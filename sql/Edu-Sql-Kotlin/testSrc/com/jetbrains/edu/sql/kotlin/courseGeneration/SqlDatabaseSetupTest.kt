@@ -370,6 +370,6 @@ class SqlDatabaseSetupTest : JvmCourseGenerationTestBase() {
     /**
      * Heavily depends on [com.jetbrains.edu.sql.jvm.gradle.SqlGradleStartupActivity.databaseUrl]
      */
-    private val DATA_SOURCE_URL_REGEX = "jdbc:h2:file:(?<path>.*)/db".toRegex()
+    private val DATA_SOURCE_URL_REGEX = "jdbc:h2:file:(?<path>.*)/db/db".toRegex()
   }
 }

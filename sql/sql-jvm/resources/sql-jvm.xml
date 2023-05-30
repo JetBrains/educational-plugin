@@ -13,5 +13,6 @@
 
   <extensions defaultExtensionNs="Educational">
     <taskNavigationExtension implementation="com.jetbrains.edu.sql.jvm.gradle.SqlTaskNavigationExtension"/>
+    <revertTaskExtension implementation="com.jetbrains.edu.sql.jvm.gradle.SqlRevertTaskExtension"/>
   </extensions>
 </idea-plugin>

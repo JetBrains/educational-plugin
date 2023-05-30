@@ -1,14 +1,21 @@
 package com.jetbrains.edu.sql.jvm.gradle
 
+import com.intellij.database.access.DatabaseCredentials
+import com.intellij.database.autoconfig.DataSourceConfigUtil
+import com.intellij.database.autoconfig.DataSourceDetector
+import com.intellij.database.autoconfig.DataSourceRegistry
 import com.intellij.database.console.JdbcConsoleProvider
 import com.intellij.database.console.runConfiguration.DatabaseScriptRunConfiguration
 import com.intellij.database.console.runConfiguration.DatabaseScriptRunConfigurationOptions
 import com.intellij.database.console.session.DatabaseSessionManager
+import com.intellij.database.dataSource.DatabaseAuthProviderNames
 import com.intellij.database.dataSource.LocalDataSource
 import com.intellij.database.dataSource.LocalDataSourceManager
+import com.intellij.database.model.DasDataSource
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.openapi.application.invokeLater
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
@@ -34,17 +41,67 @@ fun Task.findDataSource(project: Project): LocalDataSource? {
 }
 
 fun Task.databaseUrl(project: Project): String? {
-  val taskDir = getDatabaseDir(project.courseDir) ?: return null
-  // Dependency on concrete database kind/SQL dialect
-  return "jdbc:h2:file:${taskDir.path}/db"
+  val taskDir = getBaseTaskDir(project) ?: return null
+  // Dependency on concrete database kind/SQL dialect.
+  // The first `db` is just to have a separate directory for database files.
+  // The second `db` is a common prefix for H2 database files
+  return "jdbc:h2:file:${taskDir.path}/db/db"
 }
 
 /**
- * Return virtual file `[courseDir](/%sectionName%)?/%lessonName%/%taskName%` for the task.
+ * Return virtual file `%courseDir%(/%sectionName%)?/%lessonName%/%taskName%` for the task.
  * Similar to [Task.getDir] but always returns `%taskName%` directory instead of `task` dir for framework lessons
  */
-private fun Task.getDatabaseDir(courseDir: VirtualFile): VirtualFile? = lesson.getDir(courseDir)?.findChild(name)
+fun Task.getBaseTaskDir(project: Project): VirtualFile? = lesson.getDir(project.courseDir)?.findChild(name)
 
+
+fun createDataSources(project: Project, tasks: List<Task>): List<LocalDataSource> {
+  val dataSourceRegistry = DataSourceRegistry(project)
+  val dataSources = mutableListOf<LocalDataSource>()
+  for (task in tasks) {
+    val url = task.databaseUrl(project) ?: continue
+    dataSourceRegistry.builder
+      .withName(task.dataSourceName)
+      .withGroupName(task.dataSourceGroupName)
+      .withUrl(url)
+      .withAuthProviderId(DatabaseAuthProviderNames.NO_AUTH_ID)
+      .withCallback(object : DataSourceDetector.Callback() {
+        override fun onCreated(dataSource: DasDataSource) {
+          if (dataSource is LocalDataSource) {
+            dataSources += dataSource
+          }
+        }
+      })
+      .commit()
+  }
+  DataSourceConfigUtil.configureDetectedDataSources(project, dataSourceRegistry, false, true, DatabaseCredentials.getInstance())
+
+  for (dataSource in dataSources) {
+    LocalDataSourceManager.getInstance(project).addDataSource(dataSource)
+  }
+
+  return dataSources
+}
+
+private val Task.dataSourceGroupName: String
+  get() {
+    val lesson = lesson
+    val section = lesson.section
+    return buildString {
+      if (section != null) {
+        append(section.presentableName.sanitizeGroupName())
+        append("/")
+      }
+      append(lesson.presentableName.sanitizeGroupName())
+    }
+  }
+
+// Database plugin uses group name as a some path in filesystem with `/` as path separator.
+// We don't want to provide additional group inside Database View because of `/` inside section or lesson name
+// so let's replace it with ` `
+private fun String.sanitizeGroupName(): String = replace("/", " ")
+
+private val Task.dataSourceName: String get() = presentableName
 
 /**
  * Attaches sql console to given sql [file]
@@ -67,6 +124,18 @@ fun attachSqlConsoleIfNeeded(project: Project, file: VirtualFile) {
 
     val session = DatabaseSessionManager.getSession(project, dataSource, task.presentableName)
     JdbcConsoleProvider.reattachConsole(project, session, file)
+  }
+}
+
+/**
+ * Attaches SQL console to already opened SQL files.
+ * If [task] is specified, only console will be attached only for files belongs to the [task]
+ */
+fun attachSqlConsoleForOpenFiles(project: Project, task: Task? = null) {
+  for (file in FileEditorManager.getInstance(project).openFiles) {
+    if (task == null || file.getTaskFile(project)?.task == task) {
+      attachSqlConsoleIfNeeded(project, file)
+    }
   }
 }
 

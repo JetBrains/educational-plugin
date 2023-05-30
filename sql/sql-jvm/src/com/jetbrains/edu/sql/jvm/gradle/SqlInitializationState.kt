@@ -1,5 +1,7 @@
 package com.jetbrains.edu.sql.jvm.gradle
 
+import com.intellij.database.dataSource.DataSourceStorageCore
+import com.intellij.database.dataSource.LocalDataSource
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
 import com.intellij.util.xmlb.annotations.XCollection
@@ -8,6 +10,15 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 @Service(Service.Level.PROJECT)
 @State(name = "SqlInitializationState", storages = [Storage(StoragePathMacros.WORKSPACE_FILE, roamingType = RoamingType.DISABLED)])
 class SqlInitializationState(private val project: Project) : SimplePersistentStateComponent<SqlInitializationState.State>(State()) {
+
+  init {
+    project.messageBus.connect().subscribe(DataSourceStorageCore.TOPIC, object : DataSourceStorageCore.Listener {
+      override fun dataSourceRemoved(dataSource: LocalDataSource) {
+        val url = dataSource.url ?: return
+        state.removeInitializedDatabase(url)
+      }
+    })
+  }
 
   var dataSourceInitialized: Boolean by state::dataSourceInitialized
 
@@ -32,6 +43,11 @@ class SqlInitializationState(private val project: Project) : SimplePersistentSta
 
     fun addInitializedDatabase(url: String) {
       taskDatabasesInitialized += url
+      incrementModificationCount()
+    }
+
+    fun removeInitializedDatabase(url: String) {
+      taskDatabasesInitialized -= url
       incrementModificationCount()
     }
   }
