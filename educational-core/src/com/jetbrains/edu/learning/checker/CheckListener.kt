@@ -1,15 +1,15 @@
-package com.jetbrains.edu.learning.checker;
+package com.jetbrains.edu.learning.checker
 
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.openapi.project.Project;
-import com.jetbrains.edu.learning.courseFormat.CheckResult;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.courseFormat.CheckResult
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
-public interface CheckListener {
-  ExtensionPointName<CheckListener> EP_NAME = ExtensionPointName.create("Educational.checkListener");
+interface CheckListener {
+  fun beforeCheck(project: Project, task: Task) {}
+  fun afterCheck(project: Project, task: Task, result: CheckResult) {}
 
-  default void beforeCheck(@NotNull Project project, @NotNull Task task) {}
-
-  default void afterCheck(@NotNull Project project, @NotNull Task task, @NotNull CheckResult result) {}
+  companion object {
+    val EP_NAME: ExtensionPointName<CheckListener> = ExtensionPointName.create("Educational.checkListener")
+  }
 }
