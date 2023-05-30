@@ -1,130 +1,104 @@
-package com.jetbrains.edu.coursecreator.actions.studyItem;
+package com.jetbrains.edu.coursecreator.actions.studyItem
 
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.InputValidator;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.coursecreator.CCStudyItemPathInputValidator;
-import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.OpenApiExtKt;
-import com.jetbrains.edu.learning.RefreshCause;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.configuration.EduConfigurator;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.messages.EduCoreBundle;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import static com.jetbrains.edu.learning.courseFormat.ext.CourseExt.getConfigurator;
+import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.InputValidator
+import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.coursecreator.CCStudyItemPathInputValidator
+import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
+import com.jetbrains.edu.coursecreator.CCUtils.wrapIntoSection
+import com.jetbrains.edu.coursecreator.StudyItemType
+import com.jetbrains.edu.coursecreator.presentableTitleName
+import com.jetbrains.edu.learning.RefreshCause
+import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.SECTION
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.messages.EduCoreBundle.lazyMessage
+import com.jetbrains.edu.learning.messages.EduCoreBundle.message
+import org.jetbrains.annotations.NonNls
+import java.util.*
+import java.util.stream.Collectors
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static com.jetbrains.edu.coursecreator.StudyItemType.SECTION_TYPE;
-import static com.jetbrains.edu.coursecreator.StudyItemTypeKt.getPresentableTitleName;
-import static com.jetbrains.edu.learning.courseFormat.EduFormatNames.SECTION;
-
-@SuppressWarnings("ComponentNotRegistered")  // registered in educational-core.xml
-public class CCWrapWithSection extends DumbAwareAction {
-  protected static final Logger LOG = Logger.getInstance(CCWrapWithSection.class);
-  @NonNls
-  public static final String ACTION_ID = "Educational.Educator.CCWrapWithSection";
-
-  public CCWrapWithSection() {
-    super(EduCoreBundle.lazyMessage("action.wrap.with.section.text"),
-          EduCoreBundle.lazyMessage("action.wrap.with.section.description"), null);
-  }
-
-  @Override
-  public void actionPerformed(AnActionEvent e) {
-    Project project = e.getProject();
-    final VirtualFile[] virtualFiles = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(e.getDataContext());
+class CCWrapWithSection : DumbAwareAction(
+  lazyMessage("action.wrap.with.section.text"),
+  lazyMessage("action.wrap.with.section.description"),
+  null
+) {
+  override fun actionPerformed(e: AnActionEvent) {
+    val project = e.project
+    val virtualFiles = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(e.dataContext)
     if (project == null || virtualFiles == null) {
-      return;
+      return
     }
-    final Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null) {
-      return;
-    }
-
-    final ArrayList<Lesson> lessonsToWrap = getLessonsToWrap(virtualFiles, course);
-
-    wrapLessonsIntoSection(project, course, lessonsToWrap);
-
-    EduConfigurator<?> configurator = getConfigurator(course);
-    if (configurator == null) {
-      return;
-    }
-    configurator.getCourseBuilder().refreshProject(project, RefreshCause.STRUCTURE_MODIFIED);
+    val course = StudyTaskManager.getInstance(project).course ?: return
+    val lessonsToWrap = getLessonsToWrap(virtualFiles, course)
+    wrapLessonsIntoSection(project, course, lessonsToWrap)
+    val configurator = course.configurator ?: return
+    configurator.courseBuilder.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
   }
 
-  @NotNull
-  private static ArrayList<Lesson> getLessonsToWrap(@NotNull VirtualFile[] virtualFiles, @NotNull Course course) {
-    final ArrayList<Lesson> lessonsToWrap = new ArrayList<>();
-    for (VirtualFile file : virtualFiles) {
-      final Lesson lesson = course.getLesson(file.getName());
-      if (lesson != null) {
-        lessonsToWrap.add(lesson);
+  override fun update(e: AnActionEvent) {
+    val project = e.project
+    val presentation = e.presentation
+    presentation.isEnabledAndVisible = false
+    if (project == null || !isCourseCreator(project)) {
+      return
+    }
+    val virtualFiles = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(e.dataContext)
+    if (virtualFiles.isNullOrEmpty()) {
+      return
+    }
+    val course = StudyTaskManager.getInstance(project).course ?: return
+    val lessonsToWrap = getLessonsToWrap(virtualFiles, course)
+    if (lessonsToWrap.isNotEmpty()) {
+      presentation.isEnabledAndVisible = true
+    }
+  }
+
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
+
+  companion object {
+    const val ACTION_ID: @NonNls String = "Educational.Educator.CCWrapWithSection"
+    private fun getLessonsToWrap(virtualFiles: Array<VirtualFile>, course: Course): ArrayList<Lesson> {
+      val lessonsToWrap = ArrayList<Lesson>()
+      for (file in virtualFiles) {
+        val lesson = course.getLesson(file.name)
+        if (lesson != null) {
+          lessonsToWrap.add(lesson)
+        }
       }
+      return if (!isConsecutive(lessonsToWrap)) ArrayList() else lessonsToWrap
     }
-    if (!isConsecutive(lessonsToWrap)) return new ArrayList<>();
-    return lessonsToWrap;
-  }
 
-  private static boolean isConsecutive(ArrayList<Lesson> lessonsToWrap) {
-    List<Integer> indexes = lessonsToWrap.stream().map(it -> it.getIndex()).collect(Collectors.toList());
-    if (indexes.isEmpty()) return false;
-    if (indexes.stream().distinct().count() != indexes.size()) {
-      return false;
+    private fun isConsecutive(lessonsToWrap: ArrayList<Lesson>): Boolean {
+      val indexes = lessonsToWrap.stream().map { it: Lesson -> it.index }.collect(Collectors.toList())
+      if (indexes.isEmpty()) return false
+      if (indexes.stream().distinct().count() != indexes.size.toLong()) {
+        return false
+      }
+      val max = Collections.max(indexes)
+      val min = Collections.min(indexes)
+      return max - min == indexes.size - 1
     }
-    Integer max = Collections.max(indexes);
-    Integer min = Collections.min(indexes);
-    if (max - min != indexes.size() - 1) {
-      return false;
-    }
-    return true;
-  }
 
-  public static void wrapLessonsIntoSection(@NotNull Project project, @NotNull Course course, @NotNull List<Lesson> lessonsToWrap) {
-    if (lessonsToWrap.isEmpty()) {
-      return;
-    }
-    int sectionIndex = course.getSections().size() + 1;
-    InputValidator validator = new CCStudyItemPathInputValidator(project, course, SECTION_TYPE, OpenApiExtKt.getCourseDir(project));
-    String sectionName = Messages.showInputDialog(EduCoreBundle.message("action.wrap.with.section.enter.name"),
-                                                  getPresentableTitleName(SECTION_TYPE), null, SECTION + sectionIndex, validator);
-    if (sectionName == null) {
-      return;
-    }
-    CCUtils.wrapIntoSection(project, course, lessonsToWrap, sectionName);
-  }
-
-  @Override
-  public void update(AnActionEvent e) {
-    Project project = e.getProject();
-    Presentation presentation = e.getPresentation();
-    presentation.setEnabledAndVisible(false);
-    if (project == null || !CCUtils.isCourseCreator(project)) {
-      return;
-    }
-    final VirtualFile[] virtualFiles = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(e.getDataContext());
-    if (virtualFiles == null || virtualFiles.length == 0) {
-      return;
-    }
-    final Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null) {
-      return;
-    }
-    final ArrayList<Lesson> lessonsToWrap = getLessonsToWrap(virtualFiles, course);
-    if (!lessonsToWrap.isEmpty()) {
-      presentation.setEnabledAndVisible(true);
+    fun wrapLessonsIntoSection(project: Project, course: Course, lessonsToWrap: List<Lesson>) {
+      if (lessonsToWrap.isEmpty()) {
+        return
+      }
+      val sectionIndex = course.sections.size + 1
+      val validator: InputValidator = CCStudyItemPathInputValidator(project, course, StudyItemType.SECTION_TYPE, project.courseDir)
+      val sectionName = Messages.showInputDialog(
+        message("action.wrap.with.section.enter.name"),
+        StudyItemType.SECTION_TYPE.presentableTitleName, null, SECTION + sectionIndex, validator
+      ) ?: return
+      wrapIntoSection(project, course, lessonsToWrap, sectionName)
     }
   }
 }
