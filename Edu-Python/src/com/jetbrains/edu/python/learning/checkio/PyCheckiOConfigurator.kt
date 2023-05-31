@@ -2,7 +2,7 @@ package com.jetbrains.edu.python.learning.checkio
 
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduCourseBuilder
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
 import com.jetbrains.edu.learning.checkio.CheckiOCourseContentGenerator
@@ -32,7 +32,7 @@ class PyCheckiOConfigurator : PyConfigurator(), CheckiOConnectorProvider {
   override val isCourseCreatorEnabled: Boolean = false
 
   override val isEnabled: Boolean
-    get() = !EduUtils.isAndroidStudio()
+    get() = !EduUtilsKt.isAndroidStudio()
 
   override fun beforeCourseStarted(course: Course) {
     val contentGenerator = CheckiOCourseContentGenerator(PythonFileType.INSTANCE, PyCheckiOApiConnector)

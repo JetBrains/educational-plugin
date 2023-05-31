@@ -2,7 +2,7 @@ package com.jetbrains.edu.python.hyperskill
 
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator.Companion.HYPERSKILL_TEST_DIR
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -15,7 +15,7 @@ class PyHyperskillCourseGenerationTest : EduTestCase() {
 
   override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {
     // Hyperskill python support is not available in Android Studio
-    if (!EduUtils.isAndroidStudio()) {
+    if (!EduUtilsKt.isAndroidStudio()) {
       withDefaultHtmlTaskDescription {
         super.runTestRunnable(context)
       }

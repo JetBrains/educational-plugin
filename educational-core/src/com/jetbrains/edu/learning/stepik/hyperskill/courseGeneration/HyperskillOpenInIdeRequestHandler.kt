@@ -134,7 +134,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     }
 
     // Android projects must be opened in Android Studio only
-    if (eduEnvironment == EduNames.ANDROID && !EduUtils.isAndroidStudio()) {
+    if (eduEnvironment == EduNames.ANDROID && !EduUtilsKt.isAndroidStudio()) {
       return Err(ValidationErrorMessageWithHyperlinks(EduCoreBundle.message("rest.service.android.not.supported")))
     }
 

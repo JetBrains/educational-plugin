@@ -2,15 +2,12 @@ package com.jetbrains.edu.learning.api
 
 import com.intellij.ide.BrowserUtil
 import com.intellij.util.Urls
-import com.jetbrains.edu.learning.EduLogInListener
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.authUtils.OAuthUtils
 import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.courseFormat.UserInfo
-import com.jetbrains.edu.learning.executeHandlingExceptions
-import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import org.jetbrains.ide.BuiltInServerManager
@@ -115,7 +112,7 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
   }
 
   protected open fun getRedirectUri(): String =
-    if (EduUtils.isAndroidStudio()) {
+    if (EduUtilsKt.isAndroidStudio()) {
       val runningServer = CustomAuthorizationServer.getServerIfStarted(platformName)
       val server = runningServer ?: createCustomServer()
       server.handlingUri

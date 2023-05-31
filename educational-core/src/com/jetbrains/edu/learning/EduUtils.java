@@ -263,11 +263,6 @@ public class EduUtils {
     }
   }
 
-  @SuppressWarnings("UnstableApiUsage")
-  public static boolean isAndroidStudio() {
-    return "AndroidStudio".equals(PlatformUtils.getPlatformPrefix());
-  }
-
   public static void runUndoableAction(Project project,
                                        @Nls(capitalization = Nls.Capitalization.Title) String name,
                                        UndoableAction action) {

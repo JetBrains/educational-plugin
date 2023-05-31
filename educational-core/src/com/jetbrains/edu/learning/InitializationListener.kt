@@ -46,7 +46,7 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
   }
 
   private fun init() {
-    if (EduUtils.isAndroidStudio()) {
+    if (EduUtilsKt.isAndroidStudio()) {
       // Android Studio requires additional credentials to use builtin server:
       // login/password form is opened in browser when a query to builtin server is made,
       // one should use _token_ as login and token from <config>/user.token file as password

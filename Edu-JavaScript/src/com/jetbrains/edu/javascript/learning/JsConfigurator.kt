@@ -8,7 +8,7 @@ import com.intellij.util.PlatformUtils.isPyCharmEducational
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils.isAndroidStudio
+import com.jetbrains.edu.learning.EduUtilsKt.isAndroidStudio
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import javax.swing.Icon

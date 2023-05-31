@@ -2,14 +2,14 @@ package com.jetbrains.edu.learning.compatibility
 
 import com.intellij.util.PlatformUtils
 import com.jetbrains.edu.EducationalCoreIcons
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.courseFormat.PluginInfo
 import javax.swing.Icon
 
 class KtCourseCompatibilityProvider : CourseCompatibilityProvider {
 
   override fun requiredPlugins(): List<PluginInfo>? {
-    if (!PlatformUtils.isIntelliJ() && !EduUtils.isAndroidStudio()) return null
+    if (!PlatformUtils.isIntelliJ() && !EduUtilsKt.isAndroidStudio()) return null
     return listOf(
       PluginInfo.KOTLIN,
       PluginInfo.JAVA,

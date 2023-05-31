@@ -8,7 +8,7 @@ import com.jetbrains.edu.jvm.jvmEnvironmentSettings
 import com.jetbrains.edu.jvm.stepik.fileName
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
@@ -25,7 +25,7 @@ class ScalaSbtConfigurator : EduConfigurator<JdkProjectSettings> {
     get() = TEST_SCALA
 
   override val isEnabled: Boolean
-    get() = !EduUtils.isAndroidStudio() && isScalaPluginCompatible
+    get() = !EduUtilsKt.isAndroidStudio() && isScalaPluginCompatible
 
   override val taskCheckerProvider: TaskCheckerProvider
     get() = ScalaSbtTaskCheckerProvider()

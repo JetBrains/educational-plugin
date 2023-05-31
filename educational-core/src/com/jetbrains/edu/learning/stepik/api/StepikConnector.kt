@@ -53,7 +53,7 @@ abstract class StepikConnector : EduOAuthCodeFlowConnector<StepikUser, StepikUse
 
   override val oAuthServicePath: String
     // In case of Stepik and Android Studio our redirect_uri is `http://localhost:port`
-    get() = if (EduUtils.isAndroidStudio()) "" else super.oAuthServicePath
+    get() = if (EduUtilsKt.isAndroidStudio()) "" else super.oAuthServicePath
 
   override val objectMapper: ObjectMapper by lazy {
     val module = SimpleModule()

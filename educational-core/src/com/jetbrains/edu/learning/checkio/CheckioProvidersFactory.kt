@@ -5,7 +5,7 @@ import com.intellij.ui.scale.JBUIScale
 import com.intellij.util.IconUtil
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.newProjectUI.CheckiOCoursesPanel
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
@@ -30,7 +30,7 @@ class CheckiOPlatformProvider : CoursesPlatformProvider() {
   override fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel = CheckiOCoursesPanel(this, scope, disposable)
 
   override suspend fun doLoadCourses(): List<CoursesGroup> {
-    return if (EduUtils.isAndroidStudio()) {
+    return if (EduUtilsKt.isAndroidStudio()) {
       emptyList()
     }
     else {

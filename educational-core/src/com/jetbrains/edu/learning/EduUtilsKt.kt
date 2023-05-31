@@ -13,6 +13,7 @@ import com.intellij.openapi.ui.InputValidatorEx
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.PlatformUtils
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.coursera.CourseraCourse
@@ -63,6 +64,9 @@ object EduUtilsKt {
   }
 
   fun isZip(fileName: String): Boolean = StringUtil.endsWithIgnoreCase(fileName, ".zip")
+
+  @Suppress("UnstableApiUsage")
+  fun isAndroidStudio(): Boolean = "AndroidStudio" == PlatformUtils.getPlatformPrefix()
 
   fun getCourseraCourse(zipFilePath: String): Course? {
     return getLocalCourse(zipFilePath, ::readCourseraCourseJson)

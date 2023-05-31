@@ -3,7 +3,7 @@ package com.jetbrains.edu.python.hyperskill
 import com.intellij.lang.Language
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.actions.create.CCNewTaskStructureTestBase
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.python.PythonLanguage
@@ -14,7 +14,7 @@ class PyHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
 
   override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {
     // Hyperskill python support is not available in Android Studio
-    if (!EduUtils.isAndroidStudio()) {
+    if (!EduUtilsKt.isAndroidStudio()) {
       withDefaultHtmlTaskDescription {
         super.runTestRunnable(context)
       }

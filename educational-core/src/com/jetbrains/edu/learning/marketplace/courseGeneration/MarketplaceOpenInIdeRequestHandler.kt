@@ -34,7 +34,7 @@ object MarketplaceOpenInIdeRequestHandler : OpenInIdeRequestHandler<MarketplaceO
       return Err(ValidationErrorMessage(EduCoreBundle.message("marketplace.course.loading.failed")))
     }
 
-    if (course.environment == EduNames.ANDROID && !EduUtils.isAndroidStudio()) {
+    if (course.environment == EduNames.ANDROID && !EduUtilsKt.isAndroidStudio()) {
       return Err(ValidationErrorMessage(EduCoreBundle.message("rest.service.android.not.supported")))
     }
 

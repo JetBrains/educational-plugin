@@ -1,7 +1,7 @@
 package com.jetbrains.edu.python.learning.stepik.hyperskill
 
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils.isAndroidStudio
+import com.jetbrains.edu.learning.EduUtilsKt.isAndroidStudio
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
 import com.jetbrains.edu.python.learning.PyConfigurator.Companion.MAIN_PY
 import com.jetbrains.edu.python.learning.PyNewConfigurator

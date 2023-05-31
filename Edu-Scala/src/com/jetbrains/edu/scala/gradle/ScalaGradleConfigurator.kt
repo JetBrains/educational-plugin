@@ -4,7 +4,7 @@ import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.jvm.gradle.GradleConfiguratorBase
 import com.jetbrains.edu.jvm.gradle.checker.GradleTaskCheckerProvider
 import com.jetbrains.edu.jvm.stepik.fileName
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.scala.isScalaPluginCompatible
@@ -19,7 +19,7 @@ class ScalaGradleConfigurator : GradleConfiguratorBase() {
     get() = TEST_SCALA
 
   override val isEnabled: Boolean
-    get() = !EduUtils.isAndroidStudio() && isScalaPluginCompatible
+    get() = !EduUtilsKt.isAndroidStudio() && isScalaPluginCompatible
 
   override val taskCheckerProvider: TaskCheckerProvider
     get() = GradleTaskCheckerProvider()
