@@ -140,6 +140,11 @@ fun VirtualFile.isTaskDirectory(project: Project): Boolean {
   return getTask(project) != null
 }
 
+fun VirtualFile.getTextFromTaskTextFile(): String? {
+  val document = FileDocumentManager.getInstance().getDocument(this)
+  return document?.text
+}
+
 fun VirtualFile.getStudyItem(project: Project): StudyItem? {
   val course = project.course ?: return null
   val courseDir = project.courseDir

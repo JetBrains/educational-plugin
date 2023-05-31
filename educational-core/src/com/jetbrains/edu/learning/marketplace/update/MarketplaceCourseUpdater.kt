@@ -10,13 +10,13 @@ import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.coursecreator.AdditionalFilesUtils.getChangeNotesVirtualFile
 import com.jetbrains.edu.coursecreator.CCNotificationUtils
 import com.jetbrains.edu.learning.EduCourseUpdater
-import com.jetbrains.edu.learning.EduUtils.getTextFromTaskTextFile
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.findTaskDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.getTextFromTaskTextFile
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
@@ -76,7 +76,7 @@ class MarketplaceCourseUpdater(project: Project, course: EduCourse, private val 
     val taskFiles = task.taskFiles
     val taskDescriptionText = task.descriptionText.ifEmpty {
       runReadAction {
-        getTextFromTaskTextFile(task.findTaskDescriptionFile(project)) ?: ""
+        task.findTaskDescriptionFile(project)?.getTextFromTaskTextFile() ?: ""
       }
     }
     val isChanged = when {

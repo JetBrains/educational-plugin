@@ -1,8 +1,8 @@
 package com.jetbrains.edu.learning.taskDescription
 
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
+import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.intellij.lang.annotations.Language
 
@@ -50,7 +50,7 @@ class TaskDescriptionMarkdownTest : EduTestCase() {
 
   private fun doTest(@Language("Markdown") descriptionText: String, @Language("HTML") expectedText: String) {
     val first = taskWithFile(descriptionText.trimIndent())
-    val actualText = EduUtils.getTaskTextFromTask(project, first)
+    val actualText = first.getTaskTextFromTask(project)
 
     assertEquals("Task description text mismatch", expectedText.trimIndent(), actualText)
   }

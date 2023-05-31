@@ -4,7 +4,6 @@ import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.EduUtils.getTaskTextFromTask
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.ContestParameters
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
@@ -12,6 +11,7 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.onError
@@ -74,7 +74,7 @@ class CodeforcesCourseUpdater(private val project: Project, val course: Codeforc
   }
 
   private fun CodeforcesTask.needToBeUpdated(project: Project, remoteTask: CodeforcesTask): Boolean {
-    val descriptionText = runReadAction { getTaskTextFromTask(project, this) }
+    val descriptionText = runReadAction { this.getTaskTextFromTask(project) }
     // TODO think about tests
     return descriptionText != remoteTask.descriptionText
   }

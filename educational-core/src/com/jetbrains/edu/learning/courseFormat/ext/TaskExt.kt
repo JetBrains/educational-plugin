@@ -3,19 +3,22 @@
 package com.jetbrains.edu.learning.courseFormat.ext
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiUtilCore
+import com.intellij.util.ObjectUtils
 import com.jetbrains.edu.coursecreator.settings.CCSettings
-import com.jetbrains.edu.learning.EduUtilsKt
-import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduUtilsKt.convertToHtml
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
@@ -25,9 +28,10 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.isTestsFile
-import com.jetbrains.edu.learning.selectedTaskFile
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.taskDescription.addHeader
+import com.jetbrains.edu.learning.taskDescription.removeHyperskillTags
+import com.jetbrains.edu.learning.taskDescription.replaceActionIDsWithShortcuts
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.yaml.errorHandling.noDirForItemMessage
@@ -225,3 +229,44 @@ fun Task.findTaskDescriptionFile(project: Project): VirtualFile? {
 
   return file
 }
+
+fun Task.getTaskTextFromTask(project: Project): String? {
+  val lessonDir = lesson.getDir(project.courseDir) ?: return null
+  val taskDirectory = if (lesson is FrameworkLesson) lessonDir.findChild(name) else getDir(project.courseDir)
+  if (taskDirectory == null) return null
+  var text = getTaskTextByTaskName(this, taskDirectory)
+  if (text == null) {
+    LOG.warn("Cannot find task description file for a task: $name")
+    return null
+  }
+  text = StringUtil.replace(text, "%IDE_NAME%", ApplicationNamesInfo.getInstance().fullProductName)
+  if (lesson is FrameworkLesson) {
+    text = addHeader(lesson.taskList.size, text)
+  }
+  val textBuffer = StringBuffer(text)
+  replaceActionIDsWithShortcuts(textBuffer)
+  if (course is HyperskillCourse) {
+    removeHyperskillTags(textBuffer)
+  }
+  return textBuffer.toString()
+}
+
+private fun getTaskTextByTaskName(task: Task, taskDirectory: VirtualFile): String? {
+  val taskTextFile = taskDirectory.getTaskTextFile()
+  val taskDescription = ObjectUtils.chooseNotNull(taskTextFile?.getTextFromTaskTextFile(), task.descriptionText)
+
+  return if (taskTextFile != null && TASK_MD == taskTextFile.name) {
+    convertToHtml(taskDescription)
+  }
+  else taskDescription
+}
+
+private fun VirtualFile.getTaskTextFile(): VirtualFile? {
+  var taskTextFile = findChild(TASK_HTML)
+  if (taskTextFile == null) {
+    taskTextFile = findChild(TASK_MD)
+  }
+  return taskTextFile
+}
+
+private val LOG = logger<Task>()

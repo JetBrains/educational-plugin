@@ -9,10 +9,10 @@ import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.keymap.impl.KeymapManagerImpl
 import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.EduFileEditorManagerListener
 import com.jetbrains.edu.learning.taskDescription.ui.JCEFToolWindow
@@ -40,7 +40,8 @@ class TaskDescriptionTest : EduTestCase() {
   fun testHyperskillTagsRemoved() {
     createCourseWithHyperskillTags(courseProducer = ::HyperskillCourse)
 
-    val taskDescription = EduUtils.getTaskTextFromTask(project, findTask(0, 0))
+    val task = findTask(0, 0)
+    val taskDescription = task.getTaskTextFromTask(project)
 
     val expectedTextWithoutTags = """
       text danger hint pre meta
@@ -51,7 +52,8 @@ class TaskDescriptionTest : EduTestCase() {
   fun testHyperskillTagsNotRemoved() {
     val expectedTextWithTags = createCourseWithHyperskillTags(courseProducer = ::EduCourse)
 
-    val taskDescription = EduUtils.getTaskTextFromTask(project, findTask(0, 0))
+    val task = findTask(0, 0)
+    val taskDescription = task.getTaskTextFromTask(project)
 
     assertEquals(expectedTextWithTags, taskDescription)
   }
@@ -73,7 +75,7 @@ class TaskDescriptionTest : EduTestCase() {
   fun testIDEName() {
     createCourseWithDescription("This is %IDE_NAME%")
     val task = findTask(0, 0)
-    val taskDescription = EduUtils.getTaskTextFromTask(project, task)
+    val taskDescription = task.getTaskTextFromTask(project)
     assertEquals("This is ${ApplicationNamesInfo.getInstance().fullProductName}", taskDescription!!.getBody())
   }
 
@@ -378,7 +380,7 @@ class TaskDescriptionTest : EduTestCase() {
     try {
       keymapManager.activeKeymap = keymapManager.getKeymap(keymapName)!!
       val task = findTask(0, 0)
-      val taskDescription = EduUtils.getTaskTextFromTask(project, task)
+      val taskDescription = task.getTaskTextFromTask(project)
       assertEquals(taskTextWithShortcuts, taskDescription!!.getBody())
     }
     finally {

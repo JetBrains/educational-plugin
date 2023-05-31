@@ -22,7 +22,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.ui.update.MergingUpdateQueue
 import com.intellij.util.ui.update.Update
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
@@ -72,19 +72,18 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) : Dispo
 
     @VisibleForTesting
     fun getTaskDescriptionWithCodeHighlighting(project: Project, task: Task?): String {
-      if (task != null) {
-        val taskText = EduUtils.getTaskTextFromTask(project, task)
-        if (taskText != null) {
-          if (task is VideoTask) {
-            return taskText
-          }
-
-          val processedText = processImagesAndLinks(project, task, taskText)
-
-          val course = task.course
-          val language = if (course is HyperskillCourse) PlainTextLanguage.INSTANCE else course.languageById ?: return processedText
-          return EduCodeHighlighter.highlightCodeFragments(project, processedText, language)
+      if (task == null) return EduCoreBundle.message("label.open.task")
+      val taskText = task.getTaskTextFromTask(project)
+      if (taskText != null) {
+        if (task is VideoTask) {
+          return taskText
         }
+
+        val processedText = processImagesAndLinks(project, task, taskText)
+
+        val course = task.course
+        val language = if (course is HyperskillCourse) PlainTextLanguage.INSTANCE else course.languageById ?: return processedText
+        return EduCodeHighlighter.highlightCodeFragments(project, processedText, language)
       }
       return EduCoreBundle.message("label.open.task")
     }
