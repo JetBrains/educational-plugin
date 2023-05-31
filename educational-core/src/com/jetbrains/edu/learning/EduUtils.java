@@ -46,18 +46,6 @@ public class EduUtils {
 
   private static final Logger LOG = Logger.getInstance(EduUtils.class.getName());
 
-  public static void updateAction(@NotNull final AnActionEvent e) {
-    final Presentation presentation = e.getPresentation();
-    presentation.setEnabled(false);
-    final Project project = e.getProject();
-    if (project != null) {
-      TaskFile taskFile = OpenApiExtKt.getSelectedTaskFile(project);
-      if (taskFile != null) {
-        presentation.setEnabledAndVisible(true);
-      }
-    }
-  }
-
   @Nullable
   public static String getTaskTextFromTask(@NotNull final Project project, @Nullable final Task task) {
     if (task == null) {

@@ -104,7 +104,7 @@ class CheckAction() : ActionWithProgressIcon(lazyMessage("action.check.text"), l
       //action is being added only in valid context, no project in event in this case, so just enable it
       return
     }
-    EduUtils.updateAction(e)
+    updateAction(e)
     val project = e.project ?: return
     val taskFile = project.selectedTaskFile
     if (taskFile != null) {

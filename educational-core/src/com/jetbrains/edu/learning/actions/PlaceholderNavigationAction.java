@@ -6,7 +6,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.VirtualFileExt;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
@@ -16,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+
+import static com.jetbrains.edu.learning.actions.ActionUtilsKt.updateAction;
 
 abstract public class PlaceholderNavigationAction extends DumbAwareAction {
 
@@ -52,7 +53,7 @@ abstract public class PlaceholderNavigationAction extends DumbAwareAction {
 
   @Override
   public void update(@NotNull AnActionEvent e) {
-    EduUtils.updateAction(e);
+    updateAction(e);
   }
 
   protected boolean indexIsValid(int index, @NotNull final Collection<?> collection) {

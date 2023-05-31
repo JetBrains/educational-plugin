@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageDialogBuilder
 import com.intellij.ui.EditorNotifications
 import com.intellij.util.ui.EmptyIcon
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.ext.revertTaskFiles
 import com.jetbrains.edu.learning.courseFormat.ext.revertTaskParameters
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -37,7 +36,7 @@ class RevertTaskAction : DumbAwareAction(), RightAlignedToolbarAction {
   }
 
   override fun update(e: AnActionEvent) {
-    EduUtils.updateAction(e)
+    updateAction(e)
     val project = e.project ?: return
     val task = project.getCurrentTask() ?: return
     if (
