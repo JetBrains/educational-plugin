@@ -58,11 +58,6 @@ public class EduUtils {
 
   private static final Logger LOG = Logger.getInstance(EduUtils.class.getName());
 
-
-  public static boolean isZip(String fileName) {
-    return StringUtil.endsWithIgnoreCase(fileName, ".zip");
-  }
-
   @Nullable
   public static <T> T getFirst(@NotNull final Iterable<T> container) {
     Iterator<T> iterator = container.iterator();

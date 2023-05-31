@@ -8,14 +8,15 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.ui.dsl.builder.*
+import com.intellij.ui.dsl.builder.AlignX
+import com.intellij.ui.dsl.builder.RowLayout
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.layout.*
 import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchiveAction
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt.isZip
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.marketplace.addVendor
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -71,7 +72,7 @@ class CCCreateCourseArchiveDialog(project: Project, courseName: String) : Dialog
     if (file.exists()) {
       return warning(EduCoreBundle.message("course.creator.create.archive.invalid.location.file.exists"))
     }
-    if (!EduUtils.isZip(text)) {
+    if (!isZip(text)) {
       return error(EduCoreBundle.message("course.creator.create.archive.invalid.location.wrong.extension"))
     }
     return null

@@ -62,6 +62,8 @@ object EduUtilsKt {
     return HtmlGenerator(normalizedText, parsedTree, flavour, false).generateHtml()
   }
 
+  fun isZip(fileName: String): Boolean = StringUtil.endsWithIgnoreCase(fileName, ".zip")
+
   fun getCourseraCourse(zipFilePath: String): Course? {
     return getLocalCourse(zipFilePath, ::readCourseraCourseJson)
   }
