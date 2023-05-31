@@ -4,13 +4,13 @@ import com.intellij.openapi.application.ex.ApplicationUtil
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.courseFormat.CheckResult
-import com.jetbrains.edu.learning.courseFormat.CheckResult.Companion.failedToCheck
+import com.intellij.ui.jcef.JBCefApp
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.details.CheckDetailsView.Companion.getInstance
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
+import com.jetbrains.edu.learning.courseFormat.CheckResult
+import com.jetbrains.edu.learning.courseFormat.CheckResult.Companion.failedToCheck
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -25,7 +25,7 @@ class CheckiOTaskChecker(
   @NonNls testFormTargetUrl: String
 ) : TaskChecker<EduTask>(task, project) {
 
-  private val missionCheck = if (EduUtils.hasJCEF()) {
+  private val missionCheck = if (JBCefApp.isSupported()) {
     CheckiOMissionCheck(project, task, oAuthConnector, interpreterName, testFormTargetUrl)
   } else error("CheckiOTaskChecker needs JCEF")
 

@@ -7,10 +7,12 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.dsl.builder.*
+import com.intellij.ui.jcef.JBCefApp
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.JavaUILibrary
-import com.jetbrains.edu.learning.JavaUILibrary.*
+import com.jetbrains.edu.learning.JavaUILibrary.JCEF
+import com.jetbrains.edu.learning.JavaUILibrary.SWING
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
@@ -66,7 +68,7 @@ class SwitchTaskPanelAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.
 
     private fun collectAvailableJavaUiLibraries(): List<JavaUILibrary> {
       val availableJavaUiLibraries = mutableListOf(SWING)
-      if (EduUtils.hasJCEF()) {
+      if (JBCefApp.isSupported()) {
         availableJavaUiLibraries += JCEF
       }
       return availableJavaUiLibraries

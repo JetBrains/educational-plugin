@@ -181,10 +181,6 @@ public class EduUtils {
     return CourseMode.STUDENT.equals(getCourseModeForNewlyCreatedProject(project));
   }
 
-  public static boolean hasJCEF() {
-    return JBCefApp.isSupported();
-  }
-
   // supposed to be called under progress
   @Nullable
   public static <T> T execCancelable(@NotNull final Callable<T> callable) {

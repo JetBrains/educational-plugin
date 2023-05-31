@@ -5,6 +5,7 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.ui.jcef.JBCefApp;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Transient;
@@ -102,7 +103,7 @@ public class EduSettings implements PersistentStateComponent<Element> {
     if (javaUiLibrary != null && javaUiLibrary != JavaUILibrary.JAVAFX) {
       return javaUiLibrary;
     }
-    if (EduUtils.hasJCEF()) {
+    if (JBCefApp.isSupported()) {
       return JavaUILibrary.JCEF;
     }
     return JavaUILibrary.SWING;
@@ -115,7 +116,7 @@ public class EduSettings implements PersistentStateComponent<Element> {
 
   @NotNull
   public JavaUILibrary getJavaUiLibraryWithCheck() {
-    if (javaUiLibrary == JavaUILibrary.JCEF && EduUtils.hasJCEF()) {
+    if (javaUiLibrary == JavaUILibrary.JCEF && JBCefApp.isSupported()) {
       return JavaUILibrary.JCEF;
     }
     return JavaUILibrary.SWING;
