@@ -53,6 +53,8 @@ object CCUtils {
   const val DEFAULT_PLACEHOLDER_TEXT = "type here"
   private const val IS_LOCAL_COURSE: String = "Edu.IsLocalCourse"
 
+  val INDEX_COMPARATOR = Comparator.comparingInt(StudyItem::index)
+
   var Project.isLocalCourse: Boolean
     get() = PropertiesComponent.getInstance(this).getBoolean(IS_LOCAL_COURSE)
     set(value) = PropertiesComponent.getInstance(this).setValue(IS_LOCAL_COURSE, value)
@@ -77,7 +79,7 @@ object CCUtils {
       .filter { it.index > threshold }
       .sortedWith(Comparator { item1, item2 ->
         // if we delete some dir we should start increasing numbers in dir names from the end
-        -delta * EduUtils.INDEX_COMPARATOR.compare(item1, item2)
+        -delta * INDEX_COMPARATOR.compare(item1, item2)
       })
 
     for (item in itemsToUpdate) {
@@ -219,7 +221,7 @@ object CCUtils {
 
   @JvmStatic
   fun wrapIntoSection(project: Project, course: Course, lessonsToWrap: List<Lesson>, @NonNls sectionName: String): Section? {
-    Collections.sort(lessonsToWrap, EduUtils.INDEX_COMPARATOR)
+    Collections.sort(lessonsToWrap, INDEX_COMPARATOR)
     val minIndex = lessonsToWrap[0].index
     val maxIndex = lessonsToWrap[lessonsToWrap.size - 1].index
 

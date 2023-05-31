@@ -56,7 +56,6 @@ public class EduUtils {
   private EduUtils() {
   }
 
-  public static final Comparator<StudyItem> INDEX_COMPARATOR = Comparator.comparingInt(StudyItem::getIndex);
   private static final Logger LOG = Logger.getInstance(EduUtils.class.getName());
 
   //Extension for binary files to mark files that are needed to be encoded
