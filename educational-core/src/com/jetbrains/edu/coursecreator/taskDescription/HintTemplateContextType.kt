@@ -5,7 +5,6 @@ import com.intellij.codeInsight.template.TemplateContextType
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 

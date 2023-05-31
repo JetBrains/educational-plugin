@@ -4,11 +4,11 @@ package com.jetbrains.edu.learning.submissions
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Time
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.submissions.SubmissionsTab.Companion.OPEN_PLAC
 import java.util.*
 
 private const val MAX_FILE_SIZE: Int = 5 * 1024 * 1024 // 5 Mb
-private val LOG: Logger = Logger.getInstance(EduUtils::class.java.name)
+private val LOG: Logger = logger<Submission>()
 
 fun getSolutionFiles(project: Project, task: Task): List<SolutionFile> {
   val files = ArrayList<SolutionFile>()

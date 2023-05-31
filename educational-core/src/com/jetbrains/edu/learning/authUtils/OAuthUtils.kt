@@ -7,7 +7,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.StreamUtil
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.builtInWebServer.BuiltInServerOptions
 import org.jetbrains.ide.BuiltInServerManager
@@ -52,7 +52,7 @@ object OAuthUtils {
 
   @Throws(IOException::class)
   private fun getPageTemplate(pagePath: String): String {
-    EduUtils::class.java.getResourceAsStream(pagePath).use { pageTemplateStream ->
+    EduUtilsKt::class.java.getResourceAsStream(pagePath).use { pageTemplateStream ->
       return StreamUtil.readText(pageTemplateStream, StandardCharsets.UTF_8)
     }
   }

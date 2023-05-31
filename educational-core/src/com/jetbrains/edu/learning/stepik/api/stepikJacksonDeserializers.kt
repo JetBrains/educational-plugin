@@ -8,13 +8,14 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.openapi.diagnostic.Logger
-import com.jetbrains.edu.learning.EduUtils
+import com.intellij.openapi.diagnostic.logger
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
-import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.courseFormat.tasks.NumberTask
 import com.jetbrains.edu.learning.courseFormat.tasks.NumberTask.Companion.NUMBER_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.StringTask
 import com.jetbrains.edu.learning.courseFormat.tasks.StringTask.Companion.STRING_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.json.migration.LANGUAGE_TASK_ROOTS
 import com.jetbrains.edu.learning.json.migration.TaskRoots
 import com.jetbrains.edu.learning.json.migration.To10VersionLocalCourseConverter
@@ -25,7 +26,7 @@ import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.NAME
 import com.jetbrains.edu.learning.serialization.converter.json.*
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 
-private val LOG = Logger.getInstance(EduUtils::class.java)
+private val LOG = logger<JacksonStepOptionsDeserializer>()
 
 class JacksonStepOptionsDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<PyCharmStepOptions>(vc) {
 

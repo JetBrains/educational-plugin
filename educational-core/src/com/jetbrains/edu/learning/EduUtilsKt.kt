@@ -51,22 +51,20 @@ import java.util.concurrent.ExecutionException
 import java.util.zip.ZipFile
 
 object EduUtilsKt {
-  @JvmStatic
-  @JvmOverloads
   fun DataContext.showPopup(htmlContent: String, position: Balloon.Position = Balloon.Position.above) {
     val balloon = JBPopupFactory.getInstance()
       .createHtmlTextBalloonBuilder(
         htmlContent,
         null,
         UIUtil.getToolTipActionBackground(),
-        EduBrowserHyperlinkListener.INSTANCE)
+        EduBrowserHyperlinkListener.INSTANCE
+      )
       .createBalloon()
 
     val tooltipRelativePoint = JBPopupFactory.getInstance().guessBestPopupLocation(this)
     balloon.show(tooltipRelativePoint, position)
   }
 
-  @JvmStatic
   fun convertToHtml(markdownText: String): String {
     // Markdown parser is supposed to work with normalized text from document
     val normalizedText = StringUtil.convertLineSeparators(markdownText)
@@ -128,7 +126,6 @@ object EduUtilsKt {
     return userData != null && userData
   }
 
-  @JvmStatic
   fun getCourseModeForNewlyCreatedProject(project: Project): CourseMode? {
     if (project.isDefault || LightEdit.owns(project)) return null
     return project.courseDir.getUserData(CourseProjectGenerator.COURSE_MODE_TO_CREATE)
@@ -158,8 +155,6 @@ object EduUtilsKt {
       }
     }
   }
-
-
 
   // supposed to be called under progress
   fun <T> execCancelable(callable: Callable<T>): T? {
@@ -234,6 +229,6 @@ object Executor {
         ProgressManager.getInstance().progressIndicator.isIndeterminate = true
         EduUtilsKt.execCancelable(callable)
       },
-      message, true, null)
+      message, true, null
+    )
 }
-

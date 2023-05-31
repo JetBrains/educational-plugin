@@ -77,10 +77,10 @@ object CCUtils {
     val itemsToUpdate = dirs
       .mapNotNull { getStudyItem.`fun`(it) }
       .filter { it.index > threshold }
-      .sortedWith(Comparator { item1, item2 ->
+      .sortedWith { item1, item2 ->
         // if we delete some dir we should start increasing numbers in dir names from the end
         -delta * INDEX_COMPARATOR.compare(item1, item2)
-      })
+      }
 
     for (item in itemsToUpdate) {
       val newIndex = item.index + delta

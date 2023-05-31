@@ -10,7 +10,6 @@ import com.intellij.ui.jcef.JBCefApp
 import com.intellij.ui.jcef.JBCefBrowserBase
 import com.intellij.ui.jcef.JBCefJSQuery
 import com.intellij.ui.jcef.JCEFHtmlPanel
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector

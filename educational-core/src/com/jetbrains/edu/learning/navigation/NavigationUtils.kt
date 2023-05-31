@@ -27,6 +27,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import org.jetbrains.annotations.VisibleForTesting
 import javax.swing.tree.TreePath
 
 object NavigationUtils {
@@ -171,6 +172,7 @@ object NavigationUtils {
     navigateToAnswerPlaceholder(editor, firstAnswerPlaceholder)
   }
 
+  @VisibleForTesting
   fun getFirstTask(course: Course): Task? {
     LocalFileSystem.getInstance().refresh(false)
     val firstItem = course.items.firstOrNull() ?: return null

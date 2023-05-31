@@ -31,6 +31,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.isBinary
 import com.jetbrains.edu.learning.courseFormat.mimeFileType
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.annotations.VisibleForTesting
 import java.util.*
 
 private val LOG = Logger.getInstance("openApiExt")
@@ -40,6 +41,7 @@ val isUnitTestMode: Boolean get() = ApplicationManager.getApplication().isUnitTe
 //Extension for binary files to mark files that are needed to be encoded
 //In test environment most of binary file extensions are recognized as unknown
 //because the plugins for their support are not available
+@VisibleForTesting
 const val EDU_TEST_BIN = "edutestbin"
 
 fun checkIsBackgroundThread() {
