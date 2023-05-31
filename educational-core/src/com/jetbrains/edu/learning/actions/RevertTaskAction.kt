@@ -10,6 +10,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageDialogBuilder
 import com.intellij.ui.EditorNotifications
 import com.intellij.util.ui.EmptyIcon
+import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
+import com.jetbrains.edu.learning.actions.EduActionUtils.updateAction
 import com.jetbrains.edu.learning.courseFormat.ext.revertTaskFiles
 import com.jetbrains.edu.learning.courseFormat.ext.revertTaskParameters
 import com.jetbrains.edu.learning.messages.EduCoreBundle

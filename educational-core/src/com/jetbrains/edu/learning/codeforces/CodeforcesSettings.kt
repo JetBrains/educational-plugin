@@ -13,7 +13,7 @@ import com.intellij.util.xmlb.XmlSerializer
 import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduLogInListener
-import com.jetbrains.edu.learning.actions.getCurrentTask
+import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.authUtils.deserializeAccount
 import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesAccount
 import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesUserInfo

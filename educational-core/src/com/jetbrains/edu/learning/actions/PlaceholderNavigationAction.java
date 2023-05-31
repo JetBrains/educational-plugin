@@ -16,8 +16,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-import static com.jetbrains.edu.learning.actions.ActionUtilsKt.updateAction;
-
 abstract public class PlaceholderNavigationAction extends DumbAwareAction {
 
   private void navigateToPlaceholder(@NotNull final Project project) {
@@ -53,7 +51,7 @@ abstract public class PlaceholderNavigationAction extends DumbAwareAction {
 
   @Override
   public void update(@NotNull AnActionEvent e) {
-    updateAction(e);
+    EduActionUtils.updateAction(e);
   }
 
   protected boolean indexIsValid(int index, @NotNull final Collection<?> collection) {

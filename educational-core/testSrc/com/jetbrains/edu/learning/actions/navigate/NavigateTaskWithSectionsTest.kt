@@ -3,9 +3,9 @@ package com.jetbrains.edu.learning.actions.navigate
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
-import com.jetbrains.edu.learning.actions.getCurrentTask
 import com.jetbrains.edu.learning.getTaskFile
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.testAction

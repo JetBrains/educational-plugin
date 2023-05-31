@@ -7,7 +7,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.actions.getCurrentTask
+import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.addDefaultTaskDescription
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile

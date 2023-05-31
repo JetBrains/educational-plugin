@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.codeforces.actions
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.ide.CopyPasteManager
 import com.jetbrains.edu.learning.EduBrowser
-import com.jetbrains.edu.learning.actions.getCurrentTask
+import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask.Companion.codeforcesSubmitLink
 import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile

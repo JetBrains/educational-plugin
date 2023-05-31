@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.actions.getCurrentTask
+import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import junit.framework.TestCase
 import org.junit.Test

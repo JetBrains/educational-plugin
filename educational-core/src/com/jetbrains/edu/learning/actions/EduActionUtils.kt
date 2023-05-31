@@ -2,11 +2,24 @@ package com.jetbrains.edu.learning.actions
 
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.command.UndoConfirmationPolicy
+import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.command.undo.UndoManager
+import com.intellij.openapi.command.undo.UndoableAction
+import com.intellij.openapi.command.undo.UnexpectedUndoException
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsContexts
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.checkIsBackgroundThread
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.selectedTaskFile
+import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.Future
@@ -35,6 +48,48 @@ object EduActionUtils {
     }
     catch (ignore: InterruptedException) {
       // if we remove catch block, exception will die inside pooled thread and logged, but this method can be used somewhere else
+    }
+  }
+
+  fun Project.getCurrentTask(): Task? {
+    return FileEditorManager.getInstance(this).selectedFiles
+      .map { it.getContainingTask(this) }
+      .firstOrNull { it != null }
+  }
+
+  @JvmStatic
+  fun updateAction(e: AnActionEvent) {
+    e.presentation.isEnabled = false
+    val project = e.project ?: return
+    project.selectedTaskFile ?: return
+    e.presentation.isEnabledAndVisible = true
+  }
+
+  fun runUndoableAction(
+    project: Project,
+    @Nls(capitalization = Nls.Capitalization.Title) name: String?,
+    action: UndoableAction
+  ) {
+    runUndoableAction(project, name, action, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION)
+  }
+
+  fun runUndoableAction(
+    project: Project,
+    name: @NlsContexts.Command String?,
+    action: UndoableAction,
+    confirmationPolicy: UndoConfirmationPolicy
+  ) {
+    try {
+      WriteCommandAction.writeCommandAction(project)
+        .withName(name)
+        .withUndoConfirmationPolicy(confirmationPolicy)
+        .run<UnexpectedUndoException> {
+          action.redo()
+          UndoManager.getInstance(project).undoableActionPerformed(action)
+        }
+    }
+    catch (e: UnexpectedUndoException) {
+      LOG.error(e)
     }
   }
 

@@ -14,7 +14,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.JavaUILibrary.JCEF
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.actions.getCurrentTask
+import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task

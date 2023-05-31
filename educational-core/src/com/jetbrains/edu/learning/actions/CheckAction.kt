@@ -28,6 +28,7 @@ import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduUtilsKt.showPopup
 import com.jetbrains.edu.learning.actions.EduActionUtils.showFakeProgress
+import com.jetbrains.edu.learning.actions.EduActionUtils.updateAction
 import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.details.CheckDetailsView

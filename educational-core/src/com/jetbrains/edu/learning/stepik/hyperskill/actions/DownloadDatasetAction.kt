@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill.actions
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.jetbrains.edu.learning.EduUtilsKt.showPopup
-import com.jetbrains.edu.learning.actions.getCurrentTask
+import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.courseFormat.CheckStatus.Unchecked
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle

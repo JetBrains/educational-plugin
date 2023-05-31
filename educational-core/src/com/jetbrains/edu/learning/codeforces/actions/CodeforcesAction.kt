@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.codeforces.actions
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
-import com.jetbrains.edu.learning.actions.getCurrentTask
+import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 
 abstract class CodeforcesAction : DumbAwareAction() {

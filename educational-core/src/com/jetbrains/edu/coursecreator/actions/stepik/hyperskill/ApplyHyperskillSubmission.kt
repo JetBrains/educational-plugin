@@ -12,7 +12,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduExperimentalFeatures.CC_HYPERSKILL
-import com.jetbrains.edu.learning.actions.getCurrentTask
+import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL

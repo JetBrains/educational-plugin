@@ -20,7 +20,7 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
-import com.jetbrains.edu.learning.actions.getCurrentTask
+import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames

@@ -8,7 +8,7 @@ import com.intellij.util.DocumentUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.actions.runUndoableAction
+import com.jetbrains.edu.learning.actions.EduActionUtils.runUndoableAction
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency.Companion.create
 import com.jetbrains.edu.learning.courseFormat.TaskFile

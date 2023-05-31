@@ -7,6 +7,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
+import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle

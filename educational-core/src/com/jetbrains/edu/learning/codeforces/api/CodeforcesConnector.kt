@@ -11,7 +11,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.util.concurrency.SynchronizedClearableLazy
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.actions.getCurrentTask
+import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getLanguages
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings

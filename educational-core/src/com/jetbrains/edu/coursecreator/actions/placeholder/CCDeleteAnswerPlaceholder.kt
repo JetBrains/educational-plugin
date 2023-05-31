@@ -3,7 +3,7 @@ package com.jetbrains.edu.coursecreator.actions.placeholder
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduState
-import com.jetbrains.edu.learning.actions.runUndoableAction
+import com.jetbrains.edu.learning.actions.EduActionUtils.runUndoableAction
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import org.jetbrains.annotations.VisibleForTesting
 

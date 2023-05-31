@@ -24,9 +24,9 @@ import com.jetbrains.edu.coursecreator.actions.CCEditTaskDescription
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
 import com.jetbrains.edu.learning.actions.EduActionUtils
+import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
-import com.jetbrains.edu.learning.actions.getCurrentTask
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.actions.CodeforcesShowLoginStatusAction
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask

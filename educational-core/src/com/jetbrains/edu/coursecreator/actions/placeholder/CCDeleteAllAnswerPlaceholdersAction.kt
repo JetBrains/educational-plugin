@@ -5,7 +5,7 @@ import com.intellij.openapi.command.UndoConfirmationPolicy
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduState
-import com.jetbrains.edu.learning.actions.runUndoableAction
+import com.jetbrains.edu.learning.actions.EduActionUtils.runUndoableAction
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.placeholder.PlaceholderHighlightingManager

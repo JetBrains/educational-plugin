@@ -3,9 +3,9 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.intellij.openapi.ui.Messages
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
-import com.jetbrains.edu.learning.actions.getCurrentTask
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader

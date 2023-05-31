@@ -9,8 +9,11 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsActions.ActionText
-import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduUtilsKt.showPopup
+import com.jetbrains.edu.learning.Err
+import com.jetbrains.edu.learning.Ok
+import com.jetbrains.edu.learning.Result
+import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskCheckerManager.remoteCheckerForTask
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
