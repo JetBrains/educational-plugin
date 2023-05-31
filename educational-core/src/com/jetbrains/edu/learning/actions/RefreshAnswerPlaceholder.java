@@ -5,10 +5,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
-import com.jetbrains.edu.learning.EduState;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.OpenApiExtKt;
-import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -33,7 +30,7 @@ public class RefreshAnswerPlaceholder extends DumbAwareAction {
     }
     Editor editor = OpenApiExtKt.getSelectedEditor(project);
     if (editor != null) {
-      EduUtils.replaceAnswerPlaceholder(editor.getDocument(), placeholder);
+      EduUtilsKt.replaceAnswerPlaceholder(editor.getDocument(), placeholder);
       placeholder.reset(false);
     }
   }

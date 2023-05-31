@@ -117,14 +117,6 @@ public class EduUtils {
     return result;
   }
 
-  public static void replaceAnswerPlaceholder(@NotNull final Document document,
-                                              @NotNull final AnswerPlaceholder answerPlaceholder) {
-    CommandProcessor.getInstance().runUndoTransparentAction(() -> ApplicationManager.getApplication().runWriteAction(() -> {
-      document.replaceString(answerPlaceholder.getOffset(), answerPlaceholder.getEndOffset(), answerPlaceholder.getPlaceholderText());
-      FileDocumentManager.getInstance().saveDocument(document);
-    }));
-  }
-
   public static void synchronize() {
     FileDocumentManager.getInstance().saveAllDocuments();
     SaveAndSyncHandler.getInstance().refreshOpenFiles();

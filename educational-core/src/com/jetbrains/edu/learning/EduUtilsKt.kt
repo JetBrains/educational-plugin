@@ -7,7 +7,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.module.kotlin.treeToValue
 import com.intellij.ide.lightEdit.LightEdit
 import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.editor.Document
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.InputValidatorEx
@@ -16,6 +20,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.PlatformUtils
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
@@ -129,6 +134,19 @@ object EduUtilsKt {
       true
     }
     else CourseMode.STUDENT == getCourseModeForNewlyCreatedProject(this)
+  }
+
+  @JvmStatic
+  fun replaceAnswerPlaceholder(
+    document: Document,
+    answerPlaceholder: AnswerPlaceholder
+  ) {
+    CommandProcessor.getInstance().runUndoTransparentAction {
+      ApplicationManager.getApplication().runWriteAction {
+        document.replaceString(answerPlaceholder.offset, answerPlaceholder.endOffset, answerPlaceholder.placeholderText)
+        FileDocumentManager.getInstance().saveDocument(document)
+      }
+    }
   }
 
   private val LOG = logger<EduUtilsKt>()

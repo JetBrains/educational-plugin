@@ -281,7 +281,7 @@ fun VirtualFile.toStudentFile(project: Project, task: Task): TaskFile? {
       for (placeholder in taskFile.answerPlaceholders) {
         try {
           placeholder.possibleAnswer = studentDocument.getText(TextRange.create(placeholder.offset, placeholder.endOffset))
-          EduUtils.replaceAnswerPlaceholder(studentDocument, placeholder)
+          EduUtilsKt.replaceAnswerPlaceholder(studentDocument, placeholder)
         }
         catch (e: IndexOutOfBoundsException) {
           // We are here because placeholder is broken. We need to put broken placeholder into exception.
