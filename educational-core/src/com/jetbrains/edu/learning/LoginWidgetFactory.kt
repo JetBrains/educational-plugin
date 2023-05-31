@@ -6,6 +6,7 @@ import com.intellij.openapi.wm.StatusBar
 import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.openapi.wm.StatusBarWidgetFactory
 import com.jetbrains.edu.coursecreator.CCUtils.isLocalCourse
+import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.isPreview
 
@@ -17,7 +18,7 @@ abstract class LoginWidgetFactory : StatusBarWidgetFactory {
   override fun canBeEnabledOn(statusBar: StatusBar): Boolean = true
 
   override fun isAvailable(project: Project): Boolean {
-    if (!EduUtils.isEduProject(project)) return false
+    if (!project.isEduProject()) return false
     val course = StudyTaskManager.getInstance(project).course
     return if (course != null && !course.isPreview && !project.isLocalCourse) {
       isWidgetAvailable(course)

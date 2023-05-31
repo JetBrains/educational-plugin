@@ -21,6 +21,7 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.SynchronizeTaskDescription
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
+import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.EduUtilsKt.isNewlyCreated
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -43,7 +44,7 @@ class EduStartupActivity : StartupActivity.DumbAware {
   private val YAML_MIGRATED = "Edu.Yaml.Migrate"
 
   override fun runActivity(project: Project) {
-    if (!EduUtils.isEduProject(project)) return
+    if (!project.isEduProject()) return
 
     val manager = StudyTaskManager.getInstance(project)
     val connection = ApplicationManager.getApplication().messageBus.connect(manager)

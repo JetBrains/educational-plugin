@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.refactoring.move.MoveCallback;
 import com.intellij.refactoring.move.MoveHandlerDelegate;
-import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.EduUtilsKt;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,6 +48,6 @@ public class EduMoveDelegate extends MoveHandlerDelegate {
                            DataContext dataContext,
                            @Nullable PsiReference reference,
                            Editor editor) {
-    return EduUtils.isEduProject(project);
+    return EduUtilsKt.isEduProject(project);
   }
 }

@@ -7,13 +7,13 @@ import com.intellij.openapi.startup.StartupActivity
 import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils
 import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils.setupGradleProject
 import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils.updateGradleSettings
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.StudyTaskManager
 
 class GradleStartupActivity : StartupActivity.DumbAware {
 
   override fun runActivity(project: Project) {
-    if (project.isDisposed || !EduUtils.isEduProject(project)) {
+    if (project.isDisposed || !project.isEduProject()) {
       return
     }
     if (EduGradleUtils.isConfiguredWithGradle(project)) {

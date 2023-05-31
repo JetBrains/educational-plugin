@@ -43,6 +43,7 @@ import com.jetbrains.edu.coursecreator.projectView.CCSectionNode
 import com.jetbrains.edu.coursecreator.projectView.CCTaskNode
 import com.jetbrains.edu.learning.CourseSetListener
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
@@ -198,7 +199,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport
     return super.getData(dataId)
   }
 
-  override fun isDefaultPane(project: Project): Boolean = EduUtils.isEduProject(project)
+  override fun isDefaultPane(project: Project): Boolean = project.isEduProject()
 
   companion object {
     @NonNls

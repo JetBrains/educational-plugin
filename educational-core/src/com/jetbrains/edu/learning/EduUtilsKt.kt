@@ -119,6 +119,10 @@ object EduUtilsKt {
     return project.courseDir.getUserData(CourseProjectGenerator.COURSE_MODE_TO_CREATE)
   }
 
+  @JvmStatic
+  fun Project.isEduProject(): Boolean =
+    StudyTaskManager.getInstance(this).course != null || getCourseModeForNewlyCreatedProject(this) != null
+
   private val LOG = logger<EduUtilsKt>()
 }
 

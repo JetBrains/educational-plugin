@@ -2,7 +2,7 @@ package com.jetbrains.edu.remote
 
 import com.intellij.openapi.application.ApplicationManager
 import com.jetbrains.codeWithMe.model.projectViewModel
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.rd.platform.util.idea.LifetimedService
 import com.jetbrains.rdserver.core.RemoteProjectSession
@@ -14,7 +14,7 @@ class EduRemoteService(private val session: RemoteProjectSession) : LifetimedSer
     val scheduler = session.protocol.scheduler
     scheduler.queue {
       val model = session.protocol.projectViewModel
-      if (EduUtils.isEduProject(project)) {
+      if (project.isEduProject()) {
         // This hack is needed because at the time this service is loaded our Course view is not present in the model
         ApplicationManager.getApplication().executeOnPooledThread {
           while (true) {

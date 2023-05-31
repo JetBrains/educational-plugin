@@ -128,10 +128,6 @@ public class EduUtils {
     return null;
   }
 
-  public static boolean isEduProject(@NotNull Project project) {
-    return StudyTaskManager.getInstance(project).getCourse() != null || EduUtilsKt.getCourseModeForNewlyCreatedProject(project) != null;
-  }
-
   public static boolean isStudentProject(@NotNull Project project) {
     Course course = StudyTaskManager.getInstance(project).getCourse();
     if (course != null && course.isStudy()) {

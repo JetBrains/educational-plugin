@@ -22,6 +22,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.coursecreator.actions.CCEditTaskDescription
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
 import com.jetbrains.edu.learning.actions.EduActionUtils
 import com.jetbrains.edu.learning.actions.NextTaskAction
@@ -38,10 +39,10 @@ import javax.swing.SwingConstants
 import javax.swing.event.ChangeListener
 
 class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
-  override fun isApplicable(project: Project): Boolean = EduUtils.isEduProject(project)
+  override fun isApplicable(project: Project): Boolean = project.isEduProject()
 
   override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
-    if (!EduUtils.isEduProject(project)) {
+    if (!project.isEduProject()) {
       return
     }
     val taskDescriptionToolWindow = TaskDescriptionView.getInstance(project)

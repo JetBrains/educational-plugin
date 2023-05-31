@@ -6,7 +6,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType
@@ -42,7 +42,7 @@ abstract class TaskDescriptionView(val project: Project) {
 
     @JvmStatic
     fun getInstance(project: Project): TaskDescriptionView {
-      if (!EduUtils.isEduProject(project)) {
+      if (!project.isEduProject()) {
         error("Attempt to get TaskDescriptionView for non-edu project")
       }
       return project.service()

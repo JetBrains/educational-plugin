@@ -8,6 +8,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.util.io.URLUtil
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.ext.technologyName
@@ -22,7 +23,8 @@ class CreateNewYouTrackIssue : DumbAwareAction(
 
   override fun update(e: AnActionEvent) {
     val project = e.project
-    e.presentation.isEnabledAndVisible = ApplicationManager.getApplication().isInternal || project != null && EduUtils.isEduProject(project)
+    e.presentation.isEnabledAndVisible = ApplicationManager.getApplication().isInternal ||
+                                         project != null && project.isEduProject()
   }
 
   override fun actionPerformed(e: AnActionEvent) {

@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
 
 /**
@@ -22,7 +23,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
  */
 class EduRunManagerListener(private val project: Project) : RunManagerListener {
   override fun runConfigurationAdded(settings: RunnerAndConfigurationSettings) {
-    if (!EduUtils.isEduProject(project)) return
+    if (!project.isEduProject()) return
     val path = settings.pathIfStoredInArbitraryFileInProject ?: return
     val configuration = settings.configuration as? ModuleBasedConfiguration<*, *> ?: return
     if (configuration.configurationModule.module != null) return

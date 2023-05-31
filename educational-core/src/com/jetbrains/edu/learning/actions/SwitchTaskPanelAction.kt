@@ -9,7 +9,7 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.jcef.JBCefApp
 import com.jetbrains.edu.learning.EduSettings
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.JavaUILibrary.JCEF
 import com.jetbrains.edu.learning.JavaUILibrary.SWING
@@ -37,7 +37,7 @@ class SwitchTaskPanelAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.
   override fun update(e: AnActionEvent) {
     val place = e.place
     val project = e.project
-    e.presentation.isEnabled = project != null && EduUtils.isEduProject(project) || ACTION_SEARCH == place
+    e.presentation.isEnabled = project != null && project.isEduProject() || ACTION_SEARCH == place
   }
 
   companion object {

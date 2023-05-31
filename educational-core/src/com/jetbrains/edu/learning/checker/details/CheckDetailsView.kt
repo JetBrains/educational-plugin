@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.checker.details
 
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import javax.swing.JComponent
 
 abstract class CheckDetailsView {
@@ -18,7 +18,7 @@ abstract class CheckDetailsView {
   companion object {
     @JvmStatic
     fun getInstance(project: Project): CheckDetailsView {
-      if (!EduUtils.isEduProject(project)) {
+      if (!project.isEduProject()) {
         error("Attempt to get CheckDetailsViewImpl for non-edu project")
       }
       return project.service()
