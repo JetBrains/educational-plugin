@@ -13,6 +13,7 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiUtilCore
+import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
@@ -131,7 +132,7 @@ fun Task.saveStudentAnswersIfNeeded(project: Project) {
 }
 
 fun Task.addDefaultTaskDescription() {
-  val format = EduUtils.getDefaultTaskDescriptionFormat()
+  val format = if (CCSettings.getInstance().useHtmlAsDefaultTaskFormat) DescriptionFormat.HTML else DescriptionFormat.MD
   val fileName = format.descriptionFileName
   descriptionText = GeneratorUtils.getInternalTemplateText(fileName)
   descriptionFormat = format

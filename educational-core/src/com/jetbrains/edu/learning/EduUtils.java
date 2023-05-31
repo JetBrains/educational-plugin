@@ -209,11 +209,6 @@ public class EduUtils {
     return taskDir.findFileByRelativePath(taskFile.getName());
   }
 
-  @NotNull
-  public static DescriptionFormat getDefaultTaskDescriptionFormat() {
-    return CCSettings.getInstance().getUseHtmlAsDefaultTaskFormat() ? DescriptionFormat.HTML : DescriptionFormat.MD;
-  }
-
   @Nullable
   public static Document getDocument(@NotNull Project project, int lessonIndex, int taskIndex, String fileName) {
     Course course = StudyTaskManager.getInstance(project).getCourse();
