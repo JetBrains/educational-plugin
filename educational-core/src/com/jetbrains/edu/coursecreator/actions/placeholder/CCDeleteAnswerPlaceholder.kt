@@ -3,7 +3,7 @@ package com.jetbrains.edu.coursecreator.actions.placeholder
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduState
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.actions.runUndoableAction
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import org.jetbrains.annotations.VisibleForTesting
 
@@ -12,7 +12,7 @@ class CCDeleteAnswerPlaceholder : CCAnswerPlaceholderAction() {
     val taskFile = state.taskFile
     val answerPlaceholder = state.answerPlaceholder
                             ?: throw IllegalStateException("Delete Placeholder action called, but no placeholder found")
-    EduUtils.runUndoableAction(project, message("action.Educational.Educator.DeleteAnswerPlaceholder.text.full"),
+    runUndoableAction(project, message("action.Educational.Educator.DeleteAnswerPlaceholder.text.full"),
       object : CCAddAnswerPlaceholder.AddAction(project, answerPlaceholder, taskFile, state.editor) {
         override fun undo() {
           super.redo()

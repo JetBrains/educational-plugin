@@ -7,8 +7,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.util.DocumentUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduState
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.actions.runUndoableAction
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency.Companion.create
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -50,7 +50,7 @@ open class CCAddAnswerPlaceholder : CCAnswerPlaceholderAction() {
       DocumentUtil.writeInRunUndoTransparentAction { editor.document.insertString(offset, defaultPlaceholderText) }
     }
     val action = AddAction(project, answerPlaceholder, taskFile, editor)
-    EduUtils.runUndoableAction(project, message("action.Educational.Educator.AddAnswerPlaceholder.text"), action)
+    runUndoableAction(project, message("action.Educational.Educator.AddAnswerPlaceholder.text"), action)
   }
 
   open fun createDialog(project: Project, answerPlaceholder: AnswerPlaceholder): CCCreateAnswerPlaceholderDialog {

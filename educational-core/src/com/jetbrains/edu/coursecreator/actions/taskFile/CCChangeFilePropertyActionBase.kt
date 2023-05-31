@@ -10,8 +10,8 @@ import com.intellij.openapi.util.NlsActions.ActionText
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.actions.runUndoableAction
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.getContainingTask
@@ -67,7 +67,7 @@ abstract class CCChangeFilePropertyActionBase(
     collect(virtualFiles)
 
     val action = ChangeFilesPropertyUndoableAction(project, states, tasks, affectedFiles)
-    EduUtils.runUndoableAction(project, name.get(), action)
+    runUndoableAction(project, name.get(), action)
   }
 
   protected open fun isAvailableForFile(project: Project, file: VirtualFile): Boolean {

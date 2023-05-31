@@ -1,22 +1,14 @@
 package com.jetbrains.edu.learning;
 
 import com.intellij.ide.SaveAndSyncHandler;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.openapi.command.UndoConfirmationPolicy;
-import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.command.undo.UndoManager;
-import com.intellij.openapi.command.undo.UndoableAction;
-import com.intellij.openapi.command.undo.UnexpectedUndoException;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.NlsContexts.Command;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -29,7 +21,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.StudyItemExtKt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import com.jetbrains.edu.learning.taskDescription.TaskDescriptionUtil;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -140,30 +131,6 @@ public class EduUtils {
       return null;
     });
     return taskRef.get();
-  }
-
-  public static void runUndoableAction(Project project,
-                                       @Command String name,
-                                       UndoableAction action,
-                                       UndoConfirmationPolicy confirmationPolicy) {
-    try {
-      WriteCommandAction.writeCommandAction(project)
-        .withName(name)
-        .withUndoConfirmationPolicy(confirmationPolicy)
-        .run(() -> {
-          action.redo();
-          UndoManager.getInstance(project).undoableActionPerformed(action);
-        });
-    }
-    catch (UnexpectedUndoException e) {
-      LOG.error(e);
-    }
-  }
-
-  public static void runUndoableAction(Project project,
-                                       @Nls(capitalization = Nls.Capitalization.Title) String name,
-                                       UndoableAction action) {
-    runUndoableAction(project, name, action, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
   }
 
   public static void replaceAnswerPlaceholder(@NotNull final Document document,
