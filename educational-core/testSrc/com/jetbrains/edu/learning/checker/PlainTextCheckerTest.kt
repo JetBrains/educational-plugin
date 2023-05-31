@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.checker
 
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
@@ -114,7 +114,7 @@ class PlainTextCheckerTest : CheckersTestBase<EmptyProjectSettings>() {
     val testFiles = eduTask.taskFiles.values.filter { eduTask.shouldBeEmpty(it.name) }
     assertEquals(0, testFiles.size)
     val taskDir = eduTask.getDir(project.courseDir) ?: error("No task dir found")
-    val testFile = eduTask.taskFiles.values.single { EduUtils.isTestsFile(eduTask, it.name) }
+    val testFile = eduTask.taskFiles.values.single { EduUtilsKt.isTestsFile(eduTask, it.name) }
     val vTestFile = taskDir.findFileByRelativePath(testFile.name) ?: error("no virtual file found for the test file")
 
     assertEquals(EDU_TEST_FILE_TEXT, vTestFile.document.text)

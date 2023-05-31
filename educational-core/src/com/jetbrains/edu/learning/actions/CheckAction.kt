@@ -205,7 +205,7 @@ class CheckAction() : ActionWithProgressIcon(lazyMessage("action.check.text"), l
 
     private val invisibleTestFiles: List<TaskFile>
       get() = task.taskFiles.values.filter {
-        EduUtils.isTestsFile(task, it.name) && !it.isVisible && (task is EduTask || task is OutputTask)
+        EduUtilsKt.isTestsFile(task, it.name) && !it.isVisible && (task is EduTask || task is OutputTask)
       }
 
     override fun onSuccess() {

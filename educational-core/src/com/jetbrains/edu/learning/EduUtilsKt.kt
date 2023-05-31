@@ -18,6 +18,8 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.json.configureCourseMapper
 import com.jetbrains.edu.learning.json.getCourseMapper
@@ -78,6 +80,11 @@ object EduUtilsKt {
   fun updateToolWindows(project: Project) {
     TaskDescriptionView.getInstance(project).updateTaskDescription()
     updateCourseProgress(project)
+  }
+
+  fun isTestsFile(task: Task, path: String): Boolean {
+    val configurator = task.course.configurator ?: return false
+    return configurator.isTestFile(task, path)
   }
 
   fun getCourseraCourse(zipFilePath: String): Course? {

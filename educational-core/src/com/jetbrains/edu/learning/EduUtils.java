@@ -65,15 +65,6 @@ public class EduUtils {
     }
   }
 
-  public static boolean isTestsFile(@NotNull Task task, @NotNull String path) {
-    Course course = task.getCourse();
-    EduConfigurator<?> configurator = CourseExt.getConfigurator(course);
-    if (configurator == null) {
-      return false;
-    }
-    return configurator.isTestFile(task, path);
-  }
-
   @Nullable
   public static String getTaskTextFromTask(@NotNull final Project project, @Nullable final Task task) {
     if (task == null) {

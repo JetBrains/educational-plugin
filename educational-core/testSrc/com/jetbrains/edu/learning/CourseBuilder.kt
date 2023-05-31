@@ -72,7 +72,7 @@ fun Course.createCourseFiles(
       ?.createCourseStructure(holder)
 
     GeneratorUtils.unpackAdditionalFiles(holder, ONLY_IDEA_DIRECTORY)
-  }, "Course structure generation", false, project)
+  }, "Course Structure Generation", false, project)
 }
 
 abstract class LessonOwnerBuilder(val course: Course) {
@@ -196,7 +196,6 @@ class SectionBuilder(course: Course, val section: Section = Section()) : LessonO
   }
 
   fun withCustomPresentableName(name: String?) {
-    @Suppress("deprecation")
     section.customPresentableName = name
   }
 }
@@ -212,7 +211,6 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
   }
 
   fun withCustomPresentableName(name: String?) {
-    @Suppress("deprecation")
     lesson.customPresentableName = name
   }
 
@@ -239,7 +237,7 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     taskBuilder.withUpdateDate(updateDate)
     taskBuilder.buildTask()
     for ((_, taskFile) in taskBuilder.task.taskFiles) {
-      taskFile.isVisible = taskBuilder.explicitVisibility[taskFile.name] ?: !EduUtils.isTestsFile(taskBuilder.task, taskFile.name)
+      taskFile.isVisible = taskBuilder.explicitVisibility[taskFile.name] ?: !EduUtilsKt.isTestsFile(taskBuilder.task, taskFile.name)
     }
 
     lesson.addTask(taskBuilder.task)
@@ -398,15 +396,6 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     task(codeforcesTask, name, customPresentableName, taskDescription, DescriptionFormat.HTML, buildTask = buildTask)
   }
 
-  fun ideTask(
-    name: String? = null,
-    customPresentableName: String? = null,
-    taskDescription: String? = null,
-    stepId: Int = 0,
-    updateDate: Date = Date(0),
-    buildTask: TaskBuilder.() -> Unit = {}
-  ) = task(IdeTask(), name, customPresentableName, taskDescription, DescriptionFormat.HTML, stepId, updateDate, buildTask)
-
   fun dataTask(
     name: String? = null,
     customPresentableName: String? = null,
@@ -489,7 +478,6 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
   }
 
   fun withCustomPresentableName(name: String?) {
-    @Suppress("deprecation")
     task.customPresentableName = name
   }
 
