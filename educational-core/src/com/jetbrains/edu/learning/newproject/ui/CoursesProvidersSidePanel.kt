@@ -11,9 +11,9 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CourseDeletedListener
+import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
@@ -50,7 +50,7 @@ class CoursesProvidersSidePanel(private val myCoursesProvider: MyCoursesProvider
     border = JBUI.Borders.customLine(CoursePanel.DIVIDER_COLOR, 0, 0, 0, 1)
     val connection = ApplicationManager.getApplication().messageBus.connect(disposable)
     connection.subscribe(CoursesStorage.COURSE_DELETED, object : CourseDeletedListener {
-      override fun courseDeleted(course: Course) {
+      override fun courseDeleted(course: CourseMetaInfo) {
         tree.repaint()
       }
     })

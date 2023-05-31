@@ -20,7 +20,6 @@ import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.marketplace.MarketplaceListedCoursesIdsLoader
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.onError
@@ -60,21 +59,10 @@ class OpenCourseButton : CourseButtonBase() {
   }
 
   private fun processMissingCourseOpening(course: Course, coursePath: String) {
-    val isFromMyCoursesPage = course is CourseMetaInfo
-    val message = if (isFromMyCoursesPage) {
-      EduCoreBundle.message("course.dialog.my.courses.remove.course")
-    }
-    else {
-      EduCoreBundle.message("course.dialog.course.not.found.reopen.button")
-    }
-
-    if (showNoCourseDialog(coursePath, message) == Messages.NO) {
+    if (showNoCourseDialog(coursePath, EduCoreBundle.message("course.dialog.course.not.found.reopen.button")) == Messages.NO) {
       CoursesStorage.getInstance().removeCourseByLocation(coursePath)
-      when {
-        isFromMyCoursesPage -> {
-          return
-        }
-        course is HyperskillCourse -> {
+      when (course) {
+        is HyperskillCourse -> {
           closeDialog()
           ProjectOpener.getInstance().apply {
             HyperskillOpenInIdeRequestHandler.openInNewProject(HyperskillOpenStageRequest(course.id, null)).onError {
@@ -83,11 +71,13 @@ class OpenCourseButton : CourseButtonBase() {
             }
           }
         }
-        course is CodeforcesCourse -> {
+
+        is CodeforcesCourse -> {
           closeDialog()
           val contestId = course.id
           StartCodeforcesContestAction.joinContest(contestId, null)
         }
+
         else -> {
           closeDialog()
           // if course is present both on stepik and marketplace we open marketplace-based one

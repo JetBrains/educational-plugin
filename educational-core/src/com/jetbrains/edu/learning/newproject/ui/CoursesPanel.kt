@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import com.jetbrains.edu.learning.newproject.CoursesDownloadingException
+import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgroundColor
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
@@ -84,7 +85,7 @@ abstract class CoursesPanel(
     showProgressState()
   }
 
-  open fun updateModelAfterCourseDeletedFromStorage(deletedCourse: Course) {
+  open fun updateModelAfterCourseDeletedFromStorage(deletedCourse: CourseMetaInfo) {
     updateModel(coursesGroups, null, true)
   }
 

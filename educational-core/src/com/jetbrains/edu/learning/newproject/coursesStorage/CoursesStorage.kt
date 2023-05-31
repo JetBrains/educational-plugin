@@ -12,7 +12,9 @@ import com.intellij.util.xmlb.annotations.Transient
 import com.intellij.util.xmlb.annotations.XCollection
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.ItemContainer
+import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.EduLanguage
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import org.apache.commons.lang.LocaleUtils
@@ -66,16 +68,19 @@ class CoursesStorage : SimplePersistentStateComponent<UserCoursesState>(UserCour
 
   fun coursesInGroups(): List<CoursesGroup> {
     val courses = state.courses.toMutableList()
-    val solvedCourses = CoursesGroup(EduCoreBundle.message("course.dialog.completed"),
-                                     courses.filter { it.isStudy && it.tasksSolved != 0 && it.tasksSolved == it.tasksTotal })
-    val courseCreatorCourses = CoursesGroup(EduCoreBundle.message("course.dialog.my.courses.course.creation"),
-                                            courses.filter { !it.isStudy })
-    val inProgressCourses = CoursesGroup(EduCoreBundle.message("course.dialog.in.progress"),
-                                         courses.filter { it.isStudy && (it.tasksSolved == 0 || it.tasksSolved != it.tasksTotal) })
+    val solvedCourses = courses.filter { it.isStudy && it.tasksSolved != 0 && it.tasksSolved == it.tasksTotal }.map { it.toCourse() }
+    val solvedCoursesGroup = CoursesGroup(EduCoreBundle.message("course.dialog.completed"), solvedCourses)
 
-    return listOf(courseCreatorCourses, inProgressCourses, solvedCourses).filter { it.courses.isNotEmpty() }
+    val courseCreatorCoursesGroup = CoursesGroup(
+      EduCoreBundle.message("course.dialog.my.courses.course.creation"),
+      courses.filter { !it.isStudy }.map { it.toCourse() }
+    )
+
+    val inProgressCourses = courses.filter { it.isStudy && (it.tasksSolved == 0 || it.tasksSolved != it.tasksTotal) }.map { it.toCourse() }
+    val inProgressCoursesGroup = CoursesGroup(EduCoreBundle.message("course.dialog.in.progress"), inProgressCourses)
+
+    return listOf(courseCreatorCoursesGroup, inProgressCoursesGroup, solvedCoursesGroup).filter { it.courses.isNotEmpty() }
   }
-
   fun isNotEmpty() = state.courses.isNotEmpty()
 
   companion object {
@@ -87,17 +92,44 @@ class CoursesStorage : SimplePersistentStateComponent<UserCoursesState>(UserCour
 }
 
 @Tag(EduNames.COURSE)
-class CourseMetaInfo() : Course() {
+class CourseMetaInfo() : CourseInfo() {
   var type: String = ""
-  var location: String = ""
   var tasksTotal: Int = 0
   var tasksSolved: Int = 0
+  var courseMode = CourseMode.STUDENT
+  var environment = ""
+  val itemType
+    @Transient
+    get() = type
 
-  override var parent: ItemContainer
-    @Transient
-    get() = super.parent
-    @Transient
-    set(_) {}
+  var programmingLanguage: String = ""
+    @OptionTag(PROGRAMMING_LANGUAGE)
+    get() {
+      if (programmingLanguageVersion != null) {
+        field = "${field} $programmingLanguageVersion"
+        programmingLanguageVersion = null
+      }
+      return field
+    }
+    @OptionTag(PROGRAMMING_LANGUAGE)
+    set
+
+  var languageVersion: String? = null
+    get() {
+      if (programmingLanguageVersion != null) {
+        programmingLanguage = "${programmingLanguage} $programmingLanguageVersion"
+        programmingLanguageVersion = null
+      }
+
+      return field
+    }
+
+  val languageID: String
+    get() = EduLanguage.get(programmingLanguage).id
+
+  // to be compatible with previous version
+  var programmingLanguageVersion: String? = null
+
 
   constructor(location: String = "", course: Course, tasksTotal: Int = 0, tasksSolved: Int = 0) : this() {
     this.type = course.itemType
@@ -108,7 +140,7 @@ class CourseMetaInfo() : Course() {
     environment = course.environment
     languageId = course.languageId
     languageVersion = course.languageVersion
-    languageCode = course.languageCode
+    languageVersion = course.languageVersion
     this.location = location
     this.tasksTotal = tasksTotal
     this.tasksSolved = tasksSolved
@@ -147,6 +179,18 @@ class CourseMetaInfo() : Course() {
       if (value == null) return
       super.languageVersion = value
     }
+  val isStudy = courseMode == CourseMode.STUDENT
+
+  fun toCourse(): EduCourse {
+    val eduCourse = EduCourse()
+    eduCourse.id = id
+    eduCourse.name = name
+    eduCourse.description = description
+    eduCourse.courseMode = courseMode
+    eduCourse.environment = environment
+    eduCourse.programmingLanguage = programmingLanguage
+    return eduCourse
+  }
 
   override val humanLanguage: String
     get() {
