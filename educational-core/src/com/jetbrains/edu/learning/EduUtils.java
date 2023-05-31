@@ -19,19 +19,15 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsContexts.Command;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.ui.jcef.JBCefApp;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.TimeoutUtil;
 import com.intellij.util.ui.UIUtil;
-import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
@@ -43,9 +39,14 @@ import com.jetbrains.edu.learning.projectView.ProgressUtil;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import com.jetbrains.edu.learning.taskDescription.TaskDescriptionUtil;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.*;
 
 import static com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML;
@@ -233,18 +234,8 @@ public class EduUtils {
     return getFirst(firstLesson.getTaskList());
   }
 
-  public static void navigateToStep(@NotNull Project project, @NotNull Course course, int stepId) {
-    if (stepId == 0) {
-      return;
-    }
-    Task task = getTask(course, stepId);
-    if (task != null) {
-      NavigationUtils.navigateToTask(project, task);
-    }
-  }
-
   @Nullable
-  private static Task getTask(@NotNull Course course, int stepId) {
+  public static Task getTask(@NotNull Course course, int stepId) {
     Ref<Task> taskRef = new Ref<>();
     course.visitLessons((lesson) -> {
       Task task = lesson.getTask(stepId);

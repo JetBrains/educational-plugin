@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.IdeaDirectoryUnpackMode.ALL_FILES
 import com.jetbrains.edu.learning.courseGeneration.OpenInIdeRequestHandler
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToTask
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder.StepikTaskType.TEXT
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
@@ -43,7 +44,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
         hyperskillCourse.selectedProblem = stepId
         runInEdt {
           requestFocus()
-          EduUtils.navigateToStep(project, hyperskillCourse, stepId)
+          navigateToStep(project, hyperskillCourse, stepId)
         }
         synchronizeProjectOnStepOpening(project, hyperskillCourse, stepId)
       }
@@ -67,6 +68,14 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
       }
     }
     return true
+  }
+
+  private fun navigateToStep(project: Project, course: Course, stepId: Int) {
+    if (stepId == 0) {
+      return
+    }
+    val task = EduUtils.getTask(course, stepId) ?: return
+    navigateToTask(project, task)
   }
 
   private fun findExistingProject(
