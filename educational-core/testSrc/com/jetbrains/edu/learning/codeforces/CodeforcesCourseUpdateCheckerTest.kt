@@ -4,8 +4,8 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.text.DateFormatUtil
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.MockResponseFactory
+import com.jetbrains.edu.learning.actions.EduActionUtils
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_PROBLEMS
 import com.jetbrains.edu.learning.codeforces.CodeforcesTestCase.Companion.contest1211
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
@@ -79,7 +79,7 @@ class CodeforcesCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
     assertEquals(ONGOING_COURSE_CHECK_INTERVAL, checker.checkInterval)
 
     val future = ApplicationManager.getApplication().executeOnPooledThread { Thread.sleep(secondsToEnd * 1000L) }
-    EduUtils.waitAndDispatchInvocationEvents(future)
+    EduActionUtils.waitAndDispatchInvocationEvents(future)
 
     checker.check()
     assertFalse(course.isOngoing)

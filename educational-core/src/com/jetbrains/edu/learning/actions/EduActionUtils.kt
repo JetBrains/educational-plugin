@@ -2,10 +2,16 @@ package com.jetbrains.edu.learning.actions
 
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.isUnitTestMode
 import org.jetbrains.annotations.NonNls
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.Future
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 object EduActionUtils {
 
@@ -31,4 +37,27 @@ object EduActionUtils {
       // if we remove catch block, exception will die inside pooled thread and logged, but this method can be used somewhere else
     }
   }
+
+  fun <T> waitAndDispatchInvocationEvents(future: Future<T>) {
+    if (!isUnitTestMode) {
+      LOG.error("`waitAndDispatchInvocationEvents` should be invoked only in unit tests")
+    }
+    while (true) {
+      try {
+        UIUtil.dispatchAllInvocationEvents()
+        future[10, TimeUnit.MILLISECONDS]
+        return
+      }
+      catch (e: InterruptedException) {
+        throw RuntimeException(e)
+      }
+      catch (e: ExecutionException) {
+        throw RuntimeException(e)
+      }
+      catch (ignored: TimeoutException) {
+      }
+    }
+  }
+
+  private val LOG = logger<EduActionUtils>()
 }

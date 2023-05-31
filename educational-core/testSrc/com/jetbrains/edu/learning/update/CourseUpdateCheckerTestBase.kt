@@ -7,9 +7,9 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.registry.Registry
-import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.MockResponseFactory
+import com.jetbrains.edu.learning.actions.EduActionUtils
+import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import okhttp3.mockwebserver.MockResponse
@@ -50,7 +50,7 @@ abstract class CourseUpdateCheckerTestBase : CourseGenerationTestBase<EmptyProje
     withCustomCheckInterval(2) {
       updateChecker.check()
       val future = ApplicationManager.getApplication().executeOnPooledThread { Thread.sleep(1000) }
-      EduUtils.waitAndDispatchInvocationEvents(future)
+      EduActionUtils.waitAndDispatchInvocationEvents(future)
       assertEquals(0, updateChecker.invocationNumber)
     }
   }
@@ -69,7 +69,7 @@ abstract class CourseUpdateCheckerTestBase : CourseGenerationTestBase<EmptyProje
 
   private fun checkScheduled(expectedInvocationNumber: Int, updateChecker: CourseUpdateChecker) {
     val future = ApplicationManager.getApplication().executeOnPooledThread { Thread.sleep(3000) }
-    EduUtils.waitAndDispatchInvocationEvents(future)
+    EduActionUtils.waitAndDispatchInvocationEvents(future)
     check(expectedInvocationNumber <= updateChecker.invocationNumber)
   }
 
@@ -83,7 +83,6 @@ abstract class CourseUpdateCheckerTestBase : CourseGenerationTestBase<EmptyProje
 
   protected fun getTestFile(fileName: String) = getTestDataPath() + fileName
 
-  @Suppress("DEPRECATION")
   class NotificationListener(project: Project, disposable: Disposable) {
     var notificationShown = false
     var notificationText = ""

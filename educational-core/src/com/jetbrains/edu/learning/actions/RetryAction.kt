@@ -49,7 +49,7 @@ class RetryAction(actionText: Supplier<@ActionText String>,
        *  [CheckAction]:122
        */
       val future = ApplicationManager.getApplication().executeOnPooledThread { ProgressManager.getInstance().run(retryTask) }
-      EduUtils.waitAndDispatchInvocationEvents(future)
+      EduActionUtils.waitAndDispatchInvocationEvents(future)
     }
     else {
       ProgressManager.getInstance().run(retryTask)

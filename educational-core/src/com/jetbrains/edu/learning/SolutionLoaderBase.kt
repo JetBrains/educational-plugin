@@ -16,6 +16,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.learning.EduUtilsKt.isNewlyCreated
+import com.jetbrains.edu.learning.actions.EduActionUtils
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.ext.findTaskFileInDir
@@ -178,7 +179,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
   private fun waitAllTasks(tasks: Collection<Future<*>>) {
     for (task in tasks) {
       if (isUnitTestMode) {
-        EduUtils.waitAndDispatchInvocationEvents(task)
+        EduActionUtils.waitAndDispatchInvocationEvents(task)
       }
       else {
         try {

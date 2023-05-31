@@ -92,7 +92,7 @@ class CheckAction() : ActionWithProgressIcon(lazyMessage("action.check.text"), l
       // if the task run in headless environment (e.g. in unit tests).
       // It blocks EDT and any next `ApplicationManager.getApplication().invokeAndWait()` call will hang because of deadlock
       val future = ApplicationManager.getApplication().executeOnPooledThread { ProgressManager.getInstance().run(checkTask) }
-      EduUtils.waitAndDispatchInvocationEvents(future)
+      EduActionUtils.waitAndDispatchInvocationEvents(future)
     }
     else {
       ProgressManager.getInstance().run(checkTask)

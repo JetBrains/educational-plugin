@@ -1,33 +1,21 @@
 package com.jetbrains.edu.learning;
 
-import com.intellij.ide.SaveAndSyncHandler;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
-import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.TimeoutUtil;
-import com.intellij.util.ui.UIUtil;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.ext.StudyItemExtKt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import com.jetbrains.edu.learning.taskDescription.TaskDescriptionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
-
-import java.util.concurrent.*;
 
 import static com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML;
 import static com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD;
@@ -98,22 +86,4 @@ public class EduUtils {
     return null;
   }
 
-  @TestOnly
-  public static <T> void waitAndDispatchInvocationEvents(@NotNull Future<T> future) {
-    if (!OpenApiExtKt.isUnitTestMode()) {
-      LOG.error("`waitAndDispatchInvocationEvents` should be invoked only in unit tests");
-    }
-    while (true) {
-      try {
-        UIUtil.dispatchAllInvocationEvents();
-        future.get(10, TimeUnit.MILLISECONDS);
-        return;
-      }
-      catch (InterruptedException | ExecutionException e) {
-        throw new RuntimeException(e);
-      }
-      catch (TimeoutException ignored) {
-      }
-    }
-  }
 }
