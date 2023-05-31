@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.taskDescription.SRC_ATTRIBUTE
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import org.apache.commons.lang.text.StrSubstitutor
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.io.File
 
@@ -39,8 +40,7 @@ fun loadText(filePath: String): String? {
   }
 }
 
-fun wrapHintTagsInsideHTML(text: String, wrapHint: (e: Element, number: String, title: String) -> String): String {
-  val document = Jsoup.parse(text)
+fun wrapHintTagsInsideHTML(document: Document, wrapHint: (e: Element, number: String, title: String) -> String): Document {
   val hints = document.getElementsByClass("hint")
 
   val hintDefaultTitle = EduCoreBundle.message("course.creator.yaml.hint.default.title")
@@ -70,7 +70,7 @@ fun wrapHintTagsInsideHTML(text: String, wrapHint: (e: Element, number: String, 
     hint.html(hintText)
   }
 
-  return document.html()
+  return document
 }
 
 private fun absolutizePaths(project: Project, content: String, task: Task?): String {

@@ -5,7 +5,7 @@ import com.intellij.lang.Language
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFileFactory
-import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
 
@@ -13,10 +13,8 @@ class EduCodeHighlighter {
 
   companion object {
     @JvmStatic
-    fun highlightCodeFragments(project: Project, html: String, defaultLanguage: Language): String {
-      val document = Jsoup.parse(html)
-
-      val codeElements = document.select("code")
+    fun highlightCodeFragments(project: Project, html: Document, defaultLanguage: Language): Document {
+      val codeElements = html.select("code")
 
       for (codeElement in codeElements) {
         val textNode = codeElement.childNodes().singleOrNull() as? TextNode ?: continue
@@ -35,14 +33,15 @@ class EduCodeHighlighter {
         if (parent?.tagName() == "pre" && parent.parent() != null) {
           parent.after("<span class='code-block'>$codeText</span>")
           parent.remove()
-        } else {
+        }
+        else {
           val inlineCodeText = codeText.trim().removeSurrounding("<pre>", "</pre>")
           codeElement.after("<span class='code'>$inlineCodeText</span>")
           codeElement.remove()
         }
       }
 
-      return document.toString()
+      return html
     }
 
     private fun Element.language(): Language? {

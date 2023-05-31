@@ -28,6 +28,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.processImagesAndLinks
+import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import javax.swing.JComponent
 
@@ -47,13 +48,11 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) : Dispo
 
   open fun updateTaskSpecificPanel(task: Task?) {}
 
-  protected fun wrapHints(text: String): String = wrapHintTagsInsideHTML(text, this::wrapHint)
-
   protected abstract fun wrapHint(hintElement: Element, displayedHintNumber: String, hintTitle: String): String
 
   fun setTaskText(project: Project, task: Task?) {
     updateQueue.queue(Update.create(TASK_DESCRIPTION_UPDATE) {
-      setText(getTaskDescriptionWithCodeHighlighting(project, task), task)
+      setText(getTaskDescription(project, task), task)
     })
   }
 
@@ -66,6 +65,7 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) : Dispo
     const val TASK_DESCRIPTION_UPDATE_DELAY_REGISTRY_KEY: String = "edu.task.description.update.delay"
 
     @VisibleForTesting
+    // will be removed in the next step of html transformers refactoring
     fun getTaskDescriptionWithCodeHighlighting(project: Project, task: Task?): String {
       if (task == null) return EduCoreBundle.message("label.open.task")
       val taskText = task.getTaskTextFromTask(project)
@@ -74,7 +74,16 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) : Dispo
 
         val course = task.course
         val language = if (course is HyperskillCourse) PlainTextLanguage.INSTANCE else course.languageById ?: return processedText
-        return EduCodeHighlighter.highlightCodeFragments(project, processedText, language)
+        return EduCodeHighlighter.highlightCodeFragments(project, Jsoup.parse(processedText), language).toString()
+      }
+      return EduCoreBundle.message("label.open.task")
+    }
+
+    @VisibleForTesting
+    fun getTaskDescription(project: Project, task: Task?): String {
+      if (task != null) {
+        val taskText = task.getTaskTextFromTask(project)
+        if (taskText != null) return taskText
       }
       return EduCoreBundle.message("label.open.task")
     }

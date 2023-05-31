@@ -23,6 +23,9 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlTransformerContext
+import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlUIMode
+import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.TaskDescriptionTransformer
 import org.jsoup.nodes.Element
 import java.awt.BorderLayout
 import java.io.IOException
@@ -68,7 +71,8 @@ class SwingToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   }
 
   public override fun setText(text: String, task: Task?) {
-    taskInfoTextPane.text = htmlWithResources(project, wrapHints(text), task)
+    val transformerContext = HtmlTransformerContext(project, task, HtmlUIMode.SWING)
+    taskInfoTextPane.text = TaskDescriptionTransformer.transform(text, transformerContext)
   }
 
   override fun wrapHint(hintElement: Element, displayedHintNumber: String, hintTitle: String): String {

@@ -6,6 +6,7 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.taskDescription.ui.htmlWithResources
 import com.jetbrains.edu.learning.taskDescription.ui.wrapHintTagsInsideHTML
+import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.awt.BorderLayout
 import javax.swing.JComponent
@@ -36,7 +37,8 @@ abstract class TabTextPanel(val project: Project, val plainText: Boolean = true)
 
   override fun dispose() {}
 
+  // will be removed in the next step of html transformers refactoring
   private fun wrapHints(text: String): String {
-    return wrapHintTagsInsideHTML(text, this::wrapHint)
+    return wrapHintTagsInsideHTML(Jsoup.parse(text), this::wrapHint).toString()
   }
 }

@@ -159,9 +159,10 @@ fun String.getYoutubeVideoId(): String? {
   }
 }
 
+// will be removed in the next step of html transformers refactoring
 fun processImagesAndLinks(project: Project, task: Task, taskText: String): String {
-  val documentWithImagesByTheme = replaceMediaForTheme(project, task, taskText)
-  return addExternalLinkIcons(documentWithImagesByTheme)
+  val documentWithImagesByTheme = replaceMediaForTheme(project, task, Jsoup.parse(taskText))
+  return addExternalLinkIcons(documentWithImagesByTheme).toString()
 }
 
 /**
@@ -176,24 +177,22 @@ fun processImagesAndLinks(project: Project, task: Task, taskText: String): Strin
  *
  * Note, that the `srcset` attribute is always removed, independently of whether the dark theme is used or not.
  */
-fun replaceMediaForTheme(project: Project, task: Task, taskText: String): Document {
-  val document = Jsoup.parse(taskText)
-
+fun replaceMediaForTheme(project: Project, task: Task, taskText: Document): Document {
   val isDarkTheme = UIUtil.isUnderDarcula()
 
-  val imageElements = document.getElementsByTag(IMG_TAG)
+  val imageElements = taskText.getElementsByTag(IMG_TAG)
   for (element in imageElements) {
     updateImageElementAccordingToUiTheme(element, isDarkTheme, task, project)
   }
 
   if (isDarkTheme) {
-    val iframeElements = document.getElementsByTag(IFRAME_TAG)
+    val iframeElements = taskText.getElementsByTag(IFRAME_TAG)
     for (element in iframeElements) {
       useDarkSrcCustomAttributeIfPresent(element)
     }
   }
 
-  return document
+  return taskText
 }
 
 private fun updateImageElementAccordingToUiTheme(element: Element, isDarkTheme: Boolean, task: Task, project: Project) {
@@ -241,7 +240,7 @@ fun useDarkSrcCustomAttributeIfPresent(element: Element): Boolean {
   } else false
 }
 
-fun addExternalLinkIcons(document: Document): String {
+fun addExternalLinkIcons(document: Document): Document {
   val links = document.getElementsByTag(A_TAG)
   val externalLinks = links.filter { element -> element.attr(HREF_ATTRIBUTE).matches(EXTERNAL_LINK_REGEX) }
   val arrowIcon = if (UIUtil.isUnderDarcula()) {
@@ -265,7 +264,7 @@ fun addExternalLinkIcons(document: Document): String {
     img.attr(WIDTH_ATTRIBUTE, pictureSize)
     img.attr(HEIGHT_ATTRIBUTE, pictureSize)
   }
-  return document.toString()
+  return document
 }
 
 fun getPictureSize(fontSize: Int): String {

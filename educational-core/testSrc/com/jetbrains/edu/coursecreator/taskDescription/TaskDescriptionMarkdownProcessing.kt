@@ -4,6 +4,7 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.ui.wrapHintTagsInsideHTML
 import junit.framework.TestCase
+import org.jsoup.Jsoup
 
 class TaskDescriptionMarkdownProcessing : EduTestCase() {
 
@@ -19,7 +20,7 @@ class TaskDescriptionMarkdownProcessing : EduTestCase() {
       <div class="hint" title="Explanation">Text 7</div>
     """.trimIndent()
 
-    val wrappedHints = wrapHintTagsInsideHTML(html) { _, n, t -> "$t$n" }
+    val wrappedHints = wrapHintTagsInsideHTML(Jsoup.parse(html)) { _, n, t -> "$t$n" }
     val hint = EduCoreBundle.message("course.creator.yaml.hint.default.title")
 
     TestCase.assertEquals("""
@@ -50,7 +51,7 @@ class TaskDescriptionMarkdownProcessing : EduTestCase() {
         </div>
        </body>
       </html>
-    """.trimIndent(), wrappedHints)
+    """.trimIndent(), wrappedHints.toString())
   }
 
 }

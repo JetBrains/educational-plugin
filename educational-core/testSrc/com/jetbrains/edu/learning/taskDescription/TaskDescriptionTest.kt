@@ -269,7 +269,7 @@ class TaskDescriptionTest : EduTestCase() {
       </html>
     """.trimIndent()
 
-    val actualText = addExternalLinkIcons(Jsoup.parse(taskText))
+    val actualText = addExternalLinkIcons(Jsoup.parse(taskText)).toString()
     assertEquals(expectedText, actualText)
   }
 
@@ -294,7 +294,7 @@ class TaskDescriptionTest : EduTestCase() {
     """.trimIndent()
 
     val task = findTask(0, 0)
-    val actualText = replaceMediaForTheme(project, task, taskText).toString()
+    val actualText = replaceMediaForTheme(project, task, Jsoup.parse(taskText)).toString()
     assertEquals(expectedText, actualText)
   }
 
@@ -327,7 +327,7 @@ class TaskDescriptionTest : EduTestCase() {
     """.trimIndent()
 
     val task = findTask(0, 0)
-    val actualText = replaceMediaForTheme(project, task, taskText).toString()
+    val actualText = replaceMediaForTheme(project, task, Jsoup.parse(taskText)).toString()
     assertEquals(expectedText, actualText)
   }
 
@@ -366,7 +366,7 @@ class TaskDescriptionTest : EduTestCase() {
       </html>
     """.trimIndent()
     val task = findTask(0, 0)
-    val actualText = replaceMediaForTheme(project, task, taskText).toString().trimIndent()
+    val actualText = replaceMediaForTheme(project, task, Jsoup.parse(taskText)).toString().trimIndent()
     assertEquals(expectedText, actualText)
   }
 
