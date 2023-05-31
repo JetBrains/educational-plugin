@@ -27,7 +27,6 @@ import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResource
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TaskDescriptionBundle
 import com.jetbrains.edu.learning.taskDescription.ui.tab.AdditionalTab
 import com.jetbrains.edu.learning.taskDescription.ui.tab.SwingTextPanel
-import com.jetbrains.edu.learning.taskDescription.ui.tab.TabTextPanel
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType.SUBMISSIONS_TAB
 import com.jetbrains.edu.learning.ui.EduColors
 import java.net.URL
@@ -36,14 +35,11 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 
 class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB) {
-  override val plainText: Boolean = true
+  override val innerTextPanel: SwingTextPanel = SwingTextPanel(project)
 
   init {
-    init()
+    setupTextViewer()
   }
-
-  private val panel: SwingTextPanel
-    get() = innerTextPanel as SwingTextPanel
 
   override fun update(task: Task) {
     if (!task.supportSubmissions) return
@@ -82,16 +78,14 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
       customLinkHandler = LoginLinkHandler(project, submissionsManager)
     }
 
-    panel.apply {
+    innerTextPanel.apply {
       hideLoadingSubmissionsPanel()
       updateLinkHandler(customLinkHandler)
     }
-    setText(descriptionText.toString())
+    innerTextPanel.setText(descriptionText.toString())
   }
 
-  override fun createTextPanel(): TabTextPanel = SwingTextPanel(project)
-
-  fun showLoadingPanel(platformName: String) = panel.showLoadingSubmissionsPanel(platformName)
+  fun showLoadingPanel(platformName: String) = innerTextPanel.showLoadingSubmissionsPanel(platformName)
 
   companion object {
     private const val SUBMISSION_PROTOCOL = "submission://"

@@ -8,28 +8,17 @@ import com.intellij.ui.jcef.JBCefApp
 import com.intellij.ui.jcef.JCEFHtmlPanel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
-import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.getStepikLink
 import org.cef.handler.CefLoadHandlerAdapter
 import org.jetbrains.annotations.TestOnly
 import org.jsoup.nodes.Element
 import javax.swing.JComponent
 
 class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
-  private val taskInfoJBCefBrowser = JCEFHtmlPanel(true, JBCefApp.getInstance().createClient(), null)
   private val taskSpecificJBCefBrowser = JCEFHtmlPanel(true, JBCefApp.getInstance().createClient(), null)
 
   private var taskSpecificLoadHandler: CefLoadHandlerAdapter? = null
 
   init {
-    val jcefLinkInToolWindowHandler = JCefToolWindowLinkHandler(project)
-    val taskInfoRequestHandler = JCEFToolWindowRequestHandler(jcefLinkInToolWindowHandler)
-    taskInfoJBCefBrowser.jbCefClient.addRequestHandler(taskInfoRequestHandler, taskInfoJBCefBrowser.cefBrowser)
-    val taskInfoLifeSpanHandler = JCEFTaskInfoLifeSpanHandler(jcefLinkInToolWindowHandler)
-    taskInfoJBCefBrowser.jbCefClient.addLifeSpanHandler(taskInfoLifeSpanHandler, taskInfoJBCefBrowser.cefBrowser)
-
-    Disposer.register(this, taskInfoJBCefBrowser)
     Disposer.register(this, taskSpecificJBCefBrowser)
 
     ApplicationManager.getApplication().messageBus.connect(this)
@@ -37,25 +26,11 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
                  LafManagerListener { TaskDescriptionView.updateAllTabs(project) })
   }
 
-  override val taskInfoPanel: JComponent
-    get() = taskInfoJBCefBrowser.component
-
   override val taskSpecificPanel: JComponent
     get() = taskSpecificJBCefBrowser.component
 
   override fun wrapHint(hintElement: Element, displayedHintNumber: String, hintTitle: String): String {
     return wrapHintJCEF(project, hintElement, displayedHintNumber, hintTitle)
-  }
-
-  override fun setText(text: String, task: Task?) {
-    val taskText = if (task is VideoTask) {
-      EduCoreBundle.message("stepik.view.video", getStepikLink(task, task.lesson))
-    }
-    else {
-      text
-    }
-    val html = htmlWithResources(project, wrapHints(taskText, task), task)
-    taskInfoJBCefBrowser.loadHTML(html)
   }
 
   override fun updateTaskSpecificPanel(task: Task?) {

@@ -17,7 +17,6 @@ package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -36,25 +35,13 @@ import javax.swing.text.BadLocationException
 import javax.swing.text.SimpleAttributeSet
 import javax.swing.text.html.HTML
 import javax.swing.text.html.HTMLDocument
-import javax.swing.text.html.HTMLEditorKit
 import javax.swing.text.Element as SwingTextElement
 
 class SwingToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
-  private val taskInfoTextPane: JTextPane
-  override val taskInfoPanel: JComponent = JPanel(BorderLayout())
   override val taskSpecificPanel: JComponent = JPanel(BorderLayout())
 
   init {
-    // we are using HTMLEditorKit here because otherwise styles are not applied
-    val editorKit = HTMLEditorKit()
-    editorKit.styleSheet = null
-    taskInfoTextPane = createTextPane(editorKit)
-    val scrollPane = JBScrollPane(taskInfoTextPane)
-    scrollPane.border = JBUI.Borders.empty()
-    taskInfoPanel.add(scrollPane, BorderLayout.CENTER)
-    taskInfoTextPane.border = JBUI.Borders.empty(20, 0, 0, 10)
-    val toolWindowLinkHandler = HintElementLinkHandler()
-    taskInfoTextPane.addHyperlinkListener(toolWindowLinkHandler)
+    taskInfoPanel.border = JBUI.Borders.empty(20, 0, 0, 10)
   }
 
   override fun updateTaskSpecificPanel(task: Task?) {
@@ -67,15 +54,11 @@ class SwingToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
     }
   }
 
-  public override fun setText(text: String, task: Task?) {
-    taskInfoTextPane.text = htmlWithResources(project, wrapHints(text, task), task)
-  }
-
   override fun wrapHint(hintElement: Element, displayedHintNumber: String, hintTitle: String): String {
     return wrapHintSwing(project, hintElement, displayedHintNumber, hintTitle)
   }
 
-  private inner class HintElementLinkHandler : SwingToolWindowLinkHandler(project) {
+  class HintElementLinkHandler(project: Project, private val taskInfoTextPane: JTextPane) : SwingToolWindowLinkHandler(project) {
     override fun processEvent(event: HyperlinkEvent) {
       val url = event.description
       if (url.startsWith(HINT_PROTOCOL)) {
