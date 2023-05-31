@@ -8,6 +8,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.refactoring.rename.RenameDialog
 import com.intellij.refactoring.rename.RenamePsiFileProcessor
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
@@ -27,7 +28,7 @@ class CCDescriptionFileRenameProcessor : RenamePsiFileProcessor() {
     val project = element.project
     if (EduUtils.isStudentProject(project)) return false
     val file = element.virtualFile
-    if (!EduUtils.isTaskDescriptionFile(file.name)) return false
+    if (!EduUtilsKt.isTaskDescriptionFile(file.name)) return false
     val task = file.getContainingTask(project) ?: return false
     return file.parent == task.getDir(project.courseDir)
   }
@@ -60,7 +61,7 @@ class CCDescriptionFileRenameProcessor : RenamePsiFileProcessor() {
 
         @Throws(ConfigurationException::class)
         override fun canRun() {
-          if (!EduUtils.isTaskDescriptionFile(newName)) {
+          if (!EduUtilsKt.isTaskDescriptionFile(newName)) {
             throw ConfigurationException(
               EduCoreBundle.message("dialog.message.incorrect.description.file.name", TASK_HTML, TASK_MD)
             )

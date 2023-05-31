@@ -84,7 +84,7 @@ interface EduConfigurator<Settings : EduProjectSettings> {
 
     return "iml" == file.extension ||
            // Course structure files
-           EduUtils.isTaskDescriptionFile(name) || isConfigFile(file) ||
+           EduUtilsKt.isTaskDescriptionFile(name) || isConfigFile(file) ||
            // Special files
            ancestorNames.contains(CCUtils.GENERATED_FILES_FOLDER) || EduNames.HINTS == name || EduNames.STEPIK_IDS_JSON == name ||
            EduNames.COURSE_IGNORE == name

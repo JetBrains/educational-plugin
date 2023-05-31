@@ -30,7 +30,7 @@ import com.intellij.util.ui.EmptyIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.toShortcut
 import org.jetbrains.annotations.NonNls
@@ -100,7 +100,7 @@ open class InsertShortcutAction : AnAction(
   override fun update(e: AnActionEvent) {
     val project = e.project ?: return
     val virtualFile = CommonDataKeys.VIRTUAL_FILE.getData(e.dataContext) ?: return
-    e.presentation.isEnabledAndVisible = CCUtils.isCourseCreator(project) && EduUtils.isTaskDescriptionFile(virtualFile.name)
+    e.presentation.isEnabledAndVisible = CCUtils.isCourseCreator(project) && EduUtilsKt.isTaskDescriptionFile(virtualFile.name)
   }
 
   private fun Group.collectAllActions(allActions: MutableSet<AnAction>) {

@@ -6,6 +6,7 @@ import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 class HintTemplateContextType : TemplateContextType("EDU_TASK_DESCRIPTION_HINT",
@@ -13,6 +14,6 @@ class HintTemplateContextType : TemplateContextType("EDU_TASK_DESCRIPTION_HINT",
 
   override fun isInContext(context: TemplateActionContext): Boolean {
     val project = ReadAction.compute<Project, RuntimeException> { context.file.project }
-    return CCUtils.isCourseCreator(project) && EduUtils.isTaskDescriptionFile(context.file.name)
+    return CCUtils.isCourseCreator(project) && EduUtilsKt.isTaskDescriptionFile(context.file.name)
   }
 }

@@ -4,7 +4,7 @@ import com.intellij.codeInspection.DefaultXmlSuppressionProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.taskDescription.containsShortcut
 
 class ShortcutInTaskDescriptionSuppressionProvider : DefaultXmlSuppressionProvider() {
@@ -13,5 +13,5 @@ class ShortcutInTaskDescriptionSuppressionProvider : DefaultXmlSuppressionProvid
     inspectionId == "CheckDtdRefs" && element.text.containsShortcut()
 
   override fun isProviderAvailable(file: PsiFile): Boolean =
-    CCUtils.isCourseCreator(file.project) && EduUtils.isTaskDescriptionFile(file.name)
+    CCUtils.isCourseCreator(file.project) && EduUtilsKt.isTaskDescriptionFile(file.name)
 }

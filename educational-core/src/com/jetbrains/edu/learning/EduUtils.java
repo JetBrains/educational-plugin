@@ -25,7 +25,6 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.PlatformUtils;
 import com.intellij.util.TimeoutUtil;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
@@ -197,10 +196,6 @@ public class EduUtils {
       LOG.warn(e.getMessage());
     }
     return result;
-  }
-
-  public static boolean isTaskDescriptionFile(@NotNull final String fileName) {
-    return TASK_HTML.equals(fileName) || TASK_MD.equals(fileName);
   }
 
   @Nullable

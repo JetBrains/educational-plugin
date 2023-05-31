@@ -16,6 +16,8 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.PlatformUtils
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.json.configureCourseMapper
 import com.jetbrains.edu.learning.json.getCourseMapper
@@ -67,6 +69,8 @@ object EduUtilsKt {
 
   @Suppress("UnstableApiUsage")
   fun isAndroidStudio(): Boolean = "AndroidStudio" == PlatformUtils.getPlatformPrefix()
+
+  fun isTaskDescriptionFile(fileName: String): Boolean = TASK_HTML == fileName || TASK_MD == fileName
 
   fun getCourseraCourse(zipFilePath: String): Course? {
     return getLocalCourse(zipFilePath, ::readCourseraCourseJson)

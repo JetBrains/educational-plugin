@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -36,7 +36,7 @@ class CCNode(
       val virtualFile = psiFile.virtualFile
       val course = StudyTaskManager.getInstance(myProject).course ?: return null
       if (course.configurator == null) return CCStudentInvisibleFileNode(myProject, psiFile, settings)
-      if (EduUtils.isTaskDescriptionFile(virtualFile.name)) {
+      if (EduUtilsKt.isTaskDescriptionFile(virtualFile.name)) {
         return null
       }
       if (!virtualFile.isTestsFile(myProject)) {
