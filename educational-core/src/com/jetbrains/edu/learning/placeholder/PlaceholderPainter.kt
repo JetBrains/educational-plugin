@@ -13,7 +13,7 @@ import com.intellij.openapi.wm.IdeGlassPaneUtil
 import com.intellij.ui.ColorUtil
 import com.intellij.ui.JBColor
 import com.intellij.ui.scale.JBUIScale
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -61,7 +61,7 @@ object PlaceholderPainter {
     val document = editor.document
     if (!taskFile.isValid(document.text)) return
 
-    val isStudentProject = EduUtils.isStudentProject(project)
+    val isStudentProject = project.isStudentProject()
     val painter: AbstractPainter = object : AbstractPainter() {
 
       override fun needsRepaint() = !editor.isDisposed

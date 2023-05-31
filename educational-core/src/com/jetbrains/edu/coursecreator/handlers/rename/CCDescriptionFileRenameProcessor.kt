@@ -7,8 +7,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.refactoring.rename.RenameDialog
 import com.intellij.refactoring.rename.RenamePsiFileProcessor
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.EduUtilsKt
+import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
@@ -26,7 +26,7 @@ class CCDescriptionFileRenameProcessor : RenamePsiFileProcessor() {
   override fun canProcessElement(element: PsiElement): Boolean {
     if (element !is PsiFile) return false
     val project = element.project
-    if (EduUtils.isStudentProject(project)) return false
+    if (project.isStudentProject()) return false
     val file = element.virtualFile
     if (!EduUtilsKt.isTaskDescriptionFile(file.name)) return false
     val task = file.getContainingTask(project) ?: return false

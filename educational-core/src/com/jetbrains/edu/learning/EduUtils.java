@@ -128,14 +128,6 @@ public class EduUtils {
     return null;
   }
 
-  public static boolean isStudentProject(@NotNull Project project) {
-    Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course != null && course.isStudy()) {
-      return true;
-    }
-    return CourseMode.STUDENT.equals(EduUtilsKt.getCourseModeForNewlyCreatedProject(project));
-  }
-
   // supposed to be called under progress
   @Nullable
   public static <T> T execCancelable(@NotNull final Callable<T> callable) {

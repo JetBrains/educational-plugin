@@ -4,7 +4,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.jetbrains.edu.learning.EduLogInListener
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 class HyperskillStartupActivity : StartupActivity {
 
   override fun runActivity(project: Project) {
-    if (project.isDisposed || !EduUtils.isStudentProject(project) || isUnitTestMode) return
+    if (project.isDisposed || !project.isStudentProject() || isUnitTestMode) return
 
     val course = StudyTaskManager.getInstance(project).course as? HyperskillCourse ?: return
     val submissionsManager = SubmissionsManager.getInstance(project)

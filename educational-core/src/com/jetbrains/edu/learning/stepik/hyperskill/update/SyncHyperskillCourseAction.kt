@@ -4,7 +4,7 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.SyncCourseAction
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import org.jetbrains.annotations.NonNls
 
-@Suppress("ComponentNotRegistered")
 class SyncHyperskillCourseAction : SyncCourseAction(
   EduCoreBundle.lazyMessage("hyperskill.update.project"),
   EduCoreBundle.lazyMessage("hyperskill.update.project"), null
@@ -36,9 +35,8 @@ class SyncHyperskillCourseAction : SyncCourseAction(
   }
 
   override fun isAvailable(project: Project): Boolean {
-    if (!EduUtils.isStudentProject(project)) return false
-    if (project.course !is HyperskillCourse) return false
-    return true
+    if (!project.isStudentProject()) return false
+    return project.course is HyperskillCourse
   }
 
   private fun showNothingToUpdateNotification(project: Project) {

@@ -7,6 +7,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -31,7 +32,7 @@ class LeaveCommentAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.lea
     e.presentation.isEnabledAndVisible = false
 
     val project = e.project ?: return
-    if (!EduUtils.isStudentProject(project)) return
+    if (!project.isStudentProject()) return
     val task = EduUtils.getCurrentTask(project) ?: return
     val course = task.course
 

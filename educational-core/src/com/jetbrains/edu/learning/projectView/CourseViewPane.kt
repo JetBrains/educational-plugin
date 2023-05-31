@@ -42,8 +42,8 @@ import com.jetbrains.edu.coursecreator.projectView.CCLessonNode
 import com.jetbrains.edu.coursecreator.projectView.CCSectionNode
 import com.jetbrains.edu.coursecreator.projectView.CCTaskNode
 import com.jetbrains.edu.learning.CourseSetListener
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
+import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
@@ -75,7 +75,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport
   override fun createComponent(): JComponent {
     val component = super.createComponent()
 
-    if (!EduUtils.isStudentProject(myProject)) return component
+    if (!myProject.isStudentProject()) return component
     val panel = JPanel(BorderLayout())
     panel.background = UIUtil.getTreeBackground()
 

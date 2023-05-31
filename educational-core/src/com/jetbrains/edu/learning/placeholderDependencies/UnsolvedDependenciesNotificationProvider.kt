@@ -8,7 +8,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotificationProvider
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.ext.getUnsolvedTaskDependencies
 import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -20,7 +20,7 @@ import javax.swing.JComponent
 class UnsolvedDependenciesNotificationProvider : EditorNotificationProvider, DumbAware {
 
   override fun collectNotificationData(project: Project, file: VirtualFile): Function<in FileEditor, out JComponent?>? {
-    if (!EduUtils.isStudentProject(project)) {
+    if (!project.isStudentProject()) {
       return null
     }
     val task = file.getContainingTask(project) ?: return null

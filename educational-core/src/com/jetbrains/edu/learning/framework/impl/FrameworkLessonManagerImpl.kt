@@ -11,7 +11,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.storage.AbstractStorage
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
@@ -46,7 +46,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
   }
 
   override fun saveExternalChanges(task: Task, externalState: Map<String, String>) {
-    require(EduUtils.isStudentProject(project)) {
+    require(project.isStudentProject()) {
       "`saveExternalChanges` should be called only if course in study mode"
     }
     require(task.lesson is FrameworkLesson) {
@@ -68,7 +68,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
   }
 
   override fun updateUserChanges(task: Task, newInitialState: Map<String, String>) {
-    require(EduUtils.isStudentProject(project)) {
+    require(project.isStudentProject()) {
       "`updateUserChanges` should be called only if course in study mode"
     }
     require(task.lesson is FrameworkLesson) {
@@ -105,7 +105,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
   }
 
   override fun getChangesTimestamp(task: Task): Long {
-    require(EduUtils.isStudentProject(project)) {
+    require(project.isStudentProject()) {
       "`getTimestamp` should be called only if course in study mode"
     }
     require(task.lesson is FrameworkLesson) {
@@ -125,7 +125,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     taskDir: VirtualFile,
     showDialogIfConflict: Boolean
   ) {
-    require(EduUtils.isStudentProject(project)) {
+    require(project.isStudentProject()) {
       "`applyTargetTaskChanges` should be called only if course in study mode"
     }
     val currentTaskIndex = lesson.currentTaskIndex

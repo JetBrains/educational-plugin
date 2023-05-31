@@ -13,7 +13,7 @@ import com.intellij.ui.components.labels.ActionLink
 import com.intellij.ui.content.Content
 import com.intellij.util.Alarm
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.CompareWithAnswerAction
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.details.CheckDetailsView
@@ -114,7 +114,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
       panel
     }
 
-    if (EduUtils.isStudentProject(project) && task.canShowSolution()) {
+    if (project.isStudentProject() && task.canShowSolution()) {
       val isExternal = task.course is HyperskillCourse
       val text = EduCoreBundle.message("label.peek.solution") + if (isExternal) {
         ""

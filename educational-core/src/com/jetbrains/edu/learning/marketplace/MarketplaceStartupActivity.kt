@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.marketplace
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -29,7 +29,7 @@ class MarketplaceStartupActivity : StartupActivity {
       return
     }
 
-    if (!EduUtils.isStudentProject(project)) return
+    if (!project.isStudentProject()) return
 
     MarketplaceUpdateChecker.getInstance(project).check()
 

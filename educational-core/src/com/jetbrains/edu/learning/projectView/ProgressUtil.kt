@@ -8,7 +8,7 @@ import com.intellij.openapi.progress.util.ColorProgressBar
 import com.intellij.openapi.project.Project
 import com.intellij.ui.Gray
 import com.intellij.ui.JBColor
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -90,7 +90,7 @@ object ProgressUtil {
     }
     val (tasksSolved, tasksTotal) = countProgress(course)
     val pane = ProjectView.getInstance(project).currentProjectViewPane
-    if (pane is CourseViewPane && EduUtils.isStudentProject(project) && !ApplicationManager.getApplication().isUnitTestMode) {
+    if (pane is CourseViewPane && project.isStudentProject() && !ApplicationManager.getApplication().isUnitTestMode) {
       pane.updateCourseProgress(tasksTotal, tasksSolved)
     }
     val location = project.basePath

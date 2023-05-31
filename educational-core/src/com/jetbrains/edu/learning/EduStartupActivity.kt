@@ -23,6 +23,7 @@ import com.jetbrains.edu.coursecreator.SynchronizeTaskDescription
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.EduUtilsKt.isNewlyCreated
+import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.isPreview
@@ -49,7 +50,7 @@ class EduStartupActivity : StartupActivity.DumbAware {
     val manager = StudyTaskManager.getInstance(project)
     val connection = ApplicationManager.getApplication().messageBus.connect(manager)
     if (!isUnitTestMode) {
-      val vfsListener = if (EduUtils.isStudentProject(project)) UserCreatedFileListener(project) else CCVirtualFileListener(project, manager)
+      val vfsListener = if (project.isStudentProject()) UserCreatedFileListener(project) else CCVirtualFileListener(project, manager)
       connection.subscribe(VirtualFileManager.VFS_CHANGES, vfsListener)
 
       if (CCUtils.isCourseCreator(project)) {
@@ -92,7 +93,7 @@ class EduStartupActivity : StartupActivity.DumbAware {
       }
 
       runWriteAction {
-        if (EduUtils.isStudentProject(project)) {
+        if (project.isStudentProject()) {
           course.visitTasks {
             setHighlightLevelForFilesInTask(it, project)
           }

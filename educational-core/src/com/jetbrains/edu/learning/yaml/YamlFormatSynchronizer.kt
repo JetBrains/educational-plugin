@@ -27,6 +27,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
@@ -259,7 +260,7 @@ object YamlFormatSynchronizer {
     project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
       override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
         if (isLocalConfigFile(file)) {
-          if (EduUtils.isStudentProject(project)) {
+          if (project.isStudentProject()) {
             @NonNls
             val errorMessageToLog = "Can't find editor for a file: ${file.name}"
             val editor = file.getEditor(project) ?: error(errorMessageToLog)

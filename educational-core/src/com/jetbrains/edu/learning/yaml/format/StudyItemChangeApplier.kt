@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.yaml.format
 
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -96,7 +96,7 @@ fun <T : StudyItem> getChangeApplierForItem(project: Project, item: T): StudyIte
   return when (item) {
     is Course -> CourseChangeApplier(project)
     is Section, is Lesson -> ItemContainerChangeApplier(project)
-    is Task -> if (EduUtils.isStudentProject(project)) StudentTaskChangeApplier(project) else TaskChangeApplier(project)
+    is Task -> if (project.isStudentProject()) StudentTaskChangeApplier(project) else TaskChangeApplier(project)
     else -> loadingError(unexpectedItemTypeMessage(item.javaClass.simpleName))
   } as StudyItemChangeApplier<T>
 }

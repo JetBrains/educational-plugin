@@ -5,7 +5,7 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TITLE
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CONTEST
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
@@ -32,7 +32,7 @@ class CodeforcesUpdateContestAction : DumbAwareAction() {
     presentation.isEnabledAndVisible = false
 
     val project = e.project ?: return
-    if (!EduUtils.isStudentProject(project)) return
+    if (!project.isStudentProject()) return
 
     val course = project.course ?: return
     if (course !is CodeforcesCourse) return

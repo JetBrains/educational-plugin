@@ -15,7 +15,7 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.getTaskFile
@@ -49,7 +49,7 @@ class PlaceholderHighlightingPass(
       progress.checkCanceled()
 
       if (!placeholder.isValid(textLength)) continue
-      if (EduUtils.isStudentProject(myProject) && !placeholder.isVisible) continue
+      if (myProject.isStudentProject() && !placeholder.isVisible) continue
       val highlightInfo = PlaceholderHighlightingInfo.forStatus(placeholder.status)
 
       val highlightInfoBuilder = HighlightInfo.newHighlightInfo(highlightInfo.highlightInfoType)

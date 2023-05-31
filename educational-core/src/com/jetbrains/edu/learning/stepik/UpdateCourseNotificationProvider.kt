@@ -8,7 +8,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotificationProvider
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.getTaskFile
@@ -25,7 +25,7 @@ class UpdateCourseNotificationProvider : EditorNotificationProvider, DumbAware {
   private var isUpdateRunning: AtomicBoolean = AtomicBoolean(false)
 
   override fun collectNotificationData(project: Project, file: VirtualFile): Function<in FileEditor, out JComponent?>? {
-    if (!EduUtils.isStudentProject(project)) {
+    if (!project.isStudentProject()) {
       return null
     }
     val course = project.course as? EduCourse ?: return null

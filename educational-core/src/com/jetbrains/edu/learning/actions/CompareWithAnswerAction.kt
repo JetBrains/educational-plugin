@@ -14,6 +14,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
@@ -98,7 +99,7 @@ open class CompareWithAnswerAction : DumbAwareAction() {
     val presentation = e.presentation
     presentation.isEnabledAndVisible = false
     val project = e.project ?: return
-    if (!EduUtils.isStudentProject(project)) {
+    if (!project.isStudentProject()) {
       return
     }
     val task = EduUtils.getCurrentTask(project) ?: return

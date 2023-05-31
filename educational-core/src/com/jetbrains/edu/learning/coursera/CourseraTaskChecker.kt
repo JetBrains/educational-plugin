@@ -21,16 +21,14 @@ import com.intellij.ui.dsl.builder.COLUMNS_MEDIUM
 import com.intellij.ui.dsl.builder.columns
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.addProxy
+import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker
-import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.loadEncodedContent
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
@@ -42,8 +40,7 @@ import java.time.Duration
 class CourseraTaskChecker : RemoteTaskChecker {
   private val checkWithoutCredentials = CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("coursera.error.no.credentials"))
   override fun canCheck(project: Project, task: Task) =
-    EduUtils.isStudentProject(project) && task.course is CourseraCourse
-
+    project.isStudentProject() && task.course is CourseraCourse
 
   override fun check(project: Project, task: Task, indicator: ProgressIndicator): CheckResult {
     val course = task.course as CourseraCourse

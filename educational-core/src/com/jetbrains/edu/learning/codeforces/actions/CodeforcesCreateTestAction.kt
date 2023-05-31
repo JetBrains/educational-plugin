@@ -12,7 +12,7 @@ import com.intellij.openapi.ui.InputValidatorEx
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCStudyItemPathInputValidator
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseDir
@@ -85,7 +85,7 @@ class CodeforcesCreateTestAction : DumbAwareAction() {
     presentation.isEnabledAndVisible = false
 
     val project = e.project ?: return
-    if (!EduUtils.isStudentProject(project)) return
+    if (!project.isStudentProject()) return
 
     if (CommonDataKeys.VIRTUAL_FILE.getData(e.dataContext)?.getContainingTask(project) !is CodeforcesTask) return
 

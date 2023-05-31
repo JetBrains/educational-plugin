@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.RightAlignedToolbarAction
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask.Companion.codeforcesTaskLink
@@ -31,7 +32,7 @@ class OpenTaskOnSiteAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.o
     e.presentation.isEnabledAndVisible = false
 
     val project = e.project ?: return
-    if (!EduUtils.isStudentProject(project)) return
+    if (!project.isStudentProject()) return
     val task = EduUtils.getCurrentTask(project) ?: return
     val course = task.course
 

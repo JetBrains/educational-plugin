@@ -6,6 +6,7 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.ActionWithProgressIcon
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -33,7 +34,7 @@ abstract class DownloadDatasetActionBase(
     presentation.isEnabledAndVisible = false
 
     val project = e.project ?: return
-    if (!EduUtils.isStudentProject(project)) return
+    if (!project.isStudentProject()) return
     val course = project.course ?: return
     if (!course.isStepikRemote && course !is HyperskillCourse) return
 

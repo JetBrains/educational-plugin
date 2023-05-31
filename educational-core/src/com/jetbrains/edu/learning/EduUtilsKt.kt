@@ -123,6 +123,14 @@ object EduUtilsKt {
   fun Project.isEduProject(): Boolean =
     StudyTaskManager.getInstance(this).course != null || getCourseModeForNewlyCreatedProject(this) != null
 
+  fun Project.isStudentProject(): Boolean {
+    val course = StudyTaskManager.getInstance(this).course
+    return if (course != null && course.isStudy) {
+      true
+    }
+    else CourseMode.STUDENT == getCourseModeForNewlyCreatedProject(this)
+  }
+
   private val LOG = logger<EduUtilsKt>()
 }
 
