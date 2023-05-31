@@ -65,11 +65,6 @@ public class EduUtils {
     }
   }
 
-  public static void updateToolWindows(@NotNull final Project project) {
-    TaskDescriptionView.getInstance(project).updateTaskDescription();
-    ProgressUtil.updateCourseProgress(project);
-  }
-
   public static boolean isTestsFile(@NotNull Task task, @NotNull String path) {
     Course course = task.getCourse();
     EduConfigurator<?> configurator = CourseExt.getConfigurator(course);

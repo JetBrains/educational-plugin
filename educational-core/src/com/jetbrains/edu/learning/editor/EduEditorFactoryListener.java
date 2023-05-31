@@ -16,7 +16,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.problems.WolfTheProblemSolver;
-import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.EduUtilsKt;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.VirtualFileExt;
 import com.jetbrains.edu.learning.courseFormat.*;
@@ -120,7 +120,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
     }
 
     if (!taskFile.getTask().equals(TaskDescriptionView.getInstance(project).getCurrentTask())) {
-      EduUtils.updateToolWindows(project);
+      EduUtilsKt.updateToolWindows(project);
       studyToolWindow.show(null);
     }
   }
