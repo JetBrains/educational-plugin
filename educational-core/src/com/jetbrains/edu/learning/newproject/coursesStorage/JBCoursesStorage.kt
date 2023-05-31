@@ -3,8 +3,9 @@ package com.jetbrains.edu.learning.newproject.coursesStorage
 import com.intellij.ide.RecentProjectsManager
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.*
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.openapi.wm.impl.welcomeScreen.learnIde.coursesInProgress.CourseInfo
+import com.intellij.openapi.wm.impl.welcomeScreen.learnIde.coursesInProgress.CoursesStorage
 import com.intellij.util.messages.Topic
 import com.intellij.util.xmlb.annotations.OptionTag
 import com.intellij.util.xmlb.annotations.Tag
@@ -17,25 +18,28 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduLanguage
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
-import org.apache.commons.lang.LocaleUtils
-import java.util.*
 
 
-private const val HUMAN_LANGUAGE = "humanLanguage"
 private const val PROGRAMMING_LANGUAGE = "programmingLanguage"
 private const val PROGRAMMING_LANGUAGE_ID = "programmingLanguageId"
 private const val PROGRAMMING_LANGUAGE_VERSION = "programmingLanguageVersion"
 
 @State(name = "CoursesStorage", storages = [Storage("coursesStorage.xml", roamingType = RoamingType.DISABLED)])
 @Service
-class CoursesStorage : SimplePersistentStateComponent<UserCoursesState>(UserCoursesState()) {
+class JBCoursesStorage : SimplePersistentStateComponent<UserCoursesState>(UserCoursesState()), CoursesStorage {
+
 
   fun addCourse(course: Course, location: String, tasksSolved: Int = 0, tasksTotal: Int = 0) {
     state.addCourse(course, location, tasksSolved, tasksTotal)
     ApplicationManager.getApplication().messageBus.syncPublisher(COURSE_ADDED).courseAdded(course)
   }
 
-  fun getCoursePath(course: Course): String? = getCourseMetaInfo(course)?.location
+  fun getCoursePath(course: Course): String? = getCoursePath(CourseMetaInfo().apply {
+    this.name = course.name
+    this.id = course.id
+    this.courseMode = course.courseMode
+    this.programmingLanguage = course.programmingLanguage
+  })
 
   fun hasCourse(course: Course): Boolean = getCoursePath(course) != null
 
@@ -47,12 +51,12 @@ class CoursesStorage : SimplePersistentStateComponent<UserCoursesState>(UserCour
     }
   }
 
-  fun getCourseMetaInfo(course: Course): CourseMetaInfo? {
+  fun getCourseMetaInfo(name: String, id: Int, courseMode: CourseMode, languageId: String): CourseMetaInfo? {
     return state.courses.find {
       it.name == course.name
       && it.id == course.id
       && it.courseMode == course.courseMode
-      && it.languageId == course.languageId
+      && it.languageID == course.languageId
     }
   }
 
@@ -60,10 +64,25 @@ class CoursesStorage : SimplePersistentStateComponent<UserCoursesState>(UserCour
     state.updateCourseProgress(course, location, tasksSolved, tasksTotal)
   }
 
-  fun removeCourseByLocation(location: String) {
-    val deletedCourse = state.removeCourseByLocation(location) ?: return
+  override fun getCoursePath(courseInfo: CourseInfo): String? {
+    return if (courseInfo is CourseMetaInfo) {
+      getCourseMetaInfo(courseInfo.name, courseInfo.id, courseInfo.courseMode, courseInfo.languageID)?.location
+    }
+    else {
+      null
+    }
+  }
+
+  override fun removeCourseByLocation(location: String): Boolean {
+    val deletedCourse = state.removeCourseByLocation(location) ?: return false
     ApplicationManager.getApplication().messageBus.syncPublisher(COURSE_DELETED).courseDeleted(deletedCourse)
     RecentProjectsManager.getInstance().removePath(location)
+
+    return true
+  }
+
+  override fun getAllCourses(): List<CourseInfo> {
+    return state.courses.toMutableList()
   }
 
   fun coursesInGroups(): List<CoursesGroup> {
@@ -87,15 +106,13 @@ class CoursesStorage : SimplePersistentStateComponent<UserCoursesState>(UserCour
     val COURSE_DELETED = Topic.create("Edu.courseDeletedFromStorage", CourseDeletedListener::class.java)
     val COURSE_ADDED = Topic.create("Edu.courseAddedToStorage", CourseAddedListener::class.java)
 
-    fun getInstance(): CoursesStorage = service()
+    fun getInstance(): JBCoursesStorage = service()
   }
 }
 
 @Tag(EduNames.COURSE)
 class CourseMetaInfo() : CourseInfo() {
   var type: String = ""
-  var tasksTotal: Int = 0
-  var tasksSolved: Int = 0
   var courseMode = CourseMode.STUDENT
   var environment = ""
   val itemType
@@ -129,7 +146,6 @@ class CourseMetaInfo() : CourseInfo() {
 
   // to be compatible with previous version
   var programmingLanguageVersion: String? = null
-
 
   constructor(location: String = "", course: Course, tasksTotal: Int = 0, tasksSolved: Int = 0) : this() {
     this.type = course.itemType
@@ -190,33 +206,6 @@ class CourseMetaInfo() : CourseInfo() {
     eduCourse.environment = environment
     eduCourse.programmingLanguage = programmingLanguage
     return eduCourse
-  }
-
-  override val humanLanguage: String
-    get() {
-      try {
-        val locale = Locale.Builder().setLanguageTag(languageCode).build()
-        if (languageCode.length > 3 && !LocaleUtils.isAvailableLocale(locale)) {
-          convertLanguageCode()
-        }
-      }
-      catch (e: IllformedLocaleException) {
-        convertLanguageCode()
-      }
-      return super.humanLanguage
-    }
-
-  @OptionTag(HUMAN_LANGUAGE)
-  override var languageCode = super.languageCode
-
-  private fun convertLanguageCode() {
-    val languageCode = Locale.getAvailableLocales().find { it.displayName == this.languageCode }?.toLanguageTag()
-    if (languageCode != null) {
-      this.languageCode = languageCode
-    }
-    else {
-      Logger.getInstance(this::class.java).warn("Cannot find locale for '${super.languageCode}'")
-    }
   }
 
   private fun convertProgrammingLanguageVersion(value: String) {

@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
-import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.newproject.coursesStorage.JBCoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettingsPanel
 import com.jetbrains.edu.learning.newproject.ui.errors.*
 import org.jetbrains.annotations.VisibleForTesting
@@ -195,7 +195,7 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
       }
       is ErrorState.LoginRequired -> {
         course?.let {
-          if (CoursesStorage.getInstance().hasCourse(it)) {
+          if (JBCoursesStorage.getInstance().hasCourse(it)) {
             return
           }
         }

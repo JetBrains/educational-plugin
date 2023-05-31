@@ -32,7 +32,7 @@ import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.navigation.NavigationUtils.setHighlightLevelForFilesInTask
-import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.newproject.coursesStorage.JBCoursesStorage
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikNames
@@ -86,7 +86,7 @@ class EduStartupActivity : StartupActivity.DumbAware {
       migrateYaml(project, course)
 
       setupProject(project, course)
-      val coursesStorage = CoursesStorage.getInstance()
+      val coursesStorage = JBCoursesStorage.getInstance()
       val location = project.basePath
       if (!coursesStorage.hasCourse(course) && location != null && !course.isPreview) {
         coursesStorage.addCourse(course, location)

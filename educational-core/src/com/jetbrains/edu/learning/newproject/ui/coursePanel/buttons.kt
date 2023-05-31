@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.marketplace.MarketplaceListedCoursesIdsLoader
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.newproject.coursesStorage.JBCoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -46,7 +46,7 @@ class OpenCourseButton : CourseButtonBase() {
 
   override fun actionListener(course: Course): ActionListener = ActionListener {
     invokeLater {
-      val coursesStorage = CoursesStorage.getInstance()
+      val coursesStorage = JBCoursesStorage.getInstance()
       val coursePath = coursesStorage.getCoursePath(course) ?: return@invokeLater
       if (!FileUtil.exists(coursePath)) {
         processMissingCourseOpening(course, coursePath)
@@ -60,7 +60,7 @@ class OpenCourseButton : CourseButtonBase() {
 
   private fun processMissingCourseOpening(course: Course, coursePath: String) {
     if (showNoCourseDialog(coursePath, EduCoreBundle.message("course.dialog.course.not.found.reopen.button")) == Messages.NO) {
-      CoursesStorage.getInstance().removeCourseByLocation(coursePath)
+      JBCoursesStorage.getInstance().removeCourseByLocation(coursePath)
       when (course) {
         is HyperskillCourse -> {
           closeDialog()
@@ -99,7 +99,7 @@ class OpenCourseButton : CourseButtonBase() {
     dialog.dialogWrapper?.close(DialogWrapper.CANCEL_EXIT_CODE)
   }
 
-  override fun isVisible(course: Course): Boolean = !course.isPreview && CoursesStorage.getInstance().hasCourse(course)
+  override fun isVisible(course: Course): Boolean = !course.isPreview && JBCoursesStorage.getInstance().hasCourse(course)
 }
 
 /**
@@ -115,7 +115,7 @@ class StartCourseButton(
   }
 
   override fun isVisible(course: Course): Boolean {
-    if (!course.isPreview && CoursesStorage.getInstance().hasCourse(course)) {
+    if (!course.isPreview && JBCoursesStorage.getInstance().hasCourse(course)) {
       return false
     }
 

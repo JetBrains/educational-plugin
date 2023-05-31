@@ -258,7 +258,7 @@ configure(allprojects.pluginModules()) {
   }
   intellij {
 //    version.set(baseVersion)
-    localPath.set("/Users/valentina.kiryushkina/Documents/IDEA_FOR_CARDS/IntelliJ IDEA 2023.2 EAP.app/Contents")
+    localPath.set("/Users/valentina.kiryushkina/Documents/IDEA_FOR_CARDS/IntelliJ IDEA 2023.2 EAP 2.app/Contents")
     instrumentCode.set(false)
   }
   dependencies {

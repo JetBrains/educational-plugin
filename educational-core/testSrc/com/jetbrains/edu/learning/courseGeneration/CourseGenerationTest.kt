@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
-import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.newproject.coursesStorage.JBCoursesStorage
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.CoreMatchers.not
 import org.junit.Assert.assertThat
@@ -22,7 +22,7 @@ import org.junit.Assert.assertThat
 class CourseGenerationTest : CourseGenerationTestBase<EmptyProjectSettings>() {
   override fun tearDown() {
     super.tearDown()
-    CoursesStorage.getInstance().state.courses.clear()
+    JBCoursesStorage.getInstance().state.courses.clear()
   }
 
   override val defaultSettings: EmptyProjectSettings = EmptyProjectSettings
@@ -129,7 +129,7 @@ class CourseGenerationTest : CourseGenerationTestBase<EmptyProjectSettings>() {
     // wa have to call it here as it is called itself at time when course isn't set to StudyTaskManager
     EduStartupActivity().runActivity(myProject)
 
-    assertFalse(CoursesStorage.getInstance().hasCourse(coursePreview))
+    assertFalse(JBCoursesStorage.getInstance().hasCourse(coursePreview))
 
     ProjectManager.getInstance().closeAndDispose(myProject)
   }

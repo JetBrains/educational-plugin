@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.actions.ImportLocalCourseAction
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
-import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.newproject.coursesStorage.JBCoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
@@ -47,7 +47,7 @@ class MyCoursesPanel(
 
   override fun updateModelAfterCourseDeletedFromStorage(deletedCourse: CourseMetaInfo) {
     coursesGroups.clear()
-    coursesGroups.addAll(CoursesStorage.getInstance().coursesInGroups())
+    coursesGroups.addAll(JBCoursesStorage.getInstance().coursesInGroups())
     super.updateModelAfterCourseDeletedFromStorage(deletedCourse)
   }
 

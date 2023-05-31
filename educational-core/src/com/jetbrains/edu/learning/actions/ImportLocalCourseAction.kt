@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser
-import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.newproject.coursesStorage.JBCoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
@@ -43,7 +43,7 @@ open class ImportLocalCourseAction(
       }
       saveLastImportLocation(file)
 
-      val courseMetaInfo = CoursesStorage.getInstance().getCourseMetaInfo(course)
+      val courseMetaInfo = JBCoursesStorage.getInstance().getCourseMetaInfo(course.name, course.id, course.courseMode, course.languageID)
       if (courseMetaInfo != null) {
         invokeLater {
           val result = Messages.showDialog(null,
@@ -54,7 +54,7 @@ open class ImportLocalCourseAction(
                                            Messages.OK,
                                            Messages.getErrorIcon())
           if (result == Messages.NO) {
-            CoursesStorage.getInstance().removeCourseByLocation(courseMetaInfo.location)
+            JBCoursesStorage.getInstance().removeCourseByLocation(courseMetaInfo.location)
             course.name = createUnusedName(course.name)
             doImportNewCourse(course, component)
           }
@@ -72,7 +72,7 @@ open class ImportLocalCourseAction(
   }
 
   private fun createUnusedName(initialName: String): String {
-    val existingNames = CoursesStorage.getInstance().state.courses.map { it.name }.filter { it.startsWith(initialName) }
+    val existingNames = JBCoursesStorage.getInstance().state.courses.map { it.name }.filter { it.startsWith(initialName) }
     var copyNumber = 1
     var newName = initialName
     while (existingNames.contains(newName)) {

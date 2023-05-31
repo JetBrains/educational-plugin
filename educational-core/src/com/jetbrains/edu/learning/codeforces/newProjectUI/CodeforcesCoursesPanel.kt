@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.codeforces.authorization.LoginDialog
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CoursesDownloadingException
-import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.newproject.coursesStorage.JBCoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
@@ -98,7 +98,7 @@ class CodeforcesCoursesPanel(
 
   private inner class CodeforcesCoursesListPanel : CoursesListWithResetFilters() {
     override fun createCourseCard(course: Course): CourseCardComponent {
-      val courseMetaInfo = CoursesStorage.getInstance().getCourseMetaInfoForAnyLanguage(course)
+      val courseMetaInfo = JBCoursesStorage.getInstance().getCourseMetaInfoForAnyLanguage(course)
       if (courseMetaInfo != null) {
         course.languageId = courseMetaInfo.languageId
         course.languageVersion = courseMetaInfo.languageVersion

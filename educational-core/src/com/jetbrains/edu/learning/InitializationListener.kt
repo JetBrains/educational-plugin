@@ -20,6 +20,9 @@ import com.jetbrains.edu.learning.authUtils.OAuthUtils.isBuiltinPortValid
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.newproject.coursesStorage.JBCoursesStorage
+import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.ui.SelectRolePanel
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import org.jetbrains.ide.BuiltInServerManager
@@ -113,7 +116,7 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
       val course = deserializeCourse(projectPath)
       if (course != null) {
         // Note: we don't set course progress here, because we didn't load course items here
-        CoursesStorage.getInstance().addCourse(course, projectPath)
+        JBCoursesStorage.getInstance().addCourse(course, projectPath)
       }
     }
   }

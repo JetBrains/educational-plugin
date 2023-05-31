@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
-import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.newproject.coursesStorage.JBCoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.errors.ErrorSeverity.*
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessageType.ERROR
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessageType.WARNING
@@ -188,7 +188,7 @@ sealed class ErrorState(
     private fun isStepikLoginRequired(selectedCourse: EduCourse): Boolean = selectedCourse is StepikCourse
 
     private fun isCheckiOLoginRequired(selectedCourse: CheckiOCourse): Boolean {
-      if (CoursesStorage.getInstance().hasCourse(selectedCourse)) {
+      if (JBCoursesStorage.getInstance().hasCourse(selectedCourse)) {
         return false
       }
       val checkiOConnectorProvider = selectedCourse.configurator as? CheckiOConnectorProvider ?: return false

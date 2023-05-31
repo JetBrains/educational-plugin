@@ -24,7 +24,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
-import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.newproject.coursesStorage.JBCoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseBindData
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseSelectionListener
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.DESCRIPTION_AND_SETTINGS_TOP_OFFSET
@@ -121,7 +121,7 @@ class CourseSettingsPanel(
 
     if (settingsComponents.isNotEmpty()
         && course !is JetBrainsAcademyCourse
-        && !CoursesStorage.getInstance().hasCourse(course)) {
+        && !JBCoursesStorage.getInstance().hasCourse(course)) {
       isVisible = true
       setSettingsComponents(settingsComponents)
     }

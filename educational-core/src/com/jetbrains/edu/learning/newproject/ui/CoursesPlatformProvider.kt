@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.compatibility
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.newproject.CoursesDownloadingException
-import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.newproject.coursesStorage.JBCoursesStorage
 import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
@@ -91,7 +91,7 @@ abstract class CoursesPlatformProvider {
           // null project means that user hasn't created course project at all.
           // For example, he/she may choose `Don't Open` option in `Trust and Open Project` dialog
           if (project != null) {
-            CoursesStorage.getInstance().addCourse(course, location)
+            JBCoursesStorage.getInstance().addCourse(course, location)
           }
           return project
         }

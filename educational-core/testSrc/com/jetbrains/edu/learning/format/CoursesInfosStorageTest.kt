@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.newproject.coursesStorage.JBCoursesStorage
 import com.jetbrains.edu.learning.newproject.coursesStorage.UserCoursesState
 import com.jetbrains.edu.learning.stepik.hyperskill.PlainTextHyperskillConfigurator
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourse
@@ -24,7 +24,7 @@ import java.util.*
 class CoursesInfosStorageTest : EduTestCase() {
 
   fun `test correct configurator found for courses in storage`() {
-    val coursesStorage = CoursesStorage.getInstance()
+    val coursesStorage = JBCoursesStorage.getInstance()
 
     val hyperskillCourse = hyperskillCourse(language = PlainTextLanguage.INSTANCE) {}
     val eduCourse = course {}
@@ -37,7 +37,7 @@ class CoursesInfosStorageTest : EduTestCase() {
   }
 
   fun testCourseModeRespected() {
-    val coursesStorage = CoursesStorage.getInstance()
+    val coursesStorage = JBCoursesStorage.getInstance()
     val educatorCourse = course(courseMode = CourseMode.EDUCATOR) {}
     coursesStorage.addCourse(educatorCourse, "", 0, 0)
     val studentCourse = course {}
@@ -45,7 +45,7 @@ class CoursesInfosStorageTest : EduTestCase() {
   }
 
   fun testCourseIdRespected() {
-    val coursesStorage = CoursesStorage.getInstance()
+    val coursesStorage = JBCoursesStorage.getInstance()
     val courseWithDefaultId = course {}
     coursesStorage.addCourse(courseWithDefaultId, "", 0, 0)
     val studentCourse = course {}.apply { id = 1234 }
@@ -53,7 +53,7 @@ class CoursesInfosStorageTest : EduTestCase() {
   }
 
   fun testLanguageRespected() {
-    val coursesStorage = CoursesStorage.getInstance()
+    val coursesStorage = JBCoursesStorage.getInstance()
     val courseWithDefaultId = course {}
     coursesStorage.addCourse(courseWithDefaultId, "", 0, 0)
     val courseWithLanguage = course {}.apply { languageId = EduNames.PYTHON }
@@ -232,8 +232,8 @@ class CoursesInfosStorageTest : EduTestCase() {
     assertEquals(EduCoreBundle.message("course.dialog.in.progress"), coursesInGroups.first().name)
   }
 
-  private fun getCoursesStorage(): CoursesStorage {
-    val coursesStorage = CoursesStorage.getInstance()
+  private fun getCoursesStorage(): JBCoursesStorage {
+    val coursesStorage = JBCoursesStorage.getInstance()
     coursesStorage.state.courses.clear()
     return coursesStorage
   }
@@ -267,7 +267,7 @@ class CoursesInfosStorageTest : EduTestCase() {
   }
 
   private fun doSerializationTest(course: Course) {
-    val coursesStorage = CoursesStorage.getInstance()
+    val coursesStorage = JBCoursesStorage.getInstance()
     val courses = coursesStorage.state.courses
     coursesStorage.state.courses.removeAll(courses)
     coursesStorage.addCourse(course, "\$USER_HOME\$/IdeaProjects/AtomicKotlin")
@@ -298,7 +298,7 @@ class CoursesInfosStorageTest : EduTestCase() {
 
   override fun tearDown() {
     super.tearDown()
-    CoursesStorage.getInstance().state.courses.clear()
+    JBCoursesStorage.getInstance().state.courses.clear()
   }
 
   override fun getTestDataPath() = "testData/coursesStorage"

@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProvider
-import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.newproject.coursesStorage.JBCoursesStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlin.coroutines.EmptyCoroutineContext
 
@@ -17,7 +17,7 @@ class StartButtonsTest : EduTestCase() {
 
   override fun setUp() {
     super.setUp()
-    CoursesStorage.getInstance().state.courses.clear()
+    JBCoursesStorage.getInstance().state.courses.clear()
   }
 
   fun `test edu course`() {
@@ -57,7 +57,7 @@ class StartButtonsTest : EduTestCase() {
     val scope = CoroutineScope(EmptyCoroutineContext)
     val panel = CheckiOPlatformProvider().createPanel(scope, testRootDisposable)
     val course = course { }
-    CoursesStorage.getInstance().addCourse(course, "test")
+    JBCoursesStorage.getInstance().addCourse(course, "test")
 
     val coursePanel = panel.coursePanel
     coursePanel.bindCourse(course)
@@ -69,6 +69,6 @@ class StartButtonsTest : EduTestCase() {
 
   override fun tearDown() {
     super.tearDown()
-    CoursesStorage.getInstance().state.courses.clear()
+    JBCoursesStorage.getInstance().state.courses.clear()
   }
 }

@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
-import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.newproject.coursesStorage.JBCoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.GRAY_COLOR
 import com.jetbrains.edu.learning.projectView.ProgressUtil
@@ -46,7 +46,8 @@ class MyCourseCardComponent(course: Course) : CourseCardComponent(course) {
   }
 
   override fun createBottomComponent(): JPanel {
-    val courseMetaInfo = CoursesStorage.getInstance().getCourseMetaInfo(course) ?: error("Cannot find ${course.name} in storage")
+    val courseMetaInfo = JBCoursesStorage.getInstance().getCourseMetaInfo(course.name, course.id, course.courseMode, course.languageID)
+                         ?: error("Cannot find ${course.name} in storage")
     return MyCourseInfoComponent(courseMetaInfo)
   }
 
@@ -55,7 +56,8 @@ class MyCourseCardComponent(course: Course) : CourseCardComponent(course) {
 
     removeLabel.addMouseListener(object : MouseAdapter() {
       override fun mouseClicked(e: MouseEvent?) {
-        val courseMetaInfo = CoursesStorage.getInstance().getCourseMetaInfo(course) ?: error("Cannot find ${course.name} in storage")
+        val courseMetaInfo = JBCoursesStorage.getInstance().getCourseMetaInfo(course.name, course.id, course.courseMode, course.languageID)
+                             ?: error("Cannot find ${course.name} in storage")
         val location = courseMetaInfo.location
 
         // We want to set default option to make dialog work correctly on windows
@@ -68,7 +70,7 @@ class MyCourseCardComponent(course: Course) : CourseCardComponent(course) {
                                          Messages.getErrorIcon())
 
         if (result == Messages.NO) {
-          CoursesStorage.getInstance().removeCourseByLocation(location)
+          JBCoursesStorage.getInstance().removeCourseByLocation(location)
         }
       }
     })

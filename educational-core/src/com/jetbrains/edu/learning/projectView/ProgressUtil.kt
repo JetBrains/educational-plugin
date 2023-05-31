@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.isPreview
 import com.jetbrains.edu.learning.courseFormat.ext.project
-import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.newproject.coursesStorage.JBCoursesStorage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import java.awt.Color
@@ -95,7 +95,7 @@ object ProgressUtil {
     }
     val location = project.basePath
     if (location != null && !course.isPreview) {
-      CoursesStorage.getInstance().updateCourseProgress(course, location, tasksSolved, tasksTotal)
+      JBCoursesStorage.getInstance().updateCourseProgress(course, location, tasksSolved, tasksTotal)
     }
   }
 

@@ -331,6 +331,7 @@
       <description>Enables support for SQL courses</description>
     </experimentalFeature>
     <iconMapper mappingFile="EduToolsIconMappings.json"/>
+    <coursesStorageProvider implementation="com.jetbrains.edu.learning.newproject.coursesStorage.JetBrainsAcademyCoursesStorageProvider"/>
     <themeMetadataProvider path="JetBrainsAcademyPlugin.themeMetadata.json"/>
   </extensions>
 

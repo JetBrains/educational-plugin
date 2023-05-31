@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.newproject.ui.coursePanel.groups
 
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.newproject.coursesStorage.JBCoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgroundColor
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCourseCardComponent
@@ -19,7 +19,7 @@ abstract class CoursesListPanel : JPanel(BorderLayout()) {
   }
 
   protected open fun createCourseCard(course: Course): CourseCardComponent {
-    val courseMetaInfo = CoursesStorage.getInstance().getCourseMetaInfo(course)
+    val courseMetaInfo = JBCoursesStorage.getInstance().getCourseMetaInfo(course.name, course.id, course.courseMode, course.languageID)
     return if (courseMetaInfo != null) {
       MyCourseCardComponent(course)
     }

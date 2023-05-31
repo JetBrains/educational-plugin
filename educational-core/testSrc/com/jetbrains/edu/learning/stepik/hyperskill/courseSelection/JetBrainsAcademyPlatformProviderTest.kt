@@ -4,7 +4,7 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
-import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.newproject.coursesStorage.JBCoursesStorage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.defaultHyperskillCourse
@@ -20,7 +20,7 @@ class JetBrainsAcademyPlatformProviderTest : EduTestCase() {
   override fun setUp() {
     super.setUp()
     logOutFakeHyperskillUser()
-    CoursesStorage.getInstance().state.courses.clear()
+    JBCoursesStorage.getInstance().state.courses.clear()
   }
 
   fun `test advertising course added when no JBA login`() {
@@ -63,7 +63,7 @@ class JetBrainsAcademyPlatformProviderTest : EduTestCase() {
 
   fun `test local content added`() {
     val localHyperskillCourse = defaultHyperskillCourse()
-    CoursesStorage.getInstance().addCourse(localHyperskillCourse, "", 1, 4)
+    JBCoursesStorage.getInstance().addCourse(localHyperskillCourse, "", 1, 4)
 
     val courseGroup = loadCourses().first()
     assertEquals(1, courseGroup.courses.size)
@@ -71,7 +71,7 @@ class JetBrainsAcademyPlatformProviderTest : EduTestCase() {
     assertEquals(localHyperskillCourse.id, courseFromProvider.id)
     assertTrue(courseFromProvider is CourseMetaInfo)
 
-    CoursesStorage.getInstance().removeCourseByLocation("")
+    JBCoursesStorage.getInstance().removeCourseByLocation("")
   }
 
   private fun loadCourses() = runBlocking {

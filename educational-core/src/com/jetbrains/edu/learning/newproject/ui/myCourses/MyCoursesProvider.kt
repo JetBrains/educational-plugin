@@ -7,7 +7,7 @@ import com.intellij.ui.scale.JBUIScale
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.newproject.coursesStorage.JBCoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.GRAY_COLOR
@@ -23,11 +23,11 @@ class MyCoursesProvider : CoursesPlatformProvider() {
   override fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel = MyCoursesPanel(this, scope, disposable)
 
   override suspend fun doLoadCourses(): List<CoursesGroup> {
-    return CoursesStorage.getInstance().coursesInGroups()
+    return JBCoursesStorage.getInstance().coursesInGroups()
   }
 
   fun getAdditionalText(isSelected: Boolean): String {
-    val courses = CoursesStorage.getInstance().state.courses
+    val courses = JBCoursesStorage.getInstance().state.courses
     val studyCourses = courses.filter { it.courseMode == CourseMode.STUDENT }
     val completedCourses = studyCourses.count { it.tasksTotal != 0 && it.tasksSolved == it.tasksTotal }
     val inProgressCourses = studyCourses.size - completedCourses
