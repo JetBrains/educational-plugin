@@ -12,6 +12,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduExperimentalFeatures.CC_HYPERSKILL
+import com.jetbrains.edu.learning.actions.getCurrentTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
@@ -85,7 +86,7 @@ class ApplyHyperskillSubmission : DumbAwareAction(
   private fun getTask(project: Project, e: AnActionEvent): Task? {
     val course = StudyTaskManager.getInstance(project).course as? HyperskillCourse ?: return null
     if (course.isStudy) {
-      return EduUtils.getCurrentTask(project)
+      return project.getCurrentTask()
     }
 
     val selectedFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY)

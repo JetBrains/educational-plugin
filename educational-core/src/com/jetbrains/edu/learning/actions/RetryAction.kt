@@ -9,11 +9,8 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsActions.ActionText
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduUtilsKt.showPopup
-import com.jetbrains.edu.learning.Err
-import com.jetbrains.edu.learning.Ok
-import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskCheckerManager.remoteCheckerForTask
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -36,7 +33,7 @@ class RetryAction(actionText: Supplier<@ActionText String>,
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    val task = EduUtils.getCurrentTask(project) ?: return
+    val task = project.getCurrentTask() ?: return
 
     if (!task.isChangedOnFailed || task.status != expectedTaskStatus) {
       return
@@ -61,7 +58,7 @@ class RetryAction(actionText: Supplier<@ActionText String>,
 
   override fun update(e: AnActionEvent) {
     val project = e.project ?: return
-    val task = EduUtils.getCurrentTask(project) ?: return
+    val task = project.getCurrentTask() ?: return
     if (task.status != expectedTaskStatus) return
   }
 
@@ -95,7 +92,7 @@ class RetryAction(actionText: Supplier<@ActionText String>,
         TaskDescriptionView.getInstance(project).updateCheckPanel(task)
       }
       processFinished()
-      RetryActionState.getInstance(project).unlock();
+      RetryActionState.getInstance(project).unlock()
     }
 
     private fun resetTaskStatus() {

@@ -13,7 +13,7 @@ import com.intellij.util.xmlb.XmlSerializer
 import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduLogInListener
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.actions.getCurrentTask
 import com.jetbrains.edu.learning.authUtils.deserializeAccount
 import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesAccount
 import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesUserInfo
@@ -59,7 +59,7 @@ class CodeforcesSettings : PersistentStateComponent<Element> {
       .filter { !it.isDisposed }
       .forEach {
         if (it.course is CodeforcesCourse) {
-          val task = EduUtils.getCurrentTask(it)
+          val task = it.getCurrentTask()
           if (task != null) {
             ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(it).updateCheckPanel(task) }
           }

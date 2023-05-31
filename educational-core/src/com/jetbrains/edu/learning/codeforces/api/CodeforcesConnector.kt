@@ -11,8 +11,8 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.util.concurrency.SynchronizedClearableLazy
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.actions.getCurrentTask
 import com.jetbrains.edu.learning.api.ConnectorUtils
-import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getLanguages
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.ContestParameters
@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesUserInfo
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.CheckFeedback
+import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -251,7 +252,7 @@ abstract class CodeforcesConnector {
     val client = OkHttpClient.Builder().readTimeout(1, TimeUnit.MINUTES).build()
     val request = Request.Builder().url(url).build()
     val latch = CountDownLatch(1)
-    val task = EduUtils.getCurrentTask(project) as? CodeforcesTask ?: return
+    val task = project.getCurrentTask() as? CodeforcesTask ?: return
     val socket = client.newWebSocket(request, object : WebSocketListener() {
 
       override fun onFailure(webSocket: WebSocket, t: Throwable, response: okhttp3.Response?) {

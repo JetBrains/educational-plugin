@@ -5,6 +5,7 @@ import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
+import com.jetbrains.edu.learning.actions.getCurrentTask
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
@@ -187,7 +188,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       task.status = CheckStatus.Solved
       testAction(NextTaskAction.ACTION_ID)
 
-      TaskDescriptionView.getInstance(myFixture.project).currentTask = EduUtils.getCurrentTask(myFixture.project)
+      TaskDescriptionView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTask()
       testAction(PreviousTaskAction.ACTION_ID)
     }
 
@@ -242,7 +243,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       task.status = CheckStatus.Solved
       testAction(NextTaskAction.ACTION_ID)
 
-      TaskDescriptionView.getInstance(myFixture.project).currentTask = EduUtils.getCurrentTask(myFixture.project)
+      TaskDescriptionView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTask()
       testAction(PreviousTaskAction.ACTION_ID)
     }
 
@@ -361,7 +362,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       task.status = CheckStatus.Solved
       testAction(NextTaskAction.ACTION_ID)
 
-      TaskDescriptionView.getInstance(myFixture.project).currentTask = EduUtils.getCurrentTask(myFixture.project)
+      TaskDescriptionView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTask()
       testAction(PreviousTaskAction.ACTION_ID)
     }
 
@@ -403,7 +404,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       myFixture.type("fun bar() {}\n")
       testAction(PreviousTaskAction.ACTION_ID)
 
-      TaskDescriptionView.getInstance(myFixture.project).currentTask = EduUtils.getCurrentTask(myFixture.project)
+      TaskDescriptionView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTask()
       testAction(NextTaskAction.ACTION_ID)
     }
 

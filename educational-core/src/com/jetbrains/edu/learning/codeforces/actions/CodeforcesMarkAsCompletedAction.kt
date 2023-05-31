@@ -5,7 +5,7 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.actions.getCurrentTask
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.CheckFeedback
 import com.jetbrains.edu.learning.courseFormat.CheckResult.Companion.SOLVED
@@ -21,7 +21,7 @@ class CodeforcesMarkAsCompletedAction : CodeforcesAction() {
     val project = e.project ?: return
     if (project.isDisposed) return
 
-    val task = EduUtils.getCurrentTask(project) as? CodeforcesTask ?: return
+    val task = project.getCurrentTask() as? CodeforcesTask ?: return
     task.status = CheckStatus.Solved
     task.feedback = CheckFeedback(checkResult = SOLVED, time = Date())
 

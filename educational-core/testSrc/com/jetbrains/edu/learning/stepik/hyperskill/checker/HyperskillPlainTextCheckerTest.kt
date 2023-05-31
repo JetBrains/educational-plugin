@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.actions.getCurrentTask
 import com.jetbrains.edu.learning.checker.*
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -43,7 +43,7 @@ class HyperskillPlainTextCheckerTest : CheckersTestBase<EmptyProjectSettings>() 
         else -> null
       }
     }
-    TaskDescriptionView.getInstance(project).currentTask = EduUtils.getCurrentTask(project)
+    TaskDescriptionView.getInstance(project).currentTask = project.getCurrentTask()
     doTest()
   }
 

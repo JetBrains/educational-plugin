@@ -14,7 +14,6 @@ import com.intellij.openapi.command.undo.UnexpectedUndoException;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsContexts.Command;
@@ -114,16 +113,6 @@ public class EduUtils {
     if (taskTextFile != null) {
       Document document = FileDocumentManager.getInstance().getDocument(taskTextFile);
       return document == null ? null : document.getText();
-    }
-    return null;
-  }
-
-  @Nullable
-  public static Task getCurrentTask(@NotNull final Project project) {
-    VirtualFile[] files = FileEditorManager.getInstance(project).getSelectedFiles();
-    for (VirtualFile file : files) {
-      Task task = VirtualFileExt.getContainingTask(file, project);
-      if (task != null) return task;
     }
     return null;
   }

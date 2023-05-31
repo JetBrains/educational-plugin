@@ -25,7 +25,7 @@ import org.jetbrains.annotations.VisibleForTesting
 class RevertTaskAction : DumbAwareAction(), RightAlignedToolbarAction {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    val task = EduUtils.getCurrentTask(project) ?: return
+    val task = project.getCurrentTask() ?: return
     if (task.isChangedOnFailed) {
       return
     }
@@ -39,7 +39,7 @@ class RevertTaskAction : DumbAwareAction(), RightAlignedToolbarAction {
   override fun update(e: AnActionEvent) {
     EduUtils.updateAction(e)
     val project = e.project ?: return
-    val task = EduUtils.getCurrentTask(project) ?: return
+    val task = project.getCurrentTask() ?: return
     if (
       !task.course.isStudy ||
       task.isChangedOnFailed // we disable revert action for tasks with changing on error
@@ -55,7 +55,7 @@ class RevertTaskAction : DumbAwareAction(), RightAlignedToolbarAction {
 
     @VisibleForTesting
     fun revert(project: Project) {
-      val task = EduUtils.getCurrentTask(project) ?: return
+      val task = project.getCurrentTask() ?: return
       task.apply {
         revertTaskFiles(project)
         revertTaskParameters(project)

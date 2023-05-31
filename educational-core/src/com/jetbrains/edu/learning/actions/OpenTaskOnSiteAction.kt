@@ -4,7 +4,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.RightAlignedToolbarAction
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.learning.EduBrowser
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
@@ -19,7 +18,7 @@ class OpenTaskOnSiteAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.o
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    val task = EduUtils.getCurrentTask(project) ?: return
+    val task = project.getCurrentTask() ?: return
     val link = when {
       task is CodeforcesTask -> codeforcesTaskLink(task)
       task.course is HyperskillCourse -> hyperskillTaskLink(task)
@@ -33,7 +32,7 @@ class OpenTaskOnSiteAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.o
 
     val project = e.project ?: return
     if (!project.isStudentProject()) return
-    val task = EduUtils.getCurrentTask(project) ?: return
+    val task = project.getCurrentTask() ?: return
     val course = task.course
 
     e.presentation.isEnabledAndVisible = course is CodeforcesCourse || course is HyperskillCourse

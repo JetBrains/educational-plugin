@@ -6,7 +6,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.CourseInfoHolder
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.actions.getCurrentTask
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -81,7 +81,7 @@ class PostHyperskillProjectToGithub : AnAction() {
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false
     val project = e.project ?: return
-    val currentTask = EduUtils.getCurrentTask(project) ?: return
+    val currentTask = project.getCurrentTask() ?: return
     e.presentation.isEnabledAndVisible = isAvailable(currentTask)
   }
 

@@ -5,6 +5,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
+import com.jetbrains.edu.learning.actions.getCurrentTask
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
@@ -381,7 +382,7 @@ class HyperskillLoadingTest : SolutionLoadingTestBase() {
     withVirtualFileListener(course) {
       withEduTestDialog(EduTestDialog(Messages.NO)) {
         task1.openTaskFileInEditor("src/Task.kt")
-        TaskDescriptionView.getInstance(myFixture.project).currentTask = EduUtils.getCurrentTask(myFixture.project)
+        TaskDescriptionView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTask()
         testAction(NextTaskAction.ACTION_ID, shouldBeEnabled = false, shouldBeVisible = true)
       }
     }

@@ -2,8 +2,8 @@ package com.jetbrains.edu.learning.codeforces.actions
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
+import com.jetbrains.edu.learning.actions.getCurrentTask
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 
 abstract class CodeforcesAction : DumbAwareAction() {
@@ -15,7 +15,7 @@ abstract class CodeforcesAction : DumbAwareAction() {
     val project = e.project ?: return
     if (!project.isStudentProject()) return
 
-    val task = EduUtils.getCurrentTask(project) ?: return
+    val task = project.getCurrentTask() ?: return
     if (task !is CodeforcesTask) return
 
     presentation.isEnabledAndVisible = true

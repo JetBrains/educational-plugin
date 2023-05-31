@@ -5,9 +5,9 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduSettings
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.ActionWithProgressIcon
+import com.jetbrains.edu.learning.actions.getCurrentTask
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -38,7 +38,7 @@ abstract class DownloadDatasetActionBase(
     val course = project.course ?: return
     if (!course.isStepikRemote && course !is HyperskillCourse) return
 
-    val task = EduUtils.getCurrentTask(project) as? DataTask ?: return
+    val task = project.getCurrentTask() as? DataTask ?: return
     if (task.status != expectedTaskStatus) return
 
     presentation.isEnabledAndVisible = !DownloadDataset.isRunning(project)

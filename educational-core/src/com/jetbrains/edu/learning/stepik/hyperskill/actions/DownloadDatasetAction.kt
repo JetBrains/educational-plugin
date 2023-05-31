@@ -1,8 +1,8 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.actions
 
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.EduUtilsKt.showPopup
+import com.jetbrains.edu.learning.actions.getCurrentTask
 import com.jetbrains.edu.learning.courseFormat.CheckStatus.Unchecked
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -13,7 +13,7 @@ class DownloadDatasetAction :
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    val task = EduUtils.getCurrentTask(project) as? DataTask ?: return
+    val task = project.getCurrentTask() as? DataTask ?: return
 
     if (!checkAuthorized(project, task.course)) return
 

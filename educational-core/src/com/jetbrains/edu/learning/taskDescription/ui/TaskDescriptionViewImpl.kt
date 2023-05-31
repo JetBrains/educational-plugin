@@ -12,9 +12,9 @@ import com.intellij.ui.content.ContentFactory
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduSettings
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.JavaUILibrary.JCEF
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.actions.getCurrentTask
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -159,7 +159,7 @@ class TaskDescriptionViewImpl(project: Project) : TaskDescriptionView(project), 
       .apply { isCloseable = false }
     contentManager.addContent(content)
 
-    currentTask = EduUtils.getCurrentTask(project)
+    currentTask = project.getCurrentTask()
     updateAdditionalTaskTabs(currentTask)
 
     val connection = project.messageBus.connect()

@@ -13,7 +13,6 @@ import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.learning.EduBrowser
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
@@ -102,7 +101,7 @@ open class CompareWithAnswerAction : DumbAwareAction() {
     if (!project.isStudentProject()) {
       return
     }
-    val task = EduUtils.getCurrentTask(project) ?: return
+    val task = project.getCurrentTask() ?: return
 
     presentation.isEnabledAndVisible = task.canShowSolution()
   }

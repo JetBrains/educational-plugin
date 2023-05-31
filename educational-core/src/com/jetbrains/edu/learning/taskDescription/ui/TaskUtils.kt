@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.actions.getCurrentTask
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -20,7 +20,7 @@ import java.io.File
 fun htmlWithResources(
   project: Project,
   content: String,
-  task: Task? = EduUtils.getCurrentTask(project)
+  task: Task? = project.getCurrentTask()
 ): String {
   val templateText = loadText("/style/template.html.ft")
   val textWithResources = StrSubstitutor(StyleManager.resources(content)).replace(templateText) ?: "Cannot load task text"

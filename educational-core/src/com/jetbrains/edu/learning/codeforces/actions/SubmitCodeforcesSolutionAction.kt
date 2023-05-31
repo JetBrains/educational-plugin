@@ -6,7 +6,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.ide.CopyPasteManager
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.actions.getCurrentTask
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_CONTEST_SUBMISSIONS_URL
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
@@ -31,7 +31,7 @@ class SubmitCodeforcesSolutionAction : CodeforcesAction() {
     val project = e.project ?: return
     if (project.isDisposed) return
 
-    val task = EduUtils.getCurrentTask(project) as? CodeforcesTask ?: return
+    val task = project.getCurrentTask() as? CodeforcesTask ?: return
     val solution = task.getCodeTaskFile(project)?.getDocument(project)?.text ?: return
 
     val taskDescriptionView = TaskDescriptionView.getInstance(project)

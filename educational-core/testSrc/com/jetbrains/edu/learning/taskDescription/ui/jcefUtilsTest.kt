@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.actions.getCurrentTask
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import junit.framework.TestCase
 import org.junit.Test
@@ -48,7 +48,7 @@ class jcefUtilsTest : EduTestCase() {
     NavigationUtils.navigateToTask(project, task)
 
     ToolWindowLinkHandler.processFileLink(project, "file://$pathToFile")
-    val currentTask = EduUtils.getCurrentTask(project)
+    val currentTask = project.getCurrentTask()
     assertEquals("task_name2", currentTask?.name)
   }
 
@@ -56,6 +56,6 @@ class jcefUtilsTest : EduTestCase() {
   fun `test psi Element`() {
     val jCefToolWindowLinkHandler = JCefToolWindowLinkHandler(project)
     assertTrue(jCefToolWindowLinkHandler.process("file:///jbcefbrowser/psi_element://java.lang.String#contains"))
-    TestCase.assertNull(EduUtils.getCurrentTask(project))
+    TestCase.assertNull(project.getCurrentTask())
   }
 }

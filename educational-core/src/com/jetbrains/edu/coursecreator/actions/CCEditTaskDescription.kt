@@ -7,7 +7,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.actions.getCurrentTask
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.addDefaultTaskDescription
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
@@ -29,7 +29,7 @@ class CCEditTaskDescription : DumbAwareAction(
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    val task = EduUtils.getCurrentTask(project) ?: return
+    val task = project.getCurrentTask() ?: return
     val descriptionFile = findOrCreateDescriptionFile(project, task)
     FileEditorManager.getInstance(project).openFile(descriptionFile, true)
   }
@@ -52,6 +52,6 @@ class CCEditTaskDescription : DumbAwareAction(
       return
     }
     e.presentation.isVisible = true
-    e.presentation.isEnabled = EduUtils.getCurrentTask(project) != null
+    e.presentation.isEnabled = project.getCurrentTask() != null
   }
 }

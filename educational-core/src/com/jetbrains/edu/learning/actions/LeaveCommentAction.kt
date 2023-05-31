@@ -6,7 +6,6 @@ import com.intellij.openapi.actionSystem.RightAlignedToolbarAction
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduBrowser
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -15,14 +14,13 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.getStepikLink
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
-@Suppress("ComponentNotRegistered")
 class LeaveCommentAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.leave.comment.text"),
                                            EduCoreBundle.lazyMessage("action.leave.comment.text"), EducationalCoreIcons.CommentTask),
                            RightAlignedToolbarAction {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    val task = EduUtils.getCurrentTask(project) ?: return
+    val task = project.getCurrentTask() ?: return
     val link = getLink(task) ?: error("LeaveFeedbackAction is not supported")
     EduBrowser.getInstance().browse(link)
     EduCounterUsageCollector.leaveFeedback()
@@ -33,7 +31,7 @@ class LeaveCommentAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.lea
 
     val project = e.project ?: return
     if (!project.isStudentProject()) return
-    val task = EduUtils.getCurrentTask(project) ?: return
+    val task = project.getCurrentTask() ?: return
     val course = task.course
 
     if (course is HyperskillCourse) {
