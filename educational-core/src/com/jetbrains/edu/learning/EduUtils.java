@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning;
 
 import com.intellij.ide.SaveAndSyncHandler;
-import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
@@ -26,16 +25,11 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.TimeoutUtil;
 import com.intellij.util.ui.UIUtil;
-import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.ext.StudyItemExtKt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
-import com.jetbrains.edu.learning.projectView.ProgressUtil;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import com.jetbrains.edu.learning.taskDescription.TaskDescriptionUtil;
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -135,14 +129,7 @@ public class EduUtils {
   }
 
   public static boolean isEduProject(@NotNull Project project) {
-    return StudyTaskManager.getInstance(project).getCourse() != null || getCourseModeForNewlyCreatedProject(project) != null;
-  }
-
-  @Nullable
-  public static CourseMode getCourseModeForNewlyCreatedProject(@NotNull Project project) {
-    if (project.isDefault() || LightEdit.owns(project)) return null;
-    VirtualFile baseDir = OpenApiExtKt.getCourseDir(project);
-    return baseDir.getUserData(CourseProjectGenerator.COURSE_MODE_TO_CREATE);
+    return StudyTaskManager.getInstance(project).getCourse() != null || EduUtilsKt.getCourseModeForNewlyCreatedProject(project) != null;
   }
 
   public static boolean isStudentProject(@NotNull Project project) {
@@ -150,7 +137,7 @@ public class EduUtils {
     if (course != null && course.isStudy()) {
       return true;
     }
-    return CourseMode.STUDENT.equals(getCourseModeForNewlyCreatedProject(project));
+    return CourseMode.STUDENT.equals(EduUtilsKt.getCourseModeForNewlyCreatedProject(project));
   }
 
   // supposed to be called under progress

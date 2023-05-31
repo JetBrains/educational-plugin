@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.module.kotlin.treeToValue
+import com.intellij.ide.lightEdit.LightEdit
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressManager
@@ -16,6 +17,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.PlatformUtils
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -109,6 +111,12 @@ object EduUtilsKt {
   fun Project.isNewlyCreated(): Boolean {
     val userData = getUserData(CourseProjectGenerator.EDU_PROJECT_CREATED)
     return userData != null && userData
+  }
+
+  @JvmStatic
+  fun getCourseModeForNewlyCreatedProject(project: Project): CourseMode? {
+    if (project.isDefault || LightEdit.owns(project)) return null
+    return project.courseDir.getUserData(CourseProjectGenerator.COURSE_MODE_TO_CREATE)
   }
 
   private val LOG = logger<EduUtilsKt>()

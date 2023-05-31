@@ -53,7 +53,7 @@ object CCUtils {
   const val DEFAULT_PLACEHOLDER_TEXT = "type here"
   private const val IS_LOCAL_COURSE: String = "Edu.IsLocalCourse"
 
-  val INDEX_COMPARATOR = Comparator.comparingInt(StudyItem::index)
+  private val INDEX_COMPARATOR = Comparator.comparingInt(StudyItem::index)
 
   var Project.isLocalCourse: Boolean
     get() = PropertiesComponent.getInstance(this).getBoolean(IS_LOCAL_COURSE)
@@ -141,7 +141,7 @@ object CCUtils {
   @JvmStatic
   fun isCourseCreator(project: Project): Boolean {
     val course = StudyTaskManager.getInstance(project).course ?: return false
-    return CourseMode.EDUCATOR == course.courseMode || CourseMode.EDUCATOR == EduUtils.getCourseModeForNewlyCreatedProject(project)
+    return CourseMode.EDUCATOR == course.courseMode || CourseMode.EDUCATOR == EduUtilsKt.getCourseModeForNewlyCreatedProject(project)
   }
 
   @JvmStatic
@@ -183,6 +183,7 @@ object CCUtils {
    * Replaces placeholder texts with [AnswerPlaceholder.possibleAnswer]` for each task file in [task].
    * Note, it doesn't affect files in file system
    */
+  @Suppress("UnstableApiUsage")
   fun initializeTaskPlaceholders(holder: CourseInfoHolder<out Course?>, task: Task) {
     for ((path, taskFile) in task.taskFiles) {
       invokeAndWaitIfNeeded {
@@ -298,7 +299,6 @@ object CCUtils {
     }
   }
 
-  @Suppress("UnstableApiUsage")
   @JvmStatic
   @JvmOverloads
   fun askToWrapTopLevelLessons(
