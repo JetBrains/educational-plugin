@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.actions;
 
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import kotlin.collections.CollectionsKt;
@@ -20,7 +19,7 @@ public class PrevPlaceholderAction extends PlaceholderNavigationAction {
     final AnswerPlaceholder selectedAnswerPlaceholder = taskFile.getAnswerPlaceholder(offset);
     final List<AnswerPlaceholder> placeholders = taskFile.getAnswerPlaceholders();
     int endIndex = selectedAnswerPlaceholder != null ? selectedAnswerPlaceholder.getIndex() : placeholders.size();
-    if (!EduUtils.indexIsValid(endIndex - 1, placeholders)) return null;
+    if (!indexIsValid(endIndex - 1, placeholders)) return null;
 
     for (AnswerPlaceholder placeholder : CollectionsKt.asReversed(placeholders.subList(0, endIndex))) {
       if (placeholder.getOffset() < offset && placeholder.isVisible()) {

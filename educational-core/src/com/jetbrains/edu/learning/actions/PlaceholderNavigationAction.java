@@ -15,6 +15,8 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+
 abstract public class PlaceholderNavigationAction extends DumbAwareAction {
 
   private void navigateToPlaceholder(@NotNull final Project project) {
@@ -51,5 +53,10 @@ abstract public class PlaceholderNavigationAction extends DumbAwareAction {
   @Override
   public void update(@NotNull AnActionEvent e) {
     EduUtils.updateAction(e);
+  }
+
+  protected boolean indexIsValid(int index, @NotNull final Collection<?> collection) {
+    int size = collection.size();
+    return index >= 0 && index < size;
   }
 }

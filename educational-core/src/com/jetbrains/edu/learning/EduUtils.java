@@ -67,11 +67,6 @@ public class EduUtils {
     return iterator.next();
   }
 
-  public static boolean indexIsValid(int index, @NotNull final Collection<?> collection) {
-    int size = collection.size();
-    return index >= 0 && index < size;
-  }
-
   public static void updateAction(@NotNull final AnActionEvent e) {
     final Presentation presentation = e.getPresentation();
     presentation.setEnabled(false);
