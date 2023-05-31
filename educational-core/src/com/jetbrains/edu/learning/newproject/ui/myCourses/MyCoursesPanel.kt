@@ -24,6 +24,7 @@ class MyCoursesPanel(
 ) : CoursesPanel(myCoursesProvider, scope, disposable) {
 
   override fun toolbarAction(): ToolbarActionWrapper {
+    coursesSearchComponent.hideFilters()
     val importCourseAction = EduActionUtils.getAction(ImportLocalCourseAction.ACTION_ID)
     return ToolbarActionWrapper(EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk.lowercase"), importCourseAction)
   }
