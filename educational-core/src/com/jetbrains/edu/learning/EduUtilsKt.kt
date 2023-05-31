@@ -19,6 +19,7 @@ import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.PlatformUtils
+import com.intellij.util.TimeoutUtil
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -44,6 +45,7 @@ import org.intellij.markdown.parser.MarkdownParser
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.util.concurrent.Callable
+import java.util.concurrent.ExecutionException
 import java.util.zip.ZipFile
 
 object EduUtilsKt {
@@ -149,6 +151,26 @@ object EduUtilsKt {
     }
   }
 
+  // supposed to be called under progress
+  fun <T> execCancelable(callable: Callable<T>): T? {
+    val future = ApplicationManager.getApplication().executeOnPooledThread(callable)
+    while (!future.isCancelled && !future.isDone) {
+      ProgressManager.checkCanceled()
+      TimeoutUtil.sleep(500)
+    }
+    var result: T? = null
+    try {
+      result = future.get()
+    }
+    catch (e: InterruptedException) {
+      LOG.warn(e.message)
+    }
+    catch (e: ExecutionException) {
+      LOG.warn(e.message)
+    }
+    return result
+  }
+
   private val LOG = logger<EduUtilsKt>()
 }
 
@@ -200,7 +222,7 @@ object Executor {
     ProgressManager.getInstance().runProcessWithProgressSynchronously<T, RuntimeException>(
       {
         ProgressManager.getInstance().progressIndicator.isIndeterminate = true
-        EduUtils.execCancelable(callable)
+        EduUtilsKt.execCancelable(callable)
       },
       message, true, null)
 }

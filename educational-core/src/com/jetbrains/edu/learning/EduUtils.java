@@ -98,25 +98,6 @@ public class EduUtils {
     return null;
   }
 
-  // supposed to be called under progress
-  @Nullable
-  public static <T> T execCancelable(@NotNull final Callable<T> callable) {
-    final Future<T> future = ApplicationManager.getApplication().executeOnPooledThread(callable);
-
-    while (!future.isCancelled() && !future.isDone()) {
-      ProgressManager.checkCanceled();
-      TimeoutUtil.sleep(500);
-    }
-    T result = null;
-    try {
-      result = future.get();
-    }
-    catch (InterruptedException | ExecutionException e) {
-      LOG.warn(e.getMessage());
-    }
-    return result;
-  }
-
   public static void synchronize() {
     FileDocumentManager.getInstance().saveAllDocuments();
     SaveAndSyncHandler.getInstance().refreshOpenFiles();

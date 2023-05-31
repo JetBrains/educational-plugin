@@ -26,7 +26,10 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
-import com.jetbrains.edu.learning.marketplace.*
+import com.jetbrains.edu.learning.marketplace.LICENSE_URL
+import com.jetbrains.edu.learning.marketplace.MARKETPLACE
+import com.jetbrains.edu.learning.marketplace.MARKETPLACE_PLUGIN_URL
+import com.jetbrains.edu.learning.marketplace.MARKETPLACE_PROFILE_PATH
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showAcceptDeveloperAgreementNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showFailedToFindMarketplaceCourseOnRemoteNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showNoRightsToUpdateNotification
@@ -166,7 +169,7 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
     ProgressManager.getInstance().runProcessWithProgressSynchronously(
       {
         ProgressManager.getInstance().progressIndicator.isIndeterminate = true
-        EduUtils.execCancelable {
+        EduUtilsKt.execCancelable {
           uploadAction()
         }
       }, message, true, null)

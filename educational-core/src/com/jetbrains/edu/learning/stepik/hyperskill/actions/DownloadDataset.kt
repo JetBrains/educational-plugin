@@ -22,7 +22,7 @@ import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.GotItTooltip
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.EduUtils.execCancelable
+import com.jetbrains.edu.learning.EduUtilsKt.execCancelable
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt.Companion.toDataTaskAttempt
 import com.jetbrains.edu.learning.document

@@ -14,8 +14,8 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.newProjectUI.CodeforcesCoursesPanel
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider.Companion.joinCourse
 import com.jetbrains.edu.learning.newproject.CourseCreationInfo
+import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider.Companion.joinCourse
 import org.jetbrains.annotations.NonNls
 import javax.swing.JPanel
 
@@ -39,7 +39,7 @@ class StartCodeforcesContestAction : DumbAwareAction() {
       ProgressManager.getInstance().runProcessWithProgressSynchronously<Result<CodeforcesCourse, String>, RuntimeException>(
         {
           ProgressManager.getInstance().progressIndicator.isIndeterminate = true
-          EduUtils.execCancelable {
+          EduUtilsKt.execCancelable {
             CodeforcesConnector.getInstance().getContest(contestParameters)
           }
         }, EduCoreBundle.message("codeforces.getting.contest.information"), true, null
@@ -102,7 +102,7 @@ class StartCodeforcesContestAction : DumbAwareAction() {
       val codeforcesCourse = ProgressManager.getInstance().runProcessWithProgressSynchronously<Result<CodeforcesCourse, String>, RuntimeException>(
         {
           ProgressManager.getInstance().progressIndicator.isIndeterminate = true
-          EduUtils.execCancelable {
+          EduUtilsKt.execCancelable {
             CodeforcesConnector.getInstance().getContestInformation(contestId)
           }
         }, EduCoreBundle.message("codeforces.getting.available.languages"), true, null
