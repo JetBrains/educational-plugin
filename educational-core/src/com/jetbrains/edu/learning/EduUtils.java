@@ -379,9 +379,4 @@ public class EduUtils {
       }
     }
   }
-
-  public static boolean isNewlyCreated(@NotNull Project project) {
-    Boolean userData = project.getUserData(CourseProjectGenerator.EDU_PROJECT_CREATED);
-    return userData != null && userData;
-  }
 }

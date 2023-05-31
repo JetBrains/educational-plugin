@@ -21,6 +21,7 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.SynchronizeTaskDescription
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
+import com.jetbrains.edu.learning.EduUtilsKt.isNewlyCreated
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.isPreview
@@ -149,7 +150,7 @@ class EduStartupActivity : StartupActivity.DumbAware {
       return
     }
 
-    if (!isUnitTestMode && EduUtils.isNewlyCreated(project)) {
+    if (!isUnitTestMode && project.isNewlyCreated()) {
       configurator.courseBuilder.refreshProject(project, RefreshCause.PROJECT_CREATED)
     }
 

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.module.kotlin.treeToValue
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.InputValidatorEx
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
@@ -20,6 +21,7 @@ import com.jetbrains.edu.learning.json.getCourseMapper
 import com.jetbrains.edu.learning.json.migrate
 import com.jetbrains.edu.learning.json.mixins.LocalEduCourseMixin
 import com.jetbrains.edu.learning.json.readCourseJson
+import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
@@ -77,6 +79,11 @@ object EduUtilsKt {
       LOG.error("Failed to unzip course archive", e)
     }
     return null
+  }
+
+  fun Project.isNewlyCreated(): Boolean {
+    val userData = getUserData(CourseProjectGenerator.EDU_PROJECT_CREATED)
+    return userData != null && userData
   }
 
   private val LOG = logger<EduUtilsKt>()

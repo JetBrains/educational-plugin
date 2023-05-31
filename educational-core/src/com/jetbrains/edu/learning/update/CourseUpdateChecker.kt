@@ -9,7 +9,7 @@ import com.intellij.openapi.util.ActionCallback
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.Alarm
 import com.intellij.util.text.DateFormatUtil
-import com.jetbrains.edu.learning.EduUtils.isNewlyCreated
+import com.jetbrains.edu.learning.EduUtilsKt.isNewlyCreated
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.isUnitTestMode
@@ -38,7 +38,7 @@ abstract class CourseUpdateChecker(protected val project: Project) : Disposable 
     if (!courseCanBeUpdated()) {
       return
     }
-    if (isNewlyCreated(project)) {
+    if (project.isNewlyCreated()) {
       queueNextCheck()
     }
     else {

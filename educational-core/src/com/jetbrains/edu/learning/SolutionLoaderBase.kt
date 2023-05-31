@@ -15,6 +15,7 @@ import com.intellij.openapi.progress.Task.Backgroundable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotifications
+import com.jetbrains.edu.learning.EduUtilsKt.isNewlyCreated
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
@@ -292,7 +293,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
           }
         }
         else {
-          if (force || EduUtils.isNewlyCreated(project) || task.modifiedBefore(project, taskSolutions)) {
+          if (force || project.isNewlyCreated() || task.modifiedBefore(project, taskSolutions)) {
             applySolutionToCurrentTask(project, task, taskSolutions)
           }
         }
