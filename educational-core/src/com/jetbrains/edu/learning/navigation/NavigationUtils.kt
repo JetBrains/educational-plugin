@@ -45,7 +45,7 @@ object NavigationUtils {
       nextLesson = nextLesson(nextLesson) ?: return null
       nextLessonTaskList = nextLesson.taskList
     }
-    return EduUtils.getFirst(nextLessonTaskList)
+    return nextLessonTaskList.firstOrNull()
   }
 
   @JvmStatic
@@ -167,21 +167,15 @@ object NavigationUtils {
   @JvmStatic
   fun navigateToFirstAnswerPlaceholder(editor: Editor, taskFile: TaskFile) {
     val visiblePlaceholders = taskFile.answerPlaceholders.filter { it.isVisible }
-    val firstAnswerPlaceholder = EduUtils.getFirst(visiblePlaceholders) ?: return
+    val firstAnswerPlaceholder = visiblePlaceholders.firstOrNull() ?: return
     navigateToAnswerPlaceholder(editor, firstAnswerPlaceholder)
   }
 
   fun getFirstTask(course: Course): Task? {
     LocalFileSystem.getInstance().refresh(false)
-    val firstItem = EduUtils.getFirst(course.items) ?: return null
-
-    val firstLesson = if (firstItem is Section) {
-      EduUtils.getFirst(firstItem.lessons)
-    }
-    else {
-      firstItem as Lesson
-    }
-    if (firstLesson != null) return EduUtils.getFirst(firstLesson.taskList)
+    val firstItem = course.items.firstOrNull() ?: return null
+    val firstLesson = if (firstItem is Section) firstItem.lessons.firstOrNull() else firstItem as Lesson
+    if (firstLesson != null) return firstLesson.taskList.firstOrNull()
     return null
   }
 

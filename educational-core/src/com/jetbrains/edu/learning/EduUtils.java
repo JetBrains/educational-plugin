@@ -21,7 +21,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsContexts.Command;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.ObjectUtils;
@@ -32,7 +31,6 @@ import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.ext.StudyItemExtKt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.ProgressUtil;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
@@ -43,7 +41,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
-import java.util.Iterator;
 import java.util.concurrent.*;
 
 import static com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML;
@@ -55,15 +52,6 @@ public class EduUtils {
   }
 
   private static final Logger LOG = Logger.getInstance(EduUtils.class.getName());
-
-  @Nullable
-  public static <T> T getFirst(@NotNull final Iterable<T> container) {
-    Iterator<T> iterator = container.iterator();
-    if (!iterator.hasNext()) {
-      return null;
-    }
-    return iterator.next();
-  }
 
   public static void updateAction(@NotNull final AnActionEvent e) {
     final Presentation presentation = e.getPresentation();
