@@ -34,6 +34,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.getTaskFile
 import com.jetbrains.edu.learning.runReadActionInSmartMode
 import com.jetbrains.edu.sql.core.EduSqlBundle
+import org.jetbrains.annotations.VisibleForTesting
 
 fun Task.findDataSource(project: Project): LocalDataSource? {
   val url = databaseUrl(project)
@@ -213,6 +214,12 @@ private fun collectInitializeConfigurations(project: Project, tasks: List<Task>)
 
 private fun Task.createInitializeConfiguration(project: Project): RunnerAndConfigurationSettings? {
   val file = findInitSqlFile(project) ?: return null
+  return createDatabaseScriptConfiguration(project, file)
+}
+
+@VisibleForTesting
+fun Task.createDatabaseScriptConfiguration(project: Project, file: VirtualFile): RunnerAndConfigurationSettings? {
+  if (file.fileType != SqlFileType.INSTANCE) return null
   val psiFile = PsiManager.getInstance(project).findFile(file) ?: return null
   val dataSource = findDataSource(project) ?: return null
   val configurationsFromContext = ConfigurationContext(psiFile).configurationsFromContext.orEmpty()
@@ -220,7 +227,7 @@ private fun Task.createInitializeConfiguration(project: Project): RunnerAndConfi
   val configurationSettings = configurationsFromContext
     .firstOrNull { it.configuration is DatabaseScriptRunConfiguration }
     ?.configurationSettings
-    ?: return null
+  ?: return null
   // @formatter:on
 
   val target = DatabaseScriptRunConfigurationOptions.Target(dataSource.uniqueId, null)
