@@ -57,7 +57,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
       if (answerPlaceholder == null || !answerPlaceholder.isVisible() || answerPlaceholder.getSelected()) {
         return;
       }
-      final Pair<Integer, Integer> offsets = EduUtils.getPlaceholderOffsets(answerPlaceholder);
+      final Pair<Integer, Integer> offsets = NavigationUtils.getPlaceholderOffsets(answerPlaceholder);
       editor.getSelectionModel().setSelection(offsets.getFirst(), offsets.getSecond());
       answerPlaceholder.setSelected(true);
       YamlFormatSynchronizer.saveItem(myTaskFile.getTask());

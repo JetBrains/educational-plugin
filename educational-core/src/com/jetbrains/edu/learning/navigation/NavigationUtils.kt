@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Pair
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.openapi.wm.ToolWindowId
@@ -156,7 +157,7 @@ object NavigationUtils {
   @JvmStatic
   fun navigateToAnswerPlaceholder(editor: Editor, answerPlaceholder: AnswerPlaceholder) {
     if (editor.isDisposed) return
-    val offsets = EduUtils.getPlaceholderOffsets(answerPlaceholder)
+    val offsets = getPlaceholderOffsets(answerPlaceholder)
     editor.caretModel.moveToOffset(offsets.first)
     editor.scrollingModel.scrollToCaret(ScrollType.CENTER)
     editor.selectionModel.setSelection(offsets.first, offsets.second)
@@ -311,13 +312,18 @@ object NavigationUtils {
     }
 
     val placeholder = taskFile.answerPlaceholders.firstOrNull { it.isVisible } ?: return
-    val offsets = EduUtils.getPlaceholderOffsets(placeholder)
+    val offsets = getPlaceholderOffsets(placeholder)
 
     with(editor) {
       selectionModel.setSelection(offsets.first, offsets.second)
       caretModel.moveToOffset(offsets.first)
       scrollingModel.scrollToCaret(ScrollType.CENTER)
     }
+  }
+
+  @JvmStatic
+  fun getPlaceholderOffsets(answerPlaceholder: AnswerPlaceholder): Pair<Int, Int> {
+    return Pair.create(answerPlaceholder.offset, answerPlaceholder.endOffset)
   }
 
   private fun prepareFilesForTargetTask(
@@ -393,4 +399,3 @@ object NavigationUtils {
     }
   }
 }
-

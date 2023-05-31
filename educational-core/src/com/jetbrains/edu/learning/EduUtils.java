@@ -209,12 +209,6 @@ public class EduUtils {
     return taskDir.findFileByRelativePath(taskFile.getName());
   }
 
-  public static Pair<Integer, Integer> getPlaceholderOffsets(@NotNull final AnswerPlaceholder answerPlaceholder) {
-    int startOffset = answerPlaceholder.getOffset();
-    final int endOffset = answerPlaceholder.getEndOffset();
-    return Pair.create(startOffset, endOffset);
-  }
-
   public static void openFirstTask(@NotNull final Course course, @NotNull final Project project) {
     final Task firstTask = getFirstTask(course);
     if (firstTask == null) return;
