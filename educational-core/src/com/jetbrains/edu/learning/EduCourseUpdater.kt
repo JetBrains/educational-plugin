@@ -52,7 +52,7 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
 
     runInEdt {
       course.isUpToDate = true
-      EduUtils.synchronize()
+      EduUtilsKt.synchronize()
       ProjectView.getInstance(project).refresh()
       course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
       YamlFormatSynchronizer.saveAll(project)

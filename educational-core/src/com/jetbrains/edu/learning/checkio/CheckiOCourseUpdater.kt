@@ -9,7 +9,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.NotificationTitle
-import com.jetbrains.edu.learning.EduUtils.synchronize
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
@@ -40,7 +39,7 @@ class CheckiOCourseUpdater(
     showNewContentUnlockedNotification(stationsWithNewMissions, EduCoreBundle.message("notification.title.new.missions.unlocked.in"))
 
     runInEdt {
-      synchronize()
+      EduUtilsKt.synchronize()
       ProjectView.getInstance(project).refresh()
       YamlFormatSynchronizer.saveAll(project)
       EduUtilsKt.updateToolWindows(project)

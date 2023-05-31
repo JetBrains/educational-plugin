@@ -98,12 +98,6 @@ public class EduUtils {
     return null;
   }
 
-  public static void synchronize() {
-    FileDocumentManager.getInstance().saveAllDocuments();
-    SaveAndSyncHandler.getInstance().refreshOpenFiles();
-    VirtualFileManager.getInstance().refreshWithoutFileWatcher(true);
-  }
-
   @TestOnly
   public static <T> void waitAndDispatchInvocationEvents(@NotNull Future<T> future) {
     if (!OpenApiExtKt.isUnitTestMode()) {

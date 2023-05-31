@@ -164,7 +164,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
           EduCoreBundle.message("notification.update.plugin.apply.solutions.content")
         ).notify(project)
       }
-      EduUtils.synchronize()
+      EduUtilsKt.synchronize()
       ProjectView.getInstance(project).refresh()
     }
   }

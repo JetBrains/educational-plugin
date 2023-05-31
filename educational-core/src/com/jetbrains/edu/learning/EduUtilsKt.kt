@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.module.kotlin.treeToValue
+import com.intellij.ide.SaveAndSyncHandler
 import com.intellij.ide.lightEdit.LightEdit
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
@@ -18,6 +19,7 @@ import com.intellij.openapi.ui.InputValidatorEx
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.PlatformUtils
 import com.intellij.util.TimeoutUtil
 import com.intellij.util.ui.UIUtil
@@ -89,6 +91,12 @@ object EduUtilsKt {
   fun updateToolWindows(project: Project) {
     TaskDescriptionView.getInstance(project).updateTaskDescription()
     updateCourseProgress(project)
+  }
+
+  fun synchronize() {
+    FileDocumentManager.getInstance().saveAllDocuments()
+    SaveAndSyncHandler.getInstance().refreshOpenFiles()
+    VirtualFileManager.getInstance().refreshWithoutFileWatcher(true)
   }
 
   fun isTestsFile(task: Task, path: String): Boolean {
