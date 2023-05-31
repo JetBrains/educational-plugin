@@ -6,7 +6,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
@@ -26,7 +25,7 @@ object PlaceholderDependencyManager {
     }
 
     for (taskFile in task.taskFiles.values) {
-      val virtualFile = EduUtils.findTaskFileInDir(taskFile, task.getDir(project.courseDir) ?: break) ?: continue
+      val virtualFile = taskFile.findTaskFileInDir(task.getDir(project.courseDir) ?: break) ?: continue
       EditorNotifications.getInstance(project).updateNotifications(virtualFile)
     }
 

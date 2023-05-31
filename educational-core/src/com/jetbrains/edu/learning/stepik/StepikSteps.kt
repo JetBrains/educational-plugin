@@ -11,7 +11,8 @@ import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduUtilsKt
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.FRAMEWORK
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.ID
@@ -20,6 +21,7 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TIME
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.findTaskFileInDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
@@ -31,6 +33,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepOptions
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.submissions.TEXT
 import com.jetbrains.edu.learning.taskDescription.replaceEncodedShortcuts
+import com.jetbrains.edu.learning.toStudentFile
 import java.util.*
 
 const val SOURCE = "source"
@@ -205,7 +208,7 @@ fun collectTaskFiles(project: Project, task: Task): MutableList<TaskFile> {
   for ((_, value) in task.taskFiles) {
     invokeAndWaitIfNeeded {
       runWriteAction {
-        val answerFile = EduUtils.findTaskFileInDir(value, taskDir) ?: return@runWriteAction
+        val answerFile = value.findTaskFileInDir(taskDir) ?: return@runWriteAction
         val studentTaskFile = answerFile.toStudentFile(project, task) ?: return@runWriteAction
         files.add(studentTaskFile)
       }

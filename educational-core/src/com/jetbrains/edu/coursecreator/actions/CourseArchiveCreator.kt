@@ -30,10 +30,7 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduNames.COURSE_META_FILE
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.PluginInfo
-import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
-import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
-import com.jetbrains.edu.learning.courseFormat.ext.getDir
-import com.jetbrains.edu.learning.courseFormat.ext.updateEnvironmentSettings
+import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
@@ -217,7 +214,7 @@ class CourseArchiveCreator(
     private fun convertToStudentTaskFiles(project: Project, task: Task, taskDir: VirtualFile) {
       val studentTaskFiles = LinkedHashMap<String, TaskFile>()
       for ((key, value) in task.taskFiles) {
-        val answerFile = EduUtils.findTaskFileInDir(value, taskDir) ?: continue
+        val answerFile = value.findTaskFileInDir(taskDir) ?: continue
         val studentFile = answerFile.toStudentFile(project, task)
         if (studentFile != null) {
           studentTaskFiles[key] = studentFile

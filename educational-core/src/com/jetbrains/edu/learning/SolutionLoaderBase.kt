@@ -18,6 +18,7 @@ import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.learning.EduUtilsKt.isNewlyCreated
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
+import com.jetbrains.edu.learning.courseFormat.ext.findTaskFileInDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.hasSolutions
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -266,7 +267,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
       }
       else {
         val taskDir = getDir(project.courseDir) ?: return Date(0)
-        Date(max(taskFiles.values.map { EduUtils.findTaskFileInDir(it, taskDir)?.timeStamp ?: 0 }))
+        Date(max(taskFiles.values.map { it.findTaskFileInDir(taskDir)?.timeStamp ?: 0 }))
       }
     }
 

@@ -8,7 +8,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.problems.WolfTheProblemSolver
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.EduFile.Companion.LOG
 import com.jetbrains.edu.learning.courseFormat.EduFileErrorHighlightLevel
@@ -23,7 +22,11 @@ fun TaskFile.getDocument(project: Project): Document? {
 
 fun TaskFile.getVirtualFile(project: Project): VirtualFile? {
   val taskDir = task.getDir(project.courseDir) ?: return null
-  return EduUtils.findTaskFileInDir(this, taskDir)
+  return this.findTaskFileInDir(taskDir)
+}
+
+fun TaskFile.findTaskFileInDir(taskDir: VirtualFile): VirtualFile? {
+  return taskDir.findFileByRelativePath(name)
 }
 
 fun TaskFile.course() = task.lesson.course

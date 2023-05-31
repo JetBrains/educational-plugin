@@ -117,11 +117,6 @@ public class EduUtils {
     return result;
   }
 
-  @Nullable
-  public static VirtualFile findTaskFileInDir(@NotNull TaskFile taskFile, @NotNull VirtualFile taskDir) {
-    return taskDir.findFileByRelativePath(taskFile.getName());
-  }
-
   public static void replaceAnswerPlaceholder(@NotNull final Document document,
                                               @NotNull final AnswerPlaceholder answerPlaceholder) {
     CommandProcessor.getInstance().runUndoTransparentAction(() -> ApplicationManager.getApplication().runWriteAction(() -> {

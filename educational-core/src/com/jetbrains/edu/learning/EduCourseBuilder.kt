@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.LESSON
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.ext.findTaskFileInDir
 import com.jetbrains.edu.learning.courseFormat.ext.testDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTaskBase.Companion.INPUT_PATTERN_NAME
@@ -183,7 +184,7 @@ interface EduCourseBuilder<Settings : EduProjectSettings> {
    */
   fun getTextForNewTask(taskFile: TaskFile, taskDir: VirtualFile, newTask: Task): String? {
     try {
-      val file = EduUtils.findTaskFileInDir(taskFile, taskDir)
+      val file = taskFile.findTaskFileInDir(taskDir)
       if (file == null) {
         LOG.warn("Can't find a file by path relative to this file for `${taskFile.name}` file")
         return null

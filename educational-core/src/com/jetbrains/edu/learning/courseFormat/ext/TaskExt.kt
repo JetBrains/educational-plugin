@@ -14,7 +14,8 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiUtilCore
 import com.jetbrains.edu.coursecreator.settings.CCSettings
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduUtilsKt
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
@@ -24,6 +25,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.isTestsFile
+import com.jetbrains.edu.learning.selectedTaskFile
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -117,7 +120,7 @@ fun Task.saveStudentAnswersIfNeeded(project: Project) {
 
   val taskDir = getDir(project.courseDir) ?: return
   for ((_, taskFile) in taskFiles) {
-    val virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
+    val virtualFile = taskFile.findTaskFileInDir(taskDir) ?: continue
     val document = FileDocumentManager.getInstance().getDocument(virtualFile) ?: continue
     for (placeholder in taskFile.answerPlaceholders) {
       val startOffset = placeholder.offset

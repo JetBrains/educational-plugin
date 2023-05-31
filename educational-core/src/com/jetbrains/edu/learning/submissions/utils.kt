@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.findTaskFileInDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.submissions.SubmissionsTab.Companion.CLOSE_PLACEHOLDER_TAG
@@ -46,7 +47,7 @@ fun getSolutionFiles(project: Project, task: Task): List<SolutionFile> {
 }
 
 fun findTaskFileInDirWithSizeCheck(taskFile: TaskFile, taskDir: VirtualFile): VirtualFile? {
-  val virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: return null
+  val virtualFile = taskFile.findTaskFileInDir(taskDir) ?: return null
   return if (virtualFile.length > MAX_FILE_SIZE) {
     LOG.warn("File ${virtualFile.path} is too big (${virtualFile.length} bytes), will be ignored for submitting to the server")
     null

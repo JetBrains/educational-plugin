@@ -9,7 +9,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.NotificationTitle
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.EduUtils.synchronize
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
@@ -17,6 +16,7 @@ import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.checkio.notifications.CheckiONotifications
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.ext.findTaskFileInDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -130,7 +130,7 @@ class CheckiOCourseUpdater(
     val oldMissionDir = oldMission.getDir(project.courseDir)
                         ?: return LOG.error("Directory is not found for mission [${oldMission.id}; ${oldMission.name}]")
 
-    val oldVirtualFile = EduUtils.findTaskFileInDir(oldTaskFile, oldMissionDir)
+    val oldVirtualFile = oldTaskFile.findTaskFileInDir(oldMissionDir)
                          ?: return LOG.error("VirtualFile is not found for mission [id=${oldMission.id}; name=${oldMission.name}]")
 
     val secondsFromChangeOnServer = newMission.secondsFromLastChangeOnServer

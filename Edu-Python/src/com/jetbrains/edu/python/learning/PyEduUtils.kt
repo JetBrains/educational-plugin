@@ -14,8 +14,8 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.ext.findTaskFileInDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isTestsFile
@@ -28,7 +28,7 @@ fun Task.getCurrentTaskVirtualFile(project: Project): VirtualFile? {
   val taskDir = getDir(project.courseDir) ?: error("Failed to get task dir for `${name}` task")
   var resultFile: VirtualFile? = null
   for ((_, taskFile) in taskFiles) {
-    val file = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
+    val file = taskFile.findTaskFileInDir(taskDir) ?: continue
     if (file.isTestsFile(project) || !TextEditorProvider.isTextFile(file)) continue
     if (resultFile == null) {
       resultFile = file
