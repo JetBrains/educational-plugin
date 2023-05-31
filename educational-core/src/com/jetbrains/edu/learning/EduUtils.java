@@ -343,17 +343,6 @@ public class EduUtils {
     VirtualFileManager.getInstance().refreshWithoutFileWatcher(true);
   }
 
-  public static String addMnemonic(String text) {
-    if (text.length() == 0) return text;
-    return addMnemonic(text, text.charAt(0));
-  }
-
-  public static String addMnemonic(String text, char ch) {
-    int index = text.indexOf(ch);
-    if (index == -1) return text;
-    return text.substring(0, index) + "&" + text.substring(index);
-  }
-
   public static void putSelectedTaskFileFirst(List<TaskFile> taskFiles, TaskFile selectedTaskFile) {
     int selectedTaskFileIndex = taskFiles.indexOf(selectedTaskFile);
     if (selectedTaskFileIndex > 0) {
