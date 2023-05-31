@@ -209,20 +209,6 @@ public class EduUtils {
     return taskDir.findFileByRelativePath(taskFile.getName());
   }
 
-  @Nullable
-  public static Document getDocument(@NotNull Project project, int lessonIndex, int taskIndex, String fileName) {
-    Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null) return null;
-    Lesson lesson = course.getLessons().get(lessonIndex - 1);
-    Task task = lesson.getTaskList().get(taskIndex - 1);
-    @SystemIndependent String basePath = project.getBasePath();
-    if (basePath == null) return null;
-    String filePath = FileUtil.join(basePath, lesson.getName(), task.getName(), fileName);
-
-    VirtualFile taskFile = LocalFileSystem.getInstance().findFileByPath(filePath);
-    return taskFile == null ? null : FileDocumentManager.getInstance().getDocument(taskFile);
-  }
-
   public static Pair<Integer, Integer> getPlaceholderOffsets(@NotNull final AnswerPlaceholder answerPlaceholder) {
     int startOffset = answerPlaceholder.getOffset();
     final int endOffset = answerPlaceholder.getEndOffset();
