@@ -44,9 +44,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.*;
 
 import static com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML;
@@ -288,13 +286,6 @@ public class EduUtils {
     FileDocumentManager.getInstance().saveAllDocuments();
     SaveAndSyncHandler.getInstance().refreshOpenFiles();
     VirtualFileManager.getInstance().refreshWithoutFileWatcher(true);
-  }
-
-  public static void putSelectedTaskFileFirst(List<TaskFile> taskFiles, TaskFile selectedTaskFile) {
-    int selectedTaskFileIndex = taskFiles.indexOf(selectedTaskFile);
-    if (selectedTaskFileIndex > 0) {
-      Collections.swap(taskFiles, 0, selectedTaskFileIndex);
-    }
   }
 
   @TestOnly

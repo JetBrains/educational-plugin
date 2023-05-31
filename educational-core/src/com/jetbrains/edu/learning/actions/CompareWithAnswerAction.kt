@@ -14,7 +14,6 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.EduUtils.putSelectedTaskFileFirst
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
@@ -26,6 +25,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_SOLUTIONS_ANCHOR
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillTaskLink
 import org.jetbrains.annotations.NonNls
+import java.util.*
 
 open class CompareWithAnswerAction : DumbAwareAction() {
   companion object {
@@ -85,6 +85,13 @@ open class CompareWithAnswerAction : DumbAwareAction() {
       }
     }
     return fullAnswer.toString()
+  }
+
+  private fun putSelectedTaskFileFirst(taskFiles: List<TaskFile>, selectedTaskFile: TaskFile) {
+    val selectedTaskFileIndex = taskFiles.indexOf(selectedTaskFile)
+    if (selectedTaskFileIndex > 0) {
+      Collections.swap(taskFiles, 0, selectedTaskFileIndex)
+    }
   }
 
   override fun update(e: AnActionEvent) {
