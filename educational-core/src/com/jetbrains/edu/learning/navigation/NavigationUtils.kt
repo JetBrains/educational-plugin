@@ -10,6 +10,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.openapi.wm.ToolWindowId
@@ -170,8 +171,22 @@ object NavigationUtils {
     navigateToAnswerPlaceholder(editor, firstAnswerPlaceholder)
   }
 
+  fun getFirstTask(course: Course): Task? {
+    LocalFileSystem.getInstance().refresh(false)
+    val firstItem = EduUtils.getFirst(course.items) ?: return null
+
+    val firstLesson = if (firstItem is Section) {
+      EduUtils.getFirst(firstItem.lessons)
+    }
+    else {
+      firstItem as Lesson
+    }
+    if (firstLesson != null) return EduUtils.getFirst(firstLesson.taskList)
+    return null
+  }
+
   fun openFirstTask(course: Course, project: Project) {
-    val firstTask = EduUtils.getFirstTask(course) ?: return
+    val firstTask = getFirstTask(course) ?: return
     navigateToTask(project, firstTask)
   }
 

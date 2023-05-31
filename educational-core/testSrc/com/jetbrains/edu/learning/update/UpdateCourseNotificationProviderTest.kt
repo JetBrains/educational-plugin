@@ -1,10 +1,10 @@
 package com.jetbrains.edu.learning.update
 
-import com.jetbrains.edu.learning.EduUtils.getFirstTask
-import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.NotificationsTestBase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
+import com.jetbrains.edu.learning.navigation.NavigationUtils.getFirstTask
 import com.jetbrains.edu.learning.stepik.UpdateCourseNotificationProvider
 
 class UpdateCourseNotificationProviderTest : NotificationsTestBase() {

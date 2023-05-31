@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator.actions
 
-import com.jetbrains.edu.learning.EduUtils.getFirstTask
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
@@ -11,6 +10,7 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.setMarketplaceAuthorsAsString
 import com.jetbrains.edu.learning.marketplace.mockJBAccount
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
+import com.jetbrains.edu.learning.navigation.NavigationUtils.getFirstTask
 
 class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
 

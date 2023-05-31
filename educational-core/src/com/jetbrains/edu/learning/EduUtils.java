@@ -204,24 +204,6 @@ public class EduUtils {
   }
 
   @Nullable
-  public static Task getFirstTask(@NotNull final Course course) {
-    LocalFileSystem.getInstance().refresh(false);
-    final StudyItem firstItem = getFirst(course.getItems());
-    if (firstItem == null) return null;
-    final Lesson firstLesson;
-    if (firstItem instanceof Section) {
-      firstLesson = getFirst(((Section)firstItem).getLessons());
-    }
-    else {
-      firstLesson = (Lesson)firstItem;
-    }
-    if (firstLesson == null) {
-      return null;
-    }
-    return getFirst(firstLesson.getTaskList());
-  }
-
-  @Nullable
   public static Task getTask(@NotNull Course course, int stepId) {
     Ref<Task> taskRef = new Ref<>();
     course.visitLessons((lesson) -> {

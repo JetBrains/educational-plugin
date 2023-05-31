@@ -1,14 +1,17 @@
 package com.jetbrains.edu.learning.marketplace
 
-import com.jetbrains.edu.learning.EduUtils.getFirstTask
 import com.jetbrains.edu.learning.FileTree
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
+import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
+import com.jetbrains.edu.learning.navigation.NavigationUtils.getFirstTask
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import com.jetbrains.rd.util.firstOrNull
 import java.util.*
