@@ -20,6 +20,9 @@ import com.jetbrains.edu.learning.settings.OAuthLoginOptions;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import org.jetbrains.annotations.NotNull;
 
+import static com.jetbrains.edu.learning.EduExperimentalFeatures.CC_HYPERSKILL;
+import static com.jetbrains.edu.learning.ExperimentsKt.isFeatureEnabled;
+
 public class StepikOptions extends OAuthLoginOptions<StepikUser> {
   @Override
   protected @NotNull EduOAuthCodeFlowConnector<StepikUser, ?> getConnector() {
@@ -36,5 +39,10 @@ public class StepikOptions extends OAuthLoginOptions<StepikUser> {
   @Override
   protected String profileUrl(@NotNull StepikUser account) {
     return StepikUtils.getProfileUrl(account);
+  }
+
+  @Override
+  public boolean isAvailable() {
+    return isFeatureEnabled(CC_HYPERSKILL);
   }
 }
