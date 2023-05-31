@@ -58,10 +58,6 @@ public class EduUtils {
 
   private static final Logger LOG = Logger.getInstance(EduUtils.class.getName());
 
-  //Extension for binary files to mark files that are needed to be encoded
-  //In test environment most of binary file extensions are recognized as unknown
-  //because the plugins for their support are not available
-  public static final String EDU_TEST_BIN = "edutestbin";
 
   public static boolean isZip(String fileName) {
     return StringUtil.endsWithIgnoreCase(fileName, ".zip");

@@ -37,6 +37,11 @@ private val LOG = Logger.getInstance("openApiExt")
 
 val isUnitTestMode: Boolean get() = ApplicationManager.getApplication().isUnitTestMode
 
+//Extension for binary files to mark files that are needed to be encoded
+//In test environment most of binary file extensions are recognized as unknown
+//because the plugins for their support are not available
+const val EDU_TEST_BIN = "edutestbin"
+
 fun checkIsBackgroundThread() {
   check(!ApplicationManager.getApplication().isDispatchThread) {
     "Long running operation invoked on UI thread"
@@ -61,7 +66,7 @@ fun toEncodeFileContent(virtualFile: VirtualFile): Boolean {
   val path = virtualFile.path
   val name = PathUtil.getFileName(path)
   val extension = FileUtilRt.getExtension(name)
-  if (isUnitTestMode && extension == EduUtils.EDU_TEST_BIN) {
+  if (isUnitTestMode && extension == EDU_TEST_BIN) {
     return true
   }
   val fileType = FileTypeManagerEx.getInstance().getFileTypeByFile(virtualFile)
