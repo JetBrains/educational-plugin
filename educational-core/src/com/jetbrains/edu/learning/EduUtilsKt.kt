@@ -117,7 +117,7 @@ abstract class CourseraCourseMixin : LocalEduCourseMixin() {
   var submitManually = false
 }
 
-class NumericInputValidator(val emptyInputMessage: String, val notNumericMessage: String) : InputValidatorEx {
+class NumericInputValidator(private val emptyInputMessage: String, private val notNumericMessage: String) : InputValidatorEx {
   override fun getErrorText(inputString: String): String? {
     val input = inputString.trim()
     return when {
