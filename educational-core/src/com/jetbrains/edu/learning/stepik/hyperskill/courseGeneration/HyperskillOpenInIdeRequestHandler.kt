@@ -5,6 +5,7 @@ import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Ref
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.authUtils.requestFocus
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -74,8 +75,17 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     if (stepId == 0) {
       return
     }
-    val task = EduUtils.getTask(course, stepId) ?: return
+    val task = getTask(course, stepId) ?: return
     navigateToTask(project, task)
+  }
+
+  private fun getTask(course: Course, stepId: Int): Task? {
+    val taskRef = Ref<Task>()
+    course.visitLessons { lesson: Lesson ->
+      val task = lesson.getTask(stepId) ?: return@visitLessons
+      taskRef.set(task)
+    }
+    return taskRef.get()
   }
 
   private fun findExistingProject(

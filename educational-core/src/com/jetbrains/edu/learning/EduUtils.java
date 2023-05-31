@@ -9,14 +9,16 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.TimeoutUtil;
 import com.intellij.util.ui.UIUtil;
-import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.ext.StudyItemExtKt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
@@ -118,19 +120,6 @@ public class EduUtils {
   @Nullable
   public static VirtualFile findTaskFileInDir(@NotNull TaskFile taskFile, @NotNull VirtualFile taskDir) {
     return taskDir.findFileByRelativePath(taskFile.getName());
-  }
-
-  @Nullable
-  public static Task getTask(@NotNull Course course, int stepId) {
-    Ref<Task> taskRef = new Ref<>();
-    course.visitLessons((lesson) -> {
-      Task task = lesson.getTask(stepId);
-      if (task != null) {
-        taskRef.set(task);
-      }
-      return null;
-    });
-    return taskRef.get();
   }
 
   public static void replaceAnswerPlaceholder(@NotNull final Document document,
