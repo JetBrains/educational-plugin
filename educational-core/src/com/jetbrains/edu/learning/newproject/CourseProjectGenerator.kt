@@ -36,6 +36,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.unpackAddition
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillCourseProjectGenerator
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -64,7 +65,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
 
     setUpPluginDependencies(project, course)
 
-    EduUtils.openFirstTask(course, project)
+    NavigationUtils.openFirstTask(course, project)
 
     YamlFormatSynchronizer.saveAll(project)
     YamlFormatSynchronizer.startSynchronization(project)

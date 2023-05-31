@@ -203,12 +203,6 @@ public class EduUtils {
     return taskDir.findFileByRelativePath(taskFile.getName());
   }
 
-  public static void openFirstTask(@NotNull final Course course, @NotNull final Project project) {
-    final Task firstTask = getFirstTask(course);
-    if (firstTask == null) return;
-    NavigationUtils.navigateToTask(project, firstTask);
-  }
-
   @Nullable
   public static Task getFirstTask(@NotNull final Course course) {
     LocalFileSystem.getInstance().refresh(false);

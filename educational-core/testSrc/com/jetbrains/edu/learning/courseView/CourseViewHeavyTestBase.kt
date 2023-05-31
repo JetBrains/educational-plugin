@@ -3,9 +3,9 @@ package com.jetbrains.edu.learning.courseView
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.ProjectViewTestUtil
-import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
+import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 
@@ -23,7 +23,7 @@ abstract class CourseViewHeavyTestBase : CourseGenerationTestBase<EmptyProjectSe
       refresh()
       changeView(CourseViewPane.ID)
       if (openFirstTask) {
-        EduUtils.openFirstTask(course, project)
+        NavigationUtils.openFirstTask(course, project)
       }
       PlatformTestUtil.waitWhileBusy(currentProjectViewPane.tree)
     }

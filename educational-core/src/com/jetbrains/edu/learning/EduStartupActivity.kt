@@ -28,6 +28,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.isPreview
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.navigation.NavigationUtils.setHighlightLevelForFilesInTask
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.projectView.CourseViewPane
@@ -76,7 +77,7 @@ class EduStartupActivity : StartupActivity.DumbAware {
 
       val fileEditorManager = FileEditorManager.getInstance(project)
       if (!fileEditorManager.hasOpenFiles()) {
-        EduUtils.openFirstTask(course, project)
+        NavigationUtils.openFirstTask(course, project)
       }
       selectProjectView(project, true)
 

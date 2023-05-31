@@ -170,6 +170,11 @@ object NavigationUtils {
     navigateToAnswerPlaceholder(editor, firstAnswerPlaceholder)
   }
 
+  fun openFirstTask(course: Course, project: Project) {
+    val firstTask = EduUtils.getFirstTask(course) ?: return
+    navigateToTask(project, firstTask)
+  }
+
   private fun getFirstTaskFile(taskDir: VirtualFile, task: Task): VirtualFile? {
     val taskFiles = task.taskFiles.values
     val firstVisibleTaskFile =
