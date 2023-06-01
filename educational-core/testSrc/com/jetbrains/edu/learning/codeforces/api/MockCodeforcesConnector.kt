@@ -10,7 +10,7 @@ class MockCodeforcesConnector : CodeforcesConnector() {
   private var _baseUrl: String? = null
     set(value) {
       field = value
-      serviceHolder.reset()
+      serviceHolder.drop()
     }
 
   private val helper = MockWebServerHelper(ApplicationManager.getApplication())

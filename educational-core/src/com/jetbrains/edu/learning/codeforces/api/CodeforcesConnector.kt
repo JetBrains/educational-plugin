@@ -9,6 +9,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.util.concurrency.SynchronizedClearableLazy
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.courseFormat.CheckResult
@@ -57,7 +58,7 @@ abstract class CodeforcesConnector {
 
   protected abstract val baseUrl: String
 
-  protected val serviceHolder: ResettableCachedValue<CodeforcesService> = ResettableCachedValue { service() }
+  protected val serviceHolder: SynchronizedClearableLazy<CodeforcesService> = SynchronizedClearableLazy { service() }
 
   private val service: CodeforcesService by serviceHolder
 
