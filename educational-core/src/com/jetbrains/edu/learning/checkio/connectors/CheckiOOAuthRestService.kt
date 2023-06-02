@@ -1,77 +1,54 @@
-package com.jetbrains.edu.learning.checkio.connectors;
+package com.jetbrains.edu.learning.checkio.connectors
 
-import com.jetbrains.edu.learning.authUtils.OAuthRestService;
-import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.QueryStringDecoder;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.ide.RestService;
+import com.jetbrains.edu.learning.authUtils.OAuthRestService
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames
+import io.netty.channel.ChannelHandlerContext
+import io.netty.handler.codec.http.FullHttpRequest
+import io.netty.handler.codec.http.HttpMethod
+import io.netty.handler.codec.http.HttpResponseStatus
+import io.netty.handler.codec.http.QueryStringDecoder
+import java.io.IOException
+import java.lang.reflect.InvocationTargetException
+import java.util.regex.Pattern
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+abstract class CheckiOOAuthRestService(platformName: String, private val oAuthConnector: CheckiOOAuthConnector) :
+  OAuthRestService(platformName) {
+  private val oAuthCodePattern: Pattern = oAuthConnector.getOAuthPattern()
 
-public abstract class CheckiOOAuthRestService extends OAuthRestService {
-  private final Pattern myOAuthCodePattern;
-  private final CheckiOOAuthConnector myOAuthConnector;
+  override fun getServiceName(): String = oAuthConnector.serviceName
 
-  protected CheckiOOAuthRestService(
-    @NotNull String platformName,
-    @NotNull CheckiOOAuthConnector oauthConnector
-  ) {
-    super(platformName);
-    myOAuthCodePattern = oauthConnector.getOAuthPattern();
-    myOAuthConnector = oauthConnector;
-  }
-
-  @Override
-  protected @NotNull String getServiceName() {
-    return myOAuthConnector.getServiceName();
-  }
-
-  @Override
-  protected boolean isHostTrusted(@NotNull FullHttpRequest request,
-                                  @NotNull QueryStringDecoder urlDecoder) throws InterruptedException, InvocationTargetException {
-    final String uri = request.uri();
-    final Matcher codeMatcher = myOAuthCodePattern.matcher(uri);
-    if (request.method() == HttpMethod.GET && codeMatcher.matches()) {
-      return true;
+  @Throws(InterruptedException::class, InvocationTargetException::class)
+  override fun isHostTrusted(request: FullHttpRequest, urlDecoder: QueryStringDecoder): Boolean {
+    val uri = request.uri()
+    val codeMatcher = oAuthCodePattern.matcher(uri)
+    return if (request.method() === HttpMethod.GET && codeMatcher.matches()) {
+      true
     }
-    return super.isHostTrusted(request, urlDecoder);
+    else super.isHostTrusted(request, urlDecoder)
   }
 
-  @Nullable
-  @Override
-  public String execute(
-    @NotNull QueryStringDecoder decoder,
-    @NotNull FullHttpRequest request,
-    @NotNull ChannelHandlerContext context
-  ) throws IOException {
-    final String uri = decoder.uri();
-    LOG.info("Request: " + uri);
-
-    if (myOAuthCodePattern.matcher(uri).matches()) {
-      final String code = getStringParameter(CODE_ARGUMENT, decoder);
-      assert code != null; // cannot be null because of pattern
-
-      LOG.info(myPlatformName + ": OAuth code is handled");
-      final boolean success = myOAuthConnector.login(code);
-
-      if (success) {
-        return sendOkResponse(request, context);
+  @Throws(IOException::class)
+  override fun execute(
+    urlDecoder: QueryStringDecoder,
+    request: FullHttpRequest,
+    context: ChannelHandlerContext
+  ): String? {
+    val uri = urlDecoder.uri()
+    LOG.info("Request: $uri")
+    if (oAuthCodePattern.matcher(uri).matches()) {
+      // cannot be null because of pattern
+      val code = getStringParameter(CODE_ARGUMENT, urlDecoder)!!
+      LOG.info("$myPlatformName: OAuth code is handled")
+      val success = oAuthConnector.login(code)
+      return if (success) {
+        sendOkResponse(request, context)
       }
       else {
-        final String errorMessage = "Failed to login to " + CheckiONames.CHECKIO;
-        return sendErrorResponse(request, context, errorMessage);
+        val errorMessage = "Failed to login to " + CheckiONames.CHECKIO
+        sendErrorResponse(request, context, errorMessage)
       }
     }
-
-    RestService.sendStatus(HttpResponseStatus.BAD_REQUEST, false, context.channel());
-    return "Unknown command: " + uri;
+    sendStatus(HttpResponseStatus.BAD_REQUEST, false, context.channel())
+    return "Unknown command: $uri"
   }
 }

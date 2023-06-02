@@ -1,53 +1,34 @@
-package com.jetbrains.edu.learning.checkio.courseFormat;
+package com.jetbrains.edu.learning.checkio.courseFormat
 
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import org.jetbrains.annotations.NonNls
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-public class CheckiOStation extends Lesson {
-  public CheckiOStation() {}
-
-  public void addMission(@NotNull CheckiOMission mission) {
-    addTask(mission);
+class CheckiOStation : Lesson() {
+  fun addMission(mission: CheckiOMission) {
+    addTask(mission)
   }
 
-  @Nullable
-  public CheckiOMission getMission(int id) {
-    final Task task = getTask(id);
-    return (task instanceof CheckiOMission ? (CheckiOMission)task : null);
+  fun getMission(id: Int): CheckiOMission? {
+    val task = getTask(id)
+    return if (task is CheckiOMission) task else null
   }
 
-  @NotNull
-  public List<CheckiOMission> getMissions() {
-    return getTaskList().stream().filter(CheckiOMission.class::isInstance).map(CheckiOMission.class::cast).collect(Collectors.toList());
+  val missions: List<CheckiOMission>
+    get() = taskList.filterIsInstance(CheckiOMission::class.java)
+
+  override val itemType: @NonNls String
+    get() = "checkiO"
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other == null || javaClass != other.javaClass) return false
+    val station = other as CheckiOStation
+    return id == station.id
   }
 
-  @Override
-  @NonNls
-  public String getItemType() {
-    return "checkiO";
-  }
+  override fun hashCode(): Int = id
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    CheckiOStation station = (CheckiOStation)o;
-    return getId() == station.getId();
-  }
-
-  @Override
-  public int hashCode() {
-    return getId();
-  }
-
-  @Override
-  public String toString() {
-    return "missions=[" + getMissions().stream().map(CheckiOMission::toString).collect(Collectors.joining("\n")) + "]";
+  override fun toString(): String {
+    return "missions=[" + missions.joinToString("\n") { it.toString() } + "]"
   }
 }

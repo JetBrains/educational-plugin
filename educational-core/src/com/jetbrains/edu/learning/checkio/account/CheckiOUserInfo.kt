@@ -1,72 +1,29 @@
-package com.jetbrains.edu.learning.checkio.account;
+package com.jetbrains.edu.learning.checkio.account
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.jetbrains.edu.learning.courseFormat.UserInfo;
-import org.jetbrains.annotations.NotNull;
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.jetbrains.edu.learning.courseFormat.UserInfo
 
-
-public class CheckiOUserInfo implements UserInfo {
-  @NotNull
+class CheckiOUserInfo : UserInfo {
   @JsonProperty("username")
-  private String myUsername;
+  var username = ""
 
   @JsonProperty("uid")
-  private int myUid;
+  var uid: Int = -1
 
-  @SuppressWarnings("unused") // used for deserialization
-  private CheckiOUserInfo() {
-    myUsername = "";
-    myUid = -1;
-  }
+  override fun getFullName(): String = username
 
-  @NotNull
-  public String getUsername() {
-    return myUsername;
-  }
-
-  public void setUsername(@NotNull String username) {
-    myUsername = username;
-  }
-
-  public int getUid() {
-    return myUid;
-  }
-
-  public void setUid(int uid) {
-    myUid = uid;
-  }
-
-  @NotNull
-  @Override
-  public String getFullName() {
-    return myUsername;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (o == null || o.getClass() != getClass()) {
-      return false;
+  override fun equals(other: Any?): Boolean {
+    if (other == null || other.javaClass != javaClass) {
+      return false
     }
-
-    CheckiOUserInfo other = (CheckiOUserInfo)o;
-    return getUid() == other.getUid();
+    return uid == (other as CheckiOUserInfo).uid
   }
 
-  @Override
-  public int hashCode() {
-    return myUid;
-  }
+  override fun hashCode(): Int = uid
 
-  @Override
-  public String toString() {
-    return myUsername;
-  }
+  override fun toString(): String = username
 
-  @Override
-  public boolean isGuest() {
-    return false;
-  }
-
-  @Override
-  public void setGuest(boolean isGuest) { }
+  override var isGuest: Boolean
+    get() = false
+    set(_) {}
 }
