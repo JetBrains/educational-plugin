@@ -1,49 +1,34 @@
-package com.jetbrains.edu.cpp.codeforces;
+package com.jetbrains.edu.cpp.codeforces
 
-import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.cidr.cpp.execution.CMakeAppRunConfiguration;
-import com.jetbrains.cidr.cpp.execution.CMakeAppRunConfigurationType;
-import com.jetbrains.cidr.cpp.execution.CMakeRunConfigurationType;
-import com.jetbrains.cidr.execution.BuildTargetAndConfigurationData;
-import com.jetbrains.cidr.execution.BuildTargetData;
-import com.jetbrains.cidr.execution.ExecutableData;
-import com.jetbrains.edu.learning.VirtualFileExt;
-import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfiguration;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.execution.InputRedirectAware
+import com.intellij.execution.configurations.ConfigurationFactory
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.cidr.cpp.execution.CMakeAppRunConfiguration
+import com.jetbrains.cidr.cpp.execution.CMakeAppRunConfigurationType
+import com.jetbrains.cidr.cpp.execution.CMakeRunConfigurationType
+import com.jetbrains.cidr.execution.BuildTargetAndConfigurationData
+import com.jetbrains.cidr.execution.BuildTargetData
+import com.jetbrains.cidr.execution.ExecutableData
+import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfiguration
+import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfigurationType
+import com.jetbrains.edu.learning.getTaskFile
 
-import static com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfigurationType.CONFIGURATION_ID;
-
-public class CppCodeforcesRunConfiguration extends CMakeAppRunConfiguration implements CodeforcesRunConfiguration {
-  public CppCodeforcesRunConfiguration(Project project, ConfigurationFactory factory) {
-    super(project, factory, CONFIGURATION_ID);
+class CppCodeforcesRunConfiguration(project: Project, factory: ConfigurationFactory) :
+  CMakeAppRunConfiguration(project, factory, CodeforcesRunConfigurationType.CONFIGURATION_ID),
+  CodeforcesRunConfiguration {
+  override fun setExecutableFile(file: VirtualFile) {
+    val buildTargetData = BuildTargetData(project.name, getTargetName(file))
+    executableData = ExecutableData(buildTargetData)
+    targetAndConfigurationData = BuildTargetAndConfigurationData(buildTargetData, null)
   }
 
-  @Override
-  public void setExecutableFile(@NotNull VirtualFile file) {
-    BuildTargetData buildTargetData = new BuildTargetData(getProject().getName(), getTargetName(file));
-    setExecutableData(new ExecutableData(buildTargetData));
-    setTargetAndConfigurationData(new BuildTargetAndConfigurationData(buildTargetData, null));
+  private fun getTargetName(file: VirtualFile): String {
+    val taskFile = file.getTaskFile(project) ?: throw IllegalStateException("Unable to find taskFile for virtual file " + file.path)
+    return taskFile.task.name + "-run"
   }
 
-  private @NotNull String getTargetName(@NotNull VirtualFile file) {
-    Project project = getProject();
-    TaskFile taskFile = VirtualFileExt.getTaskFile(file, project);
-    if (taskFile == null) {
-      throw new IllegalStateException("Unable to find taskFile for virtual file " + file.getPath());
-    }
-    return taskFile.getTask().getName() + "-run";
-  }
+  override fun getInputRedirectOptions(): InputRedirectAware.InputRedirectOptions = this
 
-  @Override
-  public @NotNull InputRedirectOptions getInputRedirectOptions() {
-    return this;
-  }
-
-  @Override
-  public @NotNull CMakeRunConfigurationType getType() {
-    return new CMakeAppRunConfigurationType();
-  }
+  override fun getType(): CMakeRunConfigurationType = CMakeAppRunConfigurationType()
 }

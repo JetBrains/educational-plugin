@@ -1,66 +1,54 @@
-package com.jetbrains.edu.jvm.gradle;
+package com.jetbrains.edu.jvm.gradle
 
-import com.intellij.execution.Executor;
-import com.intellij.execution.application.ApplicationConfiguration;
-import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.execution.configurations.JavaRunConfigurationModule;
-import com.intellij.execution.configurations.RunProfileState;
-import com.intellij.execution.filters.TextConsoleBuilderFactory;
-import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.lang.Language;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiClass;
-import com.jetbrains.edu.jvm.MainFileProvider;
-import com.jetbrains.edu.learning.OpenApiExtKt;
-import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfiguration;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.execution.Executor
+import com.intellij.execution.application.ApplicationConfiguration
+import com.intellij.execution.configurations.ConfigurationFactory
+import com.intellij.execution.configurations.RunProfileState
+import com.intellij.execution.filters.TextConsoleBuilderFactory
+import com.intellij.execution.runners.ExecutionEnvironment
+import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiClass
+import com.jetbrains.edu.jvm.MainFileProvider.Companion.getMainClass
+import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfiguration
+import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfigurationType
+import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.ext.languageById
 
-import static com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfigurationType.CONFIGURATION_ID;
-
-public class GradleCodeforcesRunConfiguration extends ApplicationConfiguration implements CodeforcesRunConfiguration {
-  private static final Logger LOG = Logger.getInstance(GradleCodeforcesRunConfiguration.class);
-
-  public GradleCodeforcesRunConfiguration(@NotNull Project project, @NotNull ConfigurationFactory factory) {
-    super(CONFIGURATION_ID, project, factory);
-  }
-
-  @Override
-  public void setExecutableFile(@NotNull VirtualFile file) {
-    Course course = OpenApiExtKt.getCourse(getProject());
+class GradleCodeforcesRunConfiguration(project: Project, factory: ConfigurationFactory) :
+  ApplicationConfiguration(CodeforcesRunConfigurationType.CONFIGURATION_ID, project, factory),
+  CodeforcesRunConfiguration {
+  override fun setExecutableFile(file: VirtualFile) {
+    val course = project.course
     if (course == null) {
-      LOG.error("Unable to find course");
-      return;
+      LOG.error("Unable to find course from gradle run configuration")
+      return
     }
-    Language language = CourseExt.getLanguageById(course);
+    val language = course.languageById
     if (language == null) {
-      LOG.error("Unable to get language for course " + course.getPresentableName());
-      return;
+      LOG.error("Unable to get language for course " + course.presentableName)
+      return
     }
-
-    PsiClass mainClass = ((PsiClass)MainFileProvider.getMainClass(getProject(), file, language));
+    val mainClass = getMainClass(project, file, language) as PsiClass?
     if (mainClass == null) {
-      LOG.error("Unable to find main class for file " + file.getPath());
-      return;
+      LOG.error("Unable to find main class for file " + file.path)
+      return
     }
-
-    setMainClass(mainClass);
+    setMainClass(mainClass)
   }
 
   // TODO: remove this after input file substitution doesn't depend on id in the platform
   // This method overriding is needed because currently input for java is redirected for specific configurations only
   // see com.intellij.execution.InputRedirectAware.TYPES_WITH_REDIRECT_AWARE_UI
-  @Override
-  public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) {
-    JavaApplicationCommandLineState<GradleCodeforcesRunConfiguration> state =
-      GradleCodeforcesUtils.getJavaApplicationCommandLineState(this, env);
+  override fun getState(executor: Executor, env: ExecutionEnvironment): RunProfileState {
+    val state = getJavaApplicationCommandLineState(this, env)
+    val module = configurationModule
+    state.consoleBuilder = TextConsoleBuilderFactory.getInstance().createBuilder(project, module.searchScope)
+    return state
+  }
 
-    JavaRunConfigurationModule module = getConfigurationModule();
-    state.setConsoleBuilder(TextConsoleBuilderFactory.getInstance().createBuilder(getProject(), module.getSearchScope()));
-
-    return state;
+  companion object {
+    private val LOG = logger<GradleCodeforcesRunConfiguration>()
   }
 }

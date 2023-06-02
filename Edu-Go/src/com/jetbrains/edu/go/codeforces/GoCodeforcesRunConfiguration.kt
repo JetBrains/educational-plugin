@@ -1,50 +1,33 @@
-package com.jetbrains.edu.go.codeforces;
+package com.jetbrains.edu.go.codeforces
 
-import com.goide.execution.application.GoApplicationConfiguration;
-import com.goide.psi.GoFile;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiManager;
-import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfiguration;
-import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfigurationType;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.courseFormat.ext.StudyItemExtKt;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.goide.execution.application.GoApplicationConfiguration
+import com.goide.psi.GoFile
+import com.intellij.execution.InputRedirectAware
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiManager
+import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfiguration
+import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfigurationType
+import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.ext.getDir
+import com.jetbrains.edu.learning.getTaskFile
 
-import static com.jetbrains.edu.learning.OpenApiExtKt.getCourseDir;
-import static com.jetbrains.edu.learning.VirtualFileExt.getTaskFile;
-import static com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfigurationType.CONFIGURATION_ID;
-
-public class GoCodeforcesRunConfiguration extends GoApplicationConfiguration implements CodeforcesRunConfiguration {
-  public GoCodeforcesRunConfiguration(Project project) {
-    super(project, CONFIGURATION_ID, CodeforcesRunConfigurationType.getInstance());
+class GoCodeforcesRunConfiguration(project: Project) :
+  GoApplicationConfiguration(project, CodeforcesRunConfigurationType.CONFIGURATION_ID, CodeforcesRunConfigurationType.getInstance()),
+  CodeforcesRunConfiguration {
+  override fun setExecutableFile(file: VirtualFile) {
+    kind = Kind.PACKAGE
+    val goPsiFile = PsiManager.getInstance(project).findFile(file) as? GoFile
+                    ?: throw IllegalStateException("Unable to find psiFile for virtual file " + file.path)
+    val packageName = goPsiFile.getImportPath(false)
+                      ?: throw IllegalStateException("Unable to obtain package name for Go file " + file.path)
+    setPackage(packageName)
+    val taskFile = file.getTaskFile(project) ?: throw IllegalStateException("Unable to find taskFile for virtual file " + file.path)
+    val task = taskFile.task
+    val taskDir = task.getDir(project.courseDir) ?: throw IllegalStateException("Unable to find taskDir for task " + task.name)
+    workingDirectory = taskDir.path
   }
 
-  @Override
-  public void setExecutableFile(@NotNull VirtualFile file) {
-    setKind(Kind.PACKAGE);
-    Project project = getProject();
-    GoFile goPsiFile = checkRequired((GoFile)PsiManager.getInstance(project).findFile(file),
-                                     "Unable to find psiFile for virtual file " + file.getPath());
-    String packageName = checkRequired(goPsiFile.getImportPath(false), "Unable to obtain package name for Go file " + file.getPath());
-    setPackage(packageName);
+  override fun getInputRedirectOptions(): InputRedirectAware.InputRedirectOptions = this
 
-    TaskFile taskFile = checkRequired(getTaskFile(file, project), "Unable to find taskFile for virtual file " + file.getPath());
-    Task task = taskFile.getTask();
-    VirtualFile taskDir = checkRequired(StudyItemExtKt.getDir(task, getCourseDir(project)),
-                                        "Unable to find taskDir for task " + task.getName());
-    setWorkingDirectory(taskDir.getPath());
-  }
-
-  private static <T> @NotNull T checkRequired(@Nullable T value, @NotNull String error) {
-    if (value == null) throw new IllegalStateException(error);
-    return value;
-  }
-
-  @Override
-  public @NotNull InputRedirectOptions getInputRedirectOptions() {
-    return this;
-  }
 }
