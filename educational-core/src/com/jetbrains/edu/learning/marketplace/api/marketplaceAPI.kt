@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.marketplace.api
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.intellij.openapi.application.PermanentInstallationID
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.ui.JBAccountInfoService
@@ -11,6 +12,7 @@ import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.stepik.api.SOLUTION
 import com.jetbrains.edu.learning.stepik.api.SUBMISSIONS
@@ -38,6 +40,7 @@ private const val SOLUTION_AWS_KEY = "solution_aws_key"
 private const val TASK_ID = "task_id"
 private const val TOTAL = "total"
 private const val UPDATES = "updates"
+private const val UUID = "uuid"
 private const val VERSION = "version"
 private const val HAS_NEXT = "has_next"
 
@@ -219,6 +222,9 @@ class MarketplaceSubmission : Submission {
   @JsonProperty(SOLUTION_AWS_KEY)
   var solutionKey: String = ""
 
+  @JsonProperty(UUID)
+  var uuid: String = ""
+
   constructor()
 
   // used to mark TheoryTasks solved
@@ -229,7 +235,8 @@ class MarketplaceSubmission : Submission {
     this.status = checkStatus.rawStatus
     this.solutionFiles = solutionFiles
     this.courseVersion = courseVersion
-    this.solution = solutionText
+    solution = solutionText
+    uuid = if (!isUnitTestMode) PermanentInstallationID.get() else "test-uuid"
   }
 }
 

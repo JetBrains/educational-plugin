@@ -58,6 +58,7 @@ class MarketplaceCreateSubmissionTest : EduTestCase() {
   :true,\"text\":\"solution file text\"},{\"name\":\"src/Test.kt\",\"placeholders\"\
   :null,\"is_visible\":false,\"text\":\"test file text\"}]"
       |format_version: $JSON_FORMAT_VERSION
+      |uuid: test-uuid
       |
     """.trimMargin())
   }
