@@ -49,6 +49,7 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
   init {
     val panel = panel {
       createShortcutTutorialHint()
+        .customize(VerticalGaps(bottom = rowGapSize / 2))
       for (index in task.ordering.indices) {
         createOption(task, index)
           .layout(RowLayout.PARENT_GRID)
@@ -275,6 +276,7 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
     val xIcon = "<label class='textShortcut'>↑</label>"
     val yIcon = "<label class='textShortcut'>↓</label>"
     val attributes = "style='color: ${MatchingTaskUI.Key.foreground().asCssColor().value};'"
+
     comment(getSortingShortcutHTML(xIcon, yIcon, attributes))
   }
 }
