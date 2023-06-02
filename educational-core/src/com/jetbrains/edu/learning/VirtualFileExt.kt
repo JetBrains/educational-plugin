@@ -3,7 +3,7 @@
 package com.jetbrains.edu.learning
 
 import com.intellij.codeInsight.daemon.impl.analysis.FileHighlightingSetting
-import com.intellij.codeInsight.daemon.impl.analysis.HighlightingSettingsPerFile
+import com.intellij.codeInsight.daemon.impl.analysis.HighlightLevelUtil
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runWriteAction
@@ -256,8 +256,6 @@ fun VirtualFile.getTaskFile(holder: CourseInfoHolder<out Course?>): TaskFile? {
 val VirtualFile.isToEncodeContent: Boolean
   get(): Boolean = toEncodeFileContent(this)
 
-fun VirtualFile.mimeType(): String? = mimeFileType(path)
-
 @Throws(IOException::class)
 fun VirtualFile.loadEncodedContent(isToEncodeContent: Boolean = this.isToEncodeContent): String {
   return if (isToEncodeContent) {
@@ -331,7 +329,12 @@ fun VirtualFile.setHighlightLevelInsideWriteAction(project: Project, highlightLe
     FileHighlightingSetting.FORCE_HIGHLIGHTING
   }
   val psiFile = PsiManager.getInstance(project).findFile(this) ?: return
-  HighlightingSettingsPerFile.getInstance(project).setHighlightingSettingForRoot(psiFile, fileHighlightLevel)
+  
+  // TriggerCompilerHighlightingService will fail if the document for the virtualFile is null.
+  // Read the documentation for FileDocumentManager.getDocument to find out when the document may be null.
+  if (FileDocumentManager.getInstance().getDocument(this) == null) return
+
+  HighlightLevelUtil.forceRootHighlighting(psiFile, fileHighlightLevel) // this utility method makes additional null checks
 }
 
 private val LOG = Logger.getInstance("com.jetbrains.edu.learning.VirtualFileExt")
