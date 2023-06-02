@@ -48,7 +48,7 @@ class TabManagerImpl(private val project: Project, private val contentManager: C
   }
 
   override fun updateTab(tabType: TabType, task: Task?) {
-    if (task == null) return
+    if (task == null || !task.supportSubmissions && tabType == SUBMISSIONS_TAB) return
 
     val tabIndex = getTabIndex(tabType, task)
     if (tabIndex == null) {
