@@ -21,24 +21,23 @@
     <module name="jvm-core"/>
     <module name="Edu-Java"/>
     <module name="Edu-Kotlin"/>
-    <module name="Edu-Scala"/>
-    <module name="Edu-Android"/>
+    <!--    <module name="Edu-Scala"/>-->
+    <!--    <module name="Edu-Android"/>-->
     <!-- Two python modules provide the same integration
      and only needed to fix https://youtrack.jetbrains.com/issue/EDU-4512
      caused by https://youtrack.jetbrains.com/issue/IDEA-292661 -->
-    <module name="Edu-Python-Community"/>
-    <module name="Edu-Python-Pro"/>
-    <module name="Edu-JavaScript"/>
-    <module name="Edu-Rust"/>
-    <module name="Edu-Cpp"/>
-    <module name="Edu-Go"/>
-    <module name="Edu-Php"/>
-    <module name="Edu-Shell"/>
-    <module name="sql-core"/>
-    <module name="sql-jvm"/>
-    <module name="Edu-Sql-Java"/>
-    <module name="Edu-Sql-Kotlin"/>
-    <module name="github"/>
-    <module name="remote-env"/>
+    <!--    <module name="Edu-Python-Community"/>-->
+    <!--    <module name="Edu-Python-Pro"/>-->
+    <!--    <module name="Edu-JavaScript"/>-->
+    <!--    <module name="Edu-Rust"/>-->
+    <!--    <module name="Edu-Cpp"/>-->
+    <!--    <module name="Edu-Go"/>-->
+    <!--    <module name="Edu-Php"/>-->
+    <!--    <module name="sql-core"/>-->
+    <!--    <module name="sql-jvm"/>-->
+    <!--    <module name="Edu-Sql-Java"/>-->
+    <!--    <module name="Edu-Sql-Kotlin"/>-->
+    <!--    <module name="github"/>-->
+    <!--    <module name="remote-env"/>-->
   </content>
 </idea-plugin>

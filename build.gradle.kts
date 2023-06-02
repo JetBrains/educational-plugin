@@ -41,7 +41,7 @@ val baseVersion = when {
 
 // Probably, these versions should be extracted to version catalog
 // See https://docs.gradle.org/current/userguide/platforms.html#sub:conventional-dependencies-toml
-val jacksonVersion = "2.14.3"
+val jacksonVersion = "2.13.4"
 val okhttpVersion = "4.10.0"
 val retrofitVersion = "2.9.0"
 
@@ -70,7 +70,6 @@ val rustPlugin: String by project
 val tomlPlugin = "org.toml.lang"
 val goPlugin: String by project
 val sqlPlugin = "com.intellij.database"
-val shellScriptPlugin = "com.jetbrains.sh"
 val markdownPlugin = "org.intellij.plugins.markdown"
 val githubPlugin = "org.jetbrains.plugins.github"
 val psiViewerPlugin: String by project
@@ -123,7 +122,7 @@ val isTeamCity: Boolean get() = System.getenv("TEAMCITY_VERSION") != null
 plugins {
   idea
   kotlin("jvm") version "1.8.0"
-  id("org.jetbrains.intellij") version "1.14.1"
+  id("org.jetbrains.intellij") version "1.13.3"
   id("de.undercouch.download") version "5.3.0"
   id("net.saliman.properties") version "1.5.2"
   id("org.gradle.test-retry") version "1.5.1"
@@ -258,7 +257,8 @@ configure(allprojects.pluginModules()) {
     plugin("org.jetbrains.intellij")
   }
   intellij {
-    version.set(baseVersion)
+//    version.set(baseVersion)
+    localPath.set("/Users/valentina.kiryushkina/Documents/IDEA_FOR_CARDS/IntelliJ IDEA 2023.2 EAP.app/Contents")
     instrumentCode.set(false)
   }
   dependencies {
@@ -323,19 +323,19 @@ project(":") {
       // but it helps a lot while developing features related to PSI
       psiViewerPlugin
     )
-    pluginsList += rustPlugins
-    pluginsList += pythonPlugins
-    pluginsList += shellScriptPlugin
+//    pluginsList += rustPlugins
+//    pluginsList += pythonPlugins
     if (isJvmCenteredIDE) {
       pluginsList += jvmPlugins
-      pluginsList += listOf(kotlinPlugin, scalaPlugin)
+      pluginsList += listOf(kotlinPlugin)
+//      pluginsList += listOf(kotlinPlugin, scalaPlugin)
     }
     if (isIdeaIDE) {
-      pluginsList += javaScriptPlugins
-      pluginsList += listOf(goPlugin, phpPlugin)
+//      pluginsList += javaScriptPlugins
+//      pluginsList += listOf(goPlugin, phpPlugin)
     }
     if (!(isStudioIDE || isPycharmIDE)) {
-      pluginsList += sqlPlugin
+//      pluginsList += sqlPlugin
     }
 
     plugins.set(pluginsList)
@@ -350,23 +350,22 @@ project(":") {
     implementation(project(":jvm-core"))
     implementation(project(":Edu-Java"))
     implementation(project(":Edu-Kotlin"))
-    implementation(project(":Edu-Python"))
-    implementation(project(":Edu-Python:Idea"))
-    implementation(project(":Edu-Python:PyCharm"))
-    implementation(project(":Edu-Scala"))
-    implementation(project(":Edu-Android"))
-    implementation(project(":Edu-JavaScript"))
-    implementation(project(":Edu-Rust"))
-    implementation(project(":Edu-Cpp"))
-    implementation(project(":Edu-Go"))
-    implementation(project(":Edu-Php"))
-    implementation(project(":Edu-Shell"))
-    implementation(project(":sql"))
-    implementation(project(":sql:sql-jvm"))
-    implementation(project(":sql:Edu-Sql-Java"))
-    implementation(project(":sql:Edu-Sql-Kotlin"))
-    implementation(project(":github"))
-    implementation(project(":remote-env"))
+//    implementation(project(":Edu-Python"))
+//    implementation(project(":Edu-Python:Idea"))
+//    implementation(project(":Edu-Python:PyCharm"))
+//    implementation(project(":Edu-Scala"))
+//    implementation(project(":Edu-Android"))
+//    implementation(project(":Edu-JavaScript"))
+//    implementation(project(":Edu-Rust"))
+//    implementation(project(":Edu-Cpp"))
+//    implementation(project(":Edu-Go"))
+//    implementation(project(":Edu-Php"))
+//    implementation(project(":sql"))
+//    implementation(project(":sql:sql-jvm"))
+//    implementation(project(":sql:Edu-Sql-Java"))
+//    implementation(project(":sql:Edu-Sql-Kotlin"))
+//    implementation(project(":github"))
+//    implementation(project(":remote-env"))
   }
 
   val removeIncompatiblePlugins = task<Delete>("removeIncompatiblePlugins") {
@@ -628,7 +627,7 @@ project(":code-insight:yaml") {
 project(":jvm-core") {
   intellij {
     if (!isJvmCenteredIDE) {
-      version.set(ideaVersion)
+//      version.set(ideaVersion)
     }
     plugins.set(jvmPlugins)
   }
@@ -640,22 +639,22 @@ project(":jvm-core") {
   }
 }
 
-project(":remote-env") {
-  intellij {
-    if (isStudioIDE) {
-      version.set(ideaVersion)
-    }
-    plugins.set(listOf(codeWithMePlugin))
-  }
-
-  dependencies {
-    implementation(project(":educational-core"))
-  }
-}
+//project(":remote-env") {
+//  intellij {
+//    if (isStudioIDE) {
+//      version.set(ideaVersion)
+//    }
+//    plugins.set(listOf(codeWithMePlugin))
+//  }
+//
+//  dependencies {
+//    implementation(project(":educational-core"))
+//  }
+//}
 
 project(":Edu-Java") {
   intellij {
-    version.set(ideaVersion)
+//    version.set(ideaVersion)
     plugins.set(jvmPlugins)
   }
 
@@ -671,7 +670,7 @@ project(":Edu-Java") {
 project(":Edu-Kotlin") {
   intellij {
     if (!isJvmCenteredIDE) {
-      version.set(ideaVersion)
+//      version.set(ideaVersion)
     }
     plugins.set(kotlinPlugins)
   }
@@ -685,245 +684,233 @@ project(":Edu-Kotlin") {
   }
 }
 
-project(":Edu-Scala") {
-  intellij {
-    version.set(ideaVersion)
-    val pluginsList = jvmPlugins + scalaPlugin
-    plugins.set(pluginsList)
-  }
+//project(":Edu-Scala") {
+//  intellij {
+//    version.set(ideaVersion)
+//    val pluginsList = jvmPlugins + scalaPlugin
+//    plugins.set(pluginsList)
+//  }
+//
+//  dependencies {
+//    implementation(project(":educational-core"))
+//    implementation(project(":jvm-core"))
+//
+//    testImplementation(project(":educational-core", "testOutput"))
+//    testImplementation(project(":jvm-core", "testOutput"))
+//  }
+//}
 
-  dependencies {
-    implementation(project(":educational-core"))
-    implementation(project(":jvm-core"))
+//project(":Edu-Android") {
+//  intellij {
+//    version.set(studioVersion)
+//    val pluginsList = jvmPlugins + androidPlugin
+//    plugins.set(pluginsList)
+//  }
+//
+//  dependencies {
+//    implementation(project(":educational-core"))
+//    implementation(project(":jvm-core"))
+//
+//    testImplementation(project(":educational-core", "testOutput"))
+//    testImplementation(project(":jvm-core", "testOutput"))
+//  }
+//
+//  // BACKCOMPAT: enable when 231 studio is available
+//  tasks.withType<Test> {
+//    enabled = environmentName.toInt() < 231
+//  }
+//}
 
-    testImplementation(project(":educational-core", "testOutput"))
-    testImplementation(project(":jvm-core", "testOutput"))
-  }
-}
+//project(":Edu-Python") {
+//  intellij {
+//    val pluginList = pythonPlugins + listOfNotNull(
+//      if (isJvmCenteredIDE) javaPlugin else null,
+//      // needed only for tests, actually
+//      platformImagesPlugin
+//    )
+//    plugins.set(pluginList)
+//  }
+//
+//  dependencies {
+//    implementation(project(":educational-core"))
+//
+//    testImplementation(project(":educational-core", "testOutput"))
+//    testImplementation(project(":Edu-Python:Idea"))
+//    testImplementation(project(":Edu-Python:PyCharm"))
+//  }
+//}
 
-project(":Edu-Android") {
-  intellij {
-    version.set(studioVersion)
-    val pluginsList = jvmPlugins + androidPlugin
-    plugins.set(pluginsList)
-  }
+//project(":Edu-Python:Idea") {
+//  intellij {
+//    if (!isJvmCenteredIDE || isStudioIDE) {
+//      version.set(ideaVersion)
+//    }
+//
+//    val pluginList = listOfNotNull(
+//      if (!isJvmCenteredIDE) pythonProPlugin else pythonPlugin,
+//      gridImplPlugin,
+//      javaPlugin
+//    )
+//    plugins.set(pluginList)
+//  }
+//
+//  dependencies {
+//    implementation(project(":educational-core"))
+//    compileOnly(project(":Edu-Python"))
+//    testImplementation(project(":educational-core", "testOutput"))
+//  }
+//}
 
-  dependencies {
-    implementation(project(":educational-core"))
-    implementation(project(":jvm-core"))
+//project(":Edu-Python:PyCharm") {
+//  intellij {
+//    if (isStudioIDE) {
+//      version.set(ideaVersion)
+//    }
+//    plugins.set(pythonPlugins)
+//  }
+//
+//  dependencies {
+//    implementation(project(":educational-core"))
+//    compileOnly(project(":Edu-Python"))
+//    testImplementation(project(":educational-core", "testOutput"))
+//  }
+//}
 
-    testImplementation(project(":educational-core", "testOutput"))
-    testImplementation(project(":jvm-core", "testOutput"))
-  }
+//project(":Edu-JavaScript") {
+//  intellij {
+//    version.set(ideaVersion)
+//    plugins.set(javaScriptPlugins)
+//  }
+//  dependencies {
+//    implementation(project(":educational-core"))
+//
+//    testImplementation(project(":educational-core", "testOutput"))
+//  }
+//}
 
-  // BACKCOMPAT: enable when 231 studio is available
-  tasks.withType<Test> {
-    enabled = environmentName.toInt() < 231
-  }
-}
+//project(":Edu-Rust") {
+//  intellij {
+//    plugins.set(rustPlugins)
+//  }
+//
+//  dependencies {
+//    implementation(project(":educational-core"))
+//
+//    testImplementation(project(":educational-core", "testOutput"))
+//  }
+//}
 
-project(":Edu-Python") {
-  intellij {
-    val pluginList = pythonPlugins + listOfNotNull(
-      if (isJvmCenteredIDE) javaPlugin else null,
-      // needed only for tests, actually
-      platformImagesPlugin
-    )
-    plugins.set(pluginList)
-  }
+//project(":Edu-Cpp") {
+//  intellij {
+//    version.set(clionVersion)
+//    plugins.set(cppPlugins)
+//  }
+//
+//  dependencies {
+//    implementation(project(":educational-core"))
+//
+//    testImplementation(project(":educational-core", "testOutput"))
+//  }
+//}
 
-  dependencies {
-    implementation(project(":educational-core"))
+//project(":Edu-Go") {
+//  intellij {
+//    version.set(ideaVersion)
+//    plugins.set(listOf(goPlugin, intelliLangPlugin))
+//  }
+//
+//  dependencies {
+//    implementation(project(":educational-core"))
+//
+//    testImplementation(project(":educational-core", "testOutput"))
+//  }
+//}
 
-    testImplementation(project(":educational-core", "testOutput"))
-    testImplementation(project(":Edu-Python:Idea"))
-    testImplementation(project(":Edu-Python:PyCharm"))
-  }
-}
+//project(":Edu-Php") {
+//  intellij {
+//    version.set(ideaVersion)
+//    plugins.set(listOf(phpPlugin))
+//  }
+//
+//  dependencies {
+//    implementation(project(":educational-core"))
+//
+//    testImplementation(project(":educational-core", "testOutput"))
+//  }
+//}
 
-project(":Edu-Python:Idea") {
-  intellij {
-    if (!isJvmCenteredIDE || isStudioIDE) {
-      version.set(ideaVersion)
-    }
+//project(":sql") {
+//  intellij {
+//    if (isStudioIDE || isPycharmIDE) {
+//      version.set(ideaVersion)
+//    }
+//    plugins.set(listOf(sqlPlugin))
+//  }
+//
+//  dependencies {
+//    api(project(":educational-core"))
+//    testImplementation(project(":educational-core", "testOutput"))
+//  }
+//}
 
-    val pluginList = listOfNotNull(
-      if (!isJvmCenteredIDE) pythonProPlugin else pythonPlugin,
-      gridImplPlugin,
-      javaPlugin
-    )
-    plugins.set(pluginList)
-  }
+//project("sql:sql-jvm") {
+//  intellij {
+//    version.set(ideaVersion)
+//    plugins.set(listOf(sqlPlugin) + jvmPlugins)
+//  }
+//
+//  dependencies {
+//    api(project(":sql"))
+//    api(project(":jvm-core"))
+//    testImplementation(project(":educational-core", "testOutput"))
+//    testImplementation(project(":sql", "testOutput"))
+//    testImplementation(project(":jvm-core", "testOutput"))
+//  }
+//}
 
-  dependencies {
-    implementation(project(":educational-core"))
-    compileOnly(project(":Edu-Python"))
-    testImplementation(project(":educational-core", "testOutput"))
-  }
-}
+//project("sql:Edu-Sql-Java") {
+//  intellij {
+//    version.set(ideaVersion)
+//    plugins.set(listOf(sqlPlugin) + jvmPlugins)
+//  }
+//
+//  dependencies {
+//    implementation(project(":sql:sql-jvm"))
+//    implementation(project(":Edu-Java"))
+//    testImplementation(project(":educational-core", "testOutput"))
+//    testImplementation(project(":sql", "testOutput"))
+//    testImplementation(project(":sql:sql-jvm", "testOutput"))
+//    testImplementation(project(":jvm-core", "testOutput"))
+//  }
+//}
 
-project(":Edu-Python:PyCharm") {
-  intellij {
-    if (isStudioIDE) {
-      version.set(ideaVersion)
-    }
-    plugins.set(pythonPlugins)
-  }
+//project("sql:Edu-Sql-Kotlin") {
+//  intellij {
+//    version.set(ideaVersion)
+//    plugins.set(listOf(sqlPlugin) + kotlinPlugins)
+//  }
+//
+//  dependencies {
+//    implementation(project(":sql:sql-jvm"))
+//    implementation(project(":Edu-Kotlin"))
+//    testImplementation(project(":educational-core", "testOutput"))
+//    testImplementation(project(":sql", "testOutput"))
+//    testImplementation(project(":sql:sql-jvm", "testOutput"))
+//    testImplementation(project(":jvm-core", "testOutput"))
+//  }
+//}
 
-  dependencies {
-    implementation(project(":educational-core"))
-    compileOnly(project(":Edu-Python"))
-    testImplementation(project(":educational-core", "testOutput"))
-  }
-}
-
-project(":Edu-JavaScript") {
-  intellij {
-    version.set(ideaVersion)
-    plugins.set(javaScriptPlugins)
-  }
-  dependencies {
-    implementation(project(":educational-core"))
-
-    testImplementation(project(":educational-core", "testOutput"))
-  }
-}
-
-project(":Edu-Rust") {
-  intellij {
-    plugins.set(rustPlugins)
-  }
-
-  dependencies {
-    implementation(project(":educational-core"))
-
-    testImplementation(project(":educational-core", "testOutput"))
-  }
-}
-
-project(":Edu-Cpp") {
-  intellij {
-    version.set(clionVersion)
-    plugins.set(cppPlugins)
-  }
-
-  dependencies {
-    implementation(project(":educational-core"))
-
-    testImplementation(project(":educational-core", "testOutput"))
-  }
-}
-
-project(":Edu-Go") {
-  intellij {
-    version.set(ideaVersion)
-    plugins.set(listOf(goPlugin, intelliLangPlugin))
-  }
-
-  dependencies {
-    implementation(project(":educational-core"))
-
-    testImplementation(project(":educational-core", "testOutput"))
-  }
-}
-
-project(":Edu-Php") {
-  intellij {
-    version.set(ideaVersion)
-    plugins.set(listOf(phpPlugin))
-  }
-
-  dependencies {
-    implementation(project(":educational-core"))
-
-    testImplementation(project(":educational-core", "testOutput"))
-  }
-}
-
-project(":Edu-Shell") {
-  intellij {
-    plugins.set(listOf(shellScriptPlugin))
-  }
-
-  dependencies {
-    implementation(project(":educational-core"))
-
-    testImplementation(project(":educational-core", "testOutput"))
-  }
-}
-
-project(":sql") {
-  intellij {
-    if (isStudioIDE || isPycharmIDE) {
-      version.set(ideaVersion)
-    }
-    plugins.set(listOf(sqlPlugin))
-  }
-
-  dependencies {
-    api(project(":educational-core"))
-    testImplementation(project(":educational-core", "testOutput"))
-  }
-}
-
-project("sql:sql-jvm") {
-  intellij {
-    version.set(ideaVersion)
-    plugins.set(listOf(sqlPlugin) + jvmPlugins)
-  }
-
-  dependencies {
-    api(project(":sql"))
-    api(project(":jvm-core"))
-    testImplementation(project(":educational-core", "testOutput"))
-    testImplementation(project(":sql", "testOutput"))
-    testImplementation(project(":jvm-core", "testOutput"))
-  }
-}
-
-project("sql:Edu-Sql-Java") {
-  intellij {
-    version.set(ideaVersion)
-    plugins.set(listOf(sqlPlugin) + jvmPlugins)
-  }
-
-  dependencies {
-    implementation(project(":sql:sql-jvm"))
-    implementation(project(":Edu-Java"))
-    testImplementation(project(":educational-core", "testOutput"))
-    testImplementation(project(":sql", "testOutput"))
-    testImplementation(project(":sql:sql-jvm", "testOutput"))
-    testImplementation(project(":jvm-core", "testOutput"))
-  }
-}
-
-project("sql:Edu-Sql-Kotlin") {
-  intellij {
-    version.set(ideaVersion)
-    plugins.set(listOf(sqlPlugin) + kotlinPlugins)
-  }
-
-  dependencies {
-    implementation(project(":sql:sql-jvm"))
-    implementation(project(":Edu-Kotlin"))
-    testImplementation(project(":educational-core", "testOutput"))
-    testImplementation(project(":sql", "testOutput"))
-    testImplementation(project(":sql:sql-jvm", "testOutput"))
-    testImplementation(project(":jvm-core", "testOutput"))
-  }
-}
-
-project(":github") {
-  intellij {
-    plugins.set(listOf(githubPlugin))
-  }
-
-  dependencies {
-    implementation(project(":educational-core"))
-
-    testImplementation(project(":educational-core", "testOutput"))
-  }
-}
+//project(":github") {
+//  intellij {
+//    plugins.set(listOf(githubPlugin))
+//  }
+//
+//  dependencies {
+//    implementation(project(":educational-core"))
+//
+//    testImplementation(project(":educational-core", "testOutput"))
+//  }
+//}
 
 fun hasProp(name: String): Boolean = extra.has(name)
 
