@@ -101,6 +101,7 @@ fun EduCourse.checkForUpdates(project: Project, updateForced: Boolean, onFinish:
   }
 }
 
+// TODO remove
 fun isRemoteUpdateFormatVersionCompatible(project: Project, remoteCourseFormatVersion: Int): Boolean {
   if (remoteCourseFormatVersion > JSON_FORMAT_VERSION) {
     runInEdt {

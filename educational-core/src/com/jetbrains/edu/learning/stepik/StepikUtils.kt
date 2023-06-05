@@ -33,6 +33,7 @@ fun getStepikLink(task: Task, lesson: Lesson): String {
   return "${StepikNames.getStepikUrl()}/lesson/${lesson.id}/step/${task.index}"
 }
 
+// TODO delete
 fun showUpdateAvailableNotification(project: Project, updateAction: () -> Unit) {
   Notification("JetBrains Academy",
                EduCoreBundle.message("update.content"),
@@ -42,6 +43,7 @@ fun showUpdateAvailableNotification(project: Project, updateAction: () -> Unit) 
     .notify(project)
 }
 
+// TODO delete
 fun notificationListener(project: Project,
                          updateAction: () -> Unit): NotificationListener {
   return NotificationListener { notification, _ ->
