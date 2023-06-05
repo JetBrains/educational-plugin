@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.util.StdConverter
 import com.intellij.lang.Language
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduNames.EDU
@@ -216,12 +217,19 @@ private class CourseBuilder(
 ) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {
+    return ProgressManager.getInstance().computeInNonCancelableSection<Course, Exception> {
+      createCourse()
+    }
+  }
+
+  private fun createCourse(): Course {
     val course = when (courseType?.replaceFirstChar { it.titlecaseChar() }) {
       CourseraNames.COURSE_TYPE -> {
         CourseraCourse().apply {
           submitManually = courseraSubmitManually ?: false
         }
       }
+
       CHECKIO_TYPE -> CheckiOCourse()
       HYPERSKILL_TYPE -> HyperskillCourse()
       STEPIK_TYPE -> StepikCourse()
@@ -231,6 +239,7 @@ private class CourseBuilder(
           programTypeId = codeforcesProgramTypeId
         }
       }
+
       EDU -> EduCourse()
       MARKETPLACE -> {
         EduCourse().apply {
@@ -238,6 +247,7 @@ private class CourseBuilder(
           generatedEduId = yamlGeneratedEduId
         }
       }
+
       null -> EduCourse()
       else -> formatError(unsupportedItemTypeMessage(courseType, EduNames.COURSE))
     }
@@ -267,11 +277,16 @@ private class CourseBuilder(
       languageId = languages.first().id
 
       val supportedLanguageVersions = configurator?.courseBuilder?.getSupportedLanguageVersions() ?: formatError(
-        EduCoreBundle.message("yaml.editor.invalid.unsupported.language", displayProgrammingLanguageName))
+        EduCoreBundle.message("yaml.editor.invalid.unsupported.language", displayProgrammingLanguageName)
+      )
       if (programmingLanguageVersion != null) {
         if (!supportedLanguageVersions.contains(programmingLanguageVersion)) {
-          formatError(EduCoreBundle.message("yaml.editor.invalid.unsupported.language.with.version", displayProgrammingLanguageName,
-                                            programmingLanguageVersion))
+          formatError(
+            EduCoreBundle.message(
+              "yaml.editor.invalid.unsupported.language.with.version", displayProgrammingLanguageName,
+              programmingLanguageVersion
+            )
+          )
         }
         else {
           languageVersion = programmingLanguageVersion
@@ -289,7 +304,8 @@ private class CourseBuilder(
     }
 
     val locale = Locale.getISOLanguages().find { displayLanguageByCode(it) == language } ?: formatError(
-      EduCoreBundle.message("yaml.editor.invalid.format.unknown.field", language))
+      EduCoreBundle.message("yaml.editor.invalid.format.unknown.field", language)
+    )
     course.languageCode = Locale(locale).language
     return course
   }
