@@ -1,47 +1,35 @@
-package com.jetbrains.edu.learning.editor;
+package com.jetbrains.edu.learning.editor
 
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.editor.Caret;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.ReadOnlyFragmentModificationException;
-import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.editor.Caret
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.ReadOnlyFragmentModificationException
+import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 
-public class EduCutTypedHandler extends EduTypedHandler {
-
-  public EduCutTypedHandler(EditorActionHandler originalHandler) {
-    super(originalHandler);
-  }
-
-  @Override
-  public void executeWriteAction(Editor editor, @Nullable Caret caret, DataContext dataContext) {
-    final Caret currentCaret = editor.getCaretModel().getPrimaryCaret();
-    final TaskFile taskFile = getTaskFile(editor);
+class EduCutTypedHandler(originalHandler: EditorActionHandler) : EduTypedHandler(originalHandler) {
+  override fun executeWriteAction(editor: Editor, caret: Caret?, dataContext: DataContext) {
+    val currentCaret = editor.caretModel.primaryCaret
+    val taskFile = getTaskFile(editor)
     if (taskFile == null) {
-      originalHandler.execute(editor, caret, dataContext);
-      return;
+      originalHandler.execute(editor, caret, dataContext)
+      return
     }
-
-    final int start = editor.getSelectionModel().getSelectionStart();
-    final int end = editor.getSelectionModel().getSelectionEnd();
-    AnswerPlaceholder placeholder = EduTypedHandler.Companion.getAnswerPlaceholder(start, end, taskFile.getAnswerPlaceholders());
-    if (placeholder != null && editor.getSelectionModel().hasSelection()) {
-      throw new ReadOnlyFragmentModificationException(null, null);
+    val start = editor.selectionModel.selectionStart
+    val end = editor.selectionModel.selectionEnd
+    var placeholder = getAnswerPlaceholder(start, end, taskFile.answerPlaceholders)
+    if (placeholder != null && editor.selectionModel.hasSelection()) {
+      throw ReadOnlyFragmentModificationException(null, null)
     }
-    final Document document = editor.getDocument();
-    final int lineNumber = document.getLineNumber(currentCaret.getOffset());
-    int lineEndOffset = document.getLineEndOffset(lineNumber);
-    int lineStartOffset = document.getLineStartOffset(lineNumber);
-    placeholder = EduTypedHandler.Companion.getAnswerPlaceholder(lineStartOffset, lineEndOffset, taskFile.getAnswerPlaceholders());
+    val document = editor.document
+    val lineNumber = document.getLineNumber(currentCaret.offset)
+    val lineEndOffset = document.getLineEndOffset(lineNumber)
+    val lineStartOffset = document.getLineStartOffset(lineNumber)
+    placeholder = getAnswerPlaceholder(lineStartOffset, lineEndOffset, taskFile.answerPlaceholders)
     if (placeholder != null && start == end) {
-      throw new ReadOnlyFragmentModificationException(null, null);
+      throw ReadOnlyFragmentModificationException(null, null)
     }
     else {
-      originalHandler.execute(editor, caret, dataContext);
+      originalHandler.execute(editor, caret, dataContext)
     }
   }
 }
-
