@@ -1,61 +1,35 @@
-package com.jetbrains.edu.learning.actions;
+package com.jetbrains.edu.learning.actions
 
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.OpenApiExtKt;
-import com.jetbrains.edu.learning.VirtualFileExt;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.navigation.NavigationUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.actions.EduActionUtils.updateAction
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.getTaskFile
+import com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToAnswerPlaceholder
+import com.jetbrains.edu.learning.selectedEditor
 
-import java.util.Collection;
-
-abstract public class PlaceholderNavigationAction extends DumbAwareAction {
-
-  private void navigateToPlaceholder(@NotNull final Project project) {
-    final Editor selectedEditor = OpenApiExtKt.getSelectedEditor(project);
-    if (selectedEditor != null) {
-      final FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
-      final VirtualFile openedFile = fileDocumentManager.getFile(selectedEditor.getDocument());
-      if (openedFile != null) {
-        final TaskFile selectedTaskFile = VirtualFileExt.getTaskFile(openedFile, project);
-        if (selectedTaskFile != null) {
-          final int offset = selectedEditor.getCaretModel().getOffset();
-          final AnswerPlaceholder targetPlaceholder = getTargetPlaceholder(selectedTaskFile, offset);
-          if (targetPlaceholder == null) {
-            return;
-          }
-          NavigationUtils.navigateToAnswerPlaceholder(selectedEditor, targetPlaceholder);
-        }
-      }
-    }
+abstract class PlaceholderNavigationAction : DumbAwareAction() {
+  private fun navigateToPlaceholder(project: Project) {
+    val selectedEditor = project.selectedEditor ?: return
+    val openedFile = FileDocumentManager.getInstance().getFile(selectedEditor.document) ?: return
+    val selectedTaskFile = openedFile.getTaskFile(project) ?: return
+    val offset = selectedEditor.caretModel.offset
+    val targetPlaceholder = getTargetPlaceholder(selectedTaskFile, offset) ?: return
+    navigateToAnswerPlaceholder(selectedEditor, targetPlaceholder)
   }
 
-  @Nullable
-  protected abstract AnswerPlaceholder getTargetPlaceholder(@NotNull final TaskFile taskFile, int offset);
-
-  @Override
-  public void actionPerformed(@NotNull AnActionEvent e) {
-    final Project project = e.getProject();
-    if (project == null) {
-      return;
-    }
-    navigateToPlaceholder(project);
+  protected abstract fun getTargetPlaceholder(taskFile: TaskFile, offset: Int): AnswerPlaceholder?
+  override fun actionPerformed(e: AnActionEvent) {
+    val project = e.project ?: return
+    navigateToPlaceholder(project)
   }
 
-  @Override
-  public void update(@NotNull AnActionEvent e) {
-    EduActionUtils.updateAction(e);
+  override fun update(e: AnActionEvent) {
+    updateAction(e)
   }
 
-  protected boolean indexIsValid(int index, @NotNull final Collection<?> collection) {
-    int size = collection.size();
-    return index >= 0 && index < size;
-  }
+  protected fun indexIsValid(index: Int, collection: Collection<*>): Boolean = index >= 0 && index < collection.size
 }
