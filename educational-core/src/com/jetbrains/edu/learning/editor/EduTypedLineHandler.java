@@ -12,7 +12,6 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.jetbrains.edu.learning.editor.EduTypedHandler.getAnswerPlaceholder;
 import static com.jetbrains.edu.learning.editor.EduTypedHandler.getTaskFile;
 
 /**
@@ -44,7 +43,8 @@ public class EduTypedLineHandler extends EditorWriteActionHandler {
     final int lineNumber = document.getLineNumber(currentCaret.getOffset());
     int lineEndOffset = document.getLineEndOffset(lineNumber);
     int lineStartOffset = document.getLineStartOffset(lineNumber);
-    final AnswerPlaceholder placeholder = getAnswerPlaceholder(lineStartOffset, lineEndOffset, taskFile.getAnswerPlaceholders());
+    final AnswerPlaceholder placeholder = EduTypedHandler.Companion.getAnswerPlaceholder(lineStartOffset, lineEndOffset,
+                                                                                         taskFile.getAnswerPlaceholders());
     if (placeholder != null) {
       throw new ReadOnlyFragmentModificationException(null, null);
     }

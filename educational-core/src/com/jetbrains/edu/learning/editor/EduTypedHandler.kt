@@ -1,87 +1,64 @@
-package com.jetbrains.edu.learning.editor;
+package com.jetbrains.edu.learning.editor
 
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.editor.Caret;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.ReadOnlyFragmentModificationException;
-import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
-import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.VirtualFileExt;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
+import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.editor.Caret
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.ReadOnlyFragmentModificationException
+import com.intellij.openapi.editor.actionSystem.EditorActionHandler
+import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.getTaskFile
 
 /**
  * Used to forbid placeholder deletion
  */
-public class EduTypedHandler extends EditorWriteActionHandler {
-  protected final EditorActionHandler myOriginalHandler;
+open class EduTypedHandler(@JvmField protected val originalHandler: EditorActionHandler) : EditorWriteActionHandler(false) {
+  override fun isEnabledForCaret(editor: Editor, caret: Caret, dataContext: DataContext): Boolean = true
 
-  public EduTypedHandler(EditorActionHandler originalHandler) {
-    super(false);
-    myOriginalHandler = originalHandler;
-  }
-
-  @Override
-  protected boolean isEnabledForCaret(@NotNull Editor editor, @NotNull Caret caret, DataContext dataContext) {
-    return true;
-  }
-
-  @Override
-  public void executeWriteAction(Editor editor, @Nullable Caret caret, DataContext dataContext) {
-    final Caret currentCaret = editor.getCaretModel().getPrimaryCaret();
-    final TaskFile taskFile = getTaskFile(editor);
+  override fun executeWriteAction(editor: Editor, caret: Caret?, dataContext: DataContext) {
+    val currentCaret = editor.caretModel.primaryCaret
+    val taskFile = getTaskFile(editor)
     if (taskFile == null) {
-      myOriginalHandler.execute(editor, caret, dataContext);
-      return;
+      originalHandler.execute(editor, caret, dataContext)
+      return
     }
-
-    final int start = editor.getSelectionModel().getSelectionStart();
-    final int end = editor.getSelectionModel().getSelectionEnd();
-    AnswerPlaceholder placeholder = getAnswerPlaceholder(start, end, taskFile.getAnswerPlaceholders());
-    if (placeholder != null && editor.getSelectionModel().hasSelection()) {
-      throw new ReadOnlyFragmentModificationException(null, null);
+    val start = editor.selectionModel.selectionStart
+    val end = editor.selectionModel.selectionEnd
+    var placeholder = getAnswerPlaceholder(start, end, taskFile.answerPlaceholders)
+    if (placeholder != null && editor.selectionModel.hasSelection()) {
+      throw ReadOnlyFragmentModificationException(null, null)
     }
-    placeholder = taskFile.getAnswerPlaceholder(currentCaret.getOffset());
-    if (placeholder != null && placeholder.getLength() == 0) {
-      throw new ReadOnlyFragmentModificationException(null, null);
+    placeholder = taskFile.getAnswerPlaceholder(currentCaret.offset)
+    if (placeholder != null && placeholder.length == 0) {
+      throw ReadOnlyFragmentModificationException(null, null)
     }
     else {
-      myOriginalHandler.execute(editor, caret, dataContext);
+      originalHandler.execute(editor, caret, dataContext)
     }
   }
 
-  @Nullable
-  public static AnswerPlaceholder getAnswerPlaceholder(int start, int end, List<AnswerPlaceholder> placeholders) {
-    for (AnswerPlaceholder placeholder : placeholders) {
-      int placeholderStart = placeholder.getOffset();
-      int placeholderEnd = placeholder.getEndOffset();
-      if (placeholderStart == start && placeholderEnd == end) continue;
-      if (placeholderStart >= start && placeholderStart < end && placeholderEnd <= end &&
-          placeholderEnd > start) {
-        return placeholder;
+  companion object {
+    @OptIn(ExperimentalStdlibApi::class)
+    fun getAnswerPlaceholder(start: Int, end: Int, placeholders: List<AnswerPlaceholder>): AnswerPlaceholder? {
+      for (placeholder in placeholders) {
+        val placeholderStart = placeholder.offset
+        val placeholderEnd = placeholder.endOffset
+        if (placeholderStart == start && placeholderEnd == end) continue
+        if (placeholderStart in start..<end && placeholderEnd <= end && placeholderEnd > start) {
+          return placeholder
+        }
       }
+      return null
     }
-    return null;
-  }
 
-  @Nullable
-  public static TaskFile getTaskFile(@Nullable Editor editor) {
-    if (editor == null) return null;
-    final Project project = editor.getProject();
-    if (project == null) return null;
-    final VirtualFile openedFile = FileDocumentManager.getInstance().getFile(editor.getDocument());
-    if (openedFile == null) return null;
-    final TaskFile taskFile = VirtualFileExt.getTaskFile(openedFile, project);
-    if (taskFile == null) return null;
-
-    return taskFile;
+    @JvmStatic
+    fun getTaskFile(editor: Editor?): TaskFile? {
+      if (editor == null) return null
+      val project = editor.project ?: return null
+      val openedFile = FileDocumentManager.getInstance().getFile(editor.document) ?: return null
+      return openedFile.getTaskFile(project)
+    }
   }
 }
-

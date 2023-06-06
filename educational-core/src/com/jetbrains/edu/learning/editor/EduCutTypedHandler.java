@@ -21,13 +21,13 @@ public class EduCutTypedHandler extends EduTypedHandler {
     final Caret currentCaret = editor.getCaretModel().getPrimaryCaret();
     final TaskFile taskFile = getTaskFile(editor);
     if (taskFile == null) {
-      myOriginalHandler.execute(editor, caret, dataContext);
+      originalHandler.execute(editor, caret, dataContext);
       return;
     }
 
     final int start = editor.getSelectionModel().getSelectionStart();
     final int end = editor.getSelectionModel().getSelectionEnd();
-    AnswerPlaceholder placeholder = getAnswerPlaceholder(start, end, taskFile.getAnswerPlaceholders());
+    AnswerPlaceholder placeholder = EduTypedHandler.Companion.getAnswerPlaceholder(start, end, taskFile.getAnswerPlaceholders());
     if (placeholder != null && editor.getSelectionModel().hasSelection()) {
       throw new ReadOnlyFragmentModificationException(null, null);
     }
@@ -35,12 +35,12 @@ public class EduCutTypedHandler extends EduTypedHandler {
     final int lineNumber = document.getLineNumber(currentCaret.getOffset());
     int lineEndOffset = document.getLineEndOffset(lineNumber);
     int lineStartOffset = document.getLineStartOffset(lineNumber);
-    placeholder = getAnswerPlaceholder(lineStartOffset, lineEndOffset, taskFile.getAnswerPlaceholders());
+    placeholder = EduTypedHandler.Companion.getAnswerPlaceholder(lineStartOffset, lineEndOffset, taskFile.getAnswerPlaceholders());
     if (placeholder != null && start == end) {
       throw new ReadOnlyFragmentModificationException(null, null);
     }
     else {
-      myOriginalHandler.execute(editor, caret, dataContext);
+      originalHandler.execute(editor, caret, dataContext);
     }
   }
 }
