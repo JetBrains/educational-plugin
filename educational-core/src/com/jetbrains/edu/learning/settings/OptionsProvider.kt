@@ -1,13 +1,13 @@
-package com.jetbrains.edu.learning.settings;
+package com.jetbrains.edu.learning.settings
 
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.options.ConfigurableEP;
+import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.openapi.options.Configurable
+import com.intellij.openapi.options.ConfigurableEP
 
-public interface OptionsProvider extends Configurable {
-  ExtensionPointName<ConfigurableEP<OptionsProvider>> EP_NAME = ExtensionPointName.create("Educational.optionsProvider");
+interface OptionsProvider : Configurable {
+  fun isAvailable(): Boolean = true
 
-  default boolean isAvailable() {
-    return true;
+  companion object {
+    val EP_NAME: ExtensionPointName<ConfigurableEP<OptionsProvider>> = ExtensionPointName.create("Educational.optionsProvider")
   }
 }

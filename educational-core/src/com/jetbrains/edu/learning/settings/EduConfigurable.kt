@@ -43,7 +43,7 @@ class EduConfigurable : CompositeConfigurable<OptionsProvider>(), Configurable.W
   }
 
   override fun createConfigurables(): List<OptionsProvider> {
-    return ConfigurableWrapper.createConfigurables(OptionsProvider.EP_NAME).filter { it.isAvailable }
+    return ConfigurableWrapper.createConfigurables(OptionsProvider.EP_NAME).filter { it.isAvailable() }
   }
 
   override fun getDependencies(): Collection<BaseExtensionPointName<*>> = listOf(OptionsProvider.EP_NAME)
