@@ -1,53 +1,46 @@
-package com.jetbrains.edu.learning.handlers;
+package com.jetbrains.edu.learning.handlers
 
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.refactoring.move.MoveCallback;
-import com.intellij.refactoring.move.MoveHandlerDelegate;
-import com.jetbrains.edu.learning.EduUtilsKt;
-import com.jetbrains.edu.learning.messages.EduCoreBundle;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.Messages
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReference
+import com.intellij.refactoring.move.MoveCallback
+import com.intellij.refactoring.move.MoveHandlerDelegate
+import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
+import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 
-import static com.jetbrains.edu.learning.handlers.HandlersUtils.isMoveForbidden;
-
-public class EduMoveDelegate extends MoveHandlerDelegate {
-  @Override
-  public boolean canMove(DataContext dataContext) {
-    return isMoveForbidden(dataContext);
+open class EduMoveDelegate : MoveHandlerDelegate() {
+  override fun canMove(dataContext: DataContext): Boolean {
+    return isMoveForbidden(dataContext)
   }
 
-  @Override
-  public boolean canMove(PsiElement[] elements, @Nullable PsiElement targetContainer, @Nullable PsiReference reference) {
-    if (elements.length == 1) {
-      Project project = elements[0].getProject();
-      return isMoveForbidden(project, elements[0], targetContainer);
+  override fun canMove(elements: Array<PsiElement>, targetContainer: PsiElement?, reference: PsiReference?): Boolean {
+    if (elements.size == 1) {
+      return isMoveForbidden(elements[0].project, elements[0], targetContainer)
     }
-    return false;
+    return false
   }
 
-  @Override
-  public boolean isValidTarget(PsiElement psiElement, PsiElement[] sources) {
-    return true;
+  override fun isValidTarget(psiElement: PsiElement?, sources: Array<PsiElement>): Boolean = true
+
+  override fun doMove(
+    project: Project,
+    elements: Array<PsiElement>,
+    targetContainer: PsiElement?,
+    callback: MoveCallback?
+  ) {
+    Messages.showInfoMessage(message("messages.move.operation.description"), message("messages.move.invalid"))
   }
 
-  @Override
-  public void doMove(final Project project,
-                     PsiElement[] elements,
-                     @Nullable PsiElement targetContainer,
-                     @Nullable MoveCallback callback) {
-    Messages.showInfoMessage(EduCoreBundle.message("messages.move.operation.description"), EduCoreBundle.message("messages.move.invalid"));
-  }
-
-  @Override
-  public boolean tryToMove(PsiElement element,
-                           Project project,
-                           DataContext dataContext,
-                           @Nullable PsiReference reference,
-                           Editor editor) {
-    return EduUtilsKt.isEduProject(project);
+  override fun tryToMove(
+    element: PsiElement,
+    project: Project,
+    dataContext: DataContext,
+    reference: PsiReference?,
+    editor: Editor
+  ): Boolean {
+    return project.isEduProject()
   }
 }
