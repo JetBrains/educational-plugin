@@ -1,132 +1,94 @@
-package com.jetbrains.edu.learning;
+package com.jetbrains.edu.learning
 
-import com.google.common.annotations.VisibleForTesting;
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import com.intellij.ui.jcef.JBCefApp;
-import com.intellij.util.xmlb.XmlSerializer;
-import com.intellij.util.xmlb.annotations.Property;
-import com.intellij.util.xmlb.annotations.Transient;
-import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException;
-import com.jetbrains.edu.learning.stepik.StepikUser;
-import com.jetbrains.edu.learning.stepik.StepikUserInfo;
-import com.jetbrains.edu.learning.stepik.api.StepikConnector;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
+import com.intellij.openapi.components.service
+import com.intellij.ui.jcef.JBCefApp
+import com.intellij.util.xmlb.XmlSerializer
+import com.intellij.util.xmlb.annotations.Property
+import com.intellij.util.xmlb.annotations.Transient
+import com.jetbrains.edu.learning.authUtils.deserializeOAuthAccount
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*
+import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException
+import com.jetbrains.edu.learning.stepik.StepikUser
+import com.jetbrains.edu.learning.stepik.StepikUserInfo
+import com.jetbrains.edu.learning.stepik.api.StepikConnector
+import org.jdom.Element
 
-import static com.jetbrains.edu.learning.authUtils.OAuthAccountKt.deserializeOAuthAccount;
-import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*;
-
-@State(name = "EduSettings", storages = @Storage("other.xml"))
-public class EduSettings implements PersistentStateComponent<Element> {
+@State(name = "EduSettings", storages = [Storage("other.xml")])
+class EduSettings : PersistentStateComponent<Element> {
   @Transient
-  @Nullable
-  private volatile StepikUser myUser;
-  @Property private JavaUILibrary javaUiLibrary = initialJavaUiLibrary();
+  @Volatile
+  private var _user: StepikUser? = null
 
-  public EduSettings() {
-    init();
-  }
-
-  @VisibleForTesting
-  public void init() {
-  }
-
-  @Nullable
-  @Override
-  public Element getState() {
-    return serialize();
-  }
-
-  @NotNull
-  private Element serialize() {
-    Element mainElement = new Element(SETTINGS_NAME);
-    XmlSerializer.serializeInto(this, mainElement);
-    if (myUser != null) {
-      Element userOption = new Element(OPTION);
-      userOption.setAttribute(NAME, USER);
-      Element userElement = myUser.serialize();
-      if (userElement != null) {
-        userOption.addContent(userElement);
-        mainElement.addContent(userOption);
+  @get:Transient
+  @set:Transient
+  var user: StepikUser?
+    get() = _user
+    set(user) {
+      _user = user
+      if (user != null) {
+        StepikConnector.getInstance().notifyUserLoggedIn()
+      }
+      else {
+        StepikConnector.getInstance().notifyUserLoggedOut()
       }
     }
-    return mainElement;
+
+  @Property
+  var javaUiLibrary: JavaUILibrary = initialJavaUiLibrary()
+
+  override fun getState(): Element {
+    return serialize()
   }
 
-  @Override
-  public void loadState(@NotNull Element state) {
+  private fun serialize(): Element {
+    val mainElement = Element(SETTINGS_NAME)
+    XmlSerializer.serializeInto(this, mainElement)
+    val userElement = _user?.serialize() ?: return mainElement
+    val userOption = Element(OPTION)
+    userOption.setAttribute(NAME, USER)
+    userOption.addContent(userElement)
+    mainElement.addContent(userOption)
+    return mainElement
+  }
+
+  override fun loadState(state: Element) {
     try {
-      deserialize(state);
+      deserialize(state)
     }
-    catch (StudyUnrecognizedFormatException ignored) {
-    }
-  }
-
-  private void deserialize(@NotNull Element state) throws StudyUnrecognizedFormatException {
-    XmlSerializer.deserializeInto(this, state);
-
-    Element user = getChildWithName(state, USER, true);
-    if (user != null) {
-      Element userXml = user.getChild(STEPIK_USER);
-      if (userXml != null) {
-        myUser = deserializeOAuthAccount(userXml, StepikUser.class, StepikUserInfo.class);
-      }
+    catch (ignored: StudyUnrecognizedFormatException) {
     }
   }
 
-  public static EduSettings getInstance() {
-    return ServiceManager.getService(EduSettings.class);
+  private fun deserialize(state: Element) {
+    XmlSerializer.deserializeInto(this, state)
+    val user = getChildWithName(state, USER, true)
+    val userXml = user?.getChild(STEPIK_USER) ?: return
+    _user = deserializeOAuthAccount(userXml, StepikUser::class.java, StepikUserInfo::class.java)
   }
 
-  @Nullable
-  @Transient
-  public StepikUser getUser() {
-    return myUser;
-  }
-
-  @Transient
-  public void setUser(@Nullable final StepikUser user) {
-    myUser = user;
-    if (user != null) {
-      StepikConnector.getInstance().notifyUserLoggedIn();
+  private fun initialJavaUiLibrary(): JavaUILibrary {
+    return if (JBCefApp.isSupported()) {
+      JavaUILibrary.JCEF
     }
     else {
-      StepikConnector.getInstance().notifyUserLoggedOut();
+      JavaUILibrary.SWING
     }
   }
 
-  private JavaUILibrary initialJavaUiLibrary() {
-    if (javaUiLibrary != null && javaUiLibrary != JavaUILibrary.JAVAFX) {
-      return javaUiLibrary;
+  val javaUiLibraryWithCheck: JavaUILibrary
+    get() = if (javaUiLibrary === JavaUILibrary.JCEF && JBCefApp.isSupported()) {
+      JavaUILibrary.JCEF
     }
-    if (JBCefApp.isSupported()) {
-      return JavaUILibrary.JCEF;
+    else {
+      JavaUILibrary.SWING
     }
-    return JavaUILibrary.SWING;
-  }
 
-  @NotNull
-  public JavaUILibrary getJavaUiLibrary() {
-    return javaUiLibrary;
-  }
-
-  @NotNull
-  public JavaUILibrary getJavaUiLibraryWithCheck() {
-    if (javaUiLibrary == JavaUILibrary.JCEF && JBCefApp.isSupported()) {
-      return JavaUILibrary.JCEF;
-    }
-    return JavaUILibrary.SWING;
-  }
-
-  public void setJavaUiLibrary(@NotNull JavaUILibrary javaUiLibrary) {
-    this.javaUiLibrary = javaUiLibrary;
-  }
-
-  public static boolean isLoggedIn() {
-    return getInstance().myUser != null;
+  companion object {
+    @JvmStatic
+    fun getInstance(): EduSettings = service()
+    fun isLoggedIn(): Boolean = getInstance().user != null
   }
 }
