@@ -1,86 +1,60 @@
-package com.jetbrains.edu.learning;
+package com.jetbrains.edu.learning
 
-import com.intellij.ide.lightEdit.LightEdit;
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.*;
-import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Computable;
-import com.intellij.util.messages.Topic;
-import com.intellij.util.xmlb.annotations.Transient;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.yaml.YamlDeepLoader;
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings;
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.ide.lightEdit.LightEdit
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.*
+import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Computable
+import com.intellij.util.messages.Topic
+import com.intellij.util.xmlb.annotations.Transient
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.yaml.YamlDeepLoader.loadCourse
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.isEduYamlProject
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.startSynchronization
 
 /**
- * Implementation of class which contains all the information
- * about study in context of current project
+ * Implementation of class which contains all the information about study in context of current project
  */
-@State(name = "StudySettings", storages = @Storage(value = "study_project.xml", roamingType = RoamingType.DISABLED))
-public class StudyTaskManager implements PersistentStateComponent<Element>, DumbAware, Disposable {
-  public static final Topic<CourseSetListener> COURSE_SET = Topic.create("Edu.courseSet", CourseSetListener.class);
-  private volatile boolean courseLoadedWithError = false;
+@Service(Service.Level.PROJECT)
+@State(name = "StudySettings", storages = [Storage(value = "study_project.xml", roamingType = RoamingType.DISABLED)])
+class StudyTaskManager(private val project: Project) : DumbAware, Disposable {
+  @Volatile
+  private var courseLoadedWithError = false
 
   @Transient
-  private Course myCourse;
+  private var _course: Course? = null
 
-  @Transient @Nullable private final Project myProject;
-
-  public StudyTaskManager(@Nullable Project project) {
-    myProject = project;
-  }
-
-  public StudyTaskManager() {
-    this(null);
-  }
-
-  @Transient
-  public void setCourse(Course course) {
-    myCourse = course;
-    if (myProject != null) {
-      myProject.getMessageBus().syncPublisher(COURSE_SET).courseSet(course);
-    }
-  }
-
-  @Nullable
-  @Transient
-  public Course getCourse() {
-    return myCourse;
-  }
-
-  @Nullable
-  @Override
-  public Element getState() {
-    return null;
-  }
-
-  @Override
-  public void loadState(@NotNull Element state) {
-  }
-
-  @Override
-  public void dispose() {}
-
-  public static StudyTaskManager getInstance(@NotNull final Project project) {
-    StudyTaskManager manager = ServiceManager.getService(project, StudyTaskManager.class);
-    if (!project.isDefault() &&
-        !LightEdit.owns(project) &&
-        manager != null &&
-        manager.getCourse() == null &&
-        YamlFormatSettings.isEduYamlProject(project) &&
-        !manager.courseLoadedWithError) {
-      Course course = ApplicationManager.getApplication().runReadAction((Computable<Course>)() -> YamlDeepLoader.loadCourse(project));
-      manager.courseLoadedWithError = course == null;
-      if (course != null) {
-        manager.setCourse(course);
+  @get:Transient
+  @set:Transient
+  var course: Course?
+    get() = _course
+    set(course) {
+      _course = course
+      course?.apply {
+        project.messageBus.syncPublisher(COURSE_SET).courseSet(this)
       }
-      YamlFormatSynchronizer.startSynchronization(project);
     }
-    return manager;
+
+  override fun dispose() {}
+
+  companion object {
+    val COURSE_SET = Topic.create("Edu.courseSet", CourseSetListener::class.java)
+
+    @JvmStatic
+    fun getInstance(project: Project): StudyTaskManager {
+      val manager = project.service<StudyTaskManager>()
+      if (!project.isDefault && !LightEdit.owns(project) && manager.course == null
+          && project.isEduYamlProject() && !manager.courseLoadedWithError) {
+        val course = ApplicationManager.getApplication().runReadAction(Computable { loadCourse(project) })
+        manager.courseLoadedWithError = course == null
+        if (course != null) {
+          manager.course = course
+        }
+        startSynchronization(project)
+      }
+      return manager
+    }
   }
 }
