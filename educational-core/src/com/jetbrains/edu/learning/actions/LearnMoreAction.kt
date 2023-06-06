@@ -1,19 +1,12 @@
-package com.jetbrains.edu.learning.actions;
+package com.jetbrains.edu.learning.actions
 
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.project.DumbAwareAction;
-import com.jetbrains.edu.learning.EduBrowser;
-import com.jetbrains.edu.learning.messages.EduCoreBundle;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.project.DumbAwareAction
+import com.jetbrains.edu.learning.EduBrowser.Companion.getInstance
+import com.jetbrains.edu.learning.messages.EduCoreBundle.lazyMessage
 
-@SuppressWarnings("ComponentNotRegistered") // educational-core.xml
-public class LearnMoreAction extends DumbAwareAction {
-  public LearnMoreAction() {
-    super(EduCoreBundle.lazyMessage("action.learn.more.text"));
-  }
-
-  @Override
-  public void actionPerformed(@NotNull AnActionEvent e) {
-    EduBrowser.getInstance().browse("https://plugins.jetbrains.com/plugin/10081-jetbrains-academy/docs/jetbrains-academy-plugin.html");
+class LearnMoreAction : DumbAwareAction(lazyMessage("action.learn.more.text")) {
+  override fun actionPerformed(e: AnActionEvent) {
+    getInstance().browse("https://plugins.jetbrains.com/plugin/10081-jetbrains-academy/docs/jetbrains-academy-plugin.html")
   }
 }
