@@ -1,56 +1,37 @@
-package com.jetbrains.edu.learning.editor;
+package com.jetbrains.edu.learning.editor
 
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.editor.Caret;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.ReadOnlyFragmentModificationException;
-import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
-import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import static com.jetbrains.edu.learning.editor.EduTypedHandler.getTaskFile;
+import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.editor.Caret
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.ReadOnlyFragmentModificationException
+import com.intellij.openapi.editor.actionSystem.EditorActionHandler
+import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
+import com.jetbrains.edu.learning.editor.EduTypedHandler.Companion.getAnswerPlaceholder
+import com.jetbrains.edu.learning.editor.EduTypedHandler.Companion.getTaskFile
 
 /**
  * Used to forbid placeholder deletion while executing line actions
  */
-public class EduTypedLineHandler extends EditorWriteActionHandler {
-  protected final EditorActionHandler myOriginalHandler;
+class EduTypedLineHandler(private val originalHandler: EditorActionHandler) : EditorWriteActionHandler(false) {
+  override fun isEnabledForCaret(editor: Editor, caret: Caret, dataContext: DataContext): Boolean = true
 
-  public EduTypedLineHandler(EditorActionHandler originalHandler) {
-    super(false);
-    myOriginalHandler = originalHandler;
-  }
-
-  @Override
-  protected boolean isEnabledForCaret(@NotNull Editor editor, @NotNull Caret caret, DataContext dataContext) {
-    return true;
-  }
-
-  @Override
-  public void executeWriteAction(Editor editor, @Nullable Caret caret, DataContext dataContext) {
-    final Caret currentCaret = editor.getCaretModel().getPrimaryCaret();
-    final TaskFile taskFile = getTaskFile(editor);
+  override fun executeWriteAction(editor: Editor, caret: Caret?, dataContext: DataContext) {
+    val currentCaret = editor.caretModel.primaryCaret
+    val taskFile = getTaskFile(editor)
     if (taskFile == null) {
-      myOriginalHandler.execute(editor, caret, dataContext);
-      return;
+      originalHandler.execute(editor, caret, dataContext)
+      return
     }
-
-    final Document document = editor.getDocument();
-    final int lineNumber = document.getLineNumber(currentCaret.getOffset());
-    int lineEndOffset = document.getLineEndOffset(lineNumber);
-    int lineStartOffset = document.getLineStartOffset(lineNumber);
-    final AnswerPlaceholder placeholder = EduTypedHandler.Companion.getAnswerPlaceholder(lineStartOffset, lineEndOffset,
-                                                                                         taskFile.getAnswerPlaceholders());
+    val document = editor.document
+    val lineNumber = document.getLineNumber(currentCaret.offset)
+    val lineEndOffset = document.getLineEndOffset(lineNumber)
+    val lineStartOffset = document.getLineStartOffset(lineNumber)
+    val placeholder = getAnswerPlaceholder(lineStartOffset, lineEndOffset, taskFile.answerPlaceholders)
     if (placeholder != null) {
-      throw new ReadOnlyFragmentModificationException(null, null);
+      throw ReadOnlyFragmentModificationException(null, null)
     }
     else {
-      myOriginalHandler.execute(editor, caret, dataContext);
+      originalHandler.execute(editor, caret, dataContext)
     }
   }
 }
-
