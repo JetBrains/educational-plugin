@@ -1,149 +1,112 @@
-package com.jetbrains.edu.learning.editor;
+package com.jetbrains.edu.learning.editor
 
-import com.intellij.ide.projectView.ProjectView;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.LogicalPosition;
-import com.intellij.openapi.editor.event.EditorFactoryEvent;
-import com.intellij.openapi.editor.event.EditorFactoryListener;
-import com.intellij.openapi.editor.event.EditorMouseEvent;
-import com.intellij.openapi.editor.event.EditorMouseListener;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.problems.WolfTheProblemSolver;
-import com.jetbrains.edu.learning.EduUtilsKt;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.VirtualFileExt;
-import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
-import com.jetbrains.edu.learning.marketplace.MarketplaceUtils;
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector;
-import com.jetbrains.edu.learning.navigation.NavigationUtils;
-import com.jetbrains.edu.learning.placeholder.PlaceholderHighlightingManager;
-import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager;
-import com.jetbrains.edu.learning.statistics.EduLaunchesReporter;
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillUtilsKt;
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory;
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.ide.projectView.ProjectView
+import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.editor.event.EditorFactoryEvent
+import com.intellij.openapi.editor.event.EditorFactoryListener
+import com.intellij.openapi.editor.event.EditorMouseEvent
+import com.intellij.openapi.editor.event.EditorMouseListener
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.wm.ToolWindowManager
+import com.intellij.problems.WolfTheProblemSolver
+import com.jetbrains.edu.learning.EduUtilsKt.updateToolWindows
+import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.getTaskFile
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
+import com.jetbrains.edu.learning.navigation.NavigationUtils.getPlaceholderOffsets
+import com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToFirstAnswerPlaceholder
+import com.jetbrains.edu.learning.placeholder.PlaceholderHighlightingManager.showPlaceholders
+import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager.updateDependentPlaceholders
+import com.jetbrains.edu.learning.statistics.EduLaunchesReporter.sendStats
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.markTheoryTaskAsCompleted
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView.Companion.getInstance
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
 
-import java.awt.*;
-
-public class EduEditorFactoryListener implements EditorFactoryListener {
-
-  private static final Logger LOG = Logger.getInstance(EduEditorFactoryListener.class);
-
-  private static class WindowSelectionListener implements EditorMouseListener {
-    private final TaskFile myTaskFile;
-
-    public WindowSelectionListener(TaskFile file) {
-      myTaskFile = file;
-    }
-
-    @Override
-    public void mouseClicked(@NotNull EditorMouseEvent e) {
-      final Editor editor = e.getEditor();
-      final Point point = e.getMouseEvent().getPoint();
-      final LogicalPosition pos = editor.xyToLogicalPosition(point);
-      final AnswerPlaceholder answerPlaceholder = myTaskFile.getAnswerPlaceholder(editor.logicalPositionToOffset(pos));
-      if (answerPlaceholder == null || !answerPlaceholder.isVisible() || answerPlaceholder.getSelected()) {
-        return;
+class EduEditorFactoryListener : EditorFactoryListener {
+  private class AnswerPlaceholderSelectionListener(private val taskFile: TaskFile) : EditorMouseListener {
+    override fun mouseClicked(e: EditorMouseEvent) {
+      val editor = e.editor
+      val point = e.mouseEvent.point
+      val pos = editor.xyToLogicalPosition(point)
+      val answerPlaceholder = taskFile.getAnswerPlaceholder(editor.logicalPositionToOffset(pos))
+      if (answerPlaceholder == null || !answerPlaceholder.isVisible || answerPlaceholder.selected) {
+        return
       }
-      final Pair<Integer, Integer> offsets = NavigationUtils.getPlaceholderOffsets(answerPlaceholder);
-      editor.getSelectionModel().setSelection(offsets.getFirst(), offsets.getSecond());
-      answerPlaceholder.setSelected(true);
-      YamlFormatSynchronizer.saveItem(myTaskFile.getTask());
+      val offsets = getPlaceholderOffsets(answerPlaceholder)
+      editor.selectionModel.setSelection(offsets.getFirst(), offsets.getSecond())
+      answerPlaceholder.selected = true
+      saveItem(taskFile.task)
     }
   }
 
-  @Override
-  public void editorCreated(@NotNull final EditorFactoryEvent event) {
-    final Editor editor = event.getEditor();
-    final Project project = editor.getProject();
-    if (project == null) {
-      return;
+  override fun editorCreated(event: EditorFactoryEvent) {
+    val editor = event.editor
+    val project = editor.project ?: return
+    val course = StudyTaskManager.getInstance(project).course ?: return
+    val openedFile = FileDocumentManager.getInstance().getFile(editor.document) ?:  return
+    val taskFile = openedFile.getTaskFile(project) ?: return
+    WolfTheProblemSolver.getInstance(project).clearProblems(openedFile)
+    showTaskDescriptionToolWindow(project, taskFile, true)
+    val task = taskFile.task
+    markTheoryTaskCompleted(project, task)
+    if (taskFile.answerPlaceholders.isNotEmpty() && taskFile.isValid(editor.document.text)) {
+      updateDependentPlaceholders(project, task)
+      navigateToFirstAnswerPlaceholder(editor, taskFile)
+      showPlaceholders(project, taskFile, editor)
+      if (course.isStudy) {
+        editor.addEditorMouseListener(AnswerPlaceholderSelectionListener(taskFile))
+      }
     }
-    Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null) {
-      return;
+    sendStats(course)
+  }
+
+  override fun editorReleased(event: EditorFactoryEvent) = event.editor.selectionModel.removeSelection()
+
+  companion object {
+    private val LOG = logger<EduEditorFactoryListener>()
+
+    private fun showTaskDescriptionToolWindow(project: Project, taskFile: TaskFile, retry: Boolean) {
+      val toolWindowManager = ToolWindowManager.getInstance(project)
+      val studyToolWindow = toolWindowManager.getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
+      if (studyToolWindow == null) {
+        if (retry) {
+          toolWindowManager.invokeLater { showTaskDescriptionToolWindow(project, taskFile, false) }
+        }
+        else {
+          LOG.warn(String.format("Failed to get toolwindow with `%s` id", TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW))
+        }
+        return
+      }
+      if (taskFile.task != getInstance(project).currentTask) {
+        updateToolWindows(project)
+        studyToolWindow.show(null)
+      }
     }
 
-    final Document document = editor.getDocument();
-    final VirtualFile openedFile = FileDocumentManager.getInstance().getFile(document);
-    if (openedFile != null) {
-      TaskFile taskFile = VirtualFileExt.getTaskFile(openedFile, project);
-      if (taskFile != null) {
-        WolfTheProblemSolver.getInstance(project).clearProblems(openedFile);
-        showTaskDescriptionToolWindow(project, taskFile, true);
-
-        Task task = taskFile.getTask();
-        markTheoryTaskAsCompleted(project, task);
-
-        boolean isStudyProject = course.isStudy();
-        if (!taskFile.getAnswerPlaceholders().isEmpty() && taskFile.isValid(editor.getDocument().getText())) {
-          PlaceholderDependencyManager.updateDependentPlaceholders(project, task);
-          NavigationUtils.navigateToFirstAnswerPlaceholder(editor, taskFile);
-          PlaceholderHighlightingManager.showPlaceholders(project, taskFile, editor);
-          if (isStudyProject) {
-            editor.addEditorMouseListener(new WindowSelectionListener(taskFile));
+    private fun markTheoryTaskCompleted(project: Project, task: Task) {
+      if (task !is TheoryTask) return
+      val course = task.course
+      if (course.isStudy && task.postSubmissionOnOpen && task.status !== CheckStatus.Solved) {
+        if (course is HyperskillCourse) {
+          markTheoryTaskAsCompleted(project, task)
+        }
+        else if (course is EduCourse) {
+          if (course.isMarketplaceRemote) {
+            MarketplaceConnector.getInstance().isLoggedInAsync().thenAcceptAsync { markTheoryTaskCompleted(project, task) }
           }
         }
-        EduLaunchesReporter.INSTANCE.sendStats(course);
+        task.status = CheckStatus.Solved
+        saveItem(task)
+        ProjectView.getInstance(project).refresh()
       }
-    }
-  }
-
-  @Override
-  public void editorReleased(@NotNull EditorFactoryEvent event) {
-    event.getEditor().getSelectionModel().removeSelection();
-  }
-
-  private static void showTaskDescriptionToolWindow(@NotNull Project project, @NotNull TaskFile taskFile, boolean retry) {
-    ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
-    final ToolWindow studyToolWindow = toolWindowManager.getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW);
-    if (studyToolWindow == null) {
-      if (retry) {
-        toolWindowManager.invokeLater(() -> showTaskDescriptionToolWindow(project, taskFile, false));
-      }
-      else {
-        LOG.warn(String.format("Failed to get toolwindow with `%s` id", TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW));
-      }
-      return;
-    }
-
-    if (!taskFile.getTask().equals(TaskDescriptionView.getInstance(project).getCurrentTask())) {
-      EduUtilsKt.updateToolWindows(project);
-      studyToolWindow.show(null);
-    }
-  }
-
-  private static void markTheoryTaskAsCompleted(@NotNull Project project, @NotNull Task task) {
-    if (!(task instanceof TheoryTask)) return;
-    TheoryTask theoryTask = (TheoryTask) task;
-    Course course = theoryTask.getCourse();
-    if (course.isStudy() && theoryTask.postSubmissionOnOpen && theoryTask.getStatus() != CheckStatus.Solved) {
-      if (course instanceof HyperskillCourse) {
-        HyperskillUtilsKt.markTheoryTaskAsCompleted(project, theoryTask);
-      }
-      else if (course instanceof EduCourse) {
-        EduCourse eduCourse = (EduCourse)course;
-        if (eduCourse.isMarketplaceRemote()) {
-          MarketplaceConnector.getInstance().isLoggedInAsync().thenAcceptAsync(
-            isLoggedIn -> MarketplaceUtils.markTheoryTaskAsCompleted(project, theoryTask));
-        }
-      }
-
-      theoryTask.setStatus(CheckStatus.Solved);
-      YamlFormatSynchronizer.saveItem(theoryTask);
-      ProjectView.getInstance(project).refresh();
     }
   }
 }
