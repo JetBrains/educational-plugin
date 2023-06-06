@@ -1,77 +1,44 @@
-package com.jetbrains.edu.learning.actions;
+package com.jetbrains.edu.learning.actions
 
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.project.Project;
-import com.jetbrains.edu.learning.*;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.project.DumbAwareAction
+import com.jetbrains.edu.learning.EduUtilsKt.replaceAnswerPlaceholder
+import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.eduState
+import com.jetbrains.edu.learning.selectedEditor
+import org.jetbrains.annotations.NonNls
 
-public class RefreshAnswerPlaceholder extends DumbAwareAction {
+class RefreshAnswerPlaceholder : DumbAwareAction() {
+  override fun actionPerformed(e: AnActionEvent) {
+    val placeholder = getAnswerPlaceholder(e) ?: return
+    val editor = e.project?.selectedEditor ?: return
+    replaceAnswerPlaceholder(editor.document, placeholder)
+    placeholder.reset(false)
+  }
 
-  @NonNls
-  public static final String ACTION_ID = "Educational.RefreshAnswerPlaceholder";
-
-  @Override
-  public void actionPerformed(@NotNull AnActionEvent e) {
-    Project project = e.getProject();
-    if (project == null) {
-      return;
+  override fun update(e: AnActionEvent) {
+    val presentation = e.presentation
+    presentation.isEnabledAndVisible = false
+    val project = e.project ?: return
+    val course = StudyTaskManager.getInstance(project).course ?: return
+    if (!course.isStudy) {
+      presentation.isVisible = true
+      return
     }
-    final AnswerPlaceholder placeholder = getAnswerPlaceholder(e);
-    if (placeholder == null) {
-      return;
-    }
-    Editor editor = OpenApiExtKt.getSelectedEditor(project);
-    if (editor != null) {
-      EduUtilsKt.replaceAnswerPlaceholder(editor.getDocument(), placeholder);
-      placeholder.reset(false);
+    if (getAnswerPlaceholder(e) != null) {
+      presentation.isEnabledAndVisible = true
     }
   }
 
-  @Override
-  public void update(@NotNull AnActionEvent e) {
-    Presentation presentation = e.getPresentation();
-    presentation.setEnabledAndVisible(false);
-    Project project = e.getProject();
-    if (project == null) {
-      return;
-    }
-    Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null) {
-      return;
-    }
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
-    if (!course.isStudy()) {
-      presentation.setVisible(true);
-      return;
+  companion object {
+    const val ACTION_ID: @NonNls String = "Educational.RefreshAnswerPlaceholder"
+    private fun getAnswerPlaceholder(e: AnActionEvent): AnswerPlaceholder? {
+      val (_, editor, taskFile) = e.project?.eduState ?: return null
+      return taskFile.getAnswerPlaceholder(editor.caretModel.offset)
     }
-
-    if (getAnswerPlaceholder(e) == null) {
-      presentation.setEnabledAndVisible(false);
-      return;
-    }
-    presentation.setEnabledAndVisible(true);
-  }
-
-  @Nullable
-  private static AnswerPlaceholder getAnswerPlaceholder(AnActionEvent e) {
-    final Project project = e.getProject();
-    if (project == null) {
-      return null;
-    }
-    final EduState eduState = OpenApiExtKt.getEduState(project);
-    if (eduState == null) {
-      return null;
-    }
-    final Editor editor = eduState.getEditor();
-    final TaskFile taskFile = eduState.getTaskFile();
-    return taskFile.getAnswerPlaceholder(editor.getCaretModel().getOffset());
   }
 }

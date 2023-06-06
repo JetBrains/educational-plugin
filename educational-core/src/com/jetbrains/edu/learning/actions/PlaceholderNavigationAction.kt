@@ -22,6 +22,7 @@ abstract class PlaceholderNavigationAction : DumbAwareAction() {
   }
 
   protected abstract fun getTargetPlaceholder(taskFile: TaskFile, offset: Int): AnswerPlaceholder?
+
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     navigateToPlaceholder(project)
