@@ -17,7 +17,7 @@ import javax.swing.event.HyperlinkEvent
 
 @Suppress("UnstableApiUsage")
 fun showPostFeedbackNotification(student : Boolean, course: Course, project: Project) {
-  val feedbackUrl = feedbackUrlTemplate
+  val feedbackUrl = FEEDBACK_URL_TEMPLATE
       .replace("\$PRODUCT", productMap[PlatformUtils.getPlatformPrefix()] ?:
                                              PlatformUtils.getPlatformPrefix())
       .replace("\$COURSE", course.name)
@@ -30,18 +30,20 @@ fun showPostFeedbackNotification(student : Boolean, course: Course, project: Pro
   else EduCoreBundle.message("feedback.template.creator", product, feedbackUrl, language)
 
   val notification = MyNotification(content, feedbackUrl)
-  PropertiesComponent.getInstance().setValue(feedbackAsked, true)
+  PropertiesComponent.getInstance().setValue(FEEDBACK_ASKED, true)
   notification.notify(project)
 }
 
+// we have plans to use the showQuestionnaireAdvertisingNotification once again later
+@Suppress("unused")
 fun showQuestionnaireAdvertisingNotification(project: Project, course: Course) {
   @Suppress("UnstableApiUsage")
-  val questionnaireUrl = questionnaireUrlTemplate
+  val questionnaireUrl = QUESTIONNAIRE_URL_TEMPLATE
     .replace("\$PRODUCT", productMap[PlatformUtils.getPlatformPrefix()] ?: PlatformUtils.getPlatformPrefix())
     .replace("\$COURSE_ID", course.id.toString())
 
   val notification = MyNotification(EduCoreBundle.message("notification.student.survey", course.name, questionnaireUrl), questionnaireUrl)
-  PropertiesComponent.getInstance().setValue(questionnaireAdvertisingNotificationShown, true)
+  PropertiesComponent.getInstance().setValue(QUESTIONNAIRE_ADVERTISING_NOTIFICATION_SHOWN, true)
   notification.notify(project)
 }
 
@@ -57,18 +59,18 @@ class MyNotification(@Suppress("UnstableApiUsage") @NotificationContent content:
   }
 }
 
-fun isFeedbackAsked() : Boolean = PropertiesComponent.getInstance().getBoolean(feedbackAsked)
+fun isFeedbackAsked() : Boolean = PropertiesComponent.getInstance().getBoolean(FEEDBACK_ASKED)
 
-fun isQuestionnaireAdvertisingNotificationShown() : Boolean = PropertiesComponent.getInstance().getBoolean(questionnaireAdvertisingNotificationShown)
+fun isQuestionnaireAdvertisingNotificationShown() : Boolean = PropertiesComponent.getInstance().getBoolean(QUESTIONNAIRE_ADVERTISING_NOTIFICATION_SHOWN)
 
-private const val feedbackAsked = "askFeedbackNotification"
+private const val FEEDBACK_ASKED = "askFeedbackNotification"
 
-private const val questionnaireAdvertisingNotificationShown = "questionnaireAdvertisingNotification"
+private const val QUESTIONNAIRE_ADVERTISING_NOTIFICATION_SHOWN = "questionnaireAdvertisingNotification"
 
-private const val feedbackUrlTemplate = "https://www.jetbrains.com/feedback/feedback.jsp?" +
-                                "product=EduTools&ide=\$PRODUCT&course=\$COURSE&mode=\$MODE"
+private const val FEEDBACK_URL_TEMPLATE = "https://www.jetbrains.com/feedback/feedback.jsp?" +
+                                          "product=EduTools&ide=\$PRODUCT&course=\$COURSE&mode=\$MODE"
 
-private const val questionnaireUrlTemplate = "https://surveys.jetbrains.com/s3/marketplace-courses-survey?ide=\$PRODUCT&courseId=\$COURSE_ID"
+private const val QUESTIONNAIRE_URL_TEMPLATE = "https://surveys.jetbrains.com/s3/marketplace-courses-survey?ide=\$PRODUCT&courseId=\$COURSE_ID"
 
 @Suppress("UnstableApiUsage")
 private val productMap = hashMapOf(
