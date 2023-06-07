@@ -406,6 +406,21 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  fun `test course programming language ID and version`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      lesson {
+        eduTask {
+          taskFile("fizz.kt", """
+          fn fizzz() = <p>TODO()</p>
+          fn buzz() = <p>TODO()</p>
+        """)
+        }
+      }
+    }
+    course.languageVersion = "11"
+    doTest()
+  }
+
   fun `test task with custom name`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {

@@ -5,14 +5,14 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.lang.Language
-import com.jetbrains.edu.learning.json.mixins.LocalTaskMixin
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.json.configureCourseMapper
 import com.jetbrains.edu.learning.json.getCourseMapper
+import com.jetbrains.edu.learning.json.migration.To10VersionLocalCourseConverter
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ID
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.UPDATE_DATE
-import com.jetbrains.edu.learning.json.migration.To10VersionLocalCourseConverter
+import com.jetbrains.edu.learning.json.mixins.LocalTaskMixin
 import com.jetbrains.edu.learning.json.mixins.RemoteLessonMixin
 import com.jetbrains.edu.learning.json.mixins.RemoteSectionMixin
 import com.jetbrains.edu.learning.stepik.api.STEPIK_ID
@@ -44,7 +44,7 @@ fun newCourse(courseLanguage: Language, courseMode: CourseMode = CourseMode.EDUC
   description = "Test Description"
   this.courseMode = courseMode
   this.environment = environment
-  programmingLanguage = courseLanguage.id
+  languageId = courseLanguage.id
 }
 
 @Suppress( "unused") // used for correct updateDate deserialization from json test data

@@ -43,10 +43,10 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
       is Err -> return null
       is Ok -> response.value
     }
-    val languageId = HyperskillLanguages.getEduLanguage(hyperskillProject.language) ?: return null
+    val (languageId, languageVersion) = HyperskillLanguages.getLanguageIdAndVersion(hyperskillProject.language) ?: return null
     val eduEnvironment = hyperskillProject.eduEnvironment ?: return null
     val stagesFromServer = connector.getStages(id) ?: return null
-    return HyperskillCourse(hyperskillProject, languageId, eduEnvironment).apply {
+    return HyperskillCourse(hyperskillProject, languageId, languageVersion, eduEnvironment).apply {
       stages = stagesFromServer
       val lessonFromServer = connector.getLesson(this, hyperskillProject.ideFiles)
       addLesson(lessonFromServer)

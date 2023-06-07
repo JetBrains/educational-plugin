@@ -30,7 +30,7 @@ val Course.configurator: EduConfigurator<*>? get() {
 
 val Course.compatibilityProvider: CourseCompatibilityProvider?
   get() {
-    return CourseCompatibilityProviderEP.find(languageID, environment)
+    return CourseCompatibilityProviderEP.find(languageId, environment)
   }
 
 val Course.sourceDir: String? get() = configurator?.sourceDir
@@ -55,7 +55,7 @@ val Course.allTasks: List<Task> get() {
   return allTasks
 }
 
-val Course.languageDisplayName: String get() = languageById?.displayName ?: languageID
+val Course.languageDisplayName: String get() = languageById?.displayName ?: languageId
 
 val Course.technologyName: String?
   get() = compatibilityProvider?.technologyName ?: languageById?.displayName
@@ -93,7 +93,7 @@ val Course.tags: List<Tag>
   }
 
 val Course.languageById: Language?
-  get() = Language.findLanguageByID(EduLanguage.get(programmingLanguage).id)
+  get() = Language.findLanguageByID(languageId)
 
 
 val Course.isPreview: Boolean
@@ -118,7 +118,7 @@ private fun Course.versionCompatibility(): CourseCompatibility? {
     return null
   }
 
-  if (programmingLanguage.isEmpty()) {
+  if (languageId.isEmpty()) {
     return CourseCompatibility.Unsupported
   }
 
@@ -131,7 +131,7 @@ private fun Course.versionCompatibility(): CourseCompatibility? {
 
 // projectLanguage parameter should be passed only for hyperskill courses because for Hyperskill
 // it can differ from the course.programmingLanguage
-fun Course.validateLanguage(projectLanguage: String = programmingLanguage): Result<Unit, CourseValidationResult> {
+fun Course.validateLanguage(projectLanguage: String = languageId): Result<Unit, CourseValidationResult> {
   val pluginCompatibility = pluginCompatibility()
   if (pluginCompatibility is CourseCompatibility.PluginsRequired) {
     return Err(PluginsRequired(pluginCompatibility.toInstallOrEnable))

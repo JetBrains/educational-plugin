@@ -2,7 +2,7 @@
   "course_version" : 5,
   "summary" : "Test Course Description",
   "title" : "Test Course",
-  "programming_language" : "FakeGradleBasedLanguage",
+  "programming_language_id" : "FakeGradleBasedLanguage",
   "language" : "en",
   "course_type" : "Marketplace",
   "vendor" : {

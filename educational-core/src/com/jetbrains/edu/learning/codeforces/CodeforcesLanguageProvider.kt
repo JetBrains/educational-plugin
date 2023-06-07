@@ -65,21 +65,17 @@ abstract class CodeforcesLanguageProvider {
       EP_NAME.extensions.filter { it.languageId == languageId }.map { it.codeforcesLanguages.first().languageIdWithVersion }.firstOrNull()
 
     /**
-     * @return Proper language with languageVersion splitted with space from codeforces programming language.
-     * If languageVersion isn't specified - then only language is returned in result
-     * @see [com.jetbrains.edu.learning.courseFormat.Course.languageID]
+     * @return Proper pair of languageId and languageVersion from codeforces programming language.
+     * @see [com.jetbrains.edu.learning.courseFormat.Course.languageId]
      * @see [com.jetbrains.edu.learning.courseFormat.Course.languageVersion]
      */
-    fun getLanguageIdAndVersion(codeforcesLanguage: String): String {
+    fun getLanguageIdAndVersion(codeforcesLanguage: String): Pair<String, String?> {
       EP_NAME.extensions.forEach { languageProvider ->
         if (codeforcesLanguage in languageProvider.codeforcesLanguages.map { it.languageIdWithVersion }) {
           val languageId = languageProvider.languageId
           val languageVersion = languageProvider.getLanguageVersion(codeforcesLanguage)
 
-          return if (languageVersion != null) {
-            "$languageId $languageVersion"
-          }
-          else languageId
+          return Pair(languageId, languageVersion)
         }
       }
       error("Failed to get language and id from Codeforces $codeforcesLanguage")
@@ -97,7 +93,7 @@ abstract class CodeforcesLanguageProvider {
 
     fun generateTaskFiles(task: Task): List<TaskFile>? =
       EP_NAME.extensions
-        .firstOrNull { it.languageId == task.course.languageID }
+        .firstOrNull { it.languageId == task.course.languageId }
         ?.createTaskFiles(task)
 
     fun getConfigurator(languageId: String): EduConfigurator<*>? {

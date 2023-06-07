@@ -75,6 +75,6 @@
   ],
   "summary": "Test Java Course",
   "title": "Java Course",
-  "programming_language": "JAVA",
+  "programming_language_id": "JAVA",
   "language": "en"
 }

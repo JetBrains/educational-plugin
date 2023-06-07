@@ -15,7 +15,7 @@
             }
           ],
           "fields" : {
-            "programmingLanguage" : "Python",
+            "programmingLanguageId" : "Python",
             "language" : "en"
           },
           "link" : "courseLink",

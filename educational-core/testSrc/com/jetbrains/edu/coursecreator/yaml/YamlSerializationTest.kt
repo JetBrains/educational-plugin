@@ -8,8 +8,8 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.coursera.CourseraCourse
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.findTask
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.YamlTestCase
 import java.util.*
@@ -838,7 +838,8 @@ class YamlSerializationTest : YamlTestCase() {
     val course = course(courseMode = CourseMode.EDUCATOR) {}
     course.languageCode = "ru"
     course.description = "sum"
-    course.programmingLanguage = "${PlainTextLanguage.INSTANCE.id} 1.42"
+    course.languageId = PlainTextLanguage.INSTANCE.id
+    course.languageVersion = "1.42"
     doTest(course, """
       |title: Test Course
       |language: Russian
@@ -868,7 +869,8 @@ class YamlSerializationTest : YamlTestCase() {
     val course = course(courseMode = CourseMode.EDUCATOR, courseProducer = ::CourseraCourse) {}
     course.languageCode = "ru"
     course.description = "sum"
-    course.programmingLanguage = "${PlainTextLanguage.INSTANCE.id} 1.42"
+    course.languageId = PlainTextLanguage.INSTANCE.id
+    course.languageVersion = "1.42"
     doTest(course, """
       |type: coursera
       |title: Test Course
@@ -885,7 +887,8 @@ class YamlSerializationTest : YamlTestCase() {
     course.languageCode = "ru"
     course.description = "sum"
     course.submitManually = true
-    course.programmingLanguage = "${PlainTextLanguage.INSTANCE.id} 1.42"
+    course.languageId = PlainTextLanguage.INSTANCE.id
+    course.languageVersion = "1.42"
     doTest(course, """
       |type: coursera
       |title: Test Course

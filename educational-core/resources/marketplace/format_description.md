@@ -19,7 +19,15 @@
           "type": "string"
         },
         "programming_language": {
-          "description": "Programming language of the course",
+          "description": "(Deprecated) Old programming language of the course",
+          "type": "string"
+        },
+        "programming_language_id": {
+          "description": "Programming language ID of the course",
+          "type": "string"
+        },
+        "programming_language_version": {
+          "description": "Programming language version of the course",
           "type": "string"
         },
         "language": {
@@ -88,7 +96,7 @@
         "items",
         "vendor",
         "language",
-        "programming_language",
+        "programming_language_id",
         "edu_plugin_version"
       ]
     }

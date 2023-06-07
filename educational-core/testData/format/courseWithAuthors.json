@@ -6,7 +6,7 @@
     "EduTools QA",
     "EduTools"
   ],
-  "programming_language": "TEXT",
+  "programming_language_id": "TEXT",
   "language": "en",
   "course_type": "PyCharm",
   "items": [

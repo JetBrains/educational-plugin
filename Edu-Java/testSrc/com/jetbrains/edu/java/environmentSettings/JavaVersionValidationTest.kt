@@ -28,7 +28,8 @@ class JavaLevelInEnvironmentSettingsTest : LightPlatformTestCase() {
 
     fun doTest(courseLanguageVersion: String?, languageLevel: String?, selectedSdkVersion: String?): String? {
       course.setLanguageLevel(languageLevel)
-      course.programmingLanguage = "Java $courseLanguageVersion"
+      course.languageId = "Java"
+      course.languageVersion = courseLanguageVersion
 
       val sdk = selectedSdkVersion?.let { MockSdk(it, "", it, MultiMap(), JavaSdkImpl()) }
 
@@ -58,11 +59,11 @@ class JavaLevelInEnvironmentSettingsTest : LightPlatformTestCase() {
 
     val expectedTestResult = """
       course language|selected jdk|validation message
-      null|null|Unsupported Java version: null
-      null|11|Unsupported Java version: null
-      null|17|Unsupported Java version: null
-      null|19|Unsupported Java version: null
-      null|2.39|Unsupported Java version: null
+      null|null|JDK is not selected. In the settings section, choose or download some JDK with a version at least 8
+      null|11|null
+      null|17|null
+      null|19|null
+      null|2.39|Failed to determine Java version from string: 2.39. In the settings section, choose or download another JDK
       11|null|JDK is not selected. In the settings section, choose or download some JDK with a version at least 11
       11|11|null
       11|17|null

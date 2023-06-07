@@ -4,18 +4,17 @@ import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.courseFormat.EduLanguage
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import javax.swing.JComponent
 
 class HyperskillChooseLanguageDialog : DialogWrapper(false) {
-  private val languageComboBox: ComboBox<EduLanguage> = ComboBox()
+  private val languageComboBox: ComboBox<HyperskillLanguages> = ComboBox()
 
-  private val supportedLanguages: Collection<EduLanguage> by lazy {
+  private val supportedLanguages: Collection<HyperskillLanguages> by lazy {
     EduConfiguratorManager.allExtensions()
       .filter { it.courseType == HYPERSKILL_TYPE }
-      .mapTo(HashSet()) { EduLanguage.get(it.language) }
+      .mapNotNullTo(HashSet()) { HyperskillLanguages.getHyperskillLanguage(it.language) }
   }
 
   init {
@@ -31,7 +30,7 @@ class HyperskillChooseLanguageDialog : DialogWrapper(false) {
     }
   }
 
-  fun selectedLanguage(): EduLanguage = languageComboBox.selectedItem as EduLanguage
+  fun selectedLanguage(): HyperskillLanguages = languageComboBox.selectedItem as HyperskillLanguages
 
   fun areLanguagesAvailable(): Boolean = supportedLanguages.isNotEmpty()
 

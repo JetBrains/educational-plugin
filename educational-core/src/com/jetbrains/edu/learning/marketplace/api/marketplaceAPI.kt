@@ -35,6 +35,8 @@ private const val LANGUAGE = "language"
 private const val PLUGIN_ID = "pluginId"
 private const val PLUGINS = "plugins"
 private const val PROGRAMMING_LANGUAGE = "programmingLanguage"
+private const val PROGRAMMING_LANGUAGE_ID = "programmingLanguageId"
+private const val PROGRAMMING_LANGUAGE_VERSION = "programmingLanguageVersion"
 private const val QUERY = "query"
 private const val SOLUTION_AWS_KEY = "solution_aws_key"
 private const val TASK_ID = "task_id"
@@ -132,8 +134,16 @@ class Author {
 }
 
 class Fields {
+  @Suppress("unused")
+  @Deprecated("Use languageId and languageVersion instead")
   @JsonProperty(PROGRAMMING_LANGUAGE)
   var programmingLanguage: String = ""
+
+  @JsonProperty(PROGRAMMING_LANGUAGE_ID)
+  var languageId: String? = null
+
+  @JsonProperty(PROGRAMMING_LANGUAGE_VERSION)
+  var languageVersion: String? = null
 
   @JsonProperty(LANGUAGE)
   var language: String = ""

@@ -85,12 +85,10 @@ abstract class CourseYamlMixin {
 
   @JsonSerialize(converter = ProgrammingLanguageConverter::class)
   @JsonProperty(PROGRAMMING_LANGUAGE)
-  lateinit var programmingLanguage: String
+  lateinit var languageId: String
 
   @JsonProperty(PROGRAMMING_LANGUAGE_VERSION)
-  fun getLanguageVersion(): String? {
-    throw NotImplementedInMixin()
-  }
+  private var languageVersion: String? = null
 
   @JsonSerialize(converter = LanguageConverter::class)
   @JsonProperty(LANGUAGE)
@@ -140,8 +138,7 @@ abstract class CourseraCourseYamlMixin : CourseYamlMixin() {
 
 private class ProgrammingLanguageConverter : StdConverter<String, String>() {
   override fun convert(languageId: String): String {
-    val languageWithoutVersion = languageId.split(" ").first()
-    return Language.findLanguageByID(languageWithoutVersion)?.displayName
+    return Language.findLanguageByID(languageId)?.displayName
            ?: formatError(EduCoreBundle.message("yaml.editor.invalid.cannot.save", languageId))
   }
 }
@@ -267,7 +264,7 @@ private class CourseBuilder(
         error("Multiple configurators for language with name: $displayProgrammingLanguageName")
       }
 
-      programmingLanguage = languages.first().id
+      languageId = languages.first().id
 
       val supportedLanguageVersions = configurator?.courseBuilder?.getSupportedLanguageVersions() ?: formatError(
         EduCoreBundle.message("yaml.editor.invalid.unsupported.language", displayProgrammingLanguageName))
@@ -277,7 +274,7 @@ private class CourseBuilder(
                                             programmingLanguageVersion))
         }
         else {
-          programmingLanguage = "$programmingLanguage $programmingLanguageVersion"
+          languageVersion = programmingLanguageVersion
         }
       }
       val newItems = content.mapIndexed { index, title ->
@@ -311,12 +308,8 @@ class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>
     existingItem.vendor = deserializedItem.vendor
     existingItem.feedbackLink = deserializedItem.feedbackLink
     existingItem.isMarketplacePrivate = deserializedItem.isMarketplacePrivate
-    if (deserializedItem.languageVersion != null) {
-      existingItem.programmingLanguage = "${existingItem.programmingLanguage} ${deserializedItem.languageVersion}"
-    }
-    else {
-      existingItem.programmingLanguage = deserializedItem.programmingLanguage
-    }
+    existingItem.languageId = deserializedItem.languageId
+    existingItem.languageVersion = deserializedItem.languageVersion
     if (deserializedItem is CourseraCourse && existingItem is CourseraCourse) {
       existingItem.submitManually = deserializedItem.submitManually
     }

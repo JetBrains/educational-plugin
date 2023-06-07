@@ -155,7 +155,7 @@ class StepikTaskBuilderTest : EduTestCase() {
   }
 
   private fun buildTask(stepSource: StepSource, language: Language, course: Course = EduCourse()): Task {
-    course.programmingLanguage = language.id
+    course.languageId = language.id
     val lesson = Lesson()
     return StepikTaskBuilder(course, lesson, stepSource).createTask(stepSource.block?.name!!) ?: error("")
   }

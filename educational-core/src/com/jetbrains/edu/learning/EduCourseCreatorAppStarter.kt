@@ -59,7 +59,13 @@ class EduCourseCreatorAppStarter : ApplicationStarter {
 
     val configurator = course.configurator
     if (configurator == null) {
-      logErrorAndExit("""Can't open `${course.name}` course (type="${course.itemType}", language="${course.programmingLanguage}", environment="${course.environment}") with current IDE setup""")
+      logErrorAndExit(
+        """
+        |Can't open `${course.name}` course (type="${course.itemType}", language="${course.languageId}"
+        |${if (!course.languageVersion.isNullOrEmpty()) ", language version=${course.languageVersion}" else ""}, 
+        |environment="${course.environment}") with current IDE setup
+        """.trimMargin()
+      )
     }
 
     val courseBuilder = configurator.courseBuilder

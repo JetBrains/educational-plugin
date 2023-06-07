@@ -15,7 +15,7 @@
             }
           ],
           "fields" : {
-            "programmingLanguage" : "FakeGradleBasedLanguage",
+            "programmingLanguageId" : "FakeGradleBasedLanguage",
             "language" : "en"
           },
           "link" : "courseLink",

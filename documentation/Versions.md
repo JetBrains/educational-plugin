@@ -904,7 +904,7 @@
     }
     ```
     
-16. Task files may now have a `highlight_level` field with two possible values: `ALL_PROBLEMS` and `NONE`.
+16. a) Task files may now have a `highlight_level` field with two possible values: `ALL_PROBLEMS` and `NONE`.
     `ALL_PROBLEMS` means that all inspections are run in this file and all issues are highlighted.
     `NONE` means that no analysis is run in this file, and no problems are highlighted.
     `ALL_PROBLEMS` is a default value and may be omitted.
@@ -924,3 +924,22 @@
             }
           },
        ```
+
+    b) Courses now have two separate fields `programming_language_id` and `programming_language_version` instead of single `programming_language`. So before
+    ```json
+    {
+      // other properties
+      "version" : 15,
+      "programming_language" : "JAVA 11"
+    }
+    ```
+    
+    After
+    ```json
+    {
+      // other properties
+      "version" : 16,
+      "programming_language_id" : "JAVA",
+      "programming_language_version" : "11"
+    }
+    ```

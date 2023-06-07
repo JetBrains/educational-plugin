@@ -109,7 +109,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     RecentProjectsManager.getInstance().lastProjectCreationLocation = PathUtil.toSystemIndependentName(location.parent)
 
     baseDir.putUserData(COURSE_MODE_TO_CREATE, course.courseMode)
-    baseDir.putUserData(COURSE_LANGUAGE_ID_TO_CREATE, course.languageID)
+    baseDir.putUserData(COURSE_LANGUAGE_ID_TO_CREATE, course.languageId)
 
     if (isCourseTrusted(course, isNewCourseCreatorCourse)) {
       @Suppress("UnstableApiUsage")

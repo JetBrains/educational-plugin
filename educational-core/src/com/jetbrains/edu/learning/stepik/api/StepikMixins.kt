@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.text.StringUtil
-import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.ID
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.NAME
@@ -128,11 +127,11 @@ private fun EduCourse.setCourseFormat(courseFormat: String) {
   }
   val environmentIndex = courseFormat.indexOf(ENVIRONMENT_SEPARATOR, languageIndex + 1)
   if (environmentIndex != -1) {
-    programmingLanguage = courseFormat.substring(languageIndex + 1, environmentIndex)
+    languageId = courseFormat.substring(languageIndex + 1, environmentIndex)
     environment = courseFormat.substring(environmentIndex + 1)
   }
   else {
-    programmingLanguage = courseFormat.substring(languageIndex + 1)
+    languageId = courseFormat.substring(languageIndex + 1)
   }
 
   if (courseFormat.contains(StepikNames.PYCHARM_PREFIX)) {

@@ -141,6 +141,23 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  fun `test course programming language ID and version`() {
+    val vendor = Vendor().apply { name = "Jetbrains s.r.o" }
+    courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
+      lesson("lesson1") {
+        eduTask("task1") {}
+      }
+      additionalFile("test.txt", "another text")
+    }.apply {
+      isMarketplace = true
+      marketplaceCourseVersion = 5
+      feedbackLink = "https://course_link.com"
+      languageVersion = "11"
+    }
+
+    doTest()
+  }
+
   fun `test task feedback link`() {
     val vendor = Vendor().apply { name = "Jetbrains s.r.o" }
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {

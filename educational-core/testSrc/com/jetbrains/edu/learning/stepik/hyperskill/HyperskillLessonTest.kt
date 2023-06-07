@@ -88,7 +88,7 @@ class HyperskillLessonTest : EduTestCase() {
 
     val course = GetHyperskillLesson.createCourse(lessonId.toString()) ?: error("Failed to get course")
     course.apply {
-      programmingLanguage = PlainTextLanguage.INSTANCE.id
+      languageId = PlainTextLanguage.INSTANCE.id
       initializeCourse(project, this)
       createCourseFiles(project)
     }

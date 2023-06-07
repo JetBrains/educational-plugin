@@ -149,7 +149,7 @@ class EduStartupActivity : StartupActivity.DumbAware {
   private fun setupProject(project: Project, course: Course) {
     val configurator = course.configurator
     if (configurator == null) {
-      LOG.warn("Failed to refresh gradle project: configurator for `${course.languageID}` is null")
+      LOG.warn("Failed to refresh gradle project: configurator for `${course.languageId}` is null")
       return
     }
 

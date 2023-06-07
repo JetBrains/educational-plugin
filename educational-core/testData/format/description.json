@@ -56,6 +56,6 @@
   ],
   "summary": "test",
   "title": "Python Course",
-  "programming_language": "TEXT",
+  "programming_language_id": "TEXT",
   "language": "en"
 }

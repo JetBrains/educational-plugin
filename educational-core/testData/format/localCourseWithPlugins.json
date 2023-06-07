@@ -1,7 +1,7 @@
 {
   "summary" : "my summary",
   "title" : "Test Course",
-  "programming_language" : "TEXT",
+  "programming_language_id" : "TEXT",
   "language" : "en",
   "course_type" : "PyCharm",
   "plugins" : [

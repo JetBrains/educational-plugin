@@ -24,7 +24,7 @@ fun showPostFeedbackNotification(student : Boolean, course: Course, project: Pro
       .replace("\$MODE", if (course.courseMode == CourseMode.STUDENT) "Learner" else "Educator")
 
   val product = if (PlatformUtils.isPyCharmEducational()) "PyCharm Edu" else "EduTools"
-  val language = course.languageID.lowercase().capitalize()
+  val language = course.languageId.lowercase().capitalize()
 
   val content = if (student) EduCoreBundle.message("feedback.template.student", product, feedbackUrl, language)
   else EduCoreBundle.message("feedback.template.creator", product, feedbackUrl, language)

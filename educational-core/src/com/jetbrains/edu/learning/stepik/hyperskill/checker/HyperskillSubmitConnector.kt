@@ -61,7 +61,7 @@ object HyperskillSubmitConnector {
 
   private fun getHyperskillLanguage(task: CodeTask): Result<String, String> {
     val course = task.course
-    val defaultLanguage = HyperskillLanguages.getLanguageName(course.languageID)
+    val defaultLanguage = HyperskillLanguages.getLanguageName(course.languageId)
     if (defaultLanguage == null) {
       val languageDisplayName = course.languageDisplayName
       return Err("""Unknown language "$languageDisplayName". Check if support for "$languageDisplayName" is enabled.""")

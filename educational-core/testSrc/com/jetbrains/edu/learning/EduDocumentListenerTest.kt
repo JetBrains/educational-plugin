@@ -330,7 +330,7 @@ class EduDocumentListenerTest : EduTestCase() {
     myFixture.copyDirectoryToProject("lesson1", "lesson1")
     val course = EduCourse()
     course.name = "Edu test course"
-    course.programmingLanguage = PlainTextLanguage.INSTANCE.id
+    course.languageId = PlainTextLanguage.INSTANCE.id
     StudyTaskManager.getInstance(myFixture.project).course = course
 
     val lesson1 = createLesson(1, 2)

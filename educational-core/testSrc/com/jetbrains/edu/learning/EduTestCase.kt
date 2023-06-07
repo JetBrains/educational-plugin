@@ -125,7 +125,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
   protected open fun createCourse() {
     val course = EduCourse()
     course.name = "Edu test course"
-    course.programmingLanguage = PlainTextLanguage.INSTANCE.id
+    course.languageId = PlainTextLanguage.INSTANCE.id
     StudyTaskManager.getInstance(project).course = course
   }
 
@@ -277,7 +277,8 @@ abstract class EduTestCase : BasePlatformTestCase() {
     remoteCourse.name = name
     remoteCourse.courseMode = courseMode
     remoteCourse.items = Lists.newArrayList(items)
-    remoteCourse.programmingLanguage = programmingLanguage
+    remoteCourse.languageId = languageId
+    remoteCourse.languageVersion = languageVersion
     remoteCourse.description = description
 
     var hasSections = false

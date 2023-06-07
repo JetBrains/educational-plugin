@@ -51,7 +51,7 @@ fun course(
   builder.withName(name)
   builder.withMode(courseMode)
   val course = builder.course
-  course.programmingLanguage = language.id
+  course.languageId = language.id
   course.environment = environment
   course.description = description
   builder.buildCourse()

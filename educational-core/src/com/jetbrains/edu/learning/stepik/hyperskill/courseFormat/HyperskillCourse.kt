@@ -30,19 +30,21 @@ class HyperskillCourse : Course {
   var selectedStage: Int? = null
   var selectedProblem: Int? = null
 
-  constructor(hyperskillProject: HyperskillProject, languageID: String, environment: String) {
+  constructor(hyperskillProject: HyperskillProject, languageId: String, languageVersion: String?, environment: String) {
     this.hyperskillProject = hyperskillProject
     name = hyperskillProject.title
     description = hyperskillProject.description + descriptionNote(hyperskillProject.id)
-    programmingLanguage = languageID
+    this.languageId = languageId
+    this.languageVersion = languageVersion
     this.environment = environment
     id = hyperskillProject.id
   }
 
-  constructor(languageName: String, languageID: String) {
+  constructor(languageName: String, languageId: String, languageVersion: String?) {
     name = getProblemsProjectName(languageName)
     description = EduCoreBundle.message("hyperskill.problems.project.description", languageName.capitalize())
-    programmingLanguage = languageID
+    this.languageId = languageId
+    this.languageVersion = languageVersion
   }
 
   val isTemplateBased: Boolean

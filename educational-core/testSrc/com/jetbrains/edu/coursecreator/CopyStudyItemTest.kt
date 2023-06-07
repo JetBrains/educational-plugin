@@ -2,7 +2,6 @@ package com.jetbrains.edu.coursecreator
 
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.copy
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
@@ -153,7 +152,7 @@ class CopyStudyItemTest : EduTestCase() {
            createDate == courseCopy.createDate &&
            description == courseCopy.description &&
            humanLanguage == courseCopy.humanLanguage &&
-           languageID == courseCopy.languageID &&
+           languageId == courseCopy.languageId &&
            environment == courseCopy.environment &&
            courseMode == courseCopy.courseMode &&
            formatVersion == courseCopy.formatVersion &&

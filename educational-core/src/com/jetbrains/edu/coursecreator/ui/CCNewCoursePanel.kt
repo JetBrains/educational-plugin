@@ -240,7 +240,7 @@ class CCNewCoursePanel(
 
     val configurator = EduConfiguratorManager.findConfigurator(courseData.courseType, courseData.environment,
                                                                courseData.language) ?: return
-    _course.programmingLanguage = courseData.language.id
+    _course.languageId = courseData.language.id
     _course.environment = courseData.environment
     languageSettings = configurator.courseBuilder.getLanguageSettings()
     languageSettings.addSettingsChangeListener { doValidation() }
@@ -261,7 +261,7 @@ class CCNewCoursePanel(
 
   private fun collectCoursesData(course: Course?): List<CourseData> {
     val courseData = if (course != null) {
-      listOfNotNull(obtainCourseData(course.languageID, course.environment, course.itemType))
+      listOfNotNull(obtainCourseData(course.languageId, course.environment, course.itemType))
     }
     else {
       EduConfiguratorManager.allExtensions()

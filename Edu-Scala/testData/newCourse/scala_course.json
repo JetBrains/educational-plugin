@@ -1,7 +1,7 @@
 {
   "summary": "test",
   "title": "Scala Course11",
-  "programming_language": "Scala",
+  "programming_language_id": "Scala",
   "language": "en",
   "environment": "Gradle",
   "items": [

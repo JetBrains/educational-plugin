@@ -142,7 +142,7 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
   protected open fun onStudyItemCreation(project: Project, course: Course, item: StudyItem) {
     val configurator = course.configurator
     if (configurator == null) {
-      LOG.info("Failed to get configurator for " + course.languageID)
+      LOG.info("Failed to get configurator for " + course.languageId)
       return
     }
 

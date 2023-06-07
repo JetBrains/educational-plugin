@@ -27,7 +27,8 @@ import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.MARKETPLACE_COURSE_
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.NAME
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.PLUGINS
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.PLUGIN_VERSION
-import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.PROGRAMMING_LANGUAGE
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.PROGRAMMING_LANGUAGE_ID
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.PROGRAMMING_LANGUAGE_VERSION
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.SOLUTIONS_HIDDEN
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.SOLUTION_HIDDEN
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.SUMMARY
@@ -49,9 +50,31 @@ import java.util.*
  */
 
 @JsonAutoDetect(setterVisibility = JsonAutoDetect.Visibility.NONE)
-@JsonPropertyOrder(MARKETPLACE_COURSE_VERSION, ENVIRONMENT, SUMMARY, TITLE, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE,
-                   PLUGIN_VERSION, VENDOR, FEEDBACK_LINK, IS_PRIVATE, SOLUTIONS_HIDDEN, PLUGINS, ITEMS, AUTHORS, TAGS, ID, GENERATED_EDU_ID,
-                   UPDATE_DATE, ADDITIONAL_FILES, PLUGIN_VERSION, VERSION)
+@JsonPropertyOrder(
+  MARKETPLACE_COURSE_VERSION,
+  ENVIRONMENT,
+  SUMMARY,
+  TITLE,
+  PROGRAMMING_LANGUAGE_ID,
+  PROGRAMMING_LANGUAGE_VERSION,
+  LANGUAGE,
+  COURSE_TYPE,
+  PLUGIN_VERSION,
+  VENDOR,
+  FEEDBACK_LINK,
+  IS_PRIVATE,
+  SOLUTIONS_HIDDEN,
+  PLUGINS,
+  ITEMS,
+  AUTHORS,
+  TAGS,
+  ID,
+  GENERATED_EDU_ID,
+  UPDATE_DATE,
+  ADDITIONAL_FILES,
+  PLUGIN_VERSION,
+  VERSION
+)
 abstract class RemoteEduCourseMixin : LocalEduCourseMixin() {
 
   @JsonProperty(VENDOR)

@@ -7,10 +7,10 @@ import org.jetbrains.annotations.NonNls
 class CheckiOCourse : Course {
   // used for deserialization
   constructor()
-  constructor(name: String, languageID: String) {
+  constructor(name: String, languageId: String) {
     super.name = name
     description = COURSE_DESCRIPTION
-    programmingLanguage = languageID
+    this.languageId = languageId
   }
 
   fun addStation(station: CheckiOStation) {

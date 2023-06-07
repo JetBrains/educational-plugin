@@ -48,7 +48,8 @@ open class CodeforcesCourse : Course {
 
   private fun setContestParameters(contestParameters: ContestParameters) {
     id = contestParameters.id
-    programmingLanguage = contestParameters.languageId
+    languageId = contestParameters.languageId
+    languageVersion = contestParameters.languageVersion
     languageCode = contestParameters.locale
     programTypeId = contestParameters.programTypeId
     endDateTime = contestParameters.endDateTime

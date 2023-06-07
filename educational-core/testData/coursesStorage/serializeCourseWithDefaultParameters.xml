@@ -3,9 +3,9 @@
       <course>
         <option name="description" value="The examples and exercises accompanying the AtomicKotlin book"/>
         <option name="id" value="20403"/>
+        <option name="programmingLanguageId" value="Python" />
         <option name="location" value="$USER_HOME$/IdeaProjects/AtomicKotlin"/>
         <option name="name" value="AtomicKotlin"/>
-        <option name="programmingLanguage" value="Python" />
         <option name="type" value="PyCharm"/>
       </course>
     </courses>

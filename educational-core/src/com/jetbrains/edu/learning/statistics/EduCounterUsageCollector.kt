@@ -186,7 +186,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     fun taskNavigation(place: TaskNavigationPlace) = TASK_NAVIGATION_EVENT.log(place)
 
     @JvmStatic
-    fun eduProjectCreated(course: Course) = EDU_PROJECT_CREATED_EVENT.log(course.courseMode, course.itemType, course.languageID)
+    fun eduProjectCreated(course: Course) = EDU_PROJECT_CREATED_EVENT.log(course.courseMode, course.itemType, course.languageId)
 
     @JvmStatic
     fun eduProjectOpened(course: Course) = EDU_PROJECT_OPENED_EVENT.log(course.courseMode, course.itemType)
@@ -260,7 +260,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     fun codeforcesSubmitSolution() = CODEFORCES_SUBMIT_SOLUTION_EVENT.log()
 
     @JvmStatic
-    fun twitterDialogShown(course: Course) = TWITTER_DIALOG_SHOWN_EVENT.log(course.itemType, course.languageID)
+    fun twitterDialogShown(course: Course) = TWITTER_DIALOG_SHOWN_EVENT.log(course.itemType, course.languageId)
 
     @JvmStatic
     fun courseSelectionViewOpened(actionPlace: String) {

@@ -74,8 +74,24 @@ class CourseFormatTest : EduTestCase() {
     assertEquals("My Python Course", courseFromJson.name)
   }
 
-  fun testCourseProgrammingLanguage() {
-    assertEquals(EduNames.PYTHON, courseFromJson.languageID)
+  fun testCourseOldProgrammingLanguage() {
+    assertEquals(EduNames.PYTHON, courseFromJson.languageId)
+    assertNull(courseFromJson.languageVersion)
+  }
+
+  fun testCourseOldProgrammingLanguageWithVersion() {
+    assertEquals(EduNames.PYTHON, courseFromJson.languageId)
+    assertEquals(EduNames.PYTHON_3_VERSION, courseFromJson.languageVersion)
+  }
+
+  fun testCourseProgrammingLanguageId() {
+    assertEquals(EduNames.PYTHON, courseFromJson.languageId)
+    assertNull(courseFromJson.languageVersion)
+  }
+
+  fun testCourseProgrammingLanguageVersion() {
+    assertEquals(EduNames.PYTHON, courseFromJson.languageId)
+    assertEquals(EduNames.PYTHON_3_VERSION, courseFromJson.languageVersion)
   }
 
   fun testCourseLanguage() {
@@ -133,22 +149,9 @@ class CourseFormatTest : EduTestCase() {
     }
   }
 
-  fun testCourseLanguageVersion() {
-    val course = course {}
-    course.programmingLanguage = "Python 3"
-    assertEquals("3", course.languageVersion)
-  }
-
   fun testCourseLanguageVersionEmpty() {
     val course = course {}
-    course.programmingLanguage = "Python"
-    assertNull(course.languageVersion)
-  }
-
-
-  fun testCourseLanguageVersionBlank() {
-    val course = course {}
-    course.programmingLanguage = "Python "
+    course.languageId = "Python"
     assertNull(course.languageVersion)
   }
 

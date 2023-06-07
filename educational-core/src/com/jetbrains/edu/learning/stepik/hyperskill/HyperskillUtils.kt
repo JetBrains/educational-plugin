@@ -224,7 +224,7 @@ fun openNextActivity(project: Project, task: Task) {
       }
 
       val course = task.course
-      val language = HyperskillLanguages.getRequestLanguage(course.programmingLanguage) ?: return
+      val language = HyperskillLanguages.getRequestLanguage(course.languageId) ?: return
       ProjectOpener.getInstance().open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(course.id, nextStep.id, language)).onError {
         logger<ProjectOpener>().warn("Opening the next activity resulted in an error: ${it.message}. The error was ignored and not displayed for the user.")
       }

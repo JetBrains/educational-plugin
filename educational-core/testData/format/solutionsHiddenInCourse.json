@@ -58,7 +58,7 @@
   ],
   "summary": "test",
   "title": "My Python Course",
-  "programming_language": "Python",
+  "programming_language_id": "Python",
   "language": "en",
   "solutions_hidden": true
 }

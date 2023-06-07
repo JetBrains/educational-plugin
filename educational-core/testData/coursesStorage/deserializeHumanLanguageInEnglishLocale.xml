@@ -7,7 +7,7 @@
         <option name="humanLanguage" value="English"/>
         <option name="location" value="$USER_HOME$/IdeaProjects/Introduction to Python"/>
         <option name="name" value="Introduction to Python"/>
-        <option name="programmingLanguage" value="Python"/>
+        <option name="programmingLanguageId" value="Python"/>
         <option name="type" value="PyCharm"/>
       </course>
     </courses>

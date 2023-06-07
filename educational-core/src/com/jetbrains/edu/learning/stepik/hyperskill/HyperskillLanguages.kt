@@ -8,7 +8,7 @@ enum class HyperskillLanguages(private val id: String, private val languageName:
   GO(EduNames.GO, "go"),
   JAVASCRIPT(EduNames.JAVASCRIPT, "javascript"),
   JAVA(EduNames.JAVA, "java11") {
-    override val eduLanguage: String = "${EduNames.JAVA} 11"
+    override val languageVersion: String = "11"
     override val requestLanguage: String = "java"
   },
   KOTLIN(EduNames.KOTLIN, "kotlin"),
@@ -24,10 +24,9 @@ enum class HyperskillLanguages(private val id: String, private val languageName:
   UNSUPPORTED("Unsupported", "Unsupported");
 
   /**
-   * Edu language is language used for Course
-   * @see [com.jetbrains.edu.learning.courseFormat.Course.getLanguage]
+   * @see [com.jetbrains.edu.learning.courseFormat.Course.languageVersion]
    */
-  open val eduLanguage: String = id
+  open val languageVersion: String? = null
 
   /**
    * Request language is language plugin received from JBA in requests
@@ -35,22 +34,28 @@ enum class HyperskillLanguages(private val id: String, private val languageName:
    */
   open val requestLanguage: String = languageName
 
-  override fun toString(): String = id.lowercase().capitalize()
+  override fun toString(): String = id.lowercase().capitalize() + if (languageVersion != null) " $languageVersion" else ""
 
   companion object {
     @JvmStatic
-    fun getEduLanguage(hyperskillLanguage: String): String? {
-      return values().find { it.requestLanguage == hyperskillLanguage }?.eduLanguage
+    fun getLanguageIdAndVersion(hyperskillLanguage: String): Pair<String, String?>? {
+      val language = values().find { it.requestLanguage == hyperskillLanguage } ?: return null
+      return Pair(language.id, language.languageVersion)
     }
 
     @JvmStatic
-    fun getRequestLanguage(eduLanguage: String): String? {
-      return values().find { it.eduLanguage == eduLanguage }?.requestLanguage
+    fun getRequestLanguage(languageId: String): String? {
+      return getHyperskillLanguage(languageId)?.requestLanguage
     }
 
     @JvmStatic
     fun getLanguageName(languageId: String): String? {
-      return values().find { it.id == languageId }?.languageName
+      return getHyperskillLanguage(languageId)?.languageName
+    }
+
+    @JvmStatic
+    fun getHyperskillLanguage(languageId: String): HyperskillLanguages? {
+      return values().find { it.id == languageId }
     }
   }
 }

@@ -21,6 +21,8 @@ import java.util.*
 
 private const val HUMAN_LANGUAGE = "humanLanguage"
 private const val PROGRAMMING_LANGUAGE = "programmingLanguage"
+private const val PROGRAMMING_LANGUAGE_ID = "programmingLanguageId"
+private const val PROGRAMMING_LANGUAGE_VERSION = "programmingLanguageVersion"
 
 @State(name = "CoursesStorage", storages = [Storage("coursesStorage.xml", roamingType = RoamingType.DISABLED)])
 @Service
@@ -48,7 +50,7 @@ class CoursesStorage : SimplePersistentStateComponent<UserCoursesState>(UserCour
       it.name == course.name
       && it.id == course.id
       && it.courseMode == course.courseMode
-      && it.languageID == course.languageID
+      && it.languageId == course.languageId
     }
   }
 
@@ -91,8 +93,6 @@ class CourseMetaInfo() : Course() {
   var tasksTotal: Int = 0
   var tasksSolved: Int = 0
 
-  // to be compatible with previous version
-  var programmingLanguageVersion: String? = null
   override var parent: ItemContainer
     @Transient
     get() = super.parent
@@ -106,7 +106,8 @@ class CourseMetaInfo() : Course() {
     description = course.description
     courseMode = course.courseMode
     environment = course.environment
-    programmingLanguage = course.programmingLanguage
+    languageId = course.languageId
+    languageVersion = course.languageVersion
     languageCode = course.languageCode
     this.location = location
     this.tasksTotal = tasksTotal
@@ -117,17 +118,34 @@ class CourseMetaInfo() : Course() {
     @Transient
     get() = type
 
-  override var programmingLanguage: String
-    @OptionTag(PROGRAMMING_LANGUAGE)
-    get() {
-      if (programmingLanguageVersion != null) {
-        convertProgrammingLanguageVersion()
-      }
-      return super.programmingLanguage
-    }
+  /**
+   * Used only for migration, see EDU-5856
+   */
+  @Suppress("MemberVisibilityCanBePrivate", "unused")
+  var oldProgrammingLanguage: String? = null
     @OptionTag(PROGRAMMING_LANGUAGE)
     set(value) {
-      super.programmingLanguage = value
+      if (value == null) return
+      convertProgrammingLanguageVersion(value)
+      field = null
+    }
+
+  override var languageId: String
+    @OptionTag(PROGRAMMING_LANGUAGE_ID)
+    get() = super.languageId
+    @OptionTag(PROGRAMMING_LANGUAGE_ID)
+    set(value) {
+      if (value.isEmpty()) return
+      super.languageId = value
+    }
+
+  override var languageVersion: String?
+    @OptionTag(PROGRAMMING_LANGUAGE_VERSION)
+    get() = super.languageVersion
+    @OptionTag(PROGRAMMING_LANGUAGE_VERSION)
+    set(value) {
+      if (value == null) return
+      super.languageVersion = value
     }
 
   override val humanLanguage: String
@@ -157,19 +175,12 @@ class CourseMetaInfo() : Course() {
     }
   }
 
-  private fun convertProgrammingLanguageVersion() {
-    programmingLanguage = "${super.programmingLanguage} $programmingLanguageVersion"
-    programmingLanguageVersion = null
-  }
-
-  override val languageVersion: String?
-    get() {
-      if (programmingLanguageVersion != null) {
-        convertProgrammingLanguageVersion()
-      }
-
-      return super.languageVersion
+  private fun convertProgrammingLanguageVersion(value: String) {
+    value.split(" ").apply {
+      super.languageId = first()
+      super.languageVersion = getOrNull(1)
     }
+  }
 }
 
 class UserCoursesState : BaseState() {

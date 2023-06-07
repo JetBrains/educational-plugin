@@ -67,12 +67,13 @@ class StartCodeforcesContestAction : DumbAwareAction() {
         return
       }
 
-      val languageIdAndVersion = getLanguageIdAndVersion(dialog.selectedLanguage())
+      val (languageId, languageVersion) = getLanguageIdAndVersion(dialog.selectedLanguage())
       val programTypeId = getProgramTypeId(dialog.selectedLanguage())
 
       val contestParameters = ContestParameters(
         codeforcesCourse.id,
-        languageIdAndVersion,
+        languageId,
+        languageVersion,
         programTypeId,
         dialog.selectedTaskTextLanguage().locale,
         codeforcesCourse.endDateTime,

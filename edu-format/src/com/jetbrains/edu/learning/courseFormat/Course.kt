@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.courseFormat
 
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYCHARM
-import com.jetbrains.edu.learning.courseFormat.EduLanguage.Companion.get
 import java.util.*
 
 /**
@@ -52,11 +51,28 @@ abstract class Course : LessonContainer() {
   var feedbackLink: String? = null
   var license: String? = null
 
+  @Suppress("SetterBackingFieldAssignment")
+  @Deprecated("Use languageId and languageVersion instead")
+  private var programmingLanguage: String? = null
+    set(value) {
+      if (value.isNullOrEmpty()) return
+      value.split(" ").apply {
+        languageId = first()
+        languageVersion = getOrNull(1)
+      }
+    }
+
   /**
-   * This method is needed to serialize language and its version as one property
-   * Consider using [languageID] and [languageVersion] properties instead
+   * Programming language ID from [com.intellij.lang.Language.getID]
+   * also see [com.jetbrains.edu.learning.courseFormat.ext.CourseExt.getLanguageById]
    */
-  open var programmingLanguage: String = "" // language and optional version in form "Language Version" (as "Python 3.7")
+  open var languageId: String = ""
+
+  /**
+   * Programming language versions in string format
+   * also see [com.jetbrains.edu.learning.EduNames.PYTHON_2_VERSION], [com.jetbrains.edu.learning.EduNames.PYTHON_3_VERSION]
+   */
+  open var languageVersion: String? = null
 
   fun init(isRestarted: Boolean) {
     init(this, isRestarted)
@@ -65,16 +81,6 @@ abstract class Course : LessonContainer() {
   override fun init(parentItem: ItemContainer, isRestarted: Boolean) {
     require(parentItem is Course)
     super.init(parentItem, isRestarted)
-  }
-
-  val languageID: String
-    get() = getEduLanguage().id
-
-  open val languageVersion: String?
-    get() = getEduLanguage().version.ifEmpty { null }
-
-  private fun getEduLanguage(): EduLanguage {
-    return get(programmingLanguage)
   }
 
   fun getLesson(sectionName: String?, lessonName: String): Lesson? {

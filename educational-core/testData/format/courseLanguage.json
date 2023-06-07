@@ -58,6 +58,6 @@
   ],
   "summary": "Best course ever",
   "title": "My Python Course",
-  "programming_language": "Python",
+  "programming_language_id": "Python",
   "language": "ru"
 }

@@ -143,22 +143,22 @@ open class CodeforcesTask : OutputTaskBase() {
 
     @Deprecated("Only for backwards compatibility. Use CodeforcesCourse.programTypeId")
     fun codeforcesDefaultProgramTypeId(course: CodeforcesCourse): String? {
-      val languageID = course.languageID
+      val languageId = course.languageId
       val languageVersion = course.languageVersion
       return when {
-        GO == languageID -> GO_TYPE_ID
-        JAVA == languageID && "8" == languageVersion-> JAVA_8_TYPE_ID
-        JAVA == languageID && "11" == languageVersion -> JAVA_11_TYPE_ID
-        JAVASCRIPT == languageID -> JAVASCRIPT_TYPE_ID
-        KOTLIN == languageID -> KOTLIN_TYPE_ID
-        PYTHON == languageID && PYTHON_2_VERSION == languageVersion -> PYTHON_2_TYPE_ID
-        PYTHON == languageID && PYTHON_3_VERSION == languageVersion -> PYTHON_3_TYPE_ID
-        RUST == languageID -> RUST_TYPE_ID
-        SCALA == languageID -> SCALA_TYPE_ID
+        GO == languageId -> GO_TYPE_ID
+        JAVA == languageId && "8" == languageVersion-> JAVA_8_TYPE_ID
+        JAVA == languageId && "11" == languageVersion -> JAVA_11_TYPE_ID
+        JAVASCRIPT == languageId -> JAVASCRIPT_TYPE_ID
+        KOTLIN == languageId -> KOTLIN_TYPE_ID
+        PYTHON == languageId && PYTHON_2_VERSION == languageVersion -> PYTHON_2_TYPE_ID
+        PYTHON == languageId && PYTHON_3_VERSION == languageVersion -> PYTHON_3_TYPE_ID
+        RUST == languageId -> RUST_TYPE_ID
+        SCALA == languageId -> SCALA_TYPE_ID
         //only for tests
-        "TEXT" == languageID -> TEXT_TYPE_ID
+        "TEXT" == languageId -> TEXT_TYPE_ID
         else -> {
-          LOG.warn("Programming language was not detected: $languageID $languageVersion")
+          LOG.warn("Programming language was not detected: $languageId $languageVersion")
           null
         }
       }?.toString()

@@ -1,7 +1,7 @@
 {
   "summary" : "Test Course Description",
   "title" : "Test Course",
-  "programming_language" : "Rust",
+  "programming_language_id" : "Rust",
   "language" : "en",
   "course_type" : "PyCharm",
   "items" : [

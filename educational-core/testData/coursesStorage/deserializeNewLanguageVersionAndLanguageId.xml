@@ -6,8 +6,9 @@
         <option name="id" value="20403"/>
         <option name="location" value="$USER_HOME$/IdeaProjects/AtomicKotlin"/>
         <option name="name" value="AtomicKotlin"/>
-        <option name="programmingLanguage" value="Python 3.7"/>
-        <option name="type" value="PyCharm"/>
+        <option name="type" value="PyCharm" />
+        <option name="programmingLanguageId" value="Python" />
+        <option name="programmingLanguageVersion" value="3.7" />
       </course>
     </courses>
   </component>

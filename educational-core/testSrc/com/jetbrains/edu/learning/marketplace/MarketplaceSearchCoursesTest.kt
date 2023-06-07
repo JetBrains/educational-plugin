@@ -125,7 +125,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
   private fun doTest(course: EduCourse,
                      expectedId: Int,
                      expectedName: String,
-                     expectedLanguage: String,
+                     expectedLanguageId: String,
                      expectedHumanLanguage: String,
                      expectedDescription: String,
                      expectedLearnersCount: Int,
@@ -139,7 +139,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     assertEquals(expectedId, course.id)
     assertEquals(expectedName, course.name)
     assertEquals(expectedEnvironment, course.environment)
-    assertEquals(expectedLanguage, course.programmingLanguage)
+    assertEquals(expectedLanguageId, course.languageId)
     assertEquals(expectedHumanLanguage, course.humanLanguage)
     assertEquals(expectedDescription, course.description)
     assertEquals(expectedLearnersCount, course.learnersCount)

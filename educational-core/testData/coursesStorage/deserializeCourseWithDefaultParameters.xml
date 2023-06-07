@@ -6,7 +6,7 @@
         <option name="id" value="20403"/>
         <option name="location" value="$USER_HOME$/IdeaProjects/AtomicKotlin"/>
         <option name="name" value="AtomicKotlin"/>
-        <option name="programmingLanguage" value="kotlin"/>
+        <option name="programmingLanguageId" value="kotlin"/>
         <option name="type" value="PyCharm"/>
       </course>
     </courses>

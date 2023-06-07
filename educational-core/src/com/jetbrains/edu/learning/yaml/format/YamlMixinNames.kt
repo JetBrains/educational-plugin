@@ -30,6 +30,9 @@ object YamlMixinNames {
   const val PROGRAMMING_LANGUAGE = "programming_language"
 
   @NlsSafe
+  const val PROGRAMMING_LANGUAGE_VERSION = "programming_language_version"
+
+  @NlsSafe
   const val SOLUTIONS_HIDDEN = "solutions_hidden"
 
   @NlsSafe
@@ -37,9 +40,6 @@ object YamlMixinNames {
 
   @NlsSafe
   const val ENVIRONMENT = "environment"
-
-  @NlsSafe
-  const val PROGRAMMING_LANGUAGE_VERSION = "programming_language_version"
 
   // coursera course
   @NlsSafe

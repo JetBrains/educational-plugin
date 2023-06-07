@@ -15,7 +15,7 @@
             }
           ],
           "fields" : {
-            "programmingLanguage" : "UnsupportedLanguage",
+            "programmingLanguageId" : "UnsupportedLanguage",
             "language" : "en"
           },
           "link" : "courseLink",

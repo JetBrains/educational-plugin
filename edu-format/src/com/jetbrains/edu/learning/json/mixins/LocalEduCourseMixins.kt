@@ -31,11 +31,11 @@ import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.DESCRIPTION_FORMAT
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.DESCRIPTION_TEXT
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ENVIRONMENT
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ENVIRONMENT_SETTINGS
-import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.HIGHLIGHT_LEVEL
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.FEEDBACK_LINK
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.FILE
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.FILES
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.FRAMEWORK_TYPE
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.HIGHLIGHT_LEVEL
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.IS_EDITABLE
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.IS_MULTIPLE_CHOICE
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.IS_VISIBLE
@@ -58,6 +58,8 @@ import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.PLUGIN_ID
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.PLUGIN_NAME
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.POSSIBLE_ANSWER
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.PROGRAMMING_LANGUAGE
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.PROGRAMMING_LANGUAGE_ID
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.PROGRAMMING_LANGUAGE_VERSION
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.QUIZ_HEADER
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.SECTION
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.SOLUTIONS_HIDDEN
@@ -75,8 +77,8 @@ import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.VERSION
 private val LOG = logger<LocalEduCourseMixin>()
 
 @JsonPropertyOrder(
-  ENVIRONMENT, SUMMARY, TITLE, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, SOLUTIONS_HIDDEN, PLUGINS,
-  ITEMS, AUTHORS, TAGS, ADDITIONAL_FILES, VERSION
+  ENVIRONMENT, SUMMARY, TITLE, PROGRAMMING_LANGUAGE_ID, PROGRAMMING_LANGUAGE_VERSION, LANGUAGE,
+  COURSE_TYPE, SOLUTIONS_HIDDEN, PLUGINS, ITEMS, AUTHORS, TAGS, ADDITIONAL_FILES, VERSION
 )
 abstract class LocalEduCourseMixin {
   @JsonProperty(TITLE)
@@ -91,8 +93,22 @@ abstract class LocalEduCourseMixin {
   @JsonProperty(SUMMARY)
   private lateinit var description: String
 
-  @JsonProperty(PROGRAMMING_LANGUAGE)
-  private lateinit var programmingLanguage: String
+  @Suppress("SetterBackingFieldAssignment")
+  private var programmingLanguage: String? = null
+    @JsonProperty(PROGRAMMING_LANGUAGE)
+    set(value) {
+      if (formatVersion >= JSON_FORMAT_VERSION_WITH_NEW_LANGUAGE_VERSION || value.isNullOrEmpty()) return
+      value.split(" ").apply {
+        languageId = first()
+        languageVersion = getOrNull(1)
+      }
+    }
+
+  @JsonProperty(PROGRAMMING_LANGUAGE_ID)
+  private lateinit var languageId: String
+
+  @JsonProperty(PROGRAMMING_LANGUAGE_VERSION)
+  private var languageVersion: String? = null
 
   @JsonProperty(LANGUAGE)
   private lateinit var languageCode: String

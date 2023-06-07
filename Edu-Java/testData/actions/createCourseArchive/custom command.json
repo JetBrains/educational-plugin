@@ -1,7 +1,7 @@
 {
   "summary" : "my summary",
   "title" : "Test Course",
-  "programming_language" : "JAVA",
+  "programming_language_id" : "JAVA",
   "language" : "en",
   "course_type" : "PyCharm",
   "items" : [

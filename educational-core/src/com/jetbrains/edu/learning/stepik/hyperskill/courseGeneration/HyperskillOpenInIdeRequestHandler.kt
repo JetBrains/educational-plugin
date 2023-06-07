@@ -97,9 +97,9 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
       is HyperskillOpenStageRequest -> findProject { it.matchesById(projectId) }
       is HyperskillOpenStepRequest -> {
         val hyperskillLanguage = request.language
-        val eduLanguage = HyperskillLanguages.getEduLanguage(hyperskillLanguage) ?: return null
+        val (languageId, languageVersion) = HyperskillLanguages.getLanguageIdAndVersion(hyperskillLanguage) ?: return null
 
-        findProject { it.matchesById(projectId) && it.programmingLanguage == eduLanguage }
+        findProject { it.matchesById(projectId) && it.languageId == languageId && it.languageVersion == languageVersion }
         ?: findProject { course -> course.isHyperskillProblemsCourse(hyperskillLanguage) }
       }
     }
@@ -118,7 +118,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     hyperskillLanguage: String,
     hyperskillProject: HyperskillProject
   ): Result<HyperskillCourse, CourseValidationResult> {
-    val eduLanguage = HyperskillLanguages.getEduLanguage(hyperskillLanguage)
+    val (languageId, languageVersion) = HyperskillLanguages.getLanguageIdAndVersion(hyperskillLanguage)
                       ?: return Err(ValidationErrorMessage(EduCoreBundle.message("hyperskill.unsupported.language", hyperskillLanguage)))
 
     if (!hyperskillProject.useIde) {
@@ -132,14 +132,14 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
       // These condition is about opening e.g. Python problem with chosen Kotlin's project,
       // otherwise - open Kotlin problem in current Kotlin project itself later below
       if (hyperskillLanguage != hyperskillProject.language) {
-        return Ok(HyperskillCourse(hyperskillLanguage, eduLanguage))
+        return Ok(HyperskillCourse(hyperskillLanguage, languageId, languageVersion))
       }
 
       // This is about opening Kotlin problem with currently chosen Android's project
       // But all Android projects are always Kotlin one's
       // So it should be possible to open problem in IntelliJ IDEA too e.g. (EDU-4641)
       if (eduEnvironment == EduNames.ANDROID && hyperskillLanguage == EduNames.KOTLIN) {
-        return Ok(HyperskillCourse(hyperskillLanguage, eduLanguage))
+        return Ok(HyperskillCourse(hyperskillLanguage, languageId, languageVersion))
       }
     }
 
@@ -148,7 +148,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
       return Err(ValidationErrorMessageWithHyperlinks(EduCoreBundle.message("rest.service.android.not.supported")))
     }
 
-    return Ok(HyperskillCourse(hyperskillProject, eduLanguage, eduEnvironment))
+    return Ok(HyperskillCourse(hyperskillProject, languageId, languageVersion, eduEnvironment))
   }
 
   override fun getCourse(request: HyperskillOpenRequest, indicator: ProgressIndicator): Result<Course, CourseValidationResult> {
