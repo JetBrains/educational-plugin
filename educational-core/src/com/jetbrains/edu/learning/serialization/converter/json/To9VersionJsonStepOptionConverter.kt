@@ -4,7 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
-import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.*
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.ADDITIONAL_FILES
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.FILES
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.IS_VISIBLE
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.NAME
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.TESTS
 
 class To9VersionJsonStepOptionConverter : JsonStepOptionsConverter {
   override fun convert(stepOptionsJson: ObjectNode): ObjectNode {

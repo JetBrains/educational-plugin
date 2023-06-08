@@ -3,7 +3,10 @@ package com.jetbrains.edu.learning.serialization.converter.json
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
-import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.*
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.ADDITIONAL_FILES
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.IS_VISIBLE
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.NAME
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.TEXT
 
 class ToSixthVersionJsonStepOptionConverter : JsonStepOptionsConverter {
 

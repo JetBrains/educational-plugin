@@ -5,7 +5,16 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
-import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.*
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.DESCRIPTION_FORMAT
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.DESCRIPTION_TEXT
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.FILES
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.FILE_WRAPPER_TEXT
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.HINTS
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.PLACEHOLDERS
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.PLACEHOLDER_TEXT
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.POSSIBLE_ANSWER
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.SUBTASK_INFOS
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.TEXTS
 import com.jetbrains.edu.learning.serialization.SerializationUtils.STATUS
 
 class ToFifthVersionJsonStepOptionsConverter : JsonStepOptionsConverter {

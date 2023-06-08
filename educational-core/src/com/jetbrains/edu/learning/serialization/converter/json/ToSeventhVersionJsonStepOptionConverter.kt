@@ -3,7 +3,13 @@ package com.jetbrains.edu.learning.serialization.converter.json
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.*
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.DEPENDENCY
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.DEPENDENCY_FILE
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.FILES
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.NAME
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.PLACEHOLDERS
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.TESTS
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.TITLE
 
 class ToSeventhVersionJsonStepOptionConverter : JsonStepOptionsConverter {
 

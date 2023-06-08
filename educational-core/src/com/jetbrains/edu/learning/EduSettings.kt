@@ -9,7 +9,6 @@ import com.intellij.util.xmlb.XmlSerializer
 import com.intellij.util.xmlb.annotations.Property
 import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.learning.authUtils.deserializeOAuthAccount
-import com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*
 import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException
 import com.jetbrains.edu.learning.stepik.StepikUser
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
@@ -64,7 +63,7 @@ class EduSettings : PersistentStateComponent<Element> {
 
   private fun deserialize(state: Element) {
     XmlSerializer.deserializeInto(this, state)
-    val user = getChildWithName(state, USER, true)
+    val user = getUser(state)
     val userXml = user?.getChild(STEPIK_USER) ?: return
     _user = deserializeOAuthAccount(userXml, StepikUser::class.java, StepikUserInfo::class.java)
   }
@@ -86,7 +85,23 @@ class EduSettings : PersistentStateComponent<Element> {
       JavaUILibrary.SWING
     }
 
+  private fun getUser(parent: Element): Element? {
+    for (child in parent.children) {
+      val attribute = child.getAttribute(NAME) ?: continue
+      if (USER == attribute.value) {
+        return child
+      }
+    }
+    return null
+  }
+
   companion object {
+    private const val SETTINGS_NAME = "EduSettings"
+    private const val OPTION = "option"
+    private const val NAME = "name"
+    private const val USER = "user"
+    private const val STEPIK_USER = "StepikUser"
+
     @JvmStatic
     fun getInstance(): EduSettings = service()
     fun isLoggedIn(): Boolean = getInstance().user != null
