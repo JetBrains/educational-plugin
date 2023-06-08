@@ -1,7 +1,9 @@
 package com.jetbrains.edu.sql.kotlin
 
 import com.intellij.database.actions.runDataSourceGeneralRefresh
+import com.intellij.database.dataSource.DataSourceSyncManager
 import com.intellij.database.dataSource.LocalDataSource
+import com.intellij.database.dataSource.LocalDataSourceManager
 import com.intellij.database.model.DasDataSource
 import com.intellij.database.model.ObjectKind
 import com.intellij.database.model.ObjectName
@@ -25,6 +27,7 @@ abstract class SqlCourseGenerationTestBase : JvmCourseGenerationTestBase() {
 
   override fun createCourseStructure(course: Course) {
     super.createCourseStructure(course)
+    waitWhileDataSourceSyncInProgress()
     PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
   }
 
@@ -49,6 +52,15 @@ abstract class SqlCourseGenerationTestBase : JvmCourseGenerationTestBase() {
     }
     else {
       assertNull("`${task.name}`'s data source shouldn't contain `$tableName` table", table)
+    }
+  }
+
+  private fun waitWhileDataSourceSyncInProgress() {
+    val dataSources = LocalDataSourceManager.getInstance(project).dataSources
+
+    while (dataSources.any { DataSourceSyncManager.getInstance().isActive(it) }) {
+      Thread.sleep(50)
+      PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
     }
   }
 
