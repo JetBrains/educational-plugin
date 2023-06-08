@@ -1,93 +1,83 @@
-package com.jetbrains.edu.learning.serialization.converter.json;
+package com.jetbrains.edu.learning.serialization.converter.json
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.EditorFactory;
-import org.jetbrains.annotations.NotNull;
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.JsonMappingException
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ObjectNode
+import com.intellij.openapi.editor.EditorFactory
+import com.jetbrains.edu.learning.serialization.SerializationUtils
+import java.io.IOException
 
-import java.io.IOException;
-import java.util.List;
-
-import static com.jetbrains.edu.learning.serialization.SerializationUtils.*;
-import static com.jetbrains.edu.learning.serialization.SerializationUtils.Json.*;
-
-public class ToSecondVersionJsonStepOptionsConverter implements JsonStepOptionsConverter {
-
-  @NotNull
-  @Override
-  public ObjectNode convert(@NotNull ObjectNode stepOptionsJson) {
-    final JsonNode files = stepOptionsJson.get(FILES);
+class ToSecondVersionJsonStepOptionsConverter : JsonStepOptionsConverter {
+  override fun convert(stepOptionsJson: ObjectNode): ObjectNode {
+    val files = stepOptionsJson[SerializationUtils.Json.FILES]
     if (files != null) {
-      for (JsonNode taskFileElement : files) {
-        JsonNode placeholders = taskFileElement.get(PLACEHOLDERS);
-        for (JsonNode placeholder : placeholders) {
-          convertToAbsoluteOffset(taskFileElement, (ObjectNode)placeholder);
-          convertMultipleHints((ObjectNode)placeholder);
-          convertToSubtaskInfo((ObjectNode)placeholder);
+      for (taskFileElement in files) {
+        val placeholders = taskFileElement[SerializationUtils.Json.PLACEHOLDERS]
+        for (placeholder in placeholders) {
+          convertToAbsoluteOffset(taskFileElement, placeholder as ObjectNode)
+          convertMultipleHints(placeholder)
+          convertToSubtaskInfo(placeholder)
         }
       }
     }
-    return stepOptionsJson;
+    return stepOptionsJson
   }
 
-  private static void convertToAbsoluteOffset(@NotNull JsonNode taskFileObject, @NotNull ObjectNode placeholderObject) {
-    int line = placeholderObject.get(LINE).asInt();
-    int start = placeholderObject.get(START).asInt();
-    if (line == -1) {
-      placeholderObject.put(OFFSET, start);
-    }
-    else {
-      Document document = EditorFactory.getInstance().createDocument(taskFileObject.get(TEXT).asText());
-      placeholderObject.put(OFFSET, document.getLineStartOffset(line) + start);
-    }
-  }
-
-  private static void convertMultipleHints(@NotNull ObjectNode placeholderObject) {
-    final String hintString = placeholderObject.get(HINT).asText();
-    final ArrayNode hintsArray = placeholderObject.putArray(ADDITIONAL_HINTS);
-    try {
-      final List<String> hints = new ObjectMapper().readValue(hintString, new TypeReference<List<String>>() {});
-      if (hints != null && !hints.isEmpty()) {
-        for (int i = 0; i < hints.size(); i++) {
-          if (i == 0) {
-            placeholderObject.put(HINT, hints.get(0));
-            continue;
-          }
-          hintsArray.add(hints.get(i));
-        }
+  companion object {
+    private fun convertToAbsoluteOffset(taskFileObject: JsonNode, placeholderObject: ObjectNode) {
+      val line = placeholderObject[SerializationUtils.LINE].asInt()
+      val start = placeholderObject[SerializationUtils.START].asInt()
+      if (line == -1) {
+        placeholderObject.put(SerializationUtils.OFFSET, start)
       }
       else {
-        placeholderObject.put(HINT, "");
-      }
-    }
-    catch (JsonMappingException e) {
-      hintsArray.add(hintString);
-    }
-    catch (IOException e) {
-      hintsArray.add(hintString);
-    }
-  }
-
-  private static void convertToSubtaskInfo(@NotNull ObjectNode placeholderObject) {
-    ObjectNode subtaskInfo = new ObjectMapper().createObjectNode();
-    final ArrayNode subtaskInfos = placeholderObject.putArray(SUBTASK_INFOS);
-    final ArrayNode hintsArray = subtaskInfo.putArray(HINTS);
-
-    hintsArray.add(placeholderObject.get(HINT).asText());
-    JsonNode additionalHints = placeholderObject.get(ADDITIONAL_HINTS);
-    if (additionalHints != null) {
-      for (JsonNode hint : additionalHints) {
-        hintsArray.add(hint);
+        val document = EditorFactory.getInstance().createDocument(taskFileObject[SerializationUtils.Json.TEXT].asText())
+        placeholderObject.put(SerializationUtils.OFFSET, document.getLineStartOffset(line) + start)
       }
     }
 
-    subtaskInfos.add(subtaskInfo);
-    subtaskInfo.put(INDEX, 0);
-    subtaskInfo.put(POSSIBLE_ANSWER, placeholderObject.get(POSSIBLE_ANSWER).asText());
+    private fun convertMultipleHints(placeholderObject: ObjectNode) {
+      val hintString = placeholderObject[SerializationUtils.HINT].asText()
+      val hintsArray = placeholderObject.putArray(SerializationUtils.ADDITIONAL_HINTS)
+      try {
+        val hints = ObjectMapper().readValue(hintString, object : TypeReference<List<String>>() {})
+        if (hints != null && hints.isNotEmpty()) {
+          for (i in hints.indices) {
+            if (i == 0) {
+              placeholderObject.put(SerializationUtils.HINT, hints[0])
+              continue
+            }
+            hintsArray.add(hints[i])
+          }
+        }
+        else {
+          placeholderObject.put(SerializationUtils.HINT, "")
+        }
+      }
+      catch (e: JsonMappingException) {
+        hintsArray.add(hintString)
+      }
+      catch (e: IOException) {
+        hintsArray.add(hintString)
+      }
+    }
+
+    private fun convertToSubtaskInfo(placeholderObject: ObjectNode) {
+      val subtaskInfo = ObjectMapper().createObjectNode()
+      val subtaskInfos = placeholderObject.putArray(SerializationUtils.Json.SUBTASK_INFOS)
+      val hintsArray = subtaskInfo.putArray(SerializationUtils.Json.HINTS)
+      hintsArray.add(placeholderObject[SerializationUtils.HINT].asText())
+      val additionalHints = placeholderObject[SerializationUtils.ADDITIONAL_HINTS]
+      if (additionalHints != null) {
+        for (hint in additionalHints) {
+          hintsArray.add(hint)
+        }
+      }
+      subtaskInfos.add(subtaskInfo)
+      subtaskInfo.put(SerializationUtils.Json.INDEX, 0)
+      subtaskInfo.put(SerializationUtils.Json.POSSIBLE_ANSWER, placeholderObject[SerializationUtils.Json.POSSIBLE_ANSWER].asText())
+    }
   }
 }
