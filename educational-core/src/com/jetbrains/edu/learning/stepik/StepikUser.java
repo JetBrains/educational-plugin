@@ -34,7 +34,7 @@ public class StepikUser extends OAuthAccount<StepikUserInfo> {
   @Transient
   public int getId() {
     StepikUserInfo info = getUserInfo();
-    return info.getId();
+    return info.id;
   }
 
   @Transient

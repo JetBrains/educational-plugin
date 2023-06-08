@@ -1,115 +1,58 @@
-package com.jetbrains.edu.learning.stepik;
+package com.jetbrains.edu.learning.stepik
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.intellij.openapi.util.text.StringUtil;
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames;
-import com.jetbrains.edu.learning.courseFormat.UserInfo;
-import org.jetbrains.annotations.NotNull;
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames
+import com.jetbrains.edu.learning.courseFormat.UserInfo
+import com.jetbrains.edu.learning.stepik.api.FIRST_NAME
+import com.jetbrains.edu.learning.stepik.api.IS_GUEST
+import com.jetbrains.edu.learning.stepik.api.LAST_NAME
+import org.jetbrains.annotations.TestOnly
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.jetbrains.edu.learning.stepik.api.StepikAPIKt.*;
-
-public class StepikUserInfo implements UserInfo {
+class StepikUserInfo private constructor() : UserInfo {
+  @JvmField
   @JsonProperty(EduFormatNames.ID)
-  private int id = -1;
+  var id = -1
 
   @JsonProperty(FIRST_NAME)
-  private String myFirstName;
+  var firstName = ""
 
   @JsonProperty(LAST_NAME)
-  private String myLastName;
+  var lastName = ""
 
   @JsonProperty(IS_GUEST)
-  private Boolean myIsGuest;
+  override var isGuest = false
 
-  @Override
-  public boolean isGuest() {
-    return myIsGuest;
-  }
-
-  @Override
-  public void setGuest(boolean isGuest) {
-    myIsGuest = isGuest;
-  }
-
-  private StepikUserInfo() {
-    myFirstName = "";
-    myLastName = "";
-    myIsGuest = false;
-  }
-
-  public StepikUserInfo(String fullName) {
-    this();
-    final List<String> firstLast = StringUtil.split(fullName, " ");
+  @TestOnly
+  constructor(fullName: String) : this() {
+    val firstLast = fullName.split(" ").toMutableList()
     if (firstLast.isEmpty()) {
-      return;
+      return
     }
-    setFirstName(firstLast.remove(0));
-    if (firstLast.size() > 0) {
-      setLastName(StringUtil.join(firstLast, " "));
+    firstName = firstLast.removeFirst()
+    if (firstLast.isNotEmpty()) {
+      lastName = firstLast.joinToString(" ")
     }
   }
 
-  public int getId() {
-    return id;
+  override fun getFullName(): String = if (lastName.isNotEmpty()) "$firstName $lastName" else firstName
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (javaClass != other?.javaClass) return false
+
+    other as StepikUserInfo
+
+    if (id != other.id) return false
+    if (firstName != other.firstName) return false
+    if (lastName != other.lastName) return false
+    return isGuest == other.isGuest
   }
 
-  public void setId(int id) {
-    this.id = id;
+  override fun hashCode(): Int {
+    var result = 31 * id + firstName.hashCode()
+    result = 31 * result + lastName.hashCode()
+    return result
   }
 
-  public String getFirstName() {
-    return myFirstName;
-  }
-
-  public void setFirstName(final String firstName) {
-    myFirstName = firstName;
-  }
-
-  public String getLastName() {
-    return myLastName;
-  }
-
-  public void setLastName(final String lastName) {
-    myLastName = lastName;
-  }
-
-  @NotNull
-  public String getFullName() {
-    List<String> names = new ArrayList<>();
-    names.add(myFirstName);
-    if (!myLastName.isEmpty()) {
-      names.add(myLastName);
-    }
-    return StringUtil.join(names, " ");
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-
-    StepikUserInfo user = (StepikUserInfo)o;
-
-    if (id != user.id) return false;
-    if (!myFirstName.equals(user.myFirstName)) return false;
-    if (!myLastName.equals(user.myLastName)) return false;
-
-    return true;
-  }
-
-  @Override
-  public int hashCode() {
-    int result = id;
-    result = 31 * result + myFirstName.hashCode();
-    result = 31 * result + myLastName.hashCode();
-    return result;
-  }
-
-  @Override
-  public String toString() {
-    return myFirstName;
-  }
+  override fun toString(): String = firstName
 }
