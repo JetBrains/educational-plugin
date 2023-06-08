@@ -1,46 +1,41 @@
-package com.jetbrains.edu.learning.serialization.converter.json;
+package com.jetbrains.edu.learning.serialization.converter.json
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.FileUtilRt;
-import com.jetbrains.edu.learning.serialization.SerializationUtils;
-import org.jetbrains.annotations.NotNull;
+import com.fasterxml.jackson.databind.node.ObjectNode
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.io.FileUtilRt
+import com.jetbrains.edu.learning.serialization.SerializationUtils
 
-import static com.jetbrains.edu.learning.serialization.SerializationUtils.Json.*;
-
-public class ToThirdVersionJsonStepOptionsConverter implements JsonStepOptionsConverter {
-
-  @NotNull
-  @Override
-  public ObjectNode convert(@NotNull ObjectNode stepOptionsJson) {
-    if (!stepOptionsJson.has(LAST_SUBTASK)) return stepOptionsJson;
-    final int lastSubtaskIndex = stepOptionsJson.get(LAST_SUBTASK).asInt();
-    if (lastSubtaskIndex == 0) return stepOptionsJson;
-    final JsonNode tests = stepOptionsJson.get(TESTS);
+class ToThirdVersionJsonStepOptionsConverter : JsonStepOptionsConverter {
+  override fun convert(stepOptionsJson: ObjectNode): ObjectNode {
+    if (!stepOptionsJson.has(SerializationUtils.Json.LAST_SUBTASK)) return stepOptionsJson
+    val lastSubtaskIndex = stepOptionsJson[SerializationUtils.Json.LAST_SUBTASK].asInt()
+    if (lastSubtaskIndex == 0) return stepOptionsJson
+    val tests = stepOptionsJson[SerializationUtils.Json.TESTS]
     if (tests.size() > 0) {
-      final JsonNode fileWrapper = tests.get(0);
-      if (fileWrapper.has(NAME)) {
-        replaceWithSubtask((ObjectNode)fileWrapper);
+      val fileWrapper = tests[0]
+      if (fileWrapper.has(SerializationUtils.Json.NAME)) {
+        replaceWithSubtask(fileWrapper as ObjectNode)
       }
     }
-    final JsonNode descriptions = stepOptionsJson.get(TEXTS);
+    val descriptions = stepOptionsJson[SerializationUtils.Json.TEXTS]
     if (descriptions != null && descriptions.size() > 0) {
-      final JsonNode fileWrapper = descriptions.get(0);
-      if (fileWrapper.has(NAME)) {
-        replaceWithSubtask((ObjectNode)fileWrapper);
+      val fileWrapper = descriptions[0]
+      if (fileWrapper.has(SerializationUtils.Json.NAME)) {
+        replaceWithSubtask(fileWrapper as ObjectNode)
       }
     }
-    return stepOptionsJson;
+    return stepOptionsJson
   }
 
-  private static void replaceWithSubtask(@NotNull ObjectNode fileWrapper) {
-    final String file = fileWrapper.get(NAME).asText();
-    final String extension = FileUtilRt.getExtension(file);
-    final String name = FileUtil.getNameWithoutExtension(file);
-    if (!name.contains(SerializationUtils.SUBTASK_MARKER)) {
-      fileWrapper.remove(NAME);
-      fileWrapper.put(NAME, name + "_subtask0." + extension);
+  companion object {
+    private fun replaceWithSubtask(fileWrapper: ObjectNode) {
+      val file = fileWrapper[SerializationUtils.Json.NAME].asText()
+      val extension = FileUtilRt.getExtension(file)
+      val name = FileUtil.getNameWithoutExtension(file)
+      if (!name.contains(SerializationUtils.SUBTASK_MARKER)) {
+        fileWrapper.remove(SerializationUtils.Json.NAME)
+        fileWrapper.put(SerializationUtils.Json.NAME, name + "_subtask0." + extension)
+      }
     }
   }
 }
