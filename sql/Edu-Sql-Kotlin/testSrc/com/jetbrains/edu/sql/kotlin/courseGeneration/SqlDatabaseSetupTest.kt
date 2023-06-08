@@ -12,15 +12,23 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.sql.SqlFileType
 import com.intellij.sql.psi.SqlLanguage
 import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.ui.tree.TreeVisitor
+import com.intellij.ui.treeStructure.Tree
+import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
-import com.jetbrains.edu.sql.jvm.gradle.SqlGradleCourseBuilderBase
+import com.jetbrains.edu.sql.jvm.gradle.SqlGradleCourseBuilderBase.Companion.INIT_SQL
 import com.jetbrains.edu.sql.jvm.gradle.findDataSource
 import com.jetbrains.edu.sql.kotlin.SqlCourseGenerationTestBase
+import org.jetbrains.concurrency.AsyncPromise
+import org.jetbrains.concurrency.Promise
+import java.lang.reflect.Method
+import javax.swing.JTree
+import javax.swing.tree.TreePath
 import kotlin.test.assertNotNull
 
 class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
@@ -121,10 +129,12 @@ class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
   }
 
   fun `test database view structure`() {
+    @Suppress("SqlDialectInspection")
     val course = course(language = SqlLanguage.INSTANCE, environment = "Kotlin") {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("src/task.sql")
+          sqlTaskFile(INIT_SQL, """create table if not exists STUDENTS_1;""")
         }
         eduTask("task2") {
           taskFile("src/task.sql")
@@ -136,6 +146,7 @@ class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
         }
         eduTask("task4") {
           taskFile("src/task.sql")
+          sqlTaskFile(INIT_SQL, """create table if not exists STUDENTS_4;""")
         }
       }
       section("section1") {
@@ -175,28 +186,83 @@ class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
     val tree = databaseView.panel.tree
 
     PlatformTestUtil.waitWhileBusy(tree)
-    PlatformTestUtil.expandAll(tree)
+    expandImportantNodes(tree)
 
     PlatformTestUtil.assertTreeEqual(tree, """
       -Root Group
        -Group (lesson1) inside Root Group
-        task1: DSN
-        task2: DSN
+        -task1: DSN
+         -DB: database
+          -PUBLIC: schema
+           -Family of 1 table (host: schema PUBLIC)
+            STUDENTS_1: table
+          +Database Objects (host: database DB)
+         +Server Objects (host: root <unnamed>)
+        -task2: DSN
+         -DB: database
+          PUBLIC: schema
+         +Server Objects (host: root <unnamed>)
        -Group (lesson2) inside Root Group
-        task3: DSN
-        task4: DSN
+        -task3: DSN
+         -DB: database
+          PUBLIC: schema
+         +Server Objects (host: root <unnamed>)
+        -task4: DSN
+         -DB: database
+          -PUBLIC: schema
+           -Family of 1 table (host: schema PUBLIC)
+            STUDENTS_4: table
+          +Database Objects (host: database DB)
+         +Server Objects (host: root <unnamed>)
        -Group (section1) inside Root Group
         -Group (section1/lesson3) inside Group (section1) inside Root Group
-         task5: DSN
-         task6: DSN
+         -task5: DSN
+          -DB: database
+           PUBLIC: schema
+          +Server Objects (host: root <unnamed>)
+         -task6: DSN
+          -DB: database
+           PUBLIC: schema
+          +Server Objects (host: root <unnamed>)
         -Group (section1/lesson4) inside Group (section1) inside Root Group
-         task7: DSN
-         task8: DSN
+         -task7: DSN
+          -DB: database
+           PUBLIC: schema
+          +Server Objects (host: root <unnamed>)
+         -task8: DSN
+          -DB: database
+           PUBLIC: schema
+          +Server Objects (host: root <unnamed>)
        -Group (section 2\) inside Root Group
         -Group (section 2\/les s on5) inside Group (section 2\) inside Root Group
-         /task:1:0/: DSN
-         task9: DSN
+         -/task:1:0/: DSN
+          -DB: database
+           PUBLIC: schema
+          +Server Objects (host: root <unnamed>)
+         -task9: DSN
+          -DB: database
+           PUBLIC: schema
+          +Server Objects (host: root <unnamed>)
     """.trimIndent())
+  }
+
+  private fun expandImportantNodes(tree: Tree) {
+    fun TreePath.isRoot(): Boolean = parentPath == null
+    fun TreePath.isGroupNode(): Boolean = lastPathComponent.toString().startsWith("Group")
+    fun TreePath.isDbNode(): Boolean = lastPathComponent.toString().startsWith("DB: database")
+    fun TreePath.isSchemaNode(): Boolean = lastPathComponent.toString().startsWith("PUBLIC: schema")
+    fun TreePath.getInsidePublicSchema(): Boolean = isSchemaNode() || parentPath?.getInsidePublicSchema() == true
+
+    expandTreePaths(tree) { path ->
+      when {
+        path.isRoot() -> TreeVisitor.Action.CONTINUE
+        path.isGroupNode() -> TreeVisitor.Action.CONTINUE
+        path.parentPath.isGroupNode() -> TreeVisitor.Action.CONTINUE
+        path.isDbNode() -> TreeVisitor.Action.CONTINUE
+        path.getInsidePublicSchema() -> TreeVisitor.Action.CONTINUE
+        else -> TreeVisitor.Action.SKIP_CHILDREN
+      }
+    }
   }
 
   @Suppress("SqlDialectInspection", "SqlNoDataSourceInspection")
@@ -205,13 +271,13 @@ class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("src/task.sql")
-          sqlTaskFile(SqlGradleCourseBuilderBase.INIT_SQL, """
+          sqlTaskFile(INIT_SQL, """
             create table if not exists STUDENTS_1;
           """)
         }
         eduTask("task2") {
           taskFile("src/task.sql")
-          sqlTaskFile(SqlGradleCourseBuilderBase.INIT_SQL, """
+          sqlTaskFile(INIT_SQL, """
             create table if not exists STUDENTS_2;
           """)
         }
@@ -230,13 +296,13 @@ class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
       frameworkLesson("lesson1") {
         eduTask("task1") {
           taskFile("src/task.sql")
-          sqlTaskFile(SqlGradleCourseBuilderBase.INIT_SQL, """
+          sqlTaskFile(INIT_SQL, """
             create table if not exists STUDENTS_1;
           """)
         }
         eduTask("task2") {
           taskFile("src/task.sql")
-          sqlTaskFile(SqlGradleCourseBuilderBase.INIT_SQL, """
+          sqlTaskFile(INIT_SQL, """
             create table if not exists STUDENTS_2;
           """)
         }
@@ -254,7 +320,7 @@ class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
     withVirtualFileListener(course) {
       // Hack to check the plugin doesn't evaluate init.sql script twice
       // If script is evaluated the second time, it will create `STUDENTS_1_1` table that test checks below
-      val initSql = findFile("lesson1/task/${SqlGradleCourseBuilderBase.INIT_SQL}")
+      val initSql = findFile("lesson1/task/$INIT_SQL")
       runWriteAction {
         // language=SQL
         VfsUtil.saveText(initSql, """
@@ -305,5 +371,31 @@ class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
      * Heavily depends on [com.jetbrains.edu.sql.jvm.gradle.SqlGradleStartupActivity.databaseUrl]
      */
     private val DATA_SOURCE_URL_REGEX = "jdbc:h2:file:(?<path>.*)/db/db".toRegex()
+
+    private val promiseMakeVisible: Method by lazy {
+      val clazz = TreeUtil::class.java
+      val promiseMakeVisible = clazz.getDeclaredMethod("promiseMakeVisible", JTree::class.java, TreeVisitor::class.java, AsyncPromise::class.java)
+      promiseMakeVisible.isAccessible = true
+      promiseMakeVisible
+    }
+
+    // Reflection-based way to call private `TreeUtil.promiseMakeVisible(JTree, TreeVisitor, AsyncPromise<?>)`
+    // It seems it's the simplest way how to reuse `TreeUtil.promiseMakeVisible` without copying a lot of code
+    private fun makeTreePathsVisible(tree: JTree, visitor: TreeVisitor, promise: AsyncPromise<*>): Promise<*> {
+      return promiseMakeVisible.invoke(null, tree, visitor, promise) as Promise<*>
+    }
+
+    // Similar to `TreeUtil.promiseExpand(JTree, int)` but allows custom `TreeVisitor`
+    private fun expandTreePaths(tree: JTree, visitor: TreeVisitor) {
+      val promise: AsyncPromise<*> = AsyncPromise<Any>()
+      makeTreePathsVisible(tree, visitor, promise)
+        .onError(promise::setError)
+        .onSuccess {
+          if (promise.isCancelled) return@onSuccess
+          promise.setResult(null)
+        }
+
+      PlatformTestUtil.waitForPromise(promise)
+    }
   }
 }

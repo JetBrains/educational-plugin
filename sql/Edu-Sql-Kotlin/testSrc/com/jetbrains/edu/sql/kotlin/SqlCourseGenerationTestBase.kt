@@ -59,7 +59,7 @@ abstract class SqlCourseGenerationTestBase : JvmCourseGenerationTestBase() {
     val dataSources = LocalDataSourceManager.getInstance(project).dataSources
 
     while (dataSources.any { DataSourceSyncManager.getInstance().isActive(it) }) {
-      Thread.sleep(50)
+      Thread.sleep(10)
       PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
     }
   }

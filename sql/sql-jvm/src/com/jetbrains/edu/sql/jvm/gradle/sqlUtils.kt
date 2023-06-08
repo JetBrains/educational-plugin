@@ -12,6 +12,7 @@ import com.intellij.database.dataSource.DatabaseAuthProviderNames
 import com.intellij.database.dataSource.LocalDataSource
 import com.intellij.database.dataSource.LocalDataSourceManager
 import com.intellij.database.model.DasDataSource
+import com.intellij.database.util.DataSourceUtil
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.openapi.application.invokeLater
@@ -80,6 +81,7 @@ fun createDataSources(project: Project, tasks: List<Task>): List<LocalDataSource
 
   for (dataSource in dataSources) {
     LocalDataSourceManager.getInstance(project).addDataSource(dataSource)
+    DataSourceUtil.performAutoSyncTask(project, dataSource)
   }
 
   return dataSources
