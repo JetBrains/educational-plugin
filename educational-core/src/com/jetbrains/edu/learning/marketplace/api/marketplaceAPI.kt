@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMEN
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.api.SOLUTION
 import com.jetbrains.edu.learning.stepik.api.SUBMISSIONS
 import com.jetbrains.edu.learning.submissions.SolutionFile
@@ -65,12 +66,18 @@ class MarketplaceAccount : OAuthAccount<JBAccountUserInfo> {
 
   @RequiresBackgroundThread
   fun getJBAccessToken(jbAccountInfoService: JBAccountInfoService): String? {
+    var success = false
     return try {
-      jbAccountInfoService.accessToken.get(30, TimeUnit.SECONDS)
+      val jbAccessToken = jbAccountInfoService.accessToken.get(30, TimeUnit.SECONDS)
+      success = jbAccessToken != null
+      jbAccessToken
     }
     catch (e: Exception) {
       LOG.warn(e)
       null
+    }
+    finally {
+      EduCounterUsageCollector.obtainJBAToken(success)
     }
   }
 

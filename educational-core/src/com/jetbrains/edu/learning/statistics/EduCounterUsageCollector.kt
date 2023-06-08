@@ -113,12 +113,13 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
   companion object {
     private const val MODE = "mode"
     private const val SOURCE = "source"
+    private const val SUCCESS = "success"
     private const val EVENT = "event"
     private const val TYPE = "type"
     private const val LANGUAGE = "language"
     private const val EDU_TAB = "tab"
 
-    private val GROUP = EventLogGroup("educational.counters", 8)
+    private val GROUP = EventLogGroup("educational.counters", 9)
 
     private val COURSE_MODE_FIELD = EventFields.Enum<CourseMode>(MODE)
     private val ITEM_TYPE_FIELD = EventFields.String(TYPE, listOf("CheckiO",
@@ -157,6 +158,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
                                                             "Codeforces"
                                                           )),
                                                           enumField<AuthorizationPlace>(SOURCE))
+    private val OBTAIN_JBA_TOKEN_EVENT = GROUP.registerEvent("obtain.jba.token", EventFields.Boolean(SUCCESS))
     private val SHOW_FULL_OUTPUT_EVENT = GROUP.registerEvent("show.full.output")
     private val PEEK_SOLUTION_EVENT = GROUP.registerEvent("peek.solution")
     private val LEAVE_FEEDBACK_EVENT = GROUP.registerEvent("leave.feedback")
@@ -210,6 +212,9 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
 
     @JvmStatic
     fun logOutSucceed(platform: String, place: AuthorizationPlace) = AUTHORIZATION_EVENT.log(LOG_OUT_SUCCEED, platform, place)
+
+    @JvmStatic
+    fun obtainJBAToken(success: Boolean) = OBTAIN_JBA_TOKEN_EVENT.log(success)
 
     @JvmStatic
     fun fullOutputShown() = SHOW_FULL_OUTPUT_EVENT.log()
