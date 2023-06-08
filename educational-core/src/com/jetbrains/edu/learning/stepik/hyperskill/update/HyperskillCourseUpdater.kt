@@ -250,7 +250,7 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
       val tasksFromServer = lessonFromServer.taskList
       val localTasks = taskList
       return when {
-        shouldFrameworkLessonBeUpdated(lessonFromServer) -> false
+        !shouldFrameworkLessonBeUpdated(lessonFromServer) -> false
         localTasks.zip(tasksFromServer).any { (task, remoteTask) -> remoteTask.updateDate.isSignificantlyAfter(task.updateDate) } -> true
         needUpdateCourseAdditionalFiles(project, remoteCourse.additionalFiles) -> true
         else -> false

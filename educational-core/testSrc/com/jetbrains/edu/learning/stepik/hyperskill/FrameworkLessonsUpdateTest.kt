@@ -35,6 +35,32 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : NavigationTestBase() {
     assertEquals(DescriptionFormat.MD, tasks[1].descriptionFormat)
   }
 
+  fun `test do not update when tasks ids changed`() {
+    createCourseWithFrameworkLessons()
+    val oldTasksList = localCourse.lessons[0].taskList
+    val oldDescriptionTextTask1 = oldTasksList[0].descriptionText
+    val oldDescriptionTextTask2 = oldTasksList[1].descriptionText
+
+    updateCourse {
+      taskList[0].apply {
+        id = 101
+        descriptionText = "New Description"
+        descriptionFormat = DescriptionFormat.MD
+      }
+      taskList[1].apply {
+        id = 111
+        descriptionText = "New Description"
+        descriptionFormat = DescriptionFormat.MD
+      }
+    }
+
+    val tasks = localCourse.lessons[0].taskList
+    assertEquals(oldDescriptionTextTask1, tasks[0].descriptionText)
+    assertEquals(oldDescriptionTextTask2, tasks[1].descriptionText)
+    assertEquals(DescriptionFormat.HTML, tasks[1].descriptionFormat)
+    assertEquals(DescriptionFormat.HTML, tasks[0].descriptionFormat)
+  }
+
   fun `test update unmodified current task`() {
     createCourseWithFrameworkLessons()
 
