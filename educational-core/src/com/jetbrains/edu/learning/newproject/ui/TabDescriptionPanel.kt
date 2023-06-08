@@ -9,7 +9,7 @@ import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgoundColor
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgroundColor
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
 import java.awt.BorderLayout
 import java.awt.Color
@@ -35,7 +35,7 @@ class TabDescriptionPanel(tabDescription: String) : NonOpaquePanel() {
       border = JBUI.Borders.empty()
     }
     add(scrollPane, BorderLayout.CENTER)
-    UIUtil.setBackgroundRecursively(this, SelectCourseBackgoundColor)
+    UIUtil.setBackgroundRecursively(this, SelectCourseBackgroundColor)
   }
 }
 

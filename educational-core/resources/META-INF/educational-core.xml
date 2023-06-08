@@ -333,6 +333,7 @@
       <description>Enables support for SQL courses</description>
     </experimentalFeature>
     <iconMapper mappingFile="EduToolsIconMappings.json"/>
+    <themeMetadataProvider path="JetBrainsAcademyPlugin.themeMetadata.json"/>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">

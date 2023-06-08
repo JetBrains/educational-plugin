@@ -63,7 +63,7 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
   @Suppress("LeakingThis")
   protected val courseDetailsPanel = createCourseDetailsPanel()
   protected val settingsPanel: CourseSettingsPanel = CourseSettingsPanel(parentDisposable, isLocationFieldNeeded).apply {
-    background = SelectCourseBackgoundColor
+    background = SelectCourseBackgroundColor
   }
   protected val content = ContentPanel()
 
@@ -308,7 +308,7 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
   protected class ContentPanel : NonOpaquePanel() {
     init {
       layout = VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false)
-      background = SelectCourseBackgoundColor
+      background = SelectCourseBackgroundColor
       border = JBUI.Borders.emptyRight(HORIZONTAL_MARGIN)
     }
 

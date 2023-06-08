@@ -6,7 +6,7 @@ import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgoundColor
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgroundColor
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
 import java.awt.BorderLayout
 import java.awt.Color
@@ -82,7 +82,7 @@ open class CourseCardComponent(val course: Course) : JPanel(BorderLayout()) {
   }
 
   fun updateColors(isSelected: Boolean) {
-    updateColors(if (isSelected) SELECTION_COLOR else SelectCourseBackgoundColor)
+    updateColors(if (isSelected) SELECTION_COLOR else SelectCourseBackgroundColor)
   }
 
   private fun updateColors(background: Color) {

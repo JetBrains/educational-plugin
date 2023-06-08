@@ -10,7 +10,7 @@ import com.intellij.util.ui.JBUI.CurrentTheme.Validator.warningBackgroundColor
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseBindData
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseSelectionListener
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgoundColor
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgroundColor
 import com.jetbrains.edu.learning.newproject.ui.createCourseDescriptionStylesheet
 import com.jetbrains.edu.learning.newproject.ui.createErrorStylesheet
 import com.jetbrains.edu.learning.taskDescription.ui.createTextPane
@@ -45,7 +45,7 @@ class ErrorComponent(
 
     init {
       border = JBUI.Borders.empty(topMargin, leftMargin, topMargin, 0)
-      background = SelectCourseBackgoundColor
+      background = SelectCourseBackgroundColor
 
       if (icon != null) {
         add(JBLabel(icon), BorderLayout.LINE_START)

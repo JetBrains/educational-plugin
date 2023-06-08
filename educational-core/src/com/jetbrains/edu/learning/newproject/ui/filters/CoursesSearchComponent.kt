@@ -5,7 +5,7 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.supportedTechnologies
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgoundColor
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgroundColor
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import java.awt.BorderLayout
 import javax.swing.JPanel
@@ -37,7 +37,7 @@ class CoursesSearchComponent(
 
     add(filtersPanel, BorderLayout.LINE_END)
 
-    UIUtil.setBackgroundRecursively(this, SelectCourseBackgoundColor)
+    UIUtil.setBackgroundRecursively(this, SelectCourseBackgroundColor)
   }
 
   fun resetSearchField() = coursesSearchComponent.resetSearchField()

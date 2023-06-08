@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.LoginPanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgoundColor
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgroundColor
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.annotations.NonNls
@@ -44,7 +44,7 @@ class CodeforcesCoursesPanel(
 
   private fun createOpenContestButtonPanel(): NonOpaquePanel {
     val button = JButton(EduCoreBundle.message("codeforces.open.contest.by.link")).apply {
-      background = SelectCourseBackgoundColor
+      background = SelectCourseBackgroundColor
       isOpaque = false
       addActionListener(ActionUtil.createActionListener(StartCodeforcesContestAction.ACTION_ID, this, PLACE))
     }

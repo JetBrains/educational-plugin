@@ -2,14 +2,14 @@ package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.ui.ColorUtil
 import com.intellij.util.ui.HtmlPanel
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgoundColor
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgroundColor
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import java.awt.Font
 
 class GrayTextHtmlPanel(private val infoText: String, private val style: String = "") : HtmlPanel() {
   init {
-    background = SelectCourseBackgoundColor
+    background = SelectCourseBackgroundColor
     super.update()
   }
 

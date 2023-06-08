@@ -5,7 +5,7 @@ import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgoundColor
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgroundColor
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPanel
 import java.awt.BorderLayout
@@ -35,7 +35,7 @@ class CoursesListDecorator(private val mainPanel: CoursesListPanel,
                                   ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER)
     scrollPane.apply {
       border = JBUI.Borders.empty()
-      background = SelectCourseBackgoundColor
+      background = SelectCourseBackgroundColor
     }
 
     add(scrollPane, BorderLayout.CENTER)

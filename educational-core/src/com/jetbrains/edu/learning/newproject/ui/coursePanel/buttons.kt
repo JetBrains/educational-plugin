@@ -23,7 +23,6 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
-import com.jetbrains.edu.learning.newproject.ui.getColorFromScheme
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
@@ -32,20 +31,17 @@ import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import java.awt.Color
 import java.awt.event.ActionListener
 
-val SelectCourseBackgoundColor: Color
+val SelectCourseBackgroundColor: Color
   get() = JBColor.namedColor(
-    "SelectCourse.background", JBColor(TaskDescriptionView.getTaskDescriptionBackgroundColor(), Color(0x313335))
+    "SelectCourse.backgroundColor",
+    JBColor(TaskDescriptionView.getTaskDescriptionBackgroundColor(), Color(0x313335))
   )
 private val GreenColor: Color = JBColor(0x5D9B47, 0x2B7B50)
 private val FillForegroundColor: Color = JBColor.namedColor("SelectCourse.Button.fillForeground", JBColor(Color.white, Color(0xBBBBBB)))
-
-private val FillBackgroundColor: Color = JBColor.namedColor(
-  "SelectCourse.Button.fillBackground",
-  getColorFromScheme("Plugins.Button.installFillBackground", GreenColor)
-)
-private val ForegroundColor: Color = JBColor.namedColor("SelectCourse.Button.foreground", GreenColor)
+private val FillBackgroundColor: Color = JBColor.namedColor("SelectCourse.Button.fillBackground", GreenColor)
+private val ForegroundColor: Color = JBColor.namedColor("SelectCourse.Button.foregroundColor", GreenColor)
 private val FocusedBackground: Color = JBColor.namedColor("SelectCourse.Button.focusedBackground", JBColor(0xE1F6DA, 0xE1F6DA))
-private val BorderColor: Color = JBColor.namedColor("SelectCourse.button.borderColor", GreenColor)
+private val BorderColor: Color = JBColor.namedColor("SelectCourse.Button.border", GreenColor)
 
 class OpenCourseButton : CourseButtonBase() {
 
@@ -121,7 +117,7 @@ class OpenCourseButton : CourseButtonBase() {
  */
 class StartCourseButton(
   private val joinCourse: (Course, CourseMode) -> Unit,
-  fill: Boolean = false
+  fill: Boolean = true
 ) : CourseButtonBase(fill) {
 
   override fun actionListener(course: Course) = ActionListener {
@@ -149,7 +145,7 @@ abstract class CourseButtonBase(fill: Boolean = false) : ColorButton() {
 
   init {
     setTextColor(if (fill) FillForegroundColor else ForegroundColor)
-    setBgColor(if (fill) FillBackgroundColor else SelectCourseBackgoundColor)
+    setBgColor(if (fill) FillBackgroundColor else SelectCourseBackgroundColor)
     setFocusedBgColor(FocusedBackground)
     setBorderColor(BorderColor)
     setFocusedBorderColor(BorderColor)

@@ -26,7 +26,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.BrowseCoursesAction
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgoundColor
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgroundColor
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.openCourse
@@ -48,7 +48,7 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
     { group -> updateModel(group) })
 
   init {
-    background = SelectCourseBackgoundColor
+    background = SelectCourseBackgroundColor
     val coursesStorage = CoursesStorage.getInstance()
     coursesListPanel.border = JBUI.Borders.emptyTop(8)
     coursesListPanel.setClickListener { course ->
@@ -80,7 +80,7 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
   private fun createSearchComponent(disposable: Disposable): JPanel {
     val panel = NonOpaquePanel()
     val searchField = coursesFilterComponent
-    UIUtil.setBackgroundRecursively(searchField, SelectCourseBackgoundColor)
+    UIUtil.setBackgroundRecursively(searchField, SelectCourseBackgroundColor)
 
     panel.add(searchField, BorderLayout.CENTER)
     panel.add(createActionToolbar(panel), BorderLayout.EAST)

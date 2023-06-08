@@ -35,7 +35,7 @@ class CourseDetailsPanel(leftMargin: Int) : NonOpaquePanel(VerticalFlowLayout(0,
   private var courseStatisticsPanel: CourseStatisticsPanel = CourseStatisticsPanel()
 
   private val descriptionPanel: CourseDescriptionHtmlPanel = CourseDescriptionHtmlPanel().apply {
-    background = SelectCourseBackgoundColor
+    background = SelectCourseBackgroundColor
   }
 
   init {

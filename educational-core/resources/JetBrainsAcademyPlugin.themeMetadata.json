@@ -15,7 +15,7 @@
       "source" : "com.jetbrains.edu.learning.newproject.ui.CourseCardComponent"
     },
     {
-      "key" : "SelectCourse.foreground",
+      "key" : "SelectCourse.foregroundColor",
       "description" : "The default foreground color for texts in Select Course dialog",
       "deprecated" : false
     },
@@ -25,7 +25,7 @@
       "deprecated" : false
     },
     {
-      "key" : "SelectCourse.background",
+      "key" : "SelectCourse.backgroundColor",
       "description" : "The default background color for Select Course dialog",
       "deprecated" : false,
       "source" : "com.jetbrains.edu.learning.newproject.ui.BrowseCoursesDialog"
@@ -43,7 +43,7 @@
       "source" : "com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseButtonBase"
     },
     {
-      "key" : "SelectCourse.Button.foreground",
+      "key" : "SelectCourse.Button.foregroundColor",
       "description" : "The foreground color for a transparent button",
       "deprecated" : false,
       "source" : "com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseButtonBase"
@@ -55,31 +55,31 @@
       "source" : "com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseButtonBase"
     },
     {
-      "key" : "SelectCourse.Button.borderColor",
+      "key" : "SelectCourse.Button.border",
       "description" : "The border color for a button",
       "deprecated" : false,
       "source" : "com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseButtonBase"
     },
     {
-      "key" : "SelectCourse.CoursesGroup.background",
+      "key" : "SelectCourse.CoursesGroup.backgroundColor",
       "description" : "The background for CoursesGroup header",
       "deprecated" : false,
       "source" : "com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroupPanel"
     },
     {
-      "key" : "SelectCourse.CoursesGroup.foreground",
+      "key" : "SelectCourse.CoursesGroup.foregroundColor",
       "description" : "The background for CoursesGroup header",
       "deprecated" : false,
       "source" : "com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroupPanel"
     },
     {
-      "key" : "SelectCourse.LoginPanel.background",
+      "key" : "SelectCourse.LoginPanel.backgroundColor",
       "description" : "Background color for login panel above courses list",
       "deprecated" : false,
       "source" : "com.jetbrains.edu.learning.newproject.ui.LoginPanel"
     },
     {
-      "key" : "Submissions.CorrectLabel.foreground",
+      "key" : "Submissions.CorrectLabel.foregroundColor",
       "description" : "A foreground for a correctly solved submission name",
       "deprecated" : false,
       "source" : "com.jetbrains.edu.learning.ui.EduColors"
