@@ -1,466 +1,480 @@
-package com.jetbrains.edu.learning.stepik;
+package com.jetbrains.edu.learning.stepik
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtilRt;
-import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduTestCase;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.json.migration.TaskRoots;
-import com.jetbrains.edu.learning.json.migration.TaskRootsKt;
-import com.jetbrains.edu.learning.stepik.api.*;
-import com.jetbrains.edu.learning.submissions.SolutionFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ObjectNode
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtilRt
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.json.migration.LANGUAGE_TASK_ROOTS
+import com.jetbrains.edu.learning.serialization.SerializationUtils
+import com.jetbrains.edu.learning.stepik.StepikNames.PYCHARM_PREFIX
+import com.jetbrains.edu.learning.stepik.api.*
+import com.jetbrains.edu.learning.stepik.api.JacksonStepOptionsDeserializer.Companion.migrate
+import com.jetbrains.edu.learning.stepik.api.JacksonSubmissionDeserializer.Companion.migrate
+import com.jetbrains.edu.learning.stepik.api.StepikConnector.Companion.getInstance
+import com.jetbrains.edu.learning.stepik.api.StepikReplyDeserializer.Companion.migrate
+import java.io.File
+import java.io.IOException
+import java.util.*
+import java.util.function.Function
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-
-import static com.jetbrains.edu.learning.serialization.SerializationUtils.Json.EDU_TASK;
-import static com.jetbrains.edu.learning.stepik.StepikNames.PYCHARM_PREFIX;
-import static com.jetbrains.edu.learning.stepik.api.StepikMixinsKt.TASK;
-
-public class StepikFormatTest extends EduTestCase {
-
-  @NotNull
-  @Override
-  protected String getTestDataPath() {
-    return "testData/stepik/format";
+class StepikFormatTest : EduTestCase() {
+  override fun getTestDataPath(): String {
+    return "testData/stepik/format"
   }
 
-  public void testFirstVersion() throws IOException {
-    doStepOptionMigrationTest(2);
+  @Throws(IOException::class)
+  fun testFirstVersion() {
+    doStepOptionMigrationTest(2)
   }
 
-  public void testSecondVersion() throws IOException {
-    doStepOptionMigrationTest(3);
+  @Throws(IOException::class)
+  fun testSecondVersion() {
+    doStepOptionMigrationTest(3)
   }
 
-  public void testThirdVersion() throws IOException {
-    doStepOptionMigrationTest(4);
+  @Throws(IOException::class)
+  fun testThirdVersion() {
+    doStepOptionMigrationTest(4)
   }
 
-  public void testFifthVersion() throws IOException {
-    doStepOptionMigrationTest(6);
+  @Throws(IOException::class)
+  fun testFifthVersion() {
+    doStepOptionMigrationTest(6)
   }
 
-  public void testSixthVersion() throws IOException {
-    for (Map.Entry<String, TaskRoots> ignored : TaskRootsKt.LANGUAGE_TASK_ROOTS.entrySet()) {
-      doStepOptionMigrationTest(7, getTestName(true) + ".gradle.after.json");
+  @Throws(IOException::class)
+  fun testSixthVersion() {
+    for (ignored in LANGUAGE_TASK_ROOTS.entries) {
+      doStepOptionMigrationTest(7, getTestName(true) + ".gradle.after.json")
     }
   }
 
-  public void testSixthVersionPython() throws IOException {
-    doStepOptionMigrationTest(7, getTestName(true) + ".after.json");
+  @Throws(IOException::class)
+  fun testSixthVersionPython() {
+    doStepOptionMigrationTest(7, getTestName(true) + ".after.json")
   }
 
-  public void test8Version() throws Exception {
-    doStepOptionMigrationTest(9);
+  @Throws(Exception::class)
+  fun test8Version() {
+    doStepOptionMigrationTest(9)
   }
 
-  public void test9Version() throws IOException {
-    doStepOptionMigrationTest(10);
+  @Throws(IOException::class)
+  fun test9Version() {
+    doStepOptionMigrationTest(10)
   }
 
-  public void test10Version() throws IOException {
-    doStepOptionMigrationTest(10);
+  @Throws(IOException::class)
+  fun test10Version() {
+    doStepOptionMigrationTest(10)
   }
 
-  public void testCourseAdditionalMaterials() throws IOException {
-    String responseString = loadJsonText();
-    final ObjectMapper mapper = StepikConnector.getInstance().getObjectMapper();
-    final CourseAdditionalInfo courseAdditionalInfo = mapper.readValue(responseString, CourseAdditionalInfo.class);
-    assertEquals(1, courseAdditionalInfo.additionalFiles.size());
-    assertTrue(courseAdditionalInfo.getSolutionsHidden());
+  @Throws(IOException::class)
+  fun testCourseAdditionalMaterials() {
+    val responseString = loadJsonText()
+    val mapper = getInstance().objectMapper
+    val courseAdditionalInfo = mapper.readValue(responseString, CourseAdditionalInfo::class.java)
+    assertEquals(1, courseAdditionalInfo.additionalFiles.size)
+    assertTrue(courseAdditionalInfo.solutionsHidden)
   }
 
-  public void testLessonAdditionalMaterials() throws IOException {
-    String responseString = loadJsonText();
-    final ObjectMapper mapper = StepikConnector.getInstance().getObjectMapper();
-    final LessonAdditionalInfo lessonAdditionalInfo = mapper.readValue(responseString, LessonAdditionalInfo.class);
-    assertEquals("renamed", lessonAdditionalInfo.getCustomName());
-    assertEquals(1, lessonAdditionalInfo.getTasksInfo().size());
-
-    final TaskAdditionalInfo taskAdditionalInfo = lessonAdditionalInfo.getTasksInfo().get(123);
-    assertEquals("My cool task", taskAdditionalInfo.getName());
-    assertEquals("Very cool", taskAdditionalInfo.getCustomName());
-    assertEquals(3, taskAdditionalInfo.getTaskFiles().size());
+  @Throws(IOException::class)
+  fun testLessonAdditionalMaterials() {
+    val responseString = loadJsonText()
+    val mapper = getInstance().objectMapper
+    val lessonAdditionalInfo = mapper.readValue(responseString, LessonAdditionalInfo::class.java)
+    assertEquals("renamed", lessonAdditionalInfo.customName)
+    assertEquals(1, lessonAdditionalInfo.tasksInfo.size)
+    val taskAdditionalInfo = lessonAdditionalInfo.tasksInfo[123]
+    assertEquals("My cool task", taskAdditionalInfo!!.name)
+    assertEquals("Very cool", taskAdditionalInfo.customName)
+    assertEquals(3, taskAdditionalInfo.taskFiles.size)
   }
 
-  public void testAdditionalMaterialsStep() throws IOException {
-    String responseString = loadJsonText();
-    for (String ignored : Arrays.asList(EduNames.KOTLIN, EduNames.PYTHON)) {
-      final ObjectMapper mapper = StepikConnector.getInstance().getObjectMapper();
-
-      StepSource step = mapper.readValue(responseString, StepsList.class).steps.get(0);
-      PyCharmStepOptions options = (PyCharmStepOptions)step.getBlock().getOptions();
-      assertEquals(EduNames.ADDITIONAL_MATERIALS, options.getTitle());
-      assertEquals("task_file.py", options.getFiles().get(0).getName());
-      assertEquals("test_helperq.py", options.getFiles().get(1).getName());
+  @Throws(IOException::class)
+  fun testAdditionalMaterialsStep() {
+    val responseString = loadJsonText()
+    for (ignored in listOf(EduNames.KOTLIN, EduNames.PYTHON)) {
+      val mapper = getInstance().objectMapper
+      val step = mapper.readValue(responseString, StepsList::class.java).steps[0]
+      val options = step.block!!.options as PyCharmStepOptions?
+      assertEquals(EduNames.ADDITIONAL_MATERIALS, options!!.title)
+      assertEquals("task_file.py", options.files!![0].name)
+      assertEquals("test_helperq.py", options.files!![1].name)
     }
   }
 
-  public void testAvailableCourses() throws IOException {
-    String responseString = loadJsonText();
-    final ObjectMapper mapper = StepikConnector.getInstance().getObjectMapper();
-    final CoursesList coursesList = mapper.readValue(responseString, CoursesList.class);
-
-    assertNotNull(coursesList.courses);
-    assertEquals("Incorrect number of courses", 4, coursesList.courses.size());
+  @Throws(IOException::class)
+  fun testAvailableCourses() {
+    val responseString = loadJsonText()
+    val mapper = getInstance().objectMapper
+    val coursesList = mapper.readValue(responseString, CoursesList::class.java)
+    assertNotNull(coursesList.courses)
+    assertEquals("Incorrect number of courses", 4, coursesList.courses.size)
   }
 
-  public void testPlaceholderSerialization() throws IOException {
-    AnswerPlaceholder answerPlaceholder = new AnswerPlaceholder();
-    answerPlaceholder.setOffset(1);
-    answerPlaceholder.setLength(10);
-    answerPlaceholder.setPlaceholderText("type here");
-    answerPlaceholder.setPossibleAnswer("answer1");
-    final ObjectMapper mapper = StepikConnector.getInstance().getObjectMapper();
-    final String placeholderSerialization = mapper.writeValueAsString(answerPlaceholder);
-    String expected  = loadJsonText();
-
-    JsonNode object = mapper.readTree(expected);
-    assertEquals(mapper.writeValueAsString(mapper.treeToValue(object, AnswerPlaceholder.class)), placeholderSerialization);
-
+  @Throws(IOException::class)
+  fun testPlaceholderSerialization() {
+    val answerPlaceholder = AnswerPlaceholder()
+    answerPlaceholder.offset = 1
+    answerPlaceholder.length = 10
+    answerPlaceholder.placeholderText = "type here"
+    answerPlaceholder.possibleAnswer = "answer1"
+    val mapper = getInstance().objectMapper
+    val placeholderSerialization = mapper.writeValueAsString(answerPlaceholder)
+    val expected = loadJsonText()
+    val `object` = mapper.readTree(expected)
+    assertEquals(mapper.writeValueAsString(mapper.treeToValue(`object`, AnswerPlaceholder::class.java)), placeholderSerialization)
   }
 
-  public void testTokenUptoDate() throws IOException {
-    String jsonText = loadJsonText();
-    final ObjectMapper mapper = StepikConnector.getInstance().getObjectMapper();
-    final UsersList usersList = mapper.readValue(jsonText, UsersList.class);
-    assertNotNull(usersList);
-    assertFalse(usersList.users.isEmpty());
-    StepikUserInfo user = usersList.users.get(0);
-    assertNotNull(user);
+  @Throws(IOException::class)
+  fun testTokenUptoDate() {
+    val jsonText = loadJsonText()
+    val mapper = getInstance().objectMapper
+    val usersList = mapper.readValue(jsonText, UsersList::class.java)
+    assertNotNull(usersList)
+    assertFalse(usersList.users.isEmpty())
+    val user = usersList.users[0]
+    assertNotNull(user)
   }
 
-  public void testCourseAuthor() throws IOException {
-    String jsonText = loadJsonText();
-    final ObjectMapper mapper = StepikConnector.getInstance().getObjectMapper();
-    final UsersList usersList = mapper.readValue(jsonText, UsersList.class);
-    assertNotNull(usersList);
-    assertFalse(usersList.users.isEmpty());
-    StepikUserInfo user = usersList.users.get(0);
-    assertNotNull(user);
+  @Throws(IOException::class)
+  fun testCourseAuthor() {
+    val jsonText = loadJsonText()
+    val mapper = getInstance().objectMapper
+    val usersList = mapper.readValue(jsonText, UsersList::class.java)
+    assertNotNull(usersList)
+    assertFalse(usersList.users.isEmpty())
+    val user = usersList.users[0]
+    assertNotNull(user)
   }
 
-  public void testSections() throws IOException {
-    String jsonText = loadJsonText();
-    final ObjectMapper mapper = StepikConnector.getInstance().getObjectMapper();
-    final SectionsList sectionsList = mapper.readValue(jsonText, SectionsList.class);
-    assertNotNull(sectionsList);
-    assertEquals(1, sectionsList.sections.size());
-    List<Integer> unitIds = sectionsList.sections.get(0).getUnits();
-    assertEquals(10, unitIds.size());
+  @Throws(IOException::class)
+  fun testSections() {
+    val jsonText = loadJsonText()
+    val mapper = getInstance().objectMapper
+    val sectionsList = mapper.readValue(jsonText, SectionsList::class.java)
+    assertNotNull(sectionsList)
+    assertEquals(1, sectionsList.sections.size)
+    val unitIds = sectionsList.sections[0].units
+    assertEquals(10, unitIds.size)
   }
 
-  public void testUnit() throws IOException {
-    String jsonText = loadJsonText();
-    final ObjectMapper mapper = StepikConnector.getInstance().getObjectMapper();
-    final UnitsList unitsList = mapper.readValue(jsonText, UnitsList.class);
-    assertNotNull(unitsList);
-    assertNotNull(unitsList);
-    assertEquals(1, unitsList.units.size());
-    final int lesson = unitsList.units.get(0).getLesson();
-    assertEquals(13416, lesson);
+  @Throws(IOException::class)
+  fun testUnit() {
+    val jsonText = loadJsonText()
+    val mapper = getInstance().objectMapper
+    val unitsList = mapper.readValue(jsonText, UnitsList::class.java)
+    assertNotNull(unitsList)
+    assertNotNull(unitsList)
+    assertEquals(1, unitsList.units.size)
+    val lesson = unitsList.units[0].lesson
+    assertEquals(13416, lesson)
   }
 
-  public void testLesson() throws IOException {
-    String jsonText = loadJsonText();
-    final ObjectMapper mapper = StepikConnector.getInstance().getObjectMapper();
-    final LessonsList lessonsList = mapper.readValue(jsonText, LessonsList.class);
-
-    assertNotNull(lessonsList);
-    assertEquals(1, lessonsList.lessons.size());
-    final Lesson lesson = lessonsList.lessons.get(0);
-    assertNotNull(lesson);
+  @Throws(IOException::class)
+  fun testLesson() {
+    val jsonText = loadJsonText()
+    val mapper = getInstance().objectMapper
+    val lessonsList = mapper.readValue(jsonText, LessonsList::class.java)
+    assertNotNull(lessonsList)
+    assertEquals(1, lessonsList.lessons.size)
+    val lesson: Lesson = lessonsList.lessons[0]
+    assertNotNull(lesson)
   }
 
-  public void testStep() throws IOException {
-    String jsonText = loadJsonText();
-    final ObjectMapper mapper = StepikConnector.getInstance().getObjectMapper();
-    final StepsList stepContainer = mapper.readValue(jsonText, StepsList.class);
-    assertNotNull(stepContainer);
-    final StepSource step = stepContainer.steps.get(0);
-    assertNotNull(step);
+  @Throws(IOException::class)
+  fun testStep() {
+    val jsonText = loadJsonText()
+    val mapper = getInstance().objectMapper
+    val stepContainer = mapper.readValue(jsonText, StepsList::class.java)
+    assertNotNull(stepContainer)
+    val step = stepContainer.steps[0]
+    assertNotNull(step)
   }
 
-  public void testStepBlock() throws IOException {
-    String jsonText = loadJsonText();
-    final ObjectMapper mapper = StepikConnector.getInstance().getObjectMapper();
-    final StepsList stepContainer = mapper.readValue(jsonText, StepsList.class);
-    final StepSource step = stepContainer.steps.get(0);
-    final Step block = step.getBlock();
-    assertNotNull(block);
-    assertNotNull(block.getOptions());
-    assertTrue(block.getName().startsWith(PYCHARM_PREFIX));
+  @Throws(IOException::class)
+  fun testStepBlock() {
+    val jsonText = loadJsonText()
+    val mapper = getInstance().objectMapper
+    val stepContainer = mapper.readValue(jsonText, StepsList::class.java)
+    val step = stepContainer.steps[0]
+    val block = step.block
+    assertNotNull(block)
+    assertNotNull(block!!.options)
+    assertTrue(block.name.startsWith(PYCHARM_PREFIX))
   }
 
-  public void testStepBlockOptions() throws IOException {
-    final StepOptions options = getStepOptions();
-    assertNotNull(options);
+  @Throws(IOException::class)
+  fun testStepBlockOptions() {
+    val options: StepOptions? = stepOptions
+    assertNotNull(options)
   }
 
-  public void testUpdateDate() throws IOException {
-    String jsonText = loadJsonText();
-    final ObjectMapper mapper = StepikConnector.getInstance().getObjectMapper();
-    final StepsList stepContainer = mapper.readValue(jsonText, StepsList.class);
-    final StepSource step = stepContainer.steps.get(0);
-    assertNotNull(step.getUpdateDate());
+  @Throws(IOException::class)
+  fun testUpdateDate() {
+    val jsonText = loadJsonText()
+    val mapper = getInstance().objectMapper
+    val stepContainer = mapper.readValue(jsonText, StepsList::class.java)
+    val step = stepContainer.steps[0]
+    assertNotNull(step.updateDate)
   }
 
-  public void testOptionsTitle() throws IOException {
-    final PyCharmStepOptions options = getStepOptions();
-    assertEquals("Our first program", options.getTitle());
+  @Throws(IOException::class)
+  fun testOptionsTitle() {
+    val options = stepOptions
+    assertEquals("Our first program", options!!.title)
   }
 
-  public void testOptionsDescription() throws IOException {
-    String jsonText = loadJsonText();
-    final ObjectMapper mapper = StepikConnector.getInstance().getObjectMapper();
-    final StepsList stepContainer = mapper.readValue(jsonText, StepsList.class);
-    final StepSource step = stepContainer.steps.get(0);
-    final Step block = step.getBlock();
-    assertEquals("\n" +
-        "Traditionally the first program you write in any programming language is <code>\"Hello World!\"</code>.\n" +
-        "<br><br>\n" +
-        "Introduce yourself to the World.\n" +
-        "<br><br>\n" +
-        "Hint: To run a script сhoose 'Run &lt;name&gt;' on the context menu. <br>\n" +
-        "For more information visit <a href=\"https://www.jetbrains.com/help/pycharm/running-and-rerunning-applications.html\">our help</a>.\n" +
-        "\n" +
-        "<br>\n", block.getText());
+  @Throws(IOException::class)
+  fun testOptionsDescription() {
+    val jsonText = loadJsonText()
+    val mapper = getInstance().objectMapper
+    val stepContainer = mapper.readValue(jsonText, StepsList::class.java)
+    val step = stepContainer.steps[0]
+    val block = step.block
+    assertEquals(
+      """
+  
+  Traditionally the first program you write in any programming language is <code>"Hello World!"</code>.
+  <br><br>
+  Introduce yourself to the World.
+  <br><br>
+  Hint: To run a script сhoose 'Run &lt;name&gt;' on the context menu. <br>
+  For more information visit <a href="https://www.jetbrains.com/help/pycharm/running-and-rerunning-applications.html">our help</a>.
+  
+  <br>
+  
+  """.trimIndent(), block!!.text
+    )
   }
 
-  public void testOptionsFiles() throws IOException {
-    final PyCharmStepOptions options = getStepOptions();
+  @Throws(IOException::class)
+  fun testOptionsFiles() {
+    val options = stepOptions
+    val files: List<TaskFile>? = options!!.files
+    assertEquals(2, files!!.size)
+    val taskFile1 = files[0]
+    assertEquals("hello_world.py", taskFile1.name)
+    assertEquals("print(\"Hello, world! My name is type your name\")\n", taskFile1.text)
+    val taskFile2 = files[1]
+    assertEquals("tests.py", taskFile2.name)
+    assertEquals(
+      """from test_helper import run_common_tests, failed, passed, get_answer_placeholders
 
-    final List<TaskFile> files = options.getFiles();
-    assertEquals(2, files.size());
-    final TaskFile taskFile1 = files.get(0);
-    assertEquals("hello_world.py", taskFile1.getName());
-    assertEquals("print(\"Hello, world! My name is type your name\")\n", taskFile1.getText());
 
-    final TaskFile taskFile2 = files.get(1);
-    assertEquals("tests.py", taskFile2.getName());
-    assertEquals("from test_helper import run_common_tests, failed, passed, get_answer_placeholders\n" +
-                 "\n" +
-                 "\n" +
-                 "def test_ASCII():\n" +
-                 "    windows = get_answer_placeholders()\n" +
-                 "    for window in windows:\n" +
-                 "        all_ascii = all(ord(c) < 128 for c in window)\n" +
-                 "        if not all_ascii:\n" +
-                 "            failed(\"Please use only English characters this time.\")\n" +
-                 "            return\n" +
-                 "    passed()\n", taskFile2.getText());
+def test_ASCII():
+    windows = get_answer_placeholders()
+    for window in windows:
+        all_ascii = all(ord(c) < 128 for c in window)
+        if not all_ascii:
+            failed("Please use only English characters this time.")
+            return
+    passed()
+""", taskFile2.text
+    )
   }
 
-  private PyCharmStepOptions getStepOptions() throws IOException {
-    String jsonText = loadJsonText();
-    final ObjectMapper mapper = StepikConnector.getInstance().getObjectMapper();
-    final StepsList stepContainer = mapper.readValue(jsonText, StepsList.class);
-    final StepSource step = stepContainer.steps.get(0);
-    final Step block = step.getBlock();
-    return (PyCharmStepOptions)block.getOptions();
+  @get:Throws(IOException::class)
+  private val stepOptions: PyCharmStepOptions?
+    get() {
+      val jsonText = loadJsonText()
+      val mapper = getInstance().objectMapper
+      val stepContainer = mapper.readValue(jsonText, StepsList::class.java)
+      val step = stepContainer.steps[0]
+      val block = step.block
+      return block!!.options as PyCharmStepOptions?
+    }
+
+  @Throws(IOException::class)
+  fun testOptionsPlaceholder() {
+    val options = stepOptions
+    val files: List<TaskFile>? = options!!.files
+    val taskFile = files!![0]
+    val placeholders = taskFile.answerPlaceholders
+    assertEquals(1, placeholders.size)
+    val offset = placeholders[0].offset
+    assertEquals(32, offset)
+    val length = placeholders[0].length
+    assertEquals(14, length)
+    assertEquals("type your name", taskFile.text.substring(offset, offset + length))
   }
 
-  public void testOptionsPlaceholder() throws IOException {
-    final PyCharmStepOptions options = getStepOptions();
-    final List<TaskFile> files = options.getFiles();
-    final TaskFile taskFile = files.get(0);
-
-    final List<AnswerPlaceholder> placeholders = taskFile.getAnswerPlaceholders();
-    assertEquals(1, placeholders.size());
-    final int offset = placeholders.get(0).getOffset();
-    assertEquals(32, offset);
-    final int length = placeholders.get(0).getLength();
-    assertEquals(14, length);
-    assertEquals("type your name", taskFile.getText().substring(offset, offset + length));
+  @Throws(IOException::class)
+  fun testOptionsPlaceholderDependency() {
+    val options = stepOptions
+    val files: List<TaskFile>? = options!!.files
+    val taskFile = files!![0]
+    val placeholders = taskFile.answerPlaceholders
+    assertEquals(1, placeholders.size)
+    val dependency = placeholders[0].placeholderDependency
+    assertNotNull(dependency)
+    assertEquals("mysite/settings.py", dependency!!.fileName)
+    assertEquals("task1", dependency.taskName)
+    assertEquals("lesson1", dependency.lessonName)
+    assertEquals(1, dependency.placeholderIndex)
   }
 
-  public void testOptionsPlaceholderDependency() throws IOException {
-    final PyCharmStepOptions options = getStepOptions();
-    final List<TaskFile> files = options.getFiles();
-    final TaskFile taskFile = files.get(0);
-
-    final List<AnswerPlaceholder> placeholders = taskFile.getAnswerPlaceholders();
-    assertEquals(1, placeholders.size());
-    final AnswerPlaceholderDependency dependency = placeholders.get(0).getPlaceholderDependency();
-    assertNotNull(dependency);
-    assertEquals("mysite/settings.py", dependency.getFileName());
-    assertEquals("task1", dependency.getTaskName());
-    assertEquals("lesson1", dependency.getLessonName());
-    assertEquals(1, dependency.getPlaceholderIndex());
+  @Throws(IOException::class)
+  fun testTaskStatuses() {
+    val jsonText = loadJsonText()
+    val mapper = getInstance().objectMapper
+    val progressesList = mapper.readValue(jsonText, ProgressesList::class.java)
+    assertNotNull(progressesList)
+    val progressList = progressesList.progresses
+    assertNotNull(progressList)
+    val statuses = progressList.map { it.isPassed }
+    assertNotNull(statuses)
+    assertEquals(50, statuses.size)
   }
 
-  public void testTaskStatuses() throws IOException {
-    String jsonText = loadJsonText();
-    final ObjectMapper mapper = StepikConnector.getInstance().getObjectMapper();
-    final ProgressesList progressesList = mapper.readValue(jsonText, ProgressesList.class);
-    assertNotNull(progressesList);
-    List<Progress> progressList = progressesList.progresses;
-    assertNotNull(progressList);
-    final Boolean[] statuses = progressList.stream().map(progress -> progress.isPassed()).toArray(Boolean[]::new);
-    assertNotNull(statuses);
-    assertEquals(50, statuses.length);
+  @Throws(IOException::class)
+  fun testAttempts() {
+    val mapper = getInstance().objectMapper
+    val attemptsList = mapper.readValue(loadJsonText(), AttemptsList::class.java)
+    assertNotNull(attemptsList)
+    val attempts = attemptsList.attempts
+    assertNotNull(attempts)
+    assertEquals(20, attempts.size)
+    val attempt1 = attempts[0]
+    assertNull(attempt1.dataset!!.options)
+    val attempt2 = attempts[11]
+    assertNotNull(attempt2.dataset)
   }
 
-  public void testAttempts() throws IOException {
-    final ObjectMapper mapper = StepikConnector.getInstance().getObjectMapper();
-    final AttemptsList attemptsList = mapper.readValue(loadJsonText(), AttemptsList.class);
-    assertNotNull(attemptsList);
-    List<Attempt> attempts = attemptsList.attempts;
-    assertNotNull(attempts);
-    assertEquals(20, attempts.size());
-    Attempt attempt1 = attempts.get(0);
-    assertNull(attempt1.getDataset().getOptions());
-    Attempt attempt2 = attempts.get(11);
-    assertNotNull(attempt2.getDataset());
+  @Throws(IOException::class)
+  fun testLastSubmission() {
+    val jsonText = loadJsonText()
+    val mapper = getInstance().objectMapper
+    val submissionsList = mapper.readValue(jsonText, SubmissionsList::class.java)
+    assertNotNull(submissionsList)
+    assertNotNull(submissionsList.submissions)
+    assertEquals(20, submissionsList.submissions.size)
+    val reply = submissionsList.submissions[0].reply
+    assertNotNull(reply)
+    val solutionFiles = reply!!.solution
+    assertEquals(1, solutionFiles!!.size)
+    assertEquals("hello_world.py", solutionFiles[0].name)
+    assertEquals("print(\"Hello, world! My name is type your name\")\n", solutionFiles[0].text)
   }
 
-  public void testLastSubmission() throws IOException {
-    String jsonText = loadJsonText();
-    final ObjectMapper mapper = StepikConnector.getInstance().getObjectMapper();
-    final SubmissionsList submissionsList = mapper.readValue(jsonText, SubmissionsList.class);
-    assertNotNull(submissionsList);
-    assertNotNull(submissionsList.submissions);
-    assertEquals(20, submissionsList.submissions.size());
-    final Reply reply = submissionsList.submissions.get(0).getReply();
-    assertNotNull(reply);
-    List<SolutionFile> solutionFiles = reply.getSolution();
-    assertEquals(1, solutionFiles.size());
-    assertEquals("hello_world.py", solutionFiles.get(0).getName());
-    assertEquals("print(\"Hello, world! My name is type your name\")\n", solutionFiles.get(0).getText());
-  }
-
-  public void testReplyTo7Version() throws IOException {
-    for (Map.Entry<String, TaskRoots> entry : TaskRootsKt.LANGUAGE_TASK_ROOTS.entrySet()) {
-      doReplyMigrationTest(7, getTestName(true) + ".gradle.after.json", entry.getKey());
+  @Throws(IOException::class)
+  fun testReplyTo7Version() {
+    for ((key) in LANGUAGE_TASK_ROOTS.entries) {
+      doReplyMigrationTest(7, getTestName(true) + ".gradle.after.json", key)
     }
   }
 
-  public void testReplyTo7VersionPython() throws IOException {
-    doReplyMigrationTest(7, getTestName(true) + ".after.json", EduNames.PYTHON);
+  @Throws(IOException::class)
+  fun testReplyTo7VersionPython() {
+    doReplyMigrationTest(7, getTestName(true) + ".after.json", EduNames.PYTHON)
   }
 
-  public void testReplyTo9Version() throws IOException {
-    doReplyMigrationTest(9);
+  @Throws(IOException::class)
+  fun testReplyTo9Version() {
+    doReplyMigrationTest(9)
   }
 
-  public void testReplyTo10Version() throws IOException {
-    doReplyMigrationTest(10);
+  @Throws(IOException::class)
+  fun testReplyTo10Version() {
+    doReplyMigrationTest(10)
   }
 
-  public void testNonEduTasks() throws IOException {
-    String jsonText = loadJsonText();
-    final ObjectMapper mapper = StepikConnector.getInstance().getObjectMapper();
-    final StepsList stepContainer = mapper.readValue(jsonText, StepsList.class);
-    assertNotNull(stepContainer);
-    assertNotNull(stepContainer.steps);
-    assertEquals(3, stepContainer.steps.size());
+  @Throws(IOException::class)
+  fun testNonEduTasks() {
+    val jsonText = loadJsonText()
+    val mapper = getInstance().objectMapper
+    val stepContainer = mapper.readValue(jsonText, StepsList::class.java)
+    assertNotNull(stepContainer)
+    assertNotNull(stepContainer.steps)
+    assertEquals(3, stepContainer.steps.size)
   }
 
-  public void testTaskWithCustomName() throws IOException {
-    String jsonText = loadJsonText();
-    final ObjectMapper mapper = StepikConnector.getInstance().getObjectMapper();
-    final StepsList stepContainer = mapper.readValue(jsonText, StepsList.class);
-    assertNotNull(stepContainer);
-    Step block = stepContainer.steps.get(0).getBlock();
-    assertNotNull(block);
-    PyCharmStepOptions options = (PyCharmStepOptions)block.getOptions();
-    assertNotNull(options);
-    assertEquals("custom name", options.getCustomPresentableName());
+  @Throws(IOException::class)
+  fun testTaskWithCustomName() {
+    val jsonText = loadJsonText()
+    val mapper = getInstance().objectMapper
+    val stepContainer = mapper.readValue(jsonText, StepsList::class.java)
+    assertNotNull(stepContainer)
+    val block = stepContainer.steps[0].block
+    assertNotNull(block)
+    val options = block!!.options as PyCharmStepOptions?
+    assertNotNull(options)
+    assertEquals("custom name", options!!.customPresentableName)
   }
 
-  public void testCode() throws IOException {
-    String jsonText = loadJsonText();
-    final ObjectMapper mapper = StepikConnector.getInstance().getObjectMapper();
-    final StepsList stepContainer = mapper.readValue(jsonText, StepsList.class);
-    assertNotNull(stepContainer);
-    Step block = stepContainer.steps.get(0).getBlock();
-    assertNotNull(block);
-    PyCharmStepOptions options = (PyCharmStepOptions)block.getOptions();
-    assertNotNull(options);
-    Map<String, ExecutionLimit> limits = options.getLimits();
-    assertNotNull(limits);
-    assertEquals(1, limits.size());
-    ExecutionLimit java11Limit = limits.get("java11");
-    assertNotNull(java11Limit);
-    assertEquals(8, (int)java11Limit.getTime());
-    assertEquals(256, (int)java11Limit.getMemory());
+  @Throws(IOException::class)
+  fun testCode() {
+    val jsonText = loadJsonText()
+    val mapper = getInstance().objectMapper
+    val stepContainer = mapper.readValue(jsonText, StepsList::class.java)
+    assertNotNull(stepContainer)
+    val block = stepContainer.steps[0].block
+    assertNotNull(block)
+    val options = block!!.options as PyCharmStepOptions?
+    assertNotNull(options)
+    val limits = options!!.limits
+    assertNotNull(limits)
+    assertEquals(1, limits!!.size)
+    val java11Limit = limits["java11"]
+    assertNotNull(java11Limit)
+    assertEquals(8, java11Limit!!.time as Int)
+    assertEquals(256, java11Limit.memory as Int)
   }
 
-  @NotNull
-  private String loadJsonText() throws IOException {
-    return loadJsonText(getTestFile());
+  @Throws(IOException::class)
+  private fun loadJsonText(fileName: String = testFile): String {
+    return FileUtil.loadFile(File(testDataPath, fileName), true)
   }
 
-  @NotNull
-  private String loadJsonText(@NotNull String fileName) throws IOException {
-    return FileUtil.loadFile(new File(getTestDataPath(), fileName), true);
+  @Throws(IOException::class)
+  private fun doStepOptionMigrationTest(maxVersion: Int, afterFileName: String? = null) {
+    doMigrationTest(afterFileName) { jsonBefore: ObjectNode? ->
+      migrate(
+        jsonBefore!!, maxVersion
+      )
+    }
   }
 
-  private void doStepOptionMigrationTest(int maxVersion) throws IOException {
-    doStepOptionMigrationTest(maxVersion, null);
-  }
-
-  private void doStepOptionMigrationTest(int maxVersion, @Nullable String afterFileName) throws IOException {
-    doMigrationTest(afterFileName, jsonBefore -> JacksonStepOptionsDeserializer.migrate(jsonBefore, maxVersion));
-  }
-
-  private void doReplyMigrationTest(int maxVersion) throws IOException {
-    doReplyMigrationTest(maxVersion, null, null);
-  }
-
-  private void doReplyMigrationTest(int maxVersion, @Nullable String afterFileName, @Nullable String language) throws IOException {
-    doMigrationTest(afterFileName, replyObject -> {
-      int initialVersion = StepikReplyDeserializer.migrate(replyObject, maxVersion);
-
-      String eduTaskWrapperString = replyObject.get(EDU_TASK).asText();
-
+  @Throws(IOException::class)
+  private fun doReplyMigrationTest(maxVersion: Int, afterFileName: String? = null, language: String? = null) {
+    doMigrationTest(afterFileName) { replyObject: ObjectNode ->
+      val initialVersion = replyObject.migrate(maxVersion)
+      val eduTaskWrapperString = replyObject[SerializationUtils.Json.EDU_TASK].asText()
       try {
-        final ObjectNode eduTaskWrapperObject = (ObjectNode)new ObjectMapper().readTree(eduTaskWrapperString);
-        ObjectNode eduTaskObject = (ObjectNode)eduTaskWrapperObject.get(TASK);
-        JacksonSubmissionDeserializer.migrate(eduTaskObject, initialVersion, maxVersion, language);
-        final String eduTaskWrapperStringAfter = new ObjectMapper().writeValueAsString(eduTaskWrapperObject);
-        replyObject.put(EDU_TASK, eduTaskWrapperStringAfter);
-        return replyObject;
+        val eduTaskWrapperObject = ObjectMapper().readTree(eduTaskWrapperString) as ObjectNode
+        val eduTaskObject = eduTaskWrapperObject.get(TASK) as ObjectNode
+        eduTaskObject.migrate(initialVersion, maxVersion, language)
+        val eduTaskWrapperStringAfter = ObjectMapper().writeValueAsString(eduTaskWrapperObject)
+        replyObject.put(SerializationUtils.Json.EDU_TASK, eduTaskWrapperStringAfter)
+        return@doMigrationTest replyObject
       }
-      catch (IOException e) {
-        LOG.error(e);
+      catch (e: IOException) {
+        LOG.error(e)
       }
-      return null;
-    });
-  }
-
-  private void doMigrationTest(@Nullable String afterFileName,
-                               @NotNull Function<ObjectNode, ObjectNode> migrationAction) throws IOException {
-    String responseString = loadJsonText();
-    String afterExpected;
-    if (afterFileName != null) {
-      afterExpected = loadJsonText(afterFileName);
-    } else {
-      afterExpected = loadJsonText(getTestName(true) + ".after.json");
+      null
     }
-
-    final ObjectNode jsonBefore = (ObjectNode)new ObjectMapper().readTree(responseString);
-    ObjectNode jsonAfter = migrationAction.apply(jsonBefore);
-    String afterActual = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(jsonAfter);
-    afterActual = StringUtilRt.convertLineSeparators(afterActual).replaceAll("\\n\\n", "\n");
-    assertEquals(afterExpected, afterActual);
   }
 
-  @NotNull
-  private String getTestFile() {
-    return getTestName(true) + ".json";
+  @Throws(IOException::class)
+  private fun doMigrationTest(
+    afterFileName: String?,
+    migrationAction: Function<ObjectNode, ObjectNode?>
+  ) {
+    val responseString = loadJsonText()
+    val afterExpected: String = afterFileName?.let { loadJsonText(it) } ?: loadJsonText(getTestName(true) + ".after.json")
+    val jsonBefore = ObjectMapper().readTree(responseString) as ObjectNode
+    val jsonAfter = migrationAction.apply(jsonBefore)
+    var afterActual = ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(jsonAfter)
+    afterActual = StringUtilRt.convertLineSeparators(afterActual!!).replace("\\n\\n".toRegex(), "\n")
+    assertEquals(afterExpected, afterActual)
   }
+
+  private val testFile: String
+    get() = getTestName(true) + ".json"
 }
