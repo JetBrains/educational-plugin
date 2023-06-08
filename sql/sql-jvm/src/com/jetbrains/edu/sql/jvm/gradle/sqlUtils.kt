@@ -58,6 +58,7 @@ fun Task.getBaseTaskDir(project: Project): VirtualFile? = lesson.getDir(project.
 
 fun createDataSources(project: Project, tasks: List<Task>): List<LocalDataSource> {
   val dataSourceRegistry = DataSourceRegistry(project)
+  dataSourceRegistry.setImportedFlag(false)
   val dataSources = mutableListOf<LocalDataSource>()
   for (task in tasks) {
     val url = task.databaseUrl(project) ?: continue
