@@ -73,7 +73,7 @@ class MarketplaceFrameworkLessonsUpdateTest : FrameworkLessonsUpdateTest<EduCour
 
   override fun updateCourse(changeCourse: EduCourse.() -> Unit) {
     val remoteCourse = toRemoteCourse(changeCourse)
-    MarketplaceCourseUpdater(project, localCourse, remoteCourse.marketplaceCourseVersion).doUpdate(remoteCourse)
+    MarketplaceCourseUpdater(project, localCourse, remoteCourse.marketplaceCourseVersion).updateCourseWithRemote(remoteCourse)
     assertEquals(remoteCourse.marketplaceCourseVersion, localCourse.marketplaceCourseVersion)
   }
 

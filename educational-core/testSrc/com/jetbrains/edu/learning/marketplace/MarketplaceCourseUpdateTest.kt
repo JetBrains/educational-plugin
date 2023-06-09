@@ -633,7 +633,7 @@ class MarketplaceCourseUpdateTest : CourseGenerationTestBase<EmptyProjectSetting
 
   fun doTest(course: EduCourse, courseFromServer: EduCourse, expectedFileTree: FileTree, remoteCourseVersion: Int) {
     loadCourseStructure(course, courseFromServer)
-    MarketplaceCourseUpdater(project, course, remoteCourseVersion).doUpdate(courseFromServer)
+    MarketplaceCourseUpdater(project, course, remoteCourseVersion).updateCourseWithRemote(courseFromServer)
     checkCourseStructure(course, courseFromServer, expectedFileTree)
     assertEquals(remoteCourseVersion, course.marketplaceCourseVersion)
   }
