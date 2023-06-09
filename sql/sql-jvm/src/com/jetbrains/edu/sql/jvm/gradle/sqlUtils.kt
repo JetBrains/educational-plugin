@@ -20,6 +20,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.sql.SqlFileType
@@ -32,6 +33,7 @@ import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.getTask
 import com.jetbrains.edu.learning.getTaskFile
 import com.jetbrains.edu.learning.runReadActionInSmartMode
 import com.jetbrains.edu.sql.core.EduSqlBundle
@@ -48,6 +50,34 @@ fun Task.databaseUrl(project: Project): String? {
   // The first `db` is just to have a separate directory for database files.
   // The second `db` is a common prefix for H2 database files
   return "jdbc:h2:file:${taskDir.path}/db/db"
+}
+
+// Heavily depends on [databaseUrl]
+// Dependency on concrete database kind/SQL dialect.
+private val DATA_SOURCE_URL_REGEX = "jdbc:h2:file:(?<path>.*)/db/db".toRegex()
+
+/**
+ * Returns true if a data source is created for a course task.
+ * At the same time, it is possible that such data source doesn't have the corresponding task
+ * because it was removed (for example, during course update)
+ *
+ * @see [LocalDataSource.task]
+ */
+fun LocalDataSource.isTaskDataSource(): Boolean {
+  val url = url ?: return false
+  return DATA_SOURCE_URL_REGEX.matches(url)
+}
+
+/**
+ * Returns [Task] associated with the data source or <code>null</code>
+ * if a data source is not associated with any task or a task doesn't exist.
+ */
+fun LocalDataSource.task(project: Project): Task? {
+  val url = url ?: return null
+  val result = DATA_SOURCE_URL_REGEX.matchEntire(url) ?: return null
+  val taskPath = result.groups["path"]!!.value
+  val taskDir = LocalFileSystem.getInstance().findFileByPath(taskPath) ?: return null
+  return taskDir.getTask(project)
 }
 
 /**

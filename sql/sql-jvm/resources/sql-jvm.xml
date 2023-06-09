@@ -7,6 +7,11 @@
     <plugin id="com.intellij.database"/>
   </dependencies>
 
+  <projectListeners>
+    <listener class="com.jetbrains.edu.sql.jvm.gradle.SqlCourseUpdateListener"
+              topic="com.jetbrains.edu.learning.CourseUpdateListener"/>
+  </projectListeners>
+
   <extensions defaultExtensionNs="com.intellij">
     <postStartupActivity implementation="com.jetbrains.edu.sql.jvm.gradle.SqlGradleStartupActivity"/>
   </extensions>

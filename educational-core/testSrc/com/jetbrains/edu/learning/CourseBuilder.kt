@@ -84,10 +84,11 @@ abstract class LessonOwnerBuilder(val course: Course) {
     name: String? = null,
     customPresentableName: String? = null,
     isTemplateBased: Boolean = true,
+    id: Int = 0,
     buildLesson: LessonBuilder<FrameworkLesson>.() -> Unit = {}
   ) {
     val lesson = FrameworkLesson().also { it.isTemplateBased = isTemplateBased }
-    lesson(lesson, name, customPresentableName, buildLesson)
+    lesson(lesson, name, customPresentableName, id, buildLesson)
   }
 
   fun stepikLesson(
@@ -96,15 +97,16 @@ abstract class LessonOwnerBuilder(val course: Course) {
     buildLesson: LessonBuilder<Lesson>.() -> Unit = {}
   ) {
     val stepikLesson = StepikLesson()
-    lesson(stepikLesson, name, customPresentableName, buildLesson)
+    lesson(stepikLesson, name, customPresentableName, buildLesson = buildLesson)
   }
 
   fun lesson(
     name: String? = null,
     customPresentableName: String? = null,
+    id: Int = 0,
     buildLesson: LessonBuilder<Lesson>.() -> Unit = {}
   ) {
-    lesson(Lesson(), name, customPresentableName, buildLesson)
+    lesson(Lesson(), name, customPresentableName, id, buildLesson)
   }
 
   fun station(
@@ -112,19 +114,21 @@ abstract class LessonOwnerBuilder(val course: Course) {
     customPresentableName: String? = null,
     buildLesson: LessonBuilder<CheckiOStation>.() -> Unit = {}
   ) {
-    lesson(CheckiOStation(), name, customPresentableName, buildLesson)
+    lesson(CheckiOStation(), name, customPresentableName, buildLesson = buildLesson)
   }
 
   protected fun <T : Lesson> lesson(
     lesson: T,
     name: String? = null,
     customPresentableName: String? = null,
+    id: Int = 0,
     buildLesson: LessonBuilder<T>.() -> Unit
   ) {
     val lessonBuilder = LessonBuilder(course, null, lesson)
     lesson.index = nextLessonIndex
     lessonBuilder.withName(name ?: (LESSON + nextLessonIndex))
     lessonBuilder.withCustomPresentableName(customPresentableName)
+    lessonBuilder.withId(id)
     addLesson(lesson)
     lessonBuilder.buildLesson()
   }
@@ -212,6 +216,10 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
 
   fun withCustomPresentableName(name: String?) {
     lesson.customPresentableName = name
+  }
+
+  fun withId(id: Int) {
+    lesson.id = id
   }
 
   private fun task(

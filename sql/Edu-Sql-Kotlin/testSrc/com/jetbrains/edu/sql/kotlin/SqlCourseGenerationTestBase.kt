@@ -19,8 +19,10 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.jvm.courseGeneration.JvmCourseGenerationTestBase
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.sql.jvm.gradle.findDataSource
+import com.jetbrains.edu.sql.jvm.gradle.task
 import java.util.concurrent.TimeUnit
 
 abstract class SqlCourseGenerationTestBase : JvmCourseGenerationTestBase() {
@@ -29,6 +31,21 @@ abstract class SqlCourseGenerationTestBase : JvmCourseGenerationTestBase() {
     super.createCourseStructure(course)
     waitWhileDataSourceSyncInProgress()
     PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
+  }
+
+  protected fun checkAllTasksHaveDataSource(course: Course) {
+    val dataSources = LocalDataSourceManager.getInstance(project).dataSources
+    val tasks = course.allTasks.toMutableSet()
+
+    for (dataSource in dataSources) {
+      // It relies on the fact that `CourseGenerationTestBase` is a heavy test, and it uses real filesystem
+      val task = dataSource.task(project) ?: error("Can't find task for `${dataSource.name}` data source")
+      tasks -= task
+    }
+
+    check(tasks.isEmpty()) {
+      "Tasks ${tasks.joinToString { "`${it.presentableName}`" }} don't have data sources"
+    }
   }
 
   protected fun checkTable(task: Task, tableName: String, shouldExist: Boolean = true) {
@@ -55,7 +72,7 @@ abstract class SqlCourseGenerationTestBase : JvmCourseGenerationTestBase() {
     }
   }
 
-  private fun waitWhileDataSourceSyncInProgress() {
+  protected fun waitWhileDataSourceSyncInProgress() {
     val dataSources = LocalDataSourceManager.getInstance(project).dataSources
 
     while (dataSources.any { DataSourceSyncManager.getInstance().isActive(it) }) {

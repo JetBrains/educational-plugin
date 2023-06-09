@@ -1,12 +1,9 @@
 package com.jetbrains.edu.sql.kotlin.courseGeneration
 
 import com.intellij.database.console.JdbcConsoleProvider
-import com.intellij.database.dataSource.LocalDataSourceManager
-import com.intellij.database.model.*
 import com.intellij.database.view.DatabaseView
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.sql.SqlFileType
@@ -20,7 +17,6 @@ import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.sql.jvm.gradle.SqlGradleCourseBuilderBase.Companion.INIT_SQL
 import com.jetbrains.edu.sql.jvm.gradle.findDataSource
 import com.jetbrains.edu.sql.kotlin.SqlCourseGenerationTestBase
@@ -55,22 +51,7 @@ class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
 
     createCourseStructure(course)
 
-    val dataSources = LocalDataSourceManager.getInstance(project).dataSources
-    val tasks = course.allTasks.toMutableSet()
-
-    for (dataSource in dataSources) {
-      val url = dataSource.url ?: error("Unexpected null url for `${dataSource.name}` data source")
-      val result = DATA_SOURCE_URL_REGEX.matchEntire(url) ?: error("`$url` of `${dataSource.name}` data source doesn't match `${DATA_SOURCE_URL_REGEX.pattern}` regex")
-      val taskPath = result.groups["path"]!!.value
-      // It relies on fact that `CourseGenerationTestBase` is heavy test, and it uses real filesystem
-      val taskDir = LocalFileSystem.getInstance().findFileByPath(taskPath) ?: error("Can't find `$taskPath`")
-      val task = taskDir.getTask(project) ?: error("Can't find task for `${dataSource.name}` data source")
-      tasks -= task
-    }
-
-    check(tasks.isEmpty()) {
-      "Tasks ${tasks.joinToString { "`${it.presentableName}`" }} don't have data sources"
-    }
+    checkAllTasksHaveDataSource(course)
   }
 
   fun `test attach jdbc console`() {
@@ -367,10 +348,6 @@ class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
   }
 
   companion object {
-    /**
-     * Heavily depends on [com.jetbrains.edu.sql.jvm.gradle.SqlGradleStartupActivity.databaseUrl]
-     */
-    private val DATA_SOURCE_URL_REGEX = "jdbc:h2:file:(?<path>.*)/db/db".toRegex()
 
     private val promiseMakeVisible: Method by lazy {
       val clazz = TreeUtil::class.java
