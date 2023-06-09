@@ -9,6 +9,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.NotificationTitle
+import com.jetbrains.edu.learning.CourseUpdateListener
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
@@ -43,6 +44,7 @@ class CheckiOCourseUpdater(
       ProjectView.getInstance(project).refresh()
       YamlFormatSynchronizer.saveAll(project)
       EduUtilsKt.updateToolWindows(project)
+      project.messageBus.syncPublisher(CourseUpdateListener.COURSE_UPDATE).courseUpdated(project, course)
     }
   }
 

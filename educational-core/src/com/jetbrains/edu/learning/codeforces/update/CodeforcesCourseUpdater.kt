@@ -4,6 +4,7 @@ import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.CourseUpdateListener
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.ContestParameters
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
@@ -46,6 +47,7 @@ class CodeforcesCourseUpdater(private val project: Project, val course: Codeforc
           updatedTasks.forEach {
             showUpdateCompletedNotification(project, EduCoreBundle.message("codeforces.task.description.was.updated.notification", it))
           }
+          project.messageBus.syncPublisher(CourseUpdateListener.COURSE_UPDATE).courseUpdated(project, course)
         }
 
         onFinish(isUpdated)

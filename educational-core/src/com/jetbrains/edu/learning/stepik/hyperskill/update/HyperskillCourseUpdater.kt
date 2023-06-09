@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill.update
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
+import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
@@ -165,6 +166,10 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
       ProjectManager.getInstance().reloadProject(project)
     }
     showUpdateCompletedNotification(project, EduCoreBundle.message("update.notification.text", EduNames.JBA, EduNames.PROJECT))
+    runInEdt {
+      if (project.isDisposed) return@runInEdt
+      project.messageBus.syncPublisher(CourseUpdateListener.COURSE_UPDATE).courseUpdated(project, course)
+    }
   }
 
   private fun updateCourse(remoteCourse: HyperskillCourse) {

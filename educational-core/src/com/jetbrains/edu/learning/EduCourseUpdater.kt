@@ -56,6 +56,7 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
       ProjectView.getInstance(project).refresh()
       course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
       YamlFormatSynchronizer.saveAll(project)
+      project.messageBus.syncPublisher(CourseUpdateListener.COURSE_UPDATE).courseUpdated(project, course)
     }
   }
 
