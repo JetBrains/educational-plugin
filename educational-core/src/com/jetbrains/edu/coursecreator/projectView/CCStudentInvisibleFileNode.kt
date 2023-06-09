@@ -1,60 +1,47 @@
-package com.jetbrains.edu.coursecreator.projectView;
+package com.jetbrains.edu.coursecreator.projectView
 
-import com.intellij.ide.projectView.PresentationData;
-import com.intellij.ide.projectView.ViewSettings;
-import com.intellij.ide.projectView.impl.nodes.PsiFileNode;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
-import com.intellij.ui.SimpleTextAttributes;
-import com.jetbrains.edu.coursecreator.AdditionalFilesUtils;
-import com.jetbrains.edu.learning.VirtualFileExt;
-import com.jetbrains.edu.learning.messages.EduCoreBundle;
-import com.jetbrains.edu.learning.projectView.CourseViewUtils;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.TestOnly;
+import com.intellij.ide.projectView.PresentationData
+import com.intellij.ide.projectView.ViewSettings
+import com.intellij.ide.projectView.impl.nodes.PsiFileNode
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
+import com.intellij.ui.SimpleTextAttributes
+import com.jetbrains.edu.coursecreator.AdditionalFilesUtils.inCourseIgnore
+import com.jetbrains.edu.learning.canBeAddedToTask
+import com.jetbrains.edu.learning.messages.EduCoreBundle.message
+import com.jetbrains.edu.learning.projectView.CourseViewUtils.testPresentation
+import org.jetbrains.annotations.TestOnly
 
 /**
  * Add to the file name postfix "course.creator.course.view.excluded" from EduCoreBundle.properties
- * if the file in {@link COURSE_IGNORE}
+ * if the file in .courseignore
  */
-public class CCStudentInvisibleFileNode extends PsiFileNode {
-  private final String myName;
+class CCStudentInvisibleFileNode(
+  project: Project,
+  value: PsiFile,
+  viewSettings: ViewSettings,
+  name: String = value.name
+) : PsiFileNode(project, value, viewSettings) {
 
-  public CCStudentInvisibleFileNode(Project project,
-                                    PsiFile value,
-                                    ViewSettings viewSettings) {
-    this(project, value, viewSettings, value.getName());
+  val presentableName: String
+  init {
+    val file = value.virtualFile
+    val isExcluded = file != null && (file.canBeAddedToTask(project) || inCourseIgnore(file, project))
+    presentableName = if (isExcluded) message("course.creator.course.view.excluded", name) else name
   }
 
-  public CCStudentInvisibleFileNode(Project project,
-                                    PsiFile value,
-                                    ViewSettings viewSettings,
-                                    String name) {
-    super(project, value, viewSettings);
-    VirtualFile file = value.getVirtualFile();
-    boolean isExcluded = file != null &&
-                         (VirtualFileExt.canBeAddedToTask(file, project) || AdditionalFilesUtils.INSTANCE.inCourseIgnore(file, project));
-    myName = isExcluded ? excludedName(name) : name;
+  override fun updateImpl(data: PresentationData) {
+    super.updateImpl(data)
+    data.clearText()
+    data.addText(presentableName, SimpleTextAttributes.GRAY_ATTRIBUTES)
   }
 
-  @Nls
-  private static String excludedName(String name) {
-    return EduCoreBundle.message("course.creator.course.view.excluded", name);
-  }
-
-  @Override
-  protected void updateImpl(@NotNull PresentationData data) {
-    super.updateImpl(data);
-    data.clearText();
-    data.addText(myName, SimpleTextAttributes.GRAY_ATTRIBUTES);
-  }
-
-  @SuppressWarnings("deprecation")
+  @Deprecated("Deprecated in Java",
+    ReplaceWith("testPresentation(this)", "com.jetbrains.edu.learning.projectView.CourseViewUtils.testPresentation")
+  )
   @TestOnly
-  @Override
-  public String getTestPresentation() {
-    return CourseViewUtils.testPresentation(this);
+  override fun getTestPresentation(): String {
+    return testPresentation(this)
   }
+
 }
