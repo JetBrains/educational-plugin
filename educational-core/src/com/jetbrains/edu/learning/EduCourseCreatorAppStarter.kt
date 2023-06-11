@@ -15,6 +15,13 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import org.apache.commons.cli.*
 import kotlin.system.exitProcess
 
+/**
+ * Adds `createCourse` command for IDE to create a course project.
+ *
+ * Expected usages:
+ * - `createCourse %/path/to/project/dir% --marketplace %marketplace-course-link%`
+ * - `createCourse %/path/to/project/dir% --archive %/path/to/course/archive%`
+ */
 class EduCourseCreatorAppStarter : ApplicationStarter {
 
   @Suppress("OVERRIDE_DEPRECATION")
@@ -33,11 +40,7 @@ class EduCourseCreatorAppStarter : ApplicationStarter {
   }
 
   private fun doMain(args: List<String>) {
-    val cmd = parseArgs(args)
-
-    val projectPath = cmd.getOptionValue(PROJECT_PATH_OPTION)
-    val courseArchivePath = cmd.getOptionValue(COURSE_ARCHIVE_PATH_OPTION)
-    val marketplaceCourseLink = cmd.getOptionValue(MARKETPLACE_COURSE_LINK_OPTION)
+    val (projectPath, courseArchivePath, marketplaceCourseLink) = parseArgs(args)
 
     val course = when {
       courseArchivePath != null -> {
@@ -62,7 +65,7 @@ class EduCourseCreatorAppStarter : ApplicationStarter {
       logErrorAndExit(
         """
         |Can't open `${course.name}` course (type="${course.itemType}", language="${course.languageId}"
-        |${if (!course.languageVersion.isNullOrEmpty()) ", language version=${course.languageVersion}" else ""}, 
+        |${if (!course.languageVersion.isNullOrEmpty()) ", language version=${course.languageVersion}" else ""},
         |environment="${course.environment}") with current IDE setup
         """.trimMargin()
       )
@@ -104,9 +107,8 @@ class EduCourseCreatorAppStarter : ApplicationStarter {
     }
   }
 
-  private fun parseArgs(args: List<String>): CommandLine {
+  private fun parseArgs(args: List<String>): Args {
     val options = Options()
-    options.addRequiredOption(null, PROJECT_PATH_OPTION, true, "Path to course project location")
 
     val group = OptionGroup()
     group.isRequired = true
@@ -127,22 +129,36 @@ class EduCourseCreatorAppStarter : ApplicationStarter {
 
     val parser = DefaultParser()
 
-    return try {
+    val cmd = try {
       parser.parse(options, args.drop(1).toTypedArray())
     }
     catch (e: ParseException) {
+      printHelp(options)
       LOG.error(e)
-      val formatter = HelpFormatter()
-      formatter.width = 140
-      formatter.printHelp("createCourse", options)
       exitProcess(1)
     }
+
+    val courseArchivePath = cmd.getOptionValue(COURSE_ARCHIVE_PATH_OPTION)
+    val marketplaceCourseLink = cmd.getOptionValue(MARKETPLACE_COURSE_LINK_OPTION)
+
+    val positionalArgs = cmd.argList
+    if (positionalArgs.isEmpty()) {
+      printHelp(options)
+      logErrorAndExit("Path to project is missing")
+    }
+
+    return Args(positionalArgs.first(), courseArchivePath, marketplaceCourseLink)
+  }
+
+  private fun printHelp(options: Options) {
+    val formatter = HelpFormatter()
+    formatter.width = 140
+    formatter.printHelp("createCourse /path/to/project", options)
   }
 
   companion object {
     private val LOG = logger<EduCourseCreatorAppStarter>()
 
-    private const val PROJECT_PATH_OPTION = "path"
     private const val COURSE_ARCHIVE_PATH_OPTION = "archive"
     private const val MARKETPLACE_COURSE_LINK_OPTION = "marketplace"
 
@@ -163,4 +179,10 @@ class EduCourseCreatorAppStarter : ApplicationStarter {
       }
     }
   }
+
+  private data class Args(
+    val projectPath: String,
+    val courseArchivePath: String?,
+    val marketplaceCourseLink: String?
+  )
 }
