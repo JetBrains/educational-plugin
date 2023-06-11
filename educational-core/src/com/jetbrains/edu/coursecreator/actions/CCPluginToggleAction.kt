@@ -20,14 +20,11 @@ class CCPluginToggleAction : DumbAwareToggleAction(EduCoreBundle.lazyMessage("ac
 
     @JvmStatic
     var isCourseCreatorFeaturesEnabled: Boolean
-      get() = PropertiesComponent.getInstance().getBoolean(COURSE_CREATOR_ENABLED) || isUnitTestMode
+      get() = PropertiesComponent.getInstance().getBoolean(COURSE_CREATOR_ENABLED, true) || isUnitTestMode
       set(value) {
         // `PropertiesComponent` removes entry from the corresponding map if `value` equals default value.
         // But we always want to write property value to property component so let's pass `!value` as default value
         PropertiesComponent.getInstance().setValue(COURSE_CREATOR_ENABLED, value, !value)
       }
-
-    val isCourseCreatorFeaturesPropertySet: Boolean
-      get() = PropertiesComponent.getInstance().isValueSet(COURSE_CREATOR_ENABLED)
   }
 }

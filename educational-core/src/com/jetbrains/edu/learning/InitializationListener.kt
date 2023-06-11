@@ -11,25 +11,17 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
-import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.application.AppUIExecutor
 import com.intellij.openapi.application.ApplicationNamesInfo
-import com.intellij.openapi.application.impl.coroutineDispatchingContext
 import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.ui.DialogBuilder
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.util.PathUtil
 import com.intellij.util.PlatformUtils
-import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.isBuiltinPortValid
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
-import com.jetbrains.edu.learning.stepik.StepikNames
-import com.jetbrains.edu.learning.ui.SelectRolePanel
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
-import kotlinx.coroutines.runBlocking
 import org.jetbrains.ide.BuiltInServerManager
 import java.io.File
 
@@ -76,23 +68,6 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
     @Suppress("UnstableApiUsage", "DEPRECATION")
     if (PlatformUtils.isPyCharmEducational() || PlatformUtils.isIdeaEducational()) {
       showSwitchFromEduNotification()
-    }
-
-    if (!CCPluginToggleAction.isCourseCreatorFeaturesPropertySet) {
-      @Suppress("UnstableApiUsage", "DEPRECATION")
-      if (!PlatformUtils.isPyCharmEducational() && !PlatformUtils.isIdeaEducational()) {
-        CCPluginToggleAction.isCourseCreatorFeaturesEnabled = true
-      }
-      else {
-        // HACK: ActionManager is instantiated here
-        // otherwise it is instantiated during dialog showing (to render buttons on Mac OS magic touch bar)
-        // which causes assert because one shouldn't instantiate ActionManager in EDT
-        ActionManager.getInstance()
-
-        runBlocking(AppUIExecutor.onUiThread().coroutineDispatchingContext()) {
-          showInitialConfigurationDialog()
-        }
-      }
     }
   }
 
@@ -150,15 +125,6 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
     return runReadAction {
       YamlDeserializer.deserializeItem(courseConfig, null) as? Course
     }
-  }
-
-  private fun showInitialConfigurationDialog() {
-    val dialog = DialogBuilder()
-    val panel = SelectRolePanel()
-    dialog.setPreferredFocusComponent(panel.getStudentButton())
-    dialog.title(EduCoreBundle.message("select.role.dialog.title")).centerPanel(panel)
-    dialog.addOkAction().setText(EduCoreBundle.message("select.role.dialog.ok.action", StepikNames.PLUGIN_NAME))
-    dialog.show()
   }
 
   private fun notifyUnsupportedPort(port: Int) {

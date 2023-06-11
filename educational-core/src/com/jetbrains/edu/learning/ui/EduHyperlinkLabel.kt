@@ -17,7 +17,7 @@ import javax.swing.event.HyperlinkListener
  * @param linkHandler action to perform on link click
  */
 class EduHyperlinkLabel(
-  @Suppress("UnstableApiUsage") @Label text: String,
+  @Label text: String,
   wrapWithLink: Boolean = false,
   private val linkHandler: ((HyperlinkEvent) -> Unit)? = null
 ) : JBLabel() {

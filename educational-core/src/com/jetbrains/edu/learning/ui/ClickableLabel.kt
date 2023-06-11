@@ -10,7 +10,7 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 
 class ClickableLabel(
-  @Suppress("UnstableApiUsage") @NlsContexts.Label val initialText: String,
+  @NlsContexts.Label val initialText: String,
   private val onClick: () -> Unit
 ) : JBLabel(initialText) {
 

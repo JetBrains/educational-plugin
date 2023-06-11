@@ -4,7 +4,6 @@ import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PlatformUtils.isCommunityEdition
-import com.intellij.util.PlatformUtils.isPyCharmEducational
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames
@@ -32,8 +31,9 @@ open class JsConfigurator : EduConfigurator<JsNewProjectSettings> {
   override val pluginRequirements: List<PluginId>
     get() = listOf(PluginId.getId("NodeJS"))
 
+  @Suppress("UnstableApiUsage")
   override val isEnabled: Boolean
-    get() = !isAndroidStudio() && !isCommunityEdition() && !isPyCharmEducational()
+    get() = !isAndroidStudio() && !isCommunityEdition()
 
   override val logo: Icon
     get() = EducationalCoreIcons.JsLogo

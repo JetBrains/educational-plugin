@@ -31,14 +31,10 @@ public class EducationalCoreIcons {
   public static final Icon Codeforces = load("/icons/com/jetbrains/edu/learning/codeforces.svg"); // 24x24
   public static final Icon CODEFORCES_SMALL = load("/icons/com/jetbrains/edu/learning/codeforcesSmall.svg"); // 16x16
   public static final Icon LOGGED_IN_USER = load("/icons/com/jetbrains/edu/learning/loggedInUser.svg"); // 16x16
+
   public static final Icon Coursera = load("/icons/com/jetbrains/edu/learning/coursera.svg"); // 24x24
 
   public static final Icon MARKETPLACE_TAB = load("/icons/com/jetbrains/edu/learning/marketplace_courses_tab.svg"); // 24x24
-
-  public static final Icon Student = load("/icons/com/jetbrains/edu/Learner.svg"); // 180x180
-  public static final Icon StudentHover = load("/icons/com/jetbrains/edu/LearnerActive.svg"); // 180x180
-  public static final Icon Teacher = load("/icons/com/jetbrains/edu/Teacher.svg"); // 180x180
-  public static final Icon TeacherHover = load("/icons/com/jetbrains/edu/TeacherActive.svg"); // 180x180
 
   public static final Icon Task = load("/icons/com/jetbrains/edu/eduTaskDefault.svg"); // 16x16
   public static final Icon TaskSolved = load("/icons/com/jetbrains/edu/eduTaskDone.svg"); // 16x16
