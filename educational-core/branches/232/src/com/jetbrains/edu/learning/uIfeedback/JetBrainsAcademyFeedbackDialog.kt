@@ -8,14 +8,17 @@ import com.intellij.feedback.common.dialog.uiBlocks.*
 import com.intellij.feedback.common.notification.ThanksForFeedbackNotification
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.encodeToJsonElement
 
 class JetBrainsAcademyFeedbackDialog(
-  private val project: Project?,
+  private val project: Project,
   private val course: Course,
+  val task: Task,
   forTest: Boolean
 ) : BlockBasedFeedbackDialogWithEmail<JbAcademyFeedbackSystemInfoData>(project, forTest) {
 
@@ -32,11 +35,10 @@ class JetBrainsAcademyFeedbackDialog(
   override val myFeedbackReportId: String
     get() = "academy_feedback"
 
-  // is teacher\student, course name?
   override val myShowFeedbackSystemInfoDialog: () -> Unit = { showJbAcademyFeedbackSystemInfoDialog(project, mySystemInfoData) }
 
   override val mySystemInfoData: JbAcademyFeedbackSystemInfoData by lazy {
-    createJbAcademyFeedbackSystemInfoData(course.isStudy)
+    createJbAcademyFeedbackSystemInfoData(course, task.getPathInCourse())
   }
 
   override val myTitle: String
@@ -59,16 +61,37 @@ class JetBrainsAcademyFeedbackDialog(
 //use @Serializable
 data class JbAcademyFeedbackSystemInfoData(
   val isStudent: Boolean,
+  val courseType: String,
+  val courseId: Int,
+  val courseName: String,
+  val taskPath: String,
   val commonSystemInfo: CommonFeedbackSystemInfoData
 ): JsonSerializable {
   override fun toString(): String {
     return buildString {
       appendLine(EduCoreBundle.message("ui.feedback.dialog.system.info.course.mode"))
       appendLine()
-      appendLine(
-        if (isStudent) EduCoreBundle.message("ui.feedback.dialog.system.info.course.mode.student")
-        else EduCoreBundle.message("ui.feedback.dialog.system.info.course.mode.teacher")
-      )
+      appendLine(if (isStudent) EduCoreBundle.message("ui.feedback.dialog.system.info.course.mode.student") else EduCoreBundle.message("ui.feedback.dialog.system.info.course.mode.teacher"))
+      appendLine()
+
+      appendLine(EduCoreBundle.message("ui.feedback.dialog.system.info.course.type"))
+      appendLine()
+      appendLine(courseType)
+      appendLine()
+
+      appendLine(EduCoreBundle.message("ui.feedback.dialog.system.info.course.id"))
+      appendLine()
+      appendLine(courseId)
+      appendLine()
+
+      appendLine(EduCoreBundle.message("ui.feedback.dialog.system.info.course.name"))
+      appendLine()
+      appendLine(courseName)
+      appendLine()
+
+      appendLine(EduCoreBundle.message("ui.feedback.dialog.system.info.task"))
+      appendLine()
+      appendLine(taskPath)
       appendLine()
       commonSystemInfo.toString()
     }
@@ -80,19 +103,36 @@ data class JbAcademyFeedbackSystemInfoData(
 }
 
 private fun showJbAcademyFeedbackSystemInfoDialog(
-  project: Project?,
+  project: Project,
   systemInfoData: JbAcademyFeedbackSystemInfoData
 ) = showFeedbackSystemInfoDialog(project, systemInfoData.commonSystemInfo) {
   row(EduCoreBundle.message("ui.feedback.dialog.system.info.course.mode")) {
     label(
-      if (systemInfoData.isStudent) EduCoreBundle.message("ui.feedback.dialog.system.info.course.mode.student")
-      else EduCoreBundle.message(
-        "ui.feedback.dialog.system.info.course.mode.teacher"
-      )
+      if (systemInfoData.isStudent) EduCoreBundle.message("ui.feedback.dialog.system.info.course.mode.student") else EduCoreBundle.message("ui.feedback.dialog.system.info.course.mode.teacher")
+    )
+  }
+  row(EduCoreBundle.message("ui.feedback.dialog.system.info.course.type")) {
+    label(
+      systemInfoData.courseType
+    )
+  }
+  row(EduCoreBundle.message("ui.feedback.dialog.system.info.course.id")) {
+    label(
+      systemInfoData.courseId.toString()
+    )
+  }
+  row(EduCoreBundle.message("ui.feedback.dialog.system.info.course.name")) {
+    label(
+      systemInfoData.courseName
+    )
+  }
+  row(EduCoreBundle.message("ui.feedback.dialog.system.info.task")) {
+    label(
+      systemInfoData.taskPath
     )
   }
 }
 
-private fun createJbAcademyFeedbackSystemInfoData(isStudent: Boolean): JbAcademyFeedbackSystemInfoData {
-  return JbAcademyFeedbackSystemInfoData(isStudent, CommonFeedbackSystemInfoData.getCurrentData())
+private fun createJbAcademyFeedbackSystemInfoData(course: Course, taskPath: String): JbAcademyFeedbackSystemInfoData {
+  return JbAcademyFeedbackSystemInfoData(course.isStudy, course.itemType, course.id, course.name, taskPath, CommonFeedbackSystemInfoData.getCurrentData())
 }
