@@ -27,11 +27,11 @@ class RsTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() 
     <html>
      <head></head>
      <body>
-      <p>Code block with default language:</p> <span class="code-block"><pre>  <span style="...">pub struct </span><span style="...">Foo&lt;</span><span style="...">'a</span><span style="...">&gt; {</span>
+      <p>Code block with default language:</p><span class="code-block"><pre>  <span style="...">pub struct </span><span style="...">Foo&lt;</span><span style="...">'a</span><span style="...">&gt; {</span>
           <span style="...">s: &amp;</span><span style="...">'a </span><span style="...">str</span>
       <span style="...">}</span>
     </pre> </span>
-      <p>Code block with specific language:</p> <span class="code-block"><pre>  <span style="...">fn </span><span style="...">main() {</span>
+      <p>Code block with specific language:</p><span class="code-block"><pre>  <span style="...">fn </span><span style="...">main() {</span>
           <span style="...">println!(</span><span style="...">"Hello!"</span><span style="...">)</span>
       <span style="...">}</span>
     </pre> </span>

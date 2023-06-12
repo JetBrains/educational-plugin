@@ -8,6 +8,7 @@ import com.intellij.ui.content.ContentFactory
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlUIMode
 import java.awt.BorderLayout
 import javax.swing.JPanel
 
@@ -16,9 +17,14 @@ import javax.swing.JPanel
  * and it must be called in constructor to initialize all necessary UI.
  */
 abstract class AdditionalTab(val project: Project, val tabType: TabType) : JPanel(BorderLayout()), Disposable {
-  protected abstract val plainText: Boolean
   protected lateinit var innerTextPanel: TabTextPanel
   val content: Content by lazy { createContent() }
+  protected open val uiMode = if (EduSettings.getInstance().javaUiLibraryWithCheck == JavaUILibrary.JCEF) {
+    HtmlUIMode.JCEF
+  }
+  else {
+    HtmlUIMode.SWING
+  }
 
   abstract fun update(task: Task)
 
@@ -30,9 +36,9 @@ abstract class AdditionalTab(val project: Project, val tabType: TabType) : JPane
     Disposer.register(this, innerTextPanel)
   }
 
-  protected open fun createTextPanel(): TabTextPanel {
-    return if (EduSettings.getInstance().javaUiLibraryWithCheck == JavaUILibrary.JCEF) {
-      JCEFTextPanel(project, plainText)
+  private fun createTextPanel(): TabTextPanel {
+    return if (uiMode == HtmlUIMode.JCEF) {
+      JCEFTextPanel(project)
     }
     else {
       SwingTextPanel(project)
@@ -46,7 +52,7 @@ abstract class AdditionalTab(val project: Project, val tabType: TabType) : JPane
     if (!this::innerTextPanel.isInitialized) {
       error("setText must be called after init() method")
     }
-    innerTextPanel.setTabText(text)
+    innerTextPanel.setText(text)
   }
 
   private fun createContent(): Content {

@@ -22,12 +22,12 @@ import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.SwingToolWindowLinkHandler
+import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlUIMode
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TaskDescriptionBundle
 import com.jetbrains.edu.learning.taskDescription.ui.tab.AdditionalTab
 import com.jetbrains.edu.learning.taskDescription.ui.tab.SwingTextPanel
-import com.jetbrains.edu.learning.taskDescription.ui.tab.TabTextPanel
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType.SUBMISSIONS_TAB
 import com.jetbrains.edu.learning.ui.EduColors
 import java.net.URL
@@ -36,7 +36,8 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 
 class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB) {
-  override val plainText: Boolean = true
+  override val uiMode: HtmlUIMode
+    get() = HtmlUIMode.SWING
 
   init {
     init()
@@ -88,8 +89,6 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
     }
     setText(descriptionText.toString())
   }
-
-  override fun createTextPanel(): TabTextPanel = SwingTextPanel(project)
 
   fun showLoadingPanel(platformName: String) = panel.showLoadingSubmissionsPanel(platformName)
 

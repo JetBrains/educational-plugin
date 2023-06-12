@@ -9,8 +9,10 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.createActionLink
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindow.Companion.getTaskDescriptionWithCodeHighlighting
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindow.Companion.getTaskDescription
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlTransformerContext
+import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.TaskDescriptionTransformer
 import com.jetbrains.edu.learning.taskDescription.ui.tab.AdditionalTab
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType.THEORY_TAB
 import java.awt.BorderLayout
@@ -18,7 +20,6 @@ import javax.swing.JPanel
 import javax.swing.JSeparator
 
 class TheoryTab(project: Project) : AdditionalTab(project, THEORY_TAB) {
-  override val plainText: Boolean = false
 
   init {
     init()
@@ -30,8 +31,10 @@ class TheoryTab(project: Project) : AdditionalTab(project, THEORY_TAB) {
       error("Selected task isn't Theory task")
     }
 
-    val text = getTaskDescriptionWithCodeHighlighting(project, task)
-    setText(text)
+    val transformerContext = HtmlTransformerContext(project, task, uiMode)
+    val plainTaskDescription = getTaskDescription(project, task)
+    val html = TaskDescriptionTransformer.transform(plainTaskDescription, transformerContext)
+    setText(html)
   }
 
   private fun createBottomPanel(): JPanel {

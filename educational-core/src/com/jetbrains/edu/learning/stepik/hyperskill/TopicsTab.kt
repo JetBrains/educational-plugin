@@ -6,15 +6,18 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlTransformerContext
+import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlUIMode
+import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.TaskDescriptionTransformer
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskDescription.ui.tab.AdditionalTab
-import com.jetbrains.edu.learning.taskDescription.ui.tab.SwingTextPanel
-import com.jetbrains.edu.learning.taskDescription.ui.tab.TabTextPanel
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType.TOPICS_TAB
 import com.jetbrains.edu.learning.ui.EduColors
 
 class TopicsTab(project: Project) : AdditionalTab(project, TOPICS_TAB) {
-  override val plainText: Boolean = false
+
+  override val uiMode: HtmlUIMode
+    get() = HtmlUIMode.SWING
 
   init {
     init()
@@ -38,10 +41,10 @@ class TopicsTab(project: Project) : AdditionalTab(project, TOPICS_TAB) {
         appendLine("<a $textStyleHeader>${EduCoreBundle.message("hyperskill.topics.not.found")}")
       }
     }
-    setText(descriptionText)
-  }
 
-  override fun createTextPanel(): TabTextPanel = SwingTextPanel(project)
+    val transformationContext = HtmlTransformerContext(project, task, HtmlUIMode.SWING)
+    setText(TaskDescriptionTransformer.transform(descriptionText, transformationContext))
+  }
 
   private fun topicLink(topic: HyperskillTopic, textStyleHeader: String): String {
     val liStyle = "style=color:#${ColorUtil.toHex(EduColors.hyperlinkColor)};"

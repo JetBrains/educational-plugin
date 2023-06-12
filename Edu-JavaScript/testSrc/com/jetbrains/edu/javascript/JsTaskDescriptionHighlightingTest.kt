@@ -28,11 +28,11 @@ class JsTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() 
     <html>
      <head></head>
      <body>
-      <p>Code block with default language:</p> <span class="code-block"><pre>  <span style="...">function </span><span style="...">sum(a, b) {</span>
+      <p>Code block with default language:</p><span class="code-block"><pre>  <span style="...">function </span><span style="...">sum(a, b) {</span>
         <span style="...">return </span><span style="...">a + b;</span>
       <span style="...">}</span>
     </pre> </span>
-      <p>Code block with specific language:</p> <span class="code-block"><pre>   <span style="...">function </span><span style="...">sum(a, b) {</span>
+      <p>Code block with specific language:</p><span class="code-block"><pre>   <span style="...">function </span><span style="...">sum(a, b) {</span>
           <span style="...">return </span><span style="...">a + b;</span>
        <span style="...">}</span>
     </pre> </span>

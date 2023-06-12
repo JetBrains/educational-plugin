@@ -42,7 +42,6 @@ data class HtmlTransformerContext(val project: Project, val task: Task?, val uiM
 interface HtmlTransformer {
   fun transform(html: Document, context: HtmlTransformerContext): Document
 
-  @Deprecated("Get rid of string html transformers")
   fun toStringTransformer() = object : StringHtmlTransformer {
     override fun transform(html: String, context: HtmlTransformerContext): String {
       val document = Jsoup.parse(html)
@@ -55,10 +54,6 @@ interface HtmlTransformer {
 /**
  * This is a class similar to [HtmlTransformer], but it works with HTML in the string form.
  */
-@Deprecated(
-  "Use HtmlTransformer, it works with parsed HTML, so all transformations are safe and respect the structure of the document",
-  ReplaceWith("com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlTransformer")
-)
 interface StringHtmlTransformer {
   fun transform(html: String, context: HtmlTransformerContext): String
 }

@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlUIMode
 import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.TaskDescriptionTransformer
 import org.cef.handler.CefLoadHandlerAdapter
 import org.jetbrains.annotations.TestOnly
-import org.jsoup.nodes.Element
 import javax.swing.JComponent
 
 class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
@@ -42,10 +41,6 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
 
   override val taskSpecificPanel: JComponent
     get() = taskSpecificJBCefBrowser.component
-
-  override fun wrapHint(hintElement: Element, displayedHintNumber: String, hintTitle: String): String {
-    return wrapHintJCEF(project, hintElement, displayedHintNumber, hintTitle)
-  }
 
   override fun setText(text: String, task: Task?) {
     val transformerContext = HtmlTransformerContext(project, task, HtmlUIMode.JCEF)

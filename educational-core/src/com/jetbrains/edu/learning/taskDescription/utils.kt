@@ -159,12 +159,6 @@ fun String.getYoutubeVideoId(): String? {
   }
 }
 
-// will be removed in the next step of html transformers refactoring
-fun processImagesAndLinks(project: Project, task: Task, taskText: String): String {
-  val documentWithImagesByTheme = replaceMediaForTheme(project, task, Jsoup.parse(taskText))
-  return addExternalLinkIcons(documentWithImagesByTheme).toString()
-}
-
 /**
  * This method replaces the `src` attributes for `<img>` and for `<iframe>` elements.
  * It does it only if the dark theme is currently used.

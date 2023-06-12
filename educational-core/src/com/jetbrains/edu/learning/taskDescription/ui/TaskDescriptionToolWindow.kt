@@ -15,20 +15,14 @@
  */
 package com.jetbrains.edu.learning.taskDescription.ui
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.ui.update.MergingUpdateQueue
 import com.intellij.util.ui.update.Update
 import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
-import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.taskDescription.processImagesAndLinks
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import javax.swing.JComponent
 
@@ -48,8 +42,6 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) : Dispo
 
   open fun updateTaskSpecificPanel(task: Task?) {}
 
-  protected abstract fun wrapHint(hintElement: Element, displayedHintNumber: String, hintTitle: String): String
-
   fun setTaskText(project: Project, task: Task?) {
     updateQueue.queue(Update.create(TASK_DESCRIPTION_UPDATE) {
       setText(getTaskDescription(project, task), task)
@@ -64,22 +56,6 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) : Dispo
     private const val TASK_DESCRIPTION_UPDATE: String = "Task Description Update"
     const val TASK_DESCRIPTION_UPDATE_DELAY_REGISTRY_KEY: String = "edu.task.description.update.delay"
 
-    @VisibleForTesting
-    // will be removed in the next step of html transformers refactoring
-    fun getTaskDescriptionWithCodeHighlighting(project: Project, task: Task?): String {
-      if (task == null) return EduCoreBundle.message("label.open.task")
-      val taskText = task.getTaskTextFromTask(project)
-        if (taskText != null) {
-          val processedText = processImagesAndLinks(project, task, taskText)
-
-        val course = task.course
-        val language = if (course is HyperskillCourse) PlainTextLanguage.INSTANCE else course.languageById ?: return processedText
-        return EduCodeHighlighter.highlightCodeFragments(project, Jsoup.parse(processedText), language).toString()
-      }
-      return EduCoreBundle.message("label.open.task")
-    }
-
-    @VisibleForTesting
     fun getTaskDescription(project: Project, task: Task?): String {
       if (task != null) {
         val taskText = task.getTaskTextFromTask(project)

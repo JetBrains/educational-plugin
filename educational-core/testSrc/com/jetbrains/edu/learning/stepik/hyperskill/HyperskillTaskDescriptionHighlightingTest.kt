@@ -29,8 +29,7 @@ abstract class HyperskillTaskDescriptionHighlightingTest : TaskDescriptionHighli
     """, """
       <html>
        <head></head>
-       <body>
-        <span class="code">$codeSampleWithBasicHighlighting</span>
+       <body><span class="code">$codeSampleWithBasicHighlighting</span>
        </body>
       </html>
         """)
@@ -46,8 +45,7 @@ abstract class HyperskillTaskDescriptionHighlightingTest : TaskDescriptionHighli
     """, """
       <html>
        <head></head>
-       <body>
-        <span class="code">$codeSampleWithBasicHighlighting</span>
+       <body><span class="code">$codeSampleWithBasicHighlighting</span>
        </body>
       </html>
         """)
@@ -63,8 +61,7 @@ abstract class HyperskillTaskDescriptionHighlightingTest : TaskDescriptionHighli
     """, """
       <html>
        <head></head>
-       <body>
-        <span class="code">${codeSampleWithHighlighting}</span>
+       <body><span class="code">${codeSampleWithHighlighting}</span>
        </body>
       </html>
         """)
