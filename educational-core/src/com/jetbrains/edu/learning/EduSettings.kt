@@ -9,7 +9,6 @@ import com.intellij.util.xmlb.XmlSerializer
 import com.intellij.util.xmlb.annotations.Property
 import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.learning.authUtils.deserializeOAuthAccount
-import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException
 import com.jetbrains.edu.learning.stepik.StepikUser
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
@@ -54,11 +53,7 @@ class EduSettings : PersistentStateComponent<Element> {
   }
 
   override fun loadState(state: Element) {
-    try {
-      deserialize(state)
-    }
-    catch (ignored: StudyUnrecognizedFormatException) {
-    }
+    deserialize(state)
   }
 
   private fun deserialize(state: Element) {
