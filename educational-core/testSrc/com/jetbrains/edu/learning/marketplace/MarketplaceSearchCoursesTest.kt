@@ -147,7 +147,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     assertEquals(expectedUpdateDate, course.updateDate)
     assertEquals(expectedCreateDate, course.createDate)
     assertEquals(expectedIsPrivate, course.isMarketplacePrivate)
-    assertEquals(expectedCourseLink, course.feedbackLink)
+    assertEquals(expectedCourseLink, course.rateOnMarketplaceLink)
     assertEquals(expectedLicense, course.license)
     assertTrue(course.isMarketplace)
   }

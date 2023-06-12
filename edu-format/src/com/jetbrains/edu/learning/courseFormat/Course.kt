@@ -48,7 +48,7 @@ abstract class Course : LessonContainer() {
   var organization: String? = null
   var isMarketplacePrivate: Boolean = false
   var createDate: Date = Date(0)
-  var feedbackLink: String? = null
+  var rateOnMarketplaceLink: String? = null
   var license: String? = null
 
   @Suppress("SetterBackingFieldAssignment")

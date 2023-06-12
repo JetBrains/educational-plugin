@@ -664,7 +664,7 @@ class YamlSerializationTest : YamlTestCase() {
       lesson {
         eduTask { }
       }
-    }.apply { feedbackLink = courseLink }
+    }.apply { rateOnMarketplaceLink = courseLink }
     doTest(course, """
       |title: Test Course
       |language: English
@@ -683,7 +683,7 @@ class YamlSerializationTest : YamlTestCase() {
       lesson {
         codeforcesTask { }
       }
-    }.apply { feedbackLink = courseLink }
+    }.apply { rateOnMarketplaceLink = courseLink }
     doTest(course, """
       |type: codeforces
       |title: Test Course
@@ -739,7 +739,7 @@ class YamlSerializationTest : YamlTestCase() {
       lesson {
         eduTask { }
       }
-    }.apply { feedbackLink = courseLink }
+    }.apply { rateOnMarketplaceLink = courseLink }
     doTest(course, """
       |type: coursera
       |title: Test Course

@@ -51,7 +51,7 @@ class LeaveCommentAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.lea
     fun getLink(task: Task): String? {
       val feedbackLink = task.feedbackLink
       val course = task.course
-      val courseLink = course.feedbackLink
+      val courseLink = course.rateOnMarketplaceLink
       return when {
         feedbackLink != null -> feedbackLink
         courseLink != null -> courseLink

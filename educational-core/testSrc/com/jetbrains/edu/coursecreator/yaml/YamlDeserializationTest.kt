@@ -180,7 +180,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |feedback_link: $link
       |""".trimMargin()
     val course = deserializeNotNull(yamlContent)
-    assertEquals(link, course.feedbackLink)
+    assertEquals(link, course.rateOnMarketplaceLink)
   }
 
   fun `test course with content tags`() {

@@ -263,7 +263,7 @@ private class CourseBuilder(
       environment = yamlEnvironment ?: DEFAULT_ENVIRONMENT
       vendor = yamlVendor
       isMarketplacePrivate = yamlIsPrivate ?: false
-      feedbackLink = yamlFeedbackLink
+      rateOnMarketplaceLink = yamlFeedbackLink
       if (marketplaceCourseVersion == 0) marketplaceCourseVersion = 1
       solutionsHidden = areSolutionsHidden ?: false
       contentTags = yamlContentTags
@@ -329,7 +329,7 @@ class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>
     existingItem.environment = deserializedItem.environment
     existingItem.solutionsHidden = deserializedItem.solutionsHidden
     existingItem.vendor = deserializedItem.vendor
-    existingItem.feedbackLink = deserializedItem.feedbackLink
+    existingItem.rateOnMarketplaceLink = deserializedItem.rateOnMarketplaceLink
     existingItem.isMarketplacePrivate = deserializedItem.isMarketplacePrivate
     existingItem.languageId = deserializedItem.languageId
     existingItem.languageVersion = deserializedItem.languageVersion

@@ -162,7 +162,7 @@ class CopyStudyItemTest : EduTestCase() {
            marketplaceCourseVersion == courseCopy.marketplaceCourseVersion &&
            organization == courseCopy.organization &&
            isMarketplacePrivate == courseCopy.isMarketplacePrivate &&
-           feedbackLink == courseCopy.feedbackLink
+           rateOnMarketplaceLink == courseCopy.rateOnMarketplaceLink
   }
 
   private fun Task.taskFilesSameTo(taskCopy: Task): Boolean {

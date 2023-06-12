@@ -70,7 +70,7 @@ private class MarketplaceCourseBuilder(
       isMarketplacePrivate = fields.isPrivate
       updateDate = Date(lastUpdateDate)
       createDate = Date(courseCreateDate)
-      feedbackLink = "$PLUGINS_REPOSITORY_URL$courseLink$REVIEWS"
+      rateOnMarketplaceLink = "$PLUGINS_REPOSITORY_URL$courseLink$REVIEWS"
       license = courseLicense
       setMarketplaceAuthorsAsString(marketplaceAuthors)
     }

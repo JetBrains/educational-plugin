@@ -135,7 +135,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     }.apply {
       isMarketplace = true
       marketplaceCourseVersion = 5
-      feedbackLink = "https://course_link.com"
+      rateOnMarketplaceLink = "https://course_link.com"
     }
 
     doTest()
