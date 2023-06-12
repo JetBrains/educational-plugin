@@ -95,6 +95,7 @@
             class="com.jetbrains.edu.learning.actions.RevertTaskAction"
             icon="com.jetbrains.edu.EducationalCoreIcons.ResetTask"/>
     <action id="Educational.LeaveCommentAction" class="com.jetbrains.edu.learning.actions.LeaveCommentAction"/>
+    <action id="Educational.LeaveInIdeFeedbackAction" class="com.jetbrains.edu.learning.actions.LeaveInIdeFeedbackAction"/>
     <action id="Educational.OpenTaskOnSiteAction" class="com.jetbrains.edu.learning.actions.OpenTaskOnSiteAction"/>
     <action id="Educational.CompareWithAnswer"
             class="com.jetbrains.edu.learning.actions.CompareWithAnswerAction"

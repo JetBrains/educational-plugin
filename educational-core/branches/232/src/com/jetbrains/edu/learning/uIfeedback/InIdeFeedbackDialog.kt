@@ -15,7 +15,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.encodeToJsonElement
 
-class JetBrainsAcademyFeedbackDialog(
+class InIdeFeedbackDialog(
   private val project: Project,
   private val course: Course,
   val task: Task,
@@ -24,31 +24,33 @@ class JetBrainsAcademyFeedbackDialog(
 
   //should we override? or no sense if outside intellij. or should ve introduce our own versioning
   override val myFeedbackJsonVersion: Int = super.myFeedbackJsonVersion + 1
-  override val myBlocks: List<FeedbackBlock>
-    get() = listOf(
+
+  override val myBlocks: List<FeedbackBlock> = listOf(
   TopLabelBlock(EduCoreBundle.message("ui.feedback.dialog.title")),
   DescriptionBlock(EduCoreBundle.message("ui.feedback.dialog.description")),
   RatingBlock(EduCoreBundle.message("ui.feedback.dialog.rating.label"), "rate_impression"),
   TextAreaBlock(EduCoreBundle.message("ui.feedback.dialog.textarea.label"), "textarea_experience")
   )
 
-  override val myFeedbackReportId: String
-    get() = "academy_feedback"
+  override val myFeedbackReportId: String = "academy_feedback"
 
-  override val myShowFeedbackSystemInfoDialog: () -> Unit = { showJbAcademyFeedbackSystemInfoDialog(project, mySystemInfoData) }
+  override val myShowFeedbackSystemInfoDialog: () -> Unit = {
+    showJbAcademyFeedbackSystemInfoDialog(project, mySystemInfoData)
+  }
 
   override val mySystemInfoData: JbAcademyFeedbackSystemInfoData by lazy {
     createJbAcademyFeedbackSystemInfoData(course, task.getPathInCourse())
   }
 
-  override val myTitle: String
-    get() = EduCoreBundle.message("ui.feedback.dialog.top.title")
-  override val zendeskFeedbackType: String
-    get() = "JBAcademy in-IDE Feedback"
-  override val zendeskTicketTitle: String
-    get() = "JBAcademy in-IDE Feedback"
+  override val myTitle: String = EduCoreBundle.message("ui.feedback.dialog.top.title")
+  override val zendeskFeedbackType: String = "JBAcademy in-IDE Feedback"
+  override val zendeskTicketTitle: String = "JBAcademy in-IDE Feedback"
 
-  override fun showThanksNotification() {
+  init {
+    init()
+  }
+
+  public override fun showThanksNotification() {
     ThanksForFeedbackNotification(description = EduCoreBundle.message("ui.feedback.thanks.notification.content")).notify(project)
   }
 
