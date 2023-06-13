@@ -10,7 +10,7 @@ import com.jetbrains.edu.cpp.messages.EduCppBundle
 import com.jetbrains.edu.learning.isUnitTestMode
 
 const val GTEST_VERSION_KEY: String = "GTEST_VERSION"
-const val GTEST_VERSION_VALUE: String = "release-1.8.1"
+const val GTEST_VERSION_VALUE: String = "release-1.12.0"
 
 const val GTEST_SOURCE_DIR_KEY: String = "GTEST_SOURCE_DIR"
 const val GTEST_SOURCE_DIR_VALUE: String = "googletest-src"
