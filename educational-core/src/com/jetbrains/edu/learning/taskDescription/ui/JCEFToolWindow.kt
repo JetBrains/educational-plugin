@@ -9,8 +9,6 @@ import com.intellij.ui.jcef.JCEFHtmlPanel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlTransformerContext
-import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.TaskDescriptionTransformer
 import org.cef.handler.CefLoadHandlerAdapter
 import org.jetbrains.annotations.TestOnly
 import javax.swing.JComponent
@@ -42,10 +40,11 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   override val taskSpecificPanel: JComponent
     get() = taskSpecificJBCefBrowser.component
 
-  override fun setText(text: String, task: Task?) {
-    val transformerContext = HtmlTransformerContext(project, task, JavaUILibrary.JCEF)
-    val html = TaskDescriptionTransformer.transform(text, transformerContext)
-    taskInfoJBCefBrowser.loadHTML(html)
+  override val uiMode: JavaUILibrary
+    get() = JavaUILibrary.JCEF
+
+  override fun setText(text: String) {
+    taskInfoJBCefBrowser.loadHTML(text)
   }
 
   override fun updateTaskSpecificPanel(task: Task?) {

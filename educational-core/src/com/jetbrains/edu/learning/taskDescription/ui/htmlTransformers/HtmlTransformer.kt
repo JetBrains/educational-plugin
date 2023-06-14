@@ -9,7 +9,7 @@ import org.jsoup.nodes.Document
 /**
  * This is the data needed during html transformation.
  */
-data class HtmlTransformerContext(val project: Project, val task: Task?, val uiMode: JavaUILibrary)
+data class HtmlTransformerContext(val project: Project, val task: Task, val uiMode: JavaUILibrary)
 
 /**
  * This is a transformer that takes one HTML and transforms it to another HTML.

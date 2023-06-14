@@ -11,7 +11,6 @@ import org.jsoup.nodes.Document
 object CodeHighlighter : HtmlTransformer {
   override fun transform(html: Document, context: HtmlTransformerContext): Document {
     val task = context.task
-    task ?: return html
     val project = context.project
 
     val course = task.course

@@ -11,8 +11,6 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.createActionLink
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindow.Companion.getTaskDescription
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
-import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlTransformerContext
-import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.TaskDescriptionTransformer
 import com.jetbrains.edu.learning.taskDescription.ui.tab.AdditionalTab
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType.THEORY_TAB
 import java.awt.BorderLayout
@@ -31,10 +29,7 @@ class TheoryTab(project: Project) : AdditionalTab(project, THEORY_TAB) {
       error("Selected task isn't Theory task")
     }
 
-    val transformerContext = HtmlTransformerContext(project, task, uiMode)
-    val plainTaskDescription = getTaskDescription(project, task)
-    val html = TaskDescriptionTransformer.transform(plainTaskDescription, transformerContext)
-    setText(html)
+    setText(getTaskDescription(project, task, uiMode))
   }
 
   private fun createBottomPanel(): JPanel {

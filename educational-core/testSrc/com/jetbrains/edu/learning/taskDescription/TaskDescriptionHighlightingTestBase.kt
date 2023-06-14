@@ -3,24 +3,15 @@ package com.jetbrains.edu.learning.taskDescription
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindow
+import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
 import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlTransformerContext
-import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.pipeline
 import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.steps.CodeHighlighter
-import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.steps.ExternalLinkIconsTransformer
-import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.steps.MediaThemesTransformer
 import org.intellij.lang.annotations.Language
 
 abstract class TaskDescriptionHighlightingTestBase : EduTestCase() {
 
   protected abstract val language: com.intellij.lang.Language
   open val environment: String = ""
-
-  private val codeHighlighterTransformer = pipeline(
-    MediaThemesTransformer,
-    ExternalLinkIconsTransformer,
-    CodeHighlighter
-  ).toStringTransformer()
 
   protected fun doHtmlTest(@Language("HTML") taskDescription: String, @Language("HTML") expectedText: String) =
     doTest(taskDescription, DescriptionFormat.HTML, expectedText)
@@ -42,11 +33,11 @@ abstract class TaskDescriptionHighlightingTestBase : EduTestCase() {
     createCourseWithTestTask(taskDescription, format)
     val task = findTask(0, 0)
 
-    val actualText = TaskDescriptionToolWindow.getTaskDescription(project, task)
+    val actualText = task.getTaskTextFromTask(project) ?: error("Failed to read task text")
 
     fun testForSpecificUIMode(uiMode: JavaUILibrary) {
       val transformationContext = HtmlTransformerContext(project, task, uiMode)
-      val html = codeHighlighterTransformer.transform(actualText, transformationContext)
+      val html = CodeHighlighter.toStringTransformer().transform(actualText, transformationContext)
       assertEquals(expectedText.trimIndent(), html.dropSpecificValues())
     }
 

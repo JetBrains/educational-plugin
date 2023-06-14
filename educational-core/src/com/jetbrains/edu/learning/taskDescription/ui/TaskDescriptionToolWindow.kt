@@ -20,9 +20,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.ui.update.MergingUpdateQueue
 import com.intellij.util.ui.update.Update
+import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlTransformerContext
+import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.TaskDescriptionTransformer
 import javax.swing.JComponent
 
 
@@ -39,15 +42,17 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) : Dispo
 
   abstract val taskSpecificPanel: JComponent
 
+  abstract val uiMode: JavaUILibrary
+
   open fun updateTaskSpecificPanel(task: Task?) {}
 
   fun setTaskText(project: Project, task: Task?) {
     updateQueue.queue(Update.create(TASK_DESCRIPTION_UPDATE) {
-      setText(getTaskDescription(project, task), task)
+      setText(getTaskDescription(project, task, uiMode))
     })
   }
 
-  protected abstract fun setText(text: String, task: Task?)
+  protected abstract fun setText(text: String)
 
   override fun dispose() {}
 
@@ -55,12 +60,10 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) : Dispo
     private const val TASK_DESCRIPTION_UPDATE: String = "Task Description Update"
     const val TASK_DESCRIPTION_UPDATE_DELAY_REGISTRY_KEY: String = "edu.task.description.update.delay"
 
-    fun getTaskDescription(project: Project, task: Task?): String {
-      if (task != null) {
-        val taskText = task.getTaskTextFromTask(project)
-        if (taskText != null) return taskText
-      }
-      return EduCoreBundle.message("label.open.task")
+    fun getTaskDescription(project: Project, task: Task?, uiMode: JavaUILibrary): String {
+      val taskText = task?.getTaskTextFromTask(project) ?: return EduCoreBundle.message("label.open.task")
+      val transformerContext = HtmlTransformerContext(project, task, uiMode)
+      return TaskDescriptionTransformer.transform(taskText, transformerContext)
     }
   }
 }

@@ -7,7 +7,7 @@ import org.jsoup.nodes.Document
 
 object MediaThemesTransformer : HtmlTransformer {
   override fun transform(html: Document, context: HtmlTransformerContext): Document {
-    val task = context.task ?: return html
+    val task = context.task
     return replaceMediaForTheme(context.project, task, html)
   }
 }

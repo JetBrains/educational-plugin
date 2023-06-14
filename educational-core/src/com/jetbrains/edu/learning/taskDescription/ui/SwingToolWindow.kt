@@ -24,8 +24,6 @@ import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlTransformerContext
-import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.TaskDescriptionTransformer
 import java.awt.BorderLayout
 import java.io.IOException
 import java.util.*
@@ -45,6 +43,8 @@ class SwingToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   private val taskInfoTextPane: JTextPane
   override val taskInfoPanel: JComponent = JPanel(BorderLayout())
   override val taskSpecificPanel: JComponent = JPanel(BorderLayout())
+  override val uiMode: JavaUILibrary
+    get() = JavaUILibrary.SWING
 
   init {
     // we are using HTMLEditorKit here because otherwise styles are not applied
@@ -69,9 +69,8 @@ class SwingToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
     }
   }
 
-  public override fun setText(text: String, task: Task?) {
-    val transformerContext = HtmlTransformerContext(project, task, JavaUILibrary.SWING)
-    taskInfoTextPane.text = TaskDescriptionTransformer.transform(text, transformerContext)
+  override fun setText(text: String) {
+    taskInfoTextPane.text = text
   }
 
   private inner class HintElementLinkHandler : SwingToolWindowLinkHandler(project) {
