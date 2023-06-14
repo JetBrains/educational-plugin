@@ -1,6 +1,7 @@
 import java.io.IOException
 import java.net.URL
 import java.nio.file.Files
+import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.util.*
 
@@ -67,27 +68,33 @@ fun configureSecretProperties() {
   secretProperties.extractAndStore(
     "educational-core/resources/hyperskill/hyperskill-oauth.properties",
     "hyperskillClientId",
-    "hyperskillClientSecret")
+    "hyperskillClientSecret"
+  )
   secretProperties.extractAndStore(
     "educational-core/resources/twitter/oauth_twitter.properties",
     "twitterConsumerKey",
-    "twitterConsumerSecret")
+    "twitterConsumerSecret"
+  )
   secretProperties.extractAndStore(
     "Edu-Python/resources/checkio/py-checkio-oauth.properties",
     "pyCheckioClientId",
-    "pyCheckioClientSecret")
+    "pyCheckioClientSecret"
+  )
   secretProperties.extractAndStore(
     "Edu-JavaScript/resources/checkio/js-checkio-oauth.properties",
     "jsCheckioClientId",
-    "jsCheckioClientSecret")
+    "jsCheckioClientSecret"
+  )
   secretProperties.extractAndStore(
     "educational-core/resources/aes/aes.properties",
-    "aesKey")
+    "aesKey"
+  )
   secretProperties.extractAndStore(
     "educational-core/resources/marketplace/marketplace-oauth.properties",
     "eduHubClientId",
     "eduHubClientSecret",
-    "marketplaceHubClientId")
+    "marketplaceHubClientId"
+  )
 }
 
 fun downloadHyperskillCss() {
@@ -95,7 +102,12 @@ fun downloadHyperskillCss() {
     download(URL("https://hyperskill.org/static/shared.css"), "educational-core/resources/style/hyperskill_task.css")
   }
   catch (e: IOException) {
-    System.err.println("Error downloading: ${e.message}")
+    System.err.println("Error downloading: ${e.message}. Using local copy")
+    Files.copy(
+      Paths.get("hyperskill_default.css"),
+      Paths.get("educational-core/resources/style/hyperskill_task.css"),
+      StandardCopyOption.REPLACE_EXISTING
+    )
   }
 }
 
