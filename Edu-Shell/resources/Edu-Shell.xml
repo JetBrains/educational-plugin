@@ -9,4 +9,8 @@
     <configurator implementationClass="com.jetbrains.edu.shell.hyperskill.ShellHyperskillConfigurator" language="Shell Script"
                   courseType="Hyperskill"/>
   </extensions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <editorNotificationProvider implementation="com.jetbrains.edu.shell.ShellWslExistenceNotificationProvider"/>
+  </extensions>
 </idea-plugin>
