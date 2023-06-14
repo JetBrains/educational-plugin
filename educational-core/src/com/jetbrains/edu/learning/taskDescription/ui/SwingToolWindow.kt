@@ -20,11 +20,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlTransformerContext
-import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlUIMode
 import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.TaskDescriptionTransformer
 import java.awt.BorderLayout
 import java.io.IOException
@@ -70,7 +70,7 @@ class SwingToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   }
 
   public override fun setText(text: String, task: Task?) {
-    val transformerContext = HtmlTransformerContext(project, task, HtmlUIMode.SWING)
+    val transformerContext = HtmlTransformerContext(project, task, JavaUILibrary.SWING)
     taskInfoTextPane.text = TaskDescriptionTransformer.transform(text, transformerContext)
   }
 

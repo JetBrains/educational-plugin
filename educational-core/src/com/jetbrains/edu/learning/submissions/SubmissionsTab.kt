@@ -14,6 +14,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.ColorUtil
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduExperimentalFeatures
+import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.isTestFile
@@ -22,7 +23,6 @@ import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.SwingToolWindowLinkHandler
-import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlUIMode
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TaskDescriptionBundle
@@ -36,8 +36,8 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 
 class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB) {
-  override val uiMode: HtmlUIMode
-    get() = HtmlUIMode.SWING
+  override val uiMode: JavaUILibrary
+    get() = JavaUILibrary.SWING
 
   init {
     init()

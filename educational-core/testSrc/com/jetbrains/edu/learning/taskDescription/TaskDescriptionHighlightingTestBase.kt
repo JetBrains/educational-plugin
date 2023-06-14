@@ -1,10 +1,10 @@
 package com.jetbrains.edu.learning.taskDescription
 
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindow
 import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlTransformerContext
-import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlUIMode
 import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.pipeline
 import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.steps.CodeHighlighter
 import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.steps.ExternalLinkIconsTransformer
@@ -44,14 +44,14 @@ abstract class TaskDescriptionHighlightingTestBase : EduTestCase() {
 
     val actualText = TaskDescriptionToolWindow.getTaskDescription(project, task)
 
-    fun testForSpecificUIMode(uiMode: HtmlUIMode) {
+    fun testForSpecificUIMode(uiMode: JavaUILibrary) {
       val transformationContext = HtmlTransformerContext(project, task, uiMode)
       val html = codeHighlighterTransformer.transform(actualText, transformationContext)
       assertEquals(expectedText.trimIndent(), html.dropSpecificValues())
     }
 
-    testForSpecificUIMode(HtmlUIMode.SWING)
-    testForSpecificUIMode(HtmlUIMode.JCEF)
+    testForSpecificUIMode(JavaUILibrary.SWING)
+    testForSpecificUIMode(JavaUILibrary.JCEF)
   }
 
   private fun String.dropSpecificValues(): String = lines()

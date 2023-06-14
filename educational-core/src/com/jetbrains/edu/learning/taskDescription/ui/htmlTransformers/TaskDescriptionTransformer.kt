@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers
 
 import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.steps.*
 
-private val TaskDescriptionTransformerStep1 = pipeline(
+private val TaskDescriptionHtmlTransformer = pipeline(
   MediaThemesTransformer,
   ExternalLinkIconsTransformer,
   CodeHighlighter,
@@ -10,6 +10,6 @@ private val TaskDescriptionTransformerStep1 = pipeline(
 )
 
 val TaskDescriptionTransformer = pipeline(
-  TaskDescriptionTransformerStep1.toStringTransformer(),
+  TaskDescriptionHtmlTransformer.toStringTransformer(),
   ResourceWrapper
 )

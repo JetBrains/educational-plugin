@@ -23,7 +23,6 @@ import com.intellij.util.ui.update.Update
 import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import org.jsoup.nodes.Element
 import javax.swing.JComponent
 
 

@@ -1,9 +1,9 @@
 package com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.steps
 
+import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlTransformer
 import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlTransformerContext
-import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlUIMode
 import com.jetbrains.edu.learning.taskDescription.ui.wrapHintJCEF
 import com.jetbrains.edu.learning.taskDescription.ui.wrapHintSwing
 import com.jetbrains.edu.learning.taskDescription.ui.wrapHintTagsInsideHTML
@@ -17,8 +17,10 @@ object HintsWrapper : HtmlTransformer {
 
     return wrapHintTagsInsideHTML(html) { e, number, title ->
       return@wrapHintTagsInsideHTML when (context.uiMode) {
-        HtmlUIMode.JCEF -> wrapHintJCEF(context.project, e, number, title)
-        HtmlUIMode.SWING -> wrapHintSwing(context.project, e, number, title)
+        JavaUILibrary.JCEF -> wrapHintJCEF(context.project, e, number, title)
+        JavaUILibrary.SWING -> wrapHintSwing(context.project, e, number, title)
+        // all other options are deprecated, but we anyway should process them:
+        else -> e.html()
       }
     }
   }

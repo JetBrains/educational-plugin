@@ -2,12 +2,12 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.openapi.project.Project
 import com.intellij.ui.ColorUtil
+import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlTransformerContext
-import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlUIMode
 import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.TaskDescriptionTransformer
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskDescription.ui.tab.AdditionalTab
@@ -16,8 +16,8 @@ import com.jetbrains.edu.learning.ui.EduColors
 
 class TopicsTab(project: Project) : AdditionalTab(project, TOPICS_TAB) {
 
-  override val uiMode: HtmlUIMode
-    get() = HtmlUIMode.SWING
+  override val uiMode: JavaUILibrary
+    get() = JavaUILibrary.SWING
 
   init {
     init()
@@ -42,7 +42,7 @@ class TopicsTab(project: Project) : AdditionalTab(project, TOPICS_TAB) {
       }
     }
 
-    val transformationContext = HtmlTransformerContext(project, task, HtmlUIMode.SWING)
+    val transformationContext = HtmlTransformerContext(project, task, JavaUILibrary.SWING)
     setText(TaskDescriptionTransformer.transform(descriptionText, transformationContext))
   }
 

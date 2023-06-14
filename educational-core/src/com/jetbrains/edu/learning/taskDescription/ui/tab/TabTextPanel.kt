@@ -4,7 +4,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
-import org.jsoup.nodes.Element
 import java.awt.BorderLayout
 import javax.swing.JComponent
 import javax.swing.JPanel

@@ -8,7 +8,6 @@ import com.intellij.ui.content.ContentFactory
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlUIMode
 import java.awt.BorderLayout
 import javax.swing.JPanel
 
@@ -19,12 +18,7 @@ import javax.swing.JPanel
 abstract class AdditionalTab(val project: Project, val tabType: TabType) : JPanel(BorderLayout()), Disposable {
   protected lateinit var innerTextPanel: TabTextPanel
   val content: Content by lazy { createContent() }
-  protected open val uiMode = if (EduSettings.getInstance().javaUiLibraryWithCheck == JavaUILibrary.JCEF) {
-    HtmlUIMode.JCEF
-  }
-  else {
-    HtmlUIMode.SWING
-  }
+  protected open val uiMode = EduSettings.getInstance().javaUiLibraryWithCheck
 
   abstract fun update(task: Task)
 
@@ -37,7 +31,7 @@ abstract class AdditionalTab(val project: Project, val tabType: TabType) : JPane
   }
 
   private fun createTextPanel(): TabTextPanel {
-    return if (uiMode == HtmlUIMode.JCEF) {
+    return if (uiMode == JavaUILibrary.JCEF) {
       JCEFTextPanel(project)
     }
     else {
