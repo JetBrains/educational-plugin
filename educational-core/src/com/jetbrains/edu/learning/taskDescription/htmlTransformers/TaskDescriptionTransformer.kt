@@ -1,6 +1,6 @@
-package com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers
+package com.jetbrains.edu.learning.taskDescription.htmlTransformers
 
-import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.steps.*
+import com.jetbrains.edu.learning.taskDescription.htmlTransformers.steps.*
 
 private val TaskDescriptionHtmlTransformer = HtmlTransformer.pipeline(
   MediaThemesTransformer,

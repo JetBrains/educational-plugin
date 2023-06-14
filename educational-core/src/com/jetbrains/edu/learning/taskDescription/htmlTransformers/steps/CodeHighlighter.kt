@@ -1,11 +1,11 @@
-package com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.steps
+package com.jetbrains.edu.learning.taskDescription.htmlTransformers.steps
 
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.EduCodeHighlighter.Companion.highlightCodeFragments
-import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlTransformer
-import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlTransformerContext
+import com.jetbrains.edu.learning.taskDescription.htmlTransformers.HtmlTransformer
+import com.jetbrains.edu.learning.taskDescription.htmlTransformers.HtmlTransformerContext
 import org.jsoup.nodes.Document
 
 object CodeHighlighter : HtmlTransformer {

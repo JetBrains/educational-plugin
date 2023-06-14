@@ -1,9 +1,9 @@
-package com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.steps
+package com.jetbrains.edu.learning.taskDescription.htmlTransformers.steps
 
 import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
-import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlTransformer
-import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlTransformerContext
+import com.jetbrains.edu.learning.taskDescription.htmlTransformers.HtmlTransformer
+import com.jetbrains.edu.learning.taskDescription.htmlTransformers.HtmlTransformerContext
 import com.jetbrains.edu.learning.taskDescription.ui.wrapHintJCEF
 import com.jetbrains.edu.learning.taskDescription.ui.wrapHintSwing
 import com.jetbrains.edu.learning.taskDescription.ui.wrapHintTagsInsideHTML

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers
+package com.jetbrains.edu.learning.taskDescription.htmlTransformers
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.JavaUILibrary

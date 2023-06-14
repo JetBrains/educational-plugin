@@ -24,8 +24,8 @@ import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlTransformerContext
-import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.TaskDescriptionTransformer
+import com.jetbrains.edu.learning.taskDescription.htmlTransformers.HtmlTransformerContext
+import com.jetbrains.edu.learning.taskDescription.htmlTransformers.TaskDescriptionTransformer
 import javax.swing.JComponent
 
 

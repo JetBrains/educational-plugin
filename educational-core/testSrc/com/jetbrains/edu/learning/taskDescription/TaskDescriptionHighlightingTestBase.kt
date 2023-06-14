@@ -4,8 +4,8 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
-import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.HtmlTransformerContext
-import com.jetbrains.edu.learning.taskDescription.ui.htmlTransformers.steps.CodeHighlighter
+import com.jetbrains.edu.learning.taskDescription.htmlTransformers.HtmlTransformerContext
+import com.jetbrains.edu.learning.taskDescription.htmlTransformers.steps.CodeHighlighter
 import org.intellij.lang.annotations.Language
 
 abstract class TaskDescriptionHighlightingTestBase : EduTestCase() {
