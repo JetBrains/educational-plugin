@@ -110,6 +110,7 @@
     <action id="Educational.SwitchTaskDescriptionPanel" class="com.jetbrains.edu.learning.actions.SwitchTaskPanelAction">
     </action>
 
+    <!-- IMPORTANT: don't chane the action id, it's used in monorepo-->
     <action id="Educational.BrowseCourses" class="com.jetbrains.edu.learning.newproject.BrowseCoursesAction"/>
 
     <action id="Educational.ToggleRestServices"
