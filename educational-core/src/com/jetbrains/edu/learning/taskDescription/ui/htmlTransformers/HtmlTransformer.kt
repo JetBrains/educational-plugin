@@ -27,6 +27,18 @@ interface HtmlTransformer {
       return transformedHtml.toString()
     }
   }
+
+  companion object {
+    fun pipeline(vararg transformers: HtmlTransformer): HtmlTransformer = object : HtmlTransformer {
+      override fun transform(html: Document, context: HtmlTransformerContext): Document {
+        var result = html
+        for (transformer in transformers) {
+          result = transformer.transform(result, context)
+        }
+        return result
+      }
+    }
+  }
 }
 
 /**
@@ -34,24 +46,16 @@ interface HtmlTransformer {
  */
 interface StringHtmlTransformer {
   fun transform(html: String, context: HtmlTransformerContext): String
-}
 
-fun pipeline(vararg transformers: StringHtmlTransformer): StringHtmlTransformer = object : StringHtmlTransformer {
-  override fun transform(html: String, context: HtmlTransformerContext): String {
-    var result = html
-    for (transformer in transformers) {
-      result = transformer.transform(result, context)
+  companion object {
+    fun pipeline(vararg transformers: StringHtmlTransformer): StringHtmlTransformer = object : StringHtmlTransformer {
+      override fun transform(html: String, context: HtmlTransformerContext): String {
+        var result = html
+        for (transformer in transformers) {
+          result = transformer.transform(result, context)
+        }
+        return result
+      }
     }
-    return result
-  }
-}
-
-fun pipeline(vararg transformers: HtmlTransformer): HtmlTransformer = object : HtmlTransformer {
-  override fun transform(html: Document, context: HtmlTransformerContext): Document {
-    var result = html
-    for (transformer in transformers) {
-      result = transformer.transform(result, context)
-    }
-    return result
   }
 }
