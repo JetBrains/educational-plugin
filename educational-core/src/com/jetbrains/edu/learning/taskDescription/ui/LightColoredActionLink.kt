@@ -3,17 +3,16 @@ package com.jetbrains.edu.learning.taskDescription.ui
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.util.NlsContexts.LinkLabel
-import com.intellij.ui.components.labels.ActionLink
+import com.intellij.ui.components.AnActionLink
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.ui.EduColors
 import javax.swing.Icon
 import javax.swing.SwingConstants
 
-class LightColoredActionLink(@Suppress("UnstableApiUsage") @LinkLabel text: String,
+class LightColoredActionLink(@LinkLabel text: String,
                              action: AnAction,
                              actionIcon: Icon? = null,
                              isExternal: Boolean = false
-) : ActionLink(text, action) {
+) : AnActionLink(text, action) {
 
   init {
     if (isExternal) {
@@ -24,7 +23,6 @@ class LightColoredActionLink(@Suppress("UnstableApiUsage") @LinkLabel text: Stri
     else {
       icon = actionIcon
     }
-    setNormalColor(EduColors.hyperlinkColor)
     border = JBUI.Borders.empty(16, 0, 0, 16)
   }
 }

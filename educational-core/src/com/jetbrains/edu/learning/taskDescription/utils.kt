@@ -11,7 +11,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.ui.ExperimentalUI
-import com.intellij.ui.components.labels.ActionLink
+import com.intellij.ui.components.AnActionLink
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduNames
@@ -293,11 +293,11 @@ fun addActionLinks(course: Course?, linkPanel: JPanel, topMargin: Int, leftMargi
   }
 }
 
-fun createActionLink(@Suppress("UnstableApiUsage") @LinkLabel actionText: String,
+fun createActionLink(@LinkLabel actionText: String,
                      actionId: String,
                      top: Int = 9,
                      left: Int = 10
-): ActionLink {
+): AnActionLink {
   val link = LightColoredActionLink(actionText, ActionManager.getInstance().getAction(actionId), isExternal = true)
   link.border = JBUI.Borders.empty(top, left, 0, 0)
   return link

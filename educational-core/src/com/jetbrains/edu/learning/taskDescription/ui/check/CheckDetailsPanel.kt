@@ -9,7 +9,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindowManager
-import com.intellij.ui.components.labels.ActionLink
+import com.intellij.ui.components.AnActionLink
 import com.intellij.ui.content.Content
 import com.intellij.util.Alarm
 import com.intellij.util.ui.JBUI
@@ -153,7 +153,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
     return panel
   }
 
-  private fun createCodeforcesMarkAsCompletedLink(): ActionLink {
+  private fun createCodeforcesMarkAsCompletedLink(): AnActionLink {
     return LightColoredActionLink(EduCoreBundle.message("codeforces.label.mark.as.completed"),
                                   ActionManager.getInstance().getAction(CodeforcesMarkAsCompletedAction.ACTION_ID))
   }
@@ -162,7 +162,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
     private var outputShown = false
     //suppressing capitalization because LightColoredActionLink's base class requires Sentence capitalization for the parameter
     @Suppress("DialogTitleCapitalization")
-    val actionLink: ActionLink = LightColoredActionLink(EduCoreBundle.message("label.full.output.show"), this)
+    val actionLink: AnActionLink = LightColoredActionLink(EduCoreBundle.message("label.full.output.show"), this)
 
     override fun actionPerformed(e: AnActionEvent) {
       if (!outputShown) {

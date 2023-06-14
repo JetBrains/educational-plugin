@@ -9,7 +9,7 @@ import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.HyperlinkAdapter
-import com.intellij.ui.components.labels.ActionLink
+import com.intellij.ui.components.AnActionLink
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.ext.CourseValidationResult
@@ -67,7 +67,7 @@ class HyperskillProjectAction : DumbAwareAction(EduCoreBundle.message("hyperskil
     val balloon = builder.createBalloon()
 
     val component = e.getData(PlatformDataKeys.CONTEXT_COMPONENT)
-    if (component is ActionLink) {
+    if (component is AnActionLink) {
       balloon.showInCenterOf(component)
     }
     else {
