@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.authUtils.Account
-import com.jetbrains.edu.learning.authUtils.OAuthRestService.CODE_ARGUMENT
+import com.jetbrains.edu.learning.authUtils.OAuthRestService.Companion.CODE_ARGUMENT
 import com.jetbrains.edu.learning.courseFormat.UserInfo
 import com.jetbrains.edu.learning.createRetrofitBuilder
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace

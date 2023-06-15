@@ -63,7 +63,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
 
       val success = HyperskillConnector.getInstance().login(code)
       if (success) {
-        LOG.info("$myPlatformName: OAuth code is handled")
+        LOG.info("$platformName: OAuth code is handled")
         val pageContent = getInternalTemplateText("hyperskill.redirectPage.html")
         createResponse(pageContent).send(context.channel(), request)
         return null

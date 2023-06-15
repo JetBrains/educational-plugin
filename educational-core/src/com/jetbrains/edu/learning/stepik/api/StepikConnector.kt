@@ -9,8 +9,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.EduOAuthCodeFlowConnector
-import com.jetbrains.edu.learning.authUtils.OAuthRestService.CODE_ARGUMENT
-import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.authUtils.OAuthRestService.Companion.CODE_ARGUMENT
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
@@ -93,12 +92,6 @@ abstract class StepikConnector : EduOAuthCodeFlowConnector<StepikUser, StepikUse
   override fun getUserInfo(account: StepikUser, accessToken: String?): StepikUserInfo? {
     val response = getEndpoints<StepikEndpoints>(account, accessToken).getCurrentUser().executeHandlingExceptions()
     return response?.body()?.users?.firstOrNull()
-  }
-
-  @JvmOverloads
-  fun getCourseInfo(courseId: Int, isIdeaCompatible: Boolean? = null, optional: Boolean = false): EduCourse? {
-    val response = stepikEndpoints.courses(courseId, isIdeaCompatible).executeHandlingExceptions(optional)
-    return response?.body()?.courses?.firstOrNull()
   }
 
   fun getLesson(lessonId: Int): StepikLesson? {

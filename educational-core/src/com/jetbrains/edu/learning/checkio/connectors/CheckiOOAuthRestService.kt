@@ -38,7 +38,7 @@ abstract class CheckiOOAuthRestService(platformName: String, private val oAuthCo
     if (oAuthCodePattern.matcher(uri).matches()) {
       // cannot be null because of pattern
       val code = getStringParameter(CODE_ARGUMENT, urlDecoder)!!
-      LOG.info("$myPlatformName: OAuth code is handled")
+      LOG.info("$platformName: OAuth code is handled")
       val success = oAuthConnector.login(code)
       return if (success) {
         sendOkResponse(request, context)
