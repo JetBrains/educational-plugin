@@ -6,8 +6,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ReadOnlyFragmentModificationException
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
-import com.jetbrains.edu.learning.editor.EduTypedHandler.Companion.getAnswerPlaceholder
-import com.jetbrains.edu.learning.editor.EduTypedHandler.Companion.getTaskFile
 
 /**
  * Used to forbid placeholder deletion while executing line actions
@@ -26,12 +24,7 @@ class EduTypedLineHandler(private val originalHandler: EditorActionHandler) : Ed
     val lineNumber = document.getLineNumber(currentCaret.offset)
     val lineEndOffset = document.getLineEndOffset(lineNumber)
     val lineStartOffset = document.getLineStartOffset(lineNumber)
-    val placeholder = getAnswerPlaceholder(lineStartOffset, lineEndOffset, taskFile.answerPlaceholders)
-    if (placeholder != null) {
-      throw ReadOnlyFragmentModificationException(null, null)
-    }
-    else {
-      originalHandler.execute(editor, caret, dataContext)
-    }
+    getAnswerPlaceholder(lineStartOffset, lineEndOffset, taskFile.answerPlaceholders) ?: originalHandler.execute(editor, caret, dataContext)
+    throw ReadOnlyFragmentModificationException(null, null)
   }
 }

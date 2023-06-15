@@ -17,10 +17,10 @@ open class EduMoveDelegate : MoveHandlerDelegate() {
   }
 
   override fun canMove(elements: Array<PsiElement>, targetContainer: PsiElement?, reference: PsiReference?): Boolean {
-    if (elements.size == 1) {
-      return isMoveForbidden(elements[0].project, elements[0], targetContainer)
+    return if (elements.size == 1) {
+      isMoveForbidden(elements[0].project, elements[0], targetContainer)
     }
-    return false
+    else false
   }
 
   override fun isValidTarget(psiElement: PsiElement?, sources: Array<PsiElement>): Boolean = true
