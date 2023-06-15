@@ -182,7 +182,8 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private val VIEW_EVENT = GROUP.registerEvent("open.task", COURSE_MODE_FIELD, ITEM_TYPE_FIELD)
     private val CREATE_NEW_COURSE_CLICK_EVENT = GROUP.registerEvent("create.new.course.clicked",
                                                                     enumField<CourseActionSource>(SOURCE))
-
+    private val CREATE_NEW_FILE_IN_NON_TEMPLATE_BASED_FRAMEWORK_LESSON_BY_LEARNER =
+      GROUP.registerEvent("create.new.file.in.non.template.based.framework.lesson.by.learner")
 
     @JvmStatic
     fun taskNavigation(place: TaskNavigationPlace) = TASK_NAVIGATION_EVENT.log(place)
@@ -280,6 +281,9 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     fun createNewCourseClicked(actionPlace: String) {
       CREATE_NEW_COURSE_CLICK_EVENT.log(CourseActionSource.fromActionPlace(actionPlace))
     }
+
+    @JvmStatic
+    fun createNewFileInNonTemplateBasedFrameworkLessonByLearner() = CREATE_NEW_FILE_IN_NON_TEMPLATE_BASED_FRAMEWORK_LESSON_BY_LEARNER.log()
 
     @JvmStatic
     fun viewEvent(task: Task?) {
