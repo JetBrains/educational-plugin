@@ -57,11 +57,13 @@ open class InsertShortcutAction : AnAction(
     ProgressManager.getInstance().run(object : Task.Modal(project, EduCoreBundle.message("dialog.title.collecting.shortcuts"), false) {
       override fun run(indicator: ProgressIndicator) {
         runReadAction {
-          val mainGroup = ActionsTreeUtil.createMainGroup(project,
-                                                          KeymapManager.getInstance().activeKeymap,
-                                                          QuickListsManager.getInstance().allQuickLists,
-                                                          "",
-                                                          true, null)
+          val mainGroup = ActionsTreeUtil.createMainGroup(
+            project,
+            KeymapManager.getInstance().activeKeymap,
+            QuickListsManager.getInstance().allQuickLists,
+            "",
+            true, null
+          )
 
 
           mainGroup.collectAllActions(allActions)
@@ -74,9 +76,13 @@ open class InsertShortcutAction : AnAction(
       var balloon: JBPopup? = null
 
       override fun invoke(action: AnAction) {
+        val shortcut = ActionManager.getInstance().getId(action)?.toShortcut() ?: error("Action not found: $action")
         runInEdt {
           WriteCommandAction.runWriteCommandAction(project) {
-            editor.document.insertString(editor.caretModel.offset, ActionManager.getInstance().getId(action).toShortcut())
+            editor.document.insertString(
+              editor.caretModel.offset,
+              shortcut
+            )
           }
         }
         balloon?.closeOk(null)
@@ -126,7 +132,8 @@ open class InsertShortcutAction : AnAction(
   }
 
   protected class ListWithSearchField(actions: Set<AnAction>, private val elementSelectedCallback: (AnAction) -> Unit) : JPanel(
-    BorderLayout()) {
+    BorderLayout()
+  ) {
     val searchField: SearchTextField
     private val speedSearch: SpeedSearch
     val list: JList<AnAction> = JBList(actions)
@@ -144,8 +151,10 @@ open class InsertShortcutAction : AnAction(
     }
 
     private fun createScrollPane(): JScrollPane {
-      val scrollPane = ScrollPaneFactory.createScrollPane(list, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                                                          ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER)
+      val scrollPane = ScrollPaneFactory.createScrollPane(
+        list, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
+      )
       scrollPane.border = JBUI.Borders.empty()
       ScrollingUtil.installActions(list, searchField)
       return scrollPane
@@ -219,11 +228,13 @@ open class InsertShortcutAction : AnAction(
   }
 
   private class ActionListCellRenderer : DefaultListCellRenderer() {
-    override fun getListCellRendererComponent(list: JList<*>?,
-                                              value: Any?,
-                                              index: Int,
-                                              isSelected: Boolean,
-                                              cellHasFocus: Boolean): Component {
+    override fun getListCellRendererComponent(
+      list: JList<*>?,
+      value: Any?,
+      index: Int,
+      isSelected: Boolean,
+      cellHasFocus: Boolean
+    ): Component {
       val panel = JPanel(BorderLayout())
       panel.border = JBUI.Borders.empty(2)
       panel.background = UIUtil.getListBackground(isSelected, cellHasFocus)
@@ -255,8 +266,10 @@ open class InsertShortcutAction : AnAction(
       if (icon != null) {
         val width = icon.iconWidth
         val height = icon.iconHeight
-        layeredIcon.setIcon(icon, 1, (EmptyIcon.ICON_18.iconWidth - width) / 2,
-                            (EmptyIcon.ICON_18.iconHeight - height) / 2)
+        layeredIcon.setIcon(
+          icon, 1, (EmptyIcon.ICON_18.iconWidth - width) / 2,
+          (EmptyIcon.ICON_18.iconHeight - height) / 2
+        )
       }
       iconLabel.border = JBUI.Borders.empty(0, 2, 0, 2)
       return iconLabel

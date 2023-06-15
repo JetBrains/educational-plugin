@@ -1,6 +1,5 @@
 package com.jetbrains.edu.sql.jvm.gradle
 
-import com.intellij.database.dataSource.DataSourceStorageCore
 import com.intellij.database.dataSource.LocalDataSource
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
@@ -12,7 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 class SqlInitializationState(private val project: Project) : SimplePersistentStateComponent<SqlInitializationState.State>(State()) {
 
   init {
-    project.messageBus.connect().subscribe(DataSourceStorageCore.TOPIC, object : DataSourceStorageCore.Listener {
+    project.messageBus.connect().subscribe(DATA_SOURCE_STORAGE_TOPIC, object : DataSourceStorageListener {
       override fun dataSourceRemoved(dataSource: LocalDataSource) {
         val url = dataSource.url ?: return
         state.removeInitializedDatabase(url)

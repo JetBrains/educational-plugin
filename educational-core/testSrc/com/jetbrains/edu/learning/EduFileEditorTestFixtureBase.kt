@@ -10,27 +10,27 @@ import kotlin.coroutines.EmptyCoroutineContext
 
 abstract class EduFileEditorTestFixtureBase(protected val fixture: CodeInsightTestFixture) : BaseFixture() {
 
-  private lateinit var manager: FileEditorManagerImpl
+  private var manager: FileEditorManagerImpl? = null
 
   override fun setUp() {
     super.setUp()
     manager = createFileEditorManager(CoroutineScope(EmptyCoroutineContext))
 
     // Copied from TestEditorManagerImpl's constructor
-    manager.registerExtraEditorDataProvider(TextEditorPsiDataProvider(), null)
+    manager?.registerExtraEditorDataProvider(TextEditorPsiDataProvider(), null)
     replaceManager(manager)
   }
 
-  protected abstract fun replaceManager(manager: FileEditorManager)
+  protected abstract fun replaceManager(manager: FileEditorManager?)
 
   override fun tearDown() {
     try {
-      manager.closeAllFiles()
+      manager?.closeAllFiles()
     }
     finally {
       super.tearDown()
     }
   }
 
-  protected abstract fun createFileEditorManager(scope: CoroutineScope): FileEditorManagerImpl
+  protected abstract fun createFileEditorManager(scope: CoroutineScope): FileEditorManagerImpl?
 }

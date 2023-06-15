@@ -41,7 +41,7 @@ val baseVersion = when {
 
 // Probably, these versions should be extracted to version catalog
 // See https://docs.gradle.org/current/userguide/platforms.html#sub:conventional-dependencies-toml
-val jacksonVersion = "2.13.4"
+val jacksonVersion = "2.14.3"
 val okhttpVersion = "4.10.0"
 val retrofitVersion = "2.9.0"
 

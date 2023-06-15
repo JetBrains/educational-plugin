@@ -39,7 +39,9 @@ class InsertShortcutActionTest : EduActionTestCase() {
         actionList.keyListeners.forEach {
           it.keyPressed(KeyEvent(actionList, 0, 0, 0, KeyEvent.VK_ENTER, KeyEvent.CHAR_UNDEFINED))
         }
-        assertTrue(myFixture.editor.document.text.contains(ActionManager.getInstance().getId(actionList.selectedValue)))
+        val selectedAction = actionList.selectedValue
+        val action = ActionManager.getInstance().getId(selectedAction) ?: error("Action not found: $selectedAction")
+        assertTrue(myFixture.editor.document.text.contains(action))
         return balloon
       }
     }, createDataContext(taskDescriptionFile))
