@@ -9,6 +9,7 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.EnumComboBoxModel
 import com.intellij.ui.dsl.builder.bindItemNullable
 import com.intellij.ui.dsl.builder.panel
+import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_HOST_ORDINAL_PROPERTY
 import org.jetbrains.annotations.NonNls
@@ -21,6 +22,7 @@ class StepikChangeHost : DumbAwareAction(EduCoreBundle.message("stepik.change.ho
 
     if (selectedHost != null) {
       PropertiesComponent.getInstance().setValue(STEPIK_HOST_ORDINAL_PROPERTY, selectedHost.ordinal, StepikHost.PRODUCTION.ordinal)
+      EduSettings.getInstance().user = null
       LOG.info("Stepik url was changed to ${selectedHost.url}")
     }
     else {
