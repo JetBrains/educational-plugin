@@ -64,7 +64,9 @@ fun configureSecretProperties() {
     "stepikClientId",
     "stepikClientSecret",
     "stepikNonProductionClientId",
-    "stepikNonProductionClientSecret"
+    "stepikNonProductionClientSecret",
+    "cogniterraClientId",
+    "cogniterraClientSecret"
   )
   secretProperties.extractAndStore(
     "educational-core/resources/hyperskill/hyperskill-oauth.properties",
