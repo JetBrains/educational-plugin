@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.actions.stepik
 
 import com.intellij.ide.util.PropertiesComponent
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.stepik.StepikNames.COGNITERRA_URL
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_DEFAULT_URL
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_HOST_ORDINAL_PROPERTY
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_RELEASE_URL
@@ -30,8 +31,13 @@ class StepikChangeHostActionTest : EduTestCase() {
     super.tearDown()
   }
 
+  fun `test cogniterra stepik host`() {
+    PropertiesComponent.getInstance().setValue(STEPIK_HOST_ORDINAL_PROPERTY, StepikHost.COGNITERRA.ordinal, 2)
+    doTestStepikHostChanged(COGNITERRA_URL, StepikHost.COGNITERRA, StepikOAuthBundle.value("cogniterraClientId"),
+                            StepikOAuthBundle.value("cogniterraClientSecret"))
+  }
   fun `test default stepik host`() {
-    PropertiesComponent.getInstance().setValue(STEPIK_HOST_ORDINAL_PROPERTY, StepikHost.RELEASE.ordinal, 2)
+    PropertiesComponent.getInstance().setValue(STEPIK_HOST_ORDINAL_PROPERTY, StepikHost.RELEASE.ordinal, 3)
     doTestStepikHostChanged(STEPIK_RELEASE_URL, StepikHost.PRODUCTION, StepikOAuthBundle.value("stepikClientId"),
                             StepikOAuthBundle.value("stepikClientSecret"))
   }
