@@ -315,7 +315,8 @@ abstract class CodeforcesConnector {
 
       return tasks.associate { task ->
         val taskSubmissions = submissionsByProblemIndex?.get(task.problemIndex)?.map {
-          val mainFileName = task.course.configurator?.courseBuilder?.mainTemplateName
+          val course = task.course
+          val mainFileName = course.configurator?.courseBuilder?.mainTemplateName(course)
           StepikBasedSubmission().apply {
             this.id = it.id
             this.time = Date.from(Instant.ofEpochSecond(it.creationTimeSeconds.toLong()))

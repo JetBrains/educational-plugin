@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.php.composer.ComposerUtils
 import javax.swing.Icon
@@ -41,12 +42,12 @@ class PhpConfigurator : EduConfigurator<PhpProjectSettings> {
   override val pluginRequirements: List<PluginId>
     get() = listOf(PluginId.getId("com.jetbrains.php"))
 
-  override fun getMockFileName(text: String): String = TASK_PHP
+  override fun getMockFileName(course: Course, text: String): String = TASK_PHP
 
   override fun isTestFile(task: Task, path: String): Boolean = super.isTestFile(task, path) || path == testFileName
 
-  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean =
-    super.excludeFromArchive(project, file) ||
+  override fun excludeFromArchive(project: Project, course: Course, file: VirtualFile): Boolean =
+    super.excludeFromArchive(project, course, file) ||
     file.path.contains(ComposerUtils.VENDOR_DIR_DEFAULT_NAME) ||
     file.path.contains(ComposerUtils.COMPOSER_PHAR_NAME)
 

@@ -6,9 +6,9 @@ import com.jetbrains.edu.python.learning.PyCourseBuilder
 import com.jetbrains.edu.python.learning.newproject.PyProjectSettings
 
 class PyCheckiOCourseBuilder : PyCourseBuilder() {
-  override val taskTemplateName: String? = null
-  override val mainTemplateName: String? = null
-  override val testTemplateName: String? = null
+  override fun taskTemplateName(course: Course): String? = null
+  override fun mainTemplateName(course: Course): String? = null
+  override fun testTemplateName(course: Course): String? = null
 
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<PyProjectSettings> =
     PyCheckiOCourseProjectGenerator(this, course)

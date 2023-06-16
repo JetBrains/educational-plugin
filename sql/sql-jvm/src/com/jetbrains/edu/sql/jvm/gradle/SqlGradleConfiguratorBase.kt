@@ -6,12 +6,13 @@ import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.gradle.GradleConfiguratorBase
 import com.jetbrains.edu.jvm.gradle.checker.GradleTaskCheckerProvider
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.sql.core.SqlConfiguratorBase
 
 abstract class SqlGradleConfiguratorBase : GradleConfiguratorBase(), SqlConfiguratorBase<JdkProjectSettings> {
 
-  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
-    if (super<GradleConfiguratorBase>.excludeFromArchive(project, file)) return true
+  override fun excludeFromArchive(project: Project, course: Course, file: VirtualFile): Boolean {
+    if (super<GradleConfiguratorBase>.excludeFromArchive(project, course, file)) return true
     return file.extension == DB_EXTENSION
   }
 

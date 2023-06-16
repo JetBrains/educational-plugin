@@ -42,7 +42,8 @@ abstract class CCChangeFilePropertyActionBase(
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val virtualFiles = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(e.dataContext)?.toList() ?: return
-    val configurator = StudyTaskManager.getInstance(project).course?.configurator ?: return
+    val course = StudyTaskManager.getInstance(project).course ?: return
+    val configurator = course.configurator ?: return
 
     val affectedFiles = mutableListOf<VirtualFile>()
     val states = mutableListOf<State>()
@@ -50,7 +51,7 @@ abstract class CCChangeFilePropertyActionBase(
 
     fun collect(files: List<VirtualFile>) {
       for (file in files) {
-        if (configurator.excludeFromArchive(project, file)) continue
+        if (configurator.excludeFromArchive(project, course, file)) continue
         val task = file.getContainingTask(project) ?: return
         if (file.isDirectory) {
           collect(VfsUtil.collectChildrenRecursively(file).filter { !it.isDirectory })

@@ -2,6 +2,7 @@ package com.jetbrains.edu.android.hyperskill
 
 import com.jetbrains.edu.android.AndroidConfigurator
 import com.jetbrains.edu.jvm.JdkProjectSettings
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
 
 class AndroidHyperskillConfigurator: HyperskillConfigurator<JdkProjectSettings>(AndroidConfigurator()) {
@@ -11,5 +12,5 @@ class AndroidHyperskillConfigurator: HyperskillConfigurator<JdkProjectSettings>(
   override val isCourseCreatorEnabled: Boolean
     get() = true
 
-  override fun getMockFileName(text: String): String = "Main.kt"
+  override fun getMockFileName(course: Course, text: String): String = "Main.kt"
 }

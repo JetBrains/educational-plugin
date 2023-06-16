@@ -42,7 +42,7 @@ class FakeGradleConfigurator : EduConfigurator<EmptyProjectSettings> {
   override val testFileName: String
     get() = TEST_FILE_NAME
 
-  override fun getMockFileName(text: String): String = TASK_FILE_NAME
+  override fun getMockFileName(course: Course, text: String): String = TASK_FILE_NAME
 
   override val taskCheckerProvider
     get() = object : TaskCheckerProvider {
@@ -70,8 +70,8 @@ class FakeGradleCourseBuilder : EduCourseBuilder<EmptyProjectSettings> {
     this, course)
 
   override fun refreshProject(project: Project, cause: RefreshCause) {}
-  override val mainTemplateName: String = "Main.kt"
-  override val testTemplateName: String = "Tests.kt"
+  override fun mainTemplateName(course: Course): String = "Main.kt"
+  override fun testTemplateName(course: Course): String = "Tests.kt"
 }
 
 class FakeGradleCourseProjectGenerator(

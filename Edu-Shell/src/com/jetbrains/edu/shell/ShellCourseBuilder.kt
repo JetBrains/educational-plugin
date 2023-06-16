@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 
 class ShellCourseBuilder : EduCourseBuilder<EmptyProjectSettings> {
-  override val taskTemplateName: String = ShellConfigurator.TASK_SH
+  override fun taskTemplateName(course: Course): String = ShellConfigurator.TASK_SH
 
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<EmptyProjectSettings> =
     ShellCourseProjectGenerator(this, course)

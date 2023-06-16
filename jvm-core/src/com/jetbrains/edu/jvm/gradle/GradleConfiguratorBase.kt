@@ -11,7 +11,7 @@ import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.jvmEnvironmentSettings
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configuration.EduConfigurator
-import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_JAR
@@ -27,17 +27,17 @@ import java.io.IOException
 abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
   abstract override val courseBuilder: GradleCourseBuilderBase
 
-  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
-    if (super.excludeFromArchive(project, file)) return true
+  override fun excludeFromArchive(project: Project, course: Course, file: VirtualFile): Boolean {
+    if (super.excludeFromArchive(project, course, file)) return true
     val name = file.name
     val path = file.path
     val pathSegments = path.split(VfsUtilCore.VFS_SEPARATOR_CHAR)
     if (SETTINGS_GRADLE == name) {
       // Always upload (don't exclude) settings.gradle for Hyperskill CC (EDU-4750)
-      if (project.course is HyperskillCourse) return false
+      if (course is HyperskillCourse) return false
 
       try {
-        val settingsDefaultText = GeneratorUtils.getInternalTemplateText(courseBuilder.settingGradleTemplateName,
+        val settingsDefaultText = GeneratorUtils.getInternalTemplateText(courseBuilder.settingGradleTemplateName(course),
                                                                          courseBuilder.templateVariables(project.name))
         val ioFile = File(path)
         return if (ioFile.exists()) FileUtil.loadFile(ioFile) == settingsDefaultText else true

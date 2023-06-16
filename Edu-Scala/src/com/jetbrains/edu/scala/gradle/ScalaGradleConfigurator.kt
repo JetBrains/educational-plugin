@@ -6,6 +6,7 @@ import com.jetbrains.edu.jvm.gradle.checker.GradleTaskCheckerProvider
 import com.jetbrains.edu.jvm.stepik.fileName
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.scala.isScalaPluginCompatible
 import org.jetbrains.plugins.scala.ScalaLanguage
@@ -27,7 +28,7 @@ class ScalaGradleConfigurator : GradleConfiguratorBase() {
   override val mockTemplate: String
     get() = getInternalTemplateText(MOCK_SCALA)
 
-  override fun getMockFileName(text: String): String = fileName(ScalaLanguage.INSTANCE, text)
+  override fun getMockFileName(course: Course, text: String): String = fileName(ScalaLanguage.INSTANCE, text)
 
   override val logo: Icon
     get() = EducationalCoreIcons.ScalaLogo

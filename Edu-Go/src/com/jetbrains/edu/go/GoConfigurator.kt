@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import javax.swing.Icon
 
@@ -22,7 +23,7 @@ class GoConfigurator : EduConfigurator<GoProjectSettings> {
   override val testFileName: String
     get() = TEST_GO
 
-  override fun getMockFileName(text: String): String = TASK_GO
+  override fun getMockFileName(course: Course, text: String): String = TASK_GO
 
   override val testDirs: List<String>
     get() = listOf(TEST)

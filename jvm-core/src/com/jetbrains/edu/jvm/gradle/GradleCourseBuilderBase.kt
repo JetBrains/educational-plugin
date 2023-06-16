@@ -17,15 +17,16 @@ import org.jetbrains.plugins.gradle.util.GradleConstants.SETTINGS_FILE_NAME
 
 abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
 
-  abstract val buildGradleTemplateName: String
-  open val settingGradleTemplateName: String = SETTINGS_FILE_NAME
+  abstract fun buildGradleTemplateName(course: Course): String
+  open fun settingGradleTemplateName(course: Course): String = SETTINGS_FILE_NAME
 
   /**
    * Map from config file name which should be created in project to template file name
    */
-  val templates: Map<String, String>
-    get() = mapOf(DEFAULT_SCRIPT_NAME to buildGradleTemplateName,
-                  SETTINGS_FILE_NAME to settingGradleTemplateName)
+  fun templates(course: Course): Map<String, String> = mapOf(
+    DEFAULT_SCRIPT_NAME to buildGradleTemplateName(course),
+    SETTINGS_FILE_NAME to settingGradleTemplateName(course)
+  )
 
   open fun templateVariables(projectName: String): Map<String, Any> {
     return mapOf(PROJECT_NAME to GeneratorUtils.gradleSanitizeName(projectName))

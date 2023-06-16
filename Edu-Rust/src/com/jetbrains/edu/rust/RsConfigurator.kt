@@ -6,6 +6,7 @@ import com.intellij.util.text.VersionComparatorUtil
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.pluginVersion
 import com.jetbrains.edu.rust.checker.RsTaskCheckerProvider
 import org.rust.cargo.CargoConstants
@@ -20,7 +21,7 @@ class RsConfigurator : EduConfigurator<RsProjectSettings> {
   override val testFileName: String
     get() = ""
 
-  override fun getMockFileName(text: String): String = RsConstants.MAIN_RS_FILE
+  override fun getMockFileName(course: Course, text: String): String = RsConstants.MAIN_RS_FILE
 
   override val courseBuilder: EduCourseBuilder<RsProjectSettings>
     get() = RsCourseBuilder()
@@ -34,10 +35,10 @@ class RsConfigurator : EduConfigurator<RsProjectSettings> {
   override val logo: Icon
     get() = RsIcons.RUST
 
-  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
+  override fun excludeFromArchive(project: Project, course: Course, file: VirtualFile): Boolean {
     // Cargo config file should be included into course even it's located in "hidden" `.cargo` directory
     if (file.isCargoConfigDirOrFile(project)) return false
-    return super.excludeFromArchive(project, file) || file.name == CargoConstants.LOCK_FILE ||
+    return super.excludeFromArchive(project, course, file) || file.name == CargoConstants.LOCK_FILE ||
            generateSequence(file, VirtualFile::getParent).any { it.name == CargoConstants.ProjectLayout.target }
   }
 

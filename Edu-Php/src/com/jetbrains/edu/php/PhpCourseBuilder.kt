@@ -10,9 +10,9 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.php.composer.actions.ComposerAbstractAction
 
 class PhpCourseBuilder : EduCourseBuilder<PhpProjectSettings> {
-  override val taskTemplateName: String = PhpConfigurator.TASK_PHP
-  override val mainTemplateName: String = PhpConfigurator.MAIN_PHP
-  override val testTemplateName: String = PhpConfigurator.TEST_PHP
+  override fun taskTemplateName(course: Course): String = PhpConfigurator.TASK_PHP
+  override fun mainTemplateName(course: Course): String = PhpConfigurator.MAIN_PHP
+  override fun testTemplateName(course: Course): String = PhpConfigurator.TEST_PHP
 
   override fun getLanguageSettings(): LanguageSettings<PhpProjectSettings> = PhpLanguageSettings()
 

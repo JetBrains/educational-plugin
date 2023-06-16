@@ -14,7 +14,7 @@ import com.jetbrains.edu.python.learning.newproject.PyProjectSettings
  *
  */
 class PyHyperskillBaseConfigurator : PyConfigurator() {
-  override fun getMockFileName(text: String): String = MAIN_PY
+  override fun getMockFileName(course: Course, text: String): String = MAIN_PY
 
   override val courseBuilder: EduCourseBuilder<PyProjectSettings>
     get() = PyHyperskillCourseBuilder()

@@ -29,8 +29,8 @@ import com.jetbrains.edu.learning.kotlinVersion
 
 class AndroidCourseBuilder : AndroidCourseBuilderBase() {
 
-  override val buildGradleTemplateName: String = "android-build.gradle"
-  override val settingGradleTemplateName: String = "android-settings.gradle"
+  override fun buildGradleTemplateName(course: Course): String = "android-build.gradle"
+  override fun settingGradleTemplateName(course: Course): String = "android-settings.gradle"
 
   override fun getCourseProjectGenerator(course: Course): GradleCourseProjectGenerator = AndroidCourseProjectGenerator(this, course)
 

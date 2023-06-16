@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.scala.isScalaPluginCompatible
 import com.jetbrains.edu.scala.sbt.checker.ScalaSbtTaskCheckerProvider
@@ -30,7 +31,7 @@ class ScalaSbtConfigurator : EduConfigurator<JdkProjectSettings> {
   override val taskCheckerProvider: TaskCheckerProvider
     get() = ScalaSbtTaskCheckerProvider()
 
-  override fun getMockFileName(text: String): String = fileName(ScalaLanguage.INSTANCE, text)
+  override fun getMockFileName(course: Course, text: String): String = fileName(ScalaLanguage.INSTANCE, text)
 
   override val mockTemplate: String
     get() = getInternalTemplateText(MOCK_SCALA)
@@ -47,8 +48,8 @@ class ScalaSbtConfigurator : EduConfigurator<JdkProjectSettings> {
   override val defaultPlaceholderText: String
     get() = "/* TODO */"
 
-  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
-    return super.excludeFromArchive(project, file) ||
+  override fun excludeFromArchive(project: Project, course: Course, file: VirtualFile): Boolean {
+    return super.excludeFromArchive(project, course, file) ||
            generateSequence(file, VirtualFile::getParent).any { it.name == "target"}
   }
 

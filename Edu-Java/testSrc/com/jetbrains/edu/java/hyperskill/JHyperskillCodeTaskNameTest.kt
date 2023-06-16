@@ -56,7 +56,7 @@ class JHyperskillCodeTaskNameTest : EduTestCase() {
     course.hyperskillProject = HyperskillProject()
     course.stages = listOf(HyperskillStage(1, "", 1))
 
-    val fileName = course.configurator?.getMockFileName("""
+    val fileName = course.configurator?.getMockFileName(course, """
       public class CoolTaskName {
         public static void main(String[] args) {
         }

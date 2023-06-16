@@ -25,7 +25,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
 class CppGTestCourseBuilder : CppCourseBuilder() {
-  override val testTemplateName: String = TEST_TEMPLATE_NAME
+  override fun testTemplateName(course: Course): String = TEST_TEMPLATE_NAME
 
   companion object {
     @VisibleForTesting
@@ -34,7 +34,7 @@ class CppGTestCourseBuilder : CppCourseBuilder() {
 }
 
 class CppCatchCourseBuilder : CppCourseBuilder() {
-  override val testTemplateName: String = TEST_TEMPLATE_NAME
+  override fun testTemplateName(course: Course): String = TEST_TEMPLATE_NAME
 
   companion object {
     @VisibleForTesting
@@ -43,9 +43,9 @@ class CppCatchCourseBuilder : CppCourseBuilder() {
 }
 
 open class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
-  override val taskTemplateName: String = CppConfigurator.TASK_CPP
-  override val mainTemplateName: String = CppConfigurator.MAIN_CPP
-  override val testTemplateName: String = CppConfigurator.TEST_CPP
+  override fun taskTemplateName(course: Course): String = CppConfigurator.TASK_CPP
+  override fun mainTemplateName(course: Course): String = CppConfigurator.MAIN_CPP
+  override fun testTemplateName(course: Course): String = CppConfigurator.TEST_CPP
 
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<CppProjectSettings>? =
     CppCourseProjectGenerator(this, course)

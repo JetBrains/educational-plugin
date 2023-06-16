@@ -377,7 +377,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
       }
     }
 
-    val fileName = configurator.getMockFileName(editorText)
+    val fileName = configurator.getMockFileName(course, editorText)
     if (fileName == null) {
       LOG.error(
         "Failed to retrieve fileName: courseType=$courseType, languageId=${language.id}, configurator=${configurator.javaClass.simpleName}")

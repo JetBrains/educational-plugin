@@ -19,9 +19,9 @@ import com.jetbrains.python.PyNames
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 
 class PyNewCourseBuilder : EduCourseBuilder<PyProjectSettings> {
-  override val taskTemplateName: String = TASK_PY
-  override val mainTemplateName: String = MAIN_PY
-  override val testTemplateName: String = TEST_FILE_NAME
+  override fun taskTemplateName(course: Course): String = TASK_PY
+  override fun mainTemplateName(course: Course): String = MAIN_PY
+  override fun testTemplateName(course: Course): String = TEST_FILE_NAME
 
   override fun getLanguageSettings(): LanguageSettings<PyProjectSettings> = PyLanguageSettings()
 

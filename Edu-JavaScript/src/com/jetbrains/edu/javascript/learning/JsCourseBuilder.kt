@@ -8,8 +8,8 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
 class JsCourseBuilder : EduCourseBuilder<JsNewProjectSettings> {
-  override val taskTemplateName: String = JsConfigurator.TASK_JS
-  override val testTemplateName: String = JsConfigurator.TEST_JS
+  override fun taskTemplateName(course: Course): String = JsConfigurator.TASK_JS
+  override fun testTemplateName(course: Course): String = JsConfigurator.TEST_JS
 
   override fun getLanguageSettings(): LanguageSettings<JsNewProjectSettings> = JsLanguageSettings()
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<JsNewProjectSettings> =

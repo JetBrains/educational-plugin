@@ -4,6 +4,7 @@ import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import org.jetbrains.annotations.NonNls
 import javax.swing.Icon
@@ -22,7 +23,7 @@ class ShellConfigurator : EduConfigurator<EmptyProjectSettings> {
   override val logo: Icon
     get() = EducationalCoreIcons.ShellLogo
 
-  override fun getMockFileName(text: String): String = TASK_SH
+  override fun getMockFileName(course: Course, text: String): String = TASK_SH
 
   companion object {
     @NonNls

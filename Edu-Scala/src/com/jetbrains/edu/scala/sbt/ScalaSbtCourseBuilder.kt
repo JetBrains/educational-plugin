@@ -23,9 +23,9 @@ import org.jetbrains.sbt.project.SbtProjectSystem
 
 class ScalaSbtCourseBuilder : EduCourseBuilder<JdkProjectSettings> {
 
-  override val taskTemplateName: String = ScalaSbtConfigurator.TASK_SCALA
-  override val mainTemplateName: String = ScalaSbtConfigurator.MAIN_SCALA
-  override val testTemplateName: String = ScalaSbtConfigurator.TEST_SCALA
+  override fun taskTemplateName(course: Course): String = ScalaSbtConfigurator.TASK_SCALA
+  override fun mainTemplateName(course: Course): String = ScalaSbtConfigurator.MAIN_SCALA
+  override fun testTemplateName(course: Course): String = ScalaSbtConfigurator.TEST_SCALA
 
   override fun getLanguageSettings(): LanguageSettings<JdkProjectSettings> = JdkLanguageSettings()
 

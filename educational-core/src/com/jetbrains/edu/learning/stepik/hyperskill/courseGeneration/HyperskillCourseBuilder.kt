@@ -72,14 +72,11 @@ open class HyperskillCourseBuilder<T : EduProjectSettings>(private val baseCours
   override fun getTextForNewTask(taskFile: TaskFile, taskDir: VirtualFile, newTask: Task): String? =
     baseCourseBuilder.getTextForNewTask(taskFile, taskDir, newTask)
 
-  override val taskTemplateName: String?
-    get() = baseCourseBuilder.taskTemplateName
+  override fun taskTemplateName(course: Course): String? = baseCourseBuilder.taskTemplateName(course)
 
-  override val mainTemplateName: String?
-    get() = baseCourseBuilder.mainTemplateName
+  override fun mainTemplateName(course: Course): String? = baseCourseBuilder.mainTemplateName(course)
 
-  override val testTemplateName: String?
-    get() = baseCourseBuilder.testTemplateName
+  override fun testTemplateName(course: Course): String? = baseCourseBuilder.testTemplateName(course)
 
   override fun validateItemName(project: Project, name: String, itemType: StudyItemType): String? =
     baseCourseBuilder.validateItemName(project, name, itemType)

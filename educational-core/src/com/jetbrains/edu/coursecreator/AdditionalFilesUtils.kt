@@ -76,7 +76,7 @@ object AdditionalFilesUtils {
     inCourseIgnore(file, project, excludedFiles) || excludedByConfigurator(file, course, project)
 
   private fun excludedByConfigurator(file: VirtualFile, course: Course, project: Project): Boolean =
-    course.configurator?.excludeFromArchive(project, file) ?: false
+    course.configurator?.excludeFromArchive(project, course, file) ?: false
 
   /**
    * @return list of paths from [EduNames.COURSE_IGNORE] file

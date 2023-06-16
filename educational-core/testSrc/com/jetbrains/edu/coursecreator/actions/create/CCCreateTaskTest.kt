@@ -269,7 +269,7 @@ class CCCreateTaskTest : EduActionTestCase() {
   }
 
   private fun getDefaultTestText(course: Course): String? {
-    val testTemplateName = course.configurator?.courseBuilder?.testTemplateName ?: return null
+    val testTemplateName = course.configurator?.courseBuilder?.testTemplateName(course) ?: return null
     return GeneratorUtils.getInternalTemplateText(testTemplateName)
   }
 

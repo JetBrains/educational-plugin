@@ -172,8 +172,8 @@ fun Task.getCodeTaskFile(project: Project): TaskFile? {
 
   val files = taskFiles.values
   if (files.size == 1) return files.firstOrNull()
-  course.configurator?.courseBuilder?.mainTemplateName?.getCodeTaskFile()?.let { return it }
-  course.configurator?.courseBuilder?.taskTemplateName?.getCodeTaskFile()?.let { return it }
+  course.configurator?.courseBuilder?.mainTemplateName(course)?.getCodeTaskFile()?.let { return it }
+  course.configurator?.courseBuilder?.taskTemplateName(course)?.getCodeTaskFile()?.let { return it }
   val editorTaskFile = project.selectedTaskFile
   return if (editorTaskFile?.task == this) {
     editorTaskFile

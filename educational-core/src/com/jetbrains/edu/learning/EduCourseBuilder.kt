@@ -118,14 +118,14 @@ interface EduCourseBuilder<Settings : EduProjectSettings> {
     val templates = mutableListOf<TemplateFileInfo>()
 
     if (withSources) {
-      val taskTemplate = if (withTests) taskTemplateName else mainTemplateName
+      val taskTemplate = if (withTests) taskTemplateName(course) else mainTemplateName(course)
       if (taskTemplate != null) {
         templates += TemplateFileInfo(taskTemplate, joinPaths(configurator.sourceDir, taskTemplate), true)
       }
     }
 
     if (withTests) {
-      val testTemplate = testTemplateName
+      val testTemplate = testTemplateName(course)
       if (testTemplate != null) {
         val testFileName = configurator.testFileName.takeIf { it.isNotEmpty() } ?: testTemplate
         templates += TemplateFileInfo(testTemplate, joinPaths(configurator.testDirs.firstOrNull(), testFileName), false)
@@ -197,9 +197,9 @@ interface EduCourseBuilder<Settings : EduProjectSettings> {
     return null
   }
 
-  val taskTemplateName: String? get() = null
-  val mainTemplateName: String? get() = taskTemplateName
-  val testTemplateName: String? get() = null
+  fun taskTemplateName(course: Course): String? = null
+  fun mainTemplateName(course: Course): String? = taskTemplateName(course)
+  fun testTemplateName(course: Course): String? = null
 
   /**
    * @return object responsible for language settings

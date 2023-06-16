@@ -34,7 +34,7 @@ open class PlainTextConfigurator : EduConfigurator<EmptyProjectSettings> {
   override val testFileName: String
     get() = "Tests.txt"
 
-  override fun getMockFileName(text: String): String = "Task.txt"
+  override fun getMockFileName(course: Course, text: String): String = "Task.txt"
 
   override val testDirs: List<String>
     get() = listOf(TEST_DIR_NAME)
@@ -125,9 +125,9 @@ open class PlainTextConfigurator : EduConfigurator<EmptyProjectSettings> {
 }
 
 class PlainTextCourseBuilder : EduCourseBuilder<EmptyProjectSettings> {
-  override val taskTemplateName: String = "Task.txt"
-  override val mainTemplateName: String = "Main.txt"
-  override val testTemplateName: String = "Tests.txt"
+  override fun taskTemplateName(course: Course): String = "Task.txt"
+  override fun mainTemplateName(course: Course): String = "Main.txt"
+  override fun testTemplateName(course: Course): String = "Tests.txt"
 
   override fun getLanguageSettings(): LanguageSettings<EmptyProjectSettings> = object : LanguageSettings<EmptyProjectSettings>() {
     override fun getSettings(): EmptyProjectSettings = EmptyProjectSettings

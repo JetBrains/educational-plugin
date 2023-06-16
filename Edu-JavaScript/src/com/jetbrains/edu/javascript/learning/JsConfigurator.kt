@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtilsKt.isAndroidStudio
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.courseFormat.Course
 import javax.swing.Icon
 
 
@@ -20,7 +21,7 @@ open class JsConfigurator : EduConfigurator<JsNewProjectSettings> {
   override val testFileName: String
     get() = ""
 
-  override fun getMockFileName(text: String): String = TASK_JS
+  override fun getMockFileName(course: Course, text: String): String = TASK_JS
 
   override val testDirs: List<String>
     get() = listOf(EduNames.TEST)
@@ -38,8 +39,8 @@ open class JsConfigurator : EduConfigurator<JsNewProjectSettings> {
   override val logo: Icon
     get() = EducationalCoreIcons.JsLogo
 
-  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean =
-    super.excludeFromArchive(project, file) || file.path.contains("node_modules") || "package-lock.json" == file.name
+  override fun excludeFromArchive(project: Project, course: Course, file: VirtualFile): Boolean =
+    super.excludeFromArchive(project, course, file) || file.path.contains("node_modules") || "package-lock.json" == file.name
 
   override val defaultPlaceholderText: String
     get() = "/* TODO */"

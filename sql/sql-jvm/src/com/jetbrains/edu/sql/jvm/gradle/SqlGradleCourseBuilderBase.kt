@@ -16,8 +16,7 @@ import com.jetbrains.edu.sql.core.SqlConfiguratorBase
 import javax.swing.JComponent
 
 abstract class SqlGradleCourseBuilderBase : GradleCourseBuilderBase() {
-  override val taskTemplateName: String
-    get() = SqlConfiguratorBase.TASK_SQL
+  override fun taskTemplateName(course: Course): String = SqlConfiguratorBase.TASK_SQL
 
   override fun getDefaultTaskTemplates(
     course: Course,

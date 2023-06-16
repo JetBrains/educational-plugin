@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.python.learning.PyConfigurator.Companion.TASK_PY
 import com.jetbrains.edu.python.learning.checker.PyNewTaskCheckerProvider
 import com.jetbrains.edu.python.learning.newproject.PyProjectSettings
@@ -17,13 +18,13 @@ class PyNewConfigurator : EduConfigurator<PyProjectSettings> {
   override val testFileName: String
     get() = TEST_FILE_NAME
 
-  override fun getMockFileName(text: String): String = TASK_PY
+  override fun getMockFileName(course: Course, text: String): String = TASK_PY
 
   override val testDirs: List<String>
     get() = listOf(TEST_FOLDER)
 
-  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean =
-    super.excludeFromArchive(project, file) || excludeFromArchive(file)
+  override fun excludeFromArchive(project: Project, course: Course, file: VirtualFile): Boolean =
+    super.excludeFromArchive(project, course, file) || excludeFromArchive(file)
 
   override val taskCheckerProvider: TaskCheckerProvider
     get() = PyNewTaskCheckerProvider()
