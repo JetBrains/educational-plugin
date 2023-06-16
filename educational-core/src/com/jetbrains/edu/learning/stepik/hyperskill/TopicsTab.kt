@@ -42,7 +42,7 @@ class TopicsTab(project: Project) : AdditionalTab(project, TOPICS_TAB) {
       }
     }
 
-    val transformationContext = HtmlTransformerContext(project, task, JavaUILibrary.SWING)
+    val transformationContext = HtmlTransformerContext(project, task, uiMode)
     setText(TaskDescriptionTransformer.transform(descriptionText, transformationContext))
   }
 

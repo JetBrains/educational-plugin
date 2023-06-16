@@ -33,11 +33,11 @@ abstract class TaskDescriptionHighlightingTestBase : EduTestCase() {
     createCourseWithTestTask(taskDescription, format)
     val task = findTask(0, 0)
 
-    val actualText = task.getTaskTextFromTask(project) ?: error("Failed to read task text")
+    val taskText = task.getTaskTextFromTask(project) ?: error("Failed to read task text")
 
     fun testForSpecificUIMode(uiMode: JavaUILibrary) {
       val transformationContext = HtmlTransformerContext(project, task, uiMode)
-      val html = CodeHighlighter.toStringTransformer().transform(actualText, transformationContext)
+      val html = CodeHighlighter.toStringTransformer().transform(taskText, transformationContext)
       assertEquals(expectedText.trimIndent(), html.dropSpecificValues())
     }
 

@@ -18,7 +18,7 @@ import javax.swing.JPanel
 abstract class AdditionalTab(val project: Project, val tabType: TabType) : JPanel(BorderLayout()), Disposable {
   protected lateinit var innerTextPanel: TabTextPanel
   val content: Content by lazy { createContent() }
-  protected open val uiMode = EduSettings.getInstance().javaUiLibraryWithCheck
+  protected open val uiMode: JavaUILibrary = EduSettings.getInstance().javaUiLibraryWithCheck
 
   abstract fun update(task: Task)
 
