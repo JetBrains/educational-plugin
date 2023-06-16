@@ -12,7 +12,6 @@ sealed class EduTestDialogBase<T> {
    * Checks if dialog was shown.
    * If [expectedMessage] is not null, also checks that shown message equals expected one
    */
-  @JvmOverloads
   fun checkWasShown(expectedMessage: String? = null) {
     check(shownMessage != null) {
       "Message dialog should be shown"

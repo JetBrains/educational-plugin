@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.stepik.api.LAST_NAME
 import org.jetbrains.annotations.TestOnly
 
 class StepikUserInfo private constructor() : UserInfo {
-  @JvmField
   @JsonProperty(EduFormatNames.ID)
   var id = -1
 

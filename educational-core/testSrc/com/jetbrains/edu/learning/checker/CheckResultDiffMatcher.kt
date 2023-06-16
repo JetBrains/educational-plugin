@@ -16,7 +16,6 @@ class CheckResultDiffMatcher(private val expected: CheckResultDiff) : BaseMatche
   }
 
   companion object {
-    @JvmStatic
     fun diff(expected: CheckResultDiff): Matcher<CheckResultDiff?> = CheckResultDiffMatcher(expected)
   }
 }

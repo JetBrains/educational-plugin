@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.submissions.SolutionFile
 
 object HyperskillSubmissionFactory {
-  @JvmStatic
   fun createCodeTaskSubmission(attempt: Attempt, answer: String, language: String): StepikBasedSubmission {
     val reply = Reply()
     reply.code = answer
@@ -36,7 +35,6 @@ object HyperskillSubmissionFactory {
     return StepikBasedSubmission(attempt, reply)
   }
 
-  @JvmStatic
   fun createChoiceTaskSubmission(task: ChoiceTask, attempt: Attempt): StepikBasedSubmission {
     val answerArray = createChoiceTaskAnswerArray(task, attempt)
     val reply = Reply()

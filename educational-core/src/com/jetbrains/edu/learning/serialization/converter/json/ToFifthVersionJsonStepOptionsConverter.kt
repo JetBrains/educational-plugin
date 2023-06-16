@@ -36,7 +36,6 @@ class ToFifthVersionJsonStepOptionsConverter : JsonStepOptionsConverter {
 
     private val LOG: Logger = Logger.getInstance(ToFifthVersionJsonStepOptionsConverter::class.java)
 
-    @JvmStatic
     fun removeSubtaskInfo(placeholderObject: ObjectNode) {
       val subtaskInfos = placeholderObject.get(SUBTASK_INFOS)
       if (!subtaskInfos.isArray) return

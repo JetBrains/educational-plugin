@@ -409,7 +409,6 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
 
     private const val ERROR_AGREEMENT_NOT_ACCEPTED = "You have not accepted the JetBrains Plugin Marketplace agreement"
     private const val ERROR_AUTH_FAILED = "Authentication Failed"
-    @JvmStatic
     fun getInstance(): MarketplaceConnector = service()
   }
 }

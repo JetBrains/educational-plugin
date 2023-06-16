@@ -26,7 +26,6 @@ object ProgressUtil {
   /**
    * @return Pair (number of solved tasks, number of tasks)
    */
-  @JvmStatic
   fun countProgress(course: Course): Pair<Int, Int> {
     if (course is HyperskillCourse) {
       // we want empty progress in case project stages are not loaded
@@ -51,7 +50,6 @@ object ProgressUtil {
     return Pair(taskSolved, taskNum)
   }
 
-  @JvmStatic
   fun countProgress(lesson: Lesson): Pair<Int, Int> {
     val taskNum = lesson.taskList.size
     val taskSolved = getSolvedTasks(lesson)
@@ -81,7 +79,6 @@ object ProgressUtil {
     return progressBar
   }
 
-  @JvmStatic
   fun updateCourseProgress(project: Project) {
     val course = StudyTaskManager.getInstance(project).course
     if (course == null) {

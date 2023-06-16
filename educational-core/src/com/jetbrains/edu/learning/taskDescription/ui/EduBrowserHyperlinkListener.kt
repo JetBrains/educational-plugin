@@ -13,6 +13,6 @@ open class EduBrowserHyperlinkListener : BrowserHyperlinkListener() {
   }
 
   companion object {
-    @JvmField val INSTANCE: EduBrowserHyperlinkListener = EduBrowserHyperlinkListener()
+    val INSTANCE: EduBrowserHyperlinkListener = EduBrowserHyperlinkListener()
   }
 }

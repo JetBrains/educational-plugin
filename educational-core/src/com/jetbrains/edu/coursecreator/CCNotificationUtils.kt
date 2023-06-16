@@ -12,15 +12,12 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
-@Suppress("UnstableApiUsage")
 object CCNotificationUtils {
   private val LOG = Logger.getInstance(CCNotificationUtils::class.java)
 
-  @JvmStatic
   val showLogAction: AnAction
     get() = ActionManager.getInstance().getAction("ShowLog")
 
-  @JvmStatic
   fun showFailedToPostItemNotification(project: Project, item: StudyItem, isNew: Boolean) {
     val pathInCourse = item.getPathInCourse()
 
@@ -33,12 +30,11 @@ object CCNotificationUtils {
     showErrorNotification(project, title, content, showLogAction)
   }
 
-  @JvmStatic
-  @JvmOverloads
-  fun showErrorNotification(project: Project,
-                            @NotificationTitle title: String,
-                            @NotificationContent message: String? = null,
-                            action: AnAction? = null
+  fun showErrorNotification(
+    project: Project,
+    @NotificationTitle title: String,
+    @NotificationContent message: String? = null,
+    action: AnAction? = null
   ) {
     LOG.info(message)
     val notification = Notification("JetBrains Academy", title, message.orEmpty(), NotificationType.ERROR)
@@ -48,33 +44,38 @@ object CCNotificationUtils {
     notification.notify(project)
   }
 
-  @JvmStatic
   fun showNoRightsToUpdateOnStepikNotification(project: Project) {
-    showErrorNotification(project,
-                          EduCoreBundle.message("notification.course.creator.access.denied.title"),
-                          EduCoreBundle.message("notification.course.creator.access.denied.content"))
+    showErrorNotification(
+      project,
+      EduCoreBundle.message("notification.course.creator.access.denied.title"),
+      EduCoreBundle.message("notification.course.creator.access.denied.content")
+    )
   }
 
-  @JvmStatic
-  fun showNotification(project: Project,
-                       @NotificationContent title: String,
-                       action: AnAction? = null) {
-  showNotification(project, action, title, "")
+  fun showNotification(
+    project: Project,
+    @NotificationContent title: String,
+    action: AnAction? = null
+  ) {
+    showNotification(project, action, title, "")
   }
 
-  @JvmStatic
-  fun showNotification(project: Project,
-                       @NotificationTitle title: String,
-                       @NotificationContent message: String,
-                       action: AnAction? = null) {
+  fun showNotification(
+    project: Project,
+    @NotificationTitle title: String,
+    @NotificationContent message: String,
+    action: AnAction? = null
+  ) {
     showNotification(project, action, title, message)
   }
 
-  fun showNotification(project: Project,
-                       action: AnAction?,
-                       @NotificationTitle title: String,
-                       @NotificationContent message: String,
-                       notificationType: NotificationType = NotificationType.INFORMATION) {
+  fun showNotification(
+    project: Project,
+    action: AnAction?,
+    @NotificationTitle title: String,
+    @NotificationContent message: String,
+    notificationType: NotificationType = NotificationType.INFORMATION
+  ) {
     val notification = Notification("JetBrains Academy", title, message, notificationType)
     if (action != null) {
       notification.addAction(action)

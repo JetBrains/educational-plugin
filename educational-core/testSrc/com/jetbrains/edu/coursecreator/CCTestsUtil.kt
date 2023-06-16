@@ -12,7 +12,6 @@ object CCTestsUtil {
            "placeholderText=${placeholder.placeholderText}"
   }
 
-  @JvmStatic
   fun checkPainters(placeholder: AnswerPlaceholder) {
     val paintedPlaceholders = getPaintedPlaceholder()
     if (paintedPlaceholders.contains(placeholder)) return
@@ -25,7 +24,6 @@ object CCTestsUtil {
     throw AssertionError("No highlighter for placeholder: " + getPlaceholderPresentation(placeholder))
   }
 
-  @JvmStatic
   fun checkPainters(taskFile: TaskFile) {
     val paintedPlaceholders = getPaintedPlaceholder()
     for (answerPlaceholder in taskFile.answerPlaceholders) {

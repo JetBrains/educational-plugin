@@ -185,95 +185,66 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private val CREATE_NEW_FILE_IN_NON_TEMPLATE_BASED_FRAMEWORK_LESSON_BY_LEARNER =
       GROUP.registerEvent("create.new.file.in.non.template.based.framework.lesson.by.learner")
 
-    @JvmStatic
     fun taskNavigation(place: TaskNavigationPlace) = TASK_NAVIGATION_EVENT.log(place)
 
-    @JvmStatic
     fun eduProjectCreated(course: Course) = EDU_PROJECT_CREATED_EVENT.log(course.courseMode, course.itemType, course.languageId)
 
-    @JvmStatic
     fun eduProjectOpened(course: Course) = EDU_PROJECT_OPENED_EVENT.log(course.courseMode, course.itemType)
 
-    @JvmStatic
     fun studyItemCreated(item: StudyItem) = STUDY_ITEM_CREATED_EVENT.log(item.course.courseMode, item.itemType)
 
-    @JvmStatic
     fun linkClicked(linkType: LinkType) = LICK_CLICKED_EVENT.log(linkType)
 
-    @JvmStatic
     @Deprecated("Use logInSucceed instead")
     fun loggedIn(platform: String, place: AuthorizationPlace) = AUTHORIZATION_EVENT.log(LOG_IN, platform, place)
 
-    @JvmStatic
     @Deprecated("Use logOutSucceed instead")
     fun loggedOut(platform: String, place: AuthorizationPlace) = AUTHORIZATION_EVENT.log(LOG_OUT, platform, place)
 
-    @JvmStatic
     fun logInSucceed(platform: String, place: AuthorizationPlace) = AUTHORIZATION_EVENT.log(LOG_IN_SUCCEED, platform, place)
 
-    @JvmStatic
     fun logOutSucceed(platform: String, place: AuthorizationPlace) = AUTHORIZATION_EVENT.log(LOG_OUT_SUCCEED, platform, place)
 
-    @JvmStatic
     fun obtainJBAToken(success: Boolean) = OBTAIN_JBA_TOKEN_EVENT.log(success)
 
-    @JvmStatic
     fun fullOutputShown() = SHOW_FULL_OUTPUT_EVENT.log()
 
-    @JvmStatic
     fun solutionPeeked() = PEEK_SOLUTION_EVENT.log()
 
-    @JvmStatic
     fun leaveFeedback() = LEAVE_FEEDBACK_EVENT.log()
 
-    @JvmStatic
     fun revertTask() = REVERT_TASK_EVENT.log()
 
-    @JvmStatic
     fun reviewStageTopics() = REVIEW_STAGE_TOPICS_EVENT.log()
 
-    @JvmStatic
     fun checkTask(status: CheckStatus) = CHECK_TASK_EVENT.log(status)
 
-    @JvmStatic
     fun hintExpanded() = HINT_CLICKED_EVENT.log(HintEvent.EXPANDED)
 
-    @JvmStatic
     fun hintCollapsed() = HINT_CLICKED_EVENT.log(HintEvent.COLLAPSED)
 
-    @JvmStatic
     fun createCoursePreview() = CREATE_COURSE_PREVIEW_EVENT.log()
 
-    @JvmStatic
     fun previewTaskFile() = PREVIEW_TASK_FILE_EVENT.log()
 
-    @JvmStatic
     fun createCourseArchive() = CREATE_COURSE_ARCHIVE_EVENT.log()
 
-    @JvmStatic
     fun updateCourse() = POST_COURSE_EVENT.log(PostCourseEvent.UPDATE)
 
-    @JvmStatic
     fun uploadCourse() = POST_COURSE_EVENT.log(PostCourseEvent.UPLOAD)
 
-    @JvmStatic
     fun synchronizeCourse(course: Course, place: SynchronizeCoursePlace) = SYNCHRONIZE_COURSE_EVENT.log(course.itemType, place)
 
-    @JvmStatic
     fun importCourseArchive() = IMPORT_COURSE_EVENT.log()
 
-    @JvmStatic
     fun codeforcesSubmitSolution() = CODEFORCES_SUBMIT_SOLUTION_EVENT.log()
 
-    @JvmStatic
     fun twitterDialogShown(course: Course) = TWITTER_DIALOG_SHOWN_EVENT.log(course.itemType, course.languageId)
 
-    @JvmStatic
     fun courseSelectionViewOpened(actionPlace: String) {
       COURSE_SELECTION_VIEW_OPENED_EVENT.log(CourseActionSource.fromActionPlace(actionPlace))
     }
 
-    @JvmStatic
     fun courseSelectionTabSelected(provider: CoursesPlatformProvider) {
       COURSE_SELECTION_TAB_SELECTED_EVENT.log(CourseSelectionViewTab.fromProvider(provider))
     }
@@ -282,10 +253,8 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
       CREATE_NEW_COURSE_CLICK_EVENT.log(CourseActionSource.fromActionPlace(actionPlace))
     }
 
-    @JvmStatic
     fun createNewFileInNonTemplateBasedFrameworkLessonByLearner() = CREATE_NEW_FILE_IN_NON_TEMPLATE_BASED_FRAMEWORK_LESSON_BY_LEARNER.log()
 
-    @JvmStatic
     fun viewEvent(task: Task?) {
       val course = task?.course ?: return
       VIEW_EVENT.log(course.courseMode, course.itemType)

@@ -92,7 +92,6 @@ abstract class EduLoginConnector<UserAccount : Account<*>, SpecificUserInfo : Us
 
   abstract fun getFreshAccessToken(userAccount: UserAccount?, accessToken: String?): String?
 
-  @JvmOverloads
   fun getOAuthPattern(suffix: String = """\?$CODE_ARGUMENT=(\w+)"""): Pattern {
     return "^.*$oAuthServicePath$suffix".toPattern()
   }

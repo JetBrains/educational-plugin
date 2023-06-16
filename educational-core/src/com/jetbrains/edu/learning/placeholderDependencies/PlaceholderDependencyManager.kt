@@ -18,7 +18,6 @@ object PlaceholderDependencyManager {
 
   private val LOG = Logger.getInstance(PlaceholderDependencyManager::class.java)
 
-  @JvmStatic
   fun updateDependentPlaceholders(project: Project, task: Task) {
     if (CCUtils.isCourseCreator(project)) {
       return

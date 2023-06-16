@@ -10,7 +10,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.EduOAuthCodeFlowConnector
-import com.jetbrains.edu.learning.authUtils.OAuthRestService.CODE_ARGUMENT
+import com.jetbrains.edu.learning.authUtils.OAuthRestService.Companion.CODE_ARGUMENT
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -363,7 +363,6 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
     private val CLIENT_ID: String = HyperskillOAuthBundle.value("hyperskillClientId")
     private val CLIENT_SECRET: String = HyperskillOAuthBundle.value("hyperskillClientSecret")
 
-    @JvmStatic
     fun getInstance(): HyperskillConnector = service()
 
     /**

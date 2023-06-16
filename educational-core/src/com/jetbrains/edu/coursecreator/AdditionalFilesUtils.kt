@@ -88,7 +88,6 @@ object AdditionalFilesUtils {
   }
 
   @Suppress("DEPRECATION") // https://youtrack.jetbrains.com/issue/EDU-4930
-  @JvmStatic
   fun collectAdditionalLessonInfo(lesson: Lesson, project: Project): LessonAdditionalInfo {
     val nonPluginTasks = lesson.taskList.filter { !it.isPluginTaskType }
     val taskInfo = nonPluginTasks.associateBy(Task::id) {

@@ -210,13 +210,10 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
   companion object {
     protected val LOG: Logger = Logger.getInstance(CCCreateStudyItemActionBase::class.java)
 
-    @JvmStatic
     val SUGGESTED_NAME: DataKey<String> = DataKey.create("SUGGESTED_NAME")
 
-    @JvmStatic
     val ITEM_INDEX: DataKey<Int> = DataKey.create("ITEM_INDEX")
 
-    @JvmStatic
     val UPDATE_PARENT_CONFIG: DataKey<Boolean> = DataKey.create("UPDATE_PARENT_CONFIG")
 
     private fun askFeedback(course: Course, project: Project) {

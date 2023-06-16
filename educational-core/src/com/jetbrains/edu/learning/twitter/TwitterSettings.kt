@@ -25,7 +25,6 @@ class TwitterSettings : SimplePersistentStateComponent<TwitterSettings.State>(St
   }
 
   companion object {
-    @JvmStatic
     fun getInstance(): TwitterSettings = service()
   }
 

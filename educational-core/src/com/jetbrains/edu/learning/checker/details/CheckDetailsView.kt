@@ -16,7 +16,6 @@ abstract class CheckDetailsView {
   abstract fun clear()
 
   companion object {
-    @JvmStatic
     fun getInstance(project: Project): CheckDetailsView {
       if (!project.isEduProject()) {
         error("Attempt to get CheckDetailsViewImpl for non-edu project")

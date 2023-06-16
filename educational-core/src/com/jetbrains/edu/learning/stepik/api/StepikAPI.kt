@@ -391,7 +391,6 @@ class CourseAdditionalInfo : AdditionalInfo {
 
   constructor()
 
-  @JvmOverloads
   constructor(additionalFiles: List<EduFile>, solutionsHidden: Boolean = false) {
     this.additionalFiles = additionalFiles
     this.solutionsHidden = solutionsHidden

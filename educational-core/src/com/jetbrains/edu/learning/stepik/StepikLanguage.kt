@@ -39,10 +39,8 @@ enum class StepikLanguage(val id: String?, val version: String = DEFAULT_VERSION
       values().filter { it.isDefault }.associateBy { it.id }
     }
 
-    @JvmStatic
     fun langOfName(lang: String): StepikLanguage = NAME_MAP.getOrElse(lang) { INVALID }
 
-    @JvmStatic
     fun langOfId(lang: String, version: String?): StepikLanguage {
       return if (version.isNullOrEmpty()) {
         DEFAULT_TITLE_MAP.getOrElse(lang) { INVALID }

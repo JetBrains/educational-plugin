@@ -60,7 +60,6 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
   }
 
   @VisibleForTesting
-  @JvmOverloads
   fun loadAndApplySolutions(course: Course, progressIndicator: ProgressIndicator? = null) {
     loadAndApplySolutions(course, course.allTasks, progressIndicator)
   }
@@ -346,7 +345,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
   protected data class Solution(val text: String, val isVisible: Boolean, val placeholders: List<AnswerPlaceholder>)
 
-  protected class TaskSolutions @JvmOverloads constructor(
+  protected class TaskSolutions(
     val date: Date?,
     val checkStatus: CheckStatus,
     val solutions: Map<String, Solution> = emptyMap(),

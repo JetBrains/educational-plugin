@@ -92,7 +92,6 @@ class CodeforcesSettings : PersistentStateComponent<Element> {
   fun getLoginIcon(): Icon = if (isLoggedIn()) EducationalCoreIcons.LOGGED_IN_USER else AllIcons.General.User
 
   companion object {
-    @JvmStatic
     fun getInstance(): CodeforcesSettings = service()
     val AUTHENTICATION_TOPIC = Topic.create("Codeforces.Authentication", EduLogInListener::class.java)
   }

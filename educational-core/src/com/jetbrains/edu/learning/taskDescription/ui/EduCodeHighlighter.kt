@@ -12,7 +12,6 @@ import org.jsoup.nodes.TextNode
 class EduCodeHighlighter {
 
   companion object {
-    @JvmStatic
     fun highlightCodeFragments(project: Project, html: Document, defaultLanguage: Language): Document {
       val codeElements = html.select("code")
 

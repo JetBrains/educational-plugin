@@ -44,7 +44,6 @@ class HyperskillCourseUpdateChecker(project: Project) : CourseUpdateChecker(proj
   }
 
   companion object {
-    @JvmStatic
     fun getInstance(project: Project): HyperskillCourseUpdateChecker {
       return project.service()
     }

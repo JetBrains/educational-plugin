@@ -68,10 +68,7 @@ class EduCustomServerService : Disposable {
         })
       }
     })
-    val port = CustomAuthorizationServer.availablePort
-    if (port == null) {
-      error("No available port for rest server in Android Studio")
-    }
+    val port = CustomAuthorizationServer.availablePort ?: error("No available port for rest server in Android Studio")
     val serverChannel = bootstrap.bind(InetAddress.getLoopbackAddress(), port).syncUninterruptibly().channel()
 
     val channelRegistrar = ChannelRegistrar()

@@ -162,7 +162,6 @@ class MarketplaceSubmissionsConnector {
       }
     }
 
-    @JvmStatic
     fun getInstance(): MarketplaceSubmissionsConnector = service()
   }
 }

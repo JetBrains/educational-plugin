@@ -10,7 +10,6 @@ enum class CheckStatus(val rawStatus: String) {
   Failed(WRONG);
 
   companion object {
-    @JvmStatic
     fun String.toCheckStatus(): CheckStatus = when (this) {
       CORRECT -> Solved
       WRONG -> Failed

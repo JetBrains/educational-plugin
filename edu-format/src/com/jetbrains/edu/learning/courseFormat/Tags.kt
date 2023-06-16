@@ -8,7 +8,7 @@ private const val PROGRAMMING_LANGUAGE_TAG_SEARCH_OPTION = "programming_language
 @NonNls
 private const val LANGUAGE_TAG_SEARCH_OPTION = "language"
 
-open class Tag @JvmOverloads constructor(val text: String, private val searchOption: String = "tag") {
+open class Tag(val text: String, private val searchOption: String = "tag") {
   fun getSearchText(): String = "$searchOption:$text".lowercase()
 
   fun accept(filter: String): Boolean {

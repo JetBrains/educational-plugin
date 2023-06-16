@@ -248,7 +248,6 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
   companion object {
     private val LOG: Logger = Logger.getInstance(HyperskillCourseUpdater::class.java)
 
-    @JvmStatic
     @VisibleForTesting
     fun FrameworkLesson.shouldBeUpdated(project: Project, remoteCourse: HyperskillCourse): Boolean {
       val lessonFromServer = remoteCourse.getProjectLesson() ?: return false

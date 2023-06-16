@@ -6,7 +6,6 @@ sealed class SettingsValidationResult {
   class Ready(val validationMessage: ValidationMessage?) : SettingsValidationResult()
 
   companion object {
-    @JvmField
     val OK: SettingsValidationResult = Ready(null)
   }
 }

@@ -62,7 +62,6 @@ interface StepikBasedConnector {
 
     fun Task.getStepikBasedConnector(): StepikBasedConnector = course.getStepikBasedConnector()
 
-    @JvmStatic
     fun createObjectMapper(module: SimpleModule): ObjectMapper {
       val objectMapper = ConnectorUtils.createMapper()
       objectMapper.addMixIn(EduCourse::class.java, StepikEduCourseMixin::class.java)

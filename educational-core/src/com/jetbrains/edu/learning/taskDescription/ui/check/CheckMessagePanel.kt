@@ -123,7 +123,6 @@ class CheckMessagePanel private constructor() : JPanel() {
     const val MAX_MESSAGE_LENGTH = 300
     const val MAX_LINES_NUMBER = 3
 
-    @JvmStatic
     fun create(checkResult: CheckResult): CheckMessagePanel {
       val messagePanel = CheckMessagePanel()
       messagePanel.setMessage(checkResult.message)

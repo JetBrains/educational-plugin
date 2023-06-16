@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
-class CCStudyItemPathInputValidator @JvmOverloads constructor(
+class CCStudyItemPathInputValidator(
   private val project: Project,
   private val course: Course,
   private val studyItemType: StudyItemType?,

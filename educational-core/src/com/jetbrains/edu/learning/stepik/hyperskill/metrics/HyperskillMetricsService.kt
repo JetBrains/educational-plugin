@@ -147,7 +147,6 @@ open class HyperskillMetricsService : PersistentStateComponent<HyperskillMetrics
   }
 
   companion object {
-    @JvmStatic
     fun getInstance(): HyperskillMetricsService = service()
 
     // it is approximately 300 bytes per event, lets keep hyperskill.xml file less than 2 MB (except time spent events)

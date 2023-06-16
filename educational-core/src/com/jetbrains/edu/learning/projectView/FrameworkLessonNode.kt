@@ -49,7 +49,6 @@ class FrameworkLessonNode private constructor(
 
   companion object {
 
-    @JvmStatic
     fun createFrameworkLessonNode(
       project: Project,
       lessonDirectory: PsiDirectory,

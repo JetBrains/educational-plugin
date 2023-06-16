@@ -37,6 +37,5 @@ object EduFormatNames {
   const val NO_TESTS_URL = "$TROUBLESHOOTING_GUIDE_URL#no_tests_have_run"
   const val FAILED_TO_CHECK_URL = "$TROUBLESHOOTING_GUIDE_URL#failed_to_launch_checking"
 
-  @JvmField
   val LOGIN_NEEDED_MESSAGE = message("check.error.login.needed")
 }

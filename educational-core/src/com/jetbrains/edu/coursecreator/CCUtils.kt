@@ -67,7 +67,6 @@ object CCUtils {
    * @param getStudyItem function that is used to get task/lesson from VirtualFile. This function can return null
    * @param threshold    index is used as threshold
    */
-  @JvmStatic
   fun updateHigherElements(
     dirs: Array<VirtualFile>,
     getStudyItem: Function<VirtualFile, out StudyItem?>,
@@ -88,7 +87,6 @@ object CCUtils {
     }
   }
 
-  @JvmStatic
   fun getGeneratedFilesFolder(project: Project): VirtualFile? {
     // TODO: come up with a way not to use `Project#getBaseDir`.
     //  Currently, it's supposed that created file path is path in local file system
@@ -113,7 +111,6 @@ object CCUtils {
     }
   }
 
-  @JvmStatic
   fun generateArchiveFolder(project: Project): VirtualFile? {
     val generatedRoot = getGeneratedFilesFolder(project) ?: return null
 
@@ -138,13 +135,11 @@ object CCUtils {
     openDocuments.forEach { FileDocumentManager.getInstance().saveDocument(it) }
   }
 
-  @JvmStatic
   fun isCourseCreator(project: Project): Boolean {
     val course = StudyTaskManager.getInstance(project).course ?: return false
     return CourseMode.EDUCATOR == course.courseMode || CourseMode.EDUCATOR == EduUtilsKt.getCourseModeForNewlyCreatedProject(project)
   }
 
-  @JvmStatic
   fun updateActionGroup(e: AnActionEvent) {
     val presentation = e.presentation
     val project = e.project
@@ -155,7 +150,6 @@ object CCUtils {
    * Replaces placeholder texts with [AnswerPlaceholder.possibleAnswer]` for each task file in [course].
    * Note, it doesn't affect files in file system
    */
-  @JvmStatic
   fun initializeCCPlaceholders(holder: CourseInfoHolder<Course>) {
     for (item in holder.course.items) {
       when (item) {
@@ -220,7 +214,6 @@ object CCUtils {
     }
   }
 
-  @JvmStatic
   fun wrapIntoSection(project: Project, course: Course, lessonsToWrap: List<Lesson>, @NonNls sectionName: String): Section? {
     Collections.sort(lessonsToWrap, INDEX_COMPARATOR)
     val minIndex = lessonsToWrap[0].index
@@ -286,7 +279,6 @@ object CCUtils {
     })
   }
 
-  @JvmStatic
   fun lessonFromDir(course: Course, lessonDir: VirtualFile, project: Project): Lesson? {
     val parentDir = lessonDir.parent
     if (parentDir != null && parentDir.name == project.courseDir.name) {
@@ -299,8 +291,6 @@ object CCUtils {
     }
   }
 
-  @JvmStatic
-  @JvmOverloads
   fun askToWrapTopLevelLessons(
     project: Project,
     course: EduCourse,
@@ -331,7 +321,6 @@ object CCUtils {
     }
   }
 
-  @JvmStatic
   fun showLoginNeededNotification(
     project: Project,
     failedActionTitle: String,
@@ -367,7 +356,6 @@ object CCUtils {
     return true
   }
 
-  @JvmStatic
   fun checkIfAuthorizedToStepik(project: Project, @Nls(capitalization = Nls.Capitalization.Title) failedActionTitle: String): Boolean {
     return checkIfAuthorized(project, failedActionTitle, EduSettings.isLoggedIn()) {
       StepikConnector.getInstance().doAuthorize()
@@ -379,7 +367,6 @@ object CCUtils {
    * [com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.PushHyperskillLesson])
    * Concatenates upload and update action texts for action search in find actions
    */
-  @JvmStatic
   fun addGluingSlash(updateText: @NlsActions.ActionText String, uploadText: @NlsActions.ActionText String): String {
     return "${updateText}/${uploadText}"
   }

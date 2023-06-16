@@ -32,7 +32,6 @@ import javax.swing.tree.TreePath
 
 object NavigationUtils {
 
-  @JvmStatic
   fun nextTask(task: Task): Task? {
     if (isUnsolvedHyperskillStage(task) || isLastHyperskillStage(task) || isLastHyperskillProblem(task)) return null
 
@@ -49,7 +48,6 @@ object NavigationUtils {
     return nextLessonTaskList.firstOrNull()
   }
 
-  @JvmStatic
   fun previousTask(task: Task): Task? {
     if (isFirstHyperskillProblem(task)) return null
 
@@ -90,7 +88,6 @@ object NavigationUtils {
     return lesson != course.getProjectLesson() && task.index == lesson.items.size
   }
 
-  @JvmStatic
   fun nextLesson(lesson: Lesson): Lesson? {
     val container = lesson.container
     val siblings = container.items
@@ -123,8 +120,7 @@ object NavigationUtils {
     return null
   }
 
-  @JvmStatic
-  fun previousLesson(lesson: Lesson): Lesson? {
+  private fun previousLesson(lesson: Lesson): Lesson? {
     val container = lesson.container
     val siblings = container.items
     val prevLessonIndex = lesson.index - 2
@@ -156,7 +152,6 @@ object NavigationUtils {
     return null
   }
 
-  @JvmStatic
   fun navigateToAnswerPlaceholder(editor: Editor, answerPlaceholder: AnswerPlaceholder) {
     if (editor.isDisposed) return
     val offsets = getPlaceholderOffsets(answerPlaceholder)
@@ -165,7 +160,6 @@ object NavigationUtils {
     editor.selectionModel.setSelection(offsets.first, offsets.second)
   }
 
-  @JvmStatic
   fun navigateToFirstAnswerPlaceholder(editor: Editor, taskFile: TaskFile) {
     val visiblePlaceholders = taskFile.answerPlaceholders.filter { it.isVisible }
     val firstAnswerPlaceholder = visiblePlaceholders.firstOrNull() ?: return
@@ -198,7 +192,6 @@ object NavigationUtils {
     return firstVisibleTaskFile.findTaskFileInDir(taskDir)
   }
 
-  @JvmStatic
   fun navigateToTask(project: Project, sectionName: String?, lessonName: String, taskName: String) {
     val course = StudyTaskManager.getInstance(project).course ?: return
     val lesson = course.getLesson(sectionName, lessonName) ?: return
@@ -206,8 +199,6 @@ object NavigationUtils {
     ApplicationManager.getApplication().invokeLater { navigateToTask(project, task) }
   }
 
-  @JvmOverloads
-  @JvmStatic
   fun navigateToTask(
     project: Project,
     task: Task,
@@ -337,7 +328,6 @@ object NavigationUtils {
     }
   }
 
-  @JvmStatic
   fun getPlaceholderOffsets(answerPlaceholder: AnswerPlaceholder): Pair<Int, Int> {
     return Pair.create(answerPlaceholder.offset, answerPlaceholder.endOffset)
   }

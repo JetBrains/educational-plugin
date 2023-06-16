@@ -127,8 +127,6 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
       }
     }
 
-    @JvmOverloads
-    @JvmStatic
     fun getBaseSdk(course: Course, context: UserDataHolder? = null): PyBaseSdkDescriptor? {
       val baseSdks = PyBaseSdksProvider.getBaseSdks(context)
       if (baseSdks.isEmpty()) {
@@ -162,7 +160,6 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
 
     const val ALL_VERSIONS = "All versions"
 
-    @JvmStatic
     fun installSdk(sdkToInstall: PySdkToInstall) = sdkToInstall.install(null) { detectSystemWideSdks(null, emptyList()) }
   }
 }

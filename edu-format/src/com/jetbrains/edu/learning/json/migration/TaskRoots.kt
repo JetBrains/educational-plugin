@@ -4,7 +4,6 @@ import com.jetbrains.edu.learning.json.migration.MigrationNames.JAVA
 import com.jetbrains.edu.learning.json.migration.MigrationNames.KOTLIN
 import com.jetbrains.edu.learning.json.migration.MigrationNames.SCALA
 
-@JvmField
 val LANGUAGE_TASK_ROOTS: Map<String, TaskRoots> = mapOf(
   KOTLIN to TaskRoots("src", "test"),
   JAVA to TaskRoots("src", "test"),

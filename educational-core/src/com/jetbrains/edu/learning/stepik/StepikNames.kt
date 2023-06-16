@@ -18,7 +18,6 @@ object StepikNames {
   const val ADDITIONAL_INFO = "additional_files.json"
   const val PLUGIN_NAME = "EduTools"
 
-  @JvmStatic
   fun getStepikUrl(): String = if (isUnitTestMode) {
     STEPIK_RELEASE_URL
   }
@@ -26,18 +25,13 @@ object StepikNames {
     StepikHost.getSelectedHost().url
   }
 
-  @JvmStatic
   fun getClientId(): String = StepikHost.getSelectedHost().clientId
 
-  @JvmStatic
   fun getClientSecret(): String = StepikHost.getSelectedHost().clientSecret
 
-  @JvmStatic
   fun getStepikApiUrl(): String = "${getStepikUrl()}/api/"
 
-  @JvmStatic
   fun getTokenUrl(): String = "${getStepikUrl()}/oauth2/token/"
 
-  @JvmStatic
   fun getStepikProfilePath(): String = "${getStepikUrl()}/users/"
 }

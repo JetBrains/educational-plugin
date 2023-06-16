@@ -25,7 +25,6 @@ import javax.swing.Icon
 
 object CourseViewUtils {
 
-  @JvmStatic
   fun modifyTaskChildNode(
     project: Project,
     childNode: AbstractTreeNode<*>,
@@ -75,7 +74,6 @@ object CourseViewUtils {
     }
   }
 
-  @JvmStatic
   fun findTaskDirectory(project: Project, baseDir: PsiDirectory, task: Task): PsiDirectory? {
     val sourceDirName = task.sourceDir
     if (sourceDirName.isNullOrEmpty() || CCUtils.isCourseCreator(project)) {
@@ -91,7 +89,6 @@ object CourseViewUtils {
   }
 
   @TestOnly
-  @JvmStatic
   fun testPresentation(node: AbstractTreeNode<out PsiFileSystemItem>): String {
     val presentation = node.presentation
     val fragments = presentation.coloredText
@@ -104,7 +101,6 @@ object CourseViewUtils {
     }
   }
 
-  @JvmStatic
   fun getIcon(item: StudyItem): Icon {
     return when (item) {
       is Course -> item.icon

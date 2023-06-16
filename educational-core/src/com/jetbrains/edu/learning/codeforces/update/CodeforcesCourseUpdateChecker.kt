@@ -25,7 +25,6 @@ class CodeforcesCourseUpdateChecker(project: Project) : CourseUpdateChecker(proj
   companion object {
     const val ONGOING_COURSE_CHECK_INTERVAL: Long = 60 * DateFormatUtil.SECOND
 
-    @JvmStatic
     fun getInstance(project: Project): CodeforcesCourseUpdateChecker {
       return project.service()
     }

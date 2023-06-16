@@ -60,8 +60,6 @@ class AnswerPlaceholderDependency() {
   companion object {
     private val DEPENDENCY_PATTERN = Pattern.compile("(([^#]+)#)?([^#]+)#([^#]+)#([^#]+)#(\\d+)")
 
-    @JvmStatic
-    @JvmOverloads
     @Throws(InvalidDependencyException::class)
     fun create(answerPlaceholder: AnswerPlaceholder, text: String, isVisible: Boolean = true): AnswerPlaceholderDependency? {
       if (text.isBlank()) {

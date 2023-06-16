@@ -88,7 +88,6 @@ abstract class Task : StudyItem {
     return _taskFiles[name]
   }
 
-  @JvmOverloads
   fun addTaskFile(name: String, isVisible: Boolean = true): TaskFile {
     val taskFile = TaskFile()
     taskFile.task = this

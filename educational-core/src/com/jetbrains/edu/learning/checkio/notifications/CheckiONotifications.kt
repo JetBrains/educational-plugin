@@ -6,11 +6,8 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.util.NlsContexts.*
 import com.jetbrains.edu.EducationalCoreIcons
 
-@Suppress("UnstableApiUsage")
 object CheckiONotifications {
 
-  @JvmOverloads
-  @JvmStatic
   fun error(
     title: @NotificationTitle String,
     subtitle: @NotificationSubtitle String?,
@@ -20,8 +17,6 @@ object CheckiONotifications {
     return notification(title, subtitle, content, NotificationType.ERROR, listener)
   }
 
-  @JvmOverloads
-  @JvmStatic
   fun warn(
     title: @NotificationTitle String,
     subtitle: @NotificationSubtitle String,
@@ -31,8 +26,6 @@ object CheckiONotifications {
     return notification(title, subtitle, content, NotificationType.WARNING, listener)
   }
 
-  @JvmOverloads
-  @JvmStatic
   fun info(
     title: @NotificationTitle String,
     subtitle: @NotificationSubtitle String,

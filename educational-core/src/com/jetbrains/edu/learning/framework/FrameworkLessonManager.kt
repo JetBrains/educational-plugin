@@ -16,7 +16,6 @@ interface FrameworkLessonManager {
   fun getChangesTimestamp(task: Task): Long
 
   companion object {
-    @JvmStatic
     fun getInstance(project: Project): FrameworkLessonManager = project.service()
   }
 }

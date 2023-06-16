@@ -11,7 +11,6 @@ class CCSettings : SimplePersistentStateComponent<CCSettings.State>(State()) {
   var copyTestsInFrameworkLessons: Boolean by state::copyTestsInFrameworkLessons
 
   companion object {
-    @JvmStatic
     fun getInstance(): CCSettings = service()
   }
 

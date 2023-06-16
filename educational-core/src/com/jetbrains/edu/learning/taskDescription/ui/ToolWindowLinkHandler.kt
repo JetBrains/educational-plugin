@@ -47,7 +47,6 @@ open class ToolWindowLinkHandler(val project: Project) {
   companion object {
     private val LOG = Logger.getInstance(ToolWindowLinkHandler::class.java)
 
-    @JvmStatic
     fun processPsiElementLink(project: Project, url: String) {
       val urlEncodedName = url.substringAfter(TaskDescriptionLinkProtocol.PSI_ELEMENT.protocol)
       // Sometimes a user has to encode element reference because it contains invalid symbols like ` `.
@@ -83,7 +82,6 @@ open class ToolWindowLinkHandler(val project: Project) {
       EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.PSI)
     }
 
-    @JvmStatic
     fun processInCourseLink(project: Project, url: String) {
       EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.IN_COURSE)
       val course = project.course ?: return
@@ -101,7 +99,6 @@ open class ToolWindowLinkHandler(val project: Project) {
       }
     }
 
-    @JvmStatic
     fun processFileLink(project: Project, url: String) {
       val urlWithoutProtocol = url.substringAfter(StandardFileSystems.FILE_PROTOCOL_PREFIX)
       val file = project.courseDir.findFileByRelativePath(urlWithoutProtocol)

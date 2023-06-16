@@ -14,7 +14,6 @@ object EduConfiguratorManager {
   /**
    * Returns any enabled [EduConfigurator] for given language, courseType and environment
    */
-  @JvmStatic
   fun findConfigurator(courseType: String, environment: String, language: Language): EduConfigurator<*>? =
     when (courseType) {
       CODEFORCES_COURSE_TYPE -> CodeforcesLanguageProvider.getConfigurator(language.id)
@@ -22,7 +21,6 @@ object EduConfiguratorManager {
       else -> findExtension(courseType, environment, language)?.instance
     }
 
-  @JvmStatic
   fun findExtension(courseType: String, environment: String, language: Language): EducationalExtensionPoint<EduConfigurator<*>>? {
     var configurator =
       allExtensions().find { extension ->
@@ -43,14 +41,12 @@ object EduConfiguratorManager {
   /**
    * Returns all extension points of [EduConfigurator] where instance of [EduConfigurator] is enabled
    */
-  @JvmStatic
   fun allExtensions(): List<EducationalExtensionPoint<EduConfigurator<*>>> =
     EducationalExtensionPoint.EP_NAME.extensions.filter { it.instance.isEnabled }
 
   /**
    * Returns all languages with enabled [EduConfigurator] for [PYCHARM] course type
    */
-  @JvmStatic
   val supportedEduLanguages: List<String>
     get() {
       return allExtensions().filter { it.courseType == PYCHARM }.map { it.language }
@@ -62,7 +58,6 @@ object EduConfiguratorManager {
     return extension.courseType == PYCHARM && courseType in compatibleCourseTypes
   }
 
-  @JvmStatic
   fun supportedEnvironments(language: Language): List<String> =
     allExtensions().filter { it.language == language.id && it.courseType == PYCHARM }.map { it.environment }.distinct()
 }

@@ -410,7 +410,6 @@ abstract class CodeforcesConnector {
 
     private val LOG = Logger.getInstance(CodeforcesConnector::class.java)
 
-    @JvmStatic
     fun getInstance(): CodeforcesConnector = service()
   }
 }

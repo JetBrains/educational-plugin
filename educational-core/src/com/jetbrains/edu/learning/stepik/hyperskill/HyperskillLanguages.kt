@@ -38,23 +38,19 @@ enum class HyperskillLanguages(private val id: String, private val languageName:
   override fun toString(): String = id.lowercase().capitalize() + if (languageVersion != null) " $languageVersion" else ""
 
   companion object {
-    @JvmStatic
     fun getLanguageIdAndVersion(hyperskillLanguage: String): Pair<String, String?>? {
       val language = values().find { it.requestLanguage == hyperskillLanguage } ?: return null
       return Pair(language.id, language.languageVersion)
     }
 
-    @JvmStatic
     fun getRequestLanguage(languageId: String): String? {
       return getHyperskillLanguage(languageId)?.requestLanguage
     }
 
-    @JvmStatic
     fun getLanguageName(languageId: String): String? {
       return getHyperskillLanguage(languageId)?.languageName
     }
 
-    @JvmStatic
     fun getHyperskillLanguage(languageId: String): HyperskillLanguages? {
       return values().find { it.id == languageId }
     }

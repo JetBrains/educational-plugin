@@ -13,15 +13,13 @@ interface MainFileProvider {
   fun findMainPsi(project: Project, file: VirtualFile): PsiElement?
 
   companion object {
-    @JvmField
-    val EP_NAME = LanguageExtension<MainFileProvider>("Educational.mainFileProvider")
+    private val EP_NAME = LanguageExtension<MainFileProvider>("Educational.mainFileProvider")
 
     fun getMainClassName(project: Project, file: VirtualFile, language: Language): String? {
       ApplicationManager.getApplication().assertReadAccessAllowed()
       return EP_NAME.forLanguage(language)?.findMainClassName(project, file)
     }
 
-    @JvmStatic
     fun getMainClass(project: Project, file: VirtualFile, language: Language): PsiElement? {
       ApplicationManager.getApplication().assertReadAccessAllowed()
       return EP_NAME.forLanguage(language)?.findMainPsi(project, file)

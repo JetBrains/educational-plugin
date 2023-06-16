@@ -11,15 +11,10 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TASK
 import org.jetbrains.annotations.NonNls
 
 object YamlFormatSettings {
-  @JvmField
   val COURSE_CONFIG = getLocalConfigFileName(EduNames.COURSE)
-  @JvmField
   val SECTION_CONFIG = getLocalConfigFileName(SECTION)
-  @JvmField
   val LESSON_CONFIG = getLocalConfigFileName(LESSON)
-
-  @JvmField
-  val TASK_CONFIG = getLocalConfigFileName(TASK)
+val TASK_CONFIG = getLocalConfigFileName(TASK)
 
   /**
    * @param itemKind Course/Section/Lesson/Task
@@ -40,7 +35,6 @@ object YamlFormatSettings {
   @NonNls
   const val REMOTE_TASK_CONFIG = "task-remote-info.yaml"
 
-  @JvmStatic
   fun Project.isEduYamlProject() = guessCourseDir()?.findChild(COURSE_CONFIG) != null
 
   // it is here because it's used in test and main code

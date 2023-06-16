@@ -7,9 +7,9 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 class ToggleRestServicesAction : DumbAwareToggleAction(EduCoreBundle.lazyMessage("action.toggle.rest.services.title")) {
 
-  override fun isSelected(e: AnActionEvent): Boolean = OAuthRestService.isRestServicesEnabled()
+  override fun isSelected(e: AnActionEvent): Boolean = OAuthRestService.isRestServicesEnabled
 
   override fun setSelected(e: AnActionEvent, state: Boolean) {
-    OAuthRestService.setRestServicesEnabled(state)
+    OAuthRestService.isRestServicesEnabled = state
   }
 }

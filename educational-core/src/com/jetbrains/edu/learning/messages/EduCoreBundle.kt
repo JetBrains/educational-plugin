@@ -9,12 +9,10 @@ const val BUNDLE = "messages.EduCoreBundle"
 
 object EduCoreBundle : EduBundle(BUNDLE) {
 
-  @JvmStatic
   fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String {
     return getMessage(key, *params)
   }
 
-  @JvmStatic
   fun lazyMessage(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): Supplier<String> {
     return Supplier { getMessage(key, *params) }
   }

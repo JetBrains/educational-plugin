@@ -193,7 +193,6 @@ class CourseArchiveCreator(
       return this
     }
 
-    @JvmStatic
     fun loadActualTexts(project: Project, course: Course) {
       course.visitLessons { lesson ->
         val lessonDir = lesson.getDir(project.courseDir)
@@ -204,8 +203,7 @@ class CourseArchiveCreator(
       }
     }
 
-    @JvmStatic
-    fun loadActualTexts(project: Project, task: Task) {
+    private fun loadActualTexts(project: Project, task: Task) {
       val taskDir = task.getDir(project.courseDir) ?: return
       convertToStudentTaskFiles(project, task, taskDir)
       addDescriptions(project, task)

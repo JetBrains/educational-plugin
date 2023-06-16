@@ -13,7 +13,6 @@ class To12VersionLocalCourseConverter : JsonLocalCourseConverterBase() {
   }
 
   companion object {
-    @JvmStatic
     fun convertTaskObject(taskObject: ObjectNode) {
       val mapper = ObjectMapper()
       val feedbackLink = taskObject.remove(FEEDBACK_LINK) as? ObjectNode ?:  mapper.createObjectNode()

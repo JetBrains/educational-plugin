@@ -7,7 +7,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 object RemoteTaskCheckerManager {
   private val EP_NAME = ExtensionPointName.create<RemoteTaskChecker>("Educational.remoteTaskChecker")
 
-  @JvmStatic
   fun remoteCheckerForTask(project: Project, task: Task): RemoteTaskChecker? {
     val checkers = EP_NAME.extensionList.filter { it.canCheck(project, task) }
     if (checkers.isEmpty()) {

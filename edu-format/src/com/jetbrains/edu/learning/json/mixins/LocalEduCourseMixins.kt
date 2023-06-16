@@ -362,7 +362,7 @@ abstract class AnswerPlaceholderDependencyMixin {
   private var isVisible = true
 }
 
-class CourseDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<Course>(vc) {
+class CourseDeserializer : StdDeserializer<Course>(Course::class.java) {
   override fun deserialize(jp: JsonParser, ctxt: DeserializationContext?): Course? {
     val node: ObjectNode = jp.codec.readTree(jp) as ObjectNode
     return deserializeCourse(node, jp.codec)
@@ -381,7 +381,7 @@ class CourseDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDe
   }
 }
 
-class StudyItemDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<StudyItem>(vc) {
+class StudyItemDeserializer : StdDeserializer<StudyItem>(StudyItem::class.java) {
   override fun deserialize(jp: JsonParser, ctxt: DeserializationContext?): StudyItem? {
     val node: ObjectNode = jp.codec.readTree(jp) as ObjectNode
     return deserializeItem(node, jp.codec)

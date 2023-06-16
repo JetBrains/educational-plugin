@@ -117,17 +117,12 @@ class HyperskillCheckDataTaskTest : CheckersTestBase<EmptyProjectSettings>() {
   // TODO TIME/TIMER RELATED tests (EDU-4845)
 
   companion object {
-    @JvmStatic
     private val DATA_TASK_1: String = "Data Task 1"
-    @JvmStatic
     private val DATA_TASK_2: String = "Data Task 2"
 
-    @JvmStatic
     private val ATTEMPT_ID_OF_SUCCEED_SUBMISSION: Int = 101
-    @JvmStatic
     private val ATTEMPT_ID_OF_FAILED_SUBMISSION: Int = 102
 
-    @JvmStatic
     private val SUBMISSION_ID: Int = 100
 
     @Language("JSON")

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 
 object ConnectorUtils {
-  @JvmStatic
   fun createMapper(): ObjectMapper {
     return JsonMapper.builder()
       .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -19,7 +18,6 @@ object ConnectorUtils {
       .build()
   }
 
-  @JvmStatic
   fun createRegisteredMapper(module: SimpleModule): ObjectMapper {
     val objectMapper = createMapper()
     objectMapper.registerModule(module)

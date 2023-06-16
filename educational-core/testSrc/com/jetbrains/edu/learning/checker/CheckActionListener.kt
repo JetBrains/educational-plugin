@@ -60,33 +60,27 @@ class CheckActionListener : CheckListener {
     private var checkResultVerifier = SHOULD_PASS
     private var expectedMessageProducer: ((Task) -> String?)? = null
 
-    @JvmStatic
     fun registerListener(disposable: Disposable) {
       CheckListener.EP_NAME.point.registerExtension(CheckActionListener(), disposable)
     }
 
-    @JvmStatic
     fun reset() {
       setCheckResultVerifier(SHOULD_PASS)
       expectedMessageProducer = null
     }
 
-    @JvmStatic
     fun shouldFail() {
       setCheckResultVerifier(SHOULD_FAIL)
     }
 
-    @JvmStatic
     fun shouldSkip() {
       setCheckResultVerifier(SHOULD_SKIP)
     }
 
-    @JvmStatic
     fun expectedMessage(producer: (Task) -> String?) {
       expectedMessageProducer = producer
     }
 
-    @JvmStatic
     fun setCheckResultVerifier(verifier: (Task, CheckResult) -> Unit) {
       checkResultVerifier = verifier
     }

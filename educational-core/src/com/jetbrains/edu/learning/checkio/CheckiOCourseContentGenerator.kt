@@ -15,9 +15,11 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.util.*
 import java.util.Locale.ENGLISH
 
-class CheckiOCourseContentGenerator @JvmOverloads constructor(private val fileType: LanguageFileType,
-                                                              private val apiConnector: CheckiOApiConnector,
-                                                              private val locale: Locale = ENGLISH) {
+class CheckiOCourseContentGenerator(
+  private val fileType: LanguageFileType,
+  private val apiConnector: CheckiOApiConnector,
+  private val locale: Locale = ENGLISH
+) {
 
   fun getStationsFromServer(): List<CheckiOStation> {
     val stations = mutableMapOf<Int, CheckiOStation>()

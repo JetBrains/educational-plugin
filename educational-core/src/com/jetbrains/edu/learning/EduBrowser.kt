@@ -39,7 +39,6 @@ open class EduBrowser {
   }
 
   companion object {
-    @JvmStatic
     fun getInstance(): EduBrowser = service()
   }
 }

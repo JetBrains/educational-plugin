@@ -60,7 +60,6 @@ class EduSplitEditorState(
     private const val MAIN_EDITOR_STATE = "MainEditorState"
     private const val SECONDARY_EDITOR_STATE = "SecondaryEditorState"
 
-    @JvmStatic
     fun read(sourceElement: Element, project: Project, file: VirtualFile): EduSplitEditorState? {
       val splitEditorState = sourceElement.getChild(SPLIT_EDITOR_STATE) ?: return null
       val editorProvider = TextEditorProvider.getInstance()

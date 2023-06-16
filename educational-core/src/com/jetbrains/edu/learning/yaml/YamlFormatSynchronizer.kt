@@ -75,7 +75,6 @@ import javax.swing.JPanel
 object YamlFormatSynchronizer {
   val LOAD_FROM_CONFIG = Key<Boolean>("Edu.loadItem")
 
-  @JvmStatic
   val MAPPER: ObjectMapper by lazy {
     val mapper = createMapper()
     addMixIns(mapper)
@@ -92,7 +91,6 @@ object YamlFormatSynchronizer {
   }
 
   @VisibleForTesting
-  @JvmStatic
   val STUDENT_MAPPER: ObjectMapper by lazy {
     val mapper = createMapper()
     addMixIns(mapper)
@@ -104,7 +102,6 @@ object YamlFormatSynchronizer {
   }
 
   @VisibleForTesting
-  @JvmStatic
   val STUDENT_MAPPER_WITH_ENCRYPTION: ObjectMapper by lazy {
     val mapper = createMapper()
     addMixIns(mapper)
@@ -190,7 +187,6 @@ object YamlFormatSynchronizer {
     addMixIn(CheckFeedback::class.java, FeedbackYamlMixin::class.java)
   }
 
-  @JvmStatic
   fun saveAll(project: Project) {
     @NonNls
     val errorMessageToLog = "Attempt to create config files for project without course"
@@ -208,8 +204,6 @@ object YamlFormatSynchronizer {
     saveRemoteInfo(course)
   }
 
-  @JvmOverloads
-  @JvmStatic
   fun saveItem(item: StudyItem, mapper: ObjectMapper = item.course.mapper, configName: String = item.configFileName) {
     val course = item.course
 
@@ -222,7 +216,6 @@ object YamlFormatSynchronizer {
     item.saveConfig(project, configName, mapper)
   }
 
-  @JvmStatic
   fun saveRemoteInfo(item: StudyItem) {
     when (item) {
       is ItemContainer -> {
@@ -235,13 +228,11 @@ object YamlFormatSynchronizer {
     }
   }
 
-  @JvmStatic
   fun saveItemWithRemoteInfo(item: StudyItem) {
     saveItem(item)
     saveRemoteInfo(item)
   }
 
-  @JvmStatic
   private fun saveItemRemoteInfo(item: StudyItem) {
     // we don't want to create remote info files in local courses
     if (item.id > 0 || item is HyperskillCourse) {
@@ -249,7 +240,6 @@ object YamlFormatSynchronizer {
     }
   }
 
-  @JvmStatic
   fun startSynchronization(project: Project) {
     if (isUnitTestMode) {
       return
@@ -309,18 +299,15 @@ object YamlFormatSynchronizer {
     }
   }
 
-  @JvmStatic
   fun isConfigFile(file: VirtualFile): Boolean {
     return isLocalConfigFile(file) || isRemoteConfigFile(file)
   }
 
-  @JvmStatic
   fun isRemoteConfigFile(file: VirtualFile): Boolean {
     val name = file.name
     return REMOTE_COURSE_CONFIG == name || REMOTE_SECTION_CONFIG == name || REMOTE_LESSON_CONFIG == name || REMOTE_TASK_CONFIG == name
   }
 
-  @JvmStatic
   fun isLocalConfigFile(file: VirtualFile): Boolean {
     val name = file.name
     return COURSE_CONFIG == name || SECTION_CONFIG == name || LESSON_CONFIG == name || TASK_CONFIG == name

@@ -31,7 +31,6 @@ class JsCheckiOSettings : PersistentStateComponent<Element?> {
 
   companion object {
     const val SERVICE_NAME = "JsCheckiOSettings"
-    @JvmStatic
     fun getInstance(): JsCheckiOSettings = service()
   }
 }

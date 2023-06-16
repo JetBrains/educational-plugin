@@ -45,7 +45,6 @@ class To10VersionLocalCourseConverter : JsonLocalCourseConverterBase() {
   }
 
   companion object {
-    @JvmStatic
     fun convertTaskObject(taskObject: ObjectNode) {
       val descriptionFormat = taskObject.get(DESCRIPTION_FORMAT)?.asText()
       if (descriptionFormat != null) {

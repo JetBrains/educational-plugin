@@ -212,7 +212,7 @@ open class StepikTaskMixin {
     get() = throw NotImplementedInMixin()
 }
 
-class TaskFileTextDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<String>(vc) {
+class TaskFileTextDeserializer(vc: Class<*>? = null) : StdDeserializer<String>(vc) {
   override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): String {
     return StringUtil.convertLineSeparators(jp.valueAsString)
   }

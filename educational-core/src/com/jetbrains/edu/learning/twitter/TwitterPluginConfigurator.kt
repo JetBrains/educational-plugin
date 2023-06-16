@@ -31,7 +31,6 @@ interface TwitterPluginConfigurator {
   fun getImagePath(solvedTask: Task): Path?
 
   companion object {
-    @JvmField
     val EP_NAME = ExtensionPointName.create<TwitterPluginConfigurator>("Educational.twitterPluginConfigurator")
   }
 }

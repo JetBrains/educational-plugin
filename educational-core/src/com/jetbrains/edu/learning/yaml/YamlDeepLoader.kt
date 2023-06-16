@@ -29,7 +29,6 @@ object YamlDeepLoader {
   private val HYPERSKILL_PROJECT_REGEX = "$HYPERSKILL_PROJECTS_URL/(\\d+)/.*".toRegex()
   private val LOG = Logger.getInstance(YamlDeepLoader::class.java)
 
-  @JvmStatic
   fun loadCourse(project: Project): Course? {
     val projectDir = project.courseDir
 
@@ -72,7 +71,6 @@ object YamlDeepLoader {
     return deserializedCourse
   }
 
-  @JvmStatic
   private fun addNonEditableFilesToCourse(taskContainer: Lesson, course: Course, project: Project) {
     val nonEditableFile = taskContainer.taskList.flatMap { task ->
       task.taskFiles.values.mapNotNull { taskFile ->

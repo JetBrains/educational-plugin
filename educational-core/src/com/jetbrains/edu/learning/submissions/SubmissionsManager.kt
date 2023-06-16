@@ -163,7 +163,6 @@ class SubmissionsManager(private val project: Project) {
 
   companion object {
 
-    @JvmStatic
     fun getInstance(project: Project): SubmissionsManager {
       return project.service()
     }

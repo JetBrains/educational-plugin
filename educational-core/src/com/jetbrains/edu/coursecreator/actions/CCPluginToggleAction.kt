@@ -18,7 +18,6 @@ class CCPluginToggleAction : DumbAwareToggleAction(EduCoreBundle.lazyMessage("ac
     @NonNls
     private const val COURSE_CREATOR_ENABLED = "Edu.CourseCreator.Enabled"
 
-    @JvmStatic
     var isCourseCreatorFeaturesEnabled: Boolean
       get() = PropertiesComponent.getInstance().getBoolean(COURSE_CREATOR_ENABLED, true) || isUnitTestMode
       set(value) {

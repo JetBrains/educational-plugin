@@ -105,20 +105,17 @@ open class ImportLocalCourseAction(
     @NonNls
     const val ACTION_ID = "Educational.ImportLocalCourse"
 
-    @JvmStatic
     fun importLocation(): VirtualFile? {
       val defaultDir = VfsUtil.getUserHomeDir()
       val lastImportLocation = PropertiesComponent.getInstance().getValue(LAST_IMPORT_LOCATION) ?: return defaultDir
       return LocalFileSystem.getInstance().findFileByPath(lastImportLocation) ?: defaultDir
     }
 
-    @JvmStatic
     fun saveLastImportLocation(file: VirtualFile) {
       val location = if (!file.isDirectory) file.parent ?: return else file
       PropertiesComponent.getInstance().setValue(LAST_IMPORT_LOCATION, location.path)
     }
 
-    @JvmStatic
     fun showInvalidCourseDialog() {
       Messages.showErrorDialog(
         EduCoreBundle.message("dialog.message.no.course.in.archive"),

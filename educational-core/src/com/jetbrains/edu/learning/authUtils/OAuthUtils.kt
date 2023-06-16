@@ -23,7 +23,6 @@ object OAuthUtils {
   private const val PLATFORM_NAME = "%PLATFORM_NAME"
   private const val ERROR_MESSAGE = "%ERROR_MESSAGE"
 
-  @JvmStatic
   @Throws(IOException::class)
   fun getOkPageContent(platformName: String): String {
     return getPageContent(OAUTH_OK_PAGE, ImmutableMap.of(
@@ -32,7 +31,6 @@ object OAuthUtils {
     ))
   }
 
-  @JvmStatic
   @Throws(IOException::class)
   fun getErrorPageContent(platformName: String, errorMessage: String): String {
     return getPageContent(OAUTH_ERROR_PAGE, ImmutableMap.of(

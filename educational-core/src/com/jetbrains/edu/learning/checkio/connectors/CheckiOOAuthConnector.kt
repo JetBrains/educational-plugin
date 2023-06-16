@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.api.EduOAuthCodeFlowConnector
-import com.jetbrains.edu.learning.authUtils.OAuthRestService.CODE_ARGUMENT
+import com.jetbrains.edu.learning.authUtils.OAuthRestService.Companion.CODE_ARGUMENT
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
 import com.jetbrains.edu.learning.checkio.account.CheckiOUserInfo
 import com.jetbrains.edu.learning.checkio.api.CheckiOEndpoints

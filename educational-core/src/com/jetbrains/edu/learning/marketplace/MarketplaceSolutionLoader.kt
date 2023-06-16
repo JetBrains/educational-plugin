@@ -71,7 +71,6 @@ class MarketplaceSolutionLoader(project: Project) : SolutionLoaderBase(project) 
   }
 
   companion object {
-    @JvmStatic
     fun getInstance(project: Project): MarketplaceSolutionLoader = project.service()
 
     private val LOG = Logger.getInstance(MarketplaceSolutionLoader::class.java)

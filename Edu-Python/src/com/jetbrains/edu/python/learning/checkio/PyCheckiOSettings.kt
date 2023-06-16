@@ -32,7 +32,6 @@ class PyCheckiOSettings : PersistentStateComponent<Element> {
   }
 
   companion object {
-    @JvmStatic
     fun getInstance(): PyCheckiOSettings = service()
   }
 }

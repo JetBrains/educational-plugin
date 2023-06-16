@@ -38,7 +38,6 @@ class ToSeventhVersionJsonStepOptionConverter : JsonStepOptionsConverter {
 
   companion object {
 
-    @JvmStatic
     fun convertTaskFile(taskFile: ObjectNode, taskFilesRoot: String) {
       val path = taskFile.get(NAME)?.asText() ?: return
       taskFile.put(NAME, "$taskFilesRoot/$path")
@@ -48,8 +47,7 @@ class ToSeventhVersionJsonStepOptionConverter : JsonStepOptionsConverter {
       }
     }
 
-    @JvmStatic
-    fun convertPlaceholder(placeholder: ObjectNode, taskFilesRoot: String) {
+    private fun convertPlaceholder(placeholder: ObjectNode, taskFilesRoot: String) {
       val dependency = placeholder.get(DEPENDENCY) as? ObjectNode ?: return
       val dependencyFilePath = dependency.get(DEPENDENCY_FILE)?.asText() ?: return
       dependency.put(DEPENDENCY_FILE, "$taskFilesRoot/$dependencyFilePath")

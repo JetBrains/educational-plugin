@@ -340,7 +340,6 @@ abstract class EduTestCase : BasePlatformTestCase() {
 
   companion object {
 
-    @JvmStatic
     fun getPlaceholders(document: Document, useLength: Boolean): List<AnswerPlaceholder> {
       return WriteCommandAction.writeCommandAction(null).compute<List<AnswerPlaceholder>, RuntimeException> {
         val placeholders = mutableListOf<AnswerPlaceholder>()

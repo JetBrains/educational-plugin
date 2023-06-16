@@ -183,7 +183,6 @@ fun Task.getCodeTaskFile(project: Project): TaskFile? {
   }
 }
 
-@JvmName("revertTaskFiles")
 fun Task.revertTaskFiles(project: Project) {
   ApplicationManager.getApplication().runWriteAction {
     for (taskFile in taskFiles.values) {
@@ -192,7 +191,6 @@ fun Task.revertTaskFiles(project: Project) {
   }
 }
 
-@JvmName("revertTaskParameters")
 fun Task.revertTaskParameters() {
   status = CheckStatus.Unchecked
   when (this) {

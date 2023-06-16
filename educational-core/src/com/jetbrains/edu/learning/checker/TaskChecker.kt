@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
  * If you add any new public methods here, please do not forget to add it also to
  * @see com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillTaskCheckerProvider
  */
-open class TaskChecker<out T : Task>(@JvmField val task: T, @JvmField val project: Project) {
+open class TaskChecker<out T : Task>(val task: T, val project: Project) {
   open fun onTaskSolved() {
   }
 
@@ -27,7 +27,6 @@ open class TaskChecker<out T : Task>(@JvmField val task: T, @JvmField val projec
   companion object {
     const val EP_NAME = "Educational.taskChecker"
 
-    @JvmField
     val LOG = Logger.getInstance(TaskChecker::class.java)
   }
 }

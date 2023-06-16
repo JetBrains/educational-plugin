@@ -12,10 +12,8 @@ interface PySdkSettingsHelper {
   fun getAllSdks(): List<Sdk>
 
   companion object {
-    @JvmStatic
-    val EP_NAME: ExtensionPointName<PySdkSettingsHelper> = ExtensionPointName.create("Educational.pySdkSettingsHelper")
+    private val EP_NAME: ExtensionPointName<PySdkSettingsHelper> = ExtensionPointName.create("Educational.pySdkSettingsHelper")
 
-    @JvmStatic
     fun firstAvailable(): PySdkSettingsHelper = EP_NAME.extensionList.first(PySdkSettingsHelper::isAvailable)
   }
 }

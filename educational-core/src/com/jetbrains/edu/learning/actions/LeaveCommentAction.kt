@@ -47,7 +47,6 @@ class LeaveCommentAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.lea
   companion object {
     const val ACTION_ID: String = "Educational.LeaveCommentAction"
 
-    @JvmStatic
     @VisibleForTesting
     fun getLink(task: Task): String? {
       val feedbackLink = task.feedbackLink

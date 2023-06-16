@@ -48,7 +48,6 @@ class UserChanges(val changes: List<Change>, val timestamp: Long = System.curren
 
     private val EMPTY = UserChanges(emptyList(), -1)
 
-    @JvmStatic
     fun empty(): UserChanges = EMPTY
 
     @Throws(IOException::class)
@@ -242,7 +241,6 @@ sealed class Change {
   companion object {
     private val LOG: Logger = Logger.getInstance(Change::class.java)
 
-    @JvmStatic
     @Throws(IOException::class)
     fun writeChange(change: Change, out: DataOutput) {
       val ordinal = when (change) {
@@ -256,7 +254,6 @@ sealed class Change {
       change.write(out)
     }
 
-    @JvmStatic
     @Throws(IOException::class)
     fun readChange(input: DataInput): Change {
       val ordinal = input.readInt()

@@ -11,9 +11,9 @@ import com.jetbrains.edu.learning.checker.PlaintTextCheckerFixture
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
+import com.jetbrains.edu.learning.pathWithoutPrams
 import com.jetbrains.edu.learning.stepik.StepikTestUtils.format
 import com.jetbrains.edu.learning.stepik.api.MockStepikBasedConnector
-import com.jetbrains.edu.learning.pathWithoutPrams
 import org.intellij.lang.annotations.Language
 import java.util.*
 

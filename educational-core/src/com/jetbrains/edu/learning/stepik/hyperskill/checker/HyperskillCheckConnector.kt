@@ -313,7 +313,6 @@ object HyperskillCheckConnector {
       .notify(project)
   }
 
-  @JvmStatic
   fun failedToSubmit(project: Project, task: Task, error: String): CheckResult {
     LOG.error(error)
 
@@ -335,7 +334,6 @@ object HyperskillCheckConnector {
     return CheckResult(if (isSolved) CheckStatus.Solved else CheckStatus.Failed, message)
   }
 
-  @JvmStatic
   private fun String.toCheckResult(): CheckResult {
     return if (this == EduCoreBundle.message("error.access.denied")) {
       CheckResult(CheckStatus.Unchecked,
@@ -346,7 +344,6 @@ object HyperskillCheckConnector {
     else CheckResult(CheckStatus.Unchecked, this)
   }
 
-  @JvmStatic
   private fun Task.checkId(): CheckResult? {
     if (id == 0) {
       val link = feedbackLink ?: return CheckResult.failedToCheck

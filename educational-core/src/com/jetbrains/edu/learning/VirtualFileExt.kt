@@ -238,7 +238,6 @@ fun VirtualFile.isTaskRunConfigurationFile(holder: CourseInfoHolder<out Course?>
  * It's supposed to be used to associate [TaskFile] with virtual file which is not located on disk,
  * for example, [LightVirtualFile]
  */
-@JvmField
 val TASK_FILE: Key<TaskFile> = Key.create("TASK_FILE")
 
 fun VirtualFile.getTaskFile(project: Project): TaskFile? {

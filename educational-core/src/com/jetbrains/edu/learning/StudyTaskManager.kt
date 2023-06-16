@@ -42,7 +42,6 @@ class StudyTaskManager(private val project: Project) : DumbAware, Disposable {
   companion object {
     val COURSE_SET = Topic.create("Edu.courseSet", CourseSetListener::class.java)
 
-    @JvmStatic
     fun getInstance(project: Project): StudyTaskManager {
       val manager = project.service<StudyTaskManager>()
       if (!project.isDefault && !LightEdit.owns(project) && manager.course == null

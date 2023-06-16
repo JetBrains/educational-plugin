@@ -259,7 +259,6 @@ abstract class StepikConnector : EduOAuthCodeFlowConnector<StepikUser, StepikUse
     private const val MAX_REQUEST_PARAMS = 100 // restriction of Stepik API for multiple requests
     private val LOG = Logger.getInstance(StepikConnector::class.java)
 
-    @JvmStatic
     fun getInstance(): StepikConnector = service()
   }
 }

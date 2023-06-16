@@ -28,8 +28,6 @@ object PlaceholderPainter {
 
   private val disposables: MutableMap<AnswerPlaceholder, MutableSet<Disposable>> = HashMap()
 
-  @JvmOverloads
-  @JvmStatic
   fun showPlaceholders(project: Project, taskFile: TaskFile, editor: Editor? = null) {
     if (project.isDisposed) return
     val editors = if (editor != null) listOf(editor) else taskFile.getEditors(project)
@@ -38,8 +36,6 @@ object PlaceholderPainter {
     }
   }
 
-  @JvmOverloads
-  @JvmStatic
   fun showPlaceholder(project: Project, placeholder: AnswerPlaceholder, editors: List<Editor>? = null) {
     if (project.isDisposed) return
     val taskFile = placeholder.taskFile
@@ -127,12 +123,10 @@ object PlaceholderPainter {
     return editor.contentComponent.visibleRect.contains(shape.bounds)
   }
 
-  @JvmStatic
   fun hidePlaceholder(placeholder: AnswerPlaceholder) {
     disposables.remove(placeholder).orEmpty().forEach(Disposer::dispose)
   }
 
-  @JvmStatic
   fun hidePlaceholders(placeholders: List<AnswerPlaceholder>) {
     for (placeholder in placeholders) {
       hidePlaceholder(placeholder)
@@ -140,7 +134,6 @@ object PlaceholderPainter {
   }
 
   @TestOnly
-  @JvmStatic
   fun getPaintedPlaceholder(): Set<AnswerPlaceholder> = disposables.keys
 
   private class PainterDisposable(private val placeholder: AnswerPlaceholder, editor: Editor) : Disposable {

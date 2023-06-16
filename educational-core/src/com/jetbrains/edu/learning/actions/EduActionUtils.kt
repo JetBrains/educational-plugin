@@ -32,7 +32,6 @@ object EduActionUtils {
     return ActionManager.getInstance().getAction(id) ?: error("Can not find action by id $id")
   }
 
-  @JvmStatic
   fun showFakeProgress(indicator: ProgressIndicator) {
     if (!isUnitTestMode) {
       checkIsBackgroundThread()
@@ -57,7 +56,6 @@ object EduActionUtils {
       .firstOrNull { it != null }
   }
 
-  @JvmStatic
   fun updateAction(e: AnActionEvent) {
     e.presentation.isEnabled = false
     val project = e.project ?: return

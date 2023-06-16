@@ -131,7 +131,6 @@ class EduDocumentListener private constructor(
   }
 
   companion object {
-    @JvmStatic
     fun setGlobalListener(project: Project, disposable: Disposable) {
       EditorFactory.getInstance().eventMulticaster.addDocumentListener(EduDocumentListener(project.toCourseInfoHolder(), null), disposable)
     }
@@ -140,7 +139,6 @@ class EduDocumentListener private constructor(
      * Should be used only when current course doesn't contain task file related to given [file].
      * For example, when changes are performed on non-physical file.
      */
-    @JvmStatic
     fun runWithListener(project: Project, taskFile: TaskFile, file: VirtualFile, action: (Document) -> Unit) {
       return runWithListener(project.toCourseInfoHolder(), taskFile, file, action)
     }
@@ -149,7 +147,6 @@ class EduDocumentListener private constructor(
      * Should be used only when current course doesn't contain task file related to given [file].
      * For example, when changes are performed on non-physical file.
      */
-    @JvmStatic
     fun runWithListener(holder: CourseInfoHolder<out Course?>, taskFile: TaskFile, file: VirtualFile, action: (Document) -> Unit) {
       require(file.getTaskFile(holder) == null) {
         "Changes in `${taskFile.name}` should be tracked by global listener"
@@ -166,7 +163,6 @@ class EduDocumentListener private constructor(
       }
     }
 
-    @JvmStatic
     fun modifyWithoutListener(task: Task, pathInTask: String, modification: () -> Unit) {
       val taskFile = task.getTaskFile(pathInTask) ?: return
       val isTrackChanges = taskFile.isTrackChanges

@@ -97,7 +97,6 @@ class EduSettings : PersistentStateComponent<Element> {
     private const val USER = "user"
     private const val STEPIK_USER = "StepikUser"
 
-    @JvmStatic
     fun getInstance(): EduSettings = service()
     fun isLoggedIn(): Boolean = getInstance().user != null
   }

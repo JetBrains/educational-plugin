@@ -187,7 +187,6 @@ class DownloadDataset(
     }
 
     companion object {
-      @JvmStatic
       fun getInstance(project: Project): DownloadDatasetState = project.service()
     }
   }

@@ -89,7 +89,6 @@ class ShellWslExistenceNotificationProvider : EditorNotificationProvider, DumbAw
     }
 
     companion object {
-      @JvmStatic
       fun getInstance(project: Project): WslDistributionsRetrieverService = project.service()
     }
   }

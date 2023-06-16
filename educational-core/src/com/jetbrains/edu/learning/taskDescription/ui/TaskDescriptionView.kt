@@ -40,7 +40,6 @@ abstract class TaskDescriptionView(val project: Project) {
 
   companion object {
 
-    @JvmStatic
     fun getInstance(project: Project): TaskDescriptionView {
       if (!project.isEduProject()) {
         error("Attempt to get TaskDescriptionView for non-edu project")
@@ -48,12 +47,10 @@ abstract class TaskDescriptionView(val project: Project) {
       return project.service()
     }
 
-    @JvmStatic
     fun getTaskDescriptionBackgroundColor(): Color {
       return UIUtil.getListBackground()
     }
 
-    @JvmStatic
     fun updateAllTabs(project: Project) {
       getInstance(project).apply {
         updateTaskDescription()

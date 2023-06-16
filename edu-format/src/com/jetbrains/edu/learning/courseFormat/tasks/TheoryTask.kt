@@ -5,7 +5,6 @@ import java.util.*
 
 open class TheoryTask : Task {
   // needed to prohibit post empty submission at unsupported tasks opening (sorting, matching, text, etc)
-  @JvmField
   var postSubmissionOnOpen = true
 
   //used for deserialization

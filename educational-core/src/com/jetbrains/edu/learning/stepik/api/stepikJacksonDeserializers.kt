@@ -28,7 +28,7 @@ import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 
 private val LOG = logger<JacksonStepOptionsDeserializer>()
 
-class JacksonStepOptionsDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<PyCharmStepOptions>(vc) {
+class JacksonStepOptionsDeserializer(vc: Class<*>? = null) : StdDeserializer<PyCharmStepOptions>(vc) {
 
   override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): PyCharmStepOptions {
     val objectMapper = StepikBasedConnector.createObjectMapper(SimpleModule())
@@ -39,7 +39,6 @@ class JacksonStepOptionsDeserializer @JvmOverloads constructor(vc: Class<*>? = n
 
   companion object {
     @VisibleForTesting
-    @JvmStatic
     fun migrate(node: ObjectNode, maxVersion: Int): ObjectNode {
       var convertedStepOptions = node
       val versionJson = node.get(SerializationUtils.Json.FORMAT_VERSION)
@@ -70,7 +69,7 @@ class JacksonStepOptionsDeserializer @JvmOverloads constructor(vc: Class<*>? = n
   }
 }
 
-class StepikReplyDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<Reply>(vc) {
+class StepikReplyDeserializer(vc: Class<*>? = null) : StdDeserializer<Reply>(vc) {
 
   override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): Reply {
     val jsonObject: ObjectNode = jp.codec.readTree(jp) as ObjectNode
@@ -89,7 +88,6 @@ class StepikReplyDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : 
      * Return object version before migration
      */
     @VisibleForTesting
-    @JvmStatic
     fun ObjectNode.migrate(maxVersion: Int): Int {
       val versionJson = get(SerializationUtils.Json.VERSION)
       if (versionJson == null && get(EDU_TASK) == null) {
@@ -120,7 +118,7 @@ class StepikReplyDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : 
   }
 }
 
-class JacksonSubmissionDeserializer @JvmOverloads constructor(private val replyVersion: Int = JSON_FORMAT_VERSION,
+class JacksonSubmissionDeserializer(private val replyVersion: Int = JSON_FORMAT_VERSION,
                                                               private val language: String? = null,
                                                               vc: Class<*>? = null) : StdDeserializer<Task>(vc) {
 
@@ -142,7 +140,6 @@ class JacksonSubmissionDeserializer @JvmOverloads constructor(private val replyV
 
   companion object {
     @VisibleForTesting
-    @JvmStatic
     fun ObjectNode.migrate(version: Int, maxVersion: Int, language: String?) {
       @Suppress("NAME_SHADOWING")
       var version = version

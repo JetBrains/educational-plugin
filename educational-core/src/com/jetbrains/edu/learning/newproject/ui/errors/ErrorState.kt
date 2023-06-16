@@ -100,7 +100,6 @@ sealed class ErrorState(
   fun merge(other: ErrorState): ErrorState = if (severity < other.severity) other else this
 
   companion object {
-    @JvmStatic
     fun forCourse(course: Course?): ErrorState {
       if (course == null) return NothingSelected
       return None
@@ -167,7 +166,6 @@ sealed class ErrorState(
       return ValidationMessage(getRequiredPluginsMessage(plugins, actionAsLink = true))
     }
 
-    @JvmStatic
     fun errorMessage(disabledPluginIds: Collection<PluginId>): ValidationMessage {
       val pluginName = if (disabledPluginIds.size == 1) {
         PluginManagerCore.getPlugin(disabledPluginIds.first())?.name

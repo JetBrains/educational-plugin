@@ -22,7 +22,6 @@ class MarketplaceUpdateChecker(project: Project) : CourseUpdateChecker(project) 
   }
 
   companion object {
-    @JvmStatic
     fun getInstance(project: Project): MarketplaceUpdateChecker {
       return project.service()
     }

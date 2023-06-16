@@ -18,7 +18,6 @@ import java.io.File
 
 object EduBuiltInServerUtils {
 
-  @JvmStatic
   fun focusOpenProject(coursePredicate: (Course) -> Boolean): Pair<Project, Course>? {
     val openProjects = ProjectManager.getInstance().openProjects
     for (project in openProjects) {
@@ -42,7 +41,6 @@ object EduBuiltInServerUtils {
 
   private fun Project.requestFocus() = ProjectUtil.focusProjectWindow(this, true)
 
-  @JvmStatic
   fun openRecentProject(coursePredicate: (Course) -> Boolean): Pair<Project, Course>? {
     val recentPaths = RecentProjectsManagerBase.getInstanceEx().getRecentPaths()
 

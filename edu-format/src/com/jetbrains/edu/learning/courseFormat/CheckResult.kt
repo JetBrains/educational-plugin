@@ -5,7 +5,7 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.LOGIN_NEEDED_MESSA
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.NO_TESTS_URL
 import org.jetbrains.annotations.Nls
 
-data class CheckResult @JvmOverloads constructor(
+data class CheckResult(
   val status: CheckStatus,
   @Nls(capitalization = Nls.Capitalization.Sentence) val message: String = "",
   val details: String? = null,
@@ -19,22 +19,11 @@ data class CheckResult @JvmOverloads constructor(
   val isSolved: Boolean get() = status == CheckStatus.Solved
 
   companion object {
-    @JvmField
     val NO_LOCAL_CHECK = CheckResult(CheckStatus.Unchecked, message("check.result.local.check.unavailable"))
-
-    @JvmField
     val LOGIN_NEEDED = CheckResult(CheckStatus.Unchecked, LOGIN_NEEDED_MESSAGE)
-
-    @JvmField
     val CONNECTION_FAILED = CheckResult(CheckStatus.Unchecked, message("check.result.connection.failed"))
-
-    @JvmField
     val SOLVED = CheckResult(CheckStatus.Solved)
-
-    @JvmField
     val CANCELED = CheckResult(CheckStatus.Unchecked, message("check.result.canceled"))
-
-    @JvmField
     val UNCHECKED = CheckResult(CheckStatus.Unchecked)
 
     val noTestsRun: CheckResult
@@ -43,7 +32,6 @@ data class CheckResult @JvmOverloads constructor(
         message("check.no.tests.with.help.guide", NO_TESTS_URL)
       )
 
-    @JvmStatic
     val failedToCheck: CheckResult
       get() = CheckResult(
         CheckStatus.Unchecked,

@@ -14,8 +14,6 @@ import com.jetbrains.edu.learning.toPsiFile
 
 object PlaceholderHighlightingManager {
 
-  @JvmOverloads
-  @JvmStatic
   fun showPlaceholders(project: Project, taskFile: TaskFile, editor: Editor? = null) {
     if (useNewRendering()) {
       val file = editor?.document?.toPsiFile(project) ?: taskFile.findPsiFile(project)
@@ -28,7 +26,6 @@ object PlaceholderHighlightingManager {
     }
   }
 
-  @JvmStatic
   fun showPlaceholder(project: Project, placeholder: AnswerPlaceholder) {
     if (useNewRendering()) {
       val file = placeholder.findPsiFile(project)
@@ -41,7 +38,6 @@ object PlaceholderHighlightingManager {
     }
   }
 
-  @JvmStatic
   fun hidePlaceholders(project: Project, placeholders: List<AnswerPlaceholder>) {
     if (useNewRendering()) {
       val file = placeholders.firstOrNull()?.findPsiFile(project)
@@ -54,7 +50,6 @@ object PlaceholderHighlightingManager {
     }
   }
 
-  @JvmStatic
   fun hidePlaceholder(project: Project, placeholder: AnswerPlaceholder) {
     if (useNewRendering()) {
       val file = placeholder.findPsiFile(project)

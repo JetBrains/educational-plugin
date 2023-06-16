@@ -57,7 +57,6 @@ object TwitterUtils {
       return TwitterFactory(configuration).instance
     }
 
-  @JvmStatic
   fun createTwitterDialogAndShow(project: Project, configurator: TwitterPluginConfigurator, task: Task) {
     invokeLater {
       val imagePath = configurator.getImagePath(task)

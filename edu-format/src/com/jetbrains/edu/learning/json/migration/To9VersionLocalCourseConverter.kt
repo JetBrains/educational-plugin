@@ -19,7 +19,6 @@ class To9VersionLocalCourseConverter : JsonLocalCourseConverterBase() {
 
   companion object {
 
-    @JvmStatic
     fun convertTaskObject(taskObject: ObjectNode) {
       val mapper = ObjectMapper()
       val files = taskObject.remove(TASK_FILES) as? ObjectNode ?: mapper.createObjectNode()

@@ -46,7 +46,6 @@ object GeneratorUtils {
   private val INVALID_TRAILING_SYMBOLS: CharArray = charArrayOf(' ', '.', '!')
 
   @Throws(IOException::class)
-  @JvmStatic
   fun createCourse(
     holder: CourseInfoHolder<Course>,
     indicator: ProgressIndicator
@@ -90,13 +89,11 @@ object GeneratorUtils {
   }
 
   @Throws(IOException::class)
-  @JvmStatic
   fun createLesson(project: Project, lesson: Lesson, parentDir: VirtualFile): VirtualFile {
     return createLesson(project.toCourseInfoHolder(), lesson, parentDir)
   }
 
   @Throws(IOException::class)
-  @JvmStatic
   private fun createLesson(holder: CourseInfoHolder<out Course?>, lesson: Lesson, parentDir: VirtualFile): VirtualFile {
     val lessonDir = createUniqueDir(parentDir, lesson)
     val taskList = lesson.taskList
@@ -108,13 +105,11 @@ object GeneratorUtils {
   }
 
   @Throws(IOException::class)
-  @JvmStatic
   fun createTask(project: Project, task: Task, lessonDir: VirtualFile): VirtualFile {
     return createTask(project.toCourseInfoHolder(), task, lessonDir)
   }
 
   @Throws(IOException::class)
-  @JvmStatic
   private fun createTask(holder: CourseInfoHolder<out Course?>, task: Task, lessonDir: VirtualFile): VirtualFile {
     val isFirstInFrameworkLesson = task.parent is FrameworkLesson && task.index == 1
     val isStudyCourse = task.course.isStudy
@@ -158,13 +153,11 @@ object GeneratorUtils {
   }
 
   @Throws(IOException::class)
-  @JvmStatic
   fun createDescriptionFile(project: Project, taskDir: VirtualFile, task: Task): VirtualFile? {
     return createDescriptionFile(project.toCourseInfoHolder(), taskDir, task)
   }
 
   @Throws(IOException::class)
-  @JvmStatic
   private fun createDescriptionFile(holder: CourseInfoHolder<out Course?>, taskDir: VirtualFile, task: Task): VirtualFile? {
     val descriptionFileName = when (task.descriptionFormat) {
       HTML -> TASK_HTML
@@ -193,13 +186,11 @@ object GeneratorUtils {
   }
 
   @Throws(IOException::class)
-  @JvmStatic
   fun createChildFile(project: Project, parentDir: VirtualFile, path: String, text: String): VirtualFile? {
     return createChildFile(project.toCourseInfoHolder(), parentDir, path, text)
   }
 
   @Throws(IOException::class)
-  @JvmStatic
   fun createChildFile(holder: CourseInfoHolder<out Course?>, parentDir: VirtualFile, path: String, text: String, isEditable: Boolean = true): VirtualFile? {
     return runInWriteActionAndWait(ThrowableComputable {
       val file = doCreateChildFile(holder, parentDir, path, text)
@@ -260,7 +251,6 @@ object GeneratorUtils {
   }
 
   @Throws(IOException::class)
-  @JvmStatic
   fun <T> runInWriteActionAndWait(action: ThrowableComputable<T, IOException>): T {
     val application = ApplicationManager.getApplication()
     val resultRef = AtomicReference<T>()
@@ -286,8 +276,7 @@ object GeneratorUtils {
   /**
    * Non unique lesson/task/section names can be received from stepik
    */
-  @JvmStatic
-  fun getUniqueValidName(parentDir: VirtualFile, name: String): String {
+  private fun getUniqueValidName(parentDir: VirtualFile, name: String): String {
     val validName = name.convertToValidName()
     var index = 0
     var candidateName = validName
@@ -298,7 +287,6 @@ object GeneratorUtils {
     return candidateName
   }
 
-  @JvmStatic
   fun String.convertToValidName(): String {
     return replace(INVALID_SYMBOLS, " ").trimEnd(*INVALID_TRAILING_SYMBOLS)
   }
@@ -318,22 +306,17 @@ object GeneratorUtils {
     })
   }
 
-  @JvmStatic
   fun joinPaths(prefix: String?, suffix: String): String {
     return if (prefix.isNullOrEmpty()) suffix else "$prefix${VfsUtilCore.VFS_SEPARATOR_CHAR}$suffix"
   }
 
-  @JvmStatic
   fun joinPaths(vararg paths: String): String {
     return paths.filter { it.isNotBlank() }.joinToString(VfsUtilCore.VFS_SEPARATOR_CHAR.toString())
   }
 
-  @JvmStatic
-  @JvmOverloads
   fun getInternalTemplateText(templateName: String, templateVariables: Map<String, Any> = emptyMap()): String =
     FileTemplateManager.getDefaultInstance().getInternalTemplate(templateName).getText(templateVariables)
 
-  @JvmStatic
   fun getJ2eeTemplateText(templateName: String): String =
     FileTemplateManager.getDefaultInstance().getJ2eeTemplate(templateName).text
 
@@ -380,7 +363,6 @@ object GeneratorUtils {
    * Reformat the code so that learners do not see tons of IDE highlighting.
    * Should be used for third-party sources of courses when language style guide is systematically ignored.
    * */
-  @JvmStatic
   fun reformatCodeInAllTaskFiles(project: Project, course: Course) {
     course.visitTasks {
       for ((_, file) in it.taskFiles) {

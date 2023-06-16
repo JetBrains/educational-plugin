@@ -5,7 +5,6 @@ import org.jetbrains.annotations.PropertyKey
 
 object EduFormatBundle : EduBundle(FORMAT_BUNDLE) {
 
-  @JvmStatic
   fun message(@PropertyKey(resourceBundle = FORMAT_BUNDLE) key: String, vararg params: Any): String {
     return getMessage(key, *params)
   }

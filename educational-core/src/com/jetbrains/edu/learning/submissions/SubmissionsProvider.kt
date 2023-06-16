@@ -29,7 +29,6 @@ interface SubmissionsProvider {
   companion object {
     private val EP_NAME = ExtensionPointName.create<SubmissionsProvider>("Educational.submissionsProvider")
 
-    @JvmStatic
     fun getSubmissionsProviderForCourse(course: Course): SubmissionsProvider? {
       val submissionsProviders = EP_NAME.extensionList.filter { it.areSubmissionsAvailable(course) }
       if (submissionsProviders.isEmpty()) {

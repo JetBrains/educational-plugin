@@ -82,7 +82,6 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
   }
 
   companion object {
-    @JvmStatic
     fun getInstance(project: Project): HyperskillSolutionLoader = project.service()
 
     private val LOG = Logger.getInstance(HyperskillSolutionLoader::class.java)

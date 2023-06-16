@@ -241,10 +241,8 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     private val LOG: Logger = Logger.getInstance(CourseProjectGenerator::class.java)
     private const val JETBRAINS_SRO_ORGANIZATION: String = "JetBrains s.r.o."
 
-    @JvmField
     val EDU_PROJECT_CREATED = Key.create<Boolean>("edu.projectCreated")
 
-    @JvmField
     val COURSE_MODE_TO_CREATE = Key.create<CourseMode>("edu.courseModeToCreate")
     val COURSE_LANGUAGE_ID_TO_CREATE = Key.create<String>("edu.courseLanguageIdToCreate")
 

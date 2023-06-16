@@ -73,10 +73,7 @@ class CustomAuthorizationServer private constructor(private val server: HttpServ
       handlerPath: String,
       codeHandler: CodeHandler
     ): CustomAuthorizationServer {
-      val port = availablePort
-      if (port == null) {
-        throw IOException("No ports available")
-      }
+      val port = availablePort ?: throw IOException("No ports available")
       val socketConfig = SocketConfig.custom()
         .setSoTimeout(15000)
         .setTcpNoDelay(true)

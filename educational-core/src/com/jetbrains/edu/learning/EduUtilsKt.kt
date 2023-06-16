@@ -85,7 +85,6 @@ object EduUtilsKt {
 
   fun isTaskDescriptionFile(fileName: String): Boolean = TASK_HTML == fileName || TASK_MD == fileName
 
-  @JvmStatic
   fun updateToolWindows(project: Project) {
     TaskDescriptionView.getInstance(project).updateTaskDescription()
     updateCourseProgress(project)
@@ -131,7 +130,6 @@ object EduUtilsKt {
     return project.courseDir.getUserData(CourseProjectGenerator.COURSE_MODE_TO_CREATE)
   }
 
-  @JvmStatic
   fun Project.isEduProject(): Boolean =
     StudyTaskManager.getInstance(this).course != null || getCourseModeForNewlyCreatedProject(this) != null
 
@@ -143,7 +141,6 @@ object EduUtilsKt {
     else CourseMode.STUDENT == getCourseModeForNewlyCreatedProject(this)
   }
 
-  @JvmStatic
   fun replaceAnswerPlaceholder(
     document: Document,
     answerPlaceholder: AnswerPlaceholder

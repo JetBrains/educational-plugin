@@ -134,6 +134,5 @@ object HyperskillSubmitConnector {
     return connector.postSubmission(taskSubmission)
   }
 
-  @JvmStatic
   private val LOG: Logger = logger<HyperskillSubmitConnector>()
 }
