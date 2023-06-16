@@ -119,7 +119,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private const val LANGUAGE = "language"
     private const val EDU_TAB = "tab"
 
-    private val GROUP = EventLogGroup("educational.counters", 9)
+    private val GROUP = EventLogGroup("educational.counters", 10)
 
     private val COURSE_MODE_FIELD = EventFields.Enum<CourseMode>(MODE)
     private val ITEM_TYPE_FIELD = EventFields.String(TYPE, listOf("CheckiO",
