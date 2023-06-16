@@ -1,8 +1,8 @@
 <style>
-  ${matching_style}
+  ${sorting_based_style}
 </style>
-<div id='matchingOptions'>
-  <div id='tutorialLabel'><label>${tutorial}</label></div>
+<div id='options'>
+  <div id='shortcutLabel'><label>${tutorial}</label></div>
   <div id='keyValueGrid'></div>
 </div>
 
@@ -11,6 +11,8 @@
   let options = ${options}
   let captions = ${captions}
   let ordering = ${ordering}
+
+  let optionN = options.length
 
   createLines(captions, options)
 
@@ -21,9 +23,12 @@
     for (let index = 0; index < ordering.length; index++) {
       let optionIndex = ordering[index]
 
-      let keyElement = createKey(captions[index])
+      if (captions.length !== 0) {
+        let keyElement = createKey(captions[index])
+        keyValueGrid.appendChild(keyElement)
+      }
+
       let valueElement = createValue(index, optionIndex, options)
-      keyValueGrid.appendChild(keyElement)
       keyValueGrid.appendChild(valueElement)
     }
   }
@@ -55,7 +60,7 @@
     card.appendChild(optionTextElement)
     card.appendChild(buttonPanel)
 
-    card.id = index
+    card.id = getCardId(index)
     card.tabIndex = -1
 
     card.onclick = function (e) {
@@ -72,7 +77,7 @@
             return false
           }
           if (shiftFlag) {
-            moveUp(index)
+            move(index, -1)
           } else {
             makeFocus(index - 1)
           }
@@ -82,7 +87,7 @@
             return false
           }
           if (shiftFlag) {
-            moveDown(index)
+            move(index, 1)
           } else {
             makeFocus(index + 1)
           }
@@ -93,10 +98,14 @@
     return card
   }
 
+  function getCardId(index) {
+    return "card-" + index.toString()
+  }
+
   function makeFocus(newIndex) {
-    document.getElementById(focusedIndex).blur()
+    document.getElementById(getCardId(focusedIndex)).blur()
     focusedIndex = newIndex
-    document.getElementById(focusedIndex).focus()
+    document.getElementById(getCardId(focusedIndex)).focus()
   }
 
   function createValueLabelPanel(text) {
@@ -115,8 +124,8 @@
     let buttonPanel = document.createElement('div')
     buttonPanel.className = 'buttonPanel'
 
-    let upButton = createButton(moveUp, index, true)
-    let downButton = createButton(moveDown, index, false)
+    let upButton = createButton(index, -1)
+    let downButton = createButton(index, 1)
 
     if (index === 0) fadeButton(upButton)
     if (index === options.length - 1) fadeButton(downButton)
@@ -127,9 +136,9 @@
     return buttonPanel
   }
 
-  function createButton(f, index, isUp) {
+  function createButton(index, delta) {
     let button = document.createElement('button')
-    if (isUp) {
+    if (delta === -1) {
       button.className = "upButton"
       button.innerHTML = `
         <img src="${upButtonIconPath}">
@@ -141,23 +150,16 @@
       `
     }
     button.addEventListener('click', function (event) {
-      f(index)
+      move(index, delta)
     })
     button.tabIndex = -1
     return button
   }
 
-  function moveUp(index) {
-    let targetIndex = index - 1
-    if (targetIndex < 0) return
+  function move(index, delta) {
+    let targetIndex = index + delta
+    if (targetIndex < 0 || targetIndex >= optionN) return
     swapElements(targetIndex, index)
-    makeFocus(targetIndex)
-  }
-
-  function moveDown(index) {
-    let targetIndex = index + 1
-    if (targetIndex >= keyValueGrid.childElementCount) return
-    swapElements(index, targetIndex)
     makeFocus(targetIndex)
   }
 

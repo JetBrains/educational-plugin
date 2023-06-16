@@ -7,19 +7,15 @@ import com.jetbrains.edu.learning.taskDescription.ui.MatchingTaskUI
 import kotlinx.css.*
 
 class MatchingTaskResourcesManager : SortingBasedTaskResourcesManager<MatchingTask>() {
-  override val templateName: String = "matchingTask.html"
+  override fun getCaptions(task: MatchingTask): String = Gson().toJson(task.captions)
 
   override val resources: Map<String, String>
-    get() = mapOf("matching_style" to stylesheet)
-
-  override fun getTextResources(task: MatchingTask): Map<String, String> {
-    return super.getTextResources(task) + mapOf("captions" to Gson().toJson(task.captions))
-  }
+    get() = mapOf(wrapIntoStyleName(MatchingTask.MATCHING_TASK_TYPE) to stylesheet)
 
   override val stylesheet: String
     get() {
       return super.stylesheet + CSSBuilder().apply {
-        "#matchingOptions" {
+        "#options" {
           paddingLeft = 8.px
         }
         "#keyValueGrid" {

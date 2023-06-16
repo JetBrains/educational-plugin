@@ -10,14 +10,12 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.taskDescription.containsYoutubeLink
-import com.jetbrains.edu.learning.taskDescription.ui.jcefSpecificQueries.ChoiceTaskQueryManager
-import com.jetbrains.edu.learning.taskDescription.ui.jcefSpecificQueries.MatchingTaskQueryManager
-import com.jetbrains.edu.learning.taskDescription.ui.jcefSpecificQueries.SortingTaskQueryManager
-import com.jetbrains.edu.learning.taskDescription.ui.jcefSpecificQueries.TaskQueryManager
+import com.jetbrains.edu.learning.taskDescription.ui.jcefSpecificQueries.*
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.ChoiceTaskResourcesManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.sortingBasedTask.MatchingTaskResourcesManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.sortingBasedTask.SortingTaskResourcesManager
@@ -160,7 +158,6 @@ fun getHTMLTemplateText(task: Task?): String? = when (task) {
 
 fun getTaskSpecificQueryManager(task: Task?, browserBase: JBCefBrowser): TaskQueryManager<out Task>? = when(task) {
   is ChoiceTask -> ChoiceTaskQueryManager(task, browserBase)
-  is SortingTask -> SortingTaskQueryManager(task, browserBase)
-  is MatchingTask -> MatchingTaskQueryManager(task, browserBase)
+  is SortingBasedTask -> SortingBasedTaskQueryManager(task, browserBase)
   else -> null
 }

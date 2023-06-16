@@ -43,9 +43,6 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
 
   private val valueTextComponents = mutableListOf<JTextComponent>()
 
-  private lateinit var firstOptionPanel: JPanel
-  private lateinit var lastOptionPanel: JPanel
-
   init {
     val panel = panel {
       createShortcutTutorialHint()
@@ -74,18 +71,7 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
       recalcOptionPanelBorder()
     }
 
-    if (index == 0) {
-      firstOptionPanel = optionPanel
-    }
-    if (index + 1 == task.options.size) {
-      lastOptionPanel = optionPanel
-    }
-
-    valueTextComponents[index].addMouseListener(object : MouseAdapter() {
-      override fun mousePressed(e: MouseEvent?) {
-        optionPanel.requestFocus()
-      }
-    })
+    valueTextComponents[index].addMouseListener(optionPanel.createMouseListener())
 
     if (task is MatchingTask) {
       val indexPanel = createIndexPanel(task, index).apply {
@@ -222,24 +208,14 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
         if (e == null) return
         when {
           (e.keyCode == KeyEvent.VK_DOWN) -> {
-            if (index + 1 >= task.options.size) {
-              if (!e.isShiftDown) {
-                firstOptionPanel.requestFocus()
-              }
-              return
-            }
+            if (index + 1 >= task.options.size) return
             if (e.isShiftDown) {
               moveDown(task, index)
             }
             transferFocus()
           }
           (e.keyCode == KeyEvent.VK_UP) -> {
-            if (index <= 0) {
-              if (!e.isShiftDown) {
-                lastOptionPanel.requestFocus()
-              }
-              return
-            }
+            if (index <= 0) return
             if (e.isShiftDown) {
               moveUp(task, index)
             }

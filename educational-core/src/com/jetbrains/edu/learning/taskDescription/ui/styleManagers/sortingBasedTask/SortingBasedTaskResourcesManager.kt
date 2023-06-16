@@ -23,24 +23,28 @@ import kotlinx.css.properties.s
 import kotlinx.css.properties.transition
 
 abstract class SortingBasedTaskResourcesManager<T : SortingBasedTask> : TaskResourcesManager<T> {
-  protected abstract val templateName: String
+  private val templateName: String = "matchingTask.html"
 
-  protected open fun getTextResources(task: T): Map<String, String> {
+  protected abstract fun getCaptions(task: T): String
+
+  private fun getTextResources(task: T): Map<String, String> {
     val moveUpUrl = StyleResourcesManager.resourceUrl(getIconPath(isDown = false))
     val moveDownUrl = StyleResourcesManager.resourceUrl(getIconPath(isDown = true))
+    val styleName = wrapIntoStyleName(task.itemType)
     return mapOf(
+      "sorting_based_style" to "\${$styleName}",
       "options" to Gson().toJson(task.options),
       "ordering" to Gson().toJson(task.ordering.toList()),
       "upButtonIconPath" to moveUpUrl,
       "downButtonIconPath" to moveDownUrl,
-      "tutorial" to getTutorialHTML(moveUpUrl, moveDownUrl)
+      "tutorial" to getTutorialHTML(moveUpUrl, moveDownUrl),
+      "captions" to getCaptions(task),
     )
   }
 
-  private fun getTutorialHTML(moveUpUrl: String, moveDownUrl: String): String {
-    //val xIcon = "<label class='textShortcut'>↑</label>"
-    //val yIcon = "<label class='textShortcut'>↓</label>"
+  protected fun wrapIntoStyleName(s: String) = "${s}_style"
 
+  private fun getTutorialHTML(moveUpUrl: String, moveDownUrl: String): String {
     val xIcon = "<img src='${moveUpUrl}' class='imgShortcut'>"
     val yIcon = "<img src='${moveDownUrl}' class='imgShortcut'>"
 
@@ -125,11 +129,11 @@ abstract class SortingBasedTaskResourcesManager<T : SortingBasedTask> : TaskReso
         "button:disabled" {
           cursor = Cursor.notAllowed
         }
-        "#tutorialLabel" {
+        "#shortcutLabel" {
           padding = "4px 0"
           marginBottom = 8.px
         }
-        "#tutorialLabel > label" {
+        "#shortcutLabel > label" {
           fontSize = 13.px
           verticalAlign = VerticalAlign.middle
           lineHeight = LineHeight(16.px.value)

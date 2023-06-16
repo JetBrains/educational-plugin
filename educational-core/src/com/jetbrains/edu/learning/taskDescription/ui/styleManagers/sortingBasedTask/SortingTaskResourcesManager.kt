@@ -1,17 +1,19 @@
 package com.jetbrains.edu.learning.taskDescription.ui.styleManagers.sortingBasedTask
 
+import com.google.gson.Gson
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import kotlinx.css.*
 
 class SortingTaskResourcesManager : SortingBasedTaskResourcesManager<SortingTask>() {
-  override val templateName: String = "sortingTask.html"
+  override fun getCaptions(task: SortingTask): String = Gson().toJson(emptyList<String>())
+
   override val resources: Map<String, String>
-    get() = mapOf("sorting_style" to stylesheet)
+    get() = mapOf(wrapIntoStyleName(SortingTask.SORTING_TASK_TYPE) to stylesheet)
 
   override val stylesheet: String
     get() {
       return super.stylesheet + CSSBuilder().apply {
-        "#sortingOptions" {
+        "#options" {
           paddingLeft = 8.px
         }
         "#keyValueGrid" {
