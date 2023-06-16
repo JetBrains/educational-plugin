@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.STATUS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.RECORD
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ORDERING
-import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TAGS
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TAGS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CAPTIONS
 
 @Suppress("unused") // used for yaml serialization

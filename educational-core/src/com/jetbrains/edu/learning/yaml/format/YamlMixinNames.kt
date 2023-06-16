@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.yaml.format
 
 import com.intellij.openapi.util.NlsSafe
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames
 
 
 @Suppress("UnstableApiUsage")
@@ -8,38 +9,41 @@ object YamlMixinNames {
 
   // common constants
   @NlsSafe
-  const val TYPE = "type"
+  const val TYPE = JsonMixinNames.TYPE
 
   @NlsSafe
   const val CONTENT = "content"
 
   @NlsSafe
-  const val CUSTOM_NAME = "custom_name"
+  const val CUSTOM_NAME = JsonMixinNames.CUSTOM_NAME
+
+  @NlsSafe
+  const val TAGS = JsonMixinNames.TAGS
 
   // course
   @NlsSafe
-  const val TITLE = "title"
+  const val TITLE = JsonMixinNames.TITLE
 
   @NlsSafe
-  const val LANGUAGE = "language"
+  const val LANGUAGE = JsonMixinNames.LANGUAGE
 
   @NlsSafe
-  const val SUMMARY = "summary"
+  const val SUMMARY = JsonMixinNames.SUMMARY
 
   @NlsSafe
   const val PROGRAMMING_LANGUAGE = "programming_language"
 
   @NlsSafe
-  const val PROGRAMMING_LANGUAGE_VERSION = "programming_language_version"
+  const val PROGRAMMING_LANGUAGE_VERSION = JsonMixinNames.PROGRAMMING_LANGUAGE_VERSION
 
   @NlsSafe
-  const val SOLUTIONS_HIDDEN = "solutions_hidden"
+  const val SOLUTIONS_HIDDEN = JsonMixinNames.SOLUTIONS_HIDDEN
 
   @NlsSafe
   const val MODE = "mode"
 
   @NlsSafe
-  const val ENVIRONMENT = "environment"
+  const val ENVIRONMENT = JsonMixinNames.ENVIRONMENT
 
   // coursera course
   @NlsSafe
@@ -67,16 +71,16 @@ object YamlMixinNames {
 
   // marketplace course
   @NlsSafe
-  const val VENDOR = "vendor"
+  const val VENDOR = JsonMixinNames.VENDOR
 
   @NlsSafe
-  const val IS_PRIVATE = "is_private"
+  const val IS_PRIVATE = JsonMixinNames.IS_PRIVATE
 
   @NlsSafe
-  const val MARKETPLACE_COURSE_VERSION = "course_version"
+  const val MARKETPLACE_COURSE_VERSION = JsonMixinNames.MARKETPLACE_COURSE_VERSION
 
   @NlsSafe
-  const val GENERATED_EDU_ID = "generated_edu_id"
+  const val GENERATED_EDU_ID = JsonMixinNames.GENERATED_EDU_ID
 
   // lesson
   @NlsSafe
@@ -87,14 +91,14 @@ object YamlMixinNames {
   const val CURRENT_TASK = "current_task"
 
   @NlsSafe
-  const val IS_TEMPLATE_BASED = "is_template_based"
+  const val IS_TEMPLATE_BASED = JsonMixinNames.IS_TEMPLATE_BASED
 
   // task
   @NlsSafe
-  const val FILES = "files"
+  const val FILES = JsonMixinNames.FILES
 
   @NlsSafe
-  const val FEEDBACK_LINK = "feedback_link"
+  const val FEEDBACK_LINK = JsonMixinNames.FEEDBACK_LINK
 
   @NlsSafe
   const val FEEDBACK = "feedback"
@@ -106,7 +110,7 @@ object YamlMixinNames {
   const val RECORD = "record"
 
   @NlsSafe
-  const val SOLUTION_HIDDEN = "solution_hidden"
+  const val SOLUTION_HIDDEN = JsonMixinNames.SOLUTION_HIDDEN
 
   @NlsSafe
   const val SUBMISSION_LANGUAGE = "submission_language"
@@ -143,28 +147,6 @@ object YamlMixinNames {
 
   const val LOCAL_CHECK = "local_check"
 
-  // video task
-  @NlsSafe
-  const val THUMBNAIL = "thumbnail"
-
-  @NlsSafe
-  const val SOURCES = "sources"
-
-  @NlsSafe
-  const val CURRENT_TIME = "currentTime"
-
-  @NlsSafe
-  const val SRC = "src"
-
-  @NlsSafe
-  const val RES = "res"
-
-  @NlsSafe
-  const val VIDEO_TYPE = "type"
-
-  @NlsSafe
-  const val LABEL = "label"
-
   // checkio missions
   @NlsSafe
   const val CODE = "code"
@@ -198,10 +180,10 @@ object YamlMixinNames {
 
   // task file
   @NlsSafe
-  const val NAME = "name"
+  const val NAME = JsonMixinNames.NAME
 
   @NlsSafe
-  const val PLACEHOLDERS = "placeholders"
+  const val PLACEHOLDERS = JsonMixinNames.PLACEHOLDERS
 
   @NlsSafe
   const val VISIBLE = "visible"
@@ -210,7 +192,7 @@ object YamlMixinNames {
   const val LEARNER_CREATED = "learner_created"
 
   @NlsSafe
-  const val TEXT = "text"
+  const val TEXT = JsonMixinNames.TEXT
 
   @NlsSafe
   const val ENCRYPTED_TEXT = "encrypted_text"
@@ -219,20 +201,20 @@ object YamlMixinNames {
   const val EDITABLE = "editable"
 
   @NlsSafe
-  const val HIGHLIGHT_LEVEL = "highlight_level"
+  const val HIGHLIGHT_LEVEL = JsonMixinNames.HIGHLIGHT_LEVEL
 
   // placeholder
   @NlsSafe
-  const val OFFSET = "offset"
+  const val OFFSET = JsonMixinNames.OFFSET
 
   @NlsSafe
-  const val LENGTH = "length"
+  const val LENGTH = JsonMixinNames.LENGTH
 
   @NlsSafe
-  const val PLACEHOLDER_TEXT = "placeholder_text"
+  const val PLACEHOLDER_TEXT = JsonMixinNames.PLACEHOLDER_TEXT
 
   @NlsSafe
-  const val DEPENDENCY = "dependency"
+  const val DEPENDENCY = JsonMixinNames.DEPENDENCY
 
   @NlsSafe
   const val INIT_FROM_DEPENDENCY = "initialized_from_dependency"
@@ -244,7 +226,7 @@ object YamlMixinNames {
   const val INITIAL_STATE = "initial_state"
 
   @NlsSafe
-  const val POSSIBLE_ANSWER = "possible_answer"
+  const val POSSIBLE_ANSWER = JsonMixinNames.POSSIBLE_ANSWER
 
   @NlsSafe
   const val ENCRYPTED_POSSIBLE_ANSWER = "encrypted_possible_answer"
@@ -254,27 +236,27 @@ object YamlMixinNames {
 
   // placeholder dependency
   @NlsSafe
-  const val SECTION = "section"
+  const val SECTION = JsonMixinNames.SECTION
 
   @NlsSafe
-  const val LESSON = "lesson"
+  const val LESSON = JsonMixinNames.LESSON
 
   @NlsSafe
-  const val TASK = "task"
+  const val TASK = JsonMixinNames.TASK
 
   @NlsSafe
-  const val FILE = "file"
+  const val FILE = JsonMixinNames.FILE
 
   @NlsSafe
-  const val PLACEHOLDER = "placeholder"
+  const val PLACEHOLDER = JsonMixinNames.PLACEHOLDER
 
   @NlsSafe
-  const val IS_VISIBLE = "is_visible"
+  const val IS_VISIBLE = JsonMixinNames.IS_VISIBLE
 
   // remote study item
   @NlsSafe
-  const val ID = "id"
+  const val ID = JsonMixinNames.ID
 
   @NlsSafe
-  const val UPDATE_DATE = "update_date"
+  const val UPDATE_DATE = JsonMixinNames.UPDATE_DATE
 }

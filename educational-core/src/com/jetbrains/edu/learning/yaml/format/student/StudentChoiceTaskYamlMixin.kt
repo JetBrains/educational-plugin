@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.yaml.format.student
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TAGS
 import com.jetbrains.edu.learning.yaml.format.ChoiceTaskYamlMixin
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_CORRECT
@@ -15,6 +14,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.QUIZ_HEADER
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.RECORD
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SELECTED_OPTIONS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.STATUS
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TAGS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 
 @Suppress("unused") // used for yaml serialization

@@ -12,7 +12,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.json.mixins.FeedbackCorrectFilter
 import com.jetbrains.edu.learning.json.mixins.FeedbackIncorrectFilter
-import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TAGS
 import com.jetbrains.edu.learning.json.mixins.QuizHeaderFilter
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
@@ -25,6 +24,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.IS_MULTIPLE_CHOICE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LOCAL_CHECK
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.OPTIONS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.QUIZ_HEADER
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TAGS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 
 @Suppress("unused") // used for yaml serialization
