@@ -48,6 +48,4 @@ abstract class StartCourseAction(
     Messages.showErrorDialog(message("error.failed.to.find.course.by.link", platformName, courseLink),
                              message("error.failed.to.find.course.title", platformName))
   }
-
-  protected fun showFailedImportCourseMessage(message: String) = Messages.showErrorDialog(message, message("error.failed.to.import.course"))
 }
