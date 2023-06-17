@@ -20,3 +20,7 @@ exclude:
   - name: SyntaxError
     paths:
       - Edu-Python/testSrc # not to produce Syntax Errors in python injections
+
+# Trigger Gradle here to evaluate `setting.gradle.kts` and load `secret.properties` CI.
+# Otherwise, Qodana shows `Invalid property key` warnings
+bootstrap: ./gradlew
