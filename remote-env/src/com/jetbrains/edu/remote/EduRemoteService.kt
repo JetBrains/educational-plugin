@@ -1,9 +1,13 @@
 package com.jetbrains.edu.remote
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.jetbrains.codeWithMe.model.projectViewModel
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
+import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.projectView.CourseViewPane
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.rd.platform.util.idea.LifetimedService
 import com.jetbrains.rdserver.core.RemoteProjectSession
 
@@ -15,12 +19,19 @@ class EduRemoteService(private val session: RemoteProjectSession) : LifetimedSer
     scheduler.queue {
       val model = session.protocol.projectViewModel
       if (project.isEduProject()) {
+        val course = project.course ?: return@queue
         // This hack is needed because at the time this service is loaded our Course view is not present in the model
         ApplicationManager.getApplication().executeOnPooledThread {
           while (true) {
             Thread.sleep(1000)
-            model.activate.fire(CourseViewPane.ID)
+            invokeAndWaitIfNeeded {
+              model.activate.fire(CourseViewPane.ID)
+            }
             if (model.currentPane.value == CourseViewPane.ID) {
+              invokeAndWaitIfNeeded {
+                NavigationUtils.openFirstTask(course, project)
+                TaskDescriptionView.getInstance(project).updateTaskDescription()
+              }
               break
             }
           }

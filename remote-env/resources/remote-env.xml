@@ -6,5 +6,6 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <projectService serviceImplementation="com.jetbrains.edu.remote.EduRemoteService" preload="true" client="remote"/>
+    <postStartupActivity implementation="com.jetbrains.edu.remote.EduRemoteStartupActivity"/>
   </extensions>
 </idea-plugin>
