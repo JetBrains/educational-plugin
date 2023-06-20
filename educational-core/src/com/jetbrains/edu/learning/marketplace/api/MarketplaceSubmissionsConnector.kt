@@ -82,6 +82,7 @@ class MarketplaceSubmissionsConnector {
   }
 
   fun getAllSubmissions(courseId: Int): List<MarketplaceSubmission> {
+    LOG.info("Loading all submissions for courseId = $courseId")
     var currentPage = 1
     val allSubmissions = mutableListOf<MarketplaceSubmission>()
     do {

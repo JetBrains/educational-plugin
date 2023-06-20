@@ -66,7 +66,7 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
 
     if (isLoggedIn) {
       val submissionsList = submissionsManager.getSubmissionsFromMemory(setOf(task.id))
-      if (submissionsList.isNullOrEmpty()) {
+      if (submissionsList.isEmpty()) {
         descriptionText.addEmptySubmissionsMessage()
       }
       else {

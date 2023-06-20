@@ -31,10 +31,10 @@ class SubmissionsManager(private val project: Project) {
   var course: Course? = project.course
     @TestOnly set
 
-  fun getSubmissionsFromMemory(stepIds: Set<Int>): List<Submission>? {
+  fun getSubmissionsFromMemory(stepIds: Set<Int>): List<Submission> {
     val submissionsFromMemory = mutableListOf<Submission>()
     for (stepId in stepIds) {
-      val submissionsByStep = submissions[stepId] ?: return null
+      val submissionsByStep = submissions[stepId] ?: continue
       submissionsFromMemory.addAll(submissionsByStep)
     }
     return submissionsFromMemory.sortedByDescending { it.time }.toList()
@@ -44,8 +44,7 @@ class SubmissionsManager(private val project: Project) {
     val course = this.course
     val stepIds = tasks.stream().map { task -> task.id }.collect(Collectors.toSet())
     val submissionsFromMemory = getSubmissionsFromMemory(stepIds)
-    return if (submissionsFromMemory != null) submissionsFromMemory
-    else {
+    return submissionsFromMemory.ifEmpty {
       if (course == null) return null
       val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course) ?: return null
       val submissionsById = submissionsProvider.loadSubmissions(tasks, course.id)
@@ -101,7 +100,7 @@ class SubmissionsManager(private val project: Project) {
   }
 
   fun containsCorrectSubmission(stepId: Int): Boolean {
-    val submissions = getSubmissionsFromMemory(setOf(stepId)) ?: return false
+    val submissions = getSubmissionsFromMemory(setOf(stepId))
     return submissions.any { it.status == CORRECT }
   }
 
