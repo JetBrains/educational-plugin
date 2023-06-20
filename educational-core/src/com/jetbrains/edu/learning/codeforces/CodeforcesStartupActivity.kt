@@ -5,7 +5,9 @@ import com.intellij.openapi.startup.StartupActivity
 import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.codeforces.CodeforcesUtils.updateCheckStatus
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.update.CodeforcesCourseUpdateChecker
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
@@ -14,6 +16,8 @@ import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType
 class CodeforcesStartupActivity : StartupActivity {
   override fun runActivity(project: Project) {
     if (project.isDisposed || !project.isStudentProject() || isUnitTestMode) return
+
+    if (project.course !is CodeforcesCourse) return
 
     val submissionsManager = SubmissionsManager.getInstance(project)
 
