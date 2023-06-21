@@ -30,21 +30,25 @@ class JTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
     Inline code `if (condition) {} else {}`
   """, """
     <html>
-     <head></head>
+     <head>
+      ...
+     </head>
      <body>
-      <p>Code block with default language:</p><span class="code-block"><pre>  <span style="...">class </span><span style="...">Main {</span>
+      <div class="wrapper">
+       <p>Code block with default language:</p><span class="code-block"><pre>  <span style="...">class </span><span style="...">Main {</span>
           <span style="...">public static void </span><span style="...">main(String[] args) {</span>
             <span style="...">System.out.println(</span><span style="...">"Hello!"</span><span style="...">);</span>
           <span style="...">}</span>
       <span style="...">}</span>
     </pre> </span>
-      <p>Code block with specific language:</p><span class="code-block"><pre>  <span style="...">class </span><span style="...">Main {</span>
+       <p>Code block with specific language:</p><span class="code-block"><pre>  <span style="...">class </span><span style="...">Main {</span>
           <span style="...">public static void </span><span style="...">main(String[] args) {</span>
             <span style="...">System.out.println(</span><span style="...">"Hello!"</span><span style="...">);</span>
           <span style="...">}</span>
       <span style="...">}</span>
     </pre> </span>
-      <p>Inline code <span class="code"><span style="...">if </span><span style="...">(condition) {} </span><span style="...">else </span><span style="...">{}</span></span></p>
+       <p>Inline code <span class="code"><span style="...">if </span><span style="...">(condition) {} </span><span style="...">else </span><span style="...">{}</span></span></p>
+      </div>
      </body>
     </html>
   """)
@@ -71,21 +75,25 @@ class JTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
     </html>
   """, """
     <html>
-     <head></head>
+     <head>
+      ...
+     </head>
      <body>
-      <p>Code block with default language:</p> <span class="code-block"><pre>  <span style="...">class </span><span style="...">Main {</span>
+      <div class="wrapper">
+       <p>Code block with default language:</p> <span class="code-block"><pre>  <span style="...">class </span><span style="...">Main {</span>
           <span style="...">public static void </span><span style="...">main(String[] args) {</span>
             <span style="...">System.out.println(</span><span style="...">"Hello!"</span><span style="...">);</span>
           <span style="...">}</span>
       <span style="...">}</span>
     </pre> </span>
-      <p>Code block with specific language:</p> <span class="code-block"><pre>  <span style="...">class </span><span style="...">Main {</span>
+       <p>Code block with specific language:</p> <span class="code-block"><pre>  <span style="...">class </span><span style="...">Main {</span>
           <span style="...">public static void </span><span style="...">main(String[] args) {</span>
             <span style="...">System.out.println(</span><span style="...">"Hello!"</span><span style="...">);</span>
           <span style="...">}</span>
       <span style="...">}</span>
     </pre> </span>
-      <p>Inline code <span class="code"><span style="...">if </span><span style="...">(condition) {} </span><span style="...">else </span><span style="...">{}</span></span></p>
+       <p>Inline code <span class="code"><span style="...">if </span><span style="...">(condition) {} </span><span style="...">else </span><span style="...">{}</span></span></p>
+      </div>
      </body>
     </html>
   """)
@@ -102,14 +110,17 @@ class JTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
     </html>
   """, """
     <html>
-     <head></head>
+     <head>
+      ...
+     </head>
      <body>
-      <span class="code-block"><pre>  <span style="...">class Main {</span>
+      <div class="wrapper"><span class="code-block"><pre>  <span style="...">class Main {</span>
           <span style="...">public static void main(String[] args) {</span>
             <span style="...">System.out.println("Hello!");</span>
           <span style="...">}</span>
       <span style="...">}</span>
     </pre> </span>
+      </div>
      </body>
     </html>
   """)

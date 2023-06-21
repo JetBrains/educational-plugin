@@ -25,17 +25,21 @@ class RsTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() 
     Inline code `if condition { 1 } else { 2 }`
   """, """
     <html>
-     <head></head>
+     <head>
+      ...
+     </head>
      <body>
-      <p>Code block with default language:</p><span class="code-block"><pre>  <span style="...">pub struct </span><span style="...">Foo&lt;</span><span style="...">'a</span><span style="...">&gt; {</span>
+      <div class="wrapper">
+       <p>Code block with default language:</p><span class="code-block"><pre>  <span style="...">pub struct </span><span style="...">Foo&lt;</span><span style="...">'a</span><span style="...">&gt; {</span>
           <span style="...">s: &amp;</span><span style="...">'a </span><span style="...">str</span>
       <span style="...">}</span>
     </pre> </span>
-      <p>Code block with specific language:</p><span class="code-block"><pre>  <span style="...">fn </span><span style="...">main() {</span>
+       <p>Code block with specific language:</p><span class="code-block"><pre>  <span style="...">fn </span><span style="...">main() {</span>
           <span style="...">println!(</span><span style="...">"Hello!"</span><span style="...">)</span>
       <span style="...">}</span>
     </pre> </span>
-      <p>Inline code <span class="code"><span style="...">if </span><span style="...">condition { </span><span style="...">1 </span><span style="...">} </span><span style="...">else </span><span style="...">{ </span><span style="...">2 </span><span style="...">}</span></span></p>
+       <p>Inline code <span class="code"><span style="...">if </span><span style="...">condition { </span><span style="...">1 </span><span style="...">} </span><span style="...">else </span><span style="...">{ </span><span style="...">2 </span><span style="...">}</span></span></p>
+      </div>
      </body>
     </html>
   """)
@@ -58,17 +62,21 @@ class RsTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() 
     </html>
   """, """
     <html>
-     <head></head>
+     <head>
+      ...
+     </head>
      <body>
-      <p>Code block with default language:</p> <span class="code-block"><pre>  <span style="...">pub struct </span><span style="...">Foo&lt;</span><span style="...">'a</span><span style="...">&gt; {</span>
+      <div class="wrapper">
+       <p>Code block with default language:</p> <span class="code-block"><pre>  <span style="...">pub struct </span><span style="...">Foo&lt;</span><span style="...">'a</span><span style="...">&gt; {</span>
           <span style="...">s: &amp;</span><span style="...">'a </span><span style="...">str</span>
       <span style="...">}</span>
     </pre> </span>
-      <p>Code block with specific language:</p> <span class="code-block"><pre>  <span style="...">fn </span><span style="...">main() {</span>
+       <p>Code block with specific language:</p> <span class="code-block"><pre>  <span style="...">fn </span><span style="...">main() {</span>
           <span style="...">println!(</span><span style="...">"Hello!"</span><span style="...">)</span>
       <span style="...">}</span>
     </pre> </span>
-      <p>Inline code <span class="code"><span style="...">if </span><span style="...">condition { </span><span style="...">1 </span><span style="...">} </span><span style="...">else </span><span style="...">{ </span><span style="...">2 </span><span style="...">}</span></span></p>
+       <p>Inline code <span class="code"><span style="...">if </span><span style="...">condition { </span><span style="...">1 </span><span style="...">} </span><span style="...">else </span><span style="...">{ </span><span style="...">2 </span><span style="...">}</span></span></p>
+      </div>
      </body>
     </html>
   """)

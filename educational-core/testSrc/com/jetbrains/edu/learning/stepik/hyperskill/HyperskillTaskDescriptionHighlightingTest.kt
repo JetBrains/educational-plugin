@@ -28,11 +28,15 @@ abstract class HyperskillTaskDescriptionHighlightingTest : TaskDescriptionHighli
       </html>
     """, """
       <html>
-       <head></head>
-       <body><span class="code">$codeSampleWithBasicHighlighting</span>
+       <head>
+        ...
+       </head>
+       <body>
+        <div class="wrapper"><span class="code">$codeSampleWithBasicHighlighting</span>
+        </div>
        </body>
       </html>
-        """)
+    """)
   }
 
   fun `test no language in hyperskill course`() {
@@ -44,11 +48,15 @@ abstract class HyperskillTaskDescriptionHighlightingTest : TaskDescriptionHighli
       </html>
     """, """
       <html>
-       <head></head>
-       <body><span class="code">$codeSampleWithBasicHighlighting</span>
+       <head>
+        ...
+       </head>
+       <body>
+        <div class="wrapper"><span class="code">$codeSampleWithBasicHighlighting</span>
+        </div>
        </body>
       </html>
-        """)
+    """)
   }
 
   fun `test highlighting`() {
@@ -60,10 +68,14 @@ abstract class HyperskillTaskDescriptionHighlightingTest : TaskDescriptionHighli
       </html>
     """, """
       <html>
-       <head></head>
-       <body><span class="code">${codeSampleWithHighlighting}</span>
+       <head>
+        ...
+       </head>
+       <body>
+        <div class="wrapper"><span class="code">$codeSampleWithHighlighting</span>
+        </div>
        </body>
       </html>
-        """)
+    """)
   }
 }

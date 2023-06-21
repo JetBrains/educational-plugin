@@ -1,53 +1,13 @@
 package com.jetbrains.edu.learning.taskDescription
 
-import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.JavaUILibrary
-import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
-import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
-import com.jetbrains.edu.learning.taskDescription.htmlTransformers.HtmlTransformerContext
-import com.jetbrains.edu.learning.taskDescription.htmlTransformers.steps.CodeHighlighter
-import org.intellij.lang.annotations.Language
+abstract class TaskDescriptionHighlightingTestBase : TaskDescriptionTestBase() {
 
-abstract class TaskDescriptionHighlightingTestBase : EduTestCase() {
-
-  protected abstract val language: com.intellij.lang.Language
-  open val environment: String = ""
-
-  protected fun doHtmlTest(@Language("HTML") taskDescription: String, @Language("HTML") expectedText: String) =
-    doTest(taskDescription, DescriptionFormat.HTML, expectedText)
-
-  protected fun doMarkdownTest(@Language("Markdown") taskDescription: String, @Language("HTML") expectedText: String) =
-    doTest(taskDescription, DescriptionFormat.MD, expectedText)
-
-  protected open fun createCourseWithTestTask(taskDescription: String, format: DescriptionFormat) {
-    courseWithFiles(language = language, environment = environment) {
-      lesson("lesson1") {
-        eduTask("task1", taskDescription = taskDescription.trimIndent(), taskDescriptionFormat = format)
-      }
-    }
+  override fun removeUnimportantParts(html: String): String {
+    return super.removeUnimportantParts(html)
+      .lines()
+      .joinToString("\n", transform = String::trimEnd)
+      .replace(SPAN_REGEX, """<span style="...">""")
   }
-
-  private fun doTest(taskDescription: String,
-                     format: DescriptionFormat,
-                     @Language("HTML") expectedText: String) {
-    createCourseWithTestTask(taskDescription, format)
-    val task = findTask(0, 0)
-
-    val taskText = task.getTaskTextFromTask(project) ?: error("Failed to read task text")
-
-    fun testForSpecificUIMode(uiMode: JavaUILibrary) {
-      val transformationContext = HtmlTransformerContext(project, task, uiMode)
-      val html = CodeHighlighter.toStringTransformer().transform(taskText, transformationContext)
-      assertEquals(expectedText.trimIndent(), html.dropSpecificValues())
-    }
-
-    testForSpecificUIMode(JavaUILibrary.SWING)
-    testForSpecificUIMode(JavaUILibrary.JCEF)
-  }
-
-  private fun String.dropSpecificValues(): String = lines()
-    .joinToString("\n", transform = String::trimEnd)
-    .replace(SPAN_REGEX, """<span style="...">""")
 
   companion object {
     private val SPAN_REGEX = Regex("""<span style=".*?">""")
