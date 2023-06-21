@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.intellij.openapi.application.PermanentInstallationID
+import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.ui.JBAccountInfoService
@@ -77,7 +79,9 @@ class MarketplaceAccount : OAuthAccount<JBAccountUserInfo> {
       null
     }
     finally {
-      EduCounterUsageCollector.obtainJBAToken(success)
+      if (GetJBATokenSuccessRecorder.getInstance().updateState(success)) {
+        EduCounterUsageCollector.obtainJBAToken(success)
+      }
     }
   }
 
@@ -99,6 +103,25 @@ class MarketplaceAccount : OAuthAccount<JBAccountUserInfo> {
     fun isJBALoggedIn(): Boolean = JBAccountInfoService.getInstance()?.userData != null
 
     fun getJBAIdToken(): String? = JBAccountInfoService.getInstance()?.idToken
+  }
+}
+
+@Service
+private class GetJBATokenSuccessRecorder {
+  @Volatile
+  private var currentState: Boolean? = null
+
+  /**
+   * Returns `true` if state changed, `false` otherwise
+   */
+  fun updateState(newState: Boolean): Boolean {
+    val oldState = currentState
+    currentState = newState
+    return oldState != newState
+  }
+
+  companion object {
+    fun getInstance(): GetJBATokenSuccessRecorder = service()
   }
 }
 
