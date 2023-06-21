@@ -258,7 +258,7 @@ configure(allprojects.pluginModules()) {
   }
   intellij {
 //    version.set(baseVersion)
-    localPath.set("/Users/valentina.kiryushkina/Documents/IDEA_FOR_CARDS/IntelliJ IDEA 2023.2 EAP 2.app/Contents")
+    localPath.set("/Users/valentina.kiryushkina/Documents/IDEA_FOR_CARDS/IntelliJ IDEA 2023.2 CE EAP 3.app/Contents")
     instrumentCode.set(false)
   }
   dependencies {
@@ -513,16 +513,16 @@ project(":") {
     }
   }
 
-  task("configureAndroidStudio") {
-    doLast {
-      intellij.sandboxDir.set(studioSandbox)
-      withProp("androidStudioPath") { path ->
-        tasks.runIde {
-          ideDir.set(file(path))
-        }
-      }
-    }
-  }
+//  task("configureAndroidStudio") {
+//    doLast {
+//      intellij.sandboxDir.set(studioSandbox)
+//      withProp("androidStudioPath") { path ->
+//        tasks.runIde {
+//          ideDir.set(file(path))
+//        }
+//      }
+//    }
+//  }
 
   task("configureGoLand") {
     doLast {
