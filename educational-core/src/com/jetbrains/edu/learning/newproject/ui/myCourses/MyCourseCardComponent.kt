@@ -46,7 +46,7 @@ class MyCourseCardComponent(course: Course) : CourseCardComponent(course) {
   }
 
   override fun createBottomComponent(): JPanel {
-    val courseMetaInfo = JBCoursesStorage.getInstance().getCourseMetaInfo(course.name, course.id, course.courseMode, course.languageID)
+    val courseMetaInfo = JBCoursesStorage.getInstance().getCourseMetaInfo(course.name, course.id, course.courseMode, course.languageId)
                          ?: error("Cannot find ${course.name} in storage")
     return MyCourseInfoComponent(courseMetaInfo)
   }
@@ -56,7 +56,7 @@ class MyCourseCardComponent(course: Course) : CourseCardComponent(course) {
 
     removeLabel.addMouseListener(object : MouseAdapter() {
       override fun mouseClicked(e: MouseEvent?) {
-        val courseMetaInfo = JBCoursesStorage.getInstance().getCourseMetaInfo(course.name, course.id, course.courseMode, course.languageID)
+        val courseMetaInfo = JBCoursesStorage.getInstance().getCourseMetaInfo(course.name, course.id, course.courseMode, course.languageId)
                              ?: error("Cannot find ${course.name} in storage")
         val location = courseMetaInfo.location
 

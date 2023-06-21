@@ -37,6 +37,7 @@ import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.projectView.ProgressUtil
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillCourseProjectGenerator
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -69,6 +70,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
 
     YamlFormatSynchronizer.saveAll(project)
     YamlFormatSynchronizer.startSynchronization(project)
+    ProgressUtil.updateCourseProgress(project)
   }
 
   // 'projectSettings' must have S type but due to some reasons:

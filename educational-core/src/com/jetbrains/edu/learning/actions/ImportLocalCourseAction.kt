@@ -43,7 +43,7 @@ open class ImportLocalCourseAction(
       }
       saveLastImportLocation(file)
 
-      val courseMetaInfo = JBCoursesStorage.getInstance().getCourseMetaInfo(course.name, course.id, course.courseMode, course.languageID)
+      val courseMetaInfo = JBCoursesStorage.getInstance().getCourseMetaInfo(course.name, course.id, course.courseMode, course.languageId)
       if (courseMetaInfo != null) {
         invokeLater {
           val result = Messages.showDialog(null,

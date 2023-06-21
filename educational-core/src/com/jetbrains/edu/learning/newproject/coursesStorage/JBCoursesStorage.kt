@@ -15,7 +15,6 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.EduLanguage
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 
@@ -28,7 +27,6 @@ private const val PROGRAMMING_LANGUAGE_VERSION = "programmingLanguageVersion"
 @Service
 class JBCoursesStorage : SimplePersistentStateComponent<UserCoursesState>(UserCoursesState()), CoursesStorage {
 
-
   fun addCourse(course: Course, location: String, tasksSolved: Int = 0, tasksTotal: Int = 0) {
     state.addCourse(course, location, tasksSolved, tasksTotal)
     ApplicationManager.getApplication().messageBus.syncPublisher(COURSE_ADDED).courseAdded(course)
@@ -38,7 +36,8 @@ class JBCoursesStorage : SimplePersistentStateComponent<UserCoursesState>(UserCo
     this.name = course.name
     this.id = course.id
     this.courseMode = course.courseMode
-    this.programmingLanguage = course.programmingLanguage
+    this.languageId = course.languageId
+    this.languageVersion = course.languageVersion
   })
 
   fun hasCourse(course: Course): Boolean = getCoursePath(course) != null
@@ -53,10 +52,10 @@ class JBCoursesStorage : SimplePersistentStateComponent<UserCoursesState>(UserCo
 
   fun getCourseMetaInfo(name: String, id: Int, courseMode: CourseMode, languageId: String): CourseMetaInfo? {
     return state.courses.find {
-      it.name == course.name
-      && it.id == course.id
-      && it.courseMode == course.courseMode
-      && it.languageID == course.languageId
+      it.name == name
+      && it.id == id
+      && it.courseMode == courseMode
+      && it.languageId == languageId
     }
   }
 
@@ -66,7 +65,7 @@ class JBCoursesStorage : SimplePersistentStateComponent<UserCoursesState>(UserCo
 
   override fun getCoursePath(courseInfo: CourseInfo): String? {
     return if (courseInfo is CourseMetaInfo) {
-      getCourseMetaInfo(courseInfo.name, courseInfo.id, courseInfo.courseMode, courseInfo.languageID)?.location
+      getCourseMetaInfo(courseInfo.name, courseInfo.id, courseInfo.courseMode, courseInfo.languageId)?.location
     }
     else {
       null
@@ -141,8 +140,7 @@ class CourseMetaInfo() : CourseInfo() {
       return field
     }
 
-  val languageID: String
-    get() = EduLanguage.get(programmingLanguage).id
+  var languageId: String = ""
 
   // to be compatible with previous version
   var programmingLanguageVersion: String? = null
@@ -156,16 +154,10 @@ class CourseMetaInfo() : CourseInfo() {
     environment = course.environment
     languageId = course.languageId
     languageVersion = course.languageVersion
-    languageVersion = course.languageVersion
     this.location = location
     this.tasksTotal = tasksTotal
     this.tasksSolved = tasksSolved
   }
-
-  override val itemType
-    @Transient
-    get() = type
-
   /**
    * Used only for migration, see EDU-5856
    */
@@ -178,23 +170,6 @@ class CourseMetaInfo() : CourseInfo() {
       field = null
     }
 
-  override var languageId: String
-    @OptionTag(PROGRAMMING_LANGUAGE_ID)
-    get() = super.languageId
-    @OptionTag(PROGRAMMING_LANGUAGE_ID)
-    set(value) {
-      if (value.isEmpty()) return
-      super.languageId = value
-    }
-
-  override var languageVersion: String?
-    @OptionTag(PROGRAMMING_LANGUAGE_VERSION)
-    get() = super.languageVersion
-    @OptionTag(PROGRAMMING_LANGUAGE_VERSION)
-    set(value) {
-      if (value == null) return
-      super.languageVersion = value
-    }
   val isStudy = courseMode == CourseMode.STUDENT
 
   fun toCourse(): EduCourse {
@@ -204,14 +179,15 @@ class CourseMetaInfo() : CourseInfo() {
     eduCourse.description = description
     eduCourse.courseMode = courseMode
     eduCourse.environment = environment
-    eduCourse.programmingLanguage = programmingLanguage
+    eduCourse.languageId = languageId
+    eduCourse.languageVersion = languageVersion
     return eduCourse
   }
 
   private fun convertProgrammingLanguageVersion(value: String) {
     value.split(" ").apply {
-      super.languageId = first()
-      super.languageVersion = getOrNull(1)
+      languageId = first()
+      languageVersion = getOrNull(1)
     }
   }
 }
