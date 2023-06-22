@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification
 import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.runInBackground
 
@@ -60,6 +61,18 @@ abstract class EduCourseUpdater(protected val project: Project, protected open v
       )
     })
       .notify(project)
+  }
+
+  data class TaskUpdate(val localTask: Task/*?*/, val taskFromServer: Task/*?*/)
+
+  protected fun getListOfTaskUpdate(localTasks: List<Task>, tasksFromServer: List<Task>): List<TaskUpdate> {
+//    val result = mutableListOf<TaskUpdate>()
+//    val size = max(localTasks.size, tasksFromServer.size)
+//    repeat(size) { index ->
+//      result.add(TaskUpdate(localTasks.getOrNull(index), tasksFromServer.getOrNull(index)))
+//    }
+//    return result
+    return localTasks.zip(tasksFromServer).map { TaskUpdate(it.first, it.second) }
   }
 
   companion object {
