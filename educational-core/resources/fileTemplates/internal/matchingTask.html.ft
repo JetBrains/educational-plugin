@@ -14,6 +14,13 @@
 
   let optionN = options.length
 
+  document.onkeydown = function (e) {
+    if (e.key === 'Tab') {
+      e.preventDefault()
+      e.stopPropagation()
+    }
+  }
+
   createLines(captions, options)
 
   let focusedIndex = 0
@@ -61,7 +68,7 @@
     card.appendChild(buttonPanel)
 
     card.id = getCardId(index)
-    card.tabIndex = -1
+    card.tabIndex = 0
 
     card.onclick = function (e) {
       if (e.target === e.currentTarget) {
@@ -72,6 +79,15 @@
     card.onkeydown = function (e) {
       let shiftFlag = e.shiftKey
       switch (e.key) {
+        case 'Tab':
+          let targetIndex
+          if (e.shiftKey) {
+            targetIndex = (focusedIndex + optionN - 1) % optionN
+          } else {
+            targetIndex = (focusedIndex + 1) % optionN
+          }
+          makeFocus(targetIndex)
+          return
         case 'ArrowUp':
           if (index === 0) {
             return false
