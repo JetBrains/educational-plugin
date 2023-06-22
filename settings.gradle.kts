@@ -89,7 +89,7 @@ fun configureSecretProperties() {
     "jsCheckioClientSecret"
   )
   secretProperties.extractAndStore(
-    "educational-core/resources/aes/aes.properties",
+    "edu-format/resources/aes/aes.properties",
     "aesKey"
   )
   secretProperties.extractAndStore(
