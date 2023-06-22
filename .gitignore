@@ -53,6 +53,7 @@ educational-core/resources/stepik/stepik.properties
 educational-core/resources/hyperskill/hyperskill-oauth.properties
 educational-core/resources/marketplace/marketplace-oauth.properties
 #AES key
+edu-format/resources/aes/aes.properties
 educational-core/resources/aes/aes.properties
 # don't commit changes in hyperskill css
 educational-core/resources/style/hyperskill_task.css
