@@ -61,7 +61,6 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_SECTION_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_TASK_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.SECTION_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.TASK_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.localConfigNameToRemote
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.MAPPER
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.REMOTE_MAPPER
 import com.jetbrains.edu.learning.yaml.errorHandling.*
@@ -83,13 +82,11 @@ object YamlDeserializer {
 
   fun deserializeItem(configFile: VirtualFile, project: Project?, loadFromVFile: Boolean = true, mapper: ObjectMapper = MAPPER): StudyItem? {
     val configFileText = if (loadFromVFile) VfsUtil.loadText(configFile) else configFile.document.text
-    val configName = configFile.name
-    val remoteConfigFile = configFile.parent?.findChild(localConfigNameToRemote(configName))
     return try {
-      when (configName) {
+      when (configFile.name) {
         COURSE_CONFIG -> mapper.deserializeCourse(configFileText)
         SECTION_CONFIG -> mapper.deserializeSection(configFileText)
-        LESSON_CONFIG -> mapper.deserializeLesson(configFileText, remoteConfigFile)
+        LESSON_CONFIG -> mapper.deserializeLesson(configFileText)
         TASK_CONFIG -> mapper.deserializeTask(configFileText)
         else -> loadingError(unknownConfigMessage(configFile.name))
       }
@@ -146,7 +143,7 @@ object YamlDeserializer {
   }
 
   @VisibleForTesting
-  fun ObjectMapper.deserializeLesson(configFileText: String, remoteConfigFile: VirtualFile? = null): Lesson {
+  fun ObjectMapper.deserializeLesson(configFileText: String): Lesson {
     val treeNode = readNode(configFileText)
 
     val type = asText(treeNode.get(YamlMixinNames.TYPE))
@@ -217,8 +214,6 @@ object YamlDeserializer {
     val treeNode = REMOTE_MAPPER.readTree(configFileText)
     return REMOTE_MAPPER.treeToValue(treeNode, RemoteStudyItem::class.java)
   }
-
-  private fun unitIsEmpty(unit: JsonNode?) = unit == null || unit.asInt() == 0
 
   private fun deserializeTaskRemoteInfo(configFileText: String): StudyItem {
     val treeNode = REMOTE_MAPPER.readTree(configFileText)
