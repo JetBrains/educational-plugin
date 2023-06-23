@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.IS_TEMPLATE_BASED
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TAGS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 
-@Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
+@Suppress("unused") // used for yaml serialization
 @JsonDeserialize(builder = StudentFrameworkLessonBuilder::class)
 @JsonPropertyOrder(TYPE, CUSTOM_NAME, CONTENT, IS_TEMPLATE_BASED, CURRENT_TASK, TAGS)
 abstract class StudentFrameworkLessonYamlMixin : FrameworkLessonYamlMixin() {
