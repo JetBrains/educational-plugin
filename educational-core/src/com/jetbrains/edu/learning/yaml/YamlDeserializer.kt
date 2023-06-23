@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.node.MissingNode
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.vfs.VfsUtil
@@ -63,17 +64,11 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSettings.SECTION_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.TASK_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.MAPPER
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.REMOTE_MAPPER
-import com.jetbrains.edu.learning.yaml.errorHandling.InvalidConfigNotification
-import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
-import com.jetbrains.edu.learning.yaml.errorHandling.noDirForItemMessage
-import com.jetbrains.edu.learning.yaml.errorHandling.unknownConfigMessage
+import com.jetbrains.edu.learning.yaml.errorHandling.*
 import com.jetbrains.edu.learning.yaml.format.RemoteStudyItem
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LESSON
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TASK
-import com.jetbrains.edu.learning.yaml.errorHandling.InvalidYamlFormatException
-import com.jetbrains.edu.learning.yaml.errorHandling.formatError
-import com.jetbrains.edu.learning.yaml.errorHandling.unsupportedItemTypeMessage
 import org.jetbrains.annotations.NonNls
 
 /**
@@ -128,11 +123,13 @@ object YamlDeserializer {
    */
   @VisibleForTesting
   fun ObjectMapper.deserializeCourse(configFileText: String): Course {
-    val treeNode = readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
-    val courseMode = asText(treeNode.get("mode"))
-    val course = treeToValue(treeNode, Course::class.java)
-    course.courseMode = if (courseMode != null) CourseMode.STUDENT else CourseMode.EDUCATOR
-    return course
+    return ProgressManager.getInstance().computeInNonCancelableSection<Course, Exception> {
+      val treeNode = readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
+      val courseMode = asText(treeNode.get("mode"))
+      val course = treeToValue(treeNode, Course::class.java)
+      course.courseMode = if (courseMode != null) CourseMode.STUDENT else CourseMode.EDUCATOR
+      return@computeInNonCancelableSection course
+    }
   }
 
   private fun ObjectMapper.readNode(configFileText: String): JsonNode =
