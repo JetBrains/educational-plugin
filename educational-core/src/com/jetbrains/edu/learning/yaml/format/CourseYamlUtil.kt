@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.util.StdConverter
 import com.intellij.lang.Language
-import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduNames.EDU
@@ -223,12 +222,6 @@ private class CourseBuilder(
 ) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {
-    return ProgressManager.getInstance().computeInNonCancelableSection<Course, Exception> {
-      createCourse()
-    }
-  }
-
-  private fun createCourse(): Course {
     val course = when (courseType?.replaceFirstChar { it.titlecaseChar() }) {
       CourseraNames.COURSE_TYPE -> {
         CourseraCourse().apply {
