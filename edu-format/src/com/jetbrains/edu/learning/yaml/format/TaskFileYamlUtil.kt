@@ -6,15 +6,15 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.EduFileErrorHighlightLevel
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.message
 import com.jetbrains.edu.learning.json.mixins.HighlightLevelValueFilter
 import com.jetbrains.edu.learning.json.mixins.TrueValueFilter
-import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.EDITABLE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.HIGHLIGHT_LEVEL
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.NAME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PLACEHOLDERS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VISIBLE
+import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 
 /**
  * Mixin class is used to deserialize [TaskFile] item.
@@ -54,7 +54,7 @@ open class TaskFileBuilder(
   @Suppress("unused") //used for deserialization
   private fun build(): TaskFile {
     if (name == null) {
-      formatError(EduCoreBundle.message("yaml.editor.invalid.file.without.name"))
+      formatError(message("yaml.editor.invalid.file.without.name"))
     }
     return createTaskFile()
   }

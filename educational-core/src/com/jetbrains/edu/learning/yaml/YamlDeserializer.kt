@@ -63,11 +63,17 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSettings.SECTION_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.TASK_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.MAPPER
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.REMOTE_MAPPER
-import com.jetbrains.edu.learning.yaml.errorHandling.*
+import com.jetbrains.edu.learning.yaml.errorHandling.InvalidConfigNotification
+import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
+import com.jetbrains.edu.learning.yaml.errorHandling.noDirForItemMessage
+import com.jetbrains.edu.learning.yaml.errorHandling.unknownConfigMessage
 import com.jetbrains.edu.learning.yaml.format.RemoteStudyItem
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LESSON
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TASK
+import com.jetbrains.edu.learning.yaml.errorHandling.InvalidYamlFormatException
+import com.jetbrains.edu.learning.yaml.errorHandling.formatError
+import com.jetbrains.edu.learning.yaml.errorHandling.unsupportedItemTypeMessage
 import org.jetbrains.annotations.NonNls
 
 /**

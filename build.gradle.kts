@@ -557,6 +557,7 @@ project(":edu-format") {
     compileOnly(group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8")
     compileOnly(group = "org.jetbrains", name = "annotations", version = "23.0.0")
     implementationWithoutKotlin(group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version = jacksonVersion)
+    implementationWithoutKotlin(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = jacksonVersion)
   }
 }
 

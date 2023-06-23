@@ -11,11 +11,11 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.StudyItem
-import com.jetbrains.edu.learning.yaml.errorHandling.formatError
-import com.jetbrains.edu.learning.yaml.errorHandling.unnamedItemAtMessage
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_NAME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TAGS
+import com.jetbrains.edu.learning.yaml.errorHandling.formatError
+import com.jetbrains.edu.learning.yaml.errorHandling.unnamedItemAtMessage
 
 /**
  * Mixin class is used to deserialize [Lesson] item.
