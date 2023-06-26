@@ -2,9 +2,7 @@ package com.jetbrains.edu.learning.taskDescription.ui.jcefSpecificQueries
 
 import com.intellij.ui.jcef.JBCefBrowserBase
 import com.intellij.ui.jcef.JBCefJSQuery
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.handler.CefLoadHandlerAdapter
