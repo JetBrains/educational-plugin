@@ -86,7 +86,7 @@ class CoursesProvidersSidePanel(private val myCoursesProvider: MyCoursesProvider
 
     val courseAction = ToolbarActionWrapper(EduCoreBundle.lazyMessage("course.dialog.create.course"), CCNewCourseAction(onOKAction = ::closeDialog))
     return createHyperlinkWithContextHelp(courseAction).apply {
-      border = JBUI.Borders.empty(12, 12)
+      border = JBUI.Borders.empty(12)
     }
   }
 

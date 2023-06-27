@@ -4,7 +4,7 @@ import com.intellij.openapi.extensions.ExtensionPointName
 
 /**
  * @property getProviders specifies the list of [CoursesPlatformProvider]. Each provider gives information for the tab on
- * [CoursesPanelWithTabs], e.g icon, list of courses.
+ * [CoursesPanelWithTabs], e.g. icon, list of courses.
  */
 interface CoursesPlatformProviderFactory {
 
