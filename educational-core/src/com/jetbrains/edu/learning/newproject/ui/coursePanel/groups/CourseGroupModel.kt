@@ -22,6 +22,8 @@ class CourseGroupModel {
   private val keyListener: KeyListener = SelectionKeyListener()
 
   var onSelection: () -> Unit = {}
+
+  // BACKCOMPACT: 2023.1
   var onClick: (Course) -> Boolean = { false }
 
   fun addCourseCard(cardComponent: CourseCardComponent) {

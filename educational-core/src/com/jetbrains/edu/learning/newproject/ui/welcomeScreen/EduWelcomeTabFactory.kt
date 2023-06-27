@@ -7,6 +7,7 @@ import com.intellij.openapi.wm.impl.welcomeScreen.TabbedWelcomeScreen.DefaultWel
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import javax.swing.JComponent
 
+// BACKCOMPACT: 2023.1
 class EduWelcomeTabFactory : WelcomeTabFactory {
   override fun createWelcomeTab(parentDisposable: Disposable): WelcomeScreenTab {
     return object : DefaultWelcomeScreenTab(EduCoreBundle.message("course.dialog.my.courses")) {
@@ -14,5 +15,9 @@ class EduWelcomeTabFactory : WelcomeTabFactory {
         return EduWelcomeTabPanel(parentDisposable)
       }
     }
+  }
+
+  override fun isApplicable(): Boolean {
+    return com.jetbrains.edu.learning.newproject.ui.welcomeScreen.isApplicable()
   }
 }
