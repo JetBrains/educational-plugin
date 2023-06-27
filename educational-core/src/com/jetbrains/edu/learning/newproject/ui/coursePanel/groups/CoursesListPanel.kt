@@ -74,6 +74,7 @@ abstract class CoursesListPanel : JPanel(BorderLayout()) {
     groupsComponent.setSelectionListener(processSelectionChanged)
   }
 
+  // BACKCOMPACT: 2023.1
   fun setClickListener(onClick: (Course) -> Boolean) {
     groupsComponent.setClickListener(onClick)
   }
