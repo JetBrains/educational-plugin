@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.newproject.coursesStorage
 
-import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.CourseMetaInfo
 
 interface CourseDeletedListener {
-  fun courseDeleted(course: Course)
+  fun courseDeleted(course: CourseMetaInfo)
 }

@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPanel
 import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.filters.CoursesSearchComponent
+import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.CourseMetaInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -84,7 +85,7 @@ abstract class CoursesPanel(
     showProgressState()
   }
 
-  open fun updateModelAfterCourseDeletedFromStorage(deletedCourse: Course) {
+  open fun updateModelAfterCourseDeletedFromStorage(deletedCourse: CourseMetaInfo) {
     updateModel(coursesGroups, null, true)
   }
 

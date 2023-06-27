@@ -61,7 +61,7 @@ class EduWelcomeTabPanel(parentDisposable: Disposable) : JBScrollPane() {
   private fun subscribeToCoursesStorageEvents(disposable: Disposable, updateModel: () -> Unit) {
     val connection = ApplicationManager.getApplication().messageBus.connect(disposable)
     connection.subscribe(CoursesStorage.COURSE_DELETED, object : CourseDeletedListener {
-      override fun courseDeleted(course: Course) {
+      override fun courseDeleted(course: CourseMetaInfo) {
         updateModel()
         showPanel()
       }
