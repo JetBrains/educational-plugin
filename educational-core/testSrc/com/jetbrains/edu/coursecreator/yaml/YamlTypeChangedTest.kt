@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator.yaml
 
-import com.jetbrains.edu.learning.placeholder.PlaceholderPainter
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -14,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
+import com.jetbrains.edu.learning.placeholder.PlaceholderPainter
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
@@ -75,17 +75,17 @@ class YamlTypeChangedTest : YamlTestCase() {
   }
 
   fun `test edu to coursera course`() {
-    testCourseTypeChanged(CourseraNames.COURSE_TYPE, CourseraCourse::class.java)
+    testCourseTypeChanged(CourseraNames.COURSE_TYPE.lowercase(), CourseraCourse::class.java)
   }
 
   fun `test edu to stepik course`() {
     project.putUserData(YAML_TEST_THROW_EXCEPTION, false)
-    testCourseTypeChanged(StepikNames.STEPIK_TYPE, StepikCourse::class.java)
+    testCourseTypeChanged(StepikNames.STEPIK_TYPE.lowercase(), StepikCourse::class.java)
   }
 
   fun `test edu to hyperskill course`() {
     project.putUserData(YAML_TEST_THROW_EXCEPTION, false)
-    testCourseTypeChanged(HYPERSKILL_TYPE, HyperskillCourse::class.java)
+    testCourseTypeChanged(HYPERSKILL_TYPE.lowercase(), HyperskillCourse::class.java)
   }
 
   fun `test edu to checkio failed`() {

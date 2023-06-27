@@ -7,13 +7,13 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
+import com.jetbrains.edu.learning.yaml.errorHandling.formatError
+import com.jetbrains.edu.learning.yaml.errorHandling.negativeLengthNotAllowedMessage
+import com.jetbrains.edu.learning.yaml.errorHandling.negativeOffsetNotAllowedMessage
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.DEPENDENCY
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LENGTH
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.OFFSET
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PLACEHOLDER_TEXT
-import com.jetbrains.edu.learning.yaml.errorHandling.formatError
-import com.jetbrains.edu.learning.yaml.errorHandling.negativeLengthNotAllowedMessage
-import com.jetbrains.edu.learning.yaml.errorHandling.negativeOffsetNotAllowedMessage
 
 @Suppress("unused") // used for yaml serialization
 @JsonPropertyOrder(OFFSET, LENGTH, PLACEHOLDER_TEXT, DEPENDENCY)
@@ -34,10 +34,12 @@ abstract class AnswerPlaceholderYamlMixin {
 }
 
 @JsonPOJOBuilder(withPrefix = "")
-open class AnswerPlaceholderBuilder(@JsonProperty(OFFSET) val offset: Int,
-                                    @JsonProperty(LENGTH) val length: Int,
-                                    @JsonProperty(PLACEHOLDER_TEXT) val placeholderText: String,
-                                    @JsonProperty(DEPENDENCY) val dependency: AnswerPlaceholderDependency?) {
+open class AnswerPlaceholderBuilder(
+  @JsonProperty(OFFSET) val offset: Int,
+  @JsonProperty(LENGTH) val length: Int,
+  @JsonProperty(PLACEHOLDER_TEXT) val placeholderText: String,
+  @JsonProperty(DEPENDENCY) val dependency: AnswerPlaceholderDependency?
+) {
   @Suppress("unused") // deserialization
   private fun build(): AnswerPlaceholder {
     return createPlaceholder()

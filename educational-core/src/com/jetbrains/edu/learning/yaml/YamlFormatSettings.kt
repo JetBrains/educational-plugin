@@ -14,7 +14,7 @@ object YamlFormatSettings {
   val COURSE_CONFIG = getLocalConfigFileName(EduNames.COURSE)
   val SECTION_CONFIG = getLocalConfigFileName(SECTION)
   val LESSON_CONFIG = getLocalConfigFileName(LESSON)
-val TASK_CONFIG = getLocalConfigFileName(TASK)
+  val TASK_CONFIG = getLocalConfigFileName(TASK)
 
   /**
    * @param itemKind Course/Section/Lesson/Task

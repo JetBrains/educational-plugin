@@ -11,8 +11,8 @@ fun formatError(message: String): Nothing = throw InvalidYamlFormatException(mes
 fun unsupportedItemTypeMessage(itemType: String, itemName: String = EduFormatNames.ITEM) = message(
   "yaml.editor.invalid.format.unsupported.type", itemName, itemType)
 
-fun unnamedItemAtMessage(position: Int) = message("yaml.editor.invalid.format.unnamed.item", position)
+fun unnamedItemAtMessage(position: Int): String = message("yaml.editor.invalid.format.unnamed.item", position)
 
-fun negativeLengthNotAllowedMessage() = message("yaml.editor.invalid.format.placeholders.negative.length")
+fun negativeLengthNotAllowedMessage(): String = message("yaml.editor.invalid.format.placeholders.negative.length")
 
-fun negativeOffsetNotAllowedMessage() = message("yaml.editor.invalid.format.placeholders.negative.offset")
+fun negativeOffsetNotAllowedMessage(): String = message("yaml.editor.invalid.format.placeholders.negative.offset")
