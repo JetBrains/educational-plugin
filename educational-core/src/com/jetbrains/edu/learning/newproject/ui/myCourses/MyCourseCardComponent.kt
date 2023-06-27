@@ -8,10 +8,10 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.GRAY_COLOR
+import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.CourseMetaInfo
 import com.jetbrains.edu.learning.projectView.ProgressUtil
 import java.awt.Component
 import java.awt.FlowLayout

@@ -12,12 +12,12 @@ import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory
-import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.onError
@@ -78,7 +78,9 @@ class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider() {
 
     selectedProject?.course?.let { courses.add(it) }
 
-    val coursesFromStorage = CoursesStorage.getInstance().state.courses.filter { it.type == HYPERSKILL && it.id != selectedProject?.id }
+    val coursesFromStorage = CoursesStorage.getInstance().state.courses
+      .filter { it.type == HYPERSKILL && it.id != selectedProject?.id }
+      .map { it.toCourse() }
     courses.addAll(coursesFromStorage)
 
     if (courses.isEmpty()) {
