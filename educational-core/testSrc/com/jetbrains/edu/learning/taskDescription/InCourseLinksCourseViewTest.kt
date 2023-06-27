@@ -42,7 +42,7 @@ class InCourseLinksCourseViewTest : CourseViewHeavyTestBase() {
 
     val projectView = createCourseAndChangeView(course, openFirstTask = false)
 
-    ToolWindowLinkHandler.processInCourseLink(project, url)
+    ToolWindowLinkHandler(project).process(url)
     PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
 
     val tree = projectView.currentProjectViewPane.tree

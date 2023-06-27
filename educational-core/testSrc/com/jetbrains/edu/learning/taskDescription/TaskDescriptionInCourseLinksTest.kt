@@ -66,7 +66,7 @@ class TaskDescriptionInCourseLinksTest : EduTestCase() {
   }
 
   private fun openInCourseLink(url: String, expectedPath: String?) {
-    ToolWindowLinkHandler.processInCourseLink(project, url)
+    ToolWindowLinkHandler(project).process(url)
     PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
 
     val selectedFile = project.selectedVirtualFile

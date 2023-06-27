@@ -9,7 +9,6 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.NavigatablePsiElement
 import com.intellij.util.io.URLUtil
@@ -35,20 +34,27 @@ open class ToolWindowLinkHandler(val project: Project) {
    * @return false to continue (for example open external link at task description), otherwise true
    */
   open fun process(url: String, referUrl: String? = null): Boolean {
-    when {
-      url.contains(TaskDescriptionLinkProtocol.PSI_ELEMENT.protocol) -> processPsiElementLink(project, url)
-      url.startsWith(TaskDescriptionLinkProtocol.COURSE.protocol) -> processInCourseLink(project, url)
-      url.startsWith(TaskDescriptionLinkProtocol.FILE.protocol) -> processFileLink(project, url)
-      else -> processExternalLink(url)
+    for ((protocol, processor) in INTERNAL_LINK_PROCESSORS) {
+      if (url.startsWith(protocol.protocol)) {
+        val urlPath = url.substringAfter(protocol.protocol)
+        processor(project, urlPath)
+        return true
+      }
     }
+    processExternalLink(url)
     return true
   }
 
   companion object {
     private val LOG = Logger.getInstance(ToolWindowLinkHandler::class.java)
 
-    fun processPsiElementLink(project: Project, url: String) {
-      val urlEncodedName = url.substringAfter(TaskDescriptionLinkProtocol.PSI_ELEMENT.protocol)
+    private val INTERNAL_LINK_PROCESSORS = mapOf(
+      TaskDescriptionLinkProtocol.PSI_ELEMENT to ::processPsiElementLink,
+      TaskDescriptionLinkProtocol.COURSE to ::processInCourseLink,
+      TaskDescriptionLinkProtocol.FILE to ::processFileLink,
+    )
+
+    private fun processPsiElementLink(project: Project, urlPath: String) {
       // Sometimes a user has to encode element reference because it contains invalid symbols like ` `.
       // For example, Java support produces `Foo#foo(int, int)` as reference for `foo` method in the following `Foo` class
       // ```
@@ -57,7 +63,7 @@ open class ToolWindowLinkHandler(val project: Project) {
       // }
       // ```
       //
-      val qualifiedName = URLUtil.decode(urlEncodedName)
+      val qualifiedName = urlPath.decode()
 
       runInEdt {
         runReadAction {
@@ -82,13 +88,13 @@ open class ToolWindowLinkHandler(val project: Project) {
       EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.PSI)
     }
 
-    fun processInCourseLink(project: Project, url: String) {
+    private fun processInCourseLink(project: Project, urlPath: String) {
       EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.IN_COURSE)
       val course = project.course ?: return
 
-      val parsedLink = parseInCourseLink(project, course, url)
+      val parsedLink = parseInCourseLink(project, course, urlPath)
       if (parsedLink == null) {
-        LOG.warn("Failed to find course item for `$url`")
+        LOG.warn("Failed to find course item for `${TaskDescriptionLinkProtocol.FILE.protocol}$urlPath`")
         return
       }
 
@@ -99,11 +105,10 @@ open class ToolWindowLinkHandler(val project: Project) {
       }
     }
 
-    fun processFileLink(project: Project, url: String) {
-      val urlWithoutProtocol = url.substringAfter(StandardFileSystems.FILE_PROTOCOL_PREFIX)
-      val file = project.courseDir.findFileByRelativePath(urlWithoutProtocol)
+    private fun processFileLink(project: Project, urlPath: String) {
+      val file = project.courseDir.findFileByRelativePath(urlPath)
       if (file == null) {
-        LOG.warn("Can't find file for url $url")
+        LOG.warn("Can't find file for url $urlPath")
       }
       else {
         navigateToFile(project, file)
@@ -119,7 +124,7 @@ open class ToolWindowLinkHandler(val project: Project) {
       EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.FILE)
     }
 
-    private fun parseInCourseLink(project: Project, course: Course, url: String): ParsedInCourseLink? {
+    private fun parseInCourseLink(project: Project, course: Course, urlPath: String): ParsedInCourseLink? {
 
       fun parseNextItem(container: StudyItem, remainingPath: String?): ParsedInCourseLink? {
         if (remainingPath == null) {
@@ -149,8 +154,7 @@ open class ToolWindowLinkHandler(val project: Project) {
         }
       }
 
-      val urlEncodedPath = url.substringAfter(TaskDescriptionLinkProtocol.COURSE.protocol)
-      val path = URLUtil.decode(urlEncodedPath)
+      val path = urlPath.decode()
       return parseNextItem(course, path)
     }
   }
@@ -179,3 +183,5 @@ open class ToolWindowLinkHandler(val project: Project) {
     }
   }
 }
+
+private fun String.decode(): String = URLUtil.decode(this)
