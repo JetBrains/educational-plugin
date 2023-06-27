@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.checker
 
+import com.intellij.execution.ExecutionException
 import com.intellij.execution.ExecutionListener
 import com.intellij.execution.ExecutionManager
 import com.intellij.execution.RunManager
@@ -18,6 +19,8 @@ import com.intellij.execution.testframework.sm.runner.SMTRunnerEventsListener
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
@@ -39,6 +42,9 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 object CheckUtils {
+
+  private val LOG: Logger = logger<CheckUtils>()
+
   val COMPILATION_ERRORS = listOf("Compilation failed", "Compilation error")
 
   val CONGRATULATIONS = EduFormatBundle.message("check.correct.solution")
@@ -115,55 +121,32 @@ object CheckUtils {
 
     testEventsListener?.let { connection.subscribe(SMTRunnerEventsListener.TEST_STATUS, it) }
 
-    val rootDisposable = Disposer.newDisposable()
     val latch = CountDownLatch(configurations.size)
-    var isConfigurationBroken = false
+    val context = Context(processListener, executionListener, latch)
+
+    var hasBrokenConfiguration = false
 
     runInEdt {
-      val environments = mutableListOf<ExecutionEnvironment>()
       connection.subscribe(
         ExecutionManager.EXECUTION_TOPIC,
-        CheckExecutionListener(DefaultRunExecutor.EXECUTOR_ID, environments, latch, executionListener)
+        CheckExecutionListener(DefaultRunExecutor.EXECUTOR_ID, context)
       )
 
       for (configuration in configurations) {
-        if (isConfigurationBroken) {
+        if (hasBrokenConfiguration) {
           latch.countDown()
           continue
         }
-        val runner = ProgramRunner.getRunner(DefaultRunExecutor.EXECUTOR_ID, configuration.configuration)
-        val env = ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), configuration).activeTarget().build()
 
-        if (runner == null || env.state == null) {
+        hasBrokenConfiguration = try {
+          val startedSuccessfully = configuration.startRunConfigurationExecution(context)
+          hasBrokenConfiguration || !startedSuccessfully
+        }
+        catch (e: Throwable) {
+          LOG.warn(e)
           latch.countDown()
-          isConfigurationBroken = true
-          continue
+          true
         }
-        @Suppress("UnstableApiUsage")
-        env.callback = ProgramRunner.Callback { descriptor ->
-          // Descriptor can be null in some cases.
-          // For example, IntelliJ Rust's test runner provides null here if compilation fails
-          if (descriptor == null) {
-            latch.countDown()
-            return@Callback
-          }
-
-          Disposer.register(rootDisposable, Disposable {
-            ExecutionManagerImpl.stopProcess(descriptor)
-          })
-          val processHandler = descriptor.processHandler
-          if (processHandler != null) {
-            processHandler.addProcessListener(object : ProcessAdapter() {
-              override fun processTerminated(event: ProcessEvent) {
-                latch.countDown()
-              }
-            })
-            processListener?.let { processHandler.addProcessListener(it) }
-          }
-        }
-
-        environments.add(env)
-        runner.execute(env)
       }
     }
 
@@ -172,58 +155,107 @@ object CheckUtils {
       if (result) break
     }
     if (indicator.isCanceled) {
-      Disposer.dispose(rootDisposable)
+      Disposer.dispose(context)
     }
-    return !isConfigurationBroken
+    return !hasBrokenConfiguration
+  }
+
+  /**
+   * Returns `true` if configuration execution is started successfully, `false` otherwise
+   */
+  @Throws(ExecutionException::class)
+  private fun RunnerAndConfigurationSettings.startRunConfigurationExecution(context: Context): Boolean {
+    val runner = ProgramRunner.getRunner(DefaultRunExecutor.EXECUTOR_ID, configuration)
+    val env = ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), configuration).activeTarget().build()
+
+    if (runner == null || env.state == null) {
+      context.latch.countDown()
+      return false
+    }
+    @Suppress("UnstableApiUsage")
+    env.callback = ProgramRunner.Callback { descriptor ->
+      // Descriptor can be null in some cases.
+      // For example, IntelliJ Rust's test runner provides null here if compilation fails
+      if (descriptor == null) {
+        context.latch.countDown()
+        return@Callback
+      }
+
+      Disposer.register(context, Disposable {
+        ExecutionManagerImpl.stopProcess(descriptor)
+      })
+      val processHandler = descriptor.processHandler
+      if (processHandler != null) {
+        processHandler.addProcessListener(object : ProcessAdapter() {
+          override fun processTerminated(event: ProcessEvent) {
+            context.latch.countDown()
+          }
+        })
+        context.processListener?.let { processHandler.addProcessListener(it) }
+      }
+    }
+
+    context.environments.add(env)
+    runner.execute(env)
+    return true
   }
 
   private class CheckExecutionListener(
     private val executorId: String,
-    private val environments: List<ExecutionEnvironment>,
-    private val latch: CountDownLatch,
-    private val delegate: ExecutionListener?
+    private val context: Context,
   ) : ExecutionListener {
     override fun processStartScheduled(executorId: String, env: ExecutionEnvironment) {
       checkAndExecute(executorId, env) {
-        delegate?.processStartScheduled(executorId, env)
+        context.executionListener?.processStartScheduled(executorId, env)
       }
     }
 
     override fun processNotStarted(executorId: String, env: ExecutionEnvironment) {
       checkAndExecute(executorId, env) {
-        latch.countDown()
-        delegate?.processNotStarted(executorId, env)
+        context.latch.countDown()
+        context.executionListener?.processNotStarted(executorId, env)
       }
     }
 
     override fun processStarting(executorId: String, env: ExecutionEnvironment) {
       checkAndExecute(executorId, env) {
-        delegate?.processStarting(executorId, env)
+        context.executionListener?.processStarting(executorId, env)
       }
     }
 
     override fun processStarted(executorId: String, env: ExecutionEnvironment, handler: ProcessHandler) {
       checkAndExecute(executorId, env) {
-        delegate?.processStarted(executorId, env, handler)
+        context.executionListener?.processStarted(executorId, env, handler)
       }
     }
 
     override fun processTerminating(executorId: String, env: ExecutionEnvironment, handler: ProcessHandler) {
       checkAndExecute(executorId, env) {
-        delegate?.processTerminating(executorId, env, handler)
+        context.executionListener?.processTerminating(executorId, env, handler)
       }
     }
 
     override fun processTerminated(executorId: String, env: ExecutionEnvironment, handler: ProcessHandler, exitCode: Int) {
       checkAndExecute(executorId, env) {
-        delegate?.processTerminated(executorId, env, handler, exitCode)
+        context.executionListener?.processTerminated(executorId, env, handler, exitCode)
       }
     }
 
     private fun checkAndExecute(executorId: String, env: ExecutionEnvironment, action: () -> Unit) {
-      if (this.executorId == executorId && env in environments) {
+      if (this.executorId == executorId && env in context.environments) {
         action()
       }
     }
+  }
+
+  private class Context(
+    val processListener: ProcessListener?,
+    val executionListener: ExecutionListener?,
+    val latch: CountDownLatch
+  ) : Disposable {
+
+    val environments: MutableList<ExecutionEnvironment> = mutableListOf()
+
+    override fun dispose() {}
   }
 }
