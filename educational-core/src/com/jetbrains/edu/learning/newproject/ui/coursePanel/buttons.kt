@@ -20,9 +20,9 @@ import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.marketplace.MarketplaceListedCoursesIdsLoader
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
+import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.isFromMyCoursesPage
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
@@ -60,7 +60,7 @@ class OpenCourseButton : CourseButtonBase() {
   }
 
   private fun processMissingCourseOpening(course: Course, coursePath: String) {
-    val isFromMyCoursesPage = course is CourseMetaInfo
+    val isFromMyCoursesPage = isFromMyCoursesPage(course)
     val message = if (isFromMyCoursesPage) {
       EduCoreBundle.message("course.dialog.my.courses.remove.course")
     }
