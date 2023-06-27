@@ -2,40 +2,18 @@
 
 package com.jetbrains.edu.learning.yaml.format
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.fasterxml.jackson.annotation.*
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.util.StdConverter
-import com.intellij.lang.Language
-import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduNames.EDU
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
-import com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_TYPE
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_COURSE_TYPE
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
-import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.EDU
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.MARKETPLACE
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYCHARM
-import com.jetbrains.edu.learning.courseFormat.StudyItem
-import com.jetbrains.edu.learning.courseFormat.Vendor
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.coursera.CourseraCourse
-import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.json.mixins.IntValueFilter
 import com.jetbrains.edu.learning.json.mixins.NotImplementedInMixin
-import com.jetbrains.edu.learning.marketplace.MARKETPLACE
-import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_TYPE
-import com.jetbrains.edu.learning.stepik.course.StepikCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.errorHandling.unnamedItemAtMessage
 import com.jetbrains.edu.learning.yaml.errorHandling.unsupportedItemTypeMessage
@@ -72,6 +50,12 @@ import java.util.*
 @JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, VENDOR, IS_PRIVATE, PROGRAMMING_LANGUAGE,
                    PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, SOLUTIONS_HIDDEN, CONTENT, FEEDBACK_LINK, TAGS, ENVIRONMENT_SETTINGS)
 @JsonDeserialize(builder = CourseBuilder::class)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY,
+  property = TYPE, defaultImpl = EduCourse::class, visible = true)
+@JsonSubTypes(
+  JsonSubTypes.Type(EduCourse::class, name = "edu"),
+  JsonSubTypes.Type(EduCourse::class, name = "marketplace")
+)
 abstract class CourseYamlMixin {
   val itemType: String
     @JsonSerialize(converter = CourseTypeSerializationConverter::class)
@@ -126,25 +110,15 @@ abstract class CourseYamlMixin {
   @JsonProperty(ENVIRONMENT_SETTINGS)
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
   lateinit var environmentSettings: Map<String, String>
-}
-
-@Suppress("unused", "LateinitVarOverridesLateinitVar") // used for yaml serialization
-abstract class CourseraCourseYamlMixin : CourseYamlMixin() {
-  @JsonProperty(SUBMIT_MANUALLY)
-  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-  private var submitManually = false
 
   @JsonIgnore
-  override lateinit var feedbackLink: String
-
-  @JsonIgnore
-  override lateinit var contentTags: List<String>
+  private var programmingLanguage: String? = null
 }
 
 private class ProgrammingLanguageConverter : StdConverter<String, String>() {
   override fun convert(languageId: String): String {
-    return Language.findLanguageByID(languageId)?.displayName
-           ?: formatError(EduCoreBundle.message("yaml.editor.invalid.cannot.save", languageId))
+    return Language.findLanguageByID(languageId)
+           ?: formatError(message("yaml.editor.invalid.cannot.save", languageId))
   }
 }
 
@@ -179,17 +153,6 @@ abstract class EduCourseRemoteInfoYamlMixin : RemoteStudyItemYamlMixin() {
   private val generatedEduId: String? = null
 }
 
-/**
- * Mixin class is used to deserialize remote information of [CodeforcesCourse] item.
- */
-@Suppress("unused") // used for json serialization
-@JsonPropertyOrder(TYPE, ID, UPDATE_DATE)
-abstract class CodeforcesCourseRemoteInfoYamlMixin : RemoteStudyItemYamlMixin() {
-
-  val itemType: String
-    @JsonProperty(TYPE)
-    get() = throw NotImplementedInMixin()
-}
 
 private class TopLevelLessonsSectionSerializer : StdConverter<List<Int>, Int?>() {
   override fun convert(value: List<Int>?) = value?.firstOrNull()
@@ -200,7 +163,7 @@ private class TopLevelLessonsSectionDeserializer : StdConverter<Int, List<Int>>(
 }
 
 @JsonPOJOBuilder(withPrefix = "")
-private class CourseBuilder(
+open class CourseBuilder(
   @JsonProperty(TYPE) val courseType: String?,
   @JsonProperty(TITLE) val title: String,
   @JsonProperty(SUMMARY) val summary: String,
@@ -222,34 +185,7 @@ private class CourseBuilder(
 ) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {
-    val course = when (courseType?.replaceFirstChar { it.titlecaseChar() }) {
-      CourseraNames.COURSE_TYPE -> {
-        CourseraCourse().apply {
-          submitManually = courseraSubmitManually ?: false
-        }
-      }
-
-      CHECKIO_TYPE -> CheckiOCourse()
-      HYPERSKILL_TYPE -> HyperskillCourse()
-      STEPIK_TYPE -> StepikCourse()
-      CODEFORCES_COURSE_TYPE -> {
-        CodeforcesCourse().apply {
-          endDateTime = codeforcesEndDateTime
-          programTypeId = codeforcesProgramTypeId
-        }
-      }
-
-      EDU -> EduCourse()
-      MARKETPLACE -> {
-        EduCourse().apply {
-          isMarketplace = true
-          generatedEduId = yamlGeneratedEduId
-        }
-      }
-
-      null -> EduCourse()
-      else -> formatError(unsupportedItemTypeMessage(courseType, EduNames.COURSE))
-    }
+    val course = makeCourse() ?: formatError(unsupportedItemTypeMessage(courseType ?: "", EduFormatNames.COURSE))
     course.apply {
       name = title
       description = summary
@@ -262,36 +198,10 @@ private class CourseBuilder(
       contentTags = yamlContentTags
       environmentSettings = yamlEnvironmentSettings
 
-      // for C++ there are two languages with the same display name, and we have to filter out the one we have configurator for
-      val languages = Language.getRegisteredLanguages()
-        .filter { it.displayName == displayProgrammingLanguageName }
-        .filter { EduConfiguratorManager.findConfigurator(itemType, environment, it) != null }
-      if (languages.isEmpty()) {
-        formatError(EduCoreBundle.message("yaml.editor.invalid.unsupported.language", displayProgrammingLanguageName))
-      }
+      languageId = Language.findLanguageByName(displayProgrammingLanguageName)
+                      ?: formatError(message("yaml.editor.invalid.unsupported.language", displayProgrammingLanguageName))
+      languageVersion = programmingLanguageVersion
 
-      if (languages.size > 1) {
-        error("Multiple configurators for language with name: $displayProgrammingLanguageName")
-      }
-
-      languageId = languages.first().id
-
-      val supportedLanguageVersions = configurator?.courseBuilder?.getSupportedLanguageVersions() ?: formatError(
-        EduCoreBundle.message("yaml.editor.invalid.unsupported.language", displayProgrammingLanguageName)
-      )
-      if (programmingLanguageVersion != null) {
-        if (!supportedLanguageVersions.contains(programmingLanguageVersion)) {
-          formatError(
-            EduCoreBundle.message(
-              "yaml.editor.invalid.unsupported.language.with.version", displayProgrammingLanguageName,
-              programmingLanguageVersion
-            )
-          )
-        }
-        else {
-          languageVersion = programmingLanguageVersion
-        }
-      }
       val newItems = content.mapIndexed { index, title ->
         if (title == null) {
           formatError(unnamedItemAtMessage(index + 1))
@@ -304,52 +214,25 @@ private class CourseBuilder(
     }
 
     val locale = Locale.getISOLanguages().find { displayLanguageByCode(it) == language } ?: formatError(
-      EduCoreBundle.message("yaml.editor.invalid.format.unknown.field", language)
+      message("yaml.editor.invalid.format.unknown.field", language)
     )
     course.languageCode = Locale(locale).language
+    return course
+  }
+
+  open fun makeCourse(): Course? {
+    val course = when (courseType?.replaceFirstChar { it.titlecaseChar() }) {
+      MARKETPLACE -> {
+        EduCourse().apply {
+          isMarketplace = true
+          generatedEduId = yamlGeneratedEduId
+        }
+      }
+      EDU, null -> EduCourse()
+      else -> formatError(unsupportedItemTypeMessage(courseType, EduFormatNames.COURSE))
+    }
     return course
   }
 }
 
 private fun displayLanguageByCode(languageCode: String) = Locale(languageCode).getDisplayLanguage(Locale.ENGLISH)
-
-class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>(project) {
-  override fun applyChanges(existingItem: Course, deserializedItem: Course) {
-    super.applyChanges(existingItem, deserializedItem)
-    existingItem.name = deserializedItem.name
-    existingItem.description = deserializedItem.description
-    existingItem.languageCode = deserializedItem.languageCode
-    existingItem.environment = deserializedItem.environment
-    existingItem.solutionsHidden = deserializedItem.solutionsHidden
-    existingItem.vendor = deserializedItem.vendor
-    existingItem.feedbackLink = deserializedItem.feedbackLink
-    existingItem.isMarketplacePrivate = deserializedItem.isMarketplacePrivate
-    existingItem.languageId = deserializedItem.languageId
-    existingItem.languageVersion = deserializedItem.languageVersion
-    if (deserializedItem is CourseraCourse && existingItem is CourseraCourse) {
-      existingItem.submitManually = deserializedItem.submitManually
-    }
-    if (deserializedItem is CodeforcesCourse && existingItem is CodeforcesCourse) {
-      existingItem.endDateTime = deserializedItem.endDateTime
-      existingItem.programTypeId = deserializedItem.programTypeId
-    }
-  }
-}
-
-class RemoteEduCourseChangeApplier : RemoteInfoChangeApplierBase<EduCourse>() {
-  override fun applyChanges(existingItem: EduCourse, deserializedItem: EduCourse) {
-    super.applyChanges(existingItem, deserializedItem)
-    existingItem.sectionIds = deserializedItem.sectionIds
-    existingItem.marketplaceCourseVersion = deserializedItem.marketplaceCourseVersion
-    existingItem.generatedEduId = deserializedItem.generatedEduId
-  }
-}
-
-class RemoteHyperskillChangeApplier : RemoteInfoChangeApplierBase<HyperskillCourse>() {
-  override fun applyChanges(existingItem: HyperskillCourse, deserializedItem: HyperskillCourse) {
-    existingItem.hyperskillProject = deserializedItem.hyperskillProject
-    existingItem.stages = deserializedItem.stages
-    existingItem.taskToTopics = deserializedItem.taskToTopics
-    existingItem.updateDate = deserializedItem.updateDate
-  }
-}

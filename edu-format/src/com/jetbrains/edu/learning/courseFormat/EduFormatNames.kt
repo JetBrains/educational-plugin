@@ -2,7 +2,9 @@ package com.jetbrains.edu.learning.courseFormat
 
 object EduFormatNames {
   const val MARKETPLACE = "Marketplace"
+  const val EDU = "Edu"
 
+  const val COURSE = "course"
   const val SECTION = "section"
   const val LESSON = "lesson"
   const val FRAMEWORK = "framework"

@@ -9,12 +9,12 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.message
 import com.jetbrains.edu.learning.json.mixins.HighlightLevelValueFilter
 import com.jetbrains.edu.learning.json.mixins.TrueValueFilter
+import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.EDITABLE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.HIGHLIGHT_LEVEL
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.NAME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PLACEHOLDERS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VISIBLE
-import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 
 /**
  * Mixin class is used to deserialize [TaskFile] item.

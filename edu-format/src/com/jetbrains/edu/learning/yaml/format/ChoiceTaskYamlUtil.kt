@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.json.mixins.FeedbackCorrectFilter
 import com.jetbrains.edu.learning.json.mixins.FeedbackIncorrectFilter
 import com.jetbrains.edu.learning.json.mixins.QuizHeaderFilter
+import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_CORRECT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_INCORRECT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_LINK
@@ -25,7 +26,6 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.OPTIONS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.QUIZ_HEADER
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TAGS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
-import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 
 @Suppress("unused") // used for yaml serialization
 @JsonPropertyOrder(TYPE, IS_MULTIPLE_CHOICE, OPTIONS, FEEDBACK_CORRECT, FEEDBACK_INCORRECT, QUIZ_HEADER, FILES, FEEDBACK_LINK, TAGS)

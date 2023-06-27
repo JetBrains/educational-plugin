@@ -3,6 +3,8 @@ package com.jetbrains.edu.learning.yaml.format
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.jetbrains.edu.learning.json.mixins.NotImplementedInMixin
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.END_DATE_TIME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT
@@ -17,6 +19,7 @@ import java.time.ZonedDateTime
 
 @Suppress("unused", "LateinitVarOverridesLateinitVar") // used for yaml serialization
 @JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, PROGRAMMING_LANGUAGE, PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, CONTENT, END_DATE_TIME, PROGRAM_TYPE_ID)
+@JsonDeserialize(builder = RemoteCourseBuilder::class)
 abstract class CodeforcesCourseYamlMixin : CourseYamlMixin() {
   @JsonProperty(END_DATE_TIME)
   private var endDateTime: ZonedDateTime? = null
@@ -29,4 +32,16 @@ abstract class CodeforcesCourseYamlMixin : CourseYamlMixin() {
 
   @JsonIgnore
   override lateinit var contentTags: List<String>
+}
+
+/**
+ * Mixin class is used to deserialize remote information of [CodeforcesCourse] item.
+ */
+@Suppress("unused") // used for json serialization
+@JsonPropertyOrder(TYPE, YamlMixinNames.ID, YamlMixinNames.UPDATE_DATE)
+abstract class CodeforcesCourseRemoteInfoYamlMixin : RemoteStudyItemYamlMixin() {
+
+  val itemType: String
+    @JsonProperty(TYPE)
+    get() = throw NotImplementedInMixin()
 }

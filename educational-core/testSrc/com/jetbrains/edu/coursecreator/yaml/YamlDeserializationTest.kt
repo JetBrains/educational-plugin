@@ -99,7 +99,7 @@ class YamlDeserializationTest : YamlTestCase() {
     val firstLesson = "the first lesson"
     val secondLesson = "the second lesson"
     val yamlContent = """
-      |type: ${CourseraNames.COURSE_TYPE}
+      |type: ${CourseraNames.COURSE_TYPE.lowercase()}
       |title: $name
       |language: $language
       |summary: |-
@@ -127,7 +127,7 @@ class YamlDeserializationTest : YamlTestCase() {
     val firstLesson = "the first lesson"
     val secondLesson = "the second lesson"
     val yamlContent = """
-      |type: ${HYPERSKILL_TYPE}
+      |type: ${HYPERSKILL_TYPE.lowercase()}
       |title: $name
       |language: $language
       |summary: |-
@@ -206,7 +206,7 @@ class YamlDeserializationTest : YamlTestCase() {
     val programmingLanguage = "Plain text"
     val programTypeId = "1000"
     val yamlContent = """
-      |type: ${CodeforcesNames.CODEFORCES_COURSE_TYPE}
+      |type: ${CodeforcesNames.CODEFORCES}
       |title: $name
       |language: English
       |summary: |-
@@ -226,7 +226,7 @@ class YamlDeserializationTest : YamlTestCase() {
     val name = "Test Course"
     val programmingLanguage = "Plain text"
     val yamlContent = """
-      |type: ${CodeforcesNames.CODEFORCES_COURSE_TYPE}
+      |type: ${CodeforcesNames.CODEFORCES}
       |title: $name
       |language: English
       |summary: |-
@@ -883,7 +883,7 @@ class YamlDeserializationTest : YamlTestCase() {
     val firstLesson = "the first lesson"
     val secondLesson = "the second lesson"
     val yamlContent = """
-      |type: ${CourseraNames.COURSE_TYPE}
+      |type: ${CourseraNames.COURSE_TYPE.lowercase()}
       |submit_manually: true
       |title: $name
       |language: $language
