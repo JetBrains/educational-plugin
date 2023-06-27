@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.intellij.ide.actions.QualifiedNameProvider
+import com.intellij.ide.actions.ShowSettingsUtilImpl
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runReadAction
@@ -10,6 +11,7 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.psi.NavigatablePsiElement
 import com.intellij.util.io.URLUtil
 import com.jetbrains.edu.learning.EduBrowser
@@ -52,6 +54,8 @@ open class ToolWindowLinkHandler(val project: Project) {
       TaskDescriptionLinkProtocol.PSI_ELEMENT to ::processPsiElementLink,
       TaskDescriptionLinkProtocol.COURSE to ::processInCourseLink,
       TaskDescriptionLinkProtocol.FILE to ::processFileLink,
+      TaskDescriptionLinkProtocol.SETTINGS to ::processSettingsLink,
+      TaskDescriptionLinkProtocol.TOOL_WINDOW to ::processToolWindowLink
     )
 
     private fun processPsiElementLink(project: Project, urlPath: String) {
@@ -156,6 +160,20 @@ open class ToolWindowLinkHandler(val project: Project) {
 
       val path = urlPath.decode()
       return parseNextItem(course, path)
+    }
+
+    private fun processToolWindowLink(project: Project, urlPath: String) {
+      val toolWindowId = urlPath.decode()
+      runInEdt {
+        ToolWindowManager.getInstance(project).getToolWindow(toolWindowId)?.show()
+      }
+    }
+
+    private fun processSettingsLink(project: Project, urlPath: String) {
+      val configurableId = urlPath.decode()
+      runInEdt {
+        ShowSettingsUtilImpl.showSettingsDialog(project, configurableId, null)
+      }
     }
   }
 
