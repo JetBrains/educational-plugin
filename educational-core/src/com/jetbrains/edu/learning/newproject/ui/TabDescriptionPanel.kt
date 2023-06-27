@@ -20,7 +20,7 @@ import javax.swing.ScrollPaneConstants
 private const val LEFT_RIGHT_OFFSET = 13
 private const val TOP_LOGIN_OFFSET = 8
 private const val BOTTOM_LOGIN_OFFSET = 10
-private const val TOP_BOTTOM_INFO_OFFSET = 13
+private const val INFO_OFFSET = 13
 
 class TabDescriptionPanel(tabDescription: String) : NonOpaquePanel() {
 
@@ -28,7 +28,7 @@ class TabDescriptionPanel(tabDescription: String) : NonOpaquePanel() {
     layout = BorderLayout()
 
     val infoPanel = GrayTextHtmlPanel(tabDescription)
-    infoPanel.border = JBUI.Borders.empty(TOP_BOTTOM_INFO_OFFSET, LEFT_RIGHT_OFFSET)
+    infoPanel.border = JBUI.Borders.empty(INFO_OFFSET)
     val scrollPane = JBScrollPane(infoPanel).apply {
       verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER
       horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
