@@ -43,6 +43,7 @@ import javax.swing.SwingConstants
 private const val EMPTY = "empty"
 private const val MY_COURSES_PANEL = "my-courses"
 
+// BACKCOMPACT: 2023.1
 class EduWelcomeTabPanel(parentDisposable: Disposable) : JBScrollPane() {
   private val cardLayout: CardLayout = CardLayout()
   private val mainPanel = JPanel(cardLayout)

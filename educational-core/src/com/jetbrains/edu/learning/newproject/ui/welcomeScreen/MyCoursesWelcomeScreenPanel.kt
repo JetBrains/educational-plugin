@@ -40,6 +40,7 @@ import javax.swing.JComponent
 import javax.swing.JPanel
 
 
+// BACKCOMPACT: 2023.1
 class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout()) {
   private val coursesListPanel = MyCoursesOnWelcomeScreenList()
   private val coursesFilterComponent: CoursesFilterComponent = CoursesFilterComponent(
