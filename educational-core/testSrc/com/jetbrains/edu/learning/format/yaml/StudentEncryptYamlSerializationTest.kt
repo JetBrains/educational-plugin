@@ -6,8 +6,9 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.json.encrypt.AES256
+import com.jetbrains.edu.learning.json.encrypt.EncryptionModule
 import com.jetbrains.edu.learning.json.encrypt.TEST_AES_KEY
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import com.jetbrains.edu.learning.yaml.YamlMapperBase
 
 class StudentEncryptYamlSerializationTest : EduTestCase() {
 
@@ -146,7 +147,9 @@ class StudentEncryptYamlSerializationTest : EduTestCase() {
   }
 
   private fun doTest(item: StudyItem, expected: String) {
-    val actual = YamlFormatSynchronizer.STUDENT_MAPPER_WITH_ENCRYPTION.writeValueAsString(item)
+    val mapper = YamlMapperBase.TEST_STUDENT_MAPPER_WITH_ENCRYPTION
+    mapper.registerModule(EncryptionModule(TEST_AES_KEY))
+    val actual = mapper.writeValueAsString(item)
     assertEquals(expected, actual)
   }
 }
