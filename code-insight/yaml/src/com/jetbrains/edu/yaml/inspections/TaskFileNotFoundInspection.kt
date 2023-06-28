@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.getContainingTask
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.yaml.YamlLoader
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VISIBLE
@@ -30,7 +31,7 @@ import java.io.IOException
 class TaskFileNotFoundInspection : UnresolvedFileReferenceInspection() {
 
   override val pattern: PsiElementPattern.Capture<YAMLScalar> get() = EduYamlTaskFilePathReferenceProvider.PSI_PATTERN
-  override val supportedConfigs: List<String> = listOf(YamlFormatSettings.TASK_CONFIG)
+  override val supportedConfigs: List<String> = listOf(YamlConfigSettings.TASK_CONFIG)
 
   override fun registerProblem(holder: ProblemsHolder, element: YAMLScalar) {
     val path = element.textValue

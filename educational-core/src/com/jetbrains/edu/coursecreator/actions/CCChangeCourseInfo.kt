@@ -10,7 +10,7 @@ import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.messages.EduCoreBundle.lazyMessage
-import com.jetbrains.edu.learning.yaml.configFileName
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
 
 class CCChangeCourseInfo : DumbAwareAction(
   lazyMessage("action.edit.course.information.text"),

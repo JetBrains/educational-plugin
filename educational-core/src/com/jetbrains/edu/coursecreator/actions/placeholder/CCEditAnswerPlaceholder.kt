@@ -6,7 +6,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
-import com.jetbrains.edu.learning.yaml.configFileName
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
 import org.jetbrains.annotations.NonNls
 
 open class CCEditAnswerPlaceholder : CCAnswerPlaceholderAction() {

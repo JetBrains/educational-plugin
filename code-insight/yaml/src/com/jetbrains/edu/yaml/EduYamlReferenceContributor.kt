@@ -21,10 +21,10 @@ import com.jetbrains.edu.codeInsight.inFileWithName
 import com.jetbrains.edu.codeInsight.psiElement
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.LESSON_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.SECTION_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.TASK_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.COURSE_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.LESSON_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.SECTION_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.TASK_CONFIG
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FILES
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.NAME

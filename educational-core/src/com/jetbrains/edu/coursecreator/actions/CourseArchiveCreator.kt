@@ -41,7 +41,7 @@ import com.jetbrains.edu.learning.json.mixins.*
 import com.jetbrains.edu.learning.json.setDateFormat
 import com.jetbrains.edu.learning.marketplace.updateCourseItems
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.TASK_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.TASK_CONFIG
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import java.io.File

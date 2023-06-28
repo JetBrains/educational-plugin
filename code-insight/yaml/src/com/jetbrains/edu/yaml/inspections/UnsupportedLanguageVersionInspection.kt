@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.messages.EduFormatBundle
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.isEduYamlProject
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
@@ -22,7 +22,7 @@ import org.jetbrains.yaml.psi.YamlPsiElementVisitor
 class UnsupportedLanguageVersionInspection : LocalInspectionTool() {
 
   override fun processFile(file: PsiFile, manager: InspectionManager): List<ProblemDescriptor> {
-    if (!file.project.isEduYamlProject() || file.name != YamlFormatSettings.COURSE_CONFIG) return emptyList()
+    if (!file.project.isEduYamlProject() || file.name != YamlConfigSettings.COURSE_CONFIG) return emptyList()
     return super.processFile(file, manager)
   }
 
@@ -50,7 +50,7 @@ class UnsupportedLanguageVersionInspection : LocalInspectionTool() {
   }
 
   val pattern: PsiElementPattern.Capture<YAMLScalar> = psiElement<YAMLScalar>()
-    .inFileWithName(YamlFormatSettings.COURSE_CONFIG)
+    .inFileWithName(YamlConfigSettings.COURSE_CONFIG)
     .withParent(
       keyValueWithName(YamlMixinNames.PROGRAMMING_LANGUAGE_VERSION)
     )

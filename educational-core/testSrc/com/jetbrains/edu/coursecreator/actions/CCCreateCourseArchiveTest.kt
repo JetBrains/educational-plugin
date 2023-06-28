@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.setUpPluginDependencies
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
-import com.jetbrains.edu.learning.yaml.configFileName
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
 import java.text.SimpleDateFormat
 import java.util.*
 

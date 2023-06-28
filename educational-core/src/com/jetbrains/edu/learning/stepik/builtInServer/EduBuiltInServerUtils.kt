@@ -11,10 +11,10 @@ import com.intellij.util.PathUtil
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.invokeLater
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.COURSE_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlDeepLoader.loadRemoteInfo
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlMapper
 import java.io.File
 

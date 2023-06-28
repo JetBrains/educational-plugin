@@ -6,12 +6,13 @@ import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.StudyItem
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.findTask
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.testAction
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
 
 class YamlChangedAfterEventTest : YamlTestCase() {
   fun `test hyperskill framework lesson navigation with learner created file`() {

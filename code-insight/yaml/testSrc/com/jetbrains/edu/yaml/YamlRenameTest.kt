@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.findTask
-import com.jetbrains.edu.learning.yaml.configFileName
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
 
 class YamlRenameTest : YamlCodeInsightTest() {
 

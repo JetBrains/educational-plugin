@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeContent
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
@@ -140,10 +141,10 @@ object YamlLoader {
     val itemDir = configFile.parent ?: error(EduCoreBundle.message("yaml.editor.invalid.format.containing.item.dir.not.found", name))
     val course = StudyTaskManager.getInstance(project).course ?: return null
     return when (name) {
-      YamlFormatSettings.COURSE_CONFIG -> course
-      YamlFormatSettings.SECTION_CONFIG -> itemDir.getSection(project)
-      YamlFormatSettings.LESSON_CONFIG -> itemDir.getLesson(project)
-      YamlFormatSettings.TASK_CONFIG -> itemDir.getTask(project)
+      YamlConfigSettings.COURSE_CONFIG -> course
+      YamlConfigSettings.SECTION_CONFIG -> itemDir.getSection(project)
+      YamlConfigSettings.LESSON_CONFIG -> itemDir.getLesson(project)
+      YamlConfigSettings.TASK_CONFIG -> itemDir.getTask(project)
       else -> loadingError(unknownConfigMessage(name))
     }
   }

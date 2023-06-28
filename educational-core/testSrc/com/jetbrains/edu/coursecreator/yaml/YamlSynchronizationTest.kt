@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.yaml.YamlTestCase
 
@@ -31,7 +32,7 @@ class YamlSynchronizationTest : YamlTestCase() {
     val section = StudyTaskManager.getInstance(project).course!!.sections.first()
     val lesson = section.lessons.first()
     val task = lesson.taskList.first()
-    val taskConfig = task.getDir(project.courseDir)?.findChild(YamlFormatSettings.TASK_CONFIG)!!
+    val taskConfig = task.getDir(project.courseDir)?.findChild(YamlConfigSettings.TASK_CONFIG)!!
     runWriteAction { VfsUtil.saveText(taskConfig, "invalid text") }
     StudyTaskManager.getInstance(project).course = null
 
@@ -44,7 +45,7 @@ class YamlSynchronizationTest : YamlTestCase() {
 
     // check that config file wasn't overwritten
     val taskDir = loadedLesson!!.getDir(project.courseDir)?.findChild("task1")
-    val loadedTaskConfig = taskDir?.findChild(YamlFormatSettings.TASK_CONFIG)!!
+    val loadedTaskConfig = taskDir?.findChild(YamlConfigSettings.TASK_CONFIG)!!
     val loadedTaskConfigDocument = FileDocumentManager.getInstance().getDocument(loadedTaskConfig)!!
     assertEquals("invalid text", loadedTaskConfigDocument.text)
   }

@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.authUtils.OAuthUtils.isBuiltinPortValid
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.yaml.YamlMapper
@@ -122,7 +123,7 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
   private fun deserializeCourse(projectPath: String): Course? {
     val projectFile = File(PathUtil.toSystemDependentName(projectPath))
     val projectDir = VfsUtil.findFile(projectFile.toPath(), true) ?: return null
-    val courseConfig = projectDir.findChild(YamlFormatSettings.COURSE_CONFIG) ?: return null
+    val courseConfig = projectDir.findChild(YamlConfigSettings.COURSE_CONFIG) ?: return null
     return runReadAction {
       YamlDeserializer.deserializeItem(courseConfig.name, YamlMapper.MAPPER, VfsUtil.loadText(courseConfig)) as? Course
     }

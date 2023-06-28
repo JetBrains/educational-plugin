@@ -20,20 +20,25 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.ItemContainer
+import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.LESSON_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_COURSE_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_LESSON_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_SECTION_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_TASK_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.SECTION_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.TASK_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.COURSE_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.LESSON_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_COURSE_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_LESSON_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_SECTION_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_TASK_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.SECTION_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.TASK_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.remoteConfigFileName
 import com.jetbrains.edu.learning.yaml.YamlMapper.MAPPER
 import com.jetbrains.edu.learning.yaml.YamlMapper.REMOTE_MAPPER
 import com.jetbrains.edu.learning.yaml.YamlMapper.STUDENT_MAPPER
@@ -197,32 +202,6 @@ object YamlFormatSynchronizer {
       MAPPER
     }
 }
-
-val StudyItem.configFileName: String
-  get() = when (this) {
-    is Course -> COURSE_CONFIG
-    is Section -> SECTION_CONFIG
-    is Lesson -> LESSON_CONFIG
-    is Task -> TASK_CONFIG
-    else -> {
-      @NonNls
-      val errorMessageToLog = "Unknown StudyItem type: ${javaClass.simpleName}"
-      error(errorMessageToLog)
-    }
-  }
-
-val StudyItem.remoteConfigFileName: String
-  get() = when (this) {
-    is Course -> REMOTE_COURSE_CONFIG
-    is Section -> REMOTE_SECTION_CONFIG
-    is Lesson -> REMOTE_LESSON_CONFIG
-    is Task -> REMOTE_TASK_CONFIG
-    else -> {
-      @NonNls
-      val errorMessageToLog = "Unknown StudyItem type: ${javaClass.simpleName}"
-      error(errorMessageToLog)
-    }
-  }
 
 fun StudyItem.getConfigDir(project: Project): VirtualFile {
   return if (this is Task && lesson is FrameworkLesson) {
