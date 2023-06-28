@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.NotificationsTestBase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.document
 import com.jetbrains.edu.learning.yaml.YamlConfigNotificationProvider
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.yaml.YamlLoader
 
@@ -19,7 +20,7 @@ class YamlConfigNotificationTest : NotificationsTestBase() {
       }
     }
 
-    val configFile = findFile("lesson1/task1/${YamlFormatSettings.TASK_CONFIG}")
+    val configFile = findFile("lesson1/task1/${YamlConfigSettings.TASK_CONFIG}")
     checkNoEditorNotification<YamlConfigNotificationProvider>(configFile)
   }
 
@@ -30,7 +31,7 @@ class YamlConfigNotificationTest : NotificationsTestBase() {
       }
     }
 
-    val configFile = changeConfigFileAndLoad("lesson1/task1/${YamlFormatSettings.TASK_CONFIG}") {
+    val configFile = changeConfigFileAndLoad("lesson1/task1/${YamlConfigSettings.TASK_CONFIG}") {
       it.setText("random text")
     }
 
@@ -48,10 +49,10 @@ class YamlConfigNotificationTest : NotificationsTestBase() {
       }
     }
 
-    val configFile1 = changeConfigFileAndLoad("lesson1/task1/${YamlFormatSettings.TASK_CONFIG}") {
+    val configFile1 = changeConfigFileAndLoad("lesson1/task1/${YamlConfigSettings.TASK_CONFIG}") {
       it.setText("random text")
     }
-    val configFile2 = changeConfigFileAndLoad("lesson1/task2/${YamlFormatSettings.TASK_CONFIG}") {
+    val configFile2 = changeConfigFileAndLoad("lesson1/task2/${YamlConfigSettings.TASK_CONFIG}") {
       it.insertString(it.textLength, "\n0")
     }
 
@@ -75,7 +76,7 @@ class YamlConfigNotificationTest : NotificationsTestBase() {
       }
     }
 
-    changeConfigFileAndLoad("lesson1/task1/${YamlFormatSettings.TASK_CONFIG}") {
+    changeConfigFileAndLoad("lesson1/task1/${YamlConfigSettings.TASK_CONFIG}") {
       it.setText("random text")
     }
 

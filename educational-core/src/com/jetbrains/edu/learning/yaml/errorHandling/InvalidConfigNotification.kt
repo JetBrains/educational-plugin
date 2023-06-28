@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.decapitalize
 import com.jetbrains.edu.learning.document
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.COURSE_CONFIG
 import javax.swing.event.HyperlinkEvent
 
 class InvalidConfigNotification(project: Project, configFile: VirtualFile, cause: String) :

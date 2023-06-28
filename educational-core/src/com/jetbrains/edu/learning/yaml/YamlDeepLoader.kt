@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROJECTS_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.remoteConfigFileName
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeContent
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
@@ -34,7 +35,7 @@ object YamlDeepLoader {
 
     @NonNls
     val errorMessageToLog = "Course yaml config cannot be null"
-    val courseConfig = projectDir.findChild(YamlFormatSettings.COURSE_CONFIG) ?: error(errorMessageToLog)
+    val courseConfig = projectDir.findChild(YamlConfigSettings.COURSE_CONFIG) ?: error(errorMessageToLog)
 
     val deserializedCourse = YamlDeserializer.deserializeItem(courseConfig, project) as? Course ?: return null
     val mapper = deserializedCourse.mapper

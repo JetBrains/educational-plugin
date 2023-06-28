@@ -169,7 +169,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     val parentStudyItem = parentItemDir.getStudyItem(project)
 
     if (parentStudyItem == null) {
-      if (configFile.name != YamlFormatSettings.COURSE_CONFIG)
+      if (configFile.name != YamlConfigSettings.COURSE_CONFIG)
         LOG.warn("Study item configuration file was created without a parent study item: $configFile. This could be a temporary issue, if a parent item is created soon.")
       return false
     }
@@ -229,10 +229,10 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
 
   private val compareConfigs: Comparator<VFileEvent> = Comparator.comparingInt {
     when (it?.file?.name) {
-      YamlFormatSettings.COURSE_CONFIG -> 0
-      YamlFormatSettings.SECTION_CONFIG -> 1
-      YamlFormatSettings.LESSON_CONFIG -> 2
-      YamlFormatSettings.TASK_CONFIG -> 3
+      YamlConfigSettings.COURSE_CONFIG -> 0
+      YamlConfigSettings.SECTION_CONFIG -> 1
+      YamlConfigSettings.LESSON_CONFIG -> 2
+      YamlConfigSettings.TASK_CONFIG -> 3
       else -> 4
     }
   }
