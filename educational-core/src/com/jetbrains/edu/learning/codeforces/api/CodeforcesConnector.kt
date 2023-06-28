@@ -104,7 +104,8 @@ abstract class CodeforcesConnector {
   fun getContestInformation(contestId: Int): Result<CodeforcesCourse, String> =
     handlingDownloadException {
       val contestsList = getContests() ?: return Err(EduCoreBundle.message("codeforces.error.failed.to.get.contests.list"))
-      val contestInfo = contestsList.result.find { it.id == contestId } ?: return Err(EduCoreBundle.message("codeforces.error.failed.to.find.contest.in.contests.list"))
+      val contestInfo = contestsList.result.find { it.id == contestId }
+                        ?: return Err(EduCoreBundle.message("codeforces.error.failed.to.find.contest.in.contests.list"))
 
       val responseBody = service.status(contestId).executeParsingErrors()
                            .onError { return Err(it) }
@@ -178,10 +179,12 @@ abstract class CodeforcesConnector {
   }
 
 
-  private fun postLoginForm(handle: String,
-                            password: String,
-                            jSessionID: String,
-                            csrfToken: String): Result<Response<ResponseBody>, String> = handlingDownloadException {
+  private fun postLoginForm(
+    handle: String,
+    password: String,
+    jSessionID: String,
+    csrfToken: String
+  ): Result<Response<ResponseBody>, String> = handlingDownloadException {
     return service.postLoginPage(
       csrfToken = csrfToken,
       handle = handle,
@@ -190,10 +193,12 @@ abstract class CodeforcesConnector {
     ).executeParsingErrors()
   }
 
-  fun submitSolution(task: CodeforcesTask,
-                     solution: String,
-                     account: CodeforcesAccount,
-                     project: Project): Result<String, String> = handlingDownloadException {
+  fun submitSolution(
+    task: CodeforcesTask,
+    solution: String,
+    account: CodeforcesAccount,
+    project: Project
+  ): Result<String, String> = handlingDownloadException {
     if ((!account.isUpToDate() || !isLoggedIn()) && !getInstance().updateJSessionID(account)) {
       return Err(EduCoreBundle.message("error.access.denied"))
     }
@@ -203,8 +208,10 @@ abstract class CodeforcesConnector {
     val languageCode = task.course.languageCode
     val programTypeId = task.course.programTypeId
 
-    val submitPage = service.getSubmissionPage(contestId, languageCode, programTypeId, task.problemIndex,
-                                               "JSESSIONID=$jSessionID").executeParsingErrors().onError {
+    val submitPage = service.getSubmissionPage(
+      contestId, languageCode, programTypeId, task.problemIndex,
+      "JSESSIONID=$jSessionID"
+    ).executeParsingErrors().onError {
       return Err(it)
     }
     val htmlPage = submitPage.body()?.string() ?: return Err(EduCoreBundle.message("error.unknown.error"))
@@ -294,7 +301,12 @@ abstract class CodeforcesConnector {
     if (submissions.isNotEmpty()) SubmissionsManager.getInstance(project).addToSubmissions(task.id, submissions[0])
   }
 
-  fun getUserSubmissions(contestId: Int, tasks: List<CodeforcesTask>, csrfToken: String, jSessionID: String): Map<Int, List<StepikBasedSubmission>> {
+  fun getUserSubmissions(
+    contestId: Int,
+    tasks: List<CodeforcesTask>,
+    csrfToken: String,
+    jSessionID: String
+  ): Map<Int, List<StepikBasedSubmission>> {
     if (CodeforcesSettings.getInstance().isLoggedIn()) {
       val body = service.getUserSolutions(CodeforcesSettings.getInstance().account!!.userInfo.handle, contestId)
         .executeParsingErrors().onError { return emptyMap() }.body()
@@ -373,8 +385,8 @@ abstract class CodeforcesConnector {
     val jSessionID = account.getSessionId() ?: return null
 
     val registrationPage = service.getRegistrationPage(contestId, "JSESSIONID=$jSessionID")
-      .executeParsingErrors()
-      .onError { return null }.body() ?: return null
+                             .executeParsingErrors()
+                             .onError { return null }.body() ?: return null
 
     val doc = Jsoup.parse(registrationPage.string())
     val csrfToken = doc.getElementsByClass("csrf-token").attr("data-csrf")
@@ -393,14 +405,16 @@ abstract class CodeforcesConnector {
     val response = service.postRegistration(csrfToken, contestId, "JSESSIONID=$jSessionId")
       .executeParsingErrors()
       .onError { return false }
-    return response.raw().isSuccessful
+
+    val containsSuccessRegisterText = response.body()?.string()?.contains("You have been successfully registered") ?: return false
+    return response.raw().isSuccessful && containsSuccessRegisterText
   }
 
   fun isUserRegisteredForContest(contestId: Int): Boolean {
     val jSessionId = CodeforcesSettings.getInstance().account?.getSessionId() ?: return false
     val registrationData = service.getContestRegistrationData(contestId, "JSESSIONID=$jSessionId")
-      .executeParsingErrors()
-      .onError { return false }.body() ?: return false
+                             .executeParsingErrors()
+                             .onError { return false }.body() ?: return false
 
     val doc = Jsoup.parse(registrationData.string())
     return doc.getElementsByClass("welldone").isNotEmpty()
