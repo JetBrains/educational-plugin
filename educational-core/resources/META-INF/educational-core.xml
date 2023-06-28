@@ -202,7 +202,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
 
-    <appStarter id="createCourse" implementation="com.jetbrains.edu.learning.EduCourseCreatorAppStarter"/>
+    <appStarter id="createCourse" implementation="com.jetbrains.edu.learning.command.EduCourseCreatorAppStarter"/>
 
     <applicationService serviceInterface="com.jetbrains.edu.learning.EduBrowser"
                         serviceImplementation="com.jetbrains.edu.learning.EduBrowser"

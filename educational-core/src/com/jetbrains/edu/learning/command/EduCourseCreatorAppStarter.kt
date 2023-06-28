@@ -1,10 +1,13 @@
-package com.jetbrains.edu.learning
+package com.jetbrains.edu.learning.command
 
 import com.intellij.openapi.application.ApplicationStarter
 import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.util.registry.Registry
+import com.jetbrains.edu.learning.EduUtilsKt
+import com.jetbrains.edu.learning.Err
+import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
