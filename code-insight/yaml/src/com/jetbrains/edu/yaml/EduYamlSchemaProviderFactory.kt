@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.FRAMEWORK
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.getContainingTask
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LESSON
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SECTION
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TASK
@@ -42,7 +42,7 @@ class EduYamlSchemaProviderFactory : JsonSchemaProviderFactory {
     abstract val itemKind: String
 
     override fun isAvailable(file: VirtualFile): Boolean = CCUtils.isCourseCreator(project)
-                                                           && YamlFormatSettings.getLocalConfigFileName(itemKind) == file.name
+                                                           && YamlConfigSettings.getLocalConfigFileName(itemKind) == file.name
 
     override fun getSchemaFile(): VirtualFile? {
       return JsonSchemaProviderFactory.getResourceFile(EduYamlSchemaProviderFactory::class.java, getSchemaResourcePath())

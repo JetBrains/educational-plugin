@@ -23,9 +23,9 @@ import com.jetbrains.edu.coursecreator.failedToFindItemMessage
 import com.jetbrains.edu.learning.actions.EduActionUtils
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.ext.hasSections
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.LESSON_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.SECTION_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.COURSE_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.LESSON_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.SECTION_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlLoader
 import com.jetbrains.edu.yaml.ItemContainerContentReferenceProvider
 import com.jetbrains.edu.yaml.messages.EduYAMLBundle

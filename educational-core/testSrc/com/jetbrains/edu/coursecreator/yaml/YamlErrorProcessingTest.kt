@@ -11,7 +11,7 @@ import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.MAPPER
 import com.jetbrains.edu.learning.yaml.YamlTestCase
 import com.jetbrains.edu.learning.yaml.errorHandling.InvalidYamlFormatException
@@ -29,7 +29,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
             |content:
             |- the first lesson
             |- the second lesson
-            |""".trimMargin(), YamlFormatSettings.COURSE_CONFIG,
+            |""".trimMargin(), YamlConfigSettings.COURSE_CONFIG,
            "title is empty", MissingKotlinParameterException::class.java)
   }
 
@@ -44,7 +44,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
             |content:
             |- the first lesson
             |- the second lesson
-            |""".trimMargin(), YamlFormatSettings.COURSE_CONFIG,
+            |""".trimMargin(), YamlConfigSettings.COURSE_CONFIG,
            "Unknown language \"wrong\"", InvalidYamlFormatException::class.java)
   }
 
@@ -60,7 +60,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
             |content:e
             |- the first lesson
             |- the second lesson
-            |""".trimMargin(), YamlFormatSettings.COURSE_CONFIG,
+            |""".trimMargin(), YamlConfigSettings.COURSE_CONFIG,
            "could not find expected ':' at line 7",
            com.fasterxml.jackson.dataformat.yaml.snakeyaml.error.MarkedYAMLException::class.java)
   }
@@ -75,7 +75,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
             |programming_language: Plain text
             |content:
             |- the first lesson
-            |""".trimMargin(), YamlFormatSettings.COURSE_CONFIG,
+            |""".trimMargin(), YamlConfigSettings.COURSE_CONFIG,
            "Invalid config", MismatchedInputException::class.java)
   }
 
@@ -88,7 +88,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
     |  - offset: a
     |    length: 3
     |    placeholder_text: type here
-    |""".trimMargin(), YamlFormatSettings.TASK_CONFIG,
+    |""".trimMargin(), YamlConfigSettings.TASK_CONFIG,
            "Invalid config", InvalidFormatException::class.java)
   }
 
@@ -104,13 +104,13 @@ class YamlErrorProcessingTest : YamlTestCase() {
       |  is_correct: true
       |- text: 2
       |  is_correct: false
-      |""".trimMargin(), YamlFormatSettings.TASK_CONFIG,
+      |""".trimMargin(), YamlConfigSettings.TASK_CONFIG,
            "Unsupported task type \"e\"", InvalidYamlFormatException::class.java)
   }
 
   fun `test task without type`() {
     doTest("""
-    """.trimIndent(), YamlFormatSettings.TASK_CONFIG,
+    """.trimIndent(), YamlConfigSettings.TASK_CONFIG,
            "Task type is not specified", InvalidYamlFormatException::class.java)
   }
 
@@ -124,7 +124,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
     |  - offset: 2
     |    length: -1
     |    placeholder_text: type here
-    |""".trimMargin(), YamlFormatSettings.TASK_CONFIG,
+    |""".trimMargin(), YamlConfigSettings.TASK_CONFIG,
            "Answer placeholder with negative length is not allowed", InvalidYamlFormatException::class.java)
   }
 
@@ -138,7 +138,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
     |  - offset: -1
     |    length: 1
     |    placeholder_text: type here
-    |""".trimMargin(), YamlFormatSettings.TASK_CONFIG,
+    |""".trimMargin(), YamlConfigSettings.TASK_CONFIG,
            "Answer placeholder with negative offset is not allowed", InvalidYamlFormatException::class.java)
   }
 
@@ -148,7 +148,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
     |files:
     |- name:
     |  visible: true
-    |""".trimMargin(), YamlFormatSettings.TASK_CONFIG,
+    |""".trimMargin(), YamlConfigSettings.TASK_CONFIG,
            "File without a name is not allowed", InvalidYamlFormatException::class.java)
   }
 

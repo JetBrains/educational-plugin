@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.MAPPER
 import com.jetbrains.edu.learning.yaml.YamlTestCase
 
@@ -102,7 +102,7 @@ open class YamlUndoTest : YamlTestCase() {
     assertEquals(expectedStartOffset, placeholder.offset)
     assertEquals(expectedEndOffset, placeholder.endOffset)
 
-    val taskConfig = taskDir.findChild(YamlFormatSettings.TASK_CONFIG)!!
+    val taskConfig = taskDir.findChild(YamlConfigSettings.TASK_CONFIG)!!
     val document = FileDocumentManager.getInstance().getDocument(taskConfig)!!
     val deserializedTask = MAPPER.deserializeTask(document.text)
     val deserializedPlaceholder = deserializedTask.getTaskFile(TASK_FILE_NAME)!!.answerPlaceholders.first()

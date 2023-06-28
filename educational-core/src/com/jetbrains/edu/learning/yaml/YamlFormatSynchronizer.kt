@@ -52,14 +52,15 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.LESSON_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_COURSE_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_LESSON_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_SECTION_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_TASK_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.SECTION_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.TASK_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.COURSE_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.LESSON_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_COURSE_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_LESSON_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_SECTION_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_TASK_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.SECTION_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.TASK_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.remoteConfigFileName
 import com.jetbrains.edu.learning.yaml.format.*
 import com.jetbrains.edu.learning.yaml.format.student.*
 import org.jetbrains.annotations.NonNls
@@ -289,19 +290,6 @@ val StudyItem.configFileName: String
     is Section -> SECTION_CONFIG
     is Lesson -> LESSON_CONFIG
     is Task -> TASK_CONFIG
-    else -> {
-      @NonNls
-      val errorMessageToLog = "Unknown StudyItem type: ${javaClass.simpleName}"
-      error(errorMessageToLog)
-    }
-  }
-
-val StudyItem.remoteConfigFileName: String
-  get() = when (this) {
-    is Course -> REMOTE_COURSE_CONFIG
-    is Section -> REMOTE_SECTION_CONFIG
-    is Lesson -> REMOTE_LESSON_CONFIG
-    is Task -> REMOTE_TASK_CONFIG
     else -> {
       @NonNls
       val errorMessageToLog = "Unknown StudyItem type: ${javaClass.simpleName}"

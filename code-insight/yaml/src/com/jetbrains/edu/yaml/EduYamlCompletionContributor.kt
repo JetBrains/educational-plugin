@@ -9,11 +9,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
 import com.jetbrains.edu.codeInsight.inFileWithName
 import com.jetbrains.edu.codeInsight.psiElement
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LANGUAGE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE
@@ -69,7 +68,7 @@ class EduYamlCompletionContributor : CompletionContributor() {
 
   private fun createPatternForKey(keyText: String): PsiElementPattern.Capture<PsiElement> =
     psiElement()
-      .inFileWithName(YamlFormatSettings.COURSE_CONFIG)
+      .inFileWithName(YamlConfigSettings.COURSE_CONFIG)
       .withParent(
         psiElement<YAMLPlainTextImpl>().withParent(keyValueWithName(keyText))
       )
