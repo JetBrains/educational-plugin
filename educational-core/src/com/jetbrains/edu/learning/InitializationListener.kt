@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
+import com.jetbrains.edu.learning.yaml.YamlMapper
 import org.jetbrains.ide.BuiltInServerManager
 import java.io.File
 
@@ -123,7 +124,7 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
     val projectDir = VfsUtil.findFile(projectFile.toPath(), true) ?: return null
     val courseConfig = projectDir.findChild(YamlFormatSettings.COURSE_CONFIG) ?: return null
     return runReadAction {
-      YamlDeserializer.deserializeItem(courseConfig, null) as? Course
+      YamlDeserializer.deserializeItem(courseConfig.name, YamlMapper.MAPPER, VfsUtil.loadText(courseConfig)) as? Course
     }
   }
 

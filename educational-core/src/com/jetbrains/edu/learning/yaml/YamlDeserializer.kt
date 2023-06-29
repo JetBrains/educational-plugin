@@ -82,22 +82,32 @@ object YamlDeserializer {
   private const val TOPIC = "Loaded YAML"
   val YAML_LOAD_TOPIC: Topic<YamlListener> = Topic.create(TOPIC, YamlListener::class.java)
 
-  fun deserializeItem(configFile: VirtualFile, project: Project?, loadFromVFile: Boolean = true, mapper: ObjectMapper = MAPPER): StudyItem? {
+  fun deserializeItemProcessingErrors(
+    configFile: VirtualFile,
+    project: Project,
+    loadFromVFile: Boolean = true,
+    mapper: ObjectMapper = MAPPER
+  ): StudyItem? {
     val configFileText = if (loadFromVFile) VfsUtil.loadText(configFile) else configFile.document.text
-    return try {
-      when (configFile.name) {
-        COURSE_CONFIG -> mapper.deserializeCourse(configFileText)
-        SECTION_CONFIG -> mapper.deserializeSection(configFileText)
-        LESSON_CONFIG -> mapper.deserializeLesson(configFileText)
-        TASK_CONFIG -> mapper.deserializeTask(configFileText)
-        else -> loadingError(unknownConfigMessage(configFile.name))
+    val configName = configFile.name
+    return ProgressManager.getInstance().computeInNonCancelableSection<StudyItem, Exception> {
+      try {
+        deserializeItem(configName, mapper, configFileText)
+      }
+      catch (e: Exception) {
+        processErrors(project, configFile, e)
+        null
       }
     }
-    catch (e: Exception) {
-      if (project != null) {
-        processErrors(project, configFile, e)
-      }
-      return null
+  }
+
+  fun deserializeItem(configName: String, mapper: ObjectMapper, configFileText: String): StudyItem {
+    return when (configName) {
+      COURSE_CONFIG -> mapper.deserializeCourse(configFileText)
+      SECTION_CONFIG -> mapper.deserializeSection(configFileText)
+      LESSON_CONFIG -> mapper.deserializeLesson(configFileText)
+      TASK_CONFIG -> mapper.deserializeTask(configFileText)
+      else -> loadingError(unknownConfigMessage(configName))
     }
   }
 
@@ -109,7 +119,7 @@ object YamlDeserializer {
     val content = mutableListOf<T>()
     for (titledItem in contentList) {
       val configFile: VirtualFile = getConfigFileForChild(project, titledItem.name) ?: continue
-      val deserializeItem = deserializeItem(configFile, project, mapper=mapper) as? T ?: continue
+      val deserializeItem = deserializeItemProcessingErrors(configFile, project, mapper = mapper) as? T ?: continue
       deserializeItem.name = titledItem.name
       deserializeItem.index = titledItem.index
       content.add(deserializeItem)
@@ -164,7 +174,8 @@ object YamlDeserializer {
   @VisibleForTesting
   fun ObjectMapper.deserializeTask(configFileText: String): Task {
     val treeNode = readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
-    val type = asText(treeNode.get(YamlMixinNames.TYPE)) ?: formatError(EduCoreBundle.message("yaml.editor.invalid.task.type.not.specified"))
+    val type = asText(treeNode.get(YamlMixinNames.TYPE))
+               ?: formatError(EduCoreBundle.message("yaml.editor.invalid.task.type.not.specified"))
 
     val clazz = when (type) {
       EDU_TASK_TYPE -> EduTask::class.java
@@ -276,15 +287,19 @@ object YamlDeserializer {
           showError(project, e, configFile)
         }
         else {
-          val cause = EduCoreBundle.message("yaml.editor.notification.parameter.is.empty",
-                                            NameUtil.nameToWordsLowerCase(parameterName).joinToString("_"))
+          val cause = EduCoreBundle.message(
+            "yaml.editor.notification.parameter.is.empty",
+            NameUtil.nameToWordsLowerCase(parameterName).joinToString("_")
+          )
           showError(project, e, configFile, cause)
         }
       }
+
       is InvalidYamlFormatException -> showError(project, e, configFile, e.message)
       is MismatchedInputException -> {
         showError(project, e, configFile)
       }
+
       is com.fasterxml.jackson.dataformat.yaml.snakeyaml.error.MarkedYAMLException -> {
         val message = yamlParsingErrorNotificationMessage(e.problem, e.contextMark?.line)
         if (message != null) {
@@ -294,6 +309,7 @@ object YamlDeserializer {
           showError(project, e, configFile)
         }
       }
+
       is JsonMappingException -> {
         val causeException = e.cause
         if (causeException?.message == null || causeException !is InvalidYamlFormatException) {
@@ -303,6 +319,7 @@ object YamlDeserializer {
           showError(project, causeException, configFile, causeException.message)
         }
       }
+
       else -> throw e
     }
   }
