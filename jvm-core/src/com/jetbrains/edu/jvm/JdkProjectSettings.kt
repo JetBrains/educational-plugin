@@ -21,7 +21,7 @@ import com.jetbrains.edu.learning.DefaultSettingsUtils.findPath
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
 
-class JdkProjectSettings(val model: ProjectSdksModel, val jdk: Sdk?) : EduProjectSettings {
+open class JdkProjectSettings(val model: ProjectSdksModel, val jdk: Sdk?) : EduProjectSettings {
 
   fun setUpProjectJdk(
     project: Project,

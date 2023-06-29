@@ -74,13 +74,19 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
   //  * Kotlin and Java do type erasure a little differently
   // we use Object instead of S and cast to S when it needed
   fun doCreateCourseProject(location: String, projectSettings: EduProjectSettings): Project? {
-    val createdProject = createProject(location) ?: return null
-
     @Suppress("UNCHECKED_CAST")
     val castedProjectSettings = projectSettings as S
+    applySettings(projectSettings)
+    val createdProject = createProject(location) ?: return null
+
     afterProjectGenerated(createdProject, castedProjectSettings)
     return createdProject
   }
+
+  /**
+   * Applies necessary changes to [course] object before course creation
+   */
+  protected open fun applySettings(projectSettings: S) {}
 
   /**
    * Create new project in given location.

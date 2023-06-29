@@ -24,7 +24,7 @@ import javax.swing.JComponent
 open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
 
   protected var jdk: Sdk? = null
-  private val sdkModel: ProjectSdksModel = createSdkModel()
+  protected val sdkModel: ProjectSdksModel = createSdkModel()
 
   private fun createSdkModel(): ProjectSdksModel {
     val project = ProjectManager.getInstance().defaultProject
