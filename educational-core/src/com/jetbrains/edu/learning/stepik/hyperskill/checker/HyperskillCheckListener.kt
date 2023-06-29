@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLoginListener
@@ -16,7 +17,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 
 class HyperskillCheckListener : CheckListener {
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
-    if (HyperskillCheckConnector.isRemotelyChecked(task)) {
+    if (HyperskillCheckConnector.isRemotelyChecked(task) || task is TheoryTask) {
       /**
        * Solution must be sent after local tests check are made for Edu tasks.
        * Opposite to Edu tasks, e.g., there are no local tests check for Code tasks and code is submitted directly to JBA.
