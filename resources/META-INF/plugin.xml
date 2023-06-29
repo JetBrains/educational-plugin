@@ -36,8 +36,6 @@
     <module name="Edu-Shell"/>
     <module name="sql-core"/>
     <module name="sql-jvm"/>
-    <module name="Edu-Sql-Java"/>
-    <module name="Edu-Sql-Kotlin"/>
     <module name="github"/>
     <module name="remote-env"/>
   </content>

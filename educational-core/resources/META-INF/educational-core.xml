@@ -393,12 +393,6 @@
                            implementationClass="com.jetbrains.edu.learning.compatibility.PhpCourseCompatibilityProvider"/>
     <compatibilityProvider language="SQL"
                            implementationClass="com.jetbrains.edu.learning.compatibility.SqlGradleCourseCompatibilityProvider"/>
-    <compatibilityProvider language="SQL"
-                           environment="Java"
-                           implementationClass="com.jetbrains.edu.learning.compatibility.SqlJCourseCompatibilityProvider"/>
-    <compatibilityProvider language="SQL"
-                           environment="Kotlin"
-                           implementationClass="com.jetbrains.edu.learning.compatibility.SqlKtCourseCompatibilityProvider"/>
     <compatibilityProvider language="Shell Script"
                            implementationClass="com.jetbrains.edu.learning.compatibility.ShellCourseCompatibilityProvider"/>
 

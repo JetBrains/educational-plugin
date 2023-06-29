@@ -30,8 +30,6 @@ include(
   "Edu-Shell",
   "sql",
   "sql:sql-jvm",
-  "sql:Edu-Sql-Java",
-  "sql:Edu-Sql-Kotlin",
   "github"
 )
 

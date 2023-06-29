@@ -363,8 +363,6 @@ project(":") {
     implementation(project(":Edu-Shell"))
     implementation(project(":sql"))
     implementation(project(":sql:sql-jvm"))
-    implementation(project(":sql:Edu-Sql-Java"))
-    implementation(project(":sql:Edu-Sql-Kotlin"))
     implementation(project(":github"))
     implementation(project(":remote-env"))
   }
@@ -877,38 +875,6 @@ project("sql:sql-jvm") {
     api(project(":jvm-core"))
     testImplementation(project(":educational-core", "testOutput"))
     testImplementation(project(":sql", "testOutput"))
-    testImplementation(project(":jvm-core", "testOutput"))
-  }
-}
-
-project("sql:Edu-Sql-Java") {
-  intellij {
-    version.set(ideaVersion)
-    plugins.set(listOf(sqlPlugin) + jvmPlugins)
-  }
-
-  dependencies {
-    implementation(project(":sql:sql-jvm"))
-    implementation(project(":Edu-Java"))
-    testImplementation(project(":educational-core", "testOutput"))
-    testImplementation(project(":sql", "testOutput"))
-    testImplementation(project(":sql:sql-jvm", "testOutput"))
-    testImplementation(project(":jvm-core", "testOutput"))
-  }
-}
-
-project("sql:Edu-Sql-Kotlin") {
-  intellij {
-    version.set(ideaVersion)
-    plugins.set(listOf(sqlPlugin) + kotlinPlugins)
-  }
-
-  dependencies {
-    implementation(project(":sql:sql-jvm"))
-    implementation(project(":Edu-Kotlin"))
-    testImplementation(project(":educational-core", "testOutput"))
-    testImplementation(project(":sql", "testOutput"))
-    testImplementation(project(":sql:sql-jvm", "testOutput"))
     testImplementation(project(":jvm-core", "testOutput"))
   }
 }

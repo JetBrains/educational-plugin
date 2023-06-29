@@ -1,23 +1,22 @@
-package com.jetbrains.edu.sql.kotlin.update
+package com.jetbrains.edu.sql.jvm.gradle.update
 
 import com.intellij.database.dataSource.LocalDataSourceManager
-import com.intellij.sql.psi.SqlLanguage
 import com.intellij.testFramework.PlatformTestUtil
-import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
+import com.jetbrains.edu.sql.jvm.gradle.SqlCourseGenerationTestBase
 import com.jetbrains.edu.sql.jvm.gradle.SqlGradleCourseBuilder.Companion.INIT_SQL
-import com.jetbrains.edu.sql.kotlin.SqlCourseGenerationTestBase
+import com.jetbrains.edu.sql.jvm.gradle.sqlCourse
 import java.util.*
 
 class SqlCourseUpdateTest : SqlCourseGenerationTestBase() {
 
   @Suppress("SqlDialectInspection")
   fun `test data sources after course update`() {
-    val course = course(language = SqlLanguage.INSTANCE, environment = "Kotlin") {
+    val course = sqlCourse {
       lesson("lesson1", id = 1) {
         eduTask("task1", stepId = 11) {
           taskFile("src/task.sql")
@@ -45,7 +44,7 @@ class SqlCourseUpdateTest : SqlCourseGenerationTestBase() {
 
     createCourseStructure(course)
 
-    val courseFromServer = course(language = SqlLanguage.INSTANCE, environment = "Kotlin") {
+    val courseFromServer = sqlCourse {
       lesson("lesson1", id = 1) {
         eduTask("task1", stepId = 11) {
           taskFile("src/task.sql")

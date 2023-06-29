@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.sql.core.SqlConfiguratorBase
 
-open class SqlGradleConfigurator : GradleConfiguratorBase(), SqlConfiguratorBase<JdkProjectSettings> {
+class SqlGradleConfigurator : GradleConfiguratorBase(), SqlConfiguratorBase<JdkProjectSettings> {
 
   // A proper test template is provided via `SqlGradleCourseBuilder.testTemplateName`
   override val testFileName: String = ""

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.sql.kotlin
+package com.jetbrains.edu.sql.jvm.gradle
 
 import com.intellij.database.actions.runDataSourceGeneralRefresh
 import com.intellij.database.dataSource.DataSourceSyncManager
@@ -21,8 +21,6 @@ import com.jetbrains.edu.jvm.courseGeneration.JvmCourseGenerationTestBase
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.sql.jvm.gradle.findDataSource
-import com.jetbrains.edu.sql.jvm.gradle.task
 import java.util.concurrent.TimeUnit
 
 abstract class SqlCourseGenerationTestBase : JvmCourseGenerationTestBase() {

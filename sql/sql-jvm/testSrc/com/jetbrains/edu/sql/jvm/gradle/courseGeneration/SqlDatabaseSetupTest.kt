@@ -1,4 +1,4 @@
-package com.jetbrains.edu.sql.kotlin.courseGeneration
+package com.jetbrains.edu.sql.jvm.gradle.courseGeneration
 
 import com.intellij.database.console.JdbcConsoleProvider
 import com.intellij.database.view.DatabaseView
@@ -7,19 +7,22 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.sql.SqlFileType
-import com.intellij.sql.psi.SqlLanguage
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.ui.tree.TreeVisitor
 import com.intellij.ui.treeStructure.Tree
 import com.intellij.util.ui.tree.TreeUtil
-import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.findTask
+import com.jetbrains.edu.learning.getTaskFile
+import com.jetbrains.edu.learning.testAction
+import com.jetbrains.edu.learning.withVirtualFileListener
+import com.jetbrains.edu.sql.jvm.gradle.SqlCourseGenerationTestBase
 import com.jetbrains.edu.sql.jvm.gradle.SqlGradleCourseBuilder.Companion.INIT_SQL
 import com.jetbrains.edu.sql.jvm.gradle.findDataSource
-import com.jetbrains.edu.sql.kotlin.SqlCourseGenerationTestBase
+import com.jetbrains.edu.sql.jvm.gradle.sqlCourse
 import org.jetbrains.concurrency.AsyncPromise
 import org.jetbrains.concurrency.Promise
 import java.lang.reflect.Method
@@ -30,7 +33,7 @@ import kotlin.test.assertNotNull
 class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
 
   fun `test data source creation`() {
-    val course = course(language = SqlLanguage.INSTANCE, environment = "Kotlin") {
+    val course = sqlCourse {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("src/task.sql")
@@ -55,7 +58,7 @@ class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
   }
 
   fun `test attach jdbc console`() {
-    val course = course(language = SqlLanguage.INSTANCE, environment = "Kotlin") {
+    val course = sqlCourse {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("src/task.sql")
@@ -78,7 +81,7 @@ class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
   }
 
   fun `test attach jdbc console for framework tasks`() {
-    val course = course(language = SqlLanguage.INSTANCE, environment = "Kotlin") {
+    val course = sqlCourse {
       frameworkLesson("lesson1") {
         eduTask("task1") {
           taskFile("src/task.sql")
@@ -111,7 +114,7 @@ class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
 
   fun `test database view structure`() {
     @Suppress("SqlDialectInspection")
-    val course = course(language = SqlLanguage.INSTANCE, environment = "Kotlin") {
+    val course = sqlCourse {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("src/task.sql")
@@ -248,7 +251,7 @@ class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
 
   @Suppress("SqlDialectInspection", "SqlNoDataSourceInspection")
   fun `test database initialization`() {
-    val course = course(language = SqlLanguage.INSTANCE, environment = "Kotlin") {
+    val course = sqlCourse {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("src/task.sql")
@@ -273,7 +276,7 @@ class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
 
   @Suppress("SqlDialectInspection", "SqlNoDataSourceInspection")
   fun `test database initialization in framework lessons`() {
-    val course = course(language = SqlLanguage.INSTANCE, environment = "Kotlin") {
+    val course = sqlCourse {
       frameworkLesson("lesson1") {
         eduTask("task1") {
           taskFile("src/task.sql")

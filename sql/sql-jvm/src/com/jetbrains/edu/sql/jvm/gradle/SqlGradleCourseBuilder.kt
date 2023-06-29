@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.sql.core.SqlConfiguratorBase
 
-open class SqlGradleCourseBuilder : GradleCourseBuilderBase() {
+class SqlGradleCourseBuilder : GradleCourseBuilderBase() {
   override fun taskTemplateName(course: Course): String = SqlConfiguratorBase.TASK_SQL
 
   override fun getDefaultTaskTemplates(

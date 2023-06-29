@@ -1,22 +1,22 @@
-package com.jetbrains.edu.sql.kotlin.action
+package com.jetbrains.edu.sql.jvm.gradle.action
 
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.ui.Messages
 import com.intellij.sql.dialects.SqlDialectMappings
 import com.intellij.sql.dialects.h2.H2Dialect
-import com.intellij.sql.psi.SqlLanguage
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.checker.CheckUtils
+import com.jetbrains.edu.sql.jvm.gradle.SqlCourseGenerationTestBase
 import com.jetbrains.edu.sql.jvm.gradle.SqlGradleCourseBuilder.Companion.INIT_SQL
 import com.jetbrains.edu.sql.jvm.gradle.createDatabaseScriptConfiguration
-import com.jetbrains.edu.sql.kotlin.SqlCourseGenerationTestBase
+import com.jetbrains.edu.sql.jvm.gradle.sqlCourse
 
 class SqlRevertTaskActionTest : SqlCourseGenerationTestBase() {
 
   @Suppress("SqlDialectInspection", "SqlNoDataSourceInspection")
   fun `test database recreation on task reversion`() {
-    val course = course(language = SqlLanguage.INSTANCE, environment = "Kotlin") {
+    val course = sqlCourse {
       lesson("lesson1") {
         eduTask("task1") {
           sqlTaskFile(INIT_SQL, """
