@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_COURSE_T
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.Vendor
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
@@ -17,8 +16,6 @@ import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_TYPE
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.yaml.errorHandling.formatError
-import com.jetbrains.edu.learning.yaml.errorHandling.unsupportedItemTypeMessage
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.END_DATE_TIME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT
@@ -81,7 +78,7 @@ class RemoteCourseBuilder(
   yamlContentTags
 ) {
 
-  override fun makeCourse(): Course {
+  override fun makeCourse(): Course? {
     return when (courseType?.replaceFirstChar { it.titlecaseChar() }) {
       CourseraNames.COURSE_TYPE -> {
         CourseraCourse().apply {
@@ -99,7 +96,7 @@ class RemoteCourseBuilder(
         }
       }
       null -> EduCourse()
-      else -> formatError(unsupportedItemTypeMessage(courseType ?: "", EduFormatNames.COURSE))
+      else -> null
     }
   }
 }

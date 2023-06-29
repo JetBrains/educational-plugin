@@ -2,11 +2,15 @@
 
 package com.jetbrains.edu.learning.yaml.format
 
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.fasterxml.jackson.annotation.*
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.EDU_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask.Companion.IDE_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask.Companion.OUTPUT_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask.Companion.THEORY_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask.Companion.CHOICE_TASK_TYPE
 import com.jetbrains.edu.learning.json.mixins.NotImplementedInMixin
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_NAME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_LINK
@@ -21,6 +25,15 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
  */
 @Suppress("unused") // used for yaml serialization
 @JsonPropertyOrder(TYPE, CUSTOM_NAME, FILES, FEEDBACK_LINK, SOLUTION_HIDDEN, TAGS)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY,
+  property = TYPE, defaultImpl = EduTask::class, visible = true)
+@JsonSubTypes(
+  JsonSubTypes.Type(EduTask::class, name = EDU_TASK_TYPE),
+  JsonSubTypes.Type(OutputTask::class, name = OUTPUT_TASK_TYPE),
+  JsonSubTypes.Type(TheoryTask::class, name = THEORY_TASK_TYPE),
+  JsonSubTypes.Type(ChoiceTask::class, name = CHOICE_TASK_TYPE),
+  JsonSubTypes.Type(IdeTask::class, name = IDE_TASK_TYPE)
+)
 abstract class TaskYamlMixin {
   val itemType: String
     @JsonProperty(TYPE)

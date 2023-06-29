@@ -124,7 +124,13 @@ object YamlFormatSynchronizer {
     addMixIn(StepikLesson::class.java, StepikLessonYamlMixin::class.java)
     addMixIn(CodeTask::class.java, CodeTaskYamlMixin::class.java)
 
+    addSubtypes()
+  }
+
+  private fun ObjectMapper.addSubtypes() {
     registerCourseSubtypes()
+    registerLessonSubtypes()
+    registerTaskSubtypes()
   }
 
   private fun ObjectMapper.registerCourseSubtypes() {
@@ -133,9 +139,25 @@ object YamlFormatSynchronizer {
     registerSubtypes(NamedType(CheckiOCourse::class.java, CheckiONames.CHECKIO_TYPE.decapitalize()))
     registerSubtypes(NamedType(HyperskillCourse::class.java, HYPERSKILL_TYPE.decapitalize()))
     registerSubtypes(NamedType(StepikCourse::class.java, StepikNames.STEPIK_TYPE.decapitalize()))
+  }
 
+  private fun ObjectMapper.registerLessonSubtypes() {
     registerSubtypes(NamedType(StepikLesson::class.java, StepikNames.STEPIK_TYPE))
     registerSubtypes(NamedType(CheckiOStation::class.java, CheckiONames.CHECKIO_LESSON_TYPE))
+  }
+
+  private fun ObjectMapper.registerTaskSubtypes() {
+    registerSubtypes(NamedType(RemoteEduTask::class.java, REMOTE_EDU_TASK_TYPE))
+    registerSubtypes(NamedType(DataTask::class.java, DATA_TASK_TYPE))
+    registerSubtypes(NamedType(CodeTask::class.java, CODE_TASK_TYPE))
+    registerSubtypes(NamedType(CheckiOMission::class.java, CHECK_IO_MISSION_TASK_TYPE))
+    registerSubtypes(NamedType(CodeforcesTask::class.java, CODEFORCES_TASK_TYPE))
+    registerSubtypes(NamedType(CodeforcesTaskWithFileIO::class.java, CODEFORCES_TASK_TYPE_WITH_FILE_IO))
+    registerSubtypes(NamedType(StringTask::class.java, STRING_TASK_TYPE))
+    registerSubtypes(NamedType(NumberTask::class.java, NUMBER_TASK_TYPE))
+    registerSubtypes(NamedType(UnsupportedTask::class.java, UNSUPPORTED_TASK_TYPE))
+    registerSubtypes(NamedType(MatchingTask::class.java, MATCHING_TASK_TYPE))
+    registerSubtypes(NamedType(SortingTask::class.java, SORTING_TASK_TYPE))
   }
 
   private fun ObjectMapper.addRemoteInfoMixInsFromProviders() {

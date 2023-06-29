@@ -229,7 +229,7 @@ open class CourseBuilder(
         }
       }
       EDU, null -> EduCourse()
-      else -> formatError(unsupportedItemTypeMessage(courseType, EduFormatNames.COURSE))
+      else -> null
     }
     return course
   }

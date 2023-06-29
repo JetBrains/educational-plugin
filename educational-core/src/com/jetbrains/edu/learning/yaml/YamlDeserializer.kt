@@ -16,45 +16,23 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.codeStyle.NameUtil
 import com.intellij.util.messages.Topic
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission.Companion.CHECK_IO_MISSION_TASK_TYPE
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE_WITH_FILE_IO
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.CourseMode.Companion.toCourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
-import com.jetbrains.edu.learning.courseFormat.tasks.*
-import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask.Companion.CODE_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.EDU_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask.Companion.IDE_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.NumberTask.Companion.NUMBER_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask.Companion.OUTPUT_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.StringTask.Companion.STRING_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask.Companion.THEORY_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.UnsupportedTask.Companion.UNSUPPORTED_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask.Companion.CHOICE_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DATA_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask.Companion.MATCHING_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask.Companion.SORTING_TASK_TYPE
 import com.jetbrains.edu.learning.document
 import com.jetbrains.edu.learning.getEditor
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask.Companion.REMOTE_EDU_TASK_TYPE
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.LESSON_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_COURSE_CONFIG
@@ -68,7 +46,6 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.REMOTE_MAPPER
 import com.jetbrains.edu.learning.yaml.errorHandling.*
 import com.jetbrains.edu.learning.yaml.format.RemoteStudyItem
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
-import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TASK
 import org.jetbrains.annotations.NonNls
 
 /**
@@ -163,30 +140,8 @@ object YamlDeserializer {
 
   @VisibleForTesting
   fun ObjectMapper.deserializeTask(configFileText: String): Task {
-    val treeNode = readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
-    val type = asText(treeNode.get(YamlMixinNames.TYPE)) ?: formatError(EduCoreBundle.message("yaml.editor.invalid.task.type.not.specified"))
-
-    val clazz = when (type) {
-      EDU_TASK_TYPE -> EduTask::class.java
-      REMOTE_EDU_TASK_TYPE -> RemoteEduTask::class.java
-      OUTPUT_TASK_TYPE -> OutputTask::class.java
-      THEORY_TASK_TYPE -> TheoryTask::class.java
-      DATA_TASK_TYPE -> DataTask::class.java
-      CHOICE_TASK_TYPE -> ChoiceTask::class.java
-      IDE_TASK_TYPE -> IdeTask::class.java
-      // for student mode
-      CODE_TASK_TYPE -> CodeTask::class.java
-      CHECK_IO_MISSION_TASK_TYPE -> CheckiOMission::class.java
-      CODEFORCES_TASK_TYPE -> CodeforcesTask::class.java
-      CODEFORCES_TASK_TYPE_WITH_FILE_IO -> CodeforcesTaskWithFileIO::class.java
-      STRING_TASK_TYPE -> StringTask::class.java
-      NUMBER_TASK_TYPE -> NumberTask::class.java
-      UNSUPPORTED_TASK_TYPE -> UnsupportedTask::class.java
-      MATCHING_TASK_TYPE -> MatchingTask::class.java
-      SORTING_TASK_TYPE -> SortingTask::class.java
-      else -> formatError(unsupportedItemTypeMessage(type, TASK))
-    }
-    return treeToValue(treeNode, clazz)
+    val treeNode = readNode(configFileText)
+    return treeToValue(treeNode, Task::class.java)
   }
 
   fun deserializeRemoteItem(configFile: VirtualFile): StudyItem {
