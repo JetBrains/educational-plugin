@@ -37,7 +37,7 @@ object YamlDeepLoader {
     val errorMessageToLog = "Course yaml config cannot be null"
     val courseConfig = projectDir.findChild(YamlConfigSettings.COURSE_CONFIG) ?: error(errorMessageToLog)
 
-    val deserializedCourse = YamlDeserializer.deserializeItem(courseConfig, project) as? Course ?: return null
+    val deserializedCourse = YamlDeserializer.deserializeItemProcessingErrors(courseConfig, project) as? Course ?: return null
     val mapper = deserializedCourse.mapper
 
     deserializedCourse.items = deserializedCourse.deserializeContent(project, deserializedCourse.items, mapper)

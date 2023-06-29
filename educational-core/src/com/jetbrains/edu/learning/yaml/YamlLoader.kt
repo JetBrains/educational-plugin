@@ -23,7 +23,7 @@ import com.jetbrains.edu.learning.yaml.format.getChangeApplierForItem
 
 /**
  *  Get fully-initialized [StudyItem] object from yaml config file.
- *  Uses [YamlDeserializer.deserializeItem] to deserialize object, than applies changes to existing object, see [loadItem].
+ *  Uses [YamlDeserializer.deserializeItemProcessingErrors] to deserialize object, than applies changes to existing object, see [loadItem].
  */
 object YamlLoader {
 
@@ -46,7 +46,7 @@ object YamlLoader {
     val mapper = StudyTaskManager.getInstance(project).course?.mapper ?: MAPPER
 
     val existingItem = getStudyItemForConfig(project, configFile)
-    val deserializedItem = YamlDeserializer.deserializeItem(configFile, project, loadFromVFile, mapper) ?: return
+    val deserializedItem = YamlDeserializer.deserializeItemProcessingErrors(configFile, project, loadFromVFile, mapper) ?: return
     deserializedItem.ensureChildrenExist(configFile.parent)
 
     if (existingItem == null) {
@@ -61,7 +61,7 @@ object YamlLoader {
       deserializedItem.name = itemDir.name
       val parentItem = deserializedItem.getParentItem(project, itemDir.parent)
       val parentConfig = parentItem.getDir(project.courseDir)?.findChild(parentItem.configFileName) ?: return
-      val deserializedParent = YamlDeserializer.deserializeItem(parentConfig, project, mapper=mapper) as? ItemContainer ?: return
+      val deserializedParent = YamlDeserializer.deserializeItemProcessingErrors(parentConfig, project, mapper=mapper) as? ItemContainer ?: return
       if (deserializedParent.items.map { it.name }.contains(itemDir.name)) {
         parentItem.addItemAsNew(project, deserializedItem)
         reopenEditors(project)

@@ -58,27 +58,32 @@ object YamlDeserializer {
   private const val TOPIC = "Loaded YAML"
   val YAML_LOAD_TOPIC: Topic<YamlListener> = Topic.create(TOPIC, YamlListener::class.java)
 
-  fun deserializeItem(configFile: VirtualFile, project: Project?, loadFromVFile: Boolean = true, mapper: ObjectMapper = MAPPER): StudyItem? {
+  fun deserializeItemProcessingErrors(
+    configFile: VirtualFile,
+    project: Project,
+    loadFromVFile: Boolean = true,
+    mapper: ObjectMapper = MAPPER
+  ): StudyItem? {
     val configFileText = if (loadFromVFile) VfsUtil.loadText(configFile) else configFile.document.text
     val configName = configFile.name
-    return try {
-      when (configName) {
-        COURSE_CONFIG -> {
-          ProgressManager.getInstance().computeInNonCancelableSection<Course, Exception> {
-            mapper.deserializeCourse(configFileText)
-          }
-        }
-        SECTION_CONFIG -> mapper.deserializeSection(configFileText)
-        LESSON_CONFIG -> mapper.deserializeLesson(configFileText)
-        TASK_CONFIG -> mapper.deserializeTask(configFileText)
-        else -> loadingError(unknownConfigMessage(configName))
+    return ProgressManager.getInstance().computeInNonCancelableSection<StudyItem, Exception> {
+      try {
+        deserializeItem(configName, mapper, configFileText)
+      }
+      catch (e: Exception) {
+        processErrors(project, configFile, e)
+        null
       }
     }
-    catch (e: Exception) {
-      if (project != null) {
-        processErrors(project, configFile, e)
-      }
-      return null
+  }
+
+  fun deserializeItem(configName: String, mapper: ObjectMapper, configFileText: String): StudyItem {
+    return when (configName) {
+      COURSE_CONFIG -> mapper.deserializeCourse(configFileText)
+      SECTION_CONFIG -> mapper.deserializeSection(configFileText)
+      LESSON_CONFIG -> mapper.deserializeLesson(configFileText)
+      TASK_CONFIG -> mapper.deserializeTask(configFileText)
+      else -> loadingError(unknownConfigMessage(configName))
     }
   }
 
@@ -90,7 +95,7 @@ object YamlDeserializer {
     val content = mutableListOf<T>()
     for (titledItem in contentList) {
       val configFile: VirtualFile = getConfigFileForChild(project, titledItem.name) ?: continue
-      val deserializeItem = deserializeItem(configFile, project, mapper=mapper) as? T ?: continue
+      val deserializeItem = deserializeItemProcessingErrors(configFile, project, mapper = mapper) as? T ?: continue
       deserializeItem.name = titledItem.name
       deserializeItem.index = titledItem.index
       content.add(deserializeItem)
