@@ -82,7 +82,7 @@ fun installRequiredPackages(project: Project, sdk: Sdk) {
   }
 }
 
-fun getSupprotedVersions(): List<String> {
+fun getSupportedVersions(): List<String> {
   val pythonVersions = mutableListOf(PyLanguageSettings.ALL_VERSIONS, EduNames.PYTHON_3_VERSION, EduNames.PYTHON_2_VERSION)
   pythonVersions.addAll(LanguageLevel.values().map { it.toString() }.reversed())
   return pythonVersions

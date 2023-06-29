@@ -18,7 +18,7 @@ open class PyCourseBuilder : EduCourseBuilder<PyProjectSettings> {
 
   override fun getLanguageSettings(): LanguageSettings<PyProjectSettings> = PyLanguageSettings()
 
-  override fun getSupportedLanguageVersions(): List<String> = getSupprotedVersions()
+  override fun getSupportedLanguageVersions(): List<String> = getSupportedVersions()
 
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<PyProjectSettings>? =
     PyCourseProjectGenerator(this, course)
