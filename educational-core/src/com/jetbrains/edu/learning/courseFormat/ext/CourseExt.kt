@@ -194,6 +194,5 @@ private fun Course.configuratorCompatibility(): CourseCompatibility? {
 }
 
 fun Course.updateEnvironmentSettings(project: Project, configurator: EduConfigurator<*>? = this.configurator) {
-  configurator ?: return
-  course.environmentSettings = configurator.getEnvironmentSettings(project)
+  course.environmentSettings += configurator?.getEnvironmentSettings(project).orEmpty()
 }

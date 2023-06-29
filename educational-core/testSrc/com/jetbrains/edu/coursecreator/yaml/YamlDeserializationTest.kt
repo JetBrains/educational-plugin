@@ -953,5 +953,21 @@ class YamlDeserializationTest : YamlTestCase() {
     assertEquals(CourseMode.STUDENT, getCourseMode(yamlContent))
   }
 
-  private fun deserializeNotNull(yamlContent: String) : Course = MAPPER.deserializeCourse(yamlContent)
+  fun `test environment settings`() {
+    val yamlContent = """
+      |title: Test Course
+      |language: English
+      |summary: Test Course Description
+      |programming_language: Plain text
+      |content:
+      |- lesson1
+      |mode: Study
+      |environment_settings:
+      |  foo: bar
+      |""".trimMargin()
+    val course = deserializeNotNull(yamlContent)
+    assertEquals(mapOf("foo" to "bar"), course.environmentSettings)
+  }
+
+  private fun deserializeNotNull(yamlContent: String): Course = MAPPER.deserializeCourse(yamlContent)
 }

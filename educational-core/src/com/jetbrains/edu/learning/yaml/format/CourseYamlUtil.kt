@@ -43,6 +43,7 @@ import com.jetbrains.edu.learning.yaml.errorHandling.unsupportedItemTypeMessage
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.END_DATE_TIME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT_SETTINGS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_LINK
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.GENERATED_EDU_ID
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ID
@@ -70,7 +71,7 @@ import java.util.*
  */
 @Suppress("unused") // used for yaml serialization
 @JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, VENDOR, IS_PRIVATE, PROGRAMMING_LANGUAGE,
-                   PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, SOLUTIONS_HIDDEN, CONTENT, FEEDBACK_LINK, TAGS)
+                   PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, SOLUTIONS_HIDDEN, CONTENT, FEEDBACK_LINK, TAGS, ENVIRONMENT_SETTINGS)
 @JsonDeserialize(builder = CourseBuilder::class)
 abstract class CourseYamlMixin {
   val itemType: String
@@ -122,6 +123,10 @@ abstract class CourseYamlMixin {
   @JsonProperty(TAGS)
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
   protected open lateinit var contentTags: List<String>
+
+  @JsonProperty(ENVIRONMENT_SETTINGS)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  lateinit var environmentSettings: Map<String, String>
 }
 
 @Suppress("unused", "LateinitVarOverridesLateinitVar") // used for yaml serialization
@@ -214,6 +219,7 @@ private class CourseBuilder(
   @JsonProperty(END_DATE_TIME) val codeforcesEndDateTime: ZonedDateTime?,
   @JsonProperty(PROGRAM_TYPE_ID) val codeforcesProgramTypeId: String?,
   @JsonProperty(TAGS) val yamlContentTags: List<String> = emptyList(),
+  @JsonProperty(ENVIRONMENT_SETTINGS) val yamlEnvironmentSettings: Map<String, String> = emptyMap(),
 ) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {
@@ -261,6 +267,7 @@ private class CourseBuilder(
       if (marketplaceCourseVersion == 0) marketplaceCourseVersion = 1
       solutionsHidden = areSolutionsHidden ?: false
       contentTags = yamlContentTags
+      environmentSettings = yamlEnvironmentSettings
 
       // for C++ there are two languages with the same display name, and we have to filter out the one we have configurator for
       val languages = Language.getRegisteredLanguages()

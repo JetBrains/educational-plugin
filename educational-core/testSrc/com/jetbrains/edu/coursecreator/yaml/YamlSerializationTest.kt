@@ -1013,6 +1013,26 @@ class YamlSerializationTest : YamlTestCase() {
       |""".trimMargin())
   }
 
+  fun `test environment settings`() {
+    val course = course {
+      lesson("lesson1") {
+        eduTask()
+      }
+    }
+    course.environmentSettings += "foo" to "bar"
+    doTest(course, """
+      |title: Test Course
+      |language: English
+      |summary: Test Course Description
+      |programming_language: Plain text
+      |content:
+      |- lesson1
+      |mode: Study
+      |environment_settings:
+      |  foo: bar
+      |""".trimMargin())
+  }
+
   private fun doTest(item: StudyItem, expected: String) {
     val actual = item.course.mapper.writeValueAsString(item)
     assertEquals(expected, actual)

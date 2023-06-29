@@ -45,6 +45,9 @@ object YamlMixinNames {
   @NlsSafe
   const val ENVIRONMENT = JsonMixinNames.ENVIRONMENT
 
+  @NlsSafe
+  const val ENVIRONMENT_SETTINGS = JsonMixinNames.ENVIRONMENT_SETTINGS
+
   // coursera course
   @NlsSafe
   const val TOP_LEVEL_LESSONS_SECTION = "default_section"

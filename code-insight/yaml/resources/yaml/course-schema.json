@@ -92,6 +92,11 @@
       "description": "Tags for content",
       "type": "array",
       "uniqueItems": true
+    },
+    "environment_settings": {
+      "description" : "Course specific properties",
+      "type" : "object",
+      "uniqueItems" : true
     }
   },
   "required": [
