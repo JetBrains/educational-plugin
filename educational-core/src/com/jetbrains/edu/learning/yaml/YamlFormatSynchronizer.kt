@@ -1,6 +1,9 @@
 package com.jetbrains.edu.learning.yaml
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.FRAMEWORK
+import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.fasterxml.jackson.databind.jsontype.NamedType
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.invokeLater
@@ -18,25 +21,35 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission.Companion.CHECK_IO_MISSION_TASK_TYPE
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE_WITH_FILE_IO
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.project
-import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask.Companion.CODE_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.NumberTask.Companion.NUMBER_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.StringTask.Companion.STRING_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.UnsupportedTask.Companion.UNSUPPORTED_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DATA_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask.Companion.MATCHING_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask.Companion.SORTING_TASK_TYPE
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.getEditor
@@ -51,6 +64,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask.Companion.REMOTE_EDU_TASK_TYPE
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.LESSON_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_COURSE_CONFIG
@@ -119,6 +133,9 @@ object YamlFormatSynchronizer {
     registerSubtypes(NamedType(CheckiOCourse::class.java, CheckiONames.CHECKIO_TYPE.decapitalize()))
     registerSubtypes(NamedType(HyperskillCourse::class.java, HYPERSKILL_TYPE.decapitalize()))
     registerSubtypes(NamedType(StepikCourse::class.java, StepikNames.STEPIK_TYPE.decapitalize()))
+
+    registerSubtypes(NamedType(StepikLesson::class.java, StepikNames.STEPIK_TYPE))
+    registerSubtypes(NamedType(CheckiOStation::class.java, CheckiONames.CHECKIO_LESSON_TYPE))
   }
 
   private fun ObjectMapper.addRemoteInfoMixInsFromProviders() {

@@ -18,7 +18,6 @@ import com.intellij.psi.codeStyle.NameUtil
 import com.intellij.util.messages.Topic
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission.Companion.CHECK_IO_MISSION_TASK_TYPE
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE_WITH_FILE_IO
@@ -53,7 +52,6 @@ import com.jetbrains.edu.learning.getEditor
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduFormatBundle
-import com.jetbrains.edu.learning.stepik.course.StepikLesson
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask.Companion.REMOTE_EDU_TASK_TYPE
@@ -65,13 +63,11 @@ import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_SECTION_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_TASK_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.SECTION_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.TASK_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlConfigSettings.localConfigNameToRemote
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.MAPPER
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.REMOTE_MAPPER
 import com.jetbrains.edu.learning.yaml.errorHandling.*
 import com.jetbrains.edu.learning.yaml.format.RemoteStudyItem
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
-import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LESSON
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TASK
 import org.jetbrains.annotations.NonNls
 
@@ -87,13 +83,18 @@ object YamlDeserializer {
 
   fun deserializeItem(configFile: VirtualFile, project: Project?, loadFromVFile: Boolean = true, mapper: ObjectMapper = MAPPER): StudyItem? {
     val configFileText = if (loadFromVFile) VfsUtil.loadText(configFile) else configFile.document.text
+    val configName = configFile.name
     return try {
-      when (configFile.name) {
-        COURSE_CONFIG -> mapper.deserializeCourse(configFileText)
+      when (configName) {
+        COURSE_CONFIG -> {
+          ProgressManager.getInstance().computeInNonCancelableSection<Course, Exception> {
+            mapper.deserializeCourse(configFileText)
+          }
+        }
         SECTION_CONFIG -> mapper.deserializeSection(configFileText)
         LESSON_CONFIG -> mapper.deserializeLesson(configFileText)
         TASK_CONFIG -> mapper.deserializeTask(configFileText)
-        else -> loadingError(unknownConfigMessage(configFile.name))
+        else -> loadingError(unknownConfigMessage(configName))
       }
     }
     catch (e: Exception) {
@@ -127,20 +128,18 @@ object YamlDeserializer {
    */
   @VisibleForTesting
   fun ObjectMapper.deserializeCourse(configFileText: String): Course {
-    return ProgressManager.getInstance().computeInNonCancelableSection<Course, Exception> {
-      val treeNode = readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
-      val courseMode = asText(treeNode.get("mode"))
-      val course = treeToValue(treeNode, Course::class.java)
-      course.courseMode = if (courseMode != null) CourseMode.STUDENT else CourseMode.EDUCATOR
+    val treeNode = readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
+    val courseMode = asText(treeNode.get("mode"))
+    val course = treeToValue(treeNode, Course::class.java)
+    course.courseMode = if (courseMode != null) CourseMode.STUDENT else CourseMode.EDUCATOR
 
-      val supportedLanguageVersions = course.configurator?.courseBuilder?.getSupportedLanguageVersions()
-                                      ?: formatError(EduFormatBundle.message("yaml.editor.invalid.unsupported.language", course.languageDisplayName))
-      val languageVersion = course.languageVersion ?: return@computeInNonCancelableSection course
-      if (!supportedLanguageVersions.contains(languageVersion)) {
-        formatError(EduCoreBundle.message("yaml.editor.invalid.unsupported.language.with.version", course.languageDisplayName, languageVersion))
-      }
-      course
+    val supportedLanguageVersions = course.configurator?.courseBuilder?.getSupportedLanguageVersions()
+                                    ?: formatError(EduFormatBundle.message("yaml.editor.invalid.unsupported.language", course.languageDisplayName))
+    val languageVersion = course.languageVersion ?: return course
+    if (!supportedLanguageVersions.contains(languageVersion)) {
+      formatError(EduCoreBundle.message("yaml.editor.invalid.unsupported.language.with.version", course.languageDisplayName, languageVersion))
     }
+    return course
   }
 
   private fun ObjectMapper.readNode(configFileText: String): JsonNode =
@@ -159,16 +158,7 @@ object YamlDeserializer {
   @VisibleForTesting
   fun ObjectMapper.deserializeLesson(configFileText: String): Lesson {
     val treeNode = readNode(configFileText)
-
-    val type = asText(treeNode.get(YamlMixinNames.TYPE))
-    val clazz = when (type) {
-      FrameworkLesson().itemType -> FrameworkLesson::class.java
-      CheckiOStation().itemType -> CheckiOStation::class.java // for student projects only
-      StepikLesson().itemType -> StepikLesson::class.java
-      null, Lesson().itemType -> Lesson::class.java
-      else -> formatError(unsupportedItemTypeMessage(type, LESSON))
-    }
-    return treeToValue(treeNode, clazz)
+    return treeToValue(treeNode, Lesson::class.java)
   }
 
   @VisibleForTesting

@@ -3,12 +3,13 @@
 
 package com.jetbrains.edu.learning.yaml.format
 
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.fasterxml.jackson.annotation.*
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.FRAMEWORK
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.LESSON
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
@@ -23,6 +24,12 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TAGS
  */
 @JsonPropertyOrder(CUSTOM_NAME, CONTENT, TAGS)
 @JsonDeserialize(builder = LessonBuilder::class)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY,
+  property = YamlMixinNames.TYPE, defaultImpl = Lesson::class, visible = true)
+@JsonSubTypes(
+  JsonSubTypes.Type(Lesson::class, name = LESSON),
+  JsonSubTypes.Type(FrameworkLesson::class, name = FRAMEWORK)
+)
 abstract class LessonYamlMixin {
   @JsonProperty(CUSTOM_NAME)
   @JsonInclude(JsonInclude.Include.NON_NULL)
