@@ -17,6 +17,7 @@
   </extensions>
 
   <extensions defaultExtensionNs="Educational">
+    <configurator language="SQL" implementationClass="com.jetbrains.edu.sql.jvm.gradle.SqlGradleConfigurator"/>
     <taskNavigationExtension implementation="com.jetbrains.edu.sql.jvm.gradle.SqlTaskNavigationExtension"/>
     <revertTaskExtension implementation="com.jetbrains.edu.sql.jvm.gradle.SqlRevertTaskExtension"/>
   </extensions>

@@ -4,11 +4,8 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.jvm.JdkLanguageSettings
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.gradle.generation.GradleCourseProjectGenerator
-import com.jetbrains.edu.learning.EduCourseBuilder
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduNames.PROJECT_NAME
-import com.jetbrains.edu.learning.LanguageSettings
-import com.jetbrains.edu.learning.RefreshCause
-import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import org.jetbrains.annotations.NonNls
@@ -29,7 +26,7 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
   )
 
   open fun templateVariables(projectName: String): Map<String, Any> {
-    return mapOf(PROJECT_NAME to GeneratorUtils.gradleSanitizeName(projectName))
+    return mapOf(PROJECT_NAME to GeneratorUtils.gradleSanitizeName(projectName)) + getKotlinTemplateVariables()
   }
 
   override fun refreshProject(project: Project, cause: RefreshCause) {
@@ -46,5 +43,12 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
   companion object {
     @NonNls
     const val HYPERSKILL_SETTINGS_GRADLE_TEMPLATE_NAME: String = "hyperskill-settings.gradle"
+
+    fun getKotlinTemplateVariables(): Map<String, Any> {
+      val kotlinVersion = kotlinVersion()
+      return mapOf(
+        "KOTLIN_VERSION" to kotlinVersion.version
+      )
+    }
   }
 }

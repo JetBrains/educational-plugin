@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.sql.jvm.gradle.SqlGradleCourseBuilderBase.Companion.INIT_SQL
+import com.jetbrains.edu.sql.jvm.gradle.SqlGradleCourseBuilder.Companion.INIT_SQL
 import com.jetbrains.edu.sql.jvm.gradle.findDataSource
 import com.jetbrains.edu.sql.kotlin.SqlCourseGenerationTestBase
 import org.jetbrains.concurrency.AsyncPromise

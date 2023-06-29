@@ -2,7 +2,7 @@ package com.jetbrains.edu.kotlin.hyperskill
 
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase.Companion.HYPERSKILL_SETTINGS_GRADLE_TEMPLATE_NAME
-import com.jetbrains.edu.kotlin.KtCourseBuilder.Companion.getKotlinTemplateVariables
+import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase.Companion.getKotlinTemplateVariables
 import com.jetbrains.edu.kotlin.hyperskill.KtHyperskillConfigurator.Companion.KOTLIN_HYPERSKILL_BUILD_GRADLE_TEMPLATE_NAME
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.CourseMode

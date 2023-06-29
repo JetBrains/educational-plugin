@@ -8,7 +8,7 @@ import com.intellij.sql.psi.SqlLanguage
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.checker.CheckUtils
-import com.jetbrains.edu.sql.jvm.gradle.SqlGradleCourseBuilderBase.Companion.INIT_SQL
+import com.jetbrains.edu.sql.jvm.gradle.SqlGradleCourseBuilder.Companion.INIT_SQL
 import com.jetbrains.edu.sql.jvm.gradle.createDatabaseScriptConfiguration
 import com.jetbrains.edu.sql.kotlin.SqlCourseGenerationTestBase
 

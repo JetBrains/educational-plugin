@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
-import com.jetbrains.edu.sql.jvm.gradle.SqlGradleCourseBuilderBase.Companion.INIT_SQL
+import com.jetbrains.edu.sql.jvm.gradle.SqlGradleCourseBuilder.Companion.INIT_SQL
 import com.jetbrains.edu.sql.kotlin.SqlCourseGenerationTestBase
 import java.util.*
 

@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.sql.core.SqlConfiguratorBase
 
-abstract class SqlGradleCourseBuilderBase : GradleCourseBuilderBase() {
+open class SqlGradleCourseBuilder : GradleCourseBuilderBase() {
   override fun taskTemplateName(course: Course): String = SqlConfiguratorBase.TASK_SQL
 
   override fun getDefaultTaskTemplates(
@@ -28,6 +28,20 @@ abstract class SqlGradleCourseBuilderBase : GradleCourseBuilderBase() {
 
   override fun getCourseProjectGenerator(course: Course): GradleCourseProjectGenerator {
     return SqlGradleCourseProjectGenerator(this, course)
+  }
+
+  override fun buildGradleTemplateName(course: Course): String {
+    return when (course.sqlTestLanguage) {
+      SqlTestLanguage.KOTLIN -> "sql-kotlin-build.gradle"
+      SqlTestLanguage.JAVA -> "sql-java-build.gradle"
+    }
+  }
+
+  override fun testTemplateName(course: Course): String {
+    return when (course.sqlTestLanguage) {
+      SqlTestLanguage.KOTLIN -> "SqlTest.kt"
+      SqlTestLanguage.JAVA -> "SqlTest.java"
+    }
   }
 
   override fun getLanguageSettings(): LanguageSettings<JdkProjectSettings> = SqlJdkLanguageSettings()

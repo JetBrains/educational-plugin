@@ -4,12 +4,19 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.gradle.GradleConfiguratorBase
+import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.jvm.gradle.checker.GradleTaskCheckerProvider
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.sql.core.SqlConfiguratorBase
 
-abstract class SqlGradleConfiguratorBase : GradleConfiguratorBase(), SqlConfiguratorBase<JdkProjectSettings> {
+open class SqlGradleConfigurator : GradleConfiguratorBase(), SqlConfiguratorBase<JdkProjectSettings> {
+
+  // A proper test template is provided via `SqlGradleCourseBuilder.testTemplateName`
+  override val testFileName: String = ""
+
+  override val courseBuilder: GradleCourseBuilderBase
+    get() = SqlGradleCourseBuilder()
 
   override fun excludeFromArchive(project: Project, course: Course, file: VirtualFile): Boolean {
     if (super<GradleConfiguratorBase>.excludeFromArchive(project, course, file)) return true

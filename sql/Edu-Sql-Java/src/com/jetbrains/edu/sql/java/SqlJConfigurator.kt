@@ -1,9 +1,9 @@
 package com.jetbrains.edu.sql.java
 
 import com.jetbrains.edu.java.JConfigurator
-import com.jetbrains.edu.sql.jvm.gradle.SqlGradleConfiguratorBase
+import com.jetbrains.edu.sql.jvm.gradle.SqlGradleConfigurator
 
-class SqlJConfigurator : SqlGradleConfiguratorBase() {
+class SqlJConfigurator : SqlGradleConfigurator() {
   override val courseBuilder: SqlJCourseBuilder
     get() = SqlJCourseBuilder()
 

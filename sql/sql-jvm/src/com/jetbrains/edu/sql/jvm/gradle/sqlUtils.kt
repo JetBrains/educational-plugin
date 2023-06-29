@@ -275,6 +275,6 @@ private fun Task.findInitSqlFile(project: Project): VirtualFile? {
   val lesson = lesson
   if (lesson is FrameworkLesson && lesson.currentTask() != this) return null
 
-  val taskFile = taskFiles[SqlGradleCourseBuilderBase.INIT_SQL] ?: return null
+  val taskFile = taskFiles[SqlGradleCourseBuilder.INIT_SQL] ?: return null
   return taskFile.getVirtualFile(project)
 }

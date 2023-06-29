@@ -1,0 +1,6 @@
+package com.jetbrains.edu.sql.jvm.gradle.compatibility
+
+import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderTestBase
+import com.jetbrains.edu.learning.compatibility.SqlGradleCourseCompatibilityProvider
+
+class SqlGradleCourseCompatibilityProviderTest : CourseCompatibilityProviderTestBase(SqlGradleCourseCompatibilityProvider::class)
