@@ -28,9 +28,7 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFile
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.CourseMode.Companion.toCourseMode
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
-import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask.Companion.CODE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.EDU_TASK_TYPE
@@ -52,7 +50,6 @@ import com.jetbrains.edu.learning.document
 import com.jetbrains.edu.learning.getEditor
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.stepik.course.StepikLesson
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
@@ -131,13 +128,6 @@ object YamlDeserializer {
       val courseMode = asText(treeNode.get("mode"))
       val course = treeToValue(treeNode, Course::class.java)
       course.courseMode = if (courseMode != null) CourseMode.STUDENT else CourseMode.EDUCATOR
-
-      val supportedLanguageVersions = course.configurator?.courseBuilder?.getSupportedLanguageVersions()
-                                      ?: formatError(EduFormatBundle.message("yaml.editor.invalid.unsupported.language", course.languageDisplayName))
-      val languageVersion = course.languageVersion ?: return@computeInNonCancelableSection course
-      if (!supportedLanguageVersions.contains(languageVersion)) {
-        formatError(EduCoreBundle.message("yaml.editor.invalid.unsupported.language.with.version", course.languageDisplayName, languageVersion))
-      }
       course
     }
   }
