@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.getTaskFile
 import com.jetbrains.edu.learning.placeholder.PlaceholderHighlightingManager
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
-import com.jetbrains.edu.learning.yaml.YamlLoader.addItemAsNew
+import com.jetbrains.edu.learning.yaml.YamlLoader
 import org.jetbrains.annotations.NonNls
 
 open class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task>() {
@@ -64,7 +64,7 @@ open class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task
 
     val parentItem = existingTask.lesson
     parentItem.removeItem(existingItem)
-    parentItem.addItemAsNew(project, deserializedItem)
+    YamlLoader.getInstance(project).addItemAsNew(parentItem, deserializedItem)
   }
 
   private fun Task.applyTaskFileChanges(deserializedItem: Task) {

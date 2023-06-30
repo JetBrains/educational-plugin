@@ -259,7 +259,7 @@ object YamlFormatSynchronizer {
           }
 
           // load item to show editor notification if config file is invalid
-          YamlLoader.loadItem(project, file, false)
+          YamlLoader.getInstance(project).loadItem(file, false)
         }
       }
     })

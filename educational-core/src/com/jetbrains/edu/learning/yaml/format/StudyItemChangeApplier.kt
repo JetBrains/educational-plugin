@@ -11,8 +11,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.getConfigFileForChild
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
-import com.jetbrains.edu.learning.yaml.YamlLoader.addItemAsNew
-import com.jetbrains.edu.learning.yaml.YamlLoader.deserializeChildrenIfNeeded
+import com.jetbrains.edu.learning.yaml.YamlLoader
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
 import com.jetbrains.edu.learning.yaml.errorHandling.unexpectedItemTypeMessage
 import com.jetbrains.edu.learning.yaml.format.student.StudentTaskChangeApplier
@@ -55,7 +54,7 @@ open class ItemContainerChangeApplier<T : ItemContainer>(val project: Project) :
 
       val parentItem = existingItem.parent
       parentItem.removeItem(existingItem)
-      parentItem.addItemAsNew(project, deserializedItem)
+      YamlLoader.getInstance(project).addItemAsNew(parentItem, deserializedItem)
       return
     }
 
@@ -82,7 +81,7 @@ open class ItemContainerChangeApplier<T : ItemContainer>(val project: Project) :
         deserializedChild.name = titledItem.name
         deserializedChild.index = titledItem.index
         deserializedChild.parent = existingItem
-        deserializedChild.deserializeChildrenIfNeeded(project, existingItem.course)
+        YamlLoader.getInstance(project).deserializeChildrenIfNeeded(deserializedChild, existingItem.course)
         preservedChildren.add(deserializedChild)
       }
     }

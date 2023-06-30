@@ -16,7 +16,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.handlers.EduVirtualFileListener
 import com.jetbrains.edu.learning.yaml.*
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
-import com.jetbrains.edu.learning.yaml.YamlLoader.deserializeChildrenIfNeeded
 
 class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : EduVirtualFileListener(project) {
 
@@ -198,7 +197,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
 
     deserializedItem.name = itemDir.name
     deserializedItem.parent = parentStudyItem
-    deserializedItem.deserializeChildrenIfNeeded(project, parentStudyItem.course)
+    YamlLoader.getInstance(project).deserializeChildrenIfNeeded(deserializedItem, parentStudyItem.course)
     deserializedItem.init(parentStudyItem, false)
     parentStudyItem.addItem(deserializedItem)
     deserializedItem.index = 1 + parentStudyItem.items.indexOf(deserializedItem)
@@ -213,7 +212,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     val loadFromConfig = file.getUserData(YamlFormatSynchronizer.LOAD_FROM_CONFIG) ?: true
     if (loadFromConfig) {
       runInEdt {
-        YamlLoader.loadItem(project, file, true)
+        YamlLoader.getInstance(project).loadItem(file, true)
         ProjectView.getInstance(project).refresh()
       }
     }
