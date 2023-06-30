@@ -13,7 +13,7 @@ import java.util.*
  * - Update [com.jetbrains.edu.learning.stepik.StepikTaskBuilder.pluginTaskTypes] for the tasks we do not have separately on stepik
  *   and [com.jetbrains.edu.learning.stepik.StepikTaskBuilder.StepikTaskType] otherwise
  * - Handle yaml deserialization:
- * - add type in [com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask]
+ * - Register subtype to the yaml deserialization in ObjectMapper
  * - add yaml mixins for course creator and student fields [com.jetbrains.edu.learning.yaml.format]
  */
 abstract class Task : StudyItem {

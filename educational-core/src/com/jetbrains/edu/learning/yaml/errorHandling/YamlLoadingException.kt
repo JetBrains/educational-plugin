@@ -3,10 +3,6 @@ package com.jetbrains.edu.learning.yaml.errorHandling
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
-class YamlLoadingException(override val message: String) : IllegalStateException(message)
-
-fun loadingError(message: String): Nothing = throw YamlLoadingException(message)
-
 fun noDirForItemMessage(name: String, itemTypeName: String = EduNames.ITEM) = EduCoreBundle.message("yaml.editor.invalid.format.no.dir",
                                                                                                     name, itemTypeName)
 

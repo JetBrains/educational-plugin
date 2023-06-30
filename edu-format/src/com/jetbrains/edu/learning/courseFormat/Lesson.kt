@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 /**
  * To introduce new lesson type it's required to:
  * - Extend Lesson class
- * - Handle yaml deserialization [com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson]
+ * - Register subtype to the yaml deserialization in ObjectMapper
  */
 open class Lesson : ItemContainer() {
 

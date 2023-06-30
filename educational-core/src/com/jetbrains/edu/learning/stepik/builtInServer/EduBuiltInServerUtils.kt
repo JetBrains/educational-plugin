@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlDeepLoader.loadRemoteInfo
-import com.jetbrains.edu.learning.yaml.YamlDeserializer
+import com.jetbrains.edu.learning.yaml.YamlDeserializerBase
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.File
 
@@ -62,7 +62,7 @@ object EduBuiltInServerUtils {
     val remoteInfoConfig = projectDir.findChild(REMOTE_COURSE_CONFIG) ?: return null
     val localCourseConfig = projectDir.findChild(COURSE_CONFIG) ?: return null
     return runReadAction {
-      val localCourse = YamlDeserializer.deserializeItem(
+      val localCourse = YamlDeserializerBase.deserializeItem(
         localCourseConfig.name,
         YamlFormatSynchronizer.MAPPER,
         VfsUtil.loadText(localCourseConfig)
