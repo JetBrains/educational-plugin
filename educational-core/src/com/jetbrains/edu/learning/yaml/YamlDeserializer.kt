@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.yaml
 
 import com.fasterxml.jackson.databind.JsonMappingException
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
@@ -45,7 +44,7 @@ import org.jetbrains.annotations.NonNls
  * It means that deserialized object contains only values from corresponding config files which
  * should be applied to existing one that is done in [YamlLoader.loadItem].
  */
-object YamlDeserializer {
+object YamlDeserializer : YamlDeserializerBase() {
   @NonNls
   private const val TOPIC = "Loaded YAML"
   val YAML_LOAD_TOPIC: Topic<YamlListener> = Topic.create(TOPIC, YamlListener::class.java)
@@ -60,7 +59,7 @@ object YamlDeserializer {
     val configName = configFile.name
     return ProgressManager.getInstance().computeInNonCancelableSection<StudyItem, Exception> {
       try {
-        YamlDeserializerBase.deserializeItem(configName, mapper, configFileText)
+        deserializeItem(configName, mapper, configFileText)
       }
       catch (e: Exception) {
         processErrors(project, configFile, e)
@@ -76,7 +75,7 @@ object YamlDeserializer {
   ): List<T> {
     val content = mutableListOf<T>()
     for (titledItem in contentList) {
-      val configFile: VirtualFile = getConfigFileForChild(project, titledItem.name) ?: continue
+      val configFile = getConfigFileForChild(project, titledItem.name) ?: continue
       val deserializeItem = deserializeItemProcessingErrors(configFile, project, mapper = mapper) as? T ?: continue
       deserializeItem.name = titledItem.name
       deserializeItem.index = titledItem.index
@@ -125,10 +124,6 @@ object YamlDeserializer {
     }
 
     return REMOTE_MAPPER.treeToValue(treeNode, clazz)
-  }
-
-  private fun asText(node: JsonNode?): String? {
-    return if (node == null || node.isNull) null else node.asText()
   }
 
   private val StudyItem.childrenConfigFileNames: Array<String>

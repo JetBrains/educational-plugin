@@ -16,12 +16,7 @@ import com.jetbrains.edu.learning.yaml.errorHandling.*
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
 import org.jetbrains.annotations.VisibleForTesting
 
-/**
- * Deserialize [StudyItem] object from yaml config file without any additional modifications.
- * It means that deserialized object contains only values from corresponding config files which
- * should be applied to existing one that is done in [YamlLoader.loadItem].
- */
-object YamlDeserializerBase {
+abstract class YamlDeserializerBase {
   fun deserializeItem(configName: String, mapper: ObjectMapper, configFileText: String): StudyItem {
     return when (configName) {
       COURSE_CONFIG -> mapper.deserializeCourse(configFileText)
@@ -70,7 +65,7 @@ object YamlDeserializerBase {
       else -> tree
     }
 
-  private fun asText(node: JsonNode?): String? {
+  protected fun asText(node: JsonNode?): String? {
     return if (node == null || node.isNull) null else node.asText()
   }
 

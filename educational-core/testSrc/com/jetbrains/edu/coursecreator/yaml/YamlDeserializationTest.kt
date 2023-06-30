@@ -20,11 +20,11 @@ import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
-import com.jetbrains.edu.learning.yaml.YamlDeserializerBase.deserializeCourse
-import com.jetbrains.edu.learning.yaml.YamlDeserializerBase.deserializeLesson
-import com.jetbrains.edu.learning.yaml.YamlDeserializerBase.deserializeSection
-import com.jetbrains.edu.learning.yaml.YamlDeserializerBase.deserializeTask
-import com.jetbrains.edu.learning.yaml.YamlDeserializerBase.getCourseMode
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeSection
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.getCourseMode
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.MAPPER
 import com.jetbrains.edu.learning.yaml.YamlTestCase
 import java.util.*
