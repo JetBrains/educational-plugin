@@ -1,8 +1,9 @@
 package com.jetbrains.edu.codeInsight.taskDescription
 
 import com.intellij.psi.PsiManager
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 
-abstract class EduInCourseLinkPathResolveTestBase : EduTaskDescriptionTestBase() {
+abstract class EduInCourseLinkPathResolveTestBase(format: DescriptionFormat) : EduTaskDescriptionTestBase(format) {
 
   override fun createCourse() {
     courseWithFiles {

@@ -1,6 +1,8 @@
 package com.jetbrains.edu.codeInsight.taskDescription
 
-abstract class EduInCourseLinkPathCompletionTestBase : EduTaskDescriptionCompletionTestBase() {
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
+
+abstract class EduInCourseLinkPathCompletionTestBase(format: DescriptionFormat) : EduTaskDescriptionCompletionTestBase(format) {
   fun `test complete section`() = doTest("course://sect<caret>", "course://section1<caret>")
   fun `test complete lesson`() = doTest("course://less<caret>", "course://lesson1<caret>")
   fun `test complete task`() = doTest("course://lesson1/tas<caret>", "course://lesson1/task1<caret>")

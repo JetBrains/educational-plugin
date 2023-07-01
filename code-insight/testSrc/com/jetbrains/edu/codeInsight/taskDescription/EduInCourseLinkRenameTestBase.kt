@@ -2,9 +2,10 @@ package com.jetbrains.edu.codeInsight.taskDescription
 
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.learning.FileTreeBuilder
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.fileTree
 
-abstract class EduInCourseLinkRenameTestBase : EduTaskDescriptionTestBase() {
+abstract class EduInCourseLinkRenameTestBase(format: DescriptionFormat) : EduTaskDescriptionTestBase(format) {
 
   override fun createCourse() {
     courseWithFiles {

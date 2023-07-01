@@ -1,8 +1,9 @@
 package com.jetbrains.edu.codeInsight.taskDescription
 
 import com.jetbrains.edu.codeInsight.EduCompletionTextFixture
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 
-abstract class EduTaskDescriptionCompletionTestBase : EduTaskDescriptionTestBase() {
+abstract class EduTaskDescriptionCompletionTestBase(format: DescriptionFormat) : EduTaskDescriptionTestBase(format) {
 
   private lateinit var completionFixture: EduCompletionTextFixture
 
