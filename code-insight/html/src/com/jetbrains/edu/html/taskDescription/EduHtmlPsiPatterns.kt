@@ -1,9 +1,6 @@
 package com.jetbrains.edu.html.taskDescription
 
-import com.intellij.patterns.PlatformPatterns
-import com.intellij.patterns.PsiElementPattern
-import com.intellij.patterns.XmlAttributeValuePattern
-import com.intellij.patterns.XmlPatterns
+import com.intellij.patterns.*
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlTokenType
 import com.jetbrains.edu.codeInsight.inCourse
@@ -11,6 +8,7 @@ import com.jetbrains.edu.codeInsight.inFileWithName
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
 import com.jetbrains.edu.learning.taskDescription.A_TAG
 import com.jetbrains.edu.learning.taskDescription.HREF_ATTRIBUTE
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionLinkProtocol
 
 object EduHtmlPsiPatterns {
 
@@ -21,4 +19,10 @@ object EduHtmlPsiPatterns {
 
   val inHrefAttributeValue: PsiElementPattern.Capture<PsiElement> = PlatformPatterns.psiElement(XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN)
     .withParent(hrefAttributeValue)
+
+  val toolWindowIdUriPath: PsiElementPattern.Capture<PsiElement> = uriPathElement(TaskDescriptionLinkProtocol.TOOL_WINDOW)
+
+  private fun uriPathElement(protocol: TaskDescriptionLinkProtocol): PsiElementPattern.Capture<PsiElement> {
+    return inHrefAttributeValue.withText(StandardPatterns.string().startsWith(protocol.protocol))
+  }
 }

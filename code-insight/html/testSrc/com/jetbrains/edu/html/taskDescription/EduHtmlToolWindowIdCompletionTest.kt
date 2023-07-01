@@ -1,0 +1,6 @@
+package com.jetbrains.edu.html.taskDescription
+
+import com.jetbrains.edu.codeInsight.taskDescription.EduToolWindowIdCompletionTestBase
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
+
+class EduHtmlToolWindowIdCompletionTest : EduToolWindowIdCompletionTestBase(DescriptionFormat.HTML)
