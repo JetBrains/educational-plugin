@@ -21,6 +21,8 @@ object EduMarkdownPsiPatterns {
 
   val toolWindowIdUriPath: PsiElementPattern.Capture<PsiElement> = uriPathElement(TaskDescriptionLinkProtocol.TOOL_WINDOW)
 
+  val settingsIdUriPath: PsiElementPattern.Capture<PsiElement> = uriPathElement(TaskDescriptionLinkProtocol.SETTINGS)
+
   private fun uriPathElement(protocol: TaskDescriptionLinkProtocol): PsiElementPattern.Capture<PsiElement> {
     return psiElement<PsiElement>()
       .withParent(markdownLinkDestination)

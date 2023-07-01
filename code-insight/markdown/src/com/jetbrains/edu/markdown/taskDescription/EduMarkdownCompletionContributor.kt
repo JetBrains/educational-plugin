@@ -9,5 +9,6 @@ class EduMarkdownCompletionContributor : CompletionContributor() {
   init {
     extend(CompletionType.BASIC, EduMarkdownPsiPatterns.inMarkdownLinkDestination, EduUriSchemaCompletionProvider())
     extend(CompletionType.BASIC, EduMarkdownPsiPatterns.toolWindowIdUriPath, EduMarkdownToolWindowIdCompletionContributor())
+    extend(CompletionType.BASIC, EduMarkdownPsiPatterns.settingsIdUriPath, EduMarkdownSettingsIdCompletionContributor())
   }
 }

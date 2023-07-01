@@ -9,5 +9,6 @@ class EduHtmlCompletionContributor : CompletionContributor() {
   init {
     extend(CompletionType.BASIC, EduHtmlPsiPatterns.inHrefAttributeValue, EduUriSchemaCompletionProvider())
     extend(CompletionType.BASIC, EduHtmlPsiPatterns.toolWindowIdUriPath, EduHtmlToolWindowIdCompletionContributor())
+    extend(CompletionType.BASIC, EduHtmlPsiPatterns.settingsIdUriPath, EduHtmlSettingsIdCompletionContributor())
   }
 }

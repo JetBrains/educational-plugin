@@ -1,0 +1,6 @@
+package com.jetbrains.edu.markdown.taskDescription
+
+import com.jetbrains.edu.codeInsight.taskDescription.EduSettingsIdCompletionTestBase
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
+
+class EduMarkdownSettingsIdCompletionTest : EduSettingsIdCompletionTestBase(DescriptionFormat.MD)
