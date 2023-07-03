@@ -16,6 +16,7 @@ exclude:
       - Edu-Python/resources/fileTemplates
       - Edu-Rust/resources/fileTemplates
       - Edu-Scala/resources/fileTemplates
+      - sql/sql-jvm/resources/fileTemplates
       - educational-core/resources/fileTemplates
   - name: SyntaxError
     paths:
