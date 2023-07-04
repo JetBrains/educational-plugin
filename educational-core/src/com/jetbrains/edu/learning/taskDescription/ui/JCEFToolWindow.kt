@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.jcef.JBCefApp
 import com.intellij.ui.jcef.JBCefBrowser
+import com.intellij.ui.jcef.JBCefClient
 import com.intellij.ui.jcef.JCEFHtmlPanel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.JavaUILibrary
@@ -38,6 +39,7 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
         }
       }
       jbCefClient.addFocusHandler(taskSpecificFocusHandlerAdapter, cefBrowser)
+      jbCefClient.setProperty(JBCefClient.Properties.JS_QUERY_POOL_SIZE, MAX_JS_QUERY_POOL_SIZE)
     }
 
     Disposer.register(this, taskInfoJBCefBrowser)
@@ -86,5 +88,7 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
     fun processContent(content: String, project: Project): String {
       return htmlWithResources(project, content)
     }
+
+    private const val MAX_JS_QUERY_POOL_SIZE = 16
   }
 }
