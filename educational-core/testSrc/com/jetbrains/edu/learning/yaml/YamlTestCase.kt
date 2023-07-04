@@ -42,7 +42,7 @@ abstract class YamlTestCase : EduTestCase() {
     }
 
     UIUtil.dispatchAllInvocationEvents()
-    YamlLoader.loadItem(project, configFile, true)
+    YamlLoader.getInstance(project).loadItem(configFile, true)
   }
 }
 

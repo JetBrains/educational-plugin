@@ -105,7 +105,7 @@ object YamlMapperBase {
   }
 
   private fun ObjectMapper.addRemoteInfoMixIns() {
-    addMixIn(EduCourse::class.java, EduCourseRemoteInfoYamlMixin::class.java)
+    addMixIn(Course::class.java, EduCourseRemoteInfoYamlMixin::class.java)
     addMixIn(Lesson::class.java, RemoteStudyItemYamlMixin::class.java)
     addMixIn(Section::class.java, RemoteStudyItemYamlMixin::class.java)
     addMixIn(Task::class.java, RemoteStudyItemYamlMixin::class.java)

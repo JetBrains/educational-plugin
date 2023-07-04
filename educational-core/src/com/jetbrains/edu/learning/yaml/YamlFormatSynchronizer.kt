@@ -52,6 +52,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask.Companion.SORTING_TASK_TYPE
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
+import com.jetbrains.edu.learning.decapitalize
 import com.jetbrains.edu.learning.getEditor
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -166,6 +167,12 @@ object YamlFormatSynchronizer {
     addMixIn(DataTask::class.java, RemoteDataTaskYamlMixin::class.java)
     addMixIn(DataTaskAttempt::class.java, DataTaskAttemptYamlMixin::class.java)
     addHyperskillMixins()
+
+    addRemoteSubtypes()
+  }
+
+  private fun ObjectMapper.addRemoteSubtypes() {
+    registerSubtypes(CodeforcesCourse::class.java, HyperskillCourse::class.java)
   }
 
   private fun ObjectMapper.addHyperskillMixins() {

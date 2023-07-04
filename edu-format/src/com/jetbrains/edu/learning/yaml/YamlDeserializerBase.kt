@@ -12,7 +12,9 @@ import com.jetbrains.edu.learning.yaml.YamlConfigSettings.LESSON_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.SECTION_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.TASK_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlMapperBase.MAPPER
-import com.jetbrains.edu.learning.yaml.errorHandling.*
+import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
+import com.jetbrains.edu.learning.yaml.errorHandling.unknownConfigMessage
+import com.jetbrains.edu.learning.yaml.format.RemoteStudyItem
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
 import org.jetbrains.annotations.VisibleForTesting
 
@@ -75,4 +77,34 @@ abstract class YamlDeserializerBase {
     return courseModeText?.toCourseMode()
   }
 
+  fun deserializeRemoteItem(configName: String, configFileText: String, remoteMapper: ObjectMapper): StudyItem {
+    return when (configName) {
+      YamlConfigSettings.REMOTE_COURSE_CONFIG -> deserializeCourseRemoteInfo(configFileText, remoteMapper)
+      YamlConfigSettings.REMOTE_LESSON_CONFIG -> deserializeLessonRemoteInfo(configFileText, remoteMapper)
+      YamlConfigSettings.REMOTE_SECTION_CONFIG -> remoteMapper.readValue(configFileText, RemoteStudyItem::class.java)
+      YamlConfigSettings.REMOTE_TASK_CONFIG -> deserializeTaskRemoteInfo(configFileText, remoteMapper)
+      else -> loadingError(unknownConfigMessage(configName))
+    }
+  }
+
+  private fun deserializeCourseRemoteInfo(configFileText: String, remoteMapper: ObjectMapper): Course {
+    val treeNode = remoteMapper.readTree(configFileText)
+    return remoteMapper.treeToValue(treeNode, Course::class.java)
+  }
+
+  private fun deserializeLessonRemoteInfo(configFileText: String, remoteMapper: ObjectMapper): StudyItem {
+    val treeNode = remoteMapper.readTree(configFileText)
+    return remoteMapper.treeToValue(treeNode, RemoteStudyItem::class.java)
+  }
+
+  private fun deserializeTaskRemoteInfo(configFileText: String, remoteMapper: ObjectMapper): StudyItem {
+    val treeNode = remoteMapper.readTree(configFileText)
+
+//    val clazz = when (asText(treeNode.get(YamlMixinNames.TYPE))) {
+//      DATA_TASK_TYPE -> DataTask::class.java
+//      else -> RemoteStudyItem::class.java
+//    }
+
+    return remoteMapper.treeToValue(treeNode, RemoteStudyItem::class.java)
+  }
 }

@@ -174,7 +174,7 @@ class AddNewItemYamlTest : YamlTestCase() {
   }
 
   private fun loadAndDispatchEvents(lastChildConfig: VirtualFile) {
-    YamlLoader.loadItem(project, lastChildConfig, true)
+    YamlLoader.getInstance(project).loadItem(lastChildConfig, true)
     UIUtil.dispatchAllInvocationEvents()
   }
 

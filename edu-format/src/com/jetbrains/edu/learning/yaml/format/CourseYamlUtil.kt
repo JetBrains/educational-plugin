@@ -137,6 +137,7 @@ private class CourseTypeSerializationConverter : StdConverter<String, String?>()
  */
 @Suppress("unused") // used for json serialization
 @JsonPropertyOrder(ID, UPDATE_DATE, TOP_LEVEL_LESSONS_SECTION, MARKETPLACE_COURSE_VERSION, GENERATED_EDU_ID)
+@JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION, defaultImpl = EduCourse::class)
 abstract class EduCourseRemoteInfoYamlMixin : RemoteStudyItemYamlMixin() {
 
   @JsonSerialize(converter = TopLevelLessonsSectionSerializer::class)

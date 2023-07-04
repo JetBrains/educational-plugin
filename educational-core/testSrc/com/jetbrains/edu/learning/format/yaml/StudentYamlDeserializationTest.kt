@@ -15,9 +15,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.messages.EduFormatBundle
-import com.jetbrains.edu.learning.yaml.YamlDeserializerBase.deserializeCourse
-import com.jetbrains.edu.learning.yaml.YamlDeserializerBase.deserializeLesson
-import com.jetbrains.edu.learning.yaml.YamlDeserializerBase.deserializeTask
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.STUDENT_MAPPER
 import junit.framework.TestCase
 import org.intellij.lang.annotations.Language

@@ -13,30 +13,24 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.codeStyle.NameUtil
 import com.intellij.util.messages.Topic
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseDir
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
-import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
-import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DATA_TASK_TYPE
 import com.jetbrains.edu.learning.document
 import com.jetbrains.edu.learning.getEditor
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.LESSON_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_COURSE_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_LESSON_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_SECTION_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_TASK_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.SECTION_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.TASK_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.MAPPER
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.REMOTE_MAPPER
-import com.jetbrains.edu.learning.yaml.errorHandling.*
-import com.jetbrains.edu.learning.yaml.format.RemoteStudyItem
-import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
+import com.jetbrains.edu.learning.yaml.errorHandling.InvalidConfigNotification
+import com.jetbrains.edu.learning.yaml.errorHandling.InvalidYamlFormatException
+import com.jetbrains.edu.learning.yaml.errorHandling.noDirForItemMessage
 import org.jetbrains.annotations.NonNls
 
 /**
@@ -88,42 +82,7 @@ object YamlDeserializer : YamlDeserializerBase() {
   fun deserializeRemoteItem(configFile: VirtualFile): StudyItem {
     val configName = configFile.name
     val configFileText = VfsUtil.loadText(configFile)
-    return when (configName) {
-      REMOTE_COURSE_CONFIG -> deserializeCourseRemoteInfo(configFileText)
-      REMOTE_LESSON_CONFIG -> deserializeLessonRemoteInfo(configFileText)
-      REMOTE_SECTION_CONFIG -> REMOTE_MAPPER.readValue(configFileText, RemoteStudyItem::class.java)
-      REMOTE_TASK_CONFIG -> deserializeTaskRemoteInfo(configFileText)
-      else -> loadingError(unknownConfigMessage(configName))
-    }
-  }
-
-  private fun deserializeCourseRemoteInfo(configFileText: String): Course {
-    val treeNode = REMOTE_MAPPER.readTree(configFileText)
-    val type = asText(treeNode.get(YamlMixinNames.TYPE))
-
-    val clazz = when {
-      type == CodeforcesNames.CODEFORCES_COURSE_TYPE -> CodeforcesCourse::class.java
-      treeNode.get(YamlMixinNames.HYPERSKILL_PROJECT) != null -> HyperskillCourse::class.java
-      else -> EduCourse::class.java
-    }
-
-    return REMOTE_MAPPER.treeToValue(treeNode, clazz)
-  }
-
-  private fun deserializeLessonRemoteInfo(configFileText: String): StudyItem {
-    val treeNode = REMOTE_MAPPER.readTree(configFileText)
-    return REMOTE_MAPPER.treeToValue(treeNode, RemoteStudyItem::class.java)
-  }
-
-  private fun deserializeTaskRemoteInfo(configFileText: String): StudyItem {
-    val treeNode = REMOTE_MAPPER.readTree(configFileText)
-
-    val clazz = when (asText(treeNode.get(YamlMixinNames.TYPE))) {
-      DATA_TASK_TYPE -> DataTask::class.java
-      else -> RemoteStudyItem::class.java
-    }
-
-    return REMOTE_MAPPER.treeToValue(treeNode, clazz)
+    return deserializeRemoteItem(configName, configFileText, REMOTE_MAPPER)
   }
 
   private val StudyItem.childrenConfigFileNames: Array<String>

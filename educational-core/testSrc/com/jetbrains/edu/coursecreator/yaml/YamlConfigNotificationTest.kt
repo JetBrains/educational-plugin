@@ -91,7 +91,7 @@ class YamlConfigNotificationTest : NotificationsTestBase() {
       applyChange(configFile.document)
     }
     withOriginalException {
-      YamlLoader.loadItem(project, configFile, false)
+      YamlLoader.getInstance(project).loadItem(configFile, false)
     }
     return configFile
   }
