@@ -1,7 +1,9 @@
 package com.jetbrains.edu.learning.courseFormat
 
 import org.jetbrains.annotations.PropertyKey
-import java.lang.reflect.Method
+import java.lang.invoke.MethodHandle
+import java.lang.invoke.MethodHandles
+import java.lang.invoke.MethodType
 import java.text.MessageFormat
 import java.util.*
 import java.util.logging.Level
@@ -11,27 +13,30 @@ private const val BUNDLE_CLASS = "com.jetbrains.edu.learning.messages.EduFormatB
 private const val INSTANCE = "INSTANCE"
 private val LOG = logger<StudyItem>()
 
-val bundleClass: Class<*>? = try {
-  Class.forName(BUNDLE_CLASS)
-}
-catch (e: Throwable) {
-  null
-}
-val messageMethod: Method? = try {
-  bundleClass?.getMethod("message", String::class.java, Array<Any>::class.java)
-}
-catch (e: Throwable) {
-  null
+val messageMethod: MethodHandle? = findMessageMethod()
+
+private fun findMessageMethod(): MethodHandle? {
+  return try {
+    val lookup = MethodHandles.lookup()
+    val bundleClass = lookup.findClass(BUNDLE_CLASS)
+    val methodType = MethodType.methodType(String::class.java, String::class.java, Array<Any>::class.java)
+    val messageMethod = lookup.findVirtual(bundleClass, "message", methodType)
+    val instanceGetter = lookup.findStaticGetter(bundleClass, INSTANCE, bundleClass)
+    val bundleInstance = instanceGetter.invoke()
+    messageMethod.bindTo(bundleInstance)
+  }
+  catch (e: Throwable) {
+    null
+  }
 }
 
 internal fun message(@PropertyKey(resourceBundle = FORMAT_BUNDLE) key: String, vararg params: Any): String {
-  return if (bundleClass == null || messageMethod == null) {
+  return if (messageMethod == null) {
     return bundledMessage(key, params)
   }
   else {
-    val bundleObject = bundleClass.getDeclaredField(INSTANCE)
     try {
-      messageMethod.invoke(bundleObject, key, params) as String
+      messageMethod.invoke(key, params) as String
     }
     catch (e: Throwable) {
       LOG.log(Level.WARNING, "Failed to invoke `$BUNDLE_CLASS.message()`", e)
