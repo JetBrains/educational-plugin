@@ -1,4 +1,4 @@
-$(window).load(function () {
+$(function () {
 
   $(".hint_header").click(function () {
     $header = $(this);
