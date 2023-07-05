@@ -51,10 +51,8 @@ import kotlin.system.measureTimeMillis
  */
 abstract class CourseProjectGenerator<S : EduProjectSettings>(
   protected val courseBuilder: EduCourseBuilder<S>,
-  protected var course: Course
+  protected val course: Course
 ) {
-  private var alreadyEnrolled = false
-
   open fun afterProjectGenerated(project: Project, projectSettings: S) {
     // project.isLocalCourse info is stored in PropertiesComponent to keep it after course restart on purpose
     // not to show login widget for local course
@@ -123,7 +121,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     }, EduCoreBundle.message("generate.project.generate.course.structure.progress.text"), false, null)
     // @formatter:on
 
-    val newProject = openNewCourseProject(course, location.toPath(), this::prepareToOpen) ?: return null
+    val newProject = openNewCourseProject(location.toPath(), this::prepareToOpen) ?: return null
 
     // @formatter:off
     ProgressManager.getInstance().runProcessWithProgressSynchronously<Unit, IOException>({
@@ -143,30 +141,12 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
   }
 
   private fun openNewCourseProject(
-    course: Course,
     location: Path,
     prepareToOpenCallback: suspend (Project, Module) -> Unit
   ): Project? {
     val task = OpenProjectTask(course, prepareToOpenCallback)
 
     return ProjectManagerEx.getInstanceEx().openProject(location, task)
-  }
-
-  private fun OpenProjectTask(course: Course, prepareToOpenCallback: suspend (Project, Module) -> Unit): OpenProjectTask {
-    @Suppress("UnstableApiUsage")
-    return OpenProjectTask {
-      forceOpenInNewFrame = true
-      isNewProject = true
-      isProjectCreatedWithWizard = false
-      runConfigurators = true
-      beforeInit = {
-        it.putUserData(EDU_PROJECT_CREATED, true)
-      }
-      preparedToOpen = {
-        StudyTaskManager.getInstance(it.project).course = course
-        prepareToOpenCallback(it.project, it)
-      }
-    }
   }
 
   /**
@@ -256,6 +236,23 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
       // Trust any marketplace course from JetBrains s.r.o. organization
       if (course.isMarketplaceRemote && course.organization == JETBRAINS_SRO_ORGANIZATION) return true
       return course.isPreview
+    }
+
+    private fun OpenProjectTask(course: Course, prepareToOpenCallback: suspend (Project, Module) -> Unit): OpenProjectTask {
+      @Suppress("UnstableApiUsage")
+      return OpenProjectTask {
+        forceOpenInNewFrame = true
+        isNewProject = true
+        isProjectCreatedWithWizard = false
+        runConfigurators = true
+        beforeInit = {
+          it.putUserData(EDU_PROJECT_CREATED, true)
+        }
+        preparedToOpen = {
+          StudyTaskManager.getInstance(it.project).course = course
+          prepareToOpenCallback(it.project, it)
+        }
+      }
     }
   }
 }
