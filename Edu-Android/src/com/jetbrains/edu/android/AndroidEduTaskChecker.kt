@@ -87,8 +87,9 @@ class AndroidChecker(task: EduTask, envChecker: EnvironmentChecker, project: Pro
     val avdOptionsModel = AvdOptionsModel(null)
     val dialog = AvdWizardUtils.createAvdWizard(null, project, avdOptionsModel)
     return if (dialog.showAndGet()) {
-      launchEmulator(avdOptionsModel.createdAvd)
-    } else {
+      launchEmulator(avdOptionsModel.getAvd())
+    }
+    else {
       null
     }
   }
@@ -111,8 +112,8 @@ class AndroidChecker(task: EduTask, envChecker: EnvironmentChecker, project: Pro
     return null
   }
 
-  private fun launchEmulator(avd: AvdInfo): Future<IDevice>? {
-    return if (avd.status == AvdInfo.AvdStatus.OK) {
+  private fun launchEmulator(avd: AvdInfo?): Future<IDevice>? {
+    return if (avd?.status == AvdInfo.AvdStatus.OK) {
       LaunchableAndroidDevice(avd).launch(project)
     } else {
       null

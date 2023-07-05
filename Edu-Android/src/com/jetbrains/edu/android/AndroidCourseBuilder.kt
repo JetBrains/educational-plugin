@@ -1,11 +1,8 @@
 package com.jetbrains.edu.android
 
-import com.android.ide.common.repository.GradleCoordinate
 import com.android.sdklib.SdkVersionInfo
 import com.android.tools.adtui.device.FormFactor
-import com.android.tools.idea.gradle.repositories.RepositoryUrlManager
 import com.android.tools.idea.projectsystem.GoogleMavenArtifactId
-import com.android.tools.idea.sdk.AndroidSdks
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -17,7 +14,6 @@ import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemUiModel
 import com.jetbrains.edu.jvm.JdkProjectSettings
-import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.jvm.gradle.generation.GradleCourseProjectGenerator
 import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.LanguageSettings
@@ -31,7 +27,7 @@ import com.jetbrains.edu.learning.gradle.GradleConstants.BUILD_GRADLE
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.kotlinVersion
 
-class AndroidCourseBuilder : GradleCourseBuilderBase() {
+class AndroidCourseBuilder : AndroidCourseBuilderBase() {
 
   override val buildGradleTemplateName: String = "android-build.gradle"
   override val settingGradleTemplateName: String = "android-settings.gradle"
@@ -131,12 +127,6 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
       "TARGET_ANDROID_SDK" to compileAndroidSdk.toString(),
       "DEPENDENCIES_BLOCK" to generateDependencyBlock()
     )
-  }
-
-  private fun getLibraryVersion(groupId: String, artifactId: String, defaultVersion: String): String {
-    val gradleCoordinate = GradleCoordinate(groupId, artifactId, "+")
-    val sdkHandler = AndroidSdks.getInstance().tryToChooseSdkHandler()
-    return RepositoryUrlManager.get().resolveDynamicCoordinateVersion(gradleCoordinate, null, sdkHandler) ?: defaultVersion
   }
 
   private fun generateDependencyBlock(): String {
