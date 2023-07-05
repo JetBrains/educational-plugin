@@ -5,13 +5,16 @@ import com.intellij.ui.jcef.JBCefJSQuery
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
-import org.cef.handler.CefLoadHandlerAdapter
 
 class ChoiceTaskQueryManager(task: ChoiceTask, taskJBCefBrowser: JBCefBrowserBase) : TaskQueryManager<ChoiceTask>(task, taskJBCefBrowser) {
   private val jsQueryGetChosenTasks = JBCefJSQuery.create(taskJBCefBrowser)
 
+  override val queries: List<JBCefJSQuery>
+    get() = super.queries + listOf(jsQueryGetChosenTasks)
+
   init {
     addChosenTaskHandler()
+    registerQueries(this)
   }
 
   private fun addChosenTaskHandler() {
@@ -19,7 +22,7 @@ class ChoiceTaskQueryManager(task: ChoiceTask, taskJBCefBrowser: JBCefBrowserBas
       if (query.isBlank()) return@addHandler null
       try {
         val values = query.split(",").map { it.toInt() }.toMutableList()
-        currentTask.selectedVariants = values
+        task.selectedVariants = values
       }
       catch (ignored: NumberFormatException) {
       }
@@ -27,7 +30,7 @@ class ChoiceTaskQueryManager(task: ChoiceTask, taskJBCefBrowser: JBCefBrowserBas
     }
   }
 
-  override fun getTaskSpecificLoadHandler(): CefLoadHandlerAdapter = object : TaskSpecificLoadHandler() {
+  private val taskSpecificLoadHandler = object : TaskSpecificLoadHandler() {
     override val parentDocumentId: String = "choiceOptions"
 
     override fun onLoadEnd(browser: CefBrowser?, frame: CefFrame?, httpStatusCode: Int) {
@@ -42,8 +45,16 @@ class ChoiceTaskQueryManager(task: ChoiceTask, taskJBCefBrowser: JBCefBrowserBas
               ${jsQueryGetChosenTasks.inject("value")}
             })
           })
-          """.trimIndent(), jcefBrowserUrl, 0
+          """.trimIndent(), taskJBCefBrowser.cefBrowser.url, 0
       )
     }
+  }
+
+  init {
+    taskJBCefBrowser.jbCefClient.addLoadHandler(taskSpecificLoadHandler, taskJBCefBrowser.cefBrowser)
+  }
+
+  override fun dispose() {
+    taskJBCefBrowser.jbCefClient.removeLoadHandler(taskSpecificLoadHandler, taskJBCefBrowser.cefBrowser)
   }
 }

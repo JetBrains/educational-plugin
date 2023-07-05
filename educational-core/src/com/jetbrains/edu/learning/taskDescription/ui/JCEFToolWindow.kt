@@ -11,17 +11,16 @@ import com.intellij.ui.jcef.JCEFHtmlPanel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.taskDescription.ui.jcefSpecificQueries.TaskQueryManager
 import org.cef.browser.CefBrowser
 import org.cef.handler.CefFocusHandlerAdapter
-import org.cef.handler.CefLoadHandlerAdapter
 import org.jetbrains.annotations.TestOnly
 import javax.swing.JComponent
 
 class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   private val taskInfoJBCefBrowser = JCEFHtmlPanel(true, JBCefApp.getInstance().createClient(), null)
   private val taskSpecificJBCefBrowser = JCEFHtmlPanel(true, JBCefApp.getInstance().createClient(), null)
-
-  private var taskSpecificLoadHandler: CefLoadHandlerAdapter? = null
+  private var taskSpecificQueryManager: TaskQueryManager<out Task>? = null
 
   init {
     val jcefLinkInToolWindowHandler = JCefToolWindowLinkHandler(project)
@@ -68,19 +67,23 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
 
     val taskText = getHTMLTemplateText(task) ?: return
 
-    val newLoadHandler = getTaskSpecificQueryManager(task, taskSpecificJBCefBrowser)?.getTaskSpecificLoadHandler() ?: return
-
-    taskSpecificLoadHandler?.let {
-      taskSpecificJBCefBrowser.jbCefClient.removeLoadHandler(it, taskSpecificJBCefBrowser.cefBrowser)
+    taskSpecificQueryManager?.let {
+      Disposer.dispose(it)
     }
 
-    taskSpecificJBCefBrowser.jbCefClient.addLoadHandler(newLoadHandler, taskSpecificJBCefBrowser.cefBrowser)
-    taskSpecificLoadHandler = newLoadHandler
+    taskSpecificQueryManager = getTaskSpecificQueryManager(task, taskSpecificJBCefBrowser)
 
     taskSpecificJBCefBrowser.component.preferredSize = JBUI.size(Int.MAX_VALUE, 250)
     val html = htmlWithResources(project, taskText, task)
     taskSpecificJBCefBrowser.loadHTML(html)
     taskSpecificJBCefBrowser.component.isVisible = true
+  }
+
+  override fun dispose() {
+    super.dispose()
+    taskSpecificQueryManager?.let {
+      Disposer.dispose(it)
+    }
   }
 
   companion object {

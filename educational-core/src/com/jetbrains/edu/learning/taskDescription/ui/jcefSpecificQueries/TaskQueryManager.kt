@@ -1,5 +1,7 @@
 package com.jetbrains.edu.learning.taskDescription.ui.jcefSpecificQueries
 
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
 import com.intellij.ui.jcef.JBCefBrowserBase
 import com.intellij.ui.jcef.JBCefJSQuery
 import com.intellij.util.ui.JBUI
@@ -8,18 +10,18 @@ import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.handler.CefLoadHandlerAdapter
 
-abstract class TaskQueryManager<T : Task>(task: T, taskJBCefBrowser: JBCefBrowserBase) {
+abstract class TaskQueryManager<T : Task>(
+  protected val task: T,
+  protected val taskJBCefBrowser: JBCefBrowserBase
+): Disposable {
+  open val queries: List<JBCefJSQuery>
+    get() = listOf(jsQuerySetScrollHeight)
+
   private val jsQuerySetScrollHeight = JBCefJSQuery.create(taskJBCefBrowser)
-
-  protected val jcefBrowserUrl: String = taskJBCefBrowser.cefBrowser.url
-
-  var currentTask: T = task
 
   init {
     addScrollHeightHandler(taskJBCefBrowser)
   }
-
-  abstract fun getTaskSpecificLoadHandler(): CefLoadHandlerAdapter
 
   private fun addScrollHeightHandler(browserBase: JBCefBrowserBase) {
     jsQuerySetScrollHeight.addHandler { height ->
@@ -32,6 +34,14 @@ abstract class TaskQueryManager<T : Task>(task: T, taskJBCefBrowser: JBCefBrowse
       null
     }
   }
+
+  protected fun registerQueries(parent: Disposable) {
+    for (query in queries) {
+      Disposer.register(parent, query)
+    }
+  }
+
+  override fun dispose() {}
 
   protected abstract inner class TaskSpecificLoadHandler : CefLoadHandlerAdapter() {
     abstract val parentDocumentId: String
