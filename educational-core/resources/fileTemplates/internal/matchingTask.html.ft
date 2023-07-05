@@ -105,7 +105,6 @@
 
     card.addEventListener('focusin', function (event) {
       focusedIndex = index
-      console.log(index)
     })
     return card
   }
