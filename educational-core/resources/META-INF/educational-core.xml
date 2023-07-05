@@ -110,7 +110,7 @@
     <action id="Educational.SwitchTaskDescriptionPanel" class="com.jetbrains.edu.learning.actions.SwitchTaskPanelAction">
     </action>
 
-    <!-- IMPORTANT: don't chane the action id, it's used in monorepo-->
+    <!-- IMPORTANT: don't change the action id, it's used in monorepo-->
     <action id="Educational.BrowseCourses" class="com.jetbrains.edu.learning.newproject.BrowseCoursesAction"/>
 
     <action id="Educational.ToggleRestServices"
@@ -407,4 +407,5 @@
   <xi:include href="/META-INF/Codeforces.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/Hyperskill.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/Marketplace.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/BranchesExtensionPoints.xml" xpointer="xpointer(/idea-plugin/*)"/>
 </idea-plugin>

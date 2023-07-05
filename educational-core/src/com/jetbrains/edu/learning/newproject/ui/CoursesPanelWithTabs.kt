@@ -8,7 +8,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.coursesStorage.CourseDeletedListener
-import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorageBase
 import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
 import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.CourseMetaInfo
@@ -84,7 +84,7 @@ class CoursesPanelWithTabs(private val scope: CoroutineScope, private val dispos
       addPanel(myCoursesProvider)
       showPanel(providers.first().name)
       val connection = ApplicationManager.getApplication().messageBus.connect(disposable)
-      connection.subscribe(CoursesStorage.COURSE_DELETED, object : CourseDeletedListener {
+      connection.subscribe(CoursesStorageBase.COURSE_DELETED, object : CourseDeletedListener {
         override fun courseDeleted(course: CourseMetaInfo) {
           panels.forEach {
             it.updateModelAfterCourseDeletedFromStorage(course)
