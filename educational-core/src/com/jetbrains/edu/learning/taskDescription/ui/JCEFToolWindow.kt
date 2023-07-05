@@ -5,10 +5,13 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.jcef.JBCefApp
+import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.ui.jcef.JCEFHtmlPanel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import org.cef.browser.CefBrowser
+import org.cef.handler.CefFocusHandlerAdapter
 import org.cef.handler.CefLoadHandlerAdapter
 import org.jetbrains.annotations.TestOnly
 import javax.swing.JComponent
@@ -25,6 +28,17 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
     taskInfoJBCefBrowser.jbCefClient.addRequestHandler(taskInfoRequestHandler, taskInfoJBCefBrowser.cefBrowser)
     val taskInfoLifeSpanHandler = JCEFTaskInfoLifeSpanHandler(jcefLinkInToolWindowHandler)
     taskInfoJBCefBrowser.jbCefClient.addLifeSpanHandler(taskInfoLifeSpanHandler, taskInfoJBCefBrowser.cefBrowser)
+
+    taskSpecificJBCefBrowser.apply {
+      setProperty(JBCefBrowser.Properties.FOCUS_ON_NAVIGATION, true)
+
+      val taskSpecificFocusHandlerAdapter = object : CefFocusHandlerAdapter() {
+        override fun onTakeFocus(browser: CefBrowser?, next: Boolean) {
+          component.requestFocusInWindow()
+        }
+      }
+      jbCefClient.addFocusHandler(taskSpecificFocusHandlerAdapter, cefBrowser)
+    }
 
     Disposer.register(this, taskInfoJBCefBrowser)
     Disposer.register(this, taskSpecificJBCefBrowser)
@@ -65,7 +79,6 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
     val html = htmlWithResources(project, taskText, task)
     taskSpecificJBCefBrowser.loadHTML(html)
     taskSpecificJBCefBrowser.component.isVisible = true
-    taskSpecificJBCefBrowser.component.requestFocus()
   }
 
   companion object {
