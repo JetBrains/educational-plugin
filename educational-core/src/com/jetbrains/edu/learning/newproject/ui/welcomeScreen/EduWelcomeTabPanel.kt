@@ -29,6 +29,7 @@ import com.jetbrains.edu.learning.newproject.BrowseCoursesAction
 import com.jetbrains.edu.learning.newproject.coursesStorage.CourseAddedListener
 import com.jetbrains.edu.learning.newproject.coursesStorage.CourseDeletedListener
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorageBase
 import com.jetbrains.edu.learning.newproject.ui.CoursesDialogFontManager
 import com.jetbrains.edu.learning.newproject.ui.GrayTextHtmlPanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgroundColor
@@ -60,13 +61,13 @@ class EduWelcomeTabPanel(parentDisposable: Disposable) : JBScrollPane() {
 
   private fun subscribeToCoursesStorageEvents(disposable: Disposable, updateModel: () -> Unit) {
     val connection = ApplicationManager.getApplication().messageBus.connect(disposable)
-    connection.subscribe(CoursesStorage.COURSE_DELETED, object : CourseDeletedListener {
+    connection.subscribe(CoursesStorageBase.COURSE_DELETED, object : CourseDeletedListener {
       override fun courseDeleted(course: CourseMetaInfo) {
         updateModel()
         showPanel()
       }
     })
-    connection.subscribe(CoursesStorage.COURSE_ADDED, object : CourseAddedListener {
+    connection.subscribe(CoursesStorageBase.COURSE_ADDED, object : CourseAddedListener {
       override fun courseAdded(course: Course) {
         updateModel()
         showPanel()
