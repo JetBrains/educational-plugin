@@ -9,6 +9,8 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.findTask
+import com.jetbrains.edu.learning.stepik.course.StepikCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.YamlTestCase
@@ -724,6 +726,40 @@ class YamlSerializationTest : YamlTestCase() {
 
     doTest(course, """
       |type: codeforces
+      |title: Test Course
+      |language: English
+      |summary: Test Course Description
+      |programming_language: Plain text
+      |mode: Study
+      |
+    """.trimMargin())
+  }
+
+  fun `test hyperskill course`() {
+    val course = course(courseProducer = ::HyperskillCourse) {} as HyperskillCourse
+    course.apply {
+      languageCode = "en"
+    }
+
+    doTest(course, """
+      |type: hyperskill
+      |title: Test Course
+      |language: English
+      |summary: Test Course Description
+      |programming_language: Plain text
+      |mode: Study
+      |
+    """.trimMargin())
+  }
+
+  fun `test stepik course`() {
+    val course = course(courseProducer = ::StepikCourse) {} as StepikCourse
+    course.apply {
+      languageCode = "en"
+    }
+
+    doTest(course, """
+      |type: stepik
       |title: Test Course
       |language: English
       |summary: Test Course Description

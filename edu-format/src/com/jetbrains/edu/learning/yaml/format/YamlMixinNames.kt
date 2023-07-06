@@ -21,7 +21,6 @@ object YamlMixinNames {
   const val MODE = "mode"
   const val ENVIRONMENT = JsonMixinNames.ENVIRONMENT
 
-  @NlsSafe
   const val ENVIRONMENT_SETTINGS = JsonMixinNames.ENVIRONMENT_SETTINGS
 
   // coursera course
