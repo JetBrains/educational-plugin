@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.yaml
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.*
@@ -15,7 +16,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
+import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
@@ -120,7 +123,34 @@ class YamlDeserializationTest : YamlTestCase() {
     assertFalse(course.isMarketplace)
   }
 
-  fun `test course with type`() {
+  fun `test checkio course`() {
+    val name = "Py CheckiO"
+    val language = "English"
+    val programmingLanguage = "Plain text"
+    val firstLesson = "Home"
+    val secondLesson = "Initiation"
+    val yamlContent = """
+      |type: checkiO
+      |title: Py CheckiO
+      |language: English
+      |summary: |-
+         CheckiO is a game where you code in Python or JavaScript.
+      |programming_language: Plain text
+      |content:
+      |- Home
+      |- Initiation
+      |mode: Study
+    """.trimMargin()
+    val course = deserializeNotNull(yamlContent) as CheckiOCourse
+    assertEquals(name, course.name)
+    assertEquals(language, course.humanLanguage)
+    assertEquals(programmingLanguage, course.languageById!!.displayName)
+    assertNotNull(course.description)
+    assertEquals(listOf(firstLesson, secondLesson), course.items.map { it.name })
+    assertFalse(course.isMarketplace)
+  }
+
+  fun `test hyperskill course`() {
     val name = "Test Course"
     val language = "Russian"
     val programmingLanguage = "Plain text"
@@ -138,7 +168,33 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
       |""".trimMargin()
-    val course = MAPPER.deserializeCourse(yamlContent)
+    val course = MAPPER.deserializeCourse(yamlContent) as HyperskillCourse
+    assertEquals(name, course.name)
+    assertEquals(language, course.humanLanguage)
+    assertEquals(programmingLanguage, course.languageById!!.displayName)
+    assertEquals(listOf(firstLesson, secondLesson), course.items.map { it.name })
+    assertFalse(course.isMarketplace)
+  }
+
+  fun `test stepik course`() {
+    val name = "Test Course"
+    val language = "Russian"
+    val programmingLanguage = "Plain text"
+    val firstLesson = "the first lesson"
+    val secondLesson = "the second lesson"
+    val yamlContent = """
+      |type: stepik
+      |title: $name
+      |language: $language
+      |summary: |-
+      |  This is a course about string theory.
+      |  Why not?"
+      |programming_language: $programmingLanguage
+      |content:
+      |- $firstLesson
+      |- $secondLesson
+      |""".trimMargin()
+    val course = MAPPER.deserializeCourse(yamlContent) as StepikCourse
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById!!.displayName)
