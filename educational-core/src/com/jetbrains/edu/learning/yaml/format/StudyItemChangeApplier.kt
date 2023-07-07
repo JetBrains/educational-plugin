@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.yaml.YamlDeserializer.getConfigFileForChild
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.YamlLoader
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
-import com.jetbrains.edu.learning.yaml.errorHandling.unexpectedItemTypeMessage
 import com.jetbrains.edu.learning.yaml.format.student.StudentTaskChangeApplier
 
 /**
@@ -97,6 +96,6 @@ fun <T : StudyItem> getChangeApplierForItem(project: Project, item: T): StudyIte
     is Course -> CourseChangeApplier(project)
     is Section, is Lesson -> ItemContainerChangeApplier(project)
     is Task -> if (project.isStudentProject()) StudentTaskChangeApplier(project) else TaskChangeApplier(project)
-    else -> loadingError(unexpectedItemTypeMessage(item.javaClass.simpleName))
+    else -> loadingError(EduCoreBundle.message("yaml.editor.invalid.format.unexpected.type", item.javaClass.simpleName))
   } as StudyItemChangeApplier<T>
 }

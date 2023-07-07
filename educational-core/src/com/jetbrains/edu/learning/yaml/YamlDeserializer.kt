@@ -13,15 +13,12 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.codeStyle.NameUtil
 import com.intellij.util.messages.Topic
-import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
-import com.jetbrains.edu.learning.document
-import com.jetbrains.edu.learning.getEditor
-import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.LESSON_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.SECTION_CONFIG
@@ -30,7 +27,6 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.MAPPER
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.REMOTE_MAPPER
 import com.jetbrains.edu.learning.yaml.errorHandling.InvalidConfigNotification
 import com.jetbrains.edu.learning.yaml.errorHandling.InvalidYamlFormatException
-import com.jetbrains.edu.learning.yaml.errorHandling.noDirForItemMessage
 import org.jetbrains.annotations.NonNls
 
 /**
@@ -94,7 +90,7 @@ object YamlDeserializer : YamlDeserializerBase() {
     }
 
   fun StudyItem.getConfigFileForChild(project: Project, childName: String): VirtualFile? {
-    val dir = getDir(project.courseDir) ?: error(noDirForItemMessage(name))
+    val dir = getDir(project.courseDir) ?: error(EduCoreBundle.message("yaml.editor.invalid.format.no.dir", name, EduNames.ITEM))
     val itemDir = dir.findChild(childName)
     val configFile = childrenConfigFileNames.map { itemDir?.findChild(it) }.firstOrNull { it != null }
     if (configFile != null) {

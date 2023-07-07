@@ -31,12 +31,12 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.addHeader
 import com.jetbrains.edu.learning.taskDescription.removeHyperskillTags
 import com.jetbrains.edu.learning.taskDescription.replaceActionIDsWithShortcuts
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
-import com.jetbrains.edu.learning.yaml.errorHandling.noDirForItemMessage
 import kotlin.collections.component1
 import kotlin.collections.component2
 
@@ -218,7 +218,7 @@ fun Task.shouldGenerateTestsOnTheFly(): Boolean {
 }
 
 fun Task.findTaskDescriptionFile(project: Project): VirtualFile? {
-  val taskDir = getDir(project.courseDir) ?: error(noDirForItemMessage(name, TASK))
+  val taskDir = getDir(project.courseDir) ?: error(EduCoreBundle.message("yaml.editor.invalid.format.no.dir", name, TASK))
   val file = taskDir.findChild(TASK_HTML) ?: taskDir.findChild(TASK_MD)
 
   file ?: logger<Task>().warn("No task description file for $name")

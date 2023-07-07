@@ -17,7 +17,6 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
 import com.jetbrains.edu.learning.yaml.errorHandling.YamlLoadingException
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
-import com.jetbrains.edu.learning.yaml.errorHandling.noDirForItemMessage
 import com.jetbrains.edu.learning.yaml.errorHandling.unknownConfigMessage
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TASK
 import com.jetbrains.edu.learning.yaml.format.getChangeApplierForItem
@@ -167,7 +166,7 @@ private fun StudyItem.ensureChildrenExist(itemDir: VirtualFile) {
     is ItemContainer -> {
       items.forEach {
         val itemTypeName = if (it is Task) TASK else EduNames.ITEM
-        itemDir.findChild(it.name) ?: loadingError(noDirForItemMessage(it.name, itemTypeName))
+        itemDir.findChild(it.name) ?: loadingError(EduCoreBundle.message("yaml.editor.invalid.format.no.dir", it.name, itemTypeName))
       }
     }
     is Task -> {
