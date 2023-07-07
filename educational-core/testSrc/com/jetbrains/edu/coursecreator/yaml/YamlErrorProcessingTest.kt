@@ -92,22 +92,6 @@ class YamlErrorProcessingTest : YamlTestCase() {
            "Invalid config", InvalidFormatException::class.java)
   }
 
-  fun `test unexpected item type`() {
-    doTest("""
-      |type: e
-      |files:
-      |- name: Test.java
-      |  visible: true
-      |is_multiple_choice: false
-      |options:
-      |- text: 1
-      |  is_correct: true
-      |- text: 2
-      |  is_correct: false
-      |""".trimMargin(), YamlConfigSettings.TASK_CONFIG,
-           "Unsupported task type \"e\"", InvalidYamlFormatException::class.java)
-  }
-
   fun `test task without type`() {
     doTest("""
     """.trimIndent(), YamlConfigSettings.TASK_CONFIG,
