@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.yaml.YamlConfigSettings.LESSON_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.SECTION_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.TASK_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlMapperBase.MAPPER
+import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
 import com.jetbrains.edu.learning.yaml.errorHandling.unknownConfigMessage
 import com.jetbrains.edu.learning.yaml.format.RemoteStudyItem
@@ -57,6 +58,7 @@ abstract class YamlDeserializerBase {
   @VisibleForTesting
   fun ObjectMapper.deserializeTask(configFileText: String): Task {
     val treeNode = readNode(configFileText)
+    asText(treeNode.get(YamlMixinNames.TYPE)) ?: formatError(message("yaml.editor.invalid.task.type.not.specified"))
     return treeToValue(treeNode, Task::class.java)
   }
 
