@@ -38,7 +38,7 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
         }
       }
       jbCefClient.addFocusHandler(taskSpecificFocusHandlerAdapter, cefBrowser)
-      jbCefClient.setProperty(JBCefClient.Properties.JS_QUERY_POOL_SIZE, MAX_JS_QUERY_POOL_SIZE)
+      jbCefClient.setProperty(JBCefClient.Properties.JS_QUERY_POOL_SIZE, TASK_SPECIFIC_PANEL_JS_QUERY_POOL_SIZE)
     }
 
     Disposer.register(this, taskInfoJBCefBrowser)
@@ -67,6 +67,7 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
 
     val taskText = getHTMLTemplateText(task) ?: return
 
+    // Dispose taskSpecificQueryManager manually because this disposes existing JSQueries and removes them from JS_QUERY_POOL
     taskSpecificQueryManager?.let {
       Disposer.dispose(it)
     }
@@ -81,17 +82,18 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
 
   override fun dispose() {
     super.dispose()
+    // Dispose undisposed yet taskSpecificQueryManager
     taskSpecificQueryManager?.let {
       Disposer.dispose(it)
     }
   }
 
   companion object {
+    private const val TASK_SPECIFIC_PANEL_JS_QUERY_POOL_SIZE = 16
+
     @TestOnly
     fun processContent(content: String, project: Project): String {
       return htmlWithResources(project, content)
     }
-
-    private const val MAX_JS_QUERY_POOL_SIZE = 16
   }
 }

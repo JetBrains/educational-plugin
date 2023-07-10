@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.taskDescription.ui.jcefSpecificQueries
 
+import com.intellij.openapi.util.Disposer
 import com.intellij.ui.jcef.JBCefBrowserBase
 import com.intellij.ui.jcef.JBCefJSQuery
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
@@ -12,26 +13,7 @@ class SortingBasedTaskQueryManager(
 ) : TaskQueryManager<SortingBasedTask>(task, taskJBCefBrowser) {
   private val jsQueryGetOrdering = JBCefJSQuery.create(taskJBCefBrowser)
 
-  override val queries: List<JBCefJSQuery>
-    get() = super.queries + listOf(jsQueryGetOrdering)
-
-  init {
-    addOrderingHandler()
-    registerQueries(this)
-  }
-
-  private fun addOrderingHandler() {
-    jsQueryGetOrdering.addHandler { query ->
-      if (query.isBlank()) return@addHandler null
-      try {
-        val values = query.split(" ").map { it.toInt() }.toIntArray()
-        task.ordering = values
-      }
-      catch (ignored: NumberFormatException) {
-      }
-      null
-    }
-  }
+  override val queries: List<JBCefJSQuery> = super.queries.plus(jsQueryGetOrdering)
 
   private val taskSpecificLoadHandler = object : TaskSpecificLoadHandler() {
     override val parentDocumentId: String = "options"
@@ -62,7 +44,22 @@ class SortingBasedTaskQueryManager(
   }
 
   init {
+    addOrderingHandler()
+    Disposer.register(this, jsQueryGetOrdering)
     taskJBCefBrowser.jbCefClient.addLoadHandler(taskSpecificLoadHandler, taskJBCefBrowser.cefBrowser)
+  }
+
+  private fun addOrderingHandler() {
+    jsQueryGetOrdering.addHandler { query ->
+      if (query.isBlank()) return@addHandler null
+      try {
+        val values = query.split(" ").map { it.toInt() }.toIntArray()
+        task.ordering = values
+      }
+      catch (ignored: NumberFormatException) {
+      }
+      null
+    }
   }
 
   override fun dispose() {

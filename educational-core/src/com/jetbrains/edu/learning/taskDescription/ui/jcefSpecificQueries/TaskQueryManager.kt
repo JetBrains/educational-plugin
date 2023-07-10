@@ -14,13 +14,14 @@ abstract class TaskQueryManager<T : Task>(
   protected val task: T,
   protected val taskJBCefBrowser: JBCefBrowserBase
 ): Disposable {
-  open val queries: List<JBCefJSQuery>
-    get() = listOf(jsQuerySetScrollHeight)
-
   private val jsQuerySetScrollHeight = JBCefJSQuery.create(taskJBCefBrowser)
+
+  open val queries: List<JBCefJSQuery> = listOf(jsQuerySetScrollHeight)
 
   init {
     addScrollHeightHandler(taskJBCefBrowser)
+    @Suppress("LeakingThis")
+    Disposer.register(this, jsQuerySetScrollHeight)
   }
 
   private fun addScrollHeightHandler(browserBase: JBCefBrowserBase) {
@@ -32,12 +33,6 @@ abstract class TaskQueryManager<T : Task>(
       catch (ignored: NumberFormatException) {
       }
       null
-    }
-  }
-
-  protected fun registerQueries(parent: Disposable) {
-    for (query in queries) {
-      Disposer.register(parent, query)
     }
   }
 
