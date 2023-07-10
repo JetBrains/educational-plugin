@@ -89,7 +89,8 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   }
 
   companion object {
-    private const val TASK_SPECIFIC_PANEL_JS_QUERY_POOL_SIZE = 16
+    // maximum number of created qs queries in taskSpecificQueryManager
+    private const val TASK_SPECIFIC_PANEL_JS_QUERY_POOL_SIZE = 2
 
     @TestOnly
     fun processContent(content: String, project: Project): String {
