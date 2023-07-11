@@ -8,6 +8,7 @@ import com.intellij.openapi.wm.IdeFrame
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.ui.AppIcon
 import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.api.EduLoginConnector.Companion.STATE
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import com.jetbrains.edu.learning.authUtils.createResponse
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
@@ -54,8 +55,15 @@ class StepikRestService : OAuthRestService(StepikNames.STEPIK) {
     val codeMatcher = oauthCodePattern.matcher(uri)
     if (codeMatcher.matches()) {
       val code = getStringParameter(CODE_ARGUMENT, urlDecoder)
+
+      val receivedState = getStringParameter(STATE, urlDecoder) ?: sendErrorResponse(
+        request,
+        context,
+        "State param was not received."
+      )
+
       if (code != null) {
-        val success = StepikConnector.getInstance().login(code)
+        val success = StepikConnector.getInstance().login(code, receivedState)
         val user = EduSettings.getInstance().user
         if (success && user != null) {
           showOkPage(request, context)

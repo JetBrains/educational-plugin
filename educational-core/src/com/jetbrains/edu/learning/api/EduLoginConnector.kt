@@ -92,7 +92,7 @@ abstract class EduLoginConnector<UserAccount : Account<*>, SpecificUserInfo : Us
 
   abstract fun getFreshAccessToken(userAccount: UserAccount?, accessToken: String?): String?
 
-  fun getOAuthPattern(suffix: String = """\?$CODE_ARGUMENT=(\w+)"""): Pattern {
+  fun getOAuthPattern(suffix: String = """\?$CODE_ARGUMENT=[\w+,.-]*\&$STATE=[\w+,.-]*"""): Pattern {
     return "^.*$oAuthServicePath$suffix".toPattern()
   }
 
@@ -107,6 +107,7 @@ abstract class EduLoginConnector<UserAccount : Account<*>, SpecificUserInfo : Us
     @JvmStatic
     @NonNls
     protected val OAUTH_SUFFIX: String = "oauth"
+    const val STATE: String = "state"
 
     /**
      * Retrofit builder needs url to be with trailing slash

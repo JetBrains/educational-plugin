@@ -35,14 +35,16 @@ abstract class StepikConnector : EduOAuthCodeFlowConnector<StepikUser, StepikUse
       EduSettings.getInstance().user = account
     }
 
-  override val authorizationUrl: String
-    get() = URIBuilder(getStepikUrl())
-      .setPath("/oauth2/authorize/")
-      .addParameter("client_id", getClientId())
-      .addParameter("redirect_uri", getRedirectUri())
-      .addParameter("response_type", CODE_ARGUMENT)
-      .build()
-      .toString()
+  override fun getAuthorizationUrl(): String = URIBuilder(getStepikUrl())
+    .setPath("/oauth2/authorize/")
+    .addParameter("client_id", getClientId())
+    .addParameter("redirect_uri", getRedirectUri())
+    .addParameter("response_type", CODE_ARGUMENT)
+    .addParameter(STATE, state)
+    .addParameter("code_challenge", codeChallenge)
+    .addParameter("code_challenge_method", "S256")
+    .build()
+    .toString()
 
   override val clientId: String
     get() = getClientId()
@@ -71,7 +73,8 @@ abstract class StepikConnector : EduOAuthCodeFlowConnector<StepikUser, StepikUse
   // Authorization requests:
 
   @Synchronized
-  override fun login(code: String): Boolean {
+  override fun login(code: String, receivedState: String): Boolean {
+    if (state != receivedState) return false
     val tokenInfo = retrieveLoginToken(code, getRedirectUri()) ?: return false
     val stepikUser = StepikUser(tokenInfo)
     val currentUser = getUserInfo(stepikUser, tokenInfo.accessToken) ?: return false
@@ -162,7 +165,7 @@ abstract class StepikConnector : EduOAuthCodeFlowConnector<StepikUser, StepikUse
   @Deprecated("Stepik support is dropped")
   override fun postAttempt(task: Task): Result<Attempt, String> = Err("Not available")
 
-  private fun postLessonAttachment(info: LessonAdditionalInfo, lessonId: Int) : Int {
+  private fun postLessonAttachment(info: LessonAdditionalInfo, lessonId: Int): Int {
     val fileBody = objectMapper.writeValueAsString(info).toRequestBody("multipart/form-data".toMediaTypeOrNull())
     val fileData = MultipartBody.Part.createFormData("file", StepikNames.ADDITIONAL_INFO, fileBody)
     val lessonBody = lessonId.toString().toPlainTextRequestBody()

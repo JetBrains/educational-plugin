@@ -20,14 +20,16 @@ import org.apache.http.client.utils.URIBuilder
 import org.jetbrains.ide.RestService
 
 abstract class CheckiOOAuthConnector : EduOAuthCodeFlowConnector<CheckiOAccount, CheckiOUserInfo>() {
-  override val authorizationUrl: String
-    get() = URIBuilder(CHECKIO_URL)
-      .setPath("/oauth/authorize/")
-      .addParameter("client_id", clientId)
-      .addParameter("redirect_uri", getRedirectUri())
-      .addParameter("response_type", CODE_ARGUMENT)
-      .build()
-      .toString()
+  override fun getAuthorizationUrl(): String = URIBuilder(CHECKIO_URL)
+    .setPath("/oauth/authorize/")
+    .addParameter("client_id", clientId)
+    .addParameter("redirect_uri", getRedirectUri())
+    .addParameter("response_type", CODE_ARGUMENT)
+    .addParameter(STATE, state)
+    .addParameter("code_challenge", codeChallenge)
+    .addParameter("code_challenge_method", "S256")
+    .build()
+    .toString()
 
   override val baseUrl: String = CHECKIO_URL
 
@@ -56,7 +58,8 @@ abstract class CheckiOOAuthConnector : EduOAuthCodeFlowConnector<CheckiOAccount,
   }
 
   @Synchronized
-  override fun login(code: String): Boolean {
+  override fun login(code: String, receivedState: String): Boolean {
+    if (state != receivedState) return false
     if (account != null) return true
     val tokenInfo = retrieveLoginToken(code, getRedirectUri()) ?: return false
     val checkiOAccount = CheckiOAccount(tokenInfo)

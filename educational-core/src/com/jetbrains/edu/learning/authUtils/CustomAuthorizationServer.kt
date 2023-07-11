@@ -42,11 +42,12 @@ class CustomAuthorizationServer private constructor(private val server: HttpServ
     /**
      * @see CustomAuthorizationServer.createContextHandler
      * @param code oauth authorization code
+     * @param state state string received from the request
      * @param handlingUri uri the code wah handled on (is used as redirect_uri in tokens request)
      *
      * @return non-null error message in case of error, null otherwise
      */
-    fun handle(code: String, handlingUri: String): String?
+    fun handle(code: String, state: String, handlingUri: String): String?
   }
 
   companion object {
@@ -113,21 +114,26 @@ class CustomAuthorizationServer private constructor(private val server: HttpServ
         LOG.info("Handling auth response")
         try {
           val parsed = URLEncodedUtils.parse(URI(request.requestLine.uri), Charsets.UTF_8)
-          for (pair in parsed) {
-            if (pair.name == "code") {
-              val code = pair.value
-              // cannot be null: if this concrete handler is working then corresponding server is working too
-              val currentServer = getServerIfStarted(platformName) ?: return@HttpRequestHandler
-              val errorMessage = codeHandler.handle(code, currentServer.handlingUri)
-              if (errorMessage == null) {
-                sendOkResponse(response, platformName)
-              }
-              else {
-                LOG.warn(errorMessage)
-                sendErrorResponse(response, platformName, errorMessage)
-              }
-              break
-            }
+          val code = parsed.find { it.name == "code" }?.value
+          if (code == null) {
+            sendErrorResponse(response, platformName, "Authentication code not found.")
+            return@HttpRequestHandler
+          }
+          val state = parsed.find { it.name == "state" }?.value
+          if (state == null) {
+            sendErrorResponse(response, platformName, "State param not found.")
+            return@HttpRequestHandler
+          }
+
+          // cannot be null: if this concrete handler is working, then the corresponding server is working too
+          val currentServer = getServerIfStarted(platformName) ?: return@HttpRequestHandler
+          val errorMessage = codeHandler.handle(code, state, currentServer.handlingUri)
+          if (errorMessage == null) {
+            sendOkResponse(response, platformName)
+          }
+          else {
+            LOG.warn(errorMessage)
+            sendErrorResponse(response, platformName, errorMessage)
           }
         }
         catch (e: URISyntaxException) {

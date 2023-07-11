@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.api.EduLoginConnector.Companion.STATE
 import com.jetbrains.edu.learning.authUtils.*
 import com.jetbrains.edu.learning.courseFormat.ext.CourseValidationResult
 import com.jetbrains.edu.learning.courseFormat.ext.ValidationErrorMessage
@@ -60,8 +61,13 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
 
     if (OAUTH_CODE_PATTERN.matcher(uri).matches()) {
       val code = getStringParameter(CODE_ARGUMENT, urlDecoder)!! // cannot be null because of pattern
+      val receivedState = getStringParameter(STATE, urlDecoder) ?: return sendErrorResponse(
+        request,
+        context,
+        "State param was not received."
+      )
 
-      val success = HyperskillConnector.getInstance().login(code)
+      val success = HyperskillConnector.getInstance().login(code, receivedState)
       if (success) {
         LOG.info("$platformName: OAuth code is handled")
         val pageContent = getInternalTemplateText("hyperskill.redirectPage.html")

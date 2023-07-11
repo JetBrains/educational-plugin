@@ -10,18 +10,26 @@ import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.courseFormat.UserInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import org.apache.commons.codec.binary.Base64
 import org.jetbrains.ide.BuiltInServerManager
 import java.io.IOException
+import java.security.MessageDigest
+import java.security.SecureRandom
+import kotlin.text.Charsets.US_ASCII
 
 /**
- * Base class for OAuthConnectors using [Authorization Code Flow](https://auth0.com/docs/get-started/authentication-and-authorization-flow/authorization-code-flow)
+ * Base class for OAuthConnectors using [Authorization Code Flow with Proof Key for Code Exchange (PKCE)](https://auth0.com/docs/get-started/authentication-and-authorization-flow/authorization-code-flow-with-proof-key-for-code-exchange-pkce)
  */
-abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUserInfo : UserInfo>: EduLoginConnector<Account, SpecificUserInfo>() {
+abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUserInfo : UserInfo> : EduLoginConnector<Account, SpecificUserInfo>() {
   protected open val redirectHost = "localhost"
 
   protected open val baseOAuthTokenUrl: String = "oauth2/token/"
 
-  protected abstract val authorizationUrl: String
+  internal lateinit var state: String
+  internal lateinit var codeChallenge: String
+  private lateinit var codeVerifier: String
+
+  protected abstract fun getAuthorizationUrl(): String
 
   /**
    * Must be changed only with synchronization
@@ -42,7 +50,8 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
 
     this.authorizationPlace = authorizationPlace
     setPostLoginActions(postLoginActions.asList())
-    BrowserUtil.browse(authorizationUrl)
+    generateStateParameters()
+    BrowserUtil.browse(getAuthorizationUrl())
   }
 
   /**
@@ -95,8 +104,9 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
 
   /**
    * Must be synchronized to avoid race condition
+   * `receivedState` MUST BE COMPARED with the `state` before any action performed
    */
-  abstract fun login(code: String): Boolean
+  abstract fun login(code: String, receivedState: String): Boolean
 
   @Synchronized
   fun doLogout(authorizationPlace: EduCounterUsageCollector.AuthorizationPlace = EduCounterUsageCollector.AuthorizationPlace.UNKNOWN) {
@@ -106,8 +116,8 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
 
   @Throws(IOException::class)
   private fun createCustomServer(): CustomAuthorizationServer {
-    return CustomAuthorizationServer.create(platformName, oAuthServicePath) { code: String, _: String ->
-      if (!login(code)) "Failed to log in to $platformName" else null
+    return CustomAuthorizationServer.create(platformName, oAuthServicePath) { code: String, state: String, _: String ->
+      if (!login(code, state)) "Failed to log in to $platformName" else null
     }
   }
 
@@ -134,7 +144,7 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
 
   protected fun retrieveLoginToken(code: String, redirectUri: String): TokenInfo? {
     val response = getEduOAuthEndpoints()
-      .getTokens(baseOAuthTokenUrl, clientId, clientSecret, redirectUri, code, OAuthUtils.GrantType.AUTHORIZATION_CODE)
+      .getTokens(baseOAuthTokenUrl, clientId, clientSecret, redirectUri, code, OAuthUtils.GrantType.AUTHORIZATION_CODE, codeVerifier)
       .executeHandlingExceptions()
     return response?.body()
   }
@@ -169,6 +179,23 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
     else {
       accessToken
     }
+  }
+
+  private fun generateStateParameters() {
+    state = generateSafeRandomString()
+    codeVerifier = generateSafeRandomString()
+
+    val bytes = codeVerifier.toByteArray(US_ASCII)
+    val md = MessageDigest.getInstance("SHA-256")
+    val digest = md.digest(bytes)
+    codeChallenge = Base64.encodeBase64URLSafeString(digest)
+  }
+
+  private fun generateSafeRandomString(): String {
+    val sr = SecureRandom()
+    val bytes = ByteArray(32)
+    sr.nextBytes(bytes)
+    return Base64.encodeBase64URLSafeString(bytes)
   }
 
   protected inline fun <reified Endpoints> getEndpoints(): Endpoints {

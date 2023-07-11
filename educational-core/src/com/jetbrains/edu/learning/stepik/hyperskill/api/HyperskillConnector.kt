@@ -44,19 +44,21 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
       HyperskillSettings.INSTANCE.account = account
     }
 
-  override val authorizationUrl: String
-    get() {
-      val url = URIBuilder(HYPERSKILL_URL)
-        .setPath("/oauth2/authorize/")
-        .addParameter("client_id", CLIENT_ID)
-        .addParameter("grant_type", CODE_ARGUMENT)
-        .addParameter("redirect_uri", getRedirectUri())
-        .addParameter("response_type", CODE_ARGUMENT)
-        .addParameter("scope", "read write")
-        .build()
-        .toString()
-      return wrapWithUtm(url, "login")
-    }
+  override fun getAuthorizationUrl(): String {
+    val url = URIBuilder(HYPERSKILL_URL)
+      .setPath("/oauth2/authorize/")
+      .addParameter("client_id", CLIENT_ID)
+      .addParameter("grant_type", CODE_ARGUMENT)
+      .addParameter("redirect_uri", getRedirectUri())
+      .addParameter("response_type", CODE_ARGUMENT)
+      .addParameter("scope", "read write")
+      .addParameter(STATE, state)
+      .addParameter("code_challenge", codeChallenge)
+      .addParameter("code_challenge_method", "S256")
+      .build()
+      .toString()
+    return wrapWithUtm(url, "login")
+  }
 
   override val clientId: String = CLIENT_ID
 
@@ -85,7 +87,8 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
   // Authorization requests:
 
   @Synchronized
-  override fun login(code: String): Boolean {
+  override fun login(code: String, receivedState: String): Boolean {
+    if (state != receivedState) return false
     val tokenInfo = retrieveLoginToken(code, getRedirectUri()) ?: return false
     val account = HyperskillAccount(tokenInfo.expiresIn)
     val currentUser = getUserInfo(account, tokenInfo.accessToken) ?: return false

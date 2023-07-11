@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.checkio.connectors
 
+import com.jetbrains.edu.learning.api.EduLoginConnector.Companion.STATE
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import io.netty.channel.ChannelHandlerContext
@@ -38,8 +39,15 @@ abstract class CheckiOOAuthRestService(platformName: String, private val oAuthCo
     if (oAuthCodePattern.matcher(uri).matches()) {
       // cannot be null because of pattern
       val code = getStringParameter(CODE_ARGUMENT, urlDecoder)!!
+
+      val receivedState = getStringParameter(STATE, urlDecoder) ?: return sendErrorResponse(
+        request,
+        context,
+        "State param was not received."
+      )
+
       LOG.info("$platformName: OAuth code is handled")
-      val success = oAuthConnector.login(code)
+      val success = oAuthConnector.login(code, receivedState)
       return if (success) {
         sendOkResponse(request, context)
       }

@@ -16,7 +16,8 @@ interface EduOAuthEndpoints {
     @Field("client_secret") clientSecret: String,
     @Field("redirect_uri") redirectUri: String,
     @Field("code") code: String,
-    @Field("grant_type") grantType: String
+    @Field("grant_type") grantType: String,
+    @Field("code_verifier") codeVerifier: String,
   ): Call<TokenInfo>
 
   @POST
