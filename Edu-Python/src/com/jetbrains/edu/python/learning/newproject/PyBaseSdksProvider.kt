@@ -14,12 +14,15 @@ object PyBaseSdksProvider {
   @Volatile
   private var sdkDescriptors: Map<String, PyBaseSdkDescriptor> = emptyMap()
 
+  @Suppress("UnstableApiUsage")
   fun getBaseSdks(context: UserDataHolder? = null): Collection<PyBaseSdkDescriptor> {
     val oldDescriptors = sdkDescriptors
     val newDescriptors = mutableMapOf<String, PyBaseSdkDescriptor>()
 
     val flavor = PythonSdkFlavor.getApplicableFlavors(false).first()
-    val sdkPaths = flavor.suggestLocalHomePaths(null, context).map { it.pathString }
+    val sdkPaths = invokeAndWaitIfNeeded {
+      flavor.suggestLocalHomePaths(null, context).map { it.pathString }
+    }
     for (sdkPath in sdkPaths) {
       val sdkDescriptor = oldDescriptors[sdkPath]
       if (sdkDescriptor != null) {
