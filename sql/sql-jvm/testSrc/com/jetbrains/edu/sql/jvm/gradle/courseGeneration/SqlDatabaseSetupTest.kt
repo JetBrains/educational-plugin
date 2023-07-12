@@ -1,16 +1,12 @@
 package com.jetbrains.edu.sql.jvm.gradle.courseGeneration
 
 import com.intellij.database.console.JdbcConsoleProvider
-import com.intellij.database.view.DatabaseView
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.sql.SqlFileType
 import com.intellij.testFramework.PlatformTestUtil
-import com.intellij.ui.tree.TreeVisitor
-import com.intellij.ui.treeStructure.Tree
-import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -23,11 +19,6 @@ import com.jetbrains.edu.sql.jvm.gradle.SqlCourseGenerationTestBase
 import com.jetbrains.edu.sql.jvm.gradle.SqlGradleCourseBuilder.Companion.INIT_SQL
 import com.jetbrains.edu.sql.jvm.gradle.findDataSource
 import com.jetbrains.edu.sql.jvm.gradle.sqlCourse
-import org.jetbrains.concurrency.AsyncPromise
-import org.jetbrains.concurrency.Promise
-import java.lang.reflect.Method
-import javax.swing.JTree
-import javax.swing.tree.TreePath
 import kotlin.test.assertNotNull
 
 class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
@@ -125,6 +116,9 @@ class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
         }
       }
       lesson("lesson2") {
+        eduTask("task1") {
+          taskFile("src/task.sql")
+        }
         eduTask("task3") {
           taskFile("src/task.sql")
         }
@@ -166,11 +160,7 @@ class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
 
     createCourseStructure(course)
 
-    val databaseView = DatabaseView.getDatabaseView(project)
-    val tree = databaseView.panel.tree
-
-    PlatformTestUtil.waitWhileBusy(tree)
-    expandImportantNodes(tree)
+    val tree = prepareDatabaseView()
 
     PlatformTestUtil.assertTreeEqual(tree, """
       -Root Group
@@ -187,6 +177,10 @@ class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
           PUBLIC: schema
          +Server Objects (host: root <unnamed>)
        -Group (lesson2) inside Root Group
+        -task1 (1): DSN
+         -DB: database
+          PUBLIC: schema
+         +Server Objects (host: root <unnamed>)
         -task3: DSN
          -DB: database
           PUBLIC: schema
@@ -228,25 +222,6 @@ class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
            PUBLIC: schema
           +Server Objects (host: root <unnamed>)
     """.trimIndent())
-  }
-
-  private fun expandImportantNodes(tree: Tree) {
-    fun TreePath.isRoot(): Boolean = parentPath == null
-    fun TreePath.isGroupNode(): Boolean = lastPathComponent.toString().startsWith("Group")
-    fun TreePath.isDbNode(): Boolean = lastPathComponent.toString().startsWith("DB: database")
-    fun TreePath.isSchemaNode(): Boolean = lastPathComponent.toString().startsWith("PUBLIC: schema")
-    fun TreePath.getInsidePublicSchema(): Boolean = isSchemaNode() || parentPath?.getInsidePublicSchema() == true
-
-    expandTreePaths(tree) { path ->
-      when {
-        path.isRoot() -> TreeVisitor.Action.CONTINUE
-        path.isGroupNode() -> TreeVisitor.Action.CONTINUE
-        path.parentPath.isGroupNode() -> TreeVisitor.Action.CONTINUE
-        path.isDbNode() -> TreeVisitor.Action.CONTINUE
-        path.getInsidePublicSchema() -> TreeVisitor.Action.CONTINUE
-        else -> TreeVisitor.Action.SKIP_CHILDREN
-      }
-    }
   }
 
   @Suppress("SqlDialectInspection", "SqlNoDataSourceInspection")
@@ -348,34 +323,5 @@ class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
     val taskDataSource = task.findDataSource(project) ?: error("Can't find data source for `${task.name}`")
 
     assertEquals("Wrong data source url", taskDataSource.url, console.dataSource.url)
-  }
-
-  companion object {
-
-    private val promiseMakeVisible: Method by lazy {
-      val clazz = TreeUtil::class.java
-      val promiseMakeVisible = clazz.getDeclaredMethod("promiseMakeVisible", JTree::class.java, TreeVisitor::class.java, AsyncPromise::class.java)
-      promiseMakeVisible.isAccessible = true
-      promiseMakeVisible
-    }
-
-    // Reflection-based way to call private `TreeUtil.promiseMakeVisible(JTree, TreeVisitor, AsyncPromise<?>)`
-    // It seems it's the simplest way how to reuse `TreeUtil.promiseMakeVisible` without copying a lot of code
-    private fun makeTreePathsVisible(tree: JTree, visitor: TreeVisitor, promise: AsyncPromise<*>): Promise<*> {
-      return promiseMakeVisible.invoke(null, tree, visitor, promise) as Promise<*>
-    }
-
-    // Similar to `TreeUtil.promiseExpand(JTree, int)` but allows custom `TreeVisitor`
-    private fun expandTreePaths(tree: JTree, visitor: TreeVisitor) {
-      val promise: AsyncPromise<*> = AsyncPromise<Any>()
-      makeTreePathsVisible(tree, visitor, promise)
-        .onError(promise::setError)
-        .onSuccess {
-          if (promise.isCancelled) return@onSuccess
-          promise.setResult(null)
-        }
-
-      PlatformTestUtil.waitForPromise(promise)
-    }
   }
 }

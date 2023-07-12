@@ -91,10 +91,14 @@ fun createDataSources(project: Project, tasks: List<Task>): List<LocalDataSource
   val dataSourceRegistry = DataSourceRegistry(project)
   dataSourceRegistry.setImportedFlag(false)
   val dataSources = mutableListOf<LocalDataSource>()
+  val existingNames = LocalDataSourceManager.getInstance(project).dataSources.mapTo(HashSet()) { it.name }
+
   for (task in tasks) {
     val url = task.databaseUrl(project) ?: continue
+    val dataSourceName = task.createDataSourceName(existingNames)
+    existingNames += dataSourceName
     dataSourceRegistry.builder
-      .withName(task.dataSourceName)
+      .withName(dataSourceName)
       .withGroupName(task.dataSourceGroupName)
       .withUrl(url)
       .withAuthProviderId(DatabaseAuthProviderNames.NO_AUTH_ID)
@@ -135,7 +139,19 @@ private val Task.dataSourceGroupName: String
 // so let's replace it with ` `
 private fun String.sanitizeGroupName(): String = replace("/", " ")
 
-private val Task.dataSourceName: String get() = presentableName
+// It's important to have unique names for each data source.
+// Otherwise, `DataSourceConfigUtil.configureDetectedDataSources` (which we use to create new data sources)
+// won't create a data source with already existing name (even with different `groupName`) after course update
+private fun Task.createDataSourceName(existingDataSourceNames: Set<String>): String {
+  val presentableName = presentableName
+  var dataSourceName = presentableName
+  var index = 0
+  while (dataSourceName in existingDataSourceNames) {
+    index++
+    dataSourceName = "$presentableName ($index)"
+  }
+  return dataSourceName
+}
 
 /**
  * Attaches sql console to given sql [file]

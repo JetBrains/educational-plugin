@@ -21,7 +21,6 @@ class SqlCourseUpdateTest : SqlCourseGenerationTestBase() {
         eduTask("task1", stepId = 11) {
           taskFile("src/task.sql")
           sqlTaskFile(INIT_SQL, """create table if not exists STUDENTS_1;""")
-
         }
         eduTask("task2", stepId = 12) {
           taskFile("src/task.sql")
@@ -40,7 +39,7 @@ class SqlCourseUpdateTest : SqlCourseGenerationTestBase() {
           taskFile("src/task.sql")
         }
       }
-    } as EduCourse
+    }
 
     createCourseStructure(course)
 
@@ -56,30 +55,85 @@ class SqlCourseUpdateTest : SqlCourseGenerationTestBase() {
         }
       }
       lesson("lesson3", id = 3) {
-        eduTask("task6", stepId = 16) {
+        eduTask("task1", stepId = 16) {
           taskFile("src/task.sql")
-
         }
-        eduTask("task7", stepId = 17) {
+        eduTask("task6", stepId = 17) {
+          taskFile("src/task.sql")
+        }
+        eduTask("task7", stepId = 18) {
           taskFile("src/task.sql")
           sqlTaskFile(INIT_SQL, """create table if not exists STUDENTS_7;""")
         }
       }
-    } as EduCourse
+    }
 
-    setTopLevelSection(courseFromServer)
-
-    MarketplaceCourseUpdater(project, course, 2).updateCourseWithRemote(courseFromServer)
-    PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
-    waitWhileDataSourceSyncInProgress()
-
-    checkAllTasksHaveDataSource(course)
-    assertEquals(course.allTasks.size, LocalDataSourceManager.getInstance (project).dataSources.size)
+    makeCourseUpdate(course, courseFromServer)
 
     checkTable(course.findTask("lesson1", "task1"), "STUDENTS_1", shouldExist = true)
     // Don't run `init.sql` script since task2 is not new
     checkTable(course.findTask("lesson1", "task2"), "STUDENTS_2", shouldExist = false)
     checkTable(course.findTask("lesson3", "task7"), "STUDENTS_7", shouldExist = true)
+  }
+
+  @Suppress("SqlDialectInspection")
+  fun `test database view after course update`() {
+    val course = sqlCourse {
+      lesson("lesson1", id = 1) {
+        eduTask("task1", stepId = 11) {
+          taskFile("src/task.sql")
+        }
+      }
+    }
+
+    createCourseStructure(course)
+
+    val courseFromServer = sqlCourse {
+      lesson("lesson1", id = 1) {
+        eduTask("task1", stepId = 11) {
+          taskFile("src/task.sql")
+        }
+        eduTask("task2", stepId = 12) {
+          taskFile("src/task.sql")
+        }
+      }
+      lesson("lesson2", id = 2) {
+        eduTask("task1", stepId = 13) {
+          taskFile("src/task.sql")
+        }
+      }
+    }
+
+    makeCourseUpdate(course, courseFromServer)
+
+    val tree = prepareDatabaseView()
+    PlatformTestUtil.assertTreeEqual(tree, """
+      -Root Group
+       -Group (lesson1) inside Root Group
+        -task1: DSN
+         -DB: database
+          PUBLIC: schema
+         +Server Objects (host: root <unnamed>)
+        -task2: DSN
+         -DB: database
+          PUBLIC: schema
+         +Server Objects (host: root <unnamed>)
+       -Group (lesson2) inside Root Group
+        -task1 (1): DSN
+         -DB: database
+          PUBLIC: schema
+         +Server Objects (host: root <unnamed>)   
+    """.trimIndent())
+  }
+
+  private fun makeCourseUpdate(course: EduCourse, courseFromServer: EduCourse) {
+    setTopLevelSection(courseFromServer)
+    MarketplaceCourseUpdater(project, course, 2).updateCourseWithRemote(courseFromServer)
+    PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
+    waitWhileDataSourceSyncInProgress()
+
+    checkAllTasksHaveDataSource(course)
+    assertEquals(course.allTasks.size, LocalDataSourceManager.getInstance(project).dataSources.size)
   }
 
   override fun createCourseStructure(course: Course) {
