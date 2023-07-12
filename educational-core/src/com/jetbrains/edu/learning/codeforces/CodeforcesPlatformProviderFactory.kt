@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.codeforces
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.EducationalCoreIcons
-import com.jetbrains.edu.learning.capitalize
 import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.codeforces.actions.StartCodeforcesContestAction
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
@@ -11,10 +10,10 @@ import com.jetbrains.edu.learning.codeforces.newProjectUI.CodeforcesCoursesPanel
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory
-import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.onError
@@ -26,7 +25,7 @@ class CodeforcesPlatformProviderFactory : CoursesPlatformProviderFactory {
 }
 
 class CodeforcesPlatformProvider : CoursesPlatformProvider() {
-  override val name: String = CodeforcesNames.CODEFORCES.capitalize()
+  override val name: String = CodeforcesNames.CODEFORCES
 
   override val icon: Icon get() = EducationalCoreIcons.Codeforces
 

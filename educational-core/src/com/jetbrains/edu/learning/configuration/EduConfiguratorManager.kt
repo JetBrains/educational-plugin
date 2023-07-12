@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.configuration
 
 import com.intellij.lang.Language
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_COURSE_TYPE
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYCHARM
 import com.jetbrains.edu.learning.coursera.CourseraNames
@@ -16,7 +16,7 @@ object EduConfiguratorManager {
    */
   fun findConfigurator(courseType: String, environment: String, language: Language): EduConfigurator<*>? =
     when (courseType) {
-      CODEFORCES_COURSE_TYPE -> CodeforcesLanguageProvider.getConfigurator(language.id)
+      CODEFORCES -> CodeforcesLanguageProvider.getConfigurator(language.id)
       MARKETPLACE -> findExtension(PYCHARM, environment, language)?.instance
       else -> findExtension(courseType, environment, language)?.instance
     }

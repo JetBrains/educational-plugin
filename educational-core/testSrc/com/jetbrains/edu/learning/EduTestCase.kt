@@ -82,7 +82,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
     registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE,
                          CourseraNames.COURSERA)
     registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE,
-                         CodeforcesNames.CODEFORCES_COURSE_TYPE)
+                         CodeforcesNames.CODEFORCES)
     registerConfigurator(myFixture.testRootDisposable, FakeGradleConfigurator::class.java, FakeGradleBasedLanguage)
     registerConfigurator(myFixture.testRootDisposable, FakeGradleHyperskillConfigurator::class.java, FakeGradleBasedLanguage, HYPERSKILL)
 

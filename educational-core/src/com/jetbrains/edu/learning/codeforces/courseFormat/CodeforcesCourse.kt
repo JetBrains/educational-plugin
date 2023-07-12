@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.codeforces.courseFormat
 
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getContestURLFromID
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_COURSE_TYPE
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES
 import com.jetbrains.edu.learning.codeforces.ContestParameters
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -66,7 +66,7 @@ open class CodeforcesCourse : Course {
     authors = contestParameters.authors
   }
 
-  override val itemType: String = CODEFORCES_COURSE_TYPE
+  override val itemType: String = CODEFORCES
 
   fun getContestUrl(): String = getContestURLFromID(id)
 

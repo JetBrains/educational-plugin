@@ -215,7 +215,7 @@ object YamlDeserializer {
     val type = asText(treeNode.get(YamlMixinNames.TYPE))
 
     val clazz = when {
-      type == CodeforcesNames.CODEFORCES_COURSE_TYPE -> CodeforcesCourse::class.java
+      type == CodeforcesNames.CODEFORCES -> CodeforcesCourse::class.java
       treeNode.get(YamlMixinNames.HYPERSKILL_PROJECT) != null -> HyperskillCourse::class.java
       else -> EduCourse::class.java
     }

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_TYPE_YAML
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_COURSE_TYPE
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TYPE_YAML
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -92,7 +92,7 @@ class RemoteCourseBuilder(
       CHECKIO_TYPE_YAML -> CheckiOCourse()
       HYPERSKILL_TYPE_YAML -> HyperskillCourse()
       STEPIK_TYPE_YAML -> StepikCourse()
-      CODEFORCES_COURSE_TYPE -> {
+      CODEFORCES_TYPE_YAML -> {
         CodeforcesCourse().apply {
           endDateTime = codeforcesEndDateTime
           programTypeId = codeforcesProgramTypeId

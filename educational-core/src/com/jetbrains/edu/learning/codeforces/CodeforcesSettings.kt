@@ -69,8 +69,8 @@ class CodeforcesSettings : PersistentStateComponent<Element> {
 
   fun setAccountWithStatisticsEvent(account: CodeforcesAccount?, authorizationPlace: AuthorizationPlace = AuthorizationPlace.UNKNOWN) {
     this.account = account
-    if (account != null) EduCounterUsageCollector.logInSucceed(CodeforcesNames.CODEFORCES, authorizationPlace)
-    else EduCounterUsageCollector.logOutSucceed(CodeforcesNames.CODEFORCES, authorizationPlace)
+    if (account != null) EduCounterUsageCollector.logInSucceed(CodeforcesNames.CODEFORCES_TYPE_YAML, authorizationPlace)
+    else EduCounterUsageCollector.logOutSucceed(CodeforcesNames.CODEFORCES_TYPE_YAML, authorizationPlace)
   }
 
   override fun getState(): Element? {

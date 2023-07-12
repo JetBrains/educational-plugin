@@ -34,7 +34,7 @@ class CodeforcesSubmissionsProvider : SubmissionsProvider {
 
   override fun isLoggedIn(): Boolean = CodeforcesSettings.getInstance().isLoggedIn()
 
-  override fun getPlatformName(): String = CodeforcesNames.CODEFORCES
+  override fun getPlatformName(): String = CodeforcesNames.CODEFORCES_TYPE_YAML
 
   override fun doAuthorize(vararg postLoginActions: Runnable) = LoginDialog(AuthorizationPlace.SUBMISSIONS_TAB).show()
 

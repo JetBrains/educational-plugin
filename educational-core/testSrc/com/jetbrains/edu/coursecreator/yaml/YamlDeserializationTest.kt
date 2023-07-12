@@ -262,7 +262,7 @@ class YamlDeserializationTest : YamlTestCase() {
     val programmingLanguage = "Plain text"
     val programTypeId = "1000"
     val yamlContent = """
-      |type: ${CodeforcesNames.CODEFORCES}
+      |type: ${CodeforcesNames.CODEFORCES_TYPE_YAML}
       |title: $name
       |language: English
       |summary: |-
@@ -282,7 +282,7 @@ class YamlDeserializationTest : YamlTestCase() {
     val name = "Test Course"
     val programmingLanguage = "Plain text"
     val yamlContent = """
-      |type: ${CodeforcesNames.CODEFORCES}
+      |type: ${CodeforcesNames.CODEFORCES_TYPE_YAML}
       |title: $name
       |language: English
       |summary: |-

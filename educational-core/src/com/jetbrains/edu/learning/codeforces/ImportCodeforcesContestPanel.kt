@@ -6,8 +6,8 @@ import com.intellij.ui.dsl.builder.columns
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getContestIdFromLink
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_HELP_TEXT
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TYPE_YAML
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.apache.commons.lang.math.NumberUtils.isDigits
 import javax.swing.JComponent
@@ -41,6 +41,6 @@ class ImportCodeforcesContestPanel {
 
   fun isValidCodeforcesLink(): Boolean {
     val link = contestURLTextField.text
-    return link.isNotBlank() && (isDigits(link) || (link.contains(CODEFORCES) && getContestIdFromLink(link) != -1))
+    return link.isNotBlank() && (isDigits(link) || (link.contains(CODEFORCES_TYPE_YAML) && getContestIdFromLink(link) != -1))
   }
 }

@@ -1,10 +1,9 @@
 package com.jetbrains.edu.learning.codeforces
 
-import com.jetbrains.edu.learning.capitalize
-
 // TODO: move to message bundle
 object CodeforcesNames {
-  const val CODEFORCES: String = "codeforces"
+  const val CODEFORCES: String = "Codeforces"
+  const val CODEFORCES_TYPE_YAML: String = "codeforces"
   const val CODEFORCES_TITLE: String = "Codeforces"
   const val CODEFORCES_URL: String = "https://codeforces.com"
   const val CODEFORCES_SUBMIT: String = "submit"
@@ -20,7 +19,6 @@ object CodeforcesNames {
 
   const val LANGUAGES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/downloads/codeforces/languages.json"
 
-  const val CODEFORCES_TASK_TYPE: String = CODEFORCES
-  const val CODEFORCES_TASK_TYPE_WITH_FILE_IO: String = "${CODEFORCES}_file_io"
-  val CODEFORCES_COURSE_TYPE: String = CODEFORCES.capitalize()
+  const val CODEFORCES_TASK_TYPE: String = CODEFORCES_TYPE_YAML
+  const val CODEFORCES_TASK_TYPE_WITH_FILE_IO: String = "${CODEFORCES_TYPE_YAML}_file_io"
 }
