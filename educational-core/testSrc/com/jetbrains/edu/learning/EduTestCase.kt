@@ -80,7 +80,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
     registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE,
                          environment = EduNames.ANDROID)
     registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE,
-                         CourseraNames.COURSE_TYPE)
+                         CourseraNames.COURSERA)
     registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE,
                          CodeforcesNames.CODEFORCES_COURSE_TYPE)
     registerConfigurator(myFixture.testRootDisposable, FakeGradleConfigurator::class.java, FakeGradleBasedLanguage)

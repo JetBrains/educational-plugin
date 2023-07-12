@@ -5,5 +5,5 @@ import com.jetbrains.edu.learning.courseFormat.Course
 class CourseraCourse : Course() {
   var submitManually = false
 
-  override val itemType: String = CourseraNames.COURSE_TYPE
+  override val itemType: String = CourseraNames.COURSERA
 }
