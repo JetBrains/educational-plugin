@@ -22,7 +22,7 @@ class LeaveFeedbackAction : DumbAwareAction(
     if (dialog.showAndGet()) {
       dialog.showThanksNotification()
     }
-
+    //TODO: add leave internal form feedback event
     //EduCounterUsageCollector.leaveFeedback()
   }
 
@@ -31,12 +31,12 @@ class LeaveFeedbackAction : DumbAwareAction(
 
     val project = e.project ?: return
 //    if (!project.isStudentProject()) return
-    val task = project.getCurrentTask() ?: return
+    project.getCurrentTask() ?: return
     //val course = task.course
     e.presentation.isEnabledAndVisible = true
   }
 
   companion object {
-    const val ACTION_ID: String = "Educational.LeaveInIdeFeedbackAction"
+    const val ACTION_ID: String = "Educational.LeaveFeedbackAction"
   }
 }
