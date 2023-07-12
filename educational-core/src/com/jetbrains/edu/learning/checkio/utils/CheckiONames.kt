@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NonNls
 
 object CheckiONames {
   const val CHECKIO: @NonNls String = "CheckiO"
-  const val CHECKIO_TYPE: @NonNls String = CHECKIO
+  const val CHECKIO_TYPE_YAML: @NonNls String = "checkiO"
   private const val HTTPS: @NonNls String = "https://"
   const val CHECKIO_HOST: @NonNls String = "checkio.org"
   const val CHECKIO_URL: @NonNls String = HTTPS + CHECKIO_HOST

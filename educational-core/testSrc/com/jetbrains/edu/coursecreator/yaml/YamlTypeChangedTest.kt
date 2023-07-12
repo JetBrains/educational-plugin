@@ -90,7 +90,7 @@ class YamlTypeChangedTest : YamlTestCase() {
 
   fun `test edu to checkio failed`() {
     project.putUserData(YAML_TEST_THROW_EXCEPTION, false)
-    testCourseTypeDidntChange(CheckiONames.CHECKIO_TYPE)
+    testCourseTypeDidntChange(CheckiONames.CHECKIO_TYPE_YAML)
   }
 
   private fun testCourseTypeDidntChange(type: String) {

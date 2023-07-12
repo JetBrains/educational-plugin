@@ -24,7 +24,7 @@ class CheckiOCourse : Course {
     "stations=[${stations.joinToString("\n") { obj: CheckiOStation -> obj.toString() }}]"
 
   override val itemType: String
-    get() = CheckiONames.CHECKIO_TYPE
+    get() = CheckiONames.CHECKIO
 
   companion object {
     private val COURSE_DESCRIPTION: @NonNls String = """
