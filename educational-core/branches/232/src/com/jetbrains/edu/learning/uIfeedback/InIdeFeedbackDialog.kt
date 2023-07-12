@@ -22,7 +22,6 @@ class InIdeFeedbackDialog(
   forTest: Boolean
 ) : BlockBasedFeedbackDialogWithEmail<JbAcademyFeedbackSystemInfoData>(project, forTest) {
 
-  //should we override? or no sense if outside intellij. or should ve introduce our own versioning
   override val myFeedbackJsonVersion: Int = super.myFeedbackJsonVersion + 1
 
   override val myBlocks: List<FeedbackBlock> = listOf(
