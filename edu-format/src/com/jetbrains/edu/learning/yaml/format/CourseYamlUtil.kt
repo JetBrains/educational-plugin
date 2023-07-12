@@ -44,7 +44,7 @@ import java.util.*
 
 /**
  * Mixin class is used to deserialize [Course] item.
- * Update [CourseChangeApplier] and [CourseBuilder] if new fields added to mixin
+ * Update [com.jetbrains.edu.learning.yaml.format.CourseChangeApplier] and [CourseBuilder] if new fields added to mixin
  */
 @Suppress("unused") // used for yaml serialization
 @JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, VENDOR, IS_PRIVATE, PROGRAMMING_LANGUAGE,
@@ -221,7 +221,7 @@ open class CourseBuilder(
   }
 
   open fun makeCourse(): Course? {
-    val course = when (courseType?.replaceFirstChar { it.titlecaseChar() }) {
+    val course = when (courseType) {
       MARKETPLACE -> {
         EduCourse().apply {
           isMarketplace = true

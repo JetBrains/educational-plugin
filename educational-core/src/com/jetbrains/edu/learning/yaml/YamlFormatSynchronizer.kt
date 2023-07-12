@@ -161,7 +161,7 @@ object YamlFormatSynchronizer {
     mapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyYamlMixin::class.java)
 
     mapper.registerSubtypes(NamedType(CodeforcesCourse::class.java, CodeforcesNames.CODEFORCES))
-    mapper.registerSubtypes(NamedType(CourseraCourse::class.java, CourseraNames.COURSERA.decapitalize()))
+    mapper.registerSubtypes(NamedType(CourseraCourse::class.java, CourseraNames.COURSE_TYPE_YAML))
     mapper.registerSubtypes(NamedType(CheckiOCourse::class.java, CheckiONames.CHECKIO_TYPE.decapitalize()))
     mapper.registerSubtypes(NamedType(HyperskillCourse::class.java, HYPERSKILL_TYPE.decapitalize()))
     mapper.registerSubtypes(NamedType(StepikCourse::class.java, StepikNames.STEPIK_TYPE.decapitalize()))

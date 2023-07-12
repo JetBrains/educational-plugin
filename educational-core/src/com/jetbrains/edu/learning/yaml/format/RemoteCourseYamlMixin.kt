@@ -82,8 +82,8 @@ class RemoteCourseBuilder(
 ) {
 
   override fun makeCourse(): Course {
-    return when (courseType?.replaceFirstChar { it.titlecaseChar() }) {
-      CourseraNames.COURSE_TYPE -> {
+    return when (courseType) {
+      CourseraNames.COURSE_TYPE_YAML -> {
         CourseraCourse().apply {
           submitManually = courseraSubmitManually ?: false
         }

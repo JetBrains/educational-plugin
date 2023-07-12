@@ -22,7 +22,7 @@ class YamlChangeApplierTest : YamlTestCase() {
     assertFalse(course.submitManually)
 
     val yamlContent = """
-      |type: ${CourseraNames.COURSE_TYPE.lowercase()}
+      |type: ${CourseraNames.COURSE_TYPE_YAML}
       |submit_manually: true
       |title: Test Course
       |language: Russian

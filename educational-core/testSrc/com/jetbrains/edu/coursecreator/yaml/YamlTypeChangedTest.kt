@@ -75,7 +75,7 @@ class YamlTypeChangedTest : YamlTestCase() {
   }
 
   fun `test edu to coursera course`() {
-    testCourseTypeChanged(CourseraNames.COURSE_TYPE.lowercase(), CourseraCourse::class.java)
+    testCourseTypeChanged(CourseraNames.COURSE_TYPE_YAML, CourseraCourse::class.java)
   }
 
   fun `test edu to stepik course`() {
