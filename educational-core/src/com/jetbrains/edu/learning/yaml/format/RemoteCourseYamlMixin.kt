@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.Vendor
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
-import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_TYPE
+import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_TYPE_YAML
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE_YAML
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -91,7 +91,7 @@ class RemoteCourseBuilder(
 
       CHECKIO_TYPE_YAML -> CheckiOCourse()
       HYPERSKILL_TYPE_YAML -> HyperskillCourse()
-      STEPIK_TYPE -> StepikCourse()
+      STEPIK_TYPE_YAML -> StepikCourse()
       CODEFORCES_COURSE_TYPE -> {
         CodeforcesCourse().apply {
           endDateTime = codeforcesEndDateTime

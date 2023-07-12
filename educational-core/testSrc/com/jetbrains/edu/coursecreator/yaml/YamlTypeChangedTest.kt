@@ -80,7 +80,7 @@ class YamlTypeChangedTest : YamlTestCase() {
 
   fun `test edu to stepik course`() {
     project.putUserData(YAML_TEST_THROW_EXCEPTION, false)
-    testCourseTypeChanged(StepikNames.STEPIK_TYPE.lowercase(), StepikCourse::class.java)
+    testCourseTypeChanged(StepikNames.STEPIK_TYPE_YAML, StepikCourse::class.java)
   }
 
   fun `test edu to hyperskill course`() {

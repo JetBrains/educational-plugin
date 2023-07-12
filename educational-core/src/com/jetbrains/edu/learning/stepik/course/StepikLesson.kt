@@ -8,5 +8,5 @@ class StepikLesson : Lesson() {
   var unitId = 0
 
   override val itemType: String
-    get() = StepikNames.STEPIK_TYPE
+    get() = StepikNames.STEPIK
 }

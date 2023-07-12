@@ -11,5 +11,5 @@ import com.jetbrains.edu.learning.stepik.StepikNames
 class StepikCourse : EduCourse() {
   var isAdaptive: Boolean = false
 
-  override val itemType: String = StepikNames.STEPIK_TYPE
+  override val itemType: String = StepikNames.STEPIK
 }

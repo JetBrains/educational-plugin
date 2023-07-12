@@ -52,7 +52,7 @@ object EduConfiguratorManager {
       return allExtensions().filter { it.courseType == PYCHARM }.map { it.language }
     }
 
-  private val compatibleCourseTypes: List<String> = listOf(CourseraNames.COURSERA, StepikNames.STEPIK_TYPE, EduFormatNames.MARKETPLACE)
+  private val compatibleCourseTypes: List<String> = listOf(CourseraNames.COURSERA, StepikNames.STEPIK, EduFormatNames.MARKETPLACE)
 
   private fun compatibleCourseType(extension: EducationalExtensionPoint<EduConfigurator<*>>, courseType: String): Boolean {
     return extension.courseType == PYCHARM && courseType in compatibleCourseTypes
