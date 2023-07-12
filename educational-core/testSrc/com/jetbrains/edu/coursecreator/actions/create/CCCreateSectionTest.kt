@@ -6,7 +6,6 @@ import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.testAction
-import junit.framework.TestCase
 
 class CCCreateSectionTest : EduActionTestCase() {
 
@@ -22,10 +21,10 @@ class CCCreateSectionTest : EduActionTestCase() {
       testAction(CCCreateSection.ACTION_ID, dataContext(LightPlatformTestCase.getSourceRoot()))
     }
 
-    TestCase.assertEquals(2, course.items.size)
+    assertEquals(2, course.items.size)
     val section = course.getSection("section1")
-    TestCase.assertNotNull(section)
-    TestCase.assertEquals(2, section!!.index)
+    assertNotNull(section)
+    assertEquals(2, section!!.index)
   }
 
   fun `test create section after lesson`() {
@@ -52,11 +51,11 @@ class CCCreateSectionTest : EduActionTestCase() {
     withMockCreateStudyItemUi(MockNewStudyItemUi("section2", 2)) {
       testAction(CCCreateSection.ACTION_ID, dataContext(lessonFile))
     }
-    TestCase.assertEquals(4, course.items.size)
-    TestCase.assertEquals(1, course.getLesson("lesson1")!!.index)
-    TestCase.assertEquals(2, course.getSection("section2")!!.index)
-    TestCase.assertEquals(3, course.getLesson("lesson2")!!.index)
-    TestCase.assertEquals(4, course.getSection("section3")!!.index)
+    assertEquals(4, course.items.size)
+    assertEquals(1, course.getLesson("lesson1")!!.index)
+    assertEquals(2, course.getSection("section2")!!.index)
+    assertEquals(3, course.getLesson("lesson2")!!.index)
+    assertEquals(4, course.getSection("section3")!!.index)
   }
 
   fun `test create section before lesson`() {
@@ -83,11 +82,11 @@ class CCCreateSectionTest : EduActionTestCase() {
     withMockCreateStudyItemUi(MockNewStudyItemUi("section2", 2)) {
       testAction(CCCreateSection.ACTION_ID, dataContext(lessonFile))
     }
-    TestCase.assertEquals(4, course.items.size)
-    TestCase.assertEquals(1, course.getLesson("lesson1")!!.index)
-    TestCase.assertEquals(2, course.getSection("section2")!!.index)
-    TestCase.assertEquals(3, course.getLesson("lesson2")!!.index)
-    TestCase.assertEquals(4, course.getSection("section3")!!.index)
+    assertEquals(4, course.items.size)
+    assertEquals(1, course.getLesson("lesson1")!!.index)
+    assertEquals(2, course.getSection("section2")!!.index)
+    assertEquals(3, course.getLesson("lesson2")!!.index)
+    assertEquals(4, course.getSection("section3")!!.index)
   }
 
   fun `test create section before section`() {
@@ -114,11 +113,11 @@ class CCCreateSectionTest : EduActionTestCase() {
     withMockCreateStudyItemUi(MockNewStudyItemUi("section1", 2)) {
       testAction(CCCreateSection.ACTION_ID, dataContext(sectionFile))
     }
-    TestCase.assertEquals(4, course.items.size)
-    TestCase.assertEquals(1, course.getLesson("lesson1")!!.index)
-    TestCase.assertEquals(2, course.getSection("section1")!!.index)
-    TestCase.assertEquals(3, course.getSection("section2")!!.index)
-    TestCase.assertEquals(4, course.getLesson("lesson2")!!.index)
+    assertEquals(4, course.items.size)
+    assertEquals(1, course.getLesson("lesson1")!!.index)
+    assertEquals(2, course.getSection("section1")!!.index)
+    assertEquals(3, course.getSection("section2")!!.index)
+    assertEquals(4, course.getLesson("lesson2")!!.index)
   }
 
   fun `test create section not available inside lesson`() {
@@ -157,10 +156,36 @@ class CCCreateSectionTest : EduActionTestCase() {
     withMockCreateStudyItemUi(MockNewStudyItemUi("section1", 3)) {
       testAction(CCCreateSection.ACTION_ID, dataContext(sectionFile))
     }
-    TestCase.assertEquals(4, course.items.size)
-    TestCase.assertEquals(1, course.getLesson("lesson1")!!.index)
-    TestCase.assertEquals(2, course.getSection("section2")!!.index)
-    TestCase.assertEquals(3, course.getSection("section1")!!.index)
-    TestCase.assertEquals(4, course.getLesson("lesson2")!!.index)
+    assertEquals(4, course.items.size)
+    assertEquals(1, course.getLesson("lesson1")!!.index)
+    assertEquals(2, course.getSection("section2")!!.index)
+    assertEquals(3, course.getSection("section1")!!.index)
+    assertEquals(4, course.getLesson("lesson2")!!.index)
+  }
+
+  fun `test section creation is not available from inner directories`() {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      lesson("lesson1") {
+        eduTask {
+          taskFile("taskFile1.txt")
+        }
+      }
+      section("section1") {
+        lesson("lesson1") {
+          eduTask("lesson1") {
+            taskFile("taskFile2.txt")
+          }
+        }
+      }
+    }
+
+    val innerLessonDir = findFile("section1/lesson1")
+    val taskDir = findFile("section1/lesson1/lesson1")
+    withMockCreateStudyItemUi(MockNewStudyItemUi("section2")) {
+      testAction(CCCreateSection.ACTION_ID, dataContext(innerLessonDir), shouldBeEnabled = false)
+    }
+    withMockCreateStudyItemUi(MockNewStudyItemUi("section3")) {
+      testAction(CCCreateSection.ACTION_ID, dataContext(taskDir), shouldBeEnabled = false)
+    }
   }
 }

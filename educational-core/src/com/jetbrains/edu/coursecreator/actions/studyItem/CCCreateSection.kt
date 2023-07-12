@@ -34,6 +34,8 @@ class CCCreateSection : CCCreateStudyItemActionBase<Section>(StudyItemType.SECTI
   override fun getParentItem(project: Project, course: Course, directory: VirtualFile): StudyItem = course
 
   override fun getThresholdItem(project: Project, course: Course, sourceDirectory: VirtualFile): StudyItem? {
+    // Threshold item should be located only at the top level
+    if (sourceDirectory.parent != project.courseDir) return null
     return course.getItem(sourceDirectory.name)
   }
 
