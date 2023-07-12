@@ -38,7 +38,7 @@ class CCWrapWithSection : DumbAwareAction(
       return
     }
     val course = StudyTaskManager.getInstance(project).course ?: return
-    val lessonsToWrap = getLessonsToWrap(virtualFiles, course)
+    val lessonsToWrap = getLessonsToWrap(project, virtualFiles, course)
     wrapLessonsIntoSection(project, course, lessonsToWrap)
     val configurator = course.configurator ?: return
     configurator.courseBuilder.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
@@ -56,7 +56,7 @@ class CCWrapWithSection : DumbAwareAction(
       return
     }
     val course = StudyTaskManager.getInstance(project).course ?: return
-    val lessonsToWrap = getLessonsToWrap(virtualFiles, course)
+    val lessonsToWrap = getLessonsToWrap(project, virtualFiles, course)
     if (lessonsToWrap.isNotEmpty()) {
       presentation.isEnabledAndVisible = true
     }
@@ -66,9 +66,11 @@ class CCWrapWithSection : DumbAwareAction(
 
   companion object {
     const val ACTION_ID: @NonNls String = "Educational.Educator.CCWrapWithSection"
-    private fun getLessonsToWrap(virtualFiles: Array<VirtualFile>, course: Course): ArrayList<Lesson> {
+    private fun getLessonsToWrap(project: Project, virtualFiles: Array<VirtualFile>, course: Course): ArrayList<Lesson> {
+      val courseDir = project.courseDir
       val lessonsToWrap = ArrayList<Lesson>()
       for (file in virtualFiles) {
+        if (file.parent != courseDir) continue
         val lesson = course.getLesson(file.name)
         if (lesson != null) {
           lessonsToWrap.add(lesson)

@@ -6,7 +6,6 @@ import com.jetbrains.edu.learning.EduTestInputDialog
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.withEduTestDialog
-import junit.framework.TestCase
 
 class CCWrapInSectionTest : EduActionTestCase() {
 
@@ -23,11 +22,11 @@ class CCWrapInSectionTest : EduActionTestCase() {
     withEduTestDialog(EduTestInputDialog("section1")) {
       testAction(CCWrapWithSection.ACTION_ID, dataContext(arrayOf(lesson2, lesson3)))
     }
-    TestCase.assertEquals(3, course.items.size)
+    assertEquals(3, course.items.size)
     val section = course.getSection("section1")
-    TestCase.assertNotNull(section)
-    TestCase.assertEquals(2, section!!.index)
-    TestCase.assertEquals(3, course.getLesson("lesson4")!!.index)
+    assertNotNull(section)
+    assertEquals(2, section!!.index)
+    assertEquals(3, course.getLesson("lesson4")!!.index)
   }
 
   fun `test wrap random lessons`() {
@@ -57,15 +56,15 @@ class CCWrapInSectionTest : EduActionTestCase() {
     withEduTestDialog(EduTestInputDialog("section1")) {
       testAction(CCWrapWithSection.ACTION_ID, dataContext(arrayOf(lesson2)))
     }
-    TestCase.assertEquals(5, course.items.size)
+    assertEquals(5, course.items.size)
     val section = course.getSection("section1")
-    TestCase.assertNotNull(section)
-    TestCase.assertEquals(1, course.getLesson("lesson1")!!.index)
-    TestCase.assertEquals(2, section!!.index)
-    TestCase.assertEquals(3, course.getLesson("lesson3")!!.index)
-    TestCase.assertEquals(4, course.getLesson("lesson4")!!.index)
-    TestCase.assertEquals(5, course.getLesson("lesson5")!!.index)
-    TestCase.assertEquals(1, section.getLesson("lesson2")!!.index)
+    assertNotNull(section)
+    assertEquals(1, course.getLesson("lesson1")!!.index)
+    assertEquals(2, section!!.index)
+    assertEquals(3, course.getLesson("lesson3")!!.index)
+    assertEquals(4, course.getLesson("lesson4")!!.index)
+    assertEquals(5, course.getLesson("lesson5")!!.index)
+    assertEquals(1, section.getLesson("lesson2")!!.index)
   }
 
   fun `test all lessons`() {
@@ -80,12 +79,31 @@ class CCWrapInSectionTest : EduActionTestCase() {
     withEduTestDialog(EduTestInputDialog("section1")) {
       testAction(CCWrapWithSection.ACTION_ID, dataContext(arrayOf(lesson1, lesson2, lesson3)))
     }
-    TestCase.assertEquals(1, course.items.size)
+    assertEquals(1, course.items.size)
     val section = course.getSection("section1")
-    TestCase.assertNotNull(section)
-    TestCase.assertEquals(1, section!!.index)
-    TestCase.assertEquals(1, section.getLesson("lesson1")!!.index)
-    TestCase.assertEquals(2, section.getLesson("lesson2")!!.index)
-    TestCase.assertEquals(3, section.getLesson("lesson3")!!.index)
+    assertNotNull(section)
+    assertEquals(1, section!!.index)
+    assertEquals(1, section.getLesson("lesson1")!!.index)
+    assertEquals(2, section.getLesson("lesson2")!!.index)
+    assertEquals(3, section.getLesson("lesson3")!!.index)
+  }
+  
+  fun `test lesson wrapping is available only for top level lessons`() {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      lesson("lesson1")
+      section("section1") {
+        lesson("lesson1") {
+          eduTask("lesson1")
+        }
+      }
+    }
+    val innerLessonDir = findFile("section1/lesson1")
+    val taskDir = findFile("section1/lesson1/lesson1")
+    withEduTestDialog(EduTestInputDialog("section2")) {
+      testAction(CCWrapWithSection.ACTION_ID, dataContext(arrayOf(innerLessonDir)), shouldBeEnabled = false)
+    }
+    withEduTestDialog(EduTestInputDialog("section3")) {
+      testAction(CCWrapWithSection.ACTION_ID, dataContext(arrayOf(taskDir)), shouldBeEnabled = false)
+    }
   }
 }
