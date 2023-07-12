@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning
 
 import java.util.*
 
-fun String.capitalize(locale: Locale): String {
+private fun String.capitalize(locale: Locale): String {
   return replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }
 }
 

@@ -157,7 +157,5 @@ class CourseSettingsPanel(
       }
       return FileUtil.findSequentNonexistentFile(File(ProjectUtil.getBaseDir()), name, "").absolutePath
     }
-
-    fun getLanguageSettings(course: Course): LanguageSettings<*>? = course.configurator?.courseBuilder?.getLanguageSettings()
   }
 }
