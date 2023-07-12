@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.actions
+package com.jetbrains.edu.learning.action
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -15,9 +15,9 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.getStepikLink
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
-class LeaveCommentAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.leave.comment.text"),
+class LeaveFeedbackAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.leave.comment.text"),
                                            EduCoreBundle.lazyMessage("action.leave.comment.text"), EducationalCoreIcons.CommentTask),
-                           RightAlignedToolbarAction {
+                            RightAlignedToolbarAction {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return

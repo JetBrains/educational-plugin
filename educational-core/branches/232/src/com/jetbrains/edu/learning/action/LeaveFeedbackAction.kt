@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.actions
+package com.jetbrains.edu.learning.action
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.RightAlignedToolbarAction
@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.uIfeedback.InIdeFeedbackDialog
 
-class LeaveInIdeFeedbackAction : DumbAwareAction(
+class LeaveFeedbackAction : DumbAwareAction(
   EduCoreBundle.lazyMessage("action.leave.feedback.text"),
   EduCoreBundle.lazyMessage("action.leave.feedback.text"),
   EducationalCoreIcons.CommentTask

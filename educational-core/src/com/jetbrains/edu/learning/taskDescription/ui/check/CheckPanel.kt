@@ -13,6 +13,7 @@ import com.intellij.util.Alarm
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.action.LeaveFeedbackAction
 import com.jetbrains.edu.learning.actions.*
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
@@ -64,7 +65,7 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
     if (task?.isChangedOnFailed != true) {
       rightActionsToolbar.add(createSingleActionToolbar(RevertTaskAction.ACTION_ID))
     }
-    rightActionsToolbar.add(createSingleActionToolbar(LeaveCommentAction.ACTION_ID))
+    rightActionsToolbar.add(createSingleActionToolbar(LeaveFeedbackAction.ACTION_ID))
     return rightActionsToolbar
   }
 
