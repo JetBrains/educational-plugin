@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.marketplace.MARKETPLACE_PLUGIN_URL
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 const val HYPERSKILL = "Hyperskill"
-const val HYPERSKILL_TYPE = HYPERSKILL
+const val HYPERSKILL_TYPE_YAML = "hyperskill"
 const val HYPERSKILL_PROBLEMS = "Problems"
 const val HYPERSKILL_TOPICS = "Topics"
 const val HYPERSKILL_URL_PROPERTY = "Hyperskill URL"

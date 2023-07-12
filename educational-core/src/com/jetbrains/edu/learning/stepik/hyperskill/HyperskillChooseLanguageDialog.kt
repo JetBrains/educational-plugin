@@ -13,7 +13,7 @@ class HyperskillChooseLanguageDialog : DialogWrapper(false) {
 
   private val supportedLanguages: Collection<HyperskillLanguages> by lazy {
     EduConfiguratorManager.allExtensions()
-      .filter { it.courseType == HYPERSKILL_TYPE }
+      .filter { it.courseType == HYPERSKILL }
       .mapNotNullTo(HashSet()) { HyperskillLanguages.getHyperskillLanguage(it.language) }
   }
 

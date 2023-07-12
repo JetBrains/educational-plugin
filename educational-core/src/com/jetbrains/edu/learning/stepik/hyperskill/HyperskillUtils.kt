@@ -141,7 +141,7 @@ fun stepLink(stepId: Int) = "${HYPERSKILL_URL}learn/step/$stepId"
  */
 fun topicCompletedLink(topicId: Int) = "${HYPERSKILL_URL}learn/topic/${topicId}"
 
-fun isHyperskillSupportAvailable(): Boolean = EduConfiguratorManager.allExtensions().any { it.courseType == HYPERSKILL_TYPE }
+fun isHyperskillSupportAvailable(): Boolean = EduConfiguratorManager.allExtensions().any { it.courseType == HYPERSKILL }
 
 fun getSelectedProjectIdUnderProgress(): Int? {
   return computeUnderProgress(null, EduCoreBundle.message("hyperskill.synchronizing.account"), false) {

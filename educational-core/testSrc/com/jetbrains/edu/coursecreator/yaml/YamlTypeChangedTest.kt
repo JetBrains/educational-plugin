@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.placeholder.PlaceholderPainter
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE_YAML
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.YAML_TEST_PROJECT_READY
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.YAML_TEST_THROW_EXCEPTION
@@ -85,7 +85,7 @@ class YamlTypeChangedTest : YamlTestCase() {
 
   fun `test edu to hyperskill course`() {
     project.putUserData(YAML_TEST_THROW_EXCEPTION, false)
-    testCourseTypeChanged(HYPERSKILL_TYPE.lowercase(), HyperskillCourse::class.java)
+    testCourseTypeChanged(HYPERSKILL_TYPE_YAML, HyperskillCourse::class.java)
   }
 
   fun `test edu to checkio failed`() {

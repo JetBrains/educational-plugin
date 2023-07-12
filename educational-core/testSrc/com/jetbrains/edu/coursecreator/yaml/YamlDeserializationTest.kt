@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE_YAML
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
@@ -157,7 +157,7 @@ class YamlDeserializationTest : YamlTestCase() {
     val firstLesson = "the first lesson"
     val secondLesson = "the second lesson"
     val yamlContent = """
-      |type: ${HYPERSKILL_TYPE.lowercase()}
+      |type: ${HYPERSKILL_TYPE_YAML}
       |title: $name
       |language: $language
       |summary: |-
