@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.courseFormat
 object EduFormatNames {
   const val MARKETPLACE = "Marketplace"
   const val MARKETPLACE_YAML_TYPE = "marketplace"
-  const val EDU = "Edu"
   const val EDU_YAML_TYPE = "edu"
 
   const val COURSE = "course"
