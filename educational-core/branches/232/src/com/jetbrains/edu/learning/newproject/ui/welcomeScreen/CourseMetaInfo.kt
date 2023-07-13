@@ -8,6 +8,8 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.newproject.ui.logo
+import javax.swing.Icon
 
 private const val PROGRAMMING_LANGUAGE = "programmingLanguage"
 
@@ -21,7 +23,7 @@ class CourseMetaInfo() : CourseInfo() {
     @Transient
     get() = type
 
-  var programmingLanguage: String = ""
+  private var programmingLanguage: String = ""
     @OptionTag(PROGRAMMING_LANGUAGE)
     get() {
       if (programmingLanguageVersion != null) {
@@ -30,8 +32,6 @@ class CourseMetaInfo() : CourseInfo() {
       }
       return field
     }
-    @OptionTag(PROGRAMMING_LANGUAGE)
-    set
 
   var languageVersion: String? = null
     get() {
@@ -46,7 +46,11 @@ class CourseMetaInfo() : CourseInfo() {
   var languageId: String = ""
 
   // to be compatible with previous version
-  var programmingLanguageVersion: String? = null
+  private var programmingLanguageVersion: String? = null
+
+  override var icon: Icon?
+    get() = this.toCourse().logo
+    set(value) {}
 
   constructor(location: String = "", course: Course, tasksTotal: Int = 0, tasksSolved: Int = 0) : this() {
     this.type = course.itemType
