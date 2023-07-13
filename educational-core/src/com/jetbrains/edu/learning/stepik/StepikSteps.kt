@@ -38,7 +38,7 @@ import java.util.*
 
 const val SOURCE = "source"
 const val TASK_TYPE = "task_type"
-const val HYPERSKILL = "hyperskill"
+const val HYPERSKILL_ADDITIONAL_INFO = "hyperskill"
 const val LESSON_TYPE = "lesson_type"
 const val SAMPLES = "samples"
 const val EXECUTION_MEMORY_LIMIT = "execution_memory_limit"
@@ -177,7 +177,7 @@ open class PyCharmStepOptions : StepOptions {
   @JsonProperty(CODE_TEMPLATES_FOOTER)
   var codeTemplatesFooter: Map<String, Int>? = null
 
-  @JsonProperty(HYPERSKILL)
+  @JsonProperty(HYPERSKILL_ADDITIONAL_INFO)
   var hyperskill: HyperskillAdditionalInfo? = null
 
   constructor()
