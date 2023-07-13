@@ -44,21 +44,20 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
       HyperskillSettings.INSTANCE.account = account
     }
 
-  override fun getAuthorizationUrl(): String {
-    val url = URIBuilder(HYPERSKILL_URL)
-      .setPath("/oauth2/authorize/")
-      .addParameter("client_id", CLIENT_ID)
-      .addParameter("grant_type", CODE_ARGUMENT)
-      .addParameter("redirect_uri", getRedirectUri())
-      .addParameter("response_type", CODE_ARGUMENT)
-      .addParameter("scope", "read write")
-      .addParameter(STATE, state)
-      .addParameter("code_challenge", codeChallenge)
-      .addParameter("code_challenge_method", "S256")
-      .build()
-      .toString()
-    return wrapWithUtm(url, "login")
-  }
+  override val authorizationUrlBuilder: URIBuilder
+    get() {
+      return URIBuilder(HYPERSKILL_URL)
+        .setPath("/oauth2/authorize/")
+        .addParameter("client_id", CLIENT_ID)
+        .addParameter("grant_type", CODE_ARGUMENT)
+        .addParameter("redirect_uri", getRedirectUri())
+        .addParameter("response_type", CODE_ARGUMENT)
+        .addParameter("scope", "read write")
+        .addParameter("utm_source", "ide")
+        .addParameter("utm_medium", "ide")
+        .addParameter("utm_campaign", "ide")
+        .addParameter("utm_content", "login")
+    }
 
   override val clientId: String = CLIENT_ID
 

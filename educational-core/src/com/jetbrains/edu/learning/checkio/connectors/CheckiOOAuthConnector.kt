@@ -20,16 +20,14 @@ import org.apache.http.client.utils.URIBuilder
 import org.jetbrains.ide.RestService
 
 abstract class CheckiOOAuthConnector : EduOAuthCodeFlowConnector<CheckiOAccount, CheckiOUserInfo>() {
-  override fun getAuthorizationUrl(): String = URIBuilder(CHECKIO_URL)
-    .setPath("/oauth/authorize/")
-    .addParameter("client_id", clientId)
-    .addParameter("redirect_uri", getRedirectUri())
-    .addParameter("response_type", CODE_ARGUMENT)
-    .addParameter(STATE, state)
-    .addParameter("code_challenge", codeChallenge)
-    .addParameter("code_challenge_method", "S256")
-    .build()
-    .toString()
+  override val authorizationUrlBuilder: URIBuilder
+    get() {
+      return URIBuilder(CHECKIO_URL)
+        .setPath("/oauth/authorize/")
+        .addParameter("client_id", clientId)
+        .addParameter("redirect_uri", getRedirectUri())
+        .addParameter("response_type", CODE_ARGUMENT)
+    }
 
   override val baseUrl: String = CHECKIO_URL
 

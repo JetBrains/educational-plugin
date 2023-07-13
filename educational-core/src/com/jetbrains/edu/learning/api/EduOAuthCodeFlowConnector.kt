@@ -11,8 +11,10 @@ import com.jetbrains.edu.learning.courseFormat.UserInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import org.apache.commons.codec.binary.Base64
+import org.apache.http.client.utils.URIBuilder
 import org.jetbrains.ide.BuiltInServerManager
 import java.io.IOException
+import java.net.URI
 import java.security.MessageDigest
 import java.security.SecureRandom
 import kotlin.text.Charsets.US_ASCII
@@ -26,10 +28,10 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
   protected open val baseOAuthTokenUrl: String = "oauth2/token/"
 
   internal lateinit var state: String
-  internal lateinit var codeChallenge: String
+  private lateinit var codeChallenge: String
   private lateinit var codeVerifier: String
 
-  protected abstract fun getAuthorizationUrl(): String
+  protected abstract val authorizationUrlBuilder: URIBuilder
 
   /**
    * Must be changed only with synchronization
@@ -50,8 +52,8 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
 
     this.authorizationPlace = authorizationPlace
     setPostLoginActions(postLoginActions.asList())
-    generateStateParameters()
-    BrowserUtil.browse(getAuthorizationUrl())
+    val url = generateAuthorizationUrl()
+    BrowserUtil.browse(url)
   }
 
   /**
@@ -181,7 +183,7 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
     }
   }
 
-  private fun generateStateParameters() {
+  private fun generateAuthorizationUrl(): URI {
     state = generateSafeRandomString()
     codeVerifier = generateSafeRandomString()
 
@@ -189,6 +191,12 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
     val md = MessageDigest.getInstance("SHA-256")
     val digest = md.digest(bytes)
     codeChallenge = Base64.encodeBase64URLSafeString(digest)
+
+    return authorizationUrlBuilder
+      .addParameter(STATE, state)
+      .addParameter("code_challenge", codeChallenge)
+      .addParameter("code_challenge_method", "S256")
+      .build()
   }
 
   private fun generateSafeRandomString(): String {

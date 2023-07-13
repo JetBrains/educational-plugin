@@ -35,16 +35,14 @@ abstract class StepikConnector : EduOAuthCodeFlowConnector<StepikUser, StepikUse
       EduSettings.getInstance().user = account
     }
 
-  override fun getAuthorizationUrl(): String = URIBuilder(getStepikUrl())
-    .setPath("/oauth2/authorize/")
-    .addParameter("client_id", getClientId())
-    .addParameter("redirect_uri", getRedirectUri())
-    .addParameter("response_type", CODE_ARGUMENT)
-    .addParameter(STATE, state)
-    .addParameter("code_challenge", codeChallenge)
-    .addParameter("code_challenge_method", "S256")
-    .build()
-    .toString()
+  override val authorizationUrlBuilder: URIBuilder
+    get() {
+      return URIBuilder(getStepikUrl())
+        .setPath("/oauth2/authorize/")
+        .addParameter("client_id", getClientId())
+        .addParameter("redirect_uri", getRedirectUri())
+        .addParameter("response_type", CODE_ARGUMENT)
+    }
 
   override val clientId: String
     get() = getClientId()
