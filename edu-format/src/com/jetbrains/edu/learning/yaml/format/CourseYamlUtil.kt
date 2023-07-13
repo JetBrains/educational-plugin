@@ -9,8 +9,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.util.StdConverter
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.EDU
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.MARKETPLACE
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.EDU_YAML_TYPE
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.MARKETPLACE_YAML_TYPE
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYCHARM
 import com.jetbrains.edu.learning.json.mixins.IntValueFilter
 import com.jetbrains.edu.learning.json.mixins.NotImplementedInMixin
@@ -222,13 +222,13 @@ open class CourseBuilder(
 
   open fun makeCourse(): Course? {
     val course = when (courseType) {
-      MARKETPLACE -> {
+      MARKETPLACE_YAML_TYPE -> {
         EduCourse().apply {
           isMarketplace = true
           generatedEduId = yamlGeneratedEduId
         }
       }
-      EDU, null -> EduCourse()
+      EDU_YAML_TYPE, null -> EduCourse()
       else -> formatError(unsupportedItemTypeMessage(courseType, EduFormatNames.COURSE))
     }
     return course
