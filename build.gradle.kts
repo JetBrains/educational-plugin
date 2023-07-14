@@ -204,6 +204,8 @@ allprojects {
       withProp(secretProperties, "stepikTestClientId") { environment("STEPIK_TEST_CLIENT_ID", it) }
       withProp("excludeTests") { exclude(it) }
 
+      systemProperty("java.awt.headless", "true")
+
       ignoreFailures = true
       filter {
         isFailOnNoMatchingTests = false
