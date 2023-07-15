@@ -2,6 +2,7 @@ package com.jetbrains.edu.remote
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
+import com.intellij.openapi.components.service
 import com.intellij.openapi.rd.util.launchOnUi
 import com.jetbrains.codeWithMe.model.projectViewModel
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
@@ -31,6 +32,7 @@ class EduRemoteService(private val session: RemoteProjectSession) : LifetimedSer
               invokeAndWaitIfNeeded {
                 NavigationUtils.openFirstTask(course, project)
                 TaskDescriptionView.getInstance(project).updateTaskDescription()
+                service<EduRemoteTerminationService>().start()
               }
               break
             }
