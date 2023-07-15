@@ -2,7 +2,6 @@ package com.jetbrains.edu.android
 
 import com.android.sdklib.SdkVersionInfo
 import com.android.tools.adtui.device.FormFactor
-import com.android.tools.idea.projectsystem.GoogleMavenArtifactId
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtilCore

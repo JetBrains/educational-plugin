@@ -5,4 +5,7 @@ import com.android.tools.idea.avdmanager.AvdOptionsModel
 import com.intellij.util.containers.orNull
 
 // BACKCOMPAT: 2022.3. Inline it
+typealias GoogleMavenArtifactId = com.android.ide.common.repository.GoogleMavenArtifactId
+
+// BACKCOMPAT: 2022.3. Inline it
 fun AvdOptionsModel.getAvd(): AvdInfo? = createdAvd.orNull()
