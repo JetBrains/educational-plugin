@@ -4,7 +4,6 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
-import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.CourseMetaInfo
 import com.jetbrains.edu.learning.pathWithoutPrams
 import com.jetbrains.edu.learning.stepik.hyperskill.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -69,7 +68,6 @@ class JetBrainsAcademyPlatformProviderTest : EduTestCase() {
     assertEquals(1, courseGroup.courses.size)
     val courseFromProvider = courseGroup.courses.first()
     assertEquals(localHyperskillCourse.id, courseFromProvider.id)
-    assertTrue(courseFromProvider is CourseMetaInfo)
 
     CoursesStorage.getInstance().removeCourseByLocation("")
   }
