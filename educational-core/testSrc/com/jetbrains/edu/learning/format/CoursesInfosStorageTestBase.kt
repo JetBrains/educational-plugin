@@ -19,9 +19,8 @@ import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourse
 import junit.framework.ComparisonFailure
 import org.jdom.Element
 import java.nio.file.Paths
-import java.util.*
 
-class CoursesInfosStorageTest : EduTestCase() {
+open class CoursesInfosStorageTestBase : EduTestCase() {
 
   fun `test correct configurator found for courses in storage`() {
     val coursesStorage = CoursesStorage.getInstance()
@@ -32,7 +31,7 @@ class CoursesInfosStorageTest : EduTestCase() {
     for ((course, configuratorClass) in listOf(hyperskillCourse to PlainTextHyperskillConfigurator::class.java,
                                                eduCourse to PlainTextConfigurator::class.java)) {
       coursesStorage.addCourse(course, "location", 0, 0)
-      assertInstanceOf(coursesStorage.getCourseMetaInfo(course)!!.configurator, configuratorClass)
+      assertInstanceOf(coursesStorage.getCourseMetaInfo(course)!!.toCourse().configurator, configuratorClass)
     }
   }
 
@@ -139,66 +138,6 @@ class CoursesInfosStorageTest : EduTestCase() {
     assertEquals("3.7", course.languageVersion)
   }
 
-  fun testDeserializeHumanLanguageInRussianLocale() {
-    val default = Locale.getDefault()
-    Locale.setDefault(Locale("ru", "RU"))
-    val deserialized = deserializeState()
-    assertEquals(1, deserialized.courses.size)
-    val course = deserialized.courses.first()
-    course.humanLanguage
-    Locale.setDefault(default)
-    assertEquals("en", course.languageCode)
-  }
-
-  fun testDeserializeHumanLanguageInEnglishLocale() {
-    val default = Locale.getDefault()
-    Locale.setDefault(Locale("en", ""))
-    val deserialized = deserializeState()
-    assertEquals(1, deserialized.courses.size)
-    val course = deserialized.courses.first()
-    course.humanLanguage
-    Locale.setDefault(default)
-    assertEquals("en", course.languageCode)
-  }
-
-  fun testSerializeCourseWithDefaultParameters() {
-    val course = course(
-      "AtomicKotlin",
-      description = "The examples and exercises accompanying the AtomicKotlin book") { }.apply {
-      id = 20403
-      languageId = EduNames.PYTHON
-    }
-
-    doSerializationTest(course)
-  }
-
-  fun testSerializeLanguageVersion() {
-    val course = course(
-      "AtomicKotlin",
-      description = "The examples and exercises accompanying the AtomicKotlin book") { }.apply {
-      id = 20403
-      languageId = EduNames.PYTHON
-      languageVersion = "3.7"
-    }
-
-    doSerializationTest(course)
-  }
-
-  fun testSerializeHumanLanguage() {
-    val default = Locale.getDefault()
-    Locale.setDefault(Locale("ru", "RU"))
-    val course = course(
-      "AtomicKotlin",
-      description = "The examples and exercises accompanying the AtomicKotlin book") { }.apply {
-      id = 20403
-      languageId = EduNames.PYTHON
-      languageVersion = "3.7"
-      languageCode = "ru"
-    }
-
-    Locale.setDefault(default)
-    doSerializationTest(course)
-  }
 
   fun testEmptyCoursesGroup() {
     val coursesStorage = getCoursesStorage()
@@ -266,7 +205,7 @@ class CoursesInfosStorageTest : EduTestCase() {
     assertEquals(EduCoreBundle.message("course.dialog.completed"), coursesInGroups[2].name)
   }
 
-  private fun doSerializationTest(course: Course) {
+  protected fun doSerializationTest(course: Course) {
     val coursesStorage = CoursesStorage.getInstance()
     val courses = coursesStorage.state.courses
     coursesStorage.state.courses.removeAll(courses)
@@ -279,7 +218,7 @@ class CoursesInfosStorageTest : EduTestCase() {
     checkEquals(expected, actual)
   }
 
-  private fun deserializeState(): UserCoursesState {
+  protected fun deserializeState(): UserCoursesState {
     val element = loadFromFile()
     return XmlSerializer.deserialize(element.children.first(), UserCoursesState::class.java)
   }

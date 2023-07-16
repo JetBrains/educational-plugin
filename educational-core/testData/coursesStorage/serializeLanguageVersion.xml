@@ -1,13 +1,14 @@
 <UserCoursesState>
-    <courses>
-      <course>
-        <option name="description" value="The examples and exercises accompanying the AtomicKotlin book"/>
-        <option name="id" value="20403"/>
-        <option name="programmingLanguageId" value="Python" />
-        <option name="programmingLanguageVersion" value="3.7" />
-        <option name="location" value="$USER_HOME$/IdeaProjects/AtomicKotlin"/>
-        <option name="name" value="AtomicKotlin"/>
-        <option name="type" value="PyCharm" />
-      </course>
-    </courses>
+  <courses>
+    <course>
+      <option name="description" value="The examples and exercises accompanying the AtomicKotlin book"/>
+      <option name="id" value="20403"/>
+      <option name="location" value="$USER_HOME$/IdeaProjects/AtomicKotlin"/>
+      <option name="marketplace" value="false"/>
+      <option name="name" value="AtomicKotlin"/>
+      <option name="type" value="PyCharm"/>
+      <option name="programmingLanguageVersion" value="3.7"/>
+      <option name="programmingLanguageId" value="Python"/>
+    </course>
+  </courses>
 </UserCoursesState>
