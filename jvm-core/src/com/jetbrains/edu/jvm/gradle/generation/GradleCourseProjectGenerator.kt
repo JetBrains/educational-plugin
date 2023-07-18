@@ -17,10 +17,10 @@ open class GradleCourseProjectGenerator(
   course: Course
 ) : CourseProjectGenerator<JdkProjectSettings>(builder, course) {
 
-  override fun afterProjectGenerated(project: Project, projectSettings: JdkProjectSettings) {
+  override fun afterProjectGenerated(project: Project, projectSettings: JdkProjectSettings, onConfigurationFinished: () -> Unit) {
     val jdk = projectSettings.setUpProjectJdk(project, course, ::getJdk)
     setupGradleSettings(project, jdk)
-    super.afterProjectGenerated(project, projectSettings)
+    super.afterProjectGenerated(project, projectSettings, onConfigurationFinished)
   }
 
   protected open fun setupGradleSettings(project: Project, sdk: Sdk?) {

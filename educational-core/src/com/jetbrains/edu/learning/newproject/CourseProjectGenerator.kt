@@ -5,6 +5,7 @@ import com.intellij.ide.RecentProjectsManager
 import com.intellij.ide.impl.OpenProjectTask
 import com.intellij.ide.impl.TrustedPaths
 import com.intellij.idea.ActionsBundle
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
@@ -23,6 +24,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.impl.status.widget.StatusBarWidgetsManager
 import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
 import com.intellij.util.PathUtil
+import com.intellij.util.messages.Topic
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.CCUtils.isLocalCourse
 import com.jetbrains.edu.learning.*
@@ -53,7 +55,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
   protected val courseBuilder: EduCourseBuilder<S>,
   protected val course: Course
 ) {
-  open fun afterProjectGenerated(project: Project, projectSettings: S) {
+  open fun afterProjectGenerated(project: Project, projectSettings: S, onConfigurationFinished: () -> Unit) {
     // project.isLocalCourse info is stored in PropertiesComponent to keep it after course restart on purpose
     // not to show login widget for local course
     project.isLocalCourse = course.isLocal
@@ -67,6 +69,8 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
 
     YamlFormatSynchronizer.saveAll(project)
     YamlFormatSynchronizer.startSynchronization(project)
+
+    onConfigurationFinished()
   }
 
   // 'projectSettings' must have S type but due to some reasons:
@@ -79,7 +83,11 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     applySettings(projectSettings)
     val createdProject = createProject(location) ?: return null
 
-    afterProjectGenerated(createdProject, castedProjectSettings)
+    afterProjectGenerated(createdProject, castedProjectSettings) {
+      ApplicationManager.getApplication().messageBus
+        .syncPublisher(COURSE_PROJECT_CONFIGURATION)
+        .onCourseProjectConfigured(createdProject)
+    }
     return createdProject
   }
 
@@ -232,6 +240,8 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     val COURSE_MODE_TO_CREATE = Key.create<CourseMode>("edu.courseModeToCreate")
     val COURSE_LANGUAGE_ID_TO_CREATE = Key.create<String>("edu.courseLanguageIdToCreate")
 
+    @Topic.AppLevel
+    val COURSE_PROJECT_CONFIGURATION: Topic<CourseProjectConfigurationListener> = createTopic("COURSE_PROJECT_CONFIGURATION")
 
     // TODO: provide more precise heuristic for Gradle, sbt and other "dangerous" build systems
     // See https://youtrack.jetbrains.com/issue/EDU-4182
@@ -260,5 +270,9 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
         }
       }
     }
+  }
+
+  fun interface CourseProjectConfigurationListener {
+    fun onCourseProjectConfigured(project: Project)
   }
 }

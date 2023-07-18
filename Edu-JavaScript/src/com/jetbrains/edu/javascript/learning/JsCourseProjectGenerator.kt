@@ -18,8 +18,7 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import java.io.IOException
 
 class JsCourseProjectGenerator(builder: JsCourseBuilder, course: Course) : CourseProjectGenerator<JsNewProjectSettings>(builder, course) {
-  override fun afterProjectGenerated(project: Project, projectSettings: JsNewProjectSettings) {
-    super.afterProjectGenerated(project, projectSettings)
+  override fun afterProjectGenerated(project: Project, projectSettings: JsNewProjectSettings, onConfigurationFinished: () -> Unit) {
     val interpreter = projectSettings.selectedInterpreter
     if (interpreter == null) {
       // It's ok not to have NodeJS interpreter in tests
@@ -49,6 +48,7 @@ class JsCourseProjectGenerator(builder: JsCourseBuilder, course: Course) : Cours
         }
       }
     }
+    super.afterProjectGenerated(project, projectSettings, onConfigurationFinished)
   }
 
   @Throws(IOException::class)

@@ -111,7 +111,7 @@ abstract class EduAppStarterBase : ModernApplicationStarter() {
     private const val MARKETPLACE_COURSE_LINK_OPTION = "marketplace"
 
     @JvmStatic
-    protected fun logErrorAndExit(message: String): Nothing {
+    fun logErrorAndExit(message: String): Nothing {
       LOG.error(message)
       exitProcess(1)
     }

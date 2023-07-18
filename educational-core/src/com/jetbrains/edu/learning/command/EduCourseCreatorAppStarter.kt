@@ -1,18 +1,24 @@
 package com.jetbrains.edu.learning.command
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.EDT
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
+import com.jetbrains.edu.learning.command.EduAppStarterBase.Companion.logErrorAndExit
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.newproject.CourseCreationInfo
+import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import java.util.concurrent.TimeUnit
 
 /**
  * Adds `createCourse` command for IDE to create a course project.
@@ -47,6 +53,13 @@ class EduCourseCreatorAppStarter : EduAppStarterBase() {
     projectSettings: EduProjectSettings
   ) {
     var errorMessage: String? = null
+
+    val listener = ProjectConfigurationListener()
+    ApplicationManager.getApplication()
+      .messageBus
+      .connect()
+      .subscribe(CourseProjectGenerator.COURSE_PROJECT_CONFIGURATION, listener)
+
     val project = withAutoImportDisabled {
       val info = CourseCreationInfo(course, location, projectSettings)
       val project = withContext(Dispatchers.EDT) {
@@ -55,6 +68,7 @@ class EduCourseCreatorAppStarter : EduAppStarterBase() {
         }
       }
       if (project != null) {
+        listener.waitForProjectConfiguration()
         withContext(Dispatchers.EDT) {
           @Suppress("UnstableApiUsage")
           ProjectManagerEx.getInstanceEx().saveAndForceCloseProject(project)
@@ -71,6 +85,32 @@ class EduCourseCreatorAppStarter : EduAppStarterBase() {
       }
       logErrorAndExit(message)
     }
+  }
+}
+
+private class ProjectConfigurationListener : CourseProjectGenerator.CourseProjectConfigurationListener {
+
+  @Volatile
+  private var isProjectConfigured: Boolean = false
+
+  override fun onCourseProjectConfigured(project: Project) {
+    isProjectConfigured = true
+  }
+
+  suspend fun waitForProjectConfiguration() {
+    val timeout = System.getProperty("edu.create.course.timeout")?.toLong() ?: DEFAULT_TIMEOUT
+    val startTime = System.currentTimeMillis()
+    // Wait until the course project is fully configured
+    while (!isProjectConfigured && (startTime - System.currentTimeMillis()) <= timeout) {
+      delay(50)
+    }
+    if (!isProjectConfigured) {
+      logErrorAndExit("Project creation took more than $timeout ms")
+    }
+  }
+
+  companion object {
+    private val DEFAULT_TIMEOUT: Long = TimeUnit.MINUTES.toMillis(5)
   }
 }
 

@@ -78,7 +78,9 @@ class FakeGradleCourseProjectGenerator(
   builder: FakeGradleCourseBuilder,
   course: Course
 ) : CourseProjectGenerator<EmptyProjectSettings>(builder, course) {
-  override fun afterProjectGenerated(project: Project, projectSettings: EmptyProjectSettings) {}
+  override fun afterProjectGenerated(project: Project, projectSettings: EmptyProjectSettings, onConfigurationFinished: () -> Unit) {
+    onConfigurationFinished()
+  }
 
   override fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
     super.createAdditionalFiles(holder, isNewCourse)

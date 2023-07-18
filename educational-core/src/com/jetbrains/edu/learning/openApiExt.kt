@@ -29,6 +29,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.util.PathUtil
+import com.intellij.util.messages.Topic
+import com.intellij.util.messages.Topic.BroadcastDirection
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.isBinary
@@ -183,3 +185,8 @@ fun <V> getInEdt(modalityState: ModalityState = ModalityState.defaultModalitySta
     compute()
   }
 }
+
+inline fun <reified L> createTopic(
+  displayName: String,
+  direction: BroadcastDirection = BroadcastDirection.TO_CHILDREN
+): Topic<L> = Topic.create(displayName, L::class.java, direction)

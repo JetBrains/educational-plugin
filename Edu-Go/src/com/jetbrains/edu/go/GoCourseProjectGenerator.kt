@@ -10,8 +10,7 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
 class GoCourseProjectGenerator(builder: GoCourseBuilder, course: Course) :
   CourseProjectGenerator<GoProjectSettings>(builder, course) {
-  override fun afterProjectGenerated(project: Project, projectSettings: GoProjectSettings) {
-    super.afterProjectGenerated(project, projectSettings)
+  override fun afterProjectGenerated(project: Project, projectSettings: GoProjectSettings, onConfigurationFinished: () -> Unit) {
     GoSdkService.getInstance(project).setSdk(projectSettings.sdk)
     val module = ModuleManager.getInstance(project).modules.singleOrNull()
     if (module != null) {
@@ -24,5 +23,6 @@ class GoCourseProjectGenerator(builder: GoCourseBuilder, course: Course) :
       GoModuleSettings.getInstance(module).isGoSupportEnabled = true
     }
     VgoProjectSettings.getInstance(project).isIntegrationEnabled = true
+    super.afterProjectGenerated(project, projectSettings, onConfigurationFinished)
   }
 }
