@@ -8,6 +8,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.coursecreator.ui.CCNewCourseDialog
 import com.jetbrains.edu.learning.EduUtilsKt
+import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -18,6 +19,10 @@ class CCEditCourseArchive : DumbAwareAction(
   EduCoreBundle.lazyMessage("action.unpack.and.edit.course.archive.description"),
   null
 ) {
+  override fun update(e: AnActionEvent) {
+    e.presentation.isEnabledAndVisible = !RemoteEnvHelper.isRemoteDevServer()
+  }
+
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.getData(CommonDataKeys.PROJECT)
     val descriptor = FileChooserDescriptor(true, true, true, true,

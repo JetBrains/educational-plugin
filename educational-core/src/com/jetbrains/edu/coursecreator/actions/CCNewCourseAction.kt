@@ -5,10 +5,10 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.util.NlsActions
 import com.intellij.openapi.util.NlsContexts
 import com.jetbrains.edu.coursecreator.ui.CCNewCourseDialog
+import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.ContextHelpProvider
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-
 import org.jetbrains.annotations.NonNls
 import java.util.function.Supplier
 
@@ -34,7 +34,7 @@ class CCNewCourseAction(
   }
 
   override fun update(e: AnActionEvent) {
-    e.presentation.isEnabledAndVisible = CCPluginToggleAction.isCourseCreatorFeaturesEnabled
+    e.presentation.isEnabledAndVisible = CCPluginToggleAction.isCourseCreatorFeaturesEnabled && !RemoteEnvHelper.isRemoteDevServer()
   }
 
   companion object {

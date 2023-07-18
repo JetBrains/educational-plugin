@@ -17,6 +17,10 @@ abstract class StartCourseAction(
   abstract val dialog: ImportCourseDialog
   abstract val courseConnector: CourseConnector
 
+  override fun update(e: AnActionEvent) {
+    e.presentation.isEnabledAndVisible = !RemoteEnvHelper.isRemoteDevServer()
+  }
+
   override fun actionPerformed(e: AnActionEvent) {
     doImport()
   }

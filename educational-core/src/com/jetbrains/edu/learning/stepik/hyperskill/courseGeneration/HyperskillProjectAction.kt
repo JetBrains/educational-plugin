@@ -12,6 +12,7 @@ import com.intellij.ui.HyperlinkAdapter
 import com.intellij.ui.components.AnActionLink
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.courseFormat.ext.CourseValidationResult
 import com.jetbrains.edu.learning.courseFormat.ext.PluginsRequired
 import com.jetbrains.edu.learning.courseFormat.ext.ValidationErrorMessage
@@ -31,7 +32,7 @@ import javax.swing.event.HyperlinkListener
 class HyperskillProjectAction : DumbAwareAction(EduCoreBundle.message("hyperskill.open.project.text")) {
 
   override fun update(e: AnActionEvent) {
-    e.presentation.isEnabledAndVisible = isHyperskillSupportAvailable()
+    e.presentation.isEnabledAndVisible = isHyperskillSupportAvailable() && !RemoteEnvHelper.isRemoteDevServer()
   }
 
   override fun actionPerformed(e: AnActionEvent) {

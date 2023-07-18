@@ -6,6 +6,7 @@ import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.coursecreator.ui.CCNewCourseDialog
 import com.jetbrains.edu.learning.EduExperimentalFeatures
+import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
@@ -29,8 +30,11 @@ class NewHyperskillCourseAction : DumbAwareAction(
   }
 
   override fun update(e: AnActionEvent) {
-    e.presentation.isEnabledAndVisible = CCPluginToggleAction.isCourseCreatorFeaturesEnabled
-                                         && isFeatureEnabled(EduExperimentalFeatures.CC_HYPERSKILL)
+    e.presentation.isEnabledAndVisible = false
+    if (!isFeatureEnabled(EduExperimentalFeatures.CC_HYPERSKILL)) return
+    if (RemoteEnvHelper.isRemoteDevServer()) return
+    if (!CCPluginToggleAction.isCourseCreatorFeaturesEnabled) return
+    e.presentation.isEnabledAndVisible = true
   }
 
   companion object {
