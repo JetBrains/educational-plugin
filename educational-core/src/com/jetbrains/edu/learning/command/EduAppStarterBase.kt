@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.command
 
-import com.intellij.openapi.application.ApplicationStarter
+import com.intellij.openapi.application.ModernApplicationStarter
 import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.diagnostic.logger
 import com.jetbrains.edu.learning.EduUtilsKt
@@ -9,12 +9,13 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import org.apache.commons.cli.*
 import kotlin.system.exitProcess
 
-abstract class EduAppStarterBase : ApplicationStarter {
+@Suppress("UnstableApiUsage")
+abstract class EduAppStarterBase : ModernApplicationStarter() {
 
   @Suppress("OVERRIDE_DEPRECATION")
   abstract override val commandName: String
 
-  override fun main(args: List<String>) {
+  override suspend fun start(args: List<String>) {
     try {
       val parsedArgs = parseArgs(args)
       val course = loadCourse(parsedArgs)
@@ -27,7 +28,7 @@ abstract class EduAppStarterBase : ApplicationStarter {
     }
   }
 
-  protected abstract fun doMain(course: Course, projectPath: String)
+  protected abstract suspend fun doMain(course: Course, projectPath: String)
 
   private fun parseArgs(args: List<String>): Args {
     val options = Options()

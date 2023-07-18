@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.command
 
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.learning.Err
@@ -10,6 +11,8 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * Adds `createCourse` command for IDE to create a course project.
@@ -24,7 +27,7 @@ class EduCourseCreatorAppStarter : EduAppStarterBase() {
   override val commandName: String
     get() = "createCourse"
 
-  override fun doMain(course: Course, projectPath: String) {
+  override suspend fun doMain(course: Course, projectPath: String) {
     val configurator = course.configurator
     if (configurator == null) {
       logErrorAndExit(course.incompatibleCourseMessage())
@@ -38,7 +41,7 @@ class EduCourseCreatorAppStarter : EduAppStarterBase() {
     }
   }
 
-  private fun createCourseProject(
+  private suspend fun createCourseProject(
     course: Course,
     location: String,
     projectSettings: EduProjectSettings
@@ -46,12 +49,16 @@ class EduCourseCreatorAppStarter : EduAppStarterBase() {
     var errorMessage: String? = null
     val project = withAutoImportDisabled {
       val info = CourseCreationInfo(course, location, projectSettings)
-      val project = CoursesPlatformProvider.joinCourse(info, CourseMode.STUDENT, null) {
-        errorMessage = it.message?.message
+      val project = withContext(Dispatchers.EDT) {
+        CoursesPlatformProvider.joinCourse(info, CourseMode.STUDENT, null) {
+          errorMessage = it.message?.message
+        }
       }
       if (project != null) {
-        @Suppress("UnstableApiUsage")
-        ProjectManagerEx.getInstanceEx().saveAndForceCloseProject(project)
+        withContext(Dispatchers.EDT) {
+          @Suppress("UnstableApiUsage")
+          ProjectManagerEx.getInstanceEx().saveAndForceCloseProject(project)
+        }
       }
       project
     }
@@ -67,7 +74,7 @@ class EduCourseCreatorAppStarter : EduAppStarterBase() {
   }
 }
 
-private fun <T> withAutoImportDisabled(action: () -> T): T {
+private suspend fun <T> withAutoImportDisabled(action: suspend () -> T): T {
   val registryValue = Registry.get("external.system.auto.import.disabled")
   val oldValue = registryValue.asBoolean()
   registryValue.setValue(true)

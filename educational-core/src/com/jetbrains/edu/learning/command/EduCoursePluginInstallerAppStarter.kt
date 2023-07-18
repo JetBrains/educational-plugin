@@ -19,7 +19,7 @@ class EduCoursePluginInstallerAppStarter : EduAppStarterBase() {
   override val commandName: String
     get() = "installCoursePlugins"
 
-  override fun doMain(course: Course, projectPath: String) {
+  override suspend fun doMain(course: Course, projectPath: String) {
     val provider = course.compatibilityProvider
     if (provider == null) {
       logErrorAndExit(course.incompatibleCourseMessage())
