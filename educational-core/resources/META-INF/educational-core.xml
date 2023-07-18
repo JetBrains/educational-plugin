@@ -72,7 +72,9 @@
     <extensionPoint qualifiedName="Educational.revertTaskExtension"
                     interface="com.jetbrains.edu.learning.actions.RevertTaskAction$RevertTaskExtension"
                     dynamic="true"/>
-
+    <extensionPoint qualifiedName="Educational.remoteEnvHelper"
+                    interface="com.jetbrains.edu.learning.RemoteEnvHelper"
+                    dynamic="true"/>
   </extensionPoints>
 
   <actions>

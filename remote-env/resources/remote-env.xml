@@ -8,4 +8,8 @@
     <projectService serviceImplementation="com.jetbrains.edu.remote.EduRemoteService" preload="true" client="remote"/>
     <postStartupActivity implementation="com.jetbrains.edu.remote.EduRemoteStartupActivity"/>
   </extensions>
+
+  <extensions defaultExtensionNs="Educational">
+    <remoteEnvHelper implementation="com.jetbrains.edu.remote.RemoteEnvDefaultHelper"/>
+  </extensions>
 </idea-plugin>
