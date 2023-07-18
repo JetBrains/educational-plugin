@@ -39,9 +39,9 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     val (project, course) = findExistingProject(findProject, request) ?: return false
     val hyperskillCourse = course as HyperskillCourse
     when (request) {
-      is HyperskillOpenStepRequest -> {
-        hyperskillCourse.addProblemsWithTopicWithFiles(project, getStepSource(request))
+      is HyperskillOpenStepRequestBase -> {
         val stepId = request.stepId
+        hyperskillCourse.addProblemsWithTopicWithFiles(project, getStepSource(stepId, request.isLanguageSelectedByUser))
         hyperskillCourse.selectedProblem = stepId
         runInEdt {
           requestFocus()
@@ -50,7 +50,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
         synchronizeProjectOnStepOpening(project, hyperskillCourse, stepId)
       }
 
-      is HyperskillOpenStageRequest -> {
+      is HyperskillOpenProjectStageRequest -> {
         if (hyperskillCourse.getProjectLesson() == null) {
           computeUnderProgress(project, EduCoreBundle.message("hyperskill.loading.stages")) {
             HyperskillConnector.getInstance().loadStages(hyperskillCourse)
@@ -67,6 +67,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
         course.selectedStage = request.stageId
         runInEdt { openSelectedStage(hyperskillCourse, project) }
       }
+
     }
     return true
   }
@@ -92,14 +93,20 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     findProject: ((Course) -> Boolean) -> Pair<Project, Course>?,
     request: HyperskillOpenRequest
   ): Pair<Project, Course>? {
-    val projectId = request.projectId
     return when (request) {
-      is HyperskillOpenStageRequest -> findProject { it.matchesById(projectId) }
-      is HyperskillOpenStepRequest -> {
+      is HyperskillOpenProjectStageRequest -> findProject { it.matchesById(request.projectId) }
+      is HyperskillOpenStepWithProjectRequest -> {
         val hyperskillLanguage = request.language
         val (languageId, languageVersion) = HyperskillLanguages.getLanguageIdAndVersion(hyperskillLanguage) ?: return null
 
-        findProject { it.matchesById(projectId) && it.languageId == languageId && it.languageVersion == languageVersion }
+        findProject { it.matchesById(request.projectId) && it.languageId == languageId && it.languageVersion == languageVersion }
+        ?: findProject { course -> course.isHyperskillProblemsCourse(hyperskillLanguage) }
+      }
+
+      is HyperskillOpenStepRequest -> {
+        val hyperskillLanguage = request.language
+        val (languageId, languageVersion) = HyperskillLanguages.getLanguageIdAndVersion(hyperskillLanguage) ?: return null
+        findProject { it.languageId == languageId && it.languageVersion == languageVersion }
         ?: findProject { course -> course.isHyperskillProblemsCourse(hyperskillLanguage) }
       }
     }
@@ -119,7 +126,14 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     hyperskillProject: HyperskillProject
   ): Result<HyperskillCourse, CourseValidationResult> {
     val (languageId, languageVersion) = HyperskillLanguages.getLanguageIdAndVersion(hyperskillLanguage)
-                      ?: return Err(ValidationErrorMessage(EduCoreBundle.message("hyperskill.unsupported.language", hyperskillLanguage)))
+                                        ?: return Err(
+                                          ValidationErrorMessage(
+                                            EduCoreBundle.message(
+                                              "hyperskill.unsupported.language",
+                                              hyperskillLanguage
+                                            )
+                                          )
+                                        )
 
     if (!hyperskillProject.useIde) {
       return Err(ValidationErrorMessageWithHyperlinks(EduCoreBundle.message("hyperskill.project.not.supported", HYPERSKILL_PROJECTS_URL)))
@@ -128,7 +142,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     val eduEnvironment = hyperskillProject.eduEnvironment
                          ?: return Err(ValidationErrorMessage("Unsupported environment ${hyperskillProject.environment}"))
 
-    if (request is HyperskillOpenStepRequest) {
+    if (request is HyperskillOpenStepWithProjectRequest) {
       // These condition is about opening e.g. Python problem with chosen Kotlin's project,
       // otherwise - open Kotlin problem in current Kotlin project itself later below
       if (hyperskillLanguage != hyperskillProject.language) {
@@ -142,6 +156,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
         return Ok(HyperskillCourse(hyperskillLanguage, languageId, languageVersion))
       }
     }
+    if (request is HyperskillOpenStepRequest) return Ok(HyperskillCourse(hyperskillLanguage, languageId, languageVersion))
 
     // Android projects must be opened in Android Studio only
     if (eduEnvironment == EduNames.ANDROID && !EduUtilsKt.isAndroidStudio()) {
@@ -152,11 +167,20 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
   }
 
   override fun getCourse(request: HyperskillOpenRequest, indicator: ProgressIndicator): Result<Course, CourseValidationResult> {
+    if (request is HyperskillOpenStepRequest) {
+      val newProject = HyperskillProject()
+      val hyperskillLanguage = request.language
+      val hyperskillCourse = createHyperskillCourse(request, hyperskillLanguage, newProject).onError { return Err(it) }
+      hyperskillCourse.addProblemsWithTopicWithFiles(null, getStepSource(request.stepId, request.isLanguageSelectedByUser))
+      hyperskillCourse.selectedProblem = request.stepId
+      return Ok(hyperskillCourse)
+    }
+    request as HyperskillOpenWithProjectRequestBase
     val hyperskillProject = HyperskillConnector.getInstance().getProject(request.projectId).onError {
       return Err(ValidationErrorMessage(it))
     }
 
-    val hyperskillLanguage = if (request is HyperskillOpenStepRequest) request.language else hyperskillProject.language
+    val hyperskillLanguage = if (request is HyperskillOpenStepWithProjectRequest) request.language else hyperskillProject.language
 
     val hyperskillCourse = createHyperskillCourse(request, hyperskillLanguage, hyperskillProject).onError {
       return Err(it)
@@ -165,12 +189,12 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     hyperskillCourse.validateLanguage(hyperskillLanguage).onError { return Err(it) }
 
     when (request) {
-      is HyperskillOpenStepRequest -> {
-        hyperskillCourse.addProblemsWithTopicWithFiles(null, getStepSource(request))
+      is HyperskillOpenStepWithProjectRequest -> {
+        hyperskillCourse.addProblemsWithTopicWithFiles(null, getStepSource(request.stepId, request.isLanguageSelectedByUser))
         hyperskillCourse.selectedProblem = request.stepId
       }
 
-      is HyperskillOpenStageRequest -> {
+      is HyperskillOpenProjectStageRequest -> {
         indicator.text2 = EduCoreBundle.message("hyperskill.loading.stages")
         HyperskillConnector.getInstance().loadStages(hyperskillCourse)
         hyperskillCourse.selectedStage = request.stageId
@@ -180,12 +204,12 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
   }
 
   @VisibleForTesting
-  fun getStepSource(request: HyperskillOpenStepRequest): HyperskillStepSource {
+  fun getStepSource(stepId: Int, isLanguageSelectedByUser: Boolean): HyperskillStepSource {
     val connector = HyperskillConnector.getInstance()
-    val stepSource = connector.getStepSource(request.stepId).onError { error(it) }
+    val stepSource = connector.getStepSource(stepId).onError { error(it) }
 
     // Choosing language by user is allowed only for Data tasks, see EDU-4718
-    if (request.isLanguageSelectedByUser && !stepSource.isDataTask()) {
+    if (isLanguageSelectedByUser && !stepSource.isDataTask()) {
       error("Language has been selected by user not for data task, but it must be specified for other tasks in request")
     }
     return stepSource

@@ -34,7 +34,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepRequest
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepWithProjectRequest
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
@@ -225,7 +225,10 @@ fun openNextActivity(project: Project, task: Task) {
 
       val course = task.course
       val language = HyperskillLanguages.getRequestLanguage(course.languageId) ?: return
-      ProjectOpener.getInstance().open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(course.id, nextStep.id, language)).onError {
+      ProjectOpener.getInstance().open(
+        HyperskillOpenInIdeRequestHandler,
+        HyperskillOpenStepWithProjectRequest(course.id, nextStep.id, language)
+      ).onError {
         logger<ProjectOpener>().warn("Opening the next activity resulted in an error: ${it.message}. The error was ignored and not displayed for the user.")
       }
     }

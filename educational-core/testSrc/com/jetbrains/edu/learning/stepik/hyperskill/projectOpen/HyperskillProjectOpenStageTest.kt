@@ -4,7 +4,7 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStageRequest
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenProjectStageRequest
 
 
 class HyperskillProjectOpenStageTest : HyperskillProjectOpenerTestBase() {
@@ -21,7 +21,7 @@ class HyperskillProjectOpenStageTest : HyperskillProjectOpenerTestBase() {
   }
 
   fun `test open stage in new project`() {
-    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStageRequest(1, 1))
+    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenProjectStageRequest(1, 1))
 
     val fileTree = fileTree {
       dir("Test Hyperskill Project") {
@@ -60,7 +60,7 @@ class HyperskillProjectOpenStageTest : HyperskillProjectOpenerTestBase() {
       }
     }
 
-    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStageRequest(1, 1))
+    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenProjectStageRequest(1, 1))
 
     val fileTree = fileTree {
       dir(HYPERSKILL_TOPICS) {

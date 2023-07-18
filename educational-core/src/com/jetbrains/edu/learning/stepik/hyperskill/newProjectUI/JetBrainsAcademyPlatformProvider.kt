@@ -26,7 +26,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStageRequest
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenProjectStageRequest
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectAction
 import kotlinx.coroutines.CoroutineScope
 import javax.swing.Icon
@@ -40,12 +40,16 @@ class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider() {
 
   override val icon: Icon get() = EducationalCoreIcons.JB_ACADEMY_TAB
 
-  override fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel = JetBrainsAcademyCoursesPanel(this, scope,
-                                                                                                                       disposable)
+  override fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel = JetBrainsAcademyCoursesPanel(
+    this, scope,
+    disposable
+  )
 
-  override fun joinAction(courseInfo: CourseCreationInfo,
-                          courseMode: CourseMode,
-                          coursePanel: CoursePanel) {
+  override fun joinAction(
+    courseInfo: CourseCreationInfo,
+    courseMode: CourseMode,
+    coursePanel: CoursePanel
+  ) {
 
     val course = courseInfo.course
     if (course is HyperskillCourse) {
@@ -86,7 +90,11 @@ class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider() {
   }
 
   private val HyperskillProject.course: HyperskillCourse?
-    get() = HyperskillOpenInIdeRequestHandler.createHyperskillCourse((HyperskillOpenStageRequest(id, null)), language, this).onError { null }
+    get() = HyperskillOpenInIdeRequestHandler.createHyperskillCourse(
+      HyperskillOpenProjectStageRequest(id, null),
+      language,
+      this
+    ).onError { null }
 
   private fun getSelectedProject(): HyperskillProject? {
     val currentUserInfo = HyperskillConnector.getInstance().getCurrentUserInfo() ?: return null
