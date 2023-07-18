@@ -1,19 +1,17 @@
 package com.jetbrains.edu.javascript.learning
 
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
+import com.intellij.javascript.nodejs.library.core.NodeCoreLibraryConfigurator
 import com.intellij.javascript.nodejs.settings.NodeSettingsConfigurable
 import com.intellij.lang.javascript.ui.NodeModuleNamesUtil
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.CourseInfoHolder
-import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createChildFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
-import com.jetbrains.edu.learning.invokeLater
-import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import java.io.IOException
 
@@ -30,7 +28,10 @@ class JsCourseProjectGenerator(builder: JsCourseBuilder, course: Course) : Cours
     NodeJsInterpreterManager.getInstance(project).setInterpreterRef(interpreter.toRef())
 
     val packageJsonFile = project.courseDir.findChild(NodeModuleNamesUtil.PACKAGE_JSON)
-    if (packageJsonFile != null && !isUnitTestMode) {
+    // Don't install dependencies in headless mode (tests or course creation using `EduCourseCreatorAppStarter` on remote)
+    // It doesn't make sense for tests since we don't check it.
+    // On remote dependencies will be installed during warmup phase
+    if (packageJsonFile != null && !isHeadlessEnvironment) {
       installNodeDependencies(project, packageJsonFile)
     }
 
@@ -38,17 +39,23 @@ class JsCourseProjectGenerator(builder: JsCourseBuilder, course: Course) : Cours
     interpreter.provideCachedVersionOrFetch { version ->
       invokeLater(modalityState, project.disposed) {
         if (version != null) {
-          configureAndAssociateWithProject(project, interpreter, version)
+          val configurator = NodeCoreLibraryConfigurator.getInstance(project)
+          configurator.configureAndAssociateWithProject(interpreter, version) {
+            onConfigurationFinished()
+          }
         }
         else {
           LOG.warn("Couldn't retrieve Node interpreter version")
           @Suppress("UnstableApiUsage")
           val requester = ModuleManager.getInstance(project).modules[0].moduleFile
           NodeSettingsConfigurable.showSettingsDialog(project, requester)
+          onConfigurationFinished()
         }
       }
     }
-    super.afterProjectGenerated(project, projectSettings, onConfigurationFinished)
+    // Pass empty callback here because Core library configuration will be made asynchronously
+    // Before this, we can't consider JS course project is fully configured
+    super.afterProjectGenerated(project, projectSettings, onConfigurationFinished = {})
   }
 
   @Throws(IOException::class)

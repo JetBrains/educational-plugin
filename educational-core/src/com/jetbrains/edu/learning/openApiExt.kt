@@ -42,6 +42,7 @@ import java.util.*
 private val LOG = Logger.getInstance("openApiExt")
 
 val isUnitTestMode: Boolean get() = ApplicationManager.getApplication().isUnitTestMode
+val isHeadlessEnvironment: Boolean get() = ApplicationManager.getApplication().isHeadlessEnvironment
 
 //Extension for binary files to mark files that are needed to be encoded
 //In test environment most of binary file extensions are recognized as unknown
