@@ -20,7 +20,7 @@ class HyperskillOptions : OAuthLoginOptions<HyperskillAccount>() {
 
   override fun getDisplayName(): String = EduNames.JBA
 
-  override fun isAvailable(): Boolean = isHyperskillSupportAvailable()
+  override fun isAvailable(): Boolean = super.isAvailable() && isHyperskillSupportAvailable()
 
   override fun profileUrl(account: HyperskillAccount): String = account.profileUrl
 

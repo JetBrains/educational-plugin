@@ -14,5 +14,5 @@ class StepikOptions : OAuthLoginOptions<StepikUser>() {
 
   override fun profileUrl(account: StepikUser): String = account.profileUrl
 
-  override fun isAvailable(): Boolean = isFeatureEnabled(CC_HYPERSKILL)
+  override fun isAvailable(): Boolean = super.isAvailable() && isFeatureEnabled(CC_HYPERSKILL)
 }

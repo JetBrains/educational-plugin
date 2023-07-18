@@ -17,6 +17,8 @@ class MarketplaceOptions : OAuthLoginOptions<MarketplaceAccount>() {
   override val connector: EduLoginConnector<MarketplaceAccount, *>
     get() = MarketplaceConnector.getInstance()
 
+  override fun isAvailable(): Boolean = true
+
   override fun getDisplayName(): String = JET_BRAINS_ACCOUNT
 
   override fun profileUrl(account: MarketplaceAccount): String = JET_BRAINS_ACCOUNT_PROFILE_PATH

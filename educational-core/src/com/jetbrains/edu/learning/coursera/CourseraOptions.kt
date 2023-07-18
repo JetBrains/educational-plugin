@@ -2,11 +2,16 @@ package com.jetbrains.edu.learning.coursera
 
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.ui.DialogPanel
-import com.intellij.ui.dsl.builder.*
+import com.intellij.ui.dsl.builder.COLUMNS_MEDIUM
+import com.intellij.ui.dsl.builder.bindText
+import com.intellij.ui.dsl.builder.columns
+import com.intellij.ui.dsl.builder.panel
+import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.settings.OptionsProvider
 
 class CourseraOptions : BoundConfigurable(CourseraNames.COURSERA), OptionsProvider {
+  override fun isAvailable(): Boolean = !RemoteEnvHelper.isRemoteDevServer()
 
   override fun createPanel(): DialogPanel = panel {
     group(displayName) {
