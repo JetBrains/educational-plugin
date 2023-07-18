@@ -31,7 +31,7 @@ enum class HyperskillLanguages(private val id: String, private val languageName:
 
   /**
    * Request language is language plugin received from JBA in requests
-   * @see [com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepRequest]
+   * @see [com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepWithProjectRequest]
    */
   open val requestLanguage: String = languageName
 

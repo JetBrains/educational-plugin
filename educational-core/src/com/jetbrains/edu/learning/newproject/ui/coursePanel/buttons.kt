@@ -26,7 +26,7 @@ import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStageRequest
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenProjectStageRequest
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import java.awt.Color
 import java.awt.event.ActionListener
@@ -77,7 +77,7 @@ class OpenCourseButton : CourseButtonBase() {
         course is HyperskillCourse -> {
           closeDialog()
           ProjectOpener.getInstance().apply {
-            HyperskillOpenInIdeRequestHandler.openInNewProject(HyperskillOpenStageRequest(course.id, null)).onError {
+            HyperskillOpenInIdeRequestHandler.openInNewProject(HyperskillOpenProjectStageRequest(course.id, null)).onError {
               Messages.showErrorDialog(it.message, EduCoreBundle.message("course.dialog.error.restart.jba"))
               logger<HyperskillOpenInIdeRequestHandler>().warn("Opening a new project resulted in an error: ${it.message}. The error was shown inside an error dialog.")
             }

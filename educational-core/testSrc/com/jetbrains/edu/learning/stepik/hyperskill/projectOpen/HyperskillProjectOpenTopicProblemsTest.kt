@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepRequest
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepWithProjectRequest
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.StepInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.TopicInfo
 
@@ -32,7 +33,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
   }
 
   fun `test open code problem in project`() {
-    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, step2640.id, "TEXT"))
+    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepWithProjectRequest(1, step2640.id, "TEXT"))
     val fileTree = fileTree {
       dir(HYPERSKILL_TOPICS) {
         dir(step9455.title) {
@@ -67,7 +68,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
   }
 
   fun `test open edu problem`() {
-    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, step10960.id, "TEXT"))
+    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepWithProjectRequest(1, step10960.id, "TEXT"))
     val fileTree = fileTree {
       dir(HYPERSKILL_TOPICS) {
         dir(step13292.title) {
@@ -128,7 +129,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
   }
 
   fun `test open dataset problem without samples`() {
-    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, step14259.id, "TEXT"))
+    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepWithProjectRequest(1, step14259.id, "TEXT"))
     val fileTree = fileTree {
       dir(HYPERSKILL_TOPICS) {
         dir(step8139.title) {
@@ -151,7 +152,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
   }
 
   fun `test open dataset problem with samples`() {
-    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, step12164.id, "TEXT"))
+    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepWithProjectRequest(1, step12164.id, "TEXT"))
     val fileTree = fileTree {
       dir(HYPERSKILL_TOPICS) {
         dir(step10933.title) {
@@ -175,7 +176,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
   }
 
   fun `test open non dataset problem with language chosen by user`() {
-    val request = HyperskillOpenStepRequest(1, step10960.id, "TEXT", true)
+    val request = HyperskillOpenStepWithProjectRequest(1, step10960.id, "TEXT", true)
     assertThrows(IllegalStateException::class.java) {
       mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, request)
     }
@@ -198,7 +199,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
       }
     }
 
-    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, step2641.id, "TEXT"))
+    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepWithProjectRequest(1, step2641.id, "TEXT"))
     val fileTree = fileTree {
       dir(HYPERSKILL_TOPICS) {
         dir(step9455.title) {
@@ -244,7 +245,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
       }
     }
 
-    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, step2641.id, "TEXT"))
+    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepWithProjectRequest(1, step2641.id, "TEXT"))
     val fileTree = fileTree {
       dir(HYPERSKILL_TOPICS) {
         dir(TOPIC_NAME) {
@@ -299,7 +300,10 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
       }
     }
 
-    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, step2640.id, FakeGradleBasedLanguage.id))
+    mockProjectOpener.open(
+      HyperskillOpenInIdeRequestHandler,
+      HyperskillOpenStepWithProjectRequest(1, step2640.id, FakeGradleBasedLanguage.id)
+    )
     val fileTree = fileTree {
       dir(TEST_HYPERSKILL_PROJECT_NAME) {
         dir("task") {
@@ -388,7 +392,10 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
       }
     }
 
-    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, step2640.id, FakeGradleBasedLanguage.id))
+    mockProjectOpener.open(
+      HyperskillOpenInIdeRequestHandler,
+      HyperskillOpenStepWithProjectRequest(1, step2640.id, FakeGradleBasedLanguage.id)
+    )
     val fileTree = fileTree {
       dir(TEST_HYPERSKILL_PROJECT_NAME) {
         dir("task") {
@@ -475,7 +482,10 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
       }
     }
 
-    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, step2641.id, FakeGradleBasedLanguage.id))
+    mockProjectOpener.open(
+      HyperskillOpenInIdeRequestHandler,
+      HyperskillOpenStepWithProjectRequest(1, step2641.id, FakeGradleBasedLanguage.id)
+    )
     val fileTree = fileTree {
       dir(TEST_HYPERSKILL_PROJECT_NAME) {
         dir("task") {
@@ -557,7 +567,10 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
       }
     }
 
-    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, step2640.id, FakeGradleBasedLanguage.id))
+    mockProjectOpener.open(
+      HyperskillOpenInIdeRequestHandler,
+      HyperskillOpenStepWithProjectRequest(1, step2640.id, FakeGradleBasedLanguage.id)
+    )
     val fileTree = fileTree {
       dir(HYPERSKILL_PROBLEMS) {
         dir("code task") {
@@ -629,7 +642,10 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
       }
     }
 
-    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, step2640.id, FakeGradleBasedLanguage.id))
+    mockProjectOpener.open(
+      HyperskillOpenInIdeRequestHandler,
+      HyperskillOpenStepWithProjectRequest(1, step2640.id, FakeGradleBasedLanguage.id)
+    )
     val fileTree = fileTree {
       dir(TEST_HYPERSKILL_PROJECT_NAME) {
         dir("task") {
@@ -697,6 +713,114 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+
+  fun `test open code problem without selected project in new project`() {
+    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(step2640.id, FakeGradleBasedLanguage.id))
+    val fileTree = fileTree {
+      dir(HYPERSKILL_TOPICS) {
+        dir(step9455.title) {
+          dir(THEORY) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
+          dir(step525047.title) {
+            file(AnswerTask.ANSWER_FILE_NAME)
+            file("task.html")
+          }
+          dir(step2640.title) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
+          dir(step2645.title) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
+          dir(step2641.title) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
+          dir(step2638.title) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
+  }
+
+  fun `test open non dataset problem with language chosen by user without selected project`() {
+    val request = HyperskillOpenStepRequest(step10960.id, FakeGradleBasedLanguage.id, true)
+    assertThrows(IllegalStateException::class.java) {
+      mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, request)
+    }
+  }
+
+  fun `test open code problem without selected project in existing project`() {
+    // set up existing project
+    hyperskillCourseWithFiles {
+      frameworkLesson(TEST_HYPERSKILL_PROJECT_NAME) {}
+    }
+
+    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(step2640.id, FakeGradleBasedLanguage.id))
+    val fileTree = fileTree {
+      dir(TEST_HYPERSKILL_PROJECT_NAME) {}
+      dir(HYPERSKILL_TOPICS) {
+        dir(step9455.title) {
+          dir(THEORY) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
+          dir(step525047.title) {
+            file(AnswerTask.ANSWER_FILE_NAME)
+            file("task.html")
+          }
+          dir(step2640.title) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
+          dir(step2645.title) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
+          dir(step2641.title) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
+          dir(step2638.title) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
+  }
+
   fun `test unknown language`() {
     val unknownLanguage = "Unknown language"
     doLanguageValidationTest(unknownLanguage) {
@@ -713,8 +837,10 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
   fun `test language not supported in IDE`() {
     val unsupportedLanguage = "Unsupported"
     doLanguageValidationTest(unsupportedLanguage) {
-      val expectedMessage = EduCoreBundle.message("rest.service.language.not.supported", ApplicationNamesInfo.getInstance().productName,
-                                                  unsupportedLanguage)
+      val expectedMessage = EduCoreBundle.message(
+        "rest.service.language.not.supported", ApplicationNamesInfo.getInstance().productName,
+        unsupportedLanguage
+      )
       assertEquals(expectedMessage, it.message)
     }
   }
@@ -730,7 +856,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
       }
     })
 
-    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, 4, language)).onError {
+    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepWithProjectRequest(1, 4, language)).onError {
       checkError(it)
       return
     }

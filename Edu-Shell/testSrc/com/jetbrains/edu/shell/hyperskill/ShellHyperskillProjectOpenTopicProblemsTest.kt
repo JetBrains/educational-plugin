@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.pathWithoutPrams
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TOPICS
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLanguages
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepRequest
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepWithProjectRequest
 import com.jetbrains.edu.learning.stepik.hyperskill.logInFakeHyperskillUser
 import com.jetbrains.edu.learning.stepik.hyperskill.logOutFakeHyperskillUser
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase
@@ -28,7 +28,7 @@ class ShellHyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestB
   fun `test open code problem in project`() {
     mockProjectOpener.open(
       HyperskillOpenInIdeRequestHandler,
-      HyperskillOpenStepRequest(1, step12720.id, HyperskillLanguages.SHELL.requestLanguage)
+      HyperskillOpenStepWithProjectRequest(1, step12720.id, HyperskillLanguages.SHELL.requestLanguage)
     )
     val fileTree = fileTree {
       dir(HYPERSKILL_TOPICS) {

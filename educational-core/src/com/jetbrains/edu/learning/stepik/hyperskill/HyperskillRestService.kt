@@ -7,7 +7,6 @@ import com.jetbrains.edu.learning.api.EduLoginConnector.Companion.STATE
 import com.jetbrains.edu.learning.authUtils.*
 import com.jetbrains.edu.learning.courseFormat.ext.CourseValidationResult
 import com.jetbrains.edu.learning.courseFormat.ext.ValidationErrorMessage
-import com.jetbrains.edu.learning.courseFormat.ext.ValidationErrorMessageWithHyperlinks
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -152,13 +151,14 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     if (!HyperskillConnector.getInstance().isLoggedIn()) {
       error("Attempt to open step for unauthorized user")
     }
-    val projectId = getSelectedProjectIdUnderProgress()
-    if (projectId == null) {
-      LOG.warn("Can't open project for step_id: $stepId language: $language")
-      showError(ValidationErrorMessageWithHyperlinks(SELECT_PROJECT))
-      return SELECT_PROJECT
-    }
-    return openInIDE(HyperskillOpenStepRequest(projectId, stepId, language, isLanguageSelectedByUser), request, context)
+    val projectId = getSelectedProjectIdUnderProgress() ?: return openInIDE(
+      HyperskillOpenStepRequest(
+        stepId,
+        language,
+        isLanguageSelectedByUser
+      ), request, context
+    )
+    return openInIDE(HyperskillOpenStepWithProjectRequest(projectId, stepId, language, isLanguageSelectedByUser), request, context)
   }
 
   private fun getLanguageSelectedByUser(): Result<String, String> {
@@ -179,7 +179,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
   private fun openStage(decoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
     val stageId = getIntParameter(STAGE_ID, decoder)
     val projectId = getIntParameter(PROJECT_ID, decoder)
-    return openInIDE(HyperskillOpenStageRequest(projectId, stageId), request, context)
+    return openInIDE(HyperskillOpenProjectStageRequest(projectId, stageId), request, context)
   }
 
   private fun askToReLogin(userId: Int): ReLoginDialogResult {

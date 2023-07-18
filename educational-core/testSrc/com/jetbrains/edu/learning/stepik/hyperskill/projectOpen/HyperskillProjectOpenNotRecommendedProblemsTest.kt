@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.hasParams
 import com.jetbrains.edu.learning.pathWithoutPrams
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepRequest
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepWithProjectRequest
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.StepInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.TopicInfo
 
@@ -28,7 +28,7 @@ class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerT
 
   fun `test open not recommended problem in new project`() {
     configureMockResponsesForStages()
-    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, step8146.id, "TEXT"))
+    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepWithProjectRequest(1, step8146.id, "TEXT"))
 
     val fileTree = fileTree {
       dir(HYPERSKILL_TOPICS) {
@@ -61,7 +61,7 @@ class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerT
       }
     }
 
-    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, step8146.id, "TEXT"))
+    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepWithProjectRequest(1, step8146.id, "TEXT"))
 
     val fileTree = fileTree {
       dir(HYPERSKILL_PROBLEMS) {
@@ -108,7 +108,7 @@ class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerT
     }
 
     withDefaultHtmlTaskDescription {
-      mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, step8146.id, FakeGradleBasedLanguage.id))
+      mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepWithProjectRequest(1, step8146.id, FakeGradleBasedLanguage.id))
     }
 
     val fileTree = fileTree {
@@ -173,7 +173,7 @@ class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerT
       }
     }
 
-    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, step8146.id, FakeGradleBasedLanguage.id))
+    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepWithProjectRequest(1, step8146.id, FakeGradleBasedLanguage.id))
 
     val fileTree = fileTree {
       dir(TEST_HYPERSKILL_PROJECT_NAME) {

@@ -85,7 +85,7 @@ class HyperskillProjectAction : DumbAwareAction(EduCoreBundle.message("hyperskil
       }
 
       return ProjectOpener.getInstance()
-        .open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStageRequest(projectId, null)).onError {
+        .open(HyperskillOpenInIdeRequestHandler, HyperskillOpenProjectStageRequest(projectId, null)).onError {
           showError(it)
           return false
         }
