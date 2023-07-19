@@ -1,5 +1,8 @@
 package com.jetbrains.edu.learning.format
 
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.course
+
 class CoursesInfosStorageTest : CoursesInfosStorageTestBase() {
 
   fun testSerializeCourseWithDefaultParameters() {
