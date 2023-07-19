@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.newproject.ui.logo
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import javax.swing.Icon
 
@@ -101,11 +101,11 @@ class CourseMetaInfo() : CourseInfo() {
 
   fun toCourse(): Course {
     val eduCourse = when (itemType) {
-      CourseraNames.COURSE_TYPE -> CourseraCourse()
-      CheckiONames.CHECKIO_TYPE -> CheckiOCourse()
-      HYPERSKILL_TYPE -> HyperskillCourse()
-      StepikNames.STEPIK_TYPE -> StepikCourse()
-      CodeforcesNames.CODEFORCES_COURSE_TYPE -> CodeforcesCourse()
+      CourseraNames.COURSERA -> CourseraCourse()
+      CheckiONames.CHECKIO -> CheckiOCourse()
+      HYPERSKILL -> HyperskillCourse()
+      StepikNames.STEPIK -> StepikCourse()
+      CodeforcesNames.CODEFORCES -> CodeforcesCourse()
       EduNames.EDU, MARKETPLACE -> EduCourse()
       else -> EduCourse()
     }
