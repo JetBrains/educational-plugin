@@ -11,9 +11,13 @@ import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionLinkProtocol
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionLinkProtocol.*
 import org.jetbrains.annotations.Nls
 
-class EduUriSchemaCompletionProvider : CompletionProvider<CompletionParameters>() {
+abstract class EduUriSchemaCompletionProviderBase : CompletionProvider<CompletionParameters>() {
+
+  protected abstract fun linkPrefix(parameters: CompletionParameters): String?
 
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+    val prefix = linkPrefix(parameters) ?: return
+
     val lookupElements = completionVariants().map { (protocol, description, scheduleAutoPopup) ->
       val lookupElement = LookupElementBuilder.create(protocol.protocol).withTypeText(description)
       if (scheduleAutoPopup) {
@@ -25,7 +29,8 @@ class EduUriSchemaCompletionProvider : CompletionProvider<CompletionParameters>(
         lookupElement
       }
     }
-    result.addAllElements(lookupElements)
+    result.withPrefixMatcher(prefix)
+      .addAllElements(lookupElements)
   }
 
   private fun completionVariants(): List<UriSchemaCompletionVariant> {

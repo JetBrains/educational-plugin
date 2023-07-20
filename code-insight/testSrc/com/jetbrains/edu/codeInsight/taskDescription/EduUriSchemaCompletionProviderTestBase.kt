@@ -24,6 +24,9 @@ abstract class EduUriSchemaCompletionProviderTestBase(format: DescriptionFormat)
   fun `test settings schema`() = doTest("sett<caret>", "settings://<caret>", popupExpected = true)
   fun `test tool window schema`() = doTest("tool<caret>", "tool_window://<caret>", popupExpected = true)
 
+  fun `test complete in any part of schema 1`() = doTest("settings:<caret>", "settings://<caret>")
+  fun `test complete in any part of schema 2`() = doTest("tool_window:/<caret>", "tool_window://<caret>")
+
   protected fun doTest(linkBefore: String, linkAfter: String, popupExpected: Boolean) {
     doTest(linkBefore, linkAfter)
     tester.joinAutopopup()
