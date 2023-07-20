@@ -64,14 +64,6 @@ class CourseArchiveCreator(
     val jsonFolder = generateArchiveFolder(project)
                      ?: return EduCoreBundle.message("error.failed.to.generate.course.archive")
 
-    val error = AdditionalFilesUtils.checkIgnoredFiles(project)
-    if (error != null) {
-      if (!isUnitTestMode) {
-        LOG.error("Failed to create course archive: $error")
-      }
-      return error
-    }
-
     try {
       prepareCourse(courseCopy)
     }

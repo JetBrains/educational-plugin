@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
+import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreRules
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -18,6 +19,7 @@ class CCNode(
   project: Project,
   value: PsiDirectory,
   viewSettings: ViewSettings,
+  private val courseIgnoreRules: CourseIgnoreRules,
   task: Task?
 ) : DirectoryNode(project, value, viewSettings, task) {
 
@@ -29,22 +31,22 @@ class CCNode(
     val value = childNode.value
 
     if (value is PsiDirectory) {
-      return CCNode(myProject, value, settings, item)
+      return CCNode(myProject, value, settings, courseIgnoreRules, item)
     }
     if (value is PsiElement) {
       val psiFile = value.containingFile
       val virtualFile = psiFile.virtualFile
       val course = StudyTaskManager.getInstance(myProject).course ?: return null
-      if (course.configurator == null) return CCStudentInvisibleFileNode(myProject, psiFile, settings)
+      if (course.configurator == null) return CCStudentInvisibleFileNode(myProject, psiFile, settings, courseIgnoreRules)
       if (EduUtilsKt.isTaskDescriptionFile(virtualFile.name)) {
         return null
       }
       if (!virtualFile.isTestsFile(myProject)) {
-        return CCStudentInvisibleFileNode(myProject, psiFile, settings)
+        return CCStudentInvisibleFileNode(myProject, psiFile, settings, courseIgnoreRules)
       }
       else {
         if (isCourseCreator(myProject)) {
-          return CCStudentInvisibleFileNode(myProject, psiFile, settings)
+          return CCStudentInvisibleFileNode(myProject, psiFile, settings, courseIgnoreRules)
         }
       }
     }
@@ -52,6 +54,6 @@ class CCNode(
   }
 
   override fun createChildDirectoryNode(value: PsiDirectory): PsiDirectoryNode {
-    return CCNode(myProject, value, settings, item)
+    return CCNode(myProject, value, settings, courseIgnoreRules, item)
   }
 }

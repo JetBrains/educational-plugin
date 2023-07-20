@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.PsiDirectory
 import com.intellij.util.containers.ContainerUtil
+import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreRules
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -26,6 +27,7 @@ class CCCourseNode(
   project: Project,
   value: PsiDirectory,
   viewSettings: ViewSettings,
+  private val courseIgnoreRules: CourseIgnoreRules,
   course: Course
 ) : CourseNode(project, value, viewSettings, course) {
 
@@ -36,24 +38,24 @@ class CCCourseNode(
       val virtualFile = childNode.virtualFile ?: return null
       if (NAMES_TO_IGNORE.contains(virtualFile.name)) return null
       if (FileUtilRt.getExtension(virtualFile.name) == "iml") return null
-      return CCStudentInvisibleFileNode(myProject, childNode.value, settings)
+      return CCStudentInvisibleFileNode(myProject, childNode.value, settings, courseIgnoreRules)
     }
     val configurator: EduConfigurator<*> = item.configurator ?: return null
     if (childNode is PsiDirectoryNode) {
       val psiDirectory = childNode.value
       if (!configurator.excludeFromArchive(myProject, item, psiDirectory.virtualFile)) {
-        return CCNode(myProject, psiDirectory, settings, null)
+        return CCNode(myProject, psiDirectory, settings, courseIgnoreRules, null)
       }
     }
     return null
   }
 
   override fun createLessonNode(directory: PsiDirectory, lesson: Lesson): LessonNode {
-    return CCLessonNode(myProject, directory, settings, lesson)
+    return CCLessonNode(myProject, directory, settings, courseIgnoreRules, lesson)
   }
 
   override fun createSectionNode(directory: PsiDirectory, section: Section): SectionNode {
-    return CCSectionNode(myProject, settings, section, directory)
+    return CCSectionNode(myProject, settings, section, courseIgnoreRules, directory)
   }
 
   override val additionalInfo: String

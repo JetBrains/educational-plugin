@@ -3,7 +3,6 @@ package com.jetbrains.edu.coursecreator.actions
 import com.intellij.externalDependencies.DependencyOnPlugin
 import com.intellij.externalDependencies.ExternalDependenciesManager
 import com.intellij.externalDependencies.ProjectExternalDependency
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchiveTest.PlainTextCompatibilityProvider.Companion.PLAIN_TEXT_PLUGIN_ID
@@ -19,7 +18,6 @@ import com.jetbrains.edu.learning.courseFormat.PluginInfo
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.findTask
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.setUpPluginDependencies
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.yaml.configFileName
@@ -529,22 +527,6 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
       additionalFile("8abe7b618ddf9c55adbea359ce891775794a61")
     }
     doTest()
-  }
-
-  fun `test ignored files contain missing file`() {
-    val tmpFileName = "tmp.txt"
-    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
-      lesson("lesson1") {
-        eduTask {
-          taskFile("taskFile1.txt")
-        }
-      }
-      additionalFile(EduNames.COURSE_IGNORE, tmpFileName)
-    }
-    course.description = "my summary"
-    val errorMessage = ApplicationManager.getApplication().runWriteAction<String>(getArchiveCreator())
-    assertTrue(errorMessage.contains(EduCoreBundle.message("course.creator.error.ignored.files.not.found", EduNames.COURSE_IGNORE)))
-    assertTrue(errorMessage.contains(tmpFileName))
   }
 
   fun `test non templated based framework lesson`() {
