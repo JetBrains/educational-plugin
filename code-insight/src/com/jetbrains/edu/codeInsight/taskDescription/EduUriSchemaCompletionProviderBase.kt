@@ -6,6 +6,7 @@ import com.intellij.codeInsight.completion.CompletionProvider
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.util.ProcessingContext
+import com.intellij.util.io.URLUtil
 import com.jetbrains.edu.codeInsight.messages.EduCodeInsightBundle
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionLinkProtocol
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionLinkProtocol.*
@@ -17,6 +18,7 @@ abstract class EduUriSchemaCompletionProviderBase : CompletionProvider<Completio
 
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
     val prefix = linkPrefix(parameters) ?: return
+    if (prefix.contains(URLUtil.SCHEME_SEPARATOR)) return
 
     val lookupElements = completionVariants().map { (protocol, description, scheduleAutoPopup) ->
       val lookupElement = LookupElementBuilder.create(protocol.protocol).withTypeText(description)

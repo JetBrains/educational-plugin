@@ -27,6 +27,8 @@ abstract class EduUriSchemaCompletionProviderTestBase(format: DescriptionFormat)
   fun `test complete in any part of schema 1`() = doTest("settings:<caret>", "settings://<caret>")
   fun `test complete in any part of schema 2`() = doTest("tool_window:/<caret>", "tool_window://<caret>")
 
+  fun `test do not suggest schema if it is already typed`() = checkDoNotContainCompletion("settings://<caret>", "settings://")
+
   protected fun doTest(linkBefore: String, linkAfter: String, popupExpected: Boolean) {
     doTest(linkBefore, linkAfter)
     tester.joinAutopopup()

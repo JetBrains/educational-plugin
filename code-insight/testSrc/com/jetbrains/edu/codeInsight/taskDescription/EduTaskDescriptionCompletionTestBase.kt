@@ -55,6 +55,11 @@ abstract class EduTaskDescriptionCompletionTestBase(format: DescriptionFormat) :
     completionFixture.checkNoCompletion(taskDescriptionFile, link.withDescriptionFormat())
   }
 
+  protected fun checkDoNotContainCompletion(link: String, variant: String) {
+    val taskDescriptionFile = findFile("lesson1/task1/${taskDescriptionFormat.descriptionFileName}")
+    completionFixture.checkDoNotContainCompletion(taskDescriptionFile, link.withDescriptionFormat(), variant)
+  }
+
   // In tests, tool windows are not registered by default
   // Let's register at least Task Description tool window
   private fun registerTaskDescriptionToolWindow() {

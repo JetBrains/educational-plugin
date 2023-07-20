@@ -1,5 +1,6 @@
 package com.jetbrains.edu.codeInsight
 
+import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -39,8 +40,31 @@ class EduCompletionTextFixture(
     BasePlatformTestCase.assertEquals("Expected zero completions", 0, variants.size)
   }
 
+  fun checkDoNotContainCompletion(file: VirtualFile, before: String, variant: String) {
+    configureExistingFile(file, before)
+    // Invoke `completeBasic` under `withNoAutoCompletion` to prevent auto completion in case of single option
+    val lookups = withNoAutoCompletion {
+      fixture.completeBasic()
+    }
+    val renderedLookups = lookups.map { it.lookupString }
+    check(variant !in renderedLookups) {
+      "Expected completion list doesn't contain `$variant` option. Shown options: $renderedLookups"
+    }
+  }
+
   private fun configureExistingFile(file: VirtualFile, before: String) {
     fixture.saveText(file, before.trimIndent())
     fixture.configureFromExistingVirtualFile(file)
+  }
+
+  private fun <T> withNoAutoCompletion(block: () -> T): T {
+    val prevSetting = CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION
+    CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = false
+    return try {
+      block()
+    }
+    finally {
+      CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = prevSetting
+    }
   }
 }
