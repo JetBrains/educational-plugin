@@ -54,9 +54,9 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
     checkActionsPanel.add(checkButtonWrapper, BorderLayout.WEST)
     checkActionsPanel.add(checkFinishedPanel, BorderLayout.CENTER)
     checkActionsPanel.add(createRightActionsToolbar(), BorderLayout.EAST)
-    checkActionsPanel.add(linkPanel, BorderLayout.SOUTH)
+    checkActionsPanel.add(linkPanel, BorderLayout.NORTH)
     add(checkActionsPanel, BorderLayout.CENTER)
-    add(checkDetailsPlaceholder, BorderLayout.SOUTH)
+    add(checkDetailsPlaceholder, BorderLayout.NORTH)
     asyncProcessIcon.border = JBUI.Borders.empty(8, 6, 0, 10)
   }
 
