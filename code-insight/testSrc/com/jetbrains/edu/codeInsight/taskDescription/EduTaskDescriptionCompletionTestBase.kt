@@ -1,7 +1,12 @@
 package com.jetbrains.edu.codeInsight.taskDescription
 
+import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.wm.ToolWindowEP
+import com.intellij.openapi.wm.ToolWindowManager
+import com.intellij.toolWindow.ToolWindowHeadlessManagerImpl
 import com.jetbrains.edu.codeInsight.EduCompletionTextFixture
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
 
 abstract class EduTaskDescriptionCompletionTestBase(format: DescriptionFormat) : EduTaskDescriptionTestBase(format) {
 
@@ -11,6 +16,7 @@ abstract class EduTaskDescriptionCompletionTestBase(format: DescriptionFormat) :
     super.setUp()
     completionFixture = EduCompletionTextFixture(myFixture)
     completionFixture.setUp()
+    registerTaskDescriptionToolWindow()
   }
 
   override fun tearDown() {
@@ -47,5 +53,22 @@ abstract class EduTaskDescriptionCompletionTestBase(format: DescriptionFormat) :
   protected open fun checkNoCompletion(link: String) {
     val taskDescriptionFile = findFile("lesson1/task1/${taskDescriptionFormat.descriptionFileName}")
     completionFixture.checkNoCompletion(taskDescriptionFile, link.withDescriptionFormat())
+  }
+
+  // In tests, tool windows are not registered by default
+  // Let's register at least Task Description tool window
+  private fun registerTaskDescriptionToolWindow() {
+    val toolWindowManager = ToolWindowManager.getInstance(project) as ToolWindowHeadlessManagerImpl
+    if (toolWindowManager.getToolWindow("Task") == null) {
+      for (bean in ToolWindowEP.EP_NAME.extensionList) {
+        if (bean.id == TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW) {
+          toolWindowManager.doRegisterToolWindow(bean.id)
+          Disposer.register(testRootDisposable) {
+            @Suppress("DEPRECATION")
+            toolWindowManager.unregisterToolWindow(bean.id)
+          }
+        }
+      }
+    }
   }
 }
