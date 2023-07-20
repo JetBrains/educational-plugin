@@ -5,14 +5,14 @@ import com.intellij.openapi.options.Configurable
 
 abstract class EduSettingsIdCompletionContributorBase : EduUriPathCompletionContributorBase() {
 
-  override fun collectPathCompletionVariants(parameters: CompletionParameters): List<UriPathCompletionVariant> {
+  override fun collectUriPathLookupElements(parameters: CompletionParameters): List<UriPathLookupElement> {
     val configurableEPs = Configurable.APPLICATION_CONFIGURABLE.extensionList +
                           Configurable.PROJECT_CONFIGURABLE.getExtensions(parameters.position.project)
 
     return configurableEPs
       .filter { it.id.orEmpty().isNotEmpty() }
       .map {
-        UriPathCompletionVariant(it.id, it.getDisplayName().ifEmpty { it.id }, null)
+        UriPathLookupElement(it.id, it.getDisplayName().ifEmpty { it.id }, null)
       }
   }
 }
