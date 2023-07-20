@@ -20,9 +20,10 @@ class EduCompletionTextFixture(
     if (variants != null) {
       if (variants.size == 1) {
         fixture.type('\n')
-        return
       }
-      error("Expected a single completion, but got ${variants.size}\n" + variants.joinToString("\n") { it.lookupString })
+      else {
+        error("Expected a single completion, but got ${variants.size}\n" + variants.joinToString("\n") { it.lookupString })
+      }
     }
     fixture.checkResult(after.trimIndent())
   }
