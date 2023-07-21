@@ -13,6 +13,8 @@ object Language {
     "JavaScript" to "JavaScript",
     "Rust" to "Rust",
     "PHP" to "PHP",
+    "Shell Script" to "Shell Script",
+    "SQL" to "SQL",
 
     // used only for testing
     "TEXT" to "Plain text",
