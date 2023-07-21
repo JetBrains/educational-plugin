@@ -17,3 +17,4 @@
     --step-text-scrollbar-thumb-color: revert !important;
     --step-text-scrollbar-thumb-hover-color: revert !important;
 }
+.step-text video { visibility: hidden;}
