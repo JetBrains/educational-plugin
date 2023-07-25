@@ -10,6 +10,8 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.remote.termination.EduRemoteDisconnectWatcherService
+import com.jetbrains.edu.remote.termination.EduRemoteInactivityWatcherService
 import com.jetbrains.rd.platform.util.idea.LifetimedService
 import com.jetbrains.rdserver.core.RemoteProjectSession
 
@@ -32,7 +34,8 @@ class EduRemoteService(private val session: RemoteProjectSession) : LifetimedSer
               invokeAndWaitIfNeeded {
                 NavigationUtils.openFirstTask(course, project)
                 TaskDescriptionView.getInstance(project).updateTaskDescription()
-                service<EduRemoteTerminationService>().start()
+                service<EduRemoteDisconnectWatcherService>().start()
+                service<EduRemoteInactivityWatcherService>().start()
               }
               break
             }
