@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.copy
+import com.jetbrains.edu.learning.courseFormat.copyFileContents
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
 import com.jetbrains.edu.learning.stepik.hyperskill.FrameworkLessonsUpdateTest
@@ -102,6 +103,7 @@ class MarketplaceFrameworkLessonsUpdateTest : FrameworkLessonsUpdateTest<EduCour
 
   override fun toRemoteCourse(changeCourse: EduCourse.() -> Unit): EduCourse {
     val remoteCourse = localCourse.copy()
+    copyFileContents(localCourse, remoteCourse)
     remoteCourse.init(false)
     remoteCourse.changeCourse()
     return remoteCourse

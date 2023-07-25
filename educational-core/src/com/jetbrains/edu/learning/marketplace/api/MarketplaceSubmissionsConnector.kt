@@ -19,7 +19,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderDependencyMixin
 import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderWithAnswerMixin
-import com.jetbrains.edu.learning.json.mixins.TaskFileMixin
 import com.jetbrains.edu.learning.marketplace.SUBMISSIONS_SERVICE_PRODUCTION_URL
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.submissions.SolutionFile
@@ -37,7 +36,7 @@ class MarketplaceSubmissionsConnector {
   private val converterFactory: JacksonConverterFactory
   val objectMapper: ObjectMapper by lazy {
     val objectMapper = ConnectorUtils.createRegisteredMapper(SimpleModule())
-    objectMapper.addMixIn(SolutionFile::class.java, TaskFileMixin::class.java)
+    objectMapper.addMixIn(SolutionFile::class.java, SolutionFileMixin::class.java)
     objectMapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderWithAnswerMixin::class.java)
     objectMapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
     objectMapper

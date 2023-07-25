@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.ObjectCodec
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.node.ObjectNode
@@ -292,6 +293,7 @@ abstract class ChoiceOptionLocalMixin {
 }
 
 @JsonPropertyOrder(NAME, IS_VISIBLE, TEXT, IS_EDITABLE, HIGHLIGHT_LEVEL)
+@JsonDeserialize(builder = EduFileBuilder::class)
 abstract class EduFileMixin {
   @JsonProperty(NAME)
   private lateinit var name: String
@@ -299,9 +301,14 @@ abstract class EduFileMixin {
   @JsonProperty(IS_VISIBLE)
   var isVisible: Boolean = true
 
-  @JsonProperty(TEXT)
-  @Encrypt
-  private lateinit var text: String
+  lateinit var text: String
+    @JsonProperty(TEXT)
+    @Encrypt
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    get
+    @JsonProperty(TEXT)
+    @Encrypt
+    set
 
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = TrueValueFilter::class)
   @JsonProperty(IS_EDITABLE)
@@ -313,6 +320,7 @@ abstract class EduFileMixin {
 }
 
 @JsonPropertyOrder(NAME, PLACEHOLDERS, IS_VISIBLE, TEXT, IS_EDITABLE, HIGHLIGHT_LEVEL)
+@JsonDeserialize(builder = TaskFileBuilder::class)
 abstract class TaskFileMixin : EduFileMixin() {
   @JsonProperty(PLACEHOLDERS)
   private lateinit var _answerPlaceholders: List<AnswerPlaceholder>
@@ -424,5 +432,59 @@ fun deserializeTask(node: ObjectNode, taskType: String, objectMapper: ObjectCode
       LOG.warning("Unsupported task type $taskType")
       null
     }
+  }
+}
+
+@JsonPOJOBuilder(withPrefix = "")
+private open class EduFileBuilder {
+
+  private var _name: String = ""
+  var name: String
+    @JsonProperty(NAME)
+    set(value) {
+      _name = value
+    }
+    @JsonProperty(NAME)
+    get() = _name
+
+  @JsonProperty(IS_VISIBLE)
+  var isVisible: Boolean = true
+  @JsonProperty(TEXT)
+  @Encrypt
+  lateinit var text: String
+  @JsonProperty(IS_EDITABLE)
+  var isEditable: Boolean = true
+  @JsonProperty(HIGHLIGHT_LEVEL)
+  var errorHighlightLevel: EduFileErrorHighlightLevel = EduFileErrorHighlightLevel.TEMPORARY_SUPPRESSION
+
+  private fun build(): EduFile {
+    val result = EduFile()
+    updateFile(result)
+
+    return result
+  }
+
+  protected fun updateFile(result: EduFile) {
+    result.name = name
+    result.isVisible = isVisible
+    result.isEditable = isEditable
+    result.errorHighlightLevel = errorHighlightLevel
+
+    result.text = text
+  }
+}
+
+@JsonPOJOBuilder(withPrefix = "")
+private class TaskFileBuilder : EduFileBuilder() {
+
+  @JsonProperty(PLACEHOLDERS)
+  var answerPlaceholders: List<AnswerPlaceholder> = mutableListOf()
+
+  private fun build(): TaskFile {
+    val result = TaskFile()
+    updateFile(result)
+
+    result.answerPlaceholders = answerPlaceholders
+    return result
   }
 }

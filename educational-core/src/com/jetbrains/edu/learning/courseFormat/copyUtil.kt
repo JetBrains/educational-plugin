@@ -3,10 +3,13 @@
 package com.jetbrains.edu.learning.courseFormat
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect
+import com.fasterxml.jackson.annotation.JsonIncludeProperties
 import com.fasterxml.jackson.annotation.PropertyAccessor
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.*
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.ser.BeanSerializerFactory
 import com.intellij.openapi.diagnostic.logger
@@ -27,7 +30,20 @@ private val MAPPER: ObjectMapper by lazy {
   module.addSerializer(StudyItem::class.java, StudyItemCopySerializer())
   module.addDeserializer(StudyItem::class.java, StudyItemDeserializer())
   mapper.registerModule(module)
+  //do not serialize or deserialize file contents, because we will restore their values after the deserialization
+  mapper.addMixIn(FileContents::class.java, FileContentsMixin::class.java)
   mapper
+}
+
+@Suppress("unused") // used for serialization
+@JsonDeserialize(builder = FileContentsBuilder::class)
+@JsonIncludeProperties
+private abstract class FileContentsMixin
+
+@JsonPOJOBuilder(withPrefix = "")
+private class FileContentsBuilder {
+  @Suppress("unused") // used by json serializer
+  private fun build(): FileContents = UndeterminedContents.EMPTY
 }
 
 fun <T : StudyItem> T.copy(): T {
@@ -41,6 +57,27 @@ fun <T : StudyItem> T.copy(): T {
     LOG.error("Failed to create study item copy", e)
   }
   error("Failed to create study item copy")
+}
+
+fun <T : StudyItem> copyFileContents(sourceItem: T, destinationItem: T) {
+  if (sourceItem is Task) {
+    copyFileContentsForTasks(sourceItem, destinationItem as Task)
+    return
+  }
+  if (sourceItem !is ItemContainer) return
+  destinationItem as ItemContainer
+
+  for (subItem1 in sourceItem.items) {
+    val subItem2 = destinationItem.getItem(subItem1.name) ?: continue
+    copyFileContents(subItem1, subItem2)
+  }
+}
+
+fun copyFileContentsForTasks(sourceTask: Task, destinationTask: Task) {
+  for (taskFile1 in sourceTask.taskFiles.values) {
+    val taskFile2 = destinationTask.getTaskFile(taskFile1.name)
+    taskFile2?.contents = taskFile1.contents
+  }
 }
 
 class StudyItemCopySerializer : JsonSerializer<StudyItem>() {

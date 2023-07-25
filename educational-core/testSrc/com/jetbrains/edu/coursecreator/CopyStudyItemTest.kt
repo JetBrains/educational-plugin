@@ -40,6 +40,7 @@ class CopyStudyItemTest : EduTestCase() {
     }
     val eduTask = localCourse.lessons[0].taskList[0]
     val taskCopy = eduTask.copy()
+    copyFileContentsForTasks(eduTask, taskCopy)
     assertTrue(eduTask.sameTo(taskCopy))
   }
 

@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_TOPICS
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.copy
+import com.jetbrains.edu.learning.courseFormat.copyFileContents
 import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileTree
@@ -359,6 +360,7 @@ class HyperskillCourseUpdateTest : FrameworkLessonsUpdateTest<HyperskillCourse>(
 
   override fun toRemoteCourse(changeCourse: HyperskillCourse.() -> Unit): HyperskillCourse {
     val remoteCourse = localCourse.copy()
+    copyFileContents(localCourse, remoteCourse)
     remoteCourse.getTopicsSection()?.let { remoteCourse.removeSection(it) }
     remoteCourse.init(false)
     remoteCourse.changeCourse()
