@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.twitter
 
+import com.fasterxml.jackson.databind.json.JsonMapper
 import com.intellij.credentialStore.CredentialAttributes
 import com.intellij.credentialStore.Credentials
 import com.intellij.credentialStore.generateServiceName
@@ -17,21 +18,18 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.io.FileUtil
-import com.jetbrains.edu.learning.EduBrowser
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.NumericInputValidator
-import com.jetbrains.edu.learning.checkIsBackgroundThread
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.twitter.ui.TwitterDialogUI
 import com.jetbrains.edu.learning.twitter.ui.createTwitterDialogUI
-import twitter4j.StatusUpdate
-import twitter4j.Twitter
-import twitter4j.TwitterException
-import twitter4j.TwitterFactory
+import okhttp3.ConnectionPool
+import retrofit2.converter.jackson.JacksonConverterFactory
+import twitter4j.*
 import twitter4j.auth.AccessToken
 import twitter4j.auth.RequestToken
 import twitter4j.conf.ConfigurationBuilder
+import java.io.File
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.nio.file.Path
@@ -43,6 +41,9 @@ object TwitterUtils {
   @Suppress("UnstableApiUsage")
   @NlsSafe
   private const val SERVICE_DISPLAY_NAME: String = "EduTools Twitter Integration"
+
+  private val connectionPool: ConnectionPool = ConnectionPool()
+  private val converterFactory: JacksonConverterFactory = JacksonConverterFactory.create(JsonMapper())
 
   /**
    * Set consumer key and secret.
@@ -84,13 +85,67 @@ object TwitterUtils {
   @Throws(IOException::class, TwitterException::class)
   private fun updateStatus(twitter: Twitter, info: TweetInfo) {
     checkIsBackgroundThread()
-    val update = StatusUpdate(info.message)
+
     val mediaPath = info.mediaPath
-    if (mediaPath != null) {
-      update.media(mediaPath.toFile())
+    val mediaId = if (mediaPath != null) {
+      twitter.uploadMedia(mediaPath.toFile()).mediaId
     }
-    twitter.updateStatus(update)
+    else {
+      null
+    }
+
+    val tweet = Tweet(info.message, Media(listOfNotNull(mediaId)))
+    twitter.postTweet(tweet)
+
     EduBrowser.getInstance().browse("https://twitter.com/")
+  }
+
+  @Throws(IOException::class)
+  private fun Twitter.postTweet(tweet: Tweet) {
+    val response = v2().postTweet(tweet).execute()
+    if (!response.isSuccessful) {
+      throw IOException(response.errorBody()?.string() ?: "${response.code()} failed to create tweet")
+    }
+  }
+
+  private fun Twitter.v2(): TwitterV2 {
+    val authHeaderValue = constructAuthHeaderValue()
+    return createRetrofitBuilder("https://api.twitter.com", connectionPool, authHeaderValue, authHeaderValue = null)
+      .addConverterFactory(converterFactory)
+      .build()
+      .create(TwitterV2::class.java)
+  }
+
+  /**
+   * Constructs proper value for `Authorization` header based on OAuth 1.0a
+   *
+   * See https://developer.twitter.com/en/docs/authentication/oauth-1-0a
+   */
+  private fun Twitter.constructAuthHeaderValue(): String {
+    val authorization = authorization
+    return authorization.getAuthorizationHeader(
+      HttpRequest(RequestMethod.POST, "https://api.twitter.com/2/tweets", null, authorization, emptyMap())
+    )
+  }
+
+  /**
+   * Uploads media file using https://upload.twitter.com/1.1/media/upload.json endpoint
+   */
+  private fun Twitter.uploadMedia(file: File): UploadedMedia {
+    val client = HttpClientFactory.getInstance(configuration.httpClientConfiguration)
+    val param = HttpParameter("media", file)
+    val response = client.post("https://upload.twitter.com/1.1/media/upload.json", arrayOf(param), authorization, null)
+    return UploadedMedia.fromResponse(response)
+  }
+
+  private class UploadedMedia(val mediaId: String) {
+    companion object {
+      fun fromResponse(response: HttpResponse): UploadedMedia {
+        val json = response.asJSONObject()
+        val mediaId = json.getString("media_id_string")
+        return UploadedMedia(mediaId)
+      }
+    }
   }
 
   /**
