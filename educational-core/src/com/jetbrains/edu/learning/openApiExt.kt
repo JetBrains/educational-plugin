@@ -1,5 +1,8 @@
 package com.jetbrains.edu.learning
 
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.AppUIExecutor
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
@@ -108,12 +111,21 @@ val Project.selectedVirtualFile: VirtualFile? get() = FileEditorManager.getInsta
 
 val Project.selectedTaskFile: TaskFile? get() = selectedVirtualFile?.getTaskFile(this)
 
+val AnActionEvent.eduState: EduState?
+  get() {
+    val project = getData(CommonDataKeys.PROJECT) ?: return null
+    val editor = getData(CommonDataKeys.HOST_EDITOR) ?: return null
+    val virtualFile = getData(CommonDataKeys.VIRTUAL_FILE) ?: return null
+    val taskFile = virtualFile.getTaskFile(project) ?: return null
+    return EduState(project, virtualFile, editor, taskFile)
+  }
+
 val Project.eduState: EduState?
   get() {
     val virtualFile = selectedVirtualFile ?: return null
     val taskFile = virtualFile.getTaskFile(this) ?: return null
     val editor = virtualFile.getEditor(this) ?: return null
-    return EduState(virtualFile, editor, taskFile)
+    return EduState(this, virtualFile, editor, taskFile)
   }
 
 val Project.course: Course? get() = StudyTaskManager.getInstance(this).course

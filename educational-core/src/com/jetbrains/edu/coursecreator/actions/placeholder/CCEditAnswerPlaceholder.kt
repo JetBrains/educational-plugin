@@ -3,7 +3,6 @@ package com.jetbrains.edu.coursecreator.actions.placeholder
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
@@ -12,11 +11,11 @@ import org.jetbrains.annotations.NonNls
 
 open class CCEditAnswerPlaceholder : CCAnswerPlaceholderAction() {
 
-  override fun performAnswerPlaceholderAction(project: Project, state: EduState) {
+  override fun performAnswerPlaceholderAction(state: EduState) {
     val answerPlaceholder = state.answerPlaceholder ?: return
     val task = answerPlaceholder.taskFile.task
     val configFileName = task.configFileName
-    val taskDir = task.getDir(project.courseDir)
+    val taskDir = task.getDir(state.project.courseDir)
     if (taskDir == null) {
       LOG.error("Failed to find task directory")
       return
@@ -26,7 +25,7 @@ open class CCEditAnswerPlaceholder : CCAnswerPlaceholderAction() {
       LOG.error("Failed to find task config file")
       return
     }
-    FileEditorManager.getInstance(project).openFile(configFile, true)
+    FileEditorManager.getInstance(state.project).openFile(configFile, true)
   }
 
   override fun updatePresentation(eduState: EduState, presentation: Presentation) {

@@ -29,17 +29,12 @@ import org.jetbrains.annotations.NonNls
 import java.util.*
 
 open class CompareWithAnswerAction : DumbAwareAction() {
-  companion object {
-    @NonNls
-    const val ACTION_ID = "Educational.CompareWithAnswer"
-  }
 
   override fun actionPerformed(e: AnActionEvent) {
-    val project = e.project ?: return
+    val state = e.eduState ?: return
 
-    val eduState = project.eduState ?: return
-
-    val (_, _, taskFile, task) = eduState
+    val task = state.task
+    val taskFile = state.taskFile
 
     if (task.course is HyperskillCourse) {
       val url = hyperskillTaskLink(task)
@@ -51,7 +46,7 @@ open class CompareWithAnswerAction : DumbAwareAction() {
     putSelectedTaskFileFirst(taskFiles, taskFile)
 
     val requests = taskFiles.map {
-      val virtualFile = it.getVirtualFile(project) ?: error("VirtualFile for ${it.name} not found")
+      val virtualFile = it.getVirtualFile(state.project) ?: error("VirtualFile for ${it.name} not found")
       val studentFileContent = DiffContentFactory.getInstance().create(VfsUtil.loadText(virtualFile), virtualFile.fileType)
       val solution = getSolution(it)
       val solutionFileContent = DiffContentFactory.getInstance().create(solution, virtualFile.fileType)
@@ -65,7 +60,7 @@ open class CompareWithAnswerAction : DumbAwareAction() {
       message.createBalloon().show(JBPopupFactory.getInstance().guessBestPopupLocation(e.dataContext), Balloon.Position.above)
       return
     }
-    showSolution(project, requests)
+    showSolution(state.project, requests)
     EduCounterUsageCollector.solutionPeeked()
   }
 
@@ -105,5 +100,10 @@ open class CompareWithAnswerAction : DumbAwareAction() {
     val task = project.getCurrentTask() ?: return
 
     presentation.isEnabledAndVisible = task.canShowSolution()
+  }
+
+  companion object {
+    @NonNls
+    const val ACTION_ID = "Educational.CompareWithAnswer"
   }
 }

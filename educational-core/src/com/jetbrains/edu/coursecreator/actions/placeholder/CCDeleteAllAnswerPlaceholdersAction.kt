@@ -16,10 +16,10 @@ class CCDeleteAllAnswerPlaceholdersAction : CCAnswerPlaceholderAction() {
     presentation.isEnabledAndVisible = eduState.taskFile.answerPlaceholders.size > 1
   }
 
-  override fun performAnswerPlaceholderAction(project: Project, state: EduState) {
-    val action = ClearPlaceholders(project, state.taskFile, state.editor)
+  override fun performAnswerPlaceholderAction(state: EduState) {
+    val action = ClearPlaceholders(state.project, state.taskFile, state.editor)
     runUndoableAction(
-      project,
+      state.project,
       message("action.Educational.Educator.DeleteAllPlaceholders.text"),
       action,
       UndoConfirmationPolicy.REQUEST_CONFIRMATION

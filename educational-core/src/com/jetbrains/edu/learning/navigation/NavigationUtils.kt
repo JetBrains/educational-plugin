@@ -311,7 +311,7 @@ object NavigationUtils {
 
   private fun selectFirstAnswerPlaceholder(project: Project) {
     val eduState = project.eduState ?: return
-    val (_, editor, taskFile, _, _) = eduState
+    val (_, _, editor, taskFile, _, _) = eduState
 
     IdeFocusManager.getInstance(project).requestFocus(editor.contentComponent, true)
     if (!taskFile.isValid(editor.document.text)) {

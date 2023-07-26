@@ -17,13 +17,13 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.placeholder.PlaceholderHighlightingManager
 
 open class CCAddAnswerPlaceholder : CCAnswerPlaceholderAction() {
-  private fun addPlaceholder(project: Project, state: EduState) {
+  private fun addPlaceholder(state: EduState) {
     val editor = state.editor
     FileDocumentManager.getInstance().saveDocument(editor.document)
     val model = editor.selectionModel
     val offset = if (model.hasSelection()) model.selectionStart else editor.caretModel.offset
     val taskFile = state.taskFile
-    val defaultPlaceholderText = defaultPlaceholderText(project)
+    val defaultPlaceholderText = defaultPlaceholderText(state.project)
 
     val answerPlaceholder = AnswerPlaceholder().apply {
       index = taskFile.answerPlaceholders.size
@@ -32,7 +32,7 @@ open class CCAddAnswerPlaceholder : CCAnswerPlaceholderAction() {
       placeholderText = defaultPlaceholderText
     }
 
-    val dlg = createDialog(project, answerPlaceholder)
+    val dlg = createDialog(state.project, answerPlaceholder)
     if (!dlg.showAndGet()) {
       return
     }
@@ -49,8 +49,8 @@ open class CCAddAnswerPlaceholder : CCAnswerPlaceholderAction() {
     if (!model.hasSelection()) {
       DocumentUtil.writeInRunUndoTransparentAction { editor.document.insertString(offset, defaultPlaceholderText) }
     }
-    val action = AddAction(project, answerPlaceholder, taskFile, editor)
-    runUndoableAction(project, message("action.Educational.Educator.AddAnswerPlaceholder.text"), action)
+    val action = AddAction(state.project, answerPlaceholder, taskFile, editor)
+    runUndoableAction(state.project, message("action.Educational.Educator.AddAnswerPlaceholder.text"), action)
   }
 
   open fun createDialog(project: Project, answerPlaceholder: AnswerPlaceholder): CCCreateAnswerPlaceholderDialog {
@@ -80,8 +80,8 @@ open class CCAddAnswerPlaceholder : CCAnswerPlaceholderAction() {
     }
   }
 
-  override fun performAnswerPlaceholderAction(project: Project, state: EduState) {
-    addPlaceholder(project, state)
+  override fun performAnswerPlaceholderAction(state: EduState) {
+    addPlaceholder(state)
   }
 
   override fun updatePresentation(eduState: EduState, presentation: Presentation) {
