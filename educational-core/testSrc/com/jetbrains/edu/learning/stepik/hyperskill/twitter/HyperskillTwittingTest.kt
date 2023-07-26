@@ -143,7 +143,7 @@ class HyperskillTwittingTest : EduActionTestCase() {
       val virtualFile = taskFile.getVirtualFile(project)
                         ?: error("Can't find virtual file for `${taskFile.name}` task file in `${task.name}` task")
       FileEditorManager.getInstance(project).openFile(virtualFile, true)
-      testAction(CheckAction(task.getUICheckLabel()), dataContext(virtualFile))
+      testAction(CheckAction(task.getUICheckLabel()))
     }
     return isDialogShown
   }

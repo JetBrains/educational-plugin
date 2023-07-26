@@ -1,12 +1,9 @@
 package com.jetbrains.edu.coursecreator.actions
 
 import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.testFramework.MapDataContext
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CourseMode
@@ -44,7 +41,7 @@ class InsertShortcutActionTest : EduActionTestCase() {
         assertTrue(myFixture.editor.document.text.contains(action))
         return balloon
       }
-    }, createDataContext(taskDescriptionFile))
+    })
   }
 
   fun `test action not available in task file`() {
@@ -62,7 +59,7 @@ class InsertShortcutActionTest : EduActionTestCase() {
 
   private fun checkActionNotAvailable(virtualFile: VirtualFile) {
     myFixture.openFileInEditor(virtualFile)
-    testAction(InsertShortcutAction.ACTION_ID, createDataContext(virtualFile), shouldBeEnabled = false)
+    testAction(InsertShortcutAction.ACTION_ID, shouldBeEnabled = false)
   }
 
   fun `test action not available in student project`() {
@@ -78,13 +75,5 @@ class InsertShortcutActionTest : EduActionTestCase() {
     val taskDescriptionFile = task.getDir(project.courseDir)?.findChild(TASK_MD) ?: error("No task description file")
 
     checkActionNotAvailable(taskDescriptionFile)
-  }
-
-  private fun createDataContext(virtualFile: VirtualFile): DataContext {
-    return MapDataContext().apply {
-      put(CommonDataKeys.PROJECT, project)
-      put(CommonDataKeys.VIRTUAL_FILE, virtualFile)
-      put(CommonDataKeys.EDITOR, myFixture.editor)
-    }
   }
 }

@@ -40,7 +40,7 @@ class CompareWithAnswerActionTest : EduActionTestCase() {
     }
     openFirstTaskFile()
 
-    testAction(CompareWithAnswerAction.ACTION_ID, dataContext(findFileInTask(0, 0, "task.txt")))
+    testAction(CompareWithAnswerAction.ACTION_ID)
 
     val mockEduBrowser = EduBrowser.getInstance() as MockEduBrowser
     assertEquals("${hyperskillTaskLink(findTask(0, 0))}$HYPERSKILL_SOLUTIONS_ANCHOR", mockEduBrowser.lastVisitedUrl)
@@ -76,13 +76,13 @@ class CompareWithAnswerActionTest : EduActionTestCase() {
         val answerContent = requests[0].contents[1] as DocumentContent
         assertEquals("task file text answer", answerContent.document.text)
       }
-    }, dataContext(findFileInTask(0, 0, "task.txt")))
+    })
   }
 
   private fun doTestDisabled() {
     openFirstTaskFile()
 
-    testAction(CompareWithAnswerAction.ACTION_ID, dataContext(findFileInTask(0, 0, "task.txt")), shouldBeEnabled = false)
+    testAction(CompareWithAnswerAction.ACTION_ID, shouldBeEnabled = false)
   }
 
   private fun openFirstTaskFile() {
