@@ -13,10 +13,7 @@ import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
 import com.jetbrains.edu.cpp.messages.EduCppBundle
-import com.jetbrains.edu.learning.EduCourseBuilder
-import com.jetbrains.edu.learning.LanguageSettings
-import com.jetbrains.edu.learning.RefreshCause
-import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
@@ -51,6 +48,8 @@ open class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
     CppCourseProjectGenerator(this, course)
 
   override fun getLanguageSettings(): LanguageSettings<CppProjectSettings> = CppLanguageSettings()
+
+  override fun getDefaultSettings(): Result<CppProjectSettings, String> = Ok(CppProjectSettings())
 
   override fun getSupportedLanguageVersions(): List<String> = getLanguageVersions()
 

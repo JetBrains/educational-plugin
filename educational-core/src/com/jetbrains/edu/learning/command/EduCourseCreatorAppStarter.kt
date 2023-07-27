@@ -4,6 +4,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
+import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
@@ -69,6 +70,10 @@ class EduCourseCreatorAppStarter : EduAppStarterBase() {
       }
       if (project != null) {
         listener.waitForProjectConfiguration()
+        // Some technologies do some work at project opening in startup activities,
+        // and they may not expect that project is closed so early (C++, for example).
+        // So, let's try to wait for them
+        waitForPostStartupActivities(project)
         withContext(Dispatchers.EDT) {
           @Suppress("UnstableApiUsage")
           ProjectManagerEx.getInstanceEx().saveAndForceCloseProject(project)
@@ -86,6 +91,11 @@ class EduCourseCreatorAppStarter : EduAppStarterBase() {
       logErrorAndExit(message)
     }
   }
+
+  private suspend fun waitForPostStartupActivities(project: Project) {
+    val startupManager = StartupManager.getInstance(project)
+    waitUntil { startupManager.postStartupActivityPassed() }
+  }
 }
 
 private class ProjectConfigurationListener : CourseProjectGenerator.CourseProjectConfigurationListener {
@@ -101,9 +111,7 @@ private class ProjectConfigurationListener : CourseProjectGenerator.CourseProjec
     val timeout = System.getProperty("edu.create.course.timeout")?.toLong() ?: DEFAULT_TIMEOUT
     val startTime = System.currentTimeMillis()
     // Wait until the course project is fully configured
-    while (!isProjectConfigured && (startTime - System.currentTimeMillis()) <= timeout) {
-      delay(50)
-    }
+    waitUntil { isProjectConfigured || (startTime - System.currentTimeMillis()) > timeout }
     if (!isProjectConfigured) {
       logErrorAndExit("Project creation took more than $timeout ms")
     }
@@ -111,6 +119,12 @@ private class ProjectConfigurationListener : CourseProjectGenerator.CourseProjec
 
   companion object {
     private val DEFAULT_TIMEOUT: Long = TimeUnit.MINUTES.toMillis(5)
+  }
+}
+
+private suspend fun waitUntil(condition: () -> Boolean) {
+  while (!condition()) {
+    delay(50)
   }
 }
 
