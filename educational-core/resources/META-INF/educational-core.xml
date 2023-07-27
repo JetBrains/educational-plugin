@@ -2,6 +2,7 @@
   <!--suppress PluginXmlValidity -->
   <dependencies>
     <plugin id="com.intellij.modules.lang"/>
+    <plugin id="com.intellij.modules.vcs"/>
   </dependencies>
 
   <resource-bundle>messages.EduCoreBundle</resource-bundle>
@@ -229,6 +230,17 @@
                     testServiceImplementation="com.jetbrains.edu.learning.checker.details.MockCheckDetailsView"/>
     <projectService serviceInterface="com.jetbrains.edu.learning.framework.FrameworkLessonManager"
                     serviceImplementation="com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl"/>
+
+    <!-- Courseignore lang -->
+    <fileType language="CourseIgnore" extensions="courseignore" fieldName="INSTANCE" name="CourseIgnore file"
+              implementationClass="com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreFileType"/>
+    <lang.parserDefinition language="CourseIgnore"
+                           implementationClass="com.intellij.openapi.vcs.changes.ignore.lang.IgnoreParserDefinition"/>
+    <codeInsight.lineMarkerProvider language="CourseIgnore"
+                                    implementationClass="com.intellij.openapi.vcs.changes.ignore.codeInsight.IgnoreDirectoryMarkerProvider"/>
+    <lang.braceMatcher language="CourseIgnore" implementationClass="com.intellij.openapi.vcs.changes.ignore.lang.IgnoreBraceMatcher"/>
+    <lang.commenter language="CourseIgnore" implementationClass="com.intellij.openapi.vcs.changes.ignore.lang.IgnoreCommenter"/>
+    <!--END of Courseignore lang-->
 
     <postStartupActivity implementation="com.jetbrains.edu.learning.EduStartupActivity"/>
 
