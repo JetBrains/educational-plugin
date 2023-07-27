@@ -943,3 +943,61 @@
       "programming_language_version" : "11"
     }
     ```
+
+### Courseignore format version
+
+#### Version 1
+
+Each line is a path to a file or a directory relative to the course root.
+It is prohibited to have an entry that names a non-existing file.
+
+Many files are ignored implicitly.
+These files are hard coded in`EduConfigurator.excludeFromArchive`.
+The table sums up the implicitly ignored files.
+It was manually translated from the `excludeFromArchive` implementations and thus may contain errors.
+The ignored files are described with the .gitignore glob syntax.
+
+| Configurator                          | Excluded files                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+|---------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| all configurators                     | `.*` all names starting with the dot<br/>`!/.idea` but not the idea folder<br/>`.idea/*` exclude all .idea subfolders, except...<br/>`!.idea/inspectionProfiles` .idea inspections settings<br/>`!.idea/scopes` and .idea scopes settings<br/>`*.iml`<br/>Task description files matching the regexp: `task.(md\|html)`<br/>Config files matching the regexp: `(task\|lesson\|section\|course)-(remote-)?info.yaml`<br/>`.coursecreator`<br/>`hints`<br/>`stepik_ids.json`<br/>`.courseignore` |
+| `CppConfigurator`                     | `/cmake-build-*`<br/>`/test-framework*`                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `GradleConfiguratorBase`              | `settings.gradle` excluded only if it is not Hyperskill and if it is the same as default<br/>`out/`<br/>`build/`<br/>`gradle/`<br/>`EduTestRunner.java`<br/>`gradlew`<br/>`gradlew.bat`<br/>`local.properties`<br/>`gradle-wrapper.jar`<br/>`gradle-wrapper.properties`                                                                                                                                                                                                  |
+| `SqlGradleConfigurator`               | excludes the same as GradleConfiguratorBase and:<br/>`*.db`                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `JsConfigurator`                      | `package-lock.json`<br/>`**node_modules**`                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `PhpConfigurator`                     | `**vendor**`<br/>`**composer.phar**`                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `PyConfigurator`, `PyNewConfigurator` | `*.pyc`<br/>`__pycache__`<br/>`venv`                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `RsConfigurator`                      | `Cargo.lock`<br/>`target/`<br/>`!/.cargo` do not exclude certain files inside the .cargo folder:<br/>`/.cargo/*`<br/>`!/.cargo/config.toml`<br/>`!/.cargo/config`                                                                                                                                                                                                                                                                                                                              |
+| `ScalaSbtConfigurator`                 | `target/`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+
+Example:
+
+```
+file1.txt
+dir/file2.png
+```
+
+Will exclude:
+* the file `file1.txt` in the course root directory;
+* the file `file2.png` in the `dir` subdirectory of the root directory.
+
+#### Version 2
+A [gitignore syntax](https://git-scm.com/docs/gitignore) is supported
+This is a breaking change because the meaning of lines has changed.
+For example, the line `a.txt` in version 1 means only a file
+in the course root directory.
+In version 2 this means any file named `a.txt`.
+
+The set of implicitly ignored files is the same as in version 1.
+
+Example:
+
+```
+file1.txt
+dir/file2.png
+dir2/
+```
+
+excludes
+* any file or directory with the name `file1.txt`;
+* the file `dir/file2.png` relative to the course root directory (because it contains `/` inside the glob pattern);
+* Any *directory* with the name `dir2`.
