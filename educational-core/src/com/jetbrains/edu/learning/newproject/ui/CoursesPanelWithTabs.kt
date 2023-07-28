@@ -6,7 +6,6 @@ import com.intellij.ui.JBCardLayout
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.LanguageSettings
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.coursesStorage.CourseDeletedListener
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorageBase
 import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState
@@ -41,10 +40,6 @@ class CoursesPanelWithTabs(private val scope: CoroutineScope, private val dispos
     add(sidePanel, BorderLayout.WEST)
     add(coursesTab, BorderLayout.CENTER)
     preferredSize = JBUI.size(PANEL_WIDTH, PANEL_HEIGHT)
-  }
-
-  fun setError(error: ErrorState) {
-    coursesTab.setError(error)
   }
 
   fun doValidation() {
@@ -117,10 +112,6 @@ class CoursesPanelWithTabs(private val scope: CoroutineScope, private val dispos
     fun doValidation() {
       (cardLayout.findComponentById(activeTabName) as CoursesPanel).doValidation()
     }
-
-    fun selectedCourse(): Course? = currentPanel.selectedCourse
-
-    fun locationString() = currentPanel.locationString
 
     fun languageSettings() = currentPanel.languageSettings
 

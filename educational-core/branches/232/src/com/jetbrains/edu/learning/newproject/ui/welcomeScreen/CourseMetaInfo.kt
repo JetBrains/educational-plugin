@@ -41,7 +41,7 @@ class CourseMetaInfo() : CourseInfo() {
     @OptionTag(PROGRAMMING_LANGUAGE)
     get() {
       if (programmingLanguageVersion != null) {
-        field = "${field} $programmingLanguageVersion"
+        field = "$field $programmingLanguageVersion"
         programmingLanguageVersion = null
       }
       return field
@@ -51,7 +51,7 @@ class CourseMetaInfo() : CourseInfo() {
   var languageVersion: String? = null
     get() {
       if (programmingLanguageVersion != null) {
-        programmingLanguage = "${programmingLanguage} $programmingLanguageVersion"
+        programmingLanguage = "$programmingLanguage $programmingLanguageVersion"
         programmingLanguageVersion = null
       }
 
