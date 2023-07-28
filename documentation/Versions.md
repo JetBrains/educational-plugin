@@ -944,6 +944,15 @@
     }
     ```
 
+17. Task files now specify if their contents are binary or not. The field `is_binary` is introduced, and
+    it can be either `true`, `false`. `true` means that the contents are binary, so the `text` field is encoded in Base64.
+    `false` means that the contents are textual, in this case the `text` field is not encoded.
+    
+    The `is_binary` field is mandatory starting from version 17. But the first implementations will
+    gracefully handle the situation when this field is absent and determine the file binarity by the
+    same means that were used in previous format versions. 
+    The reason is that we expect bugs that sometimes prevent writing this field.
+
 ### Courseignore format version
 
 #### Version 1
@@ -981,7 +990,7 @@ Will exclude:
 * the file `file2.png` in the `dir` subdirectory of the root directory.
 
 #### Version 2
-The [gitignore syntax](https://git-scm.com/docs/gitignore) is supported
+The [gitignore syntax](https://git-scm.com/docs/gitignore) is supported.
 This is a breaking change because the meaning of lines has changed.
 For example, the line `a.txt` in version 1 means only a file
 in the course root directory.
