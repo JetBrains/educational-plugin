@@ -4,6 +4,7 @@ import org.gradle.api.JavaVersion.VERSION_17
 import org.gradle.plugins.ide.idea.model.IdeaLanguageLevel
 import org.jetbrains.intellij.tasks.PatchPluginXmlTask
 import org.jetbrains.intellij.tasks.PrepareSandboxTask
+import org.jetbrains.intellij.tasks.RunIdeBase
 import org.jetbrains.intellij.tasks.RunIdeTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
@@ -437,7 +438,11 @@ project(":") {
     prepareSandbox {
       finalizedBy(mergePluginJarTask)
     }
-    withType<RunIdeTask> {
+    withType<RunIdeBase> {
+      // Force `mergePluginJarTask` be executed before any task based on `RunIdeBase` (for example, `runIde` or `buildSearchableOptions`).
+      // Otherwise, these tasks fail because of implicit dependency.
+      // Should be dropped when jar merging is implemented in `gradle-intellij-plugin` itself
+      mustRunAfter(mergePluginJarTask)
       // Disable auto plugin reloading. See `com.intellij.ide.plugins.DynamicPluginVfsListener`
       // To enable dynamic reloading, change value to `true` and disable `EduDynamicPluginListener`
       jvmArgs("-Didea.auto.reload.plugins=false")
@@ -452,12 +457,11 @@ project(":") {
       // Uncomment to enable FUS testing mode
       // jvmArgs("-Dfus.internal.test.mode=true")
     }
+    verifyPlugin {
+      mustRunAfter(mergePluginJarTask)
+    }
     buildSearchableOptions {
       enabled = findProperty("enableBuildSearchableOptions") != "false"
-      // Force `mergePluginJarTask` be executed before `buildSearchableOptions`
-      // Otherwise, `buildSearchableOptions` task can't load JetBrains Academy plugin and searchable options are not built.
-      // Should be dropped when jar merging is implemented in `gradle-intellij-plugin` itself
-      mustRunAfter(mergePluginJarTask)
     }
   }
 
