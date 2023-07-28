@@ -240,7 +240,7 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
 
       val courseDir = project.courseDir
       for (additionalFile in remoteCourse.additionalFiles) {
-        GeneratorUtils.createChildFile(project, courseDir, additionalFile.name, additionalFile.text)
+        GeneratorUtils.createChildFile(project, courseDir, additionalFile.name, additionalFile.contents)
       }
     }
   }

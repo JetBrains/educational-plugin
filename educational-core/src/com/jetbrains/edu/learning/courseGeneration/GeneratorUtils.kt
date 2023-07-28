@@ -35,7 +35,6 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.IdeaDirectoryU
 import com.jetbrains.edu.learning.courseGeneration.macro.EduMacroUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import org.apache.commons.codec.binary.Base64
 import java.io.IOException
 import java.util.concurrent.atomic.AtomicReference
 
@@ -143,11 +142,11 @@ object GeneratorUtils {
     val (testFiles, taskFiles) = task.taskFiles.values.partition { task.shouldBeEmpty(it.name) }
 
     for (file in taskFiles) {
-      createChildFile(holder, taskDir, file.name, file.text, file.isEditable)
+      createChildFile(holder, taskDir, file.name, file.contents, file.isEditable)
     }
 
     for (file in testFiles) {
-      createChildFile(holder, taskDir, file.name, "", file.isEditable)
+      createChildFile(holder, taskDir, file.name, TextualContents.EMPTY, file.isEditable)
     }
   }
 
@@ -163,7 +162,7 @@ object GeneratorUtils {
       MD -> TASK_MD
     }
 
-    return createChildFile(holder, taskDir, descriptionFileName, task.descriptionText)
+    return createChildFile(holder, taskDir, descriptionFileName, InMemoryTextualContents(task.descriptionText))
   }
 
   enum class IdeaDirectoryUnpackMode(val insideIdeaDirectory: Boolean, val outsideIdeaDirectory: Boolean) {
@@ -179,20 +178,51 @@ object GeneratorUtils {
       val insideIdeaDirectory = file.name == Project.DIRECTORY_STORE_FOLDER || file.name.startsWith("${Project.DIRECTORY_STORE_FOLDER}/")
 
       if (insideIdeaDirectory && unpackMode.outsideIdeaDirectory || !insideIdeaDirectory && unpackMode.insideIdeaDirectory) {
-        createChildFile(holder, holder.courseDir, file.name, file.text, file.isEditable)
+        createChildFile(holder, holder.courseDir, file.name, file.contents, file.isEditable)
       }
     }
   }
 
   @Throws(IOException::class)
+  @Deprecated(
+    "Use the other createChildFile() method, where you explicitly specify whether text is binary or not",
+    ReplaceWith("GeneratorUtils.createChildFile(holder, parentDir, path, fileContent, isEditable)")
+  )
   fun createChildFile(project: Project, parentDir: VirtualFile, path: String, text: String): VirtualFile? {
-    return createChildFile(project.toCourseInfoHolder(), parentDir, path, text)
+    return createChildFile(project.toCourseInfoHolder(), parentDir, path, InMemoryUndeterminedContents(text))
   }
 
   @Throws(IOException::class)
-  fun createChildFile(holder: CourseInfoHolder<out Course?>, parentDir: VirtualFile, path: String, text: String, isEditable: Boolean = true): VirtualFile? {
+  fun createChildFile(project: Project, parentDir: VirtualFile, path: String, contents: FileContents): VirtualFile? {
+    return createChildFile(project.toCourseInfoHolder(), parentDir, path, contents)
+  }
+
+  @Throws(IOException::class)
+  fun createTextChildFile(project: Project, parentDir: VirtualFile, path: String, text: String): VirtualFile? {
+    return createTextChildFile(project.toCourseInfoHolder(), parentDir, path, text)
+  }
+
+  @Throws(IOException::class)
+  fun createTextChildFile(
+    holder: CourseInfoHolder<out Course?>,
+    parentDir: VirtualFile,
+    path: String,
+    text: String,
+    isEditable: Boolean = true
+  ): VirtualFile? {
+    return createChildFile(holder, parentDir, path, InMemoryTextualContents(text), isEditable)
+  }
+
+  @Throws(IOException::class)
+  fun createChildFile(
+    holder: CourseInfoHolder<out Course?>,
+    parentDir: VirtualFile,
+    path: String,
+    fileContents: FileContents,
+    isEditable: Boolean = true
+  ): VirtualFile? {
     return runInWriteActionAndWait(ThrowableComputable {
-      val file = doCreateChildFile(holder, parentDir, path, text)
+      val file = doCreateChildFile(holder, parentDir, path, fileContents)
       val course = holder.course
       if (course != null && file != null && !isEditable) {
         addNonEditableFileToCourse(course, file)
@@ -202,7 +232,12 @@ object GeneratorUtils {
   }
 
   @Throws(IOException::class)
-  private fun doCreateChildFile(holder: CourseInfoHolder<out Course?>, parentDir: VirtualFile, path: String, text: String): VirtualFile? {
+  private fun doCreateChildFile(
+    holder: CourseInfoHolder<out Course?>,
+    parentDir: VirtualFile,
+    path: String,
+    fileContents: FileContents
+  ): VirtualFile? {
     checkIsWriteActionAllowed()
 
     var newDirectories: String? = null
@@ -216,19 +251,32 @@ object GeneratorUtils {
     if (newDirectories != null) {
       dir = VfsUtil.createDirectoryIfMissing(parentDir, newDirectories)
     }
-    return if (dir != null) {
-      val virtualTaskFile = dir.findOrCreateChildData(parentDir, fileName)
-      if (virtualTaskFile.isToEncodeContent) {
-        virtualTaskFile.setBinaryContent(Base64.decodeBase64(text))
+
+    dir ?: return null
+
+    val virtualTaskFile = dir.findOrCreateChildData(parentDir, fileName)
+
+    fun writeBinary(bytes: ByteArray) {
+      virtualTaskFile.setBinaryContent(bytes)
+    }
+
+    fun writeTextual(text: String) {
+      val expandedText = EduMacroUtils.expandMacrosForFile(holder, virtualTaskFile, text)
+      VfsUtil.saveText(virtualTaskFile, expandedText)
+    }
+
+    when (fileContents) {
+      is BinaryContents -> writeBinary(fileContents.bytes)
+      is TextualContents -> writeTextual(fileContents.text)
+      is UndeterminedContents -> if (virtualTaskFile.isToEncodeContent) { // fallback to the legacy way to interpret task file content
+        writeBinary(fileContents.bytes)
       }
       else {
-        VfsUtil.saveText(virtualTaskFile, EduMacroUtils.expandMacrosForFile(holder, virtualTaskFile, text))
+        writeTextual(fileContents.text)
       }
-      virtualTaskFile
     }
-    else {
-      null
-    }
+
+    return virtualTaskFile
   }
 
   @Throws(IOException::class)
@@ -290,10 +338,12 @@ object GeneratorUtils {
     return replace(INVALID_SYMBOLS, " ").trimEnd(*INVALID_TRAILING_SYMBOLS)
   }
 
-  private fun createUniqueDir(parentDir: VirtualFile,
-                              item: StudyItem,
-                              baseDirName: String = item.name,
-                              needUpdateItem: Boolean = true): VirtualFile {
+  private fun createUniqueDir(
+    parentDir: VirtualFile,
+    item: StudyItem,
+    baseDirName: String = item.name,
+    needUpdateItem: Boolean = true
+  ): VirtualFile {
     val uniqueDirName = getUniqueValidName(parentDir, baseDirName)
     if (uniqueDirName != baseDirName && needUpdateItem) {
       item.customPresentableName = item.name
@@ -332,15 +382,17 @@ object GeneratorUtils {
    * Otherwise, substitutes all template variables in file text
    */
   @Throws(IOException::class)
-  fun createFileFromTemplate(holder: CourseInfoHolder<out Course?>,
-                             baseDir: VirtualFile,
-                             path: String,
-                             templateName: String,
-                             templateVariables: Map<String, Any>) {
+  fun createFileFromTemplate(
+    holder: CourseInfoHolder<out Course?>,
+    baseDir: VirtualFile,
+    path: String,
+    templateName: String,
+    templateVariables: Map<String, Any>
+  ) {
     val file = baseDir.findFileByRelativePath(path)
     if (file == null) {
       val configText = getInternalTemplateText(templateName, templateVariables)
-      createChildFile(holder, baseDir, path, configText)
+      createChildFile(holder, baseDir, path, InMemoryTextualContents(configText))
     }
     else {
       evaluateExistingTemplate(file, templateVariables)

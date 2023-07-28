@@ -70,7 +70,7 @@ class CodeforcesCourseUpdater(private val project: Project, val course: Codeforc
 
     val courseDir = project.courseDir
     for (additionalFile in remoteCourse.additionalFiles) {
-      GeneratorUtils.createChildFile(project, courseDir, additionalFile.name, additionalFile.text)
+      GeneratorUtils.createChildFile(project, courseDir, additionalFile.name, additionalFile.contents)
     }
     return updatedTasks
   }

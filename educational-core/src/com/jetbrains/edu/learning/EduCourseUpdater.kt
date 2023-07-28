@@ -294,7 +294,7 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
     val filesToCreate = courseFromServer.additionalFiles
     val baseDir = project.courseDir
     for (file in filesToCreate) {
-      GeneratorUtils.createChildFile(project, baseDir, file.name, file.text)
+      GeneratorUtils.createChildFile(project, baseDir, file.name, file.contents)
     }
   }
 

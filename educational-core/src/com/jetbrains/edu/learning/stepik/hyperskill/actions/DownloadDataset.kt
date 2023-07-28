@@ -107,7 +107,7 @@ class DownloadDataset(
       taskDir.findFileByRelativePath(datasetFilePath)
     }
     if (dataset == null) {
-      return GeneratorUtils.createChildFile(project, taskDir, datasetFilePath, input) ?: error("File $datasetFilePath can't be created")
+      return GeneratorUtils.createTextChildFile(project, taskDir, datasetFilePath, input) ?: error("File $datasetFilePath can't be created")
     }
 
     val datasetDocument = runReadAction {
