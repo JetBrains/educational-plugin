@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.EduFileErrorHighlightLevel
+import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.json.encrypt.Encrypt
 import com.jetbrains.edu.learning.yaml.format.TaskFileBuilder
@@ -45,13 +46,12 @@ class StudentTaskFileBuilder(
   override fun createTaskFile(): TaskFile {
     return super.createTaskFile().apply {
       if (encryptedTextFromConfig != null) {
-        text = encryptedTextFromConfig
+        contents = InMemoryTextualContents(encryptedTextFromConfig)
       }
       else if (textFromConfig != null){
-        text = textFromConfig
+        contents = InMemoryTextualContents(textFromConfig)
       }
       isLearnerCreated = learnerCreated
     }
   }
 }
-
