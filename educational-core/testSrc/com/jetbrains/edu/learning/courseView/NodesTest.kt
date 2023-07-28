@@ -446,6 +446,97 @@ class NodesTest : CourseViewTestBase() {
     """.trimMargin("|"))
   }
 
+  fun `test excluded files in educator mode - do not show dirs inside tasks as excluded`() {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      lesson("lesson1") {
+        eduTask {
+          taskFile("file1.txt")
+          taskFile("file2.txt")
+          dir("dir-inside-task-ignored") {
+            taskFile("a.txt")
+            //taskFile("b.txt") exists as an additional file, it is not included independently of courseignore
+          }
+          dir("dir-inside-task-not-ignored") {
+            taskFile("c.txt")
+            //taskFile("d.txt") exists as an additional file, it is not included independently of courseignore
+          }
+        }
+        eduTask {
+          taskFile("file1.txt")
+          taskFile("file2.txt")
+        }
+      }
+      additionalFile("lesson1/task1/dir-inside-task-ignored/b.txt")
+      additionalFile("lesson1/task1/dir-inside-task-not-ignored/d.txt")
+      additionalFile("dir-ignored/a.txt")
+      additionalFile("dir-not-ignored/a.txt")
+      additionalFile("dir-not-ignored/ignored-file.txt")
+      additionalFile(EduNames.COURSE_IGNORE, """
+        |dir-inside-task-ignored/
+        |**/dir-inside-task-not-ignored/**
+        |
+        |dir-ignored/
+        |ignored-file.txt
+      """.trimMargin("|"))
+    }
+    assertCourseView("""
+      |-Project
+      | -CCCourseNode Test Course (Course Creation)
+      |  -CCLessonNode lesson1
+      |   -CCTaskNode task1
+      |    -CCNode dir-inside-task-ignored
+      |     a.txt
+      |     CCStudentInvisibleFileNode b.txt (excluded)
+      |    -CCNode dir-inside-task-not-ignored
+      |     c.txt
+      |     CCStudentInvisibleFileNode d.txt (excluded)
+      |    file1.txt
+      |    file2.txt
+      |    CCStudentInvisibleFileNode task.md
+      |   -CCTaskNode task2
+      |    file1.txt
+      |    file2.txt
+      |    CCStudentInvisibleFileNode task.md
+      |  -CCNode dir-ignored (excluded)
+      |   CCStudentInvisibleFileNode a.txt
+      |  -CCNode dir-not-ignored
+      |   CCStudentInvisibleFileNode a.txt
+      |   CCStudentInvisibleFileNode ignored-file.txt (excluded)
+      |  CCStudentInvisibleFileNode .courseignore
+    """.trimMargin("|"))
+  }
+
+  fun `test excluded files in educator mode - files are excluded differently inside and outside of tasks`() {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      lesson("lesson1") {
+        eduTask {
+          taskFile("ignored.txt")
+          taskFile("not-ignored.txt")
+        }
+      }
+      additionalFile("ignored.txt")
+      additionalFile("subfolder/ignored.txt")
+      additionalFile("not-ignored.txt")
+      additionalFile("subfolder/not-ignored.txt")
+      additionalFile(EduNames.COURSE_IGNORE, "ignored.txt\ntask.md")
+    }
+    assertCourseView("""
+      |-Project
+      | -CCCourseNode Test Course (Course Creation)
+      |  -CCLessonNode lesson1
+      |   -CCTaskNode task1
+      |    ignored.txt
+      |    not-ignored.txt
+      |    CCStudentInvisibleFileNode task.md
+      |  -CCNode subfolder
+      |   CCStudentInvisibleFileNode ignored.txt (excluded)
+      |   CCStudentInvisibleFileNode not-ignored.txt
+      |  CCStudentInvisibleFileNode .courseignore
+      |  CCStudentInvisibleFileNode ignored.txt (excluded)
+      |  CCStudentInvisibleFileNode not-ignored.txt
+    """.trimMargin("|"))
+  }
+
   fun `test hyperskill course`() {
     courseWithFiles(courseProducer = ::HyperskillCourse) {
       frameworkLesson  {
