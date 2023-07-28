@@ -445,7 +445,7 @@ project(":") {
       mustRunAfter(mergePluginJarTask)
       // Disable auto plugin reloading. See `com.intellij.ide.plugins.DynamicPluginVfsListener`
       // To enable dynamic reloading, change value to `true` and disable `EduDynamicPluginListener`
-      jvmArgs("-Didea.auto.reload.plugins=false")
+      autoReloadPlugins = false
       jvmArgs("-Xmx2g")
 
       // Uncomment to show localized messages
