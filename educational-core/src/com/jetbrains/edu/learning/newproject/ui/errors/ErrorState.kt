@@ -137,11 +137,12 @@ sealed class ErrorState(
 
     private val Course.courseSpecificError: ErrorState
       get() {
-        return when (this) {
-          is CheckiOCourse -> checkiOError
-          is JetBrainsAcademyCourse -> if (HyperskillSettings.INSTANCE.account == null) JetBrainsAcademyLoginNeeded else None
-          is HyperskillCourse -> if (HyperskillSettings.INSTANCE.account == null) HyperskillLoginRequired else None
-          is EduCourse -> {
+        return when {
+          CoursesStorage.getInstance().hasCourse(this) -> None
+          this is CheckiOCourse -> checkiOError
+          this is JetBrainsAcademyCourse -> if (HyperskillSettings.INSTANCE.account == null) JetBrainsAcademyLoginNeeded else None
+          this is HyperskillCourse -> if (HyperskillSettings.INSTANCE.account == null) HyperskillLoginRequired else None
+          this is EduCourse -> {
             if (!isMarketplace && !isLoggedInToStepik()) {
               if (isStepikLoginRequired(this)) StepikLoginRequired else NotLoggedIn
             }
