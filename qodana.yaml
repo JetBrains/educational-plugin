@@ -13,6 +13,7 @@ exclude:
       - Edu-Java/resources/fileTemplates
       - Edu-JavaScript/resources/fileTemplates
       - Edu-Kotlin/resources/fileTemplates
+      - Edu-Php/resources/fileTemplates
       - Edu-Python/resources/fileTemplates
       - Edu-Rust/resources/fileTemplates
       - Edu-Scala/resources/fileTemplates
