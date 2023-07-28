@@ -5,6 +5,8 @@ import org.gradle.plugins.ide.idea.model.IdeaLanguageLevel
 import org.jetbrains.intellij.tasks.PatchPluginXmlTask
 import org.jetbrains.intellij.tasks.PrepareSandboxTask
 import org.jetbrains.intellij.tasks.RunIdeTask
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.*
@@ -220,12 +222,13 @@ allprojects {
 
     withType<JavaCompile> { options.encoding = "UTF-8" }
     withType<KotlinCompile> {
-      kotlinOptions {
-        jvmTarget = VERSION_17.toString()
-        languageVersion = "1.8"
+      compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
+        languageVersion.set(KotlinVersion.DEFAULT)
+        // BACKCOMPAT: 2022.3. Use 1.8
         // see https://plugins.jetbrains.com/docs/intellij/using-kotlin.html#kotlin-standard-library
-        apiVersion = "1.7"
-        freeCompilerArgs = listOf("-Xjvm-default=all")
+        apiVersion.set(KotlinVersion.KOTLIN_1_7)
+        freeCompilerArgs.set(listOf("-Xjvm-default=all"))
       }
     }
 
