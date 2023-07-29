@@ -16,6 +16,7 @@ import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.fileTypes.FileTypeManager
@@ -26,9 +27,11 @@ import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
-import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
@@ -37,7 +40,6 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
-import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.project
@@ -52,8 +54,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
-import com.jetbrains.edu.learning.getEditor
-import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.json.encrypt.EncryptionModule
 import com.jetbrains.edu.learning.json.encrypt.TEST_AES_KEY
 import com.jetbrains.edu.learning.json.encrypt.getAesKey
@@ -308,16 +308,33 @@ object YamlFormatSynchronizer {
           if (FileTypeManager.getInstance().getFileTypeByFile(file) == UnknownFileType.INSTANCE) {
             @NonNls
             val errorMessageToLog = "Failed to get extension for file ${file.name}"
-            FileTypeManager.getInstance().associateExtension(PlainTextFileType.INSTANCE,
-                                                             file.extension ?: error(errorMessageToLog))
+            FileTypeManager.getInstance().associateExtension(
+              PlainTextFileType.INSTANCE,
+              file.extension ?: error(errorMessageToLog)
+            )
           }
-          VfsUtil.saveText(file, mapper.writeValueAsString(this))
+          val yamlText = mapper.writeValueAsString(this)
+          val formattedYamlText = reformatYaml(project, file.name, yamlText)
+
+          VfsUtil.saveText(file, formattedYamlText)
+          // make sure that there is no conflict between disk contents and ide in-memory document contents
+          FileDocumentManager.getInstance().reloadFiles(file)
         }
         finally {
           file.putUserData(LOAD_FROM_CONFIG, true)
         }
       }
     }
+  }
+
+  private fun reformatYaml(project: Project, fileName: String, text: String): String {
+    // We are able to reformat YAML only if the IDE supports the YAML language
+    val yamlFileType = FileTypeManager.getInstance().findFileTypeByName("YAML") ?: return text
+
+    val psiFile = PsiFileFactory.getInstance(project).createFileFromText(fileName, yamlFileType, text)
+    CodeStyleManager.getInstance(project).reformat(psiFile)
+
+    return psiFile.text ?: text
   }
 
   fun isConfigFile(file: VirtualFile): Boolean {
