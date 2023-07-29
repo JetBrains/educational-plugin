@@ -56,6 +56,16 @@ open class EduFile {
 
   @Suppress("unused") // used for serialization
   fun getTextToSerialize(): String? {
+    // first, do not serialize binary contents
+    if (contents is BinaryContents) return null
+    if (contents is UndeterminedContents) {
+      // fallback to the legacy file way to determine binarity
+      val contentType = mimeFileType(name)
+      if (contentType != null && isBinary(contentType)) return null
+    }
+
+    val text = contents.textualRepresentation
+
     if (exceedsBase64ContentLimit(text)) {
       LOG.warning(
         "Base64 encoding of `$name` file exceeds limit (${getBinaryFileLimit().toLong()}), " +
@@ -63,8 +73,8 @@ open class EduFile {
       )
       return null
     }
-    val contentType = mimeFileType(name) ?: return text
-    return if (isBinary(contentType)) null else text
+
+    return text
   }
 
   companion object {

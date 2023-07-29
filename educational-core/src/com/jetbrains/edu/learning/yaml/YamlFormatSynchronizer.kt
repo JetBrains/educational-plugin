@@ -143,6 +143,10 @@ object YamlFormatSynchronizer {
   private fun StudyItem.saveConfig(project: Project, configName: String, mapper: ObjectMapper) {
     val dir = getConfigDir(project)
 
+    if (this is Task) {
+      disambiguateTaskFilesContents()
+    }
+
     project.invokeLater {
       runWriteAction {
         val file = dir.findOrCreateChildData(javaClass, configName)
@@ -211,5 +215,11 @@ fun StudyItem.getConfigDir(project: Project): VirtualFile {
   }
   else {
     getDir(project.courseDir) ?: error("Config for '$this' not found")
+  }
+}
+
+private fun Task.disambiguateTaskFilesContents() {
+  for ((path, taskFile) in taskFiles) {
+    taskFile.contents = taskFile.contents.disambiguateContents(path)
   }
 }
