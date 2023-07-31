@@ -235,7 +235,8 @@
                  defaultValue="300"/>
 
     <applicationConfigurable groupId="tools" instance="com.jetbrains.edu.learning.settings.EduConfigurable"
-                             id="Educational" displayName="Education"/>
+                             id="Educational"
+                             key="settings.educational" bundle="messages.EduCoreBundle"/>
 
     <toolWindow id="Task" anchor="right" order="first"
                 factoryClass="com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory"/>
