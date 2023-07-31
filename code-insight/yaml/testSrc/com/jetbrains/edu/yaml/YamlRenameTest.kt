@@ -71,10 +71,15 @@ class YamlRenameTest : YamlCodeInsightTest() {
     """.trimMargin("|"))
   }
 
-  private fun doTest(element: PsiElement, newName: String, parentItem: StudyItem, text: String) {
+  private fun doTest(element: PsiElement, newName: String, parentItem: StudyItem, expectedText: String) {
     myFixture.renameElement(element, newName)
     openConfigFile(parentItem)
-    myFixture.checkResult(text)
+    val actualText = myFixture.editor.document.text
+
+    val expectedLines = expectedText.lines().map { it.trim() }
+    val actualLines = actualText.lines().map { it.trim() }
+
+    assertEquals(expectedLines, actualLines)
   }
 
   private fun openConfigFile(item: StudyItem) {
