@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
@@ -157,25 +158,91 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
     dataContext: DataContext,
     studyItemCreator: (NewStudyItemInfo) -> Unit
   ) {
-    val index: Int
-    val suggestedName: String
-    if (isAddedAsLast(project, course, sourceDirectory)) {
-      index = ITEM_INDEX.getData(dataContext) ?: getSiblingsSize(course, parentItem)
-      suggestedName = SUGGESTED_NAME.getData(dataContext) ?: (itemType.presentableName + (index + 1))
+    parentItem ?: return
+
+    val addedAsLast = isAddedAsLast(project, course, sourceDirectory)
+
+    val index = if (addedAsLast) {
+      ITEM_INDEX.getData(dataContext) ?: getSiblingsSize(course, parentItem)
     }
     else {
       val thresholdItem = getThresholdItem(project, course, sourceDirectory) ?: return
-      val defaultIndex = ITEM_INDEX.getData(dataContext)
-      index = defaultIndex ?: thresholdItem.index
-      val itemName = itemType.presentableName
-      suggestedName = SUGGESTED_NAME.getData(dataContext) ?: (itemName + (index + 1))
+      ITEM_INDEX.getData(dataContext) ?: thresholdItem.index
     }
-    if (parentItem == null) {
-      return
-    }
+    val suggestedName = SUGGESTED_NAME.getData(dataContext) ?: suggestName(
+      parentItem,
+      itemType.presentableName,
+      if (addedAsLast) Int.MAX_VALUE else index
+    )
+
     val parentItemDir = parentItem.getDir(project.courseDir) ?: return
     val model = NewStudyItemUiModel(parentItem, parentItemDir, itemType, suggestedName, index, studyItemVariants)
     showCreateStudyItemDialog(project, course, model, studyItemCreator)
+  }
+
+  /**
+   * Suggests a name of the form `"$presentableName$index"` that is not already contained in parentItem.
+   *
+   * The name is suggested to be "good enough" for a new element at the index [insertionIndex].
+   * To achieve that, the index is taken to be greater than all indexes from the left of [insertionIndex], and also have
+   * the minimal possible value that does not clash with all existing names.
+   *
+   * For example, if parentItem contains `["abc", "task1", "task5", "task2", "xyz", "task4", "task6"]`, then
+   * ```
+   * suggestName(parentItem, "task", 0) == "task3"
+   * suggestName(parentItem, "task", 1) == "task3"
+   * suggestName(parentItem, "task", 2) == "task3"
+   * suggestName(parentItem, "task", 3) == "task3"
+   * suggestName(parentItem, "task", 4) == "task3"
+   * suggestName(parentItem, "task", 5) == "task3"
+   * suggestName(parentItem, "task", 6) == "task7"
+   * suggestName(parentItem, "task", 7) == "task7"
+   * ```
+   *
+   * if parentItem contains `["abc", "task1", "task5", "task2", "task3", "xyz", "task4", "task6"]`, then
+   * ```
+   * suggestName(parentItem, "task", /*any value*/) == "task7"
+   * ```
+   */
+  private fun suggestName(parentItem: StudyItem, presentableName: String, insertionIndex: Int): String {
+    // parentItem must be ItemContainer, but we add this check to preserve the legacy behaviour
+    if (parentItem !is ItemContainer) return "$presentableName${insertionIndex + 1}"
+
+    val prefixLength = presentableName.length
+    val items = parentItem.items
+
+    val fixedInsertionIndex = when {
+      insertionIndex < 0 -> 0
+      insertionIndex > items.size -> items.size
+      else -> insertionIndex
+    }
+
+    val itemsBefore = items.subList(0, fixedInsertionIndex)
+    val itemsAfter = items.subList(fixedInsertionIndex, items.size)
+
+    // Get the list of existing indexes.
+    // For example, ["task1", "task4", "dir", "task2"] is converted to [1, 4, 2]
+    fun studyItem2index(item: StudyItem): Int? {
+      val name = item.name
+      if (!name.startsWith(presentableName)) return null
+      val extractedIndex = name.substring(prefixLength).toIntOrNull() ?: return null
+      return if (extractedIndex <= 0) null else extractedIndex
+    }
+
+    val startIndex = (itemsBefore.mapNotNull { studyItem2index(it) }.maxOrNull() ?: 0) + 1
+
+    val nextIndexes = itemsAfter.mapNotNull { studyItem2index(it) }.sorted()
+
+    var suggestedIndex = startIndex
+    for (forbiddenIndex in nextIndexes) {
+      if (suggestedIndex != forbiddenIndex) {
+        return "$presentableName$suggestedIndex"
+      }
+
+      suggestedIndex++
+    }
+
+    return "$presentableName$suggestedIndex"
   }
 
   protected abstract val studyItemVariants: List<StudyItemVariant>

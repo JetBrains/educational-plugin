@@ -268,6 +268,50 @@ class CCCreateTaskTest : EduActionTestCase() {
     }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  fun `test create task suggest name`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      lesson {}
+    }
+
+    fun assertTasks(vararg names: String) {
+      val actualNames = course.lessons[0].taskList.map { it.name }
+      assertEquals(listOf(*names), actualNames)
+    }
+
+    fun createTask(contextFolder: String, suggestedIndex: Int? = null, suggestedName: String? = null) {
+      withMockCreateStudyItemUi(MockNewStudyItemUi(suggestedName, suggestedIndex)) {
+        testAction(CCCreateTask.ACTION_ID, dataContext(findFile(contextFolder)))
+      }
+    }
+
+    createTask("lesson1")
+    assertTasks("task1")
+
+    createTask("lesson1", suggestedName = "abc")
+    assertTasks("task1", "abc")
+
+    createTask("lesson1", suggestedName = "task3")
+    assertTasks("task1", "abc", "task3")
+
+    createTask("lesson1") // create a new task at the end
+    assertTasks("task1", "abc", "task3", "task4")
+
+    createTask("lesson1/task3") // create a new task after task3
+    assertTasks("task1", "abc", "task3", "task5", "task4")
+
+    createTask("lesson1/task3")
+    assertTasks("task1", "abc", "task3", "task6", "task5", "task4")
+
+    createTask("lesson1")
+    assertTasks("task1", "abc", "task3", "task6", "task5", "task4", "task7")
+
+    createTask("lesson1/abc")
+    assertTasks("task1", "abc", "task2", "task3", "task6", "task5", "task4", "task7")
+
+    createTask("lesson1", 2, "inserted-task")
+    assertTasks("task1", "inserted-task", "abc", "task2", "task3", "task6", "task5", "task4", "task7")
+  }
+
   private fun getDefaultTestText(course: Course): String? {
     val testTemplateName = course.configurator?.courseBuilder?.testTemplateName(course) ?: return null
     return GeneratorUtils.getInternalTemplateText(testTemplateName)
