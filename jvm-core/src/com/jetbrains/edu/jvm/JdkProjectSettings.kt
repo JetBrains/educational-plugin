@@ -35,7 +35,8 @@ open class JdkProjectSettings(val model: ProjectSdksModel, val jdk: Sdk?) : EduP
       model.apply()
     }
     catch (e: ConfigurationException) {
-      LOG.error(e)
+      val listOfAllSDKs = model.projectSdks.values.joinToString { it.toString() }
+      LOG.error("ModelSDKs: $listOfAllSDKs", e)
     }
 
     runWriteAction {
