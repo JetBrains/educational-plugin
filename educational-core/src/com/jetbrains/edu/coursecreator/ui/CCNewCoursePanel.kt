@@ -4,6 +4,8 @@ import com.intellij.ide.BrowserUtil
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.lang.Language
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationActivationListener
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
@@ -14,6 +16,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.wm.IdeFrame
 import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.bindItem
@@ -143,6 +146,16 @@ class CCNewCoursePanel(
       descriptionTextArea.text = course.description
       titleField.setTextManually(course.name)
     }
+
+    ApplicationManager
+      .getApplication()
+      .messageBus
+      .connect(parentDisposable)
+      .subscribe(ApplicationActivationListener.TOPIC, object : ApplicationActivationListener {
+        override fun applicationActivated(ideFrame: IdeFrame) {
+          doValidation()
+        }
+      })
   }
 
 

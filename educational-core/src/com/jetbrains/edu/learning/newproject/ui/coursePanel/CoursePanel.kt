@@ -3,10 +3,12 @@ package com.jetbrains.edu.learning.newproject.ui.coursePanel
 import com.intellij.ide.plugins.DynamicPluginListener
 import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationActivationListener
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.wm.IdeFrame
 import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBPanelWithEmptyText
@@ -94,10 +96,16 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
     doValidation()
     setButtonsEnabled(canStartCourse())
 
-    ApplicationManager.getApplication()
+    val connection = ApplicationManager.getApplication()
       .messageBus
       .connect(parentDisposable)
-      .subscribe(DynamicPluginListener.TOPIC, PluginListener())
+
+    connection.subscribe(DynamicPluginListener.TOPIC, PluginListener())
+    connection.subscribe(ApplicationActivationListener.TOPIC, object : ApplicationActivationListener {
+      override fun applicationActivated(ideFrame: IdeFrame) {
+        doValidation()
+      }
+    })
   }
 
   private fun layoutComponents() {
