@@ -8,6 +8,8 @@ interface PostToGithubActionProvider {
 
   fun postToGitHub(project: Project, file: VirtualFile)
 
+  fun getWebUrl(project: Project, file: VirtualFile): String?
+
   companion object {
     val EP_NAME: ExtensionPointName<PostToGithubActionProvider> = ExtensionPointName.create("Educational.postToGithub")
 

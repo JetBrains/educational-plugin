@@ -62,4 +62,7 @@ interface HyperskillEndpoints {
 
   @POST("/api/time-spent-events")
   fun sendTimeSpentEvents(@Body events: List<HyperskillTimeSpentEvent>): Call<HyperskillTimeSpentEventList>
+
+  @POST("api/comments")
+  fun postComment(@Body comment: HyperskillComment): Call<ResponseBody>
 }

@@ -294,6 +294,16 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
     return withTokenRefreshIfFailed { hyperskillEndpoints.sendTimeSpentEvents(events).executeAndExtractFromBody() }.map { it.events }
   }
 
+  fun saveGithubLink(projectId: Int, link: String): Result<Any, String> {
+    val comment = HyperskillComment().apply {
+      targetId = projectId
+      this.link = link
+    }
+    return withTokenRefreshIfFailed {
+      hyperskillEndpoints.postComment(comment).executeAndExtractFromBody()
+    }
+  }
+
   private fun <T> Call<T>.executeAndExtractFromBody(): Result<T, String> {
     return executeParsingErrors(true).flatMap {
       val result = it.body()

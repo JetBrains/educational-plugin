@@ -54,7 +54,11 @@ const val ROUTE = "route"
 const val SOLUTIONS = "solutions"
 const val STAGES = "stages"
 const val STEP_ID = "step"
+const val TARGET_ID = "target_id"
+const val TARGET_TYPE = "target_type"
+const val TEXT = "text"
 const val THEORY_ID = "theory"
+const val THREAD = "thread"
 const val TIME_SPENT_EVENTS = "time-spent-events"
 const val TITLE = "title"
 const val TOKEN = "token"
@@ -333,4 +337,18 @@ class HyperskillFrontendEventList {
 class HyperskillTimeSpentEventList {
   @JsonProperty(TIME_SPENT_EVENTS)
   lateinit var events: List<HyperskillTimeSpentEvent>
+}
+
+class HyperskillComment {
+  @JsonProperty(TARGET_ID)
+  var targetId: Int = -1
+
+  @JsonProperty(TARGET_TYPE)
+  var targetType: String = "project"
+
+  @JsonProperty(THREAD)
+  var thread: String = "publication"
+
+  @JsonProperty(TEXT)
+  lateinit var link: String
 }
