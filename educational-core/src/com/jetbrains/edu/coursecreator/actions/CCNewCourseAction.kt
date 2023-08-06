@@ -34,7 +34,7 @@ class CCNewCourseAction(
   }
 
   override fun update(e: AnActionEvent) {
-    e.presentation.isEnabledAndVisible = CCPluginToggleAction.isCourseCreatorFeaturesEnabled && !RemoteEnvHelper.isRemoteDevServer()
+    e.presentation.isEnabledAndVisible = !RemoteEnvHelper.isRemoteDevServer()
   }
 
   companion object {

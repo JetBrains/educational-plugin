@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.statistics
 import com.intellij.internal.statistic.beans.MetricEvent
 import com.intellij.internal.statistic.eventLog.EventLogGroup
 import com.intellij.internal.statistic.service.fus.collectors.ApplicationUsagesCollector
-import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.JavaUILibrary
 
@@ -14,10 +13,6 @@ import com.jetbrains.edu.learning.JavaUILibrary
 @Suppress("UnstableApiUsage")
 class EduStateUsagesCollector : ApplicationUsagesCollector() {
 
-  private enum class EduRole {
-    STUDENT, EDUCATOR
-  }
-
   override fun getGroup(): EventLogGroup = GROUP
 
   override fun getMetrics(): Set<MetricEvent> {
@@ -26,16 +21,12 @@ class EduStateUsagesCollector : ApplicationUsagesCollector() {
     val taskPanel = EduSettings.getInstance().javaUiLibrary
     metrics += TASK_PANEL_EVENT.metric(taskPanel)
 
-    val role = if (CCPluginToggleAction.isCourseCreatorFeaturesEnabled) EduRole.EDUCATOR else EduRole.STUDENT
-    metrics += ROLE_EVENT.metric(role)
-
     return metrics
   }
 
   companion object {
-    private val GROUP = EventLogGroup("educational.state", 2)
+    private val GROUP = EventLogGroup("educational.state", 3)
 
     private val TASK_PANEL_EVENT = GROUP.registerEvent("task.panel", enumField<JavaUILibrary>())
-    private val ROLE_EVENT = GROUP.registerEvent("role", enumField<EduRole>())
   }
 }

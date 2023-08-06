@@ -15,7 +15,6 @@ import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification
 import com.jetbrains.edu.coursecreator.CCUtils.addGluingSlash
 import com.jetbrains.edu.coursecreator.CCUtils.checkIfAuthorizedToStepik
 import com.jetbrains.edu.coursecreator.CCUtils.lessonFromDir
-import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction.Companion.isCourseCreatorFeaturesEnabled
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.learning.EduExperimentalFeatures.CC_HYPERSKILL
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -34,7 +33,7 @@ import org.jetbrains.annotations.VisibleForTesting
 class PushHyperskillLesson : DumbAwareAction(addGluingSlash(updateTitleText, uploadTitleText)) {
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false
-    if (!isFeatureEnabled(CC_HYPERSKILL) || !isCourseCreatorFeaturesEnabled) return
+    if (!isFeatureEnabled(CC_HYPERSKILL)) return
     val project = e.getData(CommonDataKeys.PROJECT) ?: return
     val course = StudyTaskManager.getInstance(project).course as? HyperskillCourse ?: return
     val lesson = getLesson(e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY), project, course) ?: return

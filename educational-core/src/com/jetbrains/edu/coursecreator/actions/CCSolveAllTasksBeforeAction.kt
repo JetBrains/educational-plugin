@@ -33,7 +33,6 @@ class CCSolveAllTasksBeforeAction : DumbAwareAction(
     val project = e.project ?: return
     if (StudyTaskManager.getInstance(project).course !is EduCourse) return
     e.presentation.isEnabledAndVisible = !CCUtils.isCourseCreator(project) &&
-                                         CCPluginToggleAction.isCourseCreatorFeaturesEnabled &&
                                          Registry.`is`(REGISTRY_KEY, false)
   }
 

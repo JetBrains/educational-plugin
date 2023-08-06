@@ -11,7 +11,6 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.io.FileUtilRt
 import com.jetbrains.edu.EducationalCoreIcons
-import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.coursecreator.ui.CCNewCourseDialog
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduNames
@@ -41,8 +40,7 @@ class GetHyperskillLesson : DumbAwareAction(
 ) {
 
   override fun update(e: AnActionEvent) {
-    e.presentation.isEnabledAndVisible = CCPluginToggleAction.isCourseCreatorFeaturesEnabled
-                                         && isFeatureEnabled(EduExperimentalFeatures.CC_HYPERSKILL)
+    e.presentation.isEnabledAndVisible = isFeatureEnabled(EduExperimentalFeatures.CC_HYPERSKILL)
   }
 
   override fun actionPerformed(e: AnActionEvent) {

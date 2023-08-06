@@ -2,7 +2,6 @@ package com.jetbrains.edu.coursecreator.actions.stepik.hyperskill
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
-import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.coursecreator.ui.CCNewCourseDialog
 import com.jetbrains.edu.learning.EduExperimentalFeatures
@@ -33,7 +32,6 @@ class NewHyperskillCourseAction : DumbAwareAction(
     e.presentation.isEnabledAndVisible = false
     if (!isFeatureEnabled(EduExperimentalFeatures.CC_HYPERSKILL)) return
     if (RemoteEnvHelper.isRemoteDevServer()) return
-    if (!CCPluginToggleAction.isCourseCreatorFeaturesEnabled) return
     e.presentation.isEnabledAndVisible = true
   }
 

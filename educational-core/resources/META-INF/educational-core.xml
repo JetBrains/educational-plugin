@@ -106,9 +106,6 @@
             icon="AllIcons.Actions.Refresh">
       <add-to-group group-id="EditorPopupMenu" anchor="last"/>
     </action>
-    <action id="Educational.Educator.EnablePluginAction" class="com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction">
-      <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="HelpTopics"/>
-    </action>
     <action id="Educational.SwitchTaskDescriptionPanel" class="com.jetbrains.edu.learning.actions.SwitchTaskPanelAction">
     </action>
 
@@ -187,7 +184,10 @@
             class="com.jetbrains.edu.learning.stepik.changeHost.StepikChangeHost"
             internal="true"/>
 
-    <group id="Educational.LearnAndTeachFileMenu" class="com.jetbrains.edu.learning.newproject.LearnAndTeachFileMenuGroup" popup="true">
+    <group id="Educational.LearnAndTeachFileMenu"
+           class="com.jetbrains.edu.learning.newproject.LearnAndTeachFileMenuGroup"
+           popup="true"
+           icon="com.jetbrains.edu.EducationalCoreIcons.CourseAction">
       <reference id="Educational.BrowseCourses"/>
       <reference id="Educational.Educator.NewCourse"/>
       <add-to-group group-id="FileOpenGroup" relative-to-action="OpenFile" anchor="after"/>
