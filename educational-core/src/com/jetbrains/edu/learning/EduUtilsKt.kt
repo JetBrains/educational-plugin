@@ -127,7 +127,7 @@ object EduUtilsKt {
 
   fun getCourseModeForNewlyCreatedProject(project: Project): CourseMode? {
     if (project.isDefault || LightEdit.owns(project)) return null
-    return project.courseDir.getUserData(CourseProjectGenerator.COURSE_MODE_TO_CREATE)
+    return project.guessCourseDir()?.getUserData(CourseProjectGenerator.COURSE_MODE_TO_CREATE)
   }
 
   fun Project.isEduProject(): Boolean =
