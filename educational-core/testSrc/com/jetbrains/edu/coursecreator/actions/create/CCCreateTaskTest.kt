@@ -268,7 +268,7 @@ class CCCreateTaskTest : EduActionTestCase() {
     }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
-  fun `test create task suggest name`() {
+  fun `test suggest name for new task`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {}
     }

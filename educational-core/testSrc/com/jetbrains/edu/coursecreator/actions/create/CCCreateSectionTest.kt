@@ -188,4 +188,32 @@ class CCCreateSectionTest : EduActionTestCase() {
       testAction(CCCreateSection.ACTION_ID, dataContext(taskDir), shouldBeEnabled = false)
     }
   }
+
+  fun `test suggest name for new section`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      section {}
+    }
+
+    fun assertLessons(vararg names: String) {
+      val actualNames = course.items.map { it.name }
+      assertEquals(listOf(*names), actualNames)
+    }
+
+    fun createSection(contextFolder: String, suggestedIndex: Int? = null, suggestedName: String? = null) {
+      withMockCreateStudyItemUi(MockNewStudyItemUi(suggestedName, suggestedIndex)) {
+        testAction(CCCreateSection.ACTION_ID, dataContext(findFile(contextFolder)))
+      }
+    }
+
+    createSection("")
+    assertLessons("section1", "section2")
+    createSection("", suggestedName = "section4")
+    assertLessons("section1", "section2", "section4")
+    createSection("")
+    assertLessons("section1", "section2", "section4", "section5")
+    createSection("section4")
+    assertLessons("section1", "section2", "section4", "section6", "section5")
+    createSection("section4", suggestedIndex = 5)
+    assertLessons("section1", "section2", "section4", "section6", "section7", "section5")
+  }
 }

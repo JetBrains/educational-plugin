@@ -5,6 +5,7 @@ import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateLesson
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.testAction
 
 class CCCreateLessonTest : EduActionTestCase() {
@@ -166,5 +167,53 @@ class CCCreateLessonTest : EduActionTestCase() {
     }
     val sourceVFile = findFile("lesson1/task1")
     testAction(CCCreateLesson.ACTION_ID, dataContext(sourceVFile), shouldBeEnabled = false)
+  }
+
+  private fun createLesson(contextFolder: String, suggestedIndex: Int? = null, suggestedName: String? = null) {
+    withMockCreateStudyItemUi(MockNewStudyItemUi(suggestedName, suggestedIndex)) {
+      testAction(CCCreateLesson.ACTION_ID, dataContext(findFile(contextFolder)))
+    }
+  }
+
+  fun `test suggest name for new lesson in section`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      section {}
+    }
+
+    val section = course.items[0] as Section
+
+    fun assertLessons(vararg names: String) {
+      val actualNames = section.items.map { it.name }
+      assertEquals(listOf(*names), actualNames)
+    }
+
+    createLesson("section1")
+    assertLessons("lesson1")
+    createLesson("section1")
+    assertLessons("lesson1", "lesson2")
+    createLesson("section1/lesson1", suggestedName = "abc")
+    assertLessons("lesson1", "abc", "lesson2")
+    createLesson("section1", suggestedIndex = 2)
+    assertLessons("lesson1", "lesson3", "abc", "lesson2")
+  }
+
+  fun `test suggest name for new lesson in course`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      lesson {}
+    }
+
+    fun assertLessons(vararg names: String) {
+      val actualNames = course.items.map { it.name }
+      assertEquals(listOf(*names), actualNames)
+    }
+
+    createLesson("")
+    assertLessons("lesson1", "lesson2")
+    createLesson("lesson1")
+    assertLessons("lesson1", "lesson3", "lesson2")
+    createLesson("", suggestedIndex = 2)
+    assertLessons("lesson1", "lesson4", "lesson3", "lesson2")
+    createLesson("", suggestedIndex = 3, suggestedName = "abc")
+    assertLessons("lesson1", "lesson4", "abc", "lesson3", "lesson2")
   }
 }

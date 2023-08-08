@@ -158,21 +158,20 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
     dataContext: DataContext,
     studyItemCreator: (NewStudyItemInfo) -> Unit
   ) {
-    parentItem ?: return
+    if (parentItem == null) return
 
-    val addedAsLast = isAddedAsLast(project, course, sourceDirectory)
-
-    val index = if (addedAsLast) {
-      ITEM_INDEX.getData(dataContext) ?: getSiblingsSize(course, parentItem)
+    val index = ITEM_INDEX.getData(dataContext) ?: if (isAddedAsLast(project, course, sourceDirectory)) {
+      getSiblingsSize(course, parentItem)
     }
     else {
       val thresholdItem = getThresholdItem(project, course, sourceDirectory) ?: return
-      ITEM_INDEX.getData(dataContext) ?: thresholdItem.index
+      thresholdItem.index
     }
+
     val suggestedName = SUGGESTED_NAME.getData(dataContext) ?: suggestName(
       parentItem,
       itemType.presentableName,
-      if (addedAsLast) Int.MAX_VALUE else index
+      index
     )
 
     val parentItemDir = parentItem.getDir(project.courseDir) ?: return
@@ -192,9 +191,9 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
    * suggestName(parentItem, "task", 0) == "task3"
    * suggestName(parentItem, "task", 1) == "task3"
    * suggestName(parentItem, "task", 2) == "task3"
-   * suggestName(parentItem, "task", 3) == "task3"
-   * suggestName(parentItem, "task", 4) == "task3"
-   * suggestName(parentItem, "task", 5) == "task3"
+   * suggestName(parentItem, "task", 3) == "task7"
+   * suggestName(parentItem, "task", 4) == "task7"
+   * suggestName(parentItem, "task", 5) == "task7"
    * suggestName(parentItem, "task", 6) == "task7"
    * suggestName(parentItem, "task", 7) == "task7"
    * ```
@@ -220,18 +219,20 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
     val itemsBefore = items.subList(0, fixedInsertionIndex)
     val itemsAfter = items.subList(fixedInsertionIndex, items.size)
 
-    // Get the list of existing indexes.
-    // For example, ["task1", "task4", "dir", "task2"] is converted to [1, 4, 2]
-    fun studyItem2index(item: StudyItem): Int? {
+    /**
+     * If the study item name has the form "$presentableName$i", returns an integer i.
+     * For example, "task4" is converted to 4
+     */
+    fun extractIndex(item: StudyItem): Int? {
       val name = item.name
       if (!name.startsWith(presentableName)) return null
       val extractedIndex = name.substring(prefixLength).toIntOrNull() ?: return null
       return if (extractedIndex <= 0) null else extractedIndex
     }
 
-    val startIndex = (itemsBefore.mapNotNull { studyItem2index(it) }.maxOrNull() ?: 0) + 1
+    val startIndex = (itemsBefore.mapNotNull { extractIndex(it) }.maxOrNull() ?: 0) + 1
 
-    val nextIndexes = itemsAfter.mapNotNull { studyItem2index(it) }.sorted()
+    val nextIndexes = itemsAfter.mapNotNull { extractIndex(it) }.sorted()
 
     var suggestedIndex = startIndex
     for (forbiddenIndex in nextIndexes) {
