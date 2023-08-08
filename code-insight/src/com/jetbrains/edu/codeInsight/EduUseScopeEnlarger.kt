@@ -16,7 +16,8 @@ class EduUseScopeEnlarger : UseScopeEnlarger() {
     if (!project.isEduProject()) return null
     if (element !is PsiFileSystemItem) return null
 
-    if (!element.virtualFile.canBelongToCourse(project)) return null
+    val virtualFile = element.virtualFile ?: return null
+    if (!virtualFile.canBelongToCourse(project)) return null
     return GlobalSearchScopes.directoryScope(project, project.courseDir, true)
   }
 }
