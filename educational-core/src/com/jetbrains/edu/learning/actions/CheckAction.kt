@@ -228,7 +228,7 @@ class CheckAction() : ActionWithProgressIcon(lazyMessage("action.check.text"), l
       }
       checkTask(task.status)
       TaskDescriptionView.getInstance(project).checkFinished(task, checkResult)
-      invokeLater {
+      project.invokeLater {
         updateCourseProgress(project)
         ProjectView.getInstance(project).refresh()
         for (listener in CheckListener.EP_NAME.extensions) {

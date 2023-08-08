@@ -3,7 +3,6 @@ package com.jetbrains.edu.coursecreator.actions.marketplace
 import com.intellij.CommonBundle
 import com.intellij.execution.process.ProcessIOExecutorService
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
@@ -18,6 +17,7 @@ import com.jetbrains.edu.coursecreator.CCUtils.showLoginNeededNotification
 import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.*
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showFailedToPushCourseNotification
@@ -80,7 +80,7 @@ class MarketplacePushCourse(
           showReloginToJBANeededNotification(connector.invokeJBALoginAction(jbAccountInfoService))
         }
         else {
-          invokeLater {
+          project.invokeLater {
             prepareAndPush(project, course, connector, e.presentation.text, hubToken)
           }
         }

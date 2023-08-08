@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount.Companion.getJBAIdToken
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
@@ -81,10 +82,9 @@ fun EduCourse.checkForUpdates(project: Project, updateForced: Boolean, onFinish:
   ApplicationManager.getApplication().executeOnPooledThread {
     val latestUpdateInfo = getUpdateInfo() ?: return@executeOnPooledThread
     val remoteCourseVersion = latestUpdateInfo.version
-    runInEdt {
-      if (project.isDisposed) return@runInEdt
+    project.invokeLater {
       if (remoteCourseVersion > marketplaceCourseVersion) {
-        if (!isRemoteUpdateFormatVersionCompatible(project, latestUpdateInfo.compatibility.gte)) return@runInEdt
+        if (!isRemoteUpdateFormatVersionCompatible(project, latestUpdateInfo.compatibility.gte)) return@invokeLater
         isUpToDate = false
         if (updateForced) {
           doUpdateInBackground(remoteCourseVersion)

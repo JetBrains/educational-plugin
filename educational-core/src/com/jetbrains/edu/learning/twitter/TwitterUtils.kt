@@ -8,7 +8,6 @@ import com.intellij.ide.BrowserUtil
 import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
-import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.progress.ProgressIndicator
@@ -59,7 +58,7 @@ object TwitterUtils {
     }
 
   fun createTwitterDialogAndShow(project: Project, configurator: TwitterPluginConfigurator, task: Task) {
-    invokeLater {
+    project.invokeLater {
       val imagePath = configurator.getImagePath(task)
       val dialog = createTwitterDialogUI(project) { configurator.getTweetDialogPanel(task, imagePath, it) }
       if (dialog.showAndGet()) {

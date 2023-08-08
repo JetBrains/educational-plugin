@@ -15,7 +15,6 @@ import com.intellij.database.model.DasDataSource
 import com.intellij.database.util.DataSourceUtil
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
-import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.DumbService
@@ -27,15 +26,12 @@ import com.intellij.sql.SqlFileType
 import com.intellij.sql.dialects.SqlDialectMappings
 import com.intellij.sql.dialects.h2.H2Dialect
 import com.intellij.util.containers.addIfNotNull
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checker.CheckUtils
-import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.getTask
-import com.jetbrains.edu.learning.getTaskFile
-import com.jetbrains.edu.learning.runReadActionInSmartMode
 import com.jetbrains.edu.sql.core.EduSqlBundle
 import org.jetbrains.annotations.VisibleForTesting
 
@@ -167,8 +163,7 @@ fun attachSqlConsoleIfNeeded(project: Project, file: VirtualFile) {
   // and listener from `DatabaseStartupActivity` will attach this console again (probably, it's a bug database plugin),
   // that leads to unexpected exceptions and behaviour.
   // So let's postpone console attaching to avoid described situation
-  invokeLater {
-    if (project.isDisposed) return@invokeLater
+  project.invokeLater {
     val currentConsole = JdbcConsoleProvider.getValidConsole(project, file)
     if (currentConsole?.dataSource == dataSource) return@invokeLater
 

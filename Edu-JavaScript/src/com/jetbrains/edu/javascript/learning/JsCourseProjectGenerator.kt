@@ -37,7 +37,7 @@ class JsCourseProjectGenerator(builder: JsCourseBuilder, course: Course) : Cours
 
     val modalityState = ModalityState.current()
     interpreter.provideCachedVersionOrFetch { version ->
-      invokeLater(modalityState, project.disposed) {
+      project.invokeLater(modalityState) {
         if (version != null) {
           val configurator = NodeCoreLibraryConfigurator.getInstance(project)
           configurator.configureAndAssociateWithProject(interpreter, version) {

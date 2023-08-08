@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.AppUIExecutor
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
@@ -21,7 +20,6 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.util.Computable
-import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.text.StringUtil
@@ -62,8 +60,18 @@ fun checkIsWriteActionAllowed() {
   }
 }
 
-inline fun invokeLater(modalityState: ModalityState, condition: Condition<*>, crossinline runnable: () -> Unit) {
-  ApplicationManager.getApplication().invokeLater({ runnable() }, modalityState, condition)
+/**
+ * Invokes [runnable] asynchronously in EDT checking that [Project] is not disposed yet
+ *
+ * @see com.intellij.openapi.application.Application.invokeLater
+ */
+inline fun Project.invokeLater(modalityState: ModalityState? = null, crossinline runnable: () -> Unit) {
+  if (modalityState == null) {
+    ApplicationManager.getApplication().invokeLater({ runnable() }, disposed)
+  }
+  else {
+    ApplicationManager.getApplication().invokeLater({ runnable() }, modalityState, disposed)
+  }
 }
 
 /**

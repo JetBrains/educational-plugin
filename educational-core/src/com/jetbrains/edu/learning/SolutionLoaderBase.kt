@@ -3,8 +3,11 @@ package com.jetbrains.edu.learning
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.*
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ex.ApplicationUtil
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
+import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.application.runUndoTransparentWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -118,8 +121,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
               progressIndicator.text = EduCoreBundle.message("loading.solution.progress", finishedTaskCount, tasksToUpdate.size)
             }
           }
-          invokeLater {
-            if (project.isDisposed) return@invokeLater
+          project.invokeLater {
             for (file in getOpenFiles(project, task)) {
               file.stopLoading(project)
               EditorNotifications.getInstance(project).updateNotifications(file)
@@ -283,8 +285,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
       taskSolutions: TaskSolutions,
       force: Boolean
     ) {
-      invokeLater {
-        if (project.isDisposed) return@invokeLater
+      project.invokeLater {
         task.status = taskSolutions.checkStatus
         YamlFormatSynchronizer.saveItem(task)
         val lesson = task.lesson

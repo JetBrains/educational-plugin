@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.yaml
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
@@ -15,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.findTaskDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROJECTS_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
@@ -81,8 +81,7 @@ object YamlDeepLoader {
           ?.findFileByRelativePath(taskFile.name)
       }
     }
-    invokeLater {
-      if (project.isDisposed) return@invokeLater
+    project.invokeLater {
       runWriteAction {
         for (virtualFile in nonEditableFile) {
           GeneratorUtils.addNonEditableFileToCourse(course, virtualFile)

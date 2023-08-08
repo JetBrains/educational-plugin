@@ -12,7 +12,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
@@ -300,7 +299,7 @@ object YamlFormatSynchronizer {
   private fun StudyItem.saveConfig(project: Project, configName: String, mapper: ObjectMapper) {
     val dir = getConfigDir(project)
 
-    invokeLater {
+    project.invokeLater {
       runWriteAction {
         val file = dir.findOrCreateChildData(javaClass, configName)
         try {
