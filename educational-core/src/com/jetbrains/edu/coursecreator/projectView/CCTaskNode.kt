@@ -8,7 +8,6 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNamedElement
-import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreRules
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.configuration.EduConfigurator
@@ -21,7 +20,6 @@ class CCTaskNode(
   project: Project,
   value: PsiDirectory,
   viewSettings: ViewSettings,
-  private val courseIgnoreRules: CourseIgnoreRules,
   task: Task
 ) : TaskNode(project, value, viewSettings, task) {
 
@@ -40,19 +38,19 @@ class CCTaskNode(
       val psiFile = value.containingFile
       val virtualFile = psiFile.virtualFile ?: return null
       val course = StudyTaskManager.getInstance(myProject).course ?: return null
-      val configurator = course.configurator ?: return CCStudentInvisibleFileNode(myProject, psiFile, settings, courseIgnoreRules)
+      val configurator = course.configurator ?: return CCStudentInvisibleFileNode(myProject, psiFile, settings)
       return if (!virtualFile.isTestsFile(myProject)) {
-        CCStudentInvisibleFileNode(myProject, psiFile, settings, courseIgnoreRules)
+        CCStudentInvisibleFileNode(myProject, psiFile, settings)
       }
       else {
-        CCStudentInvisibleFileNode(myProject, psiFile, settings, courseIgnoreRules, getTestNodeName(configurator, value))
+        CCStudentInvisibleFileNode(myProject, psiFile, settings, getTestNodeName(configurator, value))
       }
     }
     return null
   }
 
   override fun createChildDirectoryNode(value: PsiDirectory): PsiDirectoryNode {
-    return CCNode(myProject, value, settings, courseIgnoreRules, item)
+    return CCNode(myProject, value, settings, item)
   }
 
   companion object {

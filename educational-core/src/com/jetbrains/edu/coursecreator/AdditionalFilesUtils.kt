@@ -12,6 +12,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchiveAction
+import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreChecker
 import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreRules
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseDir
@@ -63,7 +64,8 @@ object AdditionalFilesUtils {
 
   private fun additionalFilesVisitor(project: Project, course: Course) =
     object : VirtualFileVisitor<Any>(NO_FOLLOW_SYMLINKS) {
-      private val courseIgnoreRules = CourseIgnoreRules.createFromCourseignoreFile(project)
+      // we take the course ignore rules once, and we are sure they are not changed while course archive is being created
+      private val courseIgnoreRules = CourseIgnoreChecker.instance(project).courseIgnoreRules
 
       val additionalTaskFiles = mutableListOf<EduFile>()
       var archiveLocation = PropertiesComponent.getInstance(project).getValue(CCCreateCourseArchiveAction.LAST_ARCHIVE_LOCATION)

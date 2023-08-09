@@ -9,7 +9,7 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.ui.SimpleTextAttributes
 import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
-import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreRules
+import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreChecker
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -22,14 +22,13 @@ class CCNode(
   project: Project,
   value: PsiDirectory,
   viewSettings: ViewSettings,
-  private val courseIgnoreRules: CourseIgnoreRules,
   task: Task?
 ) : DirectoryNode(project, value, viewSettings, task) {
 
   private val excludedName: String?
   init {
     // show node as excluded, if it is not inside a task folder, but is in the .courseignore
-    excludedName = if (task == null && courseIgnoreRules.isIgnored(value.virtualFile, project)) {
+    excludedName = if (task == null && CourseIgnoreChecker.instance(project).isIgnored(value.virtualFile)) {
       EduCoreBundle.message("course.creator.course.view.excluded", value.name)
     }
     else {
@@ -45,22 +44,22 @@ class CCNode(
     val value = childNode.value
 
     if (value is PsiDirectory) {
-      return CCNode(myProject, value, settings, courseIgnoreRules, item)
+      return CCNode(myProject, value, settings, item)
     }
     if (value is PsiElement) {
       val psiFile = value.containingFile
       val virtualFile = psiFile.virtualFile
       val course = StudyTaskManager.getInstance(myProject).course ?: return null
-      if (course.configurator == null) return CCStudentInvisibleFileNode(myProject, psiFile, settings, courseIgnoreRules)
+      if (course.configurator == null) return CCStudentInvisibleFileNode(myProject, psiFile, settings)
       if (EduUtilsKt.isTaskDescriptionFile(virtualFile.name)) {
         return null
       }
       if (!virtualFile.isTestsFile(myProject)) {
-        return CCStudentInvisibleFileNode(myProject, psiFile, settings, courseIgnoreRules)
+        return CCStudentInvisibleFileNode(myProject, psiFile, settings)
       }
       else {
         if (isCourseCreator(myProject)) {
-          return CCStudentInvisibleFileNode(myProject, psiFile, settings, courseIgnoreRules)
+          return CCStudentInvisibleFileNode(myProject, psiFile, settings)
         }
       }
     }
@@ -76,6 +75,6 @@ class CCNode(
   }
 
   override fun createChildDirectoryNode(value: PsiDirectory): PsiDirectoryNode {
-    return CCNode(myProject, value, settings, courseIgnoreRules, item)
+    return CCNode(myProject, value, settings, item)
   }
 }

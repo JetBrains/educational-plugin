@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator.courseignore
 
-import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.changes.ignore.cache.PatternCache
 import com.intellij.openapi.vcs.changes.ignore.psi.IgnoreEntry
@@ -8,8 +7,6 @@ import com.intellij.openapi.vcs.changes.ignore.psi.IgnoreVisitor
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiManager
-import com.jetbrains.edu.learning.EduNames.COURSE_IGNORE
 import com.jetbrains.edu.learning.courseDir
 import java.util.regex.Pattern
 
@@ -42,15 +39,9 @@ class CourseIgnoreRules private constructor(private val reversedListOfPatterns: 
 
   companion object {
 
-    private val EMPTY: CourseIgnoreRules = CourseIgnoreRules(listOf())
+    val EMPTY: CourseIgnoreRules = CourseIgnoreRules(listOf())
 
-    fun createFromCourseignoreFile(project: Project): CourseIgnoreRules = runReadAction {
-      val courseIgnoreVirtualFile = project.courseDir.findChild(COURSE_IGNORE) ?: return@runReadAction EMPTY
-      val courseIgnorePsiFile = PsiManager.getInstance(project).findFile(courseIgnoreVirtualFile) ?: return@runReadAction EMPTY
-      interpret(project, courseIgnorePsiFile)
-    }
-
-    private fun interpret(project: Project, courseIgnorePsiFile: PsiFile): CourseIgnoreRules {
+    fun interpret(project: Project, courseIgnorePsiFile: PsiFile): CourseIgnoreRules {
       val patternCache = PatternCache.getInstance(project)
       val patterns = mutableListOf<IgnorePattern>()
 
