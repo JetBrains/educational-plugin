@@ -1,12 +1,12 @@
 package com.jetbrains.edu.php
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createChildFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
+import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.php.composer.ComposerDataService
@@ -60,7 +60,7 @@ class PhpCourseProjectGenerator(
   private fun installComposer(project: Project) {
     val courseDir = project.courseDir
     val composerFile = courseDir.findChild(ComposerUtils.CONFIG_DEFAULT_FILENAME) ?: return
-    ApplicationManager.getApplication().invokeLater {
+    project.invokeLater {
       val executor = ComposerInstallAction.createExecutor(
         project,
         ComposerDataService.getInstance(project).composerExecution,

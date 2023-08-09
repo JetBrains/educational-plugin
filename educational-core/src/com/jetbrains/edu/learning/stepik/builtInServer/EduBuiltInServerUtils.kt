@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.util.PathUtil
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.yaml.YamlDeepLoader.loadRemoteInfo
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
@@ -24,7 +25,7 @@ object EduBuiltInServerUtils {
       if (project.isDefault) continue
       val course = project.course ?: continue
       if (!coursePredicate(course)) continue
-      ApplicationManager.getApplication().invokeLater { project.requestFocus() }
+      project.invokeLater { project.requestFocus() }
       return project to course
     }
     return null

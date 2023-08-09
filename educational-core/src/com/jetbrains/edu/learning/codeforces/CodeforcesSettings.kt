@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesAccount
 import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesUserInfo
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
@@ -57,11 +58,11 @@ class CodeforcesSettings : PersistentStateComponent<Element> {
   private fun updateCheckPanel() {
     ProjectManager.getInstance().openProjects
       .filter { !it.isDisposed }
-      .forEach {
-        if (it.course is CodeforcesCourse) {
-          val task = it.getCurrentTask()
+      .forEach { project ->
+        if (project.course is CodeforcesCourse) {
+          val task = project.getCurrentTask()
           if (task != null) {
-            ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(it).updateCheckPanel(task) }
+            project.invokeLater { TaskDescriptionView.getInstance(project).updateCheckPanel(task) }
           }
         }
       }

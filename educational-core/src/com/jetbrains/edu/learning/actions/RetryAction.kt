@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskCheckerManager.remoteCheckerForTask
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -90,7 +91,7 @@ class RetryAction(actionText: Supplier<@ActionText String>,
 
     override fun onFinished() {
       resetTaskStatus()
-      ApplicationManager.getApplication().invokeLater {
+      project.invokeLater {
         TaskDescriptionView.getInstance(project).updateTaskSpecificPanel()
         TaskDescriptionView.getInstance(project).updateCheckPanel(task)
       }

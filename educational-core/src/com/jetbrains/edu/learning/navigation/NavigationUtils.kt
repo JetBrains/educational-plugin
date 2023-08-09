@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.navigation
 
 import com.intellij.ide.projectView.ProjectView
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Editor
@@ -196,7 +195,7 @@ object NavigationUtils {
     val course = StudyTaskManager.getInstance(project).course ?: return
     val lesson = course.getLesson(sectionName, lessonName) ?: return
     val task = lesson.getTask(taskName) ?: return
-    ApplicationManager.getApplication().invokeLater { navigateToTask(project, task) }
+    project.invokeLater { navigateToTask(project, task) }
   }
 
   fun navigateToTask(

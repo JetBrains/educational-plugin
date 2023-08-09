@@ -1,6 +1,5 @@
 package com.jetbrains.edu.rust
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
@@ -202,7 +201,7 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
 
     RsCourseProjectRefreshService.getInstance(project).disableProjectRefresh()
 
-    ApplicationManager.getApplication().invokeLater {
+    project.invokeLater {
       WriteCommandAction.runWriteCommandAction(project) {
         try {
           for (pointer in itemPointers) {

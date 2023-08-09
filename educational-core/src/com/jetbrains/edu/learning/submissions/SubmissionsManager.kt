@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType.SUBMISSIONS_TAB
@@ -96,7 +97,7 @@ class SubmissionsManager(private val project: Project) {
   }
 
   private fun updateSubmissionsTab() {
-    ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateTab(SUBMISSIONS_TAB) }
+    project.invokeLater { TaskDescriptionView.getInstance(project).updateTab(SUBMISSIONS_TAB) }
   }
 
   fun containsCorrectSubmission(stepId: Int): Boolean {
