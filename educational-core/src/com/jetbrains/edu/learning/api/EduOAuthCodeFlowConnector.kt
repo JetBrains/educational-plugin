@@ -2,17 +2,18 @@ package com.jetbrains.edu.learning.api
 
 import com.intellij.ide.BrowserUtil
 import com.intellij.util.Urls
+import com.intellij.util.io.origin
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer
-import com.jetbrains.edu.learning.authUtils.OAuthAccount
-import com.jetbrains.edu.learning.authUtils.OAuthUtils
-import com.jetbrains.edu.learning.authUtils.TokenInfo
+import com.jetbrains.edu.learning.authUtils.*
 import com.jetbrains.edu.learning.courseFormat.UserInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import io.netty.handler.codec.http.FullHttpRequest
+import io.netty.handler.codec.http.QueryStringDecoder
 import org.apache.commons.codec.binary.Base64
 import org.apache.http.client.utils.URIBuilder
 import org.jetbrains.ide.BuiltInServerManager
+import org.jetbrains.ide.RestService
 import java.io.IOException
 import java.net.URI
 import java.security.MessageDigest
@@ -27,9 +28,9 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
 
   protected open val baseOAuthTokenUrl: String = "oauth2/token/"
 
-  internal lateinit var state: String
-  private lateinit var codeChallenge: String
-  private lateinit var codeVerifier: String
+  private var state: String = generateSafeRandomString()
+  private var codeVerifier: String = generateSafeRandomString()
+  private var codeChallenge: String? = null
 
   protected abstract val authorizationUrlBuilder: URIBuilder
 
@@ -108,7 +109,7 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
    * Must be synchronized to avoid race condition
    * `receivedState` MUST BE COMPARED with the `state` before any action performed
    */
-  abstract fun login(code: String, receivedState: String): Boolean
+  abstract fun login(code: String): Boolean
 
   @Synchronized
   fun doLogout(authorizationPlace: EduCounterUsageCollector.AuthorizationPlace = EduCounterUsageCollector.AuthorizationPlace.UNKNOWN) {
@@ -118,8 +119,8 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
 
   @Throws(IOException::class)
   private fun createCustomServer(): CustomAuthorizationServer {
-    return CustomAuthorizationServer.create(platformName, oAuthServicePath) { code: String, state: String, _: String ->
-      if (!login(code, state)) "Failed to log in to $platformName" else null
+    return CustomAuthorizationServer.create(platformName, oAuthServicePath) { code: String, receivedState: String, _: String ->
+      if (receivedState != state && !login(code)) "Failed to log in to $platformName" else null
     }
   }
 
@@ -204,6 +205,13 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
     val bytes = ByteArray(32)
     sr.nextBytes(bytes)
     return Base64.encodeBase64URLSafeString(bytes)
+  }
+
+  fun isValidOAuthRequest(request: FullHttpRequest, urlDecoder: QueryStringDecoder): Boolean {
+    val origin = request.origin
+    if (origin.isNullOrEmpty()) return RestService.getStringParameter(STATE, urlDecoder) == state
+    LOG.warn("RestService got request with empty origin")
+    return false
   }
 
   protected inline fun <reified Endpoints> getEndpoints(): Endpoints {

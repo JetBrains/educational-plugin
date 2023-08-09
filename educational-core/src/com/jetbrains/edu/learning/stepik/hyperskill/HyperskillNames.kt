@@ -9,13 +9,13 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 const val HYPERSKILL_TYPE_YAML = "hyperskill"
 const val HYPERSKILL_URL_PROPERTY = "Hyperskill URL"
-const val HYPERSKILL_DEFAULT_URL = "https://hyperskill.org/"
+const val HYPERSKILL_DEFAULT_URL = "https://hyperskill.org"
 const val HYPERSKILL_DEFAULT_HOST = "hyperskill.org"
 const val JBA_HELP = "${MARKETPLACE_PLUGIN_URL}/10081-jetbrains-academy/docs/jetbrains-academy-on-hyperskill.html"
 const val HYPERSKILL_COMMENT_ANCHOR = "#comment"
 const val HYPERSKILL_SOLUTIONS_ANCHOR = "#solutions"
 
-val HYPERSKILL_PROFILE_PATH = "${HYPERSKILL_URL}profile/"
+val HYPERSKILL_PROFILE_PATH = "${HYPERSKILL_URL}/profile/"
 
 val SELECT_PROJECT = EduCoreBundle.message("hyperskill.select.project", HYPERSKILL_PROJECTS_URL, EduNames.JBA)
 

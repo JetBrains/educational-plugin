@@ -7,18 +7,16 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.wm.IdeFrame
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.ui.AppIcon
+import com.intellij.util.io.origin
 import com.jetbrains.edu.learning.EduSettings
-import com.jetbrains.edu.learning.api.EduLoginConnector.Companion.STATE
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import com.jetbrains.edu.learning.authUtils.createResponse
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.stepik.StepikNames.getStepikUrl
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import io.netty.channel.ChannelHandlerContext
-import io.netty.handler.codec.http.FullHttpRequest
-import io.netty.handler.codec.http.HttpMethod
-import io.netty.handler.codec.http.HttpResponseStatus
-import io.netty.handler.codec.http.QueryStringDecoder
+import io.netty.handler.codec.http.*
 import org.jetbrains.io.send
 import java.io.IOException
 import java.lang.reflect.InvocationTargetException
@@ -31,10 +29,9 @@ class StepikRestService : OAuthRestService(StepikNames.STEPIK) {
     request: FullHttpRequest,
     urlDecoder: QueryStringDecoder
   ): Boolean {
-    val uri = request.uri()
-    val codeMatcher = oauthCodePattern.matcher(uri)
-    val errorMatcher = oauthErrorCodePattern.matcher(uri)
-    return if (request.method() === HttpMethod.GET && (codeMatcher.matches() || errorMatcher.matches())) {
+    return if (request.method() === HttpMethod.GET
+               // If isOriginAllowed is `false` check if it is a valid oAuth request with empty origin
+               && ((isOriginAllowed(request) === OriginCheckResult.ALLOW || StepikConnector.getInstance().isValidOAuthRequest(request, urlDecoder)))) {
       true
     }
     else {
@@ -55,15 +52,8 @@ class StepikRestService : OAuthRestService(StepikNames.STEPIK) {
     val codeMatcher = oauthCodePattern.matcher(uri)
     if (codeMatcher.matches()) {
       val code = getStringParameter(CODE_ARGUMENT, urlDecoder)
-
-      val receivedState = getStringParameter(STATE, urlDecoder) ?: sendErrorResponse(
-        request,
-        context,
-        "State param was not received."
-      )
-
       if (code != null) {
-        val success = StepikConnector.getInstance().login(code, receivedState)
+        val success = StepikConnector.getInstance().login(code)
         val user = EduSettings.getInstance().user
         if (success && user != null) {
           showOkPage(request, context)
@@ -82,6 +72,16 @@ class StepikRestService : OAuthRestService(StepikNames.STEPIK) {
   }
 
   override fun getServiceName(): String = StepikConnector.getInstance().serviceName
+
+  override fun isOriginAllowed(request: HttpRequest): OriginCheckResult {
+    val originAllowed = super.isOriginAllowed(request)
+    if (originAllowed == OriginCheckResult.FORBID) {
+      val origin = request.origin ?: return OriginCheckResult.FORBID
+      return if (origin == getStepikUrl()) OriginCheckResult.ALLOW
+      else OriginCheckResult.ASK_CONFIRMATION
+    }
+    return originAllowed
+  }
 
   private fun focusOnApplicationWindow() {
     val frame = WindowManager.getInstance().findVisibleFrame() ?: return

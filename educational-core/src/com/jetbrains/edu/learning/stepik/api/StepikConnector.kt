@@ -72,8 +72,7 @@ abstract class StepikConnector : EduOAuthCodeFlowConnector<StepikUser, StepikUse
   // Authorization requests:
 
   @Synchronized
-  override fun login(code: String, receivedState: String): Boolean {
-    if (state != receivedState) return false
+  override fun login(code: String): Boolean {
     val tokenInfo = retrieveLoginToken(code, getRedirectUri()) ?: return false
     val stepikUser = StepikUser(tokenInfo)
     val currentUser = getUserInfo(stepikUser, tokenInfo.accessToken) ?: return false

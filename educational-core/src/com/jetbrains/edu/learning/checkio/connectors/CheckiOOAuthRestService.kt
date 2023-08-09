@@ -1,13 +1,12 @@
 package com.jetbrains.edu.learning.checkio.connectors
 
-import com.jetbrains.edu.learning.api.EduLoginConnector.Companion.STATE
+import com.intellij.util.io.origin
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_URL
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CHECKIO
 import io.netty.channel.ChannelHandlerContext
-import io.netty.handler.codec.http.FullHttpRequest
-import io.netty.handler.codec.http.HttpMethod
-import io.netty.handler.codec.http.HttpResponseStatus
-import io.netty.handler.codec.http.QueryStringDecoder
+import io.netty.handler.codec.http.*
 import java.io.IOException
 import java.lang.reflect.InvocationTargetException
 import java.util.regex.Pattern
@@ -20,9 +19,9 @@ abstract class CheckiOOAuthRestService(platformName: String, private val oAuthCo
 
   @Throws(InterruptedException::class, InvocationTargetException::class)
   override fun isHostTrusted(request: FullHttpRequest, urlDecoder: QueryStringDecoder): Boolean {
-    val uri = request.uri()
-    val codeMatcher = oAuthCodePattern.matcher(uri)
-    return if (request.method() === HttpMethod.GET && codeMatcher.matches()) {
+    return if (request.method() === HttpMethod.GET
+               // If isOriginAllowed is `false` check if it is a valid oAuth request with empty origin
+               && (isOriginAllowed(request) === OriginCheckResult.ALLOW || oAuthConnector.isValidOAuthRequest(request, urlDecoder))) {
       true
     }
     else super.isHostTrusted(request, urlDecoder)
@@ -39,15 +38,8 @@ abstract class CheckiOOAuthRestService(platformName: String, private val oAuthCo
     if (oAuthCodePattern.matcher(uri).matches()) {
       // cannot be null because of pattern
       val code = getStringParameter(CODE_ARGUMENT, urlDecoder)!!
-
-      val receivedState = getStringParameter(STATE, urlDecoder) ?: return sendErrorResponse(
-        request,
-        context,
-        "State param was not received."
-      )
-
       LOG.info("$platformName: OAuth code is handled")
-      val success = oAuthConnector.login(code, receivedState)
+      val success = oAuthConnector.login(code)
       return if (success) {
         sendOkResponse(request, context)
       }
@@ -58,5 +50,15 @@ abstract class CheckiOOAuthRestService(platformName: String, private val oAuthCo
     }
     sendStatus(HttpResponseStatus.BAD_REQUEST, false, context.channel())
     return "Unknown command: $uri"
+  }
+
+  override fun isOriginAllowed(request: HttpRequest): OriginCheckResult {
+    val originAllowed = super.isOriginAllowed(request)
+    if (originAllowed == OriginCheckResult.FORBID) {
+      val origin = request.origin ?: return OriginCheckResult.FORBID
+      return if (origin == CHECKIO_URL) OriginCheckResult.ALLOW
+      else OriginCheckResult.ASK_CONFIRMATION
+    }
+    return originAllowed
   }
 }

@@ -91,8 +91,7 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
   // Authorization requests:
 
   @Synchronized
-  override fun login(code: String, receivedState: String): Boolean {
-    if (state != receivedState) return false
+  override fun login(code: String): Boolean {
     val tokenInfo = retrieveLoginToken(code, getRedirectUri()) ?: return false
     val account = HyperskillAccount(tokenInfo.expiresIn)
     val currentUser = getUserInfo(account, tokenInfo.accessToken) ?: return false

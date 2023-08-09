@@ -2,8 +2,8 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.ui.Messages
+import com.intellij.util.io.origin
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.api.EduLoginConnector.Companion.STATE
 import com.jetbrains.edu.learning.authUtils.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL
 import com.jetbrains.edu.learning.courseFormat.ext.CourseValidationResult
@@ -27,17 +27,9 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
 
   @Throws(InterruptedException::class, InvocationTargetException::class)
   override fun isHostTrusted(request: FullHttpRequest, urlDecoder: QueryStringDecoder): Boolean {
-    val uri = request.uri()
-    val oAuthCodeMatcher = OAUTH_CODE_PATTERN.matcher(uri)
-    val oAuthErrorMatcher = OAUTH_ERROR_CODE_PATTERN.matcher(uri)
-    val openCourseMatcher = OPEN_COURSE_PATTERN.matcher(uri)
-    val openStepMatcher = OPEN_STEP_PATTERN.matcher(uri)
-    val pluginInfo = PLUGIN_INFO.matcher(uri)
-    return if (request.method() === HttpMethod.GET && (oAuthCodeMatcher.matches()
-                                                       || oAuthErrorMatcher.matches()
-                                                       || openCourseMatcher.matches()
-                                                       || openStepMatcher.matches()
-                                                       || pluginInfo.matches())) {
+    return if (request.method() === HttpMethod.GET
+               // If isOriginAllowed is `false` check if it is a valid oAuth request with empty origin
+               && ((isOriginAllowed(request) === OriginCheckResult.ALLOW || HyperskillConnector.getInstance().isValidOAuthRequest(request, urlDecoder)))) {
       true
     }
     else {
@@ -61,13 +53,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
 
     if (OAUTH_CODE_PATTERN.matcher(uri).matches()) {
       val code = getStringParameter(CODE_ARGUMENT, urlDecoder)!! // cannot be null because of pattern
-      val receivedState = getStringParameter(STATE, urlDecoder) ?: return sendErrorResponse(
-        request,
-        context,
-        "State param was not received."
-      )
-
-      val success = HyperskillConnector.getInstance().login(code, receivedState)
+      val success = HyperskillConnector.getInstance().login(code)
       if (success) {
         LOG.info("$platformName: OAuth code is handled")
         val pageContent = getInternalTemplateText("hyperskill.redirectPage.html")
@@ -97,6 +83,16 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
   }
 
   override fun getServiceName(): String = HyperskillConnector.getInstance().serviceName
+
+  override fun isOriginAllowed(request: HttpRequest): OriginCheckResult {
+    val originAllowed = super.isOriginAllowed(request)
+    if (originAllowed == OriginCheckResult.FORBID) {
+      val origin = request.origin ?: return OriginCheckResult.FORBID
+      return if (origin == HYPERSKILL_URL) OriginCheckResult.ALLOW
+      else OriginCheckResult.ASK_CONFIRMATION
+    }
+    return originAllowed
+  }
 
   private fun withHyperskillAuthorization(userId: Int, action: () -> String?): String? {
     val connector = HyperskillConnector.getInstance()

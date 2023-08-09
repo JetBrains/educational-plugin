@@ -56,8 +56,7 @@ abstract class CheckiOOAuthConnector : EduOAuthCodeFlowConnector<CheckiOAccount,
   }
 
   @Synchronized
-  override fun login(code: String, receivedState: String): Boolean {
-    if (state != receivedState) return false
+  override fun login(code: String): Boolean {
     if (account != null) return true
     val tokenInfo = retrieveLoginToken(code, getRedirectUri()) ?: return false
     val checkiOAccount = CheckiOAccount(tokenInfo)

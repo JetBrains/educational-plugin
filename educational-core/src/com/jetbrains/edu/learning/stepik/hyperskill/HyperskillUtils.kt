@@ -138,12 +138,12 @@ fun stageLink(task: Task): String {
 
 fun stageLink(projectId: Int, stageId: Int) = "$HYPERSKILL_PROJECTS_URL/$projectId/stages/$stageId/implement"
 
-fun stepLink(stepId: Int) = "${HYPERSKILL_URL}learn/step/$stepId"
+fun stepLink(stepId: Int) = "${HYPERSKILL_URL}/learn/step/$stepId"
 
 /**
  * If lesson is not complete when next step appear
  */
-fun topicCompletedLink(topicId: Int) = "${HYPERSKILL_URL}learn/topic/${topicId}"
+fun topicCompletedLink(topicId: Int) = "${HYPERSKILL_URL}/learn/topic/${topicId}"
 
 fun isHyperskillSupportAvailable(): Boolean = EduConfiguratorManager.allExtensions().any { it.courseType == HYPERSKILL }
 

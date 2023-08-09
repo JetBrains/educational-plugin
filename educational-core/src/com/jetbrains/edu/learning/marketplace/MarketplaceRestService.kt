@@ -14,23 +14,9 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.notificationFromCourseValidation
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.http.*
-import java.lang.reflect.InvocationTargetException
 import java.util.regex.Pattern
 
 class MarketplaceRestService : OAuthRestService(MARKETPLACE) {
-
-  @Throws(InterruptedException::class, InvocationTargetException::class)
-  override fun isHostTrusted(request: FullHttpRequest, urlDecoder: QueryStringDecoder): Boolean {
-    val uri = request.uri()
-    val isOauthCodeRequest = getStringParameter(CODE_ARGUMENT, urlDecoder) != null
-    val isOpenCourseRequest = getIntParameter(COURSE_ID, urlDecoder) != -1
-    val isErrorRequest = getStringParameter(ERROR, urlDecoder) != null
-    val isPluginInfoRequest = uri.contains(INFO)
-    return if (request.method() === HttpMethod.GET && (isOauthCodeRequest || isOpenCourseRequest || isErrorRequest || isPluginInfoRequest)) {
-      true
-    }
-    else super.isHostTrusted(request, urlDecoder)
-  }
 
   override fun execute(urlDecoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
     val uri = urlDecoder.uri()
@@ -88,7 +74,6 @@ class MarketplaceRestService : OAuthRestService(MARKETPLACE) {
 
   companion object {
     private const val COURSE_ID = "course_id"
-    private const val ERROR = "error"
     private const val INFO = "info"
     private val JETBRAINS_ORIGIN_PATTERN = Pattern.compile("https://([a-z0-9-]+\\.)*jetbrains.com$")
     private val TRUSTED_ORIGINS = setOf(PLUGINS_REPOSITORY_URL, PLUGINS_EDU_DEMO, PLUGINS_MASTER_DEMO)
