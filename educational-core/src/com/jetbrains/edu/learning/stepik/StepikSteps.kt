@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.util.StdConverter
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
@@ -23,6 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.findTaskFileInDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
+import com.jetbrains.edu.learning.courseFormat.ext.updateDescriptionTextAndFormat
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -99,7 +99,7 @@ class Step {
   constructor()
 
   constructor(project: Project, task: Task) {
-    CourseArchiveCreator.addDescriptions(project, task)
+    task.updateDescriptionTextAndFormat(project)
     text = if (task.descriptionFormat == DescriptionFormat.MD && task.course !is HyperskillCourse) {
       // convert to html because Stepik website can't display markdown
       EduUtilsKt.convertToHtml(task.descriptionText)

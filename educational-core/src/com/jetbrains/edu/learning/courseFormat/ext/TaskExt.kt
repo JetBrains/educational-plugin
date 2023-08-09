@@ -4,11 +4,13 @@ package com.jetbrains.edu.learning.courseFormat.ext
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ApplicationNamesInfo
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
@@ -31,12 +33,15 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.addHeader
 import com.jetbrains.edu.learning.taskDescription.removeHyperskillTags
 import com.jetbrains.edu.learning.taskDescription.replaceActionIDsWithShortcuts
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
 import com.jetbrains.edu.learning.yaml.errorHandling.noDirForItemMessage
+import java.io.IOException
 import kotlin.collections.component1
 import kotlin.collections.component2
 
@@ -224,6 +229,31 @@ fun Task.findTaskDescriptionFile(project: Project): VirtualFile? {
   file ?: logger<Task>().warn("No task description file for $name")
 
   return file
+}
+
+fun Task.updateDescriptionTextAndFormat(project: Project) = runReadAction {
+  val taskDescriptionFile = findTaskDescriptionFile(project)
+
+  if (taskDescriptionFile == null) {
+    descriptionFormat = DescriptionFormat.HTML
+    descriptionText = EduCoreBundle.message("task.description.not.found")
+    return@runReadAction
+  }
+
+  try {
+    descriptionText = VfsUtil.loadText(taskDescriptionFile)
+    descriptionFormat = taskDescriptionFile.toDescriptionFormat()
+  }
+  catch (e: IOException) {
+    logger<Task>().warn("Failed to load text " + taskDescriptionFile.name)
+    descriptionFormat = DescriptionFormat.HTML
+    descriptionText = EduCoreBundle.message("task.description.not.found")
+  }
+}
+
+private fun VirtualFile.toDescriptionFormat(): DescriptionFormat {
+  return DescriptionFormat.values().firstOrNull { it.fileExtension == extension } ?: loadingError(
+    EduCoreBundle.message("yaml.editor.invalid.description"))
 }
 
 fun Task.getTaskTextFromTask(project: Project): String? {

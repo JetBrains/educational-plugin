@@ -48,7 +48,7 @@ abstract class CourseArchiveTestBase : EduActionTestCase() {
     return FileUtil.loadFile(File(testDataPath, fileName))
   }
 
-  private fun generateJson(): String {
+  protected fun generateJson(): String {
     val course = StudyTaskManager.getInstance(project).course ?: error("No course found")
     val creator = getArchiveCreator()
     creator.prepareCourse(course)

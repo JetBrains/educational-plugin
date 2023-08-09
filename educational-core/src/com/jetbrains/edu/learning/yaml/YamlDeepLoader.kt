@@ -4,15 +4,14 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.ext.findTaskDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
+import com.jetbrains.edu.learning.courseFormat.ext.updateDescriptionTextAndFormat
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -173,20 +172,8 @@ object YamlDeepLoader {
   private fun Course.setDescriptionInfo(project: Project) {
     visitLessons { lesson ->
       lesson.visitTasks {
-        val taskDescriptionFile = it.findTaskDescriptionFile(project)
-        if (taskDescriptionFile != null) {
-          it.descriptionFormat = taskDescriptionFile.toDescriptionFormat()
-          it.descriptionText = VfsUtil.loadText(taskDescriptionFile)
-        } else {
-          it.descriptionFormat = DescriptionFormat.HTML
-          it.descriptionText = EduCoreBundle.message("task.description.not.found")
-        }
+        it.updateDescriptionTextAndFormat(project)
       }
     }
-  }
-
-  private fun VirtualFile.toDescriptionFormat(): DescriptionFormat {
-    return DescriptionFormat.values().firstOrNull { it.fileExtension == extension } ?: loadingError(
-      EduCoreBundle.message("yaml.editor.invalid.description"))
   }
 }

@@ -1,9 +1,14 @@
 package com.jetbrains.edu.coursecreator.actions
 
+import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.testFramework.utils.vfs.getFile
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
 import com.jetbrains.edu.learning.courseFormat.Vendor
+import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.marketplace.addVendor
 import com.jetbrains.edu.learning.marketplace.api.Author
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
@@ -172,6 +177,37 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     val firstTask = getFirstTask(course) ?: return
     firstTask.feedbackLink = "https://task_link.com"
     doTest()
+  }
+
+  fun `test creating archive after changing task format`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {}
+    val task = course.getLesson("lesson1")?.getTask("task1") ?: error("no task1 found")
+    val taskDir = task.getDir(project.courseDir) ?: error("no dir for task1")
+
+    // first, test that course archive is created with the task description in MD format
+
+    val descriptionFile = taskDir.getFile("task.md")
+    val mdDescription = "# MD description"
+
+    runWriteAction {
+      VfsUtil.saveText(descriptionFile, mdDescription)
+    }
+
+    val mdJson = generateJson()
+
+    assertTrue("Json should contain correct description text", mdJson.contains(""""description_text" : "$mdDescription""""))
+    assertTrue("Description format should be MD", mdJson.contains(""""description_format" : "MD""""))
+
+    // second, test that if we rename the file from "task.md" to "task.html" outside IDE, the course archive is created in HTML format
+    val htmlDescription = "<h1>HTML description</h1>"
+    runWriteAction {
+      descriptionFile.rename(null, "task.html")
+      VfsUtil.saveText(descriptionFile, htmlDescription)
+    }
+
+    val htmlJson = generateJson()
+    assertTrue("Json should contain correct description text", htmlJson.contains(""""description_text" : "$htmlDescription""""))
+    assertTrue("Description format should be HTML", htmlJson.contains(""""description_format" : "HTML""""))
   }
 
   override fun getTestDataPath(): String {

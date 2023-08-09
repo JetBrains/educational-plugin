@@ -19,7 +19,6 @@ import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
-import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.io.ZipUtil
@@ -206,7 +205,7 @@ class CourseArchiveCreator(
     private fun loadActualTexts(project: Project, task: Task) {
       val taskDir = task.getDir(project.courseDir) ?: return
       convertToStudentTaskFiles(project, task, taskDir)
-      addDescriptions(project, task)
+      task.updateDescriptionTextAndFormat(project)
     }
 
     private fun convertToStudentTaskFiles(project: Project, task: Task, taskDir: VirtualFile) {
@@ -219,28 +218,6 @@ class CourseArchiveCreator(
         }
       }
       task.taskFiles = studentTaskFiles
-    }
-
-    fun addDescriptions(project: Project, task: Task) {
-      val descriptionFile = task.getDescriptionFile(project)
-
-      if (descriptionFile != null) {
-        try {
-          task.descriptionText = VfsUtilCore.loadText(descriptionFile)
-          val extension = descriptionFile.extension
-          val descriptionFormat = DescriptionFormat.values().firstOrNull { format -> format.fileExtension == extension }
-          if (descriptionFormat != null) {
-            task.descriptionFormat = descriptionFormat
-          }
-        }
-        catch (e: IOException) {
-          LOG.warn("Failed to load text " + descriptionFile.name)
-        }
-
-      }
-      else {
-        LOG.warn("Can't find description file for task ${task.name}")
-      }
     }
 
     private fun collectCourseDependencies(project: Project, course: Course): List<PluginInfo> {
