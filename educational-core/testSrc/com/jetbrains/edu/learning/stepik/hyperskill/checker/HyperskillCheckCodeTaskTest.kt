@@ -1,41 +1,27 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
-import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.MockResponseFactory
-import com.jetbrains.edu.learning.actions.CheckAction
-import com.jetbrains.edu.learning.checker.CheckActionListener
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.pathWithoutPrams
-import com.jetbrains.edu.learning.navigation.NavigationUtils
-import com.jetbrains.edu.learning.stepik.hyperskill.*
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.MockWebSocketState
+import com.jetbrains.edu.learning.stepik.hyperskill.confirmConnection
+import com.jetbrains.edu.learning.stepik.hyperskill.confirmSubscription
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.testAction
-import com.jetbrains.edu.learning.ui.getUICheckLabel
+import com.jetbrains.edu.learning.stepik.hyperskill.webSocketConfiguration
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import org.intellij.lang.annotations.Language
 
-class HyperskillCheckCodeTaskTest : EduTestCase() {
-  private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
+class HyperskillCheckCodeTaskTest : HyperskillCheckActionTestBase() {
 
-  override fun setUp() {
-    super.setUp()
+  override fun createCourse() {
     courseWithFiles(courseProducer = ::HyperskillCourse) {
       lesson("Problems") {
         codeTask("task1", stepId = 4) {
           taskFile("Task.txt", "fun foo() {}")
         }
       }
-    } as HyperskillCourse
-
-    logInFakeHyperskillUser()
-    NavigationUtils.navigateToTask(project, findTask(0, 0))
-  }
-
-  override fun tearDown() {
-    logOutFakeHyperskillUser()
-    super.tearDown()
+    }
   }
 
   fun `test successful check via web socket`() {
@@ -58,7 +44,8 @@ class HyperskillCheckCodeTaskTest : EduTestCase() {
       }
     })
 
-    doTest()
+    val task = findTask(0, 0)
+    checkCheckAction(task, CheckStatus.Failed, "Failed")
   }
 
   fun `test submission made, result not received via web socket`() {
@@ -82,7 +69,8 @@ class HyperskillCheckCodeTaskTest : EduTestCase() {
       }
     })
 
-    doTest()
+    val task = findTask(0, 0)
+    checkCheckAction(task, CheckStatus.Failed, "Failed")
   }
 
   fun `test no submission made, result received via REST API`() {
@@ -94,7 +82,8 @@ class HyperskillCheckCodeTaskTest : EduTestCase() {
       }
     })
 
-    doTest()
+    val task = findTask(0, 0)
+    checkCheckAction(task, CheckStatus.Failed, "Failed")
   }
 
   fun `test failed to get submission status via API`() {
@@ -115,10 +104,8 @@ class HyperskillCheckCodeTaskTest : EduTestCase() {
       }
     })
 
-    CheckActionListener.shouldSkip()
-    doTest()
-//    val task = findTask(0, 0)
-//    testAction(CheckAction(task))
+    val task = findTask(0, 0)
+    checkCheckAction(task, CheckStatus.Unchecked)
   }
 
   private fun configureResponses() {
@@ -132,13 +119,6 @@ class HyperskillCheckCodeTaskTest : EduTestCase() {
         }
       )
     }
-  }
-
-  private fun doTest() {
-    CheckActionListener.shouldFail()
-    CheckActionListener.expectedMessage { "Failed" }
-    val task = findTask(0, 0)
-    testAction(CheckAction(task.getUICheckLabel()))
   }
 
   @Language("JSON")
