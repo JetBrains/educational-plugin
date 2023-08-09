@@ -1,67 +1,50 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
 import com.jetbrains.edu.learning.MockResponseFactory
-import com.jetbrains.edu.learning.actions.CheckAction
-import com.jetbrains.edu.learning.checker.CheckActionListener
-import com.jetbrains.edu.learning.checker.CheckersTestBase
-import com.jetbrains.edu.learning.checker.EduCheckerFixture
-import com.jetbrains.edu.learning.checker.PlaintTextCheckerFixture
-import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.navigation.NavigationUtils
-import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
-import com.jetbrains.edu.learning.stepik.StepikTestUtils.format
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.pathWithoutPrams
-import com.jetbrains.edu.learning.stepik.hyperskill.logInFakeHyperskillUser
-import com.jetbrains.edu.learning.stepik.hyperskill.logOutFakeHyperskillUser
-import com.jetbrains.edu.learning.testAction
-import com.jetbrains.edu.learning.ui.getUICheckLabel
+import com.jetbrains.edu.learning.stepik.StepikTestUtils.format
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import org.intellij.lang.annotations.Language
 import java.util.*
 
-class HyperskillCheckChoiceTaskTest : CheckersTestBase<EmptyProjectSettings>() {
-  private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
+class HyperskillCheckChoiceTaskTest : HyperskillCheckActionTestBase() {
 
-  override fun createCheckerFixture(): EduCheckerFixture<EmptyProjectSettings> = PlaintTextCheckerFixture()
-
-  override fun createCourse(): Course = course(courseProducer = ::HyperskillCourse) {
-    section("Topics") {
-      lesson("1_lesson_correct") {
-        choiceTask(stepId = 1,
-                   name = "1_choice_task",
-                   isMultipleChoice = true,
-                   choiceOptions = mapOf("Correct1" to ChoiceOptionStatus.UNKNOWN,
-                                         "Incorrect" to ChoiceOptionStatus.UNKNOWN,
-                                         "Correct2" to ChoiceOptionStatus.UNKNOWN),
-                   selectedVariants = mutableListOf(0, 2)) {
-          taskFile("Task.txt", "")
-        }
-        choiceTask(stepId = 2,
-                   name = "2_choice_task",
-                   isMultipleChoice = false,
-                   choiceOptions = mapOf("Correct1" to ChoiceOptionStatus.UNKNOWN,
-                                         "Incorrect" to ChoiceOptionStatus.UNKNOWN,
-                                         "Correct2" to ChoiceOptionStatus.UNKNOWN)) {
-          taskFile("Task.txt", "")
+  override fun createCourse() {
+    courseWithFiles(courseProducer = ::HyperskillCourse) {
+      section("Topics") {
+        lesson("1_lesson_correct") {
+          choiceTask(
+            stepId = 1,
+            name = "1_choice_task",
+            isMultipleChoice = true,
+            choiceOptions = mapOf(
+              "Correct1" to ChoiceOptionStatus.UNKNOWN,
+              "Incorrect" to ChoiceOptionStatus.UNKNOWN,
+              "Correct2" to ChoiceOptionStatus.UNKNOWN
+            ),
+            selectedVariants = mutableListOf(0, 2)
+          ) {
+            taskFile("Task.txt", "")
+          }
+          choiceTask(
+            stepId = 2,
+            name = "2_choice_task",
+            isMultipleChoice = false,
+            choiceOptions = mapOf(
+              "Correct1" to ChoiceOptionStatus.UNKNOWN,
+              "Incorrect" to ChoiceOptionStatus.UNKNOWN,
+              "Correct2" to ChoiceOptionStatus.UNKNOWN
+            )
+          ) {
+            taskFile("Task.txt", "")
+          }
         }
       }
     }
-  } as HyperskillCourse
-
-  override fun setUp() {
-    super.setUp()
-    logInFakeHyperskillUser()
-  }
-
-  override fun tearDown() {
-    logOutFakeHyperskillUser()
-    super.tearDown()
   }
 
   fun `test choice task correct`() {
@@ -75,11 +58,8 @@ class HyperskillCheckChoiceTaskTest : CheckersTestBase<EmptyProjectSettings>() {
         }
       )
     }
-    CheckActionListener.reset()
-    CheckActionListener.expectedMessage { "<html>Succeed solution</html>" }
-    val task = myCourse.allTasks[0]
-    NavigationUtils.navigateToTask(project, task)
-    testAction(CheckAction(task.getUICheckLabel()))
+    val task = getCourse().allTasks[0]
+    checkCheckAction(task, CheckStatus.Solved, "<html>Succeed solution</html>")
   }
 
 
@@ -95,19 +75,13 @@ class HyperskillCheckChoiceTaskTest : CheckersTestBase<EmptyProjectSettings>() {
       )
     }
 
-    CheckActionListener.shouldFail()
-    CheckActionListener.expectedMessage { "Wrong solution" }
-    val task = myCourse.allTasks[0]
-    NavigationUtils.navigateToTask(project, task)
-    testAction(CheckAction(task.getUICheckLabel()))
+    val task = getCourse().allTasks[0]
+    checkCheckAction(task, CheckStatus.Failed, "Wrong solution")
   }
 
-  fun `test choice task nothing selected `() {
-    CheckActionListener.shouldFail()
-    CheckActionListener.expectedMessage { EduCoreBundle.message("choice.task.empty.variant") }
-    val task = myCourse.allTasks[1]
-    NavigationUtils.navigateToTask(project, task)
-    testAction(CheckAction(task.getUICheckLabel()))
+  fun `test choice task nothing selected`() {
+    val task = getCourse().allTasks[1]
+    checkCheckAction(task, CheckStatus.Failed, EduCoreBundle.message("choice.task.empty.variant"))
   }
 
   @Language("JSON")
