@@ -1,58 +1,41 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
 import com.jetbrains.edu.learning.MockResponseFactory
-import com.jetbrains.edu.learning.checker.*
-import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
-import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.pathWithoutPrams
-import com.jetbrains.edu.learning.stepik.hyperskill.logInFakeHyperskillUser
-import com.jetbrains.edu.learning.stepik.hyperskill.logOutFakeHyperskillUser
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import org.intellij.lang.annotations.Language
 
-class HyperskillCheckEduTaskTest : CheckersTestBase<EmptyProjectSettings>() {
-  private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
+class HyperskillCheckEduTaskTest : HyperskillCheckActionTestBase() {
 
-  override fun createCheckerFixture(): EduCheckerFixture<EmptyProjectSettings> = PlaintTextCheckerFixture()
-
-  override fun createCourse(): Course = course(courseProducer = ::HyperskillCourse) {
-    section("Topics") {
-      lesson("Topic name") {
-        eduTask("Problem name 1") {
-          checkResultFile(CheckStatus.Solved)
-        }
-        eduTask("Problem name 2") {
-          checkResultFile(CheckStatus.Failed)
+  override fun createCourse() {
+    courseWithFiles(courseProducer = ::HyperskillCourse) {
+      section("Topics") {
+        lesson("Topic name") {
+          eduTask("Problem name 1") {
+            checkResultFile(CheckStatus.Solved)
+          }
+          eduTask("Problem name 2") {
+            checkResultFile(CheckStatus.Failed)
+          }
         }
       }
     }
-  } as HyperskillCourse
+  }
 
   override fun setUp() {
     super.setUp()
     configureResponse()
-    logInFakeHyperskillUser()
-  }
-
-  override fun tearDown() {
-    logOutFakeHyperskillUser()
-    super.tearDown()
   }
 
   fun `test solved edu task`() {
-    CheckActionListener.reset()
-    CheckActionListener.expectedMessage { CheckUtils.CONGRATULATIONS }
-    checkTask(myCourse.allTasks[0]).apply { assertEmpty(this) }
+    checkCheckAction(getCourse().allTasks[0], CheckStatus.Solved, CheckUtils.CONGRATULATIONS)
   }
 
   fun `test failed edu task`() {
-    CheckActionListener.shouldFail()
-    checkTask(myCourse.allTasks[1]).apply { assertEmpty(this) }
+    checkCheckAction(getCourse().allTasks[1], CheckStatus.Failed)
   }
 
   private fun configureResponse() {
