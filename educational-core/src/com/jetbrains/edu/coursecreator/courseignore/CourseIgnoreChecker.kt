@@ -24,7 +24,7 @@ class CourseIgnoreChecker(val project: Project) {
 
       CachedValuesManager.getCachedValue(courseIgnorePsiFile, CachedValueProvider {
         CachedValueProvider.Result(
-          CourseIgnoreRules.interpret(project, courseIgnorePsiFile),
+          CourseIgnoreRules.create(project, courseIgnorePsiFile),
           PsiModificationTracker.MODIFICATION_COUNT
         )
       })

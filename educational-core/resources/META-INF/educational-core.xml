@@ -2,7 +2,7 @@
   <!--suppress PluginXmlValidity -->
   <dependencies>
     <plugin id="com.intellij.modules.lang"/>
-    <plugin id="com.intellij.modules.vcs"/>
+    <plugin id="com.intellij.modules.vcs"/> <!-- to support the .courseignore language -->
   </dependencies>
 
   <resource-bundle>messages.EduCoreBundle</resource-bundle>

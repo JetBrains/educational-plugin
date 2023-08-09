@@ -12,16 +12,11 @@ import java.util.regex.Pattern
 
 private data class IgnorePattern(val pattern: Pattern, val isNegated: Boolean)
 
-class CourseIgnoreRules private constructor(private val reversedListOfPatterns: List<IgnorePattern>) {
+class CourseIgnoreRules private constructor(private val patterns: List<IgnorePattern>) {
 
   private fun isIgnored(path: String): Boolean {
-    for ((pattern, isNegated) in reversedListOfPatterns) {
-      if (pattern.matcher(path).find()) {
-        return !isNegated
-      }
-    }
-
-    return false
+    val matchingPattern = patterns.findLast { it.pattern.matcher(path).find() } ?: return false
+    return !matchingPattern.isNegated
   }
 
   fun isIgnored(file: VirtualFile, project: Project): Boolean {
@@ -41,7 +36,7 @@ class CourseIgnoreRules private constructor(private val reversedListOfPatterns: 
 
     val EMPTY: CourseIgnoreRules = CourseIgnoreRules(listOf())
 
-    fun interpret(project: Project, courseIgnorePsiFile: PsiFile): CourseIgnoreRules {
+    fun create(project: Project, courseIgnorePsiFile: PsiFile): CourseIgnoreRules {
       val patternCache = PatternCache.getInstance(project)
       val patterns = mutableListOf<IgnorePattern>()
 
@@ -53,7 +48,7 @@ class CourseIgnoreRules private constructor(private val reversedListOfPatterns: 
         }
       })
 
-      return CourseIgnoreRules(patterns.reversed())
+      return CourseIgnoreRules(patterns)
     }
   }
 }

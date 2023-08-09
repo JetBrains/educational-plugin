@@ -981,11 +981,11 @@ Will exclude:
 * the file `file2.png` in the `dir` subdirectory of the root directory.
 
 #### Version 2
-A [gitignore syntax](https://git-scm.com/docs/gitignore) is supported
+The [gitignore syntax](https://git-scm.com/docs/gitignore) is supported
 This is a breaking change because the meaning of lines has changed.
 For example, the line `a.txt` in version 1 means only a file
 in the course root directory.
-In version 2 this means any file named `a.txt`.
+In version 2, it means any file named `a.txt`.
 
 The set of implicitly ignored files is the same as in version 1.
 
