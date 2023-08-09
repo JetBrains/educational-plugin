@@ -1,25 +1,20 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
-import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.MockResponseFactory
-import com.jetbrains.edu.learning.actions.CheckAction
-import com.jetbrains.edu.learning.checker.CheckActionListener
-import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.pathWithoutPrams
 import com.jetbrains.edu.learning.stepik.StepikTestUtils.format
-import com.jetbrains.edu.learning.stepik.hyperskill.*
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.MockWebSocketState
+import com.jetbrains.edu.learning.stepik.hyperskill.confirmConnection
+import com.jetbrains.edu.learning.stepik.hyperskill.confirmSubscription
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.testAction
-import com.jetbrains.edu.learning.ui.getUICheckLabel
+import com.jetbrains.edu.learning.stepik.hyperskill.webSocketConfiguration
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import org.intellij.lang.annotations.Language
 import java.util.*
 
-class HyperskillCheckRemoteEduTaskTest : EduTestCase() {
-  private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
+class HyperskillCheckRemoteEduTaskTest : HyperskillCheckActionTestBase() {
 
   override fun setUp() {
     super.setUp()
@@ -30,16 +25,7 @@ class HyperskillCheckRemoteEduTaskTest : EduTestCase() {
           taskFile("tests/Test.txt", "fun foo() {}")
         }
       }
-    } as HyperskillCourse
-
-    CheckActionListener.registerListener(testRootDisposable)
-    logInFakeHyperskillUser()
-    NavigationUtils.navigateToTask(project, findTask(0, 0))
-  }
-
-  override fun tearDown() {
-    logOutFakeHyperskillUser()
-    super.tearDown()
+    }
   }
 
   fun `test successful check via web socket`() {
@@ -63,7 +49,8 @@ class HyperskillCheckRemoteEduTaskTest : EduTestCase() {
       }
     })
 
-    doTest()
+    val task = findTask(0, 0)
+    checkCheckAction(task, CheckStatus.Solved, "<html>Succeed solution</html>")
   }
 
   private fun configureResponses() {
@@ -79,14 +66,8 @@ class HyperskillCheckRemoteEduTaskTest : EduTestCase() {
     }
   }
 
-  private fun doTest() {
-    CheckActionListener.expectedMessage { "<html>Succeed solution</html>" }
-    val task = findTask(0, 0)
-    testAction(CheckAction(task.getUICheckLabel()))
-  }
-
   @Language("JSON")
-  protected val submissionWithSucceedStatus = """
+  private val submissionWithSucceedStatus = """
     {
       "meta": {
         "page": 1,
