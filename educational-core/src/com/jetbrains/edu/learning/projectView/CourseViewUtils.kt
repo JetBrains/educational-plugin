@@ -115,7 +115,7 @@ object CourseViewUtils {
     }
   }
 
-  private val StudyItem.isSolved: Boolean
+  val StudyItem.isSolved: Boolean
     get() {
       return when (this) {
         is Section -> lessons.all { it.isSolved() }

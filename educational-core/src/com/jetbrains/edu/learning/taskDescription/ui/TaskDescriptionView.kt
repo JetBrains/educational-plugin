@@ -26,7 +26,7 @@ abstract class TaskDescriptionView(val project: Project) {
   abstract fun showTab(tabType: TabType)
   abstract fun updateCheckPanel(task: Task?)
   abstract fun updateTaskSpecificPanel()
-  abstract fun updateTopPanel(task: Task?)
+  abstract fun updateNavigationPanel(task: Task?)
   abstract fun updateTaskDescription(task: Task?)
   abstract fun updateTaskDescription()
   abstract fun updateAdditionalTaskTabs(task: Task? = null)

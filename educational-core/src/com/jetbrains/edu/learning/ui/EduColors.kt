@@ -11,6 +11,10 @@ object EduColors {
   val errorTextForeground: Color = JBColor.namedColor("Component.errorForeground", 0xac0013, 0xef5f65)
   val warningTextForeground: Color = JBColor.namedColor("Component.warningForeground", 0xa49152, 0xbbb529)
   val correctLabelForeground: Color = JBColor.namedColor("Submissions.CorrectLabel.foreground", 0x368746, 0x499C54)
+  val navigationMapIconNotSelectedBorder: JBColor = JBColor.namedColor("NavigationMap.icon.not.selected.border", 0xC9CCD6, 0x646464)
+  val navigationMapIconSelectedBorder: JBColor = JBColor.namedColor("NavigationMap.icon.selected.border", 0x3574F0, 0x3574F0)
+  val navigationMapIconSolvedBorder: JBColor = JBColor.namedColor("NavigationMap.icon.solved.border", 0x369650, 0x5FAD65)
+
   val wrongLabelForeground: Color = UIUtil.getErrorForeground()
   val hyperlinkColor: Color get() = getColorFromThemeIfNeeded("Link.activeForeground", JBColor(0x6894C6, 0x5C84C9))
 

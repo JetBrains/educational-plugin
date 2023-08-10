@@ -1,19 +1,14 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
-import com.intellij.icons.AllIcons
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
-import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.ui.HyperlinkAdapter
-import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLoginSuccessfulNotification
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
@@ -36,12 +31,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepWithProjectRequest
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
-import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
-import java.awt.BorderLayout
-import javax.swing.JPanel
-import javax.swing.JSeparator
 import javax.swing.event.HyperlinkEvent
 
 private val LOG: Logger = Logger.getInstance("HyperskillUtils")
@@ -82,42 +72,12 @@ private fun computeSelectedStage(course: HyperskillCourse): Int? {
   return course.stages[if (firstUnsolvedTask != -1) firstUnsolvedTask else projectLesson.taskList.size - 1].id
 }
 
-fun getTopPanelForProblem(project: Project, course: HyperskillCourse, task: Task?): JPanel? {
-  if (task == null || course.isTaskInProject(task) || CCUtils.isCourseCreator(project) || course.getProjectLesson() == null) {
-    return null
-  }
-
-  val linkText = EduCoreBundle.message("hyperskill.navigate.to.project", course.presentableName)
-  val actionLink = LightColoredActionLink(linkText, NavigateToProjectAction(project, course), AllIcons.Actions.Back).apply {
-    border = JBUI.Borders.emptyBottom(8)
-  }
-
-  return JPanel().apply {
-    background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
-    border = JBUI.Borders.empty(15, 0, 8, 15)
-    add(actionLink, BorderLayout.NORTH)
-    add(JSeparator(), BorderLayout.SOUTH)
-    maximumSize = JBUI.size(Int.MAX_VALUE, 30)
-  }
-}
-
 fun markStageAsCompleted(task: Task) {
   val course = task.course as HyperskillCourse
   val stage = course.stages.getOrNull(task.index - 1) ?: error("No stage for stage ${task.name} in course ${course.name}")
   if (stage.isCompleted) return
   stage.isCompleted = true
   YamlFormatSynchronizer.saveRemoteInfo(course)
-}
-
-private class NavigateToProjectAction(
-  private val project: Project,
-  private val course: HyperskillCourse
-) : DumbAwareAction(null as String?) {
-  override fun actionPerformed(e: AnActionEvent) {
-    val lesson = course.getProjectLesson() ?: return
-    val currentTask = lesson.currentTask() ?: return
-    NavigationUtils.navigateToTask(project, currentTask)
-  }
 }
 
 fun hyperskillTaskLink(task: Task): String {

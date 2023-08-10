@@ -1,8 +1,7 @@
 package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.intellij.ide.ui.LafManagerListener
-import com.intellij.openapi.actionSystem.DataProvider
-import com.intellij.openapi.actionSystem.PlatformDataKeys
+import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
@@ -22,10 +21,11 @@ import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.getTopPanelForProblem
 import com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsService
 import com.jetbrains.edu.learning.submissions.SubmissionsTab
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel
+import com.jetbrains.edu.learning.taskDescription.ui.navigationMap.NavigationMapAction
+import com.jetbrains.edu.learning.taskDescription.ui.navigationMap.NavigationMapPanel
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManagerImpl
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType
@@ -48,7 +48,7 @@ class TaskDescriptionViewImpl(project: Project) : TaskDescriptionView(project), 
         ui.separator.isVisible = value != null
         ui.checkPanel.isVisible = value != null
         updateCheckPanel(value)
-        updateTopPanel(value)
+        updateNavigationPanel(value)
         ui.taskTextTW.updateTaskSpecificPanel(value)
         updateAdditionalTaskTabs(value)
         HyperskillMetricsService.getInstance().viewEvent(value)
@@ -91,13 +91,16 @@ class TaskDescriptionViewImpl(project: Project) : TaskDescriptionView(project), 
     uiContent?.taskTextTW?.updateTaskSpecificPanel(currentTask)
   }
 
-  override fun updateTopPanel(task: Task?) {
-    val topPanel = uiContent?.topPanel ?: return
-    topPanel.removeAll()
+  override fun updateNavigationPanel(task: Task?) {
+    task ?: return
+    val navigationPanel = uiContent?.navigationMapPanel ?: return
+    navigationPanel.setHeader(task.lesson.presentableName)
+    val actions = task.lesson.taskList.map { NavigationMapAction(it, task) }
+    navigationPanel.replaceActions(actions)
+
     val course = StudyTaskManager.getInstance(project).course
     if (course is HyperskillCourse) {
-      val panel = getTopPanelForProblem(project, course, task) ?: return
-      topPanel.add(panel, BorderLayout.SOUTH)
+      navigationPanel.updateTopPanelForProblems(project, course, task)
     }
   }
 
@@ -127,9 +130,9 @@ class TaskDescriptionViewImpl(project: Project) : TaskDescriptionView(project), 
     Disposer.register(contentManager, taskTextTW)
 
     val taskTextPanel = taskTextTW.taskInfoPanel
-    val topPanel = JPanel(BorderLayout())
+    val navigationPanel = NavigationMapPanel()
 
-    panel.add(topPanel, BorderLayout.NORTH)
+    panel.add(navigationPanel, BorderLayout.NORTH)
     panel.add(taskTextPanel, BorderLayout.CENTER)
     taskTextPanel.border = JBUI.Borders.emptyBottom(10)
 
@@ -152,7 +155,7 @@ class TaskDescriptionViewImpl(project: Project) : TaskDescriptionView(project), 
     panel.add(bottomPanel, BorderLayout.SOUTH)
     UIUtil.setBackgroundRecursively(panel, getTaskDescriptionBackgroundColor())
 
-    uiContent = UiContent(topPanel, taskTextTW, checkPanel, separator)
+    uiContent = UiContent(navigationPanel, taskTextTW, checkPanel, separator)
 
     val content = ContentFactory.getInstance()
       .createContent(panel, EduCoreBundle.message("label.description"), false)
@@ -204,7 +207,7 @@ class TaskDescriptionViewImpl(project: Project) : TaskDescriptionView(project), 
   }
 
   class UiContent(
-    val topPanel: JPanel,
+    val navigationMapPanel: NavigationMapPanel,
     val taskTextTW: TaskDescriptionToolWindow,
     val checkPanel: CheckPanel,
     val separator: JSeparator

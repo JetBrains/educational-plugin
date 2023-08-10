@@ -64,7 +64,7 @@ object NavigationUtils {
     return prevLessonTaskList[prevLessonTaskList.size - 1]
   }
 
-  private fun isUnsolvedHyperskillStage(task: Task): Boolean {
+  fun isUnsolvedHyperskillStage(task: Task): Boolean {
     val course = task.course as? HyperskillCourse ?: return false
     if (task.lesson != course.getProjectLesson() || task.status == CheckStatus.Solved) return false
     val stage = course.stages.getOrNull(task.index - 1) ?: return false
