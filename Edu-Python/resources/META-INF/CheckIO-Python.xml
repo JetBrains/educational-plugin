@@ -1,6 +1,8 @@
 <idea-plugin>
   <extensions defaultExtensionNs="com.intellij">
-    <statusBarWidgetFactory implementation="com.jetbrains.edu.python.learning.checkio.PyCheckiOWidgetFactory" order="before positionWidget"/>
+    <statusBarWidgetFactory id="widget.pyCheckiO"
+                            implementation="com.jetbrains.edu.python.learning.checkio.PyCheckiOWidgetFactory"
+                            order="before positionWidget"/>
     <httpRequestHandler implementation="com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOOAuthRestService"/>
     <applicationService serviceImplementation="com.jetbrains.edu.python.learning.checkio.PyCheckiOSettings"/>
   </extensions>

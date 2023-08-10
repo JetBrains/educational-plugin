@@ -1,6 +1,8 @@
 <idea-plugin>
   <extensions defaultExtensionNs="com.intellij">
-    <statusBarWidgetFactory implementation="com.jetbrains.edu.javascript.learning.checkio.JsCheckiOWidgetFactory" order="before positionWidget"/>
+    <statusBarWidgetFactory id="widget.jsCheckiO"
+                            implementation="com.jetbrains.edu.javascript.learning.checkio.JsCheckiOWidgetFactory"
+                            order="before positionWidget"/>
     <httpRequestHandler implementation="com.jetbrains.edu.javascript.learning.checkio.connectors.JsCheckiOOAuthRestService"/>
     <applicationService serviceImplementation="com.jetbrains.edu.javascript.learning.checkio.JsCheckiOSettings"/>
   </extensions>
