@@ -22,15 +22,8 @@ class CCStudentInvisibleFileNode(
   project: Project,
   value: PsiFile,
   viewSettings: ViewSettings,
-  name: String = value.name
+  private val name: String = value.name
 ) : PsiFileNode(project, value, viewSettings) {
-
-  val presentableName: String
-  init {
-    val file = value.virtualFile
-    val isExcluded = isExcluded(file, project)
-    presentableName = if (isExcluded) message("course.creator.course.view.excluded", name) else name
-  }
 
   private fun isExcluded(file: VirtualFile?, project: Project): Boolean {
     file ?: return false
@@ -46,6 +39,11 @@ class CCStudentInvisibleFileNode(
 
   override fun updateImpl(data: PresentationData) {
     super.updateImpl(data)
+
+    val file = value.virtualFile
+    val isExcluded = isExcluded(file, project)
+    val presentableName = if (isExcluded) message("course.creator.course.view.excluded", name) else name
+
     data.clearText()
     data.addText(presentableName, SimpleTextAttributes.GRAY_ATTRIBUTES)
   }

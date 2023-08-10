@@ -25,17 +25,6 @@ class CCNode(
   task: Task?
 ) : DirectoryNode(project, value, viewSettings, task) {
 
-  private val excludedName: String?
-  init {
-    // show node as excluded, if it is not inside a task folder, but is in the .courseignore
-    excludedName = if (task == null && CourseIgnoreRules.loadFromCourseIgnoreFile(project).isIgnored(value.virtualFile)) {
-      EduCoreBundle.message("course.creator.course.view.excluded", value.name)
-    }
-    else {
-      null
-    }
-  }
-
   override fun canNavigate(): Boolean = true
 
   override fun modifyChildNode(childNode: AbstractTreeNode<*>): AbstractTreeNode<*>? {
@@ -68,9 +57,11 @@ class CCNode(
 
   override fun updateImpl(data: PresentationData) {
     super.updateImpl(data)
-    if (excludedName != null) {
+
+    // show node as excluded, if it is not inside a task folder, but is in the .courseignore
+    if (item == null && CourseIgnoreRules.loadFromCourseIgnoreFile(project).isIgnored(value.virtualFile)) {
       data.clearText()
-      data.addText(excludedName, SimpleTextAttributes.GRAY_ATTRIBUTES)
+      data.addText(EduCoreBundle.message("course.creator.course.view.excluded", value.name), SimpleTextAttributes.GRAY_ATTRIBUTES)
     }
   }
 
