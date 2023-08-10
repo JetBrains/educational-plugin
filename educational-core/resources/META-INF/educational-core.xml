@@ -2,7 +2,8 @@
   <!--suppress PluginXmlValidity -->
   <dependencies>
     <plugin id="com.intellij.modules.lang"/>
-    <plugin id="com.intellij.modules.vcs"/> <!-- to support the .courseignore language -->
+    <!-- The vcs module is needed to be sure that IgnoreFileType, PatternCache exist which are used for .courseignore support -->
+    <plugin id="com.intellij.modules.vcs"/>
   </dependencies>
 
   <resource-bundle>messages.EduCoreBundle</resource-bundle>
