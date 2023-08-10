@@ -9,7 +9,7 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.ui.SimpleTextAttributes
 import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
-import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreChecker
+import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreRules
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -28,7 +28,7 @@ class CCNode(
   private val excludedName: String?
   init {
     // show node as excluded, if it is not inside a task folder, but is in the .courseignore
-    excludedName = if (task == null && CourseIgnoreChecker.instance(project).isIgnored(value.virtualFile)) {
+    excludedName = if (task == null && CourseIgnoreRules.loadFromCourseIgnoreFile(project).isIgnored(value.virtualFile)) {
       EduCoreBundle.message("course.creator.course.view.excluded", value.name)
     }
     else {

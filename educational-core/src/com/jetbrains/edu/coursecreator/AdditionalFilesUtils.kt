@@ -12,7 +12,6 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchiveAction
-import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreChecker
 import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreRules
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseDir
@@ -43,7 +42,7 @@ object AdditionalFilesUtils {
   }
 
   private fun isExcluded(file: VirtualFile, courseIgnoreRules: CourseIgnoreRules, course: Course, project: Project): Boolean =
-    courseIgnoreRules.isIgnored(file, project) || excludedByConfigurator(file, course, project)
+    courseIgnoreRules.isIgnored(file) || excludedByConfigurator(file, course, project)
 
   private fun excludedByConfigurator(file: VirtualFile, course: Course, project: Project): Boolean =
     course.configurator?.excludeFromArchive(project, course, file) ?: false
@@ -65,7 +64,7 @@ object AdditionalFilesUtils {
   private fun additionalFilesVisitor(project: Project, course: Course) =
     object : VirtualFileVisitor<Any>(NO_FOLLOW_SYMLINKS) {
       // we take the course ignore rules once, and we are sure they are not changed while course archive is being created
-      private val courseIgnoreRules = CourseIgnoreChecker.instance(project).courseIgnoreRules
+      private val courseIgnoreRules = CourseIgnoreRules.loadFromCourseIgnoreFile(project)
 
       val additionalTaskFiles = mutableListOf<EduFile>()
       var archiveLocation = PropertiesComponent.getInstance(project).getValue(CCCreateCourseArchiveAction.LAST_ARCHIVE_LOCATION)

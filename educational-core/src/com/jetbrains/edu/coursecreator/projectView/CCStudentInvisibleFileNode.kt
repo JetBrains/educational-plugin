@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.ui.SimpleTextAttributes
-import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreChecker
+import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreRules
 import com.jetbrains.edu.learning.canBeAddedToTask
 import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
@@ -40,7 +40,7 @@ class CCStudentInvisibleFileNode(
       file.canBeAddedToTask(project)
     }
     else {
-      CourseIgnoreChecker.instance(project).isIgnored(file)
+      CourseIgnoreRules.loadFromCourseIgnoreFile(project).isIgnored(file)
     }
   }
 
