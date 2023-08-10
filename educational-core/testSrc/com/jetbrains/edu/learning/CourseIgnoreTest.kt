@@ -102,35 +102,35 @@ class CourseIgnoreTest : EduTestCase() {
         eduFile(
           ".courseignore",
           """
-            |# exclude directories (not files) starting with dir
-            |dir*/
-            |
-            |# exclude all files and directories starting with file
-            |file*
-            |
-            |# exclude all a.txt
-            |a.txt
-            |
-            |# exclude b.txt, c.txt
-            |[bc].txt
-            |# we don't exclude c.txt, but it is inside the task, and it should not anyway go inside the archive
-            |!lesson1/task1/dir1/c.txt
-            |
-            |# exclude only root x.txt
-            |/x.txt
-            |
-            |# test negative patterns
-            |folder/*
-            |!folder/p.txt
-            |!folder/q.txt
-            |# but then again, ignore q.txt
-            |q.txt
-            |
-            |# regular expressions should also work
-            |syntax: regexp
-            |
-            |\d(-|\+)\d\.txt
-          """.trimMargin()
+            # exclude directories (not files) starting with dir
+            dir*/
+            
+            # exclude all files and directories starting with file
+            file*
+            
+            # exclude all a.txt
+            a.txt
+            
+            # exclude b.txt, c.txt
+            [bc].txt
+            # we don't exclude c.txt, but it is inside the task, and it should not anyway go inside the archive
+            !lesson1/task1/dir1/c.txt
+            
+            # exclude only root x.txt
+            /x.txt
+            
+            # test negative patterns
+            folder/*
+            !folder/p.txt
+            !folder/q.txt
+            # but then again, ignore q.txt
+            q.txt
+            
+            # regular expressions should also work
+            syntax: regexp
+            
+            \d(-|\+)\d\.txt
+          """
         )
       }
     }
