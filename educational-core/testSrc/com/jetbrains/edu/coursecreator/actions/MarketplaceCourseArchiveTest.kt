@@ -2,7 +2,6 @@ package com.jetbrains.edu.coursecreator.actions
 
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VfsUtil
-import com.intellij.testFramework.utils.vfs.getFile
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CourseMode
@@ -186,7 +185,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
 
     // first, test that course archive is created with the task description in MD format
 
-    val descriptionFile = taskDir.getFile("task.md")
+    val descriptionFile = taskDir.findChild("task.md") ?: error("no task.md file found")
     val mdDescription = "# MD description"
 
     runWriteAction {

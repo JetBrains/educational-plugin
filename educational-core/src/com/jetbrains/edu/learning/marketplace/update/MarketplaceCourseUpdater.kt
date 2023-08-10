@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.ext.findTaskDescriptionFile
+import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.getTextFromTaskTextFile
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
@@ -76,7 +76,7 @@ class MarketplaceCourseUpdater(project: Project, course: EduCourse, private val 
     val taskFiles = task.taskFiles
     val taskDescriptionText = task.descriptionText.ifEmpty {
       runReadAction {
-        task.findTaskDescriptionFile(project)?.getTextFromTaskTextFile() ?: ""
+        task.getDescriptionFile(project, guessFormat = true)?.getTextFromTaskTextFile() ?: ""
       }
     }
     val isChanged = when {

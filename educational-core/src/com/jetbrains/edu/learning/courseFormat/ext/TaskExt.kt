@@ -40,7 +40,6 @@ import com.jetbrains.edu.learning.taskDescription.removeHyperskillTags
 import com.jetbrains.edu.learning.taskDescription.replaceActionIDsWithShortcuts
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
-import com.jetbrains.edu.learning.yaml.errorHandling.noDirForItemMessage
 import java.io.IOException
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -149,9 +148,25 @@ fun Task.addDefaultTaskDescription() {
   descriptionFormat = format
 }
 
-fun Task.getDescriptionFile(project: Project): VirtualFile? {
+/**
+ * If [guessFormat] is `false`, the format of the task description file is taken from the [Task.descriptionFormat]
+ * field.
+ * If [guessFormat] is `true`, [Task.descriptionFormat] field is ignored, and the description file is searched
+ * to be either `task.html` or `task.md` with the former having more priority.
+ */
+fun Task.getDescriptionFile(project: Project, guessFormat: Boolean = false): VirtualFile? {
   val taskDir = getDir(project.courseDir) ?: return null
-  return taskDir.findChild(descriptionFormat.descriptionFileName)
+
+  val file = if (guessFormat) {
+    taskDir.findChild(TASK_HTML) ?: taskDir.findChild(TASK_MD)
+  }
+  else {
+    taskDir.findChild(descriptionFormat.descriptionFileName)
+  }
+
+  file ?: LOG.warn("No task description file for $name")
+
+  return file
 }
 
 private fun TaskFile.canShowSolution() =
@@ -222,17 +237,8 @@ fun Task.shouldGenerateTestsOnTheFly(): Boolean {
   return course.isStudy && course is EduCourse && course.isMarketplace && (this is EduTask || this is OutputTask)
 }
 
-fun Task.findTaskDescriptionFile(project: Project): VirtualFile? {
-  val taskDir = getDir(project.courseDir) ?: error(noDirForItemMessage(name, TASK))
-  val file = taskDir.findChild(TASK_HTML) ?: taskDir.findChild(TASK_MD)
-
-  file ?: logger<Task>().warn("No task description file for $name")
-
-  return file
-}
-
 fun Task.updateDescriptionTextAndFormat(project: Project) = runReadAction {
-  val taskDescriptionFile = findTaskDescriptionFile(project)
+  val taskDescriptionFile = getDescriptionFile(project, guessFormat = true)
 
   if (taskDescriptionFile == null) {
     descriptionFormat = DescriptionFormat.HTML
@@ -245,7 +251,7 @@ fun Task.updateDescriptionTextAndFormat(project: Project) = runReadAction {
     descriptionFormat = taskDescriptionFile.toDescriptionFormat()
   }
   catch (e: IOException) {
-    logger<Task>().warn("Failed to load text " + taskDescriptionFile.name)
+    LOG.warn("Failed to load text " + taskDescriptionFile.name)
     descriptionFormat = DescriptionFormat.HTML
     descriptionText = EduCoreBundle.message("task.description.not.found")
   }
