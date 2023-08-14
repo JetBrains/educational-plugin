@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseSelectionListe
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgroundColor
 import com.jetbrains.edu.learning.newproject.ui.createCourseDescriptionStylesheet
 import com.jetbrains.edu.learning.newproject.ui.createErrorStylesheet
-import com.jetbrains.edu.learning.taskDescription.ui.createTextPane
+import com.jetbrains.edu.learning.taskToolWindow.ui.createTextPane
 import java.awt.*
 import javax.swing.Icon
 import javax.swing.JTextPane

@@ -8,11 +8,11 @@ import com.jetbrains.edu.learning.actions.OpenTaskOnSiteAction
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.taskDescription.createActionLink
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindow.Companion.getTaskDescription
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
-import com.jetbrains.edu.learning.taskDescription.ui.tab.AdditionalTab
-import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType.THEORY_TAB
+import com.jetbrains.edu.learning.taskToolWindow.createActionLink
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindow.Companion.getTaskDescription
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
+import com.jetbrains.edu.learning.taskToolWindow.ui.tab.AdditionalTab
+import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType.THEORY_TAB
 import java.awt.BorderLayout
 import javax.swing.JPanel
 import javax.swing.JSeparator
@@ -41,7 +41,7 @@ class TheoryTab(project: Project) : AdditionalTab(project, THEORY_TAB) {
       add(actionLink, BorderLayout.CENTER)
     }
 
-    UIUtil.setBackgroundRecursively(bottomPanel, TaskDescriptionView.getTaskDescriptionBackgroundColor())
+    UIUtil.setBackgroundRecursively(bottomPanel, TaskToolWindowView.getTaskDescriptionBackgroundColor())
     return bottomPanel
   }
 }

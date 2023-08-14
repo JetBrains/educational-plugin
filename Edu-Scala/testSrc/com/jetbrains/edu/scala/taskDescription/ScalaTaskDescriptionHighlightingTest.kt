@@ -1,7 +1,7 @@
 package com.jetbrains.edu.scala.taskDescription
 
 import com.intellij.lang.Language
-import com.jetbrains.edu.learning.taskDescription.TaskDescriptionHighlightingTestBase
+import com.jetbrains.edu.learning.taskToolWindow.TaskDescriptionHighlightingTestBase
 import org.jetbrains.plugins.scala.ScalaLanguage
 
 class ScalaTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {

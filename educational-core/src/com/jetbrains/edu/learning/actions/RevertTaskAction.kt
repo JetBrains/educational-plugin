@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager.updateDependentPlaceholders
 import com.jetbrains.edu.learning.projectView.ProgressUtil.updateCourseProgress
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.Companion.revertTask
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.VisibleForTesting
@@ -77,8 +77,8 @@ class RevertTaskAction : DumbAwareAction(), RightAlignedToolbarAction {
         .setIcon(EmptyIcon.ICON_16)
         .notify(project)
       ProjectView.getInstance(project).refresh()
-      TaskDescriptionView.getInstance(project).updateTaskSpecificPanel()
-      TaskDescriptionView.getInstance(project).readyToCheck()
+      TaskToolWindowView.getInstance(project).updateTaskSpecificPanel()
+      TaskToolWindowView.getInstance(project).readyToCheck()
       updateCourseProgress(project)
     }
   }

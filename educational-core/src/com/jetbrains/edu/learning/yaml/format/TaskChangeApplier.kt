@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.getTaskFile
 import com.jetbrains.edu.learning.placeholder.PlaceholderHighlightingManager
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.yaml.YamlLoader.addItemAsNew
 import org.jetbrains.annotations.NonNls
 
@@ -35,12 +35,12 @@ open class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task
     }
     if (deserializedItem is SortingTask && existingItem is SortingTask) {
       existingItem.options = deserializedItem.options
-      TaskDescriptionView.getInstance(project).updateTaskDescription()
+      TaskToolWindowView.getInstance(project).updateTaskDescription()
     }
     if (deserializedItem is MatchingTask && existingItem is MatchingTask) {
       existingItem.options = deserializedItem.options
       existingItem.captions = deserializedItem.captions
-      TaskDescriptionView.getInstance(project).updateTaskDescription()
+      TaskToolWindowView.getInstance(project).updateTaskDescription()
     }
     if (deserializedItem is ChoiceTask && existingItem is ChoiceTask) {
       existingItem.isMultipleChoice = deserializedItem.isMultipleChoice
@@ -48,7 +48,7 @@ open class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task
       existingItem.messageCorrect = deserializedItem.messageCorrect
       existingItem.messageIncorrect = deserializedItem.messageIncorrect
       existingItem.quizHeader = deserializedItem.quizHeader
-      TaskDescriptionView.getInstance(project).updateTaskDescription()
+      TaskToolWindowView.getInstance(project).updateTaskDescription()
     }
     hideOldPlaceholdersForOpenedFiles(project, existingItem)
     existingItem.applyTaskFileChanges(deserializedItem)

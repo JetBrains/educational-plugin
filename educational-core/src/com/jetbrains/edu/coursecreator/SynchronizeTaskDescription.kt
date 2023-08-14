@@ -8,8 +8,8 @@ import com.jetbrains.edu.learning.EduDocumentListenerBase
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.getContainingTask
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory.Companion.STUDY_TOOL_WINDOW
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory.Companion.STUDY_TOOL_WINDOW
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 
 class SynchronizeTaskDescription(private val project: Project) : EduDocumentListenerBase(project) {
 
@@ -25,6 +25,6 @@ class SynchronizeTaskDescription(private val project: Project) : EduDocumentList
     task.descriptionText = eventDocument.text
     if (ToolWindowManager.getInstance(project).getToolWindow(STUDY_TOOL_WINDOW) == null) return
 
-    TaskDescriptionView.getInstance(project).updateTaskDescription(task)
+    TaskToolWindowView.getInstance(project).updateTaskDescription(task)
   }
 }

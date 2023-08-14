@@ -1,7 +1,7 @@
 package com.jetbrains.edu.rust.taskDescription
 
 import com.intellij.lang.Language
-import com.jetbrains.edu.learning.taskDescription.TaskDescriptionHighlightingTestBase
+import com.jetbrains.edu.learning.taskToolWindow.TaskDescriptionHighlightingTestBase
 import org.rust.lang.RsLanguage
 
 class RsTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {

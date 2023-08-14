@@ -2,7 +2,7 @@ package com.jetbrains.edu.javascript
 
 import com.intellij.lang.Language
 import com.intellij.lang.javascript.JavascriptLanguage
-import com.jetbrains.edu.learning.taskDescription.TaskDescriptionHighlightingTestBase
+import com.jetbrains.edu.learning.taskToolWindow.TaskDescriptionHighlightingTestBase
 
 
 class JsTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {

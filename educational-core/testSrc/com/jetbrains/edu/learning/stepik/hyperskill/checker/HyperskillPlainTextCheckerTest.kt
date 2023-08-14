@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.markStageAsCompleted
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 
 class HyperskillPlainTextCheckerTest : CheckersTestBase<EmptyProjectSettings>() {
 
@@ -43,7 +43,7 @@ class HyperskillPlainTextCheckerTest : CheckersTestBase<EmptyProjectSettings>() 
         else -> null
       }
     }
-    TaskDescriptionView.getInstance(project).currentTask = project.getCurrentTask()
+    TaskToolWindowView.getInstance(project).currentTask = project.getCurrentTask()
     doTest()
   }
 

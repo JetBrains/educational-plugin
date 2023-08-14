@@ -23,7 +23,7 @@ import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import org.jdom.Element
 import javax.swing.Icon
 
@@ -62,7 +62,7 @@ class CodeforcesSettings : PersistentStateComponent<Element> {
         if (project.course is CodeforcesCourse) {
           val task = project.getCurrentTask()
           if (task != null) {
-            project.invokeLater { TaskDescriptionView.getInstance(project).updateCheckPanel(task) }
+            project.invokeLater { TaskToolWindowView.getInstance(project).updateCheckPanel(task) }
           }
         }
       }

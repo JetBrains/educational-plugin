@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.createCourseFromJson
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 
 abstract class CourseGenerationTestBase<Settings : EduProjectSettings> : HeavyPlatformTestCase() {
 
@@ -25,7 +25,7 @@ abstract class CourseGenerationTestBase<Settings : EduProjectSettings> : HeavyPl
                     ?: error("given builder returns null as course project generator")
     val project = generator.doCreateCourseProject(rootDir.path, defaultSettings) ?: error("Cannot create project")
 
-    TaskDescriptionView.getInstance(project).currentTask = project.getCurrentTask()
+    TaskToolWindowView.getInstance(project).currentTask = project.getCurrentTask()
     runInEdtAndWait {
       myProject = project
     }

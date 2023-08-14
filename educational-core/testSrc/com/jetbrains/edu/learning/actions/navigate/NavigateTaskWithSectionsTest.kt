@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.getTaskFile
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.testAction
 import junit.framework.TestCase
 
@@ -181,6 +181,6 @@ class NavigateTaskWithSectionsTest : EduTestCase() {
     val file = myFixture.findFileInTempDir(fileName)
     myFixture.configureFromExistingVirtualFile(file)
     FileEditorManager.getInstance(myFixture.project).openFile(file, true)
-    TaskDescriptionView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTask()
+    TaskToolWindowView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTask()
   }
 }

@@ -35,9 +35,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.taskDescription.addHeader
-import com.jetbrains.edu.learning.taskDescription.removeHyperskillTags
-import com.jetbrains.edu.learning.taskDescription.replaceActionIDsWithShortcuts
+import com.jetbrains.edu.learning.taskToolWindow.addHeader
+import com.jetbrains.edu.learning.taskToolWindow.removeHyperskillTags
+import com.jetbrains.edu.learning.taskToolWindow.replaceActionIDsWithShortcuts
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
 import java.io.IOException

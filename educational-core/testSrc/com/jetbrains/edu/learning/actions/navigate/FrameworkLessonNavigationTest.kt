@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.navigation.NavigationUtils
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 
 // Note, `CodeInsightTestFixture#type` can trigger completion (e.g. it inserts paired `"`)
 class FrameworkLessonNavigationTest : NavigationTestBase() {
@@ -183,12 +183,12 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     withVirtualFileListener(course) {
       val task = course.findTask("lesson1", "task1")
       task.openTaskFileInEditor("fizz.kt", 0)
-      TaskDescriptionView.getInstance(myFixture.project).currentTask = task
+      TaskToolWindowView.getInstance(myFixture.project).currentTask = task
       myFixture.type("123")
       task.status = CheckStatus.Solved
       testAction(NextTaskAction.ACTION_ID)
 
-      TaskDescriptionView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTask()
+      TaskToolWindowView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTask()
       testAction(PreviousTaskAction.ACTION_ID)
     }
 
@@ -243,7 +243,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       task.status = CheckStatus.Solved
       testAction(NextTaskAction.ACTION_ID)
 
-      TaskDescriptionView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTask()
+      TaskToolWindowView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTask()
       testAction(PreviousTaskAction.ACTION_ID)
     }
 
@@ -362,7 +362,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       task.status = CheckStatus.Solved
       testAction(NextTaskAction.ACTION_ID)
 
-      TaskDescriptionView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTask()
+      TaskToolWindowView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTask()
       testAction(PreviousTaskAction.ACTION_ID)
     }
 
@@ -404,7 +404,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       myFixture.type("fun bar() {}\n")
       testAction(PreviousTaskAction.ACTION_ID)
 
-      TaskDescriptionView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTask()
+      TaskToolWindowView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTask()
       testAction(NextTaskAction.ACTION_ID)
     }
 

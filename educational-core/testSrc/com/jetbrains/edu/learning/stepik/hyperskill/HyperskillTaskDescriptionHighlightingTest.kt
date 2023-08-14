@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.taskDescription.TaskDescriptionHighlightingTestBase
+import com.jetbrains.edu.learning.taskToolWindow.TaskDescriptionHighlightingTestBase
 
 abstract class HyperskillTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
   protected abstract val codeSample: String

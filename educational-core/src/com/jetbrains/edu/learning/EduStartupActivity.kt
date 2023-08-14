@@ -38,7 +38,7 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 
 class EduStartupActivity : StartupActivity.DumbAware {
 
@@ -61,7 +61,7 @@ class EduStartupActivity : StartupActivity.DumbAware {
     }
 
     connection.subscribe(EditorColorsManager.TOPIC, EditorColorsListener {
-      TaskDescriptionView.updateAllTabs(project)
+      TaskToolWindowView.updateAllTabs(project)
     })
 
     StartupManager.getInstance(project).runWhenProjectIsInitialized {

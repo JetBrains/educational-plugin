@@ -32,7 +32,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.taskDescription.toShortcut
+import com.jetbrains.edu.learning.taskToolWindow.toShortcut
 import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
 import java.awt.Component

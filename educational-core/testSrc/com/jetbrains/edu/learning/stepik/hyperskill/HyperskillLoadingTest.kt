@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 
 class HyperskillLoadingTest : SolutionLoadingTestBase() {
   override fun doLoginFakeUser() = logInFakeHyperskillUser()
@@ -382,7 +382,7 @@ class HyperskillLoadingTest : SolutionLoadingTestBase() {
     withVirtualFileListener(course) {
       withEduTestDialog(EduTestDialog(Messages.NO)) {
         task1.openTaskFileInEditor("src/Task.kt")
-        TaskDescriptionView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTask()
+        TaskToolWindowView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTask()
         testAction(NextTaskAction.ACTION_ID, shouldBeEnabled = false, shouldBeVisible = true)
       }
     }

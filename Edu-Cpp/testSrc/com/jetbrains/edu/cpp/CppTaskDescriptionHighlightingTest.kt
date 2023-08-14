@@ -2,7 +2,7 @@ package com.jetbrains.edu.cpp
 
 import com.intellij.lang.Language
 import com.jetbrains.cidr.lang.OCLanguage
-import com.jetbrains.edu.learning.taskDescription.TaskDescriptionHighlightingTestBase
+import com.jetbrains.edu.learning.taskToolWindow.TaskDescriptionHighlightingTestBase
 
 class CppTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
   override val language: Language = OCLanguage.getInstance()

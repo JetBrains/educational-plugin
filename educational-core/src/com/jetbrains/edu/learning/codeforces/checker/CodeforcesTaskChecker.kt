@@ -24,7 +24,7 @@ class CodeforcesTaskChecker(
   override fun processCorrectCheckResult(): CheckResult {
     /**
      * Message will be added in
-     * @see com.jetbrains.edu.learning.taskDescription.ui.check.CheckDetailsPanel.createCodeforcesSuccessMessagePanel
+     * @see com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckDetailsPanel.createCodeforcesSuccessMessagePanel
      * It's better not to reuse hyperlinkListener mechanism.
      *
      * We need to check the status of Codeforces task in checker tests, e.g.

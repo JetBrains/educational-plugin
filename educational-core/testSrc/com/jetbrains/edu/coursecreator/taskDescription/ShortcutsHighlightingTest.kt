@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
-import com.jetbrains.edu.learning.taskDescription.toShortcut
+import com.jetbrains.edu.learning.taskToolWindow.toShortcut
 
 class ShortcutsHighlightingTest : EduTestCase() {
   override fun setUp() {

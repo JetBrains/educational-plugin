@@ -221,9 +221,9 @@
                         serviceImplementation="com.jetbrains.edu.learning.courseGeneration.ProjectOpenerImpl"
                         testServiceImplementation="com.jetbrains.edu.learning.MockProjectOpener"/>
 
-    <projectService serviceInterface="com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView"
-                    serviceImplementation="com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionViewImpl"
-                    testServiceImplementation="com.jetbrains.edu.learning.taskDescription.ui.MockTaskDescriptionView"/>
+    <projectService serviceInterface="com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView"
+                    serviceImplementation="com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowViewImpl"
+                    testServiceImplementation="com.jetbrains.edu.learning.taskToolWindow.ui.MockTaskToolWindowView"/>
     <projectService serviceInterface="com.jetbrains.edu.learning.checker.details.CheckDetailsView"
                     serviceImplementation="com.jetbrains.edu.learning.checker.details.CheckDetailsViewImpl"
                     testServiceImplementation="com.jetbrains.edu.learning.checker.details.MockCheckDetailsView"/>
@@ -241,7 +241,7 @@
                              key="settings.educational" bundle="messages.EduCoreBundle"/>
 
     <toolWindow id="Task" anchor="right" order="first"
-                factoryClass="com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory"/>
+                factoryClass="com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory"/>
     <toolWindow id="Educational.CheckDetails" anchor="bottom" canCloseContents="true" doNotActivateOnStart="true"
                 factoryClass="com.jetbrains.edu.learning.checker.details.CheckDetailsToolWindowFactory"/>
 
@@ -281,7 +281,7 @@
     <applicationService serviceImplementation="com.jetbrains.edu.learning.EduSettings"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.coursera.CourseraSettings"/>
     <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.builtInServer.StepikRestService"/>
-    <httpRequestHandler implementation="com.jetbrains.edu.learning.taskDescription.ui.EduToolsResourcesRequestHandler"/>
+    <httpRequestHandler implementation="com.jetbrains.edu.learning.taskToolWindow.ui.EduToolsResourcesRequestHandler"/>
     <registryKey key="edu.course.update.check.interval"
                  description="Sets is course up to date check interval in seconds"
                  defaultValue="18000"/>

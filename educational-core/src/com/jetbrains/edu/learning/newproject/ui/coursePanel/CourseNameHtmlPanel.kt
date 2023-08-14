@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.newproject.ui.coursePanel
 
 import com.intellij.openapi.util.NlsSafe
 import com.jetbrains.edu.learning.newproject.ui.CoursesDialogFontManager
-import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
+import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.TypographyManager
 import org.jetbrains.annotations.Nls
 import java.awt.Font
 

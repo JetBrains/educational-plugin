@@ -32,7 +32,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAdditionalInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepOptions
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.submissions.TEXT
-import com.jetbrains.edu.learning.taskDescription.replaceEncodedShortcuts
+import com.jetbrains.edu.learning.taskToolWindow.replaceEncodedShortcuts
 import com.jetbrains.edu.learning.toStudentFile
 import java.util.*
 

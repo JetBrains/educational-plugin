@@ -27,14 +27,14 @@ import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenProjectStageRequest
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import java.awt.Color
 import java.awt.event.ActionListener
 
 val SelectCourseBackgroundColor: Color
   get() = JBColor.namedColor(
     "SelectCourse.backgroundColor",
-    JBColor(TaskDescriptionView.getTaskDescriptionBackgroundColor(), Color(0x313335))
+    JBColor(TaskToolWindowView.getTaskDescriptionBackgroundColor(), Color(0x313335))
   )
 private val GreenColor: Color = JBColor(0x5D9B47, 0x2B7B50)
 private val FillForegroundColor: Color = JBColor.namedColor("SelectCourse.Button.fillForeground", JBColor(Color.white, Color(0xBBBBBB)))

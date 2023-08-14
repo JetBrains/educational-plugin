@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.CoursesDialogFontManager
 import com.jetbrains.edu.learning.newproject.ui.GRAY_COLOR
-import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
+import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.TypographyManager
 import java.awt.FlowLayout
 import java.awt.Font
 import javax.swing.JLabel

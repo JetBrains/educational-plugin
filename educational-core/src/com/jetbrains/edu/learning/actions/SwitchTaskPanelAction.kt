@@ -14,8 +14,8 @@ import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.JavaUILibrary.JCEF
 import com.jetbrains.edu.learning.JavaUILibrary.SWING
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import org.jetbrains.annotations.NonNls
 import javax.swing.JComponent
 
@@ -25,10 +25,10 @@ class SwitchTaskPanelAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.
     val project = e.project
     val result = MyDialog(false).showAndGet()
     if (result && project != null) {
-      val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW) ?: return
+      val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskToolWindowFactory.STUDY_TOOL_WINDOW) ?: return
       toolWindow.contentManager.removeAllContents(false)
-      TaskDescriptionToolWindowFactory().createToolWindowContent(project, toolWindow)
-      TaskDescriptionView.getInstance(project).updateTaskDescription()
+      TaskToolWindowFactory().createToolWindowContent(project, toolWindow)
+      TaskToolWindowView.getInstance(project).updateTaskDescription()
     }
   }
 

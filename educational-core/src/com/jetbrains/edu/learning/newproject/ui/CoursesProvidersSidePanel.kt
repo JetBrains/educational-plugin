@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorageBase
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
 import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.CourseMetaInfo
-import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
+import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.TypographyManager
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.FlowLayout

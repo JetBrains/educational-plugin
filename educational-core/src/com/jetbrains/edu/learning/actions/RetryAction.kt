@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.jetbrains.annotations.NonNls
 import java.util.concurrent.atomic.AtomicBoolean
@@ -92,8 +92,8 @@ class RetryAction(actionText: Supplier<@ActionText String>,
     override fun onFinished() {
       resetTaskStatus()
       project.invokeLater {
-        TaskDescriptionView.getInstance(project).updateTaskSpecificPanel()
-        TaskDescriptionView.getInstance(project).updateCheckPanel(task)
+        TaskToolWindowView.getInstance(project).updateTaskSpecificPanel()
+        TaskToolWindowView.getInstance(project).updateCheckPanel(task)
       }
       processFinished()
       RetryActionState.getInstance(project).unlock()

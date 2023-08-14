@@ -31,7 +31,7 @@ import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 import com.jetbrains.edu.learning.submissions.SolutionFile
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import okhttp3.*
 import org.jsoup.Jsoup
@@ -275,7 +275,7 @@ abstract class CodeforcesConnector {
       override fun onMessage(webSocket: WebSocket, text: String) {
         val wsResponse = objectMapper.readValue(text, object : TypeReference<CodeforcesWSResponse>() {})
         if (channel == wsResponse.channel) {
-          TaskDescriptionView.getInstance(project).checkStarted(task, true)
+          TaskToolWindowView.getInstance(project).checkStarted(task, true)
           val dataResponse = objectMapper.readValue(wsResponse.text, object : TypeReference<DataResponse>() {})
 
           val verdict = dataResponse.verdict
@@ -284,7 +284,7 @@ abstract class CodeforcesConnector {
           task.feedback = CheckFeedback(Date(), checkResult)
           task.status = verdict.toCheckStatus()
           ProjectView.getInstance(project).refresh()
-          TaskDescriptionView.getInstance(project).checkFinished(task, checkResult)
+          TaskToolWindowView.getInstance(project).checkFinished(task, checkResult)
 
           if (verdict != CodeforcesVerdict.TESTING) {
             YamlFormatSynchronizer.saveItem(task)

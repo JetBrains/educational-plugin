@@ -38,8 +38,8 @@ import com.jetbrains.edu.learning.json.mixins.LocalEduCourseMixin
 import com.jetbrains.edu.learning.json.readCourseJson
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.projectView.ProgressUtil.updateCourseProgress
-import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.taskToolWindow.ui.EduBrowserHyperlinkListener
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.html.HtmlGenerator
@@ -86,7 +86,7 @@ object EduUtilsKt {
   fun isTaskDescriptionFile(fileName: String): Boolean = TASK_HTML == fileName || TASK_MD == fileName
 
   fun updateToolWindows(project: Project) {
-    TaskDescriptionView.getInstance(project).updateTaskDescription()
+    TaskToolWindowView.getInstance(project).updateTaskDescription()
     updateCourseProgress(project)
   }
 

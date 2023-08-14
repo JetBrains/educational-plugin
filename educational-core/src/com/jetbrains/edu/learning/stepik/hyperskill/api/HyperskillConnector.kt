@@ -24,8 +24,8 @@ import com.jetbrains.edu.learning.stepik.hyperskill.checker.WebSocketConnectionS
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillTaskBuilder
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
-import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType.TOPICS_TAB
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
+import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType.TOPICS_TAB
 import okhttp3.*
 import org.apache.http.client.utils.URIBuilder
 import org.jetbrains.ide.BuiltInServerManager
@@ -142,7 +142,7 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
       course.taskToTopics[taskIndex] = topics
       runInEdt {
         if (project.isDisposed) return@runInEdt
-        TaskDescriptionView.getInstance(project).updateTab(TOPICS_TAB)
+        TaskToolWindowView.getInstance(project).updateTab(TOPICS_TAB)
       }
     }
   }

@@ -4,7 +4,7 @@ import com.intellij.openapi.util.NlsContexts.Label
 import com.intellij.ui.HyperlinkAdapter
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
+import com.jetbrains.edu.learning.taskToolWindow.ui.EduBrowserHyperlinkListener
 import org.jetbrains.annotations.NonNls
 import javax.swing.event.HyperlinkEvent
 import javax.swing.event.HyperlinkListener

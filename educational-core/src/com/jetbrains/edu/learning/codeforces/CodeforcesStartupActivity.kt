@@ -10,8 +10,8 @@ import com.jetbrains.edu.learning.codeforces.update.CodeforcesCourseUpdateChecke
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
-import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
+import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
 
 class CodeforcesStartupActivity : StartupActivity {
   override fun runActivity(project: Project) {
@@ -33,7 +33,7 @@ class CodeforcesStartupActivity : StartupActivity {
       }
 
       override fun userLoggedOut() {
-        TaskDescriptionView.getInstance(project).updateTab(TabType.SUBMISSIONS_TAB)
+        TaskToolWindowView.getInstance(project).updateTab(TabType.SUBMISSIONS_TAB)
       }
     })
     CodeforcesCourseUpdateChecker.getInstance(project).check()

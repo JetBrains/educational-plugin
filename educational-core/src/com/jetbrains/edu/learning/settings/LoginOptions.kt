@@ -10,7 +10,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.authUtils.Account
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.taskDescription.ui.createTextPane
+import com.jetbrains.edu.learning.taskToolWindow.ui.createTextPane
 import javax.swing.JComponent
 import javax.swing.JPanel
 

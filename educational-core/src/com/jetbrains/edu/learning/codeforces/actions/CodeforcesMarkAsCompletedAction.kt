@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckFeedback
 import com.jetbrains.edu.learning.courseFormat.CheckResult.Companion.SOLVED
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.jetbrains.annotations.NonNls
 import java.util.*
@@ -26,7 +26,7 @@ class CodeforcesMarkAsCompletedAction : CodeforcesAction() {
     task.feedback = CheckFeedback(checkResult = SOLVED, time = Date())
 
     ProjectView.getInstance(project).refresh()
-    TaskDescriptionView.getInstance(project).updateCheckPanel(task)
+    TaskToolWindowView.getInstance(project).updateCheckPanel(task)
     YamlFormatSynchronizer.saveItem(task)
     showSuccessNotification(project)
   }

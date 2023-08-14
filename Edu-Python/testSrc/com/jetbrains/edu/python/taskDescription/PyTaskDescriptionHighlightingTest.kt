@@ -1,7 +1,7 @@
 package com.jetbrains.edu.python.taskDescription
 
 import com.intellij.lang.Language
-import com.jetbrains.edu.learning.taskDescription.TaskDescriptionHighlightingTestBase
+import com.jetbrains.edu.learning.taskToolWindow.TaskDescriptionHighlightingTestBase
 import com.jetbrains.python.PythonLanguage
 
 class PyTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {

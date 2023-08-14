@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.CoursesDialogFontManager
 import com.jetbrains.edu.learning.newproject.ui.GRAY_COLOR
 import com.jetbrains.edu.learning.newproject.ui.createCourseDescriptionStylesheet
-import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
+import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.TypographyManager
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout

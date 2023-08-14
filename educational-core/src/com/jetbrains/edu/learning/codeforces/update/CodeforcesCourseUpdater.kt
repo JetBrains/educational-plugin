@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.runInBackground
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.update.UpdateUtils.showUpdateCompletedNotification
 import com.jetbrains.edu.learning.update.UpdateUtils.updateTaskDescription
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -43,7 +43,7 @@ class CodeforcesCourseUpdater(private val project: Project, val course: Codeforc
         val isUpdated = updatedTasks.isNotEmpty()
 
         if (isUpdated) {
-          TaskDescriptionView.getInstance(project).updateTaskDescription()
+          TaskToolWindowView.getInstance(project).updateTaskDescription()
           updatedTasks.forEach {
             showUpdateCompletedNotification(project, EduCoreBundle.message("codeforces.task.description.was.updated.notification", it))
           }

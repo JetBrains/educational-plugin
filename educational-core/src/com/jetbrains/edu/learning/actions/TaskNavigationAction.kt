@@ -7,8 +7,8 @@ import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
-import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
+import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckPanel
 
 abstract class TaskNavigationAction : DumbAwareAction() {
 
@@ -24,14 +24,14 @@ abstract class TaskNavigationAction : DumbAwareAction() {
     e.presentation.isEnabled = false
     val project = e.project ?: return
     if (!project.isEduProject()) return
-    val currentTask = TaskDescriptionView.getInstance(project).currentTask ?: return
+    val currentTask = TaskToolWindowView.getInstance(project).currentTask ?: return
     if (getTargetTask(currentTask) != null || getCustomAction(currentTask) != null) {
       e.presentation.isEnabled = true
     }
   }
 
   private fun navigateTask(project: Project, place: String) {
-    val currentTask = TaskDescriptionView.getInstance(project).currentTask ?: return
+    val currentTask = TaskToolWindowView.getInstance(project).currentTask ?: return
     val customAction = getCustomAction(currentTask)
     if (customAction != null) {
       customAction(project, currentTask)

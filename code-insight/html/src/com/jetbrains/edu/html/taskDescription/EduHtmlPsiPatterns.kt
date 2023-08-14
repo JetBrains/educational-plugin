@@ -6,9 +6,9 @@ import com.intellij.psi.xml.XmlTokenType
 import com.jetbrains.edu.codeInsight.inCourse
 import com.jetbrains.edu.codeInsight.inFileWithName
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
-import com.jetbrains.edu.learning.taskDescription.A_TAG
-import com.jetbrains.edu.learning.taskDescription.HREF_ATTRIBUTE
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionLinkProtocol
+import com.jetbrains.edu.learning.taskToolWindow.A_TAG
+import com.jetbrains.edu.learning.taskToolWindow.HREF_ATTRIBUTE
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskDescriptionLinkProtocol
 
 object EduHtmlPsiPatterns {
 

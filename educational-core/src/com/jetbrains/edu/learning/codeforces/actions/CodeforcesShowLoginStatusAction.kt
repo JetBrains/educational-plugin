@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.codeforces.authorization.LoginDialog
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory
 import com.jetbrains.edu.learning.ui.ClickableLabel
 import com.jetbrains.edu.learning.ui.EduHyperlinkLabel
 import org.jetbrains.annotations.NonNls
@@ -34,7 +34,7 @@ class CodeforcesShowLoginStatusAction : CodeforcesAction() {
     val project = e.project ?: return
     if (project.isDisposed) return
     val toolWindow = ToolWindowManager.getInstance(project)
-                       .getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW) as? ToolWindowEx ?: return
+                       .getToolWindow(TaskToolWindowFactory.STUDY_TOOL_WINDOW) as? ToolWindowEx ?: return
     val headerToolbarComponent = toolWindow.decorator.headerToolbar.component
 
     val popup = createPopup(project)

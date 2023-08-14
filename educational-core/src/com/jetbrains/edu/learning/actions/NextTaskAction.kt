@@ -5,7 +5,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.openNextActivity
-import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel
+import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckPanel
 import org.jetbrains.annotations.NonNls
 
 class NextTaskAction : TaskNavigationAction() {

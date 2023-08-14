@@ -26,8 +26,8 @@ import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyM
 import com.jetbrains.edu.learning.statistics.EduLaunchesReporter.sendStats
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.markTheoryTaskAsCompleted
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView.Companion.getInstance
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView.Companion.getInstance
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
 
 class EduEditorFactoryListener : EditorFactoryListener {
@@ -72,13 +72,13 @@ class EduEditorFactoryListener : EditorFactoryListener {
 
   private fun showTaskDescriptionToolWindow(project: Project, taskFile: TaskFile, retry: Boolean) {
     val toolWindowManager = ToolWindowManager.getInstance(project)
-    val studyToolWindow = toolWindowManager.getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
+    val studyToolWindow = toolWindowManager.getToolWindow(TaskToolWindowFactory.STUDY_TOOL_WINDOW)
     if (studyToolWindow == null) {
       if (retry) {
         toolWindowManager.invokeLater { showTaskDescriptionToolWindow(project, taskFile, false) }
       }
       else {
-        LOG.warn(String.format("Failed to get toolwindow with `%s` id", TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW))
+        LOG.warn(String.format("Failed to get toolwindow with `%s` id", TaskToolWindowFactory.STUDY_TOOL_WINDOW))
       }
       return
     }

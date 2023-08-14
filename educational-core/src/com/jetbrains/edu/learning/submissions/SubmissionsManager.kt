@@ -13,8 +13,8 @@ import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
-import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType.SUBMISSIONS_TAB
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
+import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType.SUBMISSIONS_TAB
 import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
@@ -97,7 +97,7 @@ class SubmissionsManager(private val project: Project) {
   }
 
   private fun updateSubmissionsTab() {
-    project.invokeLater { TaskDescriptionView.getInstance(project).updateTab(SUBMISSIONS_TAB) }
+    project.invokeLater { TaskToolWindowView.getInstance(project).updateTab(SUBMISSIONS_TAB) }
   }
 
   fun containsCorrectSubmission(stepId: Int): Boolean {
@@ -122,12 +122,12 @@ class SubmissionsManager(private val project: Project) {
     val course = this.course
     val submissionsProvider = course?.getSubmissionsProvider() ?: return
 
-    val taskDescriptionView = TaskDescriptionView.getInstance(project)
-    taskDescriptionView.showLoadingSubmissionsPanel(getPlatformName())
+    val taskToolWindowView = TaskToolWindowView.getInstance(project)
+    taskToolWindowView.showLoadingSubmissionsPanel(getPlatformName())
 
     CompletableFuture.runAsync({
       if (isLoggedIn()) {
-        loadSubmissionsContent(course, submissionsProvider, taskDescriptionView, loadSolutions)
+        loadSubmissionsContent(course, submissionsProvider, taskToolWindowView, loadSolutions)
       }
     }, ProcessIOExecutorService.INSTANCE)
   }
@@ -145,11 +145,11 @@ class SubmissionsManager(private val project: Project) {
 
   private fun loadSubmissionsContent(course: Course,
                                      submissionsProvider: SubmissionsProvider,
-                                     taskDescriptionView: TaskDescriptionView,
+                                     taskToolWindowView: TaskToolWindowView,
                                      loadSolutions: () -> Unit) {
     submissions.putAll(submissionsProvider.loadAllSubmissions(course))
     loadSolutions()
-    ApplicationManager.getApplication().invokeLater { taskDescriptionView.updateTab(SUBMISSIONS_TAB) }
+    ApplicationManager.getApplication().invokeLater { taskToolWindowView.updateTab(SUBMISSIONS_TAB) }
   }
 
   private fun Course.getSubmissionsProvider(): SubmissionsProvider? {

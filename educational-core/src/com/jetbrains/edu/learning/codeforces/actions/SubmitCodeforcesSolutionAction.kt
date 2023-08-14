@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.onError
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.jetbrains.annotations.NonNls
 import java.awt.datatransfer.StringSelection
@@ -34,8 +34,8 @@ class SubmitCodeforcesSolutionAction : CodeforcesAction() {
     val task = project.getCurrentTask() as? CodeforcesTask ?: return
     val solution = task.getCodeTaskFile(project)?.getDocument(project)?.text ?: return
 
-    val taskDescriptionView = TaskDescriptionView.getInstance(project)
-    taskDescriptionView.checkStarted(task, true)
+    val taskToolWindowView = TaskToolWindowView.getInstance(project)
+    taskToolWindowView.checkStarted(task, true)
 
     ApplicationManager.getApplication().executeOnPooledThread {
       var checkStatus = CheckStatus.Unchecked
@@ -78,7 +78,7 @@ class SubmitCodeforcesSolutionAction : CodeforcesAction() {
           ProjectView.getInstance(project).refresh()
           YamlFormatSynchronizer.saveItem(task)
         }
-        taskDescriptionView.checkFinished(task, checkResult)
+        taskToolWindowView.checkFinished(task, checkResult)
       }
     }
   }

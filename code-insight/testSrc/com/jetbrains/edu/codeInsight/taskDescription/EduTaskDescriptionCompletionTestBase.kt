@@ -6,7 +6,7 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.toolWindow.ToolWindowHeadlessManagerImpl
 import com.jetbrains.edu.codeInsight.EduCompletionTextFixture
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory
 
 abstract class EduTaskDescriptionCompletionTestBase(format: DescriptionFormat) : EduTaskDescriptionTestBase(format) {
 
@@ -66,7 +66,7 @@ abstract class EduTaskDescriptionCompletionTestBase(format: DescriptionFormat) :
     val toolWindowManager = ToolWindowManager.getInstance(project) as ToolWindowHeadlessManagerImpl
     if (toolWindowManager.getToolWindow("Task") == null) {
       for (bean in ToolWindowEP.EP_NAME.extensionList) {
-        if (bean.id == TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW) {
+        if (bean.id == TaskToolWindowFactory.STUDY_TOOL_WINDOW) {
           toolWindowManager.doRegisterToolWindow(bean.id)
           Disposer.register(testRootDisposable) {
             @Suppress("DEPRECATION")

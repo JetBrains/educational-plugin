@@ -13,7 +13,7 @@ import com.intellij.util.ProcessingContext
 import com.jetbrains.edu.codeInsight.EduPsiReferenceProvider
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionLinkProtocol
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskDescriptionLinkProtocol
 
 abstract class InCourseLinkReferenceProviderBase : EduPsiReferenceProvider() {
 

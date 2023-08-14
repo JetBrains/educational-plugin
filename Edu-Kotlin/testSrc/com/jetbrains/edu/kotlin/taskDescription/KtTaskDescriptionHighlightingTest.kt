@@ -1,7 +1,7 @@
 package com.jetbrains.edu.kotlin.taskDescription
 
 import com.intellij.lang.Language
-import com.jetbrains.edu.learning.taskDescription.TaskDescriptionHighlightingTestBase
+import com.jetbrains.edu.learning.taskToolWindow.TaskDescriptionHighlightingTestBase
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
 class KtTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {

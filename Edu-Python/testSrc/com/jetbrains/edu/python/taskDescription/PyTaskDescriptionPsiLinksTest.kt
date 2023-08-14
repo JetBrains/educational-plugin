@@ -1,7 +1,7 @@
 package com.jetbrains.edu.python.taskDescription
 
 import com.intellij.openapi.fileTypes.FileType
-import com.jetbrains.edu.learning.taskDescription.TaskDescriptionPsiLinksTestBase
+import com.jetbrains.edu.learning.taskToolWindow.TaskDescriptionPsiLinksTestBase
 import com.jetbrains.python.PythonFileType
 
 @Suppress("PyInterpreter", "PyUnresolvedReferences")

@@ -32,7 +32,7 @@ import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.StepikBasedConnector.Companion.getStepikBasedConnector
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.toPsiFile
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.jetbrains.annotations.NonNls
@@ -114,7 +114,7 @@ class DownloadDataset(
         showTooltipForDataset(project, dataset)
       }
     }
-    TaskDescriptionView.getInstance(project).updateCheckPanel(task)
+    TaskToolWindowView.getInstance(project).updateCheckPanel(task)
   }
 
   private fun showTooltipForDataset(project: Project, virtualFile: VirtualFile) {

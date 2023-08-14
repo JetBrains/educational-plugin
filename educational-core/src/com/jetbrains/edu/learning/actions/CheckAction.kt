@@ -50,8 +50,8 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.projectView.ProgressUtil.updateCourseProgress
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.Companion.checkTask
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillCheckConnector.failedToSubmit
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
-import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
+import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckPanel
 import com.jetbrains.edu.learning.ui.getUICheckLabel
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
 import org.jetbrains.annotations.NonNls
@@ -140,7 +140,7 @@ class CheckAction() : ActionWithProgressIcon(lazyMessage("action.check.text"), l
     private fun onStarted(indicator: ProgressIndicator) {
       processStarted()
       ApplicationManager.getApplication().executeOnPooledThread { showFakeProgress(indicator) }
-      TaskDescriptionView.getInstance(project).checkStarted(task, false)
+      TaskToolWindowView.getInstance(project).checkStarted(task, false)
     }
 
     override fun run(indicator: ProgressIndicator) {
@@ -227,7 +227,7 @@ class CheckAction() : ActionWithProgressIcon(lazyMessage("action.check.text"), l
         }
       }
       checkTask(task.status)
-      TaskDescriptionView.getInstance(project).checkFinished(task, checkResult)
+      TaskToolWindowView.getInstance(project).checkFinished(task, checkResult)
       project.invokeLater {
         updateCourseProgress(project)
         ProjectView.getInstance(project).refresh()
@@ -238,7 +238,7 @@ class CheckAction() : ActionWithProgressIcon(lazyMessage("action.check.text"), l
     }
 
     override fun onCancel() {
-      TaskDescriptionView.getInstance(project).readyToCheck()
+      TaskToolWindowView.getInstance(project).readyToCheck()
     }
 
     override fun onFinished() {
@@ -250,10 +250,10 @@ class CheckAction() : ActionWithProgressIcon(lazyMessage("action.check.text"), l
     override fun onThrowable(error: Throwable) {
       super.onThrowable(error)
       if (error.message == message("error.failed.to.refresh.tokens")) {
-        TaskDescriptionView.getInstance(project).checkFinished(task, failedToSubmit(project, task, message("error.failed.to.refresh.tokens")))
+        TaskToolWindowView.getInstance(project).checkFinished(task, failedToSubmit(project, task, message("error.failed.to.refresh.tokens")))
       }
       else {
-        TaskDescriptionView.getInstance(project).checkFinished(task, failedToCheck)
+        TaskToolWindowView.getInstance(project).checkFinished(task, failedToCheck)
       }
     }
 

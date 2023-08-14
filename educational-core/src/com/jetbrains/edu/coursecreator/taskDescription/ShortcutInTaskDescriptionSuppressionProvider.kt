@@ -5,7 +5,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduUtilsKt
-import com.jetbrains.edu.learning.taskDescription.containsShortcut
+import com.jetbrains.edu.learning.taskToolWindow.containsShortcut
 
 class ShortcutInTaskDescriptionSuppressionProvider : DefaultXmlSuppressionProvider() {
 

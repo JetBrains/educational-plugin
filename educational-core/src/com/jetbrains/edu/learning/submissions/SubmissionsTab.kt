@@ -22,13 +22,13 @@ import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.taskDescription.ui.SwingToolWindowLinkHandler
-import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
-import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager
-import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TaskDescriptionBundle
-import com.jetbrains.edu.learning.taskDescription.ui.tab.AdditionalTab
-import com.jetbrains.edu.learning.taskDescription.ui.tab.SwingTextPanel
-import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType.SUBMISSIONS_TAB
+import com.jetbrains.edu.learning.taskToolWindow.ui.SwingToolWindowLinkHandler
+import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleManager
+import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager
+import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.TaskToolWindowBundle
+import com.jetbrains.edu.learning.taskToolWindow.ui.tab.AdditionalTab
+import com.jetbrains.edu.learning.taskToolWindow.ui.tab.SwingTextPanel
+import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType.SUBMISSIONS_TAB
 import com.jetbrains.edu.learning.ui.EduColors
 import java.net.URL
 import java.text.DateFormat
@@ -217,7 +217,7 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
 
     private fun getCorrectLinkColor(): String {
       return if (StyleResourcesManager.isHighContrast()) {
-        TaskDescriptionBundle.value("correct.label.foreground.high.contrast")
+        TaskToolWindowBundle.value("correct.label.foreground.high.contrast")
       }
       else {
         "#${ColorUtil.toHex(EduColors.correctLabelForeground)}"
@@ -226,7 +226,7 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
 
     private fun getWrongLinkColor(): String {
       return if (StyleResourcesManager.isHighContrast()) {
-        TaskDescriptionBundle.value("wrong.label.foreground.high.contrast")
+        TaskToolWindowBundle.value("wrong.label.foreground.high.contrast")
       }
       else {
         "#${ColorUtil.toHex(EduColors.wrongLabelForeground)}"
