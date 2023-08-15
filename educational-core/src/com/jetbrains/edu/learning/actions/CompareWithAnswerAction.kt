@@ -31,7 +31,8 @@ import java.util.*
 open class CompareWithAnswerAction : DumbAwareAction() {
 
   override fun actionPerformed(e: AnActionEvent) {
-    val state = e.eduState ?: return
+    val project = e.project ?: return
+    val state = project.eduState ?: return
 
     val task = state.task
     val taskFile = state.taskFile
