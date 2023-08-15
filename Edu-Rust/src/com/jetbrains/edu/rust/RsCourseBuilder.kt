@@ -62,6 +62,10 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
   }
 
   override fun refreshProject(project: Project, cause: RefreshCause) {
+    // Don't try to call project model reloading in light tests.
+    // It doesn't make sense and may even fail
+    @Suppress("TestOnlyProblems")
+    if (isUnitTestMode && project.isLight) return
     val course = StudyTaskManager.getInstance(project).course ?: return
     if (!RsCourseProjectRefreshService.getInstance(project).isRefreshEnabled) return
     if (project.isSingleWorkspaceProject) {

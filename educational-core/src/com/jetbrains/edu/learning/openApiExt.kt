@@ -18,6 +18,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ex.ProjectEx
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.io.FileUtilRt
@@ -34,6 +35,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.isBinary
 import com.jetbrains.edu.learning.courseFormat.mimeFileType
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.annotations.VisibleForTesting
 import java.util.*
 
@@ -102,6 +104,9 @@ fun toEncodeFileContent(virtualFile: VirtualFile): Boolean {
 private fun isGitObject(name: String): Boolean {
   return (name.length == 38 || name.length == 40) && name.matches(Regex("[a-z0-9]+"))
 }
+
+@get:TestOnly
+val Project.isLight: Boolean get() = (this as? ProjectEx)?.isLight == true
 
 val Project.courseDir: VirtualFile
   get() {

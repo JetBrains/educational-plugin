@@ -10,7 +10,6 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ex.ProjectEx
 import com.intellij.openapi.project.modifyModules
 import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.vfs.VfsUtil
@@ -354,7 +353,8 @@ object GeneratorUtils {
    * and initial base module is unexpected while import
    */
   fun removeModule(project: Project, module: Module) {
-    if (!isUnitTestMode || (project as? ProjectEx)?.isLight == false) {
+    @Suppress("TestOnlyProblems")
+    if (!isUnitTestMode || !project.isLight) {
       project.modifyModules { disposeModule(module) }
     }
   }
