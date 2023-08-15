@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.project
+import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -40,6 +41,12 @@ open class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task
     if (deserializedItem is MatchingTask && existingItem is MatchingTask) {
       existingItem.options = deserializedItem.options
       existingItem.captions = deserializedItem.captions
+      TaskToolWindowView.getInstance(project).updateTaskDescription()
+    }
+    if (deserializedItem is TableTask && existingItem is TableTask) {
+      existingItem.rows = deserializedItem.rows
+      existingItem.columns = deserializedItem.columns
+      existingItem.isCheckbox = deserializedItem.isCheckbox
       TaskToolWindowView.getInstance(project).updateTaskDescription()
     }
     if (deserializedItem is ChoiceTask && existingItem is ChoiceTask) {

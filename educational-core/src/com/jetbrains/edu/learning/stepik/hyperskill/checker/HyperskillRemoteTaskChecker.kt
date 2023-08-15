@@ -8,10 +8,7 @@ import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.tasks.AnswerTask
-import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.UnsupportedTask
+import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
@@ -37,6 +34,7 @@ class HyperskillRemoteTaskChecker : RemoteTaskChecker {
       is RemoteEduTask -> HyperskillCheckConnector.checkRemoteEduTask(project, task)
       is SortingTask -> HyperskillCheckConnector.checkSortingBasedTask(project, task)
       is MatchingTask -> HyperskillCheckConnector.checkSortingBasedTask(project, task)
+      is TableTask -> HyperskillCheckConnector.checkTableTask(project, task)
       is UnsupportedTask -> HyperskillCheckConnector.checkUnsupportedTask(task)
       else -> error("Can't check ${task.itemType} on ${EduNames.JBA}")
     }

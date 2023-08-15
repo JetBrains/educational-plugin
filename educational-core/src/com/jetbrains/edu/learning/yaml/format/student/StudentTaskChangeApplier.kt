@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
@@ -36,6 +37,10 @@ class StudentTaskChangeApplier(project: Project) : TaskChangeApplier(project) {
       is SortingBasedTask -> {
         existingItem.record = deserializedItem.record
         existingItem.ordering = (deserializedItem as SortingBasedTask).ordering
+      }
+      is TableTask -> {
+        existingItem.record = deserializedItem.record
+        existingItem.isSelected = (deserializedItem as TableTask).isSelected
       }
       is EduTask -> {
         if (existingItem is RemoteEduTask) {

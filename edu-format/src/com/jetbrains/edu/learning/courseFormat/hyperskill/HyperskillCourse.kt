@@ -126,6 +126,7 @@ class HyperskillCourse : Course {
       HyperskillTaskType.PYCHARM.type,
       HyperskillTaskType.SORTING.type,
       HyperskillTaskType.STRING.type,
+      HyperskillTaskType.TABLE.type,
       HyperskillTaskType.TEXT.type,
     )
 

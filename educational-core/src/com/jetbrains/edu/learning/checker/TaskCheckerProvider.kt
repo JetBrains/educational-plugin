@@ -32,7 +32,7 @@ interface TaskCheckerProvider {
       is RemoteEduTask,
       is StringTask, is NumberTask,
       is MatchingTask, is SortingTask,
-      is CodeTask, is DataTask, is UnsupportedTask -> null
+      is CodeTask, is DataTask, is TableTask, is UnsupportedTask -> null
       is EduTask -> getEduTaskChecker(task, project)
       is OutputTask -> OutputTaskChecker(task, envChecker, project, codeExecutor)
       is TheoryTask -> getTheoryTaskChecker(task, project)

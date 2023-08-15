@@ -71,7 +71,7 @@ class HyperskillTaskBuilder(
         is TheoryTask -> {
           descriptionText = description(title = stepSource.title)
         }
-        is ChoiceTask, is StringTask, is NumberTask, is SortingTask, is MatchingTask -> {
+        is ChoiceTask, is StringTask, is NumberTask, is SortingTask, is MatchingTask, is TableTask -> {
           descriptionText = description(stepSource.title)
           name = stepSource.title
         }

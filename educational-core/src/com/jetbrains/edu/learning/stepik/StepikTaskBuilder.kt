@@ -23,6 +23,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.DataTask.Companion.INPUT_FI
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.EDU_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask.Companion.IDE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask.Companion.OUTPUT_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.StringTask.Companion.STRING_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.TableTask.Companion.TABLE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask.Companion.THEORY_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -74,6 +76,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
         HyperskillTaskType.REMOTE_EDU -> { _: String -> pycharmTask(REMOTE_EDU_TASK_TYPE) }
         HyperskillTaskType.SORTING -> this::sortingTask
         HyperskillTaskType.STRING -> this::stringTask
+        HyperskillTaskType.TABLE -> this::tableTask
         HyperskillTaskType.TEXT -> this::theoryTask
         else -> this::unsupportedTask
       }
@@ -217,6 +220,23 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
       when (val result = course.getStepikBasedConnector().getActiveAttemptOrPostNew(task)) {
         is Ok -> fillMatchingTask(result.value, task)
         is Err -> LOG.warn("Can't get attempt for Matching task of $courseType course: ${result.error}")
+      }
+    }
+
+    initTaskFiles(task)
+    return task
+  }
+
+  private fun tableTask(name: String): TableTask {
+    val task = TableTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked)
+
+    task.descriptionText = step.text
+    task.descriptionFormat = DescriptionFormat.HTML
+
+    if (!isUnitTestMode) {
+      when (val result = course.getStepikBasedConnector().getActiveAttemptOrPostNew(task)) {
+        is Ok -> fillTableTask(result.value, task)
+        is Err -> LOG.warn("Can't get attempt for Table task of $courseType course: ${result.error}")
       }
     }
 
@@ -419,6 +439,29 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
       val pairs = dataset.pairs.orEmpty()
       task.options = pairs.map { it.second }
       task.captions = pairs.map { it.first }
+      return true
+    }
+
+    private fun fillTableTask(attempt: Attempt, task: TableTask): Boolean {
+      val dataset = attempt.dataset
+      if (dataset == null) {
+        LOG.warn("Dataset for step ${task.id} is null")
+        return false
+      }
+      val rows = dataset.rows
+      if (rows == null) {
+        LOG.warn("Dataset does not contain any rows for step ${task.id}")
+        return false
+      }
+
+      val columns = dataset.columns
+      if (columns == null) {
+        LOG.warn("Dataset does not contain any columns for step ${task.id}")
+        return false
+      }
+
+      val isCheckbox = dataset.isCheckbox
+      task.createTable(rows, columns, isCheckbox)
       return true
     }
 

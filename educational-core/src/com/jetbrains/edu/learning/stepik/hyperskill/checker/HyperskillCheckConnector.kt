@@ -275,6 +275,17 @@ object HyperskillCheckConnector {
     return periodicallyCheckSubmissionResult(project, submission, task)
   }
 
+  fun checkTableTask(project: Project, task: TableTask): CheckResult {
+    val checkId = task.checkId()
+    if (checkId != null) {
+      return checkId
+    }
+    val submission = HyperskillSubmitConnector.submitTableTask(task).onError { error ->
+      return failedToSubmit(project, task, error)
+    }
+    return periodicallyCheckSubmissionResult(project, submission, task)
+  }
+
   fun retryChoiceTask(task: ChoiceTask): Result<Boolean, String> {
     val connector = task.getStepikBasedConnector()
     val attempt = connector.postAttempt(task).onError {

@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.hasChangedFiles
+import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
@@ -35,6 +36,9 @@ object UpdateUtils {
       task is MatchingTask && remoteTask is MatchingTask -> {
         task.captions = remoteTask.captions
         task.options = remoteTask.options
+      }
+      task is TableTask && remoteTask is TableTask -> {
+        task.createTable(remoteTask.rows, remoteTask.columns, remoteTask.isCheckbox)
       }
     }
 

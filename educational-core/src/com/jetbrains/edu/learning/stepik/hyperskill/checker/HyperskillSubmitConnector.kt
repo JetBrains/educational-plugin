@@ -10,10 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getText
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
-import com.jetbrains.edu.learning.courseFormat.tasks.AnswerTask
-import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
-import com.jetbrains.edu.learning.courseFormat.tasks.NumberTask
-import com.jetbrains.edu.learning.courseFormat.tasks.StringTask
+import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
@@ -101,6 +98,16 @@ object HyperskillSubmitConnector {
     }
 
     val submission = HyperskillSubmissionFactory.createSortingBasedTaskSubmission(attempt, task.ordering)
+    return connector.postSubmission(submission)
+  }
+
+  fun submitTableTask(task: TableTask): Result<StepikBasedSubmission, String> {
+    val connector = task.getStepikBasedConnector()
+    val attempt = connector.getActiveAttemptOrPostNew(task).onError {
+      return Err(it)
+    }
+
+    val submission = HyperskillSubmissionFactory.createTableTaskSubmission(attempt, task)
     return connector.postSubmission(submission)
   }
 

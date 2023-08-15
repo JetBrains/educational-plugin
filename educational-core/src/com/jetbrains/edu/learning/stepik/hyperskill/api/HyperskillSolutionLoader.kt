@@ -11,10 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus.Companion.toCheckStat
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.UnsupportedTask
+import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
@@ -41,7 +38,7 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
     val files: Map<String, Solution> = when (task) {
       is EduTask -> lastSubmission.eduTaskFiles
       is CodeTask -> lastSubmission.codeTaskFiles(task)
-      is SortingTask, is MatchingTask, is ChoiceTask, is UnsupportedTask -> emptyMap()
+      is SortingTask, is MatchingTask, is ChoiceTask, is TableTask, is UnsupportedTask -> emptyMap()
       else -> {
         LOG.warn("Solutions for task ${task.name} of type ${task::class.simpleName} not loaded")
         emptyMap()

@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
+import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.UnsupportedTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -140,6 +141,9 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
       }
       first is MatchingTask && second is MatchingTask -> {
         (first.options != second.options) || (first.captions != second.captions)
+      }
+      first is TableTask && second is TableTask -> {
+        (first.rows != second.rows) || (first.columns != second.columns) || (first.isCheckbox != second.isCheckbox)
       }
       first is RemoteEduTask && second is RemoteEduTask -> {
         first.checkProfile != second.checkProfile

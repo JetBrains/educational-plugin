@@ -69,14 +69,20 @@ object YamlMixinNames {
   // choice task
   const val IS_CORRECT = "is_correct"
   const val OPTIONS = "options"
-  const val ORDERING = "ordering"
-  const val CAPTIONS = "captions"
   const val IS_MULTIPLE_CHOICE = "is_multiple_choice"
   const val FEEDBACK_CORRECT = "message_correct"
   const val FEEDBACK_INCORRECT = "message_incorrect"
   const val SELECTED_OPTIONS = "selected_options"
   const val QUIZ_HEADER = "quiz_header"
   const val LOCAL_CHECK = "local_check"
+
+  //sorting based task
+  const val ORDERING = "ordering"
+  const val CAPTIONS = "captions"
+
+  //table task
+  const val ROWS = "rows"
+  const val COLUMNS = "columns"
 
   // checkio
   const val CHECKIO_TYPE_YAML = "checkiO"

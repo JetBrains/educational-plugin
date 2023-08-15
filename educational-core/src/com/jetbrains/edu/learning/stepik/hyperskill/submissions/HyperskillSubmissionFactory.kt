@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill.submissions
 
 import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -78,6 +79,72 @@ object HyperskillSubmissionFactory {
   fun createSortingBasedTaskSubmission(attempt: Attempt, ordering: IntArray): StepikBasedSubmission {
     val reply = SortingBasedTaskReply()
     reply.ordering = ordering
+    return StepikBasedSubmission(attempt, reply)
+  }
+
+  fun createTableTaskSubmission(attempt: Attempt, task: TableTask): StepikBasedSubmission {
+    val reply = TableTaskReply()
+    TODO()
+    /*
+    {
+	"reply": {
+		"choices": [
+			{
+				"name_row": "incorrect keyword",
+				"columns": [
+					{
+						"name": "compile-time",
+						"answer": true
+					},
+					{
+						"name": "run-time (\"bugs\")",
+						"answer": false
+					}
+				]
+			},
+			{
+				"name_row": "incorrect text output",
+				"columns": [
+					{
+						"name": "compile-time",
+						"answer": true
+					},
+					{
+						"name": "run-time (\"bugs\")",
+						"answer": false
+					}
+				]
+			},
+			{
+				"name_row": "missing closing bracket",
+				"columns": [
+					{
+						"name": "compile-time",
+						"answer": true
+					},
+					{
+						"name": "run-time (\"bugs\")",
+						"answer": false
+					}
+				]
+			},
+			{
+				"name_row": "a program cannot open a file",
+				"columns": [
+					{
+						"name": "compile-time",
+						"answer": true
+					},
+					{
+						"name": "run-time (\"bugs\")",
+						"answer": false
+					}
+				]
+			}
+		]
+	}
+}
+     */
     return StepikBasedSubmission(attempt, reply)
   }
 }

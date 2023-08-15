@@ -47,6 +47,11 @@ const val IS_MULTIPLE_CHOICE = "is_multiple_choice"
 const val PAIRS = "pairs"
 const val OPTIONS = "options"
 const val ORDERING = "ordering"
+const val ROWS = "rows"
+const val COLUMNS = "columns"
+const val IS_CHECKBOX = "is_checkbox"
+const val NAME_ROW = "name_row"
+const val ANSWER = "answer"
 const val DATASET = "dataset"
 const val REPLY = "reply"
 const val HINT = "hint"
@@ -65,6 +70,7 @@ const val STRING_TASK = "string"
 const val SORTING_BASED_TASK = "sorting_based"
 const val CHOICE_TASK = "choice"
 const val DATA_TASK = "data"
+const val TABLE_TASK = "table"
 const val VERSION = "version"
 const val ATTACHMENTS = "attachments"
 const val COURSE_REVIEW_SUMMARIES = "course-review-summaries"
@@ -339,6 +345,28 @@ class NumberTaskReply: Reply() {
 class TextTaskReply: Reply() {
   @JsonProperty(TEXT)
   var text: String? = null
+}
+
+@JsonTypeName(TABLE_TASK)
+class TableTaskReply: Reply() {
+  @JsonProperty(CHOICES)
+  val choices: Array<Row>? = null
+}
+
+class Row {
+  @JsonProperty(NAME_ROW)
+  val nameRow: String? = null
+
+  @JsonProperty(COLUMNS)
+  val columns: Array<Column>? = null
+}
+
+class Column {
+  @JsonProperty(NAME)
+  val name: String? = null
+
+  @JsonProperty(ANSWER)
+  val answer: Boolean? = null
 }
 
 class Attachment {
