@@ -24,7 +24,8 @@ class EduTypedLineHandler(private val originalHandler: EditorActionHandler) : Ed
     val lineNumber = document.getLineNumber(currentCaret.offset)
     val lineEndOffset = document.getLineEndOffset(lineNumber)
     val lineStartOffset = document.getLineStartOffset(lineNumber)
-    getAnswerPlaceholder(lineStartOffset, lineEndOffset, taskFile.answerPlaceholders) ?: originalHandler.execute(editor, caret, dataContext)
-    throw ReadOnlyFragmentModificationException(null, null)
+    val placeholder = getAnswerPlaceholder(lineStartOffset, lineEndOffset, taskFile.answerPlaceholders)
+    if (placeholder != null) throw ReadOnlyFragmentModificationException(null, null)
+    originalHandler.execute(editor, caret, dataContext)
   }
 }
