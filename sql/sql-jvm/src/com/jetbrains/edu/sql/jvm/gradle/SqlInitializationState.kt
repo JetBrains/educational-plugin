@@ -19,7 +19,13 @@ class SqlInitializationState(private val project: Project) : SimplePersistentSta
     })
   }
 
-  var dataSourceInitialized: Boolean by state::dataSourceInitialized
+  // Don't use property delegation like `var dataSourceInitialized by state::dataSourceInitialized`.
+  // It doesn't work because `state` may change but delegation keeps the initial state object
+  var dataSourceInitialized: Boolean
+    get() = state.dataSourceInitialized
+    set(value) {
+      state.dataSourceInitialized = value
+    }
 
   fun taskDatabaseInitialized(task: Task) {
     val url = task.databaseUrl(project) ?: return
