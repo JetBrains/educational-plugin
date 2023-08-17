@@ -8,7 +8,13 @@ import java.util.*
 @State(name = "StudyTwitterSettings", storages = [Storage("study_twitter_settings.xml", roamingType = RoamingType.DISABLED)])
 class TwitterSettings : SimplePersistentStateComponent<TwitterSettings.State>(State()) {
 
-  var askToTweet: Boolean by state::askToTweet
+  // Don't use property delegation like `var askToTweet by state::askToTweet`.
+  // It doesn't work because `state` may change but delegation keeps the initial state object
+  var askToTweet: Boolean
+    get() = state.askToTweet
+    set(value) {
+      state.askToTweet = value
+    }
 
   var userId: String
     get() {
