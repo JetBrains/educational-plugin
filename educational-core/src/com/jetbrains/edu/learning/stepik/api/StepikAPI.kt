@@ -4,6 +4,9 @@ package com.jetbrains.edu.learning.stepik.api
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
+import com.fasterxml.jackson.annotation.JsonTypeName
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.*
@@ -12,14 +15,18 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.NAME
 import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
 import com.jetbrains.edu.learning.courseFormat.attempts.AttemptBase
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.stepik.ChoiceStepSource
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.submissions.SolutionFile
 import com.jetbrains.edu.learning.submissions.Submission
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.submissions.TEXT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SOLUTIONS_HIDDEN
+import org.jetbrains.annotations.TestOnly
 import java.util.*
 
 const val USERS = "users"
@@ -280,12 +287,24 @@ class Feedback {
   }
 }
 
-class Reply {
-  @JsonProperty(CHOICES)
-  var choices: BooleanArray? = null
-
-  @JsonProperty(SCORE)
-  var score: String = ""
+@JsonTypeInfo(
+  use = JsonTypeInfo.Id.NAME,
+  include = JsonTypeInfo.As.PROPERTY,
+  property = TYPE
+)
+@JsonSubTypes(
+  JsonSubTypes.Type(value = CodeTaskReply::class, name = CodeTask.CODE_TASK_TYPE),
+  JsonSubTypes.Type(value = EduTaskReply::class, name = EduTask.EDU_TASK_TYPE),
+  JsonSubTypes.Type(value = RemoteEduTaskReply::class, name = RemoteEduTask.REMOTE_EDU_TASK_TYPE),
+  JsonSubTypes.Type(value = ChoiceTaskReply::class, name = ChoiceTask.CHOICE_TASK_TYPE),
+  JsonSubTypes.Type(value = SortingBasedTaskReply::class, name = "sorting_based"),
+  JsonSubTypes.Type(value = DataTaskReply::class, name = DataTask.DATA_TASK_TYPE),
+  JsonSubTypes.Type(value = NumberTaskReply::class, name = NumberTask.NUMBER_TASK_TYPE),
+  JsonSubTypes.Type(value = TextTaskReply::class, name = StringTask.STRING_TASK_TYPE),
+)
+open class Reply {
+  @JsonProperty(VERSION)
+  var version = JSON_FORMAT_VERSION
 
   @JsonProperty(SOLUTION)
   var solution: List<SolutionFile>? = null
@@ -299,30 +318,50 @@ class Reply {
   @JsonProperty(FILE)
   var file: String? = null
 
-  @JsonProperty(TEXT)
-  var text: String? = null
-
-  @JsonProperty(NUMBER)
-  var number: String? = null
-
-  @JsonProperty(EDU_TASK)
-  var eduTask: String? = null
-
-  @JsonProperty(VERSION)
-  var version = JSON_FORMAT_VERSION
-
+@JsonTypeName(EduTask.EDU_TASK_TYPE)
+class EduTaskReply: Reply() {
   @JsonProperty(FEEDBACK)
   var feedback: Feedback? = null
 
+  @JsonProperty(SCORE)
+  var score: String = ""
+}
+
+@JsonTypeName(RemoteEduTask.REMOTE_EDU_TASK_TYPE)
+class RemoteEduTaskReply: Reply() {
   @JsonProperty(CHECK_PROFILE)
   @JsonInclude(JsonInclude.Include.NON_NULL)
   var checkProfile: String? = null
+}
 
+@JsonTypeName(ChoiceTask.CHOICE_TASK_TYPE)
+class ChoiceTaskReply: Reply() {
+  @JsonProperty(CHOICES)
+  var choices: BooleanArray? = null
+}
+
+@JsonTypeName("sorting_based")
+class SortingBasedTaskReply: Reply() {
   @JsonProperty(ORDERING)
   var ordering: IntArray? = null
+}
 
-  @Suppress("ConvertSecondaryConstructorToPrimary") // used for deserialization
-  constructor()
+@JsonTypeName(DataTask.DATA_TASK_TYPE)
+class DataTaskReply: Reply() {
+  @JsonProperty(FILE)
+  var file: String? = null
+}
+
+@JsonTypeName(NumberTask.NUMBER_TASK_TYPE)
+class NumberTaskReply: Reply() {
+  @JsonProperty(NUMBER)
+  var number: String? = null
+}
+
+@JsonTypeName(StringTask.STRING_TASK_TYPE)
+class TextTaskReply: Reply() {
+  @JsonProperty(TEXT)
+  var text: String? = null
 }
 
 class Attachment {
@@ -440,7 +479,7 @@ class StepikBasedSubmission : Submission {
 
   override fun getSubmissionTexts(taskName: String): Map<String, String>? {
     return if (solutionFiles == null) {
-      val submissionText = reply?.code ?: return null
+      val submissionText = (reply as? CodeTaskReply)?.code ?: return null
       mapOf(taskName to submissionText)
     }
     else {

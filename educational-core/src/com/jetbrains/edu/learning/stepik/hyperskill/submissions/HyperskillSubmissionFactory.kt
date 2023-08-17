@@ -10,18 +10,19 @@ import com.jetbrains.edu.learning.stepik.api.Feedback
 import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 import com.jetbrains.edu.learning.courseFormat.RemoteEduTask
+import com.jetbrains.edu.learning.stepik.api.*
 import com.jetbrains.edu.learning.submissions.SolutionFile
 
 object HyperskillSubmissionFactory {
   fun createCodeTaskSubmission(attempt: Attempt, answer: String, language: String): StepikBasedSubmission {
-    val reply = Reply()
+    val reply = CodeTaskReply()
     reply.code = answer
     reply.language = language
     return StepikBasedSubmission(attempt, reply)
   }
 
   fun createEduTaskSubmission(task: Task, attempt: Attempt, files: List<SolutionFile>, feedback: String): StepikBasedSubmission {
-    val reply = Reply()
+    val reply = EduTaskReply()
     reply.feedback = Feedback(feedback)
     reply.score = if (task.status == CheckStatus.Solved) "1" else "0"
     reply.solution = files
@@ -29,7 +30,7 @@ object HyperskillSubmissionFactory {
   }
 
   fun createRemoteEduTaskSubmission(task: RemoteEduTask, attempt: Attempt, files: List<SolutionFile>): StepikBasedSubmission {
-    val reply = Reply()
+    val reply = RemoteEduTaskReply()
     reply.checkProfile = task.checkProfile
     reply.solution = files
     return StepikBasedSubmission(attempt, reply)
@@ -37,7 +38,7 @@ object HyperskillSubmissionFactory {
 
   fun createChoiceTaskSubmission(task: ChoiceTask, attempt: Attempt): StepikBasedSubmission {
     val answerArray = createChoiceTaskAnswerArray(task, attempt)
-    val reply = Reply()
+    val reply = ChoiceTaskReply()
     reply.choices = answerArray
     return StepikBasedSubmission(attempt, reply)
   }
@@ -58,25 +59,25 @@ object HyperskillSubmissionFactory {
   }
 
   fun createStringTaskSubmission(attempt: Attempt, answer: String): StepikBasedSubmission {
-    val reply = Reply()
+    val reply = TextTaskReply()
     reply.text = answer
     return StepikBasedSubmission(attempt, reply)
   }
 
   fun createNumberTaskSubmission(attempt: Attempt, answer: String): StepikBasedSubmission {
-    val reply = Reply()
+    val reply = NumberTaskReply()
     reply.number = answer
     return StepikBasedSubmission(attempt, reply)
   }
 
   fun createDataTaskSubmission(attempt: DataTaskAttempt, answer: String): StepikBasedSubmission {
-    val reply = Reply()
+    val reply = DataTaskReply()
     reply.file = answer
     return StepikBasedSubmission(attempt, reply)
   }
 
   fun createSortingBasedTaskSubmission(attempt: Attempt, ordering: IntArray): StepikBasedSubmission {
-    val reply = Reply()
+    val reply = SortingBasedTaskReply()
     reply.ordering = ordering
     return StepikBasedSubmission(attempt, reply)
   }

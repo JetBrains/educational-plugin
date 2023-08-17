@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.api.CodeTaskReply
 import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
@@ -55,7 +56,7 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
     get() = solutionFiles?.associate { it.name to Solution(it.text, it.isVisible, emptyList()) } ?: emptyMap()
 
   private fun StepikBasedSubmission.codeTaskFiles(task: CodeTask): Map<String, Solution> {
-    val codeFromServer = reply?.code ?: return emptyMap()
+    val codeFromServer = (reply as? CodeTaskReply)?.code ?: return emptyMap()
     val configurator = task.course.configurator as? HyperskillConfigurator ?: return emptyMap()
     val taskFile = configurator.getCodeTaskFile(project, task) ?: return emptyMap()
     return mapOf(taskFile.name to Solution(codeFromServer, true, emptyList()))
