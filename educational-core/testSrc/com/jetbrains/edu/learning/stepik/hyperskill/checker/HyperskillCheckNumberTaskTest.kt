@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.pathWithoutPrams
 import com.jetbrains.edu.learning.stepik.Step
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 
 class HyperskillCheckNumberTaskTest : HyperskillCheckAnswerTaskTest() {
 

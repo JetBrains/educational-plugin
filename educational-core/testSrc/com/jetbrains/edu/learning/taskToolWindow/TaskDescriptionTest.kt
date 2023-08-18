@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.taskToolWindow.ui.EduFileEditorManagerListener
 import com.jetbrains.edu.learning.taskToolWindow.ui.JCEFToolWindow
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView

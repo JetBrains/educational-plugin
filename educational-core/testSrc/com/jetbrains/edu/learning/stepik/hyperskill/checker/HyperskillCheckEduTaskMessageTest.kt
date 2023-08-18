@@ -6,9 +6,9 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.pathWithoutPrams
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROJECTS_URL
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import org.intellij.lang.annotations.Language
 
 class HyperskillCheckEduTaskMessageTest : HyperskillCheckActionTestBase() {

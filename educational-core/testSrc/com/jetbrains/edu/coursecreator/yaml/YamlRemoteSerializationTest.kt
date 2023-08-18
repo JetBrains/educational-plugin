@@ -7,10 +7,10 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.courseFormat.attempts.DataTaskAttempt.Companion.toDataTaskAttempt
 import com.jetbrains.edu.learning.stepik.course.StepikLesson
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillTopic
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.yaml.YamlTestCase
 import java.util.*
@@ -42,7 +42,8 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     course.hyperskillProject = hyperskillProject
     course.updateDate = Date("Fri, 01 Jan 2010 00:00:00 UTC")
 
-    course.stages = listOf(HyperskillStage(1, "First", 11, true),
+    course.stages = listOf(
+      HyperskillStage(1, "First", 11, true),
                            HyperskillStage(2, "Second", 22)
     )
 

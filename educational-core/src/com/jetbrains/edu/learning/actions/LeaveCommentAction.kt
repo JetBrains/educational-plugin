@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.getStepikLink
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 
 class LeaveCommentAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.leave.comment.text"),
                                            EduCoreBundle.lazyMessage("action.leave.comment.text"), EducationalCoreIcons.CommentTask),

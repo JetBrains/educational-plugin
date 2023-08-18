@@ -61,11 +61,11 @@ import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.course.StepikLesson
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE_YAML
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillTopic
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.RemoteEduTask
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.LESSON_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_COURSE_CONFIG

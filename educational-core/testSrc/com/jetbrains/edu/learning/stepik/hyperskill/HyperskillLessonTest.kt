@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.stepik.StepikTestUtils
 import com.jetbrains.edu.learning.stepik.StepikTestUtils.logOutFakeStepikUser
 import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import org.apache.commons.codec.binary.Base64
 import java.io.File
 

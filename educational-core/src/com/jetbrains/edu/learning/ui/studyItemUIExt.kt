@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.UnsupportedTask
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 
 
 fun Task.getUIName(): String = if (course is HyperskillCourse) {

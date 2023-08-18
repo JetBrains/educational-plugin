@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.stepik.SOURCE
 import com.jetbrains.edu.learning.stepik.Step
 import com.jetbrains.edu.learning.stepik.api.MockStepikBasedConnector
 import com.jetbrains.edu.learning.stepik.api.OPTIONS
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket

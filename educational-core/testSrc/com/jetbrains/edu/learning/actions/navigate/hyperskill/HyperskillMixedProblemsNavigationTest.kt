@@ -5,7 +5,7 @@ import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROBLEMS
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 
 class HyperskillMixedProblemsNavigationTest : HyperskillNavigateInCourseTestBase() {
   override val course: HyperskillCourse

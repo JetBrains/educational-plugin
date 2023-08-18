@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.pathWithoutPrams
 import com.jetbrains.edu.learning.stepik.hyperskill.api.*
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.defaultHyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.logInFakeHyperskillUser
 import com.jetbrains.edu.learning.stepik.hyperskill.logOutFakeHyperskillUser

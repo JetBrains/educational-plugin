@@ -24,7 +24,7 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToFirstAnsw
 import com.jetbrains.edu.learning.placeholder.PlaceholderHighlightingManager.showPlaceholders
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager.updateDependentPlaceholders
 import com.jetbrains.edu.learning.statistics.EduLaunchesReporter.sendStats
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.markTheoryTaskAsCompleted
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView.Companion.getInstance

@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillFrontendEvent
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillFrontendEventType
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTimeSpentEvent
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.atomic.DoubleAdder

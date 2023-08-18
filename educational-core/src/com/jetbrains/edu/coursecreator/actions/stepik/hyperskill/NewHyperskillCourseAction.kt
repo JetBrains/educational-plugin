@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import org.jetbrains.annotations.NonNls
 
 @Suppress("ComponentNotRegistered") // Hyperskill.xml

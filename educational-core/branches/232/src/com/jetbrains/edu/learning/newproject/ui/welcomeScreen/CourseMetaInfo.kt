@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.newproject.ui.logo
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import javax.swing.Icon
 
 private const val PROGRAMMING_LANGUAGE = "programmingLanguage"

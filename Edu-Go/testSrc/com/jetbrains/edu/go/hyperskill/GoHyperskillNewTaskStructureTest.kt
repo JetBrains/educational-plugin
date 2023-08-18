@@ -10,7 +10,7 @@ import com.jetbrains.edu.go.GoConfigurator.Companion.TASK_GO
 import com.jetbrains.edu.go.GoConfigurator.Companion.TEST_GO
 import com.jetbrains.edu.learning.EduNames.TEST
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 
 class GoHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
   override val language: Language get() = GoLanguage.INSTANCE

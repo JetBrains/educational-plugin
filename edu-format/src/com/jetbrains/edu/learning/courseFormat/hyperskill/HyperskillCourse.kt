@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.hyperskill.courseFormat
+package com.jetbrains.edu.learning.courseFormat.hyperskill
 
 import com.jetbrains.edu.learning.capitalize
 import com.jetbrains.edu.learning.courseFormat.*
@@ -7,10 +7,10 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_PROBLEM
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_PROJECTS_URL
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_TOPICS
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
-import com.jetbrains.edu.learning.stepik.hyperskill.StepikTaskType
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillTopic
+import com.jetbrains.edu.learning.courseFormat.hyperskill.StepikTaskType
 import com.jetbrains.edu.learning.wrapWithUtm
 import java.util.concurrent.ConcurrentHashMap
 

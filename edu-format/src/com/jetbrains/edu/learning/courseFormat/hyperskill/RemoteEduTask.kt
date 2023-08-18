@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.hyperskill.courseFormat
+package com.jetbrains.edu.learning.courseFormat.hyperskill
 
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask

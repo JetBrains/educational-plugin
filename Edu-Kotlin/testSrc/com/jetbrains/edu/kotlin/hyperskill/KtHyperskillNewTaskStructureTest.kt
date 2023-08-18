@@ -4,7 +4,7 @@ import com.intellij.lang.Language
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.actions.create.CCNewTaskStructureTestBase
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
 class KtHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {

@@ -5,8 +5,8 @@ import com.intellij.ui.ColorUtil
 import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillTopic
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.taskToolWindow.htmlTransformers.HtmlTransformerContext
 import com.jetbrains.edu.learning.taskToolWindow.htmlTransformers.TaskDescriptionTransformer
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleManager

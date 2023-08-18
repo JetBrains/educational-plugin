@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.isToEncodeContent
 import com.jetbrains.edu.learning.loadEncodedContent
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.ui.getUIName
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.IOException

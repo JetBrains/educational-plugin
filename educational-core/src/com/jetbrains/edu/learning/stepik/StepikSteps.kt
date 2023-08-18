@@ -30,7 +30,7 @@ import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.stepik.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAdditionalInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepOptions
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.submissions.TEXT
 import com.jetbrains.edu.learning.taskToolWindow.replaceEncodedShortcuts
 import com.jetbrains.edu.learning.toStudentFile

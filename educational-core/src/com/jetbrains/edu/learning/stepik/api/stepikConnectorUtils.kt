@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikNames.getStepikUrl
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 
 fun loadAndFillLessonAdditionalInfo(lesson: Lesson, course: Course? = null) {
   val attachmentLink = "${getStepikUrl()}/media/attachments/lesson/${lesson.id}/${StepikNames.ADDITIONAL_INFO}"

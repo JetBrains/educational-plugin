@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
-import com.jetbrains.edu.learning.stepik.hyperskill.StepikTaskType
+import com.jetbrains.edu.learning.courseFormat.hyperskill.StepikTaskType
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask.Companion.DATA_FOLDER_NAME
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask.Companion.DATA_SAMPLE_FOLDER_NAME
@@ -33,8 +33,8 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.StepikBasedConnector.Companion.getStepikBasedConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask.Companion.REMOTE_EDU_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.hyperskill.RemoteEduTask
+import com.jetbrains.edu.learning.courseFormat.hyperskill.RemoteEduTask.Companion.REMOTE_EDU_TASK_TYPE
 import com.jetbrains.edu.learning.xmlEscaped
 import com.jetbrains.rd.util.first
 import org.jetbrains.annotations.NonNls

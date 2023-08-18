@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.actions.create.CCNewTaskStructureTestBase
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 
 class JsHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
   override val language: Language get() = JavascriptLanguage.INSTANCE

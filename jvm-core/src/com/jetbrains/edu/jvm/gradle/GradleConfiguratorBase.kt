@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_UNIX
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_WIN
 import com.jetbrains.edu.learning.gradle.GradleConstants.LOCAL_PROPERTIES
 import com.jetbrains.edu.learning.gradle.GradleConstants.SETTINGS_GRADLE
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import java.io.File
 import java.io.IOException
 

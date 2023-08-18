@@ -18,8 +18,8 @@ import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_COMMENT_ANCHOR
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLanguages
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask.Companion.REMOTE_EDU_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.hyperskill.RemoteEduTask
+import com.jetbrains.edu.learning.courseFormat.hyperskill.RemoteEduTask.Companion.REMOTE_EDU_TASK_TYPE
 import com.jetbrains.edu.learning.stepik.hyperskill.stepLink
 
 class HyperskillTaskBuilder(

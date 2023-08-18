@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.hyperskill.api
+package com.jetbrains.edu.learning.courseFormat.hyperskill
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.ID
