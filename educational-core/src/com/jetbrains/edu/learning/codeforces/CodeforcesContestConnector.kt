@@ -1,9 +1,9 @@
 package com.jetbrains.edu.learning.codeforces
 
 import com.intellij.openapi.diagnostic.Logger
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_URL
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesUserInfo
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_URL
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesUserInfo
 import com.jetbrains.edu.learning.courseFormat.codeforces.ContestParameters
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element

@@ -7,7 +7,7 @@ import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getContestIdFromLink
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_HELP_TEXT
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TYPE_YAML
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_TYPE_YAML
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.apache.commons.lang.math.NumberUtils.isDigits
 import javax.swing.JComponent

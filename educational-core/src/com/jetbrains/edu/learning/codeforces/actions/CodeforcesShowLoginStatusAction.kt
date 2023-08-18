@@ -8,10 +8,10 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.openapi.wm.ex.ToolWindowEx
 import com.intellij.ui.awt.RelativePoint
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.CodeforcesUtils.updateCheckStatus
 import com.jetbrains.edu.learning.codeforces.authorization.LoginDialog
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_URL
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
@@ -57,7 +57,7 @@ class CodeforcesShowLoginStatusAction : CodeforcesAction() {
     val account = CodeforcesSettings.getInstance().account
     val accountInfoText = if (account != null) {
       val handle = account.userInfo.handle
-      EduCoreBundle.message("account.widget.login.message", "${CodeforcesNames.CODEFORCES_URL}/profile/$handle",
+      EduCoreBundle.message("account.widget.login.message", "${CODEFORCES_URL}/profile/$handle",
                             handle)
     }
     else {

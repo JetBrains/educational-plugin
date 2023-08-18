@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.codeforces.actions.StartCodeforcesContestActio
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.api.MockCodeforcesConnector
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_URL
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask.Companion.codeforcesSubmitLink
@@ -18,7 +19,7 @@ class CodeforcesLoadingTest : CodeforcesTestCase() {
   override fun setUp() {
     super.setUp()
     val mockCodeforcesConnector = CodeforcesConnector.getInstance() as MockCodeforcesConnector
-    mockCodeforcesConnector.setBaseUrl(CodeforcesNames.CODEFORCES_URL, testRootDisposable)
+    mockCodeforcesConnector.setBaseUrl(CODEFORCES_URL, testRootDisposable)
   }
 
   private val contestKotlinHeroesEpisode1: CodeforcesCourse by lazy {

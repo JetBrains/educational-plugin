@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.codeforces.authorization.LoginDialog
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_TYPE_YAML
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.onError
@@ -34,7 +35,7 @@ class CodeforcesSubmissionsProvider : SubmissionsProvider {
 
   override fun isLoggedIn(): Boolean = CodeforcesSettings.getInstance().isLoggedIn()
 
-  override fun getPlatformName(): String = CodeforcesNames.CODEFORCES_TYPE_YAML
+  override fun getPlatformName(): String = CODEFORCES_TYPE_YAML
 
   override fun doAuthorize(vararg postLoginActions: Runnable) = LoginDialog(AuthorizationPlace.SUBMISSIONS_TAB).show()
 

@@ -3,12 +3,13 @@ package com.jetbrains.edu.learning.codeforces.api
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_URL
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTaskWithFileIO
-import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.TaskFile
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
@@ -62,7 +63,7 @@ fun createCodeforcesTask(problemHolder: Element, lesson: Lesson, index: Int): Co
       srcValue = srcValue.replace(ESPRESSO_CODEFORCES_COM, "https:${ESPRESSO_CODEFORCES_COM}")
     }
     else if (srcValue.matches(URL_WITH_TRAILING_SLASH)) {
-      srcValue = srcValue.replace(TRAILING_SLASH, "${CodeforcesNames.CODEFORCES_URL}/")
+      srcValue = srcValue.replace(TRAILING_SLASH, "${CODEFORCES_URL}/")
     }
     it.attr("src", srcValue)
   }

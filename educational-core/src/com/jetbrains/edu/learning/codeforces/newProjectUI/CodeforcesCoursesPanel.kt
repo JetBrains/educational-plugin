@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.actions.StartCodeforcesContestAction
 import com.jetbrains.edu.learning.codeforces.authorization.LoginDialog
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_URL
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CoursesDownloadingException
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
@@ -89,7 +90,7 @@ class CodeforcesCoursesPanel(
     text.text = EduCoreBundle.message("codeforces.anti.crawler.start")
     text.appendSecondaryText(EduCoreBundle.message("codeforces.anti.crawler.end2") + " ", SimpleTextAttributes.GRAYED_ATTRIBUTES, null)
     text.appendSecondaryText(EduCoreBundle.message("action.open.on.text", CodeforcesNames.CODEFORCES_TITLE),
-                             SimpleTextAttributes.LINK_ATTRIBUTES) { EduBrowser.getInstance().browse(CodeforcesNames.CODEFORCES_URL) }
+                             SimpleTextAttributes.LINK_ATTRIBUTES) { EduBrowser.getInstance().browse(CODEFORCES_URL) }
     text.appendLine(EduCoreBundle.message("help.use.guide1") + " ", SimpleTextAttributes.GRAYED_ATTRIBUTES, null)
     @Suppress("DialogTitleCapitalization") // it's ok to start from lowercase as it's the second part of a sentence
     text.appendText(EduCoreBundle.message("help.use.guide2"),

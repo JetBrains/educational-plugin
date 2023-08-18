@@ -15,9 +15,10 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesPlatformProvider
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_URL
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import com.jetbrains.edu.learning.newproject.ui.GrayTextHtmlPanel
@@ -74,7 +75,7 @@ class CodeforcesCoursePanel(disposable: Disposable) : CoursePanel(disposable, fa
   override fun joinCourseAction(info: CourseCreationInfo, mode: CourseMode) {
     val codeforcesCourse = info.course as? CodeforcesCourse ?: return
     if (codeforcesCourse.isRegistrationOpen && !codeforcesCourse.isOngoing) {
-      val registrationLink = CodeforcesNames.CODEFORCES_URL + codeforcesCourse.registrationLink
+      val registrationLink = CODEFORCES_URL + codeforcesCourse.registrationLink
       register(codeforcesCourse.id, registrationLink, codeforcesCourse)
     }
     else {
@@ -103,7 +104,7 @@ class CodeforcesCoursePanel(disposable: Disposable) : CoursePanel(disposable, fa
       hyperlinkLabel.apply {
         isVisible = codeforcesCourse.isRegistrationOpen == true && codeforcesCourse.isOngoing
         setListener({ _, course ->
-                      val registrationLink = CodeforcesNames.CODEFORCES_URL + course.registrationLink
+                      val registrationLink = CODEFORCES_URL + course.registrationLink
                       register(codeforcesCourse.id, registrationLink, codeforcesCourse)
                     }, codeforcesCourse)
       }

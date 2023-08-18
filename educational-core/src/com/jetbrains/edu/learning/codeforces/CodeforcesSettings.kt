@@ -16,9 +16,10 @@ import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.authUtils.deserializeAccount
 import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesAccount
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesUserInfo
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesUserInfo
 import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
@@ -70,8 +71,8 @@ class CodeforcesSettings : PersistentStateComponent<Element> {
 
   fun setAccountWithStatisticsEvent(account: CodeforcesAccount?, authorizationPlace: AuthorizationPlace = AuthorizationPlace.UNKNOWN) {
     this.account = account
-    if (account != null) EduCounterUsageCollector.logInSucceed(CodeforcesNames.CODEFORCES_TYPE_YAML, authorizationPlace)
-    else EduCounterUsageCollector.logOutSucceed(CodeforcesNames.CODEFORCES_TYPE_YAML, authorizationPlace)
+    if (account != null) EduCounterUsageCollector.logInSucceed(EduFormatNames.CODEFORCES_TYPE_YAML, authorizationPlace)
+    else EduCounterUsageCollector.logOutSucceed(EduFormatNames.CODEFORCES_TYPE_YAML, authorizationPlace)
   }
 
   override fun getState(): Element? {

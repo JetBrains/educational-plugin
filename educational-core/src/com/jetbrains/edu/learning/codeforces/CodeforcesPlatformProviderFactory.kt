@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.codeforces.actions.StartCodeforcesContestActio
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.newProjectUI.CodeforcesCoursesPanel
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseCreationInfo
@@ -25,7 +26,7 @@ class CodeforcesPlatformProviderFactory : CoursesPlatformProviderFactory {
 }
 
 class CodeforcesPlatformProvider : CoursesPlatformProvider() {
-  override val name: String = CodeforcesNames.CODEFORCES
+  override val name: String = CODEFORCES
 
   override val icon: Icon get() = EducationalCoreIcons.Codeforces
 

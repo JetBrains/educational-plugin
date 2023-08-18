@@ -2,8 +2,8 @@ package com.jetbrains.edu.learning.configuration
 
 import com.intellij.lang.Language
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYCHARM
 import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE

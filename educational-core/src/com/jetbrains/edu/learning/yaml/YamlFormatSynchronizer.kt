@@ -32,8 +32,8 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_TYPE_YAML
 import com.jetbrains.edu.learning.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.courseFormat.attempts.DataTaskAttempt
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
@@ -161,7 +161,7 @@ object YamlFormatSynchronizer {
     mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderYamlMixin::class.java)
     mapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyYamlMixin::class.java)
 
-    mapper.registerSubtypes(NamedType(CodeforcesCourse::class.java, CodeforcesNames.CODEFORCES_TYPE_YAML))
+    mapper.registerSubtypes(NamedType(CodeforcesCourse::class.java, CODEFORCES_TYPE_YAML))
     mapper.registerSubtypes(NamedType(CourseraCourse::class.java, CourseraNames.COURSE_TYPE_YAML))
     mapper.registerSubtypes(NamedType(CheckiOCourse::class.java, CheckiONames.CHECKIO_TYPE_YAML))
     mapper.registerSubtypes(NamedType(HyperskillCourse::class.java, HYPERSKILL_TYPE_YAML))

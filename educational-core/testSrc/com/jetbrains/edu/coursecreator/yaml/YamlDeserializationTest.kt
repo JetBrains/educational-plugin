@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
@@ -262,7 +261,7 @@ class YamlDeserializationTest : YamlTestCase() {
     val programmingLanguage = "Plain text"
     val programTypeId = "1000"
     val yamlContent = """
-      |type: ${CodeforcesNames.CODEFORCES_TYPE_YAML}
+      |type: ${EduFormatNames.CODEFORCES_TYPE_YAML}
       |title: $name
       |language: English
       |summary: |-
@@ -282,7 +281,7 @@ class YamlDeserializationTest : YamlTestCase() {
     val name = "Test Course"
     val programmingLanguage = "Plain text"
     val yamlContent = """
-      |type: ${CodeforcesNames.CODEFORCES_TYPE_YAML}
+      |type: ${EduFormatNames.CODEFORCES_TYPE_YAML}
       |title: $name
       |language: English
       |summary: |-
