@@ -8,6 +8,7 @@ import com.intellij.platform.templates.github.DownloadUtil
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSERA
 import com.jetbrains.edu.learning.coursera.newProjectUI.CourseraCoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
@@ -28,7 +29,7 @@ class CourseraPlatformProviderFactory : CoursesPlatformProviderFactory {
 
 class CourseraPlatformProvider : CoursesPlatformProvider() {
 
-  override val name: String = CourseraNames.COURSERA
+  override val name: String = COURSERA
 
   override val icon: Icon get() = EducationalCoreIcons.Coursera
 

@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.coursera.newProjectUI
 
 import com.intellij.openapi.Disposable
-import com.jetbrains.edu.learning.coursera.CourseraNames.COURSERA
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSERA
 import com.jetbrains.edu.learning.coursera.CourseraNames.COURSERA_HELP
 import com.jetbrains.edu.learning.coursera.CourseraPlatformProvider
 import com.jetbrains.edu.learning.messages.EduCoreBundle
