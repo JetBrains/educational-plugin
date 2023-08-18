@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.codeforces
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.text.DateFormatUtil
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.actions.EduActionUtils
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_PROBLEMS
@@ -11,10 +10,11 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesTestCase.Companion.contes
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.api.MockCodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.api.parseResponseToAddContent
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.update.CodeforcesCourseUpdateChecker
 import com.jetbrains.edu.learning.codeforces.update.CodeforcesCourseUpdateChecker.Companion.ONGOING_COURSE_CHECK_INTERVAL
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.KOTLIN
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.codeforces.ContestParameters
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -28,7 +28,7 @@ import java.util.*
 class CodeforcesCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
   private val expectedTaskADescription: String by lazy {
     val doc = Jsoup.parse(loadText(contest1211))
-    val course = CodeforcesCourse(ContestParameters(1211, EduNames.KOTLIN, "48"))
+    val course = CodeforcesCourse(ContestParameters(1211, KOTLIN, "48"))
     course.parseResponseToAddContent(doc)
     course.allTasks.first().descriptionText
   }

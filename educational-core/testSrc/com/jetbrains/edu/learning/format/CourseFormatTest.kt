@@ -1,12 +1,16 @@
 package com.jetbrains.edu.learning.format
 
 import com.intellij.testFramework.LightPlatformTestCase
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON_3_VERSION
 import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.createCourseFiles
+import com.jetbrains.edu.learning.createCourseFromJson
 
 class CourseFormatTest : EduTestCase() {
   fun testAdditionalMaterialsLesson() {
@@ -75,23 +79,23 @@ class CourseFormatTest : EduTestCase() {
   }
 
   fun testCourseOldProgrammingLanguage() {
-    assertEquals(EduNames.PYTHON, courseFromJson.languageId)
+    assertEquals(EduFormatNames.PYTHON, courseFromJson.languageId)
     assertNull(courseFromJson.languageVersion)
   }
 
   fun testCourseOldProgrammingLanguageWithVersion() {
-    assertEquals(EduNames.PYTHON, courseFromJson.languageId)
-    assertEquals(EduNames.PYTHON_3_VERSION, courseFromJson.languageVersion)
+    assertEquals(EduFormatNames.PYTHON, courseFromJson.languageId)
+    assertEquals(PYTHON_3_VERSION, courseFromJson.languageVersion)
   }
 
   fun testCourseProgrammingLanguageId() {
-    assertEquals(EduNames.PYTHON, courseFromJson.languageId)
+    assertEquals(EduFormatNames.PYTHON, courseFromJson.languageId)
     assertNull(courseFromJson.languageVersion)
   }
 
   fun testCourseProgrammingLanguageVersion() {
-    assertEquals(EduNames.PYTHON, courseFromJson.languageId)
-    assertEquals(EduNames.PYTHON_3_VERSION, courseFromJson.languageVersion)
+    assertEquals(EduFormatNames.PYTHON, courseFromJson.languageId)
+    assertEquals(PYTHON_3_VERSION, courseFromJson.languageVersion)
   }
 
   fun testCourseLanguage() {

@@ -7,6 +7,7 @@ import com.jetbrains.edu.go.GoConfigurator.Companion.MAIN_GO
 import com.jetbrains.edu.go.GoCourseBuilder.Companion.FORBIDDEN_SYMBOLS
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.GO
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -15,7 +16,7 @@ import javax.swing.Icon
 
 class GoCodeforcesLanguageProvider  : CodeforcesLanguageProvider() {
   override val configurator: GoConfigurator = GoConfigurator()
-  override val languageId: String = EduNames.GO
+  override val languageId: String = GO
   override val templateFileName: String = "codeforces.Go main.go"
   override val displayTemplateName: String = "main.go"
   override val languageIcon: Icon = EducationalCoreIcons.GoLogo

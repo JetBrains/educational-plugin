@@ -1,23 +1,23 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.capitalize
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 
 
 enum class HyperskillLanguages(private val id: String, private val languageName: String) {
-  GO(EduNames.GO, "go"),
-  JAVASCRIPT(EduNames.JAVASCRIPT, "javascript"),
-  JAVA(EduNames.JAVA, "java11") {
+  GO(EduFormatNames.GO, "go"),
+  JAVASCRIPT(EduFormatNames.JAVASCRIPT, "javascript"),
+  JAVA(EduFormatNames.JAVA, "java11") {
     override val languageVersion: String = "11"
     override val requestLanguage: String = "java"
   },
-  KOTLIN(EduNames.KOTLIN, "kotlin"),
-  PYTHON(EduNames.PYTHON, "python3") {
+  KOTLIN(EduFormatNames.KOTLIN, "kotlin"),
+  PYTHON(EduFormatNames.PYTHON, "python3") {
     override val requestLanguage: String = "python"
   },
-  SCALA(EduNames.SCALA, "scala"),
-  SCALA3(EduNames.SCALA, "scala3"),
-  SHELL(EduNames.SHELL, "shell"),
+  SCALA(EduFormatNames.SCALA, "scala"),
+  SCALA3(EduFormatNames.SCALA, "scala3"),
+  SHELL(EduFormatNames.SHELL, "shell"),
 
   // last three needed for tests
   PLAINTEXT("TEXT", "TEXT"),

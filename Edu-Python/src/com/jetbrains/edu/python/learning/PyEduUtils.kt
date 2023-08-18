@@ -13,8 +13,9 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON_2_VERSION
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON_3_VERSION
 import com.jetbrains.edu.learning.courseFormat.ext.findTaskFileInDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -83,7 +84,7 @@ fun installRequiredPackages(project: Project, sdk: Sdk) {
 }
 
 fun getSupprotedVersions(): List<String> {
-  val pythonVersions = mutableListOf(PyLanguageSettings.ALL_VERSIONS, EduNames.PYTHON_3_VERSION, EduNames.PYTHON_2_VERSION)
+  val pythonVersions = mutableListOf(PyLanguageSettings.ALL_VERSIONS, PYTHON_3_VERSION, PYTHON_2_VERSION)
   pythonVersions.addAll(LanguageLevel.values().map { it.toString() }.reversed())
   return pythonVersions
 }

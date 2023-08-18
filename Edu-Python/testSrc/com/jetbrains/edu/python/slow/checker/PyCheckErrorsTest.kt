@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckResultDiff
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.nullValue
@@ -114,7 +115,7 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       assertEquals("Status for ${task.name} doesn't match", CheckStatus.Unchecked, checkResult.status)
       assertThat("Checker output for ${task.name} doesn't match", checkResult.message,
-                 containsString(EduCoreBundle.message("error.no.interpreter", EduNames.PYTHON)))
+                 containsString(EduCoreBundle.message("error.no.interpreter", EduFormatNames.PYTHON)))
     }
     doTest()
   }

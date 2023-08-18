@@ -1,9 +1,9 @@
 package com.jetbrains.edu.learning.newproject
 
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseVisibility
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.wrapWithUtm
 
@@ -36,10 +36,10 @@ class JetBrainsAcademyCourse : Course() {
 
   companion object {
     private val FEATURED_LANGUAGES = listOf(
-      EduNames.JAVA,
-      EduNames.KOTLIN,
-      EduNames.PYTHON,
-      EduNames.JAVASCRIPT
+      EduFormatNames.JAVA,
+      EduFormatNames.KOTLIN,
+      EduFormatNames.PYTHON,
+      EduFormatNames.JAVASCRIPT
     )
   }
 }

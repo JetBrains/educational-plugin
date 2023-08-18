@@ -1,12 +1,12 @@
 package com.jetbrains.edu.learning.codeforces
 
 import com.intellij.openapi.util.Disposer
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.codeforces.api.createCodeforcesTask
 import com.jetbrains.edu.learning.codeforces.api.parseResponseToAddContent
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.KOTLIN
+import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
-import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.codeforces.ContestParameters
 import org.jsoup.Jsoup
 import java.util.*
@@ -58,7 +58,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
 
   fun `test codeforces contest Kotlin Heroes Episode 2`() {
     val doc = Jsoup.parse(loadText(contest1211))
-    val course = CodeforcesCourse(ContestParameters(1211, EduNames.KOTLIN))
+    val course = CodeforcesCourse(ContestParameters(1211, KOTLIN))
     course.parseResponseToAddContent(doc)
 
     assertEquals("Kotlin Heroes: Episode 2", course.name)

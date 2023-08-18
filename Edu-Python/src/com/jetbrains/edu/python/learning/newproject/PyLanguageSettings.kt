@@ -7,13 +7,13 @@ import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.UserDataHolderBase
 import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_PYTHON
-import com.jetbrains.edu.learning.EduNames.PYTHON_2_VERSION
-import com.jetbrains.edu.learning.EduNames.PYTHON_3_VERSION
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON_2_VERSION
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON_3_VERSION
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage

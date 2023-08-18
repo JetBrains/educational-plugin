@@ -4,12 +4,13 @@ import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.util.xmlb.SkipDefaultsSerializationFilter
 import com.intellij.util.xmlb.XmlSerializer
-import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.EduFormatNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
@@ -55,7 +56,7 @@ open class CoursesInfosStorageTestBase : EduTestCase() {
     val coursesStorage = CoursesStorage.getInstance()
     val courseWithDefaultId = course {}
     coursesStorage.addCourse(courseWithDefaultId, "", 0, 0)
-    val courseWithLanguage = course {}.apply { languageId = EduNames.PYTHON }
+    val courseWithLanguage = course {}.apply { languageId = EduFormatNames.PYTHON }
     assertFalse(coursesStorage.hasCourse(courseWithLanguage))
   }
 
@@ -68,7 +69,7 @@ open class CoursesInfosStorageTestBase : EduTestCase() {
     assertEquals("\$USER_HOME\$/IdeaProjects/Introduction to Python", course.location)
     assertEquals("Introduction course to Python.", course.description)
     assertEquals("PyCharm", course.type)
-    assertEquals(EduNames.PYTHON, course.languageId)
+    assertEquals(EduFormatNames.PYTHON, course.languageId)
     assertEquals("2.7", course.languageVersion)
   }
 
@@ -93,7 +94,7 @@ open class CoursesInfosStorageTestBase : EduTestCase() {
     assertEquals("\$USER_HOME\$/IdeaProjects/AtomicKotlin", course.location)
     assertEquals("The examples and exercises accompanying the AtomicKotlin book", course.description)
     assertEquals("PyCharm", course.type)
-    assertEquals(EduNames.PYTHON, course.languageId)
+    assertEquals(EduFormatNames.PYTHON, course.languageId)
     assertEquals("3.7", course.languageVersion)
   }
 
@@ -107,7 +108,7 @@ open class CoursesInfosStorageTestBase : EduTestCase() {
     assertEquals("\$USER_HOME\$/IdeaProjects/AtomicKotlin", course.location)
     assertEquals("The examples and exercises accompanying the AtomicKotlin book", course.description)
     assertEquals("PyCharm", course.type)
-    assertEquals(EduNames.PYTHON, course.languageId)
+    assertEquals(EduFormatNames.PYTHON, course.languageId)
     assertEquals("3.7", course.languageVersion)
   }
 
@@ -120,7 +121,7 @@ open class CoursesInfosStorageTestBase : EduTestCase() {
     assertEquals("\$USER_HOME\$/IdeaProjects/AtomicKotlin", course.location)
     assertEquals("The examples and exercises accompanying the AtomicKotlin book", course.description)
     assertEquals("PyCharm", course.type)
-    assertEquals(EduNames.PYTHON, course.languageId)
+    assertEquals(EduFormatNames.PYTHON, course.languageId)
     assertEquals("3.7", course.languageVersion)
   }
 
@@ -134,7 +135,7 @@ open class CoursesInfosStorageTestBase : EduTestCase() {
     assertEquals("\$USER_HOME\$/IdeaProjects/AtomicKotlin", course.location)
     assertEquals("The examples and exercises accompanying the AtomicKotlin book", course.description)
     assertEquals("PyCharm", course.type)
-    assertEquals(EduNames.PYTHON, course.languageId)
+    assertEquals(EduFormatNames.PYTHON, course.languageId)
     assertEquals("3.7", course.languageVersion)
   }
 

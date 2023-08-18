@@ -7,6 +7,7 @@ import com.intellij.openapi.util.text.StringUtilRt
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.json.migration.LANGUAGE_TASK_ROOTS
@@ -99,7 +100,7 @@ class StepikFormatTest : EduTestCase() {
   @Throws(IOException::class)
   fun testAdditionalMaterialsStep() {
     val responseString = loadJsonText()
-    for (ignored in listOf(EduNames.KOTLIN, EduNames.PYTHON)) {
+    for (ignored in listOf(EduFormatNames.KOTLIN, EduFormatNames.PYTHON)) {
       val mapper = getInstance().objectMapper
       val step = mapper.readValue(responseString, StepsList::class.java).steps[0]
       val options = step.block!!.options as PyCharmStepOptions?
@@ -372,7 +373,7 @@ def test_ASCII():
 
   @Throws(IOException::class)
   fun testReplyTo7VersionPython() {
-    doReplyMigrationTest(7, getTestName(true) + ".after.json", EduNames.PYTHON)
+    doReplyMigrationTest(7, getTestName(true) + ".after.json", EduFormatNames.PYTHON)
   }
 
   @Throws(IOException::class)

@@ -1,18 +1,18 @@
 package com.jetbrains.edu.slow.integration.codeforces
 
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.TEST_DATA_FOLDER
 import com.jetbrains.edu.learning.codeforces.CodeforcesTestCase
-import com.jetbrains.edu.learning.courseFormat.codeforces.ContestParameters
 import com.jetbrains.edu.learning.codeforces.actions.StartCodeforcesContestAction
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.api.MockCodeforcesConnector
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask.Companion.codeforcesSubmitLink
+import com.jetbrains.edu.learning.courseFormat.codeforces.ContestParameters
 
 class CodeforcesLoadingTest : CodeforcesTestCase() {
   override fun setUp() {
@@ -22,7 +22,7 @@ class CodeforcesLoadingTest : CodeforcesTestCase() {
   }
 
   private val contestKotlinHeroesEpisode1: CodeforcesCourse by lazy {
-    val contestInfo = ContestParameters(1170, EduNames.KOTLIN, codeforcesLanguageRepresentation = "Kotlin")
+    val contestInfo = ContestParameters(1170, EduFormatNames.KOTLIN, codeforcesLanguageRepresentation = "Kotlin")
     when (val contest = StartCodeforcesContestAction.getContestUnderProgress(contestInfo)) {
       is Err -> error(contest.error)
       is Ok -> contest.value
@@ -30,7 +30,7 @@ class CodeforcesLoadingTest : CodeforcesTestCase() {
   }
 
   private val contestKotlinHeroesPractice6: CodeforcesCourse by lazy {
-    val contestInfo = ContestParameters(1489, EduNames.KOTLIN, codeforcesLanguageRepresentation = "Kotlin")
+    val contestInfo = ContestParameters(1489, EduFormatNames.KOTLIN, codeforcesLanguageRepresentation = "Kotlin")
     when (val contest = StartCodeforcesContestAction.getContestUnderProgress(contestInfo)) {
       is Err -> error(contest.error)
       is Ok -> contest.value
@@ -38,7 +38,7 @@ class CodeforcesLoadingTest : CodeforcesTestCase() {
   }
 
   private val codeforcesRound605Div3: CodeforcesCourse by lazy {
-    val contestInfo = ContestParameters(1272, EduNames.JAVA, codeforcesLanguageRepresentation = "Java")
+    val contestInfo = ContestParameters(1272, EduFormatNames.JAVA, codeforcesLanguageRepresentation = "Java")
     when (val contest = StartCodeforcesContestAction.getContestUnderProgress(contestInfo)) {
       is Err -> error(contest.error)
       is Ok -> contest.value

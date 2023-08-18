@@ -28,25 +28,6 @@ object EduNames {
   const val COURSE_IGNORE = ".courseignore"
   const val CHANGE_NOTES = "change-notes.txt"
 
-  // IDs of supported languages. They are the same that `Language#getID` returns
-  // but in some cases we don't have corresponding Language in classpath to get its id via `getID` method
-  const val JAVA = "JAVA"
-  const val KOTLIN = "kotlin"
-  const val PYTHON = "Python"
-  const val SCALA = "Scala"
-  const val JAVASCRIPT = "JavaScript"
-  const val RUST = "Rust"
-  const val SHELL = "Shell Script"
-
-  // Single `ObjectiveC` id is used both for `ObjectiveC` and `C/C++`
-  const val CPP = "ObjectiveC"
-  const val GO = "go"
-  const val PHP = "PHP"
-
-  // Language versions
-  const val PYTHON_2_VERSION = "2.x"
-  const val PYTHON_3_VERSION = "3.x"
-
   // Troubleshooting guide links
   const val NO_COURSES_URL = "$TROUBLESHOOTING_GUIDE_URL#no_courses_found"
   const val CODEFORCES_ANTI_CRAWLER_URL = "$TROUBLESHOOTING_GUIDE_URL#codeforces_anti_crawler"

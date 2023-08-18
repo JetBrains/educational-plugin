@@ -2,8 +2,8 @@ package com.jetbrains.edu.sql.jvm.gradle
 
 import com.intellij.lang.Language
 import com.jetbrains.edu.EducationalCoreIcons
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import javax.swing.Icon
 
 const val SQL_TEST_LANGUAGE_KEY = "sql_test_language"
@@ -21,8 +21,8 @@ var Course.sqlTestLanguage: SqlTestLanguage
  * Default programming language used for test files
  */
 enum class SqlTestLanguage(val languageId: String, val logo: Icon) {
-  KOTLIN(EduNames.KOTLIN, EducationalCoreIcons.KotlinLogo),
-  JAVA(EduNames.JAVA, EducationalCoreIcons.JavaLogo);
+  KOTLIN(EduFormatNames.KOTLIN, EducationalCoreIcons.KotlinLogo),
+  JAVA(EduFormatNames.JAVA, EducationalCoreIcons.JavaLogo);
 
   fun getLanguage(): Language? = Language.findLanguageByID(languageId)
 }

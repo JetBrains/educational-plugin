@@ -1,10 +1,10 @@
 package com.jetbrains.edu.learning.checkio.newProjectUI
 
 import com.intellij.openapi.Disposable
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_HELP
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
@@ -45,7 +45,7 @@ class CheckiOCoursesPanel(
 
   override fun tabDescription(): String {
     val linkText = """<a href="$CHECKIO_HELP">${CheckiONames.CHECKIO}</a>"""
-    return EduCoreBundle.message("checkio.courses.explanation", linkText, EduNames.PYTHON, EduNames.JAVASCRIPT)
+    return EduCoreBundle.message("checkio.courses.explanation", linkText, EduFormatNames.PYTHON, EduFormatNames.JAVASCRIPT)
   }
 
   private inner class CheckiOLoginPanel : LoginPanel(EduCoreBundle.message("course.dialog.log.in.to.checkio.label.text"),

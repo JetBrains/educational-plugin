@@ -16,10 +16,12 @@ import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -30,7 +32,6 @@ import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.loadAndFillAdditionalCourseInfo
 import com.jetbrains.edu.learning.stepik.api.loadAndFillLessonAdditionalInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import org.jetbrains.annotations.NonNls
 
 class GetHyperskillLesson : DumbAwareAction(
@@ -144,21 +145,21 @@ class GetHyperskillLesson : DumbAwareAction(
       for (task in lesson.taskList) {
         val taskFiles = task.taskFiles.values
         if (taskFiles.any { it.name.contains("androidTest") || it.name.contains("AndroidManifest.xml") }) {
-          return EduNames.KOTLIN to EduNames.ANDROID
+          return EduFormatNames.KOTLIN to EduNames.ANDROID
         }
         if (taskFiles.any { it.name == "tests.py" }) {
-          return EduNames.PYTHON to DEFAULT_ENVIRONMENT
+          return EduFormatNames.PYTHON to DEFAULT_ENVIRONMENT
         }
         for (taskFile in taskFiles) {
           if (!taskFile.isVisible) {
             continue
           }
           val languageAndEnvironment = when (FileUtilRt.getExtension(taskFile.name)) {
-            "java" -> EduNames.JAVA to DEFAULT_ENVIRONMENT
-            "py" -> EduNames.PYTHON to EduNames.UNITTEST
-            "kt" -> EduNames.KOTLIN to DEFAULT_ENVIRONMENT
-            "js", "html" -> EduNames.JAVASCRIPT to DEFAULT_ENVIRONMENT
-            "scala" -> EduNames.SCALA to DEFAULT_ENVIRONMENT
+            "java" -> EduFormatNames.JAVA to DEFAULT_ENVIRONMENT
+            "py" -> EduFormatNames.PYTHON to EduNames.UNITTEST
+            "kt" -> EduFormatNames.KOTLIN to DEFAULT_ENVIRONMENT
+            "js", "html" -> EduFormatNames.JAVASCRIPT to DEFAULT_ENVIRONMENT
+            "scala" -> EduFormatNames.SCALA to DEFAULT_ENVIRONMENT
             else -> null
           }
 
@@ -167,7 +168,7 @@ class GetHyperskillLesson : DumbAwareAction(
           }
         }
       }
-      return EduNames.JAVA to DEFAULT_ENVIRONMENT
+      return EduFormatNames.JAVA to DEFAULT_ENVIRONMENT
     }
   }
 }

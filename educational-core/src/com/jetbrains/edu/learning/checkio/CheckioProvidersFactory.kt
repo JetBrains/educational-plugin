@@ -4,11 +4,12 @@ import com.intellij.openapi.Disposable
 import com.intellij.ui.scale.JBUIScale
 import com.intellij.util.IconUtil
 import com.jetbrains.edu.EducationalCoreIcons
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtilsKt
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.newProjectUI.CheckiOCoursesPanel
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON_3_VERSION
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory
@@ -35,7 +36,7 @@ class CheckiOPlatformProvider : CoursesPlatformProvider() {
     }
     else {
       val courses = listOf(
-        CheckiOCourse(CheckiONames.PY_CHECKIO, EduNames.PYTHON).apply { languageVersion = EduNames.PYTHON_3_VERSION },
+        CheckiOCourse(CheckiONames.PY_CHECKIO, PYTHON).apply { languageVersion = PYTHON_3_VERSION },
 //        CheckiOCourse(CheckiONames.JS_CHECKIO, EduNames.JAVASCRIPT)
       )
 

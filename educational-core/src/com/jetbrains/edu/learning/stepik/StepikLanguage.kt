@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.stepik
 
-import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON_3_VERSION
 
 /**
  * Base on a class from intellij plugin from Stepik
@@ -12,14 +13,14 @@ import com.jetbrains.edu.learning.EduNames
 private const val DEFAULT_VERSION = ""
 
 enum class StepikLanguage(val id: String?, val version: String = DEFAULT_VERSION, val langName: String?, val isDefault: Boolean = true) {
-  JAVA(EduNames.JAVA, "8", "java8"),
-  JAVA11(EduNames.JAVA, "11", "java11", isDefault = false),
-  KOTLIN(EduNames.KOTLIN, langName = "kotlin"),
-  PYTHON(EduNames.PYTHON, EduNames.PYTHON_3_VERSION, langName = "python3"),
-  JAVASCRIPT(EduNames.JAVASCRIPT, langName = "javascript"),
-  SCALA(EduNames.SCALA, langName = "scala"),
-  CPP(EduNames.CPP, langName = "c++"),
-  GO(EduNames.GO, langName = "go"),
+  JAVA(EduFormatNames.JAVA, "8", "java8"),
+  JAVA11(EduFormatNames.JAVA, "11", "java11", isDefault = false),
+  KOTLIN(EduFormatNames.KOTLIN, langName = "kotlin"),
+  PYTHON(EduFormatNames.PYTHON, PYTHON_3_VERSION, langName = "python3"),
+  JAVASCRIPT(EduFormatNames.JAVASCRIPT, langName = "javascript"),
+  SCALA(EduFormatNames.SCALA, langName = "scala"),
+  CPP(EduFormatNames.CPP, langName = "c++"),
+  GO(EduFormatNames.GO, langName = "go"),
   PLAINTEXT("TEXT", langName = "TEXT"), // added for tests
   INVALID(null, langName = null);
 

@@ -4,6 +4,7 @@ import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.RUST
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -16,7 +17,7 @@ import javax.swing.Icon
 
 class RsCodeforcesLanguageProvider : CodeforcesLanguageProvider() {
   override val configurator: EduConfigurator<RsProjectSettings> = RsConfigurator()
-  override val languageId: String = EduNames.RUST
+  override val languageId: String = RUST
   override val templateFileName: String = "codeforces.Rust main.rs"
   override val displayTemplateName: String = "main.rs"
   override val languageIcon: Icon = EducationalCoreIcons.RustLogo
