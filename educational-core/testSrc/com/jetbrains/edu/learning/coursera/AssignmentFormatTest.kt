@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.coursera
 import com.intellij.testFramework.UsefulTestCase
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtilsKt
+import com.jetbrains.edu.learning.courseFormat.CourseraCourse
 import com.jetbrains.edu.learning.initializeCourse
 
 

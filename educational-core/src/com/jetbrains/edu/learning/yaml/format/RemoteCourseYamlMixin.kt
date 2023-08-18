@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.Vendor
-import com.jetbrains.edu.learning.coursera.CourseraCourse
+import com.jetbrains.edu.learning.courseFormat.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_TYPE_YAML
 import com.jetbrains.edu.learning.stepik.course.StepikCourse

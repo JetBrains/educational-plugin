@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.yaml.format
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.coursera.CourseraCourse
+import com.jetbrains.edu.learning.courseFormat.CourseraCourse
 
 class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>(project) {
   override fun applyChanges(existingItem: Course, deserializedItem: Course) {

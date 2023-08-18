@@ -61,6 +61,9 @@ object EduFormatNames {
   const val HYPERSKILL_PROJECTS_URL = "https://hyperskill.org/projects"
   const val HYPERSKILL = "Hyperskill"
 
+  // coursera
+  const val COURSERA = "Coursera"
+
   // Troubleshooting guide links
   const val TROUBLESHOOTING_GUIDE_URL = "https://plugins.jetbrains.com/plugin/10081-jetbrains-academy/docs/troubleshooting-guide.html"
   const val NO_TESTS_URL = "$TROUBLESHOOTING_GUIDE_URL#no_tests_have_run"
