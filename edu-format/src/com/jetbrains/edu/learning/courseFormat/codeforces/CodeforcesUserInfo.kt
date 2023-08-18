@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.codeforces.authorization
+package com.jetbrains.edu.learning.courseFormat.codeforces
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.jetbrains.edu.learning.courseFormat.UserInfo

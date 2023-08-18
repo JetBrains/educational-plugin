@@ -2,7 +2,7 @@ package com.jetbrains.edu.cpp.codeforces
 
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesTestCase
-import com.jetbrains.edu.learning.codeforces.ContestParameters
+import com.jetbrains.edu.learning.courseFormat.codeforces.ContestParameters
 import com.jetbrains.edu.learning.codeforces.api.parseResponseToAddContent
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask

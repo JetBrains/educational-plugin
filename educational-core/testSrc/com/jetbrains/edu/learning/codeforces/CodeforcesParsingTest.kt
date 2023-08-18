@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.codeforces.api.parseResponseToAddContent
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.codeforces.ContestParameters
 import org.jsoup.Jsoup
 import java.util.*
 

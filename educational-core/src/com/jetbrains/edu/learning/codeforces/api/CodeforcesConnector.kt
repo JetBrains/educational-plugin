@@ -15,9 +15,9 @@ import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getLanguages
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
-import com.jetbrains.edu.learning.codeforces.ContestParameters
+import com.jetbrains.edu.learning.courseFormat.codeforces.ContestParameters
 import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesAccount
-import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesUserInfo
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesUserInfo
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.CheckFeedback

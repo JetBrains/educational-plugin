@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.codeforces.courseFormat
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getContestURLFromID
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.codeforces.ContestParameters
+import com.jetbrains.edu.learning.courseFormat.codeforces.ContestParameters
 import java.time.Duration
 import java.time.ZonedDateTime
 import java.util.*

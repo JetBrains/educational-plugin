@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.authUtils.deserializeAccount
 import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesAccount
-import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesUserInfo
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesUserInfo
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.invokeLater

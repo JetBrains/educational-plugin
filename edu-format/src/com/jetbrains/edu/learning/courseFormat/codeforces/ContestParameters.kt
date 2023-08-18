@@ -1,6 +1,6 @@
-package com.jetbrains.edu.learning.codeforces
+package com.jetbrains.edu.learning.courseFormat.codeforces
 
-import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesUserInfo
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesUserInfo
 import java.time.Duration
 import java.time.ZonedDateTime
 
