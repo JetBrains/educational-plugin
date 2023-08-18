@@ -1,6 +1,5 @@
-package com.jetbrains.edu.learning.courseFormat.hyperskill
+package com.jetbrains.edu.learning.courseFormat
 
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import org.jetbrains.annotations.NonNls
 import java.util.*

@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.attempts.DataTaskAttempt.Companion.toDataTaskAttempt
 import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
-import com.jetbrains.edu.learning.courseFormat.hyperskill.RemoteEduTask
+import com.jetbrains.edu.learning.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.stepik.hyperskill.submissions.HyperskillSubmissionFactory.createChoiceTaskSubmission
 import com.jetbrains.edu.learning.stepik.hyperskill.submissions.HyperskillSubmissionFactory.createCodeTaskSubmission
 import com.jetbrains.edu.learning.stepik.hyperskill.submissions.HyperskillSubmissionFactory.createDataTaskSubmission
