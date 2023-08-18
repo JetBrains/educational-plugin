@@ -9,6 +9,8 @@ import com.intellij.openapi.util.Ref
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.authUtils.requestFocus
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_PROJECTS_URL
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_TOPICS
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.KOTLIN
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section

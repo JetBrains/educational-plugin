@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.projectOpen
 
 import com.intellij.testFramework.LightPlatformTestCase
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_TOPICS
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler

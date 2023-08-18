@@ -1,10 +1,10 @@
 package com.jetbrains.edu.learning.actions.navigate.hyperskill
 
 import com.jetbrains.edu.learning.actions.NextTaskAction
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_PROBLEMS
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.findTask
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROBLEMS
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 
 class HyperskillLegacyProblemsNavigationTest : HyperskillNavigateInCourseTestBase() {
   override val course: HyperskillCourse

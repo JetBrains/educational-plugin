@@ -10,11 +10,11 @@ import com.intellij.ui.BalloonLayout
 import com.intellij.util.xmlb.XmlSerializer
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.MockResponseFactory
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_PROBLEMS
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.findTask
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROBLEMS
-import com.jetbrains.edu.learning.stepik.hyperskill.api.*
 import com.jetbrains.edu.learning.pathWithoutPrams
+import com.jetbrains.edu.learning.stepik.hyperskill.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
 import com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsService.Companion.getRoute
 import java.awt.Rectangle

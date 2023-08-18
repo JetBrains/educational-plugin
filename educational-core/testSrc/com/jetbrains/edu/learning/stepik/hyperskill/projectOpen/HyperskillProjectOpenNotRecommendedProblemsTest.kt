@@ -3,6 +3,8 @@ package com.jetbrains.edu.learning.stepik.hyperskill.projectOpen
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_PROBLEMS
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_TOPICS
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.hasParams
 import com.jetbrains.edu.learning.pathWithoutPrams

@@ -5,6 +5,7 @@ import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.EduLoginConnector.Companion.STATE
 import com.jetbrains.edu.learning.authUtils.*
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL
 import com.jetbrains.edu.learning.courseFormat.ext.CourseValidationResult
 import com.jetbrains.edu.learning.courseFormat.ext.ValidationErrorMessage
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText

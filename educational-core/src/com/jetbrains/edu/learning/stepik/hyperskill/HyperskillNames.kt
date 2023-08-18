@@ -3,18 +3,14 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.intellij.ide.util.PropertiesComponent
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.capitalize
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_PROJECTS_URL
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE_PLUGIN_URL
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
-const val HYPERSKILL = "Hyperskill"
 const val HYPERSKILL_TYPE_YAML = "hyperskill"
-const val HYPERSKILL_PROBLEMS = "Problems"
-const val HYPERSKILL_TOPICS = "Topics"
 const val HYPERSKILL_URL_PROPERTY = "Hyperskill URL"
 const val HYPERSKILL_DEFAULT_URL = "https://hyperskill.org/"
 const val HYPERSKILL_DEFAULT_HOST = "hyperskill.org"
-const val HYPERSKILL_PROJECTS_URL = "https://hyperskill.org/projects"
-const val JBA_DEFAULT_URL = "https://www.jetbrains.com/academy/"
 const val JBA_HELP = "${MARKETPLACE_PLUGIN_URL}/10081-jetbrains-academy/docs/jetbrains-academy-on-hyperskill.html"
 const val HYPERSKILL_COMMENT_ANCHOR = "#comment"
 const val HYPERSKILL_SOLUTIONS_ANCHOR = "#solutions"

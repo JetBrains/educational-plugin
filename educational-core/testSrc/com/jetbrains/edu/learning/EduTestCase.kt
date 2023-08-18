@@ -34,6 +34,7 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CHECKIO
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSERA
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.STEPIK
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile

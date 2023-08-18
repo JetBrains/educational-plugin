@@ -20,13 +20,13 @@ import com.jetbrains.edu.learning.EduExperimentalFeatures.CC_HYPERSKILL
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikNames.getStepikUrl
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveRemoteInfo
 import org.jetbrains.annotations.VisibleForTesting
 

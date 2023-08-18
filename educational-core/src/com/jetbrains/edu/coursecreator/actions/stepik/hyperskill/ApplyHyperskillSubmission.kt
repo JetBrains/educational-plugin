@@ -13,12 +13,12 @@ import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduExperimentalFeatures.CC_HYPERSKILL
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import org.jetbrains.annotations.NonNls
 
 class ApplyHyperskillSubmission : DumbAwareAction(

@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_TOPICS
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.copy
 import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
