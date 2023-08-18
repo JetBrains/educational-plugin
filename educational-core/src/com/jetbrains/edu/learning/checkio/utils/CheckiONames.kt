@@ -1,11 +1,11 @@
 package com.jetbrains.edu.learning.checkio.utils
 
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CHECKIO
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE_PLUGIN_URL
 import com.sun.istack.NotNull
 import org.jetbrains.annotations.NonNls
 
 object CheckiONames {
-  const val CHECKIO: @NonNls String = "CheckiO"
   const val CHECKIO_TYPE_YAML: @NonNls String = "checkiO"
   private const val HTTPS: @NonNls String = "https://"
   const val CHECKIO_HOST: @NonNls String = "checkio.org"

@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.checkio.connectors
 
 import com.jetbrains.edu.learning.api.EduLoginConnector.Companion.STATE
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
-import com.jetbrains.edu.learning.checkio.utils.CheckiONames
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CHECKIO
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.http.FullHttpRequest
 import io.netty.handler.codec.http.HttpMethod
@@ -52,7 +52,7 @@ abstract class CheckiOOAuthRestService(platformName: String, private val oAuthCo
         sendOkResponse(request, context)
       }
       else {
-        val errorMessage = "Failed to login to " + CheckiONames.CHECKIO
+        val errorMessage = "Failed to login to $CHECKIO"
         sendErrorResponse(request, context, errorMessage)
       }
     }

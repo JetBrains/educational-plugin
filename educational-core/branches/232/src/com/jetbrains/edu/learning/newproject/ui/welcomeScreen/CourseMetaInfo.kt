@@ -5,20 +5,20 @@ import com.intellij.util.xmlb.annotations.OptionTag
 import com.intellij.util.xmlb.annotations.Tag
 import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.CourseraCourse
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CHECKIO
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSERA
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.STEPIK
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
-import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.newproject.ui.logo
-import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import javax.swing.Icon
 
@@ -101,10 +101,10 @@ class CourseMetaInfo() : CourseInfo() {
 
   fun toCourse(): Course {
     val eduCourse = when (itemType) {
-      CourseraNames.COURSERA -> CourseraCourse()
-      CheckiONames.CHECKIO -> CheckiOCourse()
+      COURSERA -> CourseraCourse()
+      CHECKIO -> CheckiOCourse()
       HYPERSKILL -> HyperskillCourse()
-      StepikNames.STEPIK -> StepikCourse()
+      STEPIK -> StepikCourse()
       CODEFORCES -> CodeforcesCourse()
       EduNames.EDU, MARKETPLACE -> EduCourse()
       else -> EduCourse()

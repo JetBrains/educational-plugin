@@ -13,8 +13,8 @@ import com.jetbrains.edu.learning.checkio.api.exceptions.ApiException
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException
 import com.jetbrains.edu.learning.checkio.api.executeHandlingCheckiOExceptions
 import com.jetbrains.edu.learning.checkio.exceptions.CheckiOLoginRequiredException
-import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_URL
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CHECKIO
 import com.jetbrains.edu.learning.isUnitTestMode
 import org.apache.http.client.utils.URIBuilder
 import org.jetbrains.ide.RestService
@@ -83,7 +83,7 @@ abstract class CheckiOOAuthConnector : EduOAuthCodeFlowConnector<CheckiOAccount,
   companion object {
     @JvmStatic
     protected fun getCheckiOServiceName(language: String): String {
-      return listOf(EduNames.EDU_PREFIX, CheckiONames.CHECKIO.lowercase(), OAUTH_SUFFIX, language).joinToString("/")
+      return listOf(EduNames.EDU_PREFIX, CHECKIO.lowercase(), OAUTH_SUFFIX, language).joinToString("/")
     }
   }
 }

@@ -5,7 +5,7 @@ import com.intellij.util.xmlb.XmlSerializer
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.authUtils.deserializeOAuthAccount
-import com.jetbrains.edu.learning.checkio.utils.CheckiONames
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CHECKIO
 import org.jdom.Element
 import org.jetbrains.annotations.NonNls
 
@@ -24,7 +24,7 @@ class CheckiOAccount : OAuthAccount<CheckiOUserInfo> {
 
   @Suppress("UnstableApiUsage")
   override val servicePrefix: @NlsSafe String
-    get() = CheckiONames.CHECKIO
+    get() = CHECKIO
 
   override fun getUserName(): String = userInfo.getFullName()
 

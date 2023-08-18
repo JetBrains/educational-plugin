@@ -7,6 +7,7 @@ import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.checkio.newProjectUI.CheckiOCoursesPanel
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CHECKIO
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON_3_VERSION
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
@@ -24,7 +25,7 @@ class CheckiOPlatformProviderFactory : CoursesPlatformProviderFactory {
 }
 
 class CheckiOPlatformProvider : CoursesPlatformProvider() {
-  override val name: String = CheckiONames.CHECKIO
+  override val name: String = CHECKIO
 
   override val icon: Icon get() = EducationalCoreIcons.CheckiO.to24()
 
