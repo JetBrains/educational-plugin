@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.courseFormat.tasks.matching
 
-import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.logger
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.jetbrains.annotations.VisibleForTesting
 import java.util.*
@@ -46,7 +46,7 @@ sealed class SortingBasedTask : Task {
   fun moveOptionUp(index: Int) {
     val targetIndex = index - 1
     if (targetIndex < 0) {
-      LOG.error("There was an attempt to move the option up out of bounds")
+      LOG.severe("There was an attempt to move the option up out of bounds")
       return
     }
     swapOptions(index, targetIndex)
@@ -58,7 +58,7 @@ sealed class SortingBasedTask : Task {
   fun moveOptionDown(index: Int) {
     val targetIndex = index + 1
     if (targetIndex == options.size) {
-      LOG.error("There was an attempt to move the option down out of bounds")
+      LOG.severe("There was an attempt to move the option down out of bounds")
       return
     }
     swapOptions(index, targetIndex)
@@ -81,6 +81,6 @@ sealed class SortingBasedTask : Task {
   }
 
   companion object {
-    private val LOG: Logger = Logger.getInstance(SortingBasedTask::class.java)
+    private val LOG = logger<SortingBasedTask>()
   }
 }

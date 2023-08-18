@@ -1,7 +1,5 @@
-package com.jetbrains.edu.learning.courseFormat.tasks.data
+package com.jetbrains.edu.learning.courseFormat.attempts
 
-import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
-import com.jetbrains.edu.learning.courseFormat.attempts.AttemptBase
 import org.jetbrains.annotations.TestOnly
 import java.util.*
 

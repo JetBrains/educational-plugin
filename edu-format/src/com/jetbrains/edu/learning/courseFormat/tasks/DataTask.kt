@@ -1,7 +1,7 @@
-package com.jetbrains.edu.learning.courseFormat.tasks.data
+package com.jetbrains.edu.learning.courseFormat.tasks
 
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.attempts.DataTaskAttempt
 import org.jetbrains.annotations.NonNls
 import java.util.*
 
