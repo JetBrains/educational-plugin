@@ -13,27 +13,20 @@ import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
+import com.jetbrains.edu.learning.stepik.hyperskill.StepikTaskType
 import com.jetbrains.edu.learning.courseFormat.tasks.*
-import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask.Companion.CODE_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.EDU_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.PYCHARM_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask.Companion.IDE_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.NumberTask.Companion.NUMBER_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask.Companion.OUTPUT_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.StringTask.Companion.STRING_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask.Companion.THEORY_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask.Companion.CHOICE_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask.Companion.DATA_FOLDER_NAME
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask.Companion.DATA_SAMPLE_FOLDER_NAME
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask.Companion.DATA_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask.Companion.INPUT_FILE_NAME
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.EDU_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask.Companion.IDE_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask.Companion.OUTPUT_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask.Companion.THEORY_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask.Companion.MATCHING_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask.Companion.SORTING_TASK_TYPE
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -85,26 +78,6 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
         else -> this::unsupportedTask
       }
     })
-
-  // lexicographical order
-  enum class StepikTaskType(val type: String, val value: String) {
-    ADMIN("admin", "Linux"),
-    CHOICE(CHOICE_TASK_TYPE, "Quiz"),
-    CODE(CODE_TASK_TYPE, "Programming"),
-    DATASET(DATA_TASK_TYPE, "Data"),
-    FREE_ANSWER("free-answer", "Free Response"),
-    MANUAL_SCORE("manual-score", "Manual Score"),
-    MATCHING(MATCHING_TASK_TYPE, "Matching"),
-    MATH("math", "Math"),
-    NUMBER(NUMBER_TASK_TYPE, "Number"),
-    PYCHARM(PYCHARM_TASK_TYPE, "Programming"),
-    REMOTE_EDU(REMOTE_EDU_TASK_TYPE, "Programming"),
-    SORTING(SORTING_TASK_TYPE, "Sorting"),
-    STRING(STRING_TASK_TYPE, "Text"),
-    TABLE("table", "Table"),
-    TEXT("text", "Theory"),
-    VIDEO("video", "Video")
-  }
 
   open fun createTask(type: String): Task? {
     val taskName = StepikTaskType.values().find { it.type == type }?.value ?: UNKNOWN_TASK_NAME

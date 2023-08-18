@@ -104,69 +104,6 @@ class HyperskillUserInfo : UserInfo {
   }
 }
 
-class HyperskillStage {
-
-  @Suppress("unused") //used for deserialization
-  constructor()
-
-  constructor(stageId: Int, stageTitle: String, stageStepId: Int, isStageCompleted: Boolean = false) {
-    id = stageId
-    title = stageTitle
-    stepId = stageStepId
-    isCompleted = isStageCompleted
-  }
-
-  @JsonProperty(ID)
-  var id: Int = -1
-
-  @JsonProperty(TITLE)
-  var title: String = ""
-
-  @JsonProperty(STEP_ID)
-  var stepId: Int = -1
-
-  @JsonProperty(IS_COMPLETED)
-  var isCompleted: Boolean = false
-}
-
-class HyperskillProject {
-  @JsonProperty(ID)
-  var id: Int = -1
-
-  @JsonProperty(TITLE)
-  var title: String = ""
-
-  @JsonProperty(DESCRIPTION)
-  var description: String = ""
-
-  @JsonProperty(IDE_FILES)
-  var ideFiles: String = ""
-
-  // some projects might not support IDE
-  @JsonProperty(USE_IDE)
-  var useIde: Boolean = true
-
-  @JsonProperty(LANGUAGE)
-  var language: String = ""
-
-  @JsonProperty(ENVIRONMENT)
-  var environment: String? = null
-
-  @JsonProperty(IS_TEMPLATE_BASED)
-  var isTemplateBased: Boolean = false
-}
-
-class HyperskillTopic {
-  @JsonProperty(ID)
-  var id: Int = -1
-
-  @JsonProperty(TITLE)
-  var title: String = ""
-
-  @JsonProperty(THEORY_ID)
-  var theoryId: Int? = null
-}
-
 class HyperskillStepOptions : PyCharmStepOptions {
   constructor()
 

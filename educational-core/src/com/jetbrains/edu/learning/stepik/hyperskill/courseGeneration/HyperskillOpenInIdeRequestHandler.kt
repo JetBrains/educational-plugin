@@ -19,7 +19,6 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.IdeaDirectoryU
 import com.jetbrains.edu.learning.courseGeneration.OpenInIdeRequestHandler
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToTask
-import com.jetbrains.edu.learning.stepik.StepikTaskBuilder.StepikTaskType.TEXT
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
@@ -252,7 +251,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
       .onError { return Err(it) }
       .filter { it.isRecommended || it.id == id }
 
-    val theoryTitle = stepSources.find { it.block?.name == TEXT.type }?.title
+    val theoryTitle = stepSources.find { it.block?.name == StepikTaskType.TEXT.type }?.title
     if (theoryTitle != null) {
       return Ok(Pair(theoryTitle, stepSources))
     }

@@ -290,18 +290,6 @@ private fun showNoNextActivityNotification(task: Task, project: Project) {
     .notify(project)
 }
 
-fun wrapWithUtm(link: String, content: String): String {
-  val utmParams = "utm_source=ide&utm_medium=ide&utm_campaign=ide&utm_content=$content"
-
-  // if there are other params, add utms as new ones
-  return if (link.contains("?")) {
-    "$link&$utmParams"
-  }
-  else {
-    "$link?$utmParams"
-  }
-}
-
 private sealed class NextActivityInfo {
   class TopicCompleted(val topicId: Int) : NextActivityInfo()
 

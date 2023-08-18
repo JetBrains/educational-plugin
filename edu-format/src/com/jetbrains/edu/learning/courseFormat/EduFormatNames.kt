@@ -45,6 +45,22 @@ object EduFormatNames {
   // Used as course type only
   const val PYCHARM = "PyCharm"
 
+  //hyperskill
+  const val TITLE = "title"
+  const val THEORY_ID = "theory"
+  const val STEP_ID = "step"
+  const val IS_COMPLETED = "is_completed"
+  const val DESCRIPTION = "description"
+  const val IDE_FILES = "ide_files"
+  const val USE_IDE = "use_ide"
+  const val LANGUAGE = "language"
+  const val ENVIRONMENT = "environment"
+  const val IS_TEMPLATE_BASED = "is_template_based"
+  const val HYPERSKILL_PROBLEMS = "Problems"
+  const val HYPERSKILL_TOPICS = "Topics"
+  const val HYPERSKILL_PROJECTS_URL = "https://hyperskill.org/projects"
+  const val HYPERSKILL = "Hyperskill"
+
   // Troubleshooting guide links
   const val TROUBLESHOOTING_GUIDE_URL = "https://plugins.jetbrains.com/plugin/10081-jetbrains-academy/docs/troubleshooting-guide.html"
   const val NO_TESTS_URL = "$TROUBLESHOOTING_GUIDE_URL#no_tests_have_run"

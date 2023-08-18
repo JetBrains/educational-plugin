@@ -1,18 +1,17 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.courseFormat
 
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.capitalize
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_PROBLEMS
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_PROJECTS_URL
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_TOPICS
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.StepikTaskBuilder.StepikTaskType
-import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
+import com.jetbrains.edu.learning.stepik.hyperskill.StepikTaskType
+import com.jetbrains.edu.learning.wrapWithUtm
 import java.util.concurrent.ConcurrentHashMap
 
 class HyperskillCourse : Course {
@@ -41,15 +40,15 @@ class HyperskillCourse : Course {
   }
 
   constructor(languageName: String, languageId: String, languageVersion: String?) {
-    name = getProblemsProjectName(languageName)
-    description = EduCoreBundle.message("hyperskill.problems.project.description", languageName.capitalize())
+    name = "${languageName.capitalize()} Problems"
+    description = message("hyperskill.problems.project.description", languageName.capitalize())
     this.languageId = languageId
     this.languageVersion = languageVersion
   }
 
   val isTemplateBased: Boolean
     get() {
-      return (hyperskillProject ?: error("Disconnected ${EduNames.JBA} project")).isTemplateBased
+      return (hyperskillProject ?: error("Disconnected ${HYPERSKILL} project")).isTemplateBased
     }
 
 
@@ -115,7 +114,7 @@ class HyperskillCourse : Course {
 
   private fun descriptionNote(projectId: Int): String {
     val link = "$HYPERSKILL_PROJECTS_URL/$projectId"
-    return """<br/><br/>${EduCoreBundle.message("learn.more.at")} <a href="${wrapWithUtm(link, "project-card")}">$link</a>"""
+    return """<br/><br/>${message("learn.more.at")} <a href="${wrapWithUtm(link, "project-card")}">$link</a>"""
   }
 
   override val itemType: String = HYPERSKILL

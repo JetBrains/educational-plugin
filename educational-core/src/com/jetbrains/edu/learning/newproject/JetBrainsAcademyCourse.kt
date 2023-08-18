@@ -5,7 +5,7 @@ import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseVisibility
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
-import com.jetbrains.edu.learning.stepik.hyperskill.wrapWithUtm
+import com.jetbrains.edu.learning.wrapWithUtm
 
 /**
  * Fake course type for advertising JBA
