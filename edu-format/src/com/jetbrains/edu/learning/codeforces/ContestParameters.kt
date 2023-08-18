@@ -1,13 +1,12 @@
 package com.jetbrains.edu.learning.codeforces
 
-import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesUserInfo
 import java.time.Duration
 import java.time.ZonedDateTime
 
 data class ContestParameters(
   val id: Int,
-  val languageId: String = PlainTextLanguage.INSTANCE.id,
+  val languageId: String = "TEXT",
   val languageVersion: String? = null,
   val programTypeId: String? = null,
   val locale: String = "en",

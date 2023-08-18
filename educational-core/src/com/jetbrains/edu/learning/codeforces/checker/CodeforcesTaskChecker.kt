@@ -5,6 +5,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.checker.CodeExecutor
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.checker.OutputTaskCheckerBase
+import com.jetbrains.edu.learning.codeforces.CodeforcesUtils.getTestFolders
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils

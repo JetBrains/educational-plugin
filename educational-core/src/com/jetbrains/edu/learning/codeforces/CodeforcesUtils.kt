@@ -49,6 +49,11 @@ object CodeforcesUtils {
     }
   }
 
+  fun CodeforcesTask.getTestFolders(project: Project): Array<out VirtualFile> {
+    return getDir(project.courseDir)?.findChild(CodeforcesNames.TEST_DATA_FOLDER)?.children.orEmpty()
+      .filter { it.isValidCodeforcesTestFolder(this) }.toTypedArray()
+  }
+
   fun updateCheckStatus(project: Project) {
     val submissionsManager = SubmissionsManager.getInstance(project)
     submissionsManager.course?.allTasks?.forEach { task ->

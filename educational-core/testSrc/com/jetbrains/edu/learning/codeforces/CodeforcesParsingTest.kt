@@ -2,6 +2,8 @@ package com.jetbrains.edu.learning.codeforces
 
 import com.intellij.openapi.util.Disposer
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.codeforces.api.createCodeforcesTask
+import com.jetbrains.edu.learning.codeforces.api.parseResponseToAddContent
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -28,7 +30,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     course.addLesson(lesson)
 
     val htmlElement = Jsoup.parse(loadText(contest1211)).select(".problem-statement").first()!!
-    val task = CodeforcesTask.create(htmlElement, lesson, 1)
+    val task = createCodeforcesTask(htmlElement, lesson, 1)
 
     assertEquals("A. Three Problems", task.name)
     assertEquals("A", task.problemIndex)
@@ -45,7 +47,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     course.addLesson(lesson)
 
     val htmlElement = Jsoup.parse(loadText(contest1211)).select(".problem-statement")[6]
-    val task = CodeforcesTask.create(htmlElement, lesson, 1)
+    val task = createCodeforcesTask(htmlElement, lesson, 1)
 
     assertEquals("G. King's Path", task.name)
     assertEquals("G", task.problemIndex)
@@ -55,7 +57,8 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
 
   fun `test codeforces contest Kotlin Heroes Episode 2`() {
     val doc = Jsoup.parse(loadText(contest1211))
-    val course = CodeforcesCourse(ContestParameters(1211, EduNames.KOTLIN), doc)
+    val course = CodeforcesCourse(ContestParameters(1211, EduNames.KOTLIN))
+    course.parseResponseToAddContent(doc)
 
     assertEquals("Kotlin Heroes: Episode 2", course.name)
     assertEquals("""
@@ -106,7 +109,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     course.addLesson(lesson)
 
     val htmlElement = Jsoup.parse(loadText(contest1211)).select(".problem-statement")[0]
-    val task = CodeforcesTask.create(htmlElement, lesson, 1)
+    val task = createCodeforcesTask(htmlElement, lesson, 1)
 
     assertEquals("6\n" +
                  "3 1 4 1 5 9", task.taskFiles["testData/1/input.txt"]?.text)
@@ -121,7 +124,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     course.addLesson(lesson)
 
     val htmlElement = Jsoup.parse(loadText(contest1715)).select(".problem-statement")[0]
-    val task = CodeforcesTask.create(htmlElement, lesson, 1)
+    val task = createCodeforcesTask(htmlElement, lesson, 1)
 
     assertEquals("7\n" +
                  "7 5\n" +

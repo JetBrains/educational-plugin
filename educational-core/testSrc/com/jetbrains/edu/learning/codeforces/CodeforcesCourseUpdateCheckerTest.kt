@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_PROBLEMS
 import com.jetbrains.edu.learning.codeforces.CodeforcesTestCase.Companion.contest1211
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.api.MockCodeforcesConnector
+import com.jetbrains.edu.learning.codeforces.api.parseResponseToAddContent
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.update.CodeforcesCourseUpdateChecker
 import com.jetbrains.edu.learning.codeforces.update.CodeforcesCourseUpdateChecker.Companion.ONGOING_COURSE_CHECK_INTERVAL
@@ -26,7 +27,8 @@ import java.util.*
 class CodeforcesCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
   private val expectedTaskADescription: String by lazy {
     val doc = Jsoup.parse(loadText(contest1211))
-    val course = CodeforcesCourse(ContestParameters(1211, EduNames.KOTLIN, "48"), doc)
+    val course = CodeforcesCourse(ContestParameters(1211, EduNames.KOTLIN, "48"))
+    course.parseResponseToAddContent(doc)
     course.allTasks.first().descriptionText
   }
   private val mockConnector: MockCodeforcesConnector get() = CodeforcesConnector.getInstance() as MockCodeforcesConnector

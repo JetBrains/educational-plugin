@@ -1,13 +1,9 @@
 package com.jetbrains.edu.learning.codeforces.courseFormat
 
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getContestURLFromID
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES
-import com.jetbrains.edu.learning.codeforces.ContestParameters
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import org.jetbrains.annotations.NonNls
-import org.jsoup.nodes.Document
+import com.jetbrains.edu.learning.codeforces.ContestParameters
 import java.time.Duration
 import java.time.ZonedDateTime
 import java.util.*
@@ -36,12 +32,6 @@ open class CodeforcesCourse : Course {
   //used for deserialization
   constructor()
 
-  constructor(contestParameters: ContestParameters, doc: Document) {
-    setContestParameters(contestParameters)
-
-    parseResponseToAddContent(doc)
-  }
-
   constructor(contestParameters: ContestParameters) {
     setContestParameters(contestParameters)
   }
@@ -69,21 +59,4 @@ open class CodeforcesCourse : Course {
   override val itemType: String = CODEFORCES
 
   fun getContestUrl(): String = getContestURLFromID(id)
-
-  private fun parseResponseToAddContent(doc: Document) {
-    @NonNls val error = "Parsing failed. Unable to find CSS elements:"
-    name = doc.selectFirst(".caption")?.text() ?: error("$error caption")
-    val problems = doc.select(".problemindexholder") ?: error("$error problemindexholder")
-
-    description = problems.joinToString("\n") {
-      it.select("div.header").select("div.title").text() ?: error("$error div.header, div.title")
-    }
-
-    val lesson = Lesson()
-    lesson.name = CodeforcesNames.CODEFORCES_PROBLEMS
-    lesson.parent = this
-
-    addLesson(lesson)
-    problems.forEachIndexed { index, task -> lesson.addTask(CodeforcesTask.create(task, lesson, index + 1)) }
-  }
 }

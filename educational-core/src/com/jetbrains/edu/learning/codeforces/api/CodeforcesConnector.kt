@@ -97,7 +97,9 @@ abstract class CodeforcesConnector {
       service.problems(contestParameters.id, contestParameters.locale).executeParsingErrors().flatMap {
         val responseBody = it.body() ?: return@flatMap Err(EduCoreBundle.message("error.failed.to.parse.response"))
         val doc = Jsoup.parse(responseBody.string())
-        Ok(CodeforcesCourse(contestParameters, doc))
+        val codeforcesCourse = CodeforcesCourse(contestParameters)
+        codeforcesCourse.parseResponseToAddContent(doc)
+        Ok(codeforcesCourse)
       }
     }
 
