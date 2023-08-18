@@ -4,8 +4,8 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesTestCase
 import com.jetbrains.edu.learning.courseFormat.codeforces.ContestParameters
 import com.jetbrains.edu.learning.codeforces.api.parseResponseToAddContent
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.findTask
 import org.jsoup.Jsoup

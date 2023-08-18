@@ -5,7 +5,7 @@ import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.ext.languageById

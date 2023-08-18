@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.codeforces.run
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 
 class CodeforcesRunLineMarkerContributorTest : EduTestCase() {
   fun `test one line marker in input file`() {

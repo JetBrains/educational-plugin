@@ -15,7 +15,7 @@ import com.jetbrains.edu.coursecreator.CCStudyItemPathInputValidator
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesUtils.getTestFolders
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.studyItemType

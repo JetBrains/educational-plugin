@@ -6,8 +6,8 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.checker.TaskChecker
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask.Companion.codeforcesSubmitLink
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask.Companion.codeforcesSubmitLink
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTaskWithFileIO
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.selectedEditor
 import java.awt.datatransfer.StringSelection

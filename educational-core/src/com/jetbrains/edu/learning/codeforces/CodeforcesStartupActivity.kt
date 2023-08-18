@@ -5,7 +5,7 @@ import com.intellij.openapi.startup.StartupActivity
 import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.codeforces.CodeforcesUtils.updateCheckStatus
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.update.CodeforcesCourseUpdateChecker
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.isUnitTestMode

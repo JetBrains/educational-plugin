@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.yaml.format
 
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseraCourse
 

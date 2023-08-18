@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.codeforces.AnsiAwareCapturingProcessAdapter
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfigurationProducer
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson

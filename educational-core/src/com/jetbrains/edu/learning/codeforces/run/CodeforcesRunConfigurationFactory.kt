@@ -4,7 +4,7 @@ import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.configurations.ConfigurationType
 import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfigurationType.Companion.CONFIGURATION_ID
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator

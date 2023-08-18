@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.codeforces
 
 import com.jetbrains.edu.learning.EduActionTestCase
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 
 class CodeforcesChooseFileForRunConfigurationTest : EduActionTestCase() {
   fun `test first test set is selected`() {

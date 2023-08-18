@@ -3,8 +3,8 @@ package com.jetbrains.edu.learning.checker
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.codeforces.checker.CodeforcesTaskChecker
 import com.jetbrains.edu.learning.codeforces.checker.CodeforcesTaskWithFileIOTaskChecker
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTaskWithFileIO
 import com.jetbrains.edu.learning.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask

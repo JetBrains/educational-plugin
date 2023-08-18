@@ -8,8 +8,8 @@ import com.jetbrains.edu.learning.CourseUpdateListener
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.courseFormat.codeforces.ContestParameters
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask

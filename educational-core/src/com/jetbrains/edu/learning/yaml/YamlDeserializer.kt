@@ -22,9 +22,9 @@ import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOStation
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE_WITH_FILE_IO
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTaskWithFileIO
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.CourseMode.Companion.toCourseMode

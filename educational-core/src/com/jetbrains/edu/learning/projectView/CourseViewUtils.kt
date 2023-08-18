@@ -11,7 +11,7 @@ import com.intellij.psi.PsiManager
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.*

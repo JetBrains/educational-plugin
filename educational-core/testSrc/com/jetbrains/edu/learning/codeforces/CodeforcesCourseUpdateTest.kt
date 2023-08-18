@@ -4,8 +4,8 @@ import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.api.MockCodeforcesConnector
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.update.CodeforcesCourseUpdateChecker
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator

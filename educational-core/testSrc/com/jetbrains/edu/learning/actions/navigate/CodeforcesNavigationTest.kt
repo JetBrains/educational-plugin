@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.actions.navigate
 
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.jetbrains.edu.learning.actions.NextTaskAction
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.getTaskFile
 import com.jetbrains.edu.learning.testAction
 

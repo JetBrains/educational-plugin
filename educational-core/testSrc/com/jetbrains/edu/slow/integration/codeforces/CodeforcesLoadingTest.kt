@@ -10,9 +10,9 @@ import com.jetbrains.edu.learning.courseFormat.codeforces.ContestParameters
 import com.jetbrains.edu.learning.codeforces.actions.StartCodeforcesContestAction
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.api.MockCodeforcesConnector
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask.Companion.codeforcesSubmitLink
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask.Companion.codeforcesSubmitLink
 
 class CodeforcesLoadingTest : CodeforcesTestCase() {
   override fun setUp() {

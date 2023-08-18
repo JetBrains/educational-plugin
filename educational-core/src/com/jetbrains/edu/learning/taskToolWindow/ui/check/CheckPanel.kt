@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.actions.CodeforcesCopyAndSubmitAction
 import com.jetbrains.edu.learning.codeforces.actions.SubmitCodeforcesSolutionAction
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus

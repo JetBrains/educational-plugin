@@ -18,8 +18,8 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.courseFormat.codeforces.ContestParameters
 import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesAccount
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesUserInfo
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.CheckFeedback
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.ext.configurator

@@ -3,8 +3,8 @@ package com.jetbrains.edu.learning.ui
 import com.intellij.openapi.util.NlsActions
 import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.coursecreator.presentableName
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTaskWithFileIO
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask

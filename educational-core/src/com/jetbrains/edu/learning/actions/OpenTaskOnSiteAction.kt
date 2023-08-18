@@ -6,9 +6,9 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask.Companion.codeforcesTaskLink
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask.Companion.codeforcesTaskLink
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillTaskLink

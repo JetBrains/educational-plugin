@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.codeforces
 
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 
 abstract class CodeforcesTestCase : EduTestCase() {
   override fun getTestDataPath(): String = "testData/codeforces"

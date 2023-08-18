@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_CONTEST_SUBMISSIONS_URL
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.CheckFeedback
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckResult.Companion.failedToCheck

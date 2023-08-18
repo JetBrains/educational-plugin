@@ -9,7 +9,7 @@ import com.intellij.ui.dsl.builder.columns
 import com.intellij.ui.dsl.builder.panel
 import com.jetbrains.edu.coursecreator.getDefaultLanguageId
 import com.jetbrains.edu.learning.LanguageSettings
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseBindData
 import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettingsPanel

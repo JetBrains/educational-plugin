@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_TYPE_YAML
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TYPE_YAML
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames

@@ -4,7 +4,7 @@ import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.checkio.CheckiOPlatformProvider
 import com.jetbrains.edu.learning.codeforces.CodeforcesPlatformProvider
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse

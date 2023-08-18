@@ -4,8 +4,8 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.ide.CopyPasteManager
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask.Companion.codeforcesSubmitLink
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask.Companion.codeforcesSubmitLink
 import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import org.jetbrains.annotations.NonNls

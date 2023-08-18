@@ -6,7 +6,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.MockEduBrowser
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_SOLUTIONS_ANCHOR

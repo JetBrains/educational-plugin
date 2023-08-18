@@ -8,7 +8,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TITLE
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CONTEST
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.NonNls

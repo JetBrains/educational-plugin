@@ -1,7 +1,7 @@
 package com.jetbrains.edu.cpp
 
 import com.jetbrains.cmake.CMakeListsFileType
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.course.StepikCourse

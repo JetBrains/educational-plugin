@@ -8,7 +8,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.jetbrains.edu.learning.codeforces.CodeforcesUtils
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.getContainingTask

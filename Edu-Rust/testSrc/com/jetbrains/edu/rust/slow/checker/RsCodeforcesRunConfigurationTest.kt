@@ -1,7 +1,7 @@
 package com.jetbrains.edu.rust.slow.checker
 
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import org.rust.lang.RsLanguage

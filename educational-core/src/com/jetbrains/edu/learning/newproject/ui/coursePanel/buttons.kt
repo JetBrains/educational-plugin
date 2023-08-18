@@ -12,7 +12,7 @@ import com.intellij.ui.JBColor
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.codeforces.actions.StartCodeforcesContestAction
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.isPreview

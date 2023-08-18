@@ -12,7 +12,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.codeforces.api.ContestInfo
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP

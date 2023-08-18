@@ -4,7 +4,7 @@ import com.intellij.ide.ui.newItemPopup.NewItemSimplePopupPanel
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.util.Consumer
 import com.jetbrains.edu.learning.EduActionTestCase
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.testAction
 import io.mockk.every

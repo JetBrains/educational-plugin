@@ -18,7 +18,7 @@ import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task

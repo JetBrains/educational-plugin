@@ -9,7 +9,7 @@ import com.intellij.util.io.IOUtil
 import com.jetbrains.cmake.completion.CMakeRecognizedCPPLanguageStandard.*
 import com.jetbrains.edu.cpp.messages.EduCppBundle
 import com.jetbrains.edu.learning.LanguageSettings
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage

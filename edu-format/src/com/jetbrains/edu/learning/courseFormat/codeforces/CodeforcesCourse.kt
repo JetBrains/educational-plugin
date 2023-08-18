@@ -1,9 +1,8 @@
-package com.jetbrains.edu.learning.codeforces.courseFormat
+package com.jetbrains.edu.learning.courseFormat.codeforces
 
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_URL
-import com.jetbrains.edu.learning.courseFormat.codeforces.ContestParameters
 import java.time.Duration
 import java.time.ZonedDateTime
 import java.util.*

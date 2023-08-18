@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesTestCase.Companion.contes
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.api.MockCodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.api.parseResponseToAddContent
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.update.CodeforcesCourseUpdateChecker
 import com.jetbrains.edu.learning.codeforces.update.CodeforcesCourseUpdateChecker.Companion.ONGOING_COURSE_CHECK_INTERVAL
 import com.jetbrains.edu.learning.course

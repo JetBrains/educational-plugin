@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.codeforces.courseFormat
+package com.jetbrains.edu.learning.courseFormat.codeforces
 
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_TASK_TYPE_WITH_FILE_IO
 

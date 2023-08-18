@@ -3,9 +3,9 @@ package com.jetbrains.edu.learning.codeforces.api
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTaskWithFileIO
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile

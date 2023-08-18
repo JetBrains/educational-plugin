@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.codeforces.newProjectUI
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent

@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse

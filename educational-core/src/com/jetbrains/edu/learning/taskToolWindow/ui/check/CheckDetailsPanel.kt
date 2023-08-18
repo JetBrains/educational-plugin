@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.actions.CompareWithAnswerAction
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.details.CheckDetailsView
 import com.jetbrains.edu.learning.codeforces.actions.CodeforcesMarkAsCompletedAction
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckResultDiff
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
