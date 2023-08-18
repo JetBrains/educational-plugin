@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.courseFormat.tasks.data
 
-import com.jetbrains.edu.learning.courseFormat.AttemptBase
-import com.jetbrains.edu.learning.stepik.api.Attempt
+import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
+import com.jetbrains.edu.learning.courseFormat.attempts.AttemptBase
 import org.jetbrains.annotations.TestOnly
 import java.util.*
 
@@ -10,7 +10,7 @@ class DataTaskAttempt : AttemptBase {
 
   // If endDateTime was calculated before and specified in yaml file we shouldn't use isRunning from AttemptBase base class
   // Because we don't save timeLeft value in yaml, so we can't calculate proper endDateTime at
-  // com.jetbrains.edu.learning.courseFormat.AttemptBase.calculateEndDateTime anymore
+  // com.jetbrains.edu.learning.courseFormat.attempts.AttemptBase.calculateEndDateTime anymore
   override val isRunning: Boolean
     get() {
       @Suppress("LocalVariableName")

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.courseFormat
+package com.jetbrains.edu.learning.courseFormat.attempts
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty

@@ -26,6 +26,15 @@ object EduFormatNames {
   const val TIME_LEFT = "time_left"
   const val ID = "id"
   const val TIME = "time"
+  const val STEP = "step"
+  const val DATASET = "dataset"
+  const val STATUS = "status"
+  const val USER = "user"
+
+  // dataset
+  const val IS_MULTIPLE_CHOICE = "is_multiple_choice"
+  const val OPTIONS = "options"
+  const val PAIRS = "pairs"
 
   const val DEFAULT_ENVIRONMENT = ""
 

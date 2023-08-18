@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.api
 
-import com.jetbrains.edu.learning.stepik.api.Attempt
+import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
 import com.jetbrains.edu.learning.stepik.api.AttemptsList
 import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 import com.jetbrains.edu.learning.stepik.api.SubmissionsList

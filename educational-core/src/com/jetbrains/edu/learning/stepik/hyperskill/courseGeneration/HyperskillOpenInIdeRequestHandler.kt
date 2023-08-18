@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.isDataTask
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.IdeaDirectoryUnpackMode.ALL_FILES
 import com.jetbrains.edu.learning.courseGeneration.OpenInIdeRequestHandler
@@ -214,6 +214,8 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     }
     return stepSource
   }
+
+  private fun HyperskillStepSource.isDataTask(): Boolean = block?.name == DataTask.DATA_TASK_TYPE
 
   private fun Lesson.addProblems(stepSources: List<HyperskillStepSource>): Result<List<Task>, String> {
     val existingTasksIds = items.map { it.id }

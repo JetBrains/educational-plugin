@@ -7,9 +7,11 @@ import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationType
 import com.intellij.notification.NotificationType.INFORMATION
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.openapi.progress.ProgressIndicator
@@ -19,21 +21,23 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.NlsContexts
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.GotItTooltip
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduUtilsKt.execCancelable
+import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
+import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt.Companion.toDataTaskAttempt
-import com.jetbrains.edu.learning.document
-import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.projectView.CourseViewPane
-import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.StepikBasedConnector.Companion.getStepikBasedConnector
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.toPsiFile
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.jetbrains.annotations.NonNls
 import java.awt.Point
@@ -96,6 +100,28 @@ class DownloadDataset(
       processError(project, exception = e)
       return
     }
+  }
+  @Throws(IOException::class)
+  fun DataTask.getOrCreateDataset(project: Project, input: String): VirtualFile {
+    val taskDir = getDir(project.courseDir) ?: error("Unable to find task directory")
+    val dataset = runReadAction {
+      taskDir.findFileByRelativePath(datasetFilePath)
+    }
+    if (dataset == null) {
+      return GeneratorUtils.createChildFile(project, taskDir, datasetFilePath, input)
+             ?: error("File ${datasetFilePath} can't be created")
+    }
+
+    val datasetDocument = runReadAction {
+      FileDocumentManager.getInstance().getDocument(dataset)
+    } ?: error("Can't get document of dataset file - ${dataset.path}")
+    if (datasetDocument.text != input) {
+      GeneratorUtils.runInWriteActionAndWait {
+        VfsUtil.saveText(dataset, input)
+        FileDocumentManager.getInstance().reloadFromDisk(datasetDocument)
+      }
+    }
+    return dataset
   }
 
   override fun onSuccess() {
@@ -240,5 +266,11 @@ class DownloadDataset(
 
     private fun Point.addXOffset(offset: Int) = Point(x + offset, y)
     private fun Point.addYOffset(offset: Int) = Point(x, y + offset)
+
+    private val datasetFilePath: String = GeneratorUtils.joinPaths(
+      DataTask.DATA_FOLDER_NAME,
+      DataTask.DATASET_FOLDER_NAME,
+      DataTask.INPUT_FILE_NAME
+    )
   }
 }

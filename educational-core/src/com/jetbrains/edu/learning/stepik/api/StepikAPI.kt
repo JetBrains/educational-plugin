@@ -2,7 +2,6 @@
 
 package com.jetbrains.edu.learning.stepik.api
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.intellij.openapi.diagnostic.logger
@@ -10,14 +9,17 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.ID
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.NAME
+import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
+import com.jetbrains.edu.learning.courseFormat.attempts.AttemptBase
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.ChoiceStepSource
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.stepik.course.StepikLesson
-import com.jetbrains.edu.learning.submissions.*
+import com.jetbrains.edu.learning.submissions.SolutionFile
+import com.jetbrains.edu.learning.submissions.Submission
+import com.jetbrains.edu.learning.submissions.TEXT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SOLUTIONS_HIDDEN
-import org.jetbrains.annotations.TestOnly
 import java.util.*
 
 const val USERS = "users"
@@ -247,47 +249,6 @@ class Assignment {
   var step: Int = 0
 }
 
-class Dataset {
-  @JsonProperty(IS_MULTIPLE_CHOICE)
-  var isMultipleChoice: Boolean = false
-
-  @JsonProperty(OPTIONS)
-  var options: List<String>? = null
-
-  @JsonProperty(PAIRS)
-  var pairs: List<Pair>? = null
-
-  constructor()
-  constructor(emptyDataset: String)  // stepik returns empty string instead of null
-}
-
-class Attempt : AttemptBase {
-  @JsonProperty(STEP)
-  var step: Int = 0
-
-  @JsonProperty(DATASET)
-  var dataset: Dataset? = null
-
-  @JsonProperty(STATUS)
-  var status: String? = null
-
-  @JsonProperty(USER)
-  var user: String? = null
-
-  val isActive: Boolean
-    @JsonIgnore
-    get() = status == "active"
-
-  constructor()
-
-  constructor(step: Int) {
-    this.step = step
-  }
-
-  @TestOnly
-  constructor(id: Int, time: Date, timeLeft: Int) : super(id, time, timeLeft.toLong())
-}
-
 class StepikUnit {
   @JsonProperty(ID)
   var id: Int? = 0
@@ -493,12 +454,4 @@ class StepikBasedSubmission : Submission {
     this.attempt = attempt.id
     this.reply = reply
   }
-}
-
-class Pair {
-  @JsonProperty("first")
-  val first: String = ""
-
-  @JsonProperty("second")
-  val second: String = ""
 }
