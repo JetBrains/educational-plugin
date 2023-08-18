@@ -50,7 +50,7 @@ import com.jetbrains.edu.learning.document
 import com.jetbrains.edu.learning.getEditor
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.course.StepikLesson
+import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.courseFormat.RemoteEduTask.Companion.REMOTE_EDU_TASK_TYPE

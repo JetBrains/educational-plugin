@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.stepik.*
 import com.jetbrains.edu.learning.stepik.StepikNames.getClientId
 import com.jetbrains.edu.learning.stepik.StepikNames.getClientSecret
 import com.jetbrains.edu.learning.stepik.StepikNames.getStepikUrl
-import com.jetbrains.edu.learning.stepik.course.StepikLesson
+import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody

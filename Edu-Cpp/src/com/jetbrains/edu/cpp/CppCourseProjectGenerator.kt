@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
-import com.jetbrains.edu.learning.stepik.course.StepikCourse
+import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 
 class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
   CourseProjectGenerator<CppProjectSettings>(builder, course) {

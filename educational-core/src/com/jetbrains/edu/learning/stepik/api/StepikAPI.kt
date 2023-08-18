@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.ChoiceStepSource
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
-import com.jetbrains.edu.learning.stepik.course.StepikLesson
+import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
 import com.jetbrains.edu.learning.submissions.SolutionFile
 import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.TEXT

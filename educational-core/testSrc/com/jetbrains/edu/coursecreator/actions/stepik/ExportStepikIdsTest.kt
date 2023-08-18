@@ -5,8 +5,8 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.stepik.course.StepikCourse
-import com.jetbrains.edu.learning.stepik.course.StepikLesson
+import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
+import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
 import org.intellij.lang.annotations.Language
 
 class ExportStepikIdsTest : EduTestCase() {

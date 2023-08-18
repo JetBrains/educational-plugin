@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessageType.WARNING
 import com.jetbrains.edu.learning.newproject.ui.errors.ready
-import com.jetbrains.edu.learning.stepik.course.StepikCourse
+import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import java.awt.BorderLayout
 import javax.swing.JComponent
 

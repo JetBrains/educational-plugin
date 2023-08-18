@@ -75,6 +75,9 @@ object EduFormatNames {
   const val CODEFORCES_TASK_TYPE_WITH_FILE_IO: String = "${CODEFORCES_TYPE_YAML}_file_io"
   const val CODEFORCES_URL: String = "https://codeforces.com"
 
+  // stepik
+  const val STEPIK = "Stepik"
+
   // IDs of supported languages. They are the same that `Language#getID` returns
   // but in some cases we don't have corresponding Language in classpath to get its id via `getID` method
   const val JAVA = "JAVA"

@@ -1,12 +1,12 @@
-package com.jetbrains.edu.learning.stepik.course
+package com.jetbrains.edu.learning.courseFormat.stepik
 
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.STEPIK
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.stepik.StepikNames
 
 class StepikLesson : Lesson() {
   var stepIds: List<Int> = listOf()
   var unitId = 0
 
   override val itemType: String
-    get() = StepikNames.STEPIK
+    get() = STEPIK
 }

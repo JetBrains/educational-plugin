@@ -4,7 +4,7 @@ import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.stepik.course.StepikCourse
+import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 
 /** Provides CMake file template information, where:
  * [mainCMakeList] - configures the course project, e.g. find all tasks `CMakeLists.txt` files and adds them.

@@ -1,7 +1,7 @@
-package com.jetbrains.edu.learning.stepik.course
+package com.jetbrains.edu.learning.courseFormat.stepik
 
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.STEPIK
 
 /**
  * Specific stepik course created via `StartStepikCourseAction`.
@@ -11,5 +11,5 @@ import com.jetbrains.edu.learning.stepik.StepikNames
 class StepikCourse : EduCourse() {
   var isAdaptive: Boolean = false
 
-  override val itemType: String = StepikNames.STEPIK
+  override val itemType: String = STEPIK
 }

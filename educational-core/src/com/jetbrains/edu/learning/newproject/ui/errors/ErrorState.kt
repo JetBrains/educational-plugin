@@ -23,7 +23,7 @@ import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessageType.ERR
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessageType.WARNING
 import com.jetbrains.edu.learning.newproject.ui.getRequiredPluginsMessage
 import com.jetbrains.edu.learning.stepik.StepikNames
-import com.jetbrains.edu.learning.stepik.course.StepikCourse
+import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.ui.EduColors.errorTextForeground

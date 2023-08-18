@@ -24,7 +24,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK
 import com.jetbrains.edu.learning.stepik.StepikNames.getStepikUrl
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
-import com.jetbrains.edu.learning.stepik.course.StepikLesson
+import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
 import org.apache.http.HttpStatus
 import org.jetbrains.annotations.NonNls
 import java.util.stream.Collectors

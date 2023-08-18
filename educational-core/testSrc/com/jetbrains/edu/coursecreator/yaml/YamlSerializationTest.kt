@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.CourseraCourse
 import com.jetbrains.edu.learning.findTask
-import com.jetbrains.edu.learning.stepik.course.StepikCourse
+import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper

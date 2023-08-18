@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.ID
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.NAME
 import com.jetbrains.edu.learning.json.mixins.NotImplementedInMixin
 import com.jetbrains.edu.learning.stepik.StepikNames
-import com.jetbrains.edu.learning.stepik.course.StepikCourse
+import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.submissions.IS_VISIBLE
 import com.jetbrains.edu.learning.submissions.PLACEHOLDERS
 import com.jetbrains.edu.learning.submissions.STATUS

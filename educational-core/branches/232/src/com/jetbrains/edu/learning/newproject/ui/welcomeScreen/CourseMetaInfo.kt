@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.newproject.ui.logo
 import com.jetbrains.edu.learning.stepik.StepikNames
-import com.jetbrains.edu.learning.stepik.course.StepikCourse
+import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import javax.swing.Icon

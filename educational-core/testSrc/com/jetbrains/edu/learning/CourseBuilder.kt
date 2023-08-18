@@ -27,7 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.IdeaDirectoryUnpackMode.ONLY_IDEA_DIRECTORY
-import com.jetbrains.edu.learning.stepik.course.StepikLesson
+import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.RemoteEduTask
 import org.intellij.lang.annotations.Language

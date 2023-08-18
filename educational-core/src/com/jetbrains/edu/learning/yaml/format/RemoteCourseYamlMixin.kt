@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.Vendor
 import com.jetbrains.edu.learning.courseFormat.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_TYPE_YAML
-import com.jetbrains.edu.learning.stepik.course.StepikCourse
+import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE_YAML
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError

@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.stepik.StepikNames
-import com.jetbrains.edu.learning.stepik.course.StepikCourse
+import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.taskToolWindow.containsYoutubeLink
 import com.jetbrains.edu.learning.taskToolWindow.ui.jcefSpecificQueries.*
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.ChoiceTaskResourcesManager

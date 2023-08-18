@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.courseFormat.attempts.DataTaskAttempt.Companion.toDataTaskAttempt
-import com.jetbrains.edu.learning.stepik.course.StepikLesson
+import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillTopic
