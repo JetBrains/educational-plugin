@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.courseFormat.hyperskill
 
+import com.jetbrains.edu.learning.courseFormat.hyperskill.RemoteEduTask.Companion.REMOTE_EDU_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask.Companion.CODE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask.Companion.DATA_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.PYCHARM_TASK_TYPE
@@ -8,11 +9,10 @@ import com.jetbrains.edu.learning.courseFormat.tasks.StringTask.Companion.STRING
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask.Companion.CHOICE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask.Companion.MATCHING_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask.Companion.SORTING_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.hyperskill.RemoteEduTask.Companion.REMOTE_EDU_TASK_TYPE
 
 // lexicographical order
 @Suppress("unused")
-enum class StepikTaskType(val type: String, val value: String) {
+enum class HyperskillTaskType(val type: String, val value: String) {
   ADMIN("admin", "Linux"),
   CHOICE(CHOICE_TASK_TYPE, "Quiz"),
   CODE(CODE_TASK_TYPE, "Programming"),

@@ -7,10 +7,6 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_PROBLEM
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_PROJECTS_URL
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_TOPICS
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillTopic
-import com.jetbrains.edu.learning.courseFormat.hyperskill.StepikTaskType
 import com.jetbrains.edu.learning.wrapWithUtm
 import java.util.concurrent.ConcurrentHashMap
 
@@ -122,15 +118,15 @@ class HyperskillCourse : Course {
   // lexicographical order
   companion object {
     private val SUPPORTED_STEP_TYPES: Set<String> = setOf(
-      StepikTaskType.CHOICE.type,
-      StepikTaskType.CODE.type,
-      StepikTaskType.DATASET.type,
-      StepikTaskType.MATCHING.type,
-      StepikTaskType.NUMBER.type,
-      StepikTaskType.PYCHARM.type,
-      StepikTaskType.SORTING.type,
-      StepikTaskType.STRING.type,
-      StepikTaskType.TEXT.type,
+      HyperskillTaskType.CHOICE.type,
+      HyperskillTaskType.CODE.type,
+      HyperskillTaskType.DATASET.type,
+      HyperskillTaskType.MATCHING.type,
+      HyperskillTaskType.NUMBER.type,
+      HyperskillTaskType.PYCHARM.type,
+      HyperskillTaskType.SORTING.type,
+      HyperskillTaskType.STRING.type,
+      HyperskillTaskType.TEXT.type,
     )
 
     fun isStepSupported(type: String?): Boolean = type in SUPPORTED_STEP_TYPES

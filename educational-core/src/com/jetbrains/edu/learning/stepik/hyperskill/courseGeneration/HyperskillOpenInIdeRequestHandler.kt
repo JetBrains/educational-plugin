@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.*
-import com.jetbrains.edu.learning.courseFormat.hyperskill.StepikTaskType
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillTaskType
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -252,7 +252,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
       .onError { return Err(it) }
       .filter { it.isRecommended || it.id == id }
 
-    val theoryTitle = stepSources.find { it.block?.name == StepikTaskType.TEXT.type }?.title
+    val theoryTitle = stepSources.find { it.block?.name == HyperskillTaskType.TEXT.type }?.title
     if (theoryTitle != null) {
       return Ok(Pair(theoryTitle, stepSources))
     }

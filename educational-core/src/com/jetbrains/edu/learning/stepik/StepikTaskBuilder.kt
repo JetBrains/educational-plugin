@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
-import com.jetbrains.edu.learning.courseFormat.hyperskill.StepikTaskType
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillTaskType
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask.Companion.DATA_FOLDER_NAME
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask.Companion.DATA_SAMPLE_FOLDER_NAME
@@ -60,27 +60,27 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
     THEORY_TASK_TYPE to { name: String -> TheoryTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked) },
   )
 
-  private val stepikTaskBuilders: Map<String, (String) -> Task> = StepikTaskType.values().associateBy(
+  private val stepikTaskBuilders: Map<String, (String) -> Task> = HyperskillTaskType.values().associateBy(
     { it.type },
     {
       when (it) {
         // lexicographical order
-        StepikTaskType.CHOICE -> this::choiceTask
-        StepikTaskType.CODE -> this::codeTask
-        StepikTaskType.DATASET -> this::dataTask
-        StepikTaskType.MATCHING -> this::matchingTask
-        StepikTaskType.NUMBER -> this::numberTask
-        StepikTaskType.PYCHARM -> { _: String -> pycharmTask() }
-        StepikTaskType.REMOTE_EDU -> { _: String -> pycharmTask(REMOTE_EDU_TASK_TYPE) }
-        StepikTaskType.SORTING -> this::sortingTask
-        StepikTaskType.STRING -> this::stringTask
-        StepikTaskType.TEXT -> this::theoryTask
+        HyperskillTaskType.CHOICE -> this::choiceTask
+        HyperskillTaskType.CODE -> this::codeTask
+        HyperskillTaskType.DATASET -> this::dataTask
+        HyperskillTaskType.MATCHING -> this::matchingTask
+        HyperskillTaskType.NUMBER -> this::numberTask
+        HyperskillTaskType.PYCHARM -> { _: String -> pycharmTask() }
+        HyperskillTaskType.REMOTE_EDU -> { _: String -> pycharmTask(REMOTE_EDU_TASK_TYPE) }
+        HyperskillTaskType.SORTING -> this::sortingTask
+        HyperskillTaskType.STRING -> this::stringTask
+        HyperskillTaskType.TEXT -> this::theoryTask
         else -> this::unsupportedTask
       }
     })
 
   open fun createTask(type: String): Task? {
-    val taskName = StepikTaskType.values().find { it.type == type }?.value ?: UNKNOWN_TASK_NAME
+    val taskName = HyperskillTaskType.values().find { it.type == type }?.value ?: UNKNOWN_TASK_NAME
     return stepikTaskBuilders[type]?.invoke(taskName)
   }
 
