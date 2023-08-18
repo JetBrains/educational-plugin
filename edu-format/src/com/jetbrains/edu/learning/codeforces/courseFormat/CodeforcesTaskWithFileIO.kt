@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.codeforces.courseFormat
 
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE_WITH_FILE_IO
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_TASK_TYPE_WITH_FILE_IO
+
 
 class CodeforcesTaskWithFileIO : CodeforcesTask {
   override lateinit var inputFileName: String

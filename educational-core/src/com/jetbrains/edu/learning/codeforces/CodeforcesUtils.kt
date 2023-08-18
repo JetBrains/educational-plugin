@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 object CodeforcesUtils {
-  fun VirtualFile.isValidCodeforcesTestFolder(task: CodeforcesTask): Boolean {
+  private fun VirtualFile.isValidCodeforcesTestFolder(task: CodeforcesTask): Boolean {
     return findChild(task.inputFileName) != null && findChild(task.outputFileName) != null
   }
 

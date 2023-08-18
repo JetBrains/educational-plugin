@@ -67,6 +67,31 @@ object EduFormatNames {
   // checkio
   const val CHECKIO = "CheckiO"
 
+  // codeforces
+  const val CODEFORCES: String = "Codeforces"
+  const val CODEFORCES_SUBMIT: String = "submit"
+  const val CODEFORCES_TYPE_YAML: String = "codeforces"
+  const val CODEFORCES_TASK_TYPE: String = CODEFORCES_TYPE_YAML
+  const val CODEFORCES_TASK_TYPE_WITH_FILE_IO: String = "${CODEFORCES_TYPE_YAML}_file_io"
+  const val CODEFORCES_URL: String = "https://codeforces.com"
+
+  // IDs of supported languages. They are the same that `Language#getID` returns
+  // but in some cases we don't have corresponding Language in classpath to get its id via `getID` method
+  const val JAVA = "JAVA"
+  const val KOTLIN = "kotlin"
+  const val PYTHON = "Python"
+  const val SCALA = "Scala"
+  const val JAVASCRIPT = "JavaScript"
+  const val RUST = "Rust"
+  const val SHELL = "Shell Script"
+  // Single `ObjectiveC` id is used both for `ObjectiveC` and `C/C++`
+  const val CPP = "ObjectiveC"
+  const val GO = "go"
+  const val PHP = "PHP"
+
+  const val PYTHON_2_VERSION = "2.x"
+  const val PYTHON_3_VERSION = "3.x"
+
   // Troubleshooting guide links
   const val TROUBLESHOOTING_GUIDE_URL = "https://plugins.jetbrains.com/plugin/10081-jetbrains-academy/docs/troubleshooting-guide.html"
   const val NO_TESTS_URL = "$TROUBLESHOOTING_GUIDE_URL#no_tests_have_run"

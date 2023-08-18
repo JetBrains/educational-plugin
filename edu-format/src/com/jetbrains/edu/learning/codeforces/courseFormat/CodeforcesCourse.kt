@@ -1,8 +1,8 @@
 package com.jetbrains.edu.learning.codeforces.courseFormat
 
-import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getContestURLFromID
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_URL
 import com.jetbrains.edu.learning.courseFormat.codeforces.ContestParameters
 import java.time.Duration
 import java.time.ZonedDateTime
@@ -58,5 +58,5 @@ open class CodeforcesCourse : Course {
 
   override val itemType: String = CODEFORCES
 
-  fun getContestUrl(): String = getContestURLFromID(id)
+  fun getContestUrl(): String = "$CODEFORCES_URL/contest/$id"
 }

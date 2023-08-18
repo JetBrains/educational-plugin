@@ -1,17 +1,17 @@
 package com.jetbrains.edu.learning.codeforces.courseFormat
 
-import com.intellij.openapi.diagnostic.Logger
-import com.jetbrains.edu.learning.EduNames.GO
-import com.jetbrains.edu.learning.EduNames.JAVA
-import com.jetbrains.edu.learning.EduNames.JAVASCRIPT
-import com.jetbrains.edu.learning.EduNames.KOTLIN
-import com.jetbrains.edu.learning.EduNames.PYTHON
-import com.jetbrains.edu.learning.EduNames.PYTHON_2_VERSION
-import com.jetbrains.edu.learning.EduNames.PYTHON_3_VERSION
-import com.jetbrains.edu.learning.EduNames.RUST
-import com.jetbrains.edu.learning.EduNames.SCALA
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_SUBMIT
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_SUBMIT
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.GO
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.JAVA
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.JAVASCRIPT
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.KOTLIN
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON_2_VERSION
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON_3_VERSION
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.RUST
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.SCALA
+import com.jetbrains.edu.learning.courseFormat.logger
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTaskBase
 
 open class CodeforcesTask : OutputTaskBase() {
@@ -23,7 +23,7 @@ open class CodeforcesTask : OutputTaskBase() {
     get() = super.course as CodeforcesCourse
 
   companion object {
-    private val LOG: Logger = Logger.getInstance(CodeforcesTask::class.java)
+    private val LOG = logger<CodeforcesTask>()
 
     fun codeforcesSubmitLink(task: CodeforcesTask): String {
       val course = task.course
@@ -54,7 +54,7 @@ open class CodeforcesTask : OutputTaskBase() {
         //only for tests
         "TEXT" == languageId -> TEXT_TYPE_ID
         else -> {
-          LOG.warn("Programming language was not detected: $languageId $languageVersion")
+          LOG.warning("Programming language was not detected: $languageId $languageVersion")
           null
         }
       }?.toString()
