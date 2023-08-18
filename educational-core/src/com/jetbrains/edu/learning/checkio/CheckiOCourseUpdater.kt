@@ -11,9 +11,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.NotificationTitle
 import com.jetbrains.edu.learning.CourseUpdateListener
 import com.jetbrains.edu.learning.EduUtilsKt
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOStation
 import com.jetbrains.edu.learning.checkio.notifications.CheckiONotifications
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.findTaskFileInDir

@@ -14,7 +14,7 @@ import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.actions.*
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.actions.CodeforcesCopyAndSubmitAction
 import com.jetbrains.edu.learning.codeforces.actions.SubmitCodeforcesSolutionAction

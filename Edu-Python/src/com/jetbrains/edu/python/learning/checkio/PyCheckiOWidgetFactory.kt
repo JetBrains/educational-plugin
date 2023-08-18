@@ -3,7 +3,7 @@ package com.jetbrains.edu.python.learning.checkio
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.StatusBarWidget
 import com.jetbrains.edu.learning.LoginWidgetFactory
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle

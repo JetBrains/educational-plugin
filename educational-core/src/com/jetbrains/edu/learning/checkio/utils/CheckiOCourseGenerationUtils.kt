@@ -5,7 +5,7 @@ import com.jetbrains.edu.learning.checkio.CheckiOCourseContentGenerator
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
 import com.jetbrains.edu.learning.checkio.api.exceptions.HttpException
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.configuration.CourseCantBeStartedException
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState

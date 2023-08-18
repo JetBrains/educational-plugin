@@ -3,7 +3,7 @@ package com.jetbrains.edu.coursecreator.yaml
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.*

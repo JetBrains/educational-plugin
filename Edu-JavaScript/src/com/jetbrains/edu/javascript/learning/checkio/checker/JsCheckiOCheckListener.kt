@@ -6,7 +6,7 @@ import com.jetbrains.edu.javascript.learning.checkio.connectors.JsCheckiOApiConn
 import com.jetbrains.edu.javascript.learning.checkio.connectors.JsCheckiOOAuthConnector
 import com.jetbrains.edu.learning.checkio.CheckiOCourseContentGenerator
 import com.jetbrains.edu.learning.checkio.checker.CheckiOCheckListener
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
 
 class JsCheckiOCheckListener : CheckiOCheckListener(

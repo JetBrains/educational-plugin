@@ -1,7 +1,7 @@
-package com.jetbrains.edu.learning.checkio.courseFormat
+package com.jetbrains.edu.learning.courseFormat.checkio
 
-import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CHECKIO
 import org.jetbrains.annotations.NonNls
 
 class CheckiOCourse : Course {
@@ -24,7 +24,7 @@ class CheckiOCourse : Course {
     "stations=[${stations.joinToString("\n") { obj: CheckiOStation -> obj.toString() }}]"
 
   override val itemType: String
-    get() = CheckiONames.CHECKIO
+    get() = CHECKIO
 
   companion object {
     private val COURSE_DESCRIPTION: @NonNls String = """

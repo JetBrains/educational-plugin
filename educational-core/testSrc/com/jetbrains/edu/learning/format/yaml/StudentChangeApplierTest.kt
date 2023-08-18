@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.format.yaml
 
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask

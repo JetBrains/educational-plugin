@@ -2,7 +2,7 @@ package com.jetbrains.edu.coursecreator.yaml
 
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*

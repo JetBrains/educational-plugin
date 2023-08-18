@@ -3,8 +3,8 @@ package com.jetbrains.edu.coursecreator.checkio
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checkio.CheckiOCourseContentGenerator
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 

@@ -31,9 +31,9 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOStation
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse

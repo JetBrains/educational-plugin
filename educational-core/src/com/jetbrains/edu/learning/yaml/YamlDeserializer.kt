@@ -16,9 +16,9 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.codeStyle.NameUtil
 import com.intellij.util.messages.Topic
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission.Companion.CHECK_IO_MISSION_TASK_TYPE
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission.Companion.CHECK_IO_MISSION_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOStation
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE_WITH_FILE_IO

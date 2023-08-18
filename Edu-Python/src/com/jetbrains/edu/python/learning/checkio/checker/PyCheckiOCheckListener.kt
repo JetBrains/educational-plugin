@@ -2,7 +2,7 @@ package com.jetbrains.edu.python.learning.checkio.checker
 
 import com.jetbrains.edu.learning.checkio.CheckiOCourseContentGenerator
 import com.jetbrains.edu.learning.checkio.checker.CheckiOCheckListener
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOApiConnector
 import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOOAuthConnector

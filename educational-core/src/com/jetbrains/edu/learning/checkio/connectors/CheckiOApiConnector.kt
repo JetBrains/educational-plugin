@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.module.SimpleModule
 import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.checkio.api.CheckiOApiEndpoint
 import com.jetbrains.edu.learning.checkio.api.executeHandlingCheckiOExceptions
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOStation
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.createRetrofitBuilder

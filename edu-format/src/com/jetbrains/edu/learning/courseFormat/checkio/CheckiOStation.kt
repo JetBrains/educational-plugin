@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.checkio.courseFormat
+package com.jetbrains.edu.learning.courseFormat.checkio
 
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import org.jetbrains.annotations.NonNls

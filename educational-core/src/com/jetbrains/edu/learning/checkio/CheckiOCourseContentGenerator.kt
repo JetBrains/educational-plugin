@@ -3,8 +3,8 @@ package com.jetbrains.edu.learning.checkio
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.progress.ProgressManager
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOApiConnector
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOStation
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames.getSolutionsLink
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames.getTaskLink
 import com.jetbrains.edu.learning.courseFormat.CheckStatus

@@ -6,7 +6,7 @@ import com.intellij.util.IconUtil
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtilsKt
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.newProjectUI.CheckiOCoursesPanel
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel

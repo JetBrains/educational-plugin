@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse

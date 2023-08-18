@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.yaml.format
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_TYPE_YAML
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TYPE_YAML
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse

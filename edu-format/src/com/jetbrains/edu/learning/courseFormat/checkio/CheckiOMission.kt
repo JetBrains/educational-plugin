@@ -1,13 +1,10 @@
-package com.jetbrains.edu.learning.checkio.courseFormat
+package com.jetbrains.edu.learning.courseFormat.checkio
 
-import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 
 class CheckiOMission : EduTask() {
-  @get:Transient
-  @set:Transient
   @Transient // used to get missions from server
   var station: CheckiOStation = CheckiOStation()
   var code = ""

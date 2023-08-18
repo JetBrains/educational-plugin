@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.checkio.CheckiOCourseContentGenerator
 import com.jetbrains.edu.learning.checkio.CheckiOCourseUpdater
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.notifications.errors.CheckiOErrorReporter
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task

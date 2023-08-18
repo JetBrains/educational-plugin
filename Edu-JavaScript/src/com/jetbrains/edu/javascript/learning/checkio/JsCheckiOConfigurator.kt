@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
 import com.jetbrains.edu.learning.checkio.CheckiOCourseContentGenerator
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.utils.CheckiOCourseGenerationUtils.getCourseFromServerUnderProgress
 import com.jetbrains.edu.learning.courseFormat.Course
 import javax.swing.Icon

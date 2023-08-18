@@ -13,7 +13,7 @@ import com.intellij.ui.jcef.JCEFHtmlPanel
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
 import com.jetbrains.edu.learning.checkio.exceptions.CheckiOLoginRequiredException
 import com.jetbrains.edu.learning.checkio.notifications.errors.CheckiOErrorReporter
 import com.jetbrains.edu.learning.courseDir
