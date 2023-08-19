@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.format
 
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import java.util.*
 
 class CoursesInfosStorageTest : CoursesInfosStorageTestBase() {
@@ -37,7 +37,7 @@ class CoursesInfosStorageTest : CoursesInfosStorageTestBase() {
       description = "The examples and exercises accompanying the AtomicKotlin book"
     ) { }.apply {
       id = 20403
-      languageId = EduNames.PYTHON
+      languageId = EduFormatNames.PYTHON
       languageVersion = "3.7"
       languageCode = "ru"
     }

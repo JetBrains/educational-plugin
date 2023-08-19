@@ -7,9 +7,9 @@ import com.intellij.execution.testframework.sm.runner.OutputToGeneralTestEventsC
 import com.intellij.execution.testframework.sm.runner.events.TreeNodeEvent
 import com.intellij.ide.IdeCoreBundle
 import com.intellij.openapi.util.Key
-import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.checker.TestsOutputParser
 import com.jetbrains.edu.learning.checker.TestsOutputParser.TestMessage
+import com.jetbrains.edu.learning.courseFormat.CheckResult
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessageVisitor
 import org.jetbrains.annotations.Nls
 

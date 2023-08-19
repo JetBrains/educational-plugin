@@ -2,8 +2,8 @@ package com.jetbrains.edu.php
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
+import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.php.messages.EduPhpBundle

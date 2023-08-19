@@ -46,8 +46,9 @@ sealed class SortingBasedTask : Task {
   fun moveOptionUp(index: Int) {
     val targetIndex = index - 1
     if (targetIndex < 0) {
-      LOG.severe("There was an attempt to move the option up out of bounds")
-      return
+      val message = "There was an attempt to move the option up out of bounds"
+      LOG.severe(message)
+      throw Throwable(message)
     }
     swapOptions(index, targetIndex)
   }
@@ -58,8 +59,9 @@ sealed class SortingBasedTask : Task {
   fun moveOptionDown(index: Int) {
     val targetIndex = index + 1
     if (targetIndex == options.size) {
-      LOG.severe("There was an attempt to move the option down out of bounds")
-      return
+      val message = "There was an attempt to move the option down out of bounds"
+      LOG.severe(message)
+      throw Throwable(message)
     }
     swapOptions(index, targetIndex)
   }

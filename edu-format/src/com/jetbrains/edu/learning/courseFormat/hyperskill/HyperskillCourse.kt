@@ -44,7 +44,7 @@ class HyperskillCourse : Course {
 
   val isTemplateBased: Boolean
     get() {
-      return (hyperskillProject ?: error("Disconnected ${HYPERSKILL} project")).isTemplateBased
+      return (hyperskillProject ?: error("Disconnected $HYPERSKILL project")).isTemplateBased
     }
 
 

@@ -32,7 +32,6 @@ class DataTask : Task {
   }
 
 
-
   companion object {
     @NonNls
     const val DATA_TASK_TYPE: String = "dataset"

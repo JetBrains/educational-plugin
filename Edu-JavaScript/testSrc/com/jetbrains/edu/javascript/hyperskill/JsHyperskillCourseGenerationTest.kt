@@ -5,8 +5,8 @@ import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.javascript.learning.JsConfigurator.Companion.TASK_JS
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator.Companion.HYPERSKILL_TEST_DIR
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator.Companion.HYPERSKILL_TEST_DIR
 
 class JsHyperskillCourseGenerationTest : EduTestCase() {
   override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {

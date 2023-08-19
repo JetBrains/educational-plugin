@@ -28,16 +28,14 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduUtilsKt.execCancelable
 import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
+import com.jetbrains.edu.learning.courseFormat.attempts.DataTaskAttempt.Companion.toDataTaskAttempt
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
-import com.jetbrains.edu.learning.courseFormat.attempts.DataTaskAttempt.Companion.toDataTaskAttempt
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.stepik.api.StepikBasedConnector.Companion.getStepikBasedConnector
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
-import com.jetbrains.edu.learning.toPsiFile
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.jetbrains.annotations.NonNls
 import java.awt.Point
@@ -101,15 +99,15 @@ class DownloadDataset(
       return
     }
   }
+
   @Throws(IOException::class)
-  fun DataTask.getOrCreateDataset(project: Project, input: String): VirtualFile {
+  private fun DataTask.getOrCreateDataset(project: Project, input: String): VirtualFile {
     val taskDir = getDir(project.courseDir) ?: error("Unable to find task directory")
     val dataset = runReadAction {
       taskDir.findFileByRelativePath(datasetFilePath)
     }
     if (dataset == null) {
-      return GeneratorUtils.createChildFile(project, taskDir, datasetFilePath, input)
-             ?: error("File ${datasetFilePath} can't be created")
+      return GeneratorUtils.createChildFile(project, taskDir, datasetFilePath, input) ?: error("File $datasetFilePath can't be created")
     }
 
     val datasetDocument = runReadAction {
@@ -134,8 +132,10 @@ class DownloadDataset(
 
     showAndOpenDataset(dataset)
     if (isDatasetNewlyCreated) {
-      showDatasetFilePathNotification(project, EduCoreBundle.message("hyperskill.dataset.downloaded.successfully"),
-                                      dataset.presentableUrl)
+      showDatasetFilePathNotification(
+        project, EduCoreBundle.message("hyperskill.dataset.downloaded.successfully"),
+        dataset.presentableUrl
+      )
       if (!isUnitTestMode) {
         showTooltipForDataset(project, dataset)
       }
@@ -166,10 +166,11 @@ class DownloadDataset(
     ProjectView.getInstance(project).selectPsiElement(psiElement, true)
   }
 
-  @Suppress("UnstableApiUsage")
-  private fun showDatasetFilePathNotification(project: Project,
-                                              @NlsContexts.NotificationTitle message: String,
-                                              @NlsContexts.NotificationContent filePath: String) {
+  private fun showDatasetFilePathNotification(
+    project: Project,
+    @NlsContexts.NotificationTitle message: String,
+    @NlsContexts.NotificationContent filePath: String
+  ) {
     Notification("JetBrains Academy", message, filePath, INFORMATION).apply {
       addAction(NotificationAction.createSimpleExpiring(EduCoreBundle.message("copy.path.to.clipboard")) {
         CopyPasteManager.getInstance().setContents(StringSelection(filePath))
@@ -252,6 +253,7 @@ class DownloadDataset(
               val yOffset = tree.getPathBounds(tree.selectionPath)?.height?.div(2) ?: 0
               location.point.addXOffset(xOffset).addYOffset(-yOffset)
             }
+
             else -> {
               LOG.warn("Unsupported position ${tooltip.position}")
               location.point

@@ -1,15 +1,15 @@
 package com.jetbrains.edu.rust.slow.checker
 
 import com.jetbrains.edu.learning.checker.CheckActionListener
-import com.jetbrains.edu.learning.courseFormat.CheckResultDiff
 import com.jetbrains.edu.learning.checker.CheckResultDiffMatcher.Companion.diff
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.CheckResultDiff
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.nullValue
-import org.hamcrest.CoreMatchers.*
+import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.assertThat
 import org.rust.lang.RsLanguage
 

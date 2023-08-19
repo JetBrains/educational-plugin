@@ -4,9 +4,9 @@ import com.intellij.lang.java.JavaLanguage
 import com.jetbrains.edu.java.hyperskill.JHyperskillConfigurator.Companion.JAVA_HYPERSKILL_BUILD_GRADLE_TEMPLATE_NAME
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase.Companion.HYPERSKILL_SETTINGS_GRADLE_TEMPLATE_NAME
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.document
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import org.jetbrains.plugins.gradle.util.GradleConstants.DEFAULT_SCRIPT_NAME
 import org.jetbrains.plugins.gradle.util.GradleConstants.SETTINGS_FILE_NAME
 

@@ -10,7 +10,6 @@ import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_PROJECTS_URL
-import com.jetbrains.edu.learning.courseFormat.ext.findTaskDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
 import com.jetbrains.edu.learning.courseFormat.ext.updateDescriptionTextAndFormat

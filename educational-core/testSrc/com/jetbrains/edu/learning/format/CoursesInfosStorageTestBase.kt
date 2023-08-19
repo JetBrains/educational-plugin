@@ -4,7 +4,6 @@ import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.util.xmlb.SkipDefaultsSerializationFilter
 import com.intellij.util.xmlb.XmlSerializer
-import com.jetbrains.edu.learning.EduFormatNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.course

@@ -5,10 +5,10 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.jvm.gradle.GradleCodeforcesRunConfiguration
 import com.jetbrains.edu.learning.Result
-import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.checker.CodeExecutor
 import com.jetbrains.edu.learning.checker.DefaultCodeExecutor
 import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfiguration
+import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 open class GradleCodeExecutor : CodeExecutor {

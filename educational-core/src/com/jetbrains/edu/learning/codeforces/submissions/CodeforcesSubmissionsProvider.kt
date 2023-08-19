@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.codeforces.submissions
 
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.authorization.LoginDialog

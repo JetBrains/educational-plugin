@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
 import com.jetbrains.edu.codeInsight.inFileWithName
 import com.jetbrains.edu.codeInsight.psiElement
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT

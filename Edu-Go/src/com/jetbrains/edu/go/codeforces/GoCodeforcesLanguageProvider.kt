@@ -5,7 +5,6 @@ import com.jetbrains.edu.go.GoConfigurator
 import com.jetbrains.edu.go.GoConfigurator.Companion.GO_MOD
 import com.jetbrains.edu.go.GoConfigurator.Companion.MAIN_GO
 import com.jetbrains.edu.go.GoCourseBuilder.Companion.FORBIDDEN_SYMBOLS
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.GO
 import com.jetbrains.edu.learning.courseFormat.TaskFile

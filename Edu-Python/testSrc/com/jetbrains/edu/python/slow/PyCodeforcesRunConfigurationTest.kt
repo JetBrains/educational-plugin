@@ -1,9 +1,9 @@
 package com.jetbrains.edu.python.slow
 
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.python.slow.checker.PyCheckersTestBase
 import com.jetbrains.python.PythonLanguage
 

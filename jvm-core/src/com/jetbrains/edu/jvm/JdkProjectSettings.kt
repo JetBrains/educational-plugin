@@ -16,9 +16,12 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.DefaultSettingsUtils.findPath
+import com.jetbrains.edu.learning.Err
+import com.jetbrains.edu.learning.Ok
+import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.flatMap
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
 
 open class JdkProjectSettings(val model: ProjectSdksModel, val jdk: Sdk?) : EduProjectSettings {

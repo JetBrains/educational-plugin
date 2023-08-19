@@ -5,7 +5,8 @@ import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
-import org.hamcrest.CoreMatchers.*
+import org.hamcrest.CoreMatchers.containsString
+import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert
 
 class GoTheoryCheckerTest : GoCheckersTestBase() {

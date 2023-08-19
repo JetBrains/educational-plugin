@@ -32,7 +32,6 @@ import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.loadAndFillAdditionalCourseInfo
 import com.jetbrains.edu.learning.stepik.api.loadAndFillLessonAdditionalInfo
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import org.jetbrains.annotations.NonNls
 
 class GetHyperskillLesson : DumbAwareAction(

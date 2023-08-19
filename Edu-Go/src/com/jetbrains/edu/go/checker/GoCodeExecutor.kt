@@ -10,9 +10,9 @@ import com.intellij.psi.PsiFile
 import com.jetbrains.edu.go.checker.GoEduTaskChecker.Companion.GO_RUN_WITH_PTY
 import com.jetbrains.edu.go.codeforces.GoCodeforcesRunConfiguration
 import com.jetbrains.edu.learning.Result
-import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.checker.DefaultCodeExecutor
 import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfiguration
+import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.toPsiFile

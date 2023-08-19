@@ -3,7 +3,6 @@ package com.jetbrains.edu.javascript.learning.codeforces
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.javascript.learning.JsConfigurator
 import com.jetbrains.edu.javascript.learning.JsNewProjectSettings
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.JAVASCRIPT

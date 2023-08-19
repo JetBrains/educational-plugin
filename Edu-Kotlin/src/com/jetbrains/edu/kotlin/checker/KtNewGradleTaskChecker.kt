@@ -7,8 +7,8 @@ import com.intellij.psi.PsiManager
 import com.jetbrains.edu.jvm.gradle.checker.GradleCommandLine
 import com.jetbrains.edu.jvm.gradle.checker.NewGradleEduTaskChecker
 import com.jetbrains.edu.jvm.gradle.checker.hasSeparateModule
-import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
+import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import org.jetbrains.kotlin.idea.extensions.KotlinTestFrameworkProvider

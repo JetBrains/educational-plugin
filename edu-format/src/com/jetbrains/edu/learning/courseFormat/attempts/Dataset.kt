@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.IS_MULTIPLE_CHOICE
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.OPTIONS
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PAIRS
 
+@Suppress("unused", "UNUSED_PARAMETER")
 class Dataset {
   @JsonProperty(IS_MULTIPLE_CHOICE)
   var isMultipleChoice: Boolean = false

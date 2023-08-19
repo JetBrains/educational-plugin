@@ -1,16 +1,16 @@
 package com.jetbrains.edu.coursecreator.yaml
 
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
-import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
+import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
 import com.jetbrains.edu.learning.courseFormat.attempts.DataTaskAttempt.Companion.toDataTaskAttempt
-import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillTopic
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
+import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.yaml.YamlTestCase
 import java.util.*
@@ -25,11 +25,13 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     course.id = 1
     course.sectionIds = listOf(1)
     course.updateDate = Date("Fri, 01 Jan 2010 00:00:00 UTC")
-    doTest(course, """
+    doTest(
+      course, """
     |id: 1
     |update_date: "Fri, 01 Jan 2010 00:00:00 UTC"
     |default_section: 1
-    |""".trimMargin())
+    |""".trimMargin()
+    )
   }
 
   fun `test hyperskill project`() {
@@ -44,7 +46,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
 
     course.stages = listOf(
       HyperskillStage(1, "First", 11, true),
-                           HyperskillStage(2, "Second", 22)
+      HyperskillStage(2, "Second", 22)
     )
 
     val topic = HyperskillTopic()
@@ -83,10 +85,12 @@ class YamlRemoteSerializationTest : YamlTestCase() {
 
     course.id = 1
     course.updateDate = Date("Fri, 01 Jan 2010 00:00:00 UTC")
-    doTest(course, """
+    doTest(
+      course, """
     |id: 1
     |update_date: "Fri, 01 Jan 2010 00:00:00 UTC"
-    |""".trimMargin())
+    |""".trimMargin()
+    )
   }
 
   fun `test section`() {
@@ -96,10 +100,12 @@ class YamlRemoteSerializationTest : YamlTestCase() {
 
     section.id = 1
     section.updateDate = Date("Fri, 01 Jan 2010 00:00:00 UTC")
-    doTest(section, """
+    doTest(
+      section, """
     |id: 1
     |update_date: "Fri, 01 Jan 2010 00:00:00 UTC"
-    |""".trimMargin())
+    |""".trimMargin()
+    )
   }
 
   fun `test lesson`() {
@@ -110,10 +116,12 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     lesson.id = 1
     lesson.updateDate = Date(0)
     lesson.unitId = 1
-    doTest(lesson, """
+    doTest(
+      lesson, """
     |id: 1
     |unit: 1
-    |""".trimMargin())
+    |""".trimMargin()
+    )
   }
 
   fun `test lesson default unit`() {
@@ -123,9 +131,11 @@ class YamlRemoteSerializationTest : YamlTestCase() {
 
     lesson.id = 1
     lesson.updateDate = Date(0)
-    doTest(lesson, """
+    doTest(
+      lesson, """
     |id: 1
-    |""".trimMargin())
+    |""".trimMargin()
+    )
   }
 
   fun `test task`() {
@@ -137,10 +147,12 @@ class YamlRemoteSerializationTest : YamlTestCase() {
 
     task.id = 1
     task.updateDate = Date("Fri, 01 Jan 2010 00:00:00 UTC")
-    doTest(task, """
+    doTest(
+      task, """
     |id: 1
     |update_date: "Fri, 01 Jan 2010 00:00:00 UTC"
-    |""".trimMargin())
+    |""".trimMargin()
+    )
   }
 
   fun `test data task without attempt`() {
@@ -150,11 +162,13 @@ class YamlRemoteSerializationTest : YamlTestCase() {
       }
     }.lessons.first().taskList.first() as DataTask
 
-    doTest(task, """
+    doTest(
+      task, """
     |type: dataset
     |id: 1
     |update_date: "Fri, 01 Jan 2010 00:00:00 UTC"
-    |""".trimMargin())
+    |""".trimMargin()
+    )
   }
 
   fun `test data task with attempt`() {
@@ -168,14 +182,16 @@ class YamlRemoteSerializationTest : YamlTestCase() {
       }
     }.lessons.first().taskList.first() as DataTask
 
-    doTest(task, """
+    doTest(
+      task, """
     |type: dataset
     |id: 1
     |update_date: "Fri, 01 Jan 2010 00:00:00 UTC"
     |attempt:
     |  id: 2
     |  end_date_time: "Thu, 01 Jan 1970 00:05:00 UTC"
-    |""".trimMargin())
+    |""".trimMargin()
+    )
   }
 
   private fun doTest(item: StudyItem, expected: String) {

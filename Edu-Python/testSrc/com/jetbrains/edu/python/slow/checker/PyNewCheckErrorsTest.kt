@@ -1,11 +1,10 @@
 package com.jetbrains.edu.python.slow.checker
 
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.CheckActionListener
-import com.jetbrains.edu.learning.courseFormat.CheckResultDiff
 import com.jetbrains.edu.learning.checker.CheckResultDiffMatcher.Companion.diff
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.CheckResultDiff
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON

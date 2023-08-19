@@ -1,7 +1,6 @@
 package com.jetbrains.edu.python.slow.checker
 
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil.setDirectoryProjectSdk
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checker.CheckResultDiffMatcher
 import com.jetbrains.edu.learning.course

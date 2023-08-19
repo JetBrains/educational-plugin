@@ -3,16 +3,12 @@ package com.jetbrains.edu.learning.ui
 import com.intellij.openapi.util.NlsActions
 import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.coursecreator.presentableName
+import com.jetbrains.edu.learning.courseFormat.CourseraCourse
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTaskWithFileIO
-import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
-import com.jetbrains.edu.learning.courseFormat.tasks.UnsupportedTask
-import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
-import com.jetbrains.edu.learning.courseFormat.CourseraCourse
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 
 fun Task.getUIName(): String = if (course is HyperskillCourse) {

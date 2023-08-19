@@ -2,7 +2,6 @@ package com.jetbrains.edu.slow.integration.codeforces
 
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.TEST_DATA_FOLDER
 import com.jetbrains.edu.learning.codeforces.CodeforcesTestCase
 import com.jetbrains.edu.learning.codeforces.actions.StartCodeforcesContestAction

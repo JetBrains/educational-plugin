@@ -11,12 +11,8 @@ import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
 import com.jetbrains.edu.jvm.JdkLanguageSettings
 import com.jetbrains.edu.jvm.JdkProjectSettings
-import com.jetbrains.edu.learning.EduCourseBuilder
-import com.jetbrains.edu.learning.LanguageSettings
-import com.jetbrains.edu.learning.RefreshCause
-import com.jetbrains.edu.learning.Result
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import org.jetbrains.sbt.project.SbtProjectSystem

@@ -22,7 +22,6 @@ import com.jetbrains.edu.learning.stepik.api.SUBMISSIONS
 import com.jetbrains.edu.learning.submissions.SolutionFile
 import com.jetbrains.edu.learning.submissions.Submission
 import org.jetbrains.annotations.TestOnly
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 const val ID = "id"

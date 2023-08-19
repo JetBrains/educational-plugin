@@ -11,13 +11,13 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 fun AnswerTask.getInputAnswer(project: Project): String {
   val answerTaskFile = getTaskFile(AnswerTask.ANSWER_FILE_NAME)
   if (answerTaskFile == null) {
-    LOG.warn("Task with answer: ${itemType} for task is null")
+    LOG.warn("Task with answer: $itemType for task is null")
     return ""
   }
 
   val answerPlaceholder = answerTaskFile.answerPlaceholders.firstOrNull()
   if (answerPlaceholder == null) {
-    LOG.warn("Answer placeholder in file: ${itemType} for task is null or empty")
+    LOG.warn("Answer placeholder in file: $itemType for task is null or empty")
     return ""
   }
 
