@@ -29,7 +29,10 @@ class JsLanguageSettings : LanguageSettings<JsNewProjectSettings>() {
         return true
       }
     }
-    interpreterField.addChangeListener { interpreter: NodeJsInterpreter? -> jsSettings.selectedInterpreter = interpreter }
+    interpreterField.addChangeListener { interpreter: NodeJsInterpreter? ->
+      jsSettings.selectedInterpreter = interpreter
+      notifyListeners()
+    }
     interpreterField.setInterpreterRef(NodeJsInterpreterManager.getInstance(defaultProject).interpreterRef)
   }
 
