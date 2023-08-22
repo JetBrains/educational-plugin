@@ -4,6 +4,7 @@ import com.intellij.execution.RunManager
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.cidr.cpp.cmake.model.CMakeTarget
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace
 import com.jetbrains.cidr.cpp.execution.testing.CMakeTestRunConfiguration
@@ -37,7 +38,7 @@ open class CppEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker, proj
     return allTestFiles.mapNotNull { file ->
       model.targets.find { target ->
         target.buildConfigurations.find { config ->
-          config.sources.map { it.path }.contains(file.virtualFile.path)
+          config.sources.map { FileUtil.toSystemIndependentName(it.path) }.contains(file.virtualFile.path)
         } != null
       }
     }
