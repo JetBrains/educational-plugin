@@ -28,12 +28,12 @@ interface CourseIgnoreRules {
       val courseIgnorePsiFile = PsiManager.getInstance(project).findFile(courseIgnoreVirtualFile)
                                 ?: return@runReadAction EMPTY
 
-      CachedValuesManager.getCachedValue(courseIgnorePsiFile, CachedValueProvider {
+      CachedValuesManager.getCachedValue(courseIgnorePsiFile) {
         CachedValueProvider.Result(
           CourseIgnoreRulesFromFile(project, courseIgnorePsiFile),
           courseIgnorePsiFile
         )
-      })
+      }
     }
 
     private val EMPTY: CourseIgnoreRules = object : CourseIgnoreRules {
@@ -50,7 +50,7 @@ private class CourseIgnoreRulesFromFile(project: Project, courseIgnorePsiFile: P
   init {
     val patternCache = PatternCache.getInstance(project)
 
-    patterns = mutableListOf<IgnorePattern>()
+    patterns = mutableListOf()
 
     courseIgnorePsiFile.acceptChildren(object : IgnoreVisitor() {
       override fun visitEntry(ignoreEntry: IgnoreEntry) {
