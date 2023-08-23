@@ -80,7 +80,7 @@ class MoveTest : MoveTestBase() {
     assertEquals(0, lesson2.items.size)
   }
 
-  fun `test forbid course file moving in student mode`() {
+  fun `test move course file moving in student mode`() {
     val lessonName = "lesson1"
     val taskName = "task1"
     val taskFileName = "taskFile1.txt"
@@ -95,14 +95,12 @@ class MoveTest : MoveTestBase() {
     val sourceFile = findPsiFile("$lessonName/$taskName/src/$taskFileName")
     val targetDir = findPsiDirectory("$lessonName/$taskName")
 
-    withEduTestDialog(EduTestDialog()) {
-      doMoveAction(course, sourceFile, targetDir)
-    }.checkWasShown()
+    doMoveAction(course, sourceFile, targetDir)
 
     val task = course.findTask(lessonName, taskName)
 
-    assertNotNull(task.getTaskFile("src/$taskFileName"))
-    assertNull(task.getTaskFile(taskFileName))
+    assertNull(task.getTaskFile("src/$taskFileName"))
+    assertNotNull(task.getTaskFile(taskFileName))
   }
 
   fun `test move learner created task file in student mode`() {

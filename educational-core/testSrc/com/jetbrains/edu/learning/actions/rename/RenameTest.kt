@@ -97,7 +97,7 @@ class RenameTest : RenameTestBase() {
     assertNotNull(findDescriptionFile(TASK_MD))
   }
 
-  fun `test forbid task file renaming in student mode`() {
+  fun `test rename task file renaming in student mode`() {
     val course = courseWithFiles {
       lesson {
         eduTask {
@@ -105,10 +105,12 @@ class RenameTest : RenameTestBase() {
         }
       }
     }
-    doRenameAction(course, "lesson1/task1/taskFile1.txt", "taskFile2.txt", shouldBeInvoked = false)
+    // When there isn't any rename handler for file, rename action uses default one.
+    // And default rename handler has special code for unit tests not to show rename dialog at all
+    doRenameAction(course, "lesson1/task1/taskFile1.txt", "taskFile2.txt", shouldBeShown = false)
     val task = course.findTask("lesson1", "task1")
-    assertNull(task.getTaskFile("taskFile2.txt"))
-    assertNotNull(task.getTaskFile("taskFile1.txt"))
+    assertNull(task.getTaskFile("taskFile1.txt"))
+    assertNotNull(task.getTaskFile("taskFile2.txt"))
   }
 
   fun `test rename student created task file in student mode`() {
