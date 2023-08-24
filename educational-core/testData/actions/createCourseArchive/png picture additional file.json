@@ -23,17 +23,20 @@
     {
       "name" : "test.png",
       "is_visible" : true,
-      "text" : "6zkm3NpDQQaIQ+CAebF//w=="
+      "text" : "6zkm3NpDQQaIQ+CAebF//w==",
+      "is_binary" : true
     },
     {
       "name" : "build.gradle",
       "is_visible" : true,
-      "text" : "6zkm3NpDQQaIQ+CAebF//w=="
+      "text" : "6zkm3NpDQQaIQ+CAebF//w==",
+      "is_binary" : false
     },
     {
       "name" : "settings.gradle",
       "is_visible" : true,
-      "text" : "6zkm3NpDQQaIQ+CAebF//w=="
+      "text" : "6zkm3NpDQQaIQ+CAebF//w==",
+      "is_binary" : false
     }
   ],
   "version" : 17,

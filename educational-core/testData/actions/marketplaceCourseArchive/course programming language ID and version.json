@@ -29,17 +29,20 @@
     {
       "name" : "test.txt",
       "is_visible" : true,
-      "text" : "AEHDfG7ecSAGGEP1w6a75g=="
+      "text" : "AEHDfG7ecSAGGEP1w6a75g==",
+      "is_binary" : false
     },
     {
       "name" : "build.gradle",
       "is_visible" : true,
-      "text" : "6zkm3NpDQQaIQ+CAebF//w=="
+      "text" : "6zkm3NpDQQaIQ+CAebF//w==",
+      "is_binary" : false
     },
     {
       "name" : "settings.gradle",
       "is_visible" : true,
-      "text" : "6zkm3NpDQQaIQ+CAebF//w=="
+      "text" : "6zkm3NpDQQaIQ+CAebF//w==",
+      "is_binary" : false
     }
   ],
   "version" : 17,
