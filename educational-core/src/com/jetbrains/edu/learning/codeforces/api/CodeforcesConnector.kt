@@ -27,7 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CoursesDownloadingException
-import com.jetbrains.edu.learning.stepik.api.Reply
+import com.jetbrains.edu.learning.stepik.api.EduTaskReply
 import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 import com.jetbrains.edu.learning.submissions.SolutionFile
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
@@ -328,7 +328,7 @@ abstract class CodeforcesConnector {
 
             if (mainFileName != null) {
               val solutionFile = SolutionFile(GeneratorUtils.joinPaths(task.sourceDir, mainFileName), submissionSource, true)
-              reply = Reply().apply {
+              reply = EduTaskReply().apply {
                 solution = listOf(solutionFile)
               }
             }

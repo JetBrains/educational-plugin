@@ -60,15 +60,16 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     doTest(submission, """
       |attempt: 123
       |reply:
+      |  type: edu
+      |  version: $JSON_FORMAT_VERSION
+      |  feedback:
+      |    message: $feedback
       |  score: 1
       |  solution:
       |  - name: src/Task.kt
       |    is_visible: true
       |  - name: src/Test.kt
       |    is_visible: false
-      |  version: $JSON_FORMAT_VERSION
-      |  feedback:
-      |    message: $feedback
       |
     """.trimMargin())
   }
@@ -83,15 +84,16 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     doTest(submission, """
       |attempt: 1234
       |reply:
+      |  type: edu
+      |  version: $JSON_FORMAT_VERSION
+      |  feedback:
+      |    message: $feedback
       |  score: 0
       |  solution:
       |  - name: src/Task.kt
       |    is_visible: true
       |  - name: src/Test.kt
       |    is_visible: false
-      |  version: $JSON_FORMAT_VERSION
-      |  feedback:
-      |    message: $feedback
       |
     """.trimMargin())
   }
@@ -106,12 +108,13 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     doTest(submission, """
       |attempt: 12345
       |reply:
+      |  type: edu
+      |  version: $JSON_FORMAT_VERSION
       |  solution:
       |  - name: src/Task.kt
       |    is_visible: true
       |  - name: src/Test.kt
       |    is_visible: false
-      |  version: $JSON_FORMAT_VERSION
       |  check_profile: $checkProfile
       |
     """.trimMargin()
@@ -127,9 +130,10 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     doTest(submission, """
       |attempt: 123
       |reply:
+      |  type: code
+      |  version: $JSON_FORMAT_VERSION
       |  language: $language
       |  code: $answer
-      |  version: $JSON_FORMAT_VERSION
       |
     """.trimMargin())
   }
@@ -149,11 +153,12 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     doTest(submission, """
       |attempt: 123
       |reply:
+      |  type: choice
+      |  version: $JSON_FORMAT_VERSION
       |  choices:
       |  - true
       |  - false
       |  - false
-      |  version: $JSON_FORMAT_VERSION
       |
     """.trimMargin())
   }
@@ -166,8 +171,9 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     doTest(submission, """
       |attempt: 123
       |reply:
-      |  text: $answer
+      |  type: string
       |  version: $JSON_FORMAT_VERSION
+      |  text: $answer
       |
     """.trimMargin())
   }
@@ -180,8 +186,9 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     doTest(submission, """
       |attempt: 123
       |reply:
-      |  number: $answer
+      |  type: number
       |  version: $JSON_FORMAT_VERSION
+      |  number: $answer
       |
     """.trimMargin())
   }
@@ -194,8 +201,9 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     doTest(submission, """
       |attempt: 123
       |reply:
-      |  file: $answer
+      |  type: data
       |  version: $JSON_FORMAT_VERSION
+      |  file: $answer
       |
     """.trimMargin())
   }
@@ -209,6 +217,7 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     doTest(submission, """
       |attempt: 123
       |reply:
+      |  type: sorting_based
       |  version: $JSON_FORMAT_VERSION
       |  ordering:
       |  - 2

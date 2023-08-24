@@ -71,6 +71,7 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
   override val objectMapper: ObjectMapper by lazy {
     val module = SimpleModule()
     module.addDeserializer(PyCharmStepOptions::class.java, JacksonStepOptionsDeserializer())
+    module.addDeserializer(Reply::class.java, StepikReplyDeserializer())
     createObjectMapper(module)
   }
 

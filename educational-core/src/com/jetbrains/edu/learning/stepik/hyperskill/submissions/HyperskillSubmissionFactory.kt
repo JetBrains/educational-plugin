@@ -30,7 +30,7 @@ object HyperskillSubmissionFactory {
   }
 
   fun createRemoteEduTaskSubmission(task: RemoteEduTask, attempt: Attempt, files: List<SolutionFile>): StepikBasedSubmission {
-    val reply = RemoteEduTaskReply()
+    val reply = EduTaskReply()
     reply.checkProfile = task.checkProfile
     reply.solution = files
     return StepikBasedSubmission(attempt, reply)

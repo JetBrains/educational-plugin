@@ -358,7 +358,7 @@ def test_ASCII():
     assertEquals(20, submissionsList.submissions.size)
     val reply = submissionsList.submissions[0].reply
     assertNotNull(reply)
-    val solutionFiles = reply!!.solution
+    val solutionFiles = (reply as EduTaskReply).solution
     assertEquals(1, solutionFiles!!.size)
     assertEquals("hello_world.py", solutionFiles[0].name)
     assertEquals("print(\"Hello, world! My name is type your name\")\n", solutionFiles[0].text)
