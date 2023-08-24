@@ -1,0 +1,5 @@
+{
+  "language" : "Kotlin",
+  "code" : "fun main() = println(\"Hello world\")",
+  "version" : 10
+}

@@ -1,0 +1,11 @@
+{
+  "score" : "1",
+  "solution" : [ {
+    "name" : "src/Task.kt",
+    "text" : "fun foo(): String = <placeholder>\"Bar\"</placeholder>"
+  } ],
+  "checkProfile" : "",
+  "choices" : [ false, false, true ],
+  "feedback" : { "message": null },
+  "version" : 10
+}

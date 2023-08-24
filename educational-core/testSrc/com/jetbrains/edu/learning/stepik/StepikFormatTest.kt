@@ -22,6 +22,7 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 import java.util.function.Function
+import kotlin.test.assertFails
 
 class StepikFormatTest : EduTestCase() {
   override fun getTestDataPath(): String {
@@ -384,6 +385,44 @@ def test_ASCII():
   @Throws(IOException::class)
   fun testReplyTo10Version() {
     doReplyMigrationTest(10)
+  }
+
+  private fun migrateTo17Version() {
+    doMigrationTest(null) { replyObject: ObjectNode ->
+      replyObject.migrate(17)
+      replyObject
+    }
+  }
+
+  @Throws(IOException::class)
+  fun testReplyTo17VersionEduTask() = migrateTo17Version()
+
+  @Throws(IOException::class)
+  fun testReplyTo17VersionCodeTask() = migrateTo17Version()
+
+  @Throws(IOException::class)
+  fun testReplyTo17VersionChoiceTask() = migrateTo17Version()
+
+  @Throws(IOException::class)
+  fun testReplyTo17VersionSortingBasedTask() = migrateTo17Version()
+
+  @Throws(IOException::class)
+  fun testReplyTo17VersionStringTask() = migrateTo17Version()
+
+  @Throws(IOException::class)
+  fun testReplyTo17VersionNumberTask() = migrateTo17Version()
+
+  @Throws(IOException::class)
+  fun testReplyTo17VersionDataTask() = migrateTo17Version()
+
+  @Throws(IOException::class)
+  fun testReplyTo17VersionIncorrect() {
+    val responseString = loadJsonText()
+    val json = ObjectMapper().readTree(responseString) as ObjectNode
+
+    assertFails("Could not guess type of reply during migration to 17 API version") {
+      json.migrate(17)
+    }
   }
 
   @Throws(IOException::class)
