@@ -23,7 +23,6 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 import java.util.function.Function
-import kotlin.test.assertFails
 
 class StepikFormatTest : EduTestCase() {
   override fun getTestDataPath(): String {
