@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.logger
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.tasks.NumberTask
@@ -23,10 +23,10 @@ import com.jetbrains.edu.learning.json.migration.To9VersionLocalCourseConverter
 import com.jetbrains.edu.learning.json.mixins.deserializeTask
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.NAME
-import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.TEXT
 import com.jetbrains.edu.learning.serialization.converter.json.*
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
-import com.jetbrains.rd.util.first
+
+private val LOG = logger<JacksonStepOptionsDeserializer>()
 
 class JacksonStepOptionsDeserializer(vc: Class<*>? = null) : StdDeserializer<PyCharmStepOptions>(vc) {
 
@@ -84,20 +84,21 @@ class StepikReplyDeserializer(vc: Class<*>? = null) : StdDeserializer<Reply>(vc)
   }
 
   companion object {
-    private val LOG: Logger = Logger.getInstance(StepikReplyDeserializer::class.java)
-
     /**
      * Return object version before migration
      */
     @VisibleForTesting
     fun ObjectNode.migrate(maxVersion: Int): Int {
       val versionJson = get(SerializationUtils.Json.VERSION)
+      if (versionJson == null && get(EDU_TASK) == null) {
+        // solution doesn't contain any edu data, let's not migrate it
+        return maxVersion
+      }
       val initialVersion = versionJson?.asInt() ?: 1
       var version = initialVersion
       while (version < maxVersion) {
         when (version) {
           6 -> toSeventhVersion()
-          16 -> toSeventeenthVersion()
         }
         version++
       }
@@ -114,34 +115,14 @@ class StepikReplyDeserializer(vc: Class<*>? = null) : StdDeserializer<Reply>(vc)
         (solutionFile as ObjectNode).put(NAME, "src/$value")
       }
     }
-
-    private fun ObjectNode.toSeventeenthVersion() {
-      if (get("type") != null) return
-
-      val typesToImportantField = mapOf(
-        CODE_TASK to CODE,
-        EDU_TASK to SOLUTION,
-        CHOICE_TASK to CHOICES,
-        SORTING_BASED_TASK to ORDERING,
-        DATA_TASK to FILE,
-        NUMBER_TASK to NUMBER,
-        STRING_TASK to TEXT,
-      )
-      val possibleTypes = typesToImportantField.filter { get(it.value)?.isNull == false }
-
-      if (possibleTypes.size != 1) {
-        LOG.error("Could not guess type of reply during migration to 17 API version")
-        return
-      }
-
-      put(TYPE, possibleTypes.first().key)
-    }
   }
 }
 
-class JacksonSubmissionDeserializer(private val replyVersion: Int = JSON_FORMAT_VERSION,
-                                                              private val language: String? = null,
-                                                              vc: Class<*>? = null) : StdDeserializer<Task>(vc) {
+class JacksonSubmissionDeserializer(
+  private val replyVersion: Int = JSON_FORMAT_VERSION,
+  private val language: String? = null,
+  vc: Class<*>? = null
+) : StdDeserializer<Task>(vc) {
 
   override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): Task? {
     val objectMapper = jp.codec
@@ -160,8 +141,6 @@ class JacksonSubmissionDeserializer(private val replyVersion: Int = JSON_FORMAT_
   }
 
   companion object {
-    private val LOG: Logger = Logger.getInstance(JacksonSubmissionDeserializer::class.java)
-
     @VisibleForTesting
     fun ObjectNode.migrate(version: Int, maxVersion: Int, language: String?) {
       @Suppress("NAME_SHADOWING")

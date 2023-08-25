@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.stepik.api.JacksonStepOptionsDeserializer.Comp
 import com.jetbrains.edu.learning.stepik.api.JacksonSubmissionDeserializer.Companion.migrate
 import com.jetbrains.edu.learning.stepik.api.StepikConnector.Companion.getInstance
 import com.jetbrains.edu.learning.stepik.api.StepikReplyDeserializer.Companion.migrate
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -352,7 +353,7 @@ def test_ASCII():
   @Throws(IOException::class)
   fun testLastSubmission() {
     val jsonText = loadJsonText()
-    val mapper = getInstance().objectMapper
+    val mapper = HyperskillConnector.getInstance().objectMapper
     val submissionsList = mapper.readValue(jsonText, SubmissionsList::class.java)
     assertNotNull(submissionsList)
     assertNotNull(submissionsList.submissions)
@@ -385,44 +386,6 @@ def test_ASCII():
   @Throws(IOException::class)
   fun testReplyTo10Version() {
     doReplyMigrationTest(10)
-  }
-
-  private fun migrateTo17Version() {
-    doMigrationTest(null) { replyObject: ObjectNode ->
-      replyObject.migrate(17)
-      replyObject
-    }
-  }
-
-  @Throws(IOException::class)
-  fun testReplyTo17VersionEduTask() = migrateTo17Version()
-
-  @Throws(IOException::class)
-  fun testReplyTo17VersionCodeTask() = migrateTo17Version()
-
-  @Throws(IOException::class)
-  fun testReplyTo17VersionChoiceTask() = migrateTo17Version()
-
-  @Throws(IOException::class)
-  fun testReplyTo17VersionSortingBasedTask() = migrateTo17Version()
-
-  @Throws(IOException::class)
-  fun testReplyTo17VersionStringTask() = migrateTo17Version()
-
-  @Throws(IOException::class)
-  fun testReplyTo17VersionNumberTask() = migrateTo17Version()
-
-  @Throws(IOException::class)
-  fun testReplyTo17VersionDataTask() = migrateTo17Version()
-
-  @Throws(IOException::class)
-  fun testReplyTo17VersionIncorrect() {
-    val responseString = loadJsonText()
-    val json = ObjectMapper().readTree(responseString) as ObjectNode
-
-    assertFails("Could not guess type of reply during migration to 17 API version") {
-      json.migrate(17)
-    }
   }
 
   @Throws(IOException::class)
