@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
@@ -265,6 +266,44 @@ class StudentYamlSerializationTest : EduTestCase() {
     |ordering:
     |- 1
     |- 0
+    |""".trimMargin())
+  }
+
+  fun `test table task`() {
+    val task = courseWithFiles {
+      lesson {
+        tableTask(
+          name = "task1",
+          rows = listOf("A", "B"),
+          columns = listOf("1", "2", "3"),
+          selected = arrayOf(
+            booleanArrayOf(false, true, false),
+            booleanArrayOf(false, false, true),
+          ),
+          status = CheckStatus.Solved,
+        )
+      }
+    }.findTask("lesson1", "task1") as TableTask
+    task.record = 1
+
+    doTest(task, """
+    |type: table
+    |status: Solved
+    |record: 1
+    |rows:
+    |- A
+    |- B
+    |columns:
+    |- 1
+    |- 2
+    |- 3
+    |selected:
+    |- - false
+    |  - true
+    |  - false
+    |- - false
+    |  - false
+    |  - true
     |""".trimMargin())
   }
 

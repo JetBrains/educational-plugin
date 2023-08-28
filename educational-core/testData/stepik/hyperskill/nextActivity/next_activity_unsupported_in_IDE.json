@@ -294,12 +294,11 @@
     },
     {
       "block" : {
-        "name" : "table",
+        "name" : "math",
         "text" : "<p></p>\n<p>Distribute different errors into two groups: <strong>compile-time</strong> and <strong>run-time</strong> errors.</p>",
         "video" : null,
         "options" : {
-          "language" : "",
-          "is_checkbox" : false
+          "language" : ""
         },
         "table_of_contents" : [ ]
       },

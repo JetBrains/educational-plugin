@@ -40,7 +40,7 @@ class StudentTaskChangeApplier(project: Project) : TaskChangeApplier(project) {
       }
       is TableTask -> {
         existingItem.record = deserializedItem.record
-        existingItem.isSelected = (deserializedItem as TableTask).isSelected
+        existingItem.selected = (deserializedItem as TableTask).selected
       }
       is EduTask -> {
         if (existingItem is RemoteEduTask) {

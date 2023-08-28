@@ -350,23 +350,23 @@ class TextTaskReply: Reply() {
 @JsonTypeName(TABLE_TASK)
 class TableTaskReply: Reply() {
   @JsonProperty(CHOICES)
-  val choices: Array<Row>? = null
+  var choices: Array<Row>? = null
 }
 
 class Row {
   @JsonProperty(NAME_ROW)
-  val nameRow: String? = null
+  var nameRow: String? = null
 
   @JsonProperty(COLUMNS)
-  val columns: Array<Column>? = null
+  var columns: Array<Column>? = null
 }
 
 class Column {
   @JsonProperty(NAME)
-  val name: String? = null
+  var name: String? = null
 
   @JsonProperty(ANSWER)
-  val answer: Boolean? = null
+  var answer: Boolean? = null
 }
 
 class Attachment {

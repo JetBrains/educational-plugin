@@ -52,7 +52,7 @@ object HyperskillCheckConnector {
   fun isRemotelyChecked(task: Task): Boolean = when (task) {
     is ChoiceTask -> !task.canCheckLocally
     is CodeTask, is DataTask, is NumberTask, is RemoteEduTask, is StringTask,
-    is UnsupportedTask, is SortingTask, is MatchingTask -> true
+    is UnsupportedTask, is SortingTask, is MatchingTask, is TableTask -> true
     else -> false
   }
 

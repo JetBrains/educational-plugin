@@ -1,0 +1,55 @@
+{
+  "meta" : {
+    "page" : 1,
+    "has_next" : false,
+    "has_previous" : false
+  },
+  "steps" : [
+    {
+      "block" : {
+        "name":"table",
+        "text":"<p></p>\n<p>Distribute different errors by two groups: <strong>compile-time</strong> and <strong>run-time</strong> errors.</p>",
+        "video":null,
+        "options": { "language": "", "is_checkbox": false },
+        "table_of_contents":[]
+      },
+      "can_abandon" : false,
+      "can_skip" : true,
+      "check_profile" : "",
+      "content_created_at" : "2018-08-15T13:56:39Z",
+      "id" : 4364,
+      "is_abandoned" : false,
+      "is_completed" : false,
+      "is_cribbed" : false,
+      "is_recommended" : true,
+      "is_next" : false,
+      "is_skipped" : false,
+      "last_completed_at" : "2023-03-29T14:55:47.960177Z",
+      "lesson_stepik_id" : 126040,
+      "position" : 1,
+      "seconds_to_complete" : 16.800900000095368,
+      "solved_by" : 15612,
+      "stage" : null,
+      "stepik_id" : 419860,
+      "success_rate" : 0.998,
+      "title" : "Constructing a program",
+      "topic" : 212,
+      "topic_theory" : 4362,
+      "type" : "practice",
+      "updated_at" : "2022-01-03T16:48:13.110011Z",
+      "content_updated_at" : "2019-12-14T15:59:42Z",
+      "progress_updated_at" : null,
+      "popular_ide" : null,
+      "project" : null,
+      "is_beta" : false,
+      "is_deprecated" : false,
+      "is_ide_compatible" : true,
+      "is_remote_tested" : false,
+      "error_issues_count" : null,
+      "warning_issues_count" : null,
+      "error_issues" : [ ],
+      "warning_issues" : [ ],
+      "can_see_admin_toolbar" : false
+    }
+  ]
+}

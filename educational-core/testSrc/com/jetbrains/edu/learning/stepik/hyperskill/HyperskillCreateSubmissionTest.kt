@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.attempts.DataTaskAttempt.Companio
 import com.jetbrains.edu.learning.courseFormat.attempts.Dataset
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
@@ -22,6 +23,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.submissions.HyperskillSubmis
 import com.jetbrains.edu.learning.stepik.hyperskill.submissions.HyperskillSubmissionFactory.createRemoteEduTaskSubmission
 import com.jetbrains.edu.learning.stepik.hyperskill.submissions.HyperskillSubmissionFactory.createSortingBasedTaskSubmission
 import com.jetbrains.edu.learning.stepik.hyperskill.submissions.HyperskillSubmissionFactory.createStringTaskSubmission
+import com.jetbrains.edu.learning.stepik.hyperskill.submissions.HyperskillSubmissionFactory.createTableTaskSubmission
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
 import com.jetbrains.edu.learning.yaml.YamlMapper
 import java.util.*
@@ -214,6 +216,47 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
       |  - 2
       |  - 0
       |  - 1
+      |
+    """.trimMargin())
+  }
+
+  fun `test creating submission for table task`() {
+    val attempt = Attempt().apply { id = 123 }
+
+    val course = courseWithFiles {
+      lesson {
+        tableTask(rows = listOf("A", "B"), columns = listOf("1", "2", "3"))
+      }
+    }
+
+    val task = course.lessons.first().taskList.first() as TableTask
+
+    task.choose(0, 1)
+    task.choose(1, 2)
+
+    val submission = createTableTaskSubmission(attempt, task)
+    doTest(submission, """
+      |attempt: 123
+      |reply:
+      |  type: table
+      |  version: $JSON_FORMAT_VERSION
+      |  choices:
+      |  - name_row: A
+      |    columns:
+      |    - name: 1
+      |      answer: false
+      |    - name: 2
+      |      answer: true
+      |    - name: 3
+      |      answer: false
+      |  - name_row: B
+      |    columns:
+      |    - name: 1
+      |      answer: false
+      |    - name: 2
+      |      answer: false
+      |    - name: 3
+      |      answer: true
       |
     """.trimMargin())
   }

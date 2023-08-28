@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_TASK_TY
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_TASK_TYPE_WITH_FILE_IO
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
@@ -358,6 +359,33 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(task.captions, listOf("dog", "cat"))
     assertEquals(task.ordering.toList(), listOf(1, 0))
     assertEquals(task.options, listOf("first", "second"))
+  }
+
+  fun `test deserialize table task`() {
+    val yamlContent = """
+    |type: table
+    |status: Solved
+    |record: 1
+    |rows:
+    |- A
+    |- B
+    |columns:
+    |- 1
+    |- 2
+    |- 3
+    |selected:
+    |- - false
+    |  - true
+    |  - false
+    |- - false
+    |  - false
+    |  - true
+    |""".trimMargin()
+    val task = deserializeTask(yamlContent)
+    check(task is TableTask)
+    assertEquals(task.rows, listOf("A", "B"))
+    assertEquals(task.columns, listOf("1", "2", "3"))
+    assertEquals(task.selected.map { it.toList() }.toList(), listOf(listOf(false, true, false), listOf(false, false, true)))
   }
 
   fun `test task record`() {

@@ -84,67 +84,18 @@ object HyperskillSubmissionFactory {
 
   fun createTableTaskSubmission(attempt: Attempt, task: TableTask): StepikBasedSubmission {
     val reply = TableTaskReply()
-    TODO()
-    /*
-    {
-	"reply": {
-		"choices": [
-			{
-				"name_row": "incorrect keyword",
-				"columns": [
-					{
-						"name": "compile-time",
-						"answer": true
-					},
-					{
-						"name": "run-time (\"bugs\")",
-						"answer": false
-					}
-				]
-			},
-			{
-				"name_row": "incorrect text output",
-				"columns": [
-					{
-						"name": "compile-time",
-						"answer": true
-					},
-					{
-						"name": "run-time (\"bugs\")",
-						"answer": false
-					}
-				]
-			},
-			{
-				"name_row": "missing closing bracket",
-				"columns": [
-					{
-						"name": "compile-time",
-						"answer": true
-					},
-					{
-						"name": "run-time (\"bugs\")",
-						"answer": false
-					}
-				]
-			},
-			{
-				"name_row": "a program cannot open a file",
-				"columns": [
-					{
-						"name": "compile-time",
-						"answer": true
-					},
-					{
-						"name": "run-time (\"bugs\")",
-						"answer": false
-					}
-				]
-			}
-		]
-	}
-}
-     */
+
+    reply.choices = Array(task.rows.size) { rowIndex ->
+      Row().apply {
+        nameRow = task.rows[rowIndex]
+        columns = Array(task.columns.size) { columnIndex ->
+          Column().apply {
+            name = task.columns[columnIndex]
+            answer = task.selected[rowIndex][columnIndex]
+          }
+        }
+      }
+    }
     return StepikBasedSubmission(attempt, reply)
   }
 }

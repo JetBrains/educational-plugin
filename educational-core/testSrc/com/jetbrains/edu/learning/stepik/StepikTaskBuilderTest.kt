@@ -61,6 +61,8 @@ class StepikTaskBuilderTest : EduTestCase() {
 
   fun `test matching task`() = doTest<MatchingTask>(FakeGradleBasedLanguage)
 
+  fun `test table task`() = doTest<TableTask>(FakeGradleBasedLanguage)
+
   // EDU-2730 old way: task text is get from `text` field that is displayed on Stepik
   fun `test edu task text from block`() {
     val stepSource = loadStepSource()

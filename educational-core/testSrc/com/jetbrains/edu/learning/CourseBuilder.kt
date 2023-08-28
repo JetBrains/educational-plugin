@@ -439,6 +439,31 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     task.captions = captions
   }
 
+  fun tableTask(
+    name: String? = null,
+    customPresentableName: String? = null,
+    taskDescription: String? = null,
+    taskDescriptionFormat: DescriptionFormat? = null,
+    stepId: Int = 0,
+    updateDate: Date = Date(0),
+    rows: List<String> = emptyList(),
+    columns: List<String> = emptyList(),
+    selected: Array<BooleanArray> = arrayOf(),
+    status: CheckStatus = CheckStatus.Unchecked,
+    buildTask: TaskBuilder.() -> Unit = {}
+  ) {
+    val task = TableTask()
+    task(task, name, customPresentableName, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
+    task.rows = rows
+    task.columns = columns
+    if (selected.size != task.rows.size || selected.firstOrNull()?.size != columns.size) {
+      task.createTable(rows, columns)
+    } else {
+      task.selected = selected
+    }
+    task.status = status
+  }
+
   fun remoteEduTask(
     name: String? = null,
     customPresentableName: String? = null,

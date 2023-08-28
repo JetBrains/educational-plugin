@@ -14,7 +14,7 @@ class TableTask : Task {
 
   var columns = emptyList<String>()
 
-  var isSelected = arrayOf<Array<Boolean>>()
+  var selected = arrayOf<BooleanArray>()
 
   constructor() : super()
 
@@ -36,25 +36,25 @@ class TableTask : Task {
     if (!isCheckbox) {
       clearSelectedInRow(rowIndex)
     }
-    isSelected[rowIndex][columnIndex] = true
+    selected[rowIndex][columnIndex] = !selected[rowIndex][columnIndex]
   }
 
   fun clearSelectedVariants() {
-    for (rowIndex in isSelected.indices) {
+    for (rowIndex in selected.indices) {
       clearSelectedInRow(rowIndex)
     }
   }
 
   private fun clearSelectedInRow(rowIndex: Int) {
-    isSelected[rowIndex].fill(false)
+    selected[rowIndex].fill(false)
   }
 
   fun createTable(rows: List<String>, columns: List<String>, isCheckbox: Boolean = false) {
     this.rows = rows
     this.columns = columns
     this.isCheckbox = isCheckbox
-    isSelected = Array(rows.size) {
-      Array(columns.size) { false }
+    selected = Array(rows.size) {
+      BooleanArray(columns.size) { false }
     }
   }
 
