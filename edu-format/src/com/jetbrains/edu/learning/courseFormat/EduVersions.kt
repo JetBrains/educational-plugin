@@ -3,7 +3,7 @@
 package com.jetbrains.edu.learning.courseFormat
 
 // If you change version of any format, add point about it in `documentation/Versions.md`
-const val JSON_FORMAT_VERSION: Int = 17
+const val JSON_FORMAT_VERSION: Int = 16
 
 /**
  * Since that version we deprecated [com.jetbrains.edu.learning.json.mixins.JsonMixinNames.PROGRAMMING_LANGUAGE] and started to use
@@ -14,4 +14,4 @@ const val JSON_FORMAT_VERSION: Int = 17
  * @see [com.jetbrains.edu.learning.json.mixins.LocalEduCourseMixin.languageId]
  * @see [com.jetbrains.edu.learning.json.mixins.LocalEduCourseMixin.languageVersion]
  */
-const val JSON_FORMAT_VERSION_WITH_NEW_LANGUAGE_VERSION: Int = 17
+const val JSON_FORMAT_VERSION_WITH_NEW_LANGUAGE_VERSION: Int = 16

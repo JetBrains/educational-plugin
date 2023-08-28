@@ -10,45 +10,45 @@ import java.io.File
 import java.io.IOException
 import kotlin.test.assertFails
 
-class HyperskillAPIMigrationTest: EduTestCase() {
+class HyperskillReplyTypeGuessTest: EduTestCase() {
   override fun getTestDataPath(): String {
     return "testData/stepik/hyperskill/api"
   }
 
   @Throws(IOException::class)
-  fun testReplyTo17VersionEduTask() = migrateTo17Version()
+  fun testGuessReplyEduTask() = guessReply()
 
   @Throws(IOException::class)
-  fun testReplyTo17VersionCodeTask() = migrateTo17Version()
+  fun testGuessReplyCodeTask() = guessReply()
 
   @Throws(IOException::class)
-  fun testReplyTo17VersionChoiceTask() = migrateTo17Version()
+  fun testGuessReplyChoiceTask() = guessReply()
 
   @Throws(IOException::class)
-  fun testReplyTo17VersionSortingBasedTask() = migrateTo17Version()
+  fun testGuessReplySortingBasedTask() = guessReply()
 
   @Throws(IOException::class)
-  fun testReplyTo17VersionStringTask() = migrateTo17Version()
+  fun testGuessReplyStringTask() = guessReply()
 
   @Throws(IOException::class)
-  fun testReplyTo17VersionNumberTask() = migrateTo17Version()
+  fun testGuessReplyNumberTask() = guessReply()
 
   @Throws(IOException::class)
-  fun testReplyTo17VersionDataTask() = migrateTo17Version()
+  fun testGuessReplyDataTask() = guessReply()
 
   @Throws(IOException::class)
-  fun testReplyTo17VersionIncorrect() {
+  fun testGuessReplyIncorrect() {
     val responseString = loadJsonText()
     val json = ObjectMapper().readTree(responseString) as ObjectNode
 
     assertFails("Could not guess type of reply during migration to 17 API version") {
-      json.migrate(17)
+      json.migrate(16)
     }
   }
 
-  private fun migrateTo17Version() {
+  private fun guessReply() {
     doMigrationTest {
-      it.migrate(17)
+      it.migrate(16)
       it
     }
   }

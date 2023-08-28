@@ -27,20 +27,14 @@ class HyperskillReplyDeserializer(vc: Class<*>? = null) : StdDeserializer<Reply>
     fun ObjectNode.migrate(maxVersion: Int): Int {
       val versionJson = get(SerializationUtils.Json.VERSION)
       val initialVersion = versionJson?.asInt() ?: 1
-      var version = initialVersion
-      while (version < maxVersion) {
-        when (version) {
-          16 -> toSeventeenthVersion()
-        }
-        version++
+      if (get("type") == null) {
+        tryGuessType()
       }
       put(SerializationUtils.Json.VERSION, maxVersion)
       return initialVersion
     }
 
-    private fun ObjectNode.toSeventeenthVersion() {
-      if (get("type") != null) return
-
+    private fun ObjectNode.tryGuessType() {
       val typesToImportantField = mapOf(
         CODE_TASK to CODE,
         EDU_TASK to SOLUTION,
@@ -53,7 +47,7 @@ class HyperskillReplyDeserializer(vc: Class<*>? = null) : StdDeserializer<Reply>
       val possibleTypes = typesToImportantField.filter { get(it.value)?.isNull == false }
 
       if (possibleTypes.size != 1) {
-        LOG.error("Could not guess type of reply during migration to 17 API version")
+        LOG.error("Could not guess type of reply")
         return
       }
 
