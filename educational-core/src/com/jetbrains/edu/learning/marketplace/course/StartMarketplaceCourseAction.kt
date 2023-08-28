@@ -9,6 +9,6 @@ import com.jetbrains.edu.learning.stepik.course.ImportCourseDialog
 @Suppress("ComponentNotRegistered")
 class StartMarketplaceCourseAction : StartCourseAction(MARKETPLACE) {
   override val dialog: ImportCourseDialog
-    get() = ImportMarketplaceCourseDialog(courseConnector)
+    get() = StartMarketplaceCourseDialog(courseConnector)
   override val courseConnector: CourseConnector = MarketplaceConnector.getInstance()
 }

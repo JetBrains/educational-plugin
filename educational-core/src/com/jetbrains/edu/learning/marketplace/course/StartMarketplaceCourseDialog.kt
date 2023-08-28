@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.stepik.course.CourseConnector
 import com.jetbrains.edu.learning.stepik.course.ImportCourseDialog
 import com.jetbrains.edu.learning.stepik.course.ImportCoursePanel
 
-class ImportMarketplaceCourseDialog(courseConnector: CourseConnector) : ImportCourseDialog() {
+class StartMarketplaceCourseDialog(courseConnector: CourseConnector) : ImportCourseDialog() {
   override val coursePanel: ImportCoursePanel = ImportMarketplaceCoursePanel(courseConnector)
 
   init {
