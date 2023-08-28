@@ -25,7 +25,7 @@ class EduStateUsagesCollector : ApplicationUsagesCollector() {
   }
 
   companion object {
-    private val GROUP = EventLogGroup("educational.state", 3)
+    private val GROUP = EventLogGroup("educational.state", 4)
 
     private val TASK_PANEL_EVENT = GROUP.registerEvent("task.panel", enumField<JavaUILibrary>())
   }
