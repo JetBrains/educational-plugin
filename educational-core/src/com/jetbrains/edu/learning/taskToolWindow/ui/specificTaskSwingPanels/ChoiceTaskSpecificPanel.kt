@@ -7,6 +7,7 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.taskToolWindow.ui.addBorder
+import com.jetbrains.edu.learning.taskToolWindow.ui.createButton
 import java.awt.event.ItemEvent
 import java.awt.event.ItemListener
 import javax.swing.*
@@ -37,7 +38,7 @@ class ChoiceTaskSpecificPanel(task: ChoiceTask) : Wrapper() {
     val choiceOption = task.choiceOptions[index]
     val areOptionsEnabled = task.status != CheckStatus.Failed
     val isMultipleChoice = task.isMultipleChoice
-    chooseButton(isMultipleChoice)
+    createButton(isMultipleChoice)
       .widthGroup("buttonsGroup")
       .enabled(areOptionsEnabled)
       .customize(Gaps(right = 8))
@@ -49,14 +50,6 @@ class ChoiceTaskSpecificPanel(task: ChoiceTask) : Wrapper() {
       }
     text(choiceOption.text)
       .resizableColumn()
-  }
-
-  private fun Row.chooseButton(isMultipleChoice: Boolean): Cell<JToggleButton> {
-    return if (isMultipleChoice) {
-      checkBox("")
-    } else {
-      radioButton("")
-    }
   }
 
   private fun createListener(task: ChoiceTask, index: Int): ItemListener {

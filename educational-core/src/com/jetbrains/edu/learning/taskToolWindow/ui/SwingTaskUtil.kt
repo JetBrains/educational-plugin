@@ -6,15 +6,19 @@ import com.intellij.ide.ui.UISettings
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.colors.FontPreferences
 import com.intellij.openapi.project.Project
+import com.intellij.ui.dsl.builder.Cell
+import com.intellij.ui.dsl.builder.Row
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.HTMLEditorKitBuilder
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.taskToolWindow.ui.specificTaskSwingPanels.ChoiceTaskSpecificPanel
 import com.jetbrains.edu.learning.taskToolWindow.ui.specificTaskSwingPanels.SortingBasedTaskSpecificPanel
+import com.jetbrains.edu.learning.taskToolWindow.ui.specificTaskSwingPanels.TableTaskSpecificPanel
 import org.apache.commons.lang.StringEscapeUtils
 import org.jetbrains.annotations.VisibleForTesting
 import org.jsoup.nodes.Element
@@ -27,6 +31,7 @@ fun createSpecificPanel(task: Task?): JPanel? {
   return when (task) {
     is ChoiceTask -> ChoiceTaskSpecificPanel(task)
     is SortingBasedTask -> SortingBasedTaskSpecificPanel(task)
+    is TableTask -> TableTaskSpecificPanel(task)
     else -> null
   }
 }
@@ -126,5 +131,13 @@ fun wrapHintSwing(project: Project, hintElement: Element, displayedHintNumber: S
 fun JPanel.addBorder(newBorder: Border?): JPanel {
   return apply {
     border = JBUI.Borders.compound(newBorder, border)
+  }
+}
+
+fun Row.createButton(isCheckbox: Boolean): Cell<JToggleButton> {
+  return if (isCheckbox) {
+    checkBox("")
+  } else {
+    radioButton("")
   }
 }
