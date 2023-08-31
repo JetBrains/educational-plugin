@@ -10,6 +10,7 @@ import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.content.ContentFactory
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.EduExperimentalFeatures.USE_NAVIGATION_MAP
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.JavaUILibrary.JCEF
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -18,9 +19,11 @@ import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
+import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.getTopPanelForProblem
 import com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsService
 import com.jetbrains.edu.learning.submissions.SubmissionsTab
 import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckPanel
@@ -37,6 +40,8 @@ import javax.swing.JSeparator
 class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), DataProvider {
   private var uiContent: UiContent? = null
   private lateinit var tabManager: TabManager
+
+  private val newNav = isFeatureEnabled(USE_NAVIGATION_MAP)
 
   override var currentTask: Task? = null
     // TODO: move it in some separate method
@@ -93,14 +98,26 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
 
   override fun updateNavigationPanel(task: Task?) {
     task ?: return
-    val navigationPanel = uiContent?.navigationMapPanel ?: return
-    navigationPanel.setHeader(task.lesson.presentableName)
-    val actions = task.lesson.taskList.map { NavigationMapAction(it, task) }
-    navigationPanel.replaceActions(actions)
 
-    val course = StudyTaskManager.getInstance(project).course
-    if (course is HyperskillCourse) {
-      navigationPanel.updateTopPanelForProblems(project, course, task)
+    val navigationPanel = uiContent?.navigationMapPanel ?: return
+    if (newNav) {
+      navigationPanel as NavigationMapPanel
+      navigationPanel.setHeader(task.lesson.presentableName)
+      val actions = task.lesson.taskList.map { NavigationMapAction(it, task) }
+      navigationPanel.replaceActions(actions)
+
+      val course = StudyTaskManager.getInstance(project).course
+      if (course is HyperskillCourse) {
+        navigationPanel.updateTopPanelForProblems(project, course, task)
+      }
+    }
+    else {
+      navigationPanel.removeAll()
+      val course = StudyTaskManager.getInstance(project).course
+      if (course is HyperskillCourse) {
+        val panel = getTopPanelForProblem(project, course, task) ?: return
+        navigationPanel.add(panel, BorderLayout.SOUTH)
+      }
     }
   }
 
@@ -130,7 +147,7 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
     Disposer.register(contentManager, taskTextTW)
 
     val taskTextPanel = taskTextTW.taskInfoPanel
-    val navigationPanel = NavigationMapPanel()
+    val navigationPanel = if (newNav) NavigationMapPanel() else JPanel(BorderLayout())
 
     panel.add(navigationPanel, BorderLayout.NORTH)
     panel.add(taskTextPanel, BorderLayout.CENTER)
@@ -207,7 +224,7 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
   }
 
   class UiContent(
-    val navigationMapPanel: NavigationMapPanel,
+    val navigationMapPanel: JPanel,
     val taskTextTW: TaskToolWindow,
     val checkPanel: CheckPanel,
     val separator: JSeparator

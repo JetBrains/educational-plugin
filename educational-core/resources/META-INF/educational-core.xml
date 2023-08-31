@@ -350,6 +350,11 @@
     <experimentalFeature id="edu.course.sql" percentOfUsers="100" internalFeature="true">
       <description>Enables support for SQL courses</description>
     </experimentalFeature>
+
+    <experimentalFeature id="edu.tasktoolwindow.navigationmap" percentOfUsers="0" internalFeature="true">
+      <description>Enables TaskToolWindow NavigationMap (project reopening required)</description>
+    </experimentalFeature>
+
     <iconMapper mappingFile="EduToolsIconMappings.json"/>
     <themeMetadataProvider path="JetBrainsAcademyPlugin.themeMetadata.json"/>
   </extensions>

@@ -6,4 +6,5 @@ object EduExperimentalFeatures {
   const val CC_HYPERSKILL = "edu.course.hyperskill"
   const val MARKETPLACE_PRIVATE_COURSES = "edu.course.marketplace.show.private"
   const val SQL_COURSES = "edu.course.sql"
+  const val USE_NAVIGATION_MAP = "edu.tasktoolwindow.navigationmap"
 }
