@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.taskToolWindow.htmlTransformers.steps
 
 import com.jetbrains.edu.learning.JavaUILibrary
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskToolWindow.htmlTransformers.HtmlTransformer
 import com.jetbrains.edu.learning.taskToolWindow.htmlTransformers.HtmlTransformerContext
 import com.jetbrains.edu.learning.taskToolWindow.ui.wrapHintJCEF
@@ -12,7 +12,7 @@ import org.jsoup.nodes.Document
 object HintsWrapper : HtmlTransformer {
 
   override fun transform(html: Document, context: HtmlTransformerContext): Document {
-    if (context.task is TheoryTask) {
+    if (context.task.course is HyperskillCourse) {
       return html
     }
 
