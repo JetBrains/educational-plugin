@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.taskToolWindow.ui.specificTaskSwingPanels.ChoiceTaskSpecificPanel
 import com.jetbrains.edu.learning.taskToolWindow.ui.specificTaskSwingPanels.SortingBasedTaskSpecificPanel
 import org.apache.commons.lang.StringEscapeUtils
+import org.jetbrains.annotations.VisibleForTesting
 import org.jsoup.nodes.Element
 import javax.swing.*
 import javax.swing.border.Border
@@ -61,13 +62,14 @@ const val HINT_PROTOCOL = "hint://"
 private val LOG = Logger.getInstance(SwingToolWindow::class.java)  //TODO we probably need another logger here
 private const val DEFAULT_ICON_SIZE = 16
 
-fun wrapHintSwing(project: Project, hintElement: Element, displayedHintNumber: String, hintTitle: String): String {
+@VisibleForTesting
+fun getHintIconSize(): Int {
+  val currentFontSize = UISettings.getInstance().fontSize
+  val defaultFontSize = FontPreferences.DEFAULT_FONT_SIZE
+  return (DEFAULT_ICON_SIZE * currentFontSize / defaultFontSize.toFloat()).roundToInt()
+}
 
-  fun getIconSize(): Int {
-    val currentFontSize = UISettings.getInstance().fontSize
-    val defaultFontSize = FontPreferences.DEFAULT_FONT_SIZE
-    return (DEFAULT_ICON_SIZE * currentFontSize / defaultFontSize.toFloat()).roundToInt()
-  }
+fun wrapHintSwing(project: Project, hintElement: Element, displayedHintNumber: String, hintTitle: String): String {
 
   fun getIconFullPath(retinaPath: String, path: String): String {
     val bulbPath = if (UIUtil.isRetina()) retinaPath else path
@@ -87,10 +89,10 @@ fun wrapHintSwing(project: Project, hintElement: Element, displayedHintNumber: S
   // all tagged elements should have different href otherwise they are all underlined on hover. That's why
   // we have to add hint number to href
   fun createHintBlockTemplate(hintElement: Element, displayedHintNumber: String, escapedHintTitle: String): String {
-    val iconSize = getIconSize()
+    val iconSize = getHintIconSize()
     return """
       <img src='${getBulbIcon()}' width='$iconSize' height='$iconSize' >
-      <span><a href='$HINT_PROTOCOL$displayedHintNumber', value='${hintElement.text()}'>$escapedHintTitle $displayedHintNumber</a>
+      <span><a href='$HINT_PROTOCOL$displayedHintNumber' value='${hintElement.text()}'>$escapedHintTitle $displayedHintNumber</a>
       <img src='${getLeftIcon()}' width='$iconSize' height='$iconSize' >
     """.trimIndent()
   }
@@ -99,10 +101,10 @@ fun wrapHintSwing(project: Project, hintElement: Element, displayedHintNumber: S
   // we have to add hint number to href
   fun createExpandedHintBlockTemplate(hintElement: Element, displayedHintNumber: String, escapedHintTitle: String): String {
     val hintText = hintElement.text()
-    val iconSize = getIconSize()
+    val iconSize = getHintIconSize()
     return """ 
         <img src='${getBulbIcon()}' width='$iconSize' height='$iconSize' >
-        <span><a href='$HINT_PROTOCOL$displayedHintNumber', value='$hintText'>$escapedHintTitle $displayedHintNumber</a>
+        <span><a href='$HINT_PROTOCOL$displayedHintNumber' value='$hintText'>$escapedHintTitle $displayedHintNumber</a>
         <img src='${getDownIcon()}' width='$iconSize' height='$iconSize' >
         <div class='hint_text'>$hintText</div>
      """.trimIndent()

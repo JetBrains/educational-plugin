@@ -1,0 +1,233 @@
+package com.jetbrains.edu.learning.taskToolWindow
+
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
+import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.taskToolWindow.ui.getHintIconSize
+
+abstract class HintsInTaskDescriptionTestBase(
+  private val isTheoryTask: Boolean, private val isHyperskillCourse: Boolean
+) : TaskDescriptionTestBase() {
+
+  override fun createCourseWithTestTask(taskDescription: String, format: DescriptionFormat) {
+    val courseProducer = if (isHyperskillCourse) ::HyperskillCourse else ::EduCourse
+
+    courseWithFiles(courseProducer = courseProducer, language = language, environment = environment) {
+      lesson {
+        if (isTheoryTask) {
+          theoryTask(taskDescription = taskDescription.trimIndent(), taskDescriptionFormat = format)
+        }
+        else {
+          eduTask(taskDescription = taskDescription.trimIndent(), taskDescriptionFormat = format)
+        }
+      }
+    }
+  }
+
+  override fun removeUnimportantParts(html: String): String = super.removeUnimportantParts(html)
+    // inside <div class='hint'><img src="...">, ignore paths to bulb.png and to right.png
+    .replace(Regex("""src="[^"]*(bulb.png|right.png)""""), """src="$1"""")
+
+  companion object {
+    const val HINT_DIV = """
+      <div class='hint'>Hint text</div>
+    """
+
+    const val JCEF_PROCESSED_HINT_DIV = """
+      <html>
+       <head>
+        ...
+       </head>
+       <body>
+        <div class="wrapper">
+         <div class="hint">
+          <div class="hint_header">
+           Hint
+          </div>
+          <div class="hint_content">
+           Hint text
+          </div>
+         </div>
+        </div>
+       </body>
+      </html>
+    """
+
+    fun swingProcessedHintDiv() = """
+      <html>
+       <head>
+        ...
+       </head>
+       <body>
+        <div class="wrapper">
+         <div class="top">
+          <div class="hint">
+           <img src="bulb.png" width="0" height="0"> <span><a href="hint://" value="Hint text">Hint </a> <img src="right.png" width="0" height="0"></span>
+          </div>
+         </div>
+        </div>
+       </body>
+      </html>
+    """.replaceWidthHeightWithFontSize()
+
+    const val UNPROCESSED_HINT_DIV = """
+      <html>
+       <head>
+        ...
+       </head>
+       <body>
+        <div class="wrapper">
+         <div class="hint">
+          Hint text
+         </div>
+        </div>
+       </body>
+      </html>
+    """
+
+    fun String.replaceWidthHeightWithFontSize(): String {
+      val iconSize = getHintIconSize()
+      return replace(Regex("""(width|height)="0""""), """$1="$iconSize"""")
+    }
+  }
+}
+
+class HintTestForHyperskillCourseEduTask : HintsInTaskDescriptionTestBase(false, true) {
+
+  fun `test hints are not processed in hyperskill edu tasks`() = doMarkdownTest(HINT_DIV, UNPROCESSED_HINT_DIV)
+}
+
+class HintTestForHyperskillCourseTheoryTask : HintsInTaskDescriptionTestBase(true, true) {
+
+  fun `test hints are not processed in hyperskill theory tasks`() = doMarkdownTest(HINT_DIV, UNPROCESSED_HINT_DIV)
+}
+
+class HintTestForMarketplaceCourseTheoryTask : HintsInTaskDescriptionTestBase(true, false) {
+
+  fun `test hints are processed in marketplace theory tasks`() = doMarkdownTest(HINT_DIV, JCEF_PROCESSED_HINT_DIV, swingProcessedHintDiv())
+}
+
+class HintTestForMarketplaceCourseEduTask : HintsInTaskDescriptionTestBase(false, false) {
+
+  fun `test hints are processed in marketplace edu tasks`() = doMarkdownTest(HINT_DIV, JCEF_PROCESSED_HINT_DIV, swingProcessedHintDiv())
+
+  fun `test hints with different titles numbering`() = doMarkdownTest(
+    """
+      Hello
+      <div class="hint" title="Explanation">Text 1</div>
+      <div class="hint" title="Clarification">Text 2</div>
+      <div class="hint">Text 3</div>
+      <div class="hint" title="Clarification">Text 4</div>
+      <div class="hint" title="Random title">Text 5</div>
+      <div class="hint">Text 6</div>
+      <div class="hint" title="Explanation">Text 7</div>
+    """, """
+      <html>
+       <head>
+        ...
+       </head>
+       <body>
+        <div class="wrapper">
+         <p>Hello</p>
+         <div class="hint">
+          <div class="hint_header">
+           Explanation 1
+          </div>
+          <div class="hint_content">
+           Text 1
+          </div>
+         </div>
+         <div class="hint">
+          <div class="hint_header">
+           Clarification 1
+          </div>
+          <div class="hint_content">
+           Text 2
+          </div>
+         </div>
+         <div class="hint">
+          <div class="hint_header">
+           Hint 1
+          </div>
+          <div class="hint_content">
+           Text 3
+          </div>
+         </div>
+         <div class="hint">
+          <div class="hint_header">
+           Clarification 2
+          </div>
+          <div class="hint_content">
+           Text 4
+          </div>
+         </div>
+         <div class="hint">
+          <div class="hint_header">
+           Random title
+          </div>
+          <div class="hint_content">
+           Text 5
+          </div>
+         </div>
+         <div class="hint">
+          <div class="hint_header">
+           Hint 2
+          </div>
+          <div class="hint_content">
+           Text 6
+          </div>
+         </div>
+         <div class="hint">
+          <div class="hint_header">
+           Explanation 2
+          </div>
+          <div class="hint_content">
+           Text 7
+          </div>
+         </div>
+        </div>
+       </body>
+      </html>
+    """, """
+      <html>
+       <head>
+        ...
+       </head>
+       <body>
+        <div class="wrapper">
+         <p>Hello</p>
+         <div class="top">
+          <div class="hint">
+           <img src="bulb.png" width="0" height="0"> <span><a href="hint://1" value="Text 1">Explanation 1</a> <img src="right.png" width="0" height="0"></span>
+          </div>
+         </div>
+         <div class="top">
+          <div class="hint">
+           <img src="bulb.png" width="0" height="0"> <span><a href="hint://1" value="Text 2">Clarification 1</a> <img src="right.png" width="0" height="0"></span>
+          </div>
+         </div>
+         <div class="top">
+          <div class="hint">
+           <img src="bulb.png" width="0" height="0"> <span><a href="hint://1" value="Text 3">Hint 1</a> <img src="right.png" width="0" height="0"></span>
+          </div>
+         </div>
+         <div class="hint">
+          <img src="bulb.png" width="0" height="0"> <span><a href="hint://2" value="Text 4">Clarification 2</a> <img src="right.png" width="0" height="0"></span>
+         </div>
+         <div class="top">
+          <div class="hint">
+           <img src="bulb.png" width="0" height="0"> <span><a href="hint://" value="Text 5">Random title </a> <img src="right.png" width="0" height="0"></span>
+          </div>
+         </div>
+         <div class="hint">
+          <img src="bulb.png" width="0" height="0"> <span><a href="hint://2" value="Text 6">Hint 2</a> <img src="right.png" width="0" height="0"></span>
+         </div>
+         <div class="hint">
+          <img src="bulb.png" width="0" height="0"> <span><a href="hint://2" value="Text 7">Explanation 2</a> <img src="right.png" width="0" height="0"></span>
+         </div>
+        </div>
+       </body>
+      </html>
+    """.replaceWidthHeightWithFontSize()
+  )
+}
