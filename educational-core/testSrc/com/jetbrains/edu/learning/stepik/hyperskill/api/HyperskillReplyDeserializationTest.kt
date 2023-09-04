@@ -1,55 +1,55 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.ObjectNode
+import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtilRt
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillReplyDeserializer.Companion.migrate
+import com.jetbrains.edu.learning.stepik.api.Reply
 import java.io.File
 import java.io.IOException
 import kotlin.test.assertFails
 
-class HyperskillReplyTypeGuessTest: EduTestCase() {
+class HyperskillReplyDeserializationTest: EduTestCase() {
+  private val objectMapper = ObjectMapper()
+
+  init {
+    val module = SimpleModule()
+    module.addDeserializer(Reply::class.java, HyperskillReplyDeserializer())
+    objectMapper.registerModule(module)
+  }
+
   override fun getTestDataPath(): String {
     return "testData/stepik/hyperskill/api"
   }
 
   @Throws(IOException::class)
-  fun testGuessReplyEduTask() = guessReply()
+  fun testGuessReplyEduTask() = doDeserializeTest()
 
   @Throws(IOException::class)
-  fun testGuessReplyCodeTask() = guessReply()
+  fun testGuessReplyCodeTask() = doDeserializeTest()
 
   @Throws(IOException::class)
-  fun testGuessReplyChoiceTask() = guessReply()
+  fun testGuessReplyChoiceTask() = doDeserializeTest()
 
   @Throws(IOException::class)
-  fun testGuessReplySortingBasedTask() = guessReply()
+  fun testGuessReplySortingBasedTask() = doDeserializeTest()
 
   @Throws(IOException::class)
-  fun testGuessReplyStringTask() = guessReply()
+  fun testGuessReplyStringTask() = doDeserializeTest()
 
   @Throws(IOException::class)
-  fun testGuessReplyNumberTask() = guessReply()
+  fun testGuessReplyNumberTask() = doDeserializeTest()
 
   @Throws(IOException::class)
-  fun testGuessReplyDataTask() = guessReply()
+  fun testGuessReplyDataTask() = doDeserializeTest()
 
   @Throws(IOException::class)
   fun testGuessReplyIncorrect() {
     val responseString = loadJsonText()
-    val json = ObjectMapper().readTree(responseString) as ObjectNode
 
     assertFails("Could not guess type of reply during migration to 17 API version") {
-      json.migrate(16)
-    }
-  }
-
-  private fun guessReply() {
-    doMigrationTest {
-      it.migrate(16)
-      it
+      ObjectMapper().readValue(responseString, Reply::class.java)
     }
   }
 
@@ -59,12 +59,11 @@ class HyperskillReplyTypeGuessTest: EduTestCase() {
   }
 
   @Throws(IOException::class)
-  private fun doMigrationTest(migrationAction: (ObjectNode) -> ObjectNode?) {
+  private fun doDeserializeTest() {
     val responseString = loadJsonText()
     val afterExpected: String = loadJsonText(getTestName(true) + ".after.json")
-    val jsonBefore = ObjectMapper().readTree(responseString) as ObjectNode
-    val jsonAfter = migrationAction(jsonBefore)
-    var afterActual = ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(jsonAfter)
+    val deserializedObject = objectMapper.readValue(responseString, Reply::class.java)
+    var afterActual = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(deserializedObject)
     afterActual = StringUtilRt.convertLineSeparators(afterActual!!).replace("\\n\\n".toRegex(), "\n")
     assertEquals(afterExpected, afterActual)
   }

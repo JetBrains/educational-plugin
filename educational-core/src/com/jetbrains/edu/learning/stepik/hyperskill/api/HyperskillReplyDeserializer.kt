@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.node.ObjectNode
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.serialization.SerializationUtils
@@ -15,43 +14,32 @@ import com.jetbrains.rd.util.first
 class HyperskillReplyDeserializer(vc: Class<*>? = null) : StdDeserializer<Reply>(vc) {
   override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): Reply {
     val jsonObject: ObjectNode = jp.codec.readTree(jp) as ObjectNode
-    jsonObject.migrate(JSON_FORMAT_VERSION)
+    val type = jsonObject.tryGuessType()
     val objectMapper = StepikBasedConnector.createObjectMapper(SimpleModule())
-    return objectMapper.treeToValue(jsonObject, Reply::class.java)
+    return objectMapper.treeToValue(jsonObject, type)
   }
 
   companion object {
     private val LOG: Logger = Logger.getInstance(StepikReplyDeserializer::class.java)
 
-    @VisibleForTesting
-    fun ObjectNode.migrate(maxVersion: Int): Int {
-      val versionJson = get(SerializationUtils.Json.VERSION)
-      val initialVersion = versionJson?.asInt() ?: 1
-      if (get("type") == null) {
-        tryGuessType()
-      }
-      put(SerializationUtils.Json.VERSION, maxVersion)
-      return initialVersion
-    }
-
-    private fun ObjectNode.tryGuessType() {
+    private fun ObjectNode.tryGuessType(): Class<out Reply> {
       val typesToImportantField = mapOf(
-        CODE_TASK to CODE,
-        EDU_TASK to SOLUTION,
-        CHOICE_TASK to CHOICES,
-        SORTING_BASED_TASK to ORDERING,
-        DATA_TASK to FILE,
-        NUMBER_TASK to NUMBER,
-        STRING_TASK to SerializationUtils.Json.TEXT,
+        CodeTaskReply::class.java to CODE,
+        EduTaskReply::class.java to SOLUTION,
+        ChoiceTaskReply::class.java to CHOICES,
+        SortingBasedTaskReply::class.java to ORDERING,
+        DataTaskReply::class.java to FILE,
+        NumberTaskReply::class.java to NUMBER,
+        TextTaskReply::class.java to SerializationUtils.Json.TEXT,
       )
       val possibleTypes = typesToImportantField.filter { get(it.value)?.isNull == false }
 
       if (possibleTypes.size != 1) {
         LOG.error("Could not guess type of reply")
-        return
+        return Reply::class.java
       }
 
-      put(TYPE, possibleTypes.first().key)
+      return possibleTypes.first().key
     }
   }
 }

@@ -1,5 +1,4 @@
 {
-  "file" : "hello.txt",
-  "version" : 16,
-  "type" : "data"
+  "version" : 10,
+  "file" : "hello.txt"
 }

@@ -60,7 +60,6 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     doTest(submission, """
       |attempt: 123
       |reply:
-      |  type: edu
       |  version: $JSON_FORMAT_VERSION
       |  feedback:
       |    message: $feedback
@@ -84,7 +83,6 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     doTest(submission, """
       |attempt: 1234
       |reply:
-      |  type: edu
       |  version: $JSON_FORMAT_VERSION
       |  feedback:
       |    message: $feedback
@@ -108,7 +106,6 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     doTest(submission, """
       |attempt: 12345
       |reply:
-      |  type: edu
       |  version: $JSON_FORMAT_VERSION
       |  solution:
       |  - name: src/Task.kt
@@ -130,7 +127,6 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     doTest(submission, """
       |attempt: 123
       |reply:
-      |  type: code
       |  version: $JSON_FORMAT_VERSION
       |  language: $language
       |  code: $answer
@@ -153,7 +149,6 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     doTest(submission, """
       |attempt: 123
       |reply:
-      |  type: choice
       |  version: $JSON_FORMAT_VERSION
       |  choices:
       |  - true
@@ -171,7 +166,6 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     doTest(submission, """
       |attempt: 123
       |reply:
-      |  type: string
       |  version: $JSON_FORMAT_VERSION
       |  text: $answer
       |
@@ -186,7 +180,6 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     doTest(submission, """
       |attempt: 123
       |reply:
-      |  type: number
       |  version: $JSON_FORMAT_VERSION
       |  number: $answer
       |
@@ -201,7 +194,6 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     doTest(submission, """
       |attempt: 123
       |reply:
-      |  type: data
       |  version: $JSON_FORMAT_VERSION
       |  file: $answer
       |
@@ -217,7 +209,6 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     doTest(submission, """
       |attempt: 123
       |reply:
-      |  type: sorting_based
       |  version: $JSON_FORMAT_VERSION
       |  ordering:
       |  - 2

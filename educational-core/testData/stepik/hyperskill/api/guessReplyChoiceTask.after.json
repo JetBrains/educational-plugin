@@ -1,5 +1,4 @@
 {
-  "choices" : [ false, false, true ],
-  "version" : 16,
-  "type" : "choice"
+  "version" : 10,
+  "choices" : [ false, false, true ]
 }

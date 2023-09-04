@@ -1,5 +1,4 @@
 {
-  "ordering" : [ 1, 2, 3 ],
-  "version" : 16,
-  "type" : "sorting_based"
+  "version" : 10,
+  "ordering" : [ 1, 2, 3 ]
 }

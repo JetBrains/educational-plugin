@@ -4,9 +4,6 @@ package com.jetbrains.edu.learning.stepik.api
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.annotation.JsonSubTypes
-import com.fasterxml.jackson.annotation.JsonTypeInfo
-import com.fasterxml.jackson.annotation.JsonTypeName
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.*
@@ -293,29 +290,12 @@ class Feedback {
   }
 }
 
-@JsonTypeInfo(
-  use = JsonTypeInfo.Id.NAME,
-  include = JsonTypeInfo.As.PROPERTY,
-  property = TYPE,
-  visible = true,
-  defaultImpl = Reply::class,
-)
-@JsonSubTypes(
-  JsonSubTypes.Type(value = CodeTaskReply::class, name = CODE_TASK),
-  JsonSubTypes.Type(value = EduTaskReply::class, name = EDU_TASK),
-  JsonSubTypes.Type(value = ChoiceTaskReply::class, name = CHOICE_TASK),
-  JsonSubTypes.Type(value = SortingBasedTaskReply::class, name = SORTING_BASED_TASK),
-  JsonSubTypes.Type(value = DataTaskReply::class, name = DATA_TASK),
-  JsonSubTypes.Type(value = NumberTaskReply::class, name = NUMBER_TASK),
-  JsonSubTypes.Type(value = TextTaskReply::class, name = STRING_TASK),
-)
-@JsonTypeName(TASK)
+
 sealed class Reply {
   @JsonProperty(VERSION)
   var version = JSON_FORMAT_VERSION
 }
 
-@JsonTypeName(CODE_TASK)
 class CodeTaskReply: Reply() {
   @JsonProperty(LANGUAGE)
   var language: String? = null
@@ -324,7 +304,6 @@ class CodeTaskReply: Reply() {
   var code: String? = null
 }
 
-@JsonTypeName(EDU_TASK)
 class EduTaskReply: Reply() {
   @JsonProperty(FEEDBACK)
   var feedback: Feedback? = null
@@ -340,31 +319,26 @@ class EduTaskReply: Reply() {
   var checkProfile: String? = null
 }
 
-@JsonTypeName(CHOICE_TASK)
 class ChoiceTaskReply: Reply() {
   @JsonProperty(CHOICES)
   var choices: BooleanArray? = null
 }
 
-@JsonTypeName(SORTING_BASED_TASK)
 class SortingBasedTaskReply: Reply() {
   @JsonProperty(ORDERING)
   var ordering: IntArray? = null
 }
 
-@JsonTypeName(DATA_TASK)
 class DataTaskReply: Reply() {
   @JsonProperty(FILE)
   var file: String? = null
 }
 
-@JsonTypeName(NUMBER_TASK)
 class NumberTaskReply: Reply() {
   @JsonProperty(NUMBER)
   var number: String? = null
 }
 
-@JsonTypeName(STRING_TASK)
 class TextTaskReply: Reply() {
   @JsonProperty(TEXT)
   var text: String? = null
