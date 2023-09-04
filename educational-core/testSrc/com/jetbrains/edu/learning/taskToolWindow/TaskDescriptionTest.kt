@@ -9,11 +9,16 @@ import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.keymap.impl.KeymapManagerImpl
 import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.taskToolWindow.htmlTransformers.HtmlTransformerContext
+import com.jetbrains.edu.learning.taskToolWindow.htmlTransformers.steps.ExternalLinkIconsTransformer
+import com.jetbrains.edu.learning.taskToolWindow.htmlTransformers.steps.getPictureSize
 import com.jetbrains.edu.learning.taskToolWindow.ui.EduFileEditorManagerListener
 import com.jetbrains.edu.learning.taskToolWindow.ui.JCEFToolWindow
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
@@ -269,7 +274,7 @@ class TaskDescriptionTest : EduTestCase() {
       </html>
     """.trimIndent()
 
-    val actualText = addExternalLinkIcons(Jsoup.parse(taskText)).toString()
+    val actualText = ExternalLinkIconsTransformer.toStringTransformer().transform(taskText, HtmlTransformerContext(project, EduTask(), JavaUILibrary.JCEF))
     assertEquals(expectedText, actualText)
   }
 
