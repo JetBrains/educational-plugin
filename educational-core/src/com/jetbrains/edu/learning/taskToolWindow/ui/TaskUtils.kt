@@ -40,39 +40,6 @@ fun loadText(filePath: String): String? {
   }
 }
 
-fun wrapHintTagsInsideHTML(document: Document, wrapHint: (e: Element, number: String, title: String) -> String): Document {
-  val hints = document.getElementsByClass("hint")
-
-  val hintDefaultTitle = EduCoreBundle.message("course.creator.yaml.hint.default.title")
-
-  fun getHintTitle(hint: Element): String {
-    val actualTitleValue = hint.attr("title")
-    return if (actualTitleValue == "") hintDefaultTitle else actualTitleValue
-  }
-
-  // map hint title to count of the same titles
-  val countHintTitles = hints.groupingBy { getHintTitle(it) }.eachCount()
-
-  val indexByTitle = mutableMapOf<String, Int>()
-
-  for (hint in hints) {
-    val hintTitle = getHintTitle(hint)
-    val index = indexByTitle.getOrDefault(hintTitle, 0)
-    val hintsWithThisTitle = countHintTitles.getValue(hintTitle)
-    indexByTitle[hintTitle] = indexByTitle.getOrDefault(hintTitle, 0) + 1
-
-    val textualIndex = if (hintsWithThisTitle <= 1) "" else (index + 1).toString()
-    val hintText = wrapHint(hint, textualIndex, hintTitle)
-
-    // we remove the title attribute, because otherwise it may generate popup hints
-    hint.removeAttr("title")
-
-    hint.html(hintText)
-  }
-
-  return document
-}
-
 private fun absolutizePaths(project: Project, content: String, task: Task?): String {
   val taskDir = task?.getDir(project.courseDir) ?: return content
 

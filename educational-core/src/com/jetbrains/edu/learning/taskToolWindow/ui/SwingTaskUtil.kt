@@ -2,25 +2,17 @@
 
 package com.jetbrains.edu.learning.taskToolWindow.ui
 
-import com.intellij.ide.ui.UISettings
-import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.editor.colors.FontPreferences
-import com.intellij.openapi.project.Project
-import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.HTMLEditorKitBuilder
-import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.StudyTaskManager
+import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.taskToolWindow.ui.specificTaskSwingPanels.ChoiceTaskSpecificPanel
 import com.jetbrains.edu.learning.taskToolWindow.ui.specificTaskSwingPanels.SortingBasedTaskSpecificPanel
-import org.apache.commons.lang.StringEscapeUtils
-import org.jsoup.nodes.Element
-import javax.swing.*
+import javax.swing.JPanel
+import javax.swing.JTextPane
 import javax.swing.border.Border
 import javax.swing.text.html.HTMLEditorKit
-import kotlin.math.roundToInt
 
 fun createSpecificPanel(task: Task?): JPanel? {
   return when (task) {
@@ -57,69 +49,6 @@ private fun prepareCss(editorKit: HTMLEditorKit) {
 }
 
 const val HINT_PROTOCOL = "hint://"
-
-private val LOG = Logger.getInstance(SwingToolWindow::class.java)  //TODO we probably need another logger here
-private const val DEFAULT_ICON_SIZE = 16
-
-fun wrapHintSwing(project: Project, hintElement: Element, displayedHintNumber: String, hintTitle: String): String {
-
-  fun getIconSize(): Int {
-    val currentFontSize = UISettings.getInstance().fontSize
-    val defaultFontSize = FontPreferences.DEFAULT_FONT_SIZE
-    return (DEFAULT_ICON_SIZE * currentFontSize / defaultFontSize.toFloat()).roundToInt()
-  }
-
-  fun getIconFullPath(retinaPath: String, path: String): String {
-    val bulbPath = if (UIUtil.isRetina()) retinaPath else path
-    val bulbIconUrl = SwingToolWindow::class.java.classLoader.getResource(bulbPath)
-    if (bulbIconUrl == null) {
-      LOG.warn("Cannot find bulb icon")
-    }
-    return if (bulbIconUrl == null) "" else bulbIconUrl.toExternalForm()
-  }
-
-  fun getBulbIcon() = getIconFullPath("style/hint/swing/swing_icons/retina_bulb.png", "style/hint/swing/swing_icons/bulb.png")
-
-  fun getLeftIcon() = getIconFullPath("style/hint/swing/swing_icons/retina_right.png", "style/hint/swing/swing_icons/right.png")
-
-  fun getDownIcon() = getIconFullPath("style/hint/swing/swing_icons/retina_down.png", "style/hint/swing/swing_icons/down.png")
-
-  // all tagged elements should have different href otherwise they are all underlined on hover. That's why
-  // we have to add hint number to href
-  fun createHintBlockTemplate(hintElement: Element, displayedHintNumber: String, escapedHintTitle: String): String {
-    val iconSize = getIconSize()
-    return """
-      <img src='${getBulbIcon()}' width='$iconSize' height='$iconSize' >
-      <span><a href='$HINT_PROTOCOL$displayedHintNumber', value='${hintElement.text()}'>$escapedHintTitle $displayedHintNumber</a>
-      <img src='${getLeftIcon()}' width='$iconSize' height='$iconSize' >
-    """.trimIndent()
-  }
-
-  // all tagged elements should have different href otherwise they are all underlined on hover. That's why
-  // we have to add hint number to href
-  fun createExpandedHintBlockTemplate(hintElement: Element, displayedHintNumber: String, escapedHintTitle: String): String {
-    val hintText = hintElement.text()
-    val iconSize = getIconSize()
-    return """ 
-        <img src='${getBulbIcon()}' width='$iconSize' height='$iconSize' >
-        <span><a href='$HINT_PROTOCOL$displayedHintNumber', value='$hintText'>$escapedHintTitle $displayedHintNumber</a>
-        <img src='${getDownIcon()}' width='$iconSize' height='$iconSize' >
-        <div class='hint_text'>$hintText</div>
-     """.trimIndent()
-  }
-
-  if (displayedHintNumber.isEmpty() || displayedHintNumber == "1") {
-    hintElement.wrap("<div class='top'></div>")
-  }
-  val course = StudyTaskManager.getInstance(project).course
-  val escapedHintTitle = StringEscapeUtils.escapeHtml(hintTitle)
-  return if (course != null && !course.isStudy) {
-    createExpandedHintBlockTemplate(hintElement, displayedHintNumber, escapedHintTitle)
-  }
-  else {
-    createHintBlockTemplate(hintElement, displayedHintNumber, escapedHintTitle)
-  }
-}
 
 fun JPanel.addBorder(newBorder: Border?): JPanel {
   return apply {

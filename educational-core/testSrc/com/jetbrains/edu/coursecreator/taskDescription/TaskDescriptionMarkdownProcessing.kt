@@ -2,7 +2,7 @@ package com.jetbrains.edu.coursecreator.taskDescription
 
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.taskToolWindow.ui.wrapHintTagsInsideHTML
+import com.jetbrains.edu.learning.taskToolWindow.htmlTransformers.steps.wrapHintTagsInsideHTML
 import junit.framework.TestCase
 import org.jsoup.Jsoup
 

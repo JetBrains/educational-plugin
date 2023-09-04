@@ -124,34 +124,6 @@ class JCEFTaskInfoLifeSpanHandler(private val jcefLinkHandler: JCefToolWindowLin
   }
 }
 
-private const val HINT_HEADER: String = "hint_header"
-private const val HINT_HEADER_EXPANDED: String = "$HINT_HEADER checked"
-private const val HINT_BLOCK_TEMPLATE: String = "<div class='" + HINT_HEADER + "'>%s %s</div>" +
-                                                "  <div class='hint_content'>" +
-                                                " %s" +
-                                                "  </div>"
-private const val HINT_EXPANDED_BLOCK_TEMPLATE: String = "<div class='" + HINT_HEADER_EXPANDED + "'>%s %s</div>" +
-                                                         "  <div class='hint_content'>" +
-                                                         " %s" +
-                                                         "  </div>"
-
-fun wrapHintJCEF(project: Project, hintElement: Element, displayedHintNumber: String, hintTitle: String): String {
-  val course = StudyTaskManager.getInstance(project).course
-  val hintText: String = hintElement.html()
-  val escapedHintTitle = StringEscapeUtils.escapeHtml(hintTitle)
-  if (course == null) {
-    return String.format(HINT_BLOCK_TEMPLATE, escapedHintTitle, displayedHintNumber, hintText)
-  }
-
-  val study = course.isStudy
-  return if (study) {
-    String.format(HINT_BLOCK_TEMPLATE, escapedHintTitle, displayedHintNumber, hintText)
-  }
-  else {
-    String.format(HINT_EXPANDED_BLOCK_TEMPLATE, escapedHintTitle, displayedHintNumber, hintText)
-  }
-}
-
 fun getHTMLTemplateText(task: Task?): String? = when (task) {
   is ChoiceTask -> ChoiceTaskResourcesManager().getText(task)
   is SortingTask -> SortingTaskResourcesManager().getText(task)
