@@ -347,7 +347,6 @@ class TextTaskReply: Reply() {
   var text: String? = null
 }
 
-@JsonTypeName(TABLE_TASK)
 class TableTaskReply: Reply() {
   @JsonProperty(CHOICES)
   var choices: Array<Row>? = null

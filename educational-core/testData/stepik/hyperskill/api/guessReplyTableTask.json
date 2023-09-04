@@ -1,0 +1,39 @@
+{
+  "choices" : [
+    {
+      "name_row": "A",
+      "columns": [
+        {
+          "name": "1",
+          "answer": false
+        },
+        {
+          "name": "2",
+          "answer": true
+        },
+        {
+          "name": "3",
+          "answer": false
+        }
+      ]
+    },
+    {
+      "name_row": "B",
+      "columns": [
+        {
+          "name": "1",
+          "answer": true
+        },
+        {
+          "name": "2",
+          "answer": false
+        },
+        {
+          "name": "3",
+          "answer": false
+        }
+      ]
+    }
+  ],
+  "version" : 10
+}

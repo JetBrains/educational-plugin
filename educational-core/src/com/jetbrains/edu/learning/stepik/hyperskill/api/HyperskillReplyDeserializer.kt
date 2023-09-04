@@ -38,7 +38,25 @@ class HyperskillReplyDeserializer(vc: Class<*>? = null) : StdDeserializer<Reply>
         return Reply::class.java
       }
 
-      return possibleTypes.first().key
+      val (type, field) = possibleTypes.first()
+      return if (field != CHOICES) {
+        type
+      } else {
+        tryGuessChoicesType()
+      }
+    }
+
+    private fun ObjectNode.tryGuessChoicesType(): Class<out Reply> {
+      val choices = get(CHOICES)
+      if (!choices.isArray || choices.size() == 0) {
+        LOG.error("Could not guess type of reply")
+        return ChoiceTaskReply::class.java
+      }
+      return if (choices.first().isBoolean) {
+        ChoiceTaskReply::class.java
+      } else {
+        TableTaskReply::class.java
+      }
     }
   }
 }

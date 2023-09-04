@@ -45,6 +45,9 @@ class HyperskillReplyDeserializationTest: EduTestCase() {
   fun testGuessReplyDataTask() = doDeserializeTest(DataTaskReply::class)
 
   @Throws(IOException::class)
+  fun testGuessReplyTableTask() = doDeserializeTest(TableTaskReply::class)
+
+  @Throws(IOException::class)
   fun testGuessReplyIncorrect() {
     val responseString = loadJsonText()
 

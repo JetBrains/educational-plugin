@@ -238,7 +238,6 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     doTest(submission, """
       |attempt: 123
       |reply:
-      |  type: table
       |  version: $JSON_FORMAT_VERSION
       |  choices:
       |  - name_row: A
