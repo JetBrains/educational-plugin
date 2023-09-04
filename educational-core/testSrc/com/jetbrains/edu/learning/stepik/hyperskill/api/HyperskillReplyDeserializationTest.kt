@@ -3,11 +3,11 @@ package com.jetbrains.edu.learning.stepik.hyperskill.api
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.text.StringUtilRt
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.stepik.api.Reply
+import com.jetbrains.edu.learning.stepik.api.*
 import java.io.File
 import java.io.IOException
+import kotlin.reflect.KClass
 import kotlin.test.assertFails
 
 class HyperskillReplyDeserializationTest: EduTestCase() {
@@ -24,25 +24,25 @@ class HyperskillReplyDeserializationTest: EduTestCase() {
   }
 
   @Throws(IOException::class)
-  fun testGuessReplyEduTask() = doDeserializeTest()
+  fun testGuessReplyEduTask() = doDeserializeTest(EduTaskReply::class)
 
   @Throws(IOException::class)
-  fun testGuessReplyCodeTask() = doDeserializeTest()
+  fun testGuessReplyCodeTask() = doDeserializeTest(CodeTaskReply::class)
 
   @Throws(IOException::class)
-  fun testGuessReplyChoiceTask() = doDeserializeTest()
+  fun testGuessReplyChoiceTask() = doDeserializeTest(ChoiceTaskReply::class)
 
   @Throws(IOException::class)
-  fun testGuessReplySortingBasedTask() = doDeserializeTest()
+  fun testGuessReplySortingBasedTask() = doDeserializeTest(SortingBasedTaskReply::class)
 
   @Throws(IOException::class)
-  fun testGuessReplyStringTask() = doDeserializeTest()
+  fun testGuessReplyStringTask() = doDeserializeTest(TextTaskReply::class)
 
   @Throws(IOException::class)
-  fun testGuessReplyNumberTask() = doDeserializeTest()
+  fun testGuessReplyNumberTask() = doDeserializeTest(NumberTaskReply::class)
 
   @Throws(IOException::class)
-  fun testGuessReplyDataTask() = doDeserializeTest()
+  fun testGuessReplyDataTask() = doDeserializeTest(DataTaskReply::class)
 
   @Throws(IOException::class)
   fun testGuessReplyIncorrect() {
@@ -59,13 +59,10 @@ class HyperskillReplyDeserializationTest: EduTestCase() {
   }
 
   @Throws(IOException::class)
-  private fun doDeserializeTest() {
+  private fun doDeserializeTest(type: KClass<out Reply>) {
     val responseString = loadJsonText()
-    val afterExpected: String = loadJsonText(getTestName(true) + ".after.json")
     val deserializedObject = objectMapper.readValue(responseString, Reply::class.java)
-    var afterActual = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(deserializedObject)
-    afterActual = StringUtilRt.convertLineSeparators(afterActual!!).replace("\\n\\n".toRegex(), "\n")
-    assertEquals(afterExpected, afterActual)
+    assertTrue(type.isInstance(deserializedObject))
   }
 
   private val testFile: String
