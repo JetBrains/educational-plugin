@@ -11,13 +11,16 @@ import java.awt.event.ItemListener
 class TableTaskSpecificPanel(task: TableTask): Wrapper() {
   init {
     val panel = panel {
-        createHeader(task)
-          .layout(RowLayout.PARENT_GRID)
-        for (rowIndex in task.rows.indices) {
+      createHeader(task)
+        .layout(RowLayout.PARENT_GRID)
+
+      for (rowIndex in task.rows.indices) {
+        buttonsGroup {
+          separator()
           createRow(task, rowIndex)
             .layout(RowLayout.PARENT_GRID)
-
         }
+      }
     }.apply {
       isOpaque = false
       border = JBUI.Borders.empty(4, 0, 10, 10)
@@ -26,34 +29,30 @@ class TableTaskSpecificPanel(task: TableTask): Wrapper() {
   }
 
   private fun Panel.createHeader(task: TableTask): Row = row {
+    cell(Wrapper())
+      .align(Align.CENTER)
     for (columnIndex in task.columns.indices) {
       text(task.columns[columnIndex])
-        .widthGroup(columnIndex.toString())
+        .align(Align.CENTER)
     }
   }
 
   private fun Panel.createRow(task: TableTask, rowIndex: Int): Row = row {
     text(task.rows[rowIndex])
-      .widthGroup("rows")
-    panel {
-      buttonsGroup {
-        row {
-          for (columnIndex in task.columns.indices) {
-            createButton(task.isCheckbox)
-              .widthGroup(columnIndex.toString())
-              .component.apply {
-                isSelected = task.selected[rowIndex][columnIndex]
-                addItemListener(createListener(task, rowIndex, columnIndex))
-              }
-          }
+      .align(AlignX.LEFT + AlignY.CENTER)
+    for (columnIndex in task.columns.indices) {
+      createButton(task.isCheckbox)
+        .align(Align.CENTER)
+        .component.apply {
+          isSelected = task.selected[rowIndex][columnIndex]
+          addItemListener(createListener(task, rowIndex, columnIndex))
         }
-      }
     }
   }
 
   private fun createListener(task: TableTask, rowIndex: Int, columnIndex: Int): ItemListener {
-    return ItemListener {
-      task.selected[rowIndex][columnIndex] = (it.stateChange == ItemEvent.SELECTED)
+    return ItemListener { event ->
+      task.selected[rowIndex][columnIndex] = (event.stateChange == ItemEvent.SELECTED)
     }
   }
 }
