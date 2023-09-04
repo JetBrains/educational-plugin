@@ -34,9 +34,9 @@ fun isRenameForbidden(project: Project?, element: PsiElement?): Boolean {
 }
 
 fun isMoveForbidden(project: Project?, element: PsiElement?, target: PsiElement?): Boolean {
+  if (project?.course == null) return false
   if (isRefactoringForbidden(project, element)) return true
   if (element is PsiFile) {
-    if (project == null) return false
     val sourceTaskDir = element.originalFile.virtualFile.getTaskDir(project) ?: return false
     val targetDir = (target as? PsiDirectory)?.virtualFile ?: return false
     val targetTaskDir = if (targetDir.isTaskDirectory(project)) {

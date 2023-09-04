@@ -36,7 +36,10 @@ abstract class CCStudyItemMoveHandlerDelegate(private val itemType: StudyItemTyp
     dataContext: DataContext,
     reference: PsiReference?,
     editor: Editor?
-  ): Boolean = CCUtils.isCourseCreator(project)
+  ): Boolean {
+    val directory = element as? PsiDirectory ?: return false
+    return if (isAvailable(directory)) CCUtils.isCourseCreator(project) else false
+  }
 
   protected abstract fun isAvailable(directory: PsiDirectory): Boolean
 }

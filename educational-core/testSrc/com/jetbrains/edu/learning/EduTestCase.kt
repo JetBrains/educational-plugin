@@ -20,6 +20,7 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
+import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.codeforces.update.CodeforcesCourseUpdateChecker
@@ -103,7 +104,12 @@ abstract class EduTestCase : BasePlatformTestCase() {
       (EduBrowser.getInstance() as MockEduBrowser).lastVisitedUrl = null
       SubmissionsManager.getInstance(project).clear()
 
-      TaskToolWindowView.getInstance(project).currentTask = null
+      // We may want to check something outside a course project
+      // to be sure that the plugin doesn't break other cases.
+      // But in the case of a non edu project, `TaskToolWindowView.getInstance(project)` throws exception
+      if (project.isEduProject()) {
+        TaskToolWindowView.getInstance(project).currentTask = null
+      }
       val storage = (FrameworkLessonManager.getInstance(project) as FrameworkLessonManagerImpl).storage
       Disposer.dispose(storage)
       YamlLoadingErrorManager.getInstance(project).removeAllErrors()

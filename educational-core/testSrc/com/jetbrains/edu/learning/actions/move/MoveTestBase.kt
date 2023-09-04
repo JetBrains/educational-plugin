@@ -46,5 +46,5 @@ abstract class MoveTestBase : EduActionTestCase() {
     return PsiManager.getInstance(project).findDirectory(file) ?: error("Failed to find directory for `$file` file")
   }
 
-  private fun MapDataContext.withTarget(element: PsiElement): MapDataContext = apply { put(LangDataKeys.TARGET_PSI_ELEMENT, element) }
+  protected fun MapDataContext.withTarget(element: PsiElement): MapDataContext = apply { put(LangDataKeys.TARGET_PSI_ELEMENT, element) }
 }

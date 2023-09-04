@@ -42,6 +42,6 @@ open class EduMoveDelegate : MoveHandlerDelegate() {
     // If move is not forbidden, just return false to delegate move action to another handler.
     // Otherwise, do nothing (since we don't want to allow moving)
     // and return true not to pass execution to another handler
-    return !isMoveForbidden(project, element, LangDataKeys.TARGET_PSI_ELEMENT.getData(dataContext))
+    return canMove(arrayOf(element), LangDataKeys.TARGET_PSI_ELEMENT.getData(dataContext), reference)
   }
 }

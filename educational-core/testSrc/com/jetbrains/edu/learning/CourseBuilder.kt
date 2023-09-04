@@ -580,6 +580,20 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
   ) = taskFile(name, text, visible, buildTaskFile = buildTaskFile)
 
+  fun javaScriptTaskFile(
+    name: String,
+    @Language("JavaScript") text: String = "",
+    visible: Boolean? = null,
+    buildTaskFile: TaskFileBuilder.() -> Unit = {}
+  ) = taskFile(name, text, visible, buildTaskFile = buildTaskFile)
+
+  fun phpTaskFile(
+    name: String,
+    @Language("PHP") text: String = "",
+    visible: Boolean? = null,
+    buildTaskFile: TaskFileBuilder.() -> Unit = {}
+  ) = taskFile(name, text, visible, buildTaskFile = buildTaskFile)
+
   fun taskFileFromResources(
     disposable: Disposable,
     name: String,
