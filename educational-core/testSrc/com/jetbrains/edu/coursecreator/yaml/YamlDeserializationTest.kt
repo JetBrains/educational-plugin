@@ -3,22 +3,18 @@ package com.jetbrains.edu.coursecreator.yaml
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.courseFormat.CourseraCourse
-import com.jetbrains.edu.learning.coursera.CourseraNames
-import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE_YAML
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
-import com.jetbrains.edu.learning.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeSection
@@ -26,6 +22,8 @@ import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.getCourseMode
 import com.jetbrains.edu.learning.yaml.YamlMapper.MAPPER
 import com.jetbrains.edu.learning.yaml.YamlTestCase
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.HYPERSKILL_TYPE_YAML
 import java.util.*
 
 
@@ -101,7 +99,7 @@ class YamlDeserializationTest : YamlTestCase() {
     val firstLesson = "the first lesson"
     val secondLesson = "the second lesson"
     val yamlContent = """
-      |type: ${CourseraNames.COURSE_TYPE_YAML}
+      |type: ${YamlMixinNames.COURSE_TYPE_YAML}
       |title: $name
       |language: $language
       |summary: |-
@@ -261,7 +259,7 @@ class YamlDeserializationTest : YamlTestCase() {
     val programmingLanguage = "Plain text"
     val programTypeId = "1000"
     val yamlContent = """
-      |type: ${EduFormatNames.CODEFORCES_TYPE_YAML}
+      |type: ${YamlMixinNames.CODEFORCES_TYPE_YAML}
       |title: $name
       |language: English
       |summary: |-
@@ -281,7 +279,7 @@ class YamlDeserializationTest : YamlTestCase() {
     val name = "Test Course"
     val programmingLanguage = "Plain text"
     val yamlContent = """
-      |type: ${EduFormatNames.CODEFORCES_TYPE_YAML}
+      |type: ${YamlMixinNames.CODEFORCES_TYPE_YAML}
       |title: $name
       |language: English
       |summary: |-
@@ -938,7 +936,7 @@ class YamlDeserializationTest : YamlTestCase() {
     val firstLesson = "the first lesson"
     val secondLesson = "the second lesson"
     val yamlContent = """
-      |type: ${CourseraNames.COURSE_TYPE_YAML}
+      |type: ${YamlMixinNames.COURSE_TYPE_YAML}
       |submit_manually: true
       |title: $name
       |language: $language

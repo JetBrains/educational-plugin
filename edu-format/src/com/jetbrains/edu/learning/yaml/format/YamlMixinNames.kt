@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.json.mixins.JsonMixinNames
 object YamlMixinNames {
 
   // common constants
+  const val EDU_YAML_TYPE = "edu"
   const val TYPE = JsonMixinNames.TYPE
   const val CONTENT = "content"
   const val CUSTOM_NAME = JsonMixinNames.CUSTOM_NAME
@@ -26,6 +27,7 @@ object YamlMixinNames {
   // coursera course
   const val TOP_LEVEL_LESSONS_SECTION = "default_section"
   const val SUBMIT_MANUALLY = "submit_manually"
+  const val COURSE_TYPE_YAML = "coursera"
 
   // codeforces contest
   const val END_DATE_TIME = "end_date_time"
@@ -35,8 +37,11 @@ object YamlMixinNames {
   const val HYPERSKILL_PROJECT = "hyperskill_project"
   const val STAGES = "stages"
   const val THEORY_ID = "theory_id"
+  const val HYPERSKILL_TYPE_YAML = "hyperskill"
+  const val STEPIK_TYPE_YAML = "stepik"
 
   // marketplace course
+  const val MARKETPLACE_YAML_TYPE = "marketplace"
   const val VENDOR = JsonMixinNames.VENDOR
   const val IS_PRIVATE = JsonMixinNames.IS_PRIVATE
   const val MARKETPLACE_COURSE_VERSION = JsonMixinNames.MARKETPLACE_COURSE_VERSION
@@ -73,9 +78,13 @@ object YamlMixinNames {
   const val QUIZ_HEADER = "quiz_header"
   const val LOCAL_CHECK = "local_check"
 
-  // checkio missions
+  // checkio
+  const val CHECKIO_TYPE_YAML = "checkiO"
   const val CODE = "code"
   const val SECONDS_FROM_CHANGE = "seconds_from_change"
+
+  // codeforces
+  const val CODEFORCES_TYPE_YAML = "codeforces"
 
   // codeforces task
   const val PROBLEM_INDEX = "problem_index"

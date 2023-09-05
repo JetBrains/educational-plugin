@@ -7,7 +7,6 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_PROJECT
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE_PLUGIN_URL
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
-const val HYPERSKILL_TYPE_YAML = "hyperskill"
 const val HYPERSKILL_URL_PROPERTY = "Hyperskill URL"
 const val HYPERSKILL_DEFAULT_URL = "https://hyperskill.org/"
 const val HYPERSKILL_DEFAULT_HOST = "hyperskill.org"

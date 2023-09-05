@@ -11,6 +11,8 @@ import com.jetbrains.edu.coursecreator.AdditionalFilesUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.courseFormat.EduFile
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CHECK_PROFILE
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TOPICS
 import com.jetbrains.edu.learning.courseFormat.UserInfo
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
@@ -19,7 +21,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.pluginVersion
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 import com.jetbrains.edu.learning.stepik.StepSource
-import com.jetbrains.edu.learning.stepik.api.CHECK_PROFILE
 import com.jetbrains.edu.learning.stepik.api.FILES
 import com.jetbrains.edu.learning.stepik.api.REPLY
 import com.jetbrains.edu.learning.stepik.api.STEPS
@@ -62,7 +63,6 @@ const val TIME_SPENT_EVENTS = "time-spent-events"
 const val TITLE = "title"
 const val TOKEN = "token"
 const val TOPIC = "topic"
-const val TOPICS = "topics"
 const val TOPIC_THEORY = "topic_theory"
 const val UPDATED_AT = "updated_at"
 const val URL = "url"

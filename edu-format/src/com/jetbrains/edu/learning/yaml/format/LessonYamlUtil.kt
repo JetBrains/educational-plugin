@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.yaml.errorHandling.unnamedItemAtMessage
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_NAME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TAGS
+import com.jetbrains.edu.learning.yaml.format.tasks.TaskWithType
 
 /**
  * Mixin class is used to deserialize [Lesson] item.

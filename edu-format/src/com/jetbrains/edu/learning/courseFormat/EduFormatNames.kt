@@ -1,11 +1,9 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import org.jetbrains.annotations.NonNls
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CODEFORCES_TYPE_YAML
 
 object EduFormatNames {
   const val MARKETPLACE = "Marketplace"
-  const val MARKETPLACE_YAML_TYPE = "marketplace"
-  const val EDU_YAML_TYPE = "edu"
 
   const val COURSE = "course"
   const val SECTION = "section"
@@ -63,27 +61,22 @@ object EduFormatNames {
   const val TOPICS = "topics"
   const val HYPERSKILL_PROJECTS_URL = "https://hyperskill.org/projects"
   const val HYPERSKILL = "Hyperskill"
-  const val HYPERSKILL_TYPE_YAML = "hyperskill"
 
   // coursera
   const val COURSERA = "Coursera"
-  const val COURSE_TYPE_YAML = "coursera"
 
   // checkio
   const val CHECKIO = "CheckiO"
-  const val CHECKIO_TYPE_YAML: @NonNls String = "checkiO"
 
   // codeforces
   const val CODEFORCES: String = "Codeforces"
   const val CODEFORCES_SUBMIT: String = "submit"
-  const val CODEFORCES_TYPE_YAML: String = "codeforces"
   const val CODEFORCES_TASK_TYPE: String = CODEFORCES_TYPE_YAML
   const val CODEFORCES_TASK_TYPE_WITH_FILE_IO: String = "${CODEFORCES_TYPE_YAML}_file_io"
   const val CODEFORCES_URL: String = "https://codeforces.com"
 
   // stepik
   const val STEPIK = "Stepik"
-  const val STEPIK_TYPE_YAML = "stepik"
   const val ATTEMPT = "attempt"
   const val CHECK_PROFILE = "check_profile"
 
