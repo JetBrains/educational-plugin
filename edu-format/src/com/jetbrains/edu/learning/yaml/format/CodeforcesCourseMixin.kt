@@ -35,7 +35,7 @@ abstract class CodeforcesCourseYamlMixin : CourseYamlMixin() {
 }
 
 /**
- * Mixin class is used to deserialize remote information of [CodeforcesCourse] item.
+ * Mixin class is used to deserialize remote information of [com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse] item.
  */
 @Suppress("unused") // used for json serialization
 @JsonPropertyOrder(TYPE, YamlMixinNames.ID, YamlMixinNames.UPDATE_DATE)

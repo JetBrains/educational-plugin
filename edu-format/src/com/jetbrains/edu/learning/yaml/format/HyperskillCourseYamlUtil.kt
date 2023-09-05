@@ -6,12 +6,17 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.ID
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.IDE_FILES
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.IS_TEMPLATE_BASED
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.STEP_ID
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TITLE
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TOPICS
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.USE_IDE
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillTopic
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.UPDATE_DATE
-import com.jetbrains.edu.learning.stepik.hyperskill.api.*
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.HYPERSKILL_PROJECT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.STAGES
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.THEORY_ID
@@ -88,13 +93,4 @@ class HyperskillTopicMixin {
 
   @JsonProperty(THEORY_ID)
   var theoryId: Int? = null
-}
-
-class RemoteHyperskillChangeApplier : RemoteInfoChangeApplierBase<HyperskillCourse>() {
-  override fun applyChanges(existingItem: HyperskillCourse, deserializedItem: HyperskillCourse) {
-    existingItem.hyperskillProject = deserializedItem.hyperskillProject
-    existingItem.stages = deserializedItem.stages
-    existingItem.taskToTopics = deserializedItem.taskToTopics
-    existingItem.updateDate = deserializedItem.updateDate
-  }
 }

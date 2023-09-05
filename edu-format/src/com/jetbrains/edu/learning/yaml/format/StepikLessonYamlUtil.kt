@@ -37,10 +37,3 @@ abstract class StepikLessonRemoteYamlMixin : RemoteStudyItemYamlMixin() {
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   private var unitId: Int = 0
 }
-
-class StepikLessonChangeApplier : RemoteInfoChangeApplierBase<StepikLesson>() {
-  override fun applyChanges(existingItem: StepikLesson, deserializedItem: StepikLesson) {
-    super.applyChanges(existingItem, deserializedItem)
-    existingItem.unitId = deserializedItem.unitId
-  }
-}

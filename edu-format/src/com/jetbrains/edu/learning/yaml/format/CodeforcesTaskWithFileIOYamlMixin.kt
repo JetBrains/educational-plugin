@@ -1,9 +1,8 @@
-package com.jetbrains.edu.learning.yaml.format.student
+package com.jetbrains.edu.learning.yaml.format
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.jetbrains.edu.learning.stepik.api.CUSTOM_NAME
-import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_NAME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_LINK
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FILES
