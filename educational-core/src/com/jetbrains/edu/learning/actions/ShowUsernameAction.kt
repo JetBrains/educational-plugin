@@ -4,8 +4,14 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.Messages
 import com.intellij.ui.JBAccountInfoService
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 
-class ShowUsernameAction : DumbAwareAction("Show user name") {
+class ShowUsernameAction : DumbAwareAction(EduCoreBundle.message("show.username")) {
+
+  override fun update(e: AnActionEvent) {
+    e.presentation.isEnabledAndVisible = true
+  }
+
   override fun actionPerformed(e: AnActionEvent) {
     val res = JBAccountInfoService.getInstance()?.userData
     if (res == null) {
