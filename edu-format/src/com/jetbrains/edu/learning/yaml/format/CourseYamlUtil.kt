@@ -39,6 +39,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TOP_LEVEL_LESSONS_S
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.UPDATE_DATE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VENDOR
+import com.jetbrains.edu.learning.yaml.format.remote.RemoteStudyItemYamlMixin
 import java.time.ZonedDateTime
 import java.util.*
 

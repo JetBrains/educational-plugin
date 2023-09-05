@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.yaml.format
+package com.jetbrains.edu.learning.yaml.format.remote
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -15,6 +15,8 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.errorHandling.unsupportedItemTypeMessage
+import com.jetbrains.edu.learning.yaml.format.CourseBuilder
+import com.jetbrains.edu.learning.yaml.format.CourseYamlMixin
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.END_DATE_TIME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT

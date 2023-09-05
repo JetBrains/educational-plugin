@@ -41,6 +41,15 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.json.encrypt.EncryptionModule
 import com.jetbrains.edu.learning.json.encrypt.getAesKey
 import com.jetbrains.edu.learning.yaml.format.*
+import com.jetbrains.edu.learning.yaml.format.checkio.CheckiOMissionYamlMixin
+import com.jetbrains.edu.learning.yaml.format.checkio.CheckiOStationYamlMixin
+import com.jetbrains.edu.learning.yaml.format.codeforces.CodeforcesCourseRemoteInfoYamlMixin
+import com.jetbrains.edu.learning.yaml.format.codeforces.CodeforcesCourseYamlMixin
+import com.jetbrains.edu.learning.yaml.format.codeforces.CodeforcesTaskWithFileIOYamlMixin
+import com.jetbrains.edu.learning.yaml.format.codeforces.CodeforcesTaskYamlMixin
+import com.jetbrains.edu.learning.yaml.format.coursera.CourseraCourseYamlMixin
+import com.jetbrains.edu.learning.yaml.format.hyperskill.*
+import com.jetbrains.edu.learning.yaml.format.remote.*
 import com.jetbrains.edu.learning.yaml.format.student.*
 import java.util.*
 

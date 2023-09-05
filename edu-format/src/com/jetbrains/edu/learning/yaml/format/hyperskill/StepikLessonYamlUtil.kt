@@ -1,7 +1,7 @@
 @file:JvmName("StepikLessonYamlUtil")
 @file:Suppress("unused")
 
-package com.jetbrains.edu.learning.yaml.format
+package com.jetbrains.edu.learning.yaml.format.hyperskill
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -10,11 +10,15 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
 import com.jetbrains.edu.learning.json.mixins.NotImplementedInMixin
+import com.jetbrains.edu.learning.yaml.format.LessonBuilder
+import com.jetbrains.edu.learning.yaml.format.LessonYamlMixin
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_NAME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ID
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.UNIT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.UPDATE_DATE
+import com.jetbrains.edu.learning.yaml.format.remote.RemoteStudyItemYamlMixin
 
 @JsonDeserialize(builder = StepikLessonBuilder::class)
 abstract class StepikLessonYamlMixin : LessonYamlMixin() {
