@@ -3,16 +3,16 @@ package com.jetbrains.edu.learning.yaml.format
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
-import com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_TYPE_YAML
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CHECKIO_TYPE_YAML
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_TYPE_YAML
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSE_TYPE_YAML
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_TYPE_YAML
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.STEPIK_TYPE_YAML
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
-import com.jetbrains.edu.learning.coursera.CourseraNames
-import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_TYPE_YAML
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE_YAML
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.errorHandling.unsupportedItemTypeMessage
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
@@ -79,7 +79,7 @@ class RemoteCourseBuilder(
 
   override fun makeCourse(): Course {
     return when (courseType) {
-      CourseraNames.COURSE_TYPE_YAML -> {
+      COURSE_TYPE_YAML -> {
         CourseraCourse().apply {
           submitManually = courseraSubmitManually ?: false
         }
@@ -95,16 +95,7 @@ class RemoteCourseBuilder(
         }
       }
       null -> EduCourse()
-      else -> formatError(unsupportedItemTypeMessage(courseType ?: "", EduFormatNames.COURSE))
+      else -> formatError(unsupportedItemTypeMessage(courseType, EduFormatNames.COURSE))
     }
-  }
-}
-
-class RemoteEduCourseChangeApplier : RemoteInfoChangeApplierBase<EduCourse>() {
-  override fun applyChanges(existingItem: EduCourse, deserializedItem: EduCourse) {
-    super.applyChanges(existingItem, deserializedItem)
-    existingItem.sectionIds = deserializedItem.sectionIds
-    existingItem.marketplaceCourseVersion = deserializedItem.marketplaceCourseVersion
-    existingItem.generatedEduId = deserializedItem.generatedEduId
   }
 }

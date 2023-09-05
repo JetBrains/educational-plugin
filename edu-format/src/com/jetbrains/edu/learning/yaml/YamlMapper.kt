@@ -11,9 +11,12 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.kotlinModule
-import com.google.common.annotations.VisibleForTesting
-import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CHECKIO_TYPE_YAML
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_TYPE_YAML
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSE_TYPE_YAML
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_TYPE_YAML
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.STEPIK_TYPE_YAML
 import com.jetbrains.edu.learning.courseFormat.attempts.DataTaskAttempt
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
@@ -35,13 +38,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
-import com.jetbrains.edu.learning.coursera.CourseraNames
-import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.json.encrypt.EncryptionModule
-import com.jetbrains.edu.learning.json.encrypt.TEST_AES_KEY
 import com.jetbrains.edu.learning.json.encrypt.getAesKey
-import com.jetbrains.edu.learning.stepik.StepikNames
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE_YAML
 import com.jetbrains.edu.learning.yaml.format.*
 import com.jetbrains.edu.learning.yaml.format.student.*
 import java.util.*
@@ -49,41 +47,38 @@ import java.util.*
 object YamlMapper {
   val MAPPER: ObjectMapper by lazy {
     val mapper = createMapper()
-    addMixIns(mapper)
-
+    mapper.addMixIns()
     mapper
   }
 
-  @VisibleForTesting
   val REMOTE_MAPPER: ObjectMapper by lazy {
     val mapper = createMapper()
     addRemoteMixIns(mapper)
-
     mapper
   }
 
-  @VisibleForTesting
   val STUDENT_MAPPER: ObjectMapper by lazy {
     val mapper = createMapper()
-    addMixIns(mapper)
+    mapper.addMixIns()
     mapper.addMixIn(TaskFile::class.java, StudentTaskFileYamlMixin::class.java)
     mapper.addMixIn(AnswerPlaceholder::class.java, StudentAnswerPlaceholderYamlMixin::class.java)
     mapper.addStudentMixIns()
-
     mapper
   }
 
-  @VisibleForTesting
   val STUDENT_MAPPER_WITH_ENCRYPTION: ObjectMapper by lazy {
     val mapper = createMapper()
-    addMixIns(mapper)
-    val aesKey = if (!isUnitTestMode) getAesKey() else TEST_AES_KEY
-    mapper.registerModule(EncryptionModule(aesKey))
+    mapper.addMixIns()
+    mapper.addEncryptionModule()
     mapper.addMixIn(TaskFile::class.java, StudentEncryptedTaskFileYamlMixin::class.java)
     mapper.addMixIn(AnswerPlaceholder::class.java, StudentEncryptedAnswerPlaceholderYamlMixin::class.java)
     mapper.addStudentMixIns()
-
     mapper
+  }
+
+  private fun ObjectMapper.addEncryptionModule() {
+    val aesKey = getAesKey()
+    registerModule(EncryptionModule(aesKey))
   }
 
   private fun createMapper(): ObjectMapper {
@@ -105,30 +100,30 @@ object YamlMapper {
       .build()
   }
 
-  private fun addMixIns(mapper: ObjectMapper) {
-    mapper.addMixIn(CodeforcesCourse::class.java, CodeforcesCourseYamlMixin::class.java)
-    mapper.addMixIn(CourseraCourse::class.java, CourseraCourseYamlMixin::class.java)
-    mapper.addMixIn(CheckiOCourse::class.java, RemoteCourseYamlMixin::class.java)
-    mapper.addMixIn(HyperskillCourse::class.java, RemoteCourseYamlMixin::class.java)
-    mapper.addMixIn(StepikCourse::class.java, RemoteCourseYamlMixin::class.java)
-    mapper.addMixIn(Course::class.java, CourseYamlMixin::class.java)
-    mapper.addMixIn(Section::class.java, SectionYamlMixin::class.java)
-    mapper.addMixIn(StepikLesson::class.java, StepikLessonYamlMixin::class.java)
-    mapper.addMixIn(Lesson::class.java, LessonYamlMixin::class.java)
-    mapper.addMixIn(FrameworkLesson::class.java, FrameworkLessonYamlMixin::class.java)
-    mapper.addMixIn(Task::class.java, TaskYamlMixin::class.java)
-    mapper.addMixIn(ChoiceTask::class.java, ChoiceTaskYamlMixin::class.java)
-    mapper.addMixIn(CodeTask::class.java, CodeTaskYamlMixin::class.java)
-    mapper.addMixIn(ChoiceOption::class.java, ChoiceOptionYamlMixin::class.java)
-    mapper.addMixIn(TaskFile::class.java, TaskFileYamlMixin::class.java)
-    mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderYamlMixin::class.java)
-    mapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyYamlMixin::class.java)
+  private fun ObjectMapper.addMixIns() {
+    addMixIn(CodeforcesCourse::class.java, CodeforcesCourseYamlMixin::class.java)
+    addMixIn(CourseraCourse::class.java, CourseraCourseYamlMixin::class.java)
+    addMixIn(CheckiOCourse::class.java, RemoteCourseYamlMixin::class.java)
+    addMixIn(HyperskillCourse::class.java, RemoteCourseYamlMixin::class.java)
+    addMixIn(StepikCourse::class.java, RemoteCourseYamlMixin::class.java)
+    addMixIn(Course::class.java, CourseYamlMixin::class.java)
+    addMixIn(Section::class.java, SectionYamlMixin::class.java)
+    addMixIn(StepikLesson::class.java, StepikLessonYamlMixin::class.java)
+    addMixIn(Lesson::class.java, LessonYamlMixin::class.java)
+    addMixIn(FrameworkLesson::class.java, FrameworkLessonYamlMixin::class.java)
+    addMixIn(Task::class.java, TaskYamlMixin::class.java)
+    addMixIn(ChoiceTask::class.java, ChoiceTaskYamlMixin::class.java)
+    addMixIn(CodeTask::class.java, CodeTaskYamlMixin::class.java)
+    addMixIn(ChoiceOption::class.java, ChoiceOptionYamlMixin::class.java)
+    addMixIn(TaskFile::class.java, TaskFileYamlMixin::class.java)
+    addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderYamlMixin::class.java)
+    addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyYamlMixin::class.java)
 
-    mapper.registerSubtypes(NamedType(CodeforcesCourse::class.java, EduFormatNames.CODEFORCES_TYPE_YAML))
-    mapper.registerSubtypes(NamedType(CourseraCourse::class.java, CourseraNames.COURSE_TYPE_YAML))
-    mapper.registerSubtypes(NamedType(CheckiOCourse::class.java, CheckiONames.CHECKIO_TYPE_YAML))
-    mapper.registerSubtypes(NamedType(HyperskillCourse::class.java, HYPERSKILL_TYPE_YAML))
-    mapper.registerSubtypes(NamedType(StepikCourse::class.java, StepikNames.STEPIK_TYPE_YAML))
+    registerSubtypes(NamedType(CodeforcesCourse::class.java, CODEFORCES_TYPE_YAML))
+    registerSubtypes(NamedType(CourseraCourse::class.java, COURSE_TYPE_YAML))
+    registerSubtypes(NamedType(CheckiOCourse::class.java, CHECKIO_TYPE_YAML))
+    registerSubtypes(NamedType(HyperskillCourse::class.java, HYPERSKILL_TYPE_YAML))
+    registerSubtypes(NamedType(StepikCourse::class.java, STEPIK_TYPE_YAML))
   }
 
   private fun addRemoteMixIns(mapper: ObjectMapper) {

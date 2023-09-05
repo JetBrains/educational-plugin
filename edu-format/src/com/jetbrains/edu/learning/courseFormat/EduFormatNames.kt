@@ -60,6 +60,7 @@ object EduFormatNames {
   const val IS_TEMPLATE_BASED = "is_template_based"
   const val HYPERSKILL_PROBLEMS = "Problems"
   const val HYPERSKILL_TOPICS = "Topics"
+  const val TOPICS = "topics"
   const val HYPERSKILL_PROJECTS_URL = "https://hyperskill.org/projects"
   const val HYPERSKILL = "Hyperskill"
   const val HYPERSKILL_TYPE_YAML = "hyperskill"
@@ -83,6 +84,8 @@ object EduFormatNames {
   // stepik
   const val STEPIK = "Stepik"
   const val STEPIK_TYPE_YAML = "stepik"
+  const val ATTEMPT = "attempt"
+  const val CHECK_PROFILE = "check_profile"
 
   // IDs of supported languages. They are the same that `Language#getID` returns
   // but in some cases we don't have corresponding Language in classpath to get its id via `getID` method
