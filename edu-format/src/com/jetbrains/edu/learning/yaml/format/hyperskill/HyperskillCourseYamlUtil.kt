@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package com.jetbrains.edu.learning.yaml.format
+package com.jetbrains.edu.learning.yaml.format.hyperskill
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnore
