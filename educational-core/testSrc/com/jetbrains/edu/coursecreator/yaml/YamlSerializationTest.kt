@@ -11,8 +11,8 @@ import com.jetbrains.edu.learning.courseFormat.CourseraCourse
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
+import com.jetbrains.edu.learning.yaml.YamlMapper
 import com.jetbrains.edu.learning.yaml.YamlTestCase
 import java.util.*
 
@@ -974,7 +974,7 @@ class YamlSerializationTest : YamlTestCase() {
     course.generatedEduId = generatedEduId
     course.description = "This is a course about string theory.\nWhy not?"
 
-    val actual = YamlFormatSynchronizer.REMOTE_MAPPER.writeValueAsString(course)
+    val actual = YamlMapper.REMOTE_MAPPER.writeValueAsString(course)
     val expected = """
       |id: 0
       |generated_edu_id: generated_edu_id

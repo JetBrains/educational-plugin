@@ -1,5 +1,7 @@
 package com.jetbrains.edu.learning.courseFormat
 
+import org.jetbrains.annotations.NonNls
+
 object EduFormatNames {
   const val MARKETPLACE = "Marketplace"
   const val MARKETPLACE_YAML_TYPE = "marketplace"
@@ -60,12 +62,15 @@ object EduFormatNames {
   const val HYPERSKILL_TOPICS = "Topics"
   const val HYPERSKILL_PROJECTS_URL = "https://hyperskill.org/projects"
   const val HYPERSKILL = "Hyperskill"
+  const val HYPERSKILL_TYPE_YAML = "hyperskill"
 
   // coursera
   const val COURSERA = "Coursera"
+  const val COURSE_TYPE_YAML = "coursera"
 
   // checkio
   const val CHECKIO = "CheckiO"
+  const val CHECKIO_TYPE_YAML: @NonNls String = "checkiO"
 
   // codeforces
   const val CODEFORCES: String = "Codeforces"
@@ -77,6 +82,7 @@ object EduFormatNames {
 
   // stepik
   const val STEPIK = "Stepik"
+  const val STEPIK_TYPE_YAML = "stepik"
 
   // IDs of supported languages. They are the same that `Language#getID` returns
   // but in some cases we don't have corresponding Language in classpath to get its id via `getID` method
