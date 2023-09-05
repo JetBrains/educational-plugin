@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.`in`
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import com.jetbrains.edu.learning.yaml.YamlMapper
 import com.jetbrains.edu.learning.yaml.configFileName
 
 class VirtualFileListenerTest : VirtualFileListenerTestBase() {
@@ -26,7 +26,7 @@ class VirtualFileListenerTest : VirtualFileListenerTestBase() {
         // after task files is created, changes are saved to config in `invokeLater`
         // we want to check config after it happened, means this event is dispatched
         PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
-        val item = YamlDeserializer.deserializeItem(taskConfigFile, project, mapper=YamlFormatSynchronizer.STUDENT_MAPPER) as EduTask
+        val item = YamlDeserializer.deserializeItem(taskConfigFile, project, mapper= YamlMapper.STUDENT_MAPPER) as EduTask
         val deserializedTaskFile = item.getTaskFile(taskFile.name) ?: error("Learner config file doesn't contain `${taskFile.name}` task file")
         assertEquals(true, deserializedTaskFile.isLearnerCreated)
       })

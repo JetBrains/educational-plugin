@@ -62,8 +62,8 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_SECTION_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_TASK_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.SECTION_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.TASK_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.MAPPER
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.REMOTE_MAPPER
+import com.jetbrains.edu.learning.yaml.YamlMapper.MAPPER
+import com.jetbrains.edu.learning.yaml.YamlMapper.REMOTE_MAPPER
 import com.jetbrains.edu.learning.yaml.errorHandling.*
 import com.jetbrains.edu.learning.yaml.format.RemoteStudyItem
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames

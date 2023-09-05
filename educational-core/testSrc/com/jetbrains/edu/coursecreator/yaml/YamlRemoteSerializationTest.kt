@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillTopic
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import com.jetbrains.edu.learning.yaml.YamlMapper
 import com.jetbrains.edu.learning.yaml.YamlTestCase
 import java.util.*
 
@@ -195,7 +195,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
   }
 
   private fun doTest(item: StudyItem, expected: String) {
-    val actual = YamlFormatSynchronizer.REMOTE_MAPPER.writeValueAsString(item)
+    val actual = YamlMapper.REMOTE_MAPPER.writeValueAsString(item)
     assertEquals(expected, actual)
   }
 }

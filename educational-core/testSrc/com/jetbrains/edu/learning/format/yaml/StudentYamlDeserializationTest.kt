@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.STUDENT_MAPPER
+import com.jetbrains.edu.learning.yaml.YamlMapper.STUDENT_MAPPER
 import junit.framework.TestCase
 import org.intellij.lang.annotations.Language
 import java.time.ZonedDateTime

@@ -186,7 +186,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
       }
     }
 
-    val mapper = StudyTaskManager.getInstance(project).course?.mapper ?: YamlFormatSynchronizer.MAPPER
+    val mapper = StudyTaskManager.getInstance(project).course?.mapper ?: YamlMapper.MAPPER
     val deserializedItem = YamlDeserializer.deserializeItem(configFile, project, true, mapper) ?: return false
 
     if (!deserializedItem.couldBeInside(parentStudyItem)) {

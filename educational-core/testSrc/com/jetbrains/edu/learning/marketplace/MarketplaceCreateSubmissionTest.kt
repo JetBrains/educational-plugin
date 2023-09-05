@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.STUDENT_MAPPER
+import com.jetbrains.edu.learning.yaml.YamlMapper.STUDENT_MAPPER
 import java.util.*
 
 class MarketplaceCreateSubmissionTest : EduTestCase() {
