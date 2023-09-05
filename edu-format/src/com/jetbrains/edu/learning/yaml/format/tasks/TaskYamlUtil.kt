@@ -1,6 +1,6 @@
 @file:JvmName("TaskYamlUtil")
 
-package com.jetbrains.edu.learning.yaml.format
+package com.jetbrains.edu.learning.yaml.format.tasks
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 
 /**
  * Mixin class is used to deserialize [Task] item.
- * Update [TaskChangeApplier] if new fields added to mixin
+ * Update [com.jetbrains.edu.learning.yaml.format.TaskChangeApplier] if new fields added to mixin
  */
 @Suppress("unused") // used for yaml serialization
 @JsonPropertyOrder(TYPE, CUSTOM_NAME, FILES, FEEDBACK_LINK, SOLUTION_HIDDEN, TAGS)

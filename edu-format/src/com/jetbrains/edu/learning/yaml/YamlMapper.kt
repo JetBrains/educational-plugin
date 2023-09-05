@@ -12,11 +12,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CHECKIO_TYPE_YAML
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_TYPE_YAML
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSE_TYPE_YAML
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_TYPE_YAML
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.STEPIK_TYPE_YAML
 import com.jetbrains.edu.learning.courseFormat.attempts.DataTaskAttempt
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
@@ -41,6 +36,11 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.json.encrypt.EncryptionModule
 import com.jetbrains.edu.learning.json.encrypt.getAesKey
 import com.jetbrains.edu.learning.yaml.format.*
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CHECKIO_TYPE_YAML
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CODEFORCES_TYPE_YAML
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.COURSE_TYPE_YAML
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.HYPERSKILL_TYPE_YAML
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.STEPIK_TYPE_YAML
 import com.jetbrains.edu.learning.yaml.format.checkio.CheckiOMissionYamlMixin
 import com.jetbrains.edu.learning.yaml.format.checkio.CheckiOStationYamlMixin
 import com.jetbrains.edu.learning.yaml.format.codeforces.CodeforcesCourseRemoteInfoYamlMixin
@@ -51,6 +51,7 @@ import com.jetbrains.edu.learning.yaml.format.coursera.CourseraCourseYamlMixin
 import com.jetbrains.edu.learning.yaml.format.hyperskill.*
 import com.jetbrains.edu.learning.yaml.format.remote.*
 import com.jetbrains.edu.learning.yaml.format.student.*
+import com.jetbrains.edu.learning.yaml.format.tasks.*
 import java.util.*
 
 object YamlMapper {

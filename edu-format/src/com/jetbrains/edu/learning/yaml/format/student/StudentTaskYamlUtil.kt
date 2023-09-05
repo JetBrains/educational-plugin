@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.*
 import com.jetbrains.edu.learning.courseFormat.CheckFeedback
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.json.mixins.NotImplementedInMixin
-import com.jetbrains.edu.learning.yaml.format.TaskYamlMixin
+import com.jetbrains.edu.learning.yaml.format.tasks.TaskYamlMixin
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ACTUAL
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_NAME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.EXPECTED

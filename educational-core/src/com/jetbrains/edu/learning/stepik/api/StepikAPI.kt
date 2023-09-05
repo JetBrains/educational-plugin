@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.ATTEMPT
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CHECK_PROFILE
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.ID
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.NAME
 import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
@@ -32,7 +34,6 @@ const val PROGRESSES = "progresses"
 const val ATTEMPTS = "attempts"
 const val ASSIGNMENTS = "assignments"
 const val ENROLLMENT = "enrollment"
-const val ATTEMPT = "attempt"
 const val VIEW = "view"
 const val UNIT = "unit"
 const val STEP_SOURCE = "step_source"
@@ -65,7 +66,6 @@ const val SORTING_BASED_TASK = "sorting_based"
 const val CHOICE_TASK = "choice"
 const val DATA_TASK = "data"
 const val VERSION = "version"
-const val CHECK_PROFILE = "check_profile"
 const val ATTACHMENTS = "attachments"
 const val COURSE_REVIEW_SUMMARIES = "course-review-summaries"
 const val ADDITIONAL_FILES = "additional_files"

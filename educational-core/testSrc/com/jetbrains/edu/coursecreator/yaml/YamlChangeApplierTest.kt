@@ -1,12 +1,12 @@
 package com.jetbrains.edu.coursecreator.yaml
 
 import com.jetbrains.edu.learning.courseFormat.CourseMode
-import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.CourseraCourse
-import com.jetbrains.edu.learning.coursera.CourseraNames
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.yaml.YamlTestCase
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
 
 
 class YamlChangeApplierTest : YamlTestCase() {
@@ -22,7 +22,7 @@ class YamlChangeApplierTest : YamlTestCase() {
     assertFalse(course.submitManually)
 
     val yamlContent = """
-      |type: ${CourseraNames.COURSE_TYPE_YAML}
+      |type: ${YamlMixinNames.COURSE_TYPE_YAML}
       |submit_manually: true
       |title: Test Course
       |language: Russian

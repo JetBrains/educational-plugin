@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.yaml.format
+package com.jetbrains.edu.learning.yaml.format.tasks
 
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
