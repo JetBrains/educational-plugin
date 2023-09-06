@@ -13,7 +13,7 @@ class HyperskillMetricsApplicationActivationListener : ApplicationActivationList
     if (!course.isStudy || course !is HyperskillCourse) {
       return
     }
-    HyperskillMetricsService.getInstance().taskStarted(task.id)
+    HyperskillMetricsService.getInstance().taskStarted(task)
   }
 
   override fun applicationDeactivated(ideFrame: IdeFrame) {

@@ -10,10 +10,11 @@ import com.intellij.ui.BalloonLayout
 import com.intellij.util.xmlb.XmlSerializer
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.MockResponseFactory
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_PROBLEMS
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.pathWithoutPrams
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROBLEMS
 import com.jetbrains.edu.learning.stepik.hyperskill.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
 import com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsService.Companion.getRoute
@@ -86,6 +87,17 @@ class HyperskillMetricsTest : EduTestCase() {
     metricsService.taskStopped()
 
     metricsService.allTimeSpentEvents(reset = false).find { it.step == id1 } ?: error("No time spent event for $id1")
+  }
+
+  fun `test no time spent events for solved task`() {
+    createHyperskillCourse()
+    val task1 = findTask(0, 1)
+    task1.status = CheckStatus.Solved
+
+    metricsService.taskStarted(task1)
+    metricsService.taskStopped()
+
+    assertNull(metricsService.allTimeSpentEvents (reset = false).find { it.step == task1.id })
   }
 
   fun `test time spent events with frame activation`() {
