@@ -7,7 +7,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.attempts.DataTaskAttempt
 import com.jetbrains.edu.learning.stepik.api.Feedback
-import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 import com.jetbrains.edu.learning.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.stepik.api.*
