@@ -52,6 +52,7 @@ import com.jetbrains.edu.learning.yaml.format.hyperskill.*
 import com.jetbrains.edu.learning.yaml.format.remote.*
 import com.jetbrains.edu.learning.yaml.format.student.*
 import com.jetbrains.edu.learning.yaml.format.tasks.*
+import org.jetbrains.annotations.TestOnly
 import java.util.*
 
 object YamlMapper {
@@ -80,6 +81,16 @@ object YamlMapper {
     val mapper = createMapper()
     mapper.addMixIns()
     mapper.addEncryptionModule()
+    mapper.addMixIn(TaskFile::class.java, StudentEncryptedTaskFileYamlMixin::class.java)
+    mapper.addMixIn(AnswerPlaceholder::class.java, StudentEncryptedAnswerPlaceholderYamlMixin::class.java)
+    mapper.addStudentMixIns()
+    mapper
+  }
+
+  @get:TestOnly
+  val TEST_STUDENT_MAPPER_WITH_ENCRYPTION: ObjectMapper by lazy {
+    val mapper = createMapper()
+    mapper.addMixIns()
     mapper.addMixIn(TaskFile::class.java, StudentEncryptedTaskFileYamlMixin::class.java)
     mapper.addMixIn(AnswerPlaceholder::class.java, StudentEncryptedAnswerPlaceholderYamlMixin::class.java)
     mapper.addStudentMixIns()

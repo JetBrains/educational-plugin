@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_NAME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 
-@Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
+@Suppress("unused") // used for yaml serialization
 @JsonDeserialize(builder = StationBuilder::class)
 @JsonPropertyOrder(TYPE, CUSTOM_NAME, CONTENT)
 class CheckiOStationYamlMixin : LessonYamlMixin() {
@@ -24,6 +24,7 @@ class CheckiOStationYamlMixin : LessonYamlMixin() {
       throw NotImplementedInMixin()
     }
 
+  @Suppress("LateinitVarOverridesLateinitVar")
   @JsonIgnore
   override lateinit var contentTags: List<String>
 }

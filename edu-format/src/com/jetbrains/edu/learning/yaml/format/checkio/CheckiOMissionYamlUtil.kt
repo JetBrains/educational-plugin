@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.STATUS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 import com.jetbrains.edu.learning.yaml.format.student.StudentTaskYamlMixin
 
-@Suppress("UNUSED_PARAMETER", "unused", "LateinitVarOverridesLateinitVar") // used for yaml serialization
+@Suppress("unused", "LateinitVarOverridesLateinitVar") // used for yaml serialization
 @JsonPropertyOrder(TYPE, CUSTOM_NAME, FILES, STATUS, FEEDBACK, CODE, SECONDS_FROM_CHANGE)
 abstract class CheckiOMissionYamlMixin : StudentTaskYamlMixin() {
   @JsonIgnore
