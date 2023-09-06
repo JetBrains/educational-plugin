@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.taskToolWindow
 
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.taskToolWindow.ui.getHintIconSize
 
 abstract class HintsInTaskDescriptionTestBase(
