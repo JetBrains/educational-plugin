@@ -7,6 +7,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.registry.Registry
+import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.actions.EduActionUtils
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
@@ -20,18 +21,19 @@ import java.io.IOException
 abstract class CourseUpdateCheckerTestBase : CourseGenerationTestBase<EmptyProjectSettings>() {
   override val defaultSettings: EmptyProjectSettings get() = EmptyProjectSettings
 
-  protected fun doTest(updateChecker: CourseUpdateChecker,
-                       isCourseUpToDate: Boolean,
-                       invocationNumber: Int,
-                       afterTimeoutInvocationNumber: Int,
-                       checkInterval: Int = 2,
-                       isCourseUpToDateCheck: () -> Unit
+  protected fun doTest(
+    updateChecker: CourseUpdateChecker,
+    isCourseUpToDate: Boolean,
+    invocationNumber: Int,
+    afterTimeoutInvocationNumber: Int,
+    checkInterval: Int = 2,
+    isCourseUpToDateCheck: () -> Unit
   ) {
     val notificationListener = NotificationListener(project, testRootDisposable)
     withCustomCheckInterval(checkInterval) {
       updateChecker.check()
       assertEquals(invocationNumber, updateChecker.invocationNumber)
-      checkScheduled(afterTimeoutInvocationNumber, updateChecker)
+      updateChecker.checkScheduled(afterTimeoutInvocationNumber, checkInterval)
       checkNotification(notificationListener, isCourseUpToDate)
       isCourseUpToDateCheck()
     }
@@ -67,10 +69,15 @@ abstract class CourseUpdateCheckerTestBase : CourseGenerationTestBase<EmptyProje
     }
   }
 
-  private fun checkScheduled(expectedInvocationNumber: Int, updateChecker: CourseUpdateChecker) {
-    val future = ApplicationManager.getApplication().executeOnPooledThread { Thread.sleep(3000) }
-    EduActionUtils.waitAndDispatchInvocationEvents(future)
-    check(expectedInvocationNumber <= updateChecker.invocationNumber)
+  private fun CourseUpdateChecker.checkScheduled(expectedInvocationNumber: Int, checkIntervalInSec: Int) {
+    val totalWaitTime = (expectedInvocationNumber + 1) * checkIntervalInSec * 1000
+    for (i in 0 until totalWaitTime / 50) {
+      Thread.sleep(50)
+      PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+      if (expectedInvocationNumber <= invocationNumber) return
+    }
+
+    error("Update checker invocations should be at least $expectedInvocationNumber but it's only $invocationNumber")
   }
 
   open fun getTestDataPath(): String = "testData/"
