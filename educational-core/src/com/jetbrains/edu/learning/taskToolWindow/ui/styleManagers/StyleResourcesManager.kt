@@ -154,6 +154,7 @@ object StyleResourcesManager {
     .plus(ChoiceTaskResourcesManager().resources)
     .plus(MatchingTaskResourcesManager().resources)
     .plus(SortingTaskResourcesManager().resources)
+    .plus(TableTaskResourcesManager().resources)
 
   private fun resourcePair(name: String, path: String) = name to resourceUrl(path)
 

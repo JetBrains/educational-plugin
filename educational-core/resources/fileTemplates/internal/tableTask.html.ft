@@ -1,0 +1,109 @@
+<style>
+    ${table_task_style}
+</style>
+<div id='tableTask'>
+</div>
+
+<script>
+  let parentElement = document.getElementById('tableTask');
+
+  let rows = ${rows}
+  let columns = ${columns}
+  let buttonType = getInputType(${is_checkbox})
+
+  let columnsSize = columns.length
+
+  let selected = ${selected}
+
+  createTable(rows, columns)
+
+  function createTable(rows, columns) {
+    let tableElement = document.createElement('table')
+    tableElement.id = 'table'
+    let header = createHeader(columns)
+    tableElement.appendChild(header)
+    for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+      let rowElement = createRow(rowIndex, rows[rowIndex])
+      tableElement.appendChild(rowElement)
+    }
+    parentElement.appendChild(tableElement)
+  }
+
+  function createHeader(columns) {
+    let header = document.createElement('tr')
+    let emptyCell = document.createElement('td')
+    header.appendChild(emptyCell)
+    for (let columnIndex = 0; columnIndex < columns.length; columnIndex++) {
+      let cell = document.createElement('td')
+      cell.className = 'header_cell'
+      cell.innerText = columns[columnIndex]
+      header.appendChild(cell)
+    }
+    return header
+  }
+
+  function createRow(rowIndex, rowName) {
+    let row = document.createElement('tr')
+    let rowHeader = document.createElement('td')
+    rowHeader.className = 'row_header'
+    rowHeader.innerText = rowName
+    row.appendChild(rowHeader)
+    for (let columnIndex = 0; columnIndex < columns.length; columnIndex++) {
+      let cell = document.createElement('td')
+      cell.className = 'input_cell'
+      let button = createButton(rowIndex, columnIndex)
+      cell.appendChild(button)
+      row.appendChild(cell)
+    }
+    return row
+  }
+
+  function getInputType(isCheckbox) {
+    var type;
+    if (isCheckbox) {
+      type = 'checkbox';
+    }
+    else {
+      type = 'radio';
+    }
+    return type;
+  }
+
+  function createButton(rowsIndex, columnIndex) {
+    let inputElement = document.createElement('input');
+    inputElement.type = buttonType;
+    inputElement.name = rowsIndex;
+    if (selected[rowsIndex][columnIndex]) {
+      inputElement.checked = true;
+    }
+    inputElement.addEventListener('change', function (event) {
+      addSelectionListener(this, rowsIndex, columnIndex)
+    })
+    inputElement.className = buttonType
+    return inputElement
+  }
+
+  function addSelectionListener(element, rowIndex, columnIndex) {
+    if (element.type === 'checkbox') {
+      selected[rowIndex][columnIndex] = element.checked
+    }
+    else {
+      for (let index = 0; index < columnsSize; ++index) {
+        selected[rowIndex][index] = false
+      }
+      selected[rowIndex][columnIndex] = true
+    }
+  }
+
+  function serializeBoolean(value) {
+    if (value) {
+      return "1"
+    } else {
+      return "0"
+    }
+  }
+
+  function getSelection() {
+    return selected.map(row => row.map(value => serializeBoolean(value)).join(" ")).join(",")
+  }
+</script>

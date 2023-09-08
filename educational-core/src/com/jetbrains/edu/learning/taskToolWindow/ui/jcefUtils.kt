@@ -2,11 +2,14 @@ package com.jetbrains.edu.learning.taskToolWindow.ui
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.util.io.URLUtil
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
@@ -17,8 +20,16 @@ import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.taskToolWindow.containsYoutubeLink
 import com.jetbrains.edu.learning.taskToolWindow.ui.jcefSpecificQueries.*
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.ChoiceTaskResourcesManager
+import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleManager
+import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.TableTaskResourcesManager
+import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.TaskToolWindowBundle
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.sortingBasedTask.MatchingTaskResourcesManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.sortingBasedTask.SortingTaskResourcesManager
+import kotlinx.css.*
+import kotlinx.css.properties.BoxShadow
+import kotlinx.css.properties.BoxShadows
+import kotlinx.css.properties.deg
+import kotlinx.css.properties.rotate
 import org.apache.commons.lang.StringEscapeUtils
 import org.apache.commons.lang3.StringUtils
 import org.cef.browser.CefBrowser
@@ -156,11 +167,141 @@ fun getHTMLTemplateText(task: Task?): String? = when (task) {
   is ChoiceTask -> ChoiceTaskResourcesManager().getText(task)
   is SortingTask -> SortingTaskResourcesManager().getText(task)
   is MatchingTask -> MatchingTaskResourcesManager().getText(task)
+  is TableTask -> TableTaskResourcesManager().getText(task)
   else -> null
 }
 
 fun getTaskSpecificQueryManager(task: Task?, browserBase: JBCefBrowser): TaskQueryManager<out Task>? = when(task) {
   is ChoiceTask -> ChoiceTaskQueryManager(task, browserBase)
   is SortingBasedTask -> SortingBasedTaskQueryManager(task, browserBase)
+  is TableTask -> TableTaskQueryManager(task, browserBase)
   else -> null
+}
+
+fun getRadioButtonCSS(): String {
+  val styleManager = StyleManager()
+  return CSSBuilder().apply {
+    ".checkbox, .radio" {
+      marginTop = 2.px
+      marginRight = 9.px
+      verticalAlign = VerticalAlign("middle")
+      position = Position.relative
+      backgroundColor = getRadioButtonBackgroundColor()
+      borderWidth = 0.7.px
+      borderColor = getBorderColor()
+      borderStyle = BorderStyle.solid
+      outline = Outline.none
+    }
+    ".checkbox" {
+      borderRadius = 3.px
+      //sets size of the element
+      padding = "8px"
+    }
+    ".radio" {
+      borderRadius = 50.pct
+      width = 16.px
+      height = 16.px
+    }
+    ".radio:checked" {
+      padding = "3.2px"
+      color = styleManager.bodyColor
+      backgroundColor = getRadioButtonCheckedBackgroundColor()
+      borderColor = getRadioButtonCheckedBorderColor()
+      borderWidth = (5.9).px
+    }
+    ".checkbox:checked" {
+      backgroundColor = getRadioButtonCheckedBorderColor()
+      borderColor = getRadioButtonCheckedBorderColor()
+    }
+    ".checkbox:checked:after" {
+      display = Display.block
+    }
+    ".checkbox:after" {
+      display = Display.none
+      position = Position.absolute
+      content = QuotedString("")
+      left = 6.px
+      top = 2.px
+      width = 3.px
+      height = 8.px
+      backgroundColor = getRadioButtonCheckedBorderColor()
+      border = "solid"
+      borderColor = getRadioButtonCheckedBackgroundColor()
+      borderTopWidth = 0.px
+      borderBottomWidth = 2.px
+      borderLeftWidth = 0.px
+      borderRightWidth = 2.px
+      transform.rotate(35.deg)
+    }
+    ".radio:focus, .radio:before, .radio:hover, .checkbox:focus, .checkbox:before, .checkbox:hover" {
+      boxShadow += BoxShadow(false, 0.px, 0.px, 2.px, 2.px, getRadioButtonFocusColor())
+    }
+    ".disable:focus, .disable:before, .disable:hover" {
+      boxShadow = BoxShadows.none
+    }
+  }.toString()
+    .plus(".checkbox, .radio { -webkit-appearance: none; }")
+    .plus(getRadioButtonSystemSpecificCss())
+}
+
+private fun getBorderColor(): Color {
+  return if (UIUtil.isUnderDarcula()) {
+    Color(TaskToolWindowBundle.value("darcula.choice.options.background.color"))
+  }
+  else {
+    Color(TaskToolWindowBundle.value("choice.options.border.color"))
+  }
+}
+
+
+private fun getRadioButtonCheckedBorderColor(): Color {
+  return if (UIUtil.isUnderDarcula()) {
+    Color(TaskToolWindowBundle.value("darcula.choice.options.background.color"))
+  }
+  else {
+    Color(TaskToolWindowBundle.value("choice.options.checked.border.color"))
+  }
+}
+
+private fun getRadioButtonCheckedBackgroundColor(): Color {
+  return if (UIUtil.isUnderDarcula()) {
+    Color(TaskToolWindowBundle.value("choice.options.border.color"))
+  }
+  else {
+    Color(TaskToolWindowBundle.value("choice.options.background.color"))
+  }
+}
+
+private fun getRadioButtonFocusColor(): Color {
+  return if (UIUtil.isUnderDarcula()) {
+    Color(TaskToolWindowBundle.value("darcula.choice.options.focus.color"))
+  }
+  else {
+    Color(TaskToolWindowBundle.value("choice.options.focus.color"))
+  }
+}
+
+private fun getRadioButtonBackgroundColor(): Color {
+  return if (UIUtil.isUnderDarcula()) {
+    Color(TaskToolWindowBundle.value("darcula.choice.options.background.color"))
+  }
+  else {
+    Color(TaskToolWindowBundle.value("choice.options.background.color"))
+  }
+}
+
+private fun getRadioButtonSystemSpecificCss(): String {
+  if (SystemInfo.isWindows) {
+    return CSSBuilder().apply {
+      ".radio:checked" {
+        marginRight = 7.3.px
+        left = (-1).px
+      }
+      ".checkbox:checked" {
+        borderStyle = BorderStyle.none
+        padding = "8.7px"
+      }
+    }.toString()
+  }
+  return ""
 }

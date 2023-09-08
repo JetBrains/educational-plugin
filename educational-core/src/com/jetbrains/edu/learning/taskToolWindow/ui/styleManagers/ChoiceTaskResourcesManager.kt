@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers
 
 import com.google.gson.Gson
-import com.intellij.openapi.util.SystemInfo
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -13,6 +11,7 @@ import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.getStepikLink
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.stepLink
+import com.jetbrains.edu.learning.taskToolWindow.ui.*
 import kotlinx.css.*
 import kotlinx.css.properties.*
 
@@ -79,128 +78,8 @@ class ChoiceTaskResourcesManager : TaskResourcesManager<ChoiceTask> {
       "#choiceOptions .text" {
         padding = "8px"
       }
-      "#choiceOptions .checkbox, .radio" {
-        marginTop = 2.px
-        marginRight = 9.px
-        verticalAlign = VerticalAlign("middle")
-        position = Position.relative
-        backgroundColor = getBackgroundColor()
-        borderWidth = 0.7.px
-        borderColor = getBorderColor()
-        borderStyle = BorderStyle.solid
-        outline = Outline.none
-      }
-      "#choiceOptions .checkbox" {
-        borderRadius = 3.px
-        //sets size of the element
-        padding = "8px"
-      }
-      "#choiceOptions .radio" {
-        borderRadius = 50.pct
-        width = 16.px
-        height = 16.px
-      }
-      "#choiceOptions .radio:checked" {
-        padding = "3.2px"
-        color = styleManager.bodyColor
-        backgroundColor = getRadioButtonCheckedBackgroundColor()
-        borderColor = getRadioButtonCheckedBorderColor()
-        borderWidth = (5.9).px
-      }
-      "#choiceOptions .checkbox:checked" {
-        backgroundColor = getRadioButtonCheckedBorderColor()
-        borderColor = getRadioButtonCheckedBorderColor()
-      }
-      "#choiceOptions .checkbox:checked:after" {
-        display = Display.block
-      }
-      "#choiceOptions .checkbox:after" {
-        display = Display.none
-        position = Position.absolute
-        content = QuotedString("")
-        left = 6.px
-        top = 2.px
-        width = 3.px
-        height = 8.px
-        backgroundColor = getRadioButtonCheckedBorderColor()
-        border = "solid"
-        borderColor = getRadioButtonCheckedBackgroundColor()
-        borderTopWidth = 0.px
-        borderBottomWidth = 2.px
-        borderLeftWidth = 0.px
-        borderRightWidth = 2.px
-        transform.rotate(35.deg)
-      }
-      "#choiceOptions .radio:focus, .radio:before, .radio:hover, .checkbox:focus, .checkbox:before, .checkbox:hover" {
-        boxShadow += BoxShadow(false, 0.px, 0.px, 2.px, 2.px, getFocusColor())
-      }
-      "#choiceOptions .disable:focus, .disable:before, .disable:hover" {
-        boxShadow = BoxShadows.none
-      }
     }.toString()
-      .plus("#choiceOptions .checkbox, .radio { -webkit-appearance: none; }")
-      .plus(getSystemSpecificCss())
-  }
-
-  private fun getBackgroundColor(): Color {
-    return if (UIUtil.isUnderDarcula()) {
-      Color(TaskToolWindowBundle.value("darcula.choice.options.background.color"))
-    }
-    else {
-      Color(TaskToolWindowBundle.value("choice.options.background.color"))
-    }
-  }
-
-  private fun getBorderColor(): Color {
-    return if (UIUtil.isUnderDarcula()) {
-      Color(TaskToolWindowBundle.value("darcula.choice.options.background.color"))
-    }
-    else {
-      Color(TaskToolWindowBundle.value("choice.options.border.color"))
-    }
-  }
-
-  private fun getRadioButtonCheckedBorderColor(): Color {
-    return if (UIUtil.isUnderDarcula()) {
-      Color(TaskToolWindowBundle.value("darcula.choice.options.background.color"))
-    }
-    else {
-      Color(TaskToolWindowBundle.value("choice.options.checked.border.color"))
-    }
-  }
-
-  private fun getRadioButtonCheckedBackgroundColor(): Color {
-    return if (UIUtil.isUnderDarcula()) {
-      Color(TaskToolWindowBundle.value("choice.options.border.color"))
-    }
-    else {
-      Color(TaskToolWindowBundle.value("choice.options.background.color"))
-    }
-  }
-
-  private fun getFocusColor(): Color {
-    return if (UIUtil.isUnderDarcula()) {
-      Color(TaskToolWindowBundle.value("darcula.choice.options.focus.color"))
-    }
-    else {
-      Color(TaskToolWindowBundle.value("choice.options.focus.color"))
-    }
-  }
-
-  private fun getSystemSpecificCss(): String {
-    if (SystemInfo.isWindows) {
-      return CSSBuilder().apply {
-        "#choiceOptions .radio:checked" {
-          marginRight = 7.3.px
-          left = (-1).px
-        }
-        "#choiceOptions .checkbox:checked" {
-          borderStyle = BorderStyle.none
-          padding = "8.7px"
-        }
-      }.toString()
-    }
-    return ""
+      .plus(getRadioButtonCSS())
   }
 
   companion object {
