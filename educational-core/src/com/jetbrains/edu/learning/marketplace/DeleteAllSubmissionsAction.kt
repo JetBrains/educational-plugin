@@ -6,13 +6,11 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
+import com.intellij.ui.JBAccountInfoService
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showErrorNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification
-import com.jetbrains.edu.coursecreator.CCUtils.showLoginNeededNotification
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.isUnitTestMode
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.runInBackground
@@ -31,22 +29,27 @@ class DeleteAllSubmissionsAction : AnAction(EduCoreBundle.lazyMessage("marketpla
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    val account = MarketplaceConnector.getInstance().account ?: return
-    val userName = account.userInfo.name
 
-    MarketplaceConnector.getInstance().isLoggedInAsync()
-      .thenApply { isLoggedIn ->
-        if (isLoggedIn) {
-          project.invokeLater {
-            if (askActionConfirmation(project, userName)) {
-              doDeleteSubmissions(project, userName)
-            }
-          }
-        }
-        else {
-          showLoginNeededNotification(project, e.presentation.text) { MarketplaceConnector.getInstance().doAuthorize() }
-        }
-      }
+    val jbAccountInfoService = try {
+      JBAccountInfoService.getInstance()
+    }
+    catch (e: Exception) {
+      null
+    }
+    val res = jbAccountInfoService?.userData
+    if (res == null) {
+      Messages.showMessageDialog(
+        "UserData is null, service instance: $jbAccountInfoService",
+        "Debug",
+        Messages.getInformationIcon()
+      )
+    } else {
+      Messages.showMessageDialog(
+        "Current logged in user: " + res.loginName + ", " + res.id,
+        "User Info",
+        Messages.getInformationIcon()
+      )
+    }
   }
 
   private fun doDeleteSubmissions(project: Project, userName: String) {
