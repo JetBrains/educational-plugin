@@ -28,12 +28,3 @@ fun <T : StudyItem> getRemoteChangeApplierForItem(item: T): RemoteInfoChangeAppl
     else -> loadingError(unexpectedItemTypeMessage(item.javaClass.simpleName))
   } as RemoteInfoChangeApplierBase<T>
 }
-
-class RemoteEduCourseChangeApplier : RemoteInfoChangeApplierBase<EduCourse>() {
-  override fun applyChanges(existingItem: EduCourse, deserializedItem: EduCourse) {
-    super.applyChanges(existingItem, deserializedItem)
-    existingItem.sectionIds = deserializedItem.sectionIds
-    existingItem.marketplaceCourseVersion = deserializedItem.marketplaceCourseVersion
-    existingItem.generatedEduId = deserializedItem.generatedEduId
-  }
-}
