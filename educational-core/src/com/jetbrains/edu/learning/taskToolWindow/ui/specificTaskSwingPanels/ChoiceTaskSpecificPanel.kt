@@ -10,7 +10,6 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.addBorder
 import com.jetbrains.edu.learning.taskToolWindow.ui.createButton
 import java.awt.event.ItemEvent
 import java.awt.event.ItemListener
-import javax.swing.*
 
 class ChoiceTaskSpecificPanel(task: ChoiceTask) : Wrapper() {
   init {
