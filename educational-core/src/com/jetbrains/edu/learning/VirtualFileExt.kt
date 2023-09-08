@@ -275,7 +275,7 @@ fun VirtualFile.toStudentFile(project: Project, task: Task): TaskFile? {
       if (task.lesson is FrameworkLesson && length >= getBinaryFileLimit()) {
         throw HugeBinaryFileException("${task.getPathInCourse()}/${taskFile.name}", length, getBinaryFileLimit().toLong(), true)
       }
-      taskFile.contents = InMemoryBinaryContents(contentsToByteArray())
+      taskFile.contents = BinaryContentsFromDisk(this)
       return taskFile
     }
     FileDocumentManager.getInstance().saveDocument(document)
@@ -295,6 +295,10 @@ fun VirtualFile.toStudentFile(project: Project, task: Task): TaskFile? {
         }
       }
       val text = studentDocument.immutableCharSequence.toString()
+      // We have just substituted placeholders and thus changed the text for the student file.
+      // It means we can not use the text from disk, and we should store the result in memory.
+      // We could not substitute placeholders later, because during placeholder substitution we compute
+      // their positions and store them inside the TaskFile.
       taskFile.contents = InMemoryTextualContents(EduMacroUtils.collapseMacrosForFile(project.toCourseInfoHolder(), this, text))
     }
     return taskFile

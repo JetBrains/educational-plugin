@@ -96,10 +96,10 @@ object AdditionalFilesUtils {
 
         val path = VfsUtilCore.getRelativePath(file, project.courseDir) ?: return null
         val contents = if (file.isToEncodeContent) {
-          InMemoryBinaryContents(file.contentsToByteArray())
+          BinaryContentsFromDisk(file)
         }
         else {
-          InMemoryTextualContents(VfsUtilCore.loadText(file))
+          TextualContentsFromDisk(file)
         }
         return EduFile(path, contents)
       }
