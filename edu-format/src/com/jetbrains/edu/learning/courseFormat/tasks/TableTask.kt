@@ -1,9 +1,10 @@
 package com.jetbrains.edu.learning.courseFormat.tasks
 
-import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.logger
 import org.jetbrains.annotations.NonNls
-import java.util.*
+import java.util.Date
+import java.util.logging.Logger
 
 class TableTask : Task {
   override val itemType: String = TABLE_TASK_TYPE
@@ -30,7 +31,7 @@ class TableTask : Task {
 
   fun choose(rowIndex: Int, columnIndex: Int) {
     if (rowIndex !in rows.indices || columnIndex !in columns.indices) {
-      LOG.error("There was an attempt to choose an cell with invalid indices")
+      LOG.severe("There was an attempt to choose an cell with invalid indices")
       return
     }
     if (!isCheckbox) {
@@ -62,6 +63,6 @@ class TableTask : Task {
     @NonNls
     const val TABLE_TASK_TYPE: String = "table"
 
-    private val LOG: Logger = Logger.getInstance(TableTask::class.java)
+    private val LOG: Logger = logger<TableTask>()
   }
 }

@@ -35,6 +35,9 @@ object EduFormatNames {
   const val IS_MULTIPLE_CHOICE = "is_multiple_choice"
   const val OPTIONS = "options"
   const val PAIRS = "pairs"
+  const val ROWS = "rows"
+  const val COLUMNS = "columns"
+  const val IS_CHECKBOX = "is_checkbox"
 
   const val DEFAULT_ENVIRONMENT = ""
 

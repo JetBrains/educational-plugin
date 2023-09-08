@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.DataTask.Companion.DATA_TAS
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.PYCHARM_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.NumberTask.Companion.NUMBER_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.StringTask.Companion.STRING_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.TableTask.Companion.TABLE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask.Companion.CHOICE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask.Companion.MATCHING_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask.Companion.SORTING_TASK_TYPE
@@ -26,7 +27,7 @@ enum class HyperskillTaskType(val type: String, val value: String) {
   REMOTE_EDU(REMOTE_EDU_TASK_TYPE, "Programming"),
   SORTING(SORTING_TASK_TYPE, "Sorting"),
   STRING(STRING_TASK_TYPE, "Text"),
-  TABLE("table", "Table"),
+  TABLE(TABLE_TASK_TYPE, "Table"),
   TEXT("text", "Theory"),
   VIDEO("video", "Video")
 }
