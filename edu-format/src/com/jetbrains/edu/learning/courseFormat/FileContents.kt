@@ -72,12 +72,18 @@ interface UndeterminedContents : FileContents {
     get() = textualRepresentation
 
   val bytes: ByteArray
-    get() = Base64.getDecoder().decode(textualRepresentation)
+    get() = try {
+      Base64.getDecoder().decode(textualRepresentation)
+    } catch (e: IllegalArgumentException) {
+      EMPTY_BYTE_ARRAY
+    }
 
   companion object {
     val EMPTY = object : UndeterminedContents {
       override val textualRepresentation: String = ""
     }
+
+    val EMPTY_BYTE_ARRAY = byteArrayOf()
   }
 }
 
