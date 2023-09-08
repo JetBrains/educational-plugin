@@ -14,7 +14,7 @@ import org.hamcrest.CoreMatchers
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.junit.Assert.assertThat
 
-abstract class AndroidCourseGeneratorTestBase : JvmCourseGenerationTestBase() {
+class AndroidCourseGeneratorTest : JvmCourseGenerationTestBase() {
 
   override fun setUp() {
     super.setUp()
@@ -25,7 +25,7 @@ abstract class AndroidCourseGeneratorTestBase : JvmCourseGenerationTestBase() {
   // Disables some extensions provided by AS.
   // They try to set up JAVA and Android JDK in test that we don't need in these tests.
   // So let's unregister them. Otherwise, tests fail
-  protected open fun disableUnnecessaryExtensions() {
+  private fun disableUnnecessaryExtensions() {
     val extensionArea = ApplicationManager.getApplication().extensionArea
 
     @Suppress("UnstableApiUsage")
@@ -35,7 +35,7 @@ abstract class AndroidCourseGeneratorTestBase : JvmCourseGenerationTestBase() {
   }
 
   @Suppress("UnstableApiUsage")
-  protected fun <T : Any, K : T> ExtensionPoint<T>.unregisterExtensionInTest(extensionClass: Class<K>) {
+  private fun <T : Any, K : T> ExtensionPoint<T>.unregisterExtensionInTest(extensionClass: Class<K>) {
     require(this is ExtensionPointImpl)
     val filteredExtensions = extensionList.filter { !extensionClass.isInstance(it) }
     maskAll(filteredExtensions, testRootDisposable, false)

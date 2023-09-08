@@ -2,5 +2,5 @@ package com.jetbrains.edu.learning.submissions
 
 import com.intellij.ui.icons.CachedImageIcon
 
-// BACKCOMPACT: 2022.3
+// BACKCOMPAT: 2023.1
 typealias CachedIcon = CachedImageIcon

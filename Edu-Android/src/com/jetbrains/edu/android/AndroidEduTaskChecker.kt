@@ -12,6 +12,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
+import com.intellij.util.containers.orNull
 import com.jetbrains.edu.android.messages.EduAndroidBundle
 import com.jetbrains.edu.jvm.gradle.checker.GradleCommandLine
 import com.jetbrains.edu.jvm.gradle.checker.GradleEduTaskChecker
@@ -87,7 +88,7 @@ class AndroidChecker(task: EduTask, envChecker: EnvironmentChecker, project: Pro
     val avdOptionsModel = AvdOptionsModel(null)
     val dialog = AvdWizardUtils.createAvdWizard(null, project, avdOptionsModel)
     return if (dialog.showAndGet()) {
-      launchEmulator(avdOptionsModel.getAvd())
+      launchEmulator(avdOptionsModel.createdAvd.orNull())
     }
     else {
       null

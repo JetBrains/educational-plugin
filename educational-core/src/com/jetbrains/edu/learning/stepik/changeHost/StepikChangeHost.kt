@@ -7,7 +7,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.EnumComboBoxModel
-import com.intellij.ui.dsl.builder.bindItemNullable
+import com.intellij.ui.dsl.builder.bindItem
 import com.intellij.ui.dsl.builder.panel
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -51,10 +51,8 @@ class StepikChangeHostDialog : DialogWrapper(true) {
 
   override fun createCenterPanel(): JComponent = panel {
     row(EduCoreBundle.message("stepik.url")) {
-      @Suppress("UnstableApiUsage", "DEPRECATION")
       comboBox(EnumComboBoxModel(StepikHost::class.java))
-        // BACKCOMPAT: 2022.3. Use bindItem instead
-        .bindItemNullable(::selectedHost)
+        .bindItem(::selectedHost)
         .focused()
     }
   }

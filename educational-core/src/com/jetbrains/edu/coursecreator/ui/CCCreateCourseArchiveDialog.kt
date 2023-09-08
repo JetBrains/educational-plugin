@@ -42,14 +42,13 @@ class CCCreateCourseArchiveDialog(project: Project, courseName: String) : Dialog
   private fun createPanel(project: Project): DialogPanel {
     return panel {
       row {
-        // BACKCOMPAT: 2022.3 Replace `validation` with `validationInfo`
-        @Suppress("UnstableApiUsage", "DEPRECATION")
+        @Suppress("UnstableApiUsage")
         textFieldWithBrowseButton(EduCoreBundle.message("course.creator.create.archive.location.title"),
                                   project, FileChooserDescriptorFactory.createSingleFolderDescriptor())
           .label(EduCoreBundle.message("course.creator.create.archive.panel.location"))
           .bindText(::locationPath)
           .align(AlignX.FILL)
-          .validation { validateArchivePath(it.text) }
+          .validationInfo { validateArchivePath(it.text) }
       }.layout(RowLayout.LABEL_ALIGNED)
       row {
         textField()

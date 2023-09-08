@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.command
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.InstallAndEnableTaskHeadlessImpl
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
 import kotlin.system.exitProcess

@@ -1,7 +1,10 @@
 package com.jetbrains.edu.android
 
+import com.android.ide.common.gradle.Dependency
+import com.android.ide.common.gradle.RichVersion
 import com.android.sdklib.SdkVersionInfo
 import com.android.tools.adtui.device.FormFactor
+import com.android.tools.idea.gradle.plugin.AgpVersions
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -25,8 +28,12 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.gradle.GradleConstants.BUILD_GRADLE
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.kotlinVersion
+import com.android.ide.common.repository.GoogleMavenArtifactId
+import com.android.tools.idea.gradle.repositories.RepositoryUrlManager
+import com.android.tools.idea.sdk.AndroidSdks
+import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 
-class AndroidCourseBuilder : AndroidCourseBuilderBase() {
+class AndroidCourseBuilder : GradleCourseBuilderBase() {
 
   override fun buildGradleTemplateName(course: Course): String = "android-build.gradle"
   override fun settingGradleTemplateName(course: Course): String = "android-settings.gradle"
@@ -128,6 +135,12 @@ class AndroidCourseBuilder : AndroidCourseBuilderBase() {
     )
   }
 
+  private fun getLibraryVersion(groupId: String, artifactId: String, defaultVersion: String): String {
+    val dependency = Dependency(groupId, artifactId, RichVersion.parse("+"))
+    val sdkHandler = AndroidSdks.getInstance().tryToChooseSdkHandler()
+    return RepositoryUrlManager.get().resolveDependencyRichVersion(dependency, null, sdkHandler) ?: defaultVersion
+  }
+
   private fun generateDependencyBlock(): String {
     return DEPENDENCIES.joinToString("\n", prefix = "dependencies {\n", postfix = "\n}") { dependency ->
       val (configuration, groupId, artifactId, defaultVersion) = dependency
@@ -135,6 +148,8 @@ class AndroidCourseBuilder : AndroidCourseBuilderBase() {
       "    ${configuration.configurationName} '$groupId:$artifactId:$version'"
     }
   }
+
+  private fun getLatestAndroidGradlePluginVersion(): String = AgpVersions.latestKnown.toString()
 
   override fun getLanguageSettings(): LanguageSettings<JdkProjectSettings> = AndroidLanguageSettings()
 

@@ -225,9 +225,8 @@ allprojects {
       compilerOptions {
         jvmTarget.set(JvmTarget.JVM_17)
         languageVersion.set(KotlinVersion.DEFAULT)
-        // BACKCOMPAT: 2022.3. Use 1.8
         // see https://plugins.jetbrains.com/docs/intellij/using-kotlin.html#kotlin-standard-library
-        apiVersion.set(KotlinVersion.KOTLIN_1_7)
+        apiVersion.set(KotlinVersion.KOTLIN_1_8)
         freeCompilerArgs.set(listOf("-Xjvm-default=all"))
       }
     }
@@ -465,10 +464,10 @@ project(":") {
     args("buildEventsScheme", "--outputFile=${buildDir.resolve("eventScheme.json").absolutePath}", "--pluginId=com.jetbrains.edu")
     // Force headless mode to be able to run command on CI
     systemProperty("java.awt.headless", "true")
-    // BACKCOMPAT: 2022.3. Update value to 231 and this comment
+    // BACKCOMPAT: 2023.1. Update value to 232 and this comment
     // `IDEA_BUILD_NUMBER` variable is used by `buildEventsScheme` task to write `buildNumber` to output json.
     // It will be used by TeamCity automation to set minimal IDE version for new events
-    environment("IDEA_BUILD_NUMBER", "223")
+    environment("IDEA_BUILD_NUMBER", "231")
   }
 
   task("configureIdea") {
