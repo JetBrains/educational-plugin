@@ -29,6 +29,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
@@ -181,6 +182,7 @@ object YamlMapper {
     addMixIn(CodeforcesTaskWithFileIO::class.java, CodeforcesTaskWithFileIOYamlMixin::class.java)
     addMixIn(SortingTask::class.java, SortingTaskYamlMixin::class.java)
     addMixIn(MatchingTask::class.java, MatchingTaskYamlMixin::class.java)
+    addMixIn(TableTask::class.java, TableTaskYamlMixin::class.java)
     addMixIn(AnswerPlaceholder.MyInitialState::class.java, InitialStateMixin::class.java)
     addMixIn(CheckFeedback::class.java, FeedbackYamlMixin::class.java)
   }
