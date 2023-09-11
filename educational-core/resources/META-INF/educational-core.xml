@@ -122,6 +122,7 @@
     </action>
     <action id="Educational.Educator.NewCourse" class="com.jetbrains.edu.coursecreator.actions.CCNewCourseAction"/>
     <action id="Educational.CCEditTaskDescription" class="com.jetbrains.edu.coursecreator.actions.CCEditTaskDescription"/>
+    <action id="Educational.ShowUserNameAction" class="com.jetbrains.edu.learning.actions.ShowUsernameAction"/>
 
     <group id="Educational.Educator.NewFile">
       <action id="Educational.Educator.CreateTask" class="com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask"/>
