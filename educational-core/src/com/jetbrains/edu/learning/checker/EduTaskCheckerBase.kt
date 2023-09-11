@@ -121,7 +121,8 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
     val firstFailedTest = failedChildren.firstOrNull() ?: error("Testing failed although no failed tests found")
     val diff = firstFailedTest.diffViewerProvider?.let { CheckResultDiff(it.left, it.right, it.diffTitle) }
     val message = if (diff != null) getComparisonErrorMessage(firstFailedTest) else getErrorMessage(firstFailedTest)
-    return CheckResult(CheckStatus.Failed, removeAttributes(fillWithIncorrect(message)), diff = diff)
+    val details = firstFailedTest.stacktrace
+    return CheckResult(CheckStatus.Failed, removeAttributes(fillWithIncorrect(message)), diff = diff, details = details)
   }
 
   private fun SMTestProxy.finishedSuccessfully(): Boolean {
