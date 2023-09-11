@@ -8,12 +8,13 @@
           "name": "Hello, world",
           "stepic_id": 0,
           "description_text": "<h2>Simple Functions</h2>\n<p>Take a look at <a href=\"http://kotlinlang.org/docs/reference/basic-syntax.html#defining-functions\">function syntax</a> and make the function <code>start</code> return the string <code>&quot;OK&quot;</code>.</p>\n<p>In the tasks the function <code>TODO()</code> is used that throws an exception. Your job during the koans will be to replace this function invocation with a meaningful code according to the problem.</p>",
-          "description_format": "html",
+          "description_format": "HTML",
           "task_type": "edu",
           "files": {
             "src/Task.kt": {
               "name": "src/Task.kt",
               "text": "fun start(): String = TODO()\n",
+              "is_binary": false,
               "placeholders": [
                 {
                   "offset": 22,
@@ -26,6 +27,7 @@
             "test/tests.kt": {
               "name": "test/tests.kt",
               "text": "import org.junit.Assert\nimport org.junit.Test\n\nclass TestStart {\n    @Test fun testOk() {\n        Assert.assertEquals(\"OK\", start())\n    }\n}",
+              "is_binary": false,
               "placeholders": [],
               "is_visible": false
             }
@@ -35,17 +37,19 @@
           "name": "Java to Kotlin conversion",
           "stepic_id": 0,
           "description_text": "<h2>Java to Kotlin conversion</h2>\n<p>We have a handy tool for Java developers: Java to Kotlin converter. To become familiar with it, please convert the java function <code>toJSON</code> in the file <code>JavaCode.java</code>. You can just copy-paste the code to Kotlin file and agree to automatically convert it to Kotlin.</p>",
-          "description_format": "html",
+          "description_format": "HTML",
           "task_type": "edu",
           "files": {
             "src/JavaCode.java": {
               "name": "src/JavaCode.java",
               "text": "import java.util.Collection;\nimport java.util.Iterator;\n\npublic class JavaCode {\n    public String toJSON(Collection<Integer> collection) {\n        StringBuilder sb = new StringBuilder();\n        sb.append(\"[\");\n        Iterator<Integer> iterator = collection.iterator();\n        while (iterator.hasNext()) {\n            Integer element = iterator.next();\n            sb.append(element);\n            if (iterator.hasNext()) {\n                sb.append(\", \");\n            }\n        }\n        sb.append(\"]\");\n        return sb.toString();\n    }\n}",
+              "is_binary": false,
               "placeholders": []
             },
             "src/Task.kt": {
               "name": "src/Task.kt",
               "text": "fun toJSON(collection: Collection<Int>): String = TODO()\n",
+              "is_binary": false,
               "placeholders": [
                 {
                   "offset": 0,
@@ -58,6 +62,7 @@
             "test/tests.kt": {
               "name": "test/tests.kt",
               "text": "import org.junit.Test\nimport org.junit.Assert\nimport koans.util.toMessageInEquals\n\nclass TestFunctions() {\n    @Test fun collection() {\n        Assert.assertEquals(\"toJSON\".toMessageInEquals(), \"[1, 2, 3, 42, 555]\", toJSON(listOf(1, 2, 3, 42, 555)))\n    }\n}",
+              "is_binary": false,
               "placeholders": [],
               "is_visible": false
             }
@@ -73,12 +78,13 @@
           "name": "Comparison",
           "stepic_id": 0,
           "description_text": "<h2>Comparison</h2>\n<p>Read about <a href=\"http://kotlinlang.org/docs/reference/operator-overloading.html\">operator overloading</a> to learn how different conventions for operations like <code>==</code>, <code>&lt;</code>, <code>+</code> work in Kotlin. Add the function <code>compareTo</code> to the class MyDate to make it comparable. After that the code below <code>date1 &lt; date2</code> will start to compile.</p>\n<p>In Kotlin when you override a member, the modifier <a href=\"http://kotlinlang.org/docs/reference/classes.html#overriding-members\"><code>override</code></a> is mandatory.</p>",
-          "description_format": "html",
+          "description_format": "HTML",
           "task_type": "edu",
           "files": {
             "src/Task.kt": {
               "name": "src/Task.kt",
               "text": "data class MyDate(val year: Int, val month: Int, val dayOfMonth: Int) : Comparable<MyDate> {\n    /* TODO */\n}\n\nfun compare(date1: MyDate, date2: MyDate) = date1 < date2\n",
+              "is_binary": false,
               "placeholders": [
                 {
                   "offset": 97,
@@ -91,25 +97,7 @@
             "test/tests.kt": {
               "name": "test/tests.kt",
               "text": "import org.junit.Assert\nimport org.junit.Test\nimport koans.util.toMessage\n\nclass TestComparison {\n\n    @Test fun testBefore() {\n        val first = MyDate(2014, 5, 10)\n        val second = MyDate(2014, 7, 11)\n        Assert.assertTrue(\"compareTo\".toMessage() + \": ${first} should go before ${second}\", first < second)\n    }\n\n    @Test fun testAfter() {\n        val first = MyDate(2014, 10, 20)\n        val second = MyDate(2014, 7, 11)\n        Assert.assertTrue(\"compareTo\".toMessage() + \": ${first} should go after ${second}\", first > second)\n    }\n}",
-              "placeholders": [],
-              "is_visible": false
-            }
-          }
-        }
-      ]
-    },
-    {
-      "id": 0,
-      "title": "PyCharm additional materials",
-      "task_list": [
-        {
-          "name": "PyCharm additional materials",
-          "stepic_id": 0,
-          "task_type": "edu",
-          "files": {
-            "util/src/koansTestUtil.kt": {
-              "name": "util/src/koansTestUtil.kt",
-              "text": "package koans.util\n\nfun String.toMessage() = \"The function '$this' is implemented incorrectly\"\n\nfun String.toMessageInEquals() = toMessage().inEquals()\n\nfun String.inEquals() = this + \":\" + if (mode == Mode.WEB_DEMO) \" \" else \"<br><br>\"\n\nprivate enum class Mode { WEB_DEMO, EDUCATIONAL_PLUGIN }\nprivate val mode = Mode.EDUCATIONAL_PLUGIN\n",
+              "is_binary": false,
               "placeholders": [],
               "is_visible": false
             }
@@ -120,5 +108,15 @@
   ],
   "summary": "Kotlin Koans",
   "title": "Kotlin Koans",
-  "programming_language_id": "kotlin"
+  "programming_language_id": "kotlin",
+  "version": 17,
+  "additional_files": [
+    {
+      "name": "util/src/koansTestUtil.kt",
+      "text": "package koans.util\n\nfun String.toMessage() = \"The function '$this' is implemented incorrectly\"\n\nfun String.toMessageInEquals() = toMessage().inEquals()\n\nfun String.inEquals() = this + \":\" + if (mode == Mode.WEB_DEMO) \" \" else \"<br><br>\"\n\nprivate enum class Mode { WEB_DEMO, EDUCATIONAL_PLUGIN }\nprivate val mode = Mode.EDUCATIONAL_PLUGIN\n",
+      "is_binary": false,
+      "placeholders": [],
+      "is_visible": false
+    }
+  ]
 }

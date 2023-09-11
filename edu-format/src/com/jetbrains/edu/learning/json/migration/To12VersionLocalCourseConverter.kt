@@ -16,7 +16,7 @@ class To12VersionLocalCourseConverter : JsonLocalCourseConverterBase() {
     fun convertTaskObject(taskObject: ObjectNode) {
       val mapper = ObjectMapper()
       val feedbackLink = taskObject.remove(FEEDBACK_LINK) as? ObjectNode ?:  mapper.createObjectNode()
-      val feedbackLinkType = feedbackLink.get(LINK_TYPE).asText() ?: ""
+      val feedbackLinkType = feedbackLink.get(LINK_TYPE)?.asText() ?: ""
       if (FeedbackLink.LinkType.CUSTOM.name == feedbackLinkType) {
         val customLink = feedbackLink.get(LINK).asText() ?: return
         taskObject.put(FEEDBACK_LINK, customLink)

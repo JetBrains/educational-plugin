@@ -8,17 +8,19 @@
           "name": "task1",
           "stepic_id": 0,
           "description_text": "Write task description here using markdown or html",
-          "description_format": "html",
+          "description_format": "HTML",
           "task_type": "edu",
           "files": {
             "src/Task.java": {
               "name": "src/Task.java",
               "text": "public class Task {\n  //put your task here\n}",
+              "is_binary": false,
               "placeholders": []
             },
             "test/Tests.java": {
               "name": "test/Tests.java",
-              "text": "import org.junit.Assert;\nimport org.junit.Test;\n\npublic class Tests {\n  @Test\n public void testSolution() {\n    // put your test here\n   Assert.fail(\"Tests not implemented for the task\");\n  }\n}"
+              "text": "import org.junit.Assert;\nimport org.junit.Test;\n\npublic class Tests {\n  @Test\n public void testSolution() {\n    // put your test here\n   Assert.fail(\"Tests not implemented for the task\");\n  }\n}",
+              "is_binary": false
             }
           },
               "placeholders": [],
@@ -28,17 +30,19 @@
           "name": "task2",
           "stepic_id": 0,
           "description_text": "Write task description here using markdown or html",
-          "description_format": "html",
+          "description_format": "HTML",
           "task_type": "edu",
           "files": {
             "src/Task.java": {
               "name": "src/Task.java",
               "text": "public class Task {\n  //put your task here\n}",
+              "is_binary": false,
               "placeholders": []
             },
             "test/Tests.java": {
               "name": "test/Tests.java",
               "text": "import org.junit.Assert;\nimport org.junit.Test;\n\npublic class Tests {\n  @Test\n public void testSolution() {\n    // put your test here\n   Assert.fail(\"Tests not implemented for the task\");\n  }\n}",
+              "is_binary": false,
               "placeholders": [],
               "is_visible": false
             }
@@ -54,17 +58,19 @@
           "name": "task1",
           "stepic_id": 0,
           "description_text": "Write task description here using markdown or html",
-          "description_format": "html",
+          "description_format": "HTML",
           "task_type": "edu",
           "files": {
             "src/Task.java": {
               "name": "src/Task.java",
               "text": "public class Task {\n  //put your task here\n}",
+              "is_binary": false,
               "placeholders": []
             },
             "test/Tests.java": {
               "name": "test/Tests.java",
               "text": "import org.junit.Assert;\nimport org.junit.Test;\n\npublic class Tests {\n  @Test\n public void testSolution() {\n    // put your test here\n   Assert.fail(\"Tests not implemented for the task\");\n  }\n}",
+              "is_binary": false,
               "placeholders": [],
               "is_visible": false
             }
@@ -76,5 +82,7 @@
   "summary": "Test Java Course",
   "title": "Java Course",
   "programming_language_id": "JAVA",
-  "language": "en"
+  "language": "en",
+  "version": 17,
+  "additional_files": [ ]
 }

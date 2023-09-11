@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.json.configureCourseMapper
 import com.jetbrains.edu.learning.json.getCourseMapper
-import com.jetbrains.edu.learning.json.migration.To10VersionLocalCourseConverter
+import com.jetbrains.edu.learning.json.migrate
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ID
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.UPDATE_DATE
 import com.jetbrains.edu.learning.json.mixins.LocalTaskMixin
@@ -26,7 +26,7 @@ fun createCourseFromJson(pathToJson: String, courseMode: CourseMode, isEncrypted
   val courseMapper = getCourseMapper()
   configureCourseMapper(courseMapper, isEncrypted)
   var objectNode = courseMapper.readTree(courseJson) as ObjectNode
-  objectNode = To10VersionLocalCourseConverter().convert(objectNode)
+  objectNode = migrate(objectNode)
   return courseMapper.treeToValue(objectNode, EduCourse::class.java).apply {
     this.courseMode = courseMode
   }
