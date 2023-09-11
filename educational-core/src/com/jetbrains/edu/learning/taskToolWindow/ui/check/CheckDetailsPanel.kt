@@ -67,7 +67,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
       CheckDetailsView.getInstance(project).showCheckResultDetails(checkResult.message, details)
     }
 
-    if (messagePanel.messageShortened) {
+    if (messagePanel.messageShortened || details != null) {
       linksPanel.add(ShowFullOutputAction(project, checkResult.fullMessage.xmlUnescaped).actionLink, BorderLayout.CENTER)
     }
     return messagePanel
