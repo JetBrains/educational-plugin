@@ -1,0 +1,80 @@
+{
+  "summary" : "my summary",
+  "title" : "Test Course",
+  "programming_language_id" : "TEXT",
+  "language" : "en",
+  "course_type" : "PyCharm",
+  "items" : [
+    {
+      "title" : "lesson1",
+      "task_list" : [
+        {
+          "name" : "task1",
+          "files" : {
+            "taskFile1.txt" : {
+              "name" : "taskFile1.txt",
+              "placeholders" : [ ],
+              "is_visible" : true,
+              "text" : "textual contents",
+              "is_binary" : false
+            },
+            "taskFile2.png" : {
+              "name" : "taskFile2.png",
+              "placeholders" : [ ],
+              "is_visible" : true,
+              "text" : "BiNaRy+CoNtEnTs",
+              "is_binary" : true
+            },
+            "taskFile3.asdf" : {
+              "name" : "taskFile3.asdf",
+              "placeholders" : [ ],
+              "is_visible" : true,
+              "text" : "textual contents",
+              "is_binary" : false
+            },
+            "taskFile4.qwerty" : {
+              "name" : "taskFile4.qwerty",
+              "placeholders" : [ ],
+              "is_visible" : true,
+              "text" : "BiNaRy+CoNtEnTs",
+              "is_binary" : true
+            }
+          },
+          "description_text" : "solve task",
+          "description_format" : "MD",
+          "task_type" : "edu"
+        }
+      ],
+      "type" : "lesson"
+    }
+  ],
+  "additional_files" : [
+    {
+      "name" : "additionalFile1.txt",
+      "text" : "textual contents",
+      "is_binary" : false
+    },
+    {
+      "name" : "additionalFile2.png",
+      "text" : "BiNaRy+CoNtEnTs",
+      "is_binary" : true
+    },
+    {
+      "name" : "additionalFile3.db",
+      "text" : "BiNaRy+CoNtEnTs",
+      "is_binary" : true
+    },
+    {
+      "name" : "additionalFile4.json",
+      "text" : "textual contents",
+      "is_binary" : false
+    }
+  ],
+  "authors" : [
+    "EduTools Dev",
+    "EduTools QA",
+    "EduTools"
+  ],
+  "version" : 17,
+  "edu_plugin_version" : "yyyy.2-yyyy.1-TEST"
+}
