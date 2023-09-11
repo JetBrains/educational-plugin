@@ -30,7 +30,7 @@ class JCEFToolWindow(project: Project) : TaskToolWindow(project) {
     taskInfoJBCefBrowser.jbCefClient.addLifeSpanHandler(taskInfoLifeSpanHandler, taskInfoJBCefBrowser.cefBrowser)
 
     taskSpecificJBCefBrowser.apply {
-      setProperty(JBCefBrowser.Properties.FOCUS_ON_NAVIGATION, true)
+      setProperty(JBCefBrowser.Properties.FOCUS_ON_NAVIGATION, false)
 
       val taskSpecificFocusHandlerAdapter = object : CefFocusHandlerAdapter() {
         override fun onTakeFocus(browser: CefBrowser?, next: Boolean) {
