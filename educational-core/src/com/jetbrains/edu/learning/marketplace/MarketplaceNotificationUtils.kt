@@ -36,6 +36,16 @@ object MarketplaceNotificationUtils {
     notification.notify(null)
   }
 
+  fun showTestUserDataNotification(project: Project, text: String) {
+    val notification = Notification(
+      "JetBrains Academy",
+      "JBa User Data",
+      text,
+      NotificationType.INFORMATION
+    )
+    notification.notify(project)
+  }
+
   @Suppress("DialogTitleCapitalization")
   fun showInstallMarketplacePluginNotification(notificationTitle: String, notificationType: NotificationType) {
     val notification = Notification(
