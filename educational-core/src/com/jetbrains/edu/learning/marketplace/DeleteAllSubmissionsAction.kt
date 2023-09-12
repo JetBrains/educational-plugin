@@ -28,7 +28,13 @@ class DeleteAllSubmissionsAction : AnAction(EduCoreBundle.lazyMessage("marketpla
   }
 
   override fun actionPerformed(e: AnActionEvent) {
-    val project = e.project ?: return
+    e.project ?: return
+
+    Messages.showMessageDialog(
+      "Test message, just press ok",
+      "Debug",
+      Messages.getInformationIcon()
+    )
 
     val jbAccountInfoService = try {
       JBAccountInfoService.getInstance()
@@ -36,6 +42,7 @@ class DeleteAllSubmissionsAction : AnAction(EduCoreBundle.lazyMessage("marketpla
     catch (e: Exception) {
       null
     }
+
     val res = jbAccountInfoService?.userData
     if (res == null) {
       Messages.showMessageDialog(

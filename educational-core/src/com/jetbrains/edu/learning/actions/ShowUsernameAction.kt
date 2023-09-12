@@ -13,6 +13,12 @@ class ShowUsernameAction : DumbAwareAction(EduCoreBundle.message("show.username"
   }
 
   override fun actionPerformed(e: AnActionEvent) {
+    Messages.showMessageDialog(
+      "Test message, just press ok",
+      "Debug",
+      Messages.getInformationIcon()
+    )
+
     val res = JBAccountInfoService.getInstance()?.userData
     if (res == null) {
       Messages.showMessageDialog(
