@@ -21,9 +21,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.util.io.ZipUtil
 import com.jetbrains.edu.coursecreator.AdditionalFilesUtils
-import com.jetbrains.edu.coursecreator.CCUtils.generateArchiveFolder
 import com.jetbrains.edu.coursecreator.CCUtils.saveOpenedDocuments
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
@@ -42,8 +40,10 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.TASK_CONFIG
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
-import java.io.File
-import java.io.IOException
+import java.io.*
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
+import kotlin.text.Charsets.UTF_8
 
 class CourseArchiveCreator(
   private val project: Project,
@@ -59,8 +59,6 @@ class CourseArchiveCreator(
     }
     course?.updateEnvironmentSettings(project)
     val courseCopy = course?.copy() ?: return EduCoreBundle.message("error.unable.to.obtain.course.for.project")
-    val jsonFolder = generateArchiveFolder(project)
-                     ?: return EduCoreBundle.message("error.failed.to.generate.course.archive")
 
     try {
       prepareCourse(courseCopy)
@@ -77,15 +75,29 @@ class CourseArchiveCreator(
       return e.message
     }
     return try {
-      val json = generateJson(jsonFolder, courseCopy)
-      VirtualFileManager.getInstance().refreshWithoutFileWatcher(false)
-      ZipUtil.compressFile(json, File(location))
+      ZipOutputStream(FileOutputStream(location)).use { outputStream ->
+        outputStream.withNewEntry(COURSE_META_FILE) {
+          val writer = OutputStreamWriter(outputStream, UTF_8)
+          generateJson(writer, courseCopy)
+        }
+      }
       synchronize(project)
       null
     }
     catch (e: IOException) {
       LOG.error("Failed to create course archive", e)
-      EduCoreBundle.message("error.failed.to.write")
+      EduCoreBundle.message("error.failed.to.generate.course.archive")
+    }
+  }
+
+  @Throws(IOException::class)
+  private fun ZipOutputStream.withNewEntry(name: String, action: () -> Unit) {
+    try {
+      putNextEntry(ZipEntry(name))
+      action()
+    }
+    finally {
+      closeEntry()
     }
   }
 
@@ -103,12 +115,9 @@ class CourseArchiveCreator(
     ProjectView.getInstance(project).refresh()
   }
 
-  private fun generateJson(parentDir: VirtualFile, course: Course): File {
+  private fun generateJson(out: Writer, course: Course) {
     val mapper = getMapper(course)
-
-    val jsonFile = File(File(parentDir.path), COURSE_META_FILE)
-    mapper.writer(printer).writeValue(jsonFile, course)
-    return jsonFile
+    mapper.writer(printer).writeValue(out, course)
   }
 
   @VisibleForTesting
@@ -119,6 +128,7 @@ class CourseArchiveCreator(
     val mapper = JsonMapper.builder()
       .addModule(module)
       .addModule(EncryptionModule(aesKey))
+      .configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false)
       .commonMapperSetup(course)
       .setDateFormat()
       .build()

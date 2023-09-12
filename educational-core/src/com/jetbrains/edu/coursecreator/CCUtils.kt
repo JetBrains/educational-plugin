@@ -109,25 +109,6 @@ object CCUtils {
     }
   }
 
-  fun generateArchiveFolder(project: Project): VirtualFile? {
-    val generatedRoot = getGeneratedFilesFolder(project) ?: return null
-
-    val name = "course"
-    var folder = generatedRoot.findChild(name)
-    //need to delete old folder
-    runWriteAction {
-      try {
-        folder?.delete(CCUtils::class.java)
-        folder = generatedRoot.createChildDirectory(null, name)
-      }
-      catch (e: IOException) {
-        LOG.info("Failed to generate folder $name", e)
-      }
-    }
-    folder?.refresh(false, true)
-    return folder
-  }
-
   fun saveOpenedDocuments(project: Project) {
     val openDocuments = FileEditorManager.getInstance(project).openFiles.mapNotNull { FileDocumentManager.getInstance().getDocument(it) }
     openDocuments.forEach { FileDocumentManager.getInstance().saveDocument(it) }
