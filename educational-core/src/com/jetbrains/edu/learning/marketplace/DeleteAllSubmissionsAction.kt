@@ -28,35 +28,22 @@ class DeleteAllSubmissionsAction : AnAction(EduCoreBundle.lazyMessage("marketpla
   }
 
   override fun actionPerformed(e: AnActionEvent) {
-    e.project ?: return
+    val project = e.project ?: return
 
-    Messages.showMessageDialog(
-      "Test message, just press ok",
-      "Debug",
-      Messages.getInformationIcon()
-    )
+    val jbAccountInfoService = JBAccountInfoService.getInstance()
+    val text = if (jbAccountInfoService == null) {
+      "JBAccount info service instance is null"
+    }
+      else {
+        val userData = jbAccountInfoService.userData
+        if (userData == null) {
+        "UserData is null, service instance: ${JBAccountInfoService.getInstance()}"
+      } else {
+        "Current logged in user: ${userData.loginName}, ${userData.id}"
+      }
+    }
 
-    val jbAccountInfoService = try {
-      JBAccountInfoService.getInstance()
-    }
-    catch (e: Exception) {
-      null
-    }
-
-    val res = jbAccountInfoService?.userData
-    if (res == null) {
-      Messages.showMessageDialog(
-        "UserData is null, service instance: $jbAccountInfoService",
-        "Debug",
-        Messages.getInformationIcon()
-      )
-    } else {
-      Messages.showMessageDialog(
-        "Current logged in user: " + res.loginName + ", " + res.id,
-        "User Info",
-        Messages.getInformationIcon()
-      )
-    }
+    MarketplaceNotificationUtils.showTestUserDataNotification(project, text)
   }
 
   private fun doDeleteSubmissions(project: Project, userName: String) {
