@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.compatibility
 import com.intellij.util.PlatformUtils.*
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.courseFormat.PluginInfo
+import com.jetbrains.edu.learning.courseFormat.PluginInfos
 import javax.swing.Icon
 
 class JsCourseCompatibilityProvider : CourseCompatibilityProvider {
@@ -10,9 +11,9 @@ class JsCourseCompatibilityProvider : CourseCompatibilityProvider {
     @Suppress("DEPRECATION", "UnstableApiUsage")
     return if (isIdeaUltimate() || isWebStorm() || isPyCharmPro() || isGoIde()) {
       listOf(
-        PluginInfo.JAVA_SCRIPT,
-        PluginInfo.JAVA_SCRIPT_DEBUGGER,
-        PluginInfo.NODE_JS
+        PluginInfos.JAVA_SCRIPT,
+        PluginInfos.JAVA_SCRIPT_DEBUGGER,
+        PluginInfos.NODE_JS
       )
     } else {
       null

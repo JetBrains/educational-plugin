@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.compatibility
 import com.intellij.util.PlatformUtils
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.courseFormat.PluginInfo
+import com.jetbrains.edu.learning.courseFormat.PluginInfos
 import com.jetbrains.edu.learning.isFeatureEnabled
 
 class SqlGradleCourseCompatibilityProvider : CourseCompatibilityProvider {
@@ -11,10 +12,10 @@ class SqlGradleCourseCompatibilityProvider : CourseCompatibilityProvider {
     @Suppress("UnstableApiUsage")
     if (!PlatformUtils.isCommercialEdition()) return null
     return listOf(
-      PluginInfo.SQL,
-      PluginInfo.JAVA,
-      PluginInfo.GRADLE,
-      PluginInfo.JUNIT
+      PluginInfos.SQL,
+      PluginInfos.JAVA,
+      PluginInfos.GRADLE,
+      PluginInfos.JUNIT
     )
   }
 

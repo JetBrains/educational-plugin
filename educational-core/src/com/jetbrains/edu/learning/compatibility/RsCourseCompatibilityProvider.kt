@@ -2,14 +2,15 @@ package com.jetbrains.edu.learning.compatibility
 
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.courseFormat.PluginInfo
+import com.jetbrains.edu.learning.courseFormat.PluginInfos
 import javax.swing.Icon
 
 class RsCourseCompatibilityProvider : CourseCompatibilityProvider {
 
   override fun requiredPlugins(): List<PluginInfo> {
     return listOf(
-      PluginInfo.RUST,
-      PluginInfo.TOML
+      PluginInfos.RUST,
+      PluginInfos.TOML
     )
   }
 
