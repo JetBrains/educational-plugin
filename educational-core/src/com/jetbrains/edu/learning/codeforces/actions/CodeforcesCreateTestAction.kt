@@ -6,7 +6,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
-import com.intellij.openapi.fileEditor.impl.EditorWindow
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.InputValidatorEx
@@ -70,7 +69,9 @@ class CodeforcesCreateTestAction : DumbAwareAction() {
     if (fileEditorManagerEx.isInSplitter) {
       val windows = fileEditorManagerEx.splitters.getWindows()
       fileEditorManagerEx.apply {
+        @Suppress("UnstableApiUsage")
         openFile(outputFile, windows[1])
+        @Suppress("UnstableApiUsage")
         openFile(inputFile, windows[0])
       }
     }
