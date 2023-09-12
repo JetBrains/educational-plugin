@@ -55,6 +55,9 @@ val clionSandbox = "${project.buildDir.absolutePath}/clion-sandbox"
 val goLandSandbox = "${project.buildDir.absolutePath}/goland-sandbox"
 val phpStormSandbox = "${project.buildDir.absolutePath}/phpstorm-sandbox"
 
+// BACKCOMPAT: 2023.1
+val isAtLeast232 = environmentName.toInt() >= 232
+
 val pythonProPlugin: String by project
 val pythonCommunityPlugin: String by project
 
@@ -327,7 +330,9 @@ project(":") {
       // but it helps a lot while developing features related to PSI
       psiViewerPlugin
     )
-    pluginsList += rustPlugins
+    if (isIdeaIDE || isClionIDE) {
+      pluginsList += rustPlugins
+    }
     pluginsList += pythonPlugins
     pluginsList += shellScriptPlugin
     if (isJvmCenteredIDE) {
@@ -795,6 +800,9 @@ project(":Edu-JavaScript") {
 
 project(":Edu-Rust") {
   intellij {
+    if (isAtLeast232 && !isIdeaIDE && !isClionIDE) {
+      version.set(ideaVersion)
+    }
     plugins.set(rustPlugins)
   }
 

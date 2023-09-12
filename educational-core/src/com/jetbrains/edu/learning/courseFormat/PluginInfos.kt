@@ -18,7 +18,7 @@ object PluginInfos {
   val JAVA_SCRIPT_DEBUGGER: PluginInfo = PluginInfo("JavaScriptDebugger", "JavaScript Debugger")
   val NODE_JS: PluginInfo = PluginInfo("NodeJS", "NodeJS")
 
-  val RUST: PluginInfo = PluginInfo("org.rust.lang", "Rust")
+  val RUST: PluginInfo = PluginInfo(RUST_PLUGIN_ID, "Rust")
   val TOML: PluginInfo = PluginInfo("org.toml.lang", "Toml")
 
   val CATCH: PluginInfo = PluginInfo("org.jetbrains.plugins.clion.test.catch", "Catch")

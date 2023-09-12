@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.PluginInfos
 import com.jetbrains.edu.learning.pluginVersion
 import com.jetbrains.edu.rust.checker.RsTaskCheckerProvider
 import org.rust.cargo.CargoConstants
@@ -52,7 +53,7 @@ class RsConfigurator : EduConfigurator<RsProjectSettings> {
 
   override val isEnabled: Boolean
     get() {
-      val rustPluginVersion = pluginVersion("org.rust.lang") ?: return false
+      val rustPluginVersion = pluginVersion(PluginInfos.RUST.stringId) ?: return false
       return VersionComparatorUtil.compare(rustPluginVersion, "0.4.194") >= 0
     }
 
