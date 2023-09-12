@@ -5,11 +5,17 @@ import com.jetbrains.edu.jvm.courseGeneration.JvmCourseGenerationTestBase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
+import com.jetbrains.edu.sql.jvm.gradle.SqlGradleStartupActivity
 import com.jetbrains.edu.sql.jvm.gradle.SqlTestLanguage
 import com.jetbrains.edu.sql.jvm.gradle.sqlCourse
 import com.jetbrains.edu.sql.jvm.gradle.sqlTestLanguage
 
 class SqlGradleCourseBuilderTest : JvmCourseGenerationTestBase() {
+
+  override fun setUp() {
+    super.setUp()
+    SqlGradleStartupActivity.disable(testRootDisposable)
+  }
 
   fun `test new educator course with java tests`() {
     val newCourse = newCourse(SqlLanguage.INSTANCE)

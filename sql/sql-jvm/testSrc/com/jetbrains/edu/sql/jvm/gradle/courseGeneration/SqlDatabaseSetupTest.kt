@@ -162,7 +162,7 @@ class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
 
     val tree = prepareDatabaseView()
 
-    PlatformTestUtil.assertTreeEqual(tree, """
+    checkDatabaseTree(tree, """
       -Root Group
        -Group (lesson1) inside Root Group
         -task1: DSN
@@ -173,18 +173,12 @@ class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
           +Database Objects (host: database DB)
          +Server Objects (host: root <unnamed>)
         -task2: DSN
-         -DB: database
-          PUBLIC: schema
-         +Server Objects (host: root <unnamed>)
+         $EMPTY_DATA_SOURCE_PLACEHOLDER
        -Group (lesson2) inside Root Group
         -task1 (1): DSN
-         -DB: database
-          PUBLIC: schema
-         +Server Objects (host: root <unnamed>)
+         $EMPTY_DATA_SOURCE_PLACEHOLDER
         -task3: DSN
-         -DB: database
-          PUBLIC: schema
-         +Server Objects (host: root <unnamed>)
+         $EMPTY_DATA_SOURCE_PLACEHOLDER
         -task4: DSN
          -DB: database
           -PUBLIC: schema
@@ -195,33 +189,21 @@ class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
        -Group (section1) inside Root Group
         -Group (section1/lesson3) inside Group (section1) inside Root Group
          -task5: DSN
-          -DB: database
-           PUBLIC: schema
-          +Server Objects (host: root <unnamed>)
+          $EMPTY_DATA_SOURCE_PLACEHOLDER
          -task6: DSN
-          -DB: database
-           PUBLIC: schema
-          +Server Objects (host: root <unnamed>)
+          $EMPTY_DATA_SOURCE_PLACEHOLDER
         -Group (section1/lesson4) inside Group (section1) inside Root Group
          -task7: DSN
-          -DB: database
-           PUBLIC: schema
-          +Server Objects (host: root <unnamed>)
+          $EMPTY_DATA_SOURCE_PLACEHOLDER
          -task8: DSN
-          -DB: database
-           PUBLIC: schema
-          +Server Objects (host: root <unnamed>)
+          $EMPTY_DATA_SOURCE_PLACEHOLDER
        -Group (section 2\) inside Root Group
         -Group (section 2\/les s on5) inside Group (section 2\) inside Root Group
          -/task:1:0/: DSN
-          -DB: database
-           PUBLIC: schema
-          +Server Objects (host: root <unnamed>)
+          $EMPTY_DATA_SOURCE_PLACEHOLDER
          -task9: DSN
-          -DB: database
-           PUBLIC: schema
-          +Server Objects (host: root <unnamed>)
-    """.trimIndent())
+          $EMPTY_DATA_SOURCE_PLACEHOLDER
+    """)
   }
 
   @Suppress("SqlDialectInspection", "SqlNoDataSourceInspection")

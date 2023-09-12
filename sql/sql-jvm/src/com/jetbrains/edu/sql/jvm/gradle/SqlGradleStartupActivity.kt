@@ -2,29 +2,33 @@ package com.jetbrains.edu.sql.jvm.gradle
 
 import com.intellij.database.dataSource.LocalDataSource
 import com.intellij.database.dataSource.validation.DatabaseDriverValidator
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.sql.dialects.SqlDialectMappings
 import com.intellij.sql.dialects.h2.H2Dialect
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import org.jetbrains.annotations.TestOnly
 
 class SqlGradleStartupActivity : StartupActivity.DumbAware {
 
   override fun runActivity(project: Project) {
+    if (disable) return
     val course = project.course ?: return
     // Setup data sources only for learners for now
     if (!course.isStudy) return
     if (course.configurator !is SqlGradleConfigurator) return
 
     val initializationState = SqlInitializationState.getInstance(project)
-    if (!initializationState.dataSourceInitialized) {
+    if (!initializationState.dataSourceInitialized && !disable) {
       @Suppress("UnstableApiUsage")
       val dataSources = invokeAndWaitIfNeeded {
         // Dependency on concrete database kind/SQL dialect
@@ -54,5 +58,19 @@ class SqlGradleStartupActivity : StartupActivity.DumbAware {
         downloadTask.run(indicator)
       }
     }.queue()
+  }
+
+  companion object {
+
+    @Volatile
+    private var disable = false
+
+    @TestOnly
+    fun disable(disposable: Disposable) {
+      disable = true
+      Disposer.register(disposable) {
+        disable = false
+      }
+    }
   }
 }

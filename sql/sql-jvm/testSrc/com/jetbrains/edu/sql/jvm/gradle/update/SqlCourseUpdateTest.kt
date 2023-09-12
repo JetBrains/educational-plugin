@@ -107,23 +107,17 @@ class SqlCourseUpdateTest : SqlCourseGenerationTestBase() {
     makeCourseUpdate(course, courseFromServer)
 
     val tree = prepareDatabaseView()
-    PlatformTestUtil.assertTreeEqual(tree, """
+    checkDatabaseTree(tree, """
       -Root Group
        -Group (lesson1) inside Root Group
         -task1: DSN
-         -DB: database
-          PUBLIC: schema
-         +Server Objects (host: root <unnamed>)
+         $EMPTY_DATA_SOURCE_PLACEHOLDER
         -task2: DSN
-         -DB: database
-          PUBLIC: schema
-         +Server Objects (host: root <unnamed>)
+         $EMPTY_DATA_SOURCE_PLACEHOLDER
        -Group (lesson2) inside Root Group
         -task1 (1): DSN
-         -DB: database
-          PUBLIC: schema
-         +Server Objects (host: root <unnamed>)   
-    """.trimIndent())
+         $EMPTY_DATA_SOURCE_PLACEHOLDER   
+    """)
   }
 
   private fun makeCourseUpdate(course: EduCourse, courseFromServer: EduCourse) {

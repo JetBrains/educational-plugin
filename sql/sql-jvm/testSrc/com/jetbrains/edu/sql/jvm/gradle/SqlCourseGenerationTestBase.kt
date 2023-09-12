@@ -13,8 +13,10 @@ import com.intellij.database.util.DasUtil
 import com.intellij.database.util.TreePattern
 import com.intellij.database.util.TreePatternUtils
 import com.intellij.database.view.DatabaseView
+import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.BuildNumber
 import com.intellij.openapi.vfs.newvfs.RefreshQueueImpl
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.ui.tree.TreeVisitor
@@ -122,7 +124,36 @@ abstract class SqlCourseGenerationTestBase : JvmCourseGenerationTestBase() {
     return tree
   }
 
+  protected fun checkDatabaseTree(tree: JTree, expectedWithPlaceholders: String) {
+    val emptyNodeRepresentation = if (ApplicationInfo.getInstance().build < BUILD_232_9559) {
+      """
+        $1-DB: database
+        $1 PUBLIC: schema
+        $1+Server Objects (host: root <unnamed>)
+      """.trimIndent()
+    }
+    else {
+      """
+        $1-DB: database
+        $1 PUBLIC: schema
+        $1 +Database Objects (host: database DB)
+        $1+Server Objects (host: root <unnamed>)
+      """.trimIndent()
+    }
+
+    val expected = expectedWithPlaceholders.trimIndent()
+      .replace("""(\h*)$EMPTY_DATA_SOURCE_PLACEHOLDER""".toRegex(), emptyNodeRepresentation)
+    PlatformTestUtil.assertTreeEqual(tree, expected)
+  }
+
   companion object {
+
+    // BACKCOMPAT: 2023.1
+    private val BUILD_232_9559 = BuildNumber.fromString("232.9559")!!
+
+    @JvmStatic
+    protected val EMPTY_DATA_SOURCE_PLACEHOLDER = "%EMPTY_DATA_SOURCE_PLACEHOLDER%"
+
     private val promiseMakeVisible: Method by lazy {
       val clazz = TreeUtil::class.java
       val promiseMakeVisible = clazz.getDeclaredMethod("promiseMakeVisible", JTree::class.java, TreeVisitor::class.java, AsyncPromise::class.java)
