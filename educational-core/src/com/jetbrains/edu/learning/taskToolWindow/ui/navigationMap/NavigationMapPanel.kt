@@ -156,12 +156,13 @@ class NavigationMapPanel : JPanel(BorderLayout()) {
   }
 }
 
-class NavigationMapAction(val task: Task, private val currentTask: Task) : DumbAwareAction() {
+class NavigationMapAction(val task: Task, private val currentTask: Task, private val index: Int) : DumbAwareAction() {
 
   var isSelected = false
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
+    if (isSelected) return
     NavigationUtils.navigateToTask(project, task, currentTask)
   }
 
@@ -178,7 +179,7 @@ class NavigationMapAction(val task: Task, private val currentTask: Task) : DumbA
       EducationalCoreIcons.TheoryTask
     }
     else {
-      val labeledIcon = LabeledIcon(EmptyIcon(), task.index.toString(), "")
+      val labeledIcon = LabeledIcon(EmptyIcon(), index.toString(), "")
       labeledIcon.iconTextGap = 2
       labeledIcon
     }

@@ -23,6 +23,7 @@ import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.stepik.hyperskill.getTopPanelForProblem
 import com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsService
 import com.jetbrains.edu.learning.submissions.SubmissionsTab
@@ -103,7 +104,8 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
     if (newNav) {
       navigationPanel as NavigationMapPanel
       navigationPanel.setHeader(task.lesson.presentableName)
-      val actions = task.lesson.taskList.map { NavigationMapAction(it, task) }
+      var index = 1
+      val actions = task.lesson.taskList.map { NavigationMapAction(it, task, if (it is TheoryTask) index else index++) }
       navigationPanel.replaceActions(actions)
 
       val course = StudyTaskManager.getInstance(project).course

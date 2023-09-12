@@ -253,7 +253,13 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
 
     val stepSources = connector.getStepsForTopic(topicId)
       .onError { return Err(it) }
-      .filter { it.isRecommended || it.id == id }
+      .filter { it.isRecommended || it.id == id }.toMutableList()
+
+    val theoryTask = stepSources.find { it.block?.name == HyperskillTaskType.TEXT.type }
+    if (theoryTask != null) {
+      stepSources.remove(theoryTask)
+      stepSources.add(0, theoryTask)
+    }
 
     val theoryTitle = stepSources.find { it.block?.name == HyperskillTaskType.TEXT.type }?.title
     if (theoryTitle != null) {
