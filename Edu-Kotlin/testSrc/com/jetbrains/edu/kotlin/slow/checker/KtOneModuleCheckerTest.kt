@@ -160,7 +160,7 @@ class KtOneModuleCheckerTest : JdkCheckerTestBase() {
     @Language("Groovy")
     private const val ONE_MODULE_BUILD_GRADLE = """
         buildscript {
-            ext.kotlin_version = '1.4.0'
+            ext.kotlin_version = '1.6.20'
             repositories {
                 mavenCentral()
             }
@@ -168,7 +168,7 @@ class KtOneModuleCheckerTest : JdkCheckerTestBase() {
                 classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version"
             }
         }
-  
+
         def printOutput(def output) {
             return tasks.create("printOutput") {
                 for (line in output.toString().readLines()) {
@@ -184,12 +184,12 @@ class KtOneModuleCheckerTest : JdkCheckerTestBase() {
                 jcenter()
             }
             dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${'$'}kotlin_version"
-  
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${'$'}kotlin_version"
+
                 // kotlin.test
-                compile "org.jetbrains.kotlin:kotlin-test"
-                compile "org.jetbrains.kotlin:kotlin-test-junit"
-                compile "junit:junit:4.12"
+                implementation "org.jetbrains.kotlin:kotlin-test"
+                implementation "org.jetbrains.kotlin:kotlin-test-junit"
+                implementation "junit:junit:4.12"
             }
             compileKotlin {
                 kotlinOptions.jvmTarget = "1.8"
@@ -201,9 +201,9 @@ class KtOneModuleCheckerTest : JdkCheckerTestBase() {
         apply plugin: 'application'
         sourceCompatibility = 1.8
         dependencies {
-            testCompile group: 'junit', name: 'junit', version: '4.12'
-            testCompile "org.jetbrains.kotlin:kotlin-test:${'$'}kotlin_version"
-            testCompile "org.jetbrains.kotlin:kotlin-test-junit:${'$'}kotlin_version"
+            testImplementation group: 'junit', name: 'junit', version: '4.12'
+            testImplementation "org.jetbrains.kotlin:kotlin-test:${'$'}kotlin_version"
+            testImplementation "org.jetbrains.kotlin:kotlin-test-junit:${'$'}kotlin_version"
         }
         def srcList = []
         def testList = []
@@ -238,11 +238,11 @@ class KtOneModuleCheckerTest : JdkCheckerTestBase() {
                 }
             }
         }
-  
+
         static def isTaskDir(File dir) {
             return new File(dir, "src").exists()
         }
-  
+
         mainClassName = project.hasProperty("mainClass") ? project.getProperty("mainClass") : ""
         test {
             outputs.upToDateWhen { false }

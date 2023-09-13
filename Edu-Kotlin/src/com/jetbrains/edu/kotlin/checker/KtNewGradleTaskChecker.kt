@@ -32,6 +32,10 @@ class KtNewGradleTaskChecker(task: EduTask, envChecker: EnvironmentChecker, proj
     }
 
     val configuration = testConfigurations.single().configuration as? GradleRunConfiguration ?: return emptyList()
+    if (configuration.settings.taskNames != listOf(":test")) {
+      LOG.warn("Found configuration should execute `:test` command instead of `${configuration.settings.taskNames.joinToString(" ")}`")
+      return emptyList()
+    }
 
     val testDirs = task.findTestDirs(project)
     check(testDirs.isNotEmpty()) {
@@ -50,7 +54,7 @@ class KtNewGradleTaskChecker(task: EduTask, envChecker: EnvironmentChecker, proj
       }
     }
 
-    configuration.settings.scriptParameters = testClasses.joinToString(" ") { "--tests $it" }
+    configuration.settings.taskNames = configuration.settings.taskNames + "--tests" + testClasses.map { "\"$it\""  }
     return testConfigurations
   }
 }
