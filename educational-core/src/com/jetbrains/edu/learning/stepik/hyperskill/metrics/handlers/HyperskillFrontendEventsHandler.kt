@@ -9,7 +9,7 @@ object HyperskillFrontendEventsHandler : HyperskillEventsHandler<HyperskillFront
   override val pendingEvents: List<HyperskillFrontendEvent>
     get() = HyperskillMetricsService.getInstance().allFrontendEvents(true)
 
-  override fun sendEvents(events: List<HyperskillFrontendEvent>): Result<List<HyperskillFrontendEvent>, String> {
+  override fun sendEvents(events: List<HyperskillFrontendEvent>): Result<Any, String> {
     return HyperskillConnector.getInstance().sendFrontendEvents(events)
   }
 

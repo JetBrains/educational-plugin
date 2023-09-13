@@ -180,7 +180,7 @@ fun <T> Call<T>.executeParsingErrors(omitErrors: Boolean = false): Result<Respon
   log(error, "Code ${response.code()}", omitErrors)
 
   return when (response.code()) {
-    HTTP_OK, HTTP_CREATED -> Ok(response) // 200, 201
+    HTTP_OK, HTTP_CREATED, HTTP_NO_CONTENT -> Ok(response) // 200, 201, 204
     HTTP_UNAVAILABLE, HTTP_BAD_GATEWAY ->
       Err("${EduCoreBundle.message("error.service.maintenance")}\n\n$error") // 502, 503
     in HTTP_INTERNAL_ERROR..HTTP_VERSION ->

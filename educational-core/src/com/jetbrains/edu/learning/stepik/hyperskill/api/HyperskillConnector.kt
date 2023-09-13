@@ -291,12 +291,12 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
     return withTokenRefreshIfFailed { hyperskillEndpoints.websocket().executeAndExtractFromBody() }
   }
 
-  fun sendFrontendEvents(events: List<HyperskillFrontendEvent>): Result<List<HyperskillFrontendEvent>, String> {
-    return withTokenRefreshIfFailed { hyperskillEndpoints.sendFrontendEvents(events).executeAndExtractFromBody() }.map { it.events }
+  fun sendFrontendEvents(events: List<HyperskillFrontendEvent>): Result<Any, String> {
+    return withTokenRefreshIfFailed { hyperskillEndpoints.sendFrontendEvents(events).executeParsingErrors(true) }
   }
 
-  fun sendTimeSpentEvents(events: List<HyperskillTimeSpentEvent>): Result<List<HyperskillTimeSpentEvent>, String> {
-    return withTokenRefreshIfFailed { hyperskillEndpoints.sendTimeSpentEvents(events).executeAndExtractFromBody() }.map { it.events }
+  fun sendTimeSpentEvents(events: List<HyperskillTimeSpentEvent>): Result<Any, String> {
+    return withTokenRefreshIfFailed { hyperskillEndpoints.sendTimeSpentEvents(events).executeParsingErrors() }
   }
 
   private fun <T> Call<T>.executeAndExtractFromBody(): Result<T, String> {

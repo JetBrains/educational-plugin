@@ -104,7 +104,6 @@ open class HyperskillMetricsService : PersistentStateComponent<HyperskillMetrics
     return snapshot
   }
 
-  @VisibleForTesting
   fun allTimeSpentEvents(reset: Boolean): List<HyperskillTimeSpentEvent> {
     return pendingTimeSpentEvents(reset).map {
       HyperskillTimeSpentEvent().apply {

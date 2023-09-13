@@ -58,8 +58,8 @@ interface HyperskillEndpoints {
   fun websocket(): Call<WebSocketConfiguration>
 
   @POST("/api/frontend-events")
-  fun sendFrontendEvents(@Body events: List<HyperskillFrontendEvent>): Call<HyperskillFrontendEventList>
+  fun sendFrontendEvents(@Body events: List<HyperskillFrontendEvent>): Call<Any>
 
   @POST("/api/time-spent-events")
-  fun sendTimeSpentEvents(@Body events: List<HyperskillTimeSpentEvent>): Call<HyperskillTimeSpentEventList>
+  fun sendTimeSpentEvents(@Body events: List<HyperskillTimeSpentEvent>): Call<Any>
 }

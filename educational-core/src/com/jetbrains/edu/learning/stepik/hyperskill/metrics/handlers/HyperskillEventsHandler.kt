@@ -5,7 +5,7 @@ import com.jetbrains.edu.learning.Result
 interface HyperskillEventsHandler<Event> {
   val pendingEvents: List<Event>
 
-  fun sendEvents(events: List<Event>): Result<List<Event>, String>
+  fun sendEvents(events: List<Event>): Result<Any, String>
 
   fun addPendingEvents(events: List<Event>)
 }

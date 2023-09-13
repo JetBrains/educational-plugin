@@ -13,7 +13,6 @@ import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.isUnitTestMode
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.metrics.handlers.HyperskillEventsHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.metrics.handlers.HyperskillFrontendEventsHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.metrics.handlers.HyperskillTimeSpentEventsHandler
@@ -56,10 +55,9 @@ class HyperskillMetricsScheduler : AppLifecycleListener, DynamicPluginListener {
       for (eventsChunk in pendingEvents.chunked(EVENTS_PER_REQUEST)) {
         when (val res = eventsHandler.sendEvents(eventsChunk)) {
           is Ok -> {
-            val sentEvents = res.value
-            LOG.info("Successfully sent ${sentEvents.size} events ($eventsHandlerName)")
+            LOG.info("Successfully sent ${eventsChunk.size} events ($eventsHandlerName)")
             if (LOG.isDebugEnabled) { // check debug level so as not to serialize events if not needed
-              LOG.debug("Events (${eventsHandlerName})=${HyperskillConnector.getInstance().objectMapper.writeValueAsString(sentEvents)}")
+              LOG.debug("Events (${eventsHandlerName})=${eventsChunk.map { it }}")
             }
           }
           is Err -> {

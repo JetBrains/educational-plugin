@@ -9,7 +9,7 @@ object HyperskillTimeSpentEventsHandler : HyperskillEventsHandler<HyperskillTime
   override val pendingEvents: List<HyperskillTimeSpentEvent>
     get() = HyperskillMetricsService.getInstance().allTimeSpentEvents(reset = true)
 
-  override fun sendEvents(events: List<HyperskillTimeSpentEvent>): Result<List<HyperskillTimeSpentEvent>, String> =
+  override fun sendEvents(events: List<HyperskillTimeSpentEvent>): Result<Any, String> =
     HyperskillConnector.getInstance().sendTimeSpentEvents(events)
 
   override fun addPendingEvents(events: List<HyperskillTimeSpentEvent>) {

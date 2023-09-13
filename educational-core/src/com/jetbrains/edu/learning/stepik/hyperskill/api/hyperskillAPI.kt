@@ -229,6 +229,11 @@ class HyperskillFrontendEvent {
 
   @JsonProperty(CONTEXT)
   var context: HyperskillFrontendEventContext = HyperskillFrontendEventContext()
+
+  override fun toString(): String {
+    return "HyperskillFrontendEvent(action=$action, route='$route', clientTime=$clientTime, context=$context)"
+  }
+
 }
 
 enum class HyperskillFrontendEventType {
@@ -249,6 +254,10 @@ class HyperskillTimeSpentEvent {
 
   @JsonProperty(DURATION)
   var duration: Double = 0.0
+
+  override fun toString(): String {
+    return "HyperskillTimeSpentEvent(step=$step, duration=$duration)"
+  }
 }
 
 class HyperskillFrontendEventContext {
