@@ -65,13 +65,15 @@ class KtOneModuleCheckerTest : JdkCheckerTestBase() {
                   <option name="executionName" />
                   <option name="externalProjectPath" value="${'$'}PROJECT_DIR${'$'}" />
                   <option name="externalSystemIdString" value="GRADLE" />
-                  <option name="scriptParameters" value="--tests &quot;CustomTests.test&quot;" />
+                  <option name="scriptParameters" value="" />
                   <option name="taskDescriptions">
                     <list />
                   </option>
                   <option name="taskNames">
                     <list>
                       <option value=":test" />
+                      <option value="--tests" />
+                      <option value="&quot;CustomTests.test&quot;" />
                     </list>
                   </option>
                   <option name="vmOptions" value="" />
