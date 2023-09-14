@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CourseDeletedListene
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorageBase
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
-import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.CourseMetaInfo
+import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.JBACourseFromStorage
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.TypographyManager
 import java.awt.BorderLayout
 import java.awt.Component
@@ -50,7 +50,7 @@ class CoursesProvidersSidePanel(private val myCoursesProvider: MyCoursesProvider
     border = JBUI.Borders.customLine(CoursePanel.DIVIDER_COLOR, 0, 0, 0, 1)
     val connection = ApplicationManager.getApplication().messageBus.connect(disposable)
     connection.subscribe(CoursesStorageBase.COURSE_DELETED, object : CourseDeletedListener {
-      override fun courseDeleted(course: CourseMetaInfo) {
+      override fun courseDeleted(course: JBACourseFromStorage) {
         tree.repaint()
       }
     })

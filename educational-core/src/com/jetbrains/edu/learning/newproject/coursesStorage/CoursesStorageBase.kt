@@ -10,7 +10,7 @@ import com.intellij.util.xmlb.annotations.XCollection
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
-import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.CourseMetaInfo
+import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.JBACourseFromStorage
 
 
 open class CoursesStorageBase : SimplePersistentStateComponent<UserCoursesState>(UserCoursesState()) {
@@ -24,7 +24,7 @@ open class CoursesStorageBase : SimplePersistentStateComponent<UserCoursesState>
 
   fun hasCourse(course: Course): Boolean = getCoursePath(course) != null
 
-  fun getCourseMetaInfoForAnyLanguage(course: Course): CourseMetaInfo? {
+  fun getCourseMetaInfoForAnyLanguage(course: Course): JBACourseFromStorage? {
     return state.courses.find {
       it.name == course.name
       && it.id == course.id
@@ -40,7 +40,7 @@ open class CoursesStorageBase : SimplePersistentStateComponent<UserCoursesState>
     return true
   }
 
-  fun getCourseMetaInfo(course: Course): CourseMetaInfo? {
+  fun getCourseMetaInfo(course: Course): JBACourseFromStorage? {
     return state.courses.find {
       it.name == course.name
       && it.id == course.id
@@ -80,16 +80,16 @@ open class CoursesStorageBase : SimplePersistentStateComponent<UserCoursesState>
 class UserCoursesState : BaseState() {
   //  courses list is not updated on course removal and could contain removed courses.
   @get:XCollection(style = XCollection.Style.v2)
-  val courses by list<CourseMetaInfo>()
+  val courses by list<JBACourseFromStorage>()
 
   fun addCourse(course: Course, location: String, tasksSolved: Int = 0, tasksTotal: Int = 0) {
     val systemIndependentLocation = FileUtilRt.toSystemIndependentName(location)
     courses.removeIf { it.location == systemIndependentLocation }
-    val courseMetaInfo = CourseMetaInfo(systemIndependentLocation, course, tasksTotal, tasksSolved)
+    val courseMetaInfo = JBACourseFromStorage(systemIndependentLocation, course, tasksTotal, tasksSolved)
     courses.add(courseMetaInfo)
   }
 
-  fun removeCourseByLocation(location: String): CourseMetaInfo? {
+  fun removeCourseByLocation(location: String): JBACourseFromStorage? {
     val courseMetaInfo = courses.find { it.location == location }
     courses.remove(courseMetaInfo)
     return courseMetaInfo
@@ -104,7 +104,7 @@ class UserCoursesState : BaseState() {
       intIncrementModificationCount()
     }
     else {
-      courses.add(CourseMetaInfo(systemIndependentLocation, course, tasksTotal, tasksSolved))
+      courses.add(JBACourseFromStorage(systemIndependentLocation, course, tasksTotal, tasksSolved))
     }
   }
 }

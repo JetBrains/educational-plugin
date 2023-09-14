@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.GRAY_COLOR
-import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.CourseMetaInfo
+import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.JBACourseFromStorage
 import com.jetbrains.edu.learning.projectView.ProgressUtil
 import java.awt.Component
 import java.awt.FlowLayout
@@ -80,7 +80,7 @@ class MyCourseCardComponent(course: Course) : CourseCardComponent(course) {
   }
 }
 
-private class MyCourseInfoComponent(courseMetaInfo: CourseMetaInfo) : JPanel(FlowLayout(FlowLayout.LEFT, INFO_HGAP, INFO_VGAP)) {
+private class MyCourseInfoComponent(courseMetaInfo: JBACourseFromStorage) : JPanel(FlowLayout(FlowLayout.LEFT, INFO_HGAP, INFO_VGAP)) {
 
   init {
     val tasksSolved = courseMetaInfo.tasksSolved

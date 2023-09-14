@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.ToolbarActionWrapper
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
-import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.CourseMetaInfo
+import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.JBACourseFromStorage
 import kotlinx.coroutines.CoroutineScope
 
 private const val ACTION_PLACE = "MyCoursesPanel"
@@ -45,7 +45,7 @@ class MyCoursesPanel(
     coursesSearchComponent.selectAllHumanLanguageItems()
   }
 
-  override fun updateModelAfterCourseDeletedFromStorage(deletedCourse: CourseMetaInfo) {
+  override fun updateModelAfterCourseDeletedFromStorage(deletedCourse: JBACourseFromStorage) {
     coursesGroups.clear()
     coursesGroups.addAll(CoursesStorage.getInstance().coursesInGroups())
     super.updateModelAfterCourseDeletedFromStorage(deletedCourse)

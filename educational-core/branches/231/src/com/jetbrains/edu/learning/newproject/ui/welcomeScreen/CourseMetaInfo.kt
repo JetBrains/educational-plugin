@@ -15,7 +15,7 @@ private const val PROGRAMMING_LANGUAGE = "programmingLanguage"
 private const val PROGRAMMING_LANGUAGE_ID = "programmingLanguageId"
 private const val PROGRAMMING_LANGUAGE_VERSION = "programmingLanguageVersion"
 @Tag(EduNames.COURSE)
-class CourseMetaInfo() : Course() {
+class JBACourseFromStorage() : Course() {
   var type: String = ""
   var location: String = ""
   var tasksTotal: Int = 0

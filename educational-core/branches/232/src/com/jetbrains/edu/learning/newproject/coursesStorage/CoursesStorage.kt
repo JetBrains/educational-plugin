@@ -5,13 +5,13 @@ import com.intellij.openapi.wm.impl.welcomeScreen.learnIde.coursesInProgress.Cou
 import com.intellij.openapi.wm.impl.welcomeScreen.learnIde.coursesInProgress.CourseInfo
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
-import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.CourseMetaInfo
+import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.JBACourseFromStorage
 
 @State(name = "CoursesStorage", storages = [Storage("coursesStorage.xml", roamingType = RoamingType.DISABLED)])
 @Service
 class CoursesStorage : CourseDataStorage, CoursesStorageBase() {
 
-  override fun getCoursePath(course: Course): String? = getCoursePath(CourseMetaInfo().apply {
+  override fun getCoursePath(course: Course): String? = getCoursePath(JBACourseFromStorage().apply {
     this.name = course.name
     this.id = course.id
     this.courseMode = course.courseMode
@@ -19,7 +19,7 @@ class CoursesStorage : CourseDataStorage, CoursesStorageBase() {
     this.languageVersion = course.languageVersion
   })
 
-  private fun getCourseMetaInfo(name: String, id: Int, courseMode: CourseMode, languageId: String): CourseMetaInfo? {
+  private fun getCourseMetaInfo(name: String, id: Int, courseMode: CourseMode, languageId: String): JBACourseFromStorage? {
     return state.courses.find {
       it.name == name
       && it.id == id
@@ -29,7 +29,7 @@ class CoursesStorage : CourseDataStorage, CoursesStorageBase() {
   }
 
   override fun getCoursePath(courseInfo: CourseInfo): String? {
-    return if (courseInfo is CourseMetaInfo) {
+    return if (courseInfo is JBACourseFromStorage) {
       getCourseMetaInfo(courseInfo.name, courseInfo.id, courseInfo.courseMode, courseInfo.languageId)?.location
     }
     else {

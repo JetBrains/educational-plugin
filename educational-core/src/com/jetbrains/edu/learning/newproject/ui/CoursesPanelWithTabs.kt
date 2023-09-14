@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CourseDeletedListene
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorageBase
 import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
-import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.CourseMetaInfo
+import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.JBACourseFromStorage
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -80,7 +80,7 @@ class CoursesPanelWithTabs(private val scope: CoroutineScope, private val dispos
       showPanel(providers.first().name)
       val connection = ApplicationManager.getApplication().messageBus.connect(disposable)
       connection.subscribe(CoursesStorageBase.COURSE_DELETED, object : CourseDeletedListener {
-        override fun courseDeleted(course: CourseMetaInfo) {
+        override fun courseDeleted(course: JBACourseFromStorage) {
           panels.forEach {
             it.updateModelAfterCourseDeletedFromStorage(course)
           }

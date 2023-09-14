@@ -28,7 +28,7 @@ private const val PROGRAMMING_LANGUAGE_VERSION = "programmingLanguageVersion"
 
 // BACKCOMPACT: 2023.1
 @Tag(EduNames.COURSE)
-class CourseMetaInfo() : CourseInfo() {
+class JBACourseFromStorage() : CourseInfo() {
   var type: String = ""
   var courseMode = CourseMode.STUDENT
   var isMarketplace: Boolean = true
