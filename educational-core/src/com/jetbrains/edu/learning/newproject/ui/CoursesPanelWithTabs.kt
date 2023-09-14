@@ -8,7 +8,6 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.newproject.coursesStorage.CourseDeletedListener
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorageBase
-import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
 import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.JBACourseFromStorage
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
@@ -114,10 +113,6 @@ class CoursesPanelWithTabs(private val scope: CoroutineScope, private val dispos
     }
 
     fun languageSettings() = currentPanel.languageSettings
-
-    fun setError(error: ErrorState) {
-      currentPanel.setError(error)
-    }
 
     private val currentPanel: CoursesPanel
       get() {

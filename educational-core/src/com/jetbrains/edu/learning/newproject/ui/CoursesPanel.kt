@@ -20,7 +20,6 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgroundColor
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPanel
-import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.filters.CoursesSearchComponent
 import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.JBACourseFromStorage
 import kotlinx.coroutines.CoroutineScope
@@ -66,12 +65,6 @@ abstract class CoursesPanel(
 
   val languageSettings get() = coursePanel.languageSettings
   val selectedCourse get() = coursesListDecorator.getSelectedCourse()
-  val locationString: String?
-    get() {
-      // We use `coursePanel` with location field
-      // so `coursePanel.locationString` must return not null value
-      return coursePanel.locationString
-    }
 
   init {
     layout = cardLayout
@@ -206,11 +199,6 @@ abstract class CoursesPanel(
 
   fun doValidation() {
     coursePanel.doValidation()
-  }
-
-  fun setError(errorState: ErrorState) {
-    coursePanel.setError(errorState)
-    revalidate()
   }
 
   fun updateModel(coursesGroups: List<CoursesGroup>, courseToSelect: Course?, filterCourses: Boolean = true) {
