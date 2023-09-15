@@ -1,12 +1,13 @@
 package com.jetbrains.edu.sql.jvm.gradle
 
-import com.intellij.database.dataSource.LocalDataSource
-import com.intellij.database.dataSource.validation.DatabaseDriverValidator
+import com.intellij.database.dataSource.DatabaseDriverManager
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
-import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.withBackgroundProgress
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.util.Disposer
@@ -16,6 +17,8 @@ import com.intellij.sql.dialects.h2.H2Dialect
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.sql.core.EduSqlBundle
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.annotations.TestOnly
 
 class SqlGradleStartupActivity : StartupActivity.DumbAware {
@@ -29,13 +32,13 @@ class SqlGradleStartupActivity : StartupActivity.DumbAware {
 
     val initializationState = SqlInitializationState.getInstance(project)
     if (!initializationState.dataSourceInitialized && !disable) {
+      loadDatabaseDriver(project)
       @Suppress("UnstableApiUsage")
-      val dataSources = invokeAndWaitIfNeeded {
+      invokeAndWaitIfNeeded {
         // Dependency on concrete database kind/SQL dialect
         SqlDialectMappings.getInstance(project).setMapping(null, H2Dialect.INSTANCE)
         createDataSources(project, course.allTasks)
       }
-      loadDatabaseDriver(project, dataSources)
       initializationState.dataSourceInitialized = true
     }
 
@@ -49,18 +52,27 @@ class SqlGradleStartupActivity : StartupActivity.DumbAware {
     executeInitScripts(project, course.allTasks)
   }
 
-  private fun loadDatabaseDriver(project: Project, dataSources: List<LocalDataSource>) {
-    val dataSource = dataSources.firstOrNull() ?: return
+  private fun loadDatabaseDriver(project: Project) {
+    // Dependency on concrete database kind/SQL dialect
+    val driver = DatabaseDriverManager.getInstance().getDriver(H2_DRIVER_ID)
+    if (driver == null) {
+      LOG.warn("Can't find H2 driver by `$H2_DRIVER_ID` id")
+      return
+    }
 
-    val downloadTask = DatabaseDriverValidator.createDownloaderTask(dataSource, null)
-    object : com.intellij.openapi.progress.Task.Backgroundable(project, downloadTask.name, true) {
-      override fun run(indicator: ProgressIndicator) {
-        downloadTask.run(indicator)
+    runBlocking {
+      @Suppress("UnstableApiUsage")
+      withBackgroundProgress(project, EduSqlBundle.message("edu.sql.downloading.driver.files.progress.title"), false) {
+        driver.loadArtifacts(project)
       }
-    }.queue()
+    }
   }
 
   companion object {
+
+    private const val H2_DRIVER_ID = "h2.unified"
+
+    private val LOG: Logger = logger<SqlGradleStartupActivity>()
 
     @Volatile
     private var disable = false

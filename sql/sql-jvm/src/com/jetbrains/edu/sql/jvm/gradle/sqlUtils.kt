@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 package com.jetbrains.edu.sql.jvm.gradle
 
 import com.intellij.database.access.DatabaseCredentials
@@ -8,15 +10,18 @@ import com.intellij.database.console.JdbcConsoleProvider
 import com.intellij.database.console.runConfiguration.DatabaseScriptRunConfiguration
 import com.intellij.database.console.runConfiguration.DatabaseScriptRunConfigurationOptions
 import com.intellij.database.console.session.DatabaseSessionManager
-import com.intellij.database.dataSource.DatabaseAuthProviderNames
-import com.intellij.database.dataSource.LocalDataSource
-import com.intellij.database.dataSource.LocalDataSourceManager
+import com.intellij.database.dataSource.*
+import com.intellij.database.dataSource.artifacts.DatabaseArtifactList
+import com.intellij.database.dataSource.artifacts.DatabaseArtifactLoader
+import com.intellij.database.dataSource.artifacts.DatabaseArtifactManager
 import com.intellij.database.model.DasDataSource
 import com.intellij.database.util.DataSourceUtil
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.coroutineToIndicator
+import com.intellij.openapi.progress.withRawProgressReporter
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -33,6 +38,9 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.sql.core.EduSqlBundle
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.future.await
+import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.VisibleForTesting
 
 fun Task.findDataSource(project: Project): LocalDataSource? {
@@ -148,6 +156,57 @@ private fun Task.createDataSourceName(existingDataSourceNames: Set<String>): Str
   }
   return dataSourceName
 }
+
+// Copy-pasted from `com.intellij.database.actions.DataSourceScriptInterpreter`
+suspend fun DatabaseDriver.loadArtifacts(project: Project) {
+  val artifactsToDownload = resolveArtifacts(project)
+  for (artifact in artifactsToDownload) {
+    downloadArtifact(artifact)
+  }
+}
+
+/**
+ * Returns list of artifacts to download
+ */
+private suspend fun DatabaseDriver.resolveArtifacts(project: Project): List<DatabaseArtifactList.ArtifactVersion> {
+  // Call `forceUpdate` here to be sure that all necessary info is loaded.
+  // Otherwise, it's possible not to have an updated list of necessary artifacts
+  // and the following version resolution may work incorrectly.
+  //
+  // Actually, it should be wrapped into `coroutineToIndicator {}` to properly show progress.
+  // But it produces deadlock in tests for some reason, so keep it as is for now
+  DatabaseArtifactManager.getInstance().forceUpdate(project).await()
+
+  val loader = DatabaseArtifactLoader.getInstance()
+
+  val updated = mutableListOf<DatabaseDriver.ArtifactRef>()
+  val toDownload = mutableListOf<DatabaseArtifactList.ArtifactVersion>()
+  for (artifact in artifacts) {
+    val version = DatabaseArtifactManager.resolveVersion(this, artifact)
+    updated += when {
+      version == null -> artifact
+      version.version == artifact.artifactVersion -> artifact
+      else -> DatabaseDriverImpl.createArtifactRef(artifact.id, version.version, artifact.channel)!!
+    }
+    if (version != null && !loader.isValid(version)) {
+      toDownload += version
+    }
+  }
+  (this as DatabaseDriverImpl).artifacts = updated
+  return toDownload
+}
+
+private suspend fun downloadArtifact(artifact: DatabaseArtifactList.ArtifactVersion) {
+  val loader = DatabaseArtifactLoader.getInstance()
+  withContext(Dispatchers.IO) {
+    withRawProgressReporter {
+      coroutineToIndicator {
+        loader.downloadArtifact(artifact)
+      }
+    }
+  }
+}
+
 
 /**
  * Attaches sql console to given sql [file]
