@@ -10,6 +10,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.ui.JBAccountInfoService
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
+import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
@@ -19,15 +20,19 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderDependencyMixin
 import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderWithAnswerMixin
+import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showFailedToDeleteNotification
 import com.jetbrains.edu.learning.marketplace.SUBMISSIONS_SERVICE_PRODUCTION_URL
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.submissions.SolutionFile
 import com.jetbrains.edu.learning.submissions.checkNotEmpty
 import com.jetbrains.edu.learning.submissions.findTaskFileInDirWithSizeCheck
 import okhttp3.ConnectionPool
+import okhttp3.ResponseBody
 import org.jetbrains.annotations.VisibleForTesting
+import retrofit2.Response
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.io.BufferedInputStream
+import java.net.HttpURLConnection.HTTP_NOT_FOUND
 import java.net.HttpURLConnection.HTTP_NO_CONTENT
 import java.net.URL
 
@@ -65,19 +70,17 @@ class MarketplaceSubmissionsConnector {
     return retrofit.create(SubmissionsService::class.java)
   }
 
-  fun deleteAllSubmissions(userName: String): Boolean {
+  fun deleteAllSubmissions(project: Project, userName: String): Boolean {
     LOG.info("Deleting submissions for user $userName")
-    val response = submissionsService.deleteAllSubmissions().executeParsingErrors().onError {
-      LOG.error("Failed to delete all submissions to user $userName. Error message: $it")
+
+    val response = submissionsService.deleteAllSubmissions().executeCall().onError {
+      LOG.error("Failed to delete all submissions for user $userName. Error message: $it")
+      showFailedToDeleteNotification(project, userName)
       return false
     }
+    logAndNotifyAfterDeletionAttempt(response, project, userName)
 
-    if (response.code() == HTTP_NO_CONTENT) {
-      LOG.info("Successfully deleted all submissions for user $userName")
-      return true
-    }
-
-    return false
+    return response.code() == HTTP_NO_CONTENT
   }
 
   fun getAllSubmissions(courseId: Int): List<MarketplaceSubmission> {
@@ -149,6 +152,32 @@ class MarketplaceSubmissionsConnector {
     }
 
     return files.checkNotEmpty()
+  }
+
+  private fun logAndNotifyAfterDeletionAttempt(response: Response<ResponseBody>, project: Project, userName: String) {
+    when (response.code()) {
+      HTTP_NO_CONTENT -> {
+        LOG.info("Successfully deleted all submissions for user $userName")
+        showNotification(
+          project,
+          EduCoreBundle.message("marketplace.delete.submissions.success.title"),
+          EduCoreBundle.message("marketplace.delete.submissions.success.message", userName)
+        )
+      }
+      HTTP_NOT_FOUND ->  {
+        LOG.info("There are no submissions to delete for user $userName")
+        showNotification(
+          project,
+          EduCoreBundle.message("marketplace.delete.submissions.nothing.title"),
+          EduCoreBundle.message("marketplace.delete.submissions.nothing.message", userName)
+        )
+      }
+      else -> {
+        val errorMsg = response.errorBody()?.string() ?: "Unknown error"
+        LOG.error("Failed to delete all submissions for user $userName. Error message: $errorMsg")
+        showFailedToDeleteNotification(project, userName)
+      }
+    }
   }
 
   companion object {

@@ -6,8 +6,6 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
-import com.jetbrains.edu.coursecreator.CCNotificationUtils.showErrorNotification
-import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification
 import com.jetbrains.edu.coursecreator.CCUtils.showLoginNeededNotification
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.invokeLater
@@ -51,21 +49,9 @@ class DeleteAllSubmissionsAction : AnAction(EduCoreBundle.lazyMessage("marketpla
 
   private fun doDeleteSubmissions(project: Project, userName: String) {
     runInBackground(project, title = EduCoreBundle.getMessage("marketplace.delete.submissions.background.title")) {
-      val success = MarketplaceSubmissionsConnector.getInstance().deleteAllSubmissions(userName)
-      if (success) {
+      val deleteLocalSubmissions = MarketplaceSubmissionsConnector.getInstance().deleteAllSubmissions(project, userName)
+      if (deleteLocalSubmissions) {
         SubmissionsManager.getInstance(project).deleteCourseSubmissionsLocally()
-        showNotification(
-          project,
-          EduCoreBundle.message("marketplace.delete.submissions.success.title"),
-          EduCoreBundle.message("marketplace.delete.submissions.success.message", userName)
-        )
-      }
-      else {
-        showErrorNotification(
-          project,
-          EduCoreBundle.message("marketplace.delete.submissions.failed.title"),
-          EduCoreBundle.message("marketplace.delete.submissions.failed.message", userName)
-        )
       }
     }
   }

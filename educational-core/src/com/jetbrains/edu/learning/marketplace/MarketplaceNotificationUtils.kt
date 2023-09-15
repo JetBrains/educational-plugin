@@ -112,4 +112,12 @@ object MarketplaceNotificationUtils {
       NotificationType.ERROR
     ).notify(project)
   }
+
+  internal fun showFailedToDeleteNotification(project: Project, userName: String) {
+    CCNotificationUtils.showErrorNotification(
+      project,
+      EduCoreBundle.message("marketplace.delete.submissions.failed.title"),
+      EduCoreBundle.message("marketplace.delete.submissions.failed.message", userName)
+    )
+  }
 }
