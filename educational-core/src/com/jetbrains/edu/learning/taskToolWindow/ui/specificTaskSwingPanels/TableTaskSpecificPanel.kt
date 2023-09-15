@@ -41,7 +41,7 @@ class TableTaskSpecificPanel(task: TableTask): Wrapper() {
     text(task.rows[rowIndex])
       .align(AlignX.LEFT + AlignY.CENTER)
     for (columnIndex in task.columns.indices) {
-      createButton(task.isCheckbox)
+      createButton(task.isMultipleChoice)
         .align(Align.CENTER)
         .component.apply {
           isSelected = task.selected[rowIndex][columnIndex]

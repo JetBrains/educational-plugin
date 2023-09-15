@@ -46,7 +46,7 @@ open class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task
     if (deserializedItem is TableTask && existingItem is TableTask) {
       existingItem.rows = deserializedItem.rows
       existingItem.columns = deserializedItem.columns
-      existingItem.isCheckbox = deserializedItem.isCheckbox
+      existingItem.isMultipleChoice = deserializedItem.isMultipleChoice
       TaskToolWindowView.getInstance(project).updateTaskDescription()
     }
     if (deserializedItem is ChoiceTask && existingItem is ChoiceTask) {

@@ -34,7 +34,7 @@ class TableTaskResourcesManager: TaskResourcesManager<TableTask> {
       "rows" to Gson().toJson(task.rows),
       "columns" to Gson().toJson(task.columns),
       "selected" to task.selected.map { it.toList()} .toList(),
-      "is_checkbox" to task.isCheckbox,
+      "is_checkbox" to task.isMultipleChoice,
     )
   }
 

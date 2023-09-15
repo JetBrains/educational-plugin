@@ -9,7 +9,7 @@ import java.util.logging.Logger
 class TableTask : Task {
   override val itemType: String = TABLE_TASK_TYPE
 
-  var isCheckbox = false
+  var isMultipleChoice = false
 
   var rows = emptyList<String>()
 
@@ -31,10 +31,10 @@ class TableTask : Task {
 
   fun choose(rowIndex: Int, columnIndex: Int) {
     if (rowIndex !in rows.indices || columnIndex !in columns.indices) {
-      LOG.severe("There was an attempt to choose an cell with invalid indices")
+      LOG.severe("There was an attempt to choose a cell with invalid indices")
       return
     }
-    if (!isCheckbox) {
+    if (!isMultipleChoice) {
       clearSelectedInRow(rowIndex)
     }
     selected[rowIndex][columnIndex] = !selected[rowIndex][columnIndex]
@@ -53,7 +53,7 @@ class TableTask : Task {
   fun createTable(rows: List<String>, columns: List<String>, isCheckbox: Boolean = false) {
     this.rows = rows
     this.columns = columns
-    this.isCheckbox = isCheckbox
+    this.isMultipleChoice = isCheckbox
     selected = Array(rows.size) {
       BooleanArray(columns.size) { false }
     }

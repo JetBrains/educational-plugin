@@ -38,7 +38,7 @@ object UpdateUtils {
         task.options = remoteTask.options
       }
       task is TableTask && remoteTask is TableTask -> {
-        task.createTable(remoteTask.rows, remoteTask.columns, remoteTask.isCheckbox)
+        task.createTable(remoteTask.rows, remoteTask.columns, remoteTask.isMultipleChoice)
       }
     }
 
