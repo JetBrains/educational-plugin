@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
+import com.jetbrains.edu.learning.marketplace.actions.DeleteAllSubmissionsAction
 import com.jetbrains.edu.learning.marketplace.api.*
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.SubmissionsTestBase

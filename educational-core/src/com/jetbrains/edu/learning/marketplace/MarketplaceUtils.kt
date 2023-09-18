@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.computeUnderProgress
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.invokeLater
@@ -127,3 +128,5 @@ fun markTheoryTaskAsCompleted(project: Project, task: TheoryTask) {
     MarketplaceSubmissionsConnector.getInstance().markTheoryTaskAsCompleted(task)
   }
 }
+
+fun Project.isMarketplaceCourse(): Boolean = course?.isMarketplace == true

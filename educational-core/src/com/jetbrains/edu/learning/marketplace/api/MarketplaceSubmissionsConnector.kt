@@ -21,7 +21,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderDependencyMixin
 import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderWithAnswerMixin
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showFailedToDeleteNotification
+import com.jetbrains.edu.learning.marketplace.MarketplaceSolutionSharingPreference
 import com.jetbrains.edu.learning.marketplace.SUBMISSIONS_SERVICE_PRODUCTION_URL
+import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.submissions.SolutionFile
 import com.jetbrains.edu.learning.submissions.checkNotEmpty
@@ -128,6 +130,22 @@ class MarketplaceSubmissionsConnector {
     submission.id = postedSubmission.id
     submission.time = postedSubmission.time
     return submission
+  }
+
+  fun changeSharingPreference(state: Boolean): Result<Response<ResponseBody>, String> {
+    LOG.info("Changing solution sharing to state $state for user ${MarketplaceSettings.INSTANCE.getMarketplaceAccount()?.userInfo?.name}")
+    val newSharingPreference = if (state) MarketplaceSolutionSharingPreference.ALWAYS else MarketplaceSolutionSharingPreference.NEVER
+
+    return submissionsService
+      .changeSharingPreference(newSharingPreference.name)
+      .executeParsingErrors()
+  }
+
+  fun getSharingPreference() : MarketplaceSolutionSharingPreference? {
+    LOG.info("Getting solution sharing preference")
+    val responseString = submissionsService.getSharingPreference().executeHandlingExceptions()?.body()?.string()
+
+    return responseString?.let { MarketplaceSolutionSharingPreference.valueOf(it) }
   }
 
   private fun doPostSubmission(courseId: Int, taskId: Int, submission: MarketplaceSubmission): Result<MarketplaceSubmission, String>{

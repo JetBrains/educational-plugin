@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.marketplace
+package com.jetbrains.edu.learning.marketplace.actions
 
 import com.intellij.CommonBundle
 import com.intellij.openapi.actionSystem.ActionUpdateThread

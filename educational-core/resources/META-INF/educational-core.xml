@@ -253,6 +253,10 @@
                              id="Educational"
                              key="settings.educational" bundle="messages.EduCoreBundle"/>
 
+    <registryKey key="edu.marketplace.solutions.sharing"
+                 description="Enables Solution Sharing action and settings"
+                 defaultValue="false"/>
+
     <toolWindow id="Task" anchor="right" order="first"
                 factoryClass="com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory"/>
     <toolWindow id="Educational.CheckDetails" anchor="bottom" canCloseContents="true" doNotActivateOnStart="true"

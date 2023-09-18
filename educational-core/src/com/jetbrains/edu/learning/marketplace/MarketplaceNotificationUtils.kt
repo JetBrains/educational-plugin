@@ -113,6 +113,15 @@ object MarketplaceNotificationUtils {
     ).notify(project)
   }
 
+  fun showFailedToChangeSharingPreferenceNotification() {
+    Notification(
+      "JetBrains Academy",
+      EduCoreBundle.message("marketplace.solutions.sharing.notification.title"),
+      EduCoreBundle.message("marketplace.solutions.sharing.notification.text"),
+      NotificationType.ERROR
+    ).notify(null)
+  }
+
   internal fun showFailedToDeleteNotification(project: Project, userName: String) {
     CCNotificationUtils.showErrorNotification(
       project,

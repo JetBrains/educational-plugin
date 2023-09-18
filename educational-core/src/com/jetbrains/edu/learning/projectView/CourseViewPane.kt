@@ -47,6 +47,7 @@ import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.marketplace.actions.ShareMySolutionsAction
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.projectView.ProgressUtil.createProgressBar
 import org.jetbrains.annotations.NonNls
@@ -122,7 +123,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport
         ProjectView.getInstance(myProject).refresh()
       }
     }
-    actionGroup.add(hideSolvedLessons)
+    actionGroup.addAll(hideSolvedLessons, ShareMySolutionsAction())
   }
 
   private fun updateCourseProgress() {

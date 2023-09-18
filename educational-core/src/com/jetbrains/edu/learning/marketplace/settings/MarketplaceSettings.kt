@@ -1,12 +1,20 @@
 package com.jetbrains.edu.learning.marketplace.settings
 
+import com.intellij.execution.process.ProcessIOExecutorService
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
+import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showFailedToChangeSharingPreferenceNotification
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.getJBAUserInfo
+import com.jetbrains.edu.learning.onError
+import java.util.concurrent.CompletableFuture
 
 class MarketplaceSettings {
+
   private var account: MarketplaceAccount? = null
+
+  var solutionsSharing: Boolean? = null
 
   fun getMarketplaceAccount(): MarketplaceAccount? {
     if (!MarketplaceAccount.isJBALoggedIn()) {
@@ -28,6 +36,16 @@ class MarketplaceSettings {
 
   fun setAccount(value: MarketplaceAccount?) {
     account = value
+  }
+
+  fun updateSharingPreference(state: Boolean) {
+    CompletableFuture.runAsync({
+      MarketplaceSubmissionsConnector.getInstance().changeSharingPreference(state).onError {
+        showFailedToChangeSharingPreferenceNotification()
+        return@runAsync
+      }
+      solutionsSharing = state
+    }, ProcessIOExecutorService.INSTANCE)
   }
 
   companion object {
