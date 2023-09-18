@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.actions
 
 import com.google.common.annotations.VisibleForTesting
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.RightAlignedToolbarAction
 import com.intellij.openapi.project.DumbAwareAction
@@ -9,15 +10,14 @@ import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.getStepikLink
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import org.jetbrains.annotations.NonNls
 
-class LeaveCommentAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.leave.comment.text"),
-                                           EduCoreBundle.lazyMessage("action.leave.comment.text"), EducationalCoreIcons.CommentTask),
-                           RightAlignedToolbarAction {
+class LeaveFeedbackAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.leave.comment.text"), EduCoreBundle.lazyMessage("action.leave.comment.text"), EducationalCoreIcons.CommentTask), RightAlignedToolbarAction {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
@@ -44,8 +44,11 @@ class LeaveCommentAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.lea
     e.presentation.isEnabledAndVisible = getLink(task) != null
   }
 
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
+
   companion object {
-    const val ACTION_ID: String = "Educational.LeaveCommentAction"
+    @NonNls
+    const val ACTION_ID: String = "Educational.LeaveFeedbackAction"
 
     @VisibleForTesting
     fun getLink(task: Task): String? {
