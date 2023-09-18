@@ -26,7 +26,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.studyItemType
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.statistics.isFeedbackAsked
-import com.jetbrains.edu.learning.statistics.showPostFeedbackNotification
+import com.jetbrains.edu.learning.statistics.showCCPostFeedbackNotification
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.IOException
 import javax.swing.Icon
@@ -291,7 +291,7 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
       var countTasks = 0
       course.visitLessons { lesson -> countTasks += lesson.taskList.size }
       if (countTasks == 5) {
-        showPostFeedbackNotification(false, course, project)
+        showCCPostFeedbackNotification(course, project)
       }
     }
 
