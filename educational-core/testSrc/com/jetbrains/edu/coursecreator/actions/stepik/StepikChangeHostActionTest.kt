@@ -37,7 +37,7 @@ class StepikChangeHostActionTest : EduTestCase() {
                             StepikOAuthBundle.value("cogniterraClientSecret"))
   }
   fun `test default stepik host`() {
-    PropertiesComponent.getInstance().setValue(STEPIK_HOST_ORDINAL_PROPERTY, StepikHost.RELEASE.ordinal, 3)
+    PropertiesComponent.getInstance().setValue(STEPIK_HOST_ORDINAL_PROPERTY, StepikHost.RELEASE.ordinal, 4)
     doTestStepikHostChanged(STEPIK_RELEASE_URL, StepikHost.PRODUCTION, StepikOAuthBundle.value("stepikClientId"),
                             StepikOAuthBundle.value("stepikClientSecret"))
   }
