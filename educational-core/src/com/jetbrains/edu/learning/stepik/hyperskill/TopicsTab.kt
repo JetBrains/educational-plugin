@@ -1,56 +1,72 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
+import com.intellij.icons.AllIcons
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
-import com.intellij.ui.ColorUtil
+import com.intellij.ui.dsl.builder.BottomGap
+import com.intellij.ui.dsl.builder.RowLayout
+import com.intellij.ui.dsl.builder.TopGap
+import com.intellij.ui.dsl.builder.panel
+import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillTopic
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
-import com.jetbrains.edu.learning.taskToolWindow.htmlTransformers.HtmlTransformerContext
-import com.jetbrains.edu.learning.taskToolWindow.htmlTransformers.TaskDescriptionTransformer
-import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleManager
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillTopic
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.AdditionalTab
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType.TOPICS_TAB
-import com.jetbrains.edu.learning.ui.EduColors
 
 class TopicsTab(project: Project) : AdditionalTab(project, TOPICS_TAB) {
-
   override val uiMode: JavaUILibrary
     get() = JavaUILibrary.SWING
-
-  init {
-    init()
-  }
 
   override fun update(task: Task) {
     val course = task.course as? HyperskillCourse
                  ?: error("Topics tab is designed for Hyperskill course, but task is located in different course")
     val topics = course.taskToTopics[task.index - 1]
-    val descriptionText = buildString {
-      val textStyleHeader = StyleManager().textStyleHeader
-      appendLine("<h3 $textStyleHeader;padding:0;>${EduCoreBundle.message("hyperskill.topics.for.stage")}</h3>")
-      if (topics != null) {
-        appendLine("<ol $textStyleHeader;padding-top:4px>")
-        for (topic in topics) {
-          appendLine(topicLink(topic, textStyleHeader))
-        }
-        appendLine("</ol>")
-      }
-      else {
-        appendLine("<a $textStyleHeader>${EduCoreBundle.message("hyperskill.topics.not.found")}")
-      }
-    }
 
-    val transformationContext = HtmlTransformerContext(project, task, uiMode)
-    setText(TaskDescriptionTransformer.transform(descriptionText, transformationContext))
+    val innerPanel = panel {
+      row {
+        label(EduCoreBundle.message("hyperskill.topics.for.stage")).bold()
+      }
+        .topGap(TopGap.SMALL)
+        .bottomGap(BottomGap.SMALL)
+      indent {
+        if (topics != null) {
+          for ((index, topic) in topics.withIndex()) {
+            row("${index + 1}.") {
+              browserLink(topic.title, "https://hyperskill.org/learn/step/${topic.theoryId}/")
+                .resizableColumn()
+              actionButton(OpenTopic(project, topic))
+            }
+              .layout(RowLayout.PARENT_GRID)
+          }
+        }
+        else {
+          row {
+            text(EduCoreBundle.message("hyperskill.topics.not.found"))
+          }
+        }
+      }
+    }.apply {
+      isOpaque = false
+      border = JBUI.Borders.empty(12)
+    }
+    removeAll()
+    add(innerPanel)
   }
 
-  private fun topicLink(topic: HyperskillTopic, textStyleHeader: String): String {
-    val liStyle = "style=color:#${ColorUtil.toHex(EduColors.hyperlinkColor)};"
-    val linkStyle = "$textStyleHeader;color:#${ColorUtil.toHex(EduColors.hyperlinkColor)}"
-    val topicLink = "https://hyperskill.org/learn/step/${topic.theoryId}/"
-
-    return """<li $liStyle><a $linkStyle href=$topicLink>${topic.title}</a></li>"""
+  private class OpenTopic(
+    private val project: Project,
+    private val topic: HyperskillTopic
+  ): AnAction(
+    EduCoreBundle.message("hyperskill.topics.solve"),
+    EduCoreBundle.message("hyperskill.topics.solve"),
+    AllIcons.Actions.EditSource
+  ) {
+    override fun actionPerformed(e: AnActionEvent) {
+      openTopic(project, topic)
+    }
   }
 }

@@ -26,7 +26,7 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.SwingToolWindowLinkHandler
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.TaskToolWindowBundle
-import com.jetbrains.edu.learning.taskToolWindow.ui.tab.AdditionalTab
+import com.jetbrains.edu.learning.taskToolWindow.ui.tab.AdditionalTextTab
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.SwingTextPanel
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType.SUBMISSIONS_TAB
 import com.jetbrains.edu.learning.ui.EduColors
@@ -35,7 +35,7 @@ import java.text.DateFormat
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB) {
+class SubmissionsTab(project: Project) : AdditionalTextTab(project, SUBMISSIONS_TAB) {
   override val uiMode: JavaUILibrary
     get() = JavaUILibrary.SWING
 
@@ -44,7 +44,7 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
   }
 
   private val panel: SwingTextPanel
-    get() = innerTextPanel as SwingTextPanel
+    get() = innerPanel as SwingTextPanel
 
   override fun update(task: Task) {
     if (!task.supportSubmissions) return
