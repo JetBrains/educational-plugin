@@ -30,7 +30,7 @@ class EduConfigurable : CompositeConfigurable<OptionsProvider>(), Configurable.W
 
   @Suppress("UnstableApiUsage")
   @ConfigurableName
-  override fun getDisplayName(): String = EduCoreBundle.message("settings.educational")
+  override fun getDisplayName(): String = EduCoreBundle.message("settings.education")
   override fun getHelpTopic(): String = ID
 
   override fun createComponent(): JComponent {

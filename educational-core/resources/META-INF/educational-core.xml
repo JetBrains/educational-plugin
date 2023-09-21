@@ -251,7 +251,7 @@
 
     <applicationConfigurable groupId="tools" instance="com.jetbrains.edu.learning.settings.EduConfigurable"
                              id="Educational"
-                             key="settings.educational" bundle="messages.EduCoreBundle"/>
+                             key="settings.education" bundle="messages.EduCoreBundle"/>
 
     <registryKey key="edu.marketplace.solutions.sharing"
                  description="Enables Solution Sharing action and settings"
