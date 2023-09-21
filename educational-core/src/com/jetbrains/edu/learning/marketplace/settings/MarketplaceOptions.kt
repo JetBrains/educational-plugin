@@ -35,13 +35,15 @@ class MarketplaceOptions : OAuthLoginOptions<MarketplaceAccount>() {
 
   init {
     CompletableFuture.runAsync({
-        val sharingPreference = MarketplaceSubmissionsConnector.getInstance().getSharingPreference()
-        MarketplaceSettings.INSTANCE.solutionsSharing = if (sharingPreference != null) {
-          shareMySolutionsCheckBox.isEnabled = true
-          sharingPreference.toString() == MarketplaceSolutionSharingPreference.ALWAYS.toString()
-        } else {
-          MarketplaceSettings.INSTANCE.solutionsSharing
-        }
+      val sharingPreference = MarketplaceSubmissionsConnector.getInstance().getSharingPreference()
+      MarketplaceSettings.INSTANCE.solutionsSharing = if (sharingPreference != null) {
+        shareMySolutionsCheckBox.isEnabled = true
+        sharingPreference.toString() == MarketplaceSolutionSharingPreference.ALWAYS.toString()
+      }
+      else {
+        MarketplaceSettings.INSTANCE.solutionsSharing
+      }
+      shareMySolutionsCheckBox.isSelected = MarketplaceSettings.INSTANCE.solutionsSharing ?: false
     }, ProcessIOExecutorService.INSTANCE)
   }
 
