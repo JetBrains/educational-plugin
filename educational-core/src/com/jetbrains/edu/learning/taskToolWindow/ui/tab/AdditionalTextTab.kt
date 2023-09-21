@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.JavaUILibrary
 import java.awt.BorderLayout
 
 /**
- * Tab initialization is made in [com.jetbrains.edu.learning.taskToolWindow.ui.tab.AdditionalTab.init] method
+ * Tab initialization is made in [com.jetbrains.edu.learning.taskToolWindow.ui.tab.AdditionalTextTab.init] method
  * and it must be called in constructor to initialize all necessary UI.
  */
 abstract class AdditionalTextTab(project: Project, tabType: TabType): AdditionalTab(project, tabType) {

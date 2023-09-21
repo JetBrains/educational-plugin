@@ -32,21 +32,19 @@ class TopicsTab(project: Project) : AdditionalTab(project, TOPICS_TAB) {
       }
         .topGap(TopGap.SMALL)
         .bottomGap(BottomGap.SMALL)
-      indent {
-        if (topics != null) {
-          for ((index, topic) in topics.withIndex()) {
-            row("${index + 1}.") {
-              browserLink(topic.title, "https://hyperskill.org/learn/step/${topic.theoryId}/")
-                .resizableColumn()
-              actionButton(OpenTopic(project, topic))
-            }
-              .layout(RowLayout.PARENT_GRID)
+      if (topics != null) {
+        for ((index, topic) in topics.withIndex()) {
+          row("${index + 1}.") {
+            browserLink(topic.title, "https://hyperskill.org/learn/step/${topic.theoryId}/")
+              .resizableColumn()
+            actionButton(OpenTopic(project, topic))
           }
+            .layout(RowLayout.PARENT_GRID)
         }
-        else {
-          row {
-            text(EduCoreBundle.message("hyperskill.topics.not.found"))
-          }
+      }
+      else {
+        row {
+          text(EduCoreBundle.message("hyperskill.topics.not.found"))
         }
       }
     }.apply {
@@ -63,7 +61,7 @@ class TopicsTab(project: Project) : AdditionalTab(project, TOPICS_TAB) {
   ): AnAction(
     EduCoreBundle.message("hyperskill.topics.solve"),
     EduCoreBundle.message("hyperskill.topics.solve"),
-    AllIcons.Actions.EditSource
+    AllIcons.Actions.Download
   ) {
     override fun actionPerformed(e: AnActionEvent) {
       openTopic(project, topic)
