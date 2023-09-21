@@ -1,13 +1,33 @@
 package com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers
 
+import com.intellij.ide.ui.LafManager
 import com.intellij.ide.ui.UISettings
+import com.intellij.ide.ui.laf.LafManagerImpl
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.editor.colors.FontPreferences
+import com.intellij.util.ui.JBFont
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
 
 internal class TypographyManager {
-  private val uiSettingsFontSize =
-    if (UISettings.getInstance().presentationMode) UISettings.getInstance().presentationModeFontSize else UISettings.getInstance().fontSize
+  private val uiSettingsFontSize: Int
+    get() {
+      return if (UISettings.getInstance().presentationMode) {
+        UISettings.getInstance().presentationModeFontSize
+      }
+      else {
+        val fontSize = UISettings.getInstance().fontSize
+        if (fontSize == 0) {
+          // from com.intellij.ide.ui.AppearanceConfigurableKt#getDefaultFont
+          val lafManager = LafManager.getInstance() as? LafManagerImpl
+          val font = lafManager?.defaultFont ?: JBFont.label()
+          font.size
+        }
+        else {
+          fontSize
+        }
+      }
+    }
+
 
   val bodyFontSize = (uiSettingsFontSize * fontScaleFactor("body.font.size")).toInt()
   val codeFontSize = (uiSettingsFontSize * fontScaleFactor("code.font.size")).toInt()
