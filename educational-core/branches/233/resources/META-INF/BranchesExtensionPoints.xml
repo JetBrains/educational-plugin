@@ -1,0 +1,8 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <coursesStorageProvider implementation="com.jetbrains.edu.learning.newproject.coursesStorage.JetBrainsAcademyCoursesStorageProvider"/>
+  </extensions>
+  <actions>
+    <action id="Educational.LeaveInIdeFeedbackAction" class="com.jetbrains.edu.learning.actions.LeaveInIdeFeedbackAction"/>
+  </actions>
+</idea-plugin>
