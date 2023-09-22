@@ -20,10 +20,17 @@ import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 class HyperskillCheckListener : CheckListener {
 
   override fun beforeCheck(project: Project, task: Task) {
+    if (task.lesson.course !is HyperskillCourse) {
+      return
+    }
+
     HyperskillMetricsService.getInstance().taskStopped()
   }
 
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
+    if (task.lesson.course !is HyperskillCourse) {
+      return
+    }
     // this method is called from EDT, so it means that between if check and if body
     // user cannot navigate between tasks
     require(ApplicationManager.getApplication().isDispatchThread)
