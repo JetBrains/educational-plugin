@@ -2,6 +2,8 @@ package com.jetbrains.edu.python.learning.newproject
 
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.util.UserDataHolder
+import com.jetbrains.edu.learning.computeUnderProgress
+import com.jetbrains.edu.python.learning.messages.EduPythonBundle
 import com.jetbrains.python.psi.LanguageLevel
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 import kotlin.io.path.pathString
@@ -20,7 +22,7 @@ object PyBaseSdksProvider {
     val newDescriptors = mutableMapOf<String, PyBaseSdkDescriptor>()
 
     val flavor = PythonSdkFlavor.getApplicableFlavors(false).first()
-    val sdkPaths = invokeAndWaitIfNeeded {
+    val sdkPaths = computeUnderProgress(title = EduPythonBundle.message("getting.sdk.paths"), canBeCancelled = false) {
       flavor.suggestLocalHomePaths(null, context).map { it.pathString }
     }
     for (sdkPath in sdkPaths) {
