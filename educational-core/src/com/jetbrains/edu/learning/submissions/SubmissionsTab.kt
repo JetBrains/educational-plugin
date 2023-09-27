@@ -61,8 +61,9 @@ class SubmissionsTab(project: Project) : AdditionalTextTab(project, SUBMISSIONS_
     val descriptionText = StringBuilder()
     var customLinkHandler: SwingToolWindowLinkHandler? = null
 
+    val submissionsList = submissionsManager.getSubmissionsFromMemory(setOf(task.id))
+
     if (isLoggedIn) {
-      val submissionsList = submissionsManager.getSubmissionsFromMemory(setOf(task.id))
       if (submissionsList.isNullOrEmpty()) {
         descriptionText.addEmptySubmissionsMessage()
       }
@@ -74,6 +75,9 @@ class SubmissionsTab(project: Project) : AdditionalTextTab(project, SUBMISSIONS_
         descriptionText.addSubmissions(submissionsList, isToShowSubmissionsIds)
         customLinkHandler = SubmissionsDifferenceLinkHandler(project, task, submissionsManager)
       }
+    }
+    else if (task.course.isMarketplace && submissionsList?.isNotEmpty() == true) {
+      descriptionText.addSubmissions(submissionsList, false)
     }
     else {
       descriptionText.addLoginText(submissionsManager)

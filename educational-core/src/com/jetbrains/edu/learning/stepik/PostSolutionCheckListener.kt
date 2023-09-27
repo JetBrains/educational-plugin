@@ -7,7 +7,6 @@ import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
@@ -22,15 +21,11 @@ abstract class PostSolutionCheckListener : CheckListener {
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
     val course = task.lesson.course
     if (course is EduCourse && course.isStudy && course.isToPostSubmissions() && task.isToSubmitToRemote) {
-      MarketplaceConnector.getInstance().isLoggedInAsync().thenApplyAsync {
-        if (it) {
-          if (isUpToDate(course, task)) {
-            addSubmissionToSubmissionsManager(project, task)
-          }
-          else {
-            showSubmissionNotPostedNotification(project, course, task.name)
-          }
-        }
+      if (isUpToDate(course, task)) {
+        addSubmissionToSubmissionsManager(project, task)
+      }
+      else {
+        showSubmissionNotPostedNotification(project, course, task.name)
       }
     }
   }

@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.marketplace.api
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
+import com.intellij.openapi.application.PermanentInstallationID
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
@@ -32,6 +33,7 @@ import com.jetbrains.edu.learning.submissions.checkNotEmpty
 import com.jetbrains.edu.learning.submissions.findTaskFileInDirWithSizeCheck
 import okhttp3.ConnectionPool
 import okhttp3.ResponseBody
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.VisibleForTesting
 import retrofit2.Response
 import retrofit2.converter.jackson.JacksonConverterFactory
@@ -67,10 +69,30 @@ class MarketplaceSubmissionsConnector {
       RemoteEnvHelper.getUserUidToken() ?: error("User UID was not found, it might require more time to retrieve it")
     }
     else {
-      JBAccountInfoService.getInstance()?.userData?.id ?: error("Nullable JB account ID token in user data")
+      JBAccountInfoService.getInstance()?.userData?.id
+    }
+
+    if (uidToken == null) {
+      LOG.warn("Nullable JB account ID token in user data")
+      return submissionsServiceWithAnonymousUser()
     }
 
     val retrofit = createRetrofitBuilder(submissionsServiceUrl, connectionPool, "u.$uidToken")
+      .addConverterFactory(converterFactory)
+      .build()
+
+    return retrofit.create(SubmissionsService::class.java)
+  }
+
+  private fun submissionsServiceWithAnonymousUser(): SubmissionsService {
+    val installationId = PermanentInstallationID.get()
+    val retrofit = createRetrofitBuilder(
+      baseUrl = submissionsServiceUrl,
+      connectionPool = connectionPool,
+      accessToken = installationId,
+      authHeaderName = ANONYMOUS_AUTHORIZATION_HEADER,
+      authHeaderValue = null
+    )
       .addConverterFactory(converterFactory)
       .build()
 
@@ -222,6 +244,9 @@ class MarketplaceSubmissionsConnector {
   }
 
   companion object {
+    @NonNls
+    private const val ANONYMOUS_AUTHORIZATION_HEADER: String = "User-PID"
+
     private val LOG = logger<MarketplaceConnector>()
 
     @VisibleForTesting
