@@ -99,15 +99,15 @@ class PlaceholderShapeTest : EduTestCase() {
   }
 
   fun `test right rectangular`() {
-    val expected = listOf(LogicalPositionInLine(0, 61),
-                          LogicalPositionInLine(0, 70),
-                          LogicalPositionInLine(2, 70, PositionInLine.BOTTOM),
+    val expected = listOf(LogicalPositionInLine(0, 57),
+                          LogicalPositionInLine(0, 68),
+                          LogicalPositionInLine(2, 68, PositionInLine.BOTTOM),
                           LogicalPositionInLine(2, 0, PositionInLine.BOTTOM),
                           LogicalPositionInLine(0, 0, PositionInLine.BOTTOM),
-                          LogicalPositionInLine(0, 61, PositionInLine.BOTTOM))
+                          LogicalPositionInLine(0, 57, PositionInLine.BOTTOM))
     checkPath("""
-      |class DateRange(val start: MyDate, val endInclusive: MyDate) <placeholder>{
-      |    operator fun contains(d: MyDate) = d >= start && d <= endInclusive
+      |class DateRange(val start: Date, val endInclusive: Date) <placeholder>{
+      |    operator fun contains(d: Date) = d >= start && d <= endInclusive
       |}</placeholder>
     """, expected)
   }
@@ -218,5 +218,6 @@ class PlaceholderShapeTest : EduTestCase() {
     TOP, BOTTOM
   }
 
-  private fun getMessage(expected: List<Point>, actual: List<Point>) = "Actual path: $actual\nExpected path:$expected"
+  private fun List<Point>.toHumanReadableString(): String = map { "(${it.x}, ${it.y})" }.toString()
+  private fun getMessage(expected: List<Point>, actual: List<Point>) = "Actual path:   ${actual.toHumanReadableString()}\nExpected path: ${expected.toHumanReadableString()}"
 }
