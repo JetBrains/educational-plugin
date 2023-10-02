@@ -83,7 +83,7 @@ class ImportCodeforcesContestDialog(private val showViewAllLabel: Boolean) : Dia
     builder.centerPanel(contestPanel)
     builder.setPreferredFocusComponent(contestPanel.coursesList)
     builder.addActionDescriptor(DialogBuilder.ActionDescriptor {
-      object : AbstractAction(EduCoreBundle.message("codeforces.select")) {
+      object : AbstractAction(EduCoreBundle.message("button.select")) {
         override fun actionPerformed(e: ActionEvent?) {
           it.close(OK_EXIT_CODE)
         }

@@ -44,7 +44,7 @@ class StepikChangeHostDialog : DialogWrapper(true) {
 
   init {
     title = EduCoreBundle.message("stepik.change.host")
-    setOKButtonText(EduCoreBundle.message("stepik.select"))
+    setOKButtonText(EduCoreBundle.message("button.select"))
     isResizable = false
     init()
   }
