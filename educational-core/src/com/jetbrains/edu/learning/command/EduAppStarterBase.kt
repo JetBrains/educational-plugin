@@ -93,7 +93,7 @@ abstract class EduAppStarterBase : ModernApplicationStarter() {
         course
       }
       marketplaceCourseLink != null -> {
-        val course = MarketplaceConnector.getInstance().getCourseInfoByLink(marketplaceCourseLink)
+        val course = MarketplaceConnector.getInstance().getCourseInfoByLink(marketplaceCourseLink, searchPrivate = true)
         if (course == null) {
           logErrorAndExit("Failed to load Marketplace course `$marketplaceCourseLink`")
         }

@@ -360,13 +360,15 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
   }
 
   override fun getCourseInfoByLink(link: String): EduCourse? {
+    return getCourseInfoByLink(link, isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE_PRIVATE_COURSES))
+  }
+
+  fun getCourseInfoByLink(link: String, searchPrivate: Boolean): EduCourse? {
     val courseId = link.toIntOrNull() ?: getCourseIdFromLink(link)
     if (courseId != -1) {
       // we don't know beforehand if the course to be searched for is private or public, while private and public courses
       // need different templates to be found via graphql
-      return searchCourse(courseId, false) ?: if (isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE_PRIVATE_COURSES))
-        searchCourse(courseId, true)
-      else null
+      return searchCourse(courseId, false) ?: if (searchPrivate) searchCourse(courseId, true) else null
     }
     return null
   }
