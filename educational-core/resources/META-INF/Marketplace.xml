@@ -32,5 +32,8 @@
     <action id="Educational.StartMarketplaceCourse" class="com.jetbrains.edu.learning.marketplace.course.StartMarketplaceCourseAction"/>
     <action id="Educational.Student.DeleteAllSubmissions" class="com.jetbrains.edu.learning.marketplace.actions.DeleteAllSubmissionsAction"/>
     <action id="Educational.Student.ShareMySolutions" class="com.jetbrains.edu.learning.marketplace.actions.ShareMySolutionsAction"/>
+    <action id="Educational.Student.SubmissionsServiceChangeHost"
+            class="com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceChangeHost"
+            internal="true"/>
   </actions>
 </idea-plugin>

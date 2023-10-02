@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderDependencyMixin
 import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderWithAnswerMixin
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showFailedToDeleteNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceSolutionSharingPreference
-import com.jetbrains.edu.learning.marketplace.SUBMISSIONS_SERVICE_PRODUCTION_URL
+import com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceHost
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.submissions.SolutionFile
@@ -49,7 +49,8 @@ class MarketplaceSubmissionsConnector {
     objectMapper
   }
 
-  private val submissionsServiceUrl: String = SUBMISSIONS_SERVICE_PRODUCTION_URL
+  private val submissionsServiceUrl: String
+    get() = SubmissionsServiceHost.getSelectedUrl()
 
   init {
     converterFactory = JacksonConverterFactory.create(objectMapper)
