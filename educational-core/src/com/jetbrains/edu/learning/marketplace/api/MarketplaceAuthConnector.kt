@@ -49,16 +49,10 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
     return postLoginActions.asList() + listOf(requestFocus, showNotification)
   }
 
-  @RequiresBackgroundThread
   override fun isLoggedIn(): Boolean {
     if (account == null) return false
-
-    val isJbaTokenAvailable = isJBAccessTokenAvailable()
-    if (!isJbaTokenAvailable) {
-      LOG.info("JetBrains account access token not available for logged-in user ${account?.userInfo?.name}")
-    }
-
-    return isJbaTokenAvailable
+    val jbaInfoService = getJBAccountInfoServiceWithNotification()
+    return jbaInfoService.isLoggedIn()
   }
 
   private fun login(vararg postLoginActions: Runnable) {
@@ -69,11 +63,13 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
       invokeJBALogin(jbAccountInfoService, setPostLoginActions(*postLoginActions))
       return
     }
-    else if (currentAccount == null || !currentAccount.isJBAccessTokenAvailable(jbAccountInfoService)) {
+    else if (currentAccount == null || !jbAccountInfoService.isLoggedIn()) {
       LOG.info("JB access token not available. Relogin needed to proceed")
       showReloginToJBANeededNotification(invokeJBALoginAction(jbAccountInfoService, *postLoginActions))
     }
   }
+
+  private fun JBAccountInfoService?.isLoggedIn(): Boolean = this?.userData != null
 
   private fun getJBAccountInfoServiceWithNotification(): JBAccountInfoService? {
     val jbAuthService = JBAccountInfoService.getInstance()
@@ -94,12 +90,6 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
     jbAuthService.invokeJBALogin({postLoginActions.forEach { it.run() }}, { showLoginFailedNotification(JET_BRAINS_ACCOUNT) })
   }
 
-  @RequiresBackgroundThread
-  private fun isJBAccessTokenAvailable(): Boolean {
-    val jbaInfoService = getJBAccountInfoServiceWithNotification() ?: return false
-    return account?.isJBAccessTokenAvailable(jbaInfoService) ?: return false
-  }
-
   /*
   Possible return values:
     - null means no jba token in IDE and you need to relogin (possible when user logged in from toolbox or when token refresh inside IDE failed)
@@ -108,8 +98,8 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
    */
   @RequiresBackgroundThread
   fun loadHubToken(currentAccount: MarketplaceAccount): String? {
-    val jbAccountInfoService: JBAccountInfoService = getJBAccountInfoServiceWithNotification() ?: return null
-    val jbAccessToken: String = currentAccount.getJBAccessToken(jbAccountInfoService) ?: return null
+    val jbAccountInfoService = getJBAccountInfoServiceWithNotification() ?: return null
+    val jbAccessToken = currentAccount.getJBAccessToken(jbAccountInfoService) ?: return null
 
     return retrieveHubToken(jbAccessToken).accessToken
   }

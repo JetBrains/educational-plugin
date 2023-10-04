@@ -59,14 +59,11 @@ class MarketplaceSubmissionsConnector {
   private val submissionsService: SubmissionsService
     get() = submissionsService()
 
-  // should be called only from background thread because of jbAccessToken
-  @RequiresBackgroundThread
   private fun submissionsService(): SubmissionsService {
     val jbAuthService = JBAccountInfoService.getInstance() ?: error("Nullable JBAccountInfoService")
-    val marketplaceConnector = MarketplaceConnector.getInstance()
-    val jbAccessToken = marketplaceConnector.account?.getJBAccessToken(jbAuthService) ?: error("Nullable JB account access token")
+    val uidToken = jbAuthService.userData?.id ?: error("Nullable JB account ID token in user data")
 
-    val retrofit = createRetrofitBuilder(submissionsServiceUrl, connectionPool, jbAccessToken)
+    val retrofit = createRetrofitBuilder(submissionsServiceUrl, connectionPool, "u.$uidToken")
       .addConverterFactory(converterFactory)
       .build()
 

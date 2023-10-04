@@ -11,8 +11,11 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.ui.JBAccountInfoService
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
+import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
+import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
@@ -59,10 +62,6 @@ class MarketplaceAccount : OAuthAccount<JBAccountUserInfo> {
 
   override fun getUserName(): String {
     return userInfo.getFullName()
-  }
-
-  fun isJBAccessTokenAvailable(jbAccountInfoService: JBAccountInfoService): Boolean {
-    return getJBAccessToken(jbAccountInfoService) != null
   }
 
   @RequiresBackgroundThread
