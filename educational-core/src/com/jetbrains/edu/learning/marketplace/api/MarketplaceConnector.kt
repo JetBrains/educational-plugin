@@ -208,11 +208,10 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
     YamlFormatSynchronizer.saveRemoteInfo(course)
     YamlFormatSynchronizer.saveItem(course)
 
-    val message = message("marketplace.push.course.successfully.uploaded", courseBean.name)
+    val message = message("marketplace.push.course.successfully.uploaded")
     showNotification(project,
-                     openOnMarketplaceAction(course.getMarketplaceUrl()),
                      message,
-                     message("marketplace.push.course.successfully.uploaded.message"))
+                     message("marketplace.push.course.successfully.uploaded.message", courseBean.name))
     LOG.info("$message with id ${courseBean.id}")
   }
 

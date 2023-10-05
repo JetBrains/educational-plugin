@@ -34,7 +34,7 @@ import java.util.concurrent.CompletableFuture
 @Suppress("ComponentNotRegistered") // Marketplace.xml
 class MarketplacePushCourse(
   private val updateTitle: @NlsActions.ActionText String = message("item.update.on.0.course.title", MARKETPLACE),
-  private val uploadTitle: @NlsActions.ActionText String = message("item.upload.to.0.course.title", MARKETPLACE)
+  private val uploadTitle: @NlsActions.ActionText String = message("item.upload.to.0.course.title", "")
 ) : DumbAwareAction(addGluingSlash(updateTitle, uploadTitle)) {
 
   override fun update(e: AnActionEvent) {
