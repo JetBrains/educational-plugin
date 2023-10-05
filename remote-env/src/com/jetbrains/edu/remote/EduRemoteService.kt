@@ -36,6 +36,7 @@ class EduRemoteService(private val session: RemoteProjectSession) : LifetimedSer
                 TaskToolWindowView.getInstance(project).updateTaskDescription()
                 service<EduRemoteDisconnectWatcherService>().start()
                 service<EduRemoteInactivityWatcherService>().start()
+                service<EduRemoteUidRetrieverService>().start()
               }
               break
             }
