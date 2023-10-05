@@ -18,6 +18,7 @@ import com.intellij.database.model.DasDataSource
 import com.intellij.database.util.DataSourceUtil
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.coroutineToIndicator
@@ -35,6 +36,7 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
+import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.sql.core.EduSqlBundle
@@ -42,6 +44,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.future.await
 import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.VisibleForTesting
+
+private val LOG = Logger.getInstance("#com.jetbrains.edu.sql.jvm.gradle.SqlUtils")
 
 fun Task.findDataSource(project: Project): LocalDataSource? {
   val url = databaseUrl(project)
@@ -92,6 +96,7 @@ fun Task.getBaseTaskDir(project: Project): VirtualFile? = lesson.getDir(project.
 
 
 fun createDataSources(project: Project, tasks: List<Task>): List<LocalDataSource> {
+  LOG.info("Setting up data sources for ${tasks.map { it.getPathInCourse() }} tasks")
   val dataSourceRegistry = DataSourceRegistry(project)
   dataSourceRegistry.setImportedFlag(false)
   val dataSources = mutableListOf<LocalDataSource>()
@@ -159,7 +164,9 @@ private fun Task.createDataSourceName(existingDataSourceNames: Set<String>): Str
 
 // Copy-pasted from `com.intellij.database.actions.DataSourceScriptInterpreter`
 suspend fun DatabaseDriver.loadArtifacts(project: Project) {
+  LOG.info("Start loading `${name}` JDBC driver")
   val artifactsToDownload = resolveArtifacts(project)
+  LOG.info("Driver artifacts to download: $artifactsToDownload")
   for (artifact in artifactsToDownload) {
     downloadArtifact(artifact)
   }
@@ -201,6 +208,8 @@ private suspend fun downloadArtifact(artifact: DatabaseArtifactList.ArtifactVers
   withContext(Dispatchers.IO) {
     withRawProgressReporter {
       coroutineToIndicator {
+        val items = artifact.items.joinToString("\n") { "  ${it.name}: ${it.type}" }
+        LOG.info("Downloading `$artifact` artifact:\n$items")
         loader.downloadArtifact(artifact)
       }
     }
