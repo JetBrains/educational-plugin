@@ -122,11 +122,10 @@ class SubmissionsManager(private val project: Project) {
     val course = this.course
     val submissionsProvider = course?.getSubmissionsProvider() ?: return
 
-    val taskToolWindowView = TaskToolWindowView.getInstance(project)
-    taskToolWindowView.showLoadingSubmissionsPanel(getPlatformName())
-
     CompletableFuture.runAsync({
       if (isLoggedIn()) {
+        val taskToolWindowView = TaskToolWindowView.getInstance(project)
+        taskToolWindowView.showLoadingSubmissionsPanel(getPlatformName())
         loadSubmissionsContent(course, submissionsProvider, taskToolWindowView, loadSolutions)
       }
     }, ProcessIOExecutorService.INSTANCE)

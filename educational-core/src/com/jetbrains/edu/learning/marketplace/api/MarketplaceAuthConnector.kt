@@ -9,6 +9,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.ui.JBAccountInfoService
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.jetbrains.edu.coursecreator.CCNotificationUtils
+import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.api.EduLoginConnector
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.JBA_TOKEN_EXCHANGE
 import com.jetbrains.edu.learning.authUtils.TokenInfo
@@ -34,6 +35,7 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
 
   override fun doAuthorize(vararg postLoginActions: Runnable,
                            authorizationPlace: EduCounterUsageCollector.AuthorizationPlace) {
+    if (RemoteEnvHelper.isRemoteDevServer()) return
     this.authorizationPlace = authorizationPlace
     ApplicationManager.getApplication().executeOnPooledThread {
       login(*postLoginActions)
@@ -50,6 +52,9 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
   }
 
   override fun isLoggedIn(): Boolean {
+    if (RemoteEnvHelper.isRemoteDevServer()) {
+      return RemoteEnvHelper.getUserUidToken() != null
+    }
     if (account == null) return false
     val jbaInfoService = getJBAccountInfoServiceWithNotification()
     return jbaInfoService.isLoggedIn()

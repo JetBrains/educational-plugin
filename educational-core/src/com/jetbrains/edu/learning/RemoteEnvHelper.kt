@@ -9,10 +9,15 @@ import com.intellij.openapi.extensions.ExtensionPointName
 interface RemoteEnvHelper {
   fun isRemoteServer(): Boolean
 
+  fun getUidToken(): String?
+
   companion object {
     val EP_NAME: ExtensionPointName<RemoteEnvHelper> = ExtensionPointName.create("Educational.remoteEnvHelper")
 
     @JvmStatic
     fun isRemoteDevServer(): Boolean = EP_NAME.computeSafeIfAny { it.isRemoteServer() } == true
+
+    @JvmStatic
+    fun getUserUidToken(): String? = EP_NAME.computeSafeIfAny { it.getUidToken() }
   }
 }

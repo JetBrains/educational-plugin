@@ -12,16 +12,13 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.ui.ColorUtil
 import com.jetbrains.edu.EducationalCoreIcons
-import com.jetbrains.edu.learning.EduExperimentalFeatures
-import com.jetbrains.edu.learning.JavaUILibrary
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.isTestFile
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.invokeLater
-import com.jetbrains.edu.learning.isFeatureEnabled
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskToolWindow.ui.SwingToolWindowLinkHandler
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager
@@ -145,8 +142,14 @@ class SubmissionsTab(project: Project) : AdditionalTextTab(project, SUBMISSIONS_
     }
 
     private fun StringBuilder.addLoginText(submissionsManager: SubmissionsManager) {
-      append("<a $textStyleHeader;color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} href=$SUBMISSION_LOGIN_URL>" +
-             EduCoreBundle.message("submissions.login", submissionsManager.getPlatformName()) + "</a>")
+      if (!RemoteEnvHelper.isRemoteDevServer()) {
+        append(
+          "<a $textStyleHeader;color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} href=$SUBMISSION_LOGIN_URL>" +
+          EduCoreBundle.message("submissions.login", submissionsManager.getPlatformName()) + "</a>"
+        )
+      } else {
+        append(EduCoreBundle.message("submissions.wait.user.data.being.retrieved"))
+      }
     }
 
     private fun showDiff(project: Project, task: Task, submission: Submission) {
