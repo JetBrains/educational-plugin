@@ -1,8 +1,10 @@
 package com.jetbrains.edu.learning.taskToolWindow.ui
 
 import com.intellij.ide.ui.LafManagerListener
-import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.actionSystem.DataProvider
+import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.ToolWindow
@@ -17,13 +19,14 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.ext.allTasks
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.stepik.hyperskill.getTopPanelForProblem
 import com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsService
 import com.jetbrains.edu.learning.submissions.SubmissionsTab
@@ -35,6 +38,8 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabManagerImpl
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType.SUBMISSIONS_TAB
 import java.awt.BorderLayout
+import java.net.URL
+import javax.net.ssl.HttpsURLConnection
 import javax.swing.JPanel
 import javax.swing.JSeparator
 
@@ -203,6 +208,19 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
     }
     if (checkResult.status == CheckStatus.Failed) {
       updateTaskSpecificPanel()
+    }
+    if (checkResult == CheckResult.SOLVED) {
+      val taskId = 1 + task.course.allTasks.indexOf(task)
+      val deploymentId = 10
+      val contextId = 2
+      val userId = 3
+
+      val url = URL("https://amazing-wildcat-on.ngrok-free.app/open_in_ide/post_scores/$taskId/$deploymentId/$contextId/$userId")
+      val con = url.openConnection() as HttpsURLConnection
+      con.setRequestMethod("GET")
+      val responseCode = con.responseCode
+      logger<TaskToolWindowViewImpl>().info("LTI for task $taskId got response $responseCode")
+      con.disconnect()
     }
   }
 
