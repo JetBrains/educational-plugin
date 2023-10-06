@@ -268,7 +268,8 @@ configure(allprojects.pluginModules()) {
     instrumentCode = false
   }
   dependencies {
-    implementationWithoutKotlin(group = "org.twitter4j", name = "twitter4j-core", version = "4.0.1")
+    implementationWithoutKotlin(group = "org.twitter4j", name = "twitter4j-core", version = "4.0.7")
+    implementationWithoutKotlin(group = "io.github.takke", name = "jp.takke.twitter4j-v2", version = "1.4.2")
     implementationWithoutKotlin("org.jsoup:jsoup:1.15.3")
     implementationWithoutKotlin(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = jacksonVersion)
     implementationWithoutKotlin(group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version = jacksonVersion)

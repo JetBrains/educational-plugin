@@ -1,18 +1,21 @@
 package com.jetbrains.edu.learning.twitter
 
-import com.fasterxml.jackson.databind.json.JsonMapper
 import com.intellij.credentialStore.CredentialAttributes
 import com.intellij.credentialStore.Credentials
 import com.intellij.credentialStore.generateServiceName
 import com.intellij.ide.BrowserUtil
 import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.ide.plugins.PluginManagerCore
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationType
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task.Backgroundable
+import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.NlsSafe
@@ -22,13 +25,10 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.twitter.ui.TwitterDialogUI
 import com.jetbrains.edu.learning.twitter.ui.createTwitterDialogUI
-import okhttp3.ConnectionPool
-import retrofit2.converter.jackson.JacksonConverterFactory
 import twitter4j.*
 import twitter4j.auth.AccessToken
 import twitter4j.auth.RequestToken
 import twitter4j.conf.ConfigurationBuilder
-import java.io.File
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.nio.file.Path
@@ -40,9 +40,6 @@ object TwitterUtils {
   @Suppress("UnstableApiUsage")
   @NlsSafe
   private const val SERVICE_DISPLAY_NAME: String = "EduTools Twitter Integration"
-
-  private val connectionPool: ConnectionPool = ConnectionPool()
-  private val converterFactory: JacksonConverterFactory = JacksonConverterFactory.create(JsonMapper())
 
   /**
    * Set consumer key and secret.
@@ -86,65 +83,20 @@ object TwitterUtils {
     checkIsBackgroundThread()
 
     val mediaPath = info.mediaPath
-    val mediaId = if (mediaPath != null) {
-      twitter.uploadMedia(mediaPath.toFile()).mediaId
-    }
-    else {
-      null
-    }
+    val mediaId = if (mediaPath != null) arrayOf(twitter.uploadMedia(mediaPath.toFile()).mediaId) else emptyArray<Long>()
 
-    val tweet = Tweet(info.message, Media(listOfNotNull(mediaId)))
-    twitter.postTweet(tweet)
+    val tweet = twitter.v2.createTweet(text = info.message, mediaIds = mediaId)
 
-    EduBrowser.getInstance().browse("https://twitter.com/")
-  }
-
-  @Throws(IOException::class)
-  private fun Twitter.postTweet(tweet: Tweet) {
-    val response = v2().postTweet(tweet).execute()
-    if (!response.isSuccessful) {
-      throw IOException(response.errorBody()?.string() ?: "${response.code()} failed to create tweet")
-    }
-  }
-
-  private fun Twitter.v2(): TwitterV2 {
-    val authHeaderValue = constructAuthHeaderValue()
-    return createRetrofitBuilder("https://api.twitter.com", connectionPool, authHeaderValue, authHeaderValue = null)
-      .addConverterFactory(converterFactory)
-      .build()
-      .create(TwitterV2::class.java)
-  }
-
-  /**
-   * Constructs proper value for `Authorization` header based on OAuth 1.0a
-   *
-   * See https://developer.twitter.com/en/docs/authentication/oauth-1-0a
-   */
-  private fun Twitter.constructAuthHeaderValue(): String {
-    val authorization = authorization
-    return authorization.getAuthorizationHeader(
-      HttpRequest(RequestMethod.POST, "https://api.twitter.com/2/tweets", null, authorization, emptyMap())
-    )
-  }
-
-  /**
-   * Uploads media file using https://upload.twitter.com/1.1/media/upload.json endpoint
-   */
-  private fun Twitter.uploadMedia(file: File): UploadedMedia {
-    val client = HttpClientFactory.getInstance(configuration.httpClientConfiguration)
-    val param = HttpParameter("media", file)
-    val response = client.post("https://upload.twitter.com/1.1/media/upload.json", arrayOf(param), authorization, null)
-    return UploadedMedia.fromResponse(response)
-  }
-
-  private class UploadedMedia(val mediaId: String) {
-    companion object {
-      fun fromResponse(response: HttpResponse): UploadedMedia {
-        val json = response.asJSONObject()
-        val mediaId = json.getString("media_id_string")
-        return UploadedMedia(mediaId)
+    Notification(
+      "JetBrains Academy",
+      EduCoreBundle.message("twitter.success.title"),
+        EduCoreBundle.message("twitter.tweet.posted"),
+      NotificationType.INFORMATION
+    ).addAction(object : DumbAwareAction(EduCoreBundle.message("twitter.tweet.show")){
+      override fun actionPerformed(e: AnActionEvent) {
+        EduBrowser.getInstance().browse("https://twitter.com/anyuser/status/${tweet.id}")
       }
-    }
+    }).notify(null)
   }
 
   /**
@@ -153,7 +105,7 @@ object TwitterUtils {
   @Throws(TwitterException::class)
   private fun authorize(project: Project, twitter: Twitter): Boolean {
     checkIsBackgroundThread()
-    val requestToken = twitter.oAuthRequestToken
+    val requestToken = twitter.getOAuthRequestToken("oob")
     BrowserUtil.browse(requestToken.authorizationURL)
     val pin = invokeAndWaitIfNeeded { createAndShowPinDialog(project) } ?: return false
     ProgressManager.checkCanceled()
