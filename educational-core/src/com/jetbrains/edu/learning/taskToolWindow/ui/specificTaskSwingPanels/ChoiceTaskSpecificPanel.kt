@@ -2,12 +2,12 @@ package com.jetbrains.edu.learning.taskToolWindow.ui.specificTaskSwingPanels
 
 import com.intellij.ui.components.panels.Wrapper
 import com.intellij.ui.dsl.builder.*
-import com.intellij.ui.dsl.gridLayout.Gaps
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.taskToolWindow.ui.addBorder
 import com.jetbrains.edu.learning.taskToolWindow.ui.createButton
+import com.jetbrains.edu.learning.taskToolWindow.ui.addGaps
 import java.awt.event.ItemEvent
 import java.awt.event.ItemListener
 
@@ -40,7 +40,7 @@ class ChoiceTaskSpecificPanel(task: ChoiceTask) : Wrapper() {
     createButton(isMultipleChoice)
       .widthGroup("buttonsGroup")
       .enabled(areOptionsEnabled)
-      .customize(Gaps(right = 8))
+      .addGaps(right = 8)
       .component
       .apply {
         isSelected = task.selectedVariants.contains(index)

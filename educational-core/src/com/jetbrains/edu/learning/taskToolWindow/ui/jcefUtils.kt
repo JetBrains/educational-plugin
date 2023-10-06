@@ -4,9 +4,9 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.ui.JBColor
 import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.util.io.URLUtil
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
@@ -30,7 +30,6 @@ import kotlinx.css.properties.BoxShadow
 import kotlinx.css.properties.BoxShadows
 import kotlinx.css.properties.deg
 import kotlinx.css.properties.rotate
-import org.apache.commons.lang.StringEscapeUtils
 import org.apache.commons.lang3.StringUtils
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
@@ -149,7 +148,7 @@ private const val HINT_EXPANDED_BLOCK_TEMPLATE: String = "<div class='" + HINT_H
 fun wrapHintJCEF(project: Project, hintElement: Element, displayedHintNumber: String, hintTitle: String): String {
   val course = StudyTaskManager.getInstance(project).course
   val hintText: String = hintElement.html()
-  val escapedHintTitle = StringEscapeUtils.escapeHtml(hintTitle)
+  val escapedHintTitle = escapeHtml(hintTitle)
   if (course == null) {
     return String.format(HINT_BLOCK_TEMPLATE, escapedHintTitle, displayedHintNumber, hintText)
   }
@@ -245,7 +244,7 @@ fun getRadioButtonCSS(): String {
 }
 
 private fun getBorderColor(): Color {
-  return if (UIUtil.isUnderDarcula()) {
+  return if (!JBColor.isBright()) {
     Color(TaskToolWindowBundle.value("darcula.choice.options.background.color"))
   }
   else {
@@ -255,7 +254,7 @@ private fun getBorderColor(): Color {
 
 
 private fun getRadioButtonCheckedBorderColor(): Color {
-  return if (UIUtil.isUnderDarcula()) {
+  return if (!JBColor.isBright()) {
     Color(TaskToolWindowBundle.value("darcula.choice.options.background.color"))
   }
   else {
@@ -264,7 +263,7 @@ private fun getRadioButtonCheckedBorderColor(): Color {
 }
 
 private fun getRadioButtonCheckedBackgroundColor(): Color {
-  return if (UIUtil.isUnderDarcula()) {
+  return if (!JBColor.isBright()) {
     Color(TaskToolWindowBundle.value("choice.options.border.color"))
   }
   else {
@@ -273,7 +272,7 @@ private fun getRadioButtonCheckedBackgroundColor(): Color {
 }
 
 private fun getRadioButtonFocusColor(): Color {
-  return if (UIUtil.isUnderDarcula()) {
+  return if (!JBColor.isBright()) {
     Color(TaskToolWindowBundle.value("darcula.choice.options.focus.color"))
   }
   else {
@@ -282,7 +281,7 @@ private fun getRadioButtonFocusColor(): Color {
 }
 
 private fun getRadioButtonBackgroundColor(): Color {
-  return if (UIUtil.isUnderDarcula()) {
+  return if (!JBColor.isBright()) {
     Color(TaskToolWindowBundle.value("darcula.choice.options.background.color"))
   }
   else {

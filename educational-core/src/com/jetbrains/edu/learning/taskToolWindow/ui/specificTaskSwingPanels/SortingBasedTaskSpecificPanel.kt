@@ -11,8 +11,6 @@ import com.intellij.ui.RoundedLineBorder
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.ui.components.panels.Wrapper
 import com.intellij.ui.dsl.builder.*
-import com.intellij.ui.dsl.gridLayout.Gaps
-import com.intellij.ui.dsl.gridLayout.VerticalGaps
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.EducationalCoreIcons
@@ -24,6 +22,8 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.MatchingTaskUI
 import com.jetbrains.edu.learning.taskToolWindow.ui.addBorder
 import com.jetbrains.edu.learning.taskToolWindow.ui.getSortingShortcutHTML
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleManager
+import com.jetbrains.edu.learning.taskToolWindow.ui.addGaps
+import com.jetbrains.edu.learning.taskToolWindow.ui.addVerticalGaps
 import java.awt.Font
 import java.awt.event.*
 import javax.swing.JPanel
@@ -46,11 +46,11 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
   init {
     val panel = panel {
       createShortcutTutorialHint()
-        .customize(VerticalGaps(bottom = rowGapSize / 2))
+        .addVerticalGaps(bottom = rowGapSize / 2)
       for (index in task.ordering.indices) {
         createOption(task, index)
           .layout(RowLayout.PARENT_GRID)
-          .customize(VerticalGaps(bottom = rowGapSize))
+          .addVerticalGaps(bottom = rowGapSize)
       }
       align(Align.FILL)
     }.apply {
@@ -84,7 +84,7 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
       cell(RoundedWrapper(indexPanel, arcSize))
         .widthGroup("IndexPanel")
         .align(AlignY.FILL)
-        .customize(Gaps(right = columnGapSize))
+        .addGaps(right = columnGapSize)
     }
 
     cell(RoundedWrapper(optionPanel, arcSize))

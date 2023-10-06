@@ -11,9 +11,9 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.ui.ExperimentalUI
+import com.intellij.ui.JBColor
 import com.intellij.ui.components.AnActionLink
 import com.intellij.util.ui.JBUI
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isSwing
 import com.jetbrains.edu.learning.actions.OpenTaskOnSiteAction
@@ -172,7 +172,7 @@ fun String.getYoutubeVideoId(): String? {
  * Note, that the `srcset` attribute is always removed, independently of whether the dark theme is used or not.
  */
 fun replaceMediaForTheme(project: Project, task: Task, taskText: Document): Document {
-  val isDarkTheme = UIUtil.isUnderDarcula()
+  val isDarkTheme = !JBColor.isBright()
 
   val imageElements = taskText.getElementsByTag(IMG_TAG)
   for (element in imageElements) {
@@ -237,7 +237,7 @@ fun useDarkSrcCustomAttributeIfPresent(element: Element): Boolean {
 fun addExternalLinkIcons(document: Document): Document {
   val links = document.getElementsByTag(A_TAG)
   val externalLinks = links.filter { element -> element.attr(HREF_ATTRIBUTE).matches(EXTERNAL_LINK_REGEX) }
-  val arrowIcon = if (UIUtil.isUnderDarcula()) {
+  val arrowIcon = if (!JBColor.isBright()) {
     EXTERNAL_LINK_ARROW_DARK_PNG
   }
   else {

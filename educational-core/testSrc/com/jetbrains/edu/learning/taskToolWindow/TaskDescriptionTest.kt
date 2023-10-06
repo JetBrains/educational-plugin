@@ -8,6 +8,8 @@ import com.intellij.openapi.keymap.KeymapManager
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.keymap.impl.KeymapManagerImpl
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.ui.AppUIUtil
+import com.intellij.ui.JBColor
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
@@ -235,11 +237,14 @@ class TaskDescriptionTest : EduTestCase() {
   private fun runWithDarkTheme(doTest: () -> Unit) {
     val initialTheme = UIManager.getLookAndFeel()
     setLookAndFeel(DarculaLaf())
+    val isDarcula = initialTheme.name.contains("Darcula")
+    AppUIUtil.updateForDarcula(true)
     try {
       doTest()
     }
     finally {
       setLookAndFeel(initialTheme)
+      AppUIUtil.updateForDarcula(isDarcula)
     }
   }
 

@@ -28,7 +28,7 @@ class StyleManager {
   val textStyleHeader = "style=font-size:${bodyFontSize}pt"
 
   private fun bodyColor(): Color {
-    return if (UIUtil.isUnderDarcula()) {
+    return if (!JBColor.isBright()) {
       if (StyleResourcesManager.isHighContrast()) {
         Color(TaskToolWindowBundle.value("high.contrast.body.color"))
       }
@@ -40,7 +40,7 @@ class StyleManager {
   }
 
   private fun codeBackground(): Color {
-    return if (UIUtil.isUnderDarcula()) Color((TaskToolWindowBundle.value("darcula.code.background")))
+    return if (!JBColor.isBright()) Color((TaskToolWindowBundle.value("darcula.code.background")))
     else Color(TaskToolWindowBundle.value("code.background"))
   }
 
@@ -107,7 +107,7 @@ class StyleManager {
 
   fun tablesStylesheet(): String {
     val themeDependentBorderColor = when {
-      !UIUtil.isUnderDarcula() -> Color(TaskToolWindowBundle.value("light.table.border.color"))
+      JBColor.isBright() -> Color(TaskToolWindowBundle.value("light.table.border.color"))
       StyleResourcesManager.isHighContrast() -> Color(TaskToolWindowBundle.value("high.contrast.table.border.color"))
       else -> Color(TaskToolWindowBundle.value("dracula.table.border.color"))
     }

@@ -1,7 +1,5 @@
 package com.jetbrains.edu.learning.ui
 
-import com.intellij.ide.ui.LafManager
-import com.intellij.ide.ui.laf.UIThemeBasedLookAndFeelInfo
 import com.intellij.openapi.editor.EditorBundle
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.UIUtil
@@ -23,8 +21,7 @@ object EduColors {
 
   @Suppress("SameParameterValue")
   private fun getColorFromThemeIfNeeded(colorProperty: String, customColor: Color): Color {
-    val lookAndFeel = LafManager.getInstance().currentLookAndFeel
-    if (lookAndFeel !is UIThemeBasedLookAndFeelInfo || lookAndFeel.name == EditorBundle.message("intellij.light.color.scheme.name")) {
+    if (getCurrentThemeName() == EditorBundle.message("intellij.light.color.scheme.name")) {
       return customColor
     }
     return JBColor.namedColor(colorProperty, customColor)

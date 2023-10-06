@@ -4,10 +4,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
-import com.intellij.ui.dsl.builder.BottomGap
-import com.intellij.ui.dsl.builder.RowLayout
-import com.intellij.ui.dsl.builder.TopGap
-import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.builder.*
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.courseFormat.tasks.Task

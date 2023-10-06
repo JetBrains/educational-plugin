@@ -19,7 +19,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.taskToolWindow.ui.specificTaskSwingPanels.ChoiceTaskSpecificPanel
 import com.jetbrains.edu.learning.taskToolWindow.ui.specificTaskSwingPanels.SortingBasedTaskSpecificPanel
 import com.jetbrains.edu.learning.taskToolWindow.ui.specificTaskSwingPanels.TableTaskSpecificPanel
-import org.apache.commons.lang.StringEscapeUtils
 import org.jetbrains.annotations.VisibleForTesting
 import org.jsoup.nodes.Element
 import javax.swing.*
@@ -119,7 +118,7 @@ fun wrapHintSwing(project: Project, hintElement: Element, displayedHintNumber: S
     hintElement.wrap("<div class='top'></div>")
   }
   val course = StudyTaskManager.getInstance(project).course
-  val escapedHintTitle = StringEscapeUtils.escapeHtml(hintTitle)
+  val escapedHintTitle = escapeHtml(hintTitle)
   return if (course != null && !course.isStudy) {
     createExpandedHintBlockTemplate(hintElement, displayedHintNumber, escapedHintTitle)
   }

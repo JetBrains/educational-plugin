@@ -4,7 +4,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.components.service
 import com.intellij.openapi.rd.util.launchOnUi
-import com.jetbrains.codeWithMe.model.projectViewModel
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.navigation.NavigationUtils
@@ -21,7 +20,7 @@ class EduRemoteService(private val session: RemoteProjectSession) : LifetimedSer
   init {
     val project = session.project
     serviceLifetime.launchOnUi {
-      val model = session.protocol.projectViewModel
+      val model = getProjectViewModel(session)
       if (project.isEduProject()) {
         // This flag is set to true because the remote development project is not actually created from scratch when connected,
         // but rather the first course project opening for a user. Therefore, the corresponding existing code in the plugin is not invoked,

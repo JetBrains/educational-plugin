@@ -33,6 +33,7 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.openCourse
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.showNoCourseDialog
 import com.jetbrains.edu.learning.newproject.ui.filters.CoursesFilterComponent
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCourseCardComponent
+import com.jetbrains.edu.learning.ui.isUnderWin10LookAndFeel
 import java.awt.BorderLayout
 import java.awt.Graphics
 import javax.swing.JButton
@@ -134,7 +135,7 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
   }
 
   private class ActionButtonLookWithHover : ActionButtonLook() {
-    private var delegate: ActionButtonLook = if (UIUtil.isUnderWin10LookAndFeel()) Win10ActionButtonLook() else IdeaActionButtonLook()
+    private var delegate: ActionButtonLook = if (isUnderWin10LookAndFeel()) Win10ActionButtonLook() else IdeaActionButtonLook()
 
     override fun paintBackground(g: Graphics?, component: JComponent?, state: Int) {
       delegate.paintBackground(g, component, state)

@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.ide.DataManager
-import com.intellij.ide.ui.LafManager
-import com.intellij.ide.ui.laf.UIThemeBasedLookAndFeelInfo
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
@@ -24,6 +22,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.TypographyManager
 import com.jetbrains.edu.learning.ui.EduColors
+import com.jetbrains.edu.learning.ui.getCurrentThemeName
 import kotlinx.css.*
 import kotlinx.css.properties.lh
 import java.awt.Color
@@ -129,9 +128,8 @@ fun createHyperlinkWithContextHelp(actionWrapper: ToolbarActionWrapper): JPanel 
 }
 
 fun getColorFromScheme(colorId: String, default: Color): JBColor {
-  val lookAndFeel = LafManager.getInstance().currentLookAndFeel
-  if (lookAndFeel is UIThemeBasedLookAndFeelInfo && UIManager.getColor(colorId) == null) {
-    LOG.warn("Cannot find $colorId for ${lookAndFeel.name}")
+  if (UIManager.getColor(colorId) == null) {
+    LOG.warn("Cannot find $colorId for ${getCurrentThemeName()}")
   }
   return JBColor.lazy { UIManager.getColor(colorId) ?: default }
 }

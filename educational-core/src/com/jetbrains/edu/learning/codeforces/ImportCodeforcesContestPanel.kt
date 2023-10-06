@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getConte
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_HELP_TEXT
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CODEFORCES_TYPE_YAML
-import org.apache.commons.lang.math.NumberUtils.isDigits
+import org.apache.commons.lang3.math.NumberUtils.isDigits
 import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel

@@ -12,7 +12,6 @@ import com.jetbrains.edu.learning.taskToolWindow.IMG_TAG
 import com.jetbrains.edu.learning.taskToolWindow.SCRIPT_TAG
 import com.jetbrains.edu.learning.taskToolWindow.SRC_ATTRIBUTE
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleManager
-import org.apache.commons.lang.text.StrSubstitutor
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -23,8 +22,9 @@ fun htmlWithResources(
   content: String,
   task: Task? = project.getCurrentTask()
 ): String {
-  val templateText = loadText("/style/template.html.ft")
-  val textWithResources = StrSubstitutor(StyleManager.resources(content)).replace(templateText) ?: "Cannot load task text"
+  val templateText = loadText("/style/template.html.ft") ?: "Cannot load task text"
+  val resources = StyleManager.resources(content)
+  val textWithResources = replaceWithTemplateText(resources, templateText)
   return absolutizePaths(project, textWithResources, task)
 }
 

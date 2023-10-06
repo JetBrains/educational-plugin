@@ -111,6 +111,8 @@ val rustPlugins = listOf(
 val cppPlugins = listOf(
   "com.intellij.cidr.lang",
   "com.intellij.clion",
+  "com.intellij.cidr.base",
+  "com.intellij.nativeDebug",
   "org.jetbrains.plugins.clion.test.google",
   "org.jetbrains.plugins.clion.test.catch"
 )

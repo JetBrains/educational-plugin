@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.sortingBasedTask
 
 import com.google.gson.Gson
+import com.intellij.ui.JBColor
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduNames
@@ -166,7 +167,7 @@ abstract class SortingBasedTaskResourcesManager<T : SortingBasedTask> : TaskReso
 
     if (isDown) index += 2
 
-    if (UIUtil.isUnderDarcula()) index += 1
+    if (!JBColor.isBright()) index += 1
 
     return StyleResourcesManager.sortingBasedTaskResourcesList[index]
   }

@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.stepik.course
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
-import org.apache.commons.lang.math.NumberUtils
+import org.apache.commons.lang3.math.NumberUtils
 import java.awt.BorderLayout
 import java.awt.Dimension
 import javax.swing.*

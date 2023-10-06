@@ -61,7 +61,8 @@ abstract class CodeforcesConnector {
 
   protected val serviceHolder: SynchronizedClearableLazy<CodeforcesService> = SynchronizedClearableLazy { service() }
 
-  private val service: CodeforcesService by serviceHolder
+  private val service: CodeforcesService
+    get() = serviceHolder.value
 
   private fun service(): CodeforcesService =
     createRetrofitBuilder(baseUrl, connectionPool, customInterceptor = AntiCrawlerInterceptor)

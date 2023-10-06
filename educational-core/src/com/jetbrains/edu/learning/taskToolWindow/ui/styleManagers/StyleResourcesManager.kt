@@ -1,13 +1,12 @@
 package com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers
 
-import com.intellij.ide.ui.LafManager
-import com.intellij.ide.ui.laf.UIThemeBasedLookAndFeelInfo
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.util.ui.UIUtil
+import com.intellij.ui.JBColor
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
 import com.jetbrains.edu.learning.taskToolWindow.ui.EduToolsResourcesRequestHandler
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.sortingBasedTask.MatchingTaskResourcesManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.sortingBasedTask.SortingTaskResourcesManager
+import com.jetbrains.edu.learning.ui.getCurrentThemeId
 import java.net.URL
 
 object StyleResourcesManager {
@@ -116,19 +115,19 @@ object StyleResourcesManager {
   private val hintLafSpecificFileName: String
     get() = when {
       isHighContrast() -> HINT_HIGH_CONTRAST_CSS
-      UIUtil.isUnderDarcula() -> HINT_DARCULA_CSS
+      !JBColor.isBright() -> HINT_DARCULA_CSS
       else -> HINT_LIGHT_CSS
     }
 
   private val scrollbarLafSpecific: String
     get() = when {
       isHighContrast() -> SCROLL_BARS_HIGH_CONTRAST_CSS
-      UIUtil.isUnderDarcula() -> SCROLL_BARS_DARCULA_CSS
+      !JBColor.isBright() -> SCROLL_BARS_DARCULA_CSS
       else -> SCROLL_BARS_LIGHT_CSS
     }
 
   private val jetbrainsAcademyStyle: String
-    get() = if (UIUtil.isUnderDarcula()) {
+    get() = if (!JBColor.isBright()) {
       JETBRAINS_ACADEMY_CSS_DARK
     }
     else {
@@ -180,7 +179,6 @@ object StyleResourcesManager {
   }
 
   fun isHighContrast(): Boolean {
-    val lookAndFeel = LafManager.getInstance().currentLookAndFeel as? UIThemeBasedLookAndFeelInfo ?: return false
-    return lookAndFeel.theme.id == "JetBrainsHighContrastTheme"
+    return getCurrentThemeId() == "JetBrainsHighContrastTheme"
   }
 }
