@@ -20,7 +20,7 @@ class JavaLevelInEnvironmentSettingsTest : LightPlatformTestCase() {
       .map { it?.description }
       .plus("6.67") // unsupported
 
-    val languageLevels = listOf(null, LanguageLevel.JDK_19_PREVIEW.name, /*unsupported*/ "57.121")
+    val languageLevels = listOf(null, LanguageLevel.JDK_19.name, /*unsupported*/ "57.121")
 
     val selectedSdkVersions = listOf(null, JavaSdkVersion.JDK_11, JavaSdkVersion.JDK_17, JavaSdkVersion.JDK_19)
       .map { it?.description }

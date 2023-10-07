@@ -16,7 +16,7 @@ class LanguageLevelInEnvironmentSettingsTest : LightPlatformTestCase() {
   fun `test jdk validation messages`() {
     val course = course {}
 
-    val languageLevels = listOf(null, LanguageLevel.JDK_1_8, LanguageLevel.JDK_17, LanguageLevel.JDK_19_PREVIEW)
+    val languageLevels = listOf(null, LanguageLevel.JDK_1_8, LanguageLevel.JDK_17, LanguageLevel.JDK_19)
       .map { it?.name }
       .plus("57.121") // unsupported
 
@@ -60,11 +60,11 @@ class LanguageLevelInEnvironmentSettingsTest : LightPlatformTestCase() {
       JDK_17|17|null
       JDK_17|19|null
       JDK_17|2.39|Failed to determine Java version from string: 2.39. In the settings section, choose or download another JDK
-      JDK_19_PREVIEW|null|JDK is not selected. In the settings section, choose or download some JDK with a version at least 19
-      JDK_19_PREVIEW|11|Your Java version is 11, while it should be at least 19. In the settings section, choose or download a newer version of JDK
-      JDK_19_PREVIEW|17|Your Java version is 17, while it should be at least 19. In the settings section, choose or download a newer version of JDK
-      JDK_19_PREVIEW|19|null
-      JDK_19_PREVIEW|2.39|Failed to determine Java version from string: 2.39. In the settings section, choose or download another JDK
+      JDK_19|null|JDK is not selected. In the settings section, choose or download some JDK with a version at least 19
+      JDK_19|11|Your Java version is 11, while it should be at least 19. In the settings section, choose or download a newer version of JDK
+      JDK_19|17|Your Java version is 17, while it should be at least 19. In the settings section, choose or download a newer version of JDK
+      JDK_19|19|null
+      JDK_19|2.39|Failed to determine Java version from string: 2.39. In the settings section, choose or download another JDK
       57.121|null|Unsupported Java version: 57.121
       57.121|11|Unsupported Java version: 57.121
       57.121|17|Unsupported Java version: 57.121
