@@ -142,9 +142,7 @@ idea {
     vcs = "Git"
   }
   module {
-    // https://github.com/gradle/gradle/issues/8749
-    // `.add` can be used since Gradle 7.1
-    excludeDirs = excludeDirs + file("dependencies")
+    excludeDirs.add(file("dependencies"))
   }
 }
 
@@ -199,7 +197,7 @@ allprojects {
     withProp("customJbr") {
       if (it.isNotBlank()) {
         runIde {
-          jbrVersion.set(it)
+          jbrVersion = it
         }
       }
     }
@@ -217,8 +215,8 @@ allprojects {
       }
       if (isTeamCity) {
         retry {
-          maxRetries.set(3)
-          maxFailures.set(5)
+          maxRetries = 3
+          maxFailures = 5
         }
       }
     }
@@ -226,11 +224,11 @@ allprojects {
     withType<JavaCompile> { options.encoding = "UTF-8" }
     withType<KotlinCompile> {
       compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_17)
-        languageVersion.set(KotlinVersion.DEFAULT)
+        jvmTarget = JvmTarget.JVM_17
+        languageVersion = KotlinVersion.DEFAULT
         // see https://plugins.jetbrains.com/docs/intellij/using-kotlin.html#kotlin-standard-library
-        apiVersion.set(KotlinVersion.KOTLIN_1_8)
-        freeCompilerArgs.set(listOf("-Xjvm-default=all"))
+        apiVersion = KotlinVersion.KOTLIN_1_8
+        freeCompilerArgs = listOf("-Xjvm-default=all")
       }
     }
 
@@ -265,8 +263,8 @@ configure(allprojects.pluginModules()) {
     plugin("org.jetbrains.intellij")
   }
   intellij {
-    version.set(baseVersion)
-    instrumentCode.set(false)
+    version = baseVersion
+    instrumentCode = false
   }
   dependencies {
     implementationWithoutKotlin(group = "org.twitter4j", name = "twitter4j-core", version = "4.0.1")
@@ -312,15 +310,15 @@ project(":") {
   version = "$pluginVersion-$platformVersion-$buildNumber"
 
   intellij {
-    pluginName.set("JetBrainsAcademy")
-    updateSinceUntilBuild.set(true)
-    downloadSources.set(false)
+    pluginName = "JetBrainsAcademy"
+    updateSinceUntilBuild = true
+    downloadSources = false
 
     tasks.withType<PatchPluginXmlTask> {
-      changeNotes.set(provider { file(changesFile).readText() })
-      pluginDescription.set(provider { file("description.html").readText() })
-      sinceBuild.set(prop("customSinceBuild"))
-      untilBuild.set(prop("customUntilBuild"))
+      changeNotes = provider { file(changesFile).readText() }
+      pluginDescription = provider { file("description.html").readText() }
+      sinceBuild = prop("customSinceBuild")
+      untilBuild = prop("customUntilBuild")
     }
 
     val pluginsList = mutableListOf(
@@ -347,7 +345,7 @@ project(":") {
       pluginsList += sqlPlugin
     }
 
-    plugins.set(pluginsList)
+    plugins = pluginsList
   }
 
   dependencies {
@@ -395,7 +393,7 @@ project(":") {
     duplicatesStrategy = DuplicatesStrategy.FAIL
 
     // The name differs from all module names to avoid collision during new jar file creation
-    archiveBaseName.set("JetBrainsAcademy")
+    archiveBaseName = "JetBrainsAcademy"
 
     exclude("META-INF/MANIFEST.MF")
 
@@ -407,7 +405,7 @@ project(":") {
       pluginLibDir.listFiles().orEmpty().filter { it.isPluginJar() }
     }
 
-    destinationDirectory.set(project.layout.dir(provider { pluginLibDir }))
+    destinationDirectory = project.layout.dir(provider { pluginLibDir })
 
     doFirst {
       for (file in pluginJars) {
@@ -477,10 +475,10 @@ project(":") {
 
   task("configureIdea") {
     doLast {
-      intellij.sandboxDir.set(ideaSandbox)
+      intellij.sandboxDir = ideaSandbox
       withProp("ideaPath") { path ->
         tasks.runIde {
-          ideDir.set(file(path))
+          ideDir = file(path)
         }
       }
     }
@@ -488,10 +486,10 @@ project(":") {
 
   task("configurePyCharm") {
     doLast {
-      intellij.sandboxDir.set(pycharmSandbox)
+      intellij.sandboxDir = pycharmSandbox
       withProp("pycharmPath") { path ->
         tasks.runIde {
-          ideDir.set(file(path))
+          ideDir = file(path)
         }
       }
     }
@@ -503,19 +501,19 @@ project(":") {
         throw InvalidUserDataException("Path to WebStorm installed locally is needed\nDefine \"webStormPath\" property")
       }
 
-      intellij.sandboxDir.set(webStormSandbox)
+      intellij.sandboxDir = webStormSandbox
       tasks.runIde {
-        ideDir.set(file(prop("webStormPath")))
+        ideDir = file(prop("webStormPath"))
       }
     }
   }
 
   task("configureCLion") {
     doLast {
-      intellij.sandboxDir.set(clionSandbox)
+      intellij.sandboxDir = clionSandbox
       withProp("clionPath") { path ->
         tasks.runIde {
-          ideDir.set(file(path))
+          ideDir = file(path)
         }
       }
     }
@@ -523,10 +521,10 @@ project(":") {
 
   task("configureAndroidStudio") {
     doLast {
-      intellij.sandboxDir.set(studioSandbox)
+      intellij.sandboxDir = studioSandbox
       withProp("androidStudioPath") { path ->
         tasks.runIde {
-          ideDir.set(file(path))
+          ideDir = file(path)
         }
       }
     }
@@ -538,9 +536,9 @@ project(":") {
         throw InvalidUserDataException("Path to GoLand installed locally is needed\nDefine \"goLandPath\" property")
       }
 
-      intellij.sandboxDir.set(goLandSandbox)
+      intellij.sandboxDir = goLandSandbox
       tasks.runIde {
-        ideDir.set(file(prop("goLandPath")))
+        ideDir = file(prop("goLandPath"))
       }
     }
   }
@@ -551,9 +549,9 @@ project(":") {
         throw InvalidUserDataException("Path to PhpStorm installed locally is needed\nDefine \"phpStormPath\" property")
       }
 
-      intellij.sandboxDir.set(phpStormSandbox)
+      intellij.sandboxDir = phpStormSandbox
       tasks.runIde {
-        ideDir.set(file(prop("phpStormPath")))
+        ideDir = file(prop("phpStormPath"))
       }
     }
   }
@@ -599,7 +597,7 @@ project(":code-insight:markdown") {
     pluginList += "platform-images"
   }
   intellij {
-    plugins.set(pluginList)
+    plugins = pluginList
   }
 
   tasks {
@@ -607,7 +605,7 @@ project(":code-insight:markdown") {
       // Set custom plugin directory name for tests.
       // Otherwise, `prepareTestingSandbox` merge directories of `markdown` plugin and `markdown` modules
       // into single one
-      pluginName.set("edu-markdown")
+      pluginName = "edu-markdown"
     }
   }
 
@@ -622,7 +620,7 @@ project(":code-insight:markdown") {
 
 project(":code-insight:yaml") {
   intellij {
-    plugins.set(listOf(yamlPlugin))
+    plugins = listOf(yamlPlugin)
   }
 
   dependencies {
@@ -637,9 +635,9 @@ project(":code-insight:yaml") {
 project(":jvm-core") {
   intellij {
     if (!isJvmCenteredIDE) {
-      version.set(ideaVersion)
+      version = ideaVersion
     }
-    plugins.set(jvmPlugins)
+    plugins = jvmPlugins
   }
 
   dependencies {
@@ -652,9 +650,9 @@ project(":jvm-core") {
 project(":remote-env") {
   intellij {
     if (isStudioIDE) {
-      version.set(ideaVersion)
+      version = ideaVersion
     }
-    plugins.set(listOf(codeWithMePlugin))
+    plugins = listOf(codeWithMePlugin)
   }
 
   dependencies {
@@ -664,8 +662,8 @@ project(":remote-env") {
 
 project(":Edu-Java") {
   intellij {
-    version.set(ideaVersion)
-    plugins.set(jvmPlugins)
+    version = ideaVersion
+    plugins = jvmPlugins
   }
 
   dependencies {
@@ -680,9 +678,9 @@ project(":Edu-Java") {
 project(":Edu-Kotlin") {
   intellij {
     if (!isJvmCenteredIDE) {
-      version.set(ideaVersion)
+      version = ideaVersion
     }
-    plugins.set(kotlinPlugins)
+    plugins = kotlinPlugins
   }
 
   dependencies {
@@ -696,9 +694,9 @@ project(":Edu-Kotlin") {
 
 project(":Edu-Scala") {
   intellij {
-    version.set(ideaVersion)
+    version = ideaVersion
     val pluginsList = jvmPlugins + scalaPlugin
-    plugins.set(pluginsList)
+    plugins = pluginsList
   }
 
   dependencies {
@@ -712,9 +710,9 @@ project(":Edu-Scala") {
 
 project(":Edu-Android") {
   intellij {
-    version.set(studioVersion)
+    version = studioVersion
     val pluginsList = jvmPlugins + androidPlugin
-    plugins.set(pluginsList)
+    plugins = pluginsList
   }
 
   dependencies {
@@ -738,7 +736,7 @@ project(":Edu-Python") {
       // needed only for tests, actually
       platformImagesPlugin
     )
-    plugins.set(pluginList)
+    plugins = pluginList
   }
 
   dependencies {
@@ -753,7 +751,7 @@ project(":Edu-Python") {
 project(":Edu-Python:Idea") {
   intellij {
     if (!isJvmCenteredIDE || isStudioIDE) {
-      version.set(ideaVersion)
+      version = ideaVersion
     }
 
     val pluginList = listOfNotNull(
@@ -761,7 +759,7 @@ project(":Edu-Python:Idea") {
       gridImplPlugin,
       javaPlugin
     )
-    plugins.set(pluginList)
+    plugins = pluginList
   }
 
   dependencies {
@@ -774,9 +772,9 @@ project(":Edu-Python:Idea") {
 project(":Edu-Python:PyCharm") {
   intellij {
     if (isStudioIDE) {
-      version.set(ideaVersion)
+      version = ideaVersion
     }
-    plugins.set(pythonPlugins)
+    plugins = pythonPlugins
   }
 
   dependencies {
@@ -788,8 +786,8 @@ project(":Edu-Python:PyCharm") {
 
 project(":Edu-JavaScript") {
   intellij {
-    version.set(ideaVersion)
-    plugins.set(javaScriptPlugins)
+    version = ideaVersion
+    plugins = javaScriptPlugins
   }
   dependencies {
     implementation(project(":educational-core"))
@@ -801,9 +799,9 @@ project(":Edu-JavaScript") {
 project(":Edu-Rust") {
   intellij {
     if (isAtLeast232 && !isIdeaIDE && !isClionIDE) {
-      version.set(ideaVersion)
+      version = ideaVersion
     }
-    plugins.set(rustPlugins)
+    plugins = rustPlugins
   }
 
   dependencies {
@@ -815,8 +813,8 @@ project(":Edu-Rust") {
 
 project(":Edu-Cpp") {
   intellij {
-    version.set(clionVersion)
-    plugins.set(cppPlugins)
+    version = clionVersion
+    plugins = cppPlugins
   }
 
   dependencies {
@@ -828,8 +826,8 @@ project(":Edu-Cpp") {
 
 project(":Edu-Go") {
   intellij {
-    version.set(ideaVersion)
-    plugins.set(listOf(goPlugin, intelliLangPlugin))
+    version = ideaVersion
+    plugins = listOf(goPlugin, intelliLangPlugin)
   }
 
   dependencies {
@@ -841,8 +839,8 @@ project(":Edu-Go") {
 
 project(":Edu-Php") {
   intellij {
-    version.set(ideaVersion)
-    plugins.set(listOf(phpPlugin))
+    version = ideaVersion
+    plugins = listOf(phpPlugin)
   }
 
   dependencies {
@@ -854,7 +852,7 @@ project(":Edu-Php") {
 
 project(":Edu-Shell") {
   intellij {
-    plugins.set(listOf(shellScriptPlugin))
+    plugins = listOf(shellScriptPlugin)
   }
 
   dependencies {
@@ -867,9 +865,9 @@ project(":Edu-Shell") {
 project(":sql") {
   intellij {
     if (isStudioIDE || isPycharmIDE) {
-      version.set(ideaVersion)
+      version = ideaVersion
     }
-    plugins.set(listOf(sqlPlugin))
+    plugins = listOf(sqlPlugin)
   }
 
   dependencies {
@@ -880,8 +878,8 @@ project(":sql") {
 
 project("sql:sql-jvm") {
   intellij {
-    version.set(ideaVersion)
-    plugins.set(listOf(sqlPlugin) + jvmPlugins)
+    version = ideaVersion
+    plugins = listOf(sqlPlugin) + jvmPlugins
   }
 
   dependencies {
@@ -895,7 +893,7 @@ project("sql:sql-jvm") {
 
 project(":github") {
   intellij {
-    plugins.set(listOf(githubPlugin))
+    plugins = listOf(githubPlugin)
   }
 
   dependencies {
