@@ -32,7 +32,11 @@ class SubmissionsServiceChangeHost : DumbAwareAction(EduCoreBundle.message("subm
 
     val submissionsManager = SubmissionsManager.getInstance(project)
     if (!course.isMarketplace || !submissionsManager.submissionsSupported()) return
-    submissionsManager.prepareSubmissionsContentWhenLoggedIn { MarketplaceSolutionLoader.getInstance(project).loadSolutionsInBackground() }
+
+    SubmissionsManager.getInstance(project).deleteCourseSubmissionsLocally()
+    submissionsManager.prepareSubmissionsContentWhenLoggedIn {
+      MarketplaceSolutionLoader.getInstance(project).loadSolutionsInBackground()
+    }
   }
 
   companion object {
