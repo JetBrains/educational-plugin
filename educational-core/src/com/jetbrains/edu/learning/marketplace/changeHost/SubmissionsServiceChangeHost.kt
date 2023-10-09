@@ -20,7 +20,7 @@ class SubmissionsServiceChangeHost : DumbAwareAction(EduCoreBundle.message("subm
 
     val selectedUrl = showDialogAndGetSubmissionsServiceHost()
     if (selectedUrl == null) {
-      LOG.error("Selected Submissions service url item is null")
+      LOG.warn("Selected Submissions service URL item is null")
       return
     }
 
@@ -28,7 +28,7 @@ class SubmissionsServiceChangeHost : DumbAwareAction(EduCoreBundle.message("subm
     if (selectedUrl == existingValue) return
 
     PropertiesComponent.getInstance().setValue(SUBMISSIONS_SERVICE_HOST_PROPERTY, selectedUrl, existingValue)
-    LOG.info("Submissions service url was changed to $selectedUrl")
+    LOG.info("Submissions service URL was changed to $selectedUrl")
 
     val submissionsManager = SubmissionsManager.getInstance(project)
     if (!course.isMarketplace || !submissionsManager.submissionsSupported()) return
