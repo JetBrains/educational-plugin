@@ -3,10 +3,13 @@ package com.jetbrains.edu.learning.marketplace.changeHost
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.EnumComboBoxModel
+import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.bindItem
 import com.intellij.ui.dsl.builder.bindText
+import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.layout.*
+import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.marketplace.SUBMISSIONS_SERVICE_HOST_PROPERTY
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import javax.swing.JComboBox
@@ -27,15 +30,16 @@ internal class SubmissionsServiceChangeHostDialog : SubmissionsServiceChangeHost
   init {
     title = EduCoreBundle.message("submissions.service.change.host")
     setOKButtonText(EduCoreBundle.message("button.select"))
-    isResizable = false
+    isResizable = true
     init()
   }
 
-  override fun createCenterPanel(): JComponent = com.intellij.ui.dsl.builder.panel {
+  override fun createCenterPanel(): JComponent = panel {
     row(EduCoreBundle.message("submissions.service.change.host.choose.server.label")) {
       comboBox = comboBox(EnumComboBoxModel(SubmissionsServiceHost::class.java))
         .bindItem(::selectedHost)
         .focused()
+        .align(Align.FILL)
         .component
     }
     row {
@@ -44,6 +48,9 @@ internal class SubmissionsServiceChangeHostDialog : SubmissionsServiceChangeHost
         .bindText(::otherServer)
         .align(AlignX.FILL)
     }.visibleIf(comboBox.selectedValueMatches { it == SubmissionsServiceHost.OTHER })
+  }.apply {
+    preferredSize = JBUI.size(WIDTH, HEIGHT)
+    minimumSize = JBUI.size(WIDTH, HEIGHT)
   }
 
   override fun getResultUrl(): String? {
@@ -56,5 +63,10 @@ internal class SubmissionsServiceChangeHostDialog : SubmissionsServiceChangeHost
     else {
       otherServer
     }
+  }
+
+  companion object {
+    private const val WIDTH: Int = 300
+    private const val HEIGHT: Int = 70
   }
 }
