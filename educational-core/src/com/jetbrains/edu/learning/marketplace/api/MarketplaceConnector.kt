@@ -45,6 +45,7 @@ import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.TimeUnit
 
 abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnector {
   override var account: MarketplaceAccount?
@@ -276,6 +277,7 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
     invokeAndWaitIfNeeded {
       uploadUnderProgress(message("push.course.updating.progress.title")) {
         courseVersionMismatch = uploadCourseUpdate(project, course, file, hubToken)
+        TimeUnit.SECONDS.sleep(5)
       }
     }
     if (courseVersionMismatch) {
