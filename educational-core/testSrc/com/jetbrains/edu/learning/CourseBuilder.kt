@@ -8,28 +8,26 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.LightPlatformTestCase
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOStation
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.LESSON
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.SECTION
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
+import com.jetbrains.edu.learning.courseFormat.attempts.DataTaskAttempt
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOStation
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
-import com.jetbrains.edu.learning.courseFormat.attempts.DataTaskAttempt
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.IdeaDirectoryUnpackMode.ONLY_IDEA_DIRECTORY
-import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
-import com.jetbrains.edu.learning.courseFormat.RemoteEduTask
 import org.intellij.lang.annotations.Language
 import java.io.File
 import java.util.*
@@ -170,10 +168,13 @@ class CourseBuilder(course: Course) : LessonOwnerBuilder(course) {
     sectionBuilder.buildSection()
   }
 
-  fun additionalFile(name: String, text: String = "", buildTaskFile: EduFileBuilder.() -> Unit = {}) {
+  fun additionalFile(name: String, text: String = "", buildTaskFile: EduFileBuilder.() -> Unit = {}) =
+    additionalFile(name, InMemoryUndeterminedContents(text), buildTaskFile)
+
+  fun additionalFile(name: String, contents: FileContents, buildTaskFile: EduFileBuilder.() -> Unit = {}) {
     val builder = EduFileBuilder()
     builder.withName(name)
-    builder.withText(text)
+    builder.withContents(contents)
     builder.buildTaskFile()
 
     course.additionalFiles = course.additionalFiles + builder.eduFile
@@ -517,17 +518,31 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
    * it creates task file with `fun foo() = TODO()` text and placeholder with `TODO()` as placeholder text.
    */
   fun taskFile(
-    name: String, text: String = "",
+    name: String, text: String,
+    visible: Boolean? = null,
+    editable: Boolean? = true,
+    buildTaskFile: TaskFileBuilder.() -> Unit = {}
+  ) = taskFile(name, InMemoryUndeterminedContents(text), visible, editable, buildTaskFile)
+
+  fun taskFile(
+    name: String, contents: FileContents = UndeterminedContents.EMPTY,
     visible: Boolean? = null,
     editable: Boolean? = true,
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
   ) {
     val taskFileBuilder = TaskFileBuilder(task)
     taskFileBuilder.withName(name)
-    val textBuilder = StringBuilder(text.trimIndent())
-    val placeholders = extractPlaceholdersFromText(textBuilder)
-    taskFileBuilder.withText(textBuilder.toString())
-    taskFileBuilder.withPlaceholders(placeholders)
+
+    if (contents !is BinaryContents) {
+      val textBuilder = StringBuilder(contents.textualRepresentation.trimIndent())
+      val placeholders = extractPlaceholdersFromText(textBuilder)
+      taskFileBuilder.withContents(InMemoryTextualContents(textBuilder.toString()))
+      taskFileBuilder.withPlaceholders(placeholders)
+    }
+    else {
+      taskFileBuilder.withContents(contents)
+    }
+
     taskFileBuilder.buildTaskFile()
     val taskFile = taskFileBuilder.taskFile
     if (visible != null) {
@@ -703,6 +718,10 @@ class TaskFileBuilder(val task: Task? = null) {
     taskFile.text = text
   }
 
+  fun withContents(contents: FileContents) {
+    taskFile.contents = contents
+  }
+
   fun withPlaceholders(placeholders: List<AnswerPlaceholder>) {
     for (placeholder in placeholders) {
       placeholder.taskFile = taskFile
@@ -739,5 +758,9 @@ class EduFileBuilder {
 
   fun withText(text: String) {
     eduFile.text = text
+  }
+
+  fun withContents(contents: FileContents) {
+    eduFile.contents = contents
   }
 }

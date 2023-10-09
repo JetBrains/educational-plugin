@@ -196,3 +196,15 @@ private fun Course.configuratorCompatibility(): CourseCompatibility? {
 fun Course.updateEnvironmentSettings(project: Project, configurator: EduConfigurator<*>? = this.configurator) {
   course.environmentSettings += configurator?.getEnvironmentSettings(project).orEmpty()
 }
+
+fun Course.visitEduFiles(visitor: (EduFile) -> Unit) {
+  visitTasks { task ->
+    for (taskFile in task.taskFiles.values) {
+      visitor(taskFile)
+    }
+  }
+
+  for (additionalFile in additionalFiles) {
+    visitor(additionalFile)
+  }
+}
