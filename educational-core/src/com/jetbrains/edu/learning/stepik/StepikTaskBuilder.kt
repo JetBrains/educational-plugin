@@ -82,7 +82,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
 
   open fun createTask(type: String): Task? {
     val taskName = HyperskillTaskType.values().find { it.type == type }?.value ?: UNKNOWN_TASK_NAME
-    return stepikTaskBuilders[type]?.invoke(taskName)
+    return (stepikTaskBuilders[type] ?: this::unsupportedTask).invoke(taskName)
   }
 
   private fun Step.pycharmOptions(): PyCharmStepOptions {
@@ -392,7 +392,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
 
   companion object {
     private const val DEFAULT_EDU_TASK_NAME = "Edu Task"
-    private const val UNKNOWN_TASK_NAME = "Unknown Task"
+    private const val UNKNOWN_TASK_NAME = "Unknown"
     private val LOG = Logger.getInstance(StepikTaskBuilder::class.java)
      val langAndVersionRegex = Regex("^([a-zA-Z+#]+)\\s?([.|0-9]+)\$")
 
