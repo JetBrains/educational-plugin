@@ -147,7 +147,8 @@ class SubmissionsTab(project: Project) : AdditionalTextTab(project, SUBMISSIONS_
           "<a $textStyleHeader;color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} href=$SUBMISSION_LOGIN_URL>" +
           EduCoreBundle.message("submissions.login", submissionsManager.getPlatformName()) + "</a>"
         )
-      } else {
+      }
+      else {
         append(EduCoreBundle.message("submissions.wait.user.data.being.retrieved"))
       }
     }

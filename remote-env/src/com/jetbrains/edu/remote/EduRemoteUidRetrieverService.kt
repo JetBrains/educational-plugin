@@ -2,7 +2,7 @@ package com.jetbrains.edu.remote
 
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
-import com.intellij.openapi.diagnostic.thisLogger
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.marketplace.MarketplaceSolutionLoader
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
@@ -33,49 +33,41 @@ class EduRemoteUidRetrieverService(private val project: Project, private val sco
     scope.launch {
       while (true) {
         if (fileWithUid.exists()) {
-          val fileText = fileWithUid.readText()
-          val matcher = PATTERN.matcher(fileText)
-
-          if (matcher.find()) {
-            val uid = matcher.group(1)
-            if (uid matches UID_REGEX) {
-              service<EduRemoteUidHolderService>().userUid = uid
-              LOG.info("The user's UID ($uid) was successfully retrieved and stored")
-              break
-            }
-            else {
-              LOG.error("Provided UID is invalid: $uid")
-              return@launch
-            }
-          }
-          else {
-            LOG.warn(
-              "The user UID file (${fileWithUid.absolutePath}) was located in the file system, however, " +
-              "it does not contain any user UID information. Re-checking after an interval of $checkInterval"
-            )
-          }
+          service<EduRemoteUidHolderService>().userUid = fileWithUid.extractUUID()
+          break
         }
         else {
           LOG.warn(
-            "The user UID file (${fileWithUid.absolutePath}) is not found in the file system. " +
+            "The user UID file (${fileWithUid.absolutePath}) was not found in the file system. " +
             "Will re-check after a delay of $checkInterval"
           )
         }
         delay(checkInterval)
       }
 
-      while (true) {
-        if (project.isOpen) {
-          submissionsManager.prepareSubmissionsContentWhenLoggedIn {
-            MarketplaceSolutionLoader.getInstance(project).loadSolutionsInBackground()
-          }
-          break
-        }
-        else {
-          LOG.warn("The project is not opened yet, re-checking after an interval of $checkInterval")
-          delay(checkInterval)
+      if (project.isOpen) {
+        submissionsManager.prepareSubmissionsContentWhenLoggedIn {
+          MarketplaceSolutionLoader.getInstance(project).loadSolutionsInBackground()
         }
       }
+    }
+  }
+
+  private fun File.extractUUID(): String? {
+    val fileText = readText()
+    val matcher = PATTERN.matcher(fileText)
+
+    return if (matcher.find()) {
+      val uid = matcher.group(1)
+      LOG.info("The user's UID ($uid) was successfully retrieved and stored")
+      uid
+    }
+    else {
+      LOG.warn(
+        "The user UID file (${fileWithUid.absolutePath}) was located in the file system, however, " +
+        "it does not contain any user UID information"
+      )
+      null
     }
   }
 
@@ -89,15 +81,7 @@ class EduRemoteUidRetrieverService(private val project: Project, private val sco
     @NonNls
     private const val JB_UID_PROPERTY_NAME_IN_FILE: String = "jbUid"
 
-    private val LOG = thisLogger()
+    private val LOG = logger<EduRemoteUidRetrieverService>()
     private val PATTERN = "$JB_UID_PROPERTY_NAME_IN_FILE=(\\S+)".toPattern()
-
-    /**
-     * The user UID can range from 22 to 25 characters, but it might also be longer
-     */
-    private val UID_REGEX = "^[a-z0-9]{22,}$".toRegex()
-
-    @JvmStatic
-    fun getInstance(project: Project): EduRemoteUidRetrieverService = project.service()
   }
 }

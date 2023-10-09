@@ -7,5 +7,5 @@ import com.jetbrains.rdserver.unattendedHost.UnattendedHostManager
 class RemoteEnvDefaultHelper : RemoteEnvHelper {
   override fun isRemoteServer(): Boolean = UnattendedHostManager.getInstance().isUnattendedMode
 
-  override fun getUidToken(): String? = service<EduRemoteUidHolderService>().userUid
+  override fun getUserUidToken(): String? = service<EduRemoteUidHolderService>().userUid
 }
