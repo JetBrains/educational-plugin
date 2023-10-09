@@ -16,6 +16,7 @@ import java.nio.file.Path
 import kotlin.system.measureTimeMillis
 
 class FrameworkStorage(storagePath: Path) : AbstractStorage(storagePath) {
+  var isDisposed = false
 
   constructor(storageFilePath: Path, version: Int) : this(storageFilePath) {
     setVersion(version)
@@ -23,6 +24,11 @@ class FrameworkStorage(storagePath: Path) : AbstractStorage(storagePath) {
 
   override fun createRecordsTable(@Suppress("UnstableApiUsage") context: StorageLockContext, recordsFile: Path): AbstractRecordsTable =
     FrameworkRecordsTable(recordsFile, context)
+
+  override fun dispose() {
+    super.dispose()
+    isDisposed = true
+  }
 
   @Throws(IOException::class)
   fun updateUserChanges(record: Int, changes: UserChanges): Int {

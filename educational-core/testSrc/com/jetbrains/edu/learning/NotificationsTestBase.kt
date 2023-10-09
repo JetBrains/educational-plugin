@@ -28,7 +28,7 @@ abstract class NotificationsTestBase : EduTestCase() {
     fileEditor: FileEditor,
     clazz: Class<T>
   ): EditorNotificationPanel? {
-    return editorNotificationsImpl()?.getNotificationPanels(fileEditor)?.get(clazz) as? EditorNotificationPanel
+    return editorNotificationsImpl()?.getNotificationPanels(fileEditor)?.get(clazz as Class<*>) as? EditorNotificationPanel
   }
 
   private fun editorNotificationsImpl(): EditorNotificationsImpl? =
