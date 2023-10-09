@@ -82,6 +82,6 @@ class EduRemoteUidRetrieverService(private val project: Project, private val sco
     private const val JB_UID_PROPERTY_NAME_IN_FILE: String = "jbUid"
 
     private val LOG = logger<EduRemoteUidRetrieverService>()
-    private val PATTERN = "$JB_UID_PROPERTY_NAME_IN_FILE=(\\S+)".toPattern()
+    private val PATTERN = """$JB_UID_PROPERTY_NAME_IN_FILE="(\S+)"""".toPattern()
   }
 }
