@@ -18,6 +18,14 @@ class MarketplaceSubmissionsProvider : SubmissionsProvider {
     return emptyMap()
   }
 
+  override fun loadSharedSolutionsForCourse(course: Course): Map<Int, List<MarketplaceSubmission>> {
+    if (course !is EduCourse || !course.isMarketplace) return mapOf()
+
+    return MarketplaceSubmissionsConnector.getInstance().getSharedSolutionsForCourse(
+      course.id, course.marketplaceCourseVersion
+    ).groupBy { it.taskId }
+  }
+
   override fun loadSubmissions(tasks: List<Task>, courseId: Int): Map<Int, List<MarketplaceSubmission>> {
     val submissions = MarketplaceSubmissionsConnector.getInstance().getAllSubmissions(courseId)
     val submissionsById = mutableMapOf<Int, MutableList<MarketplaceSubmission>>()

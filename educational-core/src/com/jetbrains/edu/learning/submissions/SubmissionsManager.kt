@@ -26,9 +26,13 @@ import java.util.stream.Collectors
  *
  * @see com.jetbrains.edu.learning.submissions.SubmissionsProvider
  */
-@Service
+@Service(Service.Level.PROJECT)
 class SubmissionsManager(private val project: Project) {
+
   private val submissions = ConcurrentHashMap<Int, List<Submission>>()
+
+  private val communitySubmissions = ConcurrentHashMap<Int, List<Submission>>()
+
   var course: Course? = project.course
     @TestOnly set
 
@@ -131,6 +135,17 @@ class SubmissionsManager(private val project: Project) {
     }, ProcessIOExecutorService.INSTANCE)
   }
 
+  fun loadCommunitySubmissions() {
+    val course = this.course
+    val submissionsProvider = course?.getSubmissionsProvider() ?: return
+
+    CompletableFuture.runAsync({
+      if (isLoggedIn()) {
+        communitySubmissions.putAll(submissionsProvider.loadSharedSolutionsForCourse(course))
+      }
+    }, ProcessIOExecutorService.INSTANCE)
+  }
+
   fun deleteCourseSubmissionsLocally() {
     course?.allTasks?.forEach { submissions.remove(it.id) }
     updateSubmissionsTab()
@@ -142,10 +157,12 @@ class SubmissionsManager(private val project: Project) {
 
   fun doAuthorize() = course?.getSubmissionsProvider()?.doAuthorize(Runnable { prepareSubmissionsContentWhenLoggedIn() })
 
-  private fun loadSubmissionsContent(course: Course,
-                                     submissionsProvider: SubmissionsProvider,
-                                     taskToolWindowView: TaskToolWindowView,
-                                     loadSolutions: () -> Unit) {
+  private fun loadSubmissionsContent(
+    course: Course,
+    submissionsProvider: SubmissionsProvider,
+    taskToolWindowView: TaskToolWindowView,
+    loadSolutions: () -> Unit
+  ) {
     submissions.putAll(submissionsProvider.loadAllSubmissions(course))
     loadSolutions()
     ApplicationManager.getApplication().invokeLater { taskToolWindowView.updateTab(SUBMISSIONS_TAB) }

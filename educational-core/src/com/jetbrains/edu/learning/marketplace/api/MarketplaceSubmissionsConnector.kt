@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -38,6 +39,7 @@ import java.net.HttpURLConnection.HTTP_NOT_FOUND
 import java.net.HttpURLConnection.HTTP_NO_CONTENT
 import java.net.URL
 
+@Service
 class MarketplaceSubmissionsConnector {
   private val connectionPool: ConnectionPool = ConnectionPool()
   private val converterFactory: JacksonConverterFactory
@@ -102,6 +104,19 @@ class MarketplaceSubmissionsConnector {
     return allSubmissions
   }
 
+  /**
+   * Fetches only N shared solutions for each task on the course that user has solved
+   */
+  fun getSharedSolutionsForCourse(courseId: Int, updateVersion: Int): List<MarketplaceSubmission> {
+    LOG.info("Loading all published solutions for courseId = $courseId")
+
+    return generateSequence(1) { it + 1 }
+      .mapNotNull { fetchSharedSolutionsForCourse(courseId, updateVersion, it) }
+      .takeWhile { it.hasNext && it.submissions.isNotEmpty() }
+      .flatMap { it.submissions }
+      .toList()
+  }
+
   fun markTheoryTaskAsCompleted(task: TheoryTask) {
     val emptySubmission = MarketplaceSubmission(task)
     LOG.info("Marking theory task ${task.name} as completed")
@@ -144,14 +159,24 @@ class MarketplaceSubmissionsConnector {
       .executeParsingErrors()
   }
 
-  fun getSharingPreference() : MarketplaceSolutionSharingPreference? {
+  fun getSharingPreference(): MarketplaceSolutionSharingPreference? {
     LOG.info("Getting solution sharing preference")
     val responseString = submissionsService.getSharingPreference().executeHandlingExceptions()?.body()?.string()
 
     return responseString?.let { MarketplaceSolutionSharingPreference.valueOf(it) }
   }
 
-  private fun doPostSubmission(courseId: Int, taskId: Int, submission: MarketplaceSubmission): Result<MarketplaceSubmission, String>{
+  private fun fetchSharedSolutionsForCourse(
+    courseId: Int,
+    updateVersion: Int,
+    page: Int
+  ): MarketplaceSubmissionsList? = submissionsService.getAllPublicSubmissionsForCourse(
+    courseId,
+    updateVersion,
+    page
+  ).executeHandlingExceptions()?.body()
+
+  private fun doPostSubmission(courseId: Int, taskId: Int, submission: MarketplaceSubmission): Result<MarketplaceSubmission, String> {
     LOG.info("Posting submission for task $taskId")
     return submissionsService.postSubmission(courseId, submission.courseVersion, taskId, submission).executeParsingErrors().flatMap {
       val result = it.body()
@@ -175,6 +200,7 @@ class MarketplaceSubmissionsConnector {
     return files.checkNotEmpty()
   }
 
+  @Suppress("DialogTitleCapitalization")
   private fun logAndNotifyAfterDeletionAttempt(response: Response<ResponseBody>, project: Project, userName: String) {
     when (response.code()) {
       HTTP_NO_CONTENT -> {
@@ -185,7 +211,8 @@ class MarketplaceSubmissionsConnector {
           EduCoreBundle.message("marketplace.delete.submissions.success.message", userName)
         )
       }
-      HTTP_NOT_FOUND ->  {
+
+      HTTP_NOT_FOUND -> {
         LOG.info("There are no submissions to delete for user $userName")
         showNotification(
           project,
@@ -193,6 +220,7 @@ class MarketplaceSubmissionsConnector {
           EduCoreBundle.message("marketplace.delete.submissions.nothing.message", userName)
         )
       }
+
       else -> {
         val errorMsg = response.errorBody()?.string() ?: "Unknown error"
         LOG.error("Failed to delete all submissions for user $userName. Error message: $errorMsg")
