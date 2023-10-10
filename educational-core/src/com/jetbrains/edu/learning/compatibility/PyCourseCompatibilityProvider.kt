@@ -15,7 +15,7 @@ class PyCourseCompatibilityProvider : CourseCompatibilityProvider {
       isPyCharmPro() -> listOf(PluginInfos.PYTHON_PRO)
       isPyCharm() -> listOf(PluginInfos.PYTHON_COMMUNITY)
       isIdeaUltimate() -> listOf(PluginInfos.PYTHON_PRO)
-      isCLion() || isIntelliJ() || EduUtilsKt.isAndroidStudio() -> listOf(PluginInfos.PYTHON_COMMUNITY)
+      isCLion() || isIntelliJ() || EduUtilsKt.isAndroidStudio() || isRustRover() -> listOf(PluginInfos.PYTHON_COMMUNITY)
       else -> null
     }
   }

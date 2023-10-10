@@ -9,7 +9,7 @@ import javax.swing.Icon
 class JsCourseCompatibilityProvider : CourseCompatibilityProvider {
   override fun requiredPlugins(): List<PluginInfo>? {
     @Suppress("DEPRECATION", "UnstableApiUsage")
-    return if (isIdeaUltimate() || isWebStorm() || isPyCharmPro() || isGoIde()) {
+    return if (isIdeaUltimate() || isWebStorm() || isPyCharmPro() || isGoIde() || isRustRover()) {
       listOf(
         PluginInfos.JAVA_SCRIPT,
         PluginInfos.JAVA_SCRIPT_DEBUGGER,
