@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.command
 
 import com.intellij.openapi.application.ModernApplicationStarter
-import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.diagnostic.logger
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -19,8 +18,11 @@ abstract class EduAppStarterBase : ModernApplicationStarter() {
     try {
       val parsedArgs = parseArgs(args)
       val course = loadCourse(parsedArgs)
-      doMain(course, parsedArgs.projectPath)
-      ApplicationManagerEx.getApplicationEx().exit(true, true)
+      val result = doMain(course, parsedArgs.projectPath)
+      if (result is CommandResult.Error) {
+        LOG.error(result.message, result.throwable)
+      }
+      saveAndExit(result.exitCode)
     }
     catch (e: Throwable) {
       LOG.error(e)
@@ -28,7 +30,7 @@ abstract class EduAppStarterBase : ModernApplicationStarter() {
     }
   }
 
-  protected abstract suspend fun doMain(course: Course, projectPath: String)
+  protected abstract suspend fun doMain(course: Course, projectPath: String): CommandResult
 
   private fun parseArgs(args: List<String>): Args {
     val options = Options()
