@@ -19,8 +19,11 @@ abstract class EduAppStarterBase : ModernApplicationStarter() {
     try {
       val parsedArgs = parseArgs(args)
       val course = loadCourse(parsedArgs)
-      doMain(course, parsedArgs.projectPath)
-      ApplicationManagerEx.getApplicationEx().exit(true, true)
+      val result = doMain(course, parsedArgs.projectPath)
+      if (result is CommandResult.Error) {
+        LOG.error(result.message, result.throwable)
+      }
+      ApplicationManagerEx.getApplicationEx().exit(true, true, result.exitCode)
     }
     catch (e: Throwable) {
       LOG.error(e)
@@ -28,7 +31,7 @@ abstract class EduAppStarterBase : ModernApplicationStarter() {
     }
   }
 
-  protected abstract suspend fun doMain(course: Course, projectPath: String)
+  protected abstract suspend fun doMain(course: Course, projectPath: String): CommandResult
 
   private fun parseArgs(args: List<String>): Args {
     val options = Options()

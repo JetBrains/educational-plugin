@@ -6,7 +6,6 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.InstallAndEnableTaskHeadlessImpl
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
-import kotlin.system.exitProcess
 
 /**
  * Adds `installCoursePlugins` command for IDE to install all necessary plugins for given course
@@ -20,10 +19,10 @@ class EduCoursePluginInstallerAppStarter : EduAppStarterBase() {
   override val commandName: String
     get() = "installCoursePlugins"
 
-  override suspend fun doMain(course: Course, projectPath: String) {
+  override suspend fun doMain(course: Course, projectPath: String): CommandResult {
     val provider = course.compatibilityProvider
     if (provider == null) {
-      logErrorAndExit(course.incompatibleCourseMessage())
+      return CommandResult.Error(course.incompatibleCourseMessage())
     }
 
     val pluginManager = PluginManager.getInstance()
@@ -34,12 +33,13 @@ class EduCoursePluginInstallerAppStarter : EduAppStarterBase() {
 
     LOG.info("Installing: $pluginIds")
 
+    var result: CommandResult = CommandResult.Ok
     @Suppress("UnstableApiUsage")
     ProgressManager.getInstance().run(object : InstallAndEnableTaskHeadlessImpl(pluginIds, {}) {
       override fun onThrowable(error: Throwable) {
-        LOG.error("Failed to install plugins:", error)
-        exitProcess(1)
+        result = CommandResult.Error("Failed to install plugins for `${course.name}` course", error)
       }
     })
+    return result
   }
 }

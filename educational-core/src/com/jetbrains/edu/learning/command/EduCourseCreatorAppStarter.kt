@@ -34,16 +34,16 @@ class EduCourseCreatorAppStarter : EduAppStarterBase() {
   override val commandName: String
     get() = "createCourse"
 
-  override suspend fun doMain(course: Course, projectPath: String) {
+  override suspend fun doMain(course: Course, projectPath: String): CommandResult {
     val configurator = course.configurator
     if (configurator == null) {
-      logErrorAndExit(course.incompatibleCourseMessage())
+      return CommandResult.Error(course.incompatibleCourseMessage())
     }
 
     val courseBuilder = configurator.courseBuilder
 
-    when (val projectSettings = courseBuilder.getDefaultSettings()) {
-      is Err -> logErrorAndExit(projectSettings.error)
+    return when (val projectSettings = courseBuilder.getDefaultSettings()) {
+      is Err -> CommandResult.Error(projectSettings.error)
       is Ok -> createCourseProject(course, projectPath, projectSettings.value)
     }
   }
@@ -52,7 +52,7 @@ class EduCourseCreatorAppStarter : EduAppStarterBase() {
     course: Course,
     location: String,
     projectSettings: EduProjectSettings
-  ) {
+  ): CommandResult {
     var errorMessage: String? = null
 
     val listener = ProjectConfigurationListener()
@@ -61,7 +61,7 @@ class EduCourseCreatorAppStarter : EduAppStarterBase() {
       .connect()
       .subscribe(CourseProjectGenerator.COURSE_PROJECT_CONFIGURATION, listener)
 
-    val project = withAutoImportDisabled {
+    val result = withAutoImportDisabled {
       val info = CourseCreationInfo(course, location, projectSettings)
       val project = withContext(Dispatchers.EDT) {
         CoursesPlatformProvider.joinCourse(info, CourseMode.STUDENT, null) {
@@ -78,18 +78,21 @@ class EduCourseCreatorAppStarter : EduAppStarterBase() {
           @Suppress("UnstableApiUsage")
           ProjectManagerEx.getInstanceEx().saveAndForceCloseProject(project)
         }
+        CommandResult.Ok
       }
-      project
-    }
-    if (project == null) {
-      val message = buildString {
-        append("Failed to create course project")
-        if (!errorMessage.isNullOrEmpty()) {
-          append(". $errorMessage")
+      else {
+        val message = buildString {
+          append("Failed to create course project")
+          if (!errorMessage.isNullOrEmpty()) {
+            append(". $errorMessage")
+          }
         }
+
+        CommandResult.Error(message)
       }
-      logErrorAndExit(message)
     }
+
+    return result
   }
 
   private suspend fun waitForPostStartupActivities(project: Project) {
