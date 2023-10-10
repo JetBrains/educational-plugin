@@ -117,11 +117,15 @@ abstract class EduAppStarterBase : ModernApplicationStarter() {
     }
 
     @JvmStatic
-    protected fun Course.incompatibleCourseMessage(): String = """
-      |Can't open `${course.name}` course (type="${course.itemType}", language="${course.languageId}"
-      |${if (!course.languageVersion.isNullOrEmpty()) ", language version=${course.languageVersion}" else ""},
-      |environment="${course.environment}") with current IDE setup
-    """.trimMargin()
+    protected fun Course.incompatibleCourseMessage(): String {
+      return buildString {
+        append("""Can't open `${course.name}` course (type="${course.itemType}", language="${course.languageId}", """)
+        if (!course.languageVersion.isNullOrEmpty()) {
+          append("""language version="${course.languageVersion}", """)
+        }
+        append("""environment="${course.environment}") with current IDE setup""")
+      }
+    }
   }
 
   protected data class Args(
