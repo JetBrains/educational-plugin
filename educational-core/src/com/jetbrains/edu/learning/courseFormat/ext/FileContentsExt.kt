@@ -1,12 +1,9 @@
 package com.jetbrains.edu.learning.courseFormat.ext
 
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileSystem
+import com.intellij.openapi.vfs.newvfs.impl.StubVirtualFile
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.isToEncodeContent
-import java.io.InputStream
-import java.io.OutputStream
 
 /**
  * The intellij platform is able to determine file types for [VirtualFile]s.
@@ -15,19 +12,15 @@ import java.io.OutputStream
  *
  * A number of methods are not implemented because they are not called (hopefully) during determining the file type.
  */
-class FakeVirtualFile(private val fakePath: String) : VirtualFile() {
+private class FakeVirtualFile(private val fakePath: String, val directory: Boolean) : StubVirtualFile() {
   override fun getName(): String {
     val i = fakePath.lastIndexOf('/')
-    return if (i > 0) path.substring(i + 1) else path
+    return if (i >= 0) path.substring(i + 1) else path
   }
-
-  override fun getFileSystem(): VirtualFileSystem = LocalFileSystem.getInstance()
 
   override fun getPath(): String = fakePath
 
-  override fun isWritable(): Boolean = TODO("This method is not expected to be called")
-
-  override fun isDirectory(): Boolean = false
+  override fun isDirectory(): Boolean = directory
 
   override fun isValid(): Boolean = true
 
@@ -39,31 +32,23 @@ class FakeVirtualFile(private val fakePath: String) : VirtualFile() {
     if (this == ROOT) return null
 
     val i = fakePath.lastIndexOf('/')
-    return if (i <= 0) ROOT else FakeVirtualFile(fakePath.substring(0, i))
+    return if (i <= 0) ROOT else FakeVirtualFile(fakePath.substring(0, i), true)
   }
-
-  override fun getChildren(): Array<VirtualFile> = TODO("This method is not expected to be called")
-
-  override fun getOutputStream(requestor: Any?, newModificationStamp: Long, newTimeStamp: Long): OutputStream = TODO("This method is not expected to be called")
 
   override fun contentsToByteArray(): ByteArray = byteArrayOf()
 
-  override fun getTimeStamp(): Long = TODO("This method is not expected to be called")
-
   override fun getLength(): Long = 0
 
-  override fun refresh(asynchronous: Boolean, recursive: Boolean, postRunnable: Runnable?) = TODO("This method is not expected to be called")
-
-  override fun getInputStream(): InputStream = TODO("This method is not expected to be called")
-
   companion object {
-    val ROOT = FakeVirtualFile("/")
+    val ROOT = FakeVirtualFile("/", directory = true)
   }
 }
 
-fun FileContents.disambiguateContents(path: String): DeterminedContents = when (this) {
+fun FileContents.disambiguateContents(path: String): DeterminedContents = disambiguateContents(FakeVirtualFile(path, directory = false))
+
+fun FileContents.disambiguateContents(file: VirtualFile): DeterminedContents = when (this) {
   is DeterminedContents -> this
-  is UndeterminedContents -> if (FakeVirtualFile(path).isToEncodeContent) {
+  is UndeterminedContents -> if (file.isToEncodeContent) {
     InMemoryBinaryContents(bytes)
   }
   else {

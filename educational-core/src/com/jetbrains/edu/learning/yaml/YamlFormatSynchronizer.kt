@@ -24,7 +24,9 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.courseFormat.ext.disambiguateContents
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
+import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -144,7 +146,7 @@ object YamlFormatSynchronizer {
     val dir = getConfigDir(project)
 
     if (this is Task) {
-      disambiguateTaskFilesContents()
+      disambiguateTaskFilesContents(project)
     }
 
     project.invokeLater {
@@ -218,8 +220,16 @@ fun StudyItem.getConfigDir(project: Project): VirtualFile {
   }
 }
 
-private fun Task.disambiguateTaskFilesContents() {
+private fun Task.disambiguateTaskFilesContents(project: Project) {
   for ((path, taskFile) in taskFiles) {
-    taskFile.contents = taskFile.contents.disambiguateContents(path)
+    val file = taskFile.getVirtualFile(project)
+    val disambiguatedContents = if (file != null) {
+      taskFile.contents.disambiguateContents(file)
+    }
+    else {
+      taskFile.contents.disambiguateContents(path)
+    }
+
+    taskFile.contents = disambiguatedContents
   }
 }
