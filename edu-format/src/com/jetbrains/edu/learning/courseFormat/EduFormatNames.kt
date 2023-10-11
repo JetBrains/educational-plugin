@@ -4,6 +4,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CODEFORCES_TYPE_YAM
 
 object EduFormatNames {
   const val MARKETPLACE = "Marketplace"
+  const val COURSE_META_FILE = "course.json"
 
   const val COURSE = "course"
   const val SECTION = "section"

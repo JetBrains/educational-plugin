@@ -26,11 +26,12 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.CourseraCourse
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSE_META_FILE
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.CourseraCourse
 import com.jetbrains.edu.learning.json.configureCourseMapper
 import com.jetbrains.edu.learning.json.getCourseMapper
 import com.jetbrains.edu.learning.json.migrate
@@ -109,7 +110,7 @@ object EduUtilsKt {
     try {
       val zipFile = ZipFile(zipFilePath)
       return zipFile.use {
-        val entry = it.getEntry(EduNames.COURSE_META_FILE) ?: return null
+        val entry = it.getEntry(COURSE_META_FILE) ?: return null
         val jsonText = String(it.getInputStream(entry).readAllBytes(), StandardCharsets.UTF_8)
         readCourseJson(jsonText)
       }
