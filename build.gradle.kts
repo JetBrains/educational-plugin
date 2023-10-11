@@ -477,6 +477,35 @@ project(":") {
     environment("IDEA_BUILD_NUMBER", "231")
   }
 
+  task<RunIdeTask>("validateCourse") {
+    dependsOn(tasks.prepareSandbox)
+    args("validateCourse", "/Users/Arseniy.Pendryak/IdeaProjects/PlainTextValidationCourse11", "--archive", "/Users/Arseniy.Pendryak/PlainTextValidationCourse/PlainTextValidationCourse.zip")
+    // Force headless mode to be able to run command on CI
+    systemProperty("java.awt.headless", "true")
+//    systemProperty("idea.disposer.debug", "off")
+    systemProperty("project.jdk", "/Users/Arseniy.Pendryak/Library/Java/JavaVirtualMachines/corretto-17.0.7/Contents/Home")
+    systemProperty("project.jdk.name", "TestJdk")
+    systemProperty("project.python.interpreter", "/opt/homebrew/bin/python3")
+    systemProperty("project.rust.toolchain", "/Users/Arseniy.Pendryak/.cargo/bin")
+    systemProperty("project.go.sdk", "/Users/Arseniy.Pendryak/sdk/go1.20.4")
+    systemProperty("project.nodejs.interpreter", "/opt/homebrew/bin/node")
+  }
+
+  task<RunIdeTask>("createCourse") {
+    dependsOn(tasks.prepareSandbox)
+    args("createCourse", "/Users/Arseniy.Pendryak/IdeaProjects/CmdPythonCourse10001", "--marketplace", "https://plugins.jetbrains.com/plugin/16630-introduction-to-python")
+    // Force headless mode to be able to run command on CI
+    systemProperty("java.awt.headless", "true")
+//    systemProperty("idea.disposer.debug", "off")
+    systemProperty("project.jdk", "/Users/Arseniy.Pendryak/Library/Java/JavaVirtualMachines/corretto-17.0.7/Contents/Home")
+    systemProperty("project.jdk.name", "TestJdk")
+    systemProperty("project.python.interpreter", "/opt/homebrew/bin/python3")
+    systemProperty("project.rust.toolchain", "/Users/Arseniy.Pendryak/.cargo/bin")
+    systemProperty("project.go.sdk", "/Users/Arseniy.Pendryak/sdk/go1.20.4")
+    systemProperty("project.nodejs.interpreter", "/opt/homebrew/bin/node")
+  }
+
+
   task("configureIdea") {
     doLast {
       intellij.sandboxDir = ideaSandbox
