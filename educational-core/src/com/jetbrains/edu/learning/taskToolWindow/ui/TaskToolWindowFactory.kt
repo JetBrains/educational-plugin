@@ -47,7 +47,7 @@ class TaskToolWindowFactory : ToolWindowFactory, DumbAware {
     toolWindow.initTitleActions()
     addGotItTooltip(toolWindow.contentManager)
     taskDescriptionToolWindow.init(toolWindow)
-    (toolWindow as ToolWindowEx).setAdditionalGearActions(DefaultActionGroup(AdjustFontSize()))
+    (toolWindow as ToolWindowEx).setAdditionalGearActions(DefaultActionGroup(AdjustFontSize(project)))
   }
 
   private fun ToolWindow.initTitleActions() {
@@ -73,7 +73,7 @@ class TaskToolWindowFactory : ToolWindowFactory, DumbAware {
    */
   private fun Int.toReverseIndex() = FontSize.values().size - 1 - this
 
-  private inner class AdjustFontSize : DumbAwareAction(EduCoreBundle.message("action.adjust.font.size.text")) {
+  private inner class AdjustFontSize(private val project: Project) : DumbAwareAction(EduCoreBundle.message("action.adjust.font.size.text")) {
     override fun actionPerformed(e: AnActionEvent) {
       val fontSizeSlider = JSlider(SwingConstants.HORIZONTAL, 0, FontSize.values().size - 1, getInitialIndex())
       fontSizeSlider.minorTickSpacing = 1
@@ -84,6 +84,7 @@ class TaskToolWindowFactory : ToolWindowFactory, DumbAware {
       fontSizeSlider.addChangeListener(ChangeListener {
         val fontFactor = FontSize.values()[fontSizeSlider.value.toReverseIndex()]
         PropertiesComponent.getInstance().setValue(StyleManager.FONT_SIZE_PROPERTY, fontFactor.size, FontPreferences.DEFAULT_FONT_SIZE)
+        TaskToolWindowView.getInstance(project).updateTaskDescription()
       })
       val popup = JBPopupFactory.getInstance().createComponentPopupBuilder(fontSizeSlider, fontSizeSlider).createPopup()
       val location = MouseInfo.getPointerInfo().location
