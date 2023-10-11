@@ -87,7 +87,7 @@ class CheckAction() : ActionWithProgressIcon(lazyMessage("action.check.text"), l
       listener.beforeCheck(project, task)
     }
     val checkTask = StudyCheckTask(project, task)
-    if (checkTask.isHeadless) {
+    if (isUnitTestMode) {
       // It's hack to make checker tests work properly.
       // `com.intellij.openapi.progress.ProgressManager.run(com.intellij.openapi.progress.Task)` executes task synchronously
       // if the task run in headless environment (e.g. in unit tests).
