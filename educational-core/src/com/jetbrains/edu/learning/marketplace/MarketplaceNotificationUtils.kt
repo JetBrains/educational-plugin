@@ -123,11 +123,17 @@ object MarketplaceNotificationUtils {
   }
 
   @Suppress("DialogTitleCapitalization")
-  internal fun showFailedToDeleteNotification(project: Project, userName: String) {
+  internal fun showFailedToDeleteNotification(project: Project, loginName: String?) {
+    val message = if (loginName != null) {
+      EduCoreBundle.message("marketplace.delete.submissions.failed.for.user.message", loginName)
+    }
+    else {
+      EduCoreBundle.message("marketplace.delete.submissions.failed.message")
+    }
     CCNotificationUtils.showErrorNotification(
       project,
       EduCoreBundle.message("marketplace.delete.submissions.failed.title"),
-      EduCoreBundle.message("marketplace.delete.submissions.failed.message", userName)
+      message
     )
   }
 

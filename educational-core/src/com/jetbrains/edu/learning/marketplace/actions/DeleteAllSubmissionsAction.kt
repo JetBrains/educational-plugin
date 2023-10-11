@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
+import com.intellij.ui.JBAccountInfoService
 import com.jetbrains.edu.coursecreator.CCUtils.showLoginNeededNotification
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.invokeLater
@@ -17,7 +18,6 @@ import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import org.jetbrains.annotations.NonNls
 
-@Suppress("ComponentNotRegistered")
 class DeleteAllSubmissionsAction : AnAction(EduCoreBundle.lazyMessage("marketplace.action.delete.all.submissions")) {
 
   override fun update(e: AnActionEvent) {
@@ -29,15 +29,14 @@ class DeleteAllSubmissionsAction : AnAction(EduCoreBundle.lazyMessage("marketpla
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    val account = MarketplaceConnector.getInstance().account ?: return
-    val userName = account.userInfo.name
 
     MarketplaceConnector.getInstance().isLoggedInAsync()
       .thenApply { isLoggedIn ->
         if (isLoggedIn) {
+          val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
           project.invokeLater {
-            if (askActionConfirmation(project, userName)) {
-              doDeleteSubmissions(project, userName)
+            if (askActionConfirmation(project, loginName)) {
+              doDeleteSubmissions(project, loginName)
             }
           }
         }
@@ -47,20 +46,20 @@ class DeleteAllSubmissionsAction : AnAction(EduCoreBundle.lazyMessage("marketpla
       }
   }
 
-  private fun doDeleteSubmissions(project: Project, userName: String) {
+  private fun doDeleteSubmissions(project: Project, loginName: String?) {
     runInBackground(project, title = EduCoreBundle.getMessage("marketplace.delete.submissions.background.title")) {
-      val deleteLocalSubmissions = MarketplaceSubmissionsConnector.getInstance().deleteAllSubmissions(project, userName)
+      val deleteLocalSubmissions = MarketplaceSubmissionsConnector.getInstance().deleteAllSubmissions(project, loginName)
       if (deleteLocalSubmissions) {
         SubmissionsManager.getInstance(project).deleteCourseSubmissionsLocally()
       }
     }
   }
 
-  private fun askActionConfirmation(project: Project, userName: String): Boolean {
+  private fun askActionConfirmation(project: Project, loginName: String?): Boolean {
     if (!isUnitTestMode) {
       val result = Messages.showYesNoDialog(
         project,
-        EduCoreBundle.getMessage("marketplace.delete.submissions.dialog.text", userName),
+        EduCoreBundle.getMessage("marketplace.delete.submissions.dialog.text", loginName),
         EduCoreBundle.getMessage("marketplace.delete.submissions.dialog.title"),
         EduCoreBundle.getMessage("marketplace.delete.submissions.dialog.yes.text"),
         CommonBundle.getCancelButtonText(),

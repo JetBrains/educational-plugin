@@ -44,6 +44,11 @@ import java.net.URL
 import java.util.concurrent.CompletableFuture
 
 abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnector {
+  /**
+   * It is recommended to use the static methods of the [com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount] class
+   * instead of relying on the 'account' property. However, there are still certain things, such as the actual name of the JBA user,
+   * that need to be retrieved from this property. Also, this property is used for retrieving Hub token.
+   */
   override var account: MarketplaceAccount?
     get () = MarketplaceSettings.INSTANCE.getMarketplaceAccount()
     set(value) {

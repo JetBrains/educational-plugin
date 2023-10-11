@@ -76,18 +76,20 @@ class MarketplaceSubmissionsConnector {
     return retrofit.create(SubmissionsService::class.java)
   }
 
-  fun deleteAllSubmissions(project: Project, userName: String): Boolean {
-    LOG.info("Deleting submissions for user $userName")
+  fun deleteAllSubmissions(project: Project, loginName: String?): Boolean {
+    LOG.info("Deleting submissions${loginName.toLogString()}")
 
     val response = submissionsService.deleteAllSubmissions().executeCall().onError {
-      LOG.error("Failed to delete all submissions for user $userName. Error message: $it")
-      showFailedToDeleteNotification(project, userName)
+      LOG.error("Failed to delete all submissions${loginName.toLogString()}. Error message: $it")
+      showFailedToDeleteNotification(project, loginName)
       return false
     }
-    logAndNotifyAfterDeletionAttempt(response, project, userName)
+    logAndNotifyAfterDeletionAttempt(response, project, loginName)
 
     return response.code() == HTTP_NO_CONTENT
   }
+
+  private fun String?.toLogString(): String = if (this != null) " for user $this" else ""
 
   fun getAllSubmissions(courseId: Int): List<MarketplaceSubmission> {
     LOG.info("Loading all submissions for courseId = $courseId")
@@ -200,30 +202,42 @@ class MarketplaceSubmissionsConnector {
   }
 
   @Suppress("DialogTitleCapitalization")
-  private fun logAndNotifyAfterDeletionAttempt(response: Response<ResponseBody>, project: Project, userName: String) {
+  private fun logAndNotifyAfterDeletionAttempt(response: Response<ResponseBody>, project: Project, loginName: String?) {
     when (response.code()) {
       HTTP_NO_CONTENT -> {
-        LOG.info("Successfully deleted all submissions for user $userName")
+        LOG.info("Successfully deleted all submissions${loginName.toLogString()}")
+        val message = if (loginName != null) {
+          EduCoreBundle.message("marketplace.delete.submissions.for.user.success.message", loginName)
+        }
+        else {
+          EduCoreBundle.message("marketplace.delete.submissions.success.message")
+        }
         showNotification(
           project,
           EduCoreBundle.message("marketplace.delete.submissions.success.title"),
-          EduCoreBundle.message("marketplace.delete.submissions.success.message", userName)
+          message
         )
       }
 
       HTTP_NOT_FOUND -> {
-        LOG.info("There are no submissions to delete for user $userName")
+        LOG.info("There are no submissions to delete${loginName.toLogString()}")
+        val message = if (loginName != null) {
+          EduCoreBundle.message("marketplace.delete.submissions.for.user.nothing.message", loginName)
+        }
+        else {
+          EduCoreBundle.message("marketplace.delete.submissions.nothing.message")
+        }
         showNotification(
           project,
           EduCoreBundle.message("marketplace.delete.submissions.nothing.title"),
-          EduCoreBundle.message("marketplace.delete.submissions.nothing.message", userName)
+          message
         )
       }
 
       else -> {
         val errorMsg = response.errorBody()?.string() ?: "Unknown error"
-        LOG.error("Failed to delete all submissions for user $userName. Error message: $errorMsg")
-        showFailedToDeleteNotification(project, userName)
+        LOG.error("Failed to delete all submissions for user $loginName. Error message: $errorMsg")
+        showFailedToDeleteNotification(project, loginName)
       }
     }
   }

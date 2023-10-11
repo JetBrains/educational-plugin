@@ -63,6 +63,7 @@ class MarketplacePushCourse(
     val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
     val connector = MarketplaceConnector.getInstance()
 
+    // We need an account to receive the hub token, and only for this purpose
     val currentAccount = connector.account
     if (currentAccount == null) {
       showLoginNeededNotification(project, e.presentation.text) { connector.doAuthorize() }

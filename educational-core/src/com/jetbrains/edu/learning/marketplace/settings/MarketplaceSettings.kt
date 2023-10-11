@@ -24,7 +24,8 @@ class MarketplaceSettings {
     val currentAccount = account
     val jbaUserInfo = getJBAUserInfo()
     if (jbaUserInfo == null) {
-      LOG.error("User info is null for account ${account?.userInfo?.name}")
+      val accountName = account?.userInfo?.name
+      LOG.error("User info is null${if (accountName != null) " for $accountName account" else ""}")
       account = null
     }
     else if (currentAccount == null || !currentAccount.checkTheSameUserAndUpdate(jbaUserInfo)) {

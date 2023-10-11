@@ -15,7 +15,10 @@ import com.jetbrains.edu.learning.submissions.SolutionFile
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
 import com.jetbrains.edu.learning.testAction
-import io.mockk.*
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkConstructor
+import io.mockk.mockkObject
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -69,7 +72,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
   fun `test delete submissions action success`() {
     val userName = MarketplaceConnector.getInstance().account?.userInfo?.name ?: error("nullable current user")
 
-    doTestSubmissionsDelete(true, EduCoreBundle.message("marketplace.delete.submissions.success.message", userName)) {
+    doTestSubmissionsDelete(true, EduCoreBundle.message("marketplace.delete.submissions.for.user.success.message", userName)) {
       checkSubmissionsDeleted(setOf(1, 2))
     }
   }
@@ -77,7 +80,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
   fun `test delete submissions action failed`() {
     val userName = MarketplaceConnector.getInstance().account?.userInfo?.name ?: error("nullable current user")
 
-    doTestSubmissionsDelete(false, EduCoreBundle.message("marketplace.delete.submissions.failed.message", userName)) {
+    doTestSubmissionsDelete(false, EduCoreBundle.message("marketplace.delete.submissions.failed.for.user.message", userName)) {
       checkSubmissionsNotDeleted(setOf(1, 2))
     }
   }
