@@ -6,6 +6,7 @@
           "expui" : {
             "learning" : {
               "android.svg" : "icons/com/jetbrains/edu/learning/AndroidLogo.svg",
+              "applySubmissionCode.svg" : "icons/com/jetbrains/edu/learning/applySubmissionCode.svg",
               "go.svg" : "icons/com/jetbrains/edu/learning/GoLogo.svg",
               "java.svg" : "icons/com/jetbrains/edu/learning/JavaLogo.svg",
               "javascript.svg" : "icons/com/jetbrains/edu/learning/JavaScriptLogo.svg",

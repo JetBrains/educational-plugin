@@ -10,6 +10,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
 import com.intellij.ui.ColorUtil
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.*
@@ -157,8 +158,10 @@ class SubmissionsTab(project: Project) : AdditionalTextTab(project, SUBMISSIONS_
       val taskFiles = task.taskFiles.values.toMutableList()
       val submissionTexts = submission.getSubmissionTexts(task.name) ?: return
       val submissionTaskFiles = taskFiles.filter { it.isVisible && !it.isTestFile }
+      val submissionTaskFilePaths = mutableListOf<String>()
       val requests = submissionTaskFiles.mapNotNull {
         val virtualFile = it.getVirtualFile(project) ?: error("VirtualFile for ${it.name} not found")
+        submissionTaskFilePaths.add(virtualFile.path)
         val documentText = FileDocumentManager.getInstance().getDocument(virtualFile)?.text
         val currentFileContent = if (documentText != null) DiffContentFactory.getInstance().create(documentText, virtualFile.fileType)
         else null
@@ -175,7 +178,9 @@ class SubmissionsTab(project: Project) : AdditionalTextTab(project, SUBMISSIONS_
                             EduCoreBundle.message("submissions.submission"))
         }
       }
-      DiffManager.getInstance().showDiff(project, SimpleDiffRequestChain(requests), DiffDialogHints.FRAME)
+      val diffRequestChain = SimpleDiffRequestChain(requests)
+      diffRequestChain.putUserData(FILE_NAME_KEY, submissionTaskFilePaths)
+      DiffManager.getInstance().showDiff(project, diffRequestChain, DiffDialogHints.FRAME)
     }
 
     private fun String.removeAllTags(): String =
@@ -236,5 +241,7 @@ class SubmissionsTab(project: Project) : AdditionalTextTab(project, SUBMISSIONS_
         "#${ColorUtil.toHex(EduColors.wrongLabelForeground)}"
       }
     }
+
+    val FILE_NAME_KEY : Key<List<String>> = Key.create("fileName")
   }
 }

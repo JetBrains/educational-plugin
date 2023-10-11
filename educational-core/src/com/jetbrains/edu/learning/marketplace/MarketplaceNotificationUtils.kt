@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.submissions.SubmissionsManager
 object MarketplaceNotificationUtils {
   fun showLoginFailedNotification(loginProviderName: String) {
     Notification(
-      "JetBrains Academy",
+      JETBRAINS_ACADEMY_GROUP_ID,
       EduCoreBundle.message("error.login.failed"),
       EduCoreBundle.message("error.failed.login.to.subsystem", loginProviderName),
       NotificationType.ERROR
@@ -27,7 +27,7 @@ object MarketplaceNotificationUtils {
 
   fun showReloginToJBANeededNotification(action: AnAction) {
     val notification = Notification(
-      "JetBrains Academy",
+      JETBRAINS_ACADEMY_GROUP_ID,
       EduCoreBundle.message("jba.relogin.needed.title"),
       EduCoreBundle.message("jba.relogin.text"),
       NotificationType.ERROR
@@ -39,7 +39,7 @@ object MarketplaceNotificationUtils {
   @Suppress("DialogTitleCapitalization")
   fun showInstallMarketplacePluginNotification(notificationTitle: String, notificationType: NotificationType) {
     val notification = Notification(
-      "JetBrains Academy",
+      JETBRAINS_ACADEMY_GROUP_ID,
       notificationTitle,
       EduCoreBundle.message("notification.marketplace.install.licensing.plugin"),
       notificationType
@@ -48,8 +48,7 @@ object MarketplaceNotificationUtils {
     notification.addAction(object : AnAction(EduCoreBundle.message("action.install.plugin.in.settings")) {
       override fun actionPerformed(e: AnActionEvent) {
         ShowSettingsUtil.getInstance().showSettingsDialog(
-          ProjectManager.getInstance().defaultProject,
-          PluginManagerConfigurable::class.java
+          ProjectManager.getInstance().defaultProject, PluginManagerConfigurable::class.java
         )
       }
     })
@@ -58,7 +57,7 @@ object MarketplaceNotificationUtils {
 
   fun showLoginToUseSubmissionsNotification(project: Project) {
     val notification = Notification(
-      "JetBrains Academy",
+      JETBRAINS_ACADEMY_GROUP_ID,
       EduCoreBundle.message("submissions.login", JET_BRAINS_ACCOUNT),
       NotificationType.INFORMATION
     )
@@ -106,22 +105,24 @@ object MarketplaceNotificationUtils {
 
   fun showFailedToPushCourseNotification(project: Project, courseName: String) {
     Notification(
-      "JetBrains Academy",
+      JETBRAINS_ACADEMY_GROUP_ID,
       EduCoreBundle.message("marketplace.push.course.failed.title"),
       EduCoreBundle.message("marketplace.push.course.failed.text", courseName),
       NotificationType.ERROR
     ).notify(project)
   }
 
+  @Suppress("DialogTitleCapitalization")
   fun showFailedToChangeSharingPreferenceNotification() {
     Notification(
-      "JetBrains Academy",
+      JETBRAINS_ACADEMY_GROUP_ID,
       EduCoreBundle.message("marketplace.solutions.sharing.notification.title"),
       EduCoreBundle.message("marketplace.solutions.sharing.notification.text"),
       NotificationType.ERROR
     ).notify(null)
   }
 
+  @Suppress("DialogTitleCapitalization")
   internal fun showFailedToDeleteNotification(project: Project, userName: String) {
     CCNotificationUtils.showErrorNotification(
       project,
@@ -129,4 +130,6 @@ object MarketplaceNotificationUtils {
       EduCoreBundle.message("marketplace.delete.submissions.failed.message", userName)
     )
   }
+
+  const val JETBRAINS_ACADEMY_GROUP_ID = "JetBrains Academy"
 }

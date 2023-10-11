@@ -75,4 +75,6 @@ public class EducationalCoreIcons {
 
   public static final Icon MoveUpMatching = load("/icons/com/jetbrains/edu/learning/moveUp.svg"); // 16x16
   public static final Icon MoveDownMatching = load("/icons/com/jetbrains/edu/learning/moveDown.svg"); // 16x16
+
+  public static final Icon ApplySubmissionCode = load("/icons/com/jetbrains/edu/learning/applySubmissionCode.svg"); // 16x16
 }
