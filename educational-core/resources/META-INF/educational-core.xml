@@ -214,6 +214,7 @@
 
     <appStarter id="createCourse" implementation="com.jetbrains.edu.learning.command.EduCourseCreatorAppStarter"/>
     <appStarter id="installCoursePlugins" implementation="com.jetbrains.edu.learning.command.EduCoursePluginInstallerAppStarter"/>
+    <appStarter id="validateCourse" implementation="com.jetbrains.edu.learning.command.EduCourseValidatorAppStarter"/>
 
     <applicationService serviceInterface="com.jetbrains.edu.learning.EduBrowser"
                         serviceImplementation="com.jetbrains.edu.learning.EduBrowser"
@@ -233,6 +234,7 @@
                     testServiceImplementation="com.jetbrains.edu.learning.taskToolWindow.ui.MockTaskToolWindowView"/>
     <projectService serviceInterface="com.jetbrains.edu.learning.checker.details.CheckDetailsView"
                     serviceImplementation="com.jetbrains.edu.learning.checker.details.CheckDetailsViewImpl"
+                    headlessImplementation="com.jetbrains.edu.learning.checker.details.MockCheckDetailsView"
                     testServiceImplementation="com.jetbrains.edu.learning.checker.details.MockCheckDetailsView"/>
     <projectService serviceInterface="com.jetbrains.edu.learning.framework.FrameworkLessonManager"
                     serviceImplementation="com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl"/>
@@ -378,6 +380,7 @@
     <optionsProvider instance="com.jetbrains.edu.learning.coursera.CourseraOptions"/>
     <checkListener implementation="com.jetbrains.edu.learning.twitter.TwitterAction"/>
     <checkListener implementation="com.jetbrains.edu.learning.statistics.PostFeedbackCheckListener"/>
+    <checkListener implementation="com.jetbrains.edu.learning.command.ValidationCheckListener"/>
     <coursesPlatformProviderFactory id="Marketplace" order="first"
                                     implementation="com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProviderFactory"/>
     <coursesPlatformProviderFactory id="JetBrainsAcademy" order="after Marketplace"
