@@ -82,11 +82,11 @@ object MarketplaceNotificationUtils {
     )
   }
 
-  fun showAcceptDeveloperAgreementNotification(project: Project, action: () -> AnAction) {
+  fun showMarketplaceAccountNotification(project: Project, message: String, action: () -> AnAction) {
     CCNotificationUtils.showErrorNotification(
       project,
       EduCoreBundle.message("notification.course.creator.failed.to.upload.course.title"),
-      EduCoreBundle.message("marketplace.plugin.development.agreement.not.accepted"),
+      message,
       action()
     )
   }

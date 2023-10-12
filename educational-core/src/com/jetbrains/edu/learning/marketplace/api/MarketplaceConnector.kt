@@ -26,12 +26,9 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
-import com.jetbrains.edu.learning.marketplace.LICENSE_URL
-import com.jetbrains.edu.learning.marketplace.MARKETPLACE
-import com.jetbrains.edu.learning.marketplace.MARKETPLACE_PLUGIN_URL
-import com.jetbrains.edu.learning.marketplace.MARKETPLACE_PROFILE_PATH
-import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showAcceptDeveloperAgreementNotification
+import com.jetbrains.edu.learning.marketplace.*
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showFailedToFindMarketplaceCourseOnRemoteNotification
+import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showMarketplaceAccountNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showNoRightsToUpdateNotification
 import com.jetbrains.edu.learning.marketplace.api.GraphqlQuery.LOADING_STEP
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
@@ -187,9 +184,8 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
       .executeUploadParsingErrors(project,
                                   message("notification.course.creator.failed.to.upload.course.title"),
                                   showLogAction,
-                                  {
-                                    showAcceptDeveloperAgreementNotification(project) { openOnMarketplaceAction(MARKETPLACE_PROFILE_PATH) }
-                                  },
+                                  getOrganizationVendorPath(course.vendor?.name),
+                                  {},
                                   {},
                                   {
                                     onAuthFailedActions(project, message("notification.course.creator.failed.to.upload.course.oauth.reason.title"))
@@ -224,7 +220,8 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
   private fun <T> Call<T>.executeUploadParsingErrors(project: Project,
                                                      failedActionMessage: String,
                                                      onErrorAction: AnAction,
-                                                     showAgreementNotAcceptedNotification: () -> Unit,
+                                                     vendorPath: String,
+                                                     showPermissionDeniedNotification: () -> Unit,
                                                      showOnNotFoundCodeNotification: () -> Unit,
                                                      onAuthFailedActions: () -> Unit): Result<Response<T>, String> {
     val response = executeCall().onError { return Err(it) }
@@ -237,8 +234,32 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
         Err(errorMessage) // 400
       }
       HttpURLConnection.HTTP_FORBIDDEN -> {
-        if (errorBody.contains(ERROR_AGREEMENT_NOT_ACCEPTED)) showAgreementNotAcceptedNotification()
-        else if (errorBody.contains(ERROR_AUTH_FAILED)) onAuthFailedActions()
+        when {
+          errorBody.contains(ERROR_AGREEMENT_NOT_ACCEPTED) -> showMarketplaceAccountNotification(
+            project,
+            message("marketplace.plugin.development.agreement.not.accepted")
+          ) { openOnMarketplaceAction(MARKETPLACE_PROFILE_PATH) }
+
+          errorBody.contains(ERROR_TRADER_STATUS_NOT_SPECIFIED) -> showMarketplaceAccountNotification(
+            project,
+            message("marketplace.trader.status.not.specified")
+          ) { openOnMarketplaceAction(MARKETPLACE_PROFILE_PATH) }
+
+          errorBody.contains(ERROR_CREATE_VENDOR_ACCOUNT) -> showMarketplaceAccountNotification(
+            project,
+            message("marketplace.create.vendor.account")
+          ) { openOnMarketplaceAction(MARKETPLACE_CREATE_VENDOR_PATH) }
+
+          errorBody.contains(ERROR_ORGANIZATION_TRADER_STATUS_NOT_SPECIFIED) -> {
+              showMarketplaceAccountNotification(
+              project,
+              message("marketplace.organization.trader.status.not.specified")
+            ) { openOnMarketplaceAction(vendorPath) }
+          }
+
+          errorBody.contains(ERROR_PERMISSION_DENIED) -> showPermissionDeniedNotification()
+          errorBody.contains(ERROR_AUTH_FAILED) -> onAuthFailedActions()
+        }
 
         Err(errorMessage) // 403
       }
@@ -303,6 +324,7 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
       .executeUploadParsingErrors(project,
                                   message("notification.course.creator.failed.to.update.course.title"),
                                   uploadAsNewCourseAction,
+                                  getOrganizationVendorPath(course.vendor?.name),
                                   {
                                     showNoRightsToUpdateNotification(project, course) {
                                       uploadNewCourseUnderProgress(project, course, file, hubToken)
@@ -410,6 +432,10 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
     private const val PLUGIN_CONTAINS_VERSION_ERROR_TEXT = "plugin already contains version"
 
     private const val ERROR_AGREEMENT_NOT_ACCEPTED = "You have not accepted the JetBrains Plugin Marketplace agreement"
+    private const val ERROR_TRADER_STATUS_NOT_SPECIFIED = "Please specify the trader status for your vendor"
+    private const val ERROR_CREATE_VENDOR_ACCOUNT = "Please create a vendor account before uploading a new plugin"
+    private const val ERROR_ORGANIZATION_TRADER_STATUS_NOT_SPECIFIED = "Please create a vendor account before uploading a new plugin"
+    private const val ERROR_PERMISSION_DENIED = "Unfortunately, you don't have sufficient permissions"
     private const val ERROR_AUTH_FAILED = "Authentication Failed"
     fun getInstance(): MarketplaceConnector = service()
   }
