@@ -143,7 +143,7 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
     Disposer.register(contentManager, tabManager)
 
     val panel = JPanel(BorderLayout())
-    panel.border = JBUI.Borders.empty(0, 15, 15, 0)
+    panel.border = JBUI.Borders.empty(0, 16, 12, 0)
 
     val taskTextTW = if (EduSettings.getInstance().javaUiLibraryWithCheck == JCEF) JCEFToolWindow(project) else SwingToolWindow(project)
     Disposer.register(contentManager, taskTextTW)

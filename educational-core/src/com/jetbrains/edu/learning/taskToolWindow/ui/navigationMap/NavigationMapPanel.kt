@@ -8,17 +8,12 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.ex.ActionButtonLook
 import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl
-import com.intellij.openapi.actionSystem.impl.IdeaActionButtonLook
-import com.intellij.openapi.actionSystem.impl.Win10ActionButtonLook
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.ui.JBColor
-import com.intellij.ui.LabeledIcon
+import com.intellij.ui.components.AnActionLink
 import com.intellij.ui.components.JBLabel
-import com.intellij.util.ui.JBEmptyBorder
-import com.intellij.util.ui.JBInsets
-import com.intellij.util.ui.JBUI
-import com.intellij.util.ui.UIUtil
+import com.intellij.util.ui.*
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
@@ -28,11 +23,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.projectView.CourseViewUtils.isSolved
-import com.jetbrains.edu.learning.taskToolWindow.ui.LightColoredActionLink
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckPanel
 import com.jetbrains.edu.learning.ui.EduColors
-import org.jdesktop.swingx.icon.EmptyIcon
 import java.awt.*
 import java.awt.geom.Path2D
 import java.awt.geom.RoundRectangle2D
@@ -44,17 +37,25 @@ class NavigationMapPanel : JPanel(BorderLayout()) {
   private val toolbar: ActionToolbarImpl = ActionToolbarImpl(CheckPanel.ACTION_PLACE, defaultActionGroup, true)
   private val topPanelForProblems: JPanel = JPanel().apply {
     background = TaskToolWindowView.getTaskDescriptionBackgroundColor()
-    maximumSize = JBUI.size(Int.MAX_VALUE, 30)
+    border = JBEmptyBorder(0, 0, 12, 0)
   }
 
   init {
-    headerText = JBLabel().withBorder(JBEmptyBorder(12, 0, 6, 0))
-    headerText.fontColor = UIUtil.FontColor.BRIGHTER
+    border = JBEmptyBorder(8, 0, 12, 8)
+    headerText = JBLabel().withFont(JBFont.medium())
+    headerText.foreground = EduColors.taskToolWindowLessonLabel
+    val headerTextPanel = JPanel()
+    // -5 to align the left border
+    headerTextPanel.border = JBEmptyBorder(0, -5, 12, 0)
+    headerTextPanel.add(headerText)
     toolbar.targetComponent = this
-    toolbar.component.border = JBEmptyBorder(0, 0, 10, 0)
+    // '-4' to align the left border
+    toolbar.border = JBEmptyBorder(0, -4, 30, 0)
     toolbar.setCustomButtonLook(MyActionButtonLook())
+    toolbar.setMinimumButtonSize(Dimension(28, 28))
+    toolbar.setActionButtonBorder(4, 0)
     defaultActionGroup.isSearchable = false
-    add(headerText, BorderLayout.WEST)
+    add(headerTextPanel, BorderLayout.WEST)
     add(topPanelForProblems, BorderLayout.EAST)
     add(toolbar.component, BorderLayout.SOUTH)
   }
@@ -70,17 +71,9 @@ class NavigationMapPanel : JPanel(BorderLayout()) {
 
   fun updateTopPanelForProblems(project: Project, course: HyperskillCourse, task: Task) {
     topPanelForProblems.removeAll()
-    if (course.isTaskInProject(task) || CCUtils.isCourseCreator(project) || course.getProjectLesson() == null) {
-      return
-    }
-    val actionLink = LightColoredActionLink(
-      EduCoreBundle.message("hyperskill.work.on.project"),
-      NavigateToProjectAction(project, course)
-    ).apply {
-      border = JBUI.Borders.empty(12, 0, 6, 0)
-    }
-    topPanelForProblems.add(actionLink, BorderLayout.NORTH)
-    topPanelForProblems.add(JSeparator(), BorderLayout.SOUTH)
+    if (course.isTaskInProject(task) || CCUtils.isCourseCreator(project) || course.getProjectLesson() == null) return
+    val actionLink = AnActionLink(EduCoreBundle.message("hyperskill.work.on.project"), NavigateToProjectAction(project, course)).apply { font = JBFont.medium() }
+    topPanelForProblems.add(actionLink)
   }
 
   private class NavigateToProjectAction(
@@ -94,8 +87,10 @@ class NavigationMapPanel : JPanel(BorderLayout()) {
     }
   }
 
+  // Copied from com.intellij.openapi.actionSystem.impl.IdeaActionButtonLook
+  // to paint bold border, custom round corners and colors
   private class MyActionButtonLook : ActionButtonLook() {
-    private var delegate: ActionButtonLook = if (UIUtil.isUnderWin10LookAndFeel()) Win10ActionButtonLook() else IdeaActionButtonLook()
+    private val buttonArk = 8f
 
     override fun paintBorder(g: Graphics?, component: JComponent?, state: Int) {
       g ?: return
@@ -106,53 +101,67 @@ class NavigationMapPanel : JPanel(BorderLayout()) {
         JBInsets.removeFrom(rect, component.getInsets())
 
         val isSelected = action.isSelected
-        val color = if (isSelected) EduColors.navigationMapIconSelectedBorder else action.task.navMapBorderColor
-        if (!isSelected) {
-          paintLookBorder(g, rect, color)
+        val color = when {
+          !component.isEnabled -> EduColors.navigationMapDisabledIconBackground
+          isSelected -> EduColors.navigationMapIconSelectedBorder
+          else -> action.task.navMapBorderColor
         }
-        else {
-          // Copied from com.intellij.openapi.actionSystem.impl.IdeaActionButtonLook.paintLookBorder to paint bold border
-          // when the task is selected
-          val g2 = g.create() as Graphics2D
-          g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
-          g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE)
 
-          try {
-            g2.color = color
-            val arc = DarculaUIUtil.BUTTON_ARC.float
-            val lw = DarculaUIUtil.LW.float * 2
-            val border = Path2D.Float(Path2D.WIND_EVEN_ODD)
-            border.append(
-              RoundRectangle2D.Float(rect.x.toFloat(), rect.y.toFloat(), rect.width.toFloat(), rect.height.toFloat(), arc, arc),
-              false
+        val g2 = g.create() as Graphics2D
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+        g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE)
+
+        try {
+          g2.color = color
+          val arc = buttonArk
+          val lw = if (isSelected) DarculaUIUtil.LW.float * 2 else DarculaUIUtil.LW.float
+          val border = Path2D.Float(Path2D.WIND_EVEN_ODD)
+          border.append(
+            RoundRectangle2D.Float(rect.x.toFloat(), rect.y.toFloat(), rect.width.toFloat(), rect.height.toFloat(), arc, arc),
+            false
+          )
+          border
+            .append(
+              RoundRectangle2D.Float(
+                rect.x + lw,
+                rect.y + lw,
+                rect.width - lw * 2,
+                rect.height - lw * 2,
+                arc - lw / 2,
+                arc - lw / 2
+              ), false
             )
-            border
-              .append(
-                RoundRectangle2D.Float(
-                  rect.x + lw,
-                  rect.y + lw,
-                  rect.width - lw * 2,
-                  rect.height - lw * 2,
-                  arc - lw / 2,
-                  arc - lw / 2
-                ), false
-              )
-            g2.fill(border)
-          }
-          finally {
-            g2.dispose()
-          }
+          g2.fill(border)
+        }
+        finally {
+          g2.dispose()
         }
       }
     }
 
-    override fun paintLookBackground(g: Graphics, rect: Rectangle, color: Color) {
-      delegate.paintLookBackground(g, rect, color)
+    override fun paintBackground(g: Graphics?, component: JComponent?, state: Int) {
+      if (component != null && !component.isEnabled) {
+        paintBackground(g, component, EduColors.navigationMapDisabledIconBackground)
+      }
+      else {
+        super.paintBackground(g, component, state)
+      }
     }
 
-    override fun paintLookBorder(g: Graphics, rect: Rectangle, color: Color) {
-      delegate.paintLookBorder(g, rect, color)
+    override fun paintLookBackground(g: Graphics, rect: Rectangle, color: Color) {
+      val g2 = g.create() as Graphics2D
+      try {
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+        g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE)
+        g2.color = color
+        val arc: Float = buttonArk
+        g2.fill(RoundRectangle2D.Float(rect.x.toFloat(), rect.y.toFloat(), rect.width.toFloat(), rect.height.toFloat(), arc, arc))
+      }
+      finally {
+        g2.dispose()
+      }
     }
+
   }
 }
 
@@ -174,15 +183,8 @@ class NavigationMapAction(val task: Task, private val currentTask: Task, private
       presentation.isEnabled = false
     }
     presentation.text = task.presentableName
-
-    presentation.icon = if (task is TheoryTask) {
-      EducationalCoreIcons.TheoryTask
-    }
-    else {
-      val labeledIcon = LabeledIcon(EmptyIcon(), index.toString(), "")
-      labeledIcon.iconTextGap = 2
-      labeledIcon
-    }
+    presentation.icon = if (task is TheoryTask) EducationalCoreIcons.NavigationMapTheoryTask else EduTextIcon(index.toString())
+    presentation.disabledIcon = EduTextIcon(index.toString())
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread {

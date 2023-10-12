@@ -52,6 +52,8 @@ public class EducationalCoreIcons {
 
   public static final Icon TheoryTaskSolved = load("/icons/com/jetbrains/edu/eduTaskTheoryDone.svg"); // 16x16
 
+  public static final Icon NavigationMapTheoryTask = load("/icons/com/jetbrains/edu/eduNavigationMapTheoryTask.svg"); // 16x16
+
   public static final Icon Lesson = load("/icons/com/jetbrains/edu/eduLessonDefault.svg"); // 16x16
   public static final Icon LessonSolved = load("/icons/com/jetbrains/edu/eduLessonDone.svg"); // 16x16
   public static final Icon Section = load("/icons/com/jetbrains/edu/eduSectionDefault.svg"); // 16x16

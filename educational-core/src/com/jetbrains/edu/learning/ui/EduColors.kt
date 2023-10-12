@@ -14,6 +14,9 @@ object EduColors {
   val navigationMapIconNotSelectedBorder: JBColor = JBColor.namedColor("NavigationMap.icon.not.selected.border", 0xC9CCD6, 0x646464)
   val navigationMapIconSelectedBorder: JBColor = JBColor.namedColor("NavigationMap.icon.selected.border", 0x3574F0, 0x3574F0)
   val navigationMapIconSolvedBorder: JBColor = JBColor.namedColor("NavigationMap.icon.solved.border", 0x369650, 0x5FAD65)
+  val navigationMapDisabledIconBackground: JBColor = JBColor.namedColor("NavigationMap.disabledIconBackground", 0xEBECF0, 0x4E5157)
+  val navigationMapDisabledIconForeground: JBColor = JBColor.namedColor("NavigationMap.disabledIconForeground", 0xA8ADBD, 0x868A91)
+  val taskToolWindowLessonLabel: JBColor = JBColor.namedColor("TaskToolWindow.lessonNameForeground", 0x6C707E, 0x6F737A)
 
   val wrongLabelForeground: Color = UIUtil.getErrorForeground()
   val hyperlinkColor: Color get() = getColorFromThemeIfNeeded("Link.activeForeground", JBColor(0x6894C6, 0x5C84C9))

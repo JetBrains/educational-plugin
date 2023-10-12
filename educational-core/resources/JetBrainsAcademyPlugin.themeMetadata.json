@@ -113,6 +113,24 @@
       "description" : "Border color for solved icons on the NavigationMap panel",
       "deprecated" : false,
       "source" : "com.jetbrains.edu.learning.ui.EduColors"
+    },
+    {
+      "key" : "NavigationMap.disabledIconBackground",
+      "description" : "Background for NavigationMap disabled icon",
+      "deprecated" : false,
+      "source" : "com.jetbrains.edu.learning.ui.EduColors"
+    },
+    {
+      "key" : "NavigationMap.disabledIconForeground",
+      "description" : "Foreground for NavigationMap disabled icon",
+      "deprecated" : false,
+      "source" : "com.jetbrains.edu.learning.ui.EduColors"
+    },
+    {
+      "key" : "TaskToolWindow.lessonNameForeground",
+      "description" : "Lesson name label foreground",
+      "deprecated" : false,
+      "source" : "com.jetbrains.edu.learning.ui.EduColors"
     }
   ]
 }
