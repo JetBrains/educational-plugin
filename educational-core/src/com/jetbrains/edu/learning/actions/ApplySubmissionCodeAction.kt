@@ -41,16 +41,18 @@ class ApplySubmissionCodeAction : DumbAwareActionButton(
     if (!getConfirmationFromDialog(project)) return
 
     val diffRequestChain = e.getDiffRequestChain()
-    val fileNames = diffRequestChain.getUserData(SubmissionsTab.FILE_NAME_KEY) ?: return
+    val fileNames = diffRequestChain.getUserData(SubmissionsTab.FILE_NAME_KEY) ?: return showApplySubmissionCodeFailedNotification(project)
 
-    val localDocuments = readLocalDocuments(fileNames)
-    if (localDocuments.size != fileNames.size) {
+    try {
+      val localDocuments = readLocalDocuments(fileNames)
+      check(localDocuments.size == fileNames.size)
+      val submissionsTexts = diffRequestChain.getSubmissionsText(fileNames.size)
+      localDocuments.writeSubmissionsTexts(submissionsTexts)
+    }
+    catch (e: Exception) {
       showApplySubmissionCodeFailedNotification(project)
       return
     }
-
-    val submissionsTexts = diffRequestChain.getSubmissionsText(fileNames.size)
-    localDocuments.writeSubmissionsTexts(submissionsTexts)
 
     showApplySubmissionCodeSuccessfulNotification(project)
   }

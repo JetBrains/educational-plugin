@@ -161,7 +161,6 @@ class SubmissionsTab(project: Project) : AdditionalTextTab(project, SUBMISSIONS_
       val submissionTaskFilePaths = mutableListOf<String>()
       val requests = submissionTaskFiles.mapNotNull {
         val virtualFile = it.getVirtualFile(project) ?: error("VirtualFile for ${it.name} not found")
-        submissionTaskFilePaths.add(virtualFile.path)
         val documentText = FileDocumentManager.getInstance().getDocument(virtualFile)?.text
         val currentFileContent = if (documentText != null) DiffContentFactory.getInstance().create(documentText, virtualFile.fileType)
         else null
@@ -170,6 +169,7 @@ class SubmissionsTab(project: Project) : AdditionalTextTab(project, SUBMISSIONS_
           null
         }
         else {
+          submissionTaskFilePaths.add(virtualFile.path)
           val submissionFileContent = DiffContentFactory.getInstance().create(submissionText.removeAllTags(), virtualFile.fileType)
           SimpleDiffRequest(EduCoreBundle.message("submissions.compare"),
                             currentFileContent,
