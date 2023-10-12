@@ -109,7 +109,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
       is HyperskillOpenStepRequest -> {
         val hyperskillLanguage = request.language
         val (languageId, languageVersion) = HyperskillLanguages.getLanguageIdAndVersion(hyperskillLanguage) ?: return null
-        findProject { it.languageId == languageId && it.languageVersion == languageVersion }
+        findProject { it is HyperskillCourse && it.languageId == languageId && it.languageVersion == languageVersion }
         ?: findProject { course -> course.isHyperskillProblemsCourse(hyperskillLanguage) }
       }
     }
