@@ -5,6 +5,7 @@ import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.ui.HyperlinkAdapter
 import com.intellij.ui.components.JBCheckBox
+import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.api.EduLoginConnector
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -26,7 +27,11 @@ class MarketplaceOptions : OAuthLoginOptions<MarketplaceAccount>() {
   override val connector: EduLoginConnector<MarketplaceAccount, *>
     get() = MarketplaceConnector.getInstance()
 
-  override fun isAvailable(): Boolean = true
+  override fun isAvailable(): Boolean {
+    // Settings should not be shown on remote development because there is currently no authentication logic implemented.
+    // Instead, we use a workaround by reading the JBA UID token from the local file system (see EDU-6321)
+    return !RemoteEnvHelper.isRemoteDevServer()
+  }
 
   private val shareMySolutionsCheckBox = JBCheckBox(
     EduCoreBundle.message("marketplace.solutions.sharing.checkbox"),
