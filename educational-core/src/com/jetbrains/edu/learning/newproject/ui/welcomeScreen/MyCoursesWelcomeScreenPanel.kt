@@ -5,11 +5,8 @@ import com.intellij.ide.ui.LafManagerListener
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.DefaultActionGroup
-import com.intellij.openapi.actionSystem.ex.ActionButtonLook
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.actionSystem.impl.ActionButton
-import com.intellij.openapi.actionSystem.impl.IdeaActionButtonLook
-import com.intellij.openapi.actionSystem.impl.Win10ActionButtonLook
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.OnePixelDivider
@@ -33,15 +30,14 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.openCourse
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.showNoCourseDialog
 import com.jetbrains.edu.learning.newproject.ui.filters.CoursesFilterComponent
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCourseCardComponent
-import com.jetbrains.edu.learning.ui.isUnderWin10LookAndFeel
+import com.jetbrains.edu.learning.ui.setLook
 import java.awt.BorderLayout
-import java.awt.Graphics
 import javax.swing.JButton
 import javax.swing.JComponent
 import javax.swing.JPanel
 
 
-// BACKCOMPACT: 2023.1
+// BACKCOMPAT: 2023.1. Remove this class
 class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout()) {
   private val coursesListPanel = MyCoursesOnWelcomeScreenList()
   private val coursesFilterComponent: CoursesFilterComponent = CoursesFilterComponent(
@@ -130,15 +126,7 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
     moreActionPresentation.putClientProperty(ActionButton.HIDE_DROPDOWN_ICON, true)
 
     return ActionButton(moreActionGroup, moreActionPresentation, ActionPlaces.WELCOME_SCREEN, JBUI.size(12, 12)).apply {
-      setLook(ActionButtonLookWithHover())
-    }
-  }
-
-  private class ActionButtonLookWithHover : ActionButtonLook() {
-    private var delegate: ActionButtonLook = if (isUnderWin10LookAndFeel()) Win10ActionButtonLook() else IdeaActionButtonLook()
-
-    override fun paintBackground(g: Graphics?, component: JComponent?, state: Int) {
-      delegate.paintBackground(g, component, state)
+      setLook()
     }
   }
 

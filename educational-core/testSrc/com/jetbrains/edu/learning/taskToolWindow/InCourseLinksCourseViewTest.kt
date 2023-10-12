@@ -1,12 +1,21 @@
 package com.jetbrains.edu.learning.taskToolWindow
 
+import com.intellij.openapi.application.ApplicationInfo
+import com.intellij.openapi.util.BuildNumber
 import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseView.CourseViewHeavyTestBase
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.taskToolWindow.ui.ToolWindowLinkHandler
 
 class InCourseLinksCourseViewTest : CourseViewHeavyTestBase() {
+
+  override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
+    if (ApplicationInfo.getInstance().build < BuildNumber.fromString("233")!!) {
+      super.runTestRunnable(testRunnable)
+    }
+  }
 
   fun `test section link`() = doTest("course://section1", """
     -Project

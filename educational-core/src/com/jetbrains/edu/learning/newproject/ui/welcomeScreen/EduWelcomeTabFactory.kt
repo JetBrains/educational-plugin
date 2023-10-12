@@ -7,7 +7,7 @@ import com.intellij.openapi.wm.impl.welcomeScreen.TabbedWelcomeScreen.DefaultWel
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import javax.swing.JComponent
 
-// BACKCOMPACT: 2023.1
+// BACKCOMPAT: 2023.1. Remove this class
 class EduWelcomeTabFactory : WelcomeTabFactory {
   override fun createWelcomeTab(parentDisposable: Disposable): WelcomeScreenTab {
     return object : DefaultWelcomeScreenTab(EduCoreBundle.message("course.dialog.my.courses")) {
