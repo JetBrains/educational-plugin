@@ -7,11 +7,11 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.yaml.YamlDeserializer
-import com.jetbrains.edu.learning.yaml.YamlDeserializer.getConfigFileForChild
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.YamlLoader.addItemAsNew
 import com.jetbrains.edu.learning.yaml.YamlLoader.deserializeChildrenIfNeeded
+import com.jetbrains.edu.learning.yaml.YamlLoader.getConfigFileForChild
+import com.jetbrains.edu.learning.yaml.deserializeItemProcessingErrors
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
 import com.jetbrains.edu.learning.yaml.errorHandling.unexpectedItemTypeMessage
 import com.jetbrains.edu.learning.yaml.format.student.StudentTaskChangeApplier
@@ -76,8 +76,7 @@ open class ItemContainerChangeApplier<T : ItemContainer>(val project: Project) :
         // it is called from `YamlLoader.loadItem`
         val configFile = existingItem.getConfigFileForChild(project, titledItem.name) ?: continue
 
-        val deserializedChild = YamlDeserializer.deserializeItemProcessingErrors(configFile, project, mapper = existingItem.course.mapper)
-                                ?: continue
+        val deserializedChild = deserializeItemProcessingErrors(configFile, project, mapper = existingItem.course.mapper) ?: continue
         deserializedChild.name = titledItem.name
         deserializedChild.index = titledItem.index
         deserializedChild.parent = existingItem

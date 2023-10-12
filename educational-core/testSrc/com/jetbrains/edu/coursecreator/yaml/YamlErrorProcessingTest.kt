@@ -10,10 +10,11 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings
-import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
+import com.jetbrains.edu.learning.yaml.YamlLoader
 import com.jetbrains.edu.learning.yaml.YamlMapper.MAPPER
 import com.jetbrains.edu.learning.yaml.YamlTestCase
+import com.jetbrains.edu.learning.yaml.deserializeItemProcessingErrors
 import com.jetbrains.edu.learning.yaml.errorHandling.InvalidYamlFormatException
 
 class YamlErrorProcessingTest : YamlTestCase() {
@@ -185,10 +186,10 @@ class YamlErrorProcessingTest : YamlTestCase() {
                                      expectedExceptionClass: Class<T>) {
     try {
       val configFile = createConfigFile(configName, yamlContent)
-      YamlDeserializer.deserializeItemProcessingErrors(configFile, project)
+      deserializeItemProcessingErrors(configFile, project)
     }
     catch (e: Exception) {
-      assertInstanceOf(e, YamlDeserializer.ProcessedException::class.java)
+      assertInstanceOf(e, YamlLoader.ProcessedException::class.java)
       assertInstanceOf(e.cause, expectedExceptionClass)
       assertEquals(expectedErrorMessage, e.message)
       return

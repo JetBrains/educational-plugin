@@ -13,6 +13,7 @@ import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.util.PathUtil
 import com.intellij.util.PlatformUtils
@@ -124,7 +125,9 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
     val projectDir = VfsUtil.findFile(projectFile.toPath(), true) ?: return null
     val courseConfig = projectDir.findChild(YamlConfigSettings.COURSE_CONFIG) ?: return null
     return runReadAction {
-      YamlDeserializer.deserializeItem(courseConfig.name, YamlMapper.MAPPER, VfsUtil.loadText(courseConfig)) as? Course
+      ProgressManager.getInstance().computeInNonCancelableSection<Course, Exception> {
+        YamlDeserializer.deserializeItem(courseConfig.name, YamlMapper.MAPPER, VfsUtil.loadText(courseConfig)) as? Course
+      }
     }
   }
 

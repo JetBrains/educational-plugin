@@ -4,6 +4,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
@@ -20,8 +21,8 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.remoteConfigFileName
-import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeContent
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
+import com.jetbrains.edu.learning.yaml.YamlLoader.deserializeContent
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
 import com.jetbrains.edu.learning.yaml.format.getRemoteChangeApplierForItem
 import org.jetbrains.annotations.NonNls
@@ -37,7 +38,7 @@ object YamlDeepLoader {
     val errorMessageToLog = "Course yaml config cannot be null"
     val courseConfig = projectDir.findChild(YamlConfigSettings.COURSE_CONFIG) ?: error(errorMessageToLog)
 
-    val deserializedCourse = YamlDeserializer.deserializeItemProcessingErrors(courseConfig, project) as? Course ?: return null
+    val deserializedCourse = deserializeItemProcessingErrors(courseConfig, project) as? Course ?: return null
     val mapper = deserializedCourse.mapper
 
     deserializedCourse.items = deserializedCourse.deserializeContent(project, deserializedCourse.items, mapper)
@@ -165,7 +166,7 @@ object YamlDeepLoader {
   }
 
   fun StudyItem.loadRemoteInfo(remoteConfigFile: VirtualFile) {
-    val itemRemoteInfo = YamlDeserializer.deserializeRemoteItem(remoteConfigFile)
+    val itemRemoteInfo = YamlDeserializer.deserializeRemoteItem(remoteConfigFile.name, VfsUtil.loadText(remoteConfigFile))
     if (itemRemoteInfo.id > 0 || itemRemoteInfo is HyperskillCourse) {
       getRemoteChangeApplierForItem(itemRemoteInfo).applyChanges(this, itemRemoteInfo)
     }

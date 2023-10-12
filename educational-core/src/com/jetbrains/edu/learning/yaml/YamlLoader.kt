@@ -1,16 +1,18 @@
 package com.jetbrains.edu.learning.yaml
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.messages.Topic
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
-import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeContent
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.childrenConfigFileNames
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
 import com.jetbrains.edu.learning.yaml.YamlLoader.loadItem
@@ -21,21 +23,25 @@ import com.jetbrains.edu.learning.yaml.errorHandling.noDirForItemMessage
 import com.jetbrains.edu.learning.yaml.errorHandling.unknownConfigMessage
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TASK
 import com.jetbrains.edu.learning.yaml.format.getChangeApplierForItem
+import org.jetbrains.annotations.NonNls
 
 /**
  *  Get fully-initialized [StudyItem] object from yaml config file.
- *  Uses [YamlDeserializer.deserializeItemProcessingErrors] to deserialize object, than applies changes to existing object, see [loadItem].
+ *  Uses [deserializeItemProcessingErrors] to deserialize object, than applies changes to existing object, see [loadItem].
  */
 object YamlLoader {
+  @NonNls
+  private const val TOPIC = "Loaded YAML"
+  val YAML_LOAD_TOPIC: Topic<YamlListener> = Topic.create(TOPIC, YamlListener::class.java)
 
   fun loadItem(project: Project, configFile: VirtualFile, loadFromVFile: Boolean) {
-    project.messageBus.syncPublisher(YamlDeserializer.YAML_LOAD_TOPIC).beforeYamlLoad(configFile)
+    project.messageBus.syncPublisher(YAML_LOAD_TOPIC).beforeYamlLoad(configFile)
     try {
       doLoad(project, configFile, loadFromVFile)
     }
     catch (e: Exception) {
       when (e) {
-        is YamlLoadingException -> YamlDeserializer.showError(project, e, configFile, e.message)
+        is YamlLoadingException -> showError(project, e, configFile, e.message)
         else -> throw e
       }
     }
@@ -47,7 +53,7 @@ object YamlLoader {
     val mapper = StudyTaskManager.getInstance(project).course?.mapper ?: MAPPER
 
     val existingItem = getStudyItemForConfig(project, configFile)
-    val deserializedItem = YamlDeserializer.deserializeItemProcessingErrors(configFile, project, loadFromVFile, mapper) ?: return
+    val deserializedItem = deserializeItemProcessingErrors(configFile, project, loadFromVFile, mapper) ?: return
     deserializedItem.ensureChildrenExist(configFile.parent)
 
     if (existingItem == null) {
@@ -62,7 +68,7 @@ object YamlLoader {
       deserializedItem.name = itemDir.name
       val parentItem = deserializedItem.getParentItem(project, itemDir.parent)
       val parentConfig = parentItem.getDir(project.courseDir)?.findChild(parentItem.configFileName) ?: return
-      val deserializedParent = YamlDeserializer.deserializeItemProcessingErrors(parentConfig, project, mapper=mapper) as? ItemContainer ?: return
+      val deserializedParent = deserializeItemProcessingErrors(parentConfig, project, mapper = mapper) as? ItemContainer ?: return
       if (deserializedParent.items.map { it.name }.contains(itemDir.name)) {
         parentItem.addItemAsNew(project, deserializedItem)
         reopenEditors(project)
@@ -73,6 +79,47 @@ object YamlLoader {
     }
 
     existingItem.applyChanges(project, deserializedItem)
+  }
+
+
+  inline fun <reified T : StudyItem> StudyItem.deserializeContent(
+    project: Project,
+    contentList: List<T>,
+    mapper: ObjectMapper = MAPPER,
+  ): List<T> {
+    val content = mutableListOf<T>()
+    for (titledItem in contentList) {
+      val configFile: VirtualFile = getConfigFileForChild(project, titledItem.name) ?: continue
+      val deserializeItem = deserializeItemProcessingErrors(configFile, project, mapper = mapper) as? T ?: continue
+      deserializeItem.name = titledItem.name
+      deserializeItem.index = titledItem.index
+      content.add(deserializeItem)
+    }
+
+    return content
+  }
+
+  fun StudyItem.getConfigFileForChild(project: Project, childName: String): VirtualFile? {
+    val dir = getDir(project.courseDir) ?: error(noDirForItemMessage(name))
+    val itemDir = dir.findChild(childName)
+    val configFile = childrenConfigFileNames.map { itemDir?.findChild(it) }.firstOrNull { it != null }
+    if (configFile != null) {
+      return configFile
+    }
+
+    val message = if (itemDir == null) {
+      EduCoreBundle.message("yaml.editor.notification.directory.not.found", childName)
+    }
+    else {
+      EduCoreBundle.message("yaml.editor.notification.config.file.not.found", childName)
+    }
+
+    @NonNls
+    val errorMessageToLog = "Config file for currently loading item $name not found"
+    val parentConfig = dir.findChild(configFileName) ?: error(errorMessageToLog)
+    showError(project, null, parentConfig, message)
+
+    return null
   }
 
   /**
@@ -125,9 +172,11 @@ object YamlLoader {
         val section = course?.let { parentDir.getSection(project) }
         section ?: course
       }
+
       is Task -> course?.let { parentDir.getLesson(project) }
       else -> loadingError(
-        EduCoreBundle.message("yaml.editor.invalid.unexpected.item.type", itemType))
+        EduCoreBundle.message("yaml.editor.invalid.unexpected.item.type", itemType)
+      )
     }
     return itemContainer ?: loadingError(EduCoreBundle.message("yaml.editor.invalid.format.parent.not.found", name))
   }
@@ -148,6 +197,10 @@ object YamlLoader {
       else -> loadingError(unknownConfigMessage(name))
     }
   }
+
+  @VisibleForTesting
+  class ProcessedException(message: String, originalException: Exception?) : Exception(message, originalException)
+
 }
 
 private fun StudyItem.ensureChildrenExist(itemDir: VirtualFile) {

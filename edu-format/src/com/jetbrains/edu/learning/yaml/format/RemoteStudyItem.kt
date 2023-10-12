@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 
 /**
  * Placeholder to deserialize [StudyItem] with remote info. Remote info is applied to
- * existing StudyItem by [RemoteInfoChangeApplierBase]
+ * existing StudyItem by [com.jetbrains.edu.learning.yaml.format.RemoteInfoChangeApplierBase]
  */
 class RemoteStudyItem : StudyItem() {
 

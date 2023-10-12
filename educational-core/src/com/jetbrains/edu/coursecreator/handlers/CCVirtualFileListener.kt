@@ -188,7 +188,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     }
 
     val mapper = StudyTaskManager.getInstance(project).course?.mapper ?: YamlMapper.MAPPER
-    val deserializedItem = YamlDeserializer.deserializeItemProcessingErrors(configFile, project, true, mapper) ?: return false
+    val deserializedItem = deserializeItemProcessingErrors(configFile, project, true, mapper) ?: return false
 
     if (!deserializedItem.couldBeInside(parentStudyItem)) {
       LOG.warn("Study item configuration file was created in a child folder of another study item, but the upper study item can not contain the created one: $configFile")

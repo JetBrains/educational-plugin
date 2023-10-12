@@ -28,7 +28,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     |""".trimMargin()
 
     val configFile = createConfigFile(yamlText, REMOTE_COURSE_CONFIG)
-    val course = YamlDeserializer.deserializeRemoteItem(configFile) as EduCourse
+    val course = YamlDeserializer.deserializeRemoteItem(configFile.name, VfsUtil.loadText(configFile)) as EduCourse
     assertEquals(1, course.id)
     assertEquals(Date(0), course.updateDate)
     assertEquals(listOf(1), course.sectionIds)
@@ -43,7 +43,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     |""".trimMargin()
 
     val configFile = createConfigFile(yamlText, REMOTE_COURSE_CONFIG)
-    val course = YamlDeserializer.deserializeRemoteItem(configFile) as EduCourse
+    val course = YamlDeserializer.deserializeRemoteItem(configFile.name, VfsUtil.loadText(configFile)) as EduCourse
     assertEquals(1, course.id)
     assertEquals(5, course.marketplaceCourseVersion)
   }
@@ -73,7 +73,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     """.trimMargin()
 
     val configFile = createConfigFile(yamlContent, REMOTE_COURSE_CONFIG)
-    val course = YamlDeserializer.deserializeRemoteItem(configFile) as HyperskillCourse
+    val course = YamlDeserializer.deserializeRemoteItem(configFile.name, VfsUtil.loadText(configFile)) as HyperskillCourse
 
     val hyperskillProject = course.hyperskillProject!!
     assertEquals(id, hyperskillProject.id)
@@ -104,7 +104,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     |""".trimMargin()
 
     val configFile = createConfigFile(yamlText, REMOTE_COURSE_CONFIG)
-    val course = YamlDeserializer.deserializeRemoteItem(configFile) as EduCourse
+    val course = YamlDeserializer.deserializeRemoteItem(configFile.name, VfsUtil.loadText(configFile)) as EduCourse
     assertEquals(1, course.id)
     assertEquals(Date(0), course.updateDate)
     assertTrue(course.sectionIds.isEmpty())
@@ -118,7 +118,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     |""".trimMargin()
 
     val configFile = createConfigFile(yamlText, REMOTE_SECTION_CONFIG)
-    val section = YamlDeserializer.deserializeRemoteItem(configFile)
+    val section = YamlDeserializer.deserializeRemoteItem(configFile.name, VfsUtil.loadText(configFile))
     assertEquals(1, section.id)
     assertEquals(Date(0), section.updateDate)
   }
@@ -130,7 +130,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     |""".trimMargin()
 
     val configFile = createConfigFile(yamlText, REMOTE_TASK_CONFIG)
-    val task = YamlDeserializer.deserializeRemoteItem(configFile) as RemoteStudyItem
+    val task = YamlDeserializer.deserializeRemoteItem(configFile.name, VfsUtil.loadText(configFile)) as RemoteStudyItem
     assertEquals(1, task.id)
     assertEquals(Date(0), task.updateDate)
   }
@@ -143,7 +143,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     |""".trimMargin()
 
     val configFile = createConfigFile(yamlText, REMOTE_TASK_CONFIG)
-    val task = YamlDeserializer.deserializeRemoteItem(configFile) as DataTask
+    val task = YamlDeserializer.deserializeRemoteItem(configFile.name, VfsUtil.loadText(configFile)) as DataTask
     assertEquals(1, task.id)
     assertEquals(Date(0), task.updateDate)
   }
@@ -160,7 +160,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     |""".trimMargin()
 
     val configFile = createConfigFile(yamlText, REMOTE_TASK_CONFIG)
-    val task = YamlDeserializer.deserializeRemoteItem(configFile) as DataTask
+    val task = YamlDeserializer.deserializeRemoteItem(configFile.name, VfsUtil.loadText(configFile)) as DataTask
     assertEquals(1, task.id)
     assertEquals(Date(0), task.updateDate)
     val attempt = Attempt(2, Date(0), 300).toDataTaskAttempt()
@@ -175,7 +175,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     |""".trimMargin()
 
     val configFile = createConfigFile(yamlText, REMOTE_COURSE_CONFIG)
-    val course = YamlDeserializer.deserializeRemoteItem(configFile) as EduCourse
+    val course = YamlDeserializer.deserializeRemoteItem(configFile.name, VfsUtil.loadText(configFile)) as EduCourse
     assertEquals(1, course.id)
     assertEquals(Date(1000), course.updateDate)
   }

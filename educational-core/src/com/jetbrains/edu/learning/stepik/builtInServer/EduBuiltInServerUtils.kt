@@ -4,6 +4,7 @@ import com.intellij.ide.RecentProjectsManagerBase
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.vfs.VfsUtil
@@ -63,11 +64,9 @@ object EduBuiltInServerUtils {
     val remoteInfoConfig = projectDir.findChild(REMOTE_COURSE_CONFIG) ?: return null
     val localCourseConfig = projectDir.findChild(COURSE_CONFIG) ?: return null
     return runReadAction {
-      val localCourse = YamlDeserializer.deserializeItem(
-        localCourseConfig.name,
-        YamlMapper.MAPPER,
-        VfsUtil.loadText(localCourseConfig)
-      ) as? Course ?: return@runReadAction null
+      val localCourse = ProgressManager.getInstance().computeInNonCancelableSection<Course, Exception> {
+        YamlDeserializer.deserializeItem(localCourseConfig.name, YamlMapper.MAPPER, VfsUtil.loadText(localCourseConfig) ) as? Course
+      } ?: return@runReadAction null
       localCourse.loadRemoteInfo(remoteInfoConfig)
       localCourse
     }
