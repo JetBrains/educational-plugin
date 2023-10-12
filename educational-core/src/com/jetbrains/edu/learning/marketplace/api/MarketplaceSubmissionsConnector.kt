@@ -62,12 +62,11 @@ class MarketplaceSubmissionsConnector {
     get() = submissionsService()
 
   private fun submissionsService(): SubmissionsService {
-    val jbAuthService = JBAccountInfoService.getInstance() ?: error("Nullable JBAccountInfoService")
     val uidToken = if (RemoteEnvHelper.isRemoteDevServer()) {
       RemoteEnvHelper.getUserUidToken() ?: error("User UID was not found, it might require more time to retrieve it")
     }
     else {
-      jbAuthService.userData?.id ?: error("Nullable JB account ID token in user data")
+      JBAccountInfoService.getInstance()?.userData?.id ?: error("Nullable JB account ID token in user data")
     }
 
     val retrofit = createRetrofitBuilder(submissionsServiceUrl, connectionPool, "u.$uidToken")
