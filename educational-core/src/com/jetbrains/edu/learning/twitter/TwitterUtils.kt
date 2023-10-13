@@ -7,15 +7,14 @@ import com.intellij.ide.BrowserUtil
 import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.notification.Notification
+import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationType
-import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task.Backgroundable
-import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.NlsSafe
@@ -36,6 +35,7 @@ import kotlin.io.path.exists
 
 object TwitterUtils {
   private val LOG = Logger.getInstance(TwitterUtils::class.java)
+  private const val REQUEST_PIN_CALLBACK = "oob"
 
   @Suppress("UnstableApiUsage")
   @NlsSafe
@@ -90,12 +90,12 @@ object TwitterUtils {
     Notification(
       "JetBrains Academy",
       EduCoreBundle.message("twitter.success.title"),
-        EduCoreBundle.message("twitter.tweet.posted"),
+      EduCoreBundle.message("twitter.tweet.posted"),
       NotificationType.INFORMATION
-    ).addAction(object : DumbAwareAction(EduCoreBundle.message("twitter.tweet.show")){
-      override fun actionPerformed(e: AnActionEvent) {
-        EduBrowser.getInstance().browse("https://twitter.com/anyuser/status/${tweet.id}")
-      }
+    ).addAction(NotificationAction.createSimpleExpiring(EduCoreBundle.message("twitter.open.in.browser")) {
+      EduBrowser.getInstance().browse(
+        "https://twitter.com/anyuser/status/${tweet.id}"
+      )
     }).notify(null)
   }
 
@@ -105,7 +105,7 @@ object TwitterUtils {
   @Throws(TwitterException::class)
   private fun authorize(project: Project, twitter: Twitter): Boolean {
     checkIsBackgroundThread()
-    val requestToken = twitter.getOAuthRequestToken("oob")
+    val requestToken = twitter.getOAuthRequestToken(REQUEST_PIN_CALLBACK)
     BrowserUtil.browse(requestToken.authorizationURL)
     val pin = invokeAndWaitIfNeeded { createAndShowPinDialog(project) } ?: return false
     ProgressManager.checkCanceled()
@@ -122,9 +122,13 @@ object TwitterUtils {
     CredentialAttributes(generateServiceName(SERVICE_DISPLAY_NAME, userId))
 
   private fun createAndShowPinDialog(project: Project): String? {
-    return Messages.showInputDialog(project, EduCoreBundle.message("twitter.enter.pin"), EduCoreBundle.message("twitter.authorization"),
-                                    null, "", NumericInputValidator(EduCoreBundle.message("twitter.validation.empty.pin"),
-                                                                    EduCoreBundle.message("twitter.validation.not.numeric.pin")))
+    return Messages.showInputDialog(
+      project, EduCoreBundle.message("twitter.enter.pin"), EduCoreBundle.message("twitter.authorization"),
+      null, "", NumericInputValidator(
+        EduCoreBundle.message("twitter.validation.empty.pin"),
+        EduCoreBundle.message("twitter.validation.not.numeric.pin")
+      )
+    )
   }
 
   private class TweetInfo(
@@ -145,7 +149,7 @@ object TwitterUtils {
     project: Project,
     private val dialog: TwitterDialogUI,
     private val imagePath: Path?
-    ) : Backgroundable(project, EduCoreBundle.message("twitter.loading.posting"), true) {
+  ) : Backgroundable(project, EduCoreBundle.message("twitter.loading.posting"), true) {
 
     override fun run(indicator: ProgressIndicator) {
       val token = getToken(TwitterSettings.getInstance().userId)
@@ -165,7 +169,8 @@ object TwitterUtils {
       LOG.warn(error)
       val message = if (error is TwitterException && error.statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
         EduCoreBundle.message("error.failed.to.authorize")
-      } else {
+      }
+      else {
         EduCoreBundle.message("error.failed.to.update.status")
       }
       Messages.showErrorDialog(project, message, EduCoreBundle.message("twitter.error.failed.to.tweet"))
