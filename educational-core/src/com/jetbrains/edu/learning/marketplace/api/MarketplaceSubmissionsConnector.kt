@@ -92,7 +92,6 @@ class MarketplaceSubmissionsConnector {
   private fun String?.toLogString(): String = if (this != null) " for user $this" else ""
 
   fun getAllSubmissions(courseId: Int): List<MarketplaceSubmission> {
-    LOG.info("Loading all submissions for courseId = $courseId")
     var currentPage = 1
     val allSubmissions = mutableListOf<MarketplaceSubmission>()
     do {

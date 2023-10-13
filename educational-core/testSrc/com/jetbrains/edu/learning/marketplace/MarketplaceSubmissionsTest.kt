@@ -106,6 +106,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
 
   private fun checkSubmissionsNotDeleted(taskIds: Set<Int>) {
     val submissions = SubmissionsManager.getInstance(project).getSubmissionsFromMemory(taskIds)
+    checkNotNull(submissions)
     assertEquals(3, submissions.size)
   }
 
