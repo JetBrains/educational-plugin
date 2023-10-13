@@ -61,6 +61,11 @@ class EduCourseValidatorAppStarter : EduCourseProjectAppStarterBase() {
     }
 
     val result = ValidationCheckResultManager.getInstance(project).getResult(this)
+
+    withContext(Dispatchers.EDT) {
+      closeOpenFiles(project)
+    }
+
     val testMessage = when (result.status) {
       CheckStatus.Unchecked -> ServiceMessageBuilder.testIgnored(presentableName)
       CheckStatus.Solved -> ServiceMessageBuilder.testFinished(presentableName)
@@ -78,6 +83,14 @@ class EduCourseValidatorAppStarter : EduCourseProjectAppStarterBase() {
                       ?: error("Can't find virtual file for `${taskFile.name}` task file in `$name task`")
 
     FileEditorManager.getInstance(project).openFile(virtualFile, true)
+  }
+
+  @RequiresEdt
+  private fun closeOpenFiles(project: Project) {
+    val fileEditorManager = FileEditorManager.getInstance(project)
+    for (openFile in fileEditorManager.openFiles) {
+      fileEditorManager.closeFile(openFile)
+    }
   }
 }
 
