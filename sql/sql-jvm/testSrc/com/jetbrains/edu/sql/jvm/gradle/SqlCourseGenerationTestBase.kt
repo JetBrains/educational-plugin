@@ -117,7 +117,7 @@ abstract class SqlCourseGenerationTestBase : JvmCourseGenerationTestBase() {
 
   protected fun prepareDatabaseView(): Tree {
     val databaseView = DatabaseView.getDatabaseView(project)
-    val tree = getTree(databaseView.panel)
+    val tree = databaseView.panel.getTree()
 
     PlatformTestUtil.waitWhileBusy(tree)
     expandImportantNodes(tree)

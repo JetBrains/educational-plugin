@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.PluginInfo
 import com.jetbrains.edu.learning.courseFormat.PluginInfos
 import javax.swing.Icon
 
-// BACKCOMPAT 2023.2
+// BACKCOMPAT: 2023.2
 private val BUILD_232 = BuildNumber.fromString("232")!!
 
 private val RUST_PLUGINS = listOf(

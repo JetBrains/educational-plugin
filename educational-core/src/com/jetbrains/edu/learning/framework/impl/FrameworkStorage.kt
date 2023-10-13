@@ -16,6 +16,7 @@ import java.nio.file.Path
 import kotlin.system.measureTimeMillis
 
 class FrameworkStorage(storagePath: Path) : AbstractStorage(storagePath) {
+  @Volatile
   var isDisposed = false
 
   constructor(storageFilePath: Path, version: Int) : this(storageFilePath) {

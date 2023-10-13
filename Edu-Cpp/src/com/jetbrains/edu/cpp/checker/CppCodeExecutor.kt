@@ -24,7 +24,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 class CppCodeExecutor : DefaultCodeExecutor() {
 
   override fun execute(project: Project, task: Task, indicator: ProgressIndicator, input: String?): Result<String, CheckResult> {
-    // BACKCOMPAT 2023.1 Get rid of it
+    // BACKCOMPAT: 2023.1 Get rid of it
     return withoutTerminalEmulation { super.execute(project, task, indicator, input) }
   }
 

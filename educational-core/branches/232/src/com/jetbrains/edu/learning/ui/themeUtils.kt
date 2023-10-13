@@ -16,5 +16,6 @@ fun getCurrentThemeId(): String? {
 }
 
 // BACKCOMPAT: 2023.1. Remove it
+@Suppress("UnusedReceiverParameter")
 fun ActionButton.setLook() {
 }
