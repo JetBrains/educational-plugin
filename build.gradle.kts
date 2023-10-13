@@ -479,7 +479,7 @@ project(":") {
 
   task<RunIdeTask>("validateCourse") {
     dependsOn(tasks.prepareSandbox)
-    args("validateCourse", "/Users/Arseniy.Pendryak/IdeaProjects/PlainTextValidationCourse11", "--archive", "/Users/Arseniy.Pendryak/PlainTextValidationCourse/PlainTextValidationCourse.zip")
+    args("validateCourse", "/Users/Arseniy.Pendryak/IdeaProjects/PlainTextValidationCourse13", "--marketplace", "22836")
     // Force headless mode to be able to run command on CI
     systemProperty("java.awt.headless", "true")
 //    systemProperty("idea.disposer.debug", "off")
