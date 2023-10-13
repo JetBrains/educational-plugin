@@ -17,6 +17,7 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.ui.DumbAwareActionButton
 import com.jetbrains.edu.EducationalCoreIcons
@@ -24,11 +25,10 @@ import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
-import com.jetbrains.edu.learning.submissions.SubmissionsTab
+import org.jetbrains.annotations.NonNls
 
-@Suppress("ComponentNotRegistered")
-class ApplySubmissionCodeAction : DumbAwareActionButton(
-  EduCoreBundle.message("action.apply.code.from.submission.title"), EducationalCoreIcons.ApplySubmissionCode
+class ApplyCodeAction : DumbAwareActionButton(
+  EduCoreBundle.message("action.apply.code.from.submission.title"), EducationalCoreIcons.ApplyCode
 ) {
 
   override fun updateButton(e: AnActionEvent) {
@@ -41,7 +41,7 @@ class ApplySubmissionCodeAction : DumbAwareActionButton(
     if (!getConfirmationFromDialog(project)) return
 
     val diffRequestChain = e.getDiffRequestChain()
-    val fileNames = diffRequestChain.getUserData(SubmissionsTab.FILE_NAME_KEY) ?: return showApplySubmissionCodeFailedNotification(project)
+    val fileNames = diffRequestChain.getUserData(FILENAMES_KEY) ?: return showApplySubmissionCodeFailedNotification(project)
 
     try {
       val localDocuments = readLocalDocuments(fileNames)
@@ -109,4 +109,11 @@ class ApplySubmissionCodeAction : DumbAwareActionButton(
     EduCoreBundle.message("action.apply.code.from.submission.notification.failed.text"),
     NotificationType.ERROR
   ).notify(project)
+
+  companion object {
+    val FILENAMES_KEY: Key<List<String>> = Key.create("fileNames")
+
+    @NonNls
+    const val ACTION_ID: String = "Educational.Student.ApplyCode"
+  }
 }

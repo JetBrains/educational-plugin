@@ -5,6 +5,7 @@ import com.intellij.diff.DiffDialogHints
 import com.intellij.diff.DiffManager
 import com.intellij.diff.chains.SimpleDiffRequestChain
 import com.intellij.diff.requests.SimpleDiffRequest
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
@@ -14,16 +15,17 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
+import com.jetbrains.edu.learning.actions.ApplyCodeAction.Companion.FILENAMES_KEY
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_SOLUTIONS_ANCHOR
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillTaskLink
 import org.jetbrains.annotations.NonNls
 import java.util.*
@@ -46,11 +48,13 @@ open class CompareWithAnswerAction : DumbAwareAction() {
     val taskFiles = getTaskFiles(task)
     putSelectedTaskFileFirst(taskFiles, taskFile)
 
+    val solutionFilePaths = mutableListOf<String>()
     val requests = taskFiles.map {
       val virtualFile = it.getVirtualFile(state.project) ?: error("VirtualFile for ${it.name} not found")
       val studentFileContent = DiffContentFactory.getInstance().create(VfsUtil.loadText(virtualFile), virtualFile.fileType)
       val solution = getSolution(it)
       val solutionFileContent = DiffContentFactory.getInstance().create(solution, virtualFile.fileType)
+      solutionFilePaths.add(virtualFile.path)
       SimpleDiffRequest(EduCoreBundle.message("action.Educational.CompareWithAnswer.description"), studentFileContent, solutionFileContent,
                         virtualFile.name,
                         EduCoreBundle.message("action.compare.answer", virtualFile.name))
@@ -61,12 +65,14 @@ open class CompareWithAnswerAction : DumbAwareAction() {
       message.createBalloon().show(JBPopupFactory.getInstance().guessBestPopupLocation(e.dataContext), Balloon.Position.above)
       return
     }
-    showSolution(state.project, requests)
+    val diffRequestChain = SimpleDiffRequestChain(requests)
+    diffRequestChain.putUserData(FILENAMES_KEY, solutionFilePaths)
+    showSolution(state.project, diffRequestChain)
     EduCounterUsageCollector.solutionPeeked()
   }
 
-  protected open fun showSolution(project: Project, requests: List<SimpleDiffRequest>) {
-    DiffManager.getInstance().showDiff(project, SimpleDiffRequestChain(requests), DiffDialogHints.FRAME)
+  protected open fun showSolution(project: Project, diffRequestChain: SimpleDiffRequestChain) {
+    DiffManager.getInstance().showDiff(project, diffRequestChain, DiffDialogHints.FRAME)
   }
 
   private fun getTaskFiles(task: Task) =
@@ -102,6 +108,8 @@ open class CompareWithAnswerAction : DumbAwareAction() {
 
     presentation.isEnabledAndVisible = task.canShowSolution()
   }
+
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
 
   companion object {
     @NonNls

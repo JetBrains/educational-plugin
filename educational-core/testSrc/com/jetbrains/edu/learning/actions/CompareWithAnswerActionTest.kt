@@ -1,14 +1,16 @@
 package com.jetbrains.edu.learning.actions
 
+import com.intellij.diff.chains.SimpleDiffRequestChain
+import com.intellij.diff.chains.SimpleDiffRequestChain.DiffRequestProducerWrapper
 import com.intellij.diff.contents.DocumentContent
 import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.MockEduBrowser
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_SOLUTIONS_ANCHOR
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillTaskLink
@@ -72,8 +74,9 @@ class CompareWithAnswerActionTest : EduActionTestCase() {
     openFirstTaskFile()
 
     testAction(object : CompareWithAnswerAction() {
-      override fun showSolution(project: Project, requests: List<SimpleDiffRequest>) {
-        val answerContent = requests[0].contents[1] as DocumentContent
+      override fun showSolution(project: Project, diffRequestChain: SimpleDiffRequestChain) {
+        val diffReq = diffRequestChain.requests[0] as DiffRequestProducerWrapper
+        val answerContent = (diffReq.request as SimpleDiffRequest).contents[1] as DocumentContent
         assertEquals("task file text answer", answerContent.document.text)
       }
     })

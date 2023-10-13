@@ -10,10 +10,10 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Key
 import com.intellij.ui.ColorUtil
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.actions.ApplyCodeAction.Companion.FILENAMES_KEY
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.isTestFile
@@ -179,7 +179,7 @@ class SubmissionsTab(project: Project) : AdditionalTextTab(project, SUBMISSIONS_
         }
       }
       val diffRequestChain = SimpleDiffRequestChain(requests)
-      diffRequestChain.putUserData(FILE_NAME_KEY, submissionTaskFilePaths)
+      diffRequestChain.putUserData(FILENAMES_KEY, submissionTaskFilePaths)
       DiffManager.getInstance().showDiff(project, diffRequestChain, DiffDialogHints.FRAME)
     }
 
@@ -241,7 +241,5 @@ class SubmissionsTab(project: Project) : AdditionalTextTab(project, SUBMISSIONS_
         "#${ColorUtil.toHex(EduColors.wrongLabelForeground)}"
       }
     }
-
-    val FILE_NAME_KEY : Key<List<String>> = Key.create("fileName")
   }
 }
