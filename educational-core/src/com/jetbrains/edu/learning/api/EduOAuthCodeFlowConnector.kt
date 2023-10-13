@@ -119,8 +119,8 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
 
   @Throws(IOException::class)
   private fun createCustomServer(): CustomAuthorizationServer {
-    return CustomAuthorizationServer.create(platformName, oAuthServicePath) { code: String, receivedState: String, _: String ->
-      if (receivedState != state && !login(code)) "Failed to log in to $platformName" else null
+    return CustomAuthorizationServer.create(platformName, oAuthServicePath, state) { code: String, _: String ->
+      if (!login(code)) "Failed to log in to $platformName" else null
     }
   }
 

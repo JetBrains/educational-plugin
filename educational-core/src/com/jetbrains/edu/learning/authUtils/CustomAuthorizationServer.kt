@@ -42,12 +42,11 @@ class CustomAuthorizationServer private constructor(private val server: HttpServ
     /**
      * @see CustomAuthorizationServer.createContextHandler
      * @param code oauth authorization code
-     * @param state state string received from the request
      * @param handlingUri uri the code wah handled on (is used as redirect_uri in tokens request)
      *
      * @return non-null error message in case of error, null otherwise
      */
-    fun handle(code: String, state: String, handlingUri: String): String?
+    fun handle(code: String, handlingUri: String): String?
   }
 
   companion object {
@@ -60,9 +59,10 @@ class CustomAuthorizationServer private constructor(private val server: HttpServ
     fun create(
       platformName: String,
       handlerPath: String,
+      state: String,
       codeHandler: CodeHandler
     ): CustomAuthorizationServer {
-      val server = createServer(platformName, handlerPath, codeHandler)
+      val server = createServer(platformName, handlerPath, state, codeHandler)
       SERVER_BY_NAME[platformName] = server
       return server
     }
@@ -72,6 +72,7 @@ class CustomAuthorizationServer private constructor(private val server: HttpServ
     private fun createServer(
       platformName: String,
       handlerPath: String,
+      state: String,
       codeHandler: CodeHandler
     ): CustomAuthorizationServer {
       val port = availablePort ?: throw IOException("No ports available")
@@ -87,7 +88,7 @@ class CustomAuthorizationServer private constructor(private val server: HttpServ
       val newServer = ServerBootstrap.bootstrap()
         .setListenerPort(port)
         .setServerInfo(platformName)
-        .registerHandler(handlerPath + slashIfNeeded, createContextHandler(platformName, codeHandler))
+        .registerHandler(handlerPath + slashIfNeeded, createContextHandler(platformName, codeHandler, state))
         .setSocketConfig(socketConfig)
         .create()
       newServer.start()
@@ -108,7 +109,8 @@ class CustomAuthorizationServer private constructor(private val server: HttpServ
 
     private fun createContextHandler(
       platformName: String,
-      codeHandler: CodeHandler
+      codeHandler: CodeHandler,
+      state: String
     ): HttpRequestHandler {
       return HttpRequestHandler { request: HttpRequest, response: HttpResponse, _: HttpContext? ->
         LOG.info("Handling auth response")
@@ -119,15 +121,19 @@ class CustomAuthorizationServer private constructor(private val server: HttpServ
             sendErrorResponse(response, platformName, "Authentication code not found.")
             return@HttpRequestHandler
           }
-          val state = parsed.find { it.name == "state" }?.value
-          if (state == null) {
+          val receivedState = parsed.find { it.name == "state" }?.value
+          if (receivedState == null) {
             sendErrorResponse(response, platformName, "State param not found.")
+            return@HttpRequestHandler
+          }
+          if (receivedState != state) {
+            sendErrorResponse(response, platformName, "Received state param does not match.")
             return@HttpRequestHandler
           }
 
           // cannot be null: if this concrete handler is working, then the corresponding server is working too
           val currentServer = getServerIfStarted(platformName) ?: return@HttpRequestHandler
-          val errorMessage = codeHandler.handle(code, state, currentServer.handlingUri)
+          val errorMessage = codeHandler.handle(code, currentServer.handlingUri)
           if (errorMessage == null) {
             sendOkResponse(response, platformName)
           }
