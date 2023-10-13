@@ -123,6 +123,7 @@ object CheckUtils {
 
     val latch = CountDownLatch(configurations.size)
     val context = Context(processListener, executionListener, latch)
+    Disposer.register(connection, context)
 
     var hasBrokenConfiguration = false
 
