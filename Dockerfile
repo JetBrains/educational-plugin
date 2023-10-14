@@ -9,11 +9,7 @@ ENV JAVA_HOME="$IDE_DIST/jbr"
 RUN apt update && \
     apt install -y unzip git telnet curl nano iputils-ping
 
-RUN mkdir /project
-WORKDIR /project
-
 COPY "JetBrainsAcademy.zip" "/tmp/JetBrainsAcademy.zip"
-COPY validate_сourse.sh "/project/validate_сourse.sh"
 
 RUN set -ex && \
     IDE_NAME="ideaIC-2023.2.2" && \
@@ -26,3 +22,8 @@ RUN set -ex && \
     unzip -d "$IDE_DIST/plugins" /tmp/JetBrainsAcademy.zip && \
     chmod +x "$IDE_DIST"/bin/*.sh && \
     rm -rf /tmp/*
+
+RUN mkdir "/project"
+WORKDIR "/project"
+
+COPY "validate_course.sh" "/project/validate_course.sh"
