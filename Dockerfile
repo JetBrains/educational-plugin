@@ -27,3 +27,4 @@ RUN mkdir "/project"
 WORKDIR "/project"
 
 COPY "validate_course.sh" "/project/validate_course.sh"
+RUN chmod +x /project/validate_course.sh
