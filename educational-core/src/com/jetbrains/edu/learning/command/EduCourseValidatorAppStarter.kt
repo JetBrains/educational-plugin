@@ -38,18 +38,29 @@ class EduCourseValidatorAppStarter : EduCourseProjectAppStarterBase() {
   }
 
   private suspend fun ItemContainer.check(project: Project, results: MutableMap<Task, CheckResult>) {
-    println(ServiceMessageBuilder.testSuiteStarted(name))
-    for (item in items) {
-      when (item) {
-        is ItemContainer -> {
-          item.check(project, results)
-        }
-        is Task -> {
-          results[item] = item.check(project)
+    testSuit(name) {
+      for (item in items) {
+        when (item) {
+          is ItemContainer -> {
+            item.check(project, results)
+          }
+
+          is Task -> {
+            results[item] = item.check(project)
+          }
         }
       }
     }
-    println(ServiceMessageBuilder.testSuiteFinished(name))
+  }
+
+  private suspend fun <T> testSuit(name: String, action: suspend () -> T): T {
+    println(ServiceMessageBuilder.testSuiteStarted(name))
+    return try {
+      action()
+    }
+    finally {
+      println(ServiceMessageBuilder.testSuiteFinished(name))
+    }
   }
 
   private suspend fun Task.check(project: Project): CheckResult {
@@ -69,7 +80,11 @@ class EduCourseValidatorAppStarter : EduCourseProjectAppStarterBase() {
     val testMessage = when (result.status) {
       CheckStatus.Unchecked -> ServiceMessageBuilder.testIgnored(presentableName)
       CheckStatus.Solved -> ServiceMessageBuilder.testFinished(presentableName)
-      CheckStatus.Failed -> ServiceMessageBuilder.testFailed(presentableName)
+      CheckStatus.Failed -> {
+        ServiceMessageBuilder.testFailed(presentableName)
+          .addAttribute("message", result.message)
+          .addAttribute("details", result.details.orEmpty())
+      }
     }
     println(testMessage)
     return result
