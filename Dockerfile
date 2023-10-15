@@ -7,7 +7,9 @@ ENV HOME="/root" \
 ENV JAVA_HOME="$IDE_DIST/jbr"
 
 RUN apt update && \
-    apt install -y unzip fontconfig git telnet curl nano iputils-ping
+    apt install -y curl unzip fontconfig git telnet nano iputils-ping
+
+RUN apt install python3
 
 COPY "JetBrainsAcademy.zip" "/tmp/JetBrainsAcademy.zip"
 
