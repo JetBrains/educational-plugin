@@ -25,6 +25,7 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.projectView.CourseViewUtils.isSolved
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckPanel
+import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
 import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.*
 import java.awt.geom.Path2D
@@ -71,8 +72,13 @@ class NavigationMapPanel : JPanel(BorderLayout()) {
 
   fun updateTopPanelForProblems(project: Project, course: HyperskillCourse, task: Task) {
     topPanelForProblems.removeAll()
-    if (course.isTaskInProject(task) || CCUtils.isCourseCreator(project) || course.getProjectLesson() == null) return
-    val actionLink = AnActionLink(EduCoreBundle.message("hyperskill.work.on.project"), NavigateToProjectAction(project, course)).apply { font = JBFont.medium() }
+    if (CCUtils.isCourseCreator(project) || course.getProjectLesson() == null) return
+
+    val linkText = if (course.isTaskInProject(task)) EduCoreBundle.message("hyperskill.back.to.learning") else EduCoreBundle.message("hyperskill.work.on.project")
+    val action = if (course.isTaskInProject(task)) NavigateToUnsolvedTopic(project, course) else NavigateToProjectAction(project, course)
+    val actionLink = AnActionLink(linkText, action).apply {
+      font = JBFont.medium()
+    }
     topPanelForProblems.add(actionLink)
   }
 
@@ -84,6 +90,23 @@ class NavigationMapPanel : JPanel(BorderLayout()) {
       val lesson = course.getProjectLesson() ?: return
       val currentTask = lesson.currentTask() ?: return
       NavigationUtils.navigateToTask(project, currentTask)
+    }
+  }
+
+  private class NavigateToUnsolvedTopic(
+    private val project: Project,
+    private val course: HyperskillCourse
+  ) : DumbAwareAction() {
+    override fun actionPerformed(e: AnActionEvent) {
+      val topicsSection = course.getTopicsSection()
+      if (topicsSection != null) {
+        val tasks = topicsSection.lessons.flatMap { it.taskList }
+        val task = tasks.find { !it.isSolved } ?: tasks.last()
+        NavigationUtils.navigateToTask(project, task)
+      }
+      else {
+        TaskToolWindowView.getInstance(project).showTab(TabType.TOPICS_TAB)
+      }
     }
   }
 
