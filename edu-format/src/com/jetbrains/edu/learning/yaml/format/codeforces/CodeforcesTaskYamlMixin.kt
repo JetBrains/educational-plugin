@@ -22,5 +22,5 @@ abstract class CodeforcesTaskYamlMixin : StudentTaskYamlMixin() {
   override lateinit var contentTags: List<String>
 
   @JsonProperty(PROBLEM_INDEX)
-  private var _problemIndex: String? = null
+  private var problemIndex: String? = null
 }
