@@ -32,14 +32,8 @@ import javax.swing.UIManager
 import javax.swing.UIManager.setLookAndFeel
 
 class TaskDescriptionTest : EduTestCase() {
-  companion object {
-    private val overrideMethodShortcut: String = getKeystrokeText(KeyEvent.VK_O, InputEvent.CTRL_MASK)
-    private val goToActionShortcut: String = getKeystrokeText(KeyEvent.VK_A, InputEvent.CTRL_MASK + InputEvent.SHIFT_MASK)
 
-    private fun getKeystrokeText(keyChar: Int, modifiers: Int) = KeymapUtil.getKeystrokeText(KeyStroke.getKeyStroke(keyChar, modifiers))
-  }
-
-  fun testHyperskillTagsRemoved() {
+  fun `test hyperskill tags removed`() {
     createCourseWithHyperskillTags(courseProducer = ::HyperskillCourse)
 
     val task = findTask(0, 0)
@@ -51,7 +45,7 @@ class TaskDescriptionTest : EduTestCase() {
     assertEquals(expectedTextWithoutTags, taskDescription)
   }
 
-  fun testHyperskillTagsNotRemoved() {
+  fun `test hyperskill tags not removed`() {
     val expectedTextWithTags = createCourseWithHyperskillTags(courseProducer = ::EduCourse)
 
     val task = findTask(0, 0)
@@ -74,24 +68,24 @@ class TaskDescriptionTest : EduTestCase() {
     return taskText
   }
 
-  fun testIDEName() {
+  fun `test ide name`() {
     createCourseWithDescription("This is %IDE_NAME%")
     val task = findTask(0, 0)
     val taskDescription = task.getTaskTextFromTask(project)
     assertEquals("This is ${ApplicationNamesInfo.getInstance().fullProductName}", taskDescription!!.getBody())
   }
 
-  fun testSimpleImg() {
+  fun `test simple img`() {
     doTestImage()
   }
 
-  fun testImgInsideOtherTags() {
+  fun `test img inside other tags`() {
     doTestImage()
   }
 
-  fun testWebImage() {
+  fun `test web image`() {
     createCourseWithDescription()
-    val name = getTestName(true) + ".html"
+    val name = getTestName(true).trim() + ".html"
     val fileText = FileUtil.loadFile(File(testDataPath, name))
     val initialDocument = Jsoup.parse(fileText)
 
@@ -107,7 +101,7 @@ class TaskDescriptionTest : EduTestCase() {
   private fun doTestImage() {
     createCourseWithDescription()
     myFixture.openFileInEditor(findFileInTask(0, 0, "taskFile1.txt"))
-    val name = getTestName(true) + ".html"
+    val name = getTestName(true).trim() + ".html"
     val fileText = FileUtil.loadFile(File(testDataPath, name))
     val processedText = JCEFToolWindow.processContent(fileText, project)
     val document = Jsoup.parse(processedText)
@@ -141,32 +135,32 @@ class TaskDescriptionTest : EduTestCase() {
     }
   }
 
-  fun testShortcutRendering() {
+  fun `test shortcut rendering`() {
     val taskText = "You can use &shortcut:OverrideMethods; to override methods"
     val taskTextWithShortcuts = "You can use $overrideMethodShortcut to override methods"
     doTestShortcut(taskText, taskTextWithShortcuts)
   }
 
-  fun testShortcutRenderingMarkdown() {
+  fun `test shortcut rendering markdown`() {
     val taskText = "You can use &shortcut:OverrideMethods; to override methods"
     val taskTextWithShortcuts = "You can use $overrideMethodShortcut to override methods"
     doTestShortcut(taskText, taskTextWithShortcuts, descriptionFormat = DescriptionFormat.MD)
   }
 
-  fun testSeveralShortcutsRendering() {
+  fun `test several shortcuts rendering`() {
     val taskText = "You can use &shortcut:OverrideMethods; to override methods. One more useful shortcut: &shortcut:GotoAction;"
     val taskTextWithShortcuts = "You can use $overrideMethodShortcut to override methods. " +
                                 "One more useful shortcut: $goToActionShortcut"
     doTestShortcut(taskText, taskTextWithShortcuts)
   }
 
-  fun testShortcutInsideTag() {
+  fun `test shortcut inside tag`() {
     val taskText = "You can use <code>&shortcut:OverrideMethods;</code> to override methods. One more useful shortcut: &shortcut:GotoAction;"
     val taskTextWithShortcuts = "You can use $overrideMethodShortcut to override methods. One more useful shortcut: $goToActionShortcut"
     doTestShortcut(taskText, taskTextWithShortcuts)
   }
 
-  fun testDoNotChangeCurrentTaskOnExternalFileOpening() {
+  fun `test do not change current task on external file opening`() {
     val taskText = "Solve"
     courseWithFiles {
       lesson {
@@ -409,4 +403,10 @@ class TaskDescriptionTest : EduTestCase() {
 
   private fun String.getBody() = Jsoup.parse(this).getElementsByTag("body").text()
 
+  companion object {
+    private val overrideMethodShortcut: String = getKeystrokeText(KeyEvent.VK_O, InputEvent.CTRL_MASK)
+    private val goToActionShortcut: String = getKeystrokeText(KeyEvent.VK_A, InputEvent.CTRL_MASK + InputEvent.SHIFT_MASK)
+
+    private fun getKeystrokeText(keyChar: Int, modifiers: Int) = KeymapUtil.getKeystrokeText(KeyStroke.getKeyStroke(keyChar, modifiers))
+  }
 }
