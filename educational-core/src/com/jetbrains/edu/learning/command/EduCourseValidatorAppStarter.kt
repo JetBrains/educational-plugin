@@ -78,15 +78,21 @@ class EduCourseValidatorAppStarter : EduCourseProjectAppStarterBase() {
     }
 
     val testMessage = when (result.status) {
-      CheckStatus.Unchecked -> ServiceMessageBuilder.testIgnored(presentableName)
-      CheckStatus.Solved -> ServiceMessageBuilder.testFinished(presentableName)
+      CheckStatus.Unchecked -> {
+        ServiceMessageBuilder.testIgnored(presentableName)
+          .addAttribute("message", result.message)
+      }
+      CheckStatus.Solved -> null
       CheckStatus.Failed -> {
         ServiceMessageBuilder.testFailed(presentableName)
           .addAttribute("message", result.message)
           .addAttribute("details", result.details.orEmpty())
       }
     }
-    println(testMessage)
+    if (testMessage != null) {
+      println(testMessage)
+    }
+    println(ServiceMessageBuilder.testFinished(presentableName))
     return result
   }
 
