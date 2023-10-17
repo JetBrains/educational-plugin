@@ -1,16 +1,13 @@
 package com.jetbrains.edu.learning.editor
 
 import com.intellij.ide.projectView.ProjectView
-import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.event.EditorFactoryEvent
 import com.intellij.openapi.editor.event.EditorFactoryListener
 import com.intellij.openapi.editor.event.EditorMouseEvent
 import com.intellij.openapi.editor.event.EditorMouseListener
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.problems.WolfTheProblemSolver
-import com.jetbrains.edu.learning.EduUtilsKt.updateToolWindows
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -26,8 +23,6 @@ import com.jetbrains.edu.learning.placeholder.PlaceholderHighlightingManager.sho
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager.updateDependentPlaceholders
 import com.jetbrains.edu.learning.statistics.EduLaunchesReporter.sendStats
 import com.jetbrains.edu.learning.stepik.hyperskill.markTheoryTaskAsCompleted
-import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory
-import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView.Companion.getInstance
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
 
 class EduEditorFactoryListener : EditorFactoryListener {
@@ -54,7 +49,6 @@ class EduEditorFactoryListener : EditorFactoryListener {
     val openedFile = FileDocumentManager.getInstance().getFile(editor.document) ?: return
     val taskFile = openedFile.getTaskFile(project) ?: return
     WolfTheProblemSolver.getInstance(project).clearProblems(openedFile)
-    showTaskDescriptionToolWindow(project, taskFile, true)
     val task = taskFile.task
     markTheoryTaskCompleted(project, task)
     if (taskFile.answerPlaceholders.isNotEmpty() && taskFile.isValid(editor.document.text)) {
@@ -70,24 +64,6 @@ class EduEditorFactoryListener : EditorFactoryListener {
 
   override fun editorReleased(event: EditorFactoryEvent) = event.editor.selectionModel.removeSelection()
 
-  private fun showTaskDescriptionToolWindow(project: Project, taskFile: TaskFile, retry: Boolean) {
-    val toolWindowManager = ToolWindowManager.getInstance(project)
-    val studyToolWindow = toolWindowManager.getToolWindow(TaskToolWindowFactory.STUDY_TOOL_WINDOW)
-    if (studyToolWindow == null) {
-      if (retry) {
-        toolWindowManager.invokeLater { showTaskDescriptionToolWindow(project, taskFile, false) }
-      }
-      else {
-        LOG.warn(String.format("Failed to get toolwindow with `%s` id", TaskToolWindowFactory.STUDY_TOOL_WINDOW))
-      }
-      return
-    }
-    if (taskFile.task != getInstance(project).currentTask) {
-      updateToolWindows(project)
-      studyToolWindow.show(null)
-    }
-  }
-
   private fun markTheoryTaskCompleted(project: Project, task: Task) {
     if (task !is TheoryTask) return
     val course = task.course
@@ -102,10 +78,5 @@ class EduEditorFactoryListener : EditorFactoryListener {
       saveItem(task)
       ProjectView.getInstance(project).refresh()
     }
-  }
-
-
-  companion object {
-    private val LOG = logger<EduEditorFactoryListener>()
   }
 }

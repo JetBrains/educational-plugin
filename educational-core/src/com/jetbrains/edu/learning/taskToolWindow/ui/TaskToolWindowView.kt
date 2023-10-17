@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.taskToolWindow.ui
 
 import com.intellij.openapi.components.service
-import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.awt.RelativePoint
@@ -13,11 +12,6 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
 import java.awt.Color
 
 abstract class TaskToolWindowView(val project: Project) {
-
-  init {
-    val connection = project.messageBus.connect()
-    connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, EduFileEditorManagerListener(project))
-  }
 
   abstract var currentTask: Task?
 

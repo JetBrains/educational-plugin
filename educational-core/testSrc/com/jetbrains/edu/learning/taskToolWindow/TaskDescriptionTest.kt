@@ -3,20 +3,17 @@ package com.jetbrains.edu.learning.taskToolWindow
 import com.intellij.ide.BrowserUtil
 import com.intellij.ide.ui.laf.darcula.DarculaLaf
 import com.intellij.openapi.application.ApplicationNamesInfo
-import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.keymap.KeymapManager
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.keymap.impl.KeymapManagerImpl
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.ui.AppUIUtil
-import com.intellij.ui.JBColor
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
-import com.jetbrains.edu.learning.taskToolWindow.ui.EduFileEditorManagerListener
 import com.jetbrains.edu.learning.taskToolWindow.ui.JCEFToolWindow
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleManager
@@ -170,15 +167,14 @@ class TaskDescriptionTest : EduTestCase() {
       }
       additionalFile("File.txt")
     }
-    //forcibly subscribing to FileEditorManagerListener here because it's not called in MockTaskDescriptionView init(), otherwise
-    // current task won't be set on myFixture.openFileInEditor() call
-    project.messageBus.connect(testRootDisposable).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER,
-                                                             EduFileEditorManagerListener(project))
+
     try {
       myFixture.openFileInEditor(findFileInTask(0, 0, "taskFile1.txt"))
       val firstTask = TaskToolWindowView.getInstance(project).currentTask
+      assertNotNull(firstTask)
       myFixture.openFileInEditor(findFile("File.txt"))
       val taskOnExternalFileOpen = TaskToolWindowView.getInstance(project).currentTask
+      assertNotNull(taskOnExternalFileOpen)
       assertEquals(firstTask, taskOnExternalFileOpen)
     }
     finally {
