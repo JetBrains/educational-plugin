@@ -240,10 +240,11 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
       }
       HttpURLConnection.HTTP_FORBIDDEN -> {
         when {
-          errorBody.contains(ERROR_AGREEMENT_NOT_ACCEPTED) -> showMarketplaceAccountNotification(
+          errorBody.contains(ERROR_MARKETPLACE_AGREEMENT_NOT_ACCEPTED) ||
+          errorBody.contains(ERROR_PLUGIN_DEV_AGREEMENT_NOT_ACCEPTED) -> showMarketplaceAccountNotification(
             project,
             message("marketplace.plugin.development.agreement.not.accepted")
-          ) { openOnMarketplaceAction(MARKETPLACE_PROFILE_PATH) }
+          ) { openOnMarketplaceAction(MARKETPLACE_CREATE_VENDOR_PATH) }
 
           errorBody.contains(ERROR_TRADER_STATUS_NOT_SPECIFIED) -> showMarketplaceAccountNotification(
             project,
@@ -436,7 +437,8 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
     private val XML_ID = "\\d{5,}-.*".toRegex()
     private const val PLUGIN_CONTAINS_VERSION_ERROR_TEXT = "plugin already contains version"
 
-    private const val ERROR_AGREEMENT_NOT_ACCEPTED = "You have not accepted the JetBrains Plugin Marketplace agreement"
+    private const val ERROR_MARKETPLACE_AGREEMENT_NOT_ACCEPTED = "You have not accepted the JetBrains Plugin Marketplace agreement"
+    private const val ERROR_PLUGIN_DEV_AGREEMENT_NOT_ACCEPTED = "You have not accepted the Plugin Developer agreement"
     private const val ERROR_TRADER_STATUS_NOT_SPECIFIED = "Please specify the trader status for your vendor"
     private const val ERROR_CREATE_VENDOR_ACCOUNT = "Please create a vendor account before uploading a new plugin"
     private const val ERROR_ORGANIZATION_TRADER_STATUS_NOT_SPECIFIED = "Please create a vendor account before uploading a new plugin"
