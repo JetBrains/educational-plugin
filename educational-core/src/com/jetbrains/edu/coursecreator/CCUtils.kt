@@ -3,8 +3,6 @@ package com.jetbrains.edu.coursecreator
 import com.intellij.CommonBundle
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.ide.util.PropertiesComponent
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
@@ -18,7 +16,6 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ProjectRootManager
@@ -38,6 +35,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showLoginNeededNotification
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -319,25 +317,6 @@ object CCUtils {
       }
       course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
     }
-  }
-
-  fun showLoginNeededNotification(
-    project: Project,
-    failedActionTitle: String,
-    notificationTitle: String = EduCoreBundle.message("notification.title.authorization.required"),
-    authAction: () -> Unit
-  ) {
-    val notification = Notification(
-      "JetBrains Academy", notificationTitle,
-      EduCoreBundle.message("notification.content.authorization", failedActionTitle), NotificationType.ERROR
-    )
-    notification.addAction(object : DumbAwareAction(EduCoreBundle.message("notification.content.authorization.action")) {
-      override fun actionPerformed(e: AnActionEvent) {
-        authAction()
-        notification.expire()
-      }
-    })
-    notification.notify(project)
   }
 
   private fun checkIfAuthorized(

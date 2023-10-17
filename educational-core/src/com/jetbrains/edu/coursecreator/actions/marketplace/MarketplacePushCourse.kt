@@ -13,7 +13,6 @@ import com.intellij.ui.JBAccountInfoService
 import com.jetbrains.edu.coursecreator.CCNotificationUtils
 import com.jetbrains.edu.coursecreator.CCUtils.addGluingSlash
 import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
-import com.jetbrains.edu.coursecreator.CCUtils.showLoginNeededNotification
 import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -21,6 +20,7 @@ import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.*
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showFailedToPushCourseNotification
+import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showLoginNeededNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showReloginToJBANeededNotification
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message

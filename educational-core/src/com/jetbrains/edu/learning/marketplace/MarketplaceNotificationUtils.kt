@@ -7,6 +7,7 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.options.ShowSettingsUtil
+import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.jetbrains.edu.coursecreator.CCNotificationUtils
@@ -53,6 +54,30 @@ object MarketplaceNotificationUtils {
       }
     })
     notification.notify(null)
+  }
+
+  fun showLoginNeededNotification(
+    project: Project?,
+    failedActionTitle: String,
+    notificationTitle: String = EduCoreBundle.message("notification.title.authorization.required"),
+    authAction: () -> Unit
+  ) {
+    val notification = Notification(
+      JETBRAINS_ACADEMY_GROUP_ID,
+      notificationTitle,
+      EduCoreBundle.message("notification.content.authorization", failedActionTitle),
+      NotificationType.ERROR
+    )
+
+    @Suppress("DialogTitleCapitalization")
+    notification.addAction(object : DumbAwareAction(EduCoreBundle.message("notification.content.authorization.action")) {
+      override fun actionPerformed(e: AnActionEvent) {
+        authAction()
+        notification.expire()
+      }
+    })
+
+    notification.notify(project)
   }
 
   fun showLoginToUseSubmissionsNotification(project: Project) {
@@ -123,18 +148,51 @@ object MarketplaceNotificationUtils {
   }
 
   @Suppress("DialogTitleCapitalization")
-  internal fun showFailedToDeleteNotification(project: Project, loginName: String?) {
+  internal fun showSubmissionsDeletedSucessfullyNotification(project: Project?, loginName: String?) {
+    val message = if (loginName != null) {
+      EduCoreBundle.message("marketplace.delete.submissions.for.user.success.message", loginName)
+    }
+    else {
+      EduCoreBundle.message("marketplace.delete.submissions.success.message")
+    }
+    Notification(
+      JETBRAINS_ACADEMY_GROUP_ID,
+      EduCoreBundle.message("marketplace.delete.submissions.success.title"),
+      message,
+      NotificationType.INFORMATION
+    ).notify(project)
+  }
+
+  @Suppress("DialogTitleCapitalization")
+  internal fun showNoSubmissionsToDeleteNotification(project: Project?, loginName: String?) {
+    val message = if (loginName != null) {
+      EduCoreBundle.message("marketplace.delete.submissions.for.user.nothing.message", loginName)
+    }
+    else {
+      EduCoreBundle.message("marketplace.delete.submissions.nothing.message")
+    }
+    Notification(
+      JETBRAINS_ACADEMY_GROUP_ID,
+      EduCoreBundle.message("marketplace.delete.submissions.nothing.title"),
+      message,
+      NotificationType.INFORMATION
+    ).notify(project)
+  }
+
+  @Suppress("DialogTitleCapitalization")
+  internal fun showFailedToDeleteNotification(project: Project?, loginName: String?) {
     val message = if (loginName != null) {
       EduCoreBundle.message("marketplace.delete.submissions.failed.for.user.message", loginName)
     }
     else {
       EduCoreBundle.message("marketplace.delete.submissions.failed.message")
     }
-    CCNotificationUtils.showErrorNotification(
-      project,
+    Notification(
+      JETBRAINS_ACADEMY_GROUP_ID,
       EduCoreBundle.message("marketplace.delete.submissions.failed.title"),
-      message
-    )
+      message,
+      NotificationType.ERROR
+    ).notify(project)
   }
 
   const val JETBRAINS_ACADEMY_GROUP_ID = "JetBrains Academy"

@@ -1,16 +1,14 @@
 package com.jetbrains.edu.learning.marketplace.actions
 
 import com.intellij.CommonBundle
-import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.ui.JBAccountInfoService
-import com.jetbrains.edu.coursecreator.CCUtils.showLoginNeededNotification
-import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showLoginNeededNotification
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -18,61 +16,54 @@ import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import org.jetbrains.annotations.NonNls
 
-class DeleteAllSubmissionsAction : AnAction(EduCoreBundle.lazyMessage("marketplace.action.delete.all.submissions")) {
-
-  override fun update(e: AnActionEvent) {
-    val project = e.project ?: return
-    e.presentation.isEnabledAndVisible = false
-    val course = StudyTaskManager.getInstance(project).course ?: return
-    e.presentation.isEnabledAndVisible = course.isMarketplace
-  }
+class DeleteAllSubmissionsAction : AnAction(EduCoreBundle.message("marketplace.action.delete.all.submissions")) {
 
   override fun actionPerformed(e: AnActionEvent) {
-    val project = e.project ?: return
+    val project = e.project
 
-    MarketplaceConnector.getInstance().isLoggedInAsync()
-      .thenApply { isLoggedIn ->
-        if (isLoggedIn) {
-          val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
-          project.invokeLater {
-            if (askActionConfirmation(project, loginName)) {
-              doDeleteSubmissions(project, loginName)
-            }
-          }
-        }
-        else {
-          showLoginNeededNotification(project, e.presentation.text) { MarketplaceConnector.getInstance().doAuthorize() }
+    MarketplaceConnector.getInstance().isLoggedInAsync().thenApply { isLoggedIn ->
+      if (!isLoggedIn) {
+        showLoginNeededNotification(project, e.presentation.text) { MarketplaceConnector.getInstance().doAuthorize() }
+        return@thenApply
+      }
+      ApplicationManager.getApplication().invokeLater {
+        val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
+        if (askActionConfirmation(project, loginName)) {
+          doDeleteSubmissions(project, loginName)
         }
       }
+    }
   }
 
-  private fun doDeleteSubmissions(project: Project, loginName: String?) {
-    runInBackground(project, title = EduCoreBundle.getMessage("marketplace.delete.submissions.background.title")) {
+  private fun doDeleteSubmissions(project: Project?, loginName: String?) {
+    runInBackground(project, title = EduCoreBundle.message("marketplace.delete.submissions.background.title")) {
       val deleteLocalSubmissions = MarketplaceSubmissionsConnector.getInstance().deleteAllSubmissions(project, loginName)
-      if (deleteLocalSubmissions) {
+      if (deleteLocalSubmissions && project != null) {
         SubmissionsManager.getInstance(project).deleteCourseSubmissionsLocally()
       }
     }
   }
 
-  private fun askActionConfirmation(project: Project, loginName: String?): Boolean {
-    if (!isUnitTestMode) {
-      val result = Messages.showYesNoDialog(
-        project,
-        EduCoreBundle.getMessage("marketplace.delete.submissions.dialog.text", loginName),
-        EduCoreBundle.getMessage("marketplace.delete.submissions.dialog.title"),
-        EduCoreBundle.getMessage("marketplace.delete.submissions.dialog.yes.text"),
-        CommonBundle.getCancelButtonText(),
-        null
-      )
-      if (result != Messages.YES) {
-        return false
-      }
-    }
-    return true
-  }
+  private fun askActionConfirmation(project: Project?, loginName: String?): Boolean {
+    if (isUnitTestMode) return true
 
-  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
+    val dialogText = if (loginName != null) {
+      EduCoreBundle.message("marketplace.delete.submissions.dialog.for.user.text", loginName)
+    }
+    else {
+      EduCoreBundle.message("marketplace.delete.submissions.dialog.text")
+    }
+    val result = Messages.showYesNoDialog(
+      project,
+      dialogText,
+      EduCoreBundle.message("marketplace.delete.submissions.dialog.title"),
+      EduCoreBundle.message("marketplace.delete.submissions.dialog.yes.text"),
+      CommonBundle.getCancelButtonText(),
+      null
+    )
+
+    return result == Messages.YES
+  }
 
   companion object {
     @NonNls

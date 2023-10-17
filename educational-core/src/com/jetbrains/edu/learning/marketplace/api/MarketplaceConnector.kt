@@ -20,7 +20,6 @@ import com.intellij.platform.templates.github.DownloadUtil
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showErrorNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLogAction
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.marketplace.MarketplacePushCourse
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.ConnectorUtils
@@ -28,6 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
 import com.jetbrains.edu.learning.marketplace.*
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showFailedToFindMarketplaceCourseOnRemoteNotification
+import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showLoginNeededNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showMarketplaceAccountNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showNoRightsToUpdateNotification
 import com.jetbrains.edu.learning.marketplace.api.GraphqlQuery.LOADING_STEP
@@ -219,7 +219,7 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
 
   private fun onAuthFailedActions(project: Project, failedActionTitle: String) {
     account = null
-    CCUtils.showLoginNeededNotification(project, message("item.upload.to.0.course.title", MARKETPLACE), failedActionTitle) { doAuthorize() }
+    showLoginNeededNotification(project, message("item.upload.to.0.course.title", MARKETPLACE), failedActionTitle) { doAuthorize() }
   }
 
   private fun <T> Call<T>.executeUploadParsingErrors(project: Project,

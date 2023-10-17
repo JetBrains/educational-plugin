@@ -11,7 +11,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.ui.JBAccountInfoService
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
-import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
@@ -22,6 +21,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderDependencyMixin
 import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderWithAnswerMixin
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showFailedToDeleteNotification
+import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showNoSubmissionsToDeleteNotification
+import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showSubmissionsDeletedSucessfullyNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceSolutionSharingPreference
 import com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceHost
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
@@ -76,7 +77,7 @@ class MarketplaceSubmissionsConnector {
     return retrofit.create(SubmissionsService::class.java)
   }
 
-  fun deleteAllSubmissions(project: Project, loginName: String?): Boolean {
+  fun deleteAllSubmissions(project: Project?, loginName: String?): Boolean {
     LOG.info("Deleting submissions${loginName.toLogString()}")
 
     val response = submissionsService.deleteAllSubmissions().executeCall().onError {
@@ -200,37 +201,16 @@ class MarketplaceSubmissionsConnector {
     return files.checkNotEmpty()
   }
 
-  @Suppress("DialogTitleCapitalization")
-  private fun logAndNotifyAfterDeletionAttempt(response: Response<ResponseBody>, project: Project, loginName: String?) {
+  private fun logAndNotifyAfterDeletionAttempt(response: Response<ResponseBody>, project: Project?, loginName: String?) {
     when (response.code()) {
       HTTP_NO_CONTENT -> {
         LOG.info("Successfully deleted all submissions${loginName.toLogString()}")
-        val message = if (loginName != null) {
-          EduCoreBundle.message("marketplace.delete.submissions.for.user.success.message", loginName)
-        }
-        else {
-          EduCoreBundle.message("marketplace.delete.submissions.success.message")
-        }
-        showNotification(
-          project,
-          EduCoreBundle.message("marketplace.delete.submissions.success.title"),
-          message
-        )
+        showSubmissionsDeletedSucessfullyNotification(project, loginName)
       }
 
       HTTP_NOT_FOUND -> {
         LOG.info("There are no submissions to delete${loginName.toLogString()}")
-        val message = if (loginName != null) {
-          EduCoreBundle.message("marketplace.delete.submissions.for.user.nothing.message", loginName)
-        }
-        else {
-          EduCoreBundle.message("marketplace.delete.submissions.nothing.message")
-        }
-        showNotification(
-          project,
-          EduCoreBundle.message("marketplace.delete.submissions.nothing.title"),
-          message
-        )
+        showNoSubmissionsToDeleteNotification(project, loginName)
       }
 
       else -> {
