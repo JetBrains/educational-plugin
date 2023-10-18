@@ -34,7 +34,12 @@ class HyperskillReplyDeserializer(vc: Class<*>? = null) : StdDeserializer<Reply>
       val possibleTypes = typesToImportantField.filter { get(it.value)?.isNull == false }
 
       if (possibleTypes.size != 1) {
-        LOG.error("Could not guess type of reply")
+        if (possibleTypes.size > 1) {
+          LOG.error("Could not guess type of reply: the choice of type is ambiguous.")
+        } else {
+          // Don't want to log this as an error because this is the way for submissions of unsupported hyperskill tasks
+          LOG.warn("Could not guess type of reply: cannot be mapped to an already existing type.")
+        }
         return Reply::class.java
       }
 
