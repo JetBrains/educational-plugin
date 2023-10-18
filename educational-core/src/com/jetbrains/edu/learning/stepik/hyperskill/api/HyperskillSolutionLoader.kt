@@ -45,8 +45,7 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
       }
     }.filter { (_, solution) -> solution.isVisible }
 
-    return if (files.isEmpty()) TaskSolutions.EMPTY
-    else TaskSolutions(lastSubmission.time, lastSubmission.status?.toCheckStatus() ?: CheckStatus.Unchecked, files)
+    return TaskSolutions(lastSubmission.time, lastSubmission.status?.toCheckStatus() ?: CheckStatus.Unchecked, files)
   }
 
   private val StepikBasedSubmission.eduTaskFiles: Map<String, Solution>

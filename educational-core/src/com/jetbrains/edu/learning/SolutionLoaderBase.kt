@@ -26,7 +26,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.findTaskFileInDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.hasSolutions
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -220,16 +219,20 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
   open fun updateTask(project: Project, task: Task, submissions: List<Submission>, force: Boolean = false): Boolean {
     val taskSolutions = loadSolution(task, submissions)
     ProgressManager.checkCanceled()
-    if (task is TheoryTask && taskSolutions.checkStatus == CheckStatus.Solved) {
-      applyCheckStatus(task, taskSolutions.checkStatus)
+    if (taskSolutions.solutions.isNotEmpty()) {
+      if (!taskSolutions.hasIncompatibleSolutions) {
+        applySolutions(project, task, taskSolutions, force)
+      }
     }
-    else if (!taskSolutions.hasIncompatibleSolutions && taskSolutions.solutions.isNotEmpty()) {
-      applySolutions(project, task, taskSolutions, force)
+    else {
+      if (taskSolutions.checkStatus != CheckStatus.Unchecked) {
+        applyCheckStatus(task, taskSolutions.checkStatus)
+      }
     }
     return taskSolutions.hasIncompatibleSolutions
   }
 
-  private fun applyCheckStatus(task: TheoryTask, checkStatus: CheckStatus) {
+  private fun applyCheckStatus(task: Task, checkStatus: CheckStatus) {
     task.status = checkStatus
     YamlFormatSynchronizer.saveItem(task)
   }
