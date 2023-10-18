@@ -292,7 +292,7 @@ class Feedback {
 }
 
 
-sealed class Reply {
+open class Reply {
   @JsonProperty(VERSION)
   var version = JSON_FORMAT_VERSION
 }
