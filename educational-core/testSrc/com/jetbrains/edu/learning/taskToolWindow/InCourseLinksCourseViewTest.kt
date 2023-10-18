@@ -1,21 +1,12 @@
 package com.jetbrains.edu.learning.taskToolWindow
 
-import com.intellij.openapi.application.ApplicationInfo
-import com.intellij.openapi.util.BuildNumber
 import com.intellij.testFramework.PlatformTestUtil
-import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseView.CourseViewHeavyTestBase
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.taskToolWindow.ui.ToolWindowLinkHandler
 
 class InCourseLinksCourseViewTest : CourseViewHeavyTestBase() {
-
-  override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
-    if (ApplicationInfo.getInstance().build < BuildNumber.fromString("233")!!) {
-      super.runTestRunnable(testRunnable)
-    }
-  }
 
   fun `test section link`() = doTest("course://section1", """
     -Project
@@ -52,12 +43,25 @@ class InCourseLinksCourseViewTest : CourseViewHeavyTestBase() {
     val projectView = createCourseAndChangeView(course, openFirstTask = false)
 
     ToolWindowLinkHandler(project).process(url)
-    PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
 
-    val tree = projectView.currentProjectViewPane.tree
-    PlatformTestUtil.waitWhileBusy(tree)
+    var lastError: AssertionError? = null
+    repeat(10) {
+      PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
+      val tree = projectView.currentProjectViewPane.tree
+      PlatformTestUtil.waitWhileBusy(tree)
 
-    assertEquals(CourseViewPane.ID, projectView.currentViewId)
-    PlatformTestUtil.assertTreeEqual(tree, expectedTree.trimIndent(), true)
+      assertEquals(CourseViewPane.ID, projectView.currentViewId)
+      try {
+        PlatformTestUtil.assertTreeEqual(tree, expectedTree.trimIndent(), true)
+        return
+      }
+      catch (e: AssertionError) {
+        lastError = e
+      }
+
+      Thread.sleep(50)
+    }
+
+    throw lastError!!
   }
 }
