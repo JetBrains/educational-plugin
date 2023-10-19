@@ -6,6 +6,7 @@ import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.UserDataHolderBase
+import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_PYTHON
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.LanguageSettings
@@ -20,11 +21,11 @@ import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.errors.ready
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle
 import com.jetbrains.python.psi.LanguageLevel
-import com.jetbrains.python.sdk.PySdkToInstall
-import com.jetbrains.python.sdk.PySdkUtil
+import com.jetbrains.python.sdk.*
 import com.jetbrains.python.sdk.add.PySdkPathChoosingComboBox
-import com.jetbrains.python.sdk.add.addBaseInterpretersAsync
-import com.jetbrains.python.sdk.detectSystemWideSdks
+import com.jetbrains.python.sdk.add.addInterpretersAsync
+import com.jetbrains.python.sdk.flavors.PyFlavorAndData
+import com.jetbrains.python.sdk.flavors.PyFlavorData
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 import org.jetbrains.annotations.Nls
 import java.awt.BorderLayout
@@ -50,12 +51,9 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
       }
     }
 
-    addBaseInterpretersAsync(sdkField, emptyList(), null, context ?: UserDataHolderBase()) {
-      val fakeSdk = createFakeSdk(course, context)
-      if (fakeSdk != null) {
-        sdkField.addSdkItemOnTop(fakeSdk)
-        sdkField.selectedSdk = fakeSdk
-      }
+    addInterpretersAsync(sdkField, {
+      collectPySdks(course, context ?: UserDataHolderBase())
+    }) {
       projectSettings.sdk = sdkField.selectedSdk
       isSettingsInitialized = true
       notifyListeners()
@@ -64,6 +62,21 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
     return listOf<LabeledComponent<JComponent>>(
       LabeledComponent.create(sdkField, EduCoreBundle.message("select.interpreter"), BorderLayout.WEST)
     )
+  }
+
+  // Inspired by `com.jetbrains.python.sdk.add.PyAddSdkPanelKt.addBaseInterpretersAsync` implementation
+  @RequiresBackgroundThread
+  private fun collectPySdks(course: Course, context: UserDataHolder): List<Sdk> {
+    val fakeSdk = listOfNotNull(createFakeSdk(course, context))
+
+    return (fakeSdk + findBaseSdks(emptyList(), null, context))
+      // It's important to check validity here, in background thread,
+      // because it caches a result of checking if python binary is executable.
+      // If the first (uncached) invocation is invoked in EDT, it may throw exception and break UI rendering.
+      // See https://youtrack.jetbrains.com/issue/EDU-6371
+      .filter { it.sdkSeemsValid }
+      .takeIf { it.isNotEmpty() }
+      ?: PySdkToInstallUtils.getSdksToInstall()
   }
 
   override fun getSettings(): PyProjectSettings = projectSettings
@@ -127,7 +140,8 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
       }
     }
 
-    fun getBaseSdk(course: Course, context: UserDataHolder? = null): PyBaseSdkDescriptor? {
+    @RequiresBackgroundThread
+    private fun getBaseSdk(course: Course, context: UserDataHolder? = null): PyBaseSdkDescriptor? {
       val baseSdks = PyBaseSdksProvider.getBaseSdks(context)
       if (baseSdks.isEmpty()) {
         return null
@@ -144,8 +158,8 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
                                                                                                   requiredVersion)) : Err<String>(
       errorMessage)
 
-
-    private fun createFakeSdk(course: Course, context: UserDataHolder? = null): Sdk? {
+    @RequiresBackgroundThread
+    private fun createFakeSdk(course: Course, context: UserDataHolder): Sdk? {
       val baseSdk = getBaseSdk(course, context) ?: return null
       val flavor = PythonSdkFlavor.getApplicableFlavors(false)[0]
       val prefix = flavor.name + " "
@@ -155,11 +169,14 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
       }
       val pythonVersion = version.substring(prefix.length)
       val name = "new virtual env $pythonVersion"
-      return ProjectJdkImpl(name, PyFakeSdkType, "", pythonVersion)
+
+      return ProjectJdkImpl(name, PyFakeSdkType, baseSdk.path, pythonVersion).apply {
+        sdkAdditionalData = PythonSdkAdditionalData(PyFlavorAndData(PyFlavorData.Empty, FakePythonSdkFlavor))
+      }
     }
 
     const val ALL_VERSIONS = "All versions"
 
-    fun installSdk(sdkToInstall: PySdkToInstall) = sdkToInstall.install(null) { detectSystemWideSdks(null, emptyList()) }
+    fun installSdk(sdkToInstall: PySdkToInstall): PyDetectedSdk? = sdkToInstall.install(null) { detectSystemWideSdks(null, emptyList()) }
   }
 }

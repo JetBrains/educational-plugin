@@ -1,7 +1,7 @@
 package com.jetbrains.edu.python.learning.newproject
 
 import com.intellij.execution.ExecutionException
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.python.learning.installRequiredPackages
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle.message
-import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings.Companion.getBaseSdk
 import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings.Companion.installSdk
 import com.jetbrains.edu.python.learning.newproject.PySdkSettingsHelper.Companion.firstAvailable
 import com.jetbrains.python.packaging.PyPackageManager
@@ -31,14 +30,18 @@ open class PyCourseProjectGenerator(
     var sdk = projectSettings.sdk
     if (sdk is PySdkToInstall) {
       val selectedSdk = sdk
-      ApplicationManager.getApplication().invokeAndWait {
+      @Suppress("UnstableApiUsage")
+      val installedSdk = invokeAndWaitIfNeeded {
         installSdk(selectedSdk)
       }
-      createAndAddVirtualEnv(project, projectSettings)
-      sdk = projectSettings.sdk
+      if (installedSdk != null) {
+        createAndAddVirtualEnv(project, projectSettings, installedSdk)
+        sdk = projectSettings.sdk
+      }
     }
     if (sdk?.sdkType === PyFakeSdkType) {
-      createAndAddVirtualEnv(project, projectSettings)
+      val homePath = sdk.homePath ?: error("Home path is not passed during fake python sdk creation")
+      createAndAddVirtualEnv(project, projectSettings, PyDetectedSdk(homePath))
       sdk = projectSettings.sdk
     }
     sdk = updateSdkIfNeeded(project, sdk)
@@ -50,10 +53,7 @@ open class PyCourseProjectGenerator(
     super.afterProjectGenerated(project, projectSettings, onConfigurationFinished)
   }
 
-  private fun createAndAddVirtualEnv(project: Project, settings: PyProjectSettings) {
-    val course = StudyTaskManager.getInstance(project).course ?: return
-    val baseSdkPath = getBaseSdkPath(settings, course) ?: return
-    val baseSdk = PyDetectedSdk(baseSdkPath)
+  private fun createAndAddVirtualEnv(project: Project, settings: PyProjectSettings, baseSdk: PyDetectedSdk) {
     val virtualEnvPath = project.basePath + "/.idea/VirtualEnvironment"
     val sdk = createSdkByGenerateTask(object : Task.WithResult<String, ExecutionException>(
       project,
@@ -78,15 +78,6 @@ open class PyCourseProjectGenerator(
 
   companion object {
     private val LOG = logger<PyCourseProjectGenerator>()
-
-    private fun getBaseSdkPath(settings: PyProjectSettings, course: Course): String? {
-      if (isUnitTestMode) {
-        val sdk = settings.sdk
-        return sdk?.homePath
-      }
-      val baseSdk = getBaseSdk(course)
-      return baseSdk?.path
-    }
 
     private fun updateSdkIfNeeded(project: Project, sdk: Sdk?): Sdk? {
       val helper = firstAvailable()
