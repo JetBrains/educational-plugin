@@ -21,19 +21,23 @@ import com.intellij.ui.dsl.builder.COLUMNS_MEDIUM
 import com.intellij.ui.dsl.builder.columns
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
+import com.jetbrains.edu.learning.addProxy
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CourseraCourse
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.loadEncodedContent
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
 import org.apache.http.HttpStatus
 import org.apache.http.entity.ContentType
 import java.time.Duration
@@ -116,7 +120,7 @@ class CourseraTaskChecker : RemoteTaskChecker {
     val builder = OkHttpClient.Builder()
       .connectTimeout(Duration.ofSeconds(TIMEOUT_SECONDS.toLong()))
       .callTimeout(Duration.ofSeconds(TIMEOUT_SECONDS.toLong()))
-    addProxy(ON_DEMAND_SUBMIT, builder)
+      .addProxy(ON_DEMAND_SUBMIT)
 
     val request = Request.Builder()
       .url(ON_DEMAND_SUBMIT)

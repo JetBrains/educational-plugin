@@ -3,19 +3,19 @@ package com.jetbrains.edu.learning.stepik.api
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.openapi.application.ApplicationManager
-import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderDependencyMixin
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
-import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
+import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderDependencyMixin
+import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 
 interface StepikBasedConnector {
   val platformName: String
@@ -24,8 +24,11 @@ interface StepikBasedConnector {
 
   fun getActiveAttemptOrPostNew(task: Task): Result<Attempt, String> {
     val activeAttempt = getActiveAttempt(task)
-    if (activeAttempt is Ok && activeAttempt.value != null) {
-      return Ok(activeAttempt.value)
+    if (activeAttempt is Ok) {
+      val value = activeAttempt.value
+      if (value != null) {
+        return Ok(value)
+      }
     }
     return postAttempt(task)
   }
@@ -45,7 +48,7 @@ interface StepikBasedConnector {
   fun <T> withTokenRefreshIfFailed(call: () -> Result<T, String>): Result<T, String> {
     val result = call()
     if (!isUnitTestMode && !ApplicationManager.getApplication().isInternal
-        && result is Err && result.error == EduCoreBundle.message("error.access.denied")) {
+        && result is Err && result.error == EduFormatBundle.message("error.access.denied")) {
       doRefreshTokens()
       return call()
     }

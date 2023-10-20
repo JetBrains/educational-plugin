@@ -578,6 +578,8 @@ project(":edu-format") {
     implementationWithoutKotlin(group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version = jacksonVersion)
     implementationWithoutKotlin(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = jacksonVersion)
     implementationWithoutKotlin(group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version = jacksonVersion)
+    implementationWithoutKotlin("com.squareup.retrofit2:retrofit:$retrofitVersion")
+    implementationWithoutKotlin("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
   }
 }
 

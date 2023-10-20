@@ -5,9 +5,10 @@ import com.jetbrains.edu.learning.checkio.CheckiOCourseContentGenerator
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
 import com.jetbrains.edu.learning.checkio.api.exceptions.HttpException
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.configuration.CourseCantBeStartedException
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
+import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState.CustomSevereError
 
@@ -35,7 +36,7 @@ object CheckiOCourseGenerationUtils {
       ) { EduBrowser.getInstance().browse("$link/login/checkio/") }
     }
     else if (e is NetworkException) {
-      return CustomSevereError(message("error.failed.to.connect"), null)
+      return CustomSevereError(EduFormatBundle.message("error.failed.to.connect"), null)
     }
     return CustomSevereError(e.message ?: "No error message", null)
   }

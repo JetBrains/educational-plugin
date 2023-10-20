@@ -10,13 +10,14 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.text.nullize
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checker.DefaultCodeExecutor
-import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.RemoteEduTask
+import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
@@ -29,8 +30,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_DEFAULT_HOST
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLoginListener
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
-import com.jetbrains.edu.learning.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.stepik.hyperskill.markStageAsCompleted
 import com.jetbrains.edu.learning.stepik.hyperskill.submissions.HyperskillSubmissionFactory
 import com.jetbrains.edu.learning.submissions.SolutionFile
@@ -300,7 +299,7 @@ object HyperskillCheckConnector {
   }
 
   private fun showErrorDetails(project: Project, error: String) {
-    if (error == EduCoreBundle.message("error.access.denied") || error == EduCoreBundle.message("error.failed.to.refresh.tokens")) {
+    if (error == EduFormatBundle.message("error.access.denied") || error == EduCoreBundle.message("error.failed.to.refresh.tokens")) {
       Notification(
         "JetBrains Academy",
         EduCoreBundle.message("error.failed.to.post.solution"),
@@ -346,7 +345,7 @@ object HyperskillCheckConnector {
   }
 
   private fun String.toCheckResult(): CheckResult {
-    return if (this == EduCoreBundle.message("error.access.denied")) {
+    return if (this == EduFormatBundle.message("error.access.denied")) {
       CheckResult(CheckStatus.Unchecked,
         EduCoreBundle.message("error.access.denied.with.link"),
         hyperlinkAction = { loginListener.doLogin() }

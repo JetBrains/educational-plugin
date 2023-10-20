@@ -15,17 +15,18 @@ import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getLanguages
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
-import com.jetbrains.edu.learning.courseFormat.codeforces.ContestParameters
 import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesAccount
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesUserInfo
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.CheckFeedback
 import com.jetbrains.edu.learning.courseFormat.CheckResult
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesUserInfo
+import com.jetbrains.edu.learning.courseFormat.codeforces.ContestParameters
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.newproject.CoursesDownloadingException
 import com.jetbrains.edu.learning.stepik.api.EduTaskReply
 import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
@@ -203,10 +204,10 @@ abstract class CodeforcesConnector {
     project: Project
   ): Result<String, String> = handlingDownloadException {
     if ((!account.isUpToDate() || !isLoggedIn()) && !getInstance().updateJSessionID(account)) {
-      return Err(EduCoreBundle.message("error.access.denied"))
+      return Err(EduFormatBundle.message("error.access.denied"))
     }
 
-    val jSessionID = account.getSessionId() ?: return Err(EduCoreBundle.message("error.access.denied"))
+    val jSessionID = account.getSessionId() ?: return Err(EduFormatBundle.message("error.access.denied"))
     val contestId = task.course.id
     val languageCode = task.course.languageCode
     val programTypeId = task.course.programTypeId
