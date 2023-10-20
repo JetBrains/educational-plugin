@@ -250,9 +250,6 @@ allprojects {
     // Fail plugin build if there are errors in module packages
     rootProject.tasks.buildPlugin {
       dependsOn(verifyClasses)
-      doLast {
-        copyFormatJar()
-      }
     }
   }
 }
@@ -466,6 +463,13 @@ project(":") {
     buildSearchableOptions {
       enabled = findProperty("enableBuildSearchableOptions") != "false"
     }
+    buildPlugin {
+      dependsOn(":edu-format:jar")
+      dependsOn(":edu-format:sourcesJar")
+      doLast {
+        copyFormatJars()
+      }
+    }
   }
 
   // Generates event scheme for JetBrains Academy plugin FUS events to `build/eventScheme.json`
@@ -565,6 +569,9 @@ project(":") {
 }
 
 project(":edu-format") {
+  java {
+    withSourcesJar()
+  }
   dependencies {
     compileOnly(group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8")
     compileOnly(group = "org.jetbrains", name = "annotations", version = "23.0.0")
@@ -1023,7 +1030,11 @@ publishing {
       groupId = "com.jetbrains.edu"
       artifactId = "edu-format"
       version = prop("publishingVersion")
+
       artifact(prop("eduFormatArtifactPath"))
+      artifact(prop("eduFormatSourcesArtifactPath")) {
+        classifier = "sources"
+      }
     }
   }
   repositories {
@@ -1055,10 +1066,10 @@ fun DependencyHandler.testImplementationWithoutKotlin(dependencyNotation: String
   }
 }
 
-fun copyFormatJar() {
+fun copyFormatJars() {
   copy {
     from("edu-format/build/libs/")
     into("build/distributions")
-    include("edu-format.jar")
+    include("*.jar")
   }
 }
