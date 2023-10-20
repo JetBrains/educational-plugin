@@ -15,6 +15,7 @@ import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.authUtils.deserializeAccount
+import com.jetbrains.edu.learning.authUtils.serialize
 import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesAccount
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse

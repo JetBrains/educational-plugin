@@ -4,6 +4,7 @@ import com.intellij.credentialStore.Credentials
 import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.openapi.util.NlsSafe
 import com.jetbrains.edu.learning.authUtils.Account
+import com.jetbrains.edu.learning.authUtils.OAuthUtils.credentialAttributes
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TITLE
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesUserInfo
 import org.jetbrains.annotations.TestOnly
