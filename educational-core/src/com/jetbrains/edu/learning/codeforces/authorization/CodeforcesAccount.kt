@@ -45,10 +45,6 @@ class CodeforcesAccount : Account<CodeforcesUserInfo> {
     PasswordSafe.instance.set(getPasswordCredentialAttributes(), Credentials(userName, password))
   }
 
-  override fun getUserName(): String {
-    return userInfo.getFullName()
-  }
-
   private fun getSessionIdCredentialAttributes() = credentialAttributes(getUserName(), serviceNameForSessionId)
   private fun getPasswordCredentialAttributes() = credentialAttributes(getUserName(), serviceNameForPassword)
 

@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.actions.SyncCourseAction
 import com.jetbrains.edu.learning.api.EduLoginConnector
 import com.jetbrains.edu.learning.api.EduOAuthCodeFlowConnector
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
+import com.jetbrains.edu.learning.courseFormat.UserInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import com.jetbrains.edu.learning.ui.EduHyperlinkLabel
@@ -34,8 +35,7 @@ import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-@Suppress("UnstableApiUsage")
-abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
+abstract class LoginWidget<T : OAuthAccount<out UserInfo>>(val project: Project,
                                                       @PopupTitle private val title: String,
                                                       @Tooltip tooltipText: String,
                                                       private val icon: Icon

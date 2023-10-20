@@ -77,9 +77,6 @@ class HyperskillAccount : OAuthAccount<HyperskillUserInfo> {
 
   override val servicePrefix: String = EduNames.JBA
 
-  override fun getUserName(): String {
-    return userInfo.getFullName()
-  }
 }
 
 class HyperskillUserInfo : UserInfo {

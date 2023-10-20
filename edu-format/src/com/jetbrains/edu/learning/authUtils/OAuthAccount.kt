@@ -7,17 +7,15 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.node.IntNode
-import com.intellij.credentialStore.Credentials
-import com.intellij.ide.passwordSafe.PasswordSafe
-import com.intellij.util.xmlb.XmlSerializer
-import org.jdom.Element
+import com.jetbrains.edu.learning.courseFormat.UserInfo
+import com.jetbrains.edu.learning.findService
 
 // Base class for oauth-based accounts
 // All user-specific information should be stored in userInfo
-abstract class OAuthAccount<UserInfo : Any> : Account<UserInfo> {
+abstract class OAuthAccount<UInfo : UserInfo> : Account<UInfo> {
 
-  private val serviceNameForAccessToken get() = "$serviceName access token"
-  private val serviceNameForRefreshToken get() = "$serviceName refresh token"
+  val serviceNameForAccessToken get() = "$serviceName access token"
+  val serviceNameForRefreshToken get() = "$serviceName refresh token"
 
   var tokenExpiresIn: Long = -1
 
@@ -27,7 +25,7 @@ abstract class OAuthAccount<UserInfo : Any> : Account<UserInfo> {
     this.tokenExpiresIn = tokenExpiresIn
   }
 
-  constructor(userInfo: UserInfo) {
+  constructor(userInfo: UInfo) {
     this.userInfo = userInfo
   }
 
@@ -42,26 +40,8 @@ abstract class OAuthAccount<UserInfo : Any> : Account<UserInfo> {
   }
 
   open fun saveTokens(tokenInfo: TokenInfo) {
-    val userName = getUserName()
-    PasswordSafe.instance.set(credentialAttributes(userName, serviceNameForAccessToken), Credentials(userName, tokenInfo.accessToken))
-    PasswordSafe.instance.set(credentialAttributes(userName, serviceNameForRefreshToken), Credentials(userName, tokenInfo.refreshToken))
+    findService(AccountService::class.java).saveTokens(this, tokenInfo)
   }
-}
-
-fun <OAuthAcc : OAuthAccount<UserInfo>, UserInfo : Any> deserializeOAuthAccount(
-  xmlAccount: Element,
-  accountClass: Class<OAuthAcc>,
-  userInfoClass: Class<UserInfo>): OAuthAcc? {
-
-  val account = deserializeAccount(xmlAccount, accountClass, userInfoClass)
-
-  val tokenInfo = TokenInfo()
-  XmlSerializer.deserializeInto(tokenInfo, xmlAccount)
-
-  if (tokenInfo.accessToken.isNotEmpty()) {
-    return null
-  }
-  return account
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)

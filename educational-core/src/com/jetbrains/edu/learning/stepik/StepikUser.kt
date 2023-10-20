@@ -12,8 +12,6 @@ class StepikUser : OAuthAccount<StepikUserInfo> {
   @Suppress("UnstableApiUsage")
   override val servicePrefix: @NlsSafe String = StepikNames.STEPIK
 
-  override fun getUserName(): String = userInfo.getFullName()
-
   @get:Transient
   val id: Int
     get() {

@@ -9,13 +9,14 @@ import com.intellij.uiDesigner.core.GridLayoutManager
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.authUtils.Account
+import com.jetbrains.edu.learning.courseFormat.UserInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskToolWindow.ui.createTextPane
 import javax.swing.JComponent
 import javax.swing.JPanel
 
 // Implement this class to show oauth settings with login/logout link
-abstract class LoginOptions<T : Account<out Any>> : OptionsProvider {
+abstract class LoginOptions<T : Account<out UserInfo>> : OptionsProvider {
   private var browseProfileLabel = createTextPane()
   private var loginLink = HoverHyperlinkLabel("")
   private var accountPanel = JPanel()

@@ -1,17 +1,18 @@
 package com.jetbrains.edu.learning.authUtils
 
+import com.jetbrains.edu.learning.courseFormat.UserInfo
 import com.jetbrains.edu.learning.findService
 
 
-abstract class Account<UserInfo : Any> {
+abstract class Account<UInfo : UserInfo> {
   protected abstract val servicePrefix: String
-  protected val serviceName get() = "$servicePrefix Integration"
+  val serviceName get() = "$servicePrefix Integration"
 
   @field:Transient
-  lateinit var userInfo: UserInfo
+  lateinit var userInfo: UInfo
 
   abstract fun isUpToDate(): Boolean
-  protected abstract fun getUserName(): String
+  fun getUserName(): String = userInfo.getFullName()
 
   protected fun getSecret(userName: String?, serviceNameForPasswordSafe: String?): String? {
     return findService(AccountService::class.java).getSecret(userName, serviceNameForPasswordSafe)

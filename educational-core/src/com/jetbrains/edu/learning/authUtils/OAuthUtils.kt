@@ -14,6 +14,7 @@ import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters
 import com.intellij.util.xmlb.XmlSerializer
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtilsKt
+import com.jetbrains.edu.learning.courseFormat.UserInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jdom.Element
 import org.jetbrains.builtInWebServer.BuiltInServerOptions
@@ -105,7 +106,7 @@ object OAuthUtils {
   }
 }
 
-fun <UserInfo : Any> Account<UserInfo>.serialize(): Element? {
+fun <UInfo : UserInfo> Account<UInfo>.serialize(): Element? {
   if (PasswordSafe.instance.isMemoryOnly) {
     return null
   }
@@ -126,5 +127,21 @@ fun <UserAccount : Account<UserInfo>, UserInfo : Any> deserializeAccount(
   XmlSerializer.deserializeInto(userInfo, xmlAccount)
   account.userInfo = userInfo
 
+  return account
+}
+
+fun <OAuthAcc : OAuthAccount<UserInfo>, UserInfo : Any> deserializeOAuthAccount(
+  xmlAccount: Element,
+  accountClass: Class<OAuthAcc>,
+  userInfoClass: Class<UserInfo>): OAuthAcc? {
+
+  val account = deserializeAccount(xmlAccount, accountClass, userInfoClass)
+
+  val tokenInfo = TokenInfo()
+  XmlSerializer.deserializeInto(tokenInfo, xmlAccount)
+
+  if (tokenInfo.accessToken.isNotEmpty()) {
+    return null
+  }
   return account
 }

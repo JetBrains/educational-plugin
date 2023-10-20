@@ -1,10 +1,12 @@
 package com.jetbrains.edu.learning.authUtils
 
 import com.intellij.credentialStore.ACCESS_TO_KEY_CHAIN_DENIED
+import com.intellij.credentialStore.Credentials
 import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.credentialAttributes
+import com.jetbrains.edu.learning.courseFormat.UserInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 class AccountServiceImpl : AccountService {
@@ -23,4 +25,15 @@ class AccountServiceImpl : AccountService {
     return credentials.getPasswordAsString()
   }
 
+  override fun <A : OAuthAccount<UInfo>, UInfo : UserInfo> saveTokens(account: A, tokenInfo: TokenInfo) {
+    val userName = account.getUserName()
+    PasswordSafe.instance.set(
+      credentialAttributes(userName, account.serviceNameForAccessToken),
+      Credentials(userName, tokenInfo.accessToken)
+    )
+    PasswordSafe.instance.set(
+      credentialAttributes(userName, account.serviceNameForRefreshToken),
+      Credentials(userName, tokenInfo.refreshToken)
+    )
+  }
 }

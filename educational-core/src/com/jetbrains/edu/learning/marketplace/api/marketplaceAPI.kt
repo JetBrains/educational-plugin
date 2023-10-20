@@ -60,10 +60,6 @@ class MarketplaceAccount : OAuthAccount<JBAccountUserInfo> {
   @NlsSafe
   override val servicePrefix: String = MARKETPLACE
 
-  override fun getUserName(): String {
-    return userInfo.getFullName()
-  }
-
   @RequiresBackgroundThread
   fun getJBAccessToken(jbAccountInfoService: JBAccountInfoService): String? {
     var success = false

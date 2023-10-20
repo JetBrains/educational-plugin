@@ -27,8 +27,6 @@ class CheckiOAccount : OAuthAccount<CheckiOUserInfo> {
   override val servicePrefix: @NlsSafe String
     get() = CHECKIO
 
-  override fun getUserName(): String = userInfo.getFullName()
-
   companion object {
     fun fromElement(element: Element): CheckiOAccount? {
       val user = element.getChild(CheckiOAccount::class.java.simpleName)
