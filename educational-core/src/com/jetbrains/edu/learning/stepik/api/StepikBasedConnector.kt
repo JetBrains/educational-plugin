@@ -6,7 +6,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
-import com.jetbrains.edu.learning.api.ConnectorUtils
+import com.jetbrains.edu.learning.authUtils.ConnectorUtils
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse

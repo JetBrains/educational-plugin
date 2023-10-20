@@ -7,7 +7,6 @@ import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.http.FullHttpRequest
 import io.netty.handler.codec.http.HttpMethod
 import io.netty.handler.codec.http.HttpRequest
-import org.jetbrains.annotations.NonNls
 import org.jetbrains.ide.RestService
 import org.jetbrains.io.send
 import java.io.IOException
@@ -51,7 +50,6 @@ abstract class OAuthRestService(protected val platformName: String) : RestServic
 
   companion object {
     private const val IS_REST_SERVICES_ENABLED = "Edu.Stepik.RestServicesEnabled"
-    const val CODE_ARGUMENT: @NonNls String = "code"
     var isRestServicesEnabled: Boolean
       get() = PropertiesComponent.getInstance().getBoolean(IS_REST_SERVICES_ENABLED, true)
       set(enabled) {

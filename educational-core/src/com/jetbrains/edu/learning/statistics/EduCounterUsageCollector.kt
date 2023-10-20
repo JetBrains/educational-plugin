@@ -4,6 +4,7 @@ import com.intellij.internal.statistic.eventLog.EventLogGroup
 import com.intellij.internal.statistic.eventLog.events.EventFields
 import com.intellij.internal.statistic.service.fus.collectors.CounterUsagesCollector
 import com.intellij.openapi.actionSystem.ActionPlaces
+import com.jetbrains.edu.learning.authUtils.AuthorizationPlace
 import com.jetbrains.edu.learning.checkio.CheckiOPlatformProvider
 import com.jetbrains.edu.learning.codeforces.CodeforcesPlatformProvider
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -51,10 +52,6 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     @Deprecated("Use LOG_OUT_SUCCEED instead")
     LOG_OUT,
     LOG_IN_SUCCEED, LOG_OUT_SUCCEED
-  }
-
-  enum class AuthorizationPlace {
-    SETTINGS, WIDGET, START_COURSE_DIALOG, SUBMISSIONS_TAB, TASK_DESCRIPTION_HEADER, UNKNOWN
   }
 
   private enum class HintEvent {

@@ -19,12 +19,12 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.actions.EduActionUtils
 import com.jetbrains.edu.learning.actions.SyncCourseAction
-import com.jetbrains.edu.learning.api.EduLoginConnector
 import com.jetbrains.edu.learning.api.EduOAuthCodeFlowConnector
+import com.jetbrains.edu.learning.authUtils.AuthorizationPlace
+import com.jetbrains.edu.learning.authUtils.EduLoginConnector
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.courseFormat.UserInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import com.jetbrains.edu.learning.ui.EduHyperlinkLabel
 import java.awt.BorderLayout
 import java.awt.Point

@@ -5,6 +5,7 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.util.io.origin
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.authUtils.*
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODE_ARGUMENT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL
 import com.jetbrains.edu.learning.courseFormat.ext.CourseValidationResult
 import com.jetbrains.edu.learning.courseFormat.ext.ValidationErrorMessage

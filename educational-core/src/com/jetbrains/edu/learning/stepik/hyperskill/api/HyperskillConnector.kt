@@ -10,9 +10,9 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.EduOAuthCodeFlowConnector
-import com.jetbrains.edu.learning.authUtils.OAuthRestService.Companion.CODE_ARGUMENT
 import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODE_ARGUMENT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson

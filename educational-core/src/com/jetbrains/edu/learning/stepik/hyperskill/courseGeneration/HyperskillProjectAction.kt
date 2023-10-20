@@ -13,6 +13,7 @@ import com.intellij.ui.components.AnActionLink
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.RemoteEnvHelper
+import com.jetbrains.edu.learning.authUtils.AuthorizationPlace
 import com.jetbrains.edu.learning.courseFormat.ext.CourseValidationResult
 import com.jetbrains.edu.learning.courseFormat.ext.PluginsRequired
 import com.jetbrains.edu.learning.courseFormat.ext.ValidationErrorMessage
@@ -20,7 +21,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.ValidationErrorMessageWithHyp
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.onError
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import com.jetbrains.edu.learning.stepik.hyperskill.SELECT_PROJECT
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.getSelectedProjectIdUnderProgress

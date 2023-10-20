@@ -1,24 +1,21 @@
-package com.jetbrains.edu.learning.api
+package com.jetbrains.edu.learning.authUtils
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.intellij.openapi.diagnostic.Logger
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.authUtils.Account
-import com.jetbrains.edu.learning.authUtils.OAuthRestService.Companion.CODE_ARGUMENT
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODE_ARGUMENT
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.REST_PREFIX
 import com.jetbrains.edu.learning.courseFormat.UserInfo
 import com.jetbrains.edu.learning.createRetrofitBuilder
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import okhttp3.ConnectionPool
 import okhttp3.Interceptor
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.ide.RestService
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.util.regex.Pattern
 
 /**
  * Base class for all connectors managing login.
  * Connectors, using [Authorization Code Flow](https://auth0.com/docs/get-started/authentication-and-authorization-flow/authorization-code-flow)
- * should be inherited from [EduOAuthCodeFlowConnector]
+ * should be inherited from [com.jetbrains.edu.learning.api.EduOAuthCodeFlowConnector]
  */
 abstract class EduLoginConnector<UserAccount : Account<*>, SpecificUserInfo : UserInfo> {
   open var account: UserAccount? = null
@@ -56,11 +53,11 @@ abstract class EduLoginConnector<UserAccount : Account<*>, SpecificUserInfo : Us
   protected open val requestInterceptor: Interceptor? = null
 
   open val serviceName: String by lazy {
-    "${EduNames.EDU_PREFIX}/${platformName.lowercase()}"
+    "${EduFormatNames.EDU_PREFIX}/${platformName.lowercase()}"
   }
 
   protected open val oAuthServicePath: String by lazy {
-    "/${RestService.PREFIX}/$serviceName/$OAUTH_SUFFIX"
+    "/$REST_PREFIX/$serviceName/$OAUTH_SUFFIX"
   }
 
   abstract fun getCurrentUserInfo(): SpecificUserInfo?
@@ -101,9 +98,6 @@ abstract class EduLoginConnector<UserAccount : Account<*>, SpecificUserInfo : Us
   open fun isLoggedIn(): Boolean = account != null
 
   companion object {
-    @JvmStatic
-    protected val LOG = Logger.getInstance(EduLoginConnector::class.java)
-
     @JvmStatic
     @NonNls
     protected val OAUTH_SUFFIX: String = "oauth"

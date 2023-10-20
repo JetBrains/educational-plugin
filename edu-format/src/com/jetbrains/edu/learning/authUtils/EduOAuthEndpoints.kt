@@ -1,6 +1,5 @@
-package com.jetbrains.edu.learning.api
+package com.jetbrains.edu.learning.authUtils
 
-import com.jetbrains.edu.learning.authUtils.TokenInfo
 import retrofit2.Call
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded

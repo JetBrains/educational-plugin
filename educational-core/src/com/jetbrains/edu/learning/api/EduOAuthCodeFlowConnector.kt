@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.api
 
 import com.intellij.ide.BrowserUtil
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.Urls
 import com.intellij.util.io.origin
 import com.jetbrains.edu.learning.*
@@ -47,7 +48,7 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
   @Synchronized
   override fun doAuthorize(
     vararg postLoginActions: Runnable,
-    authorizationPlace: EduCounterUsageCollector.AuthorizationPlace
+    authorizationPlace: AuthorizationPlace
   ) {
     if (!OAuthUtils.checkBuiltinPortValid()) return
 
@@ -78,7 +79,7 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
 
   /**
    * Designed to be called in a single place `*Settings.setAccount` for every platform
-   * @see com.jetbrains.edu.learning.EduSettings.setUser
+   * @see com.jetbrains.edu.learning.EduSettings.user
    */
   @Synchronized
   fun notifyUserLoggedIn() {
@@ -87,20 +88,20 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
     }
     submissionTabListener?.userLoggedIn()
 
-    val place = authorizationPlace ?: EduCounterUsageCollector.AuthorizationPlace.UNKNOWN
+    val place = authorizationPlace ?: AuthorizationPlace.UNKNOWN
     EduCounterUsageCollector.logInSucceed(platformName, place)
     authorizationPlace = null
   }
 
   /**
    * Designed to be called in a single place `*Settings.setAccount` for every platform
-   * @see com.jetbrains.edu.learning.EduSettings.setUser
+   * @see com.jetbrains.edu.learning.EduSettings.user
    */
   @Synchronized
   fun notifyUserLoggedOut() {
     submissionTabListener?.userLoggedOut()
 
-    val place = authorizationPlace ?: EduCounterUsageCollector.AuthorizationPlace.UNKNOWN
+    val place = authorizationPlace ?: AuthorizationPlace.UNKNOWN
     EduCounterUsageCollector.logOutSucceed(platformName, place)
     authorizationPlace = null
   }
@@ -112,7 +113,7 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
   abstract fun login(code: String): Boolean
 
   @Synchronized
-  fun doLogout(authorizationPlace: EduCounterUsageCollector.AuthorizationPlace = EduCounterUsageCollector.AuthorizationPlace.UNKNOWN) {
+  fun doLogout(authorizationPlace: AuthorizationPlace = AuthorizationPlace.UNKNOWN) {
     this.authorizationPlace = authorizationPlace
     account = null
   }
@@ -216,5 +217,9 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
 
   protected inline fun <reified Endpoints> getEndpoints(): Endpoints {
     return getEndpoints(accessToken = account?.getAccessToken())
+  }
+
+  companion object {
+    private val LOG = Logger.getInstance(EduOAuthCodeFlowConnector::class.java)
   }
 }

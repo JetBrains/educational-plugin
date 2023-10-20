@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopup
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.LoginWidget
-import com.jetbrains.edu.learning.api.EduLoginConnector
+import com.jetbrains.edu.learning.authUtils.EduLoginConnector
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.update.SyncMarketplaceCourseAction

@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.checkio.connectors
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
-import com.jetbrains.edu.learning.api.ConnectorUtils
+import com.jetbrains.edu.learning.authUtils.ConnectorUtils
 import com.jetbrains.edu.learning.checkio.api.CheckiOApiEndpoint
 import com.jetbrains.edu.learning.checkio.api.executeHandlingCheckiOExceptions
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission

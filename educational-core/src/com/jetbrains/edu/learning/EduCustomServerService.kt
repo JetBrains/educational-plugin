@@ -6,10 +6,10 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Disposer
-import com.jetbrains.edu.learning.EduNames.EDU_PREFIX
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import com.jetbrains.edu.learning.builtInServer.createServerBootstrap
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.EDU_PREFIX
 import io.netty.channel.Channel
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.ChannelInitializer

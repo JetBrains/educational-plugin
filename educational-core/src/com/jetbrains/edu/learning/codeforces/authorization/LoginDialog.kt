@@ -10,12 +10,12 @@ import com.intellij.ui.dsl.builder.COLUMNS_MEDIUM
 import com.intellij.ui.dsl.builder.columns
 import com.intellij.ui.dsl.builder.panel
 import com.jetbrains.edu.learning.EduUtilsKt
+import com.jetbrains.edu.learning.authUtils.AuthorizationPlace
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.onError
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import javax.swing.JComponent
 
 class LoginDialog(private val authorizationPlace: AuthorizationPlace) : DialogWrapper(false) {

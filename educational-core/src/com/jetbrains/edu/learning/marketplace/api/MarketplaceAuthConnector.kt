@@ -10,7 +10,8 @@ import com.intellij.ui.JBAccountInfoService
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.jetbrains.edu.coursecreator.CCNotificationUtils
 import com.jetbrains.edu.learning.RemoteEnvHelper
-import com.jetbrains.edu.learning.api.EduLoginConnector
+import com.jetbrains.edu.learning.authUtils.AuthorizationPlace
+import com.jetbrains.edu.learning.authUtils.EduLoginConnector
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.JBA_TOKEN_EXCHANGE
 import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.authUtils.requestFocus
@@ -33,8 +34,7 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
 
   override val clientId: String = MarketplaceOAuthBundle.value("eduHubClientId")
 
-  override fun doAuthorize(vararg postLoginActions: Runnable,
-                           authorizationPlace: EduCounterUsageCollector.AuthorizationPlace) {
+  override fun doAuthorize(vararg postLoginActions: Runnable, authorizationPlace: AuthorizationPlace) {
     if (RemoteEnvHelper.isRemoteDevServer()) return
     this.authorizationPlace = authorizationPlace
     ApplicationManager.getApplication().executeOnPooledThread {

@@ -6,7 +6,7 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.ui.HyperlinkAdapter
 import com.intellij.ui.components.JBCheckBox
 import com.jetbrains.edu.learning.RemoteEnvHelper
-import com.jetbrains.edu.learning.api.EduLoginConnector
+import com.jetbrains.edu.learning.authUtils.EduLoginConnector
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.JET_BRAINS_ACCOUNT

@@ -1,11 +1,11 @@
 package com.jetbrains.edu.learning.codeforces.authorization
 
 import com.intellij.ui.HyperlinkAdapter
+import com.jetbrains.edu.learning.authUtils.AuthorizationPlace
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_URL
 import com.jetbrains.edu.learning.settings.LoginOptions
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import javax.swing.event.HyperlinkEvent
 
 class CodeforcesLoginOptions : LoginOptions<CodeforcesAccount>() {

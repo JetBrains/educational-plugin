@@ -6,7 +6,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.intellij.ui.EditorNotifications
-import com.jetbrains.edu.learning.api.ConnectorUtils
+import com.jetbrains.edu.learning.authUtils.ConnectorUtils
 import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*

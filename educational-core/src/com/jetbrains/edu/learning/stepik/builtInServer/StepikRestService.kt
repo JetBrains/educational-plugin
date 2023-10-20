@@ -11,6 +11,7 @@ import com.intellij.util.io.origin
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import com.jetbrains.edu.learning.authUtils.createResponse
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODE_ARGUMENT
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikNames.getStepikUrl

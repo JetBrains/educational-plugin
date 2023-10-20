@@ -7,6 +7,7 @@ import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.authUtils.AuthorizationPlace
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.actions.StartCodeforcesContestAction
@@ -22,7 +23,6 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.LoginPanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgroundColor
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
@@ -51,7 +51,7 @@ class CodeforcesCoursesPanel(
     }
 
     return NonOpaquePanel().apply {
-      border = JBUI.Borders.empty(0, 0, 0, 12)
+      border = JBUI.Borders.emptyRight(12)
       add(button)
     }
   }

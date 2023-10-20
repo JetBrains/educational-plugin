@@ -14,6 +14,7 @@ import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
+import com.jetbrains.edu.learning.authUtils.AuthorizationPlace
 import com.jetbrains.edu.learning.authUtils.deserializeAccount
 import com.jetbrains.edu.learning.authUtils.serialize
 import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesAccount
@@ -23,7 +24,6 @@ import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesUserInfo
 import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
 import org.jdom.Element

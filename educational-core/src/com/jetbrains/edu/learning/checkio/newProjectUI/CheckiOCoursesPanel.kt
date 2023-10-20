@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.checkio.newProjectUI
 
 import com.intellij.openapi.Disposable
+import com.jetbrains.edu.learning.authUtils.AuthorizationPlace
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_HELP
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
@@ -10,7 +11,6 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.LoginPanel
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import kotlinx.coroutines.CoroutineScope
 
 class CheckiOCoursesPanel(

@@ -580,6 +580,7 @@ project(":edu-format") {
     implementationWithoutKotlin(group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version = jacksonVersion)
     implementationWithoutKotlin("com.squareup.retrofit2:retrofit:$retrofitVersion")
     implementationWithoutKotlin("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
+    implementationWithoutKotlin("com.squareup.retrofit2:converter-jackson:$retrofitVersion")
   }
 }
 

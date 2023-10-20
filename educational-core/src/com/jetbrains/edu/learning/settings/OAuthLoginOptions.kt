@@ -1,11 +1,11 @@
 package com.jetbrains.edu.learning.settings
 
 import com.intellij.ui.HyperlinkAdapter
-import com.jetbrains.edu.learning.api.EduLoginConnector
 import com.jetbrains.edu.learning.api.EduOAuthCodeFlowConnector
+import com.jetbrains.edu.learning.authUtils.AuthorizationPlace
+import com.jetbrains.edu.learning.authUtils.EduLoginConnector
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.courseFormat.UserInfo
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import javax.swing.event.HyperlinkEvent
 
 abstract class OAuthLoginOptions <T : OAuthAccount<out UserInfo>> : LoginOptions<T>() {

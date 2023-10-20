@@ -3,6 +3,10 @@ package com.jetbrains.edu.learning.courseFormat
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CODEFORCES_TYPE_YAML
 
 object EduFormatNames {
+  const val EDU_PREFIX = "edu"
+  const val REST_PREFIX = "api"
+  const val CODE_ARGUMENT = "code"
+
   const val MARKETPLACE = "Marketplace"
   const val COURSE_META_FILE = "course.json"
 

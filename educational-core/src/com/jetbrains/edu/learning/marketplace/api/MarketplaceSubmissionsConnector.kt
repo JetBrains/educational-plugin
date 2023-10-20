@@ -13,7 +13,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.JBAccountInfoService
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.api.ConnectorUtils
+import com.jetbrains.edu.learning.authUtils.ConnectorUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.ext.getDir

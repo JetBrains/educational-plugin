@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.api
+package com.jetbrains.edu.learning.authUtils
 
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.json.JsonMapper

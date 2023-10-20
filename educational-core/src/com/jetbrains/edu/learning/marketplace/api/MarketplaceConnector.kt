@@ -22,7 +22,7 @@ import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLogAction
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification
 import com.jetbrains.edu.coursecreator.actions.marketplace.MarketplacePushCourse
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.api.ConnectorUtils
+import com.jetbrains.edu.learning.authUtils.ConnectorUtils
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
 import com.jetbrains.edu.learning.marketplace.*

@@ -2,9 +2,9 @@ package com.jetbrains.edu.learning.checkio.connectors
 
 import com.intellij.util.io.origin
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
-import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_URL
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CHECKIO
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODE_ARGUMENT
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.http.*
 import java.io.IOException
