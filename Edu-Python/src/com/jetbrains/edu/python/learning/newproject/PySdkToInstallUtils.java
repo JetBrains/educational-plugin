@@ -14,6 +14,7 @@ import java.util.List;
  */
 public class PySdkToInstallUtils {
 
+  // BACKCOMPAT: 2023.2. Inline it since `getSdksToInstall` became public since 233
   @SuppressWarnings("KotlinInternalInJava")
   @NotNull
   public static List<PySdkToInstall> getSdksToInstall() {
