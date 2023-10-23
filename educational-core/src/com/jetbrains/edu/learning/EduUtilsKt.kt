@@ -108,10 +108,9 @@ object EduUtilsKt {
 
   fun getLocalCourse(zipFilePath: String, readCourseJson: (String) -> Course? = ::readCourseJson): Course? {
     try {
-      val zipFile = ZipFile(zipFilePath)
-      return zipFile.use {
-        val entry = it.getEntry(COURSE_META_FILE) ?: return null
-        val jsonText = String(it.getInputStream(entry).readAllBytes(), StandardCharsets.UTF_8)
+      return ZipFile(zipFilePath).use { zipFile ->
+        val entry = zipFile.getEntry(COURSE_META_FILE) ?: return null
+        val jsonText = zipFile.getInputStream(entry).reader(StandardCharsets.UTF_8).use { it.readText() }
         readCourseJson(jsonText)
       }
     }
