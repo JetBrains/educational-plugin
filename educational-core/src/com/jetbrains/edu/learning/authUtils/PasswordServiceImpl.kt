@@ -6,13 +6,10 @@ import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.credentialAttributes
-import com.jetbrains.edu.learning.courseFormat.UserInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
-class AccountServiceImpl : AccountService {
-  override fun getSecret(userName: String?, serviceNameForPasswordSafe: String?): String? {
-    userName ?: return null
-    serviceNameForPasswordSafe ?: return null
+class PasswordServiceImpl : PasswordService {
+  override fun getSecret(userName: String, serviceNameForPasswordSafe: String): String? {
     val credentials = PasswordSafe.instance.get(credentialAttributes(userName, serviceNameForPasswordSafe)) ?: return null
     if (credentials == ACCESS_TO_KEY_CHAIN_DENIED) {
       val notification = Notification(
@@ -25,15 +22,7 @@ class AccountServiceImpl : AccountService {
     return credentials.getPasswordAsString()
   }
 
-  override fun <A : OAuthAccount<UInfo>, UInfo : UserInfo> saveTokens(account: A, tokenInfo: TokenInfo) {
-    val userName = account.getUserName()
-    PasswordSafe.instance.set(
-      credentialAttributes(userName, account.serviceNameForAccessToken),
-      Credentials(userName, tokenInfo.accessToken)
-    )
-    PasswordSafe.instance.set(
-      credentialAttributes(userName, account.serviceNameForRefreshToken),
-      Credentials(userName, tokenInfo.refreshToken)
-    )
+  override fun saveSecret(userName: String, serviceNameForPasswordSafe: String, secret: String) {
+    PasswordSafe.instance.set(credentialAttributes(userName, serviceNameForPasswordSafe), Credentials(userName, secret))
   }
 }

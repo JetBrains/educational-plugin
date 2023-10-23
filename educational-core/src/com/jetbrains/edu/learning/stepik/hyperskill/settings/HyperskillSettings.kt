@@ -42,7 +42,7 @@ class HyperskillSettings : PersistentStateComponent<Element> {
     XmlSerializer.deserializeInto(this, settings)
     val accountClass = HyperskillAccount::class.java
     val user = settings.getChild(accountClass.simpleName)
-    account = deserializeOAuthAccount(user, accountClass, HyperskillUserInfo::class.java)
+    account = user.deserializeOAuthAccount(accountClass, HyperskillUserInfo::class.java)
   }
 
   companion object {

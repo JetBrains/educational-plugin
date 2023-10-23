@@ -30,7 +30,7 @@ class CheckiOAccount : OAuthAccount<CheckiOUserInfo> {
   companion object {
     fun fromElement(element: Element): CheckiOAccount? {
       val user = element.getChild(CheckiOAccount::class.java.simpleName)
-      val account = deserializeOAuthAccount(user, CheckiOAccount::class.java, CheckiOUserInfo::class.java)
+      val account = user.deserializeOAuthAccount(CheckiOAccount::class.java, CheckiOUserInfo::class.java)
 
       // We've changed CheckiO deserialization in 2022.1 version. It causes invalid deserialization of already existed accounts,
       // so we force user to do re-login.

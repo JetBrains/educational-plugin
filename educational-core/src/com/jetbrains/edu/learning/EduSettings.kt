@@ -61,7 +61,7 @@ class EduSettings : PersistentStateComponent<Element> {
     XmlSerializer.deserializeInto(this, state)
     val user = getUser(state)
     val userXml = user?.getChild(STEPIK_USER) ?: return
-    _user = deserializeOAuthAccount(userXml, StepikUser::class.java, StepikUserInfo::class.java)
+    _user = userXml.deserializeOAuthAccount(StepikUser::class.java, StepikUserInfo::class.java)
   }
 
   private fun initialJavaUiLibrary(): JavaUILibrary {

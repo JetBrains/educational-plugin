@@ -35,10 +35,11 @@ import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-abstract class LoginWidget<T : OAuthAccount<out UserInfo>>(val project: Project,
-                                                      @PopupTitle private val title: String,
-                                                      @Tooltip tooltipText: String,
-                                                      private val icon: Icon
+abstract class LoginWidget<T : OAuthAccount<out UserInfo>>(
+  val project: Project,
+  @PopupTitle private val title: String,
+  @Tooltip tooltipText: String,
+  private val icon: Icon
 ) : IconLikeCustomStatusBarWidget {
   abstract val connector: EduLoginConnector<T, *>
 
@@ -105,7 +106,7 @@ abstract class LoginWidget<T : OAuthAccount<out UserInfo>>(val project: Project,
 
     val accountActionLabel = if (!isLoggedIn) {
       EduHyperlinkLabel(EduCoreBundle.message("account.widget.login"), true) {
-        connector.doAuthorize(Runnable{ postLoginActions() }, authorizationPlace = AuthorizationPlace.WIDGET)
+        connector.doAuthorize(Runnable { postLoginActions() }, authorizationPlace = AuthorizationPlace.WIDGET)
         popup.closeOk(null)
       }
     }

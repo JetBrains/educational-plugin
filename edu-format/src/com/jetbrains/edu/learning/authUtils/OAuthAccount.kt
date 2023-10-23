@@ -14,8 +14,8 @@ import com.jetbrains.edu.learning.findService
 // All user-specific information should be stored in userInfo
 abstract class OAuthAccount<UInfo : UserInfo> : Account<UInfo> {
 
-  val serviceNameForAccessToken get() = "$serviceName access token"
-  val serviceNameForRefreshToken get() = "$serviceName refresh token"
+  private val serviceNameForAccessToken get() = "$serviceName access token"
+  private val serviceNameForRefreshToken get() = "$serviceName refresh token"
 
   var tokenExpiresIn: Long = -1
 
@@ -40,7 +40,9 @@ abstract class OAuthAccount<UInfo : UserInfo> : Account<UInfo> {
   }
 
   open fun saveTokens(tokenInfo: TokenInfo) {
-    findService(AccountService::class.java).saveTokens(this, tokenInfo)
+    val passwordService = findService(PasswordService::class.java)
+    passwordService.saveSecret(getUserName(), serviceNameForAccessToken, tokenInfo.accessToken)
+    passwordService.saveSecret(getUserName(), serviceNameForRefreshToken, tokenInfo.refreshToken)
   }
 }
 

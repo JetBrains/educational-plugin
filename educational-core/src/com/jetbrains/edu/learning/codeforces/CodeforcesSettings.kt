@@ -88,7 +88,7 @@ class CodeforcesSettings : PersistentStateComponent<Element> {
     XmlSerializer.deserializeInto(this, settings)
     val accountClass = CodeforcesAccount::class.java
     val user = settings.getChild(accountClass.simpleName)
-    account = deserializeAccount(user, accountClass, CodeforcesUserInfo::class.java)
+    account = user.deserializeAccount(accountClass, CodeforcesUserInfo::class.java)
   }
 
   fun isLoggedIn(): Boolean = account != null

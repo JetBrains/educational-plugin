@@ -115,30 +115,29 @@ fun <UInfo : UserInfo> Account<UInfo>.serialize(): Element? {
   return accountElement
 }
 
-fun <UserAccount : Account<UserInfo>, UserInfo : Any> deserializeAccount(
-  xmlAccount: Element,
+fun <UserAccount : Account<UInfo>, UInfo : UserInfo> Element.deserializeAccount(
   accountClass: Class<UserAccount>,
-  userInfoClass: Class<UserInfo>
+  userInfoClass: Class<UInfo>
 ): UserAccount {
 
-  val account = XmlSerializer.deserialize(xmlAccount, accountClass)
+  val account = XmlSerializer.deserialize(this, accountClass)
 
   val userInfo = ReflectionUtil.newInstance(userInfoClass)
-  XmlSerializer.deserializeInto(userInfo, xmlAccount)
+  XmlSerializer.deserializeInto(userInfo, this)
   account.userInfo = userInfo
 
   return account
 }
 
-fun <OAuthAcc : OAuthAccount<UserInfo>, UserInfo : Any> deserializeOAuthAccount(
-  xmlAccount: Element,
+fun <OAuthAcc : OAuthAccount<UInfo>, UInfo : UserInfo> Element.deserializeOAuthAccount(
   accountClass: Class<OAuthAcc>,
-  userInfoClass: Class<UserInfo>): OAuthAcc? {
+  userInfoClass: Class<UInfo>
+): OAuthAcc? {
 
-  val account = deserializeAccount(xmlAccount, accountClass, userInfoClass)
+  val account = deserializeAccount(accountClass, userInfoClass)
 
   val tokenInfo = TokenInfo()
-  XmlSerializer.deserializeInto(tokenInfo, xmlAccount)
+  XmlSerializer.deserializeInto(tokenInfo, this)
 
   if (tokenInfo.accessToken.isNotEmpty()) {
     return null
