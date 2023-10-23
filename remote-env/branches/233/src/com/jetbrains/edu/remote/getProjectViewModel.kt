@@ -1,8 +1,10 @@
 package com.jetbrains.edu.remote
 
+import com.intellij.openapi.client.ClientProjectSession
 import com.jetbrains.codeWithMe.model.ProjectViewModel
 import com.jetbrains.codeWithMe.model.projectViewModel
-import com.jetbrains.rd.platform.client.ProtocolProjectSession
+import com.jetbrains.rdserver.core.protocolModel
 
 // BACKCOMPAT: 2023.2. Inline it
-fun getProjectViewModel(session: ProtocolProjectSession): ProjectViewModel = session.solution.projectViewModel
+@Suppress("UnstableApiUsage")
+fun getProjectViewModel(session: ClientProjectSession): ProjectViewModel = session.protocolModel.projectViewModel

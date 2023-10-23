@@ -2,6 +2,7 @@ package com.jetbrains.edu.remote
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
+import com.intellij.openapi.client.ClientProjectSession
 import com.intellij.openapi.components.service
 import com.intellij.openapi.rd.util.launchOnUi
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
@@ -12,11 +13,10 @@ import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.remote.termination.EduRemoteDisconnectWatcherService
 import com.jetbrains.edu.remote.termination.EduRemoteInactivityWatcherService
-import com.jetbrains.rd.platform.client.ProtocolProjectSession
 import com.jetbrains.rd.platform.util.idea.LifetimedService
 
 @Suppress("UnstableApiUsage")
-class EduRemoteService(private val session: ProtocolProjectSession): LifetimedService() {
+class EduRemoteService(private val session: ClientProjectSession): LifetimedService() {
   init {
     val project = session.project
     serviceLifetime.launchOnUi {
@@ -53,6 +53,6 @@ class EduRemoteService(private val session: ProtocolProjectSession): LifetimedSe
 
   companion object {
     @Suppress("unused")
-    fun getInstance(session: ProtocolProjectSession): EduRemoteService = session.getService(EduRemoteService::class.java)
+    fun getInstance(session: ClientProjectSession): EduRemoteService = session.getService(EduRemoteService::class.java)
   }
 }
