@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning
 
 import com.intellij.openapi.application.ex.ApplicationUtil
-import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.util.PlatformUtils
@@ -17,7 +17,6 @@ import retrofit2.Call
 import retrofit2.Response
 import java.io.IOException
 import java.io.InterruptedIOException
-
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.net.URI
@@ -113,6 +112,6 @@ class RetrofitHelperImpl : RetrofitHelper {
   }
 
   companion object {
-    private val LOG = Logger.getInstance("com.jetbrains.edu.learning.RetrofitActual")
+    private val LOG = logger<RetrofitHelperImpl>()
   }
 }
