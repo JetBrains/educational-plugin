@@ -5,6 +5,8 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.ui.JBAccountInfoService
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
@@ -28,6 +30,7 @@ import com.jetbrains.edu.learning.marketplace.MarketplaceOAuthBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, JBAccountUserInfo>() {
   override val clientSecret: String = MarketplaceOAuthBundle.value("eduHubClientSecret")
@@ -102,11 +105,30 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
     - non-null value - correct hab token
    */
   @RequiresBackgroundThread
-  fun loadHubToken(currentAccount: MarketplaceAccount): String? {
+  fun loadHubToken(): String? {
     val jbAccountInfoService = getJBAccountInfoServiceWithNotification() ?: return null
-    val jbAccessToken = currentAccount.getJBAccessToken(jbAccountInfoService) ?: return null
+    val jbAccessToken = getJBAccessToken(jbAccountInfoService) ?: return null
 
     return retrieveHubToken(jbAccessToken).accessToken
+  }
+
+  @RequiresBackgroundThread
+  fun getJBAccessToken(jbAccountInfoService: JBAccountInfoService): String? {
+    var success = false
+    return try {
+      val jbAccessToken = jbAccountInfoService.accessToken.get(30, TimeUnit.SECONDS)
+      success = jbAccessToken != null
+      jbAccessToken
+    }
+    catch (e: Exception) {
+      LOG.warn(e)
+      null
+    }
+    finally {
+      if (GetJBATokenSuccessRecorder.getInstance().updateState(success)) {
+        EduCounterUsageCollector.obtainJBAToken(success)
+      }
+    }
   }
 
   fun invokeJBALoginAction(jbAuthService: JBAccountInfoService, vararg postLoginActions: Runnable) = object : AnAction(EduCoreBundle.message("action.relogin.to.jba")) {
@@ -146,4 +168,24 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
 
     private const val AUTH_TYPE_BASIC = "Basic"
   }
+
+  @Service
+  private class GetJBATokenSuccessRecorder {
+    @Volatile
+    private var currentState: Boolean? = null
+
+    /**
+     * Returns `true` if state changed, `false` otherwise
+     */
+    fun updateState(newState: Boolean): Boolean {
+      val oldState = currentState
+      currentState = newState
+      return oldState != newState
+    }
+
+    companion object {
+      fun getInstance(): GetJBATokenSuccessRecorder = service()
+    }
+  }
+
 }

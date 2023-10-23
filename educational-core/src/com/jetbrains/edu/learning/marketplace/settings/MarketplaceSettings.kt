@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.marketplace.settings
 import com.intellij.execution.process.ProcessIOExecutorService
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.ui.JBAccountInfoService
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showFailedToChangeSharingPreferenceNotification
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
@@ -17,7 +18,7 @@ class MarketplaceSettings {
   var solutionsSharing: Boolean? = null
 
   fun getMarketplaceAccount(): MarketplaceAccount? {
-    if (!MarketplaceAccount.isJBALoggedIn()) {
+    if (!isJBALoggedIn()) {
       account = null
       return null
     }
@@ -51,6 +52,8 @@ class MarketplaceSettings {
 
   companion object {
     private val LOG = logger<MarketplaceSettings>()
+
+    fun isJBALoggedIn(): Boolean = JBAccountInfoService.getInstance()?.userData != null
 
     val INSTANCE: MarketplaceSettings
       get() = service()

@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.authUtils.ConnectorUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
@@ -118,7 +119,8 @@ class MarketplaceSubmissionsConnector {
     var currentPage = 1
     val allSubmissions = mutableListOf<MarketplaceSubmission>()
     do {
-      val submissionsList = submissionsService.getAllSubmissionsForCourse(courseId, currentPage).executeHandlingExceptions()?.body() ?: break
+      val submissionsList = submissionsService.getAllSubmissionsForCourse(courseId, currentPage).executeHandlingExceptions()?.body()
+                            ?: break
       val submissions = submissionsList.submissions
       allSubmissions.addAll(submissions)
       currentPage += 1
@@ -141,7 +143,14 @@ class MarketplaceSubmissionsConnector {
   }
 
   fun markTheoryTaskAsCompleted(task: TheoryTask) {
-    val emptySubmission = MarketplaceSubmission(task)
+    val emptySubmission = MarketplaceSubmission(
+      task.id,
+      CheckStatus.Solved,
+      "",
+      null,
+      task.course.marketplaceCourseVersion,
+      PermanentInstallationID.get()
+    )
     LOG.info("Marking theory task ${task.name} as completed")
     doPostSubmission(task.course.id, task.id, emptySubmission)
   }
@@ -165,7 +174,14 @@ class MarketplaceSubmissionsConnector {
 
     val course = task.course
 
-    val submission = MarketplaceSubmission(task.id, task.status, solutionText, solutionFiles, course.marketplaceCourseVersion)
+    val submission = MarketplaceSubmission(
+      task.id,
+      task.status,
+      solutionText,
+      solutionFiles,
+      course.marketplaceCourseVersion,
+      PermanentInstallationID.get()
+    )
 
     val postedSubmission = doPostSubmission(course.id, task.id, submission).onError { error("failed to post submission") }
     submission.id = postedSubmission.id

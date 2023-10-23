@@ -17,6 +17,11 @@ object EduFormatNames {
   const val TASK = "task"
   const val ITEM = "item"
 
+
+  // marketplace
+  const val SOLUTION = "solution"
+  const val SUBMISSIONS = "submissions"
+
   // vendor
   const val EMAIL = "email"
   const val NAME = "name"

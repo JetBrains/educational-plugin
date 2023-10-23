@@ -3,29 +3,18 @@ package com.jetbrains.edu.learning.marketplace.api
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.intellij.openapi.application.PermanentInstallationID
-import com.intellij.openapi.components.Service
-import com.intellij.openapi.components.service
-import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.util.NlsSafe
-import com.intellij.ui.JBAccountInfoService
-import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.MARKETPLACE
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.SOLUTION
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.SUBMISSIONS
 import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
 import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
-import com.jetbrains.edu.learning.isUnitTestMode
-import com.jetbrains.edu.learning.marketplace.MARKETPLACE
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.stepik.api.SOLUTION
-import com.jetbrains.edu.learning.stepik.api.SUBMISSIONS
 import com.jetbrains.edu.learning.submissions.SolutionFile
 import com.jetbrains.edu.learning.submissions.Submission
 import org.jetbrains.annotations.TestOnly
-import java.util.concurrent.TimeUnit
 
 const val ID = "id"
 const val NAME = "name"
@@ -57,27 +46,7 @@ class MarketplaceAccount : OAuthAccount<JBAccountUserInfo> {
 
   constructor(jbAccountUserInfo: JBAccountUserInfo) : super(jbAccountUserInfo)
 
-  @NlsSafe
   override val servicePrefix: String = MARKETPLACE
-
-  @RequiresBackgroundThread
-  fun getJBAccessToken(jbAccountInfoService: JBAccountInfoService): String? {
-    var success = false
-    return try {
-      val jbAccessToken = jbAccountInfoService.accessToken.get(30, TimeUnit.SECONDS)
-      success = jbAccessToken != null
-      jbAccessToken
-    }
-    catch (e: Exception) {
-      LOG.warn(e)
-      null
-    }
-    finally {
-      if (GetJBATokenSuccessRecorder.getInstance().updateState(success)) {
-        EduCounterUsageCollector.obtainJBAToken(success)
-      }
-    }
-  }
 
   fun checkTheSameUserAndUpdate(currentJbaUser: JBAccountUserInfo): Boolean {
     return if (userInfo.jbaLogin == currentJbaUser.jbaLogin) {
@@ -89,33 +58,6 @@ class MarketplaceAccount : OAuthAccount<JBAccountUserInfo> {
     else {
       false
     }
-  }
-
-  companion object {
-    private val LOG = logger<MarketplaceAccount>()
-
-    fun isJBALoggedIn(): Boolean = JBAccountInfoService.getInstance()?.userData != null
-
-    fun getJBAIdToken(): String? = JBAccountInfoService.getInstance()?.idToken
-  }
-}
-
-@Service
-private class GetJBATokenSuccessRecorder {
-  @Volatile
-  private var currentState: Boolean? = null
-
-  /**
-   * Returns `true` if state changed, `false` otherwise
-   */
-  fun updateState(newState: Boolean): Boolean {
-    val oldState = currentState
-    currentState = newState
-    return oldState != newState
-  }
-
-  companion object {
-    fun getInstance(): GetJBATokenSuccessRecorder = service()
   }
 }
 
@@ -147,6 +89,7 @@ class CoursesInfos {
   lateinit var myCoursesInfoList: CoursesInfoList
 }
 
+@Suppress("unused")
 class Author {
   @JsonProperty(NAME)
   var name: String = ""
@@ -190,6 +133,7 @@ class UpdateData {
   lateinit var data: Updates
 }
 
+@Suppress("unused")
 @JsonIgnoreProperties(ignoreUnknown = true)
 class Updates {
   @JsonProperty(TOTAL)
@@ -261,16 +205,20 @@ class MarketplaceSubmission : Submission {
 
   constructor()
 
-  // used to mark TheoryTasks solved
-  constructor(task: TheoryTask) : this(task.id, CheckStatus.Solved, "", null, task.course.marketplaceCourseVersion)
-
-  constructor(taskId: Int, checkStatus: CheckStatus, solutionText: String, solutionFiles: List<SolutionFile>?, courseVersion: Int) {
+  constructor(
+    taskId: Int,
+    checkStatus: CheckStatus,
+    solutionText: String,
+    solutionFiles: List<SolutionFile>?,
+    courseVersion: Int,
+    uuid: String
+  ) {
     this.taskId = taskId
     this.status = checkStatus.rawStatus
     this.solutionFiles = solutionFiles
     this.courseVersion = courseVersion
     solution = solutionText
-    uuid = if (!isUnitTestMode) PermanentInstallationID.get() else "test-uuid"
+    this.uuid = uuid
   }
 }
 

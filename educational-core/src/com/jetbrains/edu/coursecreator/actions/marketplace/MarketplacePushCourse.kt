@@ -70,7 +70,7 @@ class MarketplacePushCourse(
       return
     }
 
-    CompletableFuture.supplyAsync({ connector.loadHubToken(currentAccount) }, ProcessIOExecutorService.INSTANCE)
+    CompletableFuture.supplyAsync({ connector.loadHubToken() }, ProcessIOExecutorService.INSTANCE)
       .handle { hubToken, exception ->
         if (exception != null) {
           showFailedToPushCourseNotification(project, course.name)

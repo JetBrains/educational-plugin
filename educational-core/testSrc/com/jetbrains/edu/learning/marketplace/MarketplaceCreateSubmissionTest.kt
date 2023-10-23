@@ -47,7 +47,7 @@ class MarketplaceCreateSubmissionTest : EduTestCase() {
     firstSolutionFile.placeholders = listOf(placeholder)
     val objectMapper = MarketplaceSubmissionsConnector.getInstance().objectMapper
     val solutionText = objectMapper.writeValueAsString(solutionFiles).trimIndent()
-    val submission = MarketplaceSubmission(eduTask.id, eduTask.status, solutionText, solutionFiles, course.marketplaceCourseVersion)
+    val submission = MarketplaceSubmission(eduTask.id, eduTask.status, solutionText, solutionFiles, course.marketplaceCourseVersion, "test-uuid")
 
     doTest(submission, """
       |status: $submissionStatus

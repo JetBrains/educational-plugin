@@ -6,13 +6,13 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.intellij.ui.EditorNotifications
+import com.intellij.ui.JBAccountInfoService
 import com.jetbrains.edu.learning.authUtils.ConnectorUtils
 import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.invokeLater
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount.Companion.getJBAIdToken
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProvider.Companion.MARKETPLACE_GROUP_ID
@@ -38,6 +38,8 @@ fun getJBAUserInfo(): JBAccountUserInfo? {
   val payload = String(Base64.getUrlDecoder().decode(parts[1]))
   return ConnectorUtils.createMapper().readValue(payload, JBAccountUserInfo::class.java)
 }
+
+private fun getJBAIdToken(): String? = JBAccountInfoService.getInstance()?.idToken
 
 fun Course.updateCourseItems() {
   visitSections { section -> section.generateId() }
