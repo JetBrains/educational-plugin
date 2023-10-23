@@ -176,7 +176,7 @@ val HyperskillProject.eduEnvironment: String?
 
 val HyperskillAccount.profileUrl: String get() = "$HYPERSKILL_PROFILE_PATH${userInfo.id}"
 
-fun markTheoryTaskAsCompleted(project: Project, task: TheoryTask) {
+fun markHyperskillTheoryTaskAsCompleted(project: Project, task: TheoryTask) {
   runInBackground(project, EduCoreBundle.message("hyperskill.posting.theory"), false) {
     HyperskillConnector.getInstance().markTheoryCompleted(task.id)
   }

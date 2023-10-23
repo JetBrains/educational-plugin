@@ -123,7 +123,7 @@ fun EduCourse.updateFeaturedStatus() {
   }
 }
 
-fun markTheoryTaskAsCompleted(project: Project, task: TheoryTask) {
+fun markMarketplaceTheoryTaskAsCompleted(project: Project, task: TheoryTask) {
   runInBackground(project, EduCoreBundle.message("marketplace.posting.theory"), false) {
     MarketplaceSubmissionsConnector.getInstance().markTheoryTaskAsCompleted(task)
   }
