@@ -182,7 +182,9 @@ private fun readCourseraCourseJson(reader: () -> Reader): Course? {
     val courseMapper = getCourseMapper()
     courseMapper.addMixIn(CourseraCourse::class.java, CourseraCourseMixin::class.java)
     courseMapper.configureCourseMapper(false)
-    var courseNode = courseMapper.readTree(reader()) as ObjectNode
+    var courseNode = reader().use { currentReader ->
+      courseMapper.readTree(currentReader) as ObjectNode
+    }
     courseNode = migrate(courseNode)
     courseMapper.treeToValue<CourseraCourse?>(courseNode)
   }

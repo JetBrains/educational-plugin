@@ -31,9 +31,13 @@ private val LOG = logger<LocalEduCourseMixin>()
 fun readCourseJson(reader: () -> Reader): Course? {
   return try {
     val courseMapper = getCourseMapper()
-    val isArchiveEncrypted = isArchiveEncrypted(reader(), courseMapper)
+    val isArchiveEncrypted = reader().use { currentReader ->
+      isArchiveEncrypted(currentReader, courseMapper)
+    }
     courseMapper.configureCourseMapper(isArchiveEncrypted)
-    var courseNode = courseMapper.readTree(reader()) as ObjectNode
+    var courseNode = reader().use { currentReader ->
+      courseMapper.readTree(currentReader) as ObjectNode
+    }
     courseNode = migrate(courseNode)
     courseMapper.treeToValue(courseNode)
   }
