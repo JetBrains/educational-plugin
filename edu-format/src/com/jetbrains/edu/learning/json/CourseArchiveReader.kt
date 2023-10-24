@@ -2,6 +2,7 @@
 
 package com.jetbrains.edu.learning.json
 
+import com.fasterxml.jackson.core.JsonToken
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -28,6 +29,8 @@ import java.util.*
 
 private val LOG = logger<LocalEduCourseMixin>()
 
+private class CourseJsonParsingException(message: String): Exception(message)
+
 fun readCourseJson(reader: () -> Reader): Course? {
   return try {
     val courseMapper = getCourseMapper()
@@ -42,17 +45,58 @@ fun readCourseJson(reader: () -> Reader): Course? {
     courseMapper.treeToValue(courseNode)
   }
   catch (e: IOException) {
-    LOG.severe("Failed to read course json \n" + e.message)
+    LOG.severe("Failed to read course json: ${e.message}")
+    null
+  }
+  catch (e: CourseJsonParsingException) {
+    LOG.severe("Course json format error: ${e.message}")
     null
   }
 }
 
+@Throws(IOException::class, CourseJsonParsingException::class)
 private fun isArchiveEncrypted(reader: Reader, courseMapper: ObjectMapper): Boolean {
-  val courseNode = courseMapper.readTree(reader) as ObjectNode
-  val version = courseNode.get(VERSION)?.asInt() ?: error("Format version is null")
+  val (version, courseType) = getFormatVersionAndCourseTypeFromJson(reader, courseMapper)
+
   if (version >= 12) return true
-  val courseType = courseNode.get(COURSE_TYPE)?.asText()
   return courseType == MARKETPLACE
+}
+
+@Throws(IOException::class, CourseJsonParsingException::class)
+private fun getFormatVersionAndCourseTypeFromJson(
+  reader: Reader,
+  courseMapper: ObjectMapper
+): Pair<Int, String?> = courseMapper.createParser(reader).use { parser ->
+  var version: Int? = null
+  var courseType: String? = null
+
+  // read start object token
+  parser.nextToken()
+  if (!parser.hasToken(JsonToken.START_OBJECT)) throw CourseJsonParsingException("No opening bracket in course.json")
+
+  // read object fields until the END_OBJECT
+  while (parser.nextToken() != null && !parser.hasToken(JsonToken.END_OBJECT)) {
+
+    // if the object is not finished, we expect a field name
+    if (!parser.hasToken(JsonToken.FIELD_NAME)) throw CourseJsonParsingException("Unexpected token ${parser.currentToken} in course.json")
+
+    when (parser.currentName) {
+      VERSION -> {
+        version = parser.nextIntValue(-1)
+        if (version == -1) throw CourseJsonParsingException("Course format version specified incorrectly")
+      }
+      COURSE_TYPE -> courseType = parser.nextTextValue()
+      else -> {
+        parser.nextToken()
+        parser.skipChildren()
+      }
+    }
+
+    if (version != null && courseType != null) break
+  }
+
+  version ?: throw CourseJsonParsingException("Format version is not specified")
+  return Pair(version, courseType)
 }
 
 fun migrate(jsonObject: ObjectNode): ObjectNode {
