@@ -1,15 +1,10 @@
 package com.jetbrains.edu.learning
 
-import com.fasterxml.jackson.databind.node.ObjectNode
 import com.jetbrains.edu.learning.courseFormat.BinaryContents
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.TextualContents
 import com.jetbrains.edu.learning.courseFormat.UndeterminedContents
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
-import com.jetbrains.edu.learning.json.getCourseMapper
-import com.jetbrains.edu.learning.json.readCourseJson
-import java.io.File
-import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.extension
 import kotlin.test.assertIs

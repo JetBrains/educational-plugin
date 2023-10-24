@@ -46,6 +46,7 @@ import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.MarkdownParser
 import java.io.IOException
+import java.io.Reader
 import java.nio.charset.StandardCharsets
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutionException
@@ -106,12 +107,12 @@ object EduUtilsKt {
     return getLocalCourse(zipFilePath, ::readCourseraCourseJson)
   }
 
-  fun getLocalCourse(zipFilePath: String, readCourseJson: (String) -> Course? = ::readCourseJson): Course? {
+  fun getLocalCourse(zipFilePath: String, readCourseJson: (() -> Reader) -> Course? = ::readCourseJson): Course? {
     try {
       return ZipFile(zipFilePath).use { zipFile ->
         val entry = zipFile.getEntry(COURSE_META_FILE) ?: return null
-        val jsonText = zipFile.getInputStream(entry).reader(StandardCharsets.UTF_8).use { it.readText() }
-        readCourseJson(jsonText)
+        val reader = { zipFile.getInputStream(entry).reader(StandardCharsets.UTF_8) }
+        readCourseJson(reader)
       }
     }
     catch (e: IOException) {
@@ -176,12 +177,12 @@ object EduUtilsKt {
   private val LOG = logger<EduUtilsKt>()
 }
 
-private fun readCourseraCourseJson(jsonText: String): Course? {
+private fun readCourseraCourseJson(reader: () -> Reader): Course? {
   return try {
     val courseMapper = getCourseMapper()
     courseMapper.addMixIn(CourseraCourse::class.java, CourseraCourseMixin::class.java)
     courseMapper.configureCourseMapper(false)
-    var courseNode = courseMapper.readTree(jsonText) as ObjectNode
+    var courseNode = courseMapper.readTree(reader()) as ObjectNode
     courseNode = migrate(courseNode)
     courseMapper.treeToValue<CourseraCourse?>(courseNode)
   }

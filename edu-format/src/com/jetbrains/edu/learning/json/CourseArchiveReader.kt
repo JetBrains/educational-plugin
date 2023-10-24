@@ -22,17 +22,18 @@ import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.COURSE_TYPE
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.VERSION
 import org.jetbrains.annotations.VisibleForTesting
 import java.io.IOException
+import java.io.Reader
 import java.text.SimpleDateFormat
 import java.util.*
 
 private val LOG = logger<LocalEduCourseMixin>()
 
-fun readCourseJson(jsonText: String): Course? {
+fun readCourseJson(reader: () -> Reader): Course? {
   return try {
     val courseMapper = getCourseMapper()
-    val isArchiveEncrypted = isArchiveEncrypted(jsonText, courseMapper)
+    val isArchiveEncrypted = isArchiveEncrypted(reader(), courseMapper)
     courseMapper.configureCourseMapper(isArchiveEncrypted)
-    var courseNode = courseMapper.readTree(jsonText) as ObjectNode
+    var courseNode = courseMapper.readTree(reader()) as ObjectNode
     courseNode = migrate(courseNode)
     courseMapper.treeToValue(courseNode)
   }
@@ -42,8 +43,8 @@ fun readCourseJson(jsonText: String): Course? {
   }
 }
 
-private fun isArchiveEncrypted(jsonText: String, courseMapper: ObjectMapper): Boolean {
-  val courseNode = courseMapper.readTree(jsonText) as ObjectNode
+private fun isArchiveEncrypted(reader: Reader, courseMapper: ObjectMapper): Boolean {
+  val courseNode = courseMapper.readTree(reader) as ObjectNode
   val version = courseNode.get(VERSION)?.asInt() ?: error("Format version is null")
   if (version >= 12) return true
   val courseType = courseNode.get(COURSE_TYPE)?.asText()
