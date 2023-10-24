@@ -259,7 +259,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
       return OpenProjectTask {
         forceOpenInNewFrame = true
         isNewProject = true
-        isProjectCreatedWithWizard = false
+        isProjectCreatedWithWizard = true
         runConfigurators = true
         beforeInit = {
           it.putUserData(EDU_PROJECT_CREATED, true)
