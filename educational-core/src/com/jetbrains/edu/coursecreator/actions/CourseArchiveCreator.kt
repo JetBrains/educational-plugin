@@ -80,6 +80,13 @@ class CourseArchiveCreator(
           val writer = OutputStreamWriter(outputStream, UTF_8)
           generateJson(writer, courseCopy)
         }
+
+        val iconFile = project.courseDir.findChild(EduFormatNames.COURSE_ICON_FILE)
+        iconFile?.inputStream?.use { iconInputStream ->
+          outputStream.withNewEntry(EduFormatNames.COURSE_ICON_FILE) {
+            iconInputStream.copyTo(outputStream)
+          }
+        }
       }
       synchronize(project)
       null

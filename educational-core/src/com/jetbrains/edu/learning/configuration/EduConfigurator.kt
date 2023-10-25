@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -87,7 +88,7 @@ interface EduConfigurator<Settings : EduProjectSettings> {
            EduUtilsKt.isTaskDescriptionFile(name) || isConfigFile(file) ||
            // Special files
            ancestorNames.contains(CCUtils.GENERATED_FILES_FOLDER) || EduNames.HINTS == name || EduNames.STEPIK_IDS_JSON == name ||
-           EduNames.COURSE_IGNORE == name
+           EduNames.COURSE_IGNORE == name || EduFormatNames.COURSE_ICON_FILE == name
   }
 
   /**
