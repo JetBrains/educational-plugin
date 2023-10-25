@@ -6,7 +6,6 @@ import com.intellij.ide.util.PropertiesComponent
 import com.intellij.notification.Notifications
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
@@ -14,7 +13,6 @@ import com.intellij.openapi.ui.MessageConstants
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.Messages.showYesNoCancelDialog
 import com.jetbrains.edu.coursecreator.CCNotificationUtils
-import com.jetbrains.edu.coursecreator.CCUtils.saveOpenedDocuments
 import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchiveAction.Companion.AUTHOR_NAME
 import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchiveAction.Companion.LAST_ARCHIVE_LOCATION
 import com.jetbrains.edu.coursecreator.actions.checkAllTasks.checkAllTasksInItemContainer
@@ -99,7 +97,7 @@ class CreateCourseArchiveProgressTask(
     course.vendor = Vendor(authorName)
     PropertiesComponent.getInstance(project).setValue(AUTHOR_NAME, authorName)
 
-    val errorMessage = createCourseArchive(project, locationPath)
+    val errorMessage = CourseArchiveCreator(project, locationPath).createArchive()
     if (errorMessage == null) {
       CCNotificationUtils.showNotification(
         project,
@@ -111,14 +109,6 @@ class CreateCourseArchiveProgressTask(
     } else {
       Messages.showErrorDialog(project, errorMessage, EduCoreBundle.message("error.failed.to.create.course.archive"))
     }
-  }
-
-  /**
-   * @return null when course archive was created successfully, non-empty error message otherwise
-   */
-  private fun createCourseArchive(project: Project, location: String): String? {
-    saveOpenedDocuments(project)
-    return ApplicationManager.getApplication().runWriteAction<String>(CourseArchiveCreator(project, location))
   }
 
   class ShowFileAction(val path: String) : AnAction(

@@ -3,7 +3,6 @@ package com.jetbrains.edu.coursecreator.ui
 import com.intellij.CommonBundle
 import com.intellij.ide.RecentProjectsManager
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
@@ -97,7 +96,7 @@ class CCCreateCoursePreviewDialog(
       val archiveName = if (courseName.isNullOrEmpty()) EduNames.COURSE else FileUtil.sanitizeFileName(courseName)
       val archiveLocation = "${folder.path}/$archiveName.zip"
       close(OK_EXIT_CODE)
-      val errorMessage = ApplicationManager.getApplication().runWriteAction<String>(CourseArchiveCreator(project, archiveLocation))
+      val errorMessage = CourseArchiveCreator(project, archiveLocation).createArchive()
 
       if (errorMessage.isNullOrEmpty()) {
         val archivePath = FileUtil.join(FileUtil.toSystemDependentName(folder.path), "$archiveName.zip")
