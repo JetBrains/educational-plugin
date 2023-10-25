@@ -57,9 +57,9 @@ abstract class CourseArchiveTestBase : EduActionTestCase() {
     return StringUtilRt.convertLineSeparators(json).replace("\\n\\n".toRegex(), "\n")
   }
 
-  protected open fun getArchiveCreator(): CourseArchiveCreator =
-    CourseArchiveCreator(myFixture.project, "${myFixture.project.basePath}/${CCUtils.GENERATED_FILES_FOLDER}/course.zip",
-                         TEST_AES_KEY)
+  protected open fun getArchiveCreator(
+    location: String = "${myFixture.project.basePath}/${CCUtils.GENERATED_FILES_FOLDER}/course.zip"
+  ): CourseArchiveCreator = CourseArchiveCreator(myFixture.project, location, TEST_AES_KEY)
 
   private fun getTestFile(): String {
     return getTestName(true).trim() + ".json"

@@ -11,18 +11,18 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
-import com.jetbrains.edu.learning.courseFormat.CourseMode
-import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.EduFileErrorHighlightLevel
-import com.jetbrains.edu.learning.courseFormat.PluginInfo
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.setUpPluginDependencies
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
+import java.nio.file.Files
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.zip.ZipFile
+import kotlin.text.Charsets.UTF_8
 
 class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
 
@@ -818,6 +818,49 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
       }
     }
     doTest()
+  }
+
+  fun `test course archive has both course_json and courseIcon_svg inside`() {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      additionalFile(EduFormatNames.COURSE_ICON_FILE)
+      additionalFile("not a course icon.svg")
+    }
+
+    val courseArchiveFile = kotlin.io.path.createTempFile("course.zip")
+    try {
+      val archiveCreator = getArchiveCreator(courseArchiveFile.toString())
+      archiveCreator.compute()
+
+      ZipFile(courseArchiveFile.toFile()).use { zip ->
+        assertNotNull("Course zip file must contain a course icon", zip.getEntry(EduFormatNames.COURSE_ICON_FILE))
+
+        val jsonEntry = zip.getEntry(EduFormatNames.COURSE_META_FILE)
+        zip.getInputStream(jsonEntry).use { input ->
+          val json = input.reader(UTF_8).readText()
+          assertFalse("Course json must not contain course icon file", json.contains(EduFormatNames.COURSE_ICON_FILE))
+        }
+      }
+    } finally {
+      Files.delete(courseArchiveFile)
+    }
+  }
+
+  fun `test courseIcon_svg file is not added inside the course archive`() {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      additionalFile("not a course icon.svg")
+    }
+
+    val courseArchiveFile = kotlin.io.path.createTempFile("course.zip")
+    try {
+      val archiveCreator = getArchiveCreator(courseArchiveFile.toString())
+      archiveCreator.compute()
+
+      ZipFile(courseArchiveFile.toFile()).use { zip ->
+        assertNull("Course zip file must not contain a course icon", zip.getEntry(EduFormatNames.COURSE_ICON_FILE))
+      }
+    } finally {
+      Files.delete(courseArchiveFile)
+    }
   }
 
   override fun getTestDataPath(): String {
