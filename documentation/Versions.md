@@ -1010,3 +1010,6 @@ excludes
 * any file or directory with the name `file1.txt`;
 * the file `dir/file2.png` relative to the course root directory (because it contains `/` inside the glob pattern);
 * Any *directory* with the name `dir2`.
+
+#### Version 3
+Now, all configurators also exclude the `courseIcon.svg` file.
