@@ -7,4 +7,8 @@ import com.jetbrains.rdserver.core.protocolModel
 
 // BACKCOMPAT: 2023.2. Inline it
 @Suppress("UnstableApiUsage")
-fun getProjectViewModel(session: ClientProjectSession): ProjectViewModel = session.protocolModel.projectViewModel
+typealias ProjectSession = ClientProjectSession
+
+// BACKCOMPAT: 2023.2. Inline it
+@Suppress("UnstableApiUsage")
+fun getProjectViewModel(session: ProjectSession): ProjectViewModel = session.protocolModel.projectViewModel

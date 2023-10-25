@@ -4,4 +4,4 @@ import com.intellij.openapi.application.impl.ApplicationInfoImpl
 
 // BACKCOMPAT: 2023.2. Inline it.
 @Suppress("UnstableApiUsage")
-fun getBuildNumber() = ApplicationInfoImpl.getShadowInstanceImpl().pluginCompatibleBuild
+fun getBuildNumber(): String = ApplicationInfoImpl.getShadowInstanceImpl().pluginCompatibleBuild
