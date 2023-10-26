@@ -447,6 +447,7 @@ project(":") {
       // To enable dynamic reloading, change value to `true` and disable `EduDynamicPluginListener`
       autoReloadPlugins = false
       jvmArgs("-Xmx2g")
+      jvmArgs("-Dide.experimental.ui=true")
 
       // Uncomment to show localized messages
       // jvmArgs("-Didea.l10n=true")
