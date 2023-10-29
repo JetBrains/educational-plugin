@@ -13,12 +13,8 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
-@Suppress("ComponentNotRegistered")  // educational-core.xml
-class CCEditCourseArchive : DumbAwareAction(
-  EduCoreBundle.lazyMessage("action.unpack.and.edit.course.archive.text"),
-  EduCoreBundle.lazyMessage("action.unpack.and.edit.course.archive.description"),
-  null
-) {
+class CCEditCourseArchive : DumbAwareAction() {
+
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = !RemoteEnvHelper.isRemoteDevServer()
   }

@@ -17,16 +17,11 @@ import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.jetbrains.annotations.NonNls
 
-class CCSolveAllTasksBeforeAction : DumbAwareAction(
-  EduCoreBundle.lazyMessage("action.solve.all.tasks.before.text"),
-  EduCoreBundle.lazyMessage("action.solve.all.tasks.before.description"),
-  null
-) {
+class CCSolveAllTasksBeforeAction : DumbAwareAction() {
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false

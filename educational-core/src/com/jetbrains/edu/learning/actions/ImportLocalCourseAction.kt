@@ -10,7 +10,6 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.DialogWrapperDialog
 import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.util.NlsActions.ActionText
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -26,12 +25,9 @@ import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import org.jetbrains.annotations.NonNls
 import java.awt.Component
-import java.util.function.Supplier
 
-@Suppress("ComponentNotRegistered") // educational-core.xml
-open class ImportLocalCourseAction(
-  text: Supplier<@ActionText String> = EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk.text")
-) : DumbAwareAction(text, EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk.description"), null) {
+class ImportLocalCourseAction : DumbAwareAction() {
+
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = !RemoteEnvHelper.isRemoteDevServer()
   }

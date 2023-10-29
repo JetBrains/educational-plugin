@@ -24,7 +24,6 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
 import com.jetbrains.edu.learning.getTaskFile
-import com.jetbrains.edu.learning.messages.EduCoreBundle.lazyMessage
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.placeholder.PlaceholderHighlightingManager.showPlaceholders
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.Companion.previewTaskFile
@@ -37,7 +36,8 @@ import javax.swing.BoxLayout
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-class CCShowPreview : DumbAwareAction(lazyMessage("action.show.preview.text"), lazyMessage("action.show.preview.description"), null) {
+class CCShowPreview : DumbAwareAction() {
+
   override fun update(e: AnActionEvent) {
     val presentation = e.presentation
     presentation.isEnabledAndVisible = false

@@ -12,14 +12,8 @@ import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.ext.technologyName
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 
-@Suppress("ComponentNotRegistered")  // registered in educational-core.xml
-class CreateNewYouTrackIssue : DumbAwareAction(
-  EduCoreBundle.lazyMessage("action.Educational.CreateNewIssue.text"),
-  EduCoreBundle.lazyMessage("action.Educational.CreateNewIssue.description"),
-  null
-) {
+class CreateNewYouTrackIssue : DumbAwareAction() {
 
   override fun update(e: AnActionEvent) {
     val project = e.project

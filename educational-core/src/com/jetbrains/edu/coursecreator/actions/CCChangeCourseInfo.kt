@@ -9,14 +9,10 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
-import com.jetbrains.edu.learning.messages.EduCoreBundle.lazyMessage
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
 
-class CCChangeCourseInfo : DumbAwareAction(
-  lazyMessage("action.edit.course.information.text"),
-  lazyMessage("action.edit.course.information.description"),
-  null
-) {
+class CCChangeCourseInfo : DumbAwareAction() {
+
   override fun update(event: AnActionEvent) {
     val project = event.project ?: return
     val presentation = event.presentation

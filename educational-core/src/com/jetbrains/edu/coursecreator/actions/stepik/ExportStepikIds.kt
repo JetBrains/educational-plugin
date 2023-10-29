@@ -14,17 +14,10 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.StudyItem
-import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
 import org.jetbrains.annotations.NonNls
 
-@Suppress("ComponentNotRegistered") // educational-core.xml
-class ExportStepikIds : DumbAwareAction(
-  EduCoreBundle.lazyMessage("action.export.ids.text", StepikNames.STEPIK),
-  EduCoreBundle.lazyMessage("action.export.ids.description", StepikNames.STEPIK, "json"),
-  null
-) {
+class ExportStepikIds : DumbAwareAction() {
 
   private fun <T> JsonObject.addChildren(propertyName: String, children: List<T>, serializeChild: (T) -> JsonElement) {
     val jsonArray = JsonArray()

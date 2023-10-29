@@ -20,17 +20,13 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.SECTION
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.messages.EduCoreBundle.lazyMessage
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import org.jetbrains.annotations.NonNls
 import java.util.*
 import java.util.stream.Collectors
 
-class CCWrapWithSection : DumbAwareAction(
-  lazyMessage("action.wrap.with.section.text"),
-  lazyMessage("action.wrap.with.section.description"),
-  null
-) {
+class CCWrapWithSection : DumbAwareAction() {
+
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project
     val virtualFiles = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(e.dataContext)

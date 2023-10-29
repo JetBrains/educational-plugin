@@ -15,17 +15,14 @@ import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
 import com.jetbrains.edu.coursecreator.CCUtils.updateHigherElements
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
-import com.jetbrains.edu.learning.messages.EduCoreBundle.lazyMessage
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.isConfigFile
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
 import org.jetbrains.annotations.NonNls
 import java.io.IOException
 
-class CCRemoveSection : DumbAwareAction(
-  lazyMessage("action.remove.section.text"),
-  lazyMessage("action.remove.section.description"), null
-) {
+class CCRemoveSection : DumbAwareAction() {
+
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project
     val selectedFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY)

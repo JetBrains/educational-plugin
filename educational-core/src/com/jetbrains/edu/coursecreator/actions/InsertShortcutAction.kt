@@ -42,12 +42,8 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.*
 
-@Suppress("ComponentNotRegistered")
-open class InsertShortcutAction : AnAction(
-  EduCoreBundle.lazyMessage("action.insert.shortcut.text"),
-  EduCoreBundle.lazyMessage("action.insert.shortcut.description"),
-  null
-) {
+open class InsertShortcutAction : AnAction() {
+
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val editor = CommonDataKeys.EDITOR.getData(e.dataContext) ?: return

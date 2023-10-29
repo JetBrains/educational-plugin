@@ -11,12 +11,8 @@ import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
-@Suppress("ComponentNotRegistered")  // educational-core.xml
-class CCUnpackCourseArchive : DumbAwareAction(
-  EduCoreBundle.lazyMessage("action.unpack.course.archive.text"),
-  EduCoreBundle.lazyMessage("action.unpack.course.archive.description"),
-  null
-) {
+class CCUnpackCourseArchive : DumbAwareAction() {
+
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = !RemoteEnvHelper.isRemoteDevServer()
   }
