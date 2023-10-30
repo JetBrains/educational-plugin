@@ -11,6 +11,7 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.actionSystem.PlatformDataKeys.LAST_ACTIVE_FILE_EDITOR
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Document
@@ -54,10 +55,11 @@ class ApplyCodeAction : DumbAwareActionButton(
       return
     }
 
+    closeDiffWindow(e)
     showApplySubmissionCodeSuccessfulNotification(project)
   }
 
-  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
   private fun getConfirmationFromDialog(project: Project): Boolean = when (Messages.showYesNoDialog(
     project,
@@ -93,6 +95,8 @@ class ApplyCodeAction : DumbAwareActionButton(
       document.setText(submissionText)
     }
   }
+
+  private fun closeDiffWindow(e: AnActionEvent) = e.getData(LAST_ACTIVE_FILE_EDITOR)?.dispose()
 
   @Suppress("DialogTitleCapitalization")
   private fun showApplySubmissionCodeSuccessfulNotification(project: Project) = Notification(
