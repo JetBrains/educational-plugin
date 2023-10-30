@@ -16,6 +16,8 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.courseFormat.UserInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.serialization.CompositeSerializationFilter
+import com.jetbrains.edu.learning.serialization.TransientFieldSerializationFilter
 import org.jdom.Element
 import org.jetbrains.builtInWebServer.BuiltInServerOptions
 import org.jetbrains.ide.BuiltInServerManager
@@ -110,7 +112,14 @@ fun <UInfo : UserInfo> Account<UInfo>.serialize(): Element? {
   if (PasswordSafe.instance.isMemoryOnly) {
     return null
   }
-  val accountElement = XmlSerializer.serialize(this, SkipDefaultValuesSerializationFilters())
+  val serializationFilter = CompositeSerializationFilter(
+    TransientFieldSerializationFilter,
+    SkipDefaultValuesSerializationFilters()
+  )
+  // Do we really need this two-step serialization?
+  // Probably, it's worth merging account and user info classes into a single one
+  // or copying everything from user info to an account object
+  val accountElement = XmlSerializer.serialize(this, serializationFilter)
   XmlSerializer.serializeInto(userInfo, accountElement)
   return accountElement
 }
