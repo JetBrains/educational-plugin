@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
 import org.jdom.Element
 
 @State(name = JsCheckiOSettings.SERVICE_NAME, storages = [Storage("other.xml")])
-class JsCheckiOSettings : PersistentStateComponent<Element?> {
+class JsCheckiOSettings : PersistentStateComponent<Element> {
   @get:Transient
   @set:Transient
   var account: CheckiOAccount? = null
