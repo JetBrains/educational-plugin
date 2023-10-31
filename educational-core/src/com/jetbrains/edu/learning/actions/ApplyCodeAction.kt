@@ -26,7 +26,6 @@ import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import org.jetbrains.annotations.NonNls
 
 class ApplyCodeAction : DumbAwareActionButton(
@@ -34,15 +33,16 @@ class ApplyCodeAction : DumbAwareActionButton(
 ) {
 
   override fun updateButton(e: AnActionEvent) {
+    e.presentation.isEnabledAndVisible = false
     val project = e.project ?: return
-    e.presentation.isEnabledAndVisible = project.isStudentProject() && SubmissionsManager.getInstance(project).submissionsSupported()
+    e.presentation.isEnabledAndVisible = project.isStudentProject() && e.isFileNamesPresented()
   }
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     if (!getConfirmationFromDialog(project)) return
 
-    val diffRequestChain = e.getDiffRequestChain()
+    val diffRequestChain = e.getDiffRequestChain() ?: return showApplySubmissionCodeFailedNotification(project)
     val fileNames = diffRequestChain.getUserData(FILENAMES_KEY) ?: return showApplySubmissionCodeFailedNotification(project)
 
     try {
@@ -62,6 +62,8 @@ class ApplyCodeAction : DumbAwareActionButton(
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
+  private fun AnActionEvent.isFileNamesPresented() = getDiffRequestChain()?.getUserData(FILENAMES_KEY) != null
+
   private fun getConfirmationFromDialog(project: Project): Boolean = when (Messages.showYesNoDialog(
     project,
     EduCoreBundle.message("action.apply.code.from.submission.dialog.text"),
@@ -74,9 +76,9 @@ class ApplyCodeAction : DumbAwareActionButton(
     else -> false
   }
 
-  private fun AnActionEvent.getDiffRequestChain(): DiffRequestChain {
-    val chainDiffVirtualFile = getData(CommonDataKeys.VIRTUAL_FILE) as ChainDiffVirtualFile
-    return chainDiffVirtualFile.chain
+  private fun AnActionEvent.getDiffRequestChain(): DiffRequestChain? {
+    val chainDiffVirtualFile = getData(CommonDataKeys.VIRTUAL_FILE) as? ChainDiffVirtualFile
+    return chainDiffVirtualFile?.chain
   }
 
   private fun readLocalDocuments(fileNames: List<String>): List<Document> = runReadAction {
