@@ -116,8 +116,8 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
   }
 
   fun getStages(projectId: Int): List<HyperskillStage>? {
-    return withPageIteration { hyperskillEndpoints.stages(projectId, it).executeAndExtractFromBody() }
-      .onError { return emptyList() }
+    return withPageIteration { page -> hyperskillEndpoints.stages(projectId, page).executeAndExtractFromBody() }
+      .onError { return null }
       .flatMap { it.stages }
   }
 
@@ -129,10 +129,17 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
   }
 
   private fun getStepSources(stepIds: List<Int>): Result<List<HyperskillStepSource>, String> =
-    hyperskillEndpoints.steps(stepIds.joinToString(separator = ",")).executeAndExtractFromBody().flatMap { Ok(it.steps) }
+    withPageIteration { page ->
+      hyperskillEndpoints.steps(
+        stepIds.joinToString(separator = ","),
+        page
+      ).executeAndExtractFromBody()
+    }.flatMap { hyperskillStepsLists -> Ok(hyperskillStepsLists.flatMap { it.steps }) }
 
-  fun getStepsForTopic(topic: Int, page: Int = 1): Result<HyperskillStepsList, String> =
-    hyperskillEndpoints.steps(topic, page).executeAndExtractFromBody()
+  fun getStepsForTopic(topic: Int): Result<List<HyperskillStepSource>, String> =
+    withPageIteration { page ->
+      hyperskillEndpoints.steps(topic, page).executeAndExtractFromBody()
+    }.flatMap { hyperskillStepsLists -> Ok(hyperskillStepsLists.flatMap { it.steps }) }
 
   fun getStepSource(stepId: Int): Result<HyperskillStepSource, String> =
     hyperskillEndpoints.steps(stepId.toString()).executeAndExtractFromBody().flatMap {
@@ -224,21 +231,11 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
 
   fun getSubmissions(stepIds: Set<Int>): List<StepikBasedSubmission> {
     val userId = account?.userInfo?.id ?: return emptyList()
-    var currentPage = 1
-    val allSubmissions = mutableListOf<StepikBasedSubmission>()
-    while (true) {
-      val submissionsList = hyperskillEndpoints.submission(
-        userId, stepIds.joinToString(separator = ","),
-        currentPage
-      ).executeHandlingExceptions()?.body() ?: break
-      val submissions = submissionsList.submissions
-      allSubmissions.addAll(submissions)
-      if (submissions.isEmpty() || !submissionsList.meta.containsKey("has_next") || submissionsList.meta["has_next"] == false) {
-        break
-      }
-      currentPage += 1
+    return withPageIteration { page ->
+      hyperskillEndpoints.submissions(userId, stepIds.joinToString(separator = ","), page).executeAndExtractFromBody()
     }
-    return allSubmissions
+      .onError { return emptyList() }
+      .flatMap { it.submissions }
   }
 
   override fun getSubmissions(stepId: Int) = getSubmissions(setOf(stepId))
@@ -255,10 +252,9 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
     return withTokenRefreshIfFailed {
       val userId = account?.userInfo?.id
                    ?: return@withTokenRefreshIfFailed Err("Trying to get list of attempts for unauthorized user")
-      val attempts = hyperskillEndpoints.attempts(task.id, userId).executeParsingErrors(true).flatMap {
-        val result = it.body()?.attempts
-        if (result == null) Err(it.message()) else Ok(result)
-      }.onError { return@withTokenRefreshIfFailed Err(it) }
+      val attempts = withPageIteration { page -> hyperskillEndpoints.attempts(task.id, userId, page).executeAndExtractFromBody() }
+        .onError { return@withTokenRefreshIfFailed Err(it) }
+        .flatMap { it.attempts }
 
       val activeAttempt = attempts.firstOrNull { it.isActive && it.isRunning }
       Ok(activeAttempt)

@@ -249,11 +249,10 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     val connector = HyperskillConnector.getInstance()
     val topicId = topic ?: return Err("Topic must not be null")
 
-    val stepSources = withPageIteration { connector.getStepsForTopic(topicId, it) }
+    val stepSources = connector.getStepsForTopic(topicId)
       .onError { return Err(it) }
-      .flatMap {it.steps}
-      .filter { it.isRecommended || it.id == id }
-      .toMutableList()
+      .filter { it.isRecommended || it.id == id }.toMutableList()
+
     val theoryTask = stepSources.find { it.block?.name == HyperskillTaskType.TEXT.type }
     if (theoryTask != null) {
       stepSources.remove(theoryTask)

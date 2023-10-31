@@ -275,10 +275,10 @@ private fun getNextStep(taskId: Int): NextActivityInfo {
 }
 
 private fun getNextStepInTopic(topicId: Int, taskId: Int?): NextActivityInfo {
-  val steps = withPageIteration { HyperskillConnector.getInstance().getStepsForTopic(topicId)}.onError { error ->
+  val steps = HyperskillConnector.getInstance().getStepsForTopic(topicId).onError { error ->
     LOG.warn(error)
     null
-  }?.flatMap { it.steps }
+  }
 
   if (steps.isNullOrEmpty()) {
     return NextActivityInfo.NoActivity
@@ -312,7 +312,7 @@ private fun showNoNextActivityNotification(task: Task?, project: Project) {
     .notify(project)
 }
 
-fun <T: WithPaginationMetaData> withPageIteration(fetchData: (Int) -> Result<T, String>): Result<MutableList<T>, String> {
+fun <T: WithPaginationMetaData> withPageIteration(fetchData: (Int) -> Result<T, String>): Result<List<T>, String> {
   val acc = emptyList<T>().toMutableList()
   var page = 1
 
@@ -321,7 +321,7 @@ fun <T: WithPaginationMetaData> withPageIteration(fetchData: (Int) -> Result<T, 
     acc.add(result)
   } while (result.meta.hasNext)
 
-  return Ok(acc)
+  return Ok(acc.toList())
 }
 
 private sealed class NextActivityInfo {

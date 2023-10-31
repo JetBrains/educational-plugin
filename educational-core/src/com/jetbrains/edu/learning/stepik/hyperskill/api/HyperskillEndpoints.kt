@@ -16,16 +16,19 @@ interface HyperskillEndpoints {
   fun stages(@Query("project") projectId: Int, @Query("page") page: Int, @Query("page_size") pageSize: Int = 100): Call<StagesList>
 
   @GET("api/topics")
-  fun topics(@Query("stage") stageId: Int, @Query("page") page: Int): Call<TopicsList>
+  fun topics(@Query("stage") stageId: Int, @Query("page") page: Int, @Query("page_size") pageSize: Int = 100): Call<TopicsList>
 
   @GET("api/steps")
-  fun steps(@Query("ids", encoded = true) ids: String): Call<HyperskillStepsList>
+  fun steps(@Query("ids", encoded = true) ids: String, @Query("page") page: Int, @Query("page_size") pageSize: Int = 100): Call<HyperskillStepsList>
 
   @GET("api/steps")
   fun steps(@Query("topic") topic: Int, @Query("page") page: Int, @Query("page_size") pageSize: Int = 100): Call<HyperskillStepsList>
 
+  @GET("api/steps")
+  fun steps(@Query("ids", encoded = true) ids: String): Call<HyperskillStepsList>
+
   @GET("api/submissions")
-  fun submission(@Query("user") user: Int, @Query("step", encoded = true) step: String, @Query("page") page: Int): Call<SubmissionsList>
+  fun submissions(@Query("user") user: Int, @Query("step", encoded = true) step: String, @Query("page") page: Int, @Query("page_size") pageSize: Int = 100): Call<SubmissionsList>
 
   @GET("api/submissions/{id}")
   fun submission(@Path("id") submissionId: Int): Call<SubmissionsList>
@@ -40,7 +43,7 @@ interface HyperskillEndpoints {
   fun user(@Path("id") id: Int): Call<UsersList>
 
   @GET("api/attempts")
-  fun attempts(@Query("step") stepId: Int, @Query("user") userId: Int): Call<AttemptsList>
+  fun attempts(@Query("step") stepId: Int, @Query("user") userId: Int, @Query("page") page: Int, @Query("page_size") pageSize: Int = 100): Call<AttemptsList>
 
   @GET("api/attempts/{dataset_id}/dataset")
   fun dataset(@Path("dataset_id") datasetId: Int): Call<ResponseBody>

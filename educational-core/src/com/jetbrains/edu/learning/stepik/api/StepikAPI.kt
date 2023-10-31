@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.ChoiceStepSource
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
+import com.jetbrains.edu.learning.stepik.hyperskill.api.WithPaginationMetaData
 import com.jetbrains.edu.learning.submissions.SolutionFile
 import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.TEXT
@@ -126,10 +127,7 @@ class ChoiceStepSourcesList {
   lateinit var steps: List<ChoiceStepSource>
 }
 
-class SubmissionsList {
-  @JsonProperty(META)
-  lateinit var meta: Map<Any, Any>
-
+class SubmissionsList : WithPaginationMetaData() {
   @JsonProperty(SUBMISSIONS)
   lateinit var submissions: List<StepikBasedSubmission>
 }
@@ -139,7 +137,7 @@ class ProgressesList {
   lateinit var progresses: List<Progress>
 }
 
-class AttemptsList {
+class AttemptsList: WithPaginationMetaData() {
   @JsonProperty(ATTEMPTS)
   lateinit var attempts: List<Attempt>
 }
