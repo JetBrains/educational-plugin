@@ -1,36 +1,23 @@
 package com.jetbrains.edu.javascript.learning.checkio
 
-import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
-import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.javascript.learning.checkio.connectors.JsCheckiOOAuthConnector
-import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
-import org.jdom.Element
+import com.jetbrains.edu.learning.checkio.CheckiOSettingsBase
+import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
 
-@State(name = JsCheckiOSettings.SERVICE_NAME, storages = [Storage("other.xml")])
-class JsCheckiOSettings : PersistentStateComponent<Element> {
-  @get:Transient
-  @set:Transient
-  var account: CheckiOAccount? = null
-    set(account) {
-      field = account
-      JsCheckiOOAuthConnector.apply {
-        if (account != null) notifyUserLoggedIn() else notifyUserLoggedOut()
-      }
-    }
+private const val SERVICE_NAME = "JsCheckiOSettings"
 
-  override fun getState(): Element? {
-    return account?.serializeIntoService(SERVICE_NAME)
-  }
+@State(name = SERVICE_NAME, storages = [Storage("other.xml")])
+class JsCheckiOSettings : CheckiOSettingsBase() {
 
-  override fun loadState(settings: Element) {
-    account = CheckiOAccount.fromElement(settings)
-  }
+  override val serviceName: String
+    get() = SERVICE_NAME
+  override val checkiOOAuthConnector: CheckiOOAuthConnector
+    get() = JsCheckiOOAuthConnector
 
   companion object {
-    const val SERVICE_NAME = "JsCheckiOSettings"
     fun getInstance(): JsCheckiOSettings = service()
   }
 }

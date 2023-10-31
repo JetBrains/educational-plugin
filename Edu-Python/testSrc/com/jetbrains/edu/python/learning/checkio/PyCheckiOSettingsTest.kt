@@ -8,7 +8,6 @@ class PyCheckiOSettingsTest : EduSettingsServiceTestBase() {
     val settings = PyCheckiOSettings()
     settings.loadStateAndCheck("""
       <PyCheckiOSettings>
-        <option name="tokenExpiresIn" value="1698710755" />
         <CheckiOAccount>
           <option name="tokenExpiresIn" value="1698710755" />
           <option name="guest" value="false" />

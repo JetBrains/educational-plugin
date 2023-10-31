@@ -8,7 +8,6 @@ class JsCheckiOSettingsTest : EduSettingsServiceTestBase() {
     val settings = JsCheckiOSettings()
     settings.loadStateAndCheck("""
       <JsCheckiOSettings>
-        <option name="tokenExpiresIn" value="1698710755" />
         <CheckiOAccount>
           <option name="tokenExpiresIn" value="1698710755" />
           <option name="guest" value="false" />
