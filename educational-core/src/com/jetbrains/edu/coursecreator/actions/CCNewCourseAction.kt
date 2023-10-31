@@ -15,7 +15,7 @@ import java.util.function.Supplier
 class CCNewCourseAction(
   title: Supplier<@NlsActions.ActionText String> = EduCoreBundle.lazyMessage("action.new.course.default.text"),
   private val onOKAction: () -> Unit = {}
-) : DumbAwareAction(title, EduCoreBundle.lazyMessage("action.new.course.description"), null), ContextHelpProvider {
+) : DumbAwareAction(title), ContextHelpProvider {
 
   constructor(@NlsActions.ActionText title: String) : this(Supplier { title })
 

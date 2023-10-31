@@ -58,7 +58,7 @@ import org.jetbrains.annotations.NonNls
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
-class CheckAction() : ActionWithProgressIcon(lazyMessage("action.check.text"), lazyMessage("action.check.description")), DumbAware {
+class CheckAction() : ActionWithProgressIcon(), DumbAware {
 
   constructor(@NlsActions.ActionText checkLabel: String) : this() {
     templatePresentation.text = checkLabel

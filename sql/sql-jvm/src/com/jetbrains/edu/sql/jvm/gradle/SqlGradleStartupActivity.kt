@@ -7,7 +7,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
-import com.intellij.openapi.progress.withBackgroundProgress
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.util.Disposer
@@ -61,7 +60,6 @@ class SqlGradleStartupActivity : StartupActivity.DumbAware {
     }
 
     runBlocking {
-      @Suppress("UnstableApiUsage")
       withBackgroundProgress(project, EduSqlBundle.message("edu.sql.downloading.driver.files.progress.title"), false) {
         driver.loadArtifacts(project)
       }

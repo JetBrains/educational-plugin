@@ -39,8 +39,11 @@ public class PyRunTestConfiguration extends PythonRunConfiguration {
   }
 
   @Override
-  protected SettingsEditor<PyRunTestConfiguration> createConfigurationEditor() {
-    return new PySettingsEditor(myProject);
+  protected SettingsEditor<PythonRunConfiguration> createConfigurationEditor() {
+    @SuppressWarnings("unchecked")
+    SettingsEditor<PythonRunConfiguration> editor =
+      (SettingsEditor<PythonRunConfiguration>)(SettingsEditor<?>)(new PySettingsEditor(myProject));
+    return editor;
   }
 
   public String getPathToTest() {

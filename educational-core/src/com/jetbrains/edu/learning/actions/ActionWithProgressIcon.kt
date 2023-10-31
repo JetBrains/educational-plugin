@@ -14,12 +14,10 @@ abstract class ActionWithProgressIcon : AnAction {
   var spinnerPanel: JPanel? = null
     private set
 
+  protected constructor() : super()
+
   protected constructor(actionText: Supplier<@ActionText String>) : super(actionText)
 
-  protected constructor(
-    actionText: Supplier<@ActionText String>,
-    descriptionText: Supplier<@ActionDescription String>
-  ) : super(actionText, descriptionText, null)
 
   protected fun setUpSpinnerPanel(@NonNls message: String) {
     val asyncProcessIcon = AsyncProcessIcon(message)

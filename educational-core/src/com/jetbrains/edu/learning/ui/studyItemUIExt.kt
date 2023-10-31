@@ -26,7 +26,7 @@ fun Task.getUICheckLabel(): String {
       else EduCoreBundle.message("action.coursera.submit.text")
     }
     is CodeforcesCourse -> EduCoreBundle.message("action.codeforces.run.local.tests.text")
-    else -> EduCoreBundle.message("action.check.text")
+    else -> EduCoreBundle.message("action.Educational.Check.text")
   }
 
   return when (this) {
