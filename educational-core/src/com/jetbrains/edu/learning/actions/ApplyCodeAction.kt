@@ -16,6 +16,7 @@ import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Key
@@ -55,7 +56,7 @@ class ApplyCodeAction : DumbAwareActionButton(
       return
     }
 
-    closeDiffWindow(e)
+    project.closeDiffWindow(e)
     showApplySubmissionCodeSuccessfulNotification(project)
   }
 
@@ -73,7 +74,10 @@ class ApplyCodeAction : DumbAwareActionButton(
     else -> false
   }
 
-  private fun AnActionEvent.getDiffRequestChain(): DiffRequestChain = (getData(CommonDataKeys.VIRTUAL_FILE) as ChainDiffVirtualFile).chain
+  private fun AnActionEvent.getDiffRequestChain(): DiffRequestChain {
+    val chainDiffVirtualFile = getData(CommonDataKeys.VIRTUAL_FILE) as ChainDiffVirtualFile
+    return chainDiffVirtualFile.chain
+  }
 
   private fun readLocalDocuments(fileNames: List<String>): List<Document> = runReadAction {
     fileNames.mapNotNull { findLocalDocument(it) }
@@ -96,7 +100,11 @@ class ApplyCodeAction : DumbAwareActionButton(
     }
   }
 
-  private fun closeDiffWindow(e: AnActionEvent) = e.getData(LAST_ACTIVE_FILE_EDITOR)?.dispose()
+  private fun Project.closeDiffWindow(e: AnActionEvent) {
+    val fileEditorManager = FileEditorManager.getInstance(this)
+    val fileEditor = e.getData(LAST_ACTIVE_FILE_EDITOR) ?: return
+    fileEditorManager.closeFile(fileEditor.file)
+  }
 
   @Suppress("DialogTitleCapitalization")
   private fun showApplySubmissionCodeSuccessfulNotification(project: Project) = Notification(
