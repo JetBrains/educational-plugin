@@ -69,7 +69,7 @@ const val URL = "url"
 const val USERS = "users"
 const val USE_IDE = "use_ide"
 
-open class WithPaginationMetaData {
+abstract class WithPaginationMetaData {
   @JsonProperty(META)
   lateinit var meta: PaginationMetaData
 }

@@ -312,14 +312,15 @@ private fun showNoNextActivityNotification(task: Task?, project: Project) {
     .notify(project)
 }
 
-fun <T: WithPaginationMetaData> withPageIteration(fetchData: (Int) -> Result<T, String>): Result<List<T>, String> {
+fun <T : WithPaginationMetaData> withPageIteration(fetchData: (Int) -> Result<T, String>): Result<List<T>, String> {
   val acc = emptyList<T>().toMutableList()
   var page = 1
 
   do {
     val result = fetchData(page++).onError { return Err(it) }
     acc.add(result)
-  } while (result.meta.hasNext)
+  } 
+  while (result.meta.hasNext)
 
   return Ok(acc.toList())
 }

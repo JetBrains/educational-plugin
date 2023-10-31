@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.stepik.Step
 import com.jetbrains.edu.learning.stepik.api.MockStepikBasedConnector
 import com.jetbrains.edu.learning.stepik.api.OPTIONS
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
@@ -71,7 +72,7 @@ class MockHyperskillConnector : HyperskillConnector(), MockStepikBasedConnector 
       MockResponseFactory.fromString(
         when {
           path == "/api/projects/$projectId" -> objectMapper.writeValueAsString(ProjectsList().also { it.projects = listOf(hyperskillProject) })
-          path == "/api/stages" && request.hasParams("project" to projectId.toString()) -> objectMapper.writeValueAsString(StagesList().also { it.stages = course.stages })
+          path == "/api/stages" && request.hasParams("project" to projectId.toString()) -> getStagesList(course.stages)
           path ==  "/api/steps" && request.hasParams("ids" to course.stages.map { it.stepId }.joinToString(separator = ","))-> stepSources(course.allTasks)
           else -> return@withResponseHandler null
         }
@@ -96,6 +97,7 @@ class MockHyperskillConnector : HyperskillConnector(), MockStepikBasedConnector 
       steps = tasks.map { task ->
         createStepSource(task).also(initStepSource)
       }
+      meta = PaginationMetaData()
     }
 
     // HACK: rename "source" to "options"
@@ -109,6 +111,12 @@ class MockHyperskillConnector : HyperskillConnector(), MockStepikBasedConnector 
     }
     return objectMapper.writeValueAsString(tree)
   }
+
+  private fun getStagesList(stages: List<HyperskillStage>): String =
+    objectMapper.writeValueAsString(StagesList().also {
+      it.meta = PaginationMetaData()
+      it.stages = stages
+    })
 
   private fun createStepSource(task: Task): HyperskillStepSource {
     val step = Step().apply {
