@@ -33,6 +33,7 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
+import com.jetbrains.edu.learning.stepik.hyperskill.api.WithPaginationMetaData
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepWithProjectRequest
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
@@ -274,10 +275,10 @@ private fun getNextStep(taskId: Int): NextActivityInfo {
 }
 
 private fun getNextStepInTopic(topicId: Int, taskId: Int?): NextActivityInfo {
-  val steps = HyperskillConnector.getInstance().getStepsForTopic(topicId).onError { error ->
+  val steps = withPageIteration { HyperskillConnector.getInstance().getStepsForTopic(topicId)}.onError { error ->
     LOG.warn(error)
     null
-  }
+  }?.flatMap { it.steps }
 
   if (steps.isNullOrEmpty()) {
     return NextActivityInfo.NoActivity
@@ -309,6 +310,18 @@ private fun showNoNextActivityNotification(task: Task?, project: Project) {
   )
     .setListener(NotificationListener.URL_OPENING_LISTENER)
     .notify(project)
+}
+
+fun <T: WithPaginationMetaData> withPageIteration(fetchData: (Int) -> Result<T, String>): Result<MutableList<T>, String> {
+  val acc = emptyList<T>().toMutableList()
+  var page = 1
+
+  do {
+    val result = fetchData(page++).onError { return Err(it) }
+    acc.add(result)
+  } while (result.meta.hasNext)
+
+  return Ok(acc)
 }
 
 private sealed class NextActivityInfo {
