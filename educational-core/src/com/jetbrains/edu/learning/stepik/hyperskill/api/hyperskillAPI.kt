@@ -69,6 +69,19 @@ const val URL = "url"
 const val USERS = "users"
 const val USE_IDE = "use_ide"
 
+open class WithPaginationMetaData {
+  @JsonProperty(META)
+  lateinit var meta: PaginationMetaData
+}
+
+class PaginationMetaData {
+  @JsonProperty("page")
+  var page: Int = -1
+
+  @JsonProperty("has_next")
+  var hasNext: Boolean = false
+}
+
 class HyperskillAccount : OAuthAccount<HyperskillUserInfo> {
   @TestOnly
   constructor() : super()
@@ -172,15 +185,12 @@ class ProfilesList {
   lateinit var profiles: List<HyperskillUserInfo>
 }
 
-class StagesList {
+class StagesList: WithPaginationMetaData() {
   @JsonProperty(STAGES)
   lateinit var stages: List<HyperskillStage>
 }
 
-class TopicsList {
-  @JsonProperty(META)
-  lateinit var meta: Map<Any, Any>
-
+class TopicsList: WithPaginationMetaData() {
   @JsonProperty(TOPICS)
   lateinit var topics: List<HyperskillTopic>
 }
@@ -190,7 +200,7 @@ class ProjectsList {
   lateinit var projects: List<HyperskillProject>
 }
 
-class HyperskillStepsList {
+class HyperskillStepsList: WithPaginationMetaData() {
   @JsonProperty(STEPS)
   lateinit var steps: List<HyperskillStepSource>
 }
