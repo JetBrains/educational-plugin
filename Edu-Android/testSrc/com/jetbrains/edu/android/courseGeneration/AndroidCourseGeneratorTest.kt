@@ -1,11 +1,13 @@
 package com.jetbrains.edu.android.courseGeneration
 
+import com.android.tools.idea.gradle.project.AndroidGradleProjectStartupActivity
 import com.android.tools.idea.startup.GradleSpecificInitializer
 import com.intellij.ide.ApplicationInitializedListener
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.ExtensionPoint
 import com.intellij.openapi.extensions.impl.ExtensionPointImpl
+import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.jvm.courseGeneration.JvmCourseGenerationTestBase
@@ -23,7 +25,7 @@ class AndroidCourseGeneratorTest : JvmCourseGenerationTestBase() {
   }
 
   // Disables some extensions provided by AS.
-  // They try to set up JAVA and Android JDK in test that we don't need in these tests.
+  // They try to set up JAVA and Android JDK, or run Gradle imoport in test that we don't need in these tests.
   // So let's unregister them. Otherwise, tests fail
   private fun disableUnnecessaryExtensions() {
     val extensionArea = ApplicationManager.getApplication().extensionArea
@@ -32,6 +34,11 @@ class AndroidCourseGeneratorTest : JvmCourseGenerationTestBase() {
     extensionArea
       .getExtensionPoint<ApplicationInitializedListener>("com.intellij.applicationInitializedListener")
       .unregisterExtensionInTest(GradleSpecificInitializer::class.java)
+
+    extensionArea
+      .getExtensionPoint<StartupActivity>("com.intellij.postStartupActivity")
+      // BACKCOMPAT: 2023.2. Use `unregisterExtensionInTest` when `AndroidGradleProjectStartupActivity` is migrated to `ProjectActivity` API
+      .unregisterExtension(AndroidGradleProjectStartupActivity::class.java)
   }
 
   @Suppress("UnstableApiUsage")
