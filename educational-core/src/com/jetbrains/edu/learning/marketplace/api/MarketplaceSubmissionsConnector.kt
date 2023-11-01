@@ -43,7 +43,7 @@ import java.net.HttpURLConnection.HTTP_NOT_FOUND
 import java.net.HttpURLConnection.HTTP_NO_CONTENT
 import java.net.URL
 
-@Service
+@Service(Service.Level.APP)
 class MarketplaceSubmissionsConnector {
   private val connectionPool: ConnectionPool = ConnectionPool()
   private val converterFactory: JacksonConverterFactory
