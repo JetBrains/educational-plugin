@@ -1,12 +1,10 @@
 import argparse
-import json
 import logging
 import os
 import subprocess
 import sys
-from typing import Optional
-from urllib.parse import quote
-from urllib.request import Request, urlopen
+
+from space import commit_changes_to_educational_plugin, create_review_in_educational_plugin, has_branch
 
 
 def gradle_property_path(platform_version: int) -> str:
@@ -18,67 +16,30 @@ def read_gradle_property_text(platform_version: int) -> str:
         return f.read()
 
 
-def make_request(url: str, token: str, method: str, data: Optional[dict]) -> dict:
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Accept": "application/json",
-        "Content-Type": "application/json"
-    }
-    if data:
-        raw_data = json.dumps(data).encode()
-    else:
-        raw_data = None
-    logging.debug(f" >> {method} {url}")
-    response = urlopen(Request(url, raw_data, headers, method=method))
-    response_str = response.read().decode()
-    if response_str:
-        return json.loads(response_str)
-    else:
-        return {}
-
-
-def has_branch(token: str, branch_name: str) -> bool:
-    encoded_branch = quote(f"refs/heads/{branch_name}")
-    url = f"https://jetbrains.team/api/http/projects/key:EDU/repositories/educational-plugin/heads?pattern={encoded_branch}"
-    response = make_request(url, token, method="GET", data=None)
-    return len(response["data"]) != 0
-
-
 REVIEWER = "Arseniy.Pendryak"
 
 
 def create_review(token: str, platform_version: int):
-    data = {
-        "repository": "educational-plugin",
-        "sourceBranch": f"update-{platform_version}",
-        "targetBranch": "master",
-        "title": f"Update {platform_version} IDE and plugin dependencies"
-    }
-
-    make_review_response = make_request("https://jetbrains.team/api/http/projects/key:EDU/code-reviews/merge-requests",
-                                        token, method="POST", data=data)
-    review_number = make_review_response["number"]
-    make_request(f"https://jetbrains.team/api/http/projects/key:EDU/code-reviews/number:{review_number}/participants/username:{REVIEWER}",
-                 token, method="POST", data={"role": "Reviewer"})
+    create_review_in_educational_plugin(
+        token=token,
+        source_branch=f"update-{platform_version}",
+        title=f"Update {platform_version} IDE and plugin dependencies",
+        review_username=REVIEWER
+    )
 
 
 def commit_changes(token: str, platform_version: int):
-    branch_name = f"refs/heads/update-{platform_version}"
-    data = {
-        "baseCommit": "master",
-        "targetBranch": branch_name,
-        "commitMessage": f"Update {platform_version} IDE and plugin dependencies",
-        "files": [
+    commit_changes_to_educational_plugin(
+        token=token,
+        branch_name=f"refs/heads/update-{platform_version}",
+        commit_massage=f"Update {platform_version} IDE and plugin dependencies",
+        changes=[
             {
                 "path": gradle_property_path(platform_version),
                 "content": {"className": "GitFileContent.Text", "value": read_gradle_property_text(platform_version)}
             }
         ]
-    }
-    response = make_request("https://jetbrains.team/api/http/projects/edu/repositories/educational-plugin/commit",
-                            token, method="POST", data=data)
-    if not response["success"]:
-        raise Exception(response["message"])
+    )
 
 
 def update_versions(updater_path: str, platform_version: int):
