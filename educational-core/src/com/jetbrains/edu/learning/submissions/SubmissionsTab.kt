@@ -78,6 +78,7 @@ class SubmissionsTab(project: Project) : AdditionalTextTab(project, SUBMISSIONS_
     }
     else if (task.course.isMarketplace && submissionsList?.isNotEmpty() == true) {
       descriptionText.addSubmissions(submissionsList, false)
+      customLinkHandler = SubmissionsDifferenceLinkHandler(project, task, submissionsManager)
     }
     else {
       descriptionText.addLoginText(submissionsManager)
