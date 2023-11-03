@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.newproject.ui.coursePanel
 
-import com.intellij.ide.plugins.newui.EmptyCaret
 import com.intellij.util.ui.HtmlPanel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
@@ -14,7 +13,6 @@ abstract class CourseHtmlPanel : HtmlPanel() {
     background = UIUtil.getEditorPaneBackground()
     isFocusable = false
     border = JBUI.Borders.empty()
-    caret = EmptyCaret.INSTANCE
 
     // set some text to force JEditorPane calculate its height properly
     text = EduCoreBundle.message("course.dialog.no.course.selected")
