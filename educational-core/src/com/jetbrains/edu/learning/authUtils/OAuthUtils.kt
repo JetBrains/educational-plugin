@@ -86,7 +86,7 @@ object OAuthUtils {
     val portsRange = defaultPort..defaultPort + 20
     val isValid = port in portsRange
     if (!isValid) {
-      LOG.error("Built-in port $port is not valid, because it's outside of default port range $portsRange")
+      LOG.warn("Built-in port $port is not valid, because it's outside of default port range $portsRange")
     }
     return isValid
   }
