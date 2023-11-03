@@ -26,7 +26,15 @@ fun StudyItem.getDir(courseDir: VirtualFile): VirtualFile? {
     is Course -> courseDir
     is Section -> courseDir.findChild(name)
     is Lesson -> parent.getDir(courseDir)?.findChild(name)
-    is Task -> findDir(lesson.getDir(courseDir))
+    is Task -> {
+      val lessonDir = lesson.getDir(courseDir)
+      if (lessonDir == null) {
+        error("Can't find lesson directory for ")
+      }
+      else {
+        findDir(lessonDir)
+      }
+    }
     else -> error("Can't find directory for the item $itemType")
   }
 }

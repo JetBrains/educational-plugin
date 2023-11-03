@@ -299,7 +299,7 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
   }
 
   @Throws(IOException::class)
-  private fun removeExistingDir(studentTask: Task, lessonDir: VirtualFile?) {
+  private fun removeExistingDir(studentTask: Task, lessonDir: VirtualFile) {
     val taskDir = studentTask.findDir(lessonDir)
     invokeAndWaitIfNeeded { runWriteAction { taskDir?.delete(studentTask) } }
   }
