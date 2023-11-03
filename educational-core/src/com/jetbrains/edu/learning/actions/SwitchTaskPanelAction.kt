@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.ActionPlaces.ACTION_SEARCH
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.dsl.builder.*
@@ -23,7 +24,7 @@ class SwitchTaskPanelAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project
-    val result = MyDialog(false).showAndGet()
+    val result = MyDialog(project).showAndGet()
     if (result && project != null) {
       val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskToolWindowFactory.STUDY_TOOL_WINDOW) ?: return
       toolWindow.contentManager.removeAllContents(false)
@@ -45,7 +46,11 @@ class SwitchTaskPanelAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.
     const val ACTION_ID = "Educational.SwitchTaskDescriptionPanel"
   }
 
-  private class MyDialog(canBeParent: Boolean) : DialogWrapper(null, canBeParent) {
+  private class MyDialog(project: Project?) : DialogWrapper(project, false) {
+    init {
+      title = EduCoreBundle.message("dialog.title.switch.task.description.panel")
+      init()
+    }
 
     override fun createCenterPanel(): JComponent = panel {
       row(EduCoreBundle.message("ui.label.choose.panel")) {
@@ -59,11 +64,6 @@ class SwitchTaskPanelAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.
             setter = { EduSettings.getInstance().javaUiLibrary = it ?: SWING }
           )
       }
-    }
-
-    init {
-      title = EduCoreBundle.message("dialog.title.switch.task.description.panel")
-      init()
     }
 
     private fun collectAvailableJavaUiLibraries(): List<JavaUILibrary> {
