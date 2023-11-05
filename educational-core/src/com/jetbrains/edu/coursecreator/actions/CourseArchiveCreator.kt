@@ -17,8 +17,9 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.jetbrains.edu.coursecreator.AdditionalFilesUtils
@@ -38,7 +39,6 @@ import com.jetbrains.edu.learning.json.setDateFormat
 import com.jetbrains.edu.learning.marketplace.updateCourseItems
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.TASK_CONFIG
-import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import java.io.*
 import java.util.zip.ZipEntry
@@ -49,16 +49,31 @@ class CourseArchiveCreator(
   private val project: Project,
   @NonNls private val location: String,
   private val aesKey: String = getAesKey()
-) : Computable<String?> {
+) {
 
-  @Nls(capitalization = Nls.Capitalization.Sentence)
-  override fun compute(): String? {
-    val course = StudyTaskManager.getInstance(project).course
-    if (course != null && course.isMarketplace && !isUnitTestMode) {
-      course.updateCourseItems()
+  private fun runModal(process: (ProgressIndicator) -> Unit) {
+    ProgressManager.getInstance().runProcessWithProgressSynchronously(
+      {
+        process(ProgressManager.getInstance().progressIndicator)
+      },
+      EduCoreBundle.message("action.create.course.archive.progress.bar"),
+      true,
+      project
+    )
+  }
+
+  fun doCreateCourseArchive(): String? {
+    ApplicationManager.getApplication().assertIsDispatchThread()
+
+    val course = StudyTaskManager.getInstance(project).course ?: return EduCoreBundle.message("error.unable.to.obtain.course.for.project")
+    if (course.isMarketplace && !isUnitTestMode) {
+      runModal {
+        course.updateCourseItems()
+      }
     }
-    course?.updateEnvironmentSettings(project)
-    val courseCopy = course?.copy() ?: return EduCoreBundle.message("error.unable.to.obtain.course.for.project")
+
+    course.updateEnvironmentSettings(project)
+    val courseCopy = course.copy()
 
     try {
       prepareCourse(courseCopy)
@@ -75,20 +90,24 @@ class CourseArchiveCreator(
       return e.message
     }
     return try {
-      ZipOutputStream(FileOutputStream(location)).use { outputStream ->
-        outputStream.withNewEntry(COURSE_META_FILE) {
-          val writer = OutputStreamWriter(outputStream, UTF_8)
-          generateJson(writer, courseCopy)
-        }
+      runModal {
+        ZipOutputStream(FileOutputStream(location)).use { outputStream ->
+          outputStream.withNewEntry(COURSE_META_FILE) {
+            val writer = OutputStreamWriter(outputStream, UTF_8)
+            generateJson(writer, courseCopy)
+          }
 
-        val iconFile = project.courseDir.findChild(EduFormatNames.COURSE_ICON_FILE)
-        iconFile?.inputStream?.use { iconInputStream ->
-          outputStream.withNewEntry(EduFormatNames.COURSE_ICON_FILE) {
-            iconInputStream.copyTo(outputStream)
+          val iconFile = project.courseDir.findChild(EduFormatNames.COURSE_ICON_FILE)
+          iconFile?.inputStream?.use { iconInputStream ->
+            outputStream.withNewEntry(EduFormatNames.COURSE_ICON_FILE) {
+              iconInputStream.copyTo(outputStream)
+            }
           }
         }
+
+        synchronize(project)
       }
-      synchronize(project)
+
       null
     }
     catch (e: IOException) {
@@ -168,7 +187,7 @@ class CourseArchiveCreator(
    */
   fun createArchive(): String? {
     saveOpenedDocuments(project)
-    return ApplicationManager.getApplication().runWriteAction<String>(this)
+    return doCreateCourseArchive()
   }
 
   companion object {

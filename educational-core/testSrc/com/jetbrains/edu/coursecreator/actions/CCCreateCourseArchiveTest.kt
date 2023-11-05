@@ -350,7 +350,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
 
     // It is not important, what would be passed to the constructor, except the first argument - project
     // Inside `compute()`, exception would be thrown, so we will not reach the moment of creating the archive
-    getArchiveCreator().compute()
+    getArchiveCreator().doCreateCourseArchive()
 
     val navigatedFile = FileEditorManagerEx.getInstanceEx(project).currentFile ?: error("Navigated file should not be null here")
     assertEquals(task.configFileName, navigatedFile.name)
@@ -829,7 +829,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     val courseArchiveFile = kotlin.io.path.createTempFile("course.zip")
     try {
       val archiveCreator = getArchiveCreator(courseArchiveFile.toString())
-      archiveCreator.compute()
+      archiveCreator.createArchive()
 
       ZipFile(courseArchiveFile.toFile()).use { zip ->
         assertNotNull("Course zip file must contain a course icon", zip.getEntry(EduFormatNames.COURSE_ICON_FILE))
@@ -853,7 +853,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     val courseArchiveFile = kotlin.io.path.createTempFile("course.zip")
     try {
       val archiveCreator = getArchiveCreator(courseArchiveFile.toString())
-      archiveCreator.compute()
+      archiveCreator.createArchive()
 
       ZipFile(courseArchiveFile.toFile()).use { zip ->
         assertNull("Course zip file must not contain a course icon", zip.getEntry(EduFormatNames.COURSE_ICON_FILE))
