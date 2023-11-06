@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.JavaUILibrary.JCEF
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -42,8 +43,6 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
   private var uiContent: UiContent? = null
   private lateinit var tabManager: TabManager
 
-  private val newNav = isFeatureEnabled(USE_NAVIGATION_MAP)
-
   override var currentTask: Task? = null
     // TODO: move it in some separate method
     set(value) {
@@ -62,6 +61,8 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
       }
       field = value
     }
+
+  private var newNav = isFeatureEnabled(USE_NAVIGATION_MAP) || project.course is HyperskillCourse
 
   override fun updateAdditionalTaskTabs(task: Task?) {
     val taskToUpdate = task ?: currentTask
