@@ -350,7 +350,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
 
     // It is not important, what would be passed to the constructor, except the first argument - project
     // Inside `compute()`, exception would be thrown, so we will not reach the moment of creating the archive
-    getArchiveCreator().doCreateCourseArchive()
+    getArchiveCreator().createArchive()
 
     val navigatedFile = FileEditorManagerEx.getInstanceEx(project).currentFile ?: error("Navigated file should not be null here")
     assertEquals(task.configFileName, navigatedFile.name)

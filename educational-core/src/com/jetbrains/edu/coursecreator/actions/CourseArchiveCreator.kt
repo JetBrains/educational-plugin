@@ -62,8 +62,12 @@ class CourseArchiveCreator(
     )
   }
 
-  fun doCreateCourseArchive(): String? {
+  /**
+   * @return null when course archive was created successfully, non-empty error message otherwise
+   */
+  fun createArchive(): String? {
     ApplicationManager.getApplication().assertIsDispatchThread()
+    saveOpenedDocuments(project)
 
     val course = StudyTaskManager.getInstance(project).course ?: return EduCoreBundle.message("error.unable.to.obtain.course.for.project")
     if (course.isMarketplace && !isUnitTestMode) {
@@ -180,14 +184,6 @@ class CourseArchiveCreator(
       val pluginVersion = if (isUnitTestMode) TEST_PLUGIN_VERSION else pluginVersion(EduNames.PLUGIN_ID) ?: "unknown"
       writeObjectField(fieldName, pluginVersion)
     }
-  }
-
-  /**
-   * @return null when course archive was created successfully, non-empty error message otherwise
-   */
-  fun createArchive(): String? {
-    saveOpenedDocuments(project)
-    return doCreateCourseArchive()
   }
 
   companion object {
