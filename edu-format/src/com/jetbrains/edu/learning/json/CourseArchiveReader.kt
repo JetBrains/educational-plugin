@@ -34,15 +34,27 @@ private class CourseJsonParsingException(message: String): Exception(message)
 fun readCourseJson(reader: () -> Reader): Course? {
   return try {
     val courseMapper = getCourseMapper()
-    val isArchiveEncrypted = reader().use { currentReader ->
-      isArchiveEncrypted(currentReader, courseMapper)
+
+    val (version, courseType) = reader().use { currentReader ->
+      getFormatVersionAndCourseTypeFromJson(currentReader, courseMapper)
     }
+
+    val isArchiveEncrypted = isArchiveEncrypted(version, courseType)
+
     courseMapper.configureCourseMapper(isArchiveEncrypted)
-    var courseNode = reader().use { currentReader ->
-      courseMapper.readTree(currentReader) as ObjectNode
+
+    if (needMigrate(version)) {
+      var courseNode = reader().use { currentReader ->
+        courseMapper.readTree(currentReader) as ObjectNode
+      }
+      courseNode = migrate(courseNode)
+      courseMapper.treeToValue(courseNode)
     }
-    courseNode = migrate(courseNode)
-    courseMapper.treeToValue(courseNode)
+    else {
+      reader().use { currentReader ->
+        courseMapper.readValue(currentReader, Course::class.java)
+      }
+    }
   }
   catch (e: IOException) {
     LOG.severe("Failed to read course json: ${e.message}")
@@ -54,10 +66,7 @@ fun readCourseJson(reader: () -> Reader): Course? {
   }
 }
 
-@Throws(IOException::class, CourseJsonParsingException::class)
-private fun isArchiveEncrypted(reader: Reader, courseMapper: ObjectMapper): Boolean {
-  val (version, courseType) = getFormatVersionAndCourseTypeFromJson(reader, courseMapper)
-
+private fun isArchiveEncrypted(version: Int, courseType: String?): Boolean {
   if (version >= 12) return true
   return courseType == MARKETPLACE
 }
@@ -125,6 +134,10 @@ fun migrate(node: ObjectNode, maxVersion: Int): ObjectNode {
     version++
   }
   return jsonObject
+}
+
+fun needMigrate(jsonVersion: Int): Boolean {
+  return jsonVersion <= 11
 }
 
 fun getCourseMapper(): ObjectMapper {
