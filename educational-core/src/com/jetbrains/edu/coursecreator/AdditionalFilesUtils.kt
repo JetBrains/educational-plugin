@@ -12,6 +12,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchiveAction
+import com.jetbrains.edu.coursecreator.actions.CourseArchiveIndicator
 import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreRules
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
@@ -27,10 +28,10 @@ import java.io.IOException
 object AdditionalFilesUtils {
   private val LOG = Logger.getInstance(AdditionalFilesUtils::class.java)
 
-  fun collectAdditionalFiles(course: Course, project: Project): List<EduFile> {
+  fun collectAdditionalFiles(course: Course, project: Project, indicator: CourseArchiveIndicator? = null): List<EduFile> {
     ApplicationManager.getApplication().invokeAndWait { FileDocumentManager.getInstance().saveAllDocuments() }
 
-    val fileVisitor = additionalFilesVisitor(project, course)
+    val fileVisitor = additionalFilesVisitor(project, course, indicator)
     VfsUtilCore.visitChildrenRecursively(project.courseDir, fileVisitor)
     return fileVisitor.additionalTaskFiles
   }
@@ -55,7 +56,7 @@ object AdditionalFilesUtils {
     return project.courseDir.findChild(EduNames.CHANGE_NOTES)
   }
 
-  private fun additionalFilesVisitor(project: Project, course: Course) =
+  private fun additionalFilesVisitor(project: Project, course: Course, indicator: CourseArchiveIndicator?) =
     object : VirtualFileVisitor<Any>(NO_FOLLOW_SYMLINKS) {
       // we take the course ignore rules once, and we are sure they are not changed while course archive is being created
       private val courseIgnoreRules = CourseIgnoreRules.loadFromCourseIgnoreFile(project)
@@ -74,13 +75,13 @@ object AdditionalFilesUtils {
           return file.getTask(project) == null
         }
 
-        addToAdditionalFiles(file, project)
+        addToAdditionalFiles(file, project, indicator)
         return false
       }
 
-      private fun addToAdditionalFiles(file: VirtualFile, project: Project) {
+      private fun addToAdditionalFiles(file: VirtualFile, project: Project, indicator: CourseArchiveIndicator?) {
         try {
-          createAdditionalTaskFile(file, project)?.also { taskFile -> additionalTaskFiles.add(taskFile) }
+          createAdditionalTaskFile(file, project, indicator)?.also { taskFile -> additionalTaskFiles.add(taskFile) }
         }
         catch (e: FileTooBigException) {
           throw HugeBinaryFileException(file.path, file.length, FileUtilRt.LARGE_FOR_CONTENT_LOADING.toLong(), false)
@@ -90,16 +91,16 @@ object AdditionalFilesUtils {
         }
       }
 
-      private fun createAdditionalTaskFile(file: VirtualFile, project: Project): EduFile? {
+      private fun createAdditionalTaskFile(file: VirtualFile, project: Project, indicator: CourseArchiveIndicator?): EduFile? {
         val taskFile = file.getTaskFile(project)
         if (taskFile != null) return null
 
         val path = VfsUtilCore.getRelativePath(file, project.courseDir) ?: return null
         val contents = if (file.isToEncodeContent) {
-          BinaryContentsFromDisk(file)
+          BinaryContentsFromDisk(file, indicator)
         }
         else {
-          TextualContentsFromDisk(file)
+          TextualContentsFromDisk(file, indicator)
         }
         return EduFile(path, contents)
       }

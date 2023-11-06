@@ -28,6 +28,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.ui.components.JBLoadingPanel
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.coursecreator.actions.CourseArchiveIndicator
 import com.jetbrains.edu.learning.EduDocumentListener.Companion.runWithListener
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
@@ -267,7 +268,7 @@ fun VirtualFile.loadEncodedContent(isToEncodeContent: Boolean = this.isToEncodeC
 }
 
 @Throws(HugeBinaryFileException::class)
-fun VirtualFile.toStudentFile(project: Project, task: Task): TaskFile? {
+fun VirtualFile.toStudentFile(project: Project, task: Task, indicator: CourseArchiveIndicator? = null): TaskFile? {
   try {
     val taskCopy = task.copy()
     val taskFile = taskCopy.getTaskFile(pathRelativeToTask(project)) ?: return null
@@ -275,7 +276,7 @@ fun VirtualFile.toStudentFile(project: Project, task: Task): TaskFile? {
       if (task.lesson is FrameworkLesson && length >= getBinaryFileLimit()) {
         throw HugeBinaryFileException("${task.getPathInCourse()}/${taskFile.name}", length, getBinaryFileLimit().toLong(), true)
       }
-      taskFile.contents = BinaryContentsFromDisk(this)
+      taskFile.contents = BinaryContentsFromDisk(this, indicator)
       return taskFile
     }
     FileDocumentManager.getInstance().saveDocument(document)
@@ -299,7 +300,15 @@ fun VirtualFile.toStudentFile(project: Project, task: Task): TaskFile? {
       // It means we can not use the text from disk, and we should store the result in memory.
       // We could not substitute placeholders later, because during placeholder substitution we compute
       // their positions and store them inside the TaskFile.
-      taskFile.contents = InMemoryTextualContents(EduMacroUtils.collapseMacrosForFile(project.toCourseInfoHolder(), this, text))
+      val inMemoryText = EduMacroUtils.collapseMacrosForFile(project.toCourseInfoHolder(), this, text)
+
+      taskFile.contents = object: TextualContents {
+        override val text: String
+          get() {
+            indicator?.readFile(this@toStudentFile)
+            return inMemoryText
+          }
+      }
     }
     return taskFile
   }

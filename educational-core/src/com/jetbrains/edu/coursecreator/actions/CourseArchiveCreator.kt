@@ -17,6 +17,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
@@ -51,16 +52,15 @@ class CourseArchiveCreator(
   private val aesKey: String = getAesKey()
 ) {
 
-  private fun runModal(process: (ProgressIndicator) -> Unit) {
-    ProgressManager.getInstance().runProcessWithProgressSynchronously(
-      {
-        process(ProgressManager.getInstance().progressIndicator)
-      },
-      EduCoreBundle.message("action.create.course.archive.progress.bar"),
-      true,
-      project
-    )
-  }
+  /**
+   * @return false if the process was cancelled, true if the process finished successfully
+   */
+  private fun runModal(process: (ProgressIndicator) -> Unit): Boolean = ProgressManager.getInstance().runProcessWithProgressSynchronously(
+    { process(ProgressManager.getInstance().progressIndicator) },
+    EduCoreBundle.message("action.create.course.archive.progress.bar"),
+    true,
+    project
+  )
 
   /**
    * @return null when course archive was created successfully, non-empty error message otherwise
@@ -79,8 +79,12 @@ class CourseArchiveCreator(
     course.updateEnvironmentSettings(project)
     val courseCopy = course.copy()
 
+    val courseArchiveIndicator = CourseArchiveIndicator()
+
     try {
-      prepareCourse(courseCopy)
+      // We run prepareCourse() in EDT because it calls the VirtualFile.toStudentFile method that replaces placeholders inside the document.
+      // Modifying the document requires a write action.
+      prepareCourse(courseCopy, courseArchiveIndicator)
     }
     catch (e: BrokenPlaceholderException) {
       if (!isUnitTestMode) {
@@ -94,7 +98,9 @@ class CourseArchiveCreator(
       return e.message
     }
     return try {
-      runModal {
+      val success = runModal { indicator ->
+        courseArchiveIndicator.init(courseCopy, indicator)
+
         ZipOutputStream(FileOutputStream(location)).use { outputStream ->
           outputStream.withNewEntry(COURSE_META_FILE) {
             val writer = OutputStreamWriter(outputStream, UTF_8)
@@ -112,11 +118,22 @@ class CourseArchiveCreator(
         synchronize(project)
       }
 
-      null
+      if (success) {
+        null
+      }
+      else {
+        EduCoreBundle.message("error.course.archiving.cancelled.by.user")
+      }
     }
     catch (e: IOException) {
-      LOG.error("Failed to create course archive", e)
-      EduCoreBundle.message("error.failed.to.generate.course.archive")
+      if (e.cause is ProcessCanceledException) {
+        // might occur during json serialization
+        EduCoreBundle.message("error.course.archiving.cancelled.by.user")
+      }
+      else {
+        LOG.error("Failed to create course archive", e)
+        EduCoreBundle.message("error.failed.to.generate.course.archive")
+      }
     }
   }
 
@@ -132,10 +149,10 @@ class CourseArchiveCreator(
   }
 
   @VisibleForTesting
-  fun prepareCourse(course: Course) {
-    loadActualTexts(project, course)
+  fun prepareCourse(course: Course, indicator: CourseArchiveIndicator? = null) {
+    loadActualTexts(project, course, indicator)
     course.sortItems()
-    course.additionalFiles = AdditionalFilesUtils.collectAdditionalFiles(course, project)
+    course.additionalFiles = AdditionalFilesUtils.collectAdditionalFiles(course, project, indicator)
     course.pluginDependencies = collectCourseDependencies(project, course)
     course.courseMode = CourseMode.STUDENT
   }
@@ -214,27 +231,28 @@ class CourseArchiveCreator(
       return this
     }
 
-    fun loadActualTexts(project: Project, course: Course) {
+    fun loadActualTexts(project: Project, course: Course, indicator: CourseArchiveIndicator? = null) {
       course.visitLessons { lesson ->
         val lessonDir = lesson.getDir(project.courseDir)
         if (lessonDir == null) return@visitLessons
         for (task in lesson.taskList) {
-          loadActualTexts(project, task)
+          loadActualTexts(project, task, indicator)
         }
       }
     }
 
-    private fun loadActualTexts(project: Project, task: Task) {
+    private fun loadActualTexts(project: Project, task: Task, indicator: CourseArchiveIndicator?) {
       val taskDir = task.getDir(project.courseDir) ?: return
-      convertToStudentTaskFiles(project, task, taskDir)
+      convertToStudentTaskFiles(project, task, taskDir, indicator)
       task.updateDescriptionTextAndFormat(project)
     }
 
-    private fun convertToStudentTaskFiles(project: Project, task: Task, taskDir: VirtualFile) {
+    private fun convertToStudentTaskFiles(project: Project, task: Task, taskDir: VirtualFile, indicator: CourseArchiveIndicator?) {
       val studentTaskFiles = LinkedHashMap<String, TaskFile>()
       for ((key, value) in task.taskFiles) {
         val answerFile = value.findTaskFileInDir(taskDir) ?: continue
-        val studentFile = answerFile.toStudentFile(project, task)
+
+        val studentFile = answerFile.toStudentFile(project, task, indicator)
         if (studentFile != null) {
           studentTaskFiles[key] = studentFile
         }
