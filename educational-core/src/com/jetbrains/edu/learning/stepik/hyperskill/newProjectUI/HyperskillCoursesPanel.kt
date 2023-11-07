@@ -18,7 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class HyperskillCoursesPanel(
-  private val platformProvider: JetBrainsAcademyPlatformProvider,
+  private val platformProvider: HyperskillPlatformProvider,
   scope: CoroutineScope,
   disposable: Disposable
 ) : CoursesPanel(platformProvider, scope, disposable) {

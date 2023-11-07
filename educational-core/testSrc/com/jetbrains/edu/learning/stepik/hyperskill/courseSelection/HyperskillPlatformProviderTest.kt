@@ -10,10 +10,10 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.defaultHyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.logInFakeHyperskillUser
 import com.jetbrains.edu.learning.stepik.hyperskill.logOutFakeHyperskillUser
-import com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.JetBrainsAcademyPlatformProvider
+import com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.HyperskillPlatformProvider
 import kotlinx.coroutines.runBlocking
 
-class JetBrainsAcademyPlatformProviderTest : EduTestCase() {
+class HyperskillPlatformProviderTest : EduTestCase() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
   override fun setUp() {
@@ -73,6 +73,6 @@ class JetBrainsAcademyPlatformProviderTest : EduTestCase() {
   }
 
   private fun loadCourses() = runBlocking {
-    JetBrainsAcademyPlatformProvider().loadCourses()
+    HyperskillPlatformProvider().loadCourses()
   }
 }

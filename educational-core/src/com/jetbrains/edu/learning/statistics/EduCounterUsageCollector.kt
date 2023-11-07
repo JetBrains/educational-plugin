@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.newproject.ui.BrowseCoursesDialog
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationEvent.*
-import com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.JetBrainsAcademyPlatformProvider
+import com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.HyperskillPlatformProvider
 
 /**
  * IMPORTANT: if you modify anything in this class, updated whitelist rules should be
@@ -95,7 +95,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     companion object {
       fun fromProvider(provider: CoursesPlatformProvider): CourseSelectionViewTab {
         return when (provider) {
-          is JetBrainsAcademyPlatformProvider -> JBA
+          is HyperskillPlatformProvider -> JBA
           is CheckiOPlatformProvider -> CHECKIO
           is CodeforcesPlatformProvider -> CODEFORCES
           is CourseraPlatformProvider -> COURSERA
