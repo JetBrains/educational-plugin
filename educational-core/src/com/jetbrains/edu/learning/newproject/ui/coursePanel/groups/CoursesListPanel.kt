@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.newproject.ui.coursePanel.groups
 
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
-import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
+import com.jetbrains.edu.learning.newproject.ui.coursesList.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgroundColor
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCourseCardComponent
 import java.awt.BorderLayout

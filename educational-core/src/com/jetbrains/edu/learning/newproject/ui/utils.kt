@@ -8,6 +8,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.ui.ColorUtil
+import com.intellij.ui.Gray
 import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
@@ -40,6 +41,7 @@ private val LOG: Logger = Logger.getInstance("com.jetbrains.edu.learning.newproj
 
 const val COURSE_CARD_BOTTOM_LABEL_H_GAP = 10
 val courseCardComponentFont = Font(TypographyManager().bodyFont, Font.PLAIN, CoursesDialogFontManager.smallCardFontSize)
+val GRAY_COLOR: Color = JBColor.namedColor("SelectCourse.grayForeground", JBColor(Gray._120, Gray._135))
 
 val Course.logo: Icon?
   get() {

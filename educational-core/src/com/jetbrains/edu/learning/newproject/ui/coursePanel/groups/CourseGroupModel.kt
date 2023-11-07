@@ -4,7 +4,7 @@ import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.ui.ComponentUtil
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
+import com.jetbrains.edu.learning.newproject.ui.coursesList.CourseCardComponent
 import java.awt.Component
 import java.awt.event.*
 import javax.swing.JComponent

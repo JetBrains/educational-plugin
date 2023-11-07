@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.newproject.ui
+package com.jetbrains.edu.learning.newproject.ui.coursesList
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.util.NlsSafe
@@ -8,6 +8,7 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.ui.*
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.TypographyManager
 import java.awt.Font
 import javax.swing.JPanel

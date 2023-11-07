@@ -16,6 +16,8 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import com.jetbrains.edu.learning.newproject.CoursesDownloadingException
+import com.jetbrains.edu.learning.newproject.ui.coursesList.CoursesListDecorator
+import com.jetbrains.edu.learning.newproject.ui.coursesList.LoginPanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgroundColor
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup

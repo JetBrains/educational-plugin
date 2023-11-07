@@ -6,7 +6,7 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
+import com.jetbrains.edu.learning.newproject.ui.coursesList.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.addCourseCardInfoStyle
 import com.jetbrains.edu.learning.newproject.ui.createUsersNumberLabel
 import com.jetbrains.edu.learning.newproject.ui.humanReadableDuration

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.newproject.ui
+package com.jetbrains.edu.learning.newproject.ui.coursesList
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.util.NlsContexts
@@ -9,13 +9,16 @@ import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.ui.CoursesDialogFontManager
+import com.jetbrains.edu.learning.newproject.ui.GrayTextHtmlPanel
+import com.jetbrains.edu.learning.newproject.ui.ToolbarActionWrapper
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgroundColor
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPanel
+import com.jetbrains.edu.learning.newproject.ui.createHyperlinkWithContextHelp
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.TypographyManager
 import java.awt.BorderLayout
-import java.awt.Color
 import java.awt.Font
 import javax.swing.JPanel
 import javax.swing.ScrollPaneConstants

@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.HyperskillCourseAdvertiser
-import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
+import com.jetbrains.edu.learning.newproject.ui.coursesList.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.CoursesDialogFontManager
 import com.jetbrains.edu.learning.newproject.ui.GRAY_COLOR
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.TypographyManager
