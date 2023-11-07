@@ -31,7 +31,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillP
 import kotlinx.coroutines.CoroutineScope
 import javax.swing.Icon
 
-class JetBrainsAcademyPlatformProviderFactory : CoursesPlatformProviderFactory {
+class HyperskillPlatformProviderFactory : CoursesPlatformProviderFactory {
   override fun getProviders(): List<CoursesPlatformProvider> = listOf(JetBrainsAcademyPlatformProvider())
 }
 
@@ -40,7 +40,7 @@ class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider() {
 
   override val icon: Icon get() = EducationalCoreIcons.JB_ACADEMY_TAB
 
-  override fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel = JetBrainsAcademyCoursesPanel(
+  override fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel = HyperskillCoursesPanel(
     this, scope,
     disposable
   )
