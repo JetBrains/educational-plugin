@@ -47,7 +47,7 @@ sealed class ErrorState(
                                   warningTextForeground,
                                   true)
 
-  object JetBrainsAcademyLoginNeeded : ErrorState(LOGIN_ERROR,
+  object HyperskillLoginNeeded : ErrorState(LOGIN_ERROR,
                                                   ValidationMessage(EduCoreBundle.message("validation.hyperskill.login.needed")),
                                                   errorTextForeground,
                                                   false)
@@ -140,7 +140,7 @@ sealed class ErrorState(
         return when {
           CoursesStorage.getInstance().hasCourse(this) -> None
           this is CheckiOCourse -> checkiOError
-          this is HyperskillCourseAdvertiser -> if (HyperskillSettings.INSTANCE.account == null) JetBrainsAcademyLoginNeeded else None
+          this is HyperskillCourseAdvertiser -> if (HyperskillSettings.INSTANCE.account == null) HyperskillLoginNeeded else None
           this is HyperskillCourse -> if (HyperskillSettings.INSTANCE.account == null) HyperskillLoginRequired else None
           this is EduCourse -> {
             if (!isMarketplace && !isLoggedInToStepik()) {

@@ -197,7 +197,7 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
 
     val message = errorState.message ?: return
     when (errorState) {
-      is ErrorState.JetBrainsAcademyLoginNeeded -> {
+      is ErrorState.HyperskillLoginNeeded -> {
         errorComponent.setErrorMessage(message)
         buttonsPanel.setButtonToolTip(EduCoreBundle.message("course.dialog.login.required"))
       }
