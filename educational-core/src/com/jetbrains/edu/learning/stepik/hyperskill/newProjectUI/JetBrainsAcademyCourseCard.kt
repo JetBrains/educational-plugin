@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI
 
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
+import com.jetbrains.edu.learning.newproject.HyperskillCourseAdvertiser
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.CoursesDialogFontManager
 import com.jetbrains.edu.learning.newproject.ui.GRAY_COLOR
@@ -18,7 +18,7 @@ private const val INFO_VGAP = 5
 class JetBrainsAcademyCourseCard(course: Course) : CourseCardComponent(course) {
 
   override fun createBottomComponent(): JPanel {
-    return AcademyCourseInfoComponent(course is JetBrainsAcademyCourse)
+    return AcademyCourseInfoComponent(course is HyperskillCourseAdvertiser)
   }
 }
 

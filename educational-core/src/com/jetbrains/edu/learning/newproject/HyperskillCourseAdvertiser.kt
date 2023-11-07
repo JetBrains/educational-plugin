@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.wrapWithUtm
 /**
  * Fake course type for advertising JBA
  */
-class JetBrainsAcademyCourse : Course() {
+class HyperskillCourseAdvertiser : Course() {
   init {
     course.name = "JetBrains Academy Project"
     visibility = CourseVisibility.FeaturedVisibility(1)

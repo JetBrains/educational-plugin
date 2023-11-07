@@ -5,7 +5,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.authUtils.AuthorizationPlace
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
+import com.jetbrains.edu.learning.newproject.HyperskillCourseAdvertiser
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.LoginPanel
@@ -35,7 +35,7 @@ class JetBrainsAcademyCoursesPanel(
       coursesGroup.courses = coursesGroup.courses.filter { it.id != deletedCourse.id }
 
       if (coursesGroup.courses.isEmpty()) {
-        coursesGroup.courses = listOf(JetBrainsAcademyCourse())
+        coursesGroup.courses = listOf(HyperskillCourseAdvertiser())
       }
     }
 

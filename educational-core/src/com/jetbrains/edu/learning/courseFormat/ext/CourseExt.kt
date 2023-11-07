@@ -21,7 +21,7 @@ import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
+import com.jetbrains.edu.learning.newproject.HyperskillCourseAdvertiser
 
 val Course.configurator: EduConfigurator<*>? get() {
   val language = languageById ?: return null
@@ -63,7 +63,7 @@ val Course.technologyName: String?
 val Course.supportedTechnologies: List<String>
   get() {
     return when (this) {
-      is JetBrainsAcademyCourse -> this.supportedLanguages
+      is HyperskillCourseAdvertiser -> this.supportedLanguages
       else -> if (technologyName != null) listOf(technologyName!!) else emptyList()
     }
   }
@@ -75,8 +75,8 @@ val Course.tags: List<Tag>
     }
 
     val tags = mutableListOf<Tag>()
-    if (course is JetBrainsAcademyCourse) {
-      tags.addAll((this as JetBrainsAcademyCourse).supportedLanguages.map { ProgrammingLanguageTag(it) })
+    if (course is HyperskillCourseAdvertiser) {
+      tags.addAll((this as HyperskillCourseAdvertiser).supportedLanguages.map { ProgrammingLanguageTag(it) })
       tags.add(HumanLanguageTag(humanLanguage))
       return tags
     }
@@ -101,7 +101,7 @@ val Course.isPreview: Boolean
 
 val Course.compatibility: CourseCompatibility
   get() {
-    if (this is JetBrainsAcademyCourse || this is CodeforcesCourse || this is ContestInfo) {
+    if (this is HyperskillCourseAdvertiser || this is CodeforcesCourse || this is ContestInfo) {
       return CourseCompatibility.Compatible
     }
 

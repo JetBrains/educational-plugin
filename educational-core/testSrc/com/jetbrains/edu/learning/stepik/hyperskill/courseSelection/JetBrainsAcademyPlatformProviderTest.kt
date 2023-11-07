@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill.courseSelection
 
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.MockResponseFactory
-import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
+import com.jetbrains.edu.learning.newproject.HyperskillCourseAdvertiser
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.pathWithoutPrams
 import com.jetbrains.edu.learning.stepik.hyperskill.api.*
@@ -29,7 +29,7 @@ class JetBrainsAcademyPlatformProviderTest : EduTestCase() {
     assertTrue(courseGroups[0].courses.size == 1)
 
     val course = courseGroups[0].courses.first()
-    assertTrue(course is JetBrainsAcademyCourse)
+    assertTrue(course is HyperskillCourseAdvertiser)
   }
 
   fun `test selected project added`() {

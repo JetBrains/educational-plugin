@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.compatibility
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
+import com.jetbrains.edu.learning.newproject.HyperskillCourseAdvertiser
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.errors.ErrorSeverity.*
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessageType.ERROR
@@ -140,7 +140,7 @@ sealed class ErrorState(
         return when {
           CoursesStorage.getInstance().hasCourse(this) -> None
           this is CheckiOCourse -> checkiOError
-          this is JetBrainsAcademyCourse -> if (HyperskillSettings.INSTANCE.account == null) JetBrainsAcademyLoginNeeded else None
+          this is HyperskillCourseAdvertiser -> if (HyperskillSettings.INSTANCE.account == null) JetBrainsAcademyLoginNeeded else None
           this is HyperskillCourse -> if (HyperskillSettings.INSTANCE.account == null) HyperskillLoginRequired else None
           this is EduCourse -> {
             if (!isMarketplace && !isLoggedInToStepik()) {
