@@ -15,7 +15,7 @@ import javax.swing.JPanel
 private const val INFO_HGAP = 0
 private const val INFO_VGAP = 5
 
-class JetBrainsAcademyCourseCard(course: Course) : CourseCardComponent(course) {
+class HyperskillCourseCard(course: Course) : CourseCardComponent(course) {
 
   override fun createBottomComponent(): JPanel {
     return AcademyCourseInfoComponent(course is HyperskillCourseAdvertiser)

@@ -17,7 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class JetBrainsAcademyCoursesPanel(
+class HyperskillCoursesPanel(
   private val platformProvider: JetBrainsAcademyPlatformProvider,
   scope: CoroutineScope,
   disposable: Disposable
@@ -42,19 +42,19 @@ class JetBrainsAcademyCoursesPanel(
     super.updateModelAfterCourseDeletedFromStorage(deletedCourse)
   }
 
-  override fun createCoursesListPanel() = JetBrainsAcademyCoursesListPanel()
+  override fun createCoursesListPanel() = HyperskillCoursesListPanel()
 
   override fun getLoginComponent(): LoginPanel {
-    return JetBrainsAcademyLoginPanel()
+    return HyperskillLoginPanel()
   }
 
-  inner class JetBrainsAcademyCoursesListPanel : CoursesListWithResetFilters() {
+  inner class HyperskillCoursesListPanel : CoursesListWithResetFilters() {
     override fun createCardForNewCourse(course: Course): CourseCardComponent {
-      return JetBrainsAcademyCourseCard(course)
+      return HyperskillCourseCard(course)
     }
   }
 
-  private inner class JetBrainsAcademyLoginPanel : LoginPanel(EduCoreBundle.message("course.dialog.log.in.to.jba.label.text"),
+  private inner class HyperskillLoginPanel : LoginPanel(EduCoreBundle.message("course.dialog.log.in.to.jba.label.text"),
                                                               isLoginNeeded(),
                                                               { handleLogin() })
 
