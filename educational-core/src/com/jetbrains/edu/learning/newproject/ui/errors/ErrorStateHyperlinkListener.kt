@@ -50,7 +50,7 @@ class ErrorStateHyperlinkListener(private val parentDisposable: Disposable) : Hy
         }
         checkiOConnectorProvider.oAuthConnector.doAuthorize(*postLoginActions, authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG)
       }
-      is ErrorState.JetBrainsAcademyLoginNeeded -> {
+      is ErrorState.HyperskillLoginNeeded -> {
         HyperskillConnector.getInstance().doAuthorize(*postLoginActions, authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG)
       }
       is ErrorState.StepikLoginRequired, ErrorState.NotLoggedIn -> {
