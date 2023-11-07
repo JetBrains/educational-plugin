@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.newproject.ui
+package com.jetbrains.edu.learning.newproject.ui.dialogs
 
 import com.intellij.ide.plugins.DisabledPluginsState
 import com.intellij.ide.plugins.DynamicPluginListener
@@ -13,6 +13,7 @@ import com.intellij.openapi.application.impl.coroutineDispatchingContext
 import com.intellij.openapi.updateSettings.impl.UpdateChecker
 import com.intellij.openapi.util.Disposer
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.ui.CoursesPanelWithTabs
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgroundColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

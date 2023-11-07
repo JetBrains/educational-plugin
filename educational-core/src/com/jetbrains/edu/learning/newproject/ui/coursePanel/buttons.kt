@@ -21,7 +21,7 @@ import com.jetbrains.edu.learning.marketplace.MarketplaceListedCoursesIdsLoader
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
-import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
+import com.jetbrains.edu.learning.newproject.ui.dialogs.JoinCourseDialog
 import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.isFromMyCoursesPage
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse

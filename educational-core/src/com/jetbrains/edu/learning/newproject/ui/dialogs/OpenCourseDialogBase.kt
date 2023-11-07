@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.newproject.ui
+package com.jetbrains.edu.learning.newproject.ui.dialogs
 
 import com.intellij.CommonBundle
 import com.intellij.openapi.ui.DialogWrapper
