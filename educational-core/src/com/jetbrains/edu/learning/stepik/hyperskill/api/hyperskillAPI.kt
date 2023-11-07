@@ -75,9 +75,6 @@ abstract class WithPaginationMetaData {
 }
 
 class PaginationMetaData {
-  @JsonProperty("page")
-  var page: Int = -1
-
   @JsonProperty("has_next")
   var hasNext: Boolean = false
 }
