@@ -13,8 +13,8 @@ import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
-import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
-import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory
+import com.jetbrains.edu.learning.newproject.ui.platformProviders.CoursesPlatformProvider
+import com.jetbrains.edu.learning.newproject.ui.platformProviders.CoursesPlatformProviderFactory
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.onError

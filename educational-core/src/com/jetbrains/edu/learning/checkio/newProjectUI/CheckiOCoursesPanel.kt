@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CHECKIO
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
-import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
+import com.jetbrains.edu.learning.newproject.ui.platformProviders.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.LoginPanel
 import kotlinx.coroutines.CoroutineScope
 

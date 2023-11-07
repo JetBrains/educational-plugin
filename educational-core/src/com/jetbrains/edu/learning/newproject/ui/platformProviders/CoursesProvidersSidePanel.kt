@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.newproject.ui
+package com.jetbrains.edu.learning.newproject.ui.platformProviders
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
@@ -14,7 +14,10 @@ import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CourseDeletedListener
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorageBase
+import com.jetbrains.edu.learning.newproject.ui.CoursesDialogFontManager
+import com.jetbrains.edu.learning.newproject.ui.ToolbarActionWrapper
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
+import com.jetbrains.edu.learning.newproject.ui.createHyperlinkWithContextHelp
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
 import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.JBACourseFromStorage
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.TypographyManager

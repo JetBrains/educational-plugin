@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.coursera.CourseraPlatformProvider
 import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.dialogs.BrowseCoursesDialog
-import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
+import com.jetbrains.edu.learning.newproject.ui.platformProviders.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationEvent.*
 import com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.HyperskillPlatformProvider

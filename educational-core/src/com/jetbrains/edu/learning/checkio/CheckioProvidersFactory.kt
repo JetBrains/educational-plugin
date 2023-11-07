@@ -12,8 +12,8 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON_3_VERSION
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
-import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
-import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory
+import com.jetbrains.edu.learning.newproject.ui.platformProviders.CoursesPlatformProvider
+import com.jetbrains.edu.learning.newproject.ui.platformProviders.CoursesPlatformProviderFactory
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.asList
 import kotlinx.coroutines.CoroutineScope

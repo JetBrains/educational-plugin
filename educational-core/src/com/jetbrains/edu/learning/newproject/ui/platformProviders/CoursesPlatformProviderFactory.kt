@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.newproject.ui
+package com.jetbrains.edu.learning.newproject.ui.platformProviders
 
 import com.intellij.openapi.extensions.ExtensionPointName
 

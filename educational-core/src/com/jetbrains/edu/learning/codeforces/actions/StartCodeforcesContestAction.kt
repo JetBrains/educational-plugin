@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.codeforces.ContestParameters
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseCreationInfo
-import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider.Companion.joinCourse
+import com.jetbrains.edu.learning.newproject.ui.platformProviders.CoursesPlatformProvider.Companion.joinCourse
 import org.jetbrains.annotations.NonNls
 import javax.swing.JPanel
 

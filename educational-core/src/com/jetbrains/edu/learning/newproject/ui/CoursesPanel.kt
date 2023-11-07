@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgrou
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPanel
 import com.jetbrains.edu.learning.newproject.ui.filters.CoursesSearchComponent
+import com.jetbrains.edu.learning.newproject.ui.platformProviders.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.JBACourseFromStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

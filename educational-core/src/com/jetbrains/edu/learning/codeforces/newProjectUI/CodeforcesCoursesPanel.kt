@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.newproject.CoursesDownloadingException
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
-import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
+import com.jetbrains.edu.learning.newproject.ui.platformProviders.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.LoginPanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgroundColor

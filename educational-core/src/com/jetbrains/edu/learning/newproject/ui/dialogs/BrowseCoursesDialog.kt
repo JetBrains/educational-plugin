@@ -13,7 +13,7 @@ import com.intellij.openapi.application.impl.coroutineDispatchingContext
 import com.intellij.openapi.updateSettings.impl.UpdateChecker
 import com.intellij.openapi.util.Disposer
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.CoursesPanelWithTabs
+import com.jetbrains.edu.learning.newproject.ui.platformProviders.CoursesPanelWithTabs
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgroundColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
