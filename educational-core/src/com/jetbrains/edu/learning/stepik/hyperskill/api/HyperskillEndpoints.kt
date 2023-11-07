@@ -13,7 +13,7 @@ interface HyperskillEndpoints {
   fun getCurrentUserInfo(): Call<ProfilesList>
 
   @GET("api/stages")
-  fun stages(@Query("project") projectId: Int): Call<StagesList>
+  fun stages(@Query("project") projectId: Int, @Query("page") page: Int, @Query("page_size") pageSize: Int = 100): Call<StagesList>
 
   @GET("api/topics")
   fun topics(@Query("stage") stageId: Int, @Query("page") page: Int): Call<TopicsList>
@@ -22,7 +22,7 @@ interface HyperskillEndpoints {
   fun steps(@Query("ids", encoded = true) ids: String): Call<HyperskillStepsList>
 
   @GET("api/steps")
-  fun steps(@Query("topic") topic: Int): Call<HyperskillStepsList>
+  fun steps(@Query("topic") topic: Int, @Query("page") page: Int, @Query("page_size") pageSize: Int = 100): Call<HyperskillStepsList>
 
   @GET("api/submissions")
   fun submission(@Query("user") user: Int, @Query("step", encoded = true) step: String, @Query("page") page: Int): Call<SubmissionsList>

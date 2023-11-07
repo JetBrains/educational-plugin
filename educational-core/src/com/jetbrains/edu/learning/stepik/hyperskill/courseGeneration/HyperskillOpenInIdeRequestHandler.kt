@@ -26,9 +26,7 @@ import com.jetbrains.edu.learning.courseGeneration.OpenInIdeRequestHandler
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToTask
 import com.jetbrains.edu.learning.stepik.hyperskill.*
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
+import com.jetbrains.edu.learning.stepik.hyperskill.api.*
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpenRequest>() {
@@ -251,10 +249,11 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     val connector = HyperskillConnector.getInstance()
     val topicId = topic ?: return Err("Topic must not be null")
 
-    val stepSources = connector.getStepsForTopic(topicId)
+    val stepSources = withPageIteration { connector.getStepsForTopic(topicId, it) }
       .onError { return Err(it) }
-      .filter { it.isRecommended || it.id == id }.toMutableList()
-
+      .flatMap {it.steps}
+      .filter { it.isRecommended || it.id == id }
+      .toMutableList()
     val theoryTask = stepSources.find { it.block?.name == HyperskillTaskType.TEXT.type }
     if (theoryTask != null) {
       stepSources.remove(theoryTask)

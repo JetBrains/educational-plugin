@@ -116,8 +116,9 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
   }
 
   fun getStages(projectId: Int): List<HyperskillStage>? {
-    val response = hyperskillEndpoints.stages(projectId).executeHandlingExceptions()
-    return response?.body()?.stages
+    return withPageIteration { hyperskillEndpoints.stages(projectId, it).executeAndExtractFromBody() }
+      .onError { return emptyList() }
+      .flatMap { it.stages }
   }
 
   fun getProject(projectId: Int): Result<HyperskillProject, String> {
@@ -130,8 +131,8 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
   private fun getStepSources(stepIds: List<Int>): Result<List<HyperskillStepSource>, String> =
     hyperskillEndpoints.steps(stepIds.joinToString(separator = ",")).executeAndExtractFromBody().flatMap { Ok(it.steps) }
 
-  fun getStepsForTopic(topic: Int): Result<List<HyperskillStepSource>, String> =
-    hyperskillEndpoints.steps(topic).executeAndExtractFromBody().flatMap { Ok(it.steps) }
+  fun getStepsForTopic(topic: Int, page: Int = 1): Result<HyperskillStepsList, String> =
+    hyperskillEndpoints.steps(topic, page).executeAndExtractFromBody()
 
   fun getStepSource(stepId: Int): Result<HyperskillStepSource, String> =
     hyperskillEndpoints.steps(stepId.toString()).executeAndExtractFromBody().flatMap {
@@ -153,15 +154,10 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
   }
 
   private fun getAllTopics(stage: HyperskillStage): List<HyperskillTopic> {
-    var page = 1
-    val topics = mutableListOf<HyperskillTopic>()
-    do {
-      val topicsList = hyperskillEndpoints.topics(stage.id, page).executeHandlingExceptions(true)?.body() ?: break
-      topics.addAll(topicsList.topics.filter { it.theoryId != null })
-      page += 1
-    }
-    while (topicsList.topics.isNotEmpty() && topicsList.meta["has_next"] == true)
-    return topics
+    return withPageIteration { hyperskillEndpoints.topics(stage.id, it).executeAndExtractFromBody() }
+      .onError { return emptyList() }
+      .flatMap { it.topics }
+      .filter { it.theoryId != null }
   }
 
   fun getLesson(course: HyperskillCourse, attachmentLink: String): Lesson {
@@ -231,8 +227,10 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
     var currentPage = 1
     val allSubmissions = mutableListOf<StepikBasedSubmission>()
     while (true) {
-      val submissionsList = hyperskillEndpoints.submission(userId, stepIds.joinToString(separator = ","),
-                                                           currentPage).executeHandlingExceptions()?.body() ?: break
+      val submissionsList = hyperskillEndpoints.submission(
+        userId, stepIds.joinToString(separator = ","),
+        currentPage
+      ).executeHandlingExceptions()?.body() ?: break
       val submissions = submissionsList.submissions
       allSubmissions.addAll(submissions)
       if (submissions.isEmpty() || !submissionsList.meta.containsKey("has_next") || submissionsList.meta["has_next"] == false) {
@@ -360,7 +358,14 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
   private fun <T, R> Call<T>.executeAndExtractFirst(extractResult: T.() -> List<R>): Result<R, String> {
     return executeParsingErrors(true).flatMap {
       val result = it.body()?.extractResult()?.firstOrNull()
-      if (result == null) Err(EduCoreBundle.message("error.failed.to.post.solution.with.guide", EduNames.JBA, EduNames.FAILED_TO_POST_TO_JBA_URL)) else Ok(result)
+      if (result == null) Err(
+        EduCoreBundle.message(
+          "error.failed.to.post.solution.with.guide",
+          EduNames.JBA,
+          EduNames.FAILED_TO_POST_TO_JBA_URL
+        )
+      )
+      else Ok(result)
     }
   }
 
