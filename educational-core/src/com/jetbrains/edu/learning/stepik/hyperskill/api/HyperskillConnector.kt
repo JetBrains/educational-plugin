@@ -192,18 +192,18 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
     return getTasks(course, lesson, stepSources)
   }
 
-  fun loadStages(hyperskillCourse: HyperskillCourse): Boolean {
+  fun loadStages(hyperskillCourse: HyperskillCourse) {
     val hyperskillProject = hyperskillCourse.hyperskillProject ?: error("No Hyperskill project")
     val projectId = hyperskillProject.id
     if (hyperskillCourse.stages.isEmpty()) {
-      val stages = getStages(projectId) ?: return false
+      val stages = getStages(projectId) ?: return
       hyperskillCourse.stages = stages
     }
     val stages = hyperskillCourse.stages
     val lesson = getLesson(hyperskillCourse, hyperskillProject.ideFiles)
     if (lesson.taskList.size != stages.size) {
       LOG.warn("Course has ${stages.size} stages, but ${lesson.taskList.size} tasks")
-      return false
+      return
     }
 
     lesson.taskList.forEachIndexed { index, task ->
@@ -222,7 +222,7 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
     }
     hyperskillCourse.addLesson(lesson)
     hyperskillCourse.sortItems()
-    return true
+    return
   }
 
   private fun feedbackLink(project: Int, stage: HyperskillStage): String {
