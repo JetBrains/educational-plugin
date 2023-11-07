@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.swing.JPanel
 
 class HyperskillCoursesPanel(
   private val platformProvider: HyperskillPlatformProvider,
@@ -44,9 +45,16 @@ class HyperskillCoursesPanel(
 
   override fun createCoursesListPanel() = HyperskillCoursesListPanel()
 
-  override fun getLoginComponent(): LoginPanel {
-    return HyperskillLoginPanel()
+  override fun createContentPanel(): JPanel {
+    if (isLoggedIn()) {
+      super.createContentPanel()
+    }
+    else {
+      // create a not-logged-in page
+    }
   }
+
+  private fun isLoggedIn() = HyperskillSettings.INSTANCE.account != null
 
   inner class HyperskillCoursesListPanel : CoursesListWithResetFilters() {
     override fun createCardForNewCourse(course: Course): CourseCardComponent {
@@ -58,7 +66,7 @@ class HyperskillCoursesPanel(
                                                               isLoginNeeded(),
                                                               { handleLogin() })
 
-  override fun isLoginNeeded() = HyperskillSettings.INSTANCE.account == null
+  override fun isLoginNeeded() = !isLoggedIn()
 
   private fun handleLogin() {
     HyperskillConnector.getInstance().doAuthorize(
