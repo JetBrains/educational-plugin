@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.PluginInfo
 import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
+import com.jetbrains.edu.learning.newproject.HyperskillCourseAdvertiser
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.TypographyManager
 import com.jetbrains.edu.learning.ui.EduColors
 import com.jetbrains.edu.learning.ui.getCurrentThemeName
@@ -42,7 +42,7 @@ val courseCardComponentFont = Font(TypographyManager().bodyFont, Font.PLAIN, Cou
 
 val Course.logo: Icon?
   get() {
-    if (this is JetBrainsAcademyCourse) {
+    if (this is HyperskillCourseAdvertiser) {
       return EducationalCoreIcons.JB_ACADEMY_TAB
     }
     val logo = configurator?.logo ?: compatibilityProvider?.logo

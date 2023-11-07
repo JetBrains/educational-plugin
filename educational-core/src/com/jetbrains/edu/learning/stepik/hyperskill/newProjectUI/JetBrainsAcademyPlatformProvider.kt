@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseCreationInfo
-import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
+import com.jetbrains.edu.learning.newproject.HyperskillCourseAdvertiser
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
@@ -85,7 +85,7 @@ class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider() {
 
     if (courses.isEmpty()) {
       // if no JB Academy content to offer, advertise it
-      courses.add(JetBrainsAcademyCourse())
+      courses.add(HyperskillCourseAdvertiser())
     }
 
     return listOf(CoursesGroup(courses))
