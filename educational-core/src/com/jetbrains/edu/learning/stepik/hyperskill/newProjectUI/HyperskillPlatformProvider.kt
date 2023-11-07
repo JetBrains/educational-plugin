@@ -32,10 +32,10 @@ import kotlinx.coroutines.CoroutineScope
 import javax.swing.Icon
 
 class HyperskillPlatformProviderFactory : CoursesPlatformProviderFactory {
-  override fun getProviders(): List<CoursesPlatformProvider> = listOf(JetBrainsAcademyPlatformProvider())
+  override fun getProviders(): List<CoursesPlatformProvider> = listOf(HyperskillPlatformProvider())
 }
 
-class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider() {
+class HyperskillPlatformProvider : CoursesPlatformProvider() {
   override val name: String = EduNames.JBA
 
   override val icon: Icon get() = EducationalCoreIcons.JB_ACADEMY_TAB
@@ -62,7 +62,7 @@ class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider() {
 
     val isOpened = HyperskillProjectAction.openHyperskillProject { errorMessage ->
       Messages.showErrorDialog(errorMessage.message, EduCoreBundle.message("hyperskill.failed.to.open.project"))
-      logger<JetBrainsAcademyPlatformProvider>().warn("Joining a course resulted in an error: ${errorMessage.message}. The error was shown inside an error dialog.")
+      logger<HyperskillPlatformProvider>().warn("Joining a course resulted in an error: ${errorMessage.message}. The error was shown inside an error dialog.")
     }
 
     if (isOpened) {
