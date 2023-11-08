@@ -480,11 +480,12 @@ private open class EduFileBuilder {
     result.isVisible = isVisible
     result.isEditable = isEditable
     result.errorHighlightLevel = errorHighlightLevel
-    result.contents = when (isBinary) {
+    /*result.contents = when (isBinary) {
       true -> InMemoryBinaryContents.parseBase64Encoding(text)
       false -> InMemoryTextualContents(text)
       null -> InMemoryUndeterminedContents(text)
-    }
+    }*/
+    LOG.info("Course json read: free memory ${Runtime.getRuntime().freeMemory()}")
   }
 }
 

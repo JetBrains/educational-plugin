@@ -32,12 +32,18 @@ private val LOG = logger<LocalEduCourseMixin>()
 private class CourseJsonParsingException(message: String): Exception(message)
 
 fun readCourseJson(reader: () -> Reader): Course? {
+  val t1 = System.currentTimeMillis()
+  LOG.info("Course json read start")
+
   return try {
     val courseMapper = getCourseMapper()
 
     val (version, courseType) = reader().use { currentReader ->
       getFormatVersionAndCourseTypeFromJson(currentReader, courseMapper)
     }
+
+    val t2 = System.currentTimeMillis()
+    LOG.info("Course json read versions in ${(t2 - t1) / 1000.0}ms")
 
     val isArchiveEncrypted = isArchiveEncrypted(version, courseType)
 
@@ -48,12 +54,21 @@ fun readCourseJson(reader: () -> Reader): Course? {
         courseMapper.readTree(currentReader) as ObjectNode
       }
       courseNode = migrate(courseNode)
-      courseMapper.treeToValue(courseNode)
+      val result = courseMapper.treeToValue<Course>(courseNode)
+
+      val t3 = System.currentTimeMillis()
+      LOG.info("Course json read in ${(t3 - t2) / 1000.0}ms")
+
+      result
     }
     else {
-      reader().use { currentReader ->
+      val result = reader().use { currentReader ->
         courseMapper.readValue(currentReader, Course::class.java)
       }
+      val t3 = System.currentTimeMillis()
+      LOG.info("Course json read in ${(t3 - t2) / 1000.0}ms")
+
+      result
     }
   }
   catch (e: IOException) {
@@ -137,7 +152,7 @@ fun migrate(node: ObjectNode, maxVersion: Int): ObjectNode {
 }
 
 fun needMigrate(jsonVersion: Int): Boolean {
-  return jsonVersion <= 11
+  return true // jsonVersion <= 11
 }
 
 fun getCourseMapper(): ObjectMapper {
