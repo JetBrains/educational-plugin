@@ -37,6 +37,7 @@ import com.jetbrains.edu.learning.json.getCourseMapper
 import com.jetbrains.edu.learning.json.migrate
 import com.jetbrains.edu.learning.json.mixins.LocalEduCourseMixin
 import com.jetbrains.edu.learning.json.readCourseJson
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.projectView.ProgressUtil.updateCourseProgress
 import com.jetbrains.edu.learning.taskToolWindow.ui.EduBrowserHyperlinkListener
@@ -45,6 +46,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.MarkdownParser
+import java.io.File
 import java.io.IOException
 import java.io.Reader
 import java.nio.charset.StandardCharsets
@@ -109,11 +111,22 @@ object EduUtilsKt {
 
   fun getLocalCourse(zipFilePath: String, readCourseJson: (() -> Reader) -> Course? = ::readCourseJson): Course? {
     try {
-      return ZipFile(zipFilePath).use { zipFile ->
-        val entry = zipFile.getEntry(COURSE_META_FILE) ?: return null
-        val reader = { zipFile.getInputStream(entry).reader(StandardCharsets.UTF_8) }
-        readCourseJson(reader)
-      }
+      var course: Course? = null
+
+      ProgressManager.getInstance().runProcessWithProgressSynchronously({
+        val indicator = ProgressManager.getInstance().progressIndicator
+
+        indicator.isIndeterminate = true
+        indicator.text = EduCoreBundle.message("action.create.course.archive.reading.file.name", File(zipFilePath).name)
+
+        course = ZipFile(zipFilePath).use { zipFile ->
+          val entry = zipFile.getEntry(COURSE_META_FILE) ?: return@use null
+          val reader = { zipFile.getInputStream(entry).reader(StandardCharsets.UTF_8) }
+          readCourseJson(reader)
+        }
+      }, EduCoreBundle.message("action.create.course.archive.reading.progress.bar"), false, null)
+
+      return course
     }
     catch (e: IOException) {
       LOG.error("Failed to unzip course archive", e)
