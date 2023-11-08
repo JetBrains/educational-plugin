@@ -39,6 +39,7 @@ const val EMAIL = "email"
 const val ENVIRONMENT = "environment"
 const val FRONTEND_EVENTS = "frontend-events"
 const val FULL_NAME = "fullname"
+const val HAS_NEXT = "has_next"
 const val ID = "id"
 const val IDE_EDITION = "ide_edition"
 const val IDE_FILES = "ide_files"
@@ -75,7 +76,7 @@ abstract class WithPaginationMetaData {
 }
 
 class PaginationMetaData {
-  @JsonProperty("has_next")
+  @JsonProperty(HAS_NEXT)
   var hasNext: Boolean = false
 }
 
