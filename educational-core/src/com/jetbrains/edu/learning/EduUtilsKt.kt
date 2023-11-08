@@ -119,12 +119,14 @@ object EduUtilsKt {
         indicator.isIndeterminate = true
         indicator.text = EduCoreBundle.message("action.create.course.archive.reading.file.name", File(zipFilePath).name)
 
-        course = ZipFile(zipFilePath).use { zipFile ->
-          val entry = zipFile.getEntry(COURSE_META_FILE) ?: return@use null
-          val reader = { zipFile.getInputStream(entry).reader(StandardCharsets.UTF_8) }
-          readCourseJson(reader)
+        course = execCancelable {
+          ZipFile (zipFilePath).use { zipFile ->
+            val entry = zipFile.getEntry(COURSE_META_FILE) ?: return@use null
+            val reader = { zipFile.getInputStream(entry).reader(StandardCharsets.UTF_8) }
+            readCourseJson(reader)
+          }
         }
-      }, EduCoreBundle.message("action.create.course.archive.reading.progress.bar"), false, null)
+      }, EduCoreBundle.message("action.create.course.archive.reading.progress.bar"), true, null)
 
       return course
     }
