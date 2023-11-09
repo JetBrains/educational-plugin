@@ -7,7 +7,7 @@ from functools import reduce
 from pathlib import Path
 from typing import Dict, TypeVar, Tuple, Optional
 
-from space import commit_changes_to_educational_plugin, create_review_in_educational_plugin, has_branch
+from external_services import commit_changes_to_educational_plugin, create_review_in_educational_plugin, get_reviewer, has_branch
 
 K = TypeVar('K')
 V = TypeVar('V')
@@ -117,10 +117,8 @@ def branch(platform_version: int) -> str:
 
 
 def create_review(token: str, platform_version: int):
-    create_review_in_educational_plugin(token, branch(platform_version), f"Drop support for {platform_version} platform", REVIEWER)
-
-
-REVIEWER = "Arseniy.Pendryak"
+    reviewer = get_reviewer("edu: drop platform", platform_version)
+    create_review_in_educational_plugin(token, branch(platform_version), f"Drop support for {platform_version} platform", reviewer)
 
 
 def parse_args():

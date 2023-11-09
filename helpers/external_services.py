@@ -1,8 +1,8 @@
 import json
 import logging
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Union
 from urllib.request import Request, urlopen
-from urllib.parse import quote
+from urllib.parse import quote, urlencode
 
 
 def commit_changes_to_educational_plugin(token: str, branch_name: str, commit_massage: str, changes: List[Dict]):
@@ -40,7 +40,61 @@ def has_branch(token: str, branch_name: str) -> bool:
     return len(response["data"]) != 0
 
 
-def make_request(url: str, token: str, method: str, data: Optional[dict]) -> dict:
+def get_youtrack_issues(tag: str, text_query: str) -> List[Dict]:
+    query_params = urlencode({
+        "fields": "summary,customFields(name,value(name))",
+        "customFields": "Assignee",
+        "query": f"tag: {{{tag}}} project: EDU {text_query}"
+    })
+    url = f"https://youtrack.jetbrains.com/api/issues/?{query_params}"
+    return make_request(url, "", "GET")
+
+
+def full_platform_version(platform_version: int) -> str:
+    """
+    Converts short platform version into full one.
+    I.e. 223 -> 2022.3
+    """
+    return f"20{platform_version // 10}.{platform_version % 10}"
+
+
+DEFAULT_REVIEWER = "Arseniy.Pendryak"
+
+
+def get_reviewer(tag: str, platform_version: int) -> str:
+    issues = get_youtrack_issues(tag, str(platform_version))
+    if not issues:
+        issues = get_youtrack_issues(tag, full_platform_version(platform_version))
+
+    if not issues:
+        return DEFAULT_REVIEWER
+
+    # Expected json format:
+    # ```
+    # [
+    #   {
+    #     "summary" : "%summary_text%",
+    #     "customFields" : [
+    #       {
+    #         "value" : {
+    #           "name" : "%user_name%",
+    #           "$type" : "User"
+    #         },
+    #         "name" : "Assignee",
+    #         "$type" : "SingleUserIssueCustomField"
+    #       }
+    #     ],
+    #     "$type" : "Issue"
+    #   }
+    # ]
+    # ```
+    assignee_name: str = issues[0]["customFields"][0]["value"]["name"]
+    # More heuristic solution than 100% reliable way
+    # but it seems it works for all possible cases for now.
+    return assignee_name.replace(" ", ".")
+
+
+def make_request(url: str, token: str, method: str, data: Optional[Dict] = None) -> Union[Dict, List]:
     headers = {
         "Authorization": f"Bearer {token}",
         "Accept": "application/json",
