@@ -67,6 +67,8 @@ public class EducationalCoreIcons {
   public static final Icon ResultIncorrect = load("/icons/com/jetbrains/edu/learning/resultIncorrect.svg"); // 16x16
   public static final Icon ResetTask = load("/icons/com/jetbrains/edu/learning/resetTask.svg"); // 16x16
   public static final Icon CommentTask = load("/icons/com/jetbrains/edu/learning/commentTask.svg"); // 16x16
+
+  public static final Icon RateCourse = load("/icons/com/jetbrains/edu/learning/rateCourse.svg"); // 16x16
   public static final Icon Clock = load("/icons/com/jetbrains/edu/learning/clock.svg"); // 16x16
 
   public static final Icon User = load("/icons/com/jetbrains/edu/usersNumber.svg"); // 12x12

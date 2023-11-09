@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.actions
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.RightAlignedToolbarAction
@@ -9,12 +8,9 @@ import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
-import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.stepik.getStepikLink
 import org.jetbrains.annotations.NonNls
 
 class LeaveFeedbackAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.leave.comment.text"), EduCoreBundle.lazyMessage("action.leave.comment.text"), EducationalCoreIcons.CommentTask), RightAlignedToolbarAction {
@@ -22,7 +18,7 @@ class LeaveFeedbackAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.le
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val task = project.getCurrentTask() ?: return
-    val link = getLink(task) ?: error("LeaveFeedbackAction is not supported")
+    val link = task.feedbackLink ?: error("LeaveFeedbackAction is not supported")
     EduBrowser.getInstance().browse(link)
     EduCounterUsageCollector.leaveFeedback()
   }
@@ -41,7 +37,7 @@ class LeaveFeedbackAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.le
       addSynonym(EduCoreBundle.lazyMessage("action.show.discussions.text"))
     }
 
-    e.presentation.isEnabledAndVisible = getLink(task) != null
+    e.presentation.isEnabledAndVisible = task.feedbackLink != null
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
@@ -49,18 +45,5 @@ class LeaveFeedbackAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.le
   companion object {
     @NonNls
     const val ACTION_ID: String = "Educational.LeaveFeedbackAction"
-
-    @VisibleForTesting
-    fun getLink(task: Task): String? {
-      val feedbackLink = task.feedbackLink
-      val course = task.course
-      val courseLink = course.feedbackLink
-      return when {
-        feedbackLink != null -> feedbackLink
-        courseLink != null -> courseLink
-        course is EduCourse && course.isStepikRemote -> getStepikLink(task, task.lesson)
-        else -> null
-      }
-    }
   }
 }

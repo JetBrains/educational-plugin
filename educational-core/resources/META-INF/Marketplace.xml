@@ -29,6 +29,7 @@
     </action>
     <action id="Educational.Marketplace.UpdateCourse" class="com.jetbrains.edu.learning.marketplace.update.SyncMarketplaceCourseAction"/>
     <action id="Educational.StartMarketplaceCourse" class="com.jetbrains.edu.learning.marketplace.course.StartMarketplaceCourseAction"/>
+    <action id="Educational.RateMarketplaceCourseAction" class="com.jetbrains.edu.learning.marketplace.actions.RateMarketplaceCourseAction"/>
     <action id="Educational.Student.DeleteAllSubmissions" class="com.jetbrains.edu.learning.marketplace.actions.DeleteAllSubmissionsAction"/>
     <action id="Educational.Student.ShareMySolutions" class="com.jetbrains.edu.learning.marketplace.actions.ShareMySolutionsAction"/>
     <action id="Educational.Student.SubmissionsServiceChangeHost"

@@ -14,23 +14,24 @@ import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.actions.*
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.actions.CodeforcesCopyAndSubmitAction
 import com.jetbrains.edu.learning.codeforces.actions.SubmitCodeforcesSolutionAction
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
-import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
+import com.jetbrains.edu.learning.marketplace.actions.RateMarketplaceCourseAction
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.actions.DownloadDatasetAction
 import com.jetbrains.edu.learning.stepik.hyperskill.actions.RetryDataTaskAction
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.taskToolWindow.addActionLinks
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.taskToolWindow.ui.retry.RetryHyperlinkComponent
@@ -64,8 +65,15 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
     if (task?.isChangedOnFailed != true) {
       rightActionsToolbar.add(createSingleActionToolbar(RevertTaskAction.ACTION_ID))
     }
+
     if (task != null) {
-      rightActionsToolbar.add(createSingleActionToolbar(getLeaveFeedbackActionId(task)))
+      if (isLeaveFeedbackActionAvailable(task)) {
+        rightActionsToolbar.add(createSingleActionToolbar(task.getLeaveFeedbackActionId()))
+      }
+
+      if (task.course.feedbackLink != null) {
+        rightActionsToolbar.add(createSingleActionToolbar(RateMarketplaceCourseAction.ACTION_ID))
+      }
     }
     return rightActionsToolbar
   }

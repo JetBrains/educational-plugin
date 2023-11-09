@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.taskToolWindow
 
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.actions.LeaveFeedbackAction
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -12,13 +11,13 @@ class TaskFeedbackLinksTest : EduTestCase() {
 
   fun testNoneLink() {
     val task = getRemoteEduTask(isMarketplaceCourse = true)
-    assertNull(LeaveFeedbackAction.getLink(task))
+    assertNull(task.feedbackLink)
   }
 
   fun testCustomLink() {
     val task = getRemoteEduTask()
     task.feedbackLink = "https://www.jetbrains.com/"
-    assertEquals("Incorrect link", "https://www.jetbrains.com/", LeaveFeedbackAction.getLink(task))
+    assertEquals("Incorrect link", "https://www.jetbrains.com/", task.feedbackLink)
   }
 
   private fun getRemoteEduTask(isMarketplaceCourse: Boolean = false): Task {

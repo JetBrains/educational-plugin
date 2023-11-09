@@ -116,7 +116,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private const val LANGUAGE = "language"
     private const val EDU_TAB = "tab"
 
-    private val GROUP = EventLogGroup("educational.counters", 11)
+    private val GROUP = EventLogGroup("educational.counters", 12)
 
     private val COURSE_MODE_FIELD = EventFields.Enum<CourseMode>(MODE)
     private val ITEM_TYPE_FIELD = EventFields.String(TYPE, listOf("CheckiO",
@@ -162,6 +162,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private val LEAVE_IN_IDE_FEEDBACK_EVENT = GROUP.registerEvent("leave.in.ide.feedback", EventFields.Boolean(SUCCESS))
     private val REVERT_TASK_EVENT = GROUP.registerEvent("revert.task")
     private val CHECK_TASK_EVENT = GROUP.registerEvent("check.task", enumField<CheckStatus>("status"))
+    private val RATE_MARKETPLACE_COURSE = GROUP.registerEvent("rate.marketplace.course")
     private val REVIEW_STAGE_TOPICS_EVENT = GROUP.registerEvent("review.stage.topics")
     private val HINT_CLICKED_EVENT = GROUP.registerEvent("hint", enumField<HintEvent>(EVENT))
     private val CREATE_COURSE_PREVIEW_EVENT = GROUP.registerEvent("create.course.preview")
@@ -210,6 +211,8 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     fun solutionPeeked() = PEEK_SOLUTION_EVENT.log()
 
     fun leaveFeedback() = LEAVE_FEEDBACK_EVENT.log()
+
+    fun rateMarketplaceCourse() = RATE_MARKETPLACE_COURSE.log()
 
     fun leaveInIdeFeedback(success: Boolean) = LEAVE_IN_IDE_FEEDBACK_EVENT.log(success)
 
