@@ -23,7 +23,7 @@ import java.io.IOException
 import java.nio.file.Path
 import java.nio.file.Paths
 
-class CCFrameworkLessonManagerImpl(private val project: Project): CCFrameworkLessonManager, Disposable {
+class CCFrameworkLessonManagerImpl(private val project: Project) : CCFrameworkLessonManager, Disposable {
   var storage: CCFrameworkStorage = createStorage(project)
 
   override fun propagateChanges(task: Task) {
@@ -68,28 +68,23 @@ class CCFrameworkLessonManagerImpl(private val project: Project): CCFrameworkLes
       return false
     }
 
-    val initialCurrentFiles = currentTask.allFiles
-    val initialTargetFiles = targetTask.allFiles
+    val initialCurrentFiles = currentTask.allPropagatableFiles
+    val initialTargetFiles = targetTask.allPropagatableFiles
 
     val previousCurrentState = getStateFromStorage(currentTask)
 
     val currentState = getVFSTaskState(initialCurrentFiles, currentTaskDir)
     val targetState = getVFSTaskState(initialTargetFiles, targetTaskDir)
 
-    // we propagate only visible files
-    val currentStateVisible = currentState.split(currentTask).first
-    val previousCurrentStateVisible = previousCurrentState.split(currentTask).first
-    val targetStateVisible = targetState.split(targetTask).first
-
     // if the state of the file has not changed from the previous one, then it is useless to push it further
-    val intersection = currentStateVisible.entries.intersect(previousCurrentStateVisible.entries)
-    val currentStateVisibleChanged = currentStateVisible.complement(intersection)
-    val previousCurrentStateVisibleChanged = previousCurrentStateVisible.complement(intersection)
-    val targetStateVisibleChanged = targetStateVisible.complementByKeys(intersection)
+    val intersection = currentState.entries.intersect(previousCurrentState.entries)
+    val currentStateChanged = currentState.complement(intersection)
+    val previousCurrentStateChanged = previousCurrentState.complement(intersection)
+    val targetStateChanged = targetState.complementByKeys(intersection)
 
     return applyChanges(
       currentTask, targetTask,
-      currentStateVisibleChanged, previousCurrentStateVisibleChanged, targetStateVisibleChanged,
+      currentStateChanged, previousCurrentStateChanged, targetStateChanged,
       targetTaskDir
     )
   }
@@ -142,7 +137,7 @@ class CCFrameworkLessonManagerImpl(private val project: Project): CCFrameworkLes
       return UpdatedState(task.record, emptyMap())
     }
     val currentRecord = task.record
-    val initialCurrentFiles = task.allFiles
+    val initialCurrentFiles = task.allPropagatableFiles
     val currentState = getVFSTaskState(initialCurrentFiles, taskDir)
     val updatedUserChanges = try {
       updateState(currentRecord, currentState)

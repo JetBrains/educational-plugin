@@ -66,6 +66,10 @@ internal fun State.split(task: Task): Pair<State, State> {
 
 internal val Task.allFiles: State get() = taskFiles.mapValues { it.value.text }
 
+// we propagate only visible files
+internal val Task.allPropagatableFiles: State
+  get() = taskFiles.filterValues { it.isVisible }.mapValues { it.value.text }
+
 internal fun chooseConflictResolveStrategy(): FLConflictResolveStrategy {
   return SimpleConflictResolveStrategy()
 }
