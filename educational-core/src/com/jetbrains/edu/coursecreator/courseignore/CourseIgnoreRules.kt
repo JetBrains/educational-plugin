@@ -7,8 +7,7 @@ import com.intellij.openapi.vcs.changes.ignore.psi.IgnoreEntry
 import com.intellij.openapi.vcs.changes.ignore.psi.IgnoreVisitor
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiManager
+import com.intellij.psi.*
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.jetbrains.edu.learning.EduNames
@@ -29,10 +28,17 @@ interface CourseIgnoreRules {
                                 ?: return@runReadAction EMPTY
 
       CachedValuesManager.getCachedValue(courseIgnorePsiFile) {
-        CachedValueProvider.Result(
-          CourseIgnoreRulesFromFile(project, courseIgnorePsiFile),
+        val psiFileToParse = if (courseIgnorePsiFile.fileType == CourseIgnoreFileType) {
           courseIgnorePsiFile
-        )
+        }
+        else {
+          val text = courseIgnorePsiFile.text
+          PsiFileFactory.getInstance(project).createFileFromText(CourseIgnoreLanguage, text)
+        }
+
+        val rules = CourseIgnoreRulesFromFile(project, psiFileToParse)
+
+        CachedValueProvider.Result(rules, courseIgnorePsiFile)
       }
     }
 
