@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.actions
 
 import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -11,8 +12,10 @@ class CourseArchiveIndicator {
 
   private var filesCount: Int = 0
   private var readFiles = 0
+  private var folderToLocalizePaths: VirtualFile? = null
 
-  fun init(course: Course, indicator: ProgressIndicator) {
+  fun init(folderToLocalizePaths: VirtualFile, course: Course, indicator: ProgressIndicator) {
+    this.folderToLocalizePaths = folderToLocalizePaths
     this.indicator = indicator
     indicator.isIndeterminate = false
 
@@ -29,8 +32,10 @@ class CourseArchiveIndicator {
 
     readFiles++
 
+    val filePath = folderToLocalizePaths?.let { VfsUtil.getRelativePath(file, it) } ?: file.path
+
     indicator?.fraction = if (filesCount != 0) readFiles.toDouble() / filesCount else 0.0
     indicator?.text = EduCoreBundle.message("action.create.course.archive.writing.file.no", readFiles, filesCount)
-    indicator?.text2 = EduCoreBundle.message("action.create.course.archive.writing.file.name", file)
+    indicator?.text2 = EduCoreBundle.message("action.create.course.archive.writing.file.name", filePath)
   }
 }

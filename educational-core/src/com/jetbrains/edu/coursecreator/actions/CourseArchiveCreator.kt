@@ -109,7 +109,8 @@ class CourseArchiveCreator(
     }
     return try {
       val success = runModal { indicator ->
-        courseArchiveIndicator.init(courseCopy, indicator)
+        val courseDir = project.courseDir
+        courseArchiveIndicator.init(courseDir, courseCopy, indicator)
 
         ZipOutputStream(FileOutputStream(location)).use { outputStream ->
           outputStream.withNewEntry(COURSE_META_FILE) {
@@ -117,7 +118,7 @@ class CourseArchiveCreator(
             generateJson(writer, courseCopy)
           }
 
-          val iconFile = project.courseDir.findChild(EduFormatNames.COURSE_ICON_FILE)
+          val iconFile = courseDir.findChild(EduFormatNames.COURSE_ICON_FILE)
           iconFile?.inputStream?.use { iconInputStream ->
             outputStream.withNewEntry(EduFormatNames.COURSE_ICON_FILE) {
               iconInputStream.copyTo(outputStream)
