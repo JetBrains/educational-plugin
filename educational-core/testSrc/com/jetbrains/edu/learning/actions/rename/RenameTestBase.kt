@@ -1,12 +1,13 @@
 package com.jetbrains.edu.learning.actions.rename
 
+import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.IdeActions
+import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.rename.PsiElementRenameHandler
 import com.intellij.refactoring.rename.RenameHandlerRegistry
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.testFramework.MapDataContext
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.handlers.rename.MockRenameDialogFactory
@@ -45,8 +46,12 @@ abstract class RenameTestBase : EduActionTestCase() {
     assertTrue("Rename refactoring is ${if (!shouldBeInvoked) "" else "not "}invoked", shouldBeInvoked == factory.isRenameInvoked)
   }
 
-  private fun MapDataContext.withRenameDefaultName(newName: String): MapDataContext =
-    apply { put(PsiElementRenameHandler.DEFAULT_NAME, newName) }
+  private fun DataContext.withRenameDefaultName(newName: String): DataContext {
+    return SimpleDataContext.builder()
+      .setParent(this)
+      .add(PsiElementRenameHandler.DEFAULT_NAME, newName)
+      .build()
+  }
 
   protected fun findDescriptionFile(name: String): VirtualFile? =
     LightPlatformTestCase.getSourceRoot().findFileByRelativePath("lesson1/task1/$name")

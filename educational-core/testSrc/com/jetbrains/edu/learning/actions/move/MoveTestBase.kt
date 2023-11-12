@@ -1,13 +1,14 @@
 package com.jetbrains.edu.learning.actions.move
 
+import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.actionSystem.LangDataKeys
+import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
-import com.intellij.testFramework.MapDataContext
 import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.coursecreator.handlers.move.MoveStudyItemUI
 import com.jetbrains.edu.coursecreator.handlers.move.withMockMoveStudyItemUI
@@ -46,5 +47,10 @@ abstract class MoveTestBase : EduActionTestCase() {
     return PsiManager.getInstance(project).findDirectory(file) ?: error("Failed to find directory for `$file` file")
   }
 
-  protected fun MapDataContext.withTarget(element: PsiElement): MapDataContext = apply { put(LangDataKeys.TARGET_PSI_ELEMENT, element) }
+  protected fun DataContext.withTarget(element: PsiElement): DataContext {
+    return SimpleDataContext.builder()
+      .setParent(this)
+      .add(LangDataKeys.TARGET_PSI_ELEMENT, element)
+      .build()
+  }
 }
