@@ -88,6 +88,7 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
       panel.component.border = JBUI.Borders.emptyLeft(34)
       communityPanel.component.border = JBUI.Borders.emptyLeft(34)
 
+      segmentedButton.selectedItem = MY
       segmentedButton.visible(true)
       communityPanel.isVisible = true
     }
