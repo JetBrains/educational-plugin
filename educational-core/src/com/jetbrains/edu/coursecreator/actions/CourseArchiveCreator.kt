@@ -56,7 +56,17 @@ class CourseArchiveCreator(
    * @return false if the process was cancelled, true if the process finished successfully
    */
   private fun runModal(process: (ProgressIndicator) -> Unit): Boolean = ProgressManager.getInstance().runProcessWithProgressSynchronously(
-    { process(ProgressManager.getInstance().progressIndicator) },
+    {
+      try {
+        process(ProgressManager.getInstance().progressIndicator)
+      }
+      catch (e: Exception) {
+        val cause = e.cause
+        // JsonMappingException might occur during json serialization`
+        if (cause is ProcessCanceledException) throw cause
+        throw e
+      }
+    },
     EduCoreBundle.message("action.create.course.archive.progress.bar"),
     true,
     project
@@ -126,14 +136,8 @@ class CourseArchiveCreator(
       }
     }
     catch (e: IOException) {
-      if (e.cause is ProcessCanceledException) {
-        // might occur during json serialization
-        EduCoreBundle.message("error.course.archiving.cancelled.by.user")
-      }
-      else {
-        LOG.error("Failed to create course archive", e)
-        EduCoreBundle.message("error.failed.to.generate.course.archive")
-      }
+      LOG.error("Failed to create course archive", e)
+      EduCoreBundle.message("error.failed.to.generate.course.archive")
     }
   }
 
