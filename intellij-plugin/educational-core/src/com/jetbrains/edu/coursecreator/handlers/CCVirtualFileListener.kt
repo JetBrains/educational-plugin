@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.coursecreator.framework.FLRecordState
 import com.jetbrains.edu.learning.handlers.EduVirtualFileListener
 import com.jetbrains.edu.learning.yaml.*
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
@@ -59,6 +60,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     val removedLesson = info.lesson
     val course = removedLesson.course
     val section = removedLesson.section
+    FLRecordState.getInstance(project).removeRecords(removedLesson)
     if (section != null) {
       section.removeLesson(removedLesson)
       YamlFormatSynchronizer.saveItem(section)
@@ -72,6 +74,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     val removedSection = info.section
     val course = removedSection.course
     course.removeSection(removedSection)
+    FLRecordState.getInstance(project).removeRecords(removedSection)
     YamlFormatSynchronizer.saveItem(course)
   }
 
@@ -79,6 +82,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     val task = info.task
     val lesson = task.lesson
     lesson.removeTask(task)
+    FLRecordState.getInstance(project).removeRecord(task)
     YamlFormatSynchronizer.saveItem(lesson)
   }
 

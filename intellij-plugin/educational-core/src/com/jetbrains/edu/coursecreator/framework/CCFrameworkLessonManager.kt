@@ -132,11 +132,11 @@ class CCFrameworkLessonManager(private val project: Project) : Disposable {
 
   private fun saveFileStateIntoStorage(task: Task, baseFilesNames: List<String>? = null): UpdatedState {
     val taskDir = task.getDir(project.courseDir)
+    val currentRecord = getRecord(task)
     if (taskDir == null) {
       LOG.error("Failed to find task directory")
-      return UpdatedState(task.record, emptyMap())
+      return UpdatedState(currentRecord, emptyMap())
     }
-    val currentRecord = task.record
     val initialCurrentFiles = calcInitialFiles(task, baseFilesNames)
     val currentState = getTaskStateFromFiles(initialCurrentFiles, taskDir).toMutableMap()
 
@@ -158,13 +158,13 @@ class CCFrameworkLessonManager(private val project: Project) : Disposable {
       UpdatedState(currentRecord, emptyMap())
     }
 
-    task.record = updatedUserChanges.record
+    FLRecordState.getInstance(project).updateRecord(task, updatedUserChanges.record)
     return updatedUserChanges
   }
 
   private fun getStateFromStorage(task: Task): FLTaskState {
     return try {
-      storage.getState(task.record)
+      storage.getState(getRecord(task))
     }
     catch (e: IOException) {
       LOG.error("Failed to get user changes for task `${task.name}`", e)
@@ -220,6 +220,8 @@ class CCFrameworkLessonManager(private val project: Project) : Disposable {
     )
     Notifications.Bus.notify(notification, project)
   }
+
+  private fun getRecord(task: Task): Int = FLRecordState.getInstance(project).getRecord(task)
 
   companion object {
     private val LOG = logger<CCFrameworkLessonManager>()
