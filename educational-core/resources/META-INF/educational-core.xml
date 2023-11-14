@@ -245,7 +245,7 @@
                     serviceImplementation="com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl"/>
 
     <!-- Courseignore lang -->
-    <fileType language="CourseIgnore" extensions="courseignore" fieldName="INSTANCE" name="CourseIgnore file"
+    <fileType language="CourseIgnore" fileNames=".courseignore" fieldName="INSTANCE" name="CourseIgnore file"
               implementationClass="com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreFileType"/>
     <lang.parserDefinition language="CourseIgnore"
                            implementationClass="com.intellij.openapi.vcs.changes.ignore.lang.IgnoreParserDefinition"/>
