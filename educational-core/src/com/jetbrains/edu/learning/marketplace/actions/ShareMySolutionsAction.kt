@@ -13,8 +13,9 @@ import org.jetbrains.annotations.NonNls
 class ShareMySolutionsAction : DumbAwareToggleAction(EduCoreBundle.message("marketplace.solutions.sharing.action")) {
 
   override fun update(e: AnActionEvent) {
-    super.update(e)
+    e.presentation.isEnabledAndVisible = false
     val project = e.project ?: return
+    super.update(e)
 
     e.presentation.isVisible = Registry.`is`(REGISTRY_KEY, false) && project.isMarketplaceCourse() && project.isStudentProject()
     if (!e.presentation.isVisible) return
@@ -28,7 +29,7 @@ class ShareMySolutionsAction : DumbAwareToggleAction(EduCoreBundle.message("mark
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
-  private fun isAvailableInSettings() = MarketplaceSettings.INSTANCE.solutionsSharing != null
+  private fun isAvailableInSettings(): Boolean = MarketplaceSettings.INSTANCE.solutionsSharing != null
 
   companion object {
 
