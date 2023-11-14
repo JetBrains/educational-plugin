@@ -3,7 +3,6 @@ package com.jetbrains.edu.python.learning.checker
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.testframework.sm.runner.SMTestProxy
-import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -14,14 +13,10 @@ import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.python.testing.AbstractPythonTestRunConfiguration
-import com.jetbrains.python.testing.PythonTestConfigurationType
-import com.jetbrains.python.testing.TestRunnerService
 
 class PyNewEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project: Project) : EduTaskCheckerBase(task, envChecker, project) {
 
   override fun createDefaultTestConfigurations(): List<RunnerAndConfigurationSettings> {
-    val module = ModuleManager.getInstance(project).modules.singleOrNull()
-    TestRunnerService.getInstance(module).selectedFactory = PythonTestConfigurationType.getInstance().unitTestFactory
     // In general, python plugin can create run configuration for a directory,
     // but it can skip some test files if they haven't proper names
     return createTestConfigurationsForTestFiles()
