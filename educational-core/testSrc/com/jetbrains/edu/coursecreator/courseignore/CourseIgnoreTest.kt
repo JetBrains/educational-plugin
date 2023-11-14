@@ -1,6 +1,8 @@
-package com.jetbrains.edu.learning
+package com.jetbrains.edu.coursecreator.courseignore
 
 import com.jetbrains.edu.coursecreator.AdditionalFilesUtils
+import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.findTask
 
 
 class CourseIgnoreTest : EduTestCase() {
