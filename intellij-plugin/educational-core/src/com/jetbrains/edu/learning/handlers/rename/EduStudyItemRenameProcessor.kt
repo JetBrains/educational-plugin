@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.rename.RenameDialog
 import com.intellij.refactoring.rename.RenamePsiFileProcessor
 import com.jetbrains.edu.coursecreator.CCStudyItemPathInputValidator
+import com.jetbrains.edu.coursecreator.framework.FLRecordState
 import com.jetbrains.edu.coursecreator.presentableTitleName
 import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.course
@@ -68,6 +69,7 @@ abstract class EduStudyItemRenameProcessor : RenamePsiFileProcessor() {
 
         override fun performRename(newName: String) {
           super.performRename(newName)
+          FLRecordState.getInstance(project).migrateRecord(item, newName)
           item.name = newName
           YamlFormatSynchronizer.saveItem(item.parent)
           item.course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)

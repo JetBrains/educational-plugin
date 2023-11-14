@@ -6,6 +6,7 @@ import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.coursecreator.StudyItemType.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.LessonContainer
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -31,10 +32,11 @@ fun StudyItem.getDir(courseDir: VirtualFile): VirtualFile? {
   }
 }
 
-fun StudyItem.getPathInCourse(): String {
+fun StudyItem.getRelativePath(root: StudyItem): String {
+  if (this == root) return ""
   val parents = mutableListOf<String>()
   var currentParent = parent
-  while (currentParent !is Course) {
+  while (currentParent != root) {
     parents.add(currentParent.name)
     currentParent = currentParent.parent
   }
@@ -42,4 +44,14 @@ fun StudyItem.getPathInCourse(): String {
   if (parents.isEmpty()) return name
   parents.add(name)
   return parents.joinToString(VfsUtilCore.VFS_SEPARATOR)
+}
+
+fun StudyItem.getPathInCourse(): String = getRelativePath(course)
+
+fun StudyItem.visitTasks(action: (Task) -> Unit) {
+  when (this) {
+    is LessonContainer -> visitTasks(action)
+    is Lesson -> visitTasks(action)
+    is Task -> action(this)
+  }
 }
