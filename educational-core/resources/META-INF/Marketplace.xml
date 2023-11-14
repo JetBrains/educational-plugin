@@ -30,7 +30,9 @@
     <action id="Educational.StartMarketplaceCourse" class="com.jetbrains.edu.learning.marketplace.course.StartMarketplaceCourseAction"/>
     <action id="Educational.RateMarketplaceCourseAction" class="com.jetbrains.edu.learning.marketplace.actions.RateMarketplaceCourseAction"/>
     <action id="Educational.Student.DeleteAllSubmissions" class="com.jetbrains.edu.learning.marketplace.actions.DeleteAllSubmissionsAction"/>
-    <action id="Educational.Student.ShareMySolutions" class="com.jetbrains.edu.learning.marketplace.actions.ShareMySolutionsAction"/>
+    <action id="Educational.Student.ShareMySolutions" class="com.jetbrains.edu.learning.marketplace.actions.ShareMySolutionsAction">
+      <add-to-group group-id="Educational.CourseView.SecondaryActions" relative-to-action="Educational.HideSolvedLessons" anchor="after"/>
+    </action>
     <action id="Educational.Student.SubmissionsServiceChangeHost"
             class="com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceChangeHost"
             internal="true"/>

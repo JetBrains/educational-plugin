@@ -30,7 +30,7 @@ import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.ide.util.treeView.NodeDescriptor
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.project.DumbAwareToggleAction
 import com.intellij.openapi.project.Project
 import com.intellij.ui.ScrollPaneFactory
 import com.intellij.util.ArrayUtil
@@ -47,7 +47,6 @@ import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
-import com.jetbrains.edu.learning.marketplace.actions.ShareMySolutionsAction
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.projectView.ProgressUtil.createProgressBar
 import org.jetbrains.annotations.NonNls
@@ -112,18 +111,10 @@ class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport
 
   override fun addToolbarActions(actionGroup: DefaultActionGroup) {
     actionGroup.removeAll()
-    val hideSolvedLessons = object : ToggleAction(EduCoreBundle.message("action.hide.solved.lessons.text")), DumbAware {
-      override fun isSelected(e: AnActionEvent): Boolean {
-        return PropertiesComponent.getInstance().getBoolean(HIDE_SOLVED_LESSONS, false)
-      }
-
-      override fun setSelected(e: AnActionEvent, state: Boolean) {
-        val hideSolved = PropertiesComponent.getInstance().getBoolean(HIDE_SOLVED_LESSONS, false)
-        PropertiesComponent.getInstance().setValue(HIDE_SOLVED_LESSONS, !hideSolved)
-        ProjectView.getInstance(myProject).refresh()
-      }
+    val group = ActionManager.getInstance().getAction("Educational.CourseView.SecondaryActions") as DefaultActionGroup
+    for (action in group.childActionsOrStubs) {
+      actionGroup.addAction(action).setAsSecondary(true)
     }
-    actionGroup.addAll(hideSolvedLessons, ShareMySolutionsAction())
   }
 
   private fun updateCourseProgress() {
@@ -208,5 +199,19 @@ class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport
     const val HIDE_SOLVED_LESSONS = "Edu.HideSolvedLessons"
 
     val STUDY_ITEM: DataKey<StudyItem> = DataKey.create("Edu.studyItem")
+  }
+
+  class HideSolvedLessonsAction : DumbAwareToggleAction() {
+    override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
+
+    override fun isSelected(e: AnActionEvent): Boolean {
+      return PropertiesComponent.getInstance().getBoolean(HIDE_SOLVED_LESSONS, false)
+    }
+
+    override fun setSelected(e: AnActionEvent, state: Boolean) {
+      PropertiesComponent.getInstance().setValue(HIDE_SOLVED_LESSONS, state)
+      val project = e.project ?: return
+      ProjectView.getInstance(project).refresh()
+    }
   }
 }

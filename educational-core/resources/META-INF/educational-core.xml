@@ -208,6 +208,11 @@
     <action id="Educational.Student.ApplyCode" class="com.jetbrains.edu.learning.actions.ApplyCodeAction">
       <add-to-group group-id="Diff.ViewerToolbar"/>
     </action>
+
+    <group id="Educational.CourseView.SecondaryActions">
+      <action id="Educational.HideSolvedLessons"
+              class="com.jetbrains.edu.learning.projectView.CourseViewPane$HideSolvedLessonsAction"/>
+    </group>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
