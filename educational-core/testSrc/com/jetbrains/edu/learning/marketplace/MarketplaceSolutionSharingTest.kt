@@ -20,7 +20,7 @@ class MarketplaceSolutionSharingTest : SubmissionsTestBase() {
   fun `test ShareMySolutionsAction is visible for marketplace course`() {
     disableRegistry()
     setMarketplaceCourse()
-    testAction(ShareMySolutionsAction.ACTION_ID)
+    testAction(ShareMySolutionsAction.ACTION_ID, shouldBeEnabled = false, shouldBeVisible = true)
   }
 
   private fun disableRegistry() = Registry.get(ShareMySolutionsAction.REGISTRY_KEY).setValue(true)

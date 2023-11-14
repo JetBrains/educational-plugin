@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.marketplace.settings
 
-import com.intellij.execution.process.ProcessIOExecutorService
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.ui.HyperlinkAdapter
@@ -11,15 +10,12 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.JET_BRAINS_ACCOUNT
 import com.jetbrains.edu.learning.marketplace.JET_BRAINS_ACCOUNT_PROFILE_PATH
-import com.jetbrains.edu.learning.marketplace.MarketplaceSolutionSharingPreference
 import com.jetbrains.edu.learning.marketplace.actions.ShareMySolutionsAction
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.settings.OAuthLoginOptions
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
-import java.util.concurrent.CompletableFuture
 import javax.swing.JComponent
 
 class MarketplaceOptions : OAuthLoginOptions<MarketplaceAccount>() {
@@ -33,23 +29,10 @@ class MarketplaceOptions : OAuthLoginOptions<MarketplaceAccount>() {
     return !RemoteEnvHelper.isRemoteDevServer()
   }
 
-  private val shareMySolutionsCheckBox = JBCheckBox(
-    EduCoreBundle.message("marketplace.solutions.sharing.checkbox"),
-    MarketplaceSettings.INSTANCE.solutionsSharing ?: false
-  ).apply { isEnabled = false }
-
-  init {
-    CompletableFuture.runAsync({
-      val sharingPreference = MarketplaceSubmissionsConnector.getInstance().getSharingPreference()
-      MarketplaceSettings.INSTANCE.solutionsSharing = if (sharingPreference != null) {
-        shareMySolutionsCheckBox.isEnabled = true
-        sharingPreference.toString() == MarketplaceSolutionSharingPreference.ALWAYS.toString()
-      }
-      else {
-        MarketplaceSettings.INSTANCE.solutionsSharing
-      }
-      shareMySolutionsCheckBox.isSelected = MarketplaceSettings.INSTANCE.solutionsSharing ?: false
-    }, ProcessIOExecutorService.INSTANCE)
+  private val shareMySolutionsCheckBox = JBCheckBox(EduCoreBundle.message("marketplace.solutions.sharing.checkbox")).apply {
+    val sharingPreference = MarketplaceSettings.INSTANCE.solutionsSharing
+    isSelected = sharingPreference ?: false
+    isEnabled = sharingPreference != null
   }
 
   override fun getDisplayName(): String = JET_BRAINS_ACCOUNT

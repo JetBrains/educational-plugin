@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.marketplace.settings
 
-import com.intellij.execution.process.ProcessIOExecutorService
+import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.ui.JBAccountInfoService
@@ -8,14 +8,27 @@ import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showF
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.getJBAUserInfo
+import com.jetbrains.edu.learning.marketplace.toBoolean
 import com.jetbrains.edu.learning.onError
-import java.util.concurrent.CompletableFuture
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class MarketplaceSettings {
+@Service(Service.Level.APP)
+class MarketplaceSettings(private val scope: CoroutineScope) {
 
   private var account: MarketplaceAccount? = null
 
+  @Volatile
   var solutionsSharing: Boolean? = null
+    private set
+
+  init {
+    scope.launch(Dispatchers.IO) {
+      val sharingPreference = MarketplaceSubmissionsConnector.getInstance().getSharingPreference()
+      solutionsSharing = sharingPreference.toBoolean()
+    }
+  }
 
   fun getMarketplaceAccount(): MarketplaceAccount? {
     if (!isJBALoggedIn()) {
@@ -41,13 +54,13 @@ class MarketplaceSettings {
   }
 
   fun updateSharingPreference(state: Boolean) {
-    CompletableFuture.runAsync({
+    scope.launch(Dispatchers.IO) {
       MarketplaceSubmissionsConnector.getInstance().changeSharingPreference(state).onError {
         showFailedToChangeSharingPreferenceNotification()
-        return@runAsync
+        return@launch
       }
       solutionsSharing = state
-    }, ProcessIOExecutorService.INSTANCE)
+    }
   }
 
   companion object {

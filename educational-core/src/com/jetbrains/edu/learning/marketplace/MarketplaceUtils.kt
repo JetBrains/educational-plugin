@@ -132,3 +132,5 @@ fun markMarketplaceTheoryTaskAsCompleted(project: Project, task: TheoryTask) {
 }
 
 fun Project.isMarketplaceCourse(): Boolean = course?.isMarketplace == true
+
+fun MarketplaceSolutionSharingPreference?.toBoolean(): Boolean = this == MarketplaceSolutionSharingPreference.ALWAYS

@@ -27,7 +27,6 @@ import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showN
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showSubmissionsDeletedSucessfullyNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceSolutionSharingPreference
 import com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceHost
-import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.submissions.SolutionFile
 import com.jetbrains.edu.learning.submissions.checkNotEmpty
@@ -189,18 +188,29 @@ class MarketplaceSubmissionsConnector {
     return submission
   }
 
-  fun changeSharingPreference(state: Boolean): Result<Response<ResponseBody>, String> {
-    LOG.info("Changing solution sharing to state $state for user ${MarketplaceSettings.INSTANCE.getMarketplaceAccount()?.userInfo?.name}")
+  suspend fun changeSharingPreference(state: Boolean): Result<Response<Unit>, String> {
+    val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
+    LOG.info("Changing solution sharing to state $state for user $loginName")
     val newSharingPreference = if (state) MarketplaceSolutionSharingPreference.ALWAYS else MarketplaceSolutionSharingPreference.NEVER
-
-    return submissionsService
-      .changeSharingPreference(newSharingPreference.name)
-      .executeParsingErrors()
+    return try {
+      Ok(submissionsService.changeSharingPreference(newSharingPreference.name))
+    }
+    catch (e: Exception) {
+      LOG.info("Error occurred while changing solution sharing to state $state for user $loginName", e)
+      Err(e.message ?: "Something went wrong")
+    }
   }
 
-  fun getSharingPreference(): MarketplaceSolutionSharingPreference? {
-    LOG.info("Getting solution sharing preference")
-    val responseString = submissionsService.getSharingPreference().executeHandlingExceptions()?.body()?.string()
+  suspend fun getSharingPreference(): MarketplaceSolutionSharingPreference? {
+    val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
+    LOG.info("Getting solution sharing preference for use $loginName")
+    val responseString = try {
+      submissionsService.getSharingPreference().string()
+    }
+    catch (e: Exception) {
+      LOG.info("Error occurred while getting solution sharing preference for user $loginName", e)
+      null
+    }
 
     return responseString?.let { MarketplaceSolutionSharingPreference.valueOf(it) }
   }

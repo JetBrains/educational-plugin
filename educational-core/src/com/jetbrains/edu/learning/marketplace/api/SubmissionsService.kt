@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.marketplace.api
 
 import okhttp3.ResponseBody
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.*
 
 interface SubmissionsService {
@@ -30,8 +31,8 @@ interface SubmissionsService {
   fun deleteAllSubmissions(): Call<ResponseBody>
 
   @GET("/api/user/sharing")
-  fun getSharingPreference(): Call<ResponseBody>
+  suspend fun getSharingPreference(): ResponseBody
 
   @PATCH("/api/user/sharing")
-  fun changeSharingPreference(@Query("preference") sharingPreference: String): Call<ResponseBody>
+  suspend fun changeSharingPreference(@Query("preference") sharingPreference: String): Response<Unit>
 }

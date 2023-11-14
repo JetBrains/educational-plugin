@@ -4,7 +4,6 @@
     <applicationService serviceInterface="com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector"
                         serviceImplementation="com.jetbrains.edu.learning.marketplace.api.MarketplaceConnectorImpl"
                         testServiceImplementation="com.jetbrains.edu.learning.marketplace.api.MockMarketplaceConnector"/>
-    <applicationService serviceImplementation="com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings"/>
     <httpRequestHandler implementation="com.jetbrains.edu.learning.marketplace.MarketplaceRestService"/>
     <statusBarWidgetFactory id="widget.marketplace"
                             implementation="com.jetbrains.edu.learning.marketplace.MarketplaceWidgetFactory"
