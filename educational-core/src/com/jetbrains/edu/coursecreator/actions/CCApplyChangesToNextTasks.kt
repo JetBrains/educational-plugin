@@ -6,10 +6,12 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.getStudyItem
+import com.jetbrains.edu.learning.isFeatureEnabled
 import org.jetbrains.annotations.NonNls
 
 class CCApplyChangesToNextTasks : DumbAwareAction() {
@@ -36,6 +38,10 @@ class CCApplyChangesToNextTasks : DumbAwareAction() {
     presentation.isEnabledAndVisible = false
 
     if (project == null || !CCUtils.isCourseCreator(project)) {
+      return
+    }
+
+    if (!isFeatureEnabled(EduExperimentalFeatures.CC_FL_APPLY_CHANGES)) {
       return
     }
 
