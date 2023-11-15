@@ -10,10 +10,12 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.framework.diff.FLConflictResolveStrategy
 import com.jetbrains.edu.coursecreator.framework.diff.SimpleConflictResolveStrategy
+import com.jetbrains.edu.coursecreator.framework.diff.DiffConflictResolveStrategy
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -23,6 +25,7 @@ import com.jetbrains.edu.learning.framework.impl.FLTaskState
 import com.jetbrains.edu.learning.framework.impl.calculateChanges
 import com.jetbrains.edu.learning.framework.impl.getTaskStateFromFiles
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import org.jetbrains.annotations.NonNls
 import java.io.IOException
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -213,11 +216,19 @@ class CCFrameworkLessonManager(private val project: Project) : Disposable {
   }
 
   private fun chooseConflictResolveStrategy(): FLConflictResolveStrategy {
-    return SimpleConflictResolveStrategy()
+    return if (Registry.`is`(DIFF_RESOLVE_ENABLED_REGISTRY_KEY, false)) {
+      DiffConflictResolveStrategy(project)
+    }
+    else {
+      SimpleConflictResolveStrategy()
+    }
   }
 
   companion object {
     private val LOG = logger<CCFrameworkLessonManager>()
+
+    @NonNls
+    const val DIFF_RESOLVE_ENABLED_REGISTRY_KEY = "edu.course.creator.diff.conflict.resolution.enabled"
 
     fun getInstance(project: Project): CCFrameworkLessonManager = project.service()
 

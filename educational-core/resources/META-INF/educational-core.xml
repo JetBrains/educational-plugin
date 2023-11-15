@@ -380,6 +380,10 @@
       <description>Enables "Apply changes to next task" action for educators in framework lessons</description>
     </experimentalFeature>
 
+    <registryKey key="edu.course.creator.diff.conflict.resolution.enabled"
+                 description="Enables diff conflict resolution for `Apply changes for next tasks` action"
+                 defaultValue="false"/>
+
     <experimentalFeature id="edu.tasktoolwindow.navigationmap" percentOfUsers="0" internalFeature="true">
       <description>Enables TaskToolWindow NavigationMap (project reopening required)</description>
     </experimentalFeature>

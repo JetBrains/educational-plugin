@@ -5,7 +5,7 @@ import com.jetbrains.edu.learning.framework.impl.FLTaskState
 /**
  * A simple conflict resolution strategy for resolving changes between task states.
  */
-class SimpleConflictResolveStrategy : FLConflictResolveStrategy {
+open class SimpleConflictResolveStrategy : FLConflictResolveStrategy {
   /**
    * This strategy does resolve some simple changes
    *
