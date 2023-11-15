@@ -147,7 +147,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     // 2. Calculate difference between initial state of current task and current state on local FS.
     // Update change list for current task in [storage] to have ability to restore state of current task in future
     val (newCurrentRecord, currentUserChanges) = try {
-      updateUserChanges(currentRecord, getUserChangesFromVFS(initialCurrentFiles, taskDir))
+      updateUserChanges(currentRecord, getUserChangesFromFiles(initialCurrentFiles, taskDir))
     }
     catch (e: IOException) {
       LOG.error("Failed to save user changes for task `${currentTask.name}`", e)
@@ -298,8 +298,8 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     }
   }
 
-  private fun getUserChangesFromVFS(initialState: State, taskDir: VirtualFile): UserChanges {
-    val currentState = getVFSTaskState(initialState, taskDir)
+  private fun getUserChangesFromFiles(initialState: FLTaskState, taskDir: VirtualFile): UserChanges {
+    val currentState = getTaskStateFromFiles(initialState, taskDir)
     return calculateChanges(initialState, currentState)
   }
 
@@ -328,6 +328,24 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
 
   override fun dispose() {
     Disposer.dispose(storage)
+  }
+
+  private val Task.allFiles: FLTaskState
+    get() = taskFiles.mapValues { it.value.text }
+
+  private fun FLTaskState.split(task: Task): Pair<FLTaskState, FLTaskState> {
+    val visibleFiles = HashMap<String, String>()
+    val invisibleFiles = HashMap<String, String>()
+
+    for ((path, text) in this) {
+      // TaskFiles and state may not be consistent due to external changes in hyperskill lessons.
+      // if there is a task in state that is not in taskFiles, then we know that it is a visible file.
+      val isVisibleFile = task.taskFiles[path]?.isVisible ?: true
+      val state = if (isVisibleFile) visibleFiles else invisibleFiles
+      state[path] = text
+    }
+
+    return visibleFiles to invisibleFiles
   }
 
   companion object {

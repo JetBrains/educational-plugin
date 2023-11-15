@@ -3,20 +3,20 @@ package com.jetbrains.edu.coursecreator.framework.diff
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.framework.impl.State
+import com.jetbrains.edu.learning.framework.impl.FLTaskState
 import com.jetbrains.edu.learning.isUnitTestMode
 import org.jetbrains.annotations.TestOnly
 
 fun applyChangesViaMergeDialog(
   project: Project,
   task: Task,
-  leftState: State,
-  baseState: State,
-  rightState: State,
+  leftState: FLTaskState,
+  baseState: FLTaskState,
+  rightState: FLTaskState,
   currentTaskName: String,
   targetTaskName: String,
   taskDir: VirtualFile,
-  initialBaseState: State = baseState
+  initialBaseState: FLTaskState = baseState
 ): Boolean {
   val mergeProvider = FLMergeProvider(project, task, leftState, baseState, rightState, initialBaseState)
   val mergeDialogCustomizer = FLMergeDialogCustomizer(project, currentTaskName, targetTaskName)

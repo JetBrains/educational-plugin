@@ -1,5 +1,8 @@
 package com.jetbrains.edu.coursecreator.framework
 
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationType
+import com.intellij.notification.Notifications
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
@@ -7,18 +10,17 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.framework.diff.FLConflictResolveStrategy
+import com.jetbrains.edu.coursecreator.framework.diff.SimpleConflictResolveStrategy
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.framework.impl.*
-import com.jetbrains.edu.learning.framework.impl.State
-import com.jetbrains.edu.learning.framework.impl.applyChanges
-import com.jetbrains.edu.learning.framework.impl.calculateChanges
-import com.jetbrains.edu.learning.framework.impl.chooseConflictResolveStrategy
 import com.jetbrains.edu.coursecreator.framework.diff.applyChangesViaMergeDialog
-import com.jetbrains.edu.learning.framework.impl.getVFSTaskState
-import com.jetbrains.edu.learning.framework.impl.showApplyChangesCanceledNotification
-import com.jetbrains.edu.learning.framework.impl.showApplyChangesSuccessNotification
+import com.jetbrains.edu.learning.framework.impl.*
+import com.jetbrains.edu.learning.framework.impl.FLTaskState
+import com.jetbrains.edu.learning.framework.impl.calculateChanges
+import com.jetbrains.edu.learning.framework.impl.getTaskStateFromFiles
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.io.IOException
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -42,10 +44,10 @@ class CCFrameworkLessonManagerImpl(private val project: Project) : CCFrameworkLe
         return
       }
       // if everything is ok with propagation, then we save the approved changes from the current task into storage
-      saveVFSChangesIntoStorage(tasks[i - 1])
+      saveFileStateIntoStorage(tasks[i - 1])
     }
     // save last task manually
-    saveVFSChangesIntoStorage(tasks.last())
+    saveFileStateIntoStorage(tasks.last())
     showApplyChangesSuccessNotification(project, task.name)
   }
 
@@ -73,8 +75,8 @@ class CCFrameworkLessonManagerImpl(private val project: Project) : CCFrameworkLe
 
     val previousCurrentState = getStateFromStorage(currentTask)
 
-    val currentState = getVFSTaskState(initialCurrentFiles, currentTaskDir)
-    val targetState = getVFSTaskState(initialTargetFiles, targetTaskDir)
+    val currentState = getTaskStateFromFiles(initialCurrentFiles, currentTaskDir)
+    val targetState = getTaskStateFromFiles(initialTargetFiles, targetTaskDir)
 
     // if the state of the file has not changed from the previous one, then it is useless to push it further
     val intersection = currentState.entries.intersect(previousCurrentState.entries)
@@ -92,9 +94,9 @@ class CCFrameworkLessonManagerImpl(private val project: Project) : CCFrameworkLe
   private fun applyChanges(
     currentTask: Task,
     targetTask: Task,
-    currentState: State,
-    previousCurrentState: State,
-    targetState: State,
+    currentState: FLTaskState,
+    previousCurrentState: FLTaskState,
+    targetState: FLTaskState,
     taskDir: VirtualFile
   ): Boolean {
     val conflictResolveStrategy = chooseConflictResolveStrategy()
@@ -105,7 +107,7 @@ class CCFrameworkLessonManagerImpl(private val project: Project) : CCFrameworkLe
       targetState
     )
 
-    // replacing the vfs target task state with a state with resolved conflicts
+    // replacing the target task file state with a state with resolved conflicts
     val resolvedConflictsState = applyChanges(resolvedChanges, previousCurrentState)
     calculateChanges(targetState, resolvedConflictsState).apply(project, taskDir, targetTask)
 
@@ -122,15 +124,15 @@ class CCFrameworkLessonManagerImpl(private val project: Project) : CCFrameworkLe
       )
       if (!isOk) {
         // if the user canceled the dialog, then we return to the target task state
-        val currentVFSState = getVFSTaskState(resolvedConflictsState, taskDir)
-        calculateChanges(currentVFSState, targetState).apply(project, taskDir, targetTask)
+        val currentStateFromFiles = getTaskStateFromFiles(resolvedConflictsState, taskDir)
+        calculateChanges(currentStateFromFiles, targetState).apply(project, taskDir, targetTask)
       }
       return isOk
     }
     return true
   }
 
-  private fun saveVFSChangesIntoStorage(task: Task): UpdatedState {
+  private fun saveFileStateIntoStorage(task: Task): UpdatedState {
     val taskDir = task.getDir(project.courseDir)
     if (taskDir == null) {
       LOG.error("Failed to find task directory")
@@ -138,7 +140,7 @@ class CCFrameworkLessonManagerImpl(private val project: Project) : CCFrameworkLe
     }
     val currentRecord = task.record
     val initialCurrentFiles = task.allPropagatableFiles
-    val currentState = getVFSTaskState(initialCurrentFiles, taskDir)
+    val currentState = getTaskStateFromFiles(initialCurrentFiles, taskDir)
     val updatedUserChanges = try {
       updateState(currentRecord, currentState)
     }
@@ -151,7 +153,7 @@ class CCFrameworkLessonManagerImpl(private val project: Project) : CCFrameworkLe
     return updatedUserChanges
   }
 
-  private fun getStateFromStorage(task: Task): State {
+  private fun getStateFromStorage(task: Task): FLTaskState {
     return try {
       storage.getState(task.record)
     }
@@ -162,7 +164,7 @@ class CCFrameworkLessonManagerImpl(private val project: Project) : CCFrameworkLe
   }
 
   @Synchronized
-  private fun updateState(record: Int, state: State): UpdatedState {
+  private fun updateState(record: Int, state: FLTaskState): UpdatedState {
     return try {
       val newRecord = storage.updateState(record, state)
       storage.force()
@@ -176,6 +178,51 @@ class CCFrameworkLessonManagerImpl(private val project: Project) : CCFrameworkLe
 
   override fun dispose() {
     Disposer.dispose(storage)
+  }
+
+  // we propagate only visible files
+  private val Task.allPropagatableFiles: FLTaskState
+    get() = taskFiles.filterValues { it.isVisible }.mapValues { it.value.text }
+
+  private fun showApplyChangesCanceledNotification(project: Project, startTaskName: String, cancelledTaskName: String) {
+    val notification = Notification(
+      "JetBrains Academy",
+      EduCoreBundle.message("action.Educational.Educator.ApplyChangesToNextTasks.Notification.cancel.title"),
+      EduCoreBundle.message(
+        "action.Educational.Educator.ApplyChangesToNextTasks.Notification.cancel.description",
+        startTaskName,
+        cancelledTaskName
+      ),
+      NotificationType.WARNING
+    )
+    Notifications.Bus.notify(notification, project)
+  }
+
+  private fun showApplyChangesSuccessNotification(project: Project, startTaskName: String) {
+    val notification = Notification(
+      "JetBrains Academy",
+      EduCoreBundle.message("action.Educational.Educator.ApplyChangesToNextTasks.Notification.success.title"),
+      EduCoreBundle.message("action.Educational.Educator.ApplyChangesToNextTasks.Notification.success.description", startTaskName),
+      NotificationType.INFORMATION
+    )
+    Notifications.Bus.notify(notification, project)
+  }
+
+  private fun chooseConflictResolveStrategy(): FLConflictResolveStrategy {
+    return SimpleConflictResolveStrategy()
+  }
+
+  private fun FLTaskState.complement(intersection: Set<Map.Entry<String, String>>): FLTaskState {
+    return entries.subtract(intersection).associate { it.key to it.value }
+  }
+
+  private fun FLTaskState.complementByKeys(intersection: Set<Map.Entry<String, String>>): FLTaskState {
+    val keysIntersection = intersection.map { it.key }.toSet()
+    return filter { it.key !in keysIntersection }
+  }
+
+  private fun applyChanges(changes: UserChanges, initialState: FLTaskState = emptyMap()): FLTaskState {
+    return HashMap(initialState).apply { changes.apply(this) }
   }
 
   companion object {
@@ -193,5 +240,5 @@ class CCFrameworkLessonManagerImpl(private val project: Project) : CCFrameworkLe
 
 private data class UpdatedState(
   val record: Int,
-  val state: State,
+  val state: FLTaskState,
 )

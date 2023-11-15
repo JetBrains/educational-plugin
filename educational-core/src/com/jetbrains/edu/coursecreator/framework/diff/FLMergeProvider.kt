@@ -16,16 +16,16 @@ import com.intellij.util.ui.ColumnInfo
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.macro.EduMacroUtils
-import com.jetbrains.edu.learning.framework.impl.State
+import com.jetbrains.edu.learning.framework.impl.FLTaskState
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 class FLMergeProvider(
   private val project: Project,
   private val task: Task,
-  private val leftState: State,
-  private val baseState: State,
-  private val rightState: State,
-  private val initialBaseState: State = baseState,
+  private val leftState: FLTaskState,
+  private val baseState: FLTaskState,
+  private val rightState: FLTaskState,
+  private val initialBaseState: FLTaskState = baseState,
 ) : MergeProvider2 {
   override fun loadRevisions(file: VirtualFile): MergeData {
     return MergeData().apply {
