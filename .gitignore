@@ -22,6 +22,9 @@ stale_outputs_checked
 *.tar.gz
 *.rar
 
+# Mac OS
+.DS_Store
+
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 !.idea/runConfigurations/*
@@ -34,11 +37,8 @@ hs_err_pid*
 .idea/
 build/
 .gradle/
+classes/
 dependencies/
-Edu-Java/classes/
-Edu-Kotlin/classes/
-Edu-Scala/classes/
-Edu-Python/classes/
 /helpers/venv/
 
 
