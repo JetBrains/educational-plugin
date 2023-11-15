@@ -9,14 +9,10 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.storage.AbstractStorage
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
-import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
-import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
-import com.jetbrains.edu.learning.framework.impl.diff.applyChangesViaMergeDialog
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.ui.getUIName
@@ -151,7 +147,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     // 2. Calculate difference between initial state of current task and current state on local FS.
     // Update change list for current task in [storage] to have ability to restore state of current task in future
     val (newCurrentRecord, currentUserChanges) = try {
-      updateUserChanges(currentRecord, initialCurrentFiles, taskDir)
+      updateUserChanges(currentRecord, getUserChangesFromVFS(initialCurrentFiles, taskDir))
     }
     catch (e: IOException) {
       LOG.error("Failed to save user changes for task `${currentTask.name}`", e)
@@ -190,115 +186,6 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     // 7. Apply difference between latest states of current and target tasks on local FS
     changes.apply(project, taskDir, targetTask)
     YamlFormatSynchronizer.saveItem(targetTask)
-  }
-
-  override fun propagateChangesCC(task: Task) {
-    require(CCUtils.isCourseCreator(project)) {
-      "`propagateChangesCC` should be called only if course in CC mode"
-    }
-    val lesson = task.lesson
-    val startIndex = task.index
-    val tasks = lesson.taskList
-
-    // Since the indexes start with 1, then startIndex - 1 is the task from which we start propagation
-    for (i in startIndex until tasks.size) {
-      // we return if user canceled propagation
-      if (!propagateChangesCC(tasks[i - 1], tasks[i])) {
-        showApplyChangesCanceledNotification(project, task.name, tasks[i - 1].name)
-        return
-      }
-      // if everything is ok with propagation, then we save the approved changes from the current task into storage
-      saveVFSChangesIntoStorage(tasks[i - 1])
-      YamlFormatSynchronizer.saveItem(tasks[i - 1])
-    }
-    // save last task manually
-    saveVFSChangesIntoStorage(tasks.last())
-    YamlFormatSynchronizer.saveItem(tasks.last())
-    showApplyChangesSuccessNotification(project, task.name)
-  }
-
-  private fun saveVFSChangesIntoStorage(task: Task): UpdatedUserChanges {
-    val taskDir = task.getDir(project.courseDir)
-    if (taskDir == null) {
-      LOG.error("Failed to find task directory")
-      return UpdatedUserChanges(task.record, UserChanges.empty())
-    }
-    val currentRecord = task.record
-    val initialCurrentFiles = task.allFiles
-    val updatedUserChanges = try {
-      updateUserChanges(currentRecord, initialCurrentFiles, taskDir)
-    }
-    catch (e: IOException) {
-      LOG.error("Failed to save user changes for task `${task.name}`", e)
-      UpdatedUserChanges(currentRecord, UserChanges.empty())
-    }
-
-    task.record = updatedUserChanges.record
-    YamlFormatSynchronizer.saveItem(task)
-    return updatedUserChanges
-  }
-
-  private fun getTaskStateFromStorage(task: Task): State {
-    val initialState = task.allFiles
-    val storageChanges = getUserChangesFromStorage(task)
-    return applyChanges(storageChanges, initialState)
-  }
-
-  private fun propagateChangesCC(
-    currentTask: Task,
-    targetTask: Task,
-  ): Boolean {
-    require(CCUtils.isCourseCreator(project)) {
-      "`propagateChangesCC` should be called only if course in CC mode"
-    }
-    val currentTaskDir = currentTask.getDir(project.courseDir)
-    if (currentTaskDir == null) {
-      LOG.error("Failed to find task directory")
-      return false
-    }
-
-    val targetTaskDir = targetTask.getDir(project.courseDir)
-    if (targetTaskDir == null) {
-      LOG.error("Failed to find task directory")
-      return false
-    }
-
-    val initialCurrentFiles = currentTask.allFiles
-    val initialTargetFiles = targetTask.allFiles
-
-    val previousCurrentState = getTaskStateFromStorage(currentTask)
-
-    val currentUserChanges = getUserChangesFromVFS(initialCurrentFiles, currentTaskDir)
-    val currentState = applyChanges(currentUserChanges, initialCurrentFiles)
-
-    val targetState = getTaskStateFromVCS(initialTargetFiles, targetTaskDir)
-
-    // we propagate only visible files
-    val currentStateVisible = currentState.split(currentTask).first
-    val previousCurrentStateVisible = previousCurrentState.split(currentTask).first
-    val targetStateVisible = targetState.split(targetTask).first
-
-    // if the state of the file has not changed from the previous one, then it is useless to push it further
-    val intersection = currentStateVisible.entries.intersect(previousCurrentStateVisible.entries)
-    val currentStateVisibleChanged = currentStateVisible.complement(intersection)
-    val previousCurrentStateVisibleChanged = previousCurrentStateVisible.complement(intersection)
-    val targetStateVisibleChanged = targetStateVisible.complementByKeys(intersection)
-
-    return applyChangesCC(
-      currentTask, targetTask,
-      currentStateVisibleChanged, previousCurrentStateVisibleChanged, targetStateVisibleChanged,
-      targetTaskDir
-    )
-  }
-
-  private fun getUserChangesFromStorage(task: Task): UserChanges {
-    return try {
-      storage.getUserChanges(task.record)
-    }
-    catch (e: IOException) {
-      LOG.error("Failed to get user changes for task `${task.name}`", e)
-      UserChanges.empty()
-    }
   }
 
   /**
@@ -411,49 +298,9 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     }
   }
 
-  private fun applyChangesCC(
-    currentTask: Task,
-    targetTask: Task,
-    currentState: State,
-    previousCurrentState: State,
-    targetState: State,
-    taskDir: VirtualFile
-  ): Boolean {
-    val conflictResolveStrategy = chooseConflictResolveStrategy()
-
-    val (areAllConflictsResolved, resolvedChanges) = conflictResolveStrategy.resolveConflicts(
-      currentState,
-      previousCurrentState,
-      targetState
-    )
-
-    // replacing the vfs target task state with a state with resolved conflicts
-    val resolvedConflictsState = applyChanges(resolvedChanges, previousCurrentState)
-    calculateChanges(targetState, resolvedConflictsState).apply(project, taskDir, targetTask)
-
-    if (!areAllConflictsResolved) {
-      val isOk = applyChangesViaMergeDialog(
-        project,
-        targetTask,
-        currentState, resolvedConflictsState, targetState,
-        currentTask.name, targetTask.name,
-        taskDir,
-        // it is necessary for the correct recognition of deleting / adding files
-        // because new files could be added / removed from the base state after conflict resolution
-        previousCurrentState
-      )
-      if (!isOk) {
-        // if the user canceled the dialog, then we return to the target task state
-        val currentVFSState = getVFSTaskState(resolvedConflictsState, taskDir)
-        calculateChanges(currentVFSState, targetState).apply(project, taskDir, targetTask)
-      }
-      return isOk
-    }
-    return true
-  }
-
-  private fun updateUserChanges(record: Int, initialFiles: State, taskDir: VirtualFile): UpdatedUserChanges {
-    return updateUserChanges(record, getUserChangesFromVFS(initialFiles, taskDir))
+  private fun getUserChangesFromVFS(initialState: State, taskDir: VirtualFile): UserChanges {
+    val currentState = getVFSTaskState(initialState, taskDir)
+    return calculateChanges(initialState, currentState)
   }
 
   @Synchronized
@@ -466,6 +313,16 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     catch (e: IOException) {
       LOG.error("Failed to update user changes", e)
       UpdatedUserChanges(record, UserChanges.empty())
+    }
+  }
+
+  private fun getUserChangesFromStorage(task: Task): UserChanges {
+    return try {
+      storage.getUserChanges(task.record)
+    }
+    catch (e: IOException) {
+      LOG.error("Failed to get user changes for task `${task.name}`", e)
+      UserChanges.empty()
     }
   }
 

@@ -6,10 +6,10 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.getStudyItem
 import com.jetbrains.edu.learning.isFeatureEnabled
 import org.jetbrains.annotations.NonNls
@@ -54,8 +54,8 @@ class CCApplyChangesToNextTasks : DumbAwareAction() {
   }
 
   private fun propagateChanges(project: Project, task: Task) {
-    val flManager = FrameworkLessonManager.getInstance(project)
-    flManager.propagateChangesCC(task)
+    val flManager = CCFrameworkLessonManager.getInstance(project)
+    flManager.propagateChanges(task)
   }
 
   companion object {
