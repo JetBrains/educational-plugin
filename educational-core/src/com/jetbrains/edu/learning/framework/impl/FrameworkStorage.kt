@@ -1,34 +1,17 @@
 package com.jetbrains.edu.learning.framework.impl
 
-import com.google.common.annotations.VisibleForTesting
-import com.intellij.util.io.StorageLockContext
 import com.intellij.util.io.UnsyncByteArrayInputStream
 import com.intellij.util.io.UnsyncByteArrayOutputStream
-import com.intellij.util.io.storage.AbstractRecordsTable
-import com.intellij.util.io.storage.AbstractStorage
 import com.jetbrains.edu.learning.framework.impl.migration.RecordConverter
 import com.jetbrains.edu.learning.framework.impl.migration.To1VersionRecordConverter
-import org.jetbrains.annotations.TestOnly
 import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.io.IOException
 import java.nio.file.Path
-import kotlin.system.measureTimeMillis
 
-class FrameworkStorage(storagePath: Path) : AbstractStorage(storagePath) {
-  @Volatile
-  var isDisposed = false
-
+class FrameworkStorage(storagePath: Path) : FrameworkStorageBase(storagePath) {
   constructor(storageFilePath: Path, version: Int) : this(storageFilePath) {
     setVersion(version)
-  }
-
-  override fun createRecordsTable(@Suppress("UnstableApiUsage") context: StorageLockContext, recordsFile: Path): AbstractRecordsTable =
-    FrameworkRecordsTable(recordsFile, context)
-
-  override fun dispose() {
-    super.dispose()
-    isDisposed = true
   }
 
   @Throws(IOException::class)
@@ -39,10 +22,6 @@ class FrameworkStorage(storagePath: Path) : AbstractStorage(storagePath) {
       id
     }
   }
-
-  @VisibleForTesting
-  @Throws(IOException::class)
-  fun createNewRecord(): Int = myRecordsTable.createNewRecord()
 
   @Throws(IOException::class)
   fun getUserChanges(record: Int): UserChanges {
@@ -57,26 +36,7 @@ class FrameworkStorage(storagePath: Path) : AbstractStorage(storagePath) {
   }
 
   @Throws(IOException::class)
-  fun migrate(newVersion: Int) {
-    val migrationTime = measureTimeMillis {
-      withWriteLock<Unit, IOException> {
-        val currentVersion = version
-        if (currentVersion >= newVersion) return@withWriteLock
-
-        val recordIterator = myRecordsTable.createRecordIdIterator()
-        while (recordIterator.hasNextId()) {
-          val recordId = recordIterator.nextId()
-          migrateRecord(recordId, currentVersion, newVersion)
-        }
-
-        version = newVersion
-      }
-    }
-    LOG.info("Migration to $newVersion version took $migrationTime ms")
-  }
-
-  @Throws(IOException::class)
-  private fun migrateRecord(recordId: Int, currentVersion: Int, newVersion: Int) {
+  override fun migrateRecord(recordId: Int, currentVersion: Int, newVersion: Int) {
     var version = currentVersion
 
     val bytes = readBytes(recordId)
@@ -98,16 +58,6 @@ class FrameworkStorage(storagePath: Path) : AbstractStorage(storagePath) {
     }
 
     writeBytes(recordId, output.toByteArraySequence(), false)
-  }
-
-  @TestOnly
-  @Throws(IOException::class)
-  fun createRecordWithData(data: FrameworkStorageData): Int {
-    return withWriteLock<Int, IOException> {
-      val record = createNewRecord()
-      writeStream(record).use(data::write)
-      record
-    }
   }
 }
 
