@@ -1,16 +1,30 @@
 package com.jetbrains.edu.learning.framework.impl
 
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationType
+import com.intellij.notification.Notifications
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.framework.impl.diff.SimpleConflictResolveStrategy
+import com.jetbrains.edu.learning.framework.impl.diff.FLConflictResolveStrategy
 import com.jetbrains.edu.learning.isToEncodeContent
 import com.jetbrains.edu.learning.loadEncodedContent
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 internal typealias State = Map<String, String>
 
 internal fun applyChanges(changes: UserChanges, initialState: State = emptyMap()): State {
   return HashMap(initialState).apply { changes.apply(this) }
+}
+
+fun State.complement(intersection: Set<Map.Entry<String, String>>): State = entries.subtract(intersection).associate { it.key to it.value }
+
+fun State.complementByKeys(intersection: Set<Map.Entry<String, String>>): State {
+  val keysIntersection = intersection.map { it.key }.toSet()
+  return filter { it.key !in keysIntersection }
 }
 
 /**
@@ -52,6 +66,18 @@ internal fun State.split(task: Task): Pair<State, State> {
 
 internal val Task.allFiles: State get() = taskFiles.mapValues { it.value.text }
 
+internal fun chooseConflictResolveStrategy(): FLConflictResolveStrategy {
+  return SimpleConflictResolveStrategy()
+}
+
+internal fun getTaskStateFromVCS(
+  initialState: State,
+  taskDir: VirtualFile,
+): State {
+  val changes = getUserChangesFromVFS(initialState, taskDir)
+  return applyChanges(changes, initialState)
+}
+
 internal fun getUserChangesFromVFS(initialState: State, taskDir: VirtualFile): UserChanges {
   val currentState = getVFSTaskState(initialState, taskDir)
   return calculateChanges(initialState, currentState)
@@ -77,4 +103,28 @@ internal fun getVFSTaskState(initialFiles: State, taskDir: VirtualFile): State {
     currentState[path] = text
   }
   return currentState
+}
+
+internal fun showApplyChangesCanceledNotification(project: Project, startTaskName: String, cancelledTaskName: String) {
+  val notification = Notification(
+    "JetBrains Academy",
+    EduCoreBundle.message("action.Educational.Educator.ApplyChangesToNextTasks.Notification.cancel.title"),
+    EduCoreBundle.message(
+      "action.Educational.Educator.ApplyChangesToNextTasks.Notification.cancel.description",
+      startTaskName,
+      cancelledTaskName
+    ),
+    NotificationType.WARNING
+  )
+  Notifications.Bus.notify(notification, project)
+}
+
+internal fun showApplyChangesSuccessNotification(project: Project, startTaskName: String) {
+  val notification = Notification(
+    "JetBrains Academy",
+    EduCoreBundle.message("action.Educational.Educator.ApplyChangesToNextTasks.Notification.success.title"),
+    EduCoreBundle.message("action.Educational.Educator.ApplyChangesToNextTasks.Notification.success.description", startTaskName),
+    NotificationType.INFORMATION
+  )
+  Notifications.Bus.notify(notification, project)
 }

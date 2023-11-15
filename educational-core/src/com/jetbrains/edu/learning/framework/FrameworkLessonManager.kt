@@ -15,6 +15,8 @@ interface FrameworkLessonManager {
 
   fun getChangesTimestamp(task: Task): Long
 
+  fun propagateChangesCC(task: Task)
+
   companion object {
     fun getInstance(project: Project): FrameworkLessonManager = project.service()
   }
