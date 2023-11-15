@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.macro.EduMacroUtils
 import com.jetbrains.edu.learning.isToEncodeContent
+import com.jetbrains.edu.learning.removeWithEmptyParents
 import com.jetbrains.edu.learning.toCourseInfoHolder
 import org.apache.commons.codec.binary.Base64
 import java.io.DataInput
@@ -144,14 +145,6 @@ sealed class Change {
 
     @Throws(IOException::class)
     constructor(input: DataInput) : super(input)
-
-    private fun VirtualFile.removeWithEmptyParents(taskDir: VirtualFile) {
-      val parent = this.parent
-      delete(RemoveFile::class.java)
-      if (parent != taskDir && parent.children.isEmpty()) {
-        parent.removeWithEmptyParents(taskDir)
-      }
-    }
 
     override fun apply(project: Project, taskDir: VirtualFile, task: Task) {
       runUndoTransparentWriteAction {

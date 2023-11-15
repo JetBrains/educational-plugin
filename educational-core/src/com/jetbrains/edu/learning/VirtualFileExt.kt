@@ -350,4 +350,12 @@ fun VirtualFile.setHighlightLevelInsideWriteAction(project: Project, highlightLe
   HighlightLevelUtil.forceRootHighlighting(psiFile, fileHighlightLevel) // this utility method makes additional null checks
 }
 
+fun VirtualFile.removeWithEmptyParents(taskDir: VirtualFile) {
+  val parent = this.parent
+  delete(this::class.java)
+  if (parent != taskDir && parent.children.isEmpty()) {
+    parent.removeWithEmptyParents(taskDir)
+  }
+}
+
 private val LOG = Logger.getInstance("com.jetbrains.edu.learning.VirtualFileExt")
