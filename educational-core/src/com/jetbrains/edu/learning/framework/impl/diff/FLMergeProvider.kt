@@ -116,7 +116,7 @@ class FLMergeProvider(
       else {
         rightState[filePath]
       }
-      if (baseContent.isNullOrEmpty()) {
+      if (baseContent == null) {
         if (changedContent == null) {
           return EduCoreBundle.message("action.Educational.Educator.ApplyChangesToNextTasks.MergeDialog.none")
         }

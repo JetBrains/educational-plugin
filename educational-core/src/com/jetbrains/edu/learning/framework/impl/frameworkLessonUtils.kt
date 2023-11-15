@@ -70,19 +70,6 @@ internal fun chooseConflictResolveStrategy(): FLConflictResolveStrategy {
   return SimpleConflictResolveStrategy()
 }
 
-internal fun getTaskStateFromVCS(
-  initialState: State,
-  taskDir: VirtualFile,
-): State {
-  val changes = getUserChangesFromVFS(initialState, taskDir)
-  return applyChanges(changes, initialState)
-}
-
-internal fun getUserChangesFromVFS(initialState: State, taskDir: VirtualFile): UserChanges {
-  val currentState = getVFSTaskState(initialState, taskDir)
-  return calculateChanges(initialState, currentState)
-}
-
 internal fun getVFSTaskState(initialFiles: State, taskDir: VirtualFile): State {
   val documentManager = FileDocumentManager.getInstance()
   val currentState = HashMap<String, String>()

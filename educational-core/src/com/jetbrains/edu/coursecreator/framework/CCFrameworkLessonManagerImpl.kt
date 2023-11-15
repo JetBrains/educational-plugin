@@ -24,7 +24,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 class CCFrameworkLessonManagerImpl(private val project: Project): CCFrameworkLessonManager, Disposable {
-  var storage: FrameworkStorage = createStorage(project)
+  var storage: CCFrameworkStorage = createStorage(project)
 
   override fun propagateChanges(task: Task) {
     require(CCUtils.isCourseCreator(project)) {
@@ -71,12 +71,10 @@ class CCFrameworkLessonManagerImpl(private val project: Project): CCFrameworkLes
     val initialCurrentFiles = currentTask.allFiles
     val initialTargetFiles = targetTask.allFiles
 
-    val previousCurrentState = getTaskStateFromStorage(currentTask)
+    val previousCurrentState = getStateFromStorage(currentTask)
 
-    val currentUserChanges = getUserChangesFromVFS(initialCurrentFiles, currentTaskDir)
-    val currentState = applyChanges(currentUserChanges, initialCurrentFiles)
-
-    val targetState = getTaskStateFromVCS(initialTargetFiles, targetTaskDir)
+    val currentState = getVFSTaskState(initialCurrentFiles, currentTaskDir)
+    val targetState = getVFSTaskState(initialTargetFiles, targetTaskDir)
 
     // we propagate only visible files
     val currentStateVisible = currentState.split(currentTask).first
@@ -137,52 +135,47 @@ class CCFrameworkLessonManagerImpl(private val project: Project): CCFrameworkLes
     return true
   }
 
-  private fun saveVFSChangesIntoStorage(task: Task): UpdatedUserChanges {
+  private fun saveVFSChangesIntoStorage(task: Task): UpdatedState {
     val taskDir = task.getDir(project.courseDir)
     if (taskDir == null) {
       LOG.error("Failed to find task directory")
-      return UpdatedUserChanges(task.record, UserChanges.empty())
+      return UpdatedState(task.record, emptyMap())
     }
     val currentRecord = task.record
     val initialCurrentFiles = task.allFiles
+    val currentState = getVFSTaskState(initialCurrentFiles, taskDir)
     val updatedUserChanges = try {
-      updateUserChanges(currentRecord, initialCurrentFiles, taskDir)
+      updateState(currentRecord, currentState)
     }
     catch (e: IOException) {
       LOG.error("Failed to save user changes for task `${task.name}`", e)
-      UpdatedUserChanges(currentRecord, UserChanges.empty())
+      UpdatedState(currentRecord, emptyMap())
     }
 
     task.record = updatedUserChanges.record
     return updatedUserChanges
   }
 
-  private fun getTaskStateFromStorage(task: Task): State {
-    val initialState = task.allFiles
-    val storageChanges = getUserChangesFromStorage(task)
-    return applyChanges(storageChanges, initialState)
-  }
-
-  private fun getUserChangesFromStorage(task: Task): UserChanges {
+  private fun getStateFromStorage(task: Task): State {
     return try {
-      storage.getUserChanges(task.record)
+      storage.getState(task.record)
     }
     catch (e: IOException) {
       LOG.error("Failed to get user changes for task `${task.name}`", e)
-      UserChanges.empty()
+      emptyMap()
     }
   }
 
   @Synchronized
-  private fun updateUserChanges(record: Int, changes: UserChanges): UpdatedUserChanges {
+  private fun updateState(record: Int, state: State): UpdatedState {
     return try {
-      val newRecord = storage.updateUserChanges(record, changes)
+      val newRecord = storage.updateState(record, state)
       storage.force()
-      UpdatedUserChanges(newRecord, changes)
+      UpdatedState(newRecord, state)
     }
     catch (e: IOException) {
       LOG.error("Failed to update user changes", e)
-      UpdatedUserChanges(record, UserChanges.empty())
+      UpdatedState(record, emptyMap())
     }
   }
 
@@ -196,14 +189,14 @@ class CCFrameworkLessonManagerImpl(private val project: Project): CCFrameworkLes
     private fun constructStoragePath(project: Project): Path =
       Paths.get(FileUtil.join(project.basePath!!, Project.DIRECTORY_STORE_FOLDER, "frameworkLessonHistoryCC", "storage"))
 
-    private fun createStorage(project: Project): FrameworkStorage {
+    private fun createStorage(project: Project): CCFrameworkStorage {
       val storageFilePath = constructStoragePath(project)
-      return FrameworkStorage(storageFilePath)
+      return CCFrameworkStorage(storageFilePath)
     }
   }
 }
 
-private data class UpdatedUserChanges(
+private data class UpdatedState(
   val record: Int,
-  val changes: UserChanges
+  val state: State,
 )
