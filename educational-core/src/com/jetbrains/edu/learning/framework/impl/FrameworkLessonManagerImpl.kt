@@ -2,9 +2,7 @@ package com.jetbrains.edu.learning.framework.impl
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Disposer
@@ -15,8 +13,6 @@ import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
-import com.jetbrains.edu.learning.isToEncodeContent
-import com.jetbrains.edu.learning.loadEncodedContent
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.ui.getUIName
@@ -145,7 +141,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     // 1. Get difference between initial state of current task and previous task state
     // and construct previous state of current task.
     // Previous state is needed to determine if a user made any new change
-    val previousCurrentUserChanges = getUserChanges(currentTask)
+    val previousCurrentUserChanges = getUserChangesFromStorage(currentTask)
     val previousCurrentState = HashMap(initialCurrentFiles).apply { previousCurrentUserChanges.apply(this) }
 
     // 2. Calculate difference between initial state of current task and current state on local FS.
@@ -163,7 +159,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     YamlFormatSynchronizer.saveItem(currentTask)
 
     // 4. Get difference (change list) between initial and latest states of target task
-    val nextUserChanges = getUserChanges(targetTask)
+    val nextUserChanges = getUserChangesFromStorage(targetTask)
 
     // 5. Apply change lists to initial state to get latest states of current and target tasks
     val currentState = HashMap(initialCurrentFiles).apply { currentUserChanges.apply(this) }
@@ -192,7 +188,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     YamlFormatSynchronizer.saveItem(targetTask)
   }
 
-  private fun getUserChanges(task: Task): UserChanges {
+  private fun getUserChangesFromStorage(task: Task): UserChanges {
     return try {
       storage.getUserChanges(task.record)
     }
@@ -292,13 +288,13 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
       val currentTaskName = "${currentTask.getUIName()} ${currentTask.index}"
       val targetTaskName = "${targetTask.getUIName()} ${targetTask.index}"
       val message = EduCoreBundle.message("framework.lesson.changes.conflict.message", currentTaskName, targetTaskName, targetTaskName,
-                                          currentTaskName)
+        currentTaskName)
       Messages.showYesNoDialog(project,
-                               message,
-                               EduCoreBundle.message("framework.lesson.changes.conflicting.changes.title"),
-                               EduCoreBundle.message("framework.lesson.changes.conflicting.changes.keep"),
-                               EduCoreBundle.message("framework.lesson.changes.conflicting.changes.replace"),
-                               null)
+        message,
+        EduCoreBundle.message("framework.lesson.changes.conflicting.changes.title"),
+        EduCoreBundle.message("framework.lesson.changes.conflicting.changes.keep"),
+        EduCoreBundle.message("framework.lesson.changes.conflicting.changes.replace"),
+        null)
     }
     else {
       Messages.YES
@@ -312,25 +308,9 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     }
   }
 
-  private fun updateUserChanges(record: Int, initialFiles: Map<String, String>, taskDir: VirtualFile): UpdatedUserChanges {
-    val documentManager = FileDocumentManager.getInstance()
-    val currentState = HashMap<String, String>()
-    for ((path, _) in initialFiles) {
-      val file = taskDir.findFileByRelativePath(path) ?: continue
 
-      val text = if (file.isToEncodeContent) {
-        file.loadEncodedContent(isToEncodeContent = true)
-      }
-      else runReadAction { documentManager.getDocument(file)?.text }
-
-      if (text == null) {
-        continue
-      }
-
-      currentState[path] = text
-    }
-    val userChanges = calculateChanges(initialFiles, currentState)
-    return updateUserChanges(record, userChanges)
+  private fun updateUserChanges(record: Int, initialFiles: State, taskDir: VirtualFile): UpdatedUserChanges {
+    return updateUserChanges(record, getUserChangesFromVFS(initialFiles, taskDir))
   }
 
   @Synchronized
@@ -344,45 +324,6 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
       LOG.error("Failed to update user changes", e)
       UpdatedUserChanges(record, UserChanges.empty())
     }
-  }
-
-  /**
-   * Returns [Change]s to convert [currentState] to [targetState]
-   */
-  private fun calculateChanges(
-    currentState: Map<String, String>,
-    targetState: Map<String, String>
-  ): UserChanges {
-    val changes = mutableListOf<Change>()
-    val current = HashMap(currentState)
-    loop@ for ((path, nextText) in targetState) {
-      val currentText = current.remove(path)
-      changes += when {
-        currentText == null -> Change.AddFile(path, nextText)
-        currentText != nextText -> Change.ChangeFile(path, nextText)
-        else -> continue@loop
-      }
-    }
-
-    current.mapTo(changes) { Change.RemoveFile(it.key) }
-    return UserChanges(changes)
-  }
-
-  private val Task.allFiles: Map<String, String> get() = taskFiles.mapValues { it.value.text }
-
-  private fun Map<String, String>.split(task: Task): Pair<Map<String, String>, Map<String, String>> {
-    val visibleFiles = HashMap<String, String>()
-    val invisibleFiles = HashMap<String, String>()
-
-    for ((path, text) in this) {
-      // TaskFiles and state may not be consistent due to external changes in hyperskill lessons.
-      // if there is a task in state that is not in taskFiles, then we know that it is a visible file.
-      val isVisibleFile = task.taskFiles[path]?.isVisible ?: true
-      val state = if (isVisibleFile) visibleFiles else invisibleFiles
-      state[path] = text
-    }
-
-    return visibleFiles to invisibleFiles
   }
 
   override fun dispose() {
