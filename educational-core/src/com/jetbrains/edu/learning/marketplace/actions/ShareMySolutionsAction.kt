@@ -7,10 +7,9 @@ import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.marketplace.isMarketplaceCourse
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.NonNls
 
-class ShareMySolutionsAction : DumbAwareToggleAction(EduCoreBundle.message("marketplace.solutions.sharing.action")) {
+class ShareMySolutionsAction : DumbAwareToggleAction() {
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false
