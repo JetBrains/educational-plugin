@@ -12,7 +12,6 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.framework.impl.Change
 import com.jetbrains.edu.coursecreator.framework.diff.SimpleConflictResolveStrategy
 import com.jetbrains.edu.coursecreator.framework.diff.withFLMultipleFileMergeUI
 import kotlin.test.assertFails
@@ -472,13 +471,15 @@ class CCPropagateChangesTest: EduActionTestCase() {
       "a.kt" to "fun f() = 12",
       "d.kt" to "fun yyy() = 100",
     )
-    val (wereConflicts, expectedChanges) = SimpleConflictResolveStrategy().resolveConflicts(currentState, baseState, targetState)
+    val (wereConflicts, expectedState) = SimpleConflictResolveStrategy().resolveConflicts(currentState, baseState, targetState)
     assertEquals(false, wereConflicts)
-    val actualChanges = listOf(
-      Change.AddFile("c.kt", "fun ggg() = 0"),
-      Change.AddFile("d.kt", "fun yyy() = 100"),
+    val actualState = mapOf(
+      "a.kt" to "fun f() = 12",
+      "b.kt" to "fun x() = 42",
+      "c.kt" to "fun ggg() = 0",
+      "d.kt" to "fun yyy() = 100",
     )
-    assertEquals(expectedChanges.changes, actualChanges)
+    assertEquals(expectedState, actualState)
   }
 
   private fun createFrameworkCourse(numberOfTasks: Int): Course = courseWithFiles(

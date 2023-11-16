@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.framework.impl.FLTaskState
 import com.jetbrains.edu.learning.isUnitTestMode
 import org.jetbrains.annotations.TestOnly
 
-fun applyChangesViaMergeDialog(
+fun applyChangesWithMergeDialog(
   project: Project,
   task: Task,
   leftState: FLTaskState,

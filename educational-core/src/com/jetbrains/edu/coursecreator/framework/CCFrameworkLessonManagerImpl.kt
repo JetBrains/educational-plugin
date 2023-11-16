@@ -15,9 +15,8 @@ import com.jetbrains.edu.coursecreator.framework.diff.SimpleConflictResolveStrat
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.coursecreator.framework.diff.applyChangesViaMergeDialog
+import com.jetbrains.edu.coursecreator.framework.diff.applyChangesWithMergeDialog
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
-import com.jetbrains.edu.learning.framework.impl.*
 import com.jetbrains.edu.learning.framework.impl.FLTaskState
 import com.jetbrains.edu.learning.framework.impl.calculateChanges
 import com.jetbrains.edu.learning.framework.impl.getTaskStateFromFiles
@@ -105,35 +104,41 @@ class CCFrameworkLessonManagerImpl(private val project: Project) : CCFrameworkLe
   ): Boolean {
     val conflictResolveStrategy = chooseConflictResolveStrategy()
 
-    val (areAllConflictsResolved, resolvedChanges) = conflictResolveStrategy.resolveConflicts(
+    // Try to resolve some changes automatically and apply them to previousCurrentState
+    val (areAllChangesResolved, resolvedChangesState) = conflictResolveStrategy.resolveConflicts(
       currentState,
       previousCurrentState,
       targetState
     )
 
-    // replacing the target task file state with a state with resolved conflicts
-    val resolvedConflictsState = applyChanges(resolvedChanges, previousCurrentState)
-    calculateChanges(targetState, resolvedConflictsState).apply(project, taskDir, targetTask)
-
-    if (!areAllConflictsResolved) {
-      val isOk = applyChangesViaMergeDialog(
-        project,
-        targetTask,
-        currentState, resolvedConflictsState, targetState,
-        currentTask.name, targetTask.name,
-        taskDir,
-        // it is necessary for the correct recognition of deleting / adding files
-        // because new files could be added / removed from the base state after conflict resolution
-        previousCurrentState
-      )
-      if (!isOk) {
-        // if the user canceled the dialog, then we return to the target task state
-        val currentStateFromFiles = getTaskStateFromFiles(resolvedConflictsState.keys, taskDir)
-        calculateChanges(currentStateFromFiles, targetState).apply(project, taskDir, targetTask)
-      }
-      return isOk
+    // if all changes were resolved, then we can apply changes into targetTask
+    if (areAllChangesResolved) {
+      calculateChanges(targetState, resolvedChangesState).apply(project, taskDir, targetTask)
+      return true
     }
-    return true
+
+    // If not, then we have to show the merge dialog so the user can resolve the conflicts manually.
+    // Merge dialog requires that the files that will be shown should be passed as virtual files.
+    // So we replace target task files with files from base state with resolved conflicts and we change them in merge dialog
+    // TODO(Show merge dialog without changing target task files)
+    calculateChanges(targetState, resolvedChangesState).apply(project, taskDir, targetTask)
+
+    val isOk = applyChangesWithMergeDialog(
+      project,
+      targetTask,
+      currentState, resolvedChangesState, targetState,
+      currentTask.name, targetTask.name,
+      taskDir,
+      // it is necessary for the correct recognition of deleting / adding files
+      // because new files could be added / removed from the base state after conflict resolution
+      previousCurrentState
+    )
+    if (!isOk) {
+      // if the user canceled the dialog, then we return to the target task state
+      val currentStateFromFiles = getTaskStateFromFiles(resolvedChangesState.keys, taskDir)
+      calculateChanges(currentStateFromFiles, targetState).apply(project, taskDir, targetTask)
+    }
+    return isOk
   }
 
   private fun saveFileStateIntoStorage(task: Task): UpdatedState {
@@ -218,10 +223,6 @@ class CCFrameworkLessonManagerImpl(private val project: Project) : CCFrameworkLe
 
   private fun FLTaskState.complement(intersection: Set<Map.Entry<String, String>>): FLTaskState {
     return (entries - intersection).associate { it.key to it.value }
-  }
-
-  private fun applyChanges(changes: UserChanges, initialState: FLTaskState = emptyMap()): FLTaskState {
-    return HashMap(initialState).apply { changes.apply(this) }
   }
 
   companion object {
