@@ -299,7 +299,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
   }
 
   private fun getUserChangesFromFiles(initialState: FLTaskState, taskDir: VirtualFile): UserChanges {
-    val currentState = getTaskStateFromFiles(initialState, taskDir)
+    val currentState = getTaskStateFromFiles(initialState.keys, taskDir)
     return calculateChanges(initialState, currentState)
   }
 

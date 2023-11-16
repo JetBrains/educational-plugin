@@ -4,7 +4,7 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.coursecreator.framework.diff.applyChangesViaMergeDialog
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.framework.impl.*
 import com.jetbrains.edu.learning.framework.impl.FLTaskState
 import com.jetbrains.edu.learning.framework.impl.calculateChanges
@@ -30,7 +31,10 @@ class CCFrameworkLessonManagerImpl(private val project: Project) : CCFrameworkLe
 
   override fun propagateChanges(task: Task) {
     require(CCUtils.isCourseCreator(project)) {
-      "`propagateChangesCC` should be called only if course in CC mode"
+      "`propagateChanges` should be called only if course in CC mode"
+    }
+    require(task.parent is FrameworkLesson) {
+      "`propagateChanges` should be called only when the task is in the framework lesson"
     }
     val lesson = task.lesson
     val startIndex = task.index
@@ -82,7 +86,7 @@ class CCFrameworkLessonManagerImpl(private val project: Project) : CCFrameworkLe
     val intersection = currentState.entries.intersect(previousCurrentState.entries)
     val currentStateChanged = currentState.complement(intersection)
     val previousCurrentStateChanged = previousCurrentState.complement(intersection)
-    val targetStateChanged = targetState.complementByKeys(intersection)
+    val targetStateChanged = targetState - intersection.map { it.key }
 
     return applyChanges(
       currentTask, targetTask,
@@ -124,7 +128,7 @@ class CCFrameworkLessonManagerImpl(private val project: Project) : CCFrameworkLe
       )
       if (!isOk) {
         // if the user canceled the dialog, then we return to the target task state
-        val currentStateFromFiles = getTaskStateFromFiles(resolvedConflictsState, taskDir)
+        val currentStateFromFiles = getTaskStateFromFiles(resolvedConflictsState.keys, taskDir)
         calculateChanges(currentStateFromFiles, targetState).apply(project, taskDir, targetTask)
       }
       return isOk
@@ -181,8 +185,8 @@ class CCFrameworkLessonManagerImpl(private val project: Project) : CCFrameworkLe
   }
 
   // we propagate only visible files
-  private val Task.allPropagatableFiles: FLTaskState
-    get() = taskFiles.filterValues { it.isVisible }.mapValues { it.value.text }
+  private val Task.allPropagatableFiles: Set<String>
+    get() = taskFiles.filterValues { it.isVisible }.keys
 
   private fun showApplyChangesCanceledNotification(project: Project, startTaskName: String, cancelledTaskName: String) {
     val notification = Notification(
@@ -213,12 +217,7 @@ class CCFrameworkLessonManagerImpl(private val project: Project) : CCFrameworkLe
   }
 
   private fun FLTaskState.complement(intersection: Set<Map.Entry<String, String>>): FLTaskState {
-    return entries.subtract(intersection).associate { it.key to it.value }
-  }
-
-  private fun FLTaskState.complementByKeys(intersection: Set<Map.Entry<String, String>>): FLTaskState {
-    val keysIntersection = intersection.map { it.key }.toSet()
-    return filter { it.key !in keysIntersection }
+    return (entries - intersection).associate { it.key to it.value }
   }
 
   private fun applyChanges(changes: UserChanges, initialState: FLTaskState = emptyMap()): FLTaskState {
@@ -226,7 +225,7 @@ class CCFrameworkLessonManagerImpl(private val project: Project) : CCFrameworkLe
   }
 
   companion object {
-    private val LOG: Logger = Logger.getInstance(CCFrameworkLessonManagerImpl::class.java)
+    private val LOG = logger<CCFrameworkLessonManagerImpl>()
 
     private fun constructStoragePath(project: Project): Path =
       Paths.get(FileUtil.join(project.basePath!!, Project.DIRECTORY_STORE_FOLDER, "frameworkLessonHistoryCC", "storage"))

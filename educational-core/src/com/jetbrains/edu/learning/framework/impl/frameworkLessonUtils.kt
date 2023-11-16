@@ -30,10 +30,10 @@ fun calculateChanges(
   return UserChanges(changes)
 }
 
-fun getTaskStateFromFiles(initialFiles: FLTaskState, taskDir: VirtualFile): FLTaskState {
+fun getTaskStateFromFiles(initialFiles: Set<String>, taskDir: VirtualFile): FLTaskState {
   val documentManager = FileDocumentManager.getInstance()
   val currentState = HashMap<String, String>()
-  for ((path, _) in initialFiles) {
+  for (path in initialFiles) {
     val file = taskDir.findFileByRelativePath(path) ?: continue
 
     val text = if (file.isToEncodeContent) {
