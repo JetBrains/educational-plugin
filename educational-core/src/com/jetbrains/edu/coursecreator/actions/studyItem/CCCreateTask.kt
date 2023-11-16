@@ -8,6 +8,7 @@ import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.EducationalCoreIcons.IdeTask
 import com.jetbrains.edu.EducationalCoreIcons.Task
 import com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE
+import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
 import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
@@ -42,6 +43,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
       course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
     }
     NavigationUtils.navigateToTask(project, item as Task)
+    saveIntoFLStorage(project, item)
   }
 
   override fun getSiblingsSize(course: Course, parentItem: StudyItem?): Int =
@@ -203,6 +205,17 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
     isVisible: Boolean = this.isVisible
   ): AnswerPlaceholderDependency =
     AnswerPlaceholderDependency(answerPlaceholder, sectionName, lessonName, taskName, fileName, placeholderIndex, isVisible)
+
+  private fun saveIntoFLStorage(project: Project, item: Task) {
+    val lesson = item.parent
+    if (lesson !is FrameworkLesson) return
+    val flManager = CCFrameworkLessonManager.getInstance(project)
+    flManager.saveCurrentState(item)
+    val prevTask = lesson.taskList.getOrNull(item.index - 2)
+    if (prevTask != null) {
+      flManager.saveCurrentState(prevTask)
+    }
+  }
 
   companion object {
     @NonNls

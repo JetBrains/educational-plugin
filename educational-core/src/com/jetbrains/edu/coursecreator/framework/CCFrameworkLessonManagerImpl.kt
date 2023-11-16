@@ -54,6 +54,10 @@ class CCFrameworkLessonManagerImpl(private val project: Project) : CCFrameworkLe
     showApplyChangesSuccessNotification(project, task.name)
   }
 
+  override fun saveCurrentState(task: Task) {
+    saveFileStateIntoStorage(task)
+  }
+
   private fun propagateChanges(
     currentTask: Task,
     targetTask: Task,
