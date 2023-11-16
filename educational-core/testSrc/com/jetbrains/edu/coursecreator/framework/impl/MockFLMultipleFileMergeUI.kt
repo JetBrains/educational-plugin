@@ -10,7 +10,7 @@ import com.jetbrains.edu.coursecreator.framework.diff.FLMultipleFileMergeUI
 // Always accepts changes
 class MockFLMultipleFileMergeUI(
   private val resolutions: List<MergeSession.Resolution>,
-  private val cancelOnStep: Int,
+  private val cancelOnConflict: Int,
 ): FLMultipleFileMergeUI {
   private var counter = 0
 
@@ -24,6 +24,6 @@ class MockFLMultipleFileMergeUI(
   ): Boolean {
     mergeProvider.FLMergeSession().acceptFilesRevisions(files.toMutableList(), resolutions[counter])
     counter++
-    return counter < cancelOnStep
+    return counter < cancelOnConflict
   }
 }

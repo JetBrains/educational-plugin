@@ -9,19 +9,19 @@ import org.jetbrains.annotations.TestOnly
 
 fun applyChangesWithMergeDialog(
   project: Project,
-  task: Task,
+  currentTask: Task,
+  targetTask: Task,
+  conflictFiles: List<String>,
   leftState: FLTaskState,
   baseState: FLTaskState,
   rightState: FLTaskState,
-  currentTaskName: String,
-  targetTaskName: String,
   taskDir: VirtualFile,
   initialBaseState: FLTaskState = baseState
 ): Boolean {
-  val mergeProvider = FLMergeProvider(project, task, leftState, baseState, rightState, initialBaseState)
-  val mergeDialogCustomizer = FLMergeDialogCustomizer(project, currentTaskName, targetTaskName)
-  val files = baseState.keys.mapNotNull { taskDir.findFileByRelativePath(it) }
-  return showMultipleFileMergeDialog(project, files, mergeProvider, mergeDialogCustomizer, currentTaskName, targetTaskName)
+  val mergeProvider = FLMergeProvider(project, targetTask, leftState, baseState, rightState, initialBaseState)
+  val mergeDialogCustomizer = FLMergeDialogCustomizer(project, currentTask.name, targetTask.name)
+  val files = conflictFiles.mapNotNull { taskDir.findFileByRelativePath(it) }
+  return showMultipleFileMergeDialog(project, files, mergeProvider, mergeDialogCustomizer, currentTask.name, targetTask.name)
 }
 
 private var MOCK: FLMultipleFileMergeUI? = null

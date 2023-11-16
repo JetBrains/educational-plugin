@@ -24,7 +24,11 @@ class CCPropagateChangesTest: EduActionTestCase() {
       val task = course.findTask("lesson1", "task1")
       task.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun bar() {}\n")
-      doTest(task, listOf(Resolution.AcceptedYours, Resolution.AcceptedYours), 2)
+      val task3 = course.findTask("lesson1", "task3")
+      task3.openTaskFileInEditor("src/Task.kt")
+      myFixture.type("fun baz() {}\n")
+      task.openTaskFileInEditor("src/Task.kt")
+      doTest(task, listOf(Resolution.AcceptedYours, Resolution.AcceptedYours), 1)
     }
 
     val fileTree = fileTree {
@@ -57,7 +61,10 @@ class CCPropagateChangesTest: EduActionTestCase() {
         }
         dir("task3") {
           dir("src") {
-            file("Task.kt", "fun foo() {}")
+            file("Task.kt", """
+              fun baz() {}
+              fun foo() {}
+            """)
             file("Baz.kt", "fun baz() {}")
           }
           dir("test") {
@@ -309,17 +316,14 @@ class CCPropagateChangesTest: EduActionTestCase() {
     val course = createFrameworkCourse(2)
 
     withVirtualFileListener(course) {
-      val task1 = course.findTask("lesson1", "task1")
-      doTest(task1, listOf(Resolution.AcceptedTheirs))
-
       val task2 = course.findTask("lesson1", "task2")
       task2.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun bar() {}\n")
-      task2.openTaskFileInEditor("test/Tests.kt")
       runWriteAction {
         findFile("lesson1/task2/src/Baz.kt").delete(CCPropagateChangesTest::class.java)
       }
       GeneratorUtils.createTextChildFile(project, rootDir, "lesson1/task2/src/Bar.kt", "fun bar() {}")
+      val task1 = course.findTask("lesson1", "task1")
       doTest(task1, listOf(Resolution.AcceptedYours))
     }
 
@@ -341,6 +345,7 @@ class CCPropagateChangesTest: EduActionTestCase() {
               fun bar() {}
               fun foo() {}
             """)
+            file("Bar.kt", "fun bar() {}")
           }
           dir("test") {
             file("Tests.kt", "fun tests() {}")
@@ -464,20 +469,46 @@ class CCPropagateChangesTest: EduActionTestCase() {
       "b.kt" to "fun x() = 42",
     )
     val currentState = mapOf(
-      "a.kt" to "fun f() = 12",
+      "a.kt" to "fun f() = 42",
       "c.kt" to "fun ggg() = 0",
     )
     val targetState = mapOf(
-      "a.kt" to "fun f() = 12",
+      "a.kt" to "fun f() = 32",
       "d.kt" to "fun yyy() = 100",
     )
-    val (wereConflicts, expectedState) = SimpleConflictResolveStrategy().resolveConflicts(currentState, baseState, targetState)
-    assertEquals(false, wereConflicts)
+    val (conflictFiles, expectedState) = SimpleConflictResolveStrategy().resolveConflicts(currentState, baseState, targetState)
+    assertEquals(listOf("a.kt"), conflictFiles)
     val actualState = mapOf(
       "a.kt" to "fun f() = 12",
-      "b.kt" to "fun x() = 42",
       "c.kt" to "fun ggg() = 0",
       "d.kt" to "fun yyy() = 100",
+    )
+    assertEquals(expectedState, actualState)
+  }
+
+  fun `test conflict files during simple conflict strategy`() {
+    val baseState = mapOf(
+      "a.kt" to "a.kt",
+      "b.kt" to "b.kt",
+      "c.kt" to "c.kt",
+    )
+    val currentState = mapOf(
+      "b.kt" to "b1.kt",
+      "d.kt" to "d.kt",
+    )
+    val targetState = mapOf(
+      "a.kt" to "a1.kt",
+      "c.kt" to "cc.kt",
+      "d.kt" to "dd.kt",
+    )
+    val (conflictFiles, expectedState) = SimpleConflictResolveStrategy().resolveConflicts(currentState, baseState, targetState)
+    val sortedConflictFiles = conflictFiles.sorted()
+    assertEquals(listOf("a.kt", "b.kt", "c.kt", "d.kt"), sortedConflictFiles)
+    val actualState = mapOf(
+      "a.kt" to "a.kt",
+      "b.kt" to "b.kt",
+      "c.kt" to "c.kt",
+      "d.kt" to "d.kt",
     )
     assertEquals(expectedState, actualState)
   }
@@ -495,14 +526,18 @@ class CCPropagateChangesTest: EduActionTestCase() {
         }
       }
     }
+  }.apply {
+    val task = course.findTask("lesson1", "task1")
+    doTest(task, List(numberOfTasks - 1) { Resolution.AcceptedYours })
   }
 
   private fun doTest(
     item: StudyItem,
     resolutions: List<Resolution>,
-    cancelOnStep: Int = Int.MAX_VALUE,
+    // cancel on conflict resolution with number [cancelOnConflict]
+    cancelOnConflict: Int = Int.MAX_VALUE,
   ) {
-    val mockUI = MockFLMultipleFileMergeUI(resolutions, cancelOnStep)
+    val mockUI = MockFLMultipleFileMergeUI(resolutions, cancelOnConflict)
     withFLMultipleFileMergeUI(mockUI) {
       val dataContext = dataContext(item.getDir(project.courseDir)!!)
       testAction(CCApplyChangesToNextTasks.ACTION_ID, dataContext)

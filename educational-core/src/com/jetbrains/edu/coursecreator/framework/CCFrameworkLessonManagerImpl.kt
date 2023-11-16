@@ -85,17 +85,7 @@ class CCFrameworkLessonManagerImpl(private val project: Project) : CCFrameworkLe
     val currentState = getTaskStateFromFiles(initialCurrentFiles, currentTaskDir)
     val targetState = getTaskStateFromFiles(initialTargetFiles, targetTaskDir)
 
-    // if the state of the file has not changed from the previous one, then it is useless to push it further
-    val intersection = currentState.entries.intersect(previousCurrentState.entries)
-    val currentStateChanged = currentState.complement(intersection)
-    val previousCurrentStateChanged = previousCurrentState.complement(intersection)
-    val targetStateChanged = targetState - intersection.map { it.key }
-
-    return applyChanges(
-      currentTask, targetTask,
-      currentStateChanged, previousCurrentStateChanged, targetStateChanged,
-      targetTaskDir
-    )
+    return applyChanges(currentTask, targetTask, currentState, previousCurrentState, targetState, targetTaskDir)
   }
 
   private fun applyChanges(
@@ -109,14 +99,14 @@ class CCFrameworkLessonManagerImpl(private val project: Project) : CCFrameworkLe
     val conflictResolveStrategy = chooseConflictResolveStrategy()
 
     // Try to resolve some changes automatically and apply them to previousCurrentState
-    val (areAllChangesResolved, resolvedChangesState) = conflictResolveStrategy.resolveConflicts(
+    val (conflictFiles, resolvedChangesState) = conflictResolveStrategy.resolveConflicts(
       currentState,
       previousCurrentState,
       targetState
     )
 
     // if all changes were resolved, then we can apply changes into targetTask
-    if (areAllChangesResolved) {
+    if (conflictFiles.isEmpty()) {
       calculateChanges(targetState, resolvedChangesState).apply(project, taskDir, targetTask)
       return true
     }
@@ -129,9 +119,10 @@ class CCFrameworkLessonManagerImpl(private val project: Project) : CCFrameworkLe
 
     val isOk = applyChangesWithMergeDialog(
       project,
+      currentTask,
       targetTask,
+      conflictFiles,
       currentState, resolvedChangesState, targetState,
-      currentTask.name, targetTask.name,
       taskDir,
       // it is necessary for the correct recognition of deleting / adding files
       // because new files could be added / removed from the base state after conflict resolution
@@ -223,10 +214,6 @@ class CCFrameworkLessonManagerImpl(private val project: Project) : CCFrameworkLe
 
   private fun chooseConflictResolveStrategy(): FLConflictResolveStrategy {
     return SimpleConflictResolveStrategy()
-  }
-
-  private fun FLTaskState.complement(intersection: Set<Map.Entry<String, String>>): FLTaskState {
-    return (entries - intersection).associate { it.key to it.value }
   }
 
   companion object {
