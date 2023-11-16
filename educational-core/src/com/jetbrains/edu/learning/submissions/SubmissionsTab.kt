@@ -4,6 +4,7 @@ import com.intellij.diff.DiffContentFactory
 import com.intellij.diff.DiffDialogHints
 import com.intellij.diff.DiffManager
 import com.intellij.diff.chains.SimpleDiffRequestChain
+import com.intellij.diff.contents.DocumentContent
 import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.execution.process.ProcessIOExecutorService
 import com.intellij.openapi.application.ApplicationManager
@@ -42,7 +43,7 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 import javax.swing.JButton
 
-@Suppress("UnstableApiUsage", "DialogTitleCapitalization")
+@Suppress("UnstableApiUsage")
 class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSIONS_TAB) {
 
   override val uiMode: JavaUILibrary
@@ -109,8 +110,11 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
     val (descriptionText, customLinkHandler) = prepareSubmissionsContent(submissionsManager, task, isLoggedIn)
 
     if (isCommunityTabAvailable) {
-      val communityDescriptionText = prepareCommunityContent(task)
-      communityPanel.setText(communityDescriptionText)
+      val (communityDescriptionText, communityLinkHandler) = prepareCommunityContent(task, submissionsManager)
+      communityPanel.apply {
+        updateLinkHandler(communityLinkHandler)
+        setText(communityDescriptionText)
+      }
     }
 
     panel.apply {
@@ -120,14 +124,20 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
     }
   }
 
-  private fun prepareCommunityContent(task: Task): String {
-    return if (task.isCommunitySolutionsAllowed()) {
+  private fun prepareCommunityContent(task: Task, submissionsManager: SubmissionsManager): Pair<String, SwingToolWindowLinkHandler?> {
+    if (task.isCommunitySolutionsAllowed()) {
       segmentedButton.enableCommunityButton()
-      "Community Solutions []"
+      val submissionsList = submissionsManager.getCommunitySubmissionsFromMemory(task.id)
+
+      if (submissionsList.isNullOrEmpty()) {
+        return EMPTY_COMMUNITY_SOLUTIONS_MESSAGE to null
+      }
+
+      return getSubmissionsText(submissionsList) to SubmissionsDifferenceLinkHandler(project, task, submissionsManager, true)
     }
     else {
       segmentedButton.disableCommunityButton()
-      EduCoreBundle.message("submissions.button.community.tooltip.text.disabled")
+      return EduCoreBundle.message("submissions.button.community.tooltip.text.disabled") to null
     }
   }
 
@@ -176,6 +186,7 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
     private val COMMUNITY = JButton(EduCoreBundle.message("submissions.button.community")).apply { isEnabled = false }
     private val SEGMENTED_BUTTON_ITEMS = listOf(MY, COMMUNITY)
     private val EMPTY_SUBMISSIONS_MESSAGE = "<a $textStyleHeader>${EduCoreBundle.message("submissions.empty")}"
+    private val EMPTY_COMMUNITY_SOLUTIONS_MESSAGE = "<a $textStyleHeader>${EduCoreBundle.message("submissions.community.empty")}"
     const val OPEN_PLACEHOLDER_TAG = "<placeholder>"
     const val CLOSE_PLACEHOLDER_TAG = "</placeholder>"
 
@@ -194,7 +205,7 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
     }
 
     private class SubmissionsDifferenceLinkHandler(
-      project: Project, private val task: Task, private val submissionsManager: SubmissionsManager
+      project: Project, private val task: Task, private val submissionsManager: SubmissionsManager, private val isCommunity: Boolean = false
     ) : SwingToolWindowLinkHandler(project) {
       override fun process(url: String, referUrl: String?): Boolean {
         if (!url.startsWith(SUBMISSION_DIFF_URL)) return false
@@ -203,7 +214,7 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
         ApplicationManager.getApplication().executeOnPooledThread {
           val submission = submissionsManager.getSubmissionWithSolutionText(task, submissionId) ?: return@executeOnPooledThread
           runInEdt {
-            showDiff(project, task, submission)
+            showDiff(project, task, submission, isCommunity)
           }
         }
         return true
@@ -229,7 +240,7 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
       EduCoreBundle.message("submissions.wait.user.data.being.retrieved")
     }
 
-    private fun showDiff(project: Project, task: Task, submission: Submission) {
+    private fun showDiff(project: Project, task: Task, submission: Submission, isCommunity: Boolean) {
       val taskFiles = task.taskFiles.values.toMutableList()
       val submissionTexts = submission.getSubmissionTexts(task.name) ?: return
       val submissionTaskFiles = taskFiles.filter { it.isVisible && !it.isTestFile }
@@ -246,18 +257,25 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
         else {
           submissionTaskFilePaths.add(virtualFile.path)
           val submissionFileContent = DiffContentFactory.getInstance().create(submissionText.removeAllTags(), virtualFile.fileType)
-          SimpleDiffRequest(
-            EduCoreBundle.message("submissions.compare"),
-            currentFileContent,
-            submissionFileContent,
-            EduCoreBundle.message("submissions.local"),
-            EduCoreBundle.message("submissions.submission")
-          )
+          createSimpleDiffRequest(currentFileContent, submissionFileContent, submission, isCommunity)
         }
       }
       val diffRequestChain = SimpleDiffRequestChain(requests)
       diffRequestChain.putUserData(FILENAMES_KEY, submissionTaskFilePaths)
       DiffManager.getInstance().showDiff(project, diffRequestChain, DiffDialogHints.FRAME)
+    }
+
+    private fun createSimpleDiffRequest(currentContent: DocumentContent, submissionContent: DocumentContent, submission: Submission, isCommunity: Boolean): SimpleDiffRequest {
+      val (title, title2) = if (!isCommunity) {
+        EduCoreBundle.message("submissions.compare") to EduCoreBundle.message("submissions.submission")
+      }
+      else {
+        val time = submission.time
+        val formattedDate = time?.let { formatDate(time) } ?: ""
+        EduCoreBundle.message("submissions.compare.community", formattedDate) to EduCoreBundle.message("submissions.community")
+      }
+
+      return SimpleDiffRequest(title, currentContent, submissionContent, EduCoreBundle.message("submissions.local"), title2)
     }
 
     private fun String.removeAllTags(): String = replace(OPEN_PLACEHOLDER_TAG.toRegex(), "").replace(CLOSE_PLACEHOLDER_TAG.toRegex(), "")

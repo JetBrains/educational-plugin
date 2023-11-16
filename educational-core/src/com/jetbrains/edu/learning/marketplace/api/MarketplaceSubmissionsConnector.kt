@@ -132,13 +132,20 @@ class MarketplaceSubmissionsConnector {
    * Fetches only N shared solutions for each task on the course that user has solved
    */
   fun getSharedSolutionsForCourse(courseId: Int, updateVersion: Int): List<MarketplaceSubmission> {
-    LOG.info("Loading all published solutions for courseId = $courseId")
+    LOG.info("Loading all published solutions for course with courseId = $courseId, updateVersion = $updateVersion")
 
-    return generateSequence(1) { it + 1 }
-      .mapNotNull { fetchSharedSolutionsForCourse(courseId, updateVersion, it) }
-      .takeWhile { it.hasNext && it.submissions.isNotEmpty() }
-      .flatMap { it.submissions }
-      .toList()
+    val courseSharedSolutions = mutableListOf<MarketplaceSubmission>()
+    var currentPage = 1
+    do {
+      val submissionsList = fetchSharedSolutionsForCourse(courseId, updateVersion, currentPage)
+                            ?: break
+      val sharedSolutions = submissionsList.submissions
+      courseSharedSolutions.addAll(sharedSolutions)
+      currentPage += 1
+    }
+    while (sharedSolutions.isNotEmpty() && submissionsList.hasNext)
+
+    return courseSharedSolutions
   }
 
   fun markTheoryTaskAsCompleted(task: TheoryTask) {

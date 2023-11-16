@@ -5,6 +5,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -12,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.invokeLater
+import com.jetbrains.edu.learning.marketplace.actions.ShareMySolutionsAction
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType.SUBMISSIONS_TAB
@@ -45,6 +47,10 @@ class SubmissionsManager(private val project: Project) {
     return submissionsFromMemory.sortedByDescending { it.time }.toList()
   }
 
+  fun getCommunitySubmissionsFromMemory(taskId: Int): List<Submission>? = communitySubmissions[taskId]?.sortedByDescending { it.time }
+
+  private fun getCommunitySubmissionFromMemory(taskId: Int, submissionId: Int): Submission? = communitySubmissions[taskId]?.find { it.id == submissionId }
+
   fun getSubmissions(tasks: List<Task>): List<Submission>? {
     val course = this.course
     val stepIds = tasks.stream().map { task -> task.id }.collect(Collectors.toSet())
@@ -65,7 +71,9 @@ class SubmissionsManager(private val project: Project) {
   }
 
   fun getSubmissionWithSolutionText(task: Task, submissionId: Int): Submission? {
-    val submission = getOrLoadSubmissions(task).find { it.id == submissionId } ?: return null
+    val submission = getOrLoadSubmissions(task).find { it.id == submissionId }
+                     ?: getCommunitySubmissionFromMemory(task.id, submissionId)
+                     ?: return null
 
     if (submission is MarketplaceSubmission && submission.solutionFiles == null) {
       val course = this.course ?: return null
@@ -165,6 +173,9 @@ class SubmissionsManager(private val project: Project) {
     loadSolutions: () -> Unit
   ) {
     submissions.putAll(submissionsProvider.loadAllSubmissions(course))
+    if (Registry.`is`(ShareMySolutionsAction.REGISTRY_KEY, false)) {
+      communitySubmissions.putAll(submissionsProvider.loadSharedSolutionsForCourse(course))
+    }
     loadSolutions()
     ApplicationManager.getApplication().invokeLater { taskToolWindowView.updateTab(SUBMISSIONS_TAB) }
   }
