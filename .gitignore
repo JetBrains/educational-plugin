@@ -33,7 +33,8 @@ hs_err_pid*
 !.idea/vcs.xml
 !.idea/dictionaries/educational.xml
 !.idea/icon.png
-!educational-core/testData/coursera/*
+!educational-core/resources/courses/*.zip
+!educational-core/testData/**/*.zip
 .idea/
 build/
 .gradle/
