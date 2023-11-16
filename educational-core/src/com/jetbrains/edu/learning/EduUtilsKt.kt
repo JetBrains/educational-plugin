@@ -111,29 +111,33 @@ object EduUtilsKt {
 
   fun getLocalCourse(zipFilePath: String, readCourseJson: (() -> Reader) -> Course? = ::readCourseJson): Course? {
     try {
-      var course: Course? = null
-
-      ProgressManager.getInstance().runProcessWithProgressSynchronously({
-        val indicator = ProgressManager.getInstance().progressIndicator
-
-        indicator.isIndeterminate = true
-        indicator.text = EduCoreBundle.message("action.create.course.archive.reading.file.name", File(zipFilePath).name)
-
-        course = execCancelable {
-          ZipFile (zipFilePath).use { zipFile ->
-            val entry = zipFile.getEntry(COURSE_META_FILE) ?: return@use null
-            val reader = { zipFile.getInputStream(entry).reader(StandardCharsets.UTF_8) }
-            readCourseJson(reader)
-          }
-        }
-      }, EduCoreBundle.message("action.create.course.archive.reading.progress.bar"), true, null)
-
-      return course
+      return ZipFile(zipFilePath).use { zipFile ->
+        val entry = zipFile.getEntry(COURSE_META_FILE) ?: return null
+        val reader = { zipFile.getInputStream(entry).reader(StandardCharsets.UTF_8) }
+        readCourseJson(reader)
+      }
     }
     catch (e: IOException) {
       LOG.error("Failed to unzip course archive", e)
     }
     return null
+  }
+
+  fun getLocalCourseWithCancellableProgress(zipFilePath: String, readCourseJson: (() -> Reader) -> Course? = ::readCourseJson): Course? {
+    var course: Course? = null
+
+    ProgressManager.getInstance().runProcessWithProgressSynchronously({
+      val indicator = ProgressManager.getInstance().progressIndicator
+
+      indicator.isIndeterminate = true
+      indicator.text = EduCoreBundle.message("action.create.course.archive.reading.file.name", File(zipFilePath).name)
+
+      course = execCancelable {
+        getLocalCourse(zipFilePath, readCourseJson)
+      }
+    }, EduCoreBundle.message("action.create.course.archive.reading.progress.bar"), true, null)
+
+    return course
   }
 
   fun Project.isNewlyCreated(): Boolean {

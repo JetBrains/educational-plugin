@@ -100,7 +100,7 @@ class CCCreateCoursePreviewDialog(
 
       if (errorMessage.isNullOrEmpty()) {
         val archivePath = FileUtil.join(FileUtil.toSystemDependentName(folder.path), "$archiveName.zip")
-        val course = EduUtilsKt.getLocalCourse(archivePath) as? EduCourse  ?: return
+        val course = EduUtilsKt.getLocalCourseWithCancellableProgress(archivePath) as? EduCourse  ?: return
         course.isPreview = true
 
         val lastProjectCreationLocation = RecentProjectsManager.getInstance().lastProjectCreationLocation
