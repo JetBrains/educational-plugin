@@ -18,7 +18,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProcessCanceledException
-import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -53,26 +52,6 @@ class CourseArchiveCreator(
 ) {
 
   /**
-   * @return false if the process was cancelled, true if the process finished successfully
-   */
-  private fun runModal(process: (ProgressIndicator) -> Unit): Boolean = ProgressManager.getInstance().runProcessWithProgressSynchronously(
-    {
-      try {
-        process(ProgressManager.getInstance().progressIndicator)
-      }
-      catch (e: Exception) {
-        val cause = e.cause
-        // JsonMappingException might occur during json serialization`
-        if (cause is ProcessCanceledException) throw cause
-        throw e
-      }
-    },
-    EduCoreBundle.message("action.create.course.archive.progress.bar"),
-    true,
-    project
-  )
-
-  /**
    * @return null when course archive was created successfully, non-empty error message otherwise
    */
   fun createArchive(): String? {
@@ -81,9 +60,9 @@ class CourseArchiveCreator(
 
     val course = StudyTaskManager.getInstance(project).course ?: return EduCoreBundle.message("error.unable.to.obtain.course.for.project")
     if (course.isMarketplace && !isUnitTestMode) {
-      runModal {
+      ProgressManager.getInstance().runProcessWithProgressSynchronously({
         course.updateCourseItems()
-      }
+      }, EduCoreBundle.message("action.create.course.archive.progress.bar"), false, project)
     }
 
     course.updateEnvironmentSettings(project)
@@ -107,39 +86,44 @@ class CourseArchiveCreator(
     catch (e: HugeBinaryFileException) {
       return e.message
     }
-    return try {
-      val success = runModal { indicator ->
-        val courseDir = project.courseDir
-        courseArchiveIndicator.init(courseDir, courseCopy, indicator)
 
-        ZipOutputStream(FileOutputStream(location)).use { outputStream ->
-          outputStream.withNewEntry(COURSE_META_FILE) {
-            val writer = OutputStreamWriter(outputStream, UTF_8)
-            generateJson(writer, courseCopy)
-          }
-
-          val iconFile = courseDir.findChild(EduFormatNames.COURSE_ICON_FILE)
-          iconFile?.inputStream?.use { iconInputStream ->
-            outputStream.withNewEntry(EduFormatNames.COURSE_ICON_FILE) {
-              iconInputStream.copyTo(outputStream)
-            }
-          }
+    return ProgressManager.getInstance().runProcessWithProgressSynchronously<String?, RuntimeException>({
+      try {
+        unwrapProcessCancelledException {
+          doCreateCourseArchive(courseArchiveIndicator, courseCopy)
         }
 
-        synchronize(project)
-      }
-
-      if (success) {
         null
       }
-      else {
+      catch (e: IOException) {
+        LOG.warn("Failed to create course archive", e)
+        EduCoreBundle.message("error.failed.to.generate.course.archive")
+      }
+      catch (e: ProcessCanceledException) {
         EduCoreBundle.message("error.course.archiving.cancelled.by.user")
       }
+    }, EduCoreBundle.message("action.create.course.archive.progress.bar"), true, project)
+  }
+
+  private fun doCreateCourseArchive(courseArchiveIndicator: CourseArchiveIndicator, courseCopy: Course) {
+    val courseDir = project.courseDir
+    courseArchiveIndicator.init(courseDir, courseCopy, ProgressManager.getInstance().progressIndicator)
+
+    ZipOutputStream(FileOutputStream(location)).use { outputStream ->
+      outputStream.withNewEntry(COURSE_META_FILE) {
+        val writer = OutputStreamWriter(outputStream, UTF_8)
+        generateJson(writer, courseCopy)
+      }
+
+      val iconFile = courseDir.findChild(EduFormatNames.COURSE_ICON_FILE)
+      iconFile?.inputStream?.use { iconInputStream ->
+        outputStream.withNewEntry(EduFormatNames.COURSE_ICON_FILE) {
+          iconInputStream.copyTo(outputStream)
+        }
+      }
     }
-    catch (e: IOException) {
-      LOG.error("Failed to create course archive", e)
-      EduCoreBundle.message("error.failed.to.generate.course.archive")
-    }
+
+    synchronize(project)
   }
 
   @Throws(IOException::class)
@@ -186,6 +170,18 @@ class CourseArchiveCreator(
       .build()
     mapper.addStudyItemMixins()
     return mapper
+  }
+
+  /**
+   * Sometimes when a user cancels a process, the ProcessCanceledException becomes a cause of another exception.
+   * We need to get rid of the caused exception to see that the process was actually cancelled
+   */
+  private fun unwrapProcessCancelledException(action: () -> Unit) = try {
+    action()
+  } catch (e: Exception) {
+    val cause = e.cause
+    if (cause is ProcessCanceledException) throw cause
+    throw e
   }
 
   class EduCoursePluginVersionSerializer : JsonSerializer<EduCourse>() {
