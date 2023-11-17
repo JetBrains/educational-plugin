@@ -37,7 +37,6 @@ import com.jetbrains.edu.learning.json.getCourseMapper
 import com.jetbrains.edu.learning.json.migrate
 import com.jetbrains.edu.learning.json.mixins.LocalEduCourseMixin
 import com.jetbrains.edu.learning.json.readCourseJson
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.projectView.ProgressUtil.updateCourseProgress
 import com.jetbrains.edu.learning.taskToolWindow.ui.EduBrowserHyperlinkListener
@@ -46,7 +45,6 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.MarkdownParser
-import java.io.File
 import java.io.IOException
 import java.io.Reader
 import java.nio.charset.StandardCharsets
@@ -121,23 +119,6 @@ object EduUtilsKt {
       LOG.error("Failed to unzip course archive", e)
     }
     return null
-  }
-
-  fun getLocalCourseWithCancellableProgress(zipFilePath: String, readCourseJson: (() -> Reader) -> Course? = ::readCourseJson): Course? {
-    var course: Course? = null
-
-    ProgressManager.getInstance().runProcessWithProgressSynchronously({
-      val indicator = ProgressManager.getInstance().progressIndicator
-
-      indicator.isIndeterminate = true
-      indicator.text = EduCoreBundle.message("action.create.course.archive.reading.file.name", File(zipFilePath).name)
-
-      course = execCancelable {
-        getLocalCourse(zipFilePath, readCourseJson)
-      }
-    }, EduCoreBundle.message("action.create.course.archive.reading.progress.bar"), true, null)
-
-    return course
   }
 
   fun Project.isNewlyCreated(): Boolean {
