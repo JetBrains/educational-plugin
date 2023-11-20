@@ -239,7 +239,23 @@ allprojects {
       // But this file shouldn't be included into final module artifact at all, so exclude it manually for now
       exclude("**/classpath.index")
     }
+  }
+}
 
+fun Iterable<Project>.pluginModules(): List<Project> {
+  return filter { it.name != "edu-format" && it.name != "fleet-plugin" }
+}
+
+configure(allprojects.pluginModules()) {
+  apply {
+    plugin("org.jetbrains.intellij")
+  }
+  intellij {
+    version = baseVersion
+    instrumentCode = false
+  }
+
+  tasks {
     val verifyClasses = task("verifyClasses") {
       dependsOn(jar)
       doLast {
@@ -251,20 +267,7 @@ allprojects {
       dependsOn(verifyClasses)
     }
   }
-}
 
-fun Iterable<Project>.pluginModules(): List<Project> {
-  return filter { it.name != "edu-format" }
-}
-
-configure(allprojects.pluginModules()) {
-  apply {
-    plugin("org.jetbrains.intellij")
-  }
-  intellij {
-    version = baseVersion
-    instrumentCode = false
-  }
   dependencies {
     implementationWithoutKotlin(rootProject.libs.twitter4j.core)
     implementationWithoutKotlin(rootProject.libs.twitter4j.v2)

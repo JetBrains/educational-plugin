@@ -33,6 +33,10 @@ include(
   "github"
 )
 
+if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {
+  include("fleet-plugin")
+}
+
 apply(from = "common.gradle.kts")
 
 val secretProperties: String by extra
@@ -149,7 +153,19 @@ buildCache {
 
 pluginManagement {
   repositories {
-    maven("https://oss.sonatype.org/content/repositories/snapshots/")
+    mavenCentral()
     gradlePluginPortal()
+    maven("https://oss.sonatype.org/content/repositories/snapshots/")
+    if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {
+      maven("https://cache-redirector.jetbrains.com/intellij-dependencies")
+      maven("https://packages.jetbrains.team/maven/p/teamcity-rest-client/teamcity-rest-client")
+      maven {
+        url = uri("https://packages.jetbrains.team/maven/p/fleet/fleet-sdk")
+        credentials {
+          username = settings.providers.gradleProperty("spaceUsername").orNull
+          password = settings.providers.gradleProperty("spacePassword").orNull
+        }
+      }
+    }
   }
 }
