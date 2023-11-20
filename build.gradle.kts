@@ -8,7 +8,6 @@ import org.jetbrains.intellij.tasks.RunIdeBase
 import org.jetbrains.intellij.tasks.RunIdeTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.*
 
@@ -41,12 +40,6 @@ val baseVersion = when {
   isStudioIDE -> studioVersion
   else -> error("Unexpected IDE name = `$baseIDE`")
 }
-
-// Probably, these versions should be extracted to version catalog
-// See https://docs.gradle.org/current/userguide/platforms.html#sub:conventional-dependencies-toml
-val jacksonVersion = "2.14.3"
-val okhttpVersion = "4.10.0"
-val retrofitVersion = "2.9.0"
 
 val ideaSandbox = "${project.buildDir.absolutePath}/idea-sandbox"
 val pycharmSandbox = "${project.buildDir.absolutePath}/pycharm-sandbox"
@@ -130,11 +123,11 @@ val isTeamCity: Boolean get() = System.getenv("TEAMCITY_VERSION") != null
 
 plugins {
   idea
-  kotlin("jvm") version "1.9.0"
-  id("org.jetbrains.intellij") version "1.16.0"
-  id("de.undercouch.download") version "5.3.0"
-  id("net.saliman.properties") version "1.5.2"
-  id("org.gradle.test-retry") version "1.5.1"
+  alias(libs.plugins.kotlinPlugin)
+  alias(libs.plugins.gradleIntelliJPlugin)
+  alias(libs.plugins.downloadPlugin)
+  alias(libs.plugins.propertiesPlugin)
+  alias(libs.plugins.testRetryPlugin)
   `maven-publish`
 }
 
@@ -267,21 +260,20 @@ configure(allprojects.pluginModules()) {
     instrumentCode = false
   }
   dependencies {
-    implementationWithoutKotlin(group = "org.twitter4j", name = "twitter4j-core", version = "4.0.7")
-    implementationWithoutKotlin(group = "io.github.takke", name = "jp.takke.twitter4j-v2", version = "1.4.2")
-    implementationWithoutKotlin("org.jsoup:jsoup:1.15.3")
-    implementationWithoutKotlin(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = jacksonVersion)
-    implementationWithoutKotlin(group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version = jacksonVersion)
-    implementationWithoutKotlin(group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version = jacksonVersion)
-    implementationWithoutKotlin("com.squareup.retrofit2:retrofit:$retrofitVersion")
-    implementationWithoutKotlin("com.squareup.retrofit2:converter-jackson:$retrofitVersion")
-    implementationWithoutKotlin("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
-    implementationWithoutKotlin("org.jetbrains:kotlin-css-jvm:1.0.0-pre.58-kotlin-1.3.0")
+    implementationWithoutKotlin(rootProject.libs.twitter4j.core)
+    implementationWithoutKotlin(rootProject.libs.twitter4j.v2)
+    implementationWithoutKotlin(rootProject.libs.jsoup)
+    implementationWithoutKotlin(rootProject.libs.jackson.dataformat.yaml)
+    implementationWithoutKotlin(rootProject.libs.jackson.datatype.jsr310)
+    implementationWithoutKotlin(rootProject.libs.jackson.module.kotlin)
+    implementationWithoutKotlin(rootProject.libs.retrofit)
+    implementationWithoutKotlin(rootProject.libs.converter.jackson)
+    implementationWithoutKotlin(rootProject.libs.logging.interceptor)
+    implementationWithoutKotlin(rootProject.libs.kotlin.css.jvm)
 
-    // The same as `testImplementation(kotlin("test"))` but with excluding kotlin stdlib dependencies
-    testImplementationWithoutKotlin("org.jetbrains.kotlin:kotlin-test-junit:${getKotlinPluginVersion()}")
-    testImplementationWithoutKotlin("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
-    testImplementationWithoutKotlin("io.mockk:mockk:1.12.0")
+    testImplementationWithoutKotlin(rootProject.libs.kotlin.test.junit)
+    testImplementationWithoutKotlin(rootProject.libs.mockwebserver)
+    testImplementationWithoutKotlin(rootProject.libs.mockk)
   }
 }
 
@@ -574,14 +566,14 @@ project(":edu-format") {
     withSourcesJar()
   }
   dependencies {
-    compileOnly(group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8")
-    compileOnly(group = "org.jetbrains", name = "annotations", version = "23.0.0")
-    implementationWithoutKotlin(group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version = jacksonVersion)
-    implementationWithoutKotlin(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = jacksonVersion)
-    implementationWithoutKotlin(group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version = jacksonVersion)
-    implementationWithoutKotlin("com.squareup.retrofit2:retrofit:$retrofitVersion")
-    implementationWithoutKotlin("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
-    implementationWithoutKotlin("com.squareup.retrofit2:converter-jackson:$retrofitVersion")
+    compileOnly(rootProject.libs.kotlin.stdlib)
+    compileOnly(rootProject.libs.annotations)
+    implementationWithoutKotlin(rootProject.libs.jackson.module.kotlin)
+    implementationWithoutKotlin(rootProject.libs.jackson.dataformat.yaml)
+    implementationWithoutKotlin(rootProject.libs.jackson.datatype.jsr310)
+    implementationWithoutKotlin(rootProject.libs.retrofit)
+    implementationWithoutKotlin(rootProject.libs.converter.jackson)
+    implementationWithoutKotlin(rootProject.libs.logging.interceptor)
   }
 }
 
@@ -1052,20 +1044,14 @@ publishing {
   }
 }
 
-fun DependencyHandler.implementationWithoutKotlin(dependencyNotation: String): ExternalModuleDependency {
-  return implementation(dependencyNotation) {
+fun DependencyHandler.implementationWithoutKotlin(dependencyNotation: Provider<*>) {
+  implementation(dependencyNotation) {
     excludeKotlinDeps()
   }
 }
 
-fun DependencyHandler.implementationWithoutKotlin(group: String, name: String, version: String? = null): ExternalModuleDependency {
-  return implementation(group, name, version) {
-    excludeKotlinDeps()
-  }
-}
-
-fun DependencyHandler.testImplementationWithoutKotlin(dependencyNotation: String): ExternalModuleDependency {
-  return testImplementation(dependencyNotation) {
+fun DependencyHandler.testImplementationWithoutKotlin(dependencyNotation: Provider<*>) {
+  testImplementation(dependencyNotation) {
     excludeKotlinDeps()
   }
 }
