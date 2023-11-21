@@ -10,6 +10,8 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileTypes.FileType
+import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.TextRange
@@ -18,6 +20,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.runInEdtAndWait
 import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
@@ -57,6 +60,7 @@ import org.apache.http.HttpStatus
 import java.io.File
 import java.io.IOException
 import java.util.regex.Pattern
+import javax.swing.Icon
 import kotlin.reflect.KMutableProperty0
 
 abstract class EduTestCase : BasePlatformTestCase() {
@@ -84,6 +88,8 @@ abstract class EduTestCase : BasePlatformTestCase() {
     registerConfigurator(myFixture.testRootDisposable, FakeGradleConfigurator::class.java, FakeGradleBasedLanguage)
     registerConfigurator(myFixture.testRootDisposable, FakeGradleHyperskillConfigurator::class.java, FakeGradleBasedLanguage, HYPERSKILL)
 
+    setupFileTypes()
+
     CheckActionListener.reset()
     val connection = project.messageBus.connect(testRootDisposable)
     connection.subscribe(StudyTaskManager.COURSE_SET, object : CourseSetListener {
@@ -100,6 +106,25 @@ abstract class EduTestCase : BasePlatformTestCase() {
     }
     createCourse()
     project.putUserData(CourseProjectGenerator.EDU_PROJECT_CREATED, true)
+  }
+
+  private fun setupFileTypes() {
+    runInEdtAndWait {
+      runWriteAction {
+        associateFileType("SVG", false)
+        associateFileType("PNG", true)
+      }
+    }
+  }
+
+  private fun associateFileType(extension: String, isBinary: Boolean) {
+    FileTypeManager.getInstance().associateExtension(object : FileType {
+      override fun getName(): String = extension
+      override fun getDescription(): String = extension
+      override fun getDefaultExtension(): String = extension
+      override fun getIcon(): Icon = TODO("Not expected to be called")
+      override fun isBinary(): Boolean = isBinary
+    }, extension)
   }
 
   override fun tearDown() {
