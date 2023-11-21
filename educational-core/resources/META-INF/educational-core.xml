@@ -249,8 +249,6 @@
                     testServiceImplementation="com.jetbrains.edu.learning.checker.details.MockCheckDetailsView"/>
     <projectService serviceInterface="com.jetbrains.edu.learning.framework.FrameworkLessonManager"
                     serviceImplementation="com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl"/>
-    <projectService serviceInterface="com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager"
-                    serviceImplementation="com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManagerImpl"/>
 
     <!-- Courseignore lang -->
     <fileType language="CourseIgnore" fileNames=".courseignore" fieldName="INSTANCE" name="CourseIgnore file"
