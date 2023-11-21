@@ -1,9 +1,9 @@
 package com.jetbrains.edu.learning.marketplace.actions
 
 import com.intellij.CommonBundle
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.ui.JBAccountInfoService
@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import org.jetbrains.annotations.NonNls
 
-class DeleteAllSubmissionsAction : AnAction(EduCoreBundle.message("marketplace.action.delete.all.submissions")) {
+class DeleteAllSubmissionsAction : DumbAwareAction(EduCoreBundle.message("marketplace.action.delete.all.submissions")) {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project
