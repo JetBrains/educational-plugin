@@ -217,7 +217,11 @@ allprojects {
       }
     }
 
-    withType<JavaCompile> { options.encoding = "UTF-8" }
+    withType<JavaCompile> {
+      options.encoding = "UTF-8"
+      // Prevents unexpected incremental compilation errors after changing value of `environmentName` property
+      inputs.property("environmentName", providers.gradleProperty("environmentName"))
+    }
     withType<KotlinCompile> {
       compilerOptions {
         jvmTarget = JvmTarget.JVM_17
@@ -226,6 +230,8 @@ allprojects {
         apiVersion = KotlinVersion.KOTLIN_1_8
         freeCompilerArgs = listOf("-Xjvm-default=all")
       }
+      // Prevents unexpected incremental compilation errors after changing value of `environmentName` property
+      inputs.property("environmentName", providers.gradleProperty("environmentName"))
     }
 
     jar {
