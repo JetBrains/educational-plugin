@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import org.jetbrains.annotations.NonNls
 
-class DeleteAllSubmissionsAction : DumbAwareAction(EduCoreBundle.message("marketplace.action.delete.all.submissions")) {
+class DeleteAllSubmissionsAction : DumbAwareAction() {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project
