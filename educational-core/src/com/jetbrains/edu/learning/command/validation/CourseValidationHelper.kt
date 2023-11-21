@@ -63,41 +63,53 @@ object CourseValidationHelper {
     }
   }
 
+  /**
+   * If a test fails, [action] is responsible for emitting additional test messages
+   */
+  private suspend fun <T> testCase(name: String, action: suspend () -> T): T {
+    println(ServiceMessageBuilder.testStarted(name))
+    return try {
+      action()
+    }
+    finally {
+      println(ServiceMessageBuilder.testFinished(name))
+    }
+  }
 
   /**
    * Returns `true` if a task is checked successfully, `false` otherwise
    */
   private suspend fun Task.check(project: Project): Boolean {
-    println(ServiceMessageBuilder.testStarted(presentableName))
-    withContext(Dispatchers.EDT) {
-      prepareForChecking(project)
-      val dataContext = SimpleDataContext.getProjectContext(project)
-      ActionUtil.invokeAction(CheckAction(), dataContext, "", null, null)
-    }
-
-    val result = ValidationCheckResultManager.getInstance(project).getResult(this)
-
-    withContext(Dispatchers.EDT) {
-      closeOpenFiles(project)
-    }
-
-    val testMessage = when (result.status) {
-      CheckStatus.Unchecked -> {
-        ServiceMessageBuilder.testIgnored(presentableName)
-          .addAttribute("message", result.message)
+    return testCase(presentableName) {
+      withContext(Dispatchers.EDT) {
+        prepareForChecking(project)
+        val dataContext = SimpleDataContext.getProjectContext(project)
+        ActionUtil.invokeAction(CheckAction(), dataContext, "", null, null)
       }
-      CheckStatus.Solved -> null
-      CheckStatus.Failed -> {
-        ServiceMessageBuilder.testFailed(presentableName)
-          .addAttribute("message", result.message)
-          .addAttribute("details", result.details.orEmpty())
+
+      val result = ValidationCheckResultManager.getInstance(project).getResult(this)
+
+      withContext(Dispatchers.EDT) {
+        closeOpenFiles(project)
       }
+
+      val testMessage = when (result.status) {
+        CheckStatus.Unchecked -> {
+          ServiceMessageBuilder.testIgnored(presentableName)
+            .addAttribute("message", result.message)
+        }
+        CheckStatus.Solved -> null
+        CheckStatus.Failed -> {
+          ServiceMessageBuilder.testFailed(presentableName)
+            .addAttribute("message", result.message)
+            .addAttribute("details", result.details.orEmpty())
+        }
+      }
+      if (testMessage != null) {
+        println(testMessage)
+      }
+      result.isSolved
     }
-    if (testMessage != null) {
-      println(testMessage)
-    }
-    println(ServiceMessageBuilder.testFinished(presentableName))
-    return result.isSolved
   }
 
   @RequiresEdt
