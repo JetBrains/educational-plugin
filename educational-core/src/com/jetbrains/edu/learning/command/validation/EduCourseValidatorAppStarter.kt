@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.command
+package com.jetbrains.edu.learning.command.validation
 
 import com.intellij.execution.testframework.sm.ServiceMessageBuilder
 import com.intellij.openapi.actionSystem.ex.ActionUtil
@@ -11,6 +11,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.checker.CheckListener
+import com.jetbrains.edu.learning.command.CommandResult
+import com.jetbrains.edu.learning.command.EduCourseProjectAppStarterBase
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
