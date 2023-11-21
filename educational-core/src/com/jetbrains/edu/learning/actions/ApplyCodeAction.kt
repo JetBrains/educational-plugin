@@ -22,15 +22,12 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.ui.DumbAwareActionButton
-import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.NonNls
 
-class ApplyCodeAction : DumbAwareActionButton(
-  EduCoreBundle.message("action.apply.code.from.submission.title"), EducationalCoreIcons.ApplyCode
-) {
+class ApplyCodeAction : DumbAwareActionButton() {
 
   override fun updateButton(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false
@@ -66,10 +63,10 @@ class ApplyCodeAction : DumbAwareActionButton(
 
   private fun getConfirmationFromDialog(project: Project): Boolean = when (Messages.showYesNoDialog(
     project,
-    EduCoreBundle.message("action.apply.code.from.submission.dialog.text"),
-    EduCoreBundle.message("action.apply.code.from.submission.dialog.title"),
-    EduCoreBundle.message("action.apply.code.from.submission.dialog.yes.text"),
-    EduCoreBundle.message("action.apply.code.from.submission.dialog.no.text"),
+    EduCoreBundle.message("action.Educational.Student.ApplyCode.dialog.text"),
+    EduCoreBundle.message("action.Educational.Student.ApplyCode.dialog.title"),
+    EduCoreBundle.message("action.Educational.Student.ApplyCode.dialog.yes.text"),
+    EduCoreBundle.message("action.Educational.Student.ApplyCode.dialog.no.text"),
     AllIcons.General.Warning
   )) {
     Messages.YES -> true
@@ -111,16 +108,16 @@ class ApplyCodeAction : DumbAwareActionButton(
   @Suppress("DialogTitleCapitalization")
   private fun showApplySubmissionCodeSuccessfulNotification(project: Project) = Notification(
     MarketplaceNotificationUtils.JETBRAINS_ACADEMY_GROUP_ID,
-    EduCoreBundle.message("action.apply.code.from.submission.notification.success.title"),
-    EduCoreBundle.message("action.apply.code.from.submission.notification.success.text"),
+    EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.success.title"),
+    EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.success.text"),
     NotificationType.INFORMATION
   ).notify(project)
 
   @Suppress("DialogTitleCapitalization")
   private fun showApplySubmissionCodeFailedNotification(project: Project) = Notification(
     MarketplaceNotificationUtils.JETBRAINS_ACADEMY_GROUP_ID,
-    EduCoreBundle.message("action.apply.code.from.submission.notification.failed.title"),
-    EduCoreBundle.message("action.apply.code.from.submission.notification.failed.text"),
+    EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.failed.title"),
+    EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.failed.text"),
     NotificationType.ERROR
   ).notify(project)
 
