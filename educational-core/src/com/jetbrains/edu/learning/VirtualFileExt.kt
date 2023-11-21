@@ -27,6 +27,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.ui.components.JBLoadingPanel
+import com.intellij.util.concurrency.annotations.RequiresWriteLock
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.actions.CourseArchiveIndicator
 import com.jetbrains.edu.learning.EduDocumentListener.Companion.runWithListener
@@ -350,9 +351,10 @@ fun VirtualFile.setHighlightLevelInsideWriteAction(project: Project, highlightLe
   HighlightLevelUtil.forceRootHighlighting(psiFile, fileHighlightLevel) // this utility method makes additional null checks
 }
 
+@RequiresWriteLock
 fun VirtualFile.removeWithEmptyParents(taskDir: VirtualFile) {
   val parent = this.parent
-  delete(this::class.java)
+  delete(javaClass)
   if (parent != taskDir && parent.children.isEmpty()) {
     parent.removeWithEmptyParents(taskDir)
   }

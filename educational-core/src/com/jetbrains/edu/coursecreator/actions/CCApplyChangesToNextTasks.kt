@@ -23,14 +23,14 @@ class CCApplyChangesToNextTasks : DumbAwareAction() {
     val project = e.project
     if (project == null || !CCUtils.isCourseCreator(project)) return
 
-    val selectedItems = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(e.dataContext)
+    val selectedItems = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY)
     val studyItem = selectedItems?.singleOrNull()?.getStudyItem(project) ?: return
     when {
       studyItem is FrameworkLesson -> {
         val task = studyItem.taskList.firstOrNull() ?: return
         propagateChanges(project, task)
       }
-      studyItem.parent is FrameworkLesson -> propagateChanges(project, studyItem as Task)
+      studyItem is Task && studyItem.parent is FrameworkLesson -> propagateChanges(project, studyItem)
       else -> error("Apply Changes To Next Tasks action was performed from invalid place")
     }
   }

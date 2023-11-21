@@ -26,11 +26,11 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 class CCFrameworkLessonManagerImpl(private val project: Project) : CCFrameworkLessonManager, Disposable {
-  var storage: CCFrameworkStorage = createStorage(project)
+  private val storage: CCFrameworkStorage = createStorage(project)
 
   override fun propagateChanges(task: Task) {
     require(CCUtils.isCourseCreator(project)) {
-      "`propagateChanges` should be called only if course in CC mode"
+      "`propagateChanges` should be called only if course is in CC mode"
     }
     require(task.parent is FrameworkLesson) {
       "`propagateChanges` should be called only when the task is in the framework lesson"
@@ -62,37 +62,25 @@ class CCFrameworkLessonManagerImpl(private val project: Project) : CCFrameworkLe
     currentTask: Task,
     targetTask: Task,
   ): Boolean {
-    require(CCUtils.isCourseCreator(project)) {
-      "`propagateChangesCC` should be called only if course in CC mode"
-    }
-    val currentTaskDir = currentTask.getDir(project.courseDir)
-    if (currentTaskDir == null) {
-      LOG.error("Failed to find task directory")
-      return false
-    }
-
-    val targetTaskDir = targetTask.getDir(project.courseDir)
-    if (targetTaskDir == null) {
-      LOG.error("Failed to find task directory")
-      return false
-    }
+    val currentTaskDir = currentTask.getDir(project.courseDir) ?: error("Failed to find task directory")
+    val targetTaskDir = targetTask.getDir(project.courseDir) ?: error("Failed to find task directory")
 
     val initialCurrentFiles = currentTask.allPropagatableFiles
     val initialTargetFiles = targetTask.allPropagatableFiles
 
-    val previousCurrentState = getStateFromStorage(currentTask)
+    val initialBaseState = getStateFromStorage(currentTask)
 
     val currentState = getTaskStateFromFiles(initialCurrentFiles, currentTaskDir)
     val targetState = getTaskStateFromFiles(initialTargetFiles, targetTaskDir)
 
-    return applyChanges(currentTask, targetTask, currentState, previousCurrentState, targetState, targetTaskDir)
+    return applyChanges(currentTask, targetTask, currentState, initialBaseState, targetState, targetTaskDir)
   }
 
   private fun applyChanges(
     currentTask: Task,
     targetTask: Task,
     currentState: FLTaskState,
-    previousCurrentState: FLTaskState,
+    initialBaseState: FLTaskState,
     targetState: FLTaskState,
     taskDir: VirtualFile
   ): Boolean {
@@ -101,7 +89,7 @@ class CCFrameworkLessonManagerImpl(private val project: Project) : CCFrameworkLe
     // Try to resolve some changes automatically and apply them to previousCurrentState
     val (conflictFiles, resolvedChangesState) = conflictResolveStrategy.resolveConflicts(
       currentState,
-      previousCurrentState,
+      initialBaseState,
       targetState
     )
 
@@ -126,7 +114,7 @@ class CCFrameworkLessonManagerImpl(private val project: Project) : CCFrameworkLe
       taskDir,
       // it is necessary for the correct recognition of deleting / adding files
       // because new files could be added / removed from the base state after conflict resolution
-      previousCurrentState
+      initialBaseState
     )
     if (!isOk) {
       // if the user canceled the dialog, then we return to the target task state

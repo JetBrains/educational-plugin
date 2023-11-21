@@ -375,7 +375,7 @@
       <description>Enables support for SQL courses</description>
     </experimentalFeature>
     <experimentalFeature id="edu.course.creator.fl.apply.changes" percentOfUsers="100" internalFeature="true">
-      <description>Enables "Apply changes to next task" action for CC in framework lessons</description>
+      <description>Enables "Apply changes to next task" action for educators in framework lessons</description>
     </experimentalFeature>
 
     <experimentalFeature id="edu.tasktoolwindow.navigationmap" percentOfUsers="0" internalFeature="true">

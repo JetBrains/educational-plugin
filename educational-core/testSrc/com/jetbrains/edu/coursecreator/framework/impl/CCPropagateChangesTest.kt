@@ -16,7 +16,7 @@ import com.jetbrains.edu.coursecreator.framework.diff.SimpleConflictResolveStrat
 import com.jetbrains.edu.coursecreator.framework.diff.withFLMultipleFileMergeUI
 import kotlin.test.assertFails
 
-class CCPropagateChangesTest: EduActionTestCase() {
+class CCPropagateChangesTest : EduActionTestCase() {
   fun `test changes in files propagate until cancel`() {
     val course = createFrameworkCourse(3)
 
@@ -270,7 +270,7 @@ class CCPropagateChangesTest: EduActionTestCase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
-  fun `test changes in invisible files does not propagate`() {
+  fun `test changes in invisible files do not propagate`() {
     val course = createFrameworkCourse(2)
 
     withVirtualFileListener(course) {
@@ -312,7 +312,7 @@ class CCPropagateChangesTest: EduActionTestCase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
-  fun `test files remains the same after propagation if changes hasn't been made in previous tasks`() {
+  fun `test files remain the same after propagation if changes haven't been made in previous tasks`() {
     val course = createFrameworkCourse(2)
 
     withVirtualFileListener(course) {
@@ -359,7 +359,7 @@ class CCPropagateChangesTest: EduActionTestCase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
-  fun `test new files does change if not resolved during merge`() {
+  fun `test new files do change if not resolved during merge`() {
     val course = createFrameworkCourse(2)
 
     withVirtualFileListener(course) {

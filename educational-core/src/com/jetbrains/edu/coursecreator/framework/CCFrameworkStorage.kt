@@ -51,6 +51,6 @@ class CCFrameworkStorage(storagePath: Path) : FrameworkStorageBase(storagePath) 
   }
 
   override fun migrateRecord(recordId: Int, currentVersion: Int, newVersion: Int) {
-    LOG.error("Could not migrate record from $currentVersion to $newVersion")
+    error("Could not migrate record from $currentVersion to $newVersion")
   }
 }

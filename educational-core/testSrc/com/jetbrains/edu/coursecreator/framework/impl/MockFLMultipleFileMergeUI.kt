@@ -11,7 +11,7 @@ import com.jetbrains.edu.coursecreator.framework.diff.FLMultipleFileMergeUI
 class MockFLMultipleFileMergeUI(
   private val resolutions: List<MergeSession.Resolution>,
   private val cancelOnConflict: Int,
-): FLMultipleFileMergeUI {
+) : FLMultipleFileMergeUI {
   private var counter = 0
 
   override fun show(

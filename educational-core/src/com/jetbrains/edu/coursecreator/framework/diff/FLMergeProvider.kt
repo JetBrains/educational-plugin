@@ -27,12 +27,14 @@ class FLMergeProvider(
   private val rightState: FLTaskState,
   private val initialBaseState: FLTaskState = baseState,
 ) : MergeProvider2 {
+  private val emptyContent = ByteArray(0)
+
   override fun loadRevisions(file: VirtualFile): MergeData {
     return MergeData().apply {
       val filePath = file.pathRelativeToTask(project)
-      ORIGINAL = baseState[filePath]?.encodeToByteArray() ?: ByteArray(0)
-      CURRENT = leftState[filePath]?.encodeToByteArray() ?: ByteArray(0)
-      LAST = rightState[filePath]?.encodeToByteArray() ?: ByteArray(0)
+      ORIGINAL = baseState[filePath]?.encodeToByteArray() ?: emptyContent
+      CURRENT = leftState[filePath]?.encodeToByteArray() ?: emptyContent
+      LAST = rightState[filePath]?.encodeToByteArray() ?: emptyContent
     }
   }
 
@@ -42,7 +44,7 @@ class FLMergeProvider(
     return file.fileType.isBinary
   }
 
-  override fun createMergeSession(files: MutableList<VirtualFile>): MergeSession {
+  override fun createMergeSession(files: List<VirtualFile>): MergeSession {
     return FLMergeSession()
   }
 

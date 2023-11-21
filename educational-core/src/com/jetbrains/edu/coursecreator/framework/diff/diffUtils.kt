@@ -46,7 +46,7 @@ fun showMultipleFileMergeDialog(
   targetTaskName: String
 ): Boolean {
   val ui = if (isUnitTestMode) {
-    MOCK ?: error("You should set mock ui via `withMockSelectTaskUi`")
+    MOCK ?: error("You should set mock UI via `withMockSelectTaskUi`")
   }
   else {
     FLMultipleFileMergeUIImpl()
