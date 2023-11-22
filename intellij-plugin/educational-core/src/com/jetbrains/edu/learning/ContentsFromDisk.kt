@@ -1,11 +1,14 @@
 package com.jetbrains.edu.learning
 
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.util.io.FileTooBigException
+import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.actions.CourseArchiveIndicator
 import com.jetbrains.edu.learning.courseFormat.BinaryContents
 import com.jetbrains.edu.learning.courseFormat.TextualContents
+import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
 
 class BinaryContentsFromDisk(val file: VirtualFile, private val indicator: CourseArchiveIndicator?) : BinaryContents {
   override val bytes: ByteArray
@@ -13,7 +16,11 @@ class BinaryContentsFromDisk(val file: VirtualFile, private val indicator: Cours
       indicator?.readFile(file)
 
       return runReadAction {
-        file.contentsToByteArray()
+        try {
+          file.contentsToByteArray()
+        } catch (e: FileTooBigException) {
+          throw HugeBinaryFileException(file.path, file.length, FileUtilRt.LARGE_FOR_CONTENT_LOADING.toLong())
+        }
       }
     }
 }

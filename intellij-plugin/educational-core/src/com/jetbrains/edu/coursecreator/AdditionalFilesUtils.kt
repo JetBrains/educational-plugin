@@ -5,9 +5,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.io.FileTooBigException
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
@@ -15,14 +13,15 @@ import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchiveAction
 import com.jetbrains.edu.coursecreator.actions.CourseArchiveIndicator
 import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreRules
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFile
+import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
 import com.jetbrains.edu.learning.stepik.api.LessonAdditionalInfo
 import com.jetbrains.edu.learning.stepik.api.TaskAdditionalInfo
 import com.jetbrains.edu.learning.stepik.collectTaskFiles
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import java.io.IOException
 
 object AdditionalFilesUtils {
@@ -82,9 +81,6 @@ object AdditionalFilesUtils {
       private fun addToAdditionalFiles(file: VirtualFile, project: Project, indicator: CourseArchiveIndicator?) {
         try {
           createAdditionalTaskFile(file, project, indicator)?.also { taskFile -> additionalTaskFiles.add(taskFile) }
-        }
-        catch (e: FileTooBigException) {
-          throw HugeBinaryFileException(file.path, file.length, FileUtilRt.LARGE_FOR_CONTENT_LOADING.toLong(), false)
         }
         catch (e: IOException) {
           LOG.error(e)

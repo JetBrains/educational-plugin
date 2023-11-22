@@ -19,9 +19,7 @@ import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.util.io.FileTooBigException
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
@@ -312,9 +310,6 @@ fun VirtualFile.toStudentFile(project: Project, task: Task, indicator: CourseArc
       }
     }
     return taskFile
-  }
-  catch (e: FileTooBigException) {
-    throw HugeBinaryFileException("${task.getPathInCourse()}/${name}", length, FileUtilRt.LARGE_FOR_CONTENT_LOADING.toLong(), false)
   }
   catch (e: IOException) {
     LOG.error("Failed to convert `${path}` to student file")

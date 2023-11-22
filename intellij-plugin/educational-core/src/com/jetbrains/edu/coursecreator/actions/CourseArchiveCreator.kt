@@ -89,15 +89,26 @@ class CourseArchiveCreator(
 
     return ProgressManager.getInstance().runProcessWithProgressSynchronously<String?, RuntimeException>({
       try {
-        unwrapProcessCancelledException {
+        unwrapExceptionCause {
           doCreateCourseArchive(courseArchiveIndicator, courseCopy)
         }
 
         null
       }
+      catch (e: HugeBinaryFileException) {
+        e.message
+      }
       catch (e: IOException) {
-        LOG.warn("Failed to create course archive", e)
-        EduCoreBundle.message("error.failed.to.generate.course.archive")
+        LOG.warn("IO Exception during creating a course archive", e)
+        val message = EduCoreBundle.message("error.failed.to.generate.course.archive.io.exception")
+        val exceptionMessage = e.message
+
+        if (exceptionMessage != null && exceptionMessage != "") {
+          message + " " + EduCoreBundle.message("error.failed.to.generate.course.archive.io.exception.additional.message", exceptionMessage)
+        }
+        else {
+          message
+        }
       }
       catch (e: ProcessCanceledException) {
         EduCoreBundle.message("error.course.archiving.cancelled.by.user")
@@ -174,11 +185,17 @@ class CourseArchiveCreator(
 
   /**
    * Sometimes when a user cancels a process, the ProcessCanceledException becomes a cause of another exception.
-   * We need to get rid of the caused exception to see that the process was actually cancelled
+   * We need to get rid of the caused exception to see that the process was actually cancelled.
+   *
+   * Another case is the JsonMappingException, it wraps other exceptions that were a real cause and are interesting for us.
    */
-  private fun unwrapProcessCancelledException(action: () -> Unit) = try {
+  private fun unwrapExceptionCause(action: () -> Unit) = try {
     action()
-  } catch (e: Exception) {
+  }
+  catch (e: JsonMappingException) {
+    throw e.cause ?: e
+  }
+  catch (e: Exception) {
     val cause = e.cause
     if (cause is ProcessCanceledException) throw cause
     throw e
