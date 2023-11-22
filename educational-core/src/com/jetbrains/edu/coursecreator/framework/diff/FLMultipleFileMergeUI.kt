@@ -28,35 +28,32 @@ class FLMultipleFileMergeUIImpl : FLMultipleFileMergeUI {
     currentTaskName: String,
     targetTaskName: String
   ): Boolean {
-    val multipleFileMergeDialog = FLMultipleFileMergeDialog(project, files, mergeProvider, mergeCustomizer, currentTaskName, targetTaskName)
+    val multipleFileMergeDialog = createFLMultipleFileMergeDialog(project, files, mergeProvider, mergeCustomizer, currentTaskName, targetTaskName)
     multipleFileMergeDialog.show()
     // multipleFileMergeDialog always exits with cancel code
     return multipleFileMergeDialog.processedFiles.size == files.size
   }
 }
 
-class FLMultipleFileMergeDialog(
+fun createFLMultipleFileMergeDialog(
   project: Project,
   files: List<VirtualFile>,
   mergeProvider: FLMergeProvider,
   mergeDialogCustomizer: FLMergeDialogCustomizer,
-  private val currentTaskName: String,
-  private val targetTaskName: String,
-) : MultipleFileMergeDialog(project, files, mergeProvider, mergeDialogCustomizer) {
-  private var acceptYoursButton: JButton? = null
-  private var acceptTheirsButton: JButton? = null
+  currentTaskName: String,
+  targetTaskName: String,
+): MultipleFileMergeDialog {
+  return object : MultipleFileMergeDialog(project, files, mergeProvider, mergeDialogCustomizer) {
+    override fun createCenterPanel(): JComponent {
+      return super.createCenterPanel().apply {
+        val buttons = components.filterIsInstance<JButton>()
 
-  override fun createCenterPanel(): JComponent {
-    return super.createCenterPanel().apply {
-      val buttons = components.filterIsInstance<JButton>()
-      acceptYoursButton = buttons.find { it.text == VcsBundle.message("multiple.file.merge.accept.yours") }
-      acceptTheirsButton = buttons.find { it.text == VcsBundle.message("multiple.file.merge.accept.theirs") }
+        val acceptYoursButton = buttons.find { it.text == VcsBundle.message("multiple.file.merge.accept.yours") }
+        val acceptTheirsButton = buttons.find { it.text == VcsBundle.message("multiple.file.merge.accept.theirs") }
+
+        acceptYoursButton?.text = EduCoreBundle.message("action.Educational.Educator.ApplyChangesToNextTasks.MergeDialog.AcceptFromButton.text", currentTaskName)
+        acceptTheirsButton?.text = EduCoreBundle.message("action.Educational.Educator.ApplyChangesToNextTasks.MergeDialog.AcceptFromButton.text", targetTaskName)
+      }
     }
-  }
-
-  override fun beforeShowCallback() {
-    super.beforeShowCallback()
-    acceptYoursButton?.text = EduCoreBundle.message("action.Educational.Educator.ApplyChangesToNextTasks.MergeDialog.AcceptFromButton.text", currentTaskName)
-    acceptTheirsButton?.text = EduCoreBundle.message("action.Educational.Educator.ApplyChangesToNextTasks.MergeDialog.AcceptFromButton.text", targetTaskName)
   }
 }
