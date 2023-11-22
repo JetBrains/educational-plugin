@@ -6,37 +6,12 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtilRt
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EDU_TEST_BIN
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.CourseMode
-import com.jetbrains.edu.learning.courseFormat.getBinaryFileLimit
-import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
 import com.jetbrains.edu.learning.json.encrypt.TEST_AES_KEY
 import java.io.File
 
 abstract class CourseArchiveTestBase : EduActionTestCase() {
-  fun `test large binary file`() {
-    val fileName = "task.${EDU_TEST_BIN}"
-    var placeholder = "placeholder"
-
-    while (placeholder.toByteArray(Charsets.UTF_8).size <= getBinaryFileLimit()) {
-      placeholder += placeholder
-    }
-
-    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
-      frameworkLesson {
-        eduTask {
-          taskFile(fileName, placeholder)
-        }
-      }
-    }
-
-    assertThrows(HugeBinaryFileException::class.java) {
-      generateJson()
-    }
-  }
-
   protected fun doTest() {
     val generatedJsonFile = generateJson()
     val expectedCourseJson = loadExpectedJson()

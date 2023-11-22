@@ -159,6 +159,8 @@ object CCUtils {
   @Suppress("UnstableApiUsage")
   fun initializeTaskPlaceholders(holder: CourseInfoHolder<out Course?>, task: Task) {
     for ((path, taskFile) in task.taskFiles) {
+      if (taskFile.contents is BinaryContents) continue
+
       invokeAndWaitIfNeeded {
         val file = LightVirtualFile(PathUtil.getFileName(path), PlainTextFileType.INSTANCE, taskFile.text)
         EduDocumentListener.runWithListener(holder, taskFile, file) { document ->
