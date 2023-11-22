@@ -1,11 +1,10 @@
-package com.jetbrains.edu.learning
+package com.jetbrains.edu.coursecreator.actions
 
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.util.io.FileTooBigException
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.coursecreator.actions.CourseArchiveIndicator
 import com.jetbrains.edu.learning.courseFormat.BinaryContents
 import com.jetbrains.edu.learning.courseFormat.TextualContents
 import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
