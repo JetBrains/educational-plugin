@@ -18,6 +18,14 @@ interface SubmissionsService {
     @Query("page") page: Int
   ): Call<MarketplaceSubmissionsList>
 
+  @GET("/api/course/{marketplaceId}/{updateVersion}/task/{taskId}/submissions/public")
+  fun getPublicSubmissionsForTask(
+    @Path("marketplaceId") marketplaceId: Int,
+    @Path("updateVersion") updateVersion: Int,
+    @Path("taskId") taskId: Int,
+    @Query("page") page: Int
+  ): Call<MarketplaceSubmissionsList>
+
   @POST("/api/course/{marketplaceId}/{courseUpdateVersion}/task/{taskId}/submission")
   fun postSubmission(@Path("marketplaceId") marketplaceId: Int,
                      @Path("courseUpdateVersion") courseUpdateVersion: Int,

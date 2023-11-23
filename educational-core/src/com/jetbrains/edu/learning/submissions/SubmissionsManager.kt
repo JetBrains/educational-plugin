@@ -155,6 +155,19 @@ class SubmissionsManager(private val project: Project) {
     }, ProcessIOExecutorService.INSTANCE)
   }
 
+  fun loadCommunitySubmissions(task: Task) {
+    val course = this.course
+    val submissionsProvider = course?.getSubmissionsProvider() ?: return
+
+    CompletableFuture.runAsync({
+      if (isLoggedIn()) {
+        val sharedSolutions = submissionsProvider.loadSharedSolutionsForTask(course, task)
+        communitySubmissions[task.id] = sharedSolutions
+        updateSubmissionsTab()
+      }
+    }, ProcessIOExecutorService.INSTANCE)
+  }
+
   fun deleteCourseSubmissionsLocally() {
     course?.allTasks?.forEach { submissions.remove(it.id) }
     updateSubmissionsTab()

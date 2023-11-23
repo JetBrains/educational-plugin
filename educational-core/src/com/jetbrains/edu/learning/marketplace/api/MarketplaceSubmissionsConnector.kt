@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.authUtils.ConnectorUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
@@ -139,6 +140,26 @@ class MarketplaceSubmissionsConnector {
     do {
       val submissionsList = fetchSharedSolutionsForCourse(courseId, updateVersion, currentPage)
                             ?: break
+      val sharedSolutions = submissionsList.submissions
+      courseSharedSolutions.addAll(sharedSolutions)
+      currentPage += 1
+    }
+    while (sharedSolutions.isNotEmpty() && submissionsList.hasNext)
+
+    return courseSharedSolutions
+  }
+
+  fun getSharedSolutionsForTask(course: Course, taskId: Int): List<MarketplaceSubmission> {
+    val (courseId, updateVersion) = course.id to course.marketplaceCourseVersion
+    LOG.info("Loading shared solutions for task $taskId on course with courseId = $courseId, updateVersion = $updateVersion")
+
+    val courseSharedSolutions = mutableListOf<MarketplaceSubmission>()
+    var currentPage = 1
+    do {
+      val submissionsList = submissionsService.getPublicSubmissionsForTask(
+        courseId, updateVersion, taskId, currentPage
+      ).executeHandlingExceptions()?.body() ?: break
+
       val sharedSolutions = submissionsList.submissions
       courseSharedSolutions.addAll(sharedSolutions)
       currentPage += 1
