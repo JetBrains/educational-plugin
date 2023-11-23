@@ -23,7 +23,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
 
-object CourseValidationHelper {
+class CourseValidationHelper(private val serviceMessageConsumer: ServiceMessageConsumer) {
 
   suspend fun validate(project: Project, course: Course): Boolean {
     return withValidationEnabled(project) {
@@ -54,12 +54,12 @@ object CourseValidationHelper {
   }
 
   private suspend fun <T> testSuite(name: String, action: suspend () -> T): T {
-    println(ServiceMessageBuilder.testSuiteStarted(name))
+    serviceMessageConsumer.consume(ServiceMessageBuilder.testSuiteStarted(name))
     return try {
       action()
     }
     finally {
-      println(ServiceMessageBuilder.testSuiteFinished(name))
+      serviceMessageConsumer.consume(ServiceMessageBuilder.testSuiteFinished(name))
     }
   }
 
@@ -67,12 +67,12 @@ object CourseValidationHelper {
    * If a test fails, [action] is responsible for emitting additional test messages
    */
   private suspend fun <T> testCase(name: String, action: suspend () -> T): T {
-    println(ServiceMessageBuilder.testStarted(name))
+    serviceMessageConsumer.consume(ServiceMessageBuilder.testStarted(name))
     return try {
       action()
     }
     finally {
-      println(ServiceMessageBuilder.testFinished(name))
+      serviceMessageConsumer.consume(ServiceMessageBuilder.testFinished(name))
     }
   }
 
@@ -106,7 +106,7 @@ object CourseValidationHelper {
         }
       }
       if (testMessage != null) {
-        println(testMessage)
+        serviceMessageConsumer.consume(testMessage)
       }
       result.isSolved
     }

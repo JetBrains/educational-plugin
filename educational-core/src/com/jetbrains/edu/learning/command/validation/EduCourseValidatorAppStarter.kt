@@ -25,7 +25,7 @@ class EduCourseValidatorAppStarter : EduCourseProjectAppStarterBase() {
     get() = CourseMode.EDUCATOR
 
   override suspend fun performProjectAction(project: Project, course: Course): CommandResult {
-    val result = CourseValidationHelper.validate(project, course)
+    val result = CourseValidationHelper(StdoutServiceMessageConsumer).validate(project, course)
 
     return if (result) CommandResult.Ok else CommandResult.Error("Some tasks haven't finished successfully")
   }
