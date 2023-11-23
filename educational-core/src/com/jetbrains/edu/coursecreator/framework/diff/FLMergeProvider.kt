@@ -27,8 +27,6 @@ class FLMergeProvider(
   private val rightState: FLTaskState,
   private val initialBaseState: FLTaskState = baseState,
 ) : MergeProvider2 {
-  private val emptyContent = ByteArray(0)
-
   override fun loadRevisions(file: VirtualFile): MergeData {
     return MergeData().apply {
       val filePath = file.pathRelativeToTask(project)
@@ -62,9 +60,9 @@ class FLMergeProvider(
 
     override fun conflictResolvedForFile(file: VirtualFile, resolution: Resolution) {}
 
-    override fun conflictResolvedForFiles(files: MutableList<out VirtualFile>, resolution: Resolution) {}
+    override fun conflictResolvedForFiles(files: List<VirtualFile>, resolution: Resolution) {}
 
-    override fun acceptFilesRevisions(files: MutableList<out VirtualFile>, resolution: Resolution) {
+    override fun acceptFilesRevisions(files: List<VirtualFile>, resolution: Resolution) {
       for (file in files) {
         val filePath = file.pathRelativeToTask(project)
         val value = if (resolution == Resolution.AcceptedYours) {
@@ -133,5 +131,9 @@ class FLMergeProvider(
     override fun getAdditionalWidth(): Int {
       return defaultGap
     }
+  }
+
+  companion object {
+    private val emptyContent = ByteArray(0)
   }
 }
