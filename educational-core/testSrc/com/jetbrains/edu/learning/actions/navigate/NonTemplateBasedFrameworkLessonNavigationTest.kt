@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.actions.navigate.hyperskill.HyperskillNavigati
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.InMemoryBinaryContents
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
@@ -414,7 +415,9 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
   }
 
   fun `test course with git object files`() {
-    class GitObjectFile(val name: String, val text: String)
+    class GitObjectFile(val name: String, text: String) {
+      val contents = InMemoryBinaryContents.parseBase64Encoding(text)
+    }
 
     val gitObjectFiles = listOf(
       GitObjectFile("2731ee243bb1111dd93916bb3296ee7f7e23ef", "eAErKUpNVTA2YTA0MDAzMVEoLNQrqShhaD4jyTnZfZLvoo4JzV1Xn8241cqyGAAhHRBB"),
@@ -429,9 +432,9 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
       frameworkLesson(isTemplateBased = false) {
         eduTask {
           taskFile(taskFileName)
-          taskFile(gitObjectFiles[2].name, gitObjectFiles[2].text)
-          taskFile("${tests}/${gitObjectFiles[0].name}", gitObjectFiles[0].text)
-          taskFile("${tests}/${gitObjectFiles[1].name}", gitObjectFiles[1].text)
+          taskFile(gitObjectFiles[2].name, gitObjectFiles[2].contents)
+          taskFile("${tests}/${gitObjectFiles[0].name}", gitObjectFiles[0].contents)
+          taskFile("${tests}/${gitObjectFiles[1].name}", gitObjectFiles[1].contents)
         }
         eduTask {
           taskFile(taskFileName)
@@ -439,8 +442,8 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
           // remove task file gitObjectFiles[0]
           // change text of gitObjectFiles[1]
           // add new task file gitObjectFiles[2]
-          taskFile("${tests}/${gitObjectFiles[1].name}", gitObjectFiles[0].text)
-          taskFile("${tests}/${gitObjectFiles[2].name}", gitObjectFiles[2].text)
+          taskFile("${tests}/${gitObjectFiles[1].name}", gitObjectFiles[0].contents)
+          taskFile("${tests}/${gitObjectFiles[2].name}", gitObjectFiles[2].contents)
         }
       }
     }
@@ -450,7 +453,7 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
         course.findTask("lesson1", "task1").openTaskFileInEditor("task.txt")
 
         //create file to test that file created by learner is propagated
-        GeneratorUtils.createChildFile(project, rootDir, "lesson1/task/${gitObjectFiles[0].name}", gitObjectFiles[0].text)
+        GeneratorUtils.createChildFile(project, rootDir, "lesson1/task/${gitObjectFiles[0].name}", gitObjectFiles[0].contents)
 
         //remove file to test that it is not propagated
         runWriteAction {
@@ -465,11 +468,11 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
       dir("lesson1") {
         dir("task") {
           file(taskFileName)
-          file(gitObjectFiles[0].name, gitObjectFiles[0].text)
+          file(gitObjectFiles[0].name, gitObjectFiles[0].contents.textualRepresentation)
           dir(tests) {
             // file text should be changed
-            file(gitObjectFiles[1].name, gitObjectFiles[0].text)
-            file(gitObjectFiles[2].name, gitObjectFiles[2].text)
+            file(gitObjectFiles[1].name, gitObjectFiles[0].contents.textualRepresentation)
+            file(gitObjectFiles[2].name, gitObjectFiles[2].contents.textualRepresentation)
           }
         }
         dir("task1") {

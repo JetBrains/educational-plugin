@@ -9,6 +9,7 @@ import com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.GetHyperskillLe
 import com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.PushHyperskillLesson
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.InMemoryBinaryContents
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikTestUtils
@@ -52,7 +53,7 @@ class HyperskillLessonTest : EduTestCase() {
       frameworkLesson("lesson1") {
         eduTask {
           taskFile("taskFile1.txt")
-          taskFile(dbFilePath, base64Text, false)
+          taskFile(dbFilePath, InMemoryBinaryContents.parseBase64Encoding(base64Text), false)
         }
       }
     }

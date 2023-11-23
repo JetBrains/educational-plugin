@@ -528,7 +528,7 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
   }
 
   /**
-   * Creates task file with given [name] and [text].
+   * Creates task file with given [name] and textual contents [text].
    *
    * You can also create placeholders for this task file using `<p>` tag.
    *
@@ -540,8 +540,16 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
     visible: Boolean? = null,
     editable: Boolean? = true,
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
-  ) = taskFile(name, InMemoryUndeterminedContents(text), visible, editable, buildTaskFile)
+  ) = taskFile(name, InMemoryTextualContents(text), visible, editable, buildTaskFile)
 
+  /**
+   * Creates task file with given [name] and [contents].
+   *
+   * If the contents is textual, you can also create placeholders for this task file using `<p>` tag.
+   *
+   * For example, for `fun foo() = <p>TODO()</p>` text
+   * it creates task file with `fun foo() = TODO()` text and placeholder with `TODO()` as placeholder text.
+   */
   fun taskFile(
     name: String, contents: FileContents = UndeterminedContents.EMPTY,
     visible: Boolean? = null,

@@ -588,14 +588,24 @@ class StudentYamlSerializationTest : EduTestCase() {
     |""".trimMargin())
   }
 
-  fun `test binary file text is saved in framework lesson`() {
+  /**
+   * This test was added after EDU-3700 was fixed, but several releases ago EDU-3700 broke again (now it is reopened as EDU-6479).
+   * The reason for EDU-6479 is that Git objects became binary, and binary files are not written into YAML.
+   * This test continued working and did not signal about the new problem because it simulated git objects having UndeterminedContents,
+   * not BinaryContents as in production.
+   *
+   * We leave this test as it is, but we will rewrite it when we fix a more general issue: all binary files should be stored somewhere,
+   * not in YAML, probably.
+   * This test will test that git objects are also preserved.
+   */
+  fun `test git object file text is saved in framework lesson`() {
     val base64Text = "eAErKUpNVTA3ZjA0MDAzMVHITczM08suYTh0o+NNPdt26bgThdosKRdPVXHN/wNVUpSamJKbqldSUcKwosqLb/75qC5OmZAJs9O9Di0I/PoCAJ5FH4E="
     val gitObjectFilePath = "test/objects/b6/28add5fd4be3bdd2cdb776dfa035cc69956859"
     val task = courseWithFiles {
       frameworkLesson {
         eduTask {
           taskFile("task.txt", "task text")
-          taskFile(gitObjectFilePath, base64Text, false)
+          taskFile(gitObjectFilePath, InMemoryUndeterminedContents(base64Text), false)
         }
       }
     }.findTask("lesson1", "task1")
@@ -630,7 +640,7 @@ class StudentYamlSerializationTest : EduTestCase() {
       frameworkLesson {
         eduTask {
           taskFile("task.txt", "task text")
-          taskFile(gitObjectFilePath, base64Text, false)
+          taskFile(gitObjectFilePath, InMemoryBinaryContents.parseBase64Encoding(base64Text), false)
         }
       }
     }.findTask("lesson1", "task1")
