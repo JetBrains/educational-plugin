@@ -2,16 +2,15 @@ package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.checker.DefaultCodeExecutor.Companion.NO_OUTPUT
-import com.jetbrains.edu.learning.configuration.PlainTextConfigurator.Companion.CHECK_RESULT_FILE
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
+import com.jetbrains.edu.learning.courseFormat.attempts.DataTaskAttempt.Companion.toDataTaskAttempt
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask.Companion.DATASET_FOLDER_NAME
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask.Companion.DATA_FOLDER_NAME
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask.Companion.INPUT_FILE_NAME
-import com.jetbrains.edu.learning.courseFormat.attempts.DataTaskAttempt.Companion.toDataTaskAttempt
 import com.jetbrains.edu.learning.pathWithoutPrams
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import org.intellij.lang.annotations.Language
 import java.util.*
 
@@ -26,7 +25,7 @@ class HyperskillCheckDataTaskTest : HyperskillCheckActionTestBase() {
             stepId = 1,
             attempt = Attempt(ATTEMPT_ID_OF_SUCCEED_SUBMISSION, Date(0), 300).toDataTaskAttempt()
           ) {
-            taskFile(CHECK_RESULT_FILE, "some text")
+            checkResultFile("some text")
             dir(DATA_FOLDER_NAME) {
               dir(DATASET_FOLDER_NAME) {
                 taskFile(INPUT_FILE_NAME, "some text")
@@ -39,7 +38,7 @@ class HyperskillCheckDataTaskTest : HyperskillCheckActionTestBase() {
             attempt = Attempt(ATTEMPT_ID_OF_FAILED_SUBMISSION, Date(0), 300).toDataTaskAttempt()
           ) {
             // mimics no output result
-            taskFile(CHECK_RESULT_FILE, NO_OUTPUT)
+            checkResultFile(NO_OUTPUT)
             dir(DATA_FOLDER_NAME) {
               dir(DATASET_FOLDER_NAME) {
                 taskFile(INPUT_FILE_NAME, "some text")

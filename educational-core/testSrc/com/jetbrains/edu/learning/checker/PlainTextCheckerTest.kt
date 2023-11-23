@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.checker
 
 import com.jetbrains.edu.learning.EduUtilsKt
-import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
+import com.jetbrains.edu.learning.configuration.PlainTextTaskCheckerProvider.Companion.CHECK_RESULT_FILE
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -22,7 +22,7 @@ class PlainTextCheckerTest : CheckersTestBase<EmptyProjectSettings>() {
     return course {
       lesson {
         outputTask("OutputTask") {
-          taskFile(PlainTextConfigurator.CHECK_RESULT_FILE) {
+          taskFile(CHECK_RESULT_FILE) {
             withText("OK!\n")
           }
           dir("tests") {
@@ -32,7 +32,7 @@ class PlainTextCheckerTest : CheckersTestBase<EmptyProjectSettings>() {
           }
         }
         outputTask("OutputTaskWithWindowsLineSeparators") {
-          taskFile(PlainTextConfigurator.CHECK_RESULT_FILE) {
+          taskFile(CHECK_RESULT_FILE) {
             withText("OK!\n")
           }
           taskFile("output.txt") {
@@ -43,7 +43,7 @@ class PlainTextCheckerTest : CheckersTestBase<EmptyProjectSettings>() {
           taskFile("task.txt") {
             withText("task file")
           }
-          taskFile(PlainTextConfigurator.CHECK_RESULT_FILE) {
+          taskFile(CHECK_RESULT_FILE) {
             withText("Solved Congratulations!")
           }
           dir("tests") {
@@ -56,7 +56,7 @@ class PlainTextCheckerTest : CheckersTestBase<EmptyProjectSettings>() {
           taskFile("task.txt") {
             withText("task file")
           }
-          taskFile(PlainTextConfigurator.CHECK_RESULT_FILE) {
+          taskFile(CHECK_RESULT_FILE) {
             withText("Solved Congratulations!")
           }
           dir("tests") {

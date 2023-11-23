@@ -8,7 +8,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.LightPlatformTestCase
-import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
+import com.jetbrains.edu.learning.configuration.PlainTextTaskCheckerProvider.Companion.CHECK_RESULT_FILE
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.LESSON
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.SECTION
@@ -554,7 +554,11 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
   }
 
   fun checkResultFile(status: CheckStatus, message: String = "") {
-    taskFile(PlainTextConfigurator.CHECK_RESULT_FILE, "$status $message")
+    checkResultFile("$status $message")
+  }
+
+  fun checkResultFile(message: String) {
+    taskFile(CHECK_RESULT_FILE, message)
   }
 
   fun kotlinTaskFile(
