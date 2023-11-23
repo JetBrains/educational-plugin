@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareToggleAction
 import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.isMarketplaceCourse
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import org.jetbrains.annotations.NonNls
@@ -19,7 +20,8 @@ class ShareMySolutionsAction : DumbAwareToggleAction() {
     e.presentation.isVisible = Registry.`is`(REGISTRY_KEY, false) && project.isMarketplaceCourse() && project.isStudentProject()
     if (!e.presentation.isVisible) return
 
-    e.presentation.isEnabled = isAvailableInSettings()
+    val isLoggedIn = MarketplaceConnector.getInstance().isLoggedIn()
+    e.presentation.isEnabled = isLoggedIn && isAvailableInSettings()
   }
 
   override fun isSelected(e: AnActionEvent): Boolean = MarketplaceSettings.INSTANCE.solutionsSharing ?: false
