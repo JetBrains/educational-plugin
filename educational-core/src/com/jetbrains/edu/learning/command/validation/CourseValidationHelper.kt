@@ -96,13 +96,13 @@ class CourseValidationHelper(private val serviceMessageConsumer: ServiceMessageC
       val testMessage = when (result.status) {
         CheckStatus.Unchecked -> {
           ServiceMessageBuilder.testIgnored(presentableName)
-            .addAttribute("message", result.message)
+            .addAttribute(MESSAGE, result.message)
         }
         CheckStatus.Solved -> null
         CheckStatus.Failed -> {
           ServiceMessageBuilder.testFailed(presentableName)
-            .addAttribute("message", result.message)
-            .addAttribute("details", result.details.orEmpty())
+            .addAttribute(MESSAGE, result.message)
+            .addAttribute(DETAILS, result.details.orEmpty())
         }
       }
       if (testMessage != null) {
@@ -128,6 +128,11 @@ class CourseValidationHelper(private val serviceMessageConsumer: ServiceMessageC
     for (openFile in fileEditorManager.openFiles) {
       fileEditorManager.closeFile(openFile)
     }
+  }
+
+  companion object {
+    private const val MESSAGE = "message"
+    private const val DETAILS = "details"
   }
 }
 
