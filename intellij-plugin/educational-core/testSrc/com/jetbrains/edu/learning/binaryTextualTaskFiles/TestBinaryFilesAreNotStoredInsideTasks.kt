@@ -3,7 +3,12 @@ package com.jetbrains.edu.learning.binaryTextualTaskFiles
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.CourseReopeningTestBase
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.BinaryContents
+import com.jetbrains.edu.learning.courseFormat.EduFile
+import com.jetbrains.edu.learning.courseFormat.FileContents
+import com.jetbrains.edu.learning.courseFormat.InMemoryBinaryContents
+import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
 import com.jetbrains.edu.learning.courseFormat.ext.visitEduFiles
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
@@ -60,8 +65,9 @@ class TestBinaryFilesAreNotStoredInsideTasks : CourseReopeningTestBase<EmptyProj
     course.visitEduFiles { eduFile ->
       val path = eduFile.pathInCourse()
       var expectedContents = expectedContents(eduFile)
-      if (binaryFilesCleared && expectedContents is BinaryContents)
-        expectedContents = UndeterminedContents.EMPTY
+      if (binaryFilesCleared && expectedContents is BinaryContents) {
+        expectedContents = BinaryContents.EMPTY
+      }
       assertContentsEqual(path, expectedContents, eduFile.contents)
     }
   }

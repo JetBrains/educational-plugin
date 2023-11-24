@@ -1,9 +1,11 @@
 package com.jetbrains.edu.learning.yaml.format.student
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.courseFormat.BinaryContents
 import com.jetbrains.edu.learning.courseFormat.EduFileErrorHighlightLevel
 import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -13,6 +15,7 @@ import com.jetbrains.edu.learning.yaml.format.TaskFileYamlMixin
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.EDITABLE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENCRYPTED_TEXT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.HIGHLIGHT_LEVEL
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.IS_BINARY
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LEARNER_CREATED
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.NAME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PLACEHOLDERS
@@ -21,8 +24,13 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VISIBLE
 
 @Suppress("unused") // used for yaml serialization
 @JsonDeserialize(builder = StudentTaskFileBuilder::class)
-@JsonPropertyOrder(NAME, VISIBLE, PLACEHOLDERS, EDITABLE, HIGHLIGHT_LEVEL, TEXT, LEARNER_CREATED)
+@JsonPropertyOrder(NAME, VISIBLE, PLACEHOLDERS, EDITABLE, HIGHLIGHT_LEVEL, TEXT, IS_BINARY, LEARNER_CREATED)
 abstract class StudentTaskFileYamlMixin : TaskFileYamlMixin() {
+
+  private val isBinary: Boolean?
+    @JsonProperty(IS_BINARY)
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = IsBinaryFilter::class)
+    get() = null
 
   @JsonProperty(TEXT)
   open fun getTextToSerialize(): String {
@@ -33,10 +41,19 @@ abstract class StudentTaskFileYamlMixin : TaskFileYamlMixin() {
   private var isLearnerCreated = false
 }
 
+/**
+ * We write only is_binary: true, and omit is_binary: false for textual files.
+ */
+@Suppress("EqualsOrHashCode")
+class IsBinaryFilter {
+  override fun equals(other: Any?) = other == false || other == null
+}
+
 class StudentTaskFileBuilder(
   @JsonProperty(TEXT) val textFromConfig: String?,
   @Encrypt @JsonProperty(ENCRYPTED_TEXT) val encryptedTextFromConfig: String?,
   @JsonProperty(LEARNER_CREATED) val learnerCreated: Boolean = false,
+  @JsonProperty(IS_BINARY) val isBinary: Boolean? = false,
   name: String?,
   placeholders: List<AnswerPlaceholder> = mutableListOf(),
   visible: Boolean = true,
@@ -44,14 +61,19 @@ class StudentTaskFileBuilder(
   @JsonProperty(HIGHLIGHT_LEVEL) errorHighlightLevel: EduFileErrorHighlightLevel = EduFileErrorHighlightLevel.ALL_PROBLEMS
 ) : TaskFileBuilder(name, placeholders, visible, editable, errorHighlightLevel) {
   override fun createTaskFile(): TaskFile {
-    return super.createTaskFile().apply {
-      if (encryptedTextFromConfig != null) {
-        contents = InMemoryTextualContents(encryptedTextFromConfig)
-      }
-      else if (textFromConfig != null){
-        contents = InMemoryTextualContents(textFromConfig)
-      }
-      isLearnerCreated = learnerCreated
+    val newTaskFile = super.createTaskFile()
+
+    newTaskFile.contents = if (isBinary == true) {
+      // binary contents are never stored in yaml
+      BinaryContents.EMPTY
     }
+    else {
+      val text = encryptedTextFromConfig ?: textFromConfig ?: ""
+      InMemoryTextualContents(text)
+    }
+
+    newTaskFile.isLearnerCreated = learnerCreated
+
+    return newTaskFile
   }
 }

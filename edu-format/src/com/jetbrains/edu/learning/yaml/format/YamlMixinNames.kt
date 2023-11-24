@@ -112,6 +112,7 @@ object YamlMixinNames {
   const val LEARNER_CREATED = "learner_created"
   const val TEXT = JsonMixinNames.TEXT
   const val ENCRYPTED_TEXT = "encrypted_text"
+  const val IS_BINARY = "is_binary"
   const val EDITABLE = "editable"
   const val HIGHLIGHT_LEVEL = JsonMixinNames.HIGHLIGHT_LEVEL
 

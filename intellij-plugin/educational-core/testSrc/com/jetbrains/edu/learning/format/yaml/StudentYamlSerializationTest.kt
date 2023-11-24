@@ -654,6 +654,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     |  learner_created: false
     |- name: $gitObjectFilePath
     |  visible: false
+    |  is_binary: true
     |  learner_created: false
     |status: Unchecked
     |record: -1
