@@ -10,7 +10,9 @@ class SqlGradleCourseCompatibilityProvider : CourseCompatibilityProvider {
   override fun requiredPlugins(): List<PluginInfo>? {
     if (!isFeatureEnabled(EduExperimentalFeatures.SQL_COURSES)) return null
     @Suppress("UnstableApiUsage")
-    if (!PlatformUtils.isCommercialEdition()) return null
+    // We need SQL plugin available only in paid IDEs and Java + Gradle plugins available in IntelliJ IDEA and Android Studio.
+    // So it's only IDEA Ultimate
+    if (!PlatformUtils.isIdeaUltimate()) return null
     return listOf(
       PluginInfos.SQL,
       PluginInfos.JAVA,
