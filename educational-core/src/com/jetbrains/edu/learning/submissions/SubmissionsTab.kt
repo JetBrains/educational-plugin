@@ -92,6 +92,8 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
       segmentedButton.selectedItem = MY
       segmentedButton.visible(true)
       communityPanel.isVisible = true
+      panel.addAdjustableBorder()
+      communityPanel.addAdjustableBorder()
     }
     else {
       headerPanel.isVisible = false
