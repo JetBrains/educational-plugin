@@ -1,4 +1,4 @@
-package fleet.edu.common
+package com.jetbrains.edu.fleet.common
 
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.rhizomedb.Entity

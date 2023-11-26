@@ -1,4 +1,4 @@
-package fleet.edu.common.generation
+package com.jetbrains.edu.fleet.common.generation
 
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD

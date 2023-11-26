@@ -1,17 +1,17 @@
-package fleet.edu.frontend.actions
+package com.jetbrains.edu.fleet.frontend.actions
 
+import com.jetbrains.edu.fleet.common.CourseEntity
+import com.jetbrains.edu.fleet.common.generation.CourseProjectGenerator
+import com.jetbrains.edu.fleet.common.yaml.YamlFormatSynchronizer
+import com.jetbrains.edu.fleet.frontend.EduTriggers
+import com.jetbrains.edu.fleet.frontend.ui.newCourseTreeView
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSE_META_FILE
 import com.jetbrains.edu.learning.json.readCourseJson
 import fleet.api.child
-import fleet.edu.common.CourseEntity
-import fleet.edu.common.generation.CourseProjectGenerator
-import fleet.edu.common.yaml.YamlFormatSynchronizer
-import fleet.edu.frontend.EduTriggers
-import fleet.edu.frontend.ui.newCourseTreeView
 import fleet.frontend.actions.FleetDataKeys
 import fleet.frontend.actions.sagaAction
 import fleet.frontend.actions.windowEntity
-import fleet.frontend.fsd.showNativeOpenDialog
+import fleet.frontend.fsd.showOpenDialog
 import fleet.frontend.fsd.showSelectFolderDialog
 import fleet.frontend.layout.ConfirmDialogCommand
 import fleet.frontend.layout.ShowOpts
@@ -34,13 +34,13 @@ internal fun createImportCourseAction(): Action {
       val window = actionContext.windowEntity
       val kernel = kernel()
 
-      showNativeOpenDialog(window) { item ->
+      showOpenDialog(window) { item ->
         withContext(Dispatchers.IO) {
           ZipFile(File(item.path.joinToString()))
         }.use {
           val entry = it.getEntry(COURSE_META_FILE)
           val reader = { it.getInputStream(entry).reader(StandardCharsets.UTF_8) }
-          val course = readCourseJson(reader) ?: return@showNativeOpenDialog ConfirmDialogCommand.CLOSE
+          val course = readCourseJson(reader) ?: return@showOpenDialog ConfirmDialogCommand.CLOSE
 
           showSelectFolderDialog(window) { item, showValidationError ->
             kernel.saga {

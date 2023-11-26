@@ -1,4 +1,4 @@
-package fleet.edu.common.yaml
+package com.jetbrains.edu.fleet.common.yaml
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -11,7 +11,7 @@ import fleet.api.FileAddress
 import fleet.api.child
 import fleet.api.createFile
 import fleet.common.fs.fsService
-import fleet.edu.common.format.getDir
+import com.jetbrains.edu.fleet.common.format.getDir
 
 object YamlFormatSynchronizer {
   suspend fun saveAll(course: Course, courseDir: FileAddress) {

@@ -1,13 +1,13 @@
-package fleet.edu.frontend.actions
+package com.jetbrains.edu.fleet.frontend.actions
 
 import fleet.api.child
-import fleet.edu.common.CourseEntity
-import fleet.edu.common.generation.CourseProjectGenerator
-import fleet.edu.common.marketplace.MarketplaceConnector
-import fleet.edu.common.yaml.YamlFormatSynchronizer
-import fleet.edu.frontend.EduTriggers
-import fleet.edu.frontend.ui.newCourseTreeView
-import fleet.edu.frontend.ui.showCourseIdDialog
+import com.jetbrains.edu.fleet.common.CourseEntity
+import com.jetbrains.edu.fleet.common.generation.CourseProjectGenerator
+import com.jetbrains.edu.fleet.common.marketplace.MarketplaceConnector
+import com.jetbrains.edu.fleet.common.yaml.YamlFormatSynchronizer
+import com.jetbrains.edu.fleet.frontend.EduTriggers
+import com.jetbrains.edu.fleet.frontend.ui.newCourseTreeView
+import com.jetbrains.edu.fleet.frontend.ui.showCourseIdDialog
 import fleet.frontend.actions.FleetDataKeys
 import fleet.frontend.actions.kernel
 import fleet.frontend.actions.sagaAction

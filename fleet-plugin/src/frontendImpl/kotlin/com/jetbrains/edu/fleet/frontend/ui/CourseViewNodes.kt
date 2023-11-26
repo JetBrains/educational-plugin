@@ -1,4 +1,4 @@
-package fleet.edu.frontend.ui
+package com.jetbrains.edu.fleet.frontend.ui
 
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
@@ -17,7 +17,7 @@ fun courseNode(course: Course): TreeItem<Any> =
            item = course,
            expandable = true,
            autoExpand = true,
-           children = { studyItems(course)}) { path, opts ->
+           children = { studyItems(course) }) { path, opts ->
     treeCellRenderer(path, opts, ::toolItemCellColors) { _, _, _ ->
       hbox(align = Align.Center) {
         icon(IconKeys.Folder)
@@ -87,7 +87,7 @@ fun containerNode(item: ItemContainer): TreeItem<Any> =
            item = item,
            expandable = true,
            autoExpand = false,
-           children = { studyItems(item)}) { path, opts ->
+           children = { studyItems(item) }) { path, opts ->
     treeCellRenderer(path, opts, ::toolItemCellColors) { _, _, _ ->
       hbox(align = Align.Center) {
         icon(IconKeys.Folder)

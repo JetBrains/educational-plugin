@@ -1,4 +1,4 @@
-package fleet.edu.common.marketplace
+package com.jetbrains.edu.fleet.common.marketplace
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.MapperFeature

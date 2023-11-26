@@ -1,4 +1,4 @@
-package fleet.edu.common.format
+package com.jetbrains.edu.fleet.common.format
 
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson

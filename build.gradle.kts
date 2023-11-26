@@ -11,6 +11,14 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.*
 
+// For some reason, Gradle doesn't find `zstd` lib to unpack fleet archive downloaded by fleet gradle plugin.
+// Let's add it manually for now
+buildscript {
+  dependencies {
+    classpath("com.github.luben:zstd-jni:1.5.5-10")
+  }
+}
+
 apply(from = "common.gradle.kts")
 
 val environmentName: String by project
@@ -584,6 +592,16 @@ project(":edu-format") {
     implementationWithoutKotlin(rootProject.libs.converter.jackson)
     implementationWithoutKotlin(rootProject.libs.logging.interceptor)
   }
+
+  // Workaround to help java to find `module-info.java` file.
+  // Is there a better way?
+  val moduleName = "com.jetbrains.edu.format"
+  tasks {
+    compileJava {
+      inputs.property("moduleName", moduleName)
+      options.compilerArgs = listOf("--patch-module", "$moduleName=${sourceSets.main.get().output.asPath}")
+    }
+  }
 }
 
 project(":educational-core") {
@@ -919,6 +937,18 @@ project(":github") {
     implementation(project(":educational-core"))
 
     testImplementation(project(":educational-core", "testOutput"))
+  }
+}
+
+// For some reason, `version = "$pluginVersion.0"` inside `fleet-plugin/build.gradle.kts` is not enough.
+// It seems fleet gradle plugin reads project version too early when it's not set yet.
+// This code executed before `fleet-plugin/build.gradle.kts` is evaluated,
+// so at the moment of reading version is already set.
+//
+// `.0` is needed because fleet plugin should have only `major.minor.patch` version structure
+if (prop("fleetIntegration").toBoolean()) {
+  project(":fleet-plugin") {
+    version = "$pluginVersion.0"
   }
 }
 

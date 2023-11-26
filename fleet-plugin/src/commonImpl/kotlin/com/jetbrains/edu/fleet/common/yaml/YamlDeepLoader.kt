@@ -1,4 +1,4 @@
-package fleet.edu.common.yaml
+package com.jetbrains.edu.fleet.common.yaml
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -12,8 +12,8 @@ import com.jetbrains.edu.learning.yaml.YamlMapper
 import com.jetbrains.edu.learning.yaml.errorHandling.noDirForItemMessage
 import fleet.api.*
 import fleet.common.fs.fsService
-import fleet.edu.common.format.getDir
-import fleet.edu.common.yaml.YamlFormatSynchronizer.mapper
+import com.jetbrains.edu.fleet.common.format.getDir
+import com.jetbrains.edu.fleet.common.yaml.YamlFormatSynchronizer.mapper
 
 object YamlDeepLoader {
   suspend fun loadCourse(courseDir: FileAddress): Course? {

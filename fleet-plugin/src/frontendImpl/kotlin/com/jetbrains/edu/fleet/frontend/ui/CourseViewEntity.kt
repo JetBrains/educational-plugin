@@ -1,8 +1,8 @@
-package fleet.edu.frontend.ui
+package com.jetbrains.edu.fleet.frontend.ui
 
 import com.jetbrains.rhizomedb.byEntityType
-import fleet.edu.common.CourseEntity
-import fleet.edu.frontend.EduTriggers
+import com.jetbrains.edu.fleet.common.CourseEntity
+import com.jetbrains.edu.fleet.frontend.EduTriggers
 import fleet.frontend.actions.FleetDataKeys
 import fleet.frontend.actions.sagaAction
 import fleet.frontend.actions.windowEntity

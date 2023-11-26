@@ -1,4 +1,4 @@
-package fleet.edu.common.marketplace
+package com.jetbrains.edu.fleet.common.marketplace
 
 object GraphqlQuery {
   fun lastUpdateId(courseId: Int) = """
