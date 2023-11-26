@@ -1,7 +1,16 @@
 import org.jetbrains.fleet.dsl.FleetKotlinDependencyHandler
 
 plugins {
+  idea
   id("org.jetbrains.fleet-plugin") version "0.2.99"
+}
+
+idea {
+  module {
+    excludeDirs.add(file("fleetDistribution"))
+    excludeDirs.add(file("config"))
+    excludeDirs.add(file("system"))
+  }
 }
 
 fleetPlugin {

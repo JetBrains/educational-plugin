@@ -58,3 +58,9 @@ edu-format/resources/aes/aes.properties
 educational-core/resources/aes/aes.properties
 # don't commit changes in hyperskill css
 educational-core/resources/style/hyperskill_task.css
+
+
+# fleet related dirs
+/fleet-plugin/fleetDistribution
+/fleet-plugin/config
+/fleet-plugin/system
