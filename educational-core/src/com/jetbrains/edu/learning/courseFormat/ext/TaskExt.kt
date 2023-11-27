@@ -18,6 +18,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.ObjectUtils
+import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduUtilsKt.convertToHtml
@@ -25,13 +26,12 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.taskToolWindow.addHeader
 import com.jetbrains.edu.learning.taskToolWindow.removeHyperskillTags
 import com.jetbrains.edu.learning.taskToolWindow.replaceActionIDsWithShortcuts
@@ -262,6 +262,7 @@ private fun VirtualFile.toDescriptionFormat(): DescriptionFormat {
     EduCoreBundle.message("yaml.editor.invalid.description"))
 }
 
+@RequiresReadLock
 fun Task.getTaskTextFromTask(project: Project): String? {
   val lessonDir = lesson.getDir(project.courseDir) ?: return null
   val taskDirectory = if (lesson is FrameworkLesson) lessonDir.findChild(name) else getDir(project.courseDir)

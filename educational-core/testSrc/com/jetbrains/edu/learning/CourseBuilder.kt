@@ -476,6 +476,18 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     val remoteEduTask = RemoteEduTask()
     task(remoteEduTask, name, customPresentableName, taskDescription, DescriptionFormat.HTML, stepId, updateDate, buildTask)
   }
+
+  fun unsupportedTask(
+    name: String? = null,
+    customPresentableName: String? = null,
+    taskDescription: String? = null,
+    stepId: Int = 0,
+    updateDate: Date = Date(0),
+    buildTask: TaskBuilder.() -> Unit = {}
+  ) {
+    val unsupportedTask = UnsupportedTask()
+    task(unsupportedTask, name, customPresentableName, taskDescription, DescriptionFormat.HTML, stepId, updateDate, buildTask)
+  }
 }
 
 class TaskBuilder(val lesson: Lesson, val task: Task) {

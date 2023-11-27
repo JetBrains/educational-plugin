@@ -8,11 +8,10 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.EduFile
-import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
-import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.UnsupportedTask
@@ -23,9 +22,6 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLanguages
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
-import com.jetbrains.edu.learning.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.stepik.hyperskill.eduEnvironment
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
@@ -34,6 +30,7 @@ import com.jetbrains.edu.learning.update.UpdateUtils.shouldFrameworkLessonBeUpda
 import com.jetbrains.edu.learning.update.UpdateUtils.showUpdateCompletedNotification
 import com.jetbrains.edu.learning.update.UpdateUtils.updateFrameworkLessonFiles
 import com.jetbrains.edu.learning.update.UpdateUtils.updateTaskDescription
+import com.jetbrains.edu.learning.update.elements.TaskUpdateInfo
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.IOException
 import java.util.*
@@ -57,7 +54,7 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
   }
 
   fun updateCourse(onFinish: (isUpdated: Boolean) -> Unit) {
-    fun getProblemsUpdate(): List<TaskUpdate> {
+    fun getProblemsUpdate(): List<TaskUpdateInfo> {
       val legacyProblemLesson = course.getProblemsLesson()
       val newProblemLessons = course.getTopicsSection()?.lessons ?: emptyList()
       val problemLessons = listOfNotNull(legacyProblemLesson, *newProblemLessons.toTypedArray())
@@ -102,11 +99,11 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
     }
   }
 
-  private fun Lesson.getProblemsUpdates(): List<TaskUpdate> {
-    val tasksFromServer = HyperskillConnector.getInstance().getProblems(this.course, this, taskList.map { it.id })
+  private fun Lesson.getProblemsUpdates(): List<TaskUpdateInfo> {
+    val tasksFromServer = HyperskillConnector.getInstance().getProblems(this.course, this)
     val localTasks = taskList.associateBy { it.id }
 
-    val result = mutableListOf<TaskUpdate>()
+    val result = mutableListOf<TaskUpdateInfo>()
     for (serverTask in tasksFromServer) {
       val localTask = localTasks[serverTask.id]
       if (localTask != null) {
@@ -114,7 +111,7 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
         val serverTaskIsDifferent = taskIsDifferent(localTask, serverTask)
         serverTask.parent = localTask.lesson
         if (localTaskIsExpired || serverTaskIsDifferent) {
-          result.add(TaskUpdate(localTask, serverTask))
+          result.add(TaskUpdateInfo(localTask, serverTask))
         }
       }
     }
@@ -152,10 +149,8 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
     }
   }
 
-  class TaskUpdate(val localTask: Task, val taskFromServer: Task)
-
   @VisibleForTesting
-  fun doUpdate(remoteCourse: HyperskillCourse?, problemsUpdates: List<TaskUpdate>) {
+  fun doUpdate(remoteCourse: HyperskillCourse?, problemsUpdates: List<TaskUpdateInfo>) {
     if (remoteCourse != null) {
       updateCourse(remoteCourse)
       updateProjectLesson(remoteCourse)
@@ -188,13 +183,13 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
     }
   }
 
-  private fun updateProblems(problemsUpdates: List<TaskUpdate>) {
+  private fun updateProblems(problemsUpdates: List<TaskUpdateInfo>) {
     invokeAndWaitIfNeeded {
       if (project.isDisposed) return@invokeAndWaitIfNeeded
 
       problemsUpdates.forEach {
-        val localTask = it.localTask
-        val taskFromServer = it.taskFromServer
+        val localTask = it.localItem
+        val taskFromServer = it.remoteItem
         val hasLocalTaskBecomeSupported = localTask is UnsupportedTask && taskFromServer !is UnsupportedTask
         if (hasLocalTaskBecomeSupported) {
           replaceTaskInCourse(localTask as UnsupportedTask, taskFromServer)

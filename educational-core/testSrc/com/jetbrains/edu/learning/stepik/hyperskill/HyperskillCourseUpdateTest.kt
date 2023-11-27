@@ -4,22 +4,21 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_TOPICS
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.copy
 import com.jetbrains.edu.learning.courseFormat.copyFileContents
 import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
-import com.jetbrains.edu.learning.courseFormat.RemoteEduTask
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.stepik.hyperskill.update.HyperskillCourseUpdater
 import com.jetbrains.edu.learning.stepik.hyperskill.update.HyperskillCourseUpdater.Companion.shouldBeUpdated
 import com.jetbrains.edu.learning.testAction
+import com.jetbrains.edu.learning.update.elements.TaskUpdateInfo
 import java.util.*
 
 class HyperskillCourseUpdateTest : FrameworkLessonsUpdateTest<HyperskillCourse>() {
@@ -339,15 +338,15 @@ class HyperskillCourseUpdateTest : FrameworkLessonsUpdateTest<HyperskillCourse>(
     assertEquals(newCheckProfile, task.checkProfile)
   }
 
-  private fun <T: Task> T.toTaskUpdate(changeTask: T.() -> Unit): HyperskillCourseUpdater.TaskUpdate {
+  private fun <T: Task> T.toTaskUpdate(changeTask: T.() -> Unit): TaskUpdateInfo {
     val remoteTask = copy()
     remoteTask.changeTask()
     remoteTask.init(parent, false)
-    return HyperskillCourseUpdater.TaskUpdate(this, remoteTask)
+    return TaskUpdateInfo(this, remoteTask)
   }
 
-  private fun updateCourseWithProblems(problemsUpdates: List<HyperskillCourseUpdater.TaskUpdate>,
-                           changeCourse: (HyperskillCourse.() -> Unit)? = null) {
+  private fun updateCourseWithProblems(problemsUpdates: List<TaskUpdateInfo>,
+                                       changeCourse: (HyperskillCourse.() -> Unit)? = null) {
     val remoteCourse = changeCourse?.let { toRemoteCourse(changeCourse) }
     HyperskillCourseUpdater(project, localCourse).doUpdate(remoteCourse, problemsUpdates)
     val isProjectUpToDate = remoteCourse == null || localCourse.getProjectLesson()?.shouldBeUpdated(project, remoteCourse) == false

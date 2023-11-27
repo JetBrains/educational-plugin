@@ -10,12 +10,16 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.EduOAuthCodeFlowConnector
-import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODE_ARGUMENT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillTopic
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
@@ -23,10 +27,6 @@ import com.jetbrains.edu.learning.stepik.api.*
 import com.jetbrains.edu.learning.stepik.api.StepikBasedConnector.Companion.createObjectMapper
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.WebSocketConnectionState
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillTopic
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillTaskBuilder
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
@@ -187,7 +187,8 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
     return lesson
   }
 
-  fun getProblems(course: Course, lesson: Lesson, steps: List<Int>): List<Task> {
+  fun getProblems(course: Course, lesson: Lesson): List<Task> {
+    val steps = lesson.taskList.map { it.id }
     val stepSources = getStepSources(steps).onError { emptyList() }
     return getTasks(course, lesson, stepSources)
   }

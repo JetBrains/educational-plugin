@@ -76,7 +76,7 @@ fun EduTestCase.defaultHyperskillCourse(): HyperskillCourse {
   }
 }
 
-private fun HyperskillCourse.init(projectId: Int?, completeStages: Boolean) {
+internal fun HyperskillCourse.init(projectId: Int?, completeStages: Boolean) {
   if (projectId == null) {
     return
   }

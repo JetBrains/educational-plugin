@@ -21,6 +21,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.json.encrypt.Encrypt
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ADDITIONAL_FILES
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.AUTHORS
@@ -435,8 +437,11 @@ fun deserializeTask(node: ObjectNode, taskType: String, objectMapper: ObjectCode
     EduTask.EDU_TASK_TYPE, EduTask.PYCHARM_TASK_TYPE -> {
       objectMapper.treeToValue(node, EduTask::class.java)
     }
-
     OutputTask.OUTPUT_TASK_TYPE -> objectMapper.treeToValue(node, OutputTask::class.java)
+    MatchingTask.MATCHING_TASK_TYPE -> objectMapper.treeToValue(node, MatchingTask::class.java)
+    RemoteEduTask.REMOTE_EDU_TASK_TYPE -> objectMapper.treeToValue(node, RemoteEduTask::class.java)
+    SortingTask.SORTING_TASK_TYPE -> objectMapper.treeToValue(node, SortingTask::class.java)
+    UnsupportedTask.UNSUPPORTED_TASK_TYPE -> objectMapper.treeToValue(node, UnsupportedTask::class.java)
     else -> {
       LOG.warning("Unsupported task type $taskType")
       null

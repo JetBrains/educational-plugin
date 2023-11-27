@@ -304,14 +304,6 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
     invokeAndWaitIfNeeded { runWriteAction { taskDir?.delete(studentTask) } }
   }
 
-  @Throws(IOException::class)
-  private fun createTaskDirectories(project: Project, lessonDir: VirtualFile, task: Task) {
-    if (!task.lesson.course.isStudy) {
-      CCUtils.initializeTaskPlaceholders(project.toCourseInfoHolder(), task)
-    }
-    GeneratorUtils.createTask(project, task, lessonDir)
-  }
-
   private fun deleteRemovedItems(remoteItemsIds: List<Int>, items: List<StudyItem>) {
     val itemsToDelete = items.filter { it.id !in remoteItemsIds }
     if (itemsToDelete.isNotEmpty()) {
@@ -393,5 +385,13 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
 
   companion object {
     private val LOG = logger<EduCourseUpdater>()
+
+    @Throws(IOException::class)
+    fun createTaskDirectories(project: Project, lessonDir: VirtualFile, task: Task) {
+      if (!task.lesson.course.isStudy) {
+        CCUtils.initializeTaskPlaceholders(project.toCourseInfoHolder(), task)
+      }
+      GeneratorUtils.createTask(project, task, lessonDir)
+    }
   }
 }
