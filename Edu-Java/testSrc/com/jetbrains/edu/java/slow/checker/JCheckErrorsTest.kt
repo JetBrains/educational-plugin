@@ -15,6 +15,8 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckResultDiff
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduTestInfo
+import com.jetbrains.edu.learning.courseFormat.EduTestInfo.Companion.PresentableStatus.FAILED
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.nullValue
@@ -154,21 +156,50 @@ class JCheckErrorsTest : JdkCheckerTestBase() {
   fun `test errors`() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       assertEquals("${task.name} should be failed", CheckStatus.Failed, checkResult.status)
-      val (messageMatcher, diffMatcher) = when (task.name) {
-        "javaCompilationError" -> equalTo(CheckUtils.COMPILATION_FAILED_MESSAGE) to nullValue()
-        "testFail" -> equalTo("Task.foo() should return 42") to nullValue()
+      val testComparisonData = when (task.name) {
+        "javaCompilationError" -> TestComparisonData(equalTo(CheckUtils.COMPILATION_FAILED_MESSAGE), nullValue())
+        "testFail" -> TestComparisonData(
+          equalTo("Task.foo() should return 42"), nullValue(), listOf(EduTestInfo("Test class Test:test", FAILED))
+        )
+
         "comparisonTestFail" ->
-          equalTo(EduCoreBundle.message("check.incorrect")) to
-            diff(CheckResultDiff(expected = "42", actual = "0", title = "Comparison Failure (test)"))
+          TestComparisonData(
+            equalTo(EduCoreBundle.message("check.incorrect")),
+            diff(CheckResultDiff(expected = "42", actual = "0", title = "Comparison Failure (test)")),
+            listOf(EduTestInfo("Test class Test:test", FAILED))
+          )
+
         "escapeMessageInFailedTest" ->
-          equalTo("<br>".xmlEscaped) to nullValue()
+          TestComparisonData(equalTo("<br>".xmlEscaped), nullValue(), listOf(EduTestInfo("Test class Test:test", FAILED)))
+
         "gradleCustomRunConfiguration" ->
-          equalTo(EduCoreBundle.message("check.incorrect")) to
-            diff(CheckResultDiff(expected = "Hello", actual = "Hello!", title = "Comparison Failure (test)"))
+          TestComparisonData(
+            equalTo(EduCoreBundle.message("check.incorrect")),
+            diff(CheckResultDiff(expected = "Hello", actual = "Hello!", title = "Comparison Failure (test)")),
+            listOf(EduTestInfo("Test class Tests:test", FAILED))
+          )
+
         else -> error("Unexpected task `${task.name}`")
       }
-      assertThat("Checker message for ${task.name} doesn't match", checkResult.message, messageMatcher)
-      assertThat("Checker diff for ${task.name} doesn't match", checkResult.diff, diffMatcher)
+      assertThat("Checker message for ${task.name} doesn't match", checkResult.message, testComparisonData.messageMatcher)
+      assertThat("Checker diff for ${task.name} doesn't match", checkResult.diff, testComparisonData.diffMatcher)
+      assertEquals(
+        "Number of executed tests for ${task.name} is wrong",
+        testComparisonData.executedTestsInfo.size,
+        checkResult.executedTestsInfo.size
+      )
+      testComparisonData.executedTestsInfo.forEach { testInfo ->
+        val actualTestInfo = checkResult.executedTestsInfo.find { it.name == testInfo.name }
+                             ?: error(
+                               "Expected test ${testInfo.name} of ${task.name} task wasn't found " +
+                               "in test results: ${checkResult.executedTestsInfo}"
+                             )
+        assertEquals(
+          "Status of test from ${task.name} task is wrong",
+          testInfo.presentableStatus,
+          actualTestInfo.presentableStatus
+        )
+      }
     }
     doTest()
   }

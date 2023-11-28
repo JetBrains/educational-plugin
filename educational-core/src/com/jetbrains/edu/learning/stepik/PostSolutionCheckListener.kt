@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.submissions.SubmissionsManager
 abstract class PostSolutionCheckListener : CheckListener {
 
   protected abstract fun isUpToDate(course: EduCourse, task: Task): Boolean
-  protected abstract fun postSubmission(project: Project, task: Task): Submission?
+  protected abstract fun postSubmission(project: Project, task: Task, result: CheckResult): Submission?
   protected abstract fun updateCourseAction(project: Project, course: EduCourse)
   protected abstract fun EduCourse.isToPostSubmissions(): Boolean
 
@@ -22,7 +22,7 @@ abstract class PostSolutionCheckListener : CheckListener {
     val course = task.lesson.course
     if (course is EduCourse && course.isStudy && course.isToPostSubmissions() && task.isToSubmitToRemote) {
       if (isUpToDate(course, task)) {
-        addSubmissionToSubmissionsManager(project, task)
+        addSubmissionToSubmissionsManager(project, task, result)
       }
       else {
         showSubmissionNotPostedNotification(project, course, task.name)
@@ -30,8 +30,8 @@ abstract class PostSolutionCheckListener : CheckListener {
     }
   }
 
-  private fun addSubmissionToSubmissionsManager(project: Project, task: Task) {
-    val submission = postSubmission(project, task) ?: return
+  private fun addSubmissionToSubmissionsManager(project: Project, task: Task, result: CheckResult) {
+    val submission = postSubmission(project, task, result) ?: return
     SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task.id, task.status, submission)
   }
 

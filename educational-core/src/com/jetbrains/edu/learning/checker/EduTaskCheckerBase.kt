@@ -18,11 +18,12 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.psi.PsiElement
-import com.jetbrains.edu.learning.courseFormat.CheckResult.Companion.noTestsRun
 import com.jetbrains.edu.learning.checker.CheckUtils.fillWithIncorrect
 import com.jetbrains.edu.learning.courseFormat.CheckResult
+import com.jetbrains.edu.learning.courseFormat.CheckResult.Companion.noTestsRun
 import com.jetbrains.edu.learning.courseFormat.CheckResultDiff
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.EduTestInfo
 import com.jetbrains.edu.learning.courseFormat.ext.getAllTestDirectories
 import com.jetbrains.edu.learning.courseFormat.ext.getAllTestFiles
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -108,7 +109,8 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
     if (testResults.isEmpty()) return noTestsRun
 
     val firstFailure = testResults.firstOrNull { it.status != CheckStatus.Solved }
-    return firstFailure ?: testResults.first()
+    val result = firstFailure ?: testResults.first()
+    return result.copy(executedTestsInfo = testRoots.getTestsInfo())
   }
 
   protected fun SMTestProxy.SMRootTestProxy.toCheckResult(): CheckResult {
@@ -215,6 +217,31 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
   protected open fun getComparisonErrorMessage(node: SMTestProxy): String = getErrorMessage(node)
 
   protected open fun validateConfiguration(configuration: RunnerAndConfigurationSettings): CheckResult? = null
+
+  private fun List<SMTestProxy.SMRootTestProxy>.getTestsInfo(): List<EduTestInfo> =
+    flatMap { root -> getEduTestInfo(children = root.children) }
+
+  private fun getEduTestInfo(paths: MutableList<String> = mutableListOf(), children: List<SMTestProxy>): List<EduTestInfo> {
+    val result = mutableListOf<EduTestInfo>()
+    children.forEach {
+      paths.add(it.presentableName)
+      if (it.isLeaf) {
+        // Submission Service stores a test name with a maximum length of 255 characters.
+        // The number 245 is chosen to allow space for [1], [2], etc., for possible duplicate test names.
+        var testName = paths.joinToString(":").take(245)
+        val testCount = result.count { test -> test.name == testName }
+        if (testCount > 0) {
+          testName = "$testName[$testCount]"
+        }
+        result.add(EduTestInfo(testName, it.magnitudeInfo.value))
+      }
+      else {
+        result.addAll(getEduTestInfo(paths, it.children))
+      }
+      paths.removeLast()
+    }
+    return result
+  }
 
   companion object {
     fun extractComparisonErrorMessage(node: SMTestProxy): String {

@@ -16,8 +16,8 @@ class MarketplaceCheckListener: PostSolutionCheckListener() {
 
   override fun EduCourse.isToPostSubmissions(): Boolean = isMarketplaceRemote
 
-  override fun postSubmission(project: Project, task: Task): MarketplaceSubmission {
-    return MarketplaceSubmissionsConnector.getInstance().postSubmission(project, task)
+  override fun postSubmission(project: Project, task: Task, result: CheckResult): MarketplaceSubmission {
+    return MarketplaceSubmissionsConnector.getInstance().postSubmission(project, task, result)
   }
 
   override fun isUpToDate(course: EduCourse, task: Task): Boolean = course.isUpToDate

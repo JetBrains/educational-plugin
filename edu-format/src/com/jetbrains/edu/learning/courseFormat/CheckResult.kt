@@ -11,7 +11,8 @@ data class CheckResult(
   val details: String? = null,
   val diff: CheckResultDiff? = null,
   val severity: CheckResultSeverity = CheckResultSeverity.Info,
-  val hyperlinkAction: (() -> Unit)? = null
+  val hyperlinkAction: (() -> Unit)? = null,
+  val executedTestsInfo: List<EduTestInfo> = emptyList()
 ) {
 
   val fullMessage: String get() = if (details == null) message else "$message\n\n$details"

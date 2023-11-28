@@ -14,10 +14,7 @@ import com.intellij.ui.JBAccountInfoService
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.authUtils.ConnectorUtils
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
@@ -195,7 +192,7 @@ class MarketplaceSubmissionsConnector {
            ?: error("Failed to load solution files for solution key $solutionKey")
   }
 
-  fun postSubmission(project: Project, task: Task): MarketplaceSubmission {
+  fun postSubmission(project: Project, task: Task, result: CheckResult): MarketplaceSubmission {
     val solutionFiles = solutionFilesList(project, task).filter { it.isVisible }
     val solutionText = objectMapper.writeValueAsString(solutionFiles).trimIndent()
 
@@ -207,7 +204,8 @@ class MarketplaceSubmissionsConnector {
       solutionText,
       solutionFiles,
       course.marketplaceCourseVersion,
-      PermanentInstallationID.get()
+      PermanentInstallationID.get(),
+      result.executedTestsInfo
     )
 
     val postedSubmission = doPostSubmission(course.id, task.id, submission).onError { error("failed to post submission") }

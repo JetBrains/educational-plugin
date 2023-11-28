@@ -4,14 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.MARKETPLACE
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.SOLUTION
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.SUBMISSIONS
-import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
-import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.submissions.SolutionFile
 import com.jetbrains.edu.learning.submissions.Submission
 import org.jetbrains.annotations.TestOnly
@@ -34,6 +31,7 @@ private const val PROGRAMMING_LANGUAGE_VERSION = "programmingLanguageVersion"
 private const val QUERY = "query"
 private const val SOLUTION_AWS_KEY = "solution_aws_key"
 private const val TASK_ID = "task_id"
+private const val TEST_RESULTS = "test_results"
 private const val TOTAL = "total"
 private const val UPDATES = "updates"
 private const val UUID = "uuid"
@@ -203,6 +201,9 @@ class MarketplaceSubmission : Submission {
   @JsonProperty(UUID)
   var uuid: String = ""
 
+  @JsonProperty(TEST_RESULTS)
+  var testsInfo: List<EduTestInfo> = emptyList()
+
   constructor()
 
   constructor(
@@ -211,7 +212,8 @@ class MarketplaceSubmission : Submission {
     solutionText: String,
     solutionFiles: List<SolutionFile>?,
     courseVersion: Int,
-    uuid: String
+    uuid: String,
+    testsInfo: List<EduTestInfo> = emptyList()
   ) {
     this.taskId = taskId
     this.status = checkStatus.rawStatus
@@ -219,6 +221,7 @@ class MarketplaceSubmission : Submission {
     this.courseVersion = courseVersion
     solution = solutionText
     this.uuid = uuid
+    this.testsInfo = testsInfo
   }
 }
 
