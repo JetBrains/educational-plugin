@@ -3,9 +3,9 @@ package com.jetbrains.edu.coursecreator.framework.impl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.merge.MergeSession
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.learning.framework.impl.diff.FLMergeDialogCustomizer
-import com.jetbrains.edu.learning.framework.impl.diff.FLMergeProvider
-import com.jetbrains.edu.learning.framework.impl.diff.FLMultipleFileMergeUI
+import com.jetbrains.edu.coursecreator.framework.diff.FLMergeDialogCustomizer
+import com.jetbrains.edu.coursecreator.framework.diff.FLMergeProvider
+import com.jetbrains.edu.coursecreator.framework.diff.FLMultipleFileMergeUI
 
 // Always accepts changes
 class MockFLMultipleFileMergeUI(

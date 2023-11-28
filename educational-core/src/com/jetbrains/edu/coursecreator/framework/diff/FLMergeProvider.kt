@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.framework.impl.diff
+package com.jetbrains.edu.coursecreator.framework.diff
 
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runReadAction
@@ -26,7 +26,7 @@ class FLMergeProvider(
   private val baseState: State,
   private val rightState: State,
   private val initialBaseState: State = baseState,
-): MergeProvider2 {
+) : MergeProvider2 {
   override fun loadRevisions(file: VirtualFile): MergeData {
     return MergeData().apply {
       val filePath = file.pathRelativeToTask(project)
@@ -46,7 +46,7 @@ class FLMergeProvider(
     return FLMergeSession()
   }
 
-  inner class FLMergeSession: MergeSessionEx {
+  inner class FLMergeSession : MergeSessionEx {
     override fun getMergeInfoColumns(): Array<ColumnInfo<out Any, out Any>> {
       return arrayOf(
         StatusColumn("Current task", true),
@@ -103,7 +103,7 @@ class FLMergeProvider(
   private inner class StatusColumn(
     defaultName: String,
     private val isLeft: Boolean,
-  ): ColumnInfo<VirtualFile, String>(defaultName) {
+  ) : ColumnInfo<VirtualFile, String>(defaultName) {
     private val defaultGap = 10
 
     override fun valueOf(item: VirtualFile?): String {
@@ -118,7 +118,7 @@ class FLMergeProvider(
       }
       if (baseContent == null) {
         if (changedContent == null) {
-          return EduCoreBundle.message("action.Educational.Educator.ApplyChangesToNextTasks.MergeDialog.none")
+          return "-"
         }
         return EduCoreBundle.message("action.Educational.Educator.ApplyChangesToNextTasks.MergeDialog.added")
       }

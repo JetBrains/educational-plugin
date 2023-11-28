@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.framework.impl.diff
+package com.jetbrains.edu.coursecreator.framework.diff
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -31,7 +31,8 @@ fun withFLMultipleFileMergeUI(mockUi: FLMultipleFileMergeUI, action: () -> Unit)
   try {
     MOCK = mockUi
     action()
-  } finally {
+  }
+  finally {
     MOCK = null
   }
 }
@@ -46,7 +47,8 @@ fun showMultipleFileMergeDialog(
 ): Boolean {
   val ui = if (isUnitTestMode) {
     MOCK ?: error("You should set mock ui via `withMockSelectTaskUi`")
-  } else {
+  }
+  else {
     FLMultipleFileMergeUIImpl()
   }
   return ui.show(project, files, mergeProvider, mergeCustomizer, currentTaskName, targetTaskName)

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.framework.impl.diff
+package com.jetbrains.edu.coursecreator.framework.diff
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.history.VcsRevisionNumber
@@ -11,7 +11,7 @@ class FLMergeDialogCustomizer(
   private val project: Project,
   private val currentTaskName: String,
   private val targetTaskName: String,
-): MergeDialogCustomizer() {
+) : MergeDialogCustomizer() {
   override fun getColumnNames(): List<String> {
     return listOf(currentTaskName, targetTaskName)
   }

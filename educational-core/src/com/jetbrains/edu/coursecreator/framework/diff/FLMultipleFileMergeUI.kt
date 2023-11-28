@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.framework.impl.diff
+package com.jetbrains.edu.coursecreator.framework.diff
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.VcsBundle
@@ -19,7 +19,7 @@ interface FLMultipleFileMergeUI {
   ): Boolean
 }
 
-class FLMultipleFileMergeUIImpl: FLMultipleFileMergeUI {
+class FLMultipleFileMergeUIImpl : FLMultipleFileMergeUI {
   override fun show(
     project: Project,
     files: List<VirtualFile>,

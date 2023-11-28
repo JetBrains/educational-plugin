@@ -1,11 +1,11 @@
-package com.jetbrains.edu.learning.framework.impl.diff
+package com.jetbrains.edu.coursecreator.framework.diff
 
 import com.jetbrains.edu.learning.framework.impl.Change
 import com.jetbrains.edu.learning.framework.impl.State
 import com.jetbrains.edu.learning.framework.impl.UserChanges
 
 // Will not resolve conflicts automatically, shows all the differences in the files
-class SimpleConflictResolveStrategy: FLConflictResolveStrategy {
+class SimpleConflictResolveStrategy : FLConflictResolveStrategy {
   override fun resolveConflicts(
     currentTaskState: State,
     baseState: State,

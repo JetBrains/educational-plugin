@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.framework.impl.State
 import com.jetbrains.edu.learning.framework.impl.applyChanges
 import com.jetbrains.edu.learning.framework.impl.calculateChanges
 import com.jetbrains.edu.learning.framework.impl.chooseConflictResolveStrategy
-import com.jetbrains.edu.learning.framework.impl.diff.applyChangesViaMergeDialog
+import com.jetbrains.edu.coursecreator.framework.diff.applyChangesViaMergeDialog
 import com.jetbrains.edu.learning.framework.impl.getVFSTaskState
 import com.jetbrains.edu.learning.framework.impl.showApplyChangesCanceledNotification
 import com.jetbrains.edu.learning.framework.impl.showApplyChangesSuccessNotification

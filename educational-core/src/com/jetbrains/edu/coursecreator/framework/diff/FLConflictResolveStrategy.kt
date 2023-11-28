@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.framework.impl.diff
+package com.jetbrains.edu.coursecreator.framework.diff
 
 import com.jetbrains.edu.learning.framework.impl.UserChanges
 

@@ -8,8 +8,8 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.framework.impl.diff.SimpleConflictResolveStrategy
-import com.jetbrains.edu.learning.framework.impl.diff.FLConflictResolveStrategy
+import com.jetbrains.edu.coursecreator.framework.diff.SimpleConflictResolveStrategy
+import com.jetbrains.edu.coursecreator.framework.diff.FLConflictResolveStrategy
 import com.jetbrains.edu.learning.isToEncodeContent
 import com.jetbrains.edu.learning.loadEncodedContent
 import com.jetbrains.edu.learning.messages.EduCoreBundle
