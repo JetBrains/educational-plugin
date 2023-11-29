@@ -66,13 +66,19 @@ class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport
 
   private lateinit var progressBar: JProgressBar
 
+  private val courseViewComponent: JComponent by lazy { createCourseViewComponent() }
+
   override fun createTree(treeModel: DefaultTreeModel): ProjectViewTree {
     return object : ProjectViewTree(treeModel) {
       override fun toString(): String = "$title ${super.toString()}"
     }
   }
 
-  override fun createComponent(): JComponent {
+  override fun createComponent(): JComponent = courseViewComponent
+
+  override fun createComparator(): Comparator<NodeDescriptor<*>> = EduNodeComparator
+
+  private fun createCourseViewComponent(): JComponent {
     val component = super.createComponent()
 
     if (!myProject.isStudentProject()) return component
@@ -96,8 +102,6 @@ class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport
     }
     return ScrollPaneFactory.createScrollPane(panel)
   }
-
-  override fun createComparator(): Comparator<NodeDescriptor<*>> = EduNodeComparator
 
   private fun createProgressPanel(): JPanel {
     val panel = JPanel(BorderLayout())
