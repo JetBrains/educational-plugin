@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.command.validation
 
-import com.intellij.execution.testframework.sm.ServiceMessageBuilder
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.application.EDT
@@ -27,88 +26,47 @@ class CourseValidationHelper(private val serviceMessageConsumer: ServiceMessageC
 
   suspend fun validate(project: Project, course: Course): Boolean {
     return withValidationEnabled(project) {
-      course.check(project)
+      withTestSuiteBuilder(serviceMessageConsumer) {
+        check(project, course)
+      }
     }
   }
 
-  /**
-   * Returns `true` if all tasks in container are checked successfully, `false` otherwise
-   */
-  private suspend fun ItemContainer.check(project: Project): Boolean {
-    var result = true
-    testSuite(name) {
-      for (item in items) {
-        val itemResult = when (item) {
+  private suspend fun TestSuiteBuilder.check(project: Project, itemContainer: ItemContainer) {
+    testSuite(itemContainer.name) {
+      for (item in itemContainer.items) {
+        when (item) {
           is ItemContainer -> {
-            item.check(project)
+            check(project, item)
           }
           is Task -> {
-            item.check(project)
+            check(project, item)
           }
           else -> error("Unreachable")
         }
-        result = result && itemResult
       }
     }
-    return result
   }
 
-  private suspend fun <T> testSuite(name: String, action: suspend () -> T): T {
-    serviceMessageConsumer.consume(ServiceMessageBuilder.testSuiteStarted(name))
-    return try {
-      action()
-    }
-    finally {
-      serviceMessageConsumer.consume(ServiceMessageBuilder.testSuiteFinished(name))
-    }
-  }
-
-  /**
-   * If a test fails, [action] is responsible for emitting additional test messages
-   */
-  private suspend fun <T> testCase(name: String, action: suspend () -> T): T {
-    serviceMessageConsumer.consume(ServiceMessageBuilder.testStarted(name))
-    return try {
-      action()
-    }
-    finally {
-      serviceMessageConsumer.consume(ServiceMessageBuilder.testFinished(name))
-    }
-  }
-
-  /**
-   * Returns `true` if a task is checked successfully, `false` otherwise
-   */
-  private suspend fun Task.check(project: Project): Boolean {
-    return testCase(presentableName) {
+  private suspend fun TestSuiteBuilder.check(project: Project, task: Task) {
+    testCase(task.presentableName) {
       withContext(Dispatchers.EDT) {
-        prepareForChecking(project)
+        task.prepareForChecking(project)
         val dataContext = SimpleDataContext.getProjectContext(project)
         ActionUtil.invokeAction(CheckAction(), dataContext, "", null, null)
       }
 
-      val result = ValidationCheckResultManager.getInstance(project).getResult(this)
+      val result = ValidationCheckResultManager.getInstance(project).getResult(task)
 
       withContext(Dispatchers.EDT) {
         closeOpenFiles(project)
       }
 
-      val testMessage = when (result.status) {
-        CheckStatus.Unchecked -> {
-          ServiceMessageBuilder.testIgnored(presentableName)
-            .addAttribute(MESSAGE, result.message)
-        }
-        CheckStatus.Solved -> null
-        CheckStatus.Failed -> {
-          ServiceMessageBuilder.testFailed(presentableName)
-            .addAttribute(MESSAGE, result.message)
-            .addAttribute(DETAILS, result.details.orEmpty())
-        }
+      when (result.status) {
+        CheckStatus.Unchecked -> testIgnored(result.message)
+        CheckStatus.Failed -> testFailed(result.message, result.details.orEmpty())
+        CheckStatus.Solved -> Unit
       }
-      if (testMessage != null) {
-        serviceMessageConsumer.consume(testMessage)
-      }
-      result.isSolved
     }
   }
 
@@ -128,11 +86,6 @@ class CourseValidationHelper(private val serviceMessageConsumer: ServiceMessageC
     for (openFile in fileEditorManager.openFiles) {
       fileEditorManager.closeFile(openFile)
     }
-  }
-
-  companion object {
-    private const val MESSAGE = "message"
-    private const val DETAILS = "details"
   }
 }
 
