@@ -1,0 +1,15 @@
+type: marketplace
+title: Example Plain Text course
+language: English
+summary: |-
+  This is an introductory Plain text course.
+  - The course will be most beneficial for beginner-level Plain text learners.
+  - The course covers core Plain text features.
+  - It contains hands-on examples of Plain text code implementation and exercises to practice new skills.
+  - The course is based on the author's personal experience in Plain text development.
+programming_language: Plain text
+content:
+  - lesson1
+mode: Study
+vendor:
+  name: Arseniy Pendryak

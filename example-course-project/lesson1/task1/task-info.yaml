@@ -1,0 +1,12 @@
+type: edu
+files:
+  - name: Task.txt
+    visible: true
+    encrypted_text: J75+qots3TIZHX0wYlhd9I0oXi5xa08uAftxd80chfo=
+    learner_created: false
+  - name: tests/Tests.txt
+    visible: false
+    encrypted_text: PwG9zjgI55k/oP/VCAQx/NEJ0ve6YhbcA+S5bJq8F9E=
+    learner_created: false
+status: Unchecked
+record: -1
