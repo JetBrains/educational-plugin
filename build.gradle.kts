@@ -49,13 +49,14 @@ val baseVersion = when {
   else -> error("Unexpected IDE name = `$baseIDE`")
 }
 
-val ideaSandbox = "${project.buildDir.absolutePath}/idea-sandbox"
-val pycharmSandbox = "${project.buildDir.absolutePath}/pycharm-sandbox"
-val studioSandbox = "${project.buildDir.absolutePath}/studio-sandbox"
-val webStormSandbox = "${project.buildDir.absolutePath}/webstorm-sandbox"
-val clionSandbox = "${project.buildDir.absolutePath}/clion-sandbox"
-val goLandSandbox = "${project.buildDir.absolutePath}/goland-sandbox"
-val phpStormSandbox = "${project.buildDir.absolutePath}/phpstorm-sandbox"
+val ideaSandbox = "${buildDir()}/idea-sandbox"
+val pycharmSandbox = "${buildDir()}/pycharm-sandbox"
+val studioSandbox = "${buildDir()}/studio-sandbox"
+val webStormSandbox = "${buildDir()}/webstorm-sandbox"
+val clionSandbox = "${buildDir()}/clion-sandbox"
+val goLandSandbox = "${buildDir()}/goland-sandbox"
+val phpStormSandbox = "${buildDir()}/phpstorm-sandbox"
+val remoteDevServerSandbox = "${buildDir()}/remote-dev-server-sandbox"
 
 // BACKCOMPAT: 2023.1
 val isAtLeast232 = environmentName.toInt() >= 232
@@ -485,13 +486,20 @@ project(":") {
   // Generates event scheme for JetBrains Academy plugin FUS events to `build/eventScheme.json`
   task<RunIdeTask>("buildEventsScheme") {
     dependsOn(tasks.prepareSandbox)
-    args("buildEventsScheme", "--outputFile=${buildDir.resolve("eventScheme.json").absolutePath}", "--pluginId=com.jetbrains.edu")
+    args("buildEventsScheme", "--outputFile=${buildDir()}/eventScheme.json", "--pluginId=com.jetbrains.edu")
     // Force headless mode to be able to run command on CI
     systemProperty("java.awt.headless", "true")
     // BACKCOMPAT: 2023.1. Update value to 232 and this comment
     // `IDEA_BUILD_NUMBER` variable is used by `buildEventsScheme` task to write `buildNumber` to output json.
     // It will be used by TeamCity automation to set minimal IDE version for new events
     environment("IDEA_BUILD_NUMBER", "231")
+  }
+
+  task<RunIdeTask>("runRemoteDevServer") {
+    dependsOn(tasks.prepareSandbox)
+    val remoteProjectPath = System.getenv("REMOTE_DEV_PROJECT") ?: project.layout.projectDirectory.dir("example-course-project").asFile.absolutePath
+    args("cwmHostNoLobby", remoteProjectPath)
+    systemProperty("ide.browser.jcef.enabled", "false")
   }
 
   task("configureIdea") {
@@ -574,6 +582,12 @@ project(":") {
       tasks.runIde {
         ideDir = file(prop("phpStormPath"))
       }
+    }
+  }
+
+  task("configureRemoteDevServer") {
+    doLast {
+      intellij.sandboxDir = remoteDevServerSandbox
     }
   }
 }
@@ -971,6 +985,10 @@ fun withProp(filePath: String, name: String, action: (String) -> Unit) {
   val properties = loadProperties(filePath)
   val value = properties.getProperty(name) ?: return
   action(value)
+}
+
+fun buildDir(): String {
+  return project.layout.buildDirectory.get().asFile.absolutePath
 }
 
 fun <T : ModuleDependency> T.excludeKotlinDeps() {
