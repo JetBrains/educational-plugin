@@ -60,6 +60,6 @@ val courseViewAction = Action(
     }
   },
   identifier = "open-course-tree",
-  requirements = setOf(FleetDataKeys.Kernel, FleetDataKeys.Window),
+  requirements = setOf(FleetDataKeys.Window),
   triggers = setOf(EduTriggers.CourseView)
 )

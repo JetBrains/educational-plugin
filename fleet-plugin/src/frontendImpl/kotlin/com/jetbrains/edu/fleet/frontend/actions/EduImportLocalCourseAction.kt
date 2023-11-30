@@ -18,7 +18,7 @@ import fleet.frontend.layout.ShowOpts
 import fleet.frontend.layout.openTool
 import fleet.frontend.navigation.attachToWorkspace
 import fleet.kernel.change
-import fleet.kernel.kernel
+import fleet.kernel.plugins.PluginScope
 import fleet.kernel.saga
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -28,11 +28,10 @@ import java.io.File
 import java.nio.charset.StandardCharsets
 import java.util.zip.ZipFile
 
-internal fun createImportCourseAction(): Action {
+internal fun createImportCourseAction(pluginScope: PluginScope): Action {
   return Action(
     perform = sagaAction { actionContext ->
       val window = actionContext.windowEntity
-      val kernel = kernel()
 
       showOpenDialog(window) { item ->
         withContext(Dispatchers.IO) {
@@ -43,7 +42,7 @@ internal fun createImportCourseAction(): Action {
           val course = readCourseJson(reader) ?: return@showOpenDialog ConfirmDialogCommand.CLOSE
 
           showSelectFolderDialog(window) { item, showValidationError ->
-            kernel.saga {
+            pluginScope.saga {
               val fileAddress = item.child(course.name)
               val success = CourseProjectGenerator().createCourse(fileAddress, course)
               if (success) {
@@ -64,7 +63,7 @@ internal fun createImportCourseAction(): Action {
       }
     },
     identifier = "import-local-course",
-    requirements = setOf(FleetDataKeys.Kernel, FleetDataKeys.Window),
+    requirements = setOf(FleetDataKeys.Window),
     triggers = setOf(EduTriggers.Import),
     defaultPresentation = ActionPresentation("Import Course"))
 }

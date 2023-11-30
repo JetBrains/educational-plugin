@@ -2,7 +2,7 @@ import org.jetbrains.fleet.dsl.FleetKotlinDependencyHandler
 
 plugins {
   idea
-  id("org.jetbrains.fleet-plugin") version "0.2.99"
+  id("org.jetbrains.fleet-plugin") version "0.3.121"
 }
 
 idea {

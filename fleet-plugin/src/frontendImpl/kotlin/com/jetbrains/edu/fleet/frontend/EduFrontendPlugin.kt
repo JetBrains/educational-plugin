@@ -24,6 +24,7 @@ import fleet.kernel.*
 import fleet.kernel.plugins.ContributionScope
 import fleet.kernel.plugins.Plugin
 import fleet.kernel.plugins.PluginScope
+import fleet.kernel.plugins.worker
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import noria.NoriaContext
@@ -37,8 +38,8 @@ class EduFrontendPlugin : Plugin<Unit> {
 
   override fun ContributionScope.load(pluginScope: PluginScope) {
     actions(
-      createImportCourseAction(),
-      createImportMarketplaceCourseAction(),
+      createImportCourseAction(pluginScope),
+      createImportMarketplaceCourseAction(pluginScope),
       courseViewAction
     )
     entityRenderer(CourseIdDialogEntity::class, NoriaContext::courseIdDialog)
@@ -56,7 +57,7 @@ class EduFrontendPlugin : Plugin<Unit> {
 //          launchOnEachEntity<FrontendEntity> {
 //            val shipParams = it.shipParams as? OpenLocalWorkspace ?: return@launchOnEachEntity
 //            val courseId = shipParams.extra["courseId"] ?: return@launchOnEachEntity
-//            createCourse(courseId, kernel)
+//            createCourse(courseId, pluginScope)
 //          }
 //        }
 //      }
@@ -64,13 +65,13 @@ class EduFrontendPlugin : Plugin<Unit> {
   }
 }
 
-private suspend fun createCourse(id: String?, kernel: Kernel) {
+private suspend fun createCourse(id: String?, pluginScope: PluginScope) {
   val courseId = id?.toInt() ?: return
   MarketplaceConnector.loadCourse(courseId) { course ->
-    kernel.saga {
+    pluginScope.saga {
       val window = lastFocusedEntity(WindowEntity::class) ?: return@saga
       showSelectFolderDialog(window) { item, showValidationError ->
-        kernel.saga {
+        pluginScope.saga {
           val fileAddress = item.child(course.name)
           val success = CourseProjectGenerator().createCourse(fileAddress, course)
           if (success) {

@@ -1,5 +1,5 @@
 [versions]
-kotlin = "1.9.0"
+kotlin = "1.9.21"
 jackson = "2.14.3"
 okhttp = "4.10.0"
 retrofit = "2.9.0"

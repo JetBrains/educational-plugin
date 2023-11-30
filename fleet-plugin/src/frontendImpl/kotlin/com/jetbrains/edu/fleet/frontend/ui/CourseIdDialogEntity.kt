@@ -1,7 +1,7 @@
 package com.jetbrains.edu.fleet.frontend.ui
 
+import fleet.frontend.PluginScopeKey
 import fleet.frontend.layout.*
-import fleet.frontend.ui.db.KernelKey
 import fleet.kernel.ChangeScope
 import fleet.util.plus
 import noria.NoriaContext
@@ -29,13 +29,13 @@ fun ChangeScope.showCourseIdDialog(window: WindowEntity, onConfirm: (String?) ->
 }
 
 fun NoriaContext.courseIdDialog(courseDialog: CourseIdDialogEntity) {
+  val pluginScope = PluginScopeKey.value
   dialog {
-    val kernel = requireNotNull(bindings[KernelKey])
     hbox(align = Align.Center) {
       uiText("Enter course id: ")
       gap(width = 2)
       textInput("", onInput = { newValue ->
-        kernel.changeAsync {
+        pluginScope.changeAsync {
           courseDialog.id = newValue
         }
       })

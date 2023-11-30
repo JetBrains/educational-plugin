@@ -1,11 +1,12 @@
 module com.jetbrains.edu.fleet.common {
   requires kotlin.stdlib;
   requires kotlinx.coroutines.core;
-  requires fleet.rhizomedb;
   requires fleet.common;
+  requires fleet.kernel.plugins;
+  requires fleet.rhizomedb;
+  requires fleet.util.network;
 
   requires com.jetbrains.edu.format;
-  requires fleet.util.network;
   requires retrofit2;
   requires com.fasterxml.jackson.databind;
   requires okhttp3;
