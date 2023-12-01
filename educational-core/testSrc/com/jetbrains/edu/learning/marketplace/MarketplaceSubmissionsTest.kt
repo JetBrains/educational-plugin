@@ -236,8 +236,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
         "time" : "2023-01-12T07:55:18.06143",
         "format_version" : 13,
         "update_version" : 1,
-        "status" : "correct",
-        "checker_output" : null
+        "status" : "correct"
       }
     """
 
@@ -253,8 +252,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
             "time" : "2023-01-12T07:55:18.06143",
             "format_version" : 13,
             "update_version" : 1,
-            "status" : "correct",
-            "checker_output" : null
+            "status" : "correct"
           },
           {
             "id" : 100023,
@@ -263,8 +261,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
             "time" : "2023-01-12T07:55:18.06143",
             "format_version" : 13,
             "update_version" : 1,
-            "status" : "correct",
-            "checker_output" : null
+            "status" : "correct"
           },
           {
             "id" : 100024,
@@ -273,8 +270,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
             "time" : "2023-01-12T07:55:18.06143",
             "format_version" : 13,
             "update_version" : 1,
-            "status" : "correct",
-            "checker_output" : null
+            "status" : "correct"
           }
         ]
       }
@@ -292,8 +288,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
             "time" : "2023-01-12T07:55:18.06143",
             "format_version" : 13,
             "update_version" : 1,
-            "status" : "correct",
-            "checker_output" : null
+            "status" : "correct"
           }
         ]
       }

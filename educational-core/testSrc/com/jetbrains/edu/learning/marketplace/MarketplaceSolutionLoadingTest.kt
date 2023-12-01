@@ -1,12 +1,13 @@
 package com.jetbrains.edu.learning.marketplace
 
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.SolutionLoadingTestBase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.WRONG
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
+import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.marketplace.MarketplaceSubmissionsTest.Companion.FIRST_TASK_SUBMISSION_AWS_KEY
 import com.jetbrains.edu.learning.marketplace.MarketplaceSubmissionsTest.Companion.SECOND_TASK_SUBMISSION_AWS_KEY
 import com.jetbrains.edu.learning.marketplace.MarketplaceSubmissionsTest.Companion.configureSubmissionsResponses
@@ -372,8 +373,7 @@ class MarketplaceSolutionLoadingTest : SolutionLoadingTestBase() {
               "time" : "2023-01-12T07:55:18.06143",
               "format_version" : 13,
               "update_version" : 1,
-              "status" : "$firstStatus",
-              "checker_output" : null
+              "status" : "$firstStatus"
             },
             {
               "id" : 100023,
@@ -382,8 +382,7 @@ class MarketplaceSolutionLoadingTest : SolutionLoadingTestBase() {
               "time" : "2023-01-12T07:55:18.06143",
               "format_version" : 13,
               "update_version" : 1,
-              "status" : "$secondStatus",
-              "checker_output" : null
+              "status" : "$secondStatus"
             }
           ]
       }
@@ -404,8 +403,7 @@ class MarketplaceSolutionLoadingTest : SolutionLoadingTestBase() {
             "time" : "2023-01-12T07:55:18.06143",
             "format_version" : 13,
             "update_version" : 1,
-            "status" : "correct",
-            "checker_output" : null
+            "status" : "correct"
           }
         ]
     }
