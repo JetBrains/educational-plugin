@@ -92,7 +92,7 @@ open class ToolWindowLinkHandler(val project: Project) {
 
       val parsedLink = parseInCourseLink(project, course, urlPath)
       if (parsedLink == null) {
-        LOG.warn("Failed to find course item for `${TaskDescriptionLinkProtocol.FILE.protocol}$urlPath`")
+        LOG.warn("Failed to find course item for `${TaskDescriptionLinkProtocol.COURSE.protocol}$urlPath`")
         return
       }
 
