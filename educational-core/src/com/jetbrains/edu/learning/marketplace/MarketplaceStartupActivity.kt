@@ -3,13 +3,11 @@ package com.jetbrains.edu.learning.marketplace
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
-import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.isUnitTestMode
-import com.jetbrains.edu.learning.marketplace.actions.ShareMySolutionsAction
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceUpdateChecker
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
@@ -39,8 +37,5 @@ class MarketplaceStartupActivity : StartupActivity {
     if (!submissionsManager.submissionsSupported()) return
 
     submissionsManager.prepareSubmissionsContentWhenLoggedIn { MarketplaceSolutionLoader.getInstance(project).loadSolutionsInBackground() }
-    if (Registry.`is`(ShareMySolutionsAction.REGISTRY_KEY, false)) {
-      submissionsManager.loadCommunitySubmissions()
-    }
   }
 }
