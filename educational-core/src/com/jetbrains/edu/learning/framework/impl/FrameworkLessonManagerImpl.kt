@@ -201,63 +201,62 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     targetState: Map<String, String>,
     showDialogIfConflict: Boolean
   ): UserChanges {
-    val (currentVisibleFilesState, currentInvisibleFilesState) = currentState.splitByKey { shouldBePropagated(currentTask, it) }
-    val (targetVisibleFilesState, targetInvisibleFilesState) = targetState.splitByKey { shouldBePropagated(targetTask, it) }
+    val (currentPropagatableFilesState, currentNonPropagatableFilesState) = currentState.splitByKey { shouldBePropagated(currentTask, it) }
+    val (targetPropagatableFilesState, targetNonPropagatableFilesState) = targetState.splitByKey { shouldBePropagated(targetTask, it) }
 
-    // A lesson may have files that are invisible in the previous step, but become visible in the new one.
-    // We allow files to change visibility from invisible to visible.
-    // Why is this necessary? Course creators often have such use-case:
+    // A lesson may have files that were non-propagatable in the previous step, but become propagatable in the new one.
+    // We allow files to change a propagation flag from false to true (from non-propagatable to propagatable).
+    // Course creators often have such use-case:
     // They want to make some files invisible on some prefix of the task list, and then have them visible in the rest of the tasks
     // So that they will be shown to students and will participate in solving the problem
     // For more detailed explanation, see the documentation:
     // https://jetbrains.team/p/edu/repositories/internal-documentation/files/subsystems/Framework%20Lessons/internal-part-ru.md
 
-    // Calculate files that change visibility
-    val fromInvisibleToVisibleFilesState = targetVisibleFilesState.filter { it.key in currentInvisibleFilesState }
-    val fromVisibleToInvisibleFilesState = targetInvisibleFilesState.filter { it.key in currentVisibleFilesState }
+    // Calculate files that change propagation flag
+    val fromNonPropagatableToPropagatableFilesState = targetPropagatableFilesState.filter { it.key in currentNonPropagatableFilesState }
+    val fromPropagatableToNonPropagatableFilesState = targetNonPropagatableFilesState.filter { it.key in currentPropagatableFilesState }
 
-    // We assume that files could not change visibility from visible to invisible
-    // This behaviour is not intended
-    if (fromVisibleToInvisibleFilesState.isNotEmpty()) {
+    // We assume that files could not change a propagation flag from true to false (for example, from visible to invisible)
+    // This behavior is not intended
+    if (fromPropagatableToNonPropagatableFilesState.isNotEmpty()) {
       LOG.error("Visibility change from visible to invisible during navigation in non-template-based lessons is not supported")
     }
 
-    // Only visible files that do not change visibility can participate in propagating user changes.
-    val currentVisibleFilesStateWithoutVisibilityChange = currentVisibleFilesState.filter { it.key !in targetInvisibleFilesState }
-    val targetVisibleFilesStateWithoutVisibilityChange = targetVisibleFilesState.filter { it.key !in currentInvisibleFilesState }
+    // Only files that do not change a propagation flag can participate in propagating user changes.
+    val newCurrentPropagatableFilesState = currentPropagatableFilesState.filter { it.key !in targetNonPropagatableFilesState }
+    val newTargetPropagatableFilesState = targetPropagatableFilesState.filter { it.key !in currentNonPropagatableFilesState }
 
-    // Files that change visibility are processed separately:
-    // (Invisible -> Visible) - Changes for them are not propagated
-    // (Visible -> Invisible) - We assume that there are no such files
+    // Files that change propagation flag are processed separately:
+    // (Non-Propagatable -> Propagatable) - Changes for them are not propagated
+    // (Propagatable -> Non-Propagatable) - We assume that there are no such files
 
-
-    // Creates [Change]s to propagates all current changes of task files to target task.
-    // During propagation, we assume that in the not-template-based framework lessons all the initial files are the same for each task.
+    // Creates Changes to propagate all current changes of task files to a target task.
+    // During propagation, we assume that in the not-template-based framework lessons, all the initial files are the same for each task.
     // Therefore, we will only add user-created files and remove user-deleted files.
     // During propagation, we do not change the text of the files.
     fun calculateCurrentTaskChanges(): UserChanges {
-      val toRemove = HashMap(targetVisibleFilesStateWithoutVisibilityChange)
-      val visibleFileChanges = mutableListOf<Change>()
+      val toRemove = HashMap(newTargetPropagatableFilesState)
+      val propagatableFileChanges = mutableListOf<Change>()
 
-      for ((path, text) in currentVisibleFilesStateWithoutVisibilityChange) {
+      for ((path, text) in newCurrentPropagatableFilesState) {
         val targetText = toRemove.remove(path)
         // Propagate user-created files
         if (targetText == null) {
-          visibleFileChanges += Change.PropagateLearnerCreatedTaskFile(path, text)
+          propagatableFileChanges += Change.PropagateLearnerCreatedTaskFile(path, text)
         }
       }
 
       // Remove user-deleted files
       for ((path, _) in toRemove) {
-        visibleFileChanges += Change.RemoveTaskFile(path)
+        propagatableFileChanges += Change.RemoveTaskFile(path)
       }
 
       // Calculate diff for invisible files and files that become visible and change them without propagation
-      val invisibleFileChanges = calculateChanges(
-        currentInvisibleFilesState,
-        targetInvisibleFilesState + fromInvisibleToVisibleFilesState
+      val nonPropagatableFileChanges = calculateChanges(
+        currentNonPropagatableFilesState,
+        targetNonPropagatableFilesState + fromNonPropagatableToPropagatableFilesState
       )
-      return invisibleFileChanges + visibleFileChanges
+      return nonPropagatableFileChanges + propagatableFileChanges
     }
 
     // target task initialization
@@ -265,12 +264,12 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
       return calculateCurrentTaskChanges()
     }
 
-    // if current and target states of visible files are the same
-    // it needs to calculate only diff for invisible files and for files that change visibility from invisible to visible
-    if (currentVisibleFilesStateWithoutVisibilityChange == targetVisibleFilesStateWithoutVisibilityChange) {
+    // if current and target states of propagatable files are the same
+    // it needs to calculate only diff for non-propagatable files and for files that change the propagation flag from false to true
+    if (newCurrentPropagatableFilesState == newTargetPropagatableFilesState) {
       return calculateChanges(
-        currentInvisibleFilesState,
-        targetInvisibleFilesState + fromInvisibleToVisibleFilesState
+        currentNonPropagatableFilesState,
+        targetNonPropagatableFilesState + fromNonPropagatableToPropagatableFilesState
       )
     }
 
@@ -334,15 +333,15 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     get() = taskFiles.mapValues { it.value.text }
 
   private fun FLTaskState.splitByKey(predicate: (String) -> Boolean): Pair<FLTaskState, FLTaskState> {
-    val s = HashMap<String, String>()
-    val t = HashMap<String, String>()
+    val positive = HashMap<String, String>()
+    val negative = HashMap<String, String>()
 
     for ((path, text) in this) {
-      val state = if (predicate(path)) s else t
+      val state = if (predicate(path)) positive else negative
       state[path] = text
     }
 
-    return s to t
+    return positive to negative
   }
 
   private fun FLTaskState.splitByVisibility(task: Task) = splitByKey { task.taskFiles[it]?.isVisible ?: true }
