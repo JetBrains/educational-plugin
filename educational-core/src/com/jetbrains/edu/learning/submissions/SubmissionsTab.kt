@@ -114,6 +114,7 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
     if (isCommunityTabAvailable) {
       val (communityDescriptionText, communityLinkHandler) = prepareCommunityContent(task, submissionsManager)
       communityPanel.apply {
+        hideLoadingSubmissionsPanel()
         updateLinkHandler(communityLinkHandler)
         setText(communityDescriptionText)
       }
@@ -162,6 +163,11 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
   }
 
   fun showLoadingPanel(platformName: String) = panel.showLoadingSubmissionsPanel(platformName)
+
+  fun showLoadingCommunityPanel(platformName: String) {
+    if (!isCommunityTabAvailable) return
+    communityPanel.showLoadingSubmissionsPanel(platformName)
+  }
 
   private fun addSegmentedButton() = headerPanel.add(panel {
     row {

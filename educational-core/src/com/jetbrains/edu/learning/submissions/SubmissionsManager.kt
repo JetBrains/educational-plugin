@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.submissions
 
 import com.intellij.execution.process.ProcessIOExecutorService
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
@@ -139,18 +138,10 @@ class SubmissionsManager(private val project: Project) {
       if (isLoggedIn()) {
         val taskToolWindowView = TaskToolWindowView.getInstance(project)
         taskToolWindowView.showLoadingSubmissionsPanel(getPlatformName())
-        loadSubmissionsContent(course, submissionsProvider, taskToolWindowView, loadSolutions)
-      }
-    }, ProcessIOExecutorService.INSTANCE)
-  }
-
-  fun loadCommunitySubmissions() {
-    val course = this.course
-    val submissionsProvider = course?.getSubmissionsProvider() ?: return
-
-    CompletableFuture.runAsync({
-      if (isLoggedIn()) {
-        communitySubmissions.putAll(submissionsProvider.loadSharedSolutionsForCourse(course))
+        if (Registry.`is`(ShareMySolutionsAction.REGISTRY_KEY, false)) {
+          taskToolWindowView.showLoadingCommunityPanel(getPlatformName())
+        }
+        loadSubmissionsContent(course, submissionsProvider, loadSolutions)
       }
     }, ProcessIOExecutorService.INSTANCE)
   }
@@ -161,6 +152,8 @@ class SubmissionsManager(private val project: Project) {
 
     CompletableFuture.runAsync({
       if (isLoggedIn()) {
+        val taskToolWindowView = TaskToolWindowView.getInstance(project)
+        taskToolWindowView.showLoadingCommunityPanel(getPlatformName())
         val sharedSolutions = submissionsProvider.loadSharedSolutionsForTask(course, task)
         communitySubmissions[task.id] = sharedSolutions
         updateSubmissionsTab()
@@ -182,7 +175,6 @@ class SubmissionsManager(private val project: Project) {
   private fun loadSubmissionsContent(
     course: Course,
     submissionsProvider: SubmissionsProvider,
-    taskToolWindowView: TaskToolWindowView,
     loadSolutions: () -> Unit
   ) {
     submissions.putAll(submissionsProvider.loadAllSubmissions(course))
@@ -190,7 +182,7 @@ class SubmissionsManager(private val project: Project) {
       communitySubmissions.putAll(submissionsProvider.loadSharedSolutionsForCourse(course))
     }
     loadSolutions()
-    ApplicationManager.getApplication().invokeLater { taskToolWindowView.updateTab(SUBMISSIONS_TAB) }
+    updateSubmissionsTab()
   }
 
   private fun Course.getSubmissionsProvider(): SubmissionsProvider? {

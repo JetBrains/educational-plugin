@@ -1,7 +1,8 @@
 package com.jetbrains.edu.learning.taskToolWindow.ui
 
 import com.intellij.ide.ui.LafManagerListener
-import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.actionSystem.DataProvider
+import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
@@ -18,13 +19,14 @@ import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.isFeatureEnabled
+import com.jetbrains.edu.learning.marketplace.isMarketplaceCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.stepik.hyperskill.getTopPanelForProblem
 import com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsService
 import com.jetbrains.edu.learning.submissions.SubmissionsTab
@@ -82,6 +84,15 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
     val submissionsTab = tabManager.getTab(SUBMISSIONS_TAB) as SubmissionsTab
     ApplicationManager.getApplication().invokeLater {
       submissionsTab.showLoadingPanel(platformName)
+    }
+  }
+
+  override fun showLoadingCommunityPanel(platformName: String) {
+    if (currentTask == null || !project.isMarketplaceCourse()) return
+
+    val submissionsTab = tabManager.getTab(SUBMISSIONS_TAB) as SubmissionsTab
+    ApplicationManager.getApplication().invokeLater {
+      submissionsTab.showLoadingCommunityPanel(platformName)
     }
   }
 

@@ -27,6 +27,8 @@ abstract class TaskToolWindowView(val project: Project) {
   abstract fun updateTab(tabType: TabType)
   abstract fun showLoadingSubmissionsPanel(platformName: String)
 
+  abstract fun showLoadingCommunityPanel(platformName: String)
+
   abstract fun readyToCheck()
   abstract fun checkStarted(task: Task, startSpinner: Boolean = false)
   abstract fun checkFinished(task: Task, checkResult: CheckResult)
