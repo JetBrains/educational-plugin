@@ -39,7 +39,11 @@ open class ToolWindowLinkHandler(val project: Project) {
     for ((protocol, processor) in INTERNAL_LINK_PROCESSORS) {
       if (url.startsWith(protocol.protocol)) {
         val urlPath = url.substringAfter(protocol.protocol)
-        processor(project, urlPath)
+        // If url path contains invalid symbols like ` ` from the URI point of view,
+        // you have to encode the path to make it work.
+        // So, the path should be decoded to support such cases.
+        val decodedUrlPath = urlPath.decode()
+        processor(project, decodedUrlPath)
         return true
       }
     }
@@ -58,17 +62,7 @@ open class ToolWindowLinkHandler(val project: Project) {
       TaskDescriptionLinkProtocol.TOOL_WINDOW to ::processToolWindowLink
     )
 
-    private fun processPsiElementLink(project: Project, urlPath: String) {
-      // Sometimes a user has to encode element reference because it contains invalid symbols like ` `.
-      // For example, Java support produces `Foo#foo(int, int)` as reference for `foo` method in the following `Foo` class
-      // ```
-      // class Foo {
-      //     public void foo(int bar, int baz) {}
-      // }
-      // ```
-      //
-      val qualifiedName = urlPath.decode()
-
+    private fun processPsiElementLink(project: Project, qualifiedName: String) {
       runInEdt {
         runReadAction {
           val dumbService = DumbService.getInstance(project)
@@ -109,10 +103,10 @@ open class ToolWindowLinkHandler(val project: Project) {
       }
     }
 
-    private fun processFileLink(project: Project, urlPath: String) {
-      val file = project.courseDir.findFileByRelativePath(urlPath)
+    private fun processFileLink(project: Project, filePath: String) {
+      val file = project.courseDir.findFileByRelativePath(filePath)
       if (file == null) {
-        LOG.warn("Can't find file for url $urlPath")
+        LOG.warn("Can't find file for url $filePath")
       }
       else {
         navigateToFile(project, file)
@@ -128,7 +122,7 @@ open class ToolWindowLinkHandler(val project: Project) {
       EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.FILE)
     }
 
-    private fun parseInCourseLink(project: Project, course: Course, urlPath: String): ParsedInCourseLink? {
+    private fun parseInCourseLink(project: Project, course: Course, path: String): ParsedInCourseLink? {
 
       fun parseNextItem(container: StudyItem, remainingPath: String?): ParsedInCourseLink? {
         if (remainingPath == null) {
@@ -158,19 +152,16 @@ open class ToolWindowLinkHandler(val project: Project) {
         }
       }
 
-      val path = urlPath.decode()
       return parseNextItem(course, path)
     }
 
-    private fun processToolWindowLink(project: Project, urlPath: String) {
-      val toolWindowId = urlPath.decode()
+    private fun processToolWindowLink(project: Project, toolWindowId: String) {
       runInEdt {
         ToolWindowManager.getInstance(project).getToolWindow(toolWindowId)?.show()
       }
     }
 
-    private fun processSettingsLink(project: Project, urlPath: String) {
-      val configurableId = urlPath.decode()
+    private fun processSettingsLink(project: Project, configurableId: String) {
       runInEdt {
         ShowSettingsUtilImpl.showSettingsDialog(project, configurableId, null)
       }
