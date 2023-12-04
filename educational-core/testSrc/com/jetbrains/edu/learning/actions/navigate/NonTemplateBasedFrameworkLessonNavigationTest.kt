@@ -820,6 +820,59 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  fun `test do not propagate non-editable files`() {
+    val course = courseWithFiles(
+      language = FakeGradleBasedLanguage
+    ) {
+      frameworkLesson("lesson1", isTemplateBased = false) {
+        eduTask("task1") {
+          taskFile("src/Task1.kt", "fun main1() {}", editable = false)
+          taskFile("src/Task2.kt", "fun main1() {}", editable = false)
+          taskFile("src/Task3.kt", "fun main1() {}")
+        }
+        eduTask("task2") {
+          taskFile("src/Task1.kt", "fun main2() {}", editable = false)
+          taskFile("src/Task3.kt", "fun main2() {}")
+          taskFile("src/Task4.kt", "fun main2() {}", editable = false)
+        }
+      }
+    }
+
+    val task1 = course.findTask("lesson1", "task1")
+
+    withVirtualFileListener(course) {
+      task1.openTaskFileInEditor("src/Task1.kt")
+      testAction(NextTaskAction.ACTION_ID)
+    }
+
+    val fileTree = fileTree {
+      dir("lesson1") {
+        dir("task") {
+          dir("src") {
+            file("Task1.kt", """
+              fun main2() {}
+            """)
+            file("Task3.kt", """
+              fun main1() {}
+            """)
+            file("Task4.kt", """
+              fun main2() {}
+            """)
+          }
+        }
+        dir("task1") {
+          file("task.md")
+        }
+        dir("task2") {
+          file("task.md")
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    fileTree.assertEquals(rootDir, myFixture)
+  }
+
   private fun createRunConfigurationTemplate(taskName: String, sourceFileName: String) = """
     <component name="ProjectRunConfigurationManager">
       <configuration default="false" name="${sourceFileName}Kt" type="JetRunConfigurationType" nameIsGenerated="true">

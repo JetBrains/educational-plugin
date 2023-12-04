@@ -49,8 +49,8 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
       "Only solutions of framework tasks can be saved"
     }
 
-    val visibleFiles = task.allFiles.split(task).first
-    val externalVisibleFiles = externalState.split(task).first
+    val visibleFiles = task.allFiles.splitByVisibility(task).first
+    val externalVisibleFiles = externalState.splitByVisibility(task).first
     val changes = calculateChanges(visibleFiles, externalVisibleFiles)
     val currentRecord = task.record
     task.record = try {
@@ -201,8 +201,8 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     targetState: Map<String, String>,
     showDialogIfConflict: Boolean
   ): UserChanges {
-    val (currentVisibleFilesState, currentInvisibleFilesState) = currentState.split(currentTask)
-    val (targetVisibleFilesState, targetInvisibleFilesState) = targetState.split(targetTask)
+    val (currentVisibleFilesState, currentInvisibleFilesState) = currentState.splitByKey { shouldBePropagated(currentTask, it) }
+    val (targetVisibleFilesState, targetInvisibleFilesState) = targetState.splitByKey { shouldBePropagated(targetTask, it) }
 
     // A lesson may have files that are invisible in the previous step, but become visible in the new one.
     // We allow files to change visibility from invisible to visible.
@@ -333,19 +333,25 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
   private val Task.allFiles: FLTaskState
     get() = taskFiles.mapValues { it.value.text }
 
-  private fun FLTaskState.split(task: Task): Pair<FLTaskState, FLTaskState> {
-    val visibleFiles = HashMap<String, String>()
-    val invisibleFiles = HashMap<String, String>()
+  private fun FLTaskState.splitByKey(predicate: (String) -> Boolean): Pair<FLTaskState, FLTaskState> {
+    val s = HashMap<String, String>()
+    val t = HashMap<String, String>()
 
     for ((path, text) in this) {
-      // TaskFiles and state may not be consistent due to external changes in hyperskill lessons.
-      // if there is a task in state that is not in taskFiles, then we know that it is a visible file.
-      val isVisibleFile = task.taskFiles[path]?.isVisible ?: true
-      val state = if (isVisibleFile) visibleFiles else invisibleFiles
+      val state = if (predicate(path)) s else t
       state[path] = text
     }
 
-    return visibleFiles to invisibleFiles
+    return s to t
+  }
+
+  private fun FLTaskState.splitByVisibility(task: Task) = splitByKey { task.taskFiles[it]?.isVisible ?: true }
+
+  private fun shouldBePropagated(task: Task, path: String): Boolean {
+    if (task.taskFiles[path]?.isEditable == false) {
+      return false
+    }
+    return task.taskFiles[path]?.isVisible ?: true
   }
 
   companion object {
