@@ -9,7 +9,7 @@ class PyTaskDescriptionPsiLinksTest : TaskDescriptionPsiLinksTestBase() {
 
   override val fileType: FileType = PythonFileType.INSTANCE
 
-  fun `test navigate to class`() = doTest("bar.Bar", """
+  fun `test navigate to class`() = doTest("psi_element://bar.Bar", """
       class <caret>Bar:
           def bar(self):
               pass
@@ -26,7 +26,7 @@ class PyTaskDescriptionPsiLinksTest : TaskDescriptionPsiLinksTestBase() {
     """)
   }
 
-  fun `test navigate to method`() = doTest("foo.Foo.foo", """
+  fun `test navigate to method`() = doTest("psi_element://foo.Foo.foo", """
       class Foo:
           def <caret>foo(self):
               pass
@@ -43,7 +43,7 @@ class PyTaskDescriptionPsiLinksTest : TaskDescriptionPsiLinksTestBase() {
     """)
   }
 
-  fun `test navigate to function`() = doTest("bar.baz", """
+  fun `test navigate to function`() = doTest("psi_element://bar.baz", """
       class Bar:
           def bar(self):
               pass

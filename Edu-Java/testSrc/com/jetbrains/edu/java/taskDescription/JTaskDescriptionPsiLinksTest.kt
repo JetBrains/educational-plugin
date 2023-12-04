@@ -8,7 +8,7 @@ class JTaskDescriptionPsiLinksTest : TaskDescriptionPsiLinksTestBase() {
 
   override val fileType: FileType = JavaFileType.INSTANCE
 
-  fun `test navigate to class`() = doTest("Bar", """
+  fun `test navigate to class`() = doTest("psi_element://Bar", """
     public class <caret>Bar {
       public void bar() {}
     }
@@ -25,7 +25,7 @@ class JTaskDescriptionPsiLinksTest : TaskDescriptionPsiLinksTestBase() {
     """)
   }
 
-  fun `test navigate to method`() = doTest("Foo#foo", """
+  fun `test navigate to method`() = doTest("psi_element://Foo#foo", """
     public class Foo {
       public void <caret>foo() {}
     }
@@ -42,7 +42,7 @@ class JTaskDescriptionPsiLinksTest : TaskDescriptionPsiLinksTestBase() {
     """)
   }
 
-  fun `test navigate to method with encoded url`() = doTest("Foo%23foo%28int%2C%20int%29", """
+  fun `test navigate to method with encoded url`() = doTest("psi_element://Foo%23foo%28int%2C%20int%29", """
       public class Foo {
         public void foo() {}
         public void <caret>foo(int bar, int baz) {}
@@ -61,7 +61,7 @@ class JTaskDescriptionPsiLinksTest : TaskDescriptionPsiLinksTestBase() {
     """)
   }
 
-  fun `test navigate to inner class`() = doTest("Foo.Baz", """
+  fun `test navigate to inner class`() = doTest("psi_element://Foo.Baz", """
     public class Foo {
       public void foo() {}
 

@@ -1,13 +1,10 @@
 package com.jetbrains.edu.learning.taskToolWindow
 
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.testFramework.PlatformTestUtil
-import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.selectedVirtualFile
-import com.jetbrains.edu.learning.taskToolWindow.ui.ToolWindowLinkHandler
 
-class TaskDescriptionInCourseLinksTest : EduTestCase() {
+class TaskDescriptionInCourseLinksTest : TaskDescriptionLinksTestBase() {
 
   fun `test empty link`() = doTest("course://")
 
@@ -66,8 +63,7 @@ class TaskDescriptionInCourseLinksTest : EduTestCase() {
   }
 
   private fun openInCourseLink(url: String, expectedPath: String?) {
-    ToolWindowLinkHandler(project).process(url)
-    PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
+    openLink(url)
 
     val selectedFile = project.selectedVirtualFile
     if (expectedPath == null) {

@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 class KtTaskDescriptionPsiLinksTest : TaskDescriptionPsiLinksTestBase() {
   override val fileType: FileType = KotlinFileType.INSTANCE
 
-  fun `test navigate to class`() = doTest("Bar", """
+  fun `test navigate to class`() = doTest("psi_element://Bar", """
     class <caret>Bar {
       fun bar() {}
     }
@@ -24,7 +24,7 @@ class KtTaskDescriptionPsiLinksTest : TaskDescriptionPsiLinksTestBase() {
     """)
   }
 
-  fun `test navigate to method`() = doTest("Foo#foo", """
+  fun `test navigate to method`() = doTest("psi_element://Foo#foo", """
     class Foo {
       fun <caret>foo() {}
     }
@@ -41,7 +41,7 @@ class KtTaskDescriptionPsiLinksTest : TaskDescriptionPsiLinksTestBase() {
     """)
   }
 
-  fun `test navigate to inner class`() = doTest("Foo.FooBar", """
+  fun `test navigate to inner class`() = doTest("psi_element://Foo.FooBar", """
     class Foo {
       fun foo() {}
 
@@ -62,7 +62,7 @@ class KtTaskDescriptionPsiLinksTest : TaskDescriptionPsiLinksTestBase() {
     """)
   }
 
-  fun `test navigate to property`() = doTest("Foo#property", """
+  fun `test navigate to property`() = doTest("psi_element://Foo#property", """
       class Foo {
         val <caret>property: Int = 1
         fun foo() {}

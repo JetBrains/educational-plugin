@@ -3,21 +3,16 @@ package com.jetbrains.edu.learning.taskToolWindow
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.FileTreeBuilder
 import com.jetbrains.edu.learning.fileTree
-import com.jetbrains.edu.learning.taskToolWindow.ui.TaskDescriptionLinkProtocol
-import com.jetbrains.edu.learning.taskToolWindow.ui.ToolWindowLinkHandler
 
-abstract class TaskDescriptionPsiLinksTestBase : EduTestCase() {
+abstract class TaskDescriptionPsiLinksTestBase : TaskDescriptionLinksTestBase() {
 
   abstract val fileType: FileType
 
   protected fun doTest(linkText: String, expectedText: String, fileTreeBlock: FileTreeBuilder.() -> Unit) {
     fileTree(fileTreeBlock).create(LightPlatformTestCase.getSourceRoot())
-    ToolWindowLinkHandler(project).process("${TaskDescriptionLinkProtocol.PSI_ELEMENT}$linkText")
-    UIUtil.dispatchAllInvocationEvents()
+    openLink(linkText)
     val openedEditor = EditorFactory.getInstance().allEditors.single()
 
     myFixture.configureByText(fileType, expectedText.trimIndent())
