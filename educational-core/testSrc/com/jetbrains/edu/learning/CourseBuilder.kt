@@ -36,6 +36,9 @@ import java.util.regex.Pattern
 private val OPENING_TAG: Pattern = Pattern.compile("<p>")
 private val CLOSING_TAG: Pattern = Pattern.compile("</p>")
 
+@DslMarker
+annotation class CourseDsl
+
 fun course(
   name: String = "Test Course",
   language: com.intellij.lang.Language = PlainTextLanguage.INSTANCE,
@@ -73,6 +76,7 @@ fun Course.createCourseFiles(
   }, "Course Structure Generation", false, project)
 }
 
+@CourseDsl
 abstract class LessonOwnerBuilder(val course: Course) {
 
   protected abstract val nextLessonIndex: Int
@@ -205,6 +209,7 @@ class SectionBuilder(course: Course, val section: Section = Section()) : LessonO
   }
 }
 
+@CourseDsl
 class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesson: T) {
 
   init {
@@ -490,6 +495,7 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
   }
 }
 
+@CourseDsl
 class TaskBuilder(val lesson: Lesson, val task: Task) {
 
   private val _explicitVisibility: MutableMap<String, Boolean> = mutableMapOf()
@@ -700,6 +706,7 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
   }
 }
 
+@CourseDsl
 class AdditionalFilesBuilder(val course: Course) {
 
   fun eduFile(
@@ -717,6 +724,7 @@ class AdditionalFilesBuilder(val course: Course) {
 
 }
 
+@CourseDsl
 class TaskFileBuilder(val task: Task? = null) {
   val taskFile = TaskFile()
 
@@ -765,6 +773,7 @@ class TaskFileBuilder(val task: Task? = null) {
   }
 }
 
+@CourseDsl
 class EduFileBuilder {
   val eduFile = EduFile()
 
