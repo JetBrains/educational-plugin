@@ -30,7 +30,7 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 
 open class ToolWindowLinkHandler(val project: Project) {
 
-  protected open fun processExternalLink(url: String) = EduBrowser.getInstance().browse(url)
+  protected fun processExternalLink(url: String) = EduBrowser.getInstance().browse(url)
 
   /**
    * @return false to continue (for example open external link at task description), otherwise true
