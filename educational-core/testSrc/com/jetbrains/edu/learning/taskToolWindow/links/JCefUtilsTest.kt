@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.taskToolWindow.ui
+package com.jetbrains.edu.learning.taskToolWindow.links
 
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask

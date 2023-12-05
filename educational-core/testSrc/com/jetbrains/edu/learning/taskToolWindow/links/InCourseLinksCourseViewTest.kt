@@ -1,10 +1,9 @@
-package com.jetbrains.edu.learning.taskToolWindow
+package com.jetbrains.edu.learning.taskToolWindow.links
 
 import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseView.CourseViewHeavyTestBase
 import com.jetbrains.edu.learning.projectView.CourseViewPane
-import com.jetbrains.edu.learning.taskToolWindow.ui.ToolWindowLinkHandler
 
 class InCourseLinksCourseViewTest : CourseViewHeavyTestBase() {
 

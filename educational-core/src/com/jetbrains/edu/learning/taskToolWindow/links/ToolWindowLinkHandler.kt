@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.taskToolWindow.ui
+package com.jetbrains.edu.learning.taskToolWindow.links
 
 import com.intellij.ide.actions.QualifiedNameProvider
 import com.intellij.ide.actions.ShowSettingsUtilImpl

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.taskToolWindow.ui
+package com.jetbrains.edu.learning.taskToolWindow.links
 
 import com.intellij.codeInsight.documentation.DocumentationManagerProtocol
 import com.intellij.openapi.vfs.StandardFileSystems

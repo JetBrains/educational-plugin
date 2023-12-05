@@ -2,7 +2,7 @@ package com.jetbrains.edu.java.taskDescription
 
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.fileTypes.FileType
-import com.jetbrains.edu.learning.taskToolWindow.TaskDescriptionPsiLinksTestBase
+import com.jetbrains.edu.learning.taskToolWindow.links.TaskDescriptionPsiLinksTestBase
 
 class JTaskDescriptionPsiLinksTest : TaskDescriptionPsiLinksTestBase() {
 

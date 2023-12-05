@@ -6,9 +6,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.jcef.JBCefApp
 import com.intellij.ui.jcef.JCEFHtmlPanel
+import com.jetbrains.edu.learning.taskToolWindow.links.JCefToolWindowLinkHandler
 import com.jetbrains.edu.learning.taskToolWindow.ui.JCEFTaskInfoLifeSpanHandler
 import com.jetbrains.edu.learning.taskToolWindow.ui.JCEFToolWindowRequestHandler
-import com.jetbrains.edu.learning.taskToolWindow.ui.JCefToolWindowLinkHandler
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import java.awt.BorderLayout
 import javax.swing.JComponent

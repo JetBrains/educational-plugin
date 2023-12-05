@@ -24,6 +24,7 @@ import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.taskToolWindow.links.SwingToolWindowLinkHandler
 import java.awt.BorderLayout
 import java.io.IOException
 import java.util.*

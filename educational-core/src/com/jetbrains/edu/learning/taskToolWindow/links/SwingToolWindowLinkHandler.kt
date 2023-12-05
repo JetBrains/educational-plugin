@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.taskToolWindow.ui
+package com.jetbrains.edu.learning.taskToolWindow.links
 
 import com.intellij.openapi.project.Project
 import javax.swing.event.HyperlinkEvent

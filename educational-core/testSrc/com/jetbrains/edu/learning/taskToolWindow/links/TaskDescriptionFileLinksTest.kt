@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.taskToolWindow
+package com.jetbrains.edu.learning.taskToolWindow.links
 
 import com.intellij.openapi.fileEditor.FileEditorManager
 

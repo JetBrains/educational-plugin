@@ -7,7 +7,7 @@ import com.jetbrains.edu.codeInsight.inCourse
 import com.jetbrains.edu.codeInsight.inFileWithName
 import com.jetbrains.edu.codeInsight.psiElement
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD
-import com.jetbrains.edu.learning.taskToolWindow.ui.TaskDescriptionLinkProtocol
+import com.jetbrains.edu.learning.taskToolWindow.links.TaskDescriptionLinkProtocol
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownLinkDestination
 
 object EduMarkdownPsiPatterns {

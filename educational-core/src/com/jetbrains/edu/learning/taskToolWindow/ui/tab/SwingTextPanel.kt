@@ -6,7 +6,7 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.taskToolWindow.ui.SwingToolWindowLinkHandler
+import com.jetbrains.edu.learning.taskToolWindow.links.SwingToolWindowLinkHandler
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.taskToolWindow.ui.createTextPane
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleManager
