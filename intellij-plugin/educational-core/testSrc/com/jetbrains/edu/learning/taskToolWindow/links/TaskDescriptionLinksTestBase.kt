@@ -1,8 +1,7 @@
-package com.jetbrains.edu.learning.taskToolWindow
+package com.jetbrains.edu.learning.taskToolWindow.links
 
 import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.taskToolWindow.ui.ToolWindowLinkHandler
 
 abstract class TaskDescriptionLinksTestBase : EduTestCase() {
 

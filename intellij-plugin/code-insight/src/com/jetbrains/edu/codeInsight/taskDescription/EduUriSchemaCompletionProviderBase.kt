@@ -8,8 +8,8 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.util.ProcessingContext
 import com.intellij.util.io.URLUtil
 import com.jetbrains.edu.codeInsight.messages.EduCodeInsightBundle
-import com.jetbrains.edu.learning.taskToolWindow.ui.TaskDescriptionLinkProtocol
-import com.jetbrains.edu.learning.taskToolWindow.ui.TaskDescriptionLinkProtocol.*
+import com.jetbrains.edu.learning.taskToolWindow.links.TaskDescriptionLinkProtocol
+import com.jetbrains.edu.learning.taskToolWindow.links.TaskDescriptionLinkProtocol.*
 import org.jetbrains.annotations.Nls
 
 abstract class EduUriSchemaCompletionProviderBase : CompletionProvider<CompletionParameters>() {

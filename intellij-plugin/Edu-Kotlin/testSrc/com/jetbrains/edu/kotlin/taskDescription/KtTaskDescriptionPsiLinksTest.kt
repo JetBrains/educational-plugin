@@ -1,7 +1,7 @@
 package com.jetbrains.edu.kotlin.taskDescription
 
 import com.intellij.openapi.fileTypes.FileType
-import com.jetbrains.edu.learning.taskToolWindow.TaskDescriptionPsiLinksTestBase
+import com.jetbrains.edu.learning.taskToolWindow.links.TaskDescriptionPsiLinksTestBase
 import org.jetbrains.kotlin.idea.KotlinFileType
 
 class KtTaskDescriptionPsiLinksTest : TaskDescriptionPsiLinksTestBase() {

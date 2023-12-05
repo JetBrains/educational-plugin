@@ -1,7 +1,7 @@
 package com.jetbrains.edu.scala.taskDescription
 
 import com.intellij.openapi.fileTypes.FileType
-import com.jetbrains.edu.learning.taskToolWindow.TaskDescriptionPsiLinksTestBase
+import com.jetbrains.edu.learning.taskToolWindow.links.TaskDescriptionPsiLinksTestBase
 import org.jetbrains.plugins.scala.ScalaFileType
 
 class ScalaTaskDescriptionPsiLinksTest : TaskDescriptionPsiLinksTestBase() {
