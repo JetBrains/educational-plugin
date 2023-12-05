@@ -1,12 +1,8 @@
 package com.jetbrains.edu.learning.taskToolWindow.links
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.util.io.URLUtil
-import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
-import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.taskToolWindow.containsYoutubeLink
 import org.apache.commons.lang3.StringUtils
 
@@ -52,32 +48,8 @@ class JCefToolWindowLinkHandler(project: Project) : ToolWindowLinkHandler(projec
     return url.split(URLUtil.SCHEME_SEPARATOR).size > 2
   }
 
-  override fun processExternalLink(url: String) {
-    if (url.startsWith(StandardFileSystems.FILE_PROTOCOL_PREFIX)) {
-      processExternalRelativePath(url)
-    }
-    else {
-      super.processExternalLink(url)
-    }
-  }
-
-  /**
-   * html can contain relative paths.
-   * for example: <a>/path/index.html</a>, <a>./path/index.html</a>
-   */
-  private fun processExternalRelativePath(url: String) {
-    if (project.course is StepikCourse) {
-      val stepikUrl = StepikNames.getStepikUrl() + url.substringAfter(StandardFileSystems.FILE_PROTOCOL_PREFIX)
-      super.processExternalLink(stepikUrl)
-    }
-    else {
-      LOG.warn("Can't open relative path on stepik for course ${project.course?.name}")
-    }
-  }
-
   companion object {
     private const val JBCEF_BROWSER: String = "/jbcefbrowser/"
     private const val JCEF_URL_PREFIX: String = "${StandardFileSystems.FILE_PROTOCOL_PREFIX}$JBCEF_BROWSER"
-    private val LOG = Logger.getInstance(JCefToolWindowLinkHandler::class.java)
   }
 }
