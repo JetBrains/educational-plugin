@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.update
 
 import com.intellij.openapi.application.runReadAction
-import com.jetbrains.edu.learning.actions.navigate.NavigationTestBase
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
@@ -11,14 +10,8 @@ import com.jetbrains.edu.learning.fileTree
 import kotlinx.coroutines.runBlocking
 import java.util.*
 
-abstract class TaskUpdateTestBase<T : Course> : NavigationTestBase() {
-  protected lateinit var localCourse: T
-
-  abstract fun initiateLocalCourse()
-
+abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
   abstract fun getUpdater(lesson: Lesson): TaskUpdater
-
-  override fun runInDispatchThread(): Boolean = false
 
   fun updateTasks(remoteCourse: T, lesson: Lesson? = null, remoteLesson: Lesson? = null, isShouldBeUpdated: Boolean = true) {
     val updater = getUpdater(lesson ?: localCourse.lessons.first())
@@ -463,13 +456,6 @@ abstract class TaskUpdateTestBase<T : Course> : NavigationTestBase() {
     }
     expectedStructure.assertEquals(rootDir)
   }
-
-  protected fun toRemoteCourse(changeCourse: T.() -> Unit): T =
-    localCourse.copy().apply {
-      copyFileContents(localCourse, this)
-      init(false)
-      changeCourse()
-    }
 
   protected val T.taskList: List<Task> get() = lessons[0].taskList
 }
