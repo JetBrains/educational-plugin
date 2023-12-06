@@ -20,16 +20,16 @@ import com.jetbrains.edu.learning.update.elements.TaskUpdate
 import com.jetbrains.edu.learning.update.elements.TaskUpdateInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.jetbrains.annotations.TestOnly
 
 abstract class TaskUpdater(project: Project, private val lesson: Lesson) : StudyItemUpdater<Task, TaskUpdate>(project) {
-
+  @TestOnly
   suspend fun update(remoteLesson: Lesson) {
-    val updates = collect(lesson.taskList, remoteLesson.taskList)
+    collect(lesson.taskList, remoteLesson.taskList)
     if (updates.isEmpty()) return
 
-    amountOfUpdates = updates.size
     isUpdateSucceed = try {
-      doUpdate(updates)
+      doUpdate()
       true
     }
     catch (e: Exception) {
@@ -38,8 +38,7 @@ abstract class TaskUpdater(project: Project, private val lesson: Lesson) : Study
     }
   }
 
-  override suspend fun collect(localItems: List<Task>, remoteItems: List<Task>): List<TaskUpdate> {
-    val result = mutableListOf<TaskUpdate>()
+  override suspend fun collect(localItems: List<Task>, remoteItems: List<Task>) {
     val localTasks = localItems.toMutableSet()
     val remoteTasks = remoteItems.toMutableSet()
 
@@ -47,14 +46,14 @@ abstract class TaskUpdater(project: Project, private val lesson: Lesson) : Study
       if (localTasks.isEmpty()) {
         // new tasks
         remoteTasks.forEach { remoteTask ->
-          result.add(TaskCreationInfo(lesson, remoteTask))
+          updates.add(TaskCreationInfo(lesson, remoteTask))
         }
         remoteTasks.clear()
       }
       if (remoteTasks.isEmpty()) {
         // tasks to be deleted
         localTasks.forEach { localTask ->
-          result.add(TaskDeletionInfo(localTask))
+          updates.add(TaskDeletionInfo(localTask))
         }
         localTasks.clear()
       }
@@ -63,22 +62,20 @@ abstract class TaskUpdater(project: Project, private val lesson: Lesson) : Study
       val localTask = localTasks.firstOrNull() ?: continue
       val remoteTask = remoteTasks.find { it.id == localTask.id }
       if (remoteTask == null) {
-        result.add(TaskDeletionInfo(localTask))
+        updates.add(TaskDeletionInfo(localTask))
         localTasks.remove(localTask)
       }
       else {
         if (isLocalTaskOutdated(localTask, remoteTask) || localTask.isChanged(remoteTask)) {
-          result.add(TaskUpdateInfo(localTask, remoteTask))
+          updates.add(TaskUpdateInfo(localTask, remoteTask))
         }
         localTasks.remove(localTask)
         remoteTasks.remove(remoteTask)
       }
     }
-
-    return result
   }
 
-  override suspend fun doUpdate(updates: List<TaskUpdate>) {
+  override suspend fun doUpdate() {
     updates.forEach {
       it.doUpdate(project)
     }

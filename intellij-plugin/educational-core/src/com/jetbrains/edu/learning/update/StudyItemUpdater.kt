@@ -14,19 +14,20 @@ import org.jetbrains.annotations.TestOnly
 // TODO EDU-5830 maybe synchronization is needed
 @Suppress("DuplicatedCode")
 abstract class StudyItemUpdater<T : StudyItem, U : StudyItemUpdate<T>>(protected val project: Project) {
-  var amountOfUpdates: Int = 0
+  protected val updates = mutableListOf<U>()
+
+  val amountOfUpdates: Int
     @TestOnly
-    get
-    protected set
+    get() = updates.size
 
   var isUpdateSucceed: Boolean = false
     @TestOnly
     get
     protected set
 
-  protected abstract suspend fun collect(localItems: List<T>, remoteItems: List<T>): List<U>
+  protected abstract suspend fun collect(localItems: List<T>, remoteItems: List<T>)
 
-  protected abstract suspend fun doUpdate(updates: List<U>)
+  protected abstract suspend fun doUpdate()
 
   companion object {
     @Suppress("UnstableApiUsage")

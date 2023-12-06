@@ -17,7 +17,7 @@ class HyperskillTaskUpdatesAvailableTest : CourseGenerationTestBase<EmptyProject
     createCourseStructure(localCourse)
     val updater = HyperskillTaskUpdater(project, localCourse.lessons.first())
     runBlocking {
-      updater.update(remoteCourse.lessons.first())
+      updater.collect(remoteCourse.lessons.first())
     }
     assertEquals(expectedAmountOfUpdates, updater.amountOfUpdates)
   }
