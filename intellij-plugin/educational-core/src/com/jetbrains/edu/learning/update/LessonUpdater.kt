@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.update
 
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.update.elements.LessonCreationInfo
@@ -10,6 +11,12 @@ import com.jetbrains.edu.learning.update.elements.LessonUpdateInfo
 
 abstract class LessonUpdater(project: Project, private val container: ItemContainer) : StudyItemUpdater<Lesson, LessonUpdate>(project) {
   protected abstract fun createTaskUpdater(lesson: Lesson): TaskUpdater
+
+  suspend fun collect(remoteContainer: ItemContainer) {
+    val localLessons = container.items.mapNotNull { it as? Lesson }.filter { it !is FrameworkLesson }
+    val remoteLessons = remoteContainer.items.mapNotNull { it as? Lesson }.filter { it !is FrameworkLesson }
+    collect(localLessons, remoteLessons)
+  }
 
   override suspend fun collect(localItems: List<Lesson>, remoteItems: List<Lesson>) {
     val localLessons = localItems.toMutableSet()

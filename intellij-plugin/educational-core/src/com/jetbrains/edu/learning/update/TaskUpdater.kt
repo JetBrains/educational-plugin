@@ -97,6 +97,7 @@ abstract class TaskUpdater(project: Project, private val lesson: Lesson) : Study
 
     return when {
       name != remoteTask.name -> true
+      index != remoteTask.index -> true
       taskFiles.size != newTaskFiles.size -> true
       taskDescriptionText != remoteTask.descriptionText -> true
       javaClass != remoteTask.javaClass -> true
