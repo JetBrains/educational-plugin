@@ -26,7 +26,7 @@ abstract class TaskUpdater(project: Project, private val lesson: Lesson) : Study
   @TestOnly
   suspend fun update(remoteLesson: Lesson) {
     collect(lesson.taskList, remoteLesson.taskList)
-    if (updates.isEmpty()) return
+    if (!areUpdatesAvailable()) return
 
     isUpdateSucceed = try {
       doUpdate()
@@ -37,6 +37,8 @@ abstract class TaskUpdater(project: Project, private val lesson: Lesson) : Study
       false
     }
   }
+
+  suspend fun collect(remoteLesson: Lesson) = collect(lesson.taskList, remoteLesson.taskList)
 
   override suspend fun collect(localItems: List<Task>, remoteItems: List<Task>) {
     val localTasks = localItems.toMutableSet()
@@ -74,6 +76,8 @@ abstract class TaskUpdater(project: Project, private val lesson: Lesson) : Study
       }
     }
   }
+
+  fun areUpdatesAvailable(): Boolean = updates.isNotEmpty()
 
   override suspend fun doUpdate() {
     updates.forEach {
