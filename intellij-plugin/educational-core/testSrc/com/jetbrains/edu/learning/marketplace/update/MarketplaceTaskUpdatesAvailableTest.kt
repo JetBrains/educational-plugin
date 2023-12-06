@@ -2,27 +2,21 @@ package com.jetbrains.edu.learning.marketplace.update
 
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
-import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
+import com.jetbrains.edu.learning.update.UpdatesAvailableTestBase
 import kotlinx.coroutines.runBlocking
 
-class MarketplaceTaskUpdatesAvailableTest : CourseGenerationTestBase<EmptyProjectSettings>() {
-  override val defaultSettings: EmptyProjectSettings get() = EmptyProjectSettings
-
-  override fun runInDispatchThread(): Boolean = false
-
-  private fun doTestUpdatesAvailable(localCourse: EduCourse, remoteCourse: EduCourse, expectedAmountOfUpdates: Int) {
+class MarketplaceTaskUpdatesAvailableTest : UpdatesAvailableTestBase<EduCourse>() {
+  private fun doTestUpdatesAvailable(remoteCourse: EduCourse, expectedAmountOfUpdates: Int) {
     createCourseStructure(localCourse)
     val updater = MarketplaceTaskUpdater(project, localCourse.lessons.first())
-    runBlocking {
+    val updates = runBlocking {
       updater.collect(remoteCourse.lessons.first())
     }
-    assertEquals(expectedAmountOfUpdates, updater.amountOfUpdates)
+    assertEquals(expectedAmountOfUpdates, updates.size)
   }
 
   fun `test updates are available when task name is changed`() {
-    val course = createCourse()
-
+    initiateLocalCourse()
     val serverCourse = course {
       lesson {
         eduTask("task1 updated", stepId = 1) {
@@ -34,11 +28,11 @@ class MarketplaceTaskUpdatesAvailableTest : CourseGenerationTestBase<EmptyProjec
       }
     } as EduCourse
 
-    doTestUpdatesAvailable(course, serverCourse, 1)
+    doTestUpdatesAvailable(serverCourse, 1)
   }
 
   fun `test updates are available when description text is changed`() {
-    val course = createCourse()
+    initiateLocalCourse()
     val serverCourse = course {
       lesson {
         eduTask("task1", stepId = 1) {
@@ -50,11 +44,11 @@ class MarketplaceTaskUpdatesAvailableTest : CourseGenerationTestBase<EmptyProjec
       }
     } as EduCourse
 
-    doTestUpdatesAvailable(course, serverCourse, 2)
+    doTestUpdatesAvailable(serverCourse, 2)
   }
 
   fun `test updates are available when placeholders are changed`() {
-    val course = course {
+    localCourse = course {
       lesson {
         eduTask("task1", stepId = 1) {
           taskFile("TaskFile1.kt", "fun foo() { <p>TODO</p>() }") {
@@ -80,12 +74,11 @@ class MarketplaceTaskUpdatesAvailableTest : CourseGenerationTestBase<EmptyProjec
       }
     } as EduCourse
 
-    doTestUpdatesAvailable(course, serverCourse, 1)
+    doTestUpdatesAvailable(serverCourse, 1)
   }
 
   fun `test updates are available when the task changes its type`() {
-    val course = createCourse()
-
+    initiateLocalCourse()
     val serverCourse = course {
       lesson {
         codeTask("task1", stepId = 1) {
@@ -97,12 +90,11 @@ class MarketplaceTaskUpdatesAvailableTest : CourseGenerationTestBase<EmptyProjec
       }
     } as EduCourse
 
-    doTestUpdatesAvailable(course, serverCourse, 1)
+    doTestUpdatesAvailable(serverCourse, 1)
   }
 
   fun `test updates are available when taskFile name is changed`() {
-    val course = createCourse()
-
+    initiateLocalCourse()
     val serverCourse = course {
       lesson {
         eduTask("task1", stepId = 1) {
@@ -114,12 +106,11 @@ class MarketplaceTaskUpdatesAvailableTest : CourseGenerationTestBase<EmptyProjec
       }
     } as EduCourse
 
-    doTestUpdatesAvailable(course, serverCourse, 1)
+    doTestUpdatesAvailable(serverCourse, 1)
   }
 
   fun `test updates are available when amount of taskFiles is changed`() {
-    val course = createCourse()
-
+    initiateLocalCourse()
     val serverCourse = course {
       lesson {
         eduTask("task1", stepId = 1) {
@@ -132,12 +123,11 @@ class MarketplaceTaskUpdatesAvailableTest : CourseGenerationTestBase<EmptyProjec
       }
     } as EduCourse
 
-    doTestUpdatesAvailable(course, serverCourse, 1)
+    doTestUpdatesAvailable(serverCourse, 1)
   }
 
   fun `test updates are available when new task created`() {
-    val course = createCourse()
-
+    initiateLocalCourse()
     val serverCourse = course {
       lesson {
         eduTask("task1", stepId = 1) {
@@ -152,11 +142,11 @@ class MarketplaceTaskUpdatesAvailableTest : CourseGenerationTestBase<EmptyProjec
       }
     } as EduCourse
 
-    doTestUpdatesAvailable(course, serverCourse, 1)
+    doTestUpdatesAvailable(serverCourse, 1)
   }
 
-  private fun createCourse(): EduCourse {
-    val course = course {
+  override fun initiateLocalCourse() {
+    localCourse = course {
       lesson {
         eduTask("task1", stepId = 1) {
           taskFile("TaskFile1.kt", "task file 1 text")
@@ -166,6 +156,5 @@ class MarketplaceTaskUpdatesAvailableTest : CourseGenerationTestBase<EmptyProjec
         }
       }
     }.apply { marketplaceCourseVersion = 1 } as EduCourse
-    return course
   }
 }

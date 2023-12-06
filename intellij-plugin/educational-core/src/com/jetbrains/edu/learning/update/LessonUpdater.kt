@@ -12,13 +12,16 @@ import com.jetbrains.edu.learning.update.elements.LessonUpdateInfo
 abstract class LessonUpdater(project: Project, private val container: ItemContainer) : StudyItemUpdater<Lesson, LessonUpdate>(project) {
   protected abstract fun createTaskUpdater(lesson: Lesson): TaskUpdater
 
-  suspend fun collect(remoteContainer: ItemContainer) {
-    val localLessons = container.items.mapNotNull { it as? Lesson }.filter { it !is FrameworkLesson }
-    val remoteLessons = remoteContainer.items.mapNotNull { it as? Lesson }.filter { it !is FrameworkLesson }
-    collect(localLessons, remoteLessons)
+  suspend fun collect(remoteContainer: ItemContainer): List<LessonUpdate> {
+    // EDU-6560 Implement new framework lesson update logic for Hyperskill and Marketplace
+    val localLessons = container.items.filterIsInstance<Lesson>().filter { it !is FrameworkLesson }
+    val remoteLessons = remoteContainer.items.filterIsInstance<Lesson>().filter { it !is FrameworkLesson }
+    return collect(localLessons, remoteLessons)
   }
 
-  override suspend fun collect(localItems: List<Lesson>, remoteItems: List<Lesson>) {
+  override suspend fun collect(localItems: List<Lesson>, remoteItems: List<Lesson>): List<LessonUpdate> {
+    val updates = mutableListOf<LessonUpdate>()
+
     val localLessons = localItems.toMutableSet()
     val remoteLessons = remoteItems.toMutableSet()
 
@@ -47,18 +50,27 @@ abstract class LessonUpdater(project: Project, private val container: ItemContai
       }
       else {
         val taskUpdater = createTaskUpdater(localLesson)
-        taskUpdater.collect(remoteLesson)
-        if (taskUpdater.areUpdatesAvailable()) {
-          updates.add(LessonUpdateInfo(localLesson, remoteLesson, taskUpdater))
+        val taskUpdates = taskUpdater.collect(remoteLesson)
+        if (taskUpdates.isNotEmpty() || localLesson.isChanged(remoteLesson)) {
+          updates.add(LessonUpdateInfo(localLesson, remoteLesson, taskUpdates))
         }
 
         localLessons.remove(localLesson)
         remoteLessons.remove(remoteLesson)
       }
     }
+
+    return updates
   }
 
-  override suspend fun doUpdate() {
+  override suspend fun doUpdate(updates: List<LessonUpdate>) {
     TODO("Not yet implemented")
+  }
+
+  private fun Lesson.isChanged(remoteLesson: Lesson): Boolean = when {
+    name != remoteLesson.name -> true
+    index != remoteLesson.index -> true
+    taskList.size != remoteLesson.taskList.size -> true
+    else -> false
   }
 }

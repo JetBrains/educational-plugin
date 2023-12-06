@@ -3,27 +3,22 @@ package com.jetbrains.edu.learning.stepik.hyperskill.update
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
-import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
-import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import com.jetbrains.edu.learning.stepik.hyperskill.init
+import com.jetbrains.edu.learning.update.UpdatesAvailableTestBase
 import kotlinx.coroutines.runBlocking
 
-class HyperskillTaskUpdatesAvailableTest : CourseGenerationTestBase<EmptyProjectSettings>() {
-  override val defaultSettings: EmptyProjectSettings get() = EmptyProjectSettings
-
-  override fun runInDispatchThread(): Boolean = false
-
-  private fun doTestUpdatesAvailable(localCourse: HyperskillCourse, remoteCourse: HyperskillCourse, expectedAmountOfUpdates: Int) {
+class HyperskillTaskUpdatesAvailableTest : UpdatesAvailableTestBase<HyperskillCourse>() {
+  private fun doTestUpdatesAvailable(remoteCourse: HyperskillCourse, expectedAmountOfUpdates: Int) {
     createCourseStructure(localCourse)
     val updater = HyperskillTaskUpdater(project, localCourse.lessons.first())
-    runBlocking {
+    val updates = runBlocking {
       updater.collect(remoteCourse.lessons.first())
     }
-    assertEquals(expectedAmountOfUpdates, updater.amountOfUpdates)
+    assertEquals(expectedAmountOfUpdates, updates.size)
   }
 
   fun `test updates are available when task name is changed`() {
-    val course = createCourse()
+    initiateLocalCourse()
     val serverCourse = course(courseProducer = ::HyperskillCourse) {
       lesson {
         eduTask("task1 updated", stepId = 1) {
@@ -35,11 +30,11 @@ class HyperskillTaskUpdatesAvailableTest : CourseGenerationTestBase<EmptyProject
       }
     } as HyperskillCourse
 
-    doTestUpdatesAvailable(course, serverCourse, 1)
+    doTestUpdatesAvailable(serverCourse, 1)
   }
 
   fun `test updates are available when description text is changed`() {
-    val course = createCourse()
+    initiateLocalCourse()
     val serverCourse = course(courseProducer = ::HyperskillCourse) {
       lesson {
         eduTask("task1", stepId = 1) {
@@ -51,11 +46,11 @@ class HyperskillTaskUpdatesAvailableTest : CourseGenerationTestBase<EmptyProject
       }
     } as HyperskillCourse
 
-    doTestUpdatesAvailable(course, serverCourse, 2)
+    doTestUpdatesAvailable(serverCourse, 2)
   }
 
   fun `test updates are available when placeholders are changed`() {
-    val course = course(courseProducer = ::HyperskillCourse) {
+    localCourse = course(courseProducer = ::HyperskillCourse) {
       lesson {
         eduTask("task1", stepId = 1) {
           taskFile("TaskFile1.kt", "fun foo() { <p>TODO</p>() }") {
@@ -67,7 +62,7 @@ class HyperskillTaskUpdatesAvailableTest : CourseGenerationTestBase<EmptyProject
         }
       }
     } as HyperskillCourse
-    course.init(1, false)
+    localCourse.init(1, false)
 
     val serverCourse = course(courseProducer = ::HyperskillCourse) {
       lesson {
@@ -82,11 +77,11 @@ class HyperskillTaskUpdatesAvailableTest : CourseGenerationTestBase<EmptyProject
       }
     } as HyperskillCourse
 
-    doTestUpdatesAvailable(course, serverCourse, 1)
+    doTestUpdatesAvailable(serverCourse, 1)
   }
 
   fun `test updates are available when the task changes its type`() {
-    val course = createCourse()
+    initiateLocalCourse()
     val serverCourse = course(courseProducer = ::HyperskillCourse) {
       lesson {
         codeTask("task1", stepId = 1) {
@@ -98,11 +93,11 @@ class HyperskillTaskUpdatesAvailableTest : CourseGenerationTestBase<EmptyProject
       }
     } as HyperskillCourse
 
-    doTestUpdatesAvailable(course, serverCourse, 1)
+    doTestUpdatesAvailable(serverCourse, 1)
   }
 
   fun `test updates are available when taskFile name is changed`() {
-    val course = createCourse()
+    initiateLocalCourse()
     val serverCourse = course(courseProducer = ::HyperskillCourse) {
       lesson {
         eduTask("task1", stepId = 1) {
@@ -114,11 +109,11 @@ class HyperskillTaskUpdatesAvailableTest : CourseGenerationTestBase<EmptyProject
       }
     } as HyperskillCourse
 
-    doTestUpdatesAvailable(course, serverCourse, 1)
+    doTestUpdatesAvailable(serverCourse, 1)
   }
 
   fun `test updates are available when amount of taskFiles is changed`() {
-    val course = createCourse()
+    initiateLocalCourse()
     val serverCourse = course(courseProducer = ::HyperskillCourse) {
       lesson {
         eduTask("task1", stepId = 1) {
@@ -131,11 +126,11 @@ class HyperskillTaskUpdatesAvailableTest : CourseGenerationTestBase<EmptyProject
       }
     } as HyperskillCourse
 
-    doTestUpdatesAvailable(course, serverCourse, 1)
+    doTestUpdatesAvailable(serverCourse, 1)
   }
 
   fun `test updates are available when unsupported task became supported`() {
-    val course = course(courseProducer = ::HyperskillCourse) {
+    localCourse = course(courseProducer = ::HyperskillCourse) {
       lesson {
         unsupportedTask("task1", stepId = 1)
         eduTask("task2", stepId = 2) {
@@ -143,7 +138,7 @@ class HyperskillTaskUpdatesAvailableTest : CourseGenerationTestBase<EmptyProject
         }
       }
     } as HyperskillCourse
-    course.init(1, false)
+    localCourse.init(1, false)
 
     val serverCourse = course(courseProducer = ::HyperskillCourse) {
       lesson {
@@ -156,11 +151,11 @@ class HyperskillTaskUpdatesAvailableTest : CourseGenerationTestBase<EmptyProject
       }
     } as HyperskillCourse
 
-    doTestUpdatesAvailable(course, serverCourse, 1)
+    doTestUpdatesAvailable(serverCourse, 1)
   }
 
   fun `test updates are available when choice options for ChoiceTask are changed`() {
-    val course = course(courseProducer = ::HyperskillCourse) {
+    localCourse = course(courseProducer = ::HyperskillCourse) {
       lesson {
         choiceTask(
           "task1", stepId = 1, choiceOptions = mapOf(
@@ -178,7 +173,7 @@ class HyperskillTaskUpdatesAvailableTest : CourseGenerationTestBase<EmptyProject
         )
       }
     } as HyperskillCourse
-    course.init(1, false)
+    localCourse.init(1, false)
 
     val serverCourse = course(courseProducer = ::HyperskillCourse) {
       lesson {
@@ -199,17 +194,17 @@ class HyperskillTaskUpdatesAvailableTest : CourseGenerationTestBase<EmptyProject
       }
     } as HyperskillCourse
 
-    doTestUpdatesAvailable(course, serverCourse, 1)
+    doTestUpdatesAvailable(serverCourse, 1)
   }
 
   fun `test updates are available when options for SortingTask are changed`() {
-    val course = course(courseProducer = ::HyperskillCourse) {
+    localCourse = course(courseProducer = ::HyperskillCourse) {
       lesson {
         sortingTask("task1", stepId = 1, options = listOf("0", "1", "2"))
         sortingTask("task2", stepId = 2, options = listOf("0", "1", "2"))
       }
     } as HyperskillCourse
-    course.init(1, false)
+    localCourse.init(1, false)
 
     val serverCourse = course(courseProducer = ::HyperskillCourse) {
       lesson {
@@ -218,17 +213,17 @@ class HyperskillTaskUpdatesAvailableTest : CourseGenerationTestBase<EmptyProject
       }
     } as HyperskillCourse
 
-    doTestUpdatesAvailable(course, serverCourse, 1)
+    doTestUpdatesAvailable(serverCourse, 1)
   }
 
   fun `test updates are available when options or captions for MatchingTask are changed`() {
-    val course = course(courseProducer = ::HyperskillCourse) {
+    localCourse = course(courseProducer = ::HyperskillCourse) {
       lesson {
         matchingTask("task1", stepId = 1, options = listOf("0", "1", "2"), captions = listOf("A", "B", "C"))
         matchingTask("task2", stepId = 2, options = listOf("0", "1", "2"), captions = listOf("A", "B", "C"))
       }
     } as HyperskillCourse
-    course.init(1, false)
+    localCourse.init(1, false)
 
     val serverCourse = course(courseProducer = ::HyperskillCourse) {
       lesson {
@@ -237,17 +232,17 @@ class HyperskillTaskUpdatesAvailableTest : CourseGenerationTestBase<EmptyProject
       }
     } as HyperskillCourse
 
-    doTestUpdatesAvailable(course, serverCourse, 2)
+    doTestUpdatesAvailable(serverCourse, 2)
   }
 
   fun `test updates are available when checkProfile for RemoteEduTask is changed`() {
-    val course = course(courseProducer = ::HyperskillCourse) {
+    localCourse = course(courseProducer = ::HyperskillCourse) {
       lesson {
         remoteEduTask("task1", stepId = 1, checkProfile = "profile 1")
         remoteEduTask("task2", stepId = 2, checkProfile = "profile 2")
       }
     } as HyperskillCourse
-    course.init(1, false)
+    localCourse.init(1, false)
 
     val serverCourse = course(courseProducer = ::HyperskillCourse) {
       lesson {
@@ -256,11 +251,11 @@ class HyperskillTaskUpdatesAvailableTest : CourseGenerationTestBase<EmptyProject
       }
     } as HyperskillCourse
 
-    doTestUpdatesAvailable(course, serverCourse, 1)
+    doTestUpdatesAvailable(serverCourse, 1)
   }
 
   fun `test updates are available when new task created`() {
-    val course = createCourse()
+    initiateLocalCourse()
     val serverCourse = course(courseProducer = ::HyperskillCourse) {
       lesson {
         eduTask("task1", stepId = 1) {
@@ -275,11 +270,11 @@ class HyperskillTaskUpdatesAvailableTest : CourseGenerationTestBase<EmptyProject
       }
     } as HyperskillCourse
 
-    doTestUpdatesAvailable(course, serverCourse, 1)
+    doTestUpdatesAvailable(serverCourse, 1)
   }
 
-  private fun createCourse(projectId: Int? = 1, completeStages: Boolean = false): HyperskillCourse {
-    val course = course(courseProducer = ::HyperskillCourse) {
+  override fun initiateLocalCourse() {
+    localCourse = course(courseProducer = ::HyperskillCourse) {
       lesson {
         eduTask("task1", stepId = 1) {
           taskFile("TaskFile1.kt", "task file 1 text")
@@ -289,8 +284,6 @@ class HyperskillTaskUpdatesAvailableTest : CourseGenerationTestBase<EmptyProject
         }
       }
     } as HyperskillCourse
-    course.init(projectId, completeStages)
-
-    return course
+    localCourse.init(1, false)
   }
 }

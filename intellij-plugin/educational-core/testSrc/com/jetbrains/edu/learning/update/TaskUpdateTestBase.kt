@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.update
 
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.diagnostic.thisLogger
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
@@ -14,13 +15,25 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
   abstract fun getUpdater(lesson: Lesson): TaskUpdater
 
   fun updateTasks(remoteCourse: T, lesson: Lesson? = null, remoteLesson: Lesson? = null, isShouldBeUpdated: Boolean = true) {
-    val updater = getUpdater(lesson ?: localCourse.lessons.first())
-    runBlocking {
-      updater.update(remoteLesson ?: remoteCourse.lessons.first())
+    val lessonToBeUpdated = lesson ?: localCourse.lessons.first()
+    val updater = getUpdater(lessonToBeUpdated)
+    val updates = runBlocking {
+      val lessonFromServer = remoteLesson ?: remoteCourse.lessons.first()
+      updater.collect(lessonFromServer)
     }
-    assertEquals("Updates are " + if (isShouldBeUpdated) "" else "not" + " available", isShouldBeUpdated, updater.amountOfUpdates > 0)
+    assertEquals("Updates are " + if (isShouldBeUpdated) "" else "not" + " available", isShouldBeUpdated, updates.isNotEmpty())
+    val isUpdateSucceed = runBlocking {
+      try {
+        updater.doUpdate(updates)
+        true
+      }
+      catch (e: Exception) {
+        thisLogger().error(e)
+        false
+      }
+    }
     if (isShouldBeUpdated) {
-      assertTrue("Update failed", updater.isUpdateSucceed)
+      assertTrue("Update failed", isUpdateSucceed)
     }
   }
 

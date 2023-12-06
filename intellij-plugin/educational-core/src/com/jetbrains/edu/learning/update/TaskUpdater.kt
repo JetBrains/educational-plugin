@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.update
 
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.readAction
-import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -20,27 +19,14 @@ import com.jetbrains.edu.learning.update.elements.TaskUpdate
 import com.jetbrains.edu.learning.update.elements.TaskUpdateInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.jetbrains.annotations.TestOnly
 
 abstract class TaskUpdater(project: Project, private val lesson: Lesson) : StudyItemUpdater<Task, TaskUpdate>(project) {
-  @TestOnly
-  suspend fun update(remoteLesson: Lesson) {
-    collect(lesson.taskList, remoteLesson.taskList)
-    if (!areUpdatesAvailable()) return
 
-    isUpdateSucceed = try {
-      doUpdate()
-      true
-    }
-    catch (e: Exception) {
-      thisLogger().error(e)
-      false
-    }
-  }
+  suspend fun collect(remoteLesson: Lesson): List<TaskUpdate> = collect(lesson.taskList, remoteLesson.taskList)
 
-  suspend fun collect(remoteLesson: Lesson) = collect(lesson.taskList, remoteLesson.taskList)
+  override suspend fun collect(localItems: List<Task>, remoteItems: List<Task>): List<TaskUpdate> {
+    val updates = mutableListOf<TaskUpdate>()
 
-  override suspend fun collect(localItems: List<Task>, remoteItems: List<Task>) {
     val localTasks = localItems.toMutableSet()
     val remoteTasks = remoteItems.toMutableSet()
 
@@ -75,11 +61,11 @@ abstract class TaskUpdater(project: Project, private val lesson: Lesson) : Study
         remoteTasks.remove(remoteTask)
       }
     }
+
+    return updates
   }
 
-  fun areUpdatesAvailable(): Boolean = updates.isNotEmpty()
-
-  override suspend fun doUpdate() {
+  override suspend fun doUpdate(updates: List<TaskUpdate>) {
     updates.forEach {
       it.doUpdate(project)
     }

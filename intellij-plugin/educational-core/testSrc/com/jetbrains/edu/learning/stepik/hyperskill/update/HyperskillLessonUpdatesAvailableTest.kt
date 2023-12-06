@@ -2,28 +2,23 @@ package com.jetbrains.edu.learning.stepik.hyperskill.update
 
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
-import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
-import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import com.jetbrains.edu.learning.stepik.hyperskill.init
+import com.jetbrains.edu.learning.update.UpdatesAvailableTestBase
 import kotlinx.coroutines.runBlocking
 
-class HyperskillLessonUpdatesAvailableTest : CourseGenerationTestBase<EmptyProjectSettings>() {
-  override val defaultSettings: EmptyProjectSettings get() = EmptyProjectSettings
-
-  override fun runInDispatchThread(): Boolean = false
-
+class HyperskillLessonUpdatesAvailableTest : UpdatesAvailableTestBase<HyperskillCourse>() {
   @Suppress("SameParameterValue")
-  private fun doTestUpdatesAvailable(localCourse: HyperskillCourse, remoteCourse: HyperskillCourse, expectedAmountOfUpdates: Int) {
+  private fun doTestUpdatesAvailable(remoteCourse: HyperskillCourse, expectedAmountOfUpdates: Int) {
+    initiateLocalCourse()
     createCourseStructure(localCourse)
     val updater = HyperskillLessonUpdater(project, localCourse)
-    runBlocking {
+    val updates = runBlocking {
       updater.collect(remoteCourse)
     }
-    assertEquals(expectedAmountOfUpdates, updater.amountOfUpdates)
+    assertEquals(expectedAmountOfUpdates, updates.size)
   }
 
   fun `test updates are available when task name is changed`() {
-    val course = createCourse()
     val serverCourse = course(courseProducer = ::HyperskillCourse) {
       lesson("lesson1") {
         eduTask("task1 updated", stepId = 1) {
@@ -35,11 +30,10 @@ class HyperskillLessonUpdatesAvailableTest : CourseGenerationTestBase<EmptyProje
       }
     } as HyperskillCourse
 
-    doTestUpdatesAvailable(course, serverCourse, 1)
+    doTestUpdatesAvailable(serverCourse, 1)
   }
 
   fun `test updates are available when new task created`() {
-    val course = createCourse()
     val serverCourse = course(courseProducer = ::HyperskillCourse) {
       lesson("lesson1") {
         eduTask("task1", stepId = 1) {
@@ -54,11 +48,10 @@ class HyperskillLessonUpdatesAvailableTest : CourseGenerationTestBase<EmptyProje
       }
     } as HyperskillCourse
 
-    doTestUpdatesAvailable(course, serverCourse, 1)
+    doTestUpdatesAvailable(serverCourse, 1)
   }
 
   fun `test updates are available when existing task has been deleted`() {
-    val course = createCourse()
     val serverCourse = course(courseProducer = ::HyperskillCourse) {
       lesson("lesson1") {
         eduTask("task2", stepId = 2) {
@@ -67,11 +60,10 @@ class HyperskillLessonUpdatesAvailableTest : CourseGenerationTestBase<EmptyProje
       }
     } as HyperskillCourse
 
-    doTestUpdatesAvailable(course, serverCourse, 1)
+    doTestUpdatesAvailable(serverCourse, 1)
   }
 
   fun `test updates are available when task places are changed`() {
-    val course = createCourse()
     val serverCourse = course(courseProducer = ::HyperskillCourse) {
       lesson("lesson1") {
         eduTask("task2", stepId = 2) {
@@ -83,11 +75,10 @@ class HyperskillLessonUpdatesAvailableTest : CourseGenerationTestBase<EmptyProje
       }
     } as HyperskillCourse
 
-    doTestUpdatesAvailable(course, serverCourse, 1)
+    doTestUpdatesAvailable(serverCourse, 1)
   }
 
   fun `test updates are available when new lesson created`() {
-    val course = createCourse()
     val serverCourse = course(courseProducer = ::HyperskillCourse) {
       lesson("lesson1") {
         eduTask("task1", stepId = 1) {
@@ -107,11 +98,11 @@ class HyperskillLessonUpdatesAvailableTest : CourseGenerationTestBase<EmptyProje
       }
     } as HyperskillCourse
 
-    doTestUpdatesAvailable(course, serverCourse, 1)
+    doTestUpdatesAvailable(serverCourse, 1)
   }
 
-  private fun createCourse(): HyperskillCourse {
-    val course = course(courseProducer = ::HyperskillCourse) {
+  override fun initiateLocalCourse() {
+    localCourse = course(courseProducer = ::HyperskillCourse) {
       lesson("lesson1") {
         eduTask("task1", stepId = 1) {
           taskFile("TaskFile1.kt", "task file 1 text")
@@ -121,8 +112,6 @@ class HyperskillLessonUpdatesAvailableTest : CourseGenerationTestBase<EmptyProje
         }
       }
     } as HyperskillCourse
-    course.init(1, false)
-
-    return course
+    localCourse.init(1, false)
   }
 }

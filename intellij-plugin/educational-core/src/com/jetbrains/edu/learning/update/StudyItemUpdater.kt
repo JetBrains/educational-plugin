@@ -9,25 +9,13 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.update.elements.StudyItemUpdate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.jetbrains.annotations.TestOnly
 
 // TODO EDU-5830 maybe synchronization is needed
 @Suppress("DuplicatedCode")
 abstract class StudyItemUpdater<T : StudyItem, U : StudyItemUpdate<T>>(protected val project: Project) {
-  protected val updates = mutableListOf<U>()
+  protected abstract suspend fun collect(localItems: List<T>, remoteItems: List<T>): List<U>
 
-  val amountOfUpdates: Int
-    @TestOnly
-    get() = updates.size
-
-  var isUpdateSucceed: Boolean = false
-    @TestOnly
-    get
-    protected set
-
-  protected abstract suspend fun collect(localItems: List<T>, remoteItems: List<T>)
-
-  protected abstract suspend fun doUpdate()
+  abstract suspend fun doUpdate(updates: List<U>)
 
   companion object {
     @Suppress("UnstableApiUsage")
