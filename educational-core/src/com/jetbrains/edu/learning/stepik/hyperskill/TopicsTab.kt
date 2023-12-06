@@ -4,6 +4,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
+import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.dsl.builder.*
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.JavaUILibrary
@@ -49,7 +50,7 @@ class TopicsTab(project: Project) : AdditionalTab(project, TOPICS_TAB) {
       border = JBUI.Borders.empty(12)
     }
     removeAll()
-    add(innerPanel)
+    add(JBScrollPane(innerPanel).apply { border = JBUI.Borders.empty() })
   }
 
   private class OpenTopic(
