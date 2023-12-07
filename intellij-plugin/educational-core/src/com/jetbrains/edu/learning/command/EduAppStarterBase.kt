@@ -18,7 +18,7 @@ abstract class EduAppStarterBase : ModernApplicationStarter() {
     try {
       val parsedArgs = parseArgs(args)
       val course = loadCourse(parsedArgs)
-      val result = doMain(course, parsedArgs.projectPath)
+      val result = doMain(course, parsedArgs)
       if (result is CommandResult.Error) {
         LOG.error(result.message, result.throwable)
       }
@@ -30,7 +30,7 @@ abstract class EduAppStarterBase : ModernApplicationStarter() {
     }
   }
 
-  protected abstract suspend fun doMain(course: Course, projectPath: String): CommandResult
+  protected abstract suspend fun doMain(course: Course, args: Args): CommandResult
 
   private fun parseArgs(args: List<String>): Args {
     val options = Options()
@@ -53,6 +53,7 @@ abstract class EduAppStarterBase : ModernApplicationStarter() {
     """.trimIndent())
     )
     options.addOptionGroup(group)
+    addCustomArgs(options)
 
     val parser = DefaultParser()
 
@@ -65,17 +66,16 @@ abstract class EduAppStarterBase : ModernApplicationStarter() {
       exitProcess(1)
     }
 
-    val courseArchivePath = cmd.getOptionValue(COURSE_ARCHIVE_PATH_OPTION)
-    val marketplaceCourseLink = cmd.getOptionValue(MARKETPLACE_COURSE_LINK_OPTION)
-
     val positionalArgs = cmd.argList
     if (positionalArgs.isEmpty()) {
       printHelp(options)
       logErrorAndExit("Path to project is missing")
     }
 
-    return Args(positionalArgs.first(), courseArchivePath, marketplaceCourseLink)
+    return Args(positionalArgs.first(), cmd)
   }
+
+  protected open fun addCustomArgs(options: Options) {}
 
   private fun printHelp(options: Options) {
     val formatter = HelpFormatter()
@@ -85,7 +85,8 @@ abstract class EduAppStarterBase : ModernApplicationStarter() {
   }
 
   private fun loadCourse(args: Args): Course {
-    val (_, courseArchivePath, marketplaceCourseLink) = args
+    val courseArchivePath = args.getOptionValue(COURSE_ARCHIVE_PATH_OPTION)
+    val marketplaceCourseLink = args.getOptionValue(MARKETPLACE_COURSE_LINK_OPTION)
     return when {
       courseArchivePath != null -> {
         val course = EduUtilsKt.getLocalCourse(courseArchivePath)
@@ -129,10 +130,11 @@ abstract class EduAppStarterBase : ModernApplicationStarter() {
       }
     }
   }
+}
 
-  protected data class Args(
-    val projectPath: String,
-    val courseArchivePath: String?,
-    val marketplaceCourseLink: String?
-  )
+class Args(
+  val projectPath: String,
+  private val cmd: CommandLine
+) {
+  fun getOptionValue(option: String): String? = cmd.getOptionValue(option)
 }

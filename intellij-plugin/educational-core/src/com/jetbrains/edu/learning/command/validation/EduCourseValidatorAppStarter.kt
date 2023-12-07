@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.command.validation
 
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.command.Args
 import com.jetbrains.edu.learning.command.CommandResult
 import com.jetbrains.edu.learning.command.EduCourseProjectAppStarterBase
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -24,7 +25,7 @@ class EduCourseValidatorAppStarter : EduCourseProjectAppStarterBase() {
   override val courseMode: CourseMode
     get() = CourseMode.EDUCATOR
 
-  override suspend fun performProjectAction(project: Project, course: Course): CommandResult {
+  override suspend fun performProjectAction(project: Project, course: Course, args: Args): CommandResult {
     val result = CourseValidationHelper(StdoutServiceMessageConsumer).validate(project, course)
 
     return if (result) CommandResult.Ok else CommandResult.Error("Some tasks haven't finished successfully")
