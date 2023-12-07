@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.command.validation
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -15,32 +16,36 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
+import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
+import com.jetbrains.edu.learning.taskToolWindow.links.TaskDescriptionLink
+import kotlinx.coroutines.*
+import org.jsoup.Jsoup
 import java.util.concurrent.ConcurrentHashMap
 
-class CourseValidationHelper(private val serviceMessageConsumer: ServiceMessageConsumer) {
+class CourseValidationHelper(
+  private val params: ValidationParams,
+  private val serviceMessageConsumer: ServiceMessageConsumer
+) {
 
   suspend fun validate(project: Project, course: Course): Boolean {
     return withValidationEnabled(project) {
       withTestSuiteBuilder(serviceMessageConsumer) {
-        check(project, course)
+        validate(project, course)
       }
     }
   }
 
-  private suspend fun TestSuiteBuilder.check(project: Project, itemContainer: ItemContainer) {
+  private suspend fun TestSuiteBuilder.validate(project: Project, itemContainer: ItemContainer) {
     testSuite(itemContainer.name) {
       for (item in itemContainer.items) {
         when (item) {
           is ItemContainer -> {
-            check(project, item)
+            validate(project, item)
           }
           is Task -> {
-            check(project, item)
+            validate(project, item)
           }
           else -> error("Unreachable")
         }
@@ -48,25 +53,71 @@ class CourseValidationHelper(private val serviceMessageConsumer: ServiceMessageC
     }
   }
 
-  private suspend fun TestSuiteBuilder.check(project: Project, task: Task) {
-    testCase(task.presentableName) {
+  private suspend fun TestSuiteBuilder.validate(project: Project, task: Task) {
+    testSuite(task.presentableName) {
       withContext(Dispatchers.EDT) {
         task.prepareForChecking(project)
+      }
+
+      if (params.validateTests) {
+        validateTaskTests(project, task)
+      }
+      if (params.validateLinks) {
+        validateTaskDescriptionLinks(project, task)
+      }
+
+      withContext(Dispatchers.EDT) {
+        closeOpenFiles(project)
+      }
+    }
+  }
+
+  private suspend fun TestSuiteBuilder.validateTaskTests(project: Project, task: Task) {
+    testCase("Tests") {
+      withContext(Dispatchers.EDT) {
         val dataContext = SimpleDataContext.getProjectContext(project)
         ActionUtil.invokeAction(CheckAction(), dataContext, "", null, null)
       }
 
       val result = ValidationCheckResultManager.getInstance(project).getResult(task)
 
-      withContext(Dispatchers.EDT) {
-        closeOpenFiles(project)
-      }
-
       when (result.status) {
         CheckStatus.Unchecked -> testIgnored(result.message)
         CheckStatus.Failed -> testFailed(result.message, result.details.orEmpty())
         CheckStatus.Solved -> Unit
       }
+    }
+  }
+
+  private suspend fun TestSuiteBuilder.validateTaskDescriptionLinks(project: Project, task: Task) {
+    val text = readAction { task.getTaskTextFromTask(project) } ?: return
+    val links = extractLinks(text)
+    // Don't create empty node if no links in the task description
+    if (links.isEmpty()) return
+
+    testSuite("Task description links") {
+      val results = withContext(Dispatchers.IO) {
+        links.map {
+          async { it to it.validate(project) }
+        }.awaitAll()
+      }
+
+      for ((link, error) in results) {
+        testCase(link.link) {
+          if (error != null) {
+            testFailed("Failed to resolve `${link.link}`", error)
+          }
+        }
+      }
+    }
+  }
+
+  private fun extractLinks(text: String): List<TaskDescriptionLink<*, *>> {
+    val document = Jsoup.parse(text)
+    val elements = document.select("a[href]")
+    return elements.mapNotNull {
+      val linkText = it.attr("href")
+      TaskDescriptionLink.fromUrl(linkText)
     }
   }
 

@@ -16,8 +16,11 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.wm.ToolWindowEP
+import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.toolWindow.ToolWindowHeadlessManagerImpl
 import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
@@ -49,6 +52,7 @@ import com.jetbrains.edu.learning.marketplace.update.MarketplaceUpdateChecker
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.stepik.hyperskill.update.HyperskillCourseUpdateChecker
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.yaml.YamlLoadingErrorManager
@@ -407,5 +411,22 @@ abstract class EduTestCase : BasePlatformTestCase() {
 
   protected fun <T> withDefaultHtmlTaskDescription(action: () -> T): T {
     return withSettingsValue(CCSettings.getInstance()::useHtmlAsDefaultTaskFormat, true, action)
+  }
+
+  // In tests, tool windows are not registered by default
+  // Let's register at least Task Description tool window
+  protected fun registerTaskDescriptionToolWindow() {
+    val toolWindowManager = ToolWindowManager.getInstance(project) as ToolWindowHeadlessManagerImpl
+    if (toolWindowManager.getToolWindow("Task") == null) {
+      for (bean in ToolWindowEP.EP_NAME.extensionList) {
+        if (bean.id == TaskToolWindowFactory.STUDY_TOOL_WINDOW) {
+          toolWindowManager.doRegisterToolWindow(bean.id)
+          Disposer.register(testRootDisposable) {
+            @Suppress("DEPRECATION")
+            toolWindowManager.unregisterToolWindow(bean.id)
+          }
+        }
+      }
+    }
   }
 }
