@@ -7,10 +7,10 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.psi.NavigatablePsiElement
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.LinkType.PSI
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
-class PsiElementLink(link: String) : TaskDescriptionLink<NavigatablePsiElement>(link, EduCounterUsageCollector.LinkType.PSI) {
+class PsiElementLink(link: String) : TaskDescriptionLink<NavigatablePsiElement, NavigatablePsiElement?>(link, PSI) {
 
   override fun resolve(project: Project): NavigatablePsiElement? {
     val qualifiedName = linkPath
@@ -38,5 +38,9 @@ class PsiElementLink(link: String) : TaskDescriptionLink<NavigatablePsiElement>(
         element.navigate(true)
       }
     }
+  }
+
+  override suspend fun validate(project: Project, element: NavigatablePsiElement?): String? {
+    return if (element == null) "Failed to find an element by `$linkPath` reference" else null
   }
 }

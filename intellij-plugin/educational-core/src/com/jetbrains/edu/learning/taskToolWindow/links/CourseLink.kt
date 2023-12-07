@@ -12,10 +12,10 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.LinkType.IN_COURSE
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
-class CourseLink(link: String) : TaskDescriptionLink<ParsedInCourseLink>(link, EduCounterUsageCollector.LinkType.IN_COURSE) {
+class CourseLink(link: String) : TaskDescriptionLink<ParsedInCourseLink, ParsedInCourseLink?>(link, IN_COURSE) {
 
   override fun resolve(project: Project): ParsedInCourseLink? {
     val course = project.course ?: return null
@@ -54,6 +54,10 @@ class CourseLink(link: String) : TaskDescriptionLink<ParsedInCourseLink>(link, E
     runInEdt {
       parsedLink.navigate(project)
     }
+  }
+
+  override suspend fun validate(project: Project, parsedLink: ParsedInCourseLink?): String? {
+    return if (parsedLink == null) "Failed to find an item in course by `$linkPath` path" else null
   }
 }
 

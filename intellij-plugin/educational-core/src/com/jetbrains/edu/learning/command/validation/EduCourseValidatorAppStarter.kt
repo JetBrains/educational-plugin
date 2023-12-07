@@ -6,6 +6,8 @@ import com.jetbrains.edu.learning.command.CommandResult
 import com.jetbrains.edu.learning.command.EduCourseProjectAppStarterBase
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import org.apache.commons.cli.Option
+import org.apache.commons.cli.Options
 
 /**
  * Adds `validateCourse` command for IDE to validate given course and report potential errors
@@ -26,8 +28,28 @@ class EduCourseValidatorAppStarter : EduCourseProjectAppStarterBase() {
     get() = CourseMode.EDUCATOR
 
   override suspend fun performProjectAction(project: Project, course: Course, args: Args): CommandResult {
-    val result = CourseValidationHelper(StdoutServiceMessageConsumer).validate(project, course)
+    val validateTests = args.getOptionValue(VALIDATE_TESTS)?.toBoolean() ?: VALIDATE_TEST_BY_DEFAULT
+    val validateLinks = args.getOptionValue(VALIDATE_LINKS)?.toBoolean() ?: VALIDATE_LINK_BY_DEFAULT
+    val params = ValidationParams(validateTests, validateLinks)
+
+    val result = CourseValidationHelper(params, StdoutServiceMessageConsumer).validate(project, course)
 
     return if (result) CommandResult.Ok else CommandResult.Error("Some tasks haven't finished successfully")
+  }
+
+  override fun addCustomArgs(options: Options) {
+    options.addOption(
+      Option(null, VALIDATE_TESTS, true, "Enables/disables test validation. `$VALIDATE_TEST_BY_DEFAULT` by default")
+    ).addOption(
+      Option(null, VALIDATE_LINKS, true, "Enables/disables task description link validation. `$VALIDATE_LINK_BY_DEFAULT` by default")
+    )
+  }
+
+  companion object {
+    private const val VALIDATE_TESTS = "tests"
+    private const val VALIDATE_LINKS = "links"
+
+    private const val VALIDATE_TEST_BY_DEFAULT = false
+    private const val VALIDATE_LINK_BY_DEFAULT = true
   }
 }

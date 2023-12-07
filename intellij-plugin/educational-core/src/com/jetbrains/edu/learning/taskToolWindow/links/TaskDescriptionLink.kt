@@ -1,12 +1,13 @@
 package com.jetbrains.edu.learning.taskToolWindow.links
 
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.intellij.util.io.URLUtil
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 
-abstract class TaskDescriptionLink<T : Any>(
+abstract class TaskDescriptionLink<T, R : T?>(
   val link: String,
   private val linkType: EduCounterUsageCollector.LinkType? = null
 ) {
@@ -29,8 +30,9 @@ abstract class TaskDescriptionLink<T : Any>(
    * It might be the same link in the case of [HttpLink] or some other object depending on link nature.
    */
   @RequiresReadLock
-  protected abstract fun resolve(project: Project): T?
+  protected abstract fun resolve(project: Project): R
   protected abstract fun open(project: Project, resolved: T)
+  protected abstract suspend fun validate(project: Project, resolved: R): String?
 
   /**
    * Opens the corresponding link depending on link nature if possible.
@@ -47,8 +49,18 @@ abstract class TaskDescriptionLink<T : Any>(
     open(project, resolved)
   }
 
+  /**
+   * Validates the links and returns an error message if the corresponding resource doesn't exist.
+   *
+   * @return an error message if the link is invalid, `null` otherwise
+   */
+  suspend fun validate(project: Project): String? {
+    val resolved = readAction { resolve(project) }
+    return validate(project, resolved)
+  }
+
   companion object {
-    fun fromUrl(link: String): TaskDescriptionLink<*>? {
+    fun fromUrl(link: String): TaskDescriptionLink<*, *>? {
       for ((schema, linkConstructor) in LINK_MAP) {
         if (link.startsWith(schema)) {
           return linkConstructor(link)
