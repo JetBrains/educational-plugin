@@ -27,7 +27,7 @@ abstract class EduCourseProjectAppStarterBase : EduAppStarterBase() {
 
   protected abstract val courseMode: CourseMode
 
-  final override suspend fun doMain(course: Course, projectPath: String): CommandResult {
+  final override suspend fun doMain(course: Course, args: Args): CommandResult {
     val configurator = course.configurator
     if (configurator == null) {
       return CommandResult.Error(course.incompatibleCourseMessage())
@@ -37,14 +37,14 @@ abstract class EduCourseProjectAppStarterBase : EduAppStarterBase() {
 
     return when (val projectSettings = courseBuilder.getDefaultSettings()) {
       is Err -> CommandResult.Error(projectSettings.error)
-      is Ok -> createCourseProject(course, projectPath, projectSettings.value)
+      is Ok -> createCourseProject(course, projectSettings.value, args)
     }
   }
 
   private suspend fun createCourseProject(
     course: Course,
-    location: String,
-    projectSettings: EduProjectSettings
+    projectSettings: EduProjectSettings,
+    args: Args
   ): CommandResult {
     var errorMessage: String? = null
 
@@ -55,7 +55,7 @@ abstract class EduCourseProjectAppStarterBase : EduAppStarterBase() {
       .subscribe(CourseProjectGenerator.COURSE_PROJECT_CONFIGURATION, listener)
 
     val result = withAutoImportDisabled {
-      val info = CourseCreationInfo(course, location, projectSettings)
+      val info = CourseCreationInfo(course, args.projectPath, projectSettings)
       val project = withContext(Dispatchers.EDT) {
         CoursesPlatformProvider.joinCourse(info, courseMode, null) {
           errorMessage = it.message?.message
@@ -68,7 +68,7 @@ abstract class EduCourseProjectAppStarterBase : EduAppStarterBase() {
         // So, let's try to wait for them
         waitForPostStartupActivities(project)
 
-        val result = performProjectAction(project, course)
+        val result = performProjectAction(project, course, args)
 
         withContext(Dispatchers.EDT) {
           @Suppress("UnstableApiUsage")
@@ -91,7 +91,7 @@ abstract class EduCourseProjectAppStarterBase : EduAppStarterBase() {
     return result
   }
 
-  protected abstract suspend fun performProjectAction(project: Project, course: Course): CommandResult
+  protected abstract suspend fun performProjectAction(project: Project, course: Course, args: Args): CommandResult
 
   private suspend fun waitForPostStartupActivities(project: Project) {
     val startupManager = StartupManager.getInstance(project)

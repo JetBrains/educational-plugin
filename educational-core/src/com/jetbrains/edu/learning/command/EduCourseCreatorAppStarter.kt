@@ -20,5 +20,5 @@ class EduCourseCreatorAppStarter : EduCourseProjectAppStarterBase() {
   override val courseMode: CourseMode
     get() = CourseMode.STUDENT
 
-  override suspend fun performProjectAction(project: Project, course: Course): CommandResult = CommandResult.Ok
+  override suspend fun performProjectAction(project: Project, course: Course, args: Args): CommandResult = CommandResult.Ok
 }
