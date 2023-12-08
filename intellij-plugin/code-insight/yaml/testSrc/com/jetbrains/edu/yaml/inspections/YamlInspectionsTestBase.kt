@@ -21,7 +21,10 @@ abstract class YamlInspectionsTestBase(private val inspectionClass: KClass<out L
     myFixture.launchAction(action)
     val configFile = item.getDir(project.courseDir)!!.findChild(item.configFileName)!!
     myFixture.openFileInEditor(configFile)
-    myFixture.checkResult(configTextAfter)
+
+    val configTextWithoutHighlighting = configTextAfter.replace(Regex("<.*?>"), "")
+    myFixture.checkResult(configTextWithoutHighlighting)
+    testHighlighting(item, configTextAfter)
   }
 
   protected fun testQuickFixIsUnavailable(item: StudyItem, fixName: String, text: String) {

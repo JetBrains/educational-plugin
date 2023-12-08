@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.yaml
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
@@ -52,6 +53,7 @@ import javax.swing.JPanel
 
 object YamlFormatSynchronizer {
   val LOAD_FROM_CONFIG = Key<Boolean>("Edu.loadItem")
+  val SAVE_TO_CONFIG = Key<Boolean>("Edu.saveItem")
 
   fun saveAll(project: Project) {
     @NonNls
@@ -144,6 +146,9 @@ object YamlFormatSynchronizer {
 
   private fun StudyItem.saveConfig(project: Project, configName: String, mapper: ObjectMapper) {
     val dir = getConfigDir(project)
+
+    val configFile = runReadAction { dir.findChild(configName) }
+    if (configFile?.getUserData(SAVE_TO_CONFIG) == false) return
 
     if (this is Task) {
       disambiguateTaskFilesContents(project)

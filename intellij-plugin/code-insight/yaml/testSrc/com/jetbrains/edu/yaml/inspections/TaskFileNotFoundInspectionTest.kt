@@ -31,6 +31,69 @@ class TaskFileNotFoundInspectionTest : YamlInspectionsTestBase(TaskFileNotFoundI
     """.trimMargin("|"), expectedTaskFiles)
   }
 
+  fun `test create task file if there are several non-existing files`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      lesson("lesson1") {
+        eduTask("task1") {
+          taskFile("src/existing_file_1.txt")
+          taskFile("src/existing_file_2.txt")
+        }
+      }
+    }
+
+    val task = course.findTask("lesson1", "task1")
+
+    val text1 = """
+      |type: edu
+      |files:
+      |- name: src/existing_file_1.txt
+      |  visible: true
+      |- name: <error descr="Cannot find `src/non_existing_file_1.txt` file">src/non_existing_file_1.txt</error>
+      |  visible: true
+      |- name: <error descr="Cannot find `src/non_existing_file_2.txt` file">src/non_existing_file_2.txt<caret></error>
+      |  visible: true
+      |- name: src/existing_file_2.txt
+      |  visible: true
+    """.trimMargin("|")
+
+    val text2 = """
+      |type: edu
+      |files:
+      |- name: src/existing_file_1.txt
+      |  visible: true
+      |- name: <error descr="Cannot find `src/non_existing_file_1.txt` file">src/non_existing_file_1.txt<caret></error>
+      |  visible: true
+      |- name: src/non_existing_file_2.txt
+      |  visible: true
+      |- name: src/existing_file_2.txt
+      |  visible: true
+    """.trimMargin("|")
+
+    val text3 = """
+      |type: edu
+      |files:
+      |- name: src/existing_file_1.txt
+      |  visible: true
+      |- name: src/non_existing_file_1.txt
+      |  visible: true
+      |- name: src/non_existing_file_2.txt
+      |  visible: true
+      |- name: src/existing_file_2.txt
+      |  visible: true
+    """.trimMargin("|")
+
+    doTest(task, "Create file", text1, text2, listOf(
+        "src/existing_file_1.txt" to true,
+        "src/existing_file_2.txt" to true
+    ))
+    doTest(task, "Create file", text2, text3, listOf(
+      "src/existing_file_1.txt" to true,
+      "src/non_existing_file_1.txt" to true,
+      "src/non_existing_file_2.txt" to true,
+      "src/existing_file_2.txt" to true
+    ))
+  }
+
   fun `test create invisible task file`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {

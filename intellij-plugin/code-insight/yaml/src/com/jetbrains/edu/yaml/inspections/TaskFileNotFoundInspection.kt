@@ -7,24 +7,20 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.util.removeUserData
 import com.intellij.patterns.PsiElementPattern
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.util.parentOfType
 import com.jetbrains.edu.learning.courseDir
-import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.yaml.YamlLoader
-import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VISIBLE
 import com.jetbrains.edu.yaml.EduYamlTaskFilePathReferenceProvider
 import com.jetbrains.edu.yaml.messages.EduYAMLBundle
-import org.jetbrains.yaml.psi.YAMLMapping
 import org.jetbrains.yaml.psi.YAMLScalar
-import org.jetbrains.yaml.psi.YAMLSequenceItem
 import java.io.IOException
 
 class TaskFileNotFoundInspection : UnresolvedFileReferenceInspection() {
@@ -50,38 +46,36 @@ class TaskFileNotFoundInspection : UnresolvedFileReferenceInspection() {
 
     override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
       val scalar = startElement as YAMLScalar
-      val task = file.virtualFile.getContainingTask(project) ?: return
+      val task = file.virtualFile?.getContainingTask(project) ?: return
       val taskDir = task.getDir(project.courseDir) ?: return
 
-      val mapping = scalar.parentOfType<YAMLMapping>() ?: return
-      val isVisible = mapping.getKeyValueByKey(VISIBLE)?.valueText != "false"
-      val sequenceItem = mapping.parentOfType<YAMLSequenceItem>() ?: return
-
-      val index = sequenceItem.itemIndex
       val path = scalar.textValue
-      val taskFile = TaskFile(path, "")
-      taskFile.isVisible = isVisible
-      // We have to add task file first to keep order
-      task.addTaskFile(taskFile, index)
+      val configFile = file.originalFile.virtualFile
+
       try {
+        // Creating a file in the task folder fires listeners that add the new task file to the task.
+        // They also rewrite YAML, but we want to avoid this.
+        // We thus do it while YAML is prevented from modifications.
+        configFile?.putUserData(YamlFormatSynchronizer.SAVE_TO_CONFIG, false)
         GeneratorUtils.createTextChildFile(project, taskDir, path, "")
-        val virtualFile = file.originalFile.virtualFile
-        if (virtualFile != null) {
-          updateEditorNotifications(project, virtualFile)
+
+        // After we re reload the config file, the Task object will be updated automatically.
+        // So we are not going to add a newly created TaskFile to the Task here explicitly.
+
+        if (configFile != null) {
+          YamlLoader.loadItem(project, configFile, false)
         }
-      } catch (e: IOException) {
+      }
+      catch (e: IOException) {
         LOG.warn(e)
-        // Remove added task file to keep correct task structure
-        task.removeTaskFile(path)
         ApplicationManager.getApplication().invokeLater {
           Messages.showErrorDialog(EduYAMLBundle.message("failed.create.file.message", path),
                                    EduYAMLBundle.message("failed.create.file.title"))
         }
       }
-    }
-
-    private fun updateEditorNotifications(project: Project, file: VirtualFile) {
-      YamlLoader.loadItem(project, file, false)
+      finally {
+        configFile?.removeUserData(YamlFormatSynchronizer.SAVE_TO_CONFIG)
+      }
     }
 
     companion object {
