@@ -7,30 +7,31 @@ import java.util.*
 
 rootProject.name = "educational-plugin"
 include(
-  "educational-core",
   "edu-format",
-  "code-insight",
-  "code-insight:html",
-  "code-insight:markdown",
-  "code-insight:yaml",
-  "jvm-core",
-  "remote-env",
-  "Edu-Java",
-  "Edu-Kotlin",
-  "Edu-Scala",
-  "Edu-Python",
-  "Edu-Python:Idea", // python support for IDEA and Android Studio
-  "Edu-Python:PyCharm", // python support for PyCharm and CLion
-  "Edu-Android",
-  "Edu-JavaScript",
-  "Edu-Rust",
-  "Edu-Cpp",
-  "Edu-Go",
-  "Edu-Php",
-  "Edu-Shell",
-  "sql",
-  "sql:sql-jvm",
-  "github"
+  "intellij-plugin",
+  "intellij-plugin:educational-core",
+  "intellij-plugin:code-insight",
+  "intellij-plugin:code-insight:html",
+  "intellij-plugin:code-insight:markdown",
+  "intellij-plugin:code-insight:yaml",
+  "intellij-plugin:jvm-core",
+  "intellij-plugin:remote-env",
+  "intellij-plugin:Edu-Java",
+  "intellij-plugin:Edu-Kotlin",
+  "intellij-plugin:Edu-Scala",
+  "intellij-plugin:Edu-Python",
+  "intellij-plugin:Edu-Python:Idea", // python support for IDEA and Android Studio
+  "intellij-plugin:Edu-Python:PyCharm", // python support for PyCharm and CLion
+  "intellij-plugin:Edu-Android",
+  "intellij-plugin:Edu-JavaScript",
+  "intellij-plugin:Edu-Rust",
+  "intellij-plugin:Edu-Cpp",
+  "intellij-plugin:Edu-Go",
+  "intellij-plugin:Edu-Php",
+  "intellij-plugin:Edu-Shell",
+  "intellij-plugin:sql",
+  "intellij-plugin:sql:sql-jvm",
+  "intellij-plugin:github"
 )
 
 if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {
@@ -62,7 +63,7 @@ fun configureSecretProperties() {
   val secretProperties = loadProperties(secretProperties)
 
   secretProperties.extractAndStore(
-    "educational-core/resources/stepik/stepik.properties",
+    "intellij-plugin/educational-core/resources/stepik/stepik.properties",
     "stepikClientId",
     "stepikClientSecret",
     "stepikNonProductionClientId",
@@ -71,22 +72,22 @@ fun configureSecretProperties() {
     "cogniterraClientSecret"
   )
   secretProperties.extractAndStore(
-    "educational-core/resources/hyperskill/hyperskill-oauth.properties",
+    "intellij-plugin/educational-core/resources/hyperskill/hyperskill-oauth.properties",
     "hyperskillClientId",
     "hyperskillClientSecret"
   )
   secretProperties.extractAndStore(
-    "educational-core/resources/twitter/oauth_twitter.properties",
+    "intellij-plugin/educational-core/resources/twitter/oauth_twitter.properties",
     "twitterConsumerKey",
     "twitterConsumerSecret"
   )
   secretProperties.extractAndStore(
-    "Edu-Python/resources/checkio/py-checkio-oauth.properties",
+    "intellij-plugin/Edu-Python/resources/checkio/py-checkio-oauth.properties",
     "pyCheckioClientId",
     "pyCheckioClientSecret"
   )
   secretProperties.extractAndStore(
-    "Edu-JavaScript/resources/checkio/js-checkio-oauth.properties",
+    "intellij-plugin/Edu-JavaScript/resources/checkio/js-checkio-oauth.properties",
     "jsCheckioClientId",
     "jsCheckioClientSecret"
   )
@@ -95,7 +96,7 @@ fun configureSecretProperties() {
     "aesKey"
   )
   secretProperties.extractAndStore(
-    "educational-core/resources/marketplace/marketplace-oauth.properties",
+    "intellij-plugin/educational-core/resources/marketplace/marketplace-oauth.properties",
     "eduHubClientId",
     "eduHubClientSecret",
     "marketplaceHubClientId"
@@ -104,13 +105,13 @@ fun configureSecretProperties() {
 
 fun downloadHyperskillCss() {
   try {
-    download(URL("https://hyperskill.org/static/shared.css"), "educational-core/resources/style/hyperskill_task.css")
+    download(URL("https://hyperskill.org/static/shared.css"), "intellij-plugin/educational-core/resources/style/hyperskill_task.css")
   }
   catch (e: IOException) {
     System.err.println("Error downloading: ${e.message}. Using local copy")
     Files.copy(
-      Paths.get("hyperskill_default.css"),
-      Paths.get("educational-core/resources/style/hyperskill_task.css"),
+      Paths.get("intellij-plugin/hyperskill_default.css"),
+      Paths.get("intellij-plugin/educational-core/resources/style/hyperskill_task.css"),
       StandardCopyOption.REPLACE_EXISTING
     )
   }
