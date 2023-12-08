@@ -33,8 +33,8 @@ hs_err_pid*
 !.idea/vcs.xml
 !.idea/dictionaries/educational.xml
 !.idea/icon.png
-!educational-core/resources/courses/*.zip
-!educational-core/testData/**/*.zip
+!intellij-plugin/educational-core/resources/courses/*.zip
+!intellij-plugin/educational-core/testData/**/*.zip
 .idea/
 build/
 .gradle/
@@ -45,6 +45,23 @@ dependencies/
 
 # oauth properties files
 secret.properties
+intellij-plugin/Edu-Python/resources/checkio/py-checkio-oauth.properties
+intellij-plugin/Edu-JavaScript/resources/checkio/js-checkio-oauth.properties
+# old location of twitter properties
+intellij-plugin/Edu-Kotlin/resources/twitter/kotlin_koans/oauth_twitter.properties
+intellij-plugin/educational-core/resources/twitter/oauth_twitter.properties
+intellij-plugin/educational-core/resources/stepik/stepik.properties
+intellij-plugin/educational-core/resources/hyperskill/hyperskill-oauth.properties
+intellij-plugin/educational-core/resources/marketplace/marketplace-oauth.properties
+#AES key
+edu-format/resources/aes/aes.properties
+intellij-plugin/educational-core/resources/aes/aes.properties
+# don't commit changes in hyperskill css
+intellij-plugin/educational-core/resources/style/hyperskill_task.css
+
+# oath properties files before movement.
+# Temporary solution not to add them into project during transition period
+# BACKCOMPAT: 2023.1. Drop all line below
 Edu-Python/resources/checkio/py-checkio-oauth.properties
 Edu-JavaScript/resources/checkio/js-checkio-oauth.properties
 # old location of twitter properties
@@ -54,7 +71,6 @@ educational-core/resources/stepik/stepik.properties
 educational-core/resources/hyperskill/hyperskill-oauth.properties
 educational-core/resources/marketplace/marketplace-oauth.properties
 #AES key
-edu-format/resources/aes/aes.properties
 educational-core/resources/aes/aes.properties
 # don't commit changes in hyperskill css
 educational-core/resources/style/hyperskill_task.css
