@@ -122,7 +122,7 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
       if (updateParentConfig) {
         YamlFormatSynchronizer.saveItem(item.parent)
       }
-      EduCounterUsageCollector.studyItemCreated(item)
+      EduCounterUsageCollector.studyItemCreatedCC(item)
 
       if (itemDir != null) {
         ProjectView.getInstance(project).select(itemDir, itemDir, true)

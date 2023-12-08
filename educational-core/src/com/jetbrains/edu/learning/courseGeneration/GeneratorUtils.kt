@@ -67,7 +67,7 @@ object GeneratorUtils {
     indicator.text = EduCoreBundle.message("generate.additional.files.progress.text")
     unpackAdditionalFiles(holder, ALL_EXCEPT_IDEA_DIRECTORY)
 
-    EduCounterUsageCollector.studyItemCreated(course)
+    EduCounterUsageCollector.studyItemCreatedCC(course)
   }
 
   @Throws(IOException::class)
@@ -82,7 +82,7 @@ object GeneratorUtils {
     for (lesson in item.lessons) {
       createLesson(holder, lesson, sectionDir)
     }
-    EduCounterUsageCollector.studyItemCreated(item)
+    EduCounterUsageCollector.studyItemCreatedCC(item)
     return sectionDir
   }
 
@@ -98,7 +98,7 @@ object GeneratorUtils {
     for (task in taskList) {
       createTask(holder, task, lessonDir)
     }
-    EduCounterUsageCollector.studyItemCreated(lesson)
+    EduCounterUsageCollector.studyItemCreatedCC(lesson)
     return lessonDir
   }
 
@@ -128,7 +128,7 @@ object GeneratorUtils {
     }
 
     createDescriptionFile(holder, configDir, task)
-    EduCounterUsageCollector.studyItemCreated(task)
+    EduCounterUsageCollector.studyItemCreatedCC(task)
     return contentDir
   }
 

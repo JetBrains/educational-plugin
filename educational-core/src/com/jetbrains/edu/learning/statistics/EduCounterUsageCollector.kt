@@ -116,7 +116,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private const val LANGUAGE = "language"
     private const val EDU_TAB = "tab"
 
-    private val GROUP = EventLogGroup("educational.counters", 12)
+    private val GROUP = EventLogGroup("educational.counters", 13)
 
     private val COURSE_MODE_FIELD = EventFields.Enum<CourseMode>(MODE)
     private val ITEM_TYPE_FIELD = EventFields.String(TYPE, listOf("CheckiO",
@@ -142,7 +142,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private val TASK_NAVIGATION_EVENT = GROUP.registerEvent("navigate.to.task", enumField<TaskNavigationPlace>(SOURCE))
     private val EDU_PROJECT_CREATED_EVENT = GROUP.registerEvent("edu.project.created", COURSE_MODE_FIELD, ITEM_TYPE_FIELD, LANGUAGE_FIELD)
     private val EDU_PROJECT_OPENED_EVENT = GROUP.registerEvent("edu.project.opened", COURSE_MODE_FIELD, ITEM_TYPE_FIELD)
-    private val STUDY_ITEM_CREATED_EVENT = GROUP.registerEvent("study.item.created", COURSE_MODE_FIELD, ITEM_TYPE_FIELD)
+    private val CC_STUDY_ITEM_CREATED_EVENT = GROUP.registerEvent("study.item.created", ITEM_TYPE_FIELD)
     private val LICK_CLICKED_EVENT = GROUP.registerEvent("link.clicked", enumField<LinkType>(TYPE))
     private val AUTHORIZATION_EVENT = GROUP.registerEvent("authorization",
                                                           enumField<AuthorizationEvent>(EVENT),
@@ -190,7 +190,11 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
 
     fun eduProjectOpened(course: Course) = EDU_PROJECT_OPENED_EVENT.log(course.courseMode, course.itemType)
 
-    fun studyItemCreated(item: StudyItem) = STUDY_ITEM_CREATED_EVENT.log(item.course.courseMode, item.itemType)
+    fun studyItemCreatedCC(item: StudyItem) {
+      if (CourseMode.EDUCATOR == item.course.courseMode) {
+        CC_STUDY_ITEM_CREATED_EVENT.log(item.itemType)
+      }
+    }
 
     fun linkClicked(linkType: LinkType) = LICK_CLICKED_EVENT.log(linkType)
 
