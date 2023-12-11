@@ -1,27 +1,32 @@
 package com.jetbrains.edu.learning.marketplace
 
 import com.intellij.diff.editor.ChainDiffVirtualFile
-import com.intellij.notification.Notification
-import com.intellij.notification.Notifications
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.util.Disposer
+import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.util.TimeoutUtil
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
-import com.jetbrains.edu.learning.marketplace.actions.DeleteAllSubmissionsAction
 import com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionAction
 import com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionActionTest
 import com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionActionTest.Companion.putCommunityData
-import com.jetbrains.edu.learning.marketplace.api.*
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsList
+import com.jetbrains.edu.learning.marketplace.api.SubmissionsService
+import com.jetbrains.edu.learning.marketplace.deleteSubmissions.AdvancedSubmissionsDeleteDialog
+import com.jetbrains.edu.learning.marketplace.deleteSubmissions.DeleteAllSubmissionsAction
+import com.jetbrains.edu.learning.marketplace.deleteSubmissions.SubmissionsDeleteDialog
+import com.jetbrains.edu.learning.marketplace.deleteSubmissions.deleteSubmissionsWithTestDialog
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.SubmissionsTestBase
 import com.jetbrains.edu.learning.submissions.*
 import com.jetbrains.edu.learning.testAction
@@ -35,7 +40,6 @@ import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
 import java.net.HttpURLConnection
-import java.util.concurrent.CompletableFuture
 import kotlin.random.Random
 
 class MarketplaceSubmissionsTest : SubmissionsTestBase() {
@@ -49,6 +53,28 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
     Disposer.register(testRootDisposable) {
       settings.setTestAgreementState(initialAgreementState)
     }
+  }
+
+  fun `test DeleteSubmissionsAction - Deleting Course Submissions`() {
+    configureSubmissionsResponses(submissionsLists = listOf(), submissionsDeleteRequestSuccess = true)
+    createEduCourse()
+    val submissionsManager = SubmissionsManager.getInstance(project)
+    assertNullOrEmpty(submissionsManager.getSubmissionsFromMemory(setOf(1, 2)))
+
+    checkTask(0, 0)
+    checkTask(0, 1)
+    TimeoutUtil.sleep(1000)
+
+    checkSubmissionsPresent(submissionsManager, 1)
+    checkSubmissionsPresent(submissionsManager, 2)
+
+    deleteSubmissionsWithTestDialog(object : SubmissionsDeleteDialog {
+      override fun showWithResult(): Int = AdvancedSubmissionsDeleteDialog.COURSE
+    }) {
+      testAction(DeleteAllSubmissionsAction.ACTION_ID)
+      PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
+    }
+    assertNullOrEmpty(submissionsManager.getSubmissionsFromMemory(setOf(1, 2)))
   }
 
   fun `test submission created after edu task check`() {
@@ -82,22 +108,6 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
     val solutionFiles = submission.solutionFiles
     checkNotNull(solutionFiles)
     checkSolutionFiles(solutionFiles, solutionFilesActual)
-  }
-
-  fun `test delete submissions action success`() {
-    val userName = MarketplaceConnector.getInstance().account?.userInfo?.name ?: error("nullable current user")
-
-    doTestSubmissionsDelete(true, EduCoreBundle.message("marketplace.delete.submissions.for.user.success.message", userName)) {
-      checkSubmissionsDeleted(setOf(1, 2))
-    }
-  }
-
-  fun `test delete submissions action failed`() {
-    val userName = MarketplaceConnector.getInstance().account?.userInfo?.name ?: error("nullable current user")
-
-    doTestSubmissionsDelete(false, EduCoreBundle.message("marketplace.delete.submissions.failed.for.user.message", userName)) {
-      checkSubmissionsNotDeleted(setOf(1, 2))
-    }
   }
 
   fun `test report community solution action success`() {
@@ -139,36 +149,6 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
     checkCommunitySolutionsPresented(taskId, communityIds)
   }
 
-  private fun doTestSubmissionsDelete(success: Boolean, notificationText: String, checkSubmissions: () -> Unit) {
-    configureSubmissionsResponses(submissionsDeleteRequestSuccess = success)
-
-    createEduCourse()
-
-    CompletableFuture.runAsync {
-      checkTask(0, 0)
-      checkTask(0, 0)
-      checkTask(0, 1)
-    }.thenApply {
-      val submissionsManager = SubmissionsManager.getInstance(project)
-      checkSubmissionsPresent(submissionsManager, 1, 2)
-      checkSubmissionsPresent(submissionsManager, 2, 1)
-
-      doTestWithNotification({ checkSubmissions() },
-        { assertEquals(notificationText, it.content) })
-    }
-  }
-
-  private fun checkSubmissionsNotDeleted(taskIds: Set<Int>) {
-    val submissions = SubmissionsManager.getInstance(project).getSubmissionsFromMemory(taskIds)
-    checkNotNull(submissions)
-    assertEquals(3, submissions.size)
-  }
-
-  private fun checkSubmissionsDeleted(taskIds: Set<Int>) {
-    val submissions = SubmissionsManager.getInstance(project).getSubmissionsFromMemory(taskIds)
-    assertNull(submissions)
-  }
-
   private fun checkCommunitySolutionsPresented(taskId: Int, solutionsIds: List<Int>) {
     val solutionsIdsFromMemory = SubmissionsManager.getInstance(project).getCommunitySubmissionsFromMemory(taskId)?.mapNotNull { it.id }?.toSet()
     checkNotNull(solutionsIdsFromMemory)
@@ -179,22 +159,6 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
     val solutionsIdsFromMemory = SubmissionsManager.getInstance(project).getCommunitySubmissionsFromMemory(taskId)?.mapNotNull { it.id }?.toSet()
     checkNotNull(solutionsIdsFromMemory)
     assertTrue(solutionId !in solutionsIdsFromMemory)
-  }
-
-  private fun doTestWithNotification(checkSubmissions: () -> Unit, checkNotification: (Notification) -> Unit) {
-    var notificationShown = false
-    val connection = project.messageBus.connect(testRootDisposable)
-    connection.subscribe(Notifications.TOPIC, object: Notifications {
-      override fun notify(notification: Notification) {
-        notificationShown = true
-        checkNotification(notification)
-      }
-    })
-
-    testAction(DeleteAllSubmissionsAction.ACTION_ID)
-
-    checkSubmissions()
-    assertTrue("Notification wasn't shown", notificationShown)
   }
 
   private fun checkSolutionFiles(expectedList: List<SolutionFile>, actualList: List<SolutionFile>?) {
@@ -272,13 +236,18 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
 
       val deleteSubmissionsCall = mockk<Call<ResponseBody>>()
       every { service.deleteAllSubmissions() } returns deleteSubmissionsCall
+      every { service.deleteAllSubmissions(any()) } returns deleteSubmissionsCall
       val responseCode = if (submissionsDeleteRequestSuccess) HttpURLConnection.HTTP_NO_CONTENT else HttpURLConnection.HTTP_RESET
-      every { deleteSubmissionsCall.execute() } returns Response.success(responseCode, "empty response body".toResponseBody())
+      every { deleteSubmissionsCall.execute() } answers {
+        Response.success(responseCode, "empty response body".toResponseBody())
+      }
 
       val postSubmissionCall = mockk<Call<MarketplaceSubmission>>()
       every { service.postSubmission(any(), any(), any(), any()) } returns postSubmissionCall
       val postSubmissionResponse = mapper.treeToValue(mapper.readTree(postSubmissionData), MarketplaceSubmission::class.java)
-      every { postSubmissionCall.execute() } returns Response.success(postSubmissionResponse)
+      every { postSubmissionCall.execute() } answers {
+        Response.success(postSubmissionResponse)
+      }
 
       val reportSolutionCall = mockk<Call<ResponseBody>>()
       every { service.reportSolution(any()) } returns reportSolutionCall
@@ -292,7 +261,9 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
 
       val userAgreementStateCall = mockk<Call<ResponseBody>>()
       coEvery {  service.getUserAgreementState() } returns userAgreementStateCall
-      every { userAgreementStateCall.execute() } returns Response.success(userAgreementState.toString().toResponseBody("application/json; charset=UTF-8".toMediaType()))
+      every { userAgreementStateCall.execute() } answers {
+        Response.success(userAgreementState.toString().toResponseBody("application/json; charset=UTF-8".toMediaType()))
+      }
 
       if (solutionsKeyTextMap.isNotEmpty()) {
         mockkObject(MarketplaceSubmissionsConnector.Companion)
