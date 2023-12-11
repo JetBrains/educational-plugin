@@ -3,9 +3,9 @@ package com.jetbrains.edu.coursecreator.framework.diff
 import com.intellij.diff.comparison.ComparisonManager
 import com.intellij.diff.comparison.ComparisonMergeUtil
 import com.intellij.diff.comparison.ComparisonPolicy
-import com.intellij.diff.fragments.MergeLineFragment
 import com.intellij.diff.merge.MergeModelBase
 import com.intellij.diff.tools.util.text.FineMergeLineFragmentImpl
+import com.intellij.diff.tools.util.text.LineOffsets
 import com.intellij.diff.tools.util.text.LineOffsetsUtil
 import com.intellij.diff.util.*
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
@@ -25,6 +25,7 @@ class DiffConflictResolveStrategy(private val project: Project) : SimpleConflict
     baseState: Map<String, String>,
     targetState: Map<String, String>
   ): FLConflictResolveStrategy.StateWithResolvedChanges {
+    // try to resolve simple conflicts
     val (changedFiles, resolvedSimpleConflictsState) = super.resolveConflicts(currentState, baseState, targetState)
     if (changedFiles.isEmpty()) {
       return FLConflictResolveStrategy.StateWithResolvedChanges(changedFiles, resolvedSimpleConflictsState)
@@ -37,16 +38,21 @@ class DiffConflictResolveStrategy(private val project: Project) : SimpleConflict
         conflictFiles += changedFile
         continue
       }
-      val documents = listOf(
-        currentState[changedFile],
-        resolvedSimpleConflictsState[changedFile],
-        targetState[changedFile]
-      ).map(::createTemporaryDocument)
+      // must be not null
+      val contents = listOf(
+        currentState,
+        resolvedSimpleConflictsState,
+        targetState
+      ).map {
+        it[changedFile] ?: error("All contents should not be null")
+      }
 
-      val baseDocument = documents[1]
+      // create a temporary document with base content for a merge model
+      val baseDocument = EditorFactory.getInstance().createDocument(resolvedSimpleConflictsState[changedFile] ?: "")
 
       computeUnderProgress(project, EduCoreBundle.message("action.Educational.Educator.ApplyChangesToNextTasks.conflict.resolution.smart.indicator", changedFile)) {
-        val allConflictsAreSolved = tryResolveConflictsForDocument(project, documents, changedFile, it)
+        val allConflictsAreSolved = tryResolveConflictsForDocument(project, baseDocument, contents, changedFile, it)
+        // do not change an original base text if the file contains unresolvable conflicts
         if (!allConflictsAreSolved) {
           conflictFiles += changedFile
         }
@@ -58,20 +64,17 @@ class DiffConflictResolveStrategy(private val project: Project) : SimpleConflict
     return FLConflictResolveStrategy.StateWithResolvedChanges(conflictFiles, resolvedState)
   }
 
-  private fun createTemporaryDocument(content: CharSequence?): Document {
-    return EditorFactory.getInstance().createDocument(content ?: "")
-  }
-
   private fun tryResolveConflictsForDocument(
     project: Project,
-    documents: List<Document>,
+    baseDocument: Document,
+    contents: List<String>,
     changedFileName: String,
     indicator: ProgressIndicator,
   ): Boolean {
-    require(documents.size == 3)
+    require(contents.size == 3)
 
-    val changes = calculateMergeLines(documents, indicator)
-    val baseDocument = documents[1]
+    val lineOffsets = contents.map { LineOffsetsUtil.create(it) }
+    val changes = calculateMergeLines(contents, lineOffsets, indicator)
 
     val lineRanges = changes.map { change ->
       val startLine = change.getStartLine(ThreeSide.BASE)
@@ -85,6 +88,7 @@ class DiffConflictResolveStrategy(private val project: Project) : SimpleConflict
 
     @Suppress("UnstableApiUsage")
     invokeAndWaitIfNeeded {
+      // the line below registers undo for task with given command id and launches a task with bulk update in write action
       model.executeMergeCommand(
         EduCoreBundle.message("action.Educational.Educator.ApplyChangesToNextTasks.conflict.resolution.smart.indicator", changedFileName),
         null,
@@ -93,12 +97,16 @@ class DiffConflictResolveStrategy(private val project: Project) : SimpleConflict
         null,
       ) {
         for ((index, change) in changes.withIndex()) {
-          val newContent = resolveChange(change, documents)
+          val newContent = resolveChange(change, contents, lineOffsets)
           if (newContent != null) {
             model.replaceChange(index, newContent)
           }
           else {
+            // if conflict could not be resolved automatically then break
+            // there is no need to resolve any more conflicts
+            // because version without any changes will be used anyway
             allConflictsResolved = false
+            break
           }
         }
       }
@@ -107,7 +115,11 @@ class DiffConflictResolveStrategy(private val project: Project) : SimpleConflict
     return allConflictsResolved
   }
 
-  private fun resolveChange(change: FineMergeLineFragmentImpl, documents: List<Document>): List<String>? {
+  private fun resolveChange(
+    change: FineMergeLineFragmentImpl,
+    contents: List<CharSequence>,
+    lineOffsets: List<LineOffsets>
+  ): List<String>? {
     val changeType = change.conflictType
 
     if (isConflict(change.conflictType)) {
@@ -115,11 +127,13 @@ class DiffConflictResolveStrategy(private val project: Project) : SimpleConflict
         return null
       }
       val texts = ThreeSide.map { side ->
-        val sourceDocument = side.select(documents)
+        val content = side.select(contents)
+        val sourceLineOffsets = side.select(lineOffsets)
+
         val startLine = change.getStartLine(side)
         val endLine = change.getEndLine(side)
 
-        DiffUtil.getLinesContent(sourceDocument, startLine, endLine)
+        DiffRangeUtil.getLinesContent(content, sourceLineOffsets, startLine, endLine)
       }
 
       val newContent = ComparisonMergeUtil.tryResolveConflict(texts[0], texts[1], texts[2])
@@ -134,22 +148,22 @@ class DiffConflictResolveStrategy(private val project: Project) : SimpleConflict
     else {
       val sourceSide = if (changeType.isChange(Side.LEFT)) ThreeSide.LEFT else ThreeSide.RIGHT
 
-      val sourceDocument = sourceSide.select(documents)
+      val sourceContent = sourceSide.select(contents)
+      val sourceLineOffsets = sourceSide.select(lineOffsets)
+
       val startLine = change.getStartLine(sourceSide)
       val endLine = change.getEndLine(sourceSide)
 
-      return DiffUtil.getLines(sourceDocument, startLine, endLine)
+      return DiffRangeUtil.getLines(sourceContent, sourceLineOffsets, startLine, endLine)
     }
   }
 
   private fun calculateMergeLines(
-    documents: List<Document>,
+    contents: List<CharSequence>,
+    lineOffsets: List<LineOffsets>,
     indicator: ProgressIndicator
   ): List<FineMergeLineFragmentImpl> {
-    require(documents.size == 3)
-
-    val contents = documents.map { it.charsSequence }
-    val lineOffsets = contents.map { LineOffsetsUtil.create(it) }
+    require(contents.size == 3)
     val fragments = ComparisonManager.getInstance().mergeLines(contents[0], contents[1], contents[2], comparisonPolicy, indicator)
 
     return fragments.map { change ->
