@@ -93,17 +93,22 @@ class DiffConflictResolveStrategyTest : ConflictResolveStrategyTestBase<DiffConf
     assertEquals(expectedState, actualState)
   }
 
-  fun `test do not resolve deletion conflict`() {
+  fun `test do not resolve (deleted, modified) conflict`() {
     val baseState = mapOf(
       "a.kt" to """
-        //TODO()
+        fun f() = 12
+
+        //adjkfjkasdfjkasjkdfjkashdjk
+        
       """.trimIndent()
     )
     val currentState = mapOf(
       "a.kt" to """
-        //TODO()
+        fun f() = 12
+
+        //adjkfjkasdfjkasjkdfjkashdjk
         
-        fun main() { println("MEM") }
+        val x = 12
       """.trimIndent(),
     )
     val targetState = mapOf<String, String>()
@@ -112,7 +117,42 @@ class DiffConflictResolveStrategyTest : ConflictResolveStrategyTestBase<DiffConf
     assertEquals(listOf("a.kt"), conflictFiles)
     val actualState = mapOf(
       "a.kt" to """
-        //TODO()
+        fun f() = 12
+
+        //adjkfjkasdfjkasjkdfjkashdjk
+        
+      """.trimIndent()
+    )
+    assertEquals(expectedState, actualState)
+  }
+
+  fun `test do not resolve (added, added) conflict`() {
+    val currentState = mapOf(
+      "a.kt" to """
+        fun f() = 12
+
+        //adjkfjkasdfjkasjkdfjkashdjk
+        
+      """.trimIndent()
+    )
+    val targetState = mapOf(
+      "a.kt" to """
+
+        //adjkfjkasdfjkasjkdfjkashdjk
+        
+        val x = 12
+      """.trimIndent(),
+    )
+    val baseState = mapOf<String, String>()
+
+    val (conflictFiles, actualState) = conflictStrategy.resolveConflicts(currentState, baseState, targetState)
+    assertEquals(listOf("a.kt"), conflictFiles)
+    val expectedState = mapOf(
+      "a.kt" to """
+        fun f() = 12
+
+        //adjkfjkasdfjkasjkdfjkashdjk
+        
       """.trimIndent()
     )
     assertEquals(expectedState, actualState)

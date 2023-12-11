@@ -32,7 +32,12 @@ class DiffConflictResolveStrategy(private val project: Project) : SimpleConflict
     }
     val conflictFiles = mutableListOf<String>()
     val resolvedState = resolvedSimpleConflictsState.toMutableMap()
-    for (changedFile in changedFiles){
+    for (changedFile in changedFiles) {
+      // do not try to resolve if conflict isn't (modified, modified)
+      if (currentState[changedFile] == null || baseState[changedFile] == null || targetState[changedFile] == null) {
+        conflictFiles += changedFile
+        continue
+      }
       val documents = listOf(
         currentState[changedFile],
         resolvedSimpleConflictsState[changedFile],
