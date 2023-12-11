@@ -7,7 +7,6 @@ import com.intellij.diff.fragments.MergeLineFragment
 import com.intellij.diff.merge.MergeModelBase
 import com.intellij.diff.tools.util.text.FineMergeLineFragmentImpl
 import com.intellij.diff.tools.util.text.LineOffsetsUtil
-import com.intellij.diff.tools.util.text.MergeInnerDifferences
 import com.intellij.diff.util.*
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.command.UndoConfirmationPolicy
@@ -155,28 +154,9 @@ class DiffConflictResolveStrategy(private val project: Project) : SimpleConflict
 
     return fragments.map { change ->
       val changeType = MergeRangeUtil.getLineMergeType(change, contents, lineOffsets, comparisonPolicy)
-      val innerDifference = getInnerDifference(change, changeType, documents, indicator)
-      FineMergeLineFragmentImpl(change, changeType, innerDifference)
+      // we don't need inner differences because they are used only for highlighting
+      FineMergeLineFragmentImpl(change, changeType, null)
     }
-  }
-
-  private fun getInnerDifference(
-    change: MergeLineFragment,
-    changeType: MergeConflictType,
-    documents: List<Document>,
-    indicator: ProgressIndicator
-  ): MergeInnerDifferences? {
-    val chunks = ThreeSide.map { side ->
-      if (!changeType.isChange(side)) return@map null
-
-      val startLine = change.getStartLine(side)
-      val endLine = change.getEndLine(side)
-      if (startLine == endLine) return@map null
-
-      val document = side.select(documents)
-      DiffUtil.getLinesContent(document, startLine, endLine)
-    }
-    return DiffUtil.compareThreesideInner(chunks, comparisonPolicy, indicator)
   }
 
   private fun isConflict(changeType: MergeConflictType): Boolean {
