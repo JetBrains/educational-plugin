@@ -5,7 +5,6 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
@@ -41,7 +40,7 @@ class MarketplaceCheckListener: PostSolutionCheckListener() {
       if (!isSolutionSharingAllowed) return@thenApply
 
       val submissionsManager = SubmissionsManager.getInstance(project)
-      if (submissionsManager.isFirstCorrectSubmissionForTask(task)) {
+      if (submissionsManager.isCommunitySolutionsAvailable(task)) {
         submissionsManager.loadCommunitySubmissions(task)
       }
 
@@ -51,10 +50,5 @@ class MarketplaceCheckListener: PostSolutionCheckListener() {
         }
       }
     }
-  }
-
-  private fun SubmissionsManager.isFirstCorrectSubmissionForTask(task: Task): Boolean {
-    val correctSubmissions = getSubmissions(task).count { it.status == EduFormatNames.CORRECT }
-    return correctSubmissions == 1
   }
 }

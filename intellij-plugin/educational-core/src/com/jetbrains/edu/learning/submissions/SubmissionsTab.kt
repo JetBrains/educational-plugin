@@ -25,6 +25,7 @@ import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.ApplyCodeAction.Companion.FILENAMES_KEY
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
+import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.isTestFile
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
@@ -33,7 +34,6 @@ import com.jetbrains.edu.learning.marketplace.UserAgreementDialog
 import com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionAction
 import com.jetbrains.edu.learning.marketplace.isMarketplaceCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.projectView.CourseViewUtils.isCommunitySolutionsAllowed
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.taskToolWindow.links.SwingToolWindowLinkHandler
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleManager
@@ -112,17 +112,18 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
   private fun updateSubmissionsContent(task: Task, isLoggedIn: Boolean) {
     val submissionsManager = SubmissionsManager.getInstance(project)
     val isSolutionSharingAllowed = submissionsManager.isSolutionSharingAllowed()
+    val isCommunitySolutionsAvailable = !task.canShowSolution() && submissionsManager.isCommunitySolutionsAvailable(task)
     val (descriptionText, customLinkHandler) =
       prepareSubmissionsContent(submissionsManager, task, isLoggedIn)
 
     if (isMarketplaceCourse) {
       val (communityDescriptionText, communityLinkHandler) =
-        prepareCommunityContent(task, submissionsManager, isSolutionSharingAllowed)
+        prepareCommunityContent(task, submissionsManager, isCommunitySolutionsAvailable, isSolutionSharingAllowed)
 
       project.invokeLater {
         segmentedButton.updateCommunityButton(
           isLoggedIn = isLoggedIn,
-          isEnabled = task.isCommunitySolutionsAllowed() || !isSolutionSharingAllowed,
+          isEnabled = isCommunitySolutionsAvailable || !isSolutionSharingAllowed,
           isAgreementTooltip = !isSolutionSharingAllowed
         )
         updatePanel(panel, descriptionText, customLinkHandler)
@@ -143,9 +144,9 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
   }
 
   private fun prepareCommunityContent(
-    task: Task, submissionsManager: SubmissionsManager, isSolutionSharingAllowed: Boolean
+    task: Task, submissionsManager: SubmissionsManager, isCommunitySolutionsAvailable: Boolean, isSolutionSharingAllowed: Boolean
   ): Pair<String, SwingToolWindowLinkHandler?> {
-    if (task.isCommunitySolutionsAllowed() && isSolutionSharingAllowed) {
+    if (isCommunitySolutionsAvailable && isSolutionSharingAllowed) {
       val submissionsList = submissionsManager.getCommunitySubmissionsFromMemory(task.id)
 
       if (submissionsList.isNullOrEmpty()) {
@@ -191,6 +192,10 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
   fun showLoadingCommunityPanel(platformName: String) {
     if (!isMarketplaceCourse) return
     communityPanel.showLoadingSubmissionsPanel(platformName)
+  }
+
+  fun showCommunityTab() {
+    segmentedButton.selectedItem = COMMUNITY
   }
 
   fun showMyTab() {

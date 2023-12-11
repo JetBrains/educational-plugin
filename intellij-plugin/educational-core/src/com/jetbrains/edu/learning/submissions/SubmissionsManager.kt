@@ -199,6 +199,16 @@ class SubmissionsManager(private val project: Project) {
   @RequiresBackgroundThread
   fun isSolutionSharingAllowed(): Boolean = course?.getSubmissionsProvider()?.isSolutionSharingAllowed() ?: false
 
+  fun isCommunitySolutionsAvailable(task: Task): Boolean {
+    if (communitySubmissions[task.id] != null) return true
+
+    val submissions = submissions[task.id] ?: return false
+    val correctSubmissions = submissions.count { it.status == CORRECT }
+    val wrongSubmissions = submissions.count() - correctSubmissions
+
+    return correctSubmissions == 1 || wrongSubmissions >= 3
+  }
+
   private fun getPlatformName(): String = course?.getSubmissionsProvider()?.getPlatformName() ?: error("Failed to get platform Name")
 
   fun doAuthorize() = course?.getSubmissionsProvider()?.doAuthorize(Runnable { prepareSubmissionsContentWhenLoggedIn() })
