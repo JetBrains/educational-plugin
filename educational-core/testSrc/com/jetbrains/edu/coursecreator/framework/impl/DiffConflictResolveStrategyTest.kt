@@ -157,4 +157,69 @@ class DiffConflictResolveStrategyTest : ConflictResolveStrategyTestBase<DiffConf
     )
     assertEquals(expectedState, actualState)
   }
+
+  fun `test resolve several conflicts in one file`() {
+    val baseState = mapOf(
+      "a.kt" to """
+        fun f() = 12
+        
+        fun main() {
+        
+        }
+      """.trimIndent()
+    )
+    val currentState = mapOf(
+      "a.kt" to """
+        fun f() = 12
+        
+        fun g() {
+          println("GGGG")
+          
+          
+        }
+        
+        fun main() {
+        
+        }
+      """.trimIndent()
+    )
+    val targetState = mapOf(
+      "a.kt" to """
+        fun f() = 12
+        
+        fun main() {
+          println("Hello world!")
+          println(f())
+        }
+        
+        fun asd() {
+          return asd()
+        }
+      """.trimIndent()
+    )
+
+    val (conflictFiles, actualState) = conflictStrategy.resolveConflicts(currentState, baseState, targetState)
+    assertEquals(emptyList<String>(), conflictFiles)
+    val expectedState = mapOf(
+      "a.kt" to """
+        fun f() = 12
+        
+        fun g() {
+          println("GGGG")
+          
+          
+        }
+        
+        fun main() {
+          println("Hello world!")
+          println(f())
+        }
+        
+        fun asd() {
+          return asd()
+        }
+      """.trimIndent(),
+    )
+    assertEquals(expectedState, actualState)
+  }
 }
