@@ -27,9 +27,9 @@ class DiffConflictResolveStrategyTest : ConflictResolveStrategyTestBase<DiffConf
       """.trimIndent()
     )
 
-    val (conflictFiles, expectedState) = conflictStrategy.resolveConflicts(currentState, baseState, targetState)
+    val (conflictFiles, actualState) = conflictStrategy.resolveConflicts(currentState, baseState, targetState)
     assertEquals(emptyList<String>(), conflictFiles)
-    val actualState = mapOf(
+    val expectedState = mapOf(
       "a.kt" to """
         fun f() = 128
         
@@ -60,9 +60,9 @@ class DiffConflictResolveStrategyTest : ConflictResolveStrategyTestBase<DiffConf
       """.trimIndent(),
     )
 
-    val (conflictFiles, expectedState) = conflictStrategy.resolveConflicts(currentState, baseState, targetState)
+    val (conflictFiles, actualState) = conflictStrategy.resolveConflicts(currentState, baseState, targetState)
     assertEquals(listOf("a.kt"), conflictFiles)
-    val actualState = mapOf(
+    val expectedState = mapOf(
       "a.kt" to """
         //TODO()
       """.trimIndent()
@@ -83,9 +83,9 @@ class DiffConflictResolveStrategyTest : ConflictResolveStrategyTestBase<DiffConf
       "d.kt" to "fun yyy() = 100",
     )
 
-    val (conflictFiles, expectedState) = conflictStrategy.resolveConflicts(currentState, baseState, targetState)
+    val (conflictFiles, actualState) = conflictStrategy.resolveConflicts(currentState, baseState, targetState)
     assertEquals(emptyList<String>(), conflictFiles)
-    val actualState = mapOf(
+    val expectedState = mapOf(
       "a.kt" to "TODO()",
       "c.kt" to "fun ggg() = 0",
       "d.kt" to "fun yyy() = 100",
@@ -113,9 +113,9 @@ class DiffConflictResolveStrategyTest : ConflictResolveStrategyTestBase<DiffConf
     )
     val targetState = mapOf<String, String>()
 
-    val (conflictFiles, expectedState) = conflictStrategy.resolveConflicts(currentState, baseState, targetState)
+    val (conflictFiles, actualState) = conflictStrategy.resolveConflicts(currentState, baseState, targetState)
     assertEquals(listOf("a.kt"), conflictFiles)
-    val actualState = mapOf(
+    val expectedState = mapOf(
       "a.kt" to """
         fun f() = 12
 

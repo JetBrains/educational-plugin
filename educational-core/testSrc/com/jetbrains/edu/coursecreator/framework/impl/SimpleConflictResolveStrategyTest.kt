@@ -18,9 +18,9 @@ class SimpleConflictResolveStrategyTest : ConflictResolveStrategyTestBase<Simple
       "a.kt" to "fun f() = 32",
       "d.kt" to "fun yyy() = 100",
     )
-    val (conflictFiles, expectedState) = conflictStrategy.resolveConflicts(currentState, baseState, targetState)
+    val (conflictFiles, actualState) = conflictStrategy.resolveConflicts(currentState, baseState, targetState)
     assertEquals(listOf("a.kt"), conflictFiles)
-    val actualState = mapOf(
+    val expectedState = mapOf(
       "a.kt" to "fun f() = 12",
       "c.kt" to "fun ggg() = 0",
       "d.kt" to "fun yyy() = 100",
@@ -43,10 +43,10 @@ class SimpleConflictResolveStrategyTest : ConflictResolveStrategyTestBase<Simple
       "c.kt" to "cc.kt",
       "d.kt" to "dd.kt",
     )
-    val (conflictFiles, expectedState) = conflictStrategy.resolveConflicts(currentState, baseState, targetState)
+    val (conflictFiles, actualState) = conflictStrategy.resolveConflicts(currentState, baseState, targetState)
     val sortedConflictFiles = conflictFiles.sorted()
     assertEquals(listOf("a.kt", "b.kt", "c.kt", "d.kt"), sortedConflictFiles)
-    val actualState = mapOf(
+    val expectedState = mapOf(
       "a.kt" to "a.kt",
       "b.kt" to "b.kt",
       "c.kt" to "c.kt",
