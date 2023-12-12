@@ -228,7 +228,7 @@ class CCFrameworkLessonManager(private val project: Project) : Disposable {
     private val LOG = logger<CCFrameworkLessonManager>()
 
     @NonNls
-    const val DIFF_RESOLVE_ENABLED_REGISTRY_KEY = "edu.course.creator.diff.conflict.resolution.enabled"
+    private const val DIFF_RESOLVE_ENABLED_REGISTRY_KEY = "edu.course.creator.diff.conflict.resolution.enabled"
 
     fun getInstance(project: Project): CCFrameworkLessonManager = project.service()
 
