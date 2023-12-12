@@ -99,7 +99,7 @@ class CCFrameworkLessonManager(private val project: Project) : Disposable {
     targetState: FLTaskState,
     taskDir: VirtualFile
   ): Boolean {
-    val conflictResolveStrategy = chooseConflictResolveStrategy()
+    val conflictResolveStrategy = DiffConflictResolveStrategy(project)
 
     // Try to resolve some changes automatically and apply them to previousCurrentState
     val (conflictFiles, resolvedChangesState) = conflictResolveStrategy.resolveConflicts(
@@ -215,20 +215,8 @@ class CCFrameworkLessonManager(private val project: Project) : Disposable {
     Notifications.Bus.notify(notification, project)
   }
 
-  private fun chooseConflictResolveStrategy(): FLConflictResolveStrategy {
-    return if (Registry.`is`(DIFF_RESOLVE_ENABLED_REGISTRY_KEY, false)) {
-      DiffConflictResolveStrategy(project)
-    }
-    else {
-      SimpleConflictResolveStrategy()
-    }
-  }
-
   companion object {
     private val LOG = logger<CCFrameworkLessonManager>()
-
-    @NonNls
-    private const val DIFF_RESOLVE_ENABLED_REGISTRY_KEY = "edu.course.creator.diff.conflict.resolution.enabled"
 
     fun getInstance(project: Project): CCFrameworkLessonManager = project.service()
 
