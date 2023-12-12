@@ -12,6 +12,9 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.PlatformDataKeys.LAST_ACTIVE_FILE_EDITOR
+import com.intellij.openapi.actionSystem.Presentation
+import com.intellij.openapi.actionSystem.ex.CustomComponentAction
+import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Document
@@ -22,12 +25,17 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.ui.DumbAwareActionButton
+import com.intellij.ui.GotItTooltip
+import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.NonNls
+import java.awt.event.ComponentAdapter
+import java.awt.event.ComponentEvent
+import javax.swing.JComponent
 
-class ApplyCodeAction : DumbAwareActionButton() {
+class ApplyCodeAction : DumbAwareActionButton(), CustomComponentAction {
 
   override fun updateButton(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false
@@ -58,6 +66,36 @@ class ApplyCodeAction : DumbAwareActionButton() {
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
+
+  override fun createCustomComponent(presentation: Presentation, place: String): JComponent = object : ActionButton(
+    this, presentation, place, JBUI.size(COMPONENT_SIZE)
+  ) {
+    init {
+      val gotItTooltip = GotItTooltip(
+        GOT_IT_ID, EduCoreBundle.message("action.Educational.Student.ApplyCode.tooltip.text")
+      ).withHeader(EduCoreBundle.message("action.Educational.Student.ApplyCode.tooltip.title"))
+
+      this.addComponentListener(object : ComponentAdapter() {
+        override fun componentMoved(e: ComponentEvent) {
+          val jComponent = e.component as JComponent
+          if (jComponent.visibleRect.isEmpty) {
+            gotItTooltip.hidePopup()
+          }
+          else {
+            gotItTooltip.show(jComponent, GotItTooltip.BOTTOM_MIDDLE)
+          }
+        }
+
+        override fun componentShown(e: ComponentEvent) {
+          gotItTooltip.show(e.component as JComponent, GotItTooltip.BOTTOM_MIDDLE)
+        }
+
+        override fun componentHidden(e: ComponentEvent) {
+          gotItTooltip.hidePopup()
+        }
+      })
+    }
+  }
 
   private fun AnActionEvent.isFileNamesPresented() = getDiffRequestChain()?.getUserData(FILENAMES_KEY) != null
 
@@ -126,5 +164,10 @@ class ApplyCodeAction : DumbAwareActionButton() {
 
     @NonNls
     const val ACTION_ID: String = "Educational.Student.ApplyCode"
+
+    @NonNls
+    private const val GOT_IT_ID: String = "diff.toolbar.apply.code.action.button"
+
+    private const val COMPONENT_SIZE: Int = 22
   }
 }
