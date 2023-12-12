@@ -213,6 +213,10 @@
             class="com.jetbrains.edu.learning.actions.ApplyCodeAction"
             icon="com.jetbrains.edu.EducationalCoreIcons.ApplyCode">
       <add-to-group group-id="Diff.ViewerToolbar"/>
+      <keyboard-shortcut
+        keymap="$default"
+        first-keystroke="control alt shift A"
+      />
     </action>
 
     <group id="Educational.CourseView.SecondaryActions">
