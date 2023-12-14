@@ -111,28 +111,23 @@ class CCFrameworkLessonManager(private val project: Project) : Disposable {
     }
 
     // If not, then we have to show the merge dialog so the user can resolve the conflicts manually.
-    // Merge dialog requires that the files that will be shown should be passed as virtual files.
-    // So we replace target task files with files from base state with resolved conflicts and we change them in merge dialog
-    // TODO(Show merge dialog without changing target task files)
-    calculateChanges(targetState, resolvedChangesState).apply(project, taskDir, targetTask)
-
-    val isOk = applyChangesWithMergeDialog(
+    val finalState = applyChangesWithMergeDialog(
       project,
       currentTask,
       targetTask,
       conflictFiles,
       currentState, resolvedChangesState, targetState,
-      taskDir,
       // it is necessary for the correct recognition of deleting / adding files
       // because new files could be added / removed from the base state after conflict resolution
       initialBaseState
     )
-    if (!isOk) {
-      // if the user canceled the dialog, then we return to the target task state
-      val currentStateFromFiles = getTaskStateFromFiles(resolvedChangesState.keys, taskDir)
-      calculateChanges(currentStateFromFiles, targetState).apply(project, taskDir, targetTask)
+
+    if (finalState == null) {
+      return false
     }
-    return isOk
+
+    calculateChanges(targetState, finalState).apply(project, taskDir, targetTask)
+    return true
   }
 
   private fun saveFileStateIntoStorage(task: Task, baseFilesNames: List<String>? = null): UpdatedState {
