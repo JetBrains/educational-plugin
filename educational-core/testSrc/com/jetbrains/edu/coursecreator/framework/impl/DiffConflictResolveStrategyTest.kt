@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.framework.impl
 
 import com.jetbrains.edu.coursecreator.framework.diff.DiffConflictResolveStrategy
+import com.jetbrains.edu.coursecreator.framework.diff.resolveConflicts
 
 class DiffConflictResolveStrategyTest : ConflictResolveStrategyTestBase<DiffConflictResolveStrategy>() {
   override val conflictStrategy
@@ -27,7 +28,7 @@ class DiffConflictResolveStrategyTest : ConflictResolveStrategyTestBase<DiffConf
       """.trimIndent()
     )
 
-    val (conflictFiles, actualState) = conflictStrategy.resolveConflicts(currentState, baseState, targetState)
+    val (conflictFiles, actualState) = resolveConflicts(project, currentState, baseState, targetState)
     assertEquals(emptyList<String>(), conflictFiles)
     val expectedState = mapOf(
       "a.kt" to """
@@ -60,7 +61,7 @@ class DiffConflictResolveStrategyTest : ConflictResolveStrategyTestBase<DiffConf
       """.trimIndent(),
     )
 
-    val (conflictFiles, actualState) = conflictStrategy.resolveConflicts(currentState, baseState, targetState)
+    val (conflictFiles, actualState) = resolveConflicts(project, currentState, baseState, targetState)
     assertEquals(listOf("a.kt"), conflictFiles)
     val expectedState = mapOf(
       "a.kt" to """
@@ -83,7 +84,7 @@ class DiffConflictResolveStrategyTest : ConflictResolveStrategyTestBase<DiffConf
       "d.kt" to "fun yyy() = 100",
     )
 
-    val (conflictFiles, actualState) = conflictStrategy.resolveConflicts(currentState, baseState, targetState)
+    val (conflictFiles, actualState) = resolveConflicts(project, currentState, baseState, targetState)
     assertEquals(emptyList<String>(), conflictFiles)
     val expectedState = mapOf(
       "a.kt" to "TODO()",
@@ -113,7 +114,7 @@ class DiffConflictResolveStrategyTest : ConflictResolveStrategyTestBase<DiffConf
     )
     val targetState = mapOf<String, String>()
 
-    val (conflictFiles, actualState) = conflictStrategy.resolveConflicts(currentState, baseState, targetState)
+    val (conflictFiles, actualState) = resolveConflicts(project, currentState, baseState, targetState)
     assertEquals(listOf("a.kt"), conflictFiles)
     val expectedState = mapOf(
       "a.kt" to """
@@ -145,7 +146,7 @@ class DiffConflictResolveStrategyTest : ConflictResolveStrategyTestBase<DiffConf
     )
     val baseState = mapOf<String, String>()
 
-    val (conflictFiles, actualState) = conflictStrategy.resolveConflicts(currentState, baseState, targetState)
+    val (conflictFiles, actualState) = resolveConflicts(project, currentState, baseState, targetState)
     assertEquals(listOf("a.kt"), conflictFiles)
     val expectedState = mapOf(
       "a.kt" to """
@@ -198,7 +199,7 @@ class DiffConflictResolveStrategyTest : ConflictResolveStrategyTestBase<DiffConf
       """.trimIndent()
     )
 
-    val (conflictFiles, actualState) = conflictStrategy.resolveConflicts(currentState, baseState, targetState)
+    val (conflictFiles, actualState) = resolveConflicts(project, currentState, baseState, targetState)
     assertEquals(emptyList<String>(), conflictFiles)
     val expectedState = mapOf(
       "a.kt" to """

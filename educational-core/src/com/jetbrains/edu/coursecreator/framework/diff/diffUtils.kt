@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.framework.diff
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.impl.FLTaskState
@@ -52,4 +53,17 @@ fun showMultipleFileMergeDialog(
     FLMultipleFileMergeUIImpl()
   }
   return ui.show(project, files, mergeProvider, mergeCustomizer, currentTaskName, targetTaskName)
+}
+
+fun resolveConflicts(
+  project: Project,
+  currentState: FLTaskState,
+  baseState: FLTaskState,
+  targetState: FLTaskState
+): FLConflictResolveStrategy.StateWithResolvedChanges {
+  return with(DiffConflictResolveStrategy(project)) {
+    val result = resolveConflicts(currentState, baseState, targetState)
+    Disposer.dispose(this)
+    result
+  }
 }

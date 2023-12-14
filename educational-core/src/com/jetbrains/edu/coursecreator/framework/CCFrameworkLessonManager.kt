@@ -99,14 +99,8 @@ class CCFrameworkLessonManager(private val project: Project) : Disposable {
     targetState: FLTaskState,
     taskDir: VirtualFile
   ): Boolean {
-    val conflictResolveStrategy = DiffConflictResolveStrategy(project)
-
     // Try to resolve some changes automatically and apply them to previousCurrentState
-    val (conflictFiles, resolvedChangesState) = conflictResolveStrategy.resolveConflicts(
-      currentState,
-      initialBaseState,
-      targetState
-    )
+    val (conflictFiles, resolvedChangesState) = resolveConflicts(project, currentState, initialBaseState, targetState)
 
     // if all changes were resolved, then we can apply changes into targetTask
     if (conflictFiles.isEmpty()) {
