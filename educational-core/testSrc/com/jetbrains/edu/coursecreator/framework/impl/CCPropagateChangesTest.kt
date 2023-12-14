@@ -12,7 +12,6 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.coursecreator.framework.diff.SimpleConflictResolveStrategy
 import com.jetbrains.edu.coursecreator.framework.diff.withFLMultipleFileMergeUI
 import kotlin.test.assertFails
 

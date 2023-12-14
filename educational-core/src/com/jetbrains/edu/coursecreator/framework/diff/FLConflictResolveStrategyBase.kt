@@ -2,17 +2,14 @@ package com.jetbrains.edu.coursecreator.framework.diff
 
 import com.jetbrains.edu.learning.framework.impl.FLTaskState
 
-/**
- * A simple conflict resolution strategy for resolving changes between task states.
- */
-open class SimpleConflictResolveStrategy : FLConflictResolveStrategy {
+abstract class FLConflictResolveStrategyBase: FLConflictResolveStrategy {
   /**
-   * This strategy does resolve some simple changes
+   * Resolve some simple changes
    *
    * If at least two versions of the file are equal, then we can resolve the change automatically.
    * Otherwise, the strategy counts this file as conflict
    */
-  override fun resolveConflicts(
+  protected fun resolveSimpleConflicts(
     currentState: FLTaskState,
     baseState: FLTaskState,
     targetState: FLTaskState,
@@ -61,5 +58,18 @@ open class SimpleConflictResolveStrategy : FLConflictResolveStrategy {
       // The conflict occurs, and we use contentBase to initialize the middle of merge dialog
       else -> true to contentBase
     }
+  }
+}
+
+/**
+ * A simple conflict resolution strategy for resolving changes between task states.
+ */
+class SimpleConflictResolveStrategy: FLConflictResolveStrategyBase() {
+  override fun resolveConflicts(
+    currentState: FLTaskState,
+    baseState: FLTaskState,
+    targetState: FLTaskState
+  ): FLConflictResolveStrategy.StateWithResolvedChanges {
+    return resolveSimpleConflicts(currentState, baseState, targetState)
   }
 }

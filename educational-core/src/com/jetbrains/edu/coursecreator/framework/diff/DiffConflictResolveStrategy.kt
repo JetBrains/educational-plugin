@@ -21,7 +21,7 @@ import com.intellij.openapi.util.text.LineTokenizer
 import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
-class DiffConflictResolveStrategy(private val project: Project) : SimpleConflictResolveStrategy(), Disposable {
+class DiffConflictResolveStrategy(private val project: Project) : FLConflictResolveStrategyBase(), Disposable {
   private val diffSettings = TextDiffSettingsHolder.TextDiffSettings().apply {
     highlightPolicy = HighlightPolicy.DO_NOT_HIGHLIGHT
     ignorePolicy = IgnorePolicy.DEFAULT
@@ -42,7 +42,7 @@ class DiffConflictResolveStrategy(private val project: Project) : SimpleConflict
     targetState: Map<String, String>
   ): FLConflictResolveStrategy.StateWithResolvedChanges {
     // try to resolve simple conflicts
-    val (changedFiles, resolvedSimpleConflictsState) = super.resolveConflicts(currentState, baseState, targetState)
+    val (changedFiles, resolvedSimpleConflictsState) = resolveSimpleConflicts(currentState, baseState, targetState)
     if (changedFiles.isEmpty()) {
       return FLConflictResolveStrategy.StateWithResolvedChanges(changedFiles, resolvedSimpleConflictsState)
     }

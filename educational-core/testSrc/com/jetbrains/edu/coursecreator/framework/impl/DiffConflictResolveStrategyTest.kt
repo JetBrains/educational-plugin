@@ -1,12 +1,9 @@
 package com.jetbrains.edu.coursecreator.framework.impl
 
-import com.jetbrains.edu.coursecreator.framework.diff.DiffConflictResolveStrategy
 import com.jetbrains.edu.coursecreator.framework.diff.resolveConflicts
+import com.jetbrains.edu.learning.EduTestCase
 
-class DiffConflictResolveStrategyTest : ConflictResolveStrategyTestBase<DiffConflictResolveStrategy>() {
-  override val conflictStrategy
-    get() = DiffConflictResolveStrategy(project)
-
+class DiffConflictResolveStrategyTest : EduTestCase() {
   fun `test solve some unrelated changes`() {
     val baseState = mapOf(
       "a.kt" to """

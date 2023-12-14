@@ -1,9 +1,10 @@
 package com.jetbrains.edu.coursecreator.framework.impl
 
 import com.jetbrains.edu.coursecreator.framework.diff.SimpleConflictResolveStrategy
+import com.jetbrains.edu.learning.EduTestCase
 
-class SimpleConflictResolveStrategyTest : ConflictResolveStrategyTestBase<SimpleConflictResolveStrategy>() {
-  override val conflictStrategy = SimpleConflictResolveStrategy()
+class SimpleConflictResolveStrategyTest : EduTestCase() {
+  private val conflictStrategy = SimpleConflictResolveStrategy()
 
   fun `test simple conflict strategy`() {
     val baseState = mapOf(
