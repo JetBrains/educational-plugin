@@ -2,7 +2,7 @@ package com.jetbrains.edu.coursecreator.framework.diff
 
 import com.jetbrains.edu.learning.framework.impl.FLTaskState
 
-abstract class FLConflictResolveStrategyBase: FLConflictResolveStrategy {
+abstract class FLConflictResolveStrategyBase : FLConflictResolveStrategy {
   /**
    * Resolve some simple changes
    *
@@ -64,7 +64,7 @@ abstract class FLConflictResolveStrategyBase: FLConflictResolveStrategy {
 /**
  * A simple conflict resolution strategy for resolving changes between task states.
  */
-class SimpleConflictResolveStrategy: FLConflictResolveStrategyBase() {
+class SimpleConflictResolveStrategy : FLConflictResolveStrategyBase() {
   override fun resolveConflicts(
     currentState: FLTaskState,
     baseState: FLTaskState,

@@ -62,8 +62,10 @@ fun resolveConflicts(
   targetState: FLTaskState
 ): FLConflictResolveStrategy.StateWithResolvedChanges {
   return with(DiffConflictResolveStrategy(project)) {
-    val result = resolveConflicts(currentState, baseState, targetState)
-    Disposer.dispose(this)
-    result
+    try {
+      resolveConflicts(currentState, baseState, targetState)
+    } finally {
+      Disposer.dispose(this)
+    }
   }
 }
