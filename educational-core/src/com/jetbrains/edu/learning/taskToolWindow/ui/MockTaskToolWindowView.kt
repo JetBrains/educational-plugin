@@ -28,4 +28,6 @@ class MockTaskToolWindowView(project: Project) : TaskToolWindowView(project) {
   override fun checkStarted(task: Task, startSpinner: Boolean) {}
   override fun checkFinished(task: Task, checkResult: CheckResult) {}
   override fun checkTooltipPosition(): RelativePoint = RelativePoint(Point(0, 0))
+
+  override fun addInlineBanner(inlineBanner: SolutionSharingInlineBanner) {}
 }

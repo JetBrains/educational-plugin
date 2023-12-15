@@ -233,6 +233,12 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
     else null
   }
 
+  override fun addInlineBanner(inlineBanner: SolutionSharingInlineBanner) {
+    val taskTextPanel = uiContent?.taskTextTW?.taskInfoPanel ?: return
+    taskTextPanel.add(inlineBanner, BorderLayout.SOUTH)
+    taskTextPanel.validate()
+  }
+
   companion object {
     private const val HELP_ID = "task.description"
   }

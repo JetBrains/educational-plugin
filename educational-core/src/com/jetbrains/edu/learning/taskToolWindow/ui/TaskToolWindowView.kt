@@ -34,6 +34,8 @@ abstract class TaskToolWindowView(val project: Project) {
   abstract fun checkFinished(task: Task, checkResult: CheckResult)
   abstract fun checkTooltipPosition(): RelativePoint?
 
+  abstract fun addInlineBanner(inlineBanner: SolutionSharingInlineBanner)
+
   companion object {
 
     fun getInstance(project: Project): TaskToolWindowView {

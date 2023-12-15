@@ -3,13 +3,14 @@ package com.jetbrains.edu.learning.marketplace.settings
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.project.Project
 import com.intellij.ui.JBAccountInfoService
-import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showFailedToChangeSharingPreferenceNotification
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.getJBAUserInfo
 import com.jetbrains.edu.learning.marketplace.toBoolean
 import com.jetbrains.edu.learning.onError
+import com.jetbrains.edu.learning.taskToolWindow.ui.SolutionSharingInlineBanners
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -53,13 +54,17 @@ class MarketplaceSettings(private val scope: CoroutineScope) {
     account = value
   }
 
-  fun updateSharingPreference(state: Boolean) {
+  fun updateSharingPreference(state: Boolean, project: Project? = null) {
     scope.launch(Dispatchers.IO) {
       MarketplaceSubmissionsConnector.getInstance().changeSharingPreference(state).onError {
-        showFailedToChangeSharingPreferenceNotification()
+        SolutionSharingInlineBanners.showFailedToEnableSolutionSharing(project)
         return@launch
       }
+
       solutionsSharing = state
+      if (state) {
+        SolutionSharingInlineBanners.showSuccessSolutionSharingEnabling(project)
+      }
     }
   }
 
