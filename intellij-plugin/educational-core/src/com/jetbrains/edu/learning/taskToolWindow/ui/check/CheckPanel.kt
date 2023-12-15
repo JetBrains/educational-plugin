@@ -160,6 +160,7 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
     when (task) {
       is CodeforcesTask -> updateCheckButtonWrapper(task)
       is DataTask -> updateCheckButtonWrapper(task)
+      is TheoryTask -> {}
       else -> {
         val isDefault = !(task.isChangedOnFailed && task.status == CheckStatus.Failed)
         val checkComponent = CheckPanelButtonComponent(CheckAction(task.getUICheckLabel()), isDefault = isDefault, isEnabled = isDefault)
@@ -217,8 +218,11 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
       return
     }
 
-    if (NavigationUtils.nextTask(task) != null || (task.status == CheckStatus.Solved && NavigationUtils.isLastHyperskillProblem(task))) {
-      val nextButton = CheckPanelButtonComponent(action = ActionManager.getInstance().getAction(NextTaskAction.ACTION_ID))
+    val nextTask = NavigationUtils.nextTask(task)
+    if (nextTask != null || (task.status == CheckStatus.Solved && NavigationUtils.isLastHyperskillProblem(task))) {
+      val isDefault = task is TheoryTask
+      val action = ActionManager.getInstance().getAction(NextTaskAction.ACTION_ID)
+      val nextButton = CheckPanelButtonComponent(action = action, isDefault = isDefault)
       add(nextButton, BorderLayout.WEST)
     }
   }
