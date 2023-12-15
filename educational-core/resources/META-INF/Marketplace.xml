@@ -36,5 +36,12 @@
     <action id="Educational.Student.SubmissionsServiceChangeHost"
             class="com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceChangeHost"
             internal="true"/>
+    <action id="Educational.Student.ReportCommunitySolution"
+            class="com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionAction"
+            icon="com.jetbrains.edu.EducationalCoreIcons.Report">
+      <add-to-group group-id="Diff.ViewerToolbar"
+                    relative-to-action="Educational.Student.ApplyCode"
+                    anchor="after"/>
+    </action>
   </actions>
 </idea-plugin>

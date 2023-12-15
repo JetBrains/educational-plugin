@@ -146,6 +146,12 @@ class SubmissionsManager(private val project: Project) {
     }, ProcessIOExecutorService.INSTANCE)
   }
 
+  fun removeCommunitySubmission(taskId: Int, submissionId: Int) {
+    val submissions = communitySubmissions[taskId] ?: return
+    communitySubmissions[taskId] = submissions.filter { it.id != submissionId }
+    updateSubmissionsTab()
+  }
+
   fun loadCommunitySubmissions(task: Task) {
     val course = this.course
     val submissionsProvider = course?.getSubmissionsProvider() ?: return
@@ -193,6 +199,9 @@ class SubmissionsManager(private val project: Project) {
   fun clear() {
     submissions.clear()
   }
+
+  @TestOnly
+  fun addCommunitySolutions(taskId: Int, solutions: List<Submission>) = communitySubmissions.putAll(mapOf(taskId to solutions))
 
   companion object {
 

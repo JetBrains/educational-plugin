@@ -195,5 +195,23 @@ object MarketplaceNotificationUtils {
     ).notify(project)
   }
 
+  fun showSuccessReportCommunitySolutionNotification(project: Project?) {
+    Notification(
+      JETBRAINS_ACADEMY_GROUP_ID,
+      EduCoreBundle.message("marketplace.report.solutions.success.title"),
+      EduCoreBundle.message("marketplace.report.solutions.success.message"),
+      NotificationType.INFORMATION
+    ).notify(project)
+  }
+
+  fun showFailedToReportCommunitySolutionNotification(project: Project?) {
+    Notification(
+      JETBRAINS_ACADEMY_GROUP_ID,
+      EduCoreBundle.message("marketplace.report.solutions.failed.title"),
+      EduCoreBundle.message("marketplace.report.solutions.failed.message"),
+      NotificationType.ERROR
+    ).notify(project)
+  }
+
   const val JETBRAINS_ACADEMY_GROUP_ID = "JetBrains Academy"
 }

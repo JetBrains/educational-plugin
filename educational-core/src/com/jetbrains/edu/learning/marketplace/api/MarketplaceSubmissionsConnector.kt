@@ -251,6 +251,16 @@ class MarketplaceSubmissionsConnector {
     page
   ).executeHandlingExceptions()?.body()
 
+  fun reportSolution(submissionId: Int): Boolean {
+    LOG.info("Reporting solution with id $submissionId")
+    submissionsService.reportSolution(submissionId).executeParsingErrors().onError {
+      LOG.info("Failed to report solution with id $submissionId")
+      return false
+    }
+
+    return true
+  }
+
   private fun doPostSubmission(courseId: Int, taskId: Int, submission: MarketplaceSubmission): Result<MarketplaceSubmission, String> {
     LOG.info("Posting submission for task $taskId")
     return submissionsService.postSubmission(courseId, submission.courseVersion, taskId, submission).executeParsingErrors().flatMap {

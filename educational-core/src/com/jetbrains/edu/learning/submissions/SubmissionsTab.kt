@@ -24,6 +24,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.isTestFile
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionAction
 import com.jetbrains.edu.learning.marketplace.actions.ShareMySolutionsAction
 import com.jetbrains.edu.learning.marketplace.isMarketplaceCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -270,6 +271,9 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
       }
       val diffRequestChain = SimpleDiffRequestChain(requests)
       diffRequestChain.putUserData(FILENAMES_KEY, submissionTaskFilePaths)
+      if (project.isMarketplaceCourse() && isCommunity) {
+        diffRequestChain.putCommunitySolution(task, submission)
+      }
       DiffManager.getInstance().showDiff(project, diffRequestChain, DiffDialogHints.FRAME)
     }
 
@@ -284,6 +288,13 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
       }
 
       return SimpleDiffRequest(title, currentContent, submissionContent, EduCoreBundle.message("submissions.local"), title2)
+    }
+
+    private fun SimpleDiffRequestChain.putCommunitySolution(task: Task, submission: Submission) {
+      if (Registry.`is`(ShareMySolutionsAction.REGISTRY_KEY, false)) {
+        putUserData(ReportCommunitySolutionAction.TASK_ID_KEY, task.id)
+        putUserData(ReportCommunitySolutionAction.SUBMISSION_ID_KEY, submission.id)
+      }
     }
 
     private fun String.removeAllTags(): String = replace(OPEN_PLACEHOLDER_TAG.toRegex(), "").replace(CLOSE_PLACEHOLDER_TAG.toRegex(), "")

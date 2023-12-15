@@ -43,4 +43,7 @@ interface SubmissionsService {
 
   @PATCH("/api/user/sharing")
   suspend fun changeSharingPreference(@Query("preference") sharingPreference: String): Response<Unit>
+
+  @PATCH("/api/submission/{submissionId}/report")
+  fun reportSolution(@Path("submissionId") submissionId: Int): Call<ResponseBody>
 }

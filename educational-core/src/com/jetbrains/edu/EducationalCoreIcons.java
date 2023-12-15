@@ -81,4 +81,7 @@ public class EducationalCoreIcons {
   public static final Icon MoveDownMatching = load("/icons/com/jetbrains/edu/learning/moveDown.svg"); // 16x16
 
   public static final Icon ApplyCode = load("/icons/com/jetbrains/edu/learning/applyCode.svg"); // 16x16
+
+  // Available in the platform starting from 233
+  public static final Icon Report = load("/icons/com/jetbrains/edu/learning/report.svg"); // 14x14
 }

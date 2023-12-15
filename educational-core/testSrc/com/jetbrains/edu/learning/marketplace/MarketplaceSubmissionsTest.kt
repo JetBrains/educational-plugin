@@ -1,20 +1,35 @@
 package com.jetbrains.edu.learning.marketplace
 
+import com.intellij.diff.editor.ChainDiffVirtualFile
 import com.intellij.notification.Notification
 import com.intellij.notification.Notifications
+import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.actionSystem.impl.SimpleDataContext
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.TestDialog
+import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.marketplace.actions.DeleteAllSubmissionsAction
+import com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionAction
+import com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionActionTest
+import com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionActionTest.Companion.putCommunityData
+import com.jetbrains.edu.learning.marketplace.actions.ShareMySolutionsAction
 import com.jetbrains.edu.learning.marketplace.api.*
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.SubmissionsTestBase
 import com.jetbrains.edu.learning.submissions.SolutionFile
+import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
 import com.jetbrains.edu.learning.testAction
+import com.jetbrains.edu.learning.withTestDialog
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkConstructor
@@ -28,12 +43,19 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import java.net.HttpURLConnection
 import java.util.concurrent.CompletableFuture
+import kotlin.random.Random
 
 class MarketplaceSubmissionsTest : SubmissionsTestBase() {
 
   override fun setUp() {
     super.setUp()
     loginFakeMarketplaceUser()
+    val registryValue = Registry.get(ShareMySolutionsAction.REGISTRY_KEY)
+    val oldValue = registryValue.asBoolean()
+    registryValue.setValue(true)
+    Disposer.register(testRootDisposable) {
+      registryValue.setValue(oldValue)
+    }
   }
 
   fun `test submission created after edu task check`() {
@@ -85,6 +107,45 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
     }
   }
 
+  fun `test report community solution action success`() {
+    configureSubmissionsResponses(reportSolutionRequestSuccess = true)
+    createEduCourse()
+
+    val taskId = Random.nextInt()
+    val communitySolutions = communitySolutions(taskId)
+    val submissionsManager = SubmissionsManager.getInstance(project)
+    val communityIds = communitySolutions.map { it.id as Int }
+    val solutionToReport = communitySolutions.random()
+    val solutionToReportId = solutionToReport.id as Int
+    submissionsManager.addCommunitySolutions(taskId, communitySolutions)
+
+    checkCommunitySolutionsPresented(taskId, communityIds)
+    withTestDialog(TestDialog.YES) {
+      testAction(ReportCommunitySolutionAction.ACTION_ID, reportActionDataContext(project, solutionToReport, solutionToReportId))
+    }
+    checkCommunitySolutionsPresented(taskId, communityIds.filter { it != solutionToReportId })
+    checkCommunitySolutionNotPresented(taskId, solutionToReportId)
+  }
+
+  fun `test report community solution action failed`() {
+    configureSubmissionsResponses()
+    createEduCourse()
+
+    val taskId = Random.nextInt()
+    val communitySolutions = communitySolutions(taskId)
+    val submissionsManager = SubmissionsManager.getInstance(project)
+    val communityIds = communitySolutions.map { it.id as Int }
+    val solutionToReport = communitySolutions.random()
+    val solutionToReportId = solutionToReport.id as Int
+    submissionsManager.addCommunitySolutions(taskId, communitySolutions)
+
+    checkCommunitySolutionsPresented(taskId, communityIds)
+    withTestDialog(TestDialog.YES) {
+      testAction(ReportCommunitySolutionAction.ACTION_ID, reportActionDataContext(project, solutionToReport, solutionToReportId))
+    }
+    checkCommunitySolutionsPresented(taskId, communityIds)
+  }
+
   private fun doTestSubmissionsDelete(success: Boolean, notificationText: String, checkSubmissions: () -> Unit) {
     configureSubmissionsResponses(submissionsDeleteRequestSuccess = success)
 
@@ -113,6 +174,18 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
   private fun checkSubmissionsDeleted(taskIds: Set<Int>) {
     val submissions = SubmissionsManager.getInstance(project).getSubmissionsFromMemory(taskIds)
     assertNull(submissions)
+  }
+
+  private fun checkCommunitySolutionsPresented(taskId: Int, solutionsIds: List<Int>) {
+    val solutionsIdsFromMemory = SubmissionsManager.getInstance(project).getCommunitySubmissionsFromMemory(taskId)?.mapNotNull { it.id }?.toSet()
+    checkNotNull(solutionsIdsFromMemory)
+    assertTrue(solutionsIds.all { solutionsIdsFromMemory.contains(it) })
+  }
+
+  private fun checkCommunitySolutionNotPresented(taskId: Int, solutionId: Int) {
+    val solutionsIdsFromMemory = SubmissionsManager.getInstance(project).getCommunitySubmissionsFromMemory(taskId)?.mapNotNull { it.id }?.toSet()
+    checkNotNull(solutionsIdsFromMemory)
+    assertTrue(solutionId !in solutionsIdsFromMemory)
   }
 
   private fun doTestWithNotification(checkSubmissions: () -> Unit, checkNotification: (Notification) -> Unit) {
@@ -182,7 +255,8 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
 
     fun configureSubmissionsResponses(submissionsLists: List<String> = listOf(loadSubmissionsData),
                                       solutionsKeyTextMap: Map<String, String> = emptyMap(),
-                                      submissionsDeleteRequestSuccess: Boolean = false) {
+                                      submissionsDeleteRequestSuccess: Boolean = false,
+                                      reportSolutionRequestSuccess: Boolean = false) {
       mockkConstructor(Retrofit::class)
       val service = mockk<SubmissionsService>()
       every {
@@ -210,6 +284,16 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
       val postSubmissionResponse = mapper.treeToValue(mapper.readTree(postSubmissionData), MarketplaceSubmission::class.java)
       every { postSubmissionCall.execute() } returns Response.success(postSubmissionResponse)
 
+      val reportSolutionCall = mockk<Call<ResponseBody>>()
+      every { service.reportSolution(any()) } returns reportSolutionCall
+      val reportCommunityResponse = if (reportSolutionRequestSuccess) {
+        Response.success(HttpURLConnection.HTTP_NO_CONTENT, "mock report response body".toResponseBody())
+      }
+      else {
+        Response.error(HttpURLConnection.HTTP_NOT_FOUND, "mock report response body".toResponseBody())
+      }
+      every { reportSolutionCall.execute() } returns reportCommunityResponse
+
       if (solutionsKeyTextMap.isNotEmpty()) {
         mockkObject(MarketplaceSubmissionsConnector.Companion)
 
@@ -218,7 +302,8 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
           val getSolutionLinkCall = mockk<Call<ResponseBody>>()
           every { service.getSolutionDownloadLink(key) } returns getSolutionLinkCall
           every { getSolutionLinkCall.execute() } returns Response.success(
-            ResponseBody.create("application/json; charset=UTF-8".toMediaType(), downloadLink))
+            downloadLink.toResponseBody("application/json; charset=UTF-8".toMediaType())
+          )
 
           every {
             MarketplaceSubmissionsConnector.loadSolutionByLink(downloadLink)
@@ -226,6 +311,29 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
         }
       }
     }
+
+    private fun reportActionDataContext(project: Project, solution: Submission, solutionId: Int): DataContext {
+      val diffChain = ReportCommunitySolutionActionTest.simpleDiffRequestChain(project)
+      diffChain.putCommunityData(solution.taskId, solutionId)
+
+      val diffVirtualFile = ChainDiffVirtualFile(diffChain, "")
+      return SimpleDataContext.builder()
+        .add(CommonDataKeys.VIRTUAL_FILE, diffVirtualFile)
+        .add(CommonDataKeys.PROJECT, project)
+        .build()
+    }
+
+    private fun communitySolutions(taskId: Int) = listOf(
+      MarketplaceSubmission(taskId, CheckStatus.Solved, "some solution", null, 1, "some-uuid").apply {
+        id = Random.nextInt()
+      },
+      MarketplaceSubmission(taskId, CheckStatus.Solved, "some solution 2", null, 1, "some-uuid").apply {
+        id = Random.nextInt()
+      },
+      MarketplaceSubmission(taskId, CheckStatus.Solved, "some solution 3", null, 1, "some-uuid").apply {
+        id = Random.nextInt()
+      }
+    )
 
     @Language("JSON")
     private val postSubmissionData = """
