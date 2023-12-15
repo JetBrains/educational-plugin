@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.framework.impl.FLTaskState
 import com.jetbrains.edu.learning.framework.impl.calculateChanges
 import com.jetbrains.edu.learning.framework.impl.getTaskStateFromFiles
@@ -35,8 +36,10 @@ class CCFrameworkLessonManager(private val project: Project) : Disposable {
    * and saves changes for them.
    *
    * If the changes cannot be merged automatically, the merge dialog is displayed.
+   *
+   * [baseFiles] - Files that will be propagated through, if null then all files will be propagated
    */
-  fun propagateChanges(task: Task) {
+  fun propagateChanges(task: Task, baseFiles: List<TaskFile>?) {
     require(CCUtils.isCourseCreator(project)) {
       "`propagateChanges` should be called only if course is in CC mode"
     }
@@ -47,18 +50,20 @@ class CCFrameworkLessonManager(private val project: Project) : Disposable {
     val startIndex = task.index
     val tasks = lesson.taskList
 
+    val baseFilesNames = baseFiles?.map { it.name }
+
     // Since the indexes start with 1, then startIndex - 1 is the task from which we start propagation
     for (i in startIndex until tasks.size) {
       // we return if user canceled propagation
-      if (!propagateChanges(tasks[i - 1], tasks[i])) {
+      if (!propagateChanges(tasks[i - 1], tasks[i], baseFilesNames)) {
         showApplyChangesCanceledNotification(project, task.name, tasks[i - 1].name)
         return
       }
       // if everything is ok with propagation, then we save the approved changes from the current task into storage
-      saveFileStateIntoStorage(tasks[i - 1])
+      saveFileStateIntoStorage(tasks[i - 1], baseFilesNames)
     }
     // save last task manually
-    saveFileStateIntoStorage(tasks.last())
+    saveFileStateIntoStorage(tasks.last(), baseFilesNames)
     showApplyChangesSuccessNotification(project, task.name)
   }
 
@@ -72,12 +77,13 @@ class CCFrameworkLessonManager(private val project: Project) : Disposable {
   private fun propagateChanges(
     currentTask: Task,
     targetTask: Task,
+    baseFilesNames: List<String>?,
   ): Boolean {
     val currentTaskDir = currentTask.getDir(project.courseDir) ?: error("Failed to find task directory")
     val targetTaskDir = targetTask.getDir(project.courseDir) ?: error("Failed to find task directory")
 
-    val initialCurrentFiles = currentTask.allPropagatableFiles
-    val initialTargetFiles = targetTask.allPropagatableFiles
+    val initialCurrentFiles = calcInitialFiles(currentTask, baseFilesNames)
+    val initialTargetFiles = calcInitialFiles(targetTask, baseFilesNames)
 
     val initialBaseState = getStateFromStorage(currentTask)
 
@@ -129,15 +135,26 @@ class CCFrameworkLessonManager(private val project: Project) : Disposable {
     return isOk
   }
 
-  private fun saveFileStateIntoStorage(task: Task): UpdatedState {
+  private fun saveFileStateIntoStorage(task: Task, baseFilesNames: List<String>? = null): UpdatedState {
     val taskDir = task.getDir(project.courseDir)
     if (taskDir == null) {
       LOG.error("Failed to find task directory")
       return UpdatedState(task.record, emptyMap())
     }
     val currentRecord = task.record
-    val initialCurrentFiles = task.allPropagatableFiles
-    val currentState = getTaskStateFromFiles(initialCurrentFiles, taskDir)
+    val initialCurrentFiles = calcInitialFiles(task, baseFilesNames)
+    val currentState = getTaskStateFromFiles(initialCurrentFiles, taskDir).toMutableMap()
+
+    // if the file is not in baseFiles, then we should not change it's content in storage
+    if (baseFilesNames != null) {
+      val baseState = getStateFromStorage(task)
+      for ((name, content) in baseState) {
+        if (name !in baseFilesNames) {
+          currentState[name] = content
+        }
+      }
+    }
+
     val updatedUserChanges = try {
       updateState(currentRecord, currentState)
     }
@@ -175,6 +192,10 @@ class CCFrameworkLessonManager(private val project: Project) : Disposable {
 
   override fun dispose() {
     Disposer.dispose(storage)
+  }
+
+  private fun calcInitialFiles(task: Task, baseFilesNames: List<String>?): Set<String> {
+    return baseFilesNames?.intersect(task.allPropagatableFiles) ?: task.allPropagatableFiles
   }
 
   // we propagate only visible files
