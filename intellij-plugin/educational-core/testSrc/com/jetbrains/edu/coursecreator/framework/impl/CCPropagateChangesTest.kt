@@ -13,6 +13,8 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.coursecreator.framework.diff.withFLMultipleFileMergeUI
+import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import kotlin.test.assertFails
 
 class CCPropagateChangesTest : EduActionTestCase() {
@@ -462,16 +464,119 @@ class CCPropagateChangesTest : EduActionTestCase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
-  private fun createFrameworkCourse(numberOfTasks: Int): Course = courseWithFiles(
+  fun `test invoke action from file nodes`() {
+    val course = createFrameworkCourseWithFiles(
+      2,
+      mapOf(
+        "src/Task.kt" to "fun foo() {}",
+        "src/Bar.kt" to "fun bar() {}",
+        "src/Baz.kt" to "fun baz() {}",
+        "test/Tests.kt" to "fun tests() {}",
+      )
+    )
+
+    withVirtualFileListener(course) {
+      val task = course.findTask("lesson1", "task1")
+      task.openTaskFileInEditor("src/Task.kt")
+      myFixture.type("fun foo() {}\n")
+      task.openTaskFileInEditor("src/Bar.kt")
+      myFixture.type("fun bar() {}\n")
+      task.openTaskFileInEditor("src/Baz.kt")
+      myFixture.type("fun baz() {}\n")
+      task.openTaskFileInEditor("test/Tests.kt")
+      myFixture.type("fun tests() {}\n")
+      val taskFile1 = task.taskFiles["src/Task.kt"]!!
+      val taskFile2 = task.taskFiles["src/Bar.kt"]!!
+      val taskFile3 = task.taskFiles["test/Tests.kt"]!!
+      doTest(listOf(taskFile1, taskFile2, taskFile3), listOf(Resolution.AcceptedYours))
+    }
+
+    val fileTree = fileTree {
+      dir("lesson1") {
+        dir("task1") {
+          dir("src") {
+            file("Task.kt", """
+              fun foo() {}
+              fun foo() {}
+            """)
+            file("Bar.kt", """
+              fun bar() {}
+              fun bar() {}
+            """)
+            file("Baz.kt", """
+              fun baz() {}
+              fun baz() {}
+            """)
+          }
+          dir("test") {
+            file("Tests.kt", """
+              fun tests() {}
+              fun tests() {}
+            """)
+          }
+          file("task.md")
+        }
+        dir("task2") {
+          dir("src") {
+            file("Task.kt", """
+              fun foo() {}
+              fun foo() {}
+            """)
+            file("Bar.kt", """
+              fun bar() {}
+              fun bar() {}
+            """)
+            file("Baz.kt", "fun baz() {}")
+          }
+          dir("test") {
+            file("Tests.kt", "fun tests() {}")
+          }
+          file("task.md")
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    fileTree.assertEquals(rootDir, myFixture)
+  }
+
+  fun `test cannot invoke action from file nodes from different tasks`() {
+    val course = createFrameworkCourse(2)
+
+    withVirtualFileListener(course) {
+      val task1 = course.findTask("lesson1", "task1")
+      task1.openTaskFileInEditor("src/Task.kt")
+      myFixture.type("fun bar() {}\n")
+      val task2 = course.findTask("lesson1", "task2")
+      task2.openTaskFileInEditor("src/Task.kt")
+      myFixture.type("fun baz() {}\n")
+      val taskFile1 = task1.taskFiles["src/Task.kt"]!!
+      val taskFile2 = task2.taskFiles["src/Task.kt"]!!
+      assertFails {
+        doTest(listOf(taskFile1, taskFile2), listOf(Resolution.AcceptedYours))
+      }
+    }
+  }
+
+  private fun createFrameworkCourse(numberOfTasks: Int): Course = createFrameworkCourseWithFiles(
+    numberOfTasks,
+    mapOf(
+      "src/Task.kt" to "fun foo() {}",
+      "src/Baz.kt" to "fun baz() {}",
+      "test/Tests.kt" to "fun tests() {}",
+    )
+  )
+
+  private fun createFrameworkCourseWithFiles(numberOfTasks: Int, files: Map<String, String>): Course = courseWithFiles(
     courseMode = CourseMode.EDUCATOR,
     language = FakeGradleBasedLanguage
   ) {
     frameworkLesson("lesson1") {
       repeat(numberOfTasks) {
         eduTask("task${it + 1}") {
-          taskFile("src/Task.kt", "fun foo() {}")
-          taskFile("src/Baz.kt", "fun baz() {}")
-          taskFile("test/Tests.kt", "fun tests() {}")
+          for ((name, content) in files) {
+            taskFile(name, content)
+          }
         }
       }
     }
@@ -489,6 +594,20 @@ class CCPropagateChangesTest : EduActionTestCase() {
     val mockUI = MockFLMultipleFileMergeUI(resolutions, cancelOnConflict)
     withFLMultipleFileMergeUI(mockUI) {
       val dataContext = dataContext(item.getDir(project.courseDir)!!)
+      testAction(CCApplyChangesToNextTasks.ACTION_ID, dataContext)
+    }
+  }
+
+  private fun doTest(
+    taskFiles: List<TaskFile>,
+    resolutions: List<Resolution>,
+    // cancel on conflict resolution with number [cancelOnConflict]
+    cancelOnConflict: Int = Int.MAX_VALUE,
+  ) {
+    val mockUI = MockFLMultipleFileMergeUI(resolutions, cancelOnConflict)
+    withFLMultipleFileMergeUI(mockUI) {
+      val files = taskFiles.map { it.getVirtualFile(project)!! }.toTypedArray()
+      val dataContext = dataContext(files)
       testAction(CCApplyChangesToNextTasks.ACTION_ID, dataContext)
     }
   }
