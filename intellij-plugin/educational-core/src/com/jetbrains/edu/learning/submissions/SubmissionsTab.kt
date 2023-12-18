@@ -30,6 +30,7 @@ import com.jetbrains.edu.learning.marketplace.isMarketplaceCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.projectView.CourseViewUtils.isCommunitySolutionsAllowed
 import com.jetbrains.edu.learning.taskToolWindow.links.SwingToolWindowLinkHandler
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.TaskToolWindowBundle
@@ -273,6 +274,7 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
       diffRequestChain.putUserData(FILENAMES_KEY, submissionTaskFilePaths)
       if (project.isMarketplaceCourse() && isCommunity) {
         diffRequestChain.putCommunitySolution(task, submission)
+        EduCounterUsageCollector.communitySolutionDiffOpened()
       }
       DiffManager.getInstance().showDiff(project, diffRequestChain, DiffDialogHints.FRAME)
     }

@@ -186,6 +186,8 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
 
     private val SOLUTION_SHARING_PROMPT_EVENT = GROUP.registerEvent("submission.share.invite.shown")
 
+    private val COMMUNITY_SOLUTION_DIFF_OPENED = GROUP.registerEvent("peer.solution.diff.opened")
+
     fun taskNavigation(place: TaskNavigationPlace) = TASK_NAVIGATION_EVENT.log(place)
 
     fun eduProjectCreated(course: Course) = EDU_PROJECT_CREATED_EVENT.log(course.courseMode, course.itemType, course.languageId)
@@ -270,5 +272,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     }
 
     fun solutionSharingPromptShown() = SOLUTION_SHARING_PROMPT_EVENT.log()
+
+    fun communitySolutionDiffOpened() = COMMUNITY_SOLUTION_DIFF_OPENED.log()
   }
 }
