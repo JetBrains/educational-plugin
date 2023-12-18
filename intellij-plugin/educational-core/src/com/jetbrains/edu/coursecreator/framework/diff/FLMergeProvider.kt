@@ -64,24 +64,23 @@ class FLMergeProvider(
 
     override fun acceptFilesRevisions(files: List<VirtualFile>, resolution: Resolution) {
       for (file in files) {
-        val filePath = file.pathRelativeToTask(project)
+        val fileName = file.name
         val value = if (resolution == Resolution.AcceptedYours) {
-          leftState[filePath]
+          leftState[fileName]
         }
         else {
-          rightState[filePath]
+          rightState[fileName]
         }
-        val taskDir = file.getTaskDir(project) ?: return
 
         @Suppress("UnstableApiUsage")
         invokeAndWaitIfNeeded {
           if (value == null) {
             runWriteAction {
-              file.removeWithEmptyParents(taskDir)
+              file.delete(javaClass)
             }
           }
           else {
-            EduDocumentListener.modifyWithoutListener(task, filePath) {
+            EduDocumentListener.modifyWithoutListener(task, fileName) {
               val document = runReadAction {
                 FileDocumentManager.getInstance().getDocument(file)
               }
