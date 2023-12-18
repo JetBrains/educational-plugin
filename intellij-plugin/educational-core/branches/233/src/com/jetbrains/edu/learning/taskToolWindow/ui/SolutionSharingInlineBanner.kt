@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils
 import com.jetbrains.edu.learning.marketplace.SolutionSharingPromptCounter
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import javax.swing.JEditorPane
 
 object SolutionSharingInlineBanners {
@@ -27,6 +28,7 @@ object SolutionSharingInlineBanners {
       }
     }
     TaskToolWindowView.getInstance(project).addInlineBanner(inlineBanner)
+    EduCounterUsageCollector.solutionSharingPromptShown()
     SolutionSharingPromptCounter.update()
   }
 

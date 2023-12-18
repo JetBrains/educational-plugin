@@ -184,6 +184,8 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private val CREATE_NEW_FILE_IN_NON_TEMPLATE_BASED_FRAMEWORK_LESSON_BY_LEARNER =
       GROUP.registerEvent("create.new.file.in.non.template.based.framework.lesson.by.learner")
 
+    private val SOLUTION_SHARING_PROMPT_EVENT = GROUP.registerEvent("submission.share.invite.shown")
+
     fun taskNavigation(place: TaskNavigationPlace) = TASK_NAVIGATION_EVENT.log(place)
 
     fun eduProjectCreated(course: Course) = EDU_PROJECT_CREATED_EVENT.log(course.courseMode, course.itemType, course.languageId)
@@ -266,5 +268,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
       val course = task?.course ?: return
       VIEW_EVENT.log(course.courseMode, course.itemType)
     }
+
+    fun solutionSharingPromptShown() = SOLUTION_SHARING_PROMPT_EVENT.log()
   }
 }

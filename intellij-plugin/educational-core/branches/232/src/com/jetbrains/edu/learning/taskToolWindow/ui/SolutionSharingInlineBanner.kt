@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils
 import com.jetbrains.edu.learning.marketplace.SolutionSharingPromptCounter
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import java.awt.BorderLayout
 import javax.swing.JPanel
 
@@ -27,6 +28,7 @@ object SolutionSharingInlineBanners {
       isSuggestionType = true
       notify(project)
     }
+    EduCounterUsageCollector.solutionSharingPromptShown()
     SolutionSharingPromptCounter.update()
   }
 
