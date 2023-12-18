@@ -380,10 +380,6 @@
       <description>Enables "Apply changes to next task" action for educators in framework lessons</description>
     </experimentalFeature>
 
-    <experimentalFeature id="edu.tasktoolwindow.navigationmap" percentOfUsers="0" internalFeature="true">
-      <description>Enables TaskToolWindow NavigationMap (project reopening required)</description>
-    </experimentalFeature>
-
     <iconMapper mappingFile="EduToolsIconMappings.json"/>
     <themeMetadataProvider path="JetBrainsAcademyPlugin.themeMetadata.json"/>
   </extensions>

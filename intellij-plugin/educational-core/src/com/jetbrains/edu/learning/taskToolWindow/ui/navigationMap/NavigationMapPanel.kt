@@ -206,7 +206,12 @@ class NavigationMapAction(val task: Task, private val currentTask: Task, private
       presentation.isEnabled = false
     }
     presentation.text = task.presentableName
-    presentation.icon = if (task is TheoryTask) EducationalCoreIcons.NavigationMapTheoryTask else EduTextIcon(index.toString())
+    presentation.icon = if (task is TheoryTask && task.course is HyperskillCourse) {
+      EducationalCoreIcons.NavigationMapTheoryTask
+    }
+    else {
+      EduTextIcon(index.toString())
+    }
     presentation.disabledIcon = EduTextIcon(index.toString())
   }
 
