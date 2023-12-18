@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.format.yaml
 
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.assertContentsEqual
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_TASK_TYPE_WITH_FILE_IO
@@ -654,6 +655,43 @@ class StudentYamlDeserializationTest : EduTestCase() {
     |status: Failed
     |submission_language: $programmingLanguage
     |""".trimMargin()
+  }
+
+  fun `test reading binary files from YAML`() {
+    val yamlContent = """
+    |type: edu
+    |files:
+    |- name: a.png
+    |  visible: true
+    |  is_binary: true
+    |- name: b.txt
+    |  visible: true
+    |- name: c.txt
+    |  visible: true
+    |  text: hello.txt
+    |- name: d.png
+    |  visible: true
+    |""".trimMargin()
+
+    val task = deserializeTask(yamlContent)
+
+    val aPng = task.taskFiles["a.png"]!!
+    assertContentsEqual("a.png", BinaryContents.EMPTY, aPng.contents)
+
+    val bTxt = task.taskFiles["b.txt"]!!
+    assertContentsEqual("b.txt", TextualContents.EMPTY, bTxt.contents)
+
+    val cTxt = task.taskFiles["c.txt"]!!
+    assertContentsEqual("c.txt", InMemoryTextualContents("hello.txt"), cTxt.contents)
+
+    val dPng = task.taskFiles["d.png"]!!
+    // d.png is stored in an old way: without the 'is_binary' field.
+    // So, when it is read, it is treated as textual, because is_binary is false by default.
+    // Binary files never have a 'text' field, so they will be treated as empty textual files.
+    // This is not a problem because binary files have always been not working properly.
+    // In other words, before the 'is_binary' field was introduced, binary files were broken, and after the 'is_binary' is introduced,
+    // they are still broken, but differently.
+    assertContentsEqual("d.png", TextualContents.EMPTY, dPng.contents)
   }
 
   private fun deserializeTask(yamlContent: String) = STUDENT_MAPPER.deserializeTask(yamlContent)

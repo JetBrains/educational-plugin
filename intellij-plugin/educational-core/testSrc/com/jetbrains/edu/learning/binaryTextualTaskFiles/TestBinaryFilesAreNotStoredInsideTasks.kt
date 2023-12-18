@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.binaryTextualTaskFiles
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.CourseReopeningTestBase
+import com.jetbrains.edu.learning.assertContentsEqual
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.BinaryContents
 import com.jetbrains.edu.learning.courseFormat.EduFile

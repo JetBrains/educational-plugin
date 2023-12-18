@@ -19,11 +19,14 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.TestActionEvent
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
-import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
+import org.junit.Assert.assertArrayEquals
+import org.junit.Assert.assertEquals
+import kotlin.test.assertIs
 
 inline fun <reified T> nullValue(): Matcher<T> = CoreMatchers.nullValue(T::class.java)
 
@@ -147,5 +150,26 @@ inline fun withVirtualFileListener(project: Project, course: Course, disposable:
   }
   finally {
     connection.disconnect()
+  }
+}
+
+fun assertContentsEqual(path: String, expectedContents: FileContents, actualContents: FileContents) {
+  when (expectedContents) {
+    is BinaryContents -> {
+      assertIs<BinaryContents>(actualContents, "Contents of $path must be binary")
+      assertArrayEquals("Unexpected contents of $path", expectedContents.bytes, actualContents.bytes)
+    }
+    is TextualContents -> {
+      assertIs<TextualContents>(actualContents, "Contents of $path must be textual")
+      assertEquals("Unexpected contents of $path", expectedContents.text, actualContents.text)
+    }
+    is UndeterminedContents -> {
+      assertIs<UndeterminedContents>(actualContents, "Contents of $path must be undetermined")
+      assertEquals(
+        "Unexpected contents of $path",
+        expectedContents.textualRepresentation,
+        actualContents.textualRepresentation
+      )
+    }
   }
 }

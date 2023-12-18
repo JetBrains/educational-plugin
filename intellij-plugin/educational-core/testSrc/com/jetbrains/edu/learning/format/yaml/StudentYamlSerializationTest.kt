@@ -626,6 +626,32 @@ class StudentYamlSerializationTest : EduTestCase() {
     |""".trimMargin())
   }
 
+  fun `test binary files have the is_binary field when saved`() {
+    val task = course {
+      lesson {
+        eduTask {
+          taskFile("a.txt", InMemoryTextualContents("a.txt"))
+          taskFile("b.png", InMemoryBinaryContents(byteArrayOf(10, 20, 30)))
+        }
+      }
+    }.findTask("lesson1", "task1")
+
+    doTest(task, """
+    |type: edu
+    |files:
+    |- name: a.txt
+    |  visible: true
+    |  text: a.txt
+    |  learner_created: false
+    |- name: b.png
+    |  visible: true
+    |  is_binary: true
+    |  learner_created: false
+    |status: Unchecked
+    |record: -1
+    |""".trimMargin())
+  }
+
   fun `test huge binary file text is not saved in framework lesson`() {
     // We are going to repeat base64text several times, so its length should be a multiple of 3 to get the correct Base64 encoding.
     var base64Text = "eAErKUpNVTA3ZjA0MDAzMVHITczM08suYTh0o+NNPdt26bgThdosKRdPVXHN/wNVUpSamJKbqldSUcKwosqLb/75qC5OmZAJs9O9Di0I/PoCAJ5FH4E"

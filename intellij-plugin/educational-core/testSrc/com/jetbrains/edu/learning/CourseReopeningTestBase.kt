@@ -6,11 +6,9 @@ import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.testFramework.runInEdtAndWait
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
-import org.junit.Assert.assertArrayEquals
-import kotlin.test.assertIs
 
 abstract class CourseReopeningTestBase<Settings : EduProjectSettings> : CourseGenerationTestBase<Settings>() {
 
@@ -52,24 +50,6 @@ abstract class CourseReopeningTestBase<Settings : EduProjectSettings> : CourseGe
 
     runInEdtAndWait {
       myProject = reopenedProject
-    }
-  }
-
-
-  protected fun assertContentsEqual(path: String, expectedContents: FileContents, actualContents: FileContents) {
-    when (expectedContents) {
-      is BinaryContents -> {
-        assertIs<BinaryContents>(actualContents,"Contents of $path must be binary")
-        assertArrayEquals("Unexpected contents of $path", expectedContents.bytes, actualContents.bytes)
-      }
-      is TextualContents -> {
-        assertIs<TextualContents>(actualContents,"Contents of $path must be textual")
-        assertEquals("Unexpected contents of $path", expectedContents.text, actualContents.text)
-      }
-      is UndeterminedContents -> {
-        assertIs<UndeterminedContents>(actualContents,"Contents of $path must be undetermined")
-        assertEquals("Unexpected contents of $path", expectedContents.textualRepresentation, actualContents.textualRepresentation)
-      }
     }
   }
 }

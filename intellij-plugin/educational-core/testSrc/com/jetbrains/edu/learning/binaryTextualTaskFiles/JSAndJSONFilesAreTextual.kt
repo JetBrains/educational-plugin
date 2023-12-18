@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.binaryTextualTaskFiles
 
 import com.jetbrains.edu.learning.CourseReopeningTestBase
+import com.jetbrains.edu.learning.assertContentsEqual
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.InMemoryBinaryContents
 import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
