@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
+import com.jetbrains.edu.learning.courseFormat.tasks.RemoteEduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.stepik.hyperskill.update.HyperskillCourseUpdater

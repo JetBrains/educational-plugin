@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checker.DefaultCodeExecutor
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.RemoteEduTask
+import com.jetbrains.edu.learning.courseFormat.tasks.RemoteEduTask
 import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse

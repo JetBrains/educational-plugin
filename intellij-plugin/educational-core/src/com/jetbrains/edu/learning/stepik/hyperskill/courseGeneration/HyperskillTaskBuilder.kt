@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration
 import com.intellij.lang.Language
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL
-import com.jetbrains.edu.learning.courseFormat.RemoteEduTask.Companion.REMOTE_EDU_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.RemoteEduTask.Companion.REMOTE_EDU_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.PYCHARM_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask

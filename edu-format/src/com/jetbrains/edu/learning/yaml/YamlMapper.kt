@@ -25,11 +25,7 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillTopic
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
-import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
-import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
-import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
+import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask

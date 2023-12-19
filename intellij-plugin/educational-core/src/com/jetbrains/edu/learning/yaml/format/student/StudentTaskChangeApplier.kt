@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.yaml.format.student
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.courseFormat.RemoteEduTask
+import com.jetbrains.edu.learning.courseFormat.tasks.RemoteEduTask
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
