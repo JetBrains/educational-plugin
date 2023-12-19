@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckResultDiff
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduTestInfo
-import com.jetbrains.edu.learning.courseFormat.EduTestInfo.Companion.PresentableStatus.FAILED
+import com.jetbrains.edu.learning.courseFormat.EduTestInfo.PresentableStatus.FAILED
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.nullValue
@@ -196,8 +196,8 @@ class JCheckErrorsTest : JdkCheckerTestBase() {
                              )
         assertEquals(
           "Status of test from ${task.name} task is wrong",
-          testInfo.presentableStatus,
-          actualTestInfo.presentableStatus
+          testInfo.toString(),
+          actualTestInfo.toString()
         )
       }
     }

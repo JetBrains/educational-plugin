@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckResultDiff
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduTestInfo
-import com.jetbrains.edu.learning.courseFormat.EduTestInfo.Companion.PresentableStatus.FAILED
+import com.jetbrains.edu.learning.courseFormat.EduTestInfo.PresentableStatus.FAILED
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.nullValue
 import com.jetbrains.edu.learning.xmlEscaped
@@ -336,7 +336,7 @@ class KtCheckErrorsTest : JdkCheckerTestBase() {
           "Expected test ${testInfo.name} of ${task.name} task wasn't found " + "in test results: ${checkResult.executedTestsInfo}"
         )
         assertEquals(
-          "Status of test from ${task.name} task is wrong", testInfo.presentableStatus, actualTestInfo.presentableStatus
+          "Status of test from ${task.name} task is wrong", testInfo.toString(), actualTestInfo.toString()
         )
       }
     }

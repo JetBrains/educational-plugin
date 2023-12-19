@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduTestInfo
-import com.jetbrains.edu.learning.courseFormat.EduTestInfo.Companion.PresentableStatus.*
+import com.jetbrains.edu.learning.courseFormat.EduTestInfo.PresentableStatus.*
 
 class JExecutedTestsInfoTest : JdkCheckerTestBase() {
   override fun createCourse(): Course = course(language = JavaLanguage.INSTANCE) {
@@ -94,7 +94,7 @@ class JExecutedTestsInfoTest : JdkCheckerTestBase() {
           "Expected test ${testInfo.name} of ${task.name} task wasn't found " + "in test results: ${checkResult.executedTestsInfo}"
         )
         assertEquals(
-          "Status of test from ${task.name} task is wrong", testInfo.presentableStatus, actualTestInfo.presentableStatus
+          "Status of test from ${task.name} task is wrong", testInfo.toString(), actualTestInfo.toString()
         )
       }
     }
