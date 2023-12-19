@@ -39,7 +39,7 @@ object TwitterUtils {
 
   @Suppress("UnstableApiUsage")
   @NlsSafe
-  private const val SERVICE_DISPLAY_NAME: String = "EduTools Twitter Integration"
+  private const val SERVICE_DISPLAY_NAME: String = "JetBrains Academy Twitter Integration"
 
   /**
    * Set consumer key and secret.
