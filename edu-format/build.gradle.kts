@@ -1,3 +1,7 @@
+plugins {
+  `maven-publish`
+}
+
 sourceSets {
   main {
     java.srcDirs("src")
@@ -46,6 +50,29 @@ tasks {
   }
 }
 
+publishing {
+  publications {
+    create<MavenPublication>("edu-format") {
+      groupId = "com.jetbrains.edu"
+      artifactId = "edu-format"
+      version = prop("publishingVersion")
+
+      // Manual artifact specification leads to absense of transitive dependencies in `pom` file
+      artifact(tasks["jar"])
+      artifact(tasks["sourcesJar"])
+    }
+  }
+  repositories {
+    maven {
+      url = uri("https://packages.jetbrains.team/maven/p/edu/maven")
+      credentials {
+        username = prop("publishingUsername")
+        password = prop("publishingPassword")
+      }
+    }
+  }
+}
+
 fun DependencyHandler.implementationWithoutKotlin(dependencyNotation: Provider<*>) {
   implementation(dependencyNotation) {
     excludeKotlinDeps()
@@ -59,3 +86,5 @@ fun <T : ModuleDependency> T.excludeKotlinDeps() {
   exclude(module = "kotlin-stdlib-common")
   exclude(module = "kotlin-stdlib-jdk8")
 }
+
+fun prop(name: String): String = providers.gradleProperty(name).get()

@@ -23,7 +23,6 @@ plugins {
   alias(libs.plugins.downloadPlugin)
   alias(libs.plugins.propertiesPlugin)
   alias(libs.plugins.testRetryPlugin)
-  `maven-publish`
 }
 
 idea {
@@ -115,28 +114,3 @@ fun withProp(name: String, action: (String) -> Unit) {
     action(prop(name))
   }
 }
-
-publishing {
-  publications {
-    create<MavenPublication>("edu-format") {
-      groupId = "com.jetbrains.edu"
-      artifactId = "edu-format"
-      version = prop("publishingVersion")
-
-      artifact(prop("eduFormatArtifactPath"))
-      artifact(prop("eduFormatSourcesArtifactPath")) {
-        classifier = "sources"
-      }
-    }
-  }
-  repositories {
-    maven {
-      url = uri("https://packages.jetbrains.team/maven/p/edu/maven")
-      credentials {
-        username = prop("publishingUsername")
-        password = prop("publishingPassword")
-      }
-    }
-  }
-}
-
