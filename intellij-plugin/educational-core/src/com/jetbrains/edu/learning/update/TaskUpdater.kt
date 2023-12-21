@@ -54,7 +54,7 @@ abstract class TaskUpdater(project: Project, private val lesson: Lesson) : Study
         localTasks.remove(localTask)
       }
       else {
-        if (isLocalTaskOutdated(localTask, remoteTask) || localTask.isChanged(remoteTask)) {
+        if (localTask.isOutdated(remoteTask) || localTask.isChanged(remoteTask)) {
           updates.add(TaskUpdateInfo(localTask, remoteTask))
         }
         localTasks.remove(localTask)
@@ -70,8 +70,6 @@ abstract class TaskUpdater(project: Project, private val lesson: Lesson) : Study
       it.doUpdate(project)
     }
   }
-
-  protected abstract fun isLocalTaskOutdated(localTask: Task, remoteTask: Task): Boolean
 
   private suspend fun Task.isChanged(remoteTask: Task): Boolean {
     val newTaskFiles = remoteTask.taskFiles

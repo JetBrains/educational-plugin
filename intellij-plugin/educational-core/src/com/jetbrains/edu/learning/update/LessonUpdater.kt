@@ -51,7 +51,7 @@ abstract class LessonUpdater(project: Project, private val container: ItemContai
       else {
         val taskUpdater = createTaskUpdater(localLesson)
         val taskUpdates = taskUpdater.collect(remoteLesson)
-        if (taskUpdates.isNotEmpty() || localLesson.isChanged(remoteLesson)) {
+        if (taskUpdates.isNotEmpty() || localLesson.isOutdated(remoteLesson) || localLesson.isChanged(remoteLesson)) {
           updates.add(LessonUpdateInfo(localLesson, remoteLesson, taskUpdates))
         }
 

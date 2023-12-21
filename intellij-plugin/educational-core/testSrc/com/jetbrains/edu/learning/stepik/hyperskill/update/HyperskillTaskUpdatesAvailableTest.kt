@@ -1,11 +1,13 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.update
 
+import com.intellij.util.Time
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.stepik.hyperskill.init
 import com.jetbrains.edu.learning.update.UpdatesAvailableTestBase
 import kotlinx.coroutines.runBlocking
+import java.util.*
 
 class HyperskillTaskUpdatesAvailableTest : UpdatesAvailableTestBase<HyperskillCourse>() {
   private fun doTestUpdatesAvailable(remoteCourse: HyperskillCourse, expectedAmountOfUpdates: Int) {
@@ -266,6 +268,22 @@ class HyperskillTaskUpdatesAvailableTest : UpdatesAvailableTestBase<HyperskillCo
         }
         eduTask("task3", stepId = 3) {
           taskFile("TaskFile3.kt", "task file 3 text")
+        }
+      }
+    } as HyperskillCourse
+
+    doTestUpdatesAvailable(serverCourse, 1)
+  }
+
+  fun `test updates are available when task update date is changed`() {
+    initiateLocalCourse()
+    val serverCourse = course(courseProducer = ::HyperskillCourse) {
+      lesson {
+        eduTask("task1", stepId = 1, updateDate = Date(2 * Time.MINUTE.toLong())) {
+          taskFile("TaskFile1.kt", "task file 1 text")
+        }
+        eduTask("task2", stepId = 2) {
+          taskFile("TaskFile2.kt", "task file 2 text")
         }
       }
     } as HyperskillCourse

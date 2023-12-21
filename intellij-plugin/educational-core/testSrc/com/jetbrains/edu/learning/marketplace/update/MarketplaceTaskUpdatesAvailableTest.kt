@@ -1,9 +1,11 @@
 package com.jetbrains.edu.learning.marketplace.update
 
+import com.intellij.util.Time
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.update.UpdatesAvailableTestBase
 import kotlinx.coroutines.runBlocking
+import java.util.*
 
 class MarketplaceTaskUpdatesAvailableTest : UpdatesAvailableTestBase<EduCourse>() {
   private fun doTestUpdatesAvailable(remoteCourse: EduCourse, expectedAmountOfUpdates: Int) {
@@ -143,6 +145,22 @@ class MarketplaceTaskUpdatesAvailableTest : UpdatesAvailableTestBase<EduCourse>(
     } as EduCourse
 
     doTestUpdatesAvailable(serverCourse, 1)
+  }
+
+  fun `test updates are not available when task update date is changed`() {
+    initiateLocalCourse()
+    val serverCourse = course {
+      lesson {
+        eduTask("task1", stepId = 1, updateDate = Date(2 * Time.MINUTE.toLong())) {
+          taskFile("TaskFile1.kt", "task file 1 text")
+        }
+        eduTask("task2", stepId = 2) {
+          taskFile("TaskFile2.kt", "task file 2 text")
+        }
+      }
+    } as EduCourse
+
+    doTestUpdatesAvailable(serverCourse, 0)
   }
 
   override fun initiateLocalCourse() {

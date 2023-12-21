@@ -90,7 +90,7 @@ abstract class LessonOwnerBuilder(val course: Course) {
     buildLesson: LessonBuilder<FrameworkLesson>.() -> Unit = {}
   ) {
     val lesson = FrameworkLesson().also { it.isTemplateBased = isTemplateBased }
-    lesson(lesson, name, customPresentableName, id, buildLesson)
+    lesson(lesson, name, customPresentableName, id, buildLesson = buildLesson)
   }
 
   fun stepikLesson(
@@ -106,9 +106,10 @@ abstract class LessonOwnerBuilder(val course: Course) {
     name: String? = null,
     customPresentableName: String? = null,
     id: Int = 0,
+    updateDate: Date = Date(0),
     buildLesson: LessonBuilder<Lesson>.() -> Unit = {}
   ) {
-    lesson(Lesson(), name, customPresentableName, id, buildLesson)
+    lesson(Lesson(), name, customPresentableName, id, updateDate, buildLesson)
   }
 
   fun station(
@@ -124,10 +125,12 @@ abstract class LessonOwnerBuilder(val course: Course) {
     name: String? = null,
     customPresentableName: String? = null,
     id: Int = 0,
+    updateDate: Date = Date(0),
     buildLesson: LessonBuilder<T>.() -> Unit
   ) {
     val lessonBuilder = LessonBuilder(course, null, lesson)
     lesson.index = nextLessonIndex
+    lesson.updateDate = updateDate
     lessonBuilder.withName(name ?: (LESSON + nextLessonIndex))
     lessonBuilder.withCustomPresentableName(customPresentableName)
     lessonBuilder.withId(id)
