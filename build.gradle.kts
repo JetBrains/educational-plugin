@@ -4,14 +4,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-// For some reason, Gradle doesn't find `zstd` lib to unpack fleet archive downloaded by fleet gradle plugin.
-// Let's add it manually for now
-buildscript {
-  dependencies {
-    classpath("com.github.luben:zstd-jni:1.5.5-10")
-  }
-}
-
 apply(from = "common.gradle.kts")
 
 val pluginVersion: String by project
