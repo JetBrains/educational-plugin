@@ -188,9 +188,10 @@ allprojects {
     implementationWithoutKotlin(rootProject.libs.jackson.dataformat.yaml)
     implementationWithoutKotlin(rootProject.libs.jackson.datatype.jsr310)
     implementationWithoutKotlin(rootProject.libs.jackson.module.kotlin)
+    implementationWithoutKotlin(rootProject.libs.okhttp)
+    implementationWithoutKotlin(rootProject.libs.logging.interceptor)
     implementationWithoutKotlin(rootProject.libs.retrofit)
     implementationWithoutKotlin(rootProject.libs.converter.jackson)
-    implementationWithoutKotlin(rootProject.libs.logging.interceptor)
     implementationWithoutKotlin(rootProject.libs.kotlin.css.jvm)
 
     testImplementationWithoutKotlin(rootProject.libs.kotlin.test.junit)
