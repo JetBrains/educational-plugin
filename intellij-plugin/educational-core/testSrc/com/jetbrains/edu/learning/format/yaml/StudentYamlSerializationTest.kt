@@ -2,15 +2,26 @@
 
 package com.jetbrains.edu.learning.format.yaml
 
+import com.jetbrains.edu.coursecreator.persistentStorage.ContentsFromCourseStorage
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.assertContentsEqual
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.CheckFeedback
+import com.jetbrains.edu.learning.courseFormat.CheckResult
+import com.jetbrains.edu.learning.courseFormat.CheckResultDiff
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_TASK_TYPE_WITH_FILE_IO
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.InMemoryBinaryContents
+import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
+import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOStation
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTaskWithFileIO
+import com.jetbrains.edu.learning.courseFormat.exceedsBase64ContentLimit
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
@@ -26,6 +37,7 @@ import com.jetbrains.edu.learning.yaml.YamlMapper
 import org.intellij.lang.annotations.Language
 import java.time.ZonedDateTime
 import java.util.*
+import kotlin.test.assertIs
 
 class StudentYamlSerializationTest : EduTestCase() {
 
@@ -588,16 +600,6 @@ class StudentYamlSerializationTest : EduTestCase() {
     |""".trimMargin())
   }
 
-  /**
-   * This test was added after EDU-3700 was fixed, but several releases ago EDU-3700 broke again (now it is reopened as EDU-6479).
-   * The reason for EDU-6479 is that Git objects became binary, and binary files are not written into YAML.
-   * This test continued working and did not signal about the new problem because it simulated git objects having UndeterminedContents,
-   * not BinaryContents as in production.
-   *
-   * We leave this test as it is, but we will rewrite it when we fix a more general issue: all binary files should be stored somewhere,
-   * not in YAML, probably.
-   * This test will test that git objects are also preserved.
-   */
   fun `test git object file text is saved in framework lesson`() {
     val base64Text = "eAErKUpNVTA3ZjA0MDAzMVHITczM08suYTh0o+NNPdt26bgThdosKRdPVXHN/wNVUpSamJKbqldSUcKwosqLb/75qC5OmZAJs9O9Di0I/PoCAJ5FH4E="
     val gitObjectFilePath = "test/objects/b6/28add5fd4be3bdd2cdb776dfa035cc69956859"
@@ -605,7 +607,7 @@ class StudentYamlSerializationTest : EduTestCase() {
       frameworkLesson {
         eduTask {
           taskFile("task.txt", "task text")
-          taskFile(gitObjectFilePath, InMemoryUndeterminedContents(base64Text), false)
+          taskFile(gitObjectFilePath, InMemoryBinaryContents.parseBase64Encoding(base64Text), false)
         }
       }
     }.findTask("lesson1", "task1")
@@ -619,11 +621,15 @@ class StudentYamlSerializationTest : EduTestCase() {
     |  learner_created: false
     |- name: $gitObjectFilePath
     |  visible: false
-    |  text: $base64Text
+    |  is_binary: true
     |  learner_created: false
     |status: Unchecked
     |record: -1
     |""".trimMargin())
+
+    val actualContents = task.taskFiles[gitObjectFilePath]!!.contents
+    assertIs<ContentsFromCourseStorage>(actualContents)
+    assertContentsEqual(gitObjectFilePath, InMemoryBinaryContents.parseBase64Encoding(base64Text), actualContents)
   }
 
   fun `test binary files have the is_binary field when saved`() {
