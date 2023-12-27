@@ -13,6 +13,11 @@ class TaskFile : EduFile {
     this.text = text
   }
 
+  constructor(name: String, contents: FileContents) {
+    this.name = name
+    this.contents = contents
+  }
+
   constructor(name: String, text: String, isVisible: Boolean) : this(name, text) {
     this.isVisible = isVisible
   }

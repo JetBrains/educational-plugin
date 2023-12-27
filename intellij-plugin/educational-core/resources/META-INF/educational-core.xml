@@ -26,6 +26,8 @@
               topic="com.jetbrains.edu.learning.yaml.YamlListener"/>
     <listener class="com.jetbrains.edu.learning.taskToolWindow.ui.EduFileEditorManagerListener"
               topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
+    <listener class="com.jetbrains.edu.learning.storage.LearningObjectsPersister"
+              topic="com.jetbrains.edu.learning.CourseSetListener"/>
   </projectListeners>
 
   <extensionPoints>
@@ -291,6 +293,10 @@
     <registryKey key="edu.marketplace.solutions.sharing.prompt.default.delay"
                  description="Delay of prompting second banner (in millis). Default value is equal to 14 days."
                  defaultValue="1209600000"/>
+
+    <registryKey key="edu.learning.objects.storage.type"
+                 description="Controls the way the original author data is stored in the project. This setting does not affect existing course projects, it affects only newly created projects"
+                 defaultValue="[SQLite*|YAML]"/>
 
     <toolWindow id="Task" anchor="right" order="first"
                 factoryClass="com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory"/>

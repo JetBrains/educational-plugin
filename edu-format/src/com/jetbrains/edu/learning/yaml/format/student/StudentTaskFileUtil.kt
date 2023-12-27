@@ -9,6 +9,8 @@ import com.jetbrains.edu.learning.courseFormat.BinaryContents
 import com.jetbrains.edu.learning.courseFormat.EduFileErrorHighlightLevel
 import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.TextualContents
+import com.jetbrains.edu.learning.courseFormat.logger
 import com.jetbrains.edu.learning.json.encrypt.Encrypt
 import com.jetbrains.edu.learning.yaml.format.TaskFileBuilder
 import com.jetbrains.edu.learning.yaml.format.TaskFileYamlMixin
@@ -65,15 +67,37 @@ class StudentTaskFileBuilder(
 
     newTaskFile.contents = if (isBinary == true) {
       // binary contents are never stored in yaml
-      BinaryContents.EMPTY
+      TakeFromStorageBinaryContents
     }
     else {
-      val text = encryptedTextFromConfig ?: textFromConfig ?: ""
-      InMemoryTextualContents(text)
+      // textual contents might be stored by the older versions of the plugin
+      val text = encryptedTextFromConfig ?: textFromConfig
+      if (text == null) {
+        TakeFromStorageTextualContents
+      }
+      else {
+        InMemoryTextualContents(text)
+      }
     }
 
     newTaskFile.isLearnerCreated = learnerCreated
 
     return newTaskFile
   }
+}
+
+object TakeFromStorageBinaryContents : BinaryContents {
+  override val bytes: ByteArray
+    get() {
+      logger<TakeFromStorageBinaryContents>().warning("This storage is only a marker storage and must not be used")
+      return byteArrayOf()
+    }
+}
+
+object TakeFromStorageTextualContents : TextualContents {
+  override val text: String
+    get() {
+      logger<TakeFromStorageTextualContents>().warning("This storage is only a marker storage and must not be used")
+      return ""
+    }
 }

@@ -20,6 +20,7 @@ import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
+import com.jetbrains.edu.learning.storage.*
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
 import org.junit.Assert.assertArrayEquals
@@ -169,5 +170,25 @@ fun assertContentsEqual(path: String, expectedContents: FileContents, actualCont
         actualContents.textualRepresentation
       )
     }
+  }
+}
+
+fun assertContentsEqual(task: Task, fileName: String, expectedContents: FileContents) {
+  val taskFile = task.taskFiles[fileName] ?: error("Failed to find file ${fileName} in task ${task}")
+  assertContentsEqual(taskFile.pathInStorage, expectedContents, taskFile.contents)
+}
+
+fun assertContentsEqual(task: Task, fileName: String, expectedText: String) =
+  assertContentsEqual(task, fileName, InMemoryTextualContents(expectedText))
+
+fun doWithLearningObjectsStorageType(type: LearningObjectStorageType, action: () -> Unit) {
+  val savedType = getDefaultLearningObjectsStorageType()
+  setDefaultLearningObjectsStorageType(type)
+
+  try {
+    action()
+  }
+  finally {
+    setDefaultLearningObjectsStorageType(savedType)
   }
 }

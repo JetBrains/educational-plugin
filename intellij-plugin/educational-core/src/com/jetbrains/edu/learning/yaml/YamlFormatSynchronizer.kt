@@ -19,6 +19,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.learning.storage.persistEduFiles
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -152,6 +153,7 @@ object YamlFormatSynchronizer {
 
     if (this is Task) {
       disambiguateTaskFilesContents(project)
+      persistEduFiles(project)
     }
 
     project.invokeLater {

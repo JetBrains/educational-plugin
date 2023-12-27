@@ -4,6 +4,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.actions.NextTaskAction
+import com.jetbrains.edu.learning.assertContentsEqual
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
@@ -31,17 +32,19 @@ class YamlChangedAfterEventTest : YamlTestCase() {
       |files:
       |- name: file1.txt
       |  visible: true
-      |  text: task 1
       |  learner_created: true
       |- name: userFile.txt
       |  visible: true
-      |  text: user file
       |  learner_created: true
       |status: Unchecked
       |record: -1
       |""".trimMargin()
 
+    val task2 = course.findTask("lesson1", "task2")
+
     checkConfig(course.findTask("lesson1", "task2"), expectedConfig)
+    assertContentsEqual(task2, "file1.txt", "task 1")
+    assertContentsEqual(task2, "userFile.txt", "user file")
   }
 
   private fun checkConfig(item: StudyItem, expectedConfig: String) {
