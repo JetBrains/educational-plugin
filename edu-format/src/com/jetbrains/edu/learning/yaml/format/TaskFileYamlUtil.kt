@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.EDITABLE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.HIGHLIGHT_LEVEL
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.NAME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PLACEHOLDERS
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PROPAGATABLE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VISIBLE
 
 /**
@@ -37,6 +38,10 @@ abstract class TaskFileYamlMixin {
   @JsonProperty(EDITABLE)
   private var isEditable = true
 
+  @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = TrueValueFilter::class)
+  @JsonProperty(PROPAGATABLE)
+  private val isPropagatable = true
+
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = HighlightLevelValueFilter::class)
   @JsonProperty(HIGHLIGHT_LEVEL)
   private var errorHighlightLevel: EduFileErrorHighlightLevel = EduFileErrorHighlightLevel.ALL_PROBLEMS
@@ -49,6 +54,7 @@ open class TaskFileBuilder(
   @JsonProperty(PLACEHOLDERS) val placeholders: List<AnswerPlaceholder> = mutableListOf(),
   @JsonProperty(VISIBLE) val visible: Boolean = true,
   @JsonProperty(EDITABLE) val editable: Boolean = true,
+  @JsonProperty(PROPAGATABLE) val propagatable: Boolean = true,
   @JsonProperty(HIGHLIGHT_LEVEL) val errorHighlightLevel: EduFileErrorHighlightLevel = EduFileErrorHighlightLevel.ALL_PROBLEMS
 ) {
   @Suppress("unused") //used for deserialization
@@ -65,6 +71,7 @@ open class TaskFileBuilder(
     taskFile.answerPlaceholders = placeholders
     taskFile.isVisible = visible
     taskFile.isEditable = editable
+    taskFile.isPropagatable = propagatable
     if (errorHighlightLevel != EduFileErrorHighlightLevel.ALL_PROBLEMS && errorHighlightLevel != EduFileErrorHighlightLevel.TEMPORARY_SUPPRESSION) {
       taskFile.errorHighlightLevel = errorHighlightLevel
     }

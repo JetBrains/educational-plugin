@@ -175,6 +175,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
     newTaskFile.text = text
     newTaskFile.isVisible = isVisible
     newTaskFile.isEditable = isEditable
+    newTaskFile.isPropagatable = isPropagatable
     newTaskFile.answerPlaceholders = answerPlaceholders.map { it.copyForNewTaskFile() }
     return newTaskFile
   }

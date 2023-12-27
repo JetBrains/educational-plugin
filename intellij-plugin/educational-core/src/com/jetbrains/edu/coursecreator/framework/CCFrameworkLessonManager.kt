@@ -231,7 +231,7 @@ class CCFrameworkLessonManager(private val project: Project) : Disposable {
 
   // we propagate only visible files
   private val Task.allPropagatableFiles: Set<String>
-    get() = taskFiles.filterValues { it.isVisible }.keys
+    get() = taskFiles.filterValues { it.isPropagatable }.keys
 
   private fun showApplyChangesCanceledNotification(project: Project, startTaskName: String, cancelledTaskName: String) {
     val notification = Notification(

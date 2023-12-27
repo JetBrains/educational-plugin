@@ -476,6 +476,8 @@ private open class EduFileBuilder {
   var isBinary: Boolean? = null
   @JsonProperty(IS_EDITABLE)
   var isEditable: Boolean = true
+  @JsonProperty
+  var isPropagatable: Boolean = true
   @JsonProperty(HIGHLIGHT_LEVEL)
   var errorHighlightLevel: EduFileErrorHighlightLevel = EduFileErrorHighlightLevel.TEMPORARY_SUPPRESSION
 
@@ -490,6 +492,7 @@ private open class EduFileBuilder {
     result.name = name
     result.isVisible = isVisible
     result.isEditable = isEditable
+    result.isPropagatable = isPropagatable
     result.errorHighlightLevel = errorHighlightLevel
     result.contents = when (isBinary) {
       true -> InMemoryBinaryContents.parseBase64Encoding(text)
