@@ -28,6 +28,7 @@ open class EduFile {
    * See the [text] field for the description.
    * The [contents] field, compared to the text field, also contains the information about whether the contents are binary or not.
    */
+  @Volatile
   var contents: FileContents = UndeterminedContents.EMPTY
 
   @Suppress("unused") // used for serialization
@@ -56,6 +57,10 @@ open class EduFile {
 
   @Suppress("unused") // used for serialization
   fun getTextToSerialize(): String? {
+    if (this !is TaskFile || !task.course.needWriteYamlText) {
+      return null
+    }
+
     // first, do not serialize binary contents
     if (contents is BinaryContents) return null
     if (contents is UndeterminedContents) {

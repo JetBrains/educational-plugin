@@ -1,28 +1,35 @@
 package com.jetbrains.edu.learning.binaryTextualTaskFiles
 
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.storage.LearningObjectStorageType
 import com.jetbrains.edu.learning.CourseReopeningTestBase
 import com.jetbrains.edu.learning.assertContentsEqual
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseFormat.BinaryContents
-import com.jetbrains.edu.learning.courseFormat.EduFile
-import com.jetbrains.edu.learning.courseFormat.FileContents
-import com.jetbrains.edu.learning.courseFormat.InMemoryBinaryContents
-import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
-import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
 import com.jetbrains.edu.learning.courseFormat.ext.visitEduFiles
+import com.jetbrains.edu.learning.doWithLearningObjectsStorageType
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 
 class TestBinaryFilesAreNotStoredInsideTasks : CourseReopeningTestBase<EmptyProjectSettings>() {
 
   override val defaultSettings = EmptyProjectSettings
 
+  fun `test binary files are not preserved after a student closes and opens the project`() =
+    doWithLearningObjectsStorageType(LearningObjectStorageType.YAML) {
+      doTest(binaryFilesCleared = true)
+    }
+
+  fun `test binary files are preserved after a student closes and opens the project`() =
+    doWithLearningObjectsStorageType(LearningObjectStorageType.SQLite) {
+      doTest(binaryFilesCleared = false)
+    }
+
   /**
    * This test describes the current behaviour of the Plugin. Actually, we want all the contents to be preserved after reopening the course
    * So this test will be rewritten in the future.
    */
-  fun `test binary files are not preserved after a student closes and opens the project`() {
+  private fun doTest(binaryFilesCleared: Boolean) {
     /**
      * We create files here in such a way that their contents depend on their path.
      * So, file contents are different, but we can later check file contents knowing only their path.
@@ -57,7 +64,7 @@ class TestBinaryFilesAreNotStoredInsideTasks : CourseReopeningTestBase<EmptyProj
     openStudentProjectThenReopenStudentProject(course, {
       testContentsArePreserved(it)
     }, {
-      testContentsArePreserved(it, binaryFilesCleared = true)
+      testContentsArePreserved(it, binaryFilesCleared)
     })
   }
 

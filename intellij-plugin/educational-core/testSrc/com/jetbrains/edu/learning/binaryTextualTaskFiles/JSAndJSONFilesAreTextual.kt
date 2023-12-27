@@ -28,8 +28,9 @@ class JSAndJSONFilesAreTextual : CourseReopeningTestBase<EmptyProjectSettings>()
       }
     }
 
-    openStudentProjectThenReopenStudentProject(course) {
-      val task1 = course.findTask("lesson1", "task1")
+    openStudentProjectThenReopenStudentProject(course) { project ->
+      val projectCourse = project.course!!
+      val task1 = projectCourse.findTask("lesson1", "task1")
 
       val json = task1.taskFiles["test/testData.json"]!!
       assertContentsEqual("test/testData.json", InMemoryTextualContents("{}"), json.contents)

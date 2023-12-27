@@ -48,6 +48,8 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl
 import com.jetbrains.edu.learning.framework.impl.FrameworkStorage
+import com.jetbrains.edu.learning.storage.InMemoryLearningObjectsStorage
+import com.jetbrains.edu.learning.storage.LearningObjectsStorageManager
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceUpdateChecker
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.stepik.hyperskill.update.HyperskillCourseUpdateChecker
@@ -125,6 +127,9 @@ abstract class EduTestCase : BasePlatformTestCase() {
       HyperskillCourseUpdateChecker.getInstance(project).course = null
       CodeforcesCourseUpdateChecker.getInstance(project).course = null
       CCFrameworkLessonManager.getInstance(project).clearRecords()
+
+      val learningObjectsStorage = LearningObjectsStorageManager.getInstance(project).learningObjectsStorage
+      (learningObjectsStorage as InMemoryLearningObjectsStorage).clear()
     }
     finally {
       super.tearDown()

@@ -2,7 +2,10 @@
 
 package com.jetbrains.edu.learning.format.yaml
 
+import com.jetbrains.edu.learning.storage.pathInStorage
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.assertContentsEqual
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_TASK_TYPE
@@ -21,7 +24,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
-import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.yaml.YamlMapper
 import org.intellij.lang.annotations.Language
 import java.time.ZonedDateTime
@@ -398,18 +400,19 @@ class StudentYamlSerializationTest : EduTestCase() {
       feedbackLink = feedbackUrl
       this.status = status
     }
-    codeforcesTask.addTaskFile(TaskFile(taskFileName, taskSolution).apply { isVisible = true })
+    codeforcesTask.addTaskFile(TaskFile(taskFileName, InMemoryTextualContents(taskSolution)).apply { isVisible = true })
 
     doTest(codeforcesTask, """
     |type: $CODEFORCES_TASK_TYPE
     |files:
     |- name: $taskFileName
     |  visible: true
-    |  text: $taskSolution
     |  learner_created: false
     |feedback_link: $feedbackUrl
     |status: $status
     |""".trimMargin())
+
+    assertContentsEqual(codeforcesTask, taskFileName, taskSolution)
   }
 
   fun `test codeforces task with file io`() {
@@ -421,7 +424,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     val inputFileName = "in.txt"
     val outputFileName = "out.txt"
 
-    val course = course {
+    val course = course(courseProducer = ::CodeforcesCourse) {
       lesson {
       }
     }
@@ -433,20 +436,21 @@ class StudentYamlSerializationTest : EduTestCase() {
     lesson.addTask(codeforcesTask)
     course.init(course, false)
 
-    codeforcesTask.addTaskFile(TaskFile(taskFileName, taskSolution).apply { isVisible = true })
+    codeforcesTask.addTaskFile(TaskFile(taskFileName, InMemoryTextualContents(taskSolution)).apply { isVisible = true })
 
     doTest(codeforcesTask, """
     |type: $CODEFORCES_TASK_TYPE_WITH_FILE_IO
     |files:
     |- name: $taskFileName
     |  visible: true
-    |  text: $taskSolution
     |  learner_created: false
     |feedback_link: $feedbackUrl
     |status: $status
     |input_file: $inputFileName
     |output_file: $outputFileName
     |""".trimMargin())
+
+    assertContentsEqual(codeforcesTask, taskFileName, taskSolution)
   }
 
   fun `test task with task files`() {
@@ -463,11 +467,12 @@ class StudentYamlSerializationTest : EduTestCase() {
     |files:
     |- name: task.txt
     |  visible: true
-    |  text: text
     |  learner_created: false
     |status: Unchecked
     |record: -1
     |""".trimMargin())
+
+    assertContentsEqual(task, "task.txt", "text")
   }
 
   fun `test task with placeholders`() {
@@ -496,11 +501,12 @@ class StudentYamlSerializationTest : EduTestCase() {
     |    initialized_from_dependency: false
     |    selected: false
     |    status: Unchecked
-    |  text: 42 is the answer
     |  learner_created: false
     |status: Unchecked
     |record: -1
     |""".trimMargin())
+
+    assertContentsEqual(task, "task.txt", "42 is the answer")
   }
 
   fun `test learner created`() {
@@ -511,18 +517,20 @@ class StudentYamlSerializationTest : EduTestCase() {
         }
       }
     }.findTask("lesson1", "task1")
-    task.taskFiles.values.first().isLearnerCreated = true
+    val taskFile = task.taskFiles.values.first()
+    taskFile.isLearnerCreated = true
 
     doTest(task, """
     |type: edu
     |files:
     |- name: task.txt
     |  visible: true
-    |  text: text
     |  learner_created: true
     |status: Unchecked
     |record: -1
     |""".trimMargin())
+
+    assertContentsEqual(taskFile.pathInStorage, taskFile.contents, InMemoryTextualContents("text"))
   }
 
   fun `test no text for image`() {
@@ -559,11 +567,12 @@ class StudentYamlSerializationTest : EduTestCase() {
     |files:
     |- name: task.txt
     |  visible: false
-    |  text: task text
     |  learner_created: false
     |status: Unchecked
     |record: -1
     |""".trimMargin())
+
+    assertContentsEqual(task, "task.txt", "task text")
   }
 
   fun `test no text for non-editable task file`() {
@@ -581,31 +590,24 @@ class StudentYamlSerializationTest : EduTestCase() {
     |- name: task.txt
     |  visible: false
     |  editable: false
-    |  text: task text
     |  learner_created: false
     |status: Unchecked
     |record: -1
     |""".trimMargin())
+
+    assertContentsEqual(task, "task.txt", "task text")
   }
 
-  /**
-   * This test was added after EDU-3700 was fixed, but several releases ago EDU-3700 broke again (now it is reopened as EDU-6479).
-   * The reason for EDU-6479 is that Git objects became binary, and binary files are not written into YAML.
-   * This test continued working and did not signal about the new problem because it simulated git objects having UndeterminedContents,
-   * not BinaryContents as in production.
-   *
-   * We leave this test as it is, but we will rewrite it when we fix a more general issue: all binary files should be stored somewhere,
-   * not in YAML, probably.
-   * This test will test that git objects are also preserved.
-   */
   fun `test git object file text is saved in framework lesson`() {
     val base64Text = "eAErKUpNVTA3ZjA0MDAzMVHITczM08suYTh0o+NNPdt26bgThdosKRdPVXHN/wNVUpSamJKbqldSUcKwosqLb/75qC5OmZAJs9O9Di0I/PoCAJ5FH4E="
     val gitObjectFilePath = "test/objects/b6/28add5fd4be3bdd2cdb776dfa035cc69956859"
+    val gitObjectContents = InMemoryBinaryContents.parseBase64Encoding(base64Text)
+
     val task = courseWithFiles {
       frameworkLesson {
         eduTask {
           taskFile("task.txt", "task text")
-          taskFile(gitObjectFilePath, InMemoryUndeterminedContents(base64Text), false)
+          taskFile(gitObjectFilePath, gitObjectContents, false)
         }
       }
     }.findTask("lesson1", "task1")
@@ -615,15 +617,17 @@ class StudentYamlSerializationTest : EduTestCase() {
     |files:
     |- name: task.txt
     |  visible: true
-    |  text: task text
     |  learner_created: false
     |- name: $gitObjectFilePath
     |  visible: false
-    |  text: $base64Text
+    |  is_binary: true
     |  learner_created: false
     |status: Unchecked
     |record: -1
     |""".trimMargin())
+
+    assertContentsEqual(task, "task.txt", "task text")
+    assertContentsEqual(task, gitObjectFilePath, gitObjectContents)
   }
 
   fun `test binary files have the is_binary field when saved`() {
@@ -641,7 +645,6 @@ class StudentYamlSerializationTest : EduTestCase() {
     |files:
     |- name: a.txt
     |  visible: true
-    |  text: a.txt
     |  learner_created: false
     |- name: b.png
     |  visible: true
@@ -650,6 +653,8 @@ class StudentYamlSerializationTest : EduTestCase() {
     |status: Unchecked
     |record: -1
     |""".trimMargin())
+
+    assertContentsEqual(task, "a.txt", "a.txt")
   }
 
   fun `test huge binary file text is not saved in framework lesson`() {
@@ -676,7 +681,6 @@ class StudentYamlSerializationTest : EduTestCase() {
     |files:
     |- name: task.txt
     |  visible: true
-    |  text: task text
     |  learner_created: false
     |- name: $gitObjectFilePath
     |  visible: false
@@ -685,6 +689,8 @@ class StudentYamlSerializationTest : EduTestCase() {
     |status: Unchecked
     |record: -1
     |""".trimMargin())
+
+    assertContentsEqual(task, "task.txt", "task text")
   }
 
   fun `test code task with java256`() {
@@ -714,6 +720,8 @@ class StudentYamlSerializationTest : EduTestCase() {
     task.submissionLanguage = programmingLanguage
 
     doTest(task, getYAMLWithProgrammingLanguageWithVersion(programmingLanguage))
+
+    assertContentsEqual("Task.txt", task.taskFiles["Task.txt"]!!.contents, InMemoryTextualContents("file text"))
   }
 
   @Language("YAML")
@@ -723,7 +731,6 @@ class StudentYamlSerializationTest : EduTestCase() {
     |files:
     |- name: Task.txt
     |  visible: true
-    |  text: file text
     |  learner_created: false
     |status: Unchecked
     |record: -1

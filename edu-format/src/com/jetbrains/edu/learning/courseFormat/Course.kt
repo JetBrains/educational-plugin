@@ -39,6 +39,17 @@ abstract class Course : LessonContainer() {
   @Transient
   var isLocal: Boolean = false
 
+  /**
+   * Whether YAML files for tasks (task-info.yaml) should have 'text' fields with the contents of task files.
+   * Normally, the file contents should not be written in YAML.
+   * But it used to be written before, and we leave here a switch to select either the old or the modern behaviour.
+   *
+   * The better place to control YAML serialization is in Jackson mappers, but currently there are too many places where mappers are
+   * created, so it will take a lot of effort to control all that mappers.
+   */
+  @Transient
+  var needWriteYamlText: Boolean = false
+
   open var languageCode: String = "en"
 
   // Marketplace:
