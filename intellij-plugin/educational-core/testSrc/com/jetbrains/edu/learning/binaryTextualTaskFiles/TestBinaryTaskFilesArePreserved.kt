@@ -4,7 +4,6 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.CourseReopeningTestBase
 import com.jetbrains.edu.learning.assertContentsEqual
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseFormat.BinaryContents
 import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.FileContents
 import com.jetbrains.edu.learning.courseFormat.InMemoryBinaryContents
@@ -14,15 +13,11 @@ import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
 import com.jetbrains.edu.learning.courseFormat.ext.visitEduFiles
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 
-class TestBinaryFilesAreNotStoredInsideTasks : CourseReopeningTestBase<EmptyProjectSettings>() {
+class TestBinaryTaskFilesArePreserved : CourseReopeningTestBase<EmptyProjectSettings>() {
 
   override val defaultSettings = EmptyProjectSettings
 
-  /**
-   * This test describes the current behaviour of the Plugin. Actually, we want all the contents to be preserved after reopening the course
-   * So this test will be rewritten in the future.
-   */
-  fun `test binary files are not preserved after a student closes and opens the project`() {
+  fun `test binary files are preserved after a student closes and opens the project`() {
     /**
      * We create files here in such a way that their contents depend on their path.
      * So, file contents are different, but we can later check file contents knowing only their path.
@@ -54,21 +49,16 @@ class TestBinaryFilesAreNotStoredInsideTasks : CourseReopeningTestBase<EmptyProj
       additionalFile("additional_file.png", InMemoryBinaryContents(byteArrayOf(10, 20, 30)))
     }
 
-    openStudentProjectThenReopenStudentProject(course, {
+    openStudentProjectThenReopenStudentProject(course) {
       testContentsArePreserved(it)
-    }, {
-      testContentsArePreserved(it, binaryFilesCleared = true)
-    })
+    }
   }
 
-  private fun testContentsArePreserved(studentProject: Project, binaryFilesCleared: Boolean = false) {
+  private fun testContentsArePreserved(studentProject: Project) {
     val course = studentProject.course!!
     course.visitEduFiles { eduFile ->
       val path = eduFile.pathInCourse()
-      var expectedContents = expectedContents(eduFile)
-      if (binaryFilesCleared && expectedContents is BinaryContents) {
-        expectedContents = BinaryContents.EMPTY
-      }
+      val expectedContents = expectedContents(eduFile)
       assertContentsEqual(path, expectedContents, eduFile.contents)
     }
   }

@@ -147,6 +147,7 @@ object YamlFormatSynchronizer {
 
     if (this is Task) {
       disambiguateTaskFilesContents(project)
+      storeEduFiles(project)
     }
 
     project.invokeLater {

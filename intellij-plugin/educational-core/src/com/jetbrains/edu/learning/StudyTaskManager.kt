@@ -8,11 +8,18 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
+import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.util.messages.Topic
+import com.jetbrains.edu.coursecreator.persistentStorage.PersistentCourseStorage
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.visitEduFiles
 import com.jetbrains.edu.learning.yaml.YamlDeepLoader.loadCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.isEduYamlProject
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.startSynchronization
+import com.jetbrains.edu.learning.yaml.store
+import java.nio.file.Files
+import java.nio.file.Path
 
 /**
  * Implementation of class which contains all the information about study in context of current project
@@ -30,8 +37,24 @@ class StudyTaskManager(private val project: Project) : DumbAware, Disposable {
       _course = course
       course?.apply {
         project.messageBus.syncPublisher(COURSE_SET).courseSet(this)
+
+        if (isStudy) {
+          _course?.visitEduFiles { eduFile ->
+            eduFile.store(persistentCourseStorage)
+          }
+        }
       }
     }
+
+  /**
+   * This is the project level storage used to store all the edu files contents and other data that should be persistent.
+   */
+  @Transient
+  val persistentCourseStorage: PersistentCourseStorage = PersistentCourseStorage.openOrCreateDB(getZipPathForProjectDirectory(project))
+
+  init {
+    Disposer.register(this, persistentCourseStorage)
+  }
 
   override fun dispose() {}
 
@@ -50,6 +73,19 @@ class StudyTaskManager(private val project: Project) : DumbAware, Disposable {
         startSynchronization(project)
       }
       return manager
+    }
+
+    const val COURSE_AUTHOR_CONTENTS_FILE = ".author_contents_storage_db"
+    private val courseDir2zipDir = mutableMapOf<String, Path>()
+
+    private fun getZipPathForProjectDirectory(project: Project): Path {
+      val courseDir = project.courseDir
+      val courseDirPath = LocalFileSystem.getInstance().getNioPath(courseDir) ?: // null, if the test mode
+                          courseDir2zipDir.computeIfAbsent(courseDir.path) {
+                            Files.createTempDirectory("boundAuthorContentStorage")
+                          }
+
+      return courseDirPath.resolve(COURSE_AUTHOR_CONTENTS_FILE)
     }
   }
 }

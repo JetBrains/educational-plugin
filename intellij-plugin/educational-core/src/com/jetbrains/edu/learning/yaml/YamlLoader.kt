@@ -6,10 +6,20 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.messages.Topic
-import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ItemContainer
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.getLesson
+import com.jetbrains.edu.learning.getSection
+import com.jetbrains.edu.learning.getTask
+import com.jetbrains.edu.learning.getTaskFile
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.childrenConfigFileNames
@@ -47,7 +57,6 @@ object YamlLoader {
     }
   }
 
-  @VisibleForTesting
   fun doLoad(project: Project, configFile: VirtualFile, loadFromVFile: Boolean) {
     // for null course we load course again so no need to pass mode specific mapper here
     val mapper = StudyTaskManager.getInstance(project).course?.mapper ?: MAPPER
@@ -70,6 +79,9 @@ object YamlLoader {
       val parentConfig = parentItem.getDir(project.courseDir)?.findChild(parentItem.configFileName) ?: return
       val deserializedParent = deserializeItemProcessingErrors(parentConfig, project, mapper = mapper) as? ItemContainer ?: return
       if (deserializedParent.items.map { it.name }.contains(itemDir.name)) {
+        if (deserializedItem is Task) {
+          deserializedItem.storeEduFiles(project)
+        }
         parentItem.addItemAsNew(project, deserializedItem)
         reopenEditors(project)
         // new item is added at the end, so we should save parent item to update items order in config file
@@ -79,8 +91,10 @@ object YamlLoader {
     }
 
     existingItem.applyChanges(project, deserializedItem)
+    if (existingItem is Task) {
+      existingItem.storeEduFiles(project)
+    }
   }
-
 
   inline fun <reified T : StudyItem> StudyItem.deserializeContent(
     project: Project,
