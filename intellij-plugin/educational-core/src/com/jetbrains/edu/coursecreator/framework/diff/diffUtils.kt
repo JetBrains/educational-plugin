@@ -24,12 +24,12 @@ fun applyChangesWithMergeDialog(
 ): FLTaskState? {
   val mergeProvider = FLMergeProvider(project, targetTask, leftState, baseState, rightState, initialBaseState)
   val mergeDialogCustomizer = FLMergeDialogCustomizer(project, currentTask.name, targetTask.name)
-  val tmpConflictFiles = conflictFiles.map { name ->
+  val conflictLightVirtualFiles = conflictFiles.map { name ->
     val fileType = findConflictFileType(project, name, currentTask, targetTask) ?: error("Couldn't find file corresponding for $name")
     val fileContent = baseState[name] ?: error("Conflict file content was not added to baseState during conflict resolution")
     LightVirtualFile(name, fileType, fileContent)
   }
-  val isOk = showMultipleFileMergeDialog(project, tmpConflictFiles, mergeProvider, mergeDialogCustomizer, currentTask.name, targetTask.name)
+  val isOk = showMultipleFileMergeDialog(project, conflictLightVirtualFiles, mergeProvider, mergeDialogCustomizer, currentTask.name, targetTask.name)
 
   // merge dialog was canceled
   if (!isOk) {
@@ -38,7 +38,7 @@ fun applyChangesWithMergeDialog(
 
   val finalState = baseState.toMutableMap()
 
-  for (file in tmpConflictFiles) {
+  for (file in conflictLightVirtualFiles) {
     // file was deleted
     if (!file.exists()) {
       finalState.remove(file.name)
@@ -47,6 +47,8 @@ fun applyChangesWithMergeDialog(
     val document = FileDocumentManager.getInstance().getDocument(file)
 
     finalState[file.name] = document?.text ?: error("There is no document for ${file.name}")
+
+    file.delete(finalState.javaClass)
   }
 
   return finalState
