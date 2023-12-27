@@ -12,6 +12,7 @@ val isTeamCity: Boolean get() = System.getenv("TEAMCITY_VERSION") != null
 plugins {
   idea
   alias(libs.plugins.kotlinPlugin)
+  alias(libs.plugins.kotlinSerializationPlugin)
   alias(libs.plugins.downloadPlugin)
   alias(libs.plugins.propertiesPlugin)
   alias(libs.plugins.testRetryPlugin)

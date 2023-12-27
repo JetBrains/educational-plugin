@@ -24,6 +24,7 @@ import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.text.nullize
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.getDefaultCourseType
+import com.jetbrains.edu.coursecreator.feedback.createFeedbackPanel
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
@@ -132,6 +133,14 @@ class CCNewCoursePanel(
         scrollCell(descriptionTextArea)
           .align(AlignX.FILL)
       }
+      val feedbackPanel = createFeedbackPanel(titleField, _course)
+      // is nullable for 231 branch where InIdeFeedbackDialog is not supported
+      if (feedbackPanel != null) {
+        row {
+          cell(feedbackPanel)
+            .align(AlignX.RIGHT)
+        }
+      }
     }
     add(topPanel, BorderLayout.NORTH)
     add(bottomPanel, BorderLayout.SOUTH)
@@ -157,7 +166,6 @@ class CCNewCoursePanel(
         }
       })
   }
-
 
   fun setValidationListener(listener: ValidationListener?) {
     validationListener = listener
@@ -243,6 +251,7 @@ class CCNewCoursePanel(
     val courseName = "${courseData.displayName.replaceFirstChar { it.titlecaseChar() }.replace(File.separatorChar, '_')} ${
       EduCoreBundle.message("item.course.title")
     }"
+    _course.name = courseName
     val file = FileUtil.findSequentNonexistentFile(File(ProjectUtil.getBaseDir()), courseName, "")
     if (!titleField.isChangedByUser) {
       titleField.setTextManually(file.name)
@@ -354,7 +363,7 @@ class CCNewCoursePanel(
     }
   }
 
-  private class CourseTitleField : CCSyncTextField() {
+  class CourseTitleField : CCSyncTextField() {
     override fun doSync(complementaryTextField: CCSyncTextField) {
       val courseName = text ?: return
       val path = complementaryTextField.text?.trim() ?: return

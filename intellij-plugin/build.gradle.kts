@@ -116,6 +116,7 @@ plugins {
 allprojects {
   apply {
     plugin("org.jetbrains.intellij")
+    plugin("org.jetbrains.kotlin.plugin.serialization")
   }
   intellij {
     version = baseVersion
@@ -498,6 +499,12 @@ task("configureRemoteDevServer") {
 project("educational-core") {
   dependencies {
     api(project(":edu-format"))
+    // For some reason, kotlin serialization plugin doesn't see the corresponding library from IDE dependency
+    // and fails Kotlin compilation.
+    // Let's provide necessary dependency during compilation to make it work
+    compileOnly(rootProject.libs.kotlinx.serialization) {
+      excludeKotlinDeps()
+    }
   }
 }
 

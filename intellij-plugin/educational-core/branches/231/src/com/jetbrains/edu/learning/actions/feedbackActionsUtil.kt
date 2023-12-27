@@ -7,7 +7,7 @@ fun Task.getLeaveFeedbackActionId(): String {
   return LeaveFeedbackAction.ACTION_ID
 }
 
-fun isLeaveFeedbackActionAvailable(task: Task): Boolean {
+fun isLeaveStudentFeedbackActionAvailable(task: Task): Boolean {
   if (task.course is HyperskillCourse) return true
   return task.feedbackLink != null
 }

@@ -8,9 +8,9 @@ import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.feedback.StudentInIdeFeedbackDialog
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.uIfeedback.InIdeFeedbackDialog
 import org.jetbrains.annotations.NonNls
 
 class LeaveInIdeFeedbackAction : DumbAwareAction(
@@ -23,7 +23,7 @@ class LeaveInIdeFeedbackAction : DumbAwareAction(
     val project = e.project ?: return
     val task = project.getCurrentTask() ?: return
 
-    val dialog = InIdeFeedbackDialog(project, task, false)
+    val dialog = StudentInIdeFeedbackDialog(project, task)
     val success = if (dialog.showAndGet()) {
       dialog.showThanksNotification()
       true

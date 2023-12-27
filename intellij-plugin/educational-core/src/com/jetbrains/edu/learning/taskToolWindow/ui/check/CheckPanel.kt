@@ -67,7 +67,7 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
     }
 
     if (task != null) {
-      if (isLeaveFeedbackActionAvailable(task)) {
+      if (isLeaveStudentFeedbackActionAvailable(task)) {
         rightActionsToolbar.add(createSingleActionToolbar(task.getLeaveFeedbackActionId()))
       }
 

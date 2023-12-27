@@ -11,4 +11,4 @@ fun Task.getLeaveFeedbackActionId(): String {
   }
 }
 
-fun isLeaveFeedbackActionAvailable(task: Task): Boolean = true
+fun isLeaveStudentFeedbackActionAvailable(task: Task): Boolean = true
