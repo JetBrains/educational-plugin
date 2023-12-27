@@ -1,3 +1,2 @@
 <?php
-echo "my answer"
-?>
+echo "my answer";
