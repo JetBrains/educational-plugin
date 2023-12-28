@@ -1,5 +1,6 @@
 package task
 
+// Sum is a task example
 // todo: replace this with an actual task
 func Sum(a, b int) int {
 	return a + b
