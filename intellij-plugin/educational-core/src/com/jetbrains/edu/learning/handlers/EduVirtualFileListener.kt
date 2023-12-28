@@ -75,9 +75,10 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
     val newPath = oldPath.replaceAfterLast(VfsUtilCore.VFS_SEPARATOR_CHAR, newName, newName)
 
     fun rename(oldPath: String, newPath: String) {
+      val taskFileIndex = task.taskFileIndex(oldPath) ?: return
       val taskFile = task.removeTaskFile(oldPath) ?: return
       taskFile.name = newPath
-      task.addTaskFile(taskFile)
+      task.addTaskFile(taskFile, taskFileIndex)
     }
 
     if (event.file.isDirectory) {
@@ -104,24 +105,26 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
       return
     }
 
-    val affectedFiles = mutableListOf<TaskFile>()
-    val oldPaths = task.taskFiles.keys.filter { oldPath == it || oldPath.isParentOf(it) }
+    val newTaskFiles = LinkedHashMap<String, TaskFile>()
 
-    for (path in oldPaths) {
-      val taskFile = task.removeTaskFile(path) ?: continue
-      PlaceholderHighlightingManager.hidePlaceholders(project, taskFile.answerPlaceholders)
-      affectedFiles += taskFile
-    }
+    for (taskFile in task.taskFiles.values) {
+      val path = taskFile.name
+      val isAffected = oldPath == path || oldPath.isParentOf(path)
 
-    for (taskFile in affectedFiles) {
-      var newPath = taskFile.name.removePrefix("$oldParentPath/")
-      if (newParentPath.isNotEmpty()) {
-        newPath = "$newParentPath/$newPath"
+      if (isAffected) {
+        PlaceholderHighlightingManager.hidePlaceholders(project, taskFile.answerPlaceholders)
+        var newPath = path.removePrefix("$oldParentPath/")
+        if (newParentPath.isNotEmpty()) {
+          newPath = "$newParentPath/$newPath"
+        }
+
+        taskFile.name = newPath
       }
 
-      taskFile.name = newPath
-      task.addTaskFile(taskFile)
+      newTaskFiles[taskFile.name] = taskFile
     }
+
+    task.taskFiles = newTaskFiles
 
     YamlFormatSynchronizer.saveItem(task)
   }

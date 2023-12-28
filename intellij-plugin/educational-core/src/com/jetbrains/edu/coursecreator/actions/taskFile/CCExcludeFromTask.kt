@@ -30,8 +30,8 @@ class CCExcludeFromTask : CCChangeFilePropertyActionBase(EduCoreBundle.lazyMessa
 
 private class RemoveFileFromTask(private val info: FileInfo.FileInTask) : State {
 
-  private val initialValue: TaskFile = info.task.getTaskFile(info.pathInTask)
-      ?: error("Can't find file by `${info.pathInTask}` path in `${info.task.name}` task")
+  private val initialValue: TaskFile = info.task.getTaskFile(info.pathInTask) ?: error(errorMessage(info))
+  private val initialIndex: Int = info.task.taskFileIndex(info.pathInTask) ?: error(errorMessage(info))
 
   override fun changeState(project: Project) {
     val taskFile = info.task.removeTaskFile(info.pathInTask)
@@ -41,7 +41,11 @@ private class RemoveFileFromTask(private val info: FileInfo.FileInTask) : State 
   }
 
   override fun restoreState(project: Project) {
-    info.task.addTaskFile(initialValue)
+    info.task.addTaskFile(initialValue, initialIndex)
     PlaceholderHighlightingManager.showPlaceholders(project, initialValue)
+  }
+
+  companion object {
+    private fun errorMessage(info: FileInfo.FileInTask) = "Can't find file by `${info.pathInTask}` path in `${info.task.name}` task"
   }
 }

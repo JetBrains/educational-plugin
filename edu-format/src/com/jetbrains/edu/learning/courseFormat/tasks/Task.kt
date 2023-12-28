@@ -138,6 +138,11 @@ abstract class Task : StudyItem {
     return _taskFiles.remove(taskFile)
   }
 
+  fun taskFileIndex(taskFile: String): Int? {
+    val index = _taskFiles.keys.toList().indexOf(taskFile)
+    return if (index == -1) null else index
+  }
+
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other == null || javaClass != other.javaClass) return false
