@@ -12,6 +12,7 @@ import com.intellij.openapi.vcs.merge.MergeSession
 import com.intellij.openapi.vcs.merge.MergeSession.Resolution
 import com.intellij.openapi.vcs.merge.MergeSessionEx
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.ui.ColumnInfo
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -64,6 +65,7 @@ class FLMergeProvider(
 
     override fun acceptFilesRevisions(files: List<VirtualFile>, resolution: Resolution) {
       for (file in files) {
+        require(file is LightVirtualFile)
         val fileName = file.name
         val value = if (resolution == Resolution.AcceptedYours) {
           leftState[fileName]
@@ -75,9 +77,9 @@ class FLMergeProvider(
         @Suppress("UnstableApiUsage")
         invokeAndWaitIfNeeded {
           if (value == null) {
-            runWriteAction {
-              file.delete(javaClass)
-            }
+            // file is deleted
+            // invalidate file, so it can be checked by file.exists()
+            file.isValid = false
           }
           else {
             EduDocumentListener.modifyWithoutListener(task, fileName) {

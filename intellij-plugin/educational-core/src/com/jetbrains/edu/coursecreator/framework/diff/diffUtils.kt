@@ -40,15 +40,14 @@ fun applyChangesWithMergeDialog(
 
   for (file in conflictLightVirtualFiles) {
     // file was deleted
-    if (!file.exists()) {
+    if (!file.isValid) {
       finalState.remove(file.name)
+      continue
     }
 
     val document = FileDocumentManager.getInstance().getDocument(file)
 
     finalState[file.name] = document?.text ?: error("There is no document for ${file.name}")
-
-    file.delete(finalState.javaClass)
   }
 
   return finalState

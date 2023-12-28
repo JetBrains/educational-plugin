@@ -464,6 +464,55 @@ class CCPropagateChangesTest : EduActionTestCase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  fun `test file is deleted when it accept deletion in merge dialog`() {
+    val course = createFrameworkCourse(2)
+
+    withVirtualFileListener(course) {
+      val task1 = course.findTask("lesson1", "task1")
+      task1.openTaskFileInEditor("src/Baz.kt")
+      myFixture.type("fun baz() {}\n")
+
+      val task2 = course.findTask("lesson1", "task2")
+      task2.openTaskFileInEditor("src/Baz.kt")
+      runWriteAction {
+        findFile("lesson1/task2/src/Baz.kt").delete(CCPropagateChangesTest::class.java)
+      }
+
+      doTest(task1, listOf(Resolution.AcceptedTheirs))
+    }
+
+    val fileTree = fileTree {
+      dir("lesson1") {
+        dir("task1") {
+          dir("src") {
+            file("Task.kt", "fun foo() {}")
+            file("Baz.kt", """
+              fun baz() {}
+              fun baz() {}
+            """)
+          }
+          dir("test") {
+            file("Tests.kt", "fun tests() {}")
+          }
+          file("task.md")
+        }
+        dir("task2") {
+          dir("src") {
+            file("Task.kt", "fun foo() {}")
+          }
+          dir("test") {
+            file("Tests.kt", "fun tests() {}")
+          }
+          file("task.md")
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    fileTree.assertEquals(rootDir, myFixture)
+  }
+
+
   fun `test invoke action from file nodes`() {
     val course = createFrameworkCourseWithFiles(
       2,
