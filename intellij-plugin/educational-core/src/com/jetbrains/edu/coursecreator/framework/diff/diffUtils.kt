@@ -12,6 +12,16 @@ import com.jetbrains.edu.learning.framework.impl.FLTaskState
 import com.jetbrains.edu.learning.isUnitTestMode
 import org.jetbrains.annotations.TestOnly
 
+class FLLightVirtualFile(path: String, fileType: FileType, content: String) : LightVirtualFile(path, fileType, content) {
+  override fun getPath(): String {
+    return name
+  }
+
+  override fun delete(requestor: Any?) {
+    isValid = false
+  }
+}
+
 fun applyChangesWithMergeDialog(
   project: Project,
   currentTask: Task,
@@ -28,7 +38,7 @@ fun applyChangesWithMergeDialog(
     val fileType = findConflictFileType(project, path, currentTask, targetTask) ?: error("Couldn't find file corresponding for $path")
     val fileContent = baseState[path] ?: error("Conflict file content was not added to baseState during conflict resolution")
     // set file name with a full file path
-    LightVirtualFile(path, fileType, fileContent)
+    FLLightVirtualFile(path, fileType, fileContent)
   }
   val isOk = showMultipleFileMergeDialog(project, conflictLightVirtualFiles, mergeProvider, mergeDialogCustomizer, currentTask.name, targetTask.name)
 
@@ -41,7 +51,7 @@ fun applyChangesWithMergeDialog(
 
   for (file in conflictLightVirtualFiles) {
     // file was deleted
-    if (!file.isValid) {
+    if (!file.exists()) {
       finalState.remove(file.name)
       continue
     }

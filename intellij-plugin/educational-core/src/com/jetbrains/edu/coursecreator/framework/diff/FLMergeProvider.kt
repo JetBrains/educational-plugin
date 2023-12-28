@@ -12,7 +12,6 @@ import com.intellij.openapi.vcs.merge.MergeSession
 import com.intellij.openapi.vcs.merge.MergeSession.Resolution
 import com.intellij.openapi.vcs.merge.MergeSessionEx
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.ui.ColumnInfo
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -66,13 +65,13 @@ class FLMergeProvider(
     override fun acceptFilesRevisions(files: List<VirtualFile>, resolution: Resolution) {
       for (file in files) {
         // it is supposed that file.name is a full path of the file (and it is equal to the corresponding taskFile.name)
-        require(file is LightVirtualFile)
-        val fileName = file.name
+        require(file is FLLightVirtualFile)
+        val filePath = file.path
         val value = if (resolution == Resolution.AcceptedYours) {
-          leftState[fileName]
+          leftState[filePath]
         }
         else {
-          rightState[fileName]
+          rightState[filePath]
         }
 
         @Suppress("UnstableApiUsage")
@@ -80,10 +79,10 @@ class FLMergeProvider(
           if (value == null) {
             // file is deleted
             // invalidate file, so it can be checked by file.exists()
-            file.isValid = false
+            file.delete(javaClass)
           }
           else {
-            EduDocumentListener.modifyWithoutListener(task, fileName) {
+            EduDocumentListener.modifyWithoutListener(task, filePath) {
               val document = runReadAction {
                 FileDocumentManager.getInstance().getDocument(file)
               }
