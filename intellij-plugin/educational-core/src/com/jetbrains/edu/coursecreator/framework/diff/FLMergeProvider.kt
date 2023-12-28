@@ -65,6 +65,7 @@ class FLMergeProvider(
 
     override fun acceptFilesRevisions(files: List<VirtualFile>, resolution: Resolution) {
       for (file in files) {
+        // it is supposed that file.name is a full path of the file (and it is equal to the corresponding taskFile.name)
         require(file is LightVirtualFile)
         val fileName = file.name
         val value = if (resolution == Resolution.AcceptedYours) {

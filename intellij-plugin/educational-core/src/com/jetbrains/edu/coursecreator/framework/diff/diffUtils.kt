@@ -24,10 +24,11 @@ fun applyChangesWithMergeDialog(
 ): FLTaskState? {
   val mergeProvider = FLMergeProvider(project, targetTask, leftState, baseState, rightState, initialBaseState)
   val mergeDialogCustomizer = FLMergeDialogCustomizer(project, currentTask.name, targetTask.name)
-  val conflictLightVirtualFiles = conflictFiles.map { name ->
-    val fileType = findConflictFileType(project, name, currentTask, targetTask) ?: error("Couldn't find file corresponding for $name")
-    val fileContent = baseState[name] ?: error("Conflict file content was not added to baseState during conflict resolution")
-    LightVirtualFile(name, fileType, fileContent)
+  val conflictLightVirtualFiles = conflictFiles.map { path ->
+    val fileType = findConflictFileType(project, path, currentTask, targetTask) ?: error("Couldn't find file corresponding for $path")
+    val fileContent = baseState[path] ?: error("Conflict file content was not added to baseState during conflict resolution")
+    // set file name with a full file path
+    LightVirtualFile(path, fileType, fileContent)
   }
   val isOk = showMultipleFileMergeDialog(project, conflictLightVirtualFiles, mergeProvider, mergeDialogCustomizer, currentTask.name, targetTask.name)
 
