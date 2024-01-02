@@ -17,14 +17,14 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
   fun updateTasks(remoteCourse: T, lesson: Lesson? = null, remoteLesson: Lesson? = null, isShouldBeUpdated: Boolean = true) {
     val lessonToBeUpdated = lesson ?: localCourse.lessons.first()
     val updater = getUpdater(lessonToBeUpdated)
+    val lessonFromServer = remoteLesson ?: remoteCourse.lessons.first()
     val updates = runBlocking {
-      val lessonFromServer = remoteLesson ?: remoteCourse.lessons.first()
       updater.collect(lessonFromServer)
     }
     assertEquals("Updates are " + if (isShouldBeUpdated) "" else "not" + " available", isShouldBeUpdated, updates.isNotEmpty())
     val isUpdateSucceed = runBlocking {
       try {
-        updater.doUpdate(updates)
+        updater.update(lessonFromServer)
         true
       }
       catch (e: Exception) {

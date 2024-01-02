@@ -63,7 +63,7 @@ abstract class LessonUpdater(project: Project, private val container: ItemContai
     return updates
   }
 
-  override suspend fun doUpdate(updates: List<LessonUpdate>) {
+  override suspend fun update(localItems: List<Lesson>, remoteItems: List<Lesson>) {
     TODO("Not yet implemented")
   }
 

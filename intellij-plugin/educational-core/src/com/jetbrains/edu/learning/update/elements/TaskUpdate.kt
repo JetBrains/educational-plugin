@@ -20,7 +20,7 @@ sealed class TaskUpdate(localItem: Task?, remoteItem: Task?) : StudyItemUpdate<T
 
 data class TaskCreationInfo(val localLesson: Lesson, override val remoteItem: Task) : TaskUpdate(null, remoteItem) {
   @Suppress("UnstableApiUsage")
-  override suspend fun doUpdate(project: Project) {
+  override suspend fun update(project: Project) {
     localLesson.addTask(remoteItem)
     remoteItem.parent = localLesson
     val lessonDir = localLesson.getDir(project.courseDir) ?: error("Failed to find lesson dir: ${localLesson.name}")
@@ -33,7 +33,7 @@ data class TaskCreationInfo(val localLesson: Lesson, override val remoteItem: Ta
 }
 
 data class TaskUpdateInfo(override val localItem: Task, override val remoteItem: Task) : TaskUpdate(localItem, remoteItem) {
-  override suspend fun doUpdate(project: Project) {
+  override suspend fun update(project: Project) {
     if (localItem.lesson is FrameworkLesson) {
       // TODO this case will be implemented in EDU-6241
       return
@@ -68,7 +68,7 @@ data class TaskUpdateInfo(override val localItem: Task, override val remoteItem:
 }
 
 data class TaskDeletionInfo(override val localItem: Task) : TaskUpdate(localItem, null) {
-  override suspend fun doUpdate(project: Project) {
+  override suspend fun update(project: Project) {
     localItem.deleteFilesOnDisc(project)
     val lesson = localItem.parent
     lesson.removeItem(localItem)

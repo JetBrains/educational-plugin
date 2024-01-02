@@ -65,9 +65,12 @@ abstract class TaskUpdater(project: Project, private val lesson: Lesson) : Study
     return updates
   }
 
-  override suspend fun doUpdate(updates: List<TaskUpdate>) {
+  suspend fun update(remoteLesson: Lesson) = update(lesson.taskList, remoteLesson.taskList)
+
+  override suspend fun update(localItems: List<Task>, remoteItems: List<Task>) {
+    val updates = collect(localItems, remoteItems)
     updates.forEach {
-      it.doUpdate(project)
+      it.update(project)
     }
   }
 

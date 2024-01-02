@@ -10,7 +10,7 @@ data class LessonCreationInfo(
   val localContainer: ItemContainer,
   override val remoteItem: Lesson
 ) : LessonUpdate(null, remoteItem) {
-  override suspend fun doUpdate(project: Project) {
+  override suspend fun update(project: Project) {
     TODO("Not yet implemented")
   }
 }
@@ -20,13 +20,13 @@ data class LessonUpdateInfo(
   override val remoteItem: Lesson,
   val taskUpdates: List<TaskUpdate>
 ) : LessonUpdate(localItem, remoteItem) {
-  override suspend fun doUpdate(project: Project) {
+  override suspend fun update(project: Project) {
     TODO("Not yet implemented")
   }
 }
 
 data class LessonDeletionInfo(override val localItem: Lesson) : LessonUpdate(localItem, null) {
-  override suspend fun doUpdate(project: Project) {
+  override suspend fun update(project: Project) {
     TODO("Not yet implemented")
   }
 }
