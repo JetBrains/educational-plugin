@@ -402,7 +402,7 @@ task<RunIdeTask>("buildEventsScheme") {
 
 task<RunIdeTask>("runRemoteDevServer") {
   dependsOn(tasks.prepareSandbox)
-  val remoteProjectPath = System.getenv("REMOTE_DEV_PROJECT") ?: project.layout.projectDirectory.dir("example-course-project").asFile.absolutePath
+  val remoteProjectPath = System.getenv("REMOTE_DEV_PROJECT") ?: rootProject.layout.projectDirectory.dir("example-course-project").asFile.absolutePath
   args("cwmHostNoLobby", remoteProjectPath)
   systemProperty("ide.browser.jcef.enabled", "false")
 }
