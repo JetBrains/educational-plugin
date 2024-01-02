@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindowManager
 import com.jetbrains.edu.learning.EduUtilsKt
+import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.getTaskFile
@@ -26,7 +27,7 @@ class EduFileEditorManagerListener(private val project: Project) : FileEditorMan
   }
 
   override fun fileClosed(source: FileEditorManager, file: VirtualFile) {
-    if (FileEditorManager.getInstance(project).openFiles.isEmpty()) {
+    if (project.isEduProject() && FileEditorManager.getInstance(project).openFiles.isEmpty()) {
       TaskToolWindowView.getInstance(project).currentTask = null
     }
   }
