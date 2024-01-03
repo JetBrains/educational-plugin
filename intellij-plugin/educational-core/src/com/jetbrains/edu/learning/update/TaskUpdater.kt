@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.update.elements.TaskUpdate
 import com.jetbrains.edu.learning.update.elements.TaskUpdateInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.jetbrains.annotations.TestOnly
 
 abstract class TaskUpdater(project: Project, private val lesson: Lesson) : StudyItemUpdater<Task, TaskUpdate>(project) {
 
@@ -65,6 +66,7 @@ abstract class TaskUpdater(project: Project, private val lesson: Lesson) : Study
     return updates
   }
 
+  @TestOnly
   suspend fun update(remoteLesson: Lesson) = update(lesson.taskList, remoteLesson.taskList)
 
   private suspend fun Task.isChanged(remoteTask: Task): Boolean {
