@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator.actions
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.util.NlsActions
@@ -21,8 +22,10 @@ class CCNewCourseAction(
 
   override fun actionPerformed(e: AnActionEvent) {
     EduCounterUsageCollector.createNewCourseClicked(e.place)
-    CCNewCourseDialog(EduCoreBundle.message("dialog.title.create.course"), EduCoreBundle.message("button.create"),
-                      onOKAction = onOKAction).show()
+    CCNewCourseDialog(
+      EduCoreBundle.message("dialog.title.create.course"), EduCoreBundle.message("button.create"),
+      onOKAction = onOKAction
+    ).show()
   }
 
   override fun getHelpRelativePath(): String = "education/educator-start-guide.html"
@@ -32,6 +35,8 @@ class CCNewCourseAction(
   override fun getTooltipText(): String {
     return EduCoreBundle.message("course.dialog.create.course.help.tooltip")
   }
+
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = !RemoteEnvHelper.isRemoteDevServer()

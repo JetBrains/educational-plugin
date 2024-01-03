@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator.actions.stepik.hyperskill
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.coursecreator.settings.CCSettings
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.NonNls
 
 class NewHyperskillCourseAction : DumbAwareAction() {
 
-  override fun actionPerformed(e: AnActionEvent) {
+ override fun actionPerformed(e: AnActionEvent) {
     CCSettings.getInstance().useHtmlAsDefaultTaskFormat = true
     CCNewCourseDialog(
       EduCoreBundle.message("action.Educational.Educator.NewHyperskillCourse.text"),
@@ -21,6 +22,8 @@ class NewHyperskillCourseAction : DumbAwareAction() {
       courseProducer = ::HyperskillCourse
     ).show()
   }
+
+  override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false

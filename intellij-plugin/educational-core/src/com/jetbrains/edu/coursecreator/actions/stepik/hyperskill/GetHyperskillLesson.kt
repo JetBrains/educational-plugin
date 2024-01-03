@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.actions.stepik.hyperskill
 
 import com.google.common.annotations.VisibleForTesting
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.runInEdt
@@ -39,6 +40,8 @@ class GetHyperskillLesson : DumbAwareAction(
   EduCoreBundle.lazyMessage("action.get.lesson.description", HYPERSKILL, StepikNames.STEPIK),
   EducationalCoreIcons.JB_ACADEMY
 ) {
+
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = isFeatureEnabled(EduExperimentalFeatures.CC_HYPERSKILL)
@@ -134,8 +137,10 @@ class GetHyperskillLesson : DumbAwareAction(
       }
 
     @Suppress("UnstableApiUsage")
-    private fun showError(@NlsContexts.DialogMessage message: String,
-                          @NlsContexts.DialogTitle title : String) {
+    private fun showError(
+      @NlsContexts.DialogMessage message: String,
+      @NlsContexts.DialogTitle title: String
+    ) {
       runInEdt {
         Messages.showErrorDialog(message, title)
       }

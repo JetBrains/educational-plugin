@@ -176,7 +176,7 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
       EduCoreBundle.lazyMessage("sorting.based.task.move.up.description"),
       EducationalCoreIcons.MoveUpMatching
     ) {
-      override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
+      override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
       override fun actionPerformed(e: AnActionEvent) = moveUp(task, index)
 
@@ -192,7 +192,7 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
       EduCoreBundle.lazyMessage("sorting.based.task.move.down.description"),
       EducationalCoreIcons.MoveDownMatching
     ) {
-      override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
+      override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
       override fun actionPerformed(e: AnActionEvent) = moveDown(task, index)
 

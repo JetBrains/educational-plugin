@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.actions
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.RightAlignedToolbarAction
 import com.intellij.openapi.project.DumbAwareAction
@@ -38,6 +39,8 @@ class OpenTaskOnSiteAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.o
 
     e.presentation.isEnabledAndVisible = course is CodeforcesCourse || course is HyperskillCourse
   }
+
+  override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
   companion object {
     @NonNls

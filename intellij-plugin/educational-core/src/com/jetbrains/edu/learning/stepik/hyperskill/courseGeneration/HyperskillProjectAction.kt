@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration
 
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.project.DumbAwareAction
@@ -31,6 +32,8 @@ import javax.swing.event.HyperlinkListener
 
 class HyperskillProjectAction : DumbAwareAction(EduCoreBundle.message("hyperskill.open.project.text")) {
 
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
+
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = isHyperskillSupportAvailable() && !RemoteEnvHelper.isRemoteDevServer()
   }
@@ -44,11 +47,12 @@ class HyperskillProjectAction : DumbAwareAction(EduCoreBundle.message("hyperskil
     openHyperskillProject { error ->
 
       val hyperlinkListener = when (error) {
-        is PluginsRequired -> object: HyperlinkAdapter() {
+        is PluginsRequired -> object : HyperlinkAdapter() {
           override fun hyperlinkActivated(e: HyperlinkEvent) {
             error.showPluginInstallAndEnableDialog()
           }
         }
+
         is ValidationErrorMessage -> null
         is ValidationErrorMessageWithHyperlinks -> HSHyperlinkListener(false)
       }

@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.actions
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbAware
@@ -43,6 +44,8 @@ abstract class DownloadDatasetActionBase(
 
     presentation.isEnabledAndVisible = !DownloadDataset.isRunning(project)
   }
+
+  override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
   protected fun checkAuthorized(project: Project, course: Course): Boolean {
     when {

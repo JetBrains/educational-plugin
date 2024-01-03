@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.actions
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
@@ -35,7 +36,7 @@ class RetryAction(actionText: Supplier<@ActionText String>,
     setUpSpinnerPanel(processMessage)
   }
 
-  override fun actionPerformed(e: AnActionEvent) {
+ override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val task = project.getCurrentTask() ?: return
 
@@ -59,6 +60,8 @@ class RetryAction(actionText: Supplier<@ActionText String>,
       ProgressManager.getInstance().run(retryTask)
     }
   }
+
+  override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
   override fun update(e: AnActionEvent) {
     val project = e.project ?: return

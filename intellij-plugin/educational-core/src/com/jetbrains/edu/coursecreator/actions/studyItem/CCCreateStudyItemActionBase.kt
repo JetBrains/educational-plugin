@@ -3,10 +3,7 @@ package com.jetbrains.edu.coursecreator.actions.studyItem
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.actionSystem.DataKey
+import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
@@ -82,6 +79,8 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
     if (CommonDataKeys.PSI_FILE.getData(event.dataContext) != null) return
     presentation.isEnabledAndVisible = true
   }
+
+  override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
   private fun getParentDir(project: Project, course: Course, directory: VirtualFile): VirtualFile? {
     return if (isAddedAsLast(project, course, directory)) directory else directory.parent

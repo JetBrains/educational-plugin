@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator.actions.stepik.hyperskill
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.runInEdt
@@ -26,6 +27,7 @@ class ApplyHyperskillSubmission : DumbAwareAction(
   EduCoreBundle.lazyMessage("action.apply.submission.description", HYPERSKILL),
   EducationalCoreIcons.JB_ACADEMY
 ) {
+
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val task = getTask(project, e) ?: return
@@ -73,6 +75,10 @@ class ApplyHyperskillSubmission : DumbAwareAction(
       HyperskillSolutionLoader.getInstance(project).updateTask(project, task, listOf(submission), true)
     }
   }
+
+
+
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false

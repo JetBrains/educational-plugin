@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.actions
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.RightAlignedToolbarAction
 import com.intellij.openapi.extensions.ExtensionPointName
@@ -51,6 +52,8 @@ class RevertTaskAction : DumbAwareAction(), RightAlignedToolbarAction {
       presentation.isEnabledAndVisible = false
     }
   }
+
+  override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
   companion object {
     @NonNls

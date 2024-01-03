@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.actions
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
@@ -30,6 +31,8 @@ abstract class SyncCourseAction(
 
     presentation.isEnabledAndVisible = true
   }
+
+  override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
   abstract fun synchronizeCourse(project: Project)
 

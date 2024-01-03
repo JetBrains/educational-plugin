@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.codeforces.update
 
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
@@ -39,6 +40,8 @@ class CodeforcesUpdateContestAction : DumbAwareAction() {
 
     presentation.isEnabledAndVisible = true
   }
+
+  override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
   private fun showUpToDateNotification(project: Project) {
     val notification = Notification(

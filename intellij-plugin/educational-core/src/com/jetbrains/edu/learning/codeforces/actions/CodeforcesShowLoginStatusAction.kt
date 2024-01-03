@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.codeforces.actions
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
@@ -106,6 +107,8 @@ class CodeforcesShowLoginStatusAction : CodeforcesAction() {
     super.update(e)
     updateIcon(e)
   }
+
+  override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
   companion object {
     @NonNls

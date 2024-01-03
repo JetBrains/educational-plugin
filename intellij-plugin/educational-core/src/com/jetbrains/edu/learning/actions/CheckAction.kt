@@ -4,6 +4,7 @@ import com.intellij.ide.projectView.ProjectView
 import com.intellij.notification.NotificationDisplayType
 import com.intellij.notification.impl.NotificationSettings
 import com.intellij.notification.impl.NotificationsConfigurationImpl
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.ex.ActionUtil
@@ -45,7 +46,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.shouldGenerateTestsOnTheFly
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.messages.EduCoreBundle.lazyMessage
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.projectView.ProgressUtil.updateCourseProgress
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.Companion.checkTask
@@ -126,6 +126,8 @@ class CheckAction() : ActionWithProgressIcon(), DumbAware {
       e.presentation.isEnabledAndVisible = true
     }
   }
+
+  override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
   private inner class StudyCheckTask(project: Project, private val task: Task)
     : com.intellij.openapi.progress.Task.Backgroundable(project, message("progress.title.checking.solution"), true) {

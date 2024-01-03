@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator.actions
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.fileChooser.FileChooser
@@ -13,14 +14,18 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 class CCUnpackCourseArchive : DumbAwareAction() {
 
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
+
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = !RemoteEnvHelper.isRemoteDevServer()
   }
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.getData(CommonDataKeys.PROJECT)
-    val descriptor = FileChooserDescriptor(true, true, true, true,
-                                           true, false)
+    val descriptor = FileChooserDescriptor(
+      true, true, true, true,
+      true, false
+    )
     val virtualFile = FileChooser.chooseFile(descriptor, project, null) ?: return
     val course = EduUtilsKt.getLocalCourse(virtualFile.path)
     if (course == null) {

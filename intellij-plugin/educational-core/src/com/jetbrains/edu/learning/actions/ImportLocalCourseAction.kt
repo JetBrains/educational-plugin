@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.actions
 
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.ide.util.PropertiesComponent
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.application.invokeLater
@@ -28,6 +29,8 @@ import java.awt.Component
 
 class ImportLocalCourseAction : DumbAwareAction() {
 
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
+
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = !RemoteEnvHelper.isRemoteDevServer()
   }
@@ -47,13 +50,17 @@ class ImportLocalCourseAction : DumbAwareAction() {
       val courseMetaInfo = CoursesStorage.getInstance().getCourseMetaInfo(course)
       if (courseMetaInfo != null) {
         invokeLater {
-          val result = Messages.showDialog(null,
-                                           EduCoreBundle.message("action.import.local.course.dialog.text"),
-                                           EduCoreBundle.message("action.import.local.course.dialog"),
-                                           arrayOf(EduCoreBundle.message("action.import.local.course.dialog.cancel.text"),
-                                                   EduCoreBundle.message("action.import.local.course.dialog.ok.text")),
-                                           Messages.OK,
-                                           Messages.getErrorIcon())
+          val result = Messages.showDialog(
+            null,
+            EduCoreBundle.message("action.import.local.course.dialog.text"),
+            EduCoreBundle.message("action.import.local.course.dialog"),
+            arrayOf(
+              EduCoreBundle.message("action.import.local.course.dialog.cancel.text"),
+              EduCoreBundle.message("action.import.local.course.dialog.ok.text")
+            ),
+            Messages.OK,
+            Messages.getErrorIcon()
+          )
           if (result == Messages.NO) {
             CoursesStorage.getInstance().removeCourseByLocation(courseMetaInfo.location)
             course.name = createUnusedName(course.name)

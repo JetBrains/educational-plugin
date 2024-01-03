@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.actions
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
@@ -29,6 +30,8 @@ abstract class TaskNavigationAction : DumbAwareAction() {
       e.presentation.isEnabled = true
     }
   }
+
+  override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
   private fun navigateTask(project: Project, place: String) {
     val currentTask = TaskToolWindowView.getInstance(project).currentTask ?: return

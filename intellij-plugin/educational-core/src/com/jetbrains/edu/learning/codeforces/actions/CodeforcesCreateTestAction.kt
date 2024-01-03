@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.codeforces.actions
 
 import com.intellij.ide.ui.newItemPopup.NewItemPopupUtil
 import com.intellij.ide.ui.newItemPopup.NewItemSimplePopupPanel
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.runWriteAction
@@ -97,6 +98,8 @@ class CodeforcesCreateTestAction : DumbAwareAction() {
 
     presentation.isEnabledAndVisible = true
   }
+
+  override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
   companion object {
     @NonNls

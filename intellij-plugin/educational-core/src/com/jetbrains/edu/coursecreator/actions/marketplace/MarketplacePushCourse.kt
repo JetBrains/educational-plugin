@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.actions.marketplace
 
 import com.intellij.CommonBundle
 import com.intellij.execution.process.ProcessIOExecutorService
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.DumbAwareAction
@@ -55,7 +56,9 @@ class MarketplacePushCourse(
     }
   }
 
-  override fun actionPerformed(e: AnActionEvent) {
+ override fun getActionUpdateThread() = ActionUpdateThread.BGT
+
+ override fun actionPerformed(e: AnActionEvent) {
     val project = e.project
     if (project == null || !isCourseCreator(project)) {
       return

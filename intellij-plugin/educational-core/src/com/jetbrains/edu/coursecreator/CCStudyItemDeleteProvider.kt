@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.ide.DeleteProvider
 import com.intellij.ide.IdeBundle
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.LangDataKeys
@@ -118,6 +119,8 @@ class CCStudyItemDeleteProvider : DeleteProvider {
       }
     }
   }
+
+  override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
   companion object {
 

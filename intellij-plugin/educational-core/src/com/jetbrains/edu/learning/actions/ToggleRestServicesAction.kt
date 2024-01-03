@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.actions
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareToggleAction
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
@@ -12,4 +13,6 @@ class ToggleRestServicesAction : DumbAwareToggleAction(EduCoreBundle.lazyMessage
   override fun setSelected(e: AnActionEvent, state: Boolean) {
     OAuthRestService.isRestServicesEnabled = state
   }
+
+  override fun getActionUpdateThread() = ActionUpdateThread.BGT
 }

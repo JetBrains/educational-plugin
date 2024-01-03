@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.codeforces.actions
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
@@ -7,7 +8,7 @@ import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 
 abstract class CodeforcesAction : DumbAwareAction() {
-
+  override fun getActionUpdateThread() = ActionUpdateThread.BGT
   override fun update(e: AnActionEvent) {
     val presentation = e.presentation
     presentation.isEnabledAndVisible = false

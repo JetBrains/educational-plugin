@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.actions.taskFile
 
 import com.intellij.ide.projectView.ProjectView
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.command.undo.BasicUndoableAction
@@ -38,6 +39,8 @@ abstract class CCChangeFilePropertyActionBase(
       else -> virtualFiles.all { isAvailableForFile(project, it) }
     }
   }
+
+  override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return

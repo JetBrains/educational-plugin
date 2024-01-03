@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NonNls
 import java.awt.datatransfer.StringSelection
 
 class CodeforcesCopyAndSubmitAction : CodeforcesAction() {
-  override fun actionPerformed(e: AnActionEvent) {
+ override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     if (project.isDisposed) return
 

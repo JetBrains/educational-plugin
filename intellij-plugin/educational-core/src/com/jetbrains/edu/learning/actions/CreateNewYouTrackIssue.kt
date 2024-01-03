@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.actions
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.application.ApplicationManager
@@ -21,7 +22,9 @@ class CreateNewYouTrackIssue : DumbAwareAction() {
                                          project != null && project.isEduProject()
   }
 
-  override fun actionPerformed(e: AnActionEvent) {
+ override fun getActionUpdateThread() = ActionUpdateThread.BGT
+
+ override fun actionPerformed(e: AnActionEvent) {
     val course = e.project?.course
     val description = createIssueDescription(course)
     val link = "https://youtrack.jetbrains.com/newIssue?project=EDU&description=${URLUtil.encodeURIComponent(description)}"

@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.Messages
@@ -16,6 +17,8 @@ abstract class StartCourseAction(
 
   abstract val dialog: ImportCourseDialog
   abstract val courseConnector: CourseConnector
+
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = !RemoteEnvHelper.isRemoteDevServer()
@@ -49,7 +52,9 @@ abstract class StartCourseAction(
   }
 
   private fun showFailedToAddCourseNotification(courseLink: String) {
-    Messages.showErrorDialog(message("error.failed.to.find.course.by.link", platformName, courseLink),
-                             message("error.failed.to.find.course.title", platformName))
+    Messages.showErrorDialog(
+      message("error.failed.to.find.course.by.link", platformName, courseLink),
+      message("error.failed.to.find.course.title", platformName)
+    )
   }
 }

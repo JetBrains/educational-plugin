@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.actions.checkAllTasks
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -56,6 +57,9 @@ class CCCheckAllTasksAction : AnAction(EduCoreBundle.lazyMessage("action.check.t
 
     ProgressManager.getInstance().run(CheckAllTasksProgressTask(project, course, studyItems))
   }
+
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
+
 
   override fun update(e: AnActionEvent) {
     val project = e.project ?: return

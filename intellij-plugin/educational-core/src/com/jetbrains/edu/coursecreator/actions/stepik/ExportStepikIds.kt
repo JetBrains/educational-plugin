@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.actions.stepik
 
 import com.google.gson.*
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -77,6 +78,8 @@ class ExportStepikIds : DumbAwareAction() {
     }
     presentation.isEnabledAndVisible = true
   }
+
+  override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
   companion object {
     @NonNls
