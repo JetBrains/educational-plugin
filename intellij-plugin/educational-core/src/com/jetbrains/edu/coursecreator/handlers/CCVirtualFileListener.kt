@@ -35,6 +35,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     super.taskFileCreated(taskFile, file)
     if (file.isTestsFile(project) || file.isTaskRunConfigurationFile(project)) {
       taskFile.isVisible = false
+      taskFile.isPropagatable = false
     }
     updateSyncChangesIconForNewFile(taskFile)
   }
