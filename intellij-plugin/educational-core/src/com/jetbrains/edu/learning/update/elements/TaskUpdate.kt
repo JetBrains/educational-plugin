@@ -29,13 +29,17 @@ data class TaskCreationInfo(val localLesson: Lesson, override val remoteItem: Ta
         GeneratorUtils.createTask(project, remoteItem, lessonDir)
       }
     }
+    runBlocking {
+      YamlFormatSynchronizer.saveItemWithRemoteInfo(remoteItem)
+    }
   }
 }
 
 data class TaskUpdateInfo(override val localItem: Task, override val remoteItem: Task) : TaskUpdate(localItem, remoteItem) {
+  @Suppress("UnstableApiUsage")
   override suspend fun update(project: Project) {
     if (localItem.lesson is FrameworkLesson) {
-      // TODO this case will be implemented in EDU-6241
+      // TODO this case will be implemented in EDU-6560
       return
     }
     remoteItem.apply {
@@ -48,16 +52,16 @@ data class TaskUpdateInfo(override val localItem: Task, override val remoteItem:
         status = localItem.status
       }
     }
+    val lesson = localItem.parent
+    localItem.deleteFilesOnDisc(project)
+    remoteItem.init(lesson, false)
+    val lessonDir = lesson.getDir(project.courseDir) ?: error("Lesson dir wasn't found")
     withContext(Dispatchers.IO) {
-      val localTask = localItem
-      val remoteTask = remoteItem
-      localTask.deleteFilesOnDisc(project)
-      val lesson = localTask.parent
-      remoteTask.init(lesson, false)
-      val lessonDir = lesson.getDir(project.courseDir) ?: error("Lesson dir wasn't found")
-      EduCourseUpdater.createTaskDirectories(project, lessonDir, remoteTask)
+      blockingContext {
+        EduCourseUpdater.createTaskDirectories(project, lessonDir, remoteItem)
+      }
     }
-    localItem.parent.apply {
+    lesson.apply {
       removeItem(localItem)
       addItem(remoteItem.index - 1, remoteItem)
     }
