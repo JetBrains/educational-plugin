@@ -67,13 +67,6 @@ abstract class TaskUpdater(project: Project, private val lesson: Lesson) : Study
 
   suspend fun update(remoteLesson: Lesson) = update(lesson.taskList, remoteLesson.taskList)
 
-  override suspend fun update(localItems: List<Task>, remoteItems: List<Task>) {
-    val updates = collect(localItems, remoteItems)
-    updates.forEach {
-      it.update(project)
-    }
-  }
-
   private suspend fun Task.isChanged(remoteTask: Task): Boolean {
     val newTaskFiles = remoteTask.taskFiles
     val taskDescriptionText = descriptionText.ifEmpty {

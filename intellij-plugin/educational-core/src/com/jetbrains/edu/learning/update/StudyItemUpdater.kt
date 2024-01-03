@@ -15,7 +15,12 @@ import kotlinx.coroutines.withContext
 abstract class StudyItemUpdater<T : StudyItem, U : StudyItemUpdate<T>>(protected val project: Project) : ItemUpdater<T> {
   protected abstract suspend fun collect(localItems: List<T>, remoteItems: List<T>): List<U>
 
-  abstract suspend fun update(localItems: List<T>, remoteItems: List<T>)
+  protected suspend fun update(localItems: List<T>, remoteItems: List<T>) {
+    val updates = collect(localItems, remoteItems)
+    updates.forEach {
+      it.update(project)
+    }
+  }
 
   companion object {
     @Suppress("UnstableApiUsage")

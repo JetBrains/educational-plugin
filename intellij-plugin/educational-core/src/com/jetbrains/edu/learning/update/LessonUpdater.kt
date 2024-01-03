@@ -63,10 +63,6 @@ abstract class LessonUpdater(project: Project, private val container: ItemContai
     return updates
   }
 
-  override suspend fun update(localItems: List<Lesson>, remoteItems: List<Lesson>) {
-    TODO("Not yet implemented")
-  }
-
   private fun Lesson.isChanged(remoteLesson: Lesson): Boolean = when {
     name != remoteLesson.name -> true
     index != remoteLesson.index -> true
