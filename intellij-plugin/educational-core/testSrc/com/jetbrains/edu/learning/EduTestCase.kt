@@ -242,6 +242,11 @@ abstract class EduTestCase : BasePlatformTestCase() {
 
   protected fun findLesson(lessonIndex: Int): Lesson = getCourse().lessons[lessonIndex]
 
+  protected fun getLessons(lessonContainer: LessonContainer? = null): List<Lesson> {
+    val container = lessonContainer ?: getCourse()
+    return container.lessons
+  }
+
   protected fun findFileInTask(lessonIndex: Int, taskIndex: Int, taskFilePath: String): VirtualFile {
     return findTask(lessonIndex, taskIndex).getTaskFile(taskFilePath)?.getVirtualFile(project)!!
   }

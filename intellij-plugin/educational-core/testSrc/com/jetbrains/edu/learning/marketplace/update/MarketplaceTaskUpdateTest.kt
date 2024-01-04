@@ -111,7 +111,6 @@ class MarketplaceTaskUpdateTest : TaskUpdateTestBase<EduCourse>() {
     expectedStructure.assertEquals(rootDir)
   }
 
-  // TODO EDU-6241 add test for lesson update with index recalculation
   fun `test last task deleted`() {
     initiateLocalCourse()
     val remoteCourse = toRemoteCourse {

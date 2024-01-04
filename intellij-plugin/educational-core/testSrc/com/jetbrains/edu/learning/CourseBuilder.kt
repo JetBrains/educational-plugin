@@ -166,6 +166,7 @@ class CourseBuilder(course: Course) : LessonOwnerBuilder(course) {
   fun section(
     name: String? = null,
     customPresentableName: String? = null,
+    id: Int = 0,
     buildSection: SectionBuilder.() -> Unit = {}
   ) {
     val sectionBuilder = SectionBuilder(course, Section())
@@ -174,6 +175,7 @@ class CourseBuilder(course: Course) : LessonOwnerBuilder(course) {
     val nextSectionIndex = course.items.size + 1
     sectionBuilder.withName(name ?: (SECTION + nextSectionIndex))
     sectionBuilder.withCustomPresentableName(customPresentableName)
+    sectionBuilder.withId(id)
     course.addSection(section)
     sectionBuilder.buildSection()
   }
@@ -212,6 +214,10 @@ class SectionBuilder(course: Course, val section: Section = Section()) : LessonO
 
   fun withCustomPresentableName(name: String?) {
     section.customPresentableName = name
+  }
+
+  fun withId(id: Int) {
+    section.id = id
   }
 }
 
