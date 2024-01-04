@@ -14,7 +14,7 @@ import java.util.*
 abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
   abstract fun getUpdater(lesson: Lesson): TaskUpdater
 
-  fun updateTasks(remoteCourse: T, lesson: Lesson? = null, remoteLesson: Lesson? = null, isShouldBeUpdated: Boolean = true) {
+  protected fun updateTasks(remoteCourse: T, lesson: Lesson? = null, remoteLesson: Lesson? = null, isShouldBeUpdated: Boolean = true) {
     val lessonToBeUpdated = lesson ?: localCourse.lessons.first()
     val updater = getUpdater(lessonToBeUpdated)
     val lessonFromServer = remoteLesson ?: remoteCourse.lessons.first()
@@ -86,7 +86,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
 
     val expectedStructure = fileTree {
       dir("lesson1") {
-        dir("taskNewName") {
+        dir(newTaskName) {
           dir("src") {
             file("Task.kt")
             file("Baz.kt")

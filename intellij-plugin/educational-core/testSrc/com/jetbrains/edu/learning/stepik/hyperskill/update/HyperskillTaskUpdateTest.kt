@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
+import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.update.TaskUpdateTestBase
 import com.jetbrains.edu.learning.update.TaskUpdater
 import java.util.*
@@ -29,7 +30,12 @@ class HyperskillTaskUpdateTest : TaskUpdateTestBase<HyperskillCourse>() {
     initiateLocalCourse()
     val newEduTask = EduTask("task3").apply {
       id = 3
-      taskFiles = linkedMapOf("TaskFile3.kt" to TaskFile("TaskFile3.kt", "task file 3 text"))
+      taskFiles = linkedMapOf(
+        "Task.kt" to TaskFile("src/Task.kt", "fun foo() {}"),
+        "Baz.kt" to TaskFile("src/Baz.kt", "fun baz() {}"),
+        "Tests1.kt" to TaskFile("test/Tests3.kt", "fun test3() {}")
+      )
+      descriptionFormat = DescriptionFormat.HTML
     }
     val newStages = listOf(
       HyperskillStage(1, "", 1, true),
@@ -45,6 +51,44 @@ class HyperskillTaskUpdateTest : TaskUpdateTestBase<HyperskillCourse>() {
     updateTasks(remoteCourse)
 
     assertEquals("Task hasn't been added", 3, findLesson(0).taskList.size)
+
+    val expectedStructure = fileTree {
+      dir("lesson1") {
+        dir("task1") {
+          dir("src") {
+            file("Task.kt")
+            file("Baz.kt")
+          }
+          dir("test") {
+            file("Tests1.kt")
+          }
+          file("task.html")
+        }
+        dir("task2") {
+          dir("src") {
+            file("Task.kt")
+            file("Baz.kt")
+          }
+          dir("test") {
+            file("Tests2.kt")
+          }
+          file("task.html")
+        }
+        dir("task3") {
+          dir("src") {
+            file("Task.kt")
+            file("Baz.kt")
+          }
+          dir("test") {
+            file("Tests3.kt")
+          }
+          file("task.html")
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    expectedStructure.assertEquals(rootDir)
   }
 
   // TODO EDU-6241 add test for lesson update with index recalculation
@@ -60,11 +104,29 @@ class HyperskillTaskUpdateTest : TaskUpdateTestBase<HyperskillCourse>() {
     updateTasks(remoteCourse)
 
     assertTrue("Task hasn't been deleted", findLesson(0).taskList.size == 1)
+
+    val expectedStructure = fileTree {
+      dir("lesson1") {
+        dir("task1") {
+          dir("src") {
+            file("Task.kt")
+            file("Baz.kt")
+          }
+          dir("test") {
+            file("Tests1.kt")
+          }
+          file("task.html")
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    expectedStructure.assertEquals(rootDir)
   }
 
   fun `test task description with placeholders have been updated`() {
     localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
-      lesson("lesson1") {
+      lesson("lesson1", id = 1) {
         eduTask("task1", stepId = 1, taskDescription = "Old Description", taskDescriptionFormat = DescriptionFormat.HTML) {
           taskFile("src/Task.kt", "fun foo() { <p>TODO</p>() }") {
             placeholder(index = 0, placeholderText = "TODO")
@@ -102,7 +164,7 @@ class HyperskillTaskUpdateTest : TaskUpdateTestBase<HyperskillCourse>() {
   fun `test task type has been updated from unsupported to supported`() {
     localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
       section(HYPERSKILL_TOPICS) {
-        lesson("lesson1") {
+        lesson("lesson1", id = 1) {
           unsupportedTask("task1", stepId = 1)
           eduTask("task2", stepId = 2) {
             taskFile("TaskFile2.kt", "task file 2 text")
@@ -133,7 +195,7 @@ class HyperskillTaskUpdateTest : TaskUpdateTestBase<HyperskillCourse>() {
   fun `test choiceTask and its choice options have been updated`() {
     localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
       section(HYPERSKILL_TOPICS) {
-        lesson("lesson1") {
+        lesson("lesson1", id = 1) {
           choiceTask(
             "task1", stepId = 1, choiceOptions = mapOf(
               "Option1" to ChoiceOptionStatus.UNKNOWN,
@@ -181,7 +243,7 @@ class HyperskillTaskUpdateTest : TaskUpdateTestBase<HyperskillCourse>() {
   fun `test sortingTask and its options have been updated`() {
     localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
       section(HYPERSKILL_TOPICS) {
-        lesson("lesson1") {
+        lesson("lesson1", id = 1) {
           sortingTask("task1", stepId = 1, options = listOf("0", "1", "2"))
           sortingTask("task2", stepId = 2, options = listOf("0", "1", "2"))
         }
@@ -213,7 +275,7 @@ class HyperskillTaskUpdateTest : TaskUpdateTestBase<HyperskillCourse>() {
   fun `test matchingTask and its options have been updated`() {
     localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
       section(HYPERSKILL_TOPICS) {
-        lesson("lesson1") {
+        lesson("lesson1", id = 1) {
           matchingTask("task1", stepId = 1, options = listOf("0", "1", "2"), captions = listOf("A", "B", "C"))
           matchingTask("task2", stepId = 2, options = listOf("0", "1", "2"), captions = listOf("A", "B", "C"))
         }
@@ -248,7 +310,7 @@ class HyperskillTaskUpdateTest : TaskUpdateTestBase<HyperskillCourse>() {
   fun `test remoteEduTask and its checkProfile have been updated`() {
     localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
       section(HYPERSKILL_TOPICS) {
-        lesson("lesson1") {
+        lesson("lesson1", id = 1) {
           remoteEduTask("task1", stepId = 1, checkProfile = "profile 1")
           remoteEduTask("task2", stepId = 2, checkProfile = "profile 2")
         }
@@ -279,7 +341,7 @@ class HyperskillTaskUpdateTest : TaskUpdateTestBase<HyperskillCourse>() {
 
   override fun initiateLocalCourse() {
     localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
-      lesson("lesson1") {
+      lesson("lesson1", id = 1) {
         eduTask("task1", stepId = 1, taskDescription = "Old Description", taskDescriptionFormat = DescriptionFormat.HTML) {
           taskFile("src/Task.kt", "fun foo() {}")
           taskFile("src/Baz.kt", "fun baz() {}")
