@@ -91,7 +91,6 @@ class HyperskillTaskUpdateTest : TaskUpdateTestBase<HyperskillCourse>() {
     expectedStructure.assertEquals(rootDir)
   }
 
-  // TODO EDU-6241 add test for lesson update with index recalculation
   fun `test last task deleted`() {
     initiateLocalCourse()
     val newStages = listOf(HyperskillStage(1, "", 1, true))
