@@ -3,8 +3,6 @@ package com.jetbrains.edu.php
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.PlatformUtils.isIntelliJ
-import com.intellij.util.PlatformUtils.isPhpStorm
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames
@@ -29,9 +27,6 @@ class PhpConfigurator : EduConfigurator<PhpProjectSettings> {
   override val logo: Icon
     // the default icon from plugin looks ugly, so we use ours
     get() = EducationalCoreIcons.PhpLogo
-
-  override val isEnabled: Boolean
-    get() = isIntelliJ() || isPhpStorm()
 
   override val testDirs: List<String>
     get() = listOf(EduNames.TEST)
