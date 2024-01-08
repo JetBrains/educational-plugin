@@ -29,7 +29,7 @@ class FLMergeProvider(
 ) : MergeProvider2 {
   override fun loadRevisions(file: VirtualFile): MergeData {
     return MergeData().apply {
-      val filePath = file.pathRelativeToTask(project)
+      val filePath = file.path
       ORIGINAL = baseState[filePath]?.encodeToByteArray() ?: emptyContent
       CURRENT = leftState[filePath]?.encodeToByteArray() ?: emptyContent
       LAST = rightState[filePath]?.encodeToByteArray() ?: emptyContent
@@ -109,7 +109,7 @@ class FLMergeProvider(
 
     override fun valueOf(item: VirtualFile?): String {
       if (item == null) return ""
-      val filePath = item.pathRelativeToTask(project)
+      val filePath = item.path
       val baseContent = initialBaseState[filePath]
       val changedContent = if (isLeft) {
         leftState[filePath]

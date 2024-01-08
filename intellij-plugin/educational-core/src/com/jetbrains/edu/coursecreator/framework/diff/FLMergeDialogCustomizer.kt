@@ -17,7 +17,7 @@ class FLMergeDialogCustomizer(
   }
 
   override fun getMergeWindowTitle(file: VirtualFile): String {
-    return EduCoreBundle.message("action.Educational.Educator.ApplyChangesToNextTasks.MergeDialog.MergeWindow.title", file.pathRelativeToTask(project))
+    return EduCoreBundle.message("action.Educational.Educator.ApplyChangesToNextTasks.MergeDialog.MergeWindow.title", file.path)
   }
 
   override fun getMultipleFileDialogTitle(): String {

@@ -6,15 +6,26 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightVirtualFile
+import com.intellij.util.PathUtil
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.impl.FLTaskState
 import com.jetbrains.edu.learning.isUnitTestMode
 import org.jetbrains.annotations.TestOnly
+import java.nio.file.Path
+import java.nio.file.Paths
 
-class FLLightVirtualFile(path: String, fileType: FileType, content: String) : LightVirtualFile(path, fileType, content) {
+class FLLightVirtualFile(
+  private val myPath: String,
+  fileType: FileType,
+  content: String,
+) : LightVirtualFile(PathUtil.getFileName(myPath), fileType, content) {
+  override fun toNioPath(): Path {
+    return Paths.get(myPath)
+  }
+
   override fun getPath(): String {
-    return name
+    return myPath
   }
 
   override fun delete(requestor: Any?) {
@@ -52,13 +63,13 @@ fun applyChangesWithMergeDialog(
   for (file in conflictLightVirtualFiles) {
     // file was deleted
     if (!file.exists()) {
-      finalState.remove(file.name)
+      finalState.remove(file.path)
       continue
     }
 
     val document = FileDocumentManager.getInstance().getDocument(file)
 
-    finalState[file.name] = document?.text ?: error("There is no document for ${file.name}")
+    finalState[file.path] = document.text
   }
 
   return finalState
