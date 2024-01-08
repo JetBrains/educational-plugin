@@ -240,9 +240,6 @@
                         serviceImplementation="com.jetbrains.edu.learning.courseGeneration.ProjectOpenerImpl"
                         testServiceImplementation="com.jetbrains.edu.learning.MockProjectOpener"/>
 
-    <projectOpenProcessor implementation="com.jetbrains.edu.coursecreator.framework.diff.FLProjectOpenProcessor"
-                          order="first"/>
-
     <projectService serviceInterface="com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView"
                     serviceImplementation="com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowViewImpl"
                     testServiceImplementation="com.jetbrains.edu.learning.taskToolWindow.ui.MockTaskToolWindowView"/>
