@@ -7,4 +7,14 @@
   <content>
     <module name="edu-markdown"/>
   </content>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <library.toolWindow id="edu.test.library.window"
+                        factoryClass="com.jetbrains.edu.codeInsight.taskDescription.MockToolWindowFactory"
+                        librarySearchClass="com.jetbrains.edu.codeInsight.taskDescription.MockLibrarySearchHelper"/>
+
+    <facet.toolWindow id="edu.test.facet.window"
+                      factoryClass="com.jetbrains.edu.codeInsight.taskDescription.MockToolWindowFactory"
+                      facetIdList=""/>
+  </extensions>
 </idea-plugin>

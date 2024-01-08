@@ -16,7 +16,6 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.wm.ToolWindowEP
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -413,20 +412,28 @@ abstract class EduTestCase : BasePlatformTestCase() {
     return withSettingsValue(CCSettings.getInstance()::useHtmlAsDefaultTaskFormat, true, action)
   }
 
-  // In tests, tool windows are not registered by default
-  // Let's register at least Task Description tool window
-  protected fun registerTaskDescriptionToolWindow() {
+  /**
+   * Manually register a tool window in [ToolWindowHeadlessManagerImpl] by its id.
+   *
+   * In tests, tool windows are not registered by default.
+   * So if you need any tool window in `ToolWindowManager` in tests,
+   * you have to register it manually.
+   */
+  protected fun registerToolWindow(id: String) {
     val toolWindowManager = ToolWindowManager.getInstance(project) as ToolWindowHeadlessManagerImpl
-    if (toolWindowManager.getToolWindow("Task") == null) {
-      for (bean in ToolWindowEP.EP_NAME.extensionList) {
-        if (bean.id == TaskToolWindowFactory.STUDY_TOOL_WINDOW) {
+    if (toolWindowManager.getToolWindow(id) == null) {
+      for (bean in collectToolWindowExtensions()) {
+        if (bean.id == id) {
           toolWindowManager.doRegisterToolWindow(bean.id)
           Disposer.register(testRootDisposable) {
-            @Suppress("DEPRECATION")
             toolWindowManager.unregisterToolWindow(bean.id)
           }
         }
       }
     }
+  }
+
+  protected fun registerTaskDescriptionToolWindow() {
+    registerToolWindow(TaskToolWindowFactory.STUDY_TOOL_WINDOW)
   }
 }

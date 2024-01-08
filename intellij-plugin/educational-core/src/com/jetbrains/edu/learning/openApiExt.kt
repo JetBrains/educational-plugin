@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning
 
+import com.intellij.facet.ui.FacetDependentToolWindow
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.AppUIExecutor
@@ -25,6 +26,8 @@ import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.wm.ToolWindowEP
+import com.intellij.openapi.wm.ext.LibraryDependentToolWindow
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.util.PathUtil
@@ -204,3 +207,13 @@ inline fun <reified L> createTopic(
   displayName: String,
   direction: BroadcastDirection = BroadcastDirection.TO_CHILDREN
 ): Topic<L> = Topic.create(displayName, L::class.java, direction)
+
+private val TOOL_WINDOW_EPS = listOf(
+  ToolWindowEP.EP_NAME,
+  LibraryDependentToolWindow.EXTENSION_POINT_NAME,
+  FacetDependentToolWindow.EXTENSION_POINT_NAME
+)
+
+fun collectToolWindowExtensions(): List<ToolWindowEP> {
+  return TOOL_WINDOW_EPS.flatMap { it.extensionList }
+}
