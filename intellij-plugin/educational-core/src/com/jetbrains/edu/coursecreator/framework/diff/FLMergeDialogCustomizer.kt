@@ -1,14 +1,11 @@
 package com.jetbrains.edu.coursecreator.framework.diff
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.history.VcsRevisionNumber
 import com.intellij.openapi.vcs.merge.MergeDialogCustomizer
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.pathRelativeToTask
 
 class FLMergeDialogCustomizer(
-  private val project: Project,
   private val currentTaskName: String,
   private val targetTaskName: String,
 ) : MergeDialogCustomizer() {

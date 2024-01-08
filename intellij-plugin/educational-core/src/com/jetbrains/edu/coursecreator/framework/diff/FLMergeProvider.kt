@@ -4,8 +4,6 @@ import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vcs.merge.MergeData
 import com.intellij.openapi.vcs.merge.MergeProvider2
 import com.intellij.openapi.vcs.merge.MergeSession
@@ -13,15 +11,10 @@ import com.intellij.openapi.vcs.merge.MergeSession.Resolution
 import com.intellij.openapi.vcs.merge.MergeSessionEx
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ui.ColumnInfo
-import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseGeneration.macro.EduMacroUtils
 import com.jetbrains.edu.learning.framework.impl.FLTaskState
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 class FLMergeProvider(
-  private val project: Project,
-  private val task: Task,
   private val leftState: FLTaskState,
   private val baseState: FLTaskState,
   private val rightState: FLTaskState,
