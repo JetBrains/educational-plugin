@@ -74,26 +74,18 @@ class FLMergeProvider(
           rightState[filePath]
         }
 
-        @Suppress("UnstableApiUsage")
-        invokeAndWaitIfNeeded {
-          if (value == null) {
-            // file is deleted
-            // invalidate file, so it can be checked by file.exists()
-            file.delete(javaClass)
-          }
-          else {
-            EduDocumentListener.modifyWithoutListener(task, filePath) {
-              val document = runReadAction {
-                FileDocumentManager.getInstance().getDocument(file)
-              }
-              if (document != null) {
-                val expandedText = StringUtil.convertLineSeparators(
-                  EduMacroUtils.expandMacrosForFile(project.toCourseInfoHolder(), file, value)
-                )
-                runWriteAction {
-                  document.setText(expandedText)
-                }
-              }
+        if (value == null) {
+          // file is deleted
+          // invalidate file, so it can be checked by file.exists()
+          file.delete(javaClass)
+        }
+        else {
+          val document = runReadAction { FileDocumentManager.getInstance().getDocument(file) } ?: return
+
+          @Suppress("UnstableApiUsage")
+          invokeAndWaitIfNeeded {
+            runWriteAction {
+              document.setText(value)
             }
           }
         }
