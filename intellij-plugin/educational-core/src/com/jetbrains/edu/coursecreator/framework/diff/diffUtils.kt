@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator.framework.diff
 
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.project.Project
@@ -67,7 +68,7 @@ fun applyChangesWithMergeDialog(
       continue
     }
 
-    val document = FileDocumentManager.getInstance().getDocument(file)
+    val document = runReadAction { FileDocumentManager.getInstance().getDocument(file) } ?: error("There is no document for ${file.path}")
 
     finalState[file.path] = document.text
   }
