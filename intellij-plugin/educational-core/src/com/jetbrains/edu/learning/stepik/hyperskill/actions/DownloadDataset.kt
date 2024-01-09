@@ -198,7 +198,7 @@ class DownloadDataset(
     ).notify(project)
   }
 
-  @Service
+  @Service(Service.Level.PROJECT)
   private class DownloadDatasetState {
     private val isBusy = AtomicBoolean(false)
 

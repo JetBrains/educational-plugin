@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.update.CourseUpdateChecker
 import java.util.*
 
-@Service
+@Service(Service.Level.PROJECT)
 class HyperskillCourseUpdateChecker(project: Project) : CourseUpdateChecker(project) {
 
   private val timeSinceUpdate: Long

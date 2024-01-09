@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbAware
@@ -108,7 +109,7 @@ class RetryAction(actionText: Supplier<@ActionText String>,
     }
   }
 
-  @Service
+  @Service(Service.Level.PROJECT)
   private class RetryActionState {
     private val isBusy = AtomicBoolean(false)
     fun doLock(): Boolean {
@@ -121,7 +122,7 @@ class RetryAction(actionText: Supplier<@ActionText String>,
 
     companion object {
       fun getInstance(project: Project): RetryActionState {
-        return project.getService(RetryActionState::class.java)
+        return project.service()
       }
     }
   }

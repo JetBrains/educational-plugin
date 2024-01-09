@@ -6,7 +6,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import org.rust.cargo.project.settings.rustSettings
 
-@Service
+@Service(Service.Level.PROJECT)
 class RsCourseProjectRefreshService(private val project: Project) {
 
   /**

@@ -14,6 +14,7 @@ import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -269,7 +270,7 @@ class CheckAction() : ActionWithProgressIcon(), DumbAware {
     private val TEST_RESULTS_DISPLAY_ID: @NonNls String = "Test Results: Run"
   }
 
-  @Service
+  @Service(Service.Level.PROJECT)
   private class CheckActionState {
     private val isBusy = AtomicBoolean(false)
     fun doLock(): Boolean {
@@ -285,7 +286,7 @@ class CheckAction() : ActionWithProgressIcon(), DumbAware {
 
     companion object {
       fun getInstance(project: Project): CheckActionState {
-        return project.getService(CheckActionState::class.java)
+        return project.service()
       }
     }
   }

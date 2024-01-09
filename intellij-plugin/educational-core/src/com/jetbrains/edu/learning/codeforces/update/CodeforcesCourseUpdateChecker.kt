@@ -7,7 +7,7 @@ import com.intellij.util.text.DateFormatUtil
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.update.CourseUpdateChecker
 
-@Service
+@Service(Service.Level.PROJECT)
 class CodeforcesCourseUpdateChecker(project: Project) : CourseUpdateChecker(project) {
   private val isCourseOngoing: Boolean
     get() = (course as? CodeforcesCourse)?.isOngoing ?: false

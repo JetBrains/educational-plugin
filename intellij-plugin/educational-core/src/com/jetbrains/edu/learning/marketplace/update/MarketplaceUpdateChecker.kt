@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.checkForUpdates
 import com.jetbrains.edu.learning.update.CourseUpdateChecker
 
-@Service
+@Service(Service.Level.PROJECT)
 class MarketplaceUpdateChecker(project: Project) : CourseUpdateChecker(project) {
 
   override fun courseCanBeUpdated(): Boolean {
