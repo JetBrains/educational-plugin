@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.isHeadlessEnvironment
 import com.jetbrains.edu.learning.marketplace.isMarketplaceCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
@@ -66,6 +67,7 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
   }
 
   override fun updateTab(tabType: TabType) {
+    if (isHeadlessEnvironment) return
     tabManager.updateTab(tabType, currentTask)
   }
 

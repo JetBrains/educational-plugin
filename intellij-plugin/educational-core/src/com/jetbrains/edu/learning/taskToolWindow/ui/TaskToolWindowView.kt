@@ -8,6 +8,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.isHeadlessEnvironment
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
 import java.awt.Color
 
@@ -50,6 +51,7 @@ abstract class TaskToolWindowView(val project: Project) {
     }
 
     fun updateAllTabs(project: Project) {
+      if (isHeadlessEnvironment) return
       getInstance(project).apply {
         updateTaskDescription()
         updateAdditionalTaskTabs()
