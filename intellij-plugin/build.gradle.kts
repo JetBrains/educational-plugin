@@ -163,6 +163,11 @@ allprojects {
       }
     }
 
+    // Temporary workaround for https://github.com/JetBrains/gradle-intellij-plugin/issues/1515
+    classpathIndexCleanup {
+      dependsOn(compileTestKotlin)
+    }
+
     withType<Test> {
       withProp("../secret.properties", "stepikTestClientSecret") { environment("STEPIK_TEST_CLIENT_SECRET", it) }
       withProp("../secret.properties", "stepikTestClientId") { environment("STEPIK_TEST_CLIENT_ID", it) }
