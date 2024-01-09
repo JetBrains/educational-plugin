@@ -17,16 +17,16 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 class FLLightVirtualFile(
-  private val myPath: String,
+  private val filePath: String,
   fileType: FileType,
   content: String,
-) : LightVirtualFile(PathUtil.getFileName(myPath), fileType, content) {
+) : LightVirtualFile(PathUtil.getFileName(filePath), fileType, content) {
   override fun toNioPath(): Path {
-    return Paths.get(myPath)
+    return Paths.get(filePath)
   }
 
   override fun getPath(): String {
-    return myPath
+    return filePath
   }
 
   override fun delete(requestor: Any?) {
