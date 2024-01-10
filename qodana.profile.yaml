@@ -1,0 +1,22 @@
+name: "JetBrains Academy Qodana profile"
+
+baseProfile: "idea.default"
+
+inspections:
+  - group: ALL
+    ignore:
+      - "**/resources/fileTemplates/**"
+      - "**/testData/**"
+      - "intellij-plugin/educational-core/resources/style/**"
+      - "intellij-plugin/educational-core/resources/oauthResponsePages/**"
+  - group: "category:Proofreading"
+    enabled: false
+    # The inspection produces too many false positives, so let's disable it for now
+  - inspection: unused
+    enabled: false
+  - inspection: SyntaxError
+    ignore:
+      - "intellij-plugin/Edu-Python/testSrc/**"
+    # It doesn't work good enough, so let's disable it for now
+  - inspection: CheckDependencyLicenses
+    enabled: false

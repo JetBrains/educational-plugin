@@ -1,27 +1,6 @@
 version: 1.0
 profile:
-  name: qodana.recommended
-include:
-  - name: KotlinUnusedImport
-  - name: Reformat
-exclude:
-  - name: All
-    paths:
-      - Edu-Android/resources/fileTemplates
-      - Edu-Cpp/resources/fileTemplates
-      - Edu-Go/resources/fileTemplates
-      - Edu-Java/resources/fileTemplates
-      - Edu-JavaScript/resources/fileTemplates
-      - Edu-Kotlin/resources/fileTemplates
-      - Edu-Php/resources/fileTemplates
-      - Edu-Python/resources/fileTemplates
-      - Edu-Rust/resources/fileTemplates
-      - Edu-Scala/resources/fileTemplates
-      - sql/sql-jvm/resources/fileTemplates
-      - educational-core/resources/fileTemplates
-  - name: SyntaxError
-    paths:
-      - Edu-Python/testSrc # not to produce Syntax Errors in python injections
+  path: qodana.profile.yaml
 
 # Trigger Gradle here to evaluate `setting.gradle.kts` and load `secret.properties` CI.
 # Otherwise, Qodana shows `Invalid property key` warnings
