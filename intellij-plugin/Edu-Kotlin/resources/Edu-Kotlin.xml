@@ -1,6 +1,7 @@
 <idea-plugin package="com.jetbrains.edu.kotlin">
   <!--suppress PluginXmlValidity -->
   <dependencies>
+    <!--suppress PluginXmlValidity -->
     <module name="jvm-core"/>
 
     <plugin id="org.jetbrains.kotlin"/>

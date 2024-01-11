@@ -1,6 +1,7 @@
 <idea-plugin package="com.jetbrains.edu.scala" xmlns:xi="http://www.w3.org/2001/XInclude">
   <!--suppress PluginXmlValidity -->
   <dependencies>
+    <!--suppress PluginXmlValidity -->
     <module name="jvm-core"/>
 
     <plugin id="org.intellij.scala"/>

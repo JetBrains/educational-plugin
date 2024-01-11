@@ -1,6 +1,7 @@
 <idea-plugin package="com.jetbrains.edu.python" xmlns:xi="http://www.w3.org/2001/XInclude">
   <!--suppress PluginXmlValidity -->
   <dependencies>
+    <!--suppress PluginXmlValidity -->
     <plugin id="PythonCore"/>
   </dependencies>
 

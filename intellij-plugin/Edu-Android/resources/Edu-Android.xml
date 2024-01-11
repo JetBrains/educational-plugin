@@ -1,6 +1,7 @@
 <idea-plugin package="com.jetbrains.edu.android" xmlns:xi="http://www.w3.org/2001/XInclude">
   <!--suppress PluginXmlValidity -->
   <dependencies>
+    <!--suppress PluginXmlValidity -->
     <module name="jvm-core"/>
 
     <plugin id="org.jetbrains.android"/>
@@ -11,7 +12,6 @@
 
   <xi:include href="/META-INF/Hyperskill-Android.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
-  <!--suppress PluginXmlValidity -->
   <projectListeners>
     <listener class="com.jetbrains.edu.android.gradle.ChangeViewGradleSyncListener"
               topic="com.android.tools.idea.gradle.project.sync.GradleSyncListener"/>

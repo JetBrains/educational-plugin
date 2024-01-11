@@ -1,3 +1,4 @@
+<!--suppress PluginXmlValidity -->
 <idea-plugin package="com.jetbrains.edu" xmlns:xi="http://www.w3.org/2001/XInclude" allow-bundled-update="true">
   <id>com.jetbrains.edu</id>
   <name>JetBrains Academy</name>
@@ -7,13 +8,11 @@
   <xi:include href="/META-INF/edu-code-insight.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <!--update description in description.html file instead-->
-  <!--suppress PluginXmlValidity -->
   <description/>
 
   <!--update changes in changes.html file instead-->
   <change-notes/>
 
-  <!--suppress PluginXmlValidity -->
   <content>
     <module name="edu-html"/>
     <module name="edu-markdown"/>
