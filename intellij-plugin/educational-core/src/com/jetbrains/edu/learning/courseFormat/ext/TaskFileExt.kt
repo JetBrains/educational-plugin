@@ -75,3 +75,5 @@ private fun TaskFile.resetDocument(project: Project): Boolean {
   isTrackChanges = true
   return true
 }
+
+fun TaskFile.shouldBePropagated(): Boolean = isEditable && isVisible

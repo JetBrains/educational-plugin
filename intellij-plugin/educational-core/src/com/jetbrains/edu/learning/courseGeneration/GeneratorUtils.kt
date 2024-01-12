@@ -188,8 +188,8 @@ object GeneratorUtils {
     "Use the other createChildFile() method, where you explicitly specify whether text is binary or not",
     ReplaceWith("GeneratorUtils.createChildFile(holder, parentDir, path, fileContent, isEditable)")
   )
-  fun createChildFile(project: Project, parentDir: VirtualFile, path: String, text: String): VirtualFile? {
-    return createChildFile(project.toCourseInfoHolder(), parentDir, path, InMemoryUndeterminedContents(text))
+  fun createChildFile(project: Project, parentDir: VirtualFile, path: String, text: String, isEditable: Boolean = true): VirtualFile? {
+    return createChildFile(project.toCourseInfoHolder(), parentDir, path, InMemoryUndeterminedContents(text), isEditable)
   }
 
   @Throws(IOException::class)

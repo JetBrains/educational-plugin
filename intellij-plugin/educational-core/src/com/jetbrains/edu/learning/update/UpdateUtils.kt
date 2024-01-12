@@ -2,12 +2,15 @@ package com.jetbrains.edu.learning.update
 
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.application.runWriteActionAndWait
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
+import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.hasChangedFiles
+import com.jetbrains.edu.learning.courseFormat.ext.shouldBePropagated
 import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -46,16 +49,15 @@ object UpdateUtils {
     GeneratorUtils.createDescriptionFile(project, task.getConfigDir(project), task) ?: return
   }
 
-  fun updateFrameworkLessonFiles(project: Project, lesson: FrameworkLesson, task: Task, remoteTask: Task, updateVisibleFiles: Boolean) {
+  fun updateFrameworkLessonFiles(project: Project, lesson: FrameworkLesson, task: Task, remoteTask: Task, updatePropagatableFiles: Boolean) {
     fun updateTaskFiles(
       task: Task,
       remoteTaskFiles: Map<String, TaskFile>,
       updateInLocalFS: Boolean
     ) {
-      val taskFiles = task.taskFiles
-      for ((path, remoteTaskFile) in remoteTaskFiles) {
-        val taskFile = taskFiles[path]
-        val currentTaskFile = if (taskFile != null) {
+      val taskFiles = remoteTaskFiles.map { (path, remoteTaskFile) ->
+        val taskFile = task.taskFiles[path]
+        if (taskFile != null) {
           taskFile.text = remoteTaskFile.text
           taskFile
         }
@@ -63,37 +65,49 @@ object UpdateUtils {
           task.addTaskFile(remoteTaskFile)
           remoteTaskFile
         }
+      }
 
-        if (updateInLocalFS) {
+      if (updateInLocalFS) {
+        // remove read only flags, so we can write new content to non-editable files
+        removeReadOnlyFlags(project, task, taskFiles)
+        for (taskFile in taskFiles) {
           val taskDir = task.getDir(project.courseDir)
           if (taskDir != null) {
-            GeneratorUtils.createChildFile(project, taskDir, path, currentTaskFile.text)
+            GeneratorUtils.createChildFile(project, taskDir, taskFile.name, taskFile.text, taskFile.isEditable)
           }
         }
       }
+
       task.init(lesson, false)
     }
 
     val flm = FrameworkLessonManager.getInstance(project)
 
     if (lesson.currentTaskIndex != task.index - 1) {
-      updateTaskFiles(task, remoteTask.invisibleFiles, false)
+      updateTaskFiles(task, remoteTask.nonPropagatableFiles, false)
       flm.updateUserChanges(task, task.taskFiles.mapValues { (_, taskFile) -> taskFile.text })
     }
     else {
-      if (updateVisibleFiles && !task.hasChangedFiles(project)) {
+      if (updatePropagatableFiles && !task.hasChangedFiles(project)) {
         updateTaskFiles(task, remoteTask.taskFiles, true)
       }
       else {
-        updateTaskFiles(task, remoteTask.invisibleFiles, true)
+        updateTaskFiles(task, remoteTask.nonPropagatableFiles, true)
       }
     }
   }
 
-  private val Task.invisibleFiles: Map<String, TaskFile>
-    get() {
-      return taskFiles.filter { !it.value.isVisible }
+  private val Task.nonPropagatableFiles: Map<String, TaskFile>
+    get() = taskFiles.filter { !it.value.shouldBePropagated() }
+
+  private fun removeReadOnlyFlags(project: Project, task: Task, taskFiles: List<TaskFile>) {
+    runWriteActionAndWait {
+      for (taskFile in taskFiles) {
+        val virtualTaskFile = taskFile.getVirtualFile(project) ?: continue
+        GeneratorUtils.removeNonEditableFileFromCourse(task.course, virtualTaskFile)
+      }
     }
+  }
 
   fun FrameworkLesson.shouldFrameworkLessonBeUpdated(lessonFromServer: FrameworkLesson): Boolean {
     val tasksFromServer = lessonFromServer.taskList

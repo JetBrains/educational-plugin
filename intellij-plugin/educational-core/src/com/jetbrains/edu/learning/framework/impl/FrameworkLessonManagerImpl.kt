@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.storage.AbstractStorage
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.ext.shouldBePropagated
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -49,9 +50,9 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
       "Only solutions of framework tasks can be saved"
     }
 
-    val visibleFiles = task.allFiles.splitByVisibility(task).first
-    val externalVisibleFiles = externalState.splitByVisibility(task).first
-    val changes = calculateChanges(visibleFiles, externalVisibleFiles)
+    val propagatableFiles = task.allFiles.split(task).first
+    val externalPropagatableFiles = externalState.split(task).first
+    val changes = calculateChanges(propagatableFiles, externalPropagatableFiles)
     val currentRecord = task.record
     task.record = try {
       storage.updateUserChanges(currentRecord, changes)
@@ -201,8 +202,8 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     targetState: Map<String, String>,
     showDialogIfConflict: Boolean
   ): UserChanges {
-    val (currentPropagatableFilesState, currentNonPropagatableFilesState) = currentState.splitByKey { shouldBePropagated(currentTask, it) }
-    val (targetPropagatableFilesState, targetNonPropagatableFilesState) = targetState.splitByKey { shouldBePropagated(targetTask, it) }
+    val (currentPropagatableFilesState, currentNonPropagatableFilesState) = currentState.split(currentTask)
+    val (targetPropagatableFilesState, targetNonPropagatableFilesState) = targetState.split(targetTask)
 
     // A lesson may have files that were non-propagatable in the previous step, but become propagatable in the new one.
     // We allow files to change a propagation flag from false to true (from non-propagatable to propagatable).
@@ -344,13 +345,8 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     return positive to negative
   }
 
-  private fun FLTaskState.splitByVisibility(task: Task) = splitByKey { task.taskFiles[it]?.isVisible ?: true }
-
-  private fun shouldBePropagated(task: Task, path: String): Boolean {
-    if (task.taskFiles[path]?.isEditable == false) {
-      return false
-    }
-    return task.taskFiles[path]?.isVisible ?: true
+  private fun FLTaskState.split(task: Task) = splitByKey {
+    task.taskFiles[it]?.shouldBePropagated() ?: true
   }
 
   companion object {
