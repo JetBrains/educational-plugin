@@ -3,11 +3,7 @@ package com.jetbrains.edu.learning.marketplace
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
-import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
-import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
-import com.jetbrains.edu.learning.courseFormat.copy
-import com.jetbrains.edu.learning.courseFormat.copyFileContents
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
 import com.jetbrains.edu.learning.stepik.hyperskill.FrameworkLessonsUpdateTest
@@ -70,6 +66,69 @@ class MarketplaceFrameworkLessonsUpdateTest : FrameworkLessonsUpdateTest<EduCour
       file("build.gradle")
       file("settings.gradle")
     }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
+  }
+
+  fun `test non-editable files addition and change update correctly`() {
+    val taskNum = 3
+    val eduCourse = courseWithFiles(
+      language = FakeGradleBasedLanguage,
+      courseProducer = ::EduCourse
+    ) {
+      frameworkLesson("lesson1") {
+        for (index in 1..taskNum) {
+          eduTask("task$index", stepId = index, taskDescription = "Old Description", taskDescriptionFormat = DescriptionFormat.HTML) {
+            taskFile("src/Baz.kt", "fun baz() {}", editable = false)
+          }
+        }
+      }
+    } as EduCourse
+    eduCourse.marketplaceCourseVersion = 1
+    localCourse = eduCourse
+
+    val task1 = localCourse.taskList[0]
+
+    withVirtualFileListener(localCourse) {
+      task1.openTaskFileInEditor("src/Baz.kt")
+      testAction(NextTaskAction.ACTION_ID)
+    }
+
+    val bazText = "fun bazbaz() {}"
+    val barText = "fun barbar() {}"
+    updateCourse {
+      for (task in taskList) {
+        task.apply {
+          taskFiles["src/Baz.kt"]!!.text = bazText
+
+          addTaskFile("src/Bar.kt").apply {
+            text = barText
+            isEditable = false
+          }
+        }
+      }
+    }
+
+    for (index in 1..taskNum) {
+      assertEquals(bazText, localCourse.taskList[index - 1].taskFiles["src/Baz.kt"]!!.text)
+      assertEquals(barText, localCourse.taskList[index - 1].taskFiles["src/Bar.kt"]!!.text)
+    }
+
+    fileTree {
+      dir("lesson1") {
+        dir("task") {
+          dir("src") {
+            file("Baz.kt", bazText)
+            file("Bar.kt", barText)
+          }
+        }
+        for (index in 1..taskNum) {
+          dir("task$index") {
+            file("task.html")
+          }
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }.assertEquals(rootDir, myFixture)
   }
 
   override fun updateCourse(changeCourse: EduCourse.() -> Unit) {

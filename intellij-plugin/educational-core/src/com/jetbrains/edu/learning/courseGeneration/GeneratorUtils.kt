@@ -256,6 +256,11 @@ object GeneratorUtils {
 
     val virtualTaskFile = dir.findOrCreateChildData(parentDir, fileName)
 
+    // If the file is not writable, and we try to set its content, then an AccessDenied exception will pop up.
+    // But in some situations (for example, when there is a not-default file system behind),
+    // It will be executed without exception despite the file being not writable
+    if (!virtualTaskFile.isWritable) error("Attempt to write to read-only file")
+
     fun writeBinary(bytes: ByteArray) {
       virtualTaskFile.setBinaryContent(bytes)
     }
