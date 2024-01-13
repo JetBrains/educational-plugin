@@ -32,13 +32,6 @@ class JCEFToolWindow(project: Project) : TaskToolWindow(project) {
 
     taskSpecificJBCefBrowser.apply {
       setProperty(JBCefBrowser.Properties.FOCUS_ON_NAVIGATION, false)
-
-      val taskSpecificFocusHandlerAdapter = object : CefFocusHandlerAdapter() {
-        override fun onTakeFocus(browser: CefBrowser?, next: Boolean) {
-          component.requestFocusInWindow()
-        }
-      }
-      jbCefClient.addFocusHandler(taskSpecificFocusHandlerAdapter, cefBrowser)
       jbCefClient.setProperty(JBCefClient.Properties.JS_QUERY_POOL_SIZE, TASK_SPECIFIC_PANEL_JS_QUERY_POOL_SIZE)
     }
 
