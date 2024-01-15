@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
 import com.jetbrains.edu.learning.stepik.hyperskill.FrameworkLessonsUpdateTest
 import com.jetbrains.edu.learning.testAction
+import junit.framework.TestCase
 import kotlin.test.assertNotEquals
 
 class MarketplaceFrameworkLessonsUpdateTest : FrameworkLessonsUpdateTest<EduCourse>() {
@@ -97,7 +98,7 @@ class MarketplaceFrameworkLessonsUpdateTest : FrameworkLessonsUpdateTest<EduCour
     updateCourse {
       for (task in taskList) {
         task.apply {
-          taskFiles["src/Baz.kt"]!!.text = bazText
+          taskFiles["src/Baz.kt"]!!.contents = InMemoryTextualContents(bazText)
 
           addTaskFile("src/Bar.kt").apply {
             text = barText
@@ -108,8 +109,14 @@ class MarketplaceFrameworkLessonsUpdateTest : FrameworkLessonsUpdateTest<EduCour
     }
 
     for (index in 1..taskNum) {
-      assertEquals(bazText, localCourse.taskList[index - 1].taskFiles["src/Baz.kt"]!!.text)
-      assertEquals(barText, localCourse.taskList[index - 1].taskFiles["src/Bar.kt"]!!.text)
+      val bazTaskFile = localCourse.taskList[index - 1].taskFiles["src/Baz.kt"]!!
+      val barTaskFile = localCourse.taskList[index - 1].taskFiles["src/Bar.kt"]!!
+
+      assertEquals(bazText, bazTaskFile.contents.textualRepresentation)
+      assertEquals(barText, barTaskFile.contents.textualRepresentation)
+
+      assertFalse(bazTaskFile.isEditable)
+      assertFalse(barTaskFile.isEditable)
     }
 
     fileTree {
