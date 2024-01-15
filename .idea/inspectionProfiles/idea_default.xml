@@ -42,7 +42,7 @@
       <scope name="Tests" level="WARNING" enabled="false" />
     </inspection_tool>
     <inspection_tool class="BooleanConstructor" enabled="true" level="Strong Warning" enabled_by_default="true" />
-    <inspection_tool class="BooleanLiteralArgument" enabled="false" level="INFO" enabled_by_default="false" />
+    <inspection_tool class="BooleanLiteralArgument" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
     <inspection_tool class="BooleanMethodIsAlwaysInverted" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="BoundFieldAssignment" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="BoundedWildcard" enabled="true" level="WARNING" enabled_by_default="true">
@@ -668,9 +668,6 @@
     <inspection_tool class="PointlessBooleanExpressionJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="PointlessNullCheck" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="PrimitiveArrayArgumentToVariableArgMethod" enabled="true" level="Strong Warning" enabled_by_default="true" />
-    <inspection_tool class="PrivatePropertyName" enabled="true" level="WEAK WARNING" enabled_by_default="true">
-      <option name="namePattern" value="([A-Z_][A-Z_\d]*)|(_?[a-z][A-Za-z\d]*)" />
-    </inspection_tool>
     <inspection_tool class="ProtectedMemberInFinalClass" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="PublicApiImplicitType" enabled="false" level="WARNING" enabled_by_default="false" editorAttributes="WARNING_ATTRIBUTES" />
     <inspection_tool class="PublicConstructorInNonPublicClass" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -694,7 +691,7 @@
     <inspection_tool class="RedundantFileCreation" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="RedundantLengthCheck" enabled="true" level="Strong Warning" enabled_by_default="true" editorAttributes="Strong Warning" />
     <inspection_tool class="RedundantOperationOnEmptyContainer" enabled="true" level="Strong Warning" enabled_by_default="true" />
-    <inspection_tool class="RedundantSamConstructor" enabled="true" level="INFORMATION" enabled_by_default="true" editorAttributes="INFORMATION_ATTRIBUTES" />
+    <inspection_tool class="RedundantSamConstructor" enabled="true" level="WARNING" enabled_by_default="true" editorAttributes="WARNING_ATTRIBUTES" />
     <inspection_tool class="RedundantScopeBinding" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="RedundantStreamOptionalCall" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="RedundantStringFormatCall" enabled="true" level="Strong Warning" enabled_by_default="true" />
@@ -705,7 +702,6 @@
     <inspection_tool class="RedundantTypeArguments" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="RedundantUnmodifiable" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="ReflectionForUnavailableAnnotation" enabled="true" level="Strong Warning" enabled_by_default="true" />
-    <inspection_tool class="RemoveCurlyBracesFromTemplate" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="ReplaceAllDot" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="ReplaceAssignmentWithOperatorAssignment" enabled="true" level="Strong Warning" enabled_by_default="true">
       <option name="ignoreLazyOperators" value="true" />
