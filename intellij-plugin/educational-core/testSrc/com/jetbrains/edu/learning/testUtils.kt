@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION")
-
 package com.jetbrains.edu.learning
 
 import com.intellij.notification.Notification
@@ -89,7 +87,7 @@ fun testAction(
   shouldBeVisible: Boolean = shouldBeEnabled,
   runAction: Boolean = shouldBeEnabled
 ): Presentation {
-  val e = if (context != null) TestActionEvent(context, action) else TestActionEvent(action)
+  val e = if (context != null) TestActionEvent.createTestEvent(action, context) else TestActionEvent.createTestEvent(action)
   action.beforeActionPerformedUpdate(e)
   val presentation = e.presentation
 

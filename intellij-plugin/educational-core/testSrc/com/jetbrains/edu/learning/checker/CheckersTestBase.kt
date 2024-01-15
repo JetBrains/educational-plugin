@@ -6,13 +6,13 @@ import com.intellij.execution.runners.ExecutionEnvironmentBuilder
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.HeavyPlatformTestCase
-import com.intellij.testFramework.MapDataContext
 import com.intellij.util.ThrowableRunnable
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.*
@@ -20,10 +20,10 @@ import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.codeforces.AnsiAwareCapturingProcessAdapter
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfigurationProducer
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -151,10 +151,10 @@ abstract class CheckersTestBase<Settings : EduProjectSettings> : HeavyPlatformTe
     }
 
     private fun createDataEvent(virtualFile: VirtualFile): DataContext {
-        val context = MapDataContext()
-        context.put(CommonDataKeys.VIRTUAL_FILE_ARRAY, arrayOf(virtualFile))
-        context.put(CommonDataKeys.PROJECT, myProject)
-        return context
+        return SimpleDataContext.builder()
+          .add(CommonDataKeys.VIRTUAL_FILE_ARRAY, arrayOf(virtualFile))
+          .add(CommonDataKeys.PROJECT, myProject)
+          .build()
     }
 
     override fun setUpProject() {
