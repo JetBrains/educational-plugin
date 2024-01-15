@@ -13,8 +13,6 @@ import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.taskToolWindow.links.JCefToolWindowLinkHandler
 import com.jetbrains.edu.learning.taskToolWindow.ui.jcefSpecificQueries.TaskQueryManager
-import org.cef.browser.CefBrowser
-import org.cef.handler.CefFocusHandlerAdapter
 import org.jetbrains.annotations.TestOnly
 import javax.swing.JComponent
 
