@@ -6,11 +6,16 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.actionSystem.Presentation
+import com.intellij.openapi.actionSystem.ex.CustomComponentAction
+import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.ui.DumbAwareActionButton
+import com.intellij.ui.GotItTooltip
+import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showFailedToReportCommunitySolutionNotification
@@ -20,8 +25,11 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import org.jetbrains.annotations.NonNls
+import java.awt.event.ComponentAdapter
+import java.awt.event.ComponentEvent
+import javax.swing.JComponent
 
-class ReportCommunitySolutionAction : DumbAwareActionButton() {
+class ReportCommunitySolutionAction : DumbAwareActionButton(), CustomComponentAction {
 
   @Suppress("DialogTitleCapitalization")
   override fun updateButton(e: AnActionEvent) {
@@ -68,6 +76,25 @@ class ReportCommunitySolutionAction : DumbAwareActionButton() {
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
+  override fun createCustomComponent(presentation: Presentation, place: String): JComponent = object : ActionButton(
+    this, presentation, place, JBUI.size(22)
+  ) {
+    init {
+      val gotItTooltip = GotItTooltip(GOT_IT_ID, EduCoreBundle.message("marketplace.report.solution.tooltip.message"))
+
+      this.addComponentListener(object : ComponentAdapter() {
+        override fun componentMoved(e: ComponentEvent) {
+          val jComponent = e.component as JComponent
+          if (!jComponent.visibleRect.isEmpty) {
+            gotItTooltip.show(jComponent, GotItTooltip.BOTTOM_MIDDLE)
+          } else {
+            gotItTooltip.hidePopup()
+          }
+        }
+      })
+    }
+  }
+
   private fun showYesNoDialog(project: Project?, time: String?): Boolean = when (Messages.showYesNoDialog(
     project,
     EduCoreBundle.message("marketplace.report.solutions.dialog.text", time.toString()),
@@ -94,9 +121,12 @@ class ReportCommunitySolutionAction : DumbAwareActionButton() {
 
   companion object {
     @NonNls
-    const val ACTION_ID = "Educational.Student.ReportCommunitySolution"
+    const val ACTION_ID: String = "Educational.Student.ReportCommunitySolution"
 
-    private val SOLUTION_PREFIX = EduCoreBundle.message("submissions.compare.community", "")
+    @NonNls
+    private const val GOT_IT_ID: String = "diff.toolbar.report.community.solution.action.button"
+
+    private val SOLUTION_PREFIX: String = EduCoreBundle.message("submissions.compare.community", "")
     private val IS_REPORTED: Key<Boolean> = Key.create("isReported")
 
     val TASK_ID_KEY: Key<Int> = Key.create("taskId")
