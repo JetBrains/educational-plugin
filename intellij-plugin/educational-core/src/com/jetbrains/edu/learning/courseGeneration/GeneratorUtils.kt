@@ -38,11 +38,13 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import java.io.IOException
 import java.util.concurrent.atomic.AtomicReference
 
+@Suppress("UnstableApiUsage")
 object GeneratorUtils {
 
   private val INVALID_SYMBOLS: Regex = """[/\\:<>"?*|;&]""".toRegex()
   private val INVALID_TRAILING_SYMBOLS: CharArray = charArrayOf(' ', '.', '!')
 
+  @RequiresBlockingContext
   @Throws(IOException::class)
   fun createCourse(
     holder: CourseInfoHolder<Course>,
@@ -70,11 +72,13 @@ object GeneratorUtils {
     EduCounterUsageCollector.studyItemCreatedCC(course)
   }
 
+  @RequiresBlockingContext
   @Throws(IOException::class)
   fun createSection(project: Project, item: Section, baseDir: VirtualFile): VirtualFile {
     return createSection(project.toCourseInfoHolder(), item, baseDir)
   }
 
+  @RequiresBlockingContext
   @Throws(IOException::class)
   private fun createSection(holder: CourseInfoHolder<out Course?>, item: Section, baseDir: VirtualFile): VirtualFile {
     val sectionDir = createUniqueDir(baseDir, item)
@@ -86,11 +90,13 @@ object GeneratorUtils {
     return sectionDir
   }
 
+  @RequiresBlockingContext
   @Throws(IOException::class)
   fun createLesson(project: Project, lesson: Lesson, parentDir: VirtualFile): VirtualFile {
     return createLesson(project.toCourseInfoHolder(), lesson, parentDir)
   }
 
+  @RequiresBlockingContext
   @Throws(IOException::class)
   private fun createLesson(holder: CourseInfoHolder<out Course?>, lesson: Lesson, parentDir: VirtualFile): VirtualFile {
     val lessonDir = createUniqueDir(parentDir, lesson)
@@ -107,6 +113,7 @@ object GeneratorUtils {
     return createTask(project.toCourseInfoHolder(), task, lessonDir)
   }
 
+  @RequiresBlockingContext
   @Throws(IOException::class)
   private fun createTask(holder: CourseInfoHolder<out Course?>, task: Task, lessonDir: VirtualFile): VirtualFile {
     val isFirstInFrameworkLesson = task.parent is FrameworkLesson && task.index == 1
@@ -132,11 +139,13 @@ object GeneratorUtils {
     return contentDir
   }
 
+  @RequiresBlockingContext
   @Throws(IOException::class)
   fun createTaskContent(project: Project, task: Task, taskDir: VirtualFile) {
     createTaskContent(project.toCourseInfoHolder(), task, taskDir)
   }
 
+  @RequiresBlockingContext
   @Throws(IOException::class)
   private fun createTaskContent(holder: CourseInfoHolder<out Course?>, task: Task, taskDir: VirtualFile) {
     val (testFiles, taskFiles) = task.taskFiles.values.partition { task.shouldBeEmpty(it.name) }
@@ -150,11 +159,13 @@ object GeneratorUtils {
     }
   }
 
+  @RequiresBlockingContext
   @Throws(IOException::class)
   fun createDescriptionFile(project: Project, taskDir: VirtualFile, task: Task): VirtualFile? {
     return createDescriptionFile(project.toCourseInfoHolder(), taskDir, task)
   }
 
+  @RequiresBlockingContext
   @Throws(IOException::class)
   private fun createDescriptionFile(holder: CourseInfoHolder<out Course?>, taskDir: VirtualFile, task: Task): VirtualFile? {
     val descriptionFileName = when (task.descriptionFormat) {
@@ -171,6 +182,7 @@ object GeneratorUtils {
     ALL_EXCEPT_IDEA_DIRECTORY(true, false)
   }
 
+  @RequiresBlockingContext
   @Throws(IOException::class)
   fun unpackAdditionalFiles(holder: CourseInfoHolder<Course>, unpackMode: IdeaDirectoryUnpackMode) {
     val course = holder.course
@@ -183,6 +195,7 @@ object GeneratorUtils {
     }
   }
 
+  @RequiresBlockingContext
   @Throws(IOException::class)
   @Deprecated(
     "Use the other createChildFile() method, where you explicitly specify whether text is binary or not",
@@ -192,16 +205,19 @@ object GeneratorUtils {
     return createChildFile(project.toCourseInfoHolder(), parentDir, path, InMemoryUndeterminedContents(text), isEditable)
   }
 
+  @RequiresBlockingContext
   @Throws(IOException::class)
   fun createChildFile(project: Project, parentDir: VirtualFile, path: String, contents: FileContents): VirtualFile? {
     return createChildFile(project.toCourseInfoHolder(), parentDir, path, contents)
   }
 
+  @RequiresBlockingContext
   @Throws(IOException::class)
   fun createTextChildFile(project: Project, parentDir: VirtualFile, path: String, text: String): VirtualFile? {
     return createTextChildFile(project.toCourseInfoHolder(), parentDir, path, text)
   }
 
+  @RequiresBlockingContext
   @Throws(IOException::class)
   fun createTextChildFile(
     holder: CourseInfoHolder<out Course?>,
@@ -213,6 +229,7 @@ object GeneratorUtils {
     return createChildFile(holder, parentDir, path, InMemoryTextualContents(text), isEditable)
   }
 
+  @RequiresBlockingContext
   @Throws(IOException::class)
   fun createChildFile(
     holder: CourseInfoHolder<out Course?>,
@@ -302,6 +319,7 @@ object GeneratorUtils {
     }
   }
 
+  @RequiresBlockingContext
   @Throws(IOException::class)
   fun <T> runInWriteActionAndWait(action: ThrowableComputable<T, IOException>): T {
     val application = ApplicationManager.getApplication()
@@ -343,6 +361,7 @@ object GeneratorUtils {
     return replace(INVALID_SYMBOLS, " ").trimEnd(*INVALID_TRAILING_SYMBOLS)
   }
 
+  @RequiresBlockingContext
   private fun createUniqueDir(
     parentDir: VirtualFile,
     item: StudyItem,
@@ -374,6 +393,7 @@ object GeneratorUtils {
   fun getJ2eeTemplateText(templateName: String): String =
     FileTemplateManager.getDefaultInstance().getJ2eeTemplate(templateName).text
 
+  @RequiresBlockingContext
   @Throws(IOException::class)
   fun evaluateExistingTemplate(child: VirtualFile, templateVariables: Map<String, Any>) {
     val rawContent = VfsUtil.loadText(child)
@@ -386,6 +406,7 @@ object GeneratorUtils {
    * If it doesn't exist, creates a new file from internal [templateName] template.
    * Otherwise, substitutes all template variables in file text
    */
+  @RequiresBlockingContext
   @Throws(IOException::class)
   fun createFileFromTemplate(
     holder: CourseInfoHolder<out Course?>,
@@ -409,6 +430,7 @@ object GeneratorUtils {
    * It should be used when external build system like Gradle, sbt, etc. creates modules itself
    * and initial base module is unexpected while import
    */
+  @RequiresBlockingContext
   fun removeModule(project: Project, module: Module) {
     @Suppress("TestOnlyProblems")
     if (!isUnitTestMode || !project.isLight) {
@@ -420,6 +442,7 @@ object GeneratorUtils {
    * Reformat the code so that learners do not see tons of IDE highlighting.
    * Should be used for third-party sources of courses when language style guide is systematically ignored.
    * */
+  @RequiresBlockingContext
   fun reformatCodeInAllTaskFiles(project: Project, course: Course) {
     course.visitTasks {
       for ((_, file) in it.taskFiles) {
