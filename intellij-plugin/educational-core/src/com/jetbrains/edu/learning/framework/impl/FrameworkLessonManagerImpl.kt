@@ -220,7 +220,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     // We assume that files could not change a propagation flag from true to false (for example, from visible to invisible)
     // This behavior is not intended
     if (fromPropagatableToNonPropagatableFilesState.isNotEmpty()) {
-      LOG.error("Visibility change from visible to invisible during navigation in non-template-based lessons is not supported")
+      LOG.error("Propagation flag change from propagatable to non-propagatable during navigation in non-template-based lessons is not supported")
     }
 
     // Only files that do not change a propagation flag can participate in propagating user changes.
