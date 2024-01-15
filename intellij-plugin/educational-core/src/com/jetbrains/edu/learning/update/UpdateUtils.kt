@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.course
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.hasChangedFiles
@@ -55,9 +56,9 @@ object UpdateUtils {
       remoteTaskFiles: Map<String, TaskFile>,
       updateInLocalFS: Boolean
     ) {
-      val taskFiles = remoteTaskFiles.map { (path, remoteTaskFile) ->
+      for ((path, remoteTaskFile) in remoteTaskFiles) {
         val taskFile = task.taskFiles[path]
-        if (taskFile != null) {
+        val currentTaskFile = if (taskFile != null) {
           taskFile.text = remoteTaskFile.text
           taskFile
         }
@@ -65,15 +66,15 @@ object UpdateUtils {
           task.addTaskFile(remoteTaskFile)
           remoteTaskFile
         }
-      }
 
-      if (updateInLocalFS) {
-        // remove read only flags, so we can write new content to non-editable files
-        removeReadOnlyFlags(project, task, taskFiles)
-        for (taskFile in taskFiles) {
+        if (updateInLocalFS) {
+          // remove read only flags, so we can write new content to non-editable files
+          // editable flags for task files will be restored in [GeneratorUtils.createChildFile()] call
+          removeReadOnlyFlags(project, currentTaskFile)
+
           val taskDir = task.getDir(project.courseDir)
           if (taskDir != null) {
-            GeneratorUtils.createChildFile(project, taskDir, taskFile.name, taskFile.text, taskFile.isEditable)
+            GeneratorUtils.createChildFile(project, taskDir, path, currentTaskFile.text, currentTaskFile.isEditable)
           }
         }
       }
@@ -100,12 +101,10 @@ object UpdateUtils {
   private val Task.nonPropagatableFiles: Map<String, TaskFile>
     get() = taskFiles.filter { !it.value.shouldBePropagated() }
 
-  private fun removeReadOnlyFlags(project: Project, task: Task, taskFiles: List<TaskFile>) {
+  private fun removeReadOnlyFlags(project: Project, taskFile: TaskFile) {
     runWriteActionAndWait {
-      for (taskFile in taskFiles) {
-        val virtualTaskFile = taskFile.getVirtualFile(project) ?: continue
-        GeneratorUtils.removeNonEditableFileFromCourse(task.course, virtualTaskFile)
-      }
+      val virtualTaskFile = taskFile.getVirtualFile(project) ?: return@runWriteActionAndWait
+      GeneratorUtils.removeNonEditableFileFromCourse(taskFile.course(), virtualTaskFile)
     }
   }
 
