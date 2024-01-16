@@ -30,7 +30,7 @@ import com.jetbrains.edu.coursecreator.CCUtils.isLocalCourse
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
-import com.jetbrains.edu.learning.courseFormat.CourseVisibility.FeaturedVisibility
+import com.jetbrains.edu.learning.courseFormat.CourseVisibility.*
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.IdeaDirectoryUnpackMode.ONLY_IDEA_DIRECTORY
@@ -233,7 +233,6 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
 
   companion object {
     private val LOG: Logger = Logger.getInstance(CourseProjectGenerator::class.java)
-    private const val JETBRAINS_SRO_ORGANIZATION: String = "JetBrains s.r.o."
 
     val EDU_PROJECT_CREATED = Key.create<Boolean>("edu.projectCreated")
 
@@ -249,8 +248,13 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
       if (isNewCourseCreatorCourse) return true
       if (course !is EduCourse) return true
       if (course.visibility is FeaturedVisibility) return true
-      // Trust any marketplace course from JetBrains s.r.o. organization
-      if (course.isMarketplaceRemote && course.organization == JETBRAINS_SRO_ORGANIZATION) return true
+      // Trust any course loaded from Marketplace since we verify every update
+      // as well as show agreement for every course.
+      //
+      // Local visibility here means that the course was manually loaded from Marketplace
+      // and opened via `Open Course from Disk` or similar action.
+      // We can't be sure that it wasn't modified anyhow, so we don't trust such courses
+      if (course.isMarketplaceRemote && course.visibility != LocalVisibility) return true
       return course.isPreview
     }
 

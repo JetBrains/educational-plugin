@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CourseVisibility
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
@@ -68,6 +69,7 @@ private class MarketplaceCourseBuilder(
       marketplaceCourseVersion = version ?: 1
       organization = courseOrganization?.name
       isMarketplacePrivate = fields.isPrivate
+      visibility = if (fields.isPrivate) CourseVisibility.PrivateVisibility else CourseVisibility.PublicVisibility
       updateDate = Date(lastUpdateDate)
       createDate = Date(courseCreateDate)
       feedbackLink = "$PLUGINS_REPOSITORY_URL$courseLink$REVIEWS"
