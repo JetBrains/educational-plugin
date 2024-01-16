@@ -15,12 +15,5 @@ class UnsupportedTask : Task {
 
   companion object {
     const val UNSUPPORTED_TASK_TYPE: String = "unsupported"
-
-    fun getDescriptionTextTemplate(name: String, link: String, platformName: String): String {
-      val fixedTaskName = name.lowercase().replaceFirstChar { it.titlecaseChar() }
-      return "$fixedTaskName tasks are not supported yet. <br>" +
-             "Solve this step on <a href=\"$link\">$platformName</a>. <br><br>" +
-             "After you have solved the step, click \"Sync with Browser\"  to move on."
-    }
   }
 }

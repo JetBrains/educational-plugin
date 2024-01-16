@@ -62,3 +62,9 @@ fun notifyStepikUnauthorized(project: Project, specificMessage: String) {
 }
 
 val StepikUser.profileUrl: String get() = "${getStepikProfilePath()}${userInfo.id}"
+
+
+fun getUnsupportedTaskDescriptionText(name: String, link: String, platformName: String): String {
+  val fixedTaskName = name.lowercase().replaceFirstChar { it.titlecaseChar() }
+  return EduCoreBundle.message("hyperskill.unsupported.task.description.text", fixedTaskName, link, platformName)
+}

@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
+import com.jetbrains.edu.learning.stepik.getUnsupportedTaskDescriptionText
 import com.jetbrains.edu.learning.stepik.hasHeaderOrFooter
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_COMMENT_ANCHOR
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLanguages
@@ -79,7 +80,7 @@ class HyperskillTaskBuilder(
           name = stepSource.title
         }
         is UnsupportedTask -> {
-          descriptionText = UnsupportedTask.getDescriptionTextTemplate(name, stepLink(stepSource.id), HYPERSKILL)
+          descriptionText = getUnsupportedTaskDescriptionText(name, stepLink(stepSource.id), HYPERSKILL)
           descriptionText = description(stepSource.title)
           name = stepSource.title
         }

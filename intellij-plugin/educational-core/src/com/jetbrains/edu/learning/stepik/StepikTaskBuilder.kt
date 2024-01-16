@@ -302,7 +302,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
   private fun unsupportedTask(@NonNls name: String): Task {
     val task = UnsupportedTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked)
 
-    task.descriptionText = UnsupportedTask.getDescriptionTextTemplate(name, getStepikLink(task, lesson), StepikNames.STEPIK)
+    task.descriptionText = getUnsupportedTaskDescriptionText(name, getStepikLink(task, lesson), StepikNames.STEPIK)
     task.descriptionFormat = DescriptionFormat.HTML
 
     initTaskFiles(task, "This is a ${name.lowercase()} task. You can use this editor as a playground\n")
