@@ -4,7 +4,6 @@ import com.intellij.lang.Language
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFileErrorHighlightLevel
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.PYCHARM_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.RemoteEduTask.Companion.REMOTE_EDU_TASK_TYPE
@@ -17,6 +16,7 @@ import com.jetbrains.edu.learning.stepik.hasHeaderOrFooter
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_COMMENT_ANCHOR
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLanguages
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
+import com.jetbrains.edu.learning.stepik.hyperskill.getUnsupportedTaskDescriptionText
 import com.jetbrains.edu.learning.stepik.hyperskill.stepLink
 
 class HyperskillTaskBuilder(
@@ -61,7 +61,7 @@ class HyperskillTaskBuilder(
           customPresentableName = null
         }
         is UnsupportedTask -> {
-          descriptionText = UnsupportedTask.getDescriptionTextTemplate(name, stepLink(stepSource.id), HYPERSKILL)
+          descriptionText = getUnsupportedTaskDescriptionText(name, stepSource.id)
           name = stepSource.title
         }
       }

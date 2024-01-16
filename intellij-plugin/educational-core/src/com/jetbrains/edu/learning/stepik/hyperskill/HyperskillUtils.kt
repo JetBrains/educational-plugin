@@ -344,3 +344,8 @@ private sealed class NextActivityInfo {
 
   class NotCalculated(val topicId: Int) : NextActivityInfo()
 }
+
+fun getUnsupportedTaskDescriptionText(name: String, stepId: Int): String {
+  val fixedTaskName = name.lowercase().replaceFirstChar { it.titlecaseChar() }
+  return EduCoreBundle.message("hyperskill.unsupported.task.description.text", fixedTaskName, stepLink(stepId), HYPERSKILL)
+}
