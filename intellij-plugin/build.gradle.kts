@@ -900,8 +900,9 @@ fun File.isPluginJar(): Boolean {
   if (!isFile) return false
   if (extension != "jar") return false
   return zipTree(this).files.any {
-    // TODO: make it more precise
-    it.extension == "xml" && it.readText().trimStart().startsWith("<idea-plugin")
+    if (it.extension != "xml") return@any false
+    val node = XmlParser().parse(it)
+    return node.name() == "idea-plugin"
   }
 }
 
