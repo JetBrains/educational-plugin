@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.DialogWrapperDialog
@@ -43,7 +43,7 @@ abstract class CoursesPlatformProvider {
       throw e
     }
     catch (e: Exception) {
-      Logger.getInstance(CoursesPlatformProvider::class.java).warn(e.message)
+      logger<CoursesPlatformProvider>().warn(e)
       return emptyList()
     }
     return courseGroups.mapNotNull { courseGroup ->

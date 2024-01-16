@@ -88,46 +88,43 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
     val courses = mutableListOf<EduCourse>()
 
     do {
-      val coursesInfoList = getCoursesInfoList(offset, searchPrivate) ?: return courses
-      val loadedCourses = updateFormatVersions(coursesInfoList)
-      if (loadedCourses.isNullOrEmpty()) return courses
+      val (loadedCourses, total) = loadCourses(QueryData(GraphqlQuery.search(offset, searchPrivate))) ?: return courses
+      if (loadedCourses.isEmpty()) return courses
       courses.addAll(loadedCourses)
       offset += LOADING_STEP
     }
-    while (courses.size < coursesInfoList.total)
+    while (courses.size < total)
 
     return courses
-  }
-
-  private fun updateFormatVersions(coursesInfoList: CoursesInfoList): List<EduCourse>? {
-    val courses = coursesInfoList.courses.toMutableList()
-    val updates = getUpdateInfoList(courses.map { it.id }) ?: return null
-    val courseIdJsonVersionMap: Map<Int, Int> = updates.associateBy(UpdateInfo::pluginId) { it.compatibility.gte }
-    for (course in courses) {
-      val courseFormatVersion = courseIdJsonVersionMap[course.id]
-      if (courseFormatVersion == null) {
-        courses.remove(course)
-        LOG.error("No UpdateInfo found for course ${course.name}")
-        continue
-      }
-      course.formatVersion = courseFormatVersion
-    }
-    return courses
-  }
-
-  private fun getCoursesInfoList(offset: Int, searchPrivate: Boolean): CoursesInfoList? {
-    val query = QueryData(GraphqlQuery.search(offset, searchPrivate))
-    val response = getRepositoryEndpoints().search(query).executeHandlingExceptions()
-    return response?.body()?.data?.myCoursesInfoList
   }
 
   fun searchCourse(courseId: Int, searchPrivate: Boolean = false): EduCourse? {
-    val query = QueryData(GraphqlQuery.searchById(courseId, searchPrivate))
+    val course = loadCourses(QueryData(GraphqlQuery.searchById(courseId, searchPrivate)))?.courses?.firstOrNull() ?: return null
+    course.id = courseId
+    return course
+  }
+
+  private fun loadCourses(query: QueryData): LoadedCourses? {
     val response = getRepositoryEndpoints().search(query).executeHandlingExceptions()
     val coursesInfoList = response?.body()?.data?.myCoursesInfoList ?: return null
-    val course = updateFormatVersions(coursesInfoList)?.firstOrNull()
-    course?.id = courseId
-    return course
+    val courses = coursesInfoList.courses
+      .updateFormatVersions()
+    return LoadedCourses(courses, coursesInfoList.total)
+  }
+
+  private fun List<EduCourse>.updateFormatVersions(): List<EduCourse> {
+    val courseIds = map { it.id }
+    val updates = getUpdateInfoList(courseIds) ?: return emptyList()
+    val courseIdJsonVersionMap: Map<Int, Int> = updates.associateBy(UpdateInfo::pluginId) { it.compatibility.gte }
+    return mapNotNull { course ->
+      val courseFormatVersion = courseIdJsonVersionMap[course.id]
+      if (courseFormatVersion == null) {
+        LOG.error("No UpdateInfo found for course ${course.name}")
+        return@mapNotNull null
+      }
+      course.formatVersion = courseFormatVersion
+      course
+    }
   }
 
   fun getLatestCourseUpdateInfo(courseId: Int): UpdateInfo? {
@@ -446,3 +443,5 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
     fun getInstance(): MarketplaceConnector = service()
   }
 }
+
+private data class LoadedCourses(val courses: List<EduCourse>, val total: Int)
