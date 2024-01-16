@@ -14,18 +14,17 @@
 
   let optionN = options.length
 
+  document.onkeydown = function (e) {
+    if (e.key === 'Tab') {
+      e.preventDefault()
+      e.stopPropagation()
+    }
+  }
+
   createLines(captions, options)
 
   let focusedIndex = 0
   makeFocus(focusedIndex)
-
-  window.addEventListener("blur", function (event) {
-    if (focusedIndex !== 0) {
-      makeFocus(0)
-    } else {
-      makeFocus(optionN - 1)
-    }
-  })
 
   function createLines(captions, options) {
     for (let index = 0; index < ordering.length; index++) {
@@ -80,6 +79,15 @@
     card.onkeydown = function (e) {
       let shiftFlag = e.shiftKey
       switch (e.key) {
+        case 'Tab':
+          let targetIndex
+          if (e.shiftKey) {
+            targetIndex = (focusedIndex + optionN - 1) % optionN
+          } else {
+            targetIndex = (focusedIndex + 1) % optionN
+          }
+          makeFocus(targetIndex)
+          return
         case 'ArrowUp':
           if (index === 0) {
             return false
@@ -103,9 +111,6 @@
       }
     }
 
-    card.addEventListener('focusin', function (event) {
-      focusedIndex = index
-    })
     return card
   }
 
