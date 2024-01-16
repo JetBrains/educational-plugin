@@ -1,14 +1,16 @@
 package com.jetbrains.edu.learning.marketplace
 
+import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.editor.ReadOnlyModificationException
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
 import com.jetbrains.edu.learning.stepik.hyperskill.FrameworkLessonsUpdateTest
 import com.jetbrains.edu.learning.testAction
-import junit.framework.TestCase
 import kotlin.test.assertNotEquals
 
 class MarketplaceFrameworkLessonsUpdateTest : FrameworkLessonsUpdateTest<EduCourse>() {
@@ -136,6 +138,56 @@ class MarketplaceFrameworkLessonsUpdateTest : FrameworkLessonsUpdateTest<EduCour
       file("build.gradle")
       file("settings.gradle")
     }.assertEquals(rootDir, myFixture)
+  }
+
+  fun `test change of editable flags apply correctly during update`() {
+    val eduCourse = courseWithFiles(
+      language = FakeGradleBasedLanguage,
+      courseProducer = ::EduCourse
+    ) {
+      frameworkLesson("lesson1") {
+        eduTask("task1", stepId = 1, taskDescription = "Old Description", taskDescriptionFormat = DescriptionFormat.HTML) {
+          taskFile("src/Baz.kt", "fun baz() {}")
+        }
+        eduTask("task2", stepId = 2, taskDescription = "Old Description", taskDescriptionFormat = DescriptionFormat.HTML) {
+          taskFile("src/Baz.kt", "fun baz() {}")
+        }
+      }
+    } as EduCourse
+    eduCourse.marketplaceCourseVersion = 1
+    localCourse = eduCourse
+
+    val newTexts = listOf(
+      "fun bazbaz() {}",
+      "fun barbar() {}",
+    )
+
+    updateCourse {
+      for ((task, newText) in taskList.zip(newTexts)) {
+        task.taskFiles["src/Baz.kt"]!!.apply {
+          contents = InMemoryTextualContents(newText)
+          isEditable = false
+        }
+      }
+    }
+
+    for ((task, newText) in localCourse.taskList.zip(newTexts)) {
+      val taskFile = task.taskFiles["src/Baz.kt"]!!
+      with(taskFile) {
+        assertEquals(newText, contents.textualRepresentation)
+        assertFalse(isEditable)
+      }
+    }
+
+    val taskFile1 = localCourse.taskList[0].taskFiles["src/Baz.kt"]!!
+
+    val document = taskFile1.getDocument(project)!!
+    assertThrows(ReadOnlyModificationException::class.java) {
+      runWriteAction {
+        document.setText(newTexts[1])
+      }
+    }
+    assertEquals(newTexts[0], document.text)
   }
 
   override fun updateCourse(changeCourse: EduCourse.() -> Unit) {

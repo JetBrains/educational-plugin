@@ -59,8 +59,10 @@ object UpdateUtils {
       for ((path, remoteTaskFile) in remoteTaskFiles) {
         val taskFile = task.taskFiles[path]
         val currentTaskFile = if (taskFile != null) {
-          taskFile.text = remoteTaskFile.text
-          taskFile
+          taskFile.apply {
+            text = remoteTaskFile.text
+            isEditable = remoteTaskFile.isEditable
+          }
         }
         else {
           task.addTaskFile(remoteTaskFile)
