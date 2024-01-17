@@ -7,7 +7,10 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import com.jetbrains.edu.learning.newproject.ui.GrayTextHtmlPanel
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.*
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseBindData
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseSelectionListener
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.HORIZONTAL_MARGIN
 
 class MarketplaceCoursePanel(disposable: Disposable): CoursePanel(disposable, true) {
 
@@ -38,7 +41,7 @@ class MarketplaceCoursePanel(disposable: Disposable): CoursePanel(disposable, tr
 
     init {
       add(textPanel)
-      border = JBUI.Borders.empty(2, 16, 0, 0)
+      border = JBUI.Borders.empty(2, HORIZONTAL_MARGIN, 0, 0)
     }
 
     override fun onCourseSelectionChanged(data: CourseBindData) {
