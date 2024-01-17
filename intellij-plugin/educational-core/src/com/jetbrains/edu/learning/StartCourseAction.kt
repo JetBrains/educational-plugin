@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.Messages
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
@@ -14,9 +15,6 @@ import com.jetbrains.edu.learning.stepik.course.ImportCourseDialog
 abstract class StartCourseAction(
   private val platformName: String
 ) : DumbAwareAction(EduCoreBundle.lazyMessage("action.start.course", platformName)) {
-
-  abstract val dialog: ImportCourseDialog
-  abstract val courseConnector: CourseConnector
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
@@ -30,12 +28,12 @@ abstract class StartCourseAction(
 
   private fun doImport() {
     val course = importCourse() ?: return
-    JoinCourseDialog(course).show()
+    createJoinCourseDialog(course).show()
   }
 
-  open fun importCourse(): EduCourse? {
+  private fun importCourse(): EduCourse? {
     val courseLink = showDialogAndGetCourseLink() ?: return null
-    val course = courseConnector.getCourseInfoByLink(courseLink)
+    val course = courseConnector().getCourseInfoByLink(courseLink)
     if (course == null) {
       showFailedToAddCourseNotification(courseLink)
       return null
@@ -44,7 +42,7 @@ abstract class StartCourseAction(
   }
 
   private fun showDialogAndGetCourseLink(): String? {
-    val inputDialog = dialog
+    val inputDialog = createImportCourseDialog()
     if (!inputDialog.showAndGet()) {
       return null
     }
@@ -57,4 +55,18 @@ abstract class StartCourseAction(
       message("error.failed.to.find.course.title", platformName)
     )
   }
+
+  /**
+   * Returns instance of [JoinCourseDialog] to show user basic info about given [course]
+   * with course settings (location, language-specific settings) and button to start the course.
+   */
+  protected open fun createJoinCourseDialog(course: Course): JoinCourseDialog {
+    return JoinCourseDialog(course)
+  }
+
+  /**
+   * Returns instance of [ImportCourseDialog] to show text field and get a course link typed by user
+   */
+  protected abstract fun createImportCourseDialog(): ImportCourseDialog
+  protected abstract fun courseConnector(): CourseConnector
 }

@@ -4,27 +4,31 @@ import com.intellij.openapi.Disposable
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseBindData
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
-import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState
 import javax.swing.JComponent
 
 open class JoinCourseDialog(
-  course: Course,
-  settings: CourseDisplaySettings = CourseDisplaySettings()
+  protected val course: Course,
+  protected val settings: CourseDisplaySettings = CourseDisplaySettings()
 ) : OpenCourseDialogBase() {
-  private val coursePanel: CoursePanel = JoinCoursePanel(disposable)
 
   init {
     super.init()
     title = course.name
-    coursePanel.bindCourse(CourseBindData(course, settings))
-    coursePanel.preferredSize = JBUI.size(500, 530)
   }
 
-  override fun createCenterPanel(): JComponent = coursePanel
+  override fun createCenterPanel(): JComponent {
+    val panel = createCoursePanel()
+    panel.bindCourse(CourseBindData(course, settings))
+    panel.preferredSize = JBUI.size(500, 530)
+    return panel
+  }
+
+  protected open fun createCoursePanel(): CoursePanel = JoinCoursePanel(disposable)
 
   protected open fun isToShowError(errorState: ErrorState): Boolean = true
 
