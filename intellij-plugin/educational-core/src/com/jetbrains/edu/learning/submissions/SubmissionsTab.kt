@@ -7,17 +7,21 @@ import com.intellij.diff.chains.SimpleDiffRequestChain
 import com.intellij.diff.contents.DocumentContent
 import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.execution.process.ProcessIOExecutorService
+import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
+import com.intellij.ui.AncestorListenerAdapter
 import com.intellij.ui.ColorUtil
+import com.intellij.ui.GotItTooltip
 import com.intellij.ui.dsl.builder.SegmentedButton
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.icons.CachedImageIcon
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.ApplyCodeAction.Companion.FILENAMES_KEY
@@ -41,12 +45,15 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.tab.AdditionalCardTextTab
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.SwingTextPanel
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType.SUBMISSIONS_TAB
 import com.jetbrains.edu.learning.ui.EduColors
+import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
 import java.net.URL
 import java.text.DateFormat
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import javax.swing.JButton
+import javax.swing.JComponent
+import javax.swing.event.AncestorEvent
 
 @Suppress("UnstableApiUsage")
 class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSIONS_TAB) {
@@ -183,23 +190,43 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
     segmentedButton.selectedItem = MY
   }
 
-  private fun addSegmentedButton() = headerPanel.add(panel {
-    row {
-      segmentedButton = segmentedButton(SEGMENTED_BUTTON_ITEMS) { segmentedButtonRenderer(it) }.apply {
-        selectedItem = MY
-        visible(false)
-        whenItemSelected {
-          when (it) {
-            MY -> showFirstCard()
-            COMMUNITY -> {
-              showLastCard()
-              EduCounterUsageCollector.openCommunityTab()
+  private fun addSegmentedButton() {
+    val segmentedButtonPanel = panel {
+      row {
+        segmentedButton = segmentedButton(SEGMENTED_BUTTON_ITEMS) { segmentedButtonRenderer(it) }.apply {
+          selectedItem = MY
+          visible(false)
+          whenItemSelected {
+            when (it) {
+              MY -> showFirstCard()
+              COMMUNITY -> {
+                showLastCard()
+                EduCounterUsageCollector.openCommunityTab()
+              }
             }
           }
         }
       }
     }
-  }, BorderLayout.CENTER)
+    headerPanel.add(segmentedButtonPanel, BorderLayout.CENTER)
+    addGotItTooltip(segmentedButtonPanel)
+  }
+
+  private fun addGotItTooltip(component: JComponent) = component.addAncestorListener(object : AncestorListenerAdapter() {
+    override fun ancestorAdded(e: AncestorEvent) {
+      val gotItTooltip = GotItTooltip(
+        GOT_IT_ID, EduCoreBundle.message("submissions.button.community.tooltip.text"), this@SubmissionsTab
+      ).withHeader(EduCoreBundle.message("submissions.button.community.tooltip.header"))
+
+      val communityJComponent = UIUtil.uiTraverser(component).filter(ActionButton::class.java).filter {
+        it.action.templateText == COMMUNITY.text
+      }.first() as JComponent
+
+      if (communityJComponent.isEnabled) {
+        gotItTooltip.show(communityJComponent, GotItTooltip.BOTTOM_MIDDLE)
+      }
+    }
+  })
 
   companion object {
     private const val SUBMISSION_PROTOCOL = "submission://"
@@ -215,6 +242,9 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
     private val EMPTY_COMMUNITY_SOLUTIONS_MESSAGE = "<a $textStyleHeader>${EduCoreBundle.message("submissions.community.empty")}"
     const val OPEN_PLACEHOLDER_TAG = "<placeholder>"
     const val CLOSE_PLACEHOLDER_TAG = "</placeholder>"
+
+    @NonNls
+    private const val GOT_IT_ID: String = "submissions.tab.community.button"
 
     private val textStyleHeader: String
       get() = StyleManager().textStyleHeader
