@@ -40,6 +40,7 @@ class PhpTaskChecker(
 
       val errorOutput = StringBuilder()
       var destroyed = false
+      var exitCode = 0
       val processListener = object : ProcessAdapter() {
         override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
           val containsError = event.text.replaceFirstChar { it.titlecaseChar() }.contains(error)
@@ -52,6 +53,10 @@ class PhpTaskChecker(
           super.processWillTerminate(event, willBeDestroyed)
           destroyed = willBeDestroyed
         }
+
+        override fun processTerminated(event: ProcessEvent) {
+          exitCode = event.exitCode
+        }
       }
 
       if (!CheckUtils.executeRunConfigurations(
@@ -59,12 +64,15 @@ class PhpTaskChecker(
           listOf(configuration),
           indicator,
           processListener = processListener)) {
-        LOG.warn("Execution was failed while trying to obtain errors for user message")
+        LOG.warn("Execution failed while trying to obtain errors for user message")
         destroyed = true
       }
 
       if (!destroyed) {
         errorOutput.clear()
+      }
+      if (errorOutput.isEmpty() && exitCode != 0) {
+        return "Process finished with exit code $exitCode"
       }
       return errorOutput.toString().nullize()
     }
