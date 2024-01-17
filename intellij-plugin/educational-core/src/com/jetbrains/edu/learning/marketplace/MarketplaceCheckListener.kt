@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.marketplace.actions.ShareMySolutionsAction
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.PostSolutionCheckListener
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.SolutionSharingInlineBanners
@@ -30,6 +31,8 @@ class MarketplaceCheckListener: PostSolutionCheckListener() {
     super.afterCheck(project, task, result)
 
     if (!Registry.`is`(ShareMySolutionsAction.REGISTRY_KEY, false)) return
+
+    EduCounterUsageCollector.submissionSuccess(result.isSolved)
 
     if (!result.isSolved || !task.supportSubmissions || !project.isStudentProject()) return
 
