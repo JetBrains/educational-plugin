@@ -24,7 +24,11 @@ object SolutionSharingInlineBanners {
       setMessage(EduCoreBundle.message("marketplace.solutions.sharing.inline.banner.prompt.action.text"))
       addAction(EduCoreBundle.message("marketplace.solutions.sharing.inline.banner.prompt.description")) {
         MarketplaceSettings.INSTANCE.updateSharingPreference(true, project)
-        close()
+        EduCounterUsageCollector.solutionSharingInviteAction(true)
+        removeFromParent()
+      }
+      setCloseAction {
+        EduCounterUsageCollector.solutionSharingInviteAction(false)
       }
     }
     TaskToolWindowView.getInstance(project).addInlineBanner(inlineBanner)

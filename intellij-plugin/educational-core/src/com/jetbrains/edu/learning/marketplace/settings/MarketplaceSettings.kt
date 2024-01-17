@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnecto
 import com.jetbrains.edu.learning.marketplace.getJBAUserInfo
 import com.jetbrains.edu.learning.marketplace.toBoolean
 import com.jetbrains.edu.learning.onError
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.taskToolWindow.ui.SolutionSharingInlineBanners
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -65,6 +66,7 @@ class MarketplaceSettings(private val scope: CoroutineScope) {
       if (state) {
         SolutionSharingInlineBanners.showSuccessSolutionSharingEnabling(project)
       }
+      EduCounterUsageCollector.solutionSharingState(state)
     }
   }
 

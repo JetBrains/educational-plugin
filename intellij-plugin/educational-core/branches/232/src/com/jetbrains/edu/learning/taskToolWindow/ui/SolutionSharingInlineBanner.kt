@@ -23,8 +23,12 @@ object SolutionSharingInlineBanners {
     ).apply {
       addAction(NotificationAction.createSimpleExpiring(EduCoreBundle.message("marketplace.solutions.sharing.inline.banner.prompt.description")) {
         MarketplaceSettings.INSTANCE.updateSharingPreference(true)
-        expire()
+        EduCounterUsageCollector.solutionSharingInviteAction(true)
+        hideBalloon()
       })
+      whenExpired {
+        EduCounterUsageCollector.solutionSharingInviteAction(false)
+      }
       isSuggestionType = true
       notify(project)
     }
