@@ -194,6 +194,8 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
 
     private val AGREE_TO_ENABLE_SOLUTION_SHARE_STATE = GROUP.registerEvent("solution.share.state", EventFields.Boolean(SUCCESS))
 
+    private val OPEN_COMMUNITY_TAB = GROUP.registerEvent("open.community.tab")
+
     fun taskNavigation(place: TaskNavigationPlace) = TASK_NAVIGATION_EVENT.log(place)
 
     fun eduProjectCreated(course: Course) = EDU_PROJECT_CREATED_EVENT.log(course.courseMode, course.itemType, course.languageId)
@@ -286,5 +288,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     fun solutionSharingInviteAction(action: Boolean) = AGREE_TO_ENABLE_INVITE_ACTION.log(action)
 
     fun solutionSharingState(state: Boolean) = AGREE_TO_ENABLE_SOLUTION_SHARE_STATE.log(state)
+
+    fun openCommunityTab() = OPEN_COMMUNITY_TAB.log()
   }
 }

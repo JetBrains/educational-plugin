@@ -179,7 +179,10 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
         whenItemSelected {
           when (it) {
             MY -> showFirstCard()
-            COMMUNITY -> showLastCard()
+            COMMUNITY -> {
+              showLastCard()
+              EduCounterUsageCollector.openCommunityTab()
+            }
           }
         }
       }
