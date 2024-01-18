@@ -2,7 +2,10 @@ package com.jetbrains.edu.coursecreator.actions.placeholder
 
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.psi.PsiManager
+import com.jetbrains.edu.coursecreator.actions.YamlActionsHelper
 import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
@@ -26,6 +29,12 @@ open class CCEditAnswerPlaceholder : CCAnswerPlaceholderAction() {
       return
     }
     FileEditorManager.getInstance(state.project).openFile(configFile, true)
+
+    EP_NAME.computeSafeIfAny { yamlActionsHelper ->
+      val yamlPsiFile = PsiManager.getInstance(state.project).findFile(configFile) ?: return@computeSafeIfAny
+      val placeholderElement = yamlActionsHelper.findPsiElementCorrespondingToPlaceholder(yamlPsiFile, answerPlaceholder) ?: return@computeSafeIfAny
+      placeholderElement.navigate(true)
+    }
   }
 
   override fun updatePresentation(eduState: EduState, presentation: Presentation) {
@@ -34,6 +43,8 @@ open class CCEditAnswerPlaceholder : CCAnswerPlaceholderAction() {
 
   companion object {
     private val LOG = Logger.getInstance(CCEditAnswerPlaceholder::class.java)
+
+    private val EP_NAME: ExtensionPointName<YamlActionsHelper> = ExtensionPointName.create("Educational.yamlActionsHelper")
 
     @NonNls
     const val ACTION_ID = "Educational.Educator.EditAnswerPlaceholder"

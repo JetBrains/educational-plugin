@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
+import com.jetbrains.edu.learning.yaml.getConfigDir
 
 class CCEditAnswerPlaceholderActionTest : EduActionTestCase() {
   fun `test navigate to yaml`() {
@@ -26,6 +27,7 @@ class CCEditAnswerPlaceholderActionTest : EduActionTestCase() {
     myFixture.openFileInEditor(virtualFile)
     testAction(CCEditAnswerPlaceholder.ACTION_ID)
     val navigatedFile = FileEditorManagerEx.getInstanceEx(project).currentFile ?: error("Navigated file should not be null here")
-    assertEquals(task.configFileName, navigatedFile.name)
+
+    assertEquals(task.getConfigDir(project).findChild(task.configFileName), navigatedFile)
   }
 }
