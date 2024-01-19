@@ -35,6 +35,10 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.stepik.course.CourseConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import retrofit2.Call
 import retrofit2.Response
 import java.io.File
@@ -225,13 +229,24 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
                                                      showPermissionDeniedNotification: () -> Unit,
                                                      showOnNotFoundCodeNotification: () -> Unit,
                                                      onAuthFailedActions: () -> Unit): Result<Response<T>, String> {
-    val response = executeCall().onError { return Err(it) }
+    val response = executeCall().onError {
+      showErrorNotification(project, failedActionMessage, it)
+      return Err(it)
+    }
     val responseCode = response.code()
     val errorBody = response.errorBody()?.string() ?: return Ok(response)
     val errorMessage = "$errorBody Code $responseCode"
+    val extractedErrorMessage = try {
+      ((Json.parseToJsonElement(errorBody) as? JsonObject)?.get("message") as? JsonPrimitive)?.content
+    }
+    catch (e: SerializationException) {
+      null
+    }
+
     return when (responseCode) {
       HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_CREATED -> Ok(response)
       HttpURLConnection.HTTP_BAD_REQUEST -> {
+        showErrorNotification(project, failedActionMessage, extractedErrorMessage ?: errorMessage)
         Err(errorMessage) // 400
       }
       HttpURLConnection.HTTP_FORBIDDEN -> {
@@ -261,6 +276,8 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
 
           errorBody.contains(ERROR_PERMISSION_DENIED) -> showPermissionDeniedNotification()
           errorBody.contains(ERROR_AUTH_FAILED) -> onAuthFailedActions()
+
+          else -> showErrorNotification(project, failedActionMessage, extractedErrorMessage ?: errorMessage)
         }
 
         Err(errorMessage) // 403
