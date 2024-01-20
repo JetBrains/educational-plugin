@@ -31,14 +31,6 @@ val baseVersion = when {
   else -> error("Unexpected IDE name = `$baseIDE`")
 }
 
-val explicitPlatformPrefix: String? = when (baseIDE) {
-  "idea" -> "idea"
-  "clion" -> "CLion"
-  "pycharm" -> "Python"
-  "studio" -> "AndroidStudio"
-  else -> null
-}
-
 val ideaSandbox = "${buildDir()}/idea-sandbox"
 val pycharmSandbox = "${buildDir()}/pycharm-sandbox"
 val studioSandbox = "${buildDir()}/studio-sandbox"
@@ -161,11 +153,6 @@ allprojects {
           jbrVersion = it
         }
       }
-    }
-
-    // Temporary workaround for https://github.com/JetBrains/gradle-intellij-plugin/issues/1515
-    classpathIndexCleanup {
-      dependsOn(compileTestKotlin)
     }
 
     withType<Test> {
@@ -376,12 +363,6 @@ tasks {
     autoReloadPlugins = false
     jvmArgs("-Xmx2g")
     jvmArgs("-Dide.experimental.ui=true")
-
-    // Temporary workaround for https://github.com/JetBrains/gradle-intellij-plugin/issues/1525
-    val platformPrefix = explicitPlatformPrefix
-    if (platformPrefix != null) {
-      jvmArgs("-Didea.platform.prefix=$platformPrefix")
-    }
 
     // Uncomment to show localized messages
     // jvmArgs("-Didea.l10n=true")
