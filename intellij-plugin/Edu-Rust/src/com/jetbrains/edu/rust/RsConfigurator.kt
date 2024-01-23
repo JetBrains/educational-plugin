@@ -1,6 +1,8 @@
 package com.jetbrains.edu.rust
 
+import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.BuildNumber
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.text.VersionComparatorUtil
 import com.jetbrains.edu.learning.EduCourseBuilder
@@ -14,6 +16,11 @@ import org.rust.cargo.CargoConstants
 import org.rust.ide.icons.RsIcons
 import org.rust.lang.RsConstants
 import javax.swing.Icon
+
+// BACKCOMPAT: 2023.1. Drop it
+private val BUILD_232 = BuildNumber.fromString("232")!!
+// BACKCOMPAT: 2023.2. Drop it
+private val BUILD_233 = BuildNumber.fromString("233")!!
 
 class RsConfigurator : EduConfigurator<RsProjectSettings> {
   override val taskCheckerProvider: RsTaskCheckerProvider
@@ -54,7 +61,15 @@ class RsConfigurator : EduConfigurator<RsProjectSettings> {
   override val isEnabled: Boolean
     get() {
       val rustPluginVersion = pluginVersion(PluginInfos.RUST.stringId) ?: return false
-      return VersionComparatorUtil.compare(rustPluginVersion, "0.4.194") >= 0
+      val currentBuild = ApplicationInfo.getInstance().build
+      val minSupportedVersion = when {
+        currentBuild < BUILD_232 -> "0.4.194"
+        // Rust plugin changed the signature of `CargoProjectsService.refreshAllProjects` method since `232.23135` and `233.23135` builds.
+        // It added default parameter which breaks binary compatibility
+        currentBuild < BUILD_233 -> "232.23135"
+        else -> "233.23135"
+      }
+      return VersionComparatorUtil.compare(rustPluginVersion, minSupportedVersion) >= 0
     }
 
   override val defaultPlaceholderText: String
