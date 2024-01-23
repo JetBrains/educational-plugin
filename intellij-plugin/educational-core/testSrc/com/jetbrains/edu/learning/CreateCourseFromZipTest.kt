@@ -3,6 +3,8 @@ package com.jetbrains.edu.learning
 import com.intellij.testFramework.UsefulTestCase
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import java.nio.file.Files
+import java.nio.file.Paths
 
 class CreateCourseFromZipTest : EduTestCase() {
 
@@ -51,6 +53,14 @@ class CreateCourseFromZipTest : EduTestCase() {
     assertEquals(jsonVersion, (course as EduCourse).formatVersion)
 
     return course
+  }
+
+  fun `test loading course from byte array`() {
+    val bytes = Files.readAllBytes(Paths.get(testDataPath, "new format marketplace course.zip"))
+    val course = EduUtilsKt.getLocalCourse(bytes) ?: error("Failed to load course from byte array")
+
+    assertEquals("Introduction to Python", course.name)
+    assertTrue(course.lessons.size == 10)
   }
 
   override fun getTestDataPath(): String {

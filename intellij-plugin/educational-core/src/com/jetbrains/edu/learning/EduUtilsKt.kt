@@ -51,6 +51,7 @@ import java.nio.charset.StandardCharsets
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutionException
 import java.util.zip.ZipFile
+import java.util.zip.ZipInputStream
 
 object EduUtilsKt {
   fun DataContext.showPopup(htmlContent: String, position: Balloon.Position = Balloon.Position.above) {
@@ -113,6 +114,25 @@ object EduUtilsKt {
         val entry = zipFile.getEntry(COURSE_META_FILE) ?: return null
         val reader = { zipFile.getInputStream(entry).reader(StandardCharsets.UTF_8) }
         readCourseJson(reader)
+      }
+    }
+    catch (e: IOException) {
+      LOG.error("Failed to unzip course archive", e)
+    }
+    return null
+  }
+
+  fun getLocalCourse(bytes: ByteArray, readCourseJson: (() -> Reader) -> Course? = ::readCourseJson): Course? {
+    try {
+      return readCourseJson {
+        val zip = ZipInputStream(bytes.inputStream())
+
+        while (true) {
+          val entry = zip.nextEntry ?: throw IOException("No file $COURSE_META_FILE in course zip")
+          if (entry.name == COURSE_META_FILE) break
+        }
+
+        zip.reader()
       }
     }
     catch (e: IOException) {
