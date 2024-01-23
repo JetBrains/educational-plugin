@@ -15,6 +15,15 @@ interface FrameworkLessonManager {
 
   fun getChangesTimestamp(task: Task): Long
 
+  /**
+   * Retrieves the state of a given task in a framework lesson.
+   *
+   * @param lesson the framework lesson containing the task
+   * @param task the task for which to retrieve the state
+   * @return a map representing the state of the task, where the keys are the file paths, and the values are the file contents
+   */
+  fun getTaskState(lesson: FrameworkLesson, task: Task): Map<String, String>
+
   companion object {
     fun getInstance(project: Project): FrameworkLessonManager = project.service()
   }

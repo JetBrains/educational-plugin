@@ -10,7 +10,9 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.storage.AbstractStorage
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBePropagated
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
@@ -110,6 +112,20 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     }
 
     return storage.getUserChanges(task.record).timestamp
+  }
+
+  override fun getTaskState(lesson: FrameworkLesson, task: Task): Map<String, String> {
+    require(task.lesson == lesson) {
+      "The task is not a part of this lesson"
+    }
+    val initialFiles = task.allFiles
+    val changes = if (lesson.currentTaskIndex + 1 == task.index) {
+      val taskDir = task.getDir(project.courseDir) ?: return emptyMap()
+      getUserChangesFromFiles(initialFiles, taskDir)
+    } else {
+      getUserChangesFromStorage(task)
+    }
+    return HashMap(initialFiles).apply { changes.apply(this) }
   }
 
   /**
