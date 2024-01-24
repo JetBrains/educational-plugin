@@ -73,7 +73,7 @@ class AnswerPlaceholder {
     initialState = MyInitialState(offset, placeholderText.length)
   }
 
-  val isVisible: Boolean
+  val isCurrentlyVisible: Boolean
     get() {
       val placeholderVisible = placeholderDependency?.isVisible ?: true
       return placeholderVisible || !isInitializedFromDependency

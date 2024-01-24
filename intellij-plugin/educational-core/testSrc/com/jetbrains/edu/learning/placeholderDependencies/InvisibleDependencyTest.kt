@@ -65,7 +65,7 @@ class InvisibleDependencyTest : CourseGenerationTestBase<EmptyProjectSettings>()
     val textEditor2 = fileEditorManager.openTextEditor(OpenFileDescriptor(project, task2VirtualFile), true)!!
 
     val placeholder2 = task2File.answerPlaceholders[0]
-    assertEquals(expectedVisibility, placeholder2.isVisible)
+    assertEquals(expectedVisibility, placeholder2.isCurrentlyVisible)
     assertEquals(expectedPlaceholderText, textEditor2.document.getText(TextRange(placeholder2.offset, placeholder2.endOffset)))
 
     fileEditorManager.closeFile(task1VirtualFile)

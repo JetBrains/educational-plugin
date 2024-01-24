@@ -12,7 +12,7 @@ class PrevPlaceholderAction : PlaceholderNavigationAction() {
     val endIndex = selectedAnswerPlaceholder?.index ?: placeholders.size
     if (!indexIsValid(endIndex - 1, placeholders)) return null
     for (placeholder in placeholders.subList(0, endIndex).asReversed()) {
-      if (placeholder.offset < offset && placeholder.isVisible) {
+      if (placeholder.offset < offset && placeholder.isCurrentlyVisible) {
         return placeholder
       }
     }

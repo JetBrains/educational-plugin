@@ -49,7 +49,7 @@ class PlaceholderHighlightingPass(
       progress.checkCanceled()
 
       if (!placeholder.isValid(textLength)) continue
-      if (myProject.isStudentProject() && !placeholder.isVisible) continue
+      if (myProject.isStudentProject() && !placeholder.isCurrentlyVisible) continue
       val highlightInfo = PlaceholderHighlightingInfo.forStatus(placeholder.status)
 
       val highlightInfoBuilder = HighlightInfo.newHighlightInfo(highlightInfo.highlightInfoType)

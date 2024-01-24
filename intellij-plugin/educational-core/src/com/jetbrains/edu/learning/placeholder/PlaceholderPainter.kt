@@ -63,7 +63,7 @@ object PlaceholderPainter {
       override fun needsRepaint() = !editor.isDisposed
 
       override fun executePaint(component: Component?, g: Graphics2D) {
-        if (isStudentProject && !placeholder.isVisible) return
+        if (isStudentProject && !placeholder.isCurrentlyVisible) return
         g.color = placeholder.getColor()
         g.stroke = BasicStroke(STROKE_WIDTH)
         val shape = getPlaceholderShape(editor, placeholder.offset, placeholder.endOffset).getShape()

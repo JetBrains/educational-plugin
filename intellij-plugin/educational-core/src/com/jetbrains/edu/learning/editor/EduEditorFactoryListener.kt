@@ -33,7 +33,7 @@ class EduEditorFactoryListener : EditorFactoryListener {
       val point = e.mouseEvent.point
       val pos = editor.xyToLogicalPosition(point)
       val answerPlaceholder = taskFile.getAnswerPlaceholder(editor.logicalPositionToOffset(pos))
-      if (answerPlaceholder == null || !answerPlaceholder.isVisible || answerPlaceholder.selected) {
+      if (answerPlaceholder == null || !answerPlaceholder.isCurrentlyVisible || answerPlaceholder.selected) {
         return
       }
       val offsets = getPlaceholderOffsets(answerPlaceholder)

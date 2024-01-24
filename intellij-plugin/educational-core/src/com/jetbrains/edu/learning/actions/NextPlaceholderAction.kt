@@ -15,7 +15,7 @@ class NextPlaceholderAction : PlaceholderNavigationAction() {
     val startIndex = if (selectedAnswerPlaceholder != null) selectedAnswerPlaceholder.index + 1 else 0
     if (!indexIsValid(startIndex, placeholders)) return null
     for (placeholder in placeholders.subList(startIndex, placeholders.size)) {
-      if (placeholder.offset > offset && placeholder.isVisible) {
+      if (placeholder.offset > offset && placeholder.isCurrentlyVisible) {
         return placeholder
       }
     }

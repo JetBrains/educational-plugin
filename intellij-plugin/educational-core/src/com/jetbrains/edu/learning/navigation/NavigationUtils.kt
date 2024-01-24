@@ -160,7 +160,7 @@ object NavigationUtils {
   }
 
   fun navigateToFirstAnswerPlaceholder(editor: Editor, taskFile: TaskFile) {
-    val visiblePlaceholders = taskFile.answerPlaceholders.filter { it.isVisible }
+    val visiblePlaceholders = taskFile.answerPlaceholders.filter { it.isCurrentlyVisible }
     val firstAnswerPlaceholder = visiblePlaceholders.firstOrNull() ?: return
     navigateToAnswerPlaceholder(editor, firstAnswerPlaceholder)
   }
@@ -259,7 +259,7 @@ object NavigationUtils {
       // We want to open task file only if it has `new` placeholder(s).
       // Currently, we consider that `new` placeholder is a visible placeholder,
       // i.e. placeholder without dependency or with visible dependency.
-      if (!taskFile.isVisible || taskFile.answerPlaceholders.all { !it.isVisible }) continue
+      if (!taskFile.isVisible || taskFile.answerPlaceholders.all { !it.isCurrentlyVisible }) continue
       val virtualFile = taskFile.findTaskFileInDir(taskDir) ?: continue
       FileEditorManager.getInstance(project).openFile(virtualFile, true)
       if (fileToActivate == null) {
@@ -317,7 +317,7 @@ object NavigationUtils {
       return
     }
 
-    val placeholder = taskFile.answerPlaceholders.firstOrNull { it.isVisible } ?: return
+    val placeholder = taskFile.answerPlaceholders.firstOrNull { it.isCurrentlyVisible } ?: return
     val offsets = getPlaceholderOffsets(placeholder)
 
     with(editor) {
