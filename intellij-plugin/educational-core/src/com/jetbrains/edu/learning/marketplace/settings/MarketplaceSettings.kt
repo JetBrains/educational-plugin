@@ -5,6 +5,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.ui.JBAccountInfoService
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.getJBAUserInfo
@@ -15,6 +16,7 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.SolutionSharingInlineBanners
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.jetbrains.annotations.TestOnly
 
 @Service(Service.Level.APP)
 class MarketplaceSettings(private val scope: CoroutineScope) {
@@ -26,9 +28,11 @@ class MarketplaceSettings(private val scope: CoroutineScope) {
     private set
 
   init {
-    scope.launch(Dispatchers.IO) {
-      val sharingPreference = MarketplaceSubmissionsConnector.getInstance().getSharingPreference()
-      solutionsSharing = sharingPreference.toBoolean()
+    if (!isUnitTestMode) {
+      scope.launch(Dispatchers.IO) {
+        val sharingPreference = MarketplaceSubmissionsConnector.getInstance().getSharingPreference()
+        solutionsSharing = sharingPreference.toBoolean()
+      }
     }
   }
 
@@ -68,6 +72,11 @@ class MarketplaceSettings(private val scope: CoroutineScope) {
       }
       EduCounterUsageCollector.solutionSharingState(state)
     }
+  }
+
+  @TestOnly
+  fun setSharingPreference(state: Boolean?) {
+    solutionsSharing = state
   }
 
   companion object {
