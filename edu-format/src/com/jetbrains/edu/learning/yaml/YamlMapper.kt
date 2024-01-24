@@ -79,7 +79,7 @@ object YamlMapper {
     mapper.addMixIns()
     mapper.addEncryptionModule()
     mapper.addMixIn(TaskFile::class.java, StudentEncryptedTaskFileYamlMixin::class.java)
-    mapper.addMixIn(AnswerPlaceholder::class.java, StudentEncryptedAnswerPlaceholderYamlMixin::class.java)
+    mapper.addMixIn(AnswerPlaceholder::class.java, StudentAnswerPlaceholderYamlMixin::class.java)
     mapper.addStudentMixIns()
     mapper
   }
@@ -89,7 +89,7 @@ object YamlMapper {
     val mapper = createMapper()
     mapper.addMixIns()
     mapper.addMixIn(TaskFile::class.java, StudentEncryptedTaskFileYamlMixin::class.java)
-    mapper.addMixIn(AnswerPlaceholder::class.java, StudentEncryptedAnswerPlaceholderYamlMixin::class.java)
+    mapper.addMixIn(AnswerPlaceholder::class.java, StudentAnswerPlaceholderYamlMixin::class.java)
     mapper.addStudentMixIns()
     mapper
   }

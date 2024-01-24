@@ -124,7 +124,6 @@ object YamlMixinNames {
   const val INIT_FROM_DEPENDENCY = "initialized_from_dependency"
   const val STUDENT_ANSWER = "student_answer"
   const val INITIAL_STATE = "initial_state"
-  const val POSSIBLE_ANSWER = JsonMixinNames.POSSIBLE_ANSWER
   const val ENCRYPTED_POSSIBLE_ANSWER = "encrypted_possible_answer"
   const val SELECTED = "selected"
 

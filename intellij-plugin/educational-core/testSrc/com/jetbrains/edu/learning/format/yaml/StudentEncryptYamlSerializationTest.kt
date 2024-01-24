@@ -55,9 +55,9 @@ class StudentEncryptYamlSerializationTest : EduTestCase() {
     |      type here
     |      and here
     |    initialized_from_dependency: false
+    |    encrypted_possible_answer: 6zkm3NpDQQaIQ+CAebF//w==
     |    selected: false
     |    status: Unchecked
-    |    encrypted_possible_answer: 6zkm3NpDQQaIQ+CAebF//w==
     |  encrypted_text: lrKTY22nc3exEO7HQjXPxaXf97REIR5R1llqKFTGca0=
     |  learner_created: false
     |status: Unchecked
@@ -93,9 +93,9 @@ class StudentEncryptYamlSerializationTest : EduTestCase() {
     |      length: 16
     |      offset: 0
     |    initialized_from_dependency: false
+    |    encrypted_possible_answer: $encryptedPossibleAnswer
     |    selected: false
     |    status: Unchecked
-    |    encrypted_possible_answer: $encryptedPossibleAnswer
     |  encrypted_text: $taskSolutionEncrypted
     |  learner_created: false
     |status: Unchecked

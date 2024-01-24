@@ -18,15 +18,14 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.INIT_FROM_DEPENDENC
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LENGTH
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.OFFSET
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PLACEHOLDER_TEXT
-import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.POSSIBLE_ANSWER
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SELECTED
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.STATUS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.STUDENT_ANSWER
 
 @Suppress("unused") // used for yaml serialization
 @JsonDeserialize(builder = EduAnswerPlaceholderBuilder::class)
-@JsonPropertyOrder(OFFSET, LENGTH, PLACEHOLDER_TEXT, DEPENDENCY, INITIAL_STATE, INIT_FROM_DEPENDENCY, POSSIBLE_ANSWER, SELECTED, STATUS,
-                   STUDENT_ANSWER, LENGTH, OFFSET)
+@JsonPropertyOrder(OFFSET, LENGTH, PLACEHOLDER_TEXT, DEPENDENCY, INITIAL_STATE, INIT_FROM_DEPENDENCY, ENCRYPTED_POSSIBLE_ANSWER, SELECTED, STATUS,
+                   STUDENT_ANSWER)
 abstract class StudentAnswerPlaceholderYamlMixin : AnswerPlaceholderYamlMixin() {
 
   @JsonProperty(INITIAL_STATE)
