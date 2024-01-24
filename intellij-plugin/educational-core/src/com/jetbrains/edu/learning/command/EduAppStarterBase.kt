@@ -3,13 +3,11 @@ package com.jetbrains.edu.learning.command
 import com.intellij.openapi.application.ModernApplicationStarter
 import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.diagnostic.logger
-import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
-import org.apache.commons.cli.*
+import com.jetbrains.edu.learning.onError
 import kotlin.system.exitProcess
 
 @Suppress("UnstableApiUsage")
@@ -39,24 +37,13 @@ abstract class EduAppStarterBase<T : Args> : ModernApplicationStarter() {
   private fun parseArgs(args: List<String>): T {
     val options = Options()
 
-    val group = OptionGroup()
-    group.isRequired = true
-    group.addOption(Option(null, COURSE_ARCHIVE_PATH_OPTION, true, "Path to course archive file"))
-    group.addOption(
-      Option(null, MARKETPLACE_COURSE_LINK_OPTION, true, """Marketplace course link. Supported formats:
-      - %course-id%
-      - %course-id%-%plugin-name%
-      - https://plugins.jetbrains.com/plugin/%course-id%
-      - https://plugins.jetbrains.com/plugin/%course-id%-%plugin-name%.
-      
-      So, for https://plugins.jetbrains.com/plugin/16630-introduction-to-python course, you can pass:
-      - 16630
-      - 16630-introduction-to-python
-      - https://plugins.jetbrains.com/plugin/16630
-      - https://plugins.jetbrains.com/plugin/16630-introduction-to-python
-    """.trimIndent())
-    )
-    options.addOptionGroup(group)
+    val courseSourceGroup = OptionGroup()
+    courseSourceGroup.isRequired = true
+    for (courseSource in CourseSource.values()) {
+      courseSourceGroup.addOption(Option(null, courseSource.option, true, courseSource.description))
+    }
+    options.addOptionGroup(courseSourceGroup)
+
     addCustomArgs(options)
 
     val parser = DefaultParser()
@@ -89,34 +76,15 @@ abstract class EduAppStarterBase<T : Args> : ModernApplicationStarter() {
     formatter.printHelp("$commandName /path/to/project", options)
   }
 
-  private fun loadCourse(args: Args): Course {
-    val courseArchivePath = args.getOptionValue(COURSE_ARCHIVE_PATH_OPTION)
-    val marketplaceCourseLink = args.getOptionValue(MARKETPLACE_COURSE_LINK_OPTION)
-    return when {
-      courseArchivePath != null -> {
-        val course = EduUtilsKt.getLocalCourse(courseArchivePath)
-        if (course == null) {
-          logErrorAndExit("Failed to create course object from `$courseArchivePath` archive")
-        }
-        course
-      }
-      marketplaceCourseLink != null -> {
-        val course = MarketplaceConnector.getInstance().getCourseInfoByLink(marketplaceCourseLink, searchPrivate = true)
-        if (course == null) {
-          logErrorAndExit("Failed to load Marketplace course `$marketplaceCourseLink`")
-        }
-        course
-      }
-      else -> error("unreachable")
+  private suspend fun loadCourse(args: Args): Course {
+    return args.loadCourse().onError { error ->
+      logErrorAndExit(error)
     }
   }
   
   companion object {
     @JvmStatic
     protected val LOG = logger<EduCourseCreatorAppStarter>()
-    
-    private const val COURSE_ARCHIVE_PATH_OPTION = "archive"
-    private const val MARKETPLACE_COURSE_LINK_OPTION = "marketplace"
 
     @JvmStatic
     fun logErrorAndExit(message: String): Nothing {
