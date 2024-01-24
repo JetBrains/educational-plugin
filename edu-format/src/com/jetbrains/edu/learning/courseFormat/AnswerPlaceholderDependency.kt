@@ -9,6 +9,9 @@ class AnswerPlaceholderDependency() {
   var taskName: String = ""
   var fileName: String = ""
   var placeholderIndex: Int = 0
+
+  // isVisible is used only for backward compatibility.
+  // It might have been written to json/yaml in older versions of the plugin
   var isVisible: Boolean = true
 
   @Transient

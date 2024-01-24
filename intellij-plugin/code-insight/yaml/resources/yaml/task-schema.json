@@ -100,6 +100,11 @@
         },
         "dependency": {
           "$ref": "#/definitions/dependency"
+        },
+        "is_visible": {
+          "type": "boolean",
+          "description" : "If the placeholder is invisible, its borders will not be drawn for learners",
+          "default" : true
         }
       },
       "required": [

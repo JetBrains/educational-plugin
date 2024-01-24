@@ -7,16 +7,18 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
+import com.jetbrains.edu.learning.json.mixins.TrueValueFilter
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.errorHandling.negativeLengthNotAllowedMessage
 import com.jetbrains.edu.learning.yaml.errorHandling.negativeOffsetNotAllowedMessage
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.DEPENDENCY
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.IS_VISIBLE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LENGTH
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.OFFSET
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PLACEHOLDER_TEXT
 
 @Suppress("unused") // used for yaml serialization
-@JsonPropertyOrder(OFFSET, LENGTH, PLACEHOLDER_TEXT, DEPENDENCY)
+@JsonPropertyOrder(OFFSET, LENGTH, PLACEHOLDER_TEXT, DEPENDENCY, IS_VISIBLE)
 @JsonDeserialize(builder = AnswerPlaceholderBuilder::class)
 abstract class AnswerPlaceholderYamlMixin {
   @JsonProperty(OFFSET)
@@ -31,6 +33,10 @@ abstract class AnswerPlaceholderYamlMixin {
 
   @JsonProperty(DEPENDENCY)
   private var placeholderDependency: AnswerPlaceholderDependency? = null
+
+  @JsonProperty(IS_VISIBLE)
+  @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = TrueValueFilter::class)
+  private var isVisible: Boolean = true
 }
 
 @JsonPOJOBuilder(withPrefix = "")
@@ -38,7 +44,8 @@ open class AnswerPlaceholderBuilder(
   @JsonProperty(OFFSET) val offset: Int,
   @JsonProperty(LENGTH) val length: Int,
   @JsonProperty(PLACEHOLDER_TEXT) val placeholderText: String,
-  @JsonProperty(DEPENDENCY) val dependency: AnswerPlaceholderDependency?
+  @JsonProperty(DEPENDENCY) val dependency: AnswerPlaceholderDependency?,
+  @JsonProperty(IS_VISIBLE) val isVisible: Boolean = true
 ) {
   @Suppress("unused") // deserialization
   private fun build(): AnswerPlaceholder {
@@ -58,6 +65,7 @@ open class AnswerPlaceholderBuilder(
     placeholder.placeholderText = placeholderText
     placeholder.offset = offset
     placeholder.placeholderDependency = dependency
+    placeholder.isVisible = isVisible
     placeholder.init()
     return placeholder
   }

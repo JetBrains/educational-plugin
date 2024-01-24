@@ -1,10 +1,12 @@
 package com.jetbrains.edu.learning.yaml.format
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.util.StdConverter
+import com.jetbrains.edu.learning.json.mixins.TrueValueFilter
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FILE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.IS_VISIBLE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LESSON
@@ -33,6 +35,7 @@ abstract class AnswerPlaceholderDependencyYamlMixin {
   private var placeholderIndex: Int = -1
 
   @JsonProperty(IS_VISIBLE)
+  @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = TrueValueFilter::class)
   private var isVisible = true
 }
 

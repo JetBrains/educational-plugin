@@ -337,7 +337,7 @@ abstract class TaskFileMixin : EduFileMixin() {
   private lateinit var _answerPlaceholders: List<AnswerPlaceholder>
 }
 
-@JsonPropertyOrder(OFFSET, LENGTH, DEPENDENCY, PLACEHOLDER_TEXT)
+@JsonPropertyOrder(OFFSET, LENGTH, DEPENDENCY, PLACEHOLDER_TEXT, IS_VISIBLE)
 abstract class AnswerPlaceholderMixin {
   @JsonProperty(OFFSET)
   private var offset: Int = -1
@@ -351,6 +351,10 @@ abstract class AnswerPlaceholderMixin {
 
   @JsonProperty(PLACEHOLDER_TEXT)
   private lateinit var placeholderText: String
+
+  @JsonProperty(IS_VISIBLE)
+  @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = TrueValueFilter::class)
+  private var isVisible: Boolean = true
 }
 
 @JsonPropertyOrder(OFFSET, LENGTH, DEPENDENCY, POSSIBLE_ANSWER, PLACEHOLDER_TEXT)
@@ -378,6 +382,7 @@ abstract class AnswerPlaceholderDependencyMixin {
   private var placeholderIndex: Int = -1
 
   @JsonProperty(IS_VISIBLE)
+  @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = TrueValueFilter::class)
   private var isVisible = true
 }
 

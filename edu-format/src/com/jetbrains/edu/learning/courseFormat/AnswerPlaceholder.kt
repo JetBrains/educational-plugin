@@ -29,6 +29,7 @@ class AnswerPlaceholder {
 
   var selected: Boolean = false
   var status: CheckStatus = CheckStatus.Unchecked
+  var isVisible: Boolean = true
 
   @Transient
   private var _taskFile: TaskFile? = null
@@ -75,8 +76,14 @@ class AnswerPlaceholder {
 
   val isCurrentlyVisible: Boolean
     get() {
-      val placeholderVisible = placeholderDependency?.isVisible ?: true
-      return placeholderVisible || !isInitializedFromDependency
+      val dependency = placeholderDependency
+
+      if (dependency != null) {
+        val placeholderVisible = dependency.isVisible && isVisible
+        return placeholderVisible || !isInitializedFromDependency
+      }
+
+      return isVisible
     }
 
   class MyInitialState {
