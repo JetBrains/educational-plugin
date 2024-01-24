@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
+import com.jetbrains.edu.learning.format.doTestPlaceholderAndDependencyVisibility
 import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
@@ -693,6 +694,74 @@ class StudentYamlDeserializationTest : EduTestCase() {
     // they are still broken, but differently.
     assertContentsEqual("d.png", TextualContents.EMPTY, dPng.contents)
   }
+
+  fun `test placeholder with invisible dependency`() = doTestPlaceholderAndDependencyVisibility(
+    STUDENT_MAPPER.deserializeTask("""
+        |type: edu
+        |files:
+        |- name: Test.java
+        |  placeholders:
+        |  - offset: 0
+        |    length: 3
+        |    placeholder_text: 'type here   '
+        |    dependency:
+        |      lesson: lesson1
+        |      task: task1
+        |      file: Test.java
+        |      placeholder: 1
+        |      is_visible: false
+        |    possible_answer: answer
+        |    status: Solved
+        |    student_answer: student answer
+        |    initial_state:
+        |      offset: 0
+        |      length: 1
+    """.trimMargin()
+    ), expectedPlaceholderVisibility = false)
+
+  fun `test invisible placeholder`() = doTestPlaceholderAndDependencyVisibility(
+    STUDENT_MAPPER.deserializeTask("""
+        |type: edu
+        |files:
+        |- name: Test.java
+        |  placeholders:
+        |  - offset: 0
+        |    length: 3
+        |    placeholder_text: 'type here   '
+        |    is_visible: false
+        |    possible_answer: answer
+        |    status: Solved
+        |    student_answer: student answer
+        |    initial_state:
+        |      offset: 0
+        |      length: 1
+    """.trimMargin()
+    ), expectedPlaceholderVisibility = false)
+
+  fun `test visible placeholder and invisible dependency`() = doTestPlaceholderAndDependencyVisibility(
+    STUDENT_MAPPER.deserializeTask("""
+        |type: edu
+        |files:
+        |- name: Test.java
+        |  placeholders:
+        |  - offset: 0
+        |    length: 3
+        |    placeholder_text: 'type here   '
+        |    dependency:
+        |      lesson: lesson1
+        |      task: task1
+        |      file: Test.java
+        |      placeholder: 1
+        |      is_visible: false
+        |    is_visible: true
+        |    possible_answer: answer
+        |    status: Solved
+        |    student_answer: student answer
+        |    initial_state:
+        |      offset: 0
+        |      length: 1
+    """.trimMargin()
+    ), expectedPlaceholderVisibility = false)
 
   private fun deserializeTask(yamlContent: String) = STUDENT_MAPPER.deserializeTask(yamlContent)
 }

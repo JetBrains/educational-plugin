@@ -64,7 +64,7 @@ class AnswerPlaceholderDependency() {
     private val DEPENDENCY_PATTERN = Pattern.compile("(([^#]+)#)?([^#]+)#([^#]+)#([^#]+)#(\\d+)")
 
     @Throws(InvalidDependencyException::class)
-    fun create(answerPlaceholder: AnswerPlaceholder, text: String, isVisible: Boolean = true): AnswerPlaceholderDependency? {
+    fun create(answerPlaceholder: AnswerPlaceholder, text: String): AnswerPlaceholderDependency? {
       if (text.isBlank()) {
         return null
       }
@@ -86,8 +86,7 @@ class AnswerPlaceholderDependency() {
         throw InvalidDependencyException(text)
       }
 
-      val dependency = AnswerPlaceholderDependency(answerPlaceholder, sectionName, lessonName, taskName, filePath, placeholderIndex,
-                                                   isVisible)
+      val dependency = AnswerPlaceholderDependency(answerPlaceholder, sectionName, lessonName, taskName, filePath, placeholderIndex, true)
       val targetPlaceholder = dependency.resolve(task.course)
                               ?: throw InvalidDependencyException(text, message("exception.placeholder.non.existing"))
       if (targetPlaceholder.taskFile.task == task) {

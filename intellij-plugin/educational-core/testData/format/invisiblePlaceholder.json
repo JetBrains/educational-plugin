@@ -1,0 +1,41 @@
+{
+  "items": [
+    {
+      "id": 0,
+      "title": "lesson1",
+      "task_list": [
+        {
+          "name": "task1",
+          "description_text": "First task description",
+          "description_format": "HTML",
+          "task_type": "edu",
+          "files": {
+            "Test.java": {
+              "name": "Test.java",
+              "text": "def foo():\n    write function body\n",
+              "is_binary": false,
+              "placeholders": [
+                {
+                  "offset": 15,
+                  "length": 19,
+                  "hints": [
+                    "my first hint"
+                  ],
+                  "possible_answer": "pass",
+                  "placeholder_text": "write function body",
+                  "is_visible": false
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "summary": "test",
+  "title": "Python Course",
+  "programming_language_id": "Python",
+  "language": "en",
+  "version": 17,
+  "additional_files": []
+}

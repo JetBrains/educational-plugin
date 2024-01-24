@@ -38,8 +38,8 @@ import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.FEEDBACK_LINK
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.FILE
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.FILES
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.FRAMEWORK_TYPE
-import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.IS_BINARY
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.HIGHLIGHT_LEVEL
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.IS_BINARY
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.IS_EDITABLE
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.IS_MULTIPLE_CHOICE
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.IS_VISIBLE
@@ -338,6 +338,7 @@ abstract class TaskFileMixin : EduFileMixin() {
 }
 
 @JsonPropertyOrder(OFFSET, LENGTH, DEPENDENCY, PLACEHOLDER_TEXT, IS_VISIBLE)
+@JsonDeserialize(converter = AnswerPlaceholderConverter::class)
 abstract class AnswerPlaceholderMixin {
   @JsonProperty(OFFSET)
   private var offset: Int = -1
@@ -511,4 +512,9 @@ private class TaskFileBuilder : EduFileBuilder() {
     result.answerPlaceholders = answerPlaceholders
     return result
   }
+}
+
+class AnswerPlaceholderConverter : StdConverter<AnswerPlaceholder, AnswerPlaceholder?>() {
+  override fun convert(value: AnswerPlaceholder): AnswerPlaceholder =
+    value.apply { takeIsVisibleFromDependency() }
 }

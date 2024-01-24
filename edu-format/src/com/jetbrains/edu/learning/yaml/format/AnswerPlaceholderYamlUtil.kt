@@ -66,6 +66,7 @@ open class AnswerPlaceholderBuilder(
     placeholder.offset = offset
     placeholder.placeholderDependency = dependency
     placeholder.isVisible = isVisible
+    placeholder.takeIsVisibleFromDependency()
     placeholder.init()
     return placeholder
   }

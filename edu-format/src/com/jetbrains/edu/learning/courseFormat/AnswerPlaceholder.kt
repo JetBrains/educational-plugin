@@ -51,6 +51,14 @@ class AnswerPlaceholder {
     this.placeholderText = placeholderText
   }
 
+  fun takeIsVisibleFromDependency() {
+    val dependency = placeholderDependency ?: return
+    if (!dependency.isVisible) {
+      dependency.isVisible = true
+      isVisible = false
+    }
+  }
+
   fun init(file: TaskFile, isRestarted: Boolean) {
     taskFile = file
     if (isRestarted) return

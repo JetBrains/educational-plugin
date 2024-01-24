@@ -2,7 +2,6 @@
 
 package com.jetbrains.edu.learning.yaml.format.student
 
-import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -10,7 +9,6 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.json.encrypt.Encrypt
-import com.jetbrains.edu.learning.json.mixins.TrueValueFilter
 import com.jetbrains.edu.learning.yaml.format.AnswerPlaceholderBuilder
 import com.jetbrains.edu.learning.yaml.format.AnswerPlaceholderYamlMixin
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.DEPENDENCY
@@ -49,10 +47,6 @@ abstract class StudentAnswerPlaceholderYamlMixin : AnswerPlaceholderYamlMixin() 
 
   @JsonProperty(STUDENT_ANSWER)
   private var studentAnswer: String? = null
-
-  @JsonProperty(IS_VISIBLE)
-  @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = TrueValueFilter::class)
-  private var isVisible: Boolean = true
 }
 
 class InitialStateMixin {
@@ -74,8 +68,9 @@ class EduAnswerPlaceholderBuilder(
   offset: Int,
   length: Int,
   placeholderText: String,
-  dependency: AnswerPlaceholderDependency?
-) : AnswerPlaceholderBuilder(offset, length, placeholderText, dependency) {
+  dependency: AnswerPlaceholderDependency?,
+  isVisible: Boolean
+) : AnswerPlaceholderBuilder(offset, length, placeholderText, dependency, isVisible) {
   override fun createPlaceholder(): AnswerPlaceholder {
     val placeholder = super.createPlaceholder()
     placeholder.initialState = initialState

@@ -142,6 +142,21 @@ class CourseFormatTest : EduTestCase() {
     assertTrue(task.solutionHidden!!)
   }
 
+  fun testPlaceholderWithInvisibleDependency() = doTestPlaceholderAndDependencyVisibility(
+    courseFromJson.lessons[0].taskList[0],
+    expectedPlaceholderVisibility = false
+  )
+
+  fun testInvisiblePlaceholder() = doTestPlaceholderAndDependencyVisibility(
+    courseFromJson.lessons[0].taskList[0],
+    expectedPlaceholderVisibility = false
+  )
+
+  fun testVisiblePlaceholderAndInvisibleDependency() = doTestPlaceholderAndDependencyVisibility(
+    courseFromJson.lessons[0].taskList[0],
+    expectedPlaceholderVisibility = false
+  )
+
   fun testLocalCourseWithPlugins() {
     val pluginDependencies = courseFromJson.pluginDependencies
     assertSize(1, pluginDependencies)

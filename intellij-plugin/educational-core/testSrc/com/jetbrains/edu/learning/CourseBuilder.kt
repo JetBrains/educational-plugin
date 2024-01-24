@@ -780,10 +780,11 @@ class TaskFileBuilder(val task: Task? = null) {
     if (placeholderText != null) {
       answerPlaceholder.placeholderText = placeholderText
     }
-    val createdDependency = AnswerPlaceholderDependency.create(answerPlaceholder, dependency, isVisible)
+    val createdDependency = AnswerPlaceholderDependency.create(answerPlaceholder, dependency)
     if (createdDependency != null) {
       answerPlaceholder.placeholderDependency = createdDependency
     }
+    answerPlaceholder.isVisible = isVisible
   }
 }
 
