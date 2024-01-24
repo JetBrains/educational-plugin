@@ -25,6 +25,10 @@ import java.awt.*
 object PlaceholderPainter {
 
   val STROKE_WIDTH: Float = JBUIScale.scale(2f)
+  private val DASH_PATTERN: FloatArray = floatArrayOf(JBUIScale.scale(2f), JBUIScale.scale(6f))
+
+  private val SOLID_BORDER_STROKE = BasicStroke(STROKE_WIDTH)
+  private val DASHED_BORDER_STROKE = BasicStroke(STROKE_WIDTH, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10.0f, DASH_PATTERN, 0.0f)
 
   private val disposables: MutableMap<AnswerPlaceholder, MutableSet<Disposable>> = HashMap()
 
@@ -65,7 +69,21 @@ object PlaceholderPainter {
       override fun executePaint(component: Component?, g: Graphics2D) {
         if (isStudentProject && !placeholder.isCurrentlyVisible) return
         g.color = placeholder.getColor()
-        g.stroke = BasicStroke(STROKE_WIDTH)
+        g.stroke = if (placeholder.isCurrentlyVisible) {
+          val logicallyInvisible = !placeholder.isVisible || (placeholder.placeholderDependency?.isVisible == false)
+          // We may see logically invisible placeholders if it is a teacher mode, or it is a learner mode, but the placeholder
+          // is not initialized from dependency
+          if (logicallyInvisible) {
+            DASHED_BORDER_STROKE
+          }
+          else {
+            SOLID_BORDER_STROKE
+          }
+        }
+        else {
+          // dashed border for the course creation mode
+          DASHED_BORDER_STROKE
+        }
         val shape = getPlaceholderShape(editor, placeholder.offset, placeholder.endOffset).getShape()
         if (!isVisible(shape, editor)) return
         g.draw(shape)
