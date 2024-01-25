@@ -71,21 +71,15 @@ class FrameworkLessonGetTaskStateTest : EduTestCase() {
     val task1 = lesson.taskList[0]
     val otherTask = otherLesson.taskList.first()
 
-    withVirtualFileListener(course) {
-      task1.openTaskFileInEditor("src/Task.kt")
-      myFixture.type("0")
-      task1.openTaskFileInEditor("src/Baz.kt")
-      myFixture.type("1")
-      testAction(NextTaskAction.ACTION_ID)
-    }
+    task1.openTaskFileInEditor("src/Task.kt")
+    testAction(NextTaskAction.ACTION_ID)
 
     assertThrows(IllegalArgumentException::class.java) {
       FrameworkLessonManager.getInstance(project).getTaskState(lesson, otherTask)
     }
   }
 
-  private fun createFrameworkCourse(
-  ): Course = courseWithFiles(
+  private fun createFrameworkCourse(): Course = courseWithFiles(
     language = FakeGradleBasedLanguage,
     courseProducer = ::EduCourse,
   ) {
