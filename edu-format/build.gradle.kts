@@ -50,6 +50,9 @@ tasks {
   }
 }
 
+val eduFormatArtifactPathProperty = "eduFormatArtifactPath"
+val eduFormatSourcesArtifactPathProperty = "eduFormatSourcesArtifactPath"
+
 publishing {
   publications {
     create<MavenPublication>("edu-format") {
@@ -57,9 +60,22 @@ publishing {
       artifactId = "edu-format"
       version = prop("publishingVersion")
 
-      // Manual artifact specification leads to absense of transitive dependencies in `pom` file
-      artifact(tasks["jar"])
-      artifact(tasks["sourcesJar"])
+      // Usually, we want to pass paths to already built edu-format artifacts from pinned build on TeamCity during release
+      // instead of building them again.
+      // It's supposed such paths are passed via `eduFormatArtifactPath` and `eduFormatSourcesArtifactPath` properties
+      if (hasProperty(eduFormatArtifactPathProperty) && hasProperty(eduFormatSourcesArtifactPathProperty)) {
+        artifact(prop(eduFormatArtifactPathProperty))
+        artifact(prop(eduFormatSourcesArtifactPathProperty)) {
+          classifier = "sources"
+        }
+      }
+      // If `eduFormatArtifactPath` and `eduFormatSourcesArtifactPath` properties are not passed
+      // build library and publish artifacts of the corresponding tasks
+      else {
+        // Manual artifact specification leads to absense of transitive dependencies in `pom` file
+        artifact(tasks["jar"])
+        artifact(tasks["sourcesJar"])
+      }
     }
   }
   repositories {
