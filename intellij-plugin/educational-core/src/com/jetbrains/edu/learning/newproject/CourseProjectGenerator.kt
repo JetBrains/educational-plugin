@@ -6,12 +6,11 @@ import com.intellij.ide.impl.OpenProjectTask
 import com.intellij.ide.impl.TrustedPaths
 import com.intellij.idea.ActionsBundle
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.*
 import com.intellij.openapi.project.NOTIFICATIONS_SILENT_MODE
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
@@ -20,10 +19,10 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.impl.status.widget.StatusBarWidgetsManager
 import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
 import com.intellij.util.PathUtil
+import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.messages.Topic
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.CCUtils.isLocalCourse
@@ -39,9 +38,19 @@ import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.progress.*
+import com.jetbrains.edu.learning.progress.ModalTaskOwner
+import com.jetbrains.edu.learning.progress.TaskCancellation
+import com.jetbrains.edu.learning.progress.indeterminateStep
+import com.jetbrains.edu.learning.progress.progressStep
+import com.jetbrains.edu.learning.progress.runWithModalProgressBlocking
+import com.jetbrains.edu.learning.progress.withModalProgress
+import com.jetbrains.edu.learning.progress.withRawProgressReporter
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillCourseProjectGenerator
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
 import java.nio.file.Path
@@ -51,10 +60,13 @@ import kotlin.system.measureTimeMillis
  * If you add any new public methods here, please do not forget to add it also to
  * @see HyperskillCourseProjectGenerator
  */
+@Suppress("UnstableApiUsage")
 abstract class CourseProjectGenerator<S : EduProjectSettings>(
   protected val courseBuilder: EduCourseBuilder<S>,
   protected val course: Course
 ) {
+
+  @RequiresBlockingContext
   open fun afterProjectGenerated(project: Project, projectSettings: S, onConfigurationFinished: () -> Unit) {
     // project.isLocalCourse info is stored in PropertiesComponent to keep it after course restart on purpose
     // not to show login widget for local course
@@ -77,16 +89,28 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
   //  * We don't know generic parameter of EduPluginConfigurator after it was gotten through extension point mechanism
   //  * Kotlin and Java do type erasure a little differently
   // we use Object instead of S and cast to S when it needed
+  @RequiresEdt
+  @RequiresBlockingContext
   fun doCreateCourseProject(location: String, projectSettings: EduProjectSettings): Project? {
+    return runWithModalProgressBlocking(ModalTaskOwner.guess(), EduCoreBundle.message("generate.course.progress.title"), TaskCancellation.cancellable()) {
+      doCreateCourseProjectAsync(location, projectSettings)
+    }
+  }
+
+  private suspend fun doCreateCourseProjectAsync(location: String, projectSettings: EduProjectSettings): Project? {
     @Suppress("UNCHECKED_CAST")
     val castedProjectSettings = projectSettings as S
     applySettings(projectSettings)
     val createdProject = createProject(location) ?: return null
 
-    afterProjectGenerated(createdProject, castedProjectSettings) {
-      ApplicationManager.getApplication().messageBus
-        .syncPublisher(COURSE_PROJECT_CONFIGURATION)
-        .onCourseProjectConfigured(createdProject)
+    withContext(Dispatchers.EDT) {
+      blockingContext {
+        afterProjectGenerated(createdProject, castedProjectSettings) {
+          ApplicationManager.getApplication().messageBus
+            .syncPublisher(COURSE_PROJECT_CONFIGURATION)
+            .onCourseProjectConfigured(createdProject)
+        }
+      }
     }
     return createdProject
   }
@@ -104,19 +128,26 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
    *
    * @return project of new course or null if new project can't be created
    */
-  private fun createProject(locationString: String): Project? {
+  private suspend fun createProject(locationString: String): Project? {
     val location = File(FileUtil.toSystemDependentName(locationString))
-    if (!location.exists() && !location.mkdirs()) {
+    val projectDirectoryExists = withContext(Dispatchers.IO) {
+      !location.exists() && !location.mkdirs()
+    }
+    if (projectDirectoryExists) {
       val message = ActionsBundle.message("action.NewDirectoryProject.cannot.create.dir", location.absolutePath)
-      Messages.showErrorDialog(message, ActionsBundle.message("action.NewDirectoryProject.title"))
+      withContext(Dispatchers.EDT) {
+        Messages.showErrorDialog(message, ActionsBundle.message("action.NewDirectoryProject.title"))
+      }
       return null
     }
-    val baseDir = WriteAction.compute<VirtualFile?, RuntimeException> { LocalFileSystem.getInstance().refreshAndFindFileByIoFile(location) }
+    val baseDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(location)
     if (baseDir == null) {
       LOG.error("Couldn't find '$location' in VFS")
       return null
     }
-    VfsUtil.markDirtyAndRefresh(false, true, true, baseDir)
+    blockingContext {
+      VfsUtil.markDirtyAndRefresh(false, true, true, baseDir)
+    }
 
     RecentProjectsManager.getInstance().lastProjectCreationLocation = PathUtil.toSystemIndependentName(location.parent)
 
@@ -129,19 +160,29 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     }
 
     val holder = CourseInfoHolder.fromCourse(course, baseDir)
-    // @formatter:off
-    ProgressManager.getInstance().runProcessWithProgressSynchronously<Unit, IOException>({
+
+    // If a course doesn't contain top-level items, let's count course itself as single item for creation.
+    // It's a minor workaround to avoid zero end progress during course structure creation.
+    val itemsToCreate = maxOf(1, course.items.size)
+    // Total progress: item count steps for each top-level item plus one step for project creation itself
+    val structureGenerationEndFraction = itemsToCreate.toDouble() / (itemsToCreate + 1)
+    progressStep(structureGenerationEndFraction, EduCoreBundle.message("generate.course.structure.progress.text")) {
       createCourseStructure(holder)
-    }, EduCoreBundle.message("generate.project.generate.course.structure.progress.text"), false, null)
-    // @formatter:on
+    }
 
-    val newProject = openNewCourseProject(location.toPath(), this::prepareToOpen) ?: return null
+    val newProject = progressStep(1.0, EduCoreBundle.message("generate.course.project.progress.text")) {
+      openNewCourseProject(location.toPath(), this@CourseProjectGenerator::prepareToOpen)
+    } ?: return null
 
-    // @formatter:off
-    ProgressManager.getInstance().runProcessWithProgressSynchronously<Unit, IOException>({
-      unpackAdditionalFiles(holder, ONLY_IDEA_DIRECTORY)
-    }, EduCoreBundle.message("generate.project.unpack.course.project.settings.progress.text"), false, newProject)
-    // @formatter:on
+    // A new progress window is needed because here we already have a new project frame,
+    // and previous progress is not visible for user anymore
+    withModalProgress(ModalTaskOwner.project(newProject), EduCoreBundle.message("generate.course.progress.title"), TaskCancellation.nonCancellable()) {
+      indeterminateStep(EduCoreBundle.message("generate.project.unpack.course.project.settings.progress.text")) {
+        blockingContext {
+          unpackAdditionalFiles(holder, ONLY_IDEA_DIRECTORY)
+        }
+      }
+    }
 
     // after adding files with settings to .idea directory, almost all settings are synchronized automatically,
     // but the inspection profiles are to be synchronized manually
@@ -154,20 +195,20 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     NOTIFICATIONS_SILENT_MODE.set(project, true)
   }
 
-  private fun openNewCourseProject(
+  private suspend fun openNewCourseProject(
     location: Path,
     prepareToOpenCallback: suspend (Project, Module) -> Unit
   ): Project? {
     val task = OpenProjectTask(course, prepareToOpenCallback)
 
-    return ProjectManagerEx.getInstanceEx().openProject(location, task)
+    return ProjectManagerEx.getInstanceEx().openProjectAsync(location, task)
   }
 
   /**
    * Creates course structure in directory provided by [holder]
    */
   @VisibleForTesting
-  open fun createCourseStructure(holder: CourseInfoHolder<Course>) {
+  open suspend fun createCourseStructure(holder: CourseInfoHolder<Course>) {
     holder.course.init(false)
     val isNewCourseCreatorCourse = isNewCourseCreatorCourse
 
@@ -179,13 +220,20 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     }
 
     try {
-      generateCourseContent(holder, isNewCourseCreatorCourse, ProgressManager.getInstance().progressIndicator)
+      withRawProgressReporter {
+        blockingContext {
+          blockingContextToIndicator {
+            generateCourseContent(holder, isNewCourseCreatorCourse, ProgressManager.getInstance().progressIndicator)
+          }
+        }
+      }
     }
     catch (e: IOException) {
       LOG.error("Failed to generate course", e)
     }
   }
 
+  @RequiresBlockingContext
   @Throws(IOException::class)
   private fun generateCourseContent(
     holder: CourseInfoHolder<Course>,

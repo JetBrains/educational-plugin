@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
@@ -59,18 +60,20 @@ fun course(
   return course
 }
 
+@Suppress("UnstableApiUsage")
 fun Course.createCourseFiles(
   project: Project,
   baseDir: VirtualFile = LightPlatformTestCase.getSourceRoot()
 ) {
-  @Suppress("HardCodedStringLiteral")
-  ProgressManager.getInstance().runProcessWithProgressSynchronously(Runnable {
+  ProgressManager.getInstance().runProcessWithProgressSynchronously({
     val holder = CourseInfoHolder.fromCourse(this, baseDir)
 
-    configurator
-      ?.courseBuilder
-      ?.getCourseProjectGenerator(this)
-      ?.createCourseStructure(holder)
+    runBlockingCancellable {
+      configurator
+        ?.courseBuilder
+        ?.getCourseProjectGenerator(this@createCourseFiles)
+        ?.createCourseStructure(holder)
+    }
 
     GeneratorUtils.unpackAdditionalFiles(holder, ONLY_IDEA_DIRECTORY)
   }, "Course Structure Generation", false, project)

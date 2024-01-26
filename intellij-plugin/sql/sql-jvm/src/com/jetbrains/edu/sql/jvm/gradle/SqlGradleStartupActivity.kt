@@ -16,6 +16,7 @@ import com.intellij.sql.dialects.h2.H2Dialect
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.progress.withBackgroundProgress
 import com.jetbrains.edu.sql.core.EduSqlBundle
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.annotations.TestOnly

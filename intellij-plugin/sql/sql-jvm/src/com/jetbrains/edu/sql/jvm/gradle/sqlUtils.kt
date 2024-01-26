@@ -38,6 +38,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.progress.withRawProgressReporter
 import com.jetbrains.edu.sql.core.EduSqlBundle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.future.await
