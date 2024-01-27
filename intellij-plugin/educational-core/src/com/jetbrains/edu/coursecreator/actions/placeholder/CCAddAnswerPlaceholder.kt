@@ -43,8 +43,9 @@ open class CCAddAnswerPlaceholder : CCAnswerPlaceholderAction() {
     answerPlaceholder.length = possibleAnswer.length
     val dependencyInfo = dlg.getDependencyInfo()
     if (dependencyInfo != null) {
-      answerPlaceholder.placeholderDependency = create(answerPlaceholder, dependencyInfo.dependencyPath, dependencyInfo.isVisible)
+      answerPlaceholder.placeholderDependency = create(answerPlaceholder, dependencyInfo.dependencyPath)
     }
+    answerPlaceholder.isVisible = dlg.getVisible()
     answerPlaceholder.init()
     if (!model.hasSelection()) {
       DocumentUtil.writeInRunUndoTransparentAction { editor.document.insertString(offset, defaultPlaceholderText) }

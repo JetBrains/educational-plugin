@@ -5,7 +5,6 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.DialogWrapperPeer
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.ui.HideableDecorator
-import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.panel
@@ -26,12 +25,8 @@ open class CCCreateAnswerPlaceholderDialog(
   private val placeholder: AnswerPlaceholder
 ) : DialogWrapper(project, true) {
 
-  private val panel: CCAddAnswerPlaceholderPanel = CCAddAnswerPlaceholderPanel(placeholder.placeholderText)
+  private val panel: CCAddAnswerPlaceholderPanel = CCAddAnswerPlaceholderPanel(placeholder)
   private val dependencyPathField: JBTextField = JBTextField(0)
-  private val visibilityCheckBox: JBCheckBox = JBCheckBox(
-    EduCoreBundle.message("label.visible"),
-    placeholder.placeholderDependency?.isVisible == true
-  )
   private val isFirstTask: Boolean = placeholder.taskFile.task.isFirstInCourse
   private val currentText: String get() = dependencyPathField.text ?: ""
 
@@ -58,7 +53,6 @@ open class CCCreateAnswerPlaceholderDialog(
         row {
           comment(EduCoreBundle.message("ui.dialog.create.answer.placeholder.path.pattern"))
         }
-        row { cell(visibilityCheckBox) }
       }
       contentPanel.border = JBUI.Borders.emptyBottom(5)
       val decorator = HideableDecorator(dependencyPanel, EduCoreBundle.message("ui.dialog.create.answer.placeholder.dependency"), true)
@@ -66,14 +60,14 @@ open class CCCreateAnswerPlaceholderDialog(
       if (placeholder.placeholderDependency != null) {
         decorator.setOn(true)
         dependencyPathField.text = placeholder.placeholderDependency?.toString()
-        panel.preferredSize = JBUI.size(PLACEHOLDER_PANEL_WIDTH, 230)
+        panel.preferredSize = JBUI.size(PLACEHOLDER_PANEL_WIDTH, 330)
       }
 
       dependencyPanel.alignmentX = Component.LEFT_ALIGNMENT
       contentPanel.maximumSize = JBUI.size(Int.MAX_VALUE, 0)
       dependencyPathField.minimumSize = JBUI.size(PLACEHOLDER_PANEL_WIDTH, 0)
       panel.add(dependencyPanel, BorderLayout.SOUTH)
-      panel.minimumSize = JBUI.size(PLACEHOLDER_PANEL_WIDTH, 130)
+      panel.minimumSize = JBUI.size(PLACEHOLDER_PANEL_WIDTH, 180)
     }
     return panel
   }
@@ -98,13 +92,15 @@ open class CCCreateAnswerPlaceholderDialog(
 
   open fun getPlaceholderText(): String = panel.getAnswerPlaceholderText().trim()
 
+  open fun getVisible(): Boolean = panel.getVisible()
+
   open fun getDependencyInfo(): DependencyInfo? =
     if (!(currentText.isBlank() || isFirstTask)) {
-      DependencyInfo(currentText, visibilityCheckBox.isSelected)
+      DependencyInfo(currentText)
     }
     else null
 
-  data class DependencyInfo(val dependencyPath: String, val isVisible: Boolean)
+  data class DependencyInfo(val dependencyPath: String)
 }
 
 private val Task.isFirstInCourse: Boolean

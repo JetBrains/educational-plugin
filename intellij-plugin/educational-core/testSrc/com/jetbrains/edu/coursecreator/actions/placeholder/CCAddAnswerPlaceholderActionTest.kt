@@ -74,7 +74,7 @@ class CCAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() 
     val placeholderDependency = AnswerPlaceholderDependency(placeholderExpected, null, "lesson1", "task1", "Task.kt", 1, true)
     placeholderExpected.placeholderDependency = placeholderDependency
     doTest("lesson1/task2/Task.kt",
-           CCTestAddAnswerPlaceholder(CCCreateAnswerPlaceholderDialog.DependencyInfo("lesson1#task1#Task.kt#1", true)), taskFile,
+           CCTestAddAnswerPlaceholder(CCCreateAnswerPlaceholderDialog.DependencyInfo("lesson1#task1#Task.kt#1")), taskFile,
            taskFileExpected)
   }
   fun `test sort placeholders`() {
