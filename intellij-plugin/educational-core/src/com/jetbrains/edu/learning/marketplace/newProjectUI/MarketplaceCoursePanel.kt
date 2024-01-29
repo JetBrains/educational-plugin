@@ -6,6 +6,7 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseCreationInfo
+import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.GrayTextHtmlPanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseBindData
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
@@ -49,7 +50,7 @@ class MarketplaceCoursePanel(disposable: Disposable): CoursePanel(disposable, tr
       val authors = course.authorFullNames.joinToString()
       val license = course.license
 
-      if (authors.isEmpty() || license.isNullOrEmpty()) {
+      if (authors.isEmpty() || license.isNullOrEmpty() || CoursesStorage.getInstance().hasCourse(course)) {
         isVisible = false
         return
       }
