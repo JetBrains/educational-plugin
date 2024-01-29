@@ -953,6 +953,76 @@
     same means that were used in previous format versions. 
     The reason is that we expect bugs that sometimes prevent writing this field.
 
+18. Placeholders got the `is_visible` property.
+    It is boolean, and if it is omitted, it defaults to true.
+
+    Invisible placeholders have no visible border.
+    Previously, invisible borders could only be achieved if a dependency of a placeholder was itself invisible.
+    We are now deprecating the `is_invisible` property for dependencies, indicating that the same information is stored for the placeholder.
+
+    If both the dependency and the placeholder have the `is_visible` property set, visibility is
+    calculated as follows: `placeholder is visible = placeholder.is_visible && placeholder.dependency.is_visible`. 
+    In other words, for a placeholder to be **invisible**, either it or its dependency must have `"is_visible": false`.
+
+    **Example:**
+    ```json
+      "placeholders" : [
+        {
+          "offset" : 32,
+          "length" : 6,
+          "possible_answer" : "AVODeu3+bfQwc+pODOmZCg==",
+          "placeholder_text" : "PLACEHODER 1",
+          // now the placeholder may be invisible:
+          "is_visible" : false
+        },
+        {
+          "offset" : 40,
+          "length" : 6,
+          "dependency" : {
+            "lesson" : "lesson1",
+            "task" : "task1",
+            "file" : "src/Task.kt",
+            "placeholder" : 0,
+            // dependency still can be invisible for backward compatibility, but it is deprecated
+            "is_visible" : false
+          },
+          "possible_answer" : "w74KEvL12IWVnr0L0pdEww==",
+          "placeholder_text" : "PLACEHODER 2"
+        },
+        {
+          "offset" : 48,
+          "length" : 6,
+          "dependency" : {
+            "lesson" : "lesson1",
+            "task" : "task1",
+            "file" : "src/Task.kt",
+            "placeholder" : 0
+          },
+          "possible_answer" : "w74KEvL12IWVnr0L0pdEww==",
+          "placeholder_text" : "PLACEHODER 3",
+          // it is better to have is_visible here, outside of the dependency
+          "is_visible" : false
+        },
+       {
+          "offset" : 56,
+          "length" : 6,
+          "dependency" : {
+            "lesson" : "lesson1",
+            "task" : "task1",
+            "file" : "src/Task.kt",
+            "placeholder" : 0,
+            // Both the dependency and the placeholder may have the is_visible property
+            "is_visible" : false
+          },
+          "possible_answer" : "w74KEvL12IWVnr0L0pdEww==",
+          "placeholder_text" : "PLACEHODER 4",
+          // In this case, the placeholder is considered invisible, because its dependency is invisible
+          "is_visible" : true
+        }
+      ],
+    ```
+
+
 ### Courseignore format version
 
 #### Version 1
