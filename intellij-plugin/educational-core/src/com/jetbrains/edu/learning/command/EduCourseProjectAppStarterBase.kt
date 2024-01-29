@@ -8,6 +8,7 @@ import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
+import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -18,16 +19,27 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import org.apache.commons.cli.CommandLine
 import java.util.concurrent.TimeUnit
 
 /**
  * Loads given course, opens a project with loaded course and performs [performProjectAction]
  */
-abstract class EduCourseProjectAppStarterBase : EduAppStarterBase() {
+abstract class EduCourseProjectAppStarterBase : EduAppStarterBase<ArgsWithProjectPath>() {
 
   protected abstract val courseMode: CourseMode
 
-  final override suspend fun doMain(course: Course, args: Args): CommandResult {
+  override fun createArgs(cmd: CommandLine): Result<ArgsWithProjectPath, String> {
+    val positionalArgs = cmd.argList
+    return if (positionalArgs.isEmpty()) {
+      Err("Path to project is missing")
+    }
+    else {
+      Ok(ArgsWithProjectPath(positionalArgs[0], cmd))
+    }
+  }
+
+  final override suspend fun doMain(course: Course, args: ArgsWithProjectPath): CommandResult {
     val configurator = course.configurator
     if (configurator == null) {
       return CommandResult.Error(course.incompatibleCourseMessage())
@@ -44,7 +56,7 @@ abstract class EduCourseProjectAppStarterBase : EduAppStarterBase() {
   private suspend fun createCourseProject(
     course: Course,
     projectSettings: EduProjectSettings,
-    args: Args
+    args: ArgsWithProjectPath
   ): CommandResult {
     var errorMessage: String? = null
 
@@ -98,6 +110,8 @@ abstract class EduCourseProjectAppStarterBase : EduAppStarterBase() {
     waitUntil { startupManager.postStartupActivityPassed() }
   }
 }
+
+class ArgsWithProjectPath(val projectPath: String, cmd: CommandLine) : Args(cmd)
 
 private class ProjectConfigurationListener : CourseProjectGenerator.CourseProjectConfigurationListener {
 

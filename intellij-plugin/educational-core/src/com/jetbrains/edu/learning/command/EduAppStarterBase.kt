@@ -3,13 +3,16 @@ package com.jetbrains.edu.learning.command
 import com.intellij.openapi.application.ModernApplicationStarter
 import com.intellij.openapi.diagnostic.logger
 import com.jetbrains.edu.learning.EduUtilsKt
+import com.jetbrains.edu.learning.Err
+import com.jetbrains.edu.learning.Ok
+import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import org.apache.commons.cli.*
 import kotlin.system.exitProcess
 
 @Suppress("UnstableApiUsage")
-abstract class EduAppStarterBase : ModernApplicationStarter() {
+abstract class EduAppStarterBase<T : Args> : ModernApplicationStarter() {
 
   @Suppress("OVERRIDE_DEPRECATION")
   abstract override val commandName: String
@@ -30,9 +33,9 @@ abstract class EduAppStarterBase : ModernApplicationStarter() {
     }
   }
 
-  protected abstract suspend fun doMain(course: Course, args: Args): CommandResult
+  protected abstract suspend fun doMain(course: Course, args: T): CommandResult
 
-  private fun parseArgs(args: List<String>): Args {
+  private fun parseArgs(args: List<String>): T {
     val options = Options()
 
     val group = OptionGroup()
@@ -66,15 +69,16 @@ abstract class EduAppStarterBase : ModernApplicationStarter() {
       exitProcess(1)
     }
 
-    val positionalArgs = cmd.argList
-    if (positionalArgs.isEmpty()) {
-      printHelp(options)
-      logErrorAndExit("Path to project is missing")
+    return when (val result = createArgs(cmd)) {
+      is Ok -> result.value
+      is Err -> {
+        printHelp(options)
+        logErrorAndExit("Path to project is missing")
+      }
     }
-
-    return Args(positionalArgs.first(), cmd)
   }
 
+  protected abstract fun createArgs(cmd: CommandLine): Result<T, String>
   protected open fun addCustomArgs(options: Options) {}
 
   private fun printHelp(options: Options) {
@@ -132,9 +136,6 @@ abstract class EduAppStarterBase : ModernApplicationStarter() {
   }
 }
 
-class Args(
-  val projectPath: String,
-  private val cmd: CommandLine
-) {
+open class Args(private val cmd: CommandLine) {
   fun getOptionValue(option: String): String? = cmd.getOptionValue(option)
 }
