@@ -77,6 +77,24 @@ class CCAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() 
            CCTestAddAnswerPlaceholder(CCCreateAnswerPlaceholderDialog.DependencyInfo("lesson1#task1#Task.kt#1")), taskFile,
            taskFileExpected)
   }
+
+  fun `test add invisible placeholder`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      lesson("lesson1") {
+        eduTask("task1") {
+          taskFile("Task.kt", DEFAULT_TASK_TEXT)
+        }
+      }
+    }
+
+    val taskFile = course.lessons[0].taskList[0].taskFiles["Task.kt"]!!
+    val taskFileExpected = copy(taskFile)
+    val selection = Selection(10, 19)
+    taskFileExpected.createExpectedPlaceholder(10, DEFAULT_PLACEHOLDER_TEXT, DEFAULT_TASK_TEXT.substring(10, 19), visible=false)
+
+    doTest("lesson1/task1/Task.kt", CCTestAddAnswerPlaceholder(visible=false), taskFile, taskFileExpected, selection)
+  }
+
   fun `test sort placeholders`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
