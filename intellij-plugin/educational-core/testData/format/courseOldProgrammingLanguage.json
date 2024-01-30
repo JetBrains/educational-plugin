@@ -43,7 +43,7 @@
   "title": "My Python Course",
   "programming_language": "Python",
   "language": "en",
-  "version": 17,
+  "version": 18,
   "additional_files": [
     {
       "name": "test_helper.py",

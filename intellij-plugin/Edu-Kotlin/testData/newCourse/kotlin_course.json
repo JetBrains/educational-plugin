@@ -109,7 +109,7 @@
   "summary": "Kotlin Koans",
   "title": "Kotlin Koans",
   "programming_language_id": "kotlin",
-  "version": 17,
+  "version": 18,
   "additional_files": [
     {
       "name": "util/src/koansTestUtil.kt",
