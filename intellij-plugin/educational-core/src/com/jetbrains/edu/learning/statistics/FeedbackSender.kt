@@ -84,17 +84,18 @@ private const val UX_RESEARCH_LINK = "https://usabi.li/do/s/bda1fa"
 
 @Suppress("UnstableApiUsage")
 private val productMap = hashMapOf(
-    Pair(PlatformUtils.PYCHARM_CE_PREFIX, "PCC"),
-    Pair(PlatformUtils.PYCHARM_PREFIX, "PCP"),
-    Pair(PlatformUtils.PYCHARM_EDU_PREFIX, "PCE"),
-    Pair(PlatformUtils.IDEA_CE_PREFIX, "IIC"),
-    Pair(PlatformUtils.IDEA_PREFIX, "IIU"),
-    Pair("AndroidStudio", "AI"),
-    Pair(PlatformUtils.WEB_PREFIX, "WS"),
-    Pair(PlatformUtils.PHP_PREFIX, "PS"),
-    Pair(PlatformUtils.APPCODE_PREFIX, "AC"),
-    Pair(PlatformUtils.CLION_PREFIX, "CL"),
-    Pair(PlatformUtils.DBE_PREFIX, "DG"),
-    Pair(PlatformUtils.GOIDE_PREFIX, "GO"),
-    Pair(PlatformUtils.RIDER_PREFIX, "RD"),
-    Pair(PlatformUtils.RUBY_PREFIX, "RM"))
+  PlatformUtils.PYCHARM_CE_PREFIX to "PCC",
+  PlatformUtils.PYCHARM_PREFIX to "PCP",
+  PlatformUtils.PYCHARM_EDU_PREFIX to "PCE",
+  PlatformUtils.IDEA_CE_PREFIX to "IIC",
+  PlatformUtils.IDEA_PREFIX to "IIU",
+  "AndroidStudio" to "AI",
+  PlatformUtils.WEB_PREFIX to "WS",
+  PlatformUtils.PHP_PREFIX to "PS",
+  PlatformUtils.APPCODE_PREFIX to "AC",
+  PlatformUtils.CLION_PREFIX to "CL",
+  PlatformUtils.DBE_PREFIX to "DG",
+  PlatformUtils.GOIDE_PREFIX to "GO",
+  PlatformUtils.RIDER_PREFIX to "RD",
+  PlatformUtils.RUBY_PREFIX to "RM"
+)
