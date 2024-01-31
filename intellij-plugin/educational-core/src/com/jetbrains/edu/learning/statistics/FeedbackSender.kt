@@ -97,5 +97,6 @@ private val productMap = hashMapOf(
   PlatformUtils.DBE_PREFIX to "DG",
   PlatformUtils.GOIDE_PREFIX to "GO",
   PlatformUtils.RIDER_PREFIX to "RD",
-  PlatformUtils.RUBY_PREFIX to "RM"
+  PlatformUtils.RUBY_PREFIX to "RM",
+  PlatformUtils.DATASPELL_PREFIX to "DS"
 )

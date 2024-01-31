@@ -32,7 +32,7 @@ class PyCheckiOConfigurator : PyConfigurator(), CheckiOConnectorProvider {
   override val isCourseCreatorEnabled: Boolean = false
 
   override val isEnabled: Boolean
-    get() = !EduUtilsKt.isAndroidStudio()
+    get() = super.isEnabled && !EduUtilsKt.isAndroidStudio()
 
   override fun beforeCourseStarted(course: Course) {
     val contentGenerator = CheckiOCourseContentGenerator(PythonFileType.INSTANCE, PyCheckiOApiConnector)
