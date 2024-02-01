@@ -12,7 +12,7 @@
       <option name="taskNames">
         <list>
           <option value=":intellij-plugin:configureWebStorm" />
-          <option value=":intellij-plugin:runIde" />
+          <option value=":intellij-plugin:runWebStorm" />
         </list>
       </option>
       <option name="vmOptions" value="" />

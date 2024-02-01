@@ -12,7 +12,7 @@
       <option name="taskNames">
         <list>
           <option value=":intellij-plugin:configurePhpStorm" />
-          <option value=":intellij-plugin:runIde" />
+          <option value=":intellij-plugin:runPhpStorm" />
         </list>
       </option>
       <option name="vmOptions" />

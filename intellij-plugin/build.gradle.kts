@@ -31,13 +31,8 @@ val baseVersion = when {
   else -> error("Unexpected IDE name = `$baseIDE`")
 }
 
-val ideaSandbox = "${buildDir()}/idea-sandbox"
 val pycharmSandbox = "${buildDir()}/pycharm-sandbox"
-val studioSandbox = "${buildDir()}/studio-sandbox"
-val webStormSandbox = "${buildDir()}/webstorm-sandbox"
 val clionSandbox = "${buildDir()}/clion-sandbox"
-val goLandSandbox = "${buildDir()}/goland-sandbox"
-val phpStormSandbox = "${buildDir()}/phpstorm-sandbox"
 val remoteDevServerSandbox = "${buildDir()}/remote-dev-server-sandbox"
 
 val pythonProPlugin: String by project
@@ -397,6 +392,12 @@ task<RunIdeTask>("buildEventsScheme") {
   environment("IDEA_BUILD_NUMBER", "232")
 }
 
+task("configureRemoteDevServer") {
+  doLast {
+    intellij.sandboxDir = remoteDevServerSandbox
+  }
+}
+
 task<RunIdeTask>("runRemoteDevServer") {
   dependsOn(tasks.prepareSandbox)
   val remoteProjectPath = System.getenv("REMOTE_DEV_PROJECT") ?: rootProject.layout.projectDirectory.dir("example-course-project").asFile.absolutePath
@@ -404,92 +405,43 @@ task<RunIdeTask>("runRemoteDevServer") {
   systemProperty("ide.browser.jcef.enabled", "false")
 }
 
-task("configureIdea") {
-  doLast {
-    intellij.sandboxDir = ideaSandbox
-    withProp("ideaPath") { path ->
-      tasks.runIde {
-        ideDir = file(path)
+createTasksToRunIde("Idea", requiresLocalPath = false)
+createTasksToRunIde("CLion", requiresLocalPath = false)
+createTasksToRunIde("PyCharm", requiresLocalPath = false)
+createTasksToRunIde("AndroidStudio", requiresLocalPath = false)
+createTasksToRunIde("WebStorm")
+createTasksToRunIde("GoLand")
+createTasksToRunIde("PhpStorm")
+
+/**
+ * Creates `configure$[ideName]` and `run$[ideName]` Gradle tasks based on given [ideName].
+ *
+ * - `configure$[ideName]` checks that all necessary properties are provided and specifies sandbox path
+ * - `run$[ideName]` runs IDE itself via `runIde` task
+ */
+fun createTasksToRunIde(ideName: String, requiresLocalPath: Boolean = true) {
+  // "GoLand" -> "goLandPath"
+  val pathProperty = ideName.replaceFirstChar { it.lowercaseChar() } + "Path"
+  // "GoLand" -> "$buildDir/goland-sandbox"
+  val sandboxPath = "${buildDir()}/${ideName.lowercase()}-sandbox"
+
+  task("configure$ideName") {
+    doLast {
+      if (requiresLocalPath && !hasProp(pathProperty)) {
+        throw InvalidUserDataException("Path to $ideName installed locally is needed\nDefine \"$pathProperty\" property")
+      }
+      intellij.sandboxDir = sandboxPath
+    }
+  }
+
+  task<RunIdeTask>("run$ideName") {
+    dependsOn(tasks.prepareSandbox)
+
+    if (hasProp(pathProperty)) {
+      ideDir = provider {
+        file(prop(pathProperty))
       }
     }
-  }
-}
-
-task("configurePyCharm") {
-  doLast {
-    intellij.sandboxDir = pycharmSandbox
-    withProp("pycharmPath") { path ->
-      tasks.runIde {
-        ideDir = file(path)
-      }
-    }
-  }
-}
-
-task("configureWebStorm") {
-  doLast {
-    if (!hasProp("webStormPath")) {
-      throw InvalidUserDataException("Path to WebStorm installed locally is needed\nDefine \"webStormPath\" property")
-    }
-
-    intellij.sandboxDir = webStormSandbox
-    tasks.runIde {
-      ideDir = file(prop("webStormPath"))
-    }
-  }
-}
-
-task("configureCLion") {
-  doLast {
-    intellij.sandboxDir = clionSandbox
-    withProp("clionPath") { path ->
-      tasks.runIde {
-        ideDir = file(path)
-      }
-    }
-  }
-}
-
-task("configureAndroidStudio") {
-  doLast {
-    intellij.sandboxDir = studioSandbox
-    withProp("androidStudioPath") { path ->
-      tasks.runIde {
-        ideDir = file(path)
-      }
-    }
-  }
-}
-
-task("configureGoLand") {
-  doLast {
-    if (!hasProp("goLandPath")) {
-      throw InvalidUserDataException("Path to GoLand installed locally is needed\nDefine \"goLandPath\" property")
-    }
-
-    intellij.sandboxDir = goLandSandbox
-    tasks.runIde {
-      ideDir = file(prop("goLandPath"))
-    }
-  }
-}
-
-task("configurePhpStorm") {
-  doLast {
-    if (!hasProp("phpStormPath")) {
-      throw InvalidUserDataException("Path to PhpStorm installed locally is needed\nDefine \"phpStormPath\" property")
-    }
-
-    intellij.sandboxDir = phpStormSandbox
-    tasks.runIde {
-      ideDir = file(prop("phpStormPath"))
-    }
-  }
-}
-
-task("configureRemoteDevServer") {
-  doLast {
-    intellij.sandboxDir = remoteDevServerSandbox
   }
 }
 
