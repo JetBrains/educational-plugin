@@ -24,10 +24,7 @@ import com.jetbrains.edu.learning.marketplace.actions.ShareMySolutionsAction
 import com.jetbrains.edu.learning.marketplace.api.*
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.SubmissionsTestBase
-import com.jetbrains.edu.learning.submissions.SolutionFile
-import com.jetbrains.edu.learning.submissions.Submission
-import com.jetbrains.edu.learning.submissions.SubmissionsManager
-import com.jetbrains.edu.learning.submissions.getSolutionFiles
+import com.jetbrains.edu.learning.submissions.*
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.withTestDialog
 import io.mockk.every
@@ -253,10 +250,13 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
     const val FIRST_TASK_SUBMISSION_AWS_KEY = "11"
     const val SECOND_TASK_SUBMISSION_AWS_KEY = "12"
 
-    fun configureSubmissionsResponses(submissionsLists: List<String> = listOf(loadSubmissionsData),
-                                      solutionsKeyTextMap: Map<String, String> = emptyMap(),
-                                      submissionsDeleteRequestSuccess: Boolean = false,
-                                      reportSolutionRequestSuccess: Boolean = false) {
+    fun configureSubmissionsResponses(
+      submissionsLists: List<String> = listOf(loadSubmissionsData),
+      solutionsKeyTextMap: Map<String, String> = emptyMap(),
+      submissionsDeleteRequestSuccess: Boolean = false,
+      reportSolutionRequestSuccess: Boolean = false,
+      userAgreementState: UserAgreementState = UserAgreementState.ACCEPTED
+    ) {
       mockkConstructor(Retrofit::class)
       val service = mockk<SubmissionsService>()
       every {
@@ -293,6 +293,10 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
         Response.error(HttpURLConnection.HTTP_NOT_FOUND, "mock report response body".toResponseBody())
       }
       every { reportSolutionCall.execute() } returns reportCommunityResponse
+
+      val userAgreementStateCall = mockk<Call<ResponseBody>>()
+      every { service.getUserAgreementState() } returns userAgreementStateCall
+      every { userAgreementStateCall.execute() } returns Response.success(userAgreementState.toString().toResponseBody("application/json; charset=UTF-8".toMediaType()))
 
       if (solutionsKeyTextMap.isNotEmpty()) {
         mockkObject(MarketplaceSubmissionsConnector.Companion)

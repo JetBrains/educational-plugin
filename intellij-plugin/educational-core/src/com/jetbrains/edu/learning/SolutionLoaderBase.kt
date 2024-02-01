@@ -36,7 +36,6 @@ import com.jetbrains.edu.learning.update.UpdateNotification
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.util.*
 import java.util.Collections.max
-import java.util.concurrent.Callable
 import java.util.concurrent.Future
 import kotlin.math.max
 
@@ -73,7 +72,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     force: Boolean = false
   ) {
     val submissions = if (progressIndicator != null) {
-      ApplicationUtil.runWithCheckCanceled(Callable { loadSubmissions(tasksToUpdate) }, progressIndicator)
+      ApplicationUtil.runWithCheckCanceled({ loadSubmissions(tasksToUpdate) }, progressIndicator)
     }
     else {
       loadSubmissions(tasksToUpdate)
@@ -338,7 +337,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
           updatePlaceholders(taskFile, solution.placeholders)
           EduDocumentListener.modifyWithoutListener(task, path) {
             runUndoTransparentWriteAction {
-              val document = FileDocumentManager.getInstance().getDocument(vFile) ?: error("No document for ${path}")
+              val document = FileDocumentManager.getInstance().getDocument(vFile) ?: error("No document for $path")
               document.setText(solution.text)
             }
           }

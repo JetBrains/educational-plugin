@@ -26,9 +26,7 @@ import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showS
 import com.jetbrains.edu.learning.marketplace.MarketplaceSolutionSharingPreference
 import com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceHost
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.submissions.SolutionFile
-import com.jetbrains.edu.learning.submissions.checkNotEmpty
-import com.jetbrains.edu.learning.submissions.findTaskFileInDirWithSizeCheck
+import com.jetbrains.edu.learning.submissions.*
 import okhttp3.ConnectionPool
 import okhttp3.ResponseBody
 import org.jetbrains.annotations.NonNls
@@ -113,6 +111,11 @@ class MarketplaceSubmissionsConnector {
   private fun String?.toLogString(): String = if (this != null) " for user $this" else ""
 
   fun getAllSubmissions(courseId: Int): List<MarketplaceSubmission> {
+    val userAgreementState = getUserAgreementState()
+    if (!userAgreementState.isSubmissionDownloadAllowed()) {
+      LOG.info("Submissions will not be loaded because User Agreement state is $userAgreementState")
+      return emptyList()
+    }
     var currentPage = 1
     val allSubmissions = mutableListOf<MarketplaceSubmission>()
     do {
@@ -262,6 +265,11 @@ class MarketplaceSubmissionsConnector {
   }
 
   private fun doPostSubmission(courseId: Int, taskId: Int, submission: MarketplaceSubmission): Result<MarketplaceSubmission, String> {
+    val userAgreementState = getUserAgreementState()
+    if (!userAgreementState.isSubmissionUploadAllowed()) {
+      LOG.info("User Agreement not accepted, submission for task $taskId will not be posted")
+      return Err("User Agreement not accepted")
+    }
     LOG.info("Posting submission for task $taskId")
     return submissionsService.postSubmission(courseId, submission.courseVersion, taskId, submission).executeParsingErrors().flatMap {
       val result = it.body()
@@ -303,6 +311,20 @@ class MarketplaceSubmissionsConnector {
         showFailedToDeleteNotification(project, loginName)
       }
     }
+  }
+
+  private fun getUserAgreementState(): UserAgreementState? {
+    val loginName = JBAccountInfoService.getInstance()?.userData?.loginName ?: run {
+      LOG.info("Unable to get user agreement state for not logged in user")
+      return null
+    }
+    LOG.info("Getting user agreement state for user $loginName")
+    val response = submissionsService.getUserAgreementState().executeParsingErrors().onError {
+      LOG.info("Error occurred while getting user agreement state for user $loginName")
+      return null
+    }
+
+    return response.body()?.string()?.let { UserAgreementState.valueOf(it) }
   }
 
   companion object {
