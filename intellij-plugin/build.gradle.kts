@@ -412,6 +412,7 @@ createTasksToRunIde("AndroidStudio", requiresLocalPath = false)
 createTasksToRunIde("WebStorm")
 createTasksToRunIde("GoLand")
 createTasksToRunIde("PhpStorm")
+createTasksToRunIde("RustRover")
 
 /**
  * Creates `configure$[ideName]` and `run$[ideName]` Gradle tasks based on given [ideName].
