@@ -159,7 +159,6 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private val SHOW_FULL_OUTPUT_EVENT = GROUP.registerEvent("show.full.output")
     private val PEEK_SOLUTION_EVENT = GROUP.registerEvent("peek.solution")
     private val LEAVE_FEEDBACK_EVENT = GROUP.registerEvent("leave.feedback")
-    private val LEAVE_IN_IDE_FEEDBACK_EVENT = GROUP.registerEvent("leave.in.ide.feedback", EventFields.Boolean(SUCCESS))
     private val REVERT_TASK_EVENT = GROUP.registerEvent("revert.task")
     private val CHECK_TASK_EVENT = GROUP.registerEvent("check.task", enumField<CheckStatus>("status"))
     private val RATE_MARKETPLACE_COURSE = GROUP.registerEvent("rate.marketplace.course")
@@ -229,8 +228,6 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     fun leaveFeedback() = LEAVE_FEEDBACK_EVENT.log()
 
     fun rateMarketplaceCourse() = RATE_MARKETPLACE_COURSE.log()
-
-    fun leaveInIdeFeedback(success: Boolean) = LEAVE_IN_IDE_FEEDBACK_EVENT.log(success)
 
     fun revertTask() = REVERT_TASK_EVENT.log()
 

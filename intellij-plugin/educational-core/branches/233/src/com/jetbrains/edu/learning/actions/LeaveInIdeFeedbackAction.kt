@@ -10,7 +10,6 @@ import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.feedback.StudentInIdeFeedbackDialog
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import org.jetbrains.annotations.NonNls
 
 class LeaveInIdeFeedbackAction : DumbAwareAction(
@@ -24,8 +23,7 @@ class LeaveInIdeFeedbackAction : DumbAwareAction(
     val task = project.getCurrentTask() ?: return
 
     val dialog = StudentInIdeFeedbackDialog(project, task)
-    val success = dialog.showAndGet()
-    EduCounterUsageCollector.leaveInIdeFeedback(success)
+    dialog.showAndGet()
   }
 
   override fun update(e: AnActionEvent) {

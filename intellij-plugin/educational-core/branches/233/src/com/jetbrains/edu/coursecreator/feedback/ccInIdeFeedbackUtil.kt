@@ -6,7 +6,6 @@ import com.jetbrains.edu.coursecreator.ui.CCNewCoursePanel
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.feedback.CourseFeedbackInfoData
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import org.jdesktop.swingx.HorizontalLayout
 import javax.swing.JLabel
 import javax.swing.JPanel
@@ -23,8 +22,7 @@ fun createFeedbackPanel(courseTitleField: CCNewCoursePanel.CourseTitleField, cou
 
   hyperlinkLabel.addHyperlinkListener {
     val dialog = CCInIdeFeedbackDialog(CourseFeedbackInfoData.from(course, courseTitleField.text))
-    val success = dialog.showAndGet()
-    EduCounterUsageCollector.leaveInIdeFeedback(success)
+    dialog.showAndGet()
   }
   panel.add(message)
   panel.add(hyperlinkLabel)
