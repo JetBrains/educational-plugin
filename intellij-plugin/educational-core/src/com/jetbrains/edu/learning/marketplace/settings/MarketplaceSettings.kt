@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.marketplace.getJBAUserInfo
 import com.jetbrains.edu.learning.marketplace.toBoolean
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.submissions.isSolutionSharingAllowed
 import com.jetbrains.edu.learning.taskToolWindow.ui.SolutionSharingInlineBanners
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +31,10 @@ class MarketplaceSettings(private val scope: CoroutineScope) {
   init {
     if (!isUnitTestMode) {
       scope.launch(Dispatchers.IO) {
-        val sharingPreference = MarketplaceSubmissionsConnector.getInstance().getSharingPreference()
+        val marketplaceSubmissionsConnector = MarketplaceSubmissionsConnector.getInstance()
+        if (!marketplaceSubmissionsConnector.getUserAgreementState().isSolutionSharingAllowed()) return@launch
+
+        val sharingPreference = marketplaceSubmissionsConnector.getSharingPreference()
         solutionsSharing = sharingPreference.toBoolean()
       }
     }

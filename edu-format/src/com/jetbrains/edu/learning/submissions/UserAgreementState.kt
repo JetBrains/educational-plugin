@@ -21,3 +21,5 @@ fun UserAgreementState?.isSubmissionDownloadAllowed(): Boolean = when (this) {
   UserAgreementState.ACCEPTED, UserAgreementState.TERMINATED -> true
   else -> false
 }
+
+fun UserAgreementState?.isSolutionSharingAllowed(): Boolean = this == UserAgreementState.ACCEPTED
