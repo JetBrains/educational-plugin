@@ -11,8 +11,10 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.submissions.SubmissionsProvider
 import com.jetbrains.edu.learning.submissions.isSubmissionDownloadAllowed
+import com.jetbrains.edu.learning.submissions.isSolutionSharingAllowed
 
 class MarketplaceSubmissionsProvider : SubmissionsProvider {
+
   override fun loadAllSubmissions(course: Course): Map<Int, List<MarketplaceSubmission>> {
     if (course is EduCourse && course.isMarketplaceRemote) {
       return loadSubmissions(course.allTasks, course.id)
@@ -21,19 +23,21 @@ class MarketplaceSubmissionsProvider : SubmissionsProvider {
   }
 
   override fun loadSharedSolutionsForCourse(course: Course): Map<Int, List<MarketplaceSubmission>> {
-    if (course !is EduCourse || !course.isMarketplace) return mapOf()
+    if (course !is EduCourse || !course.isMarketplace) return emptyMap()
 
-    val sharedSolutions = MarketplaceSubmissionsConnector.getInstance().getSharedSolutionsForCourse(
-      course.id,
-      course.marketplaceCourseVersion
-    )
-    return sharedSolutions.groupBy { it.taskId }
+    val submissionsConnector = MarketplaceSubmissionsConnector.getInstance()
+    if (!submissionsConnector.getUserAgreementState().isSolutionSharingAllowed()) return emptyMap()
+
+    return submissionsConnector.getSharedSolutionsForCourse(course.id, course.marketplaceCourseVersion).groupBy { it.taskId }
   }
 
   override fun loadSharedSolutionsForTask(course: Course, task: Task): List<MarketplaceSubmission> {
-    if (course !is EduCourse || !course.isMarketplace) return listOf()
+    if (course !is EduCourse || !course.isMarketplace) return emptyList()
 
-    return MarketplaceSubmissionsConnector.getInstance().getSharedSolutionsForTask(course, task.id)
+    val submissionsConnector = MarketplaceSubmissionsConnector.getInstance()
+    if (!submissionsConnector.getUserAgreementState().isSolutionSharingAllowed()) return emptyList()
+
+    return submissionsConnector.getSharedSolutionsForTask(course, task.id)
   }
 
   override fun loadSubmissions(tasks: List<Task>, courseId: Int): Map<Int, List<MarketplaceSubmission>> {
