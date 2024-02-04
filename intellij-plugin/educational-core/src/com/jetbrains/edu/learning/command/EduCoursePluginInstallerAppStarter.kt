@@ -4,11 +4,8 @@ import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.InstallAndEnableTaskHeadlessImpl
-import com.jetbrains.edu.learning.Ok
-import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
-import org.apache.commons.cli.CommandLine
 
 /**
  * Adds `installCoursePlugins` command for IDE to install all necessary plugins for given course
@@ -27,7 +24,7 @@ class EduCoursePluginInstallerAppStarter : EduAppStarterBase<Args>() {
   override val commandName: String
     get() = "installCoursePlugins"
 
-  override fun createArgs(cmd: CommandLine): Result<Args, String> = Ok(Args(cmd))
+  override fun createArgParser(): ArgParser<Args> = ArgParser.createDefault(commandName)
 
   override suspend fun doMain(course: Course, args: Args): CommandResult {
     val provider = course.compatibilityProvider

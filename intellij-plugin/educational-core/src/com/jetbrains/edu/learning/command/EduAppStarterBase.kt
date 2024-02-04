@@ -5,7 +5,6 @@ import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.diagnostic.logger
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
-import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.onError
 import kotlin.system.exitProcess
@@ -32,48 +31,18 @@ abstract class EduAppStarterBase<T : Args> : ModernApplicationStarter() {
     }
   }
 
+  protected abstract fun createArgParser(): ArgParser<T>
   protected abstract suspend fun doMain(course: Course, args: T): CommandResult
 
   private fun parseArgs(args: List<String>): T {
-    val options = Options()
-
-    val courseSourceGroup = OptionGroup()
-    courseSourceGroup.isRequired = true
-    for (courseSource in CourseSource.values()) {
-      courseSourceGroup.addOption(Option(null, courseSource.option, true, courseSource.description))
-    }
-    options.addOptionGroup(courseSourceGroup)
-
-    addCustomArgs(options)
-
-    val parser = DefaultParser()
-
-    val cmd = try {
-      parser.parse(options, args.drop(1).toTypedArray())
-    }
-    catch (e: ParseException) {
-      printHelp(options)
-      LOG.error(e)
-      exitProcess(1)
-    }
-
-    return when (val result = createArgs(cmd)) {
+    val parser = createArgParser()
+    return when (val result = parser.parseArgs(args)) {
       is Ok -> result.value
       is Err -> {
-        printHelp(options)
-        logErrorAndExit("Path to project is missing")
+        parser.printHelp()
+        logErrorAndExit(result.error)
       }
     }
-  }
-
-  protected abstract fun createArgs(cmd: CommandLine): Result<T, String>
-  protected open fun addCustomArgs(options: Options) {}
-
-  private fun printHelp(options: Options) {
-    val formatter = HelpFormatter()
-    formatter.width = 140
-    @Suppress("DEPRECATION")
-    formatter.printHelp("$commandName /path/to/project", options)
   }
 
   private suspend fun loadCourse(args: Args): Course {
@@ -103,8 +72,4 @@ abstract class EduAppStarterBase<T : Args> : ModernApplicationStarter() {
       }
     }
   }
-}
-
-open class Args(private val cmd: CommandLine) {
-  fun getOptionValue(option: String): String? = cmd.getOptionValue(option)
 }
