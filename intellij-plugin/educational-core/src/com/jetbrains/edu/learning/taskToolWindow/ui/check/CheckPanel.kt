@@ -67,9 +67,14 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
     }
 
     if (task != null) {
-      if (isLeaveStudentFeedbackActionAvailable(task)) {
-        rightActionsToolbar.add(createSingleActionToolbar(task.getLeaveFeedbackActionId()))
+      val leaveFeedbackActionId = if (task.course.isMarketplace) {
+        LeaveInIdeFeedbackAction.ACTION_ID
       }
+      else {
+        LeaveFeedbackAction.ACTION_ID
+      }
+
+      rightActionsToolbar.add(createSingleActionToolbar(leaveFeedbackActionId))
 
       if (task.course.feedbackLink != null) {
         rightActionsToolbar.add(createSingleActionToolbar(RateMarketplaceCourseAction.ACTION_ID))

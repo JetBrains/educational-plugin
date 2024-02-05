@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.command
 
 import com.intellij.openapi.application.ModernApplicationStarter
+import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.diagnostic.logger
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.Err
@@ -25,7 +26,7 @@ abstract class EduAppStarterBase<T : Args> : ModernApplicationStarter() {
       if (result is CommandResult.Error) {
         LOG.error(result.message, result.throwable)
       }
-      saveAndExit(result.exitCode)
+      ApplicationManagerEx.getApplicationEx().exit(true, true, result.exitCode)
     }
     catch (e: Throwable) {
       LOG.error(e)

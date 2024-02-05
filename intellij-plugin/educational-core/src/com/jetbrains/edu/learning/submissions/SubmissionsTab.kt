@@ -15,6 +15,7 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.ui.ColorUtil
 import com.intellij.ui.dsl.builder.SegmentedButton
 import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.icons.CachedImageIcon
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.*
@@ -29,8 +30,8 @@ import com.jetbrains.edu.learning.marketplace.actions.ShareMySolutionsAction
 import com.jetbrains.edu.learning.marketplace.isMarketplaceCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.projectView.CourseViewUtils.isCommunitySolutionsAllowed
-import com.jetbrains.edu.learning.taskToolWindow.links.SwingToolWindowLinkHandler
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.taskToolWindow.links.SwingToolWindowLinkHandler
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.TaskToolWindowBundle
@@ -332,7 +333,7 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
         else -> if (StyleResourcesManager.isHighContrast()) EducationalCoreIcons.TaskFailedNoFrameHighContrast else EducationalCoreIcons.TaskFailedNoFrame
       }
 
-      return (icon as CachedIcon).url
+      return (icon as CachedImageIcon).url
     }
 
     private fun getLinkColor(submission: Submission): String {

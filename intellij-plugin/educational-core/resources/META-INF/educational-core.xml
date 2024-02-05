@@ -219,6 +219,8 @@
       <action id="Educational.HideSolvedLessons"
               class="com.jetbrains.edu.learning.projectView.CourseViewPane$HideSolvedLessonsAction"/>
     </group>
+
+    <action id="Educational.LeaveInIdeFeedbackAction" class="com.jetbrains.edu.learning.actions.LeaveInIdeFeedbackAction"/>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -366,10 +368,6 @@
                  description="Enables `Solve All Tasks Before` action"
                  defaultValue="false"/>
 
-    <welcomeTabFactory id="EducationalWelcomeTab"
-                       implementation="com.jetbrains.edu.learning.newproject.ui.welcomeScreen.EduWelcomeTabFactory"
-                       order="last"/>
-
     <writingAccessProvider implementation="com.jetbrains.edu.learning.editor.EditableFileProvider"/>
     <trailingSpacesOptionsProvider implementation="com.jetbrains.edu.learning.editor.TrailingSpacesOptionsAnswerTaskProvider"/>
 
@@ -382,6 +380,8 @@
 
     <iconMapper mappingFile="EduToolsIconMappings.json"/>
     <themeMetadataProvider path="JetBrainsAcademyPlugin.themeMetadata.json"/>
+
+    <coursesStorageProvider implementation="com.jetbrains.edu.learning.newproject.coursesStorage.JetBrainsAcademyCoursesStorageProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">
@@ -454,5 +454,4 @@
   <xi:include href="/META-INF/Codeforces.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/Hyperskill.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/Marketplace.xml" xpointer="xpointer(/idea-plugin/*)"/>
-  <xi:include href="/META-INF/BranchesExtensionPoints.xml" xpointer="xpointer(/idea-plugin/*)"/>
 </idea-plugin>

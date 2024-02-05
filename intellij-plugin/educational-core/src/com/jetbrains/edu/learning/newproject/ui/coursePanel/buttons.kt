@@ -12,19 +12,18 @@ import com.intellij.ui.JBColor
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.codeforces.actions.StartCodeforcesContestAction
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.ext.isPreview
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.marketplace.MarketplaceListedCoursesIdsLoader
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
-import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.isFromMyCoursesPage
 import com.jetbrains.edu.learning.onError
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenProjectStageRequest
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
@@ -60,21 +59,12 @@ class OpenCourseButton : CourseButtonBase() {
   }
 
   private fun processMissingCourseOpening(course: Course, coursePath: String) {
-    val isFromMyCoursesPage = isFromMyCoursesPage(course)
-    val message = if (isFromMyCoursesPage) {
-      EduCoreBundle.message("course.dialog.my.courses.remove.course")
-    }
-    else {
-      EduCoreBundle.message("course.dialog.course.not.found.reopen.button")
-    }
+    val message = EduCoreBundle.message("course.dialog.course.not.found.reopen.button")
 
     if (showNoCourseDialog(coursePath, message) == Messages.NO) {
       CoursesStorage.getInstance().removeCourseByLocation(coursePath)
-      when {
-        isFromMyCoursesPage -> {
-          return
-        }
-        course is HyperskillCourse -> {
+      when (course) {
+        is HyperskillCourse -> {
           closeDialog()
           ProjectOpener.getInstance().apply {
             HyperskillOpenInIdeRequestHandler.openInNewProject(HyperskillOpenProjectStageRequest(course.id, null)).onError {
@@ -83,11 +73,13 @@ class OpenCourseButton : CourseButtonBase() {
             }
           }
         }
-        course is CodeforcesCourse -> {
+
+        is CodeforcesCourse -> {
           closeDialog()
           val contestId = course.id
           StartCodeforcesContestAction.joinContest(contestId, null)
         }
+
         else -> {
           closeDialog()
           // if course is present both on stepik and marketplace we open marketplace-based one

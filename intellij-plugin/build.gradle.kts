@@ -40,9 +40,6 @@ val goLandSandbox = "${buildDir()}/goland-sandbox"
 val phpStormSandbox = "${buildDir()}/phpstorm-sandbox"
 val remoteDevServerSandbox = "${buildDir()}/remote-dev-server-sandbox"
 
-// BACKCOMPAT: 2023.1
-val isAtLeast232 = environmentName.toInt() >= 232
-
 val pythonProPlugin: String by project
 val pythonCommunityPlugin: String by project
 
@@ -394,10 +391,10 @@ task<RunIdeTask>("buildEventsScheme") {
   args("buildEventsScheme", "--outputFile=${buildDir()}/eventScheme.json", "--pluginId=com.jetbrains.edu")
   // Force headless mode to be able to run command on CI
   systemProperty("java.awt.headless", "true")
-  // BACKCOMPAT: 2023.1. Update value to 232 and this comment
+  // BACKCOMPAT: 2023.2. Update value to 232 and this comment
   // `IDEA_BUILD_NUMBER` variable is used by `buildEventsScheme` task to write `buildNumber` to output json.
   // It will be used by TeamCity automation to set minimal IDE version for new events
-  environment("IDEA_BUILD_NUMBER", "231")
+  environment("IDEA_BUILD_NUMBER", "232")
 }
 
 task<RunIdeTask>("runRemoteDevServer") {
@@ -733,7 +730,7 @@ project("Edu-JavaScript") {
 
 project("Edu-Rust") {
   intellij {
-    if (isAtLeast232 && !isIdeaIDE && !isClionIDE) {
+    if (!isIdeaIDE && !isClionIDE) {
       version = ideaVersion
     }
     plugins = rustPlugins

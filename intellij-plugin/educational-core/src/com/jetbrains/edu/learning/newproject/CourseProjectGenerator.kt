@@ -22,6 +22,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.wm.impl.status.widget.StatusBarWidgetsManager
 import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
 import com.intellij.util.PathUtil
+import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.messages.Topic
 import com.jetbrains.edu.coursecreator.CCUtils

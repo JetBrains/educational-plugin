@@ -2,8 +2,8 @@ package com.jetbrains.edu.learning.placeholderDependencies
 
 import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.util.BuildNumber
+import com.intellij.testFramework.fixtures.impl.BaseFixture
 import com.intellij.util.ThrowableRunnable
-import com.jetbrains.edu.learning.EduFileEditorTestFixture
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.findTask
@@ -17,16 +17,23 @@ class InvisibleDependencyTest : EduTestCase() {
     }
   }
 
-  private lateinit var fileEditorFixture: EduFileEditorTestFixture
+  private lateinit var fileEditorFixture: BaseFixture
 
   override fun setUp() {
     super.setUp()
-    fileEditorFixture = EduFileEditorTestFixture(myFixture).apply { setUp() }
+    fileEditorFixture = BaseFixture().apply { setUp() }
   }
 
   override fun tearDown() {
-    fileEditorFixture.tearDown()
-    super.tearDown()
+    try {
+      fileEditorFixture.tearDown()
+    }
+    catch (e: Throwable) {
+      addSuppressedException(e)
+    }
+    finally {
+      super.tearDown()
+    }
   }
 
   fun `test invisible placeholder with invisible dependency`() = doTest(CheckStatus.Solved, false, "type Bar")

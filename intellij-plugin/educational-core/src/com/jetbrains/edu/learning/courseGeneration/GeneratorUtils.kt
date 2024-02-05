@@ -17,6 +17,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.codeStyle.CodeStyleManager
+import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import com.intellij.util.io.ReadOnlyAttributeUtil
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*

@@ -56,10 +56,4 @@ class GroupsComponent(
   fun setSelectionListener(processSelectionChanged: () -> Unit) {
     courseGroupModel.onSelection = processSelectionChanged
   }
-
-  // BACKCOMPACT: 2023.1
-  fun setClickListener(onClick: (Course) -> Boolean) {
-    courseGroupModel.onClick = onClick
-  }
-
 }

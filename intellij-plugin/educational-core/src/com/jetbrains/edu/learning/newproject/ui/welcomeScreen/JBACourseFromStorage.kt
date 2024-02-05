@@ -26,7 +26,6 @@ private const val PROGRAMMING_LANGUAGE = "programmingLanguage"
 private const val PROGRAMMING_LANGUAGE_ID = "programmingLanguageId"
 private const val PROGRAMMING_LANGUAGE_VERSION = "programmingLanguageVersion"
 
-// BACKCOMPACT: 2023.1
 @Tag(EduNames.COURSE)
 class JBACourseFromStorage() : CourseInfo() {
   var type: String = ""
