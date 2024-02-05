@@ -1,9 +1,7 @@
 package com.jetbrains.edu.coursecreator.taskDescription
 
 import com.intellij.openapi.actionSystem.IdeActions
-import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.util.BuildNumber
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.EduTestCase
@@ -15,10 +13,8 @@ class TaskDescriptionLiveTemplateTest : EduTestCase() {
 
   override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
     // https://youtrack.jetbrains.com/issue/EDU-6069/Fix-TaskDescriptionLiveTemplateTest-for-232
-    if (ApplicationInfo.getInstance().build < BUILD_232) {
-      super.runTestRunnable(testRunnable)
-    }
   }
+
   fun `test hint live template in task description file in cc mode`() {
     createCourse(CourseMode.EDUCATOR)
 
@@ -74,7 +70,11 @@ class TaskDescriptionLiveTemplateTest : EduTestCase() {
     }
   }
 
-  private fun expandSnippet(filePath: String, @Language("HTML") before: String, @Language("HTML") after: String) {
+  private fun expandSnippet(
+    filePath: String,
+    @Suppress("SameParameterValue") @Language("HTML") before: String,
+    @Language("HTML") after: String
+  ) {
     val file = myFixture.findFileInTempDir(filePath)
 
     runWriteAction {
@@ -83,9 +83,5 @@ class TaskDescriptionLiveTemplateTest : EduTestCase() {
     myFixture.configureFromExistingVirtualFile(file)
     myFixture.performEditorAction(IdeActions.ACTION_EXPAND_LIVE_TEMPLATE_BY_TAB)
     myFixture.checkResult(after.trimIndent())
-  }
-
-  companion object {
-    private val BUILD_232: BuildNumber = BuildNumber.fromString("232")!!
   }
 }
