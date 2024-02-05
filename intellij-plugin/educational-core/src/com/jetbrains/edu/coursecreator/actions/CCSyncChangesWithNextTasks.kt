@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.NonNls
 
 class CCSyncChangesWithNextTasks : DumbAwareAction() {
@@ -47,7 +48,24 @@ class CCSyncChangesWithNextTasks : DumbAwareAction() {
     }
 
     val context = parseSelectedItems(project, e)
-    e.presentation.isEnabledAndVisible = context != null
+    if (context != null) {
+      val (actionText, actionDescription) = when {
+        context is LessonContext -> {
+          EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.Lesson.text") to EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.Lesson.description")
+        }
+        context is TaskFilesContext && context.files.size == 1 -> {
+          EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.SingleFile.text") to EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.SingleFile.description")
+        }
+        else -> {
+          EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.SeveralFiles.text") to EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.SeveralFiles.description")
+        }
+      }
+      presentation.apply {
+        text = actionText
+        description = actionDescription
+        isEnabledAndVisible = true
+      }
+    }
   }
 
   private fun propagateChanges(project: Project, task: Task, files: List<TaskFile>? = null) {
