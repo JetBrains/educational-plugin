@@ -47,24 +47,22 @@ class CCSyncChangesWithNextTasks : DumbAwareAction() {
       return
     }
 
-    val context = parseSelectedItems(project, e)
-    if (context != null) {
-      val (actionText, actionDescription) = when {
-        context is LessonContext -> {
-          EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.Lesson.text") to EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.Lesson.description")
-        }
-        context is TaskFilesContext && context.files.size == 1 -> {
-          EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.SingleFile.text") to EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.SingleFile.description")
-        }
-        else -> {
-          EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.SeveralFiles.text") to EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.SeveralFiles.description")
-        }
+    val context = parseSelectedItems(project, e) ?: return
+    val (actionText, actionDescription) = when {
+      context is LessonContext -> {
+        EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.Lesson.text") to EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.Lesson.description")
       }
-      presentation.apply {
-        text = actionText
-        description = actionDescription
-        isEnabledAndVisible = true
+      context is TaskFilesContext && context.files.size == 1 -> {
+        EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.SingleFile.text") to EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.SingleFile.description")
       }
+      else -> {
+        EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.SeveralFiles.text") to EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.SeveralFiles.description")
+      }
+    }
+    presentation.apply {
+      text = actionText
+      description = actionDescription
+      isEnabledAndVisible = true
     }
   }
 
