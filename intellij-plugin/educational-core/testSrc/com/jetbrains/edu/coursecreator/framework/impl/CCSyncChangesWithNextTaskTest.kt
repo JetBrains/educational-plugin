@@ -4,7 +4,7 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vcs.merge.MergeSession.Resolution
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightPlatformTestCase
-import com.jetbrains.edu.coursecreator.actions.CCApplyChangesToNextTasks
+import com.jetbrains.edu.coursecreator.actions.CCSyncChangesWithNextTasks
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import kotlin.test.assertFails
 
-class CCPropagateChangesTest : EduActionTestCase() {
+class CCSyncChangesWithNextTaskTest : EduActionTestCase() {
   fun `test changes in files propagate until cancel`() {
     val course = createFrameworkCourse(3)
 
@@ -126,7 +126,7 @@ class CCPropagateChangesTest : EduActionTestCase() {
     withVirtualFileListener(course) {
       val task = course.findTask("lesson1", "task1")
       runWriteAction {
-        findFile("lesson1/task1/src/Baz.kt").delete(CCPropagateChangesTest::class.java)
+        findFile("lesson1/task1/src/Baz.kt").delete(CCSyncChangesWithNextTaskTest::class.java)
       }
       doTest(task, listOf(Resolution.AcceptedYours))
     }
@@ -321,7 +321,7 @@ class CCPropagateChangesTest : EduActionTestCase() {
       task2.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun bar() {}\n")
       runWriteAction {
-        findFile("lesson1/task2/src/Baz.kt").delete(CCPropagateChangesTest::class.java)
+        findFile("lesson1/task2/src/Baz.kt").delete(CCSyncChangesWithNextTaskTest::class.java)
       }
       GeneratorUtils.createTextChildFile(project, rootDir, "lesson1/task2/src/Bar.kt", "fun bar() {}")
       val task1 = course.findTask("lesson1", "task1")
@@ -423,7 +423,7 @@ class CCPropagateChangesTest : EduActionTestCase() {
       myFixture.type("fun f() {}\n")
       GeneratorUtils.createTextChildFile(project, rootDir, "lesson1/task2/src/Bar.kt", "fun bar() {}")
       runWriteAction {
-        findFile("lesson1/task2/src/Baz.kt").delete(CCPropagateChangesTest::class.java)
+        findFile("lesson1/task2/src/Baz.kt").delete(CCSyncChangesWithNextTaskTest::class.java)
       }
 
       doTest(task1, listOf(Resolution.AcceptedTheirs))
@@ -475,7 +475,7 @@ class CCPropagateChangesTest : EduActionTestCase() {
       val task2 = course.findTask("lesson1", "task2")
       task2.openTaskFileInEditor("src/Baz.kt")
       runWriteAction {
-        findFile("lesson1/task2/src/Baz.kt").delete(CCPropagateChangesTest::class.java)
+        findFile("lesson1/task2/src/Baz.kt").delete(CCSyncChangesWithNextTaskTest::class.java)
       }
 
       doTest(task1, listOf(Resolution.AcceptedTheirs))
@@ -643,7 +643,7 @@ class CCPropagateChangesTest : EduActionTestCase() {
     val mockUI = MockFLMultipleFileMergeUI(resolutions, cancelOnConflict)
     withFLMultipleFileMergeUI(mockUI) {
       val dataContext = dataContext(item.getDir(project.courseDir)!!)
-      testAction(CCApplyChangesToNextTasks.ACTION_ID, dataContext)
+      testAction(CCSyncChangesWithNextTasks.ACTION_ID, dataContext)
     }
   }
 
@@ -657,7 +657,7 @@ class CCPropagateChangesTest : EduActionTestCase() {
     withFLMultipleFileMergeUI(mockUI) {
       val files = taskFiles.map { it.getVirtualFile(project)!! }.toTypedArray()
       val dataContext = dataContext(files)
-      testAction(CCApplyChangesToNextTasks.ACTION_ID, dataContext)
+      testAction(CCSyncChangesWithNextTasks.ACTION_ID, dataContext)
     }
   }
 

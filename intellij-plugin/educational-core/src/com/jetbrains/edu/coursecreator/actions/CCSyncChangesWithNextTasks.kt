@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.jetbrains.annotations.NonNls
 
-class CCApplyChangesToNextTasks : DumbAwareAction() {
+class CCSyncChangesWithNextTasks : DumbAwareAction() {
   override fun getActionUpdateThread(): ActionUpdateThread {
     return ActionUpdateThread.BGT
   }
@@ -29,7 +29,7 @@ class CCApplyChangesToNextTasks : DumbAwareAction() {
         propagateChanges(project, task)
       }
       is TaskFilesContext -> propagateChanges(project, context.task, context.files)
-      null -> error("ApplyChangesToNextTasks action was performed from invalid place")
+      null -> error("SyncChangesWithNextTasks action was performed from invalid place")
     }
   }
 
@@ -90,6 +90,6 @@ class CCApplyChangesToNextTasks : DumbAwareAction() {
   private class TaskFilesContext(val task: Task, val files: List<TaskFile>) : SelectedContext
 
   companion object {
-    const val ACTION_ID: @NonNls String = "Educational.Educator.ApplyChangesToNextTasks"
+    const val ACTION_ID: @NonNls String = "Educational.Educator.SyncChangesWithNextTasks"
   }
 }

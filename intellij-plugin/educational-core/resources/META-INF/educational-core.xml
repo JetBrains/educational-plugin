@@ -145,8 +145,8 @@
     <action id="Educational.Educator.CheckAllTasks" class="com.jetbrains.edu.coursecreator.actions.checkAllTasks.CCCheckAllTasksAction"/>
 
     <action class="com.jetbrains.edu.coursecreator.actions.CCCreateCoursePreview" id="Educational.Educator.CreateCoursePreview"/>
-    <action id="Educational.Educator.ApplyChangesToNextTasks"
-            class="com.jetbrains.edu.coursecreator.actions.CCApplyChangesToNextTasks"
+    <action id="Educational.Educator.SyncChangesWithNextTasks"
+            class="com.jetbrains.edu.coursecreator.actions.CCSyncChangesWithNextTasks"
             icon="AllIcons.Vcs.Push"/>
 
     <group id="Educational.Educator.CourseCreator.Menu" popup="true"
@@ -161,7 +161,7 @@
       <action id="Educational.Educator.IncludeIntoTask" class="com.jetbrains.edu.coursecreator.actions.taskFile.CCIncludeIntoTask"/>
       <action id="Educational.Educator.ExcludeFromTask" class="com.jetbrains.edu.coursecreator.actions.taskFile.CCExcludeFromTask"/>
       <separator/>
-      <reference id="Educational.Educator.ApplyChangesToNextTasks"/>
+      <reference id="Educational.Educator.SyncChangesWithNextTasks"/>
       <reference id="Educational.Educator.CreateCoursePreview"/>
       <reference id="Educational.Educator.ChangeCourseInfo"/>
       <reference id="Educational.Educator.CheckAllTasks"/>

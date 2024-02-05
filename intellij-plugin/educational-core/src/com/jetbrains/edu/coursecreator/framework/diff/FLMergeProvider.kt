@@ -107,12 +107,12 @@ class FLMergeProvider(
         if (changedContent == null) {
           return "-"
         }
-        return EduCoreBundle.message("action.Educational.Educator.ApplyChangesToNextTasks.MergeDialog.added")
+        return EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.MergeDialog.added")
       }
       if (changedContent == null) {
-        return EduCoreBundle.message("action.Educational.Educator.ApplyChangesToNextTasks.MergeDialog.deleted")
+        return EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.MergeDialog.deleted")
       }
-      return EduCoreBundle.message("action.Educational.Educator.ApplyChangesToNextTasks.MergeDialog.modified")
+      return EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.MergeDialog.modified")
     }
 
     override fun getAdditionalWidth(): Int {

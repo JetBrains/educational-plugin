@@ -49,7 +49,7 @@ class DiffConflictResolveStrategy(private val project: Project) : FLConflictReso
     val conflictFiles = mutableListOf<String>()
     val resolvedState = resolvedSimpleConflictsState.toMutableMap()
 
-    computeUnderProgress(project, EduCoreBundle.message("action.Educational.Educator.ApplyChangesToNextTasks.conflict.resolution.smart.indicator")) { indicator ->
+    computeUnderProgress(project, EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.conflict.resolution.smart.indicator")) { indicator ->
       for (changedFile in changedFiles) {
         val leftContent = currentState[changedFile]
         val baseContent = baseState[changedFile]
@@ -103,7 +103,7 @@ class DiffConflictResolveStrategy(private val project: Project) : FLConflictReso
     invokeAndWaitIfNeeded {
       // the line below registers undo for task with given command id and launches a task with bulk update in write action
       model.executeMergeCommand(
-        EduCoreBundle.message("action.Educational.Educator.ApplyChangesToNextTasks.conflict.resolution.smart.indicator"),
+        EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.conflict.resolution.smart.indicator"),
         null,
         UndoConfirmationPolicy.DEFAULT,
         true,

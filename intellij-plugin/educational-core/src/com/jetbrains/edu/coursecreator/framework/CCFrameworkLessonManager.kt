@@ -200,9 +200,9 @@ class CCFrameworkLessonManager(private val project: Project) : Disposable {
   private fun showApplyChangesCanceledNotification(project: Project, startTaskName: String, cancelledTaskName: String) {
     val notification = Notification(
       "JetBrains Academy",
-      EduCoreBundle.message("action.Educational.Educator.ApplyChangesToNextTasks.Notification.cancel.title"),
+      EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.Notification.cancel.title"),
       EduCoreBundle.message(
-        "action.Educational.Educator.ApplyChangesToNextTasks.Notification.cancel.description",
+        "action.Educational.Educator.SyncChangesWithNextTasks.Notification.cancel.description",
         startTaskName,
         cancelledTaskName
       ),
@@ -214,8 +214,8 @@ class CCFrameworkLessonManager(private val project: Project) : Disposable {
   private fun showApplyChangesSuccessNotification(project: Project, startTaskName: String) {
     val notification = Notification(
       "JetBrains Academy",
-      EduCoreBundle.message("action.Educational.Educator.ApplyChangesToNextTasks.Notification.success.title"),
-      EduCoreBundle.message("action.Educational.Educator.ApplyChangesToNextTasks.Notification.success.description", startTaskName),
+      EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.Notification.success.title"),
+      EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.Notification.success.description", startTaskName),
       NotificationType.INFORMATION
     )
     Notifications.Bus.notify(notification, project)
