@@ -1,9 +1,0 @@
-<idea-plugin package="com.jetbrains.edu.rust" xmlns:xi="http://www.w3.org/2001/XInclude">
-  <!--suppress PluginXmlValidity -->
-  <dependencies>
-    <plugin id="org.rust.lang"/>
-    <plugin id="org.toml.lang"/>
-  </dependencies>
-
-  <xi:include href="/META-INF/Edu-Rust-base.xml" xpointer="xpointer(/idea-plugin/*)"/>
-</idea-plugin>
