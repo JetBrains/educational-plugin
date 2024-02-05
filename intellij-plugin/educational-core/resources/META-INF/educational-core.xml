@@ -236,6 +236,7 @@
     <appStarter id="createCourse" implementation="com.jetbrains.edu.learning.command.EduCourseCreatorAppStarter"/>
     <appStarter id="installCoursePlugins" implementation="com.jetbrains.edu.learning.command.EduCoursePluginInstallerAppStarter"/>
     <appStarter id="validateCourse" implementation="com.jetbrains.edu.learning.command.validation.EduCourseValidatorAppStarter"/>
+    <appStarter id="openCourse" implementation="com.jetbrains.edu.learning.command.EduOpenCourseAppStarter"/>
 
     <applicationService serviceInterface="com.jetbrains.edu.learning.EduBrowser"
                         serviceImplementation="com.jetbrains.edu.learning.EduBrowser"
