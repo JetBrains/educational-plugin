@@ -4,6 +4,8 @@ import com.intellij.openapi.Disposable
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.CourseVisibility.LocalVisibility
+import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplaceCoursePanel
 import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseBindData
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
@@ -28,7 +30,12 @@ open class JoinCourseDialog(
     return panel
   }
 
-  protected open fun createCoursePanel(): CoursePanel = JoinCoursePanel(disposable)
+  protected open fun createCoursePanel(): CoursePanel {
+    return when {
+      course.isMarketplace && course.visibility != LocalVisibility -> MarketplaceCoursePanel(disposable)
+      else -> JoinCoursePanel(disposable)
+    }
+  }
 
   protected open fun isToShowError(errorState: ErrorState): Boolean = true
 

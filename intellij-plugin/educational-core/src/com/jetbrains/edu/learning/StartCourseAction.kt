@@ -4,7 +4,6 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.Messages
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
@@ -28,7 +27,7 @@ abstract class StartCourseAction(
 
   private fun doImport() {
     val course = importCourse() ?: return
-    createJoinCourseDialog(course).show()
+    JoinCourseDialog(course).show()
   }
 
   private fun importCourse(): EduCourse? {
@@ -54,14 +53,6 @@ abstract class StartCourseAction(
       message("error.failed.to.find.course.by.link", platformName, courseLink),
       message("error.failed.to.find.course.title", platformName)
     )
-  }
-
-  /**
-   * Returns instance of [JoinCourseDialog] to show user basic info about given [course]
-   * with course settings (location, language-specific settings) and button to start the course.
-   */
-  protected open fun createJoinCourseDialog(course: Course): JoinCourseDialog {
-    return JoinCourseDialog(course)
   }
 
   /**
