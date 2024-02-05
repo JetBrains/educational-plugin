@@ -147,7 +147,7 @@
     <action class="com.jetbrains.edu.coursecreator.actions.CCCreateCoursePreview" id="Educational.Educator.CreateCoursePreview"/>
     <action id="Educational.Educator.SyncChangesWithNextTasks"
             class="com.jetbrains.edu.coursecreator.actions.CCSyncChangesWithNextTasks"
-            icon="AllIcons.Vcs.Push"/>
+            icon="com.jetbrains.edu.EducationalCoreIcons.SyncFiles"/>
 
     <group id="Educational.Educator.CourseCreator.Menu" popup="true"
            class="com.jetbrains.edu.coursecreator.actions.CCProjectViewActionGroup">

@@ -52,6 +52,7 @@
             "eduTaskTheoryDefault.svg" : "icons/com/jetbrains/edu/eduTaskTheoryDefault.svg",
             "eduTaskTheoryDone.svg" : "icons/com/jetbrains/edu/eduTaskTheoryDone.svg",
             "eduNavigationMapTheoryTask.svg" : "icons/com/jetbrains/edu/eduNavigationMapTheoryTask.svg",
+            "syncFiles.svg" : "icons/com/jetbrains/edu/syncFiles.svg",
             "usersNumbers.svg" : "icons/com/jetbrains/edu/usersNumber.svg"
           }
         }
