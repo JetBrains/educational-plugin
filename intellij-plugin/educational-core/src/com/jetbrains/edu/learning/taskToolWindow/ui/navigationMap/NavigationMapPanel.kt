@@ -1,10 +1,7 @@
 package com.jetbrains.edu.learning.taskToolWindow.ui.navigationMap
 
 import com.intellij.ide.ui.laf.darcula.DarculaUIUtil
-import com.intellij.openapi.actionSystem.ActionUpdateThread
-import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.ex.ActionButtonLook
 import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl
@@ -12,7 +9,10 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.AnActionLink
 import com.intellij.ui.components.JBLabel
-import com.intellij.util.ui.*
+import com.intellij.ui.util.preferredHeight
+import com.intellij.util.ui.JBEmptyBorder
+import com.intellij.util.ui.JBFont
+import com.intellij.util.ui.JBInsets
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
@@ -41,23 +41,32 @@ class NavigationMapPanel : JPanel(BorderLayout()) {
   }
 
   init {
-    border = JBEmptyBorder(8, 0, 12, 8)
+    border = JBEmptyBorder(8, 0, 0, 8)
     headerText = JBLabel().withFont(JBFont.medium())
     headerText.foreground = EduColors.taskToolWindowLessonLabel
     val headerTextPanel = JPanel()
     // -5 to align the left border
     headerTextPanel.border = JBEmptyBorder(0, -5, 12, 0)
     headerTextPanel.add(headerText)
-    toolbar.targetComponent = this
     // '-4' to align the left border
-    toolbar.border = JBEmptyBorder(0, -4, 30, 0)
+    toolbar.border = JBEmptyBorder(0, -4, 0, 0)
+    toolbar.layoutPolicy = ActionToolbar.NOWRAP_LAYOUT_POLICY
     toolbar.setCustomButtonLook(MyActionButtonLook())
     toolbar.setMinimumButtonSize(Dimension(28, 28))
     toolbar.setActionButtonBorder(4, 0)
     defaultActionGroup.isSearchable = false
     add(headerTextPanel, BorderLayout.WEST)
     add(topPanelForProblems, BorderLayout.EAST)
-    add(toolbar.component, BorderLayout.SOUTH)
+    val navMapPanel = JScrollPane(
+      toolbar,
+      ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER,
+      ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS
+    ).apply {
+      border = JBEmptyBorder(0)
+      preferredHeight = 51
+    }
+    toolbar.targetComponent = navMapPanel
+    add(navMapPanel, BorderLayout.SOUTH)
   }
 
   fun setHeader(header: String) {
@@ -67,6 +76,11 @@ class NavigationMapPanel : JPanel(BorderLayout()) {
   fun replaceActions(actionList: List<AnAction>) {
     defaultActionGroup.removeAll()
     defaultActionGroup.addAll(actionList)
+  }
+
+  fun scrollToTask(task: Task) {
+    val selected = toolbar.components.find { ((it as ActionButton).action as NavigationMapAction).task == task } ?: return
+    toolbar.scrollRectToVisible(selected.bounds)
   }
 
   fun updateTopPanelForProblems(project: Project, course: HyperskillCourse, task: Task) {

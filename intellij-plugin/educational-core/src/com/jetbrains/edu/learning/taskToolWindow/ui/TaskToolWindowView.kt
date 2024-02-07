@@ -31,6 +31,7 @@ abstract class TaskToolWindowView(val project: Project) {
   abstract fun showLoadingCommunityPanel(platformName: String)
 
   abstract fun readyToCheck()
+  abstract fun scrollNavMap(task: Task?)
   abstract fun checkStarted(task: Task, startSpinner: Boolean = false)
   abstract fun checkFinished(task: Task, checkResult: CheckResult)
   abstract fun checkTooltipPosition(): RelativePoint?

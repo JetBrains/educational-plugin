@@ -121,6 +121,7 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
     if (course is HyperskillCourse) {
       navigationPanel.updateTopPanelForProblems(project, course, task)
     }
+    scrollNavMap(task)
   }
 
   override fun updateTaskDescription(task: Task?) {
@@ -131,6 +132,12 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
   override fun updateTaskDescription() {
     updateTaskDescription(currentTask)
     updateCheckPanel(currentTask)
+    scrollNavMap(currentTask)
+  }
+
+  override fun scrollNavMap(task: Task?) {
+    task ?: return
+    uiContent?.navigationMapPanel?.scrollToTask(task)
   }
 
   override fun readyToCheck() {
