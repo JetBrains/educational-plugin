@@ -34,7 +34,6 @@ private const val TASK_ID = "task_id"
 private const val TEST_RESULTS = "test_results"
 private const val TOTAL = "total"
 private const val UPDATES = "updates"
-private const val UUID = "uuid"
 private const val VERSION = "version"
 private const val HAS_NEXT = "has_next"
 
@@ -198,9 +197,6 @@ class MarketplaceSubmission : Submission {
   @JsonProperty(SOLUTION_AWS_KEY)
   var solutionKey: String = ""
 
-  @JsonProperty(UUID)
-  var uuid: String = ""
-
   @JsonProperty(TEST_RESULTS)
   var testsInfo: List<EduTestInfo> = emptyList()
 
@@ -212,7 +208,6 @@ class MarketplaceSubmission : Submission {
     solutionText: String,
     solutionFiles: List<SolutionFile>?,
     courseVersion: Int,
-    uuid: String,
     testsInfo: List<EduTestInfo> = emptyList()
   ) {
     this.taskId = taskId
@@ -220,7 +215,6 @@ class MarketplaceSubmission : Submission {
     this.solutionFiles = solutionFiles
     this.courseVersion = courseVersion
     solution = solutionText
-    this.uuid = uuid
     this.testsInfo = testsInfo
   }
 }

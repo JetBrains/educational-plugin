@@ -47,7 +47,7 @@ class MarketplaceCreateSubmissionTest : EduTestCase() {
     firstSolutionFile.placeholders = listOf(placeholder)
     val objectMapper = MarketplaceSubmissionsConnector.getInstance().objectMapper
     val solutionText = objectMapper.writeValueAsString(solutionFiles).trimIndent()
-    val submission = MarketplaceSubmission(eduTask.id, eduTask.status, solutionText, solutionFiles, course.marketplaceCourseVersion, "test-uuid")
+    val submission = MarketplaceSubmission(eduTask.id, eduTask.status, solutionText, solutionFiles, course.marketplaceCourseVersion)
 
     doTest(submission, """
       |status: $submissionStatus
@@ -58,7 +58,6 @@ class MarketplaceCreateSubmissionTest : EduTestCase() {
   :true,\"text\":\"solution file text\"},{\"name\":\"src/Test.kt\",\"placeholders\"\
   :null,\"is_visible\":false,\"text\":\"test file text\"}]"
       |format_version: $JSON_FORMAT_VERSION
-      |uuid: test-uuid
       |
     """.trimMargin())
   }

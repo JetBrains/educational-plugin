@@ -328,13 +328,13 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
     }
 
     private fun communitySolutions(taskId: Int) = listOf(
-      MarketplaceSubmission(taskId, CheckStatus.Solved, "some solution", null, 1, "some-uuid").apply {
+      MarketplaceSubmission(taskId, CheckStatus.Solved, "some solution", null, 1).apply {
         id = Random.nextInt()
       },
-      MarketplaceSubmission(taskId, CheckStatus.Solved, "some solution 2", null, 1, "some-uuid").apply {
+      MarketplaceSubmission(taskId, CheckStatus.Solved, "some solution 2", null, 1).apply {
         id = Random.nextInt()
       },
-      MarketplaceSubmission(taskId, CheckStatus.Solved, "some solution 3", null, 1, "some-uuid").apply {
+      MarketplaceSubmission(taskId, CheckStatus.Solved, "some solution 3", null, 1).apply {
         id = Random.nextInt()
       }
     )
