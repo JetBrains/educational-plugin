@@ -10,7 +10,6 @@ import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
-import com.intellij.ui.JBColor
 import com.intellij.ui.components.AnActionLink
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.*
@@ -127,7 +126,7 @@ class NavigationMapPanel : JPanel(BorderLayout()) {
         val color = when {
           !component.isEnabled -> EduColors.navigationMapDisabledIconBackground
           isSelected -> EduColors.navigationMapIconSelectedBorder
-          else -> action.task.navMapBorderColor
+          else -> if (action.task.isSolved) EduColors.navigationMapIconSolvedBorder else EduColors.navigationMapIconNotSelectedBorder
         }
 
         val g2 = g.create() as Graphics2D
@@ -222,13 +221,3 @@ class NavigationMapAction(val task: Task, private val currentTask: Task, private
   private fun isPreviousTaskUnsolvedHyperskillStage(task: Task): Boolean =
     NavigationUtils.isUnsolvedHyperskillStage(task.lesson.taskList[task.index - 2])
 }
-
-private val Task.navMapBorderColor: JBColor
-  get() {
-    return when (this) {
-      is TheoryTask -> EduColors.navigationMapIconSolvedBorder
-      else -> {
-        if (isSolved) EduColors.navigationMapIconSolvedBorder else EduColors.navigationMapIconNotSelectedBorder
-      }
-    }
-  }
