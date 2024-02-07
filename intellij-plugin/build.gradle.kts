@@ -413,6 +413,7 @@ createTasksToRunIde("WebStorm")
 createTasksToRunIde("GoLand")
 createTasksToRunIde("PhpStorm")
 createTasksToRunIde("RustRover")
+createTasksToRunIde("DataSpell")
 
 /**
  * Creates `configure$[ideName]` and `run$[ideName]` Gradle tasks based on given [ideName].
