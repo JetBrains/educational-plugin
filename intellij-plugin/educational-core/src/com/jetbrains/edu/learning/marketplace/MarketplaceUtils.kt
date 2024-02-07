@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.marketplace.update.getUpdateInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
+import com.jetbrains.edu.learning.submissions.MarketplaceSolutionSharingPreference
 import com.jetbrains.edu.learning.update.UpdateNotification
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.util.*

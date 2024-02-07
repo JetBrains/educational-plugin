@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderWithAnswerMixin
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showFailedToDeleteNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showNoSubmissionsToDeleteNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showSubmissionsDeletedSucessfullyNotification
-import com.jetbrains.edu.learning.marketplace.MarketplaceSolutionSharingPreference
+import com.jetbrains.edu.learning.submissions.MarketplaceSolutionSharingPreference
 import com.jetbrains.edu.learning.marketplace.UserAgreementDialogResultState
 import com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceHost
 import com.jetbrains.edu.learning.messages.EduCoreBundle
