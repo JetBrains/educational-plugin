@@ -4,13 +4,13 @@ import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.command.undo.BasicUndoableAction
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsActions.ActionText
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.actions.EduUndoableAction
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.actions.EduActionUtils.runUndoableAction
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -22,8 +22,6 @@ import java.util.function.Supplier
 abstract class CCChangeFilePropertyActionBase(
   private val name: Supplier<@ActionText String>
 ) : DumbAwareAction(name) {
-
-  constructor(@ActionText name: String) : this(Supplier { name })
 
   override fun update(e: AnActionEvent) {
     val project = e.project
@@ -95,7 +93,7 @@ private class ChangeFilesPropertyUndoableAction(
   private val states: List<State>,
   private val affectedTasks: Collection<Task>,
   files: List<VirtualFile>
-) : BasicUndoableAction(*files.toTypedArray()) {
+) : EduUndoableAction(files, true) {
 
   override fun redo() = doAction { it.changeState(project) }
   override fun undo() = doAction { it.restoreState(project) }
@@ -105,8 +103,6 @@ private class ChangeFilesPropertyUndoableAction(
     ProjectView.getInstance(project).refresh()
     affectedTasks.forEach { saveItem(it) }
   }
-
-  override fun isGlobal(): Boolean = true
 }
 
 interface State {

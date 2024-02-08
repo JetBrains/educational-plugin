@@ -1,13 +1,9 @@
 package com.jetbrains.edu.android.courseGeneration
 
-import com.android.tools.idea.gradle.project.AndroidGradleProjectStartupActivity
-import com.android.tools.idea.startup.GradleSpecificInitializer
-import com.intellij.ide.ApplicationInitializedListener
 import com.intellij.ide.util.PropertiesComponent
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.extensions.ExtensionPoint
 import com.intellij.openapi.extensions.impl.ExtensionPointImpl
-import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.jvm.courseGeneration.JvmCourseGenerationTestBase
@@ -20,32 +16,8 @@ class AndroidCourseGeneratorTest : JvmCourseGenerationTestBase() {
 
   override fun setUp() {
     super.setUp()
-    disableUnnecessaryExtensions()
+    disableUnnecessaryExtensions(testRootDisposable)
     disableProjectSyncNotifications()
-  }
-
-  // Disables some extensions provided by AS.
-  // They try to set up JAVA and Android JDK, or run Gradle imoport in test that we don't need in these tests.
-  // So let's unregister them. Otherwise, tests fail
-  private fun disableUnnecessaryExtensions() {
-    val extensionArea = ApplicationManager.getApplication().extensionArea
-
-    @Suppress("UnstableApiUsage")
-    extensionArea
-      .getExtensionPoint<ApplicationInitializedListener>("com.intellij.applicationInitializedListener")
-      .unregisterExtensionInTest(GradleSpecificInitializer::class.java)
-
-    extensionArea
-      .getExtensionPoint<StartupActivity>("com.intellij.postStartupActivity")
-      // BACKCOMPAT: 2023.2. Use `unregisterExtensionInTest` when `AndroidGradleProjectStartupActivity` is migrated to `ProjectActivity` API
-      .unregisterExtension(AndroidGradleProjectStartupActivity::class.java)
-  }
-
-  @Suppress("UnstableApiUsage")
-  private fun <T : Any, K : T> ExtensionPoint<T>.unregisterExtensionInTest(extensionClass: Class<K>) {
-    require(this is ExtensionPointImpl)
-    val filteredExtensions = extensionList.filter { !extensionClass.isInstance(it) }
-    maskAll(filteredExtensions, testRootDisposable, false)
   }
 
   fun `test new course structure`() {
@@ -143,5 +115,12 @@ class AndroidCourseGeneratorTest : JvmCourseGenerationTestBase() {
   companion object {
     // See com.android.tools.idea.gradle.notification.ProjectSyncStatusNotificationProvider.ProjectStructureNotificationPanel.userAllowsShow
     private const val PROJECT_STRUCTURE_NOTIFICATION_LAST_HIDDEN_TIMESTAMP = "PROJECT_STRUCTURE_NOTIFICATION_LAST_HIDDEN_TIMESTAMP"
+
+    @Suppress("UnstableApiUsage")
+    fun <T : Any, K : T> ExtensionPoint<T>.unregisterExtensionInTest(extensionClass: Class<K>, disposable: Disposable) {
+      require(this is ExtensionPointImpl)
+      val filteredExtensions = extensionList.filter { !extensionClass.isInstance(it) }
+      maskAll(filteredExtensions, disposable, false)
+    }
   }
 }

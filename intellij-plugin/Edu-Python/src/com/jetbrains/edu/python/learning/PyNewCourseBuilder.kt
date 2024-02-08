@@ -28,6 +28,7 @@ class PyNewCourseBuilder : EduCourseBuilder<PyProjectSettings> {
   override fun getDefaultSettings(): Result<PyProjectSettings, String> {
     return findPath(INTERPRETER_PROPERTY, "Python interpreter").flatMap { sdkPath ->
       val versionString = PythonSdkFlavor.getApplicableFlavors(false)[0].getVersionString(sdkPath)
+                          ?: error("Can't get python version")
       val sdk = ProjectJdkImpl(versionString, PyFakeSdkType, sdkPath, versionString)
       Ok(PyProjectSettings(sdk))
     }

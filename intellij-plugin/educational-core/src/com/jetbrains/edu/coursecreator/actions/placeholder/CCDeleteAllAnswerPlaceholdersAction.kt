@@ -26,11 +26,11 @@ class CCDeleteAllAnswerPlaceholdersAction : CCAnswerPlaceholderAction() {
     )
   }
 
-  private class ClearPlaceholders(project: Project, taskFile: TaskFile, editor: Editor) : TaskFileUndoableAction(
-    project,
-    taskFile,
-    editor
-  ) {
+  private class ClearPlaceholders(
+    project: Project,
+    taskFile: TaskFile,
+    editor: Editor
+  ) : TaskFileUndoableAction(project, taskFile, editor, true) {
     private val placeholders = ArrayList(taskFile.answerPlaceholders)
 
     override fun performUndo(): Boolean {
@@ -46,8 +46,6 @@ class CCDeleteAllAnswerPlaceholdersAction : CCAnswerPlaceholderAction() {
       taskFile.removeAllPlaceholders()
       PlaceholderHighlightingManager.hidePlaceholders(project, placeholders)
     }
-
-    override fun isGlobal(): Boolean = true
   }
 
   companion object {

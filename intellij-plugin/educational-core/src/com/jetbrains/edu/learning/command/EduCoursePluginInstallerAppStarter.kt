@@ -2,8 +2,6 @@ package com.jetbrains.edu.learning.command
 
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.extensions.PluginId
-import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.InstallAndEnableTaskHeadlessImpl
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
 
@@ -40,13 +38,6 @@ class EduCoursePluginInstallerAppStarter : EduAppStarterBase<Args>() {
 
     LOG.info("Installing: $pluginIds")
 
-    var result: CommandResult = CommandResult.Ok
-    @Suppress("UnstableApiUsage")
-    ProgressManager.getInstance().run(object : InstallAndEnableTaskHeadlessImpl(pluginIds, {}) {
-      override fun onThrowable(error: Throwable) {
-        result = CommandResult.Error("Failed to install plugins for `${course.name}` course", error)
-      }
-    })
-    return result
+    return installPlugins(pluginIds, course.name)
   }
 }

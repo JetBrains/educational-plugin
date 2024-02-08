@@ -24,6 +24,7 @@ class PyCheckerFixture : EduCheckerFixture<PyProjectSettings>() {
     val sdkLocation = sdkLocation ?: return
     runInEdtAndWait {
       val versionString = PythonSdkFlavor.getApplicableFlavors(false)[0].getVersionString(sdkLocation)
+                          ?: error("Can't get python version")
       projectSettings.sdk = ProjectJdkImpl(versionString, PyFakeSdkType, sdkLocation, versionString)
       VfsRootAccess.allowRootAccess(testRootDisposable, sdkLocation)
     }
