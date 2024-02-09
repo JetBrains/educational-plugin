@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.submissions
 
 import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
@@ -25,6 +26,12 @@ interface SubmissionsProvider {
   fun areSubmissionsAvailable(course: Course): Boolean
 
   fun isLoggedIn(): Boolean
+
+  /**
+   * Reflects whether submissions download is allowed for legal reasons, for Marketplace we should check User Agreement state on the remote
+   */
+  @RequiresBackgroundThread
+  fun isSubmissionDownloadAllowed(): Boolean = true
 
   fun getPlatformName(): String
 

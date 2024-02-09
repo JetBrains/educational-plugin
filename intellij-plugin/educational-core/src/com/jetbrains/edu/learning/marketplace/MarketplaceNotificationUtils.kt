@@ -83,7 +83,7 @@ object MarketplaceNotificationUtils {
   fun showLoginToUseSubmissionsNotification(project: Project) {
     val notification = Notification(
       JETBRAINS_ACADEMY_GROUP_ID,
-      EduCoreBundle.message("submissions.login", JET_BRAINS_ACCOUNT),
+      EduCoreBundle.message("submissions.tab.login", JET_BRAINS_ACCOUNT),
       NotificationType.INFORMATION
     )
     notification.addAction(object : AnAction(EduCoreBundle.message("log.in.to", JET_BRAINS_ACCOUNT)) {

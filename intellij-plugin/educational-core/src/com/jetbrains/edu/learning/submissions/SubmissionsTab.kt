@@ -16,6 +16,7 @@ import com.intellij.ui.ColorUtil
 import com.intellij.ui.dsl.builder.SegmentedButton
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.icons.CachedImageIcon
+import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.*
@@ -25,6 +26,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.isTestFile
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.marketplace.UserAgreementDialog
 import com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionAction
 import com.jetbrains.edu.learning.marketplace.actions.ShareMySolutionsAction
 import com.jetbrains.edu.learning.marketplace.isMarketplaceCourse
@@ -77,9 +79,7 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
       val isLoggedIn = submissionsManager.isLoggedIn()
       updateCommunityUI(isLoggedIn)
 
-      project.invokeLater {
-        updateSubmissionsContent(task, isLoggedIn)
-      }
+      updateSubmissionsContent(task, isLoggedIn)
     }, ProcessIOExecutorService.INSTANCE)
   }
 
@@ -114,19 +114,21 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
     val submissionsManager = SubmissionsManager.getInstance(project)
     val (descriptionText, customLinkHandler) = prepareSubmissionsContent(submissionsManager, task, isLoggedIn)
 
-    if (isCommunityTabAvailable) {
-      val (communityDescriptionText, communityLinkHandler) = prepareCommunityContent(task, submissionsManager)
-      communityPanel.apply {
-        hideLoadingSubmissionsPanel()
-        updateLinkHandler(communityLinkHandler)
-        setText(communityDescriptionText)
+    project.invokeLater {
+      if (isCommunityTabAvailable) {
+        val (communityDescriptionText, communityLinkHandler) = prepareCommunityContent(task, submissionsManager)
+        communityPanel.apply {
+          hideLoadingSubmissionsPanel()
+          updateLinkHandler(communityLinkHandler)
+          setText(communityDescriptionText)
+        }
       }
-    }
 
-    panel.apply {
-      hideLoadingSubmissionsPanel()
-      updateLinkHandler(customLinkHandler)
-      setText(descriptionText)
+      panel.apply {
+        hideLoadingSubmissionsPanel()
+        updateLinkHandler(customLinkHandler)
+        setText(descriptionText)
+      }
     }
   }
 
@@ -147,15 +149,21 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
     }
   }
 
+  @RequiresBackgroundThread
   private fun prepareSubmissionsContent(submissionsManager: SubmissionsManager, task: Task, isLoggedIn: Boolean): Pair<String, SwingToolWindowLinkHandler?> {
     val submissionsList = submissionsManager.getSubmissionsFromMemory(setOf(task.id))
 
-    if (!isLoggedIn && task.course.isMarketplace && submissionsList?.isNotEmpty() == true) {
-      return getSubmissionsText(submissionsList) to SubmissionsDifferenceLinkHandler(project, task, submissionsManager)
+    if (!isLoggedIn) {
+      if (task.course.isMarketplace && submissionsList?.isNotEmpty() == true) {
+        return getSubmissionsText(submissionsList) to SubmissionsDifferenceLinkHandler(project, task, submissionsManager)
+      }
+      else {
+        return getLoginText() to LoginLinkHandler(project, submissionsManager)
+      }
     }
 
-    if (!isLoggedIn) {
-      return getLoginText(submissionsManager) to LoginLinkHandler(project, submissionsManager)
+    if (!submissionsManager.isSubmissionDownloadAllowed()) {
+      return getAgreementPromptText() to LoginLinkHandler(project, submissionsManager)
     }
 
     if (submissionsList.isNullOrEmpty()) {
@@ -194,6 +202,7 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
     private const val SUBMISSION_PROTOCOL = "submission://"
     private const val SUBMISSION_DIFF_URL = "${SUBMISSION_PROTOCOL}diff/"
     private const val SUBMISSION_LOGIN_URL = "${SUBMISSION_PROTOCOL}login/"
+    private const val SUBMISSION_USER_AGREEMENT = "${SUBMISSION_PROTOCOL}agreement/"
     private const val OPEN_UL_TAG = "<ul style=list-style-type:none;margin:0;padding:0;>"
     private const val CLOSE_UL_TAG = "</ul>"
     private val MY = JButton(EduCoreBundle.message("submissions.button.my"))
@@ -211,10 +220,18 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
       project: Project, private val submissionsManager: SubmissionsManager
     ) : SwingToolWindowLinkHandler(project) {
       override fun process(url: String, referUrl: String?): Boolean {
-        if (!url.startsWith(SUBMISSION_LOGIN_URL)) return false
 
-        submissionsManager.doAuthorize()
-        return true
+        return when {
+          url.startsWith(SUBMISSION_LOGIN_URL) -> {
+            submissionsManager.doAuthorize()
+            true
+          }
+          url.startsWith(SUBMISSION_USER_AGREEMENT) -> {
+            runInEdt { UserAgreementDialog.showUserAgreementDialog(project) }
+            true
+          }
+          else -> false
+        }
       }
     }
 
@@ -246,13 +263,17 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
       StringBuilder(OPEN_UL_TAG), separator = ""
     ).append(CLOSE_UL_TAG).toString()
 
-    private fun getLoginText(submissionsManager: SubmissionsManager): String = if (!RemoteEnvHelper.isRemoteDevServer()) {
+    private fun getLoginText(): String = if (!RemoteEnvHelper.isRemoteDevServer()) {
       "<a $textStyleHeader;color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} href=$SUBMISSION_LOGIN_URL>" +
-      EduCoreBundle.message("submissions.login", submissionsManager.getPlatformName()) + "</a>"
+      EduCoreBundle.message("submissions.tab.login") + "</a>"
     }
     else {
       EduCoreBundle.message("submissions.wait.user.data.being.retrieved")
     }
+
+    private fun getAgreementPromptText(): String =
+      "<a $textStyleHeader;color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} href=$SUBMISSION_USER_AGREEMENT>" +
+      EduCoreBundle.message("submissions.tab.agreement") + "</a>"
 
     private fun showDiff(project: Project, task: Task, submission: Submission, isCommunity: Boolean) {
       val taskFiles = task.taskFiles.values.toMutableList()

@@ -23,6 +23,7 @@ import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showF
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showNoSubmissionsToDeleteNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showSubmissionsDeletedSucessfullyNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceSolutionSharingPreference
+import com.jetbrains.edu.learning.marketplace.UserAgreementDialogResultState
 import com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceHost
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.submissions.*
@@ -289,7 +290,8 @@ class MarketplaceSubmissionsConnector {
     }
   }
 
-  private fun getUserAgreementState(): UserAgreementState? {
+  @RequiresBackgroundThread
+  fun getUserAgreementState(): UserAgreementState? {
     val loginName = JBAccountInfoService.getInstance()?.userData?.loginName ?: run {
       LOG.info("Unable to get user agreement state for not logged in user")
       return null
@@ -301,6 +303,34 @@ class MarketplaceSubmissionsConnector {
     }
 
     return response.body()?.string()?.let { UserAgreementState.valueOf(it) }
+  }
+
+  suspend fun changeUserAgreementAndStatisticsState(result: UserAgreementDialogResultState) {
+    changeUserAgreementState(result.agreementState)
+    changeUserStatisticsAllowedState(result.isStatisticsSharingAllowed)
+  }
+
+  private suspend fun changeUserAgreementState(newState: UserAgreementState) {
+    val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
+    val newStateName = newState.name
+    LOG.info("Changing User Agreement state to $newStateName for user $loginName")
+    try {
+      submissionsService.changeUserAgreementState(newStateName)
+    }
+    catch (e: Exception) {
+      LOG.error("Error occurred while changing User Agreement state to $newStateName for user $loginName", e)
+    }
+  }
+
+  private suspend fun changeUserStatisticsAllowedState(newState: Boolean) {
+    val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
+    LOG.info("Changing User Statistics Allowed state to $newState for user $loginName")
+    try {
+      submissionsService.changeUserStatisticsAllowedState(newState)
+    }
+    catch (e: Exception) {
+      LOG.error("Error occurred while changing User Statistics Allowed state to $newState for user $loginName", e)
+    }
   }
 
   companion object {

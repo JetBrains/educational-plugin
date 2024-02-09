@@ -20,14 +20,12 @@ import com.jetbrains.edu.learning.authUtils.requestFocus
 import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
 import com.jetbrains.edu.learning.createRetrofitBuilder
 import com.jetbrains.edu.learning.executeHandlingExceptions
-import com.jetbrains.edu.learning.marketplace.HUB_AUTH_URL
-import com.jetbrains.edu.learning.marketplace.JET_BRAINS_ACCOUNT
-import com.jetbrains.edu.learning.marketplace.MARKETPLACE
+import com.jetbrains.edu.learning.marketplace.*
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showInstallMarketplacePluginNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showLoginFailedNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showReloginToJBANeededNotification
-import com.jetbrains.edu.learning.marketplace.MarketplaceOAuthBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -41,7 +39,11 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
     if (RemoteEnvHelper.isRemoteDevServer()) return
     this.authorizationPlace = authorizationPlace
     ApplicationManager.getApplication().executeOnPooledThread {
-      login(*postLoginActions)
+      login(
+        *postLoginActions,
+        Runnable {
+          runInBackground(null, EduCoreBundle.message("user.agreement.getting.state"), false) { UserAgreementDialog.showAtLogin() }
+        })
     }
   }
 
@@ -54,6 +56,7 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
     return postLoginActions.asList() + listOf(requestFocus, showNotification)
   }
 
+  @RequiresBackgroundThread
   override fun isLoggedIn(): Boolean {
     if (RemoteEnvHelper.isRemoteDevServer()) {
       return RemoteEnvHelper.getUserUidToken() != null

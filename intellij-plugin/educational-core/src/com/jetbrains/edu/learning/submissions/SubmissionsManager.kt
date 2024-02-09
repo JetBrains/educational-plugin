@@ -5,6 +5,7 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
+import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -137,11 +138,16 @@ class SubmissionsManager(private val project: Project) {
     CompletableFuture.runAsync({
       if (isLoggedIn()) {
         val taskToolWindowView = TaskToolWindowView.getInstance(project)
-        taskToolWindowView.showLoadingSubmissionsPanel(getPlatformName())
-        if (Registry.`is`(ShareMySolutionsAction.REGISTRY_KEY, false)) {
-          taskToolWindowView.showLoadingCommunityPanel(getPlatformName())
+
+        if (submissionsProvider.isSubmissionDownloadAllowed()) {
+          taskToolWindowView.showLoadingSubmissionsPanel(getPlatformName())
+
+          if (Registry.`is`(ShareMySolutionsAction.REGISTRY_KEY, false)) {
+            taskToolWindowView.showLoadingCommunityPanel(getPlatformName())
+          }
+
+          loadSubmissionsContent(course, submissionsProvider, loadSolutions)
         }
-        loadSubmissionsContent(course, submissionsProvider, loadSolutions)
       }
     }, ProcessIOExecutorService.INSTANCE)
   }
@@ -174,7 +180,11 @@ class SubmissionsManager(private val project: Project) {
 
   fun isLoggedIn(): Boolean = course?.getSubmissionsProvider()?.isLoggedIn() ?: false
 
-  fun getPlatformName(): String = course?.getSubmissionsProvider()?.getPlatformName() ?: error("Failed to get platform Name")
+
+  @RequiresBackgroundThread
+  fun isSubmissionDownloadAllowed(): Boolean = course?.getSubmissionsProvider()?.isSubmissionDownloadAllowed() ?: false
+
+  private fun getPlatformName(): String = course?.getSubmissionsProvider()?.getPlatformName() ?: error("Failed to get platform Name")
 
   fun doAuthorize() = course?.getSubmissionsProvider()?.doAuthorize(Runnable { prepareSubmissionsContentWhenLoggedIn() })
 

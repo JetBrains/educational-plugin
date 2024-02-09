@@ -51,11 +51,11 @@ interface SubmissionsService {
   fun getUserAgreementState(): Call<ResponseBody>
 
   @PATCH("/api/user/agreement")
-  fun changeUserAgreementState(@Query("state") agreementState: String): Response<Unit>
+  suspend fun changeUserAgreementState(@Query("state") agreementState: String): Response<Unit>
 
   @GET("/api/user/statisticsAllowed")
   fun getUserStatisticsAllowedState(): Call<Boolean>
 
   @PATCH("/api/user/statisticsAllowed")
-  fun changeUserStatisticsAllowedState(@Query("state") statisticsAllowed: Boolean): Response<Unit>
+  suspend fun changeUserStatisticsAllowedState(@Query("state") statisticsAllowed: Boolean): Response<Unit>
 }
