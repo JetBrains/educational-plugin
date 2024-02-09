@@ -18,13 +18,14 @@ import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.wm.IdeFrame
 import com.intellij.ui.DocumentAdapter
+import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.bindItem
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.text.nullize
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.coursecreator.feedback.CCInIdeFeedbackDialog
 import com.jetbrains.edu.coursecreator.getDefaultCourseType
-import com.jetbrains.edu.coursecreator.feedback.createFeedbackPanel
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
@@ -37,11 +38,13 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMEN
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.courseFormat.ext.technologyName
 import com.jetbrains.edu.learning.enablePlugins
+import com.jetbrains.edu.learning.feedback.CourseFeedbackInfoData
 import com.jetbrains.edu.learning.getDisabledPlugins
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
 import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettingsPanel
 import com.jetbrains.edu.learning.newproject.ui.errors.*
+import org.jdesktop.swingx.HorizontalLayout
 import org.jetbrains.annotations.Nls
 import java.awt.BorderLayout
 import java.awt.Component
@@ -134,12 +137,8 @@ class CCNewCoursePanel(
           .align(AlignX.FILL)
       }
       val feedbackPanel = createFeedbackPanel(titleField, _course)
-      // is nullable for 231 branch where InIdeFeedbackDialog is not supported
-      if (feedbackPanel != null) {
-        row {
-          cell(feedbackPanel)
-            .align(AlignX.RIGHT)
-        }
+      row {
+        cell(feedbackPanel).align(AlignX.RIGHT)
       }
     }
     add(topPanel, BorderLayout.NORTH)
@@ -321,6 +320,25 @@ class CCNewCoursePanel(
       LOG.info("Language with id $languageId not found")
       null
     }
+  }
+
+  private fun createFeedbackPanel(courseTitleField: CourseTitleField, course: Course): JPanel {
+    val panel = JPanel(HorizontalLayout())
+    val message = JLabel(EduCoreBundle.message("ui.feedback.cc.label"))
+    message.apply {
+      border = JBUI.Borders.emptyRight(3)
+      foreground = JBUI.CurrentTheme.ContextHelp.FOREGROUND
+    }
+
+    val hyperlinkLabel = HyperlinkLabel(EduCoreBundle.message("ui.feedback.cc.hyperlink.label"))
+
+    hyperlinkLabel.addHyperlinkListener {
+      val dialog = CCInIdeFeedbackDialog(CourseFeedbackInfoData.from(course, courseTitleField.text))
+      dialog.showAndGet()
+    }
+    panel.add(message)
+    panel.add(hyperlinkLabel)
+    return panel
   }
 
   companion object {

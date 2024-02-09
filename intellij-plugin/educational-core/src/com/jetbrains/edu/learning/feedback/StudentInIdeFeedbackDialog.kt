@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 package com.jetbrains.edu.learning.feedback
 
 import com.intellij.openapi.project.Project
@@ -13,7 +11,11 @@ class StudentInIdeFeedbackDialog(
 ) : InIdeFeedbackDialog<JbAcademyStudentFeedbackSystemInfoData>(true, project) {
 
   override val mySystemInfoData: JbAcademyStudentFeedbackSystemInfoData by lazy {
-    createJbAcademyFeedbackSystemInfoData(task)
+    JbAcademyStudentFeedbackSystemInfoData(
+      CommonFeedbackSystemData.getCurrentData(),
+      CourseFeedbackInfoData.from(task.course),
+      task.getPathInCourse()
+    )
   }
 
   init {
@@ -30,8 +32,4 @@ class StudentInIdeFeedbackDialog(
         }
       }
     }
-}
-
-private fun createJbAcademyFeedbackSystemInfoData(task: Task): JbAcademyStudentFeedbackSystemInfoData {
-    return JbAcademyStudentFeedbackSystemInfoData(CommonFeedbackSystemData.getCurrentData(), CourseFeedbackInfoData.from(task.course), task.getPathInCourse())
 }

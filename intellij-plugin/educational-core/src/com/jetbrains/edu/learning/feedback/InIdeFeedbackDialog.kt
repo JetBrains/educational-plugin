@@ -1,15 +1,10 @@
 package com.jetbrains.edu.learning.feedback
 
-import com.intellij.feedback.common.dialog.BlockBasedFeedbackDialogWithEmail
-import com.intellij.feedback.common.dialog.showFeedbackSystemInfoDialog
-import com.intellij.feedback.common.dialog.uiBlocks.*
-import com.intellij.feedback.common.notification.ThanksForFeedbackNotification
 import com.intellij.openapi.project.Project
 import com.intellij.ui.dsl.builder.Panel
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.NonNls
 
-@Suppress("UnstableApiUsage")
 abstract class InIdeFeedbackDialog<T : JbAcademyFeedbackSystemInfoData>(
   private val isStudent: Boolean,
   private val project: Project?,
@@ -34,10 +29,6 @@ abstract class InIdeFeedbackDialog<T : JbAcademyFeedbackSystemInfoData>(
   override val myTitle: String = EduCoreBundle.message("ui.feedback.dialog.top.title")
   override val zendeskFeedbackType: String = JBA_IN_IDE_FEEDBACK
   override val zendeskTicketTitle: String = JBA_IN_IDE_FEEDBACK
-
-  public override fun showThanksNotification() {
-    ThanksForFeedbackNotification(description = EduCoreBundle.message("ui.feedback.thanks.notification.content")).notify(project)
-  }
 
   abstract fun showJbAcademyFeedbackSystemInfoDialog(project: Project?, systemInfoData: T)
 
