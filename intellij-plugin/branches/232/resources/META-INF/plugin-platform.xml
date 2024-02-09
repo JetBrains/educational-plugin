@@ -1,0 +1,10 @@
+<!--suppress PluginXmlValidity -->
+<idea-plugin>
+  <content>
+    <!-- Two python modules provide the same integration
+     and are only needed to fix https://youtrack.jetbrains.com/issue/EDU-4512
+     caused by https://youtrack.jetbrains.com/issue/IDEA-292661 -->
+    <module name="Edu-Python-Community"/>
+    <module name="Edu-Python-Pro"/>
+  </content>
+</idea-plugin>

@@ -22,11 +22,6 @@
     <module name="Edu-Kotlin"/>
     <module name="Edu-Scala"/>
     <module name="Edu-Android"/>
-    <!-- Two python modules provide the same integration
-     and only needed to fix https://youtrack.jetbrains.com/issue/EDU-4512
-     caused by https://youtrack.jetbrains.com/issue/IDEA-292661 -->
-    <module name="Edu-Python-Community"/>
-    <module name="Edu-Python-Pro"/>
     <module name="Edu-JavaScript"/>
     <module name="Edu-Rust"/>
     <module name="Edu-Cpp"/>
@@ -38,4 +33,7 @@
     <module name="github"/>
     <module name="remote-env"/>
   </content>
+
+  <!-- BACKCOMPAT: 2023.3. Inline it -->
+  <xi:include href="/META-INF/plugin-platform.xml" xpointer="xpointer(/idea-plugin/*)"/>
 </idea-plugin>

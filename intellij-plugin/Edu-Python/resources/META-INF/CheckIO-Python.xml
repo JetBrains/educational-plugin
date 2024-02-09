@@ -13,5 +13,4 @@
     <optionsProvider instance="com.jetbrains.edu.python.learning.checkio.settings.PyCheckiOOptions"/>
     <checkListener implementation="com.jetbrains.edu.python.learning.checkio.checker.PyCheckiOCheckListener"/>
   </extensions>
-
 </idea-plugin>

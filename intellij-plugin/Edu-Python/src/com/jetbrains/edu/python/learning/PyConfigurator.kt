@@ -10,7 +10,6 @@ import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.python.learning.checker.PyTaskCheckerProvider
 import com.jetbrains.edu.python.learning.newproject.PyProjectSettings
-import icons.PythonIcons
 import javax.swing.Icon
 
 open class PyConfigurator : EduConfigurator<PyProjectSettings> {
@@ -29,7 +28,7 @@ open class PyConfigurator : EduConfigurator<PyProjectSettings> {
     get() = PyTaskCheckerProvider()
 
   override val logo: Icon
-    get() = PythonIcons.Python.Python
+    get() = pythonIcon
 
   override val isCourseCreatorEnabled: Boolean
     get() = false

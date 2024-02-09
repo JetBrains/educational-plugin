@@ -2,7 +2,7 @@ package com.jetbrains.edu.python.learning.newproject
 
 import com.intellij.openapi.projectRoots.*
 import com.intellij.openapi.util.IconLoader
-import icons.PythonIcons
+import com.jetbrains.edu.python.learning.virtualenvIcon
 import org.jdom.Element
 import javax.swing.Icon
 
@@ -14,5 +14,5 @@ object PyFakeSdkType : SdkType("") {
   override fun createAdditionalDataConfigurable(sdkModel: SdkModel,
                                                 sdkModificator: SdkModificator): AdditionalDataConfigurable? = null
   override fun saveAdditionalData(additionalData: SdkAdditionalData, additional: Element) {}
-  override fun getIcon(): Icon = IconLoader.getTransparentIcon(PythonIcons.Python.Virtualenv)
+  override fun getIcon(): Icon = IconLoader.getTransparentIcon(virtualenvIcon)
 }

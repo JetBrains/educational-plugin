@@ -1,3 +1,4 @@
+<!-- BACKCOMPAT: 2023.3 -->
 <idea-plugin package="com.jetbrains.edu.python" xmlns:xi="http://www.w3.org/2001/XInclude">
   <!--suppress PluginXmlValidity -->
   <dependencies>

@@ -11,7 +11,7 @@ import com.jetbrains.edu.android.courseGeneration.AndroidCourseGeneratorTest.Com
 // Disables some extensions provided by AS.
 // They try to set up JAVA and Android JDK, or run Gradle import in tests where we don't need it.
 // So let's unregister them. Otherwise, tests fail
-// BACKCOMPAT" 2023.3. Inline
+// BACKCOMPAT: 2023.3. Inline
 internal fun disableUnnecessaryExtensions(disposable: Disposable) {
   val extensionArea = ApplicationManager.getApplication().extensionArea
 

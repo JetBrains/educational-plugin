@@ -2,5 +2,4 @@
   <extensions defaultExtensionNs="Educational">
     <pySdkSettingsHelper implementation="com.jetbrains.edu.python.learning.PyIdeaSdkSettingsHelper"/>
   </extensions>
-
 </idea-plugin>

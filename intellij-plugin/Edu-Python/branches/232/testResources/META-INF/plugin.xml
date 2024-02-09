@@ -1,3 +1,4 @@
+<!-- BACKCOMPAT: 2023.3 -->
 <!--suppress PluginXmlValidity -->
 <idea-plugin package="com.jetbrains.edu" xmlns:xi="http://www.w3.org/2001/XInclude">
   <id>com.jetbrains.edu.python</id>
@@ -5,7 +6,7 @@
 
   <content>
     <!-- Two python modules provide the same integration
-     and only needed to fix https://youtrack.jetbrains.com/issue/EDU-4512
+     and are only needed to fix https://youtrack.jetbrains.com/issue/EDU-4512
      caused by https://youtrack.jetbrains.com/issue/IDEA-292661 -->
     <module name="Edu-Python-Community"/>
     <module name="Edu-Python-Pro"/>
