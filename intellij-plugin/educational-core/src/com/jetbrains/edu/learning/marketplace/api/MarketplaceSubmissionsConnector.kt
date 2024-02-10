@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderWithAnswerMixin
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showFailedToDeleteNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showNoSubmissionsToDeleteNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showSubmissionsDeletedSucessfullyNotification
-import com.jetbrains.edu.learning.submissions.MarketplaceSolutionSharingPreference
+import com.jetbrains.edu.learning.submissions.SolutionSharingPreference
 import com.jetbrains.edu.learning.marketplace.UserAgreementDialogResultState
 import com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceHost
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -197,7 +197,7 @@ class MarketplaceSubmissionsConnector {
   suspend fun changeSharingPreference(state: Boolean): Result<Response<Unit>, String> {
     val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
     LOG.info("Changing solution sharing to state $state for user $loginName")
-    val newSharingPreference = if (state) MarketplaceSolutionSharingPreference.ALWAYS else MarketplaceSolutionSharingPreference.NEVER
+    val newSharingPreference = if (state) SolutionSharingPreference.ALWAYS else SolutionSharingPreference.NEVER
     return try {
       Ok(submissionsService.changeSharingPreference(newSharingPreference.name))
     }
@@ -207,7 +207,7 @@ class MarketplaceSubmissionsConnector {
     }
   }
 
-  suspend fun getSharingPreference(): MarketplaceSolutionSharingPreference? {
+  suspend fun getSharingPreference(): SolutionSharingPreference? {
     val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
     LOG.info("Getting solution sharing preference for use $loginName")
     val responseString = try {
@@ -218,7 +218,7 @@ class MarketplaceSubmissionsConnector {
       null
     }
 
-    return responseString?.let { MarketplaceSolutionSharingPreference.valueOf(it) }
+    return responseString?.let { SolutionSharingPreference.valueOf(it) }
   }
 
   private fun fetchSharedSolutionsForCourse(

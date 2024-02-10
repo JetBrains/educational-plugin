@@ -6,6 +6,6 @@ package com.jetbrains.edu.learning.submissions
  * @property ALWAYS always share user's correct submissions
  * @property PROHIBITED user is prohibited to share
  */
-enum class MarketplaceSolutionSharingPreference {
+enum class SolutionSharingPreference {
   NEVER, ALWAYS, PROHIBITED
 }
