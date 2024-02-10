@@ -21,9 +21,8 @@ class MockTaskToolWindowView(project: Project) : TaskToolWindowView(project) {
   override fun updateAdditionalTaskTabs(task: Task?) {}
   override fun updateTab(tabType: TabType) {}
   override fun showLoadingSubmissionsPanel(platformName: String) {}
-
   override fun showLoadingCommunityPanel(platformName: String) {}
-
+  override fun showMyTab() {}
   override fun readyToCheck() {}
   override fun scrollNavMap(task: Task?) {}
   override fun checkStarted(task: Task, startSpinner: Boolean) {}

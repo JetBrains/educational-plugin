@@ -92,6 +92,15 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
     }
   }
 
+  override fun showMyTab() {
+    if (!project.isMarketplaceCourse()) return
+
+    val submissionsTab = tabManager.getTab(SUBMISSIONS_TAB) as SubmissionsTab
+    ApplicationManager.getApplication().invokeLater {
+      submissionsTab.showMyTab()
+    }
+  }
+
   override fun updateCheckPanel(task: Task?) {
     if (task == null) return
     val checkPanel = uiContent?.checkPanel ?: return

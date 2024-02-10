@@ -179,6 +179,10 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
     communityPanel.showLoadingSubmissionsPanel(platformName)
   }
 
+  fun showMyTab() {
+    segmentedButton.selectedItem = MY
+  }
+
   private fun addSegmentedButton() = headerPanel.add(panel {
     row {
       segmentedButton = segmentedButton(SEGMENTED_BUTTON_ITEMS) { segmentedButtonRenderer(it) }.apply {
