@@ -54,7 +54,7 @@ object SolutionSharingInlineBanners {
     }
 
     val inlineBanner = SolutionSharingInlineBanner(EditorNotificationPanel.Status.Error).apply {
-      setMessage("Failed to enable Solution Sharing, please try again later")
+      setMessage(EduCoreBundle.message("marketplace.solutions.sharing.inline.banner.failure.description"))
     }
     TaskToolWindowView.getInstance(project).addInlineBanner(inlineBanner)
   }
