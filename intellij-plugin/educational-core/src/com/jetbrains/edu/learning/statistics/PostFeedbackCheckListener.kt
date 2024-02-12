@@ -11,10 +11,18 @@ class PostFeedbackCheckListener : CheckListener {
     val lesson = task.lesson
     val course = lesson.course
 
-    val progress = ProgressUtil.countProgress(course)
-    val solvedTasks = progress.first
-    if (solvedTasks == lesson.taskList.size && !isFeedbackAsked()) {
+    if (progressPassed(ProgressUtil.countProgress(course)) && !isSurveyPrompted()) {
       showStudentPostFeedbackNotification(project)
     }
+  }
+
+  private fun progressPassed(progress: ProgressUtil.CourseProgress): Boolean {
+    return progress.tasksSolved.toFloat() / progress.tasksTotalNum.toFloat() > SOLVED_TASKS_PERCENTAGE || progress.tasksSolved > MIN_SOLVED_TASKS_NUMBER
+  }
+
+  companion object {
+    private const val MIN_SOLVED_TASKS_NUMBER = 1
+
+    private const val SOLVED_TASKS_PERCENTAGE = 0.05
   }
 }

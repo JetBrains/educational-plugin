@@ -127,14 +127,12 @@ class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport
       Logger.getInstance(CourseViewPane::class.java).error("course is null")
       return
     }
-    val (taskSolved, tasksTotal) = ProgressUtil.countProgress(course)
-
-    updateCourseProgress(tasksTotal, taskSolved)
+    updateCourseProgress(ProgressUtil.countProgress(course))
   }
 
-  fun updateCourseProgress(tasksTotal: Int, taskSolved: Int) {
-    progressBar.maximum = tasksTotal
-    progressBar.value = taskSolved
+  fun updateCourseProgress(progress: ProgressUtil.CourseProgress) {
+    progressBar.maximum = progress.tasksTotalNum
+    progressBar.value = progress.tasksSolved
   }
 
   @TestOnly

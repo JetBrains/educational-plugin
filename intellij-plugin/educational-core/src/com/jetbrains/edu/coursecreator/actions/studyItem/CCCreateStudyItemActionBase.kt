@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.studyItemType
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.statistics.isFeedbackAsked
+import com.jetbrains.edu.learning.statistics.isSurveyPrompted
 import com.jetbrains.edu.learning.statistics.showCCPostFeedbackNotification
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.IOException
@@ -284,7 +284,7 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
     val UPDATE_PARENT_CONFIG: DataKey<Boolean> = DataKey.create("UPDATE_PARENT_CONFIG")
 
     private fun askFeedback(course: Course, project: Project) {
-      if (isFeedbackAsked()) {
+      if (isSurveyPrompted()) {
         return
       }
       var countTasks = 0

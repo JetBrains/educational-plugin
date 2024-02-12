@@ -16,21 +16,19 @@ import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.isPreview
 import com.jetbrains.edu.learning.courseFormat.ext.project
-import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import java.awt.Color
 import javax.swing.JProgressBar
 
 object ProgressUtil {
-  /**
-   * @return Pair (number of solved tasks, number of tasks)
-   */
-  fun countProgress(course: Course): Pair<Int, Int> {
+
+  fun countProgress(course: Course): CourseProgress {
     if (course is HyperskillCourse) {
       // we want empty progress in case project stages are not loaded
       // and only code challenges are present
-      val projectLesson = course.getProjectLesson() ?: return 0 to 0
+      val projectLesson = course.getProjectLesson() ?: return CourseProgress(0, 0)
       return countProgress(projectLesson)
     }
     var taskNum = 0
@@ -47,13 +45,13 @@ object ProgressUtil {
         taskSolved += getSolvedTasks(lesson)
       }
     }
-    return Pair(taskSolved, taskNum)
+    return CourseProgress(taskSolved, taskNum)
   }
 
-  fun countProgress(lesson: Lesson): Pair<Int, Int> {
+  fun countProgress(lesson: Lesson): CourseProgress {
     val taskNum = lesson.taskList.size
     val taskSolved = getSolvedTasks(lesson)
-    return Pair(taskSolved, taskNum)
+    return CourseProgress(taskSolved, taskNum)
   }
 
   private fun getSolvedTasks(lesson: Lesson): Int {
@@ -75,7 +73,7 @@ object ProgressUtil {
     })
     progressBar.foreground = ColorProgressBar.GREEN
     progressBar.isIndeterminate = false
-    progressBar.putClientProperty("ProgressBar.flatEnds", java.lang.Boolean.TRUE)
+    progressBar.putClientProperty("ProgressBar.flatEnds", true)
     return progressBar
   }
 
@@ -85,16 +83,18 @@ object ProgressUtil {
       LOG.error("course is null for project at ${project.basePath}")
       return
     }
-    val (tasksSolved, tasksTotal) = countProgress(course)
+    val progress = countProgress(course)
     val pane = ProjectView.getInstance(project).currentProjectViewPane
     if (pane is CourseViewPane && project.isStudentProject() && !ApplicationManager.getApplication().isUnitTestMode) {
-      pane.updateCourseProgress(tasksTotal, tasksSolved)
+      pane.updateCourseProgress(progress)
     }
     val location = project.basePath
     if (location != null && !course.isPreview) {
-      CoursesStorage.getInstance().updateCourseProgress(course, location, tasksSolved, tasksTotal)
+      CoursesStorage.getInstance().updateCourseProgress(course, location, progress.tasksSolved, progress.tasksTotalNum)
     }
   }
 
   private val LOG: Logger = Logger.getInstance(ProgressUtil::class.java)
+
+  data class CourseProgress(val tasksSolved: Int, val tasksTotalNum: Int)
 }

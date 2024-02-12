@@ -28,17 +28,17 @@ fun showCCPostFeedbackNotification(course: Course, project: Project) {
   val language = course.languageId.lowercase().capitalize()
 
   val notification = FeedbackNotification(EduCoreBundle.message("check.correct.solution.title"), EduCoreBundle.message("feedback.template.creator", feedbackUrl, language), feedbackUrl)
-  PropertiesComponent.getInstance().setValue(FEEDBACK_ASKED, true)
+  PropertiesComponent.getInstance().setValue(QUESTIONNAIRE_ADVERTISING_NOTIFICATION_SHOWN, true)
   notification.notify(project)
 }
 
 fun showStudentPostFeedbackNotification(project: Project) {
   val notification = FeedbackNotification(
-    EduCoreBundle.message("feedback.template.student.title"),
-    EduCoreBundle.message("feedback.template.student", UX_RESEARCH_LINK),
-    UX_RESEARCH_LINK
+    EduCoreBundle.message("survey.title"),
+    EduCoreBundle.message("survey.template", SURVEY_LINK),
+    SURVEY_LINK
   )
-  PropertiesComponent.getInstance().setValue(FEEDBACK_ASKED, true)
+  PropertiesComponent.getInstance().setValue(SURVEY_PROMPTED, true)
   notification.notify(project)
 }
 
@@ -67,11 +67,11 @@ private class FeedbackNotification(@NotificationTitle title: String, @Notificati
   }
 }
 
-fun isFeedbackAsked() : Boolean = PropertiesComponent.getInstance().getBoolean(FEEDBACK_ASKED)
+fun isSurveyPrompted() : Boolean = PropertiesComponent.getInstance().getBoolean(SURVEY_PROMPTED)
 
 fun isQuestionnaireAdvertisingNotificationShown() : Boolean = PropertiesComponent.getInstance().getBoolean(QUESTIONNAIRE_ADVERTISING_NOTIFICATION_SHOWN)
 
-private const val FEEDBACK_ASKED = "askFeedbackNotification"
+private const val SURVEY_PROMPTED = "surveyPrompted"
 
 private const val QUESTIONNAIRE_ADVERTISING_NOTIFICATION_SHOWN = "questionnaireAdvertisingNotification"
 
@@ -80,7 +80,7 @@ private const val FEEDBACK_URL_TEMPLATE = "https://www.jetbrains.com/feedback/fe
 
 private const val QUESTIONNAIRE_URL_TEMPLATE = "https://surveys.jetbrains.com/s3/marketplace-courses-survey?ide=\$PRODUCT&courseId=\$COURSE_ID"
 
-private const val UX_RESEARCH_LINK = "https://usabi.li/do/s/bda1fa"
+private const val SURVEY_LINK = "https://surveys.jetbrains.com/s3/plnf-computer-science-learning-curve-survey"
 
 @Suppress("UnstableApiUsage")
 private val productMap = hashMapOf(
