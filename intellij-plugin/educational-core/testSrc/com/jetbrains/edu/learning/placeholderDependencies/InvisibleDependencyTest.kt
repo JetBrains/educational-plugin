@@ -1,41 +1,27 @@
 package com.jetbrains.edu.learning.placeholderDependencies
 
-import com.intellij.testFramework.fixtures.impl.BaseFixture
-import com.intellij.util.ThrowableRunnable
-import com.jetbrains.edu.learning.EduTestCase
+import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.OpenFileDescriptor
+import com.intellij.openapi.util.TextRange
+import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
+import com.jetbrains.edu.learning.EduDocumentListener
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
+import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.findTask
+import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 
-class InvisibleDependencyTest : EduTestCase() {
+class InvisibleDependencyTest : CourseGenerationTestBase<EmptyProjectSettings>() {
 
-  override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
-    // https://youtrack.jetbrains.com/issue/EDU-6002/Fix-InvisibleDependencyTest-in-232
-  }
+  override val defaultSettings: EmptyProjectSettings get() = EmptyProjectSettings
 
-  private lateinit var fileEditorFixture: BaseFixture
-
-  override fun setUp() {
-    super.setUp()
-    fileEditorFixture = BaseFixture().apply { setUp() }
-  }
-
-  override fun tearDown() {
-    try {
-      fileEditorFixture.tearDown()
-    }
-    catch (e: Throwable) {
-      addSuppressedException(e)
-    }
-    finally {
-      super.tearDown()
-    }
-  }
-
-  fun `test invisible placeholder with invisible dependency`() = doTest(CheckStatus.Solved, false, "type Bar")
+  fun `test invisible placeholder with invisible dependency`() = doTest(CheckStatus.Solved, false, "\"Foo\"")
   fun `test visible placeholder with invisible dependency`() = doTest(CheckStatus.Unchecked, true, "type Foo")
 
-  private fun doTest(status: CheckStatus, expectedVisibility: Boolean, expectedSelectedText: String) {
-    val course = courseWithFiles {
+  private fun doTest(status: CheckStatus, expectedVisibility: Boolean, expectedPlaceholderText: String) {
+    val course = course {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("Task.kt", """
@@ -55,17 +41,34 @@ class InvisibleDependencyTest : EduTestCase() {
       }
     }
 
+    createCourseStructure(course)
+    createConfigFiles(project)
+    EduDocumentListener.setGlobalListener(project, testRootDisposable)
+
+    val fileEditorManager = FileEditorManager.getInstance(project)
+
     val task1 = course.findTask("lesson1", "task1")
-    task1.openTaskFileInEditor("Task.kt", 0)
-    myFixture.type("\"Foo\"")
+    val task1File = task1.getTaskFile("Task.kt")!!
+    val task1VirtualFile = task1File.getVirtualFile(project)!!
+    val textEditor1 = fileEditorManager.openTextEditor(OpenFileDescriptor(project, task1VirtualFile), true)!!
+
+    val placeholder1 = task1File.answerPlaceholders[0]
+    WriteCommandAction.runWriteCommandAction(project) {
+      textEditor1.document.replaceString(placeholder1.offset, placeholder1.endOffset, "\"Foo\"")
+    }
+
     task1.status = status
 
     val task2 = course.findTask("lesson1", "task2")
-    task2.openTaskFileInEditor("Task.kt")
+    val task2File = task2.getTaskFile("Task.kt")!!
+    val task2VirtualFile = task2File.getVirtualFile(project)!!
+    val textEditor2 = fileEditorManager.openTextEditor(OpenFileDescriptor(project, task2VirtualFile), true)!!
 
-    val taskFile = task2.getTaskFile("Task.kt") ?: error("")
-    val placeholder = taskFile.answerPlaceholders[0]
-    assertEquals(expectedVisibility, placeholder.isVisible)
-    assertEquals(expectedSelectedText, myFixture.editor.selectionModel.selectedText)
+    val placeholder2 = task2File.answerPlaceholders[0]
+    assertEquals(expectedVisibility, placeholder2.isVisible)
+    assertEquals(expectedPlaceholderText, textEditor2.document.getText(TextRange(placeholder2.offset, placeholder2.endOffset)))
+
+    fileEditorManager.closeFile(task1VirtualFile)
+    fileEditorManager.closeFile(task2VirtualFile)
   }
 }
