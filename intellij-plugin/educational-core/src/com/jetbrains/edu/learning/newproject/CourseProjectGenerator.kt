@@ -141,7 +141,9 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
       }
       return null
     }
-    val baseDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(location)
+    val baseDir = blockingContext {
+      LocalFileSystem.getInstance().refreshAndFindFileByIoFile(location)
+    }
     if (baseDir == null) {
       LOG.error("Couldn't find '$location' in VFS")
       return null
