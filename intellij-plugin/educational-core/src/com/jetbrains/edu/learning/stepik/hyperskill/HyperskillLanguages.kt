@@ -15,6 +15,9 @@ enum class HyperskillLanguages(private val id: String, private val languageName:
   PYTHON(EduFormatNames.PYTHON, "python3") {
     override val requestLanguage: String = "python"
   },
+  PYTHON3_10(EduFormatNames.PYTHON, "python3") {
+    override val requestLanguage: String = "python3.10"
+  },
   SCALA(EduFormatNames.SCALA, "scala"),
   SCALA3(EduFormatNames.SCALA, "scala3"),
   SHELL(EduFormatNames.SHELL, "shell"),
