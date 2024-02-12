@@ -1,11 +1,11 @@
 package com.jetbrains.edu.learning.command
 
-import com.jetbrains.edu.learning.EduUtilsKt
-import com.jetbrains.edu.learning.Err
-import com.jetbrains.edu.learning.Ok
-import com.jetbrains.edu.learning.Result
+import com.intellij.openapi.progress.EmptyProgressIndicator
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenProjectStageRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -34,6 +34,16 @@ enum class CourseSource(val option: String, val description: String) {
     override suspend fun loadCourse(marketplaceCourseLink: String): Result<Course, String> {
       val course = MarketplaceConnector.getInstance().getCourseInfoByLink(marketplaceCourseLink, searchPrivate = true)
       return if (course != null) Ok(course) else Err("Failed to load Marketplace course `$marketplaceCourseLink`")
+    }
+  },
+
+  HYPERSKILL("hyperskill", "Hyperskill project id") {
+    override suspend fun loadCourse(value: String): Result<Course, String> {
+      val projectId = value.toIntOrNull() ?: return Err("Hyperskill course id should be integer. Got `$value`")
+
+      val request = HyperskillOpenProjectStageRequest(projectId, null)
+      return HyperskillOpenInIdeRequestHandler.getCourse(request, EmptyProgressIndicator())
+        .mapErr { it.message }
     }
   };
 

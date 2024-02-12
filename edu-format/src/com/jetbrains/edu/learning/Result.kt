@@ -11,6 +11,13 @@ inline fun <T, S, E> Result<T, E>.map(func: (T) -> S): Result<S, E> {
   }
 }
 
+inline fun <T, E, S> Result<T, E>.mapErr(func: (E) -> S): Result<T, S> {
+  return when (this) {
+    is Err -> Err(func(error))
+    is Ok -> this
+  }
+}
+
 inline fun <T, S, E> Result<T, E>.flatMap(func: (T) -> Result<S, E>): Result<S, E> {
   return when (this) {
     is Err -> this
