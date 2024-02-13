@@ -20,9 +20,10 @@ abstract class AdditionalCardTextTab(project: Project, tabType: TabType) : Addit
 
   init {
     this.add(headerPanel, BorderLayout.NORTH)
-    List(2) { SwingTextPanel(project) }.forEach {
-      cardLayoutPanel.add(it)
-      Disposer.register(this, it)
+    repeat(2)  {
+      val swingTextPanel = SwingTextPanel(project)
+      cardLayoutPanel.add(swingTextPanel)
+      Disposer.register(this, swingTextPanel)
     }
     this.add(cardLayoutPanel, BorderLayout.CENTER)
   }
