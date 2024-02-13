@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.taskToolWindow.ui.tab
 
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.ui.JBUI
@@ -12,9 +11,7 @@ abstract class AdditionalCardTextTab(project: Project, tabType: TabType) : Addit
 
   private val cardLayout = CardLayout()
 
-  private val cardLayoutPanel = object : JPanel(cardLayout), Disposable {
-    override fun dispose() {}
-  }
+  private val cardLayoutPanel = JPanel(cardLayout)
 
   protected val headerPanel = JPanel(BorderLayout()).apply {
     border = JBUI.Borders.empty(16, 16, 16, 0)
@@ -25,7 +22,7 @@ abstract class AdditionalCardTextTab(project: Project, tabType: TabType) : Addit
     this.add(headerPanel, BorderLayout.NORTH)
     List(2) { SwingTextPanel(project) }.forEach {
       cardLayoutPanel.add(it)
-      Disposer.register(cardLayoutPanel, it)
+      Disposer.register(this, it)
     }
     this.add(cardLayoutPanel, BorderLayout.CENTER)
   }
