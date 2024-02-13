@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.marketplace
 
+import com.intellij.icons.ExpUiIcons
 import com.intellij.ide.plugins.PluginManagerConfigurable
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationAction
@@ -201,7 +202,10 @@ object MarketplaceNotificationUtils {
       EduCoreBundle.message("marketplace.report.solutions.success.title"),
       EduCoreBundle.message("marketplace.report.solutions.success.message"),
       NotificationType.INFORMATION
-    ).notify(project)
+    ).apply {
+      // workaround: there is no NotificationType.Success in the platform yet
+      icon = ExpUiIcons.Status.Success
+    }.notify(project)
   }
 
   fun showFailedToReportCommunitySolutionNotification(project: Project?) {
