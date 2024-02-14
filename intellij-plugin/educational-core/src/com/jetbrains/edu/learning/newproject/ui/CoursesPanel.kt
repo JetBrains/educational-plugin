@@ -94,7 +94,7 @@ abstract class CoursesPanel(
 
   open fun showErrorMessage(e: CoursesDownloadingException) {}
 
-  private fun createContentPanel(): JPanel {
+  protected open fun createContentPanel(): JPanel {
     val searchAndLoginPanel = NonOpaquePanel()
     searchAndLoginPanel.add(coursesSearchComponent, BorderLayout.NORTH)
     loginPanel?.apply {
