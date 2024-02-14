@@ -16,6 +16,7 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.getTaskFile
@@ -50,7 +51,7 @@ class PlaceholderHighlightingPass(
 
       if (!placeholder.isValid(textLength)) continue
       if (myProject.isStudentProject() && !placeholder.isCurrentlyVisible) continue
-      val highlightInfo = PlaceholderHighlightingInfo.forStatus(placeholder.status)
+      val highlightInfo = PlaceholderHighlightingInfo.forPlaceholder(placeholder)
 
       val highlightInfoBuilder = HighlightInfo.newHighlightInfo(highlightInfo.highlightInfoType)
         .range(placeholder.offset, placeholder.endOffset)
@@ -79,7 +80,8 @@ class PlaceholderHighlightingPass(
 enum class PlaceholderHighlightingInfo {
   UNCHECKED,
   SOLVED,
-  FAILED;
+  FAILED,
+  UNCHECKED_INVISIBLE;
 
   val severity: HighlightSeverity = HighlightSeverity("placeholder_${name.lowercase()}", HighlightSeverity.INFORMATION.myVal)
   val highlightInfoType: HighlightInfoType = HighlightInfoType.HighlightInfoTypeImpl(
@@ -88,9 +90,9 @@ enum class PlaceholderHighlightingInfo {
   )
 
   companion object {
-    fun forStatus(status: CheckStatus): PlaceholderHighlightingInfo {
-      return when (status) {
-        CheckStatus.Unchecked -> UNCHECKED
+    fun forPlaceholder(placeholder: AnswerPlaceholder): PlaceholderHighlightingInfo {
+      return when (placeholder.status) {
+        CheckStatus.Unchecked -> if (placeholder.isVisibleWithDependency) UNCHECKED else UNCHECKED_INVISIBLE
         CheckStatus.Solved -> SOLVED
         CheckStatus.Failed -> FAILED
       }

@@ -6,6 +6,12 @@
       <option name="EFFECT_TYPE" value="0" />
     </value>
   </option>
+  <option name="com.jetbrains.edu.PLACEHOLDER_UNCHECKED_INVISIBLE">
+    <value>
+      <option name="EFFECT_COLOR" value="444D58"/>
+      <option name="EFFECT_TYPE" value="0" />
+    </value>
+  </option>
   <option name="com.jetbrains.edu.PLACEHOLDER_SOLVED">
     <value>
       <option name="EFFECT_COLOR" value="2D5734"/>

@@ -55,7 +55,8 @@ class PlaceholderHighlightingPassTest : EduTestCase() {
     val task = course.findTask("lesson1", "task1")
     task.status = status
 
-    val expectedSeverity = PlaceholderHighlightingInfo.forStatus(status).severity
+    val firstPlaceholder = task.taskFiles["taskFile1.txt"]!!.answerPlaceholders[0]
+    val expectedSeverity = PlaceholderHighlightingInfo.forPlaceholder(firstPlaceholder).severity
 
     val file = findFile("lesson1/task1/taskFile1.txt")
 
