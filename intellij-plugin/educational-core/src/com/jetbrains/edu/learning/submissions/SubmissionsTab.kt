@@ -240,7 +240,7 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
     private const val CLOSE_UL_TAG = "</ul>"
     private val emptyBorder = JBUI.Borders.empty()
     private val emptyDefaultBorder = JBUI.Borders.empty(15, 15, 0, 0)
-    private val emptyLeftBorder = JBUI.Borders.emptyLeft(34)
+    private val emptyLeftBorder = JBUI.Borders.emptyLeft(33)
     /**
      * Workaround: [com.intellij.ui.dsl.builder.SegmentedButton.ItemPresentation] doesn't allow setting custom size of the button,
      * additional space characters allow showing the closest version to the design.
