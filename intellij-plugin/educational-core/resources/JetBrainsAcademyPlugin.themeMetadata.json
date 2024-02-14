@@ -73,6 +73,18 @@
       "source" : "com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroupPanel"
     },
     {
+      "key" : "SelectCourse.Hyperskill.HyperskillNotLoggedInPanel.backgroundColor",
+      "description" : "Background color for the main panel for Hyperskill tab",
+      "deprecated" : false,
+      "source" : "com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.HyperskillNotLoggedInPanel"
+    },
+    {
+      "key" : "SelectCourse.Hyperskill.HyperskillNotLoggedInPanel.LoginBanner.backgroundColor",
+      "description" : "Background color for login panel for Hyperskill tab",
+      "deprecated" : false,
+      "source" : "com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.HyperskillNotLoggedInPanel"
+    },
+    {
       "key" : "SelectCourse.LoginPanel.backgroundColor",
       "description" : "Background color for login panel above courses list",
       "deprecated" : false,
