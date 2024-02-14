@@ -238,10 +238,15 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
     private const val SUBMISSION_USER_AGREEMENT = "${SUBMISSION_PROTOCOL}agreement/"
     private const val OPEN_UL_TAG = "<ul style=list-style-type:none;margin:0;padding:0;>"
     private const val CLOSE_UL_TAG = "</ul>"
-    private val MY = JButton(EduCoreBundle.message("submissions.button.my"))
     private val emptyBorder = JBUI.Borders.empty()
     private val emptyDefaultBorder = JBUI.Borders.empty(15, 15, 0, 0)
     private val emptyLeftBorder = JBUI.Borders.emptyLeft(34)
+    /**
+     * Workaround: [com.intellij.ui.dsl.builder.SegmentedButton.ItemPresentation] doesn't allow setting custom size of the button,
+     * additional space characters allow showing the closest version to the design.
+     */
+    private val tripleSpace = " ".repeat(3)
+    private val MY = JButton(tripleSpace + EduCoreBundle.message("submissions.button.my") + tripleSpace)
     private val COMMUNITY = JButton(EduCoreBundle.message("submissions.button.community")).apply { isEnabled = false }
     private val SEGMENTED_BUTTON_ITEMS = listOf(MY, COMMUNITY)
     private val EMPTY_SUBMISSIONS_MESSAGE = "<a $textStyleHeader>${EduCoreBundle.message("submissions.empty")}"
