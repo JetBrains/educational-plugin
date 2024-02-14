@@ -93,22 +93,25 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
   private fun updateCommunityUI(isLoggedIn: Boolean) {
     if (isLoggedIn && isCommunityTabAvailable) {
       headerPanel.isVisible = true
-
-      panel.border = JBUI.Borders.empty()
-      communityPanel.border = JBUI.Borders.empty()
-      panel.component.border = JBUI.Borders.emptyLeft(34)
-      communityPanel.component.border = JBUI.Borders.emptyLeft(34)
-
       segmentedButton.visible(true)
-      communityPanel.isVisible = true
-      panel.addAdjustableBorder()
-      communityPanel.addAdjustableBorder()
+      panel.apply {
+        border = emptyBorder
+        component.border = emptyLeftBorder
+        addAdjustableBorder()
+      }
+      communityPanel.apply {
+        border = emptyBorder
+        component.border = emptyLeftBorder
+        addAdjustableBorder()
+        isVisible = true
+      }
     }
     else {
       headerPanel.isVisible = false
-
-      panel.border = JBUI.Borders.empty(15, 15, 0, 0)
-      panel.component.border = JBUI.Borders.empty()
+      panel.apply {
+        border = emptyDefaultBorder
+        component.border = emptyBorder
+      }
       if (project.isMarketplaceCourse()) {
         segmentedButton.visible(false)
         communityPanel.isVisible = false
@@ -236,6 +239,9 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
     private const val OPEN_UL_TAG = "<ul style=list-style-type:none;margin:0;padding:0;>"
     private const val CLOSE_UL_TAG = "</ul>"
     private val MY = JButton(EduCoreBundle.message("submissions.button.my"))
+    private val emptyBorder = JBUI.Borders.empty()
+    private val emptyDefaultBorder = JBUI.Borders.empty(15, 15, 0, 0)
+    private val emptyLeftBorder = JBUI.Borders.emptyLeft(34)
     private val COMMUNITY = JButton(EduCoreBundle.message("submissions.button.community")).apply { isEnabled = false }
     private val SEGMENTED_BUTTON_ITEMS = listOf(MY, COMMUNITY)
     private val EMPTY_SUBMISSIONS_MESSAGE = "<a $textStyleHeader>${EduCoreBundle.message("submissions.empty")}"
