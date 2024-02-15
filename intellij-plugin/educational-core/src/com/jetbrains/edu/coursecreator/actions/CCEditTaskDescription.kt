@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.actions
 
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.DumbAwareAction
@@ -33,6 +34,8 @@ class CCEditTaskDescription : DumbAwareAction(
     val descriptionFile = findOrCreateDescriptionFile(project, task)
     FileEditorManager.getInstance(project).openFile(descriptionFile, true)
   }
+
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
   private fun findOrCreateDescriptionFile(project: Project, task: Task): VirtualFile {
     val descriptionFile = task.getDescriptionFile(project)
