@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
 import com.jetbrains.edu.learning.courseFormat.ext.getRelativePath
 import com.jetbrains.edu.learning.courseFormat.ext.visitTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import org.jetbrains.annotations.VisibleForTesting
 
 @Service(Service.Level.PROJECT)
 @State(name = "FrameworkLessonRecordStorage", storages = [Storage(StoragePathMacros.WORKSPACE_FILE, roamingType = RoamingType.DISABLED)])
@@ -55,7 +56,17 @@ class FLRecordState : SimplePersistentStateComponent<FLRecordState.State>(State(
     }
   }
 
-  class State: BaseState() {
+  @VisibleForTesting
+  fun getRecord(path: String): Int? {
+    return state.taskRecords[path]
+  }
+
+  @VisibleForTesting
+  fun reset() {
+    state.taskRecords.clear()
+  }
+
+  class State : BaseState() {
     @get:XCollection(style = XCollection.Style.v2)
     val taskRecords: MutableMap<String, Int> by map()
 
