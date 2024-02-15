@@ -138,16 +138,15 @@ class SubmissionsManager(private val project: Project) {
     CompletableFuture.runAsync({
       if (isLoggedIn()) {
         val taskToolWindowView = TaskToolWindowView.getInstance(project)
-
         if (submissionsProvider.isSubmissionDownloadAllowed()) {
           taskToolWindowView.showLoadingSubmissionsPanel(getPlatformName())
-
-          if (Registry.`is`(ShareMySolutionsAction.REGISTRY_KEY, false)) {
-            taskToolWindowView.showLoadingCommunityPanel(getPlatformName())
-          }
-
           loadSubmissionsContent(course, submissionsProvider, loadSolutions)
         }
+        if (Registry.`is`(ShareMySolutionsAction.REGISTRY_KEY, false) && submissionsProvider.isSolutionSharingAllowed()) {
+          taskToolWindowView.showLoadingCommunityPanel(getPlatformName())
+          loadCommunityContent(course, submissionsProvider)
+        }
+        notifySubmissionsChanged()
       }
     }, ProcessIOExecutorService.INSTANCE)
   }
@@ -191,18 +190,13 @@ class SubmissionsManager(private val project: Project) {
 
   fun doAuthorize() = course?.getSubmissionsProvider()?.doAuthorize(Runnable { prepareSubmissionsContentWhenLoggedIn() })
 
-  private fun loadSubmissionsContent(
-    course: Course,
-    submissionsProvider: SubmissionsProvider,
-    loadSolutions: () -> Unit
-  ) {
+  private fun loadSubmissionsContent(course: Course, submissionsProvider: SubmissionsProvider, loadSolutions: () -> Unit) {
     submissions.putAll(submissionsProvider.loadAllSubmissions(course))
-    if (Registry.`is`(ShareMySolutionsAction.REGISTRY_KEY, false)) {
-      communitySubmissions.putAll(submissionsProvider.loadSharedSolutionsForCourse(course))
-    }
     loadSolutions()
-    notifySubmissionsChanged()
   }
+
+  private fun loadCommunityContent(course: Course, submissionsProvider: SubmissionsProvider) =
+    communitySubmissions.putAll(submissionsProvider.loadSharedSolutionsForCourse(course))
 
   private fun Course.getSubmissionsProvider(): SubmissionsProvider? {
     return SubmissionsProvider.getSubmissionsProviderForCourse(this)
