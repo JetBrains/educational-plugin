@@ -33,6 +33,12 @@ interface SubmissionsProvider {
   @RequiresBackgroundThread
   fun isSubmissionDownloadAllowed(): Boolean = true
 
+  /**
+   * Reflects whether Solution Sharing is allowed for legal reasons, for Marketplace we should check User Agreement state on the remote
+   */
+  @RequiresBackgroundThread
+  fun isSolutionSharingAllowed(): Boolean = false
+
   fun getPlatformName(): String
 
   fun doAuthorize(vararg postLoginActions: Runnable)

@@ -8,5 +8,5 @@ fun segmentedButtonRenderer(item: JButton): String = item.text
 @Suppress("UnstableApiUsage", "UnusedReceiverParameter")
 fun SegmentedButton<JButton>.enableCommunityButton() {}
 
-@Suppress("UnstableApiUsage", "UnusedReceiverParameter")
-fun SegmentedButton<JButton>.disableCommunityButton() {}
+@Suppress("UnstableApiUsage", "UnusedReceiverParameter", "UNUSED_PARAMETER")
+fun SegmentedButton<JButton>.disableCommunityButton(isAgreementTooltip: Boolean = false) {}

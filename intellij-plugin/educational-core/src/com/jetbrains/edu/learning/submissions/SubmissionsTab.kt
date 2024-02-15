@@ -84,9 +84,10 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
     CompletableFuture.runAsync({
       val submissionsManager = SubmissionsManager.getInstance(project)
       val isLoggedIn = submissionsManager.isLoggedIn()
+      val isSolutionSharingAllowed = submissionsManager.isSolutionSharingAllowed()
       updateCommunityUI(isLoggedIn)
 
-      updateSubmissionsContent(task, isLoggedIn)
+      updateSubmissionsContent(task, isLoggedIn, isSolutionSharingAllowed)
     }, ProcessIOExecutorService.INSTANCE)
   }
 
@@ -119,13 +120,13 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
     }
   }
 
-  private fun updateSubmissionsContent(task: Task, isLoggedIn: Boolean) {
+  private fun updateSubmissionsContent(task: Task, isLoggedIn: Boolean, isSolutionSharingAllowed: Boolean) {
     val submissionsManager = SubmissionsManager.getInstance(project)
     val (descriptionText, customLinkHandler) = prepareSubmissionsContent(submissionsManager, task, isLoggedIn)
 
     project.invokeLater {
       if (isCommunityTabAvailable) {
-        val (communityDescriptionText, communityLinkHandler) = prepareCommunityContent(task, submissionsManager)
+        val (communityDescriptionText, communityLinkHandler) = prepareCommunityContent(task, submissionsManager, isSolutionSharingAllowed)
         communityPanel.apply {
           hideLoadingSubmissionsPanel()
           updateLinkHandler(communityLinkHandler)
@@ -141,8 +142,8 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
     }
   }
 
-  private fun prepareCommunityContent(task: Task, submissionsManager: SubmissionsManager): Pair<String, SwingToolWindowLinkHandler?> {
-    if (task.isCommunitySolutionsAllowed()) {
+  private fun prepareCommunityContent(task: Task, submissionsManager: SubmissionsManager, isSolutionSharingAllowed: Boolean): Pair<String, SwingToolWindowLinkHandler?> {
+    if (task.isCommunitySolutionsAllowed() && isSolutionSharingAllowed) {
       segmentedButton.enableCommunityButton()
       val submissionsList = submissionsManager.getCommunitySubmissionsFromMemory(task.id)
 
@@ -151,6 +152,10 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
       }
 
       return getSubmissionsText(submissionsList) to SubmissionsDifferenceLinkHandler(project, task, submissionsManager, true)
+    }
+    else if (!isSolutionSharingAllowed) {
+      segmentedButton.disableCommunityButton(isAgreementTooltip = true)
+      return getSolutionSharingAgreementPromptText() to LoginLinkHandler(project, submissionsManager)
     }
     else {
       segmentedButton.disableCommunityButton()
@@ -318,6 +323,10 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
     private fun getAgreementPromptText(): String =
       "<a $textStyleHeader;color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} href=$SUBMISSION_USER_AGREEMENT>" +
       EduCoreBundle.message("submissions.tab.agreement") + "</a>"
+
+    private fun getSolutionSharingAgreementPromptText(): String =
+      "<a $textStyleHeader;color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} href=$SUBMISSION_USER_AGREEMENT>" +
+      EduCoreBundle.message("submissions.tab.solution.sharing.agreement") + "</a>"
 
     private fun showDiff(project: Project, task: Task, submission: Submission, isCommunity: Boolean) {
       val taskFiles = task.taskFiles.values.toMutableList()

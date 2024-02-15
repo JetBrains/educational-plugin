@@ -20,10 +20,15 @@ fun SegmentedButton<JButton>.enableCommunityButton() {
 }
 
 @Suppress("UnstableApiUsage")
-fun SegmentedButton<JButton>.disableCommunityButton() {
+fun SegmentedButton<JButton>.disableCommunityButton(isAgreementTooltip: Boolean = false) {
   val communityButton = items.last()
   communityButton.isEnabled = false
-  communityButton.toolTipText = EduCoreBundle.message("submissions.button.community.tooltip.text.disabled")
+  communityButton.toolTipText = if (isAgreementTooltip) {
+    EduCoreBundle.message("submissions.tab.solution.sharing.agreement")
+  }
+  else {
+    EduCoreBundle.message("submissions.button.community.tooltip.text.disabled")
+  }
   selectedItem = items.first()
   update(communityButton)
 }

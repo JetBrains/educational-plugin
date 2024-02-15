@@ -10,8 +10,8 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.submissions.SubmissionsProvider
-import com.jetbrains.edu.learning.submissions.isSubmissionDownloadAllowed
 import com.jetbrains.edu.learning.submissions.isSolutionSharingAllowed
+import com.jetbrains.edu.learning.submissions.isSubmissionDownloadAllowed
 
 class MarketplaceSubmissionsProvider : SubmissionsProvider {
 
@@ -63,6 +63,11 @@ class MarketplaceSubmissionsProvider : SubmissionsProvider {
   @RequiresBackgroundThread
   override fun isSubmissionDownloadAllowed(): Boolean {
     return MarketplaceSubmissionsConnector.getInstance().getUserAgreementState().isSubmissionDownloadAllowed()
+  }
+
+  @RequiresBackgroundThread
+  override fun isSolutionSharingAllowed(): Boolean {
+    return MarketplaceSubmissionsConnector.getInstance().getUserAgreementState().isSolutionSharingAllowed()
   }
 
   override fun getPlatformName(): String = JET_BRAINS_ACCOUNT
