@@ -6,17 +6,17 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
+import com.intellij.util.messages.Topic
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.invokeLater
+import com.jetbrains.edu.learning.createTopic
 import com.jetbrains.edu.learning.marketplace.actions.ShareMySolutionsAction
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
-import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType.SUBMISSIONS_TAB
 import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
@@ -61,7 +61,7 @@ class SubmissionsManager(private val project: Project) {
       val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course) ?: return null
       val submissionsById = submissionsProvider.loadSubmissions(tasks, course.id)
       submissions.putAll(submissionsById)
-      updateSubmissionsTab()
+      notifySubmissionsChanged()
       submissionsById.values.flatten()
     }
   }
@@ -93,7 +93,7 @@ class SubmissionsManager(private val project: Project) {
     else {
       val loadedSubmissions = submissionsProvider.loadSubmissions(listOf(task), course.id)
       submissions.putAll(loadedSubmissions)
-      updateSubmissionsTab()
+      notifySubmissionsChanged()
       return loadedSubmissions[task.id] ?: emptyList()
     }
   }
@@ -106,11 +106,11 @@ class SubmissionsManager(private val project: Project) {
       submissions[taskId] = submissionsList
       //potential race when loading submissions and checking task at one time
     }
-    updateSubmissionsTab()
+    notifySubmissionsChanged()
   }
 
-  private fun updateSubmissionsTab() {
-    project.invokeLater { TaskToolWindowView.getInstance(project).updateTab(SUBMISSIONS_TAB) }
+  private fun notifySubmissionsChanged() {
+    project.messageBus.syncPublisher(TOPIC).submissionsChanged()
   }
 
   fun containsCorrectSubmission(stepId: Int): Boolean {
@@ -155,7 +155,7 @@ class SubmissionsManager(private val project: Project) {
   fun removeCommunitySubmission(taskId: Int, submissionId: Int) {
     val submissions = communitySubmissions[taskId] ?: return
     communitySubmissions[taskId] = submissions.filter { it.id != submissionId }
-    updateSubmissionsTab()
+    notifySubmissionsChanged()
   }
 
   fun loadCommunitySubmissions(task: Task) {
@@ -168,14 +168,14 @@ class SubmissionsManager(private val project: Project) {
         taskToolWindowView.showLoadingCommunityPanel(getPlatformName())
         val sharedSolutions = submissionsProvider.loadSharedSolutionsForTask(course, task)
         communitySubmissions[task.id] = sharedSolutions
-        updateSubmissionsTab()
+        notifySubmissionsChanged()
       }
     }, ProcessIOExecutorService.INSTANCE)
   }
 
   fun deleteCourseSubmissionsLocally() {
     course?.allTasks?.forEach { submissions.remove(it.id) }
-    updateSubmissionsTab()
+    notifySubmissionsChanged()
   }
 
   fun isLoggedIn(): Boolean = course?.getSubmissionsProvider()?.isLoggedIn() ?: false
@@ -198,7 +198,7 @@ class SubmissionsManager(private val project: Project) {
       communitySubmissions.putAll(submissionsProvider.loadSharedSolutionsForCourse(course))
     }
     loadSolutions()
-    updateSubmissionsTab()
+    notifySubmissionsChanged()
   }
 
   private fun Course.getSubmissionsProvider(): SubmissionsProvider? {
@@ -215,8 +215,15 @@ class SubmissionsManager(private val project: Project) {
 
   companion object {
 
+    @Topic.ProjectLevel
+    val TOPIC: Topic<SubmissionsListener> = createTopic("Edu.submissions")
+
     fun getInstance(project: Project): SubmissionsManager {
       return project.service()
     }
   }
+}
+
+fun interface SubmissionsListener {
+  fun submissionsChanged()
 }

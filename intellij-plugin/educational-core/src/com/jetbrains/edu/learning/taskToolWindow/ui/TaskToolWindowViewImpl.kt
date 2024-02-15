@@ -4,6 +4,7 @@ import com.intellij.ide.ui.LafManagerListener
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.editor.colors.EditorColorsListener
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.project.Project
@@ -28,6 +29,8 @@ import com.jetbrains.edu.learning.marketplace.isMarketplaceCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsService
+import com.jetbrains.edu.learning.submissions.SubmissionsListener
+import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.SubmissionsTab
 import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckPanel
 import com.jetbrains.edu.learning.taskToolWindow.ui.navigationMap.NavigationMapAction
@@ -208,6 +211,11 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
     })
     connection.subscribe(EditorColorsManager.TOPIC, EditorColorsListener {
       updateAllTabs(project)
+    })
+    connection.subscribe(SubmissionsManager.TOPIC, SubmissionsListener {
+      invokeLater {
+        updateTab(SUBMISSIONS_TAB)
+      }
     })
   }
 
