@@ -43,7 +43,7 @@ class CCSyncChangesWithNextTasks : DumbAwareAction() {
       return
     }
 
-    if (!isFeatureEnabled(EduExperimentalFeatures.CC_FL_APPLY_CHANGES)) {
+    if (!isFeatureEnabled(EduExperimentalFeatures.CC_FL_SYNC_CHANGES)) {
       return
     }
 

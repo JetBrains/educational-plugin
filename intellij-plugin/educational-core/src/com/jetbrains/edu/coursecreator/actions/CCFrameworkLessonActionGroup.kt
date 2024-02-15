@@ -16,6 +16,6 @@ class CCFrameworkLessonActionGroup : DefaultActionGroup(), DumbAware {
   override fun update(e: AnActionEvent) {
     val presentation = e.presentation
     val project = e.project
-    presentation.isEnabledAndVisible = project != null && CCUtils.isCourseCreator(project) && isFeatureEnabled(EduExperimentalFeatures.CC_FL_APPLY_CHANGES)
+    presentation.isEnabledAndVisible = project != null && CCUtils.isCourseCreator(project) && isFeatureEnabled(EduExperimentalFeatures.CC_FL_SYNC_CHANGES)
   }
 }
