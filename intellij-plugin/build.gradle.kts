@@ -846,14 +846,31 @@ fun parseManifest(file: File): Node {
   return node
 }
 
-fun manifestFile(project: Project, filePath: String? = null): File {
+fun manifestFile(project: Project): File {
+  var filePath: String? = null
+  // Some gradle projects are not modules from IDEA plugin point of view
+  // because we use `include` for them inside manifests, i.e. they just a part of another module.
+  // That's why we delegate manifest search to other projects in some cases
+  when (project.path) {
+    ":intellij-plugin" -> {
+      filePath = "META-INF/plugin.xml"
+    }
+    ":intellij-plugin:educational-core", ":intellij-plugin:code-insight",
+    ":intellij-plugin:Edu-Python:Idea", ":intellij-plugin:Edu-Python:PyCharm" -> return manifestFile(project.parent!!)
+    // Special rules for `Edu-Python` module because it's added via `include`
+    // BACKCOMPAT: 2023.3. Drop this branch
+    ":intellij-plugin:Edu-Python" -> {
+      filePath = if (environmentName.toInt() < 241) "Edu-Python-Community.xml" else "Edu-Python.xml"
+    }
+  }
+
   val mainOutput = project.sourceSets.main.get().output
   val resourcesDir = mainOutput.resourcesDir ?: error("Failed to find resources dir for ${project.name}")
 
   if (filePath != null) {
     return resourcesDir.resolve(filePath).takeIf { it.exists() } ?: error("Failed to find manifest file for ${project.name} module")
   }
-  val rootManifest = parseManifest(manifestFile(project(":intellij-plugin"), "META-INF/plugin.xml"))
+  val rootManifest = parseManifest(manifestFile(project(":intellij-plugin")))
   val children = ((rootManifest["content"] as? List<*>)?.single() as? Node)?.children()
                  ?: error("Failed to find module declarations in root manifest")
   return children.filterIsInstance<Node>()
@@ -865,15 +882,7 @@ fun manifestFile(project: Project, filePath: String? = null): File {
 }
 
 fun findModulePackage(project: Project): String {
-  // Some gradle projects are not modules from IDEA plugin point of view
-  // because we use `include` for them inside manifests, i.e. they just a part of another module.
-  // That's why we delegate manifest search to other projects in some cases
-  val moduleManifest = when (project.path) {
-    ":intellij-plugin", ":intellij-plugin:educational-core", ":intellij-plugin:code-insight" -> manifestFile(project(":intellij-plugin"), "META-INF/plugin.xml")
-    ":intellij-plugin:Edu-Python:Idea", ":intellij-plugin:Edu-Python:PyCharm" -> manifestFile(project.parent!!)
-    else -> manifestFile(project)
-  }
-
+  val moduleManifest = manifestFile(project)
   val node = parseManifest(moduleManifest)
   return node.attribute("package") as? String ?: error("Failed to find package for ${project.name}")
 }
