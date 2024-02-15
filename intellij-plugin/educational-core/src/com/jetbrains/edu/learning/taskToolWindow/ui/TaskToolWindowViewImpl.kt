@@ -4,6 +4,8 @@ import com.intellij.ide.ui.LafManagerListener
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.editor.colors.EditorColorsListener
+import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.ToolWindow
@@ -203,6 +205,9 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
     val connection = project.messageBus.connect()
     connection.subscribe(LafManagerListener.TOPIC, LafManagerListener {
       UIUtil.setBackgroundRecursively(panel, getTaskDescriptionBackgroundColor())
+    })
+    connection.subscribe(EditorColorsManager.TOPIC, EditorColorsListener {
+      updateAllTabs(project)
     })
   }
 

@@ -9,8 +9,6 @@ import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.EditorFactory
-import com.intellij.openapi.editor.colors.EditorColorsListener
-import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileTypes.ExactFileNameMatcher
 import com.intellij.openapi.fileTypes.FileTypeManager
@@ -43,7 +41,6 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikNames
-import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 
 class EduStartupActivity : StartupActivity.DumbAware {
 
@@ -64,10 +61,6 @@ class EduStartupActivity : StartupActivity.DumbAware {
       }
       EduDocumentListener.setGlobalListener(project, manager)
     }
-
-    connection.subscribe(EditorColorsManager.TOPIC, EditorColorsListener {
-      TaskToolWindowView.updateAllTabs(project)
-    })
 
     ensureCourseIgnoreHasNoCustomAssociation()
 
