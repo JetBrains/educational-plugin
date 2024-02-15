@@ -171,7 +171,7 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
       val name = "new virtual env $pythonVersion"
 
       return ProjectJdkImpl(name, PyFakeSdkType, baseSdk.path, pythonVersion).apply {
-        sdkAdditionalData = PythonSdkAdditionalData(PyFlavorAndData(PyFlavorData.Empty, FakePythonSdkFlavor))
+        sdkModificator.sdkAdditionalData = PythonSdkAdditionalData(PyFlavorAndData(PyFlavorData.Empty, FakePythonSdkFlavor))
       }
     }
 
