@@ -70,10 +70,9 @@ object PlaceholderPainter {
         if (isStudentProject && !placeholder.isCurrentlyVisible) return
         g.color = placeholder.getColor()
         g.stroke = if (placeholder.isCurrentlyVisible) {
-          val logicallyVisible = placeholder.isVisibleWithDependency
           // We may see logically invisible placeholders if it is a teacher mode, or it is a learner mode, but the placeholder
           // is not initialized from dependency
-          if (logicallyVisible) {
+          if (placeholder.shouldBeVisible) {
             SOLID_BORDER_STROKE
           }
           else {

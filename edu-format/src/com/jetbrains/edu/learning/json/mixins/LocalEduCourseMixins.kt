@@ -518,3 +518,11 @@ class AnswerPlaceholderConverter : StdConverter<AnswerPlaceholder, AnswerPlaceho
   override fun convert(value: AnswerPlaceholder): AnswerPlaceholder =
     value.apply { takeIsVisibleFromDependency() }
 }
+
+fun AnswerPlaceholder.takeIsVisibleFromDependency() {
+  val dependency = placeholderDependency ?: return
+  if (!dependency.isVisible) {
+    dependency.isVisible = true
+    isVisible = false
+  }
+}

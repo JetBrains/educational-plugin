@@ -92,7 +92,7 @@ enum class PlaceholderHighlightingInfo {
   companion object {
     fun forPlaceholder(placeholder: AnswerPlaceholder): PlaceholderHighlightingInfo {
       return when (placeholder.status) {
-        CheckStatus.Unchecked -> if (placeholder.isVisibleWithDependency) UNCHECKED else UNCHECKED_INVISIBLE
+        CheckStatus.Unchecked -> if (placeholder.shouldBeVisible) UNCHECKED else UNCHECKED_INVISIBLE
         CheckStatus.Solved -> SOLVED
         CheckStatus.Failed -> FAILED
       }

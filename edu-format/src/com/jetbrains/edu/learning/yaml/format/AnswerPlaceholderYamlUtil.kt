@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.json.mixins.TrueValueFilter
+import com.jetbrains.edu.learning.json.mixins.takeIsVisibleFromDependency
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.errorHandling.negativeLengthNotAllowedMessage
 import com.jetbrains.edu.learning.yaml.errorHandling.negativeOffsetNotAllowedMessage

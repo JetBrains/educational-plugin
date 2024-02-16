@@ -29,7 +29,20 @@ class AnswerPlaceholder {
 
   var selected: Boolean = false
   var status: CheckStatus = CheckStatus.Unchecked
+
+  /**
+   * Stores the visibility for JSON and YAML.
+   * To get real visibility, use [shouldBeVisible] instead.
+   * [shouldBeVisible] also considers the visibility of the dependency if it is present.
+   *
+   * This is a temporary behaviour for the transition period, and in future [shouldBeVisible] will become a getter for this field.
+   */
   var isVisible: Boolean = true
+    @Deprecated(
+      "This field does not store actual value about the visibility, it stores value to be serialized in json or yaml",
+      replaceWith = ReplaceWith("shouldBeVisible")
+    )
+    get
 
   @Transient
   private var _taskFile: TaskFile? = null
@@ -49,14 +62,6 @@ class AnswerPlaceholder {
     this.offset = offset
     length = placeholderText.length
     this.placeholderText = placeholderText
-  }
-
-  fun takeIsVisibleFromDependency() {
-    val dependency = placeholderDependency ?: return
-    if (!dependency.isVisible) {
-      dependency.isVisible = true
-      isVisible = false
-    }
   }
 
   fun init(file: TaskFile, isRestarted: Boolean) {
@@ -82,16 +87,36 @@ class AnswerPlaceholder {
     initialState = MyInitialState(offset, placeholderText.length)
   }
 
+  /**
+   * Whether the placeholder should be visible by a learner.
+   * Depends on the [shouldBeVisible], but also considers, whether the placeholder was initialized from dependency.
+   */
   val isCurrentlyVisible: Boolean
+    get() {
+      var result = shouldBeVisible
+
+      if (placeholderDependency != null) {
+        result = result || !isInitializedFromDependency
+      }
+
+      return result
+    }
+
+  /**
+   * Whether the placeholder should be visible or not.
+   * Considers the [isVisible] field and the visibility of the [placeholderDependency].
+   * Use it instead of [isVisible] because the latter stores information for yaml/json serialization.
+   */
+  val shouldBeVisible: Boolean
     get() {
       val dependency = placeholderDependency
 
-      if (dependency != null) {
-        val placeholderVisible = dependency.isVisible && isVisible
-        return placeholderVisible || !isInitializedFromDependency
+      return if (dependency == null) {
+        isVisible
       }
-
-      return isVisible
+      else {
+        isVisible && dependency.isVisible
+      }
     }
 
   class MyInitialState {
