@@ -69,18 +69,10 @@ object PlaceholderPainter {
       override fun executePaint(component: Component?, g: Graphics2D) {
         if (isStudentProject && !placeholder.isCurrentlyVisible) return
         g.color = placeholder.getColor()
-        g.stroke = if (placeholder.isCurrentlyVisible) {
-          // We may see logically invisible placeholders if it is a teacher mode, or it is a learner mode, but the placeholder
-          // is not initialized from dependency
-          if (placeholder.shouldBeVisible) {
-            SOLID_BORDER_STROKE
-          }
-          else {
-            DASHED_BORDER_STROKE
-          }
+        g.stroke = if (placeholder.shouldBeVisible) {
+          SOLID_BORDER_STROKE
         }
         else {
-          // dashed border for the course creation mode
           DASHED_BORDER_STROKE
         }
         val shape = getPlaceholderShape(editor, placeholder.offset, placeholder.endOffset).getShape()
