@@ -4,6 +4,7 @@ import com.intellij.ui.dsl.builder.SegmentedButton
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import javax.swing.JButton
 
+// BACKCOMPAT: 2023.2
 @Suppress("UnstableApiUsage")
 fun SegmentedButton.ItemPresentation.segmentedButtonRenderer(item: JButton) {
   text = item.text
@@ -11,6 +12,7 @@ fun SegmentedButton.ItemPresentation.segmentedButtonRenderer(item: JButton) {
   toolTipText = item.toolTipText
 }
 
+// BACKCOMPAT: 2023.2
 @Suppress("UnstableApiUsage")
 fun SegmentedButton<JButton>.enableCommunityButton() {
   val communityButton = items.last()
@@ -19,6 +21,7 @@ fun SegmentedButton<JButton>.enableCommunityButton() {
   update(communityButton)
 }
 
+// BACKCOMPAT: 2023.2
 @Suppress("UnstableApiUsage")
 fun SegmentedButton<JButton>.disableCommunityButton(isAgreementTooltip: Boolean = false) {
   val communityButton = items.last()
