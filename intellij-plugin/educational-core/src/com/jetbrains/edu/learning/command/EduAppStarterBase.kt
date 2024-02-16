@@ -39,7 +39,6 @@ abstract class EduAppStarterBase<T : Args> : ModernApplicationStarter() {
     return when (val result = parser.parseArgs(args)) {
       is Ok -> result.value
       is Err -> {
-        parser.printHelp()
         logErrorAndExit(result.error)
       }
     }

@@ -6,6 +6,8 @@ import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
 import org.apache.commons.cli.*
+import java.io.PrintWriter
+import java.io.StringWriter
 
 class ArgParser<T : Args> private constructor(
   private val commandName: String,
@@ -27,17 +29,18 @@ class ArgParser<T : Args> private constructor(
     }
     catch (e: ParseException) {
       LOG.error(e)
-      return Err("")
+      return Err(createHelpMessage())
     }
 
     return createArgs(cmd)
   }
 
-  fun printHelp() {
+  private fun createHelpMessage(): String {
     val formatter = HelpFormatter()
-    formatter.width = 140
     val cmdLineSyntax = if (requiresProjectPath) "$commandName /path/to/project" else commandName
-    formatter.printHelp(cmdLineSyntax, options)
+    val stringWriter = StringWriter()
+    formatter.printHelp(PrintWriter(stringWriter), 140, cmdLineSyntax, null, options, formatter.leftPadding, formatter.descPadding, null)
+    return stringWriter.toString()
   }
 
   companion object {

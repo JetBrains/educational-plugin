@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.command
 
 import com.intellij.featureStatistics.fusCollectors.LifecycleUsageTriggerCollector
 import com.intellij.ide.AppLifecycleListener
+import com.intellij.ide.CliResult
 import com.intellij.idea.IdeStarter
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.diagnostic.Logger
@@ -9,6 +10,9 @@ import com.intellij.openapi.diagnostic.getOrLogException
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.progress.blockingContext
+import com.jetbrains.edu.learning.Err
+import com.jetbrains.edu.learning.Result
+import com.jetbrains.edu.learning.authUtils.requestFocus
 import com.jetbrains.edu.learning.map
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.onError
@@ -35,28 +39,18 @@ class EduOpenCourseAppStarter : IdeStarter() {
     asyncCoroutineScope: CoroutineScope,
     lifecyclePublisher: AppLifecycleListener
   ) {
-    val parser = ArgParser.createDefault(COMMAND_NAME)
-
-    val parsedArgs = parser.parseArgs(args).onError { error ->
-      LOG.error(error)
-      parser.printHelp()
+    val parsedArgs = parseArgs(args).onError {
       app.saveAndExit(1)
       return
     }
 
     invokeAppListeners(args, lifecyclePublisher, asyncCoroutineScope)
 
-    parsedArgs.loadCourse().map { course ->
-      val result = withContext(Dispatchers.EDT) {
-        JoinCourseDialog(course).showAndGet()
-      }
-      if (!result) {
-        app.saveAndExit(0)
-      }
-    }.onError { error ->
-      LOG.error(error)
-      app.saveAndExit(1)
-      return
+    val result = showOpenCourseDialog(parsedArgs)
+    when (result) {
+      OpenCourseDialogResult.Ok -> Unit
+      OpenCourseDialogResult.Canceled -> app.saveAndExit(0)
+      is OpenCourseDialogResult.Error -> app.saveAndExit(1)
     }
   }
 
@@ -78,6 +72,45 @@ class EduOpenCourseAppStarter : IdeStarter() {
     }
   }
 
+  override fun canProcessExternalCommandLine(): Boolean = true
+
+  @Suppress("MoveVariableDeclarationIntoWhen")
+  override suspend fun processExternalCommandLine(args: List<String>, currentDirectory: String?): CliResult {
+    val parsedArgs = parseArgs(args).onError {
+      return CliResult(1, it)
+    }
+    val dialogResult = showOpenCourseDialog(parsedArgs)
+    return when (dialogResult) {
+      OpenCourseDialogResult.Ok,
+      OpenCourseDialogResult.Canceled -> CliResult.OK
+      is OpenCourseDialogResult.Error -> CliResult(1, dialogResult.message)
+    }
+  }
+
+  private fun parseArgs(args: List<String>): Result<Args, String> {
+    val parser = ArgParser.createDefault(COMMAND_NAME)
+    val result = parser.parseArgs(args)
+    if (result is Err) {
+      LOG.error(result.error)
+    }
+    return result
+  }
+
+  private suspend fun showOpenCourseDialog(args: Args): OpenCourseDialogResult {
+    return args.loadCourse().map { course ->
+      val result = withContext(Dispatchers.EDT) {
+        // If it's called from external command, the application frame can be not in focus,
+        // but we want to show the corresponding dialog to a user
+        requestFocus()
+        JoinCourseDialog(course).showAndGet()
+      }
+      if (result) OpenCourseDialogResult.Ok else OpenCourseDialogResult.Canceled
+    }.onError { error ->
+      LOG.error(error)
+      OpenCourseDialogResult.Error(error)
+    }
+  }
+
   private suspend fun Application.saveAndExit(exitCode: Int) {
     blockingContext {
       exit(true, true, false, exitCode)
@@ -88,5 +121,11 @@ class EduOpenCourseAppStarter : IdeStarter() {
     private val LOG: Logger = logger<EduOpenCourseAppStarter>()
 
     private const val COMMAND_NAME = "openCourse"
+  }
+
+  private sealed interface OpenCourseDialogResult {
+    data object Ok : OpenCourseDialogResult
+    data object Canceled : OpenCourseDialogResult
+    data class Error(val message: String) : OpenCourseDialogResult
   }
 }
