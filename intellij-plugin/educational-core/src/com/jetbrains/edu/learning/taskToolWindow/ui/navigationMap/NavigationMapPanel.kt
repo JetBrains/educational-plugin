@@ -9,7 +9,6 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.AnActionLink
 import com.intellij.ui.components.JBLabel
-import com.intellij.ui.util.preferredHeight
 import com.intellij.util.ui.JBEmptyBorder
 import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.JBInsets
@@ -25,6 +24,7 @@ import com.jetbrains.edu.learning.projectView.CourseViewUtils.isSolved
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckPanel
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
+import com.jetbrains.edu.learning.taskToolWindow.ui.setupLayoutStrategy
 import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.*
 import java.awt.geom.Path2D
@@ -50,7 +50,7 @@ class NavigationMapPanel : JPanel(BorderLayout()) {
     headerTextPanel.add(headerText)
     // '-4' to align the left border
     toolbar.border = JBEmptyBorder(0, -4, 0, 0)
-    toolbar.layoutPolicy = ActionToolbar.NOWRAP_LAYOUT_POLICY
+    toolbar.setupLayoutStrategy()
     toolbar.setCustomButtonLook(MyActionButtonLook())
     toolbar.setMinimumButtonSize(Dimension(28, 28))
     toolbar.setActionButtonBorder(4, 0)
@@ -63,7 +63,7 @@ class NavigationMapPanel : JPanel(BorderLayout()) {
       ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS
     ).apply {
       border = JBEmptyBorder(0)
-      preferredHeight = 51
+      preferredSize = Dimension(0, 51)
     }
     toolbar.targetComponent = navMapPanel
     add(navMapPanel, BorderLayout.SOUTH)
