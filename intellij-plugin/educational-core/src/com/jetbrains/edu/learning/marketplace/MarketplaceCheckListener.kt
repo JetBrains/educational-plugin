@@ -2,14 +2,12 @@ package com.jetbrains.edu.learning.marketplace
 
 import com.intellij.execution.process.ProcessIOExecutorService
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.invokeLater
-import com.jetbrains.edu.learning.marketplace.actions.ShareMySolutionsAction
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
@@ -33,9 +31,6 @@ class MarketplaceCheckListener: PostSolutionCheckListener() {
 
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
     super.afterCheck(project, task, result)
-
-    if (!Registry.`is`(ShareMySolutionsAction.REGISTRY_KEY, false)) return
-
     EduCounterUsageCollector.submissionSuccess(result.isSolved)
 
     if (!result.isSolved || !task.supportSubmissions || !project.isStudentProject()) return

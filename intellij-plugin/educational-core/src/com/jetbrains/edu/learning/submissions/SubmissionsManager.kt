@@ -4,7 +4,6 @@ import com.intellij.execution.process.ProcessIOExecutorService
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.intellij.util.messages.Topic
 import com.jetbrains.edu.learning.course
@@ -14,7 +13,6 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.createTopic
-import com.jetbrains.edu.learning.marketplace.actions.ShareMySolutionsAction
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import org.jetbrains.annotations.TestOnly
@@ -142,7 +140,7 @@ class SubmissionsManager(private val project: Project) {
           taskToolWindowView.showLoadingSubmissionsPanel(getPlatformName())
           loadSubmissionsContent(course, submissionsProvider, loadSolutions)
         }
-        if (Registry.`is`(ShareMySolutionsAction.REGISTRY_KEY, false) && submissionsProvider.isSolutionSharingAllowed()) {
+        if (submissionsProvider.isSolutionSharingAllowed()) {
           taskToolWindowView.showLoadingCommunityPanel(getPlatformName())
           loadCommunityContent(course, submissionsProvider)
         }

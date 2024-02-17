@@ -6,7 +6,6 @@ import com.intellij.diff.editor.ChainDiffVirtualFile
 import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.testAction
@@ -15,14 +14,9 @@ class ReportCommunitySolutionActionTest : EduActionTestCase() {
 
   override fun setUp() {
     super.setUp()
-
     project.course?.isMarketplace = true
-    val registryValue = Registry.get(ShareMySolutionsAction.REGISTRY_KEY)
-    val oldValue = registryValue.asBoolean()
-    registryValue.setValue(true)
 
     Disposer.register(testRootDisposable) {
-      registryValue.setValue(oldValue)
       project.course?.isMarketplace = false
     }
   }
