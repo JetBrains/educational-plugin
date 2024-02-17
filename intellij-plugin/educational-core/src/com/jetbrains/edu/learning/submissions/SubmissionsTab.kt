@@ -12,7 +12,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.ui.AncestorListenerAdapter
 import com.intellij.ui.ColorUtil
 import com.intellij.ui.GotItTooltip
@@ -32,7 +31,6 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.marketplace.UserAgreementDialog
 import com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionAction
-import com.jetbrains.edu.learning.marketplace.actions.ShareMySolutionsAction
 import com.jetbrains.edu.learning.marketplace.isMarketplaceCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.projectView.CourseViewUtils.isCommunitySolutionsAllowed
@@ -68,10 +66,10 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
 
   private lateinit var segmentedButton: SegmentedButton<JButton>
 
-  private val isCommunityTabAvailable: Boolean = Registry.`is`(ShareMySolutionsAction.REGISTRY_KEY, false) && project.isMarketplaceCourse()
+  private val isMarketplaceCourse: Boolean = project.isMarketplaceCourse()
 
   init {
-    if (project.isMarketplaceCourse()) {
+    if (isMarketplaceCourse) {
       communityPanel = cards().last() as SwingTextPanel
       communityPanel.isVisible = false
       addSegmentedButton()
@@ -91,7 +89,7 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
   }
 
   private fun updateCommunityUI(isLoggedIn: Boolean) {
-    if (isLoggedIn && isCommunityTabAvailable) {
+    if (isLoggedIn && isMarketplaceCourse) {
       headerPanel.isVisible = true
       segmentedButton.visible(true)
       panel.apply {
@@ -112,7 +110,7 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
         border = emptyDefaultBorder
         component.border = emptyBorder
       }
-      if (project.isMarketplaceCourse()) {
+      if (isMarketplaceCourse) {
         segmentedButton.visible(false)
         communityPanel.isVisible = false
       }
@@ -125,7 +123,7 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
     val (descriptionText, customLinkHandler) =
       prepareSubmissionsContent(submissionsManager, task, isLoggedIn)
 
-    if (isCommunityTabAvailable) {
+    if (isMarketplaceCourse) {
       val (communityDescriptionText, communityLinkHandler) =
         prepareCommunityContent(task, submissionsManager, isSolutionSharingAllowed)
 
@@ -204,7 +202,7 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
   fun showLoadingPanel(platformName: String) = panel.showLoadingSubmissionsPanel(platformName)
 
   fun showLoadingCommunityPanel(platformName: String) {
-    if (!isCommunityTabAvailable) return
+    if (!isMarketplaceCourse) return
     communityPanel.showLoadingSubmissionsPanel(platformName)
   }
 
@@ -385,10 +383,8 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
     }
 
     private fun SimpleDiffRequestChain.putCommunitySolution(task: Task, submission: Submission) {
-      if (Registry.`is`(ShareMySolutionsAction.REGISTRY_KEY, false)) {
-        putUserData(ReportCommunitySolutionAction.TASK_ID_KEY, task.id)
-        putUserData(ReportCommunitySolutionAction.SUBMISSION_ID_KEY, submission.id)
-      }
+      putUserData(ReportCommunitySolutionAction.TASK_ID_KEY, task.id)
+      putUserData(ReportCommunitySolutionAction.SUBMISSION_ID_KEY, submission.id)
     }
 
     private fun String.removeAllTags(): String = replace(OPEN_PLACEHOLDER_TAG.toRegex(), "").replace(CLOSE_PLACEHOLDER_TAG.toRegex(), "")

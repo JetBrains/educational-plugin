@@ -282,10 +282,6 @@
                              id="Educational"
                              key="settings.education" bundle="messages.EduCoreBundle"/>
 
-    <registryKey key="edu.marketplace.solutions.sharing"
-                 description="Enables Solution Sharing action and settings"
-                 defaultValue="false"/>
-
     <registryKey key="edu.marketplace.solutions.sharing.prompt.default.delay"
                  description="Delay of prompting second banner (in millis). Default value is equal to 14 days."
                  defaultValue="1209600000"/>

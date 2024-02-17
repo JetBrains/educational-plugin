@@ -9,7 +9,6 @@ import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -20,7 +19,6 @@ import com.jetbrains.edu.learning.marketplace.actions.DeleteAllSubmissionsAction
 import com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionAction
 import com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionActionTest
 import com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionActionTest.Companion.putCommunityData
-import com.jetbrains.edu.learning.marketplace.actions.ShareMySolutionsAction
 import com.jetbrains.edu.learning.marketplace.api.*
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -45,14 +43,10 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
   override fun setUp() {
     super.setUp()
     loginFakeMarketplaceUser()
-    val registryValue = Registry.get(ShareMySolutionsAction.REGISTRY_KEY)
-    val oldValue = registryValue.asBoolean()
-    registryValue.setValue(true)
     val settings = MarketplaceSettings.INSTANCE
     val initialAgreementState = settings.userAgreementState
     settings.setTestAgreementState(UserAgreementState.ACCEPTED)
     Disposer.register(testRootDisposable) {
-      registryValue.setValue(oldValue)
       settings.setTestAgreementState(initialAgreementState)
     }
   }

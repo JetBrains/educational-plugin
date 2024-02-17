@@ -12,7 +12,6 @@ import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.ui.DumbAwareActionButton
 import com.intellij.ui.GotItTooltip
 import com.intellij.util.ui.JBUI
@@ -37,8 +36,7 @@ class ReportCommunitySolutionAction : DumbAwareActionButton(), CustomComponentAc
     val project = e.project ?: return
 
     e.presentation.apply {
-      isVisible = Registry.`is`(ShareMySolutionsAction.REGISTRY_KEY, false)
-                  && project.isMarketplaceCourse()
+      isVisible = project.isMarketplaceCourse()
                   && project.isStudentProject()
                   && e.userDataAvailable(TASK_ID_KEY)
                   && e.userDataAvailable(SUBMISSION_ID_KEY)
