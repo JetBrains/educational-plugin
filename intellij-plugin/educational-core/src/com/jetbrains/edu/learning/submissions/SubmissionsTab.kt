@@ -70,9 +70,7 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
 
   init {
     if (isMarketplaceCourse) {
-      communityPanel = cards().last() as SwingTextPanel
-      communityPanel.isVisible = false
-      addSegmentedButton()
+      initCommunityUI()
     }
   }
 
@@ -82,38 +80,32 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
     CompletableFuture.runAsync({
       val submissionsManager = SubmissionsManager.getInstance(project)
       val isLoggedIn = submissionsManager.isLoggedIn()
-      updateCommunityUI(isLoggedIn)
 
       updateSubmissionsContent(task, isLoggedIn)
     }, ProcessIOExecutorService.INSTANCE)
   }
 
-  private fun updateCommunityUI(isLoggedIn: Boolean) {
-    if (isLoggedIn && isMarketplaceCourse) {
-      headerPanel.isVisible = true
-      segmentedButton.visible(true)
-      panel.apply {
-        border = emptyBorder
-        component.border = emptyLeftBorder
-        addAdjustableBorder()
-      }
-      communityPanel.apply {
-        border = emptyBorder
-        component.border = emptyLeftBorder
-        addAdjustableBorder()
-        isVisible = true
-      }
+  private fun initCommunityUI() {
+    communityPanel = cards().last() as SwingTextPanel
+
+    val segmentedButtonPanel = createSegmentedButton()
+    addGotItTooltip(segmentedButtonPanel)
+    headerPanel.apply {
+      add(segmentedButtonPanel, BorderLayout.CENTER)
+      isVisible = true
     }
-    else {
-      headerPanel.isVisible = false
-      panel.apply {
-        border = emptyDefaultBorder
-        component.border = emptyBorder
-      }
-      if (isMarketplaceCourse) {
-        segmentedButton.visible(false)
-        communityPanel.isVisible = false
-      }
+
+    val emptyBorder = JBUI.Borders.empty()
+    val emptyLeftBorder = JBUI.Borders.emptyLeft(33)
+    panel.apply {
+      border = emptyBorder
+      component.border = emptyLeftBorder
+      addAdjustableBorder()
+    }
+    communityPanel.apply {
+      border = emptyBorder
+      component.border = emptyLeftBorder
+      addAdjustableBorder()
     }
   }
 
@@ -210,26 +202,21 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
     segmentedButton.selectedItem = MY
   }
 
-  private fun addSegmentedButton() {
-    val segmentedButtonPanel = panel {
-      row {
-        segmentedButton = segmentedButton(SEGMENTED_BUTTON_ITEMS) { segmentedButtonRenderer(it) }.apply {
-          selectedItem = MY
-          visible(false)
-          whenItemSelected {
-            when (it) {
-              MY -> showFirstCard()
-              COMMUNITY -> {
-                showLastCard()
-                EduCounterUsageCollector.openCommunityTab()
-              }
+  private fun createSegmentedButton() = panel {
+    row {
+      segmentedButton = segmentedButton(SEGMENTED_BUTTON_ITEMS) { segmentedButtonRenderer(it) }.apply {
+        selectedItem = MY
+        whenItemSelected {
+          when (it) {
+            MY -> showFirstCard()
+            COMMUNITY -> {
+              showLastCard()
+              EduCounterUsageCollector.openCommunityTab()
             }
           }
         }
       }
     }
-    headerPanel.add(segmentedButtonPanel, BorderLayout.CENTER)
-    addGotItTooltip(segmentedButtonPanel)
   }
 
   private fun addGotItTooltip(component: JComponent) = component.addAncestorListener(object : AncestorListenerAdapter() {
@@ -255,9 +242,6 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
     private const val SUBMISSION_USER_AGREEMENT = "${SUBMISSION_PROTOCOL}agreement/"
     private const val OPEN_UL_TAG = "<ul style=list-style-type:none;margin:0;padding:0;>"
     private const val CLOSE_UL_TAG = "</ul>"
-    private val emptyBorder = JBUI.Borders.empty()
-    private val emptyDefaultBorder = JBUI.Borders.empty(15, 15, 0, 0)
-    private val emptyLeftBorder = JBUI.Borders.emptyLeft(33)
     /**
      * Workaround: [com.intellij.ui.dsl.builder.SegmentedButton.ItemPresentation] doesn't allow setting custom size of the button,
      * additional space characters allow showing the closest version to the design.
