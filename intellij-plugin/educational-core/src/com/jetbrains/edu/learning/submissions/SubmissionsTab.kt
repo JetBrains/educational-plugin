@@ -84,10 +84,9 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
     CompletableFuture.runAsync({
       val submissionsManager = SubmissionsManager.getInstance(project)
       val isLoggedIn = submissionsManager.isLoggedIn()
-      val isSolutionSharingAllowed = submissionsManager.isSolutionSharingAllowed()
       updateCommunityUI(isLoggedIn)
 
-      updateSubmissionsContent(task, isLoggedIn, isSolutionSharingAllowed)
+      updateSubmissionsContent(task, isLoggedIn)
     }, ProcessIOExecutorService.INSTANCE)
   }
 
@@ -120,31 +119,48 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
     }
   }
 
-  private fun updateSubmissionsContent(task: Task, isLoggedIn: Boolean, isSolutionSharingAllowed: Boolean) {
+  private fun updateSubmissionsContent(task: Task, isLoggedIn: Boolean) {
     val submissionsManager = SubmissionsManager.getInstance(project)
-    val (descriptionText, customLinkHandler) = prepareSubmissionsContent(submissionsManager, task, isLoggedIn)
+    val isSolutionSharingAllowed = submissionsManager.isSolutionSharingAllowed()
+    val (descriptionText, customLinkHandler) =
+      prepareSubmissionsContent(submissionsManager, task, isLoggedIn)
 
-    project.invokeLater {
-      if (isCommunityTabAvailable) {
-        val (communityDescriptionText, communityLinkHandler) = prepareCommunityContent(task, submissionsManager, isSolutionSharingAllowed)
-        communityPanel.apply {
-          hideLoadingSubmissionsPanel()
-          updateLinkHandler(communityLinkHandler)
-          setText(communityDescriptionText)
-        }
+    if (isCommunityTabAvailable) {
+      val (communityDescriptionText, communityLinkHandler) =
+        prepareCommunityContent(task, submissionsManager, isSolutionSharingAllowed)
+
+      project.invokeLater {
+        updateSegmentedButtonState(task, isSolutionSharingAllowed)
+        updatePanel(panel, descriptionText, customLinkHandler)
+        updatePanel(communityPanel, communityDescriptionText, communityLinkHandler)
       }
-
-      panel.apply {
-        hideLoadingSubmissionsPanel()
-        updateLinkHandler(customLinkHandler)
-        setText(descriptionText)
+    }
+    else {
+      project.invokeLater {
+        updatePanel(panel, descriptionText, customLinkHandler)
       }
     }
   }
 
-  private fun prepareCommunityContent(task: Task, submissionsManager: SubmissionsManager, isSolutionSharingAllowed: Boolean): Pair<String, SwingToolWindowLinkHandler?> {
+  private fun updatePanel(panel: SwingTextPanel, text: String, linkHandler: SwingToolWindowLinkHandler?) = panel.apply {
+    hideLoadingSubmissionsPanel()
+    updateLinkHandler(linkHandler)
+    setText(text)
+  }
+
+  private fun updateSegmentedButtonState(task: Task, isSolutionSharingAllowed: Boolean) {
     if (task.isCommunitySolutionsAllowed() && isSolutionSharingAllowed) {
       segmentedButton.enableCommunityButton()
+    }
+    else {
+      segmentedButton.disableCommunityButton(isAgreementTooltip = !isSolutionSharingAllowed)
+    }
+  }
+
+  private fun prepareCommunityContent(
+    task: Task, submissionsManager: SubmissionsManager, isSolutionSharingAllowed: Boolean
+  ): Pair<String, SwingToolWindowLinkHandler?> {
+    if (task.isCommunitySolutionsAllowed() && isSolutionSharingAllowed) {
       val submissionsList = submissionsManager.getCommunitySubmissionsFromMemory(task.id)
 
       if (submissionsList.isNullOrEmpty()) {
@@ -154,11 +170,9 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
       return getSubmissionsText(submissionsList) to SubmissionsDifferenceLinkHandler(project, task, submissionsManager, true)
     }
     else if (!isSolutionSharingAllowed) {
-      segmentedButton.disableCommunityButton(isAgreementTooltip = true)
       return getSolutionSharingAgreementPromptText() to LoginLinkHandler(project, submissionsManager)
     }
     else {
-      segmentedButton.disableCommunityButton()
       return EduCoreBundle.message("submissions.button.community.tooltip.text.disabled") to null
     }
   }
