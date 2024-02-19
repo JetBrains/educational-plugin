@@ -15,7 +15,7 @@ fun SegmentedButton.ItemPresentation.segmentedButtonRenderer(item: JButton) {
 // BACKCOMPAT: 2023.2
 @Suppress("UnstableApiUsage")
 fun SegmentedButton<JButton>.enableCommunityButton() {
-  val communityButton = items.last()
+  val communityButton = items.findLast { it.text == SubmissionsTab.COMMUNITY.text } ?: return
   communityButton.isEnabled = true
   communityButton.toolTipText = EduCoreBundle.message("submissions.button.community.tooltip.text.enabled")
   update(communityButton)
@@ -24,7 +24,7 @@ fun SegmentedButton<JButton>.enableCommunityButton() {
 // BACKCOMPAT: 2023.2
 @Suppress("UnstableApiUsage")
 fun SegmentedButton<JButton>.disableCommunityButton(isAgreementTooltip: Boolean = false) {
-  val communityButton = items.last()
+  val communityButton = items.findLast { it.text == SubmissionsTab.COMMUNITY.text } ?: return
   communityButton.isEnabled = false
   communityButton.toolTipText = if (isAgreementTooltip) {
     EduCoreBundle.message("submissions.tab.solution.sharing.agreement")

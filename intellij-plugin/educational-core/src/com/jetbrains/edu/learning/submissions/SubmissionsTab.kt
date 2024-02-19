@@ -252,7 +252,7 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
      */
     private val tripleSpace = " ".repeat(3)
     private val MY = JButton(tripleSpace + EduCoreBundle.message("submissions.button.my") + tripleSpace)
-    private val COMMUNITY = JButton(EduCoreBundle.message("submissions.button.community")).apply { isEnabled = false }
+    val COMMUNITY = JButton(EduCoreBundle.message("submissions.button.community")).apply { isEnabled = false }
     private val SEGMENTED_BUTTON_ITEMS = listOf(MY, COMMUNITY)
     private val EMPTY_SUBMISSIONS_MESSAGE = "<a $textStyleHeader>${EduCoreBundle.message("submissions.empty")}"
     private val EMPTY_COMMUNITY_SOLUTIONS_MESSAGE = "<a $textStyleHeader>${EduCoreBundle.message("submissions.community.empty")}"
