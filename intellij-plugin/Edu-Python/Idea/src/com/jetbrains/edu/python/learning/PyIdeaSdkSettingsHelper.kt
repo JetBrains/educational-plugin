@@ -14,7 +14,6 @@ import com.intellij.openapi.util.Condition
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PlatformUtils
-import com.jetbrains.edu.python.learning.newproject.PyFakeSdkType
 import com.jetbrains.edu.python.learning.newproject.PySdkSettingsHelper
 import com.jetbrains.python.sdk.PyDetectedSdk
 import com.jetbrains.python.sdk.PythonSdkType
@@ -40,7 +39,7 @@ class PyIdeaSdkSettingsHelper : PySdkSettingsHelper {
       override fun sdkHomeSelected(sdk: Sdk, newSdkHome: String) {}
     })
 
-    val sdkTypeIdFilter = Condition<SdkTypeId> { it == PythonSdkType.getInstance() || it == PyFakeSdkType }
+    val sdkTypeIdFilter = Condition<SdkTypeId> { it == PythonSdkType.getInstance() }
     val sdkFilter = JdkComboBox.getSdkFilter(sdkTypeIdFilter)
     val comboBox = JdkComboBox(null, model, sdkTypeIdFilter, sdkFilter, sdkTypeIdFilter, null)
     comboBox.addActionListener {

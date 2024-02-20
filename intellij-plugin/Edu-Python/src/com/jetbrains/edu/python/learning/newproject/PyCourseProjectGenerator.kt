@@ -39,7 +39,7 @@ open class PyCourseProjectGenerator(
         sdk = projectSettings.sdk
       }
     }
-    if (sdk?.sdkType === PyFakeSdkType) {
+    if (sdk is PySdkToCreateVirtualEnv) {
       val homePath = sdk.homePath ?: error("Home path is not passed during fake python sdk creation")
       createAndAddVirtualEnv(project, projectSettings, PyDetectedSdk(homePath))
       sdk = projectSettings.sdk

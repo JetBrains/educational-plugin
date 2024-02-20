@@ -1,13 +1,13 @@
 package com.jetbrains.edu.python.slow.checker
 
 import com.intellij.openapi.projectRoots.ProjectJdkTable
-import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.runInEdtAndWait
 import com.jetbrains.edu.learning.checker.EduCheckerFixture
-import com.jetbrains.edu.python.learning.newproject.PyFakeSdkType
+import com.jetbrains.edu.python.learning.newproject.PySdkToCreateVirtualEnv
 import com.jetbrains.edu.python.learning.newproject.PyProjectSettings
+import com.jetbrains.edu.python.learning.newproject.create
 import com.jetbrains.python.sdk.PythonSdkType
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 import java.nio.file.Paths
@@ -25,7 +25,7 @@ class PyCheckerFixture : EduCheckerFixture<PyProjectSettings>() {
     runInEdtAndWait {
       val versionString = PythonSdkFlavor.getApplicableFlavors(false)[0].getVersionString(sdkLocation)
                           ?: error("Can't get python version")
-      projectSettings.sdk = ProjectJdkImpl(versionString, PyFakeSdkType, sdkLocation, versionString)
+      projectSettings.sdk = PySdkToCreateVirtualEnv.create(versionString, sdkLocation, versionString)
       VfsRootAccess.allowRootAccess(testRootDisposable, sdkLocation)
     }
   }
