@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.command
 
+import com.intellij.ide.CliResult
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.extensions.PluginId
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -39,5 +40,13 @@ class EduCoursePluginInstallerAppStarter : EduAppStarterBase<Args>() {
     LOG.info("Installing: $pluginIds")
 
     return installPlugins(pluginIds, course.name)
+  }
+
+  override fun canProcessExternalCommandLine(): Boolean = true
+
+  override suspend fun processExternalCommandLine(args: List<String>, currentDirectory: String?): CliResult {
+    // Temporary workaround not to fail on external `installCoursePlugin` command invocation.
+    // Should be replaced with proper implementation later (https://youtrack.jetbrains.com/issue/EDU-6692)
+    return CliResult.OK
   }
 }
