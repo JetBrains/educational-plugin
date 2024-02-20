@@ -2,7 +2,6 @@ package com.jetbrains.edu.python.learning.newproject
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.UserDataHolderBase
@@ -24,8 +23,6 @@ import com.jetbrains.python.psi.LanguageLevel
 import com.jetbrains.python.sdk.*
 import com.jetbrains.python.sdk.add.PySdkPathChoosingComboBox
 import com.jetbrains.python.sdk.add.addInterpretersAsync
-import com.jetbrains.python.sdk.flavors.PyFlavorAndData
-import com.jetbrains.python.sdk.flavors.PyFlavorData
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 import org.jetbrains.annotations.Nls
 import java.awt.BorderLayout
@@ -103,7 +100,7 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
 
   private val Sdk.languageLevel: LanguageLevel
     get() {
-      return if (sdkType === PyFakeSdkType) {
+      return if (this is PySdkToCreateVirtualEnv) {
         val pythonVersion = versionString
         if (pythonVersion == null) {
           LanguageLevel.getDefault()
@@ -170,9 +167,7 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
       val pythonVersion = version.substring(prefix.length)
       val name = "new virtual env $pythonVersion"
 
-      return ProjectJdkImpl(name, PyFakeSdkType, baseSdk.path, pythonVersion).apply {
-        sdkModificator.sdkAdditionalData = PythonSdkAdditionalData(PyFlavorAndData(PyFlavorData.Empty, FakePythonSdkFlavor))
-      }
+      return PySdkToCreateVirtualEnv.create(name, baseSdk.path, pythonVersion)
     }
 
     const val ALL_VERSIONS = "All versions"

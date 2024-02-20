@@ -11,4 +11,5 @@ import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 object FakePythonSdkFlavor : PythonSdkFlavor<PyFlavorData.Empty>() {
   override fun getName(): String = "Python"
   override fun sdkSeemsValid(sdk: Sdk, flavorData: PyFlavorData.Empty, targetConfig: TargetEnvironmentConfiguration?): Boolean = true
+  override fun getFlavorDataClass(): Class<PyFlavorData.Empty> = PyFlavorData.Empty::class.java
 }

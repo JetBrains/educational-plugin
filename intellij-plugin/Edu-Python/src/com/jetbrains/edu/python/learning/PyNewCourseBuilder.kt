@@ -1,6 +1,5 @@
 package com.jetbrains.edu.python.learning
 
-import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
 import com.jetbrains.edu.learning.*
@@ -11,10 +10,7 @@ import com.jetbrains.edu.python.learning.PyConfigurator.Companion.MAIN_PY
 import com.jetbrains.edu.python.learning.PyConfigurator.Companion.TASK_PY
 import com.jetbrains.edu.python.learning.PyNewConfigurator.Companion.TEST_FILE_NAME
 import com.jetbrains.edu.python.learning.PyNewConfigurator.Companion.TEST_FOLDER
-import com.jetbrains.edu.python.learning.newproject.PyCourseProjectGenerator
-import com.jetbrains.edu.python.learning.newproject.PyFakeSdkType
-import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings
-import com.jetbrains.edu.python.learning.newproject.PyProjectSettings
+import com.jetbrains.edu.python.learning.newproject.*
 import com.jetbrains.python.PyNames
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 
@@ -29,7 +25,7 @@ class PyNewCourseBuilder : EduCourseBuilder<PyProjectSettings> {
     return findPath(INTERPRETER_PROPERTY, "Python interpreter").flatMap { sdkPath ->
       val versionString = PythonSdkFlavor.getApplicableFlavors(false).firstOrNull()?.getVersionString(sdkPath)
                           ?: return Err("Can't get python version")
-      val sdk = ProjectJdkImpl(versionString, PyFakeSdkType, sdkPath, versionString)
+      val sdk = PySdkToCreateVirtualEnv.create(versionString, sdkPath, versionString)
       Ok(PyProjectSettings(sdk))
     }
   }
