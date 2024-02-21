@@ -6,10 +6,12 @@ import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.dsl.builder.AlignY
+import com.intellij.ui.dsl.builder.RightGap
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.runInBackground
@@ -19,6 +21,7 @@ import com.jetbrains.edu.learning.submissions.isSubmissionDownloadAllowed
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.swing.JComponent
+import javax.swing.JPanel
 
 class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
 
@@ -40,18 +43,19 @@ class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
     }
   }.apply { border = JBUI.Borders.empty(5) }
 
-  @Suppress("DialogTitleCapitalization")
   private fun createInnerPanel(): JComponent = panel {
     row {
       text(EduCoreBundle.message("user.agreement.dialog.text"))
     }
     row {
-      checkBox(EduCoreBundle.message("user.agreement.dialog.agreement.checkbox"))
+      checkBox("")
         .comment(EduCoreBundle.message("user.agreement.dialog.agreement.checkbox.comment"))
         .onChanged {
           userAgreementSelected = it.isSelected
           isOKActionEnabled = isAnyCheckBoxSelected()
         }
+        .gap(RightGap.SMALL)
+      cell(createCheckBoxTextPanel())
     }
     row {
       checkBox(EduCoreBundle.message("user.agreement.dialog.statistics.checkbox"))
@@ -59,6 +63,19 @@ class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
           statisticsSelected = it.isSelected
           isOKActionEnabled = isAnyCheckBoxSelected()
         }
+    }
+  }
+
+  @Suppress("DialogTitleCapitalization")
+  private fun createCheckBoxTextPanel(): JPanel = panel {
+    row {
+      link(EduCoreBundle.message("user.agreement.dialog.checkbox.agreement")) { EduBrowser.getInstance().browse(USER_AGREEMENT_URL) }
+        .resizableColumn()
+        .gap(RightGap.SMALL)
+      label(EduCoreBundle.message("user.agreement.dialog.checkbox.and"))
+        .gap(RightGap.SMALL)
+      link(EduCoreBundle.message("user.agreement.dialog.checkbox.privacy.policy")) { EduBrowser.getInstance().browse(PRIVACY_POLICY_URL) }
+        .resizableColumn()
     }
   }
 
@@ -76,6 +93,8 @@ class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
   }
 
   companion object {
+    private const val USER_AGREEMENT_URL = "https://www.jetbrains.com/legal/docs/terms/jetbrains-academy/plugin/"
+    private const val PRIVACY_POLICY_URL = "https://www.jetbrains.com/legal/docs/privacy/privacy/"
 
     @RequiresEdt
     fun showUserAgreementDialog(project: Project?) {
