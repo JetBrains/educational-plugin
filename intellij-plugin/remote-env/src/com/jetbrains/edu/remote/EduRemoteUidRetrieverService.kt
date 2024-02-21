@@ -28,7 +28,7 @@ class EduRemoteUidRetrieverService(private val project: Project, private val sco
     if (!isStarted.compareAndSet(false, true)) {
       error("There was an attempt to start the service again, while it is already running")
     }
-    LOG.debug("EduRemoteUidRetrieverService started")
+    LOG.info("EduRemoteUidRetrieverService started")
 
     scope.launch {
       while (true) {
