@@ -73,7 +73,11 @@ class EduEditorFactoryListener : EditorFactoryListener {
         markHyperskillTheoryTaskAsCompleted(project, task)
       }
       else if (course is EduCourse && course.isMarketplaceRemote) {
-        MarketplaceConnector.getInstance().isLoggedInAsync().thenAcceptAsync { markMarketplaceTheoryTaskAsCompleted(project, task) }
+        MarketplaceConnector.getInstance().isLoggedInAsync().thenAcceptAsync { isLoggedIn ->
+          if (isLoggedIn) {
+            markMarketplaceTheoryTaskAsCompleted(project, task)
+          }
+        }
       }
       task.status = CheckStatus.Solved
       saveItem(task)
