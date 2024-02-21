@@ -11,11 +11,13 @@ import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
+import com.intellij.openapi.util.NlsContexts
 import com.jetbrains.edu.coursecreator.CCNotificationUtils
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
+import org.jetbrains.annotations.NotNull
 
 object MarketplaceNotificationUtils {
   fun showLoginFailedNotification(loginProviderName: String) {
@@ -143,7 +145,7 @@ object MarketplaceNotificationUtils {
     Notification(
       JETBRAINS_ACADEMY_GROUP_ID,
       EduCoreBundle.message("marketplace.solutions.sharing.notification.title"),
-      EduCoreBundle.message("marketplace.solutions.sharing.notification.text"),
+      EduCoreBundle.message("notification.something.went.wrong.text"),
       NotificationType.ERROR
     ).notify(null)
   }
@@ -196,11 +198,15 @@ object MarketplaceNotificationUtils {
     ).notify(project)
   }
 
-  fun showSuccessReportCommunitySolutionNotification(project: Project?) {
+  fun showSuccessRequestNotification(
+    project: Project?,
+    @NotNull @NlsContexts.NotificationTitle title: String,
+    @NotNull @NlsContexts.NotificationContent message: String
+  ) {
     Notification(
       JETBRAINS_ACADEMY_GROUP_ID,
-      EduCoreBundle.message("marketplace.report.solutions.success.title"),
-      EduCoreBundle.message("marketplace.report.solutions.success.message"),
+      title,
+      message,
       NotificationType.INFORMATION
     ).apply {
       // workaround: there is no NotificationType.Success in the platform yet
@@ -208,11 +214,15 @@ object MarketplaceNotificationUtils {
     }.notify(project)
   }
 
-  fun showFailedToReportCommunitySolutionNotification(project: Project?) {
+  fun showFailedRequestNotification(
+    project: Project?,
+    @NotNull @NlsContexts.NotificationTitle title: String,
+    @NotNull @NlsContexts.NotificationContent message: String
+  ) {
     Notification(
       JETBRAINS_ACADEMY_GROUP_ID,
-      EduCoreBundle.message("marketplace.report.solutions.failed.title"),
-      EduCoreBundle.message("marketplace.report.solutions.failed.message"),
+      title,
+      message,
       NotificationType.ERROR
     ).notify(project)
   }

@@ -22,7 +22,6 @@ import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderWithAnswerMixin
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showFailedToDeleteNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showNoSubmissionsToDeleteNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showSubmissionsDeletedSucessfullyNotification
-import com.jetbrains.edu.learning.submissions.SolutionSharingPreference
 import com.jetbrains.edu.learning.marketplace.UserAgreementDialogResultState
 import com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceHost
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -310,27 +309,51 @@ class MarketplaceSubmissionsConnector {
     changeUserStatisticsAllowedState(result.isStatisticsSharingAllowed)
   }
 
-  private suspend fun changeUserAgreementState(newState: UserAgreementState) {
+  suspend fun changeUserAgreementState(newState: UserAgreementState): Result<Unit, String> {
     val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
     val newStateName = newState.name
     LOG.info("Changing User Agreement state to $newStateName for user $loginName")
-    try {
-      submissionsService.changeUserAgreementState(newStateName)
+    return try {
+      val response = submissionsService.changeUserAgreementState(newStateName)
+      if (response.isSuccessful) {
+        Ok(Unit)
+      }
+      else {
+        Err("Failed to change User Agreement state: ${response.errorBody()}. Response code: ${response.code()}")
+      }
     }
     catch (e: Exception) {
       LOG.error("Error occurred while changing User Agreement state to $newStateName for user $loginName", e)
+      Err(e.message ?: "Failed to update User Agreement state")
     }
   }
 
-  private suspend fun changeUserStatisticsAllowedState(newState: Boolean) {
+  suspend fun changeUserStatisticsAllowedState(newState: Boolean): Result<Unit, String> {
     val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
     LOG.info("Changing User Statistics Allowed state to $newState for user $loginName")
-    try {
-      submissionsService.changeUserStatisticsAllowedState(newState)
+    return try {
+      val response = submissionsService.changeUserStatisticsAllowedState(newState)
+      if (response.isSuccessful) {
+        Ok(Unit)
+      }
+      else {
+        Err("Failed to change User Statistics Allowance state: ${response.errorBody()}. Response code: ${response.code()}")
+      }
     }
     catch (e: Exception) {
       LOG.error("Error occurred while changing User Statistics Allowed state to $newState for user $loginName", e)
+      Err(e.message ?: "Failed to change User Statistics Allowed state")
     }
+  }
+
+  suspend fun getUserStatisticsAllowedState(): Boolean? {
+    val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
+    val response = submissionsService.getUserStatisticsAllowedState()
+    val responseBody = response.body()
+    if (responseBody == null) {
+      LOG.info("Error occurred while getting User Agreement state for user $loginName: ${response.errorBody()}. Response code: ${response.code()}")
+    }
+    return responseBody
   }
 
   companion object {

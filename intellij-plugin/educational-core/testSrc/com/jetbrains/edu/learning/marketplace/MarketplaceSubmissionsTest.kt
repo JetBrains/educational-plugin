@@ -22,15 +22,13 @@ import com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionAct
 import com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionActionTest.Companion.putCommunityData
 import com.jetbrains.edu.learning.marketplace.actions.ShareMySolutionsAction
 import com.jetbrains.edu.learning.marketplace.api.*
+import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.SubmissionsTestBase
 import com.jetbrains.edu.learning.submissions.*
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.withTestDialog
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.mockkConstructor
-import io.mockk.mockkObject
+import io.mockk.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -50,8 +48,12 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
     val registryValue = Registry.get(ShareMySolutionsAction.REGISTRY_KEY)
     val oldValue = registryValue.asBoolean()
     registryValue.setValue(true)
+    val settings = MarketplaceSettings.INSTANCE
+    val initialAgreementState = settings.userAgreementState
+    settings.setTestAgreementState(UserAgreementState.ACCEPTED)
     Disposer.register(testRootDisposable) {
       registryValue.setValue(oldValue)
+      settings.setTestAgreementState(initialAgreementState)
     }
   }
 
@@ -295,7 +297,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
       every { reportSolutionCall.execute() } returns reportCommunityResponse
 
       val userAgreementStateCall = mockk<Call<ResponseBody>>()
-      every { service.getUserAgreementState() } returns userAgreementStateCall
+      coEvery {  service.getUserAgreementState() } returns userAgreementStateCall
       every { userAgreementStateCall.execute() } returns Response.success(userAgreementState.toString().toResponseBody("application/json; charset=UTF-8".toMediaType()))
 
       if (solutionsKeyTextMap.isNotEmpty()) {

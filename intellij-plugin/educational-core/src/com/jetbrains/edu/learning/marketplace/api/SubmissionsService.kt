@@ -54,7 +54,7 @@ interface SubmissionsService {
   suspend fun changeUserAgreementState(@Query("state") agreementState: String): Response<Unit>
 
   @GET("/api/user/statisticsAllowed")
-  fun getUserStatisticsAllowedState(): Call<Boolean>
+  suspend fun getUserStatisticsAllowedState(): Response<Boolean>
 
   @PATCH("/api/user/statisticsAllowed")
   suspend fun changeUserStatisticsAllowedState(@Query("state") statisticsAllowed: Boolean): Response<Unit>

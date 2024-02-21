@@ -18,7 +18,7 @@ import com.intellij.ui.GotItTooltip
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils
-import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showFailedToReportCommunitySolutionNotification
+import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showFailedRequestNotification
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.isMarketplaceCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -64,13 +64,21 @@ class ReportCommunitySolutionAction : DumbAwareActionButton(), CustomComponentAc
     runInBackground(project, EduCoreBundle.message("marketplace.report.solutions.background.title")) {
       val isSuccessful = MarketplaceSubmissionsConnector.getInstance().reportSolution(submissionId)
       if (!isSuccessful) {
-        showFailedToReportCommunitySolutionNotification(project)
+        showFailedRequestNotification(
+          project,
+          EduCoreBundle.message("marketplace.report.solutions.failed.title"),
+          EduCoreBundle.message("marketplace.report.solutions.failed.message")
+        )
         return@runInBackground
       }
       val taskId = chainDiffVirtualFile.getUserDataFromChain(TASK_ID_KEY) ?: return@runInBackground
       SubmissionsManager.getInstance(project).removeCommunitySubmission(taskId, submissionId)
       chainDiffVirtualFile.putUserData(IS_REPORTED, true)
-      MarketplaceNotificationUtils.showSuccessReportCommunitySolutionNotification(project)
+      MarketplaceNotificationUtils.showSuccessRequestNotification(
+        project,
+        EduCoreBundle.message("marketplace.report.solutions.success.title"),
+        EduCoreBundle.message("marketplace.report.solutions.success.message")
+      )
     }
   }
 

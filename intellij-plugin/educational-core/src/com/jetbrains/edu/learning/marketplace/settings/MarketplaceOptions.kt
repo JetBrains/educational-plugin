@@ -1,5 +1,8 @@
 package com.jetbrains.edu.learning.marketplace.settings
 
+import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.asContextElement
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.ui.HyperlinkAdapter
@@ -16,6 +19,9 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.settings.OAuthLoginOptions
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
+import com.jetbrains.edu.learning.submissions.UserAgreementState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.swing.JComponent
 
 class MarketplaceOptions : OAuthLoginOptions<MarketplaceAccount>() {
@@ -29,10 +35,50 @@ class MarketplaceOptions : OAuthLoginOptions<MarketplaceAccount>() {
     return !RemoteEnvHelper.isRemoteDevServer()
   }
 
-  private val shareMySolutionsCheckBox = JBCheckBox(EduCoreBundle.message("marketplace.solutions.sharing.checkbox")).apply {
+  private val shareMySolutionsCheckBox = JBCheckBox(EduCoreBundle.message("marketplace.options.solutions.sharing.checkbox")).apply {
     val sharingPreference = MarketplaceSettings.INSTANCE.solutionsSharing
     isSelected = sharingPreference ?: false
     isEnabled = sharingPreference != null
+  }
+
+  private val userAgreementCheckBox = JBCheckBox(EduCoreBundle.message("marketplace.options.user.agreement.checkbox")).apply {
+    updateUserAgreementState()
+  }
+
+  private fun JBCheckBox.updateUserAgreementState() {
+    fun updateCheckbox(agreementState: UserAgreementState?, enabled: Boolean = agreementState != null) {
+      isSelected = agreementState == UserAgreementState.ACCEPTED && MarketplaceSettings.isJBALoggedIn()
+      isEnabled = enabled
+    }
+
+    val lastAgreementState = MarketplaceSettings.INSTANCE.userAgreementState
+    updateCheckbox(lastAgreementState, false)
+    MarketplaceSettings.INSTANCE.updateToActualUserAgreementState {
+      withContext(Dispatchers.EDT + ModalityState.any().asContextElement()) {
+        updateCheckbox(it)
+      }
+    }
+  }
+
+  private val statisticsCollectionAllowedCheckBox = JBCheckBox(EduCoreBundle.message("marketplace.options.statistics.checkbox")).apply {
+   updateStatisticsCollectionState()
+  }
+
+  private fun JBCheckBox.updateStatisticsCollectionState() {
+    fun updateCheckbox(statisticsState: Boolean?, enabled: Boolean = statisticsState != null) {
+      val isStatisticsCollectionAllowed = statisticsState ?: false
+      isSelected = isStatisticsCollectionAllowed && MarketplaceSettings.isJBALoggedIn()
+      isEnabled = enabled
+    }
+
+    val lastStatisticsState = MarketplaceSettings.INSTANCE.statisticsCollectionState
+    updateCheckbox(lastStatisticsState, false)
+
+    MarketplaceSettings.INSTANCE.updateToActualStatisticsSharingState {
+      withContext(Dispatchers.EDT + ModalityState.any().asContextElement()) {
+        updateCheckbox(it)
+      }
+    }
   }
 
   override fun getDisplayName(): String = JET_BRAINS_ACCOUNT
@@ -47,27 +93,59 @@ class MarketplaceOptions : OAuthLoginOptions<MarketplaceAccount>() {
     super.postLoginActions()
     val openProjects = ProjectManager.getInstance().openProjects
     openProjects.forEach { if (!it.isDisposed && it.course is EduCourse) SubmissionsManager.getInstance(it).prepareSubmissionsContentWhenLoggedIn() }
+    statisticsCollectionAllowedCheckBox.updateStatisticsCollectionState()
+    userAgreementCheckBox.updateUserAgreementState()
   }
 
   override fun getAdditionalComponents(): List<JComponent> =
     if (Registry.`is`(ShareMySolutionsAction.REGISTRY_KEY, false) && MarketplaceSettings.INSTANCE.getMarketplaceAccount() != null) {
-      listOf(shareMySolutionsCheckBox)
+      listOf(userAgreementCheckBox, shareMySolutionsCheckBox, statisticsCollectionAllowedCheckBox)
     }
     else {
-      listOf()
+      listOf(userAgreementCheckBox, statisticsCollectionAllowedCheckBox)
     }
 
   override fun apply() {
     super.apply()
-    MarketplaceSettings.INSTANCE.updateSharingPreference(shareMySolutionsCheckBox.isSelected)
+    val settings = MarketplaceSettings.INSTANCE
+    if (settings.isSolutionSharingStateModified()) {
+      settings.updateSharingPreference(shareMySolutionsCheckBox.isSelected)
+    }
+
+    if (settings.isUserAgreementStateModified()) {
+      val agreementState = if (userAgreementCheckBox.isSelected) {
+        UserAgreementState.ACCEPTED
+      }
+      else {
+        UserAgreementState.TERMINATED
+      }
+      settings.updateAgreementState(agreementState)
+    }
+
+    if (settings.isStatisticsCollectionStateModified()) {
+      settings.updateStatisticsCollectionState(statisticsCollectionAllowedCheckBox.isSelected)
+    }
   }
 
   override fun reset() {
     super.reset()
-    shareMySolutionsCheckBox.isSelected = MarketplaceSettings.INSTANCE.solutionsSharing == true
+    val settings = MarketplaceSettings.INSTANCE
+    shareMySolutionsCheckBox.isSelected = settings.solutionsSharing == true
+    userAgreementCheckBox.isSelected = settings.userAgreementState == UserAgreementState.ACCEPTED
+    statisticsCollectionAllowedCheckBox.isSelected = settings.statisticsCollectionState == true
   }
 
   override fun isModified(): Boolean {
-    return super.isModified() || MarketplaceSettings.INSTANCE.solutionsSharing != shareMySolutionsCheckBox.isSelected
+    val settings = MarketplaceSettings.INSTANCE
+    return super.isModified() ||
+           settings.isSolutionSharingStateModified() ||
+           settings.isUserAgreementStateModified() ||
+           settings.isStatisticsCollectionStateModified()
   }
+
+  private fun MarketplaceSettings.isSolutionSharingStateModified(): Boolean = solutionsSharing != shareMySolutionsCheckBox.isSelected
+
+  private fun MarketplaceSettings.isUserAgreementStateModified(): Boolean = userAgreementState == UserAgreementState.ACCEPTED != userAgreementCheckBox.isSelected
+
+  private fun MarketplaceSettings.isStatisticsCollectionStateModified(): Boolean = statisticsCollectionState != statisticsCollectionAllowedCheckBox.isSelected
 }
