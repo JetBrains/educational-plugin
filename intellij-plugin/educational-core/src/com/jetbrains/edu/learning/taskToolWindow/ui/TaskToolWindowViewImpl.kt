@@ -45,7 +45,7 @@ import javax.swing.JSeparator
 
 class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), DataProvider {
   private var uiContent: UiContent? = null
-  private lateinit var tabManager: TabManager
+  private var tabManager: TabManager? = null
 
   override var currentTask: Task? = null
     // TODO: move it in some separate method
@@ -68,21 +68,21 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
 
   override fun updateAdditionalTaskTabs(task: Task?) {
     val taskToUpdate = task ?: currentTask
-    tabManager.updateTabs(taskToUpdate)
+    tabManager?.updateTabs(taskToUpdate)
   }
 
   override fun updateTab(tabType: TabType) {
     if (isHeadlessEnvironment) return
-    tabManager.updateTab(tabType, currentTask)
+    tabManager?.updateTab(tabType, currentTask)
   }
 
   override fun showTab(tabType: TabType) {
-    tabManager.selectTab(tabType)
+    tabManager?.selectTab(tabType)
   }
 
   override fun showLoadingSubmissionsPanel(platformName: String) {
     if (currentTask == null) return
-    val submissionsTab = tabManager.getTab(SUBMISSIONS_TAB) as SubmissionsTab
+    val submissionsTab = getSubmissionTab() ?: return
     ApplicationManager.getApplication().invokeLater {
       submissionsTab.showLoadingPanel(platformName)
     }
@@ -91,7 +91,7 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
   override fun showLoadingCommunityPanel(platformName: String) {
     if (currentTask == null || !project.isMarketplaceCourse()) return
 
-    val submissionsTab = tabManager.getTab(SUBMISSIONS_TAB) as SubmissionsTab
+    val submissionsTab = getSubmissionTab() ?: return
     ApplicationManager.getApplication().invokeLater {
       submissionsTab.showLoadingCommunityPanel(platformName)
     }
@@ -100,11 +100,13 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
   override fun showMyTab() {
     if (!project.isMarketplaceCourse()) return
 
-    val submissionsTab = tabManager.getTab(SUBMISSIONS_TAB) as SubmissionsTab
+    val submissionsTab = getSubmissionTab() ?: return
     ApplicationManager.getApplication().invokeLater {
       submissionsTab.showMyTab()
     }
   }
+
+  private fun getSubmissionTab(): SubmissionsTab? = tabManager?.getTab(SUBMISSIONS_TAB) as? SubmissionsTab
 
   override fun updateCheckPanel(task: Task?) {
     if (task == null) return
@@ -160,8 +162,9 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
 
   override fun init(toolWindow: ToolWindow) {
     val contentManager = toolWindow.contentManager
-    tabManager = TabManagerImpl(project, contentManager)
-    Disposer.register(contentManager, tabManager)
+    tabManager = TabManagerImpl(project, contentManager).apply {
+      Disposer.register(contentManager, this)
+    }
 
     val panel = JPanel(BorderLayout())
     panel.border = JBUI.Borders.empty(0, 16, 12, 0)
