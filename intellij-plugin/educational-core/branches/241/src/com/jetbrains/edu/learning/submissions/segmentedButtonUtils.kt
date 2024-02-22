@@ -2,11 +2,10 @@ package com.jetbrains.edu.learning.submissions
 
 import com.intellij.ui.dsl.builder.SegmentedButton
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import javax.swing.JButton
 
 // BACKCOMPAT: 2023.2. Inline it
 @Suppress("UnstableApiUsage")
-fun SegmentedButton.ItemPresentation.segmentedButtonRenderer(item: JButton) {
+fun SegmentedButton.ItemPresentation.segmentedButtonRenderer(item: SubmissionsTab.SegmentedButtonItem) {
   text = item.text
   enabled = item.isEnabled
   toolTipText = item.toolTipText
@@ -14,7 +13,7 @@ fun SegmentedButton.ItemPresentation.segmentedButtonRenderer(item: JButton) {
 
 // BACKCOMPAT: 2023.2. Move to [com.jetbrains.edu.learning.submissions.SubmissionsTab.kt]
 @Suppress("UnstableApiUsage")
-fun SegmentedButton<JButton>.updateCommunityButton(isEnabled: Boolean, isAgreementTooltip: Boolean) {
+fun SegmentedButton<SubmissionsTab.SegmentedButtonItem>.updateCommunityButton(isEnabled: Boolean, isAgreementTooltip: Boolean) {
   // todo: fix to `communityButton.text` after move
   val communityButton = items.findLast { it.text == EduCoreBundle.message("submissions.button.community") } ?: return
   communityButton.isEnabled = isEnabled

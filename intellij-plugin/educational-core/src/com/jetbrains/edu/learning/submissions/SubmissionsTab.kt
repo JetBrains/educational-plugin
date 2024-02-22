@@ -49,7 +49,6 @@ import java.net.URL
 import java.text.DateFormat
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import javax.swing.JButton
 import javax.swing.JComponent
 import javax.swing.event.AncestorEvent
 
@@ -64,11 +63,17 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
 
   private lateinit var communityPanel: SwingTextPanel
 
-  private lateinit var segmentedButton: SegmentedButton<JButton>
+  private lateinit var segmentedButton: SegmentedButton<SegmentedButtonItem>
 
-  private lateinit var myButton: JButton
+  private lateinit var myButton: SegmentedButtonItem
 
-  private lateinit var communityButton: JButton
+  private lateinit var communityButton: SegmentedButtonItem
+
+  data class SegmentedButtonItem(
+    val text: String,
+    var isEnabled: Boolean = true,
+    var toolTipText: String? = null
+  )
 
   private val isMarketplaceCourse: Boolean = project.isMarketplaceCourse()
 
@@ -91,8 +96,8 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
 
   private fun initCommunityUI() {
     communityPanel = cards().last() as SwingTextPanel
-    myButton = JButton(TRIPLE_SPACE + EduCoreBundle.message("submissions.button.my") + TRIPLE_SPACE)
-    communityButton = JButton(EduCoreBundle.message("submissions.button.community")).apply { isEnabled = false }
+    myButton = SegmentedButtonItem(TRIPLE_SPACE + EduCoreBundle.message("submissions.button.my") + TRIPLE_SPACE)
+    communityButton = SegmentedButtonItem(EduCoreBundle.message("submissions.button.community"), false)
 
     val segmentedButtonPanel = createSegmentedButton(listOf(myButton, communityButton))
     addGotItTooltip(segmentedButtonPanel)
@@ -202,7 +207,7 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
     segmentedButton.selectedItem = myButton
   }
 
-  private fun createSegmentedButton(segmentedButtonItems: List<JButton>) = panel {
+  private fun createSegmentedButton(segmentedButtonItems: List<SegmentedButtonItem>) = panel {
     row {
       segmentedButton = segmentedButton(segmentedButtonItems) { segmentedButtonRenderer(it) }.apply {
         selectedItem = myButton
