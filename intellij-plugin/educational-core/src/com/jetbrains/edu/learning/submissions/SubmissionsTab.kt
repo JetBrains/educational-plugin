@@ -66,6 +66,10 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
 
   private lateinit var segmentedButton: SegmentedButton<JButton>
 
+  private lateinit var myButton: JButton
+
+  private lateinit var communityButton: JButton
+
   private val isMarketplaceCourse: Boolean = project.isMarketplaceCourse()
 
   init {
@@ -87,8 +91,10 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
 
   private fun initCommunityUI() {
     communityPanel = cards().last() as SwingTextPanel
+    myButton = JButton(TRIPLE_SPACE + EduCoreBundle.message("submissions.button.my") + TRIPLE_SPACE)
+    communityButton = JButton(EduCoreBundle.message("submissions.button.community")).apply { isEnabled = false }
 
-    val segmentedButtonPanel = createSegmentedButton()
+    val segmentedButtonPanel = createSegmentedButton(listOf(myButton, communityButton))
     addGotItTooltip(segmentedButtonPanel)
     headerPanel.apply {
       add(segmentedButtonPanel, BorderLayout.CENTER)
@@ -199,17 +205,17 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
   }
 
   fun showMyTab() {
-    segmentedButton.selectedItem = MY
+    segmentedButton.selectedItem = myButton
   }
 
-  private fun createSegmentedButton() = panel {
+  private fun createSegmentedButton(segmentedButtonItems: List<JButton>) = panel {
     row {
-      segmentedButton = segmentedButton(SEGMENTED_BUTTON_ITEMS) { segmentedButtonRenderer(it) }.apply {
-        selectedItem = MY
+      segmentedButton = segmentedButton(segmentedButtonItems) { segmentedButtonRenderer(it) }.apply {
+        selectedItem = myButton
         whenItemSelected {
           when (it) {
-            MY -> showFirstCard()
-            COMMUNITY -> {
+            myButton -> showFirstCard()
+            communityButton -> {
               showLastCard()
               EduCounterUsageCollector.openCommunityTab()
             }
@@ -226,7 +232,7 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
       ).withHeader(EduCoreBundle.message("submissions.button.community.tooltip.header"))
 
       val communityJComponent = UIUtil.uiTraverser(component).filter(ActionButton::class.java).filter {
-        it.action.templateText == COMMUNITY.text
+        it.action.templateText == communityButton.text
       }.first() as JComponent
 
       if (communityJComponent.isEnabled) {
@@ -246,10 +252,7 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
      * Workaround: [com.intellij.ui.dsl.builder.SegmentedButton.ItemPresentation] doesn't allow setting custom size of the button,
      * additional space characters allow showing the closest version to the design.
      */
-    private val tripleSpace = " ".repeat(3)
-    private val MY = JButton(tripleSpace + EduCoreBundle.message("submissions.button.my") + tripleSpace)
-    val COMMUNITY = JButton(EduCoreBundle.message("submissions.button.community")).apply { isEnabled = false }
-    private val SEGMENTED_BUTTON_ITEMS = listOf(MY, COMMUNITY)
+    private val TRIPLE_SPACE = " ".repeat(3)
     private val EMPTY_SUBMISSIONS_MESSAGE = "<a $textStyleHeader>${EduCoreBundle.message("submissions.empty")}"
     private val EMPTY_COMMUNITY_SOLUTIONS_MESSAGE = "<a $textStyleHeader>${EduCoreBundle.message("submissions.community.empty")}"
     const val OPEN_PLACEHOLDER_TAG = "<placeholder>"
