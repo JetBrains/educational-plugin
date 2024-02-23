@@ -620,7 +620,9 @@ project("Edu-Python") {
     val pluginList = pythonPlugins + listOfNotNull(
       if (isJvmCenteredIDE) javaPlugin else null,
       // needed only for tests, actually
-      platformImagesPlugin
+      platformImagesPlugin,
+      // needed to load `intellij.python.community.impl` module of Python plugin in tests
+      tomlPlugin
     )
     plugins = pluginList
   }
