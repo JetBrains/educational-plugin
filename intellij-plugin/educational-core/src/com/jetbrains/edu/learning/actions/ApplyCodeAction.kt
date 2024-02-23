@@ -17,6 +17,7 @@ import com.intellij.openapi.actionSystem.ex.CustomComponentAction
 import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -54,7 +55,10 @@ class ApplyCodeAction : DumbAwareActionButton(), CustomComponentAction {
       val localDocuments = readLocalDocuments(fileNames)
       check(localDocuments.size == fileNames.size)
       val submissionsTexts = diffRequestChain.getSubmissionsText(fileNames.size)
-      localDocuments.writeSubmissionsTexts(submissionsTexts)
+      val runnableCommand = {
+        localDocuments.writeSubmissionsTexts(submissionsTexts)
+      }
+      CommandProcessor.getInstance().executeCommand(project, runnableCommand, this.templatePresentation.text, ACTION_ID)
     }
     catch (e: Exception) {
       showApplySubmissionCodeFailedNotification(project)
