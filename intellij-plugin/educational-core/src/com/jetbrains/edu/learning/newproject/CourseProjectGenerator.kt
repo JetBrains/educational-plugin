@@ -215,24 +215,28 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     holder.course.init(false)
     val isNewCourseCreatorCourse = isNewCourseCreatorCourse
 
-    if (isNewCourseCreatorCourse) {
-      val lesson = courseBuilder.createInitialLesson(holder)
-      if (lesson != null) {
-        course.addLesson(lesson)
-      }
-    }
+    withRawProgressReporter {
+      blockingContext {
+        blockingContextToIndicator {
+          if (isNewCourseCreatorCourse) {
+            // `courseBuilder.createInitialLesson` is under blocking context with progress indicator as a temporary solution
+            // to avoid deadlock during C++ course creation.
+            // Otherwise, it may try to run a background process under modal progress during `CMAKE_MINIMUM_REQUIRED_LINE_VALUE` initialization.
+            // See https://youtrack.jetbrains.com/issue/EDU-6702
+            val lesson = courseBuilder.createInitialLesson(holder)
+            if (lesson != null) {
+              course.addLesson(lesson)
+            }
+          }
 
-    try {
-      withRawProgressReporter {
-        blockingContext {
-          blockingContextToIndicator {
+          try {
             generateCourseContent(holder, isNewCourseCreatorCourse, ProgressManager.getInstance().progressIndicator)
+          }
+          catch (e: IOException) {
+            LOG.error("Failed to generate course", e)
           }
         }
       }
-    }
-    catch (e: IOException) {
-      LOG.error("Failed to generate course", e)
     }
   }
 
