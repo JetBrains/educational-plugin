@@ -12,6 +12,7 @@ import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduBrowser
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.runInBackground
@@ -113,6 +114,7 @@ class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
 
     @RequiresBackgroundThread
     fun showAtLogin() {
+      if (!MarketplaceConnector.getInstance().isLoggedIn()) return
       val agreementState = MarketplaceSubmissionsConnector.getInstance().getUserAgreementState()
       if (!agreementState.isSubmissionDownloadAllowed()) {
         runInEdt {
