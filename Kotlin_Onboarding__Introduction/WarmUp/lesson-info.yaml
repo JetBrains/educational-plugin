@@ -1,0 +1,32 @@
+type: framework
+custom_name: Warm up
+content:
+  - Introduction
+  - typesOfVariablesTheory
+  - TypesOfVariables
+  - customFunctionsTheory
+  - customFunctionsTheoryPartTwo
+  - todoFunction
+  - CustomFunctions
+  - isCompleteFunction
+  - loopsTheory
+  - mutableVariable
+  - Loops
+  - playGameMain
+  - ifDefinition
+  - ifExpression
+  - If
+  - listTheory
+  - lambdaFunctions
+  - Collections
+  - CollectionsPartTwo
+  - countPartialMatches
+  - printRoundResults
+  - compositeIf
+  - isWinFunction
+  - isLostFunction
+  - compositeOperators
+  - breakExpression
+  - CompleteTheProject
+is_template_based: false
+current_task: 0

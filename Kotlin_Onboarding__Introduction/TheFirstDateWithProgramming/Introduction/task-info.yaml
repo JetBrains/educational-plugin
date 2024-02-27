@@ -1,0 +1,15 @@
+type: theory
+custom_name: Story twister - Introduction
+files:
+  - name: src/main/kotlin/jetbrains/kotlin/course/first/date/Main.kt
+    visible: true
+    encrypted_text: T5CIWZyBkzMy2sgbGt4RBkUQJgpmeeogp2HqsYKTBzzAreoJ+mB2a2MdenfEUZHR9rBMFFN0hDdAYeh7tDGKgUyYRYilFTgm/FHWI7eVdh0+BQCcSQZ1UEVYhT2QsPqo
+    learner_created: false
+  - name: src/main/kotlin/jetbrains/kotlin/course/first/date/RealQuestions.kt
+    visible: false
+    encrypted_text: Oy/gDnbNPSzsPCVDBSqOQo4c2ok/X683JY+3DbdKq6Ft9Rg6uJiImwwsRgMXQO1ncuP1fS2tgXAGcaparqRQsM13XMoZ2qE2Lyn6Dx5li82iBQBrlcxjIWoDLTNybB7V6m+wOQpycnnzdi69WOE9jxBifTQxg39qYve3+pIpwGjp2ZFQL/UzA74Tlz83apcBNqNX3AJYITZhXi06YcHCVBWQ26zVslM7gHgLDsDZgkdErq7QoCSiXFmHB28Jshery/sUHnowFTFbKh/qFpn0H+KkHBqA75GXIkFYr2msDbaToPJueErT2AjyxisbwkRlDtPbYyNha4VJ91xze9MSVA==
+    learner_created: false
+feedback_link: https://docs.google.com/forms/d/e/1FAIpQLScylICclQIi9_YDjO7iuyRITDLn0Qgzw_aLxKxiishKAbL0qg/viewform?usp=pp_url&entry.2103429047=Introduction/The+first+day+with+programming/Introduction
+status: Solved
+record: -1
+post_submission_on_open: true

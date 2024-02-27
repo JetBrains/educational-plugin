@@ -1,0 +1,13 @@
+type: framework
+custom_name: Last push
+content:
+  - PatternsGenerator
+  - getPatternHeightFunction
+  - Helpers
+  - repeatHorizontallyFunction
+  - dropTopFromLineFunction
+  - CanvasGenerator
+  - CanvasGapsGenerator
+  - CompleteTheProject
+is_template_based: false
+current_task: 0

@@ -1,0 +1,30 @@
+# buildUponDefaultConfig is active; add only the rules that require explicit configuration here
+potential-bugs:
+  Deprecation:
+    active: true
+
+style:
+  MaxLineLength:
+    active: true
+    maxLineLength: 180
+  # wildcards are used all over the project
+  WildcardImport:
+    active: false
+  ReturnCount:
+    max: 3
+  MagicNumber:
+    active: false
+  UnusedPrivateMember:
+    active: false
+  FunctionOnlyReturningConstant:
+    active: false
+
+complexity:
+  TooManyFunctions:
+    active: true
+    thresholdInFiles: 20
+
+exceptions:
+  active: true
+  InstanceOfCheckForException:
+    active: false

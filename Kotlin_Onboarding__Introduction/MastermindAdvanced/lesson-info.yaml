@@ -1,0 +1,13 @@
+type: framework
+custom_name: Mastermind Advanced
+content:
+  - introduction
+  - randomFunction
+  - joinToStringFunction
+  - generateSecretFunction
+  - errorHandling
+  - isCorrectInputFunction
+  - safeUserInputFunction
+  - CompleteTheProject
+is_template_based: false
+current_task: 0

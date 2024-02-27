@@ -1,0 +1,25 @@
+type: framework
+custom_name: Almost done
+content:
+  - Introduction
+  - multiRowStringsTheory
+  - MultiRowStrings
+  - applyBordersFilterFunction
+  - whenTheory
+  - errorFunction
+  - When
+  - linesFunction
+  - repeatFunction
+  - stringBuilder
+  - StringFunctions
+  - StringFunctionsPartTwo
+  - nullValue
+  - nullSafetyTheory
+  - safeReadLineFunction
+  - NullSafety
+  - letScopeFunction
+  - choosePictureFunction
+  - NullSafetyPartTwo
+  - CompleteTheProject
+is_template_based: false
+current_task: 0

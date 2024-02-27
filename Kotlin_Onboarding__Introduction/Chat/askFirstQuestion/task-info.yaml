@@ -1,0 +1,13 @@
+type: edu
+custom_name: Chat - Ask First Question
+files:
+  - name: src/main/kotlin/jetbrains/kotlin/course/chat/Main.kt
+    visible: true
+    encrypted_text: T5CIWZyBkzMy2sgbGt4RBkUQJgpmeeogp2HqsYKTBzxbCB/KxJn8MnA4lt+33DjAzcyaxhkepdY7GVnipc32sdNwwaTMh3oWdHgIOsJHCxozlWvnD8Z1UqFA3mfIFhlCYO5Z+5b+0D+maUg8hEHhL1JopEmEYM6lokCAo5fpcl/CXqhHb8x/sgoLubby1kTaTAku+aWvHQMRPqnIxzZVrcdsoj0fE6BbtdtrgZKSGsxMeS4Mmue+qcHC6P9r3GO6
+    learner_created: false
+  - name: test/Tests.kt
+    visible: false
+    encrypted_text: +P35fUi3ClXVuFQP/w26Kwr7Wjdv0hEM/0e31A2X+b3zuGDXTApvNhNOGzz3g60EmCFMH6vWkSR1q43LPTlP7GuZ6D1SlC2qPzRShqzQeBI9a+eg2W+BQ8C6oPZhZeh/OwtU4j6uE9q5ArszMBLA0GLn103z7TLPQMTvuy/uIo8w2F9Zoqer9g+pD0RDabU5GAzHeWF4qxXUVO6LLdP2CzikHcwvdU74OY1TJf4WyXtIs2CnmubAQDI/0gklDd72aRU0KqfYEBJSAXqdPW6INvfhR7MFKgq1tfR/UM91twjIUrDl7VTQzDyCnYe0/MyTo92OLujt3NnglhN/jgi1voEFtzlocQ+LRYFazW1vPsSkwIkoxv6oJTZsBp848mqJNAi/75cVMWZ5+dlr0lx7P44UNEzlVrsGoOpbaxom2fxU6M0DbccOshjCpboW2qiPX/Vgmt8TE2SEHuceUw9x9J8otfz4TcRaVl0yEwWRVBF0cmLKBnKF3LuNOgkeYkXOak5UV7tOAHUuwtORKB8p3HY2rd0utlXiOO2kD6bks4caabitv89CDnzURzbEtEz97BprzXvj2ZLSysSnn+YWuDAp7Fsc71dTgsQFcqk37VksWz4/R+pf0AgS8H7wQCGGTxtKi+0cVix9lobJZoh5/NUKCNkw8xRDJAoU29Zo4SM=
+    learner_created: false
+status: Unchecked
+record: -1

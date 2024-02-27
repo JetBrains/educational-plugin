@@ -8,6 +8,7 @@
           <entry key="CWM_NO_TIMEOUTS" value="1" />
           <entry key="ORG_JETBRAINS_PROJECTOR_SERVER_ATTACH_TO_IDE" value="false" />
           <entry key="REMOTE_DEV_PORT" value="5995" />
+          <entry key="REMOTE_DEV_PROJECT" value="$PROJECT_DIR$/Kotlin_Onboarding__Introduction" />
         </map>
       </option>
       <option name="executionName" />

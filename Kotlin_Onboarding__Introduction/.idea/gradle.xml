@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="delegatedBuild" value="false" />
+        <option name="distributionType" value="WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/AlmostDone/task" />
+            <option value="$PROJECT_DIR$/Chat/task" />
+            <option value="$PROJECT_DIR$/FeedbackSurvey/Survey" />
+            <option value="$PROJECT_DIR$/Hangman/task" />
+            <option value="$PROJECT_DIR$/Introduction/task" />
+            <option value="$PROJECT_DIR$/LastPush/task" />
+            <option value="$PROJECT_DIR$/MastermindAdvanced/task" />
+            <option value="$PROJECT_DIR$/TheFirstDateWithProgramming/task" />
+            <option value="$PROJECT_DIR$/WarmUp/task" />
+            <option value="$PROJECT_DIR$/gifs" />
+            <option value="$PROJECT_DIR$/utils" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>

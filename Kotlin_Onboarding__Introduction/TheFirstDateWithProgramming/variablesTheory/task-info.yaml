@@ -1,0 +1,14 @@
+type: theory
+custom_name: "Story twister - Variables, Theory"
+files:
+  - name: src/main/kotlin/jetbrains/kotlin/course/first/date/Main.kt
+    visible: true
+    encrypted_text: T5CIWZyBkzMy2sgbGt4RBkUQJgpmeeogp2HqsYKTBzzAreoJ+mB2a2MdenfEUZHR9rBMFFN0hDdAYeh7tDGKgRGoyKTPGxU4VROZvMmlzrYIDlZ327kt49GeSFR7B2G6iegYc+IUuD55+FkOFdoAO8ZAyVbOjM46Q14msnjX8ejprVnPFN05IriOQ+WUgsQRbGWLiy/Z2nbkA7/rpsHJTkn5oLjtwyg9ysqFuoEvavztDTJ/CLyHZsN6tmqLgui/
+    learner_created: false
+  - name: src/main/kotlin/jetbrains/kotlin/course/first/date/RealQuestions.kt
+    visible: false
+    encrypted_text: Oy/gDnbNPSzsPCVDBSqOQo4c2ok/X683JY+3DbdKq6Ft9Rg6uJiImwwsRgMXQO1ncuP1fS2tgXAGcaparqRQsM13XMoZ2qE2Lyn6Dx5li82iBQBrlcxjIWoDLTNybB7V6m+wOQpycnnzdi69WOE9jxBifTQxg39qYve3+pIpwGjp2ZFQL/UzA74Tlz83apcBNqNX3AJYITZhXi06YcHCVBWQ26zVslM7gHgLDsDZgkdErq7QoCSiXFmHB28Jshery/sUHnowFTFbKh/qFpn0H+KkHBqA75GXIkFYr2msDbaToPJueErT2AjyxisbwkRlDtPbYyNha4VJ91xze9MSVA==
+    learner_created: false
+status: Unchecked
+record: -1
+post_submission_on_open: true

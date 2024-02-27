@@ -1,0 +1,16 @@
+type: framework
+custom_name: The first date with programming
+content:
+  - Introduction
+  - programEntryPointTheory
+  - ProgramEntryPoint
+  - builtinFunctionsTheory
+  - BuiltinFunctions
+  - variablesTheory
+  - Variables
+  - readUserInputTheory
+  - ReadUserInput
+  - comments
+  - CompleteTheProject
+is_template_based: false
+current_task: 0

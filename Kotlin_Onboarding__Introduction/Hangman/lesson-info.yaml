@@ -1,0 +1,13 @@
+type: framework
+content:
+  - CreateTheGame
+  - isCompleteFunction
+  - Core
+  - generateSecretFunction
+  - getHiddenSecretFunction
+  - isCorrectInputFunction
+  - safeUserInputFunction
+  - getRoundResultsFunction
+  - CompleteTheProject
+is_template_based: false
+current_task: 0

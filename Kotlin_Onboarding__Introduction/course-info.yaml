@@ -1,0 +1,27 @@
+type: marketplace
+title: "Kotlin Onboarding: Introduction"
+language: English
+summary: "<p>This course is designed for novices in Kotlin and focuses on the basic\
+  \ concepts of the Kotlin language. Each lesson of the course is built in the form\
+  \ of a project: step by step, by completing different small tasks, you will get\
+  \ a finished small project in the end. At the end of each lesson, an additional\
+  \ similar project will be offered: it includes all the lesson topics but does not\
+  \ contain the theory part.</p>\n<p><i>Note, this course does not provide a detailed\
+  \ explanation of the basic concepts, like variables: it just shows how to use them\
+  \ in Kotlin and can briefly remind you the definitions.</i></p>\n<p>All topics will\
+  \ be accompanied by links to the official Kotlin documentation, which you can read\
+  \ later. After this course, you will be ready to write basic console applications\
+  \ in the Kotlin-like style.</p> "
+programming_language: Kotlin
+content:
+  - Introduction
+  - TheFirstDateWithProgramming
+  - Chat
+  - WarmUp
+  - MastermindAdvanced
+  - Hangman
+  - AlmostDone
+  - LastPush
+  - FeedbackSurvey
+mode: Study
+feedback_link: https://plugins.jetbrains.com/plugin/21067-kotlin-onboarding-introduction/reviews

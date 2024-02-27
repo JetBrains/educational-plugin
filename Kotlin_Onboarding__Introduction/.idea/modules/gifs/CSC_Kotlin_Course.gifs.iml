@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id=":gifs" external.linked.project.path="$MODULE_DIR$/../../../gifs" external.root.project.path="$MODULE_DIR$/../../.." external.system.id="GRADLE" external.system.module.group="CSC_Kotlin_Course" external.system.module.version="unspecified" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../../gifs">
+      <excludeFolder url="file://$MODULE_DIR$/../../../gifs/.gradle" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../gifs/build" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../gifs/out" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>

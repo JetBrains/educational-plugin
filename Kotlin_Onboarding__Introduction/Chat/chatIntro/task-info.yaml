@@ -1,0 +1,10 @@
+type: theory
+custom_name: Chat - Introduction
+files:
+  - name: src/main/kotlin/jetbrains/kotlin/course/chat/Main.kt
+    visible: true
+    encrypted_text: T5CIWZyBkzMy2sgbGt4RBkUQJgpmeeogp2HqsYKTBzxbCB/KxJn8MnA4lt+33DjAXGTqbrzDMV7srVqJxLQkMETjZv+7hpE9XCdcSHy/tG2/Yar32D4iJPuWz7FbALNg
+    learner_created: false
+status: Unchecked
+record: -1
+post_submission_on_open: true

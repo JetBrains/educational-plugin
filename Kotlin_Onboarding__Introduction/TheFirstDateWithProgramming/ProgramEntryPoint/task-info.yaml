@@ -1,0 +1,18 @@
+type: edu
+custom_name: Story twister - First Kotlin Program
+files:
+  - name: src/main/kotlin/jetbrains/kotlin/course/first/date/Main.kt
+    visible: true
+    encrypted_text: T5CIWZyBkzMy2sgbGt4RBkUQJgpmeeogp2HqsYKTBzzAreoJ+mB2a2MdenfEUZHR9rBMFFN0hDdAYeh7tDGKgSEvAuqKF3Oo6/hCJ9Ldjs61yaHqwU0RTY2I1GXoND6V
+    learner_created: false
+  - name: test/Tests.kt
+    visible: false
+    encrypted_text: +P35fUi3ClXVuFQP/w26K0WNNQur3FS/zuGP9b7JJjhNLCChZ6j/x0a5v7J4nAK8LU25jxakMoTVElwwh7IDhflGTMpS1TJE7eHJ4T9MCA+BcWGYelI7GxuK43MW0BIp3r4ZrsyvwaNdRF1UuVDzK4b7/P7S665auG3qwBz6sB0sRjiZoHft16bgk87i2T1jZkGnI1831ThKfs9TPuXKai6cv6ThDFNUqY728gaTZxzghmp5swfne1UcwtQ9Trma0MwBILJfq7NnKtC+zfyPM+NmPW73iUrtYuHx1p/OGnKRBGGJgX/tKHQI0cVzFKEYXiGGuh+qxPjhRXEH2ZS9ctSlJSEdD7In1EYwDYVmDcodb7rXDcUXcG6arQ/Og8uUGmvj4QzTKb8uamHP10IzjVeN34sR5BScyX+pyC+jYmc=
+    learner_created: false
+  - name: src/main/kotlin/jetbrains/kotlin/course/first/date/RealQuestions.kt
+    visible: false
+    encrypted_text: Oy/gDnbNPSzsPCVDBSqOQo4c2ok/X683JY+3DbdKq6Ft9Rg6uJiImwwsRgMXQO1ncuP1fS2tgXAGcaparqRQsM13XMoZ2qE2Lyn6Dx5li82iBQBrlcxjIWoDLTNybB7V6m+wOQpycnnzdi69WOE9jxBifTQxg39qYve3+pIpwGjp2ZFQL/UzA74Tlz83apcBNqNX3AJYITZhXi06YcHCVBWQ26zVslM7gHgLDsDZgkdErq7QoCSiXFmHB28Jshery/sUHnowFTFbKh/qFpn0H+KkHBqA75GXIkFYr2msDbaToPJueErT2AjyxisbwkRlDtPbYyNha4VJ91xze9MSVA==
+    learner_created: false
+feedback_link: https://docs.google.com/forms/d/e/1FAIpQLScylICclQIi9_YDjO7iuyRITDLn0Qgzw_aLxKxiishKAbL0qg/viewform?usp=pp_url&entry.2103429047=Introduction/The+first+day+with+programming/Program+entry+point
+status: Unchecked
+record: -1

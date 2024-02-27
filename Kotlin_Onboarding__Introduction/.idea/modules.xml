@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/CSC_Kotlin_Course.iml" filepath="$PROJECT_DIR$/.idea/modules/CSC_Kotlin_Course.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AlmostDone/task/CSC_Kotlin_Course.AlmostDone-task.iml" filepath="$PROJECT_DIR$/.idea/modules/AlmostDone/task/CSC_Kotlin_Course.AlmostDone-task.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AlmostDone/task/CSC_Kotlin_Course.AlmostDone-task.main.iml" filepath="$PROJECT_DIR$/.idea/modules/AlmostDone/task/CSC_Kotlin_Course.AlmostDone-task.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AlmostDone/task/CSC_Kotlin_Course.AlmostDone-task.test.iml" filepath="$PROJECT_DIR$/.idea/modules/AlmostDone/task/CSC_Kotlin_Course.AlmostDone-task.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Chat/task/CSC_Kotlin_Course.Chat-task.iml" filepath="$PROJECT_DIR$/.idea/modules/Chat/task/CSC_Kotlin_Course.Chat-task.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Chat/task/CSC_Kotlin_Course.Chat-task.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Chat/task/CSC_Kotlin_Course.Chat-task.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Chat/task/CSC_Kotlin_Course.Chat-task.test.iml" filepath="$PROJECT_DIR$/.idea/modules/Chat/task/CSC_Kotlin_Course.Chat-task.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/FeedbackSurvey/Survey/CSC_Kotlin_Course.FeedbackSurvey-Survey.iml" filepath="$PROJECT_DIR$/.idea/modules/FeedbackSurvey/Survey/CSC_Kotlin_Course.FeedbackSurvey-Survey.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/FeedbackSurvey/Survey/CSC_Kotlin_Course.FeedbackSurvey-Survey.main.iml" filepath="$PROJECT_DIR$/.idea/modules/FeedbackSurvey/Survey/CSC_Kotlin_Course.FeedbackSurvey-Survey.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/FeedbackSurvey/Survey/CSC_Kotlin_Course.FeedbackSurvey-Survey.test.iml" filepath="$PROJECT_DIR$/.idea/modules/FeedbackSurvey/Survey/CSC_Kotlin_Course.FeedbackSurvey-Survey.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Hangman/task/CSC_Kotlin_Course.Hangman-task.iml" filepath="$PROJECT_DIR$/.idea/modules/Hangman/task/CSC_Kotlin_Course.Hangman-task.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Hangman/task/CSC_Kotlin_Course.Hangman-task.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Hangman/task/CSC_Kotlin_Course.Hangman-task.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Hangman/task/CSC_Kotlin_Course.Hangman-task.test.iml" filepath="$PROJECT_DIR$/.idea/modules/Hangman/task/CSC_Kotlin_Course.Hangman-task.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Introduction/task/CSC_Kotlin_Course.Introduction-task.iml" filepath="$PROJECT_DIR$/.idea/modules/Introduction/task/CSC_Kotlin_Course.Introduction-task.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Introduction/task/CSC_Kotlin_Course.Introduction-task.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Introduction/task/CSC_Kotlin_Course.Introduction-task.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Introduction/task/CSC_Kotlin_Course.Introduction-task.test.iml" filepath="$PROJECT_DIR$/.idea/modules/Introduction/task/CSC_Kotlin_Course.Introduction-task.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/LastPush/task/CSC_Kotlin_Course.LastPush-task.iml" filepath="$PROJECT_DIR$/.idea/modules/LastPush/task/CSC_Kotlin_Course.LastPush-task.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/LastPush/task/CSC_Kotlin_Course.LastPush-task.main.iml" filepath="$PROJECT_DIR$/.idea/modules/LastPush/task/CSC_Kotlin_Course.LastPush-task.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/LastPush/task/CSC_Kotlin_Course.LastPush-task.test.iml" filepath="$PROJECT_DIR$/.idea/modules/LastPush/task/CSC_Kotlin_Course.LastPush-task.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MastermindAdvanced/task/CSC_Kotlin_Course.MastermindAdvanced-task.iml" filepath="$PROJECT_DIR$/.idea/modules/MastermindAdvanced/task/CSC_Kotlin_Course.MastermindAdvanced-task.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MastermindAdvanced/task/CSC_Kotlin_Course.MastermindAdvanced-task.main.iml" filepath="$PROJECT_DIR$/.idea/modules/MastermindAdvanced/task/CSC_Kotlin_Course.MastermindAdvanced-task.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MastermindAdvanced/task/CSC_Kotlin_Course.MastermindAdvanced-task.test.iml" filepath="$PROJECT_DIR$/.idea/modules/MastermindAdvanced/task/CSC_Kotlin_Course.MastermindAdvanced-task.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/TheFirstDateWithProgramming/task/CSC_Kotlin_Course.TheFirstDateWithProgramming-task.iml" filepath="$PROJECT_DIR$/.idea/modules/TheFirstDateWithProgramming/task/CSC_Kotlin_Course.TheFirstDateWithProgramming-task.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/TheFirstDateWithProgramming/task/CSC_Kotlin_Course.TheFirstDateWithProgramming-task.main.iml" filepath="$PROJECT_DIR$/.idea/modules/TheFirstDateWithProgramming/task/CSC_Kotlin_Course.TheFirstDateWithProgramming-task.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/TheFirstDateWithProgramming/task/CSC_Kotlin_Course.TheFirstDateWithProgramming-task.test.iml" filepath="$PROJECT_DIR$/.idea/modules/TheFirstDateWithProgramming/task/CSC_Kotlin_Course.TheFirstDateWithProgramming-task.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/WarmUp/task/CSC_Kotlin_Course.WarmUp-task.iml" filepath="$PROJECT_DIR$/.idea/modules/WarmUp/task/CSC_Kotlin_Course.WarmUp-task.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/WarmUp/task/CSC_Kotlin_Course.WarmUp-task.main.iml" filepath="$PROJECT_DIR$/.idea/modules/WarmUp/task/CSC_Kotlin_Course.WarmUp-task.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/WarmUp/task/CSC_Kotlin_Course.WarmUp-task.test.iml" filepath="$PROJECT_DIR$/.idea/modules/WarmUp/task/CSC_Kotlin_Course.WarmUp-task.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/gifs/CSC_Kotlin_Course.gifs.iml" filepath="$PROJECT_DIR$/.idea/modules/gifs/CSC_Kotlin_Course.gifs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/gifs/CSC_Kotlin_Course.gifs.main.iml" filepath="$PROJECT_DIR$/.idea/modules/gifs/CSC_Kotlin_Course.gifs.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/gifs/CSC_Kotlin_Course.gifs.test.iml" filepath="$PROJECT_DIR$/.idea/modules/gifs/CSC_Kotlin_Course.gifs.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/CSC_Kotlin_Course.main.iml" filepath="$PROJECT_DIR$/.idea/modules/CSC_Kotlin_Course.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/CSC_Kotlin_Course.test.iml" filepath="$PROJECT_DIR$/.idea/modules/CSC_Kotlin_Course.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/utils/CSC_Kotlin_Course.utils.iml" filepath="$PROJECT_DIR$/.idea/modules/utils/CSC_Kotlin_Course.utils.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/utils/CSC_Kotlin_Course.utils.main.iml" filepath="$PROJECT_DIR$/.idea/modules/utils/CSC_Kotlin_Course.utils.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/utils/CSC_Kotlin_Course.utils.test.iml" filepath="$PROJECT_DIR$/.idea/modules/utils/CSC_Kotlin_Course.utils.test.iml" />
+    </modules>
+  </component>
+</project>

@@ -1,0 +1,9 @@
+type: framework
+custom_name: Chat
+content:
+  - chatIntro
+  - askFirstQuestion
+  - askSecondQuestion
+  - completeTheProject
+is_template_based: false
+current_task: 0
