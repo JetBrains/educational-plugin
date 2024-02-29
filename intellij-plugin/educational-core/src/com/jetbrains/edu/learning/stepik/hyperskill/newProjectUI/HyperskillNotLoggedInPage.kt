@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI
 
 import com.intellij.openapi.util.IconLoader
 import com.intellij.ui.Gray
+import com.intellij.ui.JBColor
 import com.intellij.ui.components.panels.Wrapper
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.panel
@@ -93,6 +94,8 @@ class HyperskillNotLoggedInPanel : Wrapper() {
         cell(topPanel)
         cell(banner).align(AlignX.FILL)
       }
+    }.apply {
+      background = JBColor.namedColor("SelectCourse.", JBColor(0xFFFFFF, 0x1E1F22))
     }
 
     setContent(contentPanel)
