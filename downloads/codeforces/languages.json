@@ -92,6 +92,11 @@
       "languageIdWithVersion": "Java 11",
       "programTypeId": "60",
       "version": "11"
+    },
+    {
+      "languageIdWithVersion": "Java 21",
+      "programTypeId": "87",
+      "version": "21"
     }
   ],
   "JavaScript":
