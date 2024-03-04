@@ -116,7 +116,11 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private const val LANGUAGE = "language"
     private const val EDU_TAB = "tab"
 
-    private val GROUP = EventLogGroup("educational.counters", 15)
+    private val GROUP = EventLogGroup(
+      "educational.counters",
+      "The metric is reported in case a user has called the corresponding JetBrains Academy features.",
+      15,
+    )
 
     private val COURSE_MODE_FIELD = EventFields.Enum<CourseMode>(MODE)
     private val ITEM_TYPE_FIELD = EventFields.String(TYPE, listOf("CheckiO",
@@ -140,7 +144,13 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
 
 
     private val TASK_NAVIGATION_EVENT = GROUP.registerEvent("navigate.to.task", enumField<TaskNavigationPlace>(SOURCE))
-    private val EDU_PROJECT_CREATED_EVENT = GROUP.registerEvent("edu.project.created", COURSE_MODE_FIELD, ITEM_TYPE_FIELD, LANGUAGE_FIELD)
+    private val EDU_PROJECT_CREATED_EVENT = GROUP.registerEvent(
+      "edu.project.created",
+      "The event is recorded in case a user creates new course.",
+      COURSE_MODE_FIELD,
+      ITEM_TYPE_FIELD,
+      LANGUAGE_FIELD
+    )
     private val EDU_PROJECT_OPENED_EVENT = GROUP.registerEvent("edu.project.opened", COURSE_MODE_FIELD, ITEM_TYPE_FIELD)
     private val CC_STUDY_ITEM_CREATED_EVENT = GROUP.registerEvent("study.item.created", ITEM_TYPE_FIELD)
     private val LICK_CLICKED_EVENT = GROUP.registerEvent("link.clicked", enumField<LinkType>(TYPE))
@@ -159,8 +169,15 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private val SHOW_FULL_OUTPUT_EVENT = GROUP.registerEvent("show.full.output")
     private val PEEK_SOLUTION_EVENT = GROUP.registerEvent("peek.solution")
     private val LEAVE_FEEDBACK_EVENT = GROUP.registerEvent("leave.feedback")
-    private val REVERT_TASK_EVENT = GROUP.registerEvent("revert.task")
-    private val CHECK_TASK_EVENT = GROUP.registerEvent("check.task", enumField<CheckStatus>("status"))
+    private val REVERT_TASK_EVENT = GROUP.registerEvent(
+      "revert.task",
+      "The event is recorded in case a user successfully resets content of a task."
+    )
+    private val CHECK_TASK_EVENT = GROUP.registerEvent(
+      "check.task",
+      "The event is recorded in case a user checks a task in any course.",
+      enumField<CheckStatus>("status")
+    )
     private val RATE_MARKETPLACE_COURSE = GROUP.registerEvent("rate.marketplace.course")
     private val REVIEW_STAGE_TOPICS_EVENT = GROUP.registerEvent("review.stage.topics")
     private val HINT_CLICKED_EVENT = GROUP.registerEvent("hint", enumField<HintEvent>(EVENT))
@@ -168,8 +185,12 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private val PREVIEW_TASK_FILE_EVENT = GROUP.registerEvent("preview.task.file")
     private val CREATE_COURSE_ARCHIVE_EVENT = GROUP.registerEvent("create.course.archive")
     private val POST_COURSE_EVENT = GROUP.registerEvent("post.course", enumField<PostCourseEvent>(EVENT))
-    private val SYNCHRONIZE_COURSE_EVENT = GROUP.registerEvent("synchronize.course",
-                                                               ITEM_TYPE_FIELD, enumField<SynchronizeCoursePlace>(SOURCE))
+    private val SYNCHRONIZE_COURSE_EVENT = GROUP.registerEvent(
+      "synchronize.course",
+      "The event is recorded in case a course is synchronized with its latest version.",
+      ITEM_TYPE_FIELD,
+      enumField<SynchronizeCoursePlace>(SOURCE)
+    )
     private val IMPORT_COURSE_EVENT = GROUP.registerEvent("import.course")
     private val CODEFORCES_SUBMIT_SOLUTION_EVENT = GROUP.registerEvent("codeforces.submit.solution")
     private val TWITTER_DIALOG_SHOWN_EVENT = GROUP.registerEvent("twitter.dialog.shown", ITEM_TYPE_FIELD, LANGUAGE_FIELD)
