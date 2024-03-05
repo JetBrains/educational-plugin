@@ -98,7 +98,7 @@ class OpenCourseButton : CourseButtonBase() {
 
   private fun closeDialog() {
     val dialog = UIUtil.getParentOfType(DialogWrapperDialog::class.java, this) ?: error("Dialog is null")
-    dialog.dialogWrapper?.close(DialogWrapper.CANCEL_EXIT_CODE)
+    dialog.dialogWrapper?.close(DialogWrapper.OK_EXIT_CODE)
   }
 
   override fun isVisible(course: Course): Boolean = !course.isPreview && CoursesStorage.getInstance().hasCourse(course)
