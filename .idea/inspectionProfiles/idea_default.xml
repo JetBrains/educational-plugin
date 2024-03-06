@@ -4,7 +4,6 @@
     <inspection_tool class="AbstractMethodCallInConstructor" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="AccessStaticViaInstance" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="ActionIsNotPreviewFriendly" enabled="true" level="Strong Warning" enabled_by_default="true" editorAttributes="Strong Warning" />
-    <inspection_tool class="ActionPresentationInstantiatedInCtor" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="Anonymous2MethodRef" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="AnonymousHasLambdaAlternative" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="AppEngineForbiddenCode" enabled="false" level="ERROR" enabled_by_default="false" />
@@ -22,7 +21,9 @@
     <inspection_tool class="AssertEqualsBetweenInconvertibleTypes" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="AssertEqualsBetweenInconvertibleTypesTestNG" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="AssertWithSideEffects" enabled="true" level="Strong Warning" enabled_by_default="true" />
-    <inspection_tool class="AssignmentToForLoopParameter" enabled="true" level="WARNING" enabled_by_default="true"/>
+    <inspection_tool class="AssignmentToForLoopParameter" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="m_checkForeachParameters" value="true" />
+    </inspection_tool>
     <inspection_tool class="AssignmentToStaticFieldFromInstanceMethod" enabled="true" level="WARNING" enabled_by_default="true">
       <scope name="Tests" level="WARNING" enabled="false" />
     </inspection_tool>
@@ -92,7 +93,6 @@
     <inspection_tool class="ComparatorCombinators" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="ComparatorResultComparison" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="ComparisonOfShortAndChar" enabled="true" level="Strong Warning" enabled_by_default="true" />
-    <inspection_tool class="ComplexRedundantLet" enabled="true" level="WEAK WARNING" enabled_by_default="true"/>
     <inspection_tool class="ComponentNotRegistered" enabled="true" level="Strong Warning" enabled_by_default="true">
       <option name="CHECK_ACTIONS" value="true" />
       <option name="IGNORE_NON_PUBLIC" value="true" />
@@ -644,7 +644,6 @@
     <inspection_tool class="OptionalOfNullableMisuse" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="OverflowingLoopIndex" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="OverwrittenKey" enabled="true" level="Strong Warning" enabled_by_default="true" />
-    <inspection_tool class="PackageDirectoryMismatch" enabled="true" level="WEAK WARNING" enabled_by_default="true"/>
     <inspection_tool class="PackageInfoWithoutPackage" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="PagesModelInspection" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="ParameterCanBeLocal" enabled="true" level="Strong Warning" enabled_by_default="true" />
@@ -656,7 +655,6 @@
     </inspection_tool>
     <inspection_tool class="PluginXmlI18n" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="PointcutMethodStyleInspection" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="PluginXmlValidity" enabled="true" level="ERROR" enabled_by_default="true"/>
     <inspection_tool class="PointlessArithmeticExpression" enabled="true" level="Strong Warning" enabled_by_default="true">
       <option name="m_ignoreExpressionsContainingConstants" value="true" />
     </inspection_tool>
@@ -707,8 +705,6 @@
       <option name="ignoreLazyOperators" value="true" />
       <option name="ignoreObscureOperators" value="true" />
     </inspection_tool>
-    <inspection_tool class="ReplaceCallWithBinaryOperator" enabled="true" level="WEAK WARNING" enabled_by_default="true"/>
-    <inspection_tool class="ReplaceGetOrSet" enabled="true" level="WEAK WARNING" enabled_by_default="true"/>
     <inspection_tool class="ReplaceGuardClauseWithFunctionCall" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="ReplaceInefficientStreamCount" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="ReplaceNegatedIsEmptyWithIsNotEmpty" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
@@ -2352,8 +2348,6 @@
     <inspection_tool class="SillyAssignmentJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="SimplifiableAnnotation" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="SimplifiableBooleanExpression" enabled="true" level="Strong Warning" enabled_by_default="true" />
-    <inspection_tool class="SimplifiableCallChain" enabled="true" level="WEAK WARNING" enabled_by_default="true"/>
-    <inspection_tool class="SimplifiableServiceRetrieving" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="SimplifyCollector" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="SimplifyOptionalCallChains" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="SimplifyStreamApiCallChains" enabled="true" level="Strong Warning" enabled_by_default="true">
@@ -2382,7 +2376,6 @@
     <inspection_tool class="SqlNoDataSourceInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="StaticCallOnSubclass" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="StaticFieldReferenceOnSubclass" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="StaticInitializationInExtensions" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="StaticNonFinalField" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="StaticSuite" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="StatisticsCollectorNotRegistered" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -2428,9 +2421,7 @@
     <inspection_tool class="TeardownIsPublicVoidNoArg" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="TelReferencesInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="TestCaseWithConstructor" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="TestCaseWithNoTestMethods" enabled="true" level="Strong Warning" enabled_by_default="true">
-      <option name="ignoreSupers" value="true" />
-    </inspection_tool>
+    <inspection_tool class="TestCaseWithNoTestMethods" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="TestMethodIsPublicVoidNoArg" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="TestNGDataProvider" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="TestOnlyProblems" enabled="true" level="WARNING" enabled_by_default="true" />

@@ -1,6 +1,9 @@
 package com.jetbrains.edu.learning.courseFormat.tasks
 
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.eduAssistant.AiAssistantState
+import com.jetbrains.edu.learning.courseFormat.eduAssistant.AuthorSolutionContext
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
 import java.util.*
 
 /**
@@ -24,6 +27,24 @@ abstract class Task : StudyItem {
       require(value is LinkedHashMap<String, TaskFile>) // taskFiles is supposed to be ordered
       _taskFiles = value
     }
+
+  /**
+   * Stores a summary of the theory from the previous steps.
+   */
+  var theorySummary: String? = null
+  /**
+   * Stores a context created by the author's solution, if any
+   */
+  var authorSolutionContext: AuthorSolutionContext? = null
+  var aiAssistantState: AiAssistantState = AiAssistantState.NotInitialized
+  /**
+   * Counts the number of hints that the student can reject before solution steps are regenerated.
+   */
+  var rejectedHintsCount: Int = 0
+  /**
+   * Stores a list of functions that can be changed.
+   */
+  var changedFunctions: List<String>? = null
 
   var feedback: CheckFeedback? = null
   var descriptionText: String = ""

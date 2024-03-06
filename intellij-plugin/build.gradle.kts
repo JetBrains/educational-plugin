@@ -10,6 +10,7 @@ import org.jetbrains.intellij.platform.gradle.tasks.RunIdeTask
 import org.jetbrains.intellij.platform.gradle.utils.extensionProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.*
+import kotlin.io.path.div
 
 val environmentName: String by project
 val pluginVersion: String by project
@@ -179,6 +180,12 @@ allprojects {
     implementationWithoutKotlin(rootProject.libs.converter.jackson)
     implementationWithoutKotlin(rootProject.libs.kotlin.css.jvm)
 
+    implementationWithoutKotlin(rootProject.libs.grazie.gateway.api)
+    implementationWithoutKotlin(rootProject.libs.grazie.gateway.client)
+    implementationWithoutKotlin(rootProject.libs.grazie.client.ktor)
+    implementationWithoutKotlin(rootProject.libs.kotlin.logging)
+    implementationWithoutKotlin(rootProject.libs.logback)
+
     testImplementationWithoutKotlin(rootProject.libs.kotlin.test.junit)
     testImplementationWithoutKotlin(rootProject.libs.mockwebserver)
     testImplementationWithoutKotlin(rootProject.libs.mockk)
@@ -294,6 +301,9 @@ dependencies {
     pluginModule(implementation(project("sql:sql-jvm")))
     pluginModule(implementation(project("github")))
     pluginModule(implementation(project("remote-env")))
+    if (isAiValidationEnabled()) {
+      pluginModule(implementation(project("ai-assistant-validation")))
+    }
   }
 }
 
@@ -324,6 +334,31 @@ tasks {
     autoReload = false
     jvmArgs("-Xmx2g")
     jvmArgs("-Dide.experimental.ui=true")
+
+    if (hasProp("validationOutputPath")) {
+      val outputPath = prop("validationOutputPath").let {
+        rootProject.projectDir.toPath() / it
+      }
+      jvmArgs("-Dvalidation.output.path=$outputPath")
+    }
+    if (hasProp("pathToSolutionsForValidation")) {
+      val pathToSolutions = prop("pathToSolutionsForValidation").let {
+        rootProject.projectDir.toPath() / it
+      }
+      jvmArgs("-Dvalidation.solution.path=$pathToSolutions")
+    }
+    if (hasProp("pathToManualHintValidation")) {
+      val pathToSolutions = prop("pathToManualHintValidation").let {
+        rootProject.projectDir.toPath() / it
+      }
+      jvmArgs("-Dmanual.hint.validation.path=$pathToSolutions")
+    }
+    if (hasProp("pathToManualStepsValidation")) {
+      val pathToSolutions = prop("pathToManualStepsValidation").let {
+        rootProject.projectDir.toPath() / it
+      }
+      jvmArgs("-Dmanual.steps.validation.path=$pathToSolutions")
+    }
 
     // Uncomment to show localized messages
     // jvmArgs("-Didea.l10n=true")
@@ -820,6 +855,42 @@ project("github") {
   }
 }
 
+if (isAiValidationEnabled()) {
+  project("ai-assistant-validation") {
+    intellij {
+      if (!isJvmCenteredIDE) {
+        version = ideaVersion
+      }
+      plugins = kotlinPlugins
+    }
+
+    dependencies {
+      implementationWithoutKotlin(rootProject.libs.dataframe)
+
+      implementation(project(":intellij-plugin:educational-core"))
+      implementation(project(":intellij-plugin:jvm-core"))
+      testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+      testImplementation(project(":intellij-plugin:jvm-core", "testOutput"))
+      implementation(project(":intellij-plugin:Edu-Kotlin"))
+      testImplementation(project(":intellij-plugin:Edu-Kotlin", "testOutput"))
+    }
+
+    tasks.test {
+      useJUnit {
+        excludeCategories("com.jetbrains.edu.assistant.validation.test.AiAutoQualityCodeTests")
+      }
+    }
+    tasks.register<Test>("categorySpecificTest") {
+      if (hasProp("maxSolutions")) {
+        jvmArgs("-Dmax.solutions.testing=${prop("maxSolutions")}")
+      }
+      useJUnit {
+        includeCategories("com.jetbrains.edu.assistant.validation.test.AiAutoQualityCodeTests")
+      }
+    }
+  }
+}
+
 data class TypeWithVersion(val type: IntelliJPlatformType, val version: String)
 
 fun String.toTypeWithVersion(): TypeWithVersion {
@@ -878,6 +949,8 @@ fun <T : ModuleDependency> T.excludeKotlinDeps() {
   exclude(module = "kotlin-stdlib")
   exclude(module = "kotlin-stdlib-common")
   exclude(module = "kotlin-stdlib-jdk8")
+  exclude(module = "kotlin-stdlib-jdk7")
+  exclude(module = "kotlinx-coroutines-core")
 }
 
 fun loadProperties(path: String): Properties {
@@ -977,3 +1050,5 @@ fun copyFormatJars() {
     include("*.jar")
   }
 }
+
+fun isAiValidationEnabled() = project.properties["aiAssistantValidation"]  == "true"

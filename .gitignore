@@ -55,6 +55,7 @@ intellij-plugin/educational-core/resources/stepik/stepik.properties
 intellij-plugin/educational-core/resources/hyperskill/hyperskill-oauth.properties
 intellij-plugin/educational-core/resources/marketplace/marketplace-oauth.properties
 intellij-plugin/educational-core/resources/ai/ai.properties
+intellij-plugin/educational-core/resources/ai/llm.properties
 #AES key
 edu-format/resources/aes/aes.properties
 intellij-plugin/educational-core/resources/aes/aes.properties

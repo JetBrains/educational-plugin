@@ -11,6 +11,7 @@ import com.intellij.problems.WolfTheProblemSolver
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.EduFile.Companion.LOG
 import com.jetbrains.edu.learning.courseFormat.EduFileErrorHighlightLevel
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
@@ -59,6 +60,23 @@ fun TaskFile.revert(project: Project) {
   YamlFormatSynchronizer.saveItem(task)
 }
 
+fun TaskFile.getSolution(): String {
+  if (this.task.lesson is FrameworkLesson) {
+    return this.contents.textualRepresentation
+  } else {
+    val fullAnswer = StringBuilder(this.contents.textualRepresentation)
+    this.answerPlaceholders.sortedBy { it.offset }.reversed().forEach { placeholder ->
+      placeholder.possibleAnswer.let { answer ->
+        fullAnswer.replace(
+          placeholder.initialState.offset,
+          placeholder.initialState.offset + placeholder.initialState.length, answer
+        )
+      }
+    }
+    return fullAnswer.toString()
+  }
+}
+
 /**
  * @return true if document related to task file has been reset, otherwise - false
  */
@@ -71,7 +89,7 @@ private fun TaskFile.resetDocument(project: Project): Boolean {
   }
 
   isTrackChanges = false
-  document.setText(text)
+  document.setText(contents.textualRepresentation)
   isTrackChanges = true
   return true
 }

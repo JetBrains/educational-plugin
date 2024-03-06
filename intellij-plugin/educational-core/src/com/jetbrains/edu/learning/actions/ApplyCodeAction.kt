@@ -1,10 +1,8 @@
 package com.jetbrains.edu.learning.actions
 
 import com.intellij.diff.chains.DiffRequestChain
-import com.intellij.diff.chains.SimpleDiffRequestChain
-import com.intellij.diff.contents.DocumentContentBase
 import com.intellij.diff.editor.ChainDiffVirtualFile
-import com.intellij.diff.requests.SimpleDiffRequest
+import com.jetbrains.edu.learning.submissions.getTexts
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -28,6 +26,9 @@ import com.intellij.openapi.vfs.findFile
 import com.intellij.ui.GotItTooltip
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
+import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.actions.AcceptHintAction.Companion.isNextStepHintDiff
+import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
@@ -49,7 +50,7 @@ class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false
     val project = e.project ?: return
-    e.presentation.isEnabledAndVisible = project.isStudentProject() && e.isUserDataPresented()
+    e.presentation.isEnabledAndVisible = project.isStudentProject() && e.isUserDataPresented() && !e.isNextStepHintDiff()
   }
 
   override fun actionPerformed(e: AnActionEvent) {

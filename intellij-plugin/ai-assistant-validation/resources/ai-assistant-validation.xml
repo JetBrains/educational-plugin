@@ -1,0 +1,17 @@
+<idea-plugin package="com.jetbrains.edu.assistant.validation">
+  <actions>
+    <action id="Validation.CodeHintValidation"
+            class="com.jetbrains.edu.assistant.validation.actions.next.step.hint.code.CodeHintValidationAction">
+      <add-to-group group-id="ToolsMenu"/>
+    </action>
+    <action id="Validation.SequentialCodeHintValidation"
+            class="com.jetbrains.edu.assistant.validation.actions.next.step.hint.code.SequentialCodeHintValidationAction">
+      <add-to-group group-id="ToolsMenu"/>
+    </action>
+    <action id="Validation.AutoHintValidation"
+            class="com.jetbrains.edu.assistant.validation.actions.next.step.hint.AutoHintValidationAction">
+      <add-to-group group-id="ToolsMenu"/>
+    </action>
+  </actions>
+  <resource-bundle>messages.AiAssistantValidationBundle</resource-bundle>
+</idea-plugin>

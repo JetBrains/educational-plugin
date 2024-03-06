@@ -26,6 +26,7 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 import com.jetbrains.edu.learning.marketplace.actions.RateMarketplaceCourseAction
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
@@ -45,9 +46,11 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
   private val checkActionsPanel: JPanel = JPanel(BorderLayout())
   private val linkPanel = JPanel(BorderLayout())
   private val checkDetailsPlaceholder: JPanel = JPanel(BorderLayout())
+  private val leftActionsToolbar: JPanel = JPanel(BorderLayout())
   private val checkButtonWrapper = JPanel(BorderLayout())
   private val rightActionsGroup = DefaultActionGroup()
   private val rightActionsToolbar = ActionToolbarImpl(ACTION_PLACE, rightActionsGroup, true)
+  private val getHintButtonWrapper = JPanel(BorderLayout())
   private val course = project.course
   private val checkTimeAlarm: Alarm = Alarm(parentDisposable)
   private val asyncProcessIcon = AsyncProcessIcon("Submitting...")
@@ -60,6 +63,9 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     rightActionsToolbar.border = JBEmptyBorder(5,0,0,0)
 
     checkActionsPanel.add(checkButtonWrapper, BorderLayout.WEST)
+    leftActionsToolbar.add(checkButtonWrapper, BorderLayout.WEST)
+    leftActionsToolbar.add(getHintButtonWrapper, BorderLayout.EAST)
+    checkActionsPanel.add(leftActionsToolbar, BorderLayout.WEST)
     checkActionsPanel.add(checkFinishedPanel, BorderLayout.CENTER)
     checkActionsPanel.add(rightActionsToolbar, BorderLayout.EAST)
     checkActionsPanel.add(linkPanel, BorderLayout.NORTH)
@@ -100,6 +106,7 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
 
   fun checkStarted(startSpinner: Boolean) {
     readyToCheck()
+    getHintButtonWrapper.removeAll()
     updateBackground()
     if (startSpinner) {
       checkFinishedPanel.add(asyncProcessIcon, BorderLayout.WEST)
@@ -107,6 +114,7 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
   }
 
   fun updateCheckDetails(task: Task, result: CheckResult? = null) {
+    updateGetHintButtonWrapper(task)
     checkFinishedPanel.removeAll()
     checkFinishedPanel.addNextTaskButton(task)
     checkFinishedPanel.addRetryButton(task)
@@ -150,6 +158,18 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     updateCheckButtonWrapper(task)
     updateRightActionsToolbar(task)
     updateCheckDetails(task)
+  }
+
+  private fun updateGetHintButtonWrapper(task: Task) {
+    getHintButtonWrapper.removeAll()
+
+    val taskProcessor = TaskProcessor(task)
+    if (taskProcessor.isGetHintButtonShown()) {
+      val action = ActionManager.getInstance().getAction(NextStepHintAction.ACTION_ID) as NextStepHintAction
+      val nextStepHintButton = CheckPanelButtonComponent(action = action)
+      action.actionTargetParent = checkDetailsPlaceholder
+      getHintButtonWrapper.add(nextStepHintButton, BorderLayout.WEST)
+    }
   }
 
   private fun updateCheckButtonWrapper(task: Task) {

@@ -31,8 +31,12 @@ include(
   "intellij-plugin:Edu-Shell",
   "intellij-plugin:sql",
   "intellij-plugin:sql:sql-jvm",
-  "intellij-plugin:github"
+  "intellij-plugin:github",
 )
+
+if (settings.providers.gradleProperty("aiAssistantValidation").get().toBoolean()) {
+  include("intellij-plugin:ai-assistant-validation")
+}
 
 if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {
   include("fleet-plugin")
@@ -42,10 +46,12 @@ apply(from = "common.gradle.kts")
 
 val secretProperties: String by extra
 val inJetBrainsNetwork: () -> Boolean by extra
+val llmProfileProperties: String by extra
 
 val isTeamCity: Boolean get() = System.getenv("TEAMCITY_VERSION") != null
 
 configureSecretProperties()
+configureLlmProperties()
 
 downloadHyperskillCss()
 
@@ -123,6 +129,19 @@ fun downloadHyperskillCss() {
       StandardCopyOption.REPLACE_EXISTING
     )
   }
+}
+
+fun configureLlmProperties() {
+  val llmProfileProperties = loadProperties(llmProfileProperties)
+
+  llmProfileProperties.extractAndStore(
+    "intellij-plugin/educational-core/resources/ai/llm.properties",
+    "LLMProfileIDForGeneratingSolutionSteps",
+    "LLMProfileIDForGeneratingNextStepTextHint",
+    "LLMProfileIDForGeneratingNextStepCodeHint",
+    "LLMAuthType",
+    "LLMServerUrlType"
+  )
 }
 
 fun download(url: URL, dstPath: String) {
