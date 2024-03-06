@@ -71,7 +71,6 @@ class NextStepHintNotificationFrame(message: String, action: AnAction?, actionTa
     pack()
   }
 
-  @Suppress("DialogTitleCapitalization")
   private fun createAction(action: AnAction): JComponent =
     object : LinkLabel<AnAction>(action.templateText, action.templatePresentation.icon, { lnk, act ->
       val dataContext = DataManager.getInstance().getDataContext(lnk)

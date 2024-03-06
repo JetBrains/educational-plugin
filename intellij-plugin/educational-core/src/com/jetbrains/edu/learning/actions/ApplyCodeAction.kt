@@ -1,10 +1,7 @@
 package com.jetbrains.edu.learning.actions
 
 import com.intellij.diff.chains.DiffRequestChain
-import com.intellij.diff.chains.SimpleDiffRequestChain
-import com.intellij.diff.contents.DocumentContentBase
 import com.intellij.diff.editor.ChainDiffVirtualFile
-import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.icons.AllIcons
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
@@ -56,9 +53,9 @@ class ApplyCodeAction : DumbAwareActionButton(), CustomComponentAction {
     try {
       val localDocuments = readLocalDocuments(fileNames)
       check(localDocuments.size == fileNames.size)
-      val submissionsTexts = diffRequestChain.getSubmissionsText(fileNames.size)
+      val submissionTexts = diffRequestChain.getSubmissionsText(fileNames.size)
       val runnableCommand = {
-        localDocuments.writeSubmissionsTexts(submissionsTexts)
+        localDocuments.writeSubmissionTexts(submissionTexts)
       }
       CommandProcessor.getInstance().executeCommand(project, runnableCommand, this.templatePresentation.text, ACTION_ID)
     }
@@ -131,14 +128,8 @@ class ApplyCodeAction : DumbAwareActionButton(), CustomComponentAction {
     return FileDocumentManager.getInstance().getDocument(file)
   }
 
-  private fun DiffRequestChain.getSubmissionsText(size: Int): List<String> {
-    val diffRequestWrappers = List(size) { requests[it] as SimpleDiffRequestChain.DiffRequestProducerWrapper }
-    val diffRequests = diffRequestWrappers.map { it.request as SimpleDiffRequest }
-    return diffRequests.map { it.contents[1] as DocumentContentBase }.map { it.document.text }
-  }
-
-  private fun List<Document>.writeSubmissionsTexts(submissionsTexts: List<String>): Unit = runWriteAction {
-    zip(submissionsTexts).forEach { (document, submissionText) ->
+  private fun List<Document>.writeSubmissionTexts(submissionTexts: List<String>): Unit = runWriteAction {
+    zip(submissionTexts).forEach { (document, submissionText) ->
       document.setText(submissionText)
     }
   }

@@ -3,19 +3,20 @@ package com.jetbrains.edu.learning.eduAssistant.grazie
 import ai.grazie.model.llm.profile.GoogleProfileIDs
 import ai.grazie.model.llm.profile.GrazieLLMProfileIDs
 import ai.grazie.model.llm.profile.OpenAIProfileIDs
+import com.jetbrains.edu.learning.ai.utils.GrazieLlmProfileProvider
 
 enum class GenerationContextProfile(private val llmProfileId: String) {
-  SOLUTION_STEPS(System.getProperty("llm.profile.id.for.generating.solution.steps")),
-  NEXT_STEP_TEXT_HINT(System.getProperty("llm.profile.id.for.generating.next.step.text.hint")),
-  NEXT_STEP_CODE_HINT(System.getProperty("llm.profile.id.for.generating.next.step.code.hint")),
-  VALIDATION("openai-gpt-4");
+  SOLUTION_STEPS(GrazieLlmProfileProvider.getSolutionStepsProfile()),
+  NEXT_STEP_TEXT_HINT(GrazieLlmProfileProvider.getNextStepTextHintProfile()),
+  NEXT_STEP_CODE_HINT(GrazieLlmProfileProvider.getNextStepCodeHintProfile()),
+  AUTO_VALIDATION(GrazieLlmProfileProvider.getAutoValidationProfile());
 
   fun getProfileById() =
-    when(this.llmProfileId) {
+    when(llmProfileId) {
       "openai-chat-gpt" -> OpenAIProfileIDs.Chat.ChatGPT
       "openai-gpt-4" -> OpenAIProfileIDs.Chat.GPT4
       "google-chat-bison" -> GoogleProfileIDs.Chat.Bison
       "grazie-chat-llama-v2-13b" -> GrazieLLMProfileIDs.LLAMA.Medium
-      else -> throw IllegalArgumentException("Unsupported LLM Profile ID: ${this.llmProfileId}")
+      else -> error("Unsupported LLM Profile ID: $llmProfileId")
     }
 }

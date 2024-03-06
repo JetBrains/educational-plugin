@@ -168,11 +168,6 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     updateCheckDetails(task)
   }
 
-  private fun updateLeftActionsToolbar(task: Task) {
-    updateGetHintButtonWrapper(task)
-    updateCheckButtonWrapper(task)
-  }
-
   private fun updateGetHintButtonWrapper(task: Task) {
     getHintButtonWrapper.removeAll()
 
