@@ -79,3 +79,9 @@ internal fun Date.isSignificantlyAfter(otherDate: Date): Boolean {
   val diff = time - otherDate.time
   return diff > Time.MINUTE
 }
+
+fun DiffRequestChain.getSubmissionsText(size: Int): List<String> {
+  val diffRequestWrappers = List(size) { requests[it] as SimpleDiffRequestChain.DiffRequestProducerWrapper }
+  val diffRequests = diffRequestWrappers.map { it.request as SimpleDiffRequest }
+  return diffRequests.map { it.contents[1] as DocumentContentBase }.map { it.document.text }
+}
