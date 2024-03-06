@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.courseFormat.tasks
 
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.eduAssistant.AiAssistantState
+import com.jetbrains.edu.learning.courseFormat.eduAssistant.AuthorSolutionContext
 import java.util.*
 
 /**
@@ -24,6 +26,20 @@ abstract class Task : StudyItem {
       require(value is LinkedHashMap<String, TaskFile>) // taskFiles is supposed to be ordered
       _taskFiles = value
     }
+
+  /**
+   * Stores the result of AI-based task analysis as a set of solution steps.
+   */
+  var generatedSolutionSteps: String? = null
+  /**
+   * Stores a summary of the theory from the previous steps.
+   */
+  var theorySummary: String? = null
+  /**
+   * Stores a context created by the author's solution, if any
+   */
+  var authorSolutionContext: AuthorSolutionContext? = null
+  var aiAssistantState: AiAssistantState = AiAssistantState.NotInitialized
 
   var feedback: CheckFeedback? = null
   var descriptionText: String = ""

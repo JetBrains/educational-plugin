@@ -29,8 +29,10 @@ import com.intellij.ui.DumbAwareActionButton
 import com.intellij.ui.GotItTooltip
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
+import com.jetbrains.edu.learning.actions.AcceptHintAction.Companion.isNextStepHintDiff
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.submissions.getSubmissionsText
 import org.jetbrains.annotations.NonNls
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
@@ -41,7 +43,7 @@ class ApplyCodeAction : DumbAwareActionButton(), CustomComponentAction {
   override fun updateButton(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false
     val project = e.project ?: return
-    e.presentation.isEnabledAndVisible = project.isStudentProject() && e.isFileNamesPresented()
+    e.presentation.isEnabledAndVisible = project.isStudentProject() && e.isFileNamesPresented() && !e.isNextStepHintDiff()
   }
 
   override fun actionPerformed(e: AnActionEvent) {

@@ -14,6 +14,11 @@
     <twitterPluginConfigurator implementation="com.jetbrains.edu.kotlin.twitter.KtTwitterConfigurator"/>
     <codeforcesLanguageProvider implementation="com.jetbrains.edu.kotlin.codeforces.KtCodeforcesLanguageProvider"/>
     <mainFileProvider language="kotlin" implementationClass="com.jetbrains.edu.kotlin.KtMainFileProvider"/>
+    <functionSignaturesProvider language="kotlin" implementationClass="com.jetbrains.edu.kotlin.learning.eduAssistant.psi.context.KtFunctionSignaturesProvider"/>
+    <functionSignatureResolver language="kotlin" implementationClass="com.jetbrains.edu.kotlin.learning.eduAssistant.psi.context.KtFunctionSignatureResolver"/>
+    <filesDiffer language="kotlin" implementationClass="com.jetbrains.edu.kotlin.learning.eduAssistant.psi.context.KtFilesDiffer"/>
+    <stringExtractor language="kotlin" implementationClass="com.jetbrains.edu.kotlin.learning.eduAssistant.psi.context.KtStringExtractor"/>
+    <inspectionProvider language="kotlin" implementationClass="com.jetbrains.edu.kotlin.learning.eduAssistant.inspection.KtInspectionProvider"/>
 
     <!-- Hyperskill -->
     <configurator implementationClass="com.jetbrains.edu.kotlin.hyperskill.KtHyperskillConfigurator" language="kotlin" courseType="Hyperskill"/>

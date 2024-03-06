@@ -2,6 +2,10 @@
 
 package com.jetbrains.edu.learning.submissions
 
+import com.intellij.diff.chains.DiffRequestChain
+import com.intellij.diff.chains.SimpleDiffRequestChain
+import com.intellij.diff.contents.DocumentContentBase
+import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
