@@ -85,6 +85,7 @@ class EducationalCoreIconsTest(
       EducationalCoreIcons.Submission.TaskFailedHighContrast,
       EducationalCoreIcons.Submission.TaskSolved,
       EducationalCoreIcons.Submission.TaskSolvedHighContrast,
+      EducationalCoreIcons.aiAssistant,
       EducationalCoreIcons.DOT,
       EducationalCoreIcons.CourseCreator.NewTask,
       EducationalCoreIcons.CourseCreator.NewLesson
