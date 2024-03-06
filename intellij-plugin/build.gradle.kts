@@ -375,16 +375,6 @@ tasks {
       jvmArgs("-Dvalidation.output.path=$outputPath")
     }
 
-    if (hasProp("LLMProfileIDForGeneratingSolutionSteps")) {
-      jvmArgs("-Dllm.profile.id.for.generating.solution.steps=${prop("LLMProfileIDForGeneratingSolutionSteps")}")
-    }
-    if (hasProp("LLMProfileIDForGeneratingNextStepTextHint")) {
-      jvmArgs("-Dllm.profile.id.for.generating.next.step.text.hint=${prop("LLMProfileIDForGeneratingNextStepTextHint")}")
-    }
-    if (hasProp("LLMProfileIDForGeneratingNextStepCodeHint")) {
-      jvmArgs("-Dllm.profile.id.for.generating.next.step.code.hint=${prop("LLMProfileIDForGeneratingNextStepCodeHint")}")
-    }
-
     // Uncomment to show localized messages
     // jvmArgs("-Didea.l10n=true")
 

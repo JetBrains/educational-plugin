@@ -1,14 +1,14 @@
 package com.jetbrains.edu.assistant.validation.processor
 
 import com.jetbrains.edu.learning.eduAssistant.grazie.AiPlatformAdapter
-import com.jetbrains.edu.learning.eduAssistant.grazie.GenerationContextProfile.VALIDATION
+import com.jetbrains.edu.learning.eduAssistant.grazie.GenerationContextProfile.AUTO_VALIDATION
 
 suspend fun processValidationSteps(taskDescription: String, authorSolution: String, steps: String) =
   AiPlatformAdapter.chat(
     systemPrompt = buildStepsValidationSystemPrompt(),
     userPrompt = buildStepsValidationUserPrompt(taskDescription, authorSolution, steps),
     temp = 0.0,
-    generationContextProfile = VALIDATION
+    generationContextProfile = AUTO_VALIDATION
   )
 
 private val validationCriteria = """

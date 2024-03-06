@@ -43,10 +43,12 @@ apply(from = "common.gradle.kts")
 
 val secretProperties: String by extra
 val inJetBrainsNetwork: () -> Boolean by extra
+val llmProfileProperties: String by extra
 
 val isTeamCity: Boolean get() = System.getenv("TEAMCITY_VERSION") != null
 
 configureSecretProperties()
+configureLlmProperties()
 
 downloadHyperskillCss()
 
@@ -124,6 +126,17 @@ fun downloadHyperskillCss() {
       StandardCopyOption.REPLACE_EXISTING
     )
   }
+}
+
+fun configureLlmProperties() {
+  val llmProfileProperties = loadProperties(llmProfileProperties)
+
+  llmProfileProperties.extractAndStore(
+    "intellij-plugin/educational-core/resources/ai/llm.properties",
+    "LLMProfileIDForGeneratingSolutionSteps",
+    "LLMProfileIDForGeneratingNextStepTextHint",
+    "LLMProfileIDForGeneratingNextStepCodeHint"
+  )
 }
 
 fun download(url: URL, dstPath: String) {
