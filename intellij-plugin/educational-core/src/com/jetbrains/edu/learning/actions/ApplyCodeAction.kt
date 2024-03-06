@@ -1,10 +1,7 @@
 package com.jetbrains.edu.learning.actions
 
 import com.intellij.diff.chains.DiffRequestChain
-import com.intellij.diff.chains.SimpleDiffRequestChain
-import com.intellij.diff.contents.DocumentContentBase
 import com.intellij.diff.editor.ChainDiffVirtualFile
-import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -13,22 +10,15 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys.LAST_ACTIVE_FILE_EDITO
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction
 import com.intellij.openapi.actionSystem.impl.ActionButton
-import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.command.CommandProcessor
-import com.intellij.openapi.editor.Document
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.findFile
 import com.intellij.ui.GotItTooltip
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
-import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.actions.AcceptHintAction.Companion.isNextStepHintDiff
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import org.jetbrains.annotations.NonNls
@@ -49,7 +39,7 @@ class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false
     val project = e.project ?: return
-    e.presentation.isEnabledAndVisible = project.isStudentProject() && e.isUserDataPresented()
+    e.presentation.isEnabledAndVisible = project.isStudentProject() && e.isUserDataPresented() && !e.isNextStepHintDiff()
   }
 
   override fun actionPerformed(e: AnActionEvent) {
@@ -59,27 +49,12 @@ class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
     val diffRequestChain = e.getDiffRequestChain() ?: return showApplyCodeFailedNotification(project)
     val fileNames = diffRequestChain.getUserData(VIRTUAL_FILE_PATH_LIST).takeIf { !it.isNullOrEmpty() } ?: return showApplyCodeFailedNotification(project)
 
-    try {
-      val localDocuments = readLocalDocuments(fileNames, project.courseDir)
-      check(localDocuments.size == fileNames.size)
-      val submissionsTexts = diffRequestChain.getTexts()
-      val runnableCommand = {
-        localDocuments.writeTexts(submissionsTexts)
-      }
-      CommandProcessor.getInstance().executeCommand(project, runnableCommand, this.templatePresentation.text, ACTION_ID)
-    }
-    catch (e: Exception) {
+    if (tryApplyTexts(project, diffRequestChain, fileNames, ACTION_ID, this.templatePresentation.text)) {
+      project.closeDiffWindow(e)
+      showApplyCodeSuccessfulNotification(project)
+    } else {
       showApplyCodeFailedNotification(project)
-      return
     }
-
-    project.closeDiffWindow(e)
-
-    EduNotificationManager.showInfoNotification(
-      project,
-      @Suppress("DialogTitleCapitalization") EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.success.title"),
-      EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.success.text")
-    )
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
@@ -125,36 +100,20 @@ class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
     return chainDiffVirtualFile?.chain
   }
 
-  private fun readLocalDocuments(fileNames: List<String>, courseDir: VirtualFile): List<Document> = runReadAction {
-    fileNames.mapNotNull { findLocalDocument(it, courseDir) }
-  }
-
-  private fun findLocalDocument(fileName: String, courseDir: VirtualFile): Document? {
-    val virtualFile = courseDir.findFile(fileName) ?: return null
-    return FileDocumentManager.getInstance().getDocument(virtualFile)
-  }
-
-  private fun DiffRequestChain.getTexts(): List<String> = requests.map {
-    val diffRequestWrapper = it as SimpleDiffRequestChain.DiffRequestProducerWrapper
-    val diffRequest = diffRequestWrapper.request as SimpleDiffRequest
-    val documentContentBase = diffRequest.contents[1] as DocumentContentBase
-    documentContentBase.document.text
-  }
-
-  private fun List<Document>.writeTexts(texts: List<String>): Unit = runWriteAction {
-    val fileDocumentManager = FileDocumentManager.getInstance()
-    zip(texts).forEach { (document, text) ->
-      document.setText(text)
-      fileDocumentManager.saveDocument(document)
-    }
-  }
-
   private fun Project.closeDiffWindow(e: AnActionEvent) {
     val fileEditorManager = FileEditorManager.getInstance(this)
     val fileEditor = e.getData(LAST_ACTIVE_FILE_EDITOR) ?: return
     fileEditorManager.closeFile(fileEditor.file)
   }
 
+  @Suppress("DialogTitleCapitalization")
+  private fun showApplyCodeSuccessfulNotification(project: Project) {
+    EduNotificationManager.showInfoNotification(
+      project,
+      EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.success.title"),
+      EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.success.text"),
+    )
+  }
   private fun showApplyCodeFailedNotification(project: Project) {
     EduNotificationManager.showErrorNotification(
       project,
