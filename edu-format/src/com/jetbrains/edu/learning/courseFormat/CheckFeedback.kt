@@ -6,10 +6,13 @@ data class CheckFeedback(
   var message: String = "",
   val time: Date? = null,
   val expected: String? = null,
-  val actual: String? = null
+  val actual: String? = null,
+  val failedTestInfo: EduTestInfo? = null
 ) {
   constructor(time: Date, checkResult: CheckResult) :
-    this(checkResult.message, time, checkResult.diff?.expected, checkResult.diff?.actual)
+    this(checkResult.message, time, checkResult.diff?.expected, checkResult.diff?.actual, checkResult.executedTestsInfo.firstOrNull {
+      EduTestInfo.PresentableStatus.getPresentableStatus(it.status) == EduTestInfo.PresentableStatus.FAILED.title
+    })
 
   fun toCheckResult(status: CheckStatus): CheckResult {
     if ((expected == null && actual != null) || (expected != null && actual == null)) {

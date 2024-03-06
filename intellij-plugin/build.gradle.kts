@@ -6,6 +6,7 @@ import org.jetbrains.intellij.tasks.RunIdeBase
 import org.jetbrains.intellij.tasks.RunIdeTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.*
+import kotlin.io.path.div
 
 val environmentName: String by project
 val pluginVersion: String by project
@@ -191,6 +192,13 @@ allprojects {
     implementationWithoutKotlin(rootProject.libs.converter.jackson)
     implementationWithoutKotlin(rootProject.libs.kotlin.css.jvm)
 
+    implementationWithoutKotlin(rootProject.libs.grazie.gateway.api)
+    implementationWithoutKotlin(rootProject.libs.grazie.gateway.client)
+    implementationWithoutKotlin(rootProject.libs.grazie.client.ktor)
+    implementationWithoutKotlin(rootProject.libs.dataframe)
+    implementationWithoutKotlin(rootProject.libs.kotlin.logging)
+    implementationWithoutKotlin(rootProject.libs.logback)
+
     testImplementationWithoutKotlin(rootProject.libs.kotlin.test.junit)
     testImplementationWithoutKotlin(rootProject.libs.mockwebserver)
     testImplementationWithoutKotlin(rootProject.libs.mockk)
@@ -284,6 +292,7 @@ dependencies {
   implementation(project("sql:sql-jvm"))
   implementation(project("github"))
   implementation(project("remote-env"))
+  implementation(project("ai-assistant-validation"))
 }
 val removeIncompatiblePlugins = task<Delete>("removeIncompatiblePlugins") {
 
@@ -357,6 +366,24 @@ tasks {
     autoReloadPlugins = false
     jvmArgs("-Xmx2g")
     jvmArgs("-Dide.experimental.ui=true")
+    jvmArgs("-Dedu.log.dir=${pluginsDir.dir("edu-assistant").get()}")
+
+    if (hasProp("validationOutputPath")) {
+      val outputPath = prop("validationOutputPath").let {
+        rootProject.projectDir.toPath() / it
+      }
+      jvmArgs("-Dvalidation.output.path=$outputPath")
+    }
+
+    if (hasProp("LLMProfileIDForGeneratingSolutionSteps")) {
+      jvmArgs("-Dllm.profile.id.for.generating.solution.steps=${prop("LLMProfileIDForGeneratingSolutionSteps")}")
+    }
+    if (hasProp("LLMProfileIDForGeneratingNextStepTextHint")) {
+      jvmArgs("-Dllm.profile.id.for.generating.next.step.text.hint=${prop("LLMProfileIDForGeneratingNextStepTextHint")}")
+    }
+    if (hasProp("LLMProfileIDForGeneratingNextStepCodeHint")) {
+      jvmArgs("-Dllm.profile.id.for.generating.next.step.code.hint=${prop("LLMProfileIDForGeneratingNextStepCodeHint")}")
+    }
 
     // Uncomment to show localized messages
     // jvmArgs("-Didea.l10n=true")
@@ -794,6 +821,24 @@ project("github") {
   }
 }
 
+project("ai-assistant-validation") {
+  intellij {
+    if (!isJvmCenteredIDE) {
+      version = ideaVersion
+    }
+    plugins = kotlinPlugins
+  }
+
+  dependencies {
+    implementation(project(":intellij-plugin:educational-core"))
+    implementation(project(":intellij-plugin:jvm-core"))
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+    testImplementation(project(":intellij-plugin:jvm-core", "testOutput"))
+    implementation(project(":intellij-plugin:Edu-Kotlin"))
+    testImplementation(project(":intellij-plugin:Edu-Kotlin", "testOutput"))
+  }
+}
+
 fun hasProp(name: String): Boolean = extra.has(name)
 
 fun prop(name: String): String =
@@ -825,6 +870,8 @@ fun <T : ModuleDependency> T.excludeKotlinDeps() {
   exclude(module = "kotlin-stdlib")
   exclude(module = "kotlin-stdlib-common")
   exclude(module = "kotlin-stdlib-jdk8")
+  exclude(module = "kotlin-stdlib-jdk7")
+  exclude(module = "kotlinx-coroutines-core")
 }
 
 fun loadProperties(path: String): Properties {

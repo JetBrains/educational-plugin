@@ -2,6 +2,10 @@
 
 package com.jetbrains.edu.learning.submissions
 
+import com.intellij.diff.chains.DiffRequestChain
+import com.intellij.diff.chains.SimpleDiffRequestChain
+import com.intellij.diff.contents.DocumentContentBase
+import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
@@ -74,4 +78,10 @@ fun isVersionCompatible(submissionFormatVersion: Int): Boolean {
 internal fun Date.isSignificantlyAfter(otherDate: Date): Boolean {
   val diff = time - otherDate.time
   return diff > Time.MINUTE
+}
+
+fun DiffRequestChain.getSubmissionsText(size: Int): List<String> {
+  val diffRequestWrappers = List(size) { requests[it] as SimpleDiffRequestChain.DiffRequestProducerWrapper }
+  val diffRequests = diffRequestWrappers.map { it.request as SimpleDiffRequest }
+  return diffRequests.map { it.contents[1] as DocumentContentBase }.map { it.document.text }
 }

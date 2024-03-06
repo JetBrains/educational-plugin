@@ -1,0 +1,15 @@
+<configuration>
+  <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+    <file>${edu.log.dir:-.}/eduAssistant.log</file>
+    <append>false</append>
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} %-5level %logger{0} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <root level="OFF"/>
+
+  <logger name="EduAssistantLogger" level="ALL">
+    <appender-ref ref="FILE" />
+  </logger>
+</configuration>
