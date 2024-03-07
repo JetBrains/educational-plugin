@@ -1,9 +1,9 @@
 package com.jetbrains.edu.learning.command
 
-import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenProjectStageRequest
 import kotlinx.coroutines.Dispatchers
@@ -41,9 +41,15 @@ enum class CourseSource(val option: String, val description: String) {
     override suspend fun loadCourse(value: String): Result<Course, String> {
       val projectId = value.toIntOrNull() ?: return Err("Hyperskill course id should be integer. Got `$value`")
 
+      val hyperskillProject = HyperskillConnector.getInstance().getProject(projectId)
+        .onError { return Err(it) }
       val request = HyperskillOpenProjectStageRequest(projectId, null)
-      return HyperskillOpenInIdeRequestHandler.getCourse(request, EmptyProgressIndicator())
-        .mapErr { it.message }
+      val hyperskillCourse = HyperskillOpenInIdeRequestHandler
+        .createHyperskillCourse(request, hyperskillProject.language, hyperskillProject)
+        .onError { return Err(it.message) }
+      HyperskillConnector.getInstance().loadStages(hyperskillCourse)
+
+      return Ok(hyperskillCourse)
     }
   };
 
