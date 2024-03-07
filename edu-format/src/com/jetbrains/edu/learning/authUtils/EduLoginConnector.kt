@@ -5,7 +5,7 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODE_ARGUMENT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.REST_PREFIX
 import com.jetbrains.edu.learning.courseFormat.UserInfo
-import com.jetbrains.edu.learning.createRetrofitBuilder
+import com.jetbrains.edu.learning.network.createRetrofitBuilder
 import okhttp3.ConnectionPool
 import okhttp3.Interceptor
 import org.jetbrains.annotations.NonNls

@@ -33,6 +33,10 @@ import com.jetbrains.edu.learning.marketplace.api.GraphqlQuery.LOADING_STEP
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.messages.EduFormatBundle
+import com.jetbrains.edu.learning.network.executeCall
+import com.jetbrains.edu.learning.network.executeHandlingExceptions
+import com.jetbrains.edu.learning.network.toMultipartBody
+import com.jetbrains.edu.learning.network.toPlainTextRequestBody
 import com.jetbrains.edu.learning.stepik.course.CourseConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import kotlinx.serialization.SerializationException

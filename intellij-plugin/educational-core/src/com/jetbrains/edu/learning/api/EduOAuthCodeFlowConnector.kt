@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.authUtils.*
 import com.jetbrains.edu.learning.courseFormat.UserInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.network.executeHandlingExceptions
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import io.netty.handler.codec.http.FullHttpRequest
 import io.netty.handler.codec.http.QueryStringDecoder

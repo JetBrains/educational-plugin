@@ -4,9 +4,9 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Disposer
 import com.jetbrains.edu.learning.EduSettings
-import com.jetbrains.edu.learning.USER_AGENT
 import com.jetbrains.edu.learning.authUtils.TokenInfo
-import com.jetbrains.edu.learning.eduToolsUserAgent
+import com.jetbrains.edu.learning.network.USER_AGENT
+import com.jetbrains.edu.learning.network.eduToolsUserAgent
 import com.jetbrains.edu.learning.stepik.StepikNames.getTokenUrl
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import org.apache.commons.codec.binary.Base64

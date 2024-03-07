@@ -1,5 +1,6 @@
-package com.jetbrains.edu.learning
+package com.jetbrains.edu.learning.network
 
+import com.jetbrains.edu.learning.Result
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Response

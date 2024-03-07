@@ -3,8 +3,8 @@ package com.jetbrains.edu.learning.taskToolWindow.links
 import com.intellij.openapi.project.Project
 import com.intellij.util.io.HttpRequests
 import com.jetbrains.edu.learning.EduBrowser
-import com.jetbrains.edu.learning.eduToolsUserAgent
 import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.network.eduToolsUserAgent
 import java.net.HttpURLConnection
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")

@@ -3,6 +3,8 @@ package com.jetbrains.edu.learning
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.common.ThreadLeakTracker
+import com.jetbrains.edu.learning.network.USER_AGENT
+import com.jetbrains.edu.learning.network.eduToolsUserAgent
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer

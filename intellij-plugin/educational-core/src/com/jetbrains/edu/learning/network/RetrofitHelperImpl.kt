@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning
+package com.jetbrains.edu.learning.network
 
 import com.intellij.openapi.application.ex.ApplicationUtil
 import com.intellij.openapi.diagnostic.logger
@@ -7,6 +7,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.util.PlatformUtils
 import com.intellij.util.net.HttpConfigurable
 import com.intellij.util.net.ssl.CertificateManager
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.newproject.CoursesDownloadingException
 import com.jetbrains.edu.learning.stepik.StepikNames
@@ -25,7 +26,7 @@ import java.util.concurrent.Callable
 /**
  * This is a service class, NOT intended to be instantiated directly
  *
- * @see com.jetbrains.edu.learning.RetrofitHelper
+ * @see com.jetbrains.edu.learning.network.RetrofitHelper
  * @see com.jetbrains.edu.learning.findService
  */
 class RetrofitHelperImpl : RetrofitHelper {

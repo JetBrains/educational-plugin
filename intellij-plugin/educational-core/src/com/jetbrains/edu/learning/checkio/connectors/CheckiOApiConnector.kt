@@ -5,11 +5,11 @@ import com.fasterxml.jackson.databind.module.SimpleModule
 import com.jetbrains.edu.learning.authUtils.ConnectorUtils
 import com.jetbrains.edu.learning.checkio.api.CheckiOApiEndpoint
 import com.jetbrains.edu.learning.checkio.api.executeHandlingCheckiOExceptions
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOStation
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
-import com.jetbrains.edu.learning.createRetrofitBuilder
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOStation
+import com.jetbrains.edu.learning.network.createRetrofitBuilder
 import okhttp3.ConnectionPool
 import retrofit2.converter.jackson.JacksonConverterFactory
 

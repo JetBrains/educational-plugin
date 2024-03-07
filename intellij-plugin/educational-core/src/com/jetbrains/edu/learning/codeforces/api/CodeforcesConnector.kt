@@ -27,6 +27,10 @@ import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduFormatBundle
+import com.jetbrains.edu.learning.network.checkStatusCode
+import com.jetbrains.edu.learning.network.createRetrofitBuilder
+import com.jetbrains.edu.learning.network.executeHandlingExceptions
+import com.jetbrains.edu.learning.network.executeParsingErrors
 import com.jetbrains.edu.learning.newproject.CoursesDownloadingException
 import com.jetbrains.edu.learning.stepik.api.EduTaskReply
 import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
