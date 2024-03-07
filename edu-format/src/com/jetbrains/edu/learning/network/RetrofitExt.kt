@@ -69,17 +69,18 @@ private fun createOkHttpClient(
     .addInterceptor(logger)
     .dispatcher(dispatcher)
 
-  if (customInterceptor != null) builder.addInterceptor(customInterceptor)
+  if (customInterceptor != null) {
+    builder.addInterceptor(customInterceptor)
+  }
 
-  builder.addProxy(baseUrl)
+  builder.customizeClient(baseUrl)
 
   return builder.build()
 }
 
-fun OkHttpClient.Builder.addProxy(baseUrl: String) : OkHttpClient.Builder {
+fun OkHttpClient.Builder.customizeClient(baseUrl: String) : OkHttpClient.Builder {
   val executor = findService(RetrofitHelper::class.java)
-  executor.addProxy(baseUrl, this)
-  return this
+  return executor.customizeClient(this, baseUrl)
 }
 
 val eduToolsUserAgent: String

@@ -21,7 +21,6 @@ import java.io.InterruptedIOException
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.net.URI
-import java.util.concurrent.Callable
 
 /**
  * This is a service class, NOT intended to be instantiated directly
@@ -35,7 +34,7 @@ class RetrofitHelperImpl : RetrofitHelper {
       val progressIndicator = ProgressManager.getInstance().progressIndicator
 
       val response = if (progressIndicator != null) {
-        ApplicationUtil.runWithCheckCanceled(Callable { call.execute() }, progressIndicator)
+        ApplicationUtil.runWithCheckCanceled({ call.execute() }, progressIndicator)
       }
       else {
         call.execute()
@@ -68,17 +67,31 @@ class RetrofitHelperImpl : RetrofitHelper {
     }
   }
 
-  override fun addProxy(baseUrl: String, builder: OkHttpClient.Builder) {
+  override fun customizeClient(builder: OkHttpClient.Builder, baseUrl: String): OkHttpClient.Builder  {
+    return builder
+      .addProxy(baseUrl)
+      .addEdtAssertions()
+  }
+
+  private fun OkHttpClient.Builder.addProxy(baseUrl: String): OkHttpClient.Builder {
     val proxyConfigurable = HttpConfigurable.getInstance()
     val proxies = proxyConfigurable.onlyBySettingsSelector.select(URI.create(baseUrl))
     val address = proxies.firstOrNull()?.address() as? InetSocketAddress
     if (address != null) {
-      builder.proxy(Proxy(Proxy.Type.HTTP, address))
-      builder.proxyAuthenticator(proxyAuthenticator)
+      proxy(Proxy(Proxy.Type.HTTP, address))
+      proxyAuthenticator(proxyAuthenticator)
     }
     val trustManager = CertificateManager.getInstance().trustManager
     val sslContext = CertificateManager.getInstance().sslContext
-    builder.sslSocketFactory(sslContext.socketFactory, trustManager)
+    return sslSocketFactory(sslContext.socketFactory, trustManager)
+  }
+
+  private fun OkHttpClient.Builder.addEdtAssertions(): OkHttpClient.Builder {
+    return addInterceptor { chain ->
+      NetworkRequestAssertionPolicy.assertIsDispatchThread()
+      val request = chain.request()
+      chain.proceed(request)
+    }
   }
 
   @Suppress("UnstableApiUsage")

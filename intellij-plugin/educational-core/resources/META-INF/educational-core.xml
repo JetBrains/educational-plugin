@@ -393,6 +393,10 @@
     <themeMetadataProvider path="JetBrainsAcademyPlugin.themeMetadata.json"/>
 
     <coursesStorageProvider implementation="com.jetbrains.edu.learning.newproject.coursesStorage.JetBrainsAcademyCoursesStorageProvider"/>
+
+    <registryKey key="edu.network.request.assertion.policy"
+                 description="Assertion policy for network requests from EDT in JetBrains Academy plugin"
+                 defaultValue="[OFF|LOG_ERROR*|EXCEPTION]"/>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">

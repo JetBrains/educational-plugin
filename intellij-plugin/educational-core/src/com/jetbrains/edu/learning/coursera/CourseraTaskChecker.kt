@@ -32,7 +32,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.loadEncodedContent
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.network.addProxy
+import com.jetbrains.edu.learning.network.customizeClient
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -120,7 +120,7 @@ class CourseraTaskChecker : RemoteTaskChecker {
     val builder = OkHttpClient.Builder()
       .connectTimeout(Duration.ofSeconds(TIMEOUT_SECONDS.toLong()))
       .callTimeout(Duration.ofSeconds(TIMEOUT_SECONDS.toLong()))
-      .addProxy(ON_DEMAND_SUBMIT)
+      .customizeClient(ON_DEMAND_SUBMIT)
 
     val request = Request.Builder()
       .url(ON_DEMAND_SUBMIT)
