@@ -143,32 +143,67 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
                                                            "JavaScript", "Rust", "ObjectiveC", "go", "PHP"))
 
 
-    private val TASK_NAVIGATION_EVENT = GROUP.registerEvent("navigate.to.task", enumField<TaskNavigationPlace>(SOURCE))
+    private val TASK_NAVIGATION_EVENT = GROUP.registerEvent(
+      "navigate.to.task",
+      "The event is recorded in case a user navigates to the next or previous task/stage/problem.",
+      enumField<TaskNavigationPlace>(SOURCE)
+    )
     private val EDU_PROJECT_CREATED_EVENT = GROUP.registerEvent(
       "edu.project.created",
-      "The event is recorded in case a user creates new course.",
+      "The event is recorded in case a user creates a new course.",
       COURSE_MODE_FIELD,
       ITEM_TYPE_FIELD,
       LANGUAGE_FIELD
     )
-    private val EDU_PROJECT_OPENED_EVENT = GROUP.registerEvent("edu.project.opened", COURSE_MODE_FIELD, ITEM_TYPE_FIELD)
-    private val CC_STUDY_ITEM_CREATED_EVENT = GROUP.registerEvent("study.item.created", ITEM_TYPE_FIELD)
-    private val LICK_CLICKED_EVENT = GROUP.registerEvent("link.clicked", enumField<LinkType>(TYPE))
-    private val AUTHORIZATION_EVENT = GROUP.registerEvent("authorization",
-                                                          enumField<AuthorizationEvent>(EVENT),
-                                                          EventFields.String("platform", listOf(
-                                                            "Hyperskill",
-                                                            "Stepik",
-                                                            "Js_CheckiO",
-                                                            "Py_CheckiO",
-                                                            "Marketplace",
-                                                            "Codeforces"
-                                                          )),
-                                                          enumField<AuthorizationPlace>(SOURCE))
-    private val OBTAIN_JBA_TOKEN_EVENT = GROUP.registerEvent("obtain.jba.token", EventFields.Boolean(SUCCESS))
-    private val SHOW_FULL_OUTPUT_EVENT = GROUP.registerEvent("show.full.output")
-    private val PEEK_SOLUTION_EVENT = GROUP.registerEvent("peek.solution")
-    private val LEAVE_FEEDBACK_EVENT = GROUP.registerEvent("leave.feedback")
+    private val EDU_PROJECT_OPENED_EVENT = GROUP.registerEvent(
+      "edu.project.opened",
+      "The event is recorded in case a user opens an already existing course.",
+      COURSE_MODE_FIELD,
+      ITEM_TYPE_FIELD
+    )
+    private val CC_STUDY_ITEM_CREATED_EVENT = GROUP.registerEvent(
+      "study.item.created",
+      "The event is recorded in case a new study item (different types of lessons and tasks) is created.",
+      ITEM_TYPE_FIELD
+    )
+    private val LICK_CLICKED_EVENT = GROUP.registerEvent(
+      "link.clicked",
+      "The event is recorded in case a user clicks a link within a task text.",
+      enumField<LinkType>(TYPE)
+    )
+    private val AUTHORIZATION_EVENT = GROUP.registerEvent(
+      "authorization",
+      "The event is recorded in case a user logs in or out on any platform we support.",
+      enumField<AuthorizationEvent>(EVENT),
+      EventFields.String(
+        "platform", listOf(
+          "Hyperskill",
+          "Stepik",
+          "Js_CheckiO",
+          "Py_CheckiO",
+          "Marketplace",
+          "Codeforces"
+        )
+      ),
+      enumField<AuthorizationPlace>(SOURCE)
+    )
+    private val OBTAIN_JBA_TOKEN_EVENT = GROUP.registerEvent(
+      "obtain.jba.token",
+      "The event is recorded in case a request for a JetBrains account access token is processed.",
+      EventFields.Boolean(SUCCESS)
+    )
+    private val SHOW_FULL_OUTPUT_EVENT = GROUP.registerEvent(
+      "show.full.output",
+      "The event is recorded in case a user clicks the Show Full Output link in the check result panel."
+    )
+    private val PEEK_SOLUTION_EVENT = GROUP.registerEvent(
+      "peek.solution",
+      "The event is recorded in case a user clicks the Peek Solution link in the check result panel."
+    )
+    private val LEAVE_FEEDBACK_EVENT = GROUP.registerEvent(
+      "leave.feedback",
+      "The event is recorded in case a user clicks the Leave Feedback icon in the check result panel."
+    )
     private val REVERT_TASK_EVENT = GROUP.registerEvent(
       "revert.task",
       "The event is recorded in case a user successfully resets content of a task."
@@ -178,43 +213,115 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
       "The event is recorded in case a user checks a task in any course.",
       enumField<CheckStatus>("status")
     )
-    private val RATE_MARKETPLACE_COURSE = GROUP.registerEvent("rate.marketplace.course")
-    private val REVIEW_STAGE_TOPICS_EVENT = GROUP.registerEvent("review.stage.topics")
-    private val HINT_CLICKED_EVENT = GROUP.registerEvent("hint", enumField<HintEvent>(EVENT))
-    private val CREATE_COURSE_PREVIEW_EVENT = GROUP.registerEvent("create.course.preview")
-    private val PREVIEW_TASK_FILE_EVENT = GROUP.registerEvent("preview.task.file")
-    private val CREATE_COURSE_ARCHIVE_EVENT = GROUP.registerEvent("create.course.archive")
-    private val POST_COURSE_EVENT = GROUP.registerEvent("post.course", enumField<PostCourseEvent>(EVENT))
+    private val RATE_MARKETPLACE_COURSE = GROUP.registerEvent(
+      "rate.marketplace.course",
+      "The event is recorded in case a user clicks on the Rate Course icon in the Task Description."
+    )
+    private val REVIEW_STAGE_TOPICS_EVENT = GROUP.registerEvent(
+      "review.stage.topics",
+      "The event is recorded in case a user clicks Review Topics for a stage in a JetBrains Academy project."
+    )
+    private val HINT_CLICKED_EVENT = GROUP.registerEvent(
+      "hint",
+      "he event is recorded in case a user expands/collapses hints in the Task Description.",
+      enumField<HintEvent>(EVENT)
+    )
+    private val CREATE_COURSE_PREVIEW_EVENT = GROUP.registerEvent(
+      "create.course.preview",
+      "The event is recorded in case an educator creates a course preview for a course in Course Creation mode."
+    )
+    private val PREVIEW_TASK_FILE_EVENT = GROUP.registerEvent(
+      "preview.task.file",
+      "The event is recorded in case an educator uses Preview for a task file in Course Creation mode."
+    )
+    private val CREATE_COURSE_ARCHIVE_EVENT = GROUP.registerEvent(
+      "create.course.archive",
+      "The event is recorded in case an educator generates an archive for their course in Course Creation mode."
+    )
+    private val POST_COURSE_EVENT = GROUP.registerEvent(
+      "post.course",
+      "The event is recorded in case an educator uploads or updates their course on Stepik or Marketplace in Course Creation mode.",
+      enumField<PostCourseEvent>(EVENT)
+    )
     private val SYNCHRONIZE_COURSE_EVENT = GROUP.registerEvent(
       "synchronize.course",
       "The event is recorded in case a course is synchronized with its latest version.",
       ITEM_TYPE_FIELD,
       enumField<SynchronizeCoursePlace>(SOURCE)
     )
-    private val IMPORT_COURSE_EVENT = GROUP.registerEvent("import.course")
-    private val CODEFORCES_SUBMIT_SOLUTION_EVENT = GROUP.registerEvent("codeforces.submit.solution")
-    private val TWITTER_DIALOG_SHOWN_EVENT = GROUP.registerEvent("twitter.dialog.shown", ITEM_TYPE_FIELD, LANGUAGE_FIELD)
-    private val COURSE_SELECTION_VIEW_OPENED_EVENT = GROUP.registerEvent("open.course.selection.view",
-                                                                         enumField<CourseActionSource>(SOURCE))
-    private val COURSE_SELECTION_TAB_SELECTED_EVENT = GROUP.registerEvent("select.tab.course.selection.view",
-                                                                          enumField<CourseSelectionViewTab>(EDU_TAB))
-    private val VIEW_EVENT = GROUP.registerEvent("open.task", COURSE_MODE_FIELD, ITEM_TYPE_FIELD)
-    private val CREATE_NEW_COURSE_CLICK_EVENT = GROUP.registerEvent("create.new.course.clicked",
-                                                                    enumField<CourseActionSource>(SOURCE))
+    private val IMPORT_COURSE_EVENT = GROUP.registerEvent(
+      "import.course",
+      "The event is recorded in case a user opens a course from a disk in Learner mode."
+    )
+    private val CODEFORCES_SUBMIT_SOLUTION_EVENT = GROUP.registerEvent(
+      "codeforces.submit.solution",
+      "The event is recorded in case a user clicks Submit Solution in the Task Description for a Codeforces task."
+    )
+    private val TWITTER_DIALOG_SHOWN_EVENT = GROUP.registerEvent(
+      "twitter.dialog.shown",
+      "The event is recorded in case a user receives a suggestion to tweet about completing a course or task (e.g., JB Academy project completion).",
+      ITEM_TYPE_FIELD,
+      LANGUAGE_FIELD
+    )
+    private val COURSE_SELECTION_VIEW_OPENED_EVENT = GROUP.registerEvent(
+      "open.course.selection.view",
+      "The event is recorded in case a user opens the Course Selection view.",
+      enumField<CourseActionSource>(SOURCE)
+    )
+    private val COURSE_SELECTION_TAB_SELECTED_EVENT = GROUP.registerEvent(
+      "select.tab.course.selection.view",
+      "The event is recorded in case a user selects a tab in the Course Selection view.",
+      enumField<CourseSelectionViewTab>(EDU_TAB)
+    )
+    private val VIEW_EVENT = GROUP.registerEvent(
+      "open.task",
+      "The event is recorded in case a user opens any task.",
+      COURSE_MODE_FIELD,
+      ITEM_TYPE_FIELD
+    )
+    private val CREATE_NEW_COURSE_CLICK_EVENT = GROUP.registerEvent(
+      "create.new.course.clicked",
+      "The event is recorded in case a user opens the Create Course dialog.",
+      enumField<CourseActionSource>(SOURCE)
+    )
     private val CREATE_NEW_FILE_IN_NON_TEMPLATE_BASED_FRAMEWORK_LESSON_BY_LEARNER =
-      GROUP.registerEvent("create.new.file.in.non.template.based.framework.lesson.by.learner")
+      GROUP.registerEvent(
+        "create.new.file.in.non.template.based.framework.lesson.by.learner",
+        "The event is recorded in case a user creates a new file in a Non-Template Based Framework Lesson in Learner mode."
+      )
 
-    private val SOLUTION_SHARING_PROMPT_EVENT = GROUP.registerEvent("submission.share.invite.shown")
+    private val SOLUTION_SHARING_PROMPT_EVENT = GROUP.registerEvent(
+      "submission.share.invite.shown",
+      "The event is recorded in case a user enables the Solution Sharing banner/notification."
+    )
 
-    private val COMMUNITY_SOLUTION_DIFF_OPENED = GROUP.registerEvent("peer.solution.diff.opened")
+    private val COMMUNITY_SOLUTION_DIFF_OPENED = GROUP.registerEvent(
+      "peer.solution.diff.opened",
+      "The event is recorded in case a user opens the Community Solution diff."
+    )
 
-    private val SUBMISSION_SUCCESS = GROUP.registerEvent("submission.attempt", EventFields.Boolean(SUCCESS))
+    private val SUBMISSION_SUCCESS = GROUP.registerEvent(
+      "submission.attempt",
+      "The event is recorded in case a user makes a submission attempt, regardless of whether it fails or succeeds.",
+      EventFields.Boolean(SUCCESS)
+    )
 
-    private val AGREE_TO_ENABLE_INVITE_ACTION = GROUP.registerEvent("submission.invite.action", EventFields.Boolean(SUCCESS))
+    private val AGREE_TO_ENABLE_INVITE_ACTION = GROUP.registerEvent(
+      "submission.invite.action",
+      "The event is recorded in case a user responds to the feature invitation, regardless of whether it is accepted or declined.",
+      EventFields.Boolean(SUCCESS)
+    )
 
-    private val AGREE_TO_ENABLE_SOLUTION_SHARE_STATE = GROUP.registerEvent("solution.share.state", EventFields.Boolean(SUCCESS))
+    private val AGREE_TO_ENABLE_SOLUTION_SHARE_STATE = GROUP.registerEvent(
+      "solution.share.state",
+      "The event is recorded in case a user's sharing preference is updated.",
+      EventFields.Boolean(SUCCESS)
+    )
 
-    private val OPEN_COMMUNITY_TAB = GROUP.registerEvent("open.community.tab")
+    private val OPEN_COMMUNITY_TAB = GROUP.registerEvent(
+      "open.community.tab",
+      "The event is recorded in case a user opens the Community panel on the Submissions tab to explore other learners' solutions."
+    )
 
     fun taskNavigation(place: TaskNavigationPlace) = TASK_NAVIGATION_EVENT.log(place)
 
