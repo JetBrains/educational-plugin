@@ -134,7 +134,7 @@ object StyleResourcesManager {
       JETBRAINS_ACADEMY_CSS_LIGHT
     }
 
-  // update style/template.html.ft in case of changing key names
+  // update fileTemplates/internal/taskDescriptionPage.html.ft in case of changing key names
   fun getResources(content: String) = mapOf(
     resourcePair("base_css", BROWSER_CSS),
     "typography_color_style" to StyleManager().typographyAndColorStylesheet(),

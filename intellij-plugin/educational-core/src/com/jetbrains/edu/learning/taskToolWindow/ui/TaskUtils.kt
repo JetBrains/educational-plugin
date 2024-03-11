@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskToolWindow.IMG_TAG
 import com.jetbrains.edu.learning.taskToolWindow.SCRIPT_TAG
@@ -22,22 +23,9 @@ fun htmlWithResources(
   content: String,
   task: Task? = project.getCurrentTask()
 ): String {
-  val templateText = loadText("/style/template.html.ft") ?: "Cannot load task text"
   val resources = StyleManager.resources(content)
-  val textWithResources = replaceWithTemplateText(resources, templateText)
+  val textWithResources = GeneratorUtils.getInternalTemplateText("taskDescriptionPage.html", resources)
   return absolutizePaths(project, textWithResources, task)
-}
-
-fun loadText(filePath: String): String? {
-  val stream = try {
-    object {}.javaClass.getResourceAsStream(filePath)
-  } catch (e: NullPointerException) {
-    return null
-  }
-
-  return stream.use {
-    it.bufferedReader().readText()
-  }
 }
 
 fun wrapHintTagsInsideHTML(document: Document, wrapHint: (e: Element, number: String, title: String) -> String): Document {

@@ -1,6 +1,3 @@
-<!-- <!DOCTYPE html>-->
-<!-- we use key from substrings "${key}" in a StrSubstitutor as keys and in case of renaming keys one has to update map keys in
- com.jetbrains.edu.learning.ui.taskToolWindow.TaskDescriptionHtml-->
 <html>
 <head>
   <script type="text/javascript" src="${mathJax}"></script>
