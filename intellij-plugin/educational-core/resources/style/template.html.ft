@@ -3,9 +3,6 @@
  com.jetbrains.edu.learning.ui.taskToolWindow.TaskDescriptionHtml-->
 <html>
 <head>
-  <script src="${video.js}"></script>
-  <script src="${videojs-resolution-switcher}"></script>
-
   <script type="text/javascript" src="${mathJax}"></script>
   <script type="text/javascript" src="${jquery}"></script>
   <script type="text/javascript" src="${toggle_hint_script}"></script>
@@ -31,7 +28,6 @@
   <link rel="stylesheet" type="text/css" href="${hint_laf_specific}"></link>
 
   <link rel="stylesheet" type="text/css" href="${stepik_link}"></link>
-  <link rel="stylesheet" href="${video-js.css}"></link>
   <link rel="stylesheet" type="text/css" href="${codeforces_task}"></link>
   <link rel="stylesheet" type="text/css" href="${hyperskill_task}"></link>
   <link rel="stylesheet" type="text/css" href="${scrollbar_style_base}"></link>
@@ -42,7 +38,6 @@
   <style>
     ${tables_style}
     ${typography_color_style}
-    ${video_style}
   </style>
 </head>
 <body>
