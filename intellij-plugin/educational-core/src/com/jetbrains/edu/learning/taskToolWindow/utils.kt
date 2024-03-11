@@ -21,14 +21,14 @@ import com.jetbrains.edu.learning.capitalize
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.actions.CodeforcesCopyAndSubmitAction
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.SOURCE
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.taskToolWindow.ui.LightColoredActionLink
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager
@@ -132,7 +132,7 @@ fun processYoutubeLink(text: String, taskId: Int): String {
 private fun getClickableImageElement(src: String, taskId: Int): Element? {
   val youtubeVideoId = src.getYoutubeVideoId()
   if (youtubeVideoId == null) {
-    LOG.warn("Incorrect youtube video link ${src} for task ${taskId}")
+    LOG.warn("Incorrect youtube video link $src for task $taskId")
     return null
   }
   val textToReplace = "<a href=http://www.youtube.com/watch?v=${youtubeVideoId}><img src=http://img.youtube.com/vi/${youtubeVideoId}/0.jpg></a>"
@@ -141,7 +141,9 @@ private fun getClickableImageElement(src: String, taskId: Int): Element? {
   return if (elements.isNotEmpty()) {
     elements[0]
   }
-  else null
+  else {
+    null
+  }
 }
 
 fun String.getYoutubeVideoId(): String? {
@@ -151,8 +153,7 @@ fun String.getYoutubeVideoId(): String? {
   val splitLink = this.split("?v=", "/embed/", ".be/", "&", "?")
   return if (splitLink.size >= 2) {
     val id = splitLink[1]
-    return if (id.length == YOUTUBE_VIDEO_ID_LENGTH) id
-    else null
+    if (id.length == YOUTUBE_VIDEO_ID_LENGTH) id else null
   }
   else {
     null
@@ -192,17 +193,16 @@ fun replaceMediaForTheme(project: Project, task: Task, taskText: Document): Docu
 private fun updateImageElementAccordingToUiTheme(element: Element, isDarkTheme: Boolean, task: Task, project: Project) {
   // remove srcset attribute independently of the theme. Store its value
   val srcsetValue = if (element.hasAttr(SRCSET_ATTRIBUTE)) element.attr(SRCSET_ATTRIBUTE) else null
-  if (srcsetValue != null)
+  if (srcsetValue != null) {
     element.removeAttr(SRCSET_ATTRIBUTE)
+  }
 
-  if (!isDarkTheme)
-    return
+  if (!isDarkTheme) return
 
-  //first, try to use data-dark-src attribute
-  if (useDarkSrcCustomAttributeIfPresent(element))
-    return
+  // first, try to use data-dark-src attribute
+  if (useDarkSrcCustomAttributeIfPresent(element)) return
 
-  //second, try to use srcset attribute
+  // second, try to use srcset attribute
   if (srcsetValue != null) {
     element.attr(SRC_ATTRIBUTE, srcsetValue)
     return
@@ -231,7 +231,10 @@ fun useDarkSrcCustomAttributeIfPresent(element: Element): Boolean {
   return if (darkSrc != null) {
     element.attr(SRC_ATTRIBUTE, darkSrc)
     true
-  } else false
+  }
+  else {
+    false
+  }
 }
 
 fun addExternalLinkIcons(document: Document): Document {
@@ -286,10 +289,11 @@ fun addActionLinks(course: Course?, linkPanel: JPanel, topMargin: Int, leftMargi
   }
 }
 
-fun createActionLink(@LinkLabel actionText: String,
-                     actionId: String,
-                     top: Int = 9,
-                     left: Int = 10
+fun createActionLink(
+  @LinkLabel actionText: String,
+  actionId: String,
+  top: Int = 9,
+  left: Int = 10
 ): AnActionLink {
   val link = LightColoredActionLink(actionText, ActionManager.getInstance().getAction(actionId), isExternal = true)
   link.border = JBUI.Borders.empty(top, left, 0, 0)
@@ -312,4 +316,4 @@ fun String.containsShortcut(): Boolean = startsWith(SHORTCUT_ENTITY) || startsWi
 fun link(url: String, text: String, right: Boolean = false): String = """<a${if (right) " class=right " else " "}href="$url">$text</a>"""
 
 @Suppress("UnstableApiUsage")
-fun isNewUI() = ExperimentalUI.isNewUI()
+fun isNewUI(): Boolean = ExperimentalUI.isNewUI()
