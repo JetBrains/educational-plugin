@@ -223,7 +223,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     )
     private val HINT_CLICKED_EVENT = GROUP.registerEvent(
       "hint",
-      "he event is recorded in case a user expands/collapses hints in the Task Description.",
+      "The event is recorded in case a user expands/collapses hints in the Task Description.",
       enumField<HintEvent>(EVENT)
     )
     private val CREATE_COURSE_PREVIEW_EVENT = GROUP.registerEvent(
