@@ -110,14 +110,14 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
     }
 
     if (project.isMarketplaceCourse() && project.isStudentProject() && !task.isSolved && !task.canShowSolution()) {
-      val seeCommunitySolutionsLink = createSeeCommunitySolutionsLink(project)
-      seeCommunitySolutionsLink.isVisible = false
+      val communitySolutionsLink = createCommunitySolutionsLink(project)
+      communitySolutionsLink.isVisible = false
       CompletableFuture.supplyAsync {
         SubmissionsManager.getInstance(project).isCommunitySolutionsAvailable(task)
       }.thenApply { isCommunitySolutionsAvailable ->
-        seeCommunitySolutionsLink.isVisible = isCommunitySolutionsAvailable
+        communitySolutionsLink.isVisible = isCommunitySolutionsAvailable
       }
-      linksPanel.add(createSeeCommunitySolutionsLink(project), BorderLayout.NORTH)
+      linksPanel.add(communitySolutionsLink, BorderLayout.NORTH)
     }
 
     return linksPanel
@@ -207,14 +207,14 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
     }
   }
 
-  private fun createSeeCommunitySolutionsLink(project: Project): DialogPanel = panel {
+  private fun createCommunitySolutionsLink(project: Project): DialogPanel = panel {
     row(EduCoreBundle.message("submissions.got.stuck")) {
       link(EduCoreBundle.message("submissions.see.community.solutions.link")) {
-        val window = ToolWindowManager.getInstance(project).getToolWindow(TaskToolWindowFactory.STUDY_TOOL_WINDOW)
-        window?.let {
-          val submissionsTabContent = window.contentManager.findContent(EduCoreBundle.message("submissions.tab.name"))
+        val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskToolWindowFactory.STUDY_TOOL_WINDOW)
+        toolWindow?.let {
+          val submissionsTabContent = toolWindow.contentManager.findContent(EduCoreBundle.message("submissions.tab.name"))
           val submissionsTab = submissionsTabContent.component as? SubmissionsTab ?: return@let
-          window.contentManager.setSelectedContent(submissionsTabContent)
+          toolWindow.contentManager.setSelectedContent(submissionsTabContent)
           submissionsTab.showCommunityTab()
         }
       }

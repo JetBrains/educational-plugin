@@ -206,7 +206,7 @@ class SubmissionsManager(private val project: Project) {
     val correctSubmissions = submissions.count { it.status == CORRECT }
     val wrongSubmissions = submissions.count() - correctSubmissions
 
-    return correctSubmissions == 1 || wrongSubmissions >= 3
+    return correctSubmissions == 1 || wrongSubmissions >= GOT_STUCK_WRONG_SUBMISSIONS_AMOUNT
   }
 
   private fun getPlatformName(): String = course?.getSubmissionsProvider()?.getPlatformName() ?: error("Failed to get platform Name")
@@ -241,6 +241,8 @@ class SubmissionsManager(private val project: Project) {
     fun getInstance(project: Project): SubmissionsManager {
       return project.service()
     }
+
+    private const val GOT_STUCK_WRONG_SUBMISSIONS_AMOUNT: Int = 3
   }
 }
 
