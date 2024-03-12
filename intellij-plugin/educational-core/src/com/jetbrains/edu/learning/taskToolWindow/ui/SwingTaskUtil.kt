@@ -8,8 +8,8 @@ import com.intellij.openapi.editor.colors.FontPreferences
 import com.intellij.openapi.project.Project
 import com.intellij.ui.dsl.builder.Cell
 import com.intellij.ui.dsl.builder.Row
-import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.HTMLEditorKitBuilder
+import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
@@ -19,9 +19,12 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.taskToolWindow.ui.specificTaskSwingPanels.ChoiceTaskSpecificPanel
 import com.jetbrains.edu.learning.taskToolWindow.ui.specificTaskSwingPanels.SortingBasedTaskSpecificPanel
 import com.jetbrains.edu.learning.taskToolWindow.ui.specificTaskSwingPanels.TableTaskSpecificPanel
+import com.jetbrains.edu.learning.xmlEscaped
 import org.jetbrains.annotations.VisibleForTesting
 import org.jsoup.nodes.Element
-import javax.swing.*
+import javax.swing.JPanel
+import javax.swing.JTextPane
+import javax.swing.JToggleButton
 import javax.swing.border.Border
 import javax.swing.text.html.HTMLEditorKit
 import kotlin.math.roundToInt
@@ -118,7 +121,7 @@ fun wrapHintSwing(project: Project, hintElement: Element, displayedHintNumber: S
     hintElement.wrap("<div class='top'></div>")
   }
   val course = StudyTaskManager.getInstance(project).course
-  val escapedHintTitle = escapeHtml(hintTitle)
+  val escapedHintTitle = hintTitle.xmlEscaped
   return if (course != null && !course.isStudy) {
     createExpandedHintBlockTemplate(hintElement, displayedHintNumber, escapedHintTitle)
   }

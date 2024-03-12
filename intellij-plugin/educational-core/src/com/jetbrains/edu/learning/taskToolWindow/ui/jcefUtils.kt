@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.TableTaskResou
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.TaskToolWindowBundle
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.sortingBasedTask.MatchingTaskResourcesManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.sortingBasedTask.SortingTaskResourcesManager
+import com.jetbrains.edu.learning.xmlEscaped
 import kotlinx.css.*
 import kotlinx.css.properties.BoxShadow
 import kotlinx.css.properties.BoxShadows
@@ -72,7 +73,7 @@ private const val HINT_EXPANDED_BLOCK_TEMPLATE: String = "<div class='" + HINT_H
 fun wrapHintJCEF(project: Project, hintElement: Element, displayedHintNumber: String, hintTitle: String): String {
   val course = StudyTaskManager.getInstance(project).course
   val hintText: String = hintElement.html()
-  val escapedHintTitle = escapeHtml(hintTitle)
+  val escapedHintTitle = hintTitle.xmlEscaped
   if (course == null) {
     return String.format(HINT_BLOCK_TEMPLATE, escapedHintTitle, displayedHintNumber, hintText)
   }
