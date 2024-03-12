@@ -25,7 +25,6 @@ import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.ApplyCodeAction.Companion.FILENAMES_KEY
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
-import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.isTestFile
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
@@ -112,18 +111,18 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
   private fun updateSubmissionsContent(task: Task, isLoggedIn: Boolean) {
     val submissionsManager = SubmissionsManager.getInstance(project)
     val isSolutionSharingAllowed = submissionsManager.isSolutionSharingAllowed()
-    val isCommunitySolutionsAvailable = !task.canShowSolution() && submissionsManager.isCommunitySolutionsAvailable(task)
+    val isAllowedToLoadCommunitySolutions = submissionsManager.isAllowedToLoadCommunitySolutions(task)
     val (descriptionText, customLinkHandler) =
       prepareSubmissionsContent(submissionsManager, task, isLoggedIn)
 
     if (isMarketplaceCourse) {
       val (communityDescriptionText, communityLinkHandler) =
-        prepareCommunityContent(task, submissionsManager, isCommunitySolutionsAvailable, isSolutionSharingAllowed)
+        prepareCommunityContent(task, submissionsManager, isAllowedToLoadCommunitySolutions, isSolutionSharingAllowed)
 
       project.invokeLater {
         segmentedButton.updateCommunityButton(
           isLoggedIn = isLoggedIn,
-          isEnabled = isCommunitySolutionsAvailable || !isSolutionSharingAllowed,
+          isEnabled = isAllowedToLoadCommunitySolutions || !isSolutionSharingAllowed,
           isAgreementTooltip = !isSolutionSharingAllowed
         )
         updatePanel(panel, descriptionText, customLinkHandler)
@@ -144,9 +143,9 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
   }
 
   private fun prepareCommunityContent(
-    task: Task, submissionsManager: SubmissionsManager, isCommunitySolutionsAvailable: Boolean, isSolutionSharingAllowed: Boolean
+    task: Task, submissionsManager: SubmissionsManager, isAllowedToShowCommunitySolutions: Boolean, isSolutionSharingAllowed: Boolean
   ): Pair<String, SwingToolWindowLinkHandler?> {
-    if (isCommunitySolutionsAvailable && isSolutionSharingAllowed) {
+    if (isAllowedToShowCommunitySolutions && isSolutionSharingAllowed) {
       val submissionsList = submissionsManager.getCommunitySubmissionsFromMemory(task.id)
 
       if (submissionsList.isNullOrEmpty()) {

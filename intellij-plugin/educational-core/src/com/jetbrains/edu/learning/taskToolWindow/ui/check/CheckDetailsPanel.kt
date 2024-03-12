@@ -28,11 +28,12 @@ import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.marketplace.isMarketplaceCourse
+import com.jetbrains.edu.learning.invokeLater
+import com.jetbrains.edu.learning.marketplace.isMarketplaceStudentCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.projectView.CourseViewUtils.isSolved
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.PostHyperskillProjectToGithub
+import com.jetbrains.edu.learning.submissions.SubmissionsListener
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.SubmissionsTab
 import com.jetbrains.edu.learning.taskToolWindow.addActionLinks
@@ -109,18 +110,48 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
       }
     }
 
-    if (project.isMarketplaceCourse() && project.isStudentProject() && !task.isSolved && !task.canShowSolution()) {
-      val communitySolutionsLink = createCommunitySolutionsLink(project)
-      communitySolutionsLink.isVisible = false
-      CompletableFuture.supplyAsync {
-        SubmissionsManager.getInstance(project).isCommunitySolutionsAvailable(task)
-      }.thenApply { isCommunitySolutionsAvailable ->
-        communitySolutionsLink.isVisible = isCommunitySolutionsAvailable
+    if (project.isMarketplaceStudentCourse() && !checkResult.isSolved && !task.canShowSolution()) {
+      val communitySolutionsLink = createCommunityLinksPanel(project).apply {
+        isVisible = false
       }
+      project.messageBus.connect().subscribe(SubmissionsManager.TOPIC, SubmissionsListener {
+        CompletableFuture.supplyAsync {
+          val submissionsManager = SubmissionsManager.getInstance(project)
+          val isCommunitySolutionsLoaded = submissionsManager.isCommunitySolutionsLoaded(task)
+          val isAllowedToLoadCommunitySolutions = checkResult.isSolved || submissionsManager.isAllowedToLoadCommunitySolutions(task)
+
+          if (!isAllowedToLoadCommunitySolutions) {
+            communitySolutionsLink.isVisible = false
+            return@supplyAsync
+          }
+
+          if (!isCommunitySolutionsLoaded) {
+            submissionsManager.loadCommunitySubmissions(task)
+          }
+
+          project.invokeLater {
+            communitySolutionsLink.isVisible = true
+          }
+        }
+      })
       linksPanel.add(communitySolutionsLink, BorderLayout.NORTH)
     }
 
     return linksPanel
+  }
+
+  private fun createCommunityLinksPanel(project: Project): DialogPanel = panel {
+    row(EduCoreBundle.message("submissions.got.stuck")) {
+      link(EduCoreBundle.message("submissions.see.community.solutions.link")) {
+        val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskToolWindowFactory.STUDY_TOOL_WINDOW)
+        toolWindow?.let {
+          val submissionsTabContent = toolWindow.contentManager.findContent(EduCoreBundle.message("submissions.tab.name"))
+          val submissionsTab = submissionsTabContent.component as? SubmissionsTab ?: return@let
+          toolWindow.contentManager.setSelectedContent(submissionsTabContent)
+          submissionsTab.showCommunityTab()
+        }
+      }
+    }
   }
 
   private val Task.showAnswerHints: Boolean
@@ -203,20 +234,6 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
       val tab = selectTab(project, index)
       if (tab != null && index == 1) {
         EduCounterUsageCollector.reviewStageTopics()
-      }
-    }
-  }
-
-  private fun createCommunitySolutionsLink(project: Project): DialogPanel = panel {
-    row(EduCoreBundle.message("submissions.got.stuck")) {
-      link(EduCoreBundle.message("submissions.see.community.solutions.link")) {
-        val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskToolWindowFactory.STUDY_TOOL_WINDOW)
-        toolWindow?.let {
-          val submissionsTabContent = toolWindow.contentManager.findContent(EduCoreBundle.message("submissions.tab.name"))
-          val submissionsTab = submissionsTabContent.component as? SubmissionsTab ?: return@let
-          toolWindow.contentManager.setSelectedContent(submissionsTabContent)
-          submissionsTab.showCommunityTab()
-        }
       }
     }
   }

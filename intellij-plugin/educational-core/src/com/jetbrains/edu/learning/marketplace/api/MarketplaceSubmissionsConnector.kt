@@ -131,7 +131,7 @@ class MarketplaceSubmissionsConnector {
     return courseSharedSolutions
   }
 
-  fun getSharedSolutionsForTask(course: Course, taskId: Int): List<MarketplaceSubmission> {
+  fun getSharedSolutionsForTask(course: Course, taskId: Int): List<MarketplaceSubmission>? {
     val (courseId, updateVersion) = course.id to course.marketplaceCourseVersion
     LOG.info("Loading shared solutions for task $taskId on course with courseId = $courseId, updateVersion = $updateVersion")
 
@@ -140,7 +140,7 @@ class MarketplaceSubmissionsConnector {
     do {
       val submissionsList = submissionsService.getPublicSubmissionsForTask(
         courseId, updateVersion, taskId, currentPage
-      ).executeHandlingExceptions()?.body() ?: break
+      ).executeHandlingExceptions()?.body() ?: return null
 
       val sharedSolutions = submissionsList.submissions
       courseSharedSolutions.addAll(sharedSolutions)
