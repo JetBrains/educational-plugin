@@ -1,7 +1,10 @@
 package com.jetbrains.edu.learning.taskToolWindow.ui.navigationMap
 
 import com.intellij.ide.ui.laf.darcula.DarculaUIUtil
-import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.ex.ActionButtonLook
 import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl
@@ -23,8 +26,8 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.projectView.CourseViewUtils.isSolved
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckPanel
-import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
 import com.jetbrains.edu.learning.taskToolWindow.ui.setupLayoutStrategy
+import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
 import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.*
 import java.awt.geom.Path2D
@@ -79,7 +82,9 @@ class NavigationMapPanel : JPanel(BorderLayout()) {
   }
 
   fun scrollToTask(task: Task) {
-    val selected = toolbar.components.find { ((it as ActionButton).action as NavigationMapAction).task == task } ?: return
+    val selected = toolbar.components
+      .filterIsInstance<ActionButton>()
+      .find { (it.action as? NavigationMapAction)?.task == task } ?: return
     toolbar.scrollRectToVisible(selected.bounds)
   }
 
