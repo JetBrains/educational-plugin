@@ -1,4 +1,4 @@
-<idea-plugin package="com.jetbrains.edu.cpp">
+<idea-plugin package="com.jetbrains.edu.cpp" xmlns:xi="http://www.w3.org/2001/XInclude">
   <!--suppress PluginXmlValidity -->
   <dependencies>
     <plugin id="com.intellij.clion"/>
@@ -24,6 +24,8 @@
                            implementationClass="com.jetbrains.edu.cpp.compatibility.CppCatchCourseCompatibilityProvider"/>
 
   </extensions>
+
+  <xi:include href="/META-INF/Hyperskill-Cpp.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <extensions defaultExtensionNs="com.intellij">
     <!--suppress PluginXmlCapitalization -->

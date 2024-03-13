@@ -1,0 +1,11 @@
+${CMAKE_MINIMUM_REQUIRED_LINE}
+project(${PROJECT_NAME})
+
+set(CMAKE_CXX_STANDARD ${CPP_STANDARD})
+#[[
+# Task file
+set(SRC src/task.cpp)
+
+# Running learner side code
+# Use PROJECT_NAME dependent names of targets for the plugin support to work correctly.
+add_executable(${PROJECT_NAME}-run ${SRC})]]#

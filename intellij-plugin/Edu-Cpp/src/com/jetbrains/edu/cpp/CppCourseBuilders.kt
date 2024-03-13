@@ -42,7 +42,6 @@ class CppCatchCourseBuilder : CppCourseBuilder() {
 open class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
   override fun taskTemplateName(course: Course): String = CppConfigurator.TASK_CPP
   override fun mainTemplateName(course: Course): String = CppConfigurator.MAIN_CPP
-  override fun testTemplateName(course: Course): String = CppConfigurator.TEST_CPP
 
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<CppProjectSettings>? =
     CppCourseProjectGenerator(this, course)

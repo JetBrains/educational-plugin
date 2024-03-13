@@ -9,6 +9,7 @@ import com.jetbrains.cmake.completion.CMakeRecognizedCPPLanguageStandard
 import com.jetbrains.cmake.psi.CMakeCommand
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -25,7 +26,9 @@ fun Task.addCMakeList(projectName: String, cppStandard: String = ""): TaskFile {
   }
 
   val taskFile = TaskFile(CMakeListsFileType.FILE_NAME, templateInfo.getText(projectName, cppStandard))
-  taskFile.isVisible = false
+  if (course !is HyperskillCourse) {
+    taskFile.isVisible = false
+  }
 
   addTaskFile(taskFile)
 
