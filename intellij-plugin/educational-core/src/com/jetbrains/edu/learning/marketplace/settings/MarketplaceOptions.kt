@@ -36,7 +36,7 @@ class MarketplaceOptions : OAuthLoginOptions<MarketplaceAccount>() {
   private val shareMySolutionsCheckBox = JBCheckBox(EduCoreBundle.message("marketplace.options.solutions.sharing.checkbox")).apply {
     val sharingPreference = MarketplaceSettings.INSTANCE.solutionsSharing
     isSelected = sharingPreference ?: false
-    isEnabled = sharingPreference != null
+    isEnabled = sharingPreference != null && MarketplaceSettings.isJBALoggedIn()
   }
 
   private val userAgreementCheckBox = JBCheckBox(EduCoreBundle.message("marketplace.options.user.agreement.checkbox")).apply {
@@ -96,12 +96,7 @@ class MarketplaceOptions : OAuthLoginOptions<MarketplaceAccount>() {
   }
 
   override fun getAdditionalComponents(): List<JComponent> =
-    if (MarketplaceSettings.INSTANCE.getMarketplaceAccount() != null) {
-      listOf(userAgreementCheckBox, shareMySolutionsCheckBox, statisticsCollectionAllowedCheckBox)
-    }
-    else {
-      listOf(userAgreementCheckBox, statisticsCollectionAllowedCheckBox)
-    }
+    listOf(userAgreementCheckBox, shareMySolutionsCheckBox, statisticsCollectionAllowedCheckBox)
 
   override fun apply() {
     super.apply()
