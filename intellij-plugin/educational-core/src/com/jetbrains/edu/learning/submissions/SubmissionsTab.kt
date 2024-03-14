@@ -120,7 +120,10 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
         prepareCommunityContent(task, submissionsManager, isSolutionSharingAllowed)
 
       project.invokeLater {
-        updateSegmentedButtonState(task, isSolutionSharingAllowed)
+        segmentedButton.updateCommunityButton(
+          isEnabled = task.isCommunitySolutionsAllowed() || !isSolutionSharingAllowed,
+          isAgreementTooltip = !isSolutionSharingAllowed
+        )
         updatePanel(panel, descriptionText, customLinkHandler)
         updatePanel(communityPanel, communityDescriptionText, communityLinkHandler)
       }
@@ -136,15 +139,6 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
     hideLoadingSubmissionsPanel()
     updateLinkHandler(linkHandler)
     setText(text)
-  }
-
-  private fun updateSegmentedButtonState(task: Task, isSolutionSharingAllowed: Boolean) {
-    if (task.isCommunitySolutionsAllowed() && isSolutionSharingAllowed) {
-      segmentedButton.enableCommunityButton()
-    }
-    else {
-      segmentedButton.disableCommunityButton(isAgreementTooltip = !isSolutionSharingAllowed)
-    }
   }
 
   private fun prepareCommunityContent(
