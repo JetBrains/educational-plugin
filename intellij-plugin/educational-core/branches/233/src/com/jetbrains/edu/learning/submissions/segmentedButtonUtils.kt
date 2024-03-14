@@ -14,11 +14,12 @@ fun SegmentedButton.ItemPresentation.segmentedButtonRenderer(item: JButton) {
 
 // BACKCOMPAT: 2023.2
 @Suppress("UnstableApiUsage")
-fun SegmentedButton<JButton>.updateCommunityButton(isEnabled: Boolean, isAgreementTooltip: Boolean = false) {
+fun SegmentedButton<JButton>.updateCommunityButton(isLoggedIn: Boolean, isEnabled: Boolean, isAgreementTooltip: Boolean = false) {
   val communityButton = items.findLast { it.text == SubmissionsTab.COMMUNITY.text } ?: return
 
-  communityButton.isEnabled = isEnabled
+  communityButton.isEnabled = isLoggedIn && isEnabled
   communityButton.toolTipText = when {
+    !isLoggedIn -> EduCoreBundle.message("submissions.button.community.tooltip.text.login")
     isAgreementTooltip -> EduCoreBundle.message("submissions.tab.solution.sharing.agreement")
     isEnabled -> EduCoreBundle.message("submissions.button.community.tooltip.text.enabled")
     else -> EduCoreBundle.message("submissions.button.community.tooltip.text.disabled")

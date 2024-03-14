@@ -121,6 +121,7 @@ class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSI
 
       project.invokeLater {
         segmentedButton.updateCommunityButton(
+          isLoggedIn = isLoggedIn,
           isEnabled = task.isCommunitySolutionsAllowed() || !isSolutionSharingAllowed,
           isAgreementTooltip = !isSolutionSharingAllowed
         )

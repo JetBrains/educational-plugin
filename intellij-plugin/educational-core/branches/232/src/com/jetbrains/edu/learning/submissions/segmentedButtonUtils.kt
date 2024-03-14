@@ -6,4 +6,4 @@ import javax.swing.JButton
 fun segmentedButtonRenderer(item: JButton): String = item.text
 
 @Suppress("UnstableApiUsage", "UnusedReceiverParameter", "UNUSED_PARAMETER")
-fun SegmentedButton<JButton>.updateCommunityButton(isEnabled: Boolean, isAgreementTooltip: Boolean = false) {}
+fun SegmentedButton<JButton>.updateCommunityButton(isLoggedIn: Boolean, isEnabled: Boolean, isAgreementTooltip: Boolean = false) {}
