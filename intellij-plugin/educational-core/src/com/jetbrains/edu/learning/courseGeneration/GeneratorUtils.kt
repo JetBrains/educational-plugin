@@ -363,7 +363,7 @@ object GeneratorUtils {
   }
 
   @RequiresBlockingContext
-  private fun createUniqueDir(
+  fun createUniqueDir(
     parentDir: VirtualFile,
     item: StudyItem,
     baseDirName: String = item.name,
@@ -375,9 +375,9 @@ object GeneratorUtils {
       item.name = uniqueDirName
     }
 
-    return runInWriteActionAndWait(ThrowableComputable {
+    return runInWriteActionAndWait {
       VfsUtil.createDirectoryIfMissing(parentDir, uniqueDirName)
-    })
+    }
   }
 
   fun joinPaths(prefix: String?, suffix: String): String {
