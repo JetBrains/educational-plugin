@@ -134,18 +134,33 @@ class SubmissionsManager(private val project: Project) {
     val submissionsProvider = course?.getSubmissionsProvider() ?: return
 
     CompletableFuture.runAsync({
-      if (isLoggedIn()) {
-        val taskToolWindowView = TaskToolWindowView.getInstance(project)
-        if (submissionsProvider.isSubmissionDownloadAllowed()) {
-          taskToolWindowView.showLoadingSubmissionsPanel(getPlatformName())
+      if (!isLoggedIn()) return@runAsync
+
+      val isSubmissionDownloadAllowed = submissionsProvider.isSubmissionDownloadAllowed()
+      val isSolutionSharingAllowed = submissionsProvider.isSolutionSharingAllowed()
+      val taskToolWindowView = TaskToolWindowView.getInstance(project)
+      val platformName = getPlatformName()
+      when {
+        isSubmissionDownloadAllowed && isSolutionSharingAllowed -> {
+          taskToolWindowView.showLoadingSubmissionsPanel(platformName)
+          taskToolWindowView.showLoadingCommunityPanel(platformName)
           loadSubmissionsContent(course, submissionsProvider, loadSolutions)
-        }
-        if (submissionsProvider.isSolutionSharingAllowed()) {
-          taskToolWindowView.showLoadingCommunityPanel(getPlatformName())
           loadCommunityContent(course, submissionsProvider)
         }
-        notifySubmissionsChanged()
+
+        isSubmissionDownloadAllowed -> {
+          taskToolWindowView.showLoadingSubmissionsPanel(platformName)
+          loadSubmissionsContent(course, submissionsProvider, loadSolutions)
+        }
+
+        isSolutionSharingAllowed -> {
+          taskToolWindowView.showLoadingCommunityPanel(platformName)
+          loadCommunityContent(course, submissionsProvider)
+        }
+
+        else -> return@runAsync
       }
+      notifySubmissionsChanged()
     }, ProcessIOExecutorService.INSTANCE)
   }
 
