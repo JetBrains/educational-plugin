@@ -5,6 +5,7 @@ import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.extensions.PluginId
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
+import com.jetbrains.edu.learning.isHeadlessEnvironment
 
 /**
  * Adds `installCoursePlugins` command for IDE to install all necessary plugins for given course
@@ -24,6 +25,14 @@ class EduCoursePluginInstallerAppStarter : EduAppStarterBase<Args>() {
     get() = "installCoursePlugins"
 
   override fun createArgParser(): ArgParser<Args> = ArgParser.createDefault(commandName)
+
+  override suspend fun start(args: List<String>) {
+    if (!isHeadlessEnvironment) {
+      logErrorAndExit("`$commandName` requires headless environment only. " +
+                      "Try adding `-Djava.awt.headless=true` to your command (commandline: ${args.joinToString(" ")})")
+    }
+    super.start(args)
+  }
 
   override suspend fun doMain(course: Course, args: Args): CommandResult {
     val provider = course.compatibilityProvider
