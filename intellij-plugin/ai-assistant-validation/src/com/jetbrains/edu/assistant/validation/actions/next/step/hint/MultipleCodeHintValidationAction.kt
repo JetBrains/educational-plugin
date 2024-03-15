@@ -1,9 +1,11 @@
 package com.jetbrains.edu.assistant.validation.actions.next.step.hint
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.runBlockingCancellable
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFileFactory
 import com.jetbrains.edu.assistant.validation.actions.ValidationAction
 import com.jetbrains.edu.assistant.validation.messages.EduAndroidAiAssistantValidationBundle
@@ -12,10 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.courseFormat.ext.getText
-import com.jetbrains.edu.learning.courseFormat.ext.languageById
-import com.jetbrains.edu.learning.courseFormat.ext.project
+import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.eduAssistant.core.TaskBasedAssistant
 import com.jetbrains.edu.learning.eduAssistant.inspection.InspectionProvider
@@ -37,7 +36,11 @@ class MultipleCodeHintValidationAction : ValidationAction<MultipleCodeHintDatafr
     setUpSpinnerPanel(name)
   }
 
-  override suspend fun buildRecords(task: EduTask, lesson: Lesson, progressIndicator: ProgressIndicator): List<MultipleCodeHintDataframeRecord> {
+  override suspend fun buildRecords(
+    task: EduTask,
+    lesson: Lesson,
+    progressIndicator: ProgressIndicator
+  ): List<MultipleCodeHintDataframeRecord> {
     return getCodeFromTaskFiles(task, lesson).map {
       runBlockingCancellable {
         buildCodeHintRecords(task, it, progressIndicator)
@@ -47,7 +50,20 @@ class MultipleCodeHintValidationAction : ValidationAction<MultipleCodeHintDatafr
 
   override fun MutableList<MultipleCodeHintDataframeRecord>.convertToDataFrame() = toDataFrame()
 
-  private suspend fun buildCodeHintRecords(task: EduTask, userCode: String, progressIndicator: ProgressIndicator): List<MultipleCodeHintDataframeRecord> {
+
+  private fun writeCodeToTaskFile(taskFile: TaskFile, project: Project, code: String) {
+    val virtualFile = taskFile.getVirtualFile(project)
+                      ?: error("Can not get virtual file for task file")
+    val document = FileDocumentManager.getInstance().getDocument(virtualFile)
+                   ?: error("Can not get document file for task file")
+    WriteCommandAction.runWriteCommandAction(project) { document.setText(code) }
+  }
+
+  private suspend fun buildCodeHintRecords(
+    task: EduTask,
+    userCode: String,
+    progressIndicator: ProgressIndicator
+  ): List<MultipleCodeHintDataframeRecord> {
     val taskProcessor = TaskProcessor(task)
     val assistant = TaskBasedAssistant(taskProcessor)
     val language = task.course.languageById ?: error("Language could not be determined")
@@ -63,23 +79,24 @@ class MultipleCodeHintValidationAction : ValidationAction<MultipleCodeHintDatafr
     task.generatedSolutionSteps ?: error("Cannot get generate solution steps for task ${task.name}")
     var currentUserCode = userCode
     val maxHintSteps = assistant.parseSteps(task.generatedSolutionSteps!!).size * 2
+
     for (hintIndex in 1..maxHintSteps) {
       try {
         val response = assistant.getHint(task, eduState, currentUserCode)
         if (response.codeHint == null) {
           error("Code hint is empty")
         }
+
         currentUserCode = taskProcessor.applyCodeHint(response.codeHint!!, eduState.taskFile) ?: error("Can not apply code hint")
+        writeCodeToTaskFile(eduState.taskFile, project, currentUserCode)
+
         val psiFile = PsiFileFactory.getInstance(project).createFileFromText("file", language, currentUserCode)
         val inspections = InspectionProvider.getInspections(language)
         val issues = psiFile.getInspectionsWithIssues(inspections).map { it.id }
 
         val checker = task.course.configurator?.taskCheckerProvider?.getTaskChecker(task, project)
                       ?: error("Can not find checker for given task")
-
-        checker.check(progressIndicator)
-
-        val testResults = task.status
+        val testResult = checker.check(progressIndicator)
 
         records.add(
           MultipleCodeHintDataframeRecord(
@@ -94,11 +111,11 @@ class MultipleCodeHintValidationAction : ValidationAction<MultipleCodeHintDatafr
             generatedCode = response.codeHint,
             numberOfIssues = issues.size,
             issues = issues.joinToString(","),
-            testStatus = task.status.name
+            testStatus = testResult.status.name
           )
         )
 
-        if (testResults == CheckStatus.Solved) {
+        if (testResult.status == CheckStatus.Solved) {
           break
         }
       }
@@ -115,6 +132,8 @@ class MultipleCodeHintValidationAction : ValidationAction<MultipleCodeHintDatafr
         )
       }
     }
+
+    writeCodeToTaskFile(eduState.taskFile, project, userCode)
     return records
   }
 
