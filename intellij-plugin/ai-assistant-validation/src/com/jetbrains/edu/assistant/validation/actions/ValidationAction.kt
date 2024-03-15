@@ -105,7 +105,7 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
               it.getSolutionListForTask(lesson.name, task.name).forEach { studentCode ->
                 downloadSolution(task, project, studentCode)
                 runBlockingCancellable {
-                  records.addAll(buildRecords(task, lesson))
+                  records.addAll(buildRecords(task, lesson, indicator))
                 }
               }
             } ?: run {

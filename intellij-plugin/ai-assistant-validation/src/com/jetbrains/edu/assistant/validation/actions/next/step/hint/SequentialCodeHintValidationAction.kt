@@ -1,12 +1,12 @@
 package com.jetbrains.edu.assistant.validation.actions.next.step.hint
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFileFactory
+import com.intellij.testFramework.utils.editor.commitToPsi
 import com.jetbrains.edu.assistant.validation.actions.ValidationAction
 import com.jetbrains.edu.assistant.validation.messages.EduAndroidAiAssistantValidationBundle
 import com.jetbrains.edu.assistant.validation.util.MultipleCodeHintDataframeRecord
@@ -22,15 +22,15 @@ import com.jetbrains.edu.learning.eduAssistant.inspection.getInspectionsWithIssu
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
-import com.jetbrains.edu.learning.navigation.NavigationUtils
 import org.jetbrains.kotlinx.dataframe.api.toDataFrame
 
 
 @Suppress("ComponentNotRegistered")
-class MultipleCodeHintValidationAction : ValidationAction<MultipleCodeHintDataframeRecord>() {
+class SequentialCodeHintValidationAction : ValidationAction<MultipleCodeHintDataframeRecord>() {
 
   override val outputFilePrefixName: String = "multipleCodeHints"
-  override val name: String = EduAndroidAiAssistantValidationBundle.message("action.multiple.code.hint.validation.action.name")
+  override val name: String = EduAndroidAiAssistantValidationBundle.message("action.sequential.code.hint.validation.action.name")
+  override val isNavigationRequired: Boolean = true
 
   init {
     setUpSpinnerPanel(name)
@@ -52,11 +52,15 @@ class MultipleCodeHintValidationAction : ValidationAction<MultipleCodeHintDatafr
 
 
   private fun writeCodeToTaskFile(taskFile: TaskFile, project: Project, code: String) {
+    val fileDocumentManager = FileDocumentManager.getInstance()
     val virtualFile = taskFile.getVirtualFile(project)
                       ?: error("Can not get virtual file for task file")
-    val document = FileDocumentManager.getInstance().getDocument(virtualFile)
+    val document = fileDocumentManager.getDocument(virtualFile)
                    ?: error("Can not get document file for task file")
-    WriteCommandAction.runWriteCommandAction(project) { document.setText(code) }
+    WriteCommandAction.runWriteCommandAction(project) {
+      document.setText(code)
+      fileDocumentManager.saveDocument(document)
+    }
   }
 
   private suspend fun buildCodeHintRecords(
@@ -69,9 +73,6 @@ class MultipleCodeHintValidationAction : ValidationAction<MultipleCodeHintDatafr
     val language = task.course.languageById ?: error("Language could not be determined")
     val project = task.project ?: error("Cannot get project")
 
-    ApplicationManager.getApplication().executeOnPooledThread {
-      NavigationUtils.navigateToTask(project, task)
-    }
     val eduState = project.eduState ?: error("Cannot get eduState for project ${project.name}")
     val records = mutableListOf<MultipleCodeHintDataframeRecord>()
 

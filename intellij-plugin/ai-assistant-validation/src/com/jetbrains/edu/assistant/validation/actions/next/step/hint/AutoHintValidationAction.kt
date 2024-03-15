@@ -1,6 +1,7 @@
 package com.jetbrains.edu.assistant.validation.actions.next.step.hint
 
 import com.google.gson.Gson
+import com.intellij.openapi.progress.ProgressIndicator
 import com.jetbrains.edu.assistant.validation.actions.ValidationAction
 import com.jetbrains.edu.assistant.validation.messages.EduAndroidAiAssistantValidationBundle
 import com.jetbrains.edu.assistant.validation.processor.processValidationHintForItsType
@@ -42,7 +43,7 @@ class AutoHintValidationAction : ValidationAction<ValidationOfHintsDataframeReco
 
   override fun MutableList<ValidationOfHintsDataframeRecord>.convertToDataFrame() = toDataFrame()
 
-  override suspend fun buildRecords(task: EduTask, lesson: Lesson): List<ValidationOfHintsDataframeRecord> {
+  override suspend fun buildRecords(task: EduTask, lesson: Lesson, progressIndicator: ProgressIndicator): List<ValidationOfHintsDataframeRecord> {
     val taskProcessor = TaskProcessor(task)
     val assistant = TaskBasedAssistant(taskProcessor)
     val project = task.project ?: error("Cannot get project")
