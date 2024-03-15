@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.UserAgreementState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.awt.event.ItemEvent
 import javax.swing.JComponent
 
 class MarketplaceOptions : OAuthLoginOptions<MarketplaceAccount>() {
@@ -41,6 +42,13 @@ class MarketplaceOptions : OAuthLoginOptions<MarketplaceAccount>() {
 
   private val userAgreementCheckBox = JBCheckBox(EduCoreBundle.message("marketplace.options.user.agreement.checkbox")).apply {
     updateUserAgreementState()
+    addItemListener { e ->
+      val isSelected = e.stateChange == ItemEvent.SELECTED
+      shareMySolutionsCheckBox.isEnabled = isSelected
+      if (!isSelected) {
+        shareMySolutionsCheckBox.isSelected = false
+      }
+    }
   }
 
   private fun JBCheckBox.updateUserAgreementState() {
