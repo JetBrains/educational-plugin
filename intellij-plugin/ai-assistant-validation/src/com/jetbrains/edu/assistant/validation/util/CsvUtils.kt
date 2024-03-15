@@ -12,7 +12,7 @@ data class StepsDataframeRecord(
     taskName: String,
     taskDescription: String,
     error: Throwable
-  ): this(taskId, taskName, taskDescription, null, "Error while generating steps: ${error.message}")
+  ) : this(taskId, taskName, taskDescription, null, "Error while generating steps: ${error.message}")
 }
 
 data class CodeHintDataframeRecord(
@@ -90,3 +90,41 @@ data class ValidationOfHintsDataframeRecord(
   val kotlinStyle: String = "",
   val length: String = ""
 )
+
+
+data class MultipleCodeHintDataframeRecord(
+  val hintIndex: Int,
+  val taskId: Int,
+  val taskName: String,
+  val taskDescription: String,
+  val taskAnalysisPrompt: String?,
+  val steps: String?,
+  val codeHintPrompt: String?,
+  val userCode: String?,
+  val generatedCode: String?,
+  val numberOfIssues: Int?,
+  val issues: String?,
+  val testStatus: String?,
+) {
+  constructor(
+    hintIndex: Int,
+    taskId: Int,
+    taskName: String,
+    taskDescription: String,
+    userCode: String,
+    error: Throwable
+  ) : this(
+    hintIndex,
+    taskId,
+    taskName,
+    taskDescription,
+    null,
+    null,
+    null,
+    userCode,
+    "Error while generating hint: ${error.message}",
+    null,
+    null,
+    null,
+  )
+}

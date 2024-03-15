@@ -8,6 +8,10 @@
             class="com.jetbrains.edu.assistant.validation.actions.next.step.hint.CodeHintValidationAction">
       <add-to-group group-id="ToolsMenu"/>
     </action>
+    <action id="Validation.MultipleCodeHintValidation"
+            class="com.jetbrains.edu.assistant.validation.actions.next.step.hint.MultipleCodeHintValidationAction">
+      <add-to-group group-id="ToolsMenu"/>
+    </action>
     <action id="Validation.AutoStepsValidation"
             class="com.jetbrains.edu.assistant.validation.actions.solution.steps.AutoStepsValidationAction">
       <add-to-group group-id="ToolsMenu"/>

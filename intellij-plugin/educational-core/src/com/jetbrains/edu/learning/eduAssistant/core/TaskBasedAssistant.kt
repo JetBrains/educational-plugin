@@ -75,6 +75,13 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
     return Regex("""(?m)^\d+\.""").replace(responseWithoutNonCodeSteps) { "${index++}." }
   }
 
+  fun parseSteps(input: String): List<String> {
+    val regex = Regex("i\\).*?(?=\\ni\\)|$)", RegexOption.DOT_MATCHES_ALL)
+    return regex.findAll(input)
+      .map { it.value.trim() }
+      .toList()
+  }
+
   override suspend fun getHint(task: Task, state: EduState, userCode: String?): AssistantResponse {
     logger.info {
       """Next step hint request
