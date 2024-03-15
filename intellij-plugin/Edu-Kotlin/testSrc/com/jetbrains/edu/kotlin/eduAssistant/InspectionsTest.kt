@@ -1,6 +1,9 @@
 package com.jetbrains.edu.kotlin.eduAssistant
 
-import com.intellij.openapi.application.ApplicationInfo
+import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.codeStyle.CodeStyleManager
 import com.jetbrains.edu.jvm.slow.checker.JdkCheckerTestBase
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.eduAssistant.inspection.applyInspections
@@ -288,29 +291,16 @@ class InspectionsTest : JdkCheckerTestBase() {
         return result
       }
     """.trimIndent()
-    val version = ApplicationInfo.getInstance().fullVersion
-    val expected = if (version >= "2024.1") { // Since version 2024.1, the formatting when executing a LoopToCallChain inspection is different.
-      """
+    val expected = """
       fun foo(list: List<String>): List<Int> {
-        val result = ArrayList<Int>()
+          val result = ArrayList<Int>()
           list
               .filter { it.length > 0 }
               .forEach { result.add(it.hashCode()) }
-        return result
+          return result
       }
     """.trimIndent()
-    } else {
-      """
-      fun foo(list: List<String>): List<Int> {
-        val result = ArrayList<Int>()
-          list
-                  .filter { it.length > 0 }
-                  .forEach { result.add(it.hashCode()) }
-        return result
-      }
-      """.trimIndent()
-    }
-    assertEquals(expected, applyInspections(code, project, language))
+    assertEquals(expected.reformatCode(), applyInspections(code, project, language).reformatCode())
   }
 
   fun testMayBeConstantInspection() {
@@ -547,6 +537,14 @@ class InspectionsTest : JdkCheckerTestBase() {
       }
     """.trimIndent()
     assertEquals(expected, applyInspections(code, project, language))
+  }
+
+  private fun String.reformatCode(): String {
+    val psi = runReadAction { PsiFileFactory.getInstance(project).createFileFromText("file", language, this) }
+    WriteCommandAction.runWriteCommandAction(project) {
+      CodeStyleManager.getInstance(project).reformat(psi)
+    }
+    return runReadAction { psi.text }
   }
 
   override fun createCourse(): Course = kotlinCourse

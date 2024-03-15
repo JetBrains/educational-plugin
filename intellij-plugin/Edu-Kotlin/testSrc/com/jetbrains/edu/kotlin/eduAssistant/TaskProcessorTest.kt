@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.eduAssistant.context.function.signatures.Funct
 import com.jetbrains.edu.learning.eduAssistant.context.function.signatures.createPsiFileForSolution
 import com.jetbrains.edu.learning.eduAssistant.core.TaskBasedAssistant
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
+import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.findTask
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import kotlin.reflect.full.memberFunctions
@@ -101,7 +102,8 @@ class TaskProcessorTest : JdkCheckerTestBase() {
             println("Hello!")
         }
       """.trimIndent()
-    assertEquals(expected, taskProcessor.getSubmissionTextRepresentation())
+    val state = project.eduState ?: error("Edu state was not found")
+    assertEquals(expected, taskProcessor.getSubmissionTextRepresentation(state))
     runWriteAction {
       val taskFile = task.taskFiles["src/main/kotlin/Main.kt"]
       val document = taskFile?.getDocument(project) ?: error("Document was not found")
@@ -129,7 +131,7 @@ class TaskProcessorTest : JdkCheckerTestBase() {
           }
         """.trimIndent()
       )
-      assertEquals(expected2.joinToString(separator = System.lineSeparator()), taskProcessor.getSubmissionTextRepresentation())
+      assertEquals(expected2.joinToString(separator = System.lineSeparator()), taskProcessor.getSubmissionTextRepresentation(state))
     }
   }
 

@@ -374,6 +374,12 @@ tasks {
       }
       jvmArgs("-Dvalidation.output.path=$outputPath")
     }
+    if (hasProp("pathToSolutionsForValidation")) {
+      val pathToSolutions = prop("pathToSolutionsForValidation").let {
+        rootProject.projectDir.toPath() / it
+      }
+      jvmArgs("-Dvalidation.solution.path=$pathToSolutions")
+    }
 
     // Uncomment to show localized messages
     // jvmArgs("-Didea.l10n=true")

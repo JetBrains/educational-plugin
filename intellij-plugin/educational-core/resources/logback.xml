@@ -7,9 +7,31 @@
     </encoder>
   </appender>
 
+  <appender name="CSV_FILE_TASK_ANALYSIS" class="ch.qos.logback.core.FileAppender">
+    <file>${edu.log.dir:-.}/taskAnalysisTiming.csv</file>
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <pattern>%date{HH:mm:ss.SSS},%msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="CSV_FILE_HINT" class="ch.qos.logback.core.FileAppender">
+    <file>${edu.log.dir:-.}/hintTiming.csv</file>
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <pattern>%date{HH:mm:ss.SSS},%msg%n</pattern>
+    </encoder>
+  </appender>
+
   <root level="OFF"/>
 
   <logger name="EduAssistantLogger" level="ALL">
     <appender-ref ref="FILE" />
+  </logger>
+
+  <logger name="TaskAnalysisTimingLogger" level="ALL">
+    <appender-ref ref="CSV_FILE_TASK_ANALYSIS" />
+  </logger>
+
+  <logger name="HintTimingLogger" level="ALL">
+    <appender-ref ref="CSV_FILE_HINT" />
   </logger>
 </configuration>

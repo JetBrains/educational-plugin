@@ -6,6 +6,7 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiManager
+import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -18,7 +19,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.eduAssistant.context.StringExtractor
 import com.jetbrains.edu.learning.eduAssistant.context.differ.getChangedContent
 import com.jetbrains.edu.learning.eduAssistant.context.function.signatures.*
-import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.getTextFromTaskTextFile
 import org.jsoup.Jsoup
 
@@ -62,10 +62,8 @@ class TaskProcessor(val task: Task) {
     return tasks.subList(0, tasks.indexOf(task)).filterIsInstance<TheoryTask>().joinToString(System.lineSeparator()) { it.presentableName }
   }
 
-  fun getSubmissionTextRepresentation(): String? {
-    val project = task.project ?: return null
-    val taskFile = project.eduState?.taskFile ?: return null
-    return runReadAction { getChangedContent(task, taskFile, project) }
+  fun getSubmissionTextRepresentation(state: EduState) = runReadAction {
+    getChangedContent(task, state.taskFile, state.project)
   }
 
   fun getFunctionsFromTask(): List<FunctionSignature>? {
@@ -111,10 +109,7 @@ class TaskProcessor(val task: Task) {
   }
 
   fun getShortFunctionSignatureIfRecommended(code: String, project: Project, language: Language): FunctionSignature? {
-    val psiFile = runReadAction { code.createPsiFileForSolution(project, language) }
-    val functionSignatures = runReadAction {
-      FunctionSignaturesProvider.getFunctionSignatures(psiFile, SignatureSource.GENERATED_SOLUTION, language)
-    }
+    val functionSignatures = getFunctionSignaturesFromGeneratedCode(code, project, language)
     if (functionSignatures.size == 1) {
       val signature = functionSignatures.first()
       val functionsSignaturesFromSolution = task.authorSolutionContext?.functionSignatures?.filter {
