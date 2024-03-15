@@ -34,17 +34,37 @@ class MarketplaceOptions : OAuthLoginOptions<MarketplaceAccount>() {
     return !RemoteEnvHelper.isRemoteDevServer()
   }
 
-  private val shareMySolutionsCheckBox = JBCheckBox(EduCoreBundle.message("marketplace.options.solutions.sharing.checkbox")).apply {
-    val sharingPreference = MarketplaceSettings.INSTANCE.solutionsSharing
-    isSelected = sharingPreference ?: false
-    isEnabled = sharingPreference != null && MarketplaceSettings.isJBALoggedIn()
+  private val shareMySolutionsCheckBox = SolutionSharingCheckBox(EduCoreBundle.message("marketplace.options.solutions.sharing.checkbox"))
+
+  private class SolutionSharingCheckBox(text: String) : JBCheckBox(text) {
+
+    init {
+      update()
+    }
+
+    fun update() {
+      val settings = MarketplaceSettings.INSTANCE
+      val solutionSharing = settings.solutionsSharing
+      solutionSharing?.let {
+        updatePresentation(it)
+      } ?: settings.updateSolutionSharingFromRemote { sharingPreference ->
+        withContext(Dispatchers.EDT + ModalityState.any().asContextElement()) {
+          updatePresentation(sharingPreference)
+        }
+      }
+    }
+
+    private fun updatePresentation(sharingPreference: Boolean?) {
+      isSelected = sharingPreference ?: false
+      isEnabled = sharingPreference != null && MarketplaceSettings.isJBALoggedIn()
+    }
   }
 
   private val userAgreementCheckBox = JBCheckBox(EduCoreBundle.message("marketplace.options.user.agreement.checkbox")).apply {
     updateUserAgreementState()
     addItemListener { e ->
       val isSelected = e.stateChange == ItemEvent.SELECTED
-      shareMySolutionsCheckBox.isEnabled = isSelected
+      shareMySolutionsCheckBox.isEnabled = isSelected && isEnabled
       if (!isSelected) {
         shareMySolutionsCheckBox.isSelected = false
       }
@@ -101,6 +121,7 @@ class MarketplaceOptions : OAuthLoginOptions<MarketplaceAccount>() {
     openProjects.forEach { if (!it.isDisposed && it.course is EduCourse) SubmissionsManager.getInstance(it).prepareSubmissionsContentWhenLoggedIn() }
     statisticsCollectionAllowedCheckBox.updateStatisticsCollectionState()
     userAgreementCheckBox.updateUserAgreementState()
+    shareMySolutionsCheckBox.update()
   }
 
   override fun getAdditionalComponents(): List<JComponent> =

@@ -17,7 +17,6 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.submissions.UserAgreementState
-import com.jetbrains.edu.learning.submissions.isSolutionSharingAllowed
 import com.jetbrains.edu.learning.taskToolWindow.ui.SolutionSharingInlineBanners
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -58,12 +57,22 @@ class MarketplaceSettings(private val scope: CoroutineScope) {
         val remoteStatisticsState = submissionsConnector.getUserStatisticsAllowedState()
         statisticsCollectionState = remoteStatisticsState
 
-        if (!remoteAgreementState.isSolutionSharingAllowed()) return@launch
-
-        val sharingPreference = submissionsConnector.getSharingPreference()
-        solutionsSharing = sharingPreference.toBoolean()
+        setSolutionSharing(submissionsConnector)
       }
     }
+  }
+
+  fun updateSolutionSharingFromRemote(afterUpdate: suspend (sharingPreference: Boolean?) -> Unit = {}) {
+    scope.launch(Dispatchers.IO) {
+      if (isJBALoggedIn() && solutionsSharing == null) {
+        setSolutionSharing(MarketplaceSubmissionsConnector.getInstance())
+      }
+      afterUpdate(solutionsSharing)
+    }
+  }
+
+  private suspend fun setSolutionSharing(submissionsConnector: MarketplaceSubmissionsConnector) {
+    solutionsSharing = submissionsConnector.getSharingPreference().toBoolean()
   }
 
   fun getMarketplaceAccount(): MarketplaceAccount? {
