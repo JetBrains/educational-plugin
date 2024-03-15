@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showS
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.getJBAUserInfo
+import com.jetbrains.edu.learning.marketplace.isMarketplaceStudentCourse
 import com.jetbrains.edu.learning.marketplace.toBoolean
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.onError
@@ -97,7 +98,7 @@ class MarketplaceSettings(private val scope: CoroutineScope) {
       }
 
       solutionsSharing = state
-      if (state) {
+      if (state && project?.isMarketplaceStudentCourse() == true) {
         SolutionSharingInlineBanners.showSuccessSolutionSharingEnabling(project)
       }
       EduCounterUsageCollector.solutionSharingState(state)

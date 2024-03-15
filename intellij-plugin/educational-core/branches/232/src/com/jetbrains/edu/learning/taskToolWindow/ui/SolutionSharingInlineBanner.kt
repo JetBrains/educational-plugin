@@ -36,16 +36,12 @@ object SolutionSharingInlineBanners {
     SolutionSharingPromptCounter.update()
   }
 
-  fun showSuccessSolutionSharingEnabling(project: Project?) {
-    if (SolutionSharingPromptCounter.isNeverPrompted()) return
-
-    Notification(
-      MarketplaceNotificationUtils.JETBRAINS_ACADEMY_GROUP_ID,
-      EduCoreBundle.message("marketplace.solutions.sharing.inline.banner.prompt.description"),
-      EduCoreBundle.message("marketplace.solutions.sharing.inline.banner.success.description"),
-      NotificationType.INFORMATION
-    ).notify(project)
-  }
+  fun showSuccessSolutionSharingEnabling(project: Project) = Notification(
+    MarketplaceNotificationUtils.JETBRAINS_ACADEMY_GROUP_ID,
+    EduCoreBundle.message("marketplace.solutions.sharing.inline.banner.prompt.description"),
+    EduCoreBundle.message("marketplace.solutions.sharing.inline.banner.success.description"),
+    NotificationType.INFORMATION
+  ).notify(project)
 
   @Suppress("Unused_Parameter")
   fun showFailedToEnableSolutionSharing(project: Project?) {

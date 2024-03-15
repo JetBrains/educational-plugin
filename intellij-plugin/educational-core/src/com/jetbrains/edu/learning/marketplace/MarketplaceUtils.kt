@@ -7,6 +7,7 @@ import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.intellij.ui.EditorNotifications
 import com.intellij.ui.JBAccountInfoService
+import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.authUtils.ConnectorUtils
 import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.course
@@ -133,5 +134,7 @@ fun markMarketplaceTheoryTaskAsCompleted(project: Project, task: TheoryTask) {
 }
 
 fun Project.isMarketplaceCourse(): Boolean = course?.isMarketplace == true
+
+fun Project.isMarketplaceStudentCourse(): Boolean = isMarketplaceCourse() && isStudentProject()
 
 fun SolutionSharingPreference?.toBoolean(): Boolean = this == SolutionSharingPreference.ALWAYS
