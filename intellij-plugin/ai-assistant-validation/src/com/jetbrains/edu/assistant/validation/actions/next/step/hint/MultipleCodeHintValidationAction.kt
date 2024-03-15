@@ -1,17 +1,18 @@
 package com.jetbrains.edu.assistant.validation.actions.next.step.hint
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.psi.PsiFileFactory
 import com.jetbrains.edu.assistant.validation.actions.ValidationAction
 import com.jetbrains.edu.assistant.validation.messages.EduAndroidAiAssistantValidationBundle
 import com.jetbrains.edu.assistant.validation.util.MultipleCodeHintDataframeRecord
-import com.jetbrains.edu.kotlin.checker.KtTaskCheckerProvider
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getText
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.courseFormat.ext.project
@@ -36,17 +37,17 @@ class MultipleCodeHintValidationAction : ValidationAction<MultipleCodeHintDatafr
     setUpSpinnerPanel(name)
   }
 
-  override suspend fun buildRecords(task: EduTask, lesson: Lesson): List<MultipleCodeHintDataframeRecord> {
+  override suspend fun buildRecords(task: EduTask, lesson: Lesson, progressIndicator: ProgressIndicator): List<MultipleCodeHintDataframeRecord> {
     return getCodeFromTaskFiles(task, lesson).map {
       runBlockingCancellable {
-        buildCodeHintRecords(task, it)
+        buildCodeHintRecords(task, it, progressIndicator)
       }
     }.flatten()
   }
 
   override fun MutableList<MultipleCodeHintDataframeRecord>.convertToDataFrame() = toDataFrame()
 
-  private suspend fun buildCodeHintRecords(task: EduTask, userCode: String): List<MultipleCodeHintDataframeRecord> {
+  private suspend fun buildCodeHintRecords(task: EduTask, userCode: String, progressIndicator: ProgressIndicator): List<MultipleCodeHintDataframeRecord> {
     val taskProcessor = TaskProcessor(task)
     val assistant = TaskBasedAssistant(taskProcessor)
     val language = task.course.languageById ?: error("Language could not be determined")
@@ -73,9 +74,11 @@ class MultipleCodeHintValidationAction : ValidationAction<MultipleCodeHintDatafr
         val inspections = InspectionProvider.getInspections(language)
         val issues = psiFile.getInspectionsWithIssues(inspections).map { it.id }
 
-        val taskChecker = KtTaskCheckerProvider().getEduTaskChecker(task, project)
-        val indicator = ProgressManager.getInstance().progressIndicator
-        taskChecker.check(indicator)
+        val checker = task.course.configurator?.taskCheckerProvider?.getTaskChecker(task, project)
+                      ?: error("Can not find checker for given task")
+
+        checker.check(progressIndicator)
+
         val testResults = task.status
 
         records.add(

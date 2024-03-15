@@ -1,5 +1,6 @@
 package com.jetbrains.edu.assistant.validation.actions.next.step.hint
 
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.psi.PsiFileFactory
 import com.jetbrains.edu.assistant.validation.actions.ValidationAction
@@ -44,7 +45,7 @@ class CodeHintValidationAction : ValidationAction<CodeHintDataframeRecord>() {
     setUpSpinnerPanel(name)
   }
 
-  override suspend fun buildRecords(task: EduTask, lesson: Lesson): List<CodeHintDataframeRecord> {
+  override suspend fun buildRecords(task: EduTask, lesson: Lesson, progressIndicator: ProgressIndicator): List<CodeHintDataframeRecord> {
     return getCodeFromTaskFiles(task, lesson).map {
       runBlockingCancellable {
         buildCodeHintRecord(task, it)

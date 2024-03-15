@@ -1,5 +1,6 @@
 package com.jetbrains.edu.assistant.validation.actions.solution.steps
 
+import com.intellij.openapi.progress.ProgressIndicator
 import com.jetbrains.edu.assistant.validation.actions.ValidationAction
 import com.jetbrains.edu.assistant.validation.messages.EduAndroidAiAssistantValidationBundle
 import com.jetbrains.edu.assistant.validation.util.StepsDataframeRecord
@@ -34,7 +35,7 @@ class StepsValidationAction : ValidationAction<StepsDataframeRecord>() {
     setUpSpinnerPanel(name)
   }
 
-  override suspend fun buildRecords(task: EduTask, lesson: Lesson): List<StepsDataframeRecord> {
+  override suspend fun buildRecords(task: EduTask, lesson: Lesson, progressIndicator: ProgressIndicator): List<StepsDataframeRecord> {
     val taskProcessor = TaskProcessor(task)
     val assistant = TaskBasedAssistant(taskProcessor)
 

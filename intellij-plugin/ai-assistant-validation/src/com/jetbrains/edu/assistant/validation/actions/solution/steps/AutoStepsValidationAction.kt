@@ -1,6 +1,7 @@
 package com.jetbrains.edu.assistant.validation.actions.solution.steps
 
 import com.google.gson.Gson
+import com.intellij.openapi.progress.ProgressIndicator
 import com.jetbrains.edu.assistant.validation.actions.ValidationAction
 import com.jetbrains.edu.assistant.validation.messages.EduAndroidAiAssistantValidationBundle
 import com.jetbrains.edu.assistant.validation.processor.processValidationSteps
@@ -38,7 +39,7 @@ class AutoStepsValidationAction : ValidationAction<ValidationOfStepsDataframeRec
     setUpSpinnerPanel(name)
   }
 
-  override suspend fun buildRecords(task: EduTask, lesson: Lesson): List<ValidationOfStepsDataframeRecord> {
+  override suspend fun buildRecords(task: EduTask, lesson: Lesson, progressIndicator: ProgressIndicator): List<ValidationOfStepsDataframeRecord> {
     val project = task.project ?: error("Cannot get project")
     val authorSolution = getAuthorSolution(task, project)
     val taskProcessor = TaskProcessor(task)

@@ -61,7 +61,7 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
 
   override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
-  protected abstract suspend fun buildRecords(task: EduTask, lesson: Lesson): List<T>
+  protected abstract suspend fun buildRecords(task: EduTask, lesson: Lesson, progressIndicator: ProgressIndicator): List<T>
 
   protected abstract fun MutableList<T>.convertToDataFrame(): DataFrame<T>
 
@@ -113,7 +113,7 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
                 propagateAuthorSolution(it, task, project)
               }
               runBlockingCancellable {
-                records.addAll(buildRecords(task, lesson))
+                records.addAll(buildRecords(task, lesson, indicator))
               }
             }
 
