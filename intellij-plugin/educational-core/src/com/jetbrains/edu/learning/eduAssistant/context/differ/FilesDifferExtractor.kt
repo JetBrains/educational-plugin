@@ -19,7 +19,11 @@ fun getChangedContent(task: Task, taskFile: TaskFile, project: Project): String?
   if (!isFileUnchanged(taskFile, project) && fileContentFromPreviousStep != null) {
     val beforePsiFile = PsiFileFactory.getInstance(project).createFileFromText("fileFromPreviousStep", language, fileContentFromPreviousStep)
     val afterPsiFile = PsiManager.getInstance(project).findFile(virtualFile) ?: return null
-    return FilesDiffer.findDifferentMethods(beforePsiFile, afterPsiFile, taskFile, language)
+    val changedMethods = FilesDiffer.findDifferentMethods(beforePsiFile, afterPsiFile, taskFile, language)
+    if (changedMethods.isNullOrBlank()) {
+      return currentFileContent
+    }
+    return changedMethods
   } else {
     return currentFileContent
   }

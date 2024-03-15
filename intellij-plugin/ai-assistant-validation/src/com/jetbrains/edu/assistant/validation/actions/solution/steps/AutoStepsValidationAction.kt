@@ -32,6 +32,7 @@ class AutoStepsValidationAction : ValidationAction<ValidationOfStepsDataframeRec
 
   override val outputFilePrefixName: String = "generatedValidationOfSteps"
   override val name: String = EduAndroidAiAssistantValidationBundle.message("action.auto.step.validation.action.name")
+  override val isNavigationRequired: Boolean = false
 
   init {
     setUpSpinnerPanel(name)

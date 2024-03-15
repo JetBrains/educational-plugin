@@ -62,3 +62,31 @@ data class ValidationOfStepsDataframeRecord(
   val granularity: String = "",
   val kotlinStyle: String = ""
 )
+
+data class StudentSolutionRecord(
+  val id: Int,
+  val lessonName: String,
+  val taskName: String,
+  val code: String
+)
+
+data class ValidationOfHintsDataframeRecord(
+  var taskId: Int = 0,
+  var taskName: String = "",
+  var taskDescription: String = "",
+  var solutionSteps: String = "",
+  var userCode: String = "",
+  var nextStepTextHint: String = "",
+  var nextStepCodeHint: String = "",
+  var feedbackType : String = "",
+  val information: String = "",
+  val levelOfDetail: String = "",
+  val personalized: String = "",
+  val intersection: String = "",
+  val appropriate: String = "",
+  val specific: String = "",
+  val misleadingInformation: String = "",
+  val codeQuality: String = "",
+  val kotlinStyle: String = "",
+  val length: String = ""
+)

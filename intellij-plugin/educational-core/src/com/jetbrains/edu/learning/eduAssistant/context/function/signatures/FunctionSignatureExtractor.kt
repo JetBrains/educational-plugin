@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.eduAssistant.context.function.signatures
 
 import com.intellij.lang.Language
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
@@ -40,4 +41,9 @@ fun getFunctionSignatures(task: Task, file: TaskFile, project: Project): List<Fu
     psiFile, if (file.isVisible) SignatureSource.VISIBLE_FILE else SignatureSource.HIDDEN_FILE, language
   )
   return functionSignatures
+}
+
+fun getFunctionSignaturesFromGeneratedCode(code: String, project: Project, language: Language) = runReadAction {
+  val psiFile = code.createPsiFileForSolution(project, language)
+  FunctionSignaturesProvider.getFunctionSignatures(psiFile, SignatureSource.GENERATED_SOLUTION, language)
 }

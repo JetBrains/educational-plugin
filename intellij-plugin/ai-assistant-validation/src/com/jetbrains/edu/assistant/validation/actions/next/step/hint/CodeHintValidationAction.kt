@@ -38,6 +38,7 @@ class CodeHintValidationAction : ValidationAction<CodeHintDataframeRecord>() {
 
   override val outputFilePrefixName: String = "codeHints"
   override val name: String = EduAndroidAiAssistantValidationBundle.message("action.code.hint.validation.action.name")
+  override val isNavigationRequired: Boolean = true
 
   init {
     setUpSpinnerPanel(name)
