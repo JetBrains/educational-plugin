@@ -826,26 +826,8 @@ project("ai-assistant-validation") {
 
   dependencies {
     implementation(project(":intellij-plugin:educational-core"))
-    implementation(project(":intellij-plugin:jvm-core"))
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-    testImplementation(project(":intellij-plugin:jvm-core", "testOutput"))
-    implementation(project(":intellij-plugin:Edu-Kotlin"))
-    testImplementation(project(":intellij-plugin:Edu-Kotlin", "testOutput"))
-  }
-}
-
-project("ai-assistant-validation") {
-  intellij {
-    if (!isJvmCenteredIDE) {
-      version = ideaVersion
-    }
-    plugins = kotlinPlugins
-  }
-
-  dependencies {
-    implementation(project(":intellij-plugin:educational-core"))
     implementation(project(":intellij-plugin:jvm-core"))
-    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
     testImplementation(project(":intellij-plugin:jvm-core", "testOutput"))
     implementation(project(":intellij-plugin:Edu-Kotlin"))
     testImplementation(project(":intellij-plugin:Edu-Kotlin", "testOutput"))

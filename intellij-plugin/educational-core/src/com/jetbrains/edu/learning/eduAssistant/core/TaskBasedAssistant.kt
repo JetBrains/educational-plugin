@@ -76,7 +76,7 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
   }
 
   fun parseSteps(input: String): List<String> {
-    val regex = Regex("i\\).*?(?=\\ni\\)|$)", RegexOption.DOT_MATCHES_ALL)
+    val regex = Regex("""^(\d+)\. (.*?)\n""", RegexOption.DOT_MATCHES_ALL)
     return regex.findAll(input)
       .map { it.value.trim() }
       .toList()

@@ -1,5 +1,6 @@
 package com.jetbrains.edu.assistant.validation.actions.next.step.hint
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.psi.PsiFileFactory
@@ -51,7 +52,9 @@ class MultipleCodeHintValidationAction : ValidationAction<MultipleCodeHintDatafr
     val language = task.course.languageById ?: error("Language could not be determined")
     val project = task.project ?: error("Cannot get project")
 
-    NavigationUtils.navigateToTask(project, task)
+    ApplicationManager.getApplication().executeOnPooledThread {
+      NavigationUtils.navigateToTask(project, task)
+    }
     val eduState = project.eduState ?: error("Cannot get eduState for project ${project.name}")
     val records = mutableListOf<MultipleCodeHintDataframeRecord>()
 
