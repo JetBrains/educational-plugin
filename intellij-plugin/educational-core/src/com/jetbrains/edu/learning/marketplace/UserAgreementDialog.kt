@@ -6,8 +6,8 @@ import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.dsl.builder.AlignY
-import com.intellij.ui.dsl.builder.RightGap
 import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.gridLayout.UnscaledGaps
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.JBUI
@@ -25,6 +25,7 @@ import javax.swing.JComponent
 import javax.swing.JPanel
 
 class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
+  private val leftGap = UnscaledGaps(0, 3, 0, 0)
 
   init {
     setOKButtonText(EduCoreBundle.message("user.agreement.dialog.agree.button"))
@@ -55,7 +56,7 @@ class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
           userAgreementSelected = it.isSelected
           isOKActionEnabled = isAnyCheckBoxSelected()
         }
-        .gap(RightGap.SMALL)
+        .customize(UnscaledGaps.EMPTY)
       cell(createCheckBoxTextPanel())
     }
     row {
@@ -72,11 +73,12 @@ class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
     row {
       link(EduCoreBundle.message("user.agreement.dialog.checkbox.agreement")) { EduBrowser.getInstance().browse(USER_AGREEMENT_URL) }
         .resizableColumn()
-        .gap(RightGap.SMALL)
+        .customize(leftGap)
       label(EduCoreBundle.message("user.agreement.dialog.checkbox.and"))
-        .gap(RightGap.SMALL)
+        .customize(leftGap)
       link(EduCoreBundle.message("user.agreement.dialog.checkbox.privacy.policy")) { EduBrowser.getInstance().browse(PRIVACY_POLICY_URL) }
         .resizableColumn()
+        .customize(leftGap)
     }
   }
 
