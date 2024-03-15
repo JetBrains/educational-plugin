@@ -5,7 +5,6 @@ import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.InlineBanner
 import com.intellij.util.ui.HTMLEditorKitBuilder
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils
 import com.jetbrains.edu.learning.marketplace.SolutionSharingPromptCounter
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
@@ -16,10 +15,6 @@ import javax.swing.JEditorPane
 object SolutionSharingInlineBanners {
 
   fun promptToEnableSolutionSharing(project: Project) {
-    if (!project.isStudentProject()) {
-      error("We can't prompt to enable Solution Sharing in non-student project")
-    }
-
     val inlineBanner = SolutionSharingInlineBanner(EditorNotificationPanel.Status.Info).apply {
       setMessage(EduCoreBundle.message("marketplace.solutions.sharing.inline.banner.prompt.action.text"))
       addAction(EduCoreBundle.message("marketplace.solutions.sharing.inline.banner.prompt.description")) {
@@ -36,11 +31,9 @@ object SolutionSharingInlineBanners {
     SolutionSharingPromptCounter.update()
   }
 
-  fun showSuccessSolutionSharingEnabling(project: Project?) {
-    if (project?.isStudentProject() != true || SolutionSharingPromptCounter.isNeverPrompted()) return
-
+  fun showSuccessSolutionSharingEnabling(project: Project) {
     val inlineBanner = SolutionSharingInlineBanner(EditorNotificationPanel.Status.Success).apply {
-      // This is a local fix, which will be also available in the platform soon
+      // This is a local fix, which will also be available on the platform soon.
       val editorPane = UIUtil.findComponentOfType(this, JEditorPane::class.java)
       editorPane?.editorKit = HTMLEditorKitBuilder().build()
       setMessage(EduCoreBundle.message("marketplace.solutions.sharing.inline.banner.success.description"))
@@ -49,8 +42,9 @@ object SolutionSharingInlineBanners {
   }
 
   fun showFailedToEnableSolutionSharing(project: Project?) {
-    if (project?.isStudentProject() != true) {
-      return MarketplaceNotificationUtils.showFailedToChangeSharingPreferenceNotification()
+    if (project == null) {
+      MarketplaceNotificationUtils.showFailedToChangeSharingPreferenceNotification()
+      return
     }
 
     val inlineBanner = SolutionSharingInlineBanner(EditorNotificationPanel.Status.Error).apply {

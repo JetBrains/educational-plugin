@@ -46,7 +46,7 @@ class MarketplaceCheckListener: PostSolutionCheckListener() {
       }
 
       project.invokeLater {
-        if (SolutionSharingPromptCounter.shouldPrompt()) {
+        if (SolutionSharingPromptCounter.shouldPrompt() && project.isStudentProject()) {
           SolutionSharingInlineBanners.promptToEnableSolutionSharing(project)
         }
       }

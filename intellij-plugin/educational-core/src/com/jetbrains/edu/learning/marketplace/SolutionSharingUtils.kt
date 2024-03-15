@@ -46,8 +46,6 @@ object SolutionSharingPromptCounter {
     }
   }
 
-  fun isNeverPrompted(): Boolean = promptCount == 0
-
   private fun isDelayPassed(): Boolean {
     val timestamp = propertiesComponent.getLong(PROMPT_SHOWN_AT, 0)
     val current = System.currentTimeMillis()
