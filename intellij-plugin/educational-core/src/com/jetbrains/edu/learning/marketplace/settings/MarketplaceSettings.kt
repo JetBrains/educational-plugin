@@ -56,7 +56,7 @@ class MarketplaceSettings(private val scope: CoroutineScope) {
         val remoteStatisticsState = submissionsConnector.getUserStatisticsAllowedState()
         statisticsCollectionState = remoteStatisticsState
 
-        setSolutionSharing(submissionsConnector)
+        solutionsSharing = submissionsConnector.getSharingPreference().toBoolean()
       }
     }
   }
@@ -64,14 +64,10 @@ class MarketplaceSettings(private val scope: CoroutineScope) {
   fun updateSolutionSharingFromRemote(afterUpdate: suspend (sharingPreference: Boolean?) -> Unit = {}) {
     scope.launch(Dispatchers.IO) {
       if (isJBALoggedIn() && solutionsSharing == null) {
-        setSolutionSharing(MarketplaceSubmissionsConnector.getInstance())
+        solutionsSharing = MarketplaceSubmissionsConnector.getInstance().getSharingPreference().toBoolean()
       }
       afterUpdate(solutionsSharing)
     }
-  }
-
-  private suspend fun setSolutionSharing(submissionsConnector: MarketplaceSubmissionsConnector) {
-    solutionsSharing = submissionsConnector.getSharingPreference().toBoolean()
   }
 
   fun getMarketplaceAccount(): MarketplaceAccount? {
