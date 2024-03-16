@@ -6,7 +6,6 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFileFactory
-import com.intellij.testFramework.utils.editor.commitToPsi
 import com.jetbrains.edu.assistant.validation.actions.ValidationAction
 import com.jetbrains.edu.assistant.validation.messages.EduAndroidAiAssistantValidationBundle
 import com.jetbrains.edu.assistant.validation.util.MultipleCodeHintDataframeRecord
@@ -84,18 +83,16 @@ class SequentialCodeHintValidationAction : ValidationAction<MultipleCodeHintData
     for (hintIndex in 1..maxHintSteps) {
       try {
         val response = assistant.getHint(task, eduState, currentUserCode)
-        if (response.codeHint == null) {
-          error("Code hint is empty")
-        }
+        val codeHint = response.codeHint ?: error("Code hint is empty")
 
-        currentUserCode = taskProcessor.applyCodeHint(response.codeHint!!, eduState.taskFile) ?: error("Can not apply code hint")
+        currentUserCode = taskProcessor.applyCodeHint(codeHint, eduState.taskFile) ?: error("Can not apply code hint")
         writeCodeToTaskFile(eduState.taskFile, project, currentUserCode)
 
         val psiFile = PsiFileFactory.getInstance(project).createFileFromText("file", language, currentUserCode)
         val inspections = InspectionProvider.getInspections(language)
         val issues = psiFile.getInspectionsWithIssues(inspections).map { it.id }
 
-        val checker = task.course.configurator?.taskCheckerProvider?.getTaskChecker(task, project)
+        val checker = project.eduState?.task!!.course.configurator?.taskCheckerProvider?.getTaskChecker(project.eduState?.task!!, project)
                       ?: error("Can not find checker for given task")
         val testResult = checker.check(progressIndicator)
 
@@ -109,7 +106,7 @@ class SequentialCodeHintValidationAction : ValidationAction<MultipleCodeHintData
             steps = task.generatedSolutionSteps,
             codeHintPrompt = response.prompts.getOrDefault("nextStepCodeHintPrompt", ""),
             userCode = userCode,
-            generatedCode = response.codeHint,
+            generatedCode = codeHint,
             numberOfIssues = issues.size,
             issues = issues.joinToString(","),
             testStatus = testResult.status.name
