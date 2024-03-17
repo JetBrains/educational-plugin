@@ -89,14 +89,6 @@ class ApplyCodeAction : DumbAwareActionButton(), CustomComponentAction {
             gotItTooltip.show(jComponent, GotItTooltip.BOTTOM_MIDDLE)
           }
         }
-
-        override fun componentShown(e: ComponentEvent) {
-          gotItTooltip.show(e.component as JComponent, GotItTooltip.BOTTOM_MIDDLE)
-        }
-
-        override fun componentHidden(e: ComponentEvent) {
-          gotItTooltip.hidePopup()
-        }
       })
     }
   }
