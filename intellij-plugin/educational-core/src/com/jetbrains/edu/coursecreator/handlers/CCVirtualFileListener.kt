@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.newvfs.events.*
 import com.intellij.util.ui.update.MergingUpdateQueue
 import com.intellij.util.ui.update.Update
 import com.jetbrains.edu.coursecreator.framework.recalcSyncChangesIconForFileInPrevTask
+import com.jetbrains.edu.coursecreator.framework.recalcSyncChangesIconForFilesInPrevTask
 import com.jetbrains.edu.coursecreator.framework.updateSyncChangesIcon
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
@@ -98,8 +99,10 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
       for (path in toRemove) {
         task.removeTaskFile(path)
       }
+      recalcSyncChangesIconForFilesInPrevTask(project, task, toRemove)
     } else {
       task.removeTaskFile(pathInTask)
+      recalcSyncChangesIconForFileInPrevTask(project, task, pathInTask)
     }
     YamlFormatSynchronizer.saveItem(task)
   }
