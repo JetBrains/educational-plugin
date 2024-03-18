@@ -41,32 +41,32 @@ class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false
     val project = e.project ?: return
-    e.presentation.isEnabledAndVisible = project.isStudentProject() && e.isFileNamesPresented()
+    e.presentation.isEnabledAndVisible = project.isStudentProject() && e.isUserDataPresented()
   }
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     if (!getConfirmationFromDialog(project)) return
 
-    val diffRequestChain = e.getDiffRequestChain() ?: return showApplySubmissionCodeFailedNotification(project)
-    val fileNames = diffRequestChain.getUserData(FILENAMES_KEY) ?: return showApplySubmissionCodeFailedNotification(project)
+    val diffRequestChain = e.getDiffRequestChain() ?: return showApplyCodeFailedNotification(project)
+    val fileNames = diffRequestChain.getUserData(VIRTUAL_FILE_PATH_LIST) ?: return showApplyCodeFailedNotification(project)
 
     try {
       val localDocuments = readLocalDocuments(fileNames)
       check(localDocuments.size == fileNames.size)
-      val submissionsTexts = diffRequestChain.getSubmissionsText(fileNames.size)
+      val submissionsTexts = diffRequestChain.getTexts(fileNames.size)
       val runnableCommand = {
-        localDocuments.writeSubmissionsTexts(submissionsTexts)
+        localDocuments.writeTexts(submissionsTexts)
       }
       CommandProcessor.getInstance().executeCommand(project, runnableCommand, this.templatePresentation.text, ACTION_ID)
     }
     catch (e: Exception) {
-      showApplySubmissionCodeFailedNotification(project)
+      showApplyCodeFailedNotification(project)
       return
     }
 
     project.closeDiffWindow(e)
-    showApplySubmissionCodeSuccessfulNotification(project)
+    showApplyCodeSuccessfulNotification(project)
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
@@ -93,7 +93,7 @@ class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
     }
   }
 
-  private fun AnActionEvent.isFileNamesPresented() = getDiffRequestChain()?.getUserData(FILENAMES_KEY) != null
+  private fun AnActionEvent.isUserDataPresented() = getDiffRequestChain()?.getUserData(VIRTUAL_FILE_PATH_LIST) != null
 
   private fun getConfirmationFromDialog(project: Project): Boolean = when (Messages.showYesNoDialog(
     project,
@@ -121,15 +121,15 @@ class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
     return FileDocumentManager.getInstance().getDocument(file)
   }
 
-  private fun DiffRequestChain.getSubmissionsText(size: Int): List<String> {
+  private fun DiffRequestChain.getTexts(size: Int): List<String> {
     val diffRequestWrappers = List(size) { requests[it] as SimpleDiffRequestChain.DiffRequestProducerWrapper }
     val diffRequests = diffRequestWrappers.map { it.request as SimpleDiffRequest }
     return diffRequests.map { it.contents[1] as DocumentContentBase }.map { it.document.text }
   }
 
-  private fun List<Document>.writeSubmissionsTexts(submissionsTexts: List<String>): Unit = runWriteAction {
-    zip(submissionsTexts).forEach { (document, submissionText) ->
-      document.setText(submissionText)
+  private fun List<Document>.writeTexts(texts: List<String>): Unit = runWriteAction {
+    zip(texts).forEach { (document, text) ->
+      document.setText(text)
     }
   }
 
@@ -140,7 +140,7 @@ class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
   }
 
   @Suppress("DialogTitleCapitalization")
-  private fun showApplySubmissionCodeSuccessfulNotification(project: Project) = Notification(
+  private fun showApplyCodeSuccessfulNotification(project: Project) = Notification(
     MarketplaceNotificationUtils.JETBRAINS_ACADEMY_GROUP_ID,
     EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.success.title"),
     EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.success.text"),
@@ -148,7 +148,7 @@ class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
   ).notify(project)
 
   @Suppress("DialogTitleCapitalization")
-  private fun showApplySubmissionCodeFailedNotification(project: Project) = Notification(
+  private fun showApplyCodeFailedNotification(project: Project) = Notification(
     MarketplaceNotificationUtils.JETBRAINS_ACADEMY_GROUP_ID,
     EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.failed.title"),
     EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.failed.text"),
@@ -156,7 +156,7 @@ class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
   ).notify(project)
 
   companion object {
-    val FILENAMES_KEY: Key<List<String>> = Key.create("fileNames")
+    val VIRTUAL_FILE_PATH_LIST: Key<List<String>> = Key.create("virtualFilePathList")
 
     @NonNls
     const val ACTION_ID: String = "Educational.Student.ApplyCode"
