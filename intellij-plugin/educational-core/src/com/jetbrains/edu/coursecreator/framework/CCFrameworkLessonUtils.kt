@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.impl.visitFrameworkLessons
 import javax.swing.Icon
 
+@Suppress("unused") // will be fixed in next review
 fun getSyncChangesIcon(taskFile: TaskFile): Icon? = when (taskFile.syncChangesIcon) {
   SyncChangesTaskFileState.NONE -> null
   SyncChangesTaskFileState.INFO -> AllIcons.General.Information
