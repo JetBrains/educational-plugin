@@ -167,7 +167,8 @@ class MarketplaceSubmissionsConnector {
   fun loadSolutionFiles(solutionKey: String): List<SolutionFile> {
 
     val solutionsDownloadLink = submissionsService.getSolutionDownloadLink(solutionKey).executeParsingErrors().onError {
-      error("failed to obtain download link for solution key $solutionKey")
+      LOG.warn("Failed to obtain a download link for solution key $solutionKey: $it")
+      return emptyList()
     }.body()?.string() ?: error("Nullable solutionsDownloadLink")
 
     val solutions: String = loadSolutionByLink(solutionsDownloadLink)
