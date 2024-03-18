@@ -13,16 +13,9 @@ class FLRecordStateRenameTest : RenameTestBase() {
   private val recordState: FLRecordState
     get() = FLRecordState.getInstance(project)
 
-  override fun tearDown() {
-    try {
-      recordState.reset()
-    }
-    catch (e: Throwable) {
-      addSuppressedException(e)
-    }
-    finally {
-      super.tearDown()
-    }
+  override fun setUp() {
+    super.setUp()
+    recordState.reset()
   }
 
   fun `test record is not deleted after task rename action`() {
@@ -35,7 +28,6 @@ class FLRecordStateRenameTest : RenameTestBase() {
     doRenameAction(course, "section1/lesson1/task1", "task3")
 
     with(recordState) {
-      println(recordState.state.taskRecords.entries.joinToString { "${it.key} ${it.value}" })
       assertEquals(2, state.taskRecords.size)
       assertNull(getRecord("section1/lesson1/task1"))
       assertEquals(record1, getRecord("section1/lesson1/task3"))
@@ -54,8 +46,6 @@ class FLRecordStateRenameTest : RenameTestBase() {
     doRenameAction(course, "section1/lesson1", "lesson2")
 
     with(recordState) {
-
-      println(recordState.state.taskRecords.entries.joinToString { "${it.key} ${it.value}" })
       assertEquals(2, state.taskRecords.size)
       assertNull(getRecord("section1/lesson1/task1"))
       assertEquals(record1, getRecord("section1/lesson2/task1"))
@@ -76,8 +66,6 @@ class FLRecordStateRenameTest : RenameTestBase() {
     doRenameAction(course, "section1", "section2")
 
     with(recordState) {
-
-      println(recordState.state.taskRecords.entries.joinToString { "${it.key} ${it.value}" })
       assertEquals(2, state.taskRecords.size)
       assertNull(getRecord("section1/lesson1/task1"))
       assertEquals(record1, getRecord("section2/lesson1/task1"))
