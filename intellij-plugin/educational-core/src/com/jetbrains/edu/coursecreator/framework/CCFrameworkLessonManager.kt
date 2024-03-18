@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.SyncChangesTaskFileState
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.framework.impl.FLTaskState
@@ -58,6 +59,7 @@ class CCFrameworkLessonManager(private val project: Project) : Disposable {
       // we return if user canceled propagation
       if (!propagateChanges(tasks[i - 1], tasks[i], baseFilesNames)) {
         showApplyChangesCanceledNotification(project, task.name, tasks[i - 1].name)
+        updateSyncChangesIcons(project, tasks[i - 1])
         return
       }
       // if everything is ok with propagation, then we save the approved changes from the current task into storage
@@ -182,6 +184,14 @@ class CCFrameworkLessonManager(private val project: Project) : Disposable {
     }
 
     task.record = updatedUserChanges.record
+
+    if (updatedUserChanges.state.isNotEmpty()) {
+      for (file in initialCurrentFiles) {
+        val taskFile = task.taskFiles[file] ?: continue
+        taskFile.syncChangesIcon = SyncChangesTaskFileState.NONE
+      }
+    }
+
     return updatedUserChanges
   }
 
