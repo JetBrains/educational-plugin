@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.framework.diff.applyChangesWithMergeDialog
 import com.jetbrains.edu.coursecreator.framework.diff.resolveConflicts
@@ -60,6 +61,7 @@ class CCFrameworkLessonManager(private val project: Project) : Disposable {
       if (!propagateChanges(tasks[i - 1], tasks[i], baseFilesNames)) {
         showApplyChangesCanceledNotification(project, task.name, tasks[i - 1].name)
         updateSyncChangesIcons(project, tasks[i - 1])
+        EditorNotifications.updateAll()
         return
       }
       // if everything is ok with propagation, then we save the approved changes from the current task into storage
@@ -68,6 +70,7 @@ class CCFrameworkLessonManager(private val project: Project) : Disposable {
     // save last task manually
     saveFileStateIntoStorage(tasks.last(), baseFilesNames)
     showApplyChangesSuccessNotification(project, task.name)
+    EditorNotifications.updateAll()
   }
 
   /**
