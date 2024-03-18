@@ -3,9 +3,11 @@ package com.jetbrains.edu.coursecreator.framework
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.LessonContainer
 import com.jetbrains.edu.learning.courseFormat.SyncChangesTaskFileState
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.framework.impl.visitFrameworkLessons
 import javax.swing.Icon
 
 fun getSyncChangesIcon(taskFile: TaskFile): Icon? = when (taskFile.syncChangesIcon) {
@@ -47,6 +49,18 @@ private fun canShowIconSyncChangesIcon(taskFile: TaskFile): Boolean {
 }
 
 fun updateSyncChangesIcons(project: Project, task: Task) = updateSyncChangesIcon(project, task.taskFiles.values.toList())
+
+fun updateSyncChangesIcons(project: Project, lesson: FrameworkLesson) {
+  lesson.visitTasks {
+    updateSyncChangesIcons(project, it)
+  }
+}
+
+fun updateSyncChangesIcons(project: Project, lessonContainer: LessonContainer) {
+  lessonContainer.visitFrameworkLessons {
+    updateSyncChangesIcons(project, it)
+  }
+}
 
 // after deletion of files, framework lesson structure might break,
 // so we need to recalculate icons for a corresponding files from a previous task in case when additional warning icons are added
