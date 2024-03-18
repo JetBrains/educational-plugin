@@ -41,12 +41,15 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.projectView.CCLessonNode
 import com.jetbrains.edu.coursecreator.projectView.CCSectionNode
 import com.jetbrains.edu.coursecreator.projectView.CCTaskNode
+import com.jetbrains.edu.coursecreator.projectView.CCCellRenderer
 import com.jetbrains.edu.learning.CourseSetListener
+import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.projectView.ProgressUtil.createProgressBar
 import org.jetbrains.annotations.NonNls
@@ -81,7 +84,17 @@ class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport
   private fun createCourseViewComponent(): JComponent {
     val component = super.createComponent()
 
-    if (!myProject.isStudentProject()) return component
+    if (!myProject.isStudentProject()) {
+      if (isFeatureEnabled(EduExperimentalFeatures.CC_FL_SYNC_CHANGES)) {
+        val cellRenderer = CCCellRenderer(myProject)
+        tree.cellRenderer = cellRenderer
+
+        val mouseListener = CCCellRenderer.createMouseAdapter(tree, cellRenderer)
+        tree.addMouseListener(mouseListener)
+        tree.addMouseMotionListener(mouseListener)
+      }
+      return component
+    }
     val panel = JPanel(BorderLayout())
     panel.background = UIUtil.getTreeBackground()
 
