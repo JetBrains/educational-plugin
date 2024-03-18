@@ -88,6 +88,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     val task = info.task
     val lesson = task.lesson
     lesson.removeTask(task)
+    recalcSyncChangesIconForFilesInPrevTask(project, task)
     YamlFormatSynchronizer.saveItem(lesson)
   }
 

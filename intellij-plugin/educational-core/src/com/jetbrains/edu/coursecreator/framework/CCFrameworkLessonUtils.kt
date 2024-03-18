@@ -74,6 +74,13 @@ fun recalcSyncChangesIconForFileInPrevTask(project: Project, task: Task, path: S
   recalcSyncChangesIconForFilesInPrevTask(project, task, listOf(path))
 }
 
+// after deletion of a task, framework lesson structure might break/restore,
+// so we need to recalculate icons for task files from a previous task in case when additional warning icon is added/removed
+fun recalcSyncChangesIconForFilesInPrevTask(project: Project, task: Task) {
+  val prevTask = task.lesson.taskList.getOrNull(task.index - 2) ?: return
+  updateSyncChangesIcon(project, prevTask.taskFiles.values.toList())
+}
+
 private fun checkForAbsenceInNextTask(taskFile: TaskFile): Boolean {
   val task = taskFile.task
   val nextTask = task.lesson.taskList.getOrNull(task.index) ?: return false
