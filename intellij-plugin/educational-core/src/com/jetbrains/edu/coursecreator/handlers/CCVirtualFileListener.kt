@@ -12,6 +12,7 @@ import com.intellij.util.ui.update.Update
 import com.jetbrains.edu.coursecreator.framework.recalcSyncChangesIconForFileInPrevTask
 import com.jetbrains.edu.coursecreator.framework.recalcSyncChangesIconForFilesInPrevTask
 import com.jetbrains.edu.coursecreator.framework.updateSyncChangesIcon
+import com.jetbrains.edu.coursecreator.framework.updateSyncChangesIconForNewFile
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -35,6 +36,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     if (file.isTestsFile(project) || file.isTaskRunConfigurationFile(project)) {
       taskFile.isVisible = false
     }
+    updateSyncChangesIconForNewFile(taskFile)
   }
 
   override fun fileDeleted(fileInfo: FileInfo, file: VirtualFile) {

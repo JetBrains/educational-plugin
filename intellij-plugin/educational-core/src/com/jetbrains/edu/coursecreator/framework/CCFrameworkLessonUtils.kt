@@ -81,9 +81,24 @@ fun recalcSyncChangesIconForFilesInPrevTask(project: Project, task: Task) {
   updateSyncChangesIcon(project, prevTask.taskFiles.values.toList())
 }
 
+// new file can either break the framework lesson structure or not
+// either way it should be synced
+fun updateSyncChangesIconForNewFile(taskFile: TaskFile) {
+  val task = taskFile.task
+  val lesson = task.lesson as? FrameworkLesson ?: return
+  if (!canShowIconSyncChangesIcon(taskFile)) return
+  val nextTask = lesson.taskList.getOrNull(task.index) ?: return
+  val correspondingTaskFile = nextTask.getTaskFile(taskFile.name)
+  taskFile.syncChangesIcon = if (correspondingTaskFile == null) {
+    SyncChangesTaskFileState.WARNING
+  }
+  else {
+    SyncChangesTaskFileState.INFO
+  }
+}
+
 private fun checkForAbsenceInNextTask(taskFile: TaskFile): Boolean {
   val task = taskFile.task
   val nextTask = task.lesson.taskList.getOrNull(task.index) ?: return false
   return taskFile.name !in nextTask.taskFiles
 }
-
