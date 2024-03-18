@@ -31,6 +31,13 @@ class TaskFile : EduFile {
   @Transient
   private var _task: Task? = null
 
+  /**
+   * State of a task file in the context of syncing changes, which will be displayed in the project view
+   *
+   * See [SyncChangesTaskFileState]
+   */
+  var syncChangesIcon: SyncChangesTaskFileState = SyncChangesTaskFileState.NONE
+
   var task: Task
     get() = _task ?: error("Task is null for TaskFile $name")
     set(value) {
