@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.framework
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.LessonContainer
 import com.jetbrains.edu.learning.courseFormat.SyncChangesTaskFileState
@@ -18,6 +19,7 @@ fun getSyncChangesIcon(taskFile: TaskFile): Icon? = when (taskFile.syncChangesIc
 
 // Process a batch of taskFiles in a certain task at once to minimize the number of accesses to the storage
 private fun updateSyncChangesIcon(project: Project, taskFiles: List<TaskFile>) {
+  if (!CCUtils.isCourseCreator(project)) return
   val task = taskFiles.firstOrNull()?.task ?: return
   if (task.lesson !is FrameworkLesson) return
 
