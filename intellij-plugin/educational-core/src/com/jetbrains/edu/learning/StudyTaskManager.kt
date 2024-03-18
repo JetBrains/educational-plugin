@@ -51,5 +51,7 @@ class StudyTaskManager(private val project: Project) : DumbAware, Disposable {
       }
       return manager
     }
+
+    fun getLightInstance(project: Project): StudyTaskManager = project.service<StudyTaskManager>()
   }
 }
