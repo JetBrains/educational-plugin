@@ -36,6 +36,14 @@ import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import javax.swing.JComponent
 
+/**
+ * Allows users to replace the code in their editor with the one they're comparing it to in the Diff.
+ * Not enabled in any Diff window by default.
+ * Put a list of paths to VirtualFiles
+ * that is used in the [com.intellij.diff.chains.DiffRequestChain] with the [ApplyCodeAction.Companion.VIRTUAL_FILE_PATH_LIST] key.
+ *
+ * @see [com.jetbrains.edu.learning.actions.CompareWithAnswerAction]
+ */
 class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
 
   override fun update(e: AnActionEvent) {
