@@ -21,11 +21,11 @@ import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.ui.DumbAwareActionButton
 import com.intellij.ui.GotItTooltip
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
@@ -36,9 +36,9 @@ import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import javax.swing.JComponent
 
-class ApplyCodeAction : DumbAwareActionButton(), CustomComponentAction {
+class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
 
-  override fun updateButton(e: AnActionEvent) {
+  override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false
     val project = e.project ?: return
     e.presentation.isEnabledAndVisible = project.isStudentProject() && e.isFileNamesPresented()
