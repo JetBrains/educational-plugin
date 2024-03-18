@@ -9,6 +9,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.events.*
 import com.intellij.util.ui.update.MergingUpdateQueue
 import com.intellij.util.ui.update.Update
+import com.jetbrains.edu.coursecreator.framework.recalcSyncChangesIconForFileInPrevTask
+import com.jetbrains.edu.coursecreator.framework.updateSyncChangesIcon
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -53,6 +55,12 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
 
       is FileInfo.FileInTask -> deleteFileInTask(fileInfo, file)
     }
+  }
+
+  override fun taskFileChanged(taskFile: TaskFile, file: VirtualFile) {
+    if (taskFile.task.lesson !is FrameworkLesson) return
+    updateSyncChangesIcon(project, taskFile)
+    recalcSyncChangesIconForFileInPrevTask(project, taskFile.task, taskFile.name)
   }
 
   private fun deleteLesson(info: FileInfo.LessonDirectory) {

@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.framework.impl.FLTaskState
 import com.jetbrains.edu.learning.framework.impl.calculateChanges
 import com.jetbrains.edu.learning.framework.impl.getTaskStateFromFiles
@@ -72,6 +73,28 @@ class CCFrameworkLessonManager(private val project: Project) : Disposable {
    */
   fun saveCurrentState(task: Task) {
     saveFileStateIntoStorage(task)
+  }
+
+  /**
+   * Filters the list of task files based on whether they have been changed from saved state or not.
+   */
+  fun filterChangedFiles(taskFiles: List<TaskFile>): List<TaskFile> {
+    require(CCUtils.isCourseCreator(project)) {
+      "`isTaskFileChanged` should be called only if course is in CC mode"
+    }
+    val task = taskFiles.firstOrNull()?.task ?: return emptyList()
+    require(task.lesson is FrameworkLesson) {
+      "`isTaskFileChanged` should be called only when the task file is in the framework lesson"
+    }
+
+    val state = getStateFromStorage(task)
+    return taskFiles.filter { isTaskFileChanged(it, state) }
+  }
+
+  private fun isTaskFileChanged(taskFile: TaskFile, storedState: FLTaskState): Boolean {
+    if (!taskFile.isVisible) return false
+    val document = taskFile.getDocument(project) ?: return false
+    return document.text != storedState[taskFile.name]
   }
 
   private fun propagateChanges(

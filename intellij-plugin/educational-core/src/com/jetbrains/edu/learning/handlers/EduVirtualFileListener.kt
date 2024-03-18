@@ -31,6 +31,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
         is VFileCopyEvent -> event.newParent.findChild(event.newChildName)?.let { fileCreated(it) }
         is VFileMoveEvent -> fileMoved(event)
         is VFileDeleteEvent -> fileDeleted(event)
+        is VFileContentChangeEvent -> fileChanged(event.file)
       }
     }
     configUpdated(configEvents)
@@ -164,6 +165,12 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
     fileDeleted(fileInfo, event.file)
   }
 
+  private fun fileChanged(file: VirtualFile) {
+    val (task, pathInTask) = file.fileInfo(project) as? FileInfo.FileInTask ?: return
+    val taskFile = task.getTaskFile(pathInTask) ?: return
+    return taskFileChanged(taskFile, file)
+  }
+
   private fun VirtualFile.directoryFileInfo(project: Project): FileInfo.FileInTask? {
     val info = fileInfo(project) ?: return null
     return when (info) {
@@ -178,6 +185,8 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
   protected open fun beforeFileDeletion(event: VFileDeleteEvent) {}
   protected open fun fileDeleted(fileInfo: FileInfo, file: VirtualFile) {}
   protected open fun taskFileCreated(taskFile: TaskFile, file: VirtualFile) {}
+
+  protected open fun taskFileChanged(taskFile: TaskFile, file: VirtualFile) {}
 
   companion object {
     private val LOG: Logger = Logger.getInstance(EduVirtualFileListener::class.java)
