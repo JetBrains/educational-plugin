@@ -23,7 +23,7 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.actions.ApplyCodeAction.Companion.FILENAMES_KEY
+import com.jetbrains.edu.learning.actions.ApplyCodeAction
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.isTestFile
@@ -374,7 +374,7 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
         }
       }
       val diffRequestChain = SimpleDiffRequestChain(requests)
-      diffRequestChain.putUserData(FILENAMES_KEY, submissionTaskFilePaths)
+      diffRequestChain.putUserData(ApplyCodeAction.VIRTUAL_FILE_PATH_LIST, submissionTaskFilePaths)
       if (project.isMarketplaceCourse() && isCommunity) {
         diffRequestChain.putCommunitySolution(task, submission)
         EduCounterUsageCollector.communitySolutionDiffOpened()

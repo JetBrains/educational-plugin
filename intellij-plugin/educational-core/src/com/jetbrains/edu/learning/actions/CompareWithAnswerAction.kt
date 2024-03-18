@@ -15,7 +15,6 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
-import com.jetbrains.edu.learning.actions.ApplyCodeAction.Companion.FILENAMES_KEY
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
@@ -66,7 +65,7 @@ open class CompareWithAnswerAction : DumbAwareAction() {
       return
     }
     val diffRequestChain = SimpleDiffRequestChain(requests)
-    diffRequestChain.putUserData(FILENAMES_KEY, solutionFilePaths)
+    diffRequestChain.putUserData(ApplyCodeAction.VIRTUAL_FILE_PATH_LIST, solutionFilePaths)
     showSolution(state.project, diffRequestChain)
     EduCounterUsageCollector.solutionPeeked()
   }
