@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.actions.taskFile
 
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsActions
 import com.intellij.openapi.vfs.VirtualFile
@@ -15,18 +16,46 @@ import com.jetbrains.edu.learning.pathRelativeToTask
 import org.jetbrains.annotations.NonNls
 import java.util.function.Supplier
 
-class CCAllowFilePropagation : CCChangeFilePropagationFlag(EduCoreBundle.lazyMessage("action.Educational.Educator.AllowFilePropagation.text"), true) {
+class CCAllowFileSyncChanges : CCChangeFilePropagationFlag(EduCoreBundle.lazyMessage("action.Educational.Educator.AllowFilePropagation.text"), true) {
+  override fun update(e: AnActionEvent) {
+    if (!isFeatureEnabled(EduExperimentalFeatures.CC_FL_SYNC_CHANGES)) {
+      e.presentation.isEnabledAndVisible = false
+      return
+    }
+    super.update(e)
+  }
+
   override fun getActionUpdateThread(): ActionUpdateThread {
     return ActionUpdateThread.BGT
   }
 
+  override fun isAvailableForDirectory(project: Project, task: Task, dir: VirtualFile): Boolean = false
+
   companion object {
     @NonNls
-    const val ACTION_ID = "Educational.Educator.AllowFilePropagation"
+    const val ACTION_ID = "Educational.Educator.AllowFileToSyncChanges"
   }
 }
 
-class CCIgnoreFilePropagation : CCChangeFilePropagationFlag(EduCoreBundle.lazyMessage("action.Educational.Educator.IgnoreFilePropagation.text"), false) {
+class CCIgnoreFileInSyncChanges : CCChangeFilePropagationFlag(EduCoreBundle.lazyMessage("action.Educational.Educator.IgnoreFilePropagation.text"), false) {
+  override fun update(e: AnActionEvent) {
+    val presentation = e.presentation
+    if (!isFeatureEnabled(EduExperimentalFeatures.CC_FL_SYNC_CHANGES)) {
+      presentation.isEnabledAndVisible = false
+      return
+    }
+
+    super.update(e)
+
+    if (!presentation.isEnabledAndVisible) return
+
+    val virtualFiles = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(e.dataContext).orEmpty()
+    if (virtualFiles.size > 1 || virtualFiles.singleOrNull()?.isDirectory == true) {
+      e.presentation.text = EduCoreBundle.message("action.Educational.Educator.IgnoreFilePropagation.All.text")
+      e.presentation.description = EduCoreBundle.message("action.Educational.Educator.IgnoreFilePropagation.All.description")
+    }
+  }
+
   override fun getActionUpdateThread(): ActionUpdateThread {
     return ActionUpdateThread.BGT
   }
@@ -39,15 +68,8 @@ class CCIgnoreFilePropagation : CCChangeFilePropagationFlag(EduCoreBundle.lazyMe
 
 abstract class CCChangeFilePropagationFlag(
   val name: Supplier<@NlsActions.ActionText String>,
-  val requiredPropagationFlag: Boolean
+  private val requiredPropagationFlag: Boolean
 ) : CCChangeFilePropertyActionBase(name) {
-  override fun update(e: AnActionEvent) {
-    if (!isFeatureEnabled(EduExperimentalFeatures.CC_FL_APPLY_CHANGES)) {
-      return
-    }
-    super.update(e)
-  }
-
   override fun createStateForFile(project: Project, task: Task, file: VirtualFile): State? {
     val taskRelativePath = file.pathRelativeToTask(project)
     val taskFile = task.getTaskFile(taskRelativePath)

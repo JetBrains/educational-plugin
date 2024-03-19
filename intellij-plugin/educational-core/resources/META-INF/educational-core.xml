@@ -152,14 +152,15 @@
               class="com.jetbrains.edu.coursecreator.actions.CCSyncChangesWithNextTasks"
               icon="com.jetbrains.edu.EducationalCoreIcons.SyncFiles">
       </action>
+      <action id="Educational.Educator.AllowFileToSyncChanges"
+              class="com.jetbrains.edu.coursecreator.actions.taskFile.CCAllowFileSyncChanges"
+              icon="AllIcons.Actions.Show"/>
+      <action id="Educational.Educator.IgnoreFilePropagation"
+              class="com.jetbrains.edu.coursecreator.actions.taskFile.CCIgnoreFileInSyncChanges"
+              icon="AllIcons.Actions.Show"/>
       <separator/>
       <add-to-group group-id="ProjectViewPopupMenu" anchor="first"/>
     </group>
-
-    <action id="Educational.Educator.AllowFilePropagation"
-            class="com.jetbrains.edu.coursecreator.actions.taskFile.CCAllowFilePropagation"/>
-    <action id="Educational.Educator.IgnoreFilePropagation"
-            class="com.jetbrains.edu.coursecreator.actions.taskFile.CCIgnoreFilePropagation"/>
 
     <group id="Educational.Educator.CourseCreator.Menu" popup="true"
            class="com.jetbrains.edu.coursecreator.actions.CCProjectViewActionGroup">
@@ -172,8 +173,6 @@
       <action id="Educational.Educator.CCRemoveSection" class="com.jetbrains.edu.coursecreator.actions.studyItem.CCRemoveSection"/>
       <action id="Educational.Educator.IncludeIntoTask" class="com.jetbrains.edu.coursecreator.actions.taskFile.CCIncludeIntoTask"/>
       <action id="Educational.Educator.ExcludeFromTask" class="com.jetbrains.edu.coursecreator.actions.taskFile.CCExcludeFromTask"/>
-      <reference id="Educational.Educator.AllowFilePropagation"/>
-      <reference id="Educational.Educator.IgnoreFilePropagation"/>
       <separator/>
       <reference id="Educational.Educator.CreateCoursePreview"/>
       <reference id="Educational.Educator.ChangeCourseInfo"/>
