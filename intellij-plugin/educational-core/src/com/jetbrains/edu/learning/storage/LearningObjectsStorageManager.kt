@@ -5,6 +5,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
@@ -42,8 +43,22 @@ class LearningObjectsStorageManager(private val project: Project) : DumbAware, D
         contents = TextualContentsFromLearningObjectsStorage(storage, pathInStorage)
       }
       else -> {
+        val initialContents = contents
+        val contentsWithDiagnostics = wrapWithDiagnostics(initialContents, pathInStorage)
+
+        // this will allow logging all accesses to the contents while it is being persisted
+        contents = contentsWithDiagnostics
         ApplicationManager.getApplication().executeOnPooledThread {
-          contents = contents.persist(storage, pathInStorage)
+          val persistedContents = initialContents.persist(storage, pathInStorage)
+          // if persisting took long, contents could have been already changed
+          val contentsAfterPersisting = contents
+
+          // check, if the contents have changed during persisting
+          if (contentsAfterPersisting != contentsWithDiagnostics) {
+            logger<FileContents>().error("Contents of a file changed while the file was being persisted: $pathInStorage from ${initialContents.javaClass} to ${contentsAfterPersisting.javaClass}")
+          }
+
+          contents = persistedContents
         }
       }
     }
