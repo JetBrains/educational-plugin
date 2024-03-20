@@ -22,7 +22,7 @@ object SolutionSharingInlineBanners {
       NotificationType.INFORMATION
     ).apply {
       addAction(NotificationAction.createSimpleExpiring(EduCoreBundle.message("marketplace.solutions.sharing.inline.banner.prompt.description")) {
-        MarketplaceSettings.INSTANCE.updateSharingPreference(true)
+        MarketplaceSettings.INSTANCE.updateSharingPreference(true, project)
         EduCounterUsageCollector.solutionSharingInviteAction(true)
         hideBalloon()
       })
