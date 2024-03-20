@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.pathRelativeToTask
 import org.jetbrains.annotations.NonNls
 import java.util.function.Supplier
 
-class CCAllowFileSyncChanges : CCChangeFilePropagationFlag(EduCoreBundle.lazyMessage("action.Educational.Educator.AllowFilePropagation.text"), true) {
+class CCAllowFileSyncChanges : CCChangeFilePropagationFlag(EduCoreBundle.lazyMessage("action.Educational.Educator.AllowFileToSyncChanges.text"), true) {
   override fun update(e: AnActionEvent) {
     if (!isFeatureEnabled(EduExperimentalFeatures.CC_FL_SYNC_CHANGES)) {
       e.presentation.isEnabledAndVisible = false
