@@ -1,12 +1,17 @@
 package com.jetbrains.edu.coursecreator.framework.editor
 
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.actionSystem.ActionPlaces
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotificationProvider
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.actions.taskFile.CCIgnoreFileInSyncChanges
 import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
@@ -37,7 +42,14 @@ class SyncChangesEditorNotificationsProvider : EditorNotificationProvider {
           { CCFrameworkLessonManager.getInstance(project).propagateChanges(taskFile.task, null) },
           true
         )
-        //setCloseAction { /* TODO(implement it in the next review) */ }
+        setCloseAction {
+          val dataContext = SimpleDataContext.builder()
+            .add(CommonDataKeys.PROJECT, project)
+            .add(CommonDataKeys.VIRTUAL_FILE_ARRAY, arrayOf(file))
+            .build()
+          val actionEvent = AnActionEvent.createFromDataContext(ActionPlaces.UNKNOWN, null, dataContext)
+          CCIgnoreFileInSyncChanges().actionPerformed(actionEvent)
+        }
       }
     }
   }

@@ -6,9 +6,12 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsActions
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.ui.EditorNotifications
+import com.jetbrains.edu.coursecreator.framework.updateSyncChangesIcon
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -95,10 +98,19 @@ abstract class CCChangeFilePropagationFlag(
 
     override fun changeState(project: Project) {
       taskFile.isPropagatable = isPropagatable
+      update(project)
     }
 
     override fun restoreState(project: Project) {
       taskFile.isPropagatable = initialPropagatableFlag
+      update(project)
+    }
+
+    private fun update(project: Project) {
+      updateSyncChangesIcon(project, taskFile)
+      taskFile.getVirtualFile(project)?.let { file ->
+        EditorNotifications.getInstance(project).updateNotifications(file)
+      }
     }
   }
 }
