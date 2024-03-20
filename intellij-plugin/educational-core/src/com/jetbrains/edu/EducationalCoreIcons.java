@@ -88,4 +88,11 @@ public class EducationalCoreIcons {
   public static final Icon SyncFiles = load("/icons/com/jetbrains/edu/syncFiles.svg"); // 14x14
 
   public static final Icon SyncChangesIgnore = load("/icons/com/jetbrains/edu/syncChangesIgnore.svg"); // 16x16
+
+  public static final Icon TaskInfo = load("/icons/com/jetbrains/edu/eduTaskInfo.svg"); // 18x18
+  public static final Icon TaskWarning = load("/icons/com/jetbrains/edu/eduTaskWarning.svg"); // 18x18
+  public static final Icon TheoryTaskInfo = load("/icons/com/jetbrains/edu/eduTaskTheoryInfo.svg"); // 18x18
+  public static final Icon TheoryTaskWarning = load("/icons/com/jetbrains/edu/eduTaskTheoryWarning.svg"); // 18x18
+  public static final Icon LessonInfo = load("/icons/com/jetbrains/edu/eduLessonInfo.svg"); // 18x18
+  public static final Icon LessonWarning = load("/icons/com/jetbrains/edu/eduLessonWarning.svg"); // 18x18
 }
