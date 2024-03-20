@@ -40,6 +40,10 @@ abstract class Task : StudyItem {
    */
   var authorSolutionContext: AuthorSolutionContext? = null
   var aiAssistantState: AiAssistantState = AiAssistantState.NotInitialized
+  /**
+   * Stores a list of functions that can be changed.
+   */
+  var changedFunctions: List<String>? = null
 
   var feedback: CheckFeedback? = null
   var descriptionText: String = ""

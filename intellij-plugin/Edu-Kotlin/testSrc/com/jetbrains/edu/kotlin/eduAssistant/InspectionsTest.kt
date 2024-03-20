@@ -1,17 +1,10 @@
 package com.jetbrains.edu.kotlin.eduAssistant
 
-import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.codeStyle.CodeStyleManager
 import com.jetbrains.edu.jvm.slow.checker.JdkCheckerTestBase
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.eduAssistant.inspection.applyInspections
-import org.jetbrains.kotlin.idea.KotlinLanguage
 
 class InspectionsTest : JdkCheckerTestBase() {
-
-  private val language = KotlinLanguage.INSTANCE
 
   fun testInlineVariableInspection() {
     val code = """
@@ -300,7 +293,7 @@ class InspectionsTest : JdkCheckerTestBase() {
           return result
       }
     """.trimIndent()
-    assertEquals(expected.reformatCode(), applyInspections(code, project, language).reformatCode())
+    assertEquals(expected.reformatCode(project), applyInspections(code, project, language).reformatCode(project))
   }
 
   fun testMayBeConstantInspection() {
@@ -537,14 +530,6 @@ class InspectionsTest : JdkCheckerTestBase() {
       }
     """.trimIndent()
     assertEquals(expected, applyInspections(code, project, language))
-  }
-
-  private fun String.reformatCode(): String {
-    val psi = runReadAction { PsiFileFactory.getInstance(project).createFileFromText("file", language, this) }
-    WriteCommandAction.runWriteCommandAction(project) {
-      CodeStyleManager.getInstance(project).reformat(psi)
-    }
-    return runReadAction { psi.text }
   }
 
   override fun createCourse(): Course = kotlinCourse

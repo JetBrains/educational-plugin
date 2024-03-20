@@ -51,15 +51,6 @@ class TaskFile : EduFile {
    */
   var snapshotFileHash: Int? = null
   /**
-   * Represents the text representation of task file content at the last snapshot.
-   */
-  var snapshotFileContent: String? = null
-  /**
-   * List of function signatures that have been changed.
-   * This list contains [FunctionSignature] objects representing the functions that the user has changed.
-   */
-  var changedFunctionSignatures: Set<FunctionSignature>? = null
-  /**
    * Represents a list of strings that have been used in the task file.
    */
   var usedStrings: List<String>? = null

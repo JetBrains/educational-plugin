@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.eduAssistant.context.StringExtractor
+import com.jetbrains.edu.learning.eduAssistant.context.differ.filterAllowedModifications
 import com.jetbrains.edu.learning.eduAssistant.context.differ.getChangedContent
 import com.jetbrains.edu.learning.eduAssistant.context.function.signatures.*
 import com.jetbrains.edu.learning.getTextFromTaskTextFile
@@ -118,6 +119,13 @@ class TaskProcessor(val task: Task) {
       return if (functionsSignaturesFromSolution.contains(signature)) signature else null
     }
     return null
+  }
+
+  fun extractRequiredFunctionsFromCodeHint(codeHint: String, taskFile: TaskFile): String {
+    val project = task.project ?: return ""
+    val language = task.course.languageById ?: return ""
+    val codeHintPsiFile = runReadAction { PsiFileFactory.getInstance(project).createFileFromText("codeHintPsiFile", language, codeHint) }
+    return codeHintPsiFile.filterAllowedModifications(task, taskFile, project, SignatureSource.GENERATED_SOLUTION)
   }
 
   fun applyCodeHint(codeHint: String, taskFile: TaskFile): String? {
