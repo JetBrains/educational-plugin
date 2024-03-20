@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.eduAssistant.core.TaskBasedAssistant
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.findTask
+import com.jetbrains.edu.learning.navigation.NavigationUtils
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.jvm.isAccessible
@@ -94,16 +95,20 @@ class TaskProcessorTest : JdkCheckerTestBase() {
 
   fun testChangedFunctionsInSubmission() {
     val course = project.course ?: error("Course was not found")
-    val task = course.findTask("lesson1", "task1")
+    val task = course.findTask("lesson1", "task2")
+    task.authorSolutionContext = task.buildAuthorSolutionContext()
     val taskProcessor = TaskProcessor(task)
     val expected = """
-        fun greet(name: String) = "Hello, \${'$'}\{name\}!"
         fun main() {
+            val a = "AA"
+            val b = stringTemplate
+            println(a)
             println("Hello!")
         }
       """.trimIndent()
+    NavigationUtils.navigateToTask(project, task)
     val state = project.eduState ?: error("Edu state was not found")
-    assertEquals(expected, taskProcessor.getSubmissionTextRepresentation(state))
+    assertEquals(expected.reformatCode(project), taskProcessor.getSubmissionTextRepresentation(state)?.reformatCode(project))
     runWriteAction {
       val taskFile = task.taskFiles["src/main/kotlin/Main.kt"]
       val document = taskFile?.getDocument(project) ?: error("Document was not found")
@@ -111,7 +116,10 @@ class TaskProcessorTest : JdkCheckerTestBase() {
         """
           fun greet(name: String) = "Hello, \${'$'}\{name\}!"
           fun main() {
-              println("Hello!Hello!")
+              val a = "AA"
+              val b = stringTemplate
+              println(a)
+              println("Hello!")
           }
           fun newFunction() {
               println("Hello world!")
@@ -120,18 +128,22 @@ class TaskProcessorTest : JdkCheckerTestBase() {
       )
       FileDocumentManager.getInstance().saveDocument(document)
       PsiDocumentManager.getInstance(project).commitDocument(document)
-      val expected2 = listOf(
+      val expected2FirstFun =
         """
           fun main() {
-              println("Hello!Hello!")
+              val a = "AA"
+              val b = stringTemplate
+              println(a)
+              println("Hello!")
           }
-        """.trimIndent(), """
+        """.trimIndent()
+      val expected2SecondFun =
+        """
           fun newFunction() {
               println("Hello world!")
           }
         """.trimIndent()
-      )
-      assertEquals(expected2.joinToString(separator = System.lineSeparator()), taskProcessor.getSubmissionTextRepresentation(state))
+      assertEquals(listOf(expected2FirstFun, expected2SecondFun).joinToString(separator = System.lineSeparator()).reformatCode(project), taskProcessor.getSubmissionTextRepresentation(state)?.reformatCode(project))
     }
   }
 
@@ -346,6 +358,28 @@ It's time to write your first program in Kotlin! Task Change the output text int
       }
     """.trimIndent()
     assertEquals(updatedUserCode, taskProcessor.applyCodeHint(codeHint, task.taskFiles["src/main/kotlin/Main.kt"]!!))
+  }
+
+  fun testExtractRequiredFunctionsFromCodeHint() {
+    val course = project.course ?: error("Course was not found")
+    val task = course.findTask("lesson5", "task2")
+    val taskFile = task.taskFiles["src/main/kotlin/Main.kt"] ?: error("Task file was not found")
+    val taskProcessor = TaskProcessor(task)
+    val codeHint = """
+      package jetbrains.kotlin.course.first.date
+
+      fun generateSecret() = "ABCDEFG"
+      
+      fun main() {
+          println("Hello!")
+      }
+    """.trimIndent()
+    val updatedCodeHint = """
+      fun main() {
+          println("Hello!")
+      }
+    """.trimIndent()
+    assertEquals(updatedCodeHint, taskProcessor.extractRequiredFunctionsFromCodeHint(codeHint, taskFile))
   }
 
   override fun createCourse(): Course = kotlinCourse

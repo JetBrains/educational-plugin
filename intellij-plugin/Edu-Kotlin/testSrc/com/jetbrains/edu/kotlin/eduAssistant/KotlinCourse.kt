@@ -139,4 +139,30 @@ val kotlinCourse = course(language = KotlinLanguage.INSTANCE) {
       )
     }
   }
+  frameworkLesson {
+    theoryTask {
+      kotlinTaskFile(
+        "src/main/kotlin/Main.kt", """
+          package jetbrains.kotlin.course.first.date
+
+          fun generateSecret() = "ABCD"
+          
+          fun main() {
+              println("My first program!")
+          }
+        """
+      )
+    }
+    eduTask {
+      kotlinTaskFile("src/main/kotlin/Main.kt", """
+          package jetbrains.kotlin.course.first.date
+
+          fun generateSecret() = "ABCD"
+          
+          fun main() {
+              println("Hello!")
+          }
+        """)
+    }
+  }
 }

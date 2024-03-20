@@ -7,12 +7,12 @@ import com.intellij.psi.PsiFile
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 
 interface FilesDiffer {
-  fun findChangedMethods(before: PsiFile, after: PsiFile, taskFile: TaskFile): String
+  fun findChangedMethods(before: PsiFile, after: PsiFile, taskFile: TaskFile): List<String>
 
   companion object {
     private val EP_NAME = LanguageExtension<FilesDiffer>("Educational.filesDiffer")
 
-    fun findDifferentMethods(before: PsiFile, after: PsiFile, taskFile: TaskFile, language: Language): String? {
+    fun findDifferentMethods(before: PsiFile, after: PsiFile, taskFile: TaskFile, language: Language): List<String>? {
       ApplicationManager.getApplication().assertReadAccessAllowed()
       return EP_NAME.forLanguage(language)?.findChangedMethods(before, after, taskFile)
     }

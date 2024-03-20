@@ -125,7 +125,10 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
       hintTimingLogger.info { "Retrieving the code hint" }
       val project = task.project ?: error("Project was not found")
       val languageId = task.course.languageById ?: error("Language was not found")
-      val codeHint = getNextStepCodeHint(nextStepCodeHintPrompt, project, languageId).also {
+      val codeHint = taskProcessor.extractRequiredFunctionsFromCodeHint(
+        getNextStepCodeHint(nextStepCodeHintPrompt, project, languageId),
+        state.taskFile
+      ).also {
         logger.info {
           """Code hint response (before applying inspections):
             |$it
