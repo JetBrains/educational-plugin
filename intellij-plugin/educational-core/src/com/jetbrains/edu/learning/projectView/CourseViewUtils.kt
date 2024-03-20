@@ -10,15 +10,13 @@ import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiManager
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
-import com.jetbrains.edu.learning.pathRelativeToTask
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import org.jetbrains.annotations.TestOnly
 import javax.swing.Icon
@@ -101,16 +99,25 @@ object CourseViewUtils {
     }
   }
 
-  fun getIcon(item: StudyItem): Icon {
+  fun getIcon(project: Project, item: StudyItem): Icon {
     return when (item) {
       is Course -> item.icon
       is Section -> {
         if (item.isSolved) EducationalCoreIcons.SectionSolved else EducationalCoreIcons.Section
       }
       is Lesson -> {
-        if (item.isSolved) EducationalCoreIcons.LessonSolved else EducationalCoreIcons.Lesson
+        if (CCUtils.isCourseCreator(project) && isFeatureEnabled(EduExperimentalFeatures.CC_FL_SYNC_CHANGES) && item is FrameworkLesson) {
+          item.syncChangesIcon
+        }
+        else if (item.isSolved) EducationalCoreIcons.LessonSolved else EducationalCoreIcons.Lesson
       }
-      is Task -> item.icon
+      is Task -> {
+        if (CCUtils.isCourseCreator(project) && isFeatureEnabled(EduExperimentalFeatures.CC_FL_SYNC_CHANGES) && item.parent is FrameworkLesson) {
+          item.syncChangesIcon
+        } else {
+          item.icon
+        }
+      }
       else -> error("Unexpected item type: ${item.javaClass.simpleName}")
     }
   }
@@ -152,5 +159,49 @@ object CourseViewUtils {
   private fun Task.containsCorrectSubmissions(): Boolean {
     val project = course.project ?: return false
     return SubmissionsManager.getInstance(project).containsCorrectSubmission(id)
+  }
+
+  // TODO(make it more efficient)
+  private val FrameworkLesson.syncChangesIcon: Icon
+    get() {
+      return when (syncChangesState) {
+        SyncChangesTaskFileState.NONE -> EducationalCoreIcons.Lesson
+        SyncChangesTaskFileState.INFO -> EducationalCoreIcons.LessonInfo
+        SyncChangesTaskFileState.WARNING -> EducationalCoreIcons.LessonWarning
+      }
+    }
+
+  private val Task.syncChangesIcon: Icon
+    get() {
+      if (this is TheoryTask) {
+        return when (syncChangesState) {
+          SyncChangesTaskFileState.NONE -> EducationalCoreIcons.TheoryTask
+          SyncChangesTaskFileState.INFO -> EducationalCoreIcons.TheoryTaskInfo
+          SyncChangesTaskFileState.WARNING -> EducationalCoreIcons.TheoryTaskWarning
+        }
+      }
+      return when (syncChangesState) {
+        SyncChangesTaskFileState.NONE -> EducationalCoreIcons.Task
+        SyncChangesTaskFileState.INFO -> EducationalCoreIcons.TaskInfo
+        SyncChangesTaskFileState.WARNING -> EducationalCoreIcons.TaskWarning
+      }
+    }
+
+  private val FrameworkLesson.syncChangesState: SyncChangesTaskFileState
+    get() = maxSyncChangesState(taskList) { it.syncChangesState }
+
+  private val Task.syncChangesState: SyncChangesTaskFileState
+    get() = maxSyncChangesState(taskFiles.values) { it.syncChangesIcon }
+
+  private fun <T> maxSyncChangesState(collection: Collection<T>, getState: (T) -> SyncChangesTaskFileState): SyncChangesTaskFileState {
+    var wasInfo = false
+    for (item in collection) {
+      when (getState(item)) {
+        SyncChangesTaskFileState.NONE -> continue
+        SyncChangesTaskFileState.INFO -> wasInfo = true
+        SyncChangesTaskFileState.WARNING -> return SyncChangesTaskFileState.WARNING
+      }
+    }
+    return if (wasInfo) SyncChangesTaskFileState.INFO else SyncChangesTaskFileState.NONE
   }
 }

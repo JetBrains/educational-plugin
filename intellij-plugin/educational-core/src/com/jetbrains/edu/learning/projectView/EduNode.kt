@@ -28,7 +28,7 @@ abstract class EduNode<T : StudyItem>(
     data.clearText()
     val item = item ?: return
     val name = item.presentableName
-    val icon = CourseViewUtils.getIcon(item)
+    val icon = CourseViewUtils.getIcon(project, item)
     data.addText(name, SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, JBColor.BLACK))
     additionalInfo?.let { data.addText(" $additionalInfo", SimpleTextAttributes.GRAYED_ATTRIBUTES) }
     data.setIcon(icon)
