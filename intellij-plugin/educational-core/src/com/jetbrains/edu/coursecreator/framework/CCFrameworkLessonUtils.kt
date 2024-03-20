@@ -47,7 +47,7 @@ fun updateSyncChangesIcon(project: Project, taskFile: TaskFile) = updateSyncChan
 // do not show icons for last framework lesson task and for non-propagatable files (visible files)
 private fun canShowIconSyncChangesIcon(taskFile: TaskFile): Boolean {
   val task = taskFile.task
-  return taskFile.isVisible && task.lesson.taskList.last() != task
+  return taskFile.isPropagatable && task.lesson.taskList.last() != task
 }
 
 fun updateSyncChangesIcons(project: Project, task: Task) = updateSyncChangesIcon(project, task.taskFiles.values.toList())
