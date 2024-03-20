@@ -174,7 +174,7 @@ fun assertContentsEqual(path: String, expectedContents: FileContents, actualCont
 }
 
 fun assertContentsEqual(task: Task, fileName: String, expectedContents: FileContents) {
-  val taskFile = task.taskFiles[fileName] ?: error("Failed to find file ${fileName} in task ${task}")
+  val taskFile = task.taskFiles[fileName] ?: error("Failed to find file $fileName in task $task")
   assertContentsEqual(taskFile.pathInStorage, expectedContents, taskFile.contents)
 }
 

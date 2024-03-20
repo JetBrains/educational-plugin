@@ -52,7 +52,7 @@ object YamlLoader {
     }
   }
 
-  fun doLoad(project: Project, configFile: VirtualFile, loadFromVFile: Boolean) {
+  private fun doLoad(project: Project, configFile: VirtualFile, loadFromVFile: Boolean) {
     // for null course we load course again so no need to pass mode specific mapper here
     val mapper = StudyTaskManager.getInstance(project).course?.mapper ?: MAPPER
 
