@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.openapi.util.Disposer
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.util.Alarm
@@ -40,7 +41,7 @@ import java.awt.BorderLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
 
-class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(BorderLayout()) {
+class CheckPanel(private val project: Project, private val parentDisposable: Disposable) : JPanel(BorderLayout()) {
   private val checkFinishedPanel: JPanel = JPanel(BorderLayout())
   private val checkActionsPanel: JPanel = JPanel(BorderLayout())
   private val linkPanel = JPanel(BorderLayout())
@@ -192,7 +193,9 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
         val isRunning = task.isRunning()
         val component = if (task.isTimeLimited && isRunning) {
           val endDateTime = task.attempt?.endDateTime ?: error("EndDateTime is expected")
-          CheckTimer(endDateTime) { updateCheckPanel(task) }
+          val checkTimer = CheckTimer(endDateTime) { updateCheckPanel(task) }
+          Disposer.register(parentDisposable, checkTimer)
+          checkTimer
         }
         else {
           CheckPanelButtonComponent(EduActionUtils.getAction(DownloadDatasetAction.ACTION_ID) as DownloadDatasetAction)
