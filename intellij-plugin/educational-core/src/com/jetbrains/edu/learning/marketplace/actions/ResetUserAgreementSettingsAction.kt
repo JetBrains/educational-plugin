@@ -6,7 +6,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.util.NlsActions
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils
-import com.jetbrains.edu.learning.marketplace.UserAgreementSettings
+import com.jetbrains.edu.learning.marketplace.userAgreement.UserAgreementSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.util.function.Supplier
 

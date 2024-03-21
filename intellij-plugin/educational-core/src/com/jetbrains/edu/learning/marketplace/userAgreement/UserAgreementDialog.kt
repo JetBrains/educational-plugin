@@ -1,10 +1,11 @@
-package com.jetbrains.edu.learning.marketplace
+package com.jetbrains.edu.learning.marketplace.userAgreement
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.ui.EditorNotifications
 import com.intellij.ui.dsl.builder.AlignY
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.gridLayout.UnscaledGaps
@@ -12,6 +13,7 @@ import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduBrowser
+import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -108,6 +110,10 @@ class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
             MarketplaceSubmissionsConnector.getInstance().changeUserAgreementAndStatisticsState(result)
             if (project != null) {
               SubmissionsManager.getInstance(project).prepareSubmissionsContentWhenLoggedIn()
+              if (RemoteEnvHelper.isRemoteDevServer() && result.agreementState == UserAgreementState.ACCEPTED) {
+                //remove editor notification for rem dev, suggesting to accept User Agreement
+                EditorNotifications.getInstance(project).updateAllNotifications()
+              }
             }
           }
         }

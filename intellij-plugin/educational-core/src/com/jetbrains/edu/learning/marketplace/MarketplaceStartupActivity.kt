@@ -13,6 +13,8 @@ import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceUpdateChecker
+import com.jetbrains.edu.learning.marketplace.userAgreement.UserAgreementDialog
+import com.jetbrains.edu.learning.marketplace.userAgreement.UserAgreementSettings
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.UserAgreementState
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.marketplace
+package com.jetbrains.edu.learning.marketplace.userAgreement
 
 import com.intellij.openapi.components.*
 

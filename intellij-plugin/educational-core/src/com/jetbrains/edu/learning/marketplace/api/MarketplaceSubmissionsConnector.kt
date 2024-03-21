@@ -22,8 +22,8 @@ import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderWithAnswerMixin
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showFailedToDeleteNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showNoSubmissionsToDeleteNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showSubmissionsDeletedSucessfullyNotification
-import com.jetbrains.edu.learning.marketplace.UserAgreementDialogResultState
 import com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceHost
+import com.jetbrains.edu.learning.marketplace.userAgreement.UserAgreementDialogResultState
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.network.createRetrofitBuilder
 import com.jetbrains.edu.learning.network.executeCall
@@ -63,7 +63,7 @@ class MarketplaceSubmissionsConnector {
     get() = submissionsService()
 
   private fun submissionsService(): SubmissionsService {
-    val uidToken = if (RemoteEnvHelper.isRemoteDevServer()) {
+    val uidToken = if (RemoteEnvHelper.isRemoteDevServer() && !isUnitTestMode) {
       RemoteEnvHelper.getUserUidToken() ?: error("User UID was not found, it might require more time to retrieve it")
     }
     else {

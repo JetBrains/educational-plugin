@@ -18,10 +18,14 @@ import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.JBA_TOKEN_EXCHA
 import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.authUtils.requestFocus
 import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
-import com.jetbrains.edu.learning.marketplace.*
+import com.jetbrains.edu.learning.marketplace.HUB_AUTH_URL
+import com.jetbrains.edu.learning.marketplace.JET_BRAINS_ACCOUNT
+import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showInstallMarketplacePluginNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showLoginFailedNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showReloginToJBANeededNotification
+import com.jetbrains.edu.learning.marketplace.MarketplaceOAuthBundle
+import com.jetbrains.edu.learning.marketplace.userAgreement.UserAgreementDialog
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.network.createRetrofitBuilder
 import com.jetbrains.edu.learning.network.executeHandlingExceptions

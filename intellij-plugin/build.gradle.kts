@@ -543,6 +543,8 @@ project("remote-env") {
 
   dependencies {
     implementation(project(":intellij-plugin:educational-core"))
+
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
   }
 }
 

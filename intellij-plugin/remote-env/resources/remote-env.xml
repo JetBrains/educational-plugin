@@ -7,6 +7,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <projectService serviceImplementation="com.jetbrains.edu.remote.EduRemoteService" preload="true" client="remote"/>
     <postStartupActivity implementation="com.jetbrains.edu.remote.EduRemoteStartupActivity"/>
+    <editorNotificationProvider implementation="com.jetbrains.edu.remote.UserAgreementNotificationProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">

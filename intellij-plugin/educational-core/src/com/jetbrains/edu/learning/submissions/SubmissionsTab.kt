@@ -29,9 +29,9 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.isTestFile
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.marketplace.UserAgreementDialog
 import com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionAction
 import com.jetbrains.edu.learning.marketplace.isMarketplaceCourse
+import com.jetbrains.edu.learning.marketplace.userAgreement.UserAgreementDialog
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.projectView.CourseViewUtils.isCommunitySolutionsAllowed
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
