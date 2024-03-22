@@ -38,7 +38,7 @@ class FLRecordState : SimplePersistentStateComponent<FLRecordState.State>(State(
 
   fun removeRecords(section: Section) = section.visitLessons { removeRecords(it) }
 
-  fun migrateRecord(studyItem: StudyItem, newName: String) {
+  fun migrateRecords(studyItem: StudyItem, newName: String) {
     if (studyItem is Course) return
     val oldName = studyItem.name
 
