@@ -20,13 +20,19 @@ import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
 
   var taskAnalysisPrompt: String? = null
   private var hintContext: HintContext? = null
 
-  suspend fun getTaskAnalysis(task: Task): String? {
+  suspend fun getTaskAnalysis(task: Task, forcedReload: Boolean = false): String? = taskIdToMutex.getOrPut(task.id, ::Mutex).withLock {
+    if (!forcedReload && task.generatedSolutionSteps != null) {
+      return@withLock task.generatedSolutionSteps
+    }
+
     Loggers.taskAnalysisTimingLogger.info("Starting getTaskAnalysis function for task-id: ${task.id}")
 
     if (taskProcessor.getFailureMessage() == EduCoreBundle.message("error.execution.failed")) return null
@@ -99,7 +105,7 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
 
       Loggers.hintTimingLogger.info("Retrieving the task analysis for task-id: ${task.id}")
       // The task files were not changed and the user asked about help again
-      if (!taskProcessor.hasFilesChanged() && task.aiAssistantState == AiAssistantState.HelpAsked) getTaskAnalysis(task)
+      if (!taskProcessor.hasFilesChanged() && task.aiAssistantState == AiAssistantState.HelpAsked) getTaskAnalysis(task, forcedReload = true)
       val taskAnalysis = task.generatedSolutionSteps?.also { hintContext?.log() } ?: getTaskAnalysis(task) ?: return AssistantResponse(
         assistantError = AssistantError.NoCompiledCode
       )
@@ -467,4 +473,8 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
       |
     """.trimMargin()
   )
+
+  companion object {
+    val taskIdToMutex = HashMap<Int, Mutex>()
+  }
 }
