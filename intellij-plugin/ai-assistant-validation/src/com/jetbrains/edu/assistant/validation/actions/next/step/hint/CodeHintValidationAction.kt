@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.eduAssistant.inspection.getInspectionsWithIssu
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
+import org.apache.commons.csv.CSVRecord
 import org.jetbrains.kotlinx.dataframe.api.toDataFrame
 
 /**
@@ -39,6 +40,7 @@ class CodeHintValidationAction : ValidationAction<CodeHintDataframeRecord>() {
   override val outputFilePrefixName: String = "codeHints"
   override val name: String = EduAndroidAiAssistantValidationBundle.message("action.code.hint.validation.action.name")
   override val isNavigationRequired: Boolean = true
+  override val pathToManualValidationDataset = null
 
   init {
     setUpSpinnerPanel(name)
@@ -101,4 +103,18 @@ class CodeHintValidationAction : ValidationAction<CodeHintDataframeRecord>() {
   }
 
   override fun MutableList<CodeHintDataframeRecord>.convertToDataFrame() = toDataFrame()
+
+  override fun CSVRecord.toDataframeRecord() = CodeHintDataframeRecord(get(0).toInt(), get(1), get(2), get(3), get(4), get(5), get(6),
+    get(7), get(8).toInt(), get(9))
+
+  override suspend fun buildRecords(manualValidationRecord: CodeHintDataframeRecord): CodeHintDataframeRecord {
+    throw UnsupportedOperationException("This function is not supported.")
+  }
+
+  override fun calculateAccuracy(
+    manualRecords: List<CodeHintDataframeRecord>,
+    autoRecords: List<CodeHintDataframeRecord>
+  ): CodeHintDataframeRecord {
+    throw UnsupportedOperationException("This function is not supported.")
+  }
 }

@@ -4,14 +4,15 @@ import com.google.gson.Gson
 import com.jetbrains.edu.assistant.validation.actions.ValidationAction
 import com.jetbrains.edu.assistant.validation.messages.EduAndroidAiAssistantValidationBundle
 import com.jetbrains.edu.assistant.validation.processor.processValidationSteps
-import com.jetbrains.edu.assistant.validation.util.ValidationOfStepsDataframeRecord
-import com.jetbrains.edu.assistant.validation.util.getAuthorSolution
+import com.jetbrains.edu.assistant.validation.util.*
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.eduAssistant.core.TaskBasedAssistant
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
+import org.apache.commons.csv.CSVRecord
 import org.jetbrains.kotlinx.dataframe.api.toDataFrame
+import kotlin.io.path.Path
 
 /**
  * The `Auto Validate Steps Generation` action runs an automatic validation of educational AI assistant generating solution steps.
@@ -33,6 +34,7 @@ class AutoStepsValidationAction : ValidationAction<ValidationOfStepsDataframeRec
   override val outputFilePrefixName: String = "generatedValidationOfSteps"
   override val name: String = EduAndroidAiAssistantValidationBundle.message("action.auto.step.validation.action.name")
   override val isNavigationRequired: Boolean = false
+  override val pathToManualValidationDataset by lazy { Path(System.getProperty("manual.steps.validation.path")) }
 
   init {
     setUpSpinnerPanel(name)
@@ -62,11 +64,90 @@ class AutoStepsValidationAction : ValidationAction<ValidationOfStepsDataframeRec
         taskId = task.id,
         taskName = task.name,
         taskDescription = taskProcessor.getTaskTextRepresentation(),
-        steps = "Error during validation generation: ${e.message}",
+        steps = "${EduAndroidAiAssistantValidationBundle.message("action.validation.error")} ${e.message}",
         solution = stepsValidation ?: ""
       ))
     }
   }
 
   override fun MutableList<ValidationOfStepsDataframeRecord>.convertToDataFrame() = toDataFrame()
+
+  override fun CSVRecord.toDataframeRecord() = ValidationOfStepsDataframeRecord(get(0).toInt(), get(1), get(2), get(3), get(4),
+    get(5).toInt(), get(6), get(7), get(8), get(9), get(10), get(11), get(12))
+
+  override suspend fun buildRecords(manualValidationRecord: ValidationOfStepsDataframeRecord): ValidationOfStepsDataframeRecord {
+    try {
+      val stepsValidation = processValidationSteps(manualValidationRecord.taskDescription, manualValidationRecord.solution, manualValidationRecord.steps)
+      val dataframeRecord = Gson().fromJson(stepsValidation, ValidationOfStepsDataframeRecord::class.java)
+      return dataframeRecord.apply {
+        taskId = manualValidationRecord.taskId
+        taskName = manualValidationRecord.taskName
+        taskDescription = manualValidationRecord.taskDescription
+        steps = manualValidationRecord.steps
+        solution = manualValidationRecord.solution
+      }
+    } catch (e: Throwable) {
+      return ValidationOfStepsDataframeRecord(
+        taskId = manualValidationRecord.taskId,
+        taskName = manualValidationRecord.taskName,
+        taskDescription = manualValidationRecord.taskDescription,
+        steps = "${EduAndroidAiAssistantValidationBundle.message("action.validation.error")} ${e.message}"
+      )
+    }
+  }
+
+  override fun calculateAccuracy(
+    manualRecords: List<ValidationOfStepsDataframeRecord>,
+    autoRecords: List<ValidationOfStepsDataframeRecord>
+  ) = ValidationOfStepsDataframeRecord(
+    solution = ACCURACY_KEYWORD,
+    amount = calculateCriterionAccuracy(
+      { i -> manualRecords[i].amount.toString() },
+      { i -> autoRecords[i].amount.toString() },
+      manualRecords.size,
+      { f, s -> f == s }
+    ).toDouble().toInt(),
+    specifics = calculateCriterionAccuracy(
+      { i -> manualRecords[i].specifics },
+      { i -> autoRecords[i].specifics },
+      manualRecords.size,
+      { f, s -> compareCriterion(f, s) }
+    ),
+    independence = calculateCriterionAccuracy(
+      { i -> manualRecords[i].independence },
+      { i -> autoRecords[i].independence },
+      manualRecords.size,
+      { f, s -> compareCriterion(f, s) }
+    ),
+    codingSpecific = calculateCriterionAccuracy(
+      { i -> manualRecords[i].codingSpecific },
+      { i -> autoRecords[i].codingSpecific },
+      manualRecords.size,
+      { f, s -> compareCriterion(f, s, CODING_KEYWORD, NOT_CODING_KEYWORD) }
+    ),
+    direction = calculateCriterionAccuracy(
+      { i -> manualRecords[i].direction },
+      { i -> autoRecords[i].direction },
+      manualRecords.size,
+      { f, s -> compareCriterion(f, s) }
+    ),
+    misleadingInformation = calculateCriterionAccuracy(
+      { i -> manualRecords[i].misleadingInformation },
+      { i -> autoRecords[i].misleadingInformation },
+      manualRecords.size,
+      { f, s -> compareCriterion(f, s) }
+    ),
+    granularity = calculateCriterionAccuracy(
+      { i -> manualRecords[i].granularity },
+      { i -> autoRecords[i].granularity },
+      manualRecords.size,
+      { f, s -> compareCriterion(f, s) }
+    ),
+    kotlinStyle = calculateCriterionAccuracy(
+      { i -> manualRecords[i].kotlinStyle },
+      { i -> autoRecords[i].kotlinStyle },
+      manualRecords.size,
+      { f, s -> compareCriterion(f, s) }
+    )
+  )
 }
