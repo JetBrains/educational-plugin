@@ -17,9 +17,6 @@ import kotlinx.css.properties.*
 class TableTaskResourcesManager: TaskResourcesManager<TableTask> {
   private val templateName = "tableTask.html"
 
-  override val resources: Map<String, String>
-    get() = mapOf("table_task_style" to stylesheet)
-
   override fun getText(task: TableTask): String {
     return if (task.rows.isNotEmpty() && task.columns.isNotEmpty()) {
       GeneratorUtils.getInternalTemplateText(templateName, getTextResources(task))
@@ -35,6 +32,7 @@ class TableTaskResourcesManager: TaskResourcesManager<TableTask> {
       "columns" to Gson().toJson(task.columns),
       "selected" to task.selected.map { it.toList()} .toList(),
       "is_checkbox" to task.isMultipleChoice,
+      "table_task_style" to stylesheet
     )
   }
 

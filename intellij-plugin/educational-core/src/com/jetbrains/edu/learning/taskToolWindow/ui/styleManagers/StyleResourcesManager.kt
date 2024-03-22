@@ -4,8 +4,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.ui.JBColor
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
 import com.jetbrains.edu.learning.taskToolWindow.ui.EduToolsResourcesRequestHandler
-import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.sortingBasedTask.MatchingTaskResourcesManager
-import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.sortingBasedTask.SortingTaskResourcesManager
 import com.jetbrains.edu.learning.ui.getCurrentThemeId
 import java.net.URL
 
@@ -150,10 +148,6 @@ object StyleResourcesManager {
     resourcePair("jetbrains_academy_style_base", JETBRAINS_ACADEMY_CSS_BASE)
   )
     .plus(panelSpecificHintResources)
-    .plus(ChoiceTaskResourcesManager().resources)
-    .plus(MatchingTaskResourcesManager().resources)
-    .plus(SortingTaskResourcesManager().resources)
-    .plus(TableTaskResourcesManager().resources)
 
   private fun resourcePair(name: String, path: String) = name to resourceUrl(path)
 

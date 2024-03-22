@@ -7,8 +7,7 @@ import kotlinx.css.*
 class SortingTaskResourcesManager : SortingBasedTaskResourcesManager<SortingTask>() {
   override fun getCaptions(task: SortingTask): String = Gson().toJson(emptyList<String>())
 
-  override val resources: Map<String, String>
-    get() = mapOf(wrapIntoStyleName(SortingTask.SORTING_TASK_TYPE) to stylesheet)
+  override fun taskSpecificStyles(): Map<String, String> = mapOf(wrapIntoStyleName(SortingTask.SORTING_TASK_TYPE) to stylesheet)
 
   override val stylesheet: String
     get() {
