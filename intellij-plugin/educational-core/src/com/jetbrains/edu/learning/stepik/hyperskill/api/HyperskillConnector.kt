@@ -183,7 +183,7 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
     }
 
     progressIndicator?.checkCanceled()
-    val tasks = getTasks(course, lesson, stepSources)
+    val tasks = getTasks(course, stepSources)
     for (task in tasks) {
       lesson.addTask(task)
     }
@@ -196,7 +196,7 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
   fun getProblems(course: Course, lesson: Lesson): List<Task> {
     val steps = lesson.taskList.map { it.id }
     val stepSources = getStepSources(steps).onError { emptyList() }
-    return getTasks(course, lesson, stepSources)
+    return getTasks(course, stepSources)
   }
 
   fun loadStages(hyperskillCourse: HyperskillCourse) {
@@ -383,10 +383,10 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
     /**
      * Create new tasks in lesson. Tasks get from stepSources
      */
-    fun getTasks(course: Course, lesson: Lesson, stepSources: List<HyperskillStepSource>): List<Task> {
+    fun getTasks(course: Course, stepSources: List<HyperskillStepSource>): List<Task> {
       val hyperskillCourse = course as HyperskillCourse
       return stepSources.mapNotNull { step ->
-        HyperskillTaskBuilder(course, lesson, step).build()
+        HyperskillTaskBuilder(course, step).build()
           ?.also { hyperskillCourse.updateAdditionalFiles(step) }
       }
     }

@@ -100,14 +100,13 @@ class HyperskillCheckNumberTaskTest : HyperskillCheckAnswerTaskTest() {
   fun `test creating placeholder`() {
     val course = getCourse()
     val task = course.allTasks[0] as NumberTask
-    val lesson = task.lesson
     val stepSource = StepSource().apply {
       block = Step().apply {
         name = "number"
       }
     }
 
-    val createdTask = StepikTaskBuilder(course, lesson, stepSource).createTask(stepSource.block?.name!!) ?: error("")
+    val createdTask = StepikTaskBuilder(course, stepSource).createTask(stepSource.block?.name!!)
     assertEquals(1, createdTask.taskFiles.size)
     assertEquals(1, createdTask.getTaskFile(AnswerTask.ANSWER_FILE_NAME)?.answerPlaceholders?.size)
     assertEquals(

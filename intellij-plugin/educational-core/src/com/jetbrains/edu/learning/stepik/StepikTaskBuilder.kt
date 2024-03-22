@@ -38,7 +38,7 @@ import com.jetbrains.edu.learning.xmlEscaped
 import com.jetbrains.rd.util.first
 import org.jetbrains.annotations.NonNls
 
-open class StepikTaskBuilder(private val course: Course, private val lesson: Lesson, stepSource: StepSource) {
+open class StepikTaskBuilder(private val course: Course, stepSource: StepSource) {
   private val courseType: String = course.itemType
   private val courseMode: CourseMode = course.courseMode
   private val courseEnvironment: String = course.environment
@@ -79,7 +79,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
       }
     })
 
-  open fun createTask(type: String): Task? {
+  open fun createTask(type: String): Task {
     val taskName = HyperskillTaskType.values().find { it.type == type }?.value ?: UNKNOWN_TASK_NAME
     return (stepikTaskBuilders[type] ?: this::unsupportedTask).invoke(taskName)
   }
@@ -299,15 +299,8 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
     return task
   }
 
-  private fun unsupportedTask(@NonNls name: String): Task {
-    val task = UnsupportedTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked)
-
-    task.descriptionText = UnsupportedTask.getDescriptionTextTemplate(name, getStepikLink(task, lesson), StepikNames.STEPIK)
-    task.descriptionFormat = DescriptionFormat.HTML
-
-    initTaskFiles(task, "This is a ${name.lowercase()} task. You can use this editor as a playground\n")
-    return task
-  }
+  // We can get an unsupported task for hyperskill courses only. There only task type is important, no other info is used
+  private fun unsupportedTask(@NonNls name: String): Task = UnsupportedTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked)
 
   private fun pycharmTask(type: String? = null): Task {
     val stepOptions = step.pycharmOptions()
