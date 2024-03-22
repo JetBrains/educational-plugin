@@ -28,11 +28,14 @@ import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.EduUtilsKt.isNewlyCreated
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.eduAssistant.AiAssistantState
+import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.isPreview
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.eduAssistant.context.initAiHintContext
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
@@ -101,6 +104,8 @@ class EduStartupActivity : StartupActivity.DumbAware {
 
         EduCounterUsageCollector.eduProjectOpened(course)
       }
+
+      initAiHintContexts(course)
     }
   }
 
@@ -168,6 +173,8 @@ class EduStartupActivity : StartupActivity.DumbAware {
     // Android Studio creates `gradlew` not via VFS, so we have to refresh project dir
     VfsUtil.markDirtyAndRefresh(false, true, true, project.courseDir)
   }
+
+  private fun initAiHintContexts(course: Course) = course.allTasks.forEach { initAiHintContext(it, AiAssistantState.ContextInitialized) }
 
   companion object {
     private val LOG = Logger.getInstance(EduStartupActivity::class.java)

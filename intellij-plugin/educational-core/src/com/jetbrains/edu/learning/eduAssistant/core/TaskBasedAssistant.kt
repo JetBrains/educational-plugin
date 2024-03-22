@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.eduAssistant.core
 
 import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.courseFormat.eduAssistant.AiAssistantState
@@ -22,6 +23,8 @@ import kotlinx.coroutines.withContext
 import com.jetbrains.edu.learning.eduAssistant.grazie.GenerationContextProfile.NEXT_STEP_TEXT_HINT
 import com.jetbrains.edu.learning.eduAssistant.grazie.GenerationContextProfile.NEXT_STEP_CODE_HINT
 import com.jetbrains.edu.learning.eduAssistant.grazie.GenerationContextProfile.SOLUTION_STEPS
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
 
@@ -31,7 +34,11 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
   var taskAnalysisPrompt: String? = null
   private var hintContext: HintContext? = null
 
-  suspend fun getTaskAnalysis(task: Task): String? {
+  suspend fun getTaskAnalysis(task: Task, forcedReload: Boolean = false): String? = taskIdToMutex.getOrPut(task.id, ::Mutex).withLock {
+    if (!forcedReload && task.generatedSolutionSteps != null) {
+      return@withLock task.generatedSolutionSteps
+    }
+
     taskAnalysisTimingLogger.info { "Starting getTaskAnalysis function for task-id: ${task.id}" }
 
     if (taskProcessor.getFailureMessage() == EduCoreBundle.message("error.execution.failed")) return null
@@ -104,7 +111,7 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
 
       hintTimingLogger.info { "Retrieving the task analysis" }
       // The task files were not changed and the user asked about help again
-      if (!taskProcessor.hasFilesChanged() && task.aiAssistantState == AiAssistantState.HelpAsked) getTaskAnalysis(task)
+      if (!taskProcessor.hasFilesChanged() && task.aiAssistantState == AiAssistantState.HelpAsked) getTaskAnalysis(task, forcedReload = true)
       val taskAnalysis = task.generatedSolutionSteps?.also { hintContext?.log() } ?: getTaskAnalysis(task) ?: return AssistantResponse(
         assistantError = AssistantError.NoCompiledCode
       )
@@ -160,7 +167,11 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
           """.trimMargin()
         }
 
-        generateTextHintAndResponse(nextStepCodeHint, functionFromCode?.text ?: "", task, nextStepCodeHintPrompt, state)
+        generateTextHintAndResponse(
+          nextStepCodeHint,
+          readAction { functionFromCode?.text } ?: "",
+          task, nextStepCodeHintPrompt, state
+        )
       }
     }
     // TODO: Handle more exceptions with AiPlatformException
@@ -385,5 +396,9 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
       availableForSolutionStrings = availableForSolutionStrings?.joinToString(separator = System.lineSeparator()),
       language = task.course.languageDisplayName.lowercase()
     )
+  }
+
+  companion object {
+    val taskIdToMutex = HashMap<Int, Mutex>()
   }
 }
