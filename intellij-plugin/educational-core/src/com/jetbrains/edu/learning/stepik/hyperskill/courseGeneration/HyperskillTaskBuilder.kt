@@ -5,7 +5,6 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFileErrorHighlightLevel
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL
-import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.PYCHARM_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.RemoteEduTask.Companion.REMOTE_EDU_TASK_TYPE
@@ -22,9 +21,8 @@ import com.jetbrains.edu.learning.stepik.hyperskill.stepLink
 
 class HyperskillTaskBuilder(
   course: Course,
-  lesson: Lesson,
   private val stepSource: HyperskillStepSource
-) : StepikTaskBuilder(course, lesson, stepSource) {
+) : StepikTaskBuilder(course, stepSource) {
   override fun getLanguageName(language: Language): String? {
     return HyperskillLanguages.getLanguageName(language.id)
   }
@@ -42,8 +40,8 @@ class HyperskillTaskBuilder(
     return createTask(type)
   }
 
-  override fun createTask(type: String): Task? {
-    val task = super.createTask(type) ?: return null
+  override fun createTask(type: String): Task {
+    val task = super.createTask(type)
 
     task.descriptionText = "<div class=\"step-text\">\n${task.descriptionText}\n</div>"
     task.apply {

@@ -93,7 +93,7 @@ class GetHyperskillLesson : DumbAwareAction(
         return null
       }
       val allStepSources = StepikConnector.getInstance().getStepSources(lesson.stepIds)
-      val tasks = getTasks(course, lesson, allStepSources)
+      val tasks = getTasks(course, allStepSources)
       for (task in tasks) {
         lesson.addTask(task)
       }
@@ -129,9 +129,9 @@ class GetHyperskillLesson : DumbAwareAction(
       showError(message, EduCoreBundle.message("error.failed.to.get.lesson"))
     }
 
-    private fun getTasks(course: Course, lesson: Lesson, allStepSources: List<StepSource>): List<Task> =
-      allStepSources.mapNotNull { step ->
-        val builder = StepikTaskBuilder(course, lesson, step)
+    private fun getTasks(course: Course, allStepSources: List<StepSource>): List<Task> =
+      allStepSources.map { step ->
+        val builder = StepikTaskBuilder(course, step)
         val type = step.block?.name ?: error("Can't get type from step source")
         builder.createTask(type)
       }

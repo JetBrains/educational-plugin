@@ -245,7 +245,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     val existingTasksIds = items.map { it.id }
     val stepsSourceForAdding = stepSources.filter { it.id !in existingTasksIds }
 
-    val tasks = HyperskillConnector.getTasks(course, this, stepsSourceForAdding)
+    val tasks = HyperskillConnector.getTasks(course, stepsSourceForAdding)
     tasks.forEach(this::addTask)
     return Ok(tasks)
   }

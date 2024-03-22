@@ -21,16 +21,9 @@ import com.intellij.notification.NotificationType.INFORMATION
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.stepik.StepikNames.getStepikProfilePath
-
-
-fun getStepikLink(task: Task, lesson: Lesson): String {
-  return "${StepikNames.getStepikUrl()}/lesson/${lesson.id}/step/${task.index}"
-}
 
 @Suppress("DialogTitleCapitalization")
 fun showUpdateAvailableNotification(project: Project, updateAction: () -> Unit) {

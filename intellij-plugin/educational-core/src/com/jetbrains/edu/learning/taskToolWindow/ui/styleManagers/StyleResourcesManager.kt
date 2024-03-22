@@ -33,8 +33,6 @@ object StyleResourcesManager {
   private const val SCROLL_BARS_HIGH_CONTRAST_CSS: String = "/style/scrollbars/highcontrast.css"
   private const val SCROLL_BARS_LIGHT_CSS: String = "/style/scrollbars/light.css"
 
-  private const val STEPIK_LINK_CSS: String = "/style/stepikLink.css"
-
   private const val INTELLIJ_ICON_FONT_EOT: String = "/style/hint/fonts/intellij-icon-font.eot"
   private const val INTELLIJ_ICON_FONT_SVG: String = "/style/hint/fonts/intellij-icon-font.svg"
   private const val INTELLIJ_ICON_FONT_TTF: String = "/style/hint/fonts/intellij-icon-font.ttf"
@@ -86,7 +84,6 @@ object StyleResourcesManager {
     SCROLL_BARS_DARCULA_CSS,
     SCROLL_BARS_HIGH_CONTRAST_CSS,
     SCROLL_BARS_LIGHT_CSS,
-    STEPIK_LINK_CSS,
     INTELLIJ_ICON_FONT_EOT,
     INTELLIJ_ICON_FONT_SVG,
     INTELLIJ_ICON_FONT_TTF,
@@ -139,7 +136,6 @@ object StyleResourcesManager {
     "tables_style" to StyleManager().tablesStylesheet(),
     "content" to content,
     "mathJax" to "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
-    resourcePair("stepik_link", STEPIK_LINK_CSS),
     resourcePair("codeforces_task", CODEFORCES_TASK_CSS),
     resourcePair("hyperskill_task", HYPERSKILL_TASK_CSS),
     resourcePair("scrollbar_style_laf", scrollbarLafSpecific),
