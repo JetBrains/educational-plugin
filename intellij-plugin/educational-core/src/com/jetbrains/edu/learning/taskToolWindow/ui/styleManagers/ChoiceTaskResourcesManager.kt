@@ -4,20 +4,18 @@ import com.google.gson.Gson
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.getStepikLink
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.stepLink
-import com.jetbrains.edu.learning.taskToolWindow.ui.*
+import com.jetbrains.edu.learning.taskToolWindow.ui.getRadioButtonCSS
 import kotlinx.css.*
-import kotlinx.css.properties.*
+import kotlinx.css.properties.lh
 
 class ChoiceTaskResourcesManager : TaskResourcesManager<ChoiceTask> {
-  override val resources: Map<String, String>
-    get() = mapOf("choice_options_style" to choiceOptionsStylesheet())
 
   // because task object is inserted after html is loaded
   private fun getTaskResources(task: ChoiceTask): Map<String, Any> = mapOf(
@@ -25,7 +23,8 @@ class ChoiceTaskResourcesManager : TaskResourcesManager<ChoiceTask> {
     "selected_variants" to task.selectedVariants,
     "choice_options" to Gson().toJson(task.choiceOptions.map { it.text }),
     "is_multiple_choice" to task.isMultipleChoice,
-    "is_disabled" to (task.status == CheckStatus.Failed && task.isChangedOnFailed)
+    "is_disabled" to (task.status == CheckStatus.Failed && task.isChangedOnFailed),
+    "choice_options_style" to choiceOptionsStylesheet()
   )
 
   override fun getText(task: ChoiceTask): String {

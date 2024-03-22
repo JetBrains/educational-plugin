@@ -28,6 +28,8 @@ abstract class SortingBasedTaskResourcesManager<T : SortingBasedTask> : TaskReso
 
   protected abstract fun getCaptions(task: T): String
 
+  protected abstract fun taskSpecificStyles(): Map<String, String>
+
   private fun getTextResources(task: T): Map<String, String> {
     val moveUpUrl = StyleResourcesManager.resourceUrl(getIconPath(isDown = false))
     val moveDownUrl = StyleResourcesManager.resourceUrl(getIconPath(isDown = true))
@@ -41,6 +43,7 @@ abstract class SortingBasedTaskResourcesManager<T : SortingBasedTask> : TaskReso
       "tutorial" to getTutorialHTML(moveUpUrl, moveDownUrl),
       "captions" to getCaptions(task),
     )
+      .plus(taskSpecificStyles())
   }
 
   protected fun wrapIntoStyleName(s: String) = "${s}_style"
