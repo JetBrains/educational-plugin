@@ -37,6 +37,7 @@ class AutoHintValidationAction : ValidationAction<ValidationOfHintsDataframeReco
   override val outputFilePrefixName: String = "generatedValidationOfHints"
   override val name: String = EduAndroidAiAssistantValidationBundle.message("action.auto.hint.validation.action.name")
   override val isNavigationRequired: Boolean = true
+  override val isResultAccuracyRequired: Boolean = true
   override val pathToManualValidationDataset by lazy { Path(System.getProperty("manual.hint.validation.path")) }
 
   init {
@@ -49,14 +50,18 @@ class AutoHintValidationAction : ValidationAction<ValidationOfHintsDataframeReco
     get(5), get(6), get(7), get(8), get(9), get(10), get(11), get(12), get(13), get(14), get(15), get(16), get(17), get(18), get(19))
 
   private fun compareLengthCriterion(first: String, second: String): Boolean {
-    val keywords = arrayOf(NEW_KEYWORD, CHANGED_KEYWORD, DELETED_KEYWORD)
-    for (keyword in keywords) {
-      val firstNumber = Regex("(?<=$keyword: )\\d+").find(first)?.value?.toInt()
-      val secondNumber = Regex("(?<=$keyword: )\\d+").find(second)?.value?.toInt()
+    arrayOf(NEW_KEYWORD, CHANGED_KEYWORD, DELETED_KEYWORD).forEach {
+      val firstNumber = Regex("(?<=$it: )\\d+").find(first)?.value?.toInt()
+      val secondNumber = Regex("(?<=$it: )\\d+").find(second)?.value?.toInt()
       if (firstNumber == null || secondNumber == null || firstNumber != secondNumber) return false
     }
     return true
   }
+
+  private fun isCorrectLength(answer: String) =
+    arrayOf(NEW_KEYWORD, CHANGED_KEYWORD, DELETED_KEYWORD).sumOf {
+      Regex("(?<=$it: )\\d+").find(answer)?.value?.toInt() ?: 0
+    } < 4
 
   private fun compareFeedbackTypeCriterion(first: String, second: String): Boolean {
     val firstList = first.split(",").map { it.trim() }
@@ -73,73 +78,73 @@ class AutoHintValidationAction : ValidationAction<ValidationOfHintsDataframeReco
       { i -> manualRecords[i].feedbackType },
       { i -> autoRecords[i].feedbackType },
       manualRecords.size,
-      { f, s -> compareFeedbackTypeCriterion(f, s) }
+      { f, s -> compareFeedbackTypeCriterion(f, s!!) }
     ),
     information = calculateCriterionAccuracy(
       { i -> manualRecords[i].information },
       { i -> autoRecords[i].information },
       manualRecords.size,
-      { f, s -> compareCriterion(f, s) }
+      { f, s -> compareCriterion(f, s!!) }
     ),
     levelOfDetail = calculateCriterionAccuracy(
       { i -> manualRecords[i].levelOfDetail },
       { i -> autoRecords[i].levelOfDetail },
       manualRecords.size,
-      { f, s -> compareCriterion(f, s, BOH_KEYWORD, HLD_KEYWORD) }
+      { f, s -> compareCriterion(f, s!!, BOH_KEYWORD, HLD_KEYWORD) }
     ),
     personalized = calculateCriterionAccuracy(
       { i -> manualRecords[i].personalized },
       { i -> autoRecords[i].personalized },
       manualRecords.size,
-      { f, s -> compareCriterion(f, s) }
+      { f, s -> compareCriterion(f, s!!) }
     ),
     intersection = calculateCriterionAccuracy(
       { i -> manualRecords[i].intersection },
       { i -> autoRecords[i].intersection },
       manualRecords.size,
-      { f, s -> compareCriterion(f, s) }
+      { f, s -> compareCriterion(f, s!!) }
     ),
     appropriate = calculateCriterionAccuracy(
       { i -> manualRecords[i].appropriate },
       { i -> autoRecords[i].appropriate },
       manualRecords.size,
-      { f, s -> compareCriterion(f, s) }
+      { f, s -> compareCriterion(f, s!!) }
     ),
     specific = calculateCriterionAccuracy(
       { i -> manualRecords[i].specific },
       { i -> autoRecords[i].specific },
       manualRecords.size,
-      { f, s -> compareCriterion(f, s) }
+      { f, s -> compareCriterion(f, s!!) }
     ),
     misleadingInformation = calculateCriterionAccuracy(
       { i -> manualRecords[i].misleadingInformation },
       { i -> autoRecords[i].misleadingInformation },
       manualRecords.size,
-      { f, s -> compareCriterion(f, s) }
+      { f, s -> compareCriterion(f, s!!) }
     ),
     codeQuality = calculateCriterionAccuracy(
       { i -> manualRecords[i].codeQuality },
       { i -> autoRecords[i].codeQuality },
       manualRecords.size,
-      { f, s -> compareCriterion(f, s) }
+      { f, s -> compareCriterion(f, s!!) }
     ),
     kotlinStyle = calculateCriterionAccuracy(
       { i -> manualRecords[i].kotlinStyle },
       { i -> autoRecords[i].kotlinStyle },
       manualRecords.size,
-      { f, s -> compareCriterion(f, s) }
+      { f, s -> compareCriterion(f, s!!) }
     ),
     length = calculateCriterionAccuracy(
       { i -> manualRecords[i].correlationWithSteps },
       { i -> autoRecords[i].correlationWithSteps },
       manualRecords.size,
-      { f, s -> compareLengthCriterion(f, s) }
+      { f, s -> compareLengthCriterion(f, s!!) }
     ),
     correlationWithSteps = calculateCriterionAccuracy(
       { i -> manualRecords[i].correlationWithSteps },
       { i -> autoRecords[i].correlationWithSteps },
       manualRecords.size,
-      { f, s -> compareCriterion(f, s) }
+      { f, s -> compareCriterion(f, s!!) }
     )
   )
 
@@ -210,4 +215,63 @@ class AutoHintValidationAction : ValidationAction<ValidationOfHintsDataframeReco
       )
     }
   }
+
+  override fun calculateResultAccuracy(records: List<ValidationOfHintsDataframeRecord>) = ValidationOfHintsDataframeRecord(
+    nextStepCodeHint = ACCURACY_KEYWORD,
+    information = calculateCriterionResultAccuracy(
+      { i -> records[i].information },
+      records.size,
+      { f -> isCorrectAnswer(f) }
+    ),
+    levelOfDetail = calculateCriterionResultAccuracy(
+      { i -> records[i].levelOfDetail },
+      records.size,
+      { f -> isCorrectAnswer(f, BOH_KEYWORD) }
+    ),
+    personalized = calculateCriterionResultAccuracy(
+      { i -> records[i].personalized },
+      records.size,
+      { f -> isCorrectAnswer(f) }
+    ),
+    intersection = calculateCriterionResultAccuracy(
+      { i -> records[i].intersection },
+      records.size,
+      { f -> isCorrectAnswer(f) }
+    ),
+    appropriate = calculateCriterionResultAccuracy(
+      { i -> records[i].appropriate },
+      records.size,
+      { f -> isCorrectAnswer(f) }
+    ),
+    specific = calculateCriterionResultAccuracy(
+      { i -> records[i].specific },
+      records.size,
+      { f -> isCorrectAnswer(f) }
+    ),
+    misleadingInformation = calculateCriterionResultAccuracy(
+      { i -> records[i].misleadingInformation },
+      records.size,
+      { f -> isCorrectAnswer(f, NO_KEYWORD) }
+    ),
+    codeQuality = calculateCriterionResultAccuracy(
+      { i -> records[i].codeQuality },
+      records.size,
+      { f -> isCorrectAnswer(f) }
+    ),
+    kotlinStyle = calculateCriterionResultAccuracy(
+      { i -> records[i].kotlinStyle },
+      records.size,
+      { f -> isCorrectAnswer(f) }
+    ),
+    length = calculateCriterionResultAccuracy(
+      { i -> records[i].correlationWithSteps },
+      records.size,
+      { f -> isCorrectLength(f) }
+    ),
+    correlationWithSteps = calculateCriterionResultAccuracy(
+      { i -> records[i].correlationWithSteps },
+      records.size,
+      { f -> isCorrectAnswer(f) }
+    )
+  )
 }

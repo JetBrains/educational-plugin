@@ -30,6 +30,7 @@ class StepsValidationAction : ValidationAction<StepsDataframeRecord>() {
   override val outputFilePrefixName: String = "generatedSteps"
   override val name: String = EduAndroidAiAssistantValidationBundle.message("action.step.validation.action.name")
   override val isNavigationRequired: Boolean = false
+  override val isResultAccuracyRequired: Boolean = false
   override val pathToManualValidationDataset = null
 
   init {
@@ -66,6 +67,10 @@ class StepsValidationAction : ValidationAction<StepsDataframeRecord>() {
   override fun CSVRecord.toDataframeRecord() = StepsDataframeRecord(get(0).toInt(), get(1), get(2), get(3), get(4))
 
   override fun calculateAccuracy(manualRecords: List<StepsDataframeRecord>, autoRecords: List<StepsDataframeRecord>): StepsDataframeRecord {
+    throw UnsupportedOperationException("This function is not supported.")
+  }
+
+  override fun calculateResultAccuracy(records: List<StepsDataframeRecord>): StepsDataframeRecord {
     throw UnsupportedOperationException("This function is not supported.")
   }
 

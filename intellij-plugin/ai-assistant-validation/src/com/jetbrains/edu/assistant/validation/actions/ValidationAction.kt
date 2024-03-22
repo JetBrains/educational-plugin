@@ -52,6 +52,7 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
   protected abstract val outputFilePrefixName: String
   protected abstract val name: String
   protected abstract val isNavigationRequired: Boolean
+  protected abstract val isResultAccuracyRequired: Boolean
   private val validationOutputPath by lazy {
     Path(System.getProperty("validation.output.path", "validationOutput")).also {
       it.createDirectories()
@@ -72,6 +73,8 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
   protected abstract fun CSVRecord.toDataframeRecord(): T
 
   protected abstract fun calculateAccuracy(manualRecords: List<T>, autoRecords: List<T>): T
+
+  protected abstract fun calculateResultAccuracy(records: List<T>): T
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
@@ -98,8 +101,8 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
       val manualValidationDataset = parseCsvFile(pathToManualValidationDataset) { it.toDataframeRecord() }
 
       val records = mutableListOf<T>()
-      manualValidationDataset?.let {
-        it.forEach { manualValidationRecord ->
+      if (manualValidationDataset != null) {
+        manualValidationDataset.forEach { manualValidationRecord ->
           indicator.text = "${EduAndroidAiAssistantValidationBundle.message("action.validation.indicator.task")} $doneTasks"
           indicator.fraction = doneTasks.toDouble() / totalTasks
 
@@ -108,9 +111,9 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
           }
           doneTasks++
         }
-        records.add(calculateAccuracy(it, records))
+        records.add(calculateAccuracy(manualValidationDataset, records))
         records.convertToDataFrame().writeCSV()
-      } ?: {
+      } else {
         for (lesson in course.lessons) {
           for (task in lesson.taskList) {
             if (task is EduTask) {
@@ -145,8 +148,12 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
             }
             previousTask = task
           }
+          records.convertToDataFrame().writeCSV()
         }
-        records.convertToDataFrame().writeCSV()
+        if (isResultAccuracyRequired) {
+          records.add(calculateResultAccuracy(records))
+          records.convertToDataFrame().writeCSV()
+        }
       }
 
       indicator.fraction = 1.0

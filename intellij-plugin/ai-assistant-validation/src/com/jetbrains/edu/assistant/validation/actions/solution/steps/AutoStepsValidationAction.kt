@@ -34,6 +34,7 @@ class AutoStepsValidationAction : ValidationAction<ValidationOfStepsDataframeRec
   override val outputFilePrefixName: String = "generatedValidationOfSteps"
   override val name: String = EduAndroidAiAssistantValidationBundle.message("action.auto.step.validation.action.name")
   override val isNavigationRequired: Boolean = false
+  override val isResultAccuracyRequired: Boolean = true
   override val pathToManualValidationDataset by lazy { Path(System.getProperty("manual.steps.validation.path")) }
 
   init {
@@ -111,43 +112,82 @@ class AutoStepsValidationAction : ValidationAction<ValidationOfStepsDataframeRec
       { i -> manualRecords[i].specifics },
       { i -> autoRecords[i].specifics },
       manualRecords.size,
-      { f, s -> compareCriterion(f, s) }
+      { f, s -> compareCriterion(f, s!!) }
     ),
     independence = calculateCriterionAccuracy(
       { i -> manualRecords[i].independence },
       { i -> autoRecords[i].independence },
       manualRecords.size,
-      { f, s -> compareCriterion(f, s) }
+      { f, s -> compareCriterion(f, s!!) }
     ),
     codingSpecific = calculateCriterionAccuracy(
       { i -> manualRecords[i].codingSpecific },
       { i -> autoRecords[i].codingSpecific },
       manualRecords.size,
-      { f, s -> compareCriterion(f, s, CODING_KEYWORD, NOT_CODING_KEYWORD) }
+      { f, s -> compareCriterion(f, s!!, CODING_KEYWORD, NOT_CODING_KEYWORD) }
     ),
     direction = calculateCriterionAccuracy(
       { i -> manualRecords[i].direction },
       { i -> autoRecords[i].direction },
       manualRecords.size,
-      { f, s -> compareCriterion(f, s) }
+      { f, s -> compareCriterion(f, s!!) }
     ),
     misleadingInformation = calculateCriterionAccuracy(
       { i -> manualRecords[i].misleadingInformation },
       { i -> autoRecords[i].misleadingInformation },
       manualRecords.size,
-      { f, s -> compareCriterion(f, s) }
+      { f, s -> compareCriterion(f, s!!) }
     ),
     granularity = calculateCriterionAccuracy(
       { i -> manualRecords[i].granularity },
       { i -> autoRecords[i].granularity },
       manualRecords.size,
-      { f, s -> compareCriterion(f, s) }
+      { f, s -> compareCriterion(f, s!!) }
     ),
     kotlinStyle = calculateCriterionAccuracy(
       { i -> manualRecords[i].kotlinStyle },
       { i -> autoRecords[i].kotlinStyle },
       manualRecords.size,
-      { f, s -> compareCriterion(f, s) }
+      { f, s -> compareCriterion(f, s!!) }
+    )
+  )
+
+  override fun calculateResultAccuracy(records: List<ValidationOfStepsDataframeRecord>) = ValidationOfStepsDataframeRecord(
+    solution = ACCURACY_KEYWORD,
+    specifics = calculateCriterionResultAccuracy(
+      { i -> records[i].specifics },
+      records.size,
+      { f -> isCorrectAnswer(f) }
+    ),
+    independence = calculateCriterionResultAccuracy(
+      { i -> records[i].independence },
+      records.size,
+      { f -> isCorrectAnswer(f) }
+    ),
+    codingSpecific = calculateCriterionResultAccuracy(
+      { i -> records[i].codingSpecific },
+      records.size,
+      { f -> isCorrectAnswer(f, CODING_KEYWORD) }
+    ),
+    direction = calculateCriterionResultAccuracy(
+      { i -> records[i].direction },
+      records.size,
+      { f -> isCorrectAnswer(f) }
+    ),
+    misleadingInformation = calculateCriterionResultAccuracy(
+      { i -> records[i].misleadingInformation },
+      records.size,
+      { f -> isCorrectAnswer(f, NO_KEYWORD) }
+    ),
+    granularity = calculateCriterionResultAccuracy(
+      { i -> records[i].granularity },
+      records.size,
+      { f -> isCorrectAnswer(f) }
+    ),
+    kotlinStyle = calculateCriterionResultAccuracy(
+      { i -> records[i].kotlinStyle },
+      records.size,
+      { f -> isCorrectAnswer(f) }
     )
   )
 }

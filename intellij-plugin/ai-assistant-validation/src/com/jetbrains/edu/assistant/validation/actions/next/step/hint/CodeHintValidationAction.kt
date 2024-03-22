@@ -40,6 +40,7 @@ class CodeHintValidationAction : ValidationAction<CodeHintDataframeRecord>() {
   override val outputFilePrefixName: String = "codeHints"
   override val name: String = EduAndroidAiAssistantValidationBundle.message("action.code.hint.validation.action.name")
   override val isNavigationRequired: Boolean = true
+  override val isResultAccuracyRequired: Boolean = false
   override val pathToManualValidationDataset = null
 
   init {
@@ -115,6 +116,10 @@ class CodeHintValidationAction : ValidationAction<CodeHintDataframeRecord>() {
     manualRecords: List<CodeHintDataframeRecord>,
     autoRecords: List<CodeHintDataframeRecord>
   ): CodeHintDataframeRecord {
+    throw UnsupportedOperationException("This function is not supported.")
+  }
+
+  override fun calculateResultAccuracy(records: List<CodeHintDataframeRecord>): CodeHintDataframeRecord {
     throw UnsupportedOperationException("This function is not supported.")
   }
 }
