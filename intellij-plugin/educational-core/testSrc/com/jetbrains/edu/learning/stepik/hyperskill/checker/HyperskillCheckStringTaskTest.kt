@@ -66,7 +66,7 @@ class HyperskillCheckStringTaskTest : HyperskillCheckAnswerTaskTest() {
       }
     }
 
-    val createdTask = StepikTaskBuilder(course, lesson, stepSource).createTask(stepSource.block?.name!!) ?: error("")
+    val createdTask = StepikTaskBuilder(course, stepSource).createTask(stepSource.block?.name!!) ?: error("")
     assertEquals(1, createdTask.taskFiles.size)
     assertEquals(1, createdTask.getTaskFile(AnswerTask.ANSWER_FILE_NAME)?.answerPlaceholders?.size)
     assertEquals(

@@ -131,7 +131,7 @@ class GetHyperskillLesson : DumbAwareAction(
 
     private fun getTasks(course: Course, lesson: Lesson, allStepSources: List<StepSource>): List<Task> =
       allStepSources.mapNotNull { step ->
-        val builder = StepikTaskBuilder(course, lesson, step)
+        val builder = StepikTaskBuilder(course, step)
         val type = step.block?.name ?: error("Can't get type from step source")
         builder.createTask(type)
       }

@@ -33,7 +33,7 @@ class StepikTaskBuilderTest : EduTestCase() {
   override fun getTestDataPath(): String = "testData/stepikTaskBuilder"
 
   fun `test theory task`() = doTest<TheoryTask>(FakeGradleBasedLanguage)
-  fun `test unsupported task`() = doTest<UnsupportedTask>(FakeGradleBasedLanguage)
+  fun `test unsupported task`() = doTestIsInstance<UnsupportedTask>(FakeGradleBasedLanguage)
   fun `test choice task`() {
     mockConnector.withResponseHandler(testRootDisposable) { _, path ->
       MockResponseFactory.fromString(
@@ -128,8 +128,7 @@ class StepikTaskBuilderTest : EduTestCase() {
   }
 
   private inline fun <reified T : Task> doTest(language: Language, postSubmissionOnOpen: Boolean = true) {
-    val stepSource = loadStepSource()
-    val task = buildTask(stepSource, language)
+    val task = getTaskFromStep(language)
 
     assertInstanceOf(task, T::class.java)
 
@@ -143,6 +142,17 @@ class StepikTaskBuilderTest : EduTestCase() {
     if (task is TheoryTask) {
       checkPostSubmissionOnOpen(task, postSubmissionOnOpen)
     }
+  }
+
+  private inline fun <reified T : Task> doTestIsInstance(language: Language) {
+    val task = getTaskFromStep(language)
+    assertInstanceOf(task, T::class.java)
+  }
+
+  private fun getTaskFromStep(language: Language): Task {
+    val stepSource = loadStepSource()
+    val task = buildTask(stepSource, language)
+    return task
   }
 
   private fun checkPostSubmissionOnOpen(task: TheoryTask, postSubmissionOnOpen: Boolean) {
@@ -159,7 +169,7 @@ class StepikTaskBuilderTest : EduTestCase() {
   private fun buildTask(stepSource: StepSource, language: Language, course: Course = EduCourse()): Task {
     course.languageId = language.id
     val lesson = Lesson()
-    return StepikTaskBuilder(course, lesson, stepSource).createTask(stepSource.block?.name!!) ?: error("")
+    return StepikTaskBuilder(course, stepSource).createTask(stepSource.block?.name!!) ?: error("")
   }
 
   private fun createPathMatcher(basePath: String, language: Language): Matcher<String> {
