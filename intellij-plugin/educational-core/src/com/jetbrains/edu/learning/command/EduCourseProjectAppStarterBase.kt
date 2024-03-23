@@ -4,7 +4,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
-import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
@@ -96,8 +95,7 @@ abstract class EduCourseProjectAppStarterBase : EduAppStarterBase<ArgsWithProjec
   protected abstract suspend fun performProjectAction(project: Project, course: Course, args: Args): CommandResult
 
   private suspend fun waitForPostStartupActivities(project: Project) {
-    val startupManager = StartupManager.getInstance(project)
-    waitUntil { startupManager.postStartupActivityPassed() }
+    com.jetbrains.edu.learning.command.waitForPostStartupActivities(project)
   }
 }
 
@@ -110,6 +108,8 @@ private class ProjectConfigurationListener : CourseProjectGenerator.CourseProjec
     isProjectConfigured = true
   }
 
+  // BACKCOMPAT: 2023.2. Consider using `ActivityTracker` instead.
+  // See https://youtrack.jetbrains.com/issue/IJPL-170/Provide-API-for-tracking-configuration-activities-in-IDE
   suspend fun waitForProjectConfiguration() {
     val timeout = System.getProperty("edu.create.course.timeout")?.toLong() ?: DEFAULT_TIMEOUT
     val startTime = System.currentTimeMillis()
@@ -125,7 +125,8 @@ private class ProjectConfigurationListener : CourseProjectGenerator.CourseProjec
   }
 }
 
-private suspend fun waitUntil(condition: () -> Boolean) {
+// BACKCOMPAT: 2023.2. Make it private
+suspend fun waitUntil(condition: () -> Boolean) {
   while (!condition()) {
     delay(50)
   }
