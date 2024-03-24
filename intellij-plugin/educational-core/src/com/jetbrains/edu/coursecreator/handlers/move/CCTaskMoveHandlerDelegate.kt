@@ -56,6 +56,8 @@ class CCTaskMoveHandlerDelegate : CCStudyItemMoveHandlerDelegate(StudyItemType.T
       }
       val taskList = targetLesson.taskList
       val targetTask = if (taskList.isEmpty()) null else taskList[taskList.size - 1]
+      // execute IDE-specific actions before actually moving the task
+      StudyItemRefactoringHandler.processBeforeTaskMovement(project, taskToMove, targetVFile)
       moveTask(sourceDirectory, taskToMove, targetTask, 1, targetVFile, targetLesson)
       saveItem(sourceLesson)
       saveItem(targetLesson)
@@ -64,6 +66,7 @@ class CCTaskMoveHandlerDelegate : CCStudyItemMoveHandlerDelegate(StudyItemType.T
       val lessonDir = targetVFile.parent ?: return
       val targetTask = targetVFile.getTask(project) ?: return
       val delta = getDelta(project, targetTask) ?: return
+      StudyItemRefactoringHandler.processBeforeTaskMovement(project, taskToMove, targetVFile)
       moveTask(sourceDirectory, taskToMove, targetTask, delta, lessonDir, targetTask.lesson)
       saveItem(sourceLesson)
       saveItem(targetTask.lesson)

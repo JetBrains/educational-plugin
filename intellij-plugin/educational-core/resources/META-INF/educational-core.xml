@@ -88,6 +88,9 @@
     <extensionPoint qualifiedName="Educational.courseViewPaneCustomization"
                     interface="com.jetbrains.edu.learning.projectView.CourseViewPaneCustomization"
                     dynamic="true"/>
+    <extensionPoint qualifiedName="Educational.virtualFileListenerManager"
+                    interface="com.jetbrains.edu.learning.CCVirtualFileListenerManager"
+                    dynamic="true"/>
   </extensionPoints>
 
   <actions>

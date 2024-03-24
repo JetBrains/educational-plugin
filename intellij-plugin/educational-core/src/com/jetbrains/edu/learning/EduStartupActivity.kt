@@ -23,7 +23,6 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.SynchronizeTaskDescription
 import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreFileType
 import com.jetbrains.edu.coursecreator.framework.SyncChangesStateManager
-import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.learning.EduNames.COURSE_IGNORE
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.EduUtilsKt.isNewlyCreated
@@ -40,6 +39,7 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.handlers.CCVirtualFileListenerManager
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
@@ -62,7 +62,12 @@ class EduStartupActivity : StartupActivity.DumbAware {
     val manager = StudyTaskManager.getInstance(project)
     val connection = ApplicationManager.getApplication().messageBus.connect(manager)
     if (!isUnitTestMode) {
-      val vfsListener = if (project.isStudentProject()) UserCreatedFileListener(project) else CCVirtualFileListener(project, manager)
+      val vfsListener = if (project.isStudentProject()) {
+        UserCreatedFileListener(project)
+      }
+      else {
+        CCVirtualFileListenerManager.getCCVirtualFileListener(project, manager)
+      }
       connection.subscribe(VirtualFileManager.VFS_CHANGES, vfsListener)
 
       if (CCUtils.isCourseCreator(project)) {

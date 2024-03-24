@@ -63,6 +63,7 @@ class CCLessonMoveHandlerDelegate : CCStudyItemMoveHandlerDelegate(StudyItemType
     if (delta == null) {
       return
     }
+    StudyItemRefactoringHandler.processBeforeLessonMovement(project, sourceLesson, targetParentDir)
     val sourceContainer = sourceLesson.container
     val sourceLessonIndex = sourceLesson.index
     sourceLesson.index = -1

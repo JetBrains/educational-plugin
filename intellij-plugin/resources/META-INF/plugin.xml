@@ -30,6 +30,7 @@
     <module name="Edu-Go"/>
     <module name="Edu-Php"/>
     <module name="Edu-Shell"/>
+    <module name="Edu-CSharp"/>
     <module name="Edu-Python"/>
     <module name="sql-core"/>
     <module name="sql-jvm"/>

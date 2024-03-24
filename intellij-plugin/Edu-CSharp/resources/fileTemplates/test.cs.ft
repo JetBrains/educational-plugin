@@ -1,0 +1,11 @@
+namespace ${NAMESPACE_NAME} {
+    [TestFixture]
+    internal class ${TEST_NAME}
+    {
+        [Test]
+        public void Test1()
+        {
+            // your code here
+        }
+    }
+}

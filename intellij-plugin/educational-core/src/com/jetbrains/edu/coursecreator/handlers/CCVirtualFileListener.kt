@@ -21,7 +21,7 @@ import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.YamlLoader.deserializeChildrenIfNeeded
 
-class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : EduVirtualFileListener(project) {
+open class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : EduVirtualFileListener(project) {
 
   private val projectRefreshRequestsQueue = MergingUpdateQueue(COURSE_REFRESH_REQUEST,
                                                                300,

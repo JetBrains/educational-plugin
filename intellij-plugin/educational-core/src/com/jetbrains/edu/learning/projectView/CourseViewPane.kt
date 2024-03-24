@@ -60,7 +60,7 @@ import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
 import javax.swing.tree.TreeCellRenderer
 
-class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport(project) {
+open class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport(project) {
 
   private val myStudyItemDeleteProvider = CCStudyItemDeleteProvider()
 

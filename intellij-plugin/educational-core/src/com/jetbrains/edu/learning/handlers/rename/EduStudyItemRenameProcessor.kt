@@ -11,6 +11,7 @@ import com.intellij.refactoring.rename.RenameDialog
 import com.intellij.refactoring.rename.RenamePsiFileProcessor
 import com.jetbrains.edu.coursecreator.CCStudyItemPathInputValidator
 import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
+import com.jetbrains.edu.coursecreator.handlers.move.StudyItemRefactoringHandler
 import com.jetbrains.edu.coursecreator.presentableTitleName
 import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.course
@@ -68,6 +69,7 @@ abstract class EduStudyItemRenameProcessor : RenamePsiFileProcessor() {
         }
 
         override fun performRename(newName: String) {
+          StudyItemRefactoringHandler.processBeforeRename(project, item, newName)
           super.performRename(newName)
           CCFrameworkLessonManager.getInstance(project).migrateRecords(item, newName)
           item.name = newName
