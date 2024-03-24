@@ -18,6 +18,22 @@ plugins {
   alias(libs.plugins.testRetryPlugin)
 }
 
+buildscript {
+  repositories {
+    maven { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
+  }
+
+  // https://search.maven.org/artifact/com.jetbrains.rd/rd-gen
+  dependencies {
+    classpath("com.jetbrains.rd:rd-gen:2023.3.0")
+  }
+}
+
+apply {
+  plugin("com.jetbrains.rdgen")
+}
+
+
 idea {
   project {
     jdkName = "17"
@@ -41,6 +57,7 @@ allprojects {
     mavenCentral()
     maven("https://cache-redirector.jetbrains.com/intellij-dependencies")
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-js-wrappers")
+//    maven("https://www.myget.org/F/rd-snapshots/maven/")
   }
 
   configure<JavaPluginExtension> {

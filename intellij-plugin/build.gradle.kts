@@ -14,25 +14,30 @@ val baseIDE: String by project
 val isJvmCenteredIDE = baseIDE in listOf("idea", "studio")
 
 val ideaVersion: String by project
+
 val clionVersion: String by project
 val pycharmVersion: String by project
 val studioVersion: String by project
+val riderVersion: String by project
 
 val isIdeaIDE = baseIDE == "idea"
 val isClionIDE = baseIDE == "clion"
 val isPycharmIDE = baseIDE == "pycharm"
 val isStudioIDE = baseIDE == "studio"
+val isRiderIDE = baseIDE == "rider"
 
 val baseVersion = when {
   isIdeaIDE -> ideaVersion
   isClionIDE -> clionVersion
   isPycharmIDE -> pycharmVersion
   isStudioIDE -> studioVersion
+  isRiderIDE -> riderVersion
   else -> error("Unexpected IDE name = `$baseIDE`")
 }
 
 val pycharmSandbox = "${buildDir()}/pycharm-sandbox"
 val clionSandbox = "${buildDir()}/clion-sandbox"
+val riderSandbox = "${buildDir()}/rider-sandbox"
 val remoteDevServerSandbox = "${buildDir()}/remote-dev-server-sandbox"
 
 val pythonProPlugin: String by project
@@ -43,6 +48,7 @@ val pythonPlugin = when {
   isClionIDE -> "python-ce"
   isPycharmIDE -> "python-ce"
   isStudioIDE -> pythonCommunityPlugin
+  isRiderIDE -> null
   else -> error("Unexpected IDE name = `$baseIDE`")
 }
 val javaPlugin = "com.intellij.java"
@@ -66,12 +72,12 @@ val platformImagesPlugin = "com.intellij.platform.images"
 val gridImplPlugin = "intellij.grid.impl"
 val codeWithMePlugin = "com.jetbrains.codeWithMe"
 
+
 val jvmPlugins = listOf(
   javaPlugin,
   "JUnit",
   "org.jetbrains.plugins.gradle"
 )
-
 val kotlinPlugins = jvmPlugins + kotlinPlugin
 
 val javaScriptPlugins = listOf(
@@ -98,6 +104,10 @@ val pythonPlugins = listOfNotNull(
   // `intellij.grid.impl` is dependency only of pythonPro plugin
   if (pythonPlugin == pythonProPlugin) gridImplPlugin else null
 )
+
+//val riderPlugins = listOfNotNull(
+//  "com.jetbrains.rd"
+//)
 
 val changesFile = "changes.html"
 
@@ -273,6 +283,7 @@ dependencies {
   implementation(project("Edu-JavaScript"))
   implementation(project("Edu-Rust"))
   implementation(project("Edu-Cpp"))
+  implementation(project("Edu-CSharp"))
   implementation(project("Edu-Go"))
   implementation(project("Edu-Php"))
   implementation(project("Edu-Shell"))
@@ -281,7 +292,6 @@ dependencies {
   implementation(project("github"))
   implementation(project("remote-env"))
 }
-
 val removeIncompatiblePlugins = task<Delete>("removeIncompatiblePlugins") {
 
   fun deletePlugin(sandboxPath: String, pluginName: String) {
@@ -325,7 +335,6 @@ val mergePluginJarTask = task<Jar>("mergePluginJars") {
     delete(pluginJars)
   }
 }
-
 tasks {
   withType<PrepareSandboxTask> {
     from("twitter") {
@@ -414,6 +423,7 @@ createTasksToRunIde("GoLand")
 createTasksToRunIde("PhpStorm")
 createTasksToRunIde("RustRover")
 createTasksToRunIde("DataSpell")
+createTasksToRunIde("Rider", requiresLocalPath = false)
 
 /**
  * Creates `configure$[ideName]` and `run$[ideName]` Gradle tasks based on given [ideName].
@@ -438,7 +448,6 @@ fun createTasksToRunIde(ideName: String, requiresLocalPath: Boolean = true) {
 
   task<RunIdeTask>("run$ideName") {
     dependsOn(tasks.prepareSandbox)
-
     if (hasProp(pathProperty)) {
       ideDir = provider {
         file(prop(pathProperty))
@@ -462,7 +471,6 @@ project("educational-core") {
 project("code-insight") {
   dependencies {
     implementation(project(":intellij-plugin:educational-core"))
-
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
   }
 }
@@ -741,6 +749,19 @@ project("Edu-Php") {
 project("Edu-Shell") {
   intellij {
     plugins = listOf(shellScriptPlugin)
+  }
+
+  dependencies {
+    implementation(project(":intellij-plugin:educational-core"))
+
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+  }
+}
+
+project("Edu-CSharp") {
+  intellij {
+    version = riderVersion
+//    plugins = riderPlugins
   }
 
   dependencies {
