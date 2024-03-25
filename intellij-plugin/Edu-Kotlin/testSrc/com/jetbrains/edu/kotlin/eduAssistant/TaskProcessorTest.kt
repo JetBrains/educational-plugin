@@ -4,6 +4,7 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.psi.PsiDocumentManager
 import com.jetbrains.edu.jvm.slow.checker.JdkCheckerTestBase
+import com.jetbrains.edu.kotlin.eduAssistant.courses.kotlinCourse
 import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course

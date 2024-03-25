@@ -1,4 +1,4 @@
-package com.jetbrains.edu.kotlin.eduAssistant
+package com.jetbrains.edu.kotlin.eduAssistant.courses
 
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat

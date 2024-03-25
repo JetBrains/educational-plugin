@@ -9,7 +9,7 @@ inspections:
       - "**/testData/**"
       - "intellij-plugin/educational-core/resources/style/**"
       - "intellij-plugin/educational-core/resources/oauthResponsePages/**"
-      - "intellij-plugin/Edu-Kotlin/testSrc/com/jetbrains/edu/kotlin/eduAssistant/KotlinCourse.kt"
+      - "intellij-plugin/Edu-Kotlin/testSrc/com/jetbrains/edu/kotlin/eduAssistant/courses/**"
       - "intellij-plugin/Edu-Java/testSrc/com/jetbrains/edu/java/eduAssistant/JavaCourse.kt"
       - "intellij-plugin/ai-assistant-validation/testResources/com/jetbrains/edu/assistant/validation/test/KotlinOnboardingData/**"
   - group: "category:Proofreading"
