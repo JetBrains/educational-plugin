@@ -28,14 +28,11 @@ abstract class SortingBasedTaskResourcesManager<T : SortingBasedTask> : TaskReso
 
   protected abstract fun getCaptions(task: T): String
 
-  protected abstract fun taskSpecificStyles(): Map<String, String>
-
   private fun getTextResources(task: T): Map<String, String> {
     val moveUpUrl = StyleResourcesManager.resourceUrl(getIconPath(isDown = false))
     val moveDownUrl = StyleResourcesManager.resourceUrl(getIconPath(isDown = true))
-    val styleName = wrapIntoStyleName(task.itemType)
     return mapOf(
-      "sorting_based_style" to "\${$styleName}",
+      "sorting_based_style" to stylesheet,
       "options" to Gson().toJson(task.options),
       "ordering" to Gson().toJson(task.ordering.toList()),
       "upButtonIconPath" to moveUpUrl,
@@ -43,10 +40,7 @@ abstract class SortingBasedTaskResourcesManager<T : SortingBasedTask> : TaskReso
       "tutorial" to getTutorialHTML(moveUpUrl, moveDownUrl),
       "captions" to getCaptions(task),
     )
-      .plus(taskSpecificStyles())
   }
-
-  protected fun wrapIntoStyleName(s: String) = "${s}_style"
 
   private fun getTutorialHTML(moveUpUrl: String, moveDownUrl: String): String {
     val xIcon = "<img src='${moveUpUrl}' class='imgShortcut'>"

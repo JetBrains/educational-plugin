@@ -9,8 +9,6 @@ import kotlinx.css.*
 class MatchingTaskResourcesManager : SortingBasedTaskResourcesManager<MatchingTask>() {
   override fun getCaptions(task: MatchingTask): String = Gson().toJson(task.captions)
 
-  override fun taskSpecificStyles(): Map<String, String> = mapOf(wrapIntoStyleName(MatchingTask.MATCHING_TASK_TYPE) to stylesheet)
-
   override val stylesheet: String
     get() {
       return super.stylesheet + CSSBuilder().apply {
