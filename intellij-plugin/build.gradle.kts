@@ -56,6 +56,7 @@ val kotlinPlugin = "org.jetbrains.kotlin"
 val scalaPlugin: String by project
 val rustPlugin: String by project
 val tomlPlugin = "org.toml.lang"
+val tomlPluginRider: String by project
 val goPlugin: String by project
 val sqlPlugin = "com.intellij.database"
 val shellScriptPlugin = "com.jetbrains.sh"
@@ -106,7 +107,7 @@ val pythonPlugins = listOfNotNull(
 )
 
 //val riderPlugins = listOfNotNull(
-//  "com.jetbrains.rd"
+//  "com.jetbrains.rd"tomlDependencyRider
 //)
 
 val changesFile = "changes.html"
@@ -630,7 +631,7 @@ project("Edu-Python") {
       // needed only for tests, actually
       platformImagesPlugin,
       // needed to load `intellij.python.community.impl` module of Python plugin in tests
-      tomlPlugin
+      if (isRiderIDE) tomlPluginRider else tomlPlugin
     )
     plugins = pluginList
   }
@@ -646,7 +647,7 @@ project("Edu-Python") {
 
 project("Edu-Python:Idea") {
   intellij {
-    if (!isJvmCenteredIDE || isStudioIDE) {
+    if (!isJvmCenteredIDE || isStudioIDE || isRiderIDE) {
       version = ideaVersion
     }
 
@@ -667,7 +668,7 @@ project("Edu-Python:Idea") {
 
 project("Edu-Python:PyCharm") {
   intellij {
-    if (isStudioIDE) {
+    if (isStudioIDE || isRiderIDE) {
       version = ideaVersion
     }
     plugins = pythonPlugins
@@ -758,12 +759,21 @@ project("Edu-Shell") {
   }
 }
 
+buildscript {
+  // https://search.maven.org/artifact/com.jetbrains.rd/rd-gen
+  dependencies {
+    classpath("com.jetbrains.rd:rd-gen:2023.3.0")
+  }
+}
+
+apply {
+  plugin("com.jetbrains.rdgen")
+}
+
 project("Edu-CSharp") {
   intellij {
     version = riderVersion
-//    plugins = riderPlugins
   }
-
   dependencies {
     implementation(project(":intellij-plugin:educational-core"))
 

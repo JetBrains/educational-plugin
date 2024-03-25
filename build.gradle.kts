@@ -22,16 +22,8 @@ buildscript {
   repositories {
     maven { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
   }
-
-  // https://search.maven.org/artifact/com.jetbrains.rd/rd-gen
-  dependencies {
-    classpath("com.jetbrains.rd:rd-gen:2023.3.0")
-  }
 }
 
-apply {
-  plugin("com.jetbrains.rdgen")
-}
 
 
 idea {
