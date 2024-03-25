@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.eduAssistant.grazie
 import ai.grazie.api.gateway.client.SuspendableAPIGatewayClient
 import ai.grazie.client.common.SuspendableHTTPClient
 import ai.grazie.client.ktor.GrazieKtorHTTPClient
-import ai.grazie.model.llm.prompt.LLMPromptID
 import com.jetbrains.edu.learning.ai.utils.AiAuthBundle.getGrazieTemporaryToken
 
 object AiPlatformAdapter {
@@ -36,19 +35,10 @@ object AiPlatformAdapter {
     temp: Double = 0.0,
     generationContextProfile: GenerationContextProfile
   ): String {
-    val currentProfile = generationContextProfile.getProfileById()
     val sb = StringBuilder()
     try {
-      client.llm().v5().chat {
-        prompt = LLMPromptID("learning-assistant-prompt")
-        profile = currentProfile
-        temperature = temp
-        messages {
-          systemPrompt?.let {
-            system(it)
-          }
-          user(userPrompt)
-        }
+      client.llm().v6().chat {
+        generationContextProfile.buildChatRequest(this, systemPrompt, userPrompt, temp)
       }.collect {
         sb.append(it.content)
       }

@@ -29,7 +29,7 @@ private fun findChangedFunctions(task: Task, taskFile: TaskFile, project: Projec
     previousTaskFile?.let {
       val beforePsiFile = it.getSolution().createPsiFileForSolution(project, language)
       val afterPsiFile = taskFile.getSolution().createPsiFileForSolution(project, language)
-      val changedFunctions = FilesDiffer.findDifferentMethods(beforePsiFile, afterPsiFile, taskFile, language)
+      val changedFunctions = FilesDiffer.findDifferentMethods(beforePsiFile, afterPsiFile, language)
       task.changedFunctions = changedFunctions
     }
   }
@@ -48,7 +48,7 @@ fun PsiFile.filterAllowedModifications(task: Task, taskFile: TaskFile, project: 
       task.changedFunctions?.contains(functionSignature.name) == true ||
       task.authorSolutionContext?.functionSignatures?.contains(functionSignature) == false
     }.joinToString(separator = System.lineSeparator()) {
-      FunctionSignatureResolver.getFunctionBySignature(this, it, language)?.text ?: ""
+      FunctionSignatureResolver.getFunctionBySignature(this, it.name, language)?.text ?: ""
     }
   }
 }

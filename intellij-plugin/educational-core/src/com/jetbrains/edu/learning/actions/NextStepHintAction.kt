@@ -15,6 +15,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.editor.markup.*
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.progress.ProgressIndicator
@@ -71,6 +72,7 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
     closeNextStepHintNotificationPanel()
     cancelTaskGettingHint()
 
+    FileDocumentManager.getInstance().saveAllDocuments()
     val state = project.eduState ?: return
     val task = state.task
 

@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.courseFormat.eduAssistant
 
 data class FunctionSignature(
-  val name: String?,
+  val name: String,
   val parameters: List<FunctionParameter>,
   val returnType: String,
   val signatureSource: SignatureSource? = null,
@@ -24,7 +24,7 @@ data class FunctionSignature(
   }
 
   override fun hashCode(): Int {
-    var result = name?.hashCode() ?: 0
+    var result = name.hashCode()
     result = 31 * result + parameters.hashCode()
     return result
   }

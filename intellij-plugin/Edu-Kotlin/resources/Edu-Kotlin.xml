@@ -17,6 +17,7 @@
     <functionSignaturesProvider language="kotlin" implementationClass="com.jetbrains.edu.kotlin.learning.eduAssistant.psi.context.KtFunctionSignaturesProvider"/>
     <functionSignatureResolver language="kotlin" implementationClass="com.jetbrains.edu.kotlin.learning.eduAssistant.psi.context.KtFunctionSignatureResolver"/>
     <filesDiffer language="kotlin" implementationClass="com.jetbrains.edu.kotlin.learning.eduAssistant.psi.context.KtFilesDiffer"/>
+    <functionDiffReducer language="kotlin" implementationClass="com.jetbrains.edu.kotlin.learning.eduAssistant.psi.context.KtFunctionDiffReducer"/>
     <stringExtractor language="kotlin" implementationClass="com.jetbrains.edu.kotlin.learning.eduAssistant.psi.context.KtStringExtractor"/>
     <inspectionProvider language="kotlin" implementationClass="com.jetbrains.edu.kotlin.learning.eduAssistant.inspection.KtInspectionProvider"/>
 

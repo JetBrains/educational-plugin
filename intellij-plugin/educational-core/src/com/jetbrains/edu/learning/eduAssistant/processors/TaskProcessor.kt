@@ -4,6 +4,7 @@ import com.intellij.lang.Language
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiManager
 import com.jetbrains.edu.learning.EduState
@@ -18,6 +19,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.eduAssistant.context.StringExtractor
 import com.jetbrains.edu.learning.eduAssistant.context.differ.filterAllowedModifications
+import com.jetbrains.edu.learning.eduAssistant.context.differ.FilesDiffer
+import com.jetbrains.edu.learning.eduAssistant.context.differ.FunctionDiffReducer
 import com.jetbrains.edu.learning.eduAssistant.context.differ.getChangedContent
 import com.jetbrains.edu.learning.eduAssistant.context.function.signatures.*
 import com.jetbrains.edu.learning.getTextFromTaskTextFile
@@ -109,14 +112,19 @@ class TaskProcessor(val task: Task) {
     return task.taskFiles.values.any { !isFileUnchanged(it, project) }
   }
 
-  fun getShortFunctionSignatureIfRecommended(code: String, project: Project, language: Language): FunctionSignature? {
+  fun getShortFunctionFromSolutionIfRecommended(code: String, project: Project, language: Language, functionName: String, taskFile: TaskFile): String? {
     val functionSignatures = getFunctionSignaturesFromGeneratedCode(code, project, language)
-    if (functionSignatures.size == 1) {
-      val signature = functionSignatures.first()
-      val functionsSignaturesFromSolution = task.authorSolutionContext?.functionSignatures?.filter {
-          it.bodyLineCount != null && (it.bodyLineCount ?: Int.MAX_VALUE) <= MAX_BODY_LINES_IN_SHORT_FUNCTION
-        } ?: return null
-      return if (functionsSignaturesFromSolution.contains(signature)) signature else null
+    val signature = functionSignatures.find { it.name == functionName }
+    val functionsSignaturesFromSolution = task.authorSolutionContext?.functionSignatures?.filter {
+        it.bodyLineCount != null && (it.bodyLineCount ?: Int.MAX_VALUE) <= MAX_BODY_LINES_IN_SHORT_FUNCTION
+      } ?: return null
+    if (signature != null && functionsSignaturesFromSolution.contains(signature)) {
+      val psiFileSolution = runReadAction { taskFile.getSolution().createPsiFileForSolution(project, language) }
+      return runReadAction {
+        FunctionSignatureResolver.getFunctionBySignature(
+          psiFileSolution, signature.name, language
+        )?.text ?: error("Cannot get the function from the author's solution")
+      }
     }
     return null
   }
@@ -127,6 +135,27 @@ class TaskProcessor(val task: Task) {
     val codeHintPsiFile = runReadAction { PsiFileFactory.getInstance(project).createFileFromText("codeHintPsiFile", language, codeHint) }
     return codeHintPsiFile.filterAllowedModifications(task, taskFile, project, SignatureSource.GENERATED_SOLUTION)
   }
+
+  fun getModifiedFunctionNameInCodeHint(codeStr: String, codeHint: String): String {
+    val project = task.project ?: return ""
+    val language = task.course.languageById ?: return ""
+    return runReadAction {
+      val codeHintPsiFile = PsiFileFactory.getInstance(project).createFileFromText("codeHintPsiFile", language, codeHint)
+      val codePsiFile = PsiFileFactory.getInstance(project).createFileFromText("codePsiFile", language, codeStr)
+      FilesDiffer.findDifferentMethods(codePsiFile, codeHintPsiFile, language, true)?.firstOrNull()
+      ?: error("The code prompt didn't make any difference")
+    }
+  }
+
+  fun getFunctionPsiWithName(code: String, functionName: String, project: Project, language: Language) = runReadAction {
+    val codePsiFile = PsiFileFactory.getInstance(project).createFileFromText("codePsiFile", language, code)
+    FunctionSignatureResolver.getFunctionBySignature(codePsiFile, functionName, language)
+  }
+
+  fun reduceChangesInCodeHint(functionPsi: PsiElement?, modifiedFunctionPsi: PsiElement?, project: Project, language: Language) =
+    modifiedFunctionPsi?.let {
+      FunctionDiffReducer.reduceDiffFunctions(functionPsi, modifiedFunctionPsi, project, language)
+    }?.text ?: ""
 
   fun applyCodeHint(codeHint: String, taskFile: TaskFile): String? {
     val project = task.project ?: return null
@@ -147,9 +176,9 @@ class TaskProcessor(val task: Task) {
     }
 
     for (newFunction in functionSignaturesFromCodeHint) {
-      runReadAction { FunctionSignatureResolver.getFunctionBySignature(codeHintPsiFile, newFunction, language) }?.let { psiNewFunction ->
+      runReadAction { FunctionSignatureResolver.getFunctionBySignature(codeHintPsiFile, newFunction.name, language) }?.let { psiNewFunction ->
         WriteCommandAction.runWriteCommandAction(project, null, null, {
-          FunctionSignatureResolver.getFunctionBySignature(psiFileCopy, newFunction, language)?.replace(psiNewFunction)?.let {
+          FunctionSignatureResolver.getFunctionBySignature(psiFileCopy, newFunction.name, language)?.replace(psiNewFunction)?.let {
             isFileModified = true
           } ?: run {
             psiFileCopy.add(psiNewFunction)

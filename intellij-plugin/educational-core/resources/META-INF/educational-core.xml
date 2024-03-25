@@ -47,6 +47,11 @@
                     dynamic="true">
       <with attribute="implementationClass" implements="com.jetbrains.edu.learning.eduAssistant.context.differ.FilesDiffer"/>
     </extensionPoint>
+    <extensionPoint qualifiedName="Educational.functionDiffReducer"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.learning.eduAssistant.context.differ.FunctionDiffReducer"/>
+    </extensionPoint>
     <extensionPoint qualifiedName="Educational.stringExtractor"
                     beanClass="com.intellij.lang.LanguageExtensionPoint"
                     dynamic="true">
