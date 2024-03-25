@@ -13,6 +13,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.AnActionLink
 import com.intellij.ui.components.JBLabel
+import com.intellij.ui.util.maximumHeight
+import com.intellij.ui.util.minimumHeight
+import com.intellij.ui.util.preferredHeight
 import com.intellij.util.ui.*
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.coursecreator.CCUtils
@@ -32,82 +35,28 @@ import java.awt.geom.Path2D
 import java.awt.geom.RoundRectangle2D
 import javax.swing.*
 
-class NavigationMapPanel : JPanel(BorderLayout()) {
-  private val headerText: JLabel
-  private val defaultActionGroup = DefaultActionGroup()
-  private val toolbar: ActionToolbarImpl = ActionToolbarImpl(CheckPanel.ACTION_PLACE, defaultActionGroup, true)
-  private val topPanelForProblems: JPanel = JPanel().apply {
-    background = TaskToolWindowView.getTaskDescriptionBackgroundColor()
-    border = JBEmptyBorder(0, 0, 12, 0)
-  }
+class NavigationMapPanel(private val defaultActionGroup: DefaultActionGroup = DefaultActionGroup()) : ActionToolbarImpl(
+  CheckPanel.ACTION_PLACE,
+  defaultActionGroup,
+  true
+) {
 
   init {
-    border = JBEmptyBorder(8, 0, 12, 8)
-    headerText = JBLabel().withFont(JBFont.medium())
-    headerText.foreground = EduColors.taskToolWindowLessonLabel
-    val headerTextPanel = JPanel()
-    // -5 to align the left border
-    headerTextPanel.border = JBEmptyBorder(0, -5, 12, 0)
-    headerTextPanel.add(headerText)
-    toolbar.targetComponent = this
-    // '-4' to align the left border
-    toolbar.border = JBEmptyBorder(0, -4, 30, 0)
-    toolbar.setCustomButtonLook(MyActionButtonLook())
-    toolbar.setMinimumButtonSize(Dimension(28, 28))
-    toolbar.setActionButtonBorder(4, 0)
+    border = JBEmptyBorder(0, -4, 20, 8)
+    preferredHeight = 28
+    minimumHeight = 28
+    targetComponent = this
+    maximumHeight = 28
+    setCustomButtonLook(MyActionButtonLook())
+    setMinimumButtonSize(Dimension(28, 28))
+    setActionButtonBorder(4, 0)
     defaultActionGroup.isSearchable = false
-    add(headerTextPanel, BorderLayout.WEST)
-    add(topPanelForProblems, BorderLayout.EAST)
-    add(toolbar.component, BorderLayout.SOUTH)
   }
 
-  fun setHeader(header: String) {
-    headerText.text = header
-  }
 
   fun replaceActions(actionList: List<AnAction>) {
     defaultActionGroup.removeAll()
     defaultActionGroup.addAll(actionList)
-  }
-
-  fun updateTopPanelForProblems(project: Project, course: HyperskillCourse, task: Task) {
-    topPanelForProblems.removeAll()
-    if (CCUtils.isCourseCreator(project) || course.getProjectLesson() == null) return
-
-    val linkText = if (course.isTaskInProject(task)) EduCoreBundle.message("hyperskill.back.to.learning") else EduCoreBundle.message("hyperskill.work.on.project")
-    val action = if (course.isTaskInProject(task)) NavigateToUnsolvedTopic(project, course) else NavigateToProjectAction(project, course)
-    val actionLink = AnActionLink(linkText, action).apply {
-      font = JBFont.medium()
-    }
-    topPanelForProblems.add(actionLink)
-  }
-
-  private class NavigateToProjectAction(
-    private val project: Project,
-    private val course: HyperskillCourse
-  ) : DumbAwareAction() {
-    override fun actionPerformed(e: AnActionEvent) {
-      val lesson = course.getProjectLesson() ?: return
-      val currentTask = lesson.currentTask() ?: return
-      NavigationUtils.navigateToTask(project, currentTask)
-    }
-  }
-
-  private class NavigateToUnsolvedTopic(
-    private val project: Project,
-    private val course: HyperskillCourse
-  ) : DumbAwareAction() {
-    override fun actionPerformed(e: AnActionEvent) {
-      val topicsSection = course.getTopicsSection()
-      if (topicsSection != null) {
-        val tasks = topicsSection.lessons.flatMap { it.taskList }
-        val task = tasks.find { !it.isSolved } ?: tasks.last()
-        NavigationUtils.navigateToTask(project, task)
-      }
-      else {
-        TaskToolWindowView.getInstance(project).showTab(TabType.TOPICS_TAB)
-      }
-    }
   }
 
   // Copied from com.intellij.openapi.actionSystem.impl.IdeaActionButtonLook

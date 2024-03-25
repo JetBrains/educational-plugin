@@ -12,13 +12,14 @@ class MockTaskToolWindowView(project: Project) : TaskToolWindowView(project) {
   override var currentTask: Task? = null
 
   override fun init(toolWindow: ToolWindow) {}
-  override fun showTab(tabType: TabType) {}
+  override fun selectTab(tabType: TabType) {}
   override fun updateCheckPanel(task: Task?) {}
   override fun updateTaskSpecificPanel() {}
   override fun updateNavigationPanel(task: Task?) {}
+  override fun updateNavigationPanel() {}
   override fun updateTaskDescription(task: Task?) {}
   override fun updateTaskDescription() {}
-  override fun updateAdditionalTaskTabs(task: Task?) {}
+  override fun updateTabs(task: Task?) {}
   override fun updateTab(tabType: TabType) {}
   override fun showLoadingSubmissionsPanel(platformName: String) {}
 
@@ -27,5 +28,4 @@ class MockTaskToolWindowView(project: Project) : TaskToolWindowView(project) {
   override fun readyToCheck() {}
   override fun checkStarted(task: Task, startSpinner: Boolean) {}
   override fun checkFinished(task: Task, checkResult: CheckResult) {}
-  override fun checkTooltipPosition(): RelativePoint = RelativePoint(Point(0, 0))
 }

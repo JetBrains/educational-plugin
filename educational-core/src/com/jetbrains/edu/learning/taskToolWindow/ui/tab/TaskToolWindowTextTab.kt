@@ -6,11 +6,11 @@ import com.jetbrains.edu.learning.JavaUILibrary
 import java.awt.BorderLayout
 
 /**
- * Tab initialization is made in [com.jetbrains.edu.learning.taskToolWindow.ui.tab.AdditionalTextTab.init] method
+ * Tab initialization is made in [com.jetbrains.edu.learning.taskToolWindow.ui.tab.TaskToolWindowTextTab.init] method
  * and it must be called in constructor to initialize all necessary UI.
  */
-abstract class AdditionalTextTab(project: Project, tabType: TabType): AdditionalTab(project, tabType) {
-  protected lateinit var innerPanel: TabTextPanel
+abstract class TaskToolWindowTextTab(project: Project, tabType: TabType) : TaskToolWindowTab(project, tabType) {
+  private lateinit var innerPanel: TabTextPanel
 
   private fun createTextPanel(): TabTextPanel {
     return if (uiMode == JavaUILibrary.JCEF) {

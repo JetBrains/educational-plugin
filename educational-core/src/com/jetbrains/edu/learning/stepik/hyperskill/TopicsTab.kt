@@ -6,16 +6,20 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.dsl.builder.*
+import com.intellij.util.ui.JBEmptyBorder
 import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillTopic
-import com.jetbrains.edu.learning.taskToolWindow.ui.tab.AdditionalTab
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
+import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TaskToolWindowTab
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType.TOPICS_TAB
+import java.awt.Insets
 
-class TopicsTab(project: Project) : AdditionalTab(project, TOPICS_TAB) {
+class TopicsTab(project: Project) : TaskToolWindowTab(project, TOPICS_TAB) {
   override val uiMode: JavaUILibrary
     get() = JavaUILibrary.SWING
 
@@ -51,12 +55,13 @@ class TopicsTab(project: Project) : AdditionalTab(project, TOPICS_TAB) {
     }
     removeAll()
     add(JBScrollPane(innerPanel).apply { border = JBUI.Borders.empty() })
+    innerPanel.background = TaskToolWindowView.getTaskDescriptionBackgroundColor()
   }
 
   private class OpenTopic(
     private val project: Project,
     private val topic: HyperskillTopic
-  ): AnAction(
+  ) : AnAction(
     EduCoreBundle.message("hyperskill.topics.solve"),
     EduCoreBundle.message("hyperskill.topics.solve"),
     AllIcons.Actions.Download

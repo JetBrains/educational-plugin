@@ -17,7 +17,6 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isSwing
 import com.jetbrains.edu.learning.actions.OpenTaskOnSiteAction
-import com.jetbrains.edu.learning.capitalize
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.actions.CodeforcesCopyAndSubmitAction
@@ -34,7 +33,6 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_DARK_PNG
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_PNG
-import com.jetbrains.edu.learning.ui.getUIName
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -294,11 +292,6 @@ fun createActionLink(@LinkLabel actionText: String,
   val link = LightColoredActionLink(actionText, ActionManager.getInstance().getAction(actionId), isExternal = true)
   link.border = JBUI.Borders.empty(top, left, 0, 0)
   return link
-}
-
-fun Task.addHeader(tasksNumber: Int, text: String): String = buildString {
-  appendLine("<h1 style=\"margin-top: 15px\">${getUIName().capitalize()} $index/$tasksNumber: $presentableName</h1>")
-  appendLine(text)
 }
 
 fun String.containsYoutubeLink(): Boolean = contains(YOUTUBE_LINKS_REGEX)

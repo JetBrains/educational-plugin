@@ -26,11 +26,6 @@ class HyperskillTaskBuilder(
     return HyperskillLanguages.getLanguageName(language.id)
   }
 
-  private fun Task.description(title: String = name): String = buildString {
-    appendLine("<h2>$title</h2>")
-    appendLine(descriptionText)
-  }
-
   fun build(): Task? {
     val blockName = stepSource.block?.name ?: return null
 
@@ -54,11 +49,7 @@ class HyperskillTaskBuilder(
       }
 
       when (this) {
-        is CodeTask -> {
-          name = stepSource.title
-          descriptionText = description()
-        }
-        is DataTask -> {
+        is CodeTask, is DataTask, is ChoiceTask, is StringTask, is NumberTask, is SortingTask, is MatchingTask, is TableTask -> {
           name = stepSource.title
         }
         is EduTask -> {
@@ -68,16 +59,8 @@ class HyperskillTaskBuilder(
           name = stepSource.title
           customPresentableName = null
         }
-        is TheoryTask -> {
-          descriptionText = description(title = stepSource.title)
-        }
-        is ChoiceTask, is StringTask, is NumberTask, is SortingTask, is MatchingTask, is TableTask -> {
-          descriptionText = description(stepSource.title)
-          name = stepSource.title
-        }
         is UnsupportedTask -> {
           descriptionText = UnsupportedTask.getDescriptionTextTemplate(name, stepLink(stepSource.id), HYPERSKILL)
-          descriptionText = description(stepSource.title)
           name = stepSource.title
         }
       }

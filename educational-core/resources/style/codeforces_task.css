@@ -216,6 +216,8 @@
     padding: 0 1em;
 }
 
+.problem-statement div.title { display: none;}
+
 .problemindexholder {
     position: relative;
 }

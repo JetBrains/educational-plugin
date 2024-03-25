@@ -32,7 +32,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.taskToolWindow.addHeader
+//import com.jetbrains.edu.learning.taskToolWindow.addHeader
 import com.jetbrains.edu.learning.taskToolWindow.removeHyperskillTags
 import com.jetbrains.edu.learning.taskToolWindow.replaceActionIDsWithShortcuts
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -273,9 +273,6 @@ fun Task.getTaskTextFromTask(project: Project): String? {
     return null
   }
   text = StringUtil.replace(text, "%IDE_NAME%", ApplicationNamesInfo.getInstance().fullProductName)
-  if (lesson is FrameworkLesson) {
-    text = addHeader(lesson.taskList.size, text)
-  }
   val textBuffer = StringBuffer(text)
   replaceActionIDsWithShortcuts(textBuffer)
   if (course is HyperskillCourse) {

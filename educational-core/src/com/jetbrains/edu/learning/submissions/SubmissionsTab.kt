@@ -32,7 +32,7 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.SwingToolWindowLinkHandler
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.TaskToolWindowBundle
-import com.jetbrains.edu.learning.taskToolWindow.ui.tab.AdditionalCardTextTab
+import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TaskToolWindowCardTextTab
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.SwingTextPanel
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType.SUBMISSIONS_TAB
 import com.jetbrains.edu.learning.ui.EduColors
@@ -44,7 +44,7 @@ import java.util.concurrent.CompletableFuture
 import javax.swing.JButton
 
 @Suppress("UnstableApiUsage")
-class SubmissionsTab(project: Project) : AdditionalCardTextTab(project, SUBMISSIONS_TAB) {
+class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBMISSIONS_TAB) {
 
   override val uiMode: JavaUILibrary
     get() = JavaUILibrary.SWING
