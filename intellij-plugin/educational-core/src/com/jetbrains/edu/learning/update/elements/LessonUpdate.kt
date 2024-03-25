@@ -21,6 +21,7 @@ data class LessonCreationInfo(
 ) : LessonUpdate(null, remoteItem) {
   @Suppress("UnstableApiUsage")
   override suspend fun update(project: Project) {
+    // TODO EDU-6756 what if lesson was created in the middle of the section?
     localContainer.addItem(remoteItem)
     remoteItem.init(localContainer, false)
 
