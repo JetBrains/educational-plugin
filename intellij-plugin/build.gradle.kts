@@ -602,6 +602,16 @@ project("Edu-Kotlin") {
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
     testImplementation(project(":intellij-plugin:jvm-core", "testOutput"))
   }
+  tasks.test {
+    useJUnit {
+      excludeCategories("com.jetbrains.edu.kotlin.eduAssistant.AiAutoQualityCodeTests")
+    }
+  }
+  tasks.register<Test>("categorySpecificTest") {
+    useJUnit {
+      includeCategories("com.jetbrains.edu.kotlin.eduAssistant.AiAutoQualityCodeTests")
+    }
+  }
 }
 
 project("Edu-Scala") {
