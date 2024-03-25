@@ -57,5 +57,5 @@ fun getAuthorSolution(task: EduTask, project: Project) =
     val document = taskFile.getDocument(project) ?: return@map ""
     val solutionPsiFile = runReadAction { PsiFileFactory.getInstance(project).createFileFromText("solution", language, solution) }
     val psiFile = runReadAction { PsiFileFactory.getInstance(project).createFileFromText("currentUserFile", language, document.text) }
-    runReadAction { FilesDiffer.findDifferentMethods(psiFile, solutionPsiFile, taskFile, language) }
+    runReadAction { FilesDiffer.findDifferentMethods(psiFile, solutionPsiFile, language) }
   }.joinToString(System.lineSeparator())

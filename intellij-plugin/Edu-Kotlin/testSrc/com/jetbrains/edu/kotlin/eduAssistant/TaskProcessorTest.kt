@@ -21,7 +21,6 @@ import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.navigation.NavigationUtils
-import org.jetbrains.kotlin.idea.KotlinLanguage
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.jvm.isAccessible
 
@@ -239,6 +238,7 @@ It's time to write your first program in Kotlin! Task Change the output text int
   fun testRecommendsImplementingShortFunction() {
     val course = project.course ?: error("Course was not found")
     val task = course.findTask("lesson2", "task2")
+    val taskFile = task.taskFiles["src/main/kotlin/Main.kt"] ?: error("Task file was not found")
     val taskProcessor = TaskProcessor(task)
     task.authorSolutionContext = task.buildAuthorSolutionContext()
     val generatedCode = """
@@ -247,8 +247,8 @@ It's time to write your first program in Kotlin! Task Change the output text int
       }
     """.trimIndent()
     assertEquals(
-      "myPrint(): Unit",
-      taskProcessor.getShortFunctionSignatureIfRecommended(generatedCode, project, KotlinLanguage.INSTANCE).toString()
+      generatedCode,
+      taskProcessor.getShortFunctionFromSolutionIfRecommended(generatedCode, project, language, "myPrint", taskFile).toString()
     )
   }
 
@@ -261,7 +261,7 @@ It's time to write your first program in Kotlin! Task Change the output text int
       fun getPrinter(): () -> Unit = { println("Printing...") }
       fun nullableLength(s: String?) = s?.length
     """.trimIndent()
-    val psiFile = code.createPsiFileForSolution(project, KotlinLanguage.INSTANCE)
+    val psiFile = code.createPsiFileForSolution(project, language)
     var functionSignature = FunctionSignature(
       "getPictureWidth",
       listOf(FunctionParameter("picture", "String")),
@@ -271,7 +271,7 @@ It's time to write your first program in Kotlin! Task Change the output text int
     var expected = """
         fun getPictureWidth(picture: String) = picture.lines().maxOfOrNull { it.length } ?: 0
       """.trimIndent()
-    assertEquals(expected, FunctionSignatureResolver.getFunctionBySignature(psiFile, functionSignature, KotlinLanguage.INSTANCE)?.text)
+    assertEquals(expected, FunctionSignatureResolver.getFunctionBySignature(psiFile, functionSignature.name, language)?.text)
     functionSignature = FunctionSignature(
       "add",
       listOf(FunctionParameter("a", "Int"), FunctionParameter("b", "Int")),
@@ -283,12 +283,12 @@ It's time to write your first program in Kotlin! Task Change the output text int
             return a + b
         }
       """.trimIndent()
-    assertEquals(expected, FunctionSignatureResolver.getFunctionBySignature(psiFile, functionSignature, KotlinLanguage.INSTANCE)?.text)
+    assertEquals(expected, FunctionSignatureResolver.getFunctionBySignature(psiFile, functionSignature.name, language)?.text)
     functionSignature = FunctionSignature("getPrinter", emptyList(), "Function0<Unit>", SignatureSource.MODEL_SOLUTION)
     expected = """
         fun getPrinter(): () -> Unit = { println("Printing...") }
       """.trimIndent()
-    assertEquals(expected, FunctionSignatureResolver.getFunctionBySignature(psiFile, functionSignature, KotlinLanguage.INSTANCE)?.text)
+    assertEquals(expected, FunctionSignatureResolver.getFunctionBySignature(psiFile, functionSignature.name, language)?.text)
     functionSignature = FunctionSignature(
       "nullableLength",
       listOf(FunctionParameter("s", "String?")),
@@ -298,7 +298,7 @@ It's time to write your first program in Kotlin! Task Change the output text int
     expected = """
         fun nullableLength(s: String?) = s?.length
       """.trimIndent()
-    assertEquals(expected, FunctionSignatureResolver.getFunctionBySignature(psiFile, functionSignature, KotlinLanguage.INSTANCE)?.text)
+    assertEquals(expected, FunctionSignatureResolver.getFunctionBySignature(psiFile, functionSignature.name, language)?.text)
   }
 
   fun testApplyCodeHint() {

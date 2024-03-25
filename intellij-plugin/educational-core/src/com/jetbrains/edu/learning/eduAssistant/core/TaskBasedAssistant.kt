@@ -2,18 +2,14 @@ package com.jetbrains.edu.learning.eduAssistant.core
 
 import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.courseFormat.eduAssistant.AiAssistantState
-import com.jetbrains.edu.learning.courseFormat.ext.getSolution
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.eduAssistant.context.buildAuthorSolutionContext
-import com.jetbrains.edu.learning.eduAssistant.context.function.signatures.FunctionSignatureResolver
-import com.jetbrains.edu.learning.eduAssistant.context.function.signatures.createPsiFileForSolution
 import com.jetbrains.edu.learning.eduAssistant.context.function.signatures.getFunctionSignaturesFromGeneratedCode
 import com.jetbrains.edu.learning.eduAssistant.grazie.AiPlatformAdapter
 import com.jetbrains.edu.learning.eduAssistant.grazie.AiPlatformException
@@ -136,16 +132,11 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
         }
         hintTimingLogger.info { "Received the code hint" }
       }
-      hintTimingLogger.info { "Retrieving the short function signature" }
-      val shortFunctionSignature = taskProcessor.getShortFunctionSignatureIfRecommended(codeHint, project, languageId)
-      if (shortFunctionSignature != null) {
-        hintTimingLogger.info { "Retrieving the code hint from solution" }
-        val psiFileSolution = runReadAction { state.taskFile.getSolution().createPsiFileForSolution(project, languageId) }
-        val nextStepCodeFromSolution = runReadAction {
-          FunctionSignatureResolver.getFunctionBySignature(
-            psiFileSolution, shortFunctionSignature, languageId
-          )?.text ?: error("Cannot get the function from the author's solution")
-        }
+      hintTimingLogger.info { "Retrieving the modified function name" }
+      val functionName = taskProcessor.getModifiedFunctionNameInCodeHint(codeStr, codeHint)
+      hintTimingLogger.info { "Retrieving the code hint from solution if it is a short function" }
+      val nextStepCodeFromSolution = taskProcessor.getShortFunctionFromSolutionIfRecommended(codeHint, project, languageId, functionName, state.taskFile)
+      if (nextStepCodeFromSolution != null) {
         logger.info {
           """Code hint from solution:
              |$nextStepCodeFromSolution
@@ -153,18 +144,23 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
         }
 
         generateTextHintAndResponse(nextStepCodeFromSolution, codeStr, task, nextStepCodeHintPrompt, state)
-      }
-      else {
+      } else {
+        hintTimingLogger.info { "Retrieving the function psi from student code" }
+        val functionFromCode = taskProcessor.getFunctionPsiWithName(codeStr, functionName, project, languageId)
+        hintTimingLogger.info { "Retrieving the function psi from code hint" }
+        val functionFromCodeHint = taskProcessor.getFunctionPsiWithName(codeHint, functionName, project, languageId)
+        hintTimingLogger.info { "Reducing the code hint" }
+        val reducedCodeHint = taskProcessor.reduceChangesInCodeHint(functionFromCode?.copy(), functionFromCodeHint?.copy(), project, languageId)
+        hintTimingLogger.info { "Applying inspections to the code hint" }
         //TODO: investigate wrong cases
-        hintTimingLogger.info { "Retrieving the final code hint" }
-        val nextStepCodeHint = applyInspections(codeHint, project, languageId)
+        val nextStepCodeHint = applyInspections(reducedCodeHint, project, languageId)
         logger.info {
           """Final code hint:
              |$nextStepCodeHint
           """.trimMargin()
         }
 
-        generateTextHintAndResponse(nextStepCodeHint, codeStr, task, nextStepCodeHintPrompt, state)
+        generateTextHintAndResponse(nextStepCodeHint, functionFromCode?.text ?: "", task, nextStepCodeHintPrompt, state)
       }
     }
     // TODO: Handle more exceptions with AiPlatformException
