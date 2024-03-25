@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.update.elements
 import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.progress.blockingContext
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -60,7 +59,7 @@ data class LessonUpdateInfo(
       withContext(Dispatchers.IO) {
         val toDir = blockingContext { GeneratorUtils.createUniqueDir(parentDir, localItem) }
         writeAction {
-          VfsUtil.copyDirectory(this, fromDir, toDir, null)
+          fromDir.children.forEach { it.move(this, toDir) }
           fromDir.delete(this)
         }
       }
