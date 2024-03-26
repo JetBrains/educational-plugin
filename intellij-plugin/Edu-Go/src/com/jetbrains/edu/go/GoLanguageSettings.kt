@@ -6,6 +6,7 @@ import com.goide.sdk.combobox.GoSdkChooserCombo
 import com.goide.sdk.combobox.GoSdkList
 import com.intellij.facet.ui.ValidationResult
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.UserDataHolder
@@ -27,11 +28,6 @@ class GoLanguageSettings : LanguageSettings<GoProjectSettings>() {
   override fun getSettings(): GoProjectSettings = GoProjectSettings(selectedSdk ?: GoSdk.NULL)
 
   override fun getLanguageSettingsComponents(course: Course, disposable: Disposable, context: UserDataHolder?): List<LabeledComponent<JComponent>> {
-    // `GoSdkChooserCombo` relies on `com.goide.sdk.combobox.GoSdkList.getAllGoSdks`, but as indicated in the documentation for this method
-    // "The method can return an empty list on the early stages of the project loading as its initialization happens in the background."
-    // therefore we need to explicitly call `reloadSdks` before initializing `GoSdkChooserCombo`
-    // related issue EDU-6757
-    GoSdkList.getInstance().reloadSdks(course.project) { }
     val sdkChooser = GoSdkChooserCombo({ null }, { true }, { ValidationResult.OK })
     Disposer.register(disposable, sdkChooser)
 
@@ -39,6 +35,16 @@ class GoLanguageSettings : LanguageSettings<GoProjectSettings>() {
     sdkChooser.addChangedListener {
       selectedSdk = sdkChooser.sdk
       notifyListeners()
+    }
+
+    // `GoSdkChooserCombo` relies on `com.goide.sdk.combobox.GoSdkList.getAllGoSdks`, but as indicated in the documentation for this method
+    // "The method can return an empty list on the early stages of the project loading as its initialization happens in the background."
+    // therefore we need to explicitly call `reloadSdks` for proper initializing `GoSdkChooserCombo`
+    // related issue EDU-6757
+    ApplicationManager.getApplication().executeOnPooledThread {
+      GoSdkList.getInstance().reloadSdks(course.project) { sdkList ->
+        sdkList.forEach { sdk -> sdkChooser.addSdk(sdk, true) }
+      }
     }
 
     return listOf(LabeledComponent.create(sdkChooser as JComponent, SDK_TYPE_ID, BorderLayout.WEST))
