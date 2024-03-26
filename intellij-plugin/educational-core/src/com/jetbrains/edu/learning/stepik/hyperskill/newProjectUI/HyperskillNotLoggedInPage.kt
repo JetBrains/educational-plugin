@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI
 
 import com.intellij.openapi.util.IconLoader
 import com.intellij.ui.Gray
-import com.intellij.ui.JBColor
 import com.intellij.ui.components.panels.Wrapper
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.panel
@@ -10,11 +9,9 @@ import com.intellij.util.IconUtil
 import com.intellij.util.ui.JBDimension
 import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.JBUI
-import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Font
 import javax.swing.JLabel
-import javax.swing.JPanel
 
 class HyperskillNotLoggedInPanel : Wrapper() {
   val academyOnHyperskillBanner = IconLoader.getIcon(
@@ -31,9 +28,10 @@ class HyperskillNotLoggedInPanel : Wrapper() {
     val leftColumn = "left"
     val rightColumn = "right"
 
+    val height = 250
+
     val topPanel = panel {
       row {
-
         val bannerHeight = 40
         val scale = JBUI.scale(bannerHeight).toFloat() / jbaAcademyHyperskillLogoIcon.iconHeight
         cell(object : JLabel(IconUtil.scale(jbaAcademyHyperskillLogoIcon, null, scale)) {
@@ -63,13 +61,14 @@ class HyperskillNotLoggedInPanel : Wrapper() {
     }.apply {
       background = background
       isOpaque = true
+      minimumSize = JBDimension(400, height)
     }
 
     val banner = panel {
       row {
 
         val width = 180
-        val height = 280
+
         val scale = JBUI.scale(height).toFloat() / academyOnHyperskillBanner.iconHeight
         cell(object : JLabel(IconUtil.scale(academyOnHyperskillBanner, null, scale)) {
           override fun setBackground(bg: Color?) {
@@ -95,9 +94,11 @@ class HyperskillNotLoggedInPanel : Wrapper() {
         cell(banner).align(AlignX.FILL)
       }
     }.apply {
-      background = JBColor.namedColor("SelectCourse.", JBColor(0xFFFFFF, 0x1E1F22))
+      background = Gray.x13
+      minimumSize = JBDimension(560, 250)
+      maximumSize = JBDimension(this.maximumSize.width, 250)
     }
 
-    setContent(contentPanel)
+    setContent(Wrapper(contentPanel))
   }
 }
