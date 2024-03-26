@@ -2,7 +2,7 @@ package com.jetbrains.edu.coursecreator.framework.impl
 
 import com.intellij.configurationStore.saveSettings
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.coursecreator.framework.FLRecordState
+import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonRecordStorage
 import com.jetbrains.edu.learning.CourseReopeningTestBase
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import com.jetbrains.edu.learning.progress.ModalTaskOwner
 import com.jetbrains.edu.learning.progress.runWithModalProgressBlocking
 
-class FLRecordStateReopeningTest : CourseReopeningTestBase<EmptyProjectSettings>() {
+class CCFrameworkLessonRecordStorageReopeningTest : CourseReopeningTestBase<EmptyProjectSettings>() {
   override val defaultSettings = EmptyProjectSettings
 
   fun `test records stay the same after course reopening`() {
@@ -27,7 +27,7 @@ class FLRecordStateReopeningTest : CourseReopeningTestBase<EmptyProjectSettings>
   }
 
   private fun firstOpen(project: Project) {
-    val recordState = FLRecordState.getInstance(project)
+    val recordState = CCFrameworkLessonRecordStorage.getInstance(project)
     val course = project.course
     val task = course?.findTask("lesson", "task") ?: error("Can't find task")
 
@@ -45,7 +45,7 @@ class FLRecordStateReopeningTest : CourseReopeningTestBase<EmptyProjectSettings>
   }
 
   private fun secondOpen(project: Project) {
-    val recordState = FLRecordState.getInstance(project)
+    val recordState = CCFrameworkLessonRecordStorage.getInstance(project)
     val course = project.course
     val task = course?.findTask("lesson", "task") ?: error("Can't find task")
 

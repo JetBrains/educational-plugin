@@ -158,7 +158,7 @@ class CCFrameworkLessonManager(private val project: Project) : Disposable {
       UpdatedState(currentRecord, emptyMap())
     }
 
-    FLRecordState.getInstance(project).updateRecord(task, updatedUserChanges.record)
+    CCFrameworkLessonRecordStorage.getInstance(project).updateRecord(task, updatedUserChanges.record)
     return updatedUserChanges
   }
 
@@ -221,7 +221,7 @@ class CCFrameworkLessonManager(private val project: Project) : Disposable {
     Notifications.Bus.notify(notification, project)
   }
 
-  private fun getRecord(task: Task): Int = FLRecordState.getInstance(project).getRecord(task)
+  private fun getRecord(task: Task): Int = CCFrameworkLessonRecordStorage.getInstance(project).getRecord(task)
 
   companion object {
     private val LOG = logger<CCFrameworkLessonManager>()
