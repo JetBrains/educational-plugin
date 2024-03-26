@@ -3,6 +3,7 @@ package com.jetbrains.edu.go
 import com.goide.GoConstants.SDK_TYPE_ID
 import com.goide.sdk.GoSdk
 import com.goide.sdk.combobox.GoSdkChooserCombo
+import com.goide.sdk.combobox.GoSdkList
 import com.intellij.facet.ui.ValidationResult
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.ui.LabeledComponent
@@ -13,6 +14,7 @@ import com.jetbrains.edu.go.messages.EduGoBundle
 import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_GO
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import java.awt.BorderLayout
@@ -25,6 +27,11 @@ class GoLanguageSettings : LanguageSettings<GoProjectSettings>() {
   override fun getSettings(): GoProjectSettings = GoProjectSettings(selectedSdk ?: GoSdk.NULL)
 
   override fun getLanguageSettingsComponents(course: Course, disposable: Disposable, context: UserDataHolder?): List<LabeledComponent<JComponent>> {
+    // `GoSdkChooserCombo` relies on `com.goide.sdk.combobox.GoSdkList.getAllGoSdks`, but as indicated in the documentation for this method
+    // "The method can return an empty list on the early stages of the project loading as its initialization happens in the background."
+    // therefore we need to explicitly call `reloadSdks` before initializing `GoSdkChooserCombo`
+    // related issue EDU-6757
+    GoSdkList.getInstance().reloadSdks(course.project) { }
     val sdkChooser = GoSdkChooserCombo({ null }, { true }, { ValidationResult.OK })
     Disposer.register(disposable, sdkChooser)
 
