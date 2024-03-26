@@ -1,7 +1,7 @@
 package com.jetbrains.edu.rust
 
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.ui.LabeledComponent
+import com.intellij.openapi.util.CheckedDisposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.UserDataHolder
 import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_RUST
@@ -33,12 +33,13 @@ class RsLanguageSettings : LanguageSettings<RsProjectSettings>() {
 
   override fun getLanguageSettingsComponents(
     course: Course,
-    disposable: Disposable,
+    disposable: CheckedDisposable,
     context: UserDataHolder?
   ): List<LabeledComponent<JComponent>> {
     Disposer.register(disposable, toolchainComboBox)
     toolchainComboBox.addToolchainsAsync(::findAllToolchainsPath) {
       loadingFinished = true
+      if (disposable.isDisposed) return@addToolchainsAsync
       // `RsToolchainPathChoosingComboBox` sets initial empty text after addition of all items
       // But we want to show text of selected item
       val combobox = toolchainComboBox.childComponent

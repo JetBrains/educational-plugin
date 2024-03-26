@@ -1,9 +1,9 @@
 package com.jetbrains.edu.php
 
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.ui.LabeledComponent
+import com.intellij.openapi.util.CheckedDisposable
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -91,7 +91,7 @@ class PhpLanguageSettings : LanguageSettings<PhpProjectSettings>() {
 
   override fun getLanguageSettingsComponents(
     course: Course,
-    disposable: Disposable,
+    disposable: CheckedDisposable,
     context: UserDataHolder?
   ): List<LabeledComponent<JComponent>> = listOf<LabeledComponent<JComponent>>(
     LabeledComponent.create(composerPhpInterpretersCombo, EduCoreBundle.message("select.interpreter"), BorderLayout.WEST))

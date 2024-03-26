@@ -4,8 +4,8 @@ import com.goide.GoConstants.SDK_TYPE_ID
 import com.goide.sdk.GoSdk
 import com.goide.sdk.combobox.GoSdkChooserCombo
 import com.intellij.facet.ui.ValidationResult
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.ui.LabeledComponent
+import com.intellij.openapi.util.CheckedDisposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.io.FileUtil.isAncestor
@@ -24,7 +24,11 @@ class GoLanguageSettings : LanguageSettings<GoProjectSettings>() {
 
   override fun getSettings(): GoProjectSettings = GoProjectSettings(selectedSdk ?: GoSdk.NULL)
 
-  override fun getLanguageSettingsComponents(course: Course, disposable: Disposable, context: UserDataHolder?): List<LabeledComponent<JComponent>> {
+  override fun getLanguageSettingsComponents(
+    course: Course,
+    disposable: CheckedDisposable,
+    context: UserDataHolder?
+  ): List<LabeledComponent<JComponent>> {
     val sdkChooser = GoSdkChooserCombo({ null }, { true }, { ValidationResult.OK })
     Disposer.register(disposable, sdkChooser)
 

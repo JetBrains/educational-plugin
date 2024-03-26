@@ -4,9 +4,9 @@ import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterField
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.ui.LabeledComponent
+import com.intellij.openapi.util.CheckedDisposable
 import com.intellij.openapi.util.UserDataHolder
 import com.jetbrains.edu.javascript.learning.messages.EduJavaScriptBundle
 import com.jetbrains.edu.learning.EduNames
@@ -38,7 +38,7 @@ class JsLanguageSettings : LanguageSettings<JsNewProjectSettings>() {
 
   override fun getLanguageSettingsComponents(
     course: Course,
-    disposable: Disposable,
+    disposable: CheckedDisposable,
     context: UserDataHolder?
   ): List<LabeledComponent<JComponent>> {
     return listOf(LabeledComponent.create(interpreterField, EduCoreBundle.message("select.interpreter"), BorderLayout.WEST))

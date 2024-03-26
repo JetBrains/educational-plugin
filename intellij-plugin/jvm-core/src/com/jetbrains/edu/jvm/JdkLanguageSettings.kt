@@ -1,6 +1,5 @@
 package com.jetbrains.edu.jvm
 
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.projectRoots.JavaSdk
@@ -11,6 +10,7 @@ import com.intellij.openapi.roots.ui.configuration.JdkComboBox
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.ui.LabeledComponent
+import com.intellij.openapi.util.CheckedDisposable
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.UserDataHolder
 import com.jetbrains.edu.jvm.messages.EduJVMBundle
@@ -44,9 +44,11 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
     this.jdk = jdk
   }
 
-  override fun getLanguageSettingsComponents(course: Course,
-                                             disposable: Disposable,
-                                             context: UserDataHolder?): List<LabeledComponent<JComponent>> {
+  override fun getLanguageSettingsComponents(
+    course: Course,
+    disposable: CheckedDisposable,
+    context: UserDataHolder?
+  ): List<LabeledComponent<JComponent>> {
     val sdkTypeFilter = Condition<SdkTypeId> { sdkTypeId -> sdkTypeId is JavaSdkType && !(sdkTypeId as JavaSdkType).isDependent }
     val sdkFilter = Condition<Sdk> { sdk -> sdkTypeFilter.value(sdk.sdkType) }
     val jdkComboBox = JdkComboBox(null, sdkModel, sdkTypeFilter, sdkFilter, sdkTypeFilter, null)

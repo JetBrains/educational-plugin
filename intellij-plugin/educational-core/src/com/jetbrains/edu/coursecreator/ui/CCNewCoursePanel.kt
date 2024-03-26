@@ -12,6 +12,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.observable.util.whenItemSelected
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
+import com.intellij.openapi.util.CheckedDisposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.UserDataHolderBase
@@ -74,7 +75,7 @@ class CCNewCoursePanel(
   private val errorComponent = ErrorComponent(getHyperlinkListener()) { doValidation() }
 
   private val context: UserDataHolder = UserDataHolderBase()
-  private var languageSettingsDisposable: Disposable? = null
+  private var languageSettingsDisposable: CheckedDisposable? = null
 
   private val _course: Course
   val course: Course
@@ -244,7 +245,7 @@ class CCNewCoursePanel(
 
   private fun onCourseDataSelected(courseData: CourseData) {
     languageSettingsDisposable?.let(Disposer::dispose)
-    val settingsDisposable = Disposer.newDisposable(parentDisposable, "languageSettingsDisposable")
+    val settingsDisposable = Disposer.newCheckedDisposable(parentDisposable, "languageSettingsDisposable")
     languageSettingsDisposable = settingsDisposable
 
     val courseName = "${courseData.displayName.replaceFirstChar { it.titlecaseChar() }.replace(File.separatorChar, '_')} ${

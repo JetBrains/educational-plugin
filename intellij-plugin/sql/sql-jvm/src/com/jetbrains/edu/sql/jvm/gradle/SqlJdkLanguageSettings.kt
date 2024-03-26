@@ -6,6 +6,7 @@ import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.LabeledComponent
+import com.intellij.openapi.util.CheckedDisposable
 import com.intellij.openapi.util.UserDataHolder
 import com.jetbrains.edu.jvm.JdkLanguageSettings
 import com.jetbrains.edu.jvm.JdkProjectSettings
@@ -34,7 +35,7 @@ class SqlJdkLanguageSettings : JdkLanguageSettings() {
 
   override fun getLanguageSettingsComponents(
     course: Course,
-    disposable: Disposable,
+    disposable: CheckedDisposable,
     context: UserDataHolder?
   ): List<LabeledComponent<JComponent>> {
     val components = mutableListOf<LabeledComponent<JComponent>>()

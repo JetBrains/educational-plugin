@@ -1,8 +1,8 @@
 package com.jetbrains.edu.python.learning.newproject
 
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.ui.LabeledComponent
+import com.intellij.openapi.util.CheckedDisposable
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
@@ -36,7 +36,7 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
 
   override fun getLanguageSettingsComponents(
     course: Course,
-    disposable: Disposable,
+    disposable: CheckedDisposable,
     context: UserDataHolder?
   ): List<LabeledComponent<JComponent>> {
 
@@ -51,6 +51,7 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
     addInterpretersAsync(sdkField, {
       collectPySdks(course, context ?: UserDataHolderBase())
     }) {
+      if (disposable.isDisposed) return@addInterpretersAsync
       projectSettings.sdk = sdkField.selectedSdk
       isSettingsInitialized = true
       notifyListeners()

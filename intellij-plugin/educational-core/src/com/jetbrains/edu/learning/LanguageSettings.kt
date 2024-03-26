@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning
 
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.ui.LabeledComponent
+import com.intellij.openapi.util.CheckedDisposable
 import com.intellij.openapi.util.UserDataHolder
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
@@ -27,7 +27,7 @@ abstract class LanguageSettings<Settings : EduProjectSettings> {
    */
   open fun getLanguageSettingsComponents(
     course: Course,
-    disposable: Disposable,
+    disposable: CheckedDisposable,
     context: UserDataHolder?
   ): List<LabeledComponent<JComponent>> {
     return emptyList()

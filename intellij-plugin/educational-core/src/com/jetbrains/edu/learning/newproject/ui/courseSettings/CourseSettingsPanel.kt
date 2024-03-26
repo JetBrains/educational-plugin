@@ -5,6 +5,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
+import com.intellij.openapi.util.CheckedDisposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.UserDataHolderBase
@@ -52,7 +53,7 @@ class CourseSettingsPanel(
   val settingsPanel = JPanel()
   private var decorator: HideableNoLineDecorator
 
-  private var languageSettingsDisposable: Disposable? = null
+  private var languageSettingsDisposable: CheckedDisposable? = null
 
   init {
     border = JBUI.Borders.empty(DESCRIPTION_AND_SETTINGS_TOP_OFFSET, HORIZONTAL_MARGIN, 0, 0)
@@ -102,7 +103,7 @@ class CourseSettingsPanel(
   override fun onCourseSelectionChanged(data: CourseBindData) {
     val (course, courseDisplaySettings) = data
     languageSettingsDisposable?.let(Disposer::dispose)
-    val settingsDisposable = Disposer.newDisposable(parentDisposable, "languageSettingsDisposable")
+    val settingsDisposable = Disposer.newCheckedDisposable(parentDisposable, "languageSettingsDisposable")
     languageSettingsDisposable = settingsDisposable
 
     val settingsComponents = mutableListOf<LabeledComponent<*>>()
