@@ -92,6 +92,7 @@ class ChooseCodeforcesContestLanguagesDialog(private val codeforcesCourse: Codef
 
   fun selectedTaskTextLanguage(): TaskTextLanguage = textLanguageComboBox.selectedItem as TaskTextLanguage
 
+  // TODO: it's possible not to have any available language, so `languageComboBox.selectedItem` may be null
   fun selectedLanguage(): String = languageComboBox.selectedItem as String
 
   fun isDoNotShowLanguageDialog(): Boolean = doNotShowLanguageDialogCheckBox.isSelected
@@ -113,7 +114,12 @@ class ChooseCodeforcesContestLanguagesDialog(private val codeforcesCourse: Codef
 
     val defaultLanguageId = getDefaultLanguageId()
     if (defaultLanguageId != null) {
-      languageComboBox.selectedItem = CodeforcesLanguageProvider.getPreferableCodeforcesLanguage(defaultLanguageId)
+      val preferableCodeforcesLanguage = CodeforcesLanguageProvider.getPreferableCodeforcesLanguage(defaultLanguageId)
+      // Technically, it's possible to have disabled integration for preferable language.
+      // In this case, it doesn't make sense to unselect the current selected item
+      if (preferableCodeforcesLanguage != null) {
+        languageComboBox.selectedItem = preferableCodeforcesLanguage
+      }
     }
   }
 }
