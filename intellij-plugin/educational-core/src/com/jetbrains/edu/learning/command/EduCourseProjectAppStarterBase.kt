@@ -93,10 +93,6 @@ abstract class EduCourseProjectAppStarterBase : EduAppStarterBase<ArgsWithProjec
   }
 
   protected abstract suspend fun performProjectAction(project: Project, course: Course, args: Args): CommandResult
-
-  private suspend fun waitForPostStartupActivities(project: Project) {
-    com.jetbrains.edu.learning.command.waitForPostStartupActivities(project)
-  }
 }
 
 private class ProjectConfigurationListener : CourseProjectGenerator.CourseProjectConfigurationListener {
