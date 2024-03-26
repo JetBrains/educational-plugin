@@ -13,8 +13,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.jetbrains.annotations.VisibleForTesting
 
 @Service(Service.Level.PROJECT)
-@State(name = "FrameworkLessonRecordStorage", storages = [Storage(StoragePathMacros.WORKSPACE_FILE, roamingType = RoamingType.DISABLED)])
-class FLRecordState : SimplePersistentStateComponent<FLRecordState.State>(State()) {
+@State(name = "CCFrameworkLessonRecordStorage", storages = [Storage(StoragePathMacros.WORKSPACE_FILE, roamingType = RoamingType.DISABLED)])
+class CCFrameworkLessonRecordStorage : SimplePersistentStateComponent<CCFrameworkLessonRecordStorage.State>(State()) {
   fun getRecord(task: Task): Int {
     if (task.parent !is FrameworkLesson) return -1
     val key = task.getPathInCourse()
@@ -89,7 +89,7 @@ class FLRecordState : SimplePersistentStateComponent<FLRecordState.State>(State(
   }
 
   companion object {
-    fun getInstance(project: Project): FLRecordState = project.service()
+    fun getInstance(project: Project): CCFrameworkLessonRecordStorage = project.service()
   }
 }
 

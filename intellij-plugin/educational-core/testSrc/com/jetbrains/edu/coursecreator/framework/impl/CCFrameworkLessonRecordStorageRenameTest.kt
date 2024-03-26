@@ -1,7 +1,7 @@
 package com.jetbrains.edu.coursecreator.framework.impl
 
 import com.jetbrains.edu.coursecreator.actions.CCSyncChangesWithNextTasks
-import com.jetbrains.edu.coursecreator.framework.FLRecordState
+import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonRecordStorage
 import com.jetbrains.edu.coursecreator.framework.diff.withFLMultipleFileMergeUI
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.rename.RenameTestBase
@@ -9,9 +9,9 @@ import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 
-class FLRecordStateRenameTest : RenameTestBase() {
-  private val recordState: FLRecordState
-    get() = FLRecordState.getInstance(project)
+class CCFrameworkLessonRecordStorageRenameTest : RenameTestBase() {
+  private val recordState: CCFrameworkLessonRecordStorage
+    get() = CCFrameworkLessonRecordStorage.getInstance(project)
 
   override fun setUp() {
     super.setUp()
