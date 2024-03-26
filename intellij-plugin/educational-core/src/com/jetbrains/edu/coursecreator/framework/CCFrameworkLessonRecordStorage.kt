@@ -12,6 +12,13 @@ import com.jetbrains.edu.learning.courseFormat.ext.visitTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.jetbrains.annotations.VisibleForTesting
 
+/*
+ * A service that is used as the persistent storage for task records in the framework lesson the for course creator,
+ * instead of storing them in yaml file.
+ *
+ * Currently, the key is the path to the task folder
+ * TODO(use id of the task as a key instead of the path to the task)
+ */
 @Service(Service.Level.PROJECT)
 @State(name = "CCFrameworkLessonRecordStorage", storages = [Storage(StoragePathMacros.WORKSPACE_FILE, roamingType = RoamingType.DISABLED)])
 class CCFrameworkLessonRecordStorage : SimplePersistentStateComponent<CCFrameworkLessonRecordStorage.State>(State()) {
@@ -35,8 +42,6 @@ class CCFrameworkLessonRecordStorage : SimplePersistentStateComponent<CCFramewor
     val key = task.getPathInCourse()
     state.removeTaskRecord(key)
   }
-
-  fun removeRecords(section: Section) = section.visitLessons { removeRecords(it) }
 
   fun migrateRecords(studyItem: StudyItem, newName: String) {
     if (studyItem is Course) return
@@ -92,8 +97,3 @@ class CCFrameworkLessonRecordStorage : SimplePersistentStateComponent<CCFramewor
     fun getInstance(project: Project): CCFrameworkLessonRecordStorage = project.service()
   }
 }
-
-
-
-
-
