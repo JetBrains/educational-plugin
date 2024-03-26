@@ -176,7 +176,11 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
     lesson.index = 1
     lesson.parent = course
     progressIndicator?.checkCanceled()
-    val stepSources = getStepSources(course.stages.map { it.stepId }).onError { emptyList() }
+    val stageIds = course.stages.map { it.stepId }
+    val stepSources = getStepSources(stageIds).onError { e ->
+      LOG.warn("Failed to load content for $stageIds stages because of: $e")
+      emptyList()
+    }
 
     progressIndicator?.checkCanceled()
     val tasks = getTasks(course, lesson, stepSources)
