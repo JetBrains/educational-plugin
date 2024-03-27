@@ -1,33 +1,36 @@
 package com.jetbrains.edu.coursecreator.framework.impl
 
-import com.jetbrains.edu.coursecreator.actions.CCSyncChangesWithNextTasks
 import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonRecordStorage
-import com.jetbrains.edu.coursecreator.framework.diff.withFLMultipleFileMergeUI
-import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.rename.RenameTestBase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.ext.getDir
 
 class CCFrameworkLessonRecordStorageRenameTest : RenameTestBase() {
-  private val recordState: CCFrameworkLessonRecordStorage
-    get() = CCFrameworkLessonRecordStorage.getInstance(project)
-
-  override fun setUp() {
-    super.setUp()
-    recordState.reset()
+  override fun tearDown() {
+    try {
+      storage.reset()
+    }
+    catch (e: Throwable) {
+      addSuppressedException(e)
+    }
+    finally {
+      super.tearDown()
+    }
   }
+
+  private val storage: CCFrameworkLessonRecordStorage
+    get() = CCFrameworkLessonRecordStorage.getInstance(project)
 
   fun `test record is not deleted after task rename action`() {
     val course = createFrameworkCourse()
     val lesson = getFrameworkLesson(course)
 
     val task1 = lesson.getTask("task1")!!
-    val record1 = recordState.getRecord(task1)
+    val record1 = storage.getRecord(task1)
 
     doRenameAction(course, "section1/lesson1/task1", "task3")
 
-    with(recordState) {
+    with(storage) {
       assertEquals(2, state.taskRecords.size)
       assertNull(getRecord("section1/lesson1/task1"))
       assertEquals(record1, getRecord("section1/lesson1/task3"))
@@ -40,12 +43,12 @@ class CCFrameworkLessonRecordStorageRenameTest : RenameTestBase() {
 
     val task1 = lesson.getTask("task1")!!
     val task2 = lesson.getTask("task2")!!
-    val record1 = recordState.getRecord(task1)
-    val record2 = recordState.getRecord(task2)
+    val record1 = storage.getRecord(task1)
+    val record2 = storage.getRecord(task2)
 
     doRenameAction(course, "section1/lesson1", "lesson2")
 
-    with(recordState) {
+    with(storage) {
       assertEquals(2, state.taskRecords.size)
       assertNull(getRecord("section1/lesson1/task1"))
       assertEquals(record1, getRecord("section1/lesson2/task1"))
@@ -60,12 +63,12 @@ class CCFrameworkLessonRecordStorageRenameTest : RenameTestBase() {
 
     val task1 = lesson.getTask("task1")!!
     val task2 = lesson.getTask("task2")!!
-    val record1 = recordState.getRecord(task1)
-    val record2 = recordState.getRecord(task2)
+    val record1 = storage.getRecord(task1)
+    val record2 = storage.getRecord(task2)
 
     doRenameAction(course, "section1", "section2")
 
-    with(recordState) {
+    with(storage) {
       assertEquals(2, state.taskRecords.size)
       assertNull(getRecord("section1/lesson1/task1"))
       assertEquals(record1, getRecord("section2/lesson1/task1"))
@@ -89,11 +92,9 @@ class CCFrameworkLessonRecordStorageRenameTest : RenameTestBase() {
       }
     }
   }.apply {
-    val task = getFrameworkLesson(this).getTask("task1")!!
-    val mockUI = MockFLMultipleFileMergeUI(listOf(), 0)
-    withFLMultipleFileMergeUI(mockUI) {
-      val dataContext = dataContext(task.getDir(project.courseDir)!!)
-      testAction(CCSyncChangesWithNextTasks.ACTION_ID, dataContext)
+    val lesson = getFrameworkLesson(this)
+    for ((index, task) in lesson.taskList.withIndex()) {
+      storage.updateRecord(task, index)
     }
   }
 
