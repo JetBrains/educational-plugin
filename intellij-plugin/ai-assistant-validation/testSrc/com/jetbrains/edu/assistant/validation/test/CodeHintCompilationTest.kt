@@ -1,26 +1,27 @@
 package com.jetbrains.edu.assistant.validation.test
 
+import com.intellij.openapi.progress.runBlockingCancellable
 import com.jetbrains.edu.assistant.validation.util.StudentSolutionRecord
 import com.jetbrains.edu.assistant.validation.util.downloadSolution
+import com.jetbrains.edu.assistant.validation.util.parseCsvFile
 import com.jetbrains.edu.jvm.slow.checker.JdkCheckerTestBase
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checker.CheckUtils
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.eduAssistant.core.TaskBasedAssistant
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 import com.jetbrains.edu.learning.navigation.NavigationUtils
-import org.apache.commons.csv.CSVFormat
-import org.apache.commons.csv.CSVParser
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
+import junit.framework.TestCase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
-import java.nio.file.Files
 import kotlin.io.path.Path
-import kotlin.io.path.exists
-import org.hamcrest.CoreMatchers
 
 @RunWith(Parameterized::class)
 class CodeHintCompilationTest(private val lessonName: String, private val taskName: String) : JdkCheckerTestBase() {
@@ -28,67 +29,47 @@ class CodeHintCompilationTest(private val lessonName: String, private val taskNa
   companion object {
     @JvmStatic
     @Parameterized.Parameters
-    fun data() = listOf(
-      arrayOf("TheFirstDateWithProgramming", "Variables")
-    )
-//    fun data() = kotlinOnboardingMockCourse.lessons.flatMap { lesson ->
-//      lesson.taskList.filterIsInstance<EduTask>().map { task ->
-//        arrayOf(lesson.name, task.name)
-//      }
-//    }
-  }
-
-  private fun getStudentSolutions(): List<StudentSolutionRecord>? {
-    val pathToSolutions = Path("../../solutionsForValidation/tt_data_for_tests_version1.csv")
-    if (pathToSolutions.exists()) {
-      Files.newBufferedReader(pathToSolutions).use { reader ->
-        val csvParser = CSVParser(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader())
-        return csvParser.records.map { record ->
-          StudentSolutionRecord(record.get(0).toInt(), record.get(1), record.get(2), record.get(3))
-        }
+    fun data() = kotlinOnboardingMockCourse.lessons.flatMap { lesson ->
+      lesson.taskList.filterIsInstance<EduTask>().map { task ->
+        arrayOf(lesson.name, task.name)
       }
     }
-    return null
   }
 
   @Test
   fun testCodeHintCompilation() {
-    CheckActionListener.setCheckResultVerifier { task, checkResult ->
-      assertEquals("${task.name} should be failed", CheckStatus.Failed, checkResult.status)
-      TestComparisonData(
-        CoreMatchers.equalTo(CheckUtils.COMPILATION_FAILED_MESSAGE),
-        nullValue()
-      )
+    CheckActionListener.setCheckResultVerifier { _, checkResult ->
+      TestCase.assertNotSame(checkResult.message, CheckUtils.COMPILATION_FAILED_MESSAGE)
     }
-    val course = project.course ?: error("Course was not found")
-    val task = course.findTask(lessonName = lessonName, taskName = taskName)
-    NavigationUtils.navigateToTask(project, task)
+
+    // TODO: `NavigationUtils.navigateToTask(project, task)` doesn't work with framework lessons
+    var task = TaskToolWindowView.getInstance(project).currentTask ?: error("")
+    while (task.name != taskName || task.lesson.name != lessonName) {
+      val targetTask = NavigationUtils.nextTask(task) ?: error("")
+      NavigationUtils.navigateToTask(project, targetTask, task)
+      task = TaskToolWindowView.getInstance(project).currentTask ?: error("")
+    }
+
     val state = project.eduState ?: error("Edu state is invalid")
     val taskProcessor = TaskProcessor(task)
     val assistant = TaskBasedAssistant(taskProcessor)
-    val studentSolutions = getStudentSolutions() ?: error("Student solutions was not found")
-    studentSolutions.filter { it.lessonName == lessonName && it.taskName == taskName }.map { it.code }.forEach { studentCode ->
-      downloadSolution(task, project, studentCode)
+    val studentSolutions = parseCsvFile(Path("../../solutionsForValidation/tt_data_for_tests_version1.csv")) { record ->
+      StudentSolutionRecord(record.get(0).toInt(), record.get(1), record.get(2), record.get(3))
+    } ?: error("Student solutions was not found")
+    val studentCode = studentSolutions.filter { it.lessonName == lessonName && it.taskName == taskName }.map { it.code }.firstOrNull()
+    studentCode?.let {
+      downloadSolution(task, project, it)
 
-//      var response: AssistantResponse? = null
-//      runInBackground(project, "Running Tests", true) {
-//        runBlockingCancellable {
-//          withContext(Dispatchers.IO) {
-//            response = assistant.getHint(task, state)
-//          }
-//        }
-//      }
-//      val codeHint = response?.codeHint ?: error("Failed to generate the code hint")
-      val codeHint = """
-        package jetbrains.kotlin.course.first.date
-
-        fun main() {
-            sajaqksndkkiwnskksk
-               djjdjkdkd
+      runInBackground(project, "Running Tests", true) {
+        runBlockingCancellable {
+          withContext(Dispatchers.IO) {
+            val response = assistant.getHint(task, state)
+            response.codeHint?.let {
+              downloadSolution(task, project, it)
+            }
+          }
         }
-      """.trimIndent()
-      downloadSolution(task, project, codeHint)
-
+      }
       myCourse.configurator!!.courseBuilder.refreshProject(project, RefreshCause.PROJECT_CREATED)
       checkTask(task)
     }

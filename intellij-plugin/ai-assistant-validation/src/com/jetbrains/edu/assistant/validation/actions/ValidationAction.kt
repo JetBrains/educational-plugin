@@ -20,17 +20,16 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.intellij.openapi.progress.Task.Backgroundable
 import com.jetbrains.edu.assistant.validation.util.StudentSolutionRecord
 import com.jetbrains.edu.assistant.validation.util.downloadSolution
+import com.jetbrains.edu.assistant.validation.util.parseCsvFile
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import java.time.LocalDateTime
 import org.apache.commons.csv.CSVFormat
-import org.apache.commons.csv.CSVParser
 import org.jetbrains.kotlinx.dataframe.*
 import org.jetbrains.kotlinx.dataframe.api.forEach
 import java.io.File
 import java.io.FileWriter
-import java.nio.file.Files
 import kotlin.io.path.*
 
 /**
@@ -84,7 +83,9 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
       var doneTasks = 0
       var previousTask: Task? = null
 
-      val studentSolutions = getStudentSolutions()
+      val studentSolutions = parseCsvFile(pathToSolutions) { record ->
+        StudentSolutionRecord(record.get(0).toInt(), record.get(1), record.get(2), record.get(3))
+      }
 
       for (lesson in course.lessons) {
         val records = mutableListOf<T>()
@@ -128,18 +129,6 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
       indicator.text = EduAndroidAiAssistantValidationBundle.message("action.validation.indicator.results")
 
       processFinished()
-    }
-
-    private fun getStudentSolutions(): List<StudentSolutionRecord>? {
-      if (pathToSolutions.exists()) {
-        Files.newBufferedReader(pathToSolutions).use { reader ->
-          val csvParser = CSVParser(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader())
-          return csvParser.records.map { record ->
-            StudentSolutionRecord(record.get(0).toInt(), record.get(1), record.get(2), record.get(3))
-          }
-        }
-      }
-      return null
     }
 
     private fun List<StudentSolutionRecord>.getSolutionListForTask(lessonName: String, taskName: String) =
