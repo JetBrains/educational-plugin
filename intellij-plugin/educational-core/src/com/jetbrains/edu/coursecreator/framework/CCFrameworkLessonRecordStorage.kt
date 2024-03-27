@@ -16,6 +16,11 @@ import org.jetbrains.annotations.VisibleForTesting
  * A service that is used as the persistent storage for task records in the framework lesson the for course creator,
  * instead of storing them in yaml file.
  *
+ * Record of the task - key in the storage framework for the task.
+ * It is needed to get information about the previous state of the task, which is stored in the framework storage.
+ * For learner, we store the record in yaml, but this option is not suitable for the CC, since we do not want to clutter a yaml.
+ * Therefore, the record is stored for the task creator in this service.
+ *
  * Currently, the key is the path to the task folder
  * TODO(use id of the task as a key instead of the path to the task)
  */
