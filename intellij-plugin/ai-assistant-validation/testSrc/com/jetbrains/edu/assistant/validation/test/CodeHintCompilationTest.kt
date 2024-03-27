@@ -34,6 +34,10 @@ class CodeHintCompilationTest(private val lessonName: String, private val taskNa
         arrayOf(lesson.name, task.name)
       }
     }
+
+    private val studentSolutions = parseCsvFile(Path("../../solutionsForValidation/tt_data_for_tests_version1.csv")) { record ->
+      StudentSolutionRecord(record.get(0).toInt(), record.get(1), record.get(2), record.get(3))
+    } ?: error("Student solutions was not found")
   }
 
   @Test
@@ -43,19 +47,16 @@ class CodeHintCompilationTest(private val lessonName: String, private val taskNa
     }
 
     // TODO: `NavigationUtils.navigateToTask(project, task)` doesn't work with framework lessons
-    var task = TaskToolWindowView.getInstance(project).currentTask ?: error("")
+    var task = TaskToolWindowView.getInstance(project).currentTask ?: error("Cannot get the current task")
     while (task.name != taskName || task.lesson.name != lessonName) {
-      val targetTask = NavigationUtils.nextTask(task) ?: error("")
+      val targetTask = NavigationUtils.nextTask(task) ?: error("The next task is null")
       NavigationUtils.navigateToTask(project, targetTask, task)
-      task = TaskToolWindowView.getInstance(project).currentTask ?: error("")
+      task = TaskToolWindowView.getInstance(project).currentTask ?: error("Cannot get the current task")
     }
 
     val state = project.eduState ?: error("Edu state is invalid")
     val taskProcessor = TaskProcessor(task)
     val assistant = TaskBasedAssistant(taskProcessor)
-    val studentSolutions = parseCsvFile(Path("../../solutionsForValidation/tt_data_for_tests_version1.csv")) { record ->
-      StudentSolutionRecord(record.get(0).toInt(), record.get(1), record.get(2), record.get(3))
-    } ?: error("Student solutions was not found")
     val studentCode = studentSolutions.filter { it.lessonName == lessonName && it.taskName == taskName }.map { it.code }.firstOrNull()
     studentCode?.let {
       downloadSolution(task, project, it)
