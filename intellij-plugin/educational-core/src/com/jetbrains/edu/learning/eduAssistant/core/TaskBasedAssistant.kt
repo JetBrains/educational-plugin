@@ -133,7 +133,12 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
         hintTimingLogger.info { "Received the code hint" }
       }
       hintTimingLogger.info { "Retrieving the modified function name" }
-      val functionName = taskProcessor.getModifiedFunctionNameInCodeHint(codeStr, codeHint)
+      val functionName = try {
+        taskProcessor.getModifiedFunctionNameInCodeHint(codeStr, codeHint)
+      } catch (e: IllegalStateException) {
+        logger.error { "Error occurred: ${e.stackTraceToString()}" }
+        return AssistantResponse(assistantError = AssistantError.EmptyDiff)
+      }
       hintTimingLogger.info { "Retrieving the code hint from solution if it is a short function" }
       val nextStepCodeFromSolution = taskProcessor.getShortFunctionFromSolutionIfRecommended(codeHint, project, languageId, functionName, state.taskFile)
       if (nextStepCodeFromSolution != null) {
@@ -165,9 +170,11 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
     }
     // TODO: Handle more exceptions with AiPlatformException
     catch (e: AiPlatformException) {
+      logger.error { "Error occurred: ${e.stackTraceToString()}" }
       AssistantResponse(assistantError = e.assistantError)
     }
     catch (e: Throwable) {
+      logger.error { "Error occurred: ${e.stackTraceToString()}" }
       AssistantResponse(assistantError = AssistantError.UnknownError)
     }
   }

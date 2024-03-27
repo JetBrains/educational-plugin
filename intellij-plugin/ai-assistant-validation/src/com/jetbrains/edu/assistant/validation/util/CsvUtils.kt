@@ -78,6 +78,7 @@ data class ValidationOfHintsDataframeRecord(
   var userCode: String = "",
   var nextStepTextHint: String = "",
   var nextStepCodeHint: String = "",
+  var errors: String = "",
   var feedbackType : String = "",
   val information: String = "",
   val levelOfDetail: String = "",

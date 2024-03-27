@@ -47,14 +47,14 @@ class AutoHintValidationAction : ValidationAction<ValidationOfHintsDataframeReco
     val assistant = TaskBasedAssistant(taskProcessor)
     val project = task.project ?: error("Cannot get project")
     val eduState = project.eduState ?: error("Cannot get eduState for project ${project.name}")
+    val response = assistant.getHint(task, eduState)
 
     try {
-      val response = assistant.getHint(task, eduState)
       val currentUserCode = eduState.taskFile.getVirtualFile(project)?.getTextFromTaskTextFile() ?: error("Cannot get a user code")
       val generatedSolutionSteps = task.generatedSolutionSteps ?: error("Cannot get the solution steps")
       val currentTaskDescription = taskProcessor.getTaskTextRepresentation()
-      val textHint = response.textHint ?: error("Cannot get a text hint")
-      val codeHint = response.codeHint ?: error("Cannot get a code hint")
+      val codeHint = response.codeHint ?: error("Cannot get a code hint (${response.assistantError?.name ?: "no assistant error found"})")
+      val textHint = response.textHint ?: error("Cannot get a text hint (${response.assistantError?.name ?: "no assistant error found"})")
       val hintType = processValidationHintForItsType(textHint, codeHint)
       val hintsValidation = processValidationHints(currentTaskDescription, textHint, codeHint, currentUserCode, generatedSolutionSteps)
       val dataframeRecord = Gson().fromJson(hintsValidation, ValidationOfHintsDataframeRecord::class.java)
@@ -74,7 +74,11 @@ class AutoHintValidationAction : ValidationAction<ValidationOfHintsDataframeReco
         taskId = task.id,
         taskName = task.name,
         taskDescription = taskProcessor.getTaskTextRepresentation(),
-        solutionSteps = "Error during validation generation: ${e.message}"
+        solutionSteps = task.generatedSolutionSteps ?: "",
+        userCode = eduState.taskFile.getVirtualFile(project)?.getTextFromTaskTextFile() ?: "",
+        nextStepCodeHint = response.codeHint ?: "",
+        nextStepTextHint = response.textHint ?: "",
+        errors = "Error during validation generation: ${e.message}"
       ))
     }
   }
