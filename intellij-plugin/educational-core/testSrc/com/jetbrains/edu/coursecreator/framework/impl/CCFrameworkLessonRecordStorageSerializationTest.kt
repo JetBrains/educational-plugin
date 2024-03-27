@@ -8,11 +8,6 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.findTask
 
 class CCFrameworkLessonRecordStorageSerializationTest : EduSettingsServiceTestBase() {
-  override fun setUp() {
-    super.setUp()
-    storage.reset()
-  }
-
   fun `test empty storage serialization`() {
     storage.loadStateAndCheck("""
       <State />
@@ -69,5 +64,5 @@ class CCFrameworkLessonRecordStorageSerializationTest : EduSettingsServiceTestBa
   }
 
   private val storage: CCFrameworkLessonRecordStorage
-    get() = CCFrameworkLessonRecordStorage.getInstance(project)
+    get() = CCFrameworkLessonRecordStorage()
 }
