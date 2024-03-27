@@ -1,11 +1,15 @@
 package com.jetbrains.edu.learning.courseFormat.eduAssistant
 
-data class FunctionSignature(
-  val name: String,
-  val parameters: List<FunctionParameter>,
-  val returnType: String,
-  val signatureSource: SignatureSource? = null,
-  val bodyLineCount: Int? = null
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
+
+data class FunctionSignature
+@JsonCreator constructor(
+  @JsonProperty("name") val name: String,
+  @JsonProperty("parameters") val parameters: List<FunctionParameter>,
+  @JsonProperty("returnType") val returnType: String,
+  @JsonProperty("signatureSource") val signatureSource: SignatureSource? = null,
+  @JsonProperty("bodyLineCount") val bodyLineCount: Int? = null
 ) {
   override fun toString(): String {
     return "$name$NAME_ARGS_SEPARATOR${parameters.joinToString(separator = ARGS_SEPARATOR)}$ARGS_RETURN_TYPE_SEPARATOR$returnType"
@@ -36,9 +40,10 @@ data class FunctionSignature(
   }
 }
 
-data class FunctionParameter(
-  val name: String,
-  val type: String
+data class FunctionParameter
+@JsonCreator constructor(
+  @JsonProperty("name") val name: String,
+  @JsonProperty("type") val type: String
 ) {
   override fun toString() = "${name}$NAME_TYPE_SEPARATOR$type"
 
