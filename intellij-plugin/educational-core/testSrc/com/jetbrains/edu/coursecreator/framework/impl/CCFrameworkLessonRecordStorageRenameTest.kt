@@ -6,18 +6,6 @@ import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.*
 
 class CCFrameworkLessonRecordStorageRenameTest : RenameTestBase() {
-  override fun tearDown() {
-    try {
-      storage.reset()
-    }
-    catch (e: Throwable) {
-      addSuppressedException(e)
-    }
-    finally {
-      super.tearDown()
-    }
-  }
-
   private val storage: CCFrameworkLessonRecordStorage
     get() = CCFrameworkLessonRecordStorage.getInstance(project)
 
