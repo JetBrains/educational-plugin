@@ -3,6 +3,7 @@ package com.jetbrains.edu.assistant.validation.util
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFileFactory
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -46,6 +47,7 @@ private fun replaceDocumentText(taskFile: TaskFile, project: Project, solution: 
   ApplicationManager.getApplication().invokeAndWait {
     ApplicationManager.getApplication().runWriteAction {
       currentDocument?.setText(solution)
+      currentDocument?.let { PsiDocumentManager.getInstance(project).commitDocument(it) }
     }
   }
 }
