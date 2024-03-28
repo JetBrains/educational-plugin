@@ -1,6 +1,6 @@
 package com.jetbrains.edu.coursecreator.framework.impl
 
-import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonRecordStorage
+import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
 import com.jetbrains.edu.learning.EduSettingsServiceTestBase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -9,8 +9,8 @@ import com.jetbrains.edu.learning.findTask
 
 class CCFrameworkLessonRecordStorageSerializationTest : EduSettingsServiceTestBase() {
   fun `test empty storage serialization`() {
-    CCFrameworkLessonRecordStorage().loadStateAndCheck("""
-      <State />
+    CCFrameworkLessonManager.getInstance(project).loadStateAndCheck("""
+      <RecordState />
     """.trimIndent())
   }
 
@@ -18,32 +18,32 @@ class CCFrameworkLessonRecordStorageSerializationTest : EduSettingsServiceTestBa
     val course = createFrameworkCourse()
     val task1 = course.findTask("lesson1", "task1")
 
-    with(CCFrameworkLessonRecordStorage()) {
+    with(CCFrameworkLessonManager.getInstance(project)) {
       updateRecord(task1, 5)
       loadStateAndCheck("""
-        <State>
+        <RecordState>
           <taskRecords>
             <map>
               <entry key="lesson1/task1" value="5" />
             </map>
           </taskRecords>
-        </State>
+        </RecordState>
       """.trimIndent())
 
       updateRecord(task1, 6)
       loadStateAndCheck("""
-        <State>
+        <RecordState>
           <taskRecords>
             <map>
               <entry key="lesson1/task1" value="6" />
             </map>
           </taskRecords>
-        </State>
+        </RecordState>
       """.trimIndent())
 
       removeRecord(task1)
       loadStateAndCheck("""
-         <State />
+         <RecordState />
       """.trimIndent()
       )
     }

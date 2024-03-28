@@ -2,7 +2,7 @@ package com.jetbrains.edu.coursecreator.framework.impl
 
 import com.intellij.configurationStore.saveSettings
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonRecordStorage
+import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
 import com.jetbrains.edu.learning.CourseReopeningTestBase
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
@@ -27,7 +27,7 @@ class CCFrameworkLessonRecordStorageReopeningTest : CourseReopeningTestBase<Empt
   }
 
   private fun firstOpen(project: Project) {
-    val recordState = CCFrameworkLessonRecordStorage.getInstance(project)
+    val recordState = CCFrameworkLessonManager.getInstance(project)
     val course = project.course
     val task = course?.findTask("lesson", "task") ?: error("Can't find task")
 
@@ -45,7 +45,7 @@ class CCFrameworkLessonRecordStorageReopeningTest : CourseReopeningTestBase<Empt
   }
 
   private fun secondOpen(project: Project) {
-    val recordState = CCFrameworkLessonRecordStorage.getInstance(project)
+    val recordState = CCFrameworkLessonManager.getInstance(project)
     val course = project.course
     val task = course?.findTask("lesson", "task") ?: error("Can't find task")
 

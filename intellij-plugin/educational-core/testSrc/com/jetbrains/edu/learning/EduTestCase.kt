@@ -20,7 +20,7 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.toolWindow.ToolWindowHeadlessManagerImpl
-import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonRecordStorage
+import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
 import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
@@ -124,7 +124,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
       MarketplaceUpdateChecker.getInstance(project).course = null
       HyperskillCourseUpdateChecker.getInstance(project).course = null
       CodeforcesCourseUpdateChecker.getInstance(project).course = null
-      CCFrameworkLessonRecordStorage.getInstance(project).reset()
+      CCFrameworkLessonManager.getInstance(project).clearRecords()
     }
     finally {
       super.tearDown()

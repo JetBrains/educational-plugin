@@ -1,24 +1,24 @@
 package com.jetbrains.edu.coursecreator.framework.impl
 
-import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonRecordStorage
+import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
 import com.jetbrains.edu.learning.actions.rename.RenameTestBase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.*
 
 class CCFrameworkLessonRecordStorageRenameTest : RenameTestBase() {
-  private val storage: CCFrameworkLessonRecordStorage
-    get() = CCFrameworkLessonRecordStorage.getInstance(project)
+  private val manager: CCFrameworkLessonManager
+    get() = CCFrameworkLessonManager.getInstance(project)
 
   fun `test record is not deleted after task rename action`() {
     val course = createFrameworkCourse()
     val lesson = getFrameworkLesson(course)
 
     val task1 = lesson.getTask("task1")!!
-    val record1 = storage.getRecord(task1)
+    val record1 = manager.getRecord(task1)
 
     doRenameAction(course, "section1/lesson1/task1", "task3")
 
-    with(storage) {
+    with(manager) {
       assertEquals(2, state.taskRecords.size)
       assertNull(getRecord("section1/lesson1/task1"))
       assertEquals(record1, getRecord("section1/lesson1/task3"))
@@ -31,12 +31,12 @@ class CCFrameworkLessonRecordStorageRenameTest : RenameTestBase() {
 
     val task1 = lesson.getTask("task1")!!
     val task2 = lesson.getTask("task2")!!
-    val record1 = storage.getRecord(task1)
-    val record2 = storage.getRecord(task2)
+    val record1 = manager.getRecord(task1)
+    val record2 = manager.getRecord(task2)
 
     doRenameAction(course, "section1/lesson1", "lesson2")
 
-    with(storage) {
+    with(manager) {
       assertEquals(2, state.taskRecords.size)
       assertNull(getRecord("section1/lesson1/task1"))
       assertEquals(record1, getRecord("section1/lesson2/task1"))
@@ -51,12 +51,12 @@ class CCFrameworkLessonRecordStorageRenameTest : RenameTestBase() {
 
     val task1 = lesson.getTask("task1")!!
     val task2 = lesson.getTask("task2")!!
-    val record1 = storage.getRecord(task1)
-    val record2 = storage.getRecord(task2)
+    val record1 = manager.getRecord(task1)
+    val record2 = manager.getRecord(task2)
 
     doRenameAction(course, "section1", "section2")
 
-    with(storage) {
+    with(manager) {
       assertEquals(2, state.taskRecords.size)
       assertNull(getRecord("section1/lesson1/task1"))
       assertEquals(record1, getRecord("section2/lesson1/task1"))
@@ -82,7 +82,7 @@ class CCFrameworkLessonRecordStorageRenameTest : RenameTestBase() {
   }.apply {
     val lesson = getFrameworkLesson(this)
     for ((index, task) in lesson.taskList.withIndex()) {
-      storage.updateRecord(task, index)
+      manager.updateRecord(task, index)
     }
   }
 

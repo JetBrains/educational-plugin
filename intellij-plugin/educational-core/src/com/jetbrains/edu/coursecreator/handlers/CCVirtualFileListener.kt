@@ -9,11 +9,11 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.events.*
 import com.intellij.util.ui.update.MergingUpdateQueue
 import com.intellij.util.ui.update.Update
+import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonRecordStorage
 import com.jetbrains.edu.learning.handlers.EduVirtualFileListener
 import com.jetbrains.edu.learning.yaml.*
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
@@ -60,7 +60,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     val removedLesson = info.lesson
     val course = removedLesson.course
     val section = removedLesson.section
-    CCFrameworkLessonRecordStorage.getInstance(project).removeRecords(removedLesson)
+    CCFrameworkLessonManager.getInstance(project).removeRecords(removedLesson)
     if (section != null) {
       section.removeLesson(removedLesson)
       YamlFormatSynchronizer.saveItem(section)
@@ -74,7 +74,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     val removedSection = info.section
     val course = removedSection.course
     course.removeSection(removedSection)
-    CCFrameworkLessonRecordStorage.getInstance(project).removeRecords(removedSection)
+    CCFrameworkLessonManager.getInstance(project).removeRecords(removedSection)
     YamlFormatSynchronizer.saveItem(course)
   }
 
@@ -82,7 +82,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     val task = info.task
     val lesson = task.lesson
     lesson.removeTask(task)
-    CCFrameworkLessonRecordStorage.getInstance(project).removeRecord(task)
+    CCFrameworkLessonManager.getInstance(project).removeRecord(task)
     YamlFormatSynchronizer.saveItem(lesson)
   }
 
