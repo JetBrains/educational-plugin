@@ -42,11 +42,11 @@ class TaskToolWindowFactory : ToolWindowFactory, DumbAware {
     if (!project.isEduProject()) {
       return
     }
-    val taskDescriptionToolWindow = TaskToolWindowView.getInstance(project)
+    val taskToolWindowView = TaskToolWindowView.getInstance(project)
     toolWindow.component.putClientProperty(ToolWindowContentUi.HIDE_ID_LABEL, "true")
     toolWindow.initTitleActions()
     addGotItTooltip(toolWindow.contentManager)
-    taskDescriptionToolWindow.init(toolWindow)
+    taskToolWindowView.init(toolWindow)
     (toolWindow as ToolWindowEx).setAdditionalGearActions(DefaultActionGroup(AdjustFontSize(project)))
   }
 

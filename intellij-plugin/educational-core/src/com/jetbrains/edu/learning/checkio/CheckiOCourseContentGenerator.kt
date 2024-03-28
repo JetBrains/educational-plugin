@@ -53,7 +53,6 @@ class CheckiOCourseContentGenerator(
 
     mission.descriptionFormat = DescriptionFormat.HTML
     mission.descriptionText = buildString {
-      appendLine("<h2>${mission.name}</h2>")
       appendLine(mission.descriptionText)
       appendLine(solutions)
       appendLine(task)

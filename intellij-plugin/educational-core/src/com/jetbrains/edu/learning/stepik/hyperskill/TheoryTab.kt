@@ -11,13 +11,13 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskToolWindow.createActionLink
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindow.Companion.getTaskDescription
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
-import com.jetbrains.edu.learning.taskToolWindow.ui.tab.AdditionalTextTab
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType.THEORY_TAB
+import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TaskToolWindowTextTab
 import java.awt.BorderLayout
 import javax.swing.JPanel
 import javax.swing.JSeparator
 
-class TheoryTab(project: Project) : AdditionalTextTab(project, THEORY_TAB) {
+class TheoryTab(project: Project) : TaskToolWindowTextTab(project, THEORY_TAB) {
 
   init {
     init()
