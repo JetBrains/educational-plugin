@@ -1,6 +1,5 @@
 package com.jetbrains.edu.kotlin.learning.eduAssistant.psi.context
 
-import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
@@ -29,11 +28,11 @@ class KtFunctionDiffReducer : FunctionDiffReducer {
     insertionAfterElement: PsiElement?
   ): Boolean {
     first.zip(second).forEach {
-      if (runReadAction { !Regex(TODO).containsMatchIn(it.first.text) && it.first.node.elementType != it.second.node.elementType }) {
+      if (!Regex(TODO).containsMatchIn(it.first.text) && it.first.node.elementType != it.second.node.elementType) {
         addElement(it.first, it.second, project, addAfter = false)
         return true
       }
-      if (runReadAction { it.first.text != it.second.text }) {
+      if (it.first.text != it.second.text) {
         swapElements(it.first, it.second, project)
         return true
       }
@@ -62,8 +61,8 @@ class KtFunctionDiffReducer : FunctionDiffReducer {
 
   private fun addElement(first: PsiElement, second: PsiElement, project: Project, addAfter: Boolean = true, needLineBreak: Boolean = true) {
     reducingNewElement(second, project)
-    val parent = runReadAction { first.parent }
-    val newLine = runReadAction { KtPsiFactory(project).createNewLine() }
+    val parent = first.parent
+    val newLine = KtPsiFactory(project).createNewLine()
     performWriteAction(project) {
       if (addAfter) {
         parent.addAfter(second.copy(), first)
@@ -90,7 +89,7 @@ class KtFunctionDiffReducer : FunctionDiffReducer {
   }
 
   private fun reducingNewElement(element: PsiElement, project: Project, downsize: Boolean = false) {
-    val size = runReadAction { element.text?.lines()?.size } ?: error("Cannot get the body size of $element")
+    val size = element.text?.lines()?.size ?: error("Cannot get the body size of $element")
     if (size > MAX_BODY_LINES_IN_SHORT_FUNCTION || downsize) {
       when (element) {
         // If a new function has been added - leave only the function declaration - change the function body to TODO_EXPRESSION
@@ -100,57 +99,57 @@ class KtFunctionDiffReducer : FunctionDiffReducer {
           } else {
             KtPsiFactory(project).createExpression(TODO_EXPRESSION)
           }
-          runReadAction { element.bodyExpression }?.let { swapElements(it, todoExpression, project) }
+          element.bodyExpression?.let { swapElements(it, todoExpression, project) }
         }
         // If a new `while` expression has been added - delete its body - leave only the condition statement
-        is KtWhileExpressionBase -> runReadAction { element.body }?.let { swapElements(it, KtPsiFactory(project).createEmptyBody(), project) }
+        is KtWhileExpressionBase -> element.body?.let { swapElements(it, KtPsiFactory(project).createEmptyBody(), project) }
         // If a new `for` expression has been added - delete its body - leave only the loopRange and loopParameter
-        is KtForExpression -> runReadAction { element.body }?.let { swapElements(it, KtPsiFactory(project).createEmptyBody(), project) }
+        is KtForExpression -> element.body?.let { swapElements(it, KtPsiFactory(project).createEmptyBody(), project) }
         // If a new `if` expression has been added - delete its `then` block and `else` block - leave only the condition statement
         is KtIfExpression -> {
-          runReadAction { element.then }?.let { swapElements(it, KtPsiFactory(project).createEmptyBody(), project) }
-          runReadAction { element.`else` }?.let { removeElement(it, project) }
-          runReadAction { element.elseKeyword }?.let { removeElement(it, project) }
+          element.then?.let { swapElements(it, KtPsiFactory(project).createEmptyBody(), project) }
+          element.`else`?.let { removeElement(it, project) }
+          element.elseKeyword?.let { removeElement(it, project) }
         }
         // If a new `when` expression has been added - delete its entries - leave only the subjectExpression
-        is KtWhenExpression -> runReadAction { element.entries }.forEach { removeElement(it, project) }
+        is KtWhenExpression -> element.entries.forEach { removeElement(it, project) }
         // If a new `return` expression has been added - move on to the reduction of the return expression
-        is KtReturnExpression -> runReadAction { element.returnedExpression }?.let { reducingNewElement(it, project) }
+        is KtReturnExpression -> element.returnedExpression?.let { reducingNewElement(it, project) }
       }
     }
   }
 
   private fun reducingReplacementElement(first: PsiElement, second: PsiElement, project: Project, downsize: Boolean = false): Boolean {
-    val size = runReadAction { second.text?.lines()?.size } ?: error("Cannot get the body size of $second")
+    val size = second.text?.lines()?.size ?: error("Cannot get the body size of $second")
     if (size > MAX_BODY_LINES_IN_SHORT_FUNCTION || downsize) {
       // Find which element of the expression in `second` has changed from `first` first from top to bottom and add this change to `first`
       return when {
         // Change the function parameters or body
         first is KtNamedFunction && second is KtNamedFunction ->
-          swapSmallElements(runReadAction { first.valueParameterList }, runReadAction { second.valueParameterList }, project) ||
-          resolveMultilineMismatch(runReadAction { first.bodyExpression }, runReadAction { second.bodyExpression }, project)
+          swapSmallElements(first.valueParameterList, second.valueParameterList, project) ||
+          resolveMultilineMismatch(first.bodyExpression, second.bodyExpression, project)
         // Change condition or body
         first is KtWhileExpressionBase && second is KtWhileExpressionBase ->
-          swapSmallElements(runReadAction { first.condition }, runReadAction { second.condition }, project) ||
-          resolveMultilineMismatch(runReadAction { first.body }, runReadAction { second.body }, project)
+          swapSmallElements(first.condition, second.condition, project) ||
+          resolveMultilineMismatch(first.body, second.body, project)
         // Change loopRange or loopParameter or body
         first is KtForExpression && second is KtForExpression ->
-          swapSmallElements(runReadAction { first.loopRange }, runReadAction { second.loopRange }, project) ||
-          swapSmallElements(runReadAction { first.loopParameter }, runReadAction { second.loopParameter }, project) ||
-          resolveMultilineMismatch(runReadAction { first.body }, runReadAction { second.body }, project)
+          swapSmallElements(first.loopRange, second.loopRange, project) ||
+          swapSmallElements(first.loopParameter, second.loopParameter, project) ||
+          resolveMultilineMismatch(first.body, second.body, project)
         // Change condition or then or else
         first is KtIfExpression && second is KtIfExpression ->
-          swapSmallElements(runReadAction { first.condition }, runReadAction { second.condition }, project) ||
-          resolveMultilineMismatch(runReadAction { first.then }, runReadAction { second.then }, project) ||
-          swapSmallElements(runReadAction { first.`else` }, runReadAction { second.`else` }, project) ||
-          addElseBlock(runReadAction { first.then }, runReadAction { second.`else` }, runReadAction { second.elseKeyword }, project)
+          swapSmallElements(first.condition, second.condition, project) ||
+          resolveMultilineMismatch(first.then, second.then, project) ||
+          swapSmallElements(first.`else`, second.`else`, project) ||
+          addElseBlock(first.then, second.`else`, second.elseKeyword, project)
         // Change subjectExpression or entries
         first is KtWhenExpression && second is KtWhenExpression ->
-          swapSmallElements(runReadAction { first.subjectExpression }, runReadAction { second.subjectExpression }, project) ||
-          compareAndAmendChildren(runReadAction { first.entries.toTypedArray() }, runReadAction { second.entries.toTypedArray() }, project, runReadAction { first.openBrace })
+          swapSmallElements(first.subjectExpression, second.subjectExpression, project) ||
+          compareAndAmendChildren(first.entries.toTypedArray(), second.entries.toTypedArray(), project, first.openBrace)
         // Move on to comparing the returned expressions
         first is KtReturnExpression && second is KtReturnExpression ->
-          swapSmallElements(runReadAction { first.returnedExpression }, runReadAction { second.returnedExpression }, project)
+          swapSmallElements(first.returnedExpression, second.returnedExpression, project)
         else -> false
       }
     }
@@ -163,7 +162,7 @@ class KtFunctionDiffReducer : FunctionDiffReducer {
     project: Project,
     action: (PsiElement?, PsiElement?, Project) -> Unit
   ): Boolean {
-    if (first != null && second != null && runReadAction { first.text != second.text })  {
+    if (first != null && second != null && first.text != second.text)  {
       action(first, second, project)
       return true
     }
@@ -177,7 +176,7 @@ class KtFunctionDiffReducer : FunctionDiffReducer {
 
   private fun resolveMultilineMismatch(first: PsiElement?, second: PsiElement?, project: Project) =
     applyActionIfElementsDiffer(first, second, project) { f, s, p ->
-      compareAndAmendChildren(runReadAction { f!!.children }, runReadAction { s!!.children }, p, runReadAction { f!!.firstChild })
+      compareAndAmendChildren(f!!.children, s!!.children, p, f.firstChild)
     }
 
   private fun addElseBlock(then: KtExpression?, elseBlock: KtExpression?, elseKeyword: PsiElement?, project: Project): Boolean {
