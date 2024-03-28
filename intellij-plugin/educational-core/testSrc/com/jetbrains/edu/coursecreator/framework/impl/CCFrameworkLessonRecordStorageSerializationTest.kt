@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.findTask
 
 class CCFrameworkLessonRecordStorageSerializationTest : EduSettingsServiceTestBase() {
   fun `test empty storage serialization`() {
-    storage.loadStateAndCheck("""
+    CCFrameworkLessonRecordStorage().loadStateAndCheck("""
       <State />
     """.trimIndent())
   }
@@ -18,7 +18,7 @@ class CCFrameworkLessonRecordStorageSerializationTest : EduSettingsServiceTestBa
     val course = createFrameworkCourse()
     val task1 = course.findTask("lesson1", "task1")
 
-    with(storage) {
+    with(CCFrameworkLessonRecordStorage()) {
       updateRecord(task1, 5)
       loadStateAndCheck("""
         <State>
@@ -62,7 +62,4 @@ class CCFrameworkLessonRecordStorageSerializationTest : EduSettingsServiceTestBa
       }
     }
   }
-
-  private val storage: CCFrameworkLessonRecordStorage
-    get() = CCFrameworkLessonRecordStorage()
 }
