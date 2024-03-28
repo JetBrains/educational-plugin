@@ -151,7 +151,7 @@ private fun buildHintsValidationSystemPrompt() = """
       "misleadingInformation": "Yes, tries to call a function that does not exist",
       "codeQuality": "Yes",
       "kotlinStyle": "No, can be inlined",
-      "length": "new: 1, changed: 3, deleted: 0",
+      "length": "the text hint consists of 1 sentence and 12 words, the code hint consists of 1 new, 3 changed, 0 deleted code lines",
       "correlationWithSteps": "Yes"
     }
   """.trimIndent()
