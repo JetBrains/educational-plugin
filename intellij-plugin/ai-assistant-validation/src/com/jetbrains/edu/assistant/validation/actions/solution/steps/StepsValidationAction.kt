@@ -16,11 +16,11 @@ import org.jetbrains.kotlinx.dataframe.api.toDataFrame
  *
  * Example of the output data:
  * ```
- * |   taskId   |      taskName     | taskDescription | prompt |                             steps                             |
- * |:----------:|:-----------------:|:---------------:|:------:|:-------------------------------------------------------------:|
- * | 1412191977 | ProgramEntryPoint |       ...       |   ...  | To solve the coding task, follow these steps: ...             |
- * | 1762576790 | BuiltinFunctions  |       ...       |   ...  | 1. Start by declaring a variable called `firstUserAnswer` ... |
- * |     ...    |        ...        |       ...       |   ...  |                              ...                              |
+ * |   taskId   |      taskName     | taskDescription | prompt | errors |                             steps                             |
+ * |:----------:|:-----------------:|:---------------:|:------:|:------:|:-------------------------------------------------------------:|
+ * | 1412191977 | ProgramEntryPoint |       ...       |   ...  |   ...  | To solve the coding task, follow these steps: ...             |
+ * | 1762576790 | BuiltinFunctions  |       ...       |   ...  |   ...  | 1. Start by declaring a variable called `firstUserAnswer` ... |
+ * |     ...    |        ...        |       ...       |   ...  |   ...  |                              ...                              |
  * ```
  */
 @Suppress("ComponentNotRegistered")
@@ -39,7 +39,7 @@ class StepsValidationAction : ValidationAction<StepsDataframeRecord>() {
     val assistant = TaskBasedAssistant(taskProcessor)
 
     try {
-      val steps = assistant.getTaskAnalysis(task) ?: ""
+      val steps = assistant.getTaskAnalysis(task) ?: error("code is not compilable")
 
       return listOf(StepsDataframeRecord (
         taskId = task.id,
@@ -54,6 +54,7 @@ class StepsValidationAction : ValidationAction<StepsDataframeRecord>() {
         taskId = task.id,
         taskName = task.name,
         taskDescription = taskProcessor.getTaskTextRepresentation(),
+        prompt = assistant.taskAnalysisPrompt,
         error = e
       ))
     }

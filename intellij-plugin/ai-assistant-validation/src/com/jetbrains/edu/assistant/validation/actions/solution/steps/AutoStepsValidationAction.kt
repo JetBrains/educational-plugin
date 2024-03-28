@@ -7,7 +7,7 @@ import com.jetbrains.edu.assistant.validation.processor.processValidationSteps
 import com.jetbrains.edu.assistant.validation.util.ValidationOfStepsDataframeRecord
 import com.jetbrains.edu.assistant.validation.util.getAuthorSolution
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.ext.*
+import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.eduAssistant.core.TaskBasedAssistant
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
@@ -20,11 +20,11 @@ import org.jetbrains.kotlinx.dataframe.api.toDataFrame
  *
  * Example of the output data:
  * ```
- * |   taskId   |      taskName     | taskDescription |              steps                |  solution |  amount  |  specifics  |  independence  |  codingSpecific  |  direction  |  misleadingInformation  |  granularity  |  kotlinStyle  |
- * |:----------:|:-----------------:|:---------------:|:---------------------------------:|:---------:|:--------:|:-----------:|:--------------:|:----------------:|:-----------:|:-----------------------:|:-------------:|:-------------:|
- * | 1412191977 | ProgramEntryPoint |       ...       | 1. Start by declaring ... 2. ...  |    ...    |    3     |    Yes      |     Yes        |     Coding       |     Yes     |          No             |     Yes       |     Yes       |
- * | 1762576790 | BuiltinFunctions  |       ...       |              ...                  |    ...    |    5     |    Yes      |     No         |     No coding    |     No      |          Yes            |     No        |     No        |
- * |     ...    |        ...        |       ...       |              ...                  |    ...    |   ...    |    ...      |     ...        |       ...        |     ...     |          ...            |     ...       |     ...       |
+ * |   taskId   |      taskName     | taskDescription | errors |              steps                |  solution |  amount  |  specifics  |  independence  |  codingSpecific  |  direction  |  misleadingInformation  |  granularity  |  kotlinStyle  |
+ * |:----------:|:-----------------:|:---------------:|:------:|:---------------------------------:|:---------:|:--------:|:-----------:|:--------------:|:----------------:|:-----------:|:-----------------------:|:-------------:|:-------------:|
+ * | 1412191977 | ProgramEntryPoint |       ...       |   ...  | 1. Start by declaring ... 2. ...  |    ...    |    3     |    Yes      |     Yes        |     Coding       |     Yes     |          No             |     Yes       |     Yes       |
+ * | 1762576790 | BuiltinFunctions  |       ...       |   ...  |              ...                  |    ...    |    5     |    Yes      |     No         |     No coding    |     No      |          Yes            |     No        |     No        |
+ * |     ...    |        ...        |       ...       |   ...  |              ...                  |    ...    |   ...    |    ...      |     ...        |       ...        |     ...     |          ...            |     ...       |     ...       |
  * ```
  */
 @Suppress("ComponentNotRegistered")
@@ -44,10 +44,10 @@ class AutoStepsValidationAction : ValidationAction<ValidationOfStepsDataframeRec
     val taskProcessor = TaskProcessor(task)
     val assistant = TaskBasedAssistant(taskProcessor)
     var stepsValidation: String? = null
+    val currentTaskDescription = taskProcessor.getTaskTextRepresentation()
 
     try {
-      val currentSteps = assistant.getTaskAnalysis(task) ?: ""
-      val currentTaskDescription = taskProcessor.getTaskTextRepresentation()
+      val currentSteps = assistant.getTaskAnalysis(task) ?: error("Error during validation generation: code is not compilable")
       stepsValidation = processValidationSteps(currentTaskDescription, authorSolution, currentSteps)
       val dataframeRecord = Gson().fromJson(stepsValidation, ValidationOfStepsDataframeRecord::class.java)
       return listOf(dataframeRecord.apply {
@@ -61,8 +61,8 @@ class AutoStepsValidationAction : ValidationAction<ValidationOfStepsDataframeRec
       return listOf(ValidationOfStepsDataframeRecord (
         taskId = task.id,
         taskName = task.name,
-        taskDescription = taskProcessor.getTaskTextRepresentation(),
-        steps = "Error during validation generation: ${e.message}",
+        taskDescription = currentTaskDescription,
+        errors = "Error during validation generation: ${e.message}",
         solution = stepsValidation ?: ""
       ))
     }
