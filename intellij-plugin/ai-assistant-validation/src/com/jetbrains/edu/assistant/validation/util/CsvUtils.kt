@@ -88,5 +88,6 @@ data class ValidationOfHintsDataframeRecord(
   val misleadingInformation: String = "",
   val codeQuality: String = "",
   val kotlinStyle: String = "",
-  val length: String = ""
+  val length: String = "",
+  val correlationWithSteps: String = ""
 )

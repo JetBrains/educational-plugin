@@ -100,7 +100,9 @@ private val validationHintsCriteria = """
     
     9. kotlinStyle: Is generated code in Kotlin-like style? (If the generated code conforms to common Kotlin language practices and idioms, answer with "Yes", otherwise answer with "No".)
     
-    10. length: What is the length of the hint? (Answer with the number of sentences and number of words from the text hint and the number of code lines from the code hint)
+    10. length: What is the length of the hint? (Answer with the number of sentences and number of words from the text hint and the number of new/changed/deleted code lines from the code hint.)
+    
+    11. correlationWithSteps: Does the hint correlate with the steps to solve the task? (If the hint guides the student by following these steps, depending on what step the student is currently at, answer with "Yes". If the hint contains guidance that does not match the steps or guidance for a step the student has already completed or for a step the student has not yet reached, answer with "No".)
   """.trimIndent()
 
 private fun buildHintsValidationUserPrompt(
@@ -149,7 +151,8 @@ private fun buildHintsValidationSystemPrompt() = """
       "misleadingInformation": "Yes, tries to call a function that does not exist",
       "codeQuality": "Yes",
       "kotlinStyle": "No, can be inlined",
-      "length": "the text hint consists of 1 sentence and 12 words, the code hint consists of 4 lines"
+      "length": "the text hint consists of 1 sentence and 12 words, the code hint consists of 1 new, 3 changed, 0 deleted code lines",
+      "correlationWithSteps": "Yes"
     }
   """.trimIndent()
 
