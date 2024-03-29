@@ -16,12 +16,10 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.DefaultSettingsUtils.findPath
-import com.jetbrains.edu.learning.Err
-import com.jetbrains.edu.learning.Ok
-import com.jetbrains.edu.learning.Result
+import com.jetbrains.edu.learning.DefaultSettingsUtils.propertyValue
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.flatMap
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
 
 open class JdkProjectSettings(val model: ProjectSdksModel, val jdk: Sdk?) : EduProjectSettings {
@@ -76,7 +74,7 @@ open class JdkProjectSettings(val model: ProjectSdksModel, val jdk: Sdk?) : EduP
     fun defaultSettings(): Result<JdkProjectSettings, String> {
       // Use `EnvironmentService` instead to get default JDK path and name
       return findPath(DEFAULT_JDK_PROPERTY, "jdk").flatMap { jdkPath ->
-        val jdkName = System.getProperty(DEFAULT_JDK_NAME_PROPERTY, DEFAULT_JDK_NAME)
+        val jdkName = propertyValue(DEFAULT_JDK_NAME_PROPERTY, "JDK name").onError { DEFAULT_JDK_NAME }
 
         var jdk = ProjectJdkTable.getInstance().findJdk(jdkName)
 
