@@ -2,6 +2,7 @@ package com.jetbrains.edu.assistant.validation.actions.next.step.hint
 
 import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.psi.PsiFileFactory
+import com.jetbrains.edu.assistant.validation.accuracy.AccuracyCalculator
 import com.jetbrains.edu.assistant.validation.actions.ValidationAction
 import com.jetbrains.edu.assistant.validation.messages.EduAndroidAiAssistantValidationBundle
 import com.jetbrains.edu.assistant.validation.util.CodeHintDataframeRecord
@@ -18,6 +19,7 @@ import com.jetbrains.edu.learning.eduAssistant.inspection.getInspectionsWithIssu
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
+import org.apache.commons.csv.CSVRecord
 import org.jetbrains.kotlinx.dataframe.api.toDataFrame
 
 /**
@@ -39,6 +41,9 @@ class CodeHintValidationAction : ValidationAction<CodeHintDataframeRecord>() {
   override val outputFilePrefixName: String = "codeHints"
   override val name: String = EduAndroidAiAssistantValidationBundle.message("action.code.hint.validation.action.name")
   override val isNavigationRequired: Boolean = true
+  override val toCalculateOverallAccuracy: Boolean = false
+  override val pathToLabelledDataset = null
+  override val accuracyCalculator = CodeHintAccuracyCalculator()
 
   init {
     setUpSpinnerPanel(name)
@@ -107,4 +112,24 @@ class CodeHintValidationAction : ValidationAction<CodeHintDataframeRecord>() {
   }
 
   override fun MutableList<CodeHintDataframeRecord>.convertToDataFrame() = toDataFrame()
+
+  override fun CSVRecord.toDataframeRecord() = CodeHintDataframeRecord(get(0).toInt(), get(1), get(2), get(3), get(4), get(5), get(6),
+    get(7), get(8), get(9).toInt(), get(10))
+
+  override suspend fun buildRecords(manualValidationRecord: CodeHintDataframeRecord): CodeHintDataframeRecord {
+    throw UnsupportedOperationException("This function is not supported.")
+  }
+
+  inner class CodeHintAccuracyCalculator : AccuracyCalculator<CodeHintDataframeRecord>() {
+    override fun calculateValidationAccuracy(
+      manualRecords: List<CodeHintDataframeRecord>,
+      autoRecords: List<CodeHintDataframeRecord>
+    ): CodeHintDataframeRecord {
+      throw UnsupportedOperationException("This function is not supported.")
+    }
+
+    override fun calculateOverallAccuracy(records: List<CodeHintDataframeRecord>): CodeHintDataframeRecord {
+      throw UnsupportedOperationException("This function is not supported.")
+    }
+  }
 }

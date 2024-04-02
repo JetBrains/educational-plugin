@@ -1,5 +1,6 @@
 package com.jetbrains.edu.assistant.validation.processor
 
+import com.jetbrains.edu.assistant.validation.util.*
 import com.jetbrains.edu.learning.eduAssistant.grazie.AiPlatformAdapter
 import com.jetbrains.edu.learning.eduAssistant.grazie.GenerationContextProfile.AUTO_VALIDATION
 
@@ -18,7 +19,7 @@ private val validationCriteria = """
 
     3. independence: Are the steps independent? (If each step does not refer to previous steps, answer with "Yes". If there are step(s) that refer to other steps e.g. "repeat steps 3-5" or "... in step 2", answer with "No" and specify which step(s) are not independent)
 
-    4. codingSpecific: Are the steps about coding tasks? (If each step is related to coding tasks such as adding a variable, changing the initial value etc, then answer with "Coding". If there are non-coding step(s) related to understanding the project, requirements gathering, or other tasks that don't involve direct interaction with the code like "read and understand the task" or "run the program", answer with "Not coding" and specify which step(s) have type "Not coding")
+    4. codingSpecific: Are the steps about coding tasks? (If each step is related to coding tasks such as adding a variable, changing the initial value etc, then answer with "$CODING_KEYWORD". If there are non-coding step(s) related to understanding the project, requirements gathering, or other tasks that don't involve direct interaction with the code like "read and understand the task" or "run the program", answer with "$NOT_CODING_KEYWORD" and specify which step(s) have type "$NOT_CODING_KEYWORD")
 
     5. direction: Do the steps solve the problem algorithmically? (If following all the steps results in a correct algorithm that accurately solves the task as per the task description, answer with "Yes"; if no, answer with "No" and specify why not and how it can be improved. You can compare the author's solution and the step solution, but it could be different and still be correct.)
 
@@ -59,7 +60,7 @@ private fun buildStepsValidationSystemPrompt() = """
       "amount": "6",
       "specifics": "No, step 1 and step 6 are not specific",
       "independence": "Yes",
-      "codingSpecific": "Not coding, step 1 and step 6 are not about coding tasks",
+      "codingSpecific": "$NOT_CODING_KEYWORD, step 1 and step 6 are not about coding tasks",
       "direction": "No, the steps do not solve the problem algorithmically. The steps do not mention the ... functions which are used in the author's solution. Also, the steps do not explain how ...",
       "misleadingInformation": "Yes. The step 3 mention the ... function which does not exist in the author's solution. The steps 2, 4 contain wrong and misleading string constants.",
       "granularity": "Yes",
@@ -84,7 +85,7 @@ suspend fun processValidationHints(
 private val validationHintsCriteria = """
     1. information: Does the hint contain additional information, such as an explanation, tip or compliment? (If the hint contains additional information beyond solving the task, answer with "Yes" and specify what additional information. If it does not, answer with "No".)
 
-    2. levelOfDetail: Is the hint a bottom-out hint (BOH) or a high-level description (HLD)? (If the hint is a bottom-out hint, answer with "BOH". If the hint is a high-level description, answer with "HLD".)
+    2. levelOfDetail: Is the hint a bottom-out hint ($BOH_KEYWORD) or a high-level description ($HLD_KEYWORD)? (If the hint is a bottom-out hint, answer with "$BOH_KEYWORD". If the hint is a high-level description, answer with "$HLD_KEYWORD".)
 
     3. personalized: Does the hint correlate with and enhance the student’s current code or approach? (If the hint includes modified student code, improved or enhanced to solve the task, answer with "Yes". If the hint does not correlate with the student's code, answer with "No" and specify why.)
 
@@ -100,7 +101,7 @@ private val validationHintsCriteria = """
     
     9. kotlinStyle: Is generated code in Kotlin-like style? (If the generated code conforms to common Kotlin language practices and idioms, answer with "Yes", otherwise answer with "No".)
     
-    10. length: What is the length of the hint? (Answer with the number of sentences and number of words from the text hint and the number of new/changed/deleted code lines from the code hint.)
+    10. length: What is the length of the hint? (Answer with the number of sentences and number of words from the text hint and the number of $NEW_KEYWORD/$CHANGED_KEYWORD/$DELETED_KEYWORD code lines from the code hint.)
     
     11. correlationWithSteps: Does the hint correlate with the steps to solve the task? (If the hint guides the student by following these steps, depending on what step the student is currently at, answer with "Yes". If the hint contains guidance that does not match the steps or guidance for a step the student has already completed or for a step the student has not yet reached, answer with "No".)
   """.trimIndent()
@@ -143,7 +144,7 @@ private fun buildHintsValidationSystemPrompt() = """
     Find below an example response for reference:
     {
       "information": "No",
-      "levelOfDetail": "HLD",
+      "levelOfDetail": "$HLD_KEYWORD",
       "personalized": "Yes",
       "intersection": "No",
       "appropriate": "No, the student uses var in his code when the task requires to use val, and the hint does not indicate this error",
@@ -151,7 +152,7 @@ private fun buildHintsValidationSystemPrompt() = """
       "misleadingInformation": "Yes, tries to call a function that does not exist",
       "codeQuality": "Yes",
       "kotlinStyle": "No, can be inlined",
-      "length": "the text hint consists of 1 sentence and 12 words, the code hint consists of 1 new, 3 changed, 0 deleted code lines",
+      "length": "the text hint consists of 1 sentence and 12 words, the code hint consists of 1 $NEW_KEYWORD, 3 $CHANGED_KEYWORD, 0 $DELETED_KEYWORD code lines",
       "correlationWithSteps": "Yes"
     }
   """.trimIndent()

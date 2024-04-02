@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.intellij.openapi.progress.Task.Backgroundable
+import com.jetbrains.edu.assistant.validation.accuracy.AccuracyCalculator
 import com.jetbrains.edu.assistant.validation.util.StudentSolutionRecord
 import com.jetbrains.edu.assistant.validation.util.downloadSolution
 import com.jetbrains.edu.learning.course
@@ -26,11 +27,13 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils
 import java.time.LocalDateTime
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
+import org.apache.commons.csv.CSVRecord
 import org.jetbrains.kotlinx.dataframe.*
 import org.jetbrains.kotlinx.dataframe.api.forEach
 import java.io.File
 import java.io.FileWriter
 import java.nio.file.Files
+import java.nio.file.Path
 import kotlin.io.path.*
 
 /**
@@ -50,6 +53,7 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
   protected abstract val outputFilePrefixName: String
   protected abstract val name: String
   protected abstract val isNavigationRequired: Boolean
+  protected abstract val toCalculateOverallAccuracy: Boolean
   private val validationOutputPath by lazy {
     Path(System.getProperty("validation.output.path", "validationOutput")).also {
       it.createDirectories()
@@ -58,12 +62,18 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
   private val outputFileName: String by lazy { "${outputFilePrefixName}_${LocalDateTime.now()}.csv" }
   private val validationOutputFile: File by lazy { (validationOutputPath / outputFileName).toFile() }
   private val pathToSolutions by lazy { Path(System.getProperty("validation.solution.path")) }
+  protected abstract val pathToLabelledDataset: Path?
 
   override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
   protected abstract suspend fun buildRecords(task: EduTask, lesson: Lesson): List<T>
+  protected abstract suspend fun buildRecords(manualValidationRecord: T): T
 
   protected abstract fun MutableList<T>.convertToDataFrame(): DataFrame<T>
+
+  protected abstract fun CSVRecord.toDataframeRecord(): T
+
+  protected abstract val accuracyCalculator: AccuracyCalculator<T>
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
@@ -84,44 +94,65 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
       var doneTasks = 0
       var previousTask: Task? = null
 
-      val studentSolutions = getStudentSolutions()
+      val studentSolutions = parseCsvFile(pathToSolutions) { record ->
+        StudentSolutionRecord(record.get(0).toInt(), record.get(1), record.get(2), record.get(3))
+      }
+      val manualValidationDataset = parseCsvFile(pathToLabelledDataset) { it.toDataframeRecord() }
 
-      for (lesson in course.lessons) {
-        val records = mutableListOf<T>()
-        for (task in lesson.taskList) {
-          if (task is EduTask) {
-            if (isNavigationRequired) {
-              ApplicationManager.getApplication().invokeAndWait {
-                ApplicationManager.getApplication().runWriteAction {
-                  NavigationUtils.navigateToTask(project, task)
+      val records = mutableListOf<T>()
+      if (manualValidationDataset != null) {
+        manualValidationDataset.forEach { manualValidationRecord ->
+          indicator.text = "${EduAndroidAiAssistantValidationBundle.message("action.validation.indicator.task")} $doneTasks"
+          indicator.fraction = doneTasks.toDouble() / totalTasks
+
+          runBlockingCancellable {
+            records.add(buildRecords(manualValidationRecord))
+          }
+          doneTasks++
+        }
+        records.add(accuracyCalculator.calculateValidationAccuracy(manualValidationDataset, records))
+        records.convertToDataFrame().writeCSV()
+      } else {
+        for (lesson in course.lessons) {
+          for (task in lesson.taskList) {
+            if (task is EduTask) {
+              if (isNavigationRequired) {
+                ApplicationManager.getApplication().invokeAndWait {
+                  ApplicationManager.getApplication().runWriteAction {
+                    NavigationUtils.navigateToTask(project, task)
+                  }
                 }
               }
-            }
 
-            indicator.text = "${EduAndroidAiAssistantValidationBundle.message("action.validation.indicator.task")} ${task.name}"
-            indicator.fraction = doneTasks.toDouble() / totalTasks
+              indicator.text = "${EduAndroidAiAssistantValidationBundle.message("action.validation.indicator.task")} ${task.name}"
+              indicator.fraction = doneTasks.toDouble() / totalTasks
 
-            studentSolutions?.let {
-              it.getSolutionListForTask(lesson.name, task.name).forEach { studentCode ->
-                downloadSolution(task, project, studentCode)
+              studentSolutions?.let {
+                it.getSolutionListForTask(lesson.name, task.name).forEach { studentCode ->
+                  downloadSolution(task, project, studentCode)
+                  runBlockingCancellable {
+                    records.addAll(buildRecords(task, lesson))
+                  }
+                }
+              } ?: run {
+                previousTask?.let {
+                  propagateAuthorSolution(it, task, project)
+                }
                 runBlockingCancellable {
                   records.addAll(buildRecords(task, lesson))
                 }
               }
-            } ?: run {
-              previousTask?.let {
-                propagateAuthorSolution(it, task, project)
-              }
-              runBlockingCancellable {
-                records.addAll(buildRecords(task, lesson))
-              }
-            }
 
-            doneTasks++
+              doneTasks++
+            }
+            previousTask = task
           }
-          previousTask = task
+          records.convertToDataFrame().writeCSV()
         }
-        records.convertToDataFrame().writeCSV()
+        if (toCalculateOverallAccuracy) {
+          records.add(accuracyCalculator.calculateOverallAccuracy(records))
+          records.convertToDataFrame().writeCSV()
+        }
       }
 
       indicator.fraction = 1.0
@@ -130,13 +161,11 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
       processFinished()
     }
 
-    private fun getStudentSolutions(): List<StudentSolutionRecord>? {
-      if (pathToSolutions.exists()) {
-        Files.newBufferedReader(pathToSolutions).use { reader ->
+    private fun <K> parseCsvFile(path: Path?, recordConverter: (CSVRecord) -> K): List<K>? {
+      if (path != null && path.exists()) {
+        Files.newBufferedReader(path).use { reader ->
           val csvParser = CSVParser(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader())
-          return csvParser.records.map { record ->
-            StudentSolutionRecord(record.get(0).toInt(), record.get(1), record.get(2), record.get(3))
-          }
+          return csvParser.records.map(recordConverter)
         }
       }
       return null

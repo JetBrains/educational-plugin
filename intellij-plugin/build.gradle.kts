@@ -380,6 +380,18 @@ tasks {
       }
       jvmArgs("-Dvalidation.solution.path=$pathToSolutions")
     }
+    if (hasProp("pathToManualHintValidation")) {
+      val pathToSolutions = prop("pathToManualHintValidation").let {
+        rootProject.projectDir.toPath() / it
+      }
+      jvmArgs("-Dmanual.hint.validation.path=$pathToSolutions")
+    }
+    if (hasProp("pathToManualStepsValidation")) {
+      val pathToSolutions = prop("pathToManualStepsValidation").let {
+        rootProject.projectDir.toPath() / it
+      }
+      jvmArgs("-Dmanual.steps.validation.path=$pathToSolutions")
+    }
 
     // Uncomment to show localized messages
     // jvmArgs("-Didea.l10n=true")
