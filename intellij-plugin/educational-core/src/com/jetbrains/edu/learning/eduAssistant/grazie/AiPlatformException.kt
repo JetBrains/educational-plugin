@@ -6,7 +6,10 @@ import com.jetbrains.edu.learning.eduAssistant.core.AssistantError
 import java.net.SocketException
 import java.nio.channels.UnresolvedAddressException
 
-class AiPlatformException(val assistantError: AssistantError, cause: Throwable) : Throwable(assistantError.errorMessage, cause) {
+class AiPlatformException(
+  val assistantError: AssistantError,
+  cause: Throwable
+) : Throwable("${assistantError.errorMessage} (${assistantError.name})", cause) {
   constructor(cause: Throwable) : this(AssistantError.UnknownError, cause)
 }
 

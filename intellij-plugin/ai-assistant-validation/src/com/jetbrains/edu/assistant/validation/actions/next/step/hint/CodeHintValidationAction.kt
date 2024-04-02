@@ -27,10 +27,10 @@ import org.jetbrains.kotlinx.dataframe.api.toDataFrame
  *
  * Example of the output data:
  * ```
- * |   taskId   |      taskName     | taskDescription | taskAnalysisPrompt |                             steps                            | codeHintPrompt |            userCode            |    generatedCode    | numberOfIssues | issues |
- * |:----------:|:-----------------:|:---------------:|:------------------:|:------------------------------------------------------------:|:--------------:|:------------------------------:|:-------------------:|:--------------:|:------:|
- * | 1412191977 | ProgramEntryPoint |       ...       |         ...        | 1. Replace the existing output text with the string "Hello!" |       ...      | println(""My first program!"") | println(""Hello!"") |        0       |        |
- * |     ...    |        ...        |       ...       |         ...        |                              ...                             |       ...      |               ...              |         ...         |       ...      |   ...  |
+ * |   taskId   |      taskName     | taskDescription | taskAnalysisPrompt |                             steps                            | codeHintPrompt |            userCode            | errors |    generatedCode    | numberOfIssues | issues |
+ * |:----------:|:-----------------:|:---------------:|:------------------:|:------------------------------------------------------------:|:--------------:|:------------------------------:|:------:|:-------------------:|:--------------:|:------:|
+ * | 1412191977 | ProgramEntryPoint |       ...       |         ...        | 1. Replace the existing output text with the string "Hello!" |       ...      | println(""My first program!"") |   ...  | println(""Hello!"") |        0       |        |
+ * |     ...    |        ...        |       ...       |         ...        |                              ...                             |       ...      |               ...              |   ...  |         ...         |       ...      |   ...  |
  * ```
  */
 @Suppress("ComponentNotRegistered")
@@ -58,9 +58,12 @@ class CodeHintValidationAction : ValidationAction<CodeHintDataframeRecord>() {
     val language = task.course.languageById ?: error("Language could not be determined")
     val project = task.project ?: error("Cannot get project")
     val eduState = project.eduState ?: error("Cannot get eduState for project ${project.name}")
+    val taskRepresentation = taskProcessor.getTaskTextRepresentation()
+
+    val response = assistant.getHint(task, eduState, userCode)
 
     try {
-      val response = assistant.getHint(task, eduState, userCode)
+      if (response.assistantError != null) error("Assistant error: ${response.assistantError?.name}")
       val psiFile = PsiFileFactory.getInstance(project).createFileFromText("file", language, userCode)
       val inspections = InspectionProvider.getInspections(language)
       val issues = psiFile.getInspectionsWithIssues(inspections).map { it.id }
@@ -68,7 +71,7 @@ class CodeHintValidationAction : ValidationAction<CodeHintDataframeRecord>() {
       return CodeHintDataframeRecord(
         taskId = task.id,
         taskName = task.name,
-        taskDescription = taskProcessor.getTaskTextRepresentation(),
+        taskDescription = taskRepresentation,
         taskAnalysisPrompt = assistant.taskAnalysisPrompt,
         steps = task.generatedSolutionSteps,
         codeHintPrompt = response.prompts.getOrDefault("nextStepCodeHintPrompt", ""),
@@ -82,7 +85,10 @@ class CodeHintValidationAction : ValidationAction<CodeHintDataframeRecord>() {
       return CodeHintDataframeRecord(
         taskId = task.id,
         taskName = task.name,
-        taskDescription = taskProcessor.getTaskTextRepresentation(),
+        taskDescription = taskRepresentation,
+        taskAnalysisPrompt = assistant.taskAnalysisPrompt,
+        steps = task.generatedSolutionSteps,
+        codeHintPrompt = response.prompts.getOrDefault("nextStepCodeHintPrompt", ""),
         userCode = userCode,
         error = e
       )

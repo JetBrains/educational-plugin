@@ -5,14 +5,16 @@ data class StepsDataframeRecord(
   val taskName: String,
   val taskDescription: String,
   val prompt: String?,
+  val errors: String? = null,
   val steps: String?
 ) {
   constructor(
     taskId: Int,
     taskName: String,
     taskDescription: String,
+    prompt: String?,
     error: Throwable
-  ): this(taskId, taskName, taskDescription, null, "Error while generating steps: ${error.message}")
+  ): this(taskId, taskName, taskDescription, prompt, "Error while generating steps: ${error.message}", null)
 }
 
 data class CodeHintDataframeRecord(
@@ -23,6 +25,7 @@ data class CodeHintDataframeRecord(
   val steps: String?,
   val codeHintPrompt: String?,
   val userCode: String,
+  val errors: String? = null,
   val generatedCode: String?,
   val numberOfIssues: Int?,
   val issues: String?
@@ -31,17 +34,21 @@ data class CodeHintDataframeRecord(
     taskId: Int,
     taskName: String,
     taskDescription: String,
+    taskAnalysisPrompt: String?,
+    steps: String?,
+    codeHintPrompt: String?,
     userCode: String,
     error: Throwable
   ) : this(
     taskId,
     taskName,
     taskDescription,
-    null,
-    null,
-    null,
+    taskAnalysisPrompt,
+    steps,
+    codeHintPrompt,
     userCode,
     "Error while generating hint: ${error.message}",
+    null,
     null,
     null
   )
@@ -51,6 +58,7 @@ data class ValidationOfStepsDataframeRecord(
   var taskId: Int = 0,
   var taskName: String = "",
   var taskDescription: String = "",
+  var errors: String = "",
   var steps: String = "",
   var solution: String = "",
   val amount: Int = 0,
@@ -78,6 +86,7 @@ data class ValidationOfHintsDataframeRecord(
   var userCode: String = "",
   var nextStepTextHint: String = "",
   var nextStepCodeHint: String = "",
+  var errors: String = "",
   var feedbackType : String = "",
   val information: String = "",
   val levelOfDetail: String = "",
