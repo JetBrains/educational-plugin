@@ -90,10 +90,15 @@ val rustPlugins = listOf(
   tomlPlugin
 )
 
-val cppPlugins = listOf(
+// BACKCOMPAT: 2023.3.
+// - Unconditionally add `com.intellij.clion.runFile`
+// - replace `listOfNotNull` with `listOf`
+val cppPlugins = listOfNotNull(
+  // Since 2024.1 `com.intellij.cidr.lang` is needed only for tests where classic C++ PSI is used.
+  // In particular, `CppTaskDescriptionHighlightingTest` and `CppMoveHandlerTest`
   "com.intellij.cidr.lang",
   "com.intellij.clion",
-  "com.intellij.cidr.base",
+  "com.intellij.clion.runFile".takeIf { environmentName.toInt() >= 241 },
   "com.intellij.nativeDebug",
   "org.jetbrains.plugins.clion.test.google",
   "org.jetbrains.plugins.clion.test.catch"
