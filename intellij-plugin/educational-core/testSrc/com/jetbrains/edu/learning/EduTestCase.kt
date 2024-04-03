@@ -100,9 +100,15 @@ abstract class EduTestCase : BasePlatformTestCase() {
         connection.disconnect()
       }
     })
-    val frameworkLessonManagerImpl = FrameworkLessonManager.getInstance(project) as FrameworkLessonManagerImpl
-    if (frameworkLessonManagerImpl.storage.isDisposed) {
-      frameworkLessonManagerImpl.storage = FrameworkStorage(FrameworkLessonManagerImpl.constructStoragePath(project))
+    (FrameworkLessonManager.getInstance(project) as FrameworkLessonManagerImpl).apply {
+      if (storage.isDisposed) {
+        storage = FrameworkStorage(FrameworkLessonManagerImpl.constructStoragePath(project))
+      }
+    }
+    CCFrameworkLessonManager.getInstance(project).apply {
+      if (storage.isDisposed) {
+        storage = CCFrameworkLessonManager.createStorage(project)
+      }
     }
     createCourse()
     project.putUserData(CourseProjectGenerator.EDU_PROJECT_CREATED, true)
@@ -121,6 +127,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
       }
       val storage = (FrameworkLessonManager.getInstance(project) as FrameworkLessonManagerImpl).storage
       Disposer.dispose(storage)
+      Disposer.dispose(CCFrameworkLessonManager.getInstance(project).storage)
       YamlLoadingErrorManager.getInstance(project).removeAllErrors()
 
       MarketplaceUpdateChecker.getInstance(project).course = null

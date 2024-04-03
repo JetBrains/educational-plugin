@@ -48,7 +48,8 @@ import java.nio.file.Paths
 class CCFrameworkLessonManager(
   private val project: Project
 ) : SimplePersistentStateComponent<CCFrameworkLessonManager.RecordState>(RecordState()), Disposable {
-  private val storage: CCFrameworkStorage = createStorage(project)
+  @VisibleForTesting
+  var storage: CCFrameworkStorage = createStorage(project)
 
   /**
    * Tries to merge changes from the last saved state of [task] until current state to all subsequent tasks
@@ -320,7 +321,8 @@ class CCFrameworkLessonManager(
     private fun constructStoragePath(project: Project): Path =
       Paths.get(FileUtil.join(project.basePath!!, Project.DIRECTORY_STORE_FOLDER, "frameworkLessonHistoryCC", "storage"))
 
-    private fun createStorage(project: Project): CCFrameworkStorage {
+    @VisibleForTesting
+    fun createStorage(project: Project): CCFrameworkStorage {
       val storageFilePath = constructStoragePath(project)
       return CCFrameworkStorage(storageFilePath)
     }
