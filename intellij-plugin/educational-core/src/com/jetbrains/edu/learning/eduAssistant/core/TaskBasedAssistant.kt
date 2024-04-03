@@ -241,7 +241,7 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
   """.trimIndent()
 
   private fun buildNextStepTextHintPrompt(nextStepCodeHint: String, codeStr: String) = """
-    Based on the given code and the improved version of the code, provide a textual hint that guides to improve the given code.
+    Based on the given code and the improved version of the code, provide a concise textual hint that directly guides to improve the given code.
     Here is the current code and the improved version of the code, all delimited with <>:
     
     The code:
@@ -250,7 +250,9 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
     The improved version of the code:
      <$nextStepCodeHint>
     
-    Respond with a brief textual explanation in imperative form of what modifications need to be made to the code to achieve the improvements exhibited in the improved code. Do not write any code, except names of functions or string literals.
+    Respond with a brief textual instruction in imperative form of what modifications need to be made to the code to achieve the improvements exhibited in the improved code. 
+    Do not write any code, except names of functions or string literals. 
+    Avoid explaining why the modifications are needed.
   """.trimIndent()
 
   private fun buildTaskErrorInformation() = if (taskProcessor.taskHasErrors()) {
