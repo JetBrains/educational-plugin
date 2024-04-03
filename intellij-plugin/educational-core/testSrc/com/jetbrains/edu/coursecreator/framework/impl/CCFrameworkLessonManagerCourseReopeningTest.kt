@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import com.jetbrains.edu.learning.progress.ModalTaskOwner
 import com.jetbrains.edu.learning.progress.runWithModalProgressBlocking
 
-class CCFrameworkLessonRecordStorageReopeningTest : CourseReopeningTestBase<EmptyProjectSettings>() {
+class CCFrameworkLessonManagerCourseReopeningTest : CourseReopeningTestBase<EmptyProjectSettings>() {
   override val defaultSettings = EmptyProjectSettings
 
   fun `test records stay the same after course reopening`() {

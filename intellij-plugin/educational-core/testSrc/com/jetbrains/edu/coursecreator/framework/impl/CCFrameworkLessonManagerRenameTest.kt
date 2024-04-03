@@ -5,7 +5,7 @@ import com.jetbrains.edu.learning.actions.rename.RenameTestBase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.*
 
-class CCFrameworkLessonRecordStorageRenameTest : RenameTestBase() {
+class CCFrameworkLessonManagerRenameTest : RenameTestBase() {
   private val manager: CCFrameworkLessonManager
     get() = CCFrameworkLessonManager.getInstance(project)
 

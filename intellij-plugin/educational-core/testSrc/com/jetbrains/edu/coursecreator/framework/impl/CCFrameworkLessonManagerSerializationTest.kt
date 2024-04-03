@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.findTask
 
-class CCFrameworkLessonRecordStorageSerializationTest : EduSettingsServiceTestBase() {
+class CCFrameworkLessonManagerSerializationTest : EduSettingsServiceTestBase() {
   fun `test empty storage serialization`() {
     CCFrameworkLessonManager.getInstance(project).loadStateAndCheck("""
       <RecordState />

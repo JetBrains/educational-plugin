@@ -31,7 +31,18 @@ import java.io.IOException
 import java.nio.file.Path
 import java.nio.file.Paths
 
-
+/**
+ * CCFrameworkLessonManager provides operations for framework lessons for the CC.
+ * Also, it is also used as the persistent storage for task records in the framework lesson the for course creator,
+ *
+ * Record of the task - key in the storage framework for the task.
+ * It is needed to get information about the previous state of the task, which is stored in the framework storage.
+ * For learner, we store the record in yaml, but this option is not suitable for the CC, since we do not want to clutter a yaml.
+ * Therefore, the record is stored for the task creator in this service.
+ *
+ * Currently, the key is the path to the task folder
+ * TODO(use id of the task as a key instead of the path to the task)
+*/
 @Service(Service.Level.PROJECT)
 @State(name = "CCFrameworkLessonManager", storages = [Storage(StoragePathMacros.WORKSPACE_FILE, roamingType = RoamingType.DISABLED)])
 class CCFrameworkLessonManager(
@@ -228,18 +239,6 @@ class CCFrameworkLessonManager(
     )
     Notifications.Bus.notify(notification, project)
   }
-
-/*
- * CCFrameworkLessonManager is also used as the persistent storage for task records in the framework lesson the for course creator,
- *
- * Record of the task - key in the storage framework for the task.
- * It is needed to get information about the previous state of the task, which is stored in the framework storage.
- * For learner, we store the record in yaml, but this option is not suitable for the CC, since we do not want to clutter a yaml.
- * Therefore, the record is stored for the task creator in this service.
- *
- * Currently, the key is the path to the task folder
- * TODO(use id of the task as a key instead of the path to the task)
-*/
 
   @VisibleForTesting
   fun getRecord(task: Task): Int {
