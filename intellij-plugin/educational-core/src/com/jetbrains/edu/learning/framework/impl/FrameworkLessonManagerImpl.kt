@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.ui.getUIName
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import org.jetbrains.annotations.TestOnly
 import java.io.IOException
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -32,9 +33,7 @@ import java.nio.file.Paths
  * It can be essential in large projects like Android applications where a lot of files are the same between two consecutive tasks
  */
 class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLessonManager, Disposable {
-
-  @VisibleForTesting
-  var storage: FrameworkStorage = createStorage(project)
+  private var storage: FrameworkStorage = createStorage(project)
 
   override fun prepareNextTask(lesson: FrameworkLesson, taskDir: VirtualFile, showDialogIfConflict: Boolean) {
     applyTargetTaskChanges(lesson, 1, taskDir, showDialogIfConflict)
@@ -365,6 +364,18 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     task.taskFiles[it]?.shouldBePropagated() ?: true
   }
 
+  @TestOnly
+  fun resetStorage() {
+    if (storage.isDisposed) {
+      storage = createStorage(project)
+    }
+  }
+
+  @TestOnly
+  fun clearStorage() {
+    storage.closeAndClean()
+  }
+
   companion object {
     private val LOG: Logger = Logger.getInstance(FrameworkLessonManagerImpl::class.java)
 
@@ -374,8 +385,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     fun constructStoragePath(project: Project): Path =
       Paths.get(FileUtil.join(project.basePath!!, Project.DIRECTORY_STORE_FOLDER, "frameworkLessonHistory", "storage"))
 
-    @VisibleForTesting
-    fun createStorage(project: Project): FrameworkStorage {
+    private fun createStorage(project: Project): FrameworkStorage {
       val storageFilePath = constructStoragePath(project)
       val storage = FrameworkStorage(storageFilePath)
       return try {

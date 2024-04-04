@@ -26,6 +26,7 @@ import com.jetbrains.edu.learning.framework.impl.FLTaskState
 import com.jetbrains.edu.learning.framework.impl.calculateChanges
 import com.jetbrains.edu.learning.framework.impl.getTaskStateFromFiles
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.annotations.VisibleForTesting
 import java.io.IOException
 import java.nio.file.Path
@@ -48,8 +49,7 @@ import java.nio.file.Paths
 class CCFrameworkLessonManager(
   private val project: Project
 ) : SimplePersistentStateComponent<CCFrameworkLessonManager.RecordState>(RecordState()), Disposable {
-  @VisibleForTesting
-  var storage: CCFrameworkStorage = createStorage(project)
+  private var storage: CCFrameworkStorage = createStorage(project)
 
   /**
    * Tries to merge changes from the last saved state of [task] until current state to all subsequent tasks
@@ -281,14 +281,22 @@ class CCFrameworkLessonManager(
     }
   }
 
-  @VisibleForTesting
-  fun getRecord(path: String): Int? {
-    return state.taskRecords[path]
+  @TestOnly
+  fun resetStorage() {
+    if (storage.isDisposed) {
+      storage = createStorage(project)
+    }
+  }
+
+  @TestOnly
+  fun clearStorage() {
+    state.taskRecords.clear()
+    storage.closeAndClean()
   }
 
   @VisibleForTesting
-  fun clearRecords() {
-    state.taskRecords.clear()
+  fun getRecord(path: String): Int? {
+    return state.taskRecords[path]
   }
 
   class RecordState : BaseState() {
@@ -321,8 +329,7 @@ class CCFrameworkLessonManager(
     private fun constructStoragePath(project: Project): Path =
       Paths.get(FileUtil.join(project.basePath!!, Project.DIRECTORY_STORE_FOLDER, "frameworkLessonHistoryCC", "storage"))
 
-    @VisibleForTesting
-    fun createStorage(project: Project): CCFrameworkStorage {
+    private fun createStorage(project: Project): CCFrameworkStorage {
       val storageFilePath = constructStoragePath(project)
       return CCFrameworkStorage(storageFilePath)
     }

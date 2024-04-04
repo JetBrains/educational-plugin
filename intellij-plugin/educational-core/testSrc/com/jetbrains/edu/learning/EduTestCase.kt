@@ -47,7 +47,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl
-import com.jetbrains.edu.learning.framework.impl.FrameworkStorage
 import com.jetbrains.edu.learning.storage.InMemoryLearningObjectsStorage
 import com.jetbrains.edu.learning.storage.LearningObjectsStorageManager
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceUpdateChecker
@@ -100,16 +99,8 @@ abstract class EduTestCase : BasePlatformTestCase() {
         connection.disconnect()
       }
     })
-    (FrameworkLessonManager.getInstance(project) as FrameworkLessonManagerImpl).apply {
-      if (storage.isDisposed) {
-        storage = FrameworkStorage(FrameworkLessonManagerImpl.constructStoragePath(project))
-      }
-    }
-    CCFrameworkLessonManager.getInstance(project).apply {
-      if (storage.isDisposed) {
-        storage = CCFrameworkLessonManager.createStorage(project)
-      }
-    }
+    (FrameworkLessonManager.getInstance(project) as FrameworkLessonManagerImpl).resetStorage()
+    CCFrameworkLessonManager.getInstance(project).resetStorage()
     createCourse()
     project.putUserData(CourseProjectGenerator.EDU_PROJECT_CREATED, true)
   }
@@ -125,15 +116,13 @@ abstract class EduTestCase : BasePlatformTestCase() {
       if (project.isEduProject()) {
         TaskToolWindowView.getInstance(project).currentTask = null
       }
-      val storage = (FrameworkLessonManager.getInstance(project) as FrameworkLessonManagerImpl).storage
-      Disposer.dispose(storage)
-      Disposer.dispose(CCFrameworkLessonManager.getInstance(project).storage)
+      (FrameworkLessonManager.getInstance(project) as FrameworkLessonManagerImpl).clearStorage()
+      CCFrameworkLessonManager.getInstance(project).clearStorage()
       YamlLoadingErrorManager.getInstance(project).removeAllErrors()
 
       MarketplaceUpdateChecker.getInstance(project).course = null
       HyperskillCourseUpdateChecker.getInstance(project).course = null
       CodeforcesCourseUpdateChecker.getInstance(project).course = null
-      CCFrameworkLessonManager.getInstance(project).clearRecords()
 
       val learningObjectsStorage = LearningObjectsStorageManager.getInstance(project).learningObjectsStorage
       (learningObjectsStorage as InMemoryLearningObjectsStorage).clear()
