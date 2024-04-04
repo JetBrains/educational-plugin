@@ -89,7 +89,7 @@ def process_gradle_properties(platform_version: int) -> Changes:
     }
 
 
-def commit_changes(token: str, platform_version: int, changes: Changes):
+def commit_changes(space_token: str, platform_version: int, changes: Changes):
     files = []
     for path, (modification, content) in changes.items():
         if modification == FileModification.Delete:
@@ -105,7 +105,7 @@ def commit_changes(token: str, platform_version: int, changes: Changes):
             })
 
     commit_changes_to_educational_plugin(
-        token=token,
+        space_token=space_token,
         branch_name=f"refs/heads/{branch(platform_version)}",
         commit_massage=f"Drop {platform_version} support",
         changes=files
@@ -116,14 +116,15 @@ def branch(platform_version: int) -> str:
     return f"drop-{platform_version}"
 
 
-def create_review(token: str, platform_version: int):
-    reviewer = get_reviewer("edu: drop platform", platform_version)
-    create_review_in_educational_plugin(token, branch(platform_version), f"Drop support for {platform_version} platform", reviewer)
+def create_review(space_token: str, youtrack_token: str, platform_version: int):
+    reviewer = get_reviewer(youtrack_token, "edu: drop platform", platform_version)
+    create_review_in_educational_plugin(space_token, branch(platform_version), f"Drop support for {platform_version} platform", reviewer)
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--token", type=str, required=True, help="Space token")
+    parser.add_argument("--space_token", type=str, required=True, help="Space token")
+    parser.add_argument("--youtrack_token", type=str, required=True, help="YouTrack token")
     parser.add_argument("--platform_version", type=int, required=True, help="Major version of IntelliJ platform")
     return parser.parse_args()
 
@@ -131,17 +132,16 @@ def parse_args():
 def main():
     args = parse_args()
 
-    token = args.token
     platform_version = args.platform_version
 
     branch_name = branch(platform_version)
-    if has_branch(token, branch_name):
+    if has_branch(args.space_token, branch_name):
         print(f"{branch_name} already exists")
         return
 
     changes = collect_changes(platform_version)
-    commit_changes(token, platform_version, changes)
-    create_review(token, platform_version)
+    commit_changes(args.space_token, platform_version, changes)
+    create_review(args.space_token, args.youtrack_token, platform_version)
 
 
 if __name__ == '__main__':

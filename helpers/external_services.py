@@ -5,7 +5,7 @@ from urllib.request import Request, urlopen
 from urllib.parse import quote, urlencode
 
 
-def commit_changes_to_educational_plugin(token: str, branch_name: str, commit_massage: str, changes: List[Dict]):
+def commit_changes_to_educational_plugin(space_token: str, branch_name: str, commit_massage: str, changes: List[Dict]):
     data = {
         "baseCommit": "master",
         "targetBranch": branch_name,
@@ -13,12 +13,12 @@ def commit_changes_to_educational_plugin(token: str, branch_name: str, commit_ma
         "files": changes
     }
     response = make_request("https://jetbrains.team/api/http/projects/edu/repositories/educational-plugin/commit",
-                            token, method="POST", data=data)
+                            space_token, method="POST", data=data)
     if not response["success"]:
         raise Exception(response["message"])
 
 
-def create_review_in_educational_plugin(token: str, source_branch: str, title: str, review_username: str):
+def create_review_in_educational_plugin(space_token: str, source_branch: str, title: str, review_username: str):
     data = {
         "repository": "educational-plugin",
         "sourceBranch": source_branch,
@@ -27,27 +27,27 @@ def create_review_in_educational_plugin(token: str, source_branch: str, title: s
     }
 
     make_review_response = make_request("https://jetbrains.team/api/http/projects/key:EDU/code-reviews/merge-requests",
-                                        token, method="POST", data=data)
+                                        space_token, method="POST", data=data)
     review_number = make_review_response["number"]
     make_request(f"https://jetbrains.team/api/http/projects/key:EDU/code-reviews/number:{review_number}/participants/username:{review_username}",
-                 token, method="POST", data={"role": "Reviewer"})
+                 space_token, method="POST", data={"role": "Reviewer"})
 
 
-def has_branch(token: str, branch_name: str) -> bool:
+def has_branch(space_token: str, branch_name: str) -> bool:
     encoded_branch = quote(f"refs/heads/{branch_name}")
     url = f"https://jetbrains.team/api/http/projects/key:EDU/repositories/educational-plugin/heads?pattern={encoded_branch}"
-    response = make_request(url, token, method="GET", data=None)
+    response = make_request(url, space_token, method="GET", data=None)
     return len(response["data"]) != 0
 
 
-def get_youtrack_issues(tag: str, text_query: str) -> List[Dict]:
+def get_youtrack_issues(youtrack_token: str, tag: str, text_query: str) -> List[Dict]:
     query_params = urlencode({
         "fields": "summary,customFields(name,value(name))",
         "customFields": "Assignee",
         "query": f"tag: {{{tag}}} project: EDU {text_query}"
     })
     url = f"https://youtrack.jetbrains.com/api/issues/?{query_params}"
-    return make_request(url, "", "GET")
+    return make_request(url, youtrack_token, "GET")
 
 
 def full_platform_version(platform_version: int) -> str:
@@ -61,10 +61,10 @@ def full_platform_version(platform_version: int) -> str:
 DEFAULT_REVIEWER = "Arseniy.Pendryak"
 
 
-def get_reviewer(tag: str, platform_version: int) -> str:
-    issues = get_youtrack_issues(tag, str(platform_version))
+def get_reviewer(youtrack_token: str, tag: str, platform_version: int) -> str:
+    issues = get_youtrack_issues(youtrack_token, tag, str(platform_version))
     if not issues:
-        issues = get_youtrack_issues(tag, full_platform_version(platform_version))
+        issues = get_youtrack_issues(youtrack_token, tag, full_platform_version(platform_version))
 
     if not issues:
         return DEFAULT_REVIEWER

@@ -16,19 +16,19 @@ def read_gradle_property_text(platform_version: int) -> str:
         return f.read()
 
 
-def create_review(token: str, platform_version: int):
-    reviewer = get_reviewer("edu: support platform", platform_version)
+def create_review(space_token: str, youtrack_token: str, platform_version: int):
+    reviewer = get_reviewer(youtrack_token, "edu: support platform", platform_version)
     create_review_in_educational_plugin(
-        token=token,
+        space_token=space_token,
         source_branch=f"update-{platform_version}",
         title=f"Update {platform_version} IDE and plugin dependencies",
         review_username=reviewer
     )
 
 
-def commit_changes(token: str, platform_version: int):
+def commit_changes(space_token: str, platform_version: int):
     commit_changes_to_educational_plugin(
-        token=token,
+        space_token=space_token,
         branch_name=f"refs/heads/update-{platform_version}",
         commit_massage=f"Update {platform_version} IDE and plugin dependencies",
         changes=[
@@ -66,7 +66,8 @@ def update_versions(updater_path: str, platform_version: int):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--token", type=str, required=True, help="Space token")
+    parser.add_argument("--space_token", type=str, required=True, help="Space token")
+    parser.add_argument("--youtrack_token", type=str, required=True, help="YouTrack token")
     parser.add_argument("--platform_version", type=int, required=True, help="Major version of IntelliJ platform")
     parser.add_argument("--updater_path", type=str, required=True, help="Path of version updater jar file")
     parser.add_argument("--log", type=str, required=False, help="Log level")
@@ -79,11 +80,10 @@ def main():
     if log_level:
         logging.basicConfig(level=log_level.upper())
 
-    token = args.token
     platform_version = args.platform_version
 
     branch_name = f"update-{platform_version}"
-    if has_branch(token, branch_name):
+    if has_branch(args.space_token, branch_name):
         print(f"{branch_name} already exists")
         return
 
@@ -95,8 +95,8 @@ def main():
         print("Everything is up-to-date")
         return
 
-    commit_changes(token, platform_version)
-    create_review(token, platform_version)
+    commit_changes(args.space_token, platform_version)
+    create_review(args.space_token, args.youtrack_token, platform_version)
 
 
 if __name__ == '__main__':
