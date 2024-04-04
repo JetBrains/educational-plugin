@@ -1,5 +1,7 @@
 package com.jetbrains.edu.learning.courseFormat
 
+import java.util.concurrent.atomic.AtomicReference
+
 open class EduFile {
   var name: String = ""
 
@@ -28,8 +30,14 @@ open class EduFile {
    * See the [text] field for the description.
    * The [contents] field, compared to the text field, also contains the information about whether the contents are binary or not.
    */
-  @Volatile
-  var contents: FileContents = UndeterminedContents.EMPTY
+  private var _contents: AtomicReference<FileContents> = AtomicReference(UndeterminedContents.EMPTY)
+
+  var contents: FileContents
+    get() = _contents.get()
+    set(value) = _contents.set(value)
+
+  fun setContentsIfEquals(expectedValue: FileContents, newValue: FileContents): Boolean =
+    _contents.compareAndSet(expectedValue, newValue)
 
   @Suppress("unused") // used for serialization
   val isBinary: Boolean?

@@ -51,14 +51,12 @@ class LearningObjectsStorageManager(private val project: Project) : DumbAware, D
         ApplicationManager.getApplication().executeOnPooledThread {
           val persistedContents = initialContents.persist(storage, pathInStorage)
           // if persisting took long, contents could have been already changed
-          val contentsAfterPersisting = contents
 
-          // check, if the contents have changed during persisting
-          if (contentsAfterPersisting != contentsWithDiagnostics) {
-            logger<FileContents>().error("Contents of a file changed while the file was being persisted: $pathInStorage from ${initialContents.javaClass} to ${contentsAfterPersisting.javaClass}")
+          if (!setContentsIfEquals(contentsWithDiagnostics, persistedContents)) {
+            // The level is `error`, because we want to have feedback if that happens.
+            // But we will probably change this later to `warn`, or 'info', or remove the check completely.
+            logger<FileContents>().error("Contents of a file changed while the file was being persisted: $pathInStorage from ${initialContents.javaClass} to ${contents.javaClass}")
           }
-
-          contents = persistedContents
         }
       }
     }
