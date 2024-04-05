@@ -456,7 +456,7 @@ tasks {
 //createTasksToRunIde("PhpStorm")
 //createTasksToRunIde("RustRover")
 //createTasksToRunIde("DataSpell")
-createTasksToRunIde("Rider", requiresLocalPath = false)
+//createTasksToRunIde("Rider", requiresLocalPath = false)
 
 /**
  * Creates `configure$[ideName]` and `run$[ideName]` Gradle tasks based on given [ideName].
