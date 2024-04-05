@@ -41,6 +41,10 @@ abstract class Task : StudyItem {
   var authorSolutionContext: AuthorSolutionContext? = null
   var aiAssistantState: AiAssistantState = AiAssistantState.NotInitialized
   /**
+   * Counts the number of hints that the student can reject before solution steps are regenerated.
+   */
+  var rejectedHintsCount: Int = 0
+  /**
    * Stores a list of functions that can be changed.
    */
   var changedFunctions: List<String>? = null

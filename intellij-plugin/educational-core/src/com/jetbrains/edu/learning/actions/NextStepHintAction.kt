@@ -128,12 +128,8 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
         if (file.name == EduCoreBundle.message("action.Educational.Diff.text")) {
           if (diffRequestChain.getUserData(NEXT_STEP_HINT_DIFF_FLAG) == true) {
             if (diffRequestChain.getUserData(IS_ACCEPTED_HINT) == null || diffRequestChain.getUserData(IS_ACCEPTED_HINT) == false) {
-              val scope = CoroutineScope(EmptyCoroutineContext)
-              val task = state.task
-              val taskProcessor = TaskProcessor(task)
-              val assistant = TaskBasedAssistant(taskProcessor)
-              scope.launch {
-                assistant.getTaskAnalysis(task)
+              if (actionTargetParent?.components?.contains(nextStepHintNotificationPanel) == true) {
+                rejectHint(state)
               }
             }
             closeNextStepHintNotificationPanel()
@@ -145,6 +141,19 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
       }
     }
     connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, myEditorChangeListener)
+  }
+
+  private fun rejectHint(state: EduState) {
+    val scope = CoroutineScope(EmptyCoroutineContext)
+    val task = state.task
+    val taskProcessor = TaskProcessor(task)
+    if (taskProcessor.needToUpdateSolutionSteps()) {
+      val assistant = TaskBasedAssistant(taskProcessor)
+      scope.launch {
+        assistant.getTaskAnalysis(task)
+      }
+    }
+    closeNextStepHintNotificationPanel()
   }
 
   override fun getActionUpdateThread() = ActionUpdateThread.BGT
@@ -189,7 +198,7 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
     }
 
     private fun showHintWindow(textToShow: String, action: AnAction? = null) {
-      val nextStepHintNotification = NextStepHintNotificationFrame(textToShow, action, actionTargetParent) { closeNextStepHintNotificationPanel() }
+      val nextStepHintNotification = NextStepHintNotificationFrame(textToShow, action, actionTargetParent) { rejectHint(state) }
       nextStepHintNotificationPanel = nextStepHintNotification.rootPane
       nextStepHintNotificationPanel?.let {  actionTargetParent?.add(it, BorderLayout.NORTH) }
 
@@ -198,6 +207,7 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
           super.beforeDocumentChange(event)
           closeNextStepHintNotificationPanel()
           cancelTaskGettingHint()
+          state.task.rejectedHintsCount = 0
         }
       })
     }

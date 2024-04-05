@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.eduAssistant.AiAssistantState
 import com.jetbrains.edu.learning.courseFormat.eduAssistant.FunctionSignature
 import com.jetbrains.edu.learning.courseFormat.eduAssistant.SignatureSource
 import com.jetbrains.edu.learning.courseFormat.ext.*
@@ -31,6 +32,15 @@ class TaskProcessor(val task: Task) {
   // Only for the Kotlin Onboarding Introduction: https://plugins.jetbrains.com/plugin/21067-kotlin-onboarding-introduction
   // and for Edu tasks
   fun isNextStepHintApplicable() = task.course.id == 21067 && task is EduTask
+
+  fun needToUpdateSolutionSteps() =
+    if (task.aiAssistantState == AiAssistantState.HelpAsked && task.rejectedHintsCount >= REJECTED_HINTS_LIMIT) {
+      task.rejectedHintsCount = 0
+      true
+    } else {
+      task.rejectedHintsCount++
+      false
+    }
 
   fun isGetHintButtonShown() = isNextStepHintApplicable() && task.course.courseMode == CourseMode.STUDENT && task.status != CheckStatus.Solved // TODO: when should we show this button?
 
@@ -193,5 +203,6 @@ class TaskProcessor(val task: Task) {
 
   companion object {
     const val MAX_BODY_LINES_IN_SHORT_FUNCTION = 3
+    const val REJECTED_HINTS_LIMIT = 3
   }
 }
