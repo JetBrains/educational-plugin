@@ -99,8 +99,8 @@ abstract class EduTestCase : BasePlatformTestCase() {
         connection.disconnect()
       }
     })
-    (FrameworkLessonManager.getInstance(project) as FrameworkLessonManagerImpl).resetStorage()
-    CCFrameworkLessonManager.getInstance(project).resetStorage()
+    (FrameworkLessonManager.getInstance(project) as FrameworkLessonManagerImpl).recreateStorageIfNeeded()
+    CCFrameworkLessonManager.getInstance(project).recreateStorageIfNeeded()
     createCourse()
     project.putUserData(CourseProjectGenerator.EDU_PROJECT_CREATED, true)
   }

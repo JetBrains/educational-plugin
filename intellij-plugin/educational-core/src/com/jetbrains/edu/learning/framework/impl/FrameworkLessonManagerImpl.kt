@@ -365,7 +365,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
   }
 
   @TestOnly
-  fun resetStorage() {
+  fun recreateStorageIfNeeded() {
     if (storage.isDisposed) {
       storage = createStorage(project)
     }

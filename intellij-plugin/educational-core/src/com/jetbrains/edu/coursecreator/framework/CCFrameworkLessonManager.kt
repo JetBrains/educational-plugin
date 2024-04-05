@@ -282,7 +282,7 @@ class CCFrameworkLessonManager(
   }
 
   @TestOnly
-  fun resetStorage() {
+  fun recreateStorageIfNeeded() {
     if (storage.isDisposed) {
       storage = createStorage(project)
     }
