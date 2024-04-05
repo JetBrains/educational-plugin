@@ -5,10 +5,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
-import com.jetbrains.edu.learning.courseFormat.eduAssistant.AiAssistantState
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.eduAssistant.context.initAiHintContext
-import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
@@ -22,11 +19,6 @@ abstract class TaskNavigationAction : DumbAwareAction() {
     val project = e.project ?: return
     if (!project.isEduProject()) return
     navigateTask(project, e.place)
-
-    // Save context for the AI edu assistant
-    // TODO: should we do it again somewhere if the course content was changed?
-    val state = project.eduState ?: return
-    initAiHintContext(state.task, AiAssistantState.ContextInitialized)
   }
 
   override fun update(e: AnActionEvent) {

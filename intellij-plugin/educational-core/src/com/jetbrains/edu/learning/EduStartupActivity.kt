@@ -28,7 +28,6 @@ import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.EduUtilsKt.isNewlyCreated
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.eduAssistant.AiAssistantState
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.isPreview
@@ -44,6 +43,9 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikNames
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import kotlin.coroutines.EmptyCoroutineContext
 
 class EduStartupActivity : StartupActivity.DumbAware {
 
@@ -174,7 +176,12 @@ class EduStartupActivity : StartupActivity.DumbAware {
     VfsUtil.markDirtyAndRefresh(false, true, true, project.courseDir)
   }
 
-  private fun initAiHintContexts(course: Course) = course.allTasks.forEach { initAiHintContext(it, AiAssistantState.ContextInitialized) }
+  private fun initAiHintContexts(course: Course) = course.allTasks.forEach {
+    val scope = CoroutineScope(EmptyCoroutineContext)
+    scope.launch {
+      initAiHintContext(it)
+    }
+  }
 
   companion object {
     private val LOG = Logger.getInstance(EduStartupActivity::class.java)

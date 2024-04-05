@@ -6,6 +6,7 @@ import com.jetbrains.edu.assistant.validation.messages.EduAndroidAiAssistantVali
 import com.jetbrains.edu.assistant.validation.util.CodeHintDataframeRecord
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.eduAssistant.core.TaskBasedAssistant
 import org.apache.commons.csv.CSVRecord
 import org.jetbrains.kotlinx.dataframe.api.toDataFrame
 
@@ -54,7 +55,7 @@ class CodeHintValidationAction : CodeValidationAction<CodeHintDataframeRecord>()
         taskName = task.name,
         taskDescription = baseAssistantInfoStorage.taskProcessor.getTaskTextRepresentation(),
         taskAnalysisPrompt = baseAssistantInfoStorage.assistant.taskAnalysisPrompt,
-        steps = task.generatedSolutionSteps,
+        steps = TaskBasedAssistant.getSolutionSteps(task.id),
         codeHintPrompt = response.prompts.getOrDefault("nextStepCodeHintPrompt", ""),
         userCode = userCode,
         generatedCode = response.codeHint ?: "",
@@ -68,7 +69,7 @@ class CodeHintValidationAction : CodeValidationAction<CodeHintDataframeRecord>()
         taskName = task.name,
         taskDescription = baseAssistantInfoStorage.taskProcessor.getTaskTextRepresentation(),
         taskAnalysisPrompt = baseAssistantInfoStorage.assistant.taskAnalysisPrompt,
-        steps = task.generatedSolutionSteps,
+        steps = TaskBasedAssistant.getSolutionSteps(task.id),
         codeHintPrompt = response.prompts.getOrDefault("nextStepCodeHintPrompt", ""),
         userCode = userCode,
         error = e

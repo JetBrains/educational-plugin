@@ -58,7 +58,7 @@ class AutoHintValidationAction : ValidationAction<ValidationOfHintsDataframeReco
 
     try {
       val userCode = eduState.taskFile.getVirtualFile(project)?.getTextFromTaskTextFile() ?: error("Cannot get a user code")
-      val solutionSteps = task.generatedSolutionSteps ?: error("Cannot get the solution steps")
+      val solutionSteps = TaskBasedAssistant.getSolutionSteps(task.id) ?: error("Cannot get the solution steps")
       val taskDescription = taskProcessor.getTaskTextRepresentation()
       val codeHint = response.codeHint ?: error("Cannot get a code hint (${response.assistantError?.name ?: "no assistant error found"})")
       val textHint = response.textHint ?: error("Cannot get a text hint (${response.assistantError?.name ?: "no assistant error found"})")
@@ -81,7 +81,7 @@ class AutoHintValidationAction : ValidationAction<ValidationOfHintsDataframeReco
         taskId = task.id,
         taskName = task.name,
         taskDescription = taskProcessor.getTaskTextRepresentation(),
-        solutionSteps = task.generatedSolutionSteps ?: "",
+        solutionSteps = TaskBasedAssistant.getSolutionSteps(task.id) ?: "",
         userCode = eduState.taskFile.getVirtualFile(project)?.getTextFromTaskTextFile() ?: "",
         nextStepCodeHint = response.codeHint ?: "",
         nextStepTextHint = response.textHint ?: "",

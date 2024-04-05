@@ -11,9 +11,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.eduAssistant.context.function.signatures.createPsiFileForSolution
 import com.jetbrains.edu.learning.eduAssistant.core.TaskBasedAssistant
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import kotlin.coroutines.EmptyCoroutineContext
 
 private fun <K, V> flatten(list: List<Map<K, V>>): Map<K, V> = mutableMapOf<K, V>().apply {
   for (innerMap in list) putAll(innerMap)
@@ -32,7 +29,7 @@ fun Task.buildAuthorSolutionContext(): AuthorSolutionContext? {
   )
 }
 
-fun initAiHintContext(task: Task, state: AiAssistantState) {
+suspend fun initAiHintContext(task: Task) {
   val taskProcessor = TaskProcessor(task)
   if (!taskProcessor.isNextStepHintApplicable()) {
     return
@@ -40,12 +37,9 @@ fun initAiHintContext(task: Task, state: AiAssistantState) {
   task.authorSolutionContext ?: run {
     task.authorSolutionContext = task.buildAuthorSolutionContext()
   }
-  task.generatedSolutionSteps ?: run {
-    val scope = CoroutineScope(EmptyCoroutineContext)
+  TaskBasedAssistant.getSolutionSteps(task.id) ?: run {
     val assistant = TaskBasedAssistant(taskProcessor)
-    scope.launch {
-      assistant.getTaskAnalysis(task)
-    }
+    assistant.getTaskAnalysis(task)
   }
-  task.aiAssistantState = state
+  task.aiAssistantState = AiAssistantState.ContextInitialized
 }

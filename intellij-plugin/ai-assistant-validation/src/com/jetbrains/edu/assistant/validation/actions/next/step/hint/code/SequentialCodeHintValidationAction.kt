@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.eduAssistant.check.EduAssistantValidationCheckListener
 import com.jetbrains.edu.learning.eduAssistant.core.AssistantResponse
 import com.intellij.platform.ide.progress.withBackgroundProgress
+import com.jetbrains.edu.learning.eduAssistant.core.TaskBasedAssistant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -89,10 +90,11 @@ class SequentialCodeHintValidationAction : CodeValidationAction<MultipleCodeHint
     val records = mutableListOf<MultipleCodeHintDataframeRecord>()
 
     baseAssistantInfoStorage.assistant.getTaskAnalysis(task)
-    task.generatedSolutionSteps ?: error("Cannot get generate solution steps for task ${task.name}")
+    val generatedSolutionSteps = TaskBasedAssistant.getSolutionSteps(task.id)
+    generatedSolutionSteps ?: error("Cannot get generate solution steps for task ${task.name}")
     var currentUserCode = userCode
     val maxHintSteps = (with(baseAssistantInfoStorage.assistant) {
-      task.generatedSolutionSteps?.parseSteps()?.size ?: 0
+      generatedSolutionSteps.parseSteps().size
     } * 1.5).toInt()
 
     for (hintIndex in 1..maxHintSteps) {
@@ -128,7 +130,7 @@ class SequentialCodeHintValidationAction : CodeValidationAction<MultipleCodeHint
             taskName = task.name,
             taskDescription = baseAssistantInfoStorage.taskProcessor.getTaskTextRepresentation(),
             taskAnalysisPrompt = baseAssistantInfoStorage.assistant.taskAnalysisPrompt,
-            steps = task.generatedSolutionSteps,
+            steps = generatedSolutionSteps,
             codeHintPrompt = response?.prompts?.getOrDefault("nextStepCodeHintPrompt", ""),
             userCode = userCode,
             generatedCode = response?.codeHint,

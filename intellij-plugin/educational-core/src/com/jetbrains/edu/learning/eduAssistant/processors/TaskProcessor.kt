@@ -119,6 +119,9 @@ class TaskProcessor(val task: Task) {
 
   fun hasFilesChanged(): Boolean {
     val project = task.project ?: return false
+    /* TODO: noticed unexpected behaviour with taskFiles: every time the hint is requested, a new taskFile in "test" directory is added...
+    *  This prevents solution steps from being regenerated because hasFilesChanged is always true
+    */
     return task.taskFiles.values.any { !isFileUnchanged(it, project) }
   }
 

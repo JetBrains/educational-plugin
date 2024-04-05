@@ -22,51 +22,55 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.util.concurrent.ConcurrentHashMap
 
 class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
 
   var taskAnalysisPrompt: String? = null
   private var hintContext: HintContext? = null
 
-  suspend fun getTaskAnalysis(task: Task, forcedReload: Boolean = false): String? = taskIdToMutex.getOrPut(task.id, ::Mutex).withLock {
-    if (!forcedReload && task.generatedSolutionSteps != null) {
-      return@withLock task.generatedSolutionSteps
-    }
-
-    Loggers.taskAnalysisTimingLogger.info("Starting getTaskAnalysis function for task-id: ${task.id}")
-
-    if (taskProcessor.getFailureMessage() == EduCoreBundle.message("error.execution.failed")) return null
-
-    task.authorSolutionContext ?: let {
-      task.authorSolutionContext = task.buildAuthorSolutionContext()
-    }
-
-    hintContext = buildHintContext(task)
-    taskAnalysisPrompt = buildTaskAnalysisPrompt(hintContext ?: error("Empty hintContext"))
-
-    logEduAssistantInfo(
-      task,
-      """Task analysis prompt:
-        |$taskAnalysisPrompt
-      """.trimMargin()
-    )
-
-    Loggers.taskAnalysisTimingLogger.info("Requesting model for task analysis for task-id: ${task.id}")
-
-    return AiPlatformAdapter.chat(
-      userPrompt = taskAnalysisPrompt ?: error("taskAnalysisPrompt was not initialized"),
-      generationContextProfile = SOLUTION_STEPS
-    ).deleteNoCodeSteps()
-      .also {
-        logEduAssistantInfo(
-          task,
-          """Task analysis response:
-            |$it
-          """.trimMargin()
-        )
-        Loggers.taskAnalysisTimingLogger.info("Completed task analysis for task-id: ${task.id}")
-        task.generatedSolutionSteps = it
+  suspend fun getTaskAnalysis(task: Task, forcedReload: Boolean = false): String? {
+    val solutionSteps = taskId2SolutionSteps.getOrPut(task.id, ::SolutionSteps)
+    solutionSteps.mutex.withLock {
+      if (!forcedReload && solutionSteps.value != null) {
+        return solutionSteps.value
       }
+
+      Loggers.taskAnalysisTimingLogger.info("Starting getTaskAnalysis function for task-id: ${task.id}")
+
+      if (taskProcessor.getFailureMessage() == EduCoreBundle.message("error.execution.failed")) return null
+
+      task.authorSolutionContext ?: let {
+        task.authorSolutionContext = task.buildAuthorSolutionContext()
+      }
+
+      hintContext = buildHintContext(task)
+      taskAnalysisPrompt = buildTaskAnalysisPrompt(hintContext ?: error("Empty hintContext"))
+
+      logEduAssistantInfo(
+        task,
+        """Task analysis prompt:
+          |$taskAnalysisPrompt
+        """.trimMargin()
+      )
+
+      Loggers.taskAnalysisTimingLogger.info("Requesting model for task analysis for task-id: ${task.id}")
+
+      return AiPlatformAdapter.chat(
+        userPrompt = taskAnalysisPrompt ?: error("taskAnalysisPrompt was not initialized"),
+        generationContextProfile = SOLUTION_STEPS
+      ).deleteNoCodeSteps()
+        .also {
+          logEduAssistantInfo(
+            task,
+            """Task analysis response:
+              |$it
+            """.trimMargin()
+          )
+          Loggers.taskAnalysisTimingLogger.info("Completed task analysis for task-id: ${task.id}")
+          solutionSteps.value = it
+        }
+    }
   }
 
   private fun String.deleteNoCodeSteps(): String {
@@ -105,8 +109,10 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
 
       Loggers.hintTimingLogger.info("Retrieving the task analysis for task-id: ${task.id}")
       // The task files were not changed and the user asked about help again
-      if (!taskProcessor.hasFilesChanged() && task.aiAssistantState == AiAssistantState.HelpAsked) getTaskAnalysis(task, forcedReload = true)
-      val taskAnalysis = task.generatedSolutionSteps?.also { hintContext?.log() } ?: getTaskAnalysis(task) ?: return AssistantResponse(
+      if (!taskProcessor.hasFilesChanged() && task.aiAssistantState == AiAssistantState.HelpAsked) {
+        getTaskAnalysis(task, forcedReload = true)
+      }
+      val taskAnalysis = getSolutionSteps(task.id)?.also { hintContext?.log() } ?: getTaskAnalysis(task) ?: return AssistantResponse(
         assistantError = AssistantError.NoCompiledCode
       )
 
@@ -475,6 +481,18 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
   )
 
   companion object {
-    val taskIdToMutex = HashMap<Int, Mutex>()
+    /**
+     * [value] stores the result of AI-based task analysis as a set of solution steps.
+     */
+    private data class SolutionSteps(@Volatile var value: String? = null) {
+      val mutex: Mutex = Mutex()
+    }
+
+    // Only one instance of SolutionSteps can be created for every task. Only SolutionSteps::value can be modified.
+    private val taskId2SolutionSteps = ConcurrentHashMap<Int, SolutionSteps>()
+
+    suspend fun getSolutionSteps(taskId: Int): String? = taskId2SolutionSteps[taskId]?.let {
+      it.mutex.withLock { it.value }
+    }
   }
 }

@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.courseFormat.tasks
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.eduAssistant.AiAssistantState
 import com.jetbrains.edu.learning.courseFormat.eduAssistant.AuthorSolutionContext
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
 import java.util.*
 
 /**
@@ -27,10 +28,6 @@ abstract class Task : StudyItem {
       _taskFiles = value
     }
 
-  /**
-   * Stores the result of AI-based task analysis as a set of solution steps.
-   */
-  var generatedSolutionSteps: String? = null
   /**
    * Stores a summary of the theory from the previous steps.
    */
