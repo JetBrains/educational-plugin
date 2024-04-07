@@ -29,9 +29,16 @@ class MarketplaceOpenInIdeTest : EduTestCase() {
   override fun getTestDataPath(): String = super.getTestDataPath() + "/marketplace/projectOpener/"
 
   override fun tearDown() {
-    mockProjectOpener.project = null
-    graphqlRequestsCounter.set(0)
-    super.tearDown()
+    try {
+      mockProjectOpener.project = null
+      graphqlRequestsCounter.set(0)
+    }
+    catch (e: Throwable) {
+      addSuppressedException(e)
+    }
+    finally {
+      super.tearDown()
+    }
   }
 
   private fun configureCoursesResponse(fileName: String) {

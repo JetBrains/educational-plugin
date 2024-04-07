@@ -47,11 +47,12 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl
-import com.jetbrains.edu.learning.storage.InMemoryLearningObjectsStorage
-import com.jetbrains.edu.learning.storage.LearningObjectsStorageManager
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceUpdateChecker
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
+import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.stepik.hyperskill.update.HyperskillCourseUpdateChecker
+import com.jetbrains.edu.learning.storage.InMemoryLearningObjectsStorage
+import com.jetbrains.edu.learning.storage.LearningObjectsStorageManager
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
@@ -109,6 +110,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
     try {
       (EduBrowser.getInstance() as MockEduBrowser).lastVisitedUrl = null
       SubmissionsManager.getInstance(project).clear()
+      CoursesStorage.getInstance().state.courses.clear()
 
       // We may want to check something outside a course project
       // to be sure that the plugin doesn't break other cases.
@@ -126,6 +128,9 @@ abstract class EduTestCase : BasePlatformTestCase() {
 
       val learningObjectsStorage = LearningObjectsStorageManager.getInstance(project).learningObjectsStorage
       (learningObjectsStorage as InMemoryLearningObjectsStorage).clear()
+    }
+    catch (e: Throwable) {
+      addSuppressedException(e)
     }
     finally {
       super.tearDown()

@@ -15,8 +15,15 @@ abstract class EduTaskDescriptionCompletionTestBase(format: DescriptionFormat) :
   }
 
   override fun tearDown() {
-    completionFixture.tearDown()
-    super.tearDown()
+    try {
+      completionFixture.tearDown()
+    }
+    catch (e: Throwable) {
+      addSuppressedException(e)
+    }
+    finally {
+      super.tearDown()
+    }
   }
 
   override fun createCourse() {

@@ -16,8 +16,15 @@ abstract class SolutionLoadingTestBase : NavigationTestBase() {
   }
 
   override fun tearDown() {
-    doLogout()
-    super.tearDown()
+    try {
+      doLogout()
+    }
+    catch (e: Throwable) {
+      addSuppressedException(e)
+    }
+    finally {
+      super.tearDown()
+    }
   }
 
   open fun doLoginFakeUser() {}

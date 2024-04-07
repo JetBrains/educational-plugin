@@ -3,22 +3,18 @@ package com.jetbrains.edu.learning.stepik.hyperskill.projectOpen
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_TOPICS
 import com.jetbrains.edu.learning.fileTree
-import com.jetbrains.edu.learning.stepik.hyperskill.*
+import com.jetbrains.edu.learning.stepik.hyperskill.TEST_HYPERSKILL_PROJECT_NAME
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenProjectStageRequest
+import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
+import com.jetbrains.edu.learning.stepik.hyperskill.testStageName
 
 
 class HyperskillProjectOpenStageTest : HyperskillProjectOpenerTestBase() {
 
   override fun setUp() {
     super.setUp()
-    logInFakeHyperskillUser()
     configureMockResponsesForStages()
-  }
-
-  override fun tearDown() {
-    logOutFakeHyperskillUser()
-    super.tearDown()
   }
 
   fun `test open stage in new project`() {

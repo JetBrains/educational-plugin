@@ -19,13 +19,7 @@ class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerT
 
   override fun setUp() {
     super.setUp()
-    logInFakeHyperskillUser()
     configureMockResponsesForNotRecommendedProblem()
-  }
-
-  override fun tearDown() {
-    logOutFakeHyperskillUser()
-    super.tearDown()
   }
 
   fun `test open not recommended problem in new project`() {

@@ -8,8 +8,6 @@ import com.jetbrains.edu.learning.pathWithoutPrams
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLanguages
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepWithProjectRequest
-import com.jetbrains.edu.learning.stepik.hyperskill.logInFakeHyperskillUser
-import com.jetbrains.edu.learning.stepik.hyperskill.logOutFakeHyperskillUser
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.StepInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.TopicInfo
@@ -20,7 +18,6 @@ class ShellHyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestB
 
   override fun setUp() {
     super.setUp()
-    logInFakeHyperskillUser()
     configureMockResponsesForStages()
     configureMockResponsesForProblems()
   }
@@ -60,15 +57,6 @@ class ShellHyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestB
     }
   }
 
-  override fun tearDown() {
-    try {
-      logOutFakeHyperskillUser()
-    }
-    finally {
-      super.tearDown()
-    }
-  }
-
   companion object {
     private val step12713 = StepInfo(12713, "Grep basic options")
     private val step12720 = StepInfo(12720, "Me")
@@ -76,5 +64,4 @@ class ShellHyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestB
 
     private val requestedInformation = listOf(step12713, step12720, topic85)
   }
-
 }

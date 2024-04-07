@@ -6,6 +6,8 @@ import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.logInFakeHyperskillUser
+import com.jetbrains.edu.learning.stepik.hyperskill.logOutFakeHyperskillUser
 
 abstract class HyperskillProjectOpenerTestBase : EduTestCase() {
   protected val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
@@ -14,14 +16,23 @@ abstract class HyperskillProjectOpenerTestBase : EduTestCase() {
   override fun setUp() {
     super.setUp()
     mockProjectOpener.project = project
+    logInFakeHyperskillUser()
+  }
+
+  override fun tearDown() {
+    try {
+      mockProjectOpener.project = null
+      logOutFakeHyperskillUser()
+    }
+    catch (e: Throwable) {
+      addSuppressedException(e)
+    }
+    finally {
+      super.tearDown()
+    }
   }
 
   override fun getTestDataPath(): String = super.getTestDataPath() + "/stepik/hyperskill/"
-
-  override fun tearDown() {
-    mockProjectOpener.project = null
-    super.tearDown()
-  }
 
   protected fun configureMockResponsesForStages() {
     mockConnector.configureFromCourse(testRootDisposable, hyperskillCourse {

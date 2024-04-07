@@ -4,10 +4,10 @@ import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.checkio.CheckiOPlatformProvider
 import com.jetbrains.edu.learning.codeforces.CodeforcesPlatformProvider
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProvider
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import kotlinx.coroutines.CoroutineScope
@@ -65,10 +65,5 @@ class StartButtonsTest : EduTestCase() {
     val openButton = coursePanel.buttonsPanel.buttons[1]
     assertTrue(openButton.isVisible)
     assertTrue(openButton.isEnabled)
-  }
-
-  override fun tearDown() {
-    super.tearDown()
-    CoursesStorage.getInstance().state.courses.clear()
   }
 }

@@ -27,8 +27,15 @@ class HyperskillTwittingTest : EduActionTestCase() {
   }
 
   override fun tearDown() {
-    TwitterSettings.getInstance().askToTweet = false
-    super.tearDown()
+    try {
+      TwitterSettings.getInstance().askToTweet = false
+    }
+    catch (e: Throwable) {
+      addSuppressedException(e)
+    }
+    finally {
+      super.tearDown()
+    }
   }
 
   fun `test show dialog after last project task solution`() =

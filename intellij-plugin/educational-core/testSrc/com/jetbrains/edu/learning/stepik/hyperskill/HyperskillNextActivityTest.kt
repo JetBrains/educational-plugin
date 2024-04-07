@@ -22,8 +22,15 @@ class HyperskillNextActivityTest : EduTestCase() {
   }
 
   override fun tearDown() {
-    logOutFakeHyperskillUser()
-    super.tearDown()
+    try {
+      logOutFakeHyperskillUser()
+    }
+    catch (e: Throwable) {
+      addSuppressedException(e)
+    }
+    finally {
+      super.tearDown()
+    }
   }
 
   fun `test activity not available`() {

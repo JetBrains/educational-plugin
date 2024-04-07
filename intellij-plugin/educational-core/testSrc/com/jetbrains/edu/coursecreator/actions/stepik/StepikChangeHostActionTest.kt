@@ -27,8 +27,15 @@ class StepikChangeHostActionTest : EduTestCase() {
   }
 
   override fun tearDown() {
-    PropertiesComponent.getInstance().setValue(STEPIK_HOST_ORDINAL_PROPERTY, initialStepikOrdinal, 0)
-    super.tearDown()
+    try {
+      PropertiesComponent.getInstance().setValue(STEPIK_HOST_ORDINAL_PROPERTY, initialStepikOrdinal, 0)
+    }
+    catch (e: Throwable) {
+      addSuppressedException(e)
+    }
+    finally {
+      super.tearDown()
+    }
   }
 
   fun `test cogniterra stepik host`() {

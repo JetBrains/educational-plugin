@@ -8,7 +8,14 @@ abstract class JvmCourseGenerationTestBase : CourseGenerationTestBase<JdkProject
   override val defaultSettings: JdkProjectSettings get() = JdkProjectSettings.emptySettings()
 
   override fun tearDown() {
-    JavaAwareProjectJdkTableImpl.removeInternalJdkInTests()
-    super.tearDown()
+    try {
+      JavaAwareProjectJdkTableImpl.removeInternalJdkInTests()
+    }
+    catch (e: Throwable) {
+      addSuppressedException(e)
+    }
+    finally {
+      super.tearDown()
+    }
   }
 }

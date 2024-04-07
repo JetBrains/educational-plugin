@@ -20,11 +20,6 @@ import org.hamcrest.CoreMatchers.not
 import org.junit.Assert.assertThat
 
 class CourseGenerationTest : CourseGenerationTestBase<EmptyProjectSettings>() {
-  override fun tearDown() {
-    super.tearDown()
-    CoursesStorage.getInstance().state.courses.clear()
-  }
-
   override val defaultSettings: EmptyProjectSettings = EmptyProjectSettings
 
   fun `test do not open invisible files after course creation`() {

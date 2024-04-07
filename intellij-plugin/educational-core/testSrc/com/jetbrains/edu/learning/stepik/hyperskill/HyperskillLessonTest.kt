@@ -11,12 +11,12 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.InMemoryBinaryContents
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikTestUtils
 import com.jetbrains.edu.learning.stepik.StepikTestUtils.logOutFakeStepikUser
 import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import org.apache.commons.codec.binary.Base64
 import java.io.File
 
@@ -136,7 +136,14 @@ class HyperskillLessonTest : EduTestCase() {
   override fun getTestDataPath(): String = super.getTestDataPath() + "/stepik/hyperskill/"
 
   override fun tearDown() {
-    super.tearDown()
-    EduSettings.getInstance().user = null
+    try {
+      EduSettings.getInstance().user = null
+    }
+    catch (e: Throwable) {
+      addSuppressedException(e)
+    }
+    finally {
+      super.tearDown()
+    }
   }
 }
