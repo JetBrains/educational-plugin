@@ -20,7 +20,7 @@ import org.rust.cargo.project.model.cargoProjects
 import org.rust.cargo.project.settings.rustSettings
 import org.rust.cargo.project.workspace.CargoWorkspace
 import org.rust.cargo.runconfig.command.CargoCommandConfiguration
-import org.rust.cargo.runconfig.command.CargoCommandConfigurationType
+import org.rust.cargo.runconfig.command.cargoCommandConfigurationType
 import org.rust.cargo.runconfig.mergeWithDefault
 import org.rust.cargo.toolchain.CargoCommandLine
 import org.rust.cargo.toolchain.tools.cargo
@@ -39,7 +39,7 @@ class RsEduTaskChecker(project: Project, envChecker: EnvironmentChecker, task: E
   }
 
   override val preferredConfigurationType: ConfigurationType
-    get() = CargoCommandConfigurationType.getInstance()
+    get() = cargoCommandConfigurationType()
 
   override fun createDefaultTestConfigurations(): List<RunnerAndConfigurationSettings> {
     val configurations = createTestConfigurationsForTestDirectories().filter { it.configuration.type == preferredConfigurationType }
@@ -49,7 +49,7 @@ class RsEduTaskChecker(project: Project, envChecker: EnvironmentChecker, task: E
       val cmd = CargoCommandLine.forPackage(pkg, "test", listOf("--color", "never")).copy(emulateTerminal = false)
 
       val configurationSetting = RunManager.getInstance(project)
-        .createConfiguration("tests", CargoCommandConfigurationType.getInstance().factory)
+        .createConfiguration("tests", cargoCommandConfigurationType().factory)
       val configuration = configurationSetting.configuration as CargoCommandConfiguration
       cmd.mergeWithDefault(configuration)
       configuration.setFromCmd(cmd)

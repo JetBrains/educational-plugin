@@ -17,8 +17,8 @@ import org.rust.ide.icons.RsIcons
 import org.rust.lang.RsConstants
 import javax.swing.Icon
 
-// BACKCOMPAT: 2023.2. Drop it
-private val BUILD_233 = BuildNumber.fromString("233")!!
+// BACKCOMPAT: 2023.3. Drop it
+private val BUILD_241 = BuildNumber.fromString("241")!!
 
 class RsConfigurator : EduConfigurator<RsProjectSettings> {
   override val taskCheckerProvider: RsTaskCheckerProvider
@@ -60,9 +60,10 @@ class RsConfigurator : EduConfigurator<RsProjectSettings> {
     get() {
       val rustPluginVersion = pluginVersion(PluginInfos.RUST.stringId) ?: return false
       val currentBuild = ApplicationInfo.getInstance().build
-      // Rust plugin changed the signature of `CargoProjectsService.refreshAllProjects` method since `232.23135` and `233.23135` builds.
-      // It added default parameter which breaks binary compatibility
-      val minSupportedVersion = if (currentBuild < BUILD_233) "232.23135" else "233.23135"
+      // Rust plugin dropped `CargoCommandConfigurationType.Companion.getInstance()` and replaced it with
+      // top-level `cargoCommandConfigurationType` function since `233.25026` and `233.23135` builds.
+      // Let's avoid runtime error because of this binary incompatibility
+      val minSupportedVersion = if (currentBuild < BUILD_241) "233.25026" else "241.25026"
       return VersionComparatorUtil.compare(rustPluginVersion, minSupportedVersion) >= 0
     }
 
