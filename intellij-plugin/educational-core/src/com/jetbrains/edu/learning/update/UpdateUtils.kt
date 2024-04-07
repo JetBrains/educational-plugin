@@ -2,16 +2,13 @@ package com.jetbrains.edu.learning.update
 
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
-import com.intellij.openapi.application.runWriteActionAndWait
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.ext.course
-import com.jetbrains.edu.learning.courseFormat.ext.getDir
-import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
-import com.jetbrains.edu.learning.courseFormat.ext.hasChangedFiles
-import com.jetbrains.edu.learning.courseFormat.ext.shouldBePropagated
+import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -102,9 +99,11 @@ object UpdateUtils {
     get() = taskFiles.filter { !it.value.shouldBePropagated() }
 
   private fun removeReadOnlyFlags(project: Project, taskFile: TaskFile) {
-    runWriteActionAndWait {
-      val virtualTaskFile = taskFile.getVirtualFile(project) ?: return@runWriteActionAndWait
-      GeneratorUtils.removeNonEditableFileFromCourse(taskFile.course(), virtualTaskFile)
+    val virtualTaskFile = taskFile.getVirtualFile(project) ?: return
+    invokeAndWaitIfNeeded {
+      runWriteAction {
+        GeneratorUtils.removeNonEditableFileFromCourse(taskFile.course(), virtualTaskFile)
+      }
     }
   }
 
