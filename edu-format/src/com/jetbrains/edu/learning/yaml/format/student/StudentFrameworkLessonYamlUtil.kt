@@ -25,8 +25,9 @@ private class StudentFrameworkLessonBuilder(
   @JsonProperty(CURRENT_TASK) val currentTaskIndex: Int,
   @JsonProperty(IS_TEMPLATE_BASED) isTemplateBased: Boolean = true,
   @JsonProperty(CONTENT) content: List<String?> = emptyList(),
-  @JsonProperty(TAGS) contentTags: List<String> = emptyList()
-) : FrameworkLessonBuilder(isTemplateBased, content, contentTags = contentTags) {
+  @JsonProperty(TAGS) contentTags: List<String> = emptyList(),
+  @JsonProperty(CUSTOM_NAME) customName: String? = null
+) : FrameworkLessonBuilder(isTemplateBased, content, contentTags = contentTags, customName = customName) {
   override fun createLesson(): FrameworkLesson {
     return super.createLesson().also { it.currentTaskIndex = currentTaskIndex }
   }

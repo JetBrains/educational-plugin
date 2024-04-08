@@ -23,6 +23,7 @@ import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeSection
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.getCourseMode
 import com.jetbrains.edu.learning.yaml.YamlMapper.MAPPER
+import com.jetbrains.edu.learning.yaml.YamlMapper.STUDENT_MAPPER
 import com.jetbrains.edu.learning.yaml.YamlTestCase
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.HYPERSKILL_TYPE_YAML
@@ -445,6 +446,21 @@ class YamlDeserializationTest : YamlTestCase() {
     check(lesson is FrameworkLesson)
     assertFalse(lesson.isTemplateBased)
   }
+
+  fun `test framework lesson with custom item names for student deserialization`() {
+    val customName = "This is custom name"
+    val yamlContent = """
+      |type: framework
+      |custom_name: $customName 
+      |content:
+      |- "Introduction Task"
+    """.trimMargin()
+    val lesson = STUDENT_MAPPER.deserializeLesson(yamlContent)
+    check(lesson is FrameworkLesson)
+    @Suppress("DEPRECATION")
+    assertEquals(customName, lesson.customPresentableName)
+  }
+
 
   fun `test output task`() {
     val yamlContent = """
