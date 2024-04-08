@@ -13,6 +13,7 @@ import com.intellij.ui.components.JBOptionButton
 import com.intellij.util.containers.headTail
 import com.jetbrains.edu.learning.actions.ActionWithProgressIcon
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import org.apache.commons.lang3.StringUtils
 import java.awt.*
 import java.awt.event.ActionEvent
 import javax.swing.AbstractAction
@@ -51,9 +52,11 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
     action: AnAction,
     isDefault: Boolean = false,
     isEnabled: Boolean = true,
-    optionalActions: List<AnAction>? = null
+    optionalActions: List<AnAction>? = null,
+    customButtonText: String? = null
   ) : this() {
-    val buttonPanel = createButtonPanel(project, action, isDefault = isDefault, isEnabled = isEnabled, optionalActions)
+    val buttonPanel =
+      createButtonPanel(project, action, isDefault = isDefault, isEnabled = isEnabled, optionalActions, customButtonText = customButtonText)
     add(buttonPanel)
   }
 
@@ -62,14 +65,20 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
     action: AnAction,
     isDefault: Boolean = false,
     isEnabled: Boolean = true,
-    optionalActions: List<AnAction>? = null
+    optionalActions: List<AnAction>? = null,
+    customButtonText: String? = null
   ): JPanel {
-    val button = createButton(action, isDefault = isDefault, isEnabled = isEnabled)
+    val button = createButton(action, isDefault = isDefault, isEnabled = isEnabled, customButtonText = customButtonText)
     val optionButton = createDefaultOptionalButton(optionalActions, project)
     return createButtonPanel(button, optionButton)
   }
 
-  private fun createButton(action: AnAction, isDefault: Boolean = false, isEnabled: Boolean = true): JButton {
+  private fun createButton(
+    action: AnAction,
+    isDefault: Boolean = false,
+    isEnabled: Boolean = true,
+    customButtonText: String? = null
+  ): JButton {
     val button = object : JButton(action.templatePresentation.text) {
       override fun isDefaultButton(): Boolean = isDefault
       override fun isEnabled(): Boolean = isEnabled
@@ -80,6 +89,7 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
         performAnAction(e, this, action)
       }
     }
+    customButtonText?.let { button.text = StringUtils.abbreviate(customButtonText, 25) }
     return button
   }
 

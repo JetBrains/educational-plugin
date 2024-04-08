@@ -31,6 +31,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.marketplace.actions.RateMarketplaceCourseAction
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.projectView.CourseViewUtils.isSolved
 import com.jetbrains.edu.learning.stepik.hyperskill.actions.DownloadDatasetAction
 import com.jetbrains.edu.learning.stepik.hyperskill.actions.RetryDataTaskAction
 import com.jetbrains.edu.learning.taskToolWindow.addActionLinks
@@ -168,7 +169,7 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
       is DataTask -> updateCheckButtonWrapper(task)
       is TheoryTask -> {}
       else -> {
-        val isDefault = !(task.isChangedOnFailed && task.status == CheckStatus.Failed)
+        val isDefault = !(task.isChangedOnFailed && task.status == CheckStatus.Failed || task.isSolved)
         val checkComponent = CheckPanelButtonComponent(CheckAction(task.getUICheckLabel()), isDefault = isDefault, isEnabled = isDefault)
         checkButtonWrapper.add(checkComponent, BorderLayout.WEST)
       }
@@ -228,9 +229,10 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
 
     val nextTask = NavigationUtils.nextTask(task)
     if (nextTask != null || (task.status == CheckStatus.Solved && NavigationUtils.isLastHyperskillProblem(task))) {
-      val isDefault = task is TheoryTask
+      val isDefault = task is TheoryTask || task.isSolved
       val action = ActionManager.getInstance().getAction(NextTaskAction.ACTION_ID)
-      val nextButton = CheckPanelButtonComponent(action = action, isDefault = isDefault)
+      val nextButtonText = nextTask?.let {  EduCoreBundle.message("button.next.task.text", nextTask.name) }
+      val nextButton = CheckPanelButtonComponent(action = action, isDefault = isDefault, customButtonText = nextButtonText)
       add(nextButton, BorderLayout.WEST)
     }
   }
