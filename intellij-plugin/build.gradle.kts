@@ -219,14 +219,13 @@ subprojects {
 }
 
 val buildNumber = System.getenv("BUILD_NUMBER") ?: "SNAPSHOT"
+version = "$pluginVersion-$platformVersion-$buildNumber"
 
 if (hasProp("setTCBuildNumber")) {
   // Specify build number at building plugin running configuration on TC
-  // with heading plugin version: e.g. `3.8.BUILD_NUMBER` instead of `BUILD_NUMBER`
-  println("##teamcity[buildNumber '$pluginVersion.$buildNumber']")
+  // with heading plugin version and platform version: e.g. `2024.4-2023.3-BUILD_NUMBER` instead of `BUILD_NUMBER`
+  println("##teamcity[buildNumber '$version']")
 }
-
-version = "$pluginVersion-$platformVersion-$buildNumber"
 
 intellij {
   pluginName = "JetBrainsAcademy"
