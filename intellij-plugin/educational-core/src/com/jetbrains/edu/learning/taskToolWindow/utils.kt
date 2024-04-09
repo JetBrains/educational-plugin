@@ -7,9 +7,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.LinkLabel
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.ui.ExperimentalUI
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.AnActionLink
@@ -189,33 +187,46 @@ fun replaceMediaForTheme(project: Project, task: Task, taskText: Document): Docu
 }
 
 private fun updateImageElementAccordingToUiTheme(element: Element, isDarkTheme: Boolean, task: Task, project: Project) {
-  // remove srcset attribute independently of the theme. Store its value
-  val srcsetValue = if (element.hasAttr(SRCSET_ATTRIBUTE)) element.attr(SRCSET_ATTRIBUTE) else null
-  if (srcsetValue != null) {
-    element.removeAttr(SRCSET_ATTRIBUTE)
+  val darkImageSrc = element.getDarkImageSrc(project, task)
+  // remove srcset attribute independently of the theme
+  element.removeAttr(SRCSET_ATTRIBUTE)
+
+  if (isDarkTheme && darkImageSrc != null) {
+    element.attr(SRC_ATTRIBUTE, darkImageSrc)
+  }
+}
+
+/**
+ * Returns an image source supposed to be used with dark theme
+ * or null if the corresponding source is not provided
+ */
+fun Element.getDarkImageSrc(project: Project, task: Task): String? {
+  require(tagName() == IMG_TAG) {
+    "Element should have `$IMG_TAG`. Found `${tagName()}`"
+  }
+  // first, try looking at data-dark-src attribute
+  val darkSrc = dataset()[DARK_SRC_CUSTOM_ATTRIBUTE]
+  if (!darkSrc.isNullOrEmpty()) {
+    return darkSrc
   }
 
-  if (!isDarkTheme) return
-
-  // first, try to use data-dark-src attribute
-  if (useDarkSrcCustomAttributeIfPresent(element)) return
-
-  // second, try to use srcset attribute
-  if (srcsetValue != null) {
-    element.attr(SRC_ATTRIBUTE, srcsetValue)
-    return
+  // second, try looking at srcset attribute
+  val srcsetValue = attr(SRCSET_ATTRIBUTE)
+  if (srcsetValue.isNotEmpty()) {
+    return srcsetValue
   }
 
-  //third, try to find a local image file with the _dark postfix
-  val srcAttr = element.attr(SRC_ATTRIBUTE)
-
+  // third, try to find a local image file with the _dark postfix
+  val srcAttr = attr(SRC_ATTRIBUTE)
   val fileNameWithoutExtension = FileUtilRt.getNameWithoutExtension(srcAttr)
   val fileExtension = FileUtilRt.getExtension(srcAttr)
-  val darkSrc = "$fileNameWithoutExtension$DARK_SUFFIX.$fileExtension"
-  val taskDir = task.getDir(project.courseDir)?.path
-  if (task.taskFiles.containsKey(darkSrc) || (taskDir != null && FileUtil.exists("$taskDir${VfsUtil.VFS_SEPARATOR_CHAR}$darkSrc"))) {
-    element.attr(SRC_ATTRIBUTE, darkSrc)
+  val darkImagePath = "$fileNameWithoutExtension$DARK_SUFFIX.$fileExtension"
+  val taskDir = task.getDir(project.courseDir)
+  if (darkImagePath in task.taskFiles || taskDir?.findChild(darkImagePath)?.exists() == true) {
+    return darkImagePath
   }
+
+  return null
 }
 
 /**
