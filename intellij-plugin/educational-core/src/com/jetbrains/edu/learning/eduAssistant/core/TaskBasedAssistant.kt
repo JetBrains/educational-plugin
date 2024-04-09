@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.eduAssistant.core
 
 import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.courseFormat.eduAssistant.AiAssistantState
@@ -110,64 +109,20 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
         assistantError = AssistantError.NoCompiledCode
       )
 
-      hintTimingLogger.info { "Retrieving the next step code hint prompt" }
-      val language = task.course.languageDisplayName.lowercase()
-      val nextStepCodeHintPrompt = buildNextStepCodeHintPrompt(taskAnalysis, codeStr, language)
-      logger.info {
-        """Code hint prompt:
-             |$nextStepCodeHintPrompt
-          """.trimMargin()
-      }
-
-      hintTimingLogger.info { "Retrieving the code hint" }
-      val project = task.project ?: error("Project was not found")
-      val languageId = task.course.languageById ?: error("Language was not found")
-      val codeHint = taskProcessor.extractRequiredFunctionsFromCodeHint(
-        getNextStepCodeHint(nextStepCodeHintPrompt, project, languageId),
-        state.taskFile
-      ).also {
-        logger.info {
-          """Code hint response (before applying inspections):
-            |$it
-          """.trimMargin()
-        }
-        hintTimingLogger.info { "Received the code hint" }
+      val nextStepCodeHintPrompt = generateCodeHintPrompt(null, task, taskAnalysis, codeStr)
+      val codeHint = generateCodeHint(task, state, nextStepCodeHintPrompt)
+      if (codeHint.isBlank()) {
+        return generateTextHintAndResponse(null, codeStr, task, nextStepCodeHintPrompt, state, taskAnalysis)
       }
       hintTimingLogger.info { "Retrieving the modified function name" }
       val functionName = try {
         taskProcessor.getModifiedFunctionNameInCodeHint(codeStr, codeHint)
       } catch (e: IllegalStateException) {
         logger.error { "Error occurred: ${e.stackTraceToString()}" }
-        return AssistantResponse(assistantError = AssistantError.EmptyDiff)
+        return generateTextHintAndResponse(null, codeStr, task, nextStepCodeHintPrompt, state, taskAnalysis)
       }
-      hintTimingLogger.info { "Retrieving the code hint from solution if it is a short function" }
-      val nextStepCodeFromSolution = taskProcessor.getShortFunctionFromSolutionIfRecommended(codeHint, project, languageId, functionName, state.taskFile)
-      if (nextStepCodeFromSolution != null) {
-        logger.info {
-          """Code hint from solution:
-             |$nextStepCodeFromSolution
-          """.trimMargin()
-        }
-
-        generateTextHintAndResponse(nextStepCodeFromSolution, codeStr, task, nextStepCodeHintPrompt, state)
-      } else {
-        hintTimingLogger.info { "Retrieving the function psi from student code" }
-        val functionFromCode = taskProcessor.getFunctionPsiWithName(codeStr, functionName, project, languageId)
-        hintTimingLogger.info { "Retrieving the function psi from code hint" }
-        val functionFromCodeHint = taskProcessor.getFunctionPsiWithName(codeHint, functionName, project, languageId)
-        hintTimingLogger.info { "Reducing the code hint" }
-        val reducedCodeHint = taskProcessor.reduceChangesInCodeHint(runReadAction { functionFromCode?.copy () }, runReadAction { functionFromCodeHint?.copy() }, project, languageId)
-        hintTimingLogger.info { "Applying inspections to the code hint" }
-        //TODO: investigate wrong cases
-        val nextStepCodeHint = applyInspections(reducedCodeHint, project, languageId)
-        logger.info {
-          """Final code hint:
-             |$nextStepCodeHint
-          """.trimMargin()
-        }
-
-        generateTextHintAndResponse(nextStepCodeHint, runReadAction { functionFromCode?.text } ?: "", task, nextStepCodeHintPrompt, state)
-      }
+      val enhancedCodeHint = getEnhancedCodeHint(functionName, codeStr, codeHint, task, state)
+      generateTextHintAndResponse(enhancedCodeHint, codeStr, task, nextStepCodeHintPrompt, state, taskAnalysis)
     }
     // TODO: Handle more exceptions with AiPlatformException
     catch (e: AiPlatformException) {
@@ -180,9 +135,78 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
     }
   }
 
-  private suspend fun generateTextHintAndResponse(nextStepCodeHint: String, codeStr: String, task: Task, nextStepCodeHintPrompt: String, state: EduState): AssistantResponse {
+  private fun getEnhancedCodeHint(functionName: String, codeStr: String, codeHint: String, task: Task, state: EduState): String {
+    val project = task.project ?: error("Project was not found")
+    val languageId = task.course.languageById ?: error("Language was not found")
+    hintTimingLogger.info { "Retrieving the code hint from solution if it is a short function" }
+    val nextStepCodeFromSolution = taskProcessor.getShortFunctionFromSolutionIfRecommended(codeHint, project, languageId, functionName, state.taskFile)
+    if (nextStepCodeFromSolution != null) {
+      logger.info {
+        """Code hint from solution:
+             |$nextStepCodeFromSolution
+          """.trimMargin()
+      }
+      return nextStepCodeFromSolution
+    } else {
+      hintTimingLogger.info { "Retrieving the function psi from student code" }
+      val functionFromCode = taskProcessor.getFunctionPsiWithName(codeStr, functionName, project, languageId)
+      hintTimingLogger.info { "Retrieving the function psi from code hint" }
+      val functionFromCodeHint = taskProcessor.getFunctionPsiWithName(codeHint, functionName, project, languageId)
+      hintTimingLogger.info { "Reducing the code hint" }
+      val reducedCodeHint = taskProcessor.reduceChangesInCodeHint(functionFromCode?.copy(), functionFromCodeHint?.copy(), project, languageId)
+      hintTimingLogger.info { "Applying inspections to the code hint" }
+      //TODO: investigate wrong cases
+      val nextStepCodeHint = applyInspections(reducedCodeHint, project, languageId)
+      logger.info {
+        """Final code hint:
+             |$nextStepCodeHint
+          """.trimMargin()
+      }
+      return nextStepCodeHint
+    }
+  }
+
+  private fun generateCodeHintPrompt(nextStepTextHint: String?, task: Task, taskAnalysis: String, codeStr: String): String {
+    hintTimingLogger.info { "Retrieving the next step code hint prompt" }
+    val language = task.course.languageDisplayName.lowercase()
+    val nextStepCodeHintPrompt = nextStepTextHint?.let {
+      buildNextStepCodeHintPromptFromTextHint(it, codeStr, language)
+    } ?: run {
+      buildNextStepCodeHintPrompt(taskAnalysis, codeStr, language)
+    }
+    logger.info {
+      """Code hint prompt:
+             |$nextStepCodeHintPrompt
+          """.trimMargin()
+    }
+    return nextStepCodeHintPrompt
+  }
+
+  private suspend fun generateCodeHint(task: Task, state: EduState, nextStepCodeHintPrompt: String): String {
+    hintTimingLogger.info { "Retrieving the code hint" }
+    val project = task.project ?: error("Project was not found")
+    val languageId = task.course.languageById ?: error("Language was not found")
+    val codeHint = taskProcessor.extractRequiredFunctionsFromCodeHint(
+      getNextStepCodeHint(nextStepCodeHintPrompt, project, languageId),
+      state.taskFile
+    ).also {
+      logger.info {
+        """Code hint response (before applying inspections):
+            |$it
+          """.trimMargin()
+      }
+      hintTimingLogger.info { "Received the code hint" }
+    }
+    return codeHint
+  }
+
+  private suspend fun generateTextHintAndResponse(codeHint: String?, codeStr: String, task: Task, codeHintPrompt: String, state: EduState, taskAnalysis: String): AssistantResponse {
     hintTimingLogger.info { "Retrieving the text hint prompt" }
-    val nextStepTextHintPrompt = buildNextStepTextHintPrompt(nextStepCodeHint, codeStr)
+    val nextStepTextHintPrompt = codeHint?.let {
+      buildNextStepTextHintPrompt(it, codeStr)
+    } ?: run {
+      buildNextStepTextHintPromptIfNoCodeHintIsGenerated(taskAnalysis, codeStr)
+    }
     logger.info {
       """Text hint prompt:
           |$nextStepTextHintPrompt
@@ -204,12 +228,26 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
       }
     }
 
+    var nextStepCodeHintPrompt = codeHintPrompt
+    var nextStepCodeHint = codeHint
+    if (codeHint == null) {
+      nextStepCodeHintPrompt = generateCodeHintPrompt(nextStepTextHint, task, taskAnalysis, codeStr)
+      val generatedCodeHint = generateCodeHint(task, state, nextStepCodeHintPrompt)
+      try {
+        hintTimingLogger.info { "Retrieving the modified function name" }
+        val functionName = taskProcessor.getModifiedFunctionNameInCodeHint(codeStr, generatedCodeHint)
+        nextStepCodeHint = getEnhancedCodeHint(functionName, codeStr, generatedCodeHint, task, state)
+      } catch (e: IllegalStateException) {
+        logger.error { "Error occurred: ${e.stackTraceToString()}" }
+      }
+    }
+
     val prompts = mapOf(
       "taskAnalysisPrompt" to (taskAnalysisPrompt ?: error("taskAnalysisPrompt was not initialized!")),
       "nextStepTextHintPrompt" to nextStepTextHintPrompt,
       "nextStepCodeHintPrompt" to nextStepCodeHintPrompt
     )
-    return AssistantResponse(nextStepTextHint, taskProcessor.applyCodeHint(nextStepCodeHint, state.taskFile), prompts).also {
+    return AssistantResponse(nextStepTextHint, nextStepCodeHint?.let { taskProcessor.applyCodeHint(it, state.taskFile) }, prompts).also {
       hintTimingLogger.info { "Completed getHint function for task-id: ${task.id}" }
     }
   }
@@ -256,6 +294,23 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
     Avoid explaining why the modifications are needed.
   """.trimIndent()
 
+  private fun buildNextStepTextHintPromptIfNoCodeHintIsGenerated(taskAnalysis: String, codeStr: String) = """
+    Based on a sequence of steps to solve a coding problem, determine the next step that must be taken to complete the task.
+    Here is the list of steps that solves the problem and the code, all delimited with <>:
+    
+    How to solve the task:
+    <$taskAnalysis>
+    
+    The code:
+    <$codeStr>
+    
+    ${buildTaskErrorInformation()}
+    
+    Respond with a brief textual instruction in imperative form of what to do next in the problem-solving sequence.
+    The response should not provide the complete solution, but instead focus on the next concise step that needs to be taken to make progress.
+    Don't use the number of step in the response. Do not write any code, except names of functions that can be used in the solution.
+  """.trimIndent()
+
   private fun buildTaskErrorInformation() = if (taskProcessor.taskHasErrors()) {
     """
       The present code does not pass test <${taskProcessor.getFailedTestName()}>, the error message is <${taskProcessor.getFailureMessage()}>.
@@ -287,6 +342,28 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
     
     The list of steps that solves the task:
     <$taskAnalysis>
+    
+    The student's code:
+    <$codeStr>
+    
+    ${buildTaskErrorInformation()}
+    
+    Write the response in the following format:
+    Response: <non-code text>
+    Code: ```$language
+    <code>
+    ```
+    
+    The code response should include the entire function or code block with the new changes incorporated into it. 
+  """.trimIndent()
+
+  private fun buildNextStepCodeHintPromptFromTextHint(
+    nextStepTextHint: String, codeStr: String, language: String
+  ) = """
+    Implement the next step to solve the coding task in the present code.
+    Here is the description of the next step and the code, all delimited with <>:
+    
+    Next step: <$nextStepTextHint>
     
     The student's code:
     <$codeStr>
