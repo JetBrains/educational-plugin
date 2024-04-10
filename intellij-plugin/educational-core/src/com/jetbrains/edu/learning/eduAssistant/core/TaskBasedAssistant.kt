@@ -110,19 +110,8 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
       )
 
       val nextStepCodeHintPrompt = generateCodeHintPrompt(null, task, taskAnalysis, codeStr)
-      val codeHint = generateCodeHint(task, state, nextStepCodeHintPrompt)
-      if (codeHint.isBlank()) {
-        return generateTextHintAndResponse(null, codeStr, task, nextStepCodeHintPrompt, state, taskAnalysis)
-      }
-      hintTimingLogger.info { "Retrieving the modified function name" }
-      val functionName = try {
-        taskProcessor.getModifiedFunctionNameInCodeHint(codeStr, codeHint)
-      } catch (e: IllegalStateException) {
-        logger.error { "Error occurred: ${e.stackTraceToString()}" }
-        return generateTextHintAndResponse(null, codeStr, task, nextStepCodeHintPrompt, state, taskAnalysis)
-      }
-      val enhancedCodeHint = getEnhancedCodeHint(functionName, codeStr, codeHint, task, state)
-      generateTextHintAndResponse(enhancedCodeHint, codeStr, task, nextStepCodeHintPrompt, state, taskAnalysis)
+      val codeHint = generateCodeHint(task, state, nextStepCodeHintPrompt, codeStr)
+      return generateFinalHintsAndResponse(codeHint, codeStr, task, nextStepCodeHintPrompt, state, taskAnalysis)
     }
     // TODO: Handle more exceptions with AiPlatformException
     catch (e: AiPlatformException) {
@@ -182,7 +171,7 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
     return nextStepCodeHintPrompt
   }
 
-  private suspend fun generateCodeHint(task: Task, state: EduState, nextStepCodeHintPrompt: String): String {
+  private suspend fun generateCodeHint(task: Task, state: EduState, nextStepCodeHintPrompt: String, codeStr: String): String? {
     hintTimingLogger.info { "Retrieving the code hint" }
     val project = task.project ?: error("Project was not found")
     val languageId = task.course.languageById ?: error("Language was not found")
@@ -197,14 +186,25 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
       }
       hintTimingLogger.info { "Received the code hint" }
     }
-    return codeHint
+    if (codeHint.isBlank()) {
+      return null
+    }
+    try {
+      hintTimingLogger.info { "Retrieving the modified function name" }
+      val functionName = taskProcessor.getModifiedFunctionNameInCodeHint(codeStr, codeHint)
+      return getEnhancedCodeHint(functionName, codeStr, codeHint, task, state)
+    } catch (e: IllegalStateException) {
+      logger.error { "Error occurred: ${e.stackTraceToString()}" }
+      return null
+    }
   }
 
-  private suspend fun generateTextHintAndResponse(codeHint: String?, codeStr: String, task: Task, codeHintPrompt: String, state: EduState, taskAnalysis: String): AssistantResponse {
+  private suspend fun generateFinalHintsAndResponse(codeHint: String?, codeStr: String, task: Task, codeHintPrompt: String, state: EduState, taskAnalysis: String): AssistantResponse {
     hintTimingLogger.info { "Retrieving the text hint prompt" }
     val nextStepTextHintPrompt = codeHint?.let {
       buildNextStepTextHintPrompt(it, codeStr)
     } ?: run {
+      logger.info { "The code hint was not generated, so the text hint is generated first" }
       buildNextStepTextHintPromptIfNoCodeHintIsGenerated(taskAnalysis, codeStr)
     }
     logger.info {
@@ -228,18 +228,12 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
       }
     }
 
-    var nextStepCodeHintPrompt = codeHintPrompt
-    var nextStepCodeHint = codeHint
-    if (codeHint == null) {
-      nextStepCodeHintPrompt = generateCodeHintPrompt(nextStepTextHint, task, taskAnalysis, codeStr)
-      val generatedCodeHint = generateCodeHint(task, state, nextStepCodeHintPrompt)
-      try {
-        hintTimingLogger.info { "Retrieving the modified function name" }
-        val functionName = taskProcessor.getModifiedFunctionNameInCodeHint(codeStr, generatedCodeHint)
-        nextStepCodeHint = getEnhancedCodeHint(functionName, codeStr, generatedCodeHint, task, state)
-      } catch (e: IllegalStateException) {
-        logger.error { "Error occurred: ${e.stackTraceToString()}" }
-      }
+    val nextStepCodeHintPrompt = codeHint?.let { codeHintPrompt } ?: run {
+      generateCodeHintPrompt(nextStepTextHint, task, taskAnalysis, codeStr)
+    }
+    val nextStepCodeHint = codeHint ?: run {
+      logger.info { "The code hint is generated for the second time" }
+      generateCodeHint(task, state, nextStepCodeHintPrompt, codeStr)
     }
 
     val prompts = mapOf(
@@ -332,9 +326,26 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
     ""
   }
 
+  private fun formatCodeResponsePrompt(description: String, codeStr: String, language: String) = """
+    $description
+    
+    The student's code:
+    <$codeStr>
+    
+    ${buildTaskErrorInformation()}
+    
+    Write the response in the following format:
+    Response: <non-code text>
+    Code: ```$language
+    <code>
+    ```
+    
+    The code response should include the entire function or code block with the new changes incorporated into it.
+  """.trimIndent()
+
   private fun buildNextStepCodeHintPrompt(
     taskAnalysis: String, codeStr: String, language: String
-  ) = """
+  ) = formatCodeResponsePrompt("""
     Generate a modified version of the provided student's code that incorporates the next step towards the solution based on the provided solution steps. 
     The modified code should not be a complete solution but should represent the next logical step that the student needs to take to solve the task. 
     Try to maintain the original structure of the student's code and focus especially on addressing common errors, while guiding the student towards the correct implementation.
@@ -342,42 +353,16 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
     
     The list of steps that solves the task:
     <$taskAnalysis>
-    
-    The student's code:
-    <$codeStr>
-    
-    ${buildTaskErrorInformation()}
-    
-    Write the response in the following format:
-    Response: <non-code text>
-    Code: ```$language
-    <code>
-    ```
-    
-    The code response should include the entire function or code block with the new changes incorporated into it. 
-  """.trimIndent()
+  """.trimIndent(), codeStr, language)
 
   private fun buildNextStepCodeHintPromptFromTextHint(
     nextStepTextHint: String, codeStr: String, language: String
-  ) = """
+  ) = formatCodeResponsePrompt("""
     Implement the next step to solve the coding task in the present code.
     Here is the description of the next step and the code, all delimited with <>:
     
     Next step: <$nextStepTextHint>
-    
-    The student's code:
-    <$codeStr>
-    
-    ${buildTaskErrorInformation()}
-    
-    Write the response in the following format:
-    Response: <non-code text>
-    Code: ```$language
-    <code>
-    ```
-    
-    The code response should include the entire function or code block with the new changes incorporated into it. 
-  """.trimIndent()
+  """.trimIndent(), codeStr, language)
 
   private suspend fun getNextStepCodeHint(nextStepCodeHintPrompt: String, project: Project, language: Language, maxAttempts: Int = 3): String {
     return withContext(Dispatchers.Default) {
