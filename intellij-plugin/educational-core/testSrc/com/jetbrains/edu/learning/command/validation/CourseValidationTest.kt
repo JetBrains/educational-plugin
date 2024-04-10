@@ -164,7 +164,79 @@ class CourseValidationTest : EduTestCase() {
               - course://lesson1/valid%20links/Task3.txt: failed
               - psi_element://foo.baz: failed
               - tool_window://Task1: failed
-              - settings://Educational2: failed   
+              - settings://Educational2: failed
+    """)
+  }
+
+  fun `test image link validation`() {
+    val helper = MockWebServerHelper(testRootDisposable)
+
+    val course = courseWithFiles {
+      lesson("lesson1") {
+        eduTask("valid links", taskDescription = """
+          ![img file link](images/md-image.png)
+          ![img http link](${helper.baseUrl}valid-md-image.png)
+          <img src="images/image-1.png" srcset="images/image-srcset.png"/>
+          <img src="images/image-2.png" data-dark-src="images/image-dark-src.png"/>
+          <img src="${helper.baseUrl}valid-src-img-1.png" srcset="${helper.baseUrl}valid-srcset-img.png"/>
+          <img src="${helper.baseUrl}valid-src-img-2.png" data-dark-src="${helper.baseUrl}valid-dark-src-img.png"/>
+        """.trimIndent(), taskDescriptionFormat = DescriptionFormat.MD) {
+          taskFile("Task1.txt")
+          taskFile("images/md-image.png")
+          taskFile("images/image-1.png")
+          taskFile("images/image-2.png")
+          taskFile("images/image-srcset.png")
+          taskFile("images/image-dark-src.png")
+        }
+        eduTask("invalid links", taskDescription = """
+          ![img file link](images/md-image.png)
+          ![img http link](${helper.baseUrl}invalid-md-image.png)
+          <img src="images/image-1.png" srcset="images/image-srcset.png"/>
+          <img src="images/image-2.png" data-dark-src="images/image-dark-src.png"/>
+          <img src="${helper.baseUrl}invalid-src-img-1.png" srcset="${helper.baseUrl}invalid-srcset-img.png"/>
+          <img src="${helper.baseUrl}invalid-src-img-2.png" data-dark-src="${helper.baseUrl}invalid-dark-src-img.png"/>
+        """.trimIndent(), taskDescriptionFormat = DescriptionFormat.MD) {
+          taskFile("Task2.txt")
+        }
+      }
+    }
+
+    registerTaskDescriptionToolWindow()
+    helper.addResponseHandler(testRootDisposable) { _, path ->
+      when {
+        path.startsWith("/invalid") -> MockResponseFactory.notFound()
+        path.startsWith("/valid") -> MockResponseFactory.ok()
+        else -> MockResponse().setResponseCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
+      }
+    }
+
+    doTest(course, validateTests = false, validateLinks = true, """
+      - Test Course:
+        - lesson1:
+          - valid links:
+            - Task description links:
+              - images/md-image.png: success
+              - ${helper.baseUrl}valid-md-image.png: success
+              - images/image-1.png: success
+              - images/image-srcset.png: success
+              - images/image-2.png: success
+              - images/image-dark-src.png: success
+              - ${helper.baseUrl}valid-src-img-1.png: success
+              - ${helper.baseUrl}valid-srcset-img.png: success
+              - ${helper.baseUrl}valid-src-img-2.png: success
+              - ${helper.baseUrl}valid-dark-src-img.png: success
+          - invalid links:
+            - Task description links:
+              - images/md-image.png: failed
+              - ${helper.baseUrl}invalid-md-image.png: failed
+              - images/image-1.png: failed
+              - images/image-srcset.png: failed
+              - images/image-2.png: failed
+              - images/image-dark-src.png: failed
+              - ${helper.baseUrl}invalid-src-img-1.png: failed
+              - ${helper.baseUrl}invalid-srcset-img.png: failed
+              - ${helper.baseUrl}invalid-src-img-2.png: failed
+              - ${helper.baseUrl}invalid-dark-src-img.png: failed
     """)
   }
 

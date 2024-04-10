@@ -8,9 +8,9 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
-class FileLink(link: String) : TaskDescriptionLink<VirtualFile, VirtualFile?>(link, EduCounterUsageCollector.LinkType.FILE) {
+open class FileLink(link: String) : TaskDescriptionLink<VirtualFile, VirtualFile?>(link, EduCounterUsageCollector.LinkType.FILE) {
   override fun resolve(project: Project): VirtualFile? {
-    return project.courseDir.findFileByRelativePath(linkPath)
+    return rootDir(project)?.findFileByRelativePath(linkPath)
   }
 
   override fun open(project: Project, file: VirtualFile) {
@@ -20,7 +20,17 @@ class FileLink(link: String) : TaskDescriptionLink<VirtualFile, VirtualFile?>(li
   }
 
   override suspend fun validate(project: Project, file: VirtualFile?): String? {
+    if (file != null) return null
+
     // TODO: validate paths in framework lessons where course have different structure in educator and student modes
-    return if (file == null) "Failed to find a file by `$linkPath` path" else null
+    val rootDir = rootDir(project)
+    return if (rootDir == null) {
+      "Failed to find a file by `$linkPath` path"
+    }
+    else {
+      "Failed to find a file by `$linkPath` path in `${rootDir.path}` directory"
+    }
   }
+
+  protected open fun rootDir(project: Project): VirtualFile? = project.courseDir
 }
