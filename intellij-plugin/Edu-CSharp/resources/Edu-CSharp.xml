@@ -1,0 +1,6 @@
+<idea-plugin package="com.jetbrains.edu.csharp">
+  <extensions defaultExtensionNs="Educational">
+    <configurator implementationClass="com.jetbrains.edu.csharp.CSharpConfigurator" language="C#"
+                  displayName="C#"/>
+  </extensions>
+</idea-plugin>

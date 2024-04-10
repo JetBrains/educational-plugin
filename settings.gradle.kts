@@ -26,6 +26,7 @@ include(
   "intellij-plugin:Edu-JavaScript",
   "intellij-plugin:Edu-Rust",
   "intellij-plugin:Edu-Cpp",
+  "intellij-plugin:Edu-CSharp",
   "intellij-plugin:Edu-Go",
   "intellij-plugin:Edu-Php",
   "intellij-plugin:Edu-Shell",

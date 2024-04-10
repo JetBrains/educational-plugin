@@ -18,14 +18,6 @@ plugins {
   alias(libs.plugins.testRetryPlugin)
 }
 
-buildscript {
-  repositories {
-    maven { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
-  }
-}
-
-
-
 idea {
   project {
     jdkName = "17"

@@ -56,7 +56,6 @@ val kotlinPlugin = "org.jetbrains.kotlin"
 val scalaPlugin: String by project
 val rustPlugin: String by project
 val tomlPlugin = "org.toml.lang"
-val tomlPluginRider: String by project
 val goPlugin: String by project
 val sqlPlugin = "com.intellij.database"
 val shellScriptPlugin = "com.jetbrains.sh"
@@ -104,6 +103,10 @@ val cppPlugins = listOfNotNull(
   "org.jetbrains.plugins.clion.test.google",
   "org.jetbrains.plugins.clion.test.catch"
 )
+
+//val riderPlugins = listOf(
+//  "com.intellij.modules.rider"
+//)
 
 val pythonPlugins = listOfNotNull(
   pythonPlugin,
@@ -205,18 +208,6 @@ allprojects {
   }
 }
 
-// Specify path for loading Rider
-buildscript {
-  // https://search.maven.org/artifact/com.jetbrains.rd/rd-gen
-  dependencies {
-    classpath("com.jetbrains.rd:rd-gen:2023.3.0")
-  }
-}
-
-apply {
-  plugin("com.jetbrains.rdgen")
-}
-
 subprojects {
   tasks {
     runIde { enabled = false }
@@ -300,6 +291,7 @@ dependencies {
   implementation(project("Edu-Go"))
   implementation(project("Edu-Php"))
   implementation(project("Edu-Shell"))
+  implementation(project("Edu-CSharp"))
   implementation(project("sql"))
   implementation(project("sql:sql-jvm"))
   implementation(project("github"))
@@ -649,7 +641,7 @@ project("Edu-Python") {
       // needed only for tests, actually
       platformImagesPlugin,
       // needed to load `intellij.python.community.impl` module of Python plugin in tests
-      if (isRiderIDE) tomlPluginRider else tomlPlugin
+      tomlPlugin
     )
     plugins = pluginList
   }
@@ -665,7 +657,7 @@ project("Edu-Python") {
 
 project("Edu-Python:Idea") {
   intellij {
-    if (!isJvmCenteredIDE || isStudioIDE || isRiderIDE) {
+    if (!isJvmCenteredIDE || isStudioIDE) {
       version = ideaVersion
     }
 
@@ -686,7 +678,7 @@ project("Edu-Python:Idea") {
 
 project("Edu-Python:PyCharm") {
   intellij {
-    if (isStudioIDE || isRiderIDE) {
+    if (isStudioIDE) {
       version = ideaVersion
     }
     plugins = pythonPlugins
@@ -770,6 +762,17 @@ project("Edu-Shell") {
     plugins = listOf(shellScriptPlugin)
   }
 
+  dependencies {
+    implementation(project(":intellij-plugin:educational-core"))
+
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+  }
+}
+
+project("Edu-CSharp") {
+  intellij {
+    version = riderVersion
+  }
   dependencies {
     implementation(project(":intellij-plugin:educational-core"))
 
