@@ -6,7 +6,6 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
-@Suppress("Unused")
 val kotlinOnboardingMockCourse = course(language = KotlinLanguage.INSTANCE) {
   frameworkLesson(name = "TheFirstDateWithProgramming") {
     addTheoryTask(name = "Introduction")
@@ -92,7 +91,12 @@ private fun LessonBuilder<FrameworkLesson>.addTheoryTask(name: String) {
   val lessonName = this.lesson.name
   val pathToTheoryFile = "KotlinOnboardingData/$lessonName/theory/$name.md"
   val theoryContent = getFileContentFromResources(pathToTheoryFile)
-  theoryTask(name = name, taskDescription = theoryContent, taskDescriptionFormat = DescriptionFormat.MD)
+  // The contents of the file are not important, but the file must be added for correct initialisation
+  val pathToTaskCode = "KotlinOnboardingData/theory/Main.kt"
+  val taskCode = getFileContentFromResources(pathToTaskCode)
+  theoryTask(name = name, taskDescription = theoryContent, taskDescriptionFormat = DescriptionFormat.MD) {
+    kotlinTaskFile(name = "src/Main.kt", text = taskCode, visible = true)
+  }
 }
 
 private fun LessonBuilder<FrameworkLesson>.addEduTask(name: String, hiddenFiles: List<String>) {
@@ -101,12 +105,16 @@ private fun LessonBuilder<FrameworkLesson>.addEduTask(name: String, hiddenFiles:
   val taskDescription = getFileContentFromResources(pathToTaskDescription)
   val pathToTaskCode = "KotlinOnboardingData/$lessonName/tasks/$name/Main.kt"
   val taskCode = getFileContentFromResources(pathToTaskCode)
+  // The contents of the tests are not important, but the file must be added to correctly run the checks from the tests
+  val pathToTestCode = "KotlinOnboardingData/test/Test.kt"
+  val testCode = getFileContentFromResources(pathToTestCode)
   eduTask(name = name, taskDescription = taskDescription, taskDescriptionFormat = DescriptionFormat.MD) {
-    kotlinTaskFile(name = "Main.kt", text = taskCode, visible = true)
+    kotlinTaskFile(name = "src/Main.kt", text = taskCode, visible = true)
     hiddenFiles.forEach { hiddenFileName ->
       val pathToFile = "KotlinOnboardingData/$lessonName/hidden/$hiddenFileName"
       val fileContent = getFileContentFromResources(pathToFile)
-      kotlinTaskFile(name = hiddenFileName, text = fileContent, visible = false)
+      kotlinTaskFile(name = "src/$hiddenFileName", text = fileContent, visible = false)
     }
+    kotlinTaskFile(name = "test/Test.kt", text = testCode, visible = false)
   }
 }

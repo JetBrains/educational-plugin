@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.eduAssistant.core
 
 import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.courseFormat.eduAssistant.AiAssistantState
@@ -155,7 +156,7 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
         hintTimingLogger.info { "Retrieving the function psi from code hint" }
         val functionFromCodeHint = taskProcessor.getFunctionPsiWithName(codeHint, functionName, project, languageId)
         hintTimingLogger.info { "Reducing the code hint" }
-        val reducedCodeHint = taskProcessor.reduceChangesInCodeHint(functionFromCode?.copy(), functionFromCodeHint?.copy(), project, languageId)
+        val reducedCodeHint = taskProcessor.reduceChangesInCodeHint(runReadAction { functionFromCode?.copy () }, runReadAction { functionFromCodeHint?.copy() }, project, languageId)
         hintTimingLogger.info { "Applying inspections to the code hint" }
         //TODO: investigate wrong cases
         val nextStepCodeHint = applyInspections(reducedCodeHint, project, languageId)
@@ -165,7 +166,7 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
           """.trimMargin()
         }
 
-        generateTextHintAndResponse(nextStepCodeHint, functionFromCode?.text ?: "", task, nextStepCodeHintPrompt, state)
+        generateTextHintAndResponse(nextStepCodeHint, runReadAction { functionFromCode?.text } ?: "", task, nextStepCodeHintPrompt, state)
       }
     }
     // TODO: Handle more exceptions with AiPlatformException

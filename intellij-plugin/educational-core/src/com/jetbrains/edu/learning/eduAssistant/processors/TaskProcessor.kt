@@ -165,7 +165,7 @@ class TaskProcessor(val task: Task) {
   fun reduceChangesInCodeHint(functionPsi: PsiElement?, modifiedFunctionPsi: PsiElement?, project: Project, language: Language) =
     modifiedFunctionPsi?.let {
       FunctionDiffReducer.reduceDiffFunctions(functionPsi, modifiedFunctionPsi, project, language)
-    }?.text ?: ""
+    }?.let { runReadAction { it.text } } ?: ""
 
   fun applyCodeHint(codeHint: String, taskFile: TaskFile): String? {
     val project = task.project ?: return null

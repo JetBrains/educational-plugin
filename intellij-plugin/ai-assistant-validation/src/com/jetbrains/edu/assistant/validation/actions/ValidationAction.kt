@@ -21,18 +21,17 @@ import com.intellij.openapi.progress.Task.Backgroundable
 import com.jetbrains.edu.assistant.validation.accuracy.AccuracyCalculator
 import com.jetbrains.edu.assistant.validation.util.StudentSolutionRecord
 import com.jetbrains.edu.assistant.validation.util.downloadSolution
+import com.jetbrains.edu.assistant.validation.util.parseCsvFile
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import java.time.LocalDateTime
 import org.apache.commons.csv.CSVFormat
-import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVRecord
 import org.jetbrains.kotlinx.dataframe.*
 import org.jetbrains.kotlinx.dataframe.api.forEach
 import java.io.File
 import java.io.FileWriter
-import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.*
 
@@ -159,16 +158,6 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
       indicator.text = EduAndroidAiAssistantValidationBundle.message("action.validation.indicator.results")
 
       processFinished()
-    }
-
-    private fun <K> parseCsvFile(path: Path?, recordConverter: (CSVRecord) -> K): List<K>? {
-      if (path != null && path.exists()) {
-        Files.newBufferedReader(path).use { reader ->
-          val csvParser = CSVParser(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader())
-          return csvParser.records.map(recordConverter)
-        }
-      }
-      return null
     }
 
     private fun List<StudentSolutionRecord>.getSolutionListForTask(lessonName: String, taskName: String) =

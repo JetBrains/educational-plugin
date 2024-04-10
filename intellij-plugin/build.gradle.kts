@@ -614,16 +614,6 @@ project("Edu-Kotlin") {
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
     testImplementation(project(":intellij-plugin:jvm-core", "testOutput"))
   }
-  tasks.test {
-    useJUnit {
-      excludeCategories("com.jetbrains.edu.kotlin.eduAssistant.AiAutoQualityCodeTests")
-    }
-  }
-  tasks.register<Test>("categorySpecificTest") {
-    useJUnit {
-      includeCategories("com.jetbrains.edu.kotlin.eduAssistant.AiAutoQualityCodeTests")
-    }
-  }
 }
 
 project("Edu-Scala") {
@@ -855,23 +845,19 @@ project("ai-assistant-validation") {
     implementation(project(":intellij-plugin:Edu-Kotlin"))
     testImplementation(project(":intellij-plugin:Edu-Kotlin", "testOutput"))
   }
-}
 
-project("ai-assistant-validation") {
-  intellij {
-    if (!isJvmCenteredIDE) {
-      version = ideaVersion
+  tasks.test {
+    useJUnit {
+      excludeCategories("com.jetbrains.edu.assistant.validation.test.AiAutoQualityCodeTests")
     }
-    plugins = kotlinPlugins
   }
-
-  dependencies {
-    implementation(project(":intellij-plugin:educational-core"))
-    implementation(project(":intellij-plugin:jvm-core"))
-    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-    testImplementation(project(":intellij-plugin:jvm-core", "testOutput"))
-    implementation(project(":intellij-plugin:Edu-Kotlin"))
-    testImplementation(project(":intellij-plugin:Edu-Kotlin", "testOutput"))
+  tasks.register<Test>("categorySpecificTest") {
+    if (hasProp("maxSolutions")) {
+      jvmArgs("-Dmax.solutions.testing=${prop("maxSolutions")}")
+    }
+    useJUnit {
+      includeCategories("com.jetbrains.edu.assistant.validation.test.AiAutoQualityCodeTests")
+    }
   }
 }
 

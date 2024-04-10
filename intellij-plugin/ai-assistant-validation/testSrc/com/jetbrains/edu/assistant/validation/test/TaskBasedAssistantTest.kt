@@ -1,33 +1,41 @@
-package com.jetbrains.edu.kotlin.eduAssistant
+package com.jetbrains.edu.assistant.validation.test
 
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.lang.Language
-import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFileFactory
-import com.jetbrains.edu.jvm.slow.checker.JdkCheckerTestBase
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.getText
-import com.jetbrains.edu.learning.eduAssistant.core.AssistantResponse
+import com.jetbrains.edu.learning.courseFormat.ext.languageById
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.eduAssistant.core.TaskBasedAssistant
+import com.jetbrains.edu.learning.eduAssistant.inspection.InspectionProvider
 import com.jetbrains.edu.learning.eduAssistant.inspection.getInspectionsWithIssues
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 import com.jetbrains.edu.learning.eduState
-import com.jetbrains.edu.learning.findTask
-import com.jetbrains.edu.learning.navigation.NavigationUtils
-import com.jetbrains.edu.learning.runInBackground
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.experimental.categories.Category
 import org.junit.runners.Parameterized
 import kotlin.test.assertNotNull
 
-@RunWith(Parameterized::class)
-abstract class BaseAssistantTest(private val lesson: String, private val task: String) : JdkCheckerTestBase() {
-  protected abstract val course: Course
-  protected abstract val language: Language
-  protected abstract fun getInspections(language: Language): List<LocalInspectionTool>
+@Category(AiAutoQualityCodeTests::class)
+class TaskBasedAssistantTest(lesson: String, task: String) : ExternalResourcesTest(lesson, task) {
+  override val course: Course = kotlinOnboardingMockCourse
+  private val language: Language = kotlinOnboardingMockCourse.languageById ?: error("Language could not be determined")
+
+  companion object {
+    @JvmStatic
+    @Parameterized.Parameters
+    fun data() = kotlinOnboardingMockCourse.lessons.flatMap { lesson ->
+      lesson.taskList.filterIsInstance<EduTask>().map { task ->
+        arrayOf(lesson.name, task.name)
+      }
+    }
+  }
+
+  private fun getInspections(language: Language): List<LocalInspectionTool> {
+    return InspectionProvider.getInspections(language)
+  }
 
   private fun getCodeIssues(code: String?, fileName: String, project: Project, language: Language, inspections: List<LocalInspectionTool>): List<String>? {
     return code?.let {
@@ -37,27 +45,19 @@ abstract class BaseAssistantTest(private val lesson: String, private val task: S
 
   @Test
   fun testGetHints() {
-    val task = course.findTask(lessonName = lesson, taskName = task)
-    NavigationUtils.navigateToTask(project, task)
+    val task = getTargetTask()
     val state = project.eduState ?: error("Edu state is invalid")
     val taskProcessor = TaskProcessor(task)
     val userCode = task.taskFiles.values.firstNotNullOfOrNull { it.getText(project) }
 
     val assistant = TaskBasedAssistant(taskProcessor)
-
-    var response: AssistantResponse? = null
-    runInBackground(project, "Running Tests", true) {
-      runBlockingCancellable {
-        withContext(Dispatchers.IO) {
-          response = assistant.getHint(task, state, userCode)
-        }
-      }
-    }
+    val response = getHint(task, state, assistant, userCode)
+    refreshProject()
 
     val inspections = getInspections(language)
 
     val issuesUser = getCodeIssues(userCode, "file", project, language, inspections)
-    val issuesAi = getCodeIssues(response?.codeHint, "file2", project, language, inspections)
+    val issuesAi = getCodeIssues(response.codeHint, "file2", project, language, inspections)
 
     assertNotNull(issuesAi, "Failed to obtain AI issues. The issue list should not be null.")
     assertNotNull(issuesUser, "Failed to obtain user issues. The issue list should not be null.")

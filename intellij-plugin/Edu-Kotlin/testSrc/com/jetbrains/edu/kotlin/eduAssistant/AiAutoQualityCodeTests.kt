@@ -1,3 +1,0 @@
-package com.jetbrains.edu.kotlin.eduAssistant
-
-interface AiAutoQualityCodeTests

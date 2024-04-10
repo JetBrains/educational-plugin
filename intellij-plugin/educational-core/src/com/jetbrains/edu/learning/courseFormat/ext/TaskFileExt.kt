@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.EduFile.Companion.LOG
 import com.jetbrains.edu.learning.courseFormat.EduFileErrorHighlightLevel
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 
@@ -62,7 +63,9 @@ fun TaskFile.revert(project: Project) {
 
 fun TaskFile.getSolution(): String {
   if (this.task.lesson is FrameworkLesson) {
-    return this.contents.textualRepresentation
+    return task.project?.let {
+      FrameworkLessonManager.getInstance(it).getTaskState(task.lesson as FrameworkLesson, task)[name]
+    } ?: ""
   } else {
     val fullAnswer = StringBuilder(this.text)
     this.answerPlaceholders.sortedBy { it.offset }.reversed().forEach { placeholder ->
