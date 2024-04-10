@@ -25,6 +25,6 @@ class SynchronizeTaskDescription(private val project: Project) : EduDocumentList
     task.descriptionText = eventDocument.text
     if (ToolWindowManager.getInstance(project).getToolWindow(STUDY_TOOL_WINDOW) == null) return
 
-    TaskToolWindowView.getInstance(project).updateTaskDescription(task)
+    TaskToolWindowView.getInstance(project).updateTaskDescriptionTab(task)
   }
 }

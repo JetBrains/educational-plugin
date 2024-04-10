@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.taskToolWindow.ui
 import com.intellij.ide.ui.LafManagerListener
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.actionSystem.PlatformDataKeys
+import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.editor.colors.EditorColorsListener
@@ -10,12 +11,13 @@ import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.ToolWindow
-import com.intellij.ui.awt.RelativePoint
+import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.content.ContentFactory
+import com.intellij.ui.util.maximumHeight
+import com.intellij.util.ui.JBEmptyBorder
+import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.EduSettings
-import com.jetbrains.edu.learning.JavaUILibrary.JCEF
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.courseFormat.CheckResult
@@ -32,52 +34,51 @@ import com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsSer
 import com.jetbrains.edu.learning.submissions.SubmissionsListener
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.SubmissionsTab
-import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckPanel
 import com.jetbrains.edu.learning.taskToolWindow.ui.navigationMap.NavigationMapAction
-import com.jetbrains.edu.learning.taskToolWindow.ui.navigationMap.NavigationMapPanel
+import com.jetbrains.edu.learning.taskToolWindow.ui.navigationMap.NavigationMapToolbar
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabManager
-import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabManagerImpl
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType.SUBMISSIONS_TAB
-import java.awt.BorderLayout
-import javax.swing.JPanel
-import javax.swing.JSeparator
+import java.awt.Component
+import java.awt.Dimension
+import javax.swing.*
 
 class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), DataProvider {
-  private var uiContent: UiContent? = null
-  private var tabManager: TabManager? = null
+  private val lessonHeader: LessonHeader = LessonHeader()
+  private val navigationMapToolbar: NavigationMapToolbar = NavigationMapToolbar()
+  private val taskName: JLabel = JLabel(EduCoreBundle.message("item.task.title"))
+  private val tabManager: TabManager = TabManager(project)
 
   override var currentTask: Task? = null
     // TODO: move it in some separate method
     set(value) {
       if (currentTask !== null && currentTask === value) return
-      val ui = uiContent
-      if (ui != null) {
-        setTaskText(value)
-        ui.separator.isVisible = value != null
-        ui.checkPanel.isVisible = value != null
-        updateCheckPanel(value)
-        updateNavigationPanel(value)
-        ui.taskTextTW.updateTaskSpecificPanel(value)
-        updateAdditionalTaskTabs(value)
-        HyperskillMetricsService.getInstance().viewEvent(value)
-        EduCounterUsageCollector.viewEvent(value)
-      }
+      tabManager.updateTaskDescription(value)
+      tabManager.descriptionTab.isSeparatorVisible = value != null
+      tabManager.descriptionTab.isCheckPanelVisible = value != null
+      updateCheckPanel(value)
+      updateNavigationPanel(value)
+      taskName.text = value?.presentableName ?: EduCoreBundle.message("item.task.title")
+      lessonHeader.setHeaderText(value?.lesson?.name)
+      updateTabs(value)
+      HyperskillMetricsService.getInstance().viewEvent(value)
+      EduCounterUsageCollector.viewEvent(value)
       field = value
     }
 
-  override fun updateAdditionalTaskTabs(task: Task?) {
+  override fun updateTabs(task: Task?) {
     val taskToUpdate = task ?: currentTask
-    tabManager?.updateTabs(taskToUpdate)
+    tabManager.updateTabs(taskToUpdate)
   }
 
   override fun updateTab(tabType: TabType) {
     if (isHeadlessEnvironment) return
-    tabManager?.updateTab(tabType, currentTask)
+    val task = currentTask ?: return
+    tabManager.updateTab(tabType, task)
   }
 
-  override fun showTab(tabType: TabType) {
-    tabManager?.selectTab(tabType)
+  override fun selectTab(tabType: TabType) {
+    tabManager.selectTab(tabType)
   }
 
   override fun showLoadingSubmissionsPanel(platformName: String) {
@@ -106,111 +107,112 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
     }
   }
 
-  private fun getSubmissionTab(): SubmissionsTab? = tabManager?.getTab(SUBMISSIONS_TAB) as? SubmissionsTab
+  private fun getSubmissionTab(): SubmissionsTab? = tabManager.getTab(SUBMISSIONS_TAB) as? SubmissionsTab
 
   override fun updateCheckPanel(task: Task?) {
     if (task == null) return
-    val checkPanel = uiContent?.checkPanel ?: return
     readyToCheck()
-
-    checkPanel.updateCheckPanel(task)
-    UIUtil.setBackgroundRecursively(checkPanel, getTaskDescriptionBackgroundColor())
+    tabManager.descriptionTab.updateCheckPanel(task)
   }
 
   override fun updateTaskSpecificPanel() {
-    uiContent?.taskTextTW?.updateTaskSpecificPanel(currentTask)
+    tabManager.updateTaskSpecificPanel(currentTask)
   }
 
   override fun updateNavigationPanel(task: Task?) {
     task ?: return
 
-    val navigationPanel = uiContent?.navigationMapPanel ?: return
-    navigationPanel.setHeader(task.lesson.presentableName)
+    lessonHeader.setHeaderText(task.lesson.presentableName)
     val course = StudyTaskManager.getInstance(project).course
     var index = 1
     val actions = task.lesson.taskList.map {
       val currentIndex = if (it is TheoryTask && course is HyperskillCourse) index else index++
       NavigationMapAction(it, task, currentIndex)
     }
-    navigationPanel.replaceActions(actions)
+    navigationMapToolbar.replaceActions(actions)
 
     if (course is HyperskillCourse) {
-      navigationPanel.updateTopPanelForProblems(project, course, task)
+      lessonHeader.updateTopPanelForProblems(project, course, task)
     }
     scrollNavMap(task)
   }
 
-  override fun updateTaskDescription(task: Task?) {
-    setTaskText(task)
-    updateTaskSpecificPanel()
+  override fun updateNavigationPanel() = updateNavigationPanel(currentTask)
+
+  override fun updateTaskDescriptionTab(task: Task?) {
+    tabManager.updateTaskDescription(task)
   }
 
   override fun updateTaskDescription() {
-    updateTaskDescription(currentTask)
+    updateTaskDescriptionTab(currentTask)
     updateCheckPanel(currentTask)
     scrollNavMap(currentTask)
   }
 
   override fun scrollNavMap(task: Task?) {
     task ?: return
-    uiContent?.navigationMapPanel?.scrollToTask(task)
-  }
+    val selectedTask = navigationMapToolbar.components
+                       ?.filterIsInstance<ActionButton>()
+                       ?.find { (it.action as? NavigationMapAction)?.task == task } ?: return
+    navigationMapToolbar.scrollRectToVisible(selectedTask.bounds)
+   }
 
   override fun readyToCheck() {
-    uiContent?.checkPanel?.readyToCheck()
+    tabManager.descriptionTab.readyToCheck()
   }
 
   override fun init(toolWindow: ToolWindow) {
-    val contentManager = toolWindow.contentManager
-    tabManager = TabManagerImpl(project, contentManager).apply {
-      Disposer.register(contentManager, this)
+    //create main panel
+    val mainPanel = JPanel().apply {
+      layout = BoxLayout(this, BoxLayout.PAGE_AXIS)
+      border = JBUI.Borders.empty(0, 16, 12, 16)
     }
+    Disposer.register(toolWindow.contentManager, tabManager)
 
-    val panel = JPanel(BorderLayout())
-    panel.border = JBUI.Borders.empty(0, 16, 12, 0)
+    mainPanel.add(lessonHeader)
 
-    val taskTextTW = if (EduSettings.getInstance().javaUiLibraryWithCheck == JCEF) JCEFToolWindow(project) else SwingToolWindow(project)
-    Disposer.register(contentManager, taskTextTW)
+    // setup navigationMapToolbar
+    navigationMapToolbar.targetComponent = mainPanel
 
-    val taskTextPanel = taskTextTW.taskInfoPanel
-    val navigationPanel = NavigationMapPanel()
+    val navMapPanel = JBScrollPane(
+      navigationMapToolbar,
+      ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER,
+      ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS
+    ).apply {
+          border = JBEmptyBorder(0)
+          preferredSize = Dimension(0, 51)
+          minimumSize = Dimension(0, 51)
+          maximumHeight = 51
+        }
 
-    panel.add(navigationPanel, BorderLayout.NORTH)
-    panel.add(taskTextPanel, BorderLayout.CENTER)
-    taskTextPanel.border = JBUI.Borders.emptyBottom(10)
 
-    val bottomPanel = JPanel(BorderLayout())
+    mainPanel.add(navMapPanel)
 
-    val separatorPanel = JPanel(BorderLayout())
-    separatorPanel.border = JBUI.Borders.emptyRight(15)
-    val separator = JSeparator()
-    separatorPanel.add(separator, BorderLayout.CENTER)
-    bottomPanel.add(separatorPanel, BorderLayout.NORTH)
+    // setup task name
+    val taskNameBox = Box.createHorizontalBox()
+    taskName.font = JBFont.h1()
+    taskName.alignmentX = Component.LEFT_ALIGNMENT
+    taskNameBox.add(taskName)
+    taskNameBox.add(Box.createHorizontalGlue())
+    taskNameBox.border = JBEmptyBorder(0,0,4,0)
 
-    val taskSpecificPanel = taskTextTW.taskSpecificPanel
-    taskSpecificPanel.border = JBUI.Borders.emptyRight(15)
-    bottomPanel.add(taskSpecificPanel, BorderLayout.CENTER)
+    mainPanel.add(taskNameBox)
 
-    val checkPanel = CheckPanel(project, contentManager)
-    checkPanel.border = JBUI.Borders.empty(2, 0, 0, 15)
-    bottomPanel.add(checkPanel, BorderLayout.SOUTH)
+    mainPanel.add(tabManager.tabbedPane)
 
-    panel.add(bottomPanel, BorderLayout.SOUTH)
-    UIUtil.setBackgroundRecursively(panel, getTaskDescriptionBackgroundColor())
-
-    uiContent = UiContent(navigationPanel, taskTextTW, checkPanel, separator)
+    UIUtil.setBackgroundRecursively(mainPanel, getTaskDescriptionBackgroundColor())
 
     val content = ContentFactory.getInstance()
-      .createContent(panel, EduCoreBundle.message("label.description"), false)
+      .createContent(mainPanel, EduCoreBundle.message("item.task.title"), false)
       .apply { isCloseable = false }
-    contentManager.addContent(content)
+    toolWindow.contentManager.addContent(content)
 
     currentTask = project.getCurrentTask()
-    updateAdditionalTaskTabs(currentTask)
+    updateTabs(currentTask)
 
     val connection = project.messageBus.connect()
     connection.subscribe(LafManagerListener.TOPIC, LafManagerListener {
-      UIUtil.setBackgroundRecursively(panel, getTaskDescriptionBackgroundColor())
+      UIUtil.setBackgroundRecursively(mainPanel, getTaskDescriptionBackgroundColor())
     })
     connection.subscribe(EditorColorsManager.TOPIC, EditorColorsListener {
       updateAllTabs(project)
@@ -224,26 +226,18 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
 
   override fun checkStarted(task: Task, startSpinner: Boolean) {
     if (task != currentTask) return
-    uiContent?.checkPanel?.checkStarted(startSpinner)
+    tabManager.descriptionTab.checkStarted(startSpinner)
   }
 
   override fun checkFinished(task: Task, checkResult: CheckResult) {
     if (task != currentTask) return
-    uiContent?.checkPanel?.updateCheckDetails(task, checkResult)
+    tabManager.descriptionTab.updateCheckDetails(task, checkResult)
     if (task is DataTask || task.isChangedOnFailed) {
       updateCheckPanel(task)
     }
     if (checkResult.status == CheckStatus.Failed) {
-      updateTaskSpecificPanel()
+      tabManager.updateTaskSpecificPanel(task)
     }
-  }
-
-  override fun checkTooltipPosition(): RelativePoint? {
-    return uiContent?.checkPanel?.checkTooltipPosition()
-  }
-
-  private fun setTaskText(task: Task?) {
-    uiContent?.taskTextTW?.setTaskText(project, task)
   }
 
   override fun getData(dataId: String): Any? {
@@ -254,19 +248,11 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
   }
 
   override fun addInlineBanner(inlineBanner: SolutionSharingInlineBanner) {
-    val taskTextPanel = uiContent?.taskTextTW?.taskInfoPanel ?: return
-    taskTextPanel.add(inlineBanner, BorderLayout.SOUTH)
-    taskTextPanel.validate()
+    tabManager.descriptionTab.addInlineBanner(inlineBanner)
   }
 
   companion object {
     private const val HELP_ID = "task.description"
   }
 
-  class UiContent(
-    val navigationMapPanel: NavigationMapPanel,
-    val taskTextTW: TaskToolWindow,
-    val checkPanel: CheckPanel,
-    val separator: JSeparator
-  )
 }

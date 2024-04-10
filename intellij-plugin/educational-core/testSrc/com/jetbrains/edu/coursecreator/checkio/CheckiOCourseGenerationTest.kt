@@ -46,7 +46,7 @@ class CheckiOCourseGenerationTest : EduTestCase() {
     val solved = missions.first { it.status == CheckStatus.Solved }
     val actualDescriptionText = solved.descriptionText
 
-    assertTrue(actualDescriptionText.contains("<h2>Stressful Subject</h2>"))
+    assertFalse(actualDescriptionText.contains("<h2>Stressful Subject</h2>"))
     assertTrue(actualDescriptionText.contains(EduCoreBundle.message("checkio.view.solutions")))
     assertTrue(actualDescriptionText.contains(EduCoreBundle.message("checkio.open.task.on.site")))
 

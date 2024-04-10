@@ -9,123 +9,41 @@ import com.intellij.openapi.actionSystem.ex.ActionButtonLook
 import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl
 import com.intellij.openapi.project.DumbAwareAction
-import com.intellij.openapi.project.Project
-import com.intellij.ui.components.AnActionLink
-import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.JBEmptyBorder
-import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.JBInsets
 import com.jetbrains.edu.EducationalCoreIcons
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.projectView.CourseViewUtils.isSolved
-import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
-import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckPanel
 import com.jetbrains.edu.learning.taskToolWindow.ui.setupLayoutStrategy
-import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
 import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.*
 import java.awt.geom.Path2D
 import java.awt.geom.RoundRectangle2D
 import javax.swing.*
 
-class NavigationMapPanel : JPanel(BorderLayout()) {
-  private val headerText: JLabel
-  private val defaultActionGroup = DefaultActionGroup()
-  private val toolbar: ActionToolbarImpl = ActionToolbarImpl(CheckPanel.ACTION_PLACE, defaultActionGroup, true)
-  private val topPanelForProblems: JPanel = JPanel().apply {
-    background = TaskToolWindowView.getTaskDescriptionBackgroundColor()
-    border = JBEmptyBorder(0, 0, 12, 0)
-  }
+class NavigationMapToolbar(private val defaultActionGroup: DefaultActionGroup = DefaultActionGroup()) : ActionToolbarImpl(
+  ACTION_PLACE,
+  defaultActionGroup,
+  true
+) {
 
   init {
-    border = JBEmptyBorder(8, 0, 0, 8)
-    headerText = JBLabel().withFont(JBFont.medium())
-    headerText.foreground = EduColors.taskToolWindowLessonLabel
-    val headerTextPanel = JPanel()
-    // -5 to align the left border
-    headerTextPanel.border = JBEmptyBorder(0, -5, 12, 0)
-    headerTextPanel.add(headerText)
     // '-4' to align the left border
-    toolbar.border = JBEmptyBorder(0, -4, 0, 0)
-    toolbar.setupLayoutStrategy()
-    toolbar.setCustomButtonLook(MyActionButtonLook())
-    toolbar.setMinimumButtonSize(Dimension(28, 28))
-    toolbar.setActionButtonBorder(4, 0)
+    border = JBEmptyBorder(8, -4, 20, 8)
+    setupLayoutStrategy()
+    setCustomButtonLook(MyActionButtonLook())
+    setMinimumButtonSize(Dimension(28, 28))
+    setActionButtonBorder(4, 0)
     defaultActionGroup.isSearchable = false
-    add(headerTextPanel, BorderLayout.WEST)
-    add(topPanelForProblems, BorderLayout.EAST)
-    val navMapPanel = JScrollPane(
-      toolbar,
-      ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER,
-      ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS
-    ).apply {
-      border = JBEmptyBorder(0)
-      preferredSize = Dimension(0, 51)
-    }
-    toolbar.targetComponent = navMapPanel
-    add(navMapPanel, BorderLayout.SOUTH)
-  }
-
-  fun setHeader(header: String) {
-    headerText.text = header
   }
 
   fun replaceActions(actionList: List<AnAction>) {
     defaultActionGroup.removeAll()
     defaultActionGroup.addAll(actionList)
-  }
-
-  fun scrollToTask(task: Task) {
-    val selected = toolbar.components
-      .filterIsInstance<ActionButton>()
-      .find { (it.action as? NavigationMapAction)?.task == task } ?: return
-    toolbar.scrollRectToVisible(selected.bounds)
-  }
-
-  fun updateTopPanelForProblems(project: Project, course: HyperskillCourse, task: Task) {
-    topPanelForProblems.removeAll()
-    if (CCUtils.isCourseCreator(project) || course.getProjectLesson() == null) return
-
-    val linkText = if (course.isTaskInProject(task)) EduCoreBundle.message("hyperskill.back.to.learning") else EduCoreBundle.message("hyperskill.work.on.project")
-    val action = if (course.isTaskInProject(task)) NavigateToUnsolvedTopic(project, course) else NavigateToProjectAction(project, course)
-    val actionLink = AnActionLink(linkText, action).apply {
-      font = JBFont.medium()
-    }
-    topPanelForProblems.add(actionLink)
-  }
-
-  private class NavigateToProjectAction(
-    private val project: Project,
-    private val course: HyperskillCourse
-  ) : DumbAwareAction() {
-    override fun actionPerformed(e: AnActionEvent) {
-      val lesson = course.getProjectLesson() ?: return
-      val currentTask = lesson.currentTask() ?: return
-      NavigationUtils.navigateToTask(project, currentTask)
-    }
-  }
-
-  private class NavigateToUnsolvedTopic(
-    private val project: Project,
-    private val course: HyperskillCourse
-  ) : DumbAwareAction() {
-    override fun actionPerformed(e: AnActionEvent) {
-      val topicsSection = course.getTopicsSection()
-      if (topicsSection != null) {
-        val tasks = topicsSection.lessons.flatMap { it.taskList }
-        val task = tasks.find { !it.isSolved } ?: tasks.last()
-        NavigationUtils.navigateToTask(project, task)
-      }
-      else {
-        TaskToolWindowView.getInstance(project).showTab(TabType.TOPICS_TAB)
-      }
-    }
   }
 
   // Copied from com.intellij.openapi.actionSystem.impl.IdeaActionButtonLook
@@ -203,6 +121,10 @@ class NavigationMapPanel : JPanel(BorderLayout()) {
       }
     }
 
+  }
+
+  companion object {
+    const val ACTION_PLACE = "NavigationMap"
   }
 }
 

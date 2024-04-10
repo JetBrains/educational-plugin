@@ -23,10 +23,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.PlatformUtils
 import com.intellij.util.TimeoutUtil
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.CourseMode
-import com.jetbrains.edu.learning.courseFormat.CourseraCourse
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSE_META_FILE
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD
@@ -45,6 +42,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.MarkdownParser
+import org.jsoup.Jsoup
 import java.io.IOException
 import java.io.Reader
 import java.nio.charset.StandardCharsets
@@ -53,6 +51,9 @@ import java.util.concurrent.ExecutionException
 import java.util.zip.ZipFile
 
 object EduUtilsKt {
+
+  private val HEADER_TAG_NAMES = listOf("h1", "h2", "h3")
+
   fun DataContext.showPopup(htmlContent: String, position: Balloon.Position = Balloon.Position.above) {
     val balloon = JBPopupFactory.getInstance()
       .createHtmlTextBalloonBuilder(
@@ -116,13 +117,38 @@ object EduUtilsKt {
       return ZipFile(zipFilePath).use { zipFile ->
         val entry = zipFile.getEntry(COURSE_META_FILE) ?: return null
         val reader = { zipFile.getInputStream(entry).reader(StandardCharsets.UTF_8) }
-        readCourseJson(reader)
+        readCourseJson(reader)?.cutOutHeader()
       }
     }
     catch (e: IOException) {
       LOG.error("Failed to unzip course archive", e)
     }
     return null
+  }
+
+  //TODO: remove when all Marketplace courses cut headers
+  private fun Course.cutOutHeader(): Course {
+    this.visitTasks {
+      val descr = it.descriptionText.trimStart()
+      if (it.descriptionFormat == DescriptionFormat.MD) {
+        if (descr.startsWith("#")) {
+          it.descriptionText = descr.dropWhile { char -> char != '\n' }
+        }
+      }
+      else {
+        val document = Jsoup.parse(descr)
+        for (tagName in HEADER_TAG_NAMES) {
+          val elementsByTag = document.getElementsByTag(tagName)
+          if (elementsByTag.size == 0) continue
+          if (elementsByTag.size == 1) {
+            elementsByTag[0].remove()
+            it.descriptionText = document.toString()
+          }
+          break
+        }
+      }
+    }
+    return this
   }
 
   fun Project.isNewlyCreated(): Boolean {

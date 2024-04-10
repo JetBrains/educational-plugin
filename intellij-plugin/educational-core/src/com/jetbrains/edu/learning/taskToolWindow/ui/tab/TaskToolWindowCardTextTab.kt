@@ -7,7 +7,7 @@ import java.awt.BorderLayout
 import java.awt.CardLayout
 import javax.swing.JPanel
 
-abstract class AdditionalCardTextTab(project: Project, tabType: TabType) : AdditionalTab(project, tabType) {
+abstract class TaskToolWindowCardTextTab(project: Project, tabType: TabType) : TaskToolWindowTab(project, tabType) {
 
   private val cardLayout = CardLayout()
 
