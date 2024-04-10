@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.marketplace.actions.PostMarketplaceProjectToGitHub
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
@@ -30,7 +31,11 @@ class MarketplaceCheckListener: PostSolutionCheckListener() {
     super.afterCheck(project, task, result)
     EduCounterUsageCollector.submissionSuccess(result.isSolved)
 
-    if (!result.isSolved || !task.supportSubmissions || !project.isStudentProject()) return
+    if (!result.isSolved || !project.isStudentProject()) return
+
+    PostMarketplaceProjectToGitHub.promptIfNeeded(project)
+
+    if (!task.supportSubmissions) return
 
     CompletableFuture.runAsync({
       SubmissionsManager.getInstance(project).loadCommunitySubmissions(task)
