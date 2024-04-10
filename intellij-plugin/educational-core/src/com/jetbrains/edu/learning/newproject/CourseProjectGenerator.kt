@@ -132,9 +132,9 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
   private suspend fun createProject(locationString: String): Project? {
     val location = File(FileUtil.toSystemDependentName(locationString))
     val projectDirectoryExists = withContext(Dispatchers.IO) {
-      !location.exists() && !location.mkdirs()
+      location.exists() || location.mkdirs()
     }
-    if (projectDirectoryExists) {
+    if (!projectDirectoryExists) {
       val message = ActionsBundle.message("action.NewDirectoryProject.cannot.create.dir", location.absolutePath)
       withContext(Dispatchers.EDT) {
         Messages.showErrorDialog(message, ActionsBundle.message("action.NewDirectoryProject.title"))
