@@ -294,6 +294,10 @@
                  description="Delay of prompting second banner (in millis). Default value is equal to 14 days."
                  defaultValue="1209600000"/>
 
+    <registryKey key="edu.marketplace.PostMarketplaceProjectToGitHub.completion.condition"
+                 description="Course completion percentage, which should prompt the student to publish the project on GitHub"
+                 defaultValue="80"/>
+
     <registryKey key="edu.learning.objects.storage.type"
                  description="Controls the way the original author data is stored in the project. This setting does not affect existing course projects, it affects only newly created projects"
                  defaultValue="[SQLite*|YAML]"/>

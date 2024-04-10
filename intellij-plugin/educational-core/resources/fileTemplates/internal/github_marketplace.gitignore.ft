@@ -1,0 +1,20 @@
+# course config files
+*.yaml
+
+# gradle
+.gradle/
+build
+
+# idea config
+.idea
+
+# md files except README
+*.md
+!README.md
+
+# excluded lessons
+${excludedLessons}
+
+# included lessons
+${includedLessons}
+${solutionDirs}

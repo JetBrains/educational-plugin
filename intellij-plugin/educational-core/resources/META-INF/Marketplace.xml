@@ -47,5 +47,8 @@
                     relative-to-action="Educational.Student.ApplyCode"
                     anchor="after"/>
     </action>
+    <action id="Educational.Student.PostMarketplaceProjectToGitHub"
+            class="com.jetbrains.edu.learning.marketplace.actions.PostMarketplaceProjectToGitHub">
+    </action>
   </actions>
 </idea-plugin>
