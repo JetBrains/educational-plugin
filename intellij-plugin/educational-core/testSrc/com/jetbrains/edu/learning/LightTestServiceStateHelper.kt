@@ -2,6 +2,8 @@ package com.jetbrains.edu.learning
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.runInEdtAndWait
 import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
 import com.jetbrains.edu.learning.codeforces.update.CodeforcesCourseUpdateChecker
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
@@ -33,7 +35,9 @@ object LightTestServiceStateHelper {
     MarketplaceUpdateChecker::class,
     CodeforcesCourseUpdateChecker::class,
     HyperskillCourseUpdateChecker::class,
-    LearningObjectsStorageManager::class
+    LearningObjectsStorageManager::class,
+    // Intentionally the last item in the list since it's holds the essential knowledge about project course
+    StudyTaskManager::class,
   )
 
   fun restoreState(project: Project) {
@@ -49,6 +53,12 @@ object LightTestServiceStateHelper {
   }
 
   fun cleanUpState(project: Project) {
+    // Some services may be used in scheduled tasks (via `invokeLater`, for example).
+    // And since we can't rely on service/project disposing in light tests, let's wait for all these tasks manually
+    runInEdtAndWait {
+      PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+    }
+
     val application = ApplicationManager.getApplication()
     for (serviceClass in lightTestAwareApplicationServices) {
       // Do not create service if it wasn't created earlier

@@ -13,12 +13,13 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.yaml.YamlDeepLoader.loadCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.isEduYamlProject
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.startSynchronization
+import org.jetbrains.annotations.TestOnly
 
 /**
  * Implementation of class which contains all the information about study in context of current project
  */
 @Service(Service.Level.PROJECT)
-class StudyTaskManager(private val project: Project) : DumbAware, Disposable {
+class StudyTaskManager(private val project: Project) : DumbAware, Disposable, LightTestAware {
   @Volatile
   private var courseLoadedWithError = false
 
@@ -34,6 +35,11 @@ class StudyTaskManager(private val project: Project) : DumbAware, Disposable {
     }
 
   override fun dispose() {}
+
+  @TestOnly
+  override fun cleanUpState() {
+    course = null
+  }
 
   companion object {
     val COURSE_SET = Topic.create("Edu.courseSet", CourseSetListener::class.java)
