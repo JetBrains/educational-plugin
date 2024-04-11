@@ -69,7 +69,8 @@ class CodeHintValidationAction : ValidationAction<CodeHintDataframeRecord>() {
 
     try {
       if (response.assistantError != null) error("Assistant error: ${response.assistantError?.name}")
-      val psiFile = PsiFileFactory.getInstance(project).createFileFromText("file", language, userCode)
+      val psiFile = response.codeHint?.let { PsiFileFactory.getInstance(project).createFileFromText("codeHintPsiFile", language, it) }
+                    ?: error("Code hint was not generated")
       val inspections = InspectionProvider.getInspections(language)
       val issues = psiFile.getInspectionsWithIssues(inspections).map { it.id }
 

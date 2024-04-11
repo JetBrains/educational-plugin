@@ -24,6 +24,7 @@ import com.jetbrains.edu.assistant.validation.util.downloadSolution
 import com.jetbrains.edu.assistant.validation.util.parseCsvFile
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import java.time.LocalDateTime
 import org.apache.commons.csv.CSVFormat
@@ -113,12 +114,13 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
         records.convertToDataFrame().writeCSV()
       } else {
         for (lesson in course.lessons) {
+          val lessonRecords = mutableListOf<T>()
           for (task in lesson.taskList) {
             if (task is EduTask) {
               if (isNavigationRequired) {
                 ApplicationManager.getApplication().invokeAndWait {
                   ApplicationManager.getApplication().runWriteAction {
-                    NavigationUtils.navigateToTask(project, task)
+                    NavigationUtils.navigateToTask(project, task, fromTask = project.eduState?.task, showDialogIfConflict = false)
                   }
                 }
               }
@@ -130,7 +132,7 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
                 it.getSolutionListForTask(lesson.name, task.name).forEach { studentCode ->
                   downloadSolution(task, project, studentCode)
                   runBlockingCancellable {
-                    records.addAll(buildRecords(task, lesson))
+                    lessonRecords.addAll(buildRecords(task, lesson))
                   }
                 }
               } ?: run {
@@ -138,7 +140,7 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
                   propagateAuthorSolution(it, task, project)
                 }
                 runBlockingCancellable {
-                  records.addAll(buildRecords(task, lesson))
+                  lessonRecords.addAll(buildRecords(task, lesson))
                 }
               }
 
@@ -146,11 +148,11 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
             }
             previousTask = task
           }
-          records.convertToDataFrame().writeCSV()
+          lessonRecords.convertToDataFrame().writeCSV()
+          records.addAll(lessonRecords)
         }
         if (toCalculateOverallAccuracy) {
-          records.add(accuracyCalculator.calculateOverallAccuracy(records))
-          records.convertToDataFrame().writeCSV()
+          mutableListOf(accuracyCalculator.calculateOverallAccuracy(records)).convertToDataFrame().writeCSV()
         }
       }
 
