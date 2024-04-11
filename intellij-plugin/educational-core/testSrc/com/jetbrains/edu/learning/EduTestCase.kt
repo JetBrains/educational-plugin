@@ -46,12 +46,10 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
-import com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceUpdateChecker
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.stepik.hyperskill.update.HyperskillCourseUpdateChecker
-import com.jetbrains.edu.learning.storage.InMemoryLearningObjectsStorage
 import com.jetbrains.edu.learning.storage.LearningObjectsStorageManager
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory
@@ -76,7 +74,6 @@ abstract class EduTestCase : BasePlatformTestCase() {
     super.setUp()
     testPluginDescriptor = PluginManager.getPlugins().first { it.pluginId.idString.startsWith("com.jetbrains.edu") }
     StudyTaskManager.getInstance(project).course = null // if a test doesn't set any course, course from the previous test stays incorrectly
-    SubmissionsManager.getInstance(project).clear()
     // In this method course is set before course files are created so `CCProjectComponent.createYamlConfigFilesIfMissing` is called
     // for course with no files. This flag is checked in this method and it does nothing if the flag is false
     project.putUserData(YamlFormatSettings.YAML_TEST_PROJECT_READY, false)
@@ -100,34 +97,33 @@ abstract class EduTestCase : BasePlatformTestCase() {
         connection.disconnect()
       }
     })
-    (FrameworkLessonManager.getInstance(project) as FrameworkLessonManagerImpl).recreateStorageIfNeeded()
-    CCFrameworkLessonManager.getInstance(project).recreateStorageIfNeeded()
+    FrameworkLessonManager.getInstance(project).restoreState()
+    CCFrameworkLessonManager.getInstance(project).restoreState()
     createCourse()
     project.putUserData(CourseProjectGenerator.EDU_PROJECT_CREATED, true)
   }
 
   override fun tearDown() {
     try {
-      (EduBrowser.getInstance() as MockEduBrowser).lastVisitedUrl = null
-      SubmissionsManager.getInstance(project).clear()
-      CoursesStorage.getInstance().state.courses.clear()
+      EduBrowser.getInstance().cleanUpState()
+      SubmissionsManager.getInstance(project).cleanUpState()
+      CoursesStorage.getInstance().cleanUpState()
 
       // We may want to check something outside a course project
       // to be sure that the plugin doesn't break other cases.
       // But in the case of a non edu project, `TaskToolWindowView.getInstance(project)` throws exception
       if (project.isEduProject()) {
-        TaskToolWindowView.getInstance(project).currentTask = null
+        TaskToolWindowView.getInstance(project).cleanUpState()
       }
-      (FrameworkLessonManager.getInstance(project) as FrameworkLessonManagerImpl).clearStorage()
-      CCFrameworkLessonManager.getInstance(project).clearStorage()
-      YamlLoadingErrorManager.getInstance(project).removeAllErrors()
+      FrameworkLessonManager.getInstance(project).cleanUpState()
+      CCFrameworkLessonManager.getInstance(project).cleanUpState()
+      YamlLoadingErrorManager.getInstance(project).cleanUpState()
 
-      MarketplaceUpdateChecker.getInstance(project).course = null
-      HyperskillCourseUpdateChecker.getInstance(project).course = null
-      CodeforcesCourseUpdateChecker.getInstance(project).course = null
+      MarketplaceUpdateChecker.getInstance(project).cleanUpState()
+      HyperskillCourseUpdateChecker.getInstance(project).cleanUpState()
+      CodeforcesCourseUpdateChecker.getInstance(project).cleanUpState()
 
-      val learningObjectsStorage = LearningObjectsStorageManager.getInstance(project).learningObjectsStorage
-      (learningObjectsStorage as InMemoryLearningObjectsStorage).clear()
+      LearningObjectsStorageManager.getInstance(project).cleanUpState()
     }
     catch (e: Throwable) {
       addSuppressedException(e)

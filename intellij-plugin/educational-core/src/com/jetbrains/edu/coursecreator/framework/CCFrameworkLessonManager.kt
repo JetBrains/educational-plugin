@@ -15,13 +15,14 @@ import com.intellij.util.xmlb.annotations.XCollection
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.framework.diff.applyChangesWithMergeDialog
 import com.jetbrains.edu.coursecreator.framework.diff.resolveConflicts
+import com.jetbrains.edu.learning.LightTestAware
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
 import com.jetbrains.edu.learning.courseFormat.ext.getRelativePath
 import com.jetbrains.edu.learning.courseFormat.ext.visitTasks
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.impl.FLTaskState
 import com.jetbrains.edu.learning.framework.impl.calculateChanges
 import com.jetbrains.edu.learning.framework.impl.getTaskStateFromFiles
@@ -48,7 +49,7 @@ import java.nio.file.Paths
 @State(name = "CCFrameworkLessonManager", storages = [Storage(StoragePathMacros.WORKSPACE_FILE, roamingType = RoamingType.DISABLED)])
 class CCFrameworkLessonManager(
   private val project: Project
-) : SimplePersistentStateComponent<CCFrameworkLessonManager.RecordState>(RecordState()), Disposable {
+) : SimplePersistentStateComponent<CCFrameworkLessonManager.RecordState>(RecordState()), Disposable, LightTestAware {
   private var storage: CCFrameworkStorage = createStorage(project)
 
   /**
@@ -281,22 +282,22 @@ class CCFrameworkLessonManager(
     }
   }
 
+  @VisibleForTesting
+  fun getRecord(path: String): Int? {
+    return state.taskRecords[path]
+  }
+
   @TestOnly
-  fun recreateStorageIfNeeded() {
+  override fun restoreState() {
     if (storage.isDisposed) {
       storage = createStorage(project)
     }
   }
 
   @TestOnly
-  fun clearStorage() {
+  override fun cleanUpState() {
     state.taskRecords.clear()
     storage.closeAndClean()
-  }
-
-  @VisibleForTesting
-  fun getRecord(path: String): Int? {
-    return state.taskRecords[path]
   }
 
   class RecordState : BaseState() {

@@ -12,6 +12,6 @@ class LearningObjectsPersister(private val project: Project) : CourseSetListener
 
     storageManager.persistAllEduFiles(course)
 
-    course.needWriteYamlText = storageManager.learningObjectsStorage.writeTextInYaml
+    course.needWriteYamlText = storageManager.writeTextInYaml
   }
 }

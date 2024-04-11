@@ -3,13 +3,15 @@ package com.jetbrains.edu.learning.newproject.coursesStorage
 import com.intellij.openapi.components.*
 import com.intellij.openapi.wm.impl.welcomeScreen.learnIde.coursesInProgress.CourseDataStorage
 import com.intellij.openapi.wm.impl.welcomeScreen.learnIde.coursesInProgress.CourseInfo
+import com.jetbrains.edu.learning.LightTestAware
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.JBACourseFromStorage
+import org.jetbrains.annotations.TestOnly
 
 @State(name = "CoursesStorage", storages = [Storage("coursesStorage.xml", roamingType = RoamingType.DISABLED)])
 @Service
-class CoursesStorage : CourseDataStorage, CoursesStorageBase() {
+class CoursesStorage : CourseDataStorage, CoursesStorageBase(), LightTestAware {
 
   override fun getCoursePath(course: Course): String? = getCoursePath(JBACourseFromStorage().apply {
     this.name = course.name
@@ -43,6 +45,11 @@ class CoursesStorage : CourseDataStorage, CoursesStorageBase() {
 
   override fun getAllCourses(): List<CourseInfo> {
     return state.courses
+  }
+
+  @TestOnly
+  override fun cleanUpState() {
+    state.courses.clear()
   }
 
   companion object {

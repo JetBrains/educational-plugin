@@ -10,13 +10,14 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.Alarm
 import com.intellij.util.text.DateFormatUtil
 import com.jetbrains.edu.learning.EduUtilsKt.isNewlyCreated
+import com.jetbrains.edu.learning.LightTestAware
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.isUnitTestMode
 import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.atomic.AtomicInteger
 
-abstract class CourseUpdateChecker(protected val project: Project) : Disposable {
+abstract class CourseUpdateChecker(protected val project: Project) : Disposable, LightTestAware {
   private val checkRunnable = Runnable { (checkIsUpToDate()).doWhenDone { queueNextCheck() } }
   private val checkForAlarm by lazy { Alarm(Alarm.ThreadToUse.POOLED_THREAD, this) }
   var course: Course? = project.course
@@ -79,6 +80,11 @@ abstract class CourseUpdateChecker(protected val project: Project) : Disposable 
   protected abstract fun courseCanBeUpdated(): Boolean
 
   override fun dispose() {}
+
+  @TestOnly
+  override fun cleanUpState() {
+    course = null
+  }
 
   companion object {
     const val REGISTRY_KEY: String = "edu.course.update.check.interval"

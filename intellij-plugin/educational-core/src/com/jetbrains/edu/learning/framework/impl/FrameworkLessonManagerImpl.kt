@@ -14,10 +14,10 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBePropagated
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.ui.getUIName
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.jetbrains.annotations.TestOnly
@@ -365,14 +365,14 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
   }
 
   @TestOnly
-  fun recreateStorageIfNeeded() {
+  override fun restoreState() {
     if (storage.isDisposed) {
       storage = createStorage(project)
     }
   }
 
   @TestOnly
-  fun clearStorage() {
+  override fun cleanUpState() {
     storage.closeAndClean()
   }
 

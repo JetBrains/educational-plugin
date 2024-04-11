@@ -9,6 +9,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.jetbrains.edu.learning.LightTestAware
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
@@ -18,14 +19,17 @@ import com.jetbrains.edu.learning.isLight
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.yaml.format.student.TakeFromStorageBinaryContents
 import com.jetbrains.edu.learning.yaml.format.student.TakeFromStorageTextualContents
+import org.jetbrains.annotations.TestOnly
 
 @Service(Service.Level.PROJECT)
-class LearningObjectsStorageManager(private val project: Project) : DumbAware, Disposable {
+class LearningObjectsStorageManager(private val project: Project) : DumbAware, Disposable, LightTestAware {
 
   /**
    * This is the project level storage used to store all the edu files contents and other data that should be persistent.
    */
-  val learningObjectsStorage: LearningObjectsStorage = createLearningObjectStorage()
+  private val learningObjectsStorage: LearningObjectsStorage = createLearningObjectStorage()
+
+  val writeTextInYaml: Boolean get() = learningObjectsStorage.writeTextInYaml
 
   init {
     Disposer.register(this, learningObjectsStorage)
@@ -129,13 +133,18 @@ class LearningObjectsStorageManager(private val project: Project) : DumbAware, D
     else -> null
   }
 
+  override fun dispose() {}
+
+  @TestOnly
+  override fun cleanUpState() {
+    (learningObjectsStorage as? InMemoryLearningObjectsStorage)?.clear()
+  }
+
   companion object {
     fun getInstance(project: Project): LearningObjectsStorageManager = project.service()
 
     private const val PROPERTIES_KEY = "Edu.LearningObjectsStorageType"
   }
-
-  override fun dispose() {}
 }
 
 fun Task.persistEduFiles(project: Project) {

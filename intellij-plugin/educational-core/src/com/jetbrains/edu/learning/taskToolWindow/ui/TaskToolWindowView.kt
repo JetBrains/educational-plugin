@@ -5,13 +5,15 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
+import com.jetbrains.edu.learning.LightTestAware
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isHeadlessEnvironment
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
+import org.jetbrains.annotations.TestOnly
 import java.awt.Color
 
-abstract class TaskToolWindowView(val project: Project) {
+abstract class TaskToolWindowView(val project: Project) : LightTestAware {
 
   abstract var currentTask: Task?
 
@@ -36,6 +38,11 @@ abstract class TaskToolWindowView(val project: Project) {
   abstract fun checkFinished(task: Task, checkResult: CheckResult)
 
   abstract fun addInlineBanner(inlineBanner: SolutionSharingInlineBanner)
+
+  @TestOnly
+  override fun cleanUpState() {
+    currentTask = null
+  }
 
   companion object {
 
