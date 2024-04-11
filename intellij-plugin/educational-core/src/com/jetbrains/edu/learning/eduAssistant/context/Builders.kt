@@ -29,7 +29,7 @@ fun Task.buildAuthorSolutionContext(): AuthorSolutionContext? {
   )
 }
 
-suspend fun initAiHintContext(task: Task) {
+suspend fun initAiHintContext(assistant: TaskBasedAssistant, task: Task) {
   val taskProcessor = TaskProcessor(task)
   if (!taskProcessor.isNextStepHintApplicable()) {
     return
@@ -37,9 +37,6 @@ suspend fun initAiHintContext(task: Task) {
   task.authorSolutionContext ?: run {
     task.authorSolutionContext = task.buildAuthorSolutionContext()
   }
-  TaskBasedAssistant.getSolutionSteps(task.id) ?: run {
-    val assistant = TaskBasedAssistant(taskProcessor)
-    assistant.getTaskAnalysis(task)
-  }
+  assistant.getTaskAnalysis(taskProcessor)
   task.aiAssistantState = AiAssistantState.ContextInitialized
 }

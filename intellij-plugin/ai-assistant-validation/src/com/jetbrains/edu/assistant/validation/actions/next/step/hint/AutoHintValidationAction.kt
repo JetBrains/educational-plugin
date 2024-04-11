@@ -1,6 +1,7 @@
 package com.jetbrains.edu.assistant.validation.actions.next.step.hint
 
 import com.google.gson.Gson
+import com.intellij.openapi.components.service
 import com.jetbrains.edu.assistant.validation.accuracy.AccuracyCalculator
 import com.jetbrains.edu.assistant.validation.actions.ValidationAction
 import com.jetbrains.edu.assistant.validation.messages.EduAndroidAiAssistantValidationBundle
@@ -51,25 +52,25 @@ class AutoHintValidationAction : ValidationAction<ValidationOfHintsDataframeReco
 
   override suspend fun buildRecords(task: EduTask, lesson: Lesson): List<ValidationOfHintsDataframeRecord> {
     val taskProcessor = TaskProcessor(task)
-    val assistant = TaskBasedAssistant(taskProcessor)
     val project = task.project ?: error("Cannot get project")
+    val assistant = project.service<TaskBasedAssistant>()
     val eduState = project.eduState ?: error("Cannot get eduState for project ${project.name}")
-    val response = assistant.getHint(task, eduState)
+    val response = assistant.getHint(taskProcessor, eduState)
 
     try {
       val userCode = eduState.taskFile.getVirtualFile(project)?.getTextFromTaskTextFile() ?: error("Cannot get a user code")
-      val solutionSteps = TaskBasedAssistant.getSolutionSteps(task.id) ?: error("Cannot get the solution steps")
+      val solutionSteps = assistant.getSolutionSteps(task.id) ?: error("Cannot get the solution steps")
       val taskDescription = taskProcessor.getTaskTextRepresentation()
       val codeHint = response.codeHint ?: error("Cannot get a code hint (${response.assistantError?.name ?: "no assistant error found"})")
       val textHint = response.textHint ?: error("Cannot get a text hint (${response.assistantError?.name ?: "no assistant error found"})")
       val hintType = processValidationHintForItsType(textHint, codeHint)
-      val hintsValidation = processValidationHints(taskDescription, textHint, codeHint, userCode, solutionSteps)
+      val hintsValidation = processValidationHints(taskDescription, textHint, codeHint, userCode, solutionSteps.value)
       val dataframeRecord = Gson().fromJson(hintsValidation, ValidationOfHintsDataframeRecord::class.java)
       return listOf(dataframeRecord.apply {
         taskId = task.id
         taskName = task.name
         this.taskDescription = taskDescription
-        this.solutionSteps = solutionSteps
+        this.solutionSteps = solutionSteps.value
         this.userCode = userCode
         nextStepTextHint = textHint
         nextStepCodeHint = codeHint
@@ -81,7 +82,7 @@ class AutoHintValidationAction : ValidationAction<ValidationOfHintsDataframeReco
         taskId = task.id,
         taskName = task.name,
         taskDescription = taskProcessor.getTaskTextRepresentation(),
-        solutionSteps = TaskBasedAssistant.getSolutionSteps(task.id) ?: "",
+        solutionSteps = assistant.getSolutionSteps(task.id)?.value ?: "",
         userCode = eduState.taskFile.getVirtualFile(project)?.getTextFromTaskTextFile() ?: "",
         nextStepCodeHint = response.codeHint ?: "",
         nextStepTextHint = response.textHint ?: "",

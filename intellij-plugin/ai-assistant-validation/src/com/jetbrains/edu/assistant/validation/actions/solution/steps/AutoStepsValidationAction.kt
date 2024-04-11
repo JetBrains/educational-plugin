@@ -1,6 +1,7 @@
 package com.jetbrains.edu.assistant.validation.actions.solution.steps
 
 import com.google.gson.Gson
+import com.intellij.openapi.components.service
 import com.jetbrains.edu.assistant.validation.accuracy.AccuracyCalculator
 import com.jetbrains.edu.assistant.validation.actions.ValidationAction
 import com.jetbrains.edu.assistant.validation.messages.EduAndroidAiAssistantValidationBundle
@@ -46,19 +47,19 @@ class AutoStepsValidationAction : ValidationAction<ValidationOfStepsDataframeRec
     val project = task.project ?: error("Cannot get project")
     val authorSolution = getAuthorSolution(task, project)
     val taskProcessor = TaskProcessor(task)
-    val assistant = TaskBasedAssistant(taskProcessor)
+    val assistant = project.service<TaskBasedAssistant>()
     var stepsValidation: String? = null
     val currentTaskDescription = taskProcessor.getTaskTextRepresentation()
 
     try {
-      val currentSteps = assistant.getTaskAnalysis(task) ?: error("Error during validation generation: code is not compilable")
-      stepsValidation = processValidationSteps(currentTaskDescription, authorSolution, currentSteps)
+      val currentSteps = assistant.getTaskAnalysis(taskProcessor) ?: error("Error during validation generation: code is not compilable")
+      stepsValidation = processValidationSteps(currentTaskDescription, authorSolution, currentSteps.value)
       val dataframeRecord = Gson().fromJson(stepsValidation, ValidationOfStepsDataframeRecord::class.java)
       return listOf(dataframeRecord.apply {
         taskId = task.id
         taskName = task.name
         taskDescription = currentTaskDescription
-        steps = currentSteps
+        steps = currentSteps.value
         solution = authorSolution
       })
     } catch (e: Throwable) {

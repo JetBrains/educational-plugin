@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.eduAssistant.core.TaskBasedAssistant
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.intellij.platform.ide.progress.withBackgroundProgress
+import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import kotlinx.coroutines.runBlocking
 import org.junit.runner.RunWith
@@ -60,13 +61,13 @@ abstract class ExternalResourcesTest(private val lessonName: String, private val
       TaskToolWindowView.getInstance(project).currentTask
     }.firstOrNull { it.name == taskName && it.lesson.name == lessonName } ?: error("Cannot get the target task")
 
-  protected fun getHint(task: Task, state: EduState, assistant: TaskBasedAssistant, userCode: String? = null) =
+  protected fun getHint(taskProcessor: TaskProcessor, state: EduState, assistant: TaskBasedAssistant, userCode: String? = null) =
     // TODO: cannot replace with runBlockingCancellable because of deadlocks
     runBlocking {
       withBackgroundProgress(project, EduAndroidAiAssistantValidationBundle.message("test.getting.hint"), false) {
-        val response = assistant.getHint(task, state, userCode)
+        val response = assistant.getHint(taskProcessor, state, userCode)
         response.codeHint?.let {
-          downloadSolution(task, project, it)
+          downloadSolution(taskProcessor.task, project, it)
         }
         response
       }

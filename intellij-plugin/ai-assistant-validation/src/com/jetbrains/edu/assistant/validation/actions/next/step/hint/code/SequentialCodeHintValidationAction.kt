@@ -18,7 +18,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.eduAssistant.check.EduAssistantValidationCheckListener
 import com.jetbrains.edu.learning.eduAssistant.core.AssistantResponse
 import com.intellij.platform.ide.progress.withBackgroundProgress
-import com.jetbrains.edu.learning.eduAssistant.core.TaskBasedAssistant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -89,8 +88,8 @@ class SequentialCodeHintValidationAction : CodeValidationAction<MultipleCodeHint
 
     val records = mutableListOf<MultipleCodeHintDataframeRecord>()
 
-    baseAssistantInfoStorage.assistant.getTaskAnalysis(task)
-    val generatedSolutionSteps = TaskBasedAssistant.getSolutionSteps(task.id)
+    baseAssistantInfoStorage.assistant.getTaskAnalysis(baseAssistantInfoStorage.taskProcessor)
+    val generatedSolutionSteps = baseAssistantInfoStorage.assistant.getSolutionSteps(task.id)?.value
     generatedSolutionSteps ?: error("Cannot get generate solution steps for task ${task.name}")
     var currentUserCode = userCode
     val maxHintSteps = (with(baseAssistantInfoStorage.assistant) {
@@ -103,7 +102,7 @@ class SequentialCodeHintValidationAction : CodeValidationAction<MultipleCodeHint
         // TODO: cannot replace with runBlockingCancellable because of deadlocks
         runBlocking {
           withBackgroundProgress(baseAssistantInfoStorage.project, GETTING_HINT_MESSAGE, false) {
-            response = baseAssistantInfoStorage.assistant.getHint(task, baseAssistantInfoStorage.eduState, currentUserCode)
+            response = baseAssistantInfoStorage.assistant.getHint(baseAssistantInfoStorage.taskProcessor, baseAssistantInfoStorage.eduState, currentUserCode)
           }
         }
 
@@ -129,7 +128,7 @@ class SequentialCodeHintValidationAction : CodeValidationAction<MultipleCodeHint
             taskId = task.id,
             taskName = task.name,
             taskDescription = baseAssistantInfoStorage.taskProcessor.getTaskTextRepresentation(),
-            taskAnalysisPrompt = baseAssistantInfoStorage.assistant.taskAnalysisPrompt,
+            taskAnalysisPrompt = response?.prompts?.getOrDefault("taskAnalysisPrompt", ""),
             steps = generatedSolutionSteps,
             codeHintPrompt = response?.prompts?.getOrDefault("nextStepCodeHintPrompt", ""),
             userCode = userCode,

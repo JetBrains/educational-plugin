@@ -1,10 +1,10 @@
 package com.jetbrains.edu.learning.eduAssistant.core
 
 import com.jetbrains.edu.learning.EduState
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 
 interface Assistant {
-  suspend fun getHint(task: Task, state: EduState, userCode: String? = null): AssistantResponse?
+  suspend fun getHint(taskProcessor: TaskProcessor, state: EduState, userCode: String? = null): AssistantResponse?
 }
 
 data class AssistantResponse(

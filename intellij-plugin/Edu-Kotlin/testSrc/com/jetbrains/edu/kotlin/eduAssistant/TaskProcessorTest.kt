@@ -1,6 +1,7 @@
 package com.jetbrains.edu.kotlin.eduAssistant
 
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.components.service
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.psi.PsiDocumentManager
 import com.jetbrains.edu.jvm.slow.checker.JdkCheckerTestBase
@@ -213,7 +214,7 @@ It's time to write your first program in Kotlin! Task Change the output text int
   fun testExtractingCodeFromResponse() {
     val course = project.course ?: error("Course was not found")
     val task = course.findTask("lesson1", "task1")
-    val assistant = TaskBasedAssistant(TaskProcessor(task))
+    val assistant = project.service<TaskBasedAssistant>()
     val language = task.course.languageDisplayName.lowercase()
     TaskBasedAssistant::class.memberFunctions.first { it.name == "getCodeFromResponse" }.apply {
       isAccessible = true

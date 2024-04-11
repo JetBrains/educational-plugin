@@ -6,7 +6,6 @@ import com.jetbrains.edu.assistant.validation.messages.EduAndroidAiAssistantVali
 import com.jetbrains.edu.assistant.validation.util.CodeHintDataframeRecord
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.eduAssistant.core.TaskBasedAssistant
 import org.apache.commons.csv.CSVRecord
 import org.jetbrains.kotlinx.dataframe.api.toDataFrame
 
@@ -45,7 +44,7 @@ class CodeHintValidationAction : CodeValidationAction<CodeHintDataframeRecord>()
 
   private suspend fun buildCodeHintRecord(task: EduTask, userCode: String): CodeHintDataframeRecord {
     val baseAssistantInfoStorage = BaseAssistantInfoStorage(task)
-    val response = baseAssistantInfoStorage.assistant.getHint(task, baseAssistantInfoStorage.eduState, userCode)
+    val response = baseAssistantInfoStorage.assistant.getHint(baseAssistantInfoStorage.taskProcessor, baseAssistantInfoStorage.eduState, userCode)
 
     try {
       val issues = runInspections(baseAssistantInfoStorage.project, baseAssistantInfoStorage.language, userCode)
@@ -54,8 +53,8 @@ class CodeHintValidationAction : CodeValidationAction<CodeHintDataframeRecord>()
         taskId = task.id,
         taskName = task.name,
         taskDescription = baseAssistantInfoStorage.taskProcessor.getTaskTextRepresentation(),
-        taskAnalysisPrompt = baseAssistantInfoStorage.assistant.taskAnalysisPrompt,
-        steps = TaskBasedAssistant.getSolutionSteps(task.id),
+        taskAnalysisPrompt = response.prompts.getOrDefault("taskAnalysisPrompt", ""),
+        steps = baseAssistantInfoStorage.assistant.getSolutionSteps(task.id)?.value,
         codeHintPrompt = response.prompts.getOrDefault("nextStepCodeHintPrompt", ""),
         userCode = userCode,
         generatedCode = response.codeHint ?: "",
@@ -68,8 +67,8 @@ class CodeHintValidationAction : CodeValidationAction<CodeHintDataframeRecord>()
         taskId = task.id,
         taskName = task.name,
         taskDescription = baseAssistantInfoStorage.taskProcessor.getTaskTextRepresentation(),
-        taskAnalysisPrompt = baseAssistantInfoStorage.assistant.taskAnalysisPrompt,
-        steps = TaskBasedAssistant.getSolutionSteps(task.id),
+        taskAnalysisPrompt = response.prompts.getOrDefault("taskAnalysisPrompt", ""),
+        steps = baseAssistantInfoStorage.assistant.getSolutionSteps(task.id)?.value,
         codeHintPrompt = response.prompts.getOrDefault("nextStepCodeHintPrompt", ""),
         userCode = userCode,
         error = e

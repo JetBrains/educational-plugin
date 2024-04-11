@@ -1,9 +1,11 @@
 package com.jetbrains.edu.assistant.validation.actions.solution.steps
 
+import com.intellij.openapi.components.service
 import com.jetbrains.edu.assistant.validation.actions.ValidationAction
 import com.jetbrains.edu.assistant.validation.messages.EduAndroidAiAssistantValidationBundle
 import com.jetbrains.edu.assistant.validation.util.StepsDataframeRecord
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.eduAssistant.core.TaskBasedAssistant
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
@@ -38,17 +40,17 @@ class StepsValidationAction : ValidationAction<StepsDataframeRecord>() {
 
   override suspend fun buildRecords(task: EduTask, lesson: Lesson): List<StepsDataframeRecord> {
     val taskProcessor = TaskProcessor(task)
-    val assistant = TaskBasedAssistant(taskProcessor)
+    val assistant = task.project?.service<TaskBasedAssistant>() ?: error("Project not found")
 
     try {
-      val steps = assistant.getTaskAnalysis(task) ?: error("code is not compilable")
+      val steps = assistant.getTaskAnalysis(taskProcessor) ?: error("code is not compilable")
 
       return listOf(StepsDataframeRecord (
         taskId = task.id,
         taskName = task.name,
         taskDescription = taskProcessor.getTaskTextRepresentation(),
-        prompt = assistant.taskAnalysisPrompt,
-        steps = steps
+        prompt = steps.prompt,
+        steps = steps.value
       ))
     }
     catch (e: Throwable) {
@@ -56,7 +58,6 @@ class StepsValidationAction : ValidationAction<StepsDataframeRecord>() {
         taskId = task.id,
         taskName = task.name,
         taskDescription = taskProcessor.getTaskTextRepresentation(),
-        prompt = assistant.taskAnalysisPrompt,
         error = e
       ))
     }

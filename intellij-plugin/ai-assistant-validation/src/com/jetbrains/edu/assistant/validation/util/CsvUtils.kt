@@ -14,9 +14,8 @@ data class StepsDataframeRecord(
     taskId: Int,
     taskName: String,
     taskDescription: String,
-    prompt: String?,
     error: Throwable
-  ): this(taskId, taskName, taskDescription, prompt, "Error while generating steps: ${error.message}", null)
+  ): this(taskId, taskName, taskDescription, null, "Error while generating steps: ${error.message}", null)
 
   companion object {
     fun buildFrom(record: CSVRecord) = StepsDataframeRecord(

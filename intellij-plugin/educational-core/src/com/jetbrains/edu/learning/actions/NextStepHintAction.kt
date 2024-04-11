@@ -54,7 +54,6 @@ import java.awt.Font
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.swing.JComponent
 import javax.swing.JPanel
-import kotlin.coroutines.EmptyCoroutineContext
 
 class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
   var actionTargetParent: JPanel? = null
@@ -162,7 +161,6 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
   }
 
   private fun rejectHint(state: EduState) {
-    val scope = CoroutineScope(EmptyCoroutineContext)
     val task = state.task
     Loggers.eduAssistantLogger.info(
       """Lesson id: ${task.lesson.id}    Task id: ${task.id}
@@ -172,9 +170,9 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
     )
     val taskProcessor = TaskProcessor(task)
     if (taskProcessor.needToUpdateSolutionSteps()) {
-      val assistant = TaskBasedAssistant(taskProcessor)
-      scope.launch {
-        assistant.getTaskAnalysis(task)
+      val assistant = state.project.service<TaskBasedAssistant>()
+      assistant.scope.launch {
+        assistant.getTaskAnalysis(taskProcessor)
       }
     }
     closeNextStepHintNotificationPanel()
@@ -198,10 +196,10 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
       progressIndicator = indicator
 
       val taskProcessor = TaskProcessor(task)
-      val assistant = TaskBasedAssistant(taskProcessor)
+      val assistant = project.service<TaskBasedAssistant>()
       runBlockingCancellable {
         task.aiAssistantState = AiAssistantState.HelpAsked
-        val response = assistant.getHint(task, state)
+        val response = assistant.getHint(taskProcessor, state)
         response.assistantError?.let {
           showHintWindow(it.errorMessage)
           return@runBlockingCancellable
