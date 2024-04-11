@@ -20,13 +20,10 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.toolWindow.ToolWindowHeadlessManagerImpl
-import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
 import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
-import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.checker.CheckActionListener
-import com.jetbrains.edu.learning.codeforces.update.CodeforcesCourseUpdateChecker
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.EducationalExtensionPoint
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
@@ -45,17 +42,11 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.framework.FrameworkLessonManager
-import com.jetbrains.edu.learning.marketplace.update.MarketplaceUpdateChecker
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
-import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
-import com.jetbrains.edu.learning.stepik.hyperskill.update.HyperskillCourseUpdateChecker
-import com.jetbrains.edu.learning.storage.LearningObjectsStorageManager
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
-import com.jetbrains.edu.learning.yaml.YamlLoadingErrorManager
 import okhttp3.mockwebserver.MockResponse
 import org.apache.http.HttpStatus
 import java.io.File
@@ -87,6 +78,8 @@ abstract class EduTestCase : BasePlatformTestCase() {
     registerConfigurator(myFixture.testRootDisposable, FakeGradleConfigurator::class.java, FakeGradleBasedLanguage)
     registerConfigurator(myFixture.testRootDisposable, FakeGradleHyperskillConfigurator::class.java, FakeGradleBasedLanguage, HYPERSKILL)
 
+    LightTestServiceStateHelper.restoreState(project)
+
     CheckActionListener.reset()
     val connection = project.messageBus.connect(testRootDisposable)
     connection.subscribe(StudyTaskManager.COURSE_SET, object : CourseSetListener {
@@ -97,33 +90,14 @@ abstract class EduTestCase : BasePlatformTestCase() {
         connection.disconnect()
       }
     })
-    FrameworkLessonManager.getInstance(project).restoreState()
-    CCFrameworkLessonManager.getInstance(project).restoreState()
+
     createCourse()
     project.putUserData(CourseProjectGenerator.EDU_PROJECT_CREATED, true)
   }
 
   override fun tearDown() {
     try {
-      EduBrowser.getInstance().cleanUpState()
-      SubmissionsManager.getInstance(project).cleanUpState()
-      CoursesStorage.getInstance().cleanUpState()
-
-      // We may want to check something outside a course project
-      // to be sure that the plugin doesn't break other cases.
-      // But in the case of a non edu project, `TaskToolWindowView.getInstance(project)` throws exception
-      if (project.isEduProject()) {
-        TaskToolWindowView.getInstance(project).cleanUpState()
-      }
-      FrameworkLessonManager.getInstance(project).cleanUpState()
-      CCFrameworkLessonManager.getInstance(project).cleanUpState()
-      YamlLoadingErrorManager.getInstance(project).cleanUpState()
-
-      MarketplaceUpdateChecker.getInstance(project).cleanUpState()
-      HyperskillCourseUpdateChecker.getInstance(project).cleanUpState()
-      CodeforcesCourseUpdateChecker.getInstance(project).cleanUpState()
-
-      LearningObjectsStorageManager.getInstance(project).cleanUpState()
+      LightTestServiceStateHelper.cleanUpState(project)
     }
     catch (e: Throwable) {
       addSuppressedException(e)
