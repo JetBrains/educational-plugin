@@ -2,6 +2,7 @@
 
 package com.jetbrains.edu.learning.feedback
 
+import com.intellij.platform.feedback.dialog.CommonFeedbackSystemData
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json

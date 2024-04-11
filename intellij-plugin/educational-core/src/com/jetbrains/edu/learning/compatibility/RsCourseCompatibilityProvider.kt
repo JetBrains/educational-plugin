@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.compatibility
 
-import com.intellij.util.PlatformUtils.isCLion
-import com.intellij.util.PlatformUtils.isIdeaUltimate
+import com.intellij.util.PlatformUtils.*
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.courseFormat.PluginInfo
 import com.jetbrains.edu.learning.courseFormat.PluginInfos

@@ -74,7 +74,7 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
       // See https://youtrack.jetbrains.com/issue/EDU-6371
       .filter { it.sdkSeemsValid }
       .takeIf { it.isNotEmpty() }
-      ?: PySdkToInstallUtils.getSdksToInstall()
+      ?: getSdksToInstall()
   }
 
   override fun getSettings(): PyProjectSettings = projectSettings

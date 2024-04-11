@@ -86,10 +86,6 @@ object EduUtilsKt {
   @Suppress("UnstableApiUsage")
   fun isAndroidStudio(): Boolean = "AndroidStudio" == PlatformUtils.getPlatformPrefix()
 
-  // BACKCOMPAT: 2023.2
-  @Deprecated("Use `PlatformUtils.isRustRover` since 2023.3", replaceWith = ReplaceWith("PlatformUtils.isRustRover()", "com.intellij.util.PlatformUtils"))
-  fun isRustRover(): Boolean = "RustRover" == PlatformUtils.getPlatformPrefix()
-
   fun isTaskDescriptionFile(fileName: String): Boolean = TASK_HTML == fileName || TASK_MD == fileName
 
   fun updateToolWindows(project: Project) {

@@ -24,9 +24,7 @@ fun getDefaultLanguageId(): String? = when {
   PlatformUtils.isCLion() -> CPP
   PlatformUtils.isGoIde() -> GO
   PlatformUtils.isPhpStorm() -> PHP
-  // BACKCOMPAT: 2023.2
-  @Suppress("DEPRECATION")
-  EduUtilsKt.isRustRover() -> RUST
+  PlatformUtils.isRustRover() -> RUST
   else -> null
 }
 

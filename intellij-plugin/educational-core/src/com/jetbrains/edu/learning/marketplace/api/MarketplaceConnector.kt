@@ -7,6 +7,7 @@ import com.intellij.notification.NotificationAction
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.impl.ApplicationInfoImpl
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
@@ -158,7 +159,7 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
   }
 
   fun loadCourse(courseId: Int): EduCourse {
-    val buildNumber = getBuildNumber()
+    val buildNumber = ApplicationInfoImpl.getShadowInstanceImpl().pluginCompatibleBuild
     val uuid = PluginDownloader.getMarketplaceDownloadsUUID()
     val updateInfo = getLatestCourseUpdateInfo(courseId) ?: error("Update info for course $courseId is null")
 

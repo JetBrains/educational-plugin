@@ -4,12 +4,14 @@ import com.intellij.featureStatistics.fusCollectors.LifecycleUsageTriggerCollect
 import com.intellij.ide.AppLifecycleListener
 import com.intellij.ide.CliResult
 import com.intellij.idea.IdeStarter
+import com.intellij.openapi.application.Application
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.getOrLogException
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.progress.blockingContext
+import com.intellij.platform.diagnostic.telemetry.impl.span
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.authUtils.requestFocus

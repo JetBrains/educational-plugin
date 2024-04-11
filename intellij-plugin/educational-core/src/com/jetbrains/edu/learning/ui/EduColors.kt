@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.ui
 
+import com.intellij.ide.ui.LafManager
 import com.intellij.openapi.editor.EditorBundle
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.UIUtil
@@ -26,4 +27,6 @@ object EduColors {
     }
     return JBColor.namedColor(colorProperty, customColor)
   }
+
+  fun getCurrentThemeName(): String? = LafManager.getInstance().currentUIThemeLookAndFeel?.name
 }

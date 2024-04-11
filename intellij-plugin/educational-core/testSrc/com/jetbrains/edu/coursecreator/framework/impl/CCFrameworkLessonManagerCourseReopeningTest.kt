@@ -2,14 +2,14 @@ package com.jetbrains.edu.coursecreator.framework.impl
 
 import com.intellij.configurationStore.saveSettings
 import com.intellij.openapi.project.Project
+import com.intellij.platform.ide.progress.ModalTaskOwner
+import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
 import com.jetbrains.edu.learning.CourseReopeningTestBase
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
-import com.jetbrains.edu.learning.progress.ModalTaskOwner
-import com.jetbrains.edu.learning.progress.runWithModalProgressBlocking
 
 class CCFrameworkLessonManagerCourseReopeningTest : CourseReopeningTestBase<EmptyProjectSettings>() {
   override val defaultSettings = EmptyProjectSettings

@@ -5,6 +5,7 @@ import com.intellij.openapi.application.EDT
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.util.registry.Registry
+import com.intellij.platform.backend.observation.Observation
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -67,7 +68,7 @@ abstract class EduCourseProjectAppStarterBase : EduAppStarterBase<ArgsWithProjec
         // Some technologies do some work at project opening in startup activities,
         // and they may not expect that project is closed so early (C++, for example).
         // So, let's try to wait for them
-        waitForPostStartupActivities(project)
+        Observation.awaitConfiguration(project)
 
         val result = performProjectAction(project, course, args)
 
@@ -121,8 +122,7 @@ private class ProjectConfigurationListener : CourseProjectGenerator.CourseProjec
   }
 }
 
-// BACKCOMPAT: 2023.2. Make it private
-suspend fun waitUntil(condition: () -> Boolean) {
+private suspend fun waitUntil(condition: () -> Boolean) {
   while (!condition()) {
     delay(50)
   }

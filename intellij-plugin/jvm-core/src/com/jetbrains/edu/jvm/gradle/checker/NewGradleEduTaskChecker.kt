@@ -28,7 +28,7 @@ open class NewGradleEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker
   override fun getErrorMessage(node: SMTestProxy): String {
     // @formatter:off
     val message = node.errorMessage ?:
-                  // Gradle integration doesn't pass error messages in some cases in 2023.2 and 2023.3
+                  // Gradle integration doesn't pass error messages in some cases in 2023.3
                   // See https://youtrack.jetbrains.com/issue/EDU-6567
                   node.stacktrace?.extractMessageFromStackTrace() ?:
                   EduCoreBundle.message("error.execution.failed")

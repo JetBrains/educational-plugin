@@ -4,6 +4,8 @@ import com.android.ddmlib.IDevice
 import com.android.sdklib.internal.avd.AvdInfo
 import com.android.tools.idea.adb.AdbService
 import com.android.tools.idea.avdmanager.AvdManagerConnection
+import com.android.tools.idea.avdmanager.ui.AvdOptionsModel
+import com.android.tools.idea.avdmanager.ui.AvdWizardUtils
 import com.android.tools.idea.run.LaunchableAndroidDevice
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger

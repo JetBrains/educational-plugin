@@ -1,10 +1,10 @@
 package com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers
 
+import com.intellij.ide.ui.LafManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.ui.JBColor
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
 import com.jetbrains.edu.learning.taskToolWindow.ui.EduToolsResourcesRequestHandler
-import com.jetbrains.edu.learning.ui.getCurrentThemeId
 import java.net.URL
 
 object StyleResourcesManager {
@@ -173,6 +173,6 @@ object StyleResourcesManager {
   }
 
   fun isHighContrast(): Boolean {
-    return getCurrentThemeId() == "JetBrainsHighContrastTheme"
+    return LafManager.getInstance().currentUIThemeLookAndFeel?.id == "JetBrainsHighContrastTheme"
   }
 }

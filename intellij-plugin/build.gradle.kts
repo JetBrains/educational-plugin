@@ -395,10 +395,10 @@ task<RunIdeTask>("buildEventsScheme") {
   args("buildEventsScheme", "--outputFile=${buildDir()}/eventScheme.json", "--pluginId=com.jetbrains.edu")
   // Force headless mode to be able to run command on CI
   systemProperty("java.awt.headless", "true")
-  // BACKCOMPAT: 2023.2. Update value to 232 and this comment
+  // BACKCOMPAT: 2023.3. Update value to 233 and this comment
   // `IDEA_BUILD_NUMBER` variable is used by `buildEventsScheme` task to write `buildNumber` to output json.
   // It will be used by TeamCity automation to set minimal IDE version for new events
-  environment("IDEA_BUILD_NUMBER", "232")
+  environment("IDEA_BUILD_NUMBER", "233")
 }
 
 task("configureRemoteDevServer") {

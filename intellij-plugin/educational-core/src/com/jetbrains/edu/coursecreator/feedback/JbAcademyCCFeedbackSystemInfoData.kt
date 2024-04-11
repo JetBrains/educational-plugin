@@ -2,7 +2,7 @@
 
 package com.jetbrains.edu.coursecreator.feedback
 
-import com.jetbrains.edu.learning.feedback.CommonFeedbackSystemData
+import com.intellij.platform.feedback.dialog.CommonFeedbackSystemData
 import com.jetbrains.edu.learning.feedback.CourseFeedbackInfoData
 import com.jetbrains.edu.learning.feedback.JbAcademyFeedbackSystemInfoData
 import kotlinx.serialization.Serializable

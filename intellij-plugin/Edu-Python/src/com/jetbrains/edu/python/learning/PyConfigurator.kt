@@ -2,10 +2,8 @@ package com.jetbrains.edu.python.learning
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.PlatformUtils
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
-import com.jetbrains.edu.learning.compatibility.isDataSpellSupported
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.python.learning.checker.PyTaskCheckerProvider
@@ -35,10 +33,6 @@ open class PyConfigurator : EduConfigurator<PyProjectSettings> {
 
   override val defaultPlaceholderText: String
     get() = "# TODO"
-
-  // BACKCOMPAT: 2023.2
-  override val isEnabled: Boolean
-    get() = if (PlatformUtils.isDataSpell()) isDataSpellSupported else super.isEnabled
 
   companion object {
     const val TESTS_PY = "tests.py"

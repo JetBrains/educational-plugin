@@ -1,9 +1,12 @@
 package com.jetbrains.edu.android.courseGeneration
 
+import com.android.tools.idea.gradle.project.AndroidGradleProjectStartupActivity
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.ExtensionPoint
 import com.intellij.openapi.extensions.impl.ExtensionPointImpl
+import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.jvm.courseGeneration.JvmCourseGenerationTestBase
@@ -16,7 +19,14 @@ class AndroidCourseGeneratorTest : JvmCourseGenerationTestBase() {
 
   override fun setUp() {
     super.setUp()
-    disableUnnecessaryExtensions(testRootDisposable)
+
+    // Disables some extensions provided by AS.
+    // They try to set up JAVA and Android JDK, or run Gradle import in tests where we don't need it.
+    // So let's unregister them. Otherwise, tests fail
+    ApplicationManager.getApplication().extensionArea
+      .getExtensionPoint<ProjectActivity>("com.intellij.postStartupActivity")
+      // Use `unregisterExtensionInTest` instead when we migrate our startup activities to `ProjectActivity` API
+      .unregisterExtension(AndroidGradleProjectStartupActivity::class.java)
     disableProjectSyncNotifications()
   }
 

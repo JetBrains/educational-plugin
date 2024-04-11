@@ -26,6 +26,7 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.util.progress.withRawProgressReporter
 import com.intellij.psi.PsiManager
 import com.intellij.sql.SqlFileType
 import com.intellij.sql.dialects.SqlDialectMappings
@@ -38,7 +39,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.progress.withRawProgressReporter
 import com.jetbrains.edu.sql.core.EduSqlBundle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.future.await

@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.HyperskillCourseAdvertiser
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.TypographyManager
 import com.jetbrains.edu.learning.ui.EduColors
-import com.jetbrains.edu.learning.ui.getCurrentThemeName
+import com.jetbrains.edu.learning.ui.EduColors.getCurrentThemeName
 import kotlinx.css.*
 import kotlinx.css.properties.lh
 import java.awt.Color

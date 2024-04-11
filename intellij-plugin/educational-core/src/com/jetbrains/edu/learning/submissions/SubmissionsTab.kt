@@ -199,7 +199,11 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
 
   private fun createSegmentedButton() = panel {
     row {
-      segmentedButton = segmentedButton(SEGMENTED_BUTTON_ITEMS) { segmentedButtonRenderer(it) }.apply {
+      segmentedButton = segmentedButton(SEGMENTED_BUTTON_ITEMS) {
+        text = it.text
+        enabled = it.isEnabled
+        toolTipText = it.toolTipText
+      }.apply {
         selectedItem = MY
         whenItemSelected {
           when (it) {
@@ -212,6 +216,25 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
         }
       }
     }
+  }
+
+  @Suppress("UnstableApiUsage")
+  private fun SegmentedButton<JButton>.updateCommunityButton(isLoggedIn: Boolean, isEnabled: Boolean, isAgreementTooltip: Boolean = false) {
+    val communityButton = items.findLast { it.text == COMMUNITY.text } ?: return
+
+    communityButton.isEnabled = isLoggedIn && isEnabled
+    communityButton.toolTipText = when {
+      !isLoggedIn -> EduCoreBundle.message("submissions.button.community.tooltip.text.login")
+      isAgreementTooltip -> EduCoreBundle.message("submissions.tab.solution.sharing.agreement")
+      isEnabled -> EduCoreBundle.message("submissions.button.community.tooltip.text.enabled")
+      else -> EduCoreBundle.message("submissions.button.community.tooltip.text.disabled")
+    }
+
+    if (!isEnabled) {
+      selectedItem = items.first()
+    }
+
+    update(communityButton)
   }
 
   private fun addGotItTooltip(component: JComponent) = component.addAncestorListener(object : AncestorListenerAdapter() {

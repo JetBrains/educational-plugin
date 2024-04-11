@@ -1,6 +1,9 @@
 package com.jetbrains.edu.learning.feedback
 
 import com.intellij.openapi.project.Project
+import com.intellij.platform.feedback.dialog.BlockBasedFeedbackDialogWithEmail
+import com.intellij.platform.feedback.dialog.showFeedbackSystemInfoDialog
+import com.intellij.platform.feedback.dialog.uiBlocks.*
 import com.intellij.ui.dsl.builder.Panel
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.NonNls

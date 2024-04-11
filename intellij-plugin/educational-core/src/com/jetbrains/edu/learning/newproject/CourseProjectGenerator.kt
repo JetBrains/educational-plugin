@@ -20,6 +20,13 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.wm.impl.status.widget.StatusBarWidgetsManager
+import com.intellij.platform.ide.progress.ModalTaskOwner
+import com.intellij.platform.ide.progress.TaskCancellation
+import com.intellij.platform.ide.progress.runWithModalProgressBlocking
+import com.intellij.platform.ide.progress.withModalProgress
+import com.intellij.platform.util.progress.indeterminateStep
+import com.intellij.platform.util.progress.progressStep
+import com.intellij.platform.util.progress.withRawProgressReporter
 import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
 import com.intellij.util.PathUtil
 import com.intellij.util.concurrency.annotations.RequiresBlockingContext
@@ -39,14 +46,6 @@ import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
-import com.jetbrains.edu.learning.progress.*
-import com.jetbrains.edu.learning.progress.ModalTaskOwner
-import com.jetbrains.edu.learning.progress.TaskCancellation
-import com.jetbrains.edu.learning.progress.indeterminateStep
-import com.jetbrains.edu.learning.progress.progressStep
-import com.jetbrains.edu.learning.progress.runWithModalProgressBlocking
-import com.jetbrains.edu.learning.progress.withModalProgress
-import com.jetbrains.edu.learning.progress.withRawProgressReporter
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillCourseProjectGenerator
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -93,7 +92,11 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
   @RequiresEdt
   @RequiresBlockingContext
   fun doCreateCourseProject(location: String, projectSettings: EduProjectSettings): Project? {
-    return runWithModalProgressBlocking(ModalTaskOwner.guess(), EduCoreBundle.message("generate.course.progress.title"), TaskCancellation.cancellable()) {
+    return runWithModalProgressBlocking(
+      ModalTaskOwner.guess(),
+      EduCoreBundle.message("generate.course.progress.title"),
+      TaskCancellation.cancellable()
+    ) {
       doCreateCourseProjectAsync(location, projectSettings)
     }
   }
@@ -179,7 +182,11 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
 
     // A new progress window is needed because here we already have a new project frame,
     // and previous progress is not visible for user anymore
-    withModalProgress(ModalTaskOwner.project(newProject), EduCoreBundle.message("generate.course.progress.title"), TaskCancellation.nonCancellable()) {
+    withModalProgress(
+      ModalTaskOwner.project(newProject),
+      EduCoreBundle.message("generate.course.progress.title"),
+      TaskCancellation.nonCancellable()
+    ) {
       indeterminateStep(EduCoreBundle.message("generate.project.unpack.course.project.settings.progress.text")) {
         blockingContext {
           unpackAdditionalFiles(holder, ONLY_IDEA_DIRECTORY)
