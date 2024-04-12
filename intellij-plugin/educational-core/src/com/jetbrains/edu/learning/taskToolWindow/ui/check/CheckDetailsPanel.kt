@@ -8,9 +8,11 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.components.AnActionLink
 import com.intellij.ui.content.Content
+import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.Alarm
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
@@ -18,17 +20,22 @@ import com.jetbrains.edu.learning.actions.CompareWithAnswerAction
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.details.CheckDetailsView
 import com.jetbrains.edu.learning.codeforces.actions.CodeforcesMarkAsCompletedAction
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckResultDiff
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.CourseraCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
+import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.invokeLater
+import com.jetbrains.edu.learning.marketplace.isMarketplaceStudentCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.PostHyperskillProjectToGithub
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.submissions.SubmissionsListener
+import com.jetbrains.edu.learning.submissions.SubmissionsManager
+import com.jetbrains.edu.learning.submissions.SubmissionsTab
 import com.jetbrains.edu.learning.taskToolWindow.addActionLinks
 import com.jetbrains.edu.learning.taskToolWindow.ui.LightColoredActionLink
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory
@@ -36,6 +43,7 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckMessagePanel.Comp
 import com.jetbrains.edu.learning.xmlUnescaped
 import org.jdesktop.swingx.HorizontalLayout
 import java.awt.BorderLayout
+import java.util.concurrent.CompletableFuture
 import javax.swing.BoxLayout
 import javax.swing.JLabel
 import javax.swing.JPanel
@@ -101,7 +109,49 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
         linksPanel.add(answerHintsPanel, BorderLayout.SOUTH)
       }
     }
+
+    if (project.isMarketplaceStudentCourse() && !checkResult.isSolved && !task.canShowSolution()) {
+      val communitySolutionsLink = createCommunityLinksPanel(project).apply {
+        isVisible = false
+      }
+      project.messageBus.connect().subscribe(SubmissionsManager.TOPIC, SubmissionsListener {
+        CompletableFuture.supplyAsync {
+          val submissionsManager = SubmissionsManager.getInstance(project)
+          val isCommunitySolutionsLoaded = submissionsManager.isCommunitySolutionsLoaded(task)
+          val isAllowedToLoadCommunitySolutions = checkResult.isSolved || submissionsManager.isAllowedToLoadCommunitySolutions(task)
+
+          if (!isAllowedToLoadCommunitySolutions) {
+            communitySolutionsLink.isVisible = false
+            return@supplyAsync
+          }
+
+          if (!isCommunitySolutionsLoaded) {
+            submissionsManager.loadCommunitySubmissions(task)
+          }
+
+          project.invokeLater {
+            communitySolutionsLink.isVisible = true
+          }
+        }
+      })
+      linksPanel.add(communitySolutionsLink, BorderLayout.NORTH)
+    }
+
     return linksPanel
+  }
+
+  private fun createCommunityLinksPanel(project: Project): DialogPanel = panel {
+    row(EduCoreBundle.message("submissions.got.stuck")) {
+      link(EduCoreBundle.message("submissions.see.community.solutions.link")) {
+        val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskToolWindowFactory.STUDY_TOOL_WINDOW)
+        toolWindow?.let {
+          val submissionsTabContent = toolWindow.contentManager.findContent(EduCoreBundle.message("submissions.tab.name"))
+          val submissionsTab = submissionsTabContent.component as? SubmissionsTab ?: return@let
+          toolWindow.contentManager.setSelectedContent(submissionsTabContent)
+          submissionsTab.showCommunityTab()
+        }
+      }
+    }
   }
 
   private val Task.showAnswerHints: Boolean
