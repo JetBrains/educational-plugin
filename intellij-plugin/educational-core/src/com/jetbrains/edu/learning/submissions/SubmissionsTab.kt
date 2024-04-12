@@ -33,7 +33,6 @@ import com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionAct
 import com.jetbrains.edu.learning.marketplace.isMarketplaceCourse
 import com.jetbrains.edu.learning.marketplace.userAgreement.UserAgreementDialog
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.projectView.CourseViewUtils.isCommunitySolutionsAllowed
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.taskToolWindow.links.SwingToolWindowLinkHandler
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleManager
@@ -112,17 +111,18 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
   private fun updateSubmissionsContent(task: Task, isLoggedIn: Boolean) {
     val submissionsManager = SubmissionsManager.getInstance(project)
     val isSolutionSharingAllowed = submissionsManager.isSolutionSharingAllowed()
+    val isAllowedToLoadCommunitySolutions = submissionsManager.isAllowedToLoadCommunitySolutions(task)
     val (descriptionText, customLinkHandler) =
       prepareSubmissionsContent(submissionsManager, task, isLoggedIn)
 
     if (isMarketplaceCourse) {
       val (communityDescriptionText, communityLinkHandler) =
-        prepareCommunityContent(task, submissionsManager, isSolutionSharingAllowed)
+        prepareCommunityContent(task, submissionsManager, isAllowedToLoadCommunitySolutions, isSolutionSharingAllowed)
 
       project.invokeLater {
         segmentedButton.updateCommunityButton(
           isLoggedIn = isLoggedIn,
-          isEnabled = task.isCommunitySolutionsAllowed() || !isSolutionSharingAllowed,
+          isEnabled = isAllowedToLoadCommunitySolutions || !isSolutionSharingAllowed,
           isAgreementTooltip = !isSolutionSharingAllowed
         )
         updatePanel(panel, descriptionText, customLinkHandler)
@@ -143,9 +143,12 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
   }
 
   private fun prepareCommunityContent(
-    task: Task, submissionsManager: SubmissionsManager, isSolutionSharingAllowed: Boolean
+    task: Task,
+    submissionsManager: SubmissionsManager,
+    isAllowedToShowCommunitySolutions: Boolean,
+    isSolutionSharingAllowed: Boolean
   ): Pair<String, SwingToolWindowLinkHandler?> {
-    if (task.isCommunitySolutionsAllowed() && isSolutionSharingAllowed) {
+    if (isAllowedToShowCommunitySolutions && isSolutionSharingAllowed) {
       val submissionsList = submissionsManager.getCommunitySubmissionsFromMemory(task.id)
 
       if (submissionsList.isNullOrEmpty()) {
@@ -191,6 +194,10 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
   fun showLoadingCommunityPanel(platformName: String) {
     if (!isMarketplaceCourse) return
     communityPanel.showLoadingSubmissionsPanel(platformName)
+  }
+
+  fun showCommunityTab() {
+    segmentedButton.selectedItem = COMMUNITY
   }
 
   fun showMyTab() {

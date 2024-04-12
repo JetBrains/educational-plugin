@@ -19,7 +19,7 @@ interface SubmissionsProvider {
 
   fun loadSharedSolutionsForCourse(course: Course): Map<Int, List<Submission>> = mapOf()
 
-  fun loadSharedSolutionsForTask(course: Course, task: Task): List<MarketplaceSubmission> = listOf()
+  fun loadSharedSolutionsForTask(course: Course, task: Task): List<MarketplaceSubmission>? = null
 
   fun loadSolutionFiles(submission: MarketplaceSubmission) {}
 

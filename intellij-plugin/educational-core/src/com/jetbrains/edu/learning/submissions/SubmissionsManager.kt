@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
+import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.createTopic
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
@@ -171,6 +172,8 @@ class SubmissionsManager(private val project: Project) {
   }
 
   fun loadCommunitySubmissions(task: Task) {
+    if (!isSolutionSharingAllowed()) return
+
     val course = this.course
     val submissionsProvider = course?.getSubmissionsProvider() ?: return
 
@@ -178,7 +181,7 @@ class SubmissionsManager(private val project: Project) {
       if (isLoggedIn()) {
         val taskToolWindowView = TaskToolWindowView.getInstance(project)
         taskToolWindowView.showLoadingCommunityPanel(getPlatformName())
-        val sharedSolutions = submissionsProvider.loadSharedSolutionsForTask(course, task)
+        val sharedSolutions = submissionsProvider.loadSharedSolutionsForTask(course, task) ?: return@runAsync
         communitySubmissions[task.id] = sharedSolutions
         notifySubmissionsChanged()
       }
@@ -198,6 +201,15 @@ class SubmissionsManager(private val project: Project) {
 
   @RequiresBackgroundThread
   fun isSolutionSharingAllowed(): Boolean = course?.getSubmissionsProvider()?.isSolutionSharingAllowed() ?: false
+
+  fun isCommunitySolutionsLoaded(task: Task): Boolean = !communitySubmissions[task.id].isNullOrEmpty()
+
+  fun isAllowedToLoadCommunitySolutions(task: Task): Boolean {
+    val submissions = submissions[task.id] ?: return false
+    val correctSubmissions = submissions.count { it.status == CORRECT }
+    val wrongSubmissions = submissions.count() - correctSubmissions
+    return correctSubmissions >= 1 || (!task.canShowSolution() && wrongSubmissions >= GOT_STUCK_WRONG_SUBMISSIONS_AMOUNT)
+  }
 
   private fun getPlatformName(): String = course?.getSubmissionsProvider()?.getPlatformName() ?: error("Failed to get platform Name")
 
@@ -231,6 +243,8 @@ class SubmissionsManager(private val project: Project) {
     fun getInstance(project: Project): SubmissionsManager {
       return project.service()
     }
+
+    private const val GOT_STUCK_WRONG_SUBMISSIONS_AMOUNT: Int = 3
   }
 }
 
