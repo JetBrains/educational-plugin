@@ -1,6 +1,5 @@
 package com.jetbrains.edu.assistant.validation.actions.solution.steps
 
-import com.jetbrains.edu.assistant.validation.accuracy.AccuracyCalculator
 import com.jetbrains.edu.assistant.validation.actions.ValidationAction
 import com.jetbrains.edu.assistant.validation.messages.EduAndroidAiAssistantValidationBundle
 import com.jetbrains.edu.assistant.validation.util.StepsDataframeRecord
@@ -31,9 +30,7 @@ class StepsValidationAction : ValidationAction<StepsDataframeRecord>() {
   override val outputFilePrefixName: String = "generatedSteps"
   override val name: String = EduAndroidAiAssistantValidationBundle.message("action.step.validation.action.name")
   override val isNavigationRequired: Boolean = false
-  override val toCalculateOverallAccuracy: Boolean = false
   override val pathToLabelledDataset = null
-  override val accuracyCalculator = StepsAccuracyCalculator()
 
   init {
     setUpSpinnerPanel(name)
@@ -68,18 +65,4 @@ class StepsValidationAction : ValidationAction<StepsDataframeRecord>() {
   override fun MutableList<StepsDataframeRecord>.convertToDataFrame() = toDataFrame()
 
   override fun CSVRecord.toDataframeRecord() = StepsDataframeRecord.buildFrom(this)
-
-  override suspend fun buildRecords(manualValidationRecord: StepsDataframeRecord): StepsDataframeRecord {
-    throw UnsupportedOperationException("This function is not supported.")
-  }
-
-  inner class StepsAccuracyCalculator : AccuracyCalculator<StepsDataframeRecord>() {
-    override fun calculateValidationAccuracy(manualRecords: List<StepsDataframeRecord>, autoRecords: List<StepsDataframeRecord>): StepsDataframeRecord {
-      throw UnsupportedOperationException("This function is not supported.")
-    }
-
-    override fun calculateOverallAccuracy(records: List<StepsDataframeRecord>): StepsDataframeRecord {
-      throw UnsupportedOperationException("This function is not supported.")
-    }
-  }
 }

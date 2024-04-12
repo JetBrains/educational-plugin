@@ -35,7 +35,6 @@ class AutoStepsValidationAction : ValidationAction<ValidationOfStepsDataframeRec
   override val outputFilePrefixName: String = "generatedValidationOfSteps"
   override val name: String = EduAndroidAiAssistantValidationBundle.message("action.auto.step.validation.action.name")
   override val isNavigationRequired: Boolean = false
-  override val toCalculateOverallAccuracy: Boolean = true
   override val pathToLabelledDataset by lazy { Path(System.getProperty("manual.steps.validation.path")) }
   override val accuracyCalculator = AutoStepsValidationAccuracyCalculator()
 
@@ -98,7 +97,7 @@ class AutoStepsValidationAction : ValidationAction<ValidationOfStepsDataframeRec
     }
   }
 
-  inner class AutoStepsValidationAccuracyCalculator : AccuracyCalculator<ValidationOfStepsDataframeRecord>() {
+  inner class AutoStepsValidationAccuracyCalculator : AccuracyCalculator<ValidationOfStepsDataframeRecord> {
     override fun calculateValidationAccuracy(
       manualRecords: List<ValidationOfStepsDataframeRecord>,
       autoRecords: List<ValidationOfStepsDataframeRecord>

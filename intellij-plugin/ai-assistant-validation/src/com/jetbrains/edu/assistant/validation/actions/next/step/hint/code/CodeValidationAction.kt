@@ -3,7 +3,6 @@ package com.jetbrains.edu.assistant.validation.actions.next.step.hint.code
 import com.intellij.lang.Language
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFileFactory
-import com.jetbrains.edu.assistant.validation.accuracy.AccuracyCalculator
 import com.jetbrains.edu.assistant.validation.actions.ValidationAction
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -30,17 +29,4 @@ abstract class CodeValidationAction<T> : ValidationAction<T>() {
   protected fun runInspections(project: Project, language: Language, code: String) = PsiFileFactory.getInstance(project).createFileFromText(
     "file", language, code
   ).getInspectionsWithIssues(InspectionProvider.getInspections(language)).map { it.id }
-
-  inner class CodeHintAccuracyCalculator : AccuracyCalculator<T>() {
-    override fun calculateValidationAccuracy(
-      manualRecords: List<T>,
-      autoRecords: List<T>
-    ): T {
-      throw UnsupportedOperationException("This function is not supported.")
-    }
-
-    override fun calculateOverallAccuracy(records: List<T>): T {
-      throw UnsupportedOperationException("This function is not supported.")
-    }
-  }
 }

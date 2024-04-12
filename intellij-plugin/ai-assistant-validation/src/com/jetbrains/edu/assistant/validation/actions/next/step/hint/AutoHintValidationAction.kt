@@ -38,7 +38,6 @@ class AutoHintValidationAction : ValidationAction<ValidationOfHintsDataframeReco
   override val outputFilePrefixName: String = "generatedValidationOfHints"
   override val name: String = EduAndroidAiAssistantValidationBundle.message("action.auto.hint.validation.action.name")
   override val isNavigationRequired: Boolean = true
-  override val toCalculateOverallAccuracy: Boolean = true
   override val pathToLabelledDataset by lazy { Path(System.getProperty("manual.hint.validation.path")) }
   override val accuracyCalculator = AutoHintValidationAccuracyCalculator()
 
@@ -122,7 +121,7 @@ class AutoHintValidationAction : ValidationAction<ValidationOfHintsDataframeReco
     }
   }
 
-  inner class AutoHintValidationAccuracyCalculator : AccuracyCalculator<ValidationOfHintsDataframeRecord>() {
+  inner class AutoHintValidationAccuracyCalculator : AccuracyCalculator<ValidationOfHintsDataframeRecord> {
 
     private fun String.getNumberBeforeWord(word: String) = Regex("(\\d+)\\s+$word").find(this)?.groupValues?.get(1)?.toInt()
 

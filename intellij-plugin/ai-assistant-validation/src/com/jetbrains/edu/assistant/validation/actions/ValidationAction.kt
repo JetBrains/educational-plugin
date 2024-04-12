@@ -54,7 +54,6 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
   protected abstract val outputFilePrefixName: String
   protected abstract val name: String
   protected abstract val isNavigationRequired: Boolean
-  protected abstract val toCalculateOverallAccuracy: Boolean
   private val validationOutputPath by lazy {
     Path(System.getProperty("validation.output.path", "validationOutput")).also {
       it.createDirectories()
@@ -74,7 +73,7 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
 
   protected abstract fun CSVRecord.toDataframeRecord(): T
 
-  protected abstract val accuracyCalculator: AccuracyCalculator<T>
+  protected open val accuracyCalculator: AccuracyCalculator<T>? = null
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
@@ -101,7 +100,7 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
       val manualValidationDataset = parseCsvFile(pathToLabelledDataset) { it.toDataframeRecord() }
 
       val records = mutableListOf<T>()
-      if (manualValidationDataset != null) {
+      if (manualValidationDataset != null && accuracyCalculator != null) {
         manualValidationDataset.forEach { manualValidationRecord ->
           indicator.text = "${EduAndroidAiAssistantValidationBundle.message("action.validation.indicator.task")} $doneTasks"
           indicator.fraction = doneTasks.toDouble() / totalTasks
@@ -112,7 +111,9 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
           }
           doneTasks++
         }
-        records.add(accuracyCalculator.calculateValidationAccuracy(manualValidationDataset, records))
+        accuracyCalculator?.let {
+          records.add(it.calculateValidationAccuracy(manualValidationDataset, records))
+        }
         records.convertToDataFrame().writeCSV()
       } else {
         for (lesson in course.lessons) {
@@ -158,8 +159,8 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
           lessonRecords.convertToDataFrame().writeCSV()
           records.addAll(lessonRecords)
         }
-        if (toCalculateOverallAccuracy) {
-          mutableListOf(accuracyCalculator.calculateOverallAccuracy(records)).convertToDataFrame().writeCSV()
+        accuracyCalculator?.let {
+          mutableListOf(it.calculateOverallAccuracy(records)).convertToDataFrame().writeCSV()
         }
       }
 

@@ -47,9 +47,7 @@ class SequentialCodeHintValidationAction : CodeValidationAction<MultipleCodeHint
   override val outputFilePrefixName: String = "multipleCodeHints"
   override val name: String = EduAndroidAiAssistantValidationBundle.message("action.sequential.code.hint.validation.action.name")
   override val isNavigationRequired: Boolean = true
-  override val toCalculateOverallAccuracy: Boolean = false
   override val pathToLabelledDataset = null
-  override val accuracyCalculator = CodeHintAccuracyCalculator()
 
   init {
     setUpSpinnerPanel(name)
