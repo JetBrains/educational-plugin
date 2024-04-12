@@ -11,7 +11,7 @@ import com.jetbrains.edu.jvm.setLanguageLevel
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 
-class JavaLevelInEnvironmentSettingsTest : LightPlatformTestCase() {
+class JVersionValidationTest : LightPlatformTestCase() {
 
   //ashjdvashd
   //ashbdhsadb
