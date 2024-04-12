@@ -59,7 +59,7 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
       updateCheckPanel(value)
       updateNavigationPanel(value)
       taskName.text = value?.presentableName ?: EduCoreBundle.message("item.task.title")
-      lessonHeader.setHeaderText(value?.lesson?.name)
+      lessonHeader.setHeaderText(value?.lesson?.presentableName)
       updateTabs(value)
       HyperskillMetricsService.getInstance().viewEvent(value)
       EduCounterUsageCollector.viewEvent(value)

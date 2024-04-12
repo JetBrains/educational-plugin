@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.taskToolWindow.ui
 
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
@@ -32,7 +31,6 @@ class LessonHeader : JPanel() {
     border = JBEmptyBorder(12, 0, 12, 0)
 
     headerText = JBLabel().withFont(JBFont.medium())
-    headerText.icon = AllIcons.Chooser.Left
     headerText.foreground = EduColors.taskToolWindowLessonLabel
     headerText.alignmentX = LEFT_ALIGNMENT
 
