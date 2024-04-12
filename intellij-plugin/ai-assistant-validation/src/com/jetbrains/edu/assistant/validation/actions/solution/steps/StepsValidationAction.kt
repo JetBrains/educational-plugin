@@ -67,7 +67,7 @@ class StepsValidationAction : ValidationAction<StepsDataframeRecord>() {
 
   override fun MutableList<StepsDataframeRecord>.convertToDataFrame() = toDataFrame()
 
-  override fun CSVRecord.toDataframeRecord() = StepsDataframeRecord(get(0).toInt(), get(1), get(2), get(3), get(4), get(5))
+  override fun CSVRecord.toDataframeRecord() = StepsDataframeRecord.buildFrom(this)
 
   override suspend fun buildRecords(manualValidationRecord: StepsDataframeRecord): StepsDataframeRecord {
     throw UnsupportedOperationException("This function is not supported.")

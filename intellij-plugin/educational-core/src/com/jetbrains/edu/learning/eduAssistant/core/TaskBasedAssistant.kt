@@ -75,6 +75,8 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
     return Regex("""(?m)^\d+\.""").replace(responseWithoutNonCodeSteps) { "${index++}." }
   }
 
+  fun String.parseSteps() = deleteNoCodeSteps().lines()
+
   override suspend fun getHint(task: Task, state: EduState, userCode: String?): AssistantResponse {
     logger.info {
       """Next step hint request

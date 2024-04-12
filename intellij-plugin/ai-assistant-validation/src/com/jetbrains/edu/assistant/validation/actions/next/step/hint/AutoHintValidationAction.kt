@@ -48,8 +48,7 @@ class AutoHintValidationAction : ValidationAction<ValidationOfHintsDataframeReco
 
   override fun MutableList<ValidationOfHintsDataframeRecord>.convertToDataFrame() = toDataFrame()
 
-  override fun CSVRecord.toDataframeRecord() = ValidationOfHintsDataframeRecord(get(0).toInt(), get(1), get(2), get(3), get(4),
-    get(5), get(6), get(7), get(8), get(9), get(10), get(11), get(12), get(13), get(14), get(15), get(16), get(17), get(18), get(19))
+  override fun CSVRecord.toDataframeRecord() = ValidationOfHintsDataframeRecord.buildFrom(this)
 
   override suspend fun buildRecords(task: EduTask, lesson: Lesson): List<ValidationOfHintsDataframeRecord> {
     val taskProcessor = TaskProcessor(task)

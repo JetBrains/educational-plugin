@@ -31,7 +31,7 @@ class CodeHintCompilationTest(private val lessonName: String, private val taskNa
     }
 
     private val studentSolutions = parseCsvFile(Path("../../solutionsForValidation/tt_data_for_tests_version1.csv")) { record ->
-      StudentSolutionRecord(record.get(0).toInt(), record.get(1), record.get(2), record.get(3))
+      StudentSolutionRecord.buildFrom(record)
     } ?: error("Student solutions were not found")
   }
 

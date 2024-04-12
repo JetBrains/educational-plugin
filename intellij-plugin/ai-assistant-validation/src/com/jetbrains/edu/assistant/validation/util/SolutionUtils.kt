@@ -30,16 +30,6 @@ fun propagateAuthorSolution(previousTask: Task, currentTask: Task, project: Proj
   }
 }
 
-fun downloadSolution(task: Task, project: Project, studentCode: String) {
-  replaceTaskFilesWithSolutions(task, project) { fileName ->
-    if (fileName.endsWith(TARGET_FILE_NAME_FOR_SOLUTIONS)) {
-      studentCode
-    } else {
-      null
-    }
-  }
-}
-
 fun replaceTaskFilesWithSolutions(task: Task, project: Project, solutionProducer: (String) -> (String?)) {
   task.taskFiles.filter { !it.value.isTestFile && it.value.isVisible }.forEach { (k, f) ->
     solutionProducer(k)?.let { solution ->
@@ -48,7 +38,7 @@ fun replaceTaskFilesWithSolutions(task: Task, project: Project, solutionProducer
   }
 }
 
-private fun replaceDocumentText(taskFile: TaskFile, project: Project, solution: String) {
+fun replaceDocumentText(taskFile: TaskFile, project: Project, solution: String) {
   val currentDocument = taskFile.getDocument(project)
   ApplicationManager.getApplication().invokeAndWait {
     ApplicationManager.getApplication().runWriteAction {
@@ -76,4 +66,14 @@ fun <K> parseCsvFile(path: Path?, recordConverter: (CSVRecord) -> K): List<K>? {
     }
   }
   return null
+}
+
+fun downloadSolution(task: Task, project: Project, studentCode: String) {
+  replaceTaskFilesWithSolutions(task, project) { fileName ->
+    if (fileName.endsWith(TARGET_FILE_NAME_FOR_SOLUTIONS)) {
+      studentCode
+    } else {
+      null
+    }
+  }
 }

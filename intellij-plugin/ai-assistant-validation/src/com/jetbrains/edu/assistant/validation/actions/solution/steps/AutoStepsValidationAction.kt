@@ -75,8 +75,7 @@ class AutoStepsValidationAction : ValidationAction<ValidationOfStepsDataframeRec
 
   override fun MutableList<ValidationOfStepsDataframeRecord>.convertToDataFrame() = toDataFrame()
 
-  override fun CSVRecord.toDataframeRecord() = ValidationOfStepsDataframeRecord(get(0).toInt(), get(1), get(2), get(3), get(4),
-    get(5), get(6).toInt(), get(7), get(8), get(9), get(10), get(11), get(12), get(13))
+  override fun CSVRecord.toDataframeRecord() = ValidationOfStepsDataframeRecord.buildFrom(this)
 
   override suspend fun buildRecords(manualValidationRecord: ValidationOfStepsDataframeRecord): ValidationOfStepsDataframeRecord {
     try {

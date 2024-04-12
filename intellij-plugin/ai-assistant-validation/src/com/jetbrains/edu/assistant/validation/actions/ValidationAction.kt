@@ -11,7 +11,6 @@ import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.assistant.validation.messages.EduAndroidAiAssistantValidationBundle
-import com.jetbrains.edu.assistant.validation.util.propagateAuthorSolution
 import com.jetbrains.edu.learning.actions.ActionWithProgressIcon
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
@@ -19,12 +18,14 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.intellij.openapi.progress.Task.Backgroundable
 import com.jetbrains.edu.assistant.validation.accuracy.AccuracyCalculator
-import com.jetbrains.edu.assistant.validation.util.StudentSolutionRecord
-import com.jetbrains.edu.assistant.validation.util.downloadSolution
-import com.jetbrains.edu.assistant.validation.util.parseCsvFile
+import com.jetbrains.edu.assistant.validation.util.*
+import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.eduState
+import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import java.time.LocalDateTime
 import org.apache.commons.csv.CSVFormat
@@ -67,7 +68,7 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
   override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
   protected abstract suspend fun buildRecords(task: EduTask, lesson: Lesson): List<T>
-  protected abstract suspend fun buildRecords(manualValidationRecord: T): T
+  protected open suspend fun buildRecords(manualValidationRecord: T): T = throw UnsupportedOperationException("This function is not supported.")
 
   protected abstract fun MutableList<T>.convertToDataFrame(): DataFrame<T>
 
@@ -95,7 +96,7 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
       var previousTask: Task? = null
 
       val studentSolutions = parseCsvFile(pathToSolutions) { record ->
-        StudentSolutionRecord(record.get(0).toInt(), record.get(1), record.get(2), record.get(3))
+        StudentSolutionRecord.buildFrom(record)
       }
       val manualValidationDataset = parseCsvFile(pathToLabelledDataset) { it.toDataframeRecord() }
 
@@ -107,6 +108,7 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
 
           runBlockingCancellable {
             records.add(buildRecords(manualValidationRecord))
+            records.writeCsvIfNeeded()
           }
           doneTasks++
         }
@@ -128,9 +130,14 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
               indicator.text = "${EduAndroidAiAssistantValidationBundle.message("action.validation.indicator.task")} ${task.name}"
               indicator.fraction = doneTasks.toDouble() / totalTasks
 
+              val project = task.project ?: error("Cannot get project")
+              val eduState = project.eduState ?: error("Cannot get eduState for project ${project.name}")
+
               studentSolutions?.let {
                 it.getSolutionListForTask(lesson.name, task.name).forEach { studentCode ->
-                  downloadSolution(task, project, studentCode)
+                  ApplicationManager.getApplication().invokeAndWait {
+                    lesson.replaceContent(task, studentCode, eduState, project)
+                  }
                   runBlockingCancellable {
                     lessonRecords.addAll(buildRecords(task, lesson))
                   }
@@ -179,6 +186,13 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
       }
     }
 
+    private fun MutableList<T>.writeCsvIfNeeded() {
+      if (size > MAX_RECORDS_IN_MEMORY) {
+        convertToDataFrame().writeCSV()
+        clear()
+      }
+    }
+
     override fun onThrowable(error: Throwable) {
       NotificationGroupManager.getInstance().getNotificationGroup("AiEduAssistantValidation")
         .createNotification(error.message ?: "Error during validation", NotificationType.ERROR)
@@ -196,5 +210,31 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
         .notify(project)
       super.onFinished()
     }
+  }
+
+  private fun changeStateForMainFile(task: Task, newCode: String, mainFileName: String = MAIN_FILE_NAME) {
+    val project = task.project ?: error("Cannot get project")
+    val frameworkLessonManager = FrameworkLessonManager.getInstance(project)
+    val externalState = task.taskFiles.mapValues {
+      if (mainFileName in it.key) {
+        newCode
+      }
+      else {
+        it.value.contents.textualRepresentation
+      }
+    }
+    frameworkLessonManager.saveExternalChanges(task, externalState)
+  }
+
+  protected fun Lesson.replaceContent(task: Task, newCode: String, eduState: EduState, project: Project) {
+    replaceDocumentText(eduState.taskFile, project, newCode)
+    if (this is FrameworkLesson) {
+      changeStateForMainFile(task, newCode)
+    }
+  }
+
+  companion object {
+    private const val MAIN_FILE_NAME = "Main.kt"
+    private const val MAX_RECORDS_IN_MEMORY = 50
   }
 }
