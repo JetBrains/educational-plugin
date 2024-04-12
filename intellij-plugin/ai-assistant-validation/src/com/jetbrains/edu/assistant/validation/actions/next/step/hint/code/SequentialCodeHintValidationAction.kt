@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.eduAssistant.check.EduAssistantValidationCheckListener
 import com.jetbrains.edu.learning.eduAssistant.core.AssistantResponse
-import com.jetbrains.edu.learning.progress.withBackgroundProgress
+import com.intellij.platform.ide.progress.withBackgroundProgress
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking

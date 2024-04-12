@@ -21,7 +21,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.eduAssistant.core.TaskBasedAssistant
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
-import com.jetbrains.edu.learning.progress.withBackgroundProgress
+import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import kotlinx.coroutines.runBlocking
 import org.junit.runner.RunWith
