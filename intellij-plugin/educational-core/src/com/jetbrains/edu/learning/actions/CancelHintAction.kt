@@ -10,12 +10,10 @@ import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.AcceptHintAction.Companion.getDiffRequestChain
 import com.jetbrains.edu.learning.actions.AcceptHintAction.Companion.isNextStepHintDiff
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jetbrains.annotations.NonNls
 import javax.swing.JButton
 
 class CancelHintAction : JButtonAction(EduCoreBundle.message("action.Educational.Assistant.CancelHint.button")) {
-  val logger = KotlinLogging.logger("EduAssistantLogger")
 
   override fun getActionUpdateThread() = ActionUpdateThread.EDT
   override fun createButton(): JButton =
@@ -32,8 +30,6 @@ class CancelHintAction : JButtonAction(EduCoreBundle.message("action.Educational
   }
 
   override fun actionPerformed(e: AnActionEvent) {
-    logger.info { "User response: canceled code hint" }
-
     val diffRequestChain = e.getDiffRequestChain() ?: return
     diffRequestChain.putUserData(NextStepHintAction.IS_ACCEPTED_HINT, false)
 

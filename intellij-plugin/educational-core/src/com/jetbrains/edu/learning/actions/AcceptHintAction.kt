@@ -16,13 +16,10 @@ import com.jetbrains.edu.learning.actions.CancelHintAction.Companion.closeDiffWi
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.submissions.getSubmissionsText
 import org.jetbrains.annotations.NonNls
-import io.github.oshai.kotlinlogging.KotlinLogging
 import javax.swing.JButton
 
 // TODO: possibly reuse ApplyCodeAction class
 class AcceptHintAction : JButtonAction(EduCoreBundle.message("action.Educational.Assistant.AcceptHint.button")) {
-  val logger = KotlinLogging.logger("EduAssistantLogger")
-
   override fun getActionUpdateThread() = ActionUpdateThread.EDT
 
   override fun createButton(): JButton =
@@ -39,8 +36,6 @@ class AcceptHintAction : JButtonAction(EduCoreBundle.message("action.Educational
   }
 
   override fun actionPerformed(e: AnActionEvent) {
-    logger.info { "User response: accepted code hint" }
-
     val project = e.project ?: return
 
     val diffRequestChain = e.getDiffRequestChain() ?: return

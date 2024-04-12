@@ -14,7 +14,9 @@ import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
-import com.intellij.openapi.editor.markup.*
+import com.intellij.openapi.editor.markup.EffectType
+import com.intellij.openapi.editor.markup.RangeHighlighter
+import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
@@ -41,15 +43,18 @@ import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 import com.jetbrains.edu.learning.eduAssistant.ui.NextStepHintNotificationFrame
 import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.NonNls
-import java.awt.*
+import java.awt.BorderLayout
+import java.awt.Font
 import javax.swing.JComponent
 import javax.swing.JPanel
 import kotlin.coroutines.EmptyCoroutineContext
 
 class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
+  val logger = KotlinLogging.logger("EduAssistantLogger")
 
   var actionTargetParent: JPanel? = null
   private var nextStepHintNotificationPanel: JComponent? = null
@@ -127,9 +132,20 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
       override fun fileClosed(source: FileEditorManager, file: VirtualFile) {
         if (file.name == EduCoreBundle.message("action.Educational.Diff.text")) {
           if (diffRequestChain.getUserData(NEXT_STEP_HINT_DIFF_FLAG) == true) {
-            if (diffRequestChain.getUserData(IS_ACCEPTED_HINT) == null || diffRequestChain.getUserData(IS_ACCEPTED_HINT) == false) {
-              if (actionTargetParent?.components?.contains(nextStepHintNotificationPanel) == true) {
-                rejectHint(state)
+            when (diffRequestChain.getUserData(IS_ACCEPTED_HINT)) {
+              null, false -> {
+                if (actionTargetParent?.components?.contains(nextStepHintNotificationPanel) == true) {
+                  rejectHint(state)
+                }
+              }
+              true -> {
+                val task = state.task
+                logger.info {
+                  """Lesson id: ${task.lesson.id}    Task id: ${task.id}
+                  |User response: accepted code hint
+                  |
+                """.trimMargin()
+                }
               }
             }
             closeNextStepHintNotificationPanel()
@@ -146,6 +162,12 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
   private fun rejectHint(state: EduState) {
     val scope = CoroutineScope(EmptyCoroutineContext)
     val task = state.task
+    logger.info {
+      """Lesson id: ${task.lesson.id}    Task id: ${task.id}
+        |User response: canceled code hint
+        |
+      """.trimMargin()
+    }
     val taskProcessor = TaskProcessor(task)
     if (taskProcessor.needToUpdateSolutionSteps()) {
       val assistant = TaskBasedAssistant(taskProcessor)
