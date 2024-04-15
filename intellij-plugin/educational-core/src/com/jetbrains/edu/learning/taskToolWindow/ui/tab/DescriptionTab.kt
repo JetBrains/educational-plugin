@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.taskToolWindow.ui.tab
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.JavaUILibrary
@@ -39,6 +40,8 @@ class DescriptionTab(project: Project) : TaskToolWindowTab(project, TabType.DESC
     get() = checkPanel.isVisible
 
   init {
+    Disposer.register(this, taskTextToolWindow)
+
     val taskDescription = taskTextToolWindow.taskInfoPanel
     taskDescription.border = JBUI.Borders.emptyBottom(10)
 
