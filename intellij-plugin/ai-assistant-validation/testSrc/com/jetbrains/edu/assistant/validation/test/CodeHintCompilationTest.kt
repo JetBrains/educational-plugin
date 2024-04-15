@@ -1,5 +1,6 @@
 package com.jetbrains.edu.assistant.validation.test
 
+import com.intellij.openapi.components.service
 import com.jetbrains.edu.assistant.validation.util.StudentSolutionRecord
 import com.jetbrains.edu.assistant.validation.util.downloadSolution
 import com.jetbrains.edu.assistant.validation.util.parseCsvFile
@@ -40,11 +41,11 @@ class CodeHintCompilationTest(private val lessonName: String, private val taskNa
     val task = getTargetTask()
     val state = project.eduState ?: error("Edu state is invalid")
     val taskProcessor = TaskProcessor(task)
-    val assistant = TaskBasedAssistant(taskProcessor)
+    val assistant = project.service<TaskBasedAssistant>()
     studentSolutions.filter { it.lessonName == lessonName && it.taskName == taskName }.shuffled().take(maxSolutions)
       .map { it.code }.firstOrNull()?.let {
       downloadSolution(task, project, it)
-      getHint(task, state, assistant)
+      getHint(taskProcessor, state, assistant)
       refreshProject()
       runCheck(task) { checkerResult ->
         TestCase.assertNotSame("Compilation error in the code: $it", checkerResult.message, CheckUtils.COMPILATION_FAILED_MESSAGE)
