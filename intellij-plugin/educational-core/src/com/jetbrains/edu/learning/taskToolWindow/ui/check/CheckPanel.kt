@@ -160,7 +160,8 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
       is TheoryTask -> {}
       else -> {
         val isDefault = !(task.isChangedOnFailed && task.status == CheckStatus.Failed || task.isSolved)
-        val checkComponent = CheckPanelButtonComponent(CheckAction(task.getUICheckLabel()), isDefault = isDefault, isEnabled = isDefault)
+        val isEnabled = !(task.isChangedOnFailed && task.status == CheckStatus.Failed)
+        val checkComponent = CheckPanelButtonComponent(CheckAction(task.getUICheckLabel()), isDefault = isDefault, isEnabled = isEnabled)
         checkButtonWrapper.add(checkComponent, BorderLayout.WEST)
       }
     }
