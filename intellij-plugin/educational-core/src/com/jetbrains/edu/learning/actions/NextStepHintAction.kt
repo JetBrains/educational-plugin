@@ -12,6 +12,8 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.editor.markup.EffectType
@@ -49,6 +51,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
 import java.awt.Font
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.swing.JComponent
 import javax.swing.JPanel
 import kotlin.coroutines.EmptyCoroutineContext
@@ -74,15 +77,16 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
       return
     }
 
-    closeNextStepHintNotificationPanel()
-    cancelTaskGettingHint()
-
     FileDocumentManager.getInstance().saveAllDocuments()
     val state = project.eduState ?: return
     val task = state.task
 
-    getHintTask = GetHintTask(project, state, task)
-    getHintTask?.let {
+    if (!GetHintTaskState.getInstance(project).lock()) {
+      e.dataContext.showPopup(EduCoreBundle.message("action.Educational.NextStepHint.already.running"))
+      return
+    }
+
+    getHintTask = GetHintTask(project, state, task).also {
       ProgressManager.getInstance().run(it)
     }
   }
@@ -186,6 +190,11 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
     var progressIndicator: ProgressIndicator? = null
 
     override fun run(indicator: ProgressIndicator) {
+      if (!GetHintTaskState.getInstance(project).isLocked) {
+        showHintWindow(AssistantError.UnlockedError.errorMessage)
+        return
+      }
+
       processStarted()
       ApplicationManager.getApplication().executeOnPooledThread { EduActionUtils.showFakeProgress(indicator) }
       progressIndicator = indicator
@@ -211,12 +220,11 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
         val action = response.codeHint?.let { showNextStepHint(state, it) }
         showHintWindow(response.textHint, action)
       }
-      processFinished()
     }
 
-    override fun onCancel() {
-      super.onCancel()
+    override fun onFinished() {
       processFinished()
+      GetHintTaskState.getInstance(project).unlock()
     }
 
     private fun showHintWindow(textToShow: String, action: AnAction? = null) {
@@ -252,6 +260,26 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
           null
         }
       }
+    }
+  }
+
+  @Service(Service.Level.PROJECT)
+  private class GetHintTaskState {
+    private val isBusy = AtomicBoolean(false)
+
+    val isLocked: Boolean
+      get() = isBusy.get()
+
+    fun lock(): Boolean {
+      return isBusy.compareAndSet(false, true)
+    }
+
+    fun unlock() {
+      isBusy.set(false)
+    }
+
+    companion object {
+      fun getInstance(project: Project): GetHintTaskState = project.service()
     }
   }
 
