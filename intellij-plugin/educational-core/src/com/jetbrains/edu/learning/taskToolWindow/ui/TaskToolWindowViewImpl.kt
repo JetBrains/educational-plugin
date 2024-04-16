@@ -107,6 +107,15 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
     }
   }
 
+  override fun showCommunityTab() {
+    if (!project.isMarketplaceCourse()) return
+
+    val submissionsTab = getSubmissionTab() ?: return
+    ApplicationManager.getApplication().invokeLater {
+      submissionsTab.showCommunityTab()
+    }
+  }
+
   private fun getSubmissionTab(): SubmissionsTab? = tabManager.getTab(SUBMISSIONS_TAB) as? SubmissionsTab
 
   override fun updateCheckPanel(task: Task?) {
