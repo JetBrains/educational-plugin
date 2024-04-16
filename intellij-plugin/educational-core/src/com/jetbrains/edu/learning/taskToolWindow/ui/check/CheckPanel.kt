@@ -216,7 +216,7 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     if (nextTask != null || (task.status == CheckStatus.Solved && NavigationUtils.isLastHyperskillProblem(task))) {
       val isDefault = task is TheoryTask || task.isSolved
       val action = ActionManager.getInstance().getAction(NextTaskAction.ACTION_ID)
-      val nextButtonText = nextTask?.let {  EduCoreBundle.message("button.next.task.text", nextTask.name) }
+      val nextButtonText = nextTask?.let {  EduCoreBundle.message("button.next.task.text", nextTask.presentableName) }
       val nextButton = CheckPanelButtonComponent(action = action, isDefault = isDefault, customButtonText = nextButtonText)
       add(nextButton, BorderLayout.WEST)
     }
