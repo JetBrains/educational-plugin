@@ -35,11 +35,12 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.PostHyperskillProjectToGithub
 import com.jetbrains.edu.learning.submissions.SubmissionsListener
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
-import com.jetbrains.edu.learning.submissions.SubmissionsTab
 import com.jetbrains.edu.learning.taskToolWindow.addActionLinks
 import com.jetbrains.edu.learning.taskToolWindow.ui.LightColoredActionLink
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckMessagePanel.Companion.FOCUS_BORDER_WIDTH
+import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
 import com.jetbrains.edu.learning.xmlUnescaped
 import org.jdesktop.swingx.HorizontalLayout
 import java.awt.BorderLayout
@@ -143,12 +144,10 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
   private fun createCommunityLinksPanel(project: Project): DialogPanel = panel {
     row(EduCoreBundle.message("submissions.got.stuck")) {
       link(EduCoreBundle.message("submissions.see.community.solutions.link")) {
-        val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskToolWindowFactory.STUDY_TOOL_WINDOW)
-        toolWindow?.let {
-          val submissionsTabContent = toolWindow.contentManager.findContent(EduCoreBundle.message("submissions.tab.name"))
-          val submissionsTab = submissionsTabContent.component as? SubmissionsTab ?: return@let
-          toolWindow.contentManager.setSelectedContent(submissionsTabContent)
-          submissionsTab.showCommunityTab()
+        val taskToolWindow = TaskToolWindowView.getInstance(project)
+        taskToolWindow.apply {
+          showCommunityTab()
+          selectTab(TabType.SUBMISSIONS_TAB)
         }
       }
     }
