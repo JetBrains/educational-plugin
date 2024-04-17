@@ -6,6 +6,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
+@Suppress("Junit4RunWithInspection")
 @RunWith(Parameterized::class)
 class ValidStudyItemNameTest(
   private val input: String,

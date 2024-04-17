@@ -9,10 +9,10 @@ import com.jetbrains.edu.learning.checker.TestsOutputParser.Companion.TEST_OK
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import junit.framework.TestCase
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class TestsOutputParserTest : TestCase() {
+class TestsOutputParserTest {
   @Test
   fun `test failure message`() {
     val failedMessage = "your test failed"

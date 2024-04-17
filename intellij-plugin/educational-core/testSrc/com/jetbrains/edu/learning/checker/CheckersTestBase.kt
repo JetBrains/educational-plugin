@@ -30,7 +30,10 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
 import com.jetbrains.edu.learning.ui.getUICheckLabel
 import org.junit.ComparisonFailure
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
+@RunWith(JUnit4::class)
 abstract class CheckersTestBase<Settings : EduProjectSettings> : HeavyPlatformTestCase() {
     protected lateinit var myCourse: Course
 

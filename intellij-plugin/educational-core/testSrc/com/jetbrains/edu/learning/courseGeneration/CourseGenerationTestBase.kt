@@ -13,8 +13,11 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.createCourseFromJson
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
 @Suppress("UnstableApiUsage")
+@RunWith(JUnit4::class)
 abstract class CourseGenerationTestBase<Settings : EduProjectSettings> : HeavyPlatformTestCase() {
 
   abstract val defaultSettings: Settings

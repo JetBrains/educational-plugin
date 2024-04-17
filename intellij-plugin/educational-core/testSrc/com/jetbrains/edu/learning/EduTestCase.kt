@@ -49,11 +49,14 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import okhttp3.mockwebserver.MockResponse
 import org.apache.http.HttpStatus
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 import java.io.File
 import java.io.IOException
 import java.util.regex.Pattern
 import kotlin.reflect.KMutableProperty0
 
+@RunWith(JUnit4::class)
 abstract class EduTestCase : BasePlatformTestCase() {
 
   protected lateinit var testPluginDescriptor: IdeaPluginDescriptor

@@ -8,8 +8,11 @@ import com.intellij.openapi.util.text.StringUtilRt
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.jetbrains.edu.learning.json.migrate
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 import java.io.File
 
+@RunWith(JUnit4::class)
 class LocalSourceMigrationTest : BasePlatformTestCase() {
 
   private val beforeFileName: String get() = getTestName(true).trim().replace(" ", "_") + ".json"
