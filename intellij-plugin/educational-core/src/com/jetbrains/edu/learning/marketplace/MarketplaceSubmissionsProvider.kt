@@ -32,10 +32,10 @@ class MarketplaceSubmissionsProvider : SubmissionsProvider {
   }
 
   override fun loadSharedSolutionsForTask(course: Course, task: Task): List<MarketplaceSubmission>? {
-    if (course !is EduCourse || !course.isMarketplace) return emptyList()
+    if (course !is EduCourse || !course.isMarketplace) return null
 
     val submissionsConnector = MarketplaceSubmissionsConnector.getInstance()
-    if (!submissionsConnector.getUserAgreementState().isSolutionSharingAllowed()) return emptyList()
+    if (!submissionsConnector.getUserAgreementState().isSolutionSharingAllowed()) return null
 
     return submissionsConnector.getSharedSolutionsForTask(course, task.id)
   }

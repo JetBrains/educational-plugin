@@ -148,7 +148,7 @@ class MarketplaceSubmissionsConnector {
     }
     while (sharedSolutions.isNotEmpty() && submissionsList.hasNext)
 
-    return courseSharedSolutions
+    return courseSharedSolutions.takeIf { it.isNotEmpty() }
   }
 
   fun markTheoryTaskAsCompleted(task: TheoryTask) {
