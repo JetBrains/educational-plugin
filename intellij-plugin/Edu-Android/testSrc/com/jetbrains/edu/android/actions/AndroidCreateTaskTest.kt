@@ -8,7 +8,6 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.testAction
-import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.junit.Test
 
@@ -27,7 +26,7 @@ class AndroidCreateTaskTest : EduActionTestCase() {
     withMockCreateStudyItemUi(MockAndroidNewStudyUi("task1", "com.edu.task1")) {
       testAction(CCCreateTask.ACTION_ID, dataContext(lessonFile))
     }
-    TestCase.assertEquals(1, course.lessons[0].taskList.size)
+    assertEquals(1, course.lessons[0].taskList.size)
     val expectedFileTree = fileTree {
       dir("lesson1/task1") {
         dir("src") {

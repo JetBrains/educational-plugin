@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.taskToolWindow
 
 import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckMessagePanel.Companion.prepareHtmlText
-import junit.framework.TestCase.assertEquals
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class CheckMessagePanelTest {
@@ -19,7 +19,7 @@ class CheckMessagePanelTest {
     doTest(input, expected)
   }
 
-  fun doTest(input: String, expected: String) {
+  private fun doTest(input: String, expected: String) {
     val actual = prepareHtmlText(input)
     assertEquals(expected, actual)
   }

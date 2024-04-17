@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.stepik
 
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder.Companion.prepareSample
-import junit.framework.TestCase.assertEquals
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
