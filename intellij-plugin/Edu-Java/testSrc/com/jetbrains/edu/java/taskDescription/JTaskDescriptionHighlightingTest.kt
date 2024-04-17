@@ -3,11 +3,13 @@ package com.jetbrains.edu.java.taskDescription
 import com.intellij.lang.Language
 import com.intellij.lang.java.JavaLanguage
 import com.jetbrains.edu.learning.taskToolWindow.TaskDescriptionHighlightingTestBase
+import org.junit.Test
 
 class JTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
 
   override val language: Language = JavaLanguage.INSTANCE
 
+  @Test
   fun `test markdown description highlighting`() = doMarkdownTest("""
     Code block with default language:
     ```
@@ -53,6 +55,7 @@ class JTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
     </html>
   """)
 
+  @Test
   fun `test html description highlighting`() = doHtmlTest("""
     <html>
     <p>Code block with default language:</p>
@@ -98,6 +101,7 @@ class JTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
     </html>
   """)
 
+  @Test
   fun `test html description no highlighting class`() = doHtmlTest("""
     <html>
     <pre><code class="no-highlight">

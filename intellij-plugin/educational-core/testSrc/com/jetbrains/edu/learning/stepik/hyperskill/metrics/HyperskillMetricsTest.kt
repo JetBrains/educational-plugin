@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.pathWithoutPrams
 import com.jetbrains.edu.learning.stepik.hyperskill.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
 import com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsService.Companion.getRoute
+import org.junit.Test
 import java.awt.Rectangle
 import java.nio.file.Paths
 import java.util.*
@@ -27,6 +28,7 @@ class HyperskillMetricsTest : EduTestCase() {
   private val metricsService: HyperskillMetricsService get() = HyperskillMetricsService.getInstance()
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
+  @Test
   fun `test current serialization format`() {
     createHyperskillCourse()
 
@@ -53,6 +55,7 @@ class HyperskillMetricsTest : EduTestCase() {
    *
    * [test current serialization format] checks if current format can be deserialized
    */
+  @Test
   fun `test frontend events deserialization from xml`() {
     val stateFromFile = deserializeFromFile("hyperskill_events.xml")
 
@@ -62,11 +65,13 @@ class HyperskillMetricsTest : EduTestCase() {
     compareFrontendEvents(expectedFrontendEvents, stateFromFile.events)
   }
 
+  @Test
   fun `test time spent events deserialization from xml`() {
     val stateFromFile = deserializeFromFile("hyperskill_time_spent_events.xml")
     assertEquals(mapOf(123 to 40.0, 124 to 20.5), stateFromFile.timeSpentEvents)
   }
 
+  @Test
   fun `test time spent events switching between tasks`() {
     createHyperskillCourse()
     val id1 = findTask(0, 0).id
@@ -79,6 +84,7 @@ class HyperskillMetricsTest : EduTestCase() {
     metricsService.allTimeSpentEvents(reset = false).find { it.step == id1 } ?: error("No time spent event for $id1")
   }
 
+  @Test
   fun `test no time spent events for solved task`() {
     createHyperskillCourse()
     val task1 = findTask(0, 1)
@@ -90,6 +96,7 @@ class HyperskillMetricsTest : EduTestCase() {
     assertNull(metricsService.allTimeSpentEvents (reset = false).find { it.step == task1.id })
   }
 
+  @Test
   fun `test time spent events with frame activation`() {
     createHyperskillCourse()
     val id = findTask(0, 0).id
@@ -113,6 +120,7 @@ class HyperskillMetricsTest : EduTestCase() {
     assertTrue(newTimeSpentEvent.duration > oldDuration)
   }
 
+  @Test
   fun `test frontend events serialization limit respected`() {
     createHyperskillCourse()
 
@@ -125,6 +133,7 @@ class HyperskillMetricsTest : EduTestCase() {
     compareFrontendEvents(addedFrontendEvents.subList(0, HyperskillMetricsService.FRONTEND_EVENTS_LIMIT), deserializedFrontendEvents)
   }
 
+  @Test
   fun `test all frontend events sent`() {
     createHyperskillCourse()
 
@@ -145,6 +154,7 @@ class HyperskillMetricsTest : EduTestCase() {
     assertEmpty(pendingFrontendEvents)
   }
 
+  @Test
   fun `test all time spent events sent`() {
     createHyperskillCourse()
 
@@ -166,6 +176,7 @@ class HyperskillMetricsTest : EduTestCase() {
     assertEmpty(pendingEvents)
   }
 
+  @Test
   fun `test no frontend events sent`() {
     createHyperskillCourse()
 
@@ -176,6 +187,7 @@ class HyperskillMetricsTest : EduTestCase() {
     compareFrontendEvents(viewEvents, pendingFrontendEvents)
   }
 
+  @Test
   fun `test no time spent events sent`() {
     createHyperskillCourse()
     metricsService.taskStarted(1)
@@ -187,6 +199,7 @@ class HyperskillMetricsTest : EduTestCase() {
     assertNotNull(pendingEvents.find { it.step == 1 })
   }
 
+  @Test
   fun `test frontend events sent in chunks`() {
     createHyperskillCourse()
 
@@ -217,6 +230,7 @@ class HyperskillMetricsTest : EduTestCase() {
     assertEmpty(pendingFrontendEvents)
   }
 
+  @Test
   fun `test pending frontend events limit respected`() {
     createHyperskillCourse()
 
@@ -227,6 +241,7 @@ class HyperskillMetricsTest : EduTestCase() {
     compareFrontendEvents(addedFrontendEvents.subList(0, HyperskillMetricsService.FRONTEND_EVENTS_LIMIT), pendingFrontendEvents)
   }
 
+  @Test
   fun `test no events sent for corrupted task with id = 0`() {
     val course = hyperskillCourseWithFiles {
       frameworkLesson("lesson1") {

@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import org.intellij.lang.annotations.Language
+import org.junit.Test
 
 class TaskDescriptionLiveTemplateTest : EduTestCase() {
 
@@ -15,6 +16,7 @@ class TaskDescriptionLiveTemplateTest : EduTestCase() {
     // https://youtrack.jetbrains.com/issue/EDU-6069/Fix-TaskDescriptionLiveTemplateTest-for-232
   }
 
+  @Test
   fun `test hint live template in task description file in cc mode`() {
     createCourse(CourseMode.EDUCATOR)
 
@@ -32,6 +34,7 @@ class TaskDescriptionLiveTemplateTest : EduTestCase() {
     """)
   }
 
+  @Test
   fun `test no hint live template in task description file in student mode`() {
     createCourse(CourseMode.STUDENT)
 
@@ -46,6 +49,7 @@ class TaskDescriptionLiveTemplateTest : EduTestCase() {
     """)
   }
 
+  @Test
   fun `test no hint live template in non task description file`() {
     createCourse(CourseMode.EDUCATOR)
 

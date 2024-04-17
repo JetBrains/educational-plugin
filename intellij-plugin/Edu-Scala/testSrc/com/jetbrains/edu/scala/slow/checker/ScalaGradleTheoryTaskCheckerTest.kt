@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import org.hamcrest.CoreMatchers.*
 import org.jetbrains.plugins.scala.ScalaLanguage
 import org.junit.Assert
+import org.junit.Test
 
 // Add Theory task with custom Application configuration
 // Currently, such test doesn't work because we haven't managed to make it compile and run in tests
@@ -156,6 +157,7 @@ class ScalaGradleTheoryTaskCheckerTest : JdkCheckerTestBase() {
 
 
 
+  @Test
   fun `test scala course`() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       val (message, statusMatcher, messageMatcher) = when (task.name) {

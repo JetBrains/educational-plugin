@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.pathWithoutPrams
 import org.intellij.lang.annotations.Language
+import org.junit.Test
 
 class HyperskillCheckEduTaskMessageTest : HyperskillCheckActionTestBase() {
 
@@ -40,6 +41,7 @@ class HyperskillCheckEduTaskMessageTest : HyperskillCheckActionTestBase() {
     configureResponse()
   }
 
+  @Test
   fun `test solve all edu tasks in topic`() {
     val course = getCourse() as HyperskillCourse
     checkCheckAction(

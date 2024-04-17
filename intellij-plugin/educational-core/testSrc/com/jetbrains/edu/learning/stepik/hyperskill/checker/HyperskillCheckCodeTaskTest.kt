@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.webSocketConfiguration
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import org.intellij.lang.annotations.Language
+import org.junit.Test
 
 class HyperskillCheckCodeTaskTest : HyperskillCheckActionTestBase() {
 
@@ -24,6 +25,7 @@ class HyperskillCheckCodeTaskTest : HyperskillCheckActionTestBase() {
     }
   }
 
+  @Test
   fun `test successful check via web socket`() {
     configureResponses()
 
@@ -48,6 +50,7 @@ class HyperskillCheckCodeTaskTest : HyperskillCheckActionTestBase() {
     checkCheckAction(task, CheckStatus.Failed, "Failed")
   }
 
+  @Test
   fun `test submission made, result not received via web socket`() {
     configureResponses()
 
@@ -73,6 +76,7 @@ class HyperskillCheckCodeTaskTest : HyperskillCheckActionTestBase() {
     checkCheckAction(task, CheckStatus.Failed, "Failed")
   }
 
+  @Test
   fun `test no submission made, result received via REST API`() {
     configureResponses()
 
@@ -86,6 +90,7 @@ class HyperskillCheckCodeTaskTest : HyperskillCheckActionTestBase() {
     checkCheckAction(task, CheckStatus.Failed, "Failed")
   }
 
+  @Test
   fun `test failed to get submission status via API`() {
     mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
       MockResponseFactory.fromString(

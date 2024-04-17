@@ -3,11 +3,13 @@ package com.jetbrains.edu.java.taskDescription
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.fileTypes.FileType
 import com.jetbrains.edu.learning.taskToolWindow.links.TaskDescriptionPsiLinksTestBase
+import org.junit.Test
 
 class JTaskDescriptionPsiLinksTest : TaskDescriptionPsiLinksTestBase() {
 
   override val fileType: FileType = JavaFileType.INSTANCE
 
+  @Test
   fun `test navigate to class`() = doTest("psi_element://Bar", """
     public class <caret>Bar {
       public void bar() {}
@@ -25,6 +27,7 @@ class JTaskDescriptionPsiLinksTest : TaskDescriptionPsiLinksTestBase() {
     """)
   }
 
+  @Test
   fun `test navigate to method`() = doTest("psi_element://Foo#foo", """
     public class Foo {
       public void <caret>foo() {}
@@ -42,6 +45,7 @@ class JTaskDescriptionPsiLinksTest : TaskDescriptionPsiLinksTestBase() {
     """)
   }
 
+  @Test
   fun `test navigate to method with encoded url`() = doTest("psi_element://Foo%23foo%28int%2C%20int%29", """
       public class Foo {
         public void foo() {}
@@ -61,6 +65,7 @@ class JTaskDescriptionPsiLinksTest : TaskDescriptionPsiLinksTestBase() {
     """)
   }
 
+  @Test
   fun `test navigate to inner class`() = doTest("psi_element://Foo.Baz", """
     public class Foo {
       public void foo() {}

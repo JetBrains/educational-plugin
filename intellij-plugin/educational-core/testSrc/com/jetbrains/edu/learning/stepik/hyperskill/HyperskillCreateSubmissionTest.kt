@@ -26,6 +26,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.submissions.HyperskillSubmis
 import com.jetbrains.edu.learning.stepik.hyperskill.submissions.HyperskillSubmissionFactory.createTableTaskSubmission
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
 import com.jetbrains.edu.learning.yaml.YamlMapper
+import org.junit.Test
 import java.util.*
 
 class HyperskillCreateSubmissionTest : EduTestCase() {
@@ -52,6 +53,7 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     } as HyperskillCourse
   }
 
+  @Test
   fun `test creating submission for solved edu task`() {
     val eduTask = hyperskillCourse.allTasks[0].apply { status = CheckStatus.Solved }
     val attempt = Attempt().apply { id = 123 }
@@ -75,6 +77,7 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test creating submission for failed edu task`() {
     val eduTask = hyperskillCourse.allTasks[0].apply { status = CheckStatus.Failed }
     val attempt = Attempt().apply { id = 1234 }
@@ -98,6 +101,7 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test creating submission for remote edu task`() {
     val remoteEduTask = hyperskillCourse.allTasks[1] as RemoteEduTask
     val checkProfile = remoteEduTask.checkProfile
@@ -120,6 +124,7 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     )
   }
 
+  @Test
   fun `test creating submission for code task`() {
     val attempt = Attempt().apply { id = 123 }
     val answer = "answer"
@@ -136,6 +141,7 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test creating submission for choice task`() {
     val task = hyperskillCourse.allTasks.find { it.id == 3 } as ChoiceTask
     task.selectedVariants = mutableListOf(0)
@@ -160,6 +166,7 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test creating submission for string task`() {
     val attempt = Attempt().apply { id = 123 }
     val answer = "answer"
@@ -174,6 +181,7 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test creating submission for number task`() {
     val attempt = Attempt().apply { id = 123 }
     val answer = 123.toString()
@@ -188,6 +196,7 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test creating submission for data task`() {
     val dataTaskAttempt = Attempt(123, Date(), 300).toDataTaskAttempt()
     val answer = "answer"
@@ -202,6 +211,7 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test creating submission for sorting based task`() {
     val attempt = Attempt().apply { id = 123 }
 
@@ -220,6 +230,7 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test creating submission for table task`() {
     val attempt = Attempt().apply { id = 123 }
 

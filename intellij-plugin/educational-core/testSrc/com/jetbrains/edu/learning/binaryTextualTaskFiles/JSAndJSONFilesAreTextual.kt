@@ -7,11 +7,13 @@ import com.jetbrains.edu.learning.courseFormat.InMemoryBinaryContents
 import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
+import org.junit.Test
 
 class JSAndJSONFilesAreTextual : CourseReopeningTestBase<EmptyProjectSettings>() {
 
   override val defaultSettings = EmptyProjectSettings
 
+  @Test
   fun `test json and js files are preserved in the test folder`() {
     val course = course {
       lesson("lesson1") {

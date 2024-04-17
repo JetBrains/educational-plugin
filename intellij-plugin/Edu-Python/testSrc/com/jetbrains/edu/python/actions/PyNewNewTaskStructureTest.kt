@@ -3,11 +3,13 @@ package com.jetbrains.edu.python.actions
 import com.intellij.lang.Language
 import com.jetbrains.edu.coursecreator.actions.create.CCNewTaskStructureTestBase
 import com.jetbrains.python.PythonLanguage
+import org.junit.Test
 
 class PyNewNewTaskStructureTest : CCNewTaskStructureTestBase() {
   override val language: Language get() = PythonLanguage.INSTANCE
   override val environment: String = "unittest"
 
+  @Test
   fun `test create edu task`() = checkEduTaskCreation(
     fullTaskStructure = {
       file("task.md")
@@ -27,6 +29,7 @@ class PyNewNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create output task`() = checkOutputTaskCreation(
     fullTaskStructure = {
       file("task.md")
@@ -46,6 +49,7 @@ class PyNewNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create theory task`() = checkTheoryTaskCreation(
     fullTaskStructure = {
       file("task.md")
@@ -57,6 +61,7 @@ class PyNewNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create IDE task`() = checkIdeTaskCreation(
     fullTaskStructure = {
       file("task.md")
@@ -68,6 +73,7 @@ class PyNewNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create choice task`() = checkChoiceTaskCreation(
     fullTaskStructure = {
       file("task.md")

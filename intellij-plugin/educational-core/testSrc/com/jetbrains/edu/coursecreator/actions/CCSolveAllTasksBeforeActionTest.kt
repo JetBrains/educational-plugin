@@ -8,9 +8,11 @@ import com.jetbrains.edu.coursecreator.ui.withMockSelectTaskUi
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import org.junit.Test
 
 class CCSolveAllTasksBeforeActionTest : EduActionTestCase() {
 
+  @Test
   fun `test solve all tasks before action`() {
     courseWithFiles {
       lesson("lesson1") {
@@ -69,6 +71,7 @@ class CCSolveAllTasksBeforeActionTest : EduActionTestCase() {
     }
   }
 
+  @Test
   fun `test solve all tasks before action with framework lessons`() {
     courseWithFiles {
       frameworkLesson("lesson1") {

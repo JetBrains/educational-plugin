@@ -3,10 +3,12 @@ package com.jetbrains.edu.coursecreator.courseignore
 import com.jetbrains.edu.coursecreator.AdditionalFilesUtils
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.findTask
+import org.junit.Test
 
 
 class CourseIgnoreTest : EduTestCase() {
 
+  @Test
   fun `test first level ignored`() {
     val course = courseWithFiles {
       lesson {
@@ -27,6 +29,7 @@ class CourseIgnoreTest : EduTestCase() {
     assertSameElements(additionalFiles.map { it.name }, listOf("not-ignored.txt"))
   }
 
+  @Test
   fun `test second level ignored`() {
     val course = courseWithFiles {
       lesson {
@@ -57,6 +60,7 @@ class CourseIgnoreTest : EduTestCase() {
     assertSameElements(task.taskFiles.keys, listOf("NotIgnored.txt", "Task.kt"))
   }
 
+  @Test
   fun `test courseignore works as gitignore`() {
     val course = courseWithFiles {
       lesson {

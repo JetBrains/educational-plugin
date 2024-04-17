@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.gradle.GradleConstants
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.junit.Test
 
 @Suppress("GrUnresolvedAccess")
 class KtOneModuleCheckerTest : JdkCheckerTestBase() {
@@ -136,6 +137,7 @@ class KtOneModuleCheckerTest : JdkCheckerTestBase() {
   }
 
 
+  @Test
   fun `test kotlin course`() {
     CheckActionListener.expectedMessage { task ->
       when (task) {

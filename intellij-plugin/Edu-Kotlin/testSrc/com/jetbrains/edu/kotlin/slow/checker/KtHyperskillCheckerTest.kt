@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.junit.Test
 
 class KtHyperskillCheckerTest : JdkCheckerTestBase() {
   override fun createCourse(): Course  {
@@ -37,6 +38,7 @@ class KtHyperskillCheckerTest : JdkCheckerTestBase() {
     return course
   }
 
+  @Test
   fun testKotlinCourse() {
     CheckActionListener.expectedMessage { CheckUtils.CONGRATULATIONS }
     doTest()

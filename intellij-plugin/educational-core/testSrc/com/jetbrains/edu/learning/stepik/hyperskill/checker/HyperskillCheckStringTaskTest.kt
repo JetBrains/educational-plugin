@@ -2,13 +2,14 @@ package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.AnswerTask
 import com.jetbrains.edu.learning.courseFormat.tasks.StringTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.Step
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import org.junit.Test
 
 class HyperskillCheckStringTaskTest : HyperskillCheckAnswerTaskTest() {
 
@@ -36,6 +37,7 @@ class HyperskillCheckStringTaskTest : HyperskillCheckAnswerTaskTest() {
     }
   }
 
+  @Test
   fun `test string task correct`() {
     configureResponses(true)
 
@@ -44,6 +46,7 @@ class HyperskillCheckStringTaskTest : HyperskillCheckAnswerTaskTest() {
     assertEquals("answer", task.getInputAnswer(project))
   }
 
+  @Test
   fun `test string task incorrect`() {
     configureResponses(false)
 
@@ -51,11 +54,13 @@ class HyperskillCheckStringTaskTest : HyperskillCheckAnswerTaskTest() {
     checkCheckAction(task, CheckStatus.Failed, "Wrong solution")
   }
 
+  @Test
   fun `test string task input is empty`() {
     val task = getCourse().allTasks[1]
     checkCheckAction(task, CheckStatus.Failed, EduCoreBundle.message("hyperskill.string.task.empty.text"))
   }
 
+  @Test
   fun `test creating placeholder`() {
     val course = getCourse()
     val task = course.allTasks[0] as StringTask
@@ -86,6 +91,7 @@ class HyperskillCheckStringTaskTest : HyperskillCheckAnswerTaskTest() {
    * This option is enabled from the settings by checking the box "ensure every saved file ends with a line break".
    * In the answerTask for file with name [AnswerTask.ANSWER_FILE_NAME] this option must be disabled.
    */
+  @Test
   fun `test string task new line at eof for answer_txt`() {
     testWithEnabledEnsureNewLineAtEOFSetting {
       val task = getCourse().allTasks[2] as StringTask
@@ -100,6 +106,7 @@ class HyperskillCheckStringTaskTest : HyperskillCheckAnswerTaskTest() {
    * Test that new line at the end of file for AnswerTask appear only in [AnswerTask.ANSWER_FILE_NAME].
    * Blank line must add for others files at AnswerTask
    */
+  @Test
   fun `test string task new line at eof for task file`() {
     testWithEnabledEnsureNewLineAtEOFSetting {
       val task = getCourse().allTasks[2] as StringTask
@@ -109,6 +116,7 @@ class HyperskillCheckStringTaskTest : HyperskillCheckAnswerTaskTest() {
     }
   }
 
+  @Test
   fun `test src answer file`() {
     testWithEnabledEnsureNewLineAtEOFSetting {
       val task = getCourse().allTasks[3] as StringTask

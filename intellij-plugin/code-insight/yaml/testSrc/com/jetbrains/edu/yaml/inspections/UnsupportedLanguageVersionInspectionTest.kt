@@ -1,9 +1,11 @@
 package com.jetbrains.edu.yaml.inspections
 
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import org.junit.Test
 
 class UnsupportedLanguageVersionInspectionTest : YamlInspectionsTestBase(UnsupportedLanguageVersionInspection::class) {
 
+  @Test
   fun `test unsupported version`() {
     val version = "8"
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
@@ -23,6 +25,7 @@ class UnsupportedLanguageVersionInspectionTest : YamlInspectionsTestBase(Unsuppo
     """.trimMargin("|")
     )
   }
+  @Test
   fun `test supported version`() {
     val version = "1.42"
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {

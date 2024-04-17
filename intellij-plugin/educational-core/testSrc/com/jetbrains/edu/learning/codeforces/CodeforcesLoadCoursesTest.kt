@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.api.MockCodeforcesConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import kotlinx.coroutines.runBlocking
+import org.junit.Test
 import java.io.File
 
 class CodeforcesLoadCoursesTest : CodeforcesTestCase() {
@@ -22,6 +23,7 @@ class CodeforcesLoadCoursesTest : CodeforcesTestCase() {
     }
   }
 
+  @Test
   fun `test basic load courses`() {
     val coursesGroups = loadCourses()
     assertEquals(2, coursesGroups.size)
@@ -33,6 +35,7 @@ class CodeforcesLoadCoursesTest : CodeforcesTestCase() {
     assertEquals(100, second.courses.size)
   }
 
+  @Test
   fun `test upcoming contests only`() {
     val coursesGroups = loadCourses()
     assertEquals(1, coursesGroups.size)
@@ -41,6 +44,7 @@ class CodeforcesLoadCoursesTest : CodeforcesTestCase() {
     assertEquals(4, first.courses.size)
   }
 
+  @Test
   fun `test past contests only`() {
     val coursesGroups = loadCourses()
     assertEquals(1, coursesGroups.size)

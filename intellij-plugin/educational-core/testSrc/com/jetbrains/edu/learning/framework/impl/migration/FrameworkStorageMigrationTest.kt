@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.framework.impl.Change
 import com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl
 import com.jetbrains.edu.learning.framework.impl.FrameworkStorage
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
+import org.junit.Test
 
 class FrameworkStorageMigrationTest : CourseGenerationTestBase<EmptyProjectSettings>() {
 
@@ -17,6 +18,7 @@ class FrameworkStorageMigrationTest : CourseGenerationTestBase<EmptyProjectSetti
     createCourseStructure(course)
   }
 
+  @Test
   fun `test migrate from 0 to current`() {
     val storage = createStorage()
     val oldChanges = UserChanges0(listOf(Change.AddFile("foo/bar.txt", "FooBar")))
@@ -30,6 +32,7 @@ class FrameworkStorageMigrationTest : CourseGenerationTestBase<EmptyProjectSetti
     assertEquals(-1, userChanges.timestamp)
   }
 
+  @Test
   fun `test migrate from 0 to 1`() {
     val storage = createStorage()
     val oldChanges = UserChanges0(listOf(Change.AddFile("foo/bar.txt", "FooBar")))

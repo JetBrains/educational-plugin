@@ -5,10 +5,12 @@ import com.intellij.psi.PsiDocumentManager
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.yaml.YamlDeepLoader
+import org.junit.Test
 import java.io.IOException
 
 class RefreshTaskTest : EduTestCase() {
 
+  @Test
   fun testRefreshTask() {
     configureByTaskFile(1, 1, "taskFile1.txt")
     myFixture.editor.caretModel.moveToOffset(13)
@@ -20,6 +22,7 @@ class RefreshTaskTest : EduTestCase() {
     assertEquals("Look! There is placeholder.", myFixture.getDocument(myFixture.file).text)
   }
 
+  @Test
   fun testCaretOutside() {
     configureByTaskFile(1, 2, "taskFile2.txt")
     myFixture.editor.caretModel.moveToOffset(4)
@@ -30,6 +33,7 @@ class RefreshTaskTest : EduTestCase() {
     assertEquals("Look! There is placeholder.", myFixture.getDocument(myFixture.file).text)
   }
 
+  @Test
   fun testMultipleFiles() {
     configureByTaskFile(1, 3, "taskFile1.txt")
     myFixture.editor.caretModel.moveToOffset(5)
@@ -51,6 +55,7 @@ class RefreshTaskTest : EduTestCase() {
     assertEquals("Look! There is placeholder.", myFixture.editor.document.text)
   }
 
+  @Test
   fun `test invisible files`() {
     // Emulate load course from yaml after project reopening
     StudyTaskManager.getInstance(project).course = YamlDeepLoader.loadCourse(project)

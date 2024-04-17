@@ -6,9 +6,11 @@ import com.jetbrains.edu.learning.EduTestInputDialog
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.withEduTestDialog
+import org.junit.Test
 
 class CCWrapInSectionTest : EduActionTestCase() {
 
+  @Test
   fun `test wrap consecutive lessons`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
@@ -29,6 +31,7 @@ class CCWrapInSectionTest : EduActionTestCase() {
     assertEquals(3, course.getLesson("lesson4")!!.index)
   }
 
+  @Test
   fun `test wrap random lessons`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
@@ -44,6 +47,7 @@ class CCWrapInSectionTest : EduActionTestCase() {
     testAction(CCWrapWithSection.ACTION_ID, context, shouldBeEnabled = false)
   }
 
+  @Test
   fun `test wrap one lesson`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
@@ -67,6 +71,7 @@ class CCWrapInSectionTest : EduActionTestCase() {
     assertEquals(1, section.getLesson("lesson2")!!.index)
   }
 
+  @Test
   fun `test all lessons`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
@@ -88,6 +93,7 @@ class CCWrapInSectionTest : EduActionTestCase() {
     assertEquals(3, section.getLesson("lesson3")!!.index)
   }
   
+  @Test
   fun `test lesson wrapping is available only for top level lessons`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1")

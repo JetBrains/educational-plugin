@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.LessonContainer
 import com.jetbrains.edu.learning.fileTree
 import kotlinx.coroutines.runBlocking
+import org.junit.Test
 
 abstract class LessonUpdateTestBase<T : Course> : UpdateTestBase<T>() {
   abstract fun getUpdater(container: LessonContainer): LessonUpdater
@@ -38,6 +39,7 @@ abstract class LessonUpdateTestBase<T : Course> : UpdateTestBase<T>() {
     }
   }
 
+  @Test
   fun `test nothing to update`() {
     initiateLocalCourse()
 
@@ -73,6 +75,7 @@ abstract class LessonUpdateTestBase<T : Course> : UpdateTestBase<T>() {
     expectedStructure.assertEquals(rootDir)
   }
 
+  @Test
   fun `test lesson name has been updated`() {
     initiateLocalCourse()
 
@@ -114,6 +117,7 @@ abstract class LessonUpdateTestBase<T : Course> : UpdateTestBase<T>() {
     expectedStructure.assertEquals(rootDir)
   }
 
+  @Test
   fun `test lesson name has been updated and task statuses are saved`() {
     initiateLocalCourse()
     localCourse.lessons.first().taskList.apply {

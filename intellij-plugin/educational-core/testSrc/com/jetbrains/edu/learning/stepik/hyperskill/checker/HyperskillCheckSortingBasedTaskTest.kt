@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.stepik.StepikTestUtils.format
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import org.apache.http.HttpStatus
 import org.intellij.lang.annotations.Language
+import org.junit.Test
 import java.util.*
 
 class HyperskillCheckSortingBasedTaskTest : HyperskillCheckActionTestBase() {
@@ -85,12 +86,16 @@ class HyperskillCheckSortingBasedTaskTest : HyperskillCheckActionTestBase() {
     }
   }
 
+  @Test
   fun `test sorting task correct`() = doTest(true, 0)
 
+  @Test
   fun `test sorting task incorrect`() = doTest(false, 1)
 
+  @Test
   fun `test matching task correct`() = doTest(true, 2)
 
+  @Test
   fun `test matching task incorrect`() = doTest(false, 3)
 
   @Language("JSON")

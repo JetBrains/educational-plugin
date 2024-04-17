@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
+import org.junit.Test
 
 class HyperskillLoadingTest : SolutionLoadingTestBase() {
   override fun doLoginFakeUser() = logInFakeHyperskillUser()
@@ -25,6 +26,7 @@ class HyperskillLoadingTest : SolutionLoadingTestBase() {
     mockConnector.withResponseHandler(testRootDisposable) { _, _ -> mockResponse(responseFileName) }
   }
 
+  @Test
   fun `test solution loading second stage failed`() {
     configureResponse("submission_stage2_failed.json")
 
@@ -58,6 +60,7 @@ class HyperskillLoadingTest : SolutionLoadingTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test local changes are not lost`() {
     configureResponse("submission_stage2_failed.json")
 
@@ -95,6 +98,7 @@ class HyperskillLoadingTest : SolutionLoadingTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test solution loading first stage solved on web interface`() {
     configureResponse("submission_stage1_web.json")
 
@@ -128,6 +132,7 @@ class HyperskillLoadingTest : SolutionLoadingTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test solution loading code task`() {
     configureResponse("submission_code_task.json")
 
@@ -177,6 +182,7 @@ class HyperskillLoadingTest : SolutionLoadingTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test solution loaded project with problems`() {
     configureResponse("submission_code_task.json")
 
@@ -211,6 +217,7 @@ class HyperskillLoadingTest : SolutionLoadingTestBase() {
 
   }
 
+  @Test
   fun `test solution loading all stages solved`() {
     configureResponse("submissions_all_solved.json")
     val course = createHyperskillCourse()
@@ -243,6 +250,7 @@ class HyperskillLoadingTest : SolutionLoadingTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test solution loading with new file on the second stage`() {
     configureResponse("submission_stage2_failed_new_file.json")
     val course = createHyperskillCourse()
@@ -279,6 +287,7 @@ class HyperskillLoadingTest : SolutionLoadingTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test solution loading with new files with different visibility`() {
     configureResponse("submission_stage2_failed_new_files_with_different_visibility.json")
     val course = createHyperskillCourse()
@@ -303,6 +312,7 @@ class HyperskillLoadingTest : SolutionLoadingTestBase() {
                           "src/additional3.txt" to true))
   }
 
+  @Test
   fun `test solution loading with new file on the first stage`() {
     configureResponse("submission_stage1_new_file.json")
     val course = createHyperskillCourse()
@@ -338,6 +348,7 @@ class HyperskillLoadingTest : SolutionLoadingTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test solution loading new file from the first stage propagated`() {
     configureResponse("submission_stage1_new_file_solved.json")
     val course = createHyperskillCourse()
@@ -373,6 +384,7 @@ class HyperskillLoadingTest : SolutionLoadingTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test navigation after solution loading`() {
     configureResponse("submission_stage2_failed.json")
     val course = createHyperskillCourse()
@@ -415,6 +427,7 @@ class HyperskillLoadingTest : SolutionLoadingTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test all topics loaded`() {
     val items = mapOf(1 to "topics_response_1.json", 2 to "topics_response_2.json")
 
@@ -428,6 +441,7 @@ class HyperskillLoadingTest : SolutionLoadingTestBase() {
     assertEquals(3, course.taskToTopics[0]?.size)
   }
 
+  @Test
   fun `test do not apply old submissions on new user changes`() =
     doApplySubmissionOnNonCurrentTaskTest("submission_stage1_ancient_submission.json") {
       dir("lesson1") {
@@ -454,6 +468,7 @@ class HyperskillLoadingTest : SolutionLoadingTestBase() {
       file("settings.gradle")
     }
 
+  @Test
   fun `test apply new submissions on old user changes`() =
     doApplySubmissionOnNonCurrentTaskTest("submission_stage1_newest_submission.json") {
       dir("lesson1") {

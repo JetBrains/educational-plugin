@@ -9,8 +9,10 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.document
 import org.jetbrains.plugins.gradle.util.GradleConstants.DEFAULT_SCRIPT_NAME
 import org.jetbrains.plugins.gradle.util.GradleConstants.SETTINGS_FILE_NAME
+import org.junit.Test
 
 class JHyperskillCourseGenerationTest : EduTestCase() {
+  @Test
   fun `test build gradle file`() {
     courseWithFiles(
       courseProducer = ::HyperskillCourse,
@@ -22,6 +24,7 @@ class JHyperskillCourseGenerationTest : EduTestCase() {
     assertEquals(expectedBuildGradleContent, actualBuildGradleContent)
   }
 
+  @Test
   fun `test settings gradle file`() {
     courseWithFiles(
       courseProducer = ::HyperskillCourse,

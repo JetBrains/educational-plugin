@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask.Companion.codeforcesSubmitLink
 import com.jetbrains.edu.learning.courseFormat.codeforces.ContestParameters
+import org.junit.Test
 
 class CodeforcesLoadingTest : CodeforcesTestCase() {
   override fun setUp() {
@@ -45,6 +46,7 @@ class CodeforcesLoadingTest : CodeforcesTestCase() {
     }
   }
 
+  @Test
   fun `test codeforces contest Kotlin Heroes Episode 1`() {
     val contest = contestKotlinHeroesEpisode1
 
@@ -83,6 +85,7 @@ class CodeforcesLoadingTest : CodeforcesTestCase() {
                  codeforcesSubmitLink(tasks[7] as CodeforcesTask))
   }
 
+  @Test
   fun `test codeforces contest Kotlin Heroes Episode 1 task A`() {
     val contest = contestKotlinHeroesEpisode1
     val task = contest.lessons.first().taskList[0] as CodeforcesTask
@@ -93,6 +96,7 @@ class CodeforcesLoadingTest : CodeforcesTestCase() {
     task.checkTaskDescription(1170, 'A')
   }
 
+  @Test
   fun `test codeforces contest Kotlin Heroes Episode 1 task E with image`() {
     val contest = contestKotlinHeroesEpisode1
     val task = contest.lessons.first().taskList[4] as CodeforcesTask
@@ -103,6 +107,7 @@ class CodeforcesLoadingTest : CodeforcesTestCase() {
     task.checkTaskDescription(1170, 'E')
   }
 
+  @Test
   fun `test codeforces contest Kotlin Heroes Episode 1 task G with image`() {
     val contest = contestKotlinHeroesEpisode1
     val task = contest.lessons.first().taskList[6] as CodeforcesTask
@@ -113,6 +118,7 @@ class CodeforcesLoadingTest : CodeforcesTestCase() {
     task.checkTaskDescription(1170, 'G')
   }
 
+  @Test
   fun `test codeforces contest Codeforces Round 605 (Div 3)`() {
     val contest = codeforcesRound605Div3
 
@@ -144,6 +150,7 @@ class CodeforcesLoadingTest : CodeforcesTestCase() {
     assertEquals("https://codeforces.com/contest/1272/submit?locale=en&submittedProblemIndex=D", codeforcesSubmitLink(tasks[3] as CodeforcesTask))
   }
 
+  @Test
   fun `test codeforces contest Codeforces Round 605 (Div 3) task A`() {
     val contest = codeforcesRound605Div3
     val task = contest.lessons.first().taskList[0] as CodeforcesTask
@@ -154,6 +161,7 @@ class CodeforcesLoadingTest : CodeforcesTestCase() {
     task.checkTaskDescription(1272, 'A')
   }
 
+  @Test
   fun `test codeforces contest Codeforces Round 605 (Div 3) task B with image`() {
     val contest = codeforcesRound605Div3
     val task = contest.lessons.first().taskList[1] as CodeforcesTask
@@ -164,6 +172,7 @@ class CodeforcesLoadingTest : CodeforcesTestCase() {
     task.checkTaskDescription(1272, 'B')
   }
 
+  @Test
   fun `test parsing several test samples for contest Kotlin Heroes Practice 6 task A`() {
     val contest = contestKotlinHeroesPractice6
 
@@ -191,6 +200,7 @@ class CodeforcesLoadingTest : CodeforcesTestCase() {
     }
   }
 
+  @Test
   fun `test parsing single test sample for contest Kotlin Heroes Practice 6 task B`() {
     val contest = contestKotlinHeroesPractice6
 

@@ -2,9 +2,11 @@ package com.jetbrains.edu.coursecreator.actions.move
 
 import com.jetbrains.edu.learning.actions.move.MoveTestBase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import org.junit.Test
 
 class CCMoveSectionTest : MoveTestBase() {
 
+  @Test
   fun `test move section before lesson`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
@@ -22,6 +24,7 @@ class CCMoveSectionTest : MoveTestBase() {
     assertEquals(2, course.getLesson("lesson1")!!.index)
   }
 
+  @Test
   fun `test move section after lesson`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
@@ -41,6 +44,7 @@ class CCMoveSectionTest : MoveTestBase() {
     assertEquals(3, course.getLesson("lesson2")!!.index)
   }
 
+  @Test
   fun `test move section before section`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
@@ -58,6 +62,7 @@ class CCMoveSectionTest : MoveTestBase() {
     assertEquals(3, course.getSection("section2")!!.index)
   }
 
+  @Test
   fun `test move section after section`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()

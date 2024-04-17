@@ -11,18 +11,21 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import org.junit.Test
 import java.io.File
 
 class CCCreateTaskFilePreviewTest : EduActionTestCase() {
 
   override fun getTestDataPath(): String = "${super.getTestDataPath()}/actions/preview"
 
+  @Test
   fun `test one placeholder`() = doTest("lesson1/task1/test.txt") {
     taskFile("test.txt", """<p>type here</p>""") {
       placeholder(0, possibleAnswer = "two")
     }
   }
 
+  @Test
   fun `test several placeholders`() = doTest("lesson1/task1/test.txt") {
     taskFile("test.txt", """print("<p>veryverylongtextveryverylongtextveryverylongtextveryverylongtext</p> + <p>test</p> = 2")""") {
       placeholder(0, possibleAnswer = "1")
@@ -30,6 +33,7 @@ class CCCreateTaskFilePreviewTest : EduActionTestCase() {
     }
   }
 
+  @Test
   fun `test nested task file`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -54,6 +58,7 @@ class CCCreateTaskFilePreviewTest : EduActionTestCase() {
     }
   }
 
+  @Test
   fun `test show error if placeholder is broken`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -71,6 +76,7 @@ class CCCreateTaskFilePreviewTest : EduActionTestCase() {
     }.checkWasShown(EduCoreBundle.message("exception.broken.placeholder.message", "lesson1/task1/fizz.kt", 1000, 0))
   }
 
+  @Test
   fun `test show error if we have no placeholders`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {

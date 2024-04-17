@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator.Companion.ED
 import com.jetbrains.edu.learning.update.CourseUpdateChecker
 import com.jetbrains.edu.learning.update.CourseUpdateCheckerTestBase
 import org.jsoup.Jsoup
+import org.junit.Test
 import java.time.ZonedDateTime
 import java.util.*
 
@@ -50,26 +51,31 @@ class CodeforcesCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
     }
   }
 
+  @Test
   fun `test check scheduled for upToDate course`() {
     createCodeforcesCourse(isCourseUpToDate = true)
     doTest(CodeforcesCourseUpdateChecker.getInstance(project), true, 1, 2) {}
   }
 
+  @Test
   fun `test check scheduled for newly created course`() {
     createCodeforcesCourse(isNewlyCreated = true, isCourseUpToDate = true)
     doTest(CodeforcesCourseUpdateChecker.getInstance(project), true, 0, 1) {}
   }
 
+  @Test
   fun `test no isUpToDate check for newly created course at project opening`() {
     createCodeforcesCourse(isNewlyCreated = true)
     testNoCheck(CodeforcesCourseUpdateChecker.getInstance(project))
   }
 
+  @Test
   fun `test check scheduled for not upToDate course with notification`() {
     createCodeforcesCourse()
     doTest(CodeforcesCourseUpdateChecker.getInstance(project), false, 1, 2, 2) {}
   }
 
+  @Test
   fun `test custom check interval for ongoing contest`() {
     val secondsToEnd = 3L
     val course = createCodeforcesCourse().apply {

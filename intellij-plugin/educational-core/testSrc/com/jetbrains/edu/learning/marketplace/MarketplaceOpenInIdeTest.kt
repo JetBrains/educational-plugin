@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.marketplace.courseGeneration.MarketplaceOpenCo
 import com.jetbrains.edu.learning.marketplace.courseGeneration.MarketplaceOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.onError
+import org.junit.Test
 import java.util.concurrent.atomic.AtomicInteger
 
 class MarketplaceOpenInIdeTest : EduTestCase() {
@@ -55,6 +56,7 @@ class MarketplaceOpenInIdeTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test open course in new project`() {
     configureCoursesResponse("test_course_info.json")
 
@@ -64,6 +66,7 @@ class MarketplaceOpenInIdeTest : EduTestCase() {
   }
 
   // https://youtrack.jetbrains.com/issue/EDU-5697
+  @Test
   fun `test open course with special symbols in new project`() {
     configureCoursesResponse("test_course_info_special_symbols.json")
 
@@ -72,11 +75,13 @@ class MarketplaceOpenInIdeTest : EduTestCase() {
     checkTestCourseFileStructure()
   }
 
+  @Test
   fun `test language supported with plugin`() {
     configureCoursesResponse("python_course_info.json")
     doLanguageValidationTest {  assertTrue("actual: $it", it is PluginsRequired) }
   }
 
+  @Test
   fun `test language not supported in IDE`() {
     configureCoursesResponse("unsupported_language_course_info.json")
     doLanguageValidationTest {

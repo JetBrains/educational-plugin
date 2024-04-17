@@ -20,12 +20,14 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.update.TaskUpdateTestBase
 import com.jetbrains.edu.learning.update.TaskUpdater
+import org.junit.Test
 import java.util.*
 
 class HyperskillTaskUpdateTest : TaskUpdateTestBase<HyperskillCourse>() {
 
   override fun getUpdater(lesson: Lesson): TaskUpdater = HyperskillTaskUpdater(project, lesson)
 
+  @Test
   fun `test new task created`() {
     initiateLocalCourse()
     val newEduTask = EduTask("task3").apply {
@@ -91,6 +93,7 @@ class HyperskillTaskUpdateTest : TaskUpdateTestBase<HyperskillCourse>() {
     expectedStructure.assertEquals(rootDir)
   }
 
+  @Test
   fun `test last task deleted`() {
     initiateLocalCourse()
     val newStages = listOf(HyperskillStage(1, "", 1, true))
@@ -123,6 +126,7 @@ class HyperskillTaskUpdateTest : TaskUpdateTestBase<HyperskillCourse>() {
     expectedStructure.assertEquals(rootDir)
   }
 
+  @Test
   fun `test task description with placeholders have been updated`() {
     localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
       lesson("lesson1", id = 1) {
@@ -160,6 +164,7 @@ class HyperskillTaskUpdateTest : TaskUpdateTestBase<HyperskillCourse>() {
     assertTrue("Task Description not updated", taskDescription.contains(newText))
   }
 
+  @Test
   fun `test task type has been updated from unsupported to supported`() {
     localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
       section(HYPERSKILL_TOPICS) {
@@ -191,6 +196,7 @@ class HyperskillTaskUpdateTest : TaskUpdateTestBase<HyperskillCourse>() {
     assertTrue("UnsupportedTask hasn't been updated to EduTask", findTask(0, 0, 0) is EduTask)
   }
 
+  @Test
   fun `test choiceTask and its choice options have been updated`() {
     localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
       section(HYPERSKILL_TOPICS) {
@@ -239,6 +245,7 @@ class HyperskillTaskUpdateTest : TaskUpdateTestBase<HyperskillCourse>() {
     assertEquals("Choice options for the ChoiceTask have not been updated", "NewOption1", newChoiceOptions[0].text)
   }
 
+  @Test
   fun `test sortingTask and its options have been updated`() {
     localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
       section(HYPERSKILL_TOPICS) {
@@ -271,6 +278,7 @@ class HyperskillTaskUpdateTest : TaskUpdateTestBase<HyperskillCourse>() {
     assertEquals("Sorting options for the SortingTask have not been updated", newOptions, newSortingOptions)
   }
 
+  @Test
   fun `test matchingTask and its options have been updated`() {
     localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
       section(HYPERSKILL_TOPICS) {
@@ -306,6 +314,7 @@ class HyperskillTaskUpdateTest : TaskUpdateTestBase<HyperskillCourse>() {
     assertEquals("Matching captions for the MatchingTask have not been updated", matchingTask.captions, newCaptions)
   }
 
+  @Test
   fun `test remoteEduTask and its checkProfile have been updated`() {
     localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
       section(HYPERSKILL_TOPICS) {

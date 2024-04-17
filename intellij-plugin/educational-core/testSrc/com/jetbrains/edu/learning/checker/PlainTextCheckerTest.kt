@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.document
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
+import org.junit.Test
 
 class PlainTextCheckerTest : CheckersTestBase<EmptyProjectSettings>() {
 
@@ -69,6 +70,7 @@ class PlainTextCheckerTest : CheckersTestBase<EmptyProjectSettings>() {
     }.apply { isMarketplace = true }
   }
 
+  @Test
   fun `test course`() {
     CheckActionListener.expectedMessage { task ->
       when (task) {
@@ -80,6 +82,7 @@ class PlainTextCheckerTest : CheckersTestBase<EmptyProjectSettings>() {
     doTest()
   }
 
+  @Test
   fun `test test files content created and deleted in output task`() {
     val outputTask = myCourse.allTasks.single { it.name == "OutputTask" }
 
@@ -94,6 +97,7 @@ class PlainTextCheckerTest : CheckersTestBase<EmptyProjectSettings>() {
     assertEmpty(vTestFile.document.text)
   }
 
+  @Test
   fun `test test files content created and deleted in edu task`() {
     val eduTask = myCourse.allTasks.single { it.name == "EduTask" }
 
@@ -108,6 +112,7 @@ class PlainTextCheckerTest : CheckersTestBase<EmptyProjectSettings>() {
     assertEmpty(vTestFile.document.text)
   }
 
+  @Test
   fun `test visible test files content is not change in edu task`() {
     val eduTask = myCourse.allTasks.first { it.name == "EduTaskWithVisibleTests" }
 

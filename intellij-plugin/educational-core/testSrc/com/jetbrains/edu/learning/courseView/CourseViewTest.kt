@@ -14,11 +14,12 @@ import com.jetbrains.edu.learning.projectView.FrameworkLessonNode
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.ui.getUICheckLabel
 import com.jetbrains.edu.learning.withEduTestDialog
-import junit.framework.TestCase
+import org.junit.Test
 import javax.swing.tree.DefaultMutableTreeNode
 
 class CourseViewTest : CourseViewTestBase() {
 
+  @Test
   fun testCoursePane() {
     createStudyCourse()
     configureByTaskFile(1, 1, "taskFile1.txt")
@@ -35,6 +36,7 @@ class CourseViewTest : CourseViewTestBase() {
     PlatformTestUtil.assertTreeEqual(pane.tree, structure)
   }
 
+  @Test
   fun `test framework lesson navigate`() {
     courseWithFiles("Edu test course") {
       lesson {
@@ -77,13 +79,15 @@ class CourseViewTest : CourseViewTestBase() {
     assertEquals("taskFile1.txt", FileEditorManager.getInstance (project).openFiles[0].name)
   }
 
+  @Test
   fun testCourseProgress() {
     createStudyCourse()
     configureByTaskFile(1, 1, "taskFile1.txt")
     val pane = createPane()
-    TestCase.assertNotNull(pane.getProgressBar())
+    assertNotNull(pane.getProgressBar())
   }
 
+  @Test
   fun testCheckTask() {
     createStudyCourse()
     configureByTaskFile(1, 1, "taskFile1.txt")
@@ -110,6 +114,7 @@ class CourseViewTest : CourseViewTestBase() {
       testAction(RevertTaskAction.ACTION_ID, dataContext(taskFile))
     }
   }
+  @Test
   fun `test hidden lesson`() {
     PropertiesComponent.getInstance().setValue(CourseViewPane.HIDE_SOLVED_LESSONS, true)
     try {

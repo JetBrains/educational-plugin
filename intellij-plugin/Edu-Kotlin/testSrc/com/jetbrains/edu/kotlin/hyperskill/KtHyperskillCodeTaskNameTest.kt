@@ -7,8 +7,10 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.junit.Test
 
 class KtHyperskillCodeTaskNameTest : EduTestCase() {
+  @Test
   fun `test find taskFile for uploading`() {
     val course = courseWithFiles(
       language = KotlinLanguage.INSTANCE,
@@ -36,6 +38,7 @@ class KtHyperskillCodeTaskNameTest : EduTestCase() {
     assertEquals("src/Main.kt", codeTaskFile!!.name)
   }
 
+  @Test
   fun `test create name for taskfile`() {
     val course = courseWithFiles(
       language = KotlinLanguage.INSTANCE,

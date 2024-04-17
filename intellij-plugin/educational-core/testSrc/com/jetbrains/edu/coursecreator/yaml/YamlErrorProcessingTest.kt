@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.yaml
 import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException
+import com.fasterxml.jackson.dataformat.yaml.snakeyaml.error.MarkedYAMLException
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import com.intellij.lang.Language
 import com.intellij.openapi.application.runWriteAction
@@ -16,9 +17,11 @@ import com.jetbrains.edu.learning.yaml.YamlMapper.MAPPER
 import com.jetbrains.edu.learning.yaml.YamlTestCase
 import com.jetbrains.edu.learning.yaml.deserializeItemProcessingErrors
 import com.jetbrains.edu.learning.yaml.errorHandling.InvalidYamlFormatException
+import org.junit.Test
 
 class YamlErrorProcessingTest : YamlTestCase() {
 
+  @Test
   fun `test empty field`() {
     doTest("""
             |title:
@@ -34,6 +37,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
            "title is empty", MissingKotlinParameterException::class.java)
   }
 
+  @Test
   fun `test invalid field value`() {
     doTest("""
             |title: Test course
@@ -49,6 +53,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
            "Unknown language \"wrong\"", InvalidYamlFormatException::class.java)
   }
 
+  @Test
   fun `test unexpected symbol`() {
     @Suppress("DEPRECATION")
     doTest("""
@@ -63,9 +68,10 @@ class YamlErrorProcessingTest : YamlTestCase() {
             |- the second lesson
             |""".trimMargin(), YamlConfigSettings.COURSE_CONFIG,
            "could not find expected ':' at line 7",
-           com.fasterxml.jackson.dataformat.yaml.snakeyaml.error.MarkedYAMLException::class.java)
+           MarkedYAMLException::class.java)
   }
 
+  @Test
   fun `test parameter name without semicolon`() {
     doTest("""
             |title
@@ -80,6 +86,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
            "Invalid config", MismatchedInputException::class.java)
   }
 
+  @Test
   fun `test wrong type of placeholder offset`() {
     doTest("""
     |type: edu
@@ -93,6 +100,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
            "Invalid config", InvalidFormatException::class.java)
   }
 
+  @Test
   fun `test unexpected item type`() {
     doTest("""
       |type: e
@@ -109,12 +117,14 @@ class YamlErrorProcessingTest : YamlTestCase() {
            "Unsupported task type \"e\"", InvalidYamlFormatException::class.java)
   }
 
+  @Test
   fun `test task without type`() {
     doTest("""
     """.trimIndent(), YamlConfigSettings.TASK_CONFIG,
            "Task type is not specified", InvalidYamlFormatException::class.java)
   }
 
+  @Test
   fun `test negative placeholder length`() {
     doTest("""
     |type: edu
@@ -129,6 +139,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
            "Answer placeholder with negative length is not allowed", InvalidYamlFormatException::class.java)
   }
 
+  @Test
   fun `test negative placeholder offset`() {
     doTest("""
     |type: edu
@@ -143,6 +154,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
            "Answer placeholder with negative offset is not allowed", InvalidYamlFormatException::class.java)
   }
 
+  @Test
   fun `test task file without name`() {
     doTest("""
     |type: edu
@@ -153,6 +165,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
            "File without a name is not allowed", InvalidYamlFormatException::class.java)
   }
 
+  @Test
   fun `test language without configurator`() {
     val name = "Test Course"
     val language = "Russian"

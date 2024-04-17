@@ -3,11 +3,13 @@ package com.jetbrains.edu.go.actions
 import com.goide.GoLanguage
 import com.intellij.lang.Language
 import com.jetbrains.edu.coursecreator.actions.create.CCNewTaskStructureTestBase
+import org.junit.Test
 
 class GoNewTaskStructureTest : CCNewTaskStructureTestBase() {
 
   override val language: Language get() = GoLanguage.INSTANCE
 
+  @Test
   fun `test create edu task`() = checkEduTaskCreation(
     fullTaskStructure = {
       file("task.md")
@@ -40,6 +42,7 @@ class GoNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create output task`() = checkOutputTaskCreation(
     fullTaskStructure = {
       file("task.md")
@@ -71,6 +74,7 @@ class GoNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create theory task`() = checkTheoryTaskCreation(
     fullTaskStructure = {
       file("task.md")
@@ -94,6 +98,7 @@ class GoNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create IDE task`() = checkIdeTaskCreation(
     fullTaskStructure = {
       file("task.md")
@@ -117,6 +122,7 @@ class GoNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create choice task`() = checkChoiceTaskCreation(
     fullTaskStructure = {
       file("task.md")

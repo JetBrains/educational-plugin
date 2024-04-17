@@ -12,9 +12,11 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.testAction
+import org.junit.Test
 
 class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
 
+  @Test
   fun `test type & next`() {
     val course = createHyperskillCourse()
 
@@ -53,6 +55,7 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test type & next prev`() {
     val course = createHyperskillCourse()
 
@@ -97,6 +100,7 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test type & next prev next`() {
     val course = createHyperskillCourse()
 
@@ -150,6 +154,7 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test create file & next`() {
     val course = createHyperskillCourse()
 
@@ -189,6 +194,7 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test create file & next prev`() {
     val course = createHyperskillCourse()
 
@@ -231,6 +237,7 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test remove file & next`() {
     val course = createHyperskillCourse()
 
@@ -269,6 +276,7 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test remove file & next prev`() {
     val course = createHyperskillCourse()
 

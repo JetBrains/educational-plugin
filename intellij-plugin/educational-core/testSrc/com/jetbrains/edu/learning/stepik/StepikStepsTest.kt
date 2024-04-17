@@ -4,9 +4,11 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import org.junit.Test
 
 class StepikStepsTest : EduTestCase() {
 
+  @Test
   fun `test md description converted to html`() {
     val course = courseWithFiles {
       lesson {
@@ -21,6 +23,7 @@ class StepikStepsTest : EduTestCase() {
                  "</code></pre><p>This was the code.</p></body>".trimIndent(), step.text.trimIndent())
   }
 
+  @Test
   fun `test no conversion for hyperskill course`() {
     val course = courseWithFiles(courseProducer = ::HyperskillCourse) {
       lesson {

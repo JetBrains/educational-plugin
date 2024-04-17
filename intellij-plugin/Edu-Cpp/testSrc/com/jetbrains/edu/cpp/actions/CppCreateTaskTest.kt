@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.testAction
+import org.junit.Test
 import com.jetbrains.cmake.CMakeListsFileType.FILE_NAME as CMAKE_LISTS_TXT
 
 class CppCreateTaskTest : EduActionTestCase() {
@@ -72,18 +73,23 @@ class CppCreateTaskTest : EduActionTestCase() {
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot())
   }
 
+  @Test
   fun `test create task in empty lesson (Google Test)`() =
     createTaskInEmptyLessonTestBase("GoogleTest")
 
+  @Test
   fun `test crete task in empty lesson (Catch Test)`() =
     createTaskInEmptyLessonTestBase("Catch")
 
+  @Test
   fun `test create task in empty framework lesson (Google Test)`() =
     createTaskInEmptyLessonTestBase("GoogleTest", true)
 
+  @Test
   fun `test crete task in empty framework lesson (Catch Test)`() =
     createTaskInEmptyLessonTestBase("Catch", true)
 
+  @Test
   fun `test create second framework task`() {
     val taskText = """
       |#include<iostream>

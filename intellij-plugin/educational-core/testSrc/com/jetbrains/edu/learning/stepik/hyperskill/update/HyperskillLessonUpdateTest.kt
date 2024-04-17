@@ -12,10 +12,12 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.update.LessonUpdateTestBase
 import com.jetbrains.edu.learning.update.LessonUpdater
+import org.junit.Test
 
 class HyperskillLessonUpdateTest : LessonUpdateTestBase<HyperskillCourse>() {
   override fun getUpdater(container: LessonContainer): LessonUpdater = HyperskillLessonUpdater(project, container)
 
+  @Test
   fun `test new lesson in course created`() {
     initiateLocalCourse()
     val newEduTask = EduTask("task3").apply {
@@ -87,6 +89,7 @@ class HyperskillLessonUpdateTest : LessonUpdateTestBase<HyperskillCourse>() {
     expectedStructure.assertEquals(rootDir)
   }
 
+  @Test
   fun `test new lesson in section created`() {
     localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
       section("section1", id = 1) {
@@ -184,6 +187,7 @@ class HyperskillLessonUpdateTest : LessonUpdateTestBase<HyperskillCourse>() {
     expectedStructure.assertEquals(rootDir)
   }
 
+  @Test
   fun `test first task deleted`() {
     initiateLocalCourse()
     val newStages = listOf(
@@ -219,6 +223,7 @@ class HyperskillLessonUpdateTest : LessonUpdateTestBase<HyperskillCourse>() {
     expectedStructure.assertEquals(rootDir)
   }
 
+  @Test
   fun `test lesson in course has been deleted`() {
     localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
       lesson("lesson1", id = 1) {
@@ -295,6 +300,7 @@ class HyperskillLessonUpdateTest : LessonUpdateTestBase<HyperskillCourse>() {
     expectedStructure.assertEquals(rootDir)
   }
 
+  @Test
   fun `test lesson in section has been deleted`() {
     localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
       section("section1", id = 1) {
@@ -376,6 +382,7 @@ class HyperskillLessonUpdateTest : LessonUpdateTestBase<HyperskillCourse>() {
     expectedStructure.assertEquals(rootDir)
   }
 
+  @Test
   fun `test new lesson in section created and existing task has been changed`() {
     localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
       section("section1", id = 1) {

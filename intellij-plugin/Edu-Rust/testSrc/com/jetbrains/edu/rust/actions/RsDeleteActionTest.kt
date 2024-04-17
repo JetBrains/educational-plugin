@@ -7,10 +7,12 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.withEduTestDialog
 import org.intellij.lang.annotations.Language
+import org.junit.Test
 import org.rust.lang.RsLanguage
 
 class RsDeleteActionTest : RsActionTestBase() {
 
+  @Test
   fun `test delete first lesson`() = doTest(createRustCourse(), "lesson1", """
       [workspace]
       
@@ -25,6 +27,7 @@ class RsDeleteActionTest : RsActionTestBase() {
       ]
   """)
 
+  @Test
   fun `test delete last lesson`() = doTest(createRustCourse(), "lesson4", """
       [workspace]
       
@@ -39,6 +42,7 @@ class RsDeleteActionTest : RsActionTestBase() {
       ]
   """)
 
+  @Test
   fun `test delete last lesson with trailing comma`() {
     val course = courseWithFiles(
       courseMode = CourseMode.EDUCATOR,
@@ -81,6 +85,7 @@ class RsDeleteActionTest : RsActionTestBase() {
     """)
   }
 
+  @Test
   fun `test delete section`() = doTest(createRustCourse(), "section1", """
       [workspace]
       
@@ -94,6 +99,7 @@ class RsDeleteActionTest : RsActionTestBase() {
       ]
   """)
 
+  @Test
   fun `test delete last task in lesson`() = doTest(createRustCourse(), "lesson1/task1", """
       [workspace]
       
@@ -108,6 +114,7 @@ class RsDeleteActionTest : RsActionTestBase() {
       ]
   """)
 
+  @Test
   fun `test delete non-last task in lesson`() = doTest(createRustCourse(), "lesson4/task5", """
       [workspace]
       
@@ -123,6 +130,7 @@ class RsDeleteActionTest : RsActionTestBase() {
       ]
   """)
 
+  @Test
   fun `test delete empty lesson`() = doTest(createRustCourse(), "lesson5", """
       [workspace]
       

@@ -5,18 +5,22 @@ import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.getTaskFile
 import com.jetbrains.edu.learning.testAction
+import org.junit.Test
 
 class CodeforcesNavigationTest : NavigationTestBase() {
+  @Test
   fun `test open next task`() {
     configureByTaskFile(1, 1, "src/Foo.kt")
     doTest("src/Bar.kt")
   }
 
+  @Test
   fun `test open next task non-test file`() {
     configureByTaskFile(1, 2, "src/Bar.kt")
     doTest("src/Baz.kt")
   }
 
+  @Test
   fun `test unable to open next task file`() {
     configureByTaskFile(1, 3, "src/Baz.kt")
     testAction(NextTaskAction.ACTION_ID)

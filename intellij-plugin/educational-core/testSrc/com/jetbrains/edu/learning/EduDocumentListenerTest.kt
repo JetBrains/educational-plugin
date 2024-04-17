@@ -15,10 +15,12 @@ import com.intellij.util.CommonProcessors
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
+import org.junit.Test
 import java.io.IOException
 
 class EduDocumentListenerTest : EduTestCase() {
 
+  @Test
   fun `test type in placeholder`() {
     val lessonIndex = 1
     val taskIndex = 1
@@ -35,6 +37,7 @@ class EduDocumentListenerTest : EduTestCase() {
     assertEquals("itests", answerPlaceholders[0].currentText)
   }
 
+  @Test
   fun `test type before placeholder`() {
     val lessonIndex = 1
     val taskIndex = 1
@@ -51,6 +54,7 @@ class EduDocumentListenerTest : EduTestCase() {
     assertEquals("is", answerPlaceholders[0].currentText)
   }
 
+  @Test
   fun `test type between placeholder`() {
     val lessonIndex = 1
     val taskIndex = 2
@@ -68,6 +72,7 @@ class EduDocumentListenerTest : EduTestCase() {
     assertEquals("is another", answerPlaceholders[1].currentText)
   }
 
+  @Test
   fun `test type in second placeholder`() {
     val lessonIndex = 1
     val taskIndex = 2
@@ -85,6 +90,7 @@ class EduDocumentListenerTest : EduTestCase() {
     assertEquals("testis another", answerPlaceholders[1].currentText)
   }
 
+  @Test
   fun `test type in first placeholder`() {
     val lessonIndex = 1
     val taskIndex = 2
@@ -102,6 +108,7 @@ class EduDocumentListenerTest : EduTestCase() {
     assertEquals("is another", answerPlaceholders[1].currentText)
   }
 
+  @Test
   fun `test type after last placeholder`() {
     val lessonIndex = 1
     val taskIndex = 2
@@ -120,6 +127,7 @@ class EduDocumentListenerTest : EduTestCase() {
 
   }
 
+  @Test
   fun `test new line at the beginning placeholder`() {
     val lessonIndex = 1
     val taskIndex = 1
@@ -136,6 +144,7 @@ class EduDocumentListenerTest : EduTestCase() {
     assertEquals("i\ns", answerPlaceholders[0].currentText)
   }
 
+  @Test
   fun `test delete before placeholder`() {
     val taskFileName = "taskFile2.txt"
     configureByTaskFile(1, 2, taskFileName)
@@ -153,6 +162,7 @@ class EduDocumentListenerTest : EduTestCase() {
     assertEquals("is another", answerPlaceholders[1].currentText)
   }
 
+  @Test
   fun `test delete between placeholder`() {
     val taskFileName = "taskFile2.txt"
     configureByTaskFile(1, 2, taskFileName)
@@ -170,6 +180,7 @@ class EduDocumentListenerTest : EduTestCase() {
     assertEquals("is another", answerPlaceholders[1].currentText)
   }
 
+  @Test
   fun `test delete after placeholder`() {
     val taskFileName = "taskFile2.txt"
     configureByTaskFile(1, 2, taskFileName)
@@ -187,6 +198,7 @@ class EduDocumentListenerTest : EduTestCase() {
     assertEquals("is another", answerPlaceholders[1].currentText)
   }
 
+  @Test
   fun `test delete first placeholder start`() {
     val taskFileName = "taskFile2.txt"
     configureByTaskFile(1, 2, taskFileName)
@@ -204,6 +216,7 @@ class EduDocumentListenerTest : EduTestCase() {
     assertEquals("is another", answerPlaceholders[1].currentText)
   }
 
+  @Test
   fun `test delete first placeholder end`() {
     val taskFileName = "taskFile2.txt"
     configureByTaskFile(1, 2, taskFileName)
@@ -221,6 +234,7 @@ class EduDocumentListenerTest : EduTestCase() {
     assertEquals("is another", answerPlaceholders[1].currentText)
   }
 
+  @Test
   fun `test delete from start beyond end`() {
     val taskFileName = "taskFile1.txt"
     configureByTaskFile(1, 1, taskFileName)
@@ -236,6 +250,7 @@ class EduDocumentListenerTest : EduTestCase() {
     assertEquals("test", answerPlaceholders[0].currentText)
   }
 
+  @Test
   fun `test delete before start beyond end`() {
     val taskFileName = "taskFile1.txt"
     configureByTaskFile(1, 1, taskFileName)
@@ -251,6 +266,7 @@ class EduDocumentListenerTest : EduTestCase() {
     assertEquals("test", answerPlaceholders[0].currentText)
   }
 
+  @Test
   fun `test delete second placeholder start`() {
     val taskFileName = "taskFile2.txt"
     configureByTaskFile(1, 2, taskFileName)
@@ -268,6 +284,7 @@ class EduDocumentListenerTest : EduTestCase() {
     assertEquals("s another", answerPlaceholders[1].currentText)
   }
 
+  @Test
   fun `test delete second placeholder end`() {
     val taskFileName = "taskFile2.txt"
     configureByTaskFile(1, 2, taskFileName)
@@ -285,6 +302,7 @@ class EduDocumentListenerTest : EduTestCase() {
 
   }
 
+  @Test
   fun `test find and replace in whole project`() {
     val findModel = FindModel().apply {
       stringToFind = "There"

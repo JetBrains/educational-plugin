@@ -1,27 +1,37 @@
 package com.jetbrains.edu.learning.taskToolWindow
 
 import com.jetbrains.edu.learning.EduTestCase
+import org.junit.Test
 
 class YoutubeVideoLinkTest : EduTestCase() {
   private val videoId = "0zM3nApSvMg"
 
+  @Test
   fun `test get video id watch v=${videoId}`() = doTestGetYoutubeVideoId("https://www.youtube.com/watch?v=${videoId}")
 
+  @Test
   fun `test get video id watch v=${videoId}&start`() = doTestGetYoutubeVideoId("https://www.youtube.com/watch?v=${videoId}&start=10")
 
+  @Test
   fun `test get video id watch v=${videoId}&feature`() = doTestGetYoutubeVideoId(
     "http://www.youtube.com/watch?v=${videoId}&feature=feedrec_grec_index")
 
+  @Test
   fun `test get video id youtu_be${videoId}`() = doTestGetYoutubeVideoId("https://youtu.be/${videoId}")
 
+  @Test
   fun `test get video id embed${videoId}`() = doTestGetYoutubeVideoId("https://www.youtube.com/embed/${videoId}")
 
+  @Test
   fun `test get video id embed${videoId}&start`() = doTestGetYoutubeVideoId("https://www.youtube.com/embed/${videoId}&start=10")
 
+  @Test
   fun `test get video id embed${videoId}&feature`() = doTestGetYoutubeVideoId("https://www.youtube.com/embed/${videoId}&feature")
 
+  @Test
   fun `test get video id v=${videoId}&feature`() = doTestGetYoutubeVideoId("http://youtube.com/?v=${videoId}&feature")
 
+  @Test
   fun `test video tag substituted`() {
     val taskDescriptionWithVideoTag = """
       Some text
@@ -32,6 +42,7 @@ class YoutubeVideoLinkTest : EduTestCase() {
     doTest(taskDescriptionWithVideoTag)
   }
 
+  @Test
   fun `test iframe tag substituted`() {
     val taskDescriptionWithIframeTag = """
       Some text

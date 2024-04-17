@@ -12,18 +12,28 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
+import org.junit.Test
 
 class CCChangeFileVisibilityTest : EduActionTestCase() {
 
+  @Test
   fun `test single task file`() = doAvailableTest(false, "TaskFile1.kt", pathPrefix = "lesson1/task1")
+  @Test
   fun `test single additional file`() = doAvailableTest(false, "TaskFile3.kt", pathPrefix = "lesson1/task1")
+  @Test
   fun `test multiple files with same visibility`() = doAvailableTest(false, "TaskFile1.kt", "TaskFile3.kt", pathPrefix = "lesson1/task1")
+  @Test
   fun `test directory 1`() = doAvailableTest(true, "lesson1/task1/folder1")
+  @Test
   fun `test directory 2`() = doAvailableTest(true, "lesson1/task1/folder2")
+  @Test
   fun `test save stepik change status after undo`() =
     doAvailableTest(false, "TaskFile1.kt", pathPrefix = "lesson1/task1")
+  @Test
   fun `test in student mode`() = doUnavailableTest("TaskFile1.kt", pathPrefix = "lesson1/task1", courseMode = CourseMode.STUDENT)
+  @Test
   fun `test multiple files with different visibility`() = doUnavailableTest("TaskFile1.kt", "TaskFile2.kt", pathPrefix = "lesson1/task1")
+  @Test
   fun `test file outside of task`() = doUnavailableTest("lesson1")
 
   private fun doAvailableTest(

@@ -6,6 +6,7 @@ import com.intellij.openapi.util.Disposer
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.testAction
+import org.junit.Test
 
 class ReportCommunitySolutionActionTest : EduActionTestCase() {
 
@@ -18,10 +19,12 @@ class ReportCommunitySolutionActionTest : EduActionTestCase() {
     }
   }
 
+  @Test
   fun `test invisible and disabled with nullable DataContext`() {
     testAction(ReportCommunitySolutionAction.ACTION_ID, shouldBeEnabled = false)
   }
 
+  @Test
   fun `test invisible and disabled with regular diff`() {
     val simpleDiffRequestChain = simpleDiffRequestChain(project)
     val diffVirtualFile = ChainDiffVirtualFile(simpleDiffRequestChain, "Regular Chain Diff Virtual File")
@@ -29,6 +32,7 @@ class ReportCommunitySolutionActionTest : EduActionTestCase() {
     testAction(ReportCommunitySolutionAction.ACTION_ID, dataContext(diffVirtualFile), shouldBeEnabled = false)
   }
 
+  @Test
   fun `test visible and enabled`() {
     val simpleDiffRequestChain = simpleDiffRequestChain(project)
     simpleDiffRequestChain.putCommunityData(1, 100)

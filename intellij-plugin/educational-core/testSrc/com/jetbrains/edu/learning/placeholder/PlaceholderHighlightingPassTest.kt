@@ -6,16 +6,19 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.findTask
+import org.junit.Test
 
 class PlaceholderHighlightingPassTest : EduTestCase() {
 
   override val useDocumentListener: Boolean = false
 
+  @Test
   fun `test unchecked placeholder highlighting`() = doTest("""
     <p>oneline placeholder 1</p> some text
     <p>oneline placeholder 2</p> some text
   """, status = CheckStatus.Unchecked)
 
+  @Test
   fun `test failed placeholder highlighting`() = doTest("""
     <p>multiline
        placeholder 1</p>
@@ -24,10 +27,12 @@ class PlaceholderHighlightingPassTest : EduTestCase() {
        placeholder 2</p>       
   """, status = CheckStatus.Failed)
 
+  @Test
   fun `test solved placeholder highlighting`() = doTest("""
     empty <p></p> placeholders <p></p>
   """, status = CheckStatus.Solved)
 
+  @Test
   fun `test placeholder highlighting in educator mode`() = doTest("""
     <p>oneline placeholder</p> some text  
     <p>multiline

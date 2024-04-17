@@ -2,9 +2,11 @@ package com.jetbrains.edu.coursecreator.actions.move
 
 import com.jetbrains.edu.learning.actions.move.MoveTestBase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import org.junit.Test
 
 class CCMoveLessonTest : MoveTestBase() {
 
+  @Test
   fun `test move lesson to section`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
@@ -24,6 +26,7 @@ class CCMoveLessonTest : MoveTestBase() {
     assertEquals(2, section.getLesson("lesson1")!!.index)
   }
 
+  @Test
   fun `test move lesson before lesson in course`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
@@ -44,6 +47,7 @@ class CCMoveLessonTest : MoveTestBase() {
   }
 
 
+  @Test
   fun `test move lesson after lesson in course`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
@@ -63,6 +67,7 @@ class CCMoveLessonTest : MoveTestBase() {
     assertEquals(3, course.getSection("section3")!!.index)
   }
 
+  @Test
   fun `test move lesson from section to course`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
@@ -83,6 +88,7 @@ class CCMoveLessonTest : MoveTestBase() {
     assertEquals(4, course.getLesson("lesson3")!!.index)
   }
 
+  @Test
   fun `test move lesson in section`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
@@ -103,6 +109,7 @@ class CCMoveLessonTest : MoveTestBase() {
     assertEquals(3, section.getLesson("lesson2")!!.index)
   }
 
+  @Test
   fun `test move lesson from section to section`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
@@ -132,6 +139,7 @@ class CCMoveLessonTest : MoveTestBase() {
   }
 
   // EDU-2467
+  @Test
   fun `test move from section with the same name to section`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section("section1") {
@@ -154,6 +162,7 @@ class CCMoveLessonTest : MoveTestBase() {
     assertEquals(2, section2!!.items.size)
   }
 
+  @Test
   fun `test move lesson from section to lesson in another section`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {

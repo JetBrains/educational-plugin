@@ -22,10 +22,12 @@ import com.jetbrains.edu.learning.marketplace.updateCourseItems
 import com.jetbrains.edu.learning.navigation.NavigationUtils.getFirstTask
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_LESSON_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_TASK_CONFIG
+import org.junit.Test
 import java.io.File
 
 class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
 
+  @Test
   fun `test user name as vendor`() {
     mockJBAccount()
 
@@ -45,6 +47,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     MarketplaceSettings.INSTANCE.setAccount(null)
   }
 
+  @Test
   fun `test course with author`() {
     val vendor = Vendor().apply { name = "Jetbrains s.r.o" }
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
@@ -57,6 +60,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test vendor with email`() {
     val vendor = Vendor().apply { name = "Jetbrains s.r.o"; email = "academy@jetbrains.com" }
     courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
@@ -69,6 +73,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test vendor with url`() {
     val vendor = Vendor().apply { name = "Jetbrains s.r.o"; url = "jetbrains.com"}
     courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
@@ -81,6 +86,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test private course`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
@@ -94,6 +100,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test plugin version`() {
     val vendor = Vendor().apply { name = "Jetbrains s.r.o"; email = "academy@jetbrains.com"}
     courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
@@ -106,6 +113,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test possible answer encrypted`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -122,6 +130,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test course version`() {
     val vendor = Vendor().apply { name = "Jetbrains s.r.o" }
     courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
@@ -137,6 +146,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test course link`() {
     val vendor = Vendor().apply { name = "Jetbrains s.r.o" }
     courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
@@ -153,6 +163,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test course programming language ID and version`() {
     val vendor = Vendor().apply { name = "Jetbrains s.r.o" }
     courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
@@ -170,6 +181,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test task feedback link`() {
     val vendor = Vendor().apply { name = "Jetbrains s.r.o" }
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
@@ -186,6 +198,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test creating archive after changing task format`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {}
     val task = course.getLesson("lesson1")?.getTask("task1") ?: error("no task1 found")
@@ -217,6 +230,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     assertTrue("Description format should be HTML", htmlJson.contains(""""description_format" : "HTML""""))
   }
 
+  @Test
   fun `test change remote info files course`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson {

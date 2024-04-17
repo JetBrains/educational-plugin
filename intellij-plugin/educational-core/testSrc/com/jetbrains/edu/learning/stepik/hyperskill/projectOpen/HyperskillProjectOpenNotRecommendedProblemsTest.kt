@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillO
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepWithProjectRequest
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.StepInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.TopicInfo
+import org.junit.Test
 
 
 class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerTestBase() {
@@ -22,6 +23,7 @@ class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerT
     configureMockResponsesForNotRecommendedProblem()
   }
 
+  @Test
   fun `test open not recommended problem in new project`() {
     configureMockResponsesForStages()
     mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepWithProjectRequest(1, step8146.id, "TEXT"))
@@ -47,6 +49,7 @@ class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerT
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  @Test
   fun `test open not recommended problem in existing legacy code problems project`() {
     // set up existing project
     hyperskillCourseWithFiles(name = getLegacyProblemsProjectName("TEXT"), language = PlainTextLanguage.INSTANCE) {
@@ -86,6 +89,7 @@ class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerT
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  @Test
   fun `test open not recommended problem in existing problems project`() {
     // set up existing project
     hyperskillCourseWithFiles {
@@ -146,6 +150,7 @@ class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerT
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  @Test
   fun `test open not recommended problem in existing project with stages`() {
     mockConnector.configureFromCourse(testRootDisposable, hyperskillCourse(projectId = null) {
       lesson(HYPERSKILL_PROBLEMS) {

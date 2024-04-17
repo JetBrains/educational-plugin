@@ -9,12 +9,14 @@ import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.testAction
 import io.mockk.every
 import io.mockk.mockkConstructor
+import org.junit.Test
 import java.awt.event.InputEvent
 import java.awt.event.KeyEvent
 
 
 class CodeforcesCreateTestTest : EduActionTestCase() {
 
+  @Test
   fun `test new test created`() {
     val taskFileName = "Task.kt"
     courseWithFiles(courseProducer = ::CodeforcesCourse) {

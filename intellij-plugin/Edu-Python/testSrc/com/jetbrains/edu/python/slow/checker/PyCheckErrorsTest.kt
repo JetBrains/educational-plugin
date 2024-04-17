@@ -16,6 +16,7 @@ import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.Matcher
 import org.junit.Assert.assertThat
+import org.junit.Test
 
 @Suppress("PyInterpreter", "PyUnresolvedReferences")
 class PyCheckErrorsTest : PyCheckersTestBase() {
@@ -85,6 +86,7 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
     }
   }
 
+  @Test
   fun `test errors`() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       assertEquals("Status for ${task.name} doesn't match", CheckStatus.Failed, checkResult.status)
@@ -108,6 +110,7 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
     doTest()
   }
 
+  @Test
   fun `test no interpreter`() {
     setDirectoryProjectSdk(project, null)
 

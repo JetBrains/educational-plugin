@@ -3,24 +3,29 @@ package com.jetbrains.edu.learning.taskToolWindow.links
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import org.junit.Test
 
 class JCefUtilsTest : EduTestCase() {
 
+  @Test
   fun `test about_blank`() {
     val jCefToolWindowLinkHandler = JCefToolWindowLinkHandler(project)
     assertFalse(jCefToolWindowLinkHandler.process("about:blank"))
   }
 
+  @Test
   fun `test youtube link`() {
     val jCefToolWindowLinkHandler = JCefToolWindowLinkHandler(project)
     assertFalse(jCefToolWindowLinkHandler.process("https://www.youtube.com/watch?v=FWukd9fsRro"))
   }
 
+  @Test
   fun `test youtube link with ref`() {
     val jCefToolWindowLinkHandler = JCefToolWindowLinkHandler(project)
     assertFalse(jCefToolWindowLinkHandler.process("https://www.youtube.com/watch?v=FWukd9fsRro", "https://google.account"))
   }
 
+  @Test
   fun `test processInFileLink`() {
     val pathToFile = "lesson2/task_name2/inside.txt"
     courseWithFiles {
@@ -45,6 +50,7 @@ class JCefUtilsTest : EduTestCase() {
     assertEquals("task_name2", currentTask?.name)
   }
 
+  @Test
   fun `test psi element`() {
     val jCefToolWindowLinkHandler = JCefToolWindowLinkHandler(project)
     assertTrue(jCefToolWindowLinkHandler.process("file:///jbcefbrowser/psi_element://java.lang.String#contains"))

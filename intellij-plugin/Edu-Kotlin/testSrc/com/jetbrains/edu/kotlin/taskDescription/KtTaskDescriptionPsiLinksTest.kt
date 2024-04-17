@@ -3,10 +3,12 @@ package com.jetbrains.edu.kotlin.taskDescription
 import com.intellij.openapi.fileTypes.FileType
 import com.jetbrains.edu.learning.taskToolWindow.links.TaskDescriptionPsiLinksTestBase
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.junit.Test
 
 class KtTaskDescriptionPsiLinksTest : TaskDescriptionPsiLinksTestBase() {
   override val fileType: FileType = KotlinFileType.INSTANCE
 
+  @Test
   fun `test navigate to class`() = doTest("psi_element://Bar", """
     class <caret>Bar {
       fun bar() {}
@@ -24,6 +26,7 @@ class KtTaskDescriptionPsiLinksTest : TaskDescriptionPsiLinksTestBase() {
     """)
   }
 
+  @Test
   fun `test navigate to method`() = doTest("psi_element://Foo#foo", """
     class Foo {
       fun <caret>foo() {}
@@ -41,6 +44,7 @@ class KtTaskDescriptionPsiLinksTest : TaskDescriptionPsiLinksTestBase() {
     """)
   }
 
+  @Test
   fun `test navigate to inner class`() = doTest("psi_element://Foo.FooBar", """
     class Foo {
       fun foo() {}
@@ -62,6 +66,7 @@ class KtTaskDescriptionPsiLinksTest : TaskDescriptionPsiLinksTestBase() {
     """)
   }
 
+  @Test
   fun `test navigate to property`() = doTest("psi_element://Foo#property", """
       class Foo {
         val <caret>property: Int = 1

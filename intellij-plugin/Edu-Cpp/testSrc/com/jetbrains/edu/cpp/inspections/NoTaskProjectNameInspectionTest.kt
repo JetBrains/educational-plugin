@@ -9,9 +9,11 @@ import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.cpp.messages.EduCppBundle
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import org.junit.Test
 
 class NoTaskProjectNameInspectionTest : EduTestCase() {
 
+  @Test
   fun `test add deleted project name to CMakeList with set minimum required`() {
     courseWithFiles(
       language = OCLanguage.getInstance(),
@@ -34,6 +36,7 @@ class NoTaskProjectNameInspectionTest : EduTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test add deleted project name to CMakeList without minimum required`() {
     courseWithFiles(
       language = OCLanguage.getInstance(),
@@ -53,6 +56,7 @@ class NoTaskProjectNameInspectionTest : EduTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test add deleted project name to CMakeList with custom task name`() {
     courseWithFiles(
       language = OCLanguage.getInstance(),

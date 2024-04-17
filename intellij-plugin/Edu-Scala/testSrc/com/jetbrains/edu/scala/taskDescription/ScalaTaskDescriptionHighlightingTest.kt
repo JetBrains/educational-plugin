@@ -3,12 +3,14 @@ package com.jetbrains.edu.scala.taskDescription
 import com.intellij.lang.Language
 import com.jetbrains.edu.learning.taskToolWindow.TaskDescriptionHighlightingTestBase
 import org.jetbrains.plugins.scala.ScalaLanguage
+import org.junit.Test
 
 class ScalaTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
 
   override val language: Language = ScalaLanguage.INSTANCE
   override val environment: String = "Gradle"
 
+  @Test
   fun `test markdown description highlighting`() = doMarkdownTest("""
     Code block with default language:
     ```
@@ -46,6 +48,7 @@ class ScalaTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase
     </html>
   """)
 
+  @Test
   fun `test html description highlighting`() = doHtmlTest("""
     <html>
     <p>Code block with default language:</p>

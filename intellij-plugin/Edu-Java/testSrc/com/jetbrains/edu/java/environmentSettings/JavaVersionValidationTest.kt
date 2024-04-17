@@ -13,6 +13,8 @@ import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 
 class JavaLevelInEnvironmentSettingsTest : LightPlatformTestCase() {
 
+  //ashjdvashd
+  //ashbdhsadb
   fun `test jdk validation messages`() {
     val course = course {}
 

@@ -5,10 +5,12 @@ import com.intellij.lang.Language
 import com.intellij.openapi.extensions.PluginId
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
+import org.junit.Test
 import kotlin.reflect.KClass
 
 abstract class CourseCompatibilityProviderTestBase(private val clazz: KClass<out CourseCompatibilityProvider>) : EduTestCase() {
 
+  @Test
   fun `test course compatibility provider`() {
     val extensionPoints = CourseCompatibilityProviderEP.EP_NAME.extensions.filter { it.instance.javaClass == clazz.java }
     check(extensionPoints.isNotEmpty()) {

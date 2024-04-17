@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.stepik.api.*
+import org.junit.Test
 import java.io.File
 import java.io.IOException
 import kotlin.reflect.KClass
@@ -24,30 +25,39 @@ class HyperskillReplyDeserializationTest: EduTestCase() {
   }
 
   @Throws(IOException::class)
+  @Test
   fun testGuessReplyEduTask() = doDeserializeTest(EduTaskReply::class)
 
   @Throws(IOException::class)
+  @Test
   fun testGuessReplyCodeTask() = doDeserializeTest(CodeTaskReply::class)
 
   @Throws(IOException::class)
+  @Test
   fun testGuessReplyChoiceTask() = doDeserializeTest(ChoiceTaskReply::class)
 
   @Throws(IOException::class)
+  @Test
   fun testGuessReplySortingBasedTask() = doDeserializeTest(SortingBasedTaskReply::class)
 
   @Throws(IOException::class)
+  @Test
   fun testGuessReplyStringTask() = doDeserializeTest(TextTaskReply::class)
 
   @Throws(IOException::class)
+  @Test
   fun testGuessReplyNumberTask() = doDeserializeTest(NumberTaskReply::class)
 
   @Throws(IOException::class)
+  @Test
   fun testGuessReplyDataTask() = doDeserializeTest(DataTaskReply::class)
 
   @Throws(IOException::class)
+  @Test
   fun testGuessReplyTableTask() = doDeserializeTest(TableTaskReply::class)
 
   @Throws(IOException::class)
+  @Test
   fun testGuessReplyIncorrect() {
     val responseString = loadJsonText()
 

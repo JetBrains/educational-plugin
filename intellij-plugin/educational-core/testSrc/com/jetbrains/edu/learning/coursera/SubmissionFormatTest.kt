@@ -6,11 +6,13 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.MissingNode
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.CourseraCourse
+import org.junit.Test
 
 
 class SubmissionFormatTest : EduTestCase() {
   private val MAPPER by lazy { ObjectMapper() }
 
+  @Test
   fun `test submission format`() {
     val assignmentKey = "cba"
     val taskFilePath = "src/task.txt"

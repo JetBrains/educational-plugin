@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.pathWithoutPrams
 import org.intellij.lang.annotations.Language
+import org.junit.Test
 
 class HyperskillCheckEduTaskTest : HyperskillCheckActionTestBase() {
 
@@ -30,10 +31,12 @@ class HyperskillCheckEduTaskTest : HyperskillCheckActionTestBase() {
     configureResponse()
   }
 
+  @Test
   fun `test solved edu task`() {
     checkCheckAction(getCourse().allTasks[0], CheckStatus.Solved, CheckUtils.CONGRATULATIONS)
   }
 
+  @Test
   fun `test failed edu task`() {
     checkCheckAction(getCourse().allTasks[1], CheckStatus.Failed)
   }

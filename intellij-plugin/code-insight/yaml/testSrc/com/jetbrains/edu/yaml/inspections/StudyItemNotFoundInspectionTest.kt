@@ -6,9 +6,11 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
+import org.junit.Test
 
 class StudyItemNotFoundInspectionTest : YamlInspectionsTestBase(StudyItemNotFoundInspection::class) {
 
+  @Test
   fun `test create missing task`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -29,6 +31,7 @@ class StudyItemNotFoundInspectionTest : YamlInspectionsTestBase(StudyItemNotFoun
     """.trimMargin("|"), expectedItems)
   }
 
+  @Test
   fun `test create missing lesson`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section("section1") {
@@ -49,6 +52,7 @@ class StudyItemNotFoundInspectionTest : YamlInspectionsTestBase(StudyItemNotFoun
     """.trimMargin("|"), expectedItems)
   }
 
+  @Test
   fun `test create missing lesson in course`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {}
@@ -72,6 +76,7 @@ class StudyItemNotFoundInspectionTest : YamlInspectionsTestBase(StudyItemNotFoun
     """.trimMargin("|"), expectedItems)
   }
 
+  @Test
   fun `test create missing section in course`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section("section1") {}
@@ -95,6 +100,7 @@ class StudyItemNotFoundInspectionTest : YamlInspectionsTestBase(StudyItemNotFoun
     """.trimMargin("|"), expectedItems)
   }
 
+  @Test
   fun `test do not provide quick fix for invalid paths`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section("section1") {}

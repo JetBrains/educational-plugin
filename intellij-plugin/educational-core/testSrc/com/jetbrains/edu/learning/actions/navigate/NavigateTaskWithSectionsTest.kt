@@ -9,134 +9,144 @@ import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.getTaskFile
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.testAction
-import junit.framework.TestCase
+import org.junit.Test
 
 class NavigateTaskWithSectionsTest : EduTestCase() {
 
+  @Test
   fun `test next from lesson to section`() {
     configureByTaskFile(1, 1, "taskFile.txt")
     testAction(NextTaskAction.ACTION_ID)
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
     val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
-    TestCase.assertEquals(1, task.index)
+    assertEquals(1, task.index)
     val lesson = task.lesson
-    TestCase.assertEquals(1, lesson.index)
-    TestCase.assertNotNull(lesson.section)
-    TestCase.assertEquals(2, lesson.section!!.index)
+    assertEquals(1, lesson.index)
+    assertNotNull(lesson.section)
+    assertEquals(2, lesson.section!!.index)
   }
 
+  @Test
   fun `test next for same lesson in section`() {
     configureByTaskFile(2, 1, 1, "taskFile.txt")
     testAction(NextTaskAction.ACTION_ID)
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
     val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
-    TestCase.assertEquals(2, task.index)
+    assertEquals(2, task.index)
     val lesson = task.lesson
-    TestCase.assertEquals(1, lesson.index)
-    TestCase.assertNotNull(lesson.section)
-    TestCase.assertEquals(2, lesson.section!!.index)
+    assertEquals(1, lesson.index)
+    assertNotNull(lesson.section)
+    assertEquals(2, lesson.section!!.index)
   }
 
+  @Test
   fun `test next lesson in section`() {
     configureByTaskFile(2, 1, 2, "taskFile.txt")
     testAction(NextTaskAction.ACTION_ID)
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
     val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
-    TestCase.assertEquals(1, task.index)
+    assertEquals(1, task.index)
     val lesson = task.lesson
-    TestCase.assertEquals(2, lesson.index)
-    TestCase.assertNotNull(lesson.section)
-    TestCase.assertEquals(2, lesson.section!!.index)
+    assertEquals(2, lesson.index)
+    assertNotNull(lesson.section)
+    assertEquals(2, lesson.section!!.index)
   }
 
+  @Test
   fun `test next from section to section`() {
     configureByTaskFile(2, 2, 1, "taskFile.txt")
     testAction(NextTaskAction.ACTION_ID)
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
     val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
-    TestCase.assertEquals(1, task.index)
+    assertEquals(1, task.index)
     val lesson = task.lesson
-    TestCase.assertEquals(1, lesson.index)
-    TestCase.assertNotNull(lesson.section)
-    TestCase.assertEquals(3, lesson.section!!.index)
+    assertEquals(1, lesson.index)
+    assertNotNull(lesson.section)
+    assertEquals(3, lesson.section!!.index)
   }
 
+  @Test
   fun `test next from section to lesson`() {
     configureByTaskFile(3, 1, 1, "taskFile.txt")
     testAction(NextTaskAction.ACTION_ID)
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
     val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
-    TestCase.assertEquals(1, task.index)
+    assertEquals(1, task.index)
     val lesson = task.lesson
-    TestCase.assertEquals(4, lesson.index)
+    assertEquals(4, lesson.index)
   }
 
+  @Test
   fun `test previous from lesson to section`() {
     configureByTaskFile(4, 1, "taskFile.txt")
     testAction(PreviousTaskAction.ACTION_ID)
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
     val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
-    TestCase.assertEquals(1, task.index)
+    assertEquals(1, task.index)
     val lesson = task.lesson
-    TestCase.assertEquals(1, lesson.index)
-    TestCase.assertNotNull(lesson.section)
-    TestCase.assertEquals(3, lesson.section!!.index)
+    assertEquals(1, lesson.index)
+    assertNotNull(lesson.section)
+    assertEquals(3, lesson.section!!.index)
   }
 
+  @Test
   fun `test previous from section to section`() {
     configureByTaskFile(3, 1, 1, "taskFile.txt")
     testAction(PreviousTaskAction.ACTION_ID)
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
     val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
-    TestCase.assertEquals(1, task.index)
+    assertEquals(1, task.index)
     val lesson = task.lesson
-    TestCase.assertEquals(2, lesson.index)
-    TestCase.assertNotNull(lesson.section)
-    TestCase.assertEquals(2, lesson.section!!.index)
+    assertEquals(2, lesson.index)
+    assertNotNull(lesson.section)
+    assertEquals(2, lesson.section!!.index)
   }
 
+  @Test
   fun `test previous lesson in same section`() {
     configureByTaskFile(2, 2, 1, "taskFile.txt")
     testAction(PreviousTaskAction.ACTION_ID)
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
     val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
-    TestCase.assertEquals(2, task.index)
+    assertEquals(2, task.index)
     val lesson = task.lesson
-    TestCase.assertEquals(1, lesson.index)
-    TestCase.assertNotNull(lesson.section)
-    TestCase.assertEquals(2, lesson.section!!.index)
+    assertEquals(1, lesson.index)
+    assertNotNull(lesson.section)
+    assertEquals(2, lesson.section!!.index)
   }
 
+  @Test
   fun `test previous task same lesson in same section`() {
     configureByTaskFile(2, 1, 2, "taskFile.txt")
     testAction(PreviousTaskAction.ACTION_ID)
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
     val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
-    TestCase.assertEquals(1, task.index)
+    assertEquals(1, task.index)
     val lesson = task.lesson
-    TestCase.assertEquals(1, lesson.index)
-    TestCase.assertNotNull(lesson.section)
-    TestCase.assertEquals(2, lesson.section!!.index)
+    assertEquals(1, lesson.index)
+    assertNotNull(lesson.section)
+    assertEquals(2, lesson.section!!.index)
   }
 
+  @Test
   fun `test previous from section to lesson`() {
     configureByTaskFile(2, 1, 1, "taskFile.txt")
     testAction(PreviousTaskAction.ACTION_ID)
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
     val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
-    TestCase.assertEquals(1, task.index)
+    assertEquals(1, task.index)
     val lesson = task.lesson
-    TestCase.assertEquals(1, lesson.index)
+    assertEquals(1, lesson.index)
   }
 
   override fun createCourse() {

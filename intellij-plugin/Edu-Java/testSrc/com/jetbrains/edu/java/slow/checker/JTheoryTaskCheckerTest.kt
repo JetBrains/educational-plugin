@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import org.hamcrest.CoreMatchers.*
 import org.junit.Assert
+import org.junit.Test
 
 // Add Theory task with custom Application configuration
 // Currently, such test doesn't work because we haven't managed to make it compile and run in tests
@@ -154,6 +155,7 @@ class JTheoryTaskCheckerTest : JdkCheckerTestBase() {
     }
   }
 
+  @Test
   fun `test java course`() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       val (message, statusMatcher, messageMatcher) = when (task.name) {

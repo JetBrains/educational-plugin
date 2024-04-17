@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert
+import org.junit.Test
 
 class GoTheoryCheckerTest : GoCheckersTestBase() {
   override fun createCourse(): Course {
@@ -140,6 +141,7 @@ class GoTheoryCheckerTest : GoCheckersTestBase() {
     }
   }
 
+  @Test
   fun `test go course`() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       val (statusMatcher, messageMatcher) = when (task.name) {

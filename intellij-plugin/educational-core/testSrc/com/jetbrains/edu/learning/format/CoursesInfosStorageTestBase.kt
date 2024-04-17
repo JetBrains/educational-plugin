@@ -18,10 +18,12 @@ import com.jetbrains.edu.learning.stepik.hyperskill.PlainTextHyperskillConfigura
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourse
 import junit.framework.ComparisonFailure
 import org.jdom.Element
+import org.junit.Test
 import java.nio.file.Paths
 
 open class CoursesInfosStorageTestBase : EduTestCase() {
 
+  @Test
   fun `test correct configurator found for courses in storage`() {
     val coursesStorage = CoursesStorage.getInstance()
 
@@ -35,6 +37,7 @@ open class CoursesInfosStorageTestBase : EduTestCase() {
     }
   }
 
+  @Test
   fun testCourseModeRespected() {
     val coursesStorage = CoursesStorage.getInstance()
     val educatorCourse = course(courseMode = CourseMode.EDUCATOR) {}
@@ -43,6 +46,7 @@ open class CoursesInfosStorageTestBase : EduTestCase() {
     assertFalse(coursesStorage.hasCourse(studentCourse))
   }
 
+  @Test
   fun testCourseIdRespected() {
     val coursesStorage = CoursesStorage.getInstance()
     val courseWithDefaultId = course {}
@@ -51,6 +55,7 @@ open class CoursesInfosStorageTestBase : EduTestCase() {
     assertFalse(coursesStorage.hasCourse(studentCourse))
   }
 
+  @Test
   fun testLanguageRespected() {
     val coursesStorage = CoursesStorage.getInstance()
     val courseWithDefaultId = course {}
@@ -59,6 +64,7 @@ open class CoursesInfosStorageTestBase : EduTestCase() {
     assertFalse(coursesStorage.hasCourse(courseWithLanguage))
   }
 
+  @Test
   fun testDeserializeFirstVersionCoursesStorage() {
     val deserialized = deserializeState()
     assertEquals(1, deserialized.courses.size)
@@ -72,6 +78,7 @@ open class CoursesInfosStorageTestBase : EduTestCase() {
     assertEquals("2.7", course.languageVersion)
   }
 
+  @Test
   fun testDeserializeCourseWithDefaultParameters() {
     val deserialized = deserializeState()
     assertEquals(1, deserialized.courses.size)
@@ -84,6 +91,7 @@ open class CoursesInfosStorageTestBase : EduTestCase() {
     assertEquals("kotlin", course.languageId)
   }
 
+  @Test
   fun testDeserializeOldLanguageVersion() {
     val deserialized = deserializeState()
     assertEquals(1, deserialized.courses.size)
@@ -98,6 +106,7 @@ open class CoursesInfosStorageTestBase : EduTestCase() {
   }
 
   // Such case shouldn't happen, but this test is useful for migration testing
+  @Test
   fun testDeserializeNewLanguageVersion() {
     val deserialized = deserializeState()
     assertEquals(1, deserialized.courses.size)
@@ -111,6 +120,7 @@ open class CoursesInfosStorageTestBase : EduTestCase() {
     assertEquals("3.7", course.languageVersion)
   }
 
+  @Test
   fun testDeserializeNewLanguageVersionAndLanguageId() {
     val deserialized = deserializeState()
     assertEquals(1, deserialized.courses.size)
@@ -125,6 +135,7 @@ open class CoursesInfosStorageTestBase : EduTestCase() {
   }
 
   // Such case shouldn't happen, but this test is useful for migration testing
+  @Test
   fun testDeserializeNewAndOldLanguageVersion() {
     val deserialized = deserializeState()
     assertEquals(1, deserialized.courses.size)
@@ -139,11 +150,13 @@ open class CoursesInfosStorageTestBase : EduTestCase() {
   }
 
 
+  @Test
   fun testEmptyCoursesGroup() {
     val coursesStorage = getCoursesStorage()
     assertEmpty(coursesStorage.coursesInGroups())
   }
 
+  @Test
   fun testInProgressCoursesGroup() {
     val coursesStorage = getCoursesStorage()
     val course = course {}
@@ -153,6 +166,7 @@ open class CoursesInfosStorageTestBase : EduTestCase() {
     assertEquals(EduCoreBundle.message("course.dialog.in.progress"), coursesInGroups.first().name)
   }
 
+  @Test
   fun testCompletedCoursesGroup() {
     val coursesStorage = getCoursesStorage()
     val course = course {}
@@ -162,6 +176,7 @@ open class CoursesInfosStorageTestBase : EduTestCase() {
     assertEquals(EduCoreBundle.message("course.dialog.completed"), coursesInGroups.first().name)
   }
 
+  @Test
   fun testUntouchedCourse() {
     val coursesStorage = getCoursesStorage()
     val course = course {}
@@ -177,6 +192,7 @@ open class CoursesInfosStorageTestBase : EduTestCase() {
     return coursesStorage
   }
 
+  @Test
   fun testCCGroup() {
     val coursesStorage = getCoursesStorage()
     val educatorCourse = course(courseMode = CourseMode.EDUCATOR) {}
@@ -186,6 +202,7 @@ open class CoursesInfosStorageTestBase : EduTestCase() {
     assertEquals(EduCoreBundle.message("course.dialog.my.courses.course.creation"), coursesInGroups.first().name)
   }
 
+  @Test
   fun testAllCoursesGroups() {
     val coursesStorage = getCoursesStorage()
 

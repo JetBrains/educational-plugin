@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
 import com.jetbrains.edu.learning.testAction
+import org.junit.Test
 
 abstract class HyperskillNavigateInCourseTestBase : NavigationTestBase() {
   private val stage1Name = "stage1"
@@ -25,11 +26,13 @@ abstract class HyperskillNavigateInCourseTestBase : NavigationTestBase() {
 
   abstract fun getFirstProblemsTask(): Task
 
+  @Test
   fun `test navigate to next unavailable on last stage`() {
     val task = course.findTask(stagesLessonName, stage1Name)
     return checkNavigationAction(task, NextTaskAction.ACTION_ID, false)
   }
 
+  @Test
   fun `test navigate to previous unavailable on first problems task`() =
     checkNavigationAction(getFirstProblemsTask(), PreviousTaskAction.ACTION_ID, false)
 

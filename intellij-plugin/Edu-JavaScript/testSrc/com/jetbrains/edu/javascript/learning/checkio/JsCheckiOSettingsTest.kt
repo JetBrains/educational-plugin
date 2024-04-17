@@ -1,9 +1,11 @@
 package com.jetbrains.edu.javascript.learning.checkio
 
 import com.jetbrains.edu.learning.EduSettingsServiceTestBase
+import org.junit.Test
 
 class JsCheckiOSettingsTest : EduSettingsServiceTestBase() {
 
+  @Test
   fun `test serialization`() {
     val settings = JsCheckiOSettings()
     settings.loadStateAndCheck("""

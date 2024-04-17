@@ -9,6 +9,8 @@ import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.codeforces.ContestParameters
 import org.jsoup.Jsoup
+import org.junit.Test
+import java.io.File
 import java.util.*
 
 class CodeforcesParsingTest : CodeforcesTestCase() {
@@ -22,6 +24,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     }
   }
 
+  @Test
   fun `test codeforces contest Kotlin Heroes Episode 2 task A`() {
     val course = CodeforcesCourse().apply {
       id = 1211
@@ -39,6 +42,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     task.checkTaskDescription(1211, 'A')
   }
 
+  @Test
   fun `test codeforces contest Kotlin Heroes Episode 2 task G with image`() {
     val course = CodeforcesCourse().apply {
       id = 1211
@@ -56,6 +60,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     task.checkTaskDescription(1211, 'G')
   }
 
+  @Test
   fun `test codeforces contest Kotlin Heroes Episode 2`() {
     val doc = Jsoup.parse(loadText(contest1211))
     val course = CodeforcesCourse(ContestParameters(1211, KOTLIN))
@@ -101,6 +106,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
   }
 
 
+  @Test
   fun testOldInputSampleFormat() {
     val course = CodeforcesCourse().apply {
       id = 1211
@@ -116,6 +122,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
                  "3 1 4 1 5 9", task.taskFiles["testData/1/input.txt"]?.text)
   }
 
+  @Test
   fun testNewInputSampleFormat() {
     val course = CodeforcesCourse().apply {
       id = 1715
@@ -137,6 +144,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
                  "5 1", task.taskFiles["testData/1/input.txt"]?.text)
   }
 
+  @Test
   fun testUpcomingContests() {
     val htmlText = getHtmlText()
     val document = Jsoup.parse(htmlText)
@@ -151,6 +159,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     assertNotNull(firstContest.registrationCountdown)
   }
 
+  @Test
   fun testUpcomingContestsRegistrationLink() {
     val htmlText = getHtmlText()
     val document = Jsoup.parse(htmlText)
@@ -161,6 +170,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     assertEquals("/contestRegistration/1488", contest.registrationLink)
   }
 
+  @Test
   fun testUpcomingContestsRegistrationDate() {
     val htmlText = getHtmlText()
     val document = Jsoup.parse(htmlText)
@@ -172,6 +182,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     assertEquals(18, registrationCountdown.toDays())
   }
 
+  @Test
   fun testRecentContests() {
     val htmlText = getHtmlText()
     val document = Jsoup.parse(htmlText)
@@ -186,6 +197,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     assertNull(firstContest.registrationLink)
   }
 
+  @Test
   fun testContestWinterTime() {
     TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"))
     val htmlText = getHtmlText()
@@ -198,6 +210,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     assertEquals("2021-02-18T15:35+01:00[Europe/Berlin]", firstContest.startDate.toString())
   }
 
+  @Test
   fun testContestSummerTime() {
     TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"))
     val htmlText = getHtmlText()
@@ -210,6 +223,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     assertEquals("2021-05-18T16:35+02:00[Europe/Berlin]", firstContest.startDate.toString())
   }
 
+  @Test
   fun testParticipantsNumber() {
     val htmlText = getHtmlText()
     val document = Jsoup.parse(htmlText)
@@ -221,6 +235,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     assertEquals(20195, firstContest.participantsNumber)
   }
 
+  @Test
   fun testUpcomingContestParticipantsNumber() {
     val htmlText = getHtmlText()
     val document = Jsoup.parse(htmlText)
@@ -230,6 +245,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     assertEquals(1880, contest.participantsNumber)
   }
 
+  @Test
   fun testUpcomingContestsRegistrationCountdown() {
     val htmlText = getHtmlText()
     val document = Jsoup.parse(htmlText)
@@ -243,6 +259,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     assertEquals(509, secondContest.registrationCountdown?.toHours()?.toInt())
   }
 
+  @Test
   fun testRunningContestsTimeRemaining() {
     val htmlText = getHtmlText()
     val document = Jsoup.parse(htmlText)
@@ -256,6 +273,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     assertEquals(29, remainingTime.toMinutesPart())
   }
 
+  @Test
   fun testCodeforcesAuthors() {
     val htmlText = getHtmlText()
     val document = Jsoup.parse(htmlText)
@@ -268,7 +286,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     assertEquals(7, authors.size)
   }
 
-  private fun getHtmlText(): String = java.io.File("$testDataPath/$testFile").readText()
+  private fun getHtmlText(): String = File("$testDataPath/$testFile").readText()
 
   private val testFile: String get() = "${getTestName(true)}.html"
 }

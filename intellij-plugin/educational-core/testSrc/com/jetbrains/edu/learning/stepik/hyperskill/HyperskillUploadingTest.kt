@@ -7,8 +7,10 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
+import org.junit.Test
 
 class HyperskillUploadingTest : EduTestCase() {
+  @Test
   fun `test collect solution files`() {
     val course = createHyperskillCourse()
     val task = course.findTask("lesson1", "task1")

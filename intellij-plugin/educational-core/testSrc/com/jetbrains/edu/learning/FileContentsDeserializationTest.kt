@@ -5,12 +5,14 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.TextualContents
 import com.jetbrains.edu.learning.courseFormat.UndeterminedContents
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
+import org.junit.Test
 import java.nio.file.Path
 import kotlin.io.path.extension
 import kotlin.test.assertIs
 
 class FileContentsDeserializationTest : EduTestCase() {
 
+  @Test
   fun `test reading file contents from course_dot_json version 16`() {
     // all file contents should be read as undefined
 
@@ -22,6 +24,7 @@ class FileContentsDeserializationTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test reading file contents from course_dot_json version 17`() {
     // all file contents should be read as either binary or textual
 

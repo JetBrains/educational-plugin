@@ -4,6 +4,7 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.taskToolWindow.ui.getHintIconSize
+import org.junit.Test
 
 abstract class HintsInTaskDescriptionTestBase(
   private val isTheoryTask: Boolean, private val isHyperskillCourse: Boolean
@@ -94,23 +95,28 @@ abstract class HintsInTaskDescriptionTestBase(
 
 class HintTestForHyperskillCourseEduTask : HintsInTaskDescriptionTestBase(false, true) {
 
+  @Test
   fun `test hints are not processed in hyperskill edu tasks`() = doMarkdownTest(HINT_DIV, UNPROCESSED_HINT_DIV)
 }
 
 class HintTestForHyperskillCourseTheoryTask : HintsInTaskDescriptionTestBase(true, true) {
 
+  @Test
   fun `test hints are not processed in hyperskill theory tasks`() = doMarkdownTest(HINT_DIV, UNPROCESSED_HINT_DIV)
 }
 
 class HintTestForMarketplaceCourseTheoryTask : HintsInTaskDescriptionTestBase(true, false) {
 
+  @Test
   fun `test hints are processed in marketplace theory tasks`() = doMarkdownTest(HINT_DIV, JCEF_PROCESSED_HINT_DIV, swingProcessedHintDiv())
 }
 
 class HintTestForMarketplaceCourseEduTask : HintsInTaskDescriptionTestBase(false, false) {
 
+  @Test
   fun `test hints are processed in marketplace edu tasks`() = doMarkdownTest(HINT_DIV, JCEF_PROCESSED_HINT_DIV, swingProcessedHintDiv())
 
+  @Test
   fun `test hints with different titles numbering`() = doMarkdownTest(
     """
       Hello

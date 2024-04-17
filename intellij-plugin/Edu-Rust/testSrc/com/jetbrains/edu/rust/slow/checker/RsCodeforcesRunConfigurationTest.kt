@@ -4,10 +4,12 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
+import org.junit.Test
 import org.rust.lang.RsLanguage
 
 class RsCodeforcesRunConfigurationTest : RsCheckersTestBase() {
 
+  @Test
   fun `test application configuration`() {
     doCodeforcesTest("123456")
   }

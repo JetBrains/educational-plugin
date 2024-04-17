@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.ui.getUICheckLabel
+import org.junit.Test
 
 
 class ChoiceTaskCheckerTest : EduTestCase() {
@@ -16,6 +17,7 @@ class ChoiceTaskCheckerTest : EduTestCase() {
     CheckActionListener.reset()
   }
 
+  @Test
   fun `test single choice solved`() {
     courseWithFiles {
       lesson {
@@ -28,6 +30,7 @@ class ChoiceTaskCheckerTest : EduTestCase() {
     launchAction()
   }
 
+  @Test
   fun `test single choice failed`() {
     courseWithFiles {
       lesson {
@@ -42,6 +45,7 @@ class ChoiceTaskCheckerTest : EduTestCase() {
     launchAction()
   }
 
+  @Test
   fun `test multiple choice solved`() {
     courseWithFiles {
       lesson {
@@ -54,6 +58,7 @@ class ChoiceTaskCheckerTest : EduTestCase() {
     launchAction()
   }
 
+  @Test
   fun `test multiple choice failed`() {
     courseWithFiles {
       lesson {
@@ -68,6 +73,7 @@ class ChoiceTaskCheckerTest : EduTestCase() {
     launchAction()
   }
 
+  @Test
   fun `test custom correct message`() {
     courseWithFiles {
       lesson {
@@ -85,6 +91,7 @@ class ChoiceTaskCheckerTest : EduTestCase() {
     launchAction()
   }
 
+  @Test
   fun `test custom incorrect message`() {
     courseWithFiles {
       lesson {

@@ -4,9 +4,11 @@ import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.edu.learning.EduTestCase
 import org.hamcrest.text.IsEqualIgnoringCase
 import org.junit.Assert.assertThat
+import org.junit.Test
 
 class CppUtilTest : EduTestCase() {
 
+  @Test
   fun `test find CMake command - project`() = checkCMakeCommand("""
     |#some text
     |
@@ -15,16 +17,19 @@ class CppUtilTest : EduTestCase() {
     |# some text
   """, "project")
 
+  @Test
   fun `test find CMake command - ProJEct`() = checkCMakeCommand("""
     | #some text
     | 
     | ProJEct(name)
   """, "project")
 
+  @Test
   fun `test find CMake command - inline call`() = checkCMakeCommand("""
     | message("Hi!") project(name) message("By!")
   """, "project")
 
+  @Test
   fun `test find CMake command - no command`() = checkCMakeCommand("""
     | #some text
     | message("empty me )=")

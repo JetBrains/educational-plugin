@@ -9,6 +9,7 @@ import com.jetbrains.edu.cpp.CppConfigurator.Companion.TEST_CPP
 import com.jetbrains.edu.cpp.CppProjectSettings
 import com.jetbrains.edu.cpp.CppTemplates.Companion.defaultExecutableTaskCMakeList
 import com.jetbrains.edu.cpp.CppTemplates.Companion.defaultTestTaskCMakeList
+import org.junit.Test
 import com.jetbrains.cmake.CMakeListsFileType.FILE_NAME as CMAKE_LISTS_TXT
 
 class CppGoogleTestNewTaskStructureTest : CCNewTaskStructureTestBase() {
@@ -18,6 +19,7 @@ class CppGoogleTestNewTaskStructureTest : CCNewTaskStructureTestBase() {
   override val language: Language get() = OCLanguage.getInstance()
   override val environment: String get() = "GoogleTest"
 
+  @Test
   fun `test create edu task`() = checkEduTaskCreation(
     fullTaskStructure = {
       file("task.md")
@@ -37,6 +39,7 @@ class CppGoogleTestNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create output task`() = checkOutputTaskCreation(
     fullTaskStructure = {
       file("task.md")
@@ -58,6 +61,7 @@ class CppGoogleTestNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create theory task`() = checkTheoryTaskCreation(
     fullTaskStructure = {
       file("task.md")
@@ -71,6 +75,7 @@ class CppGoogleTestNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create IDE task`() = checkIdeTaskCreation(
     fullTaskStructure = {
       file("task.md")
@@ -84,6 +89,7 @@ class CppGoogleTestNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create choice task`() = checkChoiceTaskCreation(
     fullTaskStructure = {
       file("task.md")

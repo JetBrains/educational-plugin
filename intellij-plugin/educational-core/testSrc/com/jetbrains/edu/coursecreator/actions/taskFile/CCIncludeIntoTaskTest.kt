@@ -6,9 +6,11 @@ import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.findTask
+import org.junit.Test
 
 class CCIncludeIntoTaskTest : CCChangeFileOwnerTestBase(CCIncludeIntoTask.ACTION_ID) {
 
+  @Test
   fun `test include single src file`() = doAvailableTest("lesson1/task1/src/excluded_folder1/excluded_file1.txt") { course ->
     val task = course.findTask("lesson1", "task1")
     Pair(
@@ -17,6 +19,7 @@ class CCIncludeIntoTaskTest : CCChangeFileOwnerTestBase(CCIncludeIntoTask.ACTION
     )
   }
 
+  @Test
   fun `test include several src files`() = doAvailableTest(
     "lesson1/task1/src/excluded_folder1/excluded_file1.txt",
     "lesson1/task1/src/excluded_folder1/excluded_file2.txt"
@@ -31,6 +34,7 @@ class CCIncludeIntoTaskTest : CCChangeFileOwnerTestBase(CCIncludeIntoTask.ACTION
     )
   }
 
+  @Test
   fun `test include src folder`() = doAvailableTest("lesson1/task1/src/excluded_folder1") { course ->
     val task = course.findTask("lesson1", "task1")
     Pair(
@@ -42,6 +46,7 @@ class CCIncludeIntoTaskTest : CCChangeFileOwnerTestBase(CCIncludeIntoTask.ACTION
     )
   }
 
+  @Test
   fun `test include single test file`() = doAvailableTest("lesson1/task1/test/excluded_folder2/excluded_file3.txt") { course ->
     val task = course.findTask("lesson1", "task1")
     Pair(
@@ -50,6 +55,7 @@ class CCIncludeIntoTaskTest : CCChangeFileOwnerTestBase(CCIncludeIntoTask.ACTION
     )
   }
 
+  @Test
   fun `test include two test files`() = doAvailableTest(
     "lesson1/task1/test/excluded_folder2/excluded_file3.txt",
     "lesson1/task1/test/excluded_folder2/excluded_file4.txt"
@@ -64,6 +70,7 @@ class CCIncludeIntoTaskTest : CCChangeFileOwnerTestBase(CCIncludeIntoTask.ACTION
     )
   }
 
+  @Test
   fun `test include test folder`() = doAvailableTest("lesson1/task1/test/excluded_folder2") { course ->
     val task = course.findTask("lesson1", "task1")
     Pair(
@@ -75,6 +82,7 @@ class CCIncludeIntoTaskTest : CCChangeFileOwnerTestBase(CCIncludeIntoTask.ACTION
     )
   }
 
+  @Test
   fun `test include single additional file`() = doAvailableTest("lesson1/task1/excluded_folder3/excluded_file5.txt") { course ->
     val task = course.findTask("lesson1", "task1")
     Pair(
@@ -83,6 +91,7 @@ class CCIncludeIntoTaskTest : CCChangeFileOwnerTestBase(CCIncludeIntoTask.ACTION
     )
   }
 
+  @Test
   fun `test include two additional files`() = doAvailableTest(
     "lesson1/task1/excluded_folder3/excluded_file5.txt",
     "lesson1/task1/excluded_folder3/excluded_file6.txt"
@@ -97,6 +106,7 @@ class CCIncludeIntoTaskTest : CCChangeFileOwnerTestBase(CCIncludeIntoTask.ACTION
     )
   }
 
+  @Test
   fun `test include additional folder`() = doAvailableTest("lesson1/task1/excluded_folder3") { course ->
     val task = course.findTask("lesson1", "task1")
     Pair(
@@ -108,6 +118,7 @@ class CCIncludeIntoTaskTest : CCChangeFileOwnerTestBase(CCIncludeIntoTask.ACTION
     )
   }
 
+  @Test
   fun `test include different files`() = doAvailableTest(
     "lesson1/task1/src/excluded_folder1/excluded_file1.txt",
     "lesson1/task1/test/excluded_folder2/excluded_file3.txt",
@@ -128,10 +139,15 @@ class CCIncludeIntoTaskTest : CCChangeFileOwnerTestBase(CCIncludeIntoTask.ACTION
     )
   }
 
+  @Test
   fun `test do not include existing task file`() = doUnavailableTest("lesson1/task1/src/taskFile.txt")
+  @Test
   fun `test do not include existing test file`() = doUnavailableTest("lesson1/task1/test/testFile.txt")
+  @Test
   fun `test do not include existing additional file`() = doUnavailableTest("lesson1/task1/additionalFile.txt")
+  @Test
   fun `test do not include file outside of task dir`() = doUnavailableTest("excluded_folder4/excluded_file7.txt")
+  @Test
   fun `test do not include folder outside of task dir`() = doUnavailableTest("excluded_folder4")
 
   override fun createCourse() {

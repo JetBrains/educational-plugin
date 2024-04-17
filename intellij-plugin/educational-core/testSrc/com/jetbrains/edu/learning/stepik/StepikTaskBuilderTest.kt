@@ -23,6 +23,7 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
 import org.junit.Assert.assertThat
+import org.junit.Test
 import java.io.File
 import java.util.*
 
@@ -32,8 +33,11 @@ class StepikTaskBuilderTest : EduTestCase() {
 
   override fun getTestDataPath(): String = "testData/stepikTaskBuilder"
 
+  @Test
   fun `test theory task`() = doTest<TheoryTask>(FakeGradleBasedLanguage)
+  @Test
   fun `test unsupported task`() = doTest<UnsupportedTask>(FakeGradleBasedLanguage)
+  @Test
   fun `test choice task`() {
     mockConnector.withResponseHandler(testRootDisposable) { _, path ->
       MockResponseFactory.fromString(
@@ -46,24 +50,37 @@ class StepikTaskBuilderTest : EduTestCase() {
     doTest<ChoiceTask>(FakeGradleBasedLanguage)
   }
 
+  @Test
   fun `test code task`() = doTest<CodeTask>(FakeGradleBasedLanguage)
+  @Test
   fun `test edu task`() = doTest<EduTask>(FakeGradleBasedLanguage)
+  @Test
   fun `test edu theory task`() = doTest<TheoryTask>(FakeGradleBasedLanguage)
+  @Test
   fun `test output task`() = doTest<OutputTask>(FakeGradleBasedLanguage)
+  @Test
   fun `test ide task`() = doTest<IdeTask>(FakeGradleBasedLanguage)
 
+  @Test
   fun `test edu task python`() = doTest<EduTask>(PlainTextLanguage.INSTANCE)
+  @Test
   fun `test edu theory task python`() = doTest<TheoryTask>(PlainTextLanguage.INSTANCE)
+  @Test
   fun `test output task python`() = doTest<OutputTask>(PlainTextLanguage.INSTANCE)
+  @Test
   fun `test ide task python`() = doTest<IdeTask>(PlainTextLanguage.INSTANCE)
 
+  @Test
   fun `test sorting task`() = doTest<SortingTask>(FakeGradleBasedLanguage)
 
+  @Test
   fun `test matching task`() = doTest<MatchingTask>(FakeGradleBasedLanguage)
 
+  @Test
   fun `test table task`() = doTest<TableTask>(FakeGradleBasedLanguage)
 
   // EDU-2730 old way: task text is get from `text` field that is displayed on Stepik
+  @Test
   fun `test edu task text from block`() {
     val stepSource = loadStepSource()
     val task = buildTask(stepSource, PlainTextLanguage.INSTANCE)
@@ -78,6 +95,7 @@ class StepikTaskBuilderTest : EduTestCase() {
   }
 
   // EDU-2730 new way: task text from option
+  @Test
   fun `test edu task text from step option`() {
     val stepSource = loadStepSource()
     val task = buildTask(stepSource, PlainTextLanguage.INSTANCE)
@@ -91,6 +109,7 @@ class StepikTaskBuilderTest : EduTestCase() {
   }
 
   // EDU-3080 the old way for hyperskill: task text from step
+  @Test
   fun `test hyperskill edu task text from step`() {
     val stepSource = loadStepSource()
     val task = buildTask(stepSource, PlainTextLanguage.INSTANCE, HyperskillCourse())
@@ -101,6 +120,7 @@ class StepikTaskBuilderTest : EduTestCase() {
     assertEquals(block!!.text, task.descriptionText)
   }
 
+  @Test
   fun `test code task language specific limits`() {
     val stepSource = loadStepSource()
     val task = buildTask(stepSource, PlainTextLanguage.INSTANCE)
@@ -114,6 +134,7 @@ class StepikTaskBuilderTest : EduTestCase() {
     assertTrue(task.descriptionText.contains(EduCoreBundle.message("stepik.time.limit", 8)))
   }
 
+  @Test
   fun `test code task no language specific limits`() {
     val stepSource = loadStepSource()
     val task = buildTask(stepSource, PlainTextLanguage.INSTANCE)

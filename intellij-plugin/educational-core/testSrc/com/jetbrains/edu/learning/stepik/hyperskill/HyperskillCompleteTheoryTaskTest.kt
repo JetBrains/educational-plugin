@@ -10,10 +10,12 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import okhttp3.mockwebserver.MockResponse
+import org.junit.Test
 
 class HyperskillCompleteTheoryTaskTest : EduTestCase() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
+  @Test
   fun `test solving theory problem`() {
     logInFakeHyperskillUser()
 

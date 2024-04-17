@@ -2,12 +2,14 @@ package com.jetbrains.edu.rust.courseGeneration
 
 import com.jetbrains.edu.coursecreator.actions.CourseArchiveTestBase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import org.junit.Test
 import org.rust.lang.RsLanguage
 
 class RsCourseArchiveTest : CourseArchiveTestBase() {
 
   override fun getTestDataPath(): String = super.getTestDataPath() + "/actions/createCourseArchive"
 
+  @Test
   fun `test cargo config 1`() {
     courseWithFiles(
       courseMode = CourseMode.EDUCATOR,
@@ -41,6 +43,7 @@ class RsCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test cargo config 2`() {
     courseWithFiles(
       courseMode = CourseMode.EDUCATOR,

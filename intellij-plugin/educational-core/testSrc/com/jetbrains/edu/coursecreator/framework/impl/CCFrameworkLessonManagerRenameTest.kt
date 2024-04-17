@@ -4,11 +4,13 @@ import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
 import com.jetbrains.edu.learning.actions.rename.RenameTestBase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.*
+import org.junit.Test
 
 class CCFrameworkLessonManagerRenameTest : RenameTestBase() {
   private val manager: CCFrameworkLessonManager
     get() = CCFrameworkLessonManager.getInstance(project)
 
+  @Test
   fun `test record is not deleted after task rename action`() {
     val course = createFrameworkCourse()
     val lesson = getFrameworkLesson(course)
@@ -25,6 +27,7 @@ class CCFrameworkLessonManagerRenameTest : RenameTestBase() {
     }
   }
 
+  @Test
   fun `test record is not deleted after lesson rename action`() {
     val course = createFrameworkCourse()
     val lesson = getFrameworkLesson(course)
@@ -45,6 +48,7 @@ class CCFrameworkLessonManagerRenameTest : RenameTestBase() {
     }
   }
 
+  @Test
   fun `test record is not deleted after section rename action`() {
     val course = createFrameworkCourse()
     val lesson = getFrameworkLesson(course)

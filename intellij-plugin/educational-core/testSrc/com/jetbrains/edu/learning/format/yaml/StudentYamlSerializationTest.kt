@@ -26,11 +26,13 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.yaml.YamlMapper
 import org.intellij.lang.annotations.Language
+import org.junit.Test
 import java.time.ZonedDateTime
 import java.util.*
 
 class StudentYamlSerializationTest : EduTestCase() {
 
+  @Test
   fun `test student course`() {
     val course = course {}
 
@@ -44,6 +46,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test hyperskill course`() {
     val course = course(courseProducer = ::HyperskillCourse) {} as HyperskillCourse
 
@@ -65,6 +68,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test codeforces course`() {
     val course = course(courseProducer = ::CodeforcesCourse) {} as CodeforcesCourse
     val endDateTime = ZonedDateTime.parse("2019-08-11T15:35+03:00[Europe/Moscow]")
@@ -85,6 +89,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test codeforces course without endDateTime`() {
     val course = course(courseProducer = ::CodeforcesCourse) {} as CodeforcesCourse
     course.apply {
@@ -102,6 +107,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test checkio station`() {
     val station = CheckiOStation()
     station.name = "station"
@@ -119,6 +125,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test framework lesson`() {
     val frameworkLesson = FrameworkLesson()
     frameworkLesson.addTask(EduTask("task1"))
@@ -135,6 +142,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test task`() {
     val task = courseWithFiles {
       lesson {
@@ -151,6 +159,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test choice task`() {
     val task: ChoiceTask = courseWithFiles {
       lesson {
@@ -179,6 +188,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test choice task with custom messages`() {
     val task: ChoiceTask = courseWithFiles {
       lesson {
@@ -215,6 +225,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test sorting task`() {
     val task = courseWithFiles {
       lesson {
@@ -241,6 +252,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test matching task`() {
     val task = courseWithFiles {
       lesson {
@@ -271,6 +283,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test table task`() {
     val task = courseWithFiles {
       lesson {
@@ -309,6 +322,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test data task`() {
     val task: DataTask = courseWithFiles {
       lesson {
@@ -325,6 +339,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test task with feedback`() {
     val message = "My error message"
     val expected = "A"
@@ -351,6 +366,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test task with incomplete feedback`() {
     val time = Date(0)
     val task = courseWithFiles {
@@ -371,6 +387,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test checkio mission`() {
     val checkiOMission = CheckiOMission()
     checkiOMission.code = "code"
@@ -384,6 +401,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test codeforces task`() {
     val taskFileName = "src/Task.kt"
     val taskSolution = "Task solution"
@@ -415,6 +433,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     assertContentsEqual(codeforcesTask, taskFileName, taskSolution)
   }
 
+  @Test
   fun `test codeforces task with file io`() {
     val taskFileName = "src/Task.kt"
     val taskSolution = "Task solution"
@@ -453,6 +472,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     assertContentsEqual(codeforcesTask, taskFileName, taskSolution)
   }
 
+  @Test
   fun `test task with task files`() {
     val task = courseWithFiles {
       lesson {
@@ -475,6 +495,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     assertContentsEqual(task, "task.txt", "text")
   }
 
+  @Test
   fun `test task with placeholders`() {
     val task = courseWithFiles {
       lesson {
@@ -509,6 +530,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     assertContentsEqual(task, "task.txt", "42 is the answer")
   }
 
+  @Test
   fun `test learner created`() {
     val task = courseWithFiles {
       lesson {
@@ -533,6 +555,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     assertContentsEqual(taskFile.pathInStorage, taskFile.contents, InMemoryTextualContents("text"))
   }
 
+  @Test
   fun `test no text for image`() {
     val task = courseWithFiles {
       lesson {
@@ -553,6 +576,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test no text for invisible task file`() {
     val task = courseWithFiles {
       lesson {
@@ -575,6 +599,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     assertContentsEqual(task, "task.txt", "task text")
   }
 
+  @Test
   fun `test no text for non-editable task file`() {
     val task = courseWithFiles {
       lesson {
@@ -598,6 +623,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     assertContentsEqual(task, "task.txt", "task text")
   }
 
+  @Test
   fun `test git object file text is saved in framework lesson`() {
     val base64Text = "eAErKUpNVTA3ZjA0MDAzMVHITczM08suYTh0o+NNPdt26bgThdosKRdPVXHN/wNVUpSamJKbqldSUcKwosqLb/75qC5OmZAJs9O9Di0I/PoCAJ5FH4E="
     val gitObjectFilePath = "test/objects/b6/28add5fd4be3bdd2cdb776dfa035cc69956859"
@@ -630,6 +656,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     assertContentsEqual(task, gitObjectFilePath, gitObjectContents)
   }
 
+  @Test
   fun `test binary files have the is_binary field when saved`() {
     val task = course {
       lesson {
@@ -657,6 +684,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     assertContentsEqual(task, "a.txt", "a.txt")
   }
 
+  @Test
   fun `test huge binary file text is not saved in framework lesson`() {
     // We are going to repeat base64text several times, so its length should be a multiple of 3 to get the correct Base64 encoding.
     var base64Text = "eAErKUpNVTA3ZjA0MDAzMVHITczM08suYTh0o+NNPdt26bgThdosKRdPVXHN/wNVUpSamJKbqldSUcKwosqLb/75qC5OmZAJs9O9Di0I/PoCAJ5FH4E"
@@ -693,17 +721,21 @@ class StudentYamlSerializationTest : EduTestCase() {
     assertContentsEqual(task, "task.txt", "task text")
   }
 
+  @Test
   fun `test code task with java256`() {
     testCodeTaskProgrammingLanguage("java256")
   }
 
+  @Test
   fun `test code task with c++`() {
     testCodeTaskProgrammingLanguage("c++")
   }
+  @Test
   fun `test code task with python3_10`() {
     testCodeTaskProgrammingLanguage("python3.10")
   }
 
+  @Test
   fun `test code task with scala`() {
     testCodeTaskProgrammingLanguage("scala")
   }

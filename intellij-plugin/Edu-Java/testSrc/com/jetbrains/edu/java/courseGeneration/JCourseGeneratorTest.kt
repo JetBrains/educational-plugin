@@ -5,9 +5,11 @@ import com.jetbrains.edu.jvm.courseGeneration.JvmCourseGenerationTestBase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
+import org.junit.Test
 
 class JCourseGeneratorTest : JvmCourseGenerationTestBase() {
 
+  @Test
   fun `test study course structure`() {
     generateCourseStructure("testData/newCourse/java_course.json")
     val expectedFileTree = fileTree {
@@ -48,6 +50,7 @@ class JCourseGeneratorTest : JvmCourseGenerationTestBase() {
     expectedFileTree.assertEquals(rootDir)
   }
 
+  @Test
   fun `test new course structure`() {
     val course = newCourse(JavaLanguage.INSTANCE)
     createCourseStructure(course)
@@ -71,6 +74,7 @@ class JCourseGeneratorTest : JvmCourseGenerationTestBase() {
     expectedFileTree.assertEquals(rootDir)
   }
 
+  @Test
   fun `test educator course structure from not empty course`() {
     generateCourseStructure("testData/newCourse/java_course.json", CourseMode.EDUCATOR)
     val expectedFileTree = fileTree {

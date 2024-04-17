@@ -3,11 +3,13 @@ package com.jetbrains.edu.python.taskDescription
 import com.intellij.lang.Language
 import com.jetbrains.edu.learning.taskToolWindow.TaskDescriptionHighlightingTestBase
 import com.jetbrains.python.PythonLanguage
+import org.junit.Test
 
 class PyTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
 
   override val language: Language = PythonLanguage.INSTANCE
 
+  @Test
   fun `test markdown description highlighting`() = doMarkdownTest("""
     Code block with default language:
     ```
@@ -41,6 +43,7 @@ class PyTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() 
     </html>
   """)
 
+  @Test
   fun `test html description highlighting`() = doHtmlTest("""
     <html>
     <p>Code block with default language:</p>

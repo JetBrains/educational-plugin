@@ -4,6 +4,7 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MockMarketplaceConnector
+import org.junit.Test
 
 class MarketplaceUpdateInfoTest : EduTestCase() {
   private val mockConnector: MockMarketplaceConnector get() = MarketplaceConnector.getInstance() as MockMarketplaceConnector
@@ -15,6 +16,7 @@ class MarketplaceUpdateInfoTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test course updateInfo loaded`() {
     configureResponse("updateInfo.json")
     val updateInfo = MarketplaceConnector.getInstance().getLatestCourseUpdateInfo(1)
@@ -26,6 +28,7 @@ class MarketplaceUpdateInfoTest : EduTestCase() {
   }
 
   // course version from updateInfo.json should be incremented by 1
+  @Test
   fun `test remote course version set from updateInfo`() {
     configureResponse("updateInfo.json")
     val course = EduCourse()
@@ -33,6 +36,7 @@ class MarketplaceUpdateInfoTest : EduTestCase() {
     assertEquals(4, course.marketplaceCourseVersion)
   }
 
+  @Test
   fun `test remote course version not set for new course`() {
     configureResponse("emptyUpdateInfo.json")
     val course = EduCourse()

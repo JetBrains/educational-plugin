@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.twitter.TwitterSettings
 import com.jetbrains.edu.learning.twitter.ui.TwitterDialogUI
 import com.jetbrains.edu.learning.twitter.ui.withMockTwitterDialogUI
 import com.jetbrains.edu.learning.ui.getUICheckLabel
+import org.junit.Test
 
 class HyperskillTwittingTest : EduActionTestCase() {
 
@@ -38,6 +39,7 @@ class HyperskillTwittingTest : EduActionTestCase() {
     }
   }
 
+  @Test
   fun `test show dialog after last project task solution`() =
     doTest(lessonName = "Project", taskName = "Task2", shouldDialogBeShown = true) { course, task ->
       (course as HyperskillCourse).getProjectLesson()?.visitTasks {
@@ -47,6 +49,7 @@ class HyperskillTwittingTest : EduActionTestCase() {
       }
     }
 
+  @Test
   fun `test do not show dialog in course creator mode`() =
     doTest(lessonName = "Project", taskName = "Task2", createCourse = { createHyperskillCourse(CourseMode.EDUCATOR) }) { course, task ->
       (course as HyperskillCourse).getProjectLesson()?.visitTasks {
@@ -56,20 +59,24 @@ class HyperskillTwittingTest : EduActionTestCase() {
       }
     }
 
+  @Test
   fun `test do not show dialog if not all tasks is solved`() = doTest(lessonName = "Project", taskName = "Task1")
 
+  @Test
   fun `test do not show dialog if not project task solved`() = doTest(HYPERSKILL_TOPICS, TOPIC_NAME, "CodeTask") { course, _ ->
     course.getLesson(HYPERSKILL_TOPICS, TOPIC_NAME)?.visitTasks {
       it.status = CheckStatus.Solved
     }
   }
 
+  @Test
   fun `test do not show dialog if task solved again`() = doTest(lessonName = "Project", taskName = "Task2") { course, _ ->
     (course as HyperskillCourse).getProjectLesson()?.visitTasks {
       it.status = CheckStatus.Solved
     }
   }
 
+  @Test
   fun `test do not show dialog for edu course`() =
     doTest(lessonName = "Project", taskName = "Task2", createCourse = ::createEduCourse) { course, task ->
       course.visitTasks {

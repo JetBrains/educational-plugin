@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.python.PythonLanguage
+import org.junit.Test
 
 @Suppress("PyInterpreter", "PyUnresolvedReferences")
 class PyNewCheckersTest : PyCheckersTestBase() {
@@ -107,6 +108,7 @@ class PyNewCheckersTest : PyCheckersTestBase() {
     }
   }
 
+  @Test
   fun `test python course`() {
     CheckActionListener.expectedMessage { task ->
       when (task) {

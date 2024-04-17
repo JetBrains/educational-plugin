@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import org.hamcrest.CoreMatchers.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.junit.Assert
+import org.junit.Test
 
 // Add Theory task with custom Kotlin configuration
 // Currently, such test doesn't work because we haven't managed to make it compile and run in tests
@@ -147,6 +148,7 @@ class KtTheoryTaskCheckerTest : JdkCheckerTestBase() {
     }
   }
 
+  @Test
   fun `test kotlin course`() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       val (message, statusMatcher, messageMatcher) = when (task.name) {

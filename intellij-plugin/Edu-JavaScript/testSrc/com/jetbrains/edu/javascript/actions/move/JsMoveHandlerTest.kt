@@ -4,9 +4,11 @@ import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.psi.PsiElement
 import com.jetbrains.edu.learning.actions.move.MoveHandlerTestBase
 import com.jetbrains.edu.learning.courseFormat.Course
+import org.junit.Test
 
 class JsMoveHandlerTest : MoveHandlerTestBase(JavascriptLanguage.INSTANCE) {
 
+  @Test
   fun `test do not forbid move refactoring for functions`() {
     val findTarget: (Course) -> PsiElement = { findPsiFile("lesson1/task1/bar.js") }
     doTest(findTarget) {
@@ -15,6 +17,7 @@ class JsMoveHandlerTest : MoveHandlerTestBase(JavascriptLanguage.INSTANCE) {
     }
   }
 
+  @Test
   fun `test do not forbid move refactoring for classes`() {
     val findTarget: (Course) -> PsiElement = { findPsiFile("lesson1/task1/bar.js") }
     doTest(findTarget) {

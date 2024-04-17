@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSettings.YAML_TEST_THROW_EXCEPT
 import com.jetbrains.edu.learning.yaml.YamlTestCase
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.HYPERSKILL_TYPE_YAML
+import org.junit.Test
 
 class YamlTypeChangedTest : YamlTestCase() {
 
@@ -38,11 +39,13 @@ class YamlTypeChangedTest : YamlTestCase() {
     }
   }
 
+  @Test
   fun `test edu to choice task`() {
     testTaskTypeChanged(ChoiceTask().itemType, ChoiceTask::class.java)
   }
 
   // EDU-1907
+  @Test
   fun `test placeholders repainted`() {
     // imitating opening task file and placeholders painting
     val taskFile = findTaskFile(0, 0, "test1.txt")
@@ -56,32 +59,39 @@ class YamlTypeChangedTest : YamlTestCase() {
     assertEquals(0, PlaceholderPainter.getPaintedPlaceholder().size)
   }
 
+  @Test
   fun `test choice to edu task`() {
     testTaskTypeChanged(EduTask().itemType, EduTask::class.java)
   }
 
+  @Test
   fun `test lesson to framework lesson`() {
     testLessonTypeChanged("framework", FrameworkLesson::class.java)
   }
 
+  @Test
   fun `test framework to lesson`() {
     testLessonTypeChanged("lesson", Lesson::class.java)
   }
 
+  @Test
   fun `test edu to coursera course`() {
     testCourseTypeChanged(YamlMixinNames.COURSE_TYPE_YAML, CourseraCourse::class.java)
   }
 
+  @Test
   fun `test edu to stepik course`() {
     project.putUserData(YAML_TEST_THROW_EXCEPTION, false)
     testCourseTypeChanged(YamlMixinNames.STEPIK_TYPE_YAML, StepikCourse::class.java)
   }
 
+  @Test
   fun `test edu to hyperskill course`() {
     project.putUserData(YAML_TEST_THROW_EXCEPTION, false)
     testCourseTypeChanged(HYPERSKILL_TYPE_YAML, HyperskillCourse::class.java)
   }
 
+  @Test
   fun `test edu to checkio failed`() {
     project.putUserData(YAML_TEST_THROW_EXCEPTION, false)
     testCourseTypeDidntChange(YamlMixinNames.CHECKIO_TYPE_YAML)

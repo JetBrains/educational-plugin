@@ -11,6 +11,7 @@ import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.testAction
+import org.junit.Test
 import org.rust.cargo.CfgOptions
 import org.rust.cargo.project.model.cargoProjects
 import org.rust.cargo.project.model.impl.TestCargoProjectsServiceImpl
@@ -40,8 +41,11 @@ class RsCreateTaskTest : RsActionTestBase() {
     }
   }
 
+  @Test
   fun `test create new task`() = doTest("task2", shouldBeCreated = true)
+  @Test
   fun `test do not create new task with invalid name`() = doTest("12345", shouldBeCreated = false)
+  @Test
   fun `test do not create new task if name is already used in workspace`() = doTest("task1", shouldBeCreated = false)
 
   private fun doTest(newTaskName: String, shouldBeCreated: Boolean) {

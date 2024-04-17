@@ -15,8 +15,10 @@ import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_SOLUTIONS_ANCHOR
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillTaskLink
 import com.jetbrains.edu.learning.testAction
+import org.junit.Test
 
 class CompareWithAnswerActionTest : EduActionTestCase() {
+  @Test
   fun `test disabled for codeforces`() {
     courseWithFiles(courseProducer = ::CodeforcesCourse) {
       lesson {
@@ -29,6 +31,7 @@ class CompareWithAnswerActionTest : EduActionTestCase() {
     doTestDisabled()
   }
 
+  @Test
   fun `test for Hyperskill course`() {
     hyperskillCourseWithFiles {
       frameworkLesson("lesson1") {
@@ -48,6 +51,7 @@ class CompareWithAnswerActionTest : EduActionTestCase() {
     assertEquals("${hyperskillTaskLink(findTask(0, 0))}$HYPERSKILL_SOLUTIONS_ANCHOR", mockEduBrowser.lastVisitedUrl)
   }
 
+  @Test
   fun `test disabled in educator mode`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -60,6 +64,7 @@ class CompareWithAnswerActionTest : EduActionTestCase() {
     doTestDisabled()
   }
 
+  @Test
   fun `test solution shown`() {
     courseWithFiles {
       lesson {

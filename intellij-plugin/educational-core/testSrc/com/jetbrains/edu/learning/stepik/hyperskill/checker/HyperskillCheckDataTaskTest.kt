@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.DataTask.Companion.DATA_FOL
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask.Companion.INPUT_FILE_NAME
 import com.jetbrains.edu.learning.pathWithoutPrams
 import org.intellij.lang.annotations.Language
+import org.junit.Test
 import java.util.*
 
 class HyperskillCheckDataTaskTest : HyperskillCheckActionTestBase() {
@@ -50,6 +51,7 @@ class HyperskillCheckDataTaskTest : HyperskillCheckActionTestBase() {
     }
   }
 
+  @Test
   fun `test solved data task`() {
     mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
       MockResponseFactory.fromString(
@@ -64,6 +66,7 @@ class HyperskillCheckDataTaskTest : HyperskillCheckActionTestBase() {
     checkCheckAction(getCourse().allTasks[0], CheckStatus.Solved)
   }
 
+  @Test
   fun `test failed data task`() {
     mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
       MockResponseFactory.fromString(
@@ -78,6 +81,7 @@ class HyperskillCheckDataTaskTest : HyperskillCheckActionTestBase() {
     checkCheckAction(getCourse().allTasks[0], CheckStatus.Failed)
   }
 
+  @Test
   fun `test skipped data task`() {
     checkCheckAction(getCourse().allTasks[1], CheckStatus.Unchecked)
   }

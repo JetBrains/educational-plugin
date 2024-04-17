@@ -14,11 +14,13 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.YamlMapper
 import com.jetbrains.edu.learning.yaml.YamlTestCase
+import org.junit.Test
 import java.util.*
 
 
 class YamlSerializationTest : YamlTestCase() {
 
+  @Test
   fun `test edu task`() {
     val task = course(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -43,6 +45,7 @@ class YamlSerializationTest : YamlTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test remote edu task`() {
     val task = course {
       lesson {
@@ -62,6 +65,7 @@ class YamlSerializationTest : YamlTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test remote edu task with check profile`() {
     val checkProfile = "hyperskill_go"
     val task = course {
@@ -83,6 +87,7 @@ class YamlSerializationTest : YamlTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test codeforces task`() {
     val course = course(courseProducer = ::CodeforcesCourse) {
       lesson {
@@ -101,6 +106,7 @@ class YamlSerializationTest : YamlTestCase() {
         """.trimMargin())
   }
 
+  @Test
   fun `test checkiO mission`() {
     val course = course(courseProducer = ::CheckiOCourse) {
       lesson {
@@ -120,6 +126,7 @@ class YamlSerializationTest : YamlTestCase() {
         """.trimMargin())
   }
 
+  @Test
   fun `test edu task with content tags`() {
     val task = course(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -148,6 +155,7 @@ class YamlSerializationTest : YamlTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test empty placeholder`() {
     val task = course(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -170,6 +178,7 @@ class YamlSerializationTest : YamlTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test placeholder starts with spaces`() {
     val task = course(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -192,6 +201,7 @@ class YamlSerializationTest : YamlTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test placeholder ends with spaces`() {
     val task = course(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -214,6 +224,7 @@ class YamlSerializationTest : YamlTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test edu task with test files`() {
     val task = course(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -241,6 +252,7 @@ class YamlSerializationTest : YamlTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test edu task with additional files`() {
     val task = course(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -268,6 +280,7 @@ class YamlSerializationTest : YamlTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test edu task with dependency`() {
     val task = course(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -302,6 +315,7 @@ class YamlSerializationTest : YamlTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test edu task with files with turned off highlighting`() {
     val task = course(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -334,6 +348,7 @@ class YamlSerializationTest : YamlTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test output task`() {
     val task = course(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -350,6 +365,7 @@ class YamlSerializationTest : YamlTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test quiz task`() {
     val task = course(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -373,6 +389,7 @@ class YamlSerializationTest : YamlTestCase() {
       |""".trimMargin())
   }
 
+  @Test
   fun `test quiz task without answers`() {
     val task = course(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -394,6 +411,7 @@ class YamlSerializationTest : YamlTestCase() {
       |""".trimMargin())
   }
 
+  @Test
   fun `test course`() {
     val course = course(courseMode = CourseMode.EDUCATOR) {
       lesson("the first lesson")
@@ -415,6 +433,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test lesson`() {
     val lesson = course {
       lesson {
@@ -430,6 +449,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test lesson with custom presentable name`() {
     val lesson = course {
       lesson(customPresentableName = "my new lesson") {
@@ -446,6 +466,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test lesson with content tags`() {
     val lesson = course {
       lesson {
@@ -466,6 +487,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test use dir name for lesson with custom name`() {
     val course = course(courseMode = CourseMode.EDUCATOR) {
       section {
@@ -485,6 +507,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test framework lesson`() {
     val lesson = course(courseMode = CourseMode.EDUCATOR) {
       frameworkLesson {
@@ -501,6 +524,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test framework lesson with content tags`() {
     val lesson = course(courseMode = CourseMode.EDUCATOR) {
       frameworkLesson {
@@ -521,6 +545,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test non templated based framework lesson`() {
     val course = course(courseMode = CourseMode.EDUCATOR) {
       frameworkLesson("lesson", isTemplateBased = false)
@@ -533,6 +558,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test framework lesson with custom name`() {
     val course = course(courseMode = CourseMode.EDUCATOR) {
       frameworkLesson("lesson", customPresentableName = "my new lesson")
@@ -547,6 +573,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test section`() {
     val section = course(courseMode = CourseMode.EDUCATOR) {
       section {
@@ -563,6 +590,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test section with custom name`() {
     val section = course(courseMode = CourseMode.EDUCATOR) {
       section(customPresentableName = "custom section name") {
@@ -580,6 +608,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test section with content tags`() {
     val section = course(courseMode = CourseMode.EDUCATOR) {
       section {
@@ -600,6 +629,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test task feedback link`() {
     val task = course(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -613,6 +643,7 @@ class YamlSerializationTest : YamlTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test checkiO mission feedback link not serialized`() {
     val task = course(courseProducer = ::CheckiOCourse) {
       lesson {
@@ -627,6 +658,7 @@ class YamlSerializationTest : YamlTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test task with custom presentable name`() {
     val taskCustomName = "task custom name"
     val task = course(courseMode = CourseMode.EDUCATOR) {
@@ -641,6 +673,7 @@ class YamlSerializationTest : YamlTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test course with environment`() {
     val course = course(courseMode = CourseMode.EDUCATOR, environment = EduNames.ANDROID) {
       lesson {
@@ -659,6 +692,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test course feedback link`() {
     val courseLink = "https://course_link.com"
     val course = course(courseMode = CourseMode.EDUCATOR) {
@@ -678,6 +712,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test codeforces course feedback link not serialized`() {
     val courseLink = "https://course_link.com"
     val course = course(courseProducer = ::CodeforcesCourse) {
@@ -698,6 +733,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test codeforces course with programTypeId`() {
     val course = course(courseProducer = ::CodeforcesCourse) {} as CodeforcesCourse
     course.apply {
@@ -717,6 +753,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test codeforces course without programTypeId`() {
     val course = course(courseProducer = ::CodeforcesCourse) {} as CodeforcesCourse
     course.apply {
@@ -734,6 +771,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test hyperskill course`() {
     val course = course(courseProducer = ::HyperskillCourse) {} as HyperskillCourse
     course.apply {
@@ -751,6 +789,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test stepik course`() {
     val course = course(courseProducer = ::StepikCourse) {} as StepikCourse
     course.apply {
@@ -768,6 +807,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test coursera course feedback link not serialized`() {
     val courseLink = "https://course_link.com"
     val course = course(courseProducer = ::CourseraCourse) {
@@ -788,6 +828,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test course with hidden solutions`() {
     val course = course(courseMode = CourseMode.EDUCATOR) {}
     course.solutionsHidden = true
@@ -801,6 +842,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test task with hidden solution`() {
     val taskCustomName = "task custom name"
     val task = course(courseMode = CourseMode.EDUCATOR) {
@@ -817,6 +859,7 @@ class YamlSerializationTest : YamlTestCase() {
     |""".trimMargin("|"))
   }
 
+  @Test
   fun `test task with hidden solution = false`() {
     val taskCustomName = "task custom name"
     val task = course(courseMode = CourseMode.EDUCATOR) {
@@ -833,6 +876,7 @@ class YamlSerializationTest : YamlTestCase() {
     |""".trimMargin("|"))
   }
 
+  @Test
   fun `test empty lesson`() {
     val lesson = course {
       lesson {
@@ -845,6 +889,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test empty section`() {
     val section = course(courseMode = CourseMode.EDUCATOR) {
       section {
@@ -857,6 +902,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test empty course`() {
     val course = course(courseMode = CourseMode.EDUCATOR) {}
 
@@ -869,6 +915,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test course with lang version`() {
     val course = course(courseMode = CourseMode.EDUCATOR) {}
     course.languageCode = "ru"
@@ -885,6 +932,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test course with content tags`() {
     val course = course(courseMode = CourseMode.EDUCATOR) {}
     course.contentTags = listOf("kotlin", "cycles")
@@ -900,6 +948,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test coursera course`() {
     val course = course(courseMode = CourseMode.EDUCATOR, courseProducer = ::CourseraCourse) {}
     course.languageCode = "ru"
@@ -917,6 +966,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test coursera course manual submit`() {
     val course = course(courseMode = CourseMode.EDUCATOR, courseProducer = ::CourseraCourse) {} as CourseraCourse
     course.languageCode = "ru"
@@ -936,6 +986,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test course with non-english locale`() {
     val defaultLocale = Locale.getDefault()
     Locale.setDefault(Locale.KOREAN)
@@ -962,6 +1013,7 @@ class YamlSerializationTest : YamlTestCase() {
     Locale.setDefault(defaultLocale)
   }
 
+  @Test
   fun `test course with generatedEduId`() {
     val generatedEduId = "generated_edu_id"
 
@@ -982,6 +1034,7 @@ class YamlSerializationTest : YamlTestCase() {
     assertEquals(expected, actual)
   }
 
+  @Test
   fun `test course with Vendor`() {
     val vendor = Vendor().apply {
       name = "Vendor name"
@@ -1014,6 +1067,7 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test course with choice tasks`() {
     val task = course(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -1048,6 +1102,7 @@ class YamlSerializationTest : YamlTestCase() {
       |""".trimMargin())
   }
 
+  @Test
   fun `test environment settings`() {
     val course = course {
       lesson("lesson1") {

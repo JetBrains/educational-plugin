@@ -5,9 +5,11 @@ import com.intellij.openapi.editor.ReadOnlyModificationException
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.document
+import org.junit.Test
 
 class ChangeFileEditableTest : EduTestCase() {
 
+  @Test
   fun `test modify non-editable files for study course`() {
     val initialTextInNonEditableFile = "text in nonEditableFile"
     val initialTextInEditableFile = "text in editableFile"
@@ -31,6 +33,7 @@ class ChangeFileEditableTest : EduTestCase() {
   }
 
 
+  @Test
   fun `test check editability of any file in task for educator course`() {
     val initialTextInNonEditableFile = "text in nonEditableFile"
     val initialTextInEditableFile = "text in editableFile"

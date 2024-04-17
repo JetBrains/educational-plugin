@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.python.PythonLanguage
+import org.junit.Test
 
 @Suppress("PyInterpreter", "PyUnresolvedReferences")
 class PyPackagesInstallationTest : PyCheckersTestBase() {
@@ -34,6 +35,7 @@ class PyPackagesInstallationTest : PyCheckersTestBase() {
 
   }
 
+  @Test
   fun `test required packages installed`() {
     CheckActionListener.expectedMessage { CheckUtils.CONGRATULATIONS }
     doTest()

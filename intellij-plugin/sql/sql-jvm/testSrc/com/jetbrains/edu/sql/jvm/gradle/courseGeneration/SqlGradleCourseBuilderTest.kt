@@ -9,6 +9,7 @@ import com.jetbrains.edu.sql.jvm.gradle.SqlGradleStartupActivity
 import com.jetbrains.edu.sql.jvm.gradle.SqlTestLanguage
 import com.jetbrains.edu.sql.jvm.gradle.sqlCourse
 import com.jetbrains.edu.sql.jvm.gradle.sqlTestLanguage
+import org.junit.Test
 
 class SqlGradleCourseBuilderTest : JvmCourseGenerationTestBase() {
 
@@ -17,6 +18,7 @@ class SqlGradleCourseBuilderTest : JvmCourseGenerationTestBase() {
     SqlGradleStartupActivity.disable(testRootDisposable)
   }
 
+  @Test
   fun `test new educator course with java tests`() {
     val newCourse = newCourse(SqlLanguage.INSTANCE)
     newCourse.sqlTestLanguage = SqlTestLanguage.JAVA
@@ -38,6 +40,7 @@ class SqlGradleCourseBuilderTest : JvmCourseGenerationTestBase() {
     }.assertEquals(rootDir)
   }
 
+  @Test
   fun `test new educator course with kotlin tests`() {
     val newCourse = newCourse(SqlLanguage.INSTANCE)
     newCourse.sqlTestLanguage = SqlTestLanguage.KOTLIN
@@ -59,6 +62,7 @@ class SqlGradleCourseBuilderTest : JvmCourseGenerationTestBase() {
     }.assertEquals(rootDir)
   }
 
+  @Test
   fun `test create existent educator course`() {
     val course = sqlCourse(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -91,6 +95,7 @@ class SqlGradleCourseBuilderTest : JvmCourseGenerationTestBase() {
     }.assertEquals(rootDir)
   }
 
+  @Test
   fun `test study course structure`() {
     val course = sqlCourse {
       lesson {

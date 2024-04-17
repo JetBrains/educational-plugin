@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
+import org.junit.Test
 import org.rust.lang.RsLanguage
 
 class RsCheckersTest : RsCheckersTestBase() {
@@ -158,6 +159,7 @@ class RsCheckersTest : RsCheckersTestBase() {
     }
   }
 
+  @Test
   fun `test rust course`() {
     CheckActionListener.expectedMessage { task ->
       when (task) {

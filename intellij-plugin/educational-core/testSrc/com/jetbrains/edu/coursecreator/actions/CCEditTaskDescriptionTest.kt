@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.testAction
+import org.junit.Test
 
 
 class CCEditTaskDescriptionTest : EduTestCase() {
@@ -26,11 +27,13 @@ class CCEditTaskDescriptionTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test is invisible for student`() {
     getCourse().courseMode = CourseMode.STUDENT
     doOpenTaskDescription(shouldBeEnabled = false)
   }
 
+  @Test
   fun `test task description file opened`() {
     doOpenTaskDescription()
 
@@ -38,6 +41,7 @@ class CCEditTaskDescriptionTest : EduTestCase() {
     assertEquals(descriptionDocument?.text, getCurrentlyOpenedText())
   }
 
+  @Test
   fun `test missing task description created`() {
     removeTaskDescriptionFile()
     doOpenTaskDescription()
@@ -45,6 +49,7 @@ class CCEditTaskDescriptionTest : EduTestCase() {
     assertEquals("solve task", getCurrentlyOpenedText())
   }
 
+  @Test
   fun `test default task description created`() {
     removeTaskDescriptionFile()
     findTask(0, 0).descriptionText = ""
@@ -54,6 +59,7 @@ class CCEditTaskDescriptionTest : EduTestCase() {
     assertEquals(defaultTaskDescriptionText, getCurrentlyOpenedText())
   }
 
+  @Test
   fun `test synchronization`() {
     EditorFactory.getInstance().eventMulticaster.addDocumentListener(SynchronizeTaskDescription(project), testRootDisposable)
 

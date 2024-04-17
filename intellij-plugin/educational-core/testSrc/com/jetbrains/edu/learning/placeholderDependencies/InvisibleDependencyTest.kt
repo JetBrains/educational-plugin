@@ -12,12 +12,15 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
+import org.junit.Test
 
 class InvisibleDependencyTest : CourseGenerationTestBase<EmptyProjectSettings>() {
 
   override val defaultSettings: EmptyProjectSettings get() = EmptyProjectSettings
 
+  @Test
   fun `test invisible placeholder with invisible dependency`() = doTest(CheckStatus.Solved, false, "\"Foo\"")
+  @Test
   fun `test visible placeholder with invisible dependency`() = doTest(CheckStatus.Unchecked, true, "type Foo")
 
   private fun doTest(status: CheckStatus, expectedVisibility: Boolean, expectedPlaceholderText: String) {

@@ -5,9 +5,11 @@ import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseView.CourseViewTestBase
+import org.junit.Test
 
 class CCCourseViewTest : CourseViewTestBase() {
 
+  @Test
   fun `test lesson with custom name`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
@@ -20,6 +22,7 @@ class CCCourseViewTest : CourseViewTestBase() {
                    "  CCLessonNode custom name (lesson1)\n")
   }
 
+  @Test
   fun `test section with custom name`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section()
@@ -32,6 +35,7 @@ class CCCourseViewTest : CourseViewTestBase() {
                     "  CCSectionNode custom name (section1)\n")
   }
 
+  @Test
   fun `test task with custom name`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {

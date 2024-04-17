@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMEN
 import com.jetbrains.edu.learning.courseFormat.UserInfo
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MockMarketplaceConnector
+import org.junit.Test
 import java.util.*
 
 class MarketplaceSearchCoursesTest : EduTestCase() {
@@ -24,11 +25,13 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test courses loaded`() {
     configureCoursesResponse()
     doTestCoursesLoaded()
   }
 
+  @Test
   fun `test python en course created`() {
     configureCoursesResponse()
     val courses = doTestCoursesLoaded()
@@ -42,6 +45,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     assertEquals(13, pythonCourse.formatVersion)
   }
 
+  @Test
   fun `test java ru course created`() {
     configureCoursesResponse()
     val courses = doTestCoursesLoaded()
@@ -56,6 +60,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     assertEquals(14, javaCourse.formatVersion)
   }
 
+  @Test
   fun `test scala course with environment created`() {
     configureCoursesResponse()
     val courses = doTestCoursesLoaded()
@@ -70,6 +75,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     assertEquals(13, scalaCourse.formatVersion)
   }
 
+  @Test
   fun `test all courses loaded`() {
     mockConnector.withResponseHandler(testRootDisposable) { request, path ->
       COURSES_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
@@ -85,6 +91,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     doTestCoursesLoaded(13)
   }
 
+  @Test
   fun `test course found by id`() {
     mockConnector.withResponseHandler(testRootDisposable) { request, path ->
       COURSES_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
@@ -102,6 +109,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
            2, 5.0)
   }
 
+  @Test
   fun `test private course found`() {
     mockConnector.withResponseHandler(testRootDisposable) { request, path ->
       COURSES_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null

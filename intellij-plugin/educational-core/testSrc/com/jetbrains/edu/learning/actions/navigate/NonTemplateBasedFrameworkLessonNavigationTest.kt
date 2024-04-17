@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.actions.navigate
 
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.ui.Messages
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
@@ -17,9 +16,11 @@ import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.CoreMatchers.not
 import org.junit.Assert.assertThat
+import org.junit.Test
 
 class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
 
+  @Test
   fun `test propagate user changes to next task (next)`() {
     val course = createFrameworkCourse()
 
@@ -62,6 +63,7 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test do not propagate user changes to prev task (next, prev)`() {
     val course = createFrameworkCourse()
 
@@ -107,6 +109,7 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test ask user when changes conflict (next, prev, next), select keep changes`() {
     val course = createFrameworkCourse()
 
@@ -161,6 +164,7 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test do not ask user about conflicts if there isn't user changes (next, prev, next)`() {
     val course = createFrameworkCourse()
 
@@ -180,7 +184,7 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
         testAction(NextTaskAction.ACTION_ID)
       }
 
-      BasePlatformTestCase.assertNull(dialog.shownMessage)
+      assertNull(dialog.shownMessage)
     }
 
     val fileTree = fileTree {
@@ -215,6 +219,7 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test ask user when changes conflict (next, prev, next), select replace changes`() {
     val course = createFrameworkCourse()
 
@@ -269,6 +274,7 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test propagate new files next task (next)`() {
     val course = createFrameworkCourse()
 
@@ -318,6 +324,7 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test removed files in solution`() {
     val course = createFrameworkCourse()
 
@@ -366,6 +373,7 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test removed file`() {
     val course = createFrameworkCourse()
 
@@ -414,6 +422,7 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
     assertThat(task2.taskFiles.keys, not(hasItem("src/Baz.kt")))
   }
 
+  @Test
   fun `test course with git object files`() {
     class GitObjectFile(val name: String, text: String) {
       val contents = InMemoryBinaryContents.parseBase64Encoding(text)
@@ -487,6 +496,7 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test invisible non-test files don't propagate, visible test files propagate`() {
     val course = courseWithFiles(language = FakeGradleBasedLanguage) {
       frameworkLesson("lesson", isTemplateBased = false) {
@@ -542,6 +552,7 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test propagate changes to tasks further the next one`() {
     val course = courseWithFiles(language = FakeGradleBasedLanguage) {
       frameworkLesson("lesson", isTemplateBased = false) {
@@ -633,6 +644,7 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test file visibility change from invisible to visible`() {
     val course = createFrameworkCourseWithVisibilityChange()
     val task1 = course.findTask("lesson", "task1")
@@ -666,6 +678,7 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test file visibility change from invisible to visible during conflict, select replace changes`() {
     val course = createFrameworkCourseWithVisibilityChange()
     val task1 = course.findTask("lesson", "task1")
@@ -711,6 +724,7 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test file visibility change from invisible to visible during conflict, select keep changes`() {
     val course = createFrameworkCourseWithVisibilityChange()
 
@@ -757,6 +771,7 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test do not propagate invisible runConfigurations files`() {
     val course = courseWithFiles(
       language = FakeGradleBasedLanguage
@@ -820,6 +835,7 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test do not propagate non-editable files`() {
     val course = courseWithFiles(
       language = FakeGradleBasedLanguage

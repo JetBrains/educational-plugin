@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.yaml.YamlTestCase
+import org.junit.Test
 
 class YamlSynchronizationTest : YamlTestCase() {
 
@@ -24,6 +25,7 @@ class YamlSynchronizationTest : YamlTestCase() {
     course.description = "test"
   }
 
+  @Test
   fun `test invalid config file`() {
     project.putUserData(YamlFormatSettings.YAML_TEST_THROW_EXCEPTION, false)
     createConfigFiles(project)

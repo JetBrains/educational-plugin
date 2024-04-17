@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.nullValue
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert
+import org.junit.Test
 
 class GoCheckErrorsTest : GoCheckersTestBase() {
   override fun createCourse(): Course {
@@ -201,6 +202,7 @@ class GoCheckErrorsTest : GoCheckersTestBase() {
     }
   }
 
+  @Test
   fun `test go errors`() {
     val incorrect = EduCoreBundle.message("check.incorrect")
     CheckActionListener.setCheckResultVerifier { task, checkResult ->

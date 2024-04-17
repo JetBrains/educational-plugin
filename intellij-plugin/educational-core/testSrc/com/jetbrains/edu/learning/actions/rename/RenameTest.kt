@@ -12,9 +12,11 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.testAction
+import org.junit.Test
 
 class RenameTest : RenameTestBase() {
 
+  @Test
   fun `test forbid section renaming in student mode`() {
     val course = courseWithFiles {
       section {
@@ -32,6 +34,7 @@ class RenameTest : RenameTestBase() {
     assertNotNull(course.getSection("section1"))
   }
 
+  @Test
   fun `test forbid lesson renaming in section in student mode`() {
     val course = courseWithFiles {
       section {
@@ -51,6 +54,7 @@ class RenameTest : RenameTestBase() {
     assertNull(section.getLesson("lesson2"))
   }
 
+  @Test
   fun `test forbid lesson renaming in course in student mode`() {
     val course = courseWithFiles {
       lesson {
@@ -66,6 +70,7 @@ class RenameTest : RenameTestBase() {
     assertNull(course.getLesson("lesson2"))
   }
 
+  @Test
   fun `test forbid task renaming in student mode`() {
     val course = courseWithFiles {
       lesson {
@@ -82,6 +87,7 @@ class RenameTest : RenameTestBase() {
     assertNull(lesson.getTask("task2"))
   }
 
+  @Test
   fun `test forbid task description file renaming in student mode`() {
     val course = courseWithFiles {
       lesson {
@@ -97,6 +103,7 @@ class RenameTest : RenameTestBase() {
     assertNotNull(findDescriptionFile(TASK_MD))
   }
 
+  @Test
   fun `test rename task file renaming in student mode`() {
     val course = courseWithFiles {
       lesson {
@@ -113,6 +120,7 @@ class RenameTest : RenameTestBase() {
     assertNotNull(task.getTaskFile("taskFile2.txt"))
   }
 
+  @Test
   fun `test rename student created task file in student mode`() {
     val course = courseWithFiles {
       lesson {
@@ -131,6 +139,7 @@ class RenameTest : RenameTestBase() {
     assertNotNull(task.getTaskFile("taskFile3.txt"))
   }
 
+  @Test
   fun `test forbid course additional file renaming in student mode`() {
     val course = courseWithFiles {
       lesson {
@@ -147,6 +156,7 @@ class RenameTest : RenameTestBase() {
     assertNotNull(course.additionalFiles.find { it.name == "additionalFile1.txt" })
   }
 
+  @Test
   fun `test rename student created task file in student mode in hyperskill course`() {
     val course = courseWithFiles(courseProducer = ::HyperskillCourse) {
       frameworkLesson {
@@ -175,6 +185,7 @@ class RenameTest : RenameTestBase() {
     assertNotNull(task2.getTaskFile("taskFile3.txt"))
   }
 
+  @Test
   fun `test rename section in CC mode`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
@@ -192,6 +203,7 @@ class RenameTest : RenameTestBase() {
     assertNotNull(course.getSection("section2"))
   }
 
+  @Test
   fun `test rename lesson in section in CC mode`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
@@ -211,6 +223,7 @@ class RenameTest : RenameTestBase() {
     assertNull(section.getLesson("lesson1"))
   }
 
+  @Test
   fun `test rename lesson in course in CC mode`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -226,6 +239,7 @@ class RenameTest : RenameTestBase() {
     assertNull(course.getLesson("lesson1"))
   }
 
+  @Test
   fun `test rename task in CC mode`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -242,6 +256,7 @@ class RenameTest : RenameTestBase() {
     assertNull(lesson.getTask("task1"))
   }
 
+  @Test
   fun `test rename task description file in CC mode`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -257,6 +272,7 @@ class RenameTest : RenameTestBase() {
     assertNotNull(findDescriptionFile(TASK_HTML))
   }
 
+  @Test
   fun `test wrong new task description file name in CC mode`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -273,6 +289,7 @@ class RenameTest : RenameTestBase() {
     assertNotNull(findDescriptionFile(TASK_MD))
   }
 
+  @Test
   fun `test rename task file in CC mode`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {

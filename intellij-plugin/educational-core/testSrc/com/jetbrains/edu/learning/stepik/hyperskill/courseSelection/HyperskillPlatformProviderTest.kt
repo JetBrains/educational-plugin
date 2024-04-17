@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.logInFakeHyperskillUser
 import com.jetbrains.edu.learning.stepik.hyperskill.logOutFakeHyperskillUser
 import com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.HyperskillPlatformProvider
 import kotlinx.coroutines.runBlocking
+import org.junit.Test
 
 class HyperskillPlatformProviderTest : EduTestCase() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
@@ -22,6 +23,7 @@ class HyperskillPlatformProviderTest : EduTestCase() {
     CoursesStorage.getInstance().state.courses.clear()
   }
 
+  @Test
   fun `test advertising course added when no JBA login`() {
     val courseGroups = loadCourses()
 
@@ -32,6 +34,7 @@ class HyperskillPlatformProviderTest : EduTestCase() {
     assertTrue(course is HyperskillCourseAdvertiser)
   }
 
+  @Test
   fun `test selected project added`() {
     logInFakeHyperskillUser()
     val profile = HyperskillUserInfo().apply { hyperskillProjectId = 1 }
@@ -60,6 +63,7 @@ class HyperskillPlatformProviderTest : EduTestCase() {
     assertEquals(1, course.id)
   }
 
+  @Test
   fun `test local content added`() {
     val localHyperskillCourse = defaultHyperskillCourse()
     CoursesStorage.getInstance().addCourse(localHyperskillCourse, "", 1, 4)

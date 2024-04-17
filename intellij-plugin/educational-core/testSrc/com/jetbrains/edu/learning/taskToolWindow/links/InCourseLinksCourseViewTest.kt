@@ -4,9 +4,11 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseView.CourseViewHeavyTestBase
 import com.jetbrains.edu.learning.projectView.CourseViewPane
+import org.junit.Test
 
 class InCourseLinksCourseViewTest : CourseViewHeavyTestBase() {
 
+  @Test
   fun `test section link`() = doTest("course://section1", """
     -Project
      -CourseNode Test Course  0/2
@@ -15,6 +17,7 @@ class InCourseLinksCourseViewTest : CourseViewHeavyTestBase() {
        +LessonNode lesson2
   """)
 
+  @Test
   fun `test lesson link`() = doTest("course://lesson1", """
     -Project
      -CourseNode Test Course  0/2

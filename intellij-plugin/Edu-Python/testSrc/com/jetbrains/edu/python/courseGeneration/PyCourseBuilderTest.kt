@@ -6,11 +6,13 @@ import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
 import com.jetbrains.edu.python.learning.newproject.PyProjectSettings
 import com.jetbrains.python.PythonLanguage
+import org.junit.Test
 
 class PyCourseBuilderTest : CourseGenerationTestBase<PyProjectSettings>() {
 
   override val defaultSettings: PyProjectSettings = PyProjectSettings()
 
+  @Test
   fun `test study course structure`() {
     generateCourseStructure("testData/newCourse/python_course.json")
     val expectedFileTree = fileTree {
@@ -39,6 +41,7 @@ class PyCourseBuilderTest : CourseGenerationTestBase<PyProjectSettings>() {
     expectedFileTree.assertEquals(rootDir)
   }
 
+  @Test
   fun `test new course structure`() {
     val course = newCourse(PythonLanguage.INSTANCE)
     createCourseStructure(course)
@@ -56,6 +59,7 @@ class PyCourseBuilderTest : CourseGenerationTestBase<PyProjectSettings>() {
     expectedFileTree.assertEquals(rootDir)
   }
 
+  @Test
   fun `test educator course structure from not empty course`() {
     generateCourseStructure("testData/newCourse/python_course.json", CourseMode.EDUCATOR)
     val expectedFileTree = fileTree {

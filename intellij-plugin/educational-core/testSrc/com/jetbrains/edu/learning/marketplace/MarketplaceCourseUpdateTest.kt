@@ -14,11 +14,13 @@ import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
 import com.jetbrains.edu.learning.navigation.NavigationUtils.getFirstTask
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import com.jetbrains.rd.util.firstOrNull
+import org.junit.Test
 import java.util.*
 
 class MarketplaceCourseUpdateTest : CourseGenerationTestBase<EmptyProjectSettings>() {
   override val defaultSettings: EmptyProjectSettings get() = EmptyProjectSettings
 
+  @Test
   fun `test update date updated`() {
     val course = createCourse(CheckStatus.Solved)
     course.updateDate = Date(1619697473000)
@@ -51,6 +53,7 @@ class MarketplaceCourseUpdateTest : CourseGenerationTestBase<EmptyProjectSetting
     assertEquals(course.updateDate, serverCourse.updateDate)
   }
 
+  @Test
   fun `test save task status Solved if task not updated`() {
     val course = createCourse(CheckStatus.Solved)
 
@@ -82,6 +85,7 @@ class MarketplaceCourseUpdateTest : CourseGenerationTestBase<EmptyProjectSetting
     assertEquals(CheckStatus.Solved, getFirstTask(course)?.status)
   }
 
+  @Test
   fun `test save task status Failed if task not updated`() {
     val course = createCourse(CheckStatus.Failed)
 
@@ -113,6 +117,7 @@ class MarketplaceCourseUpdateTest : CourseGenerationTestBase<EmptyProjectSetting
     assertEquals(CheckStatus.Failed, getFirstTask(course)?.status)
   }
 
+  @Test
   fun `test save task status Solved if task was updated`() {
     val course = createCourse(CheckStatus.Solved)
 
@@ -144,6 +149,7 @@ class MarketplaceCourseUpdateTest : CourseGenerationTestBase<EmptyProjectSetting
     assertEquals(CheckStatus.Solved, getFirstTask(course)?.status)
   }
 
+  @Test
   fun `test do not save task status Failed if task was updated`() {
     val course = createCourse(CheckStatus.Failed)
 
@@ -175,6 +181,7 @@ class MarketplaceCourseUpdateTest : CourseGenerationTestBase<EmptyProjectSetting
     assertEquals(CheckStatus.Unchecked, getFirstTask(course)?.status)
   }
 
+  @Test
   fun `test placeholder possible answer changed`() {
     val course = course {
       lesson {
@@ -212,6 +219,7 @@ class MarketplaceCourseUpdateTest : CourseGenerationTestBase<EmptyProjectSetting
     assertEquals("\"Updated\"", placeholder.possibleAnswer)
   }
 
+  @Test
   fun `test placeholder length changed`() {
     val course = course {
       lesson {
@@ -249,6 +257,7 @@ class MarketplaceCourseUpdateTest : CourseGenerationTestBase<EmptyProjectSetting
     assertEquals(4, placeholder.length)
   }
 
+  @Test
   fun `test placeholder dependency changed`() {
     val course = course {
       lesson {
@@ -313,6 +322,7 @@ class MarketplaceCourseUpdateTest : CourseGenerationTestBase<EmptyProjectSetting
     assertEquals("lesson1#task2#TaskFile2.kt#1", placeholder.placeholderDependency.toString())
   }
 
+  @Test
   fun `test framework lesson in section first task updated`() {
     val taskFileName = "src/Task.kt"
     val testFileName = "test/Tests.kt"
@@ -388,6 +398,7 @@ class MarketplaceCourseUpdateTest : CourseGenerationTestBase<EmptyProjectSetting
     checkTaskFiles(secondTask, oldTaskFileText, oldTestFileText, oldTaskDescriptionText, taskFileName, testFileName)
   }
 
+  @Test
   fun `test framework lesson not updated if tasks number on remote decreased`() {
     val taskFileName = "src/Task.kt"
     val testFileName = "test/Tests.kt"
@@ -447,6 +458,7 @@ class MarketplaceCourseUpdateTest : CourseGenerationTestBase<EmptyProjectSetting
     checkTaskFiles(secondTask, oldTaskFileText, oldTestFileText, oldTaskDescriptionText, taskFileName, testFileName)
   }
 
+  @Test
   fun `test framework lesson not updated if tasks number on remote increased`() {
     val taskFileName = "src/Task.kt"
     val testFileName = "test/Tests.kt"
@@ -514,6 +526,7 @@ class MarketplaceCourseUpdateTest : CourseGenerationTestBase<EmptyProjectSetting
     checkTaskFiles(secondTask, oldTaskFileText, oldTestFileText, oldTaskDescriptionText, taskFileName, testFileName)
   }
 
+  @Test
   fun `test framework lesson not updated if tasks ids changed`() {
     val taskFileName = "src/Task.kt"
     val testFileName = "test/Tests.kt"

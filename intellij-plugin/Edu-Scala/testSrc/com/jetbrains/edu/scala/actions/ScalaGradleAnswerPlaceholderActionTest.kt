@@ -3,9 +3,11 @@ package com.jetbrains.edu.scala.actions
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholderActionTestBase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import org.jetbrains.plugins.scala.ScalaLanguage
+import org.junit.Test
 
 class ScalaGradleAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() {
 
+  @Test
   fun `test placeholder text`() {
     val course = courseWithFiles(
       courseMode = CourseMode.EDUCATOR,

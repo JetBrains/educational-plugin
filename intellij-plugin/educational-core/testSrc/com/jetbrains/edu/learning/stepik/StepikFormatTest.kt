@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.stepik.api.JacksonStepOptionsDeserializer.Comp
 import com.jetbrains.edu.learning.stepik.api.JacksonSubmissionDeserializer.Companion.migrate
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector.Companion.getInstance
 import com.jetbrains.edu.learning.stepik.api.StepikReplyDeserializer.Companion.migrate
+import org.junit.Test
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -29,26 +30,31 @@ class StepikFormatTest : EduTestCase() {
   }
 
   @Throws(IOException::class)
+  @Test
   fun testFirstVersion() {
     doStepOptionMigrationTest(2)
   }
 
   @Throws(IOException::class)
+  @Test
   fun testSecondVersion() {
     doStepOptionMigrationTest(3)
   }
 
   @Throws(IOException::class)
+  @Test
   fun testThirdVersion() {
     doStepOptionMigrationTest(4)
   }
 
   @Throws(IOException::class)
+  @Test
   fun testFifthVersion() {
     doStepOptionMigrationTest(6)
   }
 
   @Throws(IOException::class)
+  @Test
   fun testSixthVersion() {
     for (ignored in LANGUAGE_TASK_ROOTS.entries) {
       doStepOptionMigrationTest(7, getTestName(true) + ".gradle.after.json")
@@ -56,26 +62,31 @@ class StepikFormatTest : EduTestCase() {
   }
 
   @Throws(IOException::class)
+  @Test
   fun testSixthVersionPython() {
     doStepOptionMigrationTest(7, getTestName(true) + ".after.json")
   }
 
   @Throws(Exception::class)
+  @Test
   fun test8Version() {
     doStepOptionMigrationTest(9)
   }
 
   @Throws(IOException::class)
+  @Test
   fun test9Version() {
     doStepOptionMigrationTest(10)
   }
 
   @Throws(IOException::class)
+  @Test
   fun test10Version() {
     doStepOptionMigrationTest(10)
   }
 
   @Throws(IOException::class)
+  @Test
   fun testCourseAdditionalMaterials() {
     val responseString = loadJsonText()
     val mapper = getInstance().objectMapper
@@ -85,6 +96,7 @@ class StepikFormatTest : EduTestCase() {
   }
 
   @Throws(IOException::class)
+  @Test
   fun testLessonAdditionalMaterials() {
     val responseString = loadJsonText()
     val mapper = getInstance().objectMapper
@@ -98,6 +110,7 @@ class StepikFormatTest : EduTestCase() {
   }
 
   @Throws(IOException::class)
+  @Test
   fun testAdditionalMaterialsStep() {
     val responseString = loadJsonText()
     for (ignored in listOf(EduFormatNames.KOTLIN, EduFormatNames.PYTHON)) {
@@ -111,6 +124,7 @@ class StepikFormatTest : EduTestCase() {
   }
 
   @Throws(IOException::class)
+  @Test
   fun testAvailableCourses() {
     val responseString = loadJsonText()
     val mapper = getInstance().objectMapper
@@ -120,6 +134,7 @@ class StepikFormatTest : EduTestCase() {
   }
 
   @Throws(IOException::class)
+  @Test
   fun testPlaceholderSerialization() {
     val answerPlaceholder = AnswerPlaceholder()
     answerPlaceholder.offset = 1
@@ -134,6 +149,7 @@ class StepikFormatTest : EduTestCase() {
   }
 
   @Throws(IOException::class)
+  @Test
   fun testTokenUptoDate() {
     val jsonText = loadJsonText()
     val mapper = getInstance().objectMapper
@@ -145,6 +161,7 @@ class StepikFormatTest : EduTestCase() {
   }
 
   @Throws(IOException::class)
+  @Test
   fun testCourseAuthor() {
     val jsonText = loadJsonText()
     val mapper = getInstance().objectMapper
@@ -156,6 +173,7 @@ class StepikFormatTest : EduTestCase() {
   }
 
   @Throws(IOException::class)
+  @Test
   fun testSections() {
     val jsonText = loadJsonText()
     val mapper = getInstance().objectMapper
@@ -167,6 +185,7 @@ class StepikFormatTest : EduTestCase() {
   }
 
   @Throws(IOException::class)
+  @Test
   fun testUnit() {
     val jsonText = loadJsonText()
     val mapper = getInstance().objectMapper
@@ -179,6 +198,7 @@ class StepikFormatTest : EduTestCase() {
   }
 
   @Throws(IOException::class)
+  @Test
   fun testLesson() {
     val jsonText = loadJsonText()
     val mapper = getInstance().objectMapper
@@ -190,6 +210,7 @@ class StepikFormatTest : EduTestCase() {
   }
 
   @Throws(IOException::class)
+  @Test
   fun testStep() {
     val jsonText = loadJsonText()
     val mapper = getInstance().objectMapper
@@ -200,6 +221,7 @@ class StepikFormatTest : EduTestCase() {
   }
 
   @Throws(IOException::class)
+  @Test
   fun testStepBlock() {
     val jsonText = loadJsonText()
     val mapper = getInstance().objectMapper
@@ -212,12 +234,14 @@ class StepikFormatTest : EduTestCase() {
   }
 
   @Throws(IOException::class)
+  @Test
   fun testStepBlockOptions() {
     val options: StepOptions? = stepOptions
     assertNotNull(options)
   }
 
   @Throws(IOException::class)
+  @Test
   fun testUpdateDate() {
     val jsonText = loadJsonText()
     val mapper = getInstance().objectMapper
@@ -227,12 +251,14 @@ class StepikFormatTest : EduTestCase() {
   }
 
   @Throws(IOException::class)
+  @Test
   fun testOptionsTitle() {
     val options = stepOptions
     assertEquals("Our first program", options!!.title)
   }
 
   @Throws(IOException::class)
+  @Test
   fun testOptionsDescription() {
     val jsonText = loadJsonText()
     val mapper = getInstance().objectMapper
@@ -256,6 +282,7 @@ class StepikFormatTest : EduTestCase() {
   }
 
   @Throws(IOException::class)
+  @Test
   fun testOptionsFiles() {
     val options = stepOptions
     val files: List<TaskFile>? = options!!.files
@@ -293,6 +320,7 @@ def test_ASCII():
     }
 
   @Throws(IOException::class)
+  @Test
   fun testOptionsPlaceholder() {
     val options = stepOptions
     val files: List<TaskFile>? = options!!.files
@@ -307,6 +335,7 @@ def test_ASCII():
   }
 
   @Throws(IOException::class)
+  @Test
   fun testOptionsPlaceholderDependency() {
     val options = stepOptions
     val files: List<TaskFile>? = options!!.files
@@ -322,6 +351,7 @@ def test_ASCII():
   }
 
   @Throws(IOException::class)
+  @Test
   fun testTaskStatuses() {
     val jsonText = loadJsonText()
     val mapper = getInstance().objectMapper
@@ -335,6 +365,7 @@ def test_ASCII():
   }
 
   @Throws(IOException::class)
+  @Test
   fun testAttempts() {
     val mapper = getInstance().objectMapper
     val attemptsList = mapper.readValue(loadJsonText(), AttemptsList::class.java)
@@ -349,6 +380,7 @@ def test_ASCII():
   }
 
   @Throws(IOException::class)
+  @Test
   fun testLastSubmission() {
     val jsonText = loadJsonText()
     val mapper = getInstance().objectMapper
@@ -365,6 +397,7 @@ def test_ASCII():
   }
 
   @Throws(IOException::class)
+  @Test
   fun testReplyTo7Version() {
     for ((key) in LANGUAGE_TASK_ROOTS.entries) {
       doReplyMigrationTest(7, getTestName(true) + ".gradle.after.json", key)
@@ -372,21 +405,25 @@ def test_ASCII():
   }
 
   @Throws(IOException::class)
+  @Test
   fun testReplyTo7VersionPython() {
     doReplyMigrationTest(7, getTestName(true) + ".after.json", EduFormatNames.PYTHON)
   }
 
   @Throws(IOException::class)
+  @Test
   fun testReplyTo9Version() {
     doReplyMigrationTest(9)
   }
 
   @Throws(IOException::class)
+  @Test
   fun testReplyTo10Version() {
     doReplyMigrationTest(10)
   }
 
   @Throws(IOException::class)
+  @Test
   fun testNonEduTasks() {
     val jsonText = loadJsonText()
     val mapper = getInstance().objectMapper
@@ -397,6 +434,7 @@ def test_ASCII():
   }
 
   @Throws(IOException::class)
+  @Test
   fun testTaskWithCustomName() {
     val jsonText = loadJsonText()
     val mapper = getInstance().objectMapper
@@ -410,6 +448,7 @@ def test_ASCII():
   }
 
   @Throws(IOException::class)
+  @Test
   fun testCode() {
     val jsonText = loadJsonText()
     val mapper = getInstance().objectMapper

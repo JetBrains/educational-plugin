@@ -11,9 +11,11 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.withEduTestDialog
+import org.junit.Test
 
 class PlaceholderDependencyTest : NotificationsTestBase() {
 
+  @Test
   fun `test placeholder replaced with solution`() {
     courseWithFiles {
       lesson {
@@ -44,6 +46,7 @@ class PlaceholderDependencyTest : NotificationsTestBase() {
     checkPlaceholderContent("print(1)", findPlaceholder(1, 0, "Task.kt", 1))
   }
 
+  @Test
   fun `test unsolved dependency`() {
     courseWithFiles {
       lesson {
@@ -66,6 +69,7 @@ class PlaceholderDependencyTest : NotificationsTestBase() {
     checkPlaceholderContent("type here", findPlaceholder(1, 0, "task.txt", 0))
   }
 
+  @Test
   fun `test no replacement`() {
     courseWithFiles {
       lesson {
@@ -96,6 +100,7 @@ class PlaceholderDependencyTest : NotificationsTestBase() {
     checkPlaceholderContent("type here", findPlaceholder(1, 0, "Task.kt", 1))
   }
 
+  @Test
   fun `test several files`() {
     courseWithFiles {
       lesson {
@@ -133,6 +138,7 @@ class PlaceholderDependencyTest : NotificationsTestBase() {
     checkPlaceholderContent("print(1)", findPlaceholder(1, 0, "Task1.kt", 0))
   }
 
+  @Test
   fun `test refresh task file with dependency`() {
     courseWithFiles {
       lesson {

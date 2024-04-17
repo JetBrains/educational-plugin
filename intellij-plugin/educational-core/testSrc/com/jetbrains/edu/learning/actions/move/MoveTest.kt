@@ -5,9 +5,11 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.withEduTestDialog
+import org.junit.Test
 
 class MoveTest : MoveTestBase() {
 
+  @Test
   fun `test forbid section moving in student mode`() {
     val sectionName1 = "section1"
     val sectionName2 = "section2"
@@ -30,6 +32,7 @@ class MoveTest : MoveTestBase() {
     assertEquals(2, section2.index)
   }
 
+  @Test
   fun `test forbid lesson moving in student mode`() {
     val sectionName1 = "section1"
     val sectionName2 = "section2"
@@ -55,6 +58,7 @@ class MoveTest : MoveTestBase() {
     assertEquals(0, section2.items.size)
   }
 
+  @Test
   fun `test forbid task moving in student mode`() {
     val lessonName1 = "lesson1"
     val lessonName2 = "lesson2"
@@ -80,6 +84,7 @@ class MoveTest : MoveTestBase() {
     assertEquals(0, lesson2.items.size)
   }
 
+  @Test
   fun `test move course file moving in student mode`() {
     val lessonName = "lesson1"
     val taskName = "task1"
@@ -103,6 +108,7 @@ class MoveTest : MoveTestBase() {
     assertNotNull(task.getTaskFile(taskFileName))
   }
 
+  @Test
   fun `test move learner created task file in student mode`() {
     val lessonName = "lesson1"
     val taskName = "task1"
@@ -128,6 +134,7 @@ class MoveTest : MoveTestBase() {
     assertNotNull(task.getTaskFile(taskFileName))
   }
 
+  @Test
   fun `test forbid task file moving to another task in student mode`() {
     val lessonName = "lesson1"
     val taskName1 = "task1"
@@ -158,6 +165,7 @@ class MoveTest : MoveTestBase() {
     assertNull(task2.getTaskFile(taskFileName))
   }
 
+  @Test
   fun `test move task files in CC mode 1`() {
     val lessonName = "lesson1"
     val taskName = "task1"
@@ -180,6 +188,7 @@ class MoveTest : MoveTestBase() {
     assertNotNull(task.getTaskFile(taskFileName))
   }
 
+  @Test
   fun `test move task files in CC mode 2`() {
     val lessonName = "lesson1"
     val taskName = "task1"

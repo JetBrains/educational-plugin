@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.update.CodeforcesCourseUpdateChecker
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
+import org.junit.Test
 import java.io.File
 
 class CodeforcesCourseUpdateTest : CodeforcesTestCase() {
@@ -39,6 +40,7 @@ class CodeforcesCourseUpdateTest : CodeforcesTestCase() {
     }
   }
 
+  @Test
   fun `test outdated description`() {
     val course = createCodeforcesCourse("OUTDATED")
     CodeforcesCourseUpdateChecker.getInstance(project).check()
@@ -46,6 +48,7 @@ class CodeforcesCourseUpdateTest : CodeforcesTestCase() {
     codeforcesTask.checkTaskDescription(1211, 'A')
   }
 
+  @Test
   fun `test up-to-date description`() {
     val course = createCodeforcesCourse()
     CodeforcesCourseUpdateChecker.getInstance(project).check()

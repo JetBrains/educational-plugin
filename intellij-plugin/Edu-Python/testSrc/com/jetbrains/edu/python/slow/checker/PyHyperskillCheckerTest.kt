@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
 import com.jetbrains.python.PythonLanguage
+import org.junit.Test
 
 @Suppress("PyInterpreter", "PyUnresolvedReferences")
 class PyHyperskillCheckerTest : PyCheckersTestBase() {
@@ -35,6 +36,7 @@ class PyHyperskillCheckerTest : PyCheckersTestBase() {
     return course
   }
 
+  @Test
   fun testPythonCourse() {
     CheckActionListener.expectedMessage { CheckUtils.CONGRATULATIONS }
     doTest()

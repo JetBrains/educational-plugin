@@ -5,9 +5,11 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
+import org.junit.Test
 
 class CopyStudyItemTest : EduTestCase() {
 
+  @Test
   fun `test copy course`() {
     val choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)
     val localCourse = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
@@ -29,6 +31,7 @@ class CopyStudyItemTest : EduTestCase() {
     checkItems(localCourse, localCourse.copy())
   }
 
+  @Test
   fun `test copy edu task`() {
     val localCourse = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -44,6 +47,7 @@ class CopyStudyItemTest : EduTestCase() {
     assertTrue(eduTask.sameTo(taskCopy))
   }
 
+  @Test
   fun `test copy output task`() {
     val localCourse = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -55,6 +59,7 @@ class CopyStudyItemTest : EduTestCase() {
     assertTrue(task.sameTo(taskCopy))
   }
 
+  @Test
   fun `test copy theory task`() {
     val localCourse = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -66,6 +71,7 @@ class CopyStudyItemTest : EduTestCase() {
     assertTrue(task.sameTo(taskCopy))
   }
 
+  @Test
   fun `test copy choice task`() {
     val choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)
     val localCourse = courseWithFiles(courseMode = CourseMode.EDUCATOR) {

@@ -5,9 +5,11 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
+import org.junit.Test
 
 class CCAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() {
 
+  @Test
   fun `test add placeholder without selection without dependency`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -24,6 +26,7 @@ class CCAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() 
     doTest("lesson1/task1/Task.kt", CCTestAddAnswerPlaceholder(), taskFile, taskFileExpected)
   }
 
+  @Test
   fun `test add placeholder with selection without dependency`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -41,6 +44,7 @@ class CCAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() 
     doTest("lesson1/task1/Task.kt", CCTestAddAnswerPlaceholder(), taskFile, taskFileExpected, selection)
   }
 
+  @Test
   fun `test placeholder intersection`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -56,6 +60,7 @@ class CCAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() 
     testAction(CCTestAddAnswerPlaceholder(), shouldBeEnabled = false, shouldBeVisible = true)
   }
 
+  @Test
   fun `test add placeholder with dependency`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -78,6 +83,7 @@ class CCAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() 
            taskFileExpected)
   }
 
+  @Test
   fun `test add invisible placeholder`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -95,6 +101,7 @@ class CCAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() 
     doTest("lesson1/task1/Task.kt", CCTestAddAnswerPlaceholder(visible=false), taskFile, taskFileExpected, selection)
   }
 
+  @Test
   fun `test sort placeholders`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -126,6 +133,7 @@ class CCAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() 
       |""".trimMargin(), actual)
   }
 
+  @Test
   fun `test add placeholder action is disabled in non templated based framework lesson`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       frameworkLesson("lesson1", isTemplateBased = false) {

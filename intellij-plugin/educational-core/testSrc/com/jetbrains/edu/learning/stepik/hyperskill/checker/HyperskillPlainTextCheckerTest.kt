@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import com.jetbrains.edu.learning.stepik.hyperskill.markStageAsCompleted
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
+import org.junit.Test
 
 class HyperskillPlainTextCheckerTest : CheckersTestBase<EmptyProjectSettings>() {
 
@@ -35,6 +36,7 @@ class HyperskillPlainTextCheckerTest : CheckersTestBase<EmptyProjectSettings>() 
     return course
   }
 
+  @Test
   fun `test course`() {
     CheckActionListener.expectedMessage { task ->
       when (task.index) {

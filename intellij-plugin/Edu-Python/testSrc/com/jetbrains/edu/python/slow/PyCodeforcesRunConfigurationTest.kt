@@ -6,9 +6,11 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.python.slow.checker.PyCheckersTestBase
 import com.jetbrains.python.PythonLanguage
+import org.junit.Test
 
 @Suppress("PyInterpreter", "PyUnresolvedReferences")
 class PyCodeforcesRunConfigurationTest : PyCheckersTestBase() {
+  @Test
   fun `test application configuration`() {
     doCodeforcesTest("123456")
   }

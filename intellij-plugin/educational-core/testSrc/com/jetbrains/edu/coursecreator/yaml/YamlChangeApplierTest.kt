@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.yaml.YamlTestCase
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
+import org.junit.Test
 
 
 class YamlChangeApplierTest : YamlTestCase() {
@@ -15,6 +16,7 @@ class YamlChangeApplierTest : YamlTestCase() {
     project.putUserData(YamlFormatSettings.YAML_TEST_PROJECT_READY, false)
   }
 
+  @Test
   fun `test coursera submit manually`() {
     val course = courseWithFiles(courseProducer = ::CourseraCourse, courseMode = CourseMode.EDUCATOR) {
       lesson { }
@@ -38,6 +40,7 @@ class YamlChangeApplierTest : YamlTestCase() {
     assertTrue(course.submitManually)
   }
 
+  @Test
   fun `test add lesson custom presentable name`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson { }
@@ -54,6 +57,7 @@ class YamlChangeApplierTest : YamlTestCase() {
     assertEquals(lessonCustomName, lesson.customPresentableName)
   }
 
+  @Test
   fun `test remove lesson custom presentable name`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson(customPresentableName = "my best lesson") {
@@ -72,6 +76,7 @@ class YamlChangeApplierTest : YamlTestCase() {
     assertNull(lesson.customPresentableName)
   }
 
+  @Test
   fun `test add section custom presentable name`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section { }
@@ -88,6 +93,7 @@ class YamlChangeApplierTest : YamlTestCase() {
     assertEquals(customName, section.customPresentableName)
   }
 
+  @Test
   fun `test remove section custom presentable name`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section(customPresentableName = "my best lesson") {
@@ -106,6 +112,7 @@ class YamlChangeApplierTest : YamlTestCase() {
     assertNull(section.customPresentableName)
   }
 
+  @Test
   fun `test add task custom presentable name`() {
     val task = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson 1") {
@@ -128,6 +135,7 @@ class YamlChangeApplierTest : YamlTestCase() {
     assertEquals(customName, task.customPresentableName)
   }
 
+  @Test
   fun `test remove task custom presentable name`() {
     val task = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson 1") {
@@ -148,6 +156,7 @@ class YamlChangeApplierTest : YamlTestCase() {
     assertNull(task.customPresentableName)
   }
 
+  @Test
   fun `test add hide solutions for course`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson { }
@@ -166,6 +175,7 @@ class YamlChangeApplierTest : YamlTestCase() {
     assertTrue(course.solutionsHidden)
   }
 
+  @Test
   fun `test remove hide solutions for course`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson { }
@@ -183,6 +193,7 @@ class YamlChangeApplierTest : YamlTestCase() {
     assertFalse(course.solutionsHidden)
   }
 
+  @Test
   fun `test add hide solution for task`() {
     val task = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -200,6 +211,7 @@ class YamlChangeApplierTest : YamlTestCase() {
     assertFalse(task.solutionHidden!!)
   }
 
+  @Test
   fun `test remove hide solution for task`() {
     val task = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -216,6 +228,7 @@ class YamlChangeApplierTest : YamlTestCase() {
     assertNull(task.solutionHidden)
   }
 
+  @Test
   fun `test change is_template_based flag in framework lesson`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       frameworkLesson("lesson1") {

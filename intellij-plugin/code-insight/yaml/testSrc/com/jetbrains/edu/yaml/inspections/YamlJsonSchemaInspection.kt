@@ -3,9 +3,11 @@ package com.jetbrains.edu.yaml.inspections
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import org.jetbrains.yaml.schema.YamlJsonSchemaHighlightingInspection
+import org.junit.Test
 
 class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlightingInspection::class) {
 
+  @Test
   fun `test course with one wrong property`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {}
@@ -26,6 +28,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
     """.trimMargin("|"))
   }
 
+  @Test
   fun `test course with marketplace course type`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {}
@@ -46,6 +49,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
     """.trimMargin("|"))
   }
 
+  @Test
   fun `test section with one wrong property`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
@@ -60,6 +64,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
     """.trimMargin("|"))
   }
 
+  @Test
   fun `test lesson with one wrong property`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -75,6 +80,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
     """.trimMargin("|"))
   }
 
+  @Test
   fun `test edu task with wrong properties on each level`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -114,6 +120,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
     |""".trimMargin("|"))
   }
 
+  @Test
   fun `test choice task with wrong properties on each level`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {

@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.nullValue
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.assertThat
+import org.junit.Test
 import org.rust.lang.RsLanguage
 
 class RsCheckErrorsTest : RsCheckersTestBase() {
@@ -195,6 +196,7 @@ class RsCheckErrorsTest : RsCheckersTestBase() {
     }
   }
 
+  @Test
   fun `test errors`() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       assertEquals(CheckStatus.Failed, checkResult.status)

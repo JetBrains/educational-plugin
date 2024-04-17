@@ -8,9 +8,11 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.InMemoryBinaryContents
 import com.jetbrains.edu.learning.courseFormat.getBinaryFileLimit
 import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
+import org.junit.Test
 
 class LargeFilesInCourseArchiveTest : CourseArchiveTestBase() {
 
+  @Test
   fun `test large binary file in a framework lesson`() {
 
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
@@ -26,6 +28,7 @@ class LargeFilesInCourseArchiveTest : CourseArchiveTestBase() {
     }
   }
 
+  @Test
   fun `test large binary file in a non-framework lesson`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -45,6 +48,7 @@ class LargeFilesInCourseArchiveTest : CourseArchiveTestBase() {
     }
   }
 
+  @Test
   fun `test large binary additional file`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       additionalFile("file.$EDU_TEST_BIN", InMemoryBinaryContents(ByteArray(FileUtilRt.LARGE_FOR_CONTENT_LOADING + 1)))

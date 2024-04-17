@@ -7,8 +7,10 @@ import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.testAction
+import org.junit.Test
 
 class YamlActionsHelperTest : EduActionTestCase() {
+  @Test
   fun `test navigate to yaml`() {
     val firstPlaceholderText = "TODO() Placeholder 1"
     val secondPlaceholderText = "TODO() Placeholder 2"

@@ -1,23 +1,27 @@
 package com.jetbrains.edu.learning
 
-import com.intellij.testFramework.UsefulTestCase
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import org.junit.Test
 
 class CreateCourseFromZipTest : EduTestCase() {
 
+  @Test
   fun `test create marketplace course from old format zip archive`() {
     doTestCreateMarketplaceCourseFromZip("old format marketplace course.zip", 11)
   }
 
+  @Test
   fun `test create marketplace course from new format zip archive`() {
     doTestCreateMarketplaceCourseFromZip("new format marketplace course.zip", 12)
   }
 
+  @Test
   fun `test create edu course from not encrypted old format zip archive`() {
     doTestCreateEduCourseFromZip("old format edu course.zip", 11)
   }
 
+  @Test
   fun `test create pycharm typed course from encrypted new format zip archive`() {
     doTestCreateEduCourseFromZip("new format edu course.zip", 12)
   }
@@ -36,10 +40,10 @@ class CreateCourseFromZipTest : EduTestCase() {
     val zipPath = "$testDataPath/$fileName"
     val course = EduUtilsKt.getLocalCourse(zipPath) ?: error("Failed to load course from $zipPath")
 
-    UsefulTestCase.assertInstanceOf(course, EduCourse::class.java)
+    assertInstanceOf(course, EduCourse::class.java)
     initializeCourse(project, course)
 
-    UsefulTestCase.assertInstanceOf(course, EduCourse::class.java)
+    assertInstanceOf(course, EduCourse::class.java)
     assertEquals(courseName, course.name)
     assertTrue(course.lessons.size == lessonsSize)
 

@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProvider
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import kotlinx.coroutines.CoroutineScope
+import org.junit.Test
 import kotlin.coroutines.EmptyCoroutineContext
 
 class StartButtonsTest : EduTestCase() {
@@ -20,6 +21,7 @@ class StartButtonsTest : EduTestCase() {
     CoursesStorage.getInstance().state.courses.clear()
   }
 
+  @Test
   fun `test edu course`() {
     val scope = CoroutineScope(EmptyCoroutineContext)
     val panel = MarketplacePlatformProvider().createPanel(scope, testRootDisposable)
@@ -32,6 +34,7 @@ class StartButtonsTest : EduTestCase() {
     assertTrue(startButton.isEnabled)
   }
 
+  @Test
   fun `test codeforces course`() {
     val scope = CoroutineScope(EmptyCoroutineContext)
     val panel = CodeforcesPlatformProvider().createPanel(scope, testRootDisposable)
@@ -44,6 +47,7 @@ class StartButtonsTest : EduTestCase() {
     assertTrue(startButton.isEnabled)
   }
 
+  @Test
   fun `test course preview`() {
     val course = course {} as EduCourse
     course.init(course, false)
@@ -53,6 +57,7 @@ class StartButtonsTest : EduTestCase() {
     assertTrue(startButton.isEnabled)
   }
 
+  @Test
   fun `test checkiO open button`() {
     val scope = CoroutineScope(EmptyCoroutineContext)
     val panel = CheckiOPlatformProvider().createPanel(scope, testRootDisposable)

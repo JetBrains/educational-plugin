@@ -7,8 +7,10 @@ import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.testAction
+import org.junit.Test
 
 class GoCreateTaskTest : EduActionTestCase() {
+  @Test
   fun `test module name generated correctly`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = GoLanguage.INSTANCE) {
       lesson {}
@@ -26,6 +28,7 @@ class GoCreateTaskTest : EduActionTestCase() {
     assertEquals("module good_task_666_пробелы_и_кириллица\n", goModFile.text)
   }
 
+  @Test
   fun `test forbidden task name`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = GoLanguage.INSTANCE) {
       lesson {}

@@ -9,11 +9,13 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.testAction
+import org.junit.Test
 import java.util.*
 
 abstract class FrameworkLessonsUpdateTest<T : Course> : NavigationTestBase() {
   protected lateinit var localCourse: T
 
+  @Test
   fun `test update`() {
     createCourseWithFrameworkLessons()
 
@@ -35,6 +37,7 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : NavigationTestBase() {
     assertEquals(DescriptionFormat.MD, tasks[1].descriptionFormat)
   }
 
+  @Test
   fun `test do not update when tasks ids changed`() {
     createCourseWithFrameworkLessons()
     val oldTasksList = localCourse.lessons[0].taskList
@@ -61,6 +64,7 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : NavigationTestBase() {
     assertEquals(DescriptionFormat.HTML, tasks[0].descriptionFormat)
   }
 
+  @Test
   fun `test update unmodified current task`() {
     createCourseWithFrameworkLessons()
 
@@ -104,6 +108,7 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : NavigationTestBase() {
     }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  @Test
   fun `test update modified current task`() {
     createCourseWithFrameworkLessons()
 
@@ -154,6 +159,7 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : NavigationTestBase() {
     }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  @Test
   fun `test update solved current task`() {
     createCourseWithFrameworkLessons()
 
@@ -197,6 +203,7 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : NavigationTestBase() {
     }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  @Test
   fun `test update unmodified non current task`() {
     createCourseWithFrameworkLessons()
 

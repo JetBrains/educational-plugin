@@ -11,6 +11,7 @@ import com.jetbrains.edu.go.GoConfigurator.Companion.TEST_GO
 import com.jetbrains.edu.learning.EduNames.TEST
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import org.junit.Test
 
 class GoHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
   override val language: Language get() = GoLanguage.INSTANCE
@@ -23,6 +24,7 @@ class GoHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
   }
 
   /** [com.jetbrains.edu.go.GoCourseBuilder.getTestTaskTemplates] */
+  @Test
   fun `test create edu task`() = checkEduTaskCreation(
     fullTaskStructure = {
       file("task.html")
@@ -43,6 +45,7 @@ class GoHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create output task`() = checkOutputTaskCreation(
     fullTaskStructure = {
       file(GO_MOD)
@@ -62,6 +65,7 @@ class GoHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create theory task`() = checkTheoryTaskCreation(
     fullTaskStructure = {
       file(GO_MOD)
@@ -73,6 +77,7 @@ class GoHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create IDE task`() = checkIdeTaskCreation(
     fullTaskStructure = {
       file(GO_MOD)
@@ -84,6 +89,7 @@ class GoHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create choice task`() = checkChoiceTaskCreation(
     fullTaskStructure = {
       file(GO_MOD)

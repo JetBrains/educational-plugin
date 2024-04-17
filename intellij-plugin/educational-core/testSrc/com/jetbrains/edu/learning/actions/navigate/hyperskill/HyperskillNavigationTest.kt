@@ -14,9 +14,11 @@ import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.CoreMatchers.not
 import org.junit.Assert.assertThat
+import org.junit.Test
 
 class HyperskillNavigationTest : NavigationTestBase() {
 
+  @Test
   fun `test propagate user changes to next task (next)`() {
     val course = createHyperskillCourse()
 
@@ -59,6 +61,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test do not propagate user changes to prev task (next, prev)`() {
     val course = createHyperskillCourse()
 
@@ -104,6 +107,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test ask user when changes conflict (next, prev, next), select keep changes`() {
     val course = createHyperskillCourse()
 
@@ -158,6 +162,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test do not ask user about conflicts if there isn't user changes (next, prev, next)`() {
     val course = createHyperskillCourse()
 
@@ -212,6 +217,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test ask user when changes conflict (next, prev, next), select replace changes`() {
     val course = createHyperskillCourse()
 
@@ -266,6 +272,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test propagate new files next task (next)`() {
     val course = createHyperskillCourse()
 
@@ -315,6 +322,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test removed files in solution`() {
     val course = createHyperskillCourse()
 
@@ -363,6 +371,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test removed file`() {
     val course = createHyperskillCourse()
 
@@ -411,6 +420,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
     assertThat(task2.taskFiles.keys, not(hasItem("src/Baz.kt")))
   }
 
+  @Test
   fun `test navigate to next unavailable`() {
     val course = createHyperskillCourse(completeStages = false)
     val task = course.findTask("lesson1", "task1")
@@ -419,6 +429,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
     testAction(NextTaskAction.ACTION_ID, shouldBeEnabled = false, shouldBeVisible = true)
   }
 
+  @Test
   fun `test navigate to next available when we have correct submission`() {
     val course = createHyperskillCourse()
     val task = course.findTask("lesson1", "task1")

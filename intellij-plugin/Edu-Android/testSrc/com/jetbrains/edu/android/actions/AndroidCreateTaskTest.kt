@@ -10,8 +10,10 @@ import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.testAction
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.junit.Test
 
 class AndroidCreateTaskTest : EduActionTestCase() {
+  @Test
   fun `test create task in empty lesson`() {
     val course = courseWithFiles(
       courseMode = CourseMode.EDUCATOR,

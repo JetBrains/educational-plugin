@@ -1,9 +1,11 @@
 package com.jetbrains.edu.learning
 
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import org.junit.Test
 
 class PlainTextCourseGeneratorTest : EduTestCase() {
 
+  @Test
   fun `test course structure creation`() {
     courseWithFiles {
       lesson {
@@ -41,6 +43,7 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test course with framework lesson structure creation`() {
     courseWithFiles {
       frameworkLesson {
@@ -79,6 +82,7 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test course with framework lesson structure creation in CC mode`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       frameworkLesson {
@@ -116,6 +120,7 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test course with sections creation`() {
     courseWithFiles {
       section {
@@ -157,6 +162,7 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test course creation in CC mode`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
@@ -198,6 +204,7 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test course with sections creation in CC mode`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
@@ -239,6 +246,7 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test creation of course with sections and without top level lessons in CC mode`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
@@ -280,6 +288,7 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test empty course creation`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {}
 
@@ -296,6 +305,7 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test placeholder content`() {
     courseWithFiles {
       lesson {
@@ -340,6 +350,7 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test placeholder content in CC mode`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -384,6 +395,7 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test placeholder content in CC mode with sections`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {

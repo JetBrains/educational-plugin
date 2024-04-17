@@ -3,9 +3,11 @@ package com.jetbrains.edu.go.actions
 import com.goide.GoLanguage
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholderActionTestBase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import org.junit.Test
 
 class GoAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() {
 
+  @Test
   fun `test placeholder text`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = GoLanguage.INSTANCE) {
       lesson("lesson1") {

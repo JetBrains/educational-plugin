@@ -2,6 +2,7 @@ package com.jetbrains.edu.codeInsight.taskDescription
 
 import com.intellij.psi.PsiManager
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
+import org.junit.Test
 
 abstract class EduInCourseLinkPathResolveTestBase(format: DescriptionFormat) : EduTaskDescriptionTestBase(format) {
 
@@ -28,11 +29,17 @@ abstract class EduInCourseLinkPathResolveTestBase(format: DescriptionFormat) : E
     }
   }
 
+  @Test
   fun `test section reference`() = doTest("course://section<caret>1", "section1")
+  @Test
   fun `test lesson reference`() = doTest("course://lesson<caret>2", "lesson2")
+  @Test
   fun `test lesson in section reference`() = doTest("course://section1/lesson<caret>3", "section1/lesson3")
+  @Test
   fun `test task reference`() = doTest("course://lesson2/task<caret>2", "lesson2/task2")
+  @Test
   fun `test task file reference 1`() = doTest("course://lesson2/task2/TaskFile<caret>1.txt", "lesson2/task2/TaskFile1.txt")
+  @Test
   fun `test task file reference 2`() = doTest("course://lesson2/task2/foo/bar/TaskFile<caret>2.txt", "lesson2/task2/foo/bar/TaskFile2.txt")
 
   protected open fun doTest(link: String, expectedPath: String) {

@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillO
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenProjectStageRequest
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
 import com.jetbrains.edu.learning.stepik.hyperskill.testStageName
+import org.junit.Test
 
 
 class HyperskillProjectOpenStageTest : HyperskillProjectOpenerTestBase() {
@@ -17,6 +18,7 @@ class HyperskillProjectOpenStageTest : HyperskillProjectOpenerTestBase() {
     configureMockResponsesForStages()
   }
 
+  @Test
   fun `test open stage in new project`() {
     mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenProjectStageRequest(1, 1))
 
@@ -43,6 +45,7 @@ class HyperskillProjectOpenStageTest : HyperskillProjectOpenerTestBase() {
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  @Test
   fun `test open stage in opened problems project`() {
     val topicName = "topicName"
 

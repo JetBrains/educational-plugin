@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import org.jetbrains.plugins.scala.ScalaLanguage
+import org.junit.Test
 
 class ScalaGradleCheckerTest : JdkCheckerTestBase() {
   override fun createCourse(): Course {
@@ -184,6 +185,7 @@ class ScalaGradleCheckerTest : JdkCheckerTestBase() {
     }
   }
 
+  @Test
   fun `test scala gradle course`() {
     CheckActionListener.expectedMessage { task ->
       when (task) {

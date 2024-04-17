@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert
+import org.junit.Test
 import org.rust.lang.RsLanguage
 
 class RsTheoryTaskCheckerTest : RsCheckersTestBase() {
@@ -77,6 +78,7 @@ class RsTheoryTaskCheckerTest : RsCheckersTestBase() {
     }
   }
 
+  @Test
   fun `test rust course`() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       val (statusMatcher, messageMatcher) = when (task.name) {

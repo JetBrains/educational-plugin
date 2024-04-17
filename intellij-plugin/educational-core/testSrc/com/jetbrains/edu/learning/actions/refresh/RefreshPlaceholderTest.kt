@@ -6,9 +6,11 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.actions.RefreshAnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.testAction
+import org.junit.Test
 import java.io.IOException
 
 class RefreshPlaceholderTest : EduTestCase() {
+  @Test
   fun `test refresh placeholder`() {
     configureByTaskFile(1, 1, "taskFile1.txt")
     myFixture.editor.caretModel.moveToOffset(12)
@@ -17,6 +19,7 @@ class RefreshPlaceholderTest : EduTestCase() {
     assertEquals("Look! There is placeholder.", myFixture.getDocument(myFixture.file).text)
   }
 
+  @Test
   fun `test caret outside`() {
     configureByTaskFile(1, 2, "taskFile2.txt")
     myFixture.editor.caretModel.moveToOffset(2)
@@ -25,6 +28,7 @@ class RefreshPlaceholderTest : EduTestCase() {
     testAction(RefreshAnswerPlaceholder.ACTION_ID, shouldBeEnabled = false)
   }
 
+  @Test
   fun `test second refresh placeholder`() {
     findTask(0, 2).openTaskFileInEditor("taskFile3.txt", 0)
     myFixture.editor.caretModel.moveToOffset(16)
@@ -38,6 +42,7 @@ class RefreshPlaceholderTest : EduTestCase() {
       """.trimIndent(), myFixture.getDocument(myFixture.file).text)
   }
 
+  @Test
   fun `test refresh second placeholder start offset`() {
     findTask(0, 2).openTaskFileInEditor("taskFile3.txt", 0)
     myFixture.editor.caretModel.moveToOffset(16)
@@ -59,6 +64,7 @@ class RefreshPlaceholderTest : EduTestCase() {
     assertEquals(53, secondPlaceholder.offset)
   }
 
+  @Test
   fun `test first refresh placeholder`() {
     findTask(0, 2).openTaskFileInEditor("taskFile3.txt", 0)
     myFixture.editor.caretModel.moveToOffset(16)

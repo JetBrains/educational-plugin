@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import org.intellij.lang.annotations.Language
+import org.junit.Test
 
 class HyperskillSubmissionsTest : SubmissionsTestBase() {
 
@@ -47,6 +48,7 @@ class HyperskillSubmissionsTest : SubmissionsTestBase() {
     }
   }
 
+  @Test
   fun `test edu task in framework lesson submissions loaded`() {
     hyperskillCourseWithFiles {
       frameworkLesson("lesson1") {
@@ -61,6 +63,7 @@ class HyperskillSubmissionsTest : SubmissionsTestBase() {
     doTestSubmissionsLoaded(setOf(1), mapOf(1 to 1))
   }
 
+  @Test
   fun `test edu problem submissions loaded`() {
     val stepId = 5
     hyperskillCourseWithFiles {
@@ -82,6 +85,7 @@ class HyperskillSubmissionsTest : SubmissionsTestBase() {
     doTestSubmissionsLoaded(setOf(stepId), mapOf(stepId to 1))
   }
 
+  @Test
   fun `test edu task several submissions loaded`() {
     hyperskillCourseWithFiles {
       frameworkLesson("lesson1") {
@@ -96,6 +100,7 @@ class HyperskillSubmissionsTest : SubmissionsTestBase() {
     doTestSubmissionsLoaded(setOf(2), mapOf(2 to 2))
   }
 
+  @Test
   fun `test code problem submissions loaded`() {
     hyperskillCourseWithFiles {
       lesson("Problems") {
@@ -108,6 +113,7 @@ class HyperskillSubmissionsTest : SubmissionsTestBase() {
     doTestSubmissionsLoaded(setOf(1), mapOf(1 to 1))
   }
 
+  @Test
   fun `test submission added after edu task check`() {
     hyperskillCourseWithFiles {
       frameworkLesson("lesson1") {
@@ -121,6 +127,7 @@ class HyperskillSubmissionsTest : SubmissionsTestBase() {
     doTestSubmissionAddedAfterTaskCheck(3, CORRECT)
   }
 
+  @Test
   fun `test submission added after code task check with periodically check`() {
     mockConnector.withWebSocketListener(object : WebSocketListener() {
       override fun onMessage(webSocket: WebSocket, text: String) {
@@ -131,6 +138,7 @@ class HyperskillSubmissionsTest : SubmissionsTestBase() {
     doTestSubmissionsAddedAfterCodeTaskCheck()
   }
 
+  @Test
   fun `test submission added after code task check with web sockets`() {
     var state: MockWebSocketState = MockWebSocketState.INITIAL
 

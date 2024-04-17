@@ -2,9 +2,11 @@ package com.jetbrains.edu.coursecreator.actions.move
 
 import com.jetbrains.edu.learning.actions.move.MoveTestBase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import org.junit.Test
 
 class CCMoveTaskTest : MoveTestBase() {
 
+  @Test
   fun `test move to another lesson`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -32,6 +34,7 @@ class CCMoveTaskTest : MoveTestBase() {
   }
 
   // EDU-2467
+  @Test
   fun `test move from lesson with the same name to another lesson`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -56,6 +59,7 @@ class CCMoveTaskTest : MoveTestBase() {
     assertEquals(2, lesson2.getTask("lesson1")!!.index)
   }
 
+  @Test
   fun `test move task with custom name to another lesson`() {
     val customTaskName = "Custom Task Name"
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
@@ -84,6 +88,7 @@ class CCMoveTaskTest : MoveTestBase() {
     assertEquals(2, lesson2.getTask(customTaskName)!!.index)
   }
 
+  @Test
   fun `test move after task`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -107,6 +112,7 @@ class CCMoveTaskTest : MoveTestBase() {
     assertEquals(4, lesson1.getTask("task4")!!.index)
   }
 
+  @Test
   fun `test move before task`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -130,6 +136,7 @@ class CCMoveTaskTest : MoveTestBase() {
     assertEquals(4, lesson1.getTask("task4")!!.index)
   }
 
+  @Test
   fun `test move before task in another lesson`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -158,6 +165,7 @@ class CCMoveTaskTest : MoveTestBase() {
     assertEquals(3, lesson2.getTask("task4")!!.index)
   }
 
+  @Test
   fun `test move after task in another lesson`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {

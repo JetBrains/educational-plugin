@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.init
 import com.jetbrains.edu.learning.update.UpdatesAvailableTestBase
 import kotlinx.coroutines.runBlocking
+import org.junit.Test
 import java.util.*
 
 class HyperskillLessonUpdatesAvailableTest : UpdatesAvailableTestBase<HyperskillCourse>() {
@@ -19,6 +20,7 @@ class HyperskillLessonUpdatesAvailableTest : UpdatesAvailableTestBase<Hyperskill
     assertEquals(expectedAmountOfUpdates, updates.size)
   }
 
+  @Test
   fun `test updates are available when lesson name is changed`() {
     initiateLocalCourse()
     val serverCourse = course(courseProducer = ::HyperskillCourse) {
@@ -35,6 +37,7 @@ class HyperskillLessonUpdatesAvailableTest : UpdatesAvailableTestBase<Hyperskill
     doTestUpdatesAvailable(serverCourse, 1)
   }
 
+  @Test
   fun `test updates are available when lesson index is changed`() {
     localCourse = course(courseProducer = ::HyperskillCourse) {
       lesson("lesson1", id = 1) {
@@ -77,6 +80,7 @@ class HyperskillLessonUpdatesAvailableTest : UpdatesAvailableTestBase<Hyperskill
     doTestUpdatesAvailable(serverCourse, 2)
   }
 
+  @Test
   fun `test updates are available when task name is changed`() {
     initiateLocalCourse()
     val serverCourse = course(courseProducer = ::HyperskillCourse) {
@@ -93,6 +97,7 @@ class HyperskillLessonUpdatesAvailableTest : UpdatesAvailableTestBase<Hyperskill
     doTestUpdatesAvailable(serverCourse, 1)
   }
 
+  @Test
   fun `test updates are available when new task created`() {
     initiateLocalCourse()
     val serverCourse = course(courseProducer = ::HyperskillCourse) {
@@ -112,6 +117,7 @@ class HyperskillLessonUpdatesAvailableTest : UpdatesAvailableTestBase<Hyperskill
     doTestUpdatesAvailable(serverCourse, 1)
   }
 
+  @Test
   fun `test updates are available when existing task has been deleted`() {
     initiateLocalCourse()
     val serverCourse = course(courseProducer = ::HyperskillCourse) {
@@ -125,6 +131,7 @@ class HyperskillLessonUpdatesAvailableTest : UpdatesAvailableTestBase<Hyperskill
     doTestUpdatesAvailable(serverCourse, 1)
   }
 
+  @Test
   fun `test updates are available when task places are changed`() {
     initiateLocalCourse()
     val serverCourse = course(courseProducer = ::HyperskillCourse) {
@@ -141,6 +148,7 @@ class HyperskillLessonUpdatesAvailableTest : UpdatesAvailableTestBase<Hyperskill
     doTestUpdatesAvailable(serverCourse, 1)
   }
 
+  @Test
   fun `test updates are available when new lesson created`() {
     initiateLocalCourse()
     val serverCourse = course(courseProducer = ::HyperskillCourse) {
@@ -165,6 +173,7 @@ class HyperskillLessonUpdatesAvailableTest : UpdatesAvailableTestBase<Hyperskill
     doTestUpdatesAvailable(serverCourse, 1)
   }
 
+  @Test
   fun `test updates are available when lesson update date is changed`() {
     initiateLocalCourse()
     val serverCourse = course(courseProducer = ::HyperskillCourse) {

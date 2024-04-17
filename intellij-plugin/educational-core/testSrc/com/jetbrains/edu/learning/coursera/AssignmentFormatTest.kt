@@ -1,16 +1,17 @@
 package com.jetbrains.edu.learning.coursera
 
-import com.intellij.testFramework.UsefulTestCase
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.courseFormat.CourseraCourse
 import com.jetbrains.edu.learning.initializeCourse
+import org.junit.Test
 
 
 class AssignmentFormatTest : EduTestCase() {
+  @Test
   fun `test assignment creation from zip`() {
     val courseraCourse = getCourseraCourse()
-    UsefulTestCase.assertInstanceOf(courseraCourse, CourseraCourse::class.java)
+    assertInstanceOf(courseraCourse, CourseraCourse::class.java)
     initializeCourse(project, courseraCourse)
 
     val task = findTask(0, 0)
@@ -35,15 +36,17 @@ class AssignmentFormatTest : EduTestCase() {
     return EduUtilsKt.getCourseraCourse(zipPath) as? CourseraCourse ?: error("Failed to import Coursera course from $zipPath")
   }
 
+  @Test
   fun `test coursera course`() {
     val course = getCourseraCourse()
-    UsefulTestCase.assertInstanceOf(course, CourseraCourse::class.java)
+    assertInstanceOf(course, CourseraCourse::class.java)
     assertFalse(course.submitManually)
   }
 
+  @Test
   fun `test coursera course submit manually`() {
     val course = getCourseraCourse()
-    UsefulTestCase.assertInstanceOf(course, CourseraCourse::class.java)
+    assertInstanceOf(course, CourseraCourse::class.java)
     assertTrue(course.submitManually)
   }
 

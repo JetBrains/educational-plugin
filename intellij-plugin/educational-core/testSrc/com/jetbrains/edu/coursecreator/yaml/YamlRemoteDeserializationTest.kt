@@ -15,10 +15,12 @@ import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_TASK_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlTestCase
 import com.jetbrains.edu.learning.yaml.format.RemoteStudyItem
+import org.junit.Test
 import java.util.*
 
 class YamlRemoteDeserializationTest : YamlTestCase() {
 
+  @Test
   fun `test course`() {
     val id = 1
     val yamlText = """
@@ -34,6 +36,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     assertEquals(listOf(1), course.sectionIds)
   }
 
+  @Test
   fun `test marketplace course`() {
     val id = 1
     val yamlText = """
@@ -48,6 +51,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     assertEquals(5, course.marketplaceCourseVersion)
   }
 
+  @Test
   fun `test hyperskill project`() {
     val id = 15
     val ideFiles = "ideFiles"
@@ -96,6 +100,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     assertEquals(expected.isCompleted, actual.isCompleted)
   }
 
+  @Test
   fun `test course without top-level lessons`() {
     val id = 1
     val yamlText = """
@@ -110,6 +115,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     assertTrue(course.sectionIds.isEmpty())
   }
 
+  @Test
   fun `test section`() {
     val id = 1
     val yamlText = """
@@ -123,6 +129,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     assertEquals(Date(0), section.updateDate)
   }
 
+  @Test
   fun `test task`() {
     val yamlText = """
     |id: 1
@@ -135,6 +142,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     assertEquals(Date(0), task.updateDate)
   }
 
+  @Test
   fun `test data task without attempt`() {
     val yamlText = """
     |type: dataset
@@ -148,6 +156,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     assertEquals(Date(0), task.updateDate)
   }
 
+  @Test
   fun `test data task with attempt`() {
     val yamlText = """
     |type: dataset
@@ -167,6 +176,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     assertEquals(attempt, task.attempt)
   }
 
+  @Test
   fun `test quoted date`() {
     val id = 1
     val yamlText = """

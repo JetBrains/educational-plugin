@@ -6,10 +6,12 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.update.LessonUpdateTestBase
 import com.jetbrains.edu.learning.update.LessonUpdater
+import org.junit.Test
 
 class MarketplaceLessonUpdateTest : LessonUpdateTestBase<EduCourse>() {
   override fun getUpdater(container: LessonContainer): LessonUpdater = MarketplaceLessonUpdater(project, container)
 
+  @Test
   fun `test new lesson in course created`() {
     initiateLocalCourse()
     val newEduTask = EduTask("task3").apply {
@@ -75,6 +77,7 @@ class MarketplaceLessonUpdateTest : LessonUpdateTestBase<EduCourse>() {
     expectedStructure.assertEquals(rootDir)
   }
 
+  @Test
   fun `test new lesson in section created`() {
     localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::EduCourse) {
       section("section1", id = 1) {
@@ -162,6 +165,7 @@ class MarketplaceLessonUpdateTest : LessonUpdateTestBase<EduCourse>() {
     expectedStructure.assertEquals(rootDir)
   }
 
+  @Test
   fun `test first task deleted`() {
     initiateLocalCourse()
     val remoteCourse = toRemoteCourse {
@@ -193,6 +197,7 @@ class MarketplaceLessonUpdateTest : LessonUpdateTestBase<EduCourse>() {
     expectedStructure.assertEquals(rootDir)
   }
 
+  @Test
   fun `test lesson in course has been deleted`() {
     localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::EduCourse) {
       lesson("lesson1", id = 1) {
@@ -259,6 +264,7 @@ class MarketplaceLessonUpdateTest : LessonUpdateTestBase<EduCourse>() {
     expectedStructure.assertEquals(rootDir)
   }
 
+  @Test
   fun `test lesson in section has been deleted`() {
     localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::EduCourse) {
       section("section1", id = 1) {
@@ -330,6 +336,7 @@ class MarketplaceLessonUpdateTest : LessonUpdateTestBase<EduCourse>() {
     expectedStructure.assertEquals(rootDir)
   }
 
+  @Test
   fun `test new lesson in section created and existing task has been changed`() {
     localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::EduCourse) {
       section("section1", id = 1) {

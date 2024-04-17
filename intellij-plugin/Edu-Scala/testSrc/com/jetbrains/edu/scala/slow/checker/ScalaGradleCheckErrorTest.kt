@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.xmlEscaped
 import org.hamcrest.CoreMatchers.equalTo
 import org.jetbrains.plugins.scala.ScalaLanguage
 import org.junit.Assert
+import org.junit.Test
 
 class ScalaGradleCheckErrorTest : JdkCheckerTestBase() {
   override fun createCourse(): Course {
@@ -151,6 +152,7 @@ class ScalaGradleCheckErrorTest : JdkCheckerTestBase() {
     }
   }
 
+  @Test
   fun `test scala errors`() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       assertEquals("${task.name} should be failed", CheckStatus.Failed, checkResult.status)

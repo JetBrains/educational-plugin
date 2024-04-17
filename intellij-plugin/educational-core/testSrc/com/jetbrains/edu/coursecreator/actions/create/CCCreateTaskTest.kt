@@ -21,9 +21,11 @@ import com.jetbrains.edu.learning.yaml.YamlDeepLoader
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.hasItem
 import org.junit.Assert.assertThat
+import org.junit.Test
 
 class CCCreateTaskTest : EduActionTestCase() {
 
+  @Test
   fun `test create task in lesson`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, createYamlConfigs=true) {
       lesson {
@@ -48,6 +50,7 @@ class CCCreateTaskTest : EduActionTestCase() {
     checkOpenedFiles(task)
   }
 
+  @Test
   fun `test create task in lesson in section`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
@@ -66,6 +69,7 @@ class CCCreateTaskTest : EduActionTestCase() {
     assertEquals(2, course.sections[0].lessons[0].taskList.size)
   }
 
+  @Test
   fun `test create task in empty lesson`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
@@ -78,6 +82,7 @@ class CCCreateTaskTest : EduActionTestCase() {
     assertEquals(1, course.lessons[0].taskList.size)
   }
 
+  @Test
   fun `test create task after task`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -102,6 +107,7 @@ class CCCreateTaskTest : EduActionTestCase() {
     assertEquals(3, lesson.getTask("task2")!!.index)
   }
 
+  @Test
   fun `test create task before task`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -126,6 +132,7 @@ class CCCreateTaskTest : EduActionTestCase() {
     assertEquals(3, lesson.getTask("task2")!!.index)
   }
 
+  @Test
   fun `test create task before task with custom name`() {
     val customTaskName = "Custom Task Name"
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
@@ -151,6 +158,7 @@ class CCCreateTaskTest : EduActionTestCase() {
     assertEquals(3, lesson.getTask(customTaskName)!!.index)
   }
 
+  @Test
   fun `test create task after task in section`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
@@ -177,6 +185,7 @@ class CCCreateTaskTest : EduActionTestCase() {
     assertEquals(3, lesson.getTask("task2")!!.index)
   }
 
+  @Test
   fun `test create task not available on course`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -189,6 +198,7 @@ class CCCreateTaskTest : EduActionTestCase() {
     testAction(CCCreateTask.ACTION_ID, dataContext(sourceVFile), shouldBeEnabled = false)
   }
 
+  @Test
   fun `test create task not available on section`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
@@ -203,8 +213,10 @@ class CCCreateTaskTest : EduActionTestCase() {
     testAction(CCCreateTask.ACTION_ID, dataContext(sourceVFile), shouldBeEnabled = false)
   }
 
+  @Test
   fun `test create framework task without test copy`() = doCreateFrameworkTaskTest(false)
 
+  @Test
   fun `test create framework task with test copy`() = doCreateFrameworkTaskTest(true)
 
   private fun doCreateFrameworkTaskTest(copyTests: Boolean) {
@@ -268,6 +280,7 @@ class CCCreateTaskTest : EduActionTestCase() {
     }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  @Test
   fun `test suggest name for new task`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {}

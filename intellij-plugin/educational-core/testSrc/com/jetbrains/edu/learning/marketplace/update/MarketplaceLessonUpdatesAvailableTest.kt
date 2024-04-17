@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.update.UpdatesAvailableTestBase
 import kotlinx.coroutines.runBlocking
+import org.junit.Test
 import java.util.*
 
 class MarketplaceLessonUpdatesAvailableTest : UpdatesAvailableTestBase<EduCourse>() {
@@ -18,6 +19,7 @@ class MarketplaceLessonUpdatesAvailableTest : UpdatesAvailableTestBase<EduCourse
     assertEquals(expectedAmountOfUpdates, updates.size)
   }
 
+  @Test
   fun `test updates are available when lesson name is changed`() {
     initiateLocalCourse()
     val serverCourse = course {
@@ -34,6 +36,7 @@ class MarketplaceLessonUpdatesAvailableTest : UpdatesAvailableTestBase<EduCourse
     doTestUpdatesAvailable(serverCourse, 1)
   }
 
+  @Test
   fun `test updates are available when lesson index is changed`() {
     localCourse = course {
       lesson("lesson1") {
@@ -76,6 +79,7 @@ class MarketplaceLessonUpdatesAvailableTest : UpdatesAvailableTestBase<EduCourse
     doTestUpdatesAvailable(serverCourse, 2)
   }
 
+  @Test
   fun `test updates are available when task name is changed`() {
     initiateLocalCourse()
     val serverCourse = course {
@@ -92,6 +96,7 @@ class MarketplaceLessonUpdatesAvailableTest : UpdatesAvailableTestBase<EduCourse
     doTestUpdatesAvailable(serverCourse, 1)
   }
 
+  @Test
   fun `test updates are available when new task created`() {
     initiateLocalCourse()
     val serverCourse = course {
@@ -111,6 +116,7 @@ class MarketplaceLessonUpdatesAvailableTest : UpdatesAvailableTestBase<EduCourse
     doTestUpdatesAvailable(serverCourse, 1)
   }
 
+  @Test
   fun `test updates are available when existing task has been deleted`() {
     initiateLocalCourse()
     val serverCourse = course {
@@ -124,6 +130,7 @@ class MarketplaceLessonUpdatesAvailableTest : UpdatesAvailableTestBase<EduCourse
     doTestUpdatesAvailable(serverCourse, 1)
   }
 
+  @Test
   fun `test updates are available when task places are changed`() {
     initiateLocalCourse()
     val serverCourse = course {
@@ -140,6 +147,7 @@ class MarketplaceLessonUpdatesAvailableTest : UpdatesAvailableTestBase<EduCourse
     doTestUpdatesAvailable(serverCourse, 1)
   }
 
+  @Test
   fun `test updates are available when new lesson created`() {
     initiateLocalCourse()
     val serverCourse = course {
@@ -164,6 +172,7 @@ class MarketplaceLessonUpdatesAvailableTest : UpdatesAvailableTestBase<EduCourse
     doTestUpdatesAvailable(serverCourse, 1)
   }
 
+  @Test
   fun `test updates are not available when lesson update date is changed`() {
     initiateLocalCourse()
     val serverCourse = course {

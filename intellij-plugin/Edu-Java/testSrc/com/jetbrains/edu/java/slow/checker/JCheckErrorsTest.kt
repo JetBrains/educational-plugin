@@ -24,6 +24,7 @@ import com.jetbrains.edu.learning.xmlEscaped
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.assertThat
+import org.junit.Test
 
 class JCheckErrorsTest : JdkCheckerTestBase() {
 
@@ -153,6 +154,7 @@ class JCheckErrorsTest : JdkCheckerTestBase() {
     }
   }
 
+  @Test
   fun `test errors`() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       assertEquals("${task.name} should be failed", CheckStatus.Failed, checkResult.status)
@@ -204,6 +206,7 @@ class JCheckErrorsTest : JdkCheckerTestBase() {
     doTest()
   }
 
+  @Test
   fun `test broken jdk`() {
     UIUtil.dispatchAllInvocationEvents()
 

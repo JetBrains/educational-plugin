@@ -4,9 +4,11 @@ import com.jetbrains.edu.jvm.courseGeneration.JvmCourseGenerationTestBase
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
 import org.jetbrains.plugins.scala.ScalaLanguage
+import org.junit.Test
 
 class ScalaSbtCourseBuilderTest : JvmCourseGenerationTestBase() {
 
+  @Test
   fun `test study course structure`() {
     generateCourseStructure("testData/newCourse/scala_course_sbt.json")
     val expectedFileTree = fileTree {
@@ -30,6 +32,7 @@ class ScalaSbtCourseBuilderTest : JvmCourseGenerationTestBase() {
     expectedFileTree.assertEquals(rootDir)
   }
 
+  @Test
   fun `test new course structure`() {
     val course = newCourse(ScalaLanguage.INSTANCE, environment = "sbt")
     createCourseStructure(course)

@@ -13,14 +13,18 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.pathWithoutPrams
 import org.intellij.lang.annotations.Language
+import org.junit.Test
 
 class ApplyHyperskillSubmissionTest: EduActionTestCase() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
+  @Test
   fun `test apply web submission`() = doTest(submissionFromWeb)
 
+  @Test
   fun `test submission from ide`() = doTest(submissionFromIDE)
 
+  @Test
   fun `test in educator mode`() = doTest(submissionFromWeb, CourseMode.EDUCATOR, fileTree {
     dir("test project") {
       dir("task1") {

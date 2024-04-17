@@ -6,9 +6,11 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.findTask
+import org.junit.Test
 
 class YamlPathCompletionTest : YamlCompletionTestBase() {
 
+  @Test
   fun `test task file completion`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -38,6 +40,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
     """.trimMargin("|"))
   }
 
+  @Test
   fun `test task file completion 2`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -66,6 +69,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
     """.trimMargin("|"))
   }
 
+  @Test
   fun `test do not suggest existing paths while completion`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -95,6 +99,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
     """.trimMargin("|"))
   }
 
+  @Test
   fun `test do not suggest excluded from archive files while completion 1`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -124,6 +129,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
     """.trimMargin("|"))
   }
 
+  @Test
   fun `test do not suggest excluded from archive files while completion 2`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -146,6 +152,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
     """.trimMargin("|"))
   }
 
+  @Test
   fun `test task file extend completion`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -175,6 +182,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
     """.trimMargin("|"), invocationCount = 2)
   }
 
+  @Test
   fun `test directories completion in task config`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -198,6 +206,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
     """.trimMargin("|"))
   }
 
+  @Test
   fun `test course content completion`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {}
@@ -232,6 +241,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
     """.trimMargin("|"))
   }
 
+  @Test
   fun `test lesson content completion`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -254,6 +264,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
     """.trimMargin("|"))
   }
 
+  @Test
   fun `test section content completion`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section("section1") {
@@ -275,6 +286,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
     """.trimMargin("|"))
   }
 
+  @Test
   fun `test lesson content extend completion`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {

@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.taskToolWindow.TaskDescriptionHighlightingTestBase
+import org.junit.Test
 
 abstract class HyperskillTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
   protected abstract val codeSample: String
@@ -19,6 +20,7 @@ abstract class HyperskillTaskDescriptionHighlightingTest : TaskDescriptionHighli
     }
   }
 
+  @Test
   fun `test class no-highlighting in hyperskill course`() {
     doHtmlTest("""
       <html>
@@ -39,6 +41,7 @@ abstract class HyperskillTaskDescriptionHighlightingTest : TaskDescriptionHighli
     """)
   }
 
+  @Test
   fun `test no language in hyperskill course`() {
     doHtmlTest("""
       <html>
@@ -59,6 +62,7 @@ abstract class HyperskillTaskDescriptionHighlightingTest : TaskDescriptionHighli
     """)
   }
 
+  @Test
   fun `test highlighting`() {
     doHtmlTest("""
       <html>

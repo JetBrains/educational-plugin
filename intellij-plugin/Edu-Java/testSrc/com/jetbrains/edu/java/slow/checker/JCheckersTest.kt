@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
+import org.junit.Test
 
 class JCheckersTest : JdkCheckerTestBase() {
 
@@ -176,6 +177,7 @@ class JCheckersTest : JdkCheckerTestBase() {
     }
   }
 
+  @Test
   fun `test java course`() {
     CheckActionListener.expectedMessage { task ->
       when (task) {

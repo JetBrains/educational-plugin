@@ -7,9 +7,11 @@ import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.testAction
+import org.junit.Test
 
 class CCCreateLessonTest : EduActionTestCase() {
 
+  @Test
   fun `test create lesson in course`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -24,6 +26,7 @@ class CCCreateLessonTest : EduActionTestCase() {
     assertEquals(2, course.lessons.size)
   }
 
+  @Test
   fun `test create lesson in section`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
@@ -42,6 +45,7 @@ class CCCreateLessonTest : EduActionTestCase() {
     assertEquals(2, course.getSection(sectionName)!!.lessons.size)
   }
 
+  @Test
   fun `test create lesson between lessons in course`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -65,6 +69,7 @@ class CCCreateLessonTest : EduActionTestCase() {
     assertEquals(3, course.getLesson("lesson3")!!.index)
   }
 
+  @Test
   fun `test create lesson before lesson in course`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -88,6 +93,7 @@ class CCCreateLessonTest : EduActionTestCase() {
     assertEquals(3, course.getLesson("lesson2")!!.index)
   }
 
+  @Test
   fun `test create lesson after lesson in course`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -111,6 +117,7 @@ class CCCreateLessonTest : EduActionTestCase() {
     assertEquals(3, course.getLesson("lesson2")!!.index)
   }
 
+  @Test
   fun `test create lesson between lessons in section`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
@@ -138,6 +145,7 @@ class CCCreateLessonTest : EduActionTestCase() {
     assertEquals(3, section.getLesson("lesson3")!!.index)
   }
 
+  @Test
   fun `test create lesson not available inside lesson`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -150,6 +158,7 @@ class CCCreateLessonTest : EduActionTestCase() {
     testAction(CCCreateLesson.ACTION_ID, dataContext(sourceVFile), shouldBeEnabled = false)
   }
 
+  @Test
   fun `test create lesson not available on top level with section on top level`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -175,6 +184,7 @@ class CCCreateLessonTest : EduActionTestCase() {
     }
   }
 
+  @Test
   fun `test suggest name for new lesson in section`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {}
@@ -197,6 +207,7 @@ class CCCreateLessonTest : EduActionTestCase() {
     assertLessons("lesson1", "lesson3", "abc", "lesson2")
   }
 
+  @Test
   fun `test suggest name for new lesson in course`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {}

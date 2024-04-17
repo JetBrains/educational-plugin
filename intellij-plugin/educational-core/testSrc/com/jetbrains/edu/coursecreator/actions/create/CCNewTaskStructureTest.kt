@@ -2,11 +2,13 @@ package com.jetbrains.edu.coursecreator.actions.create
 
 import com.intellij.lang.Language
 import com.intellij.openapi.fileTypes.PlainTextLanguage
+import org.junit.Test
 
 class CCNewTaskStructureTest : CCNewTaskStructureTestBase() {
 
   override val language: Language get() = PlainTextLanguage.INSTANCE
 
+  @Test
   fun `test create edu task`() = checkEduTaskCreation(
     fullTaskStructure = {
       file("task.md")
@@ -23,6 +25,7 @@ class CCNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create output task`() = checkOutputTaskCreation(
     fullTaskStructure = {
       file("task.md")
@@ -41,6 +44,7 @@ class CCNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create theory task`() = checkTheoryTaskCreation(
     fullTaskStructure = {
       file("task.md")
@@ -51,6 +55,7 @@ class CCNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create IDE task`() = checkIdeTaskCreation(
     fullTaskStructure = {
       file("task.md")
@@ -61,6 +66,7 @@ class CCNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create choice task`() = checkChoiceTaskCreation(
     fullTaskStructure = {
       file("task.md")

@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.testAction
-import junit.framework.TestCase
+import org.junit.Test
 
 class CCUnWrapSectionTest : EduActionTestCase() {
 
@@ -20,6 +20,7 @@ class CCUnWrapSectionTest : EduActionTestCase() {
       .subscribe(VirtualFileManager.VFS_CHANGES, CCVirtualFileListener(project, testRootDisposable))
   }
 
+  @Test
   fun `test unwrap lessons`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
@@ -31,14 +32,15 @@ class CCUnWrapSectionTest : EduActionTestCase() {
     }
     val section2 = findFile("section2")
     testAction(CCRemoveSection.ACTION_ID, dataContext(arrayOf(section2)))
-    TestCase.assertEquals(4, course.items.size)
+    assertEquals(4, course.items.size)
     val section = course.getSection("section2")
-    TestCase.assertNull(section)
+    assertNull(section)
     for (i in 1..4) {
-      TestCase.assertEquals(i, course.getLesson("lesson$i")!!.index)
+      assertEquals(i, course.getLesson("lesson$i")!!.index)
     }
   }
 
+  @Test
   fun `test one lesson`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
@@ -49,14 +51,15 @@ class CCUnWrapSectionTest : EduActionTestCase() {
     }
     val section2 = findFile("section2")
     testAction(CCRemoveSection.ACTION_ID, dataContext(arrayOf(section2)))
-    TestCase.assertEquals(3, course.items.size)
+    assertEquals(3, course.items.size)
     val section = course.getSection("section2")
-    TestCase.assertNull(section)
+    assertNull(section)
     for (i in 1..3) {
-      TestCase.assertEquals(i, course.getLesson("lesson$i")!!.index)
+      assertEquals(i, course.getLesson("lesson$i")!!.index)
     }
   }
 
+  @Test
   fun `test with multiple lesson before and after`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
@@ -71,14 +74,15 @@ class CCUnWrapSectionTest : EduActionTestCase() {
     }
     val section2 = findFile("section2")
     testAction(CCRemoveSection.ACTION_ID, dataContext(arrayOf(section2)))
-    TestCase.assertEquals(7, course.items.size)
+    assertEquals(7, course.items.size)
     val section = course.getSection("section2")
-    TestCase.assertNull(section)
+    assertNull(section)
     for (i in 1..7) {
-      TestCase.assertEquals(i, course.getLesson("lesson$i")!!.index)
+      assertEquals(i, course.getLesson("lesson$i")!!.index)
     }
   }
 
+  @Test
   fun `test unwrap lessons tree structure`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
@@ -99,6 +103,7 @@ class CCUnWrapSectionTest : EduActionTestCase() {
     expectedFileTree.assertEquals(LightPlatformTestCase.getSourceRoot())
   }
 
+  @Test
   fun `test course has the same named lesson`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
@@ -111,15 +116,15 @@ class CCUnWrapSectionTest : EduActionTestCase() {
     val section2 = findFile("section2")
     try {
       testAction(CCRemoveSection.ACTION_ID, dataContext(arrayOf(section2)))
-      TestCase.fail("Expected failed to move lesson out message")
+      fail("Expected failed to move lesson out message")
     }
     catch (_: Throwable) {}
 
-    TestCase.assertEquals(3, course.items.size)
+    assertEquals(3, course.items.size)
     val section = course.getSection("section2")
-    TestCase.assertNotNull(section)
-    TestCase.assertEquals(1, course.getLesson("lesson1")!!.index)
-    TestCase.assertEquals(2, course.getSection("section2")!!.index)
-    TestCase.assertEquals(3, course.getLesson("lesson2")!!.index)
+    assertNotNull(section)
+    assertEquals(1, course.getLesson("lesson1")!!.index)
+    assertEquals(2, course.getSection("section2")!!.index)
+    assertEquals(3, course.getLesson("lesson2")!!.index)
   }
 }

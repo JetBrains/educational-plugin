@@ -4,6 +4,7 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.learning.FileTreeBuilder
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.fileTree
+import org.junit.Test
 
 abstract class EduInCourseLinkRenameTestBase(format: DescriptionFormat) : EduTaskDescriptionTestBase(format) {
 
@@ -25,6 +26,7 @@ abstract class EduInCourseLinkRenameTestBase(format: DescriptionFormat) : EduTas
     }
   }
 
+  @Test
   fun `test rename section`() = doTest("section 1", "course://section<caret>1", "course://section 1") {
     dir("lesson1/task1") {
       file("TaskFile1.txt")
@@ -39,6 +41,7 @@ abstract class EduInCourseLinkRenameTestBase(format: DescriptionFormat) : EduTas
     }
   }
 
+  @Test
   fun `test rename lesson`() = doTest("lesson 1", "course://lesson<caret>1", "course://lesson 1") {
     dir("lesson 1/task1") {
       file("TaskFile1.txt")
@@ -53,6 +56,7 @@ abstract class EduInCourseLinkRenameTestBase(format: DescriptionFormat) : EduTas
     }
   }
 
+  @Test
   fun `test rename lesson in section`() = doTest("lesson 2", "course://section1/lesson<caret>2", "course://section1/lesson 2") {
     dir("lesson1/task1") {
       file("TaskFile1.txt")
@@ -67,6 +71,7 @@ abstract class EduInCourseLinkRenameTestBase(format: DescriptionFormat) : EduTas
     }
   }
 
+  @Test
   fun `test rename task`() = doTest("task 1", "course://lesson1/task<caret>1", "course://lesson1/task 1") {
     dir("lesson1/task 1") {
       file("TaskFile1.txt")
@@ -81,6 +86,7 @@ abstract class EduInCourseLinkRenameTestBase(format: DescriptionFormat) : EduTas
     }
   }
 
+  @Test
   fun `test rename task file`() = doTest(
     "TaskFile 1.txt",
     "course://lesson1/task1/TaskFile1<caret>.txt",
@@ -99,6 +105,7 @@ abstract class EduInCourseLinkRenameTestBase(format: DescriptionFormat) : EduTas
     }
   }
 
+  @Test
   fun `test rename task file in directory`() = doTest(
     "TaskFile 2.txt",
     "course://lesson1/task1/foo/bar/TaskFile2<caret>.txt",
@@ -117,6 +124,7 @@ abstract class EduInCourseLinkRenameTestBase(format: DescriptionFormat) : EduTas
     }
   }
 
+  @Test
   fun `test rename item in the middle of link`() = doTest(
     "task 1",
     "course://lesson1/task<caret>1/TaskFile1.txt",

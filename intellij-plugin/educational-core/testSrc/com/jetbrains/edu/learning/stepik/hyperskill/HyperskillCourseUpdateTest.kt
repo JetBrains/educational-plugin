@@ -17,10 +17,12 @@ import com.jetbrains.edu.learning.stepik.hyperskill.update.HyperskillCourseUpdat
 import com.jetbrains.edu.learning.stepik.hyperskill.update.HyperskillCourseUpdater.Companion.shouldBeUpdated
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.update.elements.TaskUpdateInfo
+import org.junit.Test
 import java.util.*
 
 class HyperskillCourseUpdateTest : FrameworkLessonsUpdateTest<HyperskillCourse>() {
 
+  @Test
   fun `test update modified non current task`() {
     createCourseWithFrameworkLessons()
 
@@ -79,6 +81,7 @@ class HyperskillCourseUpdateTest : FrameworkLessonsUpdateTest<HyperskillCourse>(
     }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  @Test
   fun `test update additional files`() {
     createCourseWithFrameworkLessons()
 
@@ -113,6 +116,7 @@ class HyperskillCourseUpdateTest : FrameworkLessonsUpdateTest<HyperskillCourse>(
     }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  @Test
   fun `test task description updated`() {
     createCourseWithFrameworkLessons()
 
@@ -132,6 +136,7 @@ class HyperskillCourseUpdateTest : FrameworkLessonsUpdateTest<HyperskillCourse>(
     assertTrue("Task Description not updated", taskDescription.contains(newDescription))
   }
 
+  @Test
   fun `test coding tasks updated`() {
     val taskFileName = "Task.txt"
     val oldText = "old text"
@@ -172,6 +177,7 @@ class HyperskillCourseUpdateTest : FrameworkLessonsUpdateTest<HyperskillCourse>(
     }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  @Test
   fun `test project with code problems updated`() {
     val taskFileName = "Task.txt"
     val oldText = "old text"
@@ -210,6 +216,7 @@ class HyperskillCourseUpdateTest : FrameworkLessonsUpdateTest<HyperskillCourse>(
     }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  @Test
   fun `test project with edu problems updated`() {
     val taskFileName = "Task.txt"
     val oldText = "old text"
@@ -250,6 +257,7 @@ class HyperskillCourseUpdateTest : FrameworkLessonsUpdateTest<HyperskillCourse>(
     }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  @Test
   fun `test project with data problems updated`() {
     val taskFileName = "Task.txt"
     val oldText = "old text"
@@ -288,6 +296,7 @@ class HyperskillCourseUpdateTest : FrameworkLessonsUpdateTest<HyperskillCourse>(
     }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  @Test
   fun `test project with remote edu problems updated`() {
     val taskFileName = "Task.txt"
     val oldText = "old text"

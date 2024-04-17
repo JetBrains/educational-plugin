@@ -6,9 +6,11 @@ import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.testAction
+import org.junit.Test
 
 class CCCreateSectionTest : EduActionTestCase() {
 
+  @Test
   fun `test create section in course`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -27,6 +29,7 @@ class CCCreateSectionTest : EduActionTestCase() {
     assertEquals(2, section!!.index)
   }
 
+  @Test
   fun `test create section after lesson`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -58,6 +61,7 @@ class CCCreateSectionTest : EduActionTestCase() {
     assertEquals(4, course.getSection("section3")!!.index)
   }
 
+  @Test
   fun `test create section before lesson`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -89,6 +93,7 @@ class CCCreateSectionTest : EduActionTestCase() {
     assertEquals(4, course.getSection("section3")!!.index)
   }
 
+  @Test
   fun `test create section before section`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -120,6 +125,7 @@ class CCCreateSectionTest : EduActionTestCase() {
     assertEquals(4, course.getLesson("lesson2")!!.index)
   }
 
+  @Test
   fun `test create section not available inside lesson`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -132,6 +138,7 @@ class CCCreateSectionTest : EduActionTestCase() {
     testAction(CCCreateSection.ACTION_ID, dataContext(sourceVFile), shouldBeEnabled = false)
   }
 
+  @Test
   fun `test create section after section`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -163,6 +170,7 @@ class CCCreateSectionTest : EduActionTestCase() {
     assertEquals(4, course.getLesson("lesson2")!!.index)
   }
 
+  @Test
   fun `test section creation is not available from inner directories`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -189,6 +197,7 @@ class CCCreateSectionTest : EduActionTestCase() {
     }
   }
 
+  @Test
   fun `test suggest name for new section`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {}

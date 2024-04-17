@@ -8,6 +8,7 @@ import com.jetbrains.python.PythonLanguage
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert
+import org.junit.Test
 
 @Suppress("PyInterpreter", "PyUnresolvedReferences")
 class PyNewTheoryCheckerTest : PyCheckersTestBase() {
@@ -142,6 +143,7 @@ class PyNewTheoryCheckerTest : PyCheckersTestBase() {
     }
   }
 
+  @Test
   fun `test python course`() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       val (statusMatcher, messageMatcher) = when (task.name) {

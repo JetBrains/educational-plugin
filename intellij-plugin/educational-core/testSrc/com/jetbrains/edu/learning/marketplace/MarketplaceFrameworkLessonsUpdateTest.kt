@@ -8,11 +8,12 @@ import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
 import com.jetbrains.edu.learning.stepik.hyperskill.FrameworkLessonsUpdateTest
 import com.jetbrains.edu.learning.testAction
-import junit.framework.TestCase
+import org.junit.Test
 import kotlin.test.assertNotEquals
 
 class MarketplaceFrameworkLessonsUpdateTest : FrameworkLessonsUpdateTest<EduCourse>() {
 
+  @Test
   fun `test check current task index and task record saved`() {
     createCourseWithFrameworkLessons()
 
@@ -69,6 +70,7 @@ class MarketplaceFrameworkLessonsUpdateTest : FrameworkLessonsUpdateTest<EduCour
     }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  @Test
   fun `test non-editable files addition and change update correctly`() {
     val taskNum = 3
     val eduCourse = courseWithFiles(

@@ -3,9 +3,11 @@ package com.jetbrains.edu.python.actions
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholderActionTestBase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.python.PythonLanguage
+import org.junit.Test
 
 class PyAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() {
 
+  @Test
   fun `test placeholder text`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = PythonLanguage.getInstance()) {
       lesson("lesson1") {

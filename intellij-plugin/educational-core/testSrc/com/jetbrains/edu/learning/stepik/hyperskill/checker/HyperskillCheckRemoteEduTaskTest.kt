@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.webSocketConfiguration
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import org.intellij.lang.annotations.Language
+import org.junit.Test
 import java.util.*
 
 class HyperskillCheckRemoteEduTaskTest : HyperskillCheckActionTestBase() {
@@ -28,6 +29,7 @@ class HyperskillCheckRemoteEduTaskTest : HyperskillCheckActionTestBase() {
     }
   }
 
+  @Test
   fun `test successful check via web socket`() {
     configureResponses()
 

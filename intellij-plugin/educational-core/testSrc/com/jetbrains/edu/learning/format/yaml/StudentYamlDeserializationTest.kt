@@ -22,13 +22,14 @@ import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
 import com.jetbrains.edu.learning.yaml.YamlMapper.STUDENT_MAPPER
-import junit.framework.TestCase
 import org.intellij.lang.annotations.Language
+import org.junit.Test
 import java.time.ZonedDateTime
 import java.util.*
 
 class StudentYamlDeserializationTest : EduTestCase() {
 
+  @Test
   fun `test course mode`() {
     val yamlContent = """
       |title: Test Course
@@ -44,6 +45,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(CourseMode.STUDENT, course.courseMode)
   }
 
+  @Test
   fun `test codeforces course`() {
     val endDateTime = ZonedDateTime.parse("2019-08-11T15:35+03:00[Europe/Moscow]")
     val yamlContent = """
@@ -61,6 +63,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(endDateTime.toEpochSecond(), (course as CodeforcesCourse).endDateTime?.toEpochSecond())
   }
 
+  @Test
   fun `test marketplace course type`() {
     val yamlContent = """
       |type: marketplace
@@ -75,6 +78,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertTrue(course is EduCourse)
   }
 
+  @Test
   fun `test checkio station`() {
     val firstTask = "Introduction Task"
     val secondTask = "Advanced Task"
@@ -89,6 +93,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(listOf(firstTask, secondTask), lesson.taskList.map { it.name })
   }
 
+  @Test
   fun `test checkio mission`() {
     val yamlContent = """
     |type: checkiO
@@ -105,6 +110,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(1, task.secondsFromLastChangeOnServer)
   }
 
+  @Test
   fun `test framework lessons`() {
     val yamlContent = """
     |type: framework
@@ -121,6 +127,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
 
   }
 
+  @Test
   fun `test codeforces task`() {
     val feedbackUrl = "https://codeforces.com/contest/1218/problem/A?locale=en"
     val status = CheckStatus.Unchecked
@@ -138,6 +145,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(status, task.status)
   }
 
+  @Test
   fun `test codeforces task with file io`() {
     val taskFileName = "src/Task.kt"
     val taskSolution = "Task solution"
@@ -175,6 +183,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(outputFileName, task.outputFileName)
   }
 
+  @Test
   fun `test task status`() {
     val yamlContent = """
     |type: edu
@@ -185,6 +194,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(CheckStatus.Solved, task.status)
   }
 
+  @Test
   fun `test task with feedback`() {
     val message = "My error message"
     val time = Date(0)
@@ -205,6 +215,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(CheckFeedback(message, time, expected, actual), task.feedback)
   }
 
+  @Test
   fun `test task with incomplete feedback`() {
     val time = Date(0)
     val yamlContent = """
@@ -219,6 +230,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(CheckFeedback("", time), task.feedback)
   }
 
+  @Test
   fun `test selected variants`() {
     val yamlContent = """
     |type: choice
@@ -243,6 +255,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(EduFormatBundle.message("course.creator.create.choice.task.single.label"), task.presentableQuizHeader)
   }
 
+  @Test
   fun `test multiple choice task label`() {
     val yamlContent = """
     |type: choice
@@ -268,6 +281,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(EduFormatBundle.message("course.creator.create.choice.task.multiple.label"), task.presentableQuizHeader)
   }
 
+  @Test
   fun `test can check locally`() {
     val yamlContent = """
     |type: choice
@@ -294,6 +308,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(EduFormatBundle.message("course.creator.create.choice.task.single.label"), task.presentableQuizHeader)
   }
 
+  @Test
   fun `test deserialize choice task with custom messages variants`() {
     val yamlContent = """
     |type: choice
@@ -321,6 +336,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals("You are not good!", task.messageIncorrect)
   }
 
+  @Test
   fun `test deserialize sorting task`() {
     val yamlContent = """
     |type: sorting
@@ -341,6 +357,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(task.options, listOf("first", "second"))
   }
 
+  @Test
   fun `test deserialize matching task`() {
     val yamlContent = """
     |type: matching
@@ -363,6 +380,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(task.options, listOf("first", "second"))
   }
 
+  @Test
   fun `test deserialize table task`() {
     val yamlContent = """
     |type: table
@@ -390,6 +408,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(task.selected.map { it.toList() }.toList(), listOf(listOf(false, true, false), listOf(false, false, true)))
   }
 
+  @Test
   fun `test task record`() {
     val yamlContent = """
     |type: edu
@@ -400,6 +419,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(1, task.record)
   }
 
+  @Test
   fun `test task file text`() {
     val taskFileName = "Task.java"
     val yamlContent = """
@@ -418,6 +438,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertTrue(taskFile.isLearnerCreated)
   }
 
+  @Test
   fun `test placeholder initial state`() {
     val yamlContent = """
     |type: edu
@@ -445,6 +466,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(1, initialState.length)
   }
 
+  @Test
   fun `test placeholder init from dependency`() {
     val yamlContent = """
     |type: edu
@@ -470,6 +492,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(true, placeholder.isInitializedFromDependency)
   }
 
+  @Test
   fun `test placeholder possible answer`() {
     val yamlContent = """
     |type: edu
@@ -494,6 +517,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals("answer", placeholder.possibleAnswer)
   }
 
+  @Test
   fun `test placeholder no possible answer`() {
     val yamlContent = """
     |type: edu
@@ -517,6 +541,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals("", placeholder.possibleAnswer)
   }
 
+  @Test
   fun `test placeholder selected`() {
     val yamlContent = """
     |type: edu
@@ -542,6 +567,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(true, placeholder.selected)
   }
 
+  @Test
   fun `test placeholder status`() {
     val yamlContent = """
     |type: edu
@@ -566,6 +592,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(CheckStatus.Solved, placeholder.status)
   }
 
+  @Test
   fun `test placeholder student answer`() {
     val yamlContent = """
     |type: edu
@@ -590,6 +617,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals("student answer", placeholder.studentAnswer)
   }
 
+  @Test
   fun `test task file editable`() {
     val taskFileName = "Task.java"
     val yamlContent = """
@@ -607,21 +635,25 @@ class StudentYamlDeserializationTest : EduTestCase() {
     val taskFile = task.taskFiles.values.first()
     assertEquals("text", taskFile.text)
     assertTrue(taskFile.isLearnerCreated)
-    TestCase.assertFalse(taskFile.isEditable)
+    assertFalse(taskFile.isEditable)
   }
 
+  @Test
   fun `test code task with java17`() {
     testCodeTaskWithProgrammingLanguage("java17")
   }
 
+  @Test
   fun `test code task with c++`() {
     testCodeTaskWithProgrammingLanguage("c++")
   }
 
+  @Test
   fun `test code task with python3_10`() {
     testCodeTaskWithProgrammingLanguage("python3.10")
   }
 
+  @Test
   fun `test code task with scala`() {
     testCodeTaskWithProgrammingLanguage("scala")
   }
@@ -658,6 +690,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     |""".trimMargin()
   }
 
+  @Test
   fun `test reading binary files from YAML`() {
     val yamlContent = """
     |type: edu
@@ -695,6 +728,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertContentsEqual("d.png", TextualContents.EMPTY, dPng.contents)
   }
 
+  @Test
   fun `test placeholder with invisible dependency`() = doTestPlaceholderAndDependencyVisibility(
     STUDENT_MAPPER.deserializeTask("""
         |type: edu
@@ -719,6 +753,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     """.trimMargin()
     ), expectedPlaceholderVisibility = false)
 
+  @Test
   fun `test invisible placeholder`() = doTestPlaceholderAndDependencyVisibility(
     STUDENT_MAPPER.deserializeTask("""
         |type: edu
@@ -738,6 +773,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     """.trimMargin()
     ), expectedPlaceholderVisibility = false)
 
+  @Test
   fun `test visible placeholder and invisible dependency`() = doTestPlaceholderAndDependencyVisibility(
     STUDENT_MAPPER.deserializeTask("""
         |type: edu

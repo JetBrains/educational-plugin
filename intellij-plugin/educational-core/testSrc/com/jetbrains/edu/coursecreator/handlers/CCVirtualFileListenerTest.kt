@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.handlers.EduVirtualFileListener
 import com.jetbrains.edu.learning.handlers.VirtualFileListenerTestBase
 import com.jetbrains.edu.learning.`in`
 import com.jetbrains.edu.learning.notIn
+import org.junit.Test
 
 class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
 
@@ -18,6 +19,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
 
   override fun createListener(project: Project): EduVirtualFileListener = CCVirtualFileListener(project, testRootDisposable)
 
+  @Test
   fun `test delete task`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -35,11 +37,13 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     assertNull(lesson!!.getTask("task1"))
   }
 
+  @Test
   fun `test add task file`() {
     val filePath = "src/taskFile.txt"
     doAddFileTest(filePath) { task -> listOf(filePath `in` task) }
   }
 
+  @Test
   fun `test add test file`() {
     doAddFileTest("test/${FakeGradleConfigurator.TEST_FILE_NAME}") { task ->
       listOf(("test/${FakeGradleConfigurator.TEST_FILE_NAME}" `in` task).withAdditionalCheck {
@@ -48,11 +52,13 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     }
   }
 
+  @Test
   fun `test add additional file`() {
     val fileName = "additionalFile.txt"
     doAddFileTest(fileName) { task -> listOf(fileName `in` task) }
   }
 
+  @Test
   fun `test add custom run configuration file`() {
     val filePath = "runConfigurations/CustomRun.run.xml"
     doAddFileTest(filePath, "<component name=\"ProjectRunConfigurationManager\"></component>") { task ->
@@ -62,6 +68,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     }
   }
 
+  @Test
   fun `test remove task file`() {
     val filePath = "src/TaskFile.kt"
     doRemoveFileTest("lesson1/task1/$filePath") { course ->
@@ -70,6 +77,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     }
   }
 
+  @Test
   fun `test remove test file`() {
     val filePath = "test/${FakeGradleConfigurator.TEST_FILE_NAME}"
     doRemoveFileTest("lesson1/task1/$filePath") { course ->
@@ -78,6 +86,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     }
   }
 
+  @Test
   fun `test remove additional file`() {
     val fileName = "additionalFile.txt"
     doRemoveFileTest("lesson1/task1/$fileName") { course ->
@@ -86,6 +95,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     }
   }
 
+  @Test
   fun `test remove src folder`() {
     doRemoveFileTest("lesson1/task1/src/packageName") { course ->
       val task = course.findTask("lesson1", "task1")
@@ -96,6 +106,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     }
   }
 
+  @Test
   fun `test remove test folder`() {
     doRemoveFileTest("lesson1/task1/test/packageName") { course ->
       val task = course.findTask("lesson1", "task1")
@@ -106,6 +117,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     }
   }
 
+  @Test
   fun `test remove additional folder`() {
     doRemoveFileTest("lesson1/task1/additional_files") { course ->
       val task = course.findTask("lesson1", "task1")
@@ -117,6 +129,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     }
   }
 
+  @Test
   fun `test rename task file`() {
     doRenameFileTest("lesson1/task1/src/packageName/Task1.kt", "Task3.kt") { course ->
       val task = course.findTask("lesson1", "task1")
@@ -127,6 +140,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     }
   }
 
+  @Test
   fun `test rename directory with task files`() {
     doRenameFileTest("lesson1/task1/src/packageName", "packageName2") { course ->
       val task = course.findTask("lesson1", "task1")
@@ -139,6 +153,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     }
   }
 
+  @Test
   fun `test rename test file`() {
     doRenameFileTest("lesson1/task1/test/packageName/Test1.kt", "Test3.kt") { course ->
       val task = course.findTask("lesson1", "task1")
@@ -149,6 +164,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     }
   }
 
+  @Test
   fun `test rename directory with test files`() {
     doRenameFileTest("lesson1/task1/test/packageName", "packageName2") { course ->
       val task = course.findTask("lesson1", "task1")
@@ -161,6 +177,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     }
   }
 
+  @Test
   fun `test rename additional file`() {
     doRenameFileTest("lesson1/task1/additional_files/additional_file1.txt", "additional_file3.txt") { course ->
       val task = course.findTask("lesson1", "task1")
@@ -171,6 +188,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     }
   }
 
+  @Test
   fun `test rename directory with additional files`() {
     doRenameFileTest("lesson1/task1/additional_files", "additional_files2") { course ->
       val task = course.findTask("lesson1", "task1")
@@ -183,6 +201,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     }
   }
 
+  @Test
   fun `test move task file`() = doMoveTest("lesson1/task1/src/Task1.kt", "lesson1/task1/src/foo") { course ->
     val task = course.findTask("lesson1", "task1")
     listOf(
@@ -191,6 +210,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     )
   }
 
+  @Test
   fun `test move dir with task files`() = doMoveTest("lesson1/task1/src/foo", "lesson1/task1/src/bar") { course ->
     val task = course.findTask("lesson1", "task1")
     listOf(
@@ -202,6 +222,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     )
   }
 
+  @Test
   fun `test move test file`() = doMoveTest("lesson1/task1/test/Tests1.kt", "lesson1/task1/test/foo") { course ->
     val task = course.findTask("lesson1", "task1")
     listOf(
@@ -210,6 +231,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     )
   }
 
+  @Test
   fun `test move dir with tests`() = doMoveTest("lesson1/task1/test/foo", "lesson1/task1/test/bar") { course ->
     val task = course.findTask("lesson1", "task1")
     listOf(
@@ -221,6 +243,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     )
   }
 
+  @Test
   fun `test move additional file 1`() = doMoveTest("lesson1/task1/additional_file1.txt", "lesson1/task1/foo") { course ->
     val task = course.findTask("lesson1", "task1")
     listOf(
@@ -229,6 +252,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     )
   }
 
+  @Test
   fun `test move additional file 2`() = doMoveTest("lesson1/task1/foo/additional_file2.txt", "lesson1/task1") { course ->
     val task = course.findTask("lesson1", "task1")
     listOf(
@@ -237,6 +261,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     )
   }
 
+  @Test
   fun `test move dir with additional files`() = doMoveTest("lesson1/task1/foo", "lesson1/task1/bar") { course ->
     val task = course.findTask("lesson1", "task1")
     listOf(
@@ -248,6 +273,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     )
   }
 
+  @Test
   fun `test move additional file into test folder`() = doMoveTest("lesson1/task1/additional_file1.txt", "lesson1/task1/test") { course ->
     val task = course.findTask("lesson1", "task1")
     listOf(
@@ -256,6 +282,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     )
   }
 
+  @Test
   fun `test move test package into src folder`() = doMoveTest("lesson1/task1/test/bar", "lesson1/task1/src/foo") { course ->
     val task = course.findTask("lesson1", "task1")
     listOf(
@@ -266,11 +293,13 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     )
   }
 
+  @Test
   fun `test move non course file as src file`() = doMoveTest("non_course_dir/non_course_file1.txt", "lesson1/task1/src") { course ->
     val task = course.findTask("lesson1", "task1")
     listOf("src/non_course_file1.txt" `in` task)
   }
 
+  @Test
   fun `test move non course file as test file`() = doMoveTest("non_course_dir/non_course_file1.txt", "lesson1/task1/test") { course ->
     val task = course.findTask("lesson1", "task1")
     listOf(("test/non_course_file1.txt" `in` task).withAdditionalCheck {
@@ -278,11 +307,13 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     })
   }
 
+  @Test
   fun `test move non course file as additional file`() = doMoveTest("non_course_dir/non_course_file1.txt", "lesson1/task1") { course ->
     val task = course.findTask("lesson1", "task1")
     listOf("non_course_file1.txt" `in` task)
   }
 
+  @Test
   fun `test move non course folder to src folder`() = doMoveTest("non_course_dir", "lesson1/task1/src") { course ->
     val task = course.findTask("lesson1", "task1")
     listOf(
@@ -291,6 +322,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     )
   }
 
+  @Test
   fun `test move non course folder to test folder`() = doMoveTest("non_course_dir", "lesson1/task1/test") { course ->
     val task = course.findTask("lesson1", "task1")
     listOf(
@@ -299,6 +331,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     )
   }
 
+  @Test
   fun `test move non course folder to task root folder`() = doMoveTest("non_course_dir", "lesson1/task1") { course ->
     val task = course.findTask("lesson1", "task1")
     listOf(
@@ -307,6 +340,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     )
   }
 
+  @Test
   fun `test copy task between lessons EDU-2796`() =
     doCopyFileTest("lesson1/task1", "lesson2", "task1copy") { course ->
       val task1copy = course.findTask("lesson2", "task1copy")
@@ -319,6 +353,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
       )
     }
 
+  @Test
   fun `test copy lesson from course to inside a sections`() =
     doCopyFileTest("lesson1", "section1", "lesson1copy") { course ->
       val task3 = course.getSection("section1")?.getLesson("lesson1copy")?.getTask("task3") ?: error("there is no task3")
@@ -331,6 +366,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
       )
     }
 
+  @Test
   fun `test copy lessons between sections`() =
     doCopyFileTest("section1/lesson1", "section2", "lesson1copy") { course ->
       val lesson1copy = course.getSection("section2")?.getLesson("lesson1copy") ?: error("there is no lesson1copy")
@@ -344,6 +380,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
       )
     }
 
+  @Test
   fun `test copy lesson from course to section`() =
     doCopyFileTest("lesson1", "section1", "lesson1copy") { course ->
       val lesson1copy = course.getSection("section1")?.getLesson("lesson1copy") ?: error("there is no lesson1copy")
@@ -357,6 +394,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
       )
     }
 
+  @Test
   fun `test copy lesson from section to course`() =
     doCopyFileTest("section1/lesson1", "", "lesson1copy") { course ->
       val lesson1copy = course.getLesson("lesson1copy") ?: error("there is no lesson1copy")
@@ -370,6 +408,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
       )
     }
 
+  @Test
   fun `test copy sections`() =
     doCopyFileTest("section1", "", "section1copy") { course ->
       val lesson1 = course.getSection("section1copy")?.getLesson("lesson1") ?: error("there is no lesson1")
@@ -383,6 +422,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
       )
     }
 
+  @Test
   fun `test copy pasted files are included into yaml EDU-5191`() {
     doCopyFileTest("lesson1/task1/additional_file1.txt", "lesson1/task1", "additional_file1copy.txt") { course ->
       val task1 = course.findTask("lesson1", "task1")
@@ -394,6 +434,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     }
   }
 
+  @Test
   fun `test files copied from the other task are included into yaml`() {
     doCopyFileTest("lesson1/task1/foo", "section1/lesson2/task2", "foo-copy") { course ->
       val task = course.getSection("section1")?.getLesson("lesson2")?.getTask("task2") ?: error("there is no lesson1")
@@ -426,27 +467,35 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     assertEquals(itemsListBefore.map {it.itemType}, itemsListAfter.map {it.itemType})
   }
 
+  @Test
   fun `test number of items do not change when copy task inside task`() =
     doTestNumberOfItemsDidNotChange("lesson1/task1", "lesson1/task2")
 
+  @Test
   fun `test number of items do not change when copy lesson inside task`() =
     doTestNumberOfItemsDidNotChange("lesson1", "lesson2/task2")
 
+  @Test
   fun `test number of items do not change when copy section inside task`() =
     doTestNumberOfItemsDidNotChange("section1", "lesson1/task2")
 
+  @Test
   fun `test number of items do not change when copy lesson inside lesson`() =
     doTestNumberOfItemsDidNotChange("lesson1", "lesson2")
 
+  @Test
   fun `test number of items do not change when copy section inside lesson`() =
     doTestNumberOfItemsDidNotChange("section1", "lesson1")
 
+  @Test
   fun `test number of items do not change when copy section inside lesson (2)`() =
     doTestNumberOfItemsDidNotChange("section1", "section2/lesson1")
 
+  @Test
   fun `test number of items do not change when copy task inside section`() =
     doTestNumberOfItemsDidNotChange("lesson1/task1", "section1")
 
+  @Test
   fun `test number of items do not change when copy section inside section`() =
     doTestNumberOfItemsDidNotChange("section1", "section2")
 }

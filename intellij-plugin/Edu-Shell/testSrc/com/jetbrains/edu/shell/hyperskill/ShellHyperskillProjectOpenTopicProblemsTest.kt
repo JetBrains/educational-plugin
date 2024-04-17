@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjec
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.StepInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.TopicInfo
 import com.jetbrains.edu.shell.ShellConfigurator.Companion.TASK_SH
+import org.junit.Test
 
 class ShellHyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase() {
   override fun getTestDataPath(): String = "testData/hyperskill/"
@@ -22,6 +23,7 @@ class ShellHyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestB
     configureMockResponsesForProblems()
   }
 
+  @Test
   fun `test open code problem in project`() {
     mockProjectOpener.open(
       HyperskillOpenInIdeRequestHandler,

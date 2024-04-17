@@ -5,11 +5,14 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.intellij.lang.annotations.Language
+import org.junit.Test
 
 class TaskDescriptionMarkdownTest : EduTestCase() {
 
+  @Test
   fun `test plain text`() = doTest("solve task", "<body><p>solve task</p></body>")
 
+  @Test
   fun `test template text`() = doTest("""
     This is the markdown document.
 
@@ -25,6 +28,7 @@ class TaskDescriptionMarkdownTest : EduTestCase() {
     </body>
   """)
 
+  @Test
   fun `test text with header`() = doTest("""
     # This is the markdown document.
 
@@ -40,6 +44,7 @@ class TaskDescriptionMarkdownTest : EduTestCase() {
     </body>
   """)
 
+  @Test
   fun `test text with links`() = doTest("""
     [file_link](file://lesson1/task1/Task.txt)
     [course_file_link](course://lesson1/task1/Task.txt)

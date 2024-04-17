@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.yaml.checkConfigsExistAndNotEmpty
+import org.junit.Test
 
 class YamlGeneratorTest : CourseGenerationTestBase<EmptyProjectSettings>() {
   override val defaultSettings: EmptyProjectSettings = EmptyProjectSettings
@@ -25,6 +26,7 @@ class YamlGeneratorTest : CourseGenerationTestBase<EmptyProjectSettings>() {
     runWriteAction { FileTypeManager.getInstance().associateExtension(PlainTextFileType.INSTANCE, "yaml") }
   }
 
+  @Test
   fun `test create yaml files for new project`() {
     // project is created inside `createCourseStructure`, where also config files created
     // so we have to set this flag after project is created, but before config files creation

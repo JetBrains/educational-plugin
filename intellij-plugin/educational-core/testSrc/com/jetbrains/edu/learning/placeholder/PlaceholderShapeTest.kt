@@ -5,20 +5,24 @@ import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.testFramework.EditorTestUtil
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import org.junit.Test
 import java.awt.Point
 
 class PlaceholderShapeTest : EduTestCase() {
 
+  @Test
   fun `test inline placeholder`() {
     checkRectangular("""
     |This is <placeholder>one line </placeholder> placeholder
     """, LogicalPosition(0, 8), LogicalPosition(0, 17))
   }
 
+  @Test
   fun `test inline placeholder with tabs`() {
     checkRectangular("\t\t1 <placeholder>23</placeholder> 4", LogicalPosition(0, 10), LogicalPosition(0, 12))
   }
 
+  @Test
   fun `test multi line rectangle`() {
     checkRectangular("""
     |def f():
@@ -30,6 +34,7 @@ class PlaceholderShapeTest : EduTestCase() {
     """, LogicalPosition(1, 0), LogicalPosition(3, 8))
   }
 
+  @Test
   fun `test last line longer`() {
     checkRectangular("""
       |<placeholder>test
@@ -38,6 +43,7 @@ class PlaceholderShapeTest : EduTestCase() {
     """, LogicalPosition(0, 0), LogicalPosition(2, 12))
   }
 
+  @Test
   fun `test first line longer`() {
     checkRectangular("""
       |<placeholder>testtesttest
@@ -46,6 +52,7 @@ class PlaceholderShapeTest : EduTestCase() {
     """, LogicalPosition(0, 0), LogicalPosition(2, 12))
   }
 
+  @Test
   fun `test one empty line`() {
     val expected = listOf(LogicalPositionInLine(0, 28),
                           LogicalPositionInLine(0, 28),
@@ -59,6 +66,7 @@ class PlaceholderShapeTest : EduTestCase() {
     """, expected)
   }
 
+  @Test
   fun `test with left margin`() {
     val expected = listOf(LogicalPositionInLine(0, 2),
                           LogicalPositionInLine(0, 4),
@@ -72,6 +80,7 @@ class PlaceholderShapeTest : EduTestCase() {
     """, expected)
   }
 
+  @Test
   fun `test with right margin`() {
     val expected = listOf(LogicalPositionInLine(0, 0),
                           LogicalPositionInLine(0, 2),
@@ -83,6 +92,7 @@ class PlaceholderShapeTest : EduTestCase() {
     """, expected)
   }
 
+  @Test
   fun `test complex shape`() {
     val expected = listOf(LogicalPositionInLine(0, 2),
                           LogicalPositionInLine(0, 4),
@@ -98,6 +108,7 @@ class PlaceholderShapeTest : EduTestCase() {
       """, expected)
   }
 
+  @Test
   fun `test right rectangular`() {
     val expected = listOf(LogicalPositionInLine(0, 57),
                           LogicalPositionInLine(0, 68),
@@ -112,6 +123,7 @@ class PlaceholderShapeTest : EduTestCase() {
     """, expected)
   }
 
+  @Test
   fun `test left rectangular`() {
     val expected = listOf(LogicalPositionInLine(0, 0),
                           LogicalPositionInLine(0, 11),
@@ -126,6 +138,7 @@ class PlaceholderShapeTest : EduTestCase() {
     """, expected)
   }
 
+  @Test
   fun `test soft wrap`() {
     val text = """
       |<placeholder>test test test
@@ -146,6 +159,7 @@ class PlaceholderShapeTest : EduTestCase() {
     checkPointsCyclically(expected, placeholderShape.points)
   }
 
+  @Test
   fun `test soft wrap last line`() {
     val text = """
       |<placeholder>exam

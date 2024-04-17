@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.pathWithoutPrams
 import com.jetbrains.edu.learning.stepik.StepikTestUtils.format
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import org.intellij.lang.annotations.Language
+import org.junit.Test
 import java.util.*
 
 class HyperskillCheckChoiceTaskTest : HyperskillCheckActionTestBase() {
@@ -47,6 +48,7 @@ class HyperskillCheckChoiceTaskTest : HyperskillCheckActionTestBase() {
     }
   }
 
+  @Test
   fun `test choice task correct`() {
     mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
       MockResponseFactory.fromString(
@@ -63,6 +65,7 @@ class HyperskillCheckChoiceTaskTest : HyperskillCheckActionTestBase() {
   }
 
 
+  @Test
   fun `test choice task incorrect`() {
     mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
       MockResponseFactory.fromString(
@@ -79,6 +82,7 @@ class HyperskillCheckChoiceTaskTest : HyperskillCheckActionTestBase() {
     checkCheckAction(task, CheckStatus.Failed, "Wrong solution")
   }
 
+  @Test
   fun `test choice task nothing selected`() {
     val task = getCourse().allTasks[1]
     checkCheckAction(task, CheckStatus.Failed, EduCoreBundle.message("choice.task.empty.variant"))

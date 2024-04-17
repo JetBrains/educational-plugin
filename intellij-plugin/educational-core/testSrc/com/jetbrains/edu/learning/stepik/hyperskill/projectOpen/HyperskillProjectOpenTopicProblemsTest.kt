@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillO
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepWithProjectRequest
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.StepInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.TopicInfo
+import org.junit.Test
 
 
 class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase() {
@@ -31,6 +32,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     configureMockResponsesForProblems()
   }
 
+  @Test
   fun `test open code problem in project`() {
     mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepWithProjectRequest(1, step2640.id, "TEXT"))
     val fileTree = fileTree {
@@ -66,6 +68,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  @Test
   fun `test open edu problem`() {
     mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepWithProjectRequest(1, step10960.id, "TEXT"))
     val fileTree = fileTree {
@@ -127,6 +130,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  @Test
   fun `test open dataset problem without samples`() {
     mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepWithProjectRequest(1, step14259.id, "TEXT"))
     val fileTree = fileTree {
@@ -150,6 +154,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  @Test
   fun `test open dataset problem with samples`() {
     mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepWithProjectRequest(1, step12164.id, "TEXT"))
     val fileTree = fileTree {
@@ -174,6 +179,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  @Test
   fun `test open non dataset problem with language chosen by user`() {
     val request = HyperskillOpenStepWithProjectRequest(1, step10960.id, "TEXT", true)
     assertThrows(IllegalStateException::class.java) {
@@ -181,6 +187,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     }
   }
 
+  @Test
   fun `test open problem with same topic in existing problems project`() {
     // set up existing project
     hyperskillCourseWithFiles(name = getProblemsProjectName("TEXT"), language = PlainTextLanguage.INSTANCE) {
@@ -232,6 +239,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  @Test
   fun `test open problem with different topic in existing problems project`() {
     // set up existing project
     hyperskillCourseWithFiles(name = getProblemsProjectName("TEXT"), language = PlainTextLanguage.INSTANCE) {
@@ -284,6 +292,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  @Test
   fun `test open problem in existing project with stages`() {
     // set up existing project
     hyperskillCourseWithFiles {
@@ -364,6 +373,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  @Test
   fun `test open problem in existing project with stages and problems with same topic`() {
     // set up existing project
     hyperskillCourseWithFiles {
@@ -456,6 +466,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  @Test
   fun `test open problem in existing project with stages and problems with different topic`() {
     // set up existing project
     hyperskillCourseWithFiles {
@@ -556,6 +567,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  @Test
   fun `test open problem in existing project with legacy code problems`() {
     // set up existing project
     hyperskillCourseWithFiles {
@@ -621,6 +633,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  @Test
   fun `test open problem in existing project with stages and legacy code problems`() {
     // set up existing project
     hyperskillCourseWithFiles {
@@ -713,6 +726,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
   }
 
 
+  @Test
   fun `test open code problem without selected project in new project`() {
     mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(step2640.id, FakeGradleBasedLanguage.id))
     val fileTree = fileTree {
@@ -760,6 +774,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  @Test
   fun `test open non dataset problem with language chosen by user without selected project`() {
     val request = HyperskillOpenStepRequest(step10960.id, FakeGradleBasedLanguage.id, true)
     assertThrows(IllegalStateException::class.java) {
@@ -767,6 +782,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     }
   }
 
+  @Test
   fun `test open code problem without selected project in existing project`() {
     // set up existing project
     hyperskillCourseWithFiles {
@@ -820,6 +836,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  @Test
   fun `test unknown language`() {
     val unknownLanguage = "Unknown language"
     doLanguageValidationTest(unknownLanguage) {
@@ -827,12 +844,14 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     }
   }
 
+  @Test
   fun `test language supported with plugin`() {
     doLanguageValidationTest("python") {
       assertTrue("actual: $it", it is PluginsRequired)
     }
   }
 
+  @Test
   fun `test language not supported in IDE`() {
     val unsupportedLanguage = "Unsupported"
     doLanguageValidationTest(unsupportedLanguage) {

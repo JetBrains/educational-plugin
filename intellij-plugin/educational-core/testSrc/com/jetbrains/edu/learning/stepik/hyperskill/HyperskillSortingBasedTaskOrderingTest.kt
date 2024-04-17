@@ -2,14 +2,17 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
+import org.junit.Test
 
 class HyperskillSortingBasedTaskOrderingTest : EduTestCase() {
+  @Test
   fun `test initial ordering in sorting based tasks`() {
     val task = SortingTask()
     task.options = listOf("A", "B", "C")
     assertEquals(listOf(0, 1, 2), task.ordering.toList())
   }
 
+  @Test
   fun `test get ordered options`() {
     val task = SortingTask()
     task.options = listOf("A", "B", "C")
@@ -17,6 +20,7 @@ class HyperskillSortingBasedTaskOrderingTest : EduTestCase() {
     assertEquals(listOf("B", "C", "A"), task.getOrderedOptions())
   }
 
+  @Test
   fun `test swap options`() {
     val task = SortingTask()
     task.options = listOf("A", "B", "C")
@@ -28,6 +32,7 @@ class HyperskillSortingBasedTaskOrderingTest : EduTestCase() {
     assertEquals(listOf("B", "C", "A"), task.getOrderedOptions())
   }
 
+  @Test
   fun `test move up`() {
     val task = SortingTask()
     task.options = listOf("A", "B", "C")
@@ -39,6 +44,7 @@ class HyperskillSortingBasedTaskOrderingTest : EduTestCase() {
     assertEquals(listOf("B", "C", "A"), task.getOrderedOptions())
   }
 
+  @Test
   fun `test move down`() {
     val task = SortingTask()
     task.options = listOf("A", "B", "C")
@@ -50,6 +56,7 @@ class HyperskillSortingBasedTaskOrderingTest : EduTestCase() {
     assertEquals(listOf("C", "A", "B"), task.getOrderedOptions())
   }
 
+  @Test
   fun `test move up out of bounds`() {
     val task = SortingTask()
     task.options = listOf("A", "B", "C")
@@ -58,6 +65,7 @@ class HyperskillSortingBasedTaskOrderingTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test move down out of bounds`() {
     val task = SortingTask()
     task.options = listOf("A", "B", "C")
@@ -66,6 +74,7 @@ class HyperskillSortingBasedTaskOrderingTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test restore initial ordering`() {
     val task = SortingTask()
     task.options = listOf("A", "B", "C")

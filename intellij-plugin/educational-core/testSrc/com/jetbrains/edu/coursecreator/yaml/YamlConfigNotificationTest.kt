@@ -10,9 +10,11 @@ import com.jetbrains.edu.learning.yaml.YamlConfigNotificationProvider
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.yaml.YamlLoader
+import org.junit.Test
 
 class YamlConfigNotificationTest : NotificationsTestBase() {
 
+  @Test
   fun `test correct config`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR, createYamlConfigs = true) {
       lesson {
@@ -24,6 +26,7 @@ class YamlConfigNotificationTest : NotificationsTestBase() {
     checkNoEditorNotification<YamlConfigNotificationProvider>(configFile)
   }
 
+  @Test
   fun `test invalid config`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR, createYamlConfigs = true) {
       lesson {
@@ -41,6 +44,7 @@ class YamlConfigNotificationTest : NotificationsTestBase() {
     )
   }
 
+  @Test
   fun `test several invalid configs`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR, createYamlConfigs = true) {
       lesson {
@@ -67,6 +71,7 @@ class YamlConfigNotificationTest : NotificationsTestBase() {
     )
   }
 
+  @Test
   fun `test do not show yaml loading error in non config file`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR, createYamlConfigs = true) {
       lesson {

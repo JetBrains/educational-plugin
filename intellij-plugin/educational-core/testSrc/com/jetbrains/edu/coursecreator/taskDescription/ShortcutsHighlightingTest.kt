@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.taskToolWindow.toShortcut
+import org.junit.Test
 
 class ShortcutsHighlightingTest : EduTestCase() {
   override fun setUp() {
@@ -14,10 +15,12 @@ class ShortcutsHighlightingTest : EduTestCase() {
     myFixture.enableInspections(listOf(CheckDtdReferencesInspection::class.java))
   }
 
+  @Test
   fun `test unresolved shortcut in html not highlighted`() {
     doTest(DescriptionFormat.HTML)
   }
 
+  @Test
   fun `test unresolved shortcut in md not highlighted`() {
     doTest(DescriptionFormat.MD)
   }

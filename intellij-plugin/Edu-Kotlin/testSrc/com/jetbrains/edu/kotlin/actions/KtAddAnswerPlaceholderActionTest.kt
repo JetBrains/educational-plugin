@@ -3,9 +3,11 @@ package com.jetbrains.edu.kotlin.actions
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholderActionTestBase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.junit.Test
 
 class KtAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() {
 
+  @Test
   fun `test placeholder text`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = KotlinLanguage.INSTANCE) {
       lesson("lesson1") {

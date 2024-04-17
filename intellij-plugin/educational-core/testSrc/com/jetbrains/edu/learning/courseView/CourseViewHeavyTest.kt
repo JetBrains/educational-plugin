@@ -10,11 +10,13 @@ import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import com.jetbrains.edu.learning.projectView.CourseViewPane
+import org.junit.Test
 import javax.swing.JTree
 
 class CourseViewHeavyTest : CourseViewHeavyTestBase() {
   override val defaultSettings: EmptyProjectSettings = EmptyProjectSettings
 
+  @Test
   fun testProjectOpened() {
     val projectView = createCourseAndChangeView()
 
@@ -35,6 +37,7 @@ class CourseViewHeavyTest : CourseViewHeavyTestBase() {
     """.trimIndent())
   }
 
+  @Test
   fun testExpandAfterNavigation() {
     // https://youtrack.jetbrains.com/issue/EDU-5367
     if (ApplicationInfo.getInstance().build >= BUILD_223) {
@@ -60,6 +63,7 @@ class CourseViewHeavyTest : CourseViewHeavyTestBase() {
     """.trimIndent())
   }
 
+  @Test
   fun testSwitchingPane() {
     val projectView = createCourseAndChangeView()
     assertEquals(CourseViewPane.ID, projectView.currentViewId)

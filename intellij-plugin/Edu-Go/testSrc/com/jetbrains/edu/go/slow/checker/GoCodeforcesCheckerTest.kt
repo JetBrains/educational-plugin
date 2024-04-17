@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.nullValue
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Test
 
 class GoCodeforcesCheckerTest : GoCheckersTestBase() {
   override fun createCourse(): Course {
@@ -71,6 +72,7 @@ class GoCodeforcesCheckerTest : GoCheckersTestBase() {
     }
   }
 
+  @Test
   fun `test Codeforces go course`() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       val matcher = when (task.name) {

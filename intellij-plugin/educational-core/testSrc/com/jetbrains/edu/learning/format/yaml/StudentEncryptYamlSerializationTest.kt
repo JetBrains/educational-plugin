@@ -9,9 +9,11 @@ import com.jetbrains.edu.learning.json.encrypt.AES256
 import com.jetbrains.edu.learning.json.encrypt.EncryptionModule
 import com.jetbrains.edu.learning.json.encrypt.TEST_AES_KEY
 import com.jetbrains.edu.learning.yaml.YamlMapper
+import org.junit.Test
 
 class StudentEncryptYamlSerializationTest : EduTestCase() {
 
+  @Test
   fun `test task with task files`() {
     val task = courseWithFiles {
       lesson {
@@ -33,6 +35,7 @@ class StudentEncryptYamlSerializationTest : EduTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test edu task in student mode with encrypted text`() {
     val task = course(courseMode = CourseMode.STUDENT) {
       lesson {
@@ -65,6 +68,7 @@ class StudentEncryptYamlSerializationTest : EduTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test task with placeholders`() {
     val taskSolution = "42 is the answer"
     val possibleAnswer = "answer"
@@ -103,6 +107,7 @@ class StudentEncryptYamlSerializationTest : EduTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test learner created`() {
     val task = courseWithFiles {
       lesson {
@@ -125,6 +130,7 @@ class StudentEncryptYamlSerializationTest : EduTestCase() {
     |""".trimMargin())
   }
 
+  @Test
   fun `test no text for invisible task file`() {
     val task = courseWithFiles {
       lesson {

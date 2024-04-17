@@ -3,11 +3,13 @@ package com.jetbrains.edu.kotlin.taskDescription
 import com.intellij.lang.Language
 import com.jetbrains.edu.learning.taskToolWindow.TaskDescriptionHighlightingTestBase
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.junit.Test
 
 class KtTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
 
   override val language: Language = KotlinLanguage.INSTANCE
 
+  @Test
   fun `test markdown description highlighting`() = doMarkdownTest("""
     Code block with default language:
     ```
@@ -45,6 +47,7 @@ class KtTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() 
     </html>
   """)
 
+  @Test
   fun `test html description highlighting`() = doHtmlTest("""
     <html>
     <p>Code block with default language:</p>

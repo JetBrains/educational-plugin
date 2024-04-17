@@ -2,24 +2,30 @@ package com.jetbrains.edu.learning.codeforces
 
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
+import org.junit.Test
 
 class CodeforcesChooseFileForRunConfigurationTest : EduActionTestCase() {
+  @Test
   fun `test first test set is selected`() {
     doTest(selectedFileName = "$TASK1/$TEST_DATA1", folderForDebug = "$TASK1/$TEST_DATA1/$INPUT")
   }
 
+  @Test
   fun `test second test set is selected`() {
     doTest(selectedFileName = "$TASK1/$TEST_DATA2/$OUTPUT", folderForDebug = "$TASK1/$TEST_DATA2/$INPUT")
   }
 
+  @Test
   fun `test test data root is selected with the only valid test set`() {
     doTest(selectedFileName = "$TASK2/${CodeforcesNames.TEST_DATA_FOLDER}", folderForDebug = "$TASK2/$TEST_DATA1/$INPUT")
   }
 
+  @Test
   fun `test invalid selection, broken test set is selected`() {
     doTest("$TASK2/$TEST_DATA2")
   }
 
+  @Test
   fun `test invalid selection, task root is selected`() {
     doTest(TASK2)
   }

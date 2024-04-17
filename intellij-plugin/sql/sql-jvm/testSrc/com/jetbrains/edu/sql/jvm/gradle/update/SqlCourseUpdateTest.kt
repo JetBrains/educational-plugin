@@ -10,11 +10,13 @@ import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
 import com.jetbrains.edu.sql.jvm.gradle.SqlCourseGenerationTestBase
 import com.jetbrains.edu.sql.jvm.gradle.SqlGradleCourseBuilder.Companion.INIT_SQL
 import com.jetbrains.edu.sql.jvm.gradle.sqlCourse
+import org.junit.Test
 import java.util.*
 
 class SqlCourseUpdateTest : SqlCourseGenerationTestBase() {
 
   @Suppress("SqlDialectInspection")
+  @Test
   fun `test data sources after course update`() {
     val course = sqlCourse {
       lesson("lesson1", id = 1) {
@@ -77,6 +79,7 @@ class SqlCourseUpdateTest : SqlCourseGenerationTestBase() {
   }
 
   @Suppress("SqlDialectInspection")
+  @Test
   fun `test database view after course update`() {
     val course = sqlCourse {
       lesson("lesson1", id = 1) {

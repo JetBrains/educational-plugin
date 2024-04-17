@@ -2,12 +2,14 @@ package com.jetbrains.edu.rust.actions
 
 import com.intellij.lang.Language
 import com.jetbrains.edu.coursecreator.actions.create.CCNewTaskStructureTestBase
+import org.junit.Test
 import org.rust.lang.RsLanguage
 
 class RsNewTaskStructureTest : CCNewTaskStructureTestBase() {
 
   override val language: Language get() = RsLanguage
 
+  @Test
   fun `test create edu task`() = checkEduTaskCreation(
     fullTaskStructure = {
       file("task.md")
@@ -28,6 +30,7 @@ class RsNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create output task`() = checkOutputTaskCreation(
     fullTaskStructure = {
       file("task.md")
@@ -49,6 +52,7 @@ class RsNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create theory task`() = checkTheoryTaskCreation(
     fullTaskStructure = {
       file("task.md")
@@ -62,6 +66,7 @@ class RsNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create IDE task`() = checkIdeTaskCreation(
     fullTaskStructure = {
       file("task.md")
@@ -75,6 +80,7 @@ class RsNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create choice task`() = checkChoiceTaskCreation(
     fullTaskStructure = {
       file("task.md")

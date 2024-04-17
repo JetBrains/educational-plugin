@@ -1,9 +1,11 @@
 package com.jetbrains.edu.learning.codeforces
 
 import com.jetbrains.edu.learning.EduSettingsServiceTestBase
+import org.junit.Test
 
 class CodeforcesSettingsTest : EduSettingsServiceTestBase() {
 
+  @Test
   fun `test serialization`() {
     val settings = CodeforcesSettings()
     settings.loadStateAndCheck("""

@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.junit.Test
 
 class KtCheckersTest : JdkCheckerTestBase() {
 
@@ -172,6 +173,7 @@ class KtCheckersTest : JdkCheckerTestBase() {
     }
   }
 
+  @Test
   fun `test kotlin course`() {
     CheckActionListener.expectedMessage { task ->
       when (task) {

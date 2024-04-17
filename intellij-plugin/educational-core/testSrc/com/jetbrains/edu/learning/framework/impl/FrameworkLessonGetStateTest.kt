@@ -8,9 +8,11 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.testAction
+import org.junit.Test
 
 class FrameworkLessonGetTaskStateTest : EduTestCase() {
 
+  @Test
   fun `test getTaskState returns correct text for non-current task`() {
     val course = createFrameworkCourse()
     val lesson = course.lessons.first() as FrameworkLesson
@@ -36,6 +38,7 @@ class FrameworkLessonGetTaskStateTest : EduTestCase() {
     assertEquals(expectedState, actualState)
   }
 
+  @Test
   fun `test getTaskState returns correct text in current task`() {
     val course = createFrameworkCourse()
     val lesson = course.lessons.first() as FrameworkLesson
@@ -63,6 +66,7 @@ class FrameworkLessonGetTaskStateTest : EduTestCase() {
     assertEquals(expectedState, actualState)
   }
 
+  @Test
   fun `test getTaskState throws exception when given task is not a part of given lesson`() {
     val course = createFrameworkCourse()
     val lesson = course.lessons.first() as FrameworkLesson

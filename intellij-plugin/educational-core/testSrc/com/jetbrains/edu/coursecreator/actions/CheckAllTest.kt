@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import org.junit.Test
 
 class CheckAllTest : EduActionTestCase() {
   private lateinit var connection: MessageBusConnection
@@ -22,6 +23,7 @@ class CheckAllTest : EduActionTestCase() {
     connection = project.messageBus.connect(testRootDisposable)
   }
 
+  @Test
   fun `test all solved`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -38,6 +40,7 @@ class CheckAllTest : EduActionTestCase() {
     }
   }
 
+  @Test
   fun `test failed tasks`() {
     val taskName = "Failed Task"
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
@@ -56,6 +59,7 @@ class CheckAllTest : EduActionTestCase() {
     }
   }
 
+  @Test
   fun `test tasks with different statuses`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -81,6 +85,7 @@ class CheckAllTest : EduActionTestCase() {
     }
   }
 
+  @Test
   fun `test disabled in student mode`() {
     courseWithFiles {
       lesson {
@@ -92,6 +97,7 @@ class CheckAllTest : EduActionTestCase() {
     testAction(CCCheckAllTasksAction.ACTION_ID, dataContext(emptyArray()), shouldBeEnabled = false)
   }
 
+  @Test
   fun `test check tasks with one data context`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson { createLessonContent() }   // 2 tasks
@@ -119,6 +125,7 @@ class CheckAllTest : EduActionTestCase() {
     }
   }
 
+  @Test
   fun `test check tasks with multiple data context`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section { createSectionContent() }  // 4 tasks
@@ -159,6 +166,7 @@ class CheckAllTest : EduActionTestCase() {
     }
   }
 
+  @Test
   fun `test skipping blank choice tasks during checking all tasks`() {
     val choiceOptions1 = mapOf("Correct" to ChoiceOptionStatus.CORRECT, "Incorrect" to ChoiceOptionStatus.INCORRECT)
     val choiceOptions2 = mapOf("0" to ChoiceOptionStatus.CORRECT, "1" to ChoiceOptionStatus.INCORRECT, "2" to ChoiceOptionStatus.CORRECT)

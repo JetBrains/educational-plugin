@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillO
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepWithProjectRequest
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.StepInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.TopicInfo
+import org.junit.Test
 
 class HyperskillProblemLoadingTest : EduTestCase() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
@@ -36,9 +37,13 @@ class HyperskillProblemLoadingTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test load step with hidden header and footer`() = doTest("steps_response_header_footer.json", shouldDisableHighlight = true)
+  @Test
   fun `test load step with hidden header`() = doTest("steps_response_header.json", shouldDisableHighlight = true)
+  @Test
   fun `test load step with hidden footer`() = doTest("steps_response_footer.json", shouldDisableHighlight = true)
+  @Test
   fun `test load step without hidden header or footer`() = doTest("steps_response_no_header_footer.json", shouldDisableHighlight = false)
 
   private fun doTest(responseFileName: String, shouldDisableHighlight: Boolean) {

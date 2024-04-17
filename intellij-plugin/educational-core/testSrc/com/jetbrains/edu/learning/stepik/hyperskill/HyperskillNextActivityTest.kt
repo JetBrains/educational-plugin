@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.StepInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.TopicInfo
+import org.junit.Test
 
 class HyperskillNextActivityTest : EduTestCase() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
@@ -33,6 +34,7 @@ class HyperskillNextActivityTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test activity not available`() {
     val task = initProject()
     configureResponsesForCurrentTask(task)
@@ -45,6 +47,7 @@ class HyperskillNextActivityTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test no topic for a task`() {
     initProject()
     withNotificationCheck(project, testRootDisposable, { shown, content ->
@@ -56,6 +59,7 @@ class HyperskillNextActivityTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test activity not available without login`() {
     logOutFakeHyperskillUser()
     createHyperskillProblemsProject()
@@ -68,6 +72,7 @@ class HyperskillNextActivityTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test topic is completed`() {
     val task = initProject()
 
@@ -78,6 +83,7 @@ class HyperskillNextActivityTest : EduTestCase() {
     assertEquals(topicCompletedLink(DEFAULT_TOPIC_ID), (EduBrowser.getInstance() as MockEduBrowser).lastVisitedUrl)
   }
 
+  @Test
   fun `test next activity unsupported in IDE`() {
     val task = initProject()
 
@@ -94,6 +100,7 @@ class HyperskillNextActivityTest : EduTestCase() {
     assertEquals(nextStepId, findTask(0, 0, 2).id)
   }
 
+  @Test
   fun `test open next step in IDE`() {
     val task = initProject()
 
@@ -111,6 +118,7 @@ class HyperskillNextActivityTest : EduTestCase() {
     assertEquals(nextStepId, findTask(0, 0, 3).id)
   }
 
+  @Test
   fun `test next step is the same as current`() {
     val task = initProject()
 

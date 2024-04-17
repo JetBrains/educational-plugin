@@ -4,11 +4,13 @@ import com.jetbrains.cidr.lang.OCLanguage
 import com.jetbrains.edu.learning.FindTaskFileTestBase
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
+import org.junit.Test
 
 class CppFindTaskTest : FindTaskFileTestBase<CppProjectSettings>() {
 
   override val defaultSettings = CppProjectSettings()
 
+  @Test
   fun `test get task dir from top-level lesson`() {
     val courseForTests = getCourseForTests()
     createCourseStructure(courseForTests)
@@ -19,6 +21,7 @@ class CppFindTaskTest : FindTaskFileTestBase<CppProjectSettings>() {
     )
   }
 
+  @Test
   fun `test get task dir from top-level section`() {
     val courseForTests = getCourseForTests()
     createCourseStructure(courseForTests)
@@ -29,6 +32,7 @@ class CppFindTaskTest : FindTaskFileTestBase<CppProjectSettings>() {
     )
   }
 
+  @Test
   fun `test get task for file from top-level lesson`() {
     val courseForTests = getCourseForTests()
     createCourseStructure(courseForTests)
@@ -39,6 +43,7 @@ class CppFindTaskTest : FindTaskFileTestBase<CppProjectSettings>() {
     ) { it.lessons[0].taskList[1] }
   }
 
+  @Test
   fun `test get task for file from top-level section`() {
     val courseForTests = getCourseForTests()
     createCourseStructure(courseForTests)
@@ -49,6 +54,7 @@ class CppFindTaskTest : FindTaskFileTestBase<CppProjectSettings>() {
     ) { it.sections[0].lessons[0].taskList[1] }
   }
 
+  @Test
   fun `test get task file from top-level lesson`() {
     val courseForTests = getCourseForTests()
     createCourseStructure(courseForTests)
@@ -59,6 +65,7 @@ class CppFindTaskTest : FindTaskFileTestBase<CppProjectSettings>() {
     ) { it.lessons[0].taskList[1].taskFiles["src/task.cpp"]!! }
   }
 
+  @Test
   fun `test get task file from top-level section`() {
     val courseForTests = getCourseForTests()
     createCourseStructure(courseForTests)

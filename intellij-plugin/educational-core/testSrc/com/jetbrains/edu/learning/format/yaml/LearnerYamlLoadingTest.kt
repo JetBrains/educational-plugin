@@ -9,9 +9,11 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.yaml.YamlDeepLoader
 import com.jetbrains.rd.util.first
+import org.junit.Test
 
 class LearnerYamlLoadingTest : EduTestCase() {
 
+  @Test
   fun `test non-existing files removed from config`() {
     val removedFileName = "file2.txt"
     courseWithFiles {
@@ -32,6 +34,7 @@ class LearnerYamlLoadingTest : EduTestCase() {
   }
 
   //see EDU-2794
+  @Test
   fun `test files not removed from framework lesson next tasks`() {
     courseWithFiles {
       frameworkLesson {
@@ -50,6 +53,7 @@ class LearnerYamlLoadingTest : EduTestCase() {
     assertEquals(2, findTask(0, 1).taskFiles.size)
   }
 
+  @Test
   fun `test non-existing files removed from framework lesson current task`() {
     val removedFileName = "file2.txt"
     courseWithFiles {
@@ -76,6 +80,7 @@ class LearnerYamlLoadingTest : EduTestCase() {
     assertEquals(1, findTask(0, 0).taskFiles.size)
   }
 
+  @Test
   fun `test editable file`() {
     courseWithFiles {
       lesson {
@@ -94,6 +99,7 @@ class LearnerYamlLoadingTest : EduTestCase() {
     assertTrue(course.isEditableFile(taskFileVF.path))
   }
 
+  @Test
   fun `test non editable file`() {
     val nonEditableFileName = "non-editable-file.txt"
     courseWithFiles {

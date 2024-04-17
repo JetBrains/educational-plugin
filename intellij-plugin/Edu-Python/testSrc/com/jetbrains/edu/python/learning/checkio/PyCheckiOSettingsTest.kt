@@ -1,9 +1,11 @@
 package com.jetbrains.edu.python.learning.checkio
 
 import com.jetbrains.edu.learning.EduSettingsServiceTestBase
+import org.junit.Test
 
 class PyCheckiOSettingsTest : EduSettingsServiceTestBase() {
 
+  @Test
   fun `test serialization`() {
     val settings = PyCheckiOSettings()
     settings.loadStateAndCheck("""

@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.setUpPluginDependencies
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
+import org.junit.Test
 import java.nio.file.Files
 import java.text.SimpleDateFormat
 import java.util.*
@@ -26,6 +27,7 @@ import kotlin.text.Charsets.UTF_8
 
 class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
 
+  @Test
   fun `test local course archive`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -38,6 +40,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test course ignore`() {
     val lessonIgnoredFile = "lesson1/LessonIgnoredFile.txt"
     val courseIgnoredFile = "IgnoredFile.txt"
@@ -55,6 +58,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test local course with author`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -69,6 +73,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test course with specific json version`() {
     val jsonVersion = 10
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
@@ -83,6 +88,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test local course with content tags`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -96,6 +102,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test framework lesson archive`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       frameworkLesson("my lesson") {
@@ -110,6 +117,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test framework lesson with content tags`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       frameworkLesson("my lesson") {
@@ -125,6 +133,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test framework lesson with custom name`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       frameworkLesson("my lesson", customPresentableName = "custom name") {
@@ -139,6 +148,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test lesson with custom name`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson(customPresentableName = "custom name") {
@@ -151,6 +161,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test sections`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
@@ -165,6 +176,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test section with content tags`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
@@ -181,6 +193,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test section with custom name`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section(customPresentableName = "custom name") {
@@ -195,6 +208,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test custom files`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
@@ -212,6 +226,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test mp3 audio task file`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
@@ -223,6 +238,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test mp4 video task file`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
@@ -234,6 +250,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test png picture task file`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
@@ -245,6 +262,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test pdf task file`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
@@ -256,6 +274,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test git object task file`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
@@ -267,6 +286,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test remote course archive`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -289,6 +309,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test placeholder dependencies`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       frameworkLesson {
@@ -313,6 +334,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test throw exception if placeholder is broken`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -331,6 +353,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     })
   }
 
+  @Test
   fun `test navigate to yaml if placeholder is broken`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -356,6 +379,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     assertEquals(task.configFileName, navigatedFile.name)
   }
 
+  @Test
   fun `test course additional files`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -374,6 +398,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test course with choice tasks`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -386,6 +411,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test course with choice with customized messages`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -404,6 +430,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test course programming language ID and version`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -419,6 +446,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test task with custom name`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -431,6 +459,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test task with content tags`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -445,6 +474,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test peek solution is hidden for course`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -458,6 +488,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test peek solution is hidden for task`() {
     val task = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -468,6 +499,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test gradle properties additional file`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
@@ -478,6 +510,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test mp3 audio additional file`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
@@ -488,6 +521,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test mp4 video additional file`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
@@ -498,6 +532,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test png picture additional file`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
@@ -509,6 +544,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
   }
 
   // EDU-2765
+  @Test
   fun `test pdf additional file`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
@@ -519,6 +555,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test git object additional file`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
@@ -529,6 +566,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test non templated based framework lesson`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       frameworkLesson("lesson1", isTemplateBased = false) {
@@ -541,6 +579,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test remote non templated based framework lesson`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR, id = 1) {
       frameworkLesson("lesson1", isTemplateBased = false) {
@@ -555,6 +594,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test local course with plugins`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -575,6 +615,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     }
   }
 
+  @Test
   fun `test local course with plugin from compatibility provider`() {
     val ep = CourseCompatibilityProviderEP()
     ep.language = PlainTextLanguage.INSTANCE.id
@@ -603,6 +644,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     }
   }
 
+  @Test
   fun `test custom command`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
       lesson("lesson1") {
@@ -676,6 +718,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test only inspectionProfiles and scopes folders go into archive from the dot_idea folder`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
       lesson("lesson1") {
@@ -792,6 +835,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test environment settings serialization`() {
     courseWithFiles {
       environmentSetting("example key 1", "example value 1")
@@ -800,6 +844,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test task file highlighting level serialization`() {
     courseWithFiles {
       lesson {
@@ -820,6 +865,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  @Test
   fun `test course archive has both course_json and courseIcon_svg inside`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       additionalFile(EduFormatNames.COURSE_ICON_FILE)
@@ -845,6 +891,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     }
   }
 
+  @Test
   fun `test courseIcon_svg file is not added inside the course archive`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       additionalFile("not a course icon.svg")

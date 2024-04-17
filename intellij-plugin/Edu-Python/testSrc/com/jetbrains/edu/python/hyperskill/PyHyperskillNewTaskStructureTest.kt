@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.python.PythonLanguage
+import org.junit.Test
 
 class PyHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
   override val language: Language get() = PythonLanguage.INSTANCE
@@ -21,6 +22,7 @@ class PyHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   }
 
+  @Test
   fun `test create edu task`() {
     checkEduTaskCreation(
       fullTaskStructure = {
@@ -39,6 +41,7 @@ class PyHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
     )
   }
 
+  @Test
   fun `test create output task`() = checkOutputTaskCreation(
     fullTaskStructure = {
       file("task.html")
@@ -57,6 +60,7 @@ class PyHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create theory task`() = checkTheoryTaskCreation(
     fullTaskStructure = {
       file("task.html")
@@ -67,6 +71,7 @@ class PyHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create IDE task`() = checkIdeTaskCreation(
     fullTaskStructure = {
       file("task.html")
@@ -77,6 +82,7 @@ class PyHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create choice task`() = checkChoiceTaskCreation(
     fullTaskStructure = {
       file("task.html")

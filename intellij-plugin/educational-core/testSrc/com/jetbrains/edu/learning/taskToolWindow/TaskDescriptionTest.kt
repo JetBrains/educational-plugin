@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResources
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_DARK_PNG
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_PNG
 import org.jsoup.Jsoup
+import org.junit.Test
 import java.awt.event.InputEvent
 import java.awt.event.KeyEvent
 import java.io.File
@@ -30,6 +31,7 @@ import javax.swing.UIManager.setLookAndFeel
 
 class TaskDescriptionTest : EduTestCase() {
 
+  @Test
   fun `test hyperskill tags removed`() {
     createCourseWithHyperskillTags(courseProducer = ::HyperskillCourse)
 
@@ -42,6 +44,7 @@ class TaskDescriptionTest : EduTestCase() {
     assertEquals(expectedTextWithoutTags, taskDescription)
   }
 
+  @Test
   fun `test hyperskill tags not removed`() {
     val expectedTextWithTags = createCourseWithHyperskillTags(courseProducer = ::EduCourse)
 
@@ -65,6 +68,7 @@ class TaskDescriptionTest : EduTestCase() {
     return taskText
   }
 
+  @Test
   fun `test ide name`() {
     createCourseWithDescription("This is %IDE_NAME%")
     val task = findTask(0, 0)
@@ -72,14 +76,17 @@ class TaskDescriptionTest : EduTestCase() {
     assertEquals("This is ${ApplicationNamesInfo.getInstance().fullProductName}", taskDescription!!.getBody())
   }
 
+  @Test
   fun `test simple img`() {
     doTestImage()
   }
 
+  @Test
   fun `test img inside other tags`() {
     doTestImage()
   }
 
+  @Test
   fun `test web image`() {
     createCourseWithDescription()
     val name = getTestName(true).trim() + ".html"
@@ -107,6 +114,7 @@ class TaskDescriptionTest : EduTestCase() {
       .map { assert(BrowserUtil.isAbsoluteURL(it.attr(SRC_ATTRIBUTE))) }
   }
 
+  @Test
   fun `test js script`() {
     val description = """
       |<script src="task.js">
@@ -132,18 +140,21 @@ class TaskDescriptionTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test shortcut rendering`() {
     val taskText = "You can use &shortcut:OverrideMethods; to override methods"
     val taskTextWithShortcuts = "You can use $overrideMethodShortcut to override methods"
     doTestShortcut(taskText, taskTextWithShortcuts)
   }
 
+  @Test
   fun `test shortcut rendering markdown`() {
     val taskText = "You can use &shortcut:OverrideMethods; to override methods"
     val taskTextWithShortcuts = "You can use $overrideMethodShortcut to override methods"
     doTestShortcut(taskText, taskTextWithShortcuts, descriptionFormat = DescriptionFormat.MD)
   }
 
+  @Test
   fun `test several shortcuts rendering`() {
     val taskText = "You can use &shortcut:OverrideMethods; to override methods. One more useful shortcut: &shortcut:GotoAction;"
     val taskTextWithShortcuts = "You can use $overrideMethodShortcut to override methods. " +
@@ -151,12 +162,14 @@ class TaskDescriptionTest : EduTestCase() {
     doTestShortcut(taskText, taskTextWithShortcuts)
   }
 
+  @Test
   fun `test shortcut inside tag`() {
     val taskText = "You can use <code>&shortcut:OverrideMethods;</code> to override methods. One more useful shortcut: &shortcut:GotoAction;"
     val taskTextWithShortcuts = "You can use $overrideMethodShortcut to override methods. One more useful shortcut: $goToActionShortcut"
     doTestShortcut(taskText, taskTextWithShortcuts)
   }
 
+  @Test
   fun `test do not change current task on external file opening`() {
     val taskText = "Solve"
     courseWithFiles {
@@ -182,44 +195,54 @@ class TaskDescriptionTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test local png image replaced in dark theme`() {
     runWithDarkTheme { doTestLocalImageReplaced(true, "screenshot.png", "screenshot_dark.png") }
   }
 
+  @Test
   fun `test local png image not replaced in light theme`() {
     doTestLocalImageReplaced(false, "screenshot.png", "screenshot_dark.png")
   }
 
+  @Test
   fun `test local svg image replaced in dark theme`() {
     runWithDarkTheme { doTestLocalImageReplaced(true, "screenshot.svg", "screenshot_dark.svg") }
   }
 
+  @Test
   fun `test local svg image not replaced in light theme`() {
     doTestLocalImageReplaced(false, "screenshot.svg", "screenshot_dark.svg")
   }
 
+  @Test
   fun `test remote image replaced from srcset in dark theme`() {
     runWithDarkTheme { doTestImageReplacedFromSrcset("https://dark.png") }
   }
 
+  @Test
   fun `test image not replaced from srcset in light theme`() {
     doTestImageReplacedFromSrcset("https://light.png")
   }
 
+  @Test
   fun `test src attribute replaced from darkSrc in dark theme`() {
     runWithDarkTheme {
       doTestImageAndIFrameSrcReplacedFromDarkSrc("https://dark.png", "https://course.edu/dark.html")
     }
   }
 
+  @Test
   fun `test src attribute not replaced from darkSrc in light theme`() {
     doTestImageAndIFrameSrcReplacedFromDarkSrc("https://light.png", "https://course.edu/light.html")
   }
 
+  @Test
   fun `test arrow icon added after external link in light theme`() {
     doTestArrowIconAdded(EXTERNAL_LINK_ARROW_PNG)
   }
 
+  @Test
   fun `test arrow icon added after external link in dark theme`() {
     runWithDarkTheme { doTestArrowIconAdded(EXTERNAL_LINK_ARROW_DARK_PNG) }
   }

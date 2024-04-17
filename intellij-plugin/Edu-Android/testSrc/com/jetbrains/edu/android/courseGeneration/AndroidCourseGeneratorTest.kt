@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.*
 import org.hamcrest.CoreMatchers
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.junit.Assert.assertThat
+import org.junit.Test
 
 class AndroidCourseGeneratorTest : JvmCourseGenerationTestBase() {
 
@@ -30,6 +31,7 @@ class AndroidCourseGeneratorTest : JvmCourseGenerationTestBase() {
     disableProjectSyncNotifications()
   }
 
+  @Test
   fun `test new course structure`() {
     val course = newCourse(KotlinLanguage.INSTANCE, environment = EduNames.ANDROID)
     createCourseStructure(course)
@@ -87,6 +89,7 @@ class AndroidCourseGeneratorTest : JvmCourseGenerationTestBase() {
     }
   }
 
+  @Test
   fun `test do not rewrite already created additional files`() {
     val course = course(language = KotlinLanguage.INSTANCE, environment = EduNames.ANDROID) {
       additionalFile("gradle.properties", "some.awesome.property=true")

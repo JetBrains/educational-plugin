@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileTree
 import kotlinx.coroutines.runBlocking
+import org.junit.Test
 import java.util.*
 
 abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
@@ -37,6 +38,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
     }
   }
 
+  @Test
   fun `test nothing to update`() {
     initiateLocalCourse()
 
@@ -72,6 +74,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
     expectedStructure.assertEquals(rootDir)
   }
 
+  @Test
   fun `test task name has been updated`() {
     initiateLocalCourse()
 
@@ -113,6 +116,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
     expectedStructure.assertEquals(rootDir)
   }
 
+  @Test
   fun `test task description has been updated`() {
     initiateLocalCourse()
 
@@ -159,6 +163,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
     expectedStructure.assertEquals(rootDir)
   }
 
+  @Test
   fun `test task type has been updated`() {
     initiateLocalCourse()
     val newTaskName = "taskNewName"
@@ -208,6 +213,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
     expectedStructure.assertEquals(rootDir)
   }
 
+  @Test
   fun `test taskFile name has been updated`() {
     initiateLocalCourse()
     val newTaskFile = TaskFile("src/TaskFile2Renamed.kt", "task file 2 text")
@@ -257,6 +263,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
     expectedStructure.assertEquals(rootDir)
   }
 
+  @Test
   fun `test taskFiles have been updated`() {
     initiateLocalCourse()
     val newTaskFile = TaskFile("src/newTaskFile.kt", "New task file text")
@@ -306,6 +313,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
     expectedStructure.assertEquals(rootDir)
   }
 
+  @Test
   fun `test save task status Solved if task not updated`() {
     initiateLocalCourse()
     localCourse.taskList[0].status = CheckStatus.Solved
@@ -345,6 +353,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
     expectedStructure.assertEquals(rootDir)
   }
 
+  @Test
   fun `test save task status Solved if task was updated`() {
     initiateLocalCourse()
     val newTaskName = "taskNewName"
@@ -388,6 +397,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
     expectedStructure.assertEquals(rootDir)
   }
 
+  @Test
   fun `test save task status Failed if task not updated`() {
     initiateLocalCourse()
     localCourse.taskList[0].status = CheckStatus.Failed
@@ -427,6 +437,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
     expectedStructure.assertEquals(rootDir)
   }
 
+  @Test
   fun `test do not save task status Failed if task was updated`() {
     initiateLocalCourse()
     val newTaskName = "taskNewName"

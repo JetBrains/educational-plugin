@@ -9,11 +9,13 @@ import com.jetbrains.edu.learning.courseFormat.EduFileErrorHighlightLevel
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
+import org.junit.Test
 
 class TestHighlightLevelFeature : CourseGenerationTestBase<EmptyProjectSettings>() {
 
   override val defaultSettings: EmptyProjectSettings = EmptyProjectSettings
 
+  @Test
   fun `test highlight level NONE disables highlighting per file`() {
     val course = course {
       lesson("lesson1") {

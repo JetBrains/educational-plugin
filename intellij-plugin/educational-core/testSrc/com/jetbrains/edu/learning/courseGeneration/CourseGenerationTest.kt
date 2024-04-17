@@ -18,10 +18,12 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.CoreMatchers.not
 import org.junit.Assert.assertThat
+import org.junit.Test
 
 class CourseGenerationTest : CourseGenerationTestBase<EmptyProjectSettings>() {
   override val defaultSettings: EmptyProjectSettings = EmptyProjectSettings
 
+  @Test
   fun `test do not open invisible files after course creation`() {
     val course = course {
       lesson("lesson1") {
@@ -40,6 +42,7 @@ class CourseGenerationTest : CourseGenerationTestBase<EmptyProjectSettings>() {
     assertThat(openFiles, hasItem(visible))
   }
 
+  @Test
   fun `test substitute placeholder answers in CC mode`() {
     val course = course(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -70,6 +73,7 @@ class CourseGenerationTest : CourseGenerationTestBase<EmptyProjectSettings>() {
     }.assertEquals(rootDir)
   }
 
+  @Test
   fun `test opened files in CC mode`() {
     val course = course(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -109,6 +113,7 @@ class CourseGenerationTest : CourseGenerationTestBase<EmptyProjectSettings>() {
     assertContainsElements(openFiles.toList(), task.getDescriptionFile(project))
   }
 
+  @Test
   fun testCoursePreviewNotAdded() {
     val coursePreview = (course {
       lesson("lesson1") {

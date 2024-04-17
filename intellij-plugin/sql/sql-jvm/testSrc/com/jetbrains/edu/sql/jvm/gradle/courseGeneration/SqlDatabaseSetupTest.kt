@@ -19,10 +19,12 @@ import com.jetbrains.edu.sql.jvm.gradle.SqlCourseGenerationTestBase
 import com.jetbrains.edu.sql.jvm.gradle.SqlGradleCourseBuilder.Companion.INIT_SQL
 import com.jetbrains.edu.sql.jvm.gradle.findDataSource
 import com.jetbrains.edu.sql.jvm.gradle.sqlCourse
+import org.junit.Test
 import kotlin.test.assertNotNull
 
 class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
 
+  @Test
   fun `test data source creation`() {
     val course = sqlCourse {
       lesson("lesson1") {
@@ -48,6 +50,7 @@ class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
     checkAllTasksHaveDataSource(course)
   }
 
+  @Test
   fun `test attach jdbc console`() {
     val course = sqlCourse {
       lesson("lesson1") {
@@ -71,6 +74,7 @@ class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
     checkJdbcConsoleForFile(sqlFile)
   }
 
+  @Test
   fun `test attach jdbc console for framework tasks`() {
     val course = sqlCourse {
       frameworkLesson("lesson1") {
@@ -103,6 +107,7 @@ class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
     checkJdbcConsoleForFile("lesson1/task/src/task.sql")
   }
 
+  @Test
   fun `test database view structure`() {
     @Suppress("SqlDialectInspection")
     val course = sqlCourse {
@@ -207,6 +212,7 @@ class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
   }
 
   @Suppress("SqlDialectInspection", "SqlNoDataSourceInspection")
+  @Test
   fun `test database initialization`() {
     val course = sqlCourse {
       lesson("lesson1") {
@@ -232,6 +238,7 @@ class SqlDatabaseSetupTest : SqlCourseGenerationTestBase() {
   }
 
   @Suppress("SqlDialectInspection", "SqlNoDataSourceInspection")
+  @Test
   fun `test database initialization in framework lessons`() {
     val course = sqlCourse {
       frameworkLesson("lesson1") {

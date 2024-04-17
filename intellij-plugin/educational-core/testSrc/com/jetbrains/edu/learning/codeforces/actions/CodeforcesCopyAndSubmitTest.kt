@@ -4,8 +4,10 @@ import com.intellij.openapi.ide.CopyPasteManager
 import com.jetbrains.edu.learning.codeforces.CodeforcesTestCase
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.testAction
+import org.junit.Test
 
 class CodeforcesCopyAndSubmitTest : CodeforcesTestCase() {
+  @Test
   fun `test codeforces task contents is copied to clipboard`() {
     val taskFileName = "Task.kt"
     val contents = "123\n456"
@@ -24,6 +26,7 @@ class CodeforcesCopyAndSubmitTest : CodeforcesTestCase() {
     assertEquals(contents, actualContentsString)
   }
 
+  @Test
   fun `test codeforces Task file is selected for submitting`() {
     val testFileName = "testData/1/input.txt"
     val taskFileName = "Task.txt"

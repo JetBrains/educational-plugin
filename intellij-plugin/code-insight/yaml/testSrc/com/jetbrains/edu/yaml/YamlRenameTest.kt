@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
+import org.junit.Test
 
 class YamlRenameTest : YamlCodeInsightTest() {
 
@@ -28,6 +29,7 @@ class YamlRenameTest : YamlCodeInsightTest() {
     }
   }
 
+  @Test
   fun `test rename lesson`() {
     val lesson = getCourse().getLesson("lesson1")!!
     val dir = lesson.getDir(project.courseDir)!!
@@ -44,6 +46,7 @@ class YamlRenameTest : YamlCodeInsightTest() {
     """.trimMargin("|"))
   }
 
+  @Test
   fun `test rename task`() {
     val task = getCourse().findTask("lesson1", "task1")
     val dir = task.getDir(project.courseDir)!!
@@ -56,6 +59,7 @@ class YamlRenameTest : YamlCodeInsightTest() {
     """.trimMargin("|"))
   }
 
+  @Test
   fun `test rename task file`() {
     val task = getCourse().findTask("lesson1", "task1")
     val taskFile = task.getTaskFile("src/taskfile1.txt")!!

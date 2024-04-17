@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.xmlEscaped
 import org.hamcrest.CoreMatchers.equalTo
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.junit.Assert.assertThat
+import org.junit.Test
 
 class KtCheckErrorsTest : JdkCheckerTestBase() {
 
@@ -259,6 +260,7 @@ class KtCheckErrorsTest : JdkCheckerTestBase() {
     }
   }
 
+  @Test
   fun `test errors`() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       assertEquals("${task.name} should be failed", CheckStatus.Failed, checkResult.status)

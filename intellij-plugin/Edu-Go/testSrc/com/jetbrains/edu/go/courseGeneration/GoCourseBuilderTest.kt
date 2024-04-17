@@ -7,10 +7,12 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
+import org.junit.Test
 
 class GoCourseBuilderTest : CourseGenerationTestBase<GoProjectSettings>() {
   override val defaultSettings: GoProjectSettings = GoProjectSettings(GoSdk.NULL)
 
+  @Test
   fun `test new educator course`() {
     val course = newCourse(GoLanguage.INSTANCE)
     createCourseStructure(course)
@@ -73,6 +75,7 @@ class GoCourseBuilderTest : CourseGenerationTestBase<GoProjectSettings>() {
     }.assertEquals(rootDir)
   }
 
+  @Test
   fun `test study course structure`() {
     val course = course(language = GoLanguage.INSTANCE) {
       lesson {

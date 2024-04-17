@@ -15,6 +15,7 @@ import io.mockk.mockkConstructor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
+import org.junit.Test
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -25,6 +26,7 @@ class UserAgreementNotificationTest : NotificationsTestBase() {
     loginFakeMarketplaceUser()
   }
 
+  @Test
   fun `test update course notification not shown`() {
     configureAgreementStateResponse()
     val virtualFile = NavigationUtils.getFirstTask(createTestCourse())!!.getTaskFile("Task.txt")!!.getVirtualFile(project)!!

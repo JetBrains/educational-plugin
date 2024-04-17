@@ -11,10 +11,12 @@ import com.jetbrains.edu.sql.jvm.gradle.SqlCourseGenerationTestBase
 import com.jetbrains.edu.sql.jvm.gradle.SqlGradleCourseBuilder.Companion.INIT_SQL
 import com.jetbrains.edu.sql.jvm.gradle.createDatabaseScriptConfiguration
 import com.jetbrains.edu.sql.jvm.gradle.sqlCourse
+import org.junit.Test
 
 class SqlRevertTaskActionTest : SqlCourseGenerationTestBase() {
 
   @Suppress("SqlDialectInspection", "SqlNoDataSourceInspection")
+  @Test
   fun `test database recreation on task reversion`() {
     val course = sqlCourse {
       lesson("lesson1") {

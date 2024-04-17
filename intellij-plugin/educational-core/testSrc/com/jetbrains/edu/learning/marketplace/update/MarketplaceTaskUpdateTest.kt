@@ -11,12 +11,14 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.update.TaskUpdateTestBase
 import com.jetbrains.edu.learning.update.TaskUpdater
+import org.junit.Test
 import java.util.*
 
 class MarketplaceTaskUpdateTest : TaskUpdateTestBase<EduCourse>() {
 
   override fun getUpdater(lesson: Lesson): TaskUpdater = MarketplaceTaskUpdater(project, lesson)
 
+  @Test
   fun `test task description with placeholders have been updated`() {
     localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::EduCourse) {
       lesson("lesson1", id = 1) {
@@ -52,6 +54,7 @@ class MarketplaceTaskUpdateTest : TaskUpdateTestBase<EduCourse>() {
     assertTrue("Task Description not updated", taskDescription.contains(newText))
   }
 
+  @Test
   fun `test new task created`() {
     initiateLocalCourse()
     val newEduTask = EduTask("task3").apply {
@@ -111,6 +114,7 @@ class MarketplaceTaskUpdateTest : TaskUpdateTestBase<EduCourse>() {
     expectedStructure.assertEquals(rootDir)
   }
 
+  @Test
   fun `test last task deleted`() {
     initiateLocalCourse()
     val remoteCourse = toRemoteCourse {

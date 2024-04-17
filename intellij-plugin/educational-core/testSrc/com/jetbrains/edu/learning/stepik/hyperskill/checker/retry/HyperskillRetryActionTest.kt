@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillActionTest
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.testAction
 import org.intellij.lang.annotations.Language
+import org.junit.Test
 import java.util.*
 
 class HyperskillRetryActionTest : HyperskillActionTestBase() {
@@ -46,6 +47,7 @@ class HyperskillRetryActionTest : HyperskillActionTestBase() {
     }
   }
 
+  @Test
   fun `test choice task correct`() {
     mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
       MockResponseFactory.fromString(
@@ -67,10 +69,12 @@ class HyperskillRetryActionTest : HyperskillActionTestBase() {
 
   }
 
+  @Test
   fun `test is not changed on failed task`() {
     checkRetryAction(getCourse().allTasks[1])
   }
 
+  @Test
   fun `test empty dataset`() {
     mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
       MockResponseFactory.fromString(

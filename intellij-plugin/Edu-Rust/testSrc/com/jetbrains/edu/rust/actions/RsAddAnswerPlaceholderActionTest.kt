@@ -2,10 +2,12 @@ package com.jetbrains.edu.rust.actions
 
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholderActionTestBase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import org.junit.Test
 import org.rust.lang.RsLanguage
 
 class RsAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() {
 
+  @Test
   fun `test placeholder text`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = RsLanguage) {
       lesson("lesson1") {

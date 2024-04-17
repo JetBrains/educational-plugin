@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import org.intellij.lang.annotations.Language
 import org.jetbrains.ide.BuiltInServerManager
+import org.junit.Test
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -43,6 +44,7 @@ class HyperskillDownloadDatasetTest : EduActionTestCase() {
     }
   }
 
+  @Test
   fun `test download new dataset`() {
     val course = hyperskillCourseWithFiles(language = PlainTextLanguage.INSTANCE) {
       section(HYPERSKILL_TOPICS) {
@@ -73,6 +75,7 @@ class HyperskillDownloadDatasetTest : EduActionTestCase() {
     }.assertEquals(LightPlatformTestCase.getSourceRoot())
   }
 
+  @Test
   fun `test update dataset`() {
     val course = hyperskillCourseWithFiles(language = PlainTextLanguage.INSTANCE) {
       section(HYPERSKILL_TOPICS) {
@@ -112,6 +115,7 @@ class HyperskillDownloadDatasetTest : EduActionTestCase() {
     }.assertEquals(LightPlatformTestCase.getSourceRoot())
   }
 
+  @Test
   fun `test outdated attempt`() {
     val course = hyperskillCourseWithFiles(language = PlainTextLanguage.INSTANCE) {
       section(HYPERSKILL_TOPICS) {

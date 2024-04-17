@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
+import org.junit.Test
 
 class JsCourseBuilderTest : CourseGenerationTestBase<JsNewProjectSettings>() {
 
@@ -19,6 +20,7 @@ class JsCourseBuilderTest : CourseGenerationTestBase<JsNewProjectSettings>() {
     defaultSettings.selectedInterpreter = interpreterRef.resolve(defaultProject)
   }
 
+  @Test
   fun `test new educator course`() {
     val newCourse = newCourse(JavascriptLanguage.INSTANCE)
 
@@ -36,6 +38,7 @@ class JsCourseBuilderTest : CourseGenerationTestBase<JsNewProjectSettings>() {
     }.assertEquals(rootDir)
   }
 
+  @Test
   fun `test study course structure`() {
     val course = course(language = JavascriptLanguage.INSTANCE) {
       lesson {

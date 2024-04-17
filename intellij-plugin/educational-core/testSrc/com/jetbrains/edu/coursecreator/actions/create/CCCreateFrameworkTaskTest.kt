@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.testAction
 import org.junit.Assert.assertArrayEquals
+import org.junit.Test
 
 class CCCreateFrameworkTaskTest : EduActionTestCase() {
 
@@ -17,6 +18,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
 
   override fun getTestDataPath(): String = super.getTestDataPath() + "/actions/frameworkLessons"
 
+  @Test
   fun `test first task in framework lesson`() {
     val lessonName = "FrameworkLesson"
     val taskName = "Task"
@@ -47,6 +49,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
     assertEquals(1, course.lessons[0].taskList.size)
   }
 
+  @Test
   fun `test new task in framework lesson`() {
     val lessonName = "FrameworkLesson"
 
@@ -100,6 +103,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
     assertEquals(prevTaskFile.answerPlaceholders[0], targetPlaceholder)
   }
 
+  @Test
   fun `test new task in the middle of lesson`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       frameworkLesson {
@@ -150,6 +154,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
                  task2.getTaskFile("Bar.kt")?.answerPlaceholders?.get(0)?.placeholderDependency?.resolve(course))
   }
 
+  @Test
   fun `test copy images`() {
     val lessonName = "lesson1"
     val imageName = "image.png"
@@ -197,6 +202,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
                       VfsUtil.loadBytes(imageCopy))
   }
 
+  @Test
   fun `test copy actual text of files`() {
     val lessonName = "lesson1"
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {

@@ -10,10 +10,12 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.testAction
+import org.junit.Test
 import java.awt.event.KeyEvent
 
 
 class InsertShortcutActionTest : EduActionTestCase() {
+  @Test
   fun `test shortcut inserted`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -44,6 +46,7 @@ class InsertShortcutActionTest : EduActionTestCase() {
     })
   }
 
+  @Test
   fun `test action not available in task file`() {
     val taskFileName = "taskFile1.txt"
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
@@ -62,6 +65,7 @@ class InsertShortcutActionTest : EduActionTestCase() {
     testAction(InsertShortcutAction.ACTION_ID, shouldBeEnabled = false)
   }
 
+  @Test
   fun `test action not available in student project`() {
     courseWithFiles {
       lesson {

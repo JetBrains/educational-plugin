@@ -16,6 +16,7 @@ import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.Matcher
 import org.junit.Assert.assertThat
+import org.junit.Test
 
 @Suppress("PyInterpreter", "PyUnresolvedReferences")
 class PyNewCheckErrorsTest : PyCheckersTestBase() {
@@ -143,6 +144,7 @@ class PyNewCheckErrorsTest : PyCheckersTestBase() {
     }
   }
 
+  @Test
   fun `test errors`() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       val matcher = when (task.name) {
@@ -173,6 +175,7 @@ class PyNewCheckErrorsTest : PyCheckersTestBase() {
     doTest()
   }
 
+  @Test
   fun `test no interpreter`() {
     SdkConfigurationUtil.setDirectoryProjectSdk(project, null)
 

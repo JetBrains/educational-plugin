@@ -1,11 +1,13 @@
 package com.jetbrains.edu.learning.codeforces
 
 import com.jetbrains.edu.learning.codeforces.api.*
+import org.junit.Test
 import java.io.IOException
 import java.time.Duration
 import java.time.ZonedDateTime
 
 class CodeforcesFormatTest : CodeforcesTestCase() {
+  @Test
   fun testAvailableContests() {
     val responseString = loadJsonText()
     val mapper = CodeforcesConnector.getInstance().objectMapper
@@ -16,6 +18,7 @@ class CodeforcesFormatTest : CodeforcesTestCase() {
     assertTrue(coursesList.isOK)
   }
 
+  @Test
   fun testContestInfo() {
     val responseString = loadJsonText()
     val mapper = CodeforcesConnector.getInstance().objectMapper

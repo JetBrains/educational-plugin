@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.stepik.changeHost.StepikChangeHostUI
 import com.jetbrains.edu.learning.stepik.changeHost.StepikHost
 import com.jetbrains.edu.learning.stepik.changeHost.withMockStepikChangeHostUI
 import com.jetbrains.edu.learning.testAction
+import org.junit.Test
 
 class StepikChangeHostActionTest : EduTestCase() {
   private var initialStepikOrdinal: Int = 0
@@ -38,17 +39,20 @@ class StepikChangeHostActionTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test cogniterra stepik host`() {
     PropertiesComponent.getInstance().setValue(STEPIK_HOST_ORDINAL_PROPERTY, StepikHost.COGNITERRA.ordinal, 2)
     doTestStepikHostChanged(COGNITERRA_URL, StepikHost.COGNITERRA, StepikOAuthBundle.value("cogniterraClientId"),
                             StepikOAuthBundle.value("cogniterraClientSecret"))
   }
+  @Test
   fun `test default stepik host`() {
     PropertiesComponent.getInstance().setValue(STEPIK_HOST_ORDINAL_PROPERTY, StepikHost.RELEASE.ordinal, 4)
     doTestStepikHostChanged(STEPIK_RELEASE_URL, StepikHost.PRODUCTION, StepikOAuthBundle.value("stepikClientId"),
                             StepikOAuthBundle.value("stepikClientSecret"))
   }
 
+  @Test
   fun `test host changed to RELEASE`() {
     doTestStepikHostChanged(STEPIK_DEFAULT_URL, StepikHost.RELEASE, StepikOAuthBundle.value("stepikNonProductionClientId"),
                             StepikOAuthBundle.value("stepikNonProductionClientSecret"))

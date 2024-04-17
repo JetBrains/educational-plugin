@@ -12,15 +12,18 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import org.intellij.lang.annotations.Language
+import org.junit.Test
 
 class HyperskillConsideringTestFilesTest : NavigationTestBase() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
+  @Test
   fun `test files in project`() {
     val course = createHyperskillCourse()
     doTestFiles(course)
   }
 
+  @Test
   fun `test files in topic section`() {
     val course = hyperskillCourse {
       section(HYPERSKILL_TOPICS) {
@@ -51,6 +54,7 @@ class HyperskillConsideringTestFilesTest : NavigationTestBase() {
     }
   }
 
+  @Test
   fun `test propagate user changes to next task`() {
     val course = createHyperskillCourse()
 
@@ -81,6 +85,7 @@ class HyperskillConsideringTestFilesTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test do not propagate user changes to prev task (next, prev)`() {
     val course = createHyperskillCourse()
 
@@ -118,6 +123,7 @@ class HyperskillConsideringTestFilesTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test solution loading for non-current task with non-visible files`() {
     logInFakeHyperskillUser()
     mockConnector.withResponseHandler(testRootDisposable) { _, _ -> MockResponseFactory.fromString(submissions) }

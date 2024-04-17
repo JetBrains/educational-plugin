@@ -5,9 +5,11 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.findTask
+import org.junit.Test
 
 class TaskFileNotFoundInspectionTest : YamlInspectionsTestBase(TaskFileNotFoundInspection::class) {
 
+  @Test
   fun `test create task file`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -31,6 +33,7 @@ class TaskFileNotFoundInspectionTest : YamlInspectionsTestBase(TaskFileNotFoundI
     """.trimMargin("|"), expectedTaskFiles)
   }
 
+  @Test
   fun `test create task file if there are several non-existing files`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -94,6 +97,7 @@ class TaskFileNotFoundInspectionTest : YamlInspectionsTestBase(TaskFileNotFoundI
     ))
   }
 
+  @Test
   fun `test create invisible task file`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -117,6 +121,7 @@ class TaskFileNotFoundInspectionTest : YamlInspectionsTestBase(TaskFileNotFoundI
     """.trimMargin("|"), expectedTaskFiles)
   }
 
+  @Test
   fun `test keep position`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -146,6 +151,7 @@ class TaskFileNotFoundInspectionTest : YamlInspectionsTestBase(TaskFileNotFoundI
     """.trimMargin("|"), expectedTaskFiles)
   }
 
+  @Test
   fun `test do not provide quick fix for invalid paths 1`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -163,6 +169,7 @@ class TaskFileNotFoundInspectionTest : YamlInspectionsTestBase(TaskFileNotFoundI
     """.trimMargin("|"))
   }
 
+  @Test
   fun `test do not provide quick fix for invalid paths 2`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {

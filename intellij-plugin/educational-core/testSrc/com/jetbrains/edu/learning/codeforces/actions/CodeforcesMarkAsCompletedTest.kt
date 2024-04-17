@@ -5,8 +5,10 @@ import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.testAction
+import org.junit.Test
 
 class CodeforcesMarkAsCompletedTest : CodeforcesTestCase() {
+  @Test
   fun `test codeforces task is successfully marked as completed`() {
     val taskFileName = "Task.kt"
     val course = courseWithFiles(courseProducer = ::CodeforcesCourse) {
@@ -24,6 +26,7 @@ class CodeforcesMarkAsCompletedTest : CodeforcesTestCase() {
     assertEquals(CheckStatus.Solved, task.status)
   }
 
+  @Test
   fun `test another task isn't marked as completed`() {
     val taskFileName = "Task.kt"
     val course = courseWithFiles {

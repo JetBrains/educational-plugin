@@ -5,8 +5,10 @@ import com.jetbrains.edu.learning.configurators.FakeGradleHyperskillConfigurator
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.findTask
+import org.junit.Test
 
 class HyperskillFindCodeTaskFileTest : EduTestCase() {
+  @Test
   fun `test find the only file`() {
     val answerFileName = "src/Task.kt"
     val taskName = "task1"
@@ -23,6 +25,7 @@ class HyperskillFindCodeTaskFileTest : EduTestCase() {
     doTest(task, answerFile)
   }
 
+  @Test
   fun `test find Main file`() {
     val answerFileName = "src/Main.kt"
     val taskName = "task1"
@@ -40,6 +43,7 @@ class HyperskillFindCodeTaskFileTest : EduTestCase() {
     doTest(task, answerFile)
   }
 
+  @Test
   fun `test find first visible & educator-created file`() {
     val answerFileName = "src/Task.kt"
     val taskName = "task1"
@@ -61,6 +65,7 @@ class HyperskillFindCodeTaskFileTest : EduTestCase() {
     doTest(task, answerFile)
   }
 
+  @Test
   fun `test unable to find file`() {
     val taskName = "task1"
     val course = hyperskillCourse {

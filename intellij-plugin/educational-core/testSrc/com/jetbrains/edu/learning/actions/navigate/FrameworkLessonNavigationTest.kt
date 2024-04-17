@@ -14,10 +14,12 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
+import org.junit.Test
 
 // Note, `CodeInsightTestFixture#type` can trigger completion (e.g. it inserts paired `"`)
 class FrameworkLessonNavigationTest : NavigationTestBase() {
 
+  @Test
   fun `test next`() {
     val course = createFrameworkCourse()
 
@@ -53,6 +55,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test next no tests dir in marketplace course`() {
     val course = courseWithFiles {
       frameworkLesson {
@@ -98,6 +101,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test next in non-marketplace course`() {
     val course = courseWithFiles {
       frameworkLesson {
@@ -139,6 +143,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test next next`() {
     val course = createFrameworkCourse()
     val task = course.findTask("lesson1", "task1")
@@ -177,6 +182,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test next prev`() {
     val course = createFrameworkCourse()
 
@@ -213,6 +219,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test correctly process placeholder offsets`() {
     val course = courseWithFiles {
       frameworkLesson {
@@ -266,6 +273,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test opened files`() {
     val course = createFrameworkCourse()
 
@@ -282,6 +290,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     assertEquals("buzz.kt", openFiles[0].name)
   }
 
+  @Test
   fun `test navigation to unsolved task`() {
     val course = createFrameworkCourse()
 
@@ -339,6 +348,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     }.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test navigation in CC mode`() {
     val course = createFrameworkCourse(CourseMode.EDUCATOR)
     val task1 = course.findTask("lesson1", "task1")
@@ -351,6 +361,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     }
   }
 
+  @Test
   fun `test save student changes`() {
     val course = createFrameworkCourse()
     val task = course.findTask("lesson1", "task1")
@@ -388,6 +399,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test save student changes 2`() {
     val course = createFrameworkCourse()
     val task = course.findTask("lesson1", "task1")
@@ -433,6 +445,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test do not propagate user created files`() {
     val course = createFrameworkCourse()
     val task = course.findTask("lesson1", "task1")
@@ -471,6 +484,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test save user created files`() {
     val course = createFrameworkCourse()
     val task = course.findTask("lesson1", "task1")
@@ -505,6 +519,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test empty directories removed`() {
     val course = courseWithFiles {
       frameworkLesson {
@@ -545,6 +560,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test windows line separators`() {
     val course = courseWithFiles {
       frameworkLesson("lesson1") {
@@ -582,6 +598,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test editable flag for files remain unchanged when navigating the course`() {
     val course = createCourseWithNonEditableFiles(CourseMode.STUDENT)
     val task1 = course.findTask("lesson", "task1")
@@ -606,6 +623,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     }
   }
 
+  @Test
   fun `test non-editable flags when navigate tasks`() {
     val course = createCourseWithNonEditableFiles(CourseMode.STUDENT)
 

@@ -10,16 +10,19 @@ import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
 import com.jetbrains.edu.learning.courseFormat.ext.visitEduFiles
 import com.jetbrains.edu.learning.doWithLearningObjectsStorageType
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
+import org.junit.Test
 
 class TestBinaryFilesAreNotStoredInsideTasks : CourseReopeningTestBase<EmptyProjectSettings>() {
 
   override val defaultSettings = EmptyProjectSettings
 
+  @Test
   fun `test binary files are not preserved after a student closes and opens the project`() =
     doWithLearningObjectsStorageType(LearningObjectStorageType.YAML) {
       doTest(binaryFilesCleared = true)
     }
 
+  @Test
   fun `test binary files are preserved after a student closes and opens the project`() =
     doWithLearningObjectsStorageType(LearningObjectStorageType.SQLite) {
       doTest(binaryFilesCleared = false)

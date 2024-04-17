@@ -2,10 +2,12 @@ package com.jetbrains.edu.coursecreator.framework.impl
 
 import com.jetbrains.edu.coursecreator.framework.diff.SimpleConflictResolveStrategy
 import com.jetbrains.edu.learning.EduTestCase
+import org.junit.Test
 
 class SimpleConflictResolveStrategyTest : EduTestCase() {
   private val conflictStrategy = SimpleConflictResolveStrategy()
 
+  @Test
   fun `test simple conflict strategy`() {
     val baseState = mapOf(
       "a.kt" to "fun f() = 12",
@@ -29,6 +31,7 @@ class SimpleConflictResolveStrategyTest : EduTestCase() {
     assertEquals(expectedState, actualState)
   }
 
+  @Test
   fun `test conflict files during simple conflict strategy`() {
     val baseState = mapOf(
       "a.kt" to "a.kt",

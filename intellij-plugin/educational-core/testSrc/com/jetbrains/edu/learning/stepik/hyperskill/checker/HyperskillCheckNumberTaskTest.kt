@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill.checker
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.AnswerTask
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.NumberTask
@@ -11,7 +12,7 @@ import com.jetbrains.edu.learning.pathWithoutPrams
 import com.jetbrains.edu.learning.stepik.Step
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import org.junit.Test
 
 class HyperskillCheckNumberTaskTest : HyperskillCheckAnswerTaskTest() {
 
@@ -55,6 +56,7 @@ class HyperskillCheckNumberTaskTest : HyperskillCheckAnswerTaskTest() {
     }
   }
 
+  @Test
   fun `test number task correct`() {
     configureResponses(true)
 
@@ -63,6 +65,7 @@ class HyperskillCheckNumberTaskTest : HyperskillCheckAnswerTaskTest() {
     assertEquals("12", task.getInputAnswer(project))
   }
 
+  @Test
   fun `test number task incorrect`() {
     configureResponses(false)
 
@@ -70,6 +73,7 @@ class HyperskillCheckNumberTaskTest : HyperskillCheckAnswerTaskTest() {
     checkCheckAction(task, CheckStatus.Failed, "Wrong solution")
   }
 
+  @Test
   fun `test number task validation on number`() {
     mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
       MockResponseFactory.fromString(
@@ -86,11 +90,13 @@ class HyperskillCheckNumberTaskTest : HyperskillCheckAnswerTaskTest() {
     checkCheckAction(task, CheckStatus.Failed, EduCoreBundle.message("hyperskill.number.task.not.number"))
   }
 
+  @Test
   fun `test number task input is empty`() {
     val task = getCourse().allTasks[1]
     checkCheckAction(task, CheckStatus.Failed, EduCoreBundle.message("hyperskill.string.task.empty.text"))
   }
 
+  @Test
   fun `test creating placeholder`() {
     val course = getCourse()
     val task = course.allTasks[0] as NumberTask
@@ -115,6 +121,7 @@ class HyperskillCheckNumberTaskTest : HyperskillCheckAnswerTaskTest() {
     )
   }
 
+  @Test
   fun `test task with space`() {
     val course = getCourse()
     assertNull((course.allTasks[3] as NumberTask).validateAnswer(project))
@@ -122,6 +129,7 @@ class HyperskillCheckNumberTaskTest : HyperskillCheckAnswerTaskTest() {
     assertNull((course.allTasks[5] as NumberTask).validateAnswer(project))
   }
 
+  @Test
   fun `test task with comma and dot`() {
     val course = getCourse()
     assertNull((course.allTasks[6] as NumberTask).validateAnswer(project))
@@ -136,6 +144,7 @@ class HyperskillCheckNumberTaskTest : HyperskillCheckAnswerTaskTest() {
    * This option is enabled from the settings by checking the box "ensure every saved file ends with a line break".
    * In the answerTask for file with name [AnswerTask.ANSWER_FILE_NAME] this option must be disabled.
    */
+  @Test
   fun `test numberTask new line at eof for answer_txt`() {
     testWithEnabledEnsureNewLineAtEOFSetting {
       val task = getCourse().allTasks[8] as NumberTask
@@ -150,6 +159,7 @@ class HyperskillCheckNumberTaskTest : HyperskillCheckAnswerTaskTest() {
    * Test that new line at the end of file for AnswerTask appear only in [AnswerTask.ANSWER_FILE_NAME].
    * Blank line must add for others files at AnswerTask
    */
+  @Test
   fun `test numberTask new line at eof for task file`() {
     testWithEnabledEnsureNewLineAtEOFSetting {
       val task = getCourse().allTasks[8] as NumberTask
@@ -163,6 +173,7 @@ class HyperskillCheckNumberTaskTest : HyperskillCheckAnswerTaskTest() {
    * Test that new line at the end of file for AnswerTask appear only in [AnswerTask.ANSWER_FILE_NAME] file.
    * Blank line must add for others files at any task type
    */
+  @Test
   fun `test new line at eof for not answer task`() {
     testWithEnabledEnsureNewLineAtEOFSetting {
       val task = getCourse().allTasks[9] as EduTask

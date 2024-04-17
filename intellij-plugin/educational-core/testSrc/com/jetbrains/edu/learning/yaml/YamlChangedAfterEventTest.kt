@@ -14,8 +14,10 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
+import org.junit.Test
 
 class YamlChangedAfterEventTest : YamlTestCase() {
+  @Test
   fun `test hyperskill framework lesson navigation with learner created file`() {
     val course = createHyperskillFrameworkCourse(isTemplateBased = false)
 

@@ -3,6 +3,7 @@ package com.jetbrains.edu.java.courseView
 import com.intellij.ide.projectView.impl.ProjectViewState
 import com.intellij.lang.java.JavaLanguage
 import com.jetbrains.edu.learning.courseView.CourseViewTestBase
+import org.junit.Test
 
 class JNodesTests : CourseViewTestBase() {
 
@@ -12,6 +13,7 @@ class JNodesTests : CourseViewTestBase() {
     ProjectViewState.getInstance(project).hideEmptyMiddlePackages = true
   }
 
+  @Test
   fun `test nested packages`() {
     courseWithFiles(language = JavaLanguage.INSTANCE) {
       lesson {

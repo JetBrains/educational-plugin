@@ -12,9 +12,11 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.yaml.YamlTestCase
 import com.jetbrains.edu.learning.yaml.format.getChangeApplierForItem
+import org.junit.Test
 
 class StudentChangeApplierTest : YamlTestCase() {
 
+  @Test
   fun `test edu task cc fields applied`() {
     val existingItem = courseWithFiles {
       lesson {
@@ -33,6 +35,7 @@ class StudentChangeApplierTest : YamlTestCase() {
     assertEquals(deserializedItem.feedbackLink, existingItem.feedbackLink)
   }
 
+  @Test
   fun `test edu task student fields applied`() {
     val existingItem = courseWithFiles {
       lesson {
@@ -47,6 +50,7 @@ class StudentChangeApplierTest : YamlTestCase() {
     assertEquals(deserializedItem.record, existingItem.record)
   }
 
+  @Test
   fun `test choice task student fields applied`() {
     val existingItem = courseWithFiles {
       lesson {
@@ -65,6 +69,7 @@ class StudentChangeApplierTest : YamlTestCase() {
     assertEquals(deserializedItem.choiceOptions, (existingItem as ChoiceTask).choiceOptions)
   }
 
+  @Test
   fun `test sorting task student fields applied`() {
     val existingItem = courseWithFiles {
       lesson {
@@ -83,6 +88,7 @@ class StudentChangeApplierTest : YamlTestCase() {
     assertEquals(deserializedItem.ordering, existingItem.ordering)
   }
 
+  @Test
   fun `test matching task student fields applied`() {
     val existingItem = courseWithFiles {
       lesson {
@@ -103,6 +109,7 @@ class StudentChangeApplierTest : YamlTestCase() {
     assertEquals(deserializedItem.ordering, existingItem.ordering)
   }
 
+  @Test
   fun `test table task student fields applied`() {
     val existingItem = courseWithFiles {
       lesson {
@@ -123,6 +130,7 @@ class StudentChangeApplierTest : YamlTestCase() {
     assertEquals(deserializedItem.selected, existingItem.selected)
   }
 
+  @Test
   fun `test task file fields applied`() {
     val existingItem = courseWithFiles {
       lesson {
@@ -141,6 +149,7 @@ class StudentChangeApplierTest : YamlTestCase() {
     assertEquals(deserializedItem.taskFiles.values.first().text, existingItem.taskFiles.values.first().text)
   }
 
+  @Test
   fun `test checkio mission`() {
     val existingMission = courseWithFiles(courseMode = CourseMode.STUDENT) {
       station("station") {

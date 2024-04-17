@@ -3,45 +3,67 @@ package com.jetbrains.edu.learning.taskToolWindow.links
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.selectedVirtualFile
+import org.junit.Test
 
 class TaskDescriptionInCourseLinksTest : TaskDescriptionLinksTestBase() {
 
+  @Test
   fun `test empty link`() = doTest("course://")
 
+  @Test
   fun `test section link`() = doTest("course://section1")
+  @Test
   fun `test non-existent section link`() = doTest("course://section2")
 
+  @Test
   fun `test lesson link 1`() = doTest("course://lesson1")
+  @Test
   fun `test lesson link 2`() = doTest("course://section/lesson4")
+  @Test
   fun `test non-existent lesson link`() = doTest("course://lesson10")
 
+  @Test
   fun `test task link 1`() = doTest("course://lesson1/task1", "lesson1/task1/TaskFile1.txt")
+  @Test
   fun `test task link 2`() = doTest("course://section1/lesson4/task5", "section1/lesson4/task5/TaskFile8.txt")
+  @Test
   fun `test non-existent task link`() = doTest("course://lesson1/task11")
 
+  @Test
   fun `test link to current task of framework lesson`() =
     doTest("course://framework%20lesson%203/task3", "framework lesson 3/task/TaskFile6.txt")
 
+  @Test
   fun `test link to non current task of framework lesson`() = doTest("course://framework%20lesson%203/task4")
 
+  @Test
   fun `test link to task file 1`() = doTest("course://lesson1/task1/TaskFile2.txt", "lesson1/task1/TaskFile2.txt")
+  @Test
   fun `test link to task file 2`() = doTest("course://lesson2/task2/Task%20File%205.txt", "lesson2/task2/Task File 5.txt")
+  @Test
   fun `test link to task file 3`() = doTest("course://section1/lesson4/task5/TaskFile9.txt", "section1/lesson4/task5/TaskFile9.txt")
+  @Test
   fun `test link to task file 4`() = doTest("course://section1/lesson 5/task 6/Task File 10.txt", "section1/lesson 5/task 6/Task File 10.txt")
 
+  @Test
   fun `test link to non-existent task file`() = doTest("course://lesson2/task2/TaskFile20.txt")
 
+  @Test
   fun `test link to task file in current task of framework lesson`() =
     doTest("course://framework%20lesson%203/task3/TaskFile6.txt", "framework lesson 3/task/TaskFile6.txt")
 
+  @Test
   fun `test link to task file in current task of framework lesson in educator mode`() =
     doTest("course://framework%20lesson%203/task3/TaskFile6.txt", "framework lesson 3/task3/TaskFile6.txt", CourseMode.EDUCATOR)
 
+  @Test
   fun `test link to task file in non current task of framework lesson`() = doTest("course://framework%20lesson%203/task4/TaskFile7.txt")
 
+  @Test
   fun `test don't close opened files 1`() =
     doTest("course://lesson2/task2/TaskFile3.txt", "lesson2/task2/TaskFile3.txt", openedFile = "lesson1/task1/TaskFile1.txt")
 
+  @Test
   fun `test don't close opened files 2`() =
     doTest("course://lesson2/task2", "lesson2/task2/TaskFile3.txt", openedFile = "lesson1/task1/TaskFile1.txt")
 

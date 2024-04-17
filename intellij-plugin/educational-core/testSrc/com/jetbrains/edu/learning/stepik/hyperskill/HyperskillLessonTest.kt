@@ -18,9 +18,11 @@ import com.jetbrains.edu.learning.stepik.StepikTestUtils.logOutFakeStepikUser
 import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import org.apache.commons.codec.binary.Base64
+import org.junit.Test
 import java.io.File
 
 class HyperskillLessonTest : EduTestCase() {
+  @Test
   fun `test collecting course additional files`() {
     val course = courseWithFiles(courseProducer = ::HyperskillCourse, courseMode = CourseMode.EDUCATOR) {
       frameworkLesson {
@@ -35,6 +37,7 @@ class HyperskillLessonTest : EduTestCase() {
     assertEquals("My cool dependencies", info.additionalFiles[0].text)
   }
 
+  @Test
   fun `test push course with binary file`() {
     StepikTestUtils.loginFakeStepikUser()
     val mockConnector = StepikConnector.getInstance() as MockStepikConnector
@@ -71,6 +74,7 @@ class HyperskillLessonTest : EduTestCase() {
     logOutFakeStepikUser()
   }
 
+  @Test
   fun `test receiving course with binary files`() {
     val lessonId = 929485
     val stepId = 3885098
@@ -109,6 +113,7 @@ class HyperskillLessonTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test receiving course additional files`() {
     val lessonId = 278738129
     val mockConnector = StepikConnector.getInstance() as MockStepikConnector

@@ -12,9 +12,11 @@ import com.jetbrains.edu.learning.marketplace.MarketplaceSubmissionsTest.Compani
 import com.jetbrains.edu.learning.marketplace.MarketplaceSubmissionsTest.Companion.SECOND_TASK_SUBMISSION_AWS_KEY
 import com.jetbrains.edu.learning.marketplace.MarketplaceSubmissionsTest.Companion.configureSubmissionsResponses
 import org.intellij.lang.annotations.Language
+import org.junit.Test
 
 class MarketplaceSolutionLoadingTest : SolutionLoadingTestBase() {
 
+  @Test
   fun `test solution not applied at submission and course versions incompatibility`() {
     configureSubmissionsResponses(getConfiguredSubmissionsList(),
                                   mapOf(FIRST_TASK_SUBMISSION_AWS_KEY to solutionCorrect, SECOND_TASK_SUBMISSION_AWS_KEY to solutionCorrect))
@@ -48,6 +50,7 @@ class MarketplaceSolutionLoadingTest : SolutionLoadingTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test local changes are not lost`() {
     configureSubmissionsResponses(getConfiguredSubmissionsList(),
                                   mapOf(FIRST_TASK_SUBMISSION_AWS_KEY to solutionCorrect, SECOND_TASK_SUBMISSION_AWS_KEY to solutionWrong))
@@ -85,6 +88,7 @@ class MarketplaceSolutionLoadingTest : SolutionLoadingTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test theory task check status solved applied`() {
     configureSubmissionsResponses(listOf(submissionForTheoryTask))
 
@@ -121,6 +125,7 @@ class MarketplaceSolutionLoadingTest : SolutionLoadingTestBase() {
     checkTaskStatuses(course.allTasks, listOf(CheckStatus.Solved))
   }
 
+  @Test
   fun `test solution loading first task solved second task failed`() {
     configureSubmissionsResponses(getConfiguredSubmissionsList(),
                                   mapOf(FIRST_TASK_SUBMISSION_AWS_KEY to solutionCorrect, SECOND_TASK_SUBMISSION_AWS_KEY to solutionWrong))
@@ -158,6 +163,7 @@ class MarketplaceSolutionLoadingTest : SolutionLoadingTestBase() {
     checkTaskStatuses(course.allTasks, listOf(CheckStatus.Solved, CheckStatus.Failed))
   }
 
+  @Test
   fun `test solution loading first task failed second task solved`() {
     configureSubmissionsResponses(getConfiguredSubmissionsList(firstStatus = WRONG, secondStatus = CORRECT),
                                   mapOf(FIRST_TASK_SUBMISSION_AWS_KEY to solutionWrong, SECOND_TASK_SUBMISSION_AWS_KEY to solutionCorrect))
@@ -195,6 +201,7 @@ class MarketplaceSolutionLoadingTest : SolutionLoadingTestBase() {
     checkTaskStatuses(course.allTasks, listOf(CheckStatus.Failed, CheckStatus.Solved))
   }
 
+  @Test
   fun `test first submission from the list applied`() {
     configureSubmissionsResponses(
       getConfiguredSubmissionsList(firstTaskId = 1, secondTaskId = 1, firstStatus = CORRECT, secondStatus = WRONG),
@@ -233,6 +240,7 @@ class MarketplaceSolutionLoadingTest : SolutionLoadingTestBase() {
     checkTaskStatuses(course.allTasks, listOf(CheckStatus.Solved, CheckStatus.Unchecked))
   }
 
+  @Test
   fun `test solution for output task applied`() {
     configureSubmissionsResponses(getConfiguredSubmissionsList(),
       mapOf(FIRST_TASK_SUBMISSION_AWS_KEY to solutionCorrect, SECOND_TASK_SUBMISSION_AWS_KEY to solutionWrong))
@@ -301,6 +309,7 @@ class MarketplaceSolutionLoadingTest : SolutionLoadingTestBase() {
 
     checkTaskStatuses(course.allTasks, listOf(CheckStatus.Solved, CheckStatus.Failed))
   }
+  @Test
   fun `test solution loading with additional file in the first task`() {
     configureSubmissionsResponses(getConfiguredSubmissionsList(firstStatus = CORRECT, secondStatus = CORRECT),
                                   mapOf(FIRST_TASK_SUBMISSION_AWS_KEY to solutionWithAdditionalFile,

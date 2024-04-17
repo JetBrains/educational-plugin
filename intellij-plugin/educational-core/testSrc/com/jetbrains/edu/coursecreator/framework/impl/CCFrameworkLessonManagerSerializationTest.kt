@@ -6,14 +6,17 @@ import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.findTask
+import org.junit.Test
 
 class CCFrameworkLessonManagerSerializationTest : EduSettingsServiceTestBase() {
+  @Test
   fun `test empty storage serialization`() {
     CCFrameworkLessonManager.getInstance(project).loadStateAndCheck("""
       <RecordState />
     """.trimIndent())
   }
 
+  @Test
   fun `test storage serialization`() {
     val course = createFrameworkCourse()
     val task1 = course.findTask("lesson1", "task1")

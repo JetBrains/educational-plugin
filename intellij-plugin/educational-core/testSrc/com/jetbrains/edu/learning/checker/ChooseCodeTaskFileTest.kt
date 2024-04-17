@@ -4,21 +4,29 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.findTask
+import org.junit.Test
 
 class ChooseCodeTaskFileTest : EduTestCase() {
+  @Test
   fun `test choose the only task file`() = doTest("task1", "TheOnlyTaskFile.txt")
 
+  @Test
   fun `test choose Main task file specified in configurator`() = doTest("task2", "Main.txt")
 
+  @Test
   fun `test choose Task task file specified in configurator`() = doTest("task5", "Task.txt")
 
+  @Test
   fun `test choose task file opened in editor`() = doTest("task3", "2.txt", "lesson1/task3/2.txt")
 
+  @Test
   fun `test choose Main task file when file from other task is opened in editor`() =
     doTest("task2", "Main.txt", "lesson1/task3/1.txt")
 
+  @Test
   fun `test choose first suitable task file`() = doTest("task4", "3.txt")
 
+  @Test
   fun `test choose user created file when it's best candidate and it's opened in editor`() =
     doTest("task4", "2.txt", "lesson1/task4/2.txt")
 

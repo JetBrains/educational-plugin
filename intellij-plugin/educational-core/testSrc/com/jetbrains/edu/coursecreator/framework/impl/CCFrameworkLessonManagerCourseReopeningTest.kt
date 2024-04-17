@@ -10,10 +10,12 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
+import org.junit.Test
 
 class CCFrameworkLessonManagerCourseReopeningTest : CourseReopeningTestBase<EmptyProjectSettings>() {
   override val defaultSettings = EmptyProjectSettings
 
+  @Test
   fun `test records stay the same after course reopening`() {
     val initialCourse = course(courseMode = CourseMode.EDUCATOR) {
       frameworkLesson("lesson") {

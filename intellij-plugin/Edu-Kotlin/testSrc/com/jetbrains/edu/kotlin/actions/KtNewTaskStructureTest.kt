@@ -3,10 +3,12 @@ package com.jetbrains.edu.kotlin.actions
 import com.intellij.lang.Language
 import com.jetbrains.edu.coursecreator.actions.create.CCNewTaskStructureTestBase
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.junit.Test
 
 class KtNewTaskStructureTest : CCNewTaskStructureTestBase() {
   override val language: Language get() = KotlinLanguage.INSTANCE
 
+  @Test
   fun `test create edu task`() = checkEduTaskCreation(
     fullTaskStructure = {
       file("task.md")
@@ -25,6 +27,7 @@ class KtNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create output task`() = checkOutputTaskCreation(
     fullTaskStructure = {
       file("task.md")
@@ -45,6 +48,7 @@ class KtNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create theory task`() = checkTheoryTaskCreation(
     fullTaskStructure = {
       file("task.md")
@@ -57,6 +61,7 @@ class KtNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create IDE task`() = checkIdeTaskCreation(
     fullTaskStructure = {
       file("task.md")
@@ -69,6 +74,7 @@ class KtNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   )
 
+  @Test
   fun `test create choice task`() = checkChoiceTaskCreation(
     fullTaskStructure = {
       file("task.md")

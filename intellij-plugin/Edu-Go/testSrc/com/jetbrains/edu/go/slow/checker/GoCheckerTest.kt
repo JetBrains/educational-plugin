@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
+import org.junit.Test
 
 class GoCheckerTest : GoCheckersTestBase() {
   override fun createCourse(): Course {
@@ -188,6 +189,7 @@ class GoCheckerTest : GoCheckersTestBase() {
     }
   }
 
+  @Test
   fun `test go course`() {
     CheckActionListener.expectedMessage { CheckUtils.CONGRATULATIONS }
     doTest()

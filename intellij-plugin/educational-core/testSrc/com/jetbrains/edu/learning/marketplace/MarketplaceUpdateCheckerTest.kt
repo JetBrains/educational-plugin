@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.marketplace.api.MockMarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceUpdateChecker
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.update.CourseUpdateCheckerTestBase
+import org.junit.Test
 
 class MarketplaceUpdateCheckerTest : CourseUpdateCheckerTestBase() {
 
@@ -24,23 +25,28 @@ class MarketplaceUpdateCheckerTest : CourseUpdateCheckerTestBase() {
     }
   }
 
+  @Test
   fun `test check scheduled for not upToDate course`() {
     doTestCheckScheduled(expectedInvocationNumber = 2, isCourseUpToDate = false, courseVersion = 1)
   }
 
+  @Test
   fun `test check scheduled for upToDate course`() {
     doTestCheckScheduled(expectedInvocationNumber = 2, isCourseUpToDate = true)
   }
 
+  @Test
   fun `test check scheduled for newly created course`() {
     doTestCheckScheduled(expectedInvocationNumber = 2, isCourseUpToDate = true, isNewlyCreated = true)
   }
 
+  @Test
   fun `test no isUpToDate check for newly created course at project opening`() {
     createCourse(isNewlyCreated = true, courseVersion = 3)
     testNoCheck(MarketplaceUpdateChecker.getInstance(project))
   }
 
+  @Test
   fun `test no check scheduled for stepik course`() {
     createCourse(isNewlyCreated = false, courseVersion = 0, isMarketplaceCourse = false)
     testNoCheck(MarketplaceUpdateChecker.getInstance(project))

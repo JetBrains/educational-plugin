@@ -31,6 +31,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.intellij.lang.annotations.Language
+import org.junit.Test
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -51,18 +52,21 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
     }
   }
 
+  @Test
   fun `test submission created after edu task check`() {
     configureSubmissionsResponses()
     createEduCourse()
     doTestSubmissionAddedAfterTaskCheck(1, CORRECT)
   }
 
+  @Test
   fun `test all submissions loaded`() {
     configureSubmissionsResponses(listOf(loadSubmissionsDataHasNext, loadSubmissionsData))
     createEduCourse()
     doTestSubmissionsLoaded(setOf(1, 2), mapOf(1 to 2, 2 to 2))
   }
 
+  @Test
   fun `test solution files loaded`() {
     configureSubmissionsResponses(solutionsKeyTextMap = mapOf(FIRST_TASK_SUBMISSION_AWS_KEY to solution))
     val course = createEduCourse()
@@ -84,6 +88,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
     checkSolutionFiles(solutionFiles, solutionFilesActual)
   }
 
+  @Test
   fun `test delete submissions action success`() {
     val userName = MarketplaceConnector.getInstance().account?.userInfo?.name ?: error("nullable current user")
 
@@ -92,6 +97,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
     }
   }
 
+  @Test
   fun `test delete submissions action failed`() {
     val userName = MarketplaceConnector.getInstance().account?.userInfo?.name ?: error("nullable current user")
 
@@ -100,6 +106,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
     }
   }
 
+  @Test
   fun `test report community solution action success`() {
     configureSubmissionsResponses(reportSolutionRequestSuccess = true)
     createEduCourse()
@@ -120,6 +127,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
     checkCommunitySolutionNotPresented(taskId, solutionToReportId)
   }
 
+  @Test
   fun `test report community solution action failed`() {
     configureSubmissionsResponses()
     createEduCourse()
@@ -295,7 +303,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
       every { userAgreementStateCall.execute() } returns Response.success(userAgreementState.toString().toResponseBody("application/json; charset=UTF-8".toMediaType()))
 
       if (solutionsKeyTextMap.isNotEmpty()) {
-        mockkObject(MarketplaceSubmissionsConnector.Companion)
+        mockkObject(MarketplaceSubmissionsConnector)
 
         for (key in solutionsKeyTextMap.keys) {
           val downloadLink = "downloadLink/key=$key"

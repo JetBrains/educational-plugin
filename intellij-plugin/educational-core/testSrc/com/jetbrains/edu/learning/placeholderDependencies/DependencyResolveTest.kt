@@ -3,9 +3,11 @@ package com.jetbrains.edu.learning.placeholderDependencies
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
+import org.junit.Test
 
 
 class DependencyResolveTest : EduTestCase() {
+  @Test
   fun `test resolve dependency`() {
     courseWithFiles {
       lesson("Introduction") {
@@ -34,6 +36,7 @@ class DependencyResolveTest : EduTestCase() {
     checkPlaceholder(11, 8, targetPlaceholder)
   }
 
+  @Test
   fun `test no such placeholder`() {
     try {
       courseWithFiles {
@@ -63,6 +66,7 @@ class DependencyResolveTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test resolve to task file in directory`() {
     courseWithFiles {
       lesson {
@@ -91,6 +95,7 @@ class DependencyResolveTest : EduTestCase() {
     checkPlaceholder(11, 8, targetPlaceholder)
   }
 
+  @Test
   fun `test resolve path with backslash`() {
     courseWithFiles {
       lesson {
@@ -119,6 +124,7 @@ class DependencyResolveTest : EduTestCase() {
     checkPlaceholder(11, 8, targetPlaceholder)
   }
 
+  @Test
   fun `test resolve with section`() {
     courseWithFiles {
       section("First section") {

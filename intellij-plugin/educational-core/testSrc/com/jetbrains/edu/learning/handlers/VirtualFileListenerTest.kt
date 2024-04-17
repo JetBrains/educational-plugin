@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.`in`
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
 import com.jetbrains.edu.learning.yaml.YamlMapper
 import com.jetbrains.edu.learning.yaml.deserializeItemProcessingErrors
+import org.junit.Test
 
 class VirtualFileListenerTest : VirtualFileListenerTestBase() {
 
@@ -17,6 +18,7 @@ class VirtualFileListenerTest : VirtualFileListenerTestBase() {
 
   override fun createListener(project: Project): EduVirtualFileListener = UserCreatedFileListener(project)
 
+  @Test
   fun `test add task file`() {
     val filePath = "src/taskFile.txt"
     doAddFileTest(filePath) { task ->

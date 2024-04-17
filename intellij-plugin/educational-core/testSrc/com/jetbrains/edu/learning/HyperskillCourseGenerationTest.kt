@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import org.junit.Test
 
 class HyperskillCourseGenerationTest : EduTestCase() {
   override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {
@@ -11,6 +12,7 @@ class HyperskillCourseGenerationTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test course structure creation`() {
     courseWithFiles(courseProducer = ::HyperskillCourse, courseMode = CourseMode.EDUCATOR) {}
 

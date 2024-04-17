@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import org.jetbrains.plugins.scala.ScalaLanguage
+import org.junit.Test
 
 class ScalaSbtCheckerTest : JdkCheckerTestBase() {
 
@@ -82,6 +83,7 @@ class ScalaSbtCheckerTest : JdkCheckerTestBase() {
   private val taskSbtText: String
     get() = GeneratorUtils.getInternalTemplateText("task-build.sbt")
 
+  @Test
   fun `test scala sbt course`() {
     CheckActionListener.expectedMessage { task ->
       when (task) {

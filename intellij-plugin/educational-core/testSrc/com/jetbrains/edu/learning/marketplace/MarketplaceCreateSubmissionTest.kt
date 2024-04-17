@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
 import com.jetbrains.edu.learning.yaml.YamlMapper.STUDENT_MAPPER
+import org.junit.Test
 import java.util.*
 
 class MarketplaceCreateSubmissionTest : EduTestCase() {
@@ -32,9 +33,13 @@ class MarketplaceCreateSubmissionTest : EduTestCase() {
     } as EduCourse
   }
 
+  @Test
   fun `test creating submission for solved edu task`() = createSubmission(CORRECT, CheckStatus.Solved)
+  @Test
   fun `test creating submission for failed edu task`() = createSubmission(WRONG, CheckStatus.Failed)
+  @Test
   fun `test correct submission deserialization`() = deserializeSubmission(CORRECT, CheckStatus.Solved)
+  @Test
   fun `test wrong submission deserialization`() = deserializeSubmission(WRONG, CheckStatus.Failed)
 
   private fun createSubmission(submissionStatus: String, checkStatus: CheckStatus) {

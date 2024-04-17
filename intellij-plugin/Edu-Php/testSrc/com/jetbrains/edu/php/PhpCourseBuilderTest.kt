@@ -10,6 +10,7 @@ import com.jetbrains.php.composer.ComposerUtils
 import com.jetbrains.php.config.interpreters.PhpInterpreter
 import com.jetbrains.php.config.interpreters.PhpInterpretersManagerImpl
 import com.jetbrains.php.lang.PhpLanguage
+import org.junit.Test
 
 class PhpCourseBuilderTest : CourseGenerationTestBase<PhpProjectSettings>() {
   override val defaultSettings = PhpProjectSettings()
@@ -21,6 +22,7 @@ class PhpCourseBuilderTest : CourseGenerationTestBase<PhpProjectSettings>() {
     PhpInterpretersManagerImpl.getInstance(project).addInterpreter(phpInterpreter)
   }
 
+  @Test
   fun `test new educator course`() {
     val newCourse = newCourse(PhpLanguage.INSTANCE)
 
@@ -40,6 +42,7 @@ class PhpCourseBuilderTest : CourseGenerationTestBase<PhpProjectSettings>() {
     }.assertEquals(rootDir)
   }
 
+  @Test
   fun `test study course structure`() {
     val course = course(language = PhpLanguage.INSTANCE) {
       lesson("lesson1") {

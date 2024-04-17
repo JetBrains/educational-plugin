@@ -12,24 +12,29 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
+import org.junit.Test
 import kotlin.test.DefaultAsserter.assertNotEquals
 
 class CourseIgnoreAssociationsTest : CourseGenerationTestBase<EduProjectSettings>() {
 
   override val defaultSettings = EmptyProjectSettings
 
+  @Test
   fun `test _courseignore file works even without file type association`() = doTestCourseignoreWorksEvenWithWrongFileTypeAssociation {
     FileTypeManager.getInstance().removeAssociation(CourseIgnoreFileType, ExactFileNameMatcher(COURSE_IGNORE))
   }
 
+  @Test
   fun `test _courseignore file works even if associated with a wrong file type`() = doTestCourseignoreWorksEvenWithWrongFileTypeAssociation {
     FileTypeManager.getInstance().associate(HtmlFileType.INSTANCE, ExactFileNameMatcher(COURSE_IGNORE))
   }
 
+  @Test
   fun `test _courseignore association after project reopening with no association`() = doTestCorrectAssociationAfterProjectOpening {
     FileTypeManager.getInstance().removeAssociation(CourseIgnoreFileType, ExactFileNameMatcher(COURSE_IGNORE))
   }
 
+  @Test
   fun `test _courseignore association after project reopening with wrong association`() = doTestCorrectAssociationAfterProjectOpening {
     FileTypeManager.getInstance().associate(HtmlFileType.INSTANCE, ExactFileNameMatcher(COURSE_IGNORE))
   }

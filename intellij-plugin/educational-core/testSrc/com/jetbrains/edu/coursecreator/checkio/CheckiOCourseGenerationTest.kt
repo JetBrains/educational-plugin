@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import org.junit.Test
 
 class CheckiOCourseGenerationTest : EduTestCase() {
   private val contentGenerator
@@ -26,10 +27,12 @@ class CheckiOCourseGenerationTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test deserialized missions list has correct size`() {
     assertEquals(6, getSourceMissions().size)
   }
 
+  @Test
   fun `test order of missions`() {
     val sourceMissions = getSourceMissions()
     val processedMissions = getProcessedMissions()
@@ -40,6 +43,7 @@ class CheckiOCourseGenerationTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test links to task and solutions generated correctly`() {
     val missions = getProcessedMissions()
 
@@ -55,6 +59,7 @@ class CheckiOCourseGenerationTest : EduTestCase() {
     assertEmpty(notSolved)
   }
 
+  @Test
   fun `test station and mission names are computed correctly`() {
     val checkiOCourse = course(courseProducer = ::CheckiOCourse) {} as CheckiOCourse
     val stations = contentGenerator.getStationsFromServer()

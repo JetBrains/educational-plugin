@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.yaml.YamlConfigSettings
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
 import com.jetbrains.edu.learning.yaml.YamlMapper.MAPPER
 import com.jetbrains.edu.learning.yaml.YamlTestCase
+import org.junit.Test
 
 open class YamlUndoTest : YamlTestCase() {
 
@@ -42,6 +43,7 @@ open class YamlUndoTest : YamlTestCase() {
   }
 
   // EDU-2217
+  @Test
   fun `test undo inside placeholder`() {
     val (task, taskFile, placeholder) = getCourseElements()
     val startOffset = placeholder.offset
@@ -55,6 +57,7 @@ open class YamlUndoTest : YamlTestCase() {
   }
 
   // EDU-2217
+  @Test
   fun `test undo after placeholder`() {
     val (task, taskFile, placeholder) = getCourseElements()
     val startOffset = placeholder.offset
@@ -68,6 +71,7 @@ open class YamlUndoTest : YamlTestCase() {
   }
 
   // EDU-2161
+  @Test
   fun `test two undo inside placeholder`() {
     val (task, taskFile, placeholder) = getCourseElements()
     val startOffset = placeholder.offset

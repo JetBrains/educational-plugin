@@ -15,9 +15,11 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.coursecreator.framework.diff.withFLMultipleFileMergeUI
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
+import org.junit.Test
 import kotlin.test.assertFails
 
 class CCSyncChangesWithNextTaskTest : EduActionTestCase() {
+  @Test
   fun `test changes in files propagate until cancel`() {
     val course = createFrameworkCourse(3)
 
@@ -80,6 +82,7 @@ class CCSyncChangesWithNextTaskTest : EduActionTestCase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test propagate new file`() {
     val course = createFrameworkCourse(2)
 
@@ -120,6 +123,7 @@ class CCSyncChangesWithNextTaskTest : EduActionTestCase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test propagate remove file`() {
     val course = createFrameworkCourse(2)
 
@@ -158,6 +162,7 @@ class CCSyncChangesWithNextTaskTest : EduActionTestCase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test invoke action from lesson node`() {
     val course = createFrameworkCourse(2)
 
@@ -203,6 +208,7 @@ class CCSyncChangesWithNextTaskTest : EduActionTestCase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test cannot invoke action from course node`() {
     val course = createFrameworkCourse(2)
 
@@ -216,6 +222,7 @@ class CCSyncChangesWithNextTaskTest : EduActionTestCase() {
     }
   }
 
+  @Test
   fun `test invoke action from second task`() {
     val course = createFrameworkCourse(3)
 
@@ -271,6 +278,7 @@ class CCSyncChangesWithNextTaskTest : EduActionTestCase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test changes in invisible files do not propagate`() {
     val course = createFrameworkCourse(2)
 
@@ -313,6 +321,7 @@ class CCSyncChangesWithNextTaskTest : EduActionTestCase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test files remain the same after propagation if changes haven't been made in previous tasks`() {
     val course = createFrameworkCourse(2)
 
@@ -360,6 +369,7 @@ class CCSyncChangesWithNextTaskTest : EduActionTestCase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test new files do change if not resolved during merge`() {
     val course = createFrameworkCourse(2)
 
@@ -410,6 +420,7 @@ class CCSyncChangesWithNextTaskTest : EduActionTestCase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test new files are added or deleted or changed if resolved during merge`() {
     val course = createFrameworkCourse(2)
 
@@ -464,6 +475,7 @@ class CCSyncChangesWithNextTaskTest : EduActionTestCase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test file is deleted when it accept deletion in merge dialog`() {
     val course = createFrameworkCourse(2)
 
@@ -513,6 +525,7 @@ class CCSyncChangesWithNextTaskTest : EduActionTestCase() {
   }
 
 
+  @Test
   fun `test invoke action from file nodes`() {
     val course = createFrameworkCourseWithFiles(
       2,
@@ -589,6 +602,7 @@ class CCSyncChangesWithNextTaskTest : EduActionTestCase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
   fun `test cannot invoke action from file nodes from different tasks`() {
     val course = createFrameworkCourse(2)
 

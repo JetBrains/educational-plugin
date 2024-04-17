@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.format
 
 import com.jetbrains.edu.learning.courseFormat.messageMethod
-import kotlin.test.Test
+import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 

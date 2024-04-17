@@ -9,6 +9,7 @@ import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import org.junit.Test
 
 class CCDeleteActionTest : EduActionTestCase() {
   override fun setUp() {
@@ -18,6 +19,7 @@ class CCDeleteActionTest : EduActionTestCase() {
       .subscribe(VirtualFileManager.VFS_CHANGES, CCVirtualFileListener(project, testRootDisposable))
   }
 
+  @Test
   fun `test delete task`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -42,6 +44,7 @@ class CCDeleteActionTest : EduActionTestCase() {
     }.assertEquals(LightPlatformTestCase.getSourceRoot())
   }
 
+  @Test
   fun `test delete task with dependent tasks`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -89,6 +92,7 @@ class CCDeleteActionTest : EduActionTestCase() {
     assertNotNull(task3.getTaskFile("Task.kt")!!.answerPlaceholders[0].placeholderDependency)
   }
 
+  @Test
   fun `test delete lesson`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -117,6 +121,7 @@ class CCDeleteActionTest : EduActionTestCase() {
     assertEquals(1, course.getLesson("lesson2")!!.index)
   }
 
+  @Test
   fun `test lesson deletion with dependent tasks`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -172,6 +177,7 @@ class CCDeleteActionTest : EduActionTestCase() {
     assertNotNull(task4.getTaskFile("Task.kt")!!.answerPlaceholders[0].placeholderDependency)
   }
 
+  @Test
   fun `test delete section`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
@@ -200,6 +206,7 @@ class CCDeleteActionTest : EduActionTestCase() {
     }.assertEquals(LightPlatformTestCase.getSourceRoot())
   }
 
+  @Test
   fun `test delete middle section`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
@@ -218,6 +225,7 @@ class CCDeleteActionTest : EduActionTestCase() {
     assertEquals(2, course.getLesson("lesson2")!!.index)
   }
 
+  @Test
   fun `test delete lesson from section`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
@@ -244,6 +252,7 @@ class CCDeleteActionTest : EduActionTestCase() {
     assertEquals(1, section.getLesson("lesson2")!!.index)
   }
 
+  @Test
   fun `test delete not empty section`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
@@ -265,6 +274,7 @@ class CCDeleteActionTest : EduActionTestCase() {
     assertEquals(2, course.getLesson("lesson2")!!.index)
   }
 
+  @Test
   fun `test section deletion with dependent tasks`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section("section1") {

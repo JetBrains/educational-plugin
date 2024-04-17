@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.stepik.hyperskill.update.HyperskillCourseUpdateChecker
 import com.jetbrains.edu.learning.stepik.hyperskill.update.SyncHyperskillCourseAction
 import com.jetbrains.edu.learning.update.CourseUpdateCheckerTestBase
+import org.junit.Test
 import java.util.*
 import kotlin.test.assertNotEquals
 
@@ -38,24 +39,28 @@ class HyperskillCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
     }
   }
 
+  @Test
   fun `test check scheduled for upToDate course`() {
     configureResponse("stages_empty_response.json")
     createHyperskillCourse()
     doTest(HyperskillCourseUpdateChecker.getInstance(project), true, 1, 2) {}
   }
 
+  @Test
   fun `test check scheduled for newly created course`() {
     configureResponse("stages_empty_response.json")
     createHyperskillCourse(true)
     doTest(HyperskillCourseUpdateChecker.getInstance(project), true, 0, 1) {}
   }
 
+  @Test
   fun `test no isUpToDate check for newly created course at project opening`() {
     configureResponse("stages_empty_response.json")
     createHyperskillCourse(true)
     testNoCheck(HyperskillCourseUpdateChecker.getInstance(project))
   }
 
+  @Test
   fun `test check scheduled for not upToDate course with notification`() {
     configureResponse("stages_response.json")
     val course = course(courseProducer = ::HyperskillCourse) {
@@ -75,6 +80,7 @@ class HyperskillCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
     doTest(HyperskillCourseUpdateChecker.getInstance(project), false, 1, 2, 2) {}
   }
 
+  @Test
   fun `test course updated at sync action`() {
     configureResponse("stages_response.json", courseResponse = "course_response_lite.json")
     val course = createHyperskillCourse(false)
@@ -96,6 +102,7 @@ class HyperskillCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
     assertNotEquals(Date(0), course.updateDate)
   }
 
+  @Test
   fun `test notification shown for up to date course at sync action`() {
     configureResponse("stages_empty_response.json", courseResponse = "course_response_lite.json")
     createHyperskillCourse(true)

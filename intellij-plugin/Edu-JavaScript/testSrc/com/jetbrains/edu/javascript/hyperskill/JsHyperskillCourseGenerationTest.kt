@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator.Companion.HYPERSKILL_TEST_DIR
+import org.junit.Test
 
 class JsHyperskillCourseGenerationTest : EduTestCase() {
   override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {
@@ -15,6 +16,7 @@ class JsHyperskillCourseGenerationTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test course structure creation`() {
     courseWithFiles(
       courseProducer = ::HyperskillCourse,

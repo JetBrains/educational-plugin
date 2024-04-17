@@ -8,9 +8,11 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
 import org.intellij.lang.annotations.Language
+import org.junit.Test
 
 class ExportStepikIdsTest : EduTestCase() {
 
+  @Test
   fun `test not available for local course`() {
     courseWithFiles {
       lesson { eduTask { } }
@@ -19,6 +21,7 @@ class ExportStepikIdsTest : EduTestCase() {
     testAction(ExportStepikIds.ACTION_ID, shouldBeEnabled = false)
   }
 
+  @Test
   fun `test export stepik ids`() {
     val course = courseWithFiles {
       stepikLesson { eduTask { } }

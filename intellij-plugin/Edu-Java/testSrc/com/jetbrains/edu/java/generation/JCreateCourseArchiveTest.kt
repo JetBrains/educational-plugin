@@ -3,12 +3,14 @@ package com.jetbrains.edu.java.generation
 import com.intellij.lang.java.JavaLanguage
 import com.jetbrains.edu.coursecreator.actions.CourseArchiveTestBase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import org.junit.Test
 
 class JCreateCourseArchiveTest : CourseArchiveTestBase() {
 
   override fun getTestDataPath(): String = super.getTestDataPath() + "/actions/createCourseArchive"
 
   /** Checks [com.jetbrains.edu.jvm.gradle.generation.macro.GradleCommandMacroProvider] */
+  @Test
   fun `test custom command`() {
     courseWithFiles(
       language = JavaLanguage.INSTANCE,

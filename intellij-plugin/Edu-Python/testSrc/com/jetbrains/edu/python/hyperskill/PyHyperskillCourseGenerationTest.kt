@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator.Compa
 import com.jetbrains.edu.python.learning.PyConfigurator.Companion.TASK_PY
 import com.jetbrains.edu.python.learning.PyConfigurator.Companion.TESTS_PY
 import com.jetbrains.python.PythonLanguage
+import org.junit.Test
 
 
 class PyHyperskillCourseGenerationTest : EduTestCase() {
@@ -22,6 +23,7 @@ class PyHyperskillCourseGenerationTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test course structure creation`() {
     courseWithFiles(courseProducer = ::HyperskillCourse, language = PythonLanguage.INSTANCE, courseMode = CourseMode.EDUCATOR) {}
 

@@ -9,11 +9,13 @@ import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.testAction
 import org.intellij.lang.annotations.Language
+import org.junit.Test
 import org.rust.cargo.CargoConstants
 import org.rust.lang.RsLanguage
 
 class RsCreateLessonTest : RsActionTestBase() {
 
+  @Test
   fun `test add lesson item no trailing comma`() = addLastLesson("""
     [workspace]
 
@@ -37,6 +39,7 @@ class RsCreateLessonTest : RsActionTestBase() {
     ]    
   """)
 
+  @Test
   fun `test add lesson item trailing comma`() = addLastLesson("""
     [workspace]
 
@@ -60,6 +63,7 @@ class RsCreateLessonTest : RsActionTestBase() {
     ]
   """)
 
+  @Test
   fun `test add lesson comments`() = addLastLesson("""
     [workspace]
 
@@ -83,6 +87,7 @@ class RsCreateLessonTest : RsActionTestBase() {
     ]
   """)
 
+  @Test
   fun `test add lesson extra spaces`() = addLastLesson("""
     [workspace]
 
@@ -106,6 +111,7 @@ class RsCreateLessonTest : RsActionTestBase() {
     ]
   """)
 
+  @Test
   fun `test add lesson item with section`() {
     courseWithFiles(
       courseMode = CourseMode.EDUCATOR,
@@ -145,6 +151,7 @@ class RsCreateLessonTest : RsActionTestBase() {
     """)
   }
 
+  @Test
   fun `test add the first lesson in course`() {
     courseWithFiles(
       courseMode = CourseMode.EDUCATOR,
@@ -178,6 +185,7 @@ class RsCreateLessonTest : RsActionTestBase() {
     """)
   }
 
+  @Test
   fun `test add lesson in the middle of course`() {
     courseWithFiles(
       courseMode = CourseMode.EDUCATOR,
@@ -220,6 +228,7 @@ class RsCreateLessonTest : RsActionTestBase() {
     """)
   }
 
+  @Test
   fun `test do not modify manifest on empty lesson creation`() {
     courseWithFiles(
       courseMode = CourseMode.EDUCATOR,
@@ -258,6 +267,7 @@ class RsCreateLessonTest : RsActionTestBase() {
       """)
   }
 
+  @Test
   fun `test do not modify manifest on non first task creation`() {
     courseWithFiles(
       courseMode = CourseMode.EDUCATOR,

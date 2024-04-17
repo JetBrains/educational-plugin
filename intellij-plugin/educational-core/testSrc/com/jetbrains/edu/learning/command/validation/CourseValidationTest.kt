@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.MockResponse
+import org.junit.Test
 import java.net.HttpURLConnection
 
 class CourseValidationTest : EduTestCase() {
@@ -33,6 +34,7 @@ class CourseValidationTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test events for check action`() {
     val course = courseWithFiles {
       lesson("lesson with unchecked tasks") {
@@ -104,6 +106,7 @@ class CourseValidationTest : EduTestCase() {
     """)
   }
 
+  @Test
   fun `test link validation`() {
     val helper = MockWebServerHelper(testRootDisposable)
 
@@ -168,6 +171,7 @@ class CourseValidationTest : EduTestCase() {
     """)
   }
 
+  @Test
   fun `test image link validation`() {
     val helper = MockWebServerHelper(testRootDisposable)
 

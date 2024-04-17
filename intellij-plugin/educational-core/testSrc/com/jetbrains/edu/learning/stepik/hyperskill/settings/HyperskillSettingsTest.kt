@@ -1,9 +1,11 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.settings
 
 import com.jetbrains.edu.learning.EduSettingsServiceTestBase
+import org.junit.Test
 
 class HyperskillSettingsTest : EduSettingsServiceTestBase() {
 
+  @Test
   fun `test serialization`() {
     val settings = HyperskillSettings()
     settings.loadStateAndCheck("""

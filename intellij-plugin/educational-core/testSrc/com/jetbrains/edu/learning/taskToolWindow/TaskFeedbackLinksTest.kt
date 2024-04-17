@@ -5,15 +5,18 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import org.junit.Test
 
 
 class TaskFeedbackLinksTest : EduTestCase() {
 
+  @Test
   fun testNoneLink() {
     val task = getRemoteEduTask(isMarketplaceCourse = true)
     assertNull(task.feedbackLink)
   }
 
+  @Test
   fun testCustomLink() {
     val task = getRemoteEduTask()
     task.feedbackLink = "https://www.jetbrains.com/"

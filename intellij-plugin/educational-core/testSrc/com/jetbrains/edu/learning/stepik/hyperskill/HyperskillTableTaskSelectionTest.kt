@@ -2,13 +2,16 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
+import org.junit.Test
 
 class HyperskillTableTaskSelectionTest: EduTestCase() {
+  @Test
   fun `test initial selection`() {
     val task = createTableTask(false)
     assertEquals(task.getSelectedCells(), listOf<Pair<Int, Int>>())
   }
 
+  @Test
   fun `test select in checkbox task`() {
     val task = createTableTask(true)
     task.apply {
@@ -20,6 +23,7 @@ class HyperskillTableTaskSelectionTest: EduTestCase() {
     assertEquals(task.getSelectedCells(), listOf(Pair(0, 1), Pair(1, 0)))
   }
 
+  @Test
   fun `test select in non-checkbox task`() {
     val task = createTableTask(false)
     task.apply {

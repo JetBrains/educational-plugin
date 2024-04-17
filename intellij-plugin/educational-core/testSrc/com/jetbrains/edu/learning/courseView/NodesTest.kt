@@ -9,9 +9,11 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import org.junit.Test
 
 class NodesTest : CourseViewTestBase() {
 
+  @Test
   fun testOutsideScrDir() {
     courseWithFiles(language = FakeGradleBasedLanguage) {
       lesson {
@@ -41,6 +43,7 @@ class NodesTest : CourseViewTestBase() {
     """.trimMargin("|"))
   }
 
+  @Test
   fun testSections() {
     courseWithFiles {
       lesson {
@@ -116,6 +119,7 @@ class NodesTest : CourseViewTestBase() {
     """.trimMargin("|"))
   }
 
+  @Test
   fun testTaskFilesOrder() {
     courseWithFiles {
       lesson {
@@ -144,6 +148,7 @@ class NodesTest : CourseViewTestBase() {
     """.trimMargin("|"))
   }
 
+  @Test
   fun `test invisible files in student mode`() {
     courseWithInvisibleItems(CourseMode.STUDENT)
     assertCourseView("""
@@ -161,6 +166,7 @@ class NodesTest : CourseViewTestBase() {
     """.trimIndent())
   }
 
+  @Test
   fun `test invisible files in educator mode`() {
     courseWithInvisibleItems(CourseMode.EDUCATOR)
     assertCourseView("""
@@ -184,6 +190,7 @@ class NodesTest : CourseViewTestBase() {
     """.trimIndent())
   }
 
+  @Test
   fun `test non course files`() {
     courseWithInvisibleItems(CourseMode.EDUCATOR)
     runWriteAction {
@@ -261,6 +268,7 @@ class NodesTest : CourseViewTestBase() {
     }
   }
 
+  @Test
   fun `test course with tests inside test dir`() {
     createCourseWithTestsInsideTestDir(CourseMode.EDUCATOR)
     assertCourseView("""   
@@ -283,6 +291,7 @@ class NodesTest : CourseViewTestBase() {
     """.trimMargin("|"))
   }
 
+  @Test
   fun `test student course with tests inside test dir`() {
     createCourseWithTestsInsideTestDir()
     assertCourseView("""
@@ -301,6 +310,7 @@ class NodesTest : CourseViewTestBase() {
   }
 
 
+  @Test
   fun `test course with dir inside test`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -346,6 +356,7 @@ class NodesTest : CourseViewTestBase() {
     """.trimMargin("|"))
   }
 
+  @Test
   fun `test directory inside lesson in educator mode`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -378,6 +389,7 @@ class NodesTest : CourseViewTestBase() {
     """.trimMargin("|"))
   }
 
+  @Test
   fun `test directory inside course in educator mode`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -410,6 +422,7 @@ class NodesTest : CourseViewTestBase() {
     """.trimMargin("|"))
   }
 
+  @Test
   fun `test excluded files in educator mode`() {
     val lessonIgnoredFile = "lesson1/LessonIgnoredFile.txt"
     val courseIgnoredFile = "IgnoredFile.txt"
@@ -446,6 +459,7 @@ class NodesTest : CourseViewTestBase() {
     """.trimMargin("|"))
   }
 
+  @Test
   fun `test excluded files in educator mode - do not show dirs inside tasks as excluded`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -506,6 +520,7 @@ class NodesTest : CourseViewTestBase() {
     """.trimMargin("|"))
   }
 
+  @Test
   fun `test excluded files in educator mode - files are excluded differently inside and outside of tasks`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
@@ -537,6 +552,7 @@ class NodesTest : CourseViewTestBase() {
     """.trimMargin("|"))
   }
 
+  @Test
   fun `test hyperskill course`() {
     courseWithFiles(courseProducer = ::HyperskillCourse) {
       frameworkLesson  {
@@ -568,6 +584,7 @@ class NodesTest : CourseViewTestBase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test hyperskill course with empty framework lesson`() {
     courseWithFiles(courseProducer = ::HyperskillCourse) {
       frameworkLesson {
@@ -581,6 +598,7 @@ class NodesTest : CourseViewTestBase() {
     """.trimMargin())
   }
 
+  @Test
   fun `test edu course with empty framework lesson`() {
     courseWithFiles(courseProducer = ::EduCourse) {
       frameworkLesson {
@@ -596,6 +614,7 @@ class NodesTest : CourseViewTestBase() {
 
 
 
+  @Test
   fun `test course dirs first order`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {

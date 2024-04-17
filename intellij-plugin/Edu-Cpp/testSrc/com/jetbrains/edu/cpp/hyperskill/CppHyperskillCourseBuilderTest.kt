@@ -7,10 +7,12 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.fileTree
+import org.junit.Test
 
 class CppHyperskillCourseBuilderTest  : CourseGenerationTestBase<CppProjectSettings>() {
   override val defaultSettings = CppProjectSettings()
 
+  @Test
   fun `test create new cc edu Hyperskill course`() {
     val course = course(
       language = OCLanguage.getInstance(),

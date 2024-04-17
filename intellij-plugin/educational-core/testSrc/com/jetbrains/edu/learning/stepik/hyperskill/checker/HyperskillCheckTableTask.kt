@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.pathWithoutPrams
 import com.jetbrains.edu.learning.stepik.StepikTestUtils.format
 import org.apache.http.HttpStatus
 import org.intellij.lang.annotations.Language
+import org.junit.Test
 import java.util.*
 
 class HyperskillCheckTableTask: HyperskillCheckActionTestBase() {
@@ -38,8 +39,10 @@ class HyperskillCheckTableTask: HyperskillCheckActionTestBase() {
     }
   }
 
+  @Test
   fun `test table task correct`() = doTest(true, 0)
 
+  @Test
   fun `test table task incorrect`() = doTest(false, 1)
 
   private fun doTest(succeed: Boolean, taskNum: Int) {

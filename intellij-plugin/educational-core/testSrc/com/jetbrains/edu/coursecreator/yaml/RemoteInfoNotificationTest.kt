@@ -8,9 +8,11 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.yaml.GeneratedRemoteInfoNotificationProvider
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings
+import org.junit.Test
 
 class RemoteInfoNotificationTest : NotificationsTestBase() {
 
+  @Test
   fun `test course remote notification`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {}
     val yamlText = createRemoteYamlConfigText()
@@ -21,6 +23,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
     }
   }
 
+  @Test
   fun `test section remote notification`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section { }
@@ -34,6 +37,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
     }
   }
 
+  @Test
   fun `test lesson remote notification`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson { }
@@ -47,6 +51,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
     }
   }
 
+  @Test
   fun `test task remote notification`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -62,6 +67,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
     }
   }
 
+  @Test
   fun `test non config file`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -76,6 +82,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
     checkNoEditorNotification<GeneratedRemoteInfoNotificationProvider>(virtualFile)
   }
 
+  @Test
   fun `test local config file`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {

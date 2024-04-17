@@ -8,8 +8,10 @@ import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
 import com.jetbrains.edu.learning.yaml.getConfigDir
+import org.junit.Test
 
 class CCEditAnswerPlaceholderActionTest : EduActionTestCase() {
+  @Test
   fun `test navigate to yaml`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {

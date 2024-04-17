@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.nullValue
 import com.jetbrains.python.PythonLanguage
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Test
 
 @Suppress("PyInterpreter", "PyUnresolvedReferences")
 class PyCodeforcesCheckerTest : PyCheckersTestBase() {
@@ -44,6 +45,7 @@ class PyCodeforcesCheckerTest : PyCheckersTestBase() {
     }
   }
 
+  @Test
   fun `test codeforces course`() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       val matcher = when (task.name) {

@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduTestInfo
 import com.jetbrains.edu.learning.courseFormat.EduTestInfo.PresentableStatus.*
+import org.junit.Test
 
 class JExecutedTestsInfoTest : JdkCheckerTestBase() {
   override fun createCourse(): Course = course(language = JavaLanguage.INSTANCE) {
@@ -78,6 +79,7 @@ class JExecutedTestsInfoTest : JdkCheckerTestBase() {
     }
   }
 
+  @Test
   fun `test executed tests info`() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       val expectedTestsInfo = when (task.name) {

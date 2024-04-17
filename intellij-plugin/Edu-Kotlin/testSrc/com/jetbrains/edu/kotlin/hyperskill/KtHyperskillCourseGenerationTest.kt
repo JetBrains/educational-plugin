@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.document
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.plugins.gradle.util.GradleConstants.DEFAULT_SCRIPT_NAME
 import org.jetbrains.plugins.gradle.util.GradleConstants.SETTINGS_FILE_NAME
+import org.junit.Test
 
 class KtHyperskillCourseGenerationTest : EduTestCase() {
   override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {
@@ -20,6 +21,7 @@ class KtHyperskillCourseGenerationTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test course structure creation`() {
     courseWithFiles(
       courseProducer = ::HyperskillCourse,
@@ -42,6 +44,7 @@ class KtHyperskillCourseGenerationTest : EduTestCase() {
     }
   }
 
+  @Test
   fun `test build gradle file`() {
     courseWithFiles(
       courseProducer = ::HyperskillCourse,
@@ -54,6 +57,7 @@ class KtHyperskillCourseGenerationTest : EduTestCase() {
     assertEquals(expectedBuildGradleContent, actualBuildGradleContent)
   }
 
+  @Test
   fun `test settings gradle file`() {
     courseWithFiles(
       courseProducer = ::HyperskillCourse,

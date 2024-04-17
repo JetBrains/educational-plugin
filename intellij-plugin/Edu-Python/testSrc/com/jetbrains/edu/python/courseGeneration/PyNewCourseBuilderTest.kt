@@ -8,10 +8,12 @@ import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.python.learning.newproject.PyProjectSettings
 import com.jetbrains.python.PythonLanguage
+import org.junit.Test
 
 class PyNewCourseBuilderTest : CourseGenerationTestBase<PyProjectSettings>() {
   override val defaultSettings: PyProjectSettings = PyProjectSettings()
 
+  @Test
   fun `test new educator course`() {
     val course = pythonCourse(CourseMode.EDUCATOR)
     createCourseStructure(course)
@@ -30,6 +32,7 @@ class PyNewCourseBuilderTest : CourseGenerationTestBase<PyProjectSettings>() {
     }.assertEquals(rootDir)
   }
 
+  @Test
   fun `test student course`() {
     val course = pythonCourse(CourseMode.STUDENT) {
       lesson("lesson1") {

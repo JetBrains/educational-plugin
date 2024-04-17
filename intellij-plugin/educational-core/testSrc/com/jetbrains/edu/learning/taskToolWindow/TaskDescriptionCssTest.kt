@@ -1,7 +1,10 @@
 package com.jetbrains.edu.learning.taskToolWindow
 
+import org.junit.Test
+
 class TaskDescriptionCssTest : TaskDescriptionTestBase() {
 
+  @Test
   fun `test remote style tag using swing`() = doHtmlTest("""
     Some <b>simple</b> text.
     

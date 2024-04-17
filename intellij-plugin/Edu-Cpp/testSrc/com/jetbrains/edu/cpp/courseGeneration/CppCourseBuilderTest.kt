@@ -7,11 +7,13 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.fileTree
+import org.junit.Test
 
 class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
 
   override val defaultSettings = CppProjectSettings()
 
+  @Test
   fun `test create new cc edu GoogleTest course`() {
     val course = course(
       language = OCLanguage.getInstance(),
@@ -42,6 +44,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
 
   }
 
+  @Test
   fun `test create new cc edu Catch course`() {
     val course = course(
       language = OCLanguage.getInstance(),
@@ -71,6 +74,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
 
   }
 
+  @Test
   fun `test study edu course structure with top-level lesson`() {
     val course = course(language = OCLanguage.getInstance(), environment = "Catch") {
       lesson("lesson") {
@@ -104,6 +108,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
 
   }
 
+  @Test
   fun `test study edu course structure with section`() {
     val course = course(language = OCLanguage.getInstance(), environment = "Catch") {
       section("section") {
@@ -139,6 +144,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
 
   }
 
+  @Test
   fun `test study course structure with top-level section and lesson`() {
     val course = course(language = OCLanguage.getInstance(), environment = "Catch") {
       section("section") {
@@ -191,6 +197,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
 
   }
 
+  @Test
   fun `test study edu course structure with different tasks`() {
     val course = course(language = OCLanguage.getInstance(), environment = "Catch") {
       lesson("lesson") {

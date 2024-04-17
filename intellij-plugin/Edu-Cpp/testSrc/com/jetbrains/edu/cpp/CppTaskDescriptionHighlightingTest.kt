@@ -3,11 +3,13 @@ package com.jetbrains.edu.cpp
 import com.intellij.lang.Language
 import com.jetbrains.cidr.lang.OCLanguage
 import com.jetbrains.edu.learning.taskToolWindow.TaskDescriptionHighlightingTestBase
+import org.junit.Test
 
 class CppTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
   override val language: Language = OCLanguage.getInstance()
   override val environment = "GoogleTest"
 
+  @Test
   fun `test markdown description highlighting`() = doMarkdownTest("""
     Code block with default language:
     ```
@@ -53,6 +55,7 @@ class CppTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase()
     </html>
   """)
 
+  @Test
   fun `test html description highlighting`() = doHtmlTest("""
     <html>
     <p>Code block with default language:</p>

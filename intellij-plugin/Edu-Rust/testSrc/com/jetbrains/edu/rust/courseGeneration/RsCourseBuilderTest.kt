@@ -6,12 +6,14 @@ import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
 import com.jetbrains.edu.rust.RsProjectSettings
+import org.junit.Test
 import org.rust.lang.RsLanguage
 
 class RsCourseBuilderTest : CourseGenerationTestBase<RsProjectSettings>() {
 
   override val defaultSettings: RsProjectSettings = RsProjectSettings(null)
 
+  @Test
   fun `test new educator course`() {
     val newCourse = newCourse(RsLanguage)
     createCourseStructure(newCourse)
@@ -43,6 +45,7 @@ class RsCourseBuilderTest : CourseGenerationTestBase<RsProjectSettings>() {
     }.assertEquals(rootDir)
   }
 
+  @Test
   fun `test create existent educator course`() {
     val course = course(language = RsLanguage, courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -70,6 +73,7 @@ class RsCourseBuilderTest : CourseGenerationTestBase<RsProjectSettings>() {
   }
 
 
+  @Test
   fun `test study course structure`() {
     val course = course(language = RsLanguage) {
       lesson {

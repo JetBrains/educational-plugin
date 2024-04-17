@@ -13,13 +13,16 @@ import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.withNotificationCheck
 import com.jetbrains.edu.learning.withTestDialog
 import com.jetbrains.rd.util.first
+import org.junit.Test
 
 class ApplyCodeActionTest : EduActionTestCase() {
 
+  @Test
   fun `test apply code not visible and not enabled by default`() {
     testAction(ApplyCodeAction.ACTION_ID, context = null, shouldBeEnabled = false, shouldBeVisible = false)
   }
 
+  @Test
   fun `test apply code not visible and not enabled with wrong context`() {
     testAction(
       ApplyCodeAction.ACTION_ID, context = dataContext(
@@ -30,6 +33,7 @@ class ApplyCodeActionTest : EduActionTestCase() {
     )
   }
 
+  @Test
   fun `test apply code with empty list of virtual file path`() {
     val diffChain = simpleDiffRequestChain(project).apply {
       putUserData(ApplyCodeAction.VIRTUAL_FILE_PATH_LIST, listOf())
@@ -48,6 +52,7 @@ class ApplyCodeActionTest : EduActionTestCase() {
     }
   }
 
+  @Test
   fun `test apply code with list of wrong virtual file path`() {
     val diffChain = simpleDiffRequestChain(project).apply {
       putUserData(ApplyCodeAction.VIRTUAL_FILE_PATH_LIST, listOf("src/wrong/path/nonExistingFile.kt"))
@@ -66,6 +71,7 @@ class ApplyCodeActionTest : EduActionTestCase() {
     }
   }
 
+  @Test
   fun `test apply code`() {
     val course = courseWithFiles {
       lesson("lesson1") {

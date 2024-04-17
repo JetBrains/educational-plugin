@@ -9,9 +9,11 @@ import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.codeforces.ContestParameters
 import com.jetbrains.edu.learning.findTask
 import org.jsoup.Jsoup
+import org.junit.Test
 import java.time.ZonedDateTime
 
 class CppCodeforcesTaskNamesTest : CodeforcesTestCase() {
+  @Test
   fun `test codeforces contest Global Round 8 Cpp`() {
     val doc = Jsoup.parse(loadText("Contest 1368.html"))
     val course = CodeforcesCourse(ContestParameters(1368, CPP, "50", startDate = ZonedDateTime.now()))

@@ -13,10 +13,12 @@ import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.yaml.YamlMapper
 import com.jetbrains.edu.learning.yaml.YamlTestCase
+import org.junit.Test
 import java.util.*
 
 class YamlRemoteSerializationTest : YamlTestCase() {
 
+  @Test
   fun `test course`() {
     val course = course {
       lesson()
@@ -34,6 +36,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     )
   }
 
+  @Test
   fun `test hyperskill project`() {
     val course = course(courseProducer = ::HyperskillCourse) { } as HyperskillCourse
     val hyperskillProject = HyperskillProject().apply {
@@ -78,6 +81,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     doTest(course, expectedYaml)
   }
 
+  @Test
   fun `test course without top-level lessons`() {
     val course = course {
       section()
@@ -93,6 +97,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     )
   }
 
+  @Test
   fun `test section`() {
     val section = course {
       section()
@@ -108,6 +113,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     )
   }
 
+  @Test
   fun `test lesson`() {
     val lesson = course {
       stepikLesson()
@@ -124,6 +130,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     )
   }
 
+  @Test
   fun `test lesson default unit`() {
     val lesson = course {
       stepikLesson()
@@ -138,6 +145,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     )
   }
 
+  @Test
   fun `test task`() {
     val task = course {
       lesson {
@@ -155,6 +163,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     )
   }
 
+  @Test
   fun `test data task without attempt`() {
     val task = course {
       lesson {
@@ -171,6 +180,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     )
   }
 
+  @Test
   fun `test data task with attempt`() {
     val task = course {
       lesson {

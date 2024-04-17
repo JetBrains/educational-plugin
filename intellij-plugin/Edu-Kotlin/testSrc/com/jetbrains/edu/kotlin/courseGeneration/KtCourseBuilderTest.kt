@@ -5,9 +5,11 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.junit.Test
 
 class KtCourseBuilderTest : JvmCourseGenerationTestBase() {
 
+  @Test
   fun `test study course structure`() {
     generateCourseStructure("testData/newCourse/kotlin_course.json")
     val expectedFileTree = fileTree {
@@ -54,6 +56,7 @@ class KtCourseBuilderTest : JvmCourseGenerationTestBase() {
     expectedFileTree.assertEquals(rootDir)
   }
 
+  @Test
   fun `test new course structure`() {
     val course = newCourse(KotlinLanguage.INSTANCE)
     createCourseStructure(course)
@@ -77,6 +80,7 @@ class KtCourseBuilderTest : JvmCourseGenerationTestBase() {
     expectedFileTree.assertEquals(rootDir)
   }
 
+  @Test
   fun `test educator course structure from not empty course`() {
     generateCourseStructure("testData/newCourse/kotlin_course.json", CourseMode.EDUCATOR)
     val expectedFileTree = fileTree {
