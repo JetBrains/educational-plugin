@@ -4,29 +4,24 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.components.JBTabbedPane
-import com.intellij.util.ui.JBEmptyBorder
 import com.intellij.util.ui.JBFont
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.TheoryTab
+import com.jetbrains.edu.learning.stepik.hyperskill.TopicsTab
 import com.jetbrains.edu.learning.stepik.hyperskill.getRelatedTheoryTask
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
+import com.jetbrains.edu.learning.submissions.SubmissionsTab
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType.*
 
 
 class TabManager(private val project: Project) : Disposable {
 
-  val tabbedPane: JBTabbedPane = JBTabbedPane()
-  val descriptionTab = DESCRIPTION_TAB.createTab(project) as DescriptionTab
-
-  init {
-    tabbedPane.font = JBFont.medium().biggerOn(1.0f)
-    tabbedPane.addTab(DESCRIPTION_TAB.tabName, descriptionTab)
-    // set border for the tab container and register in Disposer
-    val descriptionTab = getTab(DESCRIPTION_TAB)
-    Disposer.register(this, descriptionTab)
-    descriptionTab.border = JBEmptyBorder(0)
+  val tabbedPane: JBTabbedPane = JBTabbedPane().apply {
+    font = JBFont.medium().biggerOn(1.0f)
   }
+  val descriptionTab = createTab(DESCRIPTION_TAB) as DescriptionTab
 
   fun updateTabs(task: Task?) {
     removeAdditionalTabs()
@@ -37,47 +32,49 @@ class TabManager(private val project: Project) : Disposable {
 
   override fun dispose() {}
 
-  fun getTab(tabType: TabType): TaskToolWindowTab {
+  private fun getOrCreateTab(tabType: TabType): TaskToolWindowTab = getTab(tabType) ?: createTab(tabType)
+
+  fun getTab(tabType: TabType): TaskToolWindowTab? {
     val indexOfTab = tabbedPane.indexOfTab(tabType.tabName)
     if (indexOfTab == -1) {
-      tabbedPane.addTab(tabType.tabName, tabType.createTab(project))
-      val newIndexOfTab = tabbedPane.indexOfTab(tabType.tabName)
-      // set border for the tab container
-      val taskToolWindowTab = tabbedPane.getComponentAt(newIndexOfTab) as TaskToolWindowTab
-      taskToolWindowTab.border = JBEmptyBorder(0)
-      Disposer.register(this, taskToolWindowTab)
-      return taskToolWindowTab
+      return null
     }
     return tabbedPane.getComponentAt(indexOfTab) as TaskToolWindowTab
   }
 
+  private fun createTab(tabType: TabType): TaskToolWindowTab {
+    val taskToolWindowTab = when (tabType) {
+      DESCRIPTION_TAB -> DescriptionTab(project)
+      THEORY_TAB -> TheoryTab(project)
+      TOPICS_TAB -> TopicsTab(project)
+      SUBMISSIONS_TAB -> SubmissionsTab(project)
+    }
+    Disposer.register(this, taskToolWindowTab)
+    tabbedPane.addTab(tabType.tabName, taskToolWindowTab)
+    return taskToolWindowTab
+  }
 
   fun updateTab(tabType: TabType, task: Task) {
     if (tabType !in task.tabsToBeDisplayed()) {
-      val indexOfTab = tabbedPane.indexOfTab(tabType.tabName)
-      if (indexOfTab > 0) {
-        val tabToRemove = tabbedPane.getComponentAt(indexOfTab) as TaskToolWindowTab
-        tabbedPane.removeTabAt(indexOfTab)
-        Disposer.dispose(tabToRemove)
-      }
+      removeTab(tabType)
       return
     }
 
     val taskForUpdate = if (tabType == THEORY_TAB) task.getRelatedTheoryTask() ?: return else task
 
-    val tab = getTab(tabType)
+    val tab = getOrCreateTab(tabType)
     tab.update(taskForUpdate)
   }
 
-  private fun removeAdditionalTabs() {
-    TabType.values().forEach {
-      val indexOfTab = tabbedPane.indexOfTab(it.tabName)
-      if (indexOfTab > 0) {
-        tabbedPane.removeTabAt(indexOfTab)
-      }
-    }
-
+  private fun removeTab(tabType: TabType) {
+    val tab = getTab(tabType) ?: return
+    tabbedPane.remove(tab)
+    Disposer.dispose(tab)
   }
+
+  private fun removeAdditionalTabs() = TabType.values()
+    .filter { it != DESCRIPTION_TAB }
+    .forEach { removeTab(it) }
 
   private fun Task.tabsToBeDisplayed(): List<TabType> {
     val result = mutableListOf(DESCRIPTION_TAB)
@@ -100,11 +97,7 @@ class TabManager(private val project: Project) : Disposable {
 
   fun selectTab(tabType: TabType) {
     val indexOfTab = tabbedPane.indexOfTab(tabType.tabName)
-    if (indexOfTab == -1) {
-      tabbedPane.selectedIndex = 0
-      return
-    }
-    tabbedPane.selectedIndex = indexOfTab
+    tabbedPane.selectedIndex = if (indexOfTab != -1) indexOfTab else 0
   }
 
   fun updateTaskSpecificPanel(task: Task?) {

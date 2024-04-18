@@ -17,6 +17,10 @@ import java.awt.BorderLayout
 import javax.swing.JPanel
 import javax.swing.JSeparator
 
+/**
+ * Constructor is called exclusively in [com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabManager.createTab]
+ * and MUST NOT be called in any other places
+ */
 class TheoryTab(project: Project) : TaskToolWindowTextTab(project, THEORY_TAB) {
 
   init {
