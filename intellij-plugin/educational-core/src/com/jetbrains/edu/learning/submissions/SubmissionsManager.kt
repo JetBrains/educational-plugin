@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.submissions
 
 import com.intellij.execution.process.ProcessIOExecutorService
+import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
@@ -16,6 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.createTopic
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
+import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
 import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
@@ -181,7 +183,12 @@ class SubmissionsManager(private val project: Project) {
       if (isLoggedIn()) {
         val taskToolWindowView = TaskToolWindowView.getInstance(project)
         taskToolWindowView.showLoadingCommunityPanel(getPlatformName())
-        val sharedSolutions = submissionsProvider.loadSharedSolutionsForTask(course, task) ?: return@runAsync
+        val sharedSolutions = submissionsProvider.loadSharedSolutionsForTask(course, task) ?: run {
+          invokeLater {
+            taskToolWindowView.updateTab(TabType.SUBMISSIONS_TAB)
+          }
+          return@runAsync
+        }
         communitySubmissions[task.id] = sharedSolutions
         notifySubmissionsChanged()
       }
