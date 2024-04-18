@@ -2,29 +2,20 @@ package com.jetbrains.edu.csharp
 
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.coursecreator.StudyItemType
-import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.ext.project
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.intellij.openapi.project.Project
 
 class CSharpCourseBuilder : EduCourseBuilder<CSharpProjectSettings> {
 
   override fun taskTemplateName(course: Course): String = CSharpConfigurator.TASK_CS
-  override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<CSharpProjectSettings>? =
+  override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<CSharpProjectSettings> =
     CSharpCourseProjectGenerator(this, course)
 
   override fun getLanguageSettings(): LanguageSettings<CSharpProjectSettings> = CSharpLanguageSettings()
 
   override fun getDefaultSettings(): Result<CSharpProjectSettings, String> = Ok(CSharpProjectSettings())
-
-  override fun initNewTask(course: Course, task: Task, info: NewStudyItemInfo, withSources: Boolean) {
-    super.initNewTask(course, task, info, withSources)
-    LOG.warn("COURSE PROJECT: ${course.project}")
-
-  }
 
   override fun validateItemName(project: Project, name: String, itemType: StudyItemType): String? =
     if (name.matches(STUDY_ITEM_NAME_PATTERN)) null else "error.invalid.name"

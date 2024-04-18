@@ -15,6 +15,7 @@ object Language {
     "PHP" to "PHP",
     "Shell Script" to "Shell Script",
     "SQL" to "SQL",
+    "C#" to "C#",
 
     // used only for testing
     "TEXT" to "Plain text",

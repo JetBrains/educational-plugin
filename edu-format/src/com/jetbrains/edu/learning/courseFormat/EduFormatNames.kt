@@ -107,6 +107,7 @@ object EduFormatNames {
   const val CPP = "ObjectiveC"
   const val GO = "go"
   const val PHP = "PHP"
+  const val CSHARP = "C#"
 
   const val PYTHON_2_VERSION = "2.x"
   const val PYTHON_3_VERSION = "3.x"

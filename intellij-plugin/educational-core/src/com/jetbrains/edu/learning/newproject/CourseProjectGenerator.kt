@@ -205,7 +205,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     NOTIFICATIONS_SILENT_MODE.set(project, true)
   }
 
-  private suspend fun openNewCourseProject(
+  protected open suspend fun openNewCourseProject(
     location: Path,
     prepareToOpenCallback: suspend (Project, Module) -> Unit
   ): Project? {
@@ -320,7 +320,8 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
       return course.isPreview
     }
 
-    private fun OpenProjectTask(course: Course, prepareToOpenCallback: suspend (Project, Module) -> Unit): OpenProjectTask {
+    @JvmStatic
+    protected fun OpenProjectTask(course: Course, prepareToOpenCallback: suspend (Project, Module) -> Unit): OpenProjectTask {
       @Suppress("UnstableApiUsage")
       return OpenProjectTask {
         forceOpenInNewFrame = true

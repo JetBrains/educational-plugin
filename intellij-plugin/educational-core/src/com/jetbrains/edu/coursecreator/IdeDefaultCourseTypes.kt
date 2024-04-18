@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.KOTLIN
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PHP
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.RUST
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CSHARP
 
 fun getDefaultCourseType(courses: List<CCNewCoursePanel.CourseData>): CCNewCoursePanel.CourseData? =
   courses.find { it.language == Language.findLanguageByID(getDefaultLanguageId()) } ?: courses.firstOrNull()
@@ -25,6 +26,7 @@ fun getDefaultLanguageId(): String? = when {
   PlatformUtils.isGoIde() -> GO
   PlatformUtils.isPhpStorm() -> PHP
   PlatformUtils.isRustRover() -> RUST
+  PlatformUtils.isRider() -> CSHARP
   else -> null
 }
 
