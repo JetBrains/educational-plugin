@@ -52,6 +52,10 @@ import javax.swing.JButton
 import javax.swing.JComponent
 import javax.swing.event.AncestorEvent
 
+/**
+ * Constructor is called exclusively in [com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabManager.createTab]
+ * and MUST NOT be called in any other places
+ */
 @Suppress("UnstableApiUsage")
 class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBMISSIONS_TAB) {
 

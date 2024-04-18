@@ -8,14 +8,18 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.dsl.builder.*
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.JavaUILibrary
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillTopic
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType.TOPICS_TAB
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TaskToolWindowTab
 
+/**
+ * Constructor is called exclusively in [com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabManager.createTab]
+ * and MUST NOT be called in any other places
+ */
 class TopicsTab(project: Project) : TaskToolWindowTab(project, TOPICS_TAB) {
   override val uiMode: JavaUILibrary
     get() = JavaUILibrary.SWING
