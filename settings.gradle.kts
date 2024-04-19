@@ -135,7 +135,9 @@ fun configureLlmProperties() {
     "intellij-plugin/educational-core/resources/ai/llm.properties",
     "LLMProfileIDForGeneratingSolutionSteps",
     "LLMProfileIDForGeneratingNextStepTextHint",
-    "LLMProfileIDForGeneratingNextStepCodeHint"
+    "LLMProfileIDForGeneratingNextStepCodeHint",
+    "LLMAuthType",
+    "LLMServerUrlType"
   )
 }
 

@@ -3,25 +3,32 @@ package com.jetbrains.edu.learning.eduAssistant.grazie
 import ai.grazie.api.gateway.client.SuspendableAPIGatewayClient
 import ai.grazie.client.common.SuspendableHTTPClient
 import ai.grazie.client.ktor.GrazieKtorHTTPClient
+import ai.grazie.model.auth.v5.AuthData
+import ai.grazie.model.cloud.AuthType
 import com.jetbrains.edu.learning.ai.utils.AiAuthBundle.getGrazieTemporaryToken
+import com.jetbrains.edu.learning.ai.utils.GrazieLlmProfileProvider
+import com.jetbrains.edu.learning.eduAssistant.core.AssistantError
 
 object AiPlatformAdapter {
   private val client: SuspendableAPIGatewayClient = initClient()
 
-  private fun getAuthType() = System.getenv("GRAZIE_JWT_TOKEN")?.let { GrazieAuthType.User } ?: GrazieAuthType.Service
-
-  private fun getGrazieToken(authType: GrazieAuthType) = when (authType) {
-    GrazieAuthType.User -> System.getenv("GRAZIE_JWT_TOKEN")
-    GrazieAuthType.Service -> getGrazieTemporaryToken()
+  private fun getGrazieToken(authType: AuthType) = when (authType) {
+    AuthType.User -> System.getenv("GRAZIE_JWT_TOKEN")
+            ?: throw AiPlatformException(AssistantError.AuthError, Throwable("Grazie user token was not provided"))
+    AuthType.Application -> getGrazieTemporaryToken()
+    else -> throw AiPlatformException(AssistantError.AuthError, Throwable("Unsupported auth type: $authType"))
   }
 
+  private fun getServerUrl() = "https://api.app.${GrazieLlmProfileProvider.getServerUrlType()}.grazie.aws.intellij.net"
+
   private fun initClient(): SuspendableAPIGatewayClient {
-    val authType = getAuthType()
+    val authType = GrazieLlmProfileProvider.getAuthType()
+                   ?: throw AiPlatformException(AssistantError.AuthError, Throwable("Incorrect Grazie auth type"))
     val jwtToken = getGrazieToken(authType)
     return SuspendableAPIGatewayClient(
-      serverUrl = "https://api.app.stgn.grazie.aws.intellij.net", SuspendableHTTPClient.WithV5(
-        GrazieKtorHTTPClient.Client.Default, authType.buildAuthData(jwtToken)
-      ), authType.grazieType
+      serverUrl = getServerUrl(),
+      httpClient = SuspendableHTTPClient.WithV5(GrazieKtorHTTPClient.Client.Default, AuthData(jwtToken)),
+      authType = authType
     )
   }
 
