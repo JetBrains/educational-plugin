@@ -1,7 +1,7 @@
 package com.jetbrains.edu.kotlin.eduAssistant
 
 import com.jetbrains.edu.jvm.slow.checker.JdkCheckerTestBase
-import com.jetbrains.edu.kotlin.eduAssistant.courses.kotlinCourse
+import com.jetbrains.edu.kotlin.eduAssistant.courses.createKotlinCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.eduAssistant.inspection.applyInspections
 
@@ -533,5 +533,5 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected, applyInspections(code, project, language))
   }
 
-  override fun createCourse(): Course = kotlinCourse
+  override fun createCourse(): Course = createKotlinCourse()
 }

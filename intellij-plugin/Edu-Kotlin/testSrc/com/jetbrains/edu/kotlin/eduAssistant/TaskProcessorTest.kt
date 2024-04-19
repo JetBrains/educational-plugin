@@ -4,7 +4,7 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.psi.PsiDocumentManager
 import com.jetbrains.edu.jvm.slow.checker.JdkCheckerTestBase
-import com.jetbrains.edu.kotlin.eduAssistant.courses.kotlinCourse
+import com.jetbrains.edu.kotlin.eduAssistant.courses.createKotlinCourse
 import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -383,5 +383,5 @@ It's time to write your first program in Kotlin! Task Change the output text int
     assertEquals(updatedCodeHint, taskProcessor.extractRequiredFunctionsFromCodeHint(codeHint, taskFile))
   }
 
-  override fun createCourse(): Course = kotlinCourse
+  override fun createCourse(): Course = createKotlinCourse()
 }

@@ -4,7 +4,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
-val kotlinCourse = course(language = KotlinLanguage.INSTANCE) {
+fun createKotlinCourse() = course(language = KotlinLanguage.INSTANCE) {
   lesson {
     eduTask {
       kotlinTaskFile(
