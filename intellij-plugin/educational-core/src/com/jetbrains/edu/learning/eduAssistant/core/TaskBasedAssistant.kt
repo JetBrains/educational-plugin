@@ -15,22 +15,19 @@ import com.jetbrains.edu.learning.eduAssistant.grazie.AiPlatformAdapter
 import com.jetbrains.edu.learning.eduAssistant.grazie.AiPlatformException
 import com.jetbrains.edu.learning.eduAssistant.grazie.GenerationContextProfile.*
 import com.jetbrains.edu.learning.eduAssistant.inspection.applyInspections
+import com.jetbrains.edu.learning.eduAssistant.log.Loggers
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
 
-  val logger = KotlinLogging.logger("EduAssistantLogger")
-  private val taskAnalysisTimingLogger = KotlinLogging.logger("TaskAnalysisTimingLogger")
-  private val hintTimingLogger = KotlinLogging.logger("HintTimingLogger")
   var taskAnalysisPrompt: String? = null
   private var hintContext: HintContext? = null
 
   suspend fun getTaskAnalysis(task: Task): String? {
-    taskAnalysisTimingLogger.info { "Starting getTaskAnalysis function for task-id: ${task.id}" }
+    Loggers.taskAnalysisTimingLogger.info("Starting getTaskAnalysis function for task-id: ${task.id}")
 
     if (taskProcessor.getFailureMessage() == EduCoreBundle.message("error.execution.failed")) return null
 
@@ -48,22 +45,22 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
       """.trimMargin()
     )
 
-    taskAnalysisTimingLogger.info { "Requesting model for task analysis for task-id: ${task.id}" }
+    Loggers.taskAnalysisTimingLogger.info("Requesting model for task analysis for task-id: ${task.id}")
 
     return AiPlatformAdapter.chat(
       userPrompt = taskAnalysisPrompt ?: error("taskAnalysisPrompt was not initialized"),
       generationContextProfile = SOLUTION_STEPS
     ).deleteNoCodeSteps()
       .also {
-      logEduAssistantInfo(
-        task,
-        """Task analysis response:
+        logEduAssistantInfo(
+          task,
+          """Task analysis response:
             |$it
           """.trimMargin()
-      )
-      taskAnalysisTimingLogger.info { "Completed task analysis for task-id: ${task.id}" }
-      task.generatedSolutionSteps = it
-    }
+        )
+        Loggers.taskAnalysisTimingLogger.info("Completed task analysis for task-id: ${task.id}")
+        task.generatedSolutionSteps = it
+      }
   }
 
   private fun String.deleteNoCodeSteps(): String {
@@ -79,14 +76,14 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
 
   override suspend fun getHint(task: Task, state: EduState, userCode: String?): AssistantResponse {
     logEduAssistantInfo(task, "Next step hint request")
-    hintTimingLogger.info { "Starting getHint function for task-id: ${task.id}" }
+    Loggers.hintTimingLogger.info("Starting getHint function for task-id: ${task.id}")
 
     return try {
       if (taskProcessor.getFailureMessage() == EduCoreBundle.message("error.execution.failed")) return AssistantResponse(
          assistantError = AssistantError.NoCompiledCode
       )
 
-      hintTimingLogger.info { "Retrieving the student's code for task-id: ${task.id}" }
+      Loggers.hintTimingLogger.info("Retrieving the student's code for task-id: ${task.id}")
       var codeStr = ""
       userCode?.let {
         codeStr = it
@@ -100,7 +97,7 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
         """.trimMargin()
       )
 
-      hintTimingLogger.info { "Retrieving the task analysis for task-id: ${task.id}" }
+      Loggers.hintTimingLogger.info("Retrieving the task analysis for task-id: ${task.id}")
       // The task files were not changed and the user asked about help again
       if (!taskProcessor.hasFilesChanged() && task.aiAssistantState == AiAssistantState.HelpAsked) getTaskAnalysis(task)
       val taskAnalysis = task.generatedSolutionSteps?.also { hintContext?.log() } ?: getTaskAnalysis(task) ?: return AssistantResponse(
@@ -113,11 +110,11 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
     }
     // TODO: Handle more exceptions with AiPlatformException
     catch (e: AiPlatformException) {
-      logger.error { "Error occurred: ${e.stackTraceToString()}" }
+      Loggers.eduAssistantLogger.error("Error occurred: ${e.stackTraceToString()}")
       AssistantResponse(assistantError = e.assistantError)
     }
     catch (e: Throwable) {
-      logger.error { "Error occurred: ${e.stackTraceToString()}" }
+      Loggers.eduAssistantLogger.error("Error occurred: ${e.stackTraceToString()}")
       AssistantResponse(assistantError = AssistantError.UnknownError)
     }
   }
@@ -125,7 +122,7 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
   private fun getEnhancedCodeHint(functionName: String, codeStr: String, codeHint: String, task: Task, state: EduState): String {
     val project = task.project ?: error("Project was not found")
     val languageId = task.course.languageById ?: error("Language was not found")
-    hintTimingLogger.info { "Retrieving the code hint from solution if it is a short function for task-id: ${task.id}" }
+    Loggers.hintTimingLogger.info("Retrieving the code hint from solution if it is a short function for task-id: ${task.id}")
     val nextStepCodeFromSolution = taskProcessor.getShortFunctionFromSolutionIfRecommended(codeHint, project, languageId, functionName, state.taskFile)
     if (nextStepCodeFromSolution != null) {
       logEduAssistantInfo(
@@ -136,13 +133,13 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
       )
       return nextStepCodeFromSolution
     } else {
-      hintTimingLogger.info { "Retrieving the function psi from student code for task-id: ${task.id}" }
+      Loggers.hintTimingLogger.info("Retrieving the function psi from student code for task-id: ${task.id}")
       val functionFromCode = taskProcessor.getFunctionPsiWithName(codeStr, functionName, project, languageId)
-      hintTimingLogger.info { "Retrieving the function psi from code hint for task-id: ${task.id}" }
+      Loggers.hintTimingLogger.info("Retrieving the function psi from code hint for task-id: ${task.id}")
       val functionFromCodeHint = taskProcessor.getFunctionPsiWithName(codeHint, functionName, project, languageId)
-      hintTimingLogger.info { "Reducing the code hint for task-id: ${task.id}" }
+      Loggers.hintTimingLogger.info("Reducing the code hint for task-id: ${task.id}")
       val reducedCodeHint = taskProcessor.reduceChangesInCodeHint(functionFromCode?.copy(), functionFromCodeHint?.copy(), project, languageId)
-      hintTimingLogger.info { "Applying inspections to the code hint for task-id: ${task.id}" }
+      Loggers.hintTimingLogger.info("Applying inspections to the code hint for task-id: ${task.id}")
       //TODO: investigate wrong cases
       val nextStepCodeHint = applyInspections(reducedCodeHint, project, languageId)
       logEduAssistantInfo(
@@ -156,7 +153,7 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
   }
 
   private fun generateCodeHintPrompt(nextStepTextHint: String?, task: Task, taskAnalysis: String, codeStr: String): String {
-    hintTimingLogger.info { "Retrieving the next step code hint prompt for task-id: ${task.id}" }
+    Loggers.hintTimingLogger.info("Retrieving the next step code hint prompt for task-id: ${task.id}")
     val language = task.course.languageDisplayName.lowercase()
     val nextStepCodeHintPrompt = nextStepTextHint?.let {
       buildNextStepCodeHintPromptFromTextHint(it, codeStr, language)
@@ -173,7 +170,7 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
   }
 
   private suspend fun generateCodeHint(task: Task, state: EduState, nextStepCodeHintPrompt: String, codeStr: String): String? {
-    hintTimingLogger.info { "Retrieving the code hint for task-id: ${task.id}" }
+    Loggers.hintTimingLogger.info("Retrieving the code hint for task-id: ${task.id}")
     val project = task.project ?: error("Project was not found")
     val languageId = task.course.languageById ?: error("Language was not found")
     val codeHint = taskProcessor.extractRequiredFunctionsFromCodeHint(
@@ -186,23 +183,23 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
             |$it
           """.trimMargin()
       )
-      hintTimingLogger.info { "Received the code hint for task-id: ${task.id}" }
+      Loggers.hintTimingLogger.info("Received the code hint for task-id: ${task.id}")
     }
     if (codeHint.isBlank()) {
       return null
     }
     try {
-      hintTimingLogger.info { "Retrieving the modified function name for task-id: ${task.id}" }
+      Loggers.hintTimingLogger.info("Retrieving the modified function name for task-id: ${task.id}")
       val functionName = taskProcessor.getModifiedFunctionNameInCodeHint(codeStr, codeHint)
       return getEnhancedCodeHint(functionName, codeStr, codeHint, task, state)
     } catch (e: IllegalStateException) {
-      logger.error { "Error occurred: ${e.stackTraceToString()}" }
+      Loggers.eduAssistantLogger.error("Error occurred: ${e.stackTraceToString()}")
       return null
     }
   }
 
   private suspend fun generateFinalHintsAndResponse(codeHint: String?, codeStr: String, task: Task, codeHintPrompt: String, state: EduState, taskAnalysis: String): AssistantResponse {
-    hintTimingLogger.info { "Retrieving the text hint prompt for task-id: ${task.id}" }
+    Loggers.hintTimingLogger.info("Retrieving the text hint prompt for task-id: ${task.id}")
     val nextStepTextHintPrompt = codeHint?.let {
       buildNextStepTextHintPrompt(it, codeStr)
     } ?: run {
@@ -215,7 +212,7 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
           |$nextStepTextHintPrompt
         """.trimMargin()
     )
-    hintTimingLogger.info { "Retrieving the text hint for task-id: ${task.id}" }
+    Loggers.hintTimingLogger.info("Retrieving the text hint for task-id: ${task.id}")
     val nextStepTextHint = AiPlatformAdapter.chat(userPrompt = nextStepTextHintPrompt, generationContextProfile = NEXT_STEP_TEXT_HINT)
     logEduAssistantInfo(
       task,
@@ -223,7 +220,7 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
           |$nextStepTextHint
         """.trimMargin()
     )
-    hintTimingLogger.info { "Received the text hint for task-id: ${task.id}" }
+    Loggers.hintTimingLogger.info("Received the text hint for task-id: ${task.id}")
 
     taskAnalysisPrompt ?: run {
       hintContext ?: run {
@@ -246,7 +243,7 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
       "nextStepCodeHintPrompt" to nextStepCodeHintPrompt
     )
     return AssistantResponse(nextStepTextHint, nextStepCodeHint?.let { taskProcessor.applyCodeHint(it, state.taskFile) }, prompts).also {
-      hintTimingLogger.info { "Completed getHint function for task-id: ${task.id}" }
+      Loggers.hintTimingLogger.info("Completed getHint function for task-id: ${task.id}")
     }
   }
 
@@ -464,10 +461,10 @@ class TaskBasedAssistant(private val taskProcessor: TaskProcessor) : Assistant {
     )
   }
 
-  private fun logEduAssistantInfo(task: Task, message: String) = logger.info {
+  private fun logEduAssistantInfo(task: Task, message: String) = Loggers.eduAssistantLogger.info(
     """Lesson id: ${task.lesson.id}    Task id: ${task.id}
       |$message
       |
     """.trimMargin()
-  }
+  )
 }

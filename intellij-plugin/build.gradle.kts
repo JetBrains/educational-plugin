@@ -366,7 +366,6 @@ tasks {
     autoReloadPlugins = false
     jvmArgs("-Xmx2g")
     jvmArgs("-Dide.experimental.ui=true")
-    jvmArgs("-Dedu.log.dir=${pluginsDir.dir("edu-assistant").get()}")
 
     if (hasProp("validationOutputPath")) {
       val outputPath = prop("validationOutputPath").let {

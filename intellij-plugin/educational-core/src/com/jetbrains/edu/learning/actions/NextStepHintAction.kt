@@ -41,11 +41,11 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.eduAssistant.core.AssistantError
 import com.jetbrains.edu.learning.eduAssistant.core.TaskBasedAssistant
+import com.jetbrains.edu.learning.eduAssistant.log.Loggers
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 import com.jetbrains.edu.learning.eduAssistant.ui.NextStepHintNotificationFrame
 import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.NonNls
@@ -57,8 +57,6 @@ import javax.swing.JPanel
 import kotlin.coroutines.EmptyCoroutineContext
 
 class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
-  val logger = KotlinLogging.logger("EduAssistantLogger")
-
   var actionTargetParent: JPanel? = null
   private var nextStepHintNotificationPanel: JComponent? = null
   private var highlighter: RangeHighlighter? = null
@@ -144,12 +142,12 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
               }
               true -> {
                 val task = state.task
-                logger.info {
+                Loggers.eduAssistantLogger.info(
                   """Lesson id: ${task.lesson.id}    Task id: ${task.id}
                   |User response: accepted code hint
                   |
                 """.trimMargin()
-                }
+                )
               }
             }
             closeNextStepHintNotificationPanel()
@@ -166,12 +164,12 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
   private fun rejectHint(state: EduState) {
     val scope = CoroutineScope(EmptyCoroutineContext)
     val task = state.task
-    logger.info {
+    Loggers.eduAssistantLogger.info(
       """Lesson id: ${task.lesson.id}    Task id: ${task.id}
         |User response: canceled code hint
         |
       """.trimMargin()
-    }
+    )
     val taskProcessor = TaskProcessor(task)
     if (taskProcessor.needToUpdateSolutionSteps()) {
       val assistant = TaskBasedAssistant(taskProcessor)
