@@ -1,7 +1,11 @@
 package com.jetbrains.edu.coursecreator.actions
 
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.writeText
+import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CourseMode
@@ -14,7 +18,11 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.setMarketplaceAuthorsAsString
 import com.jetbrains.edu.learning.marketplace.mockJBAccount
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
+import com.jetbrains.edu.learning.marketplace.updateCourseItems
 import com.jetbrains.edu.learning.navigation.NavigationUtils.getFirstTask
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_LESSON_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_TASK_CONFIG
+import java.io.File
 
 class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
 
@@ -209,7 +217,36 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     assertTrue("Description format should be HTML", htmlJson.contains(""""description_format" : "HTML""""))
   }
 
+  fun `test change remote info files course`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
+      lesson {
+        eduTask("task1") {
+          taskFile("Task.txt")
+        }
+      }
+    }.asRemote().apply { isMarketplace = true }
+    createConfigFiles(project)
+
+    doTest()
+
+    // Change `*-remote-info.yaml`s to ensure it will not equal to the original one
+    runWriteAction {
+      findFile("lesson1/task1/${REMOTE_TASK_CONFIG}").writeText("id: 11")
+      findFile("lesson1/${REMOTE_LESSON_CONFIG}").writeText("id: 11")
+      FileDocumentManager.getInstance().saveAllDocuments()
+    }
+    course.updateCourseItems(project)
+
+    val newJson = generateJson()
+    val courseWithRemoteInfoFilesChanges = FileUtil.loadFile(File(testDataPath, CHANGE_REMOTE_INFO_FILES_COURSE_WITH_CHANGES))
+    assertEquals(courseWithRemoteInfoFilesChanges, newJson)
+  }
+
   override fun getTestDataPath(): String {
     return super.getTestDataPath() + "/actions/marketplaceCourseArchive"
+  }
+
+  companion object {
+    private const val CHANGE_REMOTE_INFO_FILES_COURSE_WITH_CHANGES: String = "change remote info files course with changes.json"
   }
 }

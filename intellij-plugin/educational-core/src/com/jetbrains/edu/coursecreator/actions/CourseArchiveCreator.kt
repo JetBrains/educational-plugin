@@ -61,7 +61,7 @@ class CourseArchiveCreator(
     val course = StudyTaskManager.getInstance(project).course ?: return EduCoreBundle.message("error.unable.to.obtain.course.for.project")
     if (course.isMarketplace && !isUnitTestMode) {
       ProgressManager.getInstance().runProcessWithProgressSynchronously({
-        course.updateCourseItems()
+        course.updateCourseItems(project)
       }, EduCoreBundle.message("action.create.course.archive.progress.bar"), false, project)
     }
 

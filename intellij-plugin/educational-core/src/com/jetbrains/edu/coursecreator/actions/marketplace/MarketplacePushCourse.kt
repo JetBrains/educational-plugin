@@ -144,7 +144,7 @@ class MarketplacePushCourse(
     if (marketplaceCourseVersion == 0) marketplaceCourseVersion = 1
 
     if (!isUnitTestMode) {
-      updateCourseItems()
+      updateCourseItems(project)
     }
     if (vendor == null) {
       if (!addVendor()) {

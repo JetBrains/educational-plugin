@@ -25,6 +25,7 @@ import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
 import com.jetbrains.edu.learning.submissions.SolutionSharingPreference
 import com.jetbrains.edu.learning.update.UpdateNotification
+import com.jetbrains.edu.learning.yaml.YamlDeepLoader.reloadRemoteInfo
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.util.*
 
@@ -43,15 +44,22 @@ fun getJBAUserInfo(): JBAccountUserInfo? {
 
 private fun getJBAIdToken(): String? = JBAccountInfoService.getInstance()?.idToken
 
-fun Course.updateCourseItems() {
-  visitSections { section -> section.generateId() }
+fun Course.updateCourseItems(project: Project) {
+  visitSections { section ->
+    section.ensureIdGenerated(project)
+  }
   visitLessons { lesson ->
+    lesson.ensureIdGenerated(project)
     lesson.visitTasks { task ->
-      task.generateId()
+      task.ensureIdGenerated(project)
     }
-    lesson.generateId()
   }
   YamlFormatSynchronizer.saveRemoteInfo(this)
+}
+
+fun StudyItem.ensureIdGenerated(project: Project) {
+  reloadRemoteInfo(project)
+  generateId()
 }
 
 fun Course.setRemoteMarketplaceCourseVersion() {

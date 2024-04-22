@@ -172,6 +172,15 @@ object YamlDeepLoader {
     }
   }
 
+  /**
+   * Reloads the content of a remote config if it exists.
+   */
+  fun StudyItem.reloadRemoteInfo(project: Project) {
+    val itemDir = getConfigDir(project)
+    val remoteConfigFile = itemDir.findChild(remoteConfigFileName) ?: return
+    loadRemoteInfo(remoteConfigFile)
+  }
+
   private fun Course.setDescriptionInfo(project: Project) {
     visitLessons { lesson ->
       lesson.visitTasks {
