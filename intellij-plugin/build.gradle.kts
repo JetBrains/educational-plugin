@@ -69,7 +69,6 @@ val nodeJsPlugin = "NodeJS"
 val yamlPlugin = "org.jetbrains.plugins.yaml"
 val androidPlugin = "org.jetbrains.android"
 val platformImagesPlugin = "com.intellij.platform.images"
-val gridImplPlugin = "intellij.grid.impl"
 val codeWithMePlugin = "com.jetbrains.codeWithMe"
 
 
@@ -102,12 +101,6 @@ val cppPlugins = listOfNotNull(
   "com.intellij.nativeDebug",
   "org.jetbrains.plugins.clion.test.google",
   "org.jetbrains.plugins.clion.test.catch"
-)
-
-val pythonPlugins = listOfNotNull(
-  pythonPlugin,
-  // `intellij.grid.impl` is dependency only of pythonPro plugin
-  if (pythonPlugin == pythonProPlugin) gridImplPlugin else null
 )
 
 val changesFile = "changes.html"
@@ -250,7 +243,7 @@ intellij {
   if (isIdeaIDE || isClionIDE) {
     pluginsList += rustPlugins
   }
-  pluginsList += pythonPlugins
+  pluginsList += pythonPlugin
   pluginsList += shellScriptPlugin
   if (isJvmCenteredIDE) {
     pluginsList += jvmPlugins
@@ -631,7 +624,8 @@ project("Edu-Python") {
       // needed to load `org.toml.lang plugin` for Python plugin in tests
       version = ideaVersion
     }
-    val pluginList = pythonPlugins + listOfNotNull(
+    val pluginList = listOfNotNull(
+      pythonPlugin,
       if (isJvmCenteredIDE) javaPlugin else null,
       // needed only for tests, actually
       platformImagesPlugin,
@@ -652,13 +646,11 @@ project("Edu-Python") {
 
 project("Edu-Python:Idea") {
   intellij {
-    if (!isJvmCenteredIDE || isStudioIDE) {
+    if (!isJvmCenteredIDE) {
       version = ideaVersion
     }
-
     val pluginList = listOfNotNull(
       if (!isJvmCenteredIDE) pythonProPlugin else pythonPlugin,
-      gridImplPlugin,
       javaPlugin
     )
     plugins = pluginList
@@ -673,10 +665,7 @@ project("Edu-Python:Idea") {
 
 project("Edu-Python:PyCharm") {
   intellij {
-    if (isStudioIDE) {
-      version = ideaVersion
-    }
-    plugins = pythonPlugins
+    plugins = listOf(pythonPlugin)
   }
 
   dependencies {
