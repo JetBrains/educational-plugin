@@ -39,11 +39,12 @@ class HyperskillLessonTest : EduTestCase() {
     StepikTestUtils.loginFakeStepikUser()
     val mockConnector = StepikConnector.getInstance() as MockStepikConnector
 
-    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
-      val responseFileName = when (path) {
+    mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
+      val responseFileName = when (request.pathWithoutPrams) {
         "/api/lessons" -> "lessons_response_278738129.json"
         "/api/step-sources" -> "step-source.json"
-        else -> ""
+        "/api/attachments" -> "attachments_response_278738129.json"
+        else -> return@withResponseHandler MockResponseFactory.notFound()
       }
       mockResponse(responseFileName)
     }
