@@ -42,7 +42,7 @@
             internal="true"/>
     <action id="Educational.Student.ReportCommunitySolution"
             class="com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionAction"
-            icon="com.jetbrains.edu.EducationalCoreIcons.Report">
+            icon="AllIcons.Actions.Report">
       <add-to-group group-id="Diff.ViewerToolbar"
                     relative-to-action="Educational.Student.ApplyCode"
                     anchor="after"/>
