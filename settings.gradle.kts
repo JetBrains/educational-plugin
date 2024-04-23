@@ -29,8 +29,8 @@ include(
   "intellij-plugin:Edu-Go",
   "intellij-plugin:Edu-Php",
   "intellij-plugin:Edu-Shell",
-  "intellij-plugin:sql",
-  "intellij-plugin:sql:sql-jvm",
+//  "intellij-plugin:sql",
+//  "intellij-plugin:sql:sql-jvm",
   "intellij-plugin:github"
 )
 

@@ -1,5 +1,7 @@
 import groovy.util.Node
 import groovy.xml.XmlParser
+import org.jetbrains.intellij.platform.gradle.extensions.IntelliJPlatformExtension
+import org.jetbrains.intellij.platform.gradle.tasks.PrepareSandboxTask
 //import org.jetbrains.intellij.tasks.PatchPluginXmlTask
 //import org.jetbrains.intellij.tasks.PrepareSandboxTask
 //import org.jetbrains.intellij.tasks.RunIdeBase
@@ -75,7 +77,8 @@ val codeWithMePlugin = "com.jetbrains.codeWithMe"
 val jvmPlugins = listOf(
   javaPlugin,
   "JUnit",
-  "org.jetbrains.plugins.gradle"
+  "org.jetbrains.plugins.gradle",
+  "com.intellij.gradle"
 )
 val kotlinPlugins = jvmPlugins + kotlinPlugin
 
@@ -97,10 +100,16 @@ val cppPlugins = listOfNotNull(
   // In particular, `CppTaskDescriptionHighlightingTest` and `CppMoveHandlerTest`
   "com.intellij.cidr.lang",
   "com.intellij.clion",
+  "com.intellij.cidr.base",
   "com.intellij.clion.runFile".takeIf { environmentName.toInt() >= 241 },
   "com.intellij.nativeDebug",
   "org.jetbrains.plugins.clion.test.google",
   "org.jetbrains.plugins.clion.test.catch"
+)
+
+val sqlPlugins = listOf(
+  sqlPlugin,
+  "intellij.grid.core.impl"
 )
 
 val changesFile = "changes.html"
@@ -150,6 +159,11 @@ allprojects {
     }
   }
 
+  intellijPlatform {
+    instrumentCode = false
+    buildSearchableOptions = prop("enableBuildSearchableOptions").toBoolean()
+  }
+
   tasks {
     withProp("customJbr") {
       if (it.isNotBlank()) {
@@ -187,11 +201,6 @@ allprojects {
   }
 
   dependencies {
-//    intellijPlatform {
-//      create()
-//    }
-
-
     implementationWithoutKotlin(rootProject.libs.twitter4j.core)
     implementationWithoutKotlin(rootProject.libs.twitter4j.v2)
     implementationWithoutKotlin(rootProject.libs.jsoup)
@@ -236,6 +245,7 @@ version = "$pluginVersion-$platformVersion-$buildNumber"
 
 
 intellijPlatform {
+
   pluginConfiguration {
     id = "com.jetbrains.edu"
     name = "JetBrains Academy"
@@ -253,8 +263,8 @@ intellijPlatform {
     }
   }
 
-  instrumentCode = false
-  buildSearchableOptions = prop("enableBuildSearchableOptions").toBoolean()
+//  instrumentCode = false
+//  buildSearchableOptions = prop("enableBuildSearchableOptions").toBoolean()
 
 }
 //intellij {
@@ -320,23 +330,25 @@ dependencies {
   implementation(project("Edu-Go"))
   implementation(project("Edu-Php"))
   implementation(project("Edu-Shell"))
-  implementation(project("sql"))
-  implementation(project("sql:sql-jvm"))
+//  implementation(project("sql"))
+//  implementation(project("sql:sql-jvm"))
   implementation(project("github"))
   implementation(project("remote-env"))
 }
-val removeIncompatiblePlugins = task<Delete>("removeIncompatiblePlugins") {
+//val removeIncompatiblePlugins = task<Delete>("removeIncompatiblePlugins") {
+//
+//  fun deletePlugin(sandboxPath: String, pluginName: String) {
+//    file("$sandboxPath/plugins/$pluginName").deleteRecursively()
+//  }
+//
+//  doLast {
+//    deletePlugin(pycharmSandbox, "python-ce")
+//    deletePlugin(clionSandbox, "python-ce")
+//    deletePlugin(pycharmSandbox, "Scala")
+//  }
+//}
 
-  fun deletePlugin(sandboxPath: String, pluginName: String) {
-    file("$sandboxPath/plugins/$pluginName").deleteRecursively()
-  }
 
-  doLast {
-    deletePlugin(pycharmSandbox, "python-ce")
-    deletePlugin(clionSandbox, "python-ce")
-    deletePlugin(pycharmSandbox, "Scala")
-  }
-}
 
 // Collects all jars produced by compilation of project modules and merges them into singe one.
 // We need to put all plugin manifest files into single jar to make new plugin model work
@@ -369,21 +381,22 @@ val removeIncompatiblePlugins = task<Delete>("removeIncompatiblePlugins") {
 //  }
 //}
 tasks {
-//  withType<PrepareSandboxTask> {
-//    from("twitter") {
-//      into("${pluginName.get()}/twitter")
-//      include("**/*.gif")
-//    }
+  withType<PrepareSandboxTask> {
+    val projectName = project.the<IntelliJPlatformExtension>().projectName
+    from("twitter") {
+      into("${projectName.get()}/twitter")
+      include("**/*.gif")
+    }
 //    finalizedBy(removeIncompatiblePlugins)
-//    doLast {
-//      val kotlinJarRe = """kotlin-(stdlib|reflect|runtime).*\.jar""".toRegex()
-//      val libraryDir = destinationDir.resolve("${pluginName.get()}/lib")
-//      val kotlinStdlibJars = libraryDir.listFiles().orEmpty().filter { kotlinJarRe.matches(it.name) }
-//      check(kotlinStdlibJars.isEmpty()) {
-//        "Plugin shouldn't contain kotlin stdlib jars. Found:\n" + kotlinStdlibJars.joinToString(separator = ",\n") { it.absolutePath }
-//      }
-//    }
-//  }
+    doLast {
+      val kotlinJarRe = """kotlin-(stdlib|reflect|runtime).*\.jar""".toRegex()
+      val libraryDir = destinationDir.resolve("${projectName.get()}/lib")
+      val kotlinStdlibJars = libraryDir.listFiles().orEmpty().filter { kotlinJarRe.matches(it.name) }
+      check(kotlinStdlibJars.isEmpty()) {
+        "Plugin shouldn't contain kotlin stdlib jars. Found:\n" + kotlinStdlibJars.joinToString(separator = ",\n") { it.absolutePath }
+      }
+    }
+  }
 //  prepareSandbox {
 //    finalizedBy(mergePluginJarTask)
 //  }
@@ -914,54 +927,58 @@ project("Edu-Shell") {
   }
 }
 
-project("sql") {
-//  intellij {
-//    if (isStudioIDE || isPycharmIDE) {
-//      version = ideaVersion
+//project("sql") {
+////  intellij {
+////    if (isStudioIDE || isPycharmIDE) {
+////      version = ideaVersion
+////    }
+////    plugins = listOf(sqlPlugin)
+////  }
+//
+//  dependencies {
+//    intellijPlatform {
+//      // TODO: refactor
+//      intellijIdeaUltimate(ideaVersion.removePrefix("IU-"))
+//
+//      sqlPlugins.forEach {
+//        plugin(it)
+//      }
 //    }
-//    plugins = listOf(sqlPlugin)
+//
+//    api(project(":intellij-plugin:educational-core"))
+//
+//    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
 //  }
+//}
 
-  dependencies {
-    intellijPlatform {
-      // TODO: refactor
-      intellijIdeaUltimate(ideaVersion.removePrefix("IU-"))
-
-      bundledPlugin(sqlPlugin)
-    }
-
-    api(project(":intellij-plugin:educational-core"))
-
-    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-  }
-}
-
-project("sql:sql-jvm") {
-//  intellij {
-//    version = ideaVersion
-//    plugins = listOf(sqlPlugin) + jvmPlugins
+//project("sql:sql-jvm") {
+////  intellij {
+////    version = ideaVersion
+////    plugins = listOf(sqlPlugin) + jvmPlugins
+////  }
+//
+//  dependencies {
+//    intellijPlatform {
+//      // TODO: refactor
+//      intellijIdeaUltimate(ideaVersion.removePrefix("IU-"))
+//
+//      // TODO: rework it
+//      jvmPlugins.forEach {
+//        bundledPlugin(it)
+//      }
+//      sqlPlugins.forEach {
+//        plugin(it)
+//      }
+//    }
+//
+//    api(project(":intellij-plugin:sql"))
+//    api(project(":intellij-plugin:jvm-core"))
+//
+//    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+//    testImplementation(project(":intellij-plugin:sql", "testOutput"))
+//    testImplementation(project(":intellij-plugin:jvm-core", "testOutput"))
 //  }
-
-  dependencies {
-    intellijPlatform {
-      // TODO: refactor
-      intellijIdeaUltimate(ideaVersion.removePrefix("IU-"))
-
-      // TODO: rework it
-      jvmPlugins.forEach {
-        bundledPlugin(it)
-      }
-      bundledPlugin(sqlPlugin)
-    }
-
-    api(project(":intellij-plugin:sql"))
-    api(project(":intellij-plugin:jvm-core"))
-
-    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-    testImplementation(project(":intellij-plugin:sql", "testOutput"))
-    testImplementation(project(":intellij-plugin:jvm-core", "testOutput"))
-  }
-}
+//}
 
 project("github") {
 //  intellij {
