@@ -787,20 +787,20 @@ project("Edu-Scala") {
 //  }
 //}
 
-project("Edu-Python:PyCharm") {
-  intellij {
-    if (isStudioIDE) {
-      version = ideaVersion
-    }
-    plugins = pythonPlugins
-  }
-
-  dependencies {
-    implementation(project(":intellij-plugin:educational-core"))
-    compileOnly(project(":intellij-plugin:Edu-Python"))
-    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-  }
-}
+//project("Edu-Python:PyCharm") {
+//  intellij {
+//    if (isStudioIDE) {
+//      version = ideaVersion
+//    }
+//    plugins = pythonPlugins
+//  }
+//
+//  dependencies {
+//    implementation(project(":intellij-plugin:educational-core"))
+//    compileOnly(project(":intellij-plugin:Edu-Python"))
+//    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+//  }
+//}
 
 project("Edu-JavaScript") {
 //  intellij {
