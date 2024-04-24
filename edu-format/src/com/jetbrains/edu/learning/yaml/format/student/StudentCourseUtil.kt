@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.util.StdConverter
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.yaml.format.CourseYamlMixin
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ADDITIONAL_FILES
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LANGUAGE
@@ -18,7 +19,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TITLE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 
 @Suppress("unused") // used for yaml serialization
-@JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, PROGRAMMING_LANGUAGE, PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, CONTENT, MODE, TAGS)
+@JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, PROGRAMMING_LANGUAGE, PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, CONTENT, ADDITIONAL_FILES, MODE, TAGS)
 abstract class StudentCourseYamlMixin : CourseYamlMixin() {
   @JsonSerialize(converter = CourseModeSerializationConverter::class)
   @JsonProperty(MODE)
