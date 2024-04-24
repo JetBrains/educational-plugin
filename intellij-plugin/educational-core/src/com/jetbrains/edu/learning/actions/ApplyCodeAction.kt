@@ -26,10 +26,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.ex.temp.TempFileSystem
 import com.intellij.testFramework.utils.editor.saveToDisk
 import com.intellij.ui.GotItTooltip
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.NonNls
@@ -126,8 +128,16 @@ class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
   }
 
   private fun findLocalDocument(fileName: String): Document? {
-    val file = LocalFileSystem.getInstance().findFileByPath(fileName) ?: return null
-    return FileDocumentManager.getInstance().getDocument(file)
+    val file = if (!isUnitTestMode) {
+      LocalFileSystem.getInstance().findFileByPath(fileName)
+    }
+    else {
+      TempFileSystem.getInstance().findFileByPath(fileName)
+    }
+
+    return file?.let {
+      FileDocumentManager.getInstance().getDocument(it)
+    }
   }
 
   private fun DiffRequestChain.getTexts(size: Int): List<String> {

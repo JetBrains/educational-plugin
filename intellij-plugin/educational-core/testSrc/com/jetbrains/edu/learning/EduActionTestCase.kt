@@ -1,10 +1,14 @@
 package com.jetbrains.edu.learning
 
+import com.intellij.diff.DiffContentFactory
+import com.intellij.diff.chains.SimpleDiffRequestChain
+import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -54,5 +58,26 @@ abstract class EduActionTestCase : EduTestCase() {
       .add(CommonDataKeys.PSI_ELEMENT, element)
       .add(PlatformDataKeys.DELETE_ELEMENT_PROVIDER, CCStudyItemDeleteProvider())
       .build()
+  }
+
+  companion object {
+    @Suppress("HardCodedStringLiteral")
+    fun simpleDiffRequestChain(
+      project: Project?,
+      currentContentText: String = "Current Content",
+      anotherContentText: String = "Another Content"
+    ): SimpleDiffRequestChain {
+      val diffContentFactory = DiffContentFactory.getInstance()
+      val currentContent = diffContentFactory.create(project, currentContentText)
+      val anotherContent = diffContentFactory.create(project, anotherContentText)
+
+      return SimpleDiffRequestChain(
+        listOf(
+          SimpleDiffRequest(
+            "Simple Diff Request", currentContent, anotherContent, "Title: 1", "Title: 2"
+          )
+        )
+      )
+    }
   }
 }

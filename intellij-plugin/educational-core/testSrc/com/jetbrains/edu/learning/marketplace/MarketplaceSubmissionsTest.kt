@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.util.Disposer
+import com.jetbrains.edu.learning.EduActionTestCase.Companion.simpleDiffRequestChain
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -17,7 +18,6 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.marketplace.actions.DeleteAllSubmissionsAction
 import com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionAction
-import com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionActionTest
 import com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionActionTest.Companion.putCommunityData
 import com.jetbrains.edu.learning.marketplace.api.*
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
@@ -313,7 +313,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
     }
 
     private fun reportActionDataContext(project: Project, solution: Submission, solutionId: Int): DataContext {
-      val diffChain = ReportCommunitySolutionActionTest.simpleDiffRequestChain(project)
+      val diffChain = simpleDiffRequestChain(project)
       diffChain.putCommunityData(solution.taskId, solutionId)
 
       val diffVirtualFile = ChainDiffVirtualFile(diffChain, "")

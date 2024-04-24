@@ -1,10 +1,7 @@
 package com.jetbrains.edu.learning.marketplace.actions
 
-import com.intellij.diff.DiffContentFactory
 import com.intellij.diff.chains.SimpleDiffRequestChain
 import com.intellij.diff.editor.ChainDiffVirtualFile
-import com.intellij.diff.requests.SimpleDiffRequest
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.course
@@ -41,16 +38,6 @@ class ReportCommunitySolutionActionTest : EduActionTestCase() {
   }
 
   companion object {
-
-    @Suppress("HardCodedStringLiteral")
-    fun simpleDiffRequestChain(project: Project?): SimpleDiffRequestChain {
-      val diffContentFactory = DiffContentFactory.getInstance()
-      val currentContent = diffContentFactory.create(project, "Current Content")
-      val anotherContent = diffContentFactory.create(project, "Another Content")
-
-      return SimpleDiffRequestChain(listOf(SimpleDiffRequest("Simple Diff Request", currentContent, anotherContent, "1", "2")))
-    }
-
     fun SimpleDiffRequestChain.putCommunityData(taskId: Int, solutionId: Int) {
       putUserData(ReportCommunitySolutionAction.TASK_ID_KEY, taskId)
       putUserData(ReportCommunitySolutionAction.SUBMISSION_ID_KEY, solutionId)
