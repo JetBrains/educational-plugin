@@ -89,6 +89,7 @@ dependencies {
     }
     pluginComposedModule(implementation(project("features:social-media")))
     pluginComposedModule(implementation(project("localization")))
+    pluginComposedModule(implementation(project("Edu-Cognifire")))
 
     testFramework(TestFrameworkType.Bundled)
   }
@@ -209,6 +210,10 @@ tasks {
     customRunIdeTask(RustRover)
     customRunIdeTask(DataSpell)
     customRunIdeTask(Rider, riderVersion)
+  }
+
+  clean {
+    delete("generated-src")
   }
 }
 

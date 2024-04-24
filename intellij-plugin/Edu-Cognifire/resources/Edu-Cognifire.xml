@@ -1,0 +1,66 @@
+<idea-plugin package="com.jetbrains.edu.cognifire">
+  <!--suppress PluginXmlValidity -->
+  <dependencies>
+    <plugin id="org.jetbrains.plugins.gradle"/>
+    <plugin id="JUnit"/>
+  </dependencies>
+
+  <resource-bundle>messages.EduCognifireBundle</resource-bundle>
+
+  <extensionPoints>
+    <extensionPoint qualifiedName="Educational.promptExpressionParser"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.cognifire.parsers.PromptExpressionParser"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="Educational.generatedCodeParser"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.cognifire.parsers.GeneratedCodeParser"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="Educational.codeExpressionWriter"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.cognifire.writers.CodeExpressionWriter"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="Educational.promptExpressionWriter"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.cognifire.writers.PromptExpressionWriter"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="Educational.codeExpressionParser"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.cognifire.parsers.CodeExpressionParser"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="Educational.cognifireDslPackageCallChecker"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.cognifire.CognifireDslPackageCallChecker"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="Educational.inspectionProcessor"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.cognifire.inspection.InspectionProcessor"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="Educational.prodeExpressionParser"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.cognifire.parsers.ProdeExpressionParser"/>
+    </extensionPoint>
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <applicationService serviceImplementation="com.jetbrains.edu.cognifire.highlighting.HighlighterManager"/>
+    <applicationService serviceImplementation="com.jetbrains.edu.cognifire.highlighting.GuardedBlockManager"/>
+    <applicationService serviceImplementation="com.jetbrains.edu.cognifire.highlighting.ProdeStateManager"/>
+    <postStartupActivity implementation="com.jetbrains.edu.cognifire.CognifireStartupActivity"/>
+  </extensions>
+
+  <actions>
+    <action id="Educational.Educator.CreateTutorial"
+            class="com.jetbrains.edu.cognifire.tutorial.TutorialGenerator">
+      <add-to-group group-id="Educational.Educator.NewFile" anchor="first"/>
+    </action>
+  </actions>
+</idea-plugin>
