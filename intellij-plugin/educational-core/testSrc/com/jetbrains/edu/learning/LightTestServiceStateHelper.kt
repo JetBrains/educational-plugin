@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.codeforces.update.CodeforcesCourseUpdateChecke
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceUpdateChecker
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsService
 import com.jetbrains.edu.learning.stepik.hyperskill.update.HyperskillCourseUpdateChecker
 import com.jetbrains.edu.learning.storage.LearningObjectsStorageManager
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
@@ -24,6 +25,7 @@ object LightTestServiceStateHelper {
   private val lightTestAwareApplicationServices: List<KClass<out LightTestAware>> = listOf(
     CoursesStorage::class,
     EduBrowser::class,
+    HyperskillMetricsService::class,
   )
 
   private val lightTestAwareProjectServices: List<KClass<out LightTestAware>> = listOf(

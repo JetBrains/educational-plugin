@@ -27,16 +27,6 @@ class HyperskillMetricsTest : EduTestCase() {
   private val metricsService: HyperskillMetricsService get() = HyperskillMetricsService.getInstance()
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
-  override fun tearDown() {
-    try {
-      metricsService.allFrontendEvents(emptyQueue = true)
-      metricsService.allTimeSpentEvents(reset = true)
-    }
-    finally {
-      super.tearDown()
-    }
-  }
-
   fun `test current serialization format`() {
     createHyperskillCourse()
 

@@ -4,19 +4,21 @@ import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.*
 import com.intellij.util.xmlb.annotations.XCollection
+import com.jetbrains.edu.learning.LightTestAware
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.projectView.CourseViewUtils.isSolved
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillFrontendEvent
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillFrontendEventType
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTimeSpentEvent
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import org.jetbrains.annotations.TestOnly
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.atomic.DoubleAdder
 import kotlin.math.min
 
 @State(name = "HyperskillMetrics", storages = [Storage("hyperskill.xml", roamingType = RoamingType.DISABLED)])
-open class HyperskillMetricsService : PersistentStateComponent<HyperskillMetricsService.State>, Disposable {
+open class HyperskillMetricsService : PersistentStateComponent<HyperskillMetricsService.State>, Disposable, LightTestAware {
   private val frontendEvents: Deque<HyperskillFrontendEvent> = ConcurrentLinkedDeque()
   private val timeSpentEvents: MutableMap<Int, DoubleAdder> = mutableMapOf()
   private var taskInProgress: Pair<Int, Long>? = null
@@ -145,6 +147,13 @@ open class HyperskillMetricsService : PersistentStateComponent<HyperskillMetrics
 
   override fun dispose() {
     // do nothing
+  }
+
+  @TestOnly
+  override fun cleanUpState() {
+    frontendEvents.clear()
+    timeSpentEvents.clear()
+    taskInProgress = null
   }
 
   class State : BaseState() {
