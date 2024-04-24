@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYCHARM
 import com.jetbrains.edu.learning.json.mixins.IntValueFilter
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ADDITIONAL_FILES
 import com.jetbrains.edu.learning.json.mixins.NotImplementedInMixin
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.errorHandling.unnamedItemAtMessage
@@ -112,6 +113,10 @@ abstract class CourseYamlMixin {
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
   lateinit var environmentSettings: Map<String, String>
 
+  @JsonProperty(ADDITIONAL_FILES)
+  @JsonInclude(JsonInclude.Include.ALWAYS)
+  lateinit var additionalFiles: List<EduFile>
+
   @JsonIgnore
   private var programmingLanguage: String? = null
 }
@@ -183,6 +188,7 @@ open class CourseBuilder(
   @JsonProperty(PROGRAM_TYPE_ID) val codeforcesProgramTypeId: String?,
   @JsonProperty(TAGS) val yamlContentTags: List<String> = emptyList(),
   @JsonProperty(ENVIRONMENT_SETTINGS) val yamlEnvironmentSettings: Map<String, String> = emptyMap(),
+  @JsonProperty(ADDITIONAL_FILES) val yamlAdditionalFiles: List<EduFile> = emptyList()
 ) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {
@@ -198,6 +204,7 @@ open class CourseBuilder(
       solutionsHidden = areSolutionsHidden ?: false
       contentTags = yamlContentTags
       environmentSettings = yamlEnvironmentSettings
+      additionalFiles = yamlAdditionalFiles
 
       languageId = Language.findLanguageByName(displayProgrammingLanguageName)
                       ?: formatError(message("yaml.editor.invalid.unsupported.language", displayProgrammingLanguageName))
