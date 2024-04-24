@@ -104,7 +104,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
   private suspend fun doCreateCourseProjectAsync(location: String, projectSettings: EduProjectSettings): Project? {
     @Suppress("UNCHECKED_CAST")
     val castedProjectSettings = projectSettings as S
-    applySettings(projectSettings)
+    applySettings(castedProjectSettings)
     val createdProject = createProject(location) ?: return null
 
     withContext(Dispatchers.EDT) {
