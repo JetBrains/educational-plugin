@@ -486,6 +486,9 @@ project("educational-core") {
       }
     }
 
+    implementation("org.jetbrains.academy.jarvis.dsl:Jarvis-no-code-in-edu:1.0.0") {
+      excludeKotlinDeps()
+    }
     api(project(":edu-format"))
     api(rootProject.libs.edu.ai.format) {
       excludeKotlinDeps()
