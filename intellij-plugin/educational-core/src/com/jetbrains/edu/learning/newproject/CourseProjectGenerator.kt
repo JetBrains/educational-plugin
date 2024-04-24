@@ -158,7 +158,6 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     RecentProjectsManager.getInstance().lastProjectCreationLocation = PathUtil.toSystemIndependentName(location.parent)
 
     baseDir.putUserData(COURSE_MODE_TO_CREATE, course.courseMode)
-    baseDir.putUserData(COURSE_LANGUAGE_ID_TO_CREATE, course.languageId)
 
     if (isCourseTrusted(course, isNewCourseCreatorCourse)) {
       @Suppress("UnstableApiUsage")
@@ -299,7 +298,6 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     val EDU_PROJECT_CREATED = Key.create<Boolean>("edu.projectCreated")
 
     val COURSE_MODE_TO_CREATE = Key.create<CourseMode>("edu.courseModeToCreate")
-    val COURSE_LANGUAGE_ID_TO_CREATE = Key.create<String>("edu.courseLanguageIdToCreate")
 
     @Topic.AppLevel
     val COURSE_PROJECT_CONFIGURATION: Topic<CourseProjectConfigurationListener> = createTopic("COURSE_PROJECT_CONFIGURATION")
