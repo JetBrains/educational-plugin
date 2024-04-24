@@ -57,7 +57,7 @@ class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
     if (!getConfirmationFromDialog(project)) return
 
     val diffRequestChain = e.getDiffRequestChain() ?: return showApplyCodeFailedNotification(project)
-    val fileNames = diffRequestChain.getUserData(VIRTUAL_FILE_PATH_LIST) ?: return showApplyCodeFailedNotification(project)
+    val fileNames = diffRequestChain.getUserData(VIRTUAL_FILE_PATH_LIST).takeIf { !it.isNullOrEmpty() } ?: return showApplyCodeFailedNotification(project)
 
     try {
       val localDocuments = readLocalDocuments(fileNames)
