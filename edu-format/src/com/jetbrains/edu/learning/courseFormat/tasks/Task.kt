@@ -31,6 +31,11 @@ abstract class Task : StudyItem {
   var feedbackLink: String? = null
 
   /**
+   * Represents whether all prompt actions have been generated successfully.
+   */
+  var isPromptActionsGeneratedSuccessfully: Boolean = true
+
+  /**
    * null means that behaviour for this particular Task hasn't been configured by a user and [Course.solutionsHidden] should be used instead
    */
   var solutionHidden: Boolean? = null

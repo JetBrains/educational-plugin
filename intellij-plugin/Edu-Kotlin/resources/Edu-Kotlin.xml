@@ -2,6 +2,8 @@
   <dependencies>
     <!--suppress PluginXmlValidity -->
     <module name="jvm-core"/>
+    <!--suppress PluginXmlValidity -->
+    <module name="Edu-Cognifire"/>
 
     <plugin id="org.jetbrains.kotlin"/>
     <plugin id="org.jetbrains.plugins.gradle"/>
@@ -18,5 +20,22 @@
 
     <!-- Hyperskill -->
     <configurator implementationClass="com.jetbrains.edu.kotlin.hyperskill.KtHyperskillConfigurator" language="kotlin" courseType="Hyperskill"/>
+
+    <promptExpressionParser language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.psi.KtPromptExpressionParser"/>
+    <codeExpressionWriter language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.psi.KtCodeExpressionWriter"/>
+    <cognifireDslPackageCallChecker language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.psi.KtCognifireDslPackageCallChecker"/>
+    <generatedCodeParser language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.psi.KtGeneratedCodeParser"/>
+    <inspectionProcessor language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.inspection.KtInspectionProcessor"/>
+    <codeExpressionParser language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.psi.KtCodeExpressionParser"/>
+    <promptExpressionWriter language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.psi.KtPromptExpressionWriter"/>
+    <prodeExpressionParser language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.psi.KtProdeExpressionParser"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <runLineMarkerContributor language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.PromptRunLineMarkerContributor"/>
+    <completion.confidence language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.completion.CognifireCompletionConfidence" id="kotlinStrings" order="first"/>
+    <completion.contributor language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.completion.CognifireCompletionContributor"/>
+    <annotator language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.psi.KtPromptErrorAnnotator"/>
+    <annotator language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.psi.KtPromptSyntaxHighlightingAnnotator"/>
   </extensions>
 </idea-plugin>
