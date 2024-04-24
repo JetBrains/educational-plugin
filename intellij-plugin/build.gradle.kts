@@ -90,6 +90,7 @@ dependencies {
     pluginModule(implementation(project("features:remote-env")))
     pluginModule(implementation(project("features:social-media")))
     pluginModule(implementation(project("localization")))
+    pluginModule(implementation(project("Edu-Cognifire")))
 
     testFramework(TestFrameworkType.Bundled)
   }
@@ -208,6 +209,10 @@ tasks {
     customRunIdeTask(RustRover)
     customRunIdeTask(DataSpell)
     customRunIdeTask(Rider, riderVersion)
+  }
+
+  clean {
+    delete("generated-src")
   }
 }
 

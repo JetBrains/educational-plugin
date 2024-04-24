@@ -31,6 +31,7 @@
     <module name="Edu-CSharp"/>
     <module name="sql-core"/>
     <module name="sql-jvm"/>
+    <module name="Edu-Cognifire"/>
 
     <!-- feature modules -->
     <module name="code-insight-core"/>

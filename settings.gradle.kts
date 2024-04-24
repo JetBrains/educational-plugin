@@ -45,6 +45,7 @@ include(
   "intellij-plugin:features:ide-onboarding",
   "intellij-plugin:features:remote-env",
   "intellij-plugin:features:social-media",
+  "intellij-plugin:Edu-Cognifire"
 )
 
 if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {
@@ -55,10 +56,12 @@ apply(from = "common.gradle.kts")
 
 val secretProperties: String by extra
 val inJetBrainsNetwork: () -> Boolean by extra
+val cognifireProperties: String by extra
 
 val isTeamCity: Boolean get() = System.getenv("TEAMCITY_VERSION") != null
 
 configureSecretProperties()
+configureCognifireProperties()
 
 downloadHyperskillCss()
 
@@ -108,6 +111,15 @@ fun configureSecretProperties() {
   secretProperties.extractAndStore(
     "intellij-plugin/educational-core/resources/lti/lti-auth.properties",
     "ltiServiceToken"
+  )
+}
+
+fun configureCognifireProperties() {
+  val cognifireProperties = loadProperties(cognifireProperties)
+
+  cognifireProperties.extractAndStore(
+    "intellij-plugin/educational-core/resources/cognifireTemplateVariables/cognifire.properties",
+    "cognifireDslVersion"
   )
 }
 
@@ -176,5 +188,6 @@ pluginManagement {
         }
       }
     }
+    maven("https://packages.jetbrains.team/maven/p/edu/cognifire")
   }
 }
