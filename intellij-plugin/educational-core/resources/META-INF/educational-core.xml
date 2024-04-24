@@ -85,6 +85,16 @@
     <extensionPoint qualifiedName="Educational.yamlActionsHelper"
                     interface="com.jetbrains.edu.coursecreator.actions.YamlActionsHelper"
                     dynamic="true"/>
+    <extensionPoint qualifiedName="Educational.descriptionExpressionParser"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.learning.jarvis.DescriptionExpressionParser"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="Educational.draftExpressionWriter"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.learning.jarvis.DraftExpressionWriter"/>
+    </extensionPoint>
   </extensionPoints>
 
   <actions>
@@ -430,6 +440,10 @@
     <registryKey key="edu.network.request.assertion.policy"
                  description="Assertion policy for network requests from EDT in JetBrains Academy plugin"
                  defaultValue="[OFF|LOG_ERROR*|EXCEPTION]"/>
+    <intentionAction>
+      <className>com.jetbrains.edu.learning.actions.DraftIntentionAction</className>
+      <category>jarvis.intention.category.name</category>
+    </intentionAction>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">
