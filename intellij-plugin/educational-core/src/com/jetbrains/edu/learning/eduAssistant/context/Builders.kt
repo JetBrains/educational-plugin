@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.eduAssistant.context
 
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.components.service
 import com.jetbrains.edu.learning.courseFormat.eduAssistant.AiAssistantState
 import com.jetbrains.edu.learning.courseFormat.eduAssistant.AuthorSolutionContext
 import com.jetbrains.edu.learning.courseFormat.ext.getSolution
@@ -29,14 +30,15 @@ fun Task.buildAuthorSolutionContext(): AuthorSolutionContext? {
   )
 }
 
-suspend fun initAiHintContext(assistant: TaskBasedAssistant, task: Task) {
+fun initAiHintContext(task: Task) {
   val taskProcessor = TaskProcessor(task)
   if (!taskProcessor.isNextStepHintApplicable()) {
     return
   }
-  task.authorSolutionContext ?: run {
+  if (task.authorSolutionContext == null) {
     task.authorSolutionContext = task.buildAuthorSolutionContext()
   }
-  assistant.getTaskAnalysis(taskProcessor)
+  val project = task.project ?: error("Project was not found")
+  project.service<TaskBasedAssistant>().launchGetTaskAnalysis(taskProcessor)
   task.aiAssistantState = AiAssistantState.ContextInitialized
 }

@@ -46,7 +46,6 @@ import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 import com.jetbrains.edu.learning.eduAssistant.ui.NextStepHintNotificationFrame
 import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import kotlinx.coroutines.launch
 import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
 import java.awt.Font
@@ -169,10 +168,7 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
     )
     val taskProcessor = TaskProcessor(task)
     if (taskProcessor.needToUpdateSolutionSteps()) {
-      val assistant = state.project.service<TaskBasedAssistant>()
-      assistant.scope.launch {
-        assistant.getTaskAnalysis(taskProcessor)
-      }
+      state.project.service<TaskBasedAssistant>().launchGetTaskAnalysis(taskProcessor)
     }
     closeNextStepHintNotificationPanel()
   }
@@ -195,10 +191,9 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
       progressIndicator = indicator
 
       val taskProcessor = TaskProcessor(task)
-      val assistant = project.service<TaskBasedAssistant>()
       runBlockingCancellable {
         task.aiAssistantState = AiAssistantState.HelpAsked
-        val response = assistant.getHint(taskProcessor, state)
+        val response = project.service<TaskBasedAssistant>().getHint(taskProcessor, state)
         response.assistantError?.let {
           showHintWindow(it.errorMessage)
           return@runBlockingCancellable

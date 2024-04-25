@@ -21,28 +21,30 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.concurrent.ConcurrentHashMap
 
 @Service(Service.Level.PROJECT)
 class TaskBasedAssistant(
-  val scope: CoroutineScope
+  private val scope: CoroutineScope
 ) : Assistant {
+  fun launchGetTaskAnalysis(taskProcessor: TaskProcessor, forcedReload: Boolean = false) {
+    scope.launch {
+      getTaskAnalysis(taskProcessor, forcedReload)
+    }
+  }
 
   suspend fun getTaskAnalysis(taskProcessor: TaskProcessor, forcedReload: Boolean = false): SolutionSteps? {
     val task = taskProcessor.task
     if (taskProcessor.getFailureMessage() == EduCoreBundle.message("error.execution.failed")) return null
 
-    val solutionSteps = taskId2SolutionSteps.getOrPut(task.id, ::SolutionStepsProxy)
-    return solutionSteps.setValue { value ->
-      if (!forcedReload && value != null) {
-        return@setValue value
-      }
-
+    val solutionStepsProxy = taskId2SolutionSteps.getOrPut(task.id, ::SolutionStepsProxy)
+    val solutionSteps = solutionStepsProxy.getOrSetValue(forcedReload) {
       Loggers.taskAnalysisTimingLogger.info("Starting getTaskAnalysis function for task-id: ${task.id}")
 
-      task.authorSolutionContext ?: let {
+      if (task.authorSolutionContext == null) {
         task.authorSolutionContext = task.buildAuthorSolutionContext()
       }
 
@@ -58,20 +60,20 @@ class TaskBasedAssistant(
 
       Loggers.taskAnalysisTimingLogger.info("Requesting model for task analysis for task-id: ${task.id}")
 
-      AiPlatformAdapter.chat(
+      val aiResponse = AiPlatformAdapter.chat(
         userPrompt = taskAnalysisPrompt,
         generationContextProfile = SOLUTION_STEPS
       ).deleteNoCodeSteps()
-        .also {
-          logEduAssistantInfo(
-            taskProcessor,
-            """Task analysis response:
-              |$it
-            """.trimMargin()
-          )
-          Loggers.taskAnalysisTimingLogger.info("Completed task analysis for task-id: ${task.id}")
-        }.let { SolutionSteps(it, hintContext, taskAnalysisPrompt) }
+      logEduAssistantInfo(
+        taskProcessor,
+        """Task analysis response:
+          |$aiResponse
+        """.trimMargin()
+      )
+      Loggers.taskAnalysisTimingLogger.info("Completed task analysis for task-id: ${task.id}")
+      return@getOrSetValue SolutionSteps(aiResponse, hintContext, taskAnalysisPrompt)
     }
+    return solutionSteps
   }
 
   private fun String.deleteNoCodeSteps(): String {
@@ -503,13 +505,14 @@ class TaskBasedAssistant(
 
     suspend fun getValue(): SolutionSteps? = mutex.withLock { value }
 
-    suspend fun setValue(calculation: suspend (SolutionSteps?) -> SolutionSteps?): SolutionSteps? =
+    suspend fun getOrSetValue(forceSet: Boolean = false, calculation: suspend () -> SolutionSteps?): SolutionSteps? {
       mutex.withLock {
-        calculation.invoke(value).also {
-          value = it
+        if (value == null || forceSet) {
+          value = calculation()
         }
+        return value
       }
-
+    }
   }
 
   data class SolutionSteps(val value: String, val hintContext: HintContext, val prompt: String)

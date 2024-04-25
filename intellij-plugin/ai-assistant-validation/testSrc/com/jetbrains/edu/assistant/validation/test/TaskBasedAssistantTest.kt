@@ -2,14 +2,12 @@ package com.jetbrains.edu.assistant.validation.test
 
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.lang.Language
-import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFileFactory
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.getText
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.eduAssistant.core.TaskBasedAssistant
 import com.jetbrains.edu.learning.eduAssistant.inspection.InspectionProvider
 import com.jetbrains.edu.learning.eduAssistant.inspection.getInspectionsWithIssues
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
@@ -51,8 +49,7 @@ class TaskBasedAssistantTest(lesson: String, task: String) : ExternalResourcesTe
     val taskProcessor = TaskProcessor(task)
     val userCode = task.taskFiles.values.firstNotNullOfOrNull { it.getText(project) }
 
-    val assistant = project.service<TaskBasedAssistant>()
-    val response = getHint(taskProcessor, state, assistant, userCode)
+    val response = getHint(taskProcessor, state, userCode)
     refreshProject()
 
     val inspections = getInspections(language)

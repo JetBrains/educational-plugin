@@ -47,12 +47,11 @@ class AutoStepsValidationAction : ValidationAction<ValidationOfStepsDataframeRec
     val project = task.project ?: error("Cannot get project")
     val authorSolution = getAuthorSolution(task, project)
     val taskProcessor = TaskProcessor(task)
-    val assistant = project.service<TaskBasedAssistant>()
     var stepsValidation: String? = null
     val currentTaskDescription = taskProcessor.getTaskTextRepresentation()
 
     try {
-      val currentSteps = assistant.getTaskAnalysis(taskProcessor) ?: error("Error during validation generation: code is not compilable")
+      val currentSteps = project.service<TaskBasedAssistant>().getTaskAnalysis(taskProcessor) ?: error("Error during validation generation: code is not compilable")
       stepsValidation = processValidationSteps(currentTaskDescription, authorSolution, currentSteps.value)
       val dataframeRecord = Gson().fromJson(stepsValidation, ValidationOfStepsDataframeRecord::class.java)
       return listOf(dataframeRecord.apply {

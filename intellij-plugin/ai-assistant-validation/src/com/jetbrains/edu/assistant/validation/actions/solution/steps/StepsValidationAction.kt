@@ -40,10 +40,10 @@ class StepsValidationAction : ValidationAction<StepsDataframeRecord>() {
 
   override suspend fun buildRecords(task: EduTask, lesson: Lesson): List<StepsDataframeRecord> {
     val taskProcessor = TaskProcessor(task)
-    val assistant = task.project?.service<TaskBasedAssistant>() ?: error("Project not found")
+    val project = task.project ?: error("Project not found")
 
     try {
-      val steps = assistant.getTaskAnalysis(taskProcessor) ?: error("code is not compilable")
+      val steps = project.service<TaskBasedAssistant>().getTaskAnalysis(taskProcessor) ?: error("code is not compilable")
 
       return listOf(StepsDataframeRecord (
         taskId = task.id,

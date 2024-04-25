@@ -1,6 +1,7 @@
 package com.jetbrains.edu.assistant.validation.test
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
@@ -61,11 +62,11 @@ abstract class ExternalResourcesTest(private val lessonName: String, private val
       TaskToolWindowView.getInstance(project).currentTask
     }.firstOrNull { it.name == taskName && it.lesson.name == lessonName } ?: error("Cannot get the target task")
 
-  protected fun getHint(taskProcessor: TaskProcessor, state: EduState, assistant: TaskBasedAssistant, userCode: String? = null) =
+  protected fun getHint(taskProcessor: TaskProcessor, state: EduState, userCode: String? = null) =
     // TODO: cannot replace with runBlockingCancellable because of deadlocks
     runBlocking {
       withBackgroundProgress(project, EduAndroidAiAssistantValidationBundle.message("test.getting.hint"), false) {
-        val response = assistant.getHint(taskProcessor, state, userCode)
+        val response = project.service<TaskBasedAssistant>().getHint(taskProcessor, state, userCode)
         response.codeHint?.let {
           downloadSolution(taskProcessor.task, project, it)
         }

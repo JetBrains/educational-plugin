@@ -53,13 +53,12 @@ class AutoHintValidationAction : ValidationAction<ValidationOfHintsDataframeReco
   override suspend fun buildRecords(task: EduTask, lesson: Lesson): List<ValidationOfHintsDataframeRecord> {
     val taskProcessor = TaskProcessor(task)
     val project = task.project ?: error("Cannot get project")
-    val assistant = project.service<TaskBasedAssistant>()
     val eduState = project.eduState ?: error("Cannot get eduState for project ${project.name}")
-    val response = assistant.getHint(taskProcessor, eduState)
+    val response = project.service<TaskBasedAssistant>().getHint(taskProcessor, eduState)
 
     try {
       val userCode = eduState.taskFile.getVirtualFile(project)?.getTextFromTaskTextFile() ?: error("Cannot get a user code")
-      val solutionSteps = assistant.getSolutionSteps(task.id) ?: error("Cannot get the solution steps")
+      val solutionSteps = project.service<TaskBasedAssistant>().getSolutionSteps(task.id) ?: error("Cannot get the solution steps")
       val taskDescription = taskProcessor.getTaskTextRepresentation()
       val codeHint = response.codeHint ?: error("Cannot get a code hint (${response.assistantError?.name ?: "no assistant error found"})")
       val textHint = response.textHint ?: error("Cannot get a text hint (${response.assistantError?.name ?: "no assistant error found"})")
@@ -82,7 +81,7 @@ class AutoHintValidationAction : ValidationAction<ValidationOfHintsDataframeReco
         taskId = task.id,
         taskName = task.name,
         taskDescription = taskProcessor.getTaskTextRepresentation(),
-        solutionSteps = assistant.getSolutionSteps(task.id)?.value ?: "",
+        solutionSteps = project.service<TaskBasedAssistant>().getSolutionSteps(task.id)?.value ?: "",
         userCode = eduState.taskFile.getVirtualFile(project)?.getTextFromTaskTextFile() ?: "",
         nextStepCodeHint = response.codeHint ?: "",
         nextStepTextHint = response.textHint ?: "",
