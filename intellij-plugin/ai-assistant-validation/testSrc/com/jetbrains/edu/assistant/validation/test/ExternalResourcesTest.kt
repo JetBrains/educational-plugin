@@ -64,6 +64,7 @@ abstract class ExternalResourcesTest(private val lessonName: String, private val
 
   protected fun getHint(taskProcessor: TaskProcessor, state: EduState, userCode: String? = null) =
     // TODO: cannot replace with runBlockingCancellable because of deadlocks
+    @Suppress("RAW_RUN_BLOCKING")
     runBlocking {
       withBackgroundProgress(project, EduAndroidAiAssistantValidationBundle.message("test.getting.hint"), false) {
         val response = project.service<TaskBasedAssistant>().getHint(taskProcessor, state, userCode)

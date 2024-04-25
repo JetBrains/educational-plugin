@@ -100,6 +100,7 @@ class SequentialCodeHintValidationAction : CodeValidationAction<MultipleCodeHint
       var response: AssistantResponse? = null
       try {
         // TODO: cannot replace with runBlockingCancellable because of deadlocks
+        @Suppress("RAW_RUN_BLOCKING")
         runBlocking {
           withBackgroundProgress(baseAssistantInfoStorage.project, GETTING_HINT_MESSAGE, false) {
             response = baseAssistantInfoStorage.assistant.getHint(baseAssistantInfoStorage.taskProcessor, baseAssistantInfoStorage.eduState, currentUserCode)
