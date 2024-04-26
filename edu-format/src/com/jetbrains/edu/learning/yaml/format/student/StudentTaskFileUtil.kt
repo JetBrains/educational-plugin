@@ -4,12 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
-import com.jetbrains.edu.learning.courseFormat.BinaryContents
-import com.jetbrains.edu.learning.courseFormat.EduFileErrorHighlightLevel
-import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
-import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.TextualContents
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.logger
 import com.jetbrains.edu.learning.json.encrypt.Encrypt
 import com.jetbrains.edu.learning.yaml.format.TaskFileBuilder
@@ -62,10 +57,10 @@ class StudentTaskFileBuilder(
   editable: Boolean = true,
   @JsonProperty(HIGHLIGHT_LEVEL) errorHighlightLevel: EduFileErrorHighlightLevel = EduFileErrorHighlightLevel.ALL_PROBLEMS
 ) : TaskFileBuilder(name, placeholders, visible, editable, errorHighlightLevel) {
-  override fun createTaskFile(): TaskFile {
-    val newTaskFile = super.createTaskFile()
+  override fun setupTaskFile(taskFile: TaskFile) {
+    super.setupTaskFile(taskFile)
 
-    newTaskFile.contents = if (isBinary == true) {
+    taskFile.contents = if (isBinary == true) {
       // binary contents are never stored in yaml
       TakeFromStorageBinaryContents
     }
@@ -80,9 +75,7 @@ class StudentTaskFileBuilder(
       }
     }
 
-    newTaskFile.isLearnerCreated = learnerCreated
-
-    return newTaskFile
+    taskFile.isLearnerCreated = learnerCreated
   }
 }
 

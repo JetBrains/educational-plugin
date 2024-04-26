@@ -55,6 +55,7 @@ import com.jetbrains.edu.learning.yaml.format.RemoteStudyItem
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LESSON
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TASK
+import com.jetbrains.edu.learning.yaml.format.student.StudentEduFileYamlMixin
 import org.jetbrains.annotations.VisibleForTesting
 
 /**
@@ -80,9 +81,18 @@ object YamlDeserializer {
   @VisibleForTesting
   fun ObjectMapper.deserializeCourse(configFileText: String): Course {
     val treeNode = readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
+
     val courseMode = asText(treeNode.get("mode"))
-    val course = treeToValue(treeNode, Course::class.java)
-    course.courseMode = if (courseMode != null) CourseMode.STUDENT else CourseMode.EDUCATOR
+    val courseModeFromTree = if (courseMode != null) CourseMode.STUDENT else CourseMode.EDUCATOR
+    val fixedMapper = if (courseModeFromTree == CourseMode.STUDENT) {
+      copy().addMixIn(EduFile::class.java, StudentEduFileYamlMixin::class.java)
+    }
+    else {
+      this
+    }
+
+    val course = fixedMapper.treeToValue(treeNode, Course::class.java)
+    course.courseMode = courseModeFromTree
     return course
   }
 

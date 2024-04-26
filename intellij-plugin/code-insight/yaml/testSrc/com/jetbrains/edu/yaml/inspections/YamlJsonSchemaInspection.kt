@@ -24,6 +24,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
       |environment: Android
       |content:
       |- lesson1
+      |additional_files: []
       |
     """.trimMargin("|"))
   }
@@ -45,6 +46,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
       |environment: Android
       |content:
       |- lesson1
+      |additional_files: []
       |
     """.trimMargin("|"))
   }

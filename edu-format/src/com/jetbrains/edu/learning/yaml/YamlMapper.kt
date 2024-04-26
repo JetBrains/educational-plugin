@@ -133,6 +133,7 @@ object YamlMapper {
     addMixIn(ChoiceTask::class.java, ChoiceTaskYamlMixin::class.java)
     addMixIn(CodeTask::class.java, CodeTaskYamlMixin::class.java)
     addMixIn(ChoiceOption::class.java, ChoiceOptionYamlMixin::class.java)
+    addMixIn(EduFile::class.java, EduFileYamlMixin::class.java)
     addMixIn(TaskFile::class.java, TaskFileYamlMixin::class.java)
     addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderYamlMixin::class.java)
     addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyYamlMixin::class.java)
@@ -165,6 +166,7 @@ object YamlMapper {
 
   private fun ObjectMapper.addStudentMixIns() {
     addMixIn(Course::class.java, StudentCourseYamlMixin::class.java)
+    addMixIn(EduFile::class.java, StudentEduFileYamlMixin::class.java)
 
     addMixIn(CheckiOStation::class.java, CheckiOStationYamlMixin::class.java)
     addMixIn(FrameworkLesson::class.java, StudentFrameworkLessonYamlMixin::class.java)
