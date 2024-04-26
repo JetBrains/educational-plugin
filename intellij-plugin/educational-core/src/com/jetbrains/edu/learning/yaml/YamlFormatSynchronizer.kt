@@ -16,6 +16,7 @@ import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.findFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.util.ui.JBUI
@@ -33,6 +34,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.storage.persistAdditionalFiles
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.LESSON_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_COURSE_CONFIG
@@ -156,6 +158,11 @@ object YamlFormatSynchronizer {
       persistEduFiles(project)
     }
 
+    if (this is Course) {
+      disambiguateAdditionalFilesContents(project)
+      persistAdditionalFiles(project)
+    }
+
     project.invokeLater {
       runWriteAction {
         val file = dir.findOrCreateChildData(javaClass, configName)
@@ -237,5 +244,23 @@ private fun Task.disambiguateTaskFilesContents(project: Project) {
     }
 
     taskFile.contents = disambiguatedContents
+  }
+}
+
+private fun Course.disambiguateAdditionalFilesContents(project: Project) {
+  val courseDir = project.courseDir
+
+  additionalFiles.map { additionalFile ->
+    val filePath = additionalFile.name
+    val file = courseDir.findFile(filePath)
+
+    val disambiguatedContents = if (file != null) {
+      additionalFile.contents.disambiguateContents(file)
+    }
+    else {
+      additionalFile.contents.disambiguateContents(filePath)
+    }
+
+    additionalFile.contents = disambiguatedContents
   }
 }
