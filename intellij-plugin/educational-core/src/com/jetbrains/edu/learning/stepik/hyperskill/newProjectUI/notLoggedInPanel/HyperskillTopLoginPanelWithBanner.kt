@@ -13,7 +13,9 @@ import com.intellij.util.IconUtil
 import com.intellij.util.ui.GraphicsUtil
 import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.learning.authUtils.AuthorizationPlace
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import java.awt.*
 import java.awt.geom.RoundRectangle2D
 import javax.swing.JLabel
@@ -29,7 +31,7 @@ private const val ICON_PANEL_RIGHT_GAP = 0
 private const val DESCRIPTION_MAX_LENGTH = 43
 private const val TITLE_FONT_FACTOR = 7f
 
-class HyperskillTopLoginPanelWithBanner(handleLogin: () -> Unit) : Wrapper() {
+class HyperskillTopLoginPanelWithBanner : Wrapper() {
   private val backgroundColor = JBColor.namedColor(
     "SelectCourse.Hyperskill.HyperskillNotLoggedInPanel.LoginBanner.backgroundColor", 0xF7F8FA, 0x2B2D30
   )
@@ -41,7 +43,7 @@ class HyperskillTopLoginPanelWithBanner(handleLogin: () -> Unit) : Wrapper() {
     border = JBUI.Borders.empty(PANEL_GAP)
 
     setContent(JPanel(BorderLayout()).apply {
-      add(createLeftPanel(handleLogin), BorderLayout.CENTER)
+      add(createLeftPanel(), BorderLayout.CENTER)
       add(createBannerPanel(), BorderLayout.EAST)
     }.apply {
       isOpaque = true
@@ -62,9 +64,9 @@ class HyperskillTopLoginPanelWithBanner(handleLogin: () -> Unit) : Wrapper() {
     config.restore()
   }
 
-  private fun createLeftPanel(handleLogin: () -> Unit): JPanel {
+  private fun createLeftPanel(): JPanel {
     val iconPanel = createIconPanel()
-    val labelAndButtonPanel = createLabelAndButtonPanel(handleLogin)
+    val labelAndButtonPanel = createLabelAndButtonPanel()
 
     return JPanel(VerticalFlowLayout()).apply {
       add(iconPanel)
@@ -72,7 +74,7 @@ class HyperskillTopLoginPanelWithBanner(handleLogin: () -> Unit) : Wrapper() {
     }
   }
 
-  private fun createLabelAndButtonPanel(handleLogin: () -> Unit) = panel {
+  private fun createLabelAndButtonPanel() = panel {
     row {
       // I haven't found anything more suitable than text()
       @Suppress("DialogTitleCapitalization") text(EduCoreBundle.message("course.dialog.hyperskill.jba.on.hyperskill.label.text")).applyToComponent {
@@ -86,7 +88,7 @@ class HyperskillTopLoginPanelWithBanner(handleLogin: () -> Unit) : Wrapper() {
     }
     row {
       button(EduCoreBundle.message("course.dialog.hyperskill.jba.on.hyperskill.log.in")) {
-        handleLogin()
+        HyperskillConnector.getInstance().doAuthorize(authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG)
       }.applyToComponent {
         this.putClientProperty(DarculaButtonUI.DEFAULT_STYLE_KEY, true)
         requestFocus()

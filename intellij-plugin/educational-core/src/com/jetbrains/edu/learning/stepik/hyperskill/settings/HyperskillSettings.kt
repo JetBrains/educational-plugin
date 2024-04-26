@@ -1,13 +1,17 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.settings
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
+import com.intellij.util.messages.Topic
 import com.intellij.util.xmlb.XmlSerializer
 import com.intellij.util.xmlb.annotations.Transient
+import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.authUtils.deserializeOAuthAccount
 import com.jetbrains.edu.learning.authUtils.serialize
+import com.jetbrains.edu.learning.createTopic
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillUserInfo
@@ -24,7 +28,13 @@ class HyperskillSettings : PersistentStateComponent<Element> {
     set(account) {
       field = account
       HyperskillConnector.getInstance().apply {
-        if (account != null) notifyUserLoggedIn() else notifyUserLoggedOut()
+        if (account != null) {
+          notifyUserLoggedIn()
+          ApplicationManager.getApplication().messageBus.syncPublisher(LOGGED_IN_TO_HYPERSKILL).userLoggedIn()
+        }
+        else {
+          notifyUserLoggedOut()
+        }
       }
     }
 
@@ -48,5 +58,7 @@ class HyperskillSettings : PersistentStateComponent<Element> {
   companion object {
     val INSTANCE: HyperskillSettings
       get() = service()
+
+    val LOGGED_IN_TO_HYPERSKILL: Topic<EduLogInListener> = createTopic("HYPERSKILL_LOGGED_IN")
   }
 }
