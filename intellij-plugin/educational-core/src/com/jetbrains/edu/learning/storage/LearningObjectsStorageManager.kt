@@ -135,6 +135,14 @@ class LearningObjectsStorageManager(private val project: Project) : DumbAware, D
     }
   }
 
+  fun persistCourseAdditionalFiles(course: Course) {
+    if (project.course?.isStudy != true) return
+
+    for (additionalFile in course.additionalFiles) {
+      additionalFile.persist(learningObjectsStorage)
+    }
+  }
+
   /**
    * Takes the learning objects storage type from the project settings, or, if nothing is configured,
    * updates settings so that they have the default storage type taken from the Registry.
@@ -193,6 +201,10 @@ class LearningObjectsStorageManager(private val project: Project) : DumbAware, D
 
 fun Task.persistEduFiles(project: Project) {
   LearningObjectsStorageManager.getInstance(project).persistTaskEduFiles(this)
+}
+
+fun Course.persistAdditionalFiles(project: Project) {
+  LearningObjectsStorageManager.getInstance(project).persistCourseAdditionalFiles(this)
 }
 
 val EduFile.pathInStorage: String
