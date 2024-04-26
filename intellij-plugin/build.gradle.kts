@@ -1,7 +1,11 @@
 import groovy.util.Node
 import groovy.xml.XmlParser
+import org.jetbrains.intellij.platform.gradle.extensions.IntelliJPlatformDependenciesExtension
 import org.jetbrains.intellij.platform.gradle.extensions.IntelliJPlatformExtension
+import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.intellij.platform.gradle.tasks.PrepareSandboxTask
+import org.jetbrains.intellij.platform.gradle.tasks.RunIdeTask
+import org.jetbrains.intellij.platform.gradle.tasks.aware.SandboxAware
 //import org.jetbrains.intellij.tasks.PatchPluginXmlTask
 //import org.jetbrains.intellij.tasks.PrepareSandboxTask
 //import org.jetbrains.intellij.tasks.RunIdeBase
@@ -47,8 +51,8 @@ val pythonCommunityPlugin: String by project
 
 val pythonPlugin = when {
   isIdeaIDE -> pythonProPlugin
-  isClionIDE -> "python-ce"
-  isPycharmIDE -> "python-ce"
+  isClionIDE -> "PythonCore"
+  isPycharmIDE -> "PythonCore"
   isStudioIDE -> pythonCommunityPlugin
   isRiderIDE -> pythonCommunityPlugin
   else -> error("Unexpected IDE name = `$baseIDE`")
@@ -201,6 +205,10 @@ allprojects {
   }
 
   dependencies {
+    intellijPlatform {
+      testFramework(TestFrameworkType.Platform.Bundled)
+    }
+
     implementationWithoutKotlin(rootProject.libs.twitter4j.core)
     implementationWithoutKotlin(rootProject.libs.twitter4j.v2)
     implementationWithoutKotlin(rootProject.libs.jsoup)
@@ -245,7 +253,7 @@ version = "$pluginVersion-$platformVersion-$buildNumber"
 
 
 intellijPlatform {
-
+  projectName = "JetBrainsAcademy"
   pluginConfiguration {
     id = "com.jetbrains.edu"
     name = "JetBrains Academy"
@@ -308,7 +316,7 @@ intellijPlatform {
 
 dependencies {
   intellijPlatform {
-    intellijIdeaUltimate(ideaVersion.removePrefix("IU-"))
+    intellijIde(baseVersion)
   }
 
   implementation(project("educational-core"))
@@ -319,9 +327,9 @@ dependencies {
   implementation(project("jvm-core"))
   implementation(project("Edu-Java"))
   implementation(project("Edu-Kotlin"))
-//  implementation(project("Edu-Python"))
-//  implementation(project("Edu-Python:Idea"))
-//  implementation(project("Edu-Python:PyCharm"))
+  implementation(project("Edu-Python"))
+  implementation(project("Edu-Python:Idea"))
+  implementation(project("Edu-Python:PyCharm"))
   implementation(project("Edu-Scala"))
 //  implementation(project("Edu-Android"))
   implementation(project("Edu-JavaScript"))
@@ -330,8 +338,8 @@ dependencies {
   implementation(project("Edu-Go"))
   implementation(project("Edu-Php"))
   implementation(project("Edu-Shell"))
-//  implementation(project("sql"))
-//  implementation(project("sql:sql-jvm"))
+  implementation(project("sql"))
+  implementation(project("sql:sql-jvm"))
   implementation(project("github"))
   implementation(project("remote-env"))
 }
@@ -349,38 +357,41 @@ dependencies {
 //}
 
 
+abstract class MergePluginJarsTask : Jar()//, SandboxAware
 
-// Collects all jars produced by compilation of project modules and merges them into singe one.
-// We need to put all plugin manifest files into single jar to make new plugin model work
-//val mergePluginJarTask = task<Jar>("mergePluginJars") {
-//  duplicatesStrategy = DuplicatesStrategy.FAIL
-//
-//  // The name differs from all module names to avoid collision during new jar file creation
-//  archiveBaseName = "JetBrainsAcademy"
-//
-//  exclude("META-INF/MANIFEST.MF")
-//
-//  val pluginLibDir by lazy {
-//    val sandboxTask = tasks.prepareSandbox.get()
-//    sandboxTask.destinationDir.resolve("${sandboxTask.pluginName.get()}/lib")
-//  }
-//  val pluginJars by lazy {
-//    pluginLibDir.listFiles().orEmpty().filter { it.isPluginJar() }
-//  }
-//
-//  destinationDirectory = project.layout.dir(provider { pluginLibDir })
-//
-//  doFirst {
-//    for (file in pluginJars) {
-//      from(zipTree(file))
-//    }
-//  }
-//
-//  doLast {
-//    delete(pluginJars)
-//  }
-//}
 tasks {
+  // Collects all jars produced by compilation of project modules and merges them into singe one.
+  // We need to put all plugin manifest files into single jar to make new plugin model work
+  val mergePluginJarTask by registering(MergePluginJarsTask::class) {
+    dependsOn(prepareSandbox)
+
+    duplicatesStrategy = DuplicatesStrategy.FAIL
+
+    exclude("META-INF/MANIFEST.MF")
+
+//    val pluginLibDir by lazy {
+//      val projectName = project.the<IntelliJPlatformExtension>().projectName.get()
+//      sandboxPluginsDirectory.get().dir("$projectName/lib")
+//    }
+//    val pluginJars by lazy {
+//      pluginLibDir.asFile.listFiles().orEmpty().filter { it.isPluginJar() }
+//    }
+//
+//    destinationDirectory = provider { pluginLibDir }
+//
+//    doFirst {
+//      for (file in pluginJars) {
+//        from(zipTree(file))
+//      }
+//    }
+//
+//    doLast {
+//      delete(pluginJars)
+//    }
+  }
+
+
+
   withType<PrepareSandboxTask> {
     val projectName = project.the<IntelliJPlatformExtension>().projectName
     from("twitter") {
@@ -400,39 +411,40 @@ tasks {
 //  prepareSandbox {
 //    finalizedBy(mergePluginJarTask)
 //  }
-//  withType<RunIdeBase> {
-//    // Force `mergePluginJarTask` be executed before any task based on `RunIdeBase` (for example, `runIde` or `buildSearchableOptions`).
-//    // Otherwise, these tasks fail because of implicit dependency.
-//    // Should be dropped when jar merging is implemented in `gradle-intellij-plugin` itself
+  withType<RunIdeTask> {
+    // Force `mergePluginJarTask` be executed before any task based on `RunIdeBase` (for example, `runIde` or `buildSearchableOptions`).
+    // Otherwise, these tasks fail because of implicit dependency.
+    // Should be dropped when jar merging is implemented in `gradle-intellij-plugin` itself
 //    mustRunAfter(mergePluginJarTask)
-//    // Disable auto plugin reloading. See `com.intellij.ide.plugins.DynamicPluginVfsListener`
-//    // To enable dynamic reloading, change value to `true` and disable `EduDynamicPluginListener`
-//    autoReloadPlugins = false
-//    jvmArgs("-Xmx2g")
-//    jvmArgs("-Dide.experimental.ui=true")
-//
-//    // Uncomment to show localized messages
-//    // jvmArgs("-Didea.l10n=true")
-//
-//    // Uncomment to enable memory dump creation if plugin cannot be unloaded by the platform
-//    // jvmArgs("-Dide.plugins.snapshot.on.unload.fail=true")
-//
-//    // Uncomment to enable FUS testing mode
-//    // jvmArgs("-Dfus.internal.test.mode=true")
-//  }
+    // Disable auto plugin reloading. See `com.intellij.ide.plugins.DynamicPluginVfsListener`
+    // To enable dynamic reloading, change value to `true` and disable `EduDynamicPluginListener`
+    autoReload = false
+    jvmArgs("-Xmx2g")
+    jvmArgs("-Dide.experimental.ui=true")
+
+    // Uncomment to show localized messages
+    // jvmArgs("-Didea.l10n=true")
+
+    // Uncomment to enable memory dump creation if plugin cannot be unloaded by the platform
+    // jvmArgs("-Dide.plugins.snapshot.on.unload.fail=true")
+
+    // Uncomment to enable FUS testing mode
+    // jvmArgs("-Dfus.internal.test.mode=true")
+  }
 //  verifyPlugin {
 //    mustRunAfter(mergePluginJarTask)
 //  }
 //  buildSearchableOptions {
 //    enabled = findProperty("enableBuildSearchableOptions") != "false"
 //  }
-//  buildPlugin {
-//    dependsOn(":edu-format:jar")
-//    dependsOn(":edu-format:sourcesJar")
-//    doLast {
-//      copyFormatJars()
-//    }
-//  }
+  buildPlugin {
+//    dependsOn(mergePluginJarTask)
+    dependsOn(":edu-format:jar")
+    dependsOn(":edu-format:sourcesJar")
+    doLast {
+      copyFormatJars()
+    }
+  }
 }
 
 // Generates event scheme for JetBrains Academy plugin FUS events to `build/eventScheme.json`
@@ -506,8 +518,7 @@ tasks {
 project("educational-core") {
   dependencies {
     intellijPlatform {
-      // TODO: refactor
-      intellijIdeaUltimate(ideaVersion.removePrefix("IU-"))
+      intellijIde(baseVersion)
     }
 
     api(project(":edu-format"))
@@ -523,8 +534,7 @@ project("educational-core") {
 project("code-insight") {
   dependencies {
     intellijPlatform {
-      // TODO: refactor
-      intellijIdeaUltimate(ideaVersion.removePrefix("IU-"))
+      intellijIde(baseVersion)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -535,8 +545,7 @@ project("code-insight") {
 project("code-insight:html") {
   dependencies {
     intellijPlatform {
-      // TODO: refactor
-      intellijIdeaUltimate(ideaVersion.removePrefix("IU-"))
+      intellijIde(baseVersion)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -567,9 +576,9 @@ project("code-insight:markdown") {
 
   dependencies {
     intellijPlatform {
-      // TODO: refactor
-      intellijIdeaUltimate(ideaVersion.removePrefix("IU-"))
-      bundledPlugin(markdownPlugin)
+      intellijIde(baseVersion)
+
+      intellijPlugin(markdownPlugin)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -581,15 +590,11 @@ project("code-insight:markdown") {
 }
 
 project("code-insight:yaml") {
-//  intellij {
-//    plugins = listOf(yamlPlugin)
-//  }
-
   dependencies {
     intellijPlatform {
-      // TODO: refactor
-      intellijIdeaUltimate(ideaVersion.removePrefix("IU-"))
-      bundledPlugin(yamlPlugin)
+      intellijIde(baseVersion)
+
+      intellijPlugin(yamlPlugin)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -601,21 +606,12 @@ project("code-insight:yaml") {
 }
 
 project("jvm-core") {
-//  intellij {
-//    if (!isJvmCenteredIDE) {
-//      version = ideaVersion
-//    }
-//    plugins = jvmPlugins
-//  }
-
   dependencies {
     intellijPlatform {
-      // TODO: refactor
-      intellijIdeaUltimate(ideaVersion.removePrefix("IU-"))
-      // TODO: refactor it
-      jvmPlugins.forEach {
-        bundledPlugin(it)
-      }
+      val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
+      intellijIde(ideVersion)
+
+      intellijPlugins(jvmPlugins)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -625,18 +621,12 @@ project("jvm-core") {
 }
 
 project("remote-env") {
-//  intellij {
-//    if (isStudioIDE || isRiderIDE) {
-//      version = ideaVersion
-//    }
-//    plugins = listOf(codeWithMePlugin)
-//  }
-
   dependencies {
     intellijPlatform {
-      // TODO: refactor
-      intellijIdeaUltimate(ideaVersion.removePrefix("IU-"))
-      bundledPlugin(codeWithMePlugin)
+      val ideVersion = if (isStudioIDE || isRiderIDE) ideaVersion else baseVersion
+      intellijIde(ideVersion)
+
+      intellijPlugin(codeWithMePlugin)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -646,19 +636,11 @@ project("remote-env") {
 }
 
 project("Edu-Java") {
-//  intellij {
-//    version = ideaVersion
-//    plugins = jvmPlugins
-//  }
-
   dependencies {
     intellijPlatform {
-      // TODO: refactor
-      intellijIdeaUltimate(ideaVersion.removePrefix("IU-"))
-      // TODO: refactor it
-      jvmPlugins.forEach {
-        bundledPlugin(it)
-      }
+      intellijIde(ideaVersion)
+
+      intellijPlugins(jvmPlugins)
     }
     implementation(project(":intellij-plugin:educational-core"))
     implementation(project(":intellij-plugin:jvm-core"))
@@ -669,21 +651,12 @@ project("Edu-Java") {
 }
 
 project("Edu-Kotlin") {
-//  intellij {
-//    if (!isJvmCenteredIDE) {
-//      version = ideaVersion
-//    }
-//    plugins = kotlinPlugins
-//  }
-
   dependencies {
     intellijPlatform {
-      // TODO: refactor
-      intellijIdeaUltimate(ideaVersion.removePrefix("IU-"))
-      // TODO: refactor it
-      kotlinPlugins.forEach {
-        bundledPlugin(it)
-      }
+      val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
+      intellijIde(ideVersion)
+
+      intellijPlugins(kotlinPlugins)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -695,21 +668,12 @@ project("Edu-Kotlin") {
 }
 
 project("Edu-Scala") {
-//  intellij {
-//    version = ideaVersion
-//    val pluginsList = jvmPlugins + scalaPlugin
-//    plugins = pluginsList
-//  }
-
   dependencies {
     intellijPlatform {
-      // TODO: refactor
-      intellijIdeaUltimate(ideaVersion.removePrefix("IU-"))
-      // TODO: refactor it
-      jvmPlugins.forEach {
-        bundledPlugin(it)
-      }
-      plugin(scalaPlugin)
+      intellijIde(ideaVersion)
+
+      intellijPlugins(jvmPlugins)
+      intellijPlugin(scalaPlugin)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -721,13 +685,13 @@ project("Edu-Scala") {
 }
 
 //project("Edu-Android") {
-////  intellij {
-////    version = studioVersion
-////    val pluginsList = jvmPlugins + androidPlugin
-////    plugins = pluginsList
-////  }
-//
 //  dependencies {
+//    intellijPlatform {
+//      intellijIde(studioVersion)
+//
+////      bundledPlugins(jvmPlugins)
+////      bundledPlugin(androidPlugin)
+//    }
 //    implementation(project(":intellij-plugin:educational-core"))
 //    implementation(project(":intellij-plugin:jvm-core"))
 //
@@ -741,80 +705,72 @@ project("Edu-Scala") {
 //  }
 //}
 
-//project("Edu-Python") {
-////  intellij {
-//    if (isRiderIDE) {
-//      // needed to load `org.toml.lang plugin` for Python plugin in tests
-//      version = ideaVersion
-//    }
-////    val pluginList = listOfNotNull(
-////      pythonPlugin,
-////      if (isJvmCenteredIDE) javaPlugin else null,
-////      // needed only for tests, actually
-////      platformImagesPlugin,
-////      // needed to load `intellij.python.community.impl` module of Python plugin in tests
-////      tomlPlugin
-////    )
-////    plugins = pluginList
-////  }
-//
-//  dependencies {
-//    implementation(project(":intellij-plugin:educational-core"))
-//
-//    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-//    testImplementation(project(":intellij-plugin:Edu-Python:Idea"))
-//    testImplementation(project(":intellij-plugin:Edu-Python:PyCharm"))
-//  }
-//}
-
-//project("Edu-Python:Idea") {
-////  intellij {
-////    if (!isJvmCenteredIDE) {
-////      version = ideaVersion
-////    }
-////
-////    val pluginList = listOfNotNull(
-////      if (!isJvmCenteredIDE) pythonProPlugin else pythonPlugin,
-////      javaPlugin
-////    )
-////    plugins = pluginList
-////  }
-//
-//  dependencies {
-//    implementation(project(":intellij-plugin:educational-core"))
-//    compileOnly(project(":intellij-plugin:Edu-Python"))
-//    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-//  }
-//}
-
-//project("Edu-Python:PyCharm") {
-//  intellij {
-//    if (isStudioIDE) {
-//      version = ideaVersion
-//    }
-//    plugins = pythonPlugins
-//  }
-//
-//  dependencies {
-//    implementation(project(":intellij-plugin:educational-core"))
-//    compileOnly(project(":intellij-plugin:Edu-Python"))
-//    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-//  }
-//}
-
-project("Edu-JavaScript") {
-//  intellij {
-//    version = ideaVersion
-//    plugins = javaScriptPlugins
-//  }
+project("Edu-Python") {
   dependencies {
     intellijPlatform {
-      // TODO: refactor
-      intellijIdeaUltimate(ideaVersion.removePrefix("IU-"))
-      // TODO: refactor it
-      javaScriptPlugins.forEach {
-        bundledPlugin(it)
-      }
+      // needed to load `org.toml.lang plugin` for Python plugin in tests
+      val ideVersion = if (isRiderIDE) ideaVersion else baseVersion
+      intellijIde(ideVersion)
+
+      val pluginList = listOfNotNull(
+        pythonPlugin,
+        if (isJvmCenteredIDE) javaPlugin else null,
+        // needed only for tests, actually
+        platformImagesPlugin,
+        // needed to load `intellij.python.community.impl` module of Python plugin in tests
+        tomlPlugin
+      )
+      intellijPlugins(pluginList)
+    }
+    implementation(project(":intellij-plugin:educational-core"))
+
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+    testImplementation(project(":intellij-plugin:Edu-Python:Idea"))
+    testImplementation(project(":intellij-plugin:Edu-Python:PyCharm"))
+  }
+}
+
+project("Edu-Python:Idea") {
+  dependencies {
+    intellijPlatform {
+      val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
+      intellijIde(ideVersion)
+
+      val pluginList = listOfNotNull(
+        if (!isJvmCenteredIDE) pythonProPlugin else pythonPlugin,
+        javaPlugin
+      )
+      intellijPlugins(pluginList)
+    }
+
+    implementation(project(":intellij-plugin:educational-core"))
+    compileOnly(project(":intellij-plugin:Edu-Python"))
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+  }
+}
+
+project("Edu-Python:PyCharm") {
+  dependencies {
+    intellijPlatform {
+      val ideVersion = if (isStudioIDE) ideaVersion else baseVersion
+      intellijIde(ideVersion)
+
+      // TODO: incorrect plugin version in case of AS
+      intellijPlugin(pythonPlugin)
+    }
+
+    implementation(project(":intellij-plugin:educational-core"))
+    compileOnly(project(":intellij-plugin:Edu-Python"))
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+  }
+}
+
+project("Edu-JavaScript") {
+  dependencies {
+    intellijPlatform {
+      intellijIde(ideaVersion)
+
+      intellijPlugins(javaScriptPlugins)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -824,20 +780,12 @@ project("Edu-JavaScript") {
 }
 
 project("Edu-Rust") {
-//  intellij {
-//    if (!isIdeaIDE && !isClionIDE) {
-//      version = ideaVersion
-//    }
-//    plugins = rustPlugins
-//  }
-
   dependencies {
     intellijPlatform {
-      // TODO: refactor
-      intellijIdeaUltimate(ideaVersion.removePrefix("IU-"))
+      val ideVersion = if (!isIdeaIDE && !isClionIDE) ideaVersion else baseVersion
+      intellijIde(ideVersion)
 
-      bundledPlugin(tomlPlugin)
-      plugin(rustPlugin)
+      intellijPlugins(rustPlugins)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -847,18 +795,11 @@ project("Edu-Rust") {
 }
 
 project("Edu-Cpp") {
-//  intellij {
-//    version = clionVersion
-//    plugins = cppPlugins
-//  }
-
   dependencies {
     intellijPlatform {
-      clion(clionVersion.removePrefix("CL-"))
-      // TODO: refactor it
-      cppPlugins.forEach {
-        bundledPlugin(it)
-      }
+      intellijIde(clionVersion)
+
+      intellijPlugins(cppPlugins)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -868,18 +809,12 @@ project("Edu-Cpp") {
 }
 
 project("Edu-Go") {
-//  intellij {
-//    version = ideaVersion
-//    plugins = listOf(goPlugin, intelliLangPlugin)
-//  }
-
   dependencies {
     intellijPlatform {
-      // TODO: refactor
-      intellijIdeaUltimate(ideaVersion.removePrefix("IU-"))
+      intellijIde(ideaVersion)
 
-      plugin(goPlugin)
-      bundledPlugin(intelliLangPlugin)
+      intellijPlugin(goPlugin)
+      intellijPlugin(intelliLangPlugin)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -889,17 +824,11 @@ project("Edu-Go") {
 }
 
 project("Edu-Php") {
-//  intellij {
-//    version = ideaVersion
-//    plugins = listOf(phpPlugin)
-//  }
-
   dependencies {
     intellijPlatform {
-      // TODO: refactor
-      intellijIdeaUltimate(ideaVersion.removePrefix("IU-"))
+      intellijIde(ideaVersion)
 
-      plugin(phpPlugin)
+      intellijPlugin(phpPlugin)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -909,16 +838,11 @@ project("Edu-Php") {
 }
 
 project("Edu-Shell") {
-//  intellij {
-//    plugins = listOf(shellScriptPlugin)
-//  }
-
   dependencies {
     intellijPlatform {
-      // TODO: refactor
-      intellijIdeaUltimate(ideaVersion.removePrefix("IU-"))
+      intellijIde(baseVersion)
 
-      bundledPlugin(shellScriptPlugin)
+      intellijPlugin(shellScriptPlugin)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -927,75 +851,70 @@ project("Edu-Shell") {
   }
 }
 
-//project("sql") {
-////  intellij {
-////    if (isStudioIDE || isPycharmIDE) {
-////      version = ideaVersion
-////    }
-////    plugins = listOf(sqlPlugin)
-////  }
-//
-//  dependencies {
-//    intellijPlatform {
-//      // TODO: refactor
-//      intellijIdeaUltimate(ideaVersion.removePrefix("IU-"))
-//
-//      sqlPlugins.forEach {
-//        plugin(it)
-//      }
-//    }
-//
-//    api(project(":intellij-plugin:educational-core"))
-//
-//    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-//  }
-//}
-
-//project("sql:sql-jvm") {
-////  intellij {
-////    version = ideaVersion
-////    plugins = listOf(sqlPlugin) + jvmPlugins
-////  }
-//
-//  dependencies {
-//    intellijPlatform {
-//      // TODO: refactor
-//      intellijIdeaUltimate(ideaVersion.removePrefix("IU-"))
-//
-//      // TODO: rework it
-//      jvmPlugins.forEach {
-//        bundledPlugin(it)
-//      }
-//      sqlPlugins.forEach {
-//        plugin(it)
-//      }
-//    }
-//
-//    api(project(":intellij-plugin:sql"))
-//    api(project(":intellij-plugin:jvm-core"))
-//
-//    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-//    testImplementation(project(":intellij-plugin:sql", "testOutput"))
-//    testImplementation(project(":intellij-plugin:jvm-core", "testOutput"))
-//  }
-//}
-
-project("github") {
-//  intellij {
-//    plugins = listOf(githubPlugin)
-//  }
-
+project("sql") {
   dependencies {
     intellijPlatform {
-      // TODO: refactor
-      intellijIdeaUltimate(ideaVersion.removePrefix("IU-"))
+      val ideVersion = if (isStudioIDE || isPycharmIDE) ideaVersion else baseVersion
+      intellijIde(ideVersion)
 
-      bundledPlugin(githubPlugin)
+      intellijPlugins(sqlPlugins)
+    }
+
+    api(project(":intellij-plugin:educational-core"))
+
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+  }
+}
+
+project("sql:sql-jvm") {
+  dependencies {
+    intellijPlatform {
+      intellijIde(ideaVersion)
+
+      intellijPlugins(jvmPlugins)
+      intellijPlugins(sqlPlugins)
+    }
+
+    api(project(":intellij-plugin:sql"))
+    api(project(":intellij-plugin:jvm-core"))
+
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+    testImplementation(project(":intellij-plugin:sql", "testOutput"))
+    testImplementation(project(":intellij-plugin:jvm-core", "testOutput"))
+  }
+}
+
+project("github") {
+  dependencies {
+    intellijPlatform {
+      intellijIde(baseVersion)
+
+      intellijPlugin(githubPlugin)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+  }
+}
+
+fun IntelliJPlatformDependenciesExtension.intellijIde(versionWithCode: String) {
+  val (code, version) = versionWithCode.split("-", limit = 2)
+  create(code, version)
+}
+
+fun IntelliJPlatformDependenciesExtension.intellijPlugin(notation: String) {
+  if (notation.contains(":")) {
+    plugin(notation)
+  }
+  else {
+    bundledPlugin(notation)
+  }
+}
+
+fun IntelliJPlatformDependenciesExtension.intellijPlugins(notations: List<String>) {
+  notations.forEach {
+    intellijPlugin(it)
   }
 }
 
