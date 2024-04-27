@@ -25,5 +25,6 @@ class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>
       existingItem.endDateTime = deserializedItem.endDateTime
       existingItem.programTypeId = deserializedItem.programTypeId
     }
+    existingItem.additionalFiles = deserializedItem.additionalFiles
   }
 }
