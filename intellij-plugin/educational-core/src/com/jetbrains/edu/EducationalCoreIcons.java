@@ -20,6 +20,7 @@ public class EducationalCoreIcons {
   public static final Icon GoLogo = load("/icons/com/jetbrains/edu/learning/GoLogo.svg"); // 16x16
   public static final Icon PhpLogo = load("/icons/com/jetbrains/edu/learning/PhpLogo.svg"); // 16x16
   public static final Icon ShellLogo = load("/icons/com/jetbrains/edu/learning/ShellLogo.svg"); // 16x16
+  public static final Icon CSharpLogo = load("/icons/com/jetbrains/edu/learning/CSharpLogo.svg"); // 16x16
 
   public static final Icon PyCheckiO = load("/icons/com/jetbrains/edu/learning/PyCheckiO.svg");
 

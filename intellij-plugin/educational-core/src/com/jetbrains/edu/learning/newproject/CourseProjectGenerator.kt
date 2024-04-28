@@ -51,9 +51,11 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillC
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okio.Path.Companion.toPath
 import java.io.File
 import java.io.IOException
 import java.nio.file.Path
+import java.nio.file.Paths
 import kotlin.system.measureTimeMillis
 
 /**
@@ -205,11 +207,14 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     NOTIFICATIONS_SILENT_MODE.set(project, true)
   }
 
-  protected open suspend fun openNewCourseProject(
+  protected open fun beforeInitHandler(location: Path): BeforeInitHandler = BeforeInitHandler()
+
+  private suspend fun openNewCourseProject(
     location: Path,
-    prepareToOpenCallback: suspend (Project, Module) -> Unit
+    prepareToOpenCallback: suspend (Project, Module) -> Unit,
   ): Project? {
-    val task = OpenProjectTask(course, prepareToOpenCallback)
+    val beforeInitHandler = beforeInitHandler(location)
+    val task = OpenProjectTask(course, prepareToOpenCallback, beforeInitHandler)
 
     return ProjectManagerEx.getInstanceEx().openProjectAsync(location, task)
   }
@@ -289,6 +294,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
   @Throws(IOException::class)
   open fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
   }
+  protected class BeforeInitHandler(val callback: (project: Project) -> Unit = { })
 
   private val isNewCourseCreatorCourse: Boolean
     get() = course.courseMode == CourseMode.EDUCATOR && course.items.isEmpty()
@@ -320,9 +326,11 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
       return course.isPreview
     }
 
-    @JvmStatic
-    protected fun OpenProjectTask(course: Course, prepareToOpenCallback: suspend (Project, Module) -> Unit): OpenProjectTask {
-      @Suppress("UnstableApiUsage")
+    private fun OpenProjectTask(
+      course: Course,
+      prepareToOpenCallback: suspend (Project, Module) -> Unit,
+      beforeInitHandler: BeforeInitHandler
+    ): OpenProjectTask {
       return OpenProjectTask {
         forceOpenInNewFrame = true
         isNewProject = true
@@ -330,6 +338,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
         runConfigurators = true
         beforeInit = {
           it.putUserData(EDU_PROJECT_CREATED, true)
+          beforeInitHandler.callback(it)
         }
         preparedToOpen = {
           StudyTaskManager.getInstance(it.project).course = course

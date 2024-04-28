@@ -7,4 +7,5 @@ object EduExperimentalFeatures {
   const val MARKETPLACE_PRIVATE_COURSES = "edu.course.marketplace.show.private"
   const val SQL_COURSES = "edu.course.sql"
   const val CC_FL_SYNC_CHANGES = "edu.course.creator.fl.sync.changes"
+  const val CSHARP_COURSES = "com.jetbrains.edu.csharp"
 }
