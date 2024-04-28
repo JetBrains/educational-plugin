@@ -104,10 +104,6 @@ val cppPlugins = listOfNotNull(
   "org.jetbrains.plugins.clion.test.catch"
 )
 
-//val riderPlugins = listOf(
-//  "com.intellij.modules.rider"
-//)
-
 val pythonPlugins = listOfNotNull(
   pythonPlugin,
   // `intellij.grid.impl` is dependency only of pythonPro plugin

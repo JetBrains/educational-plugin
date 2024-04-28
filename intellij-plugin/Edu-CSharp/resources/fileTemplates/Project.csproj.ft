@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>${VERSION}</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="task.cs" />
+  </ItemGroup>
+</Project>
