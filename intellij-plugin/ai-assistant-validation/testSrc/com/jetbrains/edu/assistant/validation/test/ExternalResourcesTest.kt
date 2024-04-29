@@ -1,3 +1,5 @@
+@file:Suppress("RAW_RUN_BLOCKING")
+
 package com.jetbrains.edu.assistant.validation.test
 
 import com.intellij.openapi.application.ApplicationManager
@@ -22,7 +24,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.eduAssistant.core.TaskBasedAssistant
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
-import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import kotlinx.coroutines.runBlocking
@@ -63,16 +64,12 @@ abstract class ExternalResourcesTest(private val lessonName: String, private val
     }.firstOrNull { it.name == taskName && it.lesson.name == lessonName } ?: error("Cannot get the target task")
 
   protected fun getHint(taskProcessor: TaskProcessor, state: EduState, userCode: String? = null) =
-    // TODO: cannot replace with runBlockingCancellable because of deadlocks
-    @Suppress("RAW_RUN_BLOCKING")
     runBlocking {
-      withBackgroundProgress(project, EduAndroidAiAssistantValidationBundle.message("test.getting.hint"), false) {
-        val response = project.service<TaskBasedAssistant>().getHint(taskProcessor, state, userCode)
-        response.codeHint?.let {
-          downloadSolution(taskProcessor.task, project, it)
-        }
-        response
+      val response = project.service<TaskBasedAssistant>().getHint(taskProcessor, state, userCode)
+      response.codeHint?.let {
+        downloadSolution(taskProcessor.task, project, it)
       }
+      response
     }
 
   protected fun runCheck(task: Task, assertAction: (CheckResult) -> Unit) {
@@ -101,4 +98,8 @@ abstract class ExternalResourcesTest(private val lessonName: String, private val
   }
 
   override fun createCourse(): Course = course
+
+  companion object {
+    private const val GETTING_HINT_MESSAGE = "Getting Hint"
+  }
 }

@@ -17,13 +17,13 @@ import org.junit.experimental.categories.Category
 @Category(AiAutoQualityCodeTests::class)
 class CodeHintCompilationTest(private val lessonName: String, private val taskName: String) : ExternalResourcesTest(lessonName, taskName) {
 
-  override val course: Course = kotlinOnboardingMockCourse
+  override val course: Course = createKotlinOnboardingMockCourse()
   private val maxSolutions by lazy { System.getProperty("max.solutions.testing").toIntOrNull() ?: 1 }
 
   companion object {
     @JvmStatic
     @Parameterized.Parameters
-    fun data() = kotlinOnboardingMockCourse.lessons.flatMap { lesson ->
+    fun data() = createKotlinOnboardingMockCourse().lessons.flatMap { lesson ->
       lesson.taskList.filterIsInstance<EduTask>().map { task ->
         arrayOf(lesson.name, task.name)
       }

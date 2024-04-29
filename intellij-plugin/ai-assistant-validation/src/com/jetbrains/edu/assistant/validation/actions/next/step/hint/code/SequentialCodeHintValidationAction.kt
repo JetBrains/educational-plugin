@@ -20,7 +20,6 @@ import com.jetbrains.edu.learning.eduAssistant.core.AssistantResponse
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.apache.commons.csv.CSVRecord
 import org.jetbrains.kotlinx.dataframe.api.toDataFrame
@@ -99,11 +98,13 @@ class SequentialCodeHintValidationAction : CodeValidationAction<MultipleCodeHint
     for (hintIndex in 1..maxHintSteps) {
       var response: AssistantResponse? = null
       try {
-        // TODO: cannot replace with runBlockingCancellable because of deadlocks
-        @Suppress("RAW_RUN_BLOCKING")
-        runBlocking {
+        runBlockingCancellable {
           withBackgroundProgress(baseAssistantInfoStorage.project, GETTING_HINT_MESSAGE, false) {
-            response = baseAssistantInfoStorage.assistant.getHint(baseAssistantInfoStorage.taskProcessor, baseAssistantInfoStorage.eduState, currentUserCode)
+            response = baseAssistantInfoStorage.assistant.getHint(
+              baseAssistantInfoStorage.taskProcessor,
+              baseAssistantInfoStorage.eduState,
+              currentUserCode
+            )
           }
         }
 

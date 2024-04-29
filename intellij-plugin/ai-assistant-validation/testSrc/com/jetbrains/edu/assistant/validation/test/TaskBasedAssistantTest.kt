@@ -19,13 +19,14 @@ import kotlin.test.assertNotNull
 
 @Category(AiAutoQualityCodeTests::class)
 class TaskBasedAssistantTest(lesson: String, task: String) : ExternalResourcesTest(lesson, task) {
-  override val course: Course = kotlinOnboardingMockCourse
-  private val language: Language = kotlinOnboardingMockCourse.languageById ?: error("Language could not be determined")
+  override val course: Course = createKotlinOnboardingMockCourse()
+
+  private val language: Language = course.languageById ?: error("Language could not be determined")
 
   companion object {
     @JvmStatic
     @Parameterized.Parameters
-    fun data() = kotlinOnboardingMockCourse.lessons.flatMap { lesson ->
+    fun data() = createKotlinOnboardingMockCourse().lessons.flatMap { lesson ->
       lesson.taskList.filterIsInstance<EduTask>().map { task ->
         arrayOf(lesson.name, task.name)
       }

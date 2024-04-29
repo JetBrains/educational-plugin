@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
-val kotlinOnboardingMockCourse = course(language = KotlinLanguage.INSTANCE) {
+fun createKotlinOnboardingMockCourse() = course(language = KotlinLanguage.INSTANCE) {
   frameworkLesson(name = "TheFirstDateWithProgramming") {
     addTheoryTask(name = "Introduction")
     addTheoryTask(name = "programEntryPointTheory")
