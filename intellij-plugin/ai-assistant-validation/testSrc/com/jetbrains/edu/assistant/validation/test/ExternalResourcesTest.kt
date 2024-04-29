@@ -1,4 +1,4 @@
-@file:Suppress("RAW_RUN_BLOCKING")
+@file:SuppressWarnings("RAW_RUN_BLOCKING")
 
 package com.jetbrains.edu.assistant.validation.test
 
@@ -98,8 +98,4 @@ abstract class ExternalResourcesTest(private val lessonName: String, private val
   }
 
   override fun createCourse(): Course = course
-
-  companion object {
-    private const val GETTING_HINT_MESSAGE = "Getting Hint"
-  }
 }
