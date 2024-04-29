@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 import com.jetbrains.edu.learning.eduState
 import com.intellij.openapi.components.service
 
-data class BaseAssistantInfoStorage(val task: EduTask) {
+data class BaseAssistantInfoStorage(private val task: EduTask) {
   val taskProcessor = TaskProcessor(task)
   val assistant get() = project.service<TaskBasedAssistant>()
   val language = task.course.languageById ?: error("Language could not be determined")
