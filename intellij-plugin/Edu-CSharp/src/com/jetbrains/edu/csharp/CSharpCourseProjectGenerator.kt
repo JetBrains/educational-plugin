@@ -20,7 +20,7 @@ class CSharpCourseProjectGenerator(
   private val projectFileName = "${course.name}.${CsprojFileType.defaultExtension}"
   override fun applySettings(projectSettings: CSharpProjectSettings) {
     super.applySettings(projectSettings)
-    course.environment = getDotNetVersion(projectSettings.version)
+    course.languageVersion = projectSettings.version
   }
 
   override fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
@@ -30,18 +30,18 @@ class CSharpCourseProjectGenerator(
       holder.courseDir,
       projectFileName,
       PROJECT_FILE_TEMPLATE,
-      mapOf(VERSION_VARIABLE to course.environment)
+      mapOf(VERSION_VARIABLE to getDotNetVersion(course.languageVersion))
     )
   }
 
-  private fun getDotNetVersion(version: String?) = when (version) { // more versions to be added
+  private fun getDotNetVersion(version: String?): String = when (version) { // more versions to be added
     ProjectTemplateSdk.net7.presentation -> ProjectTemplateTargetFramework.net70.presentation
     else -> ProjectTemplateTargetFramework.net80.presentation
   }
 
   override fun beforeInitHandler(location: Path): BeforeInitHandler = BeforeInitHandler {
     val description = SolutionDescriptionFactory.virtual(
-      course.name,
+      location.pathString,
       listOf("${location.pathString}/${projectFileName}")
     )
     val strategy = RdOpenSolution(description, false)
