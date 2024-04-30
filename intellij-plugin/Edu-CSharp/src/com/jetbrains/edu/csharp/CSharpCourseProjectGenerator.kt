@@ -7,8 +7,6 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.rd.ide.model.RdOpenSolution
 import com.jetbrains.rider.ideaInterop.fileTypes.msbuild.CsprojFileType
 import com.jetbrains.rider.projectView.*
-import com.jetbrains.rider.projectView.projectTemplates.components.ProjectTemplateSdk
-import com.jetbrains.rider.projectView.projectTemplates.components.ProjectTemplateTargetFramework
 import java.nio.file.Path
 import kotlin.io.path.pathString
 
@@ -32,11 +30,6 @@ class CSharpCourseProjectGenerator(
       PROJECT_FILE_TEMPLATE,
       mapOf(VERSION_VARIABLE to getDotNetVersion(course.languageVersion))
     )
-  }
-
-  private fun getDotNetVersion(version: String?): String = when (version) { // more versions to be added
-    ProjectTemplateSdk.net7.presentation -> ProjectTemplateTargetFramework.net70.presentation
-    else -> ProjectTemplateTargetFramework.net80.presentation
   }
 
   override fun beforeInitHandler(location: Path): BeforeInitHandler = BeforeInitHandler {
