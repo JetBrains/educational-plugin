@@ -51,11 +51,9 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillC
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okio.Path.Companion.toPath
 import java.io.File
 import java.io.IOException
 import java.nio.file.Path
-import java.nio.file.Paths
 import kotlin.system.measureTimeMillis
 
 /**
