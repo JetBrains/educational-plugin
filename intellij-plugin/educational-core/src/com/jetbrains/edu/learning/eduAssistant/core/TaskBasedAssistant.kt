@@ -30,11 +30,10 @@ import java.util.concurrent.ConcurrentHashMap
 class TaskBasedAssistant(
   private val scope: CoroutineScope
 ) : Assistant {
-  fun launchGetTaskAnalysis(taskProcessor: TaskProcessor, forcedReload: Boolean = false) {
+  fun launchGetTaskAnalysis(taskProcessor: TaskProcessor, forcedReload: Boolean = false) =
     scope.launch {
       getTaskAnalysis(taskProcessor, forcedReload)
     }
-  }
 
   suspend fun getTaskAnalysis(taskProcessor: TaskProcessor, forcedReload: Boolean = false): SolutionSteps? {
     val task = taskProcessor.task

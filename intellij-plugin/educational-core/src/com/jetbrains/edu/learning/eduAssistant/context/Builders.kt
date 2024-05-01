@@ -39,6 +39,9 @@ fun initAiHintContext(task: Task) {
     task.authorSolutionContext = task.buildAuthorSolutionContext()
   }
   val project = task.project ?: error("Project was not found")
-  project.service<TaskBasedAssistant>().launchGetTaskAnalysis(taskProcessor)
-  task.aiAssistantState = AiAssistantState.ContextInitialized
+  project.service<TaskBasedAssistant>().launchGetTaskAnalysis(taskProcessor).invokeOnCompletion {
+    if (it == null) {
+      task.aiAssistantState = AiAssistantState.ContextInitialized
+    }
+  }
 }
