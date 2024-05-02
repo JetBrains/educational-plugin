@@ -5,10 +5,13 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.events.*
 import com.intellij.util.ui.update.MergingUpdateQueue
 import com.intellij.util.ui.update.Update
+import com.jetbrains.edu.coursecreator.AdditionalFilesUtils.isExcluded
+import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreRules
 import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
 import com.jetbrains.edu.coursecreator.framework.SyncChangesStateManager
 import com.jetbrains.edu.learning.*
@@ -50,6 +53,42 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     val oldDirectoryInfo = event.oldParent.directoryFileInfo(project) ?: return
 
     SyncChangesStateManager.getInstance(project).fileMoved(movedFile, fileInfo, oldDirectoryInfo)
+  }
+
+  override fun fileCreated(file: VirtualFile) {
+    super.fileCreated(file)
+    addFileIfAdditional(file)
+  }
+
+  private fun addFileIfAdditional(file: VirtualFile) {
+    if (file.isDirectory) return
+
+    val containingTask = file.getContainingTask(project)
+    if (containingTask != null) return
+
+    val course = project.course ?: return
+    val configurator = course.configurator ?: return
+    val isExcluded = isExcluded(
+      file,
+      CourseIgnoreRules.loadFromCourseIgnoreFile(project),
+      configurator,
+      project
+    )
+    if (!isExcluded) {
+      additionalFileCreated(course, file)
+    }
+  }
+
+  private fun additionalFileCreated(course: Course, file: VirtualFile) {
+    val name = VfsUtil.getRelativePath(file, project.courseDir) ?: return
+    if (course.additionalFiles.any { it.name == name }) return
+    course.additionalFiles += EduFile(name, if (file.isToEncodeContent) {
+      BinaryContents.EMPTY
+    }
+    else {
+      TextualContents.EMPTY
+    })
+    YamlFormatSynchronizer.saveItem(course)
   }
 
   override fun fileDeleted(fileInfo: FileInfo, file: VirtualFile) {
