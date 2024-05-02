@@ -59,7 +59,10 @@ object AdditionalFilesUtils {
     return fileVisitor.additionalTaskFiles
   }
 
-  private fun isExcluded(
+  /**
+   * Tests the file to be excluded either by a course configurator or a .courseignore
+   */
+  fun isExcluded(
     file: VirtualFile,
     courseIgnoreRules: CourseIgnoreRules,
     courseConfigurator: EduConfigurator<*>,
