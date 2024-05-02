@@ -34,7 +34,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.actions.DownloadDatasetActio
 import com.jetbrains.edu.learning.stepik.hyperskill.actions.RetryDataTaskAction
 import com.jetbrains.edu.learning.taskToolWindow.addActionLinks
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
-import com.jetbrains.edu.learning.taskToolWindow.ui.retry.RetryHyperlinkComponent
 import com.jetbrains.edu.learning.ui.getUICheckLabel
 import java.awt.BorderLayout
 import java.awt.Dimension
@@ -227,9 +226,9 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     if (!task.isChangedOnFailed) return
 
     if (task.status == CheckStatus.Failed) {
-      val retryLink = RetryHyperlinkComponent(EduCoreBundle.message("action.retry.try.again.description"),
-                                              ActionManager.getInstance().getAction(RetryAction.ACTION_ID) as ActionWithProgressIcon)
-      add(retryLink, BorderLayout.WEST)
+      val retryComponent = CheckPanelButtonComponent(EduActionUtils.getAction(RetryAction.ACTION_ID) as ActionWithProgressIcon,
+        isDefault = true, isEnabled = true)
+      add(retryComponent, BorderLayout.WEST)
     }
   }
 
