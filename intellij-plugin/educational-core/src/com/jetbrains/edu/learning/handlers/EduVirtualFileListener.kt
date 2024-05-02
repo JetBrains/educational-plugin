@@ -43,7 +43,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
 
   protected open fun configUpdated(configEvents: List<VFileEvent>) {}
 
-  private fun fileCreated(file: VirtualFile) {
+  protected open fun fileCreated(file: VirtualFile) {
     if (file.isDirectory) return
     val fileInfo = file.fileInfo(project) as? FileInfo.FileInTask ?: return
     if (EduUtilsKt.isTaskDescriptionFile(fileInfo.pathInTask)) return
