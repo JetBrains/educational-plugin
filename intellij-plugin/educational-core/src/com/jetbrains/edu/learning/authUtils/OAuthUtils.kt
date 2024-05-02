@@ -94,7 +94,7 @@ object OAuthUtils {
   private fun showUnsupportedPortError(port: Int) {
     Messages.showErrorDialog(
       EduCoreBundle.message("error.unsupported.port.message", port.toString(), EduNames.OUTSIDE_OF_KNOWN_PORT_RANGE_URL),
-      EduCoreBundle.message("error.unsupported.port.title")
+      EduCoreBundle.message("error.authorization.error")
     )
   }
 

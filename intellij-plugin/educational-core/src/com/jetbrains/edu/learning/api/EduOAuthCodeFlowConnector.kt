@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.api
 
 import com.intellij.ide.BrowserUtil
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.Urls
 import com.intellij.util.io.origin
@@ -8,6 +10,7 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.authUtils.*
 import com.jetbrains.edu.learning.courseFormat.UserInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.network.executeCall
 import com.jetbrains.edu.learning.network.executeHandlingExceptions
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import io.netty.handler.codec.http.FullHttpRequest
@@ -17,6 +20,7 @@ import org.apache.http.client.utils.URIBuilder
 import org.jetbrains.ide.BuiltInServerManager
 import org.jetbrains.ide.RestService
 import java.io.IOException
+import java.net.HttpURLConnection.*
 import java.net.URI
 import java.security.MessageDigest
 import java.security.SecureRandom
@@ -143,8 +147,21 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
     val refreshToken = currentAccount.getRefreshToken() ?: error("Refresh token is null")
     val response = getEduOAuthEndpoints()
       .refreshTokens(baseOAuthTokenUrl, OAuthUtils.GrantType.REFRESH_TOKEN, clientId, clientSecret, refreshToken)
-      .executeHandlingExceptions()
-    return response?.body() ?: error(EduCoreBundle.message("error.failed.to.refresh.tokens"))
+      .executeCall().onError { error(EduCoreBundle.message("error.failed.to.refresh.tokens")) }
+    if (response.isSuccessful) return response.body() ?: error("Failed to refresh token")
+
+    // logout the user if the server did not accept Hyperskill refresh token
+    if (response.code() in BROKEN_TOKEN_RESPONSE_CODES && response.errorBody()?.string() == "{\"error\": \"invalid_grant\"}") {
+      doLogout()
+      @Suppress("DialogTitleCapitalization")
+      Notification(
+        "JetBrains Academy",
+        EduCoreBundle.message("error.authorization.error"),
+        EduCoreBundle.message("notification.hyperskill.no.next.activity.login.content"),
+        NotificationType.ERROR
+      ).notify(null)
+    }
+    error("Failed to refresh token")
   }
 
   protected fun retrieveLoginToken(code: String, redirectUri: String): TokenInfo? {
@@ -159,9 +176,6 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
     // which causes tokens corruption
     synchronized(this) {
       val currentAccount = account ?: return
-      if (currentAccount.isUpToDate()) {
-        return
-      }
       val tokens = getNewTokens()
       currentAccount.tokenExpiresIn = tokens.expiresIn
       currentAccount.saveTokens(tokens)
@@ -222,5 +236,6 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
 
   companion object {
     private val LOG = Logger.getInstance(EduOAuthCodeFlowConnector::class.java)
+    private val BROKEN_TOKEN_RESPONSE_CODES = arrayOf(HTTP_BAD_REQUEST, HTTP_FORBIDDEN, HTTP_UNAUTHORIZED)
   }
 }
