@@ -5,6 +5,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.events.*
 import com.intellij.util.ui.update.MergingUpdateQueue
@@ -50,6 +51,12 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     val oldDirectoryInfo = event.oldParent.directoryFileInfo(project) ?: return
 
     SyncChangesStateManager.getInstance(project).fileMoved(movedFile, fileInfo, oldDirectoryInfo)
+  }
+
+  override fun additionalFileCreated(course: Course, file: VirtualFile) {
+    val name = VfsUtil.getRelativePath(file, project.courseDir) ?: return
+    course.additionalFiles += EduFile(name, UndeterminedContents.EMPTY)
+    YamlFormatSynchronizer.saveItem(course)
   }
 
   override fun fileDeleted(fileInfo: FileInfo, file: VirtualFile) {

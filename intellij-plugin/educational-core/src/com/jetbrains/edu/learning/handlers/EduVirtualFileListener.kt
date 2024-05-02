@@ -8,10 +8,16 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.*
+import com.jetbrains.edu.coursecreator.AdditionalFilesUtils.excludedByConfiguratorOrCourseignore
+import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreRules
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.FileInfo
+import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.fileInfo
+import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.placeholder.PlaceholderHighlightingManager
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
@@ -45,9 +51,28 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
 
   private fun fileCreated(file: VirtualFile) {
     if (file.isDirectory) return
-    val fileInfo = file.fileInfo(project) as? FileInfo.FileInTask ?: return
     if (EduUtilsKt.isTaskDescriptionFile(fileInfo.pathInTask)) return
     fileInTaskCreated(fileInfo, file)
+
+    val containingTask = file.getContainingTask(project)
+    if (containingTask == null) {
+      val course = project.course ?: return
+      val configurator = course.configurator ?: return
+      val isExcluded = excludedByConfiguratorOrCourseignore(
+        file,
+        CourseIgnoreRules.loadFromCourseIgnoreFile(project),
+        configurator,
+        project
+      )
+      if (!isExcluded) {
+        additionalFileCreated(course, file)
+      }
+    }
+    else {
+      val fileInfo = file.fileInfo(project) as? FileInfo.FileInTask ?: return
+      if (EduUtilsKt.isTaskDescriptionFile(fileInfo.pathInTask)) return
+      fileInTaskCreated(fileInfo, file)
+    }
   }
 
   /**
@@ -190,6 +215,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
   protected open fun beforeFileDeletion(event: VFileDeleteEvent) {}
   protected open fun fileDeleted(fileInfo: FileInfo, file: VirtualFile) {}
   protected open fun taskFileCreated(taskFile: TaskFile, file: VirtualFile) {}
+  protected open fun additionalFileCreated(course: Course, file: VirtualFile) {}
 
   protected open fun taskFileChanged(taskFile: TaskFile, file: VirtualFile) {}
 
