@@ -37,7 +37,7 @@ object AdditionalFilesUtils {
     return fileVisitor.additionalTaskFiles
   }
 
-  private fun isExcluded(file: VirtualFile, courseIgnoreRules: CourseIgnoreRules, course: Course, project: Project): Boolean =
+  fun excludedByConfiguratorOrCourseignore(file: VirtualFile, courseIgnoreRules: CourseIgnoreRules, course: Course, project: Project): Boolean =
     courseIgnoreRules.isIgnored(file) || excludedByConfigurator(file, course, project)
 
   private fun excludedByConfigurator(file: VirtualFile, course: Course, project: Project): Boolean =
@@ -66,7 +66,7 @@ object AdditionalFilesUtils {
       var archiveLocation = PropertiesComponent.getInstance(project).getValue(CCCreateCourseArchiveAction.LAST_ARCHIVE_LOCATION)
 
       override fun visitFile(file: VirtualFile): Boolean {
-        if (FileUtil.toSystemDependentName(file.path) == archiveLocation || isExcluded(file, courseIgnoreRules, course, project)) {
+        if (FileUtil.toSystemDependentName(file.path) == archiveLocation || excludedByConfiguratorOrCourseignore(file, courseIgnoreRules, course, project)) {
           return false
         }
 

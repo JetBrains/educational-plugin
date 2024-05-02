@@ -5,9 +5,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.*
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.*
+import com.jetbrains.edu.coursecreator.AdditionalFilesUtils.excludedByConfiguratorOrCourseignore
+import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreRules
 import com.jetbrains.edu.learning.FileInfo
+import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.fileInfo
+import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.placeholder.PlaceholderHighlightingManager
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
@@ -40,8 +45,24 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
 
   private fun fileCreated(file: VirtualFile) {
     if (file.isDirectory) return
-    val fileInfo = file.fileInfo(project) as? FileInfo.FileInTask ?: return
-    fileInTaskCreated(fileInfo, file)
+
+    val containingTask = file.getContainingTask(project)
+    if (containingTask == null) {
+      val course = project.course ?: return
+      val isExcluded = excludedByConfiguratorOrCourseignore(
+        file,
+        CourseIgnoreRules.loadFromCourseIgnoreFile(project),
+        course,
+        project
+      )
+      if (!isExcluded) {
+        additionalFileCreated(course, file)
+      }
+    }
+    else {
+      val fileInfo = file.fileInfo(project) as? FileInfo.FileInTask ?: return
+      fileInTaskCreated(fileInfo, file)
+    }
   }
 
   /**
@@ -178,6 +199,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
   protected open fun beforeFileDeletion(event: VFileDeleteEvent) {}
   protected open fun fileDeleted(fileInfo: FileInfo, file: VirtualFile) {}
   protected open fun taskFileCreated(taskFile: TaskFile, file: VirtualFile) {}
+  protected open fun additionalFileCreated(course: Course, file: VirtualFile) {}
 
   companion object {
     private val LOG: Logger = Logger.getInstance(EduVirtualFileListener::class.java)
