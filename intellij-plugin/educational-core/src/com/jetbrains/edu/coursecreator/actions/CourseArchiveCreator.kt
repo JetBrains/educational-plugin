@@ -22,7 +22,6 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.jetbrains.edu.coursecreator.AdditionalFilesUtils
 import com.jetbrains.edu.coursecreator.CCUtils.saveOpenedDocuments
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
@@ -152,7 +151,6 @@ class CourseArchiveCreator(
   fun prepareCourse(course: Course, indicator: CourseArchiveIndicator? = null) {
     loadActualTexts(project, course, indicator)
     course.sortItems()
-    course.additionalFiles = AdditionalFilesUtils.collectAdditionalFiles(course, project, indicator)
     course.pluginDependencies = collectCourseDependencies(project, course)
     course.courseMode = CourseMode.STUDENT
   }
@@ -250,11 +248,23 @@ class CourseArchiveCreator(
     }
 
     fun loadActualTexts(project: Project, course: Course, indicator: CourseArchiveIndicator? = null) {
+      val courseDir = project.courseDir
+
       course.visitLessons { lesson ->
-        val lessonDir = lesson.getDir(project.courseDir)
+        val lessonDir = lesson.getDir(courseDir)
         if (lessonDir == null) return@visitLessons
         for (task in lesson.taskList) {
           loadActualTexts(project, task, indicator)
+        }
+      }
+
+      for (additionalFile in course.additionalFiles) {
+        val fsFile = courseDir.findFileByRelativePath(additionalFile.name) ?: continue
+        additionalFile.contents = if (fsFile.isToEncodeContent) {
+          BinaryContentsFromDisk(fsFile, indicator)
+        }
+        else {
+          TextualContentsFromDisk(fsFile, indicator)
         }
       }
     }

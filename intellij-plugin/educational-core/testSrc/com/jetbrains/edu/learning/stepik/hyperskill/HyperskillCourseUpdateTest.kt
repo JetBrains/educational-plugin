@@ -90,7 +90,9 @@ class HyperskillCourseUpdateTest : FrameworkLessonsUpdateTest<HyperskillCourse>(
       sourceCompatibility = '1.8'
     """.trimIndent()
     updateCourse {
-      additionalFiles = additionalFiles + TaskFile("build.gradle", buildGradleText)
+      val buildGradle = additionalFiles.find { it.name == "build.gradle" }
+      assertNotNull("The course should already have additional file build.gradle", buildGradle)
+      buildGradle!!.contents = InMemoryTextualContents(buildGradleText)
     }
 
     fileTree {

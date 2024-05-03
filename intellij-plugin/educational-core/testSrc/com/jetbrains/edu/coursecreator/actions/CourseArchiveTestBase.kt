@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.util.DefaultIndenter
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtilRt
+import com.jetbrains.edu.coursecreator.AdditionalFilesUtils
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -26,6 +27,7 @@ abstract class CourseArchiveTestBase : EduActionTestCase() {
   protected fun generateJson(): String {
     val course = StudyTaskManager.getInstance(project).course ?: error("No course found")
     val creator = getArchiveCreator()
+    course.additionalFiles = AdditionalFilesUtils.collectAdditionalFiles(course, project)
     creator.prepareCourse(course)
     val mapper = creator.getMapper(course)
     val json = mapper.writer(printer).writeValueAsString(course)

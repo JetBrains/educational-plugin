@@ -29,10 +29,10 @@ import java.io.IOException
 object AdditionalFilesUtils {
   private val LOG = Logger.getInstance(AdditionalFilesUtils::class.java)
 
-  fun collectAdditionalFiles(course: Course, project: Project, indicator: CourseArchiveIndicator? = null): List<EduFile> {
+  fun collectAdditionalFiles(course: Course, project: Project): List<EduFile> {
     ApplicationManager.getApplication().invokeAndWait { FileDocumentManager.getInstance().saveAllDocuments() }
 
-    val fileVisitor = additionalFilesVisitor(project, course, indicator)
+    val fileVisitor = additionalFilesVisitor(project, course)
     VfsUtilCore.visitChildrenRecursively(project.courseDir, fileVisitor)
     return fileVisitor.additionalTaskFiles
   }
@@ -57,7 +57,7 @@ object AdditionalFilesUtils {
     return project.courseDir.findChild(EduNames.CHANGE_NOTES)
   }
 
-  private fun additionalFilesVisitor(project: Project, course: Course, indicator: CourseArchiveIndicator?) =
+  private fun additionalFilesVisitor(project: Project, course: Course) =
     object : VirtualFileVisitor<Any>(NO_FOLLOW_SYMLINKS) {
       // we take the course ignore rules once, and we are sure they are not changed while course archive is being created
       private val courseIgnoreRules = CourseIgnoreRules.loadFromCourseIgnoreFile(project)
@@ -76,29 +76,29 @@ object AdditionalFilesUtils {
           return file.getTask(project) == null
         }
 
-        addToAdditionalFiles(file, project, indicator)
+        addToAdditionalFiles(file, project)
         return false
       }
 
-      private fun addToAdditionalFiles(file: VirtualFile, project: Project, indicator: CourseArchiveIndicator?) {
+      private fun addToAdditionalFiles(file: VirtualFile, project: Project) {
         try {
-          createAdditionalTaskFile(file, project, indicator)?.also { taskFile -> additionalTaskFiles.add(taskFile) }
+          createAdditionalTaskFile(file, project)?.also { taskFile -> additionalTaskFiles.add(taskFile) }
         }
         catch (e: IOException) {
           LOG.error(e)
         }
       }
 
-      private fun createAdditionalTaskFile(file: VirtualFile, project: Project, indicator: CourseArchiveIndicator?): EduFile? {
+      private fun createAdditionalTaskFile(file: VirtualFile, project: Project): EduFile? {
         val taskFile = file.getTaskFile(project)
         if (taskFile != null) return null
 
         val path = VfsUtilCore.getRelativePath(file, project.courseDir) ?: return null
         val contents = if (file.isToEncodeContent) {
-          BinaryContentsFromDisk(file, indicator)
+          BinaryContentsFromDisk(file, null)
         }
         else {
-          TextualContentsFromDisk(file, indicator)
+          TextualContentsFromDisk(file, null)
         }
         return EduFile(path, contents)
       }
