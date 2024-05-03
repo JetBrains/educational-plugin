@@ -3,9 +3,11 @@ package com.jetbrains.edu.coursecreator.actions
 import com.intellij.externalDependencies.DependencyOnPlugin
 import com.intellij.externalDependencies.ExternalDependenciesManager
 import com.intellij.externalDependencies.ProjectExternalDependency
+import com.intellij.openapi.application.runWriteActionAndWait
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.findOrCreateFile
 import com.intellij.psi.PsiDocumentManager
 import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchiveTest.PlainTextCompatibilityProvider.Companion.PLAIN_TEXT_PLUGIN_ID
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
@@ -17,6 +19,7 @@ import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSE_CONTENTS_FOLDER
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createTextChildFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.runInWriteActionAndWait
@@ -30,6 +33,7 @@ import java.nio.file.Files
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.zip.ZipFile
+import kotlin.io.path.createTempFile
 import kotlin.text.Charsets.UTF_8
 
 class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
@@ -880,7 +884,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     createUserFile(EduFormatNames.COURSE_ICON_FILE)
     createUserFile("not a course icon.svg")
 
-    val courseArchiveFile = kotlin.io.path.createTempFile("course.zip")
+    val courseArchiveFile = createTempFile("course.zip")
     try {
       val archiveCreator = getArchiveCreator(courseArchiveFile.toString())
       archiveCreator.createArchive()
@@ -904,7 +908,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {}
     createUserFile("not a course icon.svg")
 
-    val courseArchiveFile = kotlin.io.path.createTempFile("course.zip")
+    val courseArchiveFile = createTempFile("course.zip")
     try {
       val archiveCreator = getArchiveCreator(courseArchiveFile.toString())
       archiveCreator.createArchive()
@@ -913,6 +917,36 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
         assertNull("Course zip file must not contain a course icon", zip.getEntry(EduFormatNames.COURSE_ICON_FILE))
       }
     } finally {
+      Files.delete(courseArchiveFile)
+    }
+  }
+
+  @Test
+  fun `additional files are taken from the list additionalFiles and not from disk`() {
+    val additionalFile1 = "additional_file1.txt"
+    val additionalFile2 = "additional_file2.txt"
+    val additionalFile3 = "additional_file3.txt"
+
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      additionalFile(additionalFile1)
+    }
+
+    runWriteActionAndWait {
+      project.courseDir.findOrCreateFile(additionalFile2) // is not present in the list course.additionalFiles
+    }
+    createUserFile(additionalFile3) // automatically added to the list course.additionalFiles
+
+    val courseArchiveFile = createTempFile("course.zip")
+    try {
+      getArchiveCreator(courseArchiveFile.toString()).createArchive()
+
+      ZipFile(courseArchiveFile.toFile()).use { zip ->
+        assertNotNull("Course zip file must contain $additionalFile1", zip.getEntry("$COURSE_CONTENTS_FOLDER/$additionalFile1"))
+        assertNull("Course zip file must not contain $additionalFile2", zip.getEntry("$COURSE_CONTENTS_FOLDER/$additionalFile2"))
+        assertNotNull("Course zip file must contain $additionalFile3", zip.getEntry("$COURSE_CONTENTS_FOLDER/$additionalFile3"))
+      }
+    }
+    finally {
       Files.delete(courseArchiveFile)
     }
   }

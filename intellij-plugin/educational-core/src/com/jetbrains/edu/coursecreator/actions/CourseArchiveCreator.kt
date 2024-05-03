@@ -22,7 +22,6 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.jetbrains.edu.coursecreator.AdditionalFilesUtils
 import com.jetbrains.edu.coursecreator.CCUtils.saveOpenedDocuments
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
@@ -188,7 +187,6 @@ class CourseArchiveCreator(
   fun prepareCourse(course: Course) {
     loadActualTexts(project, course)
     course.sortItems()
-    course.additionalFiles = AdditionalFilesUtils.collectAdditionalFiles(course.configurator, project)
     course.pluginDependencies = collectCourseDependencies(project, course)
     course.courseMode = CourseMode.STUDENT
   }
@@ -287,11 +285,30 @@ class CourseArchiveCreator(
     }
 
     fun loadActualTexts(project: Project, course: Course) {
+      val courseDir = project.courseDir
+
       course.visitLessons { lesson ->
-        val lessonDir = lesson.getDir(project.courseDir)
+        val lessonDir = lesson.getDir(courseDir)
         if (lessonDir == null) return@visitLessons
         for (task in lesson.taskList) {
           loadActualTexts(project, task)
+        }
+      }
+
+      for (additionalFile in course.additionalFiles) {
+        val fsFile = courseDir.findFileByRelativePath(additionalFile.name) ?: continue
+        additionalFile.contents = when(additionalFile.isBinary) {
+          false -> TextualContentsFromDisk(fsFile)
+          true -> BinaryContentsFromDisk(fsFile)
+          // Undetermined contents seem impossible because additional files
+          // are created and read from course-info.yaml always with determined contents.
+          // But if the contents are anyhow undetermined (probably because of tests), we must disambiguate it.
+          null -> if (fsFile.isToEncodeContent) {
+            BinaryContentsFromDisk(fsFile)
+          }
+          else {
+            TextualContentsFromDisk(fsFile)
+          }
         }
       }
     }
