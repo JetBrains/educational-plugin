@@ -5,14 +5,21 @@ import com.intellij.externalDependencies.ExternalDependenciesManager
 import com.intellij.externalDependencies.ProjectExternalDependency
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.fileTypes.PlainTextLanguage
+import com.intellij.openapi.vfs.findOrCreateFile
 import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchiveTest.PlainTextCompatibilityProvider.Companion.PLAIN_TEXT_PLUGIN_ID
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.EduFileErrorHighlightLevel
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames
+import com.jetbrains.edu.learning.courseFormat.PluginInfo
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.runInWriteActionAndWait
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.setUpPluginDependencies
@@ -868,8 +875,10 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
   @Test
   fun `test course archive has both course_json and courseIcon_svg inside`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
-      additionalFile(EduFormatNames.COURSE_ICON_FILE)
       additionalFile("not a course icon.svg")
+    }
+    runInWriteActionAndWait {
+      project.courseDir.findOrCreateFile(EduFormatNames.COURSE_ICON_FILE)
     }
 
     val courseArchiveFile = kotlin.io.path.createTempFile("course.zip")

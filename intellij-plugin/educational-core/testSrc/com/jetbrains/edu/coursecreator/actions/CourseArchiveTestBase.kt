@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.util.DefaultIndenter
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtilRt
+import com.jetbrains.edu.coursecreator.AdditionalFilesUtils
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduExperimentalFeatures.COURSE_FORMAT_WITH_FILES_OUTSIDE_JSON
@@ -13,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSE_CONTENTS_FOLDER
 import com.jetbrains.edu.learning.courseFormat.ext.visitEduFiles
 import com.jetbrains.edu.learning.json.encrypt.AES256
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.json.encrypt.TEST_AES_KEY
 import com.jetbrains.edu.learning.json.pathInArchive
 import com.jetbrains.edu.learning.withFeature
@@ -86,6 +88,7 @@ abstract class CourseArchiveTestBase : EduActionTestCase() {
     copiedCourse.authors = course.authors
 
     val creator = getArchiveCreator()
+    course.additionalFiles = AdditionalFilesUtils.collectAdditionalFiles(course.configurator, project)
     creator.prepareCourse(copiedCourse)
 
     return action(creator, copiedCourse)

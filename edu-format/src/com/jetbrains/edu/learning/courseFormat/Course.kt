@@ -20,7 +20,6 @@ abstract class Course : LessonContainer() {
   @Transient
   var visibility: CourseVisibility = CourseVisibility.LocalVisibility
 
-  @Transient
   var additionalFiles: List<EduFile> = emptyList()
 
   @Transient
