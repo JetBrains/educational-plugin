@@ -1,5 +1,8 @@
 package com.jetbrains.edu.learning
 
+import com.intellij.diff.DiffContentFactory
+import com.intellij.diff.chains.SimpleDiffRequestChain
+import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.notification.Notification
 import com.intellij.notification.Notifications
 import com.intellij.openapi.Disposable
@@ -191,4 +194,23 @@ fun doWithLearningObjectsStorageType(type: LearningObjectStorageType, action: ()
   finally {
     setDefaultLearningObjectsStorageType(savedType)
   }
+}
+
+@Suppress("HardCodedStringLiteral")
+fun simpleDiffRequestChain(
+  project: Project,
+  currentContentText: String = "Current Content",
+  anotherContentText: String = "Another Content"
+): SimpleDiffRequestChain {
+  val diffContentFactory = DiffContentFactory.getInstance()
+  val currentContent = diffContentFactory.create(project, currentContentText)
+  val anotherContent = diffContentFactory.create(project, anotherContentText)
+
+  return SimpleDiffRequestChain(
+    listOf(
+      SimpleDiffRequest(
+        "Simple Diff Request", currentContent, anotherContent, "Title: 1", "Title: 2"
+      )
+    )
+  )
 }

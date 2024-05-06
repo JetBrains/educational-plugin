@@ -5,13 +5,10 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.vfs.readText
-import com.jetbrains.edu.learning.EduActionTestCase
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.testAction
-import com.jetbrains.edu.learning.withNotificationCheck
-import com.jetbrains.edu.learning.withTestDialog
 import com.jetbrains.rd.util.first
 import org.junit.Test
 

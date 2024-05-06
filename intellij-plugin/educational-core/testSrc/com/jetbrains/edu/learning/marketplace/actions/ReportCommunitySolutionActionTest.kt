@@ -5,6 +5,7 @@ import com.intellij.diff.editor.ChainDiffVirtualFile
 import com.intellij.openapi.util.Disposer
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.simpleDiffRequestChain
 import com.jetbrains.edu.learning.testAction
 import org.junit.Test
 
