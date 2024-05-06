@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.courseFormat
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYCHARM
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * To introduce new course it's required to:
@@ -168,5 +169,23 @@ abstract class Course : LessonContainer() {
     if (path != null && isStudy) {
       nonEditableFiles.remove(path)
     }
+  }
+
+  /**
+   * Whether additional files are taken from course-info.yaml without the `additional_files` section.
+   * Or, in case the course is going to be written to yaml, whether the `additional_files` section should be written.
+   */
+  val additionalFilesNotLoaded: Boolean
+    get() = additionalFiles === ADDITIONAL_FILES_NOT_LOADED
+
+  /**
+   * Sets the [additionalFilesNotLoaded] property to true
+   */
+  fun invalidateAdditionalFiles() {
+    additionalFiles = ADDITIONAL_FILES_NOT_LOADED
+  }
+
+  companion object {
+    val ADDITIONAL_FILES_NOT_LOADED = ArrayList<EduFile>()
   }
 }

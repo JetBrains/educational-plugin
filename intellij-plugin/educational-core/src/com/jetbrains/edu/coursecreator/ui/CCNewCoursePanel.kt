@@ -84,6 +84,7 @@ class CCNewCoursePanel(
       _course.description = descriptionTextArea.text
       _course.isMarketplace = true
       _course.marketplaceCourseVersion = 1
+      _course.invalidateAdditionalFiles()
       return _course
     }
 

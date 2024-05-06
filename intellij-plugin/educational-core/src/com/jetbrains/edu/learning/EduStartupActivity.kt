@@ -19,6 +19,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
+import com.jetbrains.edu.coursecreator.AdditionalFilesUtils
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.SynchronizeTaskDescription
 import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreFileType
@@ -41,6 +42,7 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 class EduStartupActivity : StartupActivity.DumbAware {
 
@@ -63,6 +65,12 @@ class EduStartupActivity : StartupActivity.DumbAware {
     }
 
     ensureCourseIgnoreHasNoCustomAssociation()
+    val course = project.course
+    if (course?.additionalFilesNotLoaded == true) {
+      course.additionalFiles = AdditionalFilesUtils.collectAdditionalFiles(course, project, saveDocuments = false)
+      YamlFormatSynchronizer.saveItem(course)
+      LOG.info("Additional files collected for the course because course-info.yaml had no list of additional files")
+    }
 
     StartupManager.getInstance(project).runWhenProjectIsInitialized {
       val course = manager.course

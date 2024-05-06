@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.util.StdConverter
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.Course.Companion.ADDITIONAL_FILES_NOT_LOADED
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYCHARM
 import com.jetbrains.edu.learning.json.mixins.IntValueFilter
@@ -43,8 +44,6 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VENDOR
 import com.jetbrains.edu.learning.yaml.format.remote.RemoteStudyItemYamlMixin
 import java.time.ZonedDateTime
 import java.util.*
-
-val ADDITIONAL_FILES_NOT_LOADED = emptyList<EduFile>()
 
 /**
  * Mixin class is used to deserialize [Course] item.
@@ -116,11 +115,16 @@ abstract class CourseYamlMixin {
   lateinit var environmentSettings: Map<String, String>
 
   @JsonProperty(ADDITIONAL_FILES)
-  @JsonInclude(JsonInclude.Include.ALWAYS)
+  @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = AdditionalFilesFilter::class)
   lateinit var additionalFiles: List<EduFile>
 
   @JsonIgnore
   private var programmingLanguage: String? = null
+}
+
+@Suppress("EqualsOrHashCode")
+private class AdditionalFilesFilter {
+  override fun equals(other: Any?): Boolean = other === ADDITIONAL_FILES_NOT_LOADED
 }
 
 private class ProgrammingLanguageConverter : StdConverter<String, String>() {
@@ -206,7 +210,12 @@ open class CourseBuilder(
       solutionsHidden = areSolutionsHidden ?: false
       contentTags = yamlContentTags
       environmentSettings = yamlEnvironmentSettings
-      additionalFiles = yamlAdditionalFiles ?: ADDITIONAL_FILES_NOT_LOADED
+      if (yamlAdditionalFiles != null) {
+        additionalFiles = yamlAdditionalFiles
+      }
+      else {
+        invalidateAdditionalFiles()
+      }
 
       languageId = Language.findLanguageByName(displayProgrammingLanguageName)
                       ?: formatError(message("yaml.editor.invalid.unsupported.language", displayProgrammingLanguageName))
