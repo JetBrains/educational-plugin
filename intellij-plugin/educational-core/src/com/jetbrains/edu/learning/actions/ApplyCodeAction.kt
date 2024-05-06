@@ -27,7 +27,6 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.ex.temp.TempFileSystem
-import com.intellij.testFramework.utils.editor.saveToDisk
 import com.intellij.ui.GotItTooltip
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
@@ -147,9 +146,10 @@ class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
   }
 
   private fun List<Document>.writeTexts(texts: List<String>): Unit = runWriteAction {
+    val fileDocumentManager = FileDocumentManager.getInstance()
     zip(texts).forEach { (document, text) ->
       document.setText(text)
-      document.saveToDisk()
+      fileDocumentManager.saveDocument(document)
     }
   }
 
