@@ -82,7 +82,8 @@ class ApplyCodeActionTest : EduActionTestCase() {
       putUserData(ApplyCodeAction.VIRTUAL_FILE_PATH_LIST, listOf(taskVirtualFile.path))
     }
     val diffVirtualFile = ChainDiffVirtualFile(diffChain, "Diff")
-    val dataContext = SimpleDataContext.builder().add(CommonDataKeys.VIRTUAL_FILE, diffVirtualFile).add(CommonDataKeys.PROJECT, project).build()
+    val dataContext =
+      SimpleDataContext.builder().add(CommonDataKeys.VIRTUAL_FILE, diffVirtualFile).add(CommonDataKeys.PROJECT, project).build()
 
     withNotificationCheck(project, testRootDisposable, { notificationShown, notificationText ->
       assertTrue(notificationShown)
