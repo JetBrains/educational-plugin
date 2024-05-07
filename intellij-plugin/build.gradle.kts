@@ -133,12 +133,9 @@ allprojects {
   repositories {
     intellijPlatform {
       defaultRepositories()
+      binaryReleasesAndroidStudio()
     }
   }
-//  intellij {
-//    version = baseVersion
-//    instrumentCode = false
-//  }
 
   sourceSets {
     main {
@@ -192,16 +189,16 @@ allprojects {
       inputs.property("environmentName", providers.gradleProperty("environmentName"))
     }
 
-    val verifyClasses = task("verifyClasses") {
+    val verifyClasses = register("verifyClasses") {
       dependsOn(jar)
       doLast {
         verifyClasses(project)
       }
     }
     // Fail plugin build if there are errors in module packages
-//    project(":intellij-plugin").tasks.buildPlugin {
-//      dependsOn(verifyClasses)
-//    }
+    project(":intellij-plugin").tasks.buildPlugin {
+      dependsOn(verifyClasses)
+    }
   }
 
   dependencies {
@@ -229,9 +226,9 @@ allprojects {
 
 subprojects {
   tasks {
-//    runIde { enabled = false }
-//    prepareSandbox { enabled = false }
-//    buildSearchableOptions { enabled = false }
+    runIde { enabled = false }
+    prepareSandbox { enabled = false }
+    buildSearchableOptions { enabled = false }
   }
 
   val testOutput = configurations.create("testOutput")
@@ -331,7 +328,7 @@ dependencies {
   implementation(project("Edu-Python:Idea"))
   implementation(project("Edu-Python:PyCharm"))
   implementation(project("Edu-Scala"))
-//  implementation(project("Edu-Android"))
+  implementation(project("Edu-Android"))
   implementation(project("Edu-JavaScript"))
   implementation(project("Edu-Rust"))
   implementation(project("Edu-Cpp"))
@@ -357,37 +354,35 @@ dependencies {
 //}
 
 
-abstract class MergePluginJarsTask : Jar()//, SandboxAware
-
 tasks {
   // Collects all jars produced by compilation of project modules and merges them into singe one.
   // We need to put all plugin manifest files into single jar to make new plugin model work
-  val mergePluginJarTask by registering(MergePluginJarsTask::class) {
+  val mergePluginJarTask = register<Jar>("mergePluginJarTask") {
     dependsOn(prepareSandbox)
 
     duplicatesStrategy = DuplicatesStrategy.FAIL
 
     exclude("META-INF/MANIFEST.MF")
 
-//    val pluginLibDir by lazy {
-//      val projectName = project.the<IntelliJPlatformExtension>().projectName.get()
-//      sandboxPluginsDirectory.get().dir("$projectName/lib")
-//    }
-//    val pluginJars by lazy {
-//      pluginLibDir.asFile.listFiles().orEmpty().filter { it.isPluginJar() }
-//    }
-//
-//    destinationDirectory = provider { pluginLibDir }
-//
-//    doFirst {
-//      for (file in pluginJars) {
-//        from(zipTree(file))
-//      }
-//    }
-//
-//    doLast {
-//      delete(pluginJars)
-//    }
+    val pluginLibDir by lazy {
+      val projectName = project.the<IntelliJPlatformExtension>().projectName.get()
+      prepareSandbox.get().sandboxPluginsDirectory.get().dir("$projectName/lib")
+    }
+    val pluginJars by lazy {
+      pluginLibDir.asFile.listFiles().orEmpty().filter { it.isPluginJar() }
+    }
+
+    destinationDirectory = provider { pluginLibDir }
+
+    doFirst {
+      for (file in pluginJars) {
+        from(zipTree(file))
+      }
+    }
+
+    doLast {
+      delete(pluginJars)
+    }
   }
 
 
@@ -408,14 +403,15 @@ tasks {
       }
     }
   }
-//  prepareSandbox {
-//    finalizedBy(mergePluginJarTask)
-//  }
+  prepareSandbox {
+    finalizedBy(mergePluginJarTask)
+  }
+
   withType<RunIdeTask> {
     // Force `mergePluginJarTask` be executed before any task based on `RunIdeBase` (for example, `runIde` or `buildSearchableOptions`).
     // Otherwise, these tasks fail because of implicit dependency.
     // Should be dropped when jar merging is implemented in `gradle-intellij-plugin` itself
-//    mustRunAfter(mergePluginJarTask)
+    mustRunAfter(mergePluginJarTask)
     // Disable auto plugin reloading. See `com.intellij.ide.plugins.DynamicPluginVfsListener`
     // To enable dynamic reloading, change value to `true` and disable `EduDynamicPluginListener`
     autoReload = false
@@ -438,13 +434,27 @@ tasks {
 //    enabled = findProperty("enableBuildSearchableOptions") != "false"
 //  }
   buildPlugin {
-//    dependsOn(mergePluginJarTask)
+    dependsOn(mergePluginJarTask)
     dependsOn(":edu-format:jar")
     dependsOn(":edu-format:sourcesJar")
     doLast {
       copyFormatJars()
     }
   }
+  buildSearchableOptions {
+    dependsOn(mergePluginJarTask)
+  }
+
+//  val buildEventsScheme by registering(RunIdeTask::class) {
+//    dependsOn(prepareSandbox)
+//    args("buildEventsScheme", "--outputFile=${buildDir()}/eventScheme.json", "--pluginId=com.jetbrains.edu")
+//    // Force headless mode to be able to run command on CI
+//    systemProperty("java.awt.headless", "true")
+//    // BACKCOMPAT: 2023.3. Update value to 233 and this comment
+//    // `IDEA_BUILD_NUMBER` variable is used by `buildEventsScheme` task to write `buildNumber` to output json.
+//    // It will be used by TeamCity automation to set minimal IDE version for new events
+//    environment("IDEA_BUILD_NUMBER", "233")
+//  }
 }
 
 // Generates event scheme for JetBrains Academy plugin FUS events to `build/eventScheme.json`
@@ -557,21 +567,11 @@ project("code-insight:html") {
 }
 
 project("code-insight:markdown") {
-  val pluginList = mutableListOf(markdownPlugin)
-  if (isStudioIDE) {
-    pluginList += "platform-images"
-  }
-//  intellij {
-//    plugins = pluginList
-//  }
-
-  tasks {
-//    prepareTestingSandbox {
-//      // Set custom plugin directory name for tests.
-//      // Otherwise, `prepareTestingSandbox` merge directories of `markdown` plugin and `markdown` modules
-//      // into single one
-//      pluginName = "edu-markdown"
-//    }
+  intellijPlatform {
+    // Set custom plugin directory name for tests.
+    // Otherwise, `prepareTestSandbox` merges directories of `markdown` plugin and `markdown` modules
+    // into single one
+    projectName = "edu-markdown"
   }
 
   dependencies {
@@ -684,26 +684,26 @@ project("Edu-Scala") {
   }
 }
 
-//project("Edu-Android") {
-//  dependencies {
-//    intellijPlatform {
-//      intellijIde(studioVersion)
-//
-////      bundledPlugins(jvmPlugins)
-////      bundledPlugin(androidPlugin)
-//    }
-//    implementation(project(":intellij-plugin:educational-core"))
-//    implementation(project(":intellij-plugin:jvm-core"))
-//
-//    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-//    testImplementation(project(":intellij-plugin:jvm-core", "testOutput"))
-//  }
-//
-//  // BACKCOMPAT: enable when 233 studio is available
-//  tasks.withType<Test> {
-//    enabled = environmentName.toInt() < 233
-//  }
-//}
+project("Edu-Android") {
+  dependencies {
+    intellijPlatform {
+      intellijIde(studioVersion)
+
+      intellijPlugins(jvmPlugins)
+      intellijPlugin(androidPlugin)
+    }
+    implementation(project(":intellij-plugin:educational-core"))
+    implementation(project(":intellij-plugin:jvm-core"))
+
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+    testImplementation(project(":intellij-plugin:jvm-core", "testOutput"))
+  }
+
+  // BACKCOMPAT: enable when 233 studio is available
+  tasks.withType<Test> {
+    enabled = environmentName.toInt() < 233
+  }
+}
 
 project("Edu-Python") {
   dependencies {
