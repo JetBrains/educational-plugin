@@ -139,10 +139,11 @@ class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
     }
   }
 
-  private fun DiffRequestChain.getTexts(size: Int): List<String> {
-    val diffRequestWrappers = List(size) { requests[it] as SimpleDiffRequestChain.DiffRequestProducerWrapper }
-    val diffRequests = diffRequestWrappers.map { it.request as SimpleDiffRequest }
-    return diffRequests.map { it.contents[1] as DocumentContentBase }.map { it.document.text }
+  private fun DiffRequestChain.getTexts(): List<String> = requests.map {
+    val diffRequestWrapper = it as SimpleDiffRequestChain.DiffRequestProducerWrapper
+    val diffRequest = diffRequestWrapper.request as SimpleDiffRequest
+    val documentContentBase = diffRequest.contents[1] as DocumentContentBase
+    documentContentBase.document.text
   }
 
   private fun List<Document>.writeTexts(texts: List<String>): Unit = runWriteAction {
