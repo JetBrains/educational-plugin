@@ -25,12 +25,12 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.openapi.vfs.ex.temp.TempFileSystem
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.findFile
 import com.intellij.ui.GotItTooltip
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
-import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.NonNls
@@ -62,9 +62,9 @@ class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
     val fileNames = diffRequestChain.getUserData(VIRTUAL_FILE_PATH_LIST).takeIf { !it.isNullOrEmpty() } ?: return showApplyCodeFailedNotification(project)
 
     try {
-      val localDocuments = readLocalDocuments(fileNames)
+      val localDocuments = readLocalDocuments(fileNames, project.courseDir)
       check(localDocuments.size == fileNames.size)
-      val submissionsTexts = diffRequestChain.getTexts(fileNames.size)
+      val submissionsTexts = diffRequestChain.getTexts()
       val runnableCommand = {
         localDocuments.writeTexts(submissionsTexts)
       }
@@ -122,21 +122,13 @@ class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
     return chainDiffVirtualFile?.chain
   }
 
-  private fun readLocalDocuments(fileNames: List<String>): List<Document> = runReadAction {
-    fileNames.mapNotNull { findLocalDocument(it) }
+  private fun readLocalDocuments(fileNames: List<String>, courseDir: VirtualFile): List<Document> = runReadAction {
+    fileNames.mapNotNull { findLocalDocument(it, courseDir) }
   }
 
-  private fun findLocalDocument(fileName: String): Document? {
-    val file = if (!isUnitTestMode) {
-      LocalFileSystem.getInstance().findFileByPath(fileName)
-    }
-    else {
-      TempFileSystem.getInstance().findFileByPath(fileName)
-    }
-
-    return file?.let {
-      FileDocumentManager.getInstance().getDocument(it)
-    }
+  private fun findLocalDocument(fileName: String, courseDir: VirtualFile): Document? {
+    val virtualFile = courseDir.findFile(fileName) ?: return null
+    return FileDocumentManager.getInstance().getDocument(virtualFile)
   }
 
   private fun DiffRequestChain.getTexts(): List<String> = requests.map {
