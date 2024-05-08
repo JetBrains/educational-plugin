@@ -115,6 +115,11 @@
   "kotlin":
   [
     {
+      "languageIdWithVersion": "Kotlin 1.9",
+      "programTypeId": "88",
+      "version": "1.9"
+    },
+    {
       "languageIdWithVersion": "Kotlin 1.7",
       "programTypeId": "83",
       "version": "1.7"
