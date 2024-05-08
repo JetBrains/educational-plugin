@@ -33,7 +33,7 @@ class RetryAction(actionText: Supplier<@ActionText String>,
 ) : ActionWithProgressIcon(actionText),
     DumbAware {
 
-  constructor() : this(EduCoreBundle.lazyMessage("action.retry.try.again.text")) {
+  constructor() : this(EduCoreBundle.lazyMessage("retry")) {
     setUpSpinnerPanel(processMessage)
   }
 

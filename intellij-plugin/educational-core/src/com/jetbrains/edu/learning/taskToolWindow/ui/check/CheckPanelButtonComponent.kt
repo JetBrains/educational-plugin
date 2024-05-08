@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.taskToolWindow.ui.check
 
+import com.intellij.collaboration.ui.CollaborationToolsUIUtil.isDefault
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
@@ -79,17 +80,17 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
     isEnabled: Boolean = true,
     customButtonText: String? = null
   ): JButton {
-    val button = object : JButton(action.templatePresentation.text) {
-      override fun isDefaultButton(): Boolean = isDefault
-      override fun isEnabled(): Boolean = isEnabled
-      override fun isFocusable(): Boolean = isEnabled
+    val text = if (customButtonText != null) StringUtils.abbreviate(customButtonText, 25) else action.templatePresentation.text
+    val button =  JButton(text).apply {
+      this.isEnabled = isEnabled
+      this.isFocusable = isEnabled
+      this.isDefault = isDefault
     }
     if (isEnabled) {
       button.addActionListener { e ->
         performAnAction(e, this, action)
       }
     }
-    customButtonText?.let { button.text = StringUtils.abbreviate(customButtonText, 25) }
     return button
   }
 
