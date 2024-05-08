@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jsoup.Jsoup
 
 const val KOTLIN_PLUGIN_ID = "org.jetbrains.kotlin"
-val DEFAULT_KOTLIN_VERSION = KotlinVersion("1.8.0")
+val DEFAULT_KOTLIN_VERSION = KotlinVersion("1.9.0")
 private val KOTLIN_VERSION_PATTERN = """(\d+-)((?<version>\d+\.\d+(.\d+)?(-(RC|RC2|M1|M2))?)(-release-\d+)?).*""".toRegex()
 
 fun getDisabledPlugins(ids: List<PluginId>): List<PluginId> {
