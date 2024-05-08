@@ -102,15 +102,16 @@ class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
     private const val PRIVACY_POLICY_URL = "https://www.jetbrains.com/legal/docs/privacy/privacy/"
 
     @RequiresEdt
-    fun showUserAgreementDialog(project: Project?) {
+    fun showUserAgreementDialog(project: Project?): Boolean {
       val result = UserAgreementDialog(project).showWithResult()
+      val isAccepted = result.agreementState == UserAgreementState.ACCEPTED
       runInBackground(project, EduCoreBundle.message("user.agreement.updating.state"), false) {
         runBlockingCancellable {
           withContext(Dispatchers.IO) {
             MarketplaceSubmissionsConnector.getInstance().changeUserAgreementAndStatisticsState(result)
             if (project != null) {
               SubmissionsManager.getInstance(project).prepareSubmissionsContentWhenLoggedIn()
-              if (RemoteEnvHelper.isRemoteDevServer() && result.agreementState == UserAgreementState.ACCEPTED) {
+              if (RemoteEnvHelper.isRemoteDevServer() && isAccepted) {
                 //remove editor notification for rem dev, suggesting to accept User Agreement
                 EditorNotifications.getInstance(project).updateAllNotifications()
               }
@@ -118,6 +119,7 @@ class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
           }
         }
       }
+      return isAccepted
     }
 
     @RequiresBackgroundThread

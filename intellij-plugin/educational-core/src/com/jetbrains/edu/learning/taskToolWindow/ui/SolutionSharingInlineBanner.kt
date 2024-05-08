@@ -5,11 +5,15 @@ import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.InlineBanner
 import com.intellij.util.ui.HTMLEditorKitBuilder
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils
 import com.jetbrains.edu.learning.marketplace.SolutionSharingPromptCounter
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
+import com.jetbrains.edu.learning.marketplace.userAgreement.UserAgreementDialog
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.submissions.SubmissionsManager
+import java.util.concurrent.CompletableFuture
 import javax.swing.JEditorPane
 
 object SolutionSharingInlineBanners {
@@ -18,9 +22,19 @@ object SolutionSharingInlineBanners {
     val inlineBanner = SolutionSharingInlineBanner(EditorNotificationPanel.Status.Info).apply {
       setMessage(EduCoreBundle.message("marketplace.solutions.sharing.inline.banner.prompt.action.text"))
       addAction(EduCoreBundle.message("marketplace.solutions.sharing.inline.banner.prompt.description")) {
-        MarketplaceSettings.INSTANCE.updateSharingPreference(true, project)
-        EduCounterUsageCollector.solutionSharingInviteAction(true)
-        removeFromParent()
+        CompletableFuture.supplyAsync {
+          SubmissionsManager.getInstance(project).isSolutionSharingAllowed()
+        }.thenApply { isSolutionSharingAllowed ->
+          project.invokeLater {
+            if (isSolutionSharingAllowed || UserAgreementDialog.showUserAgreementDialog(project)) {
+              CompletableFuture.runAsync {
+                MarketplaceSettings.INSTANCE.updateSharingPreference(true, project)
+                EduCounterUsageCollector.solutionSharingInviteAction(true)
+              }
+              removeFromParent()
+            }
+          }
+        }
       }
       setCloseAction {
         EduCounterUsageCollector.solutionSharingInviteAction(false)

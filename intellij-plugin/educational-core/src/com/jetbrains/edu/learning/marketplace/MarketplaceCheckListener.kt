@@ -5,14 +5,11 @@ import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.PostSolutionCheckListener
-import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.SolutionSharingInlineBanners
-import java.util.concurrent.CompletableFuture
 
 class MarketplaceCheckListener: PostSolutionCheckListener() {
 
@@ -32,16 +29,8 @@ class MarketplaceCheckListener: PostSolutionCheckListener() {
 
     if (!result.isSolved || !task.supportSubmissions || !project.isStudentProject()) return
 
-    CompletableFuture.supplyAsync {
-      SubmissionsManager.getInstance(project).isSolutionSharingAllowed()
-    }.thenApply { isSolutionSharingAllowed ->
-      if (isSolutionSharingAllowed) {
-        project.invokeLater {
-          if (SolutionSharingPromptCounter.shouldPrompt() && project.isStudentProject()) {
-            SolutionSharingInlineBanners.promptToEnableSolutionSharing(project)
-          }
-        }
-      }
+    if (SolutionSharingPromptCounter.shouldPrompt()) {
+      SolutionSharingInlineBanners.promptToEnableSolutionSharing(project)
     }
   }
 }
