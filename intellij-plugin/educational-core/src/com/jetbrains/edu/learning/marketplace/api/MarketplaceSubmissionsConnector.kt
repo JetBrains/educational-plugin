@@ -33,6 +33,7 @@ import com.jetbrains.edu.learning.submissions.*
 import okhttp3.ConnectionPool
 import okhttp3.ResponseBody
 import org.jetbrains.annotations.VisibleForTesting
+import retrofit2.Call
 import retrofit2.Response
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.io.BufferedInputStream
@@ -77,20 +78,28 @@ class MarketplaceSubmissionsConnector {
     return retrofit.create(SubmissionsService::class.java)
   }
 
-  fun deleteAllSubmissions(project: Project?, loginName: String?): Boolean {
-    LOG.info("Deleting submissions${loginName.toLogString()}")
+  fun deleteAllSubmissions(project: Project?, courseId: Int? = null, loginName: String?): Boolean {
+    LOG.info("Deleting submissions ${logLoginName(loginName)} ${logCourseId(courseId)}")
+    val deleteCall: Call<ResponseBody> = if (courseId != null) {
+      submissionsService.deleteAllSubmissions(courseId)
+    }
+    else {
+      submissionsService.deleteAllSubmissions()
+    }
 
-    val response = submissionsService.deleteAllSubmissions().executeCall().onError {
-      LOG.error("Failed to delete all submissions${loginName.toLogString()}. Error message: $it")
-      showFailedToDeleteNotification(project, loginName)
+    val response = deleteCall.executeCall().onError {
+      LOG.error("Failed to delete all submissions ${logLoginName(loginName)} ${logCourseId(courseId)}. Error message: $it")
+      showFailedToDeleteNotification(project, courseId, loginName)
       return false
     }
-    logAndNotifyAfterDeletionAttempt(response, project, loginName)
+    logAndNotifyAfterDeletionAttempt(response, project, courseId, loginName)
 
     return response.code() == HTTP_NO_CONTENT
   }
 
-  private fun String?.toLogString(): String = if (this != null) " for user $this" else ""
+  private fun logLoginName(loginName: String?): String = if (loginName != null) "for user $loginName" else ""
+
+  private fun logCourseId(courseId: Int?): String = if (courseId != null) "for course $courseId" else ""
 
   fun getAllSubmissions(courseId: Int): List<MarketplaceSubmission> {
     val userAgreementState = getUserAgreementState()
@@ -274,22 +283,22 @@ class MarketplaceSubmissionsConnector {
     return files.checkNotEmpty()
   }
 
-  private fun logAndNotifyAfterDeletionAttempt(response: Response<ResponseBody>, project: Project?, loginName: String?) {
+  private fun logAndNotifyAfterDeletionAttempt(response: Response<ResponseBody>, project: Project?, courseId: Int?, loginName: String?) {
     when (response.code()) {
       HTTP_NO_CONTENT -> {
-        LOG.info("Successfully deleted all submissions${loginName.toLogString()}")
-        showSubmissionsDeletedSucessfullyNotification(project, loginName)
+        LOG.info("Successfully deleted all submissions ${logLoginName(loginName)} ${logCourseId(courseId)}")
+        showSubmissionsDeletedSucessfullyNotification(project, courseId, loginName)
       }
 
       HTTP_NOT_FOUND -> {
-        LOG.info("There are no submissions to delete${loginName.toLogString()}")
-        showNoSubmissionsToDeleteNotification(project, loginName)
+        LOG.info("There are no submissions to delete ${logLoginName(loginName)} ${logCourseId(courseId)}")
+        showNoSubmissionsToDeleteNotification(project, courseId, loginName)
       }
 
       else -> {
         val errorMsg = response.errorBody()?.string() ?: "Unknown error"
-        LOG.error("Failed to delete all submissions for user $loginName. Error message: $errorMsg")
-        showFailedToDeleteNotification(project, loginName)
+        LOG.error("Failed to delete all submissions ${logLoginName(loginName)} ${logCourseId(courseId)}. Error message: $errorMsg")
+        showFailedToDeleteNotification(project, courseId, loginName)
       }
     }
   }

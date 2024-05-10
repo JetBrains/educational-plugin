@@ -151,13 +151,20 @@ object MarketplaceNotificationUtils {
   }
 
   @Suppress("DialogTitleCapitalization")
-  internal fun showSubmissionsDeletedSucessfullyNotification(project: Project?, loginName: String?) {
-    val message = if (loginName != null) {
+  internal fun showSubmissionsDeletedSucessfullyNotification(project: Project?, courseId: Int?, loginName: String?) {
+    val message = if (loginName != null && courseId != null) {
+      EduCoreBundle.message("marketplace.delete.submissions.for.user.on.course.success.message", loginName, courseId)
+    }
+    else if (loginName != null) {
       EduCoreBundle.message("marketplace.delete.submissions.for.user.success.message", loginName)
+    }
+    else if (courseId != null) {
+      EduCoreBundle.message("marketplace.delete.submissions.success.on.course.message", courseId)
     }
     else {
       EduCoreBundle.message("marketplace.delete.submissions.success.message")
     }
+
     Notification(
       JETBRAINS_ACADEMY_GROUP_ID,
       EduCoreBundle.message("marketplace.delete.submissions.success.title"),
@@ -167,13 +174,20 @@ object MarketplaceNotificationUtils {
   }
 
   @Suppress("DialogTitleCapitalization")
-  internal fun showNoSubmissionsToDeleteNotification(project: Project?, loginName: String?) {
-    val message = if (loginName != null) {
+  internal fun showNoSubmissionsToDeleteNotification(project: Project?, courseId: Int?, loginName: String?) {
+    val message = if (loginName != null && courseId != null) {
+      EduCoreBundle.message("marketplace.delete.submissions.for.user.on.course.nothing.message", loginName, courseId)
+    }
+    else if (loginName != null) {
       EduCoreBundle.message("marketplace.delete.submissions.for.user.nothing.message", loginName)
+    }
+    else if (courseId != null) {
+      EduCoreBundle.message("marketplace.delete.submissions.on.course.nothing.message", courseId)
     }
     else {
       EduCoreBundle.message("marketplace.delete.submissions.nothing.message")
     }
+
     Notification(
       JETBRAINS_ACADEMY_GROUP_ID,
       EduCoreBundle.message("marketplace.delete.submissions.nothing.title"),
@@ -183,13 +197,20 @@ object MarketplaceNotificationUtils {
   }
 
   @Suppress("DialogTitleCapitalization")
-  internal fun showFailedToDeleteNotification(project: Project?, loginName: String?) {
-    val message = if (loginName != null) {
+  internal fun showFailedToDeleteNotification(project: Project?, courseId: Int?, loginName: String?) {
+    val message = if (loginName != null && courseId != null) {
+      EduCoreBundle.message("marketplace.delete.submissions.failed.for.user.on.course.message", loginName, courseId)
+    }
+    else if (loginName != null) {
       EduCoreBundle.message("marketplace.delete.submissions.failed.for.user.message", loginName)
+    }
+    else if (courseId != null) {
+      EduCoreBundle.message("marketplace.delete.submissions.failed.on.course.message", courseId.toString())
     }
     else {
       EduCoreBundle.message("marketplace.delete.submissions.failed.message")
     }
+
     Notification(
       JETBRAINS_ACADEMY_GROUP_ID,
       EduCoreBundle.message("marketplace.delete.submissions.failed.title"),

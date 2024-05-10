@@ -38,6 +38,9 @@ interface SubmissionsService {
   @DELETE("/api/course/submission")
   fun deleteAllSubmissions(): Call<ResponseBody>
 
+  @DELETE("/api/course/{courseId}/submission")
+  fun deleteAllSubmissions(@Path("courseId") courseId: Int): Call<ResponseBody>
+
   @GET("/api/user/sharing")
   suspend fun getSharingPreference(): ResponseBody
 
