@@ -4,6 +4,7 @@ import com.intellij.diff.DiffContentFactory
 import com.intellij.diff.DiffDialogHints
 import com.intellij.diff.DiffManager
 import com.intellij.diff.requests.SimpleDiffRequest
+import com.intellij.execution.process.ProcessIOExecutorService
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
@@ -116,24 +117,19 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
         isVisible = false
       }
       project.messageBus.connect().subscribe(SubmissionsManager.TOPIC, SubmissionsListener {
-        CompletableFuture.supplyAsync {
+        CompletableFuture.runAsync({
           val submissionsManager = SubmissionsManager.getInstance(project)
-          val isCommunitySolutionsLoaded = submissionsManager.isCommunitySolutionsLoaded(task)
-          val isAllowedToLoadCommunitySolutions = checkResult.isSolved || submissionsManager.isAllowedToLoadCommunitySolutions(task)
-
-          if (!isAllowedToLoadCommunitySolutions) {
+          if (!submissionsManager.isAllowedToLoadCommunitySolutions(task)) {
             communitySolutionsLink.isVisible = false
-            return@supplyAsync
+            return@runAsync
           }
-
-          if (!isCommunitySolutionsLoaded) {
+          if (!submissionsManager.isCommunitySolutionsLoaded(task)) {
             submissionsManager.loadCommunitySubmissions(task)
           }
-
           project.invokeLater {
             communitySolutionsLink.isVisible = true
           }
-        }
+        }, ProcessIOExecutorService.INSTANCE)
       })
       linksPanel.add(communitySolutionsLink, BorderLayout.NORTH)
     }
