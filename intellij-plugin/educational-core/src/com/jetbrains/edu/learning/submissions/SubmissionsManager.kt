@@ -216,7 +216,11 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
     val submissions = submissions[task.id] ?: return false
     val correctSubmissions = submissions.count { it.status == CORRECT }
     val wrongSubmissions = submissions.count() - correctSubmissions
-    return correctSubmissions >= 1 || (!task.canShowSolution() && wrongSubmissions >= GOT_STUCK_WRONG_SUBMISSIONS_AMOUNT)
+    return correctSubmissions >= 1 || gotStuckCondition(task, wrongSubmissions)
+  }
+
+  private fun gotStuckCondition(task: Task, numberOfWrongSubmissions: Int): Boolean {
+    return !task.canShowSolution() && numberOfWrongSubmissions >= GOT_STUCK_WRONG_SUBMISSIONS_AMOUNT
   }
 
   private fun getPlatformName(): String = course?.getSubmissionsProvider()?.getPlatformName() ?: error("Failed to get platform Name")
