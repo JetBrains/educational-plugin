@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.marketplace
 
+import com.intellij.execution.process.ProcessIOExecutorService
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.CheckResult
@@ -9,7 +10,9 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.PostSolutionCheckListener
+import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.SolutionSharingInlineBanners
+import java.util.concurrent.CompletableFuture
 
 class MarketplaceCheckListener: PostSolutionCheckListener() {
 
@@ -28,6 +31,10 @@ class MarketplaceCheckListener: PostSolutionCheckListener() {
     EduCounterUsageCollector.submissionSuccess(result.isSolved)
 
     if (!result.isSolved || !task.supportSubmissions || !project.isStudentProject()) return
+
+    CompletableFuture.runAsync({
+      SubmissionsManager.getInstance(project).loadCommunitySubmissions(task)
+    }, ProcessIOExecutorService.INSTANCE)
 
     if (SolutionSharingPromptCounter.shouldPrompt()) {
       SolutionSharingInlineBanners.promptToEnableSolutionSharing(project)
