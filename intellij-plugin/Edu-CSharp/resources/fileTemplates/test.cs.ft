@@ -1,8 +1,11 @@
 using System;
+using task;
 
+[TestFixture]
 class HelloWorldTest
 {
-    static void Main(string[] args)
+    [Test]
+    public void Test1()
     {
         // your code here
     }

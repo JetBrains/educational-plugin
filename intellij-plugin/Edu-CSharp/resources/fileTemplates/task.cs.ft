@@ -1,9 +1,11 @@
 using System;
-
-class HelloWorld
-{
-    static void Main(string[] args)
+namespace task {
+    class HelloWorld
     {
-        // your code here
+        static void Main(string[] args)
+        {
+            // your code here
+            Console.WriteLine("Hello world");
+        }
     }
 }

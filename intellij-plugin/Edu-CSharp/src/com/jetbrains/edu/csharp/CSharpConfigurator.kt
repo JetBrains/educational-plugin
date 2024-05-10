@@ -17,8 +17,13 @@ class CSharpConfigurator : EduConfigurator<CSharpProjectSettings> {
   override val testFileName: String
     get() = TEST_CS
 
+//  override val sourceDir: String
+//    get() = "task"
+//  override val testDirs: List<String>
+//    get() = listOf("test")
+
   override val taskCheckerProvider: TaskCheckerProvider
-    get() = TODO("Not yet implemented")
+    get() = CSharpTaskCheckerProvider()
   override val isEnabled: Boolean
     get() = isFeatureEnabled(EduExperimentalFeatures.CSHARP_COURSES)
 
