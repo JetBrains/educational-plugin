@@ -21,7 +21,7 @@ import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderDependencyMixin
 import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderWithAnswerMixin
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showFailedToDeleteNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showNoSubmissionsToDeleteNotification
-import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showSubmissionsDeletedSucessfullyNotification
+import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showSubmissionsDeletedSuccessfullyNotification
 import com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceHost
 import com.jetbrains.edu.learning.marketplace.userAgreement.UserAgreementDialogResultState
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -89,7 +89,7 @@ class MarketplaceSubmissionsConnector {
 
     val response = deleteCall.executeCall().onError {
       LOG.error("Failed to delete all submissions ${logLoginName(loginName)} ${logCourseId(courseId)}. Error message: $it")
-      showFailedToDeleteNotification(project, courseId, loginName)
+      showFailedToDeleteNotification(project, loginName)
       return false
     }
     logAndNotifyAfterDeletionAttempt(response, project, courseId, loginName)
@@ -287,18 +287,18 @@ class MarketplaceSubmissionsConnector {
     when (response.code()) {
       HTTP_NO_CONTENT -> {
         LOG.info("Successfully deleted all submissions ${logLoginName(loginName)} ${logCourseId(courseId)}")
-        showSubmissionsDeletedSucessfullyNotification(project, courseId, loginName)
+        showSubmissionsDeletedSuccessfullyNotification(project, loginName)
       }
 
       HTTP_NOT_FOUND -> {
         LOG.info("There are no submissions to delete ${logLoginName(loginName)} ${logCourseId(courseId)}")
-        showNoSubmissionsToDeleteNotification(project, courseId, loginName)
+        showNoSubmissionsToDeleteNotification(project, loginName)
       }
 
       else -> {
         val errorMsg = response.errorBody()?.string() ?: "Unknown error"
         LOG.error("Failed to delete all submissions ${logLoginName(loginName)} ${logCourseId(courseId)}. Error message: $errorMsg")
-        showFailedToDeleteNotification(project, courseId, loginName)
+        showFailedToDeleteNotification(project, loginName)
       }
     }
   }
