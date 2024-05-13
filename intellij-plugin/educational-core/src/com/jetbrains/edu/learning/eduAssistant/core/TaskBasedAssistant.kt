@@ -18,10 +18,7 @@ import com.jetbrains.edu.learning.eduAssistant.log.Loggers
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import java.util.concurrent.ConcurrentHashMap
 
 @Service(Service.Level.PROJECT)
 class TaskBasedAssistant : Assistant {
@@ -402,16 +399,6 @@ class TaskBasedAssistant : Assistant {
     }
   }
 
-  private fun buildTaskAnalysisPrompt(hintContext: HintContext): String = buildTaskAnalysisPrompt(
-    taskStr = hintContext.taskStr,
-    functionsSetStrFromUserSolution = hintContext.functionsSetStrFromUserSolution,
-    functionsSetStrFromAuthorSolution = hintContext.functionsSetStrFromAuthorSolution,
-    hintsStr = hintContext.hintsStr,
-    theoryStr = hintContext.theoryStr,
-    availableForSolutionStrings = hintContext.availableForSolutionStrings,
-    language = hintContext.language
-  )
-
   private fun buildHintContext(taskProcessor: TaskProcessor): HintContext {
     val task = taskProcessor.task
     val functionsSetStrFromUserSolution = taskProcessor.getFunctionsFromTask()
@@ -445,33 +432,4 @@ class TaskBasedAssistant : Assistant {
       |
     """.trimMargin()
   )
-
-  /**
-   * [value] stores the result of AI-based task analysis as a set of solution steps.
-   */
-  private class SolutionStepsProxy {
-
-    @Volatile
-    private var value: SolutionSteps? = null
-
-    private val mutex: Mutex = Mutex()
-
-    suspend fun getValue(): SolutionSteps? = mutex.withLock { value }
-
-    suspend fun getOrSetValue(forceSet: Boolean = false, calculation: suspend () -> SolutionSteps?): SolutionSteps? {
-      mutex.withLock {
-        if (value == null || forceSet) {
-          value = calculation()
-        }
-        return value
-      }
-    }
-  }
-
-  data class SolutionSteps(val value: String, val hintContext: HintContext, val prompt: String)
-
-  // Only one instance of SolutionSteps can be created for every task. Only SolutionSteps::value can be modified.
-  private val taskId2SolutionSteps = ConcurrentHashMap<Int, SolutionStepsProxy>()
-
-  suspend fun getSolutionSteps(taskId: Int): SolutionSteps? = taskId2SolutionSteps[taskId]?.getValue()
 }

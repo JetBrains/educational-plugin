@@ -1,19 +1,13 @@
 package com.jetbrains.edu.assistant.validation.util
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiFileFactory
-import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.courseFormat.ext.getSolution
 import com.jetbrains.edu.learning.courseFormat.ext.isTestFile
-import com.jetbrains.edu.learning.courseFormat.ext.languageById
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.eduAssistant.context.differ.FilesDiffer
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVRecord
@@ -47,16 +41,6 @@ fun replaceDocumentText(taskFile: TaskFile, project: Project, solution: String) 
     }
   }
 }
-
-fun getAuthorSolution(task: EduTask, project: Project) =
-  task.taskFiles.map { (_, taskFile) ->
-    val solution = taskFile.getSolution()
-    val language = project.course?.languageById ?: return@map ""
-    val document = taskFile.getDocument(project) ?: return@map ""
-    val solutionPsiFile = runReadAction { PsiFileFactory.getInstance(project).createFileFromText("solution", language, solution) }
-    val psiFile = runReadAction { PsiFileFactory.getInstance(project).createFileFromText("currentUserFile", language, document.text) }
-    runReadAction { FilesDiffer.findDifferentMethods(psiFile, solutionPsiFile, language) }
-  }.joinToString(System.lineSeparator())
 
 fun <K> parseCsvFile(path: Path?, recordConverter: (CSVRecord) -> K): List<K>? {
   if (path != null && path.exists()) {
