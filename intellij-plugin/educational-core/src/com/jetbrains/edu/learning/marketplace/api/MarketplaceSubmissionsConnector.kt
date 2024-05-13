@@ -9,6 +9,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.Messages
 import com.intellij.ui.JBAccountInfoService
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.jetbrains.edu.learning.*
@@ -68,6 +69,7 @@ class MarketplaceSubmissionsConnector {
       RemoteEnvHelper.getUserUidToken() ?: error("User UID was not found, it might require more time to retrieve it")
     }
     else {
+      Messages.showInfoMessage("JBAccountInfoService = ${JBAccountInfoService.getInstance()}, userData = ${JBAccountInfoService.getInstance()?.userData}", "JB account details")
       JBAccountInfoService.getInstance()?.userData?.id ?: error("Nullable JB account ID token in user data")
     }
 
