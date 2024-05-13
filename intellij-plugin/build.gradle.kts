@@ -113,7 +113,11 @@ val cppPlugins = listOfNotNull(
 
 val sqlPlugins = listOf(
   sqlPlugin,
-  "intellij.grid.core.impl"
+  // TODO: drop all transitive plugins after using beta2 version
+  "intellij.grid.core.impl",
+  "com.intellij.platform.images",
+  "intellij.grid.impl",
+  "intellij.charts"
 )
 
 val changesFile = "changes.html"
