@@ -58,18 +58,16 @@ class AutoHintValidationAction : ValidationAction<ValidationOfHintsDataframeReco
 
     try {
       val userCode = eduState.taskFile.getVirtualFile(project)?.getTextFromTaskTextFile() ?: error("Cannot get a user code")
-      val solutionSteps = project.service<TaskBasedAssistant>().getSolutionSteps(task.id) ?: error("Cannot get the solution steps")
       val taskDescription = taskProcessor.getTaskTextRepresentation()
       val codeHint = response.codeHint ?: error("Cannot get a code hint (${response.assistantError?.name ?: "no assistant error found"})")
       val textHint = response.textHint ?: error("Cannot get a text hint (${response.assistantError?.name ?: "no assistant error found"})")
       val hintType = processValidationHintForItsType(textHint, codeHint)
-      val hintsValidation = processValidationHints(taskDescription, textHint, codeHint, userCode, solutionSteps.value)
+      val hintsValidation = processValidationHints(taskDescription, textHint, codeHint, userCode)
       val dataframeRecord = Gson().fromJson(hintsValidation, ValidationOfHintsDataframeRecord::class.java)
       return listOf(dataframeRecord.apply {
         taskId = task.id
         taskName = task.name
         this.taskDescription = taskDescription
-        this.solutionSteps = solutionSteps.value
         this.userCode = userCode
         nextStepTextHint = textHint
         nextStepCodeHint = codeHint
@@ -81,7 +79,6 @@ class AutoHintValidationAction : ValidationAction<ValidationOfHintsDataframeReco
         taskId = task.id,
         taskName = task.name,
         taskDescription = taskProcessor.getTaskTextRepresentation(),
-        solutionSteps = project.service<TaskBasedAssistant>().getSolutionSteps(task.id)?.value ?: "",
         userCode = eduState.taskFile.getVirtualFile(project)?.getTextFromTaskTextFile() ?: "",
         nextStepCodeHint = response.codeHint ?: "",
         nextStepTextHint = response.textHint ?: "",
@@ -97,15 +94,13 @@ class AutoHintValidationAction : ValidationAction<ValidationOfHintsDataframeReco
         manualValidationRecord.taskDescription,
         manualValidationRecord.nextStepTextHint,
         manualValidationRecord.nextStepCodeHint,
-        manualValidationRecord.userCode,
-        manualValidationRecord.solutionSteps
+        manualValidationRecord.userCode
       )
       val dataframeRecord = Gson().fromJson(hintsValidation, ValidationOfHintsDataframeRecord::class.java)
       return dataframeRecord.apply {
         taskId = manualValidationRecord.taskId
         taskName = manualValidationRecord.taskName
         this.taskDescription = manualValidationRecord.taskDescription
-        this.solutionSteps = manualValidationRecord.solutionSteps
         this.userCode = manualValidationRecord.userCode
         nextStepTextHint = manualValidationRecord.nextStepTextHint
         nextStepCodeHint = manualValidationRecord.nextStepCodeHint
@@ -116,7 +111,6 @@ class AutoHintValidationAction : ValidationAction<ValidationOfHintsDataframeReco
         taskId = manualValidationRecord.taskId,
         taskName = manualValidationRecord.taskName,
         taskDescription = manualValidationRecord.taskDescription,
-        solutionSteps = "${EduAndroidAiAssistantValidationBundle.message("action.validation.error")} ${e.message}"
       )
     }
   }
@@ -180,9 +174,6 @@ class AutoHintValidationAction : ValidationAction<ValidationOfHintsDataframeReco
       },
       length = calculateCriterionAccuracy(manualRecords, autoRecords, ValidationOfHintsDataframeRecord::length) { f, s ->
         areSameLengthCriteria(f, s!!)
-      },
-      correlationWithSteps = calculateCriterionAccuracy(manualRecords, autoRecords, ValidationOfHintsDataframeRecord::correlationWithSteps) { f, s ->
-        areSameCriteria(f, s!!)
       }
     )
 
@@ -198,7 +189,6 @@ class AutoHintValidationAction : ValidationAction<ValidationOfHintsDataframeReco
       codeQuality = calculateCriterionResultAccuracy(records, ValidationOfHintsDataframeRecord::codeQuality) { f -> isCorrectAnswer(f) },
       kotlinStyle = calculateCriterionResultAccuracy(records, ValidationOfHintsDataframeRecord::kotlinStyle) { f -> isCorrectAnswer(f) },
       length = calculateCriterionResultAccuracy(records, ValidationOfHintsDataframeRecord::length) { f -> isCorrectLength(f) },
-      correlationWithSteps = calculateCriterionResultAccuracy(records, ValidationOfHintsDataframeRecord::correlationWithSteps) { f -> isCorrectAnswer(f) },
     )
   }
 }

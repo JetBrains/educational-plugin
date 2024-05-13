@@ -53,8 +53,6 @@ class CodeHintValidationAction : CodeValidationAction<CodeHintDataframeRecord>()
         taskId = task.id,
         taskName = task.name,
         taskDescription = baseAssistantInfoStorage.taskProcessor.getTaskTextRepresentation(),
-        taskAnalysisPrompt = response.prompts.getOrDefault("taskAnalysisPrompt", ""),
-        steps = baseAssistantInfoStorage.assistant.getSolutionSteps(task.id)?.value,
         codeHintPrompt = response.prompts.getOrDefault("nextStepCodeHintPrompt", ""),
         userCode = userCode,
         generatedCode = response.codeHint ?: "",
@@ -67,8 +65,6 @@ class CodeHintValidationAction : CodeValidationAction<CodeHintDataframeRecord>()
         taskId = task.id,
         taskName = task.name,
         taskDescription = baseAssistantInfoStorage.taskProcessor.getTaskTextRepresentation(),
-        taskAnalysisPrompt = response.prompts.getOrDefault("taskAnalysisPrompt", ""),
-        steps = baseAssistantInfoStorage.assistant.getSolutionSteps(task.id)?.value,
         codeHintPrompt = response.prompts.getOrDefault("nextStepCodeHintPrompt", ""),
         userCode = userCode,
         error = e

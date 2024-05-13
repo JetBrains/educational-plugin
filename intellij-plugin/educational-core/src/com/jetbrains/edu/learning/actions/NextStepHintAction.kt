@@ -166,10 +166,6 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
         |
       """.trimMargin()
     )
-    val taskProcessor = TaskProcessor(task)
-    if (taskProcessor.needToUpdateSolutionSteps()) {
-      state.project.service<TaskBasedAssistant>().launchGetTaskAnalysis(taskProcessor)
-    }
     closeNextStepHintNotificationPanel()
   }
 

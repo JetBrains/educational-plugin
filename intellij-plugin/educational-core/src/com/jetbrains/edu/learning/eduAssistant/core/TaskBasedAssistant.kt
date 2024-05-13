@@ -5,87 +5,26 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduState
-import com.jetbrains.edu.learning.courseFormat.eduAssistant.AiAssistantState
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.courseFormat.ext.project
-import com.jetbrains.edu.learning.eduAssistant.context.buildAuthorSolutionContext
 import com.jetbrains.edu.learning.eduAssistant.context.function.signatures.getFunctionSignaturesFromGeneratedCode
 import com.jetbrains.edu.learning.eduAssistant.grazie.AiPlatformAdapter
 import com.jetbrains.edu.learning.eduAssistant.grazie.AiPlatformException
-import com.jetbrains.edu.learning.eduAssistant.grazie.GenerationContextProfile.*
+import com.jetbrains.edu.learning.eduAssistant.grazie.GenerationContextProfile.NEXT_STEP_CODE_HINT
+import com.jetbrains.edu.learning.eduAssistant.grazie.GenerationContextProfile.NEXT_STEP_TEXT_HINT
 import com.jetbrains.edu.learning.eduAssistant.inspection.applyInspections
 import com.jetbrains.edu.learning.eduAssistant.log.Loggers
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
 
 @Service(Service.Level.PROJECT)
-class TaskBasedAssistant(
-  private val scope: CoroutineScope
-) : Assistant {
-  fun launchGetTaskAnalysis(taskProcessor: TaskProcessor, forcedReload: Boolean = false) =
-    scope.launch {
-      getTaskAnalysis(taskProcessor, forcedReload)
-    }
-
-  suspend fun getTaskAnalysis(taskProcessor: TaskProcessor, forcedReload: Boolean = false): SolutionSteps? {
-    val task = taskProcessor.task
-    if (taskProcessor.getFailureMessage() == EduCoreBundle.message("error.execution.failed")) return null
-
-    val solutionStepsProxy = taskId2SolutionSteps.getOrPut(task.id, ::SolutionStepsProxy)
-    val solutionSteps = solutionStepsProxy.getOrSetValue(forcedReload) {
-      Loggers.taskAnalysisTimingLogger.info("Starting getTaskAnalysis function for task-id: ${task.id}")
-
-      if (task.authorSolutionContext == null) {
-        task.authorSolutionContext = task.buildAuthorSolutionContext()
-      }
-
-      val hintContext = buildHintContext(taskProcessor)
-      val taskAnalysisPrompt = buildTaskAnalysisPrompt(hintContext)
-
-      logEduAssistantInfo(
-        taskProcessor,
-        """Task analysis prompt:
-          |$taskAnalysisPrompt
-        """.trimMargin()
-      )
-
-      Loggers.taskAnalysisTimingLogger.info("Requesting model for task analysis for task-id: ${task.id}")
-
-      val aiResponse = AiPlatformAdapter.chat(
-        userPrompt = taskAnalysisPrompt,
-        generationContextProfile = SOLUTION_STEPS
-      ).deleteNoCodeSteps()
-      logEduAssistantInfo(
-        taskProcessor,
-        """Task analysis response:
-          |$aiResponse
-        """.trimMargin()
-      )
-      Loggers.taskAnalysisTimingLogger.info("Completed task analysis for task-id: ${task.id}")
-      return@getOrSetValue SolutionSteps(aiResponse, hintContext, taskAnalysisPrompt)
-    }
-    return solutionSteps
-  }
-
-  private fun String.deleteNoCodeSteps(): String {
-    val responseWithoutNonCodeSteps = this.replace(
-      Regex("(?i)\\d+\\..*?no-code[\\s\\S]*?(?=\\n\\d+\\.|$)"),
-      ""
-    ).lines().filterNot { it.isBlank() }.joinToString(System.lineSeparator())
-    var index = 1
-    return Regex("""(?m)^\d+\.""").replace(responseWithoutNonCodeSteps) { "${index++}." }
-  }
-
-  fun String.parseSteps() = deleteNoCodeSteps().lines()
-
+class TaskBasedAssistant : Assistant {
   override suspend fun getHint(taskProcessor: TaskProcessor, state: EduState, userCode: String?): AssistantResponse {
     val task = taskProcessor.task
     logEduAssistantInfo(taskProcessor, "Next step hint request")
@@ -110,19 +49,9 @@ class TaskBasedAssistant(
         """.trimMargin()
       )
 
-      Loggers.hintTimingLogger.info("Retrieving the task analysis for task-id: ${task.id}")
-      // The task files were not changed and the user asked about help again
-      val solutionSteps = if (!taskProcessor.hasFilesChanged() && task.aiAssistantState == AiAssistantState.HelpAsked) {
-        getTaskAnalysis(taskProcessor, forcedReload = true)
-      } else {
-        getSolutionSteps(task.id)?.also { it.hintContext.log() } ?: getTaskAnalysis(taskProcessor)
-      } ?: return AssistantResponse(
-        assistantError = AssistantError.NoCompiledCode
-      )
-
-      val nextStepCodeHintPrompt = generateCodeHintPrompt(taskProcessor, null, solutionSteps.value, codeStr)
+      val nextStepCodeHintPrompt = generateCodeHintPrompt(taskProcessor, null, codeStr)
       val codeHint = generateCodeHint(taskProcessor, state, nextStepCodeHintPrompt, codeStr)
-      return generateFinalHintsAndResponse(taskProcessor, solutionSteps.prompt, codeHint, codeStr, nextStepCodeHintPrompt, state, solutionSteps.value)
+      return generateFinalHintsAndResponse(taskProcessor, codeHint, codeStr, nextStepCodeHintPrompt, state)
     }
     // TODO: Handle more exceptions with AiPlatformException
     catch (e: AiPlatformException) {
@@ -169,14 +98,15 @@ class TaskBasedAssistant(
     }
   }
 
-  private fun generateCodeHintPrompt(taskProcessor: TaskProcessor, nextStepTextHint: String?, taskAnalysis: String, codeStr: String): String {
+  private fun generateCodeHintPrompt(taskProcessor: TaskProcessor, nextStepTextHint: String?, codeStr: String): String {
     val task = taskProcessor.task
     Loggers.hintTimingLogger.info("Retrieving the next step code hint prompt for task-id: ${task.id}")
     val language = task.course.languageDisplayName.lowercase()
     val nextStepCodeHintPrompt = nextStepTextHint?.let {
       buildNextStepCodeHintPromptFromTextHint(taskProcessor, it, codeStr, language)
     } ?: run {
-      buildNextStepCodeHintPrompt(taskProcessor, taskAnalysis, codeStr, language)
+      val hintContext = buildHintContext(taskProcessor)
+      buildNextStepCodeHintPrompt(taskProcessor, codeStr, language, hintContext)
     }
     logEduAssistantInfo(
       taskProcessor,
@@ -219,12 +149,10 @@ class TaskBasedAssistant(
 
   private suspend fun generateFinalHintsAndResponse(
     taskProcessor: TaskProcessor,
-    taskAnalysisPrompt: String,
     codeHint: String?,
     codeStr: String,
     codeHintPrompt: String,
     state: EduState,
-    taskAnalysis: String
   ): AssistantResponse {
     val task = taskProcessor.task
     Loggers.hintTimingLogger.info("Retrieving the text hint prompt for task-id: ${task.id}")
@@ -232,7 +160,8 @@ class TaskBasedAssistant(
       buildNextStepTextHintPrompt(it, codeStr)
     } ?: run {
       logEduAssistantInfo(taskProcessor, "The code hint was not generated, so the text hint is generated first")
-      buildNextStepTextHintPromptIfNoCodeHintIsGenerated(taskProcessor, taskAnalysis, codeStr)
+      val hintContext = buildHintContext(taskProcessor)
+      buildNextStepTextHintPromptIfNoCodeHintIsGenerated(taskProcessor, codeStr, hintContext)
     }
     logEduAssistantInfo(
       taskProcessor,
@@ -251,7 +180,7 @@ class TaskBasedAssistant(
     Loggers.hintTimingLogger.info("Received the text hint for task-id: ${task.id}")
 
     val nextStepCodeHintPrompt = codeHint?.let { codeHintPrompt } ?: run {
-      generateCodeHintPrompt(taskProcessor, nextStepTextHint, taskAnalysis, codeStr)
+      generateCodeHintPrompt(taskProcessor, nextStepTextHint, codeStr)
     }
     val nextStepCodeHint = codeHint ?: run {
       logEduAssistantInfo(taskProcessor, "The code hint is generated for the second time")
@@ -259,7 +188,6 @@ class TaskBasedAssistant(
     }
 
     val prompts = mapOf(
-      "taskAnalysisPrompt" to taskAnalysisPrompt,
       "nextStepTextHintPrompt" to nextStepTextHintPrompt,
       "nextStepCodeHintPrompt" to nextStepCodeHintPrompt
     )
@@ -310,12 +238,25 @@ class TaskBasedAssistant(
     Avoid explaining why the modifications are needed.
   """.trimIndent()
 
-  private fun buildNextStepTextHintPromptIfNoCodeHintIsGenerated(taskProcessor: TaskProcessor, taskAnalysis: String, codeStr: String) = """
-    Based on a sequence of steps to solve a coding problem, determine the next step that must be taken to complete the task.
+  private fun buildNextStepTextHintPromptIfNoCodeHintIsGenerated(
+     taskProcessor: TaskProcessor,
+     codeStr: String,
+     hintContext: HintContext
+  ) = """
+    Based on a coding problem, determine the next step that must be taken to complete the task.
     Here is the list of steps that solves the problem and the code, all delimited with <>:
     
-    How to solve the task:
-    <$taskAnalysis>
+    Task: <${hintContext.taskStr}>
+    
+    Set of functions that might be implemented: <${hintContext.functionsSetStrFromAuthorSolution}>
+    
+    Existing functions within the user's implementation can be used for the solution, without needing to describe their implementations: <${hintContext.functionsSetStrFromUserSolution}>
+    
+    Hints: <${hintContext.hintsStr}>
+    
+    Theory: <${hintContext.theoryStr}>
+    
+    The solution can use only these strings: <${hintContext.availableForSolutionStrings ?: "None"}>
     
     The code:
     <$codeStr>
@@ -366,15 +307,28 @@ class TaskBasedAssistant(
   """.trimIndent()
 
   private fun buildNextStepCodeHintPrompt(
-    taskProcessor: TaskProcessor, taskAnalysis: String, codeStr: String, language: String
+    taskProcessor: TaskProcessor,
+    codeStr: String,
+    language: String,
+    hintContext: HintContext
   ) = formatCodeResponsePrompt("""
-    Generate a modified version of the provided student's code that incorporates the next step towards the solution based on the provided solution steps. 
+    Generate a modified version of the provided student's code that incorporates the next step towards the solution for the described coding task. 
     The modified code should not be a complete solution but should represent the next logical step that the student needs to take to solve the task. 
     Try to maintain the original structure of the student's code and focus especially on addressing common errors, while guiding the student towards the correct implementation.
-    Here is the list of steps that solves the task and the code, all delimited with <>:
+    Here is information about the task and the student's code, all blocks delimited with <>:
     
-    The list of steps that solves the task:
-    <$taskAnalysis>
+    Task: <${hintContext.taskStr}>
+    
+    Set of functions that might be implemented: <${hintContext.functionsSetStrFromAuthorSolution}>
+    
+    Existing functions within the user's implementation can be used for the solution, without needing to describe their implementations: <${hintContext.functionsSetStrFromUserSolution}>
+    
+    Hints: <${hintContext.hintsStr}>
+    
+    Theory: <${hintContext.theoryStr}>
+    
+    The solution can use only these strings: <${hintContext.availableForSolutionStrings ?: "None"}>
+
   """.trimIndent(), codeStr, language, taskProcessor)
 
   private fun buildNextStepCodeHintPromptFromTextHint(

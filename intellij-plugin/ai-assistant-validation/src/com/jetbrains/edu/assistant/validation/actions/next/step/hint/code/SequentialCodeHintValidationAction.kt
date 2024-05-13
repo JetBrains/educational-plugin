@@ -86,16 +86,9 @@ class SequentialCodeHintValidationAction : CodeValidationAction<MultipleCodeHint
     task.resetStatus()
 
     val records = mutableListOf<MultipleCodeHintDataframeRecord>()
-
-    baseAssistantInfoStorage.assistant.getTaskAnalysis(baseAssistantInfoStorage.taskProcessor)
-    val generatedSolutionSteps = baseAssistantInfoStorage.assistant.getSolutionSteps(task.id)?.value
-    generatedSolutionSteps ?: error("Cannot get generate solution steps for task ${task.name}")
     var currentUserCode = userCode
-    val maxHintSteps = (with(baseAssistantInfoStorage.assistant) {
-      generatedSolutionSteps.parseSteps().size
-    } * 1.5).toInt()
 
-    for (hintIndex in 1..maxHintSteps) {
+    for (hintIndex in 1..MAX_HINTS) {
       var response: AssistantResponse? = null
       try {
         runBlockingCancellable {
@@ -130,8 +123,6 @@ class SequentialCodeHintValidationAction : CodeValidationAction<MultipleCodeHint
             taskId = task.id,
             taskName = task.name,
             taskDescription = baseAssistantInfoStorage.taskProcessor.getTaskTextRepresentation(),
-            taskAnalysisPrompt = response?.prompts?.getOrDefault("taskAnalysisPrompt", ""),
-            steps = generatedSolutionSteps,
             codeHintPrompt = response?.prompts?.getOrDefault("nextStepCodeHintPrompt", ""),
             userCode = userCode,
             generatedCode = response?.codeHint,
@@ -166,5 +157,6 @@ class SequentialCodeHintValidationAction : CodeValidationAction<MultipleCodeHint
 
   companion object {
     private const val GETTING_HINT_MESSAGE = "Getting Hint"
+    private const val MAX_HINTS = 10
   }
 }
