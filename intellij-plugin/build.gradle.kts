@@ -695,6 +695,8 @@ project("Edu-Android") {
 
       intellijPlugins(jvmPlugins)
       intellijPlugin(androidPlugin)
+      // TODO: make it test-only plugin
+      intellijPlugin(kotlinPlugin)
     }
     implementation(project(":intellij-plugin:educational-core"))
     implementation(project(":intellij-plugin:jvm-core"))
