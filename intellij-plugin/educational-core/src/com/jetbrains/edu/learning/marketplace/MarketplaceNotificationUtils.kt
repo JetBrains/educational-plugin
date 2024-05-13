@@ -11,7 +11,9 @@ import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
+import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.NlsContexts
+import com.intellij.ui.JBAccountInfoService
 import com.jetbrains.edu.coursecreator.CCNotificationUtils
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
@@ -30,6 +32,7 @@ object MarketplaceNotificationUtils {
   }
 
   fun showReloginToJBANeededNotification(action: AnAction) {
+    Messages.showInfoMessage("JBAccountInfoService = ${JBAccountInfoService.getInstance()}, userData = ${JBAccountInfoService.getInstance()?.userData}", "JB account details")
     val notification = Notification(
       JETBRAINS_ACADEMY_GROUP_ID,
       EduCoreBundle.message("jba.relogin.needed.title"),
