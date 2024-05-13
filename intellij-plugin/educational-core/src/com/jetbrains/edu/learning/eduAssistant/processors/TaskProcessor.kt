@@ -11,7 +11,6 @@ import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.eduAssistant.AiAssistantState
 import com.jetbrains.edu.learning.courseFormat.eduAssistant.FunctionSignature
 import com.jetbrains.edu.learning.courseFormat.eduAssistant.SignatureSource
 import com.jetbrains.edu.learning.courseFormat.ext.*
@@ -32,15 +31,6 @@ class TaskProcessor(val task: Task) {
   // Only for the Kotlin Onboarding Introduction: https://plugins.jetbrains.com/plugin/21067-kotlin-onboarding-introduction
   // and for Edu tasks
   fun isNextStepHintApplicable() = task.course.id == 21067 && task is EduTask
-
-  fun needToUpdateSolutionSteps() =
-    if (task.aiAssistantState == AiAssistantState.HelpAsked && task.rejectedHintsCount >= REJECTED_HINTS_LIMIT) {
-      task.rejectedHintsCount = 0
-      true
-    } else {
-      task.rejectedHintsCount++
-      false
-    }
 
   fun isGetHintButtonShown() = isNextStepHintApplicable() && task.course.courseMode == CourseMode.STUDENT && task.status != CheckStatus.Solved // TODO: when should we show this button?
 
@@ -115,14 +105,6 @@ class TaskProcessor(val task: Task) {
         }
       }
     }
-  }
-
-  fun hasFilesChanged(): Boolean {
-    val project = task.project ?: return false
-    /* TODO: noticed unexpected behaviour with taskFiles: every time the hint is requested, a new taskFile in "test" directory is added...
-    *  This prevents solution steps from being regenerated because hasFilesChanged is always true
-    */
-    return task.taskFiles.values.any { !isFileUnchanged(it, project) }
   }
 
   fun getShortFunctionFromSolutionIfRecommended(code: String, project: Project, language: Language, functionName: String, taskFile: TaskFile): String? {

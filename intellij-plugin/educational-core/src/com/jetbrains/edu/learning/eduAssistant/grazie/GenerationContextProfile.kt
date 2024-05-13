@@ -9,7 +9,6 @@ import ai.grazie.model.llm.prompt.LLMPromptID
 import com.jetbrains.edu.learning.ai.utils.GrazieLlmProfileProvider
 
 enum class GenerationContextProfile(private val llmProfileId: String) {
-  SOLUTION_STEPS(GrazieLlmProfileProvider.getSolutionStepsProfile()),
   NEXT_STEP_TEXT_HINT(GrazieLlmProfileProvider.getNextStepTextHintProfile()),
   NEXT_STEP_CODE_HINT(GrazieLlmProfileProvider.getNextStepCodeHintProfile()),
   AUTO_VALIDATION(GrazieLlmProfileProvider.getAutoValidationProfile());

@@ -193,33 +193,6 @@ class TaskBasedAssistant : Assistant {
     }
   }
 
-  private fun buildTaskAnalysisPrompt(
-    taskStr: String,
-    functionsSetStrFromUserSolution: String?,
-    functionsSetStrFromAuthorSolution: String?,
-    hintsStr: String,
-    theoryStr: String,
-    availableForSolutionStrings: String?,
-    language: String
-  ) = """
-    Generate an ordered list of steps to solve the described coding task with each step marked as either "code" or "no-code" in the title. For example, "no-code" steps might involve actions like "End ... function", "Test ... function", "Read the task description and understand the requirements". 
-    Each step is a detailed explanation of one distinct concrete action or operation that is understandable for beginners in $language. Use built-in $language functions in your solution. Do not write any example code blocks, except names of functions that can be used in the solution.
-    Be very detailed and precise, include at least 6 steps in the list, the more and clearer the better. 
-    Here is information about the task, all blocks delimited with <>:
-    
-    Task: <$taskStr>
-    
-    Set of functions that might be implemented: <$functionsSetStrFromAuthorSolution>
-    
-    Existing functions within the user's implementation can be used for the solution, without needing to describe their implementations: <$functionsSetStrFromUserSolution>
-    
-    Hints: <$hintsStr>
-    
-    Theory: <$theoryStr>
-    
-    The solution can use only these strings: <${availableForSolutionStrings ?: "None"}>
-  """.trimIndent()
-
   private fun buildNextStepTextHintPrompt(nextStepCodeHint: String, codeStr: String) = """
     Based on the given code and the improved version of the code, provide a concise textual hint that directly guides to improve the given code.
     Here is the current code and the improved version of the code, all delimited with <>:

@@ -11,10 +11,6 @@ object Loggers {
     EduAssistantLoggerFactory.getLoggerInstanceOrNull() ?: default
   }
 
-  val taskAnalysisTimingLogger: Logger by lazyPub {
-    TaskAnalysisTimingLoggerFactory.getLoggerInstanceOrNull() ?: default
-  }
-
   val hintTimingLogger: Logger by lazyPub {
     HintTimingLoggerFactory.getLoggerInstanceOrNull() ?: default
   }
