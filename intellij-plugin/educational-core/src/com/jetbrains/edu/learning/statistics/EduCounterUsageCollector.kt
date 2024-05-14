@@ -18,6 +18,9 @@ import com.jetbrains.edu.learning.newproject.ui.BrowseCoursesDialog
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationEvent.*
+import com.jetbrains.edu.learning.statistics.EduFields.COURSE_MODE_FIELD
+import com.jetbrains.edu.learning.statistics.EduFields.ITEM_TYPE_FIELD
+import com.jetbrains.edu.learning.statistics.EduFields.LANGUAGE_FIELD
 import com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.HyperskillPlatformProvider
 
 /**
@@ -108,12 +111,10 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
   }
 
   companion object {
-    private const val MODE = "mode"
     private const val SOURCE = "source"
     private const val SUCCESS = "success"
     private const val EVENT = "event"
     private const val TYPE = "type"
-    private const val LANGUAGE = "language"
     private const val EDU_TAB = "tab"
 
     private val GROUP = EventLogGroup(
@@ -121,27 +122,6 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
       "The metric is reported in case a user has called the corresponding JetBrains Academy features.",
       15,
     )
-
-    private val COURSE_MODE_FIELD = EventFields.Enum<CourseMode>(MODE)
-    private val ITEM_TYPE_FIELD = EventFields.String(TYPE, listOf("CheckiO",
-                                                                  "PyCharm",
-                                                                  "Coursera",
-                                                                  "Hyperskill",
-                                                                  "Marketplace",
-                                                                  "Codeforces",
-                                                                  "section",
-                                                                  "framework",
-                                                                  "lesson",
-                                                                  "edu",
-                                                                  "ide",
-                                                                  "choice",
-                                                                  "code",
-                                                                  "output",
-                                                                  "theory"))
-    private val LANGUAGE_FIELD = EventFields.String(LANGUAGE,
-                                                    listOf("JAVA", "kotlin", "Python", "Scala",
-                                                           "JavaScript", "Rust", "ObjectiveC", "go", "PHP"))
-
 
     private val TASK_NAVIGATION_EVENT = GROUP.registerEvent(
       "navigate.to.task",
