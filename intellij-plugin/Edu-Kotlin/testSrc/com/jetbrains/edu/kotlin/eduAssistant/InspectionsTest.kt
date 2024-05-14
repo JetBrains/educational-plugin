@@ -4,9 +4,11 @@ import com.jetbrains.edu.jvm.slow.checker.JdkCheckerTestBase
 import com.jetbrains.edu.kotlin.eduAssistant.courses.createKotlinCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.eduAssistant.inspection.applyInspections
+import org.junit.Test
 
 class InspectionsTest : JdkCheckerTestBase() {
 
+  @Test
   fun testInlineVariableInspection() {
     val code = """
       private fun logError(error: Exception, filePath: String) {
@@ -22,6 +24,7 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected, applyInspections(code, project, language))
   }
 
+  @Test
   fun testImplicitThisAndPublicApiImplicitTypeInspections() {
     val code = """
       class Foo {
@@ -44,6 +47,7 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected, applyInspections(code, project, language))
   }
 
+  @Test
   fun testRedundantNullableReturnTypeInspection() {
     val code = """
       fun greeting(): String? = "Hello!"
@@ -54,6 +58,7 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected, applyInspections(code, project, language))
   }
 
+  @Test
   fun testRedundantSemicolonInspection() {
     val code = """
       val myMap = mapOf("one" to 1, "two" to 2);
@@ -64,6 +69,7 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected, applyInspections(code, project, language))
   }
 
+  @Test
   fun testAddOperatorModifierInspection() {
     val code = """
       class Complex(val real: Double, val imaginary: Double) {
@@ -80,6 +86,7 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected, applyInspections(code, project, language))
   }
 
+  @Test
   fun testAddVarianceModifierInspection() {
     val code = """
       class Box<T>(val obj: T)
@@ -106,6 +113,7 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected, applyInspections(code, project, language))
   }
 
+  @Test
   fun testRedundantIfInspection() {
     val code = """
       class Example {
@@ -132,6 +140,7 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected, applyInspections(code, project, language))
   }
 
+  @Test
   fun testRemoveToStringInStringTemplateInspection() {
     val code = """
       class MyClass {
@@ -154,6 +163,7 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected, applyInspections(code, project, language))
   }
 
+  @Test
   fun testCanBeValInspection() {
     val code = """
       fun foo() {
@@ -170,6 +180,7 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected, applyInspections(code, project, language))
   }
 
+  @Test
   fun testReplaceGetOrSetInspection() {
     val code = """
       class Test {
@@ -192,6 +203,7 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected, applyInspections(code, project, language))
   }
 
+  @Test
   fun testConvertReferenceToLambdaInspection() {
     val code = """
       fun checkIdentifier(id: String) {
@@ -216,6 +228,7 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected, applyInspections(code, project, language))
   }
 
+  @Test
   fun testRemoveRedundantQualifierNameInspection() {
     val code = """
       package my.simple.name
@@ -238,6 +251,7 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected, applyInspections(code, project, language))
   }
 
+  @Test
   fun testConvertTwoComparisonsToRangeCheckInspection() {
     val code = """
       fun checkMonth(month: Int): Boolean {
@@ -252,6 +266,7 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected, applyInspections(code, project, language))
   }
 
+  @Test
   fun testIntroduceWhenSubjectInspection() {
     val code = """
       fun test(obj: Any): String {
@@ -274,6 +289,7 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected, applyInspections(code, project, language))
   }
 
+  @Test
   fun testLoopToCallChainInspection() {
     val code = """
       fun foo(list: List<String>): List<Int> {
@@ -297,6 +313,7 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected.reformatCode(project), applyInspections(code, project, language).reformatCode(project))
   }
 
+  @Test
   fun testMayBeConstantInspection() {
     val code = """
       val foo: Int = 1
@@ -307,6 +324,7 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected, applyInspections(code, project, language))
   }
 
+  @Test
   fun testMoveVariableDeclarationIntoWhenInspection() {
     val code = """
       fun someCalc(x: Int) = x * 42
@@ -334,6 +352,7 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected, applyInspections(code, project, language))
   }
 
+  @Test
   fun testRedundantVisibilityModifierInspection() {
     val code = """
       class A {
@@ -352,6 +371,7 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected, applyInspections(code, project, language))
   }
 
+  @Test
   fun testRemoveCurlyBracesFromTemplateInspection() {
     val code = """
       fun redundant() {
@@ -368,6 +388,7 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected, applyInspections(code, project, language))
   }
 
+  @Test
   fun testReplaceCallWithBinaryOperatorInspection() {
     val code = """
       fun test(): Boolean {
@@ -382,6 +403,7 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected, applyInspections(code, project, language))
   }
 
+  @Test
   fun testReplaceManualRangeWithIndicesCallsInspection() {
     val code = """
       fun main(args: Array<String>) {
@@ -400,6 +422,7 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected, applyInspections(code, project, language))
   }
 
+  @Test
   fun testReplaceRangeToWithUntilInspection() {
     val code = """
       fun foo(a: Int) {
@@ -418,6 +441,7 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected, applyInspections(code, project, language))
   }
 
+  @Test
   fun testLiftReturnOrAssignmentInspection() {
     val code = """
       fun foo(arg: Int): String {
@@ -440,6 +464,7 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected, applyInspections(code, project, language))
   }
 
+  @Test
   fun testRemoveSingleExpressionStringTemplateInspection() {
     val code = """
       const val x: String = "Hello"
@@ -452,6 +477,7 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected, applyInspections(code, project, language))
   }
 
+  @Test
   fun testReplaceSizeCheckWithIsNotEmptyInspection() {
     val code = """
       fun foo(): Boolean {
@@ -468,6 +494,7 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected, applyInspections(code, project, language))
   }
 
+  @Test
   fun testReplaceSizeZeroCheckWithIsEmptyInspection() {
     val code = """
       fun foo(): Boolean {
@@ -484,6 +511,7 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected, applyInspections(code, project, language))
   }
 
+  @Test
   fun testSelfAssignmentInspection() {
     val code = """
       fun test() {
@@ -499,6 +527,7 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected, applyInspections(code, project, language))
   }
 
+  @Test
   fun testSimplifyBooleanWithConstantsInspection() {
     val code = """
       fun use(arg: Boolean) {
@@ -517,6 +546,7 @@ class InspectionsTest : JdkCheckerTestBase() {
     assertEquals(expected, applyInspections(code, project, language))
   }
 
+  @Test
   fun testReplaceToStringWithStringTemplateInspection() {
     val code = """
       fun test(): String {
