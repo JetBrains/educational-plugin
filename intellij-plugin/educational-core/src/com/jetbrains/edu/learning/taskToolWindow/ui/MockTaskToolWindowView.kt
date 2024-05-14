@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.taskToolWindow.ui
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
+import com.intellij.ui.InlineBanner
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
@@ -27,6 +28,5 @@ class MockTaskToolWindowView(project: Project) : TaskToolWindowView(project) {
   override fun scrollNavMap(task: Task?) {}
   override fun checkStarted(task: Task, startSpinner: Boolean) {}
   override fun checkFinished(task: Task, checkResult: CheckResult) {}
-
-  override fun addInlineBanner(inlineBanner: SolutionSharingInlineBanner) {}
+  override fun addInlineBanner(inlineBanner: InlineBanner) {}
 }

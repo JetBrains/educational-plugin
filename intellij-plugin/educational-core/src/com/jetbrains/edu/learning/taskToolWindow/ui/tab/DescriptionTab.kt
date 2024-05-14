@@ -2,13 +2,13 @@ package com.jetbrains.edu.learning.taskToolWindow.ui.tab
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.ui.InlineBanner
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.taskToolWindow.ui.JCEFToolWindow
-import com.jetbrains.edu.learning.taskToolWindow.ui.SolutionSharingInlineBanner
 import com.jetbrains.edu.learning.taskToolWindow.ui.SwingToolWindow
 import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckPanel
 import java.awt.BorderLayout
@@ -84,7 +84,7 @@ class DescriptionTab(project: Project) : TaskToolWindowTab(project, TabType.DESC
 
   fun checkStarted(startSpinner: Boolean) = checkPanel.checkStarted(startSpinner)
   
-  fun addInlineBanner(inlineBanner: SolutionSharingInlineBanner) {
+  fun addInlineBanner(inlineBanner: InlineBanner) {
     val taskInfoPanel = taskTextToolWindow.taskInfoPanel
     taskInfoPanel.add(inlineBanner, BorderLayout.SOUTH)
     taskInfoPanel.validate()

@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.taskToolWindow.ui
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
+import com.intellij.ui.InlineBanner
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.LightTestAware
@@ -36,8 +37,7 @@ abstract class TaskToolWindowView(val project: Project) : LightTestAware {
   abstract fun scrollNavMap(task: Task?)
   abstract fun checkStarted(task: Task, startSpinner: Boolean = false)
   abstract fun checkFinished(task: Task, checkResult: CheckResult)
-
-  abstract fun addInlineBanner(inlineBanner: SolutionSharingInlineBanner)
+  abstract fun addInlineBanner(inlineBanner: InlineBanner)
 
   @TestOnly
   override fun cleanUpState() {
