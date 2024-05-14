@@ -12,8 +12,11 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.JCEFToolWindow
 import com.jetbrains.edu.learning.taskToolWindow.ui.SwingToolWindow
 import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckPanel
 import java.awt.BorderLayout
+import java.awt.event.*
+import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.JSeparator
+import kotlin.collections.ArrayDeque
 
 /**
  * Constructor is called exclusively in [com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabManager.createTab]
@@ -85,9 +88,36 @@ class DescriptionTab(project: Project) : TaskToolWindowTab(project, TabType.DESC
   fun checkStarted(startSpinner: Boolean) = checkPanel.checkStarted(startSpinner)
   
   fun addInlineBanner(inlineBanner: InlineBanner) {
+    val layout = taskTextToolWindow.taskInfoPanel.layout as? BorderLayout ?: return
+    val currentInlineBanner = layout.getLayoutComponent(BorderLayout.SOUTH) as? JComponent
+
+    if (currentInlineBanner != null) {
+      displayNextListener.inlineBanners.add(inlineBanner)
+      if (!displayNextListener.isAdded) {
+        currentInlineBanner.parent.addContainerListener(displayNextListener)
+        displayNextListener.isAdded = true
+      }
+    }
+    else {
+      displayInlineBanner(inlineBanner)
+    }
+  }
+
+  private val displayNextListener = object : ContainerAdapter() {
+
+    val inlineBanners: ArrayDeque<InlineBanner> = ArrayDeque()
+
+    var isAdded: Boolean = false
+
+    override fun componentRemoved(e: ContainerEvent) {
+      val nextInlineBanner = inlineBanners.removeFirstOrNull() ?: return
+      displayInlineBanner(nextInlineBanner)
+    }
+  }
+
+  private fun displayInlineBanner(inlineBanner: InlineBanner) {
     val taskInfoPanel = taskTextToolWindow.taskInfoPanel
     taskInfoPanel.add(inlineBanner, BorderLayout.SOUTH)
     taskInfoPanel.validate()
   }
-
 }
