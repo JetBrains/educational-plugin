@@ -19,7 +19,7 @@ import javax.swing.JEditorPane
 object SolutionSharingInlineBanners {
 
   fun promptToEnableSolutionSharing(project: Project) {
-    val inlineBanner = SolutionSharingInlineBanner(EditorNotificationPanel.Status.Info).apply {
+    val inlineBanner = InlineBanner(EditorNotificationPanel.Status.Info).apply {
       setMessage(EduCoreBundle.message("marketplace.solutions.sharing.inline.banner.prompt.action.text"))
       addAction(EduCoreBundle.message("marketplace.solutions.sharing.inline.banner.prompt.description")) {
         CompletableFuture.supplyAsync {
@@ -46,7 +46,7 @@ object SolutionSharingInlineBanners {
   }
 
   fun showSuccessSolutionSharingEnabling(project: Project) {
-    val inlineBanner = SolutionSharingInlineBanner(EditorNotificationPanel.Status.Success).apply {
+    val inlineBanner = InlineBanner(EditorNotificationPanel.Status.Success).apply {
       // This is a local fix, which will also be available on the platform soon.
       val editorPane = UIUtil.findComponentOfType(this, JEditorPane::class.java)
       editorPane?.editorKit = HTMLEditorKitBuilder().build()
@@ -61,11 +61,9 @@ object SolutionSharingInlineBanners {
       return
     }
 
-    val inlineBanner = SolutionSharingInlineBanner(EditorNotificationPanel.Status.Error).apply {
+    val inlineBanner = InlineBanner(EditorNotificationPanel.Status.Error).apply {
       setMessage(EduCoreBundle.message("marketplace.solutions.sharing.inline.banner.failure.description"))
     }
     TaskToolWindowView.getInstance(project).addInlineBanner(inlineBanner)
   }
 }
-
-class SolutionSharingInlineBanner(status: EditorNotificationPanel.Status) : InlineBanner(status)
