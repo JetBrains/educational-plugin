@@ -72,9 +72,7 @@ class CheckAction() : ActionWithProgressIcon(), DumbAware {
     }
     CheckDetailsView.getInstance(project).clear()
     FileDocumentManager.getInstance().saveAllDocuments()
-    val editor = FileEditorManager.getInstance(project).selectedEditor ?: return
-    val virtualFile = editor.file ?: return
-    val task = virtualFile.getContainingTask(project) ?: return
+    val task = TaskToolWindowView.getInstance(project).currentTask ?: return
     if (!CheckActionState.getInstance(project).doLock()) {
       e.dataContext.showPopup(message("action.check.already.running"))
       return

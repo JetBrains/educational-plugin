@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask.Compani
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillTaskLink
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import org.jetbrains.annotations.NonNls
 
 
@@ -20,7 +21,7 @@ class OpenTaskOnSiteAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.o
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    val task = project.getCurrentTask() ?: return
+    val task = TaskToolWindowView.getInstance(project).currentTask ?: return
     val link = when {
       task is CodeforcesTask -> codeforcesTaskLink(task)
       task.course is HyperskillCourse -> hyperskillTaskLink(task)
