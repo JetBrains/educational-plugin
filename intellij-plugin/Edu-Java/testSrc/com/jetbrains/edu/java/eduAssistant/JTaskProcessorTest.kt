@@ -5,9 +5,11 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 import com.jetbrains.edu.learning.findTask
+import org.junit.Test
 
 class JTaskProcessorTest : JdkCheckerTestBase() {
 
+  @Test
   fun testFunctionsSetTextRepresentationInJavaProject() {
     val course = project.course ?: error("Course was not found")
     val task = course.findTask("lesson1", "task1")

@@ -1,10 +1,8 @@
 package com.jetbrains.edu.learning.actions
 
 import com.intellij.diff.chains.DiffRequestChain
-import com.intellij.diff.chains.SimpleDiffRequestChain
-import com.intellij.diff.contents.DocumentContentBase
 import com.intellij.diff.editor.ChainDiffVirtualFile
-import com.intellij.diff.requests.SimpleDiffRequest
+import com.jetbrains.edu.learning.submissions.getTexts
 import com.intellij.icons.AllIcons
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
@@ -139,12 +137,6 @@ class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
     return file?.let {
       FileDocumentManager.getInstance().getDocument(it)
     }
-  }
-
-  private fun DiffRequestChain.getTexts(size: Int): List<String> {
-    val diffRequestWrappers = List(size) { requests[it] as SimpleDiffRequestChain.DiffRequestProducerWrapper }
-    val diffRequests = diffRequestWrappers.map { it.request as SimpleDiffRequest }
-    return diffRequests.map { it.contents[1] as DocumentContentBase }.map { it.document.text }
   }
 
   private fun List<Document>.writeTexts(texts: List<String>): Unit = runWriteAction {

@@ -14,7 +14,7 @@ import com.intellij.util.ui.JButtonAction
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.CancelHintAction.Companion.closeDiffWindow
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.submissions.getSubmissionsText
+import com.jetbrains.edu.learning.submissions.getTexts
 import org.jetbrains.annotations.NonNls
 import javax.swing.JButton
 
@@ -44,7 +44,7 @@ class AcceptHintAction : JButtonAction(EduCoreBundle.message("action.Educational
     try {
       val localDocuments = readLocalDocuments(fileNames)
       check(localDocuments.size == fileNames.size)
-      val submissionsTexts = diffRequestChain.getSubmissionsText(fileNames.size)
+      val submissionsTexts = diffRequestChain.getTexts(fileNames.size)
       localDocuments.writeSubmissionsTexts(submissionsTexts)
     }
     catch (e: Exception) {

@@ -1,11 +1,19 @@
 package com.jetbrains.edu.kotlin.eduAssistant
 
-import com.jetbrains.edu.jvm.slow.checker.JdkCheckerTestBase
+import com.intellij.openapi.ui.TestDialog
+import com.intellij.testFramework.HeavyPlatformTestCase
+import com.intellij.util.ThrowableRunnable
+import com.jetbrains.edu.jvm.JdkProjectSettings
+import com.jetbrains.edu.jvm.slow.checker.JdkCheckerFixture
 import com.jetbrains.edu.kotlin.eduAssistant.courses.createKotlinCourse
+import com.jetbrains.edu.learning.EduDocumentListener
+import com.jetbrains.edu.learning.checker.CheckActionListener
+import com.jetbrains.edu.learning.checker.EduCheckerFixture
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 import com.jetbrains.edu.learning.findTask
+import com.jetbrains.edu.learning.withTestDialog
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.Test
@@ -16,7 +24,7 @@ class FunctionDiffReducerTest(
   private val codeHint: String,
   private val updatedCodeHint: String,
   private val functionName: String
-) : JdkCheckerTestBase() {
+) : HeavyPlatformTestCase() {
 
   companion object {
     @JvmStatic
@@ -783,5 +791,52 @@ class FunctionDiffReducerTest(
     return taskProcessor.reduceChangesInCodeHint(functionFromCode, functionFromCodeHint, project, language)
   }
 
-  override fun createCourse(): Course = createKotlinCourse()
+  private val checkerFixture: EduCheckerFixture<JdkProjectSettings> by lazy {
+    JdkCheckerFixture()
+  }
+
+  override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {
+    val skipTestReason = checkerFixture.getSkipTestReason()
+    if (skipTestReason != null) {
+      System.err.println("SKIP `$name`: $skipTestReason")
+    }
+    else {
+      super.runTestRunnable(context)
+    }
+  }
+
+  override fun setUpProject() {
+    checkerFixture.setUp()
+    if (checkerFixture.getSkipTestReason() == null) {
+      val myCourse = createKotlinCourse()
+      val settings = checkerFixture.projectSettings
+
+      withTestDialog(TestDialog.NO) {
+        val rootDir = tempDir.createVirtualDir()
+        val generator = myCourse.configurator?.courseBuilder?.getCourseProjectGenerator(myCourse)
+                        ?: error("Failed to get `CourseProjectGenerator`")
+        myProject = generator.doCreateCourseProject(rootDir.path, settings)
+                    ?: error("Cannot create project with name ${getTestName(true)}")
+      }
+    }
+  }
+
+  override fun setUp() {
+    super.setUp()
+
+    if (myProject != null) {
+      EduDocumentListener.setGlobalListener(myProject, testRootDisposable)
+    }
+
+    CheckActionListener.registerListener(testRootDisposable)
+    CheckActionListener.reset()
+  }
+
+  override fun tearDown() {
+    try {
+      checkerFixture.tearDown()
+    } finally {
+      super.tearDown()
+    }
+  }
 }
