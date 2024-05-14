@@ -34,3 +34,9 @@ fun <T1, T2, T3> EventLogGroup.registerEvent(
   eventField2: EventField<T2>,
   eventField3: EventField<T3>
 ): EventId3<T1, T2, T3> = registerEvent(eventId, eventField1, eventField2, eventField3)
+
+fun EventLogGroup.registerVarargEvent(
+  eventId: String,
+  @Suppress("UNUSED_PARAMETER") description: String,
+  vararg fields: EventField<*>
+): VarargEventId = registerVarargEvent(eventId, *fields)

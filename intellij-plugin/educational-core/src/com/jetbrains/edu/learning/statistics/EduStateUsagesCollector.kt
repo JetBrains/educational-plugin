@@ -2,9 +2,15 @@ package com.jetbrains.edu.learning.statistics
 
 import com.intellij.internal.statistic.beans.MetricEvent
 import com.intellij.internal.statistic.eventLog.EventLogGroup
+import com.intellij.internal.statistic.eventLog.events.EventFields
 import com.intellij.internal.statistic.service.fus.collectors.ApplicationUsagesCollector
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.JavaUILibrary
+import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.JBACourseFromStorage
+import com.jetbrains.edu.learning.statistics.EduFields.COURSE_MODE_FIELD
+import com.jetbrains.edu.learning.statistics.EduFields.ITEM_TYPE_FIELD
+import com.jetbrains.edu.learning.statistics.EduFields.LANGUAGE_FIELD
 
 /**
  * IMPORTANT: if you modify anything in this class, updated whitelist rules should be
@@ -21,6 +27,17 @@ class EduStateUsagesCollector : ApplicationUsagesCollector() {
     val taskPanel = EduSettings.getInstance().javaUiLibrary
     metrics += TASK_PANEL_EVENT.metric(taskPanel)
 
+    CoursesStorage.getInstance().getAllCourses()
+      .filterIsInstance<JBACourseFromStorage>()
+      .forEach { course ->
+        metrics += COURSE_EVENT.metric(
+          COURSE_ID.with(course.id),
+          COURSE_MODE_FIELD.with(course.courseMode),
+          ITEM_TYPE_FIELD.with(course.itemType),
+          LANGUAGE_FIELD.with(course.languageId)
+        )
+      }
+
     return metrics
   }
 
@@ -28,13 +45,23 @@ class EduStateUsagesCollector : ApplicationUsagesCollector() {
     private val GROUP = EventLogGroup(
       "educational.state",
       "The metric is reported in case a user has JetBrains Academy plugin installed and contains data about settings related to the plugin.",
-      4
+      5
     )
 
     private val TASK_PANEL_EVENT = GROUP.registerEvent(
       "task.panel",
       "Task Panel",
       enumField<JavaUILibrary>()
+    )
+
+    private val COURSE_ID = EventFields.Int("course_id")
+    private val COURSE_EVENT = GROUP.registerVarargEvent(
+      "course",
+      "The metric shows base info about educational course opened in IDE",
+      COURSE_ID,
+      COURSE_MODE_FIELD,
+      ITEM_TYPE_FIELD,
+      LANGUAGE_FIELD
     )
   }
 }
