@@ -67,10 +67,6 @@ data object EduAssistantLoggerFactory : BaseEduAssistantLoggerFactory("eduAssist
   override val formatter = defaultTimeFormatter()
 }
 
-data object TaskAnalysisTimingLoggerFactory : BaseEduAssistantLoggerFactory("taskAnalysisTiming.csv", "TaskAnalysisTiming") {
-  override val formatter = defaultCsvFormatter()
-}
-
 data object HintTimingLoggerFactory : BaseEduAssistantLoggerFactory("hintTiming.csv", "HintTiming") {
   override val formatter = defaultCsvFormatter()
 }

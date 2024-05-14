@@ -188,6 +188,5 @@ class TaskProcessor(val task: Task) {
 
   companion object {
     const val MAX_BODY_LINES_IN_SHORT_FUNCTION = 3
-    const val REJECTED_HINTS_LIMIT = 3
   }
 }

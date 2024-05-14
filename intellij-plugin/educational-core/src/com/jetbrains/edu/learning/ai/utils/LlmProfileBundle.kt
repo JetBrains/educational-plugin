@@ -23,8 +23,6 @@ object GrazieLlmProfileProvider : EduPropertiesBundle(BUNDLE_NAME) {
 
   fun getServerUrlType(): String = value("LLMServerUrlType")
 
-  fun getSolutionStepsProfile(): String = value("LLMProfileIDForGeneratingSolutionSteps")
-
   fun getNextStepTextHintProfile(): String = value("LLMProfileIDForGeneratingNextStepTextHint")
 
   fun getNextStepCodeHintProfile(): String = value("LLMProfileIDForGeneratingNextStepCodeHint")
