@@ -5,7 +5,6 @@ import com.intellij.concurrency.JobScheduler
 import com.intellij.ide.AppLifecycleListener
 import com.intellij.ide.plugins.DynamicPluginListener
 import com.intellij.ide.plugins.IdeaPluginDescriptor
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.Disposer
@@ -16,6 +15,7 @@ import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.hyperskill.metrics.handlers.HyperskillEventsHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.metrics.handlers.HyperskillFrontendEventsHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.metrics.handlers.HyperskillTimeSpentEventsHandler
+import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import java.util.concurrent.TimeUnit
 
 class HyperskillMetricsScheduler : AppLifecycleListener, DynamicPluginListener {
@@ -44,6 +44,11 @@ class HyperskillMetricsScheduler : AppLifecycleListener, DynamicPluginListener {
     private fun <Event> sendEvents(eventsHandler: HyperskillEventsHandler<Event>) {
       val eventsHandlerName = eventsHandler.javaClass.simpleName
 
+      if (HyperskillSettings.INSTANCE.account == null) {
+        LOG.info("Hyperskill user logged out. No events were sent.")
+        return
+      }
+
       val pendingEvents = eventsHandler.pendingEvents
       if (pendingEvents.isEmpty()) {
         LOG.info("No data to send ($eventsHandlerName)")
@@ -53,6 +58,10 @@ class HyperskillMetricsScheduler : AppLifecycleListener, DynamicPluginListener {
       val remainingEvents = mutableListOf<Event>()
 
       for (eventsChunk in pendingEvents.chunked(EVENTS_PER_REQUEST)) {
+        if (HyperskillSettings.INSTANCE.account == null) {
+          remainingEvents.addAll(eventsChunk)
+          continue
+        }
         when (val res = eventsHandler.sendEvents(eventsChunk)) {
           is Ok -> {
             LOG.info("Successfully sent ${eventsChunk.size} events ($eventsHandlerName)")
@@ -76,7 +85,7 @@ class HyperskillMetricsScheduler : AppLifecycleListener, DynamicPluginListener {
       val job = JobScheduler.getScheduler().scheduleWithFixedDelay(sendEvents, 0,
                                                                    Registry.intValue(HYPERSKILL_STATISTICS_INTERVAL_REGISTRY).toLong(),
                                                                    TimeUnit.MINUTES)
-      Disposer.register(HyperskillMetricsService.getInstance(), Disposable { job.cancel(false) })
+      Disposer.register(HyperskillMetricsService.getInstance()) { job.cancel(false) }
     }
 
     @VisibleForTesting
