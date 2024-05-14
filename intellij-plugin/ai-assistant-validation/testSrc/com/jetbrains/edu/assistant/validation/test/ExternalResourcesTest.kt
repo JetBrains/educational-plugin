@@ -153,6 +153,7 @@ abstract class ExternalResourcesTest(private val lessonName: String, private val
   override fun tearDown() {
     try {
       checkerFixture.tearDown()
+    } catch (_: Throwable) {
     } finally {
       super.tearDown()
     }

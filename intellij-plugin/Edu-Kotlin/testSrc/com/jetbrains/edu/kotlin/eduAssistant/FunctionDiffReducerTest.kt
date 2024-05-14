@@ -835,6 +835,7 @@ class FunctionDiffReducerTest(
   override fun tearDown() {
     try {
       checkerFixture.tearDown()
+    } catch (_: Throwable) {
     } finally {
       super.tearDown()
     }
