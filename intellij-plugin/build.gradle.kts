@@ -316,6 +316,7 @@ dependencies {
     pluginModule(implementation(project("github")))
     pluginModule(implementation(project("remote-env")))
     pluginModule(implementation(project("features:command-line")))
+    pluginModule(implementation(project("Edu-Jarvis")))
     // BACKCOMPAT: 2024.1
     if (isAtLeast242) {
       // bundled localization resources can be used only since 2024.2,
@@ -647,6 +648,9 @@ project("Edu-Kotlin") {
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
     testImplementation(project(":intellij-plugin:jvm-core", "testOutput"))
+
+    implementation(project(":intellij-plugin:Edu-Jarvis"))
+    testImplementation(project(":intellij-plugin:Edu-Jarvis", "testOutput"))
   }
 }
 
@@ -971,6 +975,38 @@ project("features:command-line") {
     implementationWithoutKotlin(rootProject.libs.clikt.core)
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+  }
+}
+
+project("Edu-Jarvis") {
+  dependencies {
+    intellijPlatform {
+      // Kotlin plugin cannot be found in 242 builds because of https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1652,
+      // and as a result, it's impossible to build the module with Kotlin plugin dependency.
+      // As a temporary workaround, let's build the module with old IDE version.
+      // Should be fixed as part of https://youtrack.jetbrains.com/issue/EDU-6934
+      val ideVersion = if (environmentName.toInt() == 242) {
+        "IU-2024.1"
+      }
+      else {
+        if (!isJvmCenteredIDE) ideaVersion else baseVersion
+      }
+
+      intellijIde(ideVersion)
+
+      intellijPlugins(jvmPlugins)
+      intellijPlugins(kotlinPlugin)
+    }
+
+    implementation(project(":intellij-plugin:educational-core"))
+    implementation(project(":intellij-plugin:jvm-core"))
+
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+    testImplementation(project(":intellij-plugin:jvm-core", "testOutput"))
+
+    implementation("org.jetbrains.academy.jarvis.dsl:Jarvis-no-code-in-edu:1.0.0") {
+      excludeKotlinDeps()
+    }
   }
 }
 
