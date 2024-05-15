@@ -60,6 +60,7 @@ abstract class CheckersTestCommonBase<Settings : EduProjectSettings> : HeavyPlat
   override fun tearDown() {
     try {
       checkerFixture.tearDown()
+    } catch (_: Throwable) {
     } finally {
       super.tearDown()
     }

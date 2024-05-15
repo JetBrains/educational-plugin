@@ -13,7 +13,6 @@ import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.slow.checker.JdkCheckerFixture
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.EduActionUtils
-import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checker.CheckersTestCommonBase
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.courseFormat.CheckResult
