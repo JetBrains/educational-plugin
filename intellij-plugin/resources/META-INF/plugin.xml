@@ -37,6 +37,7 @@
     <module name="sql-core"/>
     <module name="sql-jvm"/>
     <module name="github"/>
+    <module name="Edu-Jarvis"/>
 
     <!-- feature modules -->
     <module name="command-line"/>
