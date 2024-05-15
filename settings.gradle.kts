@@ -34,6 +34,7 @@ include(
   "intellij-plugin:sql:sql-jvm",
   "intellij-plugin:github",
   "intellij-plugin:localization",
+  "intellij-plugin:Edu-Jarvis"
 )
 
 // BACKCOMPAT: 2024.1
@@ -167,7 +168,6 @@ buildCache {
 pluginManagement {
   repositories {
     mavenCentral()
-    mavenLocal()
     gradlePluginPortal()
     maven("https://oss.sonatype.org/content/repositories/snapshots/")
     if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {
