@@ -14,8 +14,6 @@ import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
-import com.intellij.openapi.editor.event.DocumentEvent
-import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.editor.markup.EffectType
 import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.openapi.editor.markup.TextAttributes
@@ -36,7 +34,6 @@ import com.intellij.util.messages.MessageBusConnection
 import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.EduUtilsKt.showPopup
 import com.jetbrains.edu.learning.courseFormat.eduAssistant.AiAssistantState
-import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.eduAssistant.core.AssistantError
@@ -76,6 +73,8 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
     val state = project.eduState ?: return
     val task = state.task
 
+    closeNextStepHintNotificationPanel()
+
     if (!GetHintTaskState.getInstance(project).lock()) {
       e.dataContext.showPopup(EduCoreBundle.message("action.Educational.NextStepHint.already.running"))
       return
@@ -83,12 +82,6 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
 
     getHintTask = GetHintTask(project, state, task).also {
       ProgressManager.getInstance().run(it)
-    }
-  }
-
-  private fun cancelTaskGettingHint() {
-    if (getHintTask?.progressIndicator?.isRunning == true) {
-      getHintTask?.progressIndicator?.cancel()
     }
   }
 
@@ -221,15 +214,6 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
       val nextStepHintNotification = NextStepHintNotificationFrame(textToShow, action, actionTargetParent) { rejectHint(state) }
       nextStepHintNotificationPanel = nextStepHintNotification.rootPane
       nextStepHintNotificationPanel?.let {  actionTargetParent?.add(it, BorderLayout.NORTH) }
-
-      state.taskFile.getDocument(state.project)?.addDocumentListener(object : DocumentListener {
-        override fun beforeDocumentChange(event: DocumentEvent) {
-          super.beforeDocumentChange(event)
-          closeNextStepHintNotificationPanel()
-          cancelTaskGettingHint()
-          state.task.rejectedHintsCount = 0
-        }
-      })
     }
 
 
