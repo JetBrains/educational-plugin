@@ -6,10 +6,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.runBlockingCancellable
-import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
-import com.intellij.testFramework.HeavyPlatformTestCase
-import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.assistant.validation.messages.EduAndroidAiAssistantValidationBundle
 import com.jetbrains.edu.assistant.validation.util.downloadSolution
 import com.jetbrains.edu.jvm.JdkProjectSettings
@@ -17,7 +14,7 @@ import com.jetbrains.edu.jvm.slow.checker.JdkCheckerFixture
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.EduActionUtils
 import com.jetbrains.edu.learning.checker.CheckActionListener
-import com.jetbrains.edu.learning.checker.EduCheckerFixture
+import com.jetbrains.edu.learning.checker.CheckersTestCommonBase
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -38,7 +35,7 @@ import org.junit.runners.Parameterized
 import java.io.File
 
 @RunWith(Parameterized::class)
-abstract class ExternalResourcesTest(private val lessonName: String, private val taskName: String) : HeavyPlatformTestCase() {
+abstract class ExternalResourcesTest(private val lessonName: String, private val taskName: String) : CheckersTestCommonBase<JdkProjectSettings>() {
 
   protected abstract val course: Course
 
@@ -121,41 +118,7 @@ abstract class ExternalResourcesTest(private val lessonName: String, private val
     EduActionUtils.waitAndDispatchInvocationEvents(future)
   }
 
-  private val checkerFixture: EduCheckerFixture<JdkProjectSettings> by lazy {
-    JdkCheckerFixture()
-  }
+  override fun createCheckerFixture() = JdkCheckerFixture()
 
-  override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {
-    val skipTestReason = checkerFixture.getSkipTestReason()
-    if (skipTestReason != null) {
-      System.err.println("SKIP `$name`: $skipTestReason")
-    }
-    else {
-      super.runTestRunnable(context)
-    }
-  }
-
-  override fun setUpProject() {
-    checkerFixture.setUp()
-    if (checkerFixture.getSkipTestReason() == null) {
-      val settings = checkerFixture.projectSettings
-
-      withTestDialog(TestDialog.NO) {
-        val rootDir = tempDir.createVirtualDir()
-        val generator = course.configurator?.courseBuilder?.getCourseProjectGenerator(course)
-                        ?: error("Failed to get `CourseProjectGenerator`")
-        myProject = generator.doCreateCourseProject(rootDir.path, settings)
-                    ?: error("Cannot create project with name ${getTestName(true)}")
-      }
-    }
-  }
-
-  override fun tearDown() {
-    try {
-      checkerFixture.tearDown()
-    } catch (_: Throwable) {
-    } finally {
-      super.tearDown()
-    }
-  }
+  override fun createCourse() = course
 }
