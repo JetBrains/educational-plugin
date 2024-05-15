@@ -292,7 +292,7 @@ dependencies {
   implementation(project("sql:sql-jvm"))
   implementation(project("github"))
   implementation(project("remote-env"))
-  if (project.hasProperty("aiAssistantValidation") && project.property("aiAssistantValidation") == "true") {
+  if (isAiValidationEnabled()) {
     implementation(project("ai-assistant-validation"))
   }
 }
@@ -830,7 +830,7 @@ project("github") {
   }
 }
 
-if (project.hasProperty("aiAssistantValidation") && project.property("aiAssistantValidation") == "true") {
+if (isAiValidationEnabled()) {
   project("ai-assistant-validation") {
     intellij {
       if (!isJvmCenteredIDE) {
@@ -1006,3 +1006,5 @@ fun copyFormatJars() {
     include("*.jar")
   }
 }
+
+fun isAiValidationEnabled() = project.properties["aiAssistantValidation"]  == "true"
