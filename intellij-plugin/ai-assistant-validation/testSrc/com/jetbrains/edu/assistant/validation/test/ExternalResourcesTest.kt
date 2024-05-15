@@ -42,13 +42,6 @@ abstract class ExternalResourcesTest(private val lessonName: String, private val
   override fun setUp() {
     super.setUp()
 
-    if (myProject != null) {
-      EduDocumentListener.setGlobalListener(myProject, testRootDisposable)
-    }
-
-    CheckActionListener.registerListener(testRootDisposable)
-    CheckActionListener.reset()
-
     course.lessons.flatMap { lesson ->
       lesson.taskList.filterIsInstance<EduTask>()
     }.map {
