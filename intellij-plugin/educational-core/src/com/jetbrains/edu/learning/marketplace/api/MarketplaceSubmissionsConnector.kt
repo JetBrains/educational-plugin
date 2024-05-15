@@ -89,7 +89,7 @@ class MarketplaceSubmissionsConnector {
 
     val response = deleteCall.executeCall().onError {
       LOG.error("Failed to delete all submissions ${logLoginName(loginName)} ${logCourseId(courseId)}. Error message: $it")
-      showFailedToDeleteNotification(project, loginName)
+      showFailedToDeleteNotification(project, courseId, loginName)
       return false
     }
     logAndNotifyAfterDeletionAttempt(response, project, courseId, loginName)
@@ -287,18 +287,18 @@ class MarketplaceSubmissionsConnector {
     when (response.code()) {
       HTTP_NO_CONTENT -> {
         LOG.info("Successfully deleted all submissions ${logLoginName(loginName)} ${logCourseId(courseId)}")
-        showSubmissionsDeletedSuccessfullyNotification(project, loginName)
+        showSubmissionsDeletedSuccessfullyNotification(project, courseId, loginName)
       }
 
       HTTP_NOT_FOUND -> {
         LOG.info("There are no submissions to delete ${logLoginName(loginName)} ${logCourseId(courseId)}")
-        showNoSubmissionsToDeleteNotification(project, loginName)
+        showNoSubmissionsToDeleteNotification(project, courseId, loginName)
       }
 
       else -> {
         val errorMsg = response.errorBody()?.string() ?: "Unknown error"
         LOG.error("Failed to delete all submissions ${logLoginName(loginName)} ${logCourseId(courseId)}. Error message: $errorMsg")
-        showFailedToDeleteNotification(project, loginName)
+        showFailedToDeleteNotification(project, courseId, loginName)
       }
     }
   }

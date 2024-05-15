@@ -152,15 +152,15 @@ object MarketplaceNotificationUtils {
   }
 
   @Suppress("DialogTitleCapitalization")
-  internal fun showSubmissionsDeletedSuccessfullyNotification(project: Project?, loginName: String?) {
+  internal fun showSubmissionsDeletedSuccessfullyNotification(project: Project?, courseId: Int?, loginName: String?) {
     val presentableName = project?.course?.presentableName
-    val message = if (loginName != null && presentableName != null) {
+    val message = if (loginName != null && courseId != null && presentableName != null) {
       EduCoreBundle.message("marketplace.delete.submissions.for.user.on.course.success.message", loginName, presentableName)
     }
     else if (loginName != null) {
       EduCoreBundle.message("marketplace.delete.submissions.for.user.success.message", loginName)
     }
-    else if (presentableName != null) {
+    else if (courseId != null && presentableName != null) {
       EduCoreBundle.message("marketplace.delete.submissions.success.on.course.message", presentableName)
     }
     else {
@@ -176,15 +176,15 @@ object MarketplaceNotificationUtils {
   }
 
   @Suppress("DialogTitleCapitalization")
-  internal fun showNoSubmissionsToDeleteNotification(project: Project?, loginName: String?) {
+  internal fun showNoSubmissionsToDeleteNotification(project: Project?, courseId: Int?, loginName: String?) {
     val presentableName = project?.course?.presentableName
-    val message = if (loginName != null && presentableName != null) {
+    val message = if (loginName != null && courseId != null && presentableName != null) {
       EduCoreBundle.message("marketplace.delete.submissions.for.user.on.course.nothing.message", loginName, presentableName)
     }
     else if (loginName != null) {
       EduCoreBundle.message("marketplace.delete.submissions.for.user.nothing.message", loginName)
     }
-    else if (presentableName != null) {
+    else if (courseId != null && presentableName != null) {
       EduCoreBundle.message("marketplace.delete.submissions.on.course.nothing.message", presentableName)
     }
     else {
@@ -200,15 +200,15 @@ object MarketplaceNotificationUtils {
   }
 
   @Suppress("DialogTitleCapitalization")
-  internal fun showFailedToDeleteNotification(project: Project?, loginName: String?) {
+  internal fun showFailedToDeleteNotification(project: Project?, courseId: Int?, loginName: String?) {
     val presentableName = project?.course?.presentableName
-    val message = if (loginName != null && presentableName != null) {
+    val message = if (loginName != null && courseId != null && presentableName != null) {
       EduCoreBundle.message("marketplace.delete.submissions.failed.for.user.on.course.message", loginName, presentableName)
     }
     else if (loginName != null) {
       EduCoreBundle.message("marketplace.delete.submissions.failed.for.user.message", loginName)
     }
-    else if (presentableName != null) {
+    else if (courseId != null && presentableName != null) {
       EduCoreBundle.message("marketplace.delete.submissions.failed.on.course.message", presentableName)
     }
     else {
