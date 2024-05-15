@@ -33,6 +33,7 @@ include(
   "intellij-plugin:sql:sql-jvm",
   "intellij-plugin:github",
   "intellij-plugin:localization",
+  "intellij-plugin:Edu-Jarvis"
 )
 
 if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {
@@ -161,7 +162,6 @@ buildCache {
 pluginManagement {
   repositories {
     mavenCentral()
-    mavenLocal()
     gradlePluginPortal()
     maven("https://oss.sonatype.org/content/repositories/snapshots/")
     if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {
