@@ -36,5 +36,6 @@
     <module name="sql-jvm"/>
     <module name="github"/>
     <module name="remote-env"/>
+    <module name="Edu-Jarvis"/>
   </content>
 </idea-plugin>
