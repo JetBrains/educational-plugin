@@ -181,5 +181,6 @@ pluginManagement {
         }
       }
     }
+    maven("https://packages.jetbrains.team/maven/p/edu/jarvis")
   }
 }
