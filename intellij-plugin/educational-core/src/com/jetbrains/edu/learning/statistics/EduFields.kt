@@ -8,6 +8,7 @@ object EduFields {
   private const val TYPE = "type"
   private const val MODE = "mode"
   private const val LANGUAGE = "language"
+  private const val PLATFORM = "platform"
 
   val COURSE_MODE_FIELD = EventFields.Enum<CourseMode>(MODE)
 
@@ -26,4 +27,14 @@ object EduFields {
     "JAVA", "kotlin", "Python", "Scala",
     "JavaScript", "Rust", "ObjectiveC", "go", "PHP"
   ))
+
+  val PLATFORM_FIELD = EventFields.String(PLATFORM, listOf(
+      "Hyperskill",
+      "Stepik",
+      "Js_CheckiO",
+      "Py_CheckiO",
+      "Marketplace",
+      "Codeforces"
+    )
+  )
 }

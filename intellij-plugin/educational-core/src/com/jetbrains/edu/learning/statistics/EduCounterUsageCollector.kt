@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.Authorizat
 import com.jetbrains.edu.learning.statistics.EduFields.COURSE_MODE_FIELD
 import com.jetbrains.edu.learning.statistics.EduFields.ITEM_TYPE_FIELD
 import com.jetbrains.edu.learning.statistics.EduFields.LANGUAGE_FIELD
+import com.jetbrains.edu.learning.statistics.EduFields.PLATFORM_FIELD
 import com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.HyperskillPlatformProvider
 
 /**
@@ -155,16 +156,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
       "authorization",
       "The event is recorded in case a user logs in or out on any platform we support.",
       enumField<AuthorizationEvent>(EVENT),
-      EventFields.String(
-        "platform", listOf(
-          "Hyperskill",
-          "Stepik",
-          "Js_CheckiO",
-          "Py_CheckiO",
-          "Marketplace",
-          "Codeforces"
-        )
-      ),
+      PLATFORM_FIELD,
       enumField<AuthorizationPlace>(SOURCE)
     )
     private val OBTAIN_JBA_TOKEN_EVENT = GROUP.registerEvent(
