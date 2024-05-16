@@ -148,6 +148,12 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
       ITEM_TYPE_FIELD,
       PLATFORM_FIELD
     )
+    private val CC_TASK_CREATED_EVENT = GROUP.registerEvent(
+      "task.created",
+      "Event is logged whenever a new task is created within a lesson, indicating the type of the lesson.",
+      ITEM_TYPE_FIELD,
+      PLATFORM_FIELD
+    )
     private val LICK_CLICKED_EVENT = GROUP.registerEvent(
       "link.clicked",
       "The event is recorded in case a user clicks a link within a task text.",
@@ -306,6 +312,9 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
       val course = item.course
       if (CourseMode.EDUCATOR == course.courseMode) {
         CC_STUDY_ITEM_CREATED_EVENT.log(item.itemType, course.itemType)
+        if (item is Task) {
+          CC_TASK_CREATED_EVENT.log(item.lesson.itemType, course.itemType)
+        }
       }
     }
 
