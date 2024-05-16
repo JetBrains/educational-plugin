@@ -24,6 +24,7 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.MatchingTaskUI
 import com.jetbrains.edu.learning.taskToolWindow.ui.addBorder
 import com.jetbrains.edu.learning.taskToolWindow.ui.getSortingShortcutHTML
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleManager
+import com.jetbrains.edu.learning.ui.RoundedWrapper
 import java.awt.Font
 import java.awt.event.*
 import javax.swing.JPanel

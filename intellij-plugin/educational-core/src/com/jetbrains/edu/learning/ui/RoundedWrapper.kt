@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.taskToolWindow.ui.specificTaskSwingPanels
+package com.jetbrains.edu.learning.ui
 
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.GraphicsUtil
@@ -10,7 +10,7 @@ import javax.swing.JComponent
 
 class RoundedWrapper(
   component: JComponent,
-  private val arcSize: Int = 10,
+  private val arcSize: Int = DEFAULT_ARC_SIZE,
 ) : NonOpaquePanel(component) {
 
   init {
@@ -48,5 +48,9 @@ class RoundedWrapper(
       rectangle.width.toFloat(), rectangle.height.toFloat(),
       arcSize.toFloat(), arcSize.toFloat()
     )
+  }
+
+  companion object {
+    private const val DEFAULT_ARC_SIZE = 10
   }
 }
