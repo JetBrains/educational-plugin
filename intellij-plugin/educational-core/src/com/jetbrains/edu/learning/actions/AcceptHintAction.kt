@@ -49,7 +49,7 @@ class AcceptHintAction : JButtonAction(EduCoreBundle.message("action.Educational
       val runnableCommand = {
         localDocuments.writeSubmissionsTexts(submissionsTexts)
       }
-      CommandProcessor.getInstance().executeCommand(project, runnableCommand, this.templatePresentation.text, ApplyCodeAction.ACTION_ID)
+      CommandProcessor.getInstance().executeCommand(project, runnableCommand, this.templatePresentation.text, ACTION_ID)
     }
     catch (e: Exception) {
       return
