@@ -121,7 +121,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private val GROUP = EventLogGroup(
       "educational.counters",
       "The metric is reported in case a user has called the corresponding JetBrains Academy features.",
-      15,
+      16,
     )
 
     private val TASK_NAVIGATION_EVENT = GROUP.registerEvent(
@@ -145,7 +145,8 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private val CC_STUDY_ITEM_CREATED_EVENT = GROUP.registerEvent(
       "study.item.created",
       "The event is recorded in case a new study item (different types of lessons and tasks) is created.",
-      ITEM_TYPE_FIELD
+      ITEM_TYPE_FIELD,
+      PLATFORM_FIELD
     )
     private val LICK_CLICKED_EVENT = GROUP.registerEvent(
       "link.clicked",
@@ -302,8 +303,9 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     fun eduProjectOpened(course: Course) = EDU_PROJECT_OPENED_EVENT.log(course.courseMode, course.itemType)
 
     fun studyItemCreatedCC(item: StudyItem) {
-      if (CourseMode.EDUCATOR == item.course.courseMode) {
-        CC_STUDY_ITEM_CREATED_EVENT.log(item.itemType)
+      val course = item.course
+      if (CourseMode.EDUCATOR == course.courseMode) {
+        CC_STUDY_ITEM_CREATED_EVENT.log(item.itemType, course.itemType)
       }
     }
 
