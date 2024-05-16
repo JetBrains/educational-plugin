@@ -32,8 +32,11 @@ include(
   "intellij-plugin:sql",
   "intellij-plugin:sql:sql-jvm",
   "intellij-plugin:github",
-  "intellij-plugin:ai-assistant-validation"
 )
+
+if (settings.providers.gradleProperty("aiAssistantValidation").get().toBoolean()) {
+  include("intellij-plugin:ai-assistant-validation")
+}
 
 if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {
   include("fleet-plugin")
