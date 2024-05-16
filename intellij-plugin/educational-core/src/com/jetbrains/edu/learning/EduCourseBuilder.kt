@@ -60,8 +60,8 @@ interface EduCourseBuilder<Settings : EduProjectSettings> {
    */
   fun refreshProject(project: Project, cause: RefreshCause) { }
 
-  fun createInitialLesson(holder: CourseInfoHolder<Course>): Lesson? {
-    val lessonInfo = NewStudyItemInfo(LESSON + 1, 1, ::Lesson)
+  fun createInitialLesson(holder: CourseInfoHolder<Course>, lessonProducer: () -> Lesson): Lesson? {
+    val lessonInfo = NewStudyItemInfo(LESSON + 1, 1, lessonProducer)
     val lesson = CCCreateLesson().createAndInitItem(holder, holder.course, lessonInfo)
     val taskInfo = NewStudyItemInfo(TASK + 1, 1, ::EduTask)
     val task = CCCreateTask().createAndInitItem(holder, lesson, taskInfo)

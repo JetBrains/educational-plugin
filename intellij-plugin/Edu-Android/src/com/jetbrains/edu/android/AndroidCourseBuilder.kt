@@ -76,7 +76,7 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
     }
   }
 
-  override fun createInitialLesson(holder: CourseInfoHolder<Course>): Lesson {
+  override fun createInitialLesson(holder: CourseInfoHolder<Course>, lessonProducer: () -> Lesson): Lesson {
     val lessonInfo = NewStudyItemInfo(LESSON + 1, 1, ::FrameworkLesson)
     val lesson = CCCreateLesson().createAndInitItem(holder, null, lessonInfo)
 

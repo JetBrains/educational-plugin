@@ -39,6 +39,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.CourseVisibility.*
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.IdeaDirectoryUnpackMode.ONLY_IDEA_DIRECTORY
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.unpackAdditionalFiles
@@ -91,21 +92,21 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
   // we use Object instead of S and cast to S when it needed
   @RequiresEdt
   @RequiresBlockingContext
-  fun doCreateCourseProject(location: String, projectSettings: EduProjectSettings): Project? {
+  fun doCreateCourseProject(location: String, projectSettings: EduProjectSettings, initialLessonProducer: () -> Lesson = ::Lesson): Project? {
     return runWithModalProgressBlocking(
       ModalTaskOwner.guess(),
       EduCoreBundle.message("generate.course.progress.title"),
       TaskCancellation.cancellable()
     ) {
-      doCreateCourseProjectAsync(location, projectSettings)
+      doCreateCourseProjectAsync(location, projectSettings, initialLessonProducer)
     }
   }
 
-  private suspend fun doCreateCourseProjectAsync(location: String, projectSettings: EduProjectSettings): Project? {
+  private suspend fun doCreateCourseProjectAsync(location: String, projectSettings: EduProjectSettings, initialLessonProducer: () -> Lesson): Project? {
     @Suppress("UNCHECKED_CAST")
     val castedProjectSettings = projectSettings as S
     applySettings(castedProjectSettings)
-    val createdProject = createProject(location) ?: return null
+    val createdProject = createProject(location, initialLessonProducer) ?: return null
 
     withContext(Dispatchers.EDT) {
       blockingContext {
@@ -132,7 +133,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
    *
    * @return project of new course or null if new project can't be created
    */
-  private suspend fun createProject(locationString: String): Project? {
+  private suspend fun createProject(locationString: String, initialLessonProducer: () -> Lesson): Project? {
     val location = File(FileUtil.toSystemDependentName(locationString))
     val projectDirectoryExists = withContext(Dispatchers.IO) {
       location.exists() || location.mkdirs()
@@ -172,7 +173,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     // Total progress: item count steps for each top-level item plus one step for project creation itself
     val structureGenerationEndFraction = itemsToCreate.toDouble() / (itemsToCreate + 1)
     progressStep(structureGenerationEndFraction, EduCoreBundle.message("generate.course.structure.progress.text")) {
-      createCourseStructure(holder)
+      createCourseStructure(holder, initialLessonProducer)
     }
 
     val newProject = progressStep(1.0, EduCoreBundle.message("generate.course.project.progress.text")) {
@@ -217,7 +218,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
    * Creates course structure in directory provided by [holder]
    */
   @VisibleForTesting
-  open suspend fun createCourseStructure(holder: CourseInfoHolder<Course>) {
+  open suspend fun createCourseStructure(holder: CourseInfoHolder<Course>, initialLessonProducer: () -> Lesson = ::Lesson) {
     holder.course.init(false)
     val isNewCourseCreatorCourse = isNewCourseCreatorCourse
 
@@ -229,7 +230,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
             // to avoid deadlock during C++ course creation.
             // Otherwise, it may try to run a background process under modal progress during `CMAKE_MINIMUM_REQUIRED_LINE_VALUE` initialization.
             // See https://youtrack.jetbrains.com/issue/EDU-6702
-            val lesson = courseBuilder.createInitialLesson(holder)
+            val lesson = courseBuilder.createInitialLesson(holder, initialLessonProducer)
             if (lesson != null) {
               course.addLesson(lesson)
             }
