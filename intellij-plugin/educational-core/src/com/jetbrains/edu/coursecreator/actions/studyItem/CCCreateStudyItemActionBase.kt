@@ -21,7 +21,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.studyItemType
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.statistics.isSurveyPrompted
 import com.jetbrains.edu.learning.statistics.showCCPostFeedbackNotification
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -121,7 +120,6 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
       if (updateParentConfig) {
         YamlFormatSynchronizer.saveItem(item.parent)
       }
-      EduCounterUsageCollector.studyItemCreatedCC(item)
 
       if (itemDir != null) {
         ProjectView.getInstance(project).select(itemDir, itemDir, true)
