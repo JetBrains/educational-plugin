@@ -143,6 +143,48 @@
       "description" : "Lesson name label foreground",
       "deprecated" : false,
       "source" : "com.jetbrains.edu.learning.ui.EduColors"
+    },
+    {
+      "key": "LessonCard.background",
+      "description" : "Background for lesson card",
+      "deprecated" : false,
+      "source" : "com.jetbrains.edu.learning.ui.EduColors"
+    },
+    {
+      "key": "LessonCard.borderColor",
+      "description" : "Border color for lesson card",
+      "deprecated" : false,
+      "source" : "com.jetbrains.edu.learning.ui.EduColors"
+    },
+    {
+      "key": "LessonCard.focusedBorderColor",
+      "description" : "Focused border color for lesson card",
+      "deprecated" : false,
+      "source" : "com.jetbrains.edu.learning.ui.EduColors"
+    },
+    {
+      "key": "LessonCard.foreground",
+      "description" : "Foreground for lesson card",
+      "deprecated" : false,
+      "source" : "com.jetbrains.edu.learning.ui.EduColors"
+    },
+    {
+      "key": "LessonCard.secondaryForeground",
+      "description" : "Secondary foreground for lesson card",
+      "deprecated" : false,
+      "source" : "com.jetbrains.edu.learning.ui.EduColors"
+    },
+    {
+      "key": "LessonCard.selectedBackground",
+      "description" : "Background for selected lesson card",
+      "deprecated" : false,
+      "source" : "com.jetbrains.edu.learning.ui.EduColors"
+    },
+    {
+      "key": "LessonCard.selectedBorderColor",
+      "description" : "Border color for selected lesson card",
+      "deprecated" : false,
+      "source" : "com.jetbrains.edu.learning.ui.EduColors"
     }
   ]
 }
