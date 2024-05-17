@@ -9,7 +9,9 @@ object EduFields {
   private const val MODE = "mode"
   private const val LANGUAGE = "language"
   private const val PLATFORM = "platform"
+  private const val COURSE_ID = "course_id"
 
+  val COURSE_ID_FIELD = EventFields.Int(COURSE_ID)
   val COURSE_MODE_FIELD = EventFields.Enum<CourseMode>(MODE)
 
   val ITEM_TYPE_FIELD = EventFields.String(TYPE, listOf(
