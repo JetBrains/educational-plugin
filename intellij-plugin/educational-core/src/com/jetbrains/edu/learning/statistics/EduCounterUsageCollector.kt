@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.newproject.ui.BrowseCoursesDialog
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationEvent.*
+import com.jetbrains.edu.learning.statistics.EduFields.COURSE_ID_FIELD
 import com.jetbrains.edu.learning.statistics.EduFields.COURSE_MODE_FIELD
 import com.jetbrains.edu.learning.statistics.EduFields.ITEM_TYPE_FIELD
 import com.jetbrains.edu.learning.statistics.EduFields.LANGUAGE_FIELD
@@ -121,7 +122,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private val GROUP = EventLogGroup(
       "educational.counters",
       "The metric is reported in case a user has called the corresponding JetBrains Academy features.",
-      16,
+      17,
     )
 
     private val TASK_NAVIGATION_EVENT = GROUP.registerEvent(
@@ -146,12 +147,14 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
       "study.item.created",
       "The event is recorded in case a new study item (different types of lessons and tasks) is created.",
       ITEM_TYPE_FIELD,
+      COURSE_ID_FIELD,
       PLATFORM_FIELD
     )
     private val CC_TASK_CREATED_EVENT = GROUP.registerEvent(
       "task.created",
       "Event is logged whenever a new task is created within a lesson, indicating the type of the lesson.",
       ITEM_TYPE_FIELD,
+      COURSE_ID_FIELD,
       PLATFORM_FIELD
     )
     private val LICK_CLICKED_EVENT = GROUP.registerEvent(
@@ -311,9 +314,9 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     fun studyItemCreatedCC(item: StudyItem) {
       val course = item.course
       if (CourseMode.EDUCATOR == course.courseMode) {
-        CC_STUDY_ITEM_CREATED_EVENT.log(item.itemType, course.itemType)
+        CC_STUDY_ITEM_CREATED_EVENT.log(item.itemType, course.id, course.itemType)
         if (item is Task) {
-          CC_TASK_CREATED_EVENT.log(item.lesson.itemType, course.itemType)
+          CC_TASK_CREATED_EVENT.log(item.lesson.itemType, course.id, course.itemType)
         }
       }
     }
