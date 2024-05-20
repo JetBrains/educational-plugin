@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.ai.utils.GrazieLlmProfileProvider
 enum class GenerationContextProfile(private val llmProfileId: String) {
   NEXT_STEP_TEXT_HINT(GrazieLlmProfileProvider.getNextStepTextHintProfile()),
   NEXT_STEP_CODE_HINT(GrazieLlmProfileProvider.getNextStepCodeHintProfile()),
+  @Suppress("unused") // Used for ai-assistant-validation module
   AUTO_VALIDATION(GrazieLlmProfileProvider.getAutoValidationProfile());
 
   private fun getProfileById() =
