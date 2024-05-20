@@ -32,7 +32,8 @@
     <module name="sql-jvm"/>
     <module name="github"/>
     <module name="remote-env"/>
-    <module name="ai-assistant-validation"/>
+<!--    TODO: update it based on the variable from Gradle-->
+<!--    <module name="ai-assistant-validation"/>-->
   </content>
 
   <!-- BACKCOMPAT: 2023.3. Inline it -->

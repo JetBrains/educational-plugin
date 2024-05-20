@@ -195,7 +195,6 @@ allprojects {
     implementationWithoutKotlin(rootProject.libs.grazie.gateway.api)
     implementationWithoutKotlin(rootProject.libs.grazie.gateway.client)
     implementationWithoutKotlin(rootProject.libs.grazie.client.ktor)
-    implementationWithoutKotlin(rootProject.libs.dataframe)
     implementationWithoutKotlin(rootProject.libs.kotlin.logging)
     implementationWithoutKotlin(rootProject.libs.logback)
 
@@ -840,6 +839,8 @@ if (isAiValidationEnabled()) {
     }
 
     dependencies {
+      implementationWithoutKotlin(rootProject.libs.dataframe)
+
       implementation(project(":intellij-plugin:educational-core"))
       implementation(project(":intellij-plugin:jvm-core"))
       testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
