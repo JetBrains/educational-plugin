@@ -166,7 +166,16 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
       "authorization",
       "The event is recorded in case a user logs in or out on any platform we support.",
       enumField<AuthorizationEvent>(EVENT),
-      PLATFORM_FIELD,
+      EventFields.String(
+        "platform", listOf(
+          "Hyperskill",
+          "Stepik",
+          "Js_CheckiO",
+          "Py_CheckiO",
+          "Marketplace",
+          "Codeforces"
+        )
+      ),
       enumField<AuthorizationPlace>(SOURCE)
     )
     private val OBTAIN_JBA_TOKEN_EVENT = GROUP.registerEvent(
