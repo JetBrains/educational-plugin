@@ -11,12 +11,14 @@ object EduFields {
   private const val PLATFORM = "platform"
   private const val COURSE_ID = "course_id"
 
+  private val PLATFORM_NAMES = listOf("CheckiO", "PyCharm", "Coursera", "Hyperskill", "Marketplace", "Codeforces")
+
   val COURSE_ID_FIELD = EventFields.Int(COURSE_ID)
   val COURSE_MODE_FIELD = EventFields.Enum<CourseMode>(MODE)
 
   val ITEM_TYPE_FIELD = EventFields.String(TYPE, listOf(
     // course types
-    "CheckiO", "PyCharm", "Coursera", "Hyperskill", "Marketplace", "Codeforces",
+    *PLATFORM_NAMES.toTypedArray(),
     // section types
     "section",
     // lesson types
@@ -30,13 +32,5 @@ object EduFields {
     "JavaScript", "Rust", "ObjectiveC", "go", "PHP"
   ))
 
-  val PLATFORM_FIELD = EventFields.String(PLATFORM, listOf(
-      "Hyperskill",
-      "Stepik",
-      "Js_CheckiO",
-      "Py_CheckiO",
-      "Marketplace",
-      "Codeforces"
-    )
-  )
+  val PLATFORM_FIELD = EventFields.String(PLATFORM, PLATFORM_NAMES)
 }
