@@ -9,8 +9,8 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.JBACourseFromStorage
 import com.jetbrains.edu.learning.statistics.EduFields.COURSE_ID_FIELD
 import com.jetbrains.edu.learning.statistics.EduFields.COURSE_MODE_FIELD
-import com.jetbrains.edu.learning.statistics.EduFields.ITEM_TYPE_FIELD
 import com.jetbrains.edu.learning.statistics.EduFields.LANGUAGE_FIELD
+import com.jetbrains.edu.learning.statistics.EduFields.PLATFORM_FIELD
 
 /**
  * IMPORTANT: if you modify anything in this class, updated whitelist rules should be
@@ -33,7 +33,7 @@ class EduStateUsagesCollector : ApplicationUsagesCollector() {
         metrics += COURSE_EVENT.metric(
           COURSE_ID_FIELD.with(course.id),
           COURSE_MODE_FIELD.with(course.courseMode),
-          ITEM_TYPE_FIELD.with(course.itemType),
+          PLATFORM_FIELD.with(course.itemType),
           LANGUAGE_FIELD.with(course.languageId)
         )
       }
@@ -54,13 +54,12 @@ class EduStateUsagesCollector : ApplicationUsagesCollector() {
       enumField<JavaUILibrary>()
     )
 
-
     private val COURSE_EVENT = GROUP.registerVarargEvent(
       "course",
       "The metric shows base info about educational course opened in IDE",
       COURSE_ID_FIELD,
       COURSE_MODE_FIELD,
-      ITEM_TYPE_FIELD,
+      PLATFORM_FIELD,
       LANGUAGE_FIELD
     )
   }
