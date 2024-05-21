@@ -122,7 +122,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private val GROUP = EventLogGroup(
       "educational.counters",
       "The metric is reported in case a user has called the corresponding JetBrains Academy features.",
-      17,
+      18,
     )
 
     private val TASK_NAVIGATION_EVENT = GROUP.registerEvent(
