@@ -4,30 +4,21 @@ import com.intellij.ide.ui.LafManagerListener
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import com.intellij.ui.jcef.JBCefApp
-import com.intellij.ui.jcef.JBCefClient
-import com.intellij.ui.jcef.JCEFHtmlPanel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.taskToolWindow.links.JCefToolWindowLinkHandler
+import com.jetbrains.edu.learning.taskToolWindow.ui.jcef.TaskInfoJBCefBrowser
+import com.jetbrains.edu.learning.taskToolWindow.ui.jcef.TaskSpecificJBCefBrowser
 import com.jetbrains.edu.learning.taskToolWindow.ui.jcefSpecificQueries.TaskQueryManager
 import org.jetbrains.annotations.TestOnly
 import javax.swing.JComponent
 
 class JCEFToolWindow(project: Project) : TaskToolWindow(project) {
-  private val taskInfoJBCefBrowser = JCEFHtmlPanel(true, JBCefApp.getInstance().createClient(), null)
-  private val taskSpecificJBCefBrowser = JCEFHtmlPanel(true, JBCefApp.getInstance().createClient(), null)
+  private val taskInfoJBCefBrowser = TaskInfoJBCefBrowser(project)
+  private val taskSpecificJBCefBrowser = TaskSpecificJBCefBrowser()
   private var taskSpecificQueryManager: TaskQueryManager<out Task>? = null
 
   init {
-    val jcefLinkInToolWindowHandler = JCefToolWindowLinkHandler(project)
-    val taskInfoRequestHandler = JCEFToolWindowRequestHandler(jcefLinkInToolWindowHandler)
-    taskInfoJBCefBrowser.jbCefClient.addRequestHandler(taskInfoRequestHandler, taskInfoJBCefBrowser.cefBrowser)
-    val taskInfoLifeSpanHandler = JCEFTaskInfoLifeSpanHandler(jcefLinkInToolWindowHandler)
-    taskInfoJBCefBrowser.jbCefClient.addLifeSpanHandler(taskInfoLifeSpanHandler, taskInfoJBCefBrowser.cefBrowser)
-    taskSpecificJBCefBrowser.jbCefClient.setProperty(JBCefClient.Properties.JS_QUERY_POOL_SIZE, TASK_SPECIFIC_PANEL_JS_QUERY_POOL_SIZE)
-
     Disposer.register(this, taskInfoJBCefBrowser)
     Disposer.register(this, taskSpecificJBCefBrowser)
 
@@ -76,8 +67,6 @@ class JCEFToolWindow(project: Project) : TaskToolWindow(project) {
   }
 
   companion object {
-    // maximum number of created qs queries in taskSpecificQueryManager
-    private const val TASK_SPECIFIC_PANEL_JS_QUERY_POOL_SIZE = 2
 
     @TestOnly
     fun processContent(content: String, project: Project): String {
