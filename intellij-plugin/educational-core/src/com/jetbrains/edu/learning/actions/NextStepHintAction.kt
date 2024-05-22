@@ -216,7 +216,7 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
       )
       val nextStepHintNotification = NextStepHintNotificationFrame(textToShow, action, actionTargetParent) { rejectHint(state) }
       nextStepHintNotificationPanel = nextStepHintNotification.rootPane
-      nextStepHintNotificationPanel?.let {  actionTargetParent?.add(it, BorderLayout.NORTH) }
+      nextStepHintNotificationPanel?.let { actionTargetParent?.add(it, BorderLayout.NORTH) }
     }
 
 
