@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYCHARM
 import com.jetbrains.edu.learning.json.mixins.IntValueFilter
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ADDITIONAL_FILES
 import com.jetbrains.edu.learning.json.mixins.NotImplementedInMixin
+import com.jetbrains.edu.learning.yaml.YamlMapper.CURRENT_YAML_VERSION
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.errorHandling.unnamedItemAtMessage
 import com.jetbrains.edu.learning.yaml.errorHandling.unsupportedItemTypeMessage
@@ -40,6 +41,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TOP_LEVEL_LESSONS_S
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.UPDATE_DATE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VENDOR
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.YAML_VERSION
 import com.jetbrains.edu.learning.yaml.format.remote.RemoteStudyItemYamlMixin
 import java.time.ZonedDateTime
 import java.util.*
@@ -49,7 +51,7 @@ import java.util.*
  * Update [com.jetbrains.edu.learning.yaml.format.CourseChangeApplier] and [CourseBuilder] if new fields added to mixin
  */
 @Suppress("unused") // used for yaml serialization
-@JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, VENDOR, IS_PRIVATE, PROGRAMMING_LANGUAGE,
+@JsonPropertyOrder(YAML_VERSION, TYPE, TITLE, LANGUAGE, SUMMARY, VENDOR, IS_PRIVATE, PROGRAMMING_LANGUAGE,
                    PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, SOLUTIONS_HIDDEN, CONTENT, FEEDBACK_LINK, TAGS, ENVIRONMENT_SETTINGS)
 @JsonDeserialize(builder = CourseBuilder::class)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY,
@@ -59,6 +61,9 @@ import java.util.*
   JsonSubTypes.Type(EduCourse::class, name = "marketplace")
 )
 abstract class CourseYamlMixin {
+  @JsonProperty(YAML_VERSION)
+  val yamlVersion: Int = CURRENT_YAML_VERSION
+
   val itemType: String
     @JsonSerialize(converter = CourseTypeSerializationConverter::class)
     @JsonProperty(TYPE)

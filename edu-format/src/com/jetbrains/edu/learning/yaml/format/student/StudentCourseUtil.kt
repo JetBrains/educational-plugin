@@ -17,9 +17,10 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SUMMARY
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TAGS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TITLE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.YAML_VERSION
 
 @Suppress("unused") // used for yaml serialization
-@JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, PROGRAMMING_LANGUAGE, PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, CONTENT, ADDITIONAL_FILES, MODE, TAGS)
+@JsonPropertyOrder(YAML_VERSION, TYPE, TITLE, LANGUAGE, SUMMARY, PROGRAMMING_LANGUAGE, PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, CONTENT, ADDITIONAL_FILES, MODE, TAGS)
 abstract class StudentCourseYamlMixin : CourseYamlMixin() {
   @JsonSerialize(converter = CourseModeSerializationConverter::class)
   @JsonProperty(MODE)

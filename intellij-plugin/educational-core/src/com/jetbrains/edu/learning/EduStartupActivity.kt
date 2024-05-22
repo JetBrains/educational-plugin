@@ -41,6 +41,7 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.yaml.YamlMigrator
 
 class EduStartupActivity : StartupActivity.DumbAware {
 
@@ -48,6 +49,8 @@ class EduStartupActivity : StartupActivity.DumbAware {
 
   override fun runActivity(project: Project) {
     if (!project.isEduProject()) return
+
+    YamlMigrator(project).migrate()
 
     val manager = StudyTaskManager.getInstance(project)
     val connection = ApplicationManager.getApplication().messageBus.connect(manager)
