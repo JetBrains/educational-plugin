@@ -2,9 +2,12 @@ package com.jetbrains.edu.android
 
 import com.android.ide.common.gradle.Dependency
 import com.android.ide.common.gradle.RichVersion
+import com.android.ide.common.repository.GoogleMavenArtifactId
 import com.android.sdklib.SdkVersionInfo
 import com.android.tools.adtui.device.FormFactor
 import com.android.tools.idea.gradle.plugin.AgpVersions
+import com.android.tools.idea.gradle.repositories.RepositoryUrlManager
+import com.android.tools.idea.sdk.AndroidSdks
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -16,6 +19,7 @@ import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemUiModel
 import com.jetbrains.edu.jvm.JdkProjectSettings
+import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.jvm.gradle.generation.GradleCourseProjectGenerator
 import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.LanguageSettings
@@ -28,10 +32,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.gradle.GradleConstants.BUILD_GRADLE
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.kotlinVersion
-import com.android.ide.common.repository.GoogleMavenArtifactId
-import com.android.tools.idea.gradle.repositories.RepositoryUrlManager
-import com.android.tools.idea.sdk.AndroidSdks
-import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 
 class AndroidCourseBuilder : GradleCourseBuilderBase() {
 
@@ -164,7 +164,7 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
                                                packageName: String = DEFAULT_PACKAGE_NAME,
                                                androidSdkVersion: Int? = null) {
       putUserData(PACKAGE_NAME, packageName)
-      putUserData(MIN_ANDROID_SDK, androidSdkVersion ?: FormFactor.MOBILE.minOfflineApiLevel)
+      putUserData(MIN_ANDROID_SDK, androidSdkVersion ?: FormFactor.MOBILE.defaultApi)
       putUserData(COMPILE_ANDROID_SDK, compileSdkVersion)
     }
 
