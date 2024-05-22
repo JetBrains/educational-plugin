@@ -196,7 +196,7 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
         }
 
         highlighter = response.codeHint?.let {
-          highlightFirstCodeDiffPositionOrNull(project, taskProcessor.currentTaskFile ?: state.taskFile, it, indicator)
+          highlightFirstCodeDiffPositionOrNull(taskProcessor.currentTaskFile ?: state.taskFile, it, indicator)
         }
 
         val action = response.codeHint?.let { showNextStepHint(state, taskProcessor.currentTaskFile ?: state.taskFile, it) }
@@ -220,7 +220,7 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
       TaskToolWindowView.getInstance(project).updateCheckPanel(task)
       val nextStepHintNotification = NextStepHintNotificationFrame(textToShow, action, actionTargetParent) { rejectHint(state) }
       nextStepHintNotificationPanel = nextStepHintNotification.rootPane
-      nextStepHintNotificationPanel?.let {  actionTargetParent?.add(it, BorderLayout.NORTH) }
+      nextStepHintNotificationPanel?.let { actionTargetParent?.add(it, BorderLayout.NORTH) }
     }
 
     /**
@@ -231,14 +231,9 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
      * if the focus is on another file or
      * if no differences are found.
      */
-    private fun highlightFirstCodeDiffPositionOrNull(
-      project: Project,
-      taskFile: TaskFile,
-      codeHint: String,
-      indicator: ProgressIndicator
-    ): RangeHighlighter? {
-      val virtualFile = taskFile.getVirtualFile(state.project) ?: return null
+    private fun highlightFirstCodeDiffPositionOrNull(taskFile: TaskFile, codeHint: String, indicator: ProgressIndicator): RangeHighlighter? {
       val editor = FileEditorManager.getInstance(project).selectedTextEditor ?: return null
+      val virtualFile = taskFile.getVirtualFile(project) ?: return null
       val currentFile = FileDocumentManager.getInstance().getFile(editor.document)
       if (currentFile != virtualFile) {
         return null
