@@ -25,10 +25,7 @@ import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showS
 import com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceHost
 import com.jetbrains.edu.learning.marketplace.userAgreement.UserAgreementDialogResultState
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.network.createRetrofitBuilder
-import com.jetbrains.edu.learning.network.executeCall
-import com.jetbrains.edu.learning.network.executeHandlingExceptions
-import com.jetbrains.edu.learning.network.executeParsingErrors
+import com.jetbrains.edu.learning.network.*
 import com.jetbrains.edu.learning.submissions.*
 import okhttp3.ConnectionPool
 import okhttp3.ResponseBody
@@ -102,16 +99,13 @@ class MarketplaceSubmissionsConnector {
   private fun logCourseId(courseId: Int?): String = if (courseId != null) "for course $courseId" else ""
 
   fun getAllSubmissions(courseId: Int): List<MarketplaceSubmission> {
-    val userAgreementState = getUserAgreementState()
-    if (!userAgreementState.isSubmissionDownloadAllowed()) {
-      LOG.info("Submissions will not be loaded because User Agreement state is $userAgreementState")
-      return emptyList()
-    }
     var currentPage = 1
     val allSubmissions = mutableListOf<MarketplaceSubmission>()
     do {
-      val submissionsList = submissionsService.getAllSubmissionsForCourse(courseId, currentPage).executeHandlingExceptions()?.body()
-                            ?: break
+      val submissionsList = submissionsService.getAllSubmissionsForCourse(courseId, currentPage).executeParsingErrors().onError {
+        LOG.error("Failed to get all submissions for course $courseId. Error message: $it")
+        return emptyList()
+      }.body() ?: break
       val submissions = submissionsList.submissions
       allSubmissions.addAll(submissions)
       currentPage += 1
@@ -129,8 +123,12 @@ class MarketplaceSubmissionsConnector {
     val courseSharedSolutions = mutableListOf<MarketplaceSubmission>()
     var currentPage = 1
     do {
-      val submissionsList = fetchSharedSolutionsForCourse(courseId, updateVersion, currentPage)
-                            ?: break
+      val submissionsList = submissionsService.getAllPublicSubmissionsForCourse(
+        courseId, updateVersion, currentPage
+      ).executeParsingErrors().onError {
+        LOG.error("Failed to get all shared submissions for course $courseId. Error message: $it")
+        return emptyList()
+      }.body() ?: break
       val sharedSolutions = submissionsList.submissions
       courseSharedSolutions.addAll(sharedSolutions)
       currentPage += 1
@@ -149,8 +147,10 @@ class MarketplaceSubmissionsConnector {
     do {
       val submissionsList = submissionsService.getPublicSubmissionsForTask(
         courseId, updateVersion, taskId, currentPage
-      ).executeHandlingExceptions()?.body() ?: return null
-
+      ).executeParsingErrors().onError {
+        LOG.error("Failed to get shared submissions for task $taskId. Error message: $it")
+        return null
+      }.body() ?: return null
       val sharedSolutions = submissionsList.submissions
       courseSharedSolutions.addAll(sharedSolutions)
       currentPage += 1
@@ -234,16 +234,6 @@ class MarketplaceSubmissionsConnector {
     return responseString?.let { SolutionSharingPreference.valueOf(it) }
   }
 
-  private fun fetchSharedSolutionsForCourse(
-    courseId: Int,
-    updateVersion: Int,
-    page: Int
-  ): MarketplaceSubmissionsList? = submissionsService.getAllPublicSubmissionsForCourse(
-    courseId,
-    updateVersion,
-    page
-  ).executeHandlingExceptions()?.body()
-
   fun reportSolution(submissionId: Int): Boolean {
     LOG.info("Reporting solution with id $submissionId")
     submissionsService.reportSolution(submissionId).executeParsingErrors().onError {
@@ -255,16 +245,12 @@ class MarketplaceSubmissionsConnector {
   }
 
   private fun doPostSubmission(courseId: Int, taskId: Int, submission: MarketplaceSubmission): Result<MarketplaceSubmission, String> {
-    val userAgreementState = getUserAgreementState()
-    if (!userAgreementState.isSubmissionUploadAllowed()) {
-      LOG.info("User Agreement not accepted, submission for task $taskId will not be posted")
-      return Err("User Agreement not accepted")
-    }
     LOG.info("Posting submission for task $taskId")
-    return submissionsService.postSubmission(courseId, submission.courseVersion, taskId, submission).executeParsingErrors().flatMap {
-      val result = it.body()
-      if (result == null) Err(EduCoreBundle.message("error.failed.to.post.solution")) else Ok(result)
-    }
+    val response = submissionsService.postSubmission(courseId, submission.courseVersion, taskId, submission).executeParsingErrors().onError {
+      LOG.error("Failed to post submission for task $taskId")
+      return Err(it)
+    }.body() ?: return Err(EduCoreBundle.message("error.failed.to.post.solution"))
+    return Ok(response)
   }
 
   private fun solutionFilesList(project: Project, task: Task): List<SolutionFile> {

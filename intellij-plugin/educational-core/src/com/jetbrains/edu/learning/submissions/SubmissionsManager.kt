@@ -139,31 +139,14 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
 
     CompletableFuture.runAsync({
       if (!isLoggedIn()) return@runAsync
-
-      val isSubmissionDownloadAllowed = submissionsProvider.isSubmissionDownloadAllowed()
-      val isSolutionSharingAllowed = submissionsProvider.isSolutionSharingAllowed()
       val taskToolWindowView = TaskToolWindowView.getInstance(project)
       val platformName = getPlatformName()
-      when {
-        isSubmissionDownloadAllowed && isSolutionSharingAllowed -> {
-          taskToolWindowView.showLoadingSubmissionsPanel(platformName)
-          taskToolWindowView.showLoadingCommunityPanel(platformName)
-          loadSubmissionsContent(course, submissionsProvider, loadSolutions)
-          loadCommunityContent(course, submissionsProvider)
-        }
 
-        isSubmissionDownloadAllowed -> {
-          taskToolWindowView.showLoadingSubmissionsPanel(platformName)
-          loadSubmissionsContent(course, submissionsProvider, loadSolutions)
-        }
+      taskToolWindowView.showLoadingSubmissionsPanel(platformName)
+      taskToolWindowView.showLoadingCommunityPanel(platformName)
+      loadSubmissionsContent(course, submissionsProvider, loadSolutions)
+      loadCommunityContent(course, submissionsProvider)
 
-        isSolutionSharingAllowed -> {
-          taskToolWindowView.showLoadingCommunityPanel(platformName)
-          loadCommunityContent(course, submissionsProvider)
-        }
-
-        else -> return@runAsync
-      }
       notifySubmissionsChanged()
     }, ProcessIOExecutorService.INSTANCE)
   }
@@ -175,8 +158,6 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
   }
 
   fun loadCommunitySubmissions(task: Task) {
-    if (!isSolutionSharingAllowed()) return
-
     val course = this.course
     val submissionsProvider = course?.getSubmissionsProvider() ?: return
 

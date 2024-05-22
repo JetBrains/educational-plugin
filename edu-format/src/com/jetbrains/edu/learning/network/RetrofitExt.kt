@@ -117,6 +117,10 @@ fun <T> Call<T>.executeParsingErrors(omitErrors: Boolean = false): Result<Respon
       val errorMessage = processForbiddenErrorMessage(error) ?: message("error.access.denied")
       Err(errorMessage)
     }
+    HTTP_UNAVAILABLE_FOR_LEGAL_REASONS -> { // 451
+      LOG.warning(message("error.agreement.not.accepted"))
+      Err(fullErrorText)
+    }
     in HTTP_BAD_REQUEST..HTTP_UNSUPPORTED_TYPE ->
       Err(message("error.unexpected.error", error)) // 400x
     else -> {
@@ -155,3 +159,5 @@ private fun processForbiddenErrorMessage(jsonText: String): String? {
     null
   }
 }
+
+const val HTTP_UNAVAILABLE_FOR_LEGAL_REASONS: Int = 451
