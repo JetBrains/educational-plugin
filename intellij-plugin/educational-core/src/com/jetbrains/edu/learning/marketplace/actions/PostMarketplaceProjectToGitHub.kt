@@ -42,6 +42,7 @@ class PostMarketplaceProjectToGitHub : DumbAwareAction() {
     val postToGithubActionProvider = PostToGithubActionProvider.first() ?: error("PostToGithubActionProvider not found")
     val course = project.course as? EduCourse ?: error("Marketplace course is expected")
     val courseDir = project.courseDir
+    setPrompted(course.id)
 
     val courseFrameworkLessons = course.frameworkLessons()
     val frameworkLessonsFromSections = course.sections.flatMap { it.frameworkLessons() }.toSet()
@@ -166,7 +167,7 @@ class PostMarketplaceProjectToGitHub : DumbAwareAction() {
 
     fun promptIfNeeded(project: Project) {
       val course = project.course as? EduCourse ?: return
-      if (!isPrompted() && canBePrompted(course)) {
+      if (!isPrompted(course.id) && canBePrompted(course)) {
         val inlineBanner = createInlineBanner()
         TaskToolWindowView.getInstance(project).addInlineBanner(inlineBanner)
       }
@@ -188,12 +189,12 @@ class PostMarketplaceProjectToGitHub : DumbAwareAction() {
       return 100 * numberOfSolvedTasks.toDouble() / tasks.size >= COMPLETION_CONDITION
     }
 
-    private fun isPrompted(): Boolean {
-      return PropertiesComponent.getInstance().getBoolean(IS_PROMPTED, false)
+    private fun isPrompted(courseId: Int): Boolean {
+      return PropertiesComponent.getInstance().getBoolean("$IS_PROMPTED.$courseId", false)
     }
 
-    private fun setPrompted() {
-      PropertiesComponent.getInstance().setValue(IS_PROMPTED, true)
+    private fun setPrompted(courseId: Int) {
+      PropertiesComponent.getInstance().setValue("$IS_PROMPTED.$courseId", true)
     }
 
     private fun createInlineBanner(): InlineBanner = InlineBanner(EditorNotificationPanel.Status.Info).apply {
@@ -201,7 +202,6 @@ class PostMarketplaceProjectToGitHub : DumbAwareAction() {
       addAction(EduCoreBundle.message("action.Educational.Student.PostMarketplaceProjectToGitHub.banner.action")) {
         val action = ActionManager.getInstance().getAction(ACTION_ID)
         ActionManager.getInstance().tryToExecute(action, null, null, null, false)
-        setPrompted()
         removeFromParent()
       }
     }
