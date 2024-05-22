@@ -5,6 +5,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduState
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.courseFormat.ext.project
@@ -17,11 +18,15 @@ import com.jetbrains.edu.learning.eduAssistant.inspection.applyInspections
 import com.jetbrains.edu.learning.eduAssistant.log.Loggers
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.rd.util.firstOrNull
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Service(Service.Level.PROJECT)
 class TaskBasedAssistant : Assistant {
+
+  private var currentTaskFile: TaskFile? = null
+
   override suspend fun getHint(taskProcessor: TaskProcessor, state: EduState, userCode: String?): AssistantResponse {
     val task = taskProcessor.task
     logEduAssistantInfo(taskProcessor, "Next step hint request")
@@ -66,7 +71,7 @@ class TaskBasedAssistant : Assistant {
     val project = task.project ?: error("Project was not found")
     val languageId = task.course.languageById ?: error("Language was not found")
     Loggers.hintTimingLogger.info("Retrieving the code hint from solution if it is a short function for task-id: ${task.id}")
-    val nextStepCodeFromSolution = taskProcessor.getShortFunctionFromSolutionIfRecommended(codeHint, project, languageId, functionName, state.taskFile)
+    val nextStepCodeFromSolution = taskProcessor.getShortFunctionFromSolutionIfRecommended(codeHint, project, languageId, functionName, currentTaskFile ?: state.taskFile)
     if (nextStepCodeFromSolution != null) {
       logEduAssistantInfo(
         taskProcessor,
@@ -121,7 +126,6 @@ class TaskBasedAssistant : Assistant {
     val languageId = task.course.languageById ?: error("Language was not found")
     val codeHint = taskProcessor.extractRequiredFunctionsFromCodeHint(
       getNextStepCodeHint(nextStepCodeHintPrompt, project, languageId),
-      state.taskFile
     ).also {
       logEduAssistantInfo(
         taskProcessor,
@@ -137,6 +141,9 @@ class TaskBasedAssistant : Assistant {
     try {
       Loggers.hintTimingLogger.info("Retrieving the modified function name for task-id: ${task.id}")
       val functionName = taskProcessor.getModifiedFunctionNameInCodeHint(codeStr, codeHint)
+      currentTaskFile = task.taskFiles[task.taskFilesWithChangedFunctions?.filter { (_, functions) ->
+        functionName in functions
+      }?.firstOrNull()?.key ?: state.taskFile.name] ?: state.taskFile
       return getEnhancedCodeHint(taskProcessor, functionName, codeStr, codeHint, state)
     } catch (e: IllegalStateException) {
       Loggers.eduAssistantLogger.error("Error occurred: ${e.stackTraceToString()}")
@@ -188,7 +195,8 @@ class TaskBasedAssistant : Assistant {
       "nextStepTextHintPrompt" to nextStepTextHintPrompt,
       "nextStepCodeHintPrompt" to nextStepCodeHintPrompt
     )
-    return AssistantResponse(nextStepTextHint, nextStepCodeHint?.let { taskProcessor.applyCodeHint(it, state.taskFile) }, prompts).also {
+    return AssistantResponse(nextStepTextHint, nextStepCodeHint?.let {
+      taskProcessor.applyCodeHint(it, currentTaskFile ?: state.taskFile) }, currentTaskFile, prompts).also {
       Loggers.hintTimingLogger.info("Completed getHint function for task-id: ${task.id}")
     }
   }

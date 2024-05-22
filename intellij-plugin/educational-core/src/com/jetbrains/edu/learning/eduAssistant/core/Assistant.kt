@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.eduAssistant.core
 
 import com.jetbrains.edu.learning.EduState
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 
 interface Assistant {
@@ -10,6 +11,7 @@ interface Assistant {
 data class AssistantResponse(
   val textHint: String? = null,
   val codeHint: String? = null,
+  val taskFile: TaskFile? = null,
   val prompts: Map<String, String> = emptyMap(),
   val assistantError: AssistantError? = null
 )

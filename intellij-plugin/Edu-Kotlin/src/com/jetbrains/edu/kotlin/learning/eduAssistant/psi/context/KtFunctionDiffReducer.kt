@@ -32,7 +32,7 @@ class KtFunctionDiffReducer : FunctionDiffReducer {
         addElement(it.first, it.second, project, addAfter = false)
         return true
       }
-      if (it.first.text != it.second.text) {
+      if (notEqualsTextIgnoringSpaces(it.first, it.second)) {
         swapElements(it.first, it.second, project)
         return true
       }
@@ -127,6 +127,7 @@ class KtFunctionDiffReducer : FunctionDiffReducer {
         // Change the function parameters or body
         first is KtNamedFunction && second is KtNamedFunction ->
           swapSmallElements(first.valueParameterList, second.valueParameterList, project) ||
+          swapSmallElements(first.typeReference, second.typeReference, project) ||
           resolveMultilineMismatch(first.bodyExpression, second.bodyExpression, project)
         // Change condition or body
         first is KtWhileExpressionBase && second is KtWhileExpressionBase ->
@@ -162,7 +163,7 @@ class KtFunctionDiffReducer : FunctionDiffReducer {
     project: Project,
     action: (PsiElement?, PsiElement?, Project) -> Unit
   ): Boolean {
-    if (first != null && second != null && first.text != second.text)  {
+    if (first != null && second != null && notEqualsTextIgnoringSpaces(first, second))  {
       action(first, second, project)
       return true
     }
@@ -187,6 +188,9 @@ class KtFunctionDiffReducer : FunctionDiffReducer {
     }
     return false
   }
+
+  private fun notEqualsTextIgnoringSpaces(first: PsiElement, second: PsiElement) =
+    first.text.replace("\\s".toRegex(), "") != second.text.replace("\\s".toRegex(), "")
 
   companion object {
     private const val MAX_BODY_LINES_IN_SHORT_FUNCTION = 3

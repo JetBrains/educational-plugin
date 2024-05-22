@@ -398,7 +398,7 @@ It's time to write your first program in Kotlin! Task Change the output text int
           println("Hello!")
       }
     """.trimIndent()
-    assertEquals(updatedCodeHint, taskProcessor.extractRequiredFunctionsFromCodeHint(codeHint, taskFile))
+    assertEquals(updatedCodeHint, taskProcessor.extractRequiredFunctionsFromCodeHint(codeHint))
   }
 
   override fun createCourse(): Course = createKotlinCourse()

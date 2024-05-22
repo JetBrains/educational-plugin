@@ -33,6 +33,7 @@ import com.intellij.ui.JBColor
 import com.intellij.util.messages.MessageBusConnection
 import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.EduUtilsKt.showPopup
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.eduAssistant.AiAssistantState
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -49,6 +50,8 @@ import java.awt.Font
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.swing.JComponent
 import javax.swing.JPanel
+import com.intellij.openapi.application.runWriteAction
+import com.jetbrains.edu.learning.eduAssistant.core.AssistantResponse
 
 class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
   var actionTargetParent: JPanel? = null
@@ -95,11 +98,10 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
   }
 
   @Suppress("DialogTitleCapitalization")
-  private fun showNextStepHint(state: EduState, codeHint: String) =
+  private fun showNextStepHint(state: EduState, taskFile: TaskFile, codeHint: String) =
     object : AnAction(EduCoreBundle.message("action.Educational.NextStepHint.show.code.text")) {
     override fun actionPerformed(p0: AnActionEvent) {
       highlighter?.dispose()
-      val taskFile = state.taskFile
       val virtualFile = taskFile.getVirtualFile(state.project) ?: error("VirtualFile for ${taskFile.name} not found")
       val solutionContent = DiffContentFactory.getInstance().create(VfsUtil.loadText(virtualFile), virtualFile.fileType)
       val solutionAfterChangesContent = DiffContentFactory.getInstance().create(codeHint, virtualFile.fileType)
@@ -180,25 +182,28 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
       progressIndicator = indicator
 
       val taskProcessor = TaskProcessor(task)
+      var response: AssistantResponse? = null
       runBlockingCancellable {
         task.aiAssistantState = AiAssistantState.HelpAsked
-        val response = project.service<TaskBasedAssistant>().getHint(taskProcessor, state)
-        response.assistantError?.let {
+        response = project.service<TaskBasedAssistant>().getHint(taskProcessor, state)
+        response?.assistantError?.let {
           showHintWindow(it.errorMessage)
           return@runBlockingCancellable
         }
-        response.textHint ?: run {
+        response?.textHint ?: run {
           showHintWindow(AssistantError.UnknownError.errorMessage)
           return@runBlockingCancellable
         }
-
-        highlighter = response.codeHint?.let {
-          highlightFirstCodeDiffPosition(project, state, it, indicator)
-        }
-
-        val action = response.codeHint?.let { showNextStepHint(state, it) }
-        showHintWindow(response.textHint, action)
       }
+
+      ApplicationManager.getApplication().invokeAndWait {
+        highlighter = response?.codeHint?.let {
+          highlightFirstCodeDiffPosition(project, response?.taskFile ?: state.taskFile, it, indicator)
+        }
+      }
+
+      val action = response?.codeHint?.let { showNextStepHint(state, response?.taskFile ?: state.taskFile, it) }
+      response?.textHint?.let { showHintWindow(it, action) }
     }
 
     override fun onFinished() {
@@ -209,24 +214,34 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
     private fun showHintWindow(textToShow: String, action: AnAction? = null) {
       val nextStepHintNotification = NextStepHintNotificationFrame(textToShow, action, actionTargetParent) { rejectHint(state) }
       nextStepHintNotificationPanel = nextStepHintNotification.rootPane
-      nextStepHintNotificationPanel?.let {  actionTargetParent?.add(it, BorderLayout.NORTH) }
+      nextStepHintNotificationPanel?.let { actionTargetParent?.add(it, BorderLayout.NORTH) }
     }
 
 
-    private fun highlightFirstCodeDiffPosition(project: Project, state: EduState, codeHint: String, indicator: ProgressIndicator): RangeHighlighter? {
-      val editor = FileEditorManager.getInstance(project).selectedTextEditor ?: return null
-      val virtualFile = state.taskFile.getVirtualFile(state.project) ?: return null
+    private fun highlightFirstCodeDiffPosition(
+      project: Project,
+      taskFile: TaskFile,
+      codeHint: String,
+      indicator: ProgressIndicator
+    ) = runWriteAction {
+      val virtualFile = taskFile.getVirtualFile(state.project) ?: return@runWriteAction null
+      val fileEditorManager = FileEditorManager.getInstance(project)
+      fileEditorManager.openFile(virtualFile, true)
+      val editor = fileEditorManager.selectedTextEditor ?: return@runWriteAction null
       val studentText = VfsUtil.loadText(virtualFile)
-      val fragments = ComparisonManager.getInstance().compareLines(studentText, codeHint,
-        ComparisonPolicy.DEFAULT, indicator)
-      return fragments.firstOrNull()?.startLine1?.let { line ->
+      val fragments = ComparisonManager.getInstance().compareLines(
+        studentText, codeHint,
+        ComparisonPolicy.DEFAULT, indicator
+      )
+      return@runWriteAction fragments.firstOrNull()?.startLine1?.let { line ->
         val attributes = TextAttributes(
           null, HIGHLIGHTER_COLOR, null,
           EffectType.BOXED, Font.PLAIN
         )
         if (line < studentText.lines().size) {
           editor.markupModel.addLineHighlighter(line, 0, attributes)
-        } else {
+        }
+        else {
           null
         }
       }

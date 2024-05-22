@@ -30,7 +30,7 @@ class TaskProcessor(val task: Task) {
 
   // Only for the Kotlin Onboarding Introduction: https://plugins.jetbrains.com/plugin/21067-kotlin-onboarding-introduction
   // and for Edu tasks
-  fun isNextStepHintApplicable() = task.course.id == 21067 && task is EduTask
+  fun isNextStepHintApplicable() = task is EduTask
 
   fun isGetHintButtonShown() = isNextStepHintApplicable() && task.course.courseMode == CourseMode.STUDENT && task.status != CheckStatus.Solved // TODO: when should we show this button?
 
@@ -67,7 +67,7 @@ class TaskProcessor(val task: Task) {
   }
 
   fun getSubmissionTextRepresentation(state: EduState) = runReadAction {
-    getChangedContent(task, state.taskFile, state.project)
+    getChangedContent(task, state.project)
   }
 
   fun getFunctionsFromTask(): List<FunctionSignature>? {
@@ -124,11 +124,11 @@ class TaskProcessor(val task: Task) {
     return null
   }
 
-  fun extractRequiredFunctionsFromCodeHint(codeHint: String, taskFile: TaskFile): String {
+  fun extractRequiredFunctionsFromCodeHint(codeHint: String): String {
     val project = task.project ?: return ""
     val language = task.course.languageById ?: return ""
     val codeHintPsiFile = runReadAction { PsiFileFactory.getInstance(project).createFileFromText("codeHintPsiFile", language, codeHint) }
-    return codeHintPsiFile.filterAllowedModifications(task, taskFile, project, SignatureSource.GENERATED_SOLUTION)
+    return codeHintPsiFile.filterAllowedModifications(task, project, SignatureSource.GENERATED_SOLUTION)
   }
 
   fun getModifiedFunctionNameInCodeHint(codeStr: String, codeHint: String): String {
