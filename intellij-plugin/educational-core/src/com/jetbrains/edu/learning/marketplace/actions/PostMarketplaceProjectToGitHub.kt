@@ -17,9 +17,7 @@ import com.intellij.ui.InlineBanner
 import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
-import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
-import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.github.PostToGithubActionProvider
@@ -45,7 +43,9 @@ class PostMarketplaceProjectToGitHub : DumbAwareAction() {
     val course = project.course as? EduCourse ?: error("Marketplace course is expected")
     val courseDir = project.courseDir
 
-    val frameworkLessons = course.frameworkLessons()
+    val courseFrameworkLessons = course.frameworkLessons()
+    val frameworkLessonsFromSections = course.sections.flatMap { it.frameworkLessons() }.toSet()
+    val frameworkLessons = courseFrameworkLessons.union(frameworkLessonsFromSections)
     if (frameworkLessons.isEmpty()) {
       LOG.info("No framework lessons found for course ${course.id}")
       return showFrameworkLessonsNotFoundNotification(project)
@@ -58,7 +58,7 @@ class PostMarketplaceProjectToGitHub : DumbAwareAction() {
     }
     val excludedLessons = course.lessons - frameworkLessons
 
-    generateGitignore(frameworkLessons, excludedLessons, course, courseDir)
+    generateGitignore(courseFrameworkLessons, frameworkLessonsFromSections, excludedLessons, course, courseDir)
     generateReadme(course, courseDir)
 
     postToGithubActionProvider.postToGitHub(project, project.courseDir)
@@ -72,19 +72,29 @@ class PostMarketplaceProjectToGitHub : DumbAwareAction() {
    * @see fileTemplates.internal
    */
   private fun generateGitignore(
-    frameworkLessons: Set<FrameworkLesson>,
+    courseFrameworkLessons: Set<FrameworkLesson>,
+    sectionsFrameworkLessons: Set<FrameworkLesson>,
     excludedLessons: List<Lesson>,
     course: EduCourse,
     courseDir: VirtualFile
   ) {
     val excludeLessonsString = excludedLessons.map { it.name }.joinToString("\n") { "$it/" }
-    val frameworkLessonsString = frameworkLessons.map { it.name }.joinToString("\n") { "$it/*/\n$it/$TASK/*/" }
-    val solutionDirsString = frameworkLessons.map { it.name }.joinToString("\n") { "!/${it}/$TASK/\n!/${it}/$TASK/$SRC/" }
+    val courseFrameworkLessonsString = courseFrameworkLessons.map { it.name }.joinToString("\n") { "$it/*/\n$it/$TASK/*/" }
+    val frameworkLessonsFromSectionsString =
+      sectionsFrameworkLessons.map { it.section?.name to it.name }.joinToString("\n") { (sectionName, lessonName) ->
+        "$sectionName/*/\n$sectionName/$lessonName/*/\n$sectionName/$lessonName/$TASK/*/"
+      }
+    val courseFrameworkLessonsSolutionDirsString =
+      courseFrameworkLessons.map { it.name }.joinToString("\n") { "!/${it}/$TASK/\n!/${it}/$TASK/$SRC/" }
+    val frameworkLessonsFromSectionsSolutionDirsString =
+      sectionsFrameworkLessons.map { it.section?.name to it.name }.joinToString("\n") { (sectionName, lessonName) ->
+        "!/$sectionName/$lessonName/\n!/$sectionName/$lessonName/$TASK/\n!/$sectionName/$lessonName/$TASK/$SRC/"
+      }
 
     val templateVariables = mapOf(
       EXCLUDED_LESSONS to excludeLessonsString,
-      INCLUDED_LESSONS to frameworkLessonsString,
-      SOLUTION_DIRS to solutionDirsString
+      INCLUDED_LESSONS to "$courseFrameworkLessonsString\n$frameworkLessonsFromSectionsString",
+      SOLUTION_DIRS to "$courseFrameworkLessonsSolutionDirsString\n$frameworkLessonsFromSectionsSolutionDirsString"
     )
 
     GeneratorUtils.createFileFromTemplate(
@@ -162,7 +172,7 @@ class PostMarketplaceProjectToGitHub : DumbAwareAction() {
       }
     }
 
-    private fun EduCourse.frameworkLessons(): Set<FrameworkLesson> {
+    private fun LessonContainer.frameworkLessons(): Set<FrameworkLesson> {
       return lessons.filterIsInstance<FrameworkLesson>().toSet()
     }
 
