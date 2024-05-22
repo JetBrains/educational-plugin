@@ -18,9 +18,11 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TAGS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TITLE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TRANSLATED_TO_LANGUAGE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.YAML_VERSION
 
 @Suppress("unused") // used for yaml serialization
 @JsonPropertyOrder(
+  YAML_VERSION,
   TYPE,
   TITLE,
   LANGUAGE,

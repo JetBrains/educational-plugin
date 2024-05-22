@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.json.mixins.IntValueFilter
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TRANSLATED_TO_LANGUAGE
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ADDITIONAL_FILES
 import com.jetbrains.edu.learning.json.mixins.NotImplementedInMixin
+import com.jetbrains.edu.learning.yaml.YamlMapper.CURRENT_YAML_VERSION
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.errorHandling.unnamedItemAtMessage
 import com.jetbrains.edu.learning.yaml.errorHandling.unsupportedItemTypeMessage
@@ -39,6 +40,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TOP_LEVEL_LESSONS_S
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.UPDATE_DATE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VENDOR
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.YAML_VERSION
 import com.jetbrains.edu.learning.yaml.format.remote.RemoteStudyItemYamlMixin
 import java.util.*
 
@@ -48,6 +50,7 @@ import java.util.*
  */
 @Suppress("unused") // used for yaml serialization
 @JsonPropertyOrder(
+  YAML_VERSION,
   TYPE,
   TITLE,
   LANGUAGE,
@@ -73,6 +76,9 @@ import java.util.*
   JsonSubTypes.Type(EduCourse::class, name = "marketplace")
 )
 abstract class CourseYamlMixin {
+  @JsonProperty(YAML_VERSION)
+  val yamlVersion: Int = CURRENT_YAML_VERSION
+
   val itemType: String
     @JsonSerialize(converter = CourseTypeSerializationConverter::class)
     @JsonProperty(TYPE)

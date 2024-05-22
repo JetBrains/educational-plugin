@@ -45,6 +45,7 @@ import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.submissions.SubmissionSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import com.jetbrains.edu.learning.yaml.YamlMigrator
 import org.jetbrains.annotations.VisibleForTesting
 
 class EduStartupActivity : StartupActivity.DumbAware {
@@ -54,6 +55,8 @@ class EduStartupActivity : StartupActivity.DumbAware {
   // Replace `trackActivityBlocking` with `trackActivity` during migration to `ProjectActivity`
   override fun runActivity(project: Project) = project.trackActivityBlocking(EduCourseConfigurationActivityKey) {
     if (!project.isEduProject()) return@trackActivityBlocking
+
+    YamlMigrator(project).migrate()
 
     val manager = StudyTaskManager.getInstance(project)
     val connection = ApplicationManager.getApplication().messageBus.connect(manager)

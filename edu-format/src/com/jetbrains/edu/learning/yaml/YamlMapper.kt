@@ -40,6 +40,8 @@ import org.jetbrains.annotations.TestOnly
 import java.util.*
 
 object YamlMapper {
+  val CURRENT_YAML_VERSION = 1
+
   val MAPPER: ObjectMapper by lazy {
     val mapper = createMapper()
     mapper.addMixIns()

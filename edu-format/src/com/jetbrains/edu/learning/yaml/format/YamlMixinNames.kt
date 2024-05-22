@@ -25,6 +25,8 @@ object YamlMixinNames {
   const val ENVIRONMENT_SETTINGS = JsonMixinNames.ENVIRONMENT_SETTINGS
   const val ADDITIONAL_FILES = JsonMixinNames.ADDITIONAL_FILES
 
+  const val YAML_VERSION = "yaml_version"
+
   // coursera course
   const val TOP_LEVEL_LESSONS_SECTION = "default_section"
   const val SUBMIT_MANUALLY = "submit_manually"

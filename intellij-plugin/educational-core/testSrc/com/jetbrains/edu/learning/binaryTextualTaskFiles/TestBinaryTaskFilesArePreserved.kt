@@ -74,14 +74,19 @@ class TestBinaryFilesAreNotStoredInsideTasks : CourseReopeningTestBase<EmptyProj
     })
   }
 
-  private fun testContentsArePreserved(studentProject: Project, binaryFilesCleared: Boolean = false) {
+  private fun testContentsArePreserved(studentProject: Project, binaryAndAdditionalFilesCleared: Boolean = false) {
     val course = studentProject.course!!
     course.visitEduFiles { eduFile ->
       val path = eduFile.pathInCourse
       var expectedContents = expectedContents(eduFile)
-      if (binaryFilesCleared && expectedContents is BinaryContents) {
-        expectedContents = BinaryContents.EMPTY
+
+      val isAdditionalFile = eduFile !is TaskFile
+      expectedContents = when {
+        binaryAndAdditionalFilesCleared && expectedContents is BinaryContents -> BinaryContents.EMPTY
+        binaryAndAdditionalFilesCleared && isAdditionalFile -> TextualContents.EMPTY
+        else -> expectedContents
       }
+
       assertContentsEqual(path, expectedContents, eduFile.contents)
     }
   }
