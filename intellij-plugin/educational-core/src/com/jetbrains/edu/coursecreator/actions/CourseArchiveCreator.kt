@@ -152,7 +152,7 @@ class CourseArchiveCreator(
   fun prepareCourse(course: Course, indicator: CourseArchiveIndicator? = null) {
     loadActualTexts(project, course, indicator)
     course.sortItems()
-    course.additionalFiles = AdditionalFilesUtils.collectAdditionalFiles(course, project, indicator)
+    course.additionalFiles = AdditionalFilesUtils.collectAdditionalFiles(course.configurator, project, indicator)
     course.pluginDependencies = collectCourseDependencies(project, course)
     course.courseMode = CourseMode.STUDENT
   }

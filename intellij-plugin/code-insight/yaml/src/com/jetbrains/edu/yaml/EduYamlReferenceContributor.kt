@@ -139,5 +139,5 @@ class ItemContainerContentReferenceProvider : EduPsiReferenceProvider() {
 private fun excludeFromArchive(project: Project, virtualFile: VirtualFile): Boolean {
   val course = StudyTaskManager.getInstance(project).course ?: return true
   val configurator = course.configurator ?: return true
-  return configurator.excludeFromArchive(project, course, virtualFile)
+  return configurator.excludeFromArchive(project, virtualFile)
 }

@@ -41,7 +41,7 @@ class CCCourseNode(
     val configurator: EduConfigurator<*> = item.configurator ?: return null
     if (childNode is PsiDirectoryNode) {
       val psiDirectory = childNode.value
-      if (!configurator.excludeFromArchive(myProject, item, psiDirectory.virtualFile)) {
+      if (!configurator.excludeFromArchive(myProject, psiDirectory.virtualFile)) {
         return CCNode(myProject, psiDirectory, settings, null)
       }
     }

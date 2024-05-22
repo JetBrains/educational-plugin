@@ -41,8 +41,8 @@ class PhpConfigurator : EduConfigurator<PhpProjectSettings> {
 
   override fun isTestFile(task: Task, path: String): Boolean = super.isTestFile(task, path) || path == testFileName
 
-  override fun excludeFromArchive(project: Project, course: Course, file: VirtualFile): Boolean =
-    super.excludeFromArchive(project, course, file) ||
+  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean =
+    super.excludeFromArchive(project, file) ||
     file.path.contains(ComposerUtils.VENDOR_DIR_DEFAULT_NAME) ||
     file.path.contains(ComposerUtils.COMPOSER_PHAR_NAME)
 
