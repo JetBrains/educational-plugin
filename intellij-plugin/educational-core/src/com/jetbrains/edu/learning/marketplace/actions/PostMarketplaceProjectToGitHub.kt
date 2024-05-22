@@ -152,7 +152,7 @@ class PostMarketplaceProjectToGitHub : DumbAwareAction() {
     private const val TASK: String = "task"
 
     private val COMPLETION_CONDITION: Int
-      get() = Registry.intValue(COMPLETION_CONDITION_REGISTRY_KEY)
+      get() = Registry.intValue(COMPLETION_CONDITION_REGISTRY_KEY).coerceIn(0, 100)
 
     fun promptIfNeeded(project: Project) {
       val course = project.course as? EduCourse ?: return
