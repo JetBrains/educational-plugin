@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CHECK_PROFILE
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TOPICS
 import com.jetbrains.edu.learning.courseFormat.UserInfo
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillTopic
@@ -121,7 +122,7 @@ class HyperskillStepOptions : PyCharmStepOptions {
 
   constructor(project: Project, task: Task) : super(project, task) {
     val hyperskillAdditionalInfo = HyperskillAdditionalInfo()
-    hyperskillAdditionalInfo.files = AdditionalFilesUtils.collectAdditionalFiles(task.course, project)
+    hyperskillAdditionalInfo.files = AdditionalFilesUtils.collectAdditionalFiles(task.course.configurator, project)
     hyperskill = hyperskillAdditionalInfo
   }
 }

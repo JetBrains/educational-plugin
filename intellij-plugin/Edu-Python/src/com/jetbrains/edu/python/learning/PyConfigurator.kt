@@ -20,8 +20,8 @@ open class PyConfigurator : EduConfigurator<PyProjectSettings> {
   override val testFileName: String
     get() = TESTS_PY
 
-  override fun excludeFromArchive(project: Project, course: Course, file: VirtualFile): Boolean =
-    super.excludeFromArchive(project, course, file) || excludeFromArchive(file)
+  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean =
+    super.excludeFromArchive(project, file) || excludeFromArchive(file)
 
   override val taskCheckerProvider: TaskCheckerProvider
     get() = PyTaskCheckerProvider()

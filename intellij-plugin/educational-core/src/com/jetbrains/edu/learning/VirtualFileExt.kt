@@ -167,7 +167,7 @@ fun VirtualFile.canBeAddedToTask(project: Project): Boolean {
   if (isDirectory) return false
   val course = getContainingTask(project)?.course ?: return false
   val configurator = course.configurator ?: return false
-  return if (configurator.excludeFromArchive(project, course, this)) false else !belongsToTask(project)
+  return if (configurator.excludeFromArchive(project, this)) false else !belongsToTask(project)
 }
 
 /**

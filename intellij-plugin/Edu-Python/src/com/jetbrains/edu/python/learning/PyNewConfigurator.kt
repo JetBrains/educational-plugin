@@ -23,8 +23,8 @@ class PyNewConfigurator : EduConfigurator<PyProjectSettings> {
   override val testDirs: List<String>
     get() = listOf(TEST_FOLDER)
 
-  override fun excludeFromArchive(project: Project, course: Course, file: VirtualFile): Boolean =
-    super.excludeFromArchive(project, course, file) || excludeFromArchive(file)
+  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean =
+    super.excludeFromArchive(project, file) || excludeFromArchive(file)
 
   override val taskCheckerProvider: TaskCheckerProvider
     get() = PyNewTaskCheckerProvider()

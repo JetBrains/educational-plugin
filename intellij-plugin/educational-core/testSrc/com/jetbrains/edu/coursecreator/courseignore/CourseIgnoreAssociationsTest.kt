@@ -9,6 +9,7 @@ import com.jetbrains.edu.coursecreator.AdditionalFilesUtils
 import com.jetbrains.edu.learning.EduNames.COURSE_IGNORE
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
@@ -60,7 +61,7 @@ class CourseIgnoreAssociationsTest : CourseGenerationTestBase<EduProjectSettings
     val actualCourseIgnoreFileTypeBefore = FileTypeManager.getInstance().getFileTypeByFile(courseIgnoreFile)
     assertNotEquals(".courseignore must be associated wrongly", actualCourseIgnoreFileTypeBefore, CourseIgnoreFileType)
 
-    val additionalFiles = AdditionalFilesUtils.collectAdditionalFiles(course, project)
+    val additionalFiles = AdditionalFilesUtils.collectAdditionalFiles(course.configurator, project)
     assertSameElements(additionalFiles.map { it.name }, listOf())
   }
 
