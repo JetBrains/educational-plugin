@@ -195,7 +195,7 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
         }
 
         highlighter = response.codeHint?.let {
-          highlightFirstCodeDiffPosition(taskProcessor.currentTaskFile ?: state.taskFile, it, indicator)
+          highlightFirstCodeDiffPositionOrNull(taskProcessor.currentTaskFile ?: state.taskFile, it, indicator)
         }
 
         val action = response.codeHint?.let { showNextStepHint(state, taskProcessor.currentTaskFile ?: state.taskFile, it) }
@@ -231,7 +231,7 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
      * if the focus is on another file or
      * if no differences are found.
      */
-    private fun highlightFirstCodeDiffPosition(taskFile: TaskFile, codeHint: String, indicator: ProgressIndicator): RangeHighlighter? {
+    private fun highlightFirstCodeDiffPositionOrNull(taskFile: TaskFile, codeHint: String, indicator: ProgressIndicator): RangeHighlighter? {
       val editor = FileEditorManager.getInstance(project).selectedTextEditor ?: return null
       val virtualFile = taskFile.getVirtualFile(state.project) ?: return null
       val currentFile = FileDocumentManager.getInstance().getFile(editor.document)
