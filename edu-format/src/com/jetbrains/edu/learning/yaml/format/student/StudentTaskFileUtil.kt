@@ -63,10 +63,10 @@ class StudentTaskFileBuilder(
   propagatable: Boolean = true,
   @JsonProperty(HIGHLIGHT_LEVEL) errorHighlightLevel: EduFileErrorHighlightLevel = EduFileErrorHighlightLevel.ALL_PROBLEMS
 ) : TaskFileBuilder(name, placeholders, visible, editable, propagatable, errorHighlightLevel) {
-  override fun createTaskFile(): TaskFile {
-    val newTaskFile = super.createTaskFile()
+  override fun setupTaskFile(taskFile: TaskFile) {
+    super.setupTaskFile(taskFile)
 
-    newTaskFile.contents = if (isBinary == true) {
+    taskFile.contents = if (isBinary == true) {
       // binary contents are never stored in yaml
       TakeFromStorageBinaryContents
     }
@@ -81,9 +81,7 @@ class StudentTaskFileBuilder(
       }
     }
 
-    newTaskFile.isLearnerCreated = learnerCreated
-
-    return newTaskFile
+    taskFile.isLearnerCreated = learnerCreated
   }
 }
 
