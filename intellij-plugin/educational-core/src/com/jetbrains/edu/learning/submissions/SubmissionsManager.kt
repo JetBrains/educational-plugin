@@ -22,7 +22,6 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
 import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
-import java.util.stream.Collectors
 
 /**
  * Stores and returns submissions for courses with submissions support if they are already loaded or delegates loading
@@ -48,12 +47,11 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
 
   private fun getCommunitySubmissionFromMemory(taskId: Int, submissionId: Int): Submission? = communitySubmissions[taskId]?.find { it.id == submissionId }
 
-  fun getSubmissions(tasks: List<Task>): List<Submission>? {
-    val course = this.course
-    val stepIds = tasks.stream().map { task -> task.id }.collect(Collectors.toSet())
-    val submissionsFromMemory = getSubmissionsFromMemory(stepIds)
+  fun getOrLoadSubmissions(tasks: List<Task>): List<Submission>? {
+    val taskIds = tasks.map { it.id }.toSet()
+    val submissionsFromMemory = getSubmissionsFromMemory(taskIds)
     return submissionsFromMemory.ifEmpty {
-      if (course == null) return null
+      val course = this.course ?: return null
       val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course) ?: return null
       val submissionsById = submissionsProvider.loadSubmissions(tasks, course.id)
       submissions.putAll(submissionsById)

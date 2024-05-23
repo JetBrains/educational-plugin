@@ -240,7 +240,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     cancelUnfinishedTasks()
   }
 
-  private fun loadSubmissions(tasks: List<Task>): List<Submission>? = SubmissionsManager.getInstance(project).getSubmissions(tasks)
+  private fun loadSubmissions(tasks: List<Task>): List<Submission>? = SubmissionsManager.getInstance(project).getOrLoadSubmissions(tasks)
 
   protected abstract fun loadSolution(task: Task, submissions: List<Submission>): TaskSolutions
 
