@@ -2,6 +2,7 @@ package com.jetbrains.edu.yaml.inspections
 
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
+import com.jetbrains.edu.learning.yaml.YamlMapper.CURRENT_YAML_VERSION
 import org.jetbrains.yaml.schema.YamlJsonSchemaHighlightingInspection
 import org.junit.Test
 
@@ -24,7 +25,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
       |environment: Android
       |content:
       |- lesson1
-      |yaml_version: 1
+      |yaml_version: $CURRENT_YAML_VERSION
       |
     """.trimMargin("|"))
   }
@@ -46,7 +47,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
       |environment: Android
       |content:
       |- lesson1
-      |yaml_version: 1
+      |yaml_version: $CURRENT_YAML_VERSION
       |
     """.trimMargin("|"))
   }
