@@ -14,6 +14,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
     }
 
     testHighlighting(getCourse(), """
+      |yaml_version: 1
       |title: Test Course
       |type: coursera
       |language: Russian
@@ -24,6 +25,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
       |environment: Android
       |content:
       |- lesson1
+      |additional_files: []
       |
     """.trimMargin("|"))
   }
@@ -35,6 +37,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
     }
 
     testHighlighting(getCourse(), """
+      |yaml_version: 1
       |title: Test Course
       |type: marketplace
       |language: Russian
@@ -45,6 +48,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
       |environment: Android
       |content:
       |- lesson1
+      |additional_files: []
       |
     """.trimMargin("|"))
   }

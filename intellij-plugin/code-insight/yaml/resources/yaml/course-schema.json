@@ -97,13 +97,36 @@
       "description" : "Course specific properties",
       "type" : "object",
       "uniqueItems" : true
+    },
+    "additional_files": {
+      "description": "Files included in the course",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/file"
+      }
     }
   },
   "required": [
     "title",
     "language",
     "programming_language",
-    "summary"
+    "summary",
+    "additional_files"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "definitions": {
+    "file": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "File path relative to the course base directory"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false
+    }
+  }
 }
