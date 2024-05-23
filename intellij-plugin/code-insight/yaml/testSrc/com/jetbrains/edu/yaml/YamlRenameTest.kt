@@ -42,6 +42,7 @@ class YamlRenameTest : YamlCodeInsightTest() {
       |programming_language: Plain text
       |content:
       |- lesson2
+      |additional_files: [ ]
       |
     """.trimMargin("|"))
   }
