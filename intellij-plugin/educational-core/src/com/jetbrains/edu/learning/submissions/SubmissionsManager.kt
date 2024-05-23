@@ -40,13 +40,8 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
   var course: Course? = project.course
     @TestOnly set
 
-  fun getSubmissionsFromMemory(stepIds: Set<Int>): List<Submission>? {
-    val submissionsFromMemory = mutableListOf<Submission>()
-    for (stepId in stepIds) {
-      val submissionsByStep = submissions[stepId] ?: return null
-      submissionsFromMemory.addAll(submissionsByStep)
-    }
-    return submissionsFromMemory.sortedByDescending { it.time }.toList()
+  fun getSubmissionsFromMemory(taskIds: Set<Int>): List<Submission> {
+    return taskIds.mapNotNull { submissions[it] }.flatten().sortedByDescending { it.time }
   }
 
   fun getCommunitySubmissionsFromMemory(taskId: Int): List<Submission>? = communitySubmissions[taskId]?.sortedByDescending { it.time }
@@ -57,8 +52,7 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
     val course = this.course
     val stepIds = tasks.stream().map { task -> task.id }.collect(Collectors.toSet())
     val submissionsFromMemory = getSubmissionsFromMemory(stepIds)
-    return if (submissionsFromMemory != null) submissionsFromMemory
-    else {
+    return submissionsFromMemory.ifEmpty {
       if (course == null) return null
       val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course) ?: return null
       val submissionsById = submissionsProvider.loadSubmissions(tasks, course.id)
@@ -116,8 +110,7 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
   }
 
   fun containsCorrectSubmission(stepId: Int): Boolean {
-    val submissions = getSubmissionsFromMemory(setOf(stepId)) ?: return false
-    return submissions.any { it.status == CORRECT }
+    return getSubmissionsFromMemory(setOf(stepId)).any { it.status == CORRECT }
   }
 
   fun addToSubmissionsWithStatus(taskId: Int, checkStatus: CheckStatus, submission: Submission?) {

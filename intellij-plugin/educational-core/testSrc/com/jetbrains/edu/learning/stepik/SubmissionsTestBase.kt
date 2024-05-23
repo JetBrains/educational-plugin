@@ -12,7 +12,7 @@ abstract class SubmissionsTestBase : EduTestCase() {
 
   protected fun doTestSubmissionsLoaded(taskIds: Set<Int>, taskIdsToSubmissionsNumber: Map<Int, Int>) {
     val submissionsManager = SubmissionsManager.getInstance(project)
-    assertNull(
+    assertEmpty(
       "SubmissionsManager should not contain submissions before submission loading",
       submissionsManager.getSubmissionsFromMemory(taskIds)
     )
@@ -29,8 +29,8 @@ abstract class SubmissionsTestBase : EduTestCase() {
                                                taskId: Int,
                                                checkStatus: String) {
     val submissions = submissionsManager.getSubmissionsFromMemory(setOf(taskId))
-    assertNotNull("Submissions list should not be null", submissions)
-    assertEquals(1, submissions!!.size)
+    assertNotEmpty(submissions)
+    assertEquals(1, submissions.size)
     assertEquals(checkStatus, submissions[0].status)
   }
 
@@ -38,13 +38,13 @@ abstract class SubmissionsTestBase : EduTestCase() {
                                         taskId: Int,
                                         submissionsNumber: Int = 1) {
     val submissions = submissionsManager.getSubmissionsFromMemory(setOf(taskId))
-    assertNotNull("Submissions list should not be null", submissions)
-    assertTrue(submissions!!.size == submissionsNumber)
+    assertNotEmpty(submissions)
+    assertTrue(submissions.size == submissionsNumber)
   }
 
   protected fun doTestSubmissionAddedAfterTaskCheck(taskId: Int, checkStatus: String) {
     val submissionsManager = SubmissionsManager.getInstance(project)
-    assertNull("SubmissionsManager should not contain submissions before task check",
+    assertEmpty("SubmissionsManager should not contain submissions before task check",
                submissionsManager.getSubmissionsFromMemory(setOf(taskId)))
 
     CompletableFuture.runAsync { checkTask() }.thenApply { checkSubmissionPresentWithStatus(submissionsManager, taskId, checkStatus) }

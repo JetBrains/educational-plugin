@@ -173,7 +173,7 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
     val submissionsList = submissionsManager.getSubmissionsFromMemory(setOf(task.id))
 
     if (!isLoggedIn) {
-      if (task.course.isMarketplace && submissionsList?.isNotEmpty() == true) {
+      if (task.course.isMarketplace && submissionsList.isNotEmpty()) {
         return getSubmissionsText(submissionsList) to SubmissionsDifferenceLinkHandler(project, task, submissionsManager)
       }
       else {
@@ -185,7 +185,7 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
       return getAgreementPromptText() to LoginLinkHandler(project, submissionsManager)
     }
 
-    if (submissionsList.isNullOrEmpty()) {
+    if (submissionsList.isEmpty()) {
       return emptySubmissionsMessage() to null
     }
 

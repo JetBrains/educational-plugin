@@ -66,7 +66,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
     val taskIds = course.allTasks.map { it.id }
     val submissionsManager = SubmissionsManager.getInstance(project)
     taskIds.forEach { taskId ->
-      assertNullOrEmpty(submissionsManager.getSubmissionsFromMemory(setOf(taskId)))
+      assertEmpty(submissionsManager.getSubmissionsFromMemory(setOf(taskId)))
       submissionsManager.addToSubmissions(taskId, generateMarketplaceSubmission())
       checkSubmissionsPresent(submissionsManager, taskId)
     }
@@ -78,7 +78,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
       PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
     }
     taskIds.forEach { taskId ->
-      assertNullOrEmpty(submissionsManager.getSubmissionsFromMemory(setOf(taskId)))
+      assertEmpty(submissionsManager.getSubmissionsFromMemory(setOf(taskId)))
     }
   }
 
@@ -90,7 +90,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
     val taskIds = course.allTasks.map { it.id }
     val submissionsManager = SubmissionsManager.getInstance(project)
     taskIds.forEach { taskId ->
-      assertNullOrEmpty(submissionsManager.getSubmissionsFromMemory(setOf(taskId)))
+      assertEmpty(submissionsManager.getSubmissionsFromMemory(setOf(taskId)))
       submissionsManager.addToSubmissions(taskId, generateMarketplaceSubmission())
       checkSubmissionsPresent(submissionsManager, taskId)
     }
@@ -102,7 +102,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
       PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
     }
     taskIds.forEach { taskId ->
-      assertNullOrEmpty(submissionsManager.getSubmissionsFromMemory(setOf(taskId)))
+      assertEmpty(submissionsManager.getSubmissionsFromMemory(setOf(taskId)))
     }
   }
 
@@ -114,7 +114,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
     val taskIds = course.allTasks.map { it.id }
     val submissionsManager = SubmissionsManager.getInstance(project)
     taskIds.forEach { taskId ->
-      assertNullOrEmpty(submissionsManager.getSubmissionsFromMemory(setOf(taskId)))
+      assertEmpty(submissionsManager.getSubmissionsFromMemory(setOf(taskId)))
       submissionsManager.addToSubmissions(taskId, generateMarketplaceSubmission())
       checkSubmissionsPresent(submissionsManager, taskId)
     }
