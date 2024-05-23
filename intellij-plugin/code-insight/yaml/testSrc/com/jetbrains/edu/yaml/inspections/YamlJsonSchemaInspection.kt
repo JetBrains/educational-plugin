@@ -1,7 +1,9 @@
 package com.jetbrains.edu.yaml.inspections
 
+import com.jetbrains.edu.learning.courseFormat.BinaryContents
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
+import com.jetbrains.edu.learning.yaml.YamlMapper.CURRENT_YAML_VERSION
 import org.jetbrains.yaml.schema.YamlJsonSchemaHighlightingInspection
 import org.junit.Test
 
@@ -24,7 +26,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
       |environment: Android
       |content:
       |- lesson1
-      |yaml_version: 1
+      |yaml_version: $CURRENT_YAML_VERSION
       |
     """.trimMargin("|"))
   }
@@ -46,7 +48,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
       |environment: Android
       |content:
       |- lesson1
-      |yaml_version: 1
+      |yaml_version: $CURRENT_YAML_VERSION
       |
     """.trimMargin("|"))
   }
@@ -167,5 +169,50 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
       |  <warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property</warning>: prop
       |  visible: true
       |""".trimMargin("|"))
+  }
+
+  @Test
+  fun `courses can have binary additional files`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      additionalFile("a.png", BinaryContents.EMPTY)
+    }
+
+    testHighlighting(course,
+      """
+      |title: Test Course
+      |type: marketplace
+      |language: Russian
+      |summary: sum
+      |programming_language: Plain text
+      |environment: Android
+      |content:
+      |- lesson1
+      |additional_files:
+      |  - name: a.png
+      |    is_binary: true
+      |yaml_version: $CURRENT_YAML_VERSION
+      |""".trimMargin("|")
+    )
+  }
+
+  @Test
+  fun `tasks can have binary additional files`() {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      lesson {
+        eduTask {
+          taskFile("Test.java", BinaryContents.EMPTY)
+        }
+      }
+    }
+
+    testHighlighting(findTask(0, 0),
+      """
+      |type: edu
+      |files:
+      |- name: Test.java
+      |  is_binary: true
+      |  visible: true
+      |""".trimMargin("|")
+    )
   }
 }

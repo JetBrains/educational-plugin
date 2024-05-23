@@ -125,6 +125,11 @@
           "type": "boolean",
           "description": "If the file is shown to learner or not"
         },
+        "is_binary": {
+          "type": "boolean",
+          "description": "Whether the file is binary",
+          "default": false
+        },
         "placeholders": {
           "description": "Answer placeholders",
           "type": "array",
