@@ -27,6 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.isHeadlessEnvironment
 import com.jetbrains.edu.learning.marketplace.isMarketplaceCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -103,7 +104,7 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
     if (!project.isMarketplaceCourse()) return
 
     val submissionsTab = getSubmissionTab() ?: return
-    ApplicationManager.getApplication().invokeLater {
+    project.invokeLater {
       submissionsTab.showMyTab()
     }
   }
@@ -112,7 +113,7 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
     if (!project.isMarketplaceCourse()) return
 
     val submissionsTab = getSubmissionTab() ?: return
-    ApplicationManager.getApplication().invokeLater {
+    project.invokeLater {
       submissionsTab.showCommunityTab()
     }
   }
