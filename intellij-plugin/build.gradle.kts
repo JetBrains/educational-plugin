@@ -4,8 +4,8 @@ import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.intellij.platform.gradle.extensions.IntelliJPlatformDependenciesExtension
 import org.jetbrains.intellij.platform.gradle.tasks.PrepareSandboxTask
+import org.jetbrains.intellij.platform.gradle.tasks.RunIdeTask
 import org.jetbrains.intellij.platform.gradle.utils.extensionProvider
-import org.jetbrains.intellij.tasks.RunIdeBase
 import org.jetbrains.intellij.tasks.RunIdeTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.*
@@ -306,10 +306,10 @@ tasks {
       }
     }
   }
-  withType<RunIdeBase> {
+  withType<RunIdeTask> {
     // Disable auto plugin reloading. See `com.intellij.ide.plugins.DynamicPluginVfsListener`
     // To enable dynamic reloading, change value to `true` and disable `EduDynamicPluginListener`
-    autoReloadPlugins = false
+    autoReload = false
     jvmArgs("-Xmx2g")
     jvmArgs("-Dide.experimental.ui=true")
 
