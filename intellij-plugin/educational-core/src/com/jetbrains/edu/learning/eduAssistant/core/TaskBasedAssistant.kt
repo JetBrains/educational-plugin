@@ -166,11 +166,12 @@ class TaskBasedAssistant : Assistant {
   ): AssistantResponse {
     val task = taskProcessor.task
     Loggers.hintTimingLogger.info("Retrieving the text hint prompt for task-id: ${task.id}")
+    val language = task.course.languageDisplayName.lowercase()
     val nextStepTextHintPrompt = codeHint?.let {
-      promptBuilder.buildTextHintPrompt(it, codeStr)
+      promptBuilder.buildTextHintPrompt(it, codeStr, language)
     } ?: run {
       logEduAssistantInfo(taskProcessor, "The code hint was not generated, so the text hint is generated first")
-      promptBuilder.buildTextHintPromptIfNoCodeHintIsGenerated(taskProcessor, codeStr)
+      promptBuilder.buildTextHintPromptIfNoCodeHintIsGenerated(taskProcessor, codeStr, language)
     }
     logEduAssistantInfo(
       taskProcessor,

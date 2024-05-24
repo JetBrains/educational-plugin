@@ -4,16 +4,19 @@ import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 
 class CompilationErrorPromptBuilder : PromptBuilder {
 
-  override fun buildTextHintPrompt(codeHint: String, codeStr: String) = """
+  override fun buildTextHintPrompt(codeHint: String, codeStr: String, language: String) = """
     Based on the given code and the improved version of the code, provide a concise textual hint that directly guides to improve the given code.
     The code contains a compilation error, and the improved code fixes this error.
-    Here is the current code and the improved version of the code, all delimited with <>:
     
     The code:
+    ```$language
     <$codeStr>
+    ```
     
     The improved version of the code:
-     <$codeHint>
+    ```$language
+    <$codeHint>
+    ```
     
     Respond with a brief textual instruction in imperative form of what modifications need to be made to the code to achieve the improvements exhibited in the improved code. 
     Do not write any code, except names of functions or string literals. 
@@ -21,13 +24,15 @@ class CompilationErrorPromptBuilder : PromptBuilder {
 
   override fun buildTextHintPromptIfNoCodeHintIsGenerated(
     taskProcessor: TaskProcessor,
-    codeStr: String
+    codeStr: String,
+    language: String
   ) = """
     Based on the given code, determine how to fix it to make the code compile successfully.
-    Here is the code, delimited with <>:
     
     The code:
+    ```$language
     <$codeStr>
+    ```
     
     Respond with a brief textual instruction in imperative form of how to fix it.
     Do not write any code, except names of functions that can be used in the solution.

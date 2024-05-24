@@ -7,5 +7,6 @@ enum class AssistantError(val errorMessage: String) {
   NetworkError("${EduCoreBundle.message("action.Educational.NextStepHint.error.common")} ${EduCoreBundle.message("action.Educational.NextStepHint.error.network")}"),
   TooManyRequests("${EduCoreBundle.message("action.Educational.NextStepHint.error.common")} ${EduCoreBundle.message("action.Educational.NextStepHint.error.requests")}"),
   UnknownError("${EduCoreBundle.message("action.Educational.NextStepHint.error.common")} ${EduCoreBundle.message("action.Educational.NextStepHint.error.unknown")}"),
-  UnlockedError("${EduCoreBundle.message("action.Educational.NextStepHint.error.common")} ${EduCoreBundle.message("action.Educational.NextStepHint.error.unlocked")}")
+  UnlockedError("${EduCoreBundle.message("action.Educational.NextStepHint.error.common")} ${EduCoreBundle.message("action.Educational.NextStepHint.error.unlocked")}"),
+  UncheckedCodeError(EduCoreBundle.message("action.Educational.NextStepHint.error.unchecked.code"))
 }

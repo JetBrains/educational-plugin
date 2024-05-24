@@ -6,28 +6,33 @@ import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 
 class NextStepHintPromptBuilder : PromptBuilder {
 
-  override fun buildTextHintPrompt(codeHint: String, codeStr: String) = """
+  override fun buildTextHintPrompt(codeHint: String, codeStr: String, language: String) = """
     Based on the given code and the improved version of the code, provide a concise textual hint that directly guides to improve the given code.
     Here is the current code and the improved version of the code, all delimited with <>:
     
     The code:
+    ```$language
     <$codeStr>
+    ```
     
     The improved version of the code:
-     <$codeHint>
+    ```$language
+    <$codeHint>
+    ```
     
     Respond with a brief textual instruction in imperative form of what modifications need to be made to the code to achieve the improvements exhibited in the improved code. 
     Do not write any code, except names of functions or string literals. 
     Avoid explaining why the modifications are needed.
   """.trimIndent()
 
-  override fun buildTextHintPromptIfNoCodeHintIsGenerated(taskProcessor: TaskProcessor, codeStr: String) =
-    buildNextStepTextHintPromptIfNoCodeHintIsGenerated(taskProcessor, codeStr, buildHintContext(taskProcessor))
+  override fun buildTextHintPromptIfNoCodeHintIsGenerated(taskProcessor: TaskProcessor, codeStr: String, language: String) =
+    buildNextStepTextHintPromptIfNoCodeHintIsGenerated(taskProcessor, codeStr, buildHintContext(taskProcessor), language)
 
   private fun buildNextStepTextHintPromptIfNoCodeHintIsGenerated(
     taskProcessor: TaskProcessor,
     codeStr: String,
-    hintContext: HintContext
+    hintContext: HintContext,
+    language: String
   ) = """
     Based on a coding problem, determine the next step that must be taken to complete the task.
     Here is the list of steps that solves the problem and the code, all delimited with <>:
@@ -45,7 +50,9 @@ class NextStepHintPromptBuilder : PromptBuilder {
     The solution can use only these strings: <${hintContext.availableForSolutionStrings ?: "None"}>
     
     The code:
+    ```$language
     <$codeStr>
+    ```
     
     ${buildTaskErrorInformation(taskProcessor)}
     

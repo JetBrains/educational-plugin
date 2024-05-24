@@ -34,6 +34,7 @@ import com.intellij.util.messages.MessageBusConnection
 import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.EduUtilsKt.showPopup
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.eduAssistant.AiAssistantState
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -74,6 +75,11 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
     FileDocumentManager.getInstance().saveAllDocuments()
     val state = project.eduState ?: return
     val task = state.task
+
+    if (task.status == CheckStatus.Unchecked) {
+      showHintWindow(AssistantError.UncheckedCodeError.errorMessage, state)
+      return
+    }
 
     closeNextStepHintNotificationPanel()
 
@@ -165,6 +171,12 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
 
   override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
+  private fun showHintWindow(textToShow: String, state: EduState, action: AnAction? = null) {
+    val nextStepHintNotification = NextStepHintNotificationFrame(textToShow, action, actionTargetParent) { rejectHint(state) }
+    nextStepHintNotificationPanel = nextStepHintNotification.rootPane
+    nextStepHintNotificationPanel?.let {  actionTargetParent?.add(it, BorderLayout.NORTH) }
+  }
+
   private inner class GetHintTask(private val project: Project, private val state: EduState, private val task: Task)
     : com.intellij.openapi.progress.Task.Backgroundable(project, EduCoreBundle.message("progress.title.getting.hint"), true) {
 
@@ -172,7 +184,7 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
 
     override fun run(indicator: ProgressIndicator) {
       if (!GetHintTaskState.getInstance(project).isLocked) {
-        showHintWindow(AssistantError.UnlockedError.errorMessage)
+        showHintWindow(AssistantError.UnlockedError.errorMessage, state)
         return
       }
 
@@ -186,11 +198,11 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
         task.aiAssistantState = AiAssistantState.HelpAsked
         response = project.service<TaskBasedAssistant>().getHint(taskProcessor, state)
         response?.assistantError?.let {
-          showHintWindow(it.errorMessage)
+          showHintWindow(it.errorMessage, state)
           return@runBlockingCancellable
         }
         response?.textHint ?: run {
-          showHintWindow(AssistantError.UnknownError.errorMessage)
+          showHintWindow(AssistantError.UnknownError.errorMessage, state)
           return@runBlockingCancellable
         }
       }
@@ -200,20 +212,13 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
       }
 
       val action = response?.codeHint?.let { showNextStepHint(state, response?.taskFile ?: state.taskFile, it) }
-      response?.textHint?.let { showHintWindow(it, action) }
+      response?.textHint?.let { showHintWindow(it, state, action) }
     }
 
     override fun onFinished() {
       processFinished()
       GetHintTaskState.getInstance(project).unlock()
     }
-
-    private fun showHintWindow(textToShow: String, action: AnAction? = null) {
-      val nextStepHintNotification = NextStepHintNotificationFrame(textToShow, action, actionTargetParent) { rejectHint(state) }
-      nextStepHintNotificationPanel = nextStepHintNotification.rootPane
-      nextStepHintNotificationPanel?.let { actionTargetParent?.add(it, BorderLayout.NORTH) }
-    }
-
 
     /**
      * Highlights the first code difference position between the student's code in the task file and a given code hint.

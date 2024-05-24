@@ -4,11 +4,16 @@ import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 
 interface PromptBuilder {
 
-  fun buildTextHintPrompt(codeHint: String, codeStr: String): String
+  fun buildTextHintPrompt(
+    codeHint: String,
+    codeStr: String,
+    language: String
+  ): String
 
   fun buildTextHintPromptIfNoCodeHintIsGenerated(
     taskProcessor: TaskProcessor,
-    codeStr: String
+    codeStr: String,
+    language: String
   ): String
 
   fun buildCodeHintPrompt(
