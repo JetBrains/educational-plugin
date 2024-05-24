@@ -190,7 +190,9 @@ class KtFunctionDiffReducer : FunctionDiffReducer {
   }
 
   private fun notEqualsTextIgnoringSpaces(first: PsiElement, second: PsiElement) =
-    first.text.replace("\\s".toRegex(), "") != second.text.replace("\\s".toRegex(), "")
+    first.text.removeWhitespace() != second.text.removeWhitespace()
+
+  private fun String.removeWhitespace() = filter { !it.isWhitespace() }
 
   companion object {
     private const val MAX_BODY_LINES_IN_SHORT_FUNCTION = 3
