@@ -3,7 +3,8 @@ import groovy.xml.XmlParser
 import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.intellij.platform.gradle.extensions.IntelliJPlatformDependenciesExtension
-import org.jetbrains.intellij.tasks.PrepareSandboxTask
+import org.jetbrains.intellij.platform.gradle.tasks.PrepareSandboxTask
+import org.jetbrains.intellij.platform.gradle.utils.extensionProvider
 import org.jetbrains.intellij.tasks.RunIdeBase
 import org.jetbrains.intellij.tasks.RunIdeTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -37,9 +38,6 @@ val baseVersion = when {
   else -> error("Unexpected IDE name = `$baseIDE`")
 }
 
-val pycharmSandbox = "${buildDir()}/pycharm-sandbox"
-val clionSandbox = "${buildDir()}/clion-sandbox"
-val riderSandbox = "${buildDir()}/rider-sandbox"
 val remoteDevServerSandbox = "${buildDir()}/remote-dev-server-sandbox"
 
 val pythonProPlugin: String by project
@@ -260,99 +258,55 @@ dependencies {
     else {
       jetbrainsRuntime()
     }
-  }
 
-  implementation(project("educational-core"))
-  implementation(project("code-insight"))
-  implementation(project("code-insight:html"))
-  implementation(project("code-insight:markdown"))
-  implementation(project("code-insight:yaml"))
-  implementation(project("jvm-core"))
-  implementation(project("Edu-Java"))
-  implementation(project("Edu-Kotlin"))
-  implementation(project("Edu-Python"))
-  implementation(project("Edu-Python:Idea"))
-  implementation(project("Edu-Python:PyCharm"))
-  implementation(project("Edu-Scala"))
-  implementation(project("Edu-Android"))
-  implementation(project("Edu-JavaScript"))
-  implementation(project("Edu-Rust"))
-  implementation(project("Edu-Cpp"))
-  implementation(project("Edu-Go"))
-  implementation(project("Edu-Php"))
-  implementation(project("Edu-Shell"))
-  implementation(project("sql"))
-  implementation(project("sql:sql-jvm"))
-  implementation(project("github"))
-  implementation(project("remote-env"))
-}
-val removeIncompatiblePlugins = task<Delete>("removeIncompatiblePlugins") {
-
-  fun deletePlugin(sandboxPath: String, pluginName: String) {
-    file("$sandboxPath/plugins/$pluginName").deleteRecursively()
-  }
-
-  doLast {
-    deletePlugin(pycharmSandbox, "python-ce")
-    deletePlugin(clionSandbox, "python-ce")
-    deletePlugin(pycharmSandbox, "Scala")
+    pluginModule(implementation(project("educational-core")))
+    pluginModule(implementation(project("code-insight")))
+    pluginModule(implementation(project("code-insight:html")))
+    pluginModule(implementation(project("code-insight:markdown")))
+    pluginModule(implementation(project("code-insight:yaml")))
+    pluginModule(implementation(project("jvm-core")))
+    pluginModule(implementation(project("Edu-Java")))
+    pluginModule(implementation(project("Edu-Kotlin")))
+    pluginModule(implementation(project("Edu-Python")))
+    pluginModule(implementation(project("Edu-Python:Idea")))
+    pluginModule(implementation(project("Edu-Python:PyCharm")))
+    pluginModule(implementation(project("Edu-Scala")))
+    pluginModule(implementation(project("Edu-Android")))
+    pluginModule(implementation(project("Edu-JavaScript")))
+    pluginModule(implementation(project("Edu-Rust")))
+    pluginModule(implementation(project("Edu-Cpp")))
+    pluginModule(implementation(project("Edu-Go")))
+    pluginModule(implementation(project("Edu-Php")))
+    pluginModule(implementation(project("Edu-Shell")))
+    pluginModule(implementation(project("sql")))
+    pluginModule(implementation(project("sql:sql-jvm")))
+    pluginModule(implementation(project("github")))
+    pluginModule(implementation(project("remote-env")))
   }
 }
 
-// Collects all jars produced by compilation of project modules and merges them into singe one.
-// We need to put all plugin manifest files into single jar to make new plugin model work
-val mergePluginJarTask = task<Jar>("mergePluginJars") {
-  duplicatesStrategy = DuplicatesStrategy.FAIL
-
-  // The name differs from all module names to avoid collision during new jar file creation
-  archiveBaseName = "JetBrainsAcademy"
-
-  exclude("META-INF/MANIFEST.MF")
-
-  val pluginLibDir by lazy {
-    val sandboxTask = tasks.prepareSandbox.get()
-    sandboxTask.destinationDir.resolve("${sandboxTask.pluginName.get()}/lib")
-  }
-  val pluginJars by lazy {
-    pluginLibDir.listFiles().orEmpty().filter { it.isPluginJar() }
-  }
-
-  destinationDirectory = project.layout.dir(provider { pluginLibDir })
-
-  doFirst {
-    for (file in pluginJars) {
-      from(zipTree(file))
-    }
-  }
-
-  doLast {
-    delete(pluginJars)
-  }
-}
 tasks {
+  val projectName = project.extensionProvider.flatMap { it.projectName }
+
+  composedJar {
+    archiveBaseName.convention(projectName)
+  }
+
   withType<PrepareSandboxTask> {
     from("twitter") {
-      into("${pluginName.get()}/twitter")
+      into("${projectName.get()}/twitter")
       include("**/*.gif")
     }
-    finalizedBy(removeIncompatiblePlugins)
     doLast {
       val kotlinJarRe = """kotlin-(stdlib|reflect|runtime).*\.jar""".toRegex()
-      val libraryDir = destinationDir.resolve("${pluginName.get()}/lib")
+      val libraryDir = destinationDir.resolve("${projectName.get()}/lib")
       val kotlinStdlibJars = libraryDir.listFiles().orEmpty().filter { kotlinJarRe.matches(it.name) }
       check(kotlinStdlibJars.isEmpty()) {
         "Plugin shouldn't contain kotlin stdlib jars. Found:\n" + kotlinStdlibJars.joinToString(separator = ",\n") { it.absolutePath }
       }
     }
   }
-  prepareSandbox {
-    finalizedBy(mergePluginJarTask)
-  }
   withType<RunIdeBase> {
-    // Force `mergePluginJarTask` be executed before any task based on `RunIdeBase` (for example, `runIde` or `buildSearchableOptions`).
-    // Otherwise, these tasks fail because of implicit dependency.
-    // Should be dropped when jar merging is implemented in `gradle-intellij-plugin` itself
-    mustRunAfter(mergePluginJarTask)
     // Disable auto plugin reloading. See `com.intellij.ide.plugins.DynamicPluginVfsListener`
     // To enable dynamic reloading, change value to `true` and disable `EduDynamicPluginListener`
     autoReloadPlugins = false
@@ -367,9 +321,6 @@ tasks {
 
     // Uncomment to enable FUS testing mode
     // jvmArgs("-Dfus.internal.test.mode=true")
-  }
-  verifyPlugin {
-    mustRunAfter(mergePluginJarTask)
   }
   buildPlugin {
     dependsOn(":edu-format:jar")
@@ -886,16 +837,6 @@ fun loadProperties(path: String): Properties {
   val properties = Properties()
   file(path).bufferedReader().use { properties.load(it) }
   return properties
-}
-
-fun File.isPluginJar(): Boolean {
-  if (!isFile) return false
-  if (extension != "jar") return false
-  return zipTree(this).files.any {
-    if (it.extension != "xml") return@any false
-    val node = XmlParser().parse(it)
-    return node.name() == "idea-plugin"
-  }
 }
 
 fun parseManifest(file: File): Node {
