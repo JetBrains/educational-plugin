@@ -194,7 +194,7 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
         }
 
         highlighter = response.codeHint?.let {
-          highlightFirstCodeDiffPosition(project, state, it, indicator)
+          highlightFirstCodeDiffPosition(taskProcessor.currentTaskFile ?: state.taskFile, it, indicator)
         }
 
         val action = response.codeHint?.let { showNextStepHint(state, taskProcessor.currentTaskFile ?: state.taskFile, it) }
@@ -228,16 +228,18 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
      * if the focus is on another file or
      * if no differences are found.
      */
-    private fun highlightFirstCodeDiffPosition(project: Project, state: EduState, codeHint: String, indicator: ProgressIndicator): RangeHighlighter? {
+    private fun highlightFirstCodeDiffPosition(taskFile: TaskFile, codeHint: String, indicator: ProgressIndicator): RangeHighlighter? {
       val editor = FileEditorManager.getInstance(project).selectedTextEditor ?: return null
-      val virtualFile = state.taskFile.getVirtualFile(state.project) ?: return null
+      val virtualFile = taskFile.getVirtualFile(state.project) ?: return null
       val currentFile = FileDocumentManager.getInstance().getFile(editor.document)
       if (currentFile != virtualFile) {
         return null
       }
       val studentText = VfsUtil.loadText(virtualFile)
-      val fragments = ComparisonManager.getInstance().compareLines(studentText, codeHint,
-        ComparisonPolicy.DEFAULT, indicator)
+      val fragments = ComparisonManager.getInstance().compareLines(
+        studentText, codeHint,
+        ComparisonPolicy.DEFAULT, indicator
+      )
       return fragments.firstOrNull()?.startLine1?.let { line ->
         val attributes = TextAttributes(
           null, HIGHLIGHTER_COLOR, null,
