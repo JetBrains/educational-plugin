@@ -156,7 +156,7 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
       val submissionsList = submissionsManager.getCommunitySubmissionsFromMemory(task.id)
 
       if (submissionsList.isNullOrEmpty()) {
-        return EMPTY_COMMUNITY_SOLUTIONS_MESSAGE to null
+        return emptyCommunitySolutionsMessage() to null
       }
 
       return getSubmissionsText(submissionsList) to SubmissionsDifferenceLinkHandler(project, task, submissionsManager, true)
@@ -187,7 +187,7 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
     }
 
     if (submissionsList.isNullOrEmpty()) {
-      return EMPTY_SUBMISSIONS_MESSAGE to null
+      return emptySubmissionsMessage() to null
     }
 
     return getSubmissionsText(submissionsList, isToShowSubmissionsIds(task)) to SubmissionsDifferenceLinkHandler(project, task, submissionsManager)
@@ -279,8 +279,6 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
     private val MY = JButton(tripleSpace + EduCoreBundle.message("submissions.button.my") + tripleSpace)
     val COMMUNITY = JButton(EduCoreBundle.message("submissions.button.community")).apply { isEnabled = false }
     private val SEGMENTED_BUTTON_ITEMS = listOf(MY, COMMUNITY)
-    private val EMPTY_SUBMISSIONS_MESSAGE = "<a $textStyleHeader>${EduCoreBundle.message("submissions.empty")}"
-    private val EMPTY_COMMUNITY_SOLUTIONS_MESSAGE = "<a $textStyleHeader>${EduCoreBundle.message("submissions.community.empty")}"
     const val OPEN_PLACEHOLDER_TAG = "<placeholder>"
     const val CLOSE_PLACEHOLDER_TAG = "</placeholder>"
 
@@ -289,6 +287,10 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
 
     private val textStyleHeader: String
       get() = StyleManager().textStyleHeader
+
+    private fun emptySubmissionsMessage(): String = "<a $textStyleHeader>${EduCoreBundle.message("submissions.empty")}"
+
+    private fun emptyCommunitySolutionsMessage(): String = "<a $textStyleHeader>${EduCoreBundle.message("submissions.community.empty")}"
 
     private class LoginLinkHandler(
       project: Project, private val submissionsManager: SubmissionsManager
