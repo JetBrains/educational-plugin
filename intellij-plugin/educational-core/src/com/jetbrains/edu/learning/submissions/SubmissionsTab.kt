@@ -48,7 +48,6 @@ import java.net.URL
 import java.text.DateFormat
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import javax.swing.JButton
 import javax.swing.JComponent
 import javax.swing.event.AncestorEvent
 
@@ -67,7 +66,7 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
 
   private lateinit var communityPanel: SwingTextPanel
 
-  private lateinit var segmentedButton: SegmentedButton<JButton>
+  private lateinit var segmentedButton: SegmentedButton<SegmentedButtonItem>
 
   private val isMarketplaceCourse: Boolean = project.isMarketplaceCourse()
 
@@ -91,8 +90,9 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
   private fun initCommunityUI() {
     communityPanel = cards().last() as SwingTextPanel
 
-    val segmentedButtonPanel = createSegmentedButton()
-    addGotItTooltip(segmentedButtonPanel)
+    val segmentedButtonItems = listOf(MySegmentedButton(), CommunitySegmentedButton().apply { isEnabled = false })
+    val segmentedButtonPanel = createSegmentedButton(segmentedButtonItems)
+    segmentedButtonPanel.addGotItTooltip(segmentedButtonItems.last())
     headerPanel.apply {
       add(segmentedButtonPanel, BorderLayout.CENTER)
       isVisible = true
@@ -201,25 +201,25 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
   }
 
   fun showCommunityTab() {
-    segmentedButton.selectedItem = COMMUNITY
+    segmentedButton.selectedItem = segmentedButton.items.find { it is CommunitySegmentedButton }
   }
 
   fun showMyTab() {
-    segmentedButton.selectedItem = MY
+    segmentedButton.selectedItem = segmentedButton.items.find { it is MySegmentedButton }
   }
 
-  private fun createSegmentedButton() = panel {
+  private fun createSegmentedButton(segmentedButtonItems: List<SegmentedButtonItem>) = panel {
     row {
-      segmentedButton = segmentedButton(SEGMENTED_BUTTON_ITEMS) {
+      segmentedButton = segmentedButton(segmentedButtonItems) {
         text = it.text
         enabled = it.isEnabled
         toolTipText = it.toolTipText
       }.apply {
-        selectedItem = MY
+        selectedItem = segmentedButtonItems.first { it is MySegmentedButton }
         whenItemSelected {
           when (it) {
-            MY -> showFirstCard()
-            COMMUNITY -> {
+            is MySegmentedButton -> showFirstCard()
+            is CommunitySegmentedButton -> {
               showLastCard()
               EduCounterUsageCollector.openCommunityTab()
             }
@@ -230,9 +230,8 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
   }
 
   @Suppress("UnstableApiUsage")
-  private fun SegmentedButton<JButton>.updateCommunityButton(isLoggedIn: Boolean, isEnabled: Boolean, isAgreementTooltip: Boolean = false) {
-    val communityButton = items.findLast { it.text == COMMUNITY.text } ?: return
-
+  private fun SegmentedButton<SegmentedButtonItem>.updateCommunityButton(isLoggedIn: Boolean, isEnabled: Boolean, isAgreementTooltip: Boolean = false) {
+    val communityButton = items.first { it is CommunitySegmentedButton }
     communityButton.isEnabled = isLoggedIn && isEnabled
     communityButton.toolTipText = when {
       !isLoggedIn -> EduCoreBundle.message("submissions.button.community.tooltip.text.login")
@@ -248,21 +247,22 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
     update(communityButton)
   }
 
-  private fun addGotItTooltip(component: JComponent) = component.addAncestorListener(object : AncestorListenerAdapter() {
-    override fun ancestorAdded(e: AncestorEvent) {
-      val gotItTooltip = GotItTooltip(
-        GOT_IT_ID, EduCoreBundle.message("submissions.button.community.tooltip.text"), this@SubmissionsTab
-      ).withHeader(EduCoreBundle.message("submissions.button.community.tooltip.header"))
+  private fun JComponent.addGotItTooltip(segmentedButtonItem: SegmentedButtonItem) =
+    addAncestorListener(object : AncestorListenerAdapter() {
+      override fun ancestorAdded(e: AncestorEvent) {
+        val gotItTooltip = GotItTooltip(
+          GOT_IT_ID, EduCoreBundle.message("submissions.button.community.tooltip.text"), this@SubmissionsTab
+        ).withHeader(EduCoreBundle.message("submissions.button.community.tooltip.header"))
 
-      val communityJComponent = UIUtil.uiTraverser(component).filter(ActionButton::class.java).filter {
-        it.action.templateText == COMMUNITY.text
-      }.first() as JComponent
+        val communityJComponent = UIUtil.uiTraverser(this@addGotItTooltip).filter(ActionButton::class.java).filter {
+          it.action.templateText == segmentedButtonItem.text
+        }.first() as JComponent
 
-      if (communityJComponent.isEnabled) {
-        gotItTooltip.show(communityJComponent, GotItTooltip.BOTTOM_MIDDLE)
+        if (communityJComponent.isEnabled) {
+          gotItTooltip.show(communityJComponent, GotItTooltip.BOTTOM_MIDDLE)
+        }
       }
-    }
-  })
+    })
 
   companion object {
     private const val SUBMISSION_PROTOCOL = "submission://"
@@ -271,14 +271,6 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
     private const val SUBMISSION_USER_AGREEMENT = "${SUBMISSION_PROTOCOL}agreement/"
     private const val OPEN_UL_TAG = "<ul style=list-style-type:none;margin:0;padding:0;>"
     private const val CLOSE_UL_TAG = "</ul>"
-    /**
-     * Workaround: [com.intellij.ui.dsl.builder.SegmentedButton.ItemPresentation] doesn't allow setting custom size of the button,
-     * additional space characters allow showing the closest version to the design.
-     */
-    private val tripleSpace = " ".repeat(3)
-    private val MY = JButton(tripleSpace + EduCoreBundle.message("submissions.button.my") + tripleSpace)
-    val COMMUNITY = JButton(EduCoreBundle.message("submissions.button.community")).apply { isEnabled = false }
-    private val SEGMENTED_BUTTON_ITEMS = listOf(MY, COMMUNITY)
     const val OPEN_PLACEHOLDER_TAG = "<placeholder>"
     const val CLOSE_PLACEHOLDER_TAG = "</placeholder>"
 
