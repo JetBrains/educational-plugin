@@ -42,7 +42,7 @@ abstract class Task : StudyItem {
    */
   var rejectedHintsCount: Int = 0
   /**
-   * Stores a map of task file names to functions that can be changed.
+   * Stores a map of task file full names (including path) to functions that can be changed.
    * This map stores only task files in which changes have been made.
    */
   var taskFilesWithChangedFunctions: Map<String, List<String>>? = null
