@@ -1,6 +1,5 @@
 import groovy.util.Node
 import groovy.xml.XmlParser
-import org.jetbrains.intellij.tasks.PatchPluginXmlTask
 import org.jetbrains.intellij.tasks.PrepareSandboxTask
 import org.jetbrains.intellij.tasks.RunIdeBase
 import org.jetbrains.intellij.tasks.RunIdeTask
@@ -103,15 +102,9 @@ val cppPlugins = listOfNotNull(
   "org.jetbrains.plugins.clion.test.catch"
 )
 
-val changesFile = "changes.html"
-
 allprojects {
   apply {
     plugin("org.jetbrains.kotlin.plugin.serialization")
-  }
-  intellij {
-    version = baseVersion
-    instrumentCode = false
   }
 
   sourceSets {
@@ -197,10 +190,12 @@ subprojects {
     plugin("org.jetbrains.intellij.platform.module")
   }
 
+  intellijPlatform {
+    instrumentCode = false
+  }
+
   tasks {
-    runIde { enabled = false }
     prepareSandbox { enabled = false }
-    buildSearchableOptions { enabled = false }
   }
 
   val testOutput = configurations.create("testOutput")
@@ -224,43 +219,26 @@ if (hasProp("setTCBuildNumber")) {
 
 version = "$pluginVersion-$platformVersion-$buildNumber"
 
-intellij {
-  pluginName = "JetBrainsAcademy"
-  updateSinceUntilBuild = true
-  downloadSources = false
+intellijPlatform {
+  projectName = "JetBrainsAcademy"
+  pluginConfiguration {
+    id = "com.jetbrains.edu"
+    name = "JetBrains Academy"
+    version = "$pluginVersion-$platformVersion-$buildNumber"
+    changeNotes = provider { file("changes.html").readText() }
+    description = provider { file("description.html").readText() }
 
-  tasks.withType<PatchPluginXmlTask> {
-    changeNotes = provider { file(changesFile).readText() }
-    pluginDescription = provider { file("description.html").readText() }
-    sinceBuild = prop("customSinceBuild")
-    untilBuild = prop("customUntilBuild")
-  }
+    ideaVersion {
+      sinceBuild = prop("customSinceBuild")
+      untilBuild = prop("customUntilBuild")
+    }
 
-  val pluginsList = mutableListOf(
-    yamlPlugin,
-    markdownPlugin,
-    // PsiViewer plugin is not a runtime dependency
-    // but it helps a lot while developing features related to PSI
-    psiViewerPlugin
-  )
-  if (isIdeaIDE || isClionIDE) {
-    pluginsList += rustPlugins
+    vendor {
+      name = "JetBrains"
+    }
   }
-  pluginsList += pythonPlugin
-  pluginsList += shellScriptPlugin
-  if (isJvmCenteredIDE) {
-    pluginsList += jvmPlugins
-    pluginsList += listOf(kotlinPlugin, scalaPlugin)
-  }
-  if (isIdeaIDE) {
-    pluginsList += javaScriptPlugins
-    pluginsList += listOf(goPlugin, phpPlugin)
-  }
-  if (!(isStudioIDE || isPycharmIDE)) {
-    pluginsList += sqlPlugin
-  }
-
-  plugins = pluginsList
+  instrumentCode = false
+  buildSearchableOptions = prop("enableBuildSearchableOptions").toBoolean()
 }
 
 dependencies {
@@ -372,9 +350,6 @@ tasks {
   }
   verifyPlugin {
     mustRunAfter(mergePluginJarTask)
-  }
-  buildSearchableOptions {
-    enabled = findProperty("enableBuildSearchableOptions") != "false"
   }
   buildPlugin {
     dependsOn(":edu-format:jar")
