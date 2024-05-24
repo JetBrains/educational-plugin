@@ -3,6 +3,7 @@ import groovy.xml.XmlParser
 import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.intellij.platform.gradle.extensions.IntelliJPlatformDependenciesExtension
+import org.jetbrains.intellij.platform.gradle.tasks.CustomRunIdeTask
 import org.jetbrains.intellij.platform.gradle.tasks.PrepareSandboxTask
 import org.jetbrains.intellij.platform.gradle.tasks.RunIdeTask
 import org.jetbrains.intellij.platform.gradle.utils.extensionProvider
@@ -329,18 +330,17 @@ tasks {
       copyFormatJars()
     }
   }
-}
 
-// Generates event scheme for JetBrains Academy plugin FUS events to `build/eventScheme.json`
-task<RunIdeTask>("buildEventsScheme") {
-  dependsOn(tasks.prepareSandbox)
-  args("buildEventsScheme", "--outputFile=${buildDir()}/eventScheme.json", "--pluginId=com.jetbrains.edu")
-  // Force headless mode to be able to run command on CI
-  systemProperty("java.awt.headless", "true")
-  // BACKCOMPAT: 2023.3. Update value to 233 and this comment
-  // `IDEA_BUILD_NUMBER` variable is used by `buildEventsScheme` task to write `buildNumber` to output json.
-  // It will be used by TeamCity automation to set minimal IDE version for new events
-  environment("IDEA_BUILD_NUMBER", "233")
+  // Generates event scheme for JetBrains Academy plugin FUS events to `build/eventScheme.json`
+  register("buildEventsScheme", CustomRunIdeTask::class) {
+    args("buildEventsScheme", "--outputFile=${buildDir()}/eventScheme.json", "--pluginId=com.jetbrains.edu")
+    // Force headless mode to be able to run command on CI
+    systemProperty("java.awt.headless", "true")
+    // BACKCOMPAT: 2023.3. Update value to 233 and this comment
+    // `IDEA_BUILD_NUMBER` variable is used by `buildEventsScheme` task to write `buildNumber` to output json.
+    // It will be used by TeamCity automation to set minimal IDE version for new events
+    environment("IDEA_BUILD_NUMBER", "233")
+  }
 }
 
 task("configureRemoteDevServer") {
