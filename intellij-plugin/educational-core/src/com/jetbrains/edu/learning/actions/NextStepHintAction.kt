@@ -50,7 +50,6 @@ import java.awt.Font
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.swing.JComponent
 import javax.swing.JPanel
-import com.intellij.openapi.application.runWriteAction
 import com.jetbrains.edu.learning.eduAssistant.core.AssistantResponse
 
 class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
@@ -196,10 +195,8 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
         }
       }
 
-      ApplicationManager.getApplication().invokeAndWait {
-        highlighter = response?.codeHint?.let {
-          highlightFirstCodeDiffPosition(project, response?.taskFile ?: state.taskFile, it, indicator)
-        }
+      highlighter = response?.codeHint?.let {
+        highlightFirstCodeDiffPosition(project, response?.taskFile ?: state.taskFile, it, indicator)
       }
 
       val action = response?.codeHint?.let { showNextStepHint(state, response?.taskFile ?: state.taskFile, it) }
@@ -223,17 +220,19 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
       taskFile: TaskFile,
       codeHint: String,
       indicator: ProgressIndicator
-    ) = runWriteAction {
-      val virtualFile = taskFile.getVirtualFile(state.project) ?: return@runWriteAction null
-      val fileEditorManager = FileEditorManager.getInstance(project)
-      fileEditorManager.openFile(virtualFile, true)
-      val editor = fileEditorManager.selectedTextEditor ?: return@runWriteAction null
+    ): RangeHighlighter? {
+      val virtualFile = taskFile.getVirtualFile(state.project) ?: return null
+      val editor = FileEditorManager.getInstance(project).selectedTextEditor ?: return null
+      val currentFile = FileDocumentManager.getInstance().getFile(editor.document)
+      if (currentFile != virtualFile) {
+        return null
+      }
       val studentText = VfsUtil.loadText(virtualFile)
       val fragments = ComparisonManager.getInstance().compareLines(
         studentText, codeHint,
         ComparisonPolicy.DEFAULT, indicator
       )
-      return@runWriteAction fragments.firstOrNull()?.startLine1?.let { line ->
+      return fragments.firstOrNull()?.startLine1?.let { line ->
         val attributes = TextAttributes(
           null, HIGHLIGHTER_COLOR, null,
           EffectType.BOXED, Font.PLAIN
