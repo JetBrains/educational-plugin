@@ -55,7 +55,6 @@ import javax.swing.event.AncestorEvent
  * Constructor is called exclusively in [com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabManager.createTab]
  * and MUST NOT be called in any other places
  */
-@Suppress("UnstableApiUsage")
 class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBMISSIONS_TAB) {
 
   override val uiMode: JavaUILibrary
@@ -229,7 +228,6 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
     }
   }
 
-  @Suppress("UnstableApiUsage")
   private fun SegmentedButton<SegmentedButtonItem>.updateCommunityButton(isLoggedIn: Boolean, isEnabled: Boolean, isAgreementTooltip: Boolean = false) {
     val communityButton = items.first { it is CommunitySegmentedButton }
     communityButton.isEnabled = isLoggedIn && isEnabled
