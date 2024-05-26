@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
-import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
@@ -22,6 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduFormatBundle
+import com.jetbrains.edu.learning.notification.EduErrorNotification
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
 import com.jetbrains.edu.learning.stepik.api.StepikBasedConnector.Companion.getStepikBasedConnector
 import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
@@ -299,11 +298,9 @@ object HyperskillCheckConnector {
 
   private fun showErrorDetails(project: Project, error: String) {
     if (error == EduFormatBundle.message("error.access.denied") || error == EduCoreBundle.message("error.failed.to.refresh.tokens")) {
-      Notification(
-        "JetBrains Academy",
+      EduErrorNotification(
         EduCoreBundle.message("error.failed.to.post.solution"),
         EduCoreBundle.message("error.access.denied.with.link"),
-        NotificationType.ERROR
       ).setListener { notification, _ ->
         notification.expire()
         loginListener
@@ -312,11 +309,9 @@ object HyperskillCheckConnector {
     }
 
     LOG.warn(error)
-    Notification(
-      "JetBrains Academy",
+    EduErrorNotification(
       EduCoreBundle.message("error.failed.to.post.solution"),
       EduFormatBundle.message("help.use.guide", EduNames.FAILED_TO_POST_TO_JBA_URL),
-      NotificationType.ERROR
     )
       .setListener(NotificationListener.URL_OPENING_LISTENER)
       .notify(project)

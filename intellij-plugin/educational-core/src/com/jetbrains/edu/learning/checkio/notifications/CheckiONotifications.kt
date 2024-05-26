@@ -5,6 +5,7 @@ import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.util.NlsContexts.*
 import com.jetbrains.edu.EducationalCoreIcons
+import com.jetbrains.edu.learning.notification.EduNotification 
 
 object CheckiONotifications {
 
@@ -42,7 +43,7 @@ object CheckiONotifications {
     type: NotificationType,
     listener: NotificationListener?
   ): Notification {
-    val notification = Notification("JetBrains Academy", title, content, type).apply {
+    val notification = EduNotification.create(title, content, type).apply {
       icon = EducationalCoreIcons.CheckiO
       this.subtitle = subtitle
     }

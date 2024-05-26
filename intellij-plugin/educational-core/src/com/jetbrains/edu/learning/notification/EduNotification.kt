@@ -10,9 +10,18 @@ sealed class EduNotification(@NotificationTitle title: String, @NotificationCont
 
   companion object {
     private const val JETBRAINS_ACADEMY_GROUP_ID = "JetBrains Academy"
+
+    fun create(title: String, content: String, type: NotificationType): Notification {
+      return when(type) {
+        NotificationType.INFORMATION -> EduInformationNotification(title, content)
+        NotificationType.WARNING -> EduWarningNotification(title, content)
+        NotificationType.ERROR -> EduErrorNotification(title, content)
+        NotificationType.IDE_UPDATE -> throw IllegalArgumentException("IDE_UPDATE notification is not supported")
+      }
+    }
   }
 }
 
-class EduInformationNotification(title: String = "", content: String) : EduNotification(title, content, NotificationType.INFORMATION)
-class EduWarningNotification(title: String = "", content: String) : EduNotification(title, content, NotificationType.WARNING)
-class EduErrorNotification(title: String = "", content: String) : EduNotification(title, content, NotificationType.ERROR)
+open class EduInformationNotification(title: String = "", content: String) : EduNotification(title, content, NotificationType.INFORMATION)
+open class EduWarningNotification(title: String = "", content: String) : EduNotification(title, content, NotificationType.WARNING)
+open class EduErrorNotification(title: String = "", content: String) : EduNotification(title, content, NotificationType.ERROR)

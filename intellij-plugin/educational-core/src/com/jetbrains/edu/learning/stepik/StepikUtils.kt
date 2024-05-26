@@ -17,15 +17,15 @@
 
 package com.jetbrains.edu.learning.stepik
 
-import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.notification.EduErrorNotification
+import com.jetbrains.edu.learning.notification.EduInformationNotification
 import com.jetbrains.edu.learning.stepik.StepikNames.getStepikProfilePath
 
 
@@ -34,10 +34,10 @@ fun getStepikLink(task: Task, lesson: Lesson): String {
 }
 
 fun showUpdateAvailableNotification(project: Project, updateAction: () -> Unit) {
-  Notification("JetBrains Academy",
-               EduCoreBundle.message("update.content"),
-               EduCoreBundle.message("update.content.request"),
-               NotificationType.INFORMATION)
+  EduInformationNotification(
+    EduCoreBundle.message("update.content"),
+    EduCoreBundle.message("update.content.request"),
+  )
     .setListener(notificationListener(project, updateAction))
     .notify(project)
 }
@@ -57,7 +57,7 @@ fun notificationListener(project: Project,
 }
 
 fun notifyStepikUnauthorized(project: Project, specificMessage: String) {
-  Notification("JetBrains Academy", specificMessage, EduCoreBundle.message("stepik.auth.error.message"), NotificationType.ERROR)
+  EduErrorNotification(specificMessage, EduCoreBundle.message("stepik.auth.error.message"))
     .notify(project)
 }
 

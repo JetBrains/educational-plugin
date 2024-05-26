@@ -1,8 +1,6 @@
 package com.jetbrains.edu.coursecreator.actions.studyItem
 
 import com.intellij.ide.projectView.ProjectView
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.DumbAwareAction
@@ -21,6 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.studyItemType
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.notification.EduInformationNotification
 import com.jetbrains.edu.learning.statistics.isSurveyPrompted
 import com.jetbrains.edu.learning.statistics.showCCPostFeedbackNotification
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -53,8 +52,10 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
     if (lessonsToWrap.size != 20) {
       return
     }
-    val notification = Notification("JetBrains Academy", EduCoreBundle.message("notification.title.wrap.lessons.with.section"),
-                                    EduCoreBundle.message("notification.content.wrap.lessons.with.section"), NotificationType.INFORMATION)
+    val notification = EduInformationNotification(
+      EduCoreBundle.message("notification.title.wrap.lessons.with.section"),
+      EduCoreBundle.message("notification.content.wrap.lessons.with.section")
+    )
     notification.addAction(object : DumbAwareAction(EduCoreBundle.lazyMessage("action.wrap.lessons.title")) {
       override fun actionPerformed(e: AnActionEvent) {
         CCWrapWithSection.wrapLessonsIntoSection(project, course, lessonsToWrap)

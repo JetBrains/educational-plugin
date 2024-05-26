@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning.marketplace.actions
 
 import com.intellij.ide.util.PropertiesComponent
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -17,14 +15,17 @@ import com.intellij.ui.InlineBanner
 import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.LessonContainer
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.github.PostToGithubActionProvider
-import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils
 import com.jetbrains.edu.learning.marketplace.isMarketplaceStudentCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.notification.EduErrorNotification
 import com.jetbrains.edu.learning.projectView.CourseViewUtils.isSolved
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import org.jetbrains.annotations.NonNls
@@ -126,11 +127,9 @@ class PostMarketplaceProjectToGitHub : DumbAwareAction() {
     )
   }
 
-  private fun showFrameworkLessonsNotFoundNotification(project: Project) = Notification(
-    MarketplaceNotificationUtils.JETBRAINS_ACADEMY_GROUP_ID,
+  private fun showFrameworkLessonsNotFoundNotification(project: Project) = EduErrorNotification(
     EduCoreBundle.message("action.Educational.Student.PostMarketplaceProjectToGitHub.notification.title.failed.to.post.project.to.marketplace"),
     EduCoreBundle.message("action.Educational.Student.PostMarketplaceProjectToGitHub.notification.content.no.framework.lessons.found"),
-    NotificationType.ERROR
   ).notify(project)
 
   companion object {

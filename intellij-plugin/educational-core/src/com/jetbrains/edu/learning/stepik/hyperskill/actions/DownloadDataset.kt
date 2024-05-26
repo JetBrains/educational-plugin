@@ -2,10 +2,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill.actions
 
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.ide.projectView.impl.ProjectViewRenderer
-import com.intellij.notification.Notification
 import com.intellij.notification.NotificationAction
-import com.intellij.notification.NotificationType
-import com.intellij.notification.NotificationType.INFORMATION
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.Service
@@ -33,6 +30,8 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.notification.EduErrorNotification
+import com.jetbrains.edu.learning.notification.EduInformationNotification
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.stepik.api.StepikBasedConnector.Companion.getStepikBasedConnector
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
@@ -171,7 +170,7 @@ class DownloadDataset(
     @NlsContexts.NotificationTitle message: String,
     @NlsContexts.NotificationContent filePath: String
   ) {
-    Notification("JetBrains Academy", message, filePath, INFORMATION).apply {
+    EduInformationNotification(message, filePath).apply {
       addAction(NotificationAction.createSimpleExpiring(EduCoreBundle.message("copy.path.to.clipboard")) {
         CopyPasteManager.getInstance().setContents(StringSelection(filePath))
       })
@@ -189,12 +188,10 @@ class DownloadDataset(
     showErrorNotification(project)
   }
 
+  // TODO candidate for extraction to EduNotificationManager
   private fun showErrorNotification(project: Project) {
-    Notification(
-      "JetBrains Academy",
-      "",
-      EduCoreBundle.message("hyperskill.download.dataset.failed.to.download.dataset"),
-      NotificationType.ERROR
+    EduErrorNotification(
+      content = EduCoreBundle.message("hyperskill.download.dataset.failed.to.download.dataset")
     ).notify(project)
   }
 

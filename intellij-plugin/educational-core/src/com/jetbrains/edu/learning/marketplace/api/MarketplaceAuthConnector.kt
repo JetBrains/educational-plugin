@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.marketplace.api
 
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
@@ -20,7 +19,6 @@ import com.jetbrains.edu.learning.authUtils.requestFocus
 import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
 import com.jetbrains.edu.learning.marketplace.HUB_AUTH_URL
 import com.jetbrains.edu.learning.marketplace.JET_BRAINS_ACCOUNT
-import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showInstallMarketplacePluginNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showLoginFailedNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showReloginToJBANeededNotification
@@ -90,10 +88,7 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
     val jbAuthService = JBAccountInfoService.getInstance()
     return if (jbAuthService == null) {
       LOG.warn("JBAccountInfoService is null")
-      showInstallMarketplacePluginNotification(
-        EduCoreBundle.message("error.failed.login.to.subsystem", MARKETPLACE),
-        NotificationType.ERROR
-      )
+      showInstallMarketplacePluginNotification()
       null
     }
     else {

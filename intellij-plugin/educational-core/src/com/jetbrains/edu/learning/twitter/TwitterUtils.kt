@@ -6,9 +6,7 @@ import com.intellij.credentialStore.generateServiceName
 import com.intellij.ide.BrowserUtil
 import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.ide.plugins.PluginManagerCore
-import com.intellij.notification.Notification
 import com.intellij.notification.NotificationAction
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.PluginId
@@ -22,6 +20,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.notification.EduInformationNotification
 import com.jetbrains.edu.learning.twitter.ui.TwitterDialogUI
 import com.jetbrains.edu.learning.twitter.ui.createTwitterDialogUI
 import twitter4j.*
@@ -87,11 +86,9 @@ object TwitterUtils {
 
     val tweet = twitter.v2.createTweet(text = info.message, mediaIds = mediaId)
 
-    Notification(
-      "JetBrains Academy",
+    EduInformationNotification(
       EduCoreBundle.message("twitter.success.title"),
       EduCoreBundle.message("twitter.tweet.posted"),
-      NotificationType.INFORMATION
     ).addAction(NotificationAction.createSimpleExpiring(EduCoreBundle.message("twitter.open.in.browser")) {
       EduBrowser.getInstance().browse(
         "https://twitter.com/anyuser/status/${tweet.id}"

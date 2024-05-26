@@ -2,7 +2,8 @@ package com.jetbrains.edu.learning.marketplace
 
 import com.intellij.icons.ExpUiIcons
 import com.intellij.ide.plugins.PluginManagerConfigurable
-import com.intellij.notification.*
+import com.intellij.notification.BrowseNotificationAction
+import com.intellij.notification.NotificationAction
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.options.ShowSettingsUtil
@@ -16,37 +17,32 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.FAILED_TO_DELETE_SUBMISSIONS
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.notification.EduErrorNotification
+import com.jetbrains.edu.learning.notification.EduInformationNotification
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import org.jetbrains.annotations.NotNull
 
 object MarketplaceNotificationUtils {
   fun showLoginFailedNotification(loginProviderName: String) {
-    Notification(
-      JETBRAINS_ACADEMY_GROUP_ID,
+    EduErrorNotification(
       EduCoreBundle.message("error.login.failed"),
       EduCoreBundle.message("error.failed.login.to.subsystem", loginProviderName),
-      NotificationType.ERROR
     ).notify(null)
   }
 
   fun showReloginToJBANeededNotification(action: AnAction) {
-    val notification = Notification(
-      JETBRAINS_ACADEMY_GROUP_ID,
+    val notification = EduErrorNotification(
       EduCoreBundle.message("jba.relogin.needed.title"),
       EduCoreBundle.message("jba.relogin.text"),
-      NotificationType.ERROR
     )
     notification.addAction(action)
     notification.notify(null)
   }
 
-  @Suppress("DialogTitleCapitalization")
-  fun showInstallMarketplacePluginNotification(notificationTitle: String, notificationType: NotificationType) {
-    val notification = Notification(
-      JETBRAINS_ACADEMY_GROUP_ID,
-      notificationTitle,
+  fun showInstallMarketplacePluginNotification() {
+    val notification = EduErrorNotification(
+      EduCoreBundle.message("error.failed.login.to.subsystem", MARKETPLACE),
       EduCoreBundle.message("notification.marketplace.install.licensing.plugin"),
-      notificationType
     )
 
     notification.addAction(object : AnAction(EduCoreBundle.message("action.install.plugin.in.settings")) {
@@ -65,11 +61,9 @@ object MarketplaceNotificationUtils {
     notificationTitle: String = EduCoreBundle.message("notification.title.authorization.required"),
     authAction: () -> Unit
   ) {
-    val notification = Notification(
-      JETBRAINS_ACADEMY_GROUP_ID,
+    val notification = EduErrorNotification(
       notificationTitle,
       EduCoreBundle.message("notification.content.authorization", failedActionTitle),
-      NotificationType.ERROR
     )
 
     @Suppress("DialogTitleCapitalization")
@@ -84,10 +78,8 @@ object MarketplaceNotificationUtils {
   }
 
   fun showLoginToUseSubmissionsNotification(project: Project) {
-    val notification = Notification(
-      JETBRAINS_ACADEMY_GROUP_ID,
-      EduCoreBundle.message("submissions.tab.login", JET_BRAINS_ACCOUNT),
-      NotificationType.INFORMATION
+    val notification = EduInformationNotification(
+      content = EduCoreBundle.message("submissions.tab.login", JET_BRAINS_ACCOUNT),
     )
     notification.addAction(object : AnAction(EduCoreBundle.message("log.in.to", JET_BRAINS_ACCOUNT)) {
       override fun actionPerformed(e: AnActionEvent) {
@@ -132,25 +124,19 @@ object MarketplaceNotificationUtils {
   }
 
   fun showFailedToPushCourseNotification(project: Project, courseName: String) {
-    Notification(
-      JETBRAINS_ACADEMY_GROUP_ID,
+    EduErrorNotification(
       EduCoreBundle.message("marketplace.push.course.failed.title"),
       EduCoreBundle.message("marketplace.push.course.failed.text", courseName),
-      NotificationType.ERROR
     ).notify(project)
   }
 
-  @Suppress("DialogTitleCapitalization")
   fun showFailedToChangeSharingPreferenceNotification() {
-    Notification(
-      JETBRAINS_ACADEMY_GROUP_ID,
+    EduErrorNotification(
       EduCoreBundle.message("marketplace.solutions.sharing.notification.title"),
       EduCoreBundle.message("notification.something.went.wrong.text"),
-      NotificationType.ERROR
     ).notify(null)
   }
 
-  @Suppress("DialogTitleCapitalization")
   internal fun showSubmissionsDeletedSuccessfullyNotification(project: Project?, courseId: Int?, loginName: String?) {
     val presentableName = project?.course?.presentableName
     val message = if (loginName != null && courseId != null && presentableName != null) {
@@ -166,15 +152,12 @@ object MarketplaceNotificationUtils {
       EduCoreBundle.message("marketplace.delete.submissions.success.message")
     }
 
-    Notification(
-      JETBRAINS_ACADEMY_GROUP_ID,
+    EduInformationNotification(
       EduCoreBundle.message("marketplace.delete.submissions.success.title"),
       message,
-      NotificationType.INFORMATION
     ).notify(project)
   }
 
-  @Suppress("DialogTitleCapitalization")
   internal fun showNoSubmissionsToDeleteNotification(project: Project?, courseId: Int?, loginName: String?) {
     val presentableName = project?.course?.presentableName
     val message = if (loginName != null && courseId != null && presentableName != null) {
@@ -190,15 +173,12 @@ object MarketplaceNotificationUtils {
       EduCoreBundle.message("marketplace.delete.submissions.nothing.message")
     }
 
-    Notification(
-      JETBRAINS_ACADEMY_GROUP_ID,
+    EduInformationNotification(
       EduCoreBundle.message("marketplace.delete.submissions.nothing.title"),
       message,
-      NotificationType.INFORMATION
     ).notify(project)
   }
 
-  @Suppress("DialogTitleCapitalization")
   internal fun showFailedToDeleteNotification(project: Project?, courseId: Int?, loginName: String?) {
     val presentableName = project?.course?.presentableName
     val message = if (loginName != null && courseId != null && presentableName != null) {
@@ -214,14 +194,17 @@ object MarketplaceNotificationUtils {
       EduCoreBundle.message("marketplace.delete.submissions.failed.message")
     }
 
-    Notification(
-      JETBRAINS_ACADEMY_GROUP_ID, EduCoreBundle.message("marketplace.delete.submissions.failed.title"), message, NotificationType.ERROR
-    ).addAction(
-      BrowseNotificationAction(
-        EduCoreBundle.message("marketplace.delete.submissions.failed.troubleshooting.text"),
-        FAILED_TO_DELETE_SUBMISSIONS
+    EduErrorNotification(
+      EduCoreBundle.message("marketplace.delete.submissions.failed.title"),
+      message
+    ) {
+      addAction(
+        BrowseNotificationAction(
+          EduCoreBundle.message("marketplace.delete.submissions.failed.troubleshooting.text"),
+          FAILED_TO_DELETE_SUBMISSIONS
+        )
       )
-    ).notify(project)
+    }
   }
 
   fun showSuccessRequestNotification(
@@ -229,29 +212,19 @@ object MarketplaceNotificationUtils {
     @NotNull @NlsContexts.NotificationTitle title: String,
     @NotNull @NlsContexts.NotificationContent message: String
   ) {
-    Notification(
-      JETBRAINS_ACADEMY_GROUP_ID,
-      title,
-      message,
-      NotificationType.INFORMATION
-    ).apply {
-      // workaround: there is no NotificationType.Success in the platform yet
-      icon = ExpUiIcons.Status.Success
-    }.notify(project)
+    EduInformationNotification(title, message)
+      .apply {
+        // workaround: there is no NotificationType.Success in the platform yet
+        icon = ExpUiIcons.Status.Success
+      }.notify(project)
   }
 
+  // TODO inline or EduNotificationManager
   fun showFailedRequestNotification(
     project: Project?,
     @NotNull @NlsContexts.NotificationTitle title: String,
     @NotNull @NlsContexts.NotificationContent message: String
   ) {
-    Notification(
-      JETBRAINS_ACADEMY_GROUP_ID,
-      title,
-      message,
-      NotificationType.ERROR
-    ).notify(project)
+    EduErrorNotification(title, message).notify(project)
   }
-
-  const val JETBRAINS_ACADEMY_GROUP_ID = "JetBrains Academy"
 }

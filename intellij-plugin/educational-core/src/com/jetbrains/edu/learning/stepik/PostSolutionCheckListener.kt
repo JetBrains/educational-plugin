@@ -1,7 +1,5 @@
 package com.jetbrains.edu.learning.stepik
 
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.courseFormat.CheckResult
@@ -9,6 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.notification.EduInformationNotification
 import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 
@@ -41,10 +40,10 @@ abstract class PostSolutionCheckListener : CheckListener {
   }
 
   private fun showSubmissionNotPostedNotification(project: Project, course: EduCourse, taskName: String) {
-    Notification("JetBrains Academy",
-                 EduCoreBundle.message("error.solution.not.posted"),
-                 EduCoreBundle.message("notification.content.task.was.updated", taskName),
-                 NotificationType.INFORMATION)
+    EduInformationNotification(
+      EduCoreBundle.message("error.solution.not.posted"),
+      EduCoreBundle.message("notification.content.task.was.updated", taskName),
+    )
       .setListener(notificationListener(project) { updateCourseAction(project, course) })
       .notify(project)
   }

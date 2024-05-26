@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik.builtInServer
 
-import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.logger
@@ -13,6 +12,7 @@ import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import com.jetbrains.edu.learning.authUtils.createResponse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODE_ARGUMENT
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
+import com.jetbrains.edu.learning.notification.EduNotification
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikNames.getStepikUrl
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
@@ -93,7 +93,7 @@ class StepikRestService : OAuthRestService(StepikNames.STEPIK) {
   }
 
   private fun showStepikNotification(notificationType: NotificationType, text: String) {
-    val notification = Notification("JetBrains Academy", StepikNames.STEPIK, text, notificationType)
+    val notification = EduNotification.create(StepikNames.STEPIK, text, notificationType)
     notification.notify(null)
   }
 

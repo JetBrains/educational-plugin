@@ -6,8 +6,6 @@ import com.intellij.diff.contents.DocumentContentBase
 import com.intellij.diff.editor.ChainDiffVirtualFile
 import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.icons.AllIcons
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -31,8 +29,9 @@ import com.intellij.ui.GotItTooltip
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseDir
-import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.notification.EduErrorNotification
+import com.jetbrains.edu.learning.notification.EduInformationNotification
 import org.jetbrains.annotations.NonNls
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
@@ -152,20 +151,14 @@ class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
     fileEditorManager.closeFile(fileEditor.file)
   }
 
-  @Suppress("DialogTitleCapitalization")
-  private fun showApplyCodeSuccessfulNotification(project: Project) = Notification(
-    MarketplaceNotificationUtils.JETBRAINS_ACADEMY_GROUP_ID,
+  private fun showApplyCodeSuccessfulNotification(project: Project) = EduInformationNotification(
     EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.success.title"),
     EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.success.text"),
-    NotificationType.INFORMATION
   ).notify(project)
 
-  @Suppress("DialogTitleCapitalization")
-  private fun showApplyCodeFailedNotification(project: Project) = Notification(
-    MarketplaceNotificationUtils.JETBRAINS_ACADEMY_GROUP_ID,
+  private fun showApplyCodeFailedNotification(project: Project) = EduErrorNotification(
     EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.failed.title"),
     EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.failed.text"),
-    NotificationType.ERROR
   ).notify(project)
 
   companion object {

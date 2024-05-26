@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.statistics
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
-import com.intellij.notification.NotificationType
 import com.intellij.notification.impl.NotificationFullContent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.NotificationContent
@@ -14,6 +13,7 @@ import com.jetbrains.edu.learning.capitalize
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.notification.EduInformationNotification
 import javax.swing.event.HyperlinkEvent
 
 @Suppress("UnstableApiUsage")
@@ -56,7 +56,7 @@ fun showQuestionnaireAdvertisingNotification(project: Project, course: Course) {
 }
 
 private class FeedbackNotification(@NotificationTitle title: String, @NotificationContent content: String, feedbackUrl: String) :
-  Notification("JetBrains Academy", title, content, NotificationType.INFORMATION),
+  EduInformationNotification(title, content),
   NotificationFullContent {
   init {
     setListener(object : NotificationListener.Adapter() {

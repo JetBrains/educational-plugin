@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.newproject.ui
 import com.intellij.ide.DataManager
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
@@ -20,6 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.PluginInfo
 import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.HyperskillCourseAdvertiser
+import com.jetbrains.edu.learning.notification.EduWarningNotification
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.TypographyManager
 import com.jetbrains.edu.learning.ui.EduColors
 import com.jetbrains.edu.learning.ui.EduColors.getCurrentThemeName
@@ -177,7 +177,7 @@ fun humanReadableDuration(duration: Duration, showHoursPartForDays: Boolean = tr
 }
 
 fun notificationFromCourseValidation(result: CourseValidationResult, title: String): Notification {
-  val notification = Notification("JetBrains Academy", title, result.message, NotificationType.WARNING)
+  val notification = EduWarningNotification(title, result.message)
 
   when (result) {
     is PluginsRequired -> {

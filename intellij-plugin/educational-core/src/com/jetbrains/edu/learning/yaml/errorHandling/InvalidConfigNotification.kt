@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.yaml.errorHandling
 import com.intellij.CommonBundle
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
@@ -14,15 +13,16 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.decapitalize
 import com.jetbrains.edu.learning.document
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.notification.EduErrorNotification
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import javax.swing.event.HyperlinkEvent
 
 class InvalidConfigNotification(project: Project, configFile: VirtualFile, cause: String) :
-  Notification("JetBrains Academy",
-               EduCoreBundle.message("yaml.invalid.config.notification.title"),
-               messageWithEditLink(project, configFile, cause),
-               NotificationType.ERROR) {
+  EduErrorNotification(
+    EduCoreBundle.message("yaml.invalid.config.notification.title"),
+    messageWithEditLink(project, configFile, cause),
+  ) {
   init {
     setListener(GoToFileListener(project, configFile))
   }

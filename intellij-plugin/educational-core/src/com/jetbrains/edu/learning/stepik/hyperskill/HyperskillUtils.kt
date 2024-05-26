@@ -1,10 +1,8 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.icons.AllIcons
-import com.intellij.notification.Notification
 import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationListener
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
@@ -30,6 +28,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.notification.EduErrorNotification
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
@@ -193,10 +192,13 @@ fun Task.getRelatedTheoryTask(): TheoryTask? {
 }
 
 fun notifyJBAUnauthorized(project: Project, specificMessage: String) {
-  Notification("JetBrains Academy", specificMessage, EduCoreBundle.message("notification.hyperskill.no.next.activity.login.content"),
-               NotificationType.ERROR).apply {
+  EduErrorNotification(
+    specificMessage,
+    EduCoreBundle.message("notification.hyperskill.no.next.activity.login.content")
+  ).apply {
     addAction(NotificationAction.createSimpleExpiring(
-      EduCoreBundle.message("notification.hyperskill.no.next.activity.login.action")) { HyperskillLoginListener.doLogin() })
+      EduCoreBundle.message("notification.hyperskill.no.next.activity.login.action")
+    ) { HyperskillLoginListener.doLogin() })
   }.notify(project)
 }
 
@@ -302,11 +304,9 @@ private fun getNextStepInTopic(topicId: Int, taskId: Int?): NextActivityInfo {
 }
 
 private fun showNoNextActivityNotification(task: Task?, project: Project) {
-  Notification(
-    "JetBrains Academy",
+  EduErrorNotification(
     EduCoreBundle.message("notification.hyperskill.no.next.activity.title"),
     task?.let { EduCoreBundle.message("notification.hyperskill.no.next.activity.content", stepLink(task.id)) } ?: "",
-    NotificationType.ERROR
   )
     .setListener(NotificationListener.URL_OPENING_LISTENER)
     .notify(project)

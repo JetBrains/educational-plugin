@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning.actions
 
 import com.intellij.ide.projectView.ProjectView
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.RightAlignedToolbarAction
@@ -18,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.revertTaskFiles
 import com.jetbrains.edu.learning.courseFormat.ext.revertTaskParameters
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.notification.EduInformationNotification
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager.updateDependentPlaceholders
 import com.jetbrains.edu.learning.projectView.ProgressUtil.updateCourseProgress
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.Companion.revertTask
@@ -76,7 +75,7 @@ class RevertTaskAction : DumbAwareAction(), RightAlignedToolbarAction {
       }
 
       EditorNotifications.getInstance(project).updateAllNotifications()
-      Notification("JetBrains Academy", "", EduCoreBundle.message("action.Educational.RefreshTask.result"), NotificationType.INFORMATION)
+      EduInformationNotification(content = EduCoreBundle.message("action.Educational.RefreshTask.result"))
         .setIcon(EmptyIcon.ICON_16)
         .notify(project)
       ProjectView.getInstance(project).refresh()

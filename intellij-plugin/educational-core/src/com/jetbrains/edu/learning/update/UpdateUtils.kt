@@ -1,7 +1,5 @@
 package com.jetbrains.edu.learning.update
 
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
@@ -17,6 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.notification.EduInformationNotification
 import com.jetbrains.edu.learning.yaml.getConfigDir
 
 object UpdateUtils {
@@ -117,9 +116,11 @@ object UpdateUtils {
     }
   }
 
+  // TODO candidate for extraction to EduNotificationManager
   fun showUpdateCompletedNotification(project: Project, message: String) {
-    Notification("JetBrains Academy", EduCoreBundle.message("update.notification.title"),
-                 message,
-                 NotificationType.INFORMATION).notify(project)
+    EduInformationNotification(
+      EduCoreBundle.message("update.notification.title"),
+      message
+    ).notify(project)
   }
 }

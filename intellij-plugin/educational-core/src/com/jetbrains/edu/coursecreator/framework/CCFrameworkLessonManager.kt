@@ -1,7 +1,5 @@
 package com.jetbrains.edu.coursecreator.framework
 
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.*
@@ -31,6 +29,8 @@ import com.jetbrains.edu.learning.framework.impl.FLTaskState
 import com.jetbrains.edu.learning.framework.impl.calculateChanges
 import com.jetbrains.edu.learning.framework.impl.getTaskStateFromFiles
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.notification.EduInformationNotification
+import com.jetbrains.edu.learning.notification.EduWarningNotification
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.annotations.VisibleForTesting
 import java.io.IOException
@@ -249,26 +249,23 @@ class CCFrameworkLessonManager(
     get() = taskFiles.filterValues { it.isVisible }.keys
 
   private fun showApplyChangesCanceledNotification(project: Project, startTaskName: String, cancelledTaskName: String) {
-    val notification = Notification(
-      "JetBrains Academy",
+    val notification = EduWarningNotification(
       EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.Notification.cancel.title"),
       EduCoreBundle.message(
         "action.Educational.Educator.SyncChangesWithNextTasks.Notification.cancel.description",
         startTaskName,
         cancelledTaskName
       ),
-      NotificationType.WARNING
     )
     Notifications.Bus.notify(notification, project)
   }
 
   private fun showApplyChangesSuccessNotification(project: Project, startTaskName: String) {
-    val notification = Notification(
-      "JetBrains Academy",
+    val notification = EduInformationNotification(
       EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.Notification.success.title"),
       EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.Notification.success.description", startTaskName),
-      NotificationType.INFORMATION
     )
+    // TODO ?????
     Notifications.Bus.notify(notification, project)
   }
 

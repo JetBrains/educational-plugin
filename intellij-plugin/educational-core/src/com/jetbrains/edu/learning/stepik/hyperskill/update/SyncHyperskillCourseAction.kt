@@ -1,16 +1,15 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.update
 
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.SyncCourseAction
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.notification.EduInformationNotification
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import org.jetbrains.annotations.NonNls
 
 class SyncHyperskillCourseAction : SyncCourseAction(
@@ -39,12 +38,11 @@ class SyncHyperskillCourseAction : SyncCourseAction(
     return project.course is HyperskillCourse
   }
 
+  // TODO candidate for extraction to EduNotificationManager
   private fun showNothingToUpdateNotification(project: Project) {
-    Notification(
-      "JetBrains Academy",
+    EduInformationNotification(
       EduCoreBundle.message("update.nothing.to.update"),
       EduCoreBundle.message("update.notification.text", EduNames.JBA, EduNames.PROJECT),
-      NotificationType.INFORMATION
     ).notify(project)
   }
 

@@ -2,8 +2,6 @@ package com.jetbrains.edu.learning
 
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.ide.util.PropertiesComponent
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runWriteAction
@@ -39,6 +37,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.navigation.NavigationUtils.setHighlightLevelForFilesInTask
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.notification.EduWarningNotification
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikNames
@@ -73,8 +72,7 @@ class EduStartupActivity : StartupActivity.DumbAware {
       }
 
       if (course is StepikCourse) {
-        val notification = Notification("JetBrains Academy", StepikNames.STEPIK, EduCoreBundle.message("stepik.is.not.supported"),
-                                        NotificationType.WARNING)
+        val notification = EduWarningNotification(StepikNames.STEPIK, EduCoreBundle.message("stepik.is.not.supported"))
         notification.notify(null)
       }
 

@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning.api
 
 import com.intellij.ide.BrowserUtil
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.Urls
 import com.intellij.util.io.origin
@@ -12,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.UserInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.network.executeCall
 import com.jetbrains.edu.learning.network.executeHandlingExceptions
+import com.jetbrains.edu.learning.notification.EduErrorNotification
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import io.netty.handler.codec.http.FullHttpRequest
 import io.netty.handler.codec.http.QueryStringDecoder
@@ -153,12 +152,9 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
     // logout the user if the server did not accept Hyperskill refresh token
     if (response.code() in BROKEN_TOKEN_RESPONSE_CODES && response.errorBody()?.string() == "{\"error\": \"invalid_grant\"}") {
       doLogout()
-      @Suppress("DialogTitleCapitalization")
-      Notification(
-        "JetBrains Academy",
+      EduErrorNotification(
         EduCoreBundle.message("error.authorization.error"),
         EduCoreBundle.message("notification.hyperskill.no.next.activity.login.content"),
-        NotificationType.ERROR
       ).notify(null)
     }
     error("Failed to refresh token")

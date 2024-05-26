@@ -2,7 +2,6 @@ package com.jetbrains.edu.coursecreator.actions.checkAllTasks
 
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.progress.ProgressIndicator
@@ -15,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.notification.EduWarningNotification
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import javax.swing.event.HyperlinkEvent
 
@@ -177,11 +177,9 @@ fun getVisitItemContainerFunc(itemContainer: ItemContainer): (((Task) -> Unit) -
 }
 
 fun createFailedTasksNotification(failedTasks: List<Task>, tasksNum: Int, project: Project): Notification {
-  val notification = Notification(
-    "JetBrains Academy",
+  val notification = EduWarningNotification(
     EduCoreBundle.message("notification.title.check"),
     notificationContent(failedTasks),
-    NotificationType.WARNING
   )
     .setSubtitle(EduCoreBundle.message("notification.subtitle.some.tasks.failed", failedTasks.size, tasksNum))
     .setListener(object : NotificationListener.Adapter() {

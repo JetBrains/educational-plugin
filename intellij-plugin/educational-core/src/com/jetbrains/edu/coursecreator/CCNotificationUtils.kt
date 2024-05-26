@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator
 
-import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
@@ -11,6 +10,9 @@ import com.intellij.openapi.util.NlsContexts.NotificationTitle
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.notification.EduErrorNotification
+import com.jetbrains.edu.learning.notification.EduInformationNotification
+import com.jetbrains.edu.learning.notification.EduNotification
 
 object CCNotificationUtils {
   private val LOG = Logger.getInstance(CCNotificationUtils::class.java)
@@ -37,13 +39,14 @@ object CCNotificationUtils {
     action: AnAction? = null
   ) {
     LOG.info(message)
-    val notification = Notification("JetBrains Academy", title, message.orEmpty(), NotificationType.ERROR)
+    val notification = EduErrorNotification(title, message.orEmpty())
     if (action != null) {
       notification.addAction(action)
     }
     notification.notify(project)
   }
 
+  // TODO Inline or EduNotificationManager
   fun showNoRightsToUpdateOnStepikNotification(project: Project) {
     showErrorNotification(
       project,
@@ -60,6 +63,7 @@ object CCNotificationUtils {
     showNotification(project, action, title, "")
   }
 
+  // TODO delete
   fun showNotification(
     project: Project,
     @NotificationTitle title: String,
@@ -76,7 +80,7 @@ object CCNotificationUtils {
     @NotificationContent message: String,
     notificationType: NotificationType = NotificationType.INFORMATION
   ) {
-    val notification = Notification("JetBrains Academy", title, message, notificationType)
+    val notification = EduNotification.create(title, message, notificationType)
     if (action != null) {
       notification.addAction(action)
     }
@@ -84,11 +88,9 @@ object CCNotificationUtils {
   }
 
   fun showLoginSuccessfulNotification(userName: String) {
-    Notification(
-      "JetBrains Academy",
+    EduInformationNotification(
       EduCoreBundle.message("login.successful"),
       EduCoreBundle.message("logged.in.as", userName),
-      NotificationType.INFORMATION
     ).notify(null)
   }
 }

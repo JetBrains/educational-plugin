@@ -7,10 +7,8 @@ import com.intellij.ide.RecentProjectsManagerBase
 import com.intellij.ide.plugins.DynamicPluginListener
 import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.util.PropertiesComponent
-import com.intellij.notification.Notification
 import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationListener
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.progress.ProgressManager
@@ -21,6 +19,7 @@ import com.jetbrains.edu.learning.authUtils.OAuthUtils.isBuiltinPortValid
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.notification.EduErrorNotification
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlMapper
@@ -74,12 +73,10 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
   }
 
   private fun showSwitchFromEduNotification() {
-    val notification = Notification(
-      "JetBrains Academy",
+    val notification = EduErrorNotification(
       EduCoreBundle.message("notification.ide.switch.from.edu.ide.title", ApplicationNamesInfo.getInstance().fullProductNameWithEdition),
       EduCoreBundle.message("notification.ide.switch.from.edu.ide.description",
                             "${ApplicationNamesInfo.getInstance().fullProductName} Community"),
-      NotificationType.ERROR,
     ).apply {
       isSuggestionType = true
       configureDoNotAskOption(SWITCH_TO_COMMUNITY_DO_NOT_ASK_OPTION_ID,
@@ -132,11 +129,9 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
   }
 
   private fun notifyUnsupportedPort(port: Int) {
-    Notification(
-      "JetBrains Academy",
+    EduErrorNotification(
       EduNames.JBA,
       EduCoreBundle.message("hyperskill.unsupported.port.extended.message", port.toString(), EduNames.OUTSIDE_OF_KNOWN_PORT_RANGE_URL),
-      NotificationType.ERROR,
     )
       .setListener(NotificationListener.URL_OPENING_LISTENER)
       .notify(null)
