@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.ui.JBCardLayout
 import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -14,15 +15,14 @@ import com.jetbrains.edu.learning.stepik.hyperskill.JBA_HELP
 import com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.notLoggedInPanel.HyperskillNotLoggedInPanel
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import javax.swing.JPanel
 
 class HyperskillCoursesPanel(
-  private val platformProvider: HyperskillPlatformProvider,
+  platformProvider: HyperskillPlatformProvider,
   scope: CoroutineScope,
   disposable: Disposable
 ) : CoursesPanel(platformProvider, scope, disposable) {
+
 
   override fun tabDescription(): String {
     val linkText = """<a href="${JBA_HELP}">${EduNames.JBA}</a>"""
@@ -46,34 +46,32 @@ class HyperskillCoursesPanel(
   override fun createCoursesListPanel() = HyperskillCoursesListPanel()
 
   override fun createContentPanel(): JPanel {
-    val panel = if (isLoggedIn()) {
-      super.createContentPanel()
+    val jbCardLayout = JBCardLayout()
+    val coursesPageId = "COURSES PAGE"
+    val loginPageId = "LOGIN PAGE"
+    val panel = JPanel(jbCardLayout)
+    panel.add(loginPageId, HyperskillNotLoggedInPanel())
+    panel.add(coursesPageId, super.createContentPanel())
+    if (isLoggedIn()) {
+      jbCardLayout.show(panel, coursesPageId)
     }
     else {
-      HyperskillNotLoggedInPanel()
+      jbCardLayout.show(panel, loginPageId)
     }
 
-    fun createCoursesPanel() = super.createContentPanel()
-
-  val connection = ApplicationManager.getApplication().messageBus.connect()
+    val connection = ApplicationManager.getApplication().messageBus.connect()
     connection.subscribe(HyperskillSettings.LOGGED_IN_TO_HYPERSKILL,
       object : EduLogInListener {
         override fun userLoggedIn() {
-          panel.removeAll()
-          panel.add(createCoursesPanel())
+
+          jbCardLayout.show(panel, coursesPageId)
+
           connection.disconnect()
         }
       }
     )
 
     return panel
-  }
-
-  override suspend fun updateCoursesAfterLogin(preserveSelection: Boolean) {
-    val academyCoursesGroups = withContext(Dispatchers.IO) { platformProvider.loadCourses() }
-    coursesGroups.clear()
-    coursesGroups.addAll(academyCoursesGroups)
-    super.updateCoursesAfterLogin(false)
   }
 
   private fun isLoggedIn() = HyperskillSettings.INSTANCE.account != null

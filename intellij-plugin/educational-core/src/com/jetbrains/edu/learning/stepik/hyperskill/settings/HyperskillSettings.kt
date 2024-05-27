@@ -27,10 +27,12 @@ class HyperskillSettings : PersistentStateComponent<Element> {
   var account: HyperskillAccount? = null
     set(account) {
       field = account
+      if (account != null) {
+        ApplicationManager.getApplication().messageBus.syncPublisher(LOGGED_IN_TO_HYPERSKILL).userLoggedIn()
+      }
       HyperskillConnector.getInstance().apply {
         if (account != null) {
           notifyUserLoggedIn()
-          ApplicationManager.getApplication().messageBus.syncPublisher(LOGGED_IN_TO_HYPERSKILL).userLoggedIn()
         }
         else {
           notifyUserLoggedOut()

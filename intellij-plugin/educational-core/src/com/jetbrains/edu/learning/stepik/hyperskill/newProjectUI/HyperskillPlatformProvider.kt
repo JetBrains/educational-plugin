@@ -72,6 +72,9 @@ class HyperskillPlatformProvider : CoursesPlatformProvider() {
   }
 
   override suspend fun doLoadCourses(): List<CoursesGroup> {
+    if (!HyperskillConnector.getInstance().isLoggedIn()) {
+      return listOf(CoursesGroup(listOf(HyperskillCourseAdvertiser ())))
+    }
     val courses = mutableListOf<Course>()
 
     val selectedProject = getSelectedProject()
