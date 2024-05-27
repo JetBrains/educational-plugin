@@ -69,6 +69,11 @@ class SyncChangesStateManager(private val project: Project) {
     }
   }
 
+  fun removeState(taskFile: TaskFile) {
+    if (!checkRequirements(taskFile.task.lesson)) return
+    stateStorage.remove(taskFile)
+  }
+
   fun updateSyncChangesState(lessonContainer: LessonContainer) {
     if (!CCUtils.isCourseCreator(project) || !isFeatureEnabled(EduExperimentalFeatures.CC_FL_SYNC_CHANGES)) return
     lessonContainer.visitFrameworkLessons { lesson ->

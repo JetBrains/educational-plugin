@@ -6,6 +6,7 @@ import com.intellij.notification.Notifications
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.*
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
@@ -81,6 +82,8 @@ class CCFrameworkLessonManager(
       // we return if user canceled propagation
       if (!propagateChanges(tasks[i - 1], tasks[i], baseFilesNames)) {
         showApplyChangesCanceledNotification(project, task.name, tasks[i - 1].name)
+        FileDocumentManager.getInstance().saveAllDocuments()
+        SyncChangesStateManager.getInstance(project).updateSyncChangesState(tasks[i - 1])
         return
       }
       // if everything is ok with propagation, then we save the approved changes from the current task into storage
@@ -89,6 +92,7 @@ class CCFrameworkLessonManager(
     // save last task manually
     saveFileStateIntoStorage(tasks.last(), baseFilesNames)
     showApplyChangesSuccessNotification(project, task.name)
+    FileDocumentManager.getInstance().saveAllDocuments()
   }
 
   /**
@@ -204,6 +208,14 @@ class CCFrameworkLessonManager(
     }
 
     updateRecord(task, updatedUserChanges.record)
+
+    if (updatedUserChanges.state.isNotEmpty()) {
+      for (file in initialCurrentFiles) {
+        val taskFile = task.taskFiles[file] ?: continue
+        SyncChangesStateManager.getInstance(project).removeState(taskFile)
+      }
+    }
+
     return updatedUserChanges
   }
 
