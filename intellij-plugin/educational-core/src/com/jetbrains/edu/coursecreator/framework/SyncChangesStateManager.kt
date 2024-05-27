@@ -34,6 +34,16 @@ class SyncChangesStateManager(private val project: Project) {
     processTaskFilesCreated(taskFile.task, listOf(taskFile))
   }
 
+  fun filesDeleted(task: Task, taskFilesNames: List<String>) {
+    if (!checkRequirements(task.lesson)) return
+    recalcSyncChangesStateForFilesInPrevTask(task, taskFilesNames)
+  }
+
+  fun taskDeleted(task: Task) {
+    if (!checkRequirements(task.lesson)) return
+    recalcSyncChangesStateForFilesInPrevTask(task, null)
+  }
+
   fun updateSyncChangesState(lessonContainer: LessonContainer) {
     if (!CCUtils.isCourseCreator(project) || !isFeatureEnabled(EduExperimentalFeatures.CC_FL_SYNC_CHANGES)) return
     lessonContainer.visitFrameworkLessons { lesson ->

@@ -70,7 +70,8 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     if (section != null) {
       section.removeLesson(removedLesson)
       YamlFormatSynchronizer.saveItem(section)
-    } else {
+    }
+    else {
       course.removeLesson(removedLesson)
       YamlFormatSynchronizer.saveItem(course)
     }
@@ -88,6 +89,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     val task = info.task
     val lesson = task.lesson
     lesson.removeTask(task)
+    SyncChangesStateManager.getInstance(project).taskDeleted(task)
     CCFrameworkLessonManager.getInstance(project).removeRecord(task)
     YamlFormatSynchronizer.saveItem(lesson)
   }
@@ -100,8 +102,11 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
       for (path in toRemove) {
         task.removeTaskFile(path)
       }
-    } else {
+      SyncChangesStateManager.getInstance(project).filesDeleted(task, toRemove)
+    }
+    else {
       task.removeTaskFile(pathInTask)
+      SyncChangesStateManager.getInstance(project).filesDeleted(task, listOf(pathInTask))
     }
     YamlFormatSynchronizer.saveItem(task)
   }
