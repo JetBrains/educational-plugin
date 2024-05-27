@@ -34,6 +34,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     if (file.isTestsFile(project) || file.isTaskRunConfigurationFile(project)) {
       taskFile.isVisible = false
     }
+    SyncChangesStateManager.getInstance(project).taskFileCreated(taskFile)
   }
 
   override fun taskFileChanged(taskFile: TaskFile, file: VirtualFile) {

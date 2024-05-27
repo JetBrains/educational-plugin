@@ -29,6 +29,11 @@ class SyncChangesStateManager(private val project: Project) {
     updateSyncChangesState(taskFile.task, listOf(taskFile))
   }
 
+  fun taskFileCreated(taskFile: TaskFile) {
+    if (!checkRequirements(taskFile.task.lesson)) return
+    processTaskFilesCreated(taskFile.task, listOf(taskFile))
+  }
+
   fun updateSyncChangesState(lessonContainer: LessonContainer) {
     if (!CCUtils.isCourseCreator(project) || !isFeatureEnabled(EduExperimentalFeatures.CC_FL_SYNC_CHANGES)) return
     lessonContainer.visitFrameworkLessons { lesson ->
@@ -41,6 +46,14 @@ class SyncChangesStateManager(private val project: Project) {
   fun updateSyncChangesState(task: Task) {
     if (!checkRequirements(task.lesson)) return
     updateSyncChangesState(task, task.taskFiles.values.toList())
+  }
+
+  // In addition/deletion of files, framework lesson structure might break/restore,
+  // so we need to recalculate the state for corresponding task files from a previous task
+  // in case when a warning state is added/removed
+  private fun processTaskFilesCreated(task: Task, taskFiles: List<TaskFile>) {
+    updateSyncChangesState(task, taskFiles)
+    recalcSyncChangesStateForFilesInPrevTask(task, taskFiles.map { it.name })
   }
 
   private fun checkRequirements(lesson: Lesson): Boolean {
@@ -75,6 +88,19 @@ class SyncChangesStateManager(private val project: Project) {
   private fun shouldUpdateSyncChangesState(taskFile: TaskFile): Boolean {
     val task = taskFile.task
     return taskFile.isVisible && task.lesson.taskList.last() != task
+  }
+
+  // after deletion of files, the framework lesson structure might break,
+  // so we need to recalculate state for a corresponding file from a previous task in case when a warning state is added/removed
+  private fun recalcSyncChangesStateForFilesInPrevTask(task: Task, filterTaskFileNames: List<String>?) {
+    val prevTask = task.lesson.taskList.getOrNull(task.index - 2) ?: return
+    val correspondingTaskFiles = if (filterTaskFileNames != null) {
+      prevTask.taskFiles.filter { it.key in filterTaskFileNames }
+    }
+    else {
+      prevTask.taskFiles
+    }.values.toList()
+    updateSyncChangesState(prevTask, correspondingTaskFiles)
   }
 
   private fun checkForAbsenceInNextTask(taskFile: TaskFile): Boolean {
