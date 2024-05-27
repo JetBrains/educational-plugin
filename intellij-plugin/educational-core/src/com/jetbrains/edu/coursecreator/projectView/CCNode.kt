@@ -3,10 +3,12 @@ package com.jetbrains.edu.coursecreator.projectView
 import com.intellij.ide.projectView.PresentationData
 import com.intellij.ide.projectView.ViewSettings
 import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode
+import com.intellij.ide.projectView.impl.nodes.PsiFileNode
 import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.ui.SimpleTextAttributes
 import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
 import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreRules
@@ -67,5 +69,9 @@ class CCNode(
 
   override fun createChildDirectoryNode(value: PsiDirectory): PsiDirectoryNode {
     return CCNode(myProject, value, settings, item)
+  }
+
+  override fun createChildFileNode(originalNode: AbstractTreeNode<*>, psiFile: PsiFile): PsiFileNode {
+    return CCFileNode(myProject, psiFile, settings)
   }
 }

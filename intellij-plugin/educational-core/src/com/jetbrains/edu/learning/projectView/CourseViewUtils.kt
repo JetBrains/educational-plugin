@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiManager
 import com.jetbrains.edu.EducationalCoreIcons
@@ -29,7 +30,8 @@ object CourseViewUtils {
     project: Project,
     childNode: AbstractTreeNode<*>,
     task: Task?,
-    directoryNodeFactory: (PsiDirectory) -> AbstractTreeNode<*>
+    fileNodeFactory: (AbstractTreeNode<*>, PsiFile) -> AbstractTreeNode<*>,
+    directoryNodeFactory: (PsiDirectory) -> AbstractTreeNode<*>,
   ): AbstractTreeNode<*>? {
     val value = childNode.value
     return when (value) {
@@ -43,7 +45,7 @@ object CourseViewUtils {
         val virtualFile = psiFile.virtualFile ?: return null
         val path = virtualFile.pathRelativeToTask(project)
         val visibleFile = task?.getTaskFile(path)
-        if (visibleFile?.isVisible == true) childNode else null
+        if (visibleFile?.isVisible == true) fileNodeFactory(childNode, psiFile) else null
       }
       else -> null
     }

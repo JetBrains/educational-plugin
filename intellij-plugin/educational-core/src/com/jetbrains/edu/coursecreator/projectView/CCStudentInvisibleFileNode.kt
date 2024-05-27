@@ -2,7 +2,6 @@ package com.jetbrains.edu.coursecreator.projectView
 
 import com.intellij.ide.projectView.PresentationData
 import com.intellij.ide.projectView.ViewSettings
-import com.intellij.ide.projectView.impl.nodes.PsiFileNode
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
@@ -23,7 +22,7 @@ class CCStudentInvisibleFileNode(
   value: PsiFile,
   viewSettings: ViewSettings,
   private val name: String = value.name
-) : PsiFileNode(project, value, viewSettings) {
+) : CCFileNode(project, value, viewSettings) {
 
   private fun isExcluded(file: VirtualFile?, project: Project): Boolean {
     file ?: return false

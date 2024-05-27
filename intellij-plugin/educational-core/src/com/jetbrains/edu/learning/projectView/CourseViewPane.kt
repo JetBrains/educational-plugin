@@ -77,7 +77,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport
       override fun createCellRenderer(): TreeCellRenderer {
         val projectViewRenderer = super.createCellRenderer()
         if (CCUtils.isCourseCreator(myProject) && isFeatureEnabled(EduExperimentalFeatures.CC_FL_SYNC_CHANGES)) {
-          return CCCellRenderer(myProject, projectViewRenderer as ColoredTreeCellRenderer)
+          return CCCellRenderer(projectViewRenderer as ColoredTreeCellRenderer)
         }
         return projectViewRenderer
       }

@@ -4,6 +4,7 @@ import com.intellij.ide.projectView.ViewSettings
 import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
+import com.intellij.psi.PsiFile
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -22,7 +23,9 @@ class FrameworkLessonNode private constructor(
 
   override fun modifyChildNode(childNode: AbstractTreeNode<*>): AbstractTreeNode<*>? {
     val task = item.currentTask() ?: return null
-    return CourseViewUtils.modifyTaskChildNode(myProject, childNode, task) { dir -> DirectoryNode(myProject, dir, settings, task) }
+    return CourseViewUtils.modifyTaskChildNode(myProject, childNode, task, ::createChildFileNode) {
+      dir -> DirectoryNode(myProject, dir, settings, task)
+    }
   }
 
   override fun canNavigate(): Boolean = item.taskList.isNotEmpty()
@@ -46,6 +49,10 @@ class FrameworkLessonNode private constructor(
       }
       else super.additionalInfo
     }
+
+  private fun createChildFileNode(originalNode: AbstractTreeNode<*>, psiFile: PsiFile): AbstractTreeNode<*> {
+    return originalNode
+  }
 
   companion object {
 

@@ -2,14 +2,11 @@ package com.jetbrains.edu.coursecreator.projectView
 
 import com.intellij.icons.AllIcons
 import com.intellij.ide.projectView.impl.nodes.PsiFileNode
-import com.intellij.openapi.project.Project
 import com.intellij.ui.ColoredTreeCellRenderer
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.tree.TreeUtil
-import com.jetbrains.edu.coursecreator.framework.SyncChangesStateManager
 import com.jetbrains.edu.coursecreator.framework.SyncChangesTaskFileState
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
-import com.jetbrains.edu.learning.getTaskFile
 import java.awt.*
 import javax.swing.*
 import javax.swing.tree.TreeCellRenderer
@@ -17,7 +14,7 @@ import javax.swing.tree.TreeCellRenderer
 /**
  * Custom cell renderer for displaying sync changes state of task files in the project view
  */
-class CCCellRenderer(private val project: Project, private val innerRenderer: ColoredTreeCellRenderer) : JPanel(BorderLayout(JBUI.scale(2), 0)), TreeCellRenderer {
+class CCCellRenderer(private val innerRenderer: ColoredTreeCellRenderer) : JPanel(BorderLayout(JBUI.scale(2), 0)), TreeCellRenderer {
   private val iconHolder = JLabel()
 
   init {
@@ -37,7 +34,7 @@ class CCCellRenderer(private val project: Project, private val innerRenderer: Co
     // render the default project view node component
     innerRenderer.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus)
 
-    val node = TreeUtil.getUserObject(value) as? PsiFileNode
+    val node = TreeUtil.getUserObject(value) as? CCFileNode
     if (!tryInstallNewIcon(node)) {
       // remove the icon if the node is not suitable
       iconHolder.icon = null
@@ -45,12 +42,11 @@ class CCCellRenderer(private val project: Project, private val innerRenderer: Co
     return this
   }
 
-  private fun tryInstallNewIcon(node: PsiFileNode?): Boolean {
+  private fun tryInstallNewIcon(node: CCFileNode?): Boolean {
     if (node == null || !isNodeInFrameworkLessonTask(node)) return false
 
-    val taskFile = node.virtualFile?.getTaskFile(project) ?: return false
-    val state = SyncChangesStateManager.getInstance(project).getSyncChangesState(taskFile)
-    iconHolder.icon = getIcon(state)
+    val presentation = node.presentation as? CCFilePresentationData ?: return false
+    iconHolder.icon = getIcon(presentation.syncChangesState)
     return true
   }
 

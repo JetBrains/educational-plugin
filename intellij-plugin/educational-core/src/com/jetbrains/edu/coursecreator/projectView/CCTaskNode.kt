@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.projectView
 
 import com.intellij.ide.projectView.ViewSettings
 import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode
+import com.intellij.ide.projectView.impl.nodes.PsiFileNode
 import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
@@ -51,6 +52,10 @@ class CCTaskNode(
 
   override fun createChildDirectoryNode(value: PsiDirectory): PsiDirectoryNode {
     return CCNode(myProject, value, settings, item)
+  }
+
+  override fun createChildFileNode(originalNode: AbstractTreeNode<*>, psiFile: PsiFile): PsiFileNode {
+    return CCFileNode(myProject, psiFile, settings)
   }
 
   companion object {
