@@ -102,7 +102,7 @@ class YamlMigrator(val project: Project) {
 
   private fun writeConfigTree(configTree: ObjectNode, configFile: VirtualFile) {
     val textConfig = YamlMapper.MAPPER.writeValueAsString(configTree)
-    project.invokeLater {
+    runInEdtAndWait { // or project.invokeLater() ?
       runWriteAction {
         configFile.writeText(reformatYaml(project, textConfig))
         FileDocumentManager.getInstance().reloadFiles(configFile)
