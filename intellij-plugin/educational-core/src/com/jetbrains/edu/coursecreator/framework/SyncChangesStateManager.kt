@@ -4,8 +4,13 @@ import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduExperimentalFeatures
+import com.jetbrains.edu.learning.FileInfo
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.LessonContainer
@@ -44,6 +49,26 @@ class SyncChangesStateManager(private val project: Project) {
     recalcSyncChangesStateForFilesInPrevTask(task, null)
   }
 
+  fun fileMoved(file: VirtualFile, fileInfo: FileInfo.FileInTask, oldDirectoryInfo: FileInfo.FileInTask) {
+    val task = fileInfo.task
+    val oldTask = oldDirectoryInfo.task
+    if (!checkRequirements(task.lesson) && !checkRequirements(oldTask.lesson)) return
+
+    val (taskFiles, oldPaths) = if (file.isDirectory) {
+      collectMovedDataInfoOfDirectory(file, fileInfo, oldDirectoryInfo)
+    }
+    else {
+      collectMovedDataInfoOfSingleFile(file, fileInfo, oldDirectoryInfo)
+    }
+
+    if (oldTask.lesson is FrameworkLesson) {
+      filesDeleted(oldTask, oldPaths)
+    }
+    if (task.lesson is FrameworkLesson) {
+      processTaskFilesCreated(task, taskFiles)
+    }
+  }
+
   fun updateSyncChangesState(lessonContainer: LessonContainer) {
     if (!CCUtils.isCourseCreator(project) || !isFeatureEnabled(EduExperimentalFeatures.CC_FL_SYNC_CHANGES)) return
     lessonContainer.visitFrameworkLessons { lesson ->
@@ -64,6 +89,54 @@ class SyncChangesStateManager(private val project: Project) {
   private fun processTaskFilesCreated(task: Task, taskFiles: List<TaskFile>) {
     updateSyncChangesState(task, taskFiles)
     recalcSyncChangesStateForFilesInPrevTask(task, taskFiles.map { it.name })
+  }
+
+  /**
+   * Collects task files in a moved directory and returns a map of task files with their old paths.
+   *
+   * @return a map of task files with their old paths
+   */
+  private fun collectMovedDataInfoOfDirectory(
+    file: VirtualFile,
+    fileInfo: FileInfo.FileInTask,
+    oldDirectoryInfo: FileInfo.FileInTask
+  ): MovedDataInfo {
+    val task = fileInfo.task
+    val taskFiles = mutableListOf<TaskFile>()
+    val oldPaths = mutableListOf<String>()
+    VfsUtil.visitChildrenRecursively(file, object : VirtualFileVisitor<Any?>(NO_FOLLOW_SYMLINKS) {
+      override fun visitFile(childFile: VirtualFile): Boolean {
+        if (!childFile.isDirectory) {
+          val relativePath = VfsUtil.findRelativePath(file, childFile, VfsUtilCore.VFS_SEPARATOR_CHAR) ?: return true
+          var oldPath = file.name + VfsUtilCore.VFS_SEPARATOR_CHAR + relativePath
+          if (oldDirectoryInfo.pathInTask.isNotEmpty()) {
+            oldPath = oldDirectoryInfo.pathInTask + VfsUtilCore.VFS_SEPARATOR_CHAR + oldPath
+          }
+          val newPath = fileInfo.pathInTask + VfsUtilCore.VFS_SEPARATOR_CHAR + relativePath
+          val taskFile = task.taskFiles[newPath] ?: return true
+          taskFiles.add(taskFile)
+          oldPaths.add(oldPath)
+        }
+        return true
+      }
+    })
+
+    return MovedDataInfo(taskFiles, oldPaths)
+  }
+
+  private fun collectMovedDataInfoOfSingleFile(
+    file: VirtualFile,
+    fileInfo: FileInfo.FileInTask,
+    oldDirectoryInfo: FileInfo.FileInTask
+  ): MovedDataInfo {
+    val oldPath = if (oldDirectoryInfo.pathInTask.isNotEmpty()) {
+      oldDirectoryInfo.pathInTask + VfsUtilCore.VFS_SEPARATOR_CHAR + file.name
+    }
+    else {
+      file.name
+    }
+    val taskFile = fileInfo.task.taskFiles[fileInfo.pathInTask] ?: return MovedDataInfo()
+    return MovedDataInfo(taskFile, oldPath)
   }
 
   private fun checkRequirements(lesson: Lesson): Boolean {
@@ -117,6 +190,14 @@ class SyncChangesStateManager(private val project: Project) {
     val task = taskFile.task
     val nextTask = task.lesson.taskList.getOrNull(task.index) ?: return false
     return taskFile.name !in nextTask.taskFiles
+  }
+
+  /**
+   * Represents information about task files that have been moved.
+   * Contains a list of task files and their corresponding old paths.
+   */
+  private data class MovedDataInfo(val taskFiles: List<TaskFile> = emptyList(), val oldPaths: List<String> = emptyList()) {
+    constructor(taskFile: TaskFile, oldPath: String) : this(listOf(taskFile), listOf(oldPath))
   }
 
   companion object {

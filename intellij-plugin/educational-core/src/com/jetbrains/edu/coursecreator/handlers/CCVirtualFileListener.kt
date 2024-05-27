@@ -41,6 +41,16 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     SyncChangesStateManager.getInstance(project).taskFileChanged(taskFile)
   }
 
+  override fun fileMoved(event: VFileMoveEvent) {
+    super.fileMoved(event)
+
+    val movedFile = event.file
+    val fileInfo = movedFile.fileInfo(project) as? FileInfo.FileInTask ?: return
+    val oldDirectoryInfo = event.oldParent.directoryFileInfo(project) ?: return
+
+    SyncChangesStateManager.getInstance(project).fileMoved(movedFile, fileInfo, oldDirectoryInfo)
+  }
+
   override fun fileDeleted(fileInfo: FileInfo, file: VirtualFile) {
     when (fileInfo) {
       is FileInfo.SectionDirectory -> {
