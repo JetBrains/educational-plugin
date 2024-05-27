@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.newvfs.events.*
 import com.intellij.util.ui.update.MergingUpdateQueue
 import com.intellij.util.ui.update.Update
 import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
+import com.jetbrains.edu.coursecreator.framework.SyncChangesStateManager
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -33,6 +34,10 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     if (file.isTestsFile(project) || file.isTaskRunConfigurationFile(project)) {
       taskFile.isVisible = false
     }
+  }
+
+  override fun taskFileChanged(taskFile: TaskFile, file: VirtualFile) {
+    SyncChangesStateManager.getInstance(project).taskFileChanged(taskFile)
   }
 
   override fun fileDeleted(fileInfo: FileInfo, file: VirtualFile) {
