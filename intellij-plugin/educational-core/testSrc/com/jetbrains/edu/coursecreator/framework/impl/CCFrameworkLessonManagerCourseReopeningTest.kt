@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
+import org.junit.Assert.assertNotEquals
 import org.junit.Test
 
 class CCFrameworkLessonManagerCourseReopeningTest : CourseReopeningTestBase<EmptyProjectSettings>() {
@@ -25,32 +26,33 @@ class CCFrameworkLessonManagerCourseReopeningTest : CourseReopeningTestBase<Empt
       }
     }
 
-    openStudentProjectThenReopenStudentProject(initialCourse, ::firstOpen, ::secondOpen)
-  }
+    var record = -1
 
-  private fun firstOpen(project: Project) {
-    val recordState = CCFrameworkLessonManager.getInstance(project)
-    val course = project.course
-    val task = course?.findTask("lesson", "task") ?: error("Can't find task")
+    val firstOpen: (Project) -> Unit = { project: Project ->
+      val recordState = CCFrameworkLessonManager.getInstance(project)
+      val course = project.course
+      val task = course?.findTask("lesson", "task") ?: error("Can't find task")
 
-    with(recordState) {
-      val oldRecord = getRecord(task)
-      assertEquals(-1, oldRecord)
-      updateRecord(task, 12)
-      assertEquals(12, getRecord(task))
+      with(recordState) {
+        val oldRecord = getRecord(task)
+        assertEquals(-1, oldRecord)
+        saveCurrentState(task)
+        record = getRecord(task)
+        assertNotEquals(record, oldRecord)
+      }
+
+      // project settings are not saved in tests by default, here it saves them manually
+      runWithModalProgressBlocking(ModalTaskOwner.project(project), "") {
+        saveSettings(project, true)
+      }
     }
 
-    // project settings are not saved in tests by default, here it saves them manually
-    runWithModalProgressBlocking(ModalTaskOwner.project(project), "") {
-      saveSettings(project, true)
+    openStudentProjectThenReopenStudentProject(initialCourse, firstOpen) {
+      val recordState = CCFrameworkLessonManager.getInstance(project)
+      val course = project.course
+      val task = course?.findTask("lesson", "task") ?: error("Can't find task")
+
+      assertEquals(record, recordState.getRecord(task))
     }
-  }
-
-  private fun secondOpen(project: Project) {
-    val recordState = CCFrameworkLessonManager.getInstance(project)
-    val course = project.course
-    val task = course?.findTask("lesson", "task") ?: error("Can't find task")
-
-    assertEquals(12, recordState.getRecord(task))
   }
 }

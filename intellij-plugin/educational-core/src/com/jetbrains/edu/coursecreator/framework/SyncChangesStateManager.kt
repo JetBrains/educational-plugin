@@ -6,7 +6,6 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduExperimentalFeatures
-import com.jetbrains.edu.learning.LightTestAware
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.LessonContainer
@@ -17,12 +16,8 @@ import com.jetbrains.edu.learning.isFeatureEnabled
 import java.util.concurrent.ConcurrentHashMap
 
 @Service(Service.Level.PROJECT)
-class SyncChangesStateManager(private val project: Project) : LightTestAware {
+class SyncChangesStateManager(private val project: Project) {
   private val stateStorage = ConcurrentHashMap<TaskFile, SyncChangesTaskFileState>()
-
-  override fun cleanUpState() {
-    stateStorage.clear()
-  }
 
   fun getSyncChangesState(taskFile: TaskFile): SyncChangesTaskFileState? {
     if (!checkRequirements(taskFile.task.lesson)) return null
