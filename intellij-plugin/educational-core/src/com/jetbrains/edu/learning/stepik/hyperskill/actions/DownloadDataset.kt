@@ -246,14 +246,18 @@ class DownloadDataset(
 
           val point = when (tooltip.position) {
             Balloon.Position.atRight -> {
+              val cellRenderer = tree.cellRenderer as? ProjectViewRenderer
+              if (cellRenderer == null) {
+                LOG.warn("ProjectView tree CellRenderer is not of type ProjectViewRenderer")
+              }
+
               // icon width + text width
-              val xOffset = ((tree.cellRenderer as ProjectViewRenderer).icon?.iconWidth ?: 0) +
+              val xOffset = (cellRenderer?.icon?.iconWidth ?: 0) +
                             (tree.getPathBounds(tree.selectionPath)?.width ?: 0)
               // 1/2 text height
               val yOffset = tree.getPathBounds(tree.selectionPath)?.height?.div(2) ?: 0
               location.point.addXOffset(xOffset).addYOffset(-yOffset)
             }
-
             else -> {
               LOG.warn("Unsupported position ${tooltip.position}")
               location.point
