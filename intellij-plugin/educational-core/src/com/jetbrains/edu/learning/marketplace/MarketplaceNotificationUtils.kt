@@ -19,17 +19,11 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduErrorNotification
 import com.jetbrains.edu.learning.notification.EduInformationNotification
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import org.jetbrains.annotations.NotNull
 
 object MarketplaceNotificationUtils {
-  fun showLoginFailedNotification(loginProviderName: String) {
-    EduErrorNotification(
-      EduCoreBundle.message("error.login.failed"),
-      EduCoreBundle.message("error.failed.login.to.subsystem", loginProviderName),
-    ).notify(null)
-  }
-
   fun showReloginToJBANeededNotification(action: AnAction) {
     val notification = EduErrorNotification(
       EduCoreBundle.message("jba.relogin.needed.title"),
@@ -124,17 +118,18 @@ object MarketplaceNotificationUtils {
   }
 
   fun showFailedToPushCourseNotification(project: Project, courseName: String) {
-    EduErrorNotification(
+    EduNotificationManager.showErrorNotification(
+      project,
       EduCoreBundle.message("marketplace.push.course.failed.title"),
-      EduCoreBundle.message("marketplace.push.course.failed.text", courseName),
-    ).notify(project)
+      EduCoreBundle.message("marketplace.push.course.failed.text", courseName)
+    )
   }
 
   fun showFailedToChangeSharingPreferenceNotification() {
-    EduErrorNotification(
-      EduCoreBundle.message("marketplace.solutions.sharing.notification.title"),
-      EduCoreBundle.message("notification.something.went.wrong.text"),
-    ).notify(null)
+    EduNotificationManager.showErrorNotification(
+      title = EduCoreBundle.message("marketplace.solutions.sharing.notification.title"),
+      content = EduCoreBundle.message("notification.something.went.wrong.text")
+    )
   }
 
   internal fun showSubmissionsDeletedSuccessfullyNotification(project: Project?, courseId: Int?, loginName: String?) {
@@ -152,10 +147,11 @@ object MarketplaceNotificationUtils {
       EduCoreBundle.message("marketplace.delete.submissions.success.message")
     }
 
-    EduInformationNotification(
+    EduNotificationManager.showInfoNotification(
+      project,
       EduCoreBundle.message("marketplace.delete.submissions.success.title"),
       message,
-    ).notify(project)
+    )
   }
 
   internal fun showNoSubmissionsToDeleteNotification(project: Project?, courseId: Int?, loginName: String?) {
@@ -173,10 +169,11 @@ object MarketplaceNotificationUtils {
       EduCoreBundle.message("marketplace.delete.submissions.nothing.message")
     }
 
-    EduInformationNotification(
+    EduNotificationManager.showInfoNotification(
+      project,
       EduCoreBundle.message("marketplace.delete.submissions.nothing.title"),
       message,
-    ).notify(project)
+    )
   }
 
   internal fun showFailedToDeleteNotification(project: Project?, courseId: Int?, loginName: String?) {
@@ -194,7 +191,8 @@ object MarketplaceNotificationUtils {
       EduCoreBundle.message("marketplace.delete.submissions.failed.message")
     }
 
-    EduErrorNotification(
+    EduNotificationManager.showErrorNotification(
+      project,
       EduCoreBundle.message("marketplace.delete.submissions.failed.title"),
       message
     ) {
@@ -217,14 +215,5 @@ object MarketplaceNotificationUtils {
         // workaround: there is no NotificationType.Success in the platform yet
         icon = ExpUiIcons.Status.Success
       }.notify(project)
-  }
-
-  // TODO inline or EduNotificationManager
-  fun showFailedRequestNotification(
-    project: Project?,
-    @NotNull @NlsContexts.NotificationTitle title: String,
-    @NotNull @NlsContexts.NotificationContent message: String
-  ) {
-    EduErrorNotification(title, message).notify(project)
   }
 }

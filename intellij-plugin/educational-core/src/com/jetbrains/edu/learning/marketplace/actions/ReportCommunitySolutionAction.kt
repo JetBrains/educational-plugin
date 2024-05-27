@@ -17,10 +17,10 @@ import com.intellij.ui.GotItTooltip
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils
-import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showFailedRequestNotification
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.isMarketplaceCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import org.jetbrains.annotations.NonNls
@@ -62,7 +62,7 @@ class ReportCommunitySolutionAction : DumbAwareAction(), CustomComponentAction {
     runInBackground(project, EduCoreBundle.message("marketplace.report.solutions.background.title")) {
       val isSuccessful = MarketplaceSubmissionsConnector.getInstance().reportSolution(submissionId)
       if (!isSuccessful) {
-        showFailedRequestNotification(
+        EduNotificationManager.showErrorNotification(
           project,
           EduCoreBundle.message("marketplace.report.solutions.failed.title"),
           EduCoreBundle.message("marketplace.report.solutions.failed.message")

@@ -30,8 +30,8 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.notification.EduErrorNotification
 import com.jetbrains.edu.learning.notification.EduInformationNotification
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.stepik.api.StepikBasedConnector.Companion.getStepikBasedConnector
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
@@ -185,14 +185,10 @@ class DownloadDataset(
       LOG.error(exception)
     }
 
-    showErrorNotification(project)
-  }
-
-  // TODO candidate for extraction to EduNotificationManager
-  private fun showErrorNotification(project: Project) {
-    EduErrorNotification(
+    EduNotificationManager.showErrorNotification(
+      project,
       content = EduCoreBundle.message("hyperskill.download.dataset.failed.to.download.dataset")
-    ).notify(project)
+    )
   }
 
   @Service(Service.Level.PROJECT)

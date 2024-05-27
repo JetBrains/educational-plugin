@@ -11,8 +11,8 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduErrorNotification
-import com.jetbrains.edu.learning.notification.EduInformationNotification
 import com.jetbrains.edu.learning.notification.EduNotification
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 
 object CCNotificationUtils {
   private val LOG = Logger.getInstance(CCNotificationUtils::class.java)
@@ -88,9 +88,9 @@ object CCNotificationUtils {
   }
 
   fun showLoginSuccessfulNotification(userName: String) {
-    EduInformationNotification(
-      EduCoreBundle.message("login.successful"),
-      EduCoreBundle.message("logged.in.as", userName),
-    ).notify(null)
+    EduNotificationManager.showInfoNotification(
+      title = EduCoreBundle.message("login.successful"),
+      content = EduCoreBundle.message("logged.in.as", userName)
+    )
   }
 }

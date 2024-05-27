@@ -6,7 +6,6 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.ui.JBAccountInfoService
 import com.jetbrains.edu.learning.isUnitTestMode
-import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showFailedRequestNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showSuccessRequestNotification
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
@@ -14,6 +13,7 @@ import com.jetbrains.edu.learning.marketplace.getJBAUserInfo
 import com.jetbrains.edu.learning.marketplace.isMarketplaceStudentCourse
 import com.jetbrains.edu.learning.marketplace.toBoolean
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.submissions.UserAgreementState
@@ -114,7 +114,7 @@ class MarketplaceSettings(private val scope: CoroutineScope) {
     if (!isJBALoggedIn()) return
     scope.launch(Dispatchers.IO) {
       MarketplaceSubmissionsConnector.getInstance().changeUserAgreementState(state).onError {
-        showFailedRequestNotification(
+        EduNotificationManager.showErrorNotification(
           project,
           EduCoreBundle.message("user.agreement.changed.failed.notification.title"),
           EduCoreBundle.message("notification.something.went.wrong.text")
@@ -148,7 +148,7 @@ class MarketplaceSettings(private val scope: CoroutineScope) {
     if (!isJBALoggedIn()) return
     scope.launch(Dispatchers.IO) {
       MarketplaceSubmissionsConnector.getInstance().changeUserStatisticsAllowedState(state).onError {
-        showFailedRequestNotification(
+        EduNotificationManager.showErrorNotification(
           project,
           EduCoreBundle.message("user.statistics.changed.failed.notification.title"),
           EduCoreBundle.message("notification.something.went.wrong.text")

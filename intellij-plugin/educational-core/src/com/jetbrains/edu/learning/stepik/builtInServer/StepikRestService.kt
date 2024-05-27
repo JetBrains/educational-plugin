@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik.builtInServer
 
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.wm.IdeFrame
@@ -12,7 +11,7 @@ import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import com.jetbrains.edu.learning.authUtils.createResponse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODE_ARGUMENT
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
-import com.jetbrains.edu.learning.notification.EduNotification
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikNames.getStepikUrl
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
@@ -58,12 +57,17 @@ class StepikRestService : OAuthRestService(StepikNames.STEPIK) {
         val user = EduSettings.getInstance().user
         if (success && user != null) {
           showOkPage(request, context)
-          showStepikNotification(NotificationType.INFORMATION, "Logged in as " + user.firstName + " " + user.lastName)
+          @Suppress("HardCodedStringLiteral")
+          EduNotificationManager.showInfoNotification(
+            title = StepikNames.STEPIK,
+            content = "Logged in as ${user.firstName} ${user.lastName}"
+          )
           focusOnApplicationWindow()
           return null
         }
       }
-      showStepikNotification(NotificationType.ERROR, "Failed to log in")
+      @Suppress("HardCodedStringLiteral")
+      EduNotificationManager.showErrorNotification(title = StepikNames.STEPIK, content = "Failed to log in")
       return sendErrorResponse(request, context, "Couldn't find code parameter for Stepik OAuth")
     }
     sendStatus(HttpResponseStatus.BAD_REQUEST, false, context.channel())
@@ -90,11 +94,6 @@ class StepikRestService : OAuthRestService(StepikNames.STEPIK) {
       AppIcon.getInstance().requestFocus(frame as IdeFrame)
       frame.toFront()
     }
-  }
-
-  private fun showStepikNotification(notificationType: NotificationType, text: String) {
-    val notification = EduNotification.create(StepikNames.STEPIK, text, notificationType)
-    notification.notify(null)
   }
 
   private val oauthCodePattern = StepikConnector.getInstance().getOAuthPattern()

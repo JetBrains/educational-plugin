@@ -30,8 +30,7 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.notification.EduErrorNotification
-import com.jetbrains.edu.learning.notification.EduInformationNotification
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import org.jetbrains.annotations.NonNls
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
@@ -151,15 +150,21 @@ class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
     fileEditorManager.closeFile(fileEditor.file)
   }
 
-  private fun showApplyCodeSuccessfulNotification(project: Project) = EduInformationNotification(
-    EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.success.title"),
-    EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.success.text"),
-  ).notify(project)
+  private fun showApplyCodeSuccessfulNotification(project: Project) {
+    EduNotificationManager.showInfoNotification(
+      project,
+      EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.success.title"),
+      EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.success.text"),
+    )
+  }
 
-  private fun showApplyCodeFailedNotification(project: Project) = EduErrorNotification(
-    EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.failed.title"),
-    EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.failed.text"),
-  ).notify(project)
+  private fun showApplyCodeFailedNotification(project: Project) {
+    EduNotificationManager.showErrorNotification(
+      project,
+      EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.failed.title"),
+      EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.failed.text"),
+    )
+  }
 
   companion object {
     val VIRTUAL_FILE_PATH_LIST: Key<List<String>> = Key.create("virtualFilePathList")

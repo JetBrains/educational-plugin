@@ -25,7 +25,7 @@ import com.jetbrains.edu.learning.github.PostToGithubActionProvider
 import com.jetbrains.edu.learning.marketplace.isMarketplaceStudentCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
-import com.jetbrains.edu.learning.notification.EduErrorNotification
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.projectView.CourseViewUtils.isSolved
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import org.jetbrains.annotations.NonNls
@@ -50,7 +50,12 @@ class PostMarketplaceProjectToGitHub : DumbAwareAction() {
     val frameworkLessons = courseFrameworkLessons.union(frameworkLessonsFromSections)
     if (frameworkLessons.isEmpty()) {
       LOG.info("No framework lessons found for course ${course.id}")
-      return showFrameworkLessonsNotFoundNotification(project)
+      EduNotificationManager.showErrorNotification(
+        project,
+        EduCoreBundle.message("action.Educational.Student.PostMarketplaceProjectToGitHub.notification.title.failed.to.post.project.to.marketplace"),
+        EduCoreBundle.message("action.Educational.Student.PostMarketplaceProjectToGitHub.notification.content.no.framework.lessons.found")
+      )
+      return
     }
     for (lesson in frameworkLessons) {
       val taskList = lesson.taskList
@@ -126,11 +131,6 @@ class PostMarketplaceProjectToGitHub : DumbAwareAction() {
       templateVariables
     )
   }
-
-  private fun showFrameworkLessonsNotFoundNotification(project: Project) = EduErrorNotification(
-    EduCoreBundle.message("action.Educational.Student.PostMarketplaceProjectToGitHub.notification.title.failed.to.post.project.to.marketplace"),
-    EduCoreBundle.message("action.Educational.Student.PostMarketplaceProjectToGitHub.notification.content.no.framework.lessons.found"),
-  ).notify(project)
 
   companion object {
     private val LOG: Logger = logger<PostMarketplaceProjectToGitHub>()

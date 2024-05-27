@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.actions.SyncCourseAction
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.notification.EduInformationNotification
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
 import org.jetbrains.annotations.NonNls
@@ -24,7 +24,11 @@ class SyncHyperskillCourseAction : SyncCourseAction(
     val course = project.course as HyperskillCourse
     HyperskillCourseUpdater(project, course).updateCourse { isUpdated ->
       if (!isUpdated) {
-        showNothingToUpdateNotification(project)
+        EduNotificationManager.showInfoNotification(
+          project,
+          EduCoreBundle.message("update.nothing.to.update"),
+          EduCoreBundle.message("update.notification.text", EduNames.JBA, EduNames.PROJECT),
+        )
       }
     }
 
@@ -36,14 +40,6 @@ class SyncHyperskillCourseAction : SyncCourseAction(
   override fun isAvailable(project: Project): Boolean {
     if (!project.isStudentProject()) return false
     return project.course is HyperskillCourse
-  }
-
-  // TODO candidate for extraction to EduNotificationManager
-  private fun showNothingToUpdateNotification(project: Project) {
-    EduInformationNotification(
-      EduCoreBundle.message("update.nothing.to.update"),
-      EduCoreBundle.message("update.notification.text", EduNames.JBA, EduNames.PROJECT),
-    ).notify(project)
   }
 
   companion object {

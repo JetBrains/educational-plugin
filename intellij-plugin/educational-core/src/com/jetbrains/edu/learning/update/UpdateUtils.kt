@@ -14,8 +14,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
-import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.notification.EduInformationNotification
 import com.jetbrains.edu.learning.yaml.getConfigDir
 
 object UpdateUtils {
@@ -114,13 +112,5 @@ object UpdateUtils {
       localTasks.zip(tasksFromServer).any { (task, remoteTask) -> task.id != remoteTask.id } -> false
       else -> true
     }
-  }
-
-  // TODO candidate for extraction to EduNotificationManager
-  fun showUpdateCompletedNotification(project: Project, message: String) {
-    EduInformationNotification(
-      EduCoreBundle.message("update.notification.title"),
-      message
-    ).notify(project)
   }
 }

@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator.actions.checkAllTasks
 
-import com.intellij.notification.Notifications
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -15,7 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.getStudyItem
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.notification.EduInformationNotification
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import org.jetbrains.annotations.NonNls
 
 class CCCheckAllTasksAction : AnAction(EduCoreBundle.lazyMessage("action.check.tasks.text")) {
@@ -29,17 +28,17 @@ class CCCheckAllTasksAction : AnAction(EduCoreBundle.lazyMessage("action.check.t
     true) {
     override fun run(indicator: ProgressIndicator) {
       val failedTasks = checkAllStudyItems(project, course, studyItems, indicator) ?: return
-      val notification = if (failedTasks.isEmpty()) {
-        EduInformationNotification(
+      if (failedTasks.isEmpty()) {
+        EduNotificationManager.showInfoNotification(
+          project,
           EduCoreBundle.message("notification.title.check.finished"),
           EduCoreBundle.message("notification.content.all.tasks.solved.correctly"),
         )
       }
       else {
         val tasksNum = getNumberOfTasks(studyItems)
-        createFailedTasksNotification(failedTasks, tasksNum, project)
+        createFailedTasksNotification(failedTasks, tasksNum, project).notify(project)
       }
-      Notifications.Bus.notify(notification, project)
     }
   }
 

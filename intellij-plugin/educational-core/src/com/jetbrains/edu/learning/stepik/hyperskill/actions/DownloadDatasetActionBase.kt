@@ -12,12 +12,12 @@ import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.stepik.hyperskill.notifyJBAUnauthorized
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
-import com.jetbrains.edu.learning.stepik.notifyStepikUnauthorized
 import java.util.function.Supplier
 
 abstract class DownloadDatasetActionBase(
@@ -57,7 +57,11 @@ abstract class DownloadDatasetActionBase(
       }
       course.isStepikRemote -> {
         if (EduSettings.getInstance().user == null) {
-          notifyStepikUnauthorized(project, EduCoreBundle.message("download.dataset.action.is.not.available"))
+          EduNotificationManager.showErrorNotification(
+            project,
+            EduCoreBundle.message("download.dataset.action.is.not.available"),
+            EduCoreBundle.message("stepik.auth.error.message")
+          )
           return false
         }
       }

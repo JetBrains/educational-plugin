@@ -37,7 +37,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.navigation.NavigationUtils.setHighlightLevelForFilesInTask
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
-import com.jetbrains.edu.learning.notification.EduWarningNotification
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikNames
@@ -72,8 +72,11 @@ class EduStartupActivity : StartupActivity.DumbAware {
       }
 
       if (course is StepikCourse) {
-        val notification = EduWarningNotification(StepikNames.STEPIK, EduCoreBundle.message("stepik.is.not.supported"))
-        notification.notify(null)
+        EduNotificationManager.showWarningNotification(
+          project,
+          StepikNames.STEPIK,
+          EduCoreBundle.message("stepik.is.not.supported")
+        )
       }
 
       val fileEditorManager = FileEditorManager.getInstance(project)

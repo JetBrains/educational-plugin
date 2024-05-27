@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator.framework
 
-import com.intellij.notification.Notifications
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.*
 import com.intellij.openapi.diagnostic.logger
@@ -29,8 +28,7 @@ import com.jetbrains.edu.learning.framework.impl.FLTaskState
 import com.jetbrains.edu.learning.framework.impl.calculateChanges
 import com.jetbrains.edu.learning.framework.impl.getTaskStateFromFiles
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.notification.EduInformationNotification
-import com.jetbrains.edu.learning.notification.EduWarningNotification
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.annotations.VisibleForTesting
 import java.io.IOException
@@ -249,7 +247,8 @@ class CCFrameworkLessonManager(
     get() = taskFiles.filterValues { it.isVisible }.keys
 
   private fun showApplyChangesCanceledNotification(project: Project, startTaskName: String, cancelledTaskName: String) {
-    val notification = EduWarningNotification(
+    EduNotificationManager.showWarningNotification(
+      project,
       EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.Notification.cancel.title"),
       EduCoreBundle.message(
         "action.Educational.Educator.SyncChangesWithNextTasks.Notification.cancel.description",
@@ -257,16 +256,14 @@ class CCFrameworkLessonManager(
         cancelledTaskName
       ),
     )
-    Notifications.Bus.notify(notification, project)
   }
 
   private fun showApplyChangesSuccessNotification(project: Project, startTaskName: String) {
-    val notification = EduInformationNotification(
+    EduNotificationManager.showInfoNotification(
+      project,
       EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.Notification.success.title"),
       EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.Notification.success.description", startTaskName),
     )
-    // TODO ?????
-    Notifications.Bus.notify(notification, project)
   }
 
   @VisibleForTesting

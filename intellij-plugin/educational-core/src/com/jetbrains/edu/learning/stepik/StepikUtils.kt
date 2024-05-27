@@ -24,7 +24,6 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.notification.EduErrorNotification
 import com.jetbrains.edu.learning.notification.EduInformationNotification
 import com.jetbrains.edu.learning.stepik.StepikNames.getStepikProfilePath
 
@@ -54,11 +53,6 @@ fun notificationListener(project: Project,
       },
       EduCoreBundle.message("push.course.updating.progress.text"), true, project)
   }
-}
-
-fun notifyStepikUnauthorized(project: Project, specificMessage: String) {
-  EduErrorNotification(specificMessage, EduCoreBundle.message("stepik.auth.error.message"))
-    .notify(project)
 }
 
 val StepikUser.profileUrl: String get() = "${getStepikProfilePath()}${userInfo.id}"

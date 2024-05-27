@@ -24,6 +24,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLanguages
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.eduEnvironment
@@ -31,7 +32,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
 import com.jetbrains.edu.learning.submissions.isSignificantlyAfter
 import com.jetbrains.edu.learning.update.UpdateUtils.shouldFrameworkLessonBeUpdated
-import com.jetbrains.edu.learning.update.UpdateUtils.showUpdateCompletedNotification
 import com.jetbrains.edu.learning.update.UpdateUtils.updateFrameworkLessonFiles
 import com.jetbrains.edu.learning.update.UpdateUtils.updateTaskDescription
 import com.jetbrains.edu.learning.update.elements.TaskUpdateInfo
@@ -168,7 +168,12 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
       YamlFormatSynchronizer.saveItemWithRemoteInfo(course)
       ProjectManager.getInstance().reloadProject(project)
     }
-    showUpdateCompletedNotification(project, EduCoreBundle.message("update.notification.text", EduNames.JBA, EduNames.PROJECT))
+    @Suppress("DialogTitleCapitalization")
+    EduNotificationManager.showInfoNotification(
+      project,
+      EduCoreBundle.message("update.notification.title"),
+      EduCoreBundle.message("update.notification.text", EduNames.JBA, EduNames.PROJECT)
+    )
     runInEdt {
       if (project.isDisposed) return@runInEdt
       project.messageBus.syncPublisher(CourseUpdateListener.COURSE_UPDATE).courseUpdated(project, course)

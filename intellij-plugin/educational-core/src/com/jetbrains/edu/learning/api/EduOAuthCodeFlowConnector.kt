@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.UserInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.network.executeCall
 import com.jetbrains.edu.learning.network.executeHandlingExceptions
-import com.jetbrains.edu.learning.notification.EduErrorNotification
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import io.netty.handler.codec.http.FullHttpRequest
 import io.netty.handler.codec.http.QueryStringDecoder
@@ -152,10 +152,10 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
     // logout the user if the server did not accept Hyperskill refresh token
     if (response.code() in BROKEN_TOKEN_RESPONSE_CODES && response.errorBody()?.string() == "{\"error\": \"invalid_grant\"}") {
       doLogout()
-      EduErrorNotification(
-        EduCoreBundle.message("error.authorization.error"),
-        EduCoreBundle.message("notification.hyperskill.no.next.activity.login.content"),
-      ).notify(null)
+      EduNotificationManager.showErrorNotification(
+        title = EduCoreBundle.message("error.authorization.error"),
+        content = EduCoreBundle.message("notification.hyperskill.no.next.activity.login.content")
+      )
     }
     error("Failed to refresh token")
   }

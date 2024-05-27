@@ -20,13 +20,13 @@ import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
 import com.jetbrains.edu.learning.marketplace.HUB_AUTH_URL
 import com.jetbrains.edu.learning.marketplace.JET_BRAINS_ACCOUNT
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showInstallMarketplacePluginNotification
-import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showLoginFailedNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showReloginToJBANeededNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceOAuthBundle
 import com.jetbrains.edu.learning.marketplace.userAgreement.UserAgreementDialog
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.network.createRetrofitBuilder
 import com.jetbrains.edu.learning.network.executeHandlingExceptions
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import java.util.*
@@ -97,7 +97,12 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
   }
 
   fun invokeJBALogin(jbAuthService: JBAccountInfoService, postLoginActions: List<Runnable>) {
-    jbAuthService.invokeJBALogin({postLoginActions.forEach { it.run() }}, { showLoginFailedNotification(JET_BRAINS_ACCOUNT) })
+    jbAuthService.invokeJBALogin({postLoginActions.forEach { it.run() }}, {
+      EduNotificationManager.showErrorNotification(
+        title = EduCoreBundle.message("error.login.failed"),
+        content = EduCoreBundle.message("error.failed.login.to.subsystem", JET_BRAINS_ACCOUNT)
+      )
+    })
   }
 
   /*

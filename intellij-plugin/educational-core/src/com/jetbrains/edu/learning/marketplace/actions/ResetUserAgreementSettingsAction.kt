@@ -5,7 +5,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.util.NlsActions
 import com.jetbrains.edu.learning.marketplace.userAgreement.UserAgreementSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.notification.EduInformationNotification
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import java.util.function.Supplier
 
 @Suppress("ComponentNotRegistered")
@@ -17,9 +17,10 @@ class ResetUserAgreementSettingsAction(
 
     UserAgreementSettings.getInstance().isDialogShown = false
 
-    EduInformationNotification(
+    EduNotificationManager.showInfoNotification(
+      project,
       EduCoreBundle.message("user.agreement.reset.notification.title"),
       EduCoreBundle.message("user.agreement.reset.notification.text"),
-    ).notify(project)
+    )
   }
 }
