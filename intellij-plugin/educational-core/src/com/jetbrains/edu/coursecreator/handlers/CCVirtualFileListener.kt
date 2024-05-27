@@ -55,7 +55,12 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
 
   override fun additionalFileCreated(course: Course, file: VirtualFile) {
     val name = VfsUtil.getRelativePath(file, project.courseDir) ?: return
-    course.additionalFiles += EduFile(name, UndeterminedContents.EMPTY)
+    course.additionalFiles += EduFile(name, if (file.isToEncodeContent) {
+      BinaryContents.EMPTY
+    }
+    else {
+      TextualContents.EMPTY
+    })
     YamlFormatSynchronizer.saveItem(course)
   }
 
