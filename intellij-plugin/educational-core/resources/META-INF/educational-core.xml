@@ -155,7 +155,7 @@
               icon="com.jetbrains.edu.EducationalCoreIcons.SyncFiles">
       </action>
       <separator/>
-      <add-to-group group-id="ProjectViewPopupMenu" anchor="first"/>
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="Educational.Educator.CourseCreator.Menu"/>
     </group>
 
     <group id="Educational.Educator.CourseCreator.Menu" popup="true"
