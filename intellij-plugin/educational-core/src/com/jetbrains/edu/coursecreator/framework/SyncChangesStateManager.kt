@@ -60,7 +60,7 @@ class SyncChangesStateManager(private val project: Project) {
     for (taskFile in warningTaskFiles) {
       stateStorage[taskFile] = SyncChangesTaskFileState.WARNING
     }
-
+/*
     val changedTaskFiles = CCFrameworkLessonManager.getInstance(project).getChangedFiles(task)
     val infoTaskFiles = otherTaskFiles.intersect(changedTaskFiles.toSet())
 
@@ -69,6 +69,7 @@ class SyncChangesStateManager(private val project: Project) {
     }
     // TODO(refresh only necessary nodes instead of refreshing whole project view tree)
     ProjectView.getInstance(project).refresh()
+    */
   }
 
   // do not update state for the last framework lesson task and for non-propagatable files (invisible files)
