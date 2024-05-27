@@ -21,10 +21,7 @@ import com.intellij.ide.impl.ProjectViewSelectInTarget
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.ide.projectView.ProjectViewSettings
 import com.intellij.ide.projectView.ViewSettings
-import com.intellij.ide.projectView.impl.AbstractProjectViewPaneWithAsyncSupport
-import com.intellij.ide.projectView.impl.ProjectAbstractTreeStructureBase
-import com.intellij.ide.projectView.impl.ProjectTreeStructure
-import com.intellij.ide.projectView.impl.ProjectViewTree
+import com.intellij.ide.projectView.impl.*
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.ide.util.treeView.NodeDescriptor
@@ -32,6 +29,7 @@ import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.DumbAwareToggleAction
 import com.intellij.openapi.project.Project
+import com.intellij.ui.ColoredTreeCellRenderer
 import com.intellij.ui.ScrollPaneFactory
 import com.intellij.util.ArrayUtil
 import com.intellij.util.ui.UIUtil
@@ -41,12 +39,15 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.projectView.CCLessonNode
 import com.jetbrains.edu.coursecreator.projectView.CCSectionNode
 import com.jetbrains.edu.coursecreator.projectView.CCTaskNode
+import com.jetbrains.edu.coursecreator.projectView.CCCellRenderer
 import com.jetbrains.edu.learning.CourseSetListener
+import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.projectView.ProgressUtil.createProgressBar
 import org.jetbrains.annotations.NonNls
@@ -59,6 +60,7 @@ import javax.swing.JProgressBar
 import javax.swing.border.EmptyBorder
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
+import javax.swing.tree.TreeCellRenderer
 
 class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport(project) {
 
@@ -71,6 +73,14 @@ class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport
   override fun createTree(treeModel: DefaultTreeModel): ProjectViewTree {
     return object : ProjectViewTree(treeModel) {
       override fun toString(): String = "$title ${super.toString()}"
+
+      override fun createCellRenderer(): TreeCellRenderer {
+        val projectViewRenderer = super.createCellRenderer()
+        if (CCUtils.isCourseCreator(myProject) && isFeatureEnabled(EduExperimentalFeatures.CC_FL_SYNC_CHANGES)) {
+          return CCCellRenderer(myProject, projectViewRenderer as ColoredTreeCellRenderer)
+        }
+        return projectViewRenderer
+      }
     }
   }
 
