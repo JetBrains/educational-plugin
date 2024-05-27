@@ -8,8 +8,10 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.LessonContainer
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.framework.impl.visitFrameworkLessons
 import com.jetbrains.edu.learning.isFeatureEnabled
 import java.util.concurrent.ConcurrentHashMap
 
@@ -25,6 +27,20 @@ class SyncChangesStateManager(private val project: Project) {
   fun taskFileChanged(taskFile: TaskFile) {
     if (!checkRequirements(taskFile.task.lesson)) return
     updateSyncChangesState(taskFile.task, listOf(taskFile))
+  }
+
+  fun updateSyncChangesState(lessonContainer: LessonContainer) {
+    if (!CCUtils.isCourseCreator(project) || !isFeatureEnabled(EduExperimentalFeatures.CC_FL_SYNC_CHANGES)) return
+    lessonContainer.visitFrameworkLessons { lesson ->
+      lesson.visitTasks {
+        updateSyncChangesState(it)
+      }
+    }
+  }
+
+  fun updateSyncChangesState(task: Task) {
+    if (!checkRequirements(task.lesson)) return
+    updateSyncChangesState(task, task.taskFiles.values.toList())
   }
 
   private fun checkRequirements(lesson: Lesson): Boolean {

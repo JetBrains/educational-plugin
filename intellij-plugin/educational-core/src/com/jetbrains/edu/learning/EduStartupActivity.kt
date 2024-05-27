@@ -22,6 +22,7 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.SynchronizeTaskDescription
 import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreFileType
+import com.jetbrains.edu.coursecreator.framework.SyncChangesStateManager
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.learning.EduNames.COURSE_IGNORE
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
@@ -91,6 +92,8 @@ class EduStartupActivity : StartupActivity.DumbAware {
       if (!coursesStorage.hasCourse(course) && location != null && !course.isPreview) {
         coursesStorage.addCourse(course, location)
       }
+
+      SyncChangesStateManager.getInstance(project).updateSyncChangesState(course)
 
       runWriteAction {
         if (project.isStudentProject()) {

@@ -3,6 +3,8 @@ package com.jetbrains.edu.learning.framework.impl
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.LessonContainer
 import com.jetbrains.edu.learning.isToEncodeContent
 import com.jetbrains.edu.learning.loadEncodedContent
 
@@ -50,4 +52,12 @@ fun getTaskStateFromFiles(initialFiles: Set<String>, taskDir: VirtualFile): FLTa
     currentState[path] = text
   }
   return currentState
+}
+
+fun LessonContainer.visitFrameworkLessons(visit : (FrameworkLesson) -> Unit) {
+  visitLessons {
+    if (it is FrameworkLesson) {
+      visit(it)
+    }
+  }
 }
