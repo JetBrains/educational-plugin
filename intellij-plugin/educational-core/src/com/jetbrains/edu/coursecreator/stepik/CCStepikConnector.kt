@@ -8,8 +8,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts
 import com.jetbrains.edu.coursecreator.AdditionalFilesUtils.collectAdditionalLessonInfo
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showErrorNotification
-import com.jetbrains.edu.coursecreator.CCNotificationUtils.showFailedToPostItemNotification
-import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNoRightsToUpdateOnStepikNotification
+import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLogAction
 import com.jetbrains.edu.coursecreator.CCUtils.checkIfAuthorizedToStepik
 import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.coursecreator.updateOnStepikTitleMessage
@@ -17,14 +16,17 @@ import com.jetbrains.edu.coursecreator.uploadToStepikTitleMessage
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
+import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
+import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK
 import com.jetbrains.edu.learning.stepik.StepikNames.getStepikUrl
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
-import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
 import org.apache.http.HttpStatus
 import org.jetbrains.annotations.NonNls
 import java.util.stream.Collectors
@@ -193,6 +195,26 @@ object CCStepikConnector {
         false
       }
     }
+  }
+
+  private fun showNoRightsToUpdateOnStepikNotification(project: Project) {
+    showErrorNotification(
+      project,
+      EduCoreBundle.message("notification.course.creator.access.denied.title"),
+      EduCoreBundle.message("notification.course.creator.access.denied.content")
+    )
+  }
+
+  private fun showFailedToPostItemNotification(project: Project, item: StudyItem, isNew: Boolean) {
+    val pathInCourse = item.getPathInCourse()
+
+    val title = if (isNew) EduCoreBundle.message("notification.course.creator.failed.to.upload.item.title")
+    else EduCoreBundle.message("notification.course.creator.failed.to.update.item.title")
+
+    val content = if (isNew) EduCoreBundle.message("notification.course.creator.failed.to.upload.item.content", pathInCourse)
+    else EduCoreBundle.message("notification.course.creator.failed.to.update.item.content", pathInCourse)
+
+    showErrorNotification(project, title, content, showLogAction)
   }
 
   // helper methods:

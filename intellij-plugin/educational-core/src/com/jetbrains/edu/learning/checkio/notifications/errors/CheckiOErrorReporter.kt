@@ -20,24 +20,31 @@ class CheckiOErrorReporter(
   private val oAuthConnector: CheckiOOAuthConnector
 ) {
   private fun reportLoginRequiredError() {
-    CheckiONotifications.error(
+    CheckiONotifications.showError(
+      project,
       title,
       "",
       EduCoreBundle.message("notification.content.log.in.and.try.again.checkio"),
       LoginLinkListener(oAuthConnector)
-    ).notify(project)
+    )
   }
 
   private fun reportNetworkError() {
-    CheckiONotifications.warn(
+    CheckiONotifications.showWarning(
+      project,
       title,
       EduCoreBundle.message("notification.subtitle.connection.failed"),
       EduCoreBundle.message("notification.content.check.connection.and.try.again"),
-    ).notify(project)
+    )
   }
 
   private fun reportUnexpectedError() {
-    CheckiONotifications.error(title, "", EduCoreBundle.message("notification.content.unexpected.error.occurred")).notify(project)
+    CheckiONotifications.showError(
+      project,
+      title,
+      "",
+      EduCoreBundle.message("notification.content.unexpected.error.occurred")
+    )
   }
 
   fun handle(e: Exception) {

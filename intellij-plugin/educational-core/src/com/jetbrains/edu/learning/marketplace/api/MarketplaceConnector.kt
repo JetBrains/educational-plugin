@@ -18,8 +18,8 @@ import com.intellij.openapi.updateSettings.impl.PluginDownloader
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.platform.templates.github.DownloadUtil
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showErrorNotification
+import com.jetbrains.edu.coursecreator.CCNotificationUtils.showInfoNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLogAction
-import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification
 import com.jetbrains.edu.coursecreator.actions.marketplace.MarketplacePushCourse
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.authUtils.ConnectorUtils
@@ -207,7 +207,11 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
 
     val courseBean = response.body()
     if (courseBean == null) {
-      showErrorNotification(project, message("notification.course.creator.failed.to.upload.course.title"), action = showLogAction)
+      showErrorNotification(
+        project,
+        message("notification.course.creator.failed.to.upload.course.title"),
+        action = showLogAction
+      )
       return
     }
     course.id = courseBean.id
@@ -215,10 +219,12 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
     YamlFormatSynchronizer.saveItem(course)
 
     val message = message("marketplace.push.course.successfully.uploaded", courseBean.name)
-    showNotification(project,
-                     openOnMarketplaceAction(course.getMarketplaceUrl()),
-                     message,
-                     message("marketplace.push.course.successfully.uploaded.message"))
+    showInfoNotification(
+      project,
+      message,
+      message("marketplace.push.course.successfully.uploaded.message"),
+      openOnMarketplaceAction(course.getMarketplaceUrl())
+    )
     LOG.info("$message with id ${courseBean.id}")
   }
 
@@ -332,7 +338,11 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
       YamlFormatSynchronizer.saveRemoteInfo(course)
       val pushAction = ActionManager.getInstance().getAction(MarketplacePushCourse.ACTION_ID)
       pushAction.templatePresentation.text = updateActionTitle
-      showNotification(project, message("marketplace.inserted.course.version.notification", insertedCourseVersion), pushAction)
+      showInfoNotification(
+        project = project,
+        title = message("marketplace.inserted.course.version.notification", insertedCourseVersion),
+        action = pushAction
+      )
     }
   }
 
@@ -361,7 +371,7 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
                                     onAuthFailedActions(project, message("notification.course.creator.failed.to.update.course.oauth.reason.title"))
                                   })
       .onError {
-        val message = "Failed to upload course update for course ${course.id}: ${it}"
+        val message = "Failed to upload course update for course ${course.id}: $it"
         if (it.contains(PLUGIN_CONTAINS_VERSION_ERROR_TEXT)) {
           LOG.info(message)
           return true
@@ -371,7 +381,11 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
       }
 
     val message = message("marketplace.push.course.successfully.updated", course.name, course.marketplaceCourseVersion)
-    showNotification(project, message, openOnMarketplaceAction(course.getMarketplaceUrl()))
+    showInfoNotification(
+      project = project,
+      title = message,
+      action = openOnMarketplaceAction(course.getMarketplaceUrl())
+    )
     LOG.info(message)
     YamlFormatSynchronizer.saveItem(course)
     return false

@@ -10,7 +10,6 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.ui.HyperlinkAdapter
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLoginSuccessfulNotification
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
@@ -160,7 +159,10 @@ object HyperskillLoginListener : HyperlinkAdapter() {
   fun doLogin() {
     HyperskillConnector.getInstance().doAuthorize(Runnable {
       val fullName = HyperskillSettings.INSTANCE.account?.userInfo?.getFullName() ?: return@Runnable
-      showLoginSuccessfulNotification(fullName)
+      EduNotificationManager.showInfoNotification(
+        title = EduCoreBundle.message("login.successful"),
+        content = EduCoreBundle.message("logged.in.as", fullName)
+      )
     })
   }
 }

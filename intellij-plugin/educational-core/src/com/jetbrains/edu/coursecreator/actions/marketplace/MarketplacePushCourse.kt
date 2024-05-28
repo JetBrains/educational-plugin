@@ -137,8 +137,11 @@ class MarketplacePushCourse(
       // if the course is Stepik remote, that means that the course was opened
       // from Stepik in CC mode with "Edit", and we need to set it's id to 0 before pushing course to marketplace
       id = 0
-      CCNotificationUtils.showNotification(project, null, message("marketplace.course.converted"),
-                                           message("marketplace.not.possible.to.post.updates.to.stepik"))
+      CCNotificationUtils.showInfoNotification(
+        project,
+        message("marketplace.course.converted"),
+        message("marketplace.not.possible.to.post.updates.to.stepik")
+      )
     }
 
     if (marketplaceCourseVersion == 0) marketplaceCourseVersion = 1

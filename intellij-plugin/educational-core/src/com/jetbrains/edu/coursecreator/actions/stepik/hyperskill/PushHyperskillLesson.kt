@@ -11,7 +11,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsActions
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification
+import com.jetbrains.edu.coursecreator.CCNotificationUtils
 import com.jetbrains.edu.coursecreator.CCUtils.addGluingSlash
 import com.jetbrains.edu.coursecreator.CCUtils.checkIfAuthorizedToStepik
 import com.jetbrains.edu.coursecreator.CCUtils.lessonFromDir
@@ -82,8 +82,6 @@ class PushHyperskillLesson : DumbAwareAction(addGluingSlash(updateTitleText, upl
 
     @VisibleForTesting
     fun doPush(lesson: Lesson, project: Project) {
-      val notification = if (lesson.id > 0) message("action.push.custom.lesson.updated", HYPERSKILL)
-      else message("action.push.custom.lesson.uploaded", HYPERSKILL)
       val success = if (lesson.id > 0) {
         CCStepikConnector.updateLesson(project, lesson, true, -1)
       }
@@ -91,7 +89,17 @@ class PushHyperskillLesson : DumbAwareAction(addGluingSlash(updateTitleText, upl
         CCStepikConnector.postLesson(project, lesson, lesson.index, -1)
       }
       if (success) {
-        showNotification(project, notification, CCStepikConnector.openOnStepikAction("/lesson/" + lesson.id))
+        val title = if (lesson.id > 0) {
+          message("action.push.custom.lesson.updated", HYPERSKILL)
+        }
+        else {
+          message("action.push.custom.lesson.uploaded", HYPERSKILL)
+        }
+        CCNotificationUtils.showInfoNotification(
+          project,
+          title = title,
+          action = CCStepikConnector.openOnStepikAction("/lesson/" + lesson.id)
+        )
       }
       else {
         LOG.error("Failed to update Hyperskill lesson")

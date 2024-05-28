@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.marketplace.update
 
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification
+import com.jetbrains.edu.coursecreator.CCNotificationUtils.showInfoNotification
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.actions.SyncCourseAction
@@ -32,7 +32,7 @@ class SyncMarketplaceCourseAction : SyncCourseAction(
         MarketplaceCourseUpdater(project, course, remoteCourseVersion).updateCourse()
       }
       else {
-        showNotification(project, message("notification.course.up.to.date"), null)
+        showInfoNotification(project, message("notification.course.up.to.date"))
       }
     }
 

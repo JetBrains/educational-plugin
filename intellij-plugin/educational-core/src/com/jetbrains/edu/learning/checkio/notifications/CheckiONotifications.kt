@@ -1,55 +1,65 @@
 package com.jetbrains.edu.learning.checkio.notifications
 
-import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
-import com.intellij.notification.NotificationType
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.*
 import com.jetbrains.edu.EducationalCoreIcons
-import com.jetbrains.edu.learning.notification.EduNotification 
+import com.jetbrains.edu.learning.notification.EduNotification
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 
 object CheckiONotifications {
 
-  fun error(
+  fun showError(
+    project: Project,
     title: @NotificationTitle String,
     subtitle: @NotificationSubtitle String?,
     content: @NotificationContent String,
     listener: NotificationListener? = null
-  ): Notification {
-    return notification(title, subtitle, content, NotificationType.ERROR, listener)
+  ) {
+    EduNotificationManager.showErrorNotification(
+      project,
+      title,
+      content,
+      getCustomization(subtitle, listener)
+    )
   }
 
-  fun warn(
+  fun showWarning(
+    project: Project,
     title: @NotificationTitle String,
     subtitle: @NotificationSubtitle String,
     content: @NotificationContent String,
     listener: NotificationListener? = null
-  ): Notification {
-    return notification(title, subtitle, content, NotificationType.WARNING, listener)
+  ) {
+    EduNotificationManager.showWarningNotification(
+      project,
+      title,
+      content,
+      getCustomization(subtitle, listener)
+    )
   }
 
-  fun info(
+  fun showInfo(
     title: @NotificationTitle String,
     subtitle: @NotificationSubtitle String,
     content: @NotificationContent String,
     listener: NotificationListener? = null
-  ): Notification {
-    return notification(title, subtitle, content, NotificationType.INFORMATION, listener)
+  ) {
+    EduNotificationManager.showInfoNotification(
+      title = title,
+      content = content,
+      customization = getCustomization(subtitle, listener)
+    )
   }
 
-  private fun notification(
-    title: @NotificationTitle String,
+  private fun getCustomization(
     subtitle: @NotificationSubtitle String?,
-    content: @NotificationContent String,
-    type: NotificationType,
-    listener: NotificationListener?
-  ): Notification {
-    val notification = EduNotification.create(title, content, type).apply {
-      icon = EducationalCoreIcons.CheckiO
-      this.subtitle = subtitle
-    }
+    listener: NotificationListener? = null
+  ): (EduNotification.() -> Unit) = {
+    icon = EducationalCoreIcons.CheckiO
+    this.subtitle = subtitle
     if (listener != null) {
-      notification.setListener(listener)
+      setListener(listener)
     }
-    return notification
   }
 }

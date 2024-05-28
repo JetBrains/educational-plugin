@@ -9,7 +9,6 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.ui.JBAccountInfoService
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
-import com.jetbrains.edu.coursecreator.CCNotificationUtils
 import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.authUtils.AuthorizationPlace
 import com.jetbrains.edu.learning.authUtils.EduLoginConnector
@@ -53,7 +52,10 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
     val requestFocus = Runnable { runInEdt { requestFocus() } }
     val showNotification = Runnable {
       val userName = account?.userInfo?.getFullName() ?: return@Runnable
-      CCNotificationUtils.showLoginSuccessfulNotification(userName)
+      EduNotificationManager.showInfoNotification(
+        title = EduCoreBundle.message("login.successful"),
+        content = EduCoreBundle.message("logged.in.as", userName)
+      )
     }
     return postLoginActions.asList() + listOf(requestFocus, showNotification)
   }

@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.checkio
 
 import com.intellij.ide.projectView.ProjectView
-import com.intellij.notification.Notifications
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.application.runWriteAction
@@ -11,11 +10,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.NotificationTitle
 import com.jetbrains.edu.learning.CourseUpdateListener
 import com.jetbrains.edu.learning.EduUtilsKt
+import com.jetbrains.edu.learning.checkio.notifications.CheckiONotifications
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOStation
-import com.jetbrains.edu.learning.checkio.notifications.CheckiONotifications
-import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.findTaskFileInDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
@@ -53,7 +52,11 @@ class CheckiOCourseUpdater(
     @NotificationTitle title: String
   ) {
     if (stations.isNotEmpty()) {
-      Notifications.Bus.notify(CheckiONotifications.info(title, "", stations.joinToString("\n") { it.name }))
+      CheckiONotifications.showInfo(
+        title,
+        "",
+        stations.joinToString("\n") { it.name }
+      )
     }
   }
 

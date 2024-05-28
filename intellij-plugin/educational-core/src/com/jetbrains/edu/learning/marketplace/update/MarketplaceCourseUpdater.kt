@@ -55,7 +55,11 @@ class MarketplaceCourseUpdater(project: Project, course: EduCourse, private val 
       }
     }
 
-    CCNotificationUtils.showNotification(project, EduCoreBundle.message("action.course.updated"), openChangeNotesAction)
+    CCNotificationUtils.showInfoNotification(
+      project = project,
+      title = EduCoreBundle.message("action.course.updated"),
+      action = openChangeNotesAction
+    )
   }
 
   private fun setUpdated(courseFromServer: EduCourse) {
