@@ -36,7 +36,6 @@ class ErrorStateHyperlinkListener(private val parentDisposable: Disposable) : Hy
     val coursesPanel = UIUtil.getParentOfType(CoursesPanel::class.java, e?.source as? JTextPane)
     val postLoginActions = arrayOf(
       Runnable { coursePanel.hideErrorPanel() },
-      Runnable { coursesPanel?.hideLoginPanel() },
       Runnable { doValidation(coursePanel) },
       Runnable { coursesPanel?.scheduleUpdateAfterLogin() }
     )

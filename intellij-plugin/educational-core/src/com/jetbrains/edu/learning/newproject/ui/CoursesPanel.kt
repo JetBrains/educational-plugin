@@ -53,7 +53,6 @@ abstract class CoursesPanel(
                                                                                         { groups -> updateModel(groups, selectedCourse) })
 
   private val coursesListDecorator = CoursesListDecorator(this.createCoursesListPanel(), this.tabDescription(), this.toolbarAction())
-  private val loginPanel: LoginPanel? by lazy { getLoginComponent() }
 
   private val cardLayout = JBCardLayout()
   protected val coursesGroups = mutableListOf<CoursesGroup>()
@@ -83,25 +82,11 @@ abstract class CoursesPanel(
 
   open fun getEmptySearchText(): String = EduCoreBundle.message("course.dialog.search.placeholder")
 
-  fun hideLoginPanel() {
-    loginPanel?.isVisible = false
-  }
-
-  fun showLoginPanel() {
-    loginPanel?.isVisible = true
-  }
-
   open fun showErrorMessage(e: CoursesDownloadingException) {}
 
   protected open fun createContentPanel(): JPanel {
-    val searchAndLoginPanel = NonOpaquePanel()
-    searchAndLoginPanel.add(coursesSearchComponent, BorderLayout.NORTH)
-    loginPanel?.apply {
-      searchAndLoginPanel.add(this, BorderLayout.SOUTH)
-    }
-
     val mainPanel = JPanel(BorderLayout()).apply {
-      add(searchAndLoginPanel, BorderLayout.PAGE_START)
+      add(coursesSearchComponent, BorderLayout.PAGE_START)
       add(createSplitPane(), BorderLayout.CENTER)
       background = SelectCourseBackgroundColor
     }
@@ -130,9 +115,6 @@ abstract class CoursesPanel(
       updateFilters(coursesGroups)
       updateModel(coursesGroups, null)
       showContent(coursesGroups.isEmpty())
-      if (!isLoginNeeded()) {
-        hideLoginPanel()
-      }
     }
   }
 
@@ -152,8 +134,6 @@ abstract class CoursesPanel(
   protected open fun toolbarAction(): ToolbarActionWrapper? = null
 
   protected open fun tabDescription(): String? = null
-
-  protected open fun getLoginComponent(): LoginPanel? = null
 
   private fun createLoadingPanel() = JPanel(BorderLayout()).apply {
     add(CenteredIcon(), BorderLayout.CENTER)
