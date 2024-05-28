@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.notification.EduErrorNotification
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLoginListener
 import com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsService
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
@@ -58,13 +58,16 @@ class HyperskillCheckListener : CheckListener {
     }
 
     if (HyperskillSettings.INSTANCE.account == null) {
-      EduErrorNotification(
+      EduNotificationManager.showErrorNotification(
+        project,
         EduCoreBundle.message("error.failed.to.post.solution.to", EduNames.JBA),
         EduCoreBundle.message("error.login.required", EduNames.JBA),
-      ).setListener { notification, e ->
-        notification.expire()
-        HyperskillLoginListener.hyperlinkUpdate(e)
-      }.notify(project)
+      ) {
+        setListener { _, e ->
+          this@showErrorNotification.expire()
+          HyperskillLoginListener.hyperlinkUpdate(e)
+        }
+      }
       return
     }
 

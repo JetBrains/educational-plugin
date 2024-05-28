@@ -1,18 +1,17 @@
 package com.jetbrains.edu.coursecreator.actions
 
 import com.intellij.ide.IdeBundle
-import com.intellij.notification.Notifications
 import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.Task.Backgroundable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageConstants
 import com.intellij.openapi.ui.Messages.showYesNoCancelDialog
 import com.jetbrains.edu.coursecreator.actions.checkAllTasks.checkAllTasksInItemContainer
-import com.jetbrains.edu.coursecreator.actions.checkAllTasks.createFailedTasksNotification
+import com.jetbrains.edu.coursecreator.actions.checkAllTasks.showFailedTasksNotification
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.getInEdt
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.intellij.openapi.progress.Task.Backgroundable
 
 /**
  * This task checks all the tasks in the course, and if at least one task fails, it asks user
@@ -53,8 +52,7 @@ class CheckAllTasksBeforeCreateCourseArchiveProgressTask(
     val needToCreateTheArchive = failedTasks.isEmpty() || when (showFailedTasksDialog(failedTasks.size)) {
       MessageConstants.CANCEL -> false
       MessageConstants.YES -> {
-        val notification = createFailedTasksNotification(failedTasks, failedTasks.size, project)
-        Notifications.Bus.notify(notification, project)
+        showFailedTasksNotification(project, failedTasks, failedTasks.size)
         false
       }
       else -> true

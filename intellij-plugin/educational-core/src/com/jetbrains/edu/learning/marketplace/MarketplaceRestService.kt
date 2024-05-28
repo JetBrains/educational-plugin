@@ -11,9 +11,12 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.courseGeneration.MarketplaceOpenCourseRequest
 import com.jetbrains.edu.learning.marketplace.courseGeneration.MarketplaceOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.notificationFromCourseValidation
+import com.jetbrains.edu.learning.newproject.ui.showNotificationFromCourseValidation
 import io.netty.channel.ChannelHandlerContext
-import io.netty.handler.codec.http.*
+import io.netty.handler.codec.http.FullHttpRequest
+import io.netty.handler.codec.http.HttpRequest
+import io.netty.handler.codec.http.HttpResponseStatus
+import io.netty.handler.codec.http.QueryStringDecoder
 import java.util.regex.Pattern
 
 class MarketplaceRestService : OAuthRestService(MARKETPLACE) {
@@ -55,7 +58,10 @@ class MarketplaceRestService : OAuthRestService(MARKETPLACE) {
         val validationResult = result.error
         val message = validationResult.message
         LOG.warn(message)
-        notificationFromCourseValidation(validationResult, EduCoreBundle.message("notification.title.failed.to.open.in.ide", openCourseRequest)).notify(null)
+        showNotificationFromCourseValidation(
+          validationResult,
+          EduCoreBundle.message("notification.title.failed.to.open.in.ide", openCourseRequest)
+        )
         sendStatus(HttpResponseStatus.NOT_FOUND, false, context.channel())
         message
       }

@@ -16,8 +16,8 @@ import com.jetbrains.edu.learning.document
 import com.jetbrains.edu.learning.getEditor
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.yaml.errorHandling.InvalidConfigNotification
 import com.jetbrains.edu.learning.yaml.errorHandling.InvalidYamlFormatException
+import com.jetbrains.edu.learning.yaml.errorHandling.showInvalidConfigNotification
 
 fun deserializeItemProcessingErrors(
   configFile: VirtualFile,
@@ -54,8 +54,7 @@ fun showError(
     val editor = configFile.getEditor(project)
     project.messageBus.syncPublisher(YamlLoader.YAML_LOAD_TOPIC).yamlFailedToLoad(configFile, cause)
     if (editor == null) {
-      val notification = InvalidConfigNotification(project, configFile, cause)
-      notification.notify(project)
+      showInvalidConfigNotification(project, configFile, cause)
     }
   }
 }

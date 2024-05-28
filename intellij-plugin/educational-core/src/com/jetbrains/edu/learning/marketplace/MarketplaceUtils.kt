@@ -24,7 +24,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
 import com.jetbrains.edu.learning.submissions.SolutionSharingPreference
-import com.jetbrains.edu.learning.update.UpdateNotification
+import com.jetbrains.edu.learning.update.showUpdateNotification
 import com.jetbrains.edu.learning.yaml.YamlDeepLoader.reloadRemoteInfo
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.util.*
@@ -121,8 +121,11 @@ fun isRemoteUpdateFormatVersionCompatible(project: Project, remoteCourseFormatVe
       // Suppression needed here because DialogTitleCapitalization is demanded by the superclass constructor, but the plugin naming with
       // the capital letters used in the notification title
       @Suppress("DialogTitleCapitalization")
-      UpdateNotification(EduCoreBundle.message("notification.update.plugin.title"),
-                         EduCoreBundle.message("notification.update.plugin.update.course.content")).notify(project)
+      showUpdateNotification(
+        project,
+        EduCoreBundle.message("notification.update.plugin.title"),
+        EduCoreBundle.message("notification.update.plugin.update.course.content")
+      )
     }
     return false
   }

@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.authUtils.OAuthUtils.isBuiltinPortValid
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
-import com.jetbrains.edu.learning.notification.EduErrorNotification
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlMapper
@@ -73,18 +73,22 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
   }
 
   private fun showSwitchFromEduNotification() {
-    val notification = EduErrorNotification(
-      EduCoreBundle.message("notification.ide.switch.from.edu.ide.title", ApplicationNamesInfo.getInstance().fullProductNameWithEdition),
-      EduCoreBundle.message("notification.ide.switch.from.edu.ide.description",
-                            "${ApplicationNamesInfo.getInstance().fullProductName} Community"),
-    ).apply {
+    EduNotificationManager.showErrorNotification(
+      title = EduCoreBundle.message(
+        "notification.ide.switch.from.edu.ide.title",
+        ApplicationNamesInfo.getInstance().fullProductNameWithEdition
+      ),
+      content = EduCoreBundle.message(
+        "notification.ide.switch.from.edu.ide.description",
+        "${ApplicationNamesInfo.getInstance().fullProductName} Community"
+      ),
+    ) {
       isSuggestionType = true
-      configureDoNotAskOption(SWITCH_TO_COMMUNITY_DO_NOT_ASK_OPTION_ID,
-                              EduCoreBundle.message("notification.ide.switch.from.edu.ide.do.not.ask"))
-    }
-
-    notification
-      .addAction(
+      configureDoNotAskOption(
+        SWITCH_TO_COMMUNITY_DO_NOT_ASK_OPTION_ID,
+        EduCoreBundle.message("notification.ide.switch.from.edu.ide.do.not.ask")
+      )
+      addAction(
         NotificationAction.createSimple(EduCoreBundle.message("notification.ide.switch.from.edu.ide.acton.title")) {
           @Suppress("UnstableApiUsage")
           val link = if (PlatformUtils.isPyCharmEducational()) {
@@ -94,14 +98,14 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
             "https://www.jetbrains.com/idea/download/"
           }
           BrowserUtil.browse(link)
-          notification.expire()
+          this@showErrorNotification.expire()
         })
-      .addAction(NotificationAction.createSimple((IdeBundle.message("notifications.toolwindow.dont.show.again"))) {
+      addAction(NotificationAction.createSimple((IdeBundle.message("notifications.toolwindow.dont.show.again"))) {
         @Suppress("UnstableApiUsage")
-        notification.setDoNotAskFor(null)
-        notification.expire()
+        this@showErrorNotification.setDoNotAskFor(null)
+        this@showErrorNotification.expire()
       })
-    notification.notify(null)
+    }
   }
 
   private fun fillRecentCourses() {
@@ -129,12 +133,16 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
   }
 
   private fun notifyUnsupportedPort(port: Int) {
-    EduErrorNotification(
-      EduNames.JBA,
-      EduCoreBundle.message("hyperskill.unsupported.port.extended.message", port.toString(), EduNames.OUTSIDE_OF_KNOWN_PORT_RANGE_URL),
-    )
-      .setListener(NotificationListener.URL_OPENING_LISTENER)
-      .notify(null)
+    EduNotificationManager.showErrorNotification(
+      title = EduNames.JBA,
+      content = EduCoreBundle.message(
+        "hyperskill.unsupported.port.extended.message",
+        port.toString(),
+        EduNames.OUTSIDE_OF_KNOWN_PORT_RANGE_URL
+      ),
+    ) {
+      setListener(NotificationListener.URL_OPENING_LISTENER)
+    }
   }
 
   companion object {

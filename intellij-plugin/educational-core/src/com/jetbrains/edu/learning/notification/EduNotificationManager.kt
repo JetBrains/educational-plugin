@@ -4,19 +4,40 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 
 object EduNotificationManager {
-  fun showNotification(project: Project? = null, title: String = "", content: String, type: NotificationType) {
-    EduNotification.create(title, content, type).notify(project)
+  private fun showNotification(
+    type: NotificationType,
+    project: Project? = null,
+    title: String = "",
+    content: String,
+    customization: (EduNotification.() -> Unit)? = null
+  ) {
+    EduNotification.create(type, title, content, customization).notify(project)
   }
 
-  fun showInfoNotification(project: Project? = null, title: String = "", content: String) {
-    showNotification(project, title, content, NotificationType.INFORMATION)
+  fun showInfoNotification(
+    project: Project? = null,
+    title: String = "",
+    content: String,
+    customization: (EduNotification.() -> Unit)? = null
+  ) {
+    showNotification(NotificationType.INFORMATION, project, title, content, customization)
   }
 
-  fun showWarningNotification(project: Project? = null, title: String = "", content: String) {
-    showNotification(project, title, content, NotificationType.WARNING)
+  fun showWarningNotification(
+    project: Project? = null,
+    title: String = "",
+    content: String,
+    customization: (EduNotification.() -> Unit)? = null
+  ) {
+    showNotification(NotificationType.WARNING, project, title, content, customization)
   }
 
-  fun showErrorNotification(project: Project? = null, title: String = "", content: String) {
-    showNotification(project, title, content, NotificationType.ERROR)
+  fun showErrorNotification(
+    project: Project? = null,
+    title: String = "",
+    content: String,
+    customization: (EduNotification.() -> Unit)? = null
+  ) {
+    showNotification(NotificationType.ERROR, project, title, content, customization)
   }
 }

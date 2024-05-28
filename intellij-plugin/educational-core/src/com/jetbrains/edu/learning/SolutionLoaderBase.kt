@@ -32,7 +32,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.isSignificantlyAfter
-import com.jetbrains.edu.learning.update.UpdateNotification
+import com.jetbrains.edu.learning.update.showUpdateNotification
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.util.*
 import java.util.Collections.max
@@ -159,10 +159,11 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
         // Suppression is needed here because DialogTitleCapitalization is demanded by the superclass constructor,
         // but the plugin naming with the capital letters used in the notification title
         @Suppress("DialogTitleCapitalization")
-        UpdateNotification(
+        showUpdateNotification(
+          project,
           EduCoreBundle.message("notification.update.plugin.title"),
           EduCoreBundle.message("notification.update.plugin.apply.solutions.content")
-        ).notify(project)
+        )
       }
       EduUtilsKt.synchronize()
       ProjectView.getInstance(project).refresh()

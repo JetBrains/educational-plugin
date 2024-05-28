@@ -37,7 +37,7 @@ class CCCheckAllTasksAction : AnAction(EduCoreBundle.lazyMessage("action.check.t
       }
       else {
         val tasksNum = getNumberOfTasks(studyItems)
-        createFailedTasksNotification(failedTasks, tasksNum, project).notify(project)
+        showFailedTasksNotification(project, failedTasks, tasksNum)
       }
     }
   }

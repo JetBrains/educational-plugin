@@ -17,14 +17,13 @@
 
 package com.jetbrains.edu.learning.stepik
 
-import com.intellij.notification.NotificationListener
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.notification.EduInformationNotification
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.stepik.StepikNames.getStepikProfilePath
 
 
@@ -33,25 +32,22 @@ fun getStepikLink(task: Task, lesson: Lesson): String {
 }
 
 fun showUpdateAvailableNotification(project: Project, updateAction: () -> Unit) {
-  EduInformationNotification(
+  EduNotificationManager.showInfoNotification(
+    project,
     EduCoreBundle.message("update.content"),
-    EduCoreBundle.message("update.content.request"),
-  )
-    .setListener(notificationListener(project, updateAction))
-    .notify(project)
-}
-
-fun notificationListener(project: Project,
-                         updateAction: () -> Unit): NotificationListener {
-  return NotificationListener { notification, _ ->
-    FileEditorManagerEx.getInstanceEx(project).closeAllFiles()
-    notification.expire()
-    ProgressManager.getInstance().runProcessWithProgressSynchronously(
-      {
-        ProgressManager.getInstance().progressIndicator.isIndeterminate = true
-        updateAction()
-      },
-      EduCoreBundle.message("push.course.updating.progress.text"), true, project)
+    EduCoreBundle.message("update.content.request")
+  ) {
+    setListener { notification, _ ->
+      FileEditorManagerEx.getInstanceEx(project).closeAllFiles()
+      notification.expire()
+      ProgressManager.getInstance().runProcessWithProgressSynchronously(
+        {
+          ProgressManager.getInstance().progressIndicator.isIndeterminate = true
+          updateAction()
+        },
+        EduCoreBundle.message("push.course.updating.progress.text"), true, project
+      )
+    }
   }
 }
 

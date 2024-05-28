@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.ValidationErrorMessage
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.notificationFromCourseValidation
+import com.jetbrains.edu.learning.newproject.ui.showNotificationFromCourseValidation
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillRestService.Companion.ReLoginDialogResult.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.*
@@ -226,7 +226,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
   }
 
   private fun showError(validationResult: CourseValidationResult) {
-    notificationFromCourseValidation(validationResult, EduNames.JBA).notify(null)
+    showNotificationFromCourseValidation(validationResult, EduNames.JBA)
   }
 
   override fun isAccessible(request: HttpRequest): Boolean = isHyperskillSupportAvailable()

@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.ide.DataManager
-import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -19,7 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.PluginInfo
 import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.HyperskillCourseAdvertiser
-import com.jetbrains.edu.learning.notification.EduWarningNotification
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.TypographyManager
 import com.jetbrains.edu.learning.ui.EduColors
 import com.jetbrains.edu.learning.ui.EduColors.getCurrentThemeName
@@ -176,25 +175,22 @@ fun humanReadableDuration(duration: Duration, showHoursPartForDays: Boolean = tr
   return registrationOpensIn
 }
 
-fun notificationFromCourseValidation(result: CourseValidationResult, title: String): Notification {
-  val notification = EduWarningNotification(title, result.message)
+fun showNotificationFromCourseValidation(result: CourseValidationResult, title: String) {
+  EduNotificationManager.showWarningNotification(title = title, content = result.message) {
+    when (result) {
+      is PluginsRequired -> {
+        addAction(object : AnAction(result.actionText()) {
+          override fun actionPerformed(e: AnActionEvent) {
+            result.showPluginInstallAndEnableDialog()
+          }
+        })
 
-  when (result) {
-    is PluginsRequired -> {
-
-      notification.addAction(object : AnAction(result.actionText()) {
-        override fun actionPerformed(e: AnActionEvent) {
-          result.showPluginInstallAndEnableDialog()
-        }
-      })
-
+      }
+      is ValidationErrorMessage -> {} // do nothing with the notification
+      is ValidationErrorMessageWithHyperlinks ->
+        //setting a listener is deprecated, so TextMessageWithHyperlinks should not be used.
+        //We need to reword such messages and make viewing a link an action inside a notification
+        setListener(NotificationListener.UrlOpeningListener(false))
     }
-    is ValidationErrorMessage -> {} // do nothing with the notification
-    is ValidationErrorMessageWithHyperlinks ->
-      //setting a listener is deprecated, so TextMessageWithHyperlinks should not be used.
-      //We need to reword such messages and make viewing a link an action inside a notification
-      notification.setListener(NotificationListener.UrlOpeningListener(false))
   }
-
-  return notification
 }

@@ -13,17 +13,17 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.decapitalize
 import com.jetbrains.edu.learning.document
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.notification.EduErrorNotification
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import javax.swing.event.HyperlinkEvent
 
-class InvalidConfigNotification(project: Project, configFile: VirtualFile, cause: String) :
-  EduErrorNotification(
-    EduCoreBundle.message("yaml.invalid.config.notification.title"),
-    messageWithEditLink(project, configFile, cause),
+fun showInvalidConfigNotification(project: Project, configFile: VirtualFile, cause: String) {
+  EduNotificationManager.showErrorNotification(
+    project,
+    title = EduCoreBundle.message("yaml.invalid.config.notification.title"),
+    content = messageWithEditLink(project, configFile, cause),
   ) {
-  init {
     setListener(GoToFileListener(project, configFile))
   }
 }
@@ -31,8 +31,7 @@ class InvalidConfigNotification(project: Project, configFile: VirtualFile, cause
 private fun messageWithEditLink(project: Project, configFile: VirtualFile, cause: String): String {
   val courseConfig = if (configFile.name == COURSE_CONFIG) {
     configFile
-  }
-                     else {
+  } else {
     project.courseDir.findChild(COURSE_CONFIG)
   } ?: error(EduCoreBundle.message("yaml.editor.invalid.format.cannot.find.config"))
 

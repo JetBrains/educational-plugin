@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduFormatBundle
-import com.jetbrains.edu.learning.notification.EduErrorNotification
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
 import com.jetbrains.edu.learning.stepik.api.StepikBasedConnector.Companion.getStepikBasedConnector
 import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
@@ -298,23 +298,27 @@ object HyperskillCheckConnector {
 
   private fun showErrorDetails(project: Project, error: String) {
     if (error == EduFormatBundle.message("error.access.denied") || error == EduCoreBundle.message("error.failed.to.refresh.tokens")) {
-      EduErrorNotification(
+      EduNotificationManager.showErrorNotification(
+        project,
         EduCoreBundle.message("error.failed.to.post.solution"),
         EduCoreBundle.message("error.access.denied.with.link"),
-      ).setListener { notification, _ ->
-        notification.expire()
-        loginListener
-      }.notify(project)
+      ) {
+        setListener { _, _ ->
+          this@showErrorNotification.expire()
+          loginListener
+        }
+      }
       return
     }
 
     LOG.warn(error)
-    EduErrorNotification(
+    EduNotificationManager.showErrorNotification(
+      project,
       EduCoreBundle.message("error.failed.to.post.solution"),
       EduFormatBundle.message("help.use.guide", EduNames.FAILED_TO_POST_TO_JBA_URL),
-    )
-      .setListener(NotificationListener.URL_OPENING_LISTENER)
-      .notify(project)
+    ) {
+      setListener(NotificationListener.URL_OPENING_LISTENER)
+    }
   }
 
   fun failedToSubmit(project: Project, task: Task, error: String): CheckResult {

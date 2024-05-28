@@ -30,7 +30,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.notification.EduInformationNotification
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.stepik.api.StepikBasedConnector.Companion.getStepikBasedConnector
@@ -170,11 +169,11 @@ class DownloadDataset(
     @NlsContexts.NotificationTitle message: String,
     @NlsContexts.NotificationContent filePath: String
   ) {
-    EduInformationNotification(message, filePath).apply {
+    EduNotificationManager.showInfoNotification(project, message, filePath) {
       addAction(NotificationAction.createSimpleExpiring(EduCoreBundle.message("copy.path.to.clipboard")) {
         CopyPasteManager.getInstance().setContents(StringSelection(filePath))
       })
-    }.notify(project)
+    }
   }
 
   private fun processError(project: Project, errorMessage: String? = null, exception: Exception? = null) {

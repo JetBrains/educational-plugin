@@ -20,7 +20,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.notification.EduInformationNotification
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.twitter.ui.TwitterDialogUI
 import com.jetbrains.edu.learning.twitter.ui.createTwitterDialogUI
 import twitter4j.*
@@ -86,14 +86,14 @@ object TwitterUtils {
 
     val tweet = twitter.v2.createTweet(text = info.message, mediaIds = mediaId)
 
-    EduInformationNotification(
-      EduCoreBundle.message("twitter.success.title"),
-      EduCoreBundle.message("twitter.tweet.posted"),
-    ).addAction(NotificationAction.createSimpleExpiring(EduCoreBundle.message("twitter.open.in.browser")) {
-      EduBrowser.getInstance().browse(
-        "https://twitter.com/anyuser/status/${tweet.id}"
-      )
-    }).notify(null)
+    EduNotificationManager.showInfoNotification(
+      title = EduCoreBundle.message("twitter.success.title"),
+      content = EduCoreBundle.message("twitter.tweet.posted")
+    ) {
+      addAction(NotificationAction.createSimpleExpiring(EduCoreBundle.message("twitter.open.in.browser")) {
+        EduBrowser.getInstance().browse("https://twitter.com/anyuser/status/${tweet.id}")
+      })
+    }
   }
 
   /**

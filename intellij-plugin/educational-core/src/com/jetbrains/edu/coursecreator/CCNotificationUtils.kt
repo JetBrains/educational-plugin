@@ -10,7 +10,6 @@ import com.intellij.openapi.util.NlsContexts.NotificationTitle
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.notification.EduErrorNotification
 import com.jetbrains.edu.learning.notification.EduNotification
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 
@@ -39,11 +38,11 @@ object CCNotificationUtils {
     action: AnAction? = null
   ) {
     LOG.info(message)
-    val notification = EduErrorNotification(title, message.orEmpty())
-    if (action != null) {
-      notification.addAction(action)
+    EduNotificationManager.showErrorNotification(project, title, message.orEmpty()) {
+      if (action != null) {
+        addAction(action)
+      }
     }
-    notification.notify(project)
   }
 
   // TODO Inline or EduNotificationManager
@@ -80,7 +79,7 @@ object CCNotificationUtils {
     @NotificationContent message: String,
     notificationType: NotificationType = NotificationType.INFORMATION
   ) {
-    val notification = EduNotification.create(title, message, notificationType)
+    val notification = EduNotification.create(notificationType, title, message)
     if (action != null) {
       notification.addAction(action)
     }

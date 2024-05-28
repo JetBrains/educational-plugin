@@ -28,7 +28,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
-import com.jetbrains.edu.learning.notification.EduErrorNotification
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
@@ -192,14 +192,16 @@ fun Task.getRelatedTheoryTask(): TheoryTask? {
 }
 
 fun notifyJBAUnauthorized(project: Project, specificMessage: String) {
-  EduErrorNotification(
+  EduNotificationManager.showErrorNotification(
+    project,
     specificMessage,
     EduCoreBundle.message("notification.hyperskill.no.next.activity.login.content")
-  ).apply {
-    addAction(NotificationAction.createSimpleExpiring(
-      EduCoreBundle.message("notification.hyperskill.no.next.activity.login.action")
-    ) { HyperskillLoginListener.doLogin() })
-  }.notify(project)
+  ) {
+    addAction(
+      NotificationAction.createSimpleExpiring(
+        EduCoreBundle.message("notification.hyperskill.no.next.activity.login.action")
+      ) { HyperskillLoginListener.doLogin() })
+  }
 }
 
 fun openNextActivity(project: Project, task: Task) {
@@ -304,12 +306,13 @@ private fun getNextStepInTopic(topicId: Int, taskId: Int?): NextActivityInfo {
 }
 
 private fun showNoNextActivityNotification(task: Task?, project: Project) {
-  EduErrorNotification(
+  EduNotificationManager.showErrorNotification(
+    project,
     EduCoreBundle.message("notification.hyperskill.no.next.activity.title"),
     task?.let { EduCoreBundle.message("notification.hyperskill.no.next.activity.content", stepLink(task.id)) } ?: "",
-  )
-    .setListener(NotificationListener.URL_OPENING_LISTENER)
-    .notify(project)
+  ) {
+    setListener(NotificationListener.URL_OPENING_LISTENER)
+  }
 }
 
 fun <T : WithPaginationMetaData> withPageIteration(fetchData: (Int) -> Result<T, String>): Result<List<T>, String> {
@@ -328,9 +331,9 @@ fun <T : WithPaginationMetaData> withPageIteration(fetchData: (Int) -> Result<T,
 private sealed class NextActivityInfo {
   class TopicCompleted(val topicId: Int) : NextActivityInfo()
 
-  object NoActivity : NextActivityInfo()
+  data object NoActivity : NextActivityInfo()
 
-  object NoTopic : NextActivityInfo()
+  data object NoTopic : NextActivityInfo()
 
   class Next(val stepSource: HyperskillStepSource, val topicId: Int) : NextActivityInfo()
 

@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.revertTaskFiles
 import com.jetbrains.edu.learning.courseFormat.ext.revertTaskParameters
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.notification.EduInformationNotification
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager.updateDependentPlaceholders
 import com.jetbrains.edu.learning.projectView.ProgressUtil.updateCourseProgress
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.Companion.revertTask
@@ -73,11 +73,13 @@ class RevertTaskAction : DumbAwareAction(), RightAlignedToolbarAction {
       EP_NAME.forEachExtensionSafe {
         it.onTaskReversion(project, task)
       }
-
       EditorNotifications.getInstance(project).updateAllNotifications()
-      EduInformationNotification(content = EduCoreBundle.message("action.Educational.RefreshTask.result"))
-        .setIcon(EmptyIcon.ICON_16)
-        .notify(project)
+      EduNotificationManager.showInfoNotification(
+        project = project,
+        content = EduCoreBundle.message("action.Educational.RefreshTask.result")
+      ) {
+        setIcon(EmptyIcon.ICON_16)
+      }
       ProjectView.getInstance(project).refresh()
       TaskToolWindowView.getInstance(project).updateTaskSpecificPanel()
       TaskToolWindowView.getInstance(project).readyToCheck()

@@ -1,9 +1,8 @@
 package com.jetbrains.edu.learning.statistics
 
 import com.intellij.ide.util.PropertiesComponent
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationListener
-import com.intellij.notification.impl.NotificationFullContent
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.NotificationContent
 import com.intellij.openapi.util.NlsContexts.NotificationTitle
@@ -13,8 +12,7 @@ import com.jetbrains.edu.learning.capitalize
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.notification.EduInformationNotification
-import javax.swing.event.HyperlinkEvent
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 
 @Suppress("UnstableApiUsage")
 fun showCCPostFeedbackNotification(course: Course, project: Project) {
@@ -27,19 +25,24 @@ fun showCCPostFeedbackNotification(course: Course, project: Project) {
 
   val language = course.languageId.lowercase().capitalize()
 
-  val notification = FeedbackNotification(EduCoreBundle.message("check.correct.solution.title"), EduCoreBundle.message("feedback.template.creator", feedbackUrl, language), feedbackUrl)
   PropertiesComponent.getInstance().setValue(QUESTIONNAIRE_ADVERTISING_NOTIFICATION_SHOWN, true)
-  notification.notify(project)
+  showFeedbackNotification(
+    project,
+    EduCoreBundle.message("check.correct.solution.title"),
+    EduCoreBundle.message("feedback.template.creator", feedbackUrl, language),
+    feedbackUrl
+  )
 }
 
 fun showStudentPostFeedbackNotification(project: Project) {
-  val notification = FeedbackNotification(
+  PropertiesComponent.getInstance().setValue(SURVEY_PROMPTED, true)
+  PropertiesComponent.getInstance().setValue(QUESTIONNAIRE_ADVERTISING_NOTIFICATION_SHOWN, true)
+  showFeedbackNotification(
+    project,
     EduCoreBundle.message("survey.title"),
     EduCoreBundle.message("survey.template", SURVEY_LINK),
     SURVEY_LINK
   )
-  PropertiesComponent.getInstance().setValue(SURVEY_PROMPTED, true)
-  notification.notify(project)
 }
 
 // we have plans to use the showQuestionnaireAdvertisingNotification once again later
@@ -50,19 +53,24 @@ fun showQuestionnaireAdvertisingNotification(project: Project, course: Course) {
     .replace("\$PRODUCT", productMap[PlatformUtils.getPlatformPrefix()] ?: PlatformUtils.getPlatformPrefix())
     .replace("\$COURSE_ID", course.id.toString())
 
-  val notification = FeedbackNotification(EduCoreBundle.message("check.correct.solution.title"), EduCoreBundle.message("notification.student.survey", course.name, questionnaireUrl), questionnaireUrl)
   PropertiesComponent.getInstance().setValue(QUESTIONNAIRE_ADVERTISING_NOTIFICATION_SHOWN, true)
-  notification.notify(project)
+  showFeedbackNotification(
+    project,
+    EduCoreBundle.message("check.correct.solution.title"),
+    EduCoreBundle.message("notification.student.survey", course.name, questionnaireUrl),
+    questionnaireUrl
+  )
 }
 
-private class FeedbackNotification(@NotificationTitle title: String, @NotificationContent content: String, feedbackUrl: String) :
-  EduInformationNotification(title, content),
-  NotificationFullContent {
-  init {
-    setListener(object : NotificationListener.Adapter() {
-      override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
-        EduBrowser.getInstance().browse(feedbackUrl)
-      }
+private fun showFeedbackNotification(
+  project: Project,
+  @NotificationTitle title: String,
+  @NotificationContent content: String,
+  feedbackUrl: String
+) {
+  EduNotificationManager.showInfoNotification(project, title, content) {
+    addAction(object : AnAction() {
+      override fun actionPerformed(e: AnActionEvent) = EduBrowser.getInstance().browse(feedbackUrl)
     })
   }
 }
