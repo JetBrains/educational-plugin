@@ -115,6 +115,7 @@ object EduFormatNames {
   const val TROUBLESHOOTING_GUIDE_URL = "https://plugins.jetbrains.com/plugin/10081-jetbrains-academy/docs/troubleshooting-guide.html"
   const val NO_TESTS_URL = "$TROUBLESHOOTING_GUIDE_URL#no_tests_have_run"
   const val FAILED_TO_CHECK_URL = "$TROUBLESHOOTING_GUIDE_URL#failed_to_launch_checking"
+  const val FAILED_TO_DELETE_SUBMISSIONS = "$TROUBLESHOOTING_GUIDE_URL#failed_to_delete_submissions"
 
   val LOGIN_NEEDED_MESSAGE = message("check.error.login.needed")
 }

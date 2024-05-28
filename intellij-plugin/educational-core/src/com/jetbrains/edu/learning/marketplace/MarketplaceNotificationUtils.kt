@@ -2,9 +2,7 @@ package com.jetbrains.edu.learning.marketplace
 
 import com.intellij.icons.ExpUiIcons
 import com.intellij.ide.plugins.PluginManagerConfigurable
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationAction
-import com.intellij.notification.NotificationType
+import com.intellij.notification.*
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.options.ShowSettingsUtil
@@ -15,6 +13,7 @@ import com.intellij.openapi.util.NlsContexts
 import com.jetbrains.edu.coursecreator.CCNotificationUtils
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.FAILED_TO_DELETE_SUBMISSIONS
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
@@ -216,10 +215,12 @@ object MarketplaceNotificationUtils {
     }
 
     Notification(
-      JETBRAINS_ACADEMY_GROUP_ID,
-      EduCoreBundle.message("marketplace.delete.submissions.failed.title"),
-      message,
-      NotificationType.ERROR
+      JETBRAINS_ACADEMY_GROUP_ID, EduCoreBundle.message("marketplace.delete.submissions.failed.title"), message, NotificationType.ERROR
+    ).addAction(
+      BrowseNotificationAction(
+        EduCoreBundle.message("marketplace.delete.submissions.failed.troubleshooting.text"),
+        FAILED_TO_DELETE_SUBMISSIONS
+      )
     ).notify(project)
   }
 
