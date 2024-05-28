@@ -2,6 +2,8 @@ package com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.runInEdt
 import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -55,13 +57,15 @@ class HyperskillCoursesPanel(
 
     fun createCoursesPanel() = super.createContentPanel()
 
-  val connection = ApplicationManager.getApplication().messageBus.connect()
+    val connection = ApplicationManager.getApplication().messageBus.connect()
     connection.subscribe(HyperskillSettings.LOGGED_IN_TO_HYPERSKILL,
       object : EduLogInListener {
         override fun userLoggedIn() {
-          panel.removeAll()
-          panel.add(createCoursesPanel())
-          connection.disconnect()
+          runInEdt(modalityState = ModalityState.stateForComponent(this@HyperskillCoursesPanel)) {
+            panel.removeAll()
+            panel.add(createCoursesPanel())
+            connection.disconnect()
+          }
         }
       }
     )
