@@ -10,7 +10,6 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.codeforces.actions.StartCodeforcesContestAction
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
@@ -73,13 +72,6 @@ class OpenCourseButton : CourseButtonBase() {
             }
           }
         }
-
-        is CodeforcesCourse -> {
-          closeDialog()
-          val contestId = course.id
-          StartCodeforcesContestAction.joinContest(contestId, null)
-        }
-
         else -> {
           closeDialog()
           // if course is present both on stepik and marketplace we open marketplace-based one

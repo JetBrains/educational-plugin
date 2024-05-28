@@ -25,9 +25,6 @@
   </extensionPoints>
 
   <actions>
-    <action id="Educational.Codeforces.StartContest"
-            class="com.jetbrains.edu.learning.codeforces.actions.StartCodeforcesContestAction">
-    </action>
     <action id="Educational.Codeforces.MarkAsCompleted"
             class="com.jetbrains.edu.learning.codeforces.actions.CodeforcesMarkAsCompletedAction"/>
     <action id="Educational.Codeforces.CopyAndSubmit"

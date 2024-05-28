@@ -443,8 +443,6 @@
                                     implementation="com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.HyperskillPlatformProviderFactory"/>
     <coursesPlatformProviderFactory id="Coursera" order="after JetBrainsAcademy"
                                     implementation="com.jetbrains.edu.learning.coursera.CourseraPlatformProviderFactory"/>
-    <coursesPlatformProviderFactory id="Codeforces" order="after Coursera"
-                                    implementation="com.jetbrains.edu.learning.codeforces.CodeforcesPlatformProviderFactory"/>
 
 
     <remoteTaskChecker implementation="com.jetbrains.edu.learning.coursera.CourseraTaskChecker"/>
