@@ -29,7 +29,6 @@ import java.awt.Color
 import java.awt.Component
 import java.awt.FlowLayout
 import java.awt.Font
-import java.time.Duration
 import javax.swing.Icon
 import javax.swing.JPanel
 import javax.swing.UIManager
@@ -146,34 +145,6 @@ fun JBLabel.addCourseCardInfoStyle() {
   foreground = GRAY_COLOR
   font = courseCardComponentFont
   border = JBUI.Borders.emptyRight(COURSE_CARD_BOTTOM_LABEL_H_GAP)
-}
-
-fun humanReadableDuration(duration: Duration, showHoursPartForDays: Boolean = true): String {
-  val daysPart = duration.toDaysPart()
-  val hoursPart = duration.toHoursPart()
-  val minutesPart = duration.toMinutesPart()
-  val registrationOpensIn = when {
-    daysPart == 1L -> {
-      if (hoursPart > 0 && showHoursPartForDays) {
-        EduCoreBundle.message("codeforces.course.selection.duration.value.day.hour", hoursPart)
-      }
-      else {
-        EduCoreBundle.message("codeforces.course.selection.duration.value.day")
-      }
-    }
-    daysPart > 1 -> {
-      if (hoursPart > 0 && showHoursPartForDays) {
-        EduCoreBundle.message("codeforces.course.selection.duration.value.days.hours", daysPart, hoursPart)
-      }
-      else {
-        EduCoreBundle.message("codeforces.course.selection.duration.value.days", daysPart)
-      }
-    }
-    hoursPart > 0 -> EduCoreBundle.message("codeforces.course.selection.duration.value.hours", hoursPart, minutesPart)
-    else -> EduCoreBundle.message("codeforces.course.selection.duration.value.min", minutesPart)
-  }
-
-  return registrationOpensIn
 }
 
 fun showNotificationFromCourseValidation(result: CourseValidationResult, title: String) {

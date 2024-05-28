@@ -10,10 +10,8 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.ext.isPreview
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
@@ -111,13 +109,6 @@ class StartCourseButton(
   override fun isVisible(course: Course): Boolean {
     if (!course.isPreview && CoursesStorage.getInstance().hasCourse(course)) {
       return false
-    }
-
-    if (course is CodeforcesCourse) {
-      val isRegistrationPossible = course.isRegistrationOpen
-                                   && course.isUpcomingContest
-                                   && !CodeforcesConnector.getInstance().isUserRegisteredForContest(course.id)
-      return isRegistrationPossible || course.isOngoing || course.isPastContest
     }
 
     return true
