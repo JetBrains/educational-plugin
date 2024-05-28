@@ -4,17 +4,15 @@ import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.extensions.PluginId
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduSettings
-import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
-import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.PluginInfo
 import com.jetbrains.edu.learning.courseFormat.ext.compatibility
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.HyperskillCourseAdvertiser
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
@@ -23,8 +21,6 @@ import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessageType.ERR
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessageType.WARNING
 import com.jetbrains.edu.learning.newproject.ui.getRequiredPluginsMessage
 import com.jetbrains.edu.learning.stepik.StepikNames
-import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.ui.EduColors.errorTextForeground
 import com.jetbrains.edu.learning.ui.EduColors.warningTextForeground
@@ -68,9 +64,6 @@ sealed class ErrorState(
                  false)
 
   object StepikLoginRequired : LoginRequired(StepikNames.STEPIK)
-
-  // Name of CheckiO course equals corresponding CheckiO platform name
-  class CheckiOLoginRequired(courseName: String) : LoginRequired(courseName)
 
   //TODO: remove it?
   object HyperskillLoginRequired : LoginRequired(EduNames.JBA)
@@ -139,7 +132,6 @@ sealed class ErrorState(
       get() {
         return when {
           CoursesStorage.getInstance().hasCourse(this) -> None
-          this is CheckiOCourse -> checkiOError
           this is HyperskillCourseAdvertiser -> if (HyperskillSettings.INSTANCE.account == null) HyperskillLoginNeeded else None
           this is HyperskillCourse -> if (HyperskillSettings.INSTANCE.account == null) HyperskillLoginRequired else None
           this is EduCourse -> {
@@ -153,14 +145,6 @@ sealed class ErrorState(
 
           else -> None
         }
-      }
-
-    private val CheckiOCourse.checkiOError: ErrorState
-      get() {
-        if (!isJCEF()) {
-          return JCEFRequired
-        }
-        return if (isCheckiOLoginRequired(this)) CheckiOLoginRequired(name) else None
       }
 
     private fun errorMessageForRequiredPlugins(plugins: Collection<PluginInfo>): ValidationMessage {
@@ -186,13 +170,6 @@ sealed class ErrorState(
 
     private fun isStepikLoginRequired(selectedCourse: EduCourse): Boolean = selectedCourse is StepikCourse
 
-    private fun isCheckiOLoginRequired(selectedCourse: CheckiOCourse): Boolean {
-      if (CoursesStorage.getInstance().hasCourse(selectedCourse)) {
-        return false
-      }
-      val checkiOConnectorProvider = selectedCourse.configurator as? CheckiOConnectorProvider ?: return false
-      return !checkiOConnectorProvider.oAuthConnector.isLoggedIn()
-    }
   }
 }
 

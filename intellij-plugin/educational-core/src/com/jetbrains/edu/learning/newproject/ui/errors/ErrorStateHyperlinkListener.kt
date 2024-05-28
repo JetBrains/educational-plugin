@@ -17,8 +17,6 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.actions.SwitchTaskPanelAction
 import com.jetbrains.edu.learning.authUtils.AuthorizationPlace
-import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.installAndEnablePlugin
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
@@ -41,14 +39,6 @@ class ErrorStateHyperlinkListener(private val parentDisposable: Disposable) : Hy
     )
 
     when (val state = coursePanel.errorState) {
-      is ErrorState.CheckiOLoginRequired -> {
-        val checkiOConnectorProvider = (coursePanel.course?.configurator as CheckiOConnectorProvider?)
-        if (checkiOConnectorProvider == null) {
-          Logger.getInstance(CoursesPanel::class.java).error("CheckiO connector provider is not found")
-          return
-        }
-        checkiOConnectorProvider.oAuthConnector.doAuthorize(*postLoginActions, authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG)
-      }
       is ErrorState.HyperskillLoginNeeded -> {
         HyperskillConnector.getInstance().doAuthorize(*postLoginActions, authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG)
       }
