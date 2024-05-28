@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.ui.JBCardLayout
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
@@ -107,9 +106,6 @@ class CoursesPanelWithTabs(private val scope: CoroutineScope, private val dispos
       val panel = cardLayout.findComponentById(activeTabName) as? CoursesPanel ?: return
       panel.onTabSelection()
       cardLayout.show(this, activeTabName)
-      val focusManager = IdeFocusManager.findInstanceByComponent(panel)
-      val toFocus = focusManager.getFocusTargetFor(panel) ?: return
-      focusManager.doWhenFocusSettlesDown { focusManager.requestFocus(toFocus, true) }
     }
 
     fun doValidation() {

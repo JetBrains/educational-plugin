@@ -8,15 +8,14 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.HyperskillCourseAdvertiser
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
+import com.jetbrains.edu.learning.newproject.ui.LoginPanel
 import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.JBACourseFromStorage
 import com.jetbrains.edu.learning.stepik.hyperskill.JBA_HELP
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.notLoggedInPanel.HyperskillNotLoggedInPanel
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.swing.JPanel
 
 class HyperskillCoursesPanel(
   private val platformProvider: HyperskillPlatformProvider,
@@ -45,16 +44,9 @@ class HyperskillCoursesPanel(
 
   override fun createCoursesListPanel() = HyperskillCoursesListPanel()
 
-  override fun createContentPanel(): JPanel {
-    return if (isLoggedIn()) {
-      super.createContentPanel()
-    }
-    else {
-      HyperskillNotLoggedInPanel { handleLogin() }
-    }
+  override fun getLoginComponent(): LoginPanel {
+    return HyperskillLoginPanel()
   }
-
-  private fun isLoggedIn() = HyperskillSettings.INSTANCE.account != null
 
   inner class HyperskillCoursesListPanel : CoursesListWithResetFilters() {
     override fun createCardForNewCourse(course: Course): CourseCardComponent {
@@ -62,12 +54,18 @@ class HyperskillCoursesPanel(
     }
   }
 
+  private inner class HyperskillLoginPanel : LoginPanel(EduCoreBundle.message("course.dialog.log.in.to.jba.label.text"),
+                                                              isLoginNeeded(),
+                                                              { handleLogin() })
+
+  override fun isLoginNeeded() = HyperskillSettings.INSTANCE.account == null
+
   private fun handleLogin() {
     HyperskillConnector.getInstance().doAuthorize(
-      Runnable {
-        this.removeAll()
-        this.add(super.createContentPanel())
-      },
+      Runnable { coursePanel.hideErrorPanel() },
+      Runnable { setButtonsEnabled(true) },
+      Runnable { hideLoginPanel() },
+      Runnable { scheduleUpdateAfterLogin() },
       authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG
     )
   }

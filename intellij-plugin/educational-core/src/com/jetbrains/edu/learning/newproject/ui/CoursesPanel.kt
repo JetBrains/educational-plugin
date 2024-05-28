@@ -29,6 +29,7 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.VisibleForTesting
 import java.awt.BorderLayout
 import java.awt.Rectangle
+import java.awt.event.ActionListener
 import javax.swing.JComponent
 import javax.swing.JPanel
 
@@ -93,7 +94,7 @@ abstract class CoursesPanel(
 
   open fun showErrorMessage(e: CoursesDownloadingException) {}
 
-  protected open fun createContentPanel(): JPanel {
+  private fun createContentPanel(): JPanel {
     val searchAndLoginPanel = NonOpaquePanel()
     searchAndLoginPanel.add(coursesSearchComponent, BorderLayout.NORTH)
     loginPanel?.apply {
@@ -165,8 +166,8 @@ abstract class CoursesPanel(
     text.appendSecondaryText(EduCoreBundle.message("help.use.guide1") + " ", SimpleTextAttributes.GRAYED_ATTRIBUTES, null)
     @Suppress("DialogTitleCapitalization") // it's ok to start from lowercase as it's the second part of a sentence
     text.appendSecondaryText(EduCoreBundle.message("help.use.guide2"),
-                             SimpleTextAttributes.LINK_ATTRIBUTES
-    ) { EduBrowser.getInstance().browse(EduNames.NO_COURSES_URL) }
+                             SimpleTextAttributes.LINK_ATTRIBUTES,
+                             ActionListener { EduBrowser.getInstance().browse(EduNames.NO_COURSES_URL) })
   }
 
   private fun showProgressState() = cardLayout.show(this, LOADING_CARD_NAME)
@@ -210,6 +211,10 @@ abstract class CoursesPanel(
     else {
       coursesListDecorator.updateModel(coursesGroups, courseToSelect)
     }
+  }
+
+  fun setButtonsEnabled(canStartCourse: Boolean) {
+    coursePanel.setButtonsEnabled(canStartCourse)
   }
 
   fun scheduleUpdateAfterLogin() {
