@@ -6,11 +6,12 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
 import com.jetbrains.edu.learning.checkio.exceptions.CheckiOLoginRequiredException
-import com.jetbrains.edu.learning.checkio.notifications.CheckiONotifications
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import javax.swing.event.HyperlinkEvent
 
 class CheckiOErrorReporter(
@@ -20,31 +21,35 @@ class CheckiOErrorReporter(
   private val oAuthConnector: CheckiOOAuthConnector
 ) {
   private fun reportLoginRequiredError() {
-    CheckiONotifications.showError(
+    EduNotificationManager.showErrorNotification(
       project,
       title,
-      "",
-      EduCoreBundle.message("notification.content.log.in.and.try.again.checkio"),
-      LoginLinkListener(oAuthConnector)
-    )
+      EduCoreBundle.message("notification.content.log.in.and.try.again.checkio")
+    ) {
+      icon = EducationalCoreIcons.CheckiO
+      setListener(LoginLinkListener(oAuthConnector))
+    }
   }
 
   private fun reportNetworkError() {
-    CheckiONotifications.showWarning(
+    EduNotificationManager.showWarningNotification(
       project,
       title,
-      EduCoreBundle.message("notification.subtitle.connection.failed"),
-      EduCoreBundle.message("notification.content.check.connection.and.try.again"),
-    )
+      EduCoreBundle.message("notification.content.check.connection.and.try.again")
+    ) {
+      icon = EducationalCoreIcons.CheckiO
+      subtitle = EduCoreBundle.message("notification.subtitle.connection.failed")
+    }
   }
 
   private fun reportUnexpectedError() {
-    CheckiONotifications.showError(
+    EduNotificationManager.showErrorNotification(
       project,
       title,
-      "",
       EduCoreBundle.message("notification.content.unexpected.error.occurred")
-    )
+    ) {
+      icon = EducationalCoreIcons.CheckiO
+    }
   }
 
   fun handle(e: Exception) {

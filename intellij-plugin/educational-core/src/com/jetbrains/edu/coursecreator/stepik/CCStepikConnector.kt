@@ -22,7 +22,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK
 import com.jetbrains.edu.learning.stepik.StepikNames.getStepikUrl
@@ -200,19 +199,26 @@ object CCStepikConnector {
   private fun showNoRightsToUpdateOnStepikNotification(project: Project) {
     showErrorNotification(
       project,
-      EduCoreBundle.message("notification.course.creator.access.denied.title"),
-      EduCoreBundle.message("notification.course.creator.access.denied.content")
+      message("notification.course.creator.access.denied.title"),
+      message("notification.course.creator.access.denied.content")
     )
   }
 
   private fun showFailedToPostItemNotification(project: Project, item: StudyItem, isNew: Boolean) {
+    val title = if (isNew) {
+      message("notification.course.creator.failed.to.upload.item.title")
+    }
+    else {
+      message("notification.course.creator.failed.to.update.item.title")
+    }
+
     val pathInCourse = item.getPathInCourse()
-
-    val title = if (isNew) EduCoreBundle.message("notification.course.creator.failed.to.upload.item.title")
-    else EduCoreBundle.message("notification.course.creator.failed.to.update.item.title")
-
-    val content = if (isNew) EduCoreBundle.message("notification.course.creator.failed.to.upload.item.content", pathInCourse)
-    else EduCoreBundle.message("notification.course.creator.failed.to.update.item.content", pathInCourse)
+    val content = if (isNew) {
+      message("notification.course.creator.failed.to.upload.item.content", pathInCourse)
+    }
+    else {
+      message("notification.course.creator.failed.to.update.item.content", pathInCourse)
+    }
 
     showErrorNotification(project, title, content, showLogAction)
   }

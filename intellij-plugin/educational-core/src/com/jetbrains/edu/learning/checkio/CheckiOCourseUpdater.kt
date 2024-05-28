@@ -8,9 +8,9 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.NotificationTitle
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.CourseUpdateListener
 import com.jetbrains.edu.learning.EduUtilsKt
-import com.jetbrains.edu.learning.checkio.notifications.CheckiONotifications
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.IOException
 
@@ -52,11 +53,12 @@ class CheckiOCourseUpdater(
     @NotificationTitle title: String
   ) {
     if (stations.isNotEmpty()) {
-      CheckiONotifications.showInfo(
-        title,
-        "",
-        stations.joinToString("\n") { it.name }
-      )
+      EduNotificationManager.showInfoNotification(
+        title = title,
+        content = stations.joinToString("\n") { it.name },
+      ) {
+        icon = EducationalCoreIcons.CheckiO
+      }
     }
   }
 
