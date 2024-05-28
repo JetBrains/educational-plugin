@@ -32,7 +32,6 @@ class HowItWorksPanel : JPanel(BorderLayout()) {
           font = JBFont.regular().biggerOn(TITLE_FONT_FACTOR).deriveFont(Font.PLAIN)
         }
       }
-      separator()
       row {
         cell(
           HowItWorksCard(
@@ -53,7 +52,8 @@ class HowItWorksPanel : JPanel(BorderLayout()) {
             "selectCourseDialog/hyperskill/Features/create-real-world-apps.png",
             EduCoreBundle.message("course.dialog.hyperskill.jba.on.hyperskill.how.it.works.real.apps.title"),
             EduCoreBundle.message("course.dialog.hyperskill.jba.on.hyperskill.how.it.works.real.apps.description"),
-            EduCoreBundle.message("course.dialog.hyperskill.jba.on.hyperskill.how.it.works.real.apps.comment")
+            EduCoreBundle.message("course.dialog.hyperskill.jba.on.hyperskill.how.it.works.real.apps.comment"),
+            true
           )
         )
       }.customize(UnscaledGapsY(ICON_TEXT_GAP))
@@ -68,7 +68,8 @@ class HowItWorksPanel : JPanel(BorderLayout()) {
     iconPath: String,
     title: String,
     description: String,
-    comment: String = ""
+    comment: String = "",
+    showStarIcon: Boolean = false
   ) : Wrapper() {
 
     init {
@@ -79,7 +80,9 @@ class HowItWorksPanel : JPanel(BorderLayout()) {
           icon(icon)
         }
         row {
-          text(title).bold()
+          @Suppress("HardCodedStringLiteral")
+          val text = if (showStarIcon) "$title <icon src='AllIcons.Actions.EnableNewUi'>" else title
+          text(text).bold()
         }
         row {
           text(description, MAX_TEXT_LENGTH)
