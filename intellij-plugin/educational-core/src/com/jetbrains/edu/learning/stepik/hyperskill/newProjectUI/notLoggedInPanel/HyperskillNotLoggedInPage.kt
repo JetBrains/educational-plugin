@@ -6,7 +6,7 @@ import com.intellij.ui.components.panels.Wrapper
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.panel
 
-class HyperskillNotLoggedInPanel : Wrapper() {
+class HyperskillNotLoggedInPanel(handleLogin: () -> Unit) : Wrapper() {
   private val backgroundColor = JBColor.namedColor(
     "SelectCourse.Hyperskill.HyperskillNotLoggedInPanel.backgroundColor", 0xFFFFFF, 0x1E1F22
   )
@@ -14,7 +14,7 @@ class HyperskillNotLoggedInPanel : Wrapper() {
   private val oldUIBackgroundColor = JBColor(0xFFFFFF,0x313335)
 
   init {
-    val loginPanel = HyperskillTopLoginPanelWithBanner()
+    val loginPanel = HyperskillTopLoginPanelWithBanner(handleLogin)
     val howItWorksPanel = HowItWorksPanel()
 
     setContent(panel {
