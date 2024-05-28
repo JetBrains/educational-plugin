@@ -196,7 +196,7 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
       }
 
       highlighter = response?.codeHint?.let {
-        highlightFirstCodeDiffPosition(project, response?.taskFile ?: state.taskFile, it, indicator)
+        highlightFirstCodeDiffPositionOrNull(project, response?.taskFile ?: state.taskFile, it, indicator)
       }
 
       val action = response?.codeHint?.let { showNextStepHint(state, response?.taskFile ?: state.taskFile, it) }
@@ -215,7 +215,15 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
     }
 
 
-    private fun highlightFirstCodeDiffPosition(
+    /**
+     * Highlights the first code difference position between the student's code in the task file and a given code hint.
+     *
+     * @return The range highlighter indicating the first code difference position, or null
+     * if virtualFile or editor is null or
+     * if the focus is on another file or
+     * if no differences are found.
+     */
+    private fun highlightFirstCodeDiffPositionOrNull(
       project: Project,
       taskFile: TaskFile,
       codeHint: String,

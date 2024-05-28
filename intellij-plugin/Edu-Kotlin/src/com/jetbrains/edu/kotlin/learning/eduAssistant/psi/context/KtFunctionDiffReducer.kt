@@ -32,7 +32,7 @@ class KtFunctionDiffReducer : FunctionDiffReducer {
         addElement(it.first, it.second, project, addAfter = false)
         return true
       }
-      if (notEqualsTextIgnoringSpaces(it.first, it.second)) {
+      if (!equalText(it.first, it.second, Char::isWhitespace)) {
         swapElements(it.first, it.second, project)
         return true
       }
@@ -163,7 +163,7 @@ class KtFunctionDiffReducer : FunctionDiffReducer {
     project: Project,
     action: (PsiElement?, PsiElement?, Project) -> Unit
   ): Boolean {
-    if (first != null && second != null && notEqualsTextIgnoringSpaces(first, second))  {
+    if (first != null && second != null && !equalText(first, second, Char::isWhitespace))  {
       action(first, second, project)
       return true
     }
@@ -189,10 +189,8 @@ class KtFunctionDiffReducer : FunctionDiffReducer {
     return false
   }
 
-  private fun notEqualsTextIgnoringSpaces(first: PsiElement, second: PsiElement) =
-    first.text.removeWhitespace() != second.text.removeWhitespace()
-
-  private fun String.removeWhitespace() = filter { !it.isWhitespace() }
+  private fun equalText(first: PsiElement, second: PsiElement, symbolsToIgnore: (Char) -> Boolean) =
+    first.text.filterNot(symbolsToIgnore) == second.text.filterNot(symbolsToIgnore)
 
   companion object {
     private const val MAX_BODY_LINES_IN_SHORT_FUNCTION = 3
