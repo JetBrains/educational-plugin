@@ -5,7 +5,6 @@ import com.intellij.internal.statistic.eventLog.events.EventFields
 import com.intellij.internal.statistic.service.fus.collectors.CounterUsagesCollector
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.jetbrains.edu.learning.authUtils.AuthorizationPlace
-import com.jetbrains.edu.learning.checkio.CheckiOPlatformProvider
 import com.jetbrains.edu.learning.codeforces.CodeforcesPlatformProvider
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -101,7 +100,6 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
       fun fromProvider(provider: CoursesPlatformProvider): CourseSelectionViewTab {
         return when (provider) {
           is HyperskillPlatformProvider -> JBA
-          is CheckiOPlatformProvider -> CHECKIO
           is CodeforcesPlatformProvider -> CODEFORCES
           is CourseraPlatformProvider -> COURSERA
           is MarketplacePlatformProvider -> MARKETPLACE
