@@ -83,4 +83,6 @@ public class EducationalCoreIcons {
   public static final Icon ApplyCode = load("/icons/com/jetbrains/edu/learning/applyCode.svg"); // 16x16
 
   public static final Icon SyncFiles = load("/icons/com/jetbrains/edu/syncFiles.svg"); // 14x14
+  public static final Icon SyncFilesModInfo = load("/icons/com/jetbrains/edu/syncFilesModInfo.svg");
+  public static final Icon SyncFilesModWarning = load("/icons/com/jetbrains/edu/syncFilesModWarning.svg");
 }
