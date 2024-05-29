@@ -14,7 +14,6 @@ import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction
 import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -25,7 +24,6 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.ex.temp.TempFileSystem
-import com.intellij.testFramework.utils.editor.saveToDisk
 import com.intellij.ui.GotItTooltip
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
@@ -33,6 +31,7 @@ import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.actions.AcceptHintAction.Companion.isNextStepHintDiff
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.submissions.writeTexts
 import org.jetbrains.annotations.NonNls
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
@@ -136,13 +135,6 @@ class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
 
     return file?.let {
       FileDocumentManager.getInstance().getDocument(it)
-    }
-  }
-
-  private fun List<Document>.writeTexts(texts: List<String>): Unit = runWriteAction {
-    zip(texts).forEach { (document, text) ->
-      document.setText(text)
-      document.saveToDisk()
     }
   }
 
