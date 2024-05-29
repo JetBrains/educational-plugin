@@ -2,17 +2,17 @@ package com.jetbrains.edu.learning
 
 import com.intellij.ide.lightEdit.LightEdit
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Computable
 import com.intellij.util.messages.Topic
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.yaml.YamlDeepLoader.loadCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.isEduYamlProject
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.startSynchronization
+import com.jetbrains.edu.learning.yaml.YamlMigrator
 import org.jetbrains.annotations.TestOnly
 
 /**
@@ -48,7 +48,10 @@ class StudyTaskManager(private val project: Project) : DumbAware, Disposable, Li
       val manager = project.service<StudyTaskManager>()
       if (!project.isDefault && !LightEdit.owns(project) && manager.course == null
           && project.isEduYamlProject() && !manager.courseLoadedWithError) {
-        val course = ApplicationManager.getApplication().runReadAction(Computable { loadCourse(project) })
+        YamlMigrator(project).migrate()
+        val course = runReadAction {
+          loadCourse(project)
+        }
         manager.courseLoadedWithError = course == null
         if (course != null) {
           manager.course = course

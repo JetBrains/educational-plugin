@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.IntNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.intellij.lang.Language
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
@@ -19,7 +20,6 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYCHARM
 import com.jetbrains.edu.learning.courseFormat.Language.findLanguageByName
-import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.stepik.api.ADDITIONAL_FILES
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.reformatYaml
 import com.jetbrains.edu.learning.yaml.YamlMapper.CURRENT_YAML_VERSION
@@ -55,7 +55,9 @@ class YamlMigrator(val project: Project) {
   }
 
   private fun readConfigTree(configFile: VirtualFile): ObjectNode? {
-    val configText = VfsUtil.loadText(configFile)
+    val configText = runReadAction {
+      VfsUtil.loadText(configFile)
+    }
     val generalYamlMapper = YAML_MAPPER
     val configTree = generalYamlMapper.readTree(configText) ?: return null
 
@@ -102,12 +104,14 @@ class YamlMigrator(val project: Project) {
 
   private fun writeConfigTree(configTree: ObjectNode, configFile: VirtualFile) {
     val textConfig = YamlMapper.MAPPER.writeValueAsString(configTree)
-    runInEdtAndWait { // or project.invokeLater() ?
+
+    runInEdtAndWait {
       runWriteAction {
         configFile.writeText(reformatYaml(project, textConfig))
-        FileDocumentManager.getInstance().reloadFiles(configFile)
       }
     }
+
+    FileDocumentManager.getInstance().reloadFiles(configFile)
   }
 
   companion object {

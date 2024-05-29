@@ -9,8 +9,12 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.courseDir
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_PROJECTS_URL
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
 import com.jetbrains.edu.learning.courseFormat.ext.updateDescriptionTextAndFormat
@@ -53,6 +57,7 @@ object YamlDeepLoader {
             it.items = it.deserializeContent(project, it.taskList, mapper)
           }
         }
+
         is Lesson -> {
           // set parent to correctly obtain dirs in deserializeContent method
           deserializedItem.parent = deserializedCourse
@@ -105,7 +110,7 @@ object YamlDeepLoader {
       task.parent = this
       val taskDir = task.getDir(project.courseDir)
       val invalidTaskFilesNames = task.taskFiles
-        .filter { (name, _) -> taskDir?.findFileByRelativePath(name) == null && !task.shouldBeEmpty(name)}.map { it.key }
+        .filter { (name, _) -> taskDir?.findFileByRelativePath(name) == null && !task.shouldBeEmpty(name) }.map { it.key }
       invalidTaskFilesNames.forEach { task.removeTaskFile(it) }
     }
   }
