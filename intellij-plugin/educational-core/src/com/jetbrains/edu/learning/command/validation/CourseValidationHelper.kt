@@ -15,7 +15,6 @@ import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
-import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
 import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -163,7 +162,7 @@ private class ValidationCheckResultManager {
 
   fun putCheckResult(task: Task, result: CheckResult) {
     require(task !in results) {
-      "Task `${task.getPathInCourse()}` is already checked"
+      "Task `${task.pathInCourse}` is already checked"
     }
 
     results[task] = result

@@ -91,6 +91,19 @@ open class EduFile {
     return text
   }
 
+  val pathInCourse: String
+    get() {
+      val pathPrefix = if (this is TaskFile) task.pathInCourse else ""
+      val pathInCourse = "$pathPrefix/$name"
+
+      return if (pathInCourse.startsWith('/')) {
+        pathInCourse.substring(1)
+      }
+      else {
+        pathInCourse
+      }
+    }
+
   companion object {
     val LOG = logger<EduFile>()
   }

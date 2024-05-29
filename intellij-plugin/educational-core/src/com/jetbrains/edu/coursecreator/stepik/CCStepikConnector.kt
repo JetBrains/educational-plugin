@@ -18,7 +18,6 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
-import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -212,7 +211,7 @@ object CCStepikConnector {
       message("notification.course.creator.failed.to.update.item.title")
     }
 
-    val pathInCourse = item.getPathInCourse()
+    val pathInCourse = item.pathInCourse
     val content = if (isNew) {
       message("notification.course.creator.failed.to.upload.item.content", pathInCourse)
     }

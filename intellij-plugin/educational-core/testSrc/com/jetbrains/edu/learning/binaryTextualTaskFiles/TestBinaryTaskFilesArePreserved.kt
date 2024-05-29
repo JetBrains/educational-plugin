@@ -1,15 +1,18 @@
 package com.jetbrains.edu.learning.binaryTextualTaskFiles
 
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.storage.LearningObjectStorageType
 import com.jetbrains.edu.learning.CourseReopeningTestBase
 import com.jetbrains.edu.learning.assertContentsEqual
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
+import com.jetbrains.edu.learning.courseFormat.BinaryContents
+import com.jetbrains.edu.learning.courseFormat.EduFile
+import com.jetbrains.edu.learning.courseFormat.FileContents
+import com.jetbrains.edu.learning.courseFormat.InMemoryBinaryContents
+import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
 import com.jetbrains.edu.learning.courseFormat.ext.visitEduFiles
 import com.jetbrains.edu.learning.doWithLearningObjectsStorageType
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
+import com.jetbrains.edu.learning.storage.LearningObjectStorageType
 import org.junit.Test
 
 class TestBinaryFilesAreNotStoredInsideTasks : CourseReopeningTestBase<EmptyProjectSettings>() {
@@ -74,7 +77,7 @@ class TestBinaryFilesAreNotStoredInsideTasks : CourseReopeningTestBase<EmptyProj
   private fun testContentsArePreserved(studentProject: Project, binaryFilesCleared: Boolean = false) {
     val course = studentProject.course!!
     course.visitEduFiles { eduFile ->
-      val path = eduFile.pathInCourse()
+      val path = eduFile.pathInCourse
       var expectedContents = expectedContents(eduFile)
       if (binaryFilesCleared && expectedContents is BinaryContents) {
         expectedContents = BinaryContents.EMPTY
@@ -83,20 +86,8 @@ class TestBinaryFilesAreNotStoredInsideTasks : CourseReopeningTestBase<EmptyProj
     }
   }
 
-  private fun EduFile.pathInCourse(): String {
-    val pathPrefix = if (this is TaskFile) task.getPathInCourse() else ""
-    val pathInCourse = "$pathPrefix/$name"
-
-    return if (pathInCourse.startsWith('/')) {
-      pathInCourse.substring(1)
-    }
-    else {
-      pathInCourse
-    }
-  }
-
   private fun expectedContents(eduFile: EduFile): FileContents {
-    val path = eduFile.pathInCourse()
+    val path = eduFile.pathInCourse
 
     return if (path.endsWith(".png")) {
       InMemoryBinaryContents(byteArrayOf(10, 20, 30))

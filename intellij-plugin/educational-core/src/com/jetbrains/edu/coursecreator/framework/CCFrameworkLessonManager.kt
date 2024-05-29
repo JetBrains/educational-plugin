@@ -272,14 +272,14 @@ class CCFrameworkLessonManager(
 
   @VisibleForTesting
   fun getRecord(task: Task): Int {
-    val key = task.getPathInCourse()
+    val key = task.pathInCourse
     return state.taskRecords[key] ?: -1
   }
 
   @VisibleForTesting
   fun updateRecord(task: Task, newRecord: Int) {
     if (task.parent !is FrameworkLesson) return
-    val key = task.getPathInCourse()
+    val key = task.pathInCourse
     state.updateTaskRecord(key, newRecord)
     task.record = newRecord
   }
@@ -288,7 +288,7 @@ class CCFrameworkLessonManager(
 
   fun removeRecord(task: Task) {
     if (task.parent !is FrameworkLesson) return
-    val key = task.getPathInCourse()
+    val key = task.pathInCourse
     state.removeTaskRecord(key)
   }
 
@@ -296,7 +296,7 @@ class CCFrameworkLessonManager(
     if (studyItem is Course) return
     val oldName = studyItem.name
 
-    val prefixPath = studyItem.parent.getPathInCourse()
+    val prefixPath = studyItem.parent.pathInCourse
 
     studyItem.visitTasks { task ->
       if (task.parent !is FrameworkLesson) return@visitTasks

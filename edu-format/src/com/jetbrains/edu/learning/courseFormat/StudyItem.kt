@@ -54,4 +54,21 @@ abstract class StudyItem() {
       id = System.identityHashCode(this)
     }
   }
+
+  fun getRelativePath(root: StudyItem): String {
+    if (this == root) return ""
+    val parents = mutableListOf<String>()
+    var currentParent = parent
+    while (currentParent != root) {
+      parents.add(currentParent.name)
+      currentParent = currentParent.parent
+    }
+    parents.reverse()
+    if (parents.isEmpty()) return name
+    parents.add(name)
+    return parents.joinToString("/")
+  }
+
+  val pathInCourse: String
+    get() = getRelativePath(course)
 }

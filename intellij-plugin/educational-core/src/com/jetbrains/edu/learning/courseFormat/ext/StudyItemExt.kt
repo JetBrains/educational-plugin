@@ -1,9 +1,11 @@
 package com.jetbrains.edu.learning.courseFormat.ext
 
-import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.StudyItemType
-import com.jetbrains.edu.coursecreator.StudyItemType.*
+import com.jetbrains.edu.coursecreator.StudyItemType.COURSE_TYPE
+import com.jetbrains.edu.coursecreator.StudyItemType.LESSON_TYPE
+import com.jetbrains.edu.coursecreator.StudyItemType.SECTION_TYPE
+import com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.LessonContainer
@@ -31,22 +33,6 @@ fun StudyItem.getDir(courseDir: VirtualFile): VirtualFile? {
     else -> error("Can't find directory for the item $itemType")
   }
 }
-
-fun StudyItem.getRelativePath(root: StudyItem): String {
-  if (this == root) return ""
-  val parents = mutableListOf<String>()
-  var currentParent = parent
-  while (currentParent != root) {
-    parents.add(currentParent.name)
-    currentParent = currentParent.parent
-  }
-  parents.reverse()
-  if (parents.isEmpty()) return name
-  parents.add(name)
-  return parents.joinToString(VfsUtilCore.VFS_SEPARATOR)
-}
-
-fun StudyItem.getPathInCourse(): String = getRelativePath(course)
 
 fun StudyItem.visitTasks(action: (Task) -> Unit) {
   when (this) {

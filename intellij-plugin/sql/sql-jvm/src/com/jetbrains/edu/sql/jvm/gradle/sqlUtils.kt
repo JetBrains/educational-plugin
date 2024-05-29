@@ -36,7 +36,6 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
-import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.sql.core.EduSqlBundle
@@ -96,7 +95,7 @@ fun Task.getBaseTaskDir(project: Project): VirtualFile? = lesson.getDir(project.
 
 
 fun createDataSources(project: Project, tasks: List<Task>): List<LocalDataSource> {
-  LOG.info("Setting up data sources for ${tasks.map { it.getPathInCourse() }} tasks")
+  LOG.info("Setting up data sources for ${tasks.map { it.pathInCourse }} tasks")
   val dataSourceRegistry = DataSourceRegistry(project)
   dataSourceRegistry.setImportedFlag(false)
   val dataSources = mutableListOf<LocalDataSource>()

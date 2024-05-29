@@ -12,7 +12,6 @@ import com.intellij.openapi.util.Disposer
 import com.jetbrains.edu.learning.LightTestAware
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
 import com.jetbrains.edu.learning.courseFormat.ext.visitEduFiles
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isLight
@@ -153,7 +152,7 @@ fun Task.persistEduFiles(project: Project) {
 
 val EduFile.pathInStorage: String
   get() = if (this is TaskFile) {
-    task.getPathInCourse() + "/"
+    task.pathInCourse + "/"
   }
   else {
     ""
