@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -25,10 +26,12 @@ class CCSyncChangesStateTest : EduActionTestCase() {
   @Test
   fun `test state change after saving document`() {
     val course = createFrameworkCourse()
-    val lesson = course.lessons.first()
+    val lesson = course.lessons.first() as FrameworkLesson
 
     val task = lesson.taskList.first()
 
+    assertNull(stateManager.getSyncChangesState(task))
+    assertNull(stateManager.getSyncChangesState(lesson))
     for (taskFile in task.taskFiles.values) {
       assertNull(stateManager.getSyncChangesState(taskFile))
     }
@@ -37,15 +40,19 @@ class CCSyncChangesStateTest : EduActionTestCase() {
       typeIntoFile(task, "src/Baz.kt", "fun baz() {}\n")
     }
 
+    assertEquals(SyncChangesTaskFileState.INFO, stateManager.getSyncChangesState(task))
+    assertEquals(SyncChangesTaskFileState.INFO, stateManager.getSyncChangesState(lesson))
     task.assertTaskFileState("src/Baz.kt", SyncChangesTaskFileState.INFO)
   }
 
   @Test
   fun `test state change after adding a new file`() {
     val course = createFrameworkCourse()
-    val lesson = course.lessons.first()
+    val lesson = course.lessons.first() as FrameworkLesson
     val task = lesson.taskList.first()
 
+    assertNull(stateManager.getSyncChangesState(task))
+    assertNull(stateManager.getSyncChangesState(lesson))
     for (taskFile in task.taskFiles.values) {
       assertNull(stateManager.getSyncChangesState(taskFile))
     }
@@ -54,16 +61,20 @@ class CCSyncChangesStateTest : EduActionTestCase() {
       GeneratorUtils.createTextChildFile(project, rootDir, "lesson1/task1/src/Bar.kt", "fun bar() {}")
     }
 
+    assertEquals(SyncChangesTaskFileState.WARNING, stateManager.getSyncChangesState(task))
+    assertEquals(SyncChangesTaskFileState.WARNING, stateManager.getSyncChangesState(lesson))
     task.assertTaskFileState("src/Bar.kt", SyncChangesTaskFileState.WARNING)
   }
 
   @Test
   fun `test state change in previous task after adding a new file`() {
     val course = createFrameworkCourse()
-    val lesson = course.lessons.first()
+    val lesson = course.lessons.first() as FrameworkLesson
 
     val task = lesson.taskList.first()
 
+    assertNull(stateManager.getSyncChangesState(task))
+    assertNull(stateManager.getSyncChangesState(lesson))
     for (taskFile in task.taskFiles.values) {
       assertNull(stateManager.getSyncChangesState(taskFile))
     }
@@ -74,16 +85,21 @@ class CCSyncChangesStateTest : EduActionTestCase() {
       GeneratorUtils.createTextChildFile(project, rootDir, "lesson1/task2/src/Bar.kt", "fun bar() {}")
     }
 
+    assertEquals(SyncChangesTaskFileState.INFO, stateManager.getSyncChangesState(task))
+    // because we have 3 tasks and we don't have this file in the third
+    assertEquals(SyncChangesTaskFileState.WARNING, stateManager.getSyncChangesState(lesson))
     task.assertTaskFileState("src/Bar.kt", SyncChangesTaskFileState.INFO)
   }
 
   @Test
   fun `test state change in previous task after removing a file`() {
     val course = createFrameworkCourse()
-    val lesson = course.lessons.first()
+    val lesson = course.lessons.first() as FrameworkLesson
 
     val task = lesson.taskList.first()
 
+    assertNull(stateManager.getSyncChangesState(task))
+    assertNull(stateManager.getSyncChangesState(lesson))
     for (taskFile in task.taskFiles.values) {
       assertNull(stateManager.getSyncChangesState(taskFile))
     }
@@ -94,16 +110,20 @@ class CCSyncChangesStateTest : EduActionTestCase() {
       }
     }
 
+    assertEquals(SyncChangesTaskFileState.WARNING, stateManager.getSyncChangesState(task))
+    assertEquals(SyncChangesTaskFileState.WARNING, stateManager.getSyncChangesState(lesson))
     task.assertTaskFileState("src/Task.kt", SyncChangesTaskFileState.WARNING)
   }
 
   @Test
   fun `test states change in previous task after removing a dir`() {
     val course = createFrameworkCourse()
-    val lesson = course.lessons.first()
+    val lesson = course.lessons.first() as FrameworkLesson
 
     val task = lesson.taskList.first()
 
+    assertNull(stateManager.getSyncChangesState(task))
+    assertNull(stateManager.getSyncChangesState(lesson))
     for (taskFile in task.taskFiles.values) {
       assertNull(stateManager.getSyncChangesState(taskFile))
     }
@@ -114,6 +134,8 @@ class CCSyncChangesStateTest : EduActionTestCase() {
       }
     }
 
+    assertEquals(SyncChangesTaskFileState.WARNING, stateManager.getSyncChangesState(task))
+    assertEquals(SyncChangesTaskFileState.WARNING, stateManager.getSyncChangesState(lesson))
     task.assertTaskFileState("src/Task.kt", SyncChangesTaskFileState.WARNING)
     task.assertTaskFileState("src/Baz.kt", SyncChangesTaskFileState.WARNING)
   }
@@ -121,11 +143,14 @@ class CCSyncChangesStateTest : EduActionTestCase() {
   @Test
   fun `test states change in previous task after removing a task`() {
     val course = createFrameworkCourse()
-    val lesson = course.lessons.first()
+    val lesson = course.lessons.first() as FrameworkLesson
 
     val task1 = lesson.taskList.first()
     val task2 = lesson.taskList[1]
 
+    assertNull(stateManager.getSyncChangesState(task1))
+    assertNull(stateManager.getSyncChangesState(task2))
+    assertNull(stateManager.getSyncChangesState(lesson))
     for (taskFile in task1.taskFiles.values) {
       assertNull(stateManager.getSyncChangesState(taskFile))
     }
@@ -148,6 +173,8 @@ class CCSyncChangesStateTest : EduActionTestCase() {
       }
     }
 
+    assertEquals(SyncChangesTaskFileState.WARNING, stateManager.getSyncChangesState(task1))
+    assertEquals(SyncChangesTaskFileState.WARNING, stateManager.getSyncChangesState(lesson))
     task1.assertTaskFileState("src/Bar.kt", SyncChangesTaskFileState.INFO)
     task1.assertTaskFileState("src/Task.kt", SyncChangesTaskFileState.WARNING)
   }
@@ -155,10 +182,12 @@ class CCSyncChangesStateTest : EduActionTestCase() {
   @Test
   fun `test states clears after sync changes operation`() {
     val course = createFrameworkCourse()
-    val lesson = course.lessons.first()
+    val lesson = course.lessons.first() as FrameworkLesson
 
     val task = lesson.taskList.first()
 
+    assertNull(stateManager.getSyncChangesState(task))
+    assertNull(stateManager.getSyncChangesState(lesson))
     for (taskFile in task.taskFiles.values) {
       assertNull(stateManager.getSyncChangesState(taskFile))
     }
@@ -169,16 +198,20 @@ class CCSyncChangesStateTest : EduActionTestCase() {
       invokeSyncChangesAction(task, listOf(MergeSession.Resolution.AcceptedYours, MergeSession.Resolution.AcceptedYours))
     }
 
+    assertEquals(null, stateManager.getSyncChangesState(task))
+    assertEquals(null, stateManager.getSyncChangesState(lesson))
     task.assertTaskFileState("src/Task.kt", null)
   }
 
   @Test
   fun `test states are always none for last task`() {
     val course = createFrameworkCourse()
-    val lesson = course.lessons.first()
+    val lesson = course.lessons.first() as FrameworkLesson
 
     val lastTask = lesson.taskList.last()
 
+    assertNull(stateManager.getSyncChangesState(lastTask))
+    assertNull(stateManager.getSyncChangesState(lesson))
     for (taskFile in lastTask.taskFiles.values) {
       assertNull(stateManager.getSyncChangesState(taskFile))
     }
@@ -187,6 +220,8 @@ class CCSyncChangesStateTest : EduActionTestCase() {
       typeIntoFile(lastTask, "src/Task.kt", "fun bar() {}\n")
     }
 
+    assertEquals(null, stateManager.getSyncChangesState(lastTask))
+    assertEquals(null, stateManager.getSyncChangesState(lesson))
     for (taskFile in lastTask.taskFiles.values) {
       assertNull(stateManager.getSyncChangesState(taskFile))
     }

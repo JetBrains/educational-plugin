@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.actions.move.MoveTestBase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import org.junit.Test
@@ -16,7 +17,7 @@ class CCSyncChangesStateMoveTest : MoveTestBase() {
   @Test
   fun `test state change after moving a file`() {
     val course = createFrameworkCourse()
-    val lesson = course.lessons.first()
+    val lesson = course.lessons.first() as FrameworkLesson
 
     for (task in lesson.taskList) {
       for (taskFile in task.taskFiles.values) {
@@ -26,6 +27,9 @@ class CCSyncChangesStateMoveTest : MoveTestBase() {
 
     val task1 = lesson.taskList[0]
     val task2 = lesson.taskList[1]
+    assertNull(stateManager.getSyncChangesState(task1))
+    assertNull(stateManager.getSyncChangesState(task2))
+    assertNull(stateManager.getSyncChangesState(lesson))
 
     withVirtualFileListener(course) {
       GeneratorUtils.createTextChildFile(project, rootDir, "lesson1/task1/src1/Bar.kt", "fun bar() {}")
@@ -34,6 +38,9 @@ class CCSyncChangesStateMoveTest : MoveTestBase() {
     }
     task1.assertTaskFileState("src1/Bar.kt", SyncChangesTaskFileState.INFO)
     task2.assertTaskFileState("src1/Bar.kt", SyncChangesTaskFileState.WARNING)
+    assertEquals(SyncChangesTaskFileState.INFO, stateManager.getSyncChangesState(task1))
+    assertEquals(SyncChangesTaskFileState.WARNING, stateManager.getSyncChangesState(task2))
+    assertEquals(SyncChangesTaskFileState.WARNING, stateManager.getSyncChangesState(lesson))
 
     val sourceFile = findPsiFile("lesson1/task2/src1/Bar.kt")
     val targetDir = findPsiDirectory("lesson1/task2/src2")
@@ -43,12 +50,15 @@ class CCSyncChangesStateMoveTest : MoveTestBase() {
     assertDoesntContain(task2.taskFiles.keys, "src1/Bar.kt")
     task1.assertTaskFileState("src1/Bar.kt", SyncChangesTaskFileState.WARNING)
     task2.assertTaskFileState("src2/Bar.kt", SyncChangesTaskFileState.INFO)
+    assertEquals(SyncChangesTaskFileState.WARNING, stateManager.getSyncChangesState(task1))
+    assertEquals(SyncChangesTaskFileState.INFO, stateManager.getSyncChangesState(task2))
+    assertEquals(SyncChangesTaskFileState.WARNING, stateManager.getSyncChangesState(lesson))
   }
 
   @Test
   fun `test state change after moving a folder`() {
     val course = createFrameworkCourse()
-    val lesson = course.lessons.first()
+    val lesson = course.lessons.first() as FrameworkLesson
 
     for (task in lesson.taskList) {
       for (taskFile in task.taskFiles.values) {
@@ -58,6 +68,9 @@ class CCSyncChangesStateMoveTest : MoveTestBase() {
 
     val task1 = lesson.taskList[0]
     val task2 = lesson.taskList[1]
+    assertNull(stateManager.getSyncChangesState(task1))
+    assertNull(stateManager.getSyncChangesState(task2))
+    assertNull(stateManager.getSyncChangesState(lesson))
 
     withVirtualFileListener(course) {
       GeneratorUtils.createTextChildFile(project, rootDir, "lesson1/task1/src2/Bar.kt", "fun bar() {}")
@@ -65,6 +78,9 @@ class CCSyncChangesStateMoveTest : MoveTestBase() {
       GeneratorUtils.createTextChildFile(project, rootDir, "lesson1/task3/src1/src2/Bar.kt", "fun bar() {}")
     }
 
+    assertEquals(SyncChangesTaskFileState.INFO, stateManager.getSyncChangesState(task1))
+    assertEquals(SyncChangesTaskFileState.WARNING, stateManager.getSyncChangesState(task2))
+    assertEquals(SyncChangesTaskFileState.WARNING, stateManager.getSyncChangesState(lesson))
     task1.assertTaskFileState("src2/Bar.kt", SyncChangesTaskFileState.INFO)
     task2.assertTaskFileState("src2/Bar.kt", SyncChangesTaskFileState.WARNING)
 
@@ -76,6 +92,9 @@ class CCSyncChangesStateMoveTest : MoveTestBase() {
     assertDoesntContain(task2.taskFiles.keys, "src2/Bar.kt")
     task1.assertTaskFileState("src2/Bar.kt", SyncChangesTaskFileState.WARNING)
     task2.assertTaskFileState("src1/src2/Bar.kt", SyncChangesTaskFileState.INFO)
+    assertEquals(SyncChangesTaskFileState.WARNING, stateManager.getSyncChangesState(task1))
+    assertEquals(SyncChangesTaskFileState.WARNING, stateManager.getSyncChangesState(task2))
+    assertEquals(SyncChangesTaskFileState.WARNING, stateManager.getSyncChangesState(lesson))
   }
 
   private fun createFrameworkCourse(): Course = courseWithFiles(
