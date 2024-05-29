@@ -58,6 +58,8 @@ class TaskProcessorImpl(val task: Task) : TaskProcessor {
     localTask.project?.let { localTask.getTaskTextFromTask(it) } ?: localTask.descriptionText
   }
 
+  fun getErrorDetails() = if (task.status == CheckStatus.Failed) task.feedback?.details else null
+
   private fun getTaskContentHtmlDocument() = Jsoup.parse(getTaskText(task).trimIndent())
 
   override fun getTaskTextRepresentation(): String {
