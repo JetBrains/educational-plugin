@@ -23,7 +23,10 @@ import java.util.*
 @Throws(IOException::class)
 fun createCourseFromJson(pathToJson: String, courseMode: CourseMode, isEncrypted: Boolean = false): EduCourse {
   val courseJson = File(pathToJson).readText()
-  val courseMapper = getCourseMapper()
+  val courseMapper = getCourseMapper(object: FileContentsFactory {
+    override fun createBinaryContents(file: EduFile) = throw IllegalStateException("description of edu file ${file.pathInCourse} must contain the 'text' field")
+    override fun createTextualContents(file: EduFile) = throw IllegalStateException("description of edu file ${file.pathInCourse} must contain the 'text' field")
+  })
   configureCourseMapper(courseMapper, isEncrypted)
   var objectNode = courseMapper.readTree(courseJson) as ObjectNode
   objectNode = migrate(objectNode)

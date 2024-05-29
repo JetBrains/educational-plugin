@@ -4,6 +4,7 @@ package com.jetbrains.edu.learning.json
 
 import com.fasterxml.jackson.core.JsonToken
 import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.InjectableValues
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.json.JsonMapper
@@ -31,9 +32,9 @@ private val LOG = logger<LocalEduCourseMixin>()
 
 private class CourseJsonParsingException(message: String): Exception(message)
 
-fun readCourseJson(reader: () -> Reader): Course? {
+fun readCourseJson(reader: () -> Reader, fileContentsFactory: FileContentsFactory): Course? {
   return try {
-    val courseMapper = getCourseMapper()
+    val courseMapper = getCourseMapper(fileContentsFactory)
     val isArchiveEncrypted = reader().use { currentReader ->
       isArchiveEncrypted(currentReader, courseMapper)
     }
@@ -127,13 +128,16 @@ fun migrate(node: ObjectNode, maxVersion: Int): ObjectNode {
   return jsonObject
 }
 
-fun getCourseMapper(): ObjectMapper {
+fun getCourseMapper(fileContentsFactory: FileContentsFactory): ObjectMapper {
   return JsonMapper.builder()
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     .disable(MapperFeature.AUTO_DETECT_FIELDS)
     .disable(MapperFeature.AUTO_DETECT_GETTERS)
     .disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
     .disable(MapperFeature.AUTO_DETECT_CREATORS)
+    .injectableValues(InjectableValues.Std(mapOf(
+      FILE_CONTENTS_FACTORY_INJECTABLE_VALUE to fileContentsFactory
+    )))
     .setDateFormat()
     .build()
 }

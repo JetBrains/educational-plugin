@@ -28,7 +28,9 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSE_META_FILE
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.FileContentsFactory
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.zip.FileContentsFromZipFactory
 import com.jetbrains.edu.learning.json.configureCourseMapper
 import com.jetbrains.edu.learning.json.getCourseMapper
 import com.jetbrains.edu.learning.json.migrate
@@ -108,13 +110,17 @@ object EduUtilsKt {
     return getLocalCourse(zipFilePath, ::readCourseraCourseJson)
   }
 
-  fun getLocalCourse(zipFilePath: String, readCourseJson: (() -> Reader) -> Course? = ::readCourseJson): Course? {
+  fun getLocalCourse(
+    zipFilePath: String,
+    readCourseJson: (() -> Reader, fileContentsFactory: FileContentsFactory) -> Course? = ::readCourseJson
+  ): Course? {
     try {
       return ZipFile(zipFilePath).use { zipFile ->
-        val entry = zipFile.getEntry(COURSE_META_FILE) ?: return null
-        val reader = { zipFile.getInputStream(entry).reader(StandardCharsets.UTF_8) }
-        readCourseJson(reader)?.cutOutHeader()
-      }
+          val entry = zipFile.getEntry(COURSE_META_FILE) ?: return null
+          val reader = { zipFile.getInputStream(entry).reader(StandardCharsets.UTF_8) }
+
+          readCourseJson(reader, FileContentsFromZipFactory(zipFilePath))?.cutOutHeader()
+        }
     }
     catch (e: IOException) {
       LOG.error("Failed to unzip course archive", e)
@@ -203,9 +209,9 @@ object EduUtilsKt {
   private val LOG = logger<EduUtilsKt>()
 }
 
-private fun readCourseraCourseJson(reader: () -> Reader): Course? {
+private fun readCourseraCourseJson(reader: () -> Reader, fileContentsFactory: FileContentsFactory): Course? {
   return try {
-    val courseMapper = getCourseMapper()
+    val courseMapper = getCourseMapper(fileContentsFactory)
     courseMapper.addMixIn(CourseraCourse::class.java, CourseraCourseMixin::class.java)
     courseMapper.configureCourseMapper(false)
     var courseNode = reader().use { currentReader ->
