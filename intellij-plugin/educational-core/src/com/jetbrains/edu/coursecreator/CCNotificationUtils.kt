@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.NotificationContent
 import com.intellij.openapi.util.NlsContexts.NotificationTitle
 import com.jetbrains.edu.learning.courseFormat.StudyItem
-import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 object CCNotificationUtils {
@@ -19,7 +18,7 @@ object CCNotificationUtils {
     get() = ActionManager.getInstance().getAction("ShowLog")
 
   fun showFailedToPostItemNotification(project: Project, item: StudyItem, isNew: Boolean) {
-    val pathInCourse = item.getPathInCourse()
+    val pathInCourse = item.pathInCourse
 
     val title = if (isNew) EduCoreBundle.message("notification.course.creator.failed.to.upload.item.title")
     else EduCoreBundle.message("notification.course.creator.failed.to.update.item.title")

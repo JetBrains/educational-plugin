@@ -33,7 +33,6 @@ import com.jetbrains.edu.learning.EduDocumentListener.Companion.runWithListener
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.macro.EduMacroUtils
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
@@ -274,7 +273,7 @@ fun VirtualFile.toStudentFile(project: Project, task: Task, indicator: CourseArc
     val taskFile = taskCopy.getTaskFile(pathRelativeToTask(project)) ?: return null
     if (isToEncodeContent) {
       if (task.lesson is FrameworkLesson && length >= getBinaryFileLimit()) {
-        throw HugeBinaryFileException("${task.getPathInCourse()}/${taskFile.name}", length, getBinaryFileLimit().toLong(), true)
+        throw HugeBinaryFileException("${task.pathInCourse}/${taskFile.name}", length, getBinaryFileLimit().toLong(), true)
       }
       taskFile.contents = BinaryContentsFromDisk(this, indicator)
       return taskFile

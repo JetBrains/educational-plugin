@@ -24,7 +24,6 @@ import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.jvm.courseGeneration.JvmCourseGenerationTestBase
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
-import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.jetbrains.concurrency.AsyncPromise
 import org.jetbrains.concurrency.Promise
@@ -52,7 +51,7 @@ abstract class SqlCourseGenerationTestBase : JvmCourseGenerationTestBase() {
     }
 
     check(tasks.isEmpty()) {
-      "Tasks ${tasks.joinToString { "`${it.getPathInCourse()}`" }} don't have data sources"
+      "Tasks ${tasks.joinToString { "`${it.pathInCourse}`" }} don't have data sources"
     }
   }
 

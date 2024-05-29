@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.feedback
 
 import com.intellij.openapi.project.Project
 import com.intellij.platform.feedback.dialog.CommonFeedbackSystemData
-import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
@@ -15,7 +14,7 @@ class StudentInIdeFeedbackDialog(
     JbAcademyStudentFeedbackSystemInfoData(
       CommonFeedbackSystemData.getCurrentData(),
       CourseFeedbackInfoData.from(task.course),
-      task.getPathInCourse()
+      task.pathInCourse
     )
   }
 
