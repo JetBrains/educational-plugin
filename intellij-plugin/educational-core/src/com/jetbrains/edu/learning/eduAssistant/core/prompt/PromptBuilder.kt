@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 interface PromptBuilder {
 
   fun buildTextHintPrompt(
+    taskProcessor: TaskProcessor,
     codeHint: String,
     codeStr: String,
     language: String

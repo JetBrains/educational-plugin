@@ -4,22 +4,25 @@ import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 
 class CompilationErrorPromptBuilder : PromptBuilder {
 
-  override fun buildTextHintPrompt(codeHint: String, codeStr: String, language: String) = """
+  override fun buildTextHintPrompt(taskProcessor: TaskProcessor, codeHint: String, codeStr: String, language: String) = """
     Based on the given code and the improved version of the code, provide a concise textual hint that directly guides to improve the given code.
     The code contains a compilation error, and the improved code fixes this error.
     
     The code:
     ```$language
-    <$codeStr>
+    $codeStr
     ```
     
     The improved version of the code:
     ```$language
-    <$codeHint>
+    $codeHint
     ```
     
-    Respond with a brief textual instruction in imperative form of what modifications need to be made to the code to achieve the improvements exhibited in the improved code. 
+    Compilation error details: <${taskProcessor.getErrorDetails()}>
+    
+    Respond with a brief textual instruction in imperative form of what modifications need to be made to the code to fix the error exhibited in the improved code. 
     Do not write any code, except names of functions or string literals. 
+    Do not write in which file and in which line of code the error is made.
   """.trimIndent()
 
   override fun buildTextHintPromptIfNoCodeHintIsGenerated(
@@ -31,10 +34,12 @@ class CompilationErrorPromptBuilder : PromptBuilder {
     
     The code:
     ```$language
-    <$codeStr>
+    $codeStr
     ```
     
-    Respond with a brief textual instruction in imperative form of how to fix it.
+    Compilation error details: <${taskProcessor.getErrorDetails()}>
+    
+    Respond with a brief explanation in a few words of what caused the error and a brief textual instruction in imperative form of how to fix it.
     Do not write any code, except names of functions that can be used in the solution.
   """.trimIndent()
 

@@ -44,6 +44,8 @@ class TaskProcessor(val task: Task) {
 
   fun getActualValue() = if (task.status == CheckStatus.Failed) task.feedback?.actual else null
 
+  fun getErrorDetails() = if (task.status == CheckStatus.Failed) task.feedback?.details else null
+
   private fun getTaskText(localTask: Task): String {
     return runReadAction { localTask.project?.let { localTask.getTaskTextFromTask(it) } ?: localTask.descriptionText }
   }

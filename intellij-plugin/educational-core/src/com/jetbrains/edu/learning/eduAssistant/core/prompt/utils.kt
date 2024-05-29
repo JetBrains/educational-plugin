@@ -7,7 +7,7 @@ fun formatCodeResponsePrompt(description: String, codeStr: String, language: Str
     
     The student's code:
     ```$language
-    <$codeStr>
+    $codeStr
     ```
     
     ${buildTaskErrorInformation(taskProcessor)}

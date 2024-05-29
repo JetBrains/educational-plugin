@@ -6,18 +6,18 @@ import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 
 class NextStepHintPromptBuilder : PromptBuilder {
 
-  override fun buildTextHintPrompt(codeHint: String, codeStr: String, language: String) = """
+  override fun buildTextHintPrompt(taskProcessor: TaskProcessor, codeHint: String, codeStr: String, language: String) = """
     Based on the given code and the improved version of the code, provide a concise textual hint that directly guides to improve the given code.
     Here is the current code and the improved version of the code, all delimited with <>:
     
     The code:
     ```$language
-    <$codeStr>
+    $codeStr
     ```
     
     The improved version of the code:
     ```$language
-    <$codeHint>
+    $codeHint
     ```
     
     Respond with a brief textual instruction in imperative form of what modifications need to be made to the code to achieve the improvements exhibited in the improved code. 
@@ -51,7 +51,7 @@ class NextStepHintPromptBuilder : PromptBuilder {
     
     The code:
     ```$language
-    <$codeStr>
+    $codeStr
     ```
     
     ${buildTaskErrorInformation(taskProcessor)}
