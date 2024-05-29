@@ -6,7 +6,6 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -16,6 +15,7 @@ import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.CancelHintAction.Companion.closeDiffWindow
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.submissions.getTexts
+import com.jetbrains.edu.learning.submissions.writeTexts
 import org.jetbrains.annotations.NonNls
 import javax.swing.JButton
 
@@ -47,7 +47,7 @@ class AcceptHintAction : JButtonAction(EduCoreBundle.message("action.Educational
       check(localDocuments.size == fileNames.size)
       val submissionsTexts = diffRequestChain.getTexts(fileNames.size)
       val runnableCommand = {
-        localDocuments.writeSubmissionsTexts(submissionsTexts)
+        localDocuments.writeTexts(submissionsTexts)
       }
       CommandProcessor.getInstance().executeCommand(project, runnableCommand, this.templatePresentation.text, ACTION_ID)
     }
@@ -65,12 +65,6 @@ class AcceptHintAction : JButtonAction(EduCoreBundle.message("action.Educational
   private fun findLocalDocument(fileName: String): Document? {
     val file = LocalFileSystem.getInstance().findFileByPath(fileName) ?: return null
     return FileDocumentManager.getInstance().getDocument(file)
-  }
-
-  private fun List<Document>.writeSubmissionsTexts(submissionsTexts: List<String>): Unit = runWriteAction {
-    zip(submissionsTexts).forEach { (document, submissionText) ->
-      document.setText(submissionText)
-    }
   }
 
   companion object {

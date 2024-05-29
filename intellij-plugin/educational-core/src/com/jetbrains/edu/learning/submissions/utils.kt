@@ -7,11 +7,14 @@ import com.intellij.diff.chains.SimpleDiffRequestChain
 import com.intellij.diff.contents.DocumentContentBase
 import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.testFramework.utils.editor.saveToDisk
 import com.intellij.util.Time
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
@@ -84,4 +87,11 @@ fun DiffRequestChain.getTexts(size: Int): List<String> {
   val diffRequestWrappers = List(size) { requests[it] as SimpleDiffRequestChain.DiffRequestProducerWrapper }
   val diffRequests = diffRequestWrappers.map { it.request as SimpleDiffRequest }
   return diffRequests.map { it.contents[1] as DocumentContentBase }.map { it.document.text }
+}
+
+fun List<Document>.writeTexts(texts: List<String>): Unit = runWriteAction {
+  zip(texts).forEach { (document, text) ->
+    document.setText(text)
+    document.saveToDisk()
+  }
 }
