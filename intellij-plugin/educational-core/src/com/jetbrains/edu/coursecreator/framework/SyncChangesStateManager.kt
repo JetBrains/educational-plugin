@@ -12,10 +12,7 @@ import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.FileInfo
-import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.LessonContainer
-import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.impl.visitFrameworkLessons
 import com.jetbrains.edu.learning.isFeatureEnabled
@@ -87,6 +84,30 @@ class SyncChangesStateManager(private val project: Project) {
   fun updateSyncChangesState(task: Task) {
     if (!checkRequirements(task.lesson)) return
     updateSyncChangesState(task, task.taskFiles.values.toList())
+  }
+
+  fun getSyncChangesState(lesson: FrameworkLesson): SyncChangesTaskFileState? {
+    if (!checkRequirements(lesson)) return null
+    return collectState(lesson.taskList, ::getSyncChangesState)
+  }
+
+  fun getSyncChangesState(task: Task): SyncChangesTaskFileState? {
+    if (!checkRequirements(task.lesson)) return null
+    return collectState(task.taskFiles.values.toList()) { stateStorage[it] }
+  }
+
+  /**
+   * Collects the SyncChangesTaskFileState based on the provided collect function.
+   * The state represents the synchronization status of the files and will be displayed in the project view.
+   */
+  private fun <T> collectState(items: Iterable<T>, collect: (T) -> SyncChangesTaskFileState?): SyncChangesTaskFileState? {
+    var resultState: SyncChangesTaskFileState? = null
+    for (item in items) {
+      val state = collect(item) ?: continue
+      if (state == SyncChangesTaskFileState.WARNING) return SyncChangesTaskFileState.WARNING
+      resultState = SyncChangesTaskFileState.INFO
+    }
+    return resultState
   }
 
   // In addition/deletion of files, framework lesson structure might break/restore,

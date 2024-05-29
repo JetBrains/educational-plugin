@@ -9,17 +9,18 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiManager
+import com.intellij.ui.LayeredIcon
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.coursecreator.framework.SyncChangesStateManager
+import com.jetbrains.edu.coursecreator.framework.SyncChangesTaskFileState
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
-import com.jetbrains.edu.learning.pathRelativeToTask
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import org.jetbrains.annotations.TestOnly
 import javax.swing.Icon
@@ -104,7 +105,7 @@ object CourseViewUtils {
   }
 
   fun getIcon(item: StudyItem): Icon {
-    return when (item) {
+    val icon = when (item) {
       is Course -> item.icon
       is Section -> {
         if (item.isSolved) EducationalCoreIcons.SectionSolved else EducationalCoreIcons.Section
@@ -114,6 +115,23 @@ object CourseViewUtils {
       }
       is Task -> item.icon
       else -> error("Unexpected item type: ${item.javaClass.simpleName}")
+    }
+    val modifier = getSyncChangesModifier(item) ?: return icon
+    return LayeredIcon.create(icon, modifier)
+  }
+
+  private fun getSyncChangesModifier(item: StudyItem): Icon? {
+    val project = item.course.project ?: return null
+    val syncChangesStateManager = SyncChangesStateManager.getInstance(project)
+    val state = when (item) {
+      is Task -> syncChangesStateManager.getSyncChangesState(item)
+      is FrameworkLesson -> syncChangesStateManager.getSyncChangesState(item)
+      else -> null
+    }
+    return when (state) {
+      SyncChangesTaskFileState.INFO -> EducationalCoreIcons.SyncFilesModInfo
+      SyncChangesTaskFileState.WARNING -> EducationalCoreIcons.SyncFilesModWarning
+      else -> null
     }
   }
 
