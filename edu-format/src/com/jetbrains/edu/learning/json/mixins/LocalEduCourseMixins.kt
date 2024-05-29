@@ -3,6 +3,7 @@
 
 package com.jetbrains.edu.learning.json.mixins
 
+import com.fasterxml.jackson.annotation.JacksonInject
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
@@ -18,6 +19,9 @@ import com.fasterxml.jackson.databind.util.StdConverter
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.MARKETPLACE
 import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.courseFormat.EmtpyFileContentFactory
+import com.jetbrains.edu.learning.courseFormat.FILE_CONTENTS_FACTORY_INJECTABLE_VALUE
+import com.jetbrains.edu.learning.courseFormat.FileContentsFactory
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -480,7 +484,7 @@ private open class EduFileBuilder {
   var isVisible: Boolean = true
   @JsonProperty(TEXT)
   @Encrypt
-  lateinit var text: String
+  var text: String? = null
   @JsonProperty(IS_BINARY)
   var isBinary: Boolean? = null
   @JsonProperty(IS_EDITABLE)
@@ -489,6 +493,9 @@ private open class EduFileBuilder {
   var isPropagatable: Boolean = true
   @JsonProperty(HIGHLIGHT_LEVEL)
   var errorHighlightLevel: EduFileErrorHighlightLevel = EduFileErrorHighlightLevel.TEMPORARY_SUPPRESSION
+
+  @JacksonInject(FILE_CONTENTS_FACTORY_INJECTABLE_VALUE)
+  var fileContentsFactory: FileContentsFactory = EmtpyFileContentFactory
 
   private fun build(): EduFile {
     val result = EduFile()
@@ -503,10 +510,21 @@ private open class EduFileBuilder {
     result.isEditable = isEditable
     result.isPropagatable = isPropagatable
     result.errorHighlightLevel = errorHighlightLevel
-    result.contents = when (isBinary) {
-      true -> InMemoryBinaryContents.parseBase64Encoding(text)
-      false -> InMemoryTextualContents(text)
-      null -> InMemoryUndeterminedContents(text)
+
+    val text = this.text
+    if (text != null) {
+      result.contents = when (isBinary) {
+        true -> InMemoryBinaryContents.parseBase64Encoding(text)
+        false -> InMemoryTextualContents(text)
+        null -> InMemoryUndeterminedContents(text)
+      }
+    }
+    else {
+      result.contents = when (isBinary) {
+        true -> fileContentsFactory.createBinaryContents(result)
+        false -> fileContentsFactory.createTextualContents(result)
+        null -> throw IllegalStateException("If the text field is absent, it must contain file binarity")
+      }
     }
   }
 }
