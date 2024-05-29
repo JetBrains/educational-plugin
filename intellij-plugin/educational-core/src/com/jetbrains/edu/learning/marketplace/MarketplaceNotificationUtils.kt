@@ -208,4 +208,11 @@ object MarketplaceNotificationUtils {
       .setIcon(ExpUiIcons.Status.Success)
       .notify(project)
   }
+
+  fun showSubmissionNotPostedNotification(project: Project, course: EduCourse, taskName: String) {
+    EduNotificationManager.create(INFORMATION,
+      @Suppress("DialogTitleCapitalization") EduCoreBundle.message("error.solution.not.posted"),
+      EduCoreBundle.message("notification.content.task.was.updated", taskName),
+    ).addAction(NotificationAction.create { course.checkForUpdates(project, true) {} }).notify(project)
+  }
 }

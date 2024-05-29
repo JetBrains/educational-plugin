@@ -2,36 +2,42 @@ package com.jetbrains.edu.learning.marketplace
 
 import com.intellij.execution.process.ProcessIOExecutorService
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
+import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showSubmissionNotPostedNotification
 import com.jetbrains.edu.learning.marketplace.actions.PostMarketplaceProjectToGitHub
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.stepik.PostSolutionCheckListener
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.SolutionSharingInlineBanners
 import java.util.concurrent.CompletableFuture
 
-class MarketplaceCheckListener: PostSolutionCheckListener() {
-
-  override fun EduCourse.isToPostSubmissions(): Boolean = isMarketplaceRemote
-
-  override fun postSubmission(project: Project, task: Task, result: CheckResult): MarketplaceSubmission {
-    return MarketplaceSubmissionsConnector.getInstance().postSubmission(project, task, result)
-  }
-
-  override fun isUpToDate(course: EduCourse, task: Task): Boolean = course.isUpToDate
-
-  override fun updateCourseAction(project: Project, course: EduCourse) = course.checkForUpdates(project, true) {}
+class MarketplaceCheckListener : CheckListener {
 
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
-    super.afterCheck(project, task, result)
+    val course = task.lesson.course as? EduCourse ?: return
+
+    if (!course.isStudy || !course.isMarketplaceRemote || !task.isToSubmitToRemote) return
+
+    val submissionsManager = SubmissionsManager.getInstance(project)
+    MarketplaceConnector.getInstance().isLoggedInAsync().thenApplyAsync { isLoggedIn ->
+      if (!isLoggedIn) return@thenApplyAsync
+
+      if (course.isUpToDate) {
+        val submission = MarketplaceSubmissionsConnector.getInstance().postSubmission(project, task, result)
+        submissionsManager.addToSubmissionsWithStatus(task.id, task.status, submission)
+      }
+      else {
+        showSubmissionNotPostedNotification(project, course, task.name)
+      }
+    }
+
     EduCounterUsageCollector.submissionSuccess(result.isSolved)
 
-    if (!result.isSolved || !project.isStudentProject()) return
+    if (!result.isSolved) return
 
     PostMarketplaceProjectToGitHub.promptIfNeeded(project)
 
