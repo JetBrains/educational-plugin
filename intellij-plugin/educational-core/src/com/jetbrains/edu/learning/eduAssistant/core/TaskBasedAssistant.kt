@@ -85,15 +85,12 @@ class TaskBasedAssistant : Assistant {
       )
       return nextStepCodeFromSolution
     } else {
-      var reducedCodeHint = codeHint
-      if (promptBuilder is NextStepHintPromptBuilder) {
-        Loggers.hintTimingLogger.info("Retrieving the function psi from student code for task-id: ${task.id}")
-        val functionFromCode = taskProcessor.getFunctionPsiWithName(codeStr, functionName, project, languageId)
-        Loggers.hintTimingLogger.info("Retrieving the function psi from code hint for task-id: ${task.id}")
-        val functionFromCodeHint = taskProcessor.getFunctionPsiWithName(codeHint, functionName, project, languageId)
-        Loggers.hintTimingLogger.info("Reducing the code hint for task-id: ${task.id}")
-        reducedCodeHint = taskProcessor.reduceChangesInCodeHint(functionFromCode?.copy(), functionFromCodeHint?.copy(), project, languageId)
-      }
+      Loggers.hintTimingLogger.info("Retrieving the function psi from student code for task-id: ${task.id}")
+      val functionFromCode = taskProcessor.getFunctionPsiWithName(codeStr, functionName, project, languageId)
+      Loggers.hintTimingLogger.info("Retrieving the function psi from code hint for task-id: ${task.id}")
+      val functionFromCodeHint = taskProcessor.getFunctionPsiWithName(codeHint, functionName, project, languageId)
+      Loggers.hintTimingLogger.info("Reducing the code hint for task-id: ${task.id}")
+      val reducedCodeHint = taskProcessor.reduceChangesInCodeHint(functionFromCode?.copy(), functionFromCodeHint?.copy(), project, languageId)
       Loggers.hintTimingLogger.info("Applying inspections to the code hint for task-id: ${task.id}")
       //TODO: investigate wrong cases
       val nextStepCodeHint = applyInspections(reducedCodeHint, project, languageId)
@@ -150,7 +147,11 @@ class TaskBasedAssistant : Assistant {
       currentTaskFile = task.taskFiles[task.taskFilesWithChangedFunctions?.filter { (_, functions) ->
         functionName in functions
       }?.firstOrNull()?.key ?: state.taskFile.name] ?: state.taskFile
-      return getEnhancedCodeHint(taskProcessor, functionName, codeStr, codeHint, state)
+      return if (promptBuilder is NextStepHintPromptBuilder) {
+        getEnhancedCodeHint(taskProcessor, functionName, codeStr, codeHint, state)
+      } else {
+        codeHint
+      }
     } catch (e: IllegalStateException) {
       Loggers.eduAssistantLogger.error("Error occurred: ${e.stackTraceToString()}")
       return null

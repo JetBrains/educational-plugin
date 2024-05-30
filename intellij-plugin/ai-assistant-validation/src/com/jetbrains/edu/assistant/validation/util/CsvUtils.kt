@@ -116,3 +116,38 @@ data class MultipleCodeHintDataframeRecord(
     )
   }
 }
+
+data class MultipleCodeHintWithErrorDataframeRecord(
+  val hintIndex: Int,
+  val taskId: Int,
+  val taskName: String,
+  val taskDescription: String,
+  val codeHintPrompt: String? = null,
+  val userCode: String?,
+  val generatedCode: String?,
+  val testStatus: String? = null,
+  val errorMessage: String? = null
+) {
+  constructor(
+    hintIndex: Int,
+    taskId: Int,
+    taskName: String,
+    taskDescription: String,
+    userCode: String,
+    error: Throwable
+  ) : this(
+    hintIndex,
+    taskId,
+    taskName,
+    taskDescription,
+    userCode = userCode,
+    generatedCode = "Error while generating hint: ${error.message}",
+  )
+
+  companion object {
+    fun buildFrom(record: CSVRecord) = MultipleCodeHintWithErrorDataframeRecord(
+      record.get(0).toInt(), record.get(1).toInt(), record.get(2), record.get(3),
+      record.get(4), record.get(5), record.get(8), record.get(9)
+    )
+  }
+}

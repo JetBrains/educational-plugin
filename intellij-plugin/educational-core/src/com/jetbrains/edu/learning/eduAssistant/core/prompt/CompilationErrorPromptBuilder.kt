@@ -7,6 +7,7 @@ class CompilationErrorPromptBuilder : PromptBuilder {
   override fun buildTextHintPrompt(taskProcessor: TaskProcessor, codeHint: String, codeStr: String, language: String) = """
     Based on the given code and the improved version of the code, provide a concise textual hint that directly guides to improve the given code.
     The code contains a compilation error, and the improved code fixes this error.
+    Your objective is to identify compilation errors, and offering clear, educational feedback. 
     
     The code:
     ```$language
@@ -20,9 +21,10 @@ class CompilationErrorPromptBuilder : PromptBuilder {
     
     Compilation error details: <${taskProcessor.getErrorDetails()}>
     
-    Respond with a brief textual instruction in imperative form of what modifications need to be made to the code to fix the error exhibited in the improved code. 
-    Do not write any code, except names of functions or string literals. 
-    Do not write in which file and in which line of code the error is made.
+    Respond with a BRIEF EXPLICIT explanation in a few words of how the compilation errors appear in the code and a BRIEF textual instruction in IMPERATIVE form of what modifications need to be made to the code to fix the error exhibited in the improved code. 
+    DO NOT write any code, except names of functions or string literals. 
+    DO NOT write in which file and in which line of code the error is made.
+    DO NOT INCLUDE introductory or concluding remarks, and MUST NOT include unessential general feedback, or use advanced vocabulary.   
   """.trimIndent()
 
   override fun buildTextHintPromptIfNoCodeHintIsGenerated(
@@ -40,7 +42,7 @@ class CompilationErrorPromptBuilder : PromptBuilder {
     Compilation error details: <${taskProcessor.getErrorDetails()}>
     
     Respond with a brief explanation in a few words of what caused the error and a brief textual instruction in imperative form of how to fix it.
-    Do not write any code, except names of functions that can be used in the solution.
+    DO NOT write any code, except names of functions that can be used in the solution.
   """.trimIndent()
 
   override fun buildCodeHintPrompt(
@@ -50,7 +52,10 @@ class CompilationErrorPromptBuilder : PromptBuilder {
   ) = formatCodeResponsePrompt("""
     Generate a modified version of the provided student's code that incorporates the compilation error fix. 
     Try to maintain the original structure of the student's code and focus especially on addressing the error.
-    Here is the student's code, delimited with <>:
+    The result MUST FOLLOW best practices for the $language programming language.
+    Here is the compilation error details and the student's code, all delimited with <>:
+    
+    Compilation error details: <${taskProcessor.getErrorDetails()}>
   """.trimIndent(), codeStr, language, taskProcessor)
 
   override fun buildCodeHintPromptFromTextHint(
