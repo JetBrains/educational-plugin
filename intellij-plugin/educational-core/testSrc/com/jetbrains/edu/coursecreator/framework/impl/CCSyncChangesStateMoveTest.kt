@@ -36,6 +36,9 @@ class CCSyncChangesStateMoveTest : MoveTestBase() {
       GeneratorUtils.createTextChildFile(project, rootDir, "lesson1/task2/src1/Bar.kt", "fun bar() {}")
       GeneratorUtils.createTextChildFile(project, rootDir, "lesson1/task3/src2/Bar.kt", "fun bar() {}")
     }
+
+    stateManager.waitForAllRequestsProcessed()
+
     task1.assertTaskFileState("src1/Bar.kt", SyncChangesTaskFileState.INFO)
     task2.assertTaskFileState("src1/Bar.kt", SyncChangesTaskFileState.WARNING)
     assertEquals(SyncChangesTaskFileState.INFO, stateManager.getSyncChangesState(task1))
@@ -46,6 +49,8 @@ class CCSyncChangesStateMoveTest : MoveTestBase() {
     val targetDir = findPsiDirectory("lesson1/task2/src2")
 
     doMoveAction(course, sourceFile, targetDir)
+
+    stateManager.waitForAllRequestsProcessed()
 
     assertDoesntContain(task2.taskFiles.keys, "src1/Bar.kt")
     task1.assertTaskFileState("src1/Bar.kt", SyncChangesTaskFileState.WARNING)
@@ -78,6 +83,8 @@ class CCSyncChangesStateMoveTest : MoveTestBase() {
       GeneratorUtils.createTextChildFile(project, rootDir, "lesson1/task3/src1/src2/Bar.kt", "fun bar() {}")
     }
 
+    stateManager.waitForAllRequestsProcessed()
+
     assertEquals(SyncChangesTaskFileState.INFO, stateManager.getSyncChangesState(task1))
     assertEquals(SyncChangesTaskFileState.WARNING, stateManager.getSyncChangesState(task2))
     assertEquals(SyncChangesTaskFileState.WARNING, stateManager.getSyncChangesState(lesson))
@@ -88,6 +95,8 @@ class CCSyncChangesStateMoveTest : MoveTestBase() {
     val targetDir = findPsiDirectory("lesson1/task2/src1")
 
     doMoveAction(course, sourceDir, targetDir)
+
+    stateManager.waitForAllRequestsProcessed()
 
     assertDoesntContain(task2.taskFiles.keys, "src2/Bar.kt")
     task1.assertTaskFileState("src2/Bar.kt", SyncChangesTaskFileState.WARNING)
@@ -114,6 +123,7 @@ class CCSyncChangesStateMoveTest : MoveTestBase() {
 
   private fun Task.assertTaskFileState(taskFileName: String, state: SyncChangesTaskFileState?) {
     val taskFile = getTaskFile(taskFileName)!!
+    stateManager.waitForAllRequestsProcessed()
     assertEquals(state, stateManager.getSyncChangesState(taskFile))
   }
 

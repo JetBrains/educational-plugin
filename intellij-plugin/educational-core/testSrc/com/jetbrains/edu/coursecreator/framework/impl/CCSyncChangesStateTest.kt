@@ -40,6 +40,8 @@ class CCSyncChangesStateTest : EduActionTestCase() {
       typeIntoFile(task, "src/Baz.kt", "fun baz() {}\n")
     }
 
+    stateManager.waitForAllRequestsProcessed()
+
     assertEquals(SyncChangesTaskFileState.INFO, stateManager.getSyncChangesState(task))
     assertEquals(SyncChangesTaskFileState.INFO, stateManager.getSyncChangesState(lesson))
     task.assertTaskFileState("src/Baz.kt", SyncChangesTaskFileState.INFO)
@@ -60,6 +62,8 @@ class CCSyncChangesStateTest : EduActionTestCase() {
     withVirtualFileListener(course) {
       GeneratorUtils.createTextChildFile(project, rootDir, "lesson1/task1/src/Bar.kt", "fun bar() {}")
     }
+
+    stateManager.waitForAllRequestsProcessed()
 
     assertEquals(SyncChangesTaskFileState.WARNING, stateManager.getSyncChangesState(task))
     assertEquals(SyncChangesTaskFileState.WARNING, stateManager.getSyncChangesState(lesson))
@@ -84,6 +88,8 @@ class CCSyncChangesStateTest : EduActionTestCase() {
       task.assertTaskFileState("src/Bar.kt", SyncChangesTaskFileState.WARNING)
       GeneratorUtils.createTextChildFile(project, rootDir, "lesson1/task2/src/Bar.kt", "fun bar() {}")
     }
+
+    stateManager.waitForAllRequestsProcessed()
 
     assertEquals(SyncChangesTaskFileState.INFO, stateManager.getSyncChangesState(task))
     // because we have 3 tasks and we don't have this file in the third
@@ -110,6 +116,8 @@ class CCSyncChangesStateTest : EduActionTestCase() {
       }
     }
 
+    stateManager.waitForAllRequestsProcessed()
+
     assertEquals(SyncChangesTaskFileState.WARNING, stateManager.getSyncChangesState(task))
     assertEquals(SyncChangesTaskFileState.WARNING, stateManager.getSyncChangesState(lesson))
     task.assertTaskFileState("src/Task.kt", SyncChangesTaskFileState.WARNING)
@@ -133,6 +141,8 @@ class CCSyncChangesStateTest : EduActionTestCase() {
         findFile("lesson1/task2/src").delete(CCSyncChangesStateTest::class.java)
       }
     }
+
+    stateManager.waitForAllRequestsProcessed()
 
     assertEquals(SyncChangesTaskFileState.WARNING, stateManager.getSyncChangesState(task))
     assertEquals(SyncChangesTaskFileState.WARNING, stateManager.getSyncChangesState(lesson))
@@ -173,6 +183,8 @@ class CCSyncChangesStateTest : EduActionTestCase() {
       }
     }
 
+    stateManager.waitForAllRequestsProcessed()
+
     assertEquals(SyncChangesTaskFileState.WARNING, stateManager.getSyncChangesState(task1))
     assertEquals(SyncChangesTaskFileState.WARNING, stateManager.getSyncChangesState(lesson))
     task1.assertTaskFileState("src/Bar.kt", SyncChangesTaskFileState.INFO)
@@ -198,6 +210,8 @@ class CCSyncChangesStateTest : EduActionTestCase() {
       invokeSyncChangesAction(task, listOf(MergeSession.Resolution.AcceptedYours, MergeSession.Resolution.AcceptedYours))
     }
 
+    stateManager.waitForAllRequestsProcessed()
+
     assertEquals(null, stateManager.getSyncChangesState(task))
     assertEquals(null, stateManager.getSyncChangesState(lesson))
     task.assertTaskFileState("src/Task.kt", null)
@@ -220,6 +234,7 @@ class CCSyncChangesStateTest : EduActionTestCase() {
       typeIntoFile(lastTask, "src/Task.kt", "fun bar() {}\n")
     }
 
+    stateManager.waitForAllRequestsProcessed()
     assertEquals(null, stateManager.getSyncChangesState(lastTask))
     assertEquals(null, stateManager.getSyncChangesState(lesson))
     for (taskFile in lastTask.taskFiles.values) {
@@ -257,6 +272,7 @@ class CCSyncChangesStateTest : EduActionTestCase() {
 
   private fun Task.assertTaskFileState(taskFileName: String, state: SyncChangesTaskFileState?) {
     val taskFile = getTaskFile(taskFileName)!!
+    stateManager.waitForAllRequestsProcessed()
     assertEquals(state, stateManager.getSyncChangesState(taskFile))
   }
 
