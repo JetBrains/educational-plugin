@@ -27,23 +27,17 @@ class SyncChangesStateManager(private val project: Project) {
     return stateStorage[taskFile]
   }
 
-  fun taskFileChanged(taskFile: TaskFile) {
-    if (!checkRequirements(taskFile.task.lesson)) return
+  fun taskFileChanged(taskFile: TaskFile) = doUpdate(taskFile) {
     updateSyncChangesState(taskFile.task, listOf(taskFile))
   }
 
-  fun taskFileCreated(taskFile: TaskFile) {
-    if (!checkRequirements(taskFile.task.lesson)) return
-    processTaskFilesCreated(taskFile.task, listOf(taskFile))
-  }
+  fun taskFileCreated(taskFile: TaskFile) = processTaskFilesCreated(taskFile.task, listOf(taskFile))
 
-  fun filesDeleted(task: Task, taskFilesNames: List<String>) {
-    if (!checkRequirements(task.lesson)) return
+  fun filesDeleted(task: Task, taskFilesNames: List<String>) = doUpdate(task) {
     recalcSyncChangesStateForFilesInPrevTask(task, taskFilesNames)
   }
 
-  fun taskDeleted(task: Task) {
-    if (!checkRequirements(task.lesson)) return
+  fun taskDeleted(task: Task) = doUpdate(task) {
     recalcSyncChangesStateForFilesInPrevTask(task, null)
   }
 
@@ -67,13 +61,11 @@ class SyncChangesStateManager(private val project: Project) {
     }
   }
 
-  fun removeState(taskFile: TaskFile) {
-    if (!checkRequirements(taskFile.task.lesson)) return
+  fun removeState(taskFile: TaskFile) = doUpdate(taskFile) {
     stateStorage.remove(taskFile)
   }
 
   fun updateSyncChangesState(lessonContainer: LessonContainer) {
-    if (!CCUtils.isCourseCreator(project) || !isFeatureEnabled(EduExperimentalFeatures.CC_FL_SYNC_CHANGES)) return
     lessonContainer.visitFrameworkLessons { lesson ->
       lesson.visitTasks {
         updateSyncChangesState(it)
@@ -81,19 +73,16 @@ class SyncChangesStateManager(private val project: Project) {
     }
   }
 
-  fun updateSyncChangesState(task: Task) {
-    if (!checkRequirements(task.lesson)) return
+  fun updateSyncChangesState(task: Task) = doUpdate(task) {
     updateSyncChangesState(task, task.taskFiles.values.toList())
   }
 
-  fun getSyncChangesState(lesson: FrameworkLesson): SyncChangesTaskFileState? {
-    if (!checkRequirements(lesson)) return null
-    return collectState(lesson.taskList, ::getSyncChangesState)
+  fun getSyncChangesState(lesson: FrameworkLesson): SyncChangesTaskFileState? = doUpdate(lesson) {
+    collectState(lesson.taskList, ::getSyncChangesState)
   }
 
-  fun getSyncChangesState(task: Task): SyncChangesTaskFileState? {
-    if (!checkRequirements(task.lesson)) return null
-    return collectState(task.taskFiles.values.toList()) { stateStorage[it] }
+  fun getSyncChangesState(task: Task): SyncChangesTaskFileState? = doUpdate(task) {
+    collectState(task.taskFiles.values.toList()) { stateStorage[it] }
   }
 
   /**
@@ -113,10 +102,26 @@ class SyncChangesStateManager(private val project: Project) {
   // In addition/deletion of files, framework lesson structure might break/restore,
   // so we need to recalculate the state for corresponding task files from a previous task
   // in case when a warning state is added/removed
-  private fun processTaskFilesCreated(task: Task, taskFiles: List<TaskFile>) {
+  private fun processTaskFilesCreated(task: Task, taskFiles: List<TaskFile>) = doUpdate(task) {
     updateSyncChangesState(task, taskFiles)
     recalcSyncChangesStateForFilesInPrevTask(task, taskFiles.map { it.name })
   }
+
+  private fun <T> doUpdate(taskFile: TaskFile, action: () -> T?): T? = doUpdate(taskFile.task, action)
+  private fun <T> doUpdate(task: Task, action: () -> T?): T? = doUpdate(task.lesson, action)
+
+  private fun <T> doUpdate(lesson: Lesson, action: () -> T?): T? {
+    if (!checkRequirements(lesson)) return null
+    return try {
+      action()
+    }
+    finally {
+      // TODO(refresh only necessary nodes instead of refreshing whole project view tree)
+      ProjectView.getInstance(project).refresh()
+      EditorNotifications.updateAll()
+    }
+  }
+
 
   /**
    * Collects task files in a moved directory and returns a map of task files with their old paths.
@@ -190,9 +195,6 @@ class SyncChangesStateManager(private val project: Project) {
     for (taskFile in infoTaskFiles) {
       stateStorage[taskFile] = SyncChangesTaskFileState.INFO
     }
-    // TODO(refresh only necessary nodes instead of refreshing whole project view tree)
-    ProjectView.getInstance(project).refresh()
-    EditorNotifications.updateAll()
   }
 
   // do not update state for the last framework lesson task and for non-propagatable files (invisible files)
