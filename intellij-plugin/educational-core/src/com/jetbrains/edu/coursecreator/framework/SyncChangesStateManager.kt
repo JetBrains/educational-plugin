@@ -8,6 +8,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
+import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.FileInfo
@@ -170,6 +171,7 @@ class SyncChangesStateManager(private val project: Project) {
     }
     // TODO(refresh only necessary nodes instead of refreshing whole project view tree)
     ProjectView.getInstance(project).refresh()
+    EditorNotifications.updateAll()
   }
 
   // do not update state for the last framework lesson task and for non-propagatable files (invisible files)

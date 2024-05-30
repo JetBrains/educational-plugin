@@ -12,6 +12,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.ui.EditorNotifications
 import com.intellij.util.xmlb.annotations.XCollection
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.framework.diff.applyChangesWithMergeDialog
@@ -215,7 +216,7 @@ class CCFrameworkLessonManager(
         SyncChangesStateManager.getInstance(project).removeState(taskFile)
       }
     }
-
+    EditorNotifications.updateAll()
     return updatedUserChanges
   }
 
