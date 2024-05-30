@@ -3,25 +3,41 @@ package com.jetbrains.edu.learning.courseFormat.zip
 import com.jetbrains.edu.learning.courseFormat.BinaryContents
 import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.TextualContents
+import com.jetbrains.edu.learning.json.encrypt.AES256
+import java.nio.charset.StandardCharsets.UTF_8
 import java.util.zip.ZipFile
-import kotlin.text.Charsets.UTF_8
 
-class ZipBinaryContents(private val zipPath: String, private val eduFile: EduFile) : BinaryContents {
+class ZipBinaryContents(zipPath: String, eduFile: EduFile, aesKey: String?) : ZipContents(
+  zipPath,
+  eduFile,
+  aesKey
+), BinaryContents {
   override val bytes: ByteArray
-    get() = ZipFile(zipPath).use { zip ->
+    get() = loadBytes()
+}
+
+class ZipTextualContents(zipPath: String, eduFile: EduFile, aesKey: String?) : ZipContents(
+  zipPath,
+  eduFile,
+  aesKey
+), TextualContents {
+  override val text: String
+    get() = String(loadBytes(), UTF_8)
+}
+
+sealed class ZipContents(private val zipPath: String, private val eduFile: EduFile, private val aesKey: String?) {
+  protected fun loadBytes(): ByteArray {
+    val encryptedBytes = ZipFile(zipPath).use { zip ->
       val path = eduFile.pathInCourse
       val entry = zip.getEntry(path)
       zip.getInputStream(entry).readAllBytes()
     }
-}
 
-class ZipTextualContents(private val zipPath: String, private val eduFile: EduFile) : TextualContents {
-  override val text: String
-    get() = ZipFile(zipPath).use { zip ->
-      val path = eduFile.pathInCourse
-      val entry = zip.getEntry(path)
-      val bytes = zip.getInputStream(entry).readAllBytes()
-
-      String(bytes, UTF_8)
+    return if (aesKey != null) {
+      AES256.decryptBinary(encryptedBytes, aesKey)
     }
+    else {
+      encryptedBytes
+    }
+  }
 }

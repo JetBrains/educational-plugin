@@ -35,6 +35,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
 import com.jetbrains.edu.learning.json.addStudyItemMixins
+import com.jetbrains.edu.learning.json.encrypt.AES256
 import com.jetbrains.edu.learning.json.encrypt.EncryptionModule
 import com.jetbrains.edu.learning.json.encrypt.getAesKey
 import com.jetbrains.edu.learning.json.mixins.*
@@ -167,7 +168,7 @@ class CourseArchiveCreator(
           is TextualContents -> contents.text.toByteArray(UTF_8)
           is UndeterminedContents -> throw IllegalStateException("All contents must be disambiguated before writing archive")
         }
-        outputStream.write(bytes)
+        outputStream.write(AES256.encryptBinary(bytes, aesKey))
         courseArchiveIndicator.writeFile(eduFile)
       }
     }

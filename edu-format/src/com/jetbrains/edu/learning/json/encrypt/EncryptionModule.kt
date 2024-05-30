@@ -90,6 +90,10 @@ object AES256 {
     val byteStr = decoder.decode(str.toByteArray(Charsets.UTF_8))
     return String(cipher(Cipher.DECRYPT_MODE, secretKey).doFinal(byteStr), Charsets.UTF_8)
   }
+
+  fun encryptBinary(bytes: ByteArray, secretKey: String): ByteArray = cipher(Cipher.ENCRYPT_MODE, secretKey).doFinal(bytes)
+
+  fun decryptBinary(bytes: ByteArray, secretKey: String): ByteArray = cipher(Cipher.DECRYPT_MODE, secretKey).doFinal(bytes)
 }
 
 
