@@ -4,6 +4,7 @@
 package com.jetbrains.edu.learning.json.mixins
 
 import com.fasterxml.jackson.annotation.JacksonInject
+import com.fasterxml.jackson.annotation.JsonFilter
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
@@ -38,6 +39,7 @@ import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.DESCRIPTION_FORMAT
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.DESCRIPTION_TEXT
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ENVIRONMENT
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ENVIRONMENT_SETTINGS
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.EXCLUDE_TEXT_FIELD_FILTER
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.FEEDBACK_LINK
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.FILE
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.FILES
@@ -302,6 +304,7 @@ abstract class ChoiceOptionLocalMixin {
 
 @JsonPropertyOrder(NAME, IS_VISIBLE, TEXT, IS_BINARY, IS_EDITABLE, HIGHLIGHT_LEVEL)
 @JsonDeserialize(builder = EduFileBuilder::class)
+@JsonFilter(EXCLUDE_TEXT_FIELD_FILTER)
 abstract class EduFileMixin {
   @JsonProperty(NAME)
   private lateinit var name: String
@@ -337,6 +340,7 @@ abstract class EduFileMixin {
 
 @JsonPropertyOrder(NAME, PLACEHOLDERS, IS_VISIBLE, TEXT, IS_BINARY, IS_EDITABLE, HIGHLIGHT_LEVEL)
 @JsonDeserialize(builder = TaskFileBuilder::class)
+@JsonFilter(EXCLUDE_TEXT_FIELD_FILTER)
 abstract class TaskFileMixin : EduFileMixin() {
   @JsonProperty(PLACEHOLDERS)
   private lateinit var _answerPlaceholders: List<AnswerPlaceholder>
