@@ -1022,6 +1022,32 @@
       ],
     ```
 
+19. The "text" field MAY be omitted for EduFiles and TaskFiles.
+    In this case, the contents of the file are located inside the course archive.
+
+    Before:
+     ```json
+       "files" : {
+             "src/Main.kt" : {
+               "name" : "src/Main.kt",
+               "placeholders" : [ ],
+               "is_visible" : true,
+               "text" : "NDA7NYDJ4pT3F7ChgC7OnY7PiQg0Z9w3V0uXkpoQ4U1bA82PIPbBUwzzqamNfgOY"
+             }
+       }
+     ```
+    
+    After:
+     ```json
+       "files" : {
+             "src/Main.kt" : {
+               "name" : "src/Main.kt",
+               "placeholders" : [ ],
+               "is_visible" : true,
+             }
+       }
+     ```
+    And the file should be located in the archive, in the `[task folder]/src/Main.kt`.
 
 ### Courseignore format version
 

@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.HyperskillCourseAdvertiser
+import kotlin.math.max
 
 val Course.configurator: EduConfigurator<*>? get() {
   val language = languageById ?: return null
@@ -122,7 +123,9 @@ private fun Course.versionCompatibility(): CourseCompatibility? {
     return CourseCompatibility.Unsupported
   }
 
-  if (formatVersion > JSON_FORMAT_VERSION) {
+  val maximalSupportedVersion = max(JSON_FORMAT_VERSION, JSON_FORMAT_VERSION_WITH_FILES_OUTSIDE)
+
+  if (formatVersion > maximalSupportedVersion) {
     return CourseCompatibility.IncompatibleVersion
   }
 

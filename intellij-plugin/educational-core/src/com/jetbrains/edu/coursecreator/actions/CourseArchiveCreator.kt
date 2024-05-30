@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.ser.BeanSerializerFactory
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.externalDependencies.DependencyOnPlugin
 import com.intellij.externalDependencies.ExternalDependenciesManager
@@ -25,6 +27,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.jetbrains.edu.coursecreator.AdditionalFilesUtils
 import com.jetbrains.edu.coursecreator.CCUtils.saveOpenedDocuments
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduExperimentalFeatures.COURSE_FORMAT_WITH_FILES_OUTSIDE_JSON
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSE_META_FILE
 import com.jetbrains.edu.learning.courseFormat.ext.*
@@ -35,6 +38,8 @@ import com.jetbrains.edu.learning.json.addStudyItemMixins
 import com.jetbrains.edu.learning.json.encrypt.EncryptionModule
 import com.jetbrains.edu.learning.json.encrypt.getAesKey
 import com.jetbrains.edu.learning.json.mixins.*
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.EXCLUDE_TEXT_FIELD_FILTER
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TEXT
 import com.jetbrains.edu.learning.json.setDateFormat
 import com.jetbrains.edu.learning.marketplace.updateCourseItems
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -68,7 +73,12 @@ class CourseArchiveCreator(
     course.updateEnvironmentSettings(project)
     val courseCopy = course.copy()
 
-    val courseArchiveIndicator = CourseArchiveIndicator()
+    val courseArchiveIndicator = CourseArchiveIndicator(if (isFeatureEnabled(COURSE_FORMAT_WITH_FILES_OUTSIDE_JSON)) {
+      FileCountingMode.DURING_WRITE
+    }
+    else {
+      FileCountingMode.DURING_READ
+    })
 
     try {
       // We run prepareCourse() in EDT because it calls the VirtualFile.toStudentFile method that replaces placeholders inside the document.
@@ -126,15 +136,41 @@ class CourseArchiveCreator(
         generateJson(writer, courseCopy)
       }
 
-      val iconFile = courseDir.findChild(EduFormatNames.COURSE_ICON_FILE)
-      iconFile?.inputStream?.use { iconInputStream ->
-        outputStream.withNewEntry(EduFormatNames.COURSE_ICON_FILE) {
-          iconInputStream.copyTo(outputStream)
-        }
+      if (isFeatureEnabled(COURSE_FORMAT_WITH_FILES_OUTSIDE_JSON)) {
+        writeAllFilesToArchive(courseCopy, outputStream, courseArchiveIndicator)
       }
+
+      writeIconToArchive(outputStream)
     }
 
     synchronize(project)
+  }
+
+  private fun writeIconToArchive(outputStream: ZipOutputStream) {
+    val iconFile = project.courseDir.findChild(EduFormatNames.COURSE_ICON_FILE)
+    iconFile?.inputStream?.use { iconInputStream ->
+      outputStream.withNewEntry(EduFormatNames.COURSE_ICON_FILE) {
+        iconInputStream.copyTo(outputStream)
+      }
+    }
+  }
+
+  private fun writeAllFilesToArchive(
+    courseCopy: Course,
+    outputStream: ZipOutputStream,
+    courseArchiveIndicator: CourseArchiveIndicator
+  ) {
+    courseCopy.visitEduFiles { eduFile ->
+      outputStream.withNewEntry(eduFile.pathInCourse) {
+        val bytes = when (val contents = eduFile.contents) {
+          is BinaryContents -> contents.bytes
+          is TextualContents -> contents.text.toByteArray(UTF_8)
+          is UndeterminedContents -> throw IllegalStateException("All contents must be disambiguated before writing archive")
+        }
+        outputStream.write(bytes)
+        courseArchiveIndicator.writeFile(eduFile)
+      }
+    }
   }
 
   @Throws(IOException::class)
@@ -150,6 +186,10 @@ class CourseArchiveCreator(
 
   @VisibleForTesting
   fun prepareCourse(course: Course, indicator: CourseArchiveIndicator? = null) {
+    if (course is EduCourse && isFeatureEnabled(COURSE_FORMAT_WITH_FILES_OUTSIDE_JSON)) {
+      course.formatVersion = JSON_FORMAT_VERSION_WITH_FILES_OUTSIDE
+    }
+
     loadActualTexts(project, course, indicator)
     course.sortItems()
     course.additionalFiles = AdditionalFilesUtils.collectAdditionalFiles(course, project, indicator)
@@ -180,7 +220,24 @@ class CourseArchiveCreator(
       .setDateFormat()
       .build()
     mapper.addStudyItemMixins()
+
+    setupTextFieldFilter(mapper)
+
     return mapper
+  }
+
+  private fun setupTextFieldFilter(mapper: JsonMapper) {
+    // We don't need to serialize the text field in EduFiles and TaskFiles if the course format stores files outside JSON
+    val textFieldFilter = if (isFeatureEnabled(COURSE_FORMAT_WITH_FILES_OUTSIDE_JSON)) {
+      SimpleBeanPropertyFilter.serializeAllExcept(TEXT)
+    }
+    else {
+      SimpleBeanPropertyFilter.serializeAll()
+    }
+
+    mapper.setFilterProvider(
+      SimpleFilterProvider(mapOf(EXCLUDE_TEXT_FIELD_FILTER to textFieldFilter))
+    )
   }
 
   /**
