@@ -9,6 +9,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.coursecreator.framework.SyncChangesStateManager
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFileErrorHighlightLevel
@@ -55,6 +56,12 @@ class EduDocumentListener private constructor(
     if (!taskFile.isTrackChanges) {
       return
     }
+
+    val project = holder.course?.project
+    if (project != null) {
+      SyncChangesStateManager.getInstance(project).taskFileChanged(taskFile)
+    }
+
     if (taskFile.answerPlaceholders.isEmpty()) return
 
     if (e !is DocumentEventImpl) {
