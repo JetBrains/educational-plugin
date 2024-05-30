@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.actions
 
 import com.intellij.diff.chains.DiffRequestChain
 import com.intellij.diff.editor.ChainDiffVirtualFile
-import com.jetbrains.edu.learning.submissions.getTexts
 import com.intellij.icons.AllIcons
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
@@ -13,25 +12,18 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys.LAST_ACTIVE_FILE_EDITO
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction
 import com.intellij.openapi.actionSystem.impl.ActionButton
-import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.command.CommandProcessor
-import com.intellij.openapi.editor.Document
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.openapi.vfs.ex.temp.TempFileSystem
 import com.intellij.ui.GotItTooltip
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
-import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.actions.AcceptHintAction.Companion.isNextStepHintDiff
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.submissions.writeTexts
+import com.jetbrains.edu.learning.submissions.applySubmissionTexts
 import org.jetbrains.annotations.NonNls
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
@@ -60,22 +52,12 @@ class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
     val diffRequestChain = e.getDiffRequestChain() ?: return showApplyCodeFailedNotification(project)
     val fileNames = diffRequestChain.getUserData(VIRTUAL_FILE_PATH_LIST).takeIf { !it.isNullOrEmpty() } ?: return showApplyCodeFailedNotification(project)
 
-    try {
-      val localDocuments = readLocalDocuments(fileNames)
-      check(localDocuments.size == fileNames.size)
-      val submissionsTexts = diffRequestChain.getTexts(fileNames.size)
-      val runnableCommand = {
-        localDocuments.writeTexts(submissionsTexts)
-      }
-      CommandProcessor.getInstance().executeCommand(project, runnableCommand, this.templatePresentation.text, ACTION_ID)
-    }
-    catch (e: Exception) {
+    if (applySubmissionTexts(project, diffRequestChain, fileNames, ACTION_ID, this.templatePresentation.text)) {
+      project.closeDiffWindow(e)
+      showApplyCodeSuccessfulNotification(project)
+    } else {
       showApplyCodeFailedNotification(project)
-      return
     }
-
-    project.closeDiffWindow(e)
-    showApplyCodeSuccessfulNotification(project)
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
@@ -119,23 +101,6 @@ class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
   private fun AnActionEvent.getDiffRequestChain(): DiffRequestChain? {
     val chainDiffVirtualFile = getData(CommonDataKeys.VIRTUAL_FILE) as? ChainDiffVirtualFile
     return chainDiffVirtualFile?.chain
-  }
-
-  private fun readLocalDocuments(fileNames: List<String>): List<Document> = runReadAction {
-    fileNames.mapNotNull { findLocalDocument(it) }
-  }
-
-  private fun findLocalDocument(fileName: String): Document? {
-    val file = if (!isUnitTestMode) {
-      LocalFileSystem.getInstance().findFileByPath(fileName)
-    }
-    else {
-      TempFileSystem.getInstance().findFileByPath(fileName)
-    }
-
-    return file?.let {
-      FileDocumentManager.getInstance().getDocument(it)
-    }
   }
 
   private fun Project.closeDiffWindow(e: AnActionEvent) {
