@@ -20,11 +20,23 @@ import java.util.concurrent.ConcurrentHashMap
 
 @Service(Service.Level.PROJECT)
 class SyncChangesStateManager(private val project: Project) {
-  private val stateStorage = ConcurrentHashMap<TaskFile, SyncChangesTaskFileState>()
+  private val taskFileStateStorage = ConcurrentHashMap<TaskFile, SyncChangesTaskFileState>()
+  private val taskStateStorage = ConcurrentHashMap<Task, SyncChangesTaskFileState>()
+  private val lessonStateStorage = ConcurrentHashMap<Lesson, SyncChangesTaskFileState>()
 
   fun getSyncChangesState(taskFile: TaskFile): SyncChangesTaskFileState? {
     if (!checkRequirements(taskFile.task.lesson)) return null
-    return stateStorage[taskFile]
+    return taskFileStateStorage[taskFile]
+  }
+
+  fun getSyncChangesState(task: Task): SyncChangesTaskFileState? {
+    if (!checkRequirements(task.lesson)) return null
+    return taskStateStorage[task]
+  }
+
+  fun getSyncChangesState(lesson: Lesson): SyncChangesTaskFileState? {
+    if (!checkRequirements(lesson)) return null
+    return lessonStateStorage[lesson]
   }
 
   fun taskFileChanged(taskFile: TaskFile) = doUpdate(taskFile) {
@@ -61,8 +73,11 @@ class SyncChangesStateManager(private val project: Project) {
     }
   }
 
-  fun removeState(taskFile: TaskFile) = doUpdate(taskFile) {
-    stateStorage.remove(taskFile)
+  fun removeState(task: Task, taskFiles: List<TaskFile>) = doUpdate(task) {
+    for (taskFile in taskFiles) {
+      taskFileStateStorage.remove(taskFile)
+    }
+    collectSyncChangesState(task)
   }
 
   fun updateSyncChangesState(lessonContainer: LessonContainer) {
@@ -77,12 +92,16 @@ class SyncChangesStateManager(private val project: Project) {
     updateSyncChangesState(task, task.taskFiles.values.toList())
   }
 
-  fun getSyncChangesState(lesson: FrameworkLesson): SyncChangesTaskFileState? = doUpdate(lesson) {
-    collectState(lesson.taskList, ::getSyncChangesState)
+  private fun collectSyncChangesState(lesson: Lesson) {
+    val state = collectState(lesson.taskList) { taskStateStorage[it] }
+    if (state != null) lessonStateStorage[lesson] = state
+    else lessonStateStorage.remove(lesson)
   }
 
-  fun getSyncChangesState(task: Task): SyncChangesTaskFileState? = doUpdate(task) {
-    collectState(task.taskFiles.values.toList()) { stateStorage[it] }
+  private fun collectSyncChangesState(task: Task) {
+    val state = collectState(task.taskFiles.values.toList()) { taskFileStateStorage[it] }
+    if (state != null) taskStateStorage[task] = state
+    else taskStateStorage.remove(task)
   }
 
   /**
@@ -116,6 +135,7 @@ class SyncChangesStateManager(private val project: Project) {
       action()
     }
     finally {
+      collectSyncChangesState(lesson)
       // TODO(refresh only necessary nodes instead of refreshing whole project view tree)
       ProjectView.getInstance(project).refresh()
       EditorNotifications.updateAll()
@@ -178,7 +198,7 @@ class SyncChangesStateManager(private val project: Project) {
   // Process a batch of taskFiles in a certain task at once to minimize the number of accesses to the storage
   private fun updateSyncChangesState(task: Task, taskFiles: List<TaskFile>) {
     for (taskFile in taskFiles) {
-      stateStorage.remove(taskFile)
+      taskFileStateStorage.remove(taskFile)
     }
 
     val updatableTaskFiles = taskFiles.filter { shouldUpdateSyncChangesState(it) }
@@ -186,15 +206,16 @@ class SyncChangesStateManager(private val project: Project) {
     val (warningTaskFiles, otherTaskFiles) = updatableTaskFiles.partition { checkForAbsenceInNextTask(it) }
 
     for (taskFile in warningTaskFiles) {
-      stateStorage[taskFile] = SyncChangesTaskFileState.WARNING
+      taskFileStateStorage[taskFile] = SyncChangesTaskFileState.WARNING
     }
 
     val changedTaskFiles = CCFrameworkLessonManager.getInstance(project).getChangedFiles(task)
     val infoTaskFiles = otherTaskFiles.intersect(changedTaskFiles.toSet())
 
     for (taskFile in infoTaskFiles) {
-      stateStorage[taskFile] = SyncChangesTaskFileState.INFO
+      taskFileStateStorage[taskFile] = SyncChangesTaskFileState.INFO
     }
+    collectSyncChangesState(task)
   }
 
   // do not update state for the last framework lesson task and for non-propagatable files (invisible files)

@@ -12,7 +12,6 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.ui.EditorNotifications
 import com.intellij.util.xmlb.annotations.XCollection
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.framework.diff.applyChangesWithMergeDialog
@@ -210,13 +209,7 @@ class CCFrameworkLessonManager(
 
     updateRecord(task, updatedUserChanges.record)
 
-    if (updatedUserChanges.state.isNotEmpty()) {
-      for (file in initialCurrentFiles) {
-        val taskFile = task.taskFiles[file] ?: continue
-        SyncChangesStateManager.getInstance(project).removeState(taskFile)
-      }
-    }
-    EditorNotifications.updateAll()
+    SyncChangesStateManager.getInstance(project).removeState(task, initialCurrentFiles.mapNotNull { task.taskFiles[it] })
     return updatedUserChanges
   }
 
