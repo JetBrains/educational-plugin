@@ -18,6 +18,11 @@
                     dynamic="true">
       <with attribute="implementationClass" implements="com.jetbrains.edu.jarvis.DraftExpressionWriter"/>
     </extensionPoint>
+    <extensionPoint qualifiedName="Educational.jarvisDslPackageCallChecker"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.jarvis.JarvisDslPackageCallChecker"/>
+    </extensionPoint>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
