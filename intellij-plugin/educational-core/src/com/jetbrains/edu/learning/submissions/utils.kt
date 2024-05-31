@@ -2,23 +2,12 @@
 
 package com.jetbrains.edu.learning.submissions
 
-import com.intellij.diff.chains.DiffRequestChain
-import com.intellij.diff.chains.SimpleDiffRequestChain
-import com.intellij.diff.contents.DocumentContentBase
-import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.ex.temp.TempFileSystem
-import com.intellij.testFramework.utils.editor.saveToDisk
 import com.intellij.util.Time
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
@@ -26,7 +15,6 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.findTaskFileInDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.submissions.SubmissionsTab.Companion.CLOSE_PLACEHOLDER_TAG
 import com.jetbrains.edu.learning.submissions.SubmissionsTab.Companion.OPEN_PLACEHOLDER_TAG
 import java.util.*
@@ -86,54 +74,4 @@ fun isVersionCompatible(submissionFormatVersion: Int): Boolean {
 internal fun Date.isSignificantlyAfter(otherDate: Date): Boolean {
   val diff = time - otherDate.time
   return diff > Time.MINUTE
-}
-
-fun DiffRequestChain.getTexts(size: Int): List<String> {
-  val diffRequestWrappers = List(size) { requests[it] as SimpleDiffRequestChain.DiffRequestProducerWrapper }
-  val diffRequests = diffRequestWrappers.map { it.request as SimpleDiffRequest }
-  return diffRequests.map { it.contents[1] as DocumentContentBase }.map { it.document.text }
-}
-
-fun List<Document>.writeTexts(texts: List<String>): Unit = runWriteAction {
-  zip(texts).forEach { (document, text) ->
-    document.setText(text)
-    document.saveToDisk()
-  }
-}
-
-fun applySubmissionTexts(
-  project: Project,
-  diffRequestChain: DiffRequestChain,
-  fileNames: List<String>,
-  actionId: String,
-  actionText: String,
-): Boolean {
-  return try {
-    val localDocuments = readLocalDocuments(fileNames)
-    check(localDocuments.size == fileNames.size)
-    val submissionsTexts = diffRequestChain.getTexts(fileNames.size)
-	CommandProcessor.getInstance().executeCommand (project, { 
-      localDocuments.writeTexts(submissionsTexts) 
-    }, actionText, actionId)
-    true
-  } catch (e: Exception) {
-    false
-  }
-}
-
-private fun readLocalDocuments(fileNames: List<String>): List<Document> = runReadAction {
-  fileNames.mapNotNull { findLocalDocument(it) }
-}
-
-private fun findLocalDocument(fileName: String): Document? {
-  val file = if (!isUnitTestMode) {
-    LocalFileSystem.getInstance().findFileByPath(fileName)
-  }
-  else {
-    TempFileSystem.getInstance().findFileByPath(fileName)
-  }
-
-  return file?.let {
-    FileDocumentManager.getInstance().getDocument(it)
-  }
 }

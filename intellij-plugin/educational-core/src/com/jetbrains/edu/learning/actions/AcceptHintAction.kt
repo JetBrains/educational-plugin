@@ -9,7 +9,6 @@ import com.intellij.util.ui.JButtonAction
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.CancelHintAction.Companion.closeDiffWindow
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.submissions.applySubmissionTexts
 import org.jetbrains.annotations.NonNls
 import javax.swing.JButton
 
@@ -36,7 +35,7 @@ class AcceptHintAction : JButtonAction(EduCoreBundle.message("action.Educational
     val diffRequestChain = e.getDiffRequestChain() ?: return
     val fileNames = diffRequestChain.getUserData(ApplyCodeAction.VIRTUAL_FILE_PATH_LIST).takeIf { !it.isNullOrEmpty() } ?: return
 
-    if (applySubmissionTexts(project, diffRequestChain, fileNames, ACTION_ID, this.templatePresentation.text)) {
+    if (tryApplyTexts(project, diffRequestChain, fileNames, ACTION_ID, this.templatePresentation.text)) {
       diffRequestChain.putUserData(NextStepHintAction.IS_ACCEPTED_HINT, true)
       project.closeDiffWindow(e)
     }
