@@ -648,11 +648,10 @@ project("Edu-Kotlin") {
 
     implementation(project(":intellij-plugin:educational-core"))
     implementation(project(":intellij-plugin:jvm-core"))
+    implementation(project(":intellij-plugin:Edu-Jarvis"))
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
     testImplementation(project(":intellij-plugin:jvm-core", "testOutput"))
-
-    implementation(project(":intellij-plugin:Edu-Jarvis"))
     testImplementation(project(":intellij-plugin:Edu-Jarvis", "testOutput"))
   }
 }
@@ -1042,10 +1041,8 @@ project("Edu-Jarvis") {
     }
 
     implementation(project(":intellij-plugin:educational-core"))
-    implementation(project(":intellij-plugin:jvm-core"))
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-    testImplementation(project(":intellij-plugin:jvm-core", "testOutput"))
 
     implementation("org.jetbrains.academy.jarvis.dsl:Jarvis-no-code-in-edu:1.0.0") {
       excludeKotlinDeps()
