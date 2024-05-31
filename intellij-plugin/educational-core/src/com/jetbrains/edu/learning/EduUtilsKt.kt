@@ -116,12 +116,14 @@ object EduUtilsKt {
     readCourseJson: (() -> Reader, fileContentsFactory: FileContentsFactory) -> Course? = ::readCourseJson
   ): Course? {
     try {
-      return ZipFile(zipFilePath).use { zipFile ->
-          val entry = zipFile.getEntry(COURSE_META_FILE) ?: return null
+      return measureAndLogTime("Read course archive") {
+        ZipFile(zipFilePath).use { zipFile ->
+          val entry = zipFile.getEntry(COURSE_META_FILE) ?: return@use null
           val reader = { zipFile.getInputStream(entry).reader(StandardCharsets.UTF_8) }
 
           readCourseJson(reader, FileContentsFromZipFactory(zipFilePath, getAesKey()))?.cutOutHeader()
         }
+      }
     }
     catch (e: IOException) {
       LOG.error("Failed to unzip course archive", e)

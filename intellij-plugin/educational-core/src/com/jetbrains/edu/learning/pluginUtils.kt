@@ -9,6 +9,7 @@ import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.application.ex.ApplicationManagerEx
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
@@ -88,3 +89,12 @@ fun enablePlugins(pluginsId: List<PluginId>) {
   restartIDE(EduCoreBundle.message("required.plugin.were.enabled"))
 }
 
+val TIME_LOGGER = Logger.getInstance("JetBrainsAcademy.performance.measure")
+
+fun <T> measureAndLogTime(title: String, block: () -> T): T {
+  val start = System.currentTimeMillis()
+  val value = block()
+  val time = System.currentTimeMillis() - start
+  TIME_LOGGER.info("$title: $time ms")
+  return value
+}

@@ -55,7 +55,6 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
 import java.nio.file.Path
-import kotlin.system.measureTimeMillis
 
 /**
  * If you add any new public methods here, please do not forget to add it also to
@@ -254,7 +253,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     isNewCourseCreatorCourse: Boolean,
     indicator: ProgressIndicator
   ) {
-    val duration = measureTimeMillis {
+    measureAndLogTime("Course content generation") {
       val course = holder.course
       if (!course.isStudy) {
         CCUtils.initializeCCPlaceholders(holder)
@@ -266,7 +265,6 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
       createAdditionalFiles(holder, isNewCourseCreatorCourse)
       EduCounterUsageCollector.eduProjectCreated(course)
     }
-    LOG.info("Course content generation: $duration ms")
   }
 
   private fun checkIfAvailableOnRemote(course: EduCourse) {

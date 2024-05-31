@@ -101,7 +101,9 @@ class CourseArchiveCreator(
     return ProgressManager.getInstance().runProcessWithProgressSynchronously<String?, RuntimeException>({
       try {
         unwrapExceptionCause {
-          doCreateCourseArchive(courseArchiveIndicator, courseCopy)
+          measureAndLogTime("Create course archive") {
+            doCreateCourseArchive(courseArchiveIndicator, courseCopy)
+          }
         }
 
         null
