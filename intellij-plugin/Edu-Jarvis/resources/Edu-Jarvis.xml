@@ -25,7 +25,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <intentionAction>
-      <language>KOTLIN</language>
+      <language>kotlin</language>
       <className>com.jetbrains.edu.jarvis.actions.DraftIntentionAction</className>
       <categoryKey>jarvis.intention.category.name</categoryKey>
     </intentionAction>
