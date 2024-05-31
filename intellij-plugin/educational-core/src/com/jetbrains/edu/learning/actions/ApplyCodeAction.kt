@@ -23,7 +23,6 @@ import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.AcceptHintAction.Companion.isNextStepHintDiff
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.submissions.applySubmissionTexts
 import org.jetbrains.annotations.NonNls
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
@@ -52,7 +51,7 @@ class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
     val diffRequestChain = e.getDiffRequestChain() ?: return showApplyCodeFailedNotification(project)
     val fileNames = diffRequestChain.getUserData(VIRTUAL_FILE_PATH_LIST).takeIf { !it.isNullOrEmpty() } ?: return showApplyCodeFailedNotification(project)
 
-    if (applySubmissionTexts(project, diffRequestChain, fileNames, ACTION_ID, this.templatePresentation.text)) {
+    if (tryApplyTexts(project, diffRequestChain, fileNames, ACTION_ID, this.templatePresentation.text)) {
       project.closeDiffWindow(e)
       showApplyCodeSuccessfulNotification(project)
     } else {
