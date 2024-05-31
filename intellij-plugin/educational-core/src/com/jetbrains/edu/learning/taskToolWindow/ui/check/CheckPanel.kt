@@ -32,6 +32,7 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.projectView.CourseViewUtils.isSolved
 import com.jetbrains.edu.learning.stepik.hyperskill.actions.DownloadDatasetAction
 import com.jetbrains.edu.learning.stepik.hyperskill.actions.RetryDataTaskAction
+import com.jetbrains.edu.learning.stepik.hyperskill.getNextButtonText
 import com.jetbrains.edu.learning.taskToolWindow.addActionLinks
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.ui.getUICheckLabel
@@ -216,10 +217,19 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     if (nextTask != null || (task.status == CheckStatus.Solved && NavigationUtils.isLastHyperskillProblem(task))) {
       val isDefault = task is TheoryTask || task.isSolved
       val action = ActionManager.getInstance().getAction(NextTaskAction.ACTION_ID)
-      val nextButtonText = nextTask?.let {  EduCoreBundle.message("button.next.task.text", nextTask.presentableName) }
+      val nextButtonText = getNextButtonText(task, nextTask)
       val nextButton = CheckPanelButtonComponent(action = action, isDefault = isDefault, customButtonText = nextButtonText)
       add(nextButton, BorderLayout.WEST)
     }
+  }
+
+  private fun getNextButtonText(task: Task, nextTask: Task?): String? {
+    nextTask?.let { return EduCoreBundle.message("button.next.task.text", it.presentableName) }
+    val course = task.course
+    if (course is HyperskillCourse && course.isTaskInTopicsSection(task)) {
+      return getNextButtonText(task.id)
+    }
+    return null
   }
 
   private fun JPanel.addRetryButton(task: Task) {

@@ -231,7 +231,14 @@ fun openTopic(project: Project, topic: HyperskillTopic) {
 
 private fun openStep(project: Project, task: Task?, nextActivityInfo: NextActivityInfo) {
   when (nextActivityInfo) {
-    is NextActivityInfo.TopicCompleted -> EduBrowser.getInstance().browse(topicCompletedLink(nextActivityInfo.topicId))
+    is NextActivityInfo.TopicCompleted -> {
+      val nextTask = task?.lesson?.let { NavigationUtils.nextLesson(it)?.taskList?.firstOrNull() }
+      if (nextTask != null) {
+        NavigationUtils.navigateToTask(project, nextTask)
+      }  else {
+        EduBrowser.getInstance().browse(topicCompletedLink(nextActivityInfo.topicId))
+      }
+    }
     NextActivityInfo.NoTopic, NextActivityInfo.NoActivity -> showNoNextActivityNotification(task, project)
     is NextActivityInfo.NotCalculated -> {
       showNoNextActivityNotification(task, project)
@@ -266,6 +273,12 @@ private fun getTopic(taskId: Int): Int? {
 
   return stepSource?.topic
 }
+
+fun getNextButtonText(taskId: Int): String? = when (val nextStep = getNextStep(taskId)) {
+    is NextActivityInfo.Next -> EduCoreBundle.message("button.next.task.text", nextStep.stepSource.title)
+    is NextActivityInfo.TopicCompleted -> EduCoreBundle.message("button.next.finish.topic")
+    else -> null
+  }
 
 private fun getNextStep(taskId: Int): NextActivityInfo {
   val topicId = getTopic(taskId)
@@ -320,7 +333,7 @@ fun <T : WithPaginationMetaData> withPageIteration(fetchData: (Int) -> Result<T,
   do {
     val result = fetchData(page++).onError { return Err(it) }
     acc.add(result)
-  } 
+  }
   while (result.meta.hasNext)
 
   return Ok(acc.toList())
