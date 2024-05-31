@@ -582,11 +582,10 @@ project("Edu-Kotlin") {
 
     implementation(project(":intellij-plugin:educational-core"))
     implementation(project(":intellij-plugin:jvm-core"))
+    implementation(project(":intellij-plugin:Edu-Jarvis"))
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
     testImplementation(project(":intellij-plugin:jvm-core", "testOutput"))
-
-    implementation(project(":intellij-plugin:Edu-Jarvis"))
     testImplementation(project(":intellij-plugin:Edu-Jarvis", "testOutput"))
   }
 }
