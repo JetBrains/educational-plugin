@@ -1246,6 +1246,106 @@
         <constraint name="Variable" nameOfExprType="JamAnnotationMeta" maxCount="2147483647" target="true" within="" contains="" />
         <constraint name="__context__" within="" contains="" />
       </searchConfiguration>
+      <replaceConfiguration name="Notification to EduNotification Conversion"
+                            description="Inspection detects the use of the 'Notification' function and offers to replace it with the corresponding 'show' function from 'EduNotificationManager'. &#10;This helps adhere to the conventions of using the 'EduNotificationManager' for displaying notifications."
+                            suppressId="EduNotificationConversion"
+                            problemDescriptor="The direct use of the 'Notification' class constructor is detected. Consider using the relevant methods from 'EduNotificationManager' with 'JetBrains Academy' as the group ID."
+                            text="$Instance$(&#10;$id$,&#10;$title$,&#10;$content$,&#10;$type$&#10;).notify($project$)" recursive="false"
+                            caseInsensitive="false" type="Kotlin" pattern_context="default" reformatAccordingToStyle="true"
+                            shortenFQN="true" replacement="EduNotificationManager.showInfoNotification($project$, $title$, $content$)">
+        <constraint name="__context__" within="" contains=""/>
+        <constraint name="Instance" regexp="com.intellij.notification.Notification" reference="class constructors" within="" contains=""/>
+        <constraint name="id" nameOfExprType="String" within="" contains=""/>
+        <constraint name="title" nameOfExprType="String" within="" contains=""/>
+        <constraint name="content" nameOfExprType="String" within="" contains=""/>
+        <constraint name="type" regexp="(NotificationType\.INFORMATION|INFORMATION)"
+                    nameOfExprType="com\.intellij\.notification\.NotificationType" within="" contains=""/>
+        <constraint name="project" nameOfExprType="com\.intellij\.openapi\.project\.Project\??" within="" contains=""/>
+      </replaceConfiguration>
+      <replaceConfiguration name="Notification to EduNotification Conversion"
+                            text="$Instance$(&#10;$id$,&#10;$title$,&#10;$content$,&#10;$type$&#10;).notify($project$)" recursive="false"
+                            caseInsensitive="false" type="Kotlin" pattern_context="default" reformatAccordingToStyle="true"
+                            shortenFQN="true" replacement="EduNotificationManager.showWarningNotification($project$, $title$, $content$)">
+        <constraint name="__context__" within="" contains=""/>
+        <constraint name="Instance" regexp="com.intellij.notification.Notification" reference="class constructors" within="" contains=""/>
+        <constraint name="id" nameOfExprType="String" within="" contains=""/>
+        <constraint name="title" nameOfExprType="String" within="" contains=""/>
+        <constraint name="content" nameOfExprType="String" within="" contains=""/>
+        <constraint name="type" regexp="(NotificationType\.WARNING|WARNING)" nameOfExprType="com\.intellij\.notification\.NotificationType"
+                    within="" contains=""/>
+        <constraint name="project" nameOfExprType="com\.intellij\.openapi\.project\.Project\??" within="" contains=""/>
+      </replaceConfiguration>
+      <replaceConfiguration name="Notification to EduNotification Conversion"
+                            text="$Instance$(&#10;$id$,&#10;$title$,&#10;$content$,&#10;$type$&#10;).notify($project$)" recursive="false"
+                            caseInsensitive="false" type="Kotlin" pattern_context="default" reformatAccordingToStyle="true"
+                            shortenFQN="true" replacement="EduNotificationManager.showErrorNotification($project$, $title$, $content$)">
+        <constraint name="__context__" within="" contains=""/>
+        <constraint name="Instance" regexp="com.intellij.notification.Notification" reference="class constructors" within="" contains=""/>
+        <constraint name="id" nameOfExprType="String" within="" contains=""/>
+        <constraint name="title" nameOfExprType="String" within="" contains=""/>
+        <constraint name="content" nameOfExprType="String" within="" contains=""/>
+        <constraint name="type" regexp="(NotificationType\.ERROR|ERROR)" nameOfExprType="com\.intellij\.notification\.NotificationType"
+                    within="" contains=""/>
+        <constraint name="project" nameOfExprType="com\.intellij\.openapi\.project\.Project\??" within="" contains=""/>
+      </replaceConfiguration>
+      <replaceConfiguration name="Notification to EduNotification Conversion"
+                            text="$Instance$(&#10;$id$,&#10;$title$,&#10;$content$,&#10;$type$&#10;).notify(null)" recursive="false"
+                            caseInsensitive="false" type="Kotlin" pattern_context="default" reformatAccordingToStyle="true"
+                            shortenFQN="true"
+                            replacement="EduNotificationManager.showInfoNotification(title = $title$, content = $content$)">
+        <constraint name="__context__" within="" contains=""/>
+        <constraint name="Instance" regexp="com.intellij.notification.Notification" reference="class constructors" within="" contains=""/>
+        <constraint name="id" nameOfExprType="String" within="" contains=""/>
+        <constraint name="title" nameOfExprType="String" within="" contains=""/>
+        <constraint name="content" nameOfExprType="String" within="" contains=""/>
+        <constraint name="type" regexp="(NotificationType\.INFORMATION|INFORMATION)"
+                    nameOfExprType="com\.intellij\.notification\.NotificationType" within="" contains=""/>
+      </replaceConfiguration>
+      <replaceConfiguration name="Notification to EduNotification Conversion"
+                            text="$Instance$(&#10;$id$,&#10;$title$,&#10;$content$,&#10;$type$&#10;).notify(null)" recursive="false"
+                            caseInsensitive="false" type="Kotlin" pattern_context="default" reformatAccordingToStyle="true"
+                            shortenFQN="true"
+                            replacement="EduNotificationManager.showWarningNotification(title = $title$, content = $content$)">
+        <constraint name="__context__" within="" contains=""/>
+        <constraint name="Instance" regexp="com.intellij.notification.Notification" reference="class constructors" within="" contains=""/>
+        <constraint name="id" nameOfExprType="String" within="" contains=""/>
+        <constraint name="title" nameOfExprType="String" within="" contains=""/>
+        <constraint name="content" nameOfExprType="String" within="" contains=""/>
+        <constraint name="type" regexp="(NotificationType\.WARNING|WARNING)" nameOfExprType="com\.intellij\.notification\.NotificationType"
+                    within="" contains=""/>
+      </replaceConfiguration>
+      <replaceConfiguration name="Notification to EduNotification Conversion"
+                            text="$Instance$(&#10;$id$,&#10;$title$,&#10;$content$,&#10;$type$&#10;).notify(null)" recursive="false"
+                            caseInsensitive="false" type="Kotlin" pattern_context="default" reformatAccordingToStyle="true"
+                            shortenFQN="true"
+                            replacement="EduNotificationManager.showErrorNotification(title = $title$, content = $content$)">
+        <constraint name="__context__" within="" contains=""/>
+        <constraint name="Instance" regexp="com.intellij.notification.Notification" reference="class constructors" within="" contains=""/>
+        <constraint name="id" nameOfExprType="String" within="" contains=""/>
+        <constraint name="title" nameOfExprType="String" within="" contains=""/>
+        <constraint name="content" nameOfExprType="String" within="" contains=""/>
+        <constraint name="type" regexp="(NotificationType\.ERROR|ERROR)" nameOfExprType="com\.intellij\.notification\.NotificationType"
+                    within="" contains=""/>
+      </replaceConfiguration>
+      <replaceConfiguration name="Notification to EduNotification Conversion"
+                            text="$Instance$(&#10;$id$,&#10;$title$,&#10;$content$,&#10;$type$&#10;)" recursive="false"
+                            caseInsensitive="false" type="Kotlin" pattern_context="default" reformatAccordingToStyle="true"
+                            shortenFQN="true" replacement="EduNotificationManager.create($type$, $title$, $content$)">
+        <constraint name="__context__" within="" contains=""/>
+        <constraint name="Instance" regexp="com.intellij.notification.Notification" reference="class constructors" within="" contains=""/>
+        <constraint name="id" nameOfExprType="String" within="" contains=""/>
+        <constraint name="title" nameOfExprType="String" within="" contains=""/>
+        <constraint name="content" nameOfExprType="String" within="" contains=""/>
+        <constraint name="type" nameOfExprType="com\.intellij\.notification\.NotificationType" within="" contains=""/>
+      </replaceConfiguration>
+      <searchConfiguration name="Notification to EduNotification Conversion" text="class $class$ : $Instance$($Parameter$)" recursive="true"
+                           caseInsensitive="false" type="Kotlin" pattern_context="default">
+        <constraint name="__context__" within="" contains=""/>
+        <constraint name="Instance" regexp="com.intellij.notification.Notification" reference="class constructors" target="true" within=""
+                    contains=""/>
+        <constraint name="class" within="" contains=""/>
+        <constraint name="Parameter" minCount="0" maxCount="2147483647" within="" contains=""/>
+      </searchConfiguration>
       <replaceConfiguration name="notNullize(s,&quot;&quot;) can be simplified" text="com.intellij.openapi.util.text.StringUtil.notNullize($s$, &quot;$l$&quot;)" recursive="false" caseInsensitive="true" type="JAVA" pattern_context="default" reformatAccordingToStyle="true" shortenFQN="true" replacement="com.intellij.openapi.util.text.StringUtil.notNullize($s$)">
         <constraint name="__context__" within="" contains="" />
         <constraint name="s" within="" contains="" />
