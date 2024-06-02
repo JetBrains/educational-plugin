@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.yaml.errorHandling
 import com.intellij.CommonBundle
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
+import com.intellij.notification.NotificationType.ERROR
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
@@ -19,13 +20,10 @@ import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import javax.swing.event.HyperlinkEvent
 
 fun showInvalidConfigNotification(project: Project, configFile: VirtualFile, cause: String) {
-  EduNotificationManager.showErrorNotification(
-    project,
-    title = EduCoreBundle.message("yaml.invalid.config.notification.title"),
-    content = messageWithEditLink(project, configFile, cause),
-  ) {
-    setListener(GoToFileListener(project, configFile))
-  }
+  EduNotificationManager
+    .create(ERROR, EduCoreBundle.message("yaml.invalid.config.notification.title"), messageWithEditLink(project, configFile, cause))
+    .setListener(GoToFileListener(project, configFile))
+    .notify(project)
 }
 
 private fun messageWithEditLink(project: Project, configFile: VirtualFile, cause: String): String {

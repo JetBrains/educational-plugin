@@ -16,14 +16,8 @@ import com.jetbrains.edu.coursecreator.framework.diff.resolveConflicts
 import com.jetbrains.edu.learning.LightTestAware
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.ext.getDir
-import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
-import com.jetbrains.edu.learning.courseFormat.ext.getRelativePath
-import com.jetbrains.edu.learning.courseFormat.ext.visitTasks
+import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
-import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.framework.impl.FLTaskState
 import com.jetbrains.edu.learning.framework.impl.calculateChanges
 import com.jetbrains.edu.learning.framework.impl.getTaskStateFromFiles
@@ -254,7 +248,7 @@ class CCFrameworkLessonManager(
         "action.Educational.Educator.SyncChangesWithNextTasks.Notification.cancel.description",
         startTaskName,
         cancelledTaskName
-      ),
+      )
     )
   }
 
@@ -262,7 +256,7 @@ class CCFrameworkLessonManager(
     EduNotificationManager.showInfoNotification(
       project,
       EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.Notification.success.title"),
-      EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.Notification.success.description", startTaskName),
+      EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.Notification.success.description", startTaskName)
     )
   }
 

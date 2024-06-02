@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
 import com.intellij.notification.NotificationListener
+import com.intellij.notification.NotificationType.ERROR
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
@@ -298,27 +299,25 @@ object HyperskillCheckConnector {
 
   private fun showErrorDetails(project: Project, error: String) {
     if (error == EduFormatBundle.message("error.access.denied") || error == EduCoreBundle.message("error.failed.to.refresh.tokens")) {
-      EduNotificationManager.showErrorNotification(
-        project,
-        EduCoreBundle.message("error.failed.to.post.solution"),
-        EduCoreBundle.message("error.access.denied.with.link"),
-      ) {
-        setListener { _, _ ->
-          this@showErrorNotification.expire()
-          loginListener
+      EduNotificationManager
+        .create(ERROR, EduCoreBundle.message("error.failed.to.post.solution"), EduCoreBundle.message("error.access.denied.with.link"))
+        .apply {
+          setListener { _, _ ->
+            this@apply.expire()
+            loginListener
+          }
         }
-      }
+        .notify(project)
       return
     }
 
     LOG.warn(error)
-    EduNotificationManager.showErrorNotification(
-      project,
+    EduNotificationManager.create(
+      ERROR,
       EduCoreBundle.message("error.failed.to.post.solution"),
-      EduFormatBundle.message("help.use.guide", EduNames.FAILED_TO_POST_TO_JBA_URL),
-    ) {
-      setListener(NotificationListener.URL_OPENING_LISTENER)
-    }
+      EduFormatBundle.message("help.use.guide", EduNames.FAILED_TO_POST_TO_JBA_URL)
+    ).setListener(NotificationListener.URL_OPENING_LISTENER)
+      .notify(project)
   }
 
   fun failedToSubmit(project: Project, task: Task, error: String): CheckResult {

@@ -4,6 +4,8 @@ import com.intellij.icons.ExpUiIcons
 import com.intellij.ide.plugins.PluginManagerConfigurable
 import com.intellij.notification.BrowseNotificationAction
 import com.intellij.notification.NotificationAction
+import com.intellij.notification.NotificationType.ERROR
+import com.intellij.notification.NotificationType.INFORMATION
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.options.ShowSettingsUtil
@@ -23,27 +25,24 @@ import org.jetbrains.annotations.NotNull
 
 object MarketplaceNotificationUtils {
   fun showReloginToJBANeededNotification(action: AnAction) {
-    EduNotificationManager.showErrorNotification(
-      title = EduCoreBundle.message("jba.relogin.needed.title"),
-      content = EduCoreBundle.message("jba.relogin.text"),
-    ) {
-      addAction(action)
-    }
+    EduNotificationManager
+      .create(ERROR, EduCoreBundle.message("jba.relogin.needed.title"), EduCoreBundle.message("jba.relogin.text"))
+      .addAction(action)
+      .notify(null)
   }
 
   fun showInstallMarketplacePluginNotification() {
-    EduNotificationManager.showErrorNotification(
-      title = EduCoreBundle.message("error.failed.login.to.subsystem", MARKETPLACE),
-      content = EduCoreBundle.message("notification.marketplace.install.licensing.plugin"),
-    ) {
-      addAction(object : AnAction(EduCoreBundle.message("action.install.plugin.in.settings")) {
-        override fun actionPerformed(e: AnActionEvent) {
-          ShowSettingsUtil.getInstance().showSettingsDialog(
-            ProjectManager.getInstance().defaultProject, PluginManagerConfigurable::class.java
-          )
-        }
-      })
-    }
+    EduNotificationManager.create(
+      ERROR,
+      EduCoreBundle.message("error.failed.login.to.subsystem", MARKETPLACE),
+      @Suppress("DialogTitleCapitalization") EduCoreBundle.message("notification.marketplace.install.licensing.plugin")
+    ).addAction(object : AnAction(EduCoreBundle.message("action.install.plugin.in.settings")) {
+      override fun actionPerformed(e: AnActionEvent) {
+        ShowSettingsUtil.getInstance().showSettingsDialog(
+          ProjectManager.getInstance().defaultProject, PluginManagerConfigurable::class.java
+        )
+      }
+    }).notify(null)
   }
 
   fun showLoginNeededNotification(
@@ -52,37 +51,34 @@ object MarketplaceNotificationUtils {
     notificationTitle: String = EduCoreBundle.message("notification.title.authorization.required"),
     authAction: () -> Unit
   ) {
-    EduNotificationManager.showErrorNotification(
-      project,
-      notificationTitle,
-      EduCoreBundle.message("notification.content.authorization", failedActionTitle),
-    ) {
-      @Suppress("DialogTitleCapitalization")
-      addAction(object : DumbAwareAction(EduCoreBundle.message("notification.content.authorization.action")) {
-        override fun actionPerformed(e: AnActionEvent) {
-          authAction()
-          this@showErrorNotification.expire()
-        }
-      })
-    }
+    EduNotificationManager
+      .create(ERROR, notificationTitle, EduCoreBundle.message("notification.content.authorization", failedActionTitle))
+      .apply {
+        @Suppress("DialogTitleCapitalization")
+        addAction(object : DumbAwareAction(EduCoreBundle.message("notification.content.authorization.action")) {
+          override fun actionPerformed(e: AnActionEvent) {
+            authAction()
+            this@apply.expire()
+          }
+        })
+      }.notify(project)
   }
 
   fun showLoginToUseSubmissionsNotification(project: Project) {
-    EduNotificationManager.showInfoNotification(
-      content = EduCoreBundle.message("submissions.tab.login", JET_BRAINS_ACCOUNT)
-    ) {
-      addAction(object : AnAction(EduCoreBundle.message("log.in.to", JET_BRAINS_ACCOUNT)) {
-        override fun actionPerformed(e: AnActionEvent) {
-          MarketplaceConnector.getInstance().doAuthorize(Runnable {
-            SubmissionsManager.getInstance(project).prepareSubmissionsContentWhenLoggedIn {
-              MarketplaceSolutionLoader.getInstance(project).loadSolutionsInBackground()
-            }
-          })
-          this@showInfoNotification.notify(project)
-        }
-      }
-      )
-    }
+    EduNotificationManager
+      .create(INFORMATION, content = EduCoreBundle.message("submissions.tab.login", JET_BRAINS_ACCOUNT))
+      .apply {
+        addAction(object : AnAction(EduCoreBundle.message("log.in.to", JET_BRAINS_ACCOUNT)) {
+          override fun actionPerformed(e: AnActionEvent) {
+            MarketplaceConnector.getInstance().doAuthorize(Runnable {
+              SubmissionsManager.getInstance(project).prepareSubmissionsContentWhenLoggedIn {
+                MarketplaceSolutionLoader.getInstance(project).loadSolutionsInBackground()
+              }
+            })
+            this@apply.notify(project)
+          }
+        })
+      }.notify(project)
   }
 
   fun showFailedToFindMarketplaceCourseOnRemoteNotification(project: Project, action: AnAction) {
@@ -125,7 +121,7 @@ object MarketplaceNotificationUtils {
 
   fun showFailedToChangeSharingPreferenceNotification() {
     EduNotificationManager.showErrorNotification(
-      title = EduCoreBundle.message("marketplace.solutions.sharing.notification.title"),
+      title = @Suppress("DialogTitleCapitalization") EduCoreBundle.message("marketplace.solutions.sharing.notification.title"),
       content = EduCoreBundle.message("notification.something.went.wrong.text")
     )
   }
@@ -147,8 +143,8 @@ object MarketplaceNotificationUtils {
 
     EduNotificationManager.showInfoNotification(
       project,
-      EduCoreBundle.message("marketplace.delete.submissions.success.title"),
-      message,
+      @Suppress("DialogTitleCapitalization") EduCoreBundle.message("marketplace.delete.submissions.success.title"),
+      message
     )
   }
 
@@ -169,10 +165,11 @@ object MarketplaceNotificationUtils {
 
     EduNotificationManager.showInfoNotification(
       project,
-      EduCoreBundle.message("marketplace.delete.submissions.nothing.title"),
-      message,
+      @Suppress("DialogTitleCapitalization") EduCoreBundle.message("marketplace.delete.submissions.nothing.title"),
+      message
     )
   }
+
 
   internal fun showFailedToDeleteNotification(project: Project?, courseId: Int?, loginName: String?) {
     val presentableName = project?.course?.presentableName
@@ -189,18 +186,15 @@ object MarketplaceNotificationUtils {
       EduCoreBundle.message("marketplace.delete.submissions.failed.message")
     }
 
-    EduNotificationManager.showErrorNotification(
-      project,
-      EduCoreBundle.message("marketplace.delete.submissions.failed.title"),
+    EduNotificationManager.create(
+      ERROR,
+      @Suppress("DialogTitleCapitalization") EduCoreBundle.message("marketplace.delete.submissions.failed.title"),
       message
-    ) {
-      addAction(
-        BrowseNotificationAction(
-          EduCoreBundle.message("marketplace.delete.submissions.failed.troubleshooting.text"),
-          FAILED_TO_DELETE_SUBMISSIONS
-        )
+    ).addAction(
+      BrowseNotificationAction(
+        EduCoreBundle.message("marketplace.delete.submissions.failed.troubleshooting.text"), FAILED_TO_DELETE_SUBMISSIONS
       )
-    }
+    ).notify(project)
   }
 
   fun showSuccessRequestNotification(
@@ -208,9 +202,10 @@ object MarketplaceNotificationUtils {
     @NotNull @NlsContexts.NotificationTitle title: String,
     @NotNull @NlsContexts.NotificationContent message: String
   ) {
-    EduNotificationManager.showInfoNotification(project, title, message) {
+    EduNotificationManager
+      .create(INFORMATION, title, message)
       // workaround: there is no NotificationType.Success in the platform yet
-      icon = ExpUiIcons.Status.Success
-    }
+      .setIcon(ExpUiIcons.Status.Success)
+      .notify(project)
   }
 }

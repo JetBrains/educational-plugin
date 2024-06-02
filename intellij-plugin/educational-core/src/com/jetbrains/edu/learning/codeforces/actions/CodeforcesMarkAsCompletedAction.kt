@@ -27,10 +27,7 @@ class CodeforcesMarkAsCompletedAction : CodeforcesAction() {
     ProjectView.getInstance(project).refresh()
     TaskToolWindowView.getInstance(project).updateCheckPanel(task)
     YamlFormatSynchronizer.saveItem(task)
-    EduNotificationManager.showInfoNotification(
-      project,
-      content = EduCoreBundle.message("codeforces.mark.as.completed.notification")
-    )
+    EduNotificationManager.showInfoNotification(project, content = EduCoreBundle.message("codeforces.mark.as.completed.notification"))
   }
 
   companion object {

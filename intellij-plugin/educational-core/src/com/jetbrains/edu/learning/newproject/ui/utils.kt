@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.ide.DataManager
 import com.intellij.notification.NotificationListener
+import com.intellij.notification.NotificationType.WARNING
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
@@ -176,21 +177,23 @@ fun humanReadableDuration(duration: Duration, showHoursPartForDays: Boolean = tr
 }
 
 fun showNotificationFromCourseValidation(result: CourseValidationResult, title: String) {
-  EduNotificationManager.showWarningNotification(title = title, content = result.message) {
-    when (result) {
-      is PluginsRequired -> {
-        addAction(object : AnAction(result.actionText()) {
-          override fun actionPerformed(e: AnActionEvent) {
-            result.showPluginInstallAndEnableDialog()
-          }
-        })
+  EduNotificationManager
+    .create(WARNING, title, result.message)
+    .apply {
+      when (result) {
+        is PluginsRequired -> {
+          addAction(object : AnAction(result.actionText()) {
+            override fun actionPerformed(e: AnActionEvent) {
+              result.showPluginInstallAndEnableDialog()
+            }
+          })
+        }
 
+        is ValidationErrorMessage -> {} // do nothing with the notification
+        is ValidationErrorMessageWithHyperlinks ->
+          //setting a listener is deprecated, so TextMessageWithHyperlinks should not be used.
+          //We need to reword such messages and make viewing a link an action inside a notification
+          setListener(NotificationListener.UrlOpeningListener(false))
       }
-      is ValidationErrorMessage -> {} // do nothing with the notification
-      is ValidationErrorMessageWithHyperlinks ->
-        //setting a listener is deprecated, so TextMessageWithHyperlinks should not be used.
-        //We need to reword such messages and make viewing a link an action inside a notification
-        setListener(NotificationListener.UrlOpeningListener(false))
-    }
-  }
+    }.notify(null)
 }

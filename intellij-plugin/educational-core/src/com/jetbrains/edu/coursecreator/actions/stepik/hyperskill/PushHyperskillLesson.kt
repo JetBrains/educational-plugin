@@ -95,11 +95,7 @@ class PushHyperskillLesson : DumbAwareAction(addGluingSlash(updateTitleText, upl
         else {
           message("action.push.custom.lesson.uploaded", HYPERSKILL)
         }
-        CCNotificationUtils.showInfoNotification(
-          project,
-          title = title,
-          action = CCStepikConnector.openOnStepikAction("/lesson/" + lesson.id)
-        )
+        CCNotificationUtils.showInfoNotification(project, title, action = CCStepikConnector.openOnStepikAction("/lesson/" + lesson.id))
       }
       else {
         LOG.error("Failed to update Hyperskill lesson")

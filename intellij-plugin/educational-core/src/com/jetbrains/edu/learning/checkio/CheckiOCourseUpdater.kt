@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.checkio
 
 import com.intellij.ide.projectView.ProjectView
+import com.intellij.notification.NotificationType.INFORMATION
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.application.runWriteAction
@@ -53,12 +54,10 @@ class CheckiOCourseUpdater(
     @NotificationTitle title: String
   ) {
     if (stations.isNotEmpty()) {
-      EduNotificationManager.showInfoNotification(
-        title = title,
-        content = stations.joinToString("\n") { it.name },
-      ) {
-        icon = EducationalCoreIcons.CheckiO
-      }
+      EduNotificationManager
+        .create(INFORMATION, title, stations.joinToString("\n") { it.name })
+        .setIcon(EducationalCoreIcons.CheckiO)
+        .notify(null)
     }
   }
 

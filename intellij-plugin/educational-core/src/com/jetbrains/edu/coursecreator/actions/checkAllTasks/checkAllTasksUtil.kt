@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.actions.checkAllTasks
 
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
+import com.intellij.notification.NotificationType.WARNING
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.progress.ProgressIndicator
@@ -177,29 +178,27 @@ fun getVisitItemContainerFunc(itemContainer: ItemContainer): (((Task) -> Unit) -
 }
 
 fun showFailedTasksNotification(project: Project, failedTasks: List<Task>, tasksNum: Int) {
-  EduNotificationManager.showWarningNotification(
-    project,
-    EduCoreBundle.message("notification.title.check"),
-    notificationContent(failedTasks)
-  ) {
-    subtitle = EduCoreBundle.message("notification.subtitle.some.tasks.failed", failedTasks.size, tasksNum)
-    setListener(object : NotificationListener.Adapter() {
-      override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
-        notification.hideBalloon()
-        NavigationUtils.navigateToTask(project, failedTasks[Integer.valueOf(e.description)])
-        EduCounterUsageCollector.taskNavigation(EduCounterUsageCollector.TaskNavigationPlace.CHECK_ALL_NOTIFICATION)
-      }
-    })
-    if (failedTasks.size > 1) {
-      addAction(object : AnAction(EduCoreBundle.lazyMessage("action.open.first.failed.task.text")) {
-        override fun actionPerformed(e: AnActionEvent) {
-          this@showWarningNotification.hideBalloon()
-          NavigationUtils.navigateToTask(project, failedTasks.first())
+  EduNotificationManager
+    .create(WARNING, EduCoreBundle.message("notification.title.check"), notificationContent(failedTasks))
+    .apply {
+      subtitle = EduCoreBundle.message("notification.subtitle.some.tasks.failed", failedTasks.size, tasksNum)
+      setListener(object : NotificationListener.Adapter() {
+        override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
+          notification.hideBalloon()
+          NavigationUtils.navigateToTask(project, failedTasks[Integer.valueOf(e.description)])
           EduCounterUsageCollector.taskNavigation(EduCounterUsageCollector.TaskNavigationPlace.CHECK_ALL_NOTIFICATION)
         }
       })
-    }
-  }
+      if (failedTasks.size > 1) {
+        addAction(object : AnAction(EduCoreBundle.lazyMessage("action.open.first.failed.task.text")) {
+          override fun actionPerformed(e: AnActionEvent) {
+            this@apply.hideBalloon()
+            NavigationUtils.navigateToTask(project, failedTasks.first())
+            EduCounterUsageCollector.taskNavigation(EduCounterUsageCollector.TaskNavigationPlace.CHECK_ALL_NOTIFICATION)
+          }
+        })
+      }
+    }.notify(project)
 }
 
 @Suppress("UnstableApiUsage")

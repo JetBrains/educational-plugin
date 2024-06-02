@@ -7,6 +7,7 @@ import com.intellij.ide.BrowserUtil
 import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.notification.NotificationAction
+import com.intellij.notification.NotificationType.INFORMATION
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.PluginId
@@ -86,14 +87,12 @@ object TwitterUtils {
 
     val tweet = twitter.v2.createTweet(text = info.message, mediaIds = mediaId)
 
-    EduNotificationManager.showInfoNotification(
-      title = EduCoreBundle.message("twitter.success.title"),
-      content = EduCoreBundle.message("twitter.tweet.posted")
-    ) {
-      addAction(NotificationAction.createSimpleExpiring(EduCoreBundle.message("twitter.open.in.browser")) {
+    EduNotificationManager
+      .create(INFORMATION, EduCoreBundle.message("twitter.success.title"), EduCoreBundle.message("twitter.tweet.posted"))
+      .addAction(NotificationAction.createSimpleExpiring(EduCoreBundle.message("twitter.open.in.browser")) {
         EduBrowser.getInstance().browse("https://twitter.com/anyuser/status/${tweet.id}")
       })
-    }
+      .notify(null)
   }
 
   /**

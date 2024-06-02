@@ -60,8 +60,8 @@ class CCCreateCourseArchiveAction : AnAction(EduCoreBundle.lazyMessage("action.c
     val errorMessage = CourseArchiveCreator(project, locationPath).createArchive()
     if (errorMessage == null) {
       CCNotificationUtils.showInfoNotification(
-        project = project,
-        title = EduCoreBundle.message("action.create.course.archive.success.message"),
+        project,
+        EduCoreBundle.message("action.create.course.archive.success.message"),
         action = ShowFileAction(locationPath)
       )
       PropertiesComponent.getInstance(project).setValue(LAST_ARCHIVE_LOCATION, locationPath)

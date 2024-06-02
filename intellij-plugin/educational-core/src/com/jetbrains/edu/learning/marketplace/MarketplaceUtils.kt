@@ -120,10 +120,9 @@ fun isRemoteUpdateFormatVersionCompatible(project: Project, remoteCourseFormatVe
       if (project.isDisposed) return@runInEdt
       // Suppression needed here because DialogTitleCapitalization is demanded by the superclass constructor, but the plugin naming with
       // the capital letters used in the notification title
-      @Suppress("DialogTitleCapitalization")
       showUpdateNotification(
         project,
-        EduCoreBundle.message("notification.update.plugin.title"),
+        @Suppress("DialogTitleCapitalization") EduCoreBundle.message("notification.update.plugin.title"),
         EduCoreBundle.message("notification.update.plugin.update.course.content")
       )
     }

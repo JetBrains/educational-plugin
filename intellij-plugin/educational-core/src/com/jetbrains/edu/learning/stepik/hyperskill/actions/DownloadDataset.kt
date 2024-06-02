@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill.actions
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.ide.projectView.impl.ProjectViewRenderer
 import com.intellij.notification.NotificationAction
+import com.intellij.notification.NotificationType.INFORMATION
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.Service
@@ -169,11 +170,12 @@ class DownloadDataset(
     @NlsContexts.NotificationTitle message: String,
     @NlsContexts.NotificationContent filePath: String
   ) {
-    EduNotificationManager.showInfoNotification(project, message, filePath) {
-      addAction(NotificationAction.createSimpleExpiring(EduCoreBundle.message("copy.path.to.clipboard")) {
+    EduNotificationManager
+      .create(INFORMATION, message, filePath)
+      .addAction(NotificationAction.createSimpleExpiring(EduCoreBundle.message("copy.path.to.clipboard")) {
         CopyPasteManager.getInstance().setContents(StringSelection(filePath))
       })
-    }
+      .notify(project)
   }
 
   private fun processError(project: Project, errorMessage: String? = null, exception: Exception? = null) {

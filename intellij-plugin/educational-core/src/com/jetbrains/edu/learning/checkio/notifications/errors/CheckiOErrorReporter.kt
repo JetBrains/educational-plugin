@@ -2,6 +2,8 @@ package com.jetbrains.edu.learning.checkio.notifications.errors
 
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
+import com.intellij.notification.NotificationType.ERROR
+import com.intellij.notification.NotificationType.WARNING
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
@@ -21,35 +23,26 @@ class CheckiOErrorReporter(
   private val oAuthConnector: CheckiOOAuthConnector
 ) {
   private fun reportLoginRequiredError() {
-    EduNotificationManager.showErrorNotification(
-      project,
-      title,
-      EduCoreBundle.message("notification.content.log.in.and.try.again.checkio")
-    ) {
-      icon = EducationalCoreIcons.CheckiO
-      setListener(LoginLinkListener(oAuthConnector))
-    }
+    EduNotificationManager
+      .create(ERROR, title, EduCoreBundle.message("notification.content.log.in.and.try.again.checkio"))
+      .setIcon(EducationalCoreIcons.CheckiO)
+      .setListener(LoginLinkListener(oAuthConnector))
+      .notify(project)
   }
 
   private fun reportNetworkError() {
-    EduNotificationManager.showWarningNotification(
-      project,
-      title,
-      EduCoreBundle.message("notification.content.check.connection.and.try.again")
-    ) {
-      icon = EducationalCoreIcons.CheckiO
-      subtitle = EduCoreBundle.message("notification.subtitle.connection.failed")
-    }
+    EduNotificationManager
+      .create(WARNING, title, EduCoreBundle.message("notification.content.check.connection.and.try.again"))
+      .setIcon(EducationalCoreIcons.CheckiO)
+      .setSubtitle(EduCoreBundle.message("notification.subtitle.connection.failed"))
+      .notify(project)
   }
 
   private fun reportUnexpectedError() {
-    EduNotificationManager.showErrorNotification(
-      project,
-      title,
-      EduCoreBundle.message("notification.content.unexpected.error.occurred")
-    ) {
-      icon = EducationalCoreIcons.CheckiO
-    }
+    EduNotificationManager
+      .create(ERROR, title, EduCoreBundle.message("notification.content.unexpected.error.occurred"))
+      .setIcon(EducationalCoreIcons.CheckiO)
+      .notify(project)
   }
 
   fun handle(e: Exception) {

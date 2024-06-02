@@ -74,7 +74,12 @@ class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
     }
 
     project.closeDiffWindow(e)
-    showApplyCodeSuccessfulNotification(project)
+
+    EduNotificationManager.showInfoNotification(
+      project,
+      @Suppress("DialogTitleCapitalization") EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.success.title"),
+      EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.success.text")
+    )
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
@@ -150,19 +155,11 @@ class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
     fileEditorManager.closeFile(fileEditor.file)
   }
 
-  private fun showApplyCodeSuccessfulNotification(project: Project) {
-    EduNotificationManager.showInfoNotification(
-      project,
-      EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.success.title"),
-      EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.success.text"),
-    )
-  }
-
   private fun showApplyCodeFailedNotification(project: Project) {
     EduNotificationManager.showErrorNotification(
       project,
-      EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.failed.title"),
-      EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.failed.text"),
+      @Suppress("DialogTitleCapitalization") EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.failed.title"),
+      EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.failed.text")
     )
   }
 

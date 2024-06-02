@@ -153,7 +153,7 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
     if (response.code() in BROKEN_TOKEN_RESPONSE_CODES && response.errorBody()?.string() == "{\"error\": \"invalid_grant\"}") {
       doLogout()
       EduNotificationManager.showErrorNotification(
-        title = EduCoreBundle.message("error.authorization.error"),
+        title = @Suppress("DialogTitleCapitalization") EduCoreBundle.message("error.authorization.error"),
         content = EduCoreBundle.message("notification.hyperskill.no.next.activity.login.content")
       )
     }

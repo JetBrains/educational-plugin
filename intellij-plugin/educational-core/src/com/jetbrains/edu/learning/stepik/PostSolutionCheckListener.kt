@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.stepik
 
-import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.notification.NotificationAction
+import com.intellij.notification.NotificationType.INFORMATION
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.courseFormat.CheckResult
@@ -42,14 +42,11 @@ abstract class PostSolutionCheckListener : CheckListener {
   }
 
   private fun showSubmissionNotPostedNotification(project: Project, course: EduCourse, taskName: String) {
-    EduNotificationManager.showInfoNotification(
-      project,
+    EduNotificationManager.create(
+      INFORMATION,
       EduCoreBundle.message("error.solution.not.posted"),
-      EduCoreBundle.message("notification.content.task.was.updated", taskName),
-    ) {
-      addAction(object : AnAction() {
-        override fun actionPerformed(e: AnActionEvent) = updateCourseAction(project, course)
-      })
-    }
+      EduCoreBundle.message("notification.content.task.was.updated", taskName)
+    ).addAction(NotificationAction.create { updateCourseAction(project, course) })
+      .notify(project)
   }
 }

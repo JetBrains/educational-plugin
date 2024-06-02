@@ -32,7 +32,7 @@ class CCCheckAllTasksAction : AnAction(EduCoreBundle.lazyMessage("action.check.t
         EduNotificationManager.showInfoNotification(
           project,
           EduCoreBundle.message("notification.title.check.finished"),
-          EduCoreBundle.message("notification.content.all.tasks.solved.correctly"),
+          EduCoreBundle.message("notification.content.all.tasks.solved.correctly")
         )
       }
       else {

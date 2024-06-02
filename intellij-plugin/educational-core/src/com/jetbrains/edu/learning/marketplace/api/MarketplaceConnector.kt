@@ -207,11 +207,7 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
 
     val courseBean = response.body()
     if (courseBean == null) {
-      showErrorNotification(
-        project,
-        message("notification.course.creator.failed.to.upload.course.title"),
-        action = showLogAction
-      )
+      showErrorNotification(project, message("notification.course.creator.failed.to.upload.course.title"), action = showLogAction)
       return
     }
     course.id = courseBean.id
@@ -338,11 +334,7 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
       YamlFormatSynchronizer.saveRemoteInfo(course)
       val pushAction = ActionManager.getInstance().getAction(MarketplacePushCourse.ACTION_ID)
       pushAction.templatePresentation.text = updateActionTitle
-      showInfoNotification(
-        project = project,
-        title = message("marketplace.inserted.course.version.notification", insertedCourseVersion),
-        action = pushAction
-      )
+      showInfoNotification(project, message("marketplace.inserted.course.version.notification", insertedCourseVersion), action = pushAction)
     }
   }
 
@@ -381,11 +373,7 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
       }
 
     val message = message("marketplace.push.course.successfully.updated", course.name, course.marketplaceCourseVersion)
-    showInfoNotification(
-      project = project,
-      title = message,
-      action = openOnMarketplaceAction(course.getMarketplaceUrl())
-    )
+    showInfoNotification(project, message, action = openOnMarketplaceAction(course.getMarketplaceUrl()))
     LOG.info(message)
     YamlFormatSynchronizer.saveItem(course)
     return false

@@ -1,5 +1,7 @@
 package com.jetbrains.edu.coursecreator
 
+import com.intellij.notification.NotificationType.ERROR
+import com.intellij.notification.NotificationType.INFORMATION
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.diagnostic.Logger
@@ -20,9 +22,10 @@ object CCNotificationUtils {
     @NotificationContent message: String = "",
     action: AnAction? = null
   ) {
-    EduNotificationManager.showInfoNotification(project, title, message) {
-      addAction(action)
-    }
+    EduNotificationManager
+      .create(INFORMATION, title, message)
+      .apply { action?.let { addAction(it) } }
+      .notify(project)
   }
 
   fun showErrorNotification(
@@ -32,8 +35,9 @@ object CCNotificationUtils {
     action: AnAction? = null
   ) {
     LOG.error(message)
-    EduNotificationManager.showErrorNotification(project, title, message.orEmpty()) {
-      addAction(action)
-    }
+    EduNotificationManager
+      .create(ERROR, title, message.orEmpty())
+      .apply { action?.let { addAction(it) } }
+      .notify(project)
   }
 }

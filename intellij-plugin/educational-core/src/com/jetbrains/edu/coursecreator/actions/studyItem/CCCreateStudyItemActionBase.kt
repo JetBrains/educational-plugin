@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.actions.studyItem
 
 import com.intellij.ide.projectView.ProjectView
+import com.intellij.notification.NotificationType.INFORMATION
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.DumbAwareAction
@@ -52,20 +53,20 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
     if (lessonsToWrap.size != 20) {
       return
     }
-    EduNotificationManager.showInfoNotification(
-      project,
+    EduNotificationManager.create(
+      INFORMATION,
       EduCoreBundle.message("notification.title.wrap.lessons.with.section"),
       EduCoreBundle.message("notification.content.wrap.lessons.with.section")
-    ) {
+    ).apply {
       addAction(
         object : DumbAwareAction(EduCoreBundle.lazyMessage("action.wrap.lessons.title")) {
           override fun actionPerformed(e: AnActionEvent) {
             CCWrapWithSection.wrapLessonsIntoSection(project, course, lessonsToWrap)
-            this@showInfoNotification.expire()
+            this@apply.expire()
           }
         }
       )
-    }
+    }.notify(project)
   }
 
   override fun update(event: AnActionEvent) {

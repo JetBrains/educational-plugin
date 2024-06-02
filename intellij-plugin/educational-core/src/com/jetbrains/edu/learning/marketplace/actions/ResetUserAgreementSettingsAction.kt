@@ -19,8 +19,8 @@ class ResetUserAgreementSettingsAction(
 
     EduNotificationManager.showInfoNotification(
       project,
-      EduCoreBundle.message("user.agreement.reset.notification.title"),
-      EduCoreBundle.message("user.agreement.reset.notification.text"),
+      @Suppress("DialogTitleCapitalization") EduCoreBundle.message("user.agreement.reset.notification.title"),
+      EduCoreBundle.message("user.agreement.reset.notification.text")
     )
   }
 }

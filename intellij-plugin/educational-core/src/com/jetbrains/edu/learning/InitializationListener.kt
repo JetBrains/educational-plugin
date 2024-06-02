@@ -9,6 +9,7 @@ import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationListener
+import com.intellij.notification.NotificationType.ERROR
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.progress.ProgressManager
@@ -73,16 +74,14 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
   }
 
   private fun showSwitchFromEduNotification() {
-    EduNotificationManager.showErrorNotification(
-      title = EduCoreBundle.message(
-        "notification.ide.switch.from.edu.ide.title",
-        ApplicationNamesInfo.getInstance().fullProductNameWithEdition
-      ),
-      content = EduCoreBundle.message(
+    EduNotificationManager.create(
+      ERROR,
+      EduCoreBundle.message("notification.ide.switch.from.edu.ide.title", ApplicationNamesInfo.getInstance().fullProductNameWithEdition),
+      EduCoreBundle.message(
         "notification.ide.switch.from.edu.ide.description",
         "${ApplicationNamesInfo.getInstance().fullProductName} Community"
       ),
-    ) {
+    ).apply {
       isSuggestionType = true
       configureDoNotAskOption(
         SWITCH_TO_COMMUNITY_DO_NOT_ASK_OPTION_ID,
@@ -98,14 +97,14 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
             "https://www.jetbrains.com/idea/download/"
           }
           BrowserUtil.browse(link)
-          this@showErrorNotification.expire()
+          this@apply.expire()
         })
       addAction(NotificationAction.createSimple((IdeBundle.message("notifications.toolwindow.dont.show.again"))) {
         @Suppress("UnstableApiUsage")
-        this@showErrorNotification.setDoNotAskFor(null)
-        this@showErrorNotification.expire()
+        this@apply.setDoNotAskFor(null)
+        this@apply.expire()
       })
-    }
+    }.notify(null)
   }
 
   private fun fillRecentCourses() {
@@ -133,16 +132,12 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
   }
 
   private fun notifyUnsupportedPort(port: Int) {
-    EduNotificationManager.showErrorNotification(
-      title = EduNames.JBA,
-      content = EduCoreBundle.message(
-        "hyperskill.unsupported.port.extended.message",
-        port.toString(),
-        EduNames.OUTSIDE_OF_KNOWN_PORT_RANGE_URL
-      ),
-    ) {
-      setListener(NotificationListener.URL_OPENING_LISTENER)
-    }
+    EduNotificationManager.create(
+      ERROR,
+      EduNames.JBA,
+      EduCoreBundle.message("hyperskill.unsupported.port.extended.message", port.toString(), EduNames.OUTSIDE_OF_KNOWN_PORT_RANGE_URL)
+    ).setListener(NotificationListener.URL_OPENING_LISTENER)
+      .notify(null)
   }
 
   companion object {

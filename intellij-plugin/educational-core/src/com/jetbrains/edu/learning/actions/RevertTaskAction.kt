@@ -9,7 +9,6 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageDialogBuilder
 import com.intellij.ui.EditorNotifications
-import com.intellij.util.ui.EmptyIcon
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.actions.EduActionUtils.updateAction
 import com.jetbrains.edu.learning.courseFormat.ext.revertTaskFiles
@@ -73,13 +72,9 @@ class RevertTaskAction : DumbAwareAction(), RightAlignedToolbarAction {
       EP_NAME.forEachExtensionSafe {
         it.onTaskReversion(project, task)
       }
+
       EditorNotifications.getInstance(project).updateAllNotifications()
-      EduNotificationManager.showInfoNotification(
-        project = project,
-        content = EduCoreBundle.message("action.Educational.RefreshTask.result")
-      ) {
-        setIcon(EmptyIcon.ICON_16)
-      }
+      EduNotificationManager.showInfoNotification(project, content = EduCoreBundle.message("action.Educational.RefreshTask.result"))
       ProjectView.getInstance(project).refresh()
       TaskToolWindowView.getInstance(project).updateTaskSpecificPanel()
       TaskToolWindowView.getInstance(project).readyToCheck()

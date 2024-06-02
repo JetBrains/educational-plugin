@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.intellij.icons.AllIcons
 import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationListener
+import com.intellij.notification.NotificationType.ERROR
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
@@ -194,16 +195,12 @@ fun Task.getRelatedTheoryTask(): TheoryTask? {
 }
 
 fun notifyJBAUnauthorized(project: Project, specificMessage: String) {
-  EduNotificationManager.showErrorNotification(
-    project,
-    specificMessage,
-    EduCoreBundle.message("notification.hyperskill.no.next.activity.login.content")
-  ) {
-    addAction(
-      NotificationAction.createSimpleExpiring(
-        EduCoreBundle.message("notification.hyperskill.no.next.activity.login.action")
-      ) { HyperskillLoginListener.doLogin() })
-  }
+  EduNotificationManager
+    .create(ERROR, specificMessage, EduCoreBundle.message("notification.hyperskill.no.next.activity.login.content"))
+    .addAction(NotificationAction.createSimpleExpiring(EduCoreBundle.message("notification.hyperskill.no.next.activity.login.action")) {
+      HyperskillLoginListener.doLogin()
+    })
+    .notify(project)
 }
 
 fun openNextActivity(project: Project, task: Task) {
@@ -308,13 +305,12 @@ private fun getNextStepInTopic(topicId: Int, taskId: Int?): NextActivityInfo {
 }
 
 private fun showNoNextActivityNotification(task: Task?, project: Project) {
-  EduNotificationManager.showErrorNotification(
-    project,
+  EduNotificationManager.create(
+    ERROR,
     EduCoreBundle.message("notification.hyperskill.no.next.activity.title"),
     task?.let { EduCoreBundle.message("notification.hyperskill.no.next.activity.content", stepLink(task.id)) } ?: "",
-  ) {
-    setListener(NotificationListener.URL_OPENING_LISTENER)
-  }
+  ).setListener(NotificationListener.URL_OPENING_LISTENER)
+    .notify(project)
 }
 
 fun <T : WithPaginationMetaData> withPageIteration(fetchData: (Int) -> Result<T, String>): Result<List<T>, String> {

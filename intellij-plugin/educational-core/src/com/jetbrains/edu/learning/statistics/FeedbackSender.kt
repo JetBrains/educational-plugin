@@ -1,8 +1,9 @@
 package com.jetbrains.edu.learning.statistics
 
 import com.intellij.ide.util.PropertiesComponent
-import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationListener
+import com.intellij.notification.NotificationType.INFORMATION
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.NotificationContent
 import com.intellij.openapi.util.NlsContexts.NotificationTitle
@@ -13,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
+import javax.swing.event.HyperlinkEvent
 
 @Suppress("UnstableApiUsage")
 fun showCCPostFeedbackNotification(course: Course, project: Project) {
@@ -68,11 +70,14 @@ private fun showFeedbackNotification(
   @NotificationContent content: String,
   feedbackUrl: String
 ) {
-  EduNotificationManager.showInfoNotification(project, title, content) {
-    addAction(object : AnAction() {
-      override fun actionPerformed(e: AnActionEvent) = EduBrowser.getInstance().browse(feedbackUrl)
+  EduNotificationManager
+    .create(INFORMATION, title, content)
+    .setListener(object : NotificationListener.Adapter() {
+      override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
+        EduBrowser.getInstance().browse(feedbackUrl)
+      }
     })
-  }
+    .notify(project)
 }
 
 fun isSurveyPrompted() : Boolean = PropertiesComponent.getInstance().getBoolean(SURVEY_PROMPTED)

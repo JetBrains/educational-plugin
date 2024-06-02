@@ -335,7 +335,7 @@
     <editorNotificationProvider implementation="com.jetbrains.edu.learning.yaml.YamlConfigNotificationProvider"/>
     <editorNotificationProvider implementation="com.jetbrains.edu.coursecreator.framework.editor.SyncChangesEditorNotificationsProvider"/>
 
-    <!-- com.jetbrains.edu.learning.notification.EduNotification.JETBRAINS_ACADEMY_GROUP_ID -->
+    <!-- com.jetbrains.edu.learning.notification.EduNotificationManager.JETBRAINS_ACADEMY_GROUP_ID -->
     <notificationGroup id="JetBrains Academy" displayType="BALLOON"
                        bundle="messages.EduCoreBundle" key="notification.group.edu.tools"/>
 

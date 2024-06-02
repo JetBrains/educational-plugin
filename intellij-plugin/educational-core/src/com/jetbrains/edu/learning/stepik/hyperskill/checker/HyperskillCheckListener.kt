@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
+import com.intellij.notification.NotificationType.ERROR
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduNames
@@ -58,16 +59,16 @@ class HyperskillCheckListener : CheckListener {
     }
 
     if (HyperskillSettings.INSTANCE.account == null) {
-      EduNotificationManager.showErrorNotification(
-        project,
+      EduNotificationManager.create(
+        ERROR,
         EduCoreBundle.message("error.failed.to.post.solution.to", EduNames.JBA),
         EduCoreBundle.message("error.login.required", EduNames.JBA),
-      ) {
+      ).apply {
         setListener { _, e ->
-          this@showErrorNotification.expire()
+          this@apply.expire()
           HyperskillLoginListener.hyperlinkUpdate(e)
         }
-      }
+      }.notify(project)
       return
     }
 

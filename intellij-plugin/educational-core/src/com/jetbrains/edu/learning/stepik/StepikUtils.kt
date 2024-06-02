@@ -17,6 +17,7 @@
 
 package com.jetbrains.edu.learning.stepik
 
+import com.intellij.notification.NotificationType.INFORMATION
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
@@ -31,13 +32,11 @@ fun getStepikLink(task: Task, lesson: Lesson): String {
   return "${StepikNames.getStepikUrl()}/lesson/${lesson.id}/step/${task.index}"
 }
 
+@Suppress("DialogTitleCapitalization")
 fun showUpdateAvailableNotification(project: Project, updateAction: () -> Unit) {
-  EduNotificationManager.showInfoNotification(
-    project,
-    EduCoreBundle.message("update.content"),
-    EduCoreBundle.message("update.content.request")
-  ) {
-    setListener { notification, _ ->
+  EduNotificationManager
+    .create(INFORMATION, EduCoreBundle.message("update.content"), EduCoreBundle.message("update.content.request"))
+    .setListener { notification, _ ->
       FileEditorManagerEx.getInstanceEx(project).closeAllFiles()
       notification.expire()
       ProgressManager.getInstance().runProcessWithProgressSynchronously(
@@ -48,7 +47,7 @@ fun showUpdateAvailableNotification(project: Project, updateAction: () -> Unit) 
         EduCoreBundle.message("push.course.updating.progress.text"), true, project
       )
     }
-  }
+    .notify(project)
 }
 
 val StepikUser.profileUrl: String get() = "${getStepikProfilePath()}${userInfo.id}"
