@@ -136,3 +136,77 @@ private fun buildFeedbackTypePrompt(textHint: String, codeHint: String) = """
     
     Find below an example response for reference: "KTC-TPR-TPRC, KC-EXA, KH-TPS-TPSB"
   """.trimIndent()
+
+suspend fun processValidationCompilationErrorHints(
+  textHint: String,
+  codeHint: String,
+  userCode: String,
+  errorDetails: String
+) =
+  AiPlatformAdapter.chat(
+    systemPrompt = buildCompilationErrorHintsValidationSystemPrompt(),
+    userPrompt = buildCompilationErrorHintsValidationUserPrompt(textHint, codeHint, userCode, errorDetails),
+    temp = 0.0,
+    generationContextProfile = AUTO_VALIDATION
+  )
+
+private val validationCompilationErrorHintsCriteria = """
+    1. comprehensible: if the text hint is intelligible (i.e., proper English, not nonsensical), answer with "Yes"; otherwise, answer with "No".
+    
+    2. unnecessaryContent: if the text hint contains unnecessary content (e.g., repeating content, comprehensible but irrelevant content), answer with "Yes" and indicate unnecessary content; otherwise, answer with "No".
+    
+    3. hasExplanation: if the text hint contains an explanation of the programming error message, answer with "Yes"; otherwise, answer with "No".
+    
+    4. explanationCorrect: If the text hint contains a correct explanation of the programming error message, answer with "Yes"; otherwise, answer with "No" and specify why the explanation is not correct.
+    
+    5. hasFix: If the text hint contains actions or steps that one should take to fix the error, answer with "Yes"; otherwise, answer with "No".
+    
+    6. fixCorrect: If the text hint contains correct actions or steps that one should take to fix the error, answer with "Yes"; otherwise, answer with "No" and indicate incorrect actions or steps.
+    
+    7. correctImplementation: if the code hint contains the correct error fix (i.e., actually fixes the error, does not cause other errors, corresponds to the explanation of the fix in the text hint), answer with "Yes"; otherwise, answer with "No" specify why the fix is not correct.
+    
+    8. improvementOverTheOriginal: if the text hint provides added value (from a novice programmer’s standpoint) when compared to the original programming error message, answer with "Yes" and specify which value; otherwise, answer with "No".
+  """.trimIndent()
+
+private fun buildCompilationErrorHintsValidationUserPrompt(
+  textHint: String,
+  codeHint: String,
+  userCode: String,
+  errorDetails: String
+) = """
+    Determine the correctness of the hints using the given criteria.
+    
+    Original programming error message: <$errorDetails>
+    
+    Current student code: 
+      ```kotlin
+        $userCode
+      ```
+    
+    Text hint: <$textHint>
+    
+    Code hint: 
+      ```kotlin
+        $codeHint
+      ```
+  """.trimIndent()
+
+private fun buildCompilationErrorHintsValidationSystemPrompt() = """
+    Text hint and code hint have been generated to guide the student to fix a compilation error. Your goal is to determine the correctness of these hints using the given criteria as if you were a teacher.
+    
+    The criteria: <$validationCompilationErrorHintsCriteria>
+    
+    Format the response as json with keys: comprehensible, unnecessaryContent, hasExplanation, explanationCorrect, hasFix, fixCorrect, correctImplementation, improvementOverTheOriginal.
+    
+    Find below an example response for reference:
+    {
+      "comprehensible": "Yes",
+      "unnecessaryContent": "Yes, contains repeating content",
+      "hasExplanation": "Yes",
+      "explanationCorrect": "No, describes another error",
+      "hasFix": "Yes",
+      "fixCorrect": "No, actions won't fix the error",
+      "correctImplementation": "No, does not fix the error",
+      "improvementOverTheOriginal": "Yes, clearer for the novice at the expense of simpler vocabulary",
+    }
+  """.trimIndent()
