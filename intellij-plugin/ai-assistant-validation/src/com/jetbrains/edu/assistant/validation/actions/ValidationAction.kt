@@ -137,10 +137,10 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
               studentSolutions?.let {
                 it.getSolutionListForTask(lesson.name, task.name).forEach { studentCode ->
                   ApplicationManager.getApplication().invokeAndWait {
-                    lesson.replaceContent(task, studentCode, eduState, project)
+                    lesson.replaceContent(eduState.task, studentCode, eduState, project)
                   }
                   runBlockingCancellable {
-                    lessonRecords.addAll(buildRecords(task, lesson))
+                    lessonRecords.addAll(buildRecords(eduState.task as EduTask, lesson))
                   }
                 }
               } ?: run {

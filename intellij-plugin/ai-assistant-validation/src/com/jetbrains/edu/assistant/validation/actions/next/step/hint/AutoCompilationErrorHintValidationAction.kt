@@ -19,6 +19,19 @@ import org.apache.commons.csv.CSVRecord
 import org.jetbrains.kotlinx.dataframe.api.toDataFrame
 import kotlin.io.path.Path
 
+/**
+ * The `Auto Validate Compilation Error Hints Generation` action runs an automatic validation of educational AI assistant generating text and code hints when a compilation error occurs.
+ * The output data can be found in `educational-plugin/aiAssistantValidation/generatedValidationOfCompilationErrorHints.csv` by default, validation
+ * output directory can be set up in `gradle.properties`.
+ *
+ * Example of the output data:
+ * ```
+ * |   taskId   |      taskName     |   errorDetails  |  userCode  |  nextStepTextHint |  nextStepCodeHint  | errors | comprehensible | unnecessaryContent | hasExplanation | explanationCorrect | hasFix | fixCorrect | correctImplementation | improvementOverTheOriginal |
+ * |:----------:|:-----------------:|:---------------:|:----------:|:-----------------:|:------------------:|:------:|:--------------:|:------------------:|:--------------:|:------------------:|:------:|:----------:|:---------------------:|:--------------------------:|
+ * | 1412191977 | ProgramEntryPoint |       ...       | package... | Replace the ...   | package ...        |   ...  |      Yes       |         No         |      BOH       |        Yes         |   No   |   Yes      |          Yes          |            No              |
+ * |     ...    |        ...        |       ...       |     ...    |       ...         |       ...          |   ...  |      ...       |        ...         |       ...      |         ...        |   ...  |   ...      |          ...          |            ...             |
+ * ```
+ */
 @Suppress("ComponentNotRegistered")
 class AutoCompilationErrorHintValidationAction : ValidationAction<ValidationOfCompilationErrorHintsDataframeRecord>() {
 
@@ -48,7 +61,9 @@ class AutoCompilationErrorHintValidationAction : ValidationAction<ValidationOfCo
         val codeHint = response.codeHint ?: error("Cannot get a code hint (${response.assistantError?.name ?: "no assistant error found"})")
         val textHint = response.textHint ?: error("Cannot get a text hint (${response.assistantError?.name ?: "no assistant error found"})")
         val hintsValidation = processValidationCompilationErrorHints(textHint, codeHint, userCode, errorDetails)
-        val dataframeRecord = Gson().fromJson(hintsValidation, ValidationOfCompilationErrorHintsDataframeRecord::class.java)
+        val regex = "^(```\\w*)?(.*?)(```)?$".toRegex(RegexOption.DOT_MATCHES_ALL)
+        val matchResult = regex.matchEntire(hintsValidation)?.groups?.get(2)?.value ?: hintsValidation
+        val dataframeRecord = Gson().fromJson(matchResult, ValidationOfCompilationErrorHintsDataframeRecord::class.java)
         return listOf(dataframeRecord.apply {
           taskId = task.id
           taskName = task.name
