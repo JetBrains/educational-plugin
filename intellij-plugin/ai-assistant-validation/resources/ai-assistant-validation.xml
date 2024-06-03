@@ -16,6 +16,10 @@
             class="com.jetbrains.edu.assistant.validation.actions.next.step.hint.AutoHintValidationAction">
       <add-to-group group-id="ToolsMenu"/>
     </action>
+    <action id="Validation.AutoCompilationErrorHintValidation"
+            class="com.jetbrains.edu.assistant.validation.actions.next.step.hint.AutoCompilationErrorHintValidationAction">
+      <add-to-group group-id="ToolsMenu"/>
+    </action>
   </actions>
   <resource-bundle>messages.AiAssistantValidationBundle</resource-bundle>
 </idea-plugin>

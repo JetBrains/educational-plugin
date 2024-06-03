@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.eduAssistant.grazie
 
 import ai.grazie.api.gateway.client.api.llm.ChatRequestBuilder
+import ai.grazie.model.llm.annotation.ExperimentalLLM
 import ai.grazie.model.llm.profile.GoogleProfileIDs
 import ai.grazie.model.llm.profile.GrazieLLMProfileIDs
 import ai.grazie.model.llm.profile.LLMProfileID
@@ -14,10 +15,12 @@ enum class GenerationContextProfile(private val llmProfileId: String) {
   @Suppress("unused") // Used for ai-assistant-validation module
   AUTO_VALIDATION(GrazieLlmProfileProvider.getAutoValidationProfile());
 
+  @OptIn(ExperimentalLLM::class)
   private fun getProfileById() =
     when(llmProfileId) {
       "openai-chat-gpt" -> OpenAIProfileIDs.Chat.ChatGPT
       "openai-gpt-4" -> OpenAIProfileIDs.Chat.GPT4
+      "openai-gpt-4o" -> OpenAIProfileIDs.Chat.GPT4o
       "google-chat-bison" -> GoogleProfileIDs.Chat.Bison
       "grazie-chat-llama-v2-13b" -> GrazieLLMProfileIDs.LLAMA.Medium
       "gemini-pro" -> GoogleProfileIDs.Chat.GeminiPro
