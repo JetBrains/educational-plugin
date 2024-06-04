@@ -1,17 +1,17 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="runAndroidStudio" type="GradleRunConfiguration" factoryName="Gradle" singleton="true" show_console_on_std_err="true" show_console_on_std_out="true">
-    <log_file alias="idea.log" path="$PROJECT_DIR$/intellij-plugin/build/androidstudio-sandbox/system/log/idea.log" />
+    <log_file alias="idea.log" path="$PROJECT_DIR$/intellij-plugin/build/idea-sandbox/androidstudio-sandbox-233/log_runAndroidStudio/idea.log" />
+    <log_file alias="idea.log" path="$PROJECT_DIR$/intellij-plugin/build/idea-sandbox/androidstudio-sandbox-241/log_runAndroidStudio/idea.log" />
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
       <option name="externalSystemIdString" value="GRADLE" />
-      <option name="scriptParameters" value="-PbaseIDE=studio" />
+      <option name="scriptParameters" value="" />
       <option name="taskDescriptions">
         <list />
       </option>
       <option name="taskNames">
         <list>
-          <option value=":intellij-plugin:configureAndroidStudio" />
           <option value=":intellij-plugin:runAndroidStudio" />
         </list>
       </option>

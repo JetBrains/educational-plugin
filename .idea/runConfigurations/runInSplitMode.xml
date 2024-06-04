@@ -1,15 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="runRemoteDevServer" type="GradleRunConfiguration" factoryName="Gradle">
-    <log_file alias="idea.log" path="$PROJECT_DIR$/intellij-plugin/build/remote-dev-server-sandbox/system/log/idea.log" />
+  <configuration default="false" name="runInSplitMode" type="GradleRunConfiguration" factoryName="Gradle">
+    <log_file alias="idea.log" path="$PROJECT_DIR$/intellij-plugin/build/idea-sandbox/split-mode-sandbox-233/log_runInSplitMode" />
+    <log_file alias="idea.log" path="$PROJECT_DIR$/intellij-plugin/build/idea-sandbox/split-mode-sandbox-241/log_runInSplitMode" />
     <ExternalSystemSettings>
-      <option name="env">
-        <map>
-          <entry key="CWM_HOST_PASSWORD" value="qwerty123" />
-          <entry key="CWM_NO_TIMEOUTS" value="1" />
-          <entry key="ORG_JETBRAINS_PROJECTOR_SERVER_ATTACH_TO_IDE" value="false" />
-          <entry key="REMOTE_DEV_PORT" value="5995" />
-        </map>
-      </option>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
       <option name="externalSystemIdString" value="GRADLE" />
@@ -19,8 +12,7 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value=":intellij-plugin:configureRemoteDevServer" />
-          <option value=":intellij-plugin:runRemoteDevServer" />
+          <option value=":intellij-plugin:runInSplitMode" />
         </list>
       </option>
       <option name="vmOptions" />

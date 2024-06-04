@@ -1,13 +1,13 @@
 import groovy.util.Node
 import groovy.xml.XmlParser
 import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
+import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType.*
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.intellij.platform.gradle.extensions.IntelliJPlatformDependenciesExtension
 import org.jetbrains.intellij.platform.gradle.tasks.CustomRunIdeTask
 import org.jetbrains.intellij.platform.gradle.tasks.PrepareSandboxTask
 import org.jetbrains.intellij.platform.gradle.tasks.RunIdeTask
 import org.jetbrains.intellij.platform.gradle.utils.extensionProvider
-import org.jetbrains.intellij.tasks.RunIdeTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.*
 
@@ -38,8 +38,6 @@ val baseVersion = when {
   isRiderIDE -> riderVersion
   else -> error("Unexpected IDE name = `$baseIDE`")
 }
-
-val remoteDevServerSandbox = "${buildDir()}/remote-dev-server-sandbox"
 
 val pythonProPlugin: String by project
 val pythonCommunityPlugin: String by project
@@ -99,6 +97,18 @@ val cppPlugins = listOfNotNull(
   "org.jetbrains.plugins.clion.test.google",
   "org.jetbrains.plugins.clion.test.catch"
 )
+
+val ideToPlugins = mapOf(
+  IntellijIdeaUltimate to listOf(scalaPlugin, rustPlugin, pythonProPlugin, goPlugin, phpPlugin),
+  CLion to listOf(rustPlugin),
+  AndroidStudio to listOf(pythonCommunityPlugin),
+  GoLand to listOf(pythonCommunityPlugin),
+  RustRover to listOf(pythonCommunityPlugin)
+)
+
+fun idePlugins(type: IntelliJPlatformType): List<String> {
+  return ideToPlugins[type].orEmpty() + psiViewerPlugin
+}
 
 allprojects {
   apply {
@@ -341,59 +351,71 @@ tasks {
     // It will be used by TeamCity automation to set minimal IDE version for new events
     environment("IDEA_BUILD_NUMBER", "233")
   }
-}
 
-task("configureRemoteDevServer") {
-  doLast {
-    intellij.sandboxDir = remoteDevServerSandbox
-  }
-}
+  customRunIdeTask(IntellijIdeaUltimate, ideaVersion, baseTaskName = "Idea")
+  customRunIdeTask(CLion, clionVersion)
+  customRunIdeTask(PyCharmCommunity, pycharmVersion, baseTaskName = "PyCharm")
+  customRunIdeTask(AndroidStudio, studioVersion)
+  customRunIdeTask(WebStorm)
+  customRunIdeTask(GoLand)
+  customRunIdeTask(PhpStorm)
+  customRunIdeTask(RustRover)
+  customRunIdeTask(DataSpell)
+  customRunIdeTask(Rider, riderVersion)
 
-task<RunIdeTask>("runRemoteDevServer") {
-  dependsOn(tasks.prepareSandbox)
-  val remoteProjectPath = System.getenv("REMOTE_DEV_PROJECT") ?: rootProject.layout.projectDirectory.dir("example-course-project").asFile.absolutePath
-  args("cwmHostNoLobby", remoteProjectPath)
-  systemProperty("ide.browser.jcef.enabled", "false")
-}
+  register("runInSplitMode", CustomRunIdeTask::class) {
+    splitMode = true
 
-createTasksToRunIde("Idea", requiresLocalPath = false)
-createTasksToRunIde("CLion", requiresLocalPath = false)
-createTasksToRunIde("PyCharm", requiresLocalPath = false)
-createTasksToRunIde("AndroidStudio", requiresLocalPath = false)
-createTasksToRunIde("WebStorm")
-createTasksToRunIde("GoLand")
-createTasksToRunIde("PhpStorm")
-createTasksToRunIde("RustRover")
-createTasksToRunIde("DataSpell")
-createTasksToRunIde("Rider", requiresLocalPath = false)
+    // Specify custom sandbox directory to have a stable path to log file
+    sandboxDirectory = intellijPlatform.sandboxContainer.dir("split-mode-sandbox-$environmentName")
 
-/**
- * Creates `configure$[ideName]` and `run$[ideName]` Gradle tasks based on given [ideName].
- *
- * - `configure$[ideName]` checks that all necessary properties are provided and specifies sandbox path
- * - `run$[ideName]` runs IDE itself via `runIde` task
- */
-fun createTasksToRunIde(ideName: String, requiresLocalPath: Boolean = true) {
-  // "GoLand" -> "goLandPath"
-  val pathProperty = ideName.replaceFirstChar { it.lowercaseChar() } + "Path"
-  // "GoLand" -> "$buildDir/goland-sandbox"
-  val sandboxPath = "${buildDir()}/${ideName.lowercase()}-sandbox"
-
-  task("configure$ideName") {
-    doLast {
-      if (requiresLocalPath && !hasProp(pathProperty)) {
-        throw InvalidUserDataException("Path to $ideName installed locally is needed\nDefine \"$pathProperty\" property")
-      }
-      intellij.sandboxDir = sandboxPath
+    plugins {
+      val type = baseVersion.toTypeWithVersion().type
+      plugins(idePlugins(type))
     }
   }
+}
 
-  task<RunIdeTask>("run$ideName") {
-    dependsOn(tasks.prepareSandbox)
-    if (hasProp(pathProperty)) {
-      ideDir = provider {
-        file(prop(pathProperty))
+/**
+ * Creates `run$[baseTaskName]` Gradle task to run IDE of given [type]
+ * via `runIde` task with plugins according to [ideToPlugins] map
+ */
+fun TaskContainer.customRunIdeTask(
+  type: IntelliJPlatformType,
+  versionWithCode: String? = null,
+  baseTaskName: String = type.name
+) {
+  register("run$baseTaskName", CustomRunIdeTask::class) {
+    if (versionWithCode != null) {
+      val version = versionWithCode.toTypeWithVersion().version
+
+      this.type = type
+      this.version = version
+    }
+    else {
+      val pathProperty = baseTaskName.replaceFirstChar { it.lowercaseChar() } + "Path"
+      // Avoid throwing exception during property calculation.
+      // Some IDE tooling (for example, Package Search plugin) may try to calculate properties during `Sync` phase for all tasks.
+      // In our case, some `run*` task may not have `pathProperty` in your `gradle.properties`,
+      // and as a result, the `Sync` tool window will show you the error thrown by `prop` function.
+      //
+      // The following solution just moves throwing the corresponding error to task execution,
+      // i.e., only when a task is actually invoked
+      if (hasProp(pathProperty)) {
+        localPath.convention(layout.dir(provider { file(prop(pathProperty)) }))
       }
+      else {
+        doFirst {
+          throw GradleException("Property `$pathProperty` is not defined in gradle.properties")
+        }
+      }
+    }
+
+    // Specify custom sandbox directory to have a stable path to log file
+    sandboxDirectory = intellijPlatform.sandboxContainer.dir("${baseTaskName.lowercase()}-sandbox-$environmentName")
+
+    plugins {
+      plugins(idePlugins(type))
     }
   }
 }
