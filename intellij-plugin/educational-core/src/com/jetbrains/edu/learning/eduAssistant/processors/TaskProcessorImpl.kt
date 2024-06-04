@@ -4,17 +4,12 @@ import com.intellij.lang.Language
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiManager
-import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.eduAssistant.FunctionSignature
 import com.jetbrains.edu.learning.courseFormat.eduAssistant.SignatureSource
 import com.jetbrains.edu.learning.courseFormat.ext.*
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.eduAssistant.context.StringExtractor
@@ -24,53 +19,61 @@ import com.jetbrains.edu.learning.eduAssistant.context.differ.FunctionDiffReduce
 import com.jetbrains.edu.learning.eduAssistant.context.differ.getChangedContent
 import com.jetbrains.edu.learning.eduAssistant.context.function.signatures.*
 import com.jetbrains.edu.learning.getTextFromTaskTextFile
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.eduAssistant.inspection.applyInspections
+import com.jetbrains.edu.learning.eduState
+import com.jetbrains.rd.util.firstOrNull
 import org.jsoup.Jsoup
 
-class TaskProcessor(val task: Task) {
+class TaskProcessorImpl(val task: Task) : TaskProcessor {
+  var currentTaskFile: TaskFile? = null
+  private val project = task.project ?: error("Project was not found")
+  private val language = task.course.languageById ?: error("Language was not found")
+  private val state = project.eduState ?: error("State was not found")
 
-  // Only for the Kotlin Onboarding Introduction: https://plugins.jetbrains.com/plugin/21067-kotlin-onboarding-introduction
-  // and for Edu tasks
-  fun isNextStepHintApplicable() = task.course.id == 21067 && task is EduTask
+  override fun taskHasCompilationError() = getFailureMessage() == EduCoreBundle.message("check.error.compilation.failed")
 
-  fun isGetHintButtonShown() = isNextStepHintApplicable() && task.course.courseMode == CourseMode.STUDENT && task.status != CheckStatus.Solved // TODO: when should we show this button?
+  override fun taskHasLogicalErrors() = getFailureMessage() !== null && getFailedTestName() != null
 
-  fun taskHasErrors() = getFailureMessage() !== null && getFailedTestName() != null
+  override fun getFailureMessage() = if (task.status == CheckStatus.Failed) task.feedback?.message else null
 
-  fun getFailureMessage() = if (task.status == CheckStatus.Failed) task.feedback?.message else null
+  override fun getFailedTestName() = if (task.status == CheckStatus.Failed) task.feedback?.failedTestInfo?.name else null
 
-  fun getFailedTestName() = if (task.status == CheckStatus.Failed) task.feedback?.failedTestInfo?.name else null
+  override fun getExpectedValue() = if (task.status == CheckStatus.Failed) task.feedback?.expected else null
 
-  fun getExpectedValue() = if (task.status == CheckStatus.Failed) task.feedback?.expected else null
+  override fun getActualValue() = if (task.status == CheckStatus.Failed) task.feedback?.actual else null
 
-  fun getActualValue() = if (task.status == CheckStatus.Failed) task.feedback?.actual else null
+  override fun getLessonId() = task.lesson.id
 
-  private fun getTaskText(localTask: Task): String {
-    return runReadAction { localTask.project?.let { localTask.getTaskTextFromTask(it) } ?: localTask.descriptionText }
+  override fun getTaskId() = task.id
+
+  override fun getLowercaseLanguageDisplayName() = language.displayName.lowercase()
+
+  override fun getSubmissionTextRepresentation() = runReadAction { getChangedContent(task, project) }
+
+  private fun getTaskText(localTask: Task) = runReadAction {
+    localTask.project?.let { localTask.getTaskTextFromTask(it) } ?: localTask.descriptionText
   }
 
   private fun getTaskContentHtmlDocument() = Jsoup.parse(getTaskText(task).trimIndent())
 
-  fun getTaskTextRepresentation(): String {
+  override fun getTaskTextRepresentation(): String {
     val document = getTaskContentHtmlDocument()
     document.getElementsByClass("hint").remove()
     return document.text()
   }
 
-  fun getHintsTextRepresentation(): List<String> {
+  override fun getHintsTextRepresentation(): List<String> {
     val document = getTaskContentHtmlDocument()
     return document.getElementsByClass("hint").map { it.text() }
   }
 
-  fun getTheoryTextRepresentation(): String {
+  override fun getTheoryTextRepresentation(): String {
     val tasks = task.lesson.taskList
     return tasks.subList(0, tasks.indexOf(task)).filterIsInstance<TheoryTask>().joinToString(System.lineSeparator()) { it.presentableName }
   }
 
-  fun getSubmissionTextRepresentation(state: EduState) = runReadAction {
-    getChangedContent(task, state.taskFile, state.project)
-  }
-
-  fun getFunctionsFromTask(): List<FunctionSignature>? {
+  override fun getFunctionsFromTask(): List<String>? {
     val project = task.project ?: return null
     return task.taskFiles.values.filterNot { it.isTestFile }.flatMap { file ->
       getFunctionSignaturesIfFileUnchanged(file, project)?.let {
@@ -80,8 +83,12 @@ class TaskProcessor(val task: Task) {
           file.functionSignatures = it
         }
       }
-    }
+    }.map { it.toString() }
   }
+
+  override fun getFunctionsSetStrFromAuthorSolution() = task.authorSolutionContext?.functionSignatures?.map { it.toString() }
+
+  override fun getStringsFromAuthorSolution() = task.authorSolutionContext?.functionsToStringMap?.values?.flatten()
 
   private fun getStringsIfFileUnchanged(file: TaskFile, project: Project): List<String>? = if (isFileUnchanged(
       file,
@@ -89,7 +96,7 @@ class TaskProcessor(val task: Task) {
     ) && file.usedStringsSnapshotHash == file.snapshotFileHash) file.usedStrings
   else null.also { file.usedStringsSnapshotHash = file.snapshotFileHash }
 
-  fun getStringsFromTask(): List<String> {
+  override fun getStringsFromTask(): List<String> {
     val project = task.project ?: return emptyList()
     val language = task.course.languageById ?: return emptyList()
     return task.taskFiles.values.filterNot { it.isTestFile }.flatMap { file ->
@@ -107,13 +114,14 @@ class TaskProcessor(val task: Task) {
     }
   }
 
-  fun getShortFunctionFromSolutionIfRecommended(code: String, project: Project, language: Language, functionName: String, taskFile: TaskFile): String? {
+  override fun getShortFunctionFromSolutionIfRecommended(code: String, functionName: String): String? {
     val functionSignatures = getFunctionSignaturesFromGeneratedCode(code, project, language)
     val signature = functionSignatures.find { it.name == functionName }
     val functionsSignaturesFromSolution = task.authorSolutionContext?.functionSignatures?.filter {
-        it.bodyLineCount != null && (it.bodyLineCount ?: Int.MAX_VALUE) <= MAX_BODY_LINES_IN_SHORT_FUNCTION
-      } ?: return null
+      it.bodyLineCount != null && (it.bodyLineCount ?: Int.MAX_VALUE) <= MAX_BODY_LINES_IN_SHORT_FUNCTION
+    } ?: return null
     if (signature != null && functionsSignaturesFromSolution.contains(signature)) {
+      val taskFile = currentTaskFile ?: state.taskFile
       val psiFileSolution = runReadAction { taskFile.getSolution().createPsiFileForSolution(project, language) }
       return runReadAction {
         FunctionSignatureResolver.getFunctionBySignature(
@@ -124,37 +132,37 @@ class TaskProcessor(val task: Task) {
     return null
   }
 
-  fun extractRequiredFunctionsFromCodeHint(codeHint: String, taskFile: TaskFile): String {
-    val project = task.project ?: return ""
-    val language = task.course.languageById ?: return ""
+  override fun extractRequiredFunctionsFromCodeHint(codeHint: String): String {
     val codeHintPsiFile = runReadAction { PsiFileFactory.getInstance(project).createFileFromText("codeHintPsiFile", language, codeHint) }
-    return codeHintPsiFile.filterAllowedModifications(task, taskFile, project, SignatureSource.GENERATED_SOLUTION)
+    return codeHintPsiFile.filterAllowedModifications(task, project, SignatureSource.GENERATED_SOLUTION)
   }
 
-  fun getModifiedFunctionNameInCodeHint(codeStr: String, codeHint: String): String {
-    val project = task.project ?: return ""
-    val language = task.course.languageById ?: return ""
-    return runReadAction {
-      val codeHintPsiFile = PsiFileFactory.getInstance(project).createFileFromText("codeHintPsiFile", language, codeHint)
-      val codePsiFile = PsiFileFactory.getInstance(project).createFileFromText("codePsiFile", language, codeStr)
-      FilesDiffer.findDifferentMethods(codePsiFile, codeHintPsiFile, language, true)?.firstOrNull()
-      ?: error("The code prompt didn't make any difference")
-    }
+  override fun getModifiedFunctionNameInCodeHint(codeStr: String, codeHint: String) = runReadAction {
+    val codeHintPsiFile = PsiFileFactory.getInstance(project).createFileFromText("codeHintPsiFile", language, codeHint)
+    val codePsiFile = PsiFileFactory.getInstance(project).createFileFromText("codePsiFile", language, codeStr)
+    val functionName = FilesDiffer.findDifferentMethods(codePsiFile, codeHintPsiFile, language, true)?.firstOrNull()
+    ?: error("The code prompt didn't make any difference")
+    currentTaskFile = task.taskFiles[task.taskFilesWithChangedFunctions?.filter { (_, functions) ->
+      functionName in functions
+    }?.firstOrNull()?.key ?: state.taskFile.name] ?: state.taskFile
+    functionName
   }
 
-  fun getFunctionPsiWithName(code: String, functionName: String, project: Project, language: Language) = runReadAction {
+  private fun getFunctionPsiWithName(code: String, functionName: String, project: Project, language: Language) = runReadAction {
     val codePsiFile = PsiFileFactory.getInstance(project).createFileFromText("codePsiFile", language, code)
     FunctionSignatureResolver.getFunctionBySignature(codePsiFile, functionName, language)
   }
 
-  fun reduceChangesInCodeHint(functionPsi: PsiElement?, modifiedFunctionPsi: PsiElement?, project: Project, language: Language) =
-    modifiedFunctionPsi?.let {
-      FunctionDiffReducer.reduceDiffFunctions(functionPsi, modifiedFunctionPsi, project, language)
+  override fun reduceChangesInCodeHint(code: String, modifiedCode: String, functionName: String): String {
+    val functionFromCode = getFunctionPsiWithName(code, functionName, project, language)?.copy()
+    val functionFromCodeHint = getFunctionPsiWithName(modifiedCode, functionName, project, language)?.copy()
+    return functionFromCodeHint?.let {
+      FunctionDiffReducer.reduceDiffFunctions(functionFromCode, functionFromCodeHint, project, language)
     }?.let { runReadAction { it.text } } ?: ""
+  }
 
-  fun applyCodeHint(codeHint: String, taskFile: TaskFile): String? {
-    val project = task.project ?: return null
-    val language = task.course.languageById ?: return null
+  override fun applyCodeHint(codeHint: String): String? {
+    val taskFile = currentTaskFile ?: state.taskFile
     val virtualFile = taskFile.getVirtualFile(project) ?: return null
     val virtualFileText = runReadAction { virtualFile.getTextFromTaskTextFile() } ?: return null
     val psiFileCopy = runReadAction {
@@ -185,6 +193,10 @@ class TaskProcessor(val task: Task) {
     if (!isFileModified) return null
     return psiFileCopy.text
   }
+
+  override fun applyInspections(code: String) = applyInspections(code, project, language)
+
+  override fun containsGeneratedCodeStructures(code: String) = getFunctionSignaturesFromGeneratedCode(code, project, language).isNotEmpty()
 
   companion object {
     const val MAX_BODY_LINES_IN_SHORT_FUNCTION = 3

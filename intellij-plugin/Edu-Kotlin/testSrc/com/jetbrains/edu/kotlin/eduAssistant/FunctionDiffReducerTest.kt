@@ -5,7 +5,7 @@ import com.jetbrains.edu.jvm.slow.checker.JdkCheckerFixture
 import com.jetbrains.edu.kotlin.eduAssistant.courses.createKotlinCourse
 import com.jetbrains.edu.learning.checker.CheckersTestCommonBase
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
+import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessorImpl
 import com.jetbrains.edu.learning.findTask
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -778,10 +778,8 @@ class FunctionDiffReducerTest(
   private fun reduceChangesInCodeHint(codeStr: String, codeHint: String, functionName: String): String {
     val course = project.course ?: error("Course was not found")
     val task = course.findTask("lesson1", "task1")
-    val taskProcessor = TaskProcessor(task)
-    val functionFromCode = taskProcessor.getFunctionPsiWithName(codeStr, functionName, project, language)
-    val functionFromCodeHint = taskProcessor.getFunctionPsiWithName(codeHint, functionName, project, language)
-    return taskProcessor.reduceChangesInCodeHint(functionFromCode, functionFromCodeHint, project, language)
+    val taskProcessor = TaskProcessorImpl(task)
+    return taskProcessor.reduceChangesInCodeHint(codeStr, codeHint, functionName)
   }
 
   override fun createCheckerFixture() = JdkCheckerFixture()
