@@ -182,7 +182,7 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
       val taskProcessor = TaskProcessorImpl(task)
       runBlockingCancellable {
         task.aiAssistantState = AiAssistantState.HelpAsked
-        val response = project.service<TaskBasedAssistant>().getHint(taskProcessor)
+        val response = TaskBasedAssistant().getHint(taskProcessor)
         response.assistantError?.let {
           showHintWindow(it.errorMessage)
           return@runBlockingCancellable
