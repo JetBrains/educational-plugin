@@ -55,18 +55,10 @@ sealed class BaseEduAssistantLoggerFactory(logFileName: String, private val cate
       override fun format(record: LogRecord) = String.format("%1\$10tT %2\$-5s - %3\$s%n", record.millis, record.level, record.message)
     }
 
-    fun defaultCsvFormatter() = object : Formatter() {
-      override fun format(record: LogRecord) = String.format("%1\$tT.%2\$03d,%3\$s%n", record.millis, record.millis % 1000, record.message)
-    }
-
     private val LOG = Logger.getInstance(BaseEduAssistantLoggerFactory::class.java)
   }
 }
 
 data object EduAssistantLoggerFactory : BaseEduAssistantLoggerFactory("eduAssistant.log", "EduAssistant") {
   override val formatter = defaultTimeFormatter()
-}
-
-data object HintTimingLoggerFactory : BaseEduAssistantLoggerFactory("hintTiming.csv", "HintTiming") {
-  override val formatter = defaultCsvFormatter()
 }

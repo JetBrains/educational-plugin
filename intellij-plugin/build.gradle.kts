@@ -897,6 +897,7 @@ fun <T : ModuleDependency> T.excludeKotlinDeps() {
   exclude(module = "kotlin-stdlib-jdk8")
   exclude(module = "kotlin-stdlib-jdk7")
   exclude(module = "kotlinx-coroutines-core")
+  exclude(module = "kotlinx-coroutines-core-jvm")
 }
 
 fun loadProperties(path: String): Properties {
