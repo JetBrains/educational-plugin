@@ -1,17 +1,17 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="runCLion" type="GradleRunConfiguration" factoryName="Gradle" show_console_on_std_err="true" show_console_on_std_out="true">
-    <log_file alias="idea.log" path="$PROJECT_DIR$/intellij-plugin/build/clion-sandbox/system/log/idea.log" />
+    <log_file alias="idea.log" path="$PROJECT_DIR$/intellij-plugin/build/idea-sandbox/clion-sandbox-233/log_runCLion/idea.log" />
+    <log_file alias="idea.log" path="$PROJECT_DIR$/intellij-plugin/build/idea-sandbox/clion-sandbox-241/log_runCLion/idea.log" />
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
       <option name="externalSystemIdString" value="GRADLE" />
-      <option name="scriptParameters" value="-PbaseIDE=clion" />
+      <option name="scriptParameters" value="" />
       <option name="taskDescriptions">
         <list />
       </option>
       <option name="taskNames">
         <list>
-          <option value=":intellij-plugin:configureCLion" />
           <option value=":intellij-plugin:runCLion" />
         </list>
       </option>

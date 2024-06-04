@@ -1,6 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="runGoLand" type="GradleRunConfiguration" factoryName="Gradle">
-    <log_file alias="idea.log" path="$PROJECT_DIR$/intellij-plugin/build/goland-sandbox/system/log/idea.log" />
+    <log_file alias="idea.log" path="$PROJECT_DIR$/intellij-plugin/build/idea-sandbox/goland-sandbox-233/log_runGoLand/idea.log" />
+    <log_file alias="idea.log" path="$PROJECT_DIR$/intellij-plugin/build/idea-sandbox/goland-sandbox-241/log_runGoLand/idea.log" />
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -11,7 +12,6 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value=":intellij-plugin:configureGoLand" />
           <option value=":intellij-plugin:runGoLand" />
         </list>
       </option>
