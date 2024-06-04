@@ -25,17 +25,17 @@ class SyncChangesStateManager(private val project: Project) {
   private val lessonStateStorage = ConcurrentHashMap<Lesson, SyncChangesTaskFileState>()
 
   fun getSyncChangesState(taskFile: TaskFile): SyncChangesTaskFileState? {
-    if (!checkRequirements(taskFile.task.lesson)) return null
+    if (!isCCFrameworkLesson(taskFile.task.lesson)) return null
     return taskFileStateStorage[taskFile]
   }
 
   fun getSyncChangesState(task: Task): SyncChangesTaskFileState? {
-    if (!checkRequirements(task.lesson)) return null
+    if (!isCCFrameworkLesson(task.lesson)) return null
     return taskStateStorage[task]
   }
 
   fun getSyncChangesState(lesson: Lesson): SyncChangesTaskFileState? {
-    if (!checkRequirements(lesson)) return null
+    if (!isCCFrameworkLesson(lesson)) return null
     return lessonStateStorage[lesson]
   }
 
@@ -56,7 +56,7 @@ class SyncChangesStateManager(private val project: Project) {
   fun fileMoved(file: VirtualFile, fileInfo: FileInfo.FileInTask, oldDirectoryInfo: FileInfo.FileInTask) {
     val task = fileInfo.task
     val oldTask = oldDirectoryInfo.task
-    if (!checkRequirements(task.lesson) && !checkRequirements(oldTask.lesson)) return
+    if (!isCCFrameworkLesson(task.lesson) && !isCCFrameworkLesson(oldTask.lesson)) return
 
     val (taskFiles, oldPaths) = if (file.isDirectory) {
       collectMovedDataInfoOfDirectory(file, fileInfo, oldDirectoryInfo)
@@ -130,7 +130,7 @@ class SyncChangesStateManager(private val project: Project) {
   private fun <T> doUpdate(task: Task, action: () -> T?): T? = doUpdate(task.lesson, action)
 
   private fun <T> doUpdate(lesson: Lesson, action: () -> T?): T? {
-    if (!checkRequirements(lesson)) return null
+    if (!isCCFrameworkLesson(lesson)) return null
     return try {
       action()
     }
@@ -191,7 +191,7 @@ class SyncChangesStateManager(private val project: Project) {
     return MovedDataInfo(taskFile, oldPath)
   }
 
-  private fun checkRequirements(lesson: Lesson): Boolean {
+  private fun isCCFrameworkLesson(lesson: Lesson): Boolean {
     return CCUtils.isCourseCreator(project) && lesson is FrameworkLesson && isFeatureEnabled(EduExperimentalFeatures.CC_FL_SYNC_CHANGES)
   }
 
