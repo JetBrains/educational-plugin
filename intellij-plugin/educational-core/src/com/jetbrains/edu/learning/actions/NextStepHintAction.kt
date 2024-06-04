@@ -39,7 +39,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.eduAssistant.core.TaskBasedAssistant
 import com.jetbrains.edu.learning.eduAssistant.errors.NextStepHintError
-import com.jetbrains.edu.learning.eduAssistant.log.Loggers
+import com.jetbrains.edu.learning.eduAssistant.log.Logger
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessorImpl
 import com.jetbrains.edu.learning.eduAssistant.ui.NextStepHintNotificationFrame
 import com.jetbrains.edu.learning.eduState
@@ -132,7 +132,7 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
               }
               true -> {
                 val task = state.task
-                Loggers.eduAssistantLogger.info(
+                Logger.eduAssistantLogger.info(
                   """Lesson id: ${task.lesson.id}    Task id: ${task.id}
                   |User response: accepted code hint
                   |
@@ -153,7 +153,7 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
 
   private fun rejectHint(state: EduState) {
     val task = state.task
-    Loggers.eduAssistantLogger.info(
+    Logger.eduAssistantLogger.info(
       """Lesson id: ${task.lesson.id}    Task id: ${task.id}
         |User response: canceled code hint
         |
@@ -182,7 +182,8 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
       val taskProcessor = TaskProcessorImpl(task)
       runBlockingCancellable {
         task.aiAssistantState = AiAssistantState.HelpAsked
-        val response = TaskBasedAssistant().getHint(taskProcessor)
+        val assistant = TaskBasedAssistant()
+        val response = assistant.getHint(taskProcessor)
         response.assistantError?.let {
           showHintWindow(it.errorMessage)
           return@runBlockingCancellable
@@ -207,7 +208,7 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
     }
 
     private fun showHintWindow(textToShow: String, action: AnAction? = null) {
-      Loggers.eduAssistantLogger.info(
+      Logger.eduAssistantLogger.info(
         """Lesson id: ${task.lesson.id}    Task id: ${task.id}
         | User response: text shown
         | Text: $textToShow
