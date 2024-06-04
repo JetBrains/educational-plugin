@@ -1,20 +1,24 @@
 package com.jetbrains.edu.assistant.validation.processor
 
 import com.jetbrains.edu.assistant.validation.util.*
-import com.jetbrains.edu.learning.eduAssistant.grazie.AiPlatformAdapter
-import com.jetbrains.edu.learning.eduAssistant.grazie.GenerationContextProfile.AUTO_VALIDATION
+import com.jetbrains.educational.ml.core.grazie.GrazieConnectionManager
+
+private val grazie: GrazieConnectionManager by lazy {
+  GrazieConnectionManager.create("user", "learning-assistant-prompt")
+}
+
+private const val AUTO_VALIDATION_LLM_PROFILE_ID = "gpt-4o"
 
 suspend fun processValidationHints(
   taskDescription: String,
   textHint: String,
   codeHint: String,
   userCode: String,
-) =
-  AiPlatformAdapter.chat(
+) = grazie.chat(
+    llmProfileId = AUTO_VALIDATION_LLM_PROFILE_ID,
     systemPrompt = buildHintsValidationSystemPrompt(),
     userPrompt = buildHintsValidationUserPrompt(taskDescription, textHint, codeHint, userCode),
-    temp = 0.0,
-    generationContextProfile = AUTO_VALIDATION
+    temp = 0.0
   )
 
 private val validationHintsCriteria = """
@@ -88,10 +92,10 @@ private fun buildHintsValidationSystemPrompt() = """
   """.trimIndent()
 
 suspend fun processValidationHintForItsType(textHint: String, codeHint: String) =
-  AiPlatformAdapter.chat(
+  grazie.chat(
+    llmProfileId = AUTO_VALIDATION_LLM_PROFILE_ID,
     userPrompt = buildFeedbackTypePrompt(textHint, codeHint),
-    temp = 0.0,
-    generationContextProfile = AUTO_VALIDATION
+    temp = 0.0
   )
 
 private val feedbackTypeCriterion = """
@@ -135,4 +139,78 @@ private fun buildFeedbackTypePrompt(textHint: String, codeHint: String) = """
       ```
     
     Find below an example response for reference: "KTC-TPR-TPRC, KC-EXA, KH-TPS-TPSB"
+  """.trimIndent()
+
+suspend fun processValidationCompilationErrorHints(
+  textHint: String,
+  codeHint: String,
+  userCode: String,
+  errorDetails: String
+) =
+  grazie.chat(
+    llmProfileId = AUTO_VALIDATION_LLM_PROFILE_ID,
+    systemPrompt = buildCompilationErrorHintsValidationSystemPrompt(),
+    userPrompt = buildCompilationErrorHintsValidationUserPrompt(textHint, codeHint, userCode, errorDetails),
+    temp = 0.0
+  )
+
+private val validationCompilationErrorHintsCriteria = """
+    1. comprehensible: if the text hint is intelligible (i.e., proper English, not nonsensical), answer with "Yes"; otherwise, answer with "No".
+    
+    2. unnecessaryContent: if the text hint contains unnecessary content (e.g., repeating content, comprehensible but irrelevant content), answer with "Yes" and indicate unnecessary content; otherwise, answer with "No".
+    
+    3. hasExplanation: if the text hint contains an explanation of the programming error message, answer with "Yes"; otherwise, answer with "No".
+    
+    4. explanationCorrect: If the text hint contains a correct explanation of the programming error message, answer with "Yes"; otherwise, answer with "No" and specify why the explanation is not correct.
+    
+    5. hasFix: If the text hint contains actions or steps that one should take to fix the error, answer with "Yes"; otherwise, answer with "No".
+    
+    6. fixCorrect: If the text hint contains correct actions or steps that one should take to fix the error, answer with "Yes"; otherwise, answer with "No" and indicate incorrect actions or steps.
+    
+    7. correctImplementation: if the code hint contains the correct error fix (i.e., actually fixes the error, does not cause other errors, corresponds to the explanation of the fix in the text hint), answer with "Yes"; otherwise, answer with "No" specify why the fix is not correct.
+    
+    8. improvementOverTheOriginal: if the text hint provides added value (from a novice programmer’s standpoint) when compared to the original programming error message, answer with "Yes" and specify which value; otherwise, answer with "No".
+  """.trimIndent()
+
+private fun buildCompilationErrorHintsValidationUserPrompt(
+  textHint: String,
+  codeHint: String,
+  userCode: String,
+  errorDetails: String
+) = """
+    Determine the correctness of the hints using the given criteria.
+    
+    Original programming error message: <$errorDetails>
+    
+    Current student code: 
+      ```kotlin
+        $userCode
+      ```
+    
+    Text hint: <$textHint>
+    
+    Code hint: 
+      ```kotlin
+        $codeHint
+      ```
+  """.trimIndent()
+
+private fun buildCompilationErrorHintsValidationSystemPrompt() = """
+    Text hint and code hint have been generated to guide the student to fix a compilation error. Your goal is to determine the correctness of these hints using the given criteria as if you were a teacher.
+    
+    The criteria: <$validationCompilationErrorHintsCriteria>
+    
+    Format the response as json with keys: comprehensible, unnecessaryContent, hasExplanation, explanationCorrect, hasFix, fixCorrect, correctImplementation, improvementOverTheOriginal.
+    
+    Find below an example response for reference:
+    {
+      "comprehensible": "Yes",
+      "unnecessaryContent": "Yes, contains repeating content",
+      "hasExplanation": "Yes",
+      "explanationCorrect": "No, describes another error",
+      "hasFix": "Yes",
+      "fixCorrect": "No, actions won't fix the error",
+      "correctImplementation": "No, does not fix the error",
+      "improvementOverTheOriginal": "Yes, clearer for the novice at the expense of simpler vocabulary",
+    }
   """.trimIndent()

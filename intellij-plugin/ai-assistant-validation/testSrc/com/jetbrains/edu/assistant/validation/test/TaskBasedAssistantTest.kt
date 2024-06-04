@@ -10,8 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.eduAssistant.inspection.InspectionProvider
 import com.jetbrains.edu.learning.eduAssistant.inspection.getInspectionsWithIssues
-import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
-import com.jetbrains.edu.learning.eduState
+import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessorImpl
 import org.junit.Test
 import org.junit.experimental.categories.Category
 import org.junit.runners.Parameterized
@@ -46,11 +45,10 @@ class TaskBasedAssistantTest(lesson: String, task: String) : ExternalResourcesTe
   @Test
   fun testGetHints() {
     val task = getTargetTask()
-    val state = project.eduState ?: error("Edu state is invalid")
-    val taskProcessor = TaskProcessor(task)
+    val taskProcessor = TaskProcessorImpl(task)
     val userCode = task.taskFiles.values.firstNotNullOfOrNull { it.getText(project) }
 
-    val response = getHint(taskProcessor, state, userCode)
+    val response = getHint(taskProcessor, userCode)
     refreshProject()
 
     val inspections = getInspections(language)

@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.eduAssistant.context.function.signatures.createPsiFileForSolution
-import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
+import com.jetbrains.edu.learning.eduAssistant.utils.isNextStepHintApplicable
 
 private fun <K, V> flatten(list: List<Map<K, V>>): Map<K, V> = mutableMapOf<K, V>().apply {
   for (innerMap in list) putAll(innerMap)
@@ -28,8 +28,7 @@ fun Task.buildAuthorSolutionContext(): AuthorSolutionContext? {
 }
 
 fun initAiHintContext(task: Task) {
-  val taskProcessor = TaskProcessor(task)
-  if (!taskProcessor.isNextStepHintApplicable()) {
+  if (!isNextStepHintApplicable(task)) {
     return
   }
   if (task.authorSolutionContext == null) {

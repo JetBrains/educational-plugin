@@ -4,14 +4,10 @@ import com.intellij.idea.LoggerFactory
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.lazyPub
 
-object Loggers {
+object Logger {
   internal val default: Logger = LoggerFactory().getLoggerInstance("edu-assistant")
 
   val eduAssistantLogger: Logger by lazyPub {
     EduAssistantLoggerFactory.getLoggerInstanceOrNull() ?: default
-  }
-
-  val hintTimingLogger: Logger by lazyPub {
-    HintTimingLoggerFactory.getLoggerInstanceOrNull() ?: default
   }
 }

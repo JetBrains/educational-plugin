@@ -2,7 +2,6 @@ package com.jetbrains.edu.assistant.validation.test
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.EDT
-import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.runBlockingCancellable
@@ -21,11 +20,11 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.eduAssistant.core.AssistantResponse
-import com.jetbrains.edu.learning.eduAssistant.core.TaskBasedAssistant
+import com.jetbrains.educational.ml.hints.core.AIHintsAssistantResponse
+import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessorImpl
+import com.jetbrains.educational.ml.hints.core.TaskBasedAssistant
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
-import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -65,17 +64,17 @@ abstract class ExternalResourcesTest(private val lessonName: String, private val
       TaskToolWindowView.getInstance(project).currentTask
     }.firstOrNull { it.name == taskName && it.lesson.name == lessonName } ?: error("Cannot get the target task")
 
-  protected fun getHint(taskProcessor: TaskProcessor, state: EduState, userCode: String? = null): AssistantResponse =
-    ProgressManager.getInstance().run(object : com.intellij.openapi.progress.Task.WithResult<AssistantResponse, Exception>(
+  protected fun getHint(taskProcessor: TaskProcessorImpl, userCode: String? = null): AIHintsAssistantResponse =
+    ProgressManager.getInstance().run(object : com.intellij.openapi.progress.Task.WithResult<AIHintsAssistantResponse, Exception>(
       project,
       EduCoreBundle.message("progress.title.getting.hint"),
       true
     ) {
-      override fun compute(indicator: ProgressIndicator): AssistantResponse {
+      override fun compute(indicator: ProgressIndicator): AIHintsAssistantResponse {
         indicator.isIndeterminate = true
         return runBlockingCancellable {
           withContext(Dispatchers.EDT) {
-            val response = project.service<TaskBasedAssistant>().getHint(taskProcessor, state, userCode)
+            val response = TaskBasedAssistant(taskProcessor).getHint(userCode)
             response.codeHint?.let {
               downloadSolution(taskProcessor.task, project, it)
             }

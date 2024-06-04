@@ -5,16 +5,10 @@ import com.intellij.diff.editor.ChainDiffVirtualFile
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.editor.Document
-import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.util.ui.JButtonAction
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.CancelHintAction.Companion.closeDiffWindow
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.submissions.getTexts
 import org.jetbrains.annotations.NonNls
 import javax.swing.JButton
 
@@ -41,31 +35,9 @@ class AcceptHintAction : JButtonAction(EduCoreBundle.message("action.Educational
     val diffRequestChain = e.getDiffRequestChain() ?: return
     val fileNames = diffRequestChain.getUserData(ApplyCodeAction.VIRTUAL_FILE_PATH_LIST).takeIf { !it.isNullOrEmpty() } ?: return
 
-    try {
-      val localDocuments = readLocalDocuments(fileNames)
-      check(localDocuments.size == fileNames.size)
-      val submissionsTexts = diffRequestChain.getTexts(fileNames.size)
-      localDocuments.writeSubmissionsTexts(submissionsTexts)
-    }
-    catch (e: Exception) {
-      return
-    }
-    diffRequestChain.putUserData(NextStepHintAction.IS_ACCEPTED_HINT, true)
-    project.closeDiffWindow(e)
-  }
-
-  private fun readLocalDocuments(fileNames: List<String>): List<Document> = runReadAction {
-    fileNames.mapNotNull { findLocalDocument(it) }
-  }
-
-  private fun findLocalDocument(fileName: String): Document? {
-    val file = LocalFileSystem.getInstance().findFileByPath(fileName) ?: return null
-    return FileDocumentManager.getInstance().getDocument(file)
-  }
-
-  private fun List<Document>.writeSubmissionsTexts(submissionsTexts: List<String>): Unit = runWriteAction {
-    zip(submissionsTexts).forEach { (document, submissionText) ->
-      document.setText(submissionText)
+    if (tryApplyTexts(project, diffRequestChain, fileNames, ACTION_ID, this.templatePresentation.text)) {
+      diffRequestChain.putUserData(NextStepHintAction.IS_ACCEPTED_HINT, true)
+      project.closeDiffWindow(e)
     }
   }
 

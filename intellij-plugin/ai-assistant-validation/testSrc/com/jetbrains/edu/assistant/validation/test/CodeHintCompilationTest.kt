@@ -6,7 +6,7 @@ import com.jetbrains.edu.assistant.validation.util.parseCsvFile
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
+import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessorImpl
 import com.jetbrains.edu.learning.eduState
 import junit.framework.TestCase
 import org.junit.Test
@@ -37,12 +37,11 @@ class CodeHintCompilationTest(private val lessonName: String, private val taskNa
   @Test
   fun testCodeHintCompilation() {
     val task = getTargetTask()
-    val state = project.eduState ?: error("Edu state is invalid")
-    val taskProcessor = TaskProcessor(task)
+    val taskProcessor = TaskProcessorImpl(task)
     studentSolutions.filter { it.lessonName == lessonName && it.taskName == taskName }.shuffled().take(maxSolutions)
       .map { it.code }.firstOrNull()?.let {
       downloadSolution(task, project, it)
-      getHint(taskProcessor, state)
+      getHint(taskProcessor)
       refreshProject()
       runCheck(task) { checkerResult ->
         TestCase.assertNotSame("Compilation error in the code: $it", checkerResult.message, CheckUtils.COMPILATION_FAILED_MESSAGE)

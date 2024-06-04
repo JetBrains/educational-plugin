@@ -180,6 +180,9 @@ allprojects {
     implementationWithoutKotlin(rootProject.libs.converter.jackson)
     implementationWithoutKotlin(rootProject.libs.kotlin.css.jvm)
 
+    implementationWithoutKotlin(rootProject.libs.educational.ml.library.core)
+    implementationWithoutKotlin(rootProject.libs.educational.ml.library.hints)
+    implementation(rootProject.libs.freemarker)
     implementationWithoutKotlin(rootProject.libs.grazie.gateway.api)
     implementationWithoutKotlin(rootProject.libs.grazie.gateway.client)
     implementationWithoutKotlin(rootProject.libs.grazie.client.ktor)
@@ -951,6 +954,7 @@ fun <T : ModuleDependency> T.excludeKotlinDeps() {
   exclude(module = "kotlin-stdlib-jdk8")
   exclude(module = "kotlin-stdlib-jdk7")
   exclude(module = "kotlinx-coroutines-core")
+  exclude(module = "kotlinx-coroutines-core-jvm")
 }
 
 fun loadProperties(path: String): Properties {
