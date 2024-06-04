@@ -51,7 +51,6 @@ val llmProfileProperties: String by extra
 val isTeamCity: Boolean get() = System.getenv("TEAMCITY_VERSION") != null
 
 configureSecretProperties()
-configureLlmProperties()
 
 downloadHyperskillCss()
 
@@ -107,14 +106,6 @@ fun configureSecretProperties() {
     "eduHubClientSecret",
     "marketplaceHubClientId"
   )
-
-  if (inJetBrainsNetwork() && !isTeamCity) {
-    // This token should be available only with the plugin being built locally
-    secretProperties.extractAndStore(
-      "intellij-plugin/educational-core/resources/ai/ai.properties",
-      "grazieTemporaryToken"
-    )
-  }
 }
 
 fun downloadHyperskillCss() {
@@ -129,19 +120,6 @@ fun downloadHyperskillCss() {
       StandardCopyOption.REPLACE_EXISTING
     )
   }
-}
-
-fun configureLlmProperties() {
-  val llmProfileProperties = loadProperties(llmProfileProperties)
-
-  llmProfileProperties.extractAndStore(
-    "intellij-plugin/educational-core/resources/ai/llm.properties",
-    "LLMProfileIDForGeneratingSolutionSteps",
-    "LLMProfileIDForGeneratingNextStepTextHint",
-    "LLMProfileIDForGeneratingNextStepCodeHint",
-    "LLMAuthType",
-    "LLMServerUrlType"
-  )
 }
 
 fun download(url: URL, dstPath: String) {

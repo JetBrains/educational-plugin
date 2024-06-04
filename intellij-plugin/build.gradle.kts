@@ -192,9 +192,8 @@ allprojects {
     implementationWithoutKotlin(rootProject.libs.converter.jackson)
     implementationWithoutKotlin(rootProject.libs.kotlin.css.jvm)
 
-    implementationWithoutKotlin(rootProject.libs.grazie.gateway.api)
-    implementationWithoutKotlin(rootProject.libs.grazie.gateway.client)
-    implementationWithoutKotlin(rootProject.libs.grazie.client.ktor)
+    implementationWithoutKotlin(rootProject.libs.educational.ml.library.core)
+    implementationWithoutKotlin(rootProject.libs.educational.ml.library.hints)
     implementationWithoutKotlin(rootProject.libs.kotlin.logging)
     implementationWithoutKotlin(rootProject.libs.logback)
 

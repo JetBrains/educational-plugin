@@ -10,8 +10,4 @@ object Loggers {
   val eduAssistantLogger: Logger by lazyPub {
     EduAssistantLoggerFactory.getLoggerInstanceOrNull() ?: default
   }
-
-  val hintTimingLogger: Logger by lazyPub {
-    HintTimingLoggerFactory.getLoggerInstanceOrNull() ?: default
-  }
 }

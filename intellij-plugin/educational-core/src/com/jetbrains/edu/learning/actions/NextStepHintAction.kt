@@ -38,10 +38,10 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.eduAssistant.AiAssistantState
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.eduAssistant.core.AssistantError
 import com.jetbrains.edu.learning.eduAssistant.core.TaskBasedAssistant
+import com.jetbrains.edu.learning.eduAssistant.errors.NextStepHintError
 import com.jetbrains.edu.learning.eduAssistant.log.Loggers
-import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
+import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessorImpl
 import com.jetbrains.edu.learning.eduAssistant.ui.NextStepHintNotificationFrame
 import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -51,7 +51,6 @@ import java.awt.Font
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.swing.JComponent
 import javax.swing.JPanel
-import com.jetbrains.edu.learning.eduAssistant.core.AssistantResponse
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 
 class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
@@ -172,17 +171,9 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
 
     var progressIndicator: ProgressIndicator? = null
 
-    private fun showHintWindow(textToShow: String, state: EduState, action: AnAction? = null) {
-      task.status = CheckStatus.Unchecked
-      TaskToolWindowView.getInstance(project).updateCheckPanel(task)
-      val nextStepHintNotification = NextStepHintNotificationFrame(textToShow, action, actionTargetParent) { rejectHint(state) }
-      nextStepHintNotificationPanel = nextStepHintNotification.rootPane
-      nextStepHintNotificationPanel?.let {  actionTargetParent?.add(it, BorderLayout.NORTH) }
-    }
-
     override fun run(indicator: ProgressIndicator) {
       if (!GetHintTaskState.getInstance(project).isLocked) {
-        showHintWindow(AssistantError.UnlockedError.errorMessage, state)
+        showHintWindow(NextStepHintError.UnlockedError.errorMessage)
         return
       }
 
@@ -190,32 +181,45 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
       ApplicationManager.getApplication().executeOnPooledThread { EduActionUtils.showFakeProgress(indicator) }
       progressIndicator = indicator
 
-      val taskProcessor = TaskProcessor(task)
-      var response: AssistantResponse? = null
+      val taskProcessor = TaskProcessorImpl(task)
       runBlockingCancellable {
         task.aiAssistantState = AiAssistantState.HelpAsked
-        response = project.service<TaskBasedAssistant>().getHint(taskProcessor, state)
-        response?.assistantError?.let {
-          showHintWindow(it.errorMessage, state)
+        val response = project.service<TaskBasedAssistant>().getHint(taskProcessor)
+        response.assistantError?.let {
+          showHintWindow(it.errorMessage)
           return@runBlockingCancellable
         }
-        response?.textHint ?: run {
-          showHintWindow(AssistantError.UnknownError.errorMessage, state)
+        response.textHint ?: run {
+          showHintWindow(NextStepHintError.UnknownError.errorMessage)
           return@runBlockingCancellable
         }
-      }
 
-      highlighter = response?.codeHint?.let {
-        highlightFirstCodeDiffPositionOrNull(project, response?.taskFile ?: state.taskFile, it, indicator)
-      }
+        highlighter = response.codeHint?.let {
+          highlightFirstCodeDiffPositionOrNull(project, taskProcessor.currentTaskFile ?: state.taskFile, it, indicator)
+        }
 
-      val action = response?.codeHint?.let { showNextStepHint(state, response?.taskFile ?: state.taskFile, it) }
-      response?.textHint?.let { showHintWindow(it, state, action) }
+        val action = response.codeHint?.let { showNextStepHint(state, taskProcessor.currentTaskFile ?: state.taskFile, it) }
+        response.textHint?.let { showHintWindow(it, action) }
+      }
     }
 
     override fun onFinished() {
       processFinished()
       GetHintTaskState.getInstance(project).unlock()
+    }
+
+    private fun showHintWindow(textToShow: String, action: AnAction? = null) {
+      Loggers.eduAssistantLogger.info(
+        """Lesson id: ${task.lesson.id}    Task id: ${task.id}
+        | User response: text shown
+        | Text: $textToShow
+      """.trimMargin()
+      )
+      task.status = CheckStatus.Unchecked
+      TaskToolWindowView.getInstance(project).updateCheckPanel(task)
+      val nextStepHintNotification = NextStepHintNotificationFrame(textToShow, action, actionTargetParent) { rejectHint(state) }
+      nextStepHintNotificationPanel = nextStepHintNotification.rootPane
+      nextStepHintNotificationPanel?.let {  actionTargetParent?.add(it, BorderLayout.NORTH) }
     }
 
     /**
