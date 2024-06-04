@@ -51,7 +51,7 @@ import java.util.function.Supplier;
 import static com.intellij.openapi.util.text.HtmlChunk.html;
 
 /**
- * Copied and modified [com.intellij.ide.HelpTooltip] from the intellij platform
+ * Copied and modified {@link com.intellij.ide.HelpTooltip} from the intellij platform
  * At the moment, we cannot use the HelpTooltip from the platform, since the platform HelpTooltip does not have the customization capabilities we need.
  * TODO() Modify this class in the platform code to use version from IntelliJ platform
  */
@@ -138,6 +138,28 @@ public class SyncChangesHelpTooltip {
         if (r.contains(mouseLocation)) {
           location.y = mouseLocation.y - r.height - JBUI.scale(5);
         }
+
+        return location;
+      }
+    },
+
+    /**
+     * The position of the tooltip at which the tooltip is shown directly on the cursor
+     * The common problem with {@link Alignment#CURSOR} is following:
+     * MouseListener leaves the current node and enters the neighboring node, which creates difficulties.
+     * Therefore, the following hack was used:
+     * Slightly change the position of the tooltip display so that the tooltip is displayed at the exact cursor position
+     */
+    EXACT_CURSOR {
+      @Override public Point getPointFor(Component owner, Dimension popupSize, Point mouseLocation) {
+        Point location = mouseLocation.getLocation();
+
+        SwingUtilities.convertPointToScreen(location, owner);
+        Rectangle r = new Rectangle(location, popupSize);
+        ScreenUtil.fitToScreen(r);
+        location = r.getLocation();
+        SwingUtilities.convertPointFromScreen(location, owner);
+        r.setLocation(location);
 
         return location;
       }
@@ -402,7 +424,6 @@ public class SyncChangesHelpTooltip {
       isMultiline = pa.length > 1;
       for (String p : pa) {
         if (!p.isEmpty()) {
-          //noinspection HardCodedStringLiteral
           tipPanel.add(new Paragraph(p, hasTitle), VerticalLayout.TOP);
         }
       }

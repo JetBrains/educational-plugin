@@ -36,10 +36,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.projectView.CCLessonNode
-import com.jetbrains.edu.coursecreator.projectView.CCSectionNode
-import com.jetbrains.edu.coursecreator.projectView.CCTaskNode
-import com.jetbrains.edu.coursecreator.projectView.CCCellRenderer
+import com.jetbrains.edu.coursecreator.projectView.*
 import com.jetbrains.edu.learning.CourseSetListener
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
@@ -90,8 +87,14 @@ class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport
 
   private fun createCourseViewComponent(): JComponent {
     val component = super.createComponent()
-
-    if (!myProject.isStudentProject()) return component
+    if (!myProject.isStudentProject()) {
+      if (isFeatureEnabled(EduExperimentalFeatures.CC_FL_SYNC_CHANGES)) {
+        HelpTooltipForTree().installOnTree(this, tree) { treeNode ->
+          tryInstallNewTooltip(myProject, treeNode)
+        }
+      }
+      return component
+    }
     val panel = JPanel(BorderLayout())
     panel.background = UIUtil.getTreeBackground()
 

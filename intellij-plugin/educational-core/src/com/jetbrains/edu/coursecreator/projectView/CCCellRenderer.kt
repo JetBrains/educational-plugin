@@ -1,12 +1,10 @@
 package com.jetbrains.edu.coursecreator.projectView
 
 import com.intellij.icons.AllIcons
-import com.intellij.ide.projectView.impl.nodes.PsiFileNode
 import com.intellij.ui.ColoredTreeCellRenderer
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.coursecreator.framework.SyncChangesTaskFileState
-import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import java.awt.*
 import javax.swing.*
 import javax.swing.tree.TreeCellRenderer
@@ -55,15 +53,6 @@ class CCCellRenderer(private val innerRenderer: ColoredTreeCellRenderer) : JPane
       SyncChangesTaskFileState.INFO -> AllIcons.General.Information
       SyncChangesTaskFileState.WARNING -> AllIcons.General.Warning
       null -> null
-    }
-  }
-
-  companion object {
-    private fun isNodeInFrameworkLessonTask(node: PsiFileNode): Boolean {
-      // find the task using parent nodes, because finding the task using VFS in mouse adapter will be slower
-      val taskNode = findAncestorTaskNode(node)
-      val task = taskNode?.item
-      return task?.lesson is FrameworkLesson
     }
   }
 }

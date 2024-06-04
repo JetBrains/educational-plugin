@@ -32,7 +32,7 @@ class SyncChangesEditorNotificationsProvider : EditorNotificationProvider {
         text = EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.Editor.Notification.description")
         icon(AllIcons.General.Information)
         createActionLabel(
-          EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.ActionLink.text"),
+          EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.ActionLink.Changes.text"),
           { CCFrameworkLessonManager.getInstance(project).propagateChanges(taskFile.task, listOf(taskFile)) },
           true
         )
