@@ -61,12 +61,13 @@ class HyperskillCoursesPanel(
     connection.subscribe(HyperskillSettings.LOGGED_IN_TO_HYPERSKILL,
       object : EduLogInListener {
         override fun userLoggedIn() {
-          runInEdt(modalityState = ModalityState.stateForComponent(this@HyperskillCoursesPanel)) {
+          runInEdt(modalityState = ModalityState.any()) {
             panel.removeAll()
             panel.add(createCoursesPanel())
-            connection.disconnect()
           }
+          connection.disconnect()
         }
+
       }
     )
 
