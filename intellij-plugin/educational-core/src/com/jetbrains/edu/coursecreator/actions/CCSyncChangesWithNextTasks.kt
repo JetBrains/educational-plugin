@@ -7,6 +7,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
+import com.jetbrains.edu.coursecreator.framework.SyncChangesStateManager
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -81,8 +82,14 @@ class CCSyncChangesWithNextTasks : DumbAwareAction() {
         val studyItem = selectedItems.singleOrNull()?.getStudyItem(project)
 
         when {
-          studyItem is FrameworkLesson -> LessonContext(studyItem)
-          studyItem is Task && studyItem.parent is FrameworkLesson -> TaskContext(studyItem)
+          studyItem is FrameworkLesson -> {
+            SyncChangesStateManager.getInstance(project).getSyncChangesState(studyItem) ?: return null
+            LessonContext(studyItem)
+          }
+          studyItem is Task && studyItem.parent is FrameworkLesson -> {
+            SyncChangesStateManager.getInstance(project).getSyncChangesState(studyItem) ?: return null
+            TaskContext(studyItem)
+          }
           else -> null
         }
       }
@@ -93,6 +100,8 @@ class CCSyncChangesWithNextTasks : DumbAwareAction() {
         if (taskFiles.size < otherFiles.size) return null
 
         val task = taskFiles.map { it.task }.distinct().singleOrNull() ?: return null
+        val stateManager = SyncChangesStateManager.getInstance(project)
+        if (taskFiles.any { stateManager.getSyncChangesState(it) == null }) return null
 
         TaskFilesContext(task, taskFiles)
       }
