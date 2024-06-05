@@ -1,10 +1,12 @@
 package com.jetbrains.edu.coursecreator.framework.impl
 
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.vcs.merge.MergeSession.Resolution
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.actions.CCSyncChangesWithNextTasks
+import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -286,7 +288,10 @@ class CCSyncChangesWithNextTaskTest : EduActionTestCase() {
       val task = course.findTask("lesson1", "task1")
       task.openTaskFileInEditor("test/Tests.kt")
       myFixture.type("fun bar() {}\n")
-      doTest(task, listOf(Resolution.AcceptedYours))
+      assertFails {
+        // SyncChanges action is not visible
+        doTest(task, listOf(Resolution.AcceptedYours))
+      }
     }
 
     val fileTree = fileTree {
@@ -550,7 +555,11 @@ class CCSyncChangesWithNextTaskTest : EduActionTestCase() {
       val taskFile1 = task.taskFiles["src/Task.kt"]!!
       val taskFile2 = task.taskFiles["src/Bar.kt"]!!
       val taskFile3 = task.taskFiles["test/Tests.kt"]!!
-      doTest(listOf(taskFile1, taskFile2, taskFile3), listOf(Resolution.AcceptedYours))
+      doTest(listOf(taskFile1, taskFile2), listOf(Resolution.AcceptedYours))
+      assertFails {
+        // because test/Tests.kt file is not visible
+        doTest(listOf(taskFile1, taskFile2, taskFile3), listOf(Resolution.AcceptedYours))
+      }
     }
 
     val fileTree = fileTree {
@@ -644,8 +653,9 @@ class CCSyncChangesWithNextTaskTest : EduActionTestCase() {
       }
     }
   }.apply {
-    val task = course.findTask("lesson1", "task1")
-    doTest(task, List(numberOfTasks - 1) { Resolution.AcceptedYours })
+    for (task in lessons.first().taskList) {
+      CCFrameworkLessonManager.getInstance(project).saveCurrentState(task)
+    }
   }
 
   private fun doTest(
@@ -654,6 +664,7 @@ class CCSyncChangesWithNextTaskTest : EduActionTestCase() {
     // cancel on conflict resolution with number [cancelOnConflict]
     cancelOnConflict: Int = Int.MAX_VALUE,
   ) {
+    FileDocumentManager.getInstance().saveAllDocuments()
     val mockUI = MockFLMultipleFileMergeUI(resolutions, cancelOnConflict)
     withFLMultipleFileMergeUI(mockUI) {
       val dataContext = dataContext(item.getDir(project.courseDir)!!)
@@ -667,6 +678,7 @@ class CCSyncChangesWithNextTaskTest : EduActionTestCase() {
     // cancel on conflict resolution with number [cancelOnConflict]
     cancelOnConflict: Int = Int.MAX_VALUE,
   ) {
+    FileDocumentManager.getInstance().saveAllDocuments()
     val mockUI = MockFLMultipleFileMergeUI(resolutions, cancelOnConflict)
     withFLMultipleFileMergeUI(mockUI) {
       val files = taskFiles.map { it.getVirtualFile(project)!! }.toTypedArray()
