@@ -154,6 +154,11 @@
               class="com.jetbrains.edu.coursecreator.actions.CCSyncChangesWithNextTasks"
               icon="com.jetbrains.edu.EducationalCoreIcons.SyncFiles">
       </action>
+      <action id="Educational.Educator.ShowUnsyncedChanges"
+              class="com.jetbrains.edu.coursecreator.actions.taskFile.CCShowUnsyncedChanges"
+              icon="AllIcons.Actions.Diff"
+              internal="true">
+      </action>
       <separator/>
       <add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="Educational.Educator.CourseCreator.Menu"/>
     </group>

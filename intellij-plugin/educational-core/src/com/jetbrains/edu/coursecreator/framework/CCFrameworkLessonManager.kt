@@ -208,7 +208,7 @@ class CCFrameworkLessonManager(
     return updatedUserChanges
   }
 
-  private fun getStateFromStorage(task: Task): FLTaskState {
+  fun getStateFromStorage(task: Task): FLTaskState {
     return try {
       storage.getState(getRecord(task))
     }
