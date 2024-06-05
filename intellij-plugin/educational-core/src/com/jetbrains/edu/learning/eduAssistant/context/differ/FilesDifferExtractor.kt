@@ -24,24 +24,21 @@ fun getChangedContent(task: Task, project: Project): String? {
 }
 
 private fun findChangedFunctions(task: Task, project: Project) {
-  if (task.taskFilesWithChangedFunctions == null) {
-    val language = task.course.languageById ?: return
-    val previousTask = NavigationUtils.previousTask(task)
-    val taskFileNamesToChangedFunctions = mutableMapOf<String, List<String>>()
-    task.taskFiles.values.filter { it.isVisible }.forEach { taskFile ->
-      val previousTaskFile = previousTask?.taskFiles?.get(taskFile.name)
-      previousTaskFile?.let { previousFile ->
-        val beforePsiFile = previousFile.getSolution().createPsiFileForSolution(project, language)
-        val afterPsiFile = taskFile.getSolution().createPsiFileForSolution(project, language)
-        val changedFunctions = FilesDiffer.findDifferentMethods(beforePsiFile, afterPsiFile, language)
-        if (!changedFunctions.isNullOrEmpty()) {
-          taskFileNamesToChangedFunctions[taskFile.name] = changedFunctions
-        }
-      }
+  if (task.taskFilesWithChangedFunctions != null) return
+  val language = task.course.languageById ?: return
+  val previousTask = NavigationUtils.previousTask(task) ?: return
+  val taskFileNamesToChangedFunctions = mutableMapOf<String, List<String>>()
+  task.taskFiles.values.filter { it.isVisible }.forEach { taskFile ->
+    val previousTaskFile = previousTask.taskFiles[taskFile.name] ?: error("Previous task file not found")
+    val beforePsiFile = previousTaskFile.getSolution().createPsiFileForSolution(project, language)
+    val afterPsiFile = taskFile.getSolution().createPsiFileForSolution(project, language)
+    val changedFunctions = FilesDiffer.findDifferentMethods(beforePsiFile, afterPsiFile, language)
+    if (!changedFunctions.isNullOrEmpty()) {
+      taskFileNamesToChangedFunctions[taskFile.name] = changedFunctions
     }
-    if (taskFileNamesToChangedFunctions.isNotEmpty()) {
-      task.taskFilesWithChangedFunctions = taskFileNamesToChangedFunctions
-    }
+  }
+  if (taskFileNamesToChangedFunctions.isNotEmpty()) {
+    task.taskFilesWithChangedFunctions = taskFileNamesToChangedFunctions
   }
 }
 

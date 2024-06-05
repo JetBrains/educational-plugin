@@ -27,8 +27,11 @@ import org.jsoup.Jsoup
 
 class TaskProcessorImpl(val task: Task) : TaskProcessor {
   var currentTaskFile: TaskFile? = null
+
   private val project = task.project ?: error("Project was not found")
+
   private val language = task.course.languageById ?: error("Language was not found")
+
   private val state = project.eduState ?: error("State was not found")
 
   override fun taskHasCompilationError() = getFailureMessage() == EduCoreBundle.message("check.error.compilation.failed")
@@ -51,7 +54,7 @@ class TaskProcessorImpl(val task: Task) : TaskProcessor {
 
   override fun getSubmissionTextRepresentation() = runReadAction { getChangedContent(task, project) }
 
-  private fun getTaskText(localTask: Task) = runReadAction {
+  private fun getTaskText(localTask: Task): String = runReadAction {
     localTask.project?.let { localTask.getTaskTextFromTask(it) } ?: localTask.descriptionText
   }
 
@@ -59,13 +62,13 @@ class TaskProcessorImpl(val task: Task) : TaskProcessor {
 
   override fun getTaskTextRepresentation(): String {
     val document = getTaskContentHtmlDocument()
-    document.getElementsByClass("hint").remove()
+    document.getElementsByClass(HTML_HINT_CLASS_NAME).remove()
     return document.text()
   }
 
   override fun getHintsTextRepresentation(): List<String> {
     val document = getTaskContentHtmlDocument()
-    return document.getElementsByClass("hint").map { it.text() }
+    return document.getElementsByClass(HTML_HINT_CLASS_NAME).map { it.text() }
   }
 
   override fun getTheoryTextRepresentation(): String {
@@ -122,8 +125,8 @@ class TaskProcessorImpl(val task: Task) : TaskProcessor {
     } ?: return null
     if (signature != null && functionsSignaturesFromSolution.contains(signature)) {
       val taskFile = currentTaskFile ?: state.taskFile
-      val psiFileSolution = runReadAction { taskFile.getSolution().createPsiFileForSolution(project, language) }
       return runReadAction {
+        val psiFileSolution = taskFile.getSolution().createPsiFileForSolution(project, language)
         FunctionSignatureResolver.getFunctionBySignature(
           psiFileSolution, signature.name, language
         )?.text ?: error("Cannot get the function from the author's solution")
@@ -133,13 +136,15 @@ class TaskProcessorImpl(val task: Task) : TaskProcessor {
   }
 
   override fun extractRequiredFunctionsFromCodeHint(codeHint: String): String {
-    val codeHintPsiFile = runReadAction { PsiFileFactory.getInstance(project).createFileFromText("codeHintPsiFile", language, codeHint) }
+    val codeHintPsiFile = runReadAction {
+      PsiFileFactory.getInstance(project).createFileFromText(CODE_HINT_PSI_FILE_NAME, language, codeHint)
+    }
     return codeHintPsiFile.filterAllowedModifications(task, project, SignatureSource.GENERATED_SOLUTION)
   }
 
   override fun getModifiedFunctionNameInCodeHint(codeStr: String, codeHint: String) = runReadAction {
-    val codeHintPsiFile = PsiFileFactory.getInstance(project).createFileFromText("codeHintPsiFile", language, codeHint)
-    val codePsiFile = PsiFileFactory.getInstance(project).createFileFromText("codePsiFile", language, codeStr)
+    val codeHintPsiFile = PsiFileFactory.getInstance(project).createFileFromText(CODE_HINT_PSI_FILE_NAME, language, codeHint)
+    val codePsiFile = PsiFileFactory.getInstance(project).createFileFromText(CODE_PSI_FILE_NAME, language, codeStr)
     val functionName = FilesDiffer.findDifferentMethods(codePsiFile, codeHintPsiFile, language, true)?.firstOrNull()
     ?: error("The code prompt didn't make any difference")
     currentTaskFile = task.taskFiles[task.taskFilesWithChangedFunctions?.filter { (_, functions) ->
@@ -149,16 +154,16 @@ class TaskProcessorImpl(val task: Task) : TaskProcessor {
   }
 
   private fun getFunctionPsiWithName(code: String, functionName: String, project: Project, language: Language) = runReadAction {
-    val codePsiFile = PsiFileFactory.getInstance(project).createFileFromText("codePsiFile", language, code)
+    val codePsiFile = PsiFileFactory.getInstance(project).createFileFromText(CODE_PSI_FILE_NAME, language, code)
     FunctionSignatureResolver.getFunctionBySignature(codePsiFile, functionName, language)
   }
 
   override fun reduceChangesInCodeHint(code: String, modifiedCode: String, functionName: String): String {
     val functionFromCode = getFunctionPsiWithName(code, functionName, project, language)?.copy()
     val functionFromCodeHint = getFunctionPsiWithName(modifiedCode, functionName, project, language)?.copy()
-    return functionFromCodeHint?.let {
-      FunctionDiffReducer.reduceDiffFunctions(functionFromCode, functionFromCodeHint, project, language)
-    }?.let { runReadAction { it.text } } ?: ""
+                               ?: error("Function with the name $functionName in the code hint is not found")
+    val reducedCodeHint = FunctionDiffReducer.reduceDiffFunctions(functionFromCode, functionFromCodeHint, project, language)
+    return runReadAction { reducedCodeHint?.text } ?: modifiedCode
   }
 
   override fun applyCodeHint(codeHint: String): String? {
@@ -171,7 +176,7 @@ class TaskProcessorImpl(val task: Task) : TaskProcessor {
       )
     }
     var isFileModified = false
-    val codeHintPsiFile = runReadAction { PsiFileFactory.getInstance(project).createFileFromText("codeHintPsiFile", language, codeHint) }
+    val codeHintPsiFile = runReadAction { PsiFileFactory.getInstance(project).createFileFromText(CODE_HINT_PSI_FILE_NAME, language, codeHint) }
     val functionSignaturesFromCodeHint = runReadAction {
       FunctionSignaturesProvider.getFunctionSignatures(
         codeHintPsiFile, SignatureSource.GENERATED_SOLUTION, language
@@ -199,6 +204,9 @@ class TaskProcessorImpl(val task: Task) : TaskProcessor {
   override fun containsGeneratedCodeStructures(code: String) = getFunctionSignaturesFromGeneratedCode(code, project, language).isNotEmpty()
 
   companion object {
-    const val MAX_BODY_LINES_IN_SHORT_FUNCTION = 3
+    private const val MAX_BODY_LINES_IN_SHORT_FUNCTION = 3
+    private const val CODE_HINT_PSI_FILE_NAME = "codeHintPsiFile"
+    private const val CODE_PSI_FILE_NAME = "codePsiFile"
+    private const val HTML_HINT_CLASS_NAME = "hint"
   }
 }
