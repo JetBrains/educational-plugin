@@ -7,6 +7,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.util.concurrency.ThreadingAssertions
 
+/**
+ * Applies the code from the draft block to the main code.
+ * Called when all errors are fixed and there are no other nested blocks.
+ * [PsiElement] - draft block element.
+ */
 interface DraftApplier {
 
   fun applyCodeDraftToMainCode(project: Project, element: PsiElement, psiFile: PsiFile?)

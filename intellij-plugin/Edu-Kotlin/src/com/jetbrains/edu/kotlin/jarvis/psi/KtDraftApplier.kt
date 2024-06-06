@@ -18,6 +18,7 @@ class KtDraftApplier : DraftApplier {
     val draftBlock = findBlock(element, { it.parent }, DRAFT) as? KtCallExpression ?: error("The draft block is not found")
     val lambdaArgument = draftBlock.lambdaArguments.firstOrNull() ?: return
     val lambdaBody = lambdaArgument.getLambdaExpression()?.bodyExpression ?: return
+    // TODO: parse these comments
     val commentsToRemove = lambdaBody.childrenOfType<PsiComment>().take(NUM_COMMENTS_TO_REMOVE)
     val descriptionBlock = findBlock(draftBlock, { it.prevSibling }, DESCRIPTION) ?: error("The description block is not found")
     WriteCommandAction.runWriteCommandAction(project, null, null, {
