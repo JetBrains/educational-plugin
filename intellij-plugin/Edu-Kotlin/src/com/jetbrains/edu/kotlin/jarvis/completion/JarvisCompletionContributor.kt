@@ -8,6 +8,12 @@ import com.intellij.patterns.PlatformPatterns
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.lexer.KtTokens.REGULAR_STRING_PART
 
+/**
+ * Provides completion suggestions for the Jarvis application.
+ * It adds completions for basic completion types defined by the `PlatformPatterns.psiElement(REGULAR_STRING_PART)` pattern.
+ *
+ * @see CompletionContributor
+ */
 class JarvisCompletionContributor : CompletionContributor() {
   init {
     extend(
