@@ -75,14 +75,16 @@ abstract class CCChangeFilePropertyActionBase(
   protected open fun isAvailableForFile(project: Project, file: VirtualFile): Boolean {
     val task = file.getContainingTask(project) ?: return false
     return if (file.isDirectory) {
-      // Recursive check is too expensive for `update` method
-      // so we allow this action for directories
-      true
+      isAvailableForDirectory(project, task, file)
     }
     else {
       isAvailableForSingleFile(project, task, file)
     }
   }
+
+  // Recursive check is too expensive for `update` method,
+  // so we allow this action for directories by default
+  protected open fun isAvailableForDirectory(project: Project, task: Task, directory: VirtualFile): Boolean = true
 
   protected abstract fun isAvailableForSingleFile(project: Project, task: Task, file: VirtualFile): Boolean
   protected abstract fun createStateForFile(project: Project, task: Task, file: VirtualFile): State?

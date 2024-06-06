@@ -154,6 +154,12 @@
               class="com.jetbrains.edu.coursecreator.actions.CCSyncChangesWithNextTasks"
               icon="com.jetbrains.edu.EducationalCoreIcons.SyncFiles">
       </action>
+      <action id="Educational.Educator.AllowFileToSyncChanges"
+              class="com.jetbrains.edu.coursecreator.actions.taskFile.CCAllowFileSyncChanges"
+              icon="AllIcons.Actions.Show"/>
+      <action id="Educational.Educator.IgnoreFilePropagation"
+              class="com.jetbrains.edu.coursecreator.actions.taskFile.CCIgnoreFileInSyncChanges"
+              icon="com.jetbrains.edu.EducationalCoreIcons.SyncChangesIgnore"/>
       <action id="Educational.Educator.ShowUnsyncedChanges"
               class="com.jetbrains.edu.coursecreator.actions.taskFile.CCShowUnsyncedChanges"
               icon="AllIcons.Actions.Diff"
