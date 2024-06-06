@@ -37,16 +37,17 @@ class TaskBasedAssistant : Assistant {
     Loggers.hintTimingLogger.info("Starting getHint function for task-id: ${task.id}")
 
     return try {
-      if (taskProcessor.getFailureMessage() == EduCoreBundle.message("check.error.compilation.failed")) {
-        promptBuilder = CompilationErrorPromptBuilder()
-      }
-
       Loggers.hintTimingLogger.info("Retrieving the student's code for task-id: ${task.id}")
       var codeStr = ""
-      userCode?.let {
-        codeStr = it
-      } ?: ApplicationManager.getApplication().invokeAndWait {
-        codeStr = taskProcessor.getSubmissionTextRepresentation(state) ?: ""
+      if (taskProcessor.getFailureMessage() == EduCoreBundle.message("check.error.compilation.failed")) {
+        promptBuilder = CompilationErrorPromptBuilder()
+        codeStr = taskProcessor.getFullTaskFileText(state)
+      } else {
+        userCode?.let {
+          codeStr = it
+        } ?: ApplicationManager.getApplication().invokeAndWait {
+          codeStr = taskProcessor.getSubmissionTextRepresentation(state) ?: ""
+        }
       }
       logEduAssistantInfo(
         taskProcessor,

@@ -72,6 +72,10 @@ class TaskProcessor(val task: Task) {
     getChangedContent(task, state.project)
   }
 
+  fun getFullTaskFileText(state: EduState) = runReadAction {
+    state.taskFile.getText(state.project) ?: error("Failed to retrieve the text of the task file")
+  }
+
   fun getFunctionsFromTask(): List<FunctionSignature>? {
     val project = task.project ?: return null
     return task.taskFiles.values.filterNot { it.isTestFile }.flatMap { file ->
