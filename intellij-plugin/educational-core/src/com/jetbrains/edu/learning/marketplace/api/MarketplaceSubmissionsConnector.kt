@@ -103,7 +103,7 @@ class MarketplaceSubmissionsConnector {
     val allSubmissions = mutableListOf<MarketplaceSubmission>()
     do {
       val submissionsList = submissionsService.getAllSubmissionsForCourse(courseId, currentPage).executeParsingErrors().onError {
-        LOG.error("Failed to get all submissions for course $courseId. Error message: $it")
+        LOG.warn("Failed to get all submissions for course $courseId. Error message: $it")
         return emptyList()
       }.body() ?: break
       val submissions = submissionsList.submissions
@@ -126,7 +126,7 @@ class MarketplaceSubmissionsConnector {
       val submissionsList = submissionsService.getAllPublicSubmissionsForCourse(
         courseId, updateVersion, currentPage
       ).executeParsingErrors().onError {
-        LOG.error("Failed to get all shared submissions for course $courseId. Error message: $it")
+        LOG.warn("Failed to get all shared submissions for course $courseId. Error message: $it")
         return emptyList()
       }.body() ?: break
       val sharedSolutions = submissionsList.submissions
@@ -148,7 +148,7 @@ class MarketplaceSubmissionsConnector {
       val submissionsList = submissionsService.getPublicSubmissionsForTask(
         courseId, updateVersion, taskId, currentPage
       ).executeParsingErrors().onError {
-        LOG.error("Failed to get shared submissions for task $taskId. Error message: $it")
+        LOG.warn("Failed to get shared submissions for task $taskId. Error message: $it")
         return null
       }.body() ?: return null
       val sharedSolutions = submissionsList.submissions
@@ -247,7 +247,7 @@ class MarketplaceSubmissionsConnector {
   private fun doPostSubmission(courseId: Int, taskId: Int, submission: MarketplaceSubmission): Result<MarketplaceSubmission, String> {
     LOG.info("Posting submission for task $taskId")
     val response = submissionsService.postSubmission(courseId, submission.courseVersion, taskId, submission).executeParsingErrors().onError {
-      LOG.error("Failed to post submission for task $taskId")
+      LOG.warn("Failed to post submission for task $taskId")
       return Err(it)
     }.body() ?: return Err(EduCoreBundle.message("error.failed.to.post.solution"))
     return Ok(response)
