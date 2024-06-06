@@ -279,7 +279,7 @@ class CCSyncChangesWithNextTaskTest : EduActionTestCase() {
   }
 
   @Test
-  fun `test changes in invisible files do not propagate`() {
+  fun `test changes in non-propagatable files do not propagate`() {
     val course = createFrameworkCourse(2)
 
     withVirtualFileListener(course) {

@@ -551,8 +551,9 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
     name: String, text: String,
     visible: Boolean? = null,
     editable: Boolean? = true,
+    propagatable: Boolean? = null,
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
-  ) = taskFile(name, InMemoryTextualContents(text), visible, editable, buildTaskFile)
+  ) = taskFile(name, InMemoryTextualContents(text), visible, editable, propagatable, buildTaskFile)
 
   /**
    * Creates task file with given [name] and [contents].
@@ -566,6 +567,7 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
     name: String, contents: FileContents = UndeterminedContents.EMPTY,
     visible: Boolean? = null,
     editable: Boolean? = true,
+    propagatable: Boolean? = null,
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
   ) {
     val taskFileBuilder = TaskFileBuilder(task)
@@ -588,6 +590,7 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
     }
     taskFile.task = task
     taskFile.isEditable = editable ?: true
+    taskFile.isPropagatable = propagatable ?: !EduUtilsKt.isTestsFile(task, taskFile.name)
     task.addTaskFile(taskFile)
   }
 
