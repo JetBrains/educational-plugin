@@ -28,8 +28,9 @@ private fun findChangedFunctions(task: Task, project: Project) {
   val language = task.course.languageById ?: return
   val previousTask = NavigationUtils.previousTask(task) ?: return
   val taskFileNamesToChangedFunctions = mutableMapOf<String, List<String>>()
-  task.taskFiles.values.filter { it.isVisible }.forEach { taskFile ->
-    val previousTaskFile = previousTask.taskFiles[taskFile.name] ?: error("Previous task file not found")
+  val visibleTaskFiles = task.taskFiles.values.filter { it.isVisible }
+  for (taskFile in visibleTaskFiles) {
+    val previousTaskFile = previousTask.taskFiles[taskFile.name] ?: continue
     val beforePsiFile = previousTaskFile.getSolution().createPsiFileForSolution(project, language)
     val afterPsiFile = taskFile.getSolution().createPsiFileForSolution(project, language)
     val changedFunctions = FilesDiffer.findDifferentMethods(beforePsiFile, afterPsiFile, language)

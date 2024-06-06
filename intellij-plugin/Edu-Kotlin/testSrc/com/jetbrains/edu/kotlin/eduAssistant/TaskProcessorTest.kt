@@ -5,8 +5,8 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.psi.PsiDocumentManager
 import com.jetbrains.edu.jvm.slow.checker.JdkCheckerTestBase
 import com.jetbrains.edu.kotlin.eduAssistant.courses.createKotlinCourse
-import com.jetbrains.edu.learning.RefreshCause
-import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.eduAssistant.FunctionParameter
 import com.jetbrains.edu.learning.courseFormat.eduAssistant.FunctionSignature
@@ -17,8 +17,6 @@ import com.jetbrains.edu.learning.eduAssistant.context.buildAuthorSolutionContex
 import com.jetbrains.edu.learning.eduAssistant.context.function.signatures.FunctionSignatureResolver
 import com.jetbrains.edu.learning.eduAssistant.context.function.signatures.createPsiFileForSolution
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessorImpl
-import com.jetbrains.edu.learning.eduState
-import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import org.junit.Test
 
@@ -108,7 +106,7 @@ class TaskProcessorTest : JdkCheckerTestBase() {
             println("Hello!")
         }
       """.trimIndent()
-    NavigationUtils.navigateToTask(project, task)
+    testAction(NextTaskAction.ACTION_ID)
     assertEquals(expected.reformatCode(project), taskProcessor.getSubmissionTextRepresentation()?.reformatCode(project))
     runWriteAction {
       val taskFile = task.taskFiles["src/main/kotlin/Main.kt"]
