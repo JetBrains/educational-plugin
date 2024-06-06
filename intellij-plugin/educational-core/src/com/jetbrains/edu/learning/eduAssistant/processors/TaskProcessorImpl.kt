@@ -48,6 +48,12 @@ class TaskProcessorImpl(val task: Task) : TaskProcessor {
 
   override fun getLessonId() = task.lesson.id
 
+  fun getErrorDetails() = if (task.status == CheckStatus.Failed) task.feedback?.errorDetails else null
+
+  fun getFullTaskFileText() = runReadAction {
+    state.taskFile.getText(state.project) ?: error("Failed to retrieve the text of the task file")
+  }
+
   override fun getTaskId() = task.id
 
   override fun getLowercaseLanguageDisplayName() = language.displayName.lowercase()
@@ -57,8 +63,6 @@ class TaskProcessorImpl(val task: Task) : TaskProcessor {
   private fun getTaskText(localTask: Task): String = runReadAction {
     localTask.project?.let { localTask.getTaskTextFromTask(it) } ?: localTask.descriptionText
   }
-
-  fun getErrorDetails() = if (task.status == CheckStatus.Failed) task.feedback?.errorDetails else null
 
   private fun getTaskContentHtmlDocument() = Jsoup.parse(getTaskText(task).trimIndent())
 
