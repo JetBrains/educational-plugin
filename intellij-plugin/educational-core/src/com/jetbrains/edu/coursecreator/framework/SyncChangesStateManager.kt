@@ -107,7 +107,14 @@ class SyncChangesStateManager(private val project: Project) : Disposable.Default
   }
 
   private fun collectSyncChangesState(task: Task) {
-    val state = collectState(task.taskFiles.values.toList()) { taskFileStateStorage[it] }
+    val state = collectState(task.taskFiles.values.toList()) {
+      if (shouldUpdateSyncChangesState(it)) {
+        taskFileStateStorage[it]
+      }
+      else {
+        null
+      }
+    }
     if (state != null) taskStateStorage[task] = state
     else taskStateStorage.remove(task)
   }
@@ -264,7 +271,7 @@ class SyncChangesStateManager(private val project: Project) : Disposable.Default
   // do not update state for the last framework lesson task and for non-propagatable files (invisible files)
   private fun shouldUpdateSyncChangesState(taskFile: TaskFile): Boolean {
     val task = taskFile.task
-    return taskFile.isVisible && task.lesson.taskList.last() != task
+    return taskFile.isPropagatable && task.lesson.taskList.last() != task
   }
 
   // after deletion of files, the framework lesson structure might break,

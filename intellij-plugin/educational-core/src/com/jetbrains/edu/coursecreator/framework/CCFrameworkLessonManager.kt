@@ -110,7 +110,7 @@ class CCFrameworkLessonManager(
   }
 
   private fun isTaskFileChanged(taskFile: TaskFile, storedState: FLTaskState): Boolean {
-    if (!taskFile.isVisible) return false
+    if (!taskFile.isPropagatable) return false
     val document = taskFile.getDocument(project)
     return document?.text != storedState[taskFile.name]
   }
@@ -123,8 +123,11 @@ class CCFrameworkLessonManager(
     val currentTaskDir = currentTask.getDir(project.courseDir) ?: error("Failed to find task directory")
     val targetTaskDir = targetTask.getDir(project.courseDir) ?: error("Failed to find task directory")
 
-    val initialCurrentFiles = calcInitialFiles(currentTask, baseFilesNames)
-    val initialTargetFiles = calcInitialFiles(targetTask, baseFilesNames)
+    val nonPropagatableFilesInCurrentTask = currentTask.allNonPropagatableFiles
+    val nonPropagatableFilesInTargetTask = targetTask.allNonPropagatableFiles
+
+    val initialCurrentFiles = calcInitialFiles(currentTask, baseFilesNames) - nonPropagatableFilesInTargetTask
+    val initialTargetFiles = calcInitialFiles(targetTask, baseFilesNames) - nonPropagatableFilesInCurrentTask
 
     val initialBaseState = getStateFromStorage(currentTask)
 
@@ -239,9 +242,11 @@ class CCFrameworkLessonManager(
     return baseFilesNames?.intersect(task.allPropagatableFiles) ?: task.allPropagatableFiles
   }
 
-  // we propagate only visible files
   private val Task.allPropagatableFiles: Set<String>
-    get() = taskFiles.filterValues { it.isVisible }.keys
+    get() = taskFiles.filterValues { it.isPropagatable }.keys
+
+  private val Task.allNonPropagatableFiles: Set<String>
+    get() = taskFiles.filterValues { !it.isPropagatable }.keys
 
   private fun showApplyChangesCanceledNotification(project: Project, startTaskName: String, cancelledTaskName: String) {
     EduNotificationManager.showWarningNotification(
