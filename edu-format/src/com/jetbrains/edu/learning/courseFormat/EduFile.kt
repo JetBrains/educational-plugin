@@ -52,6 +52,7 @@ open class EduFile {
   var errorHighlightLevel: EduFileErrorHighlightLevel = EduFileErrorHighlightLevel.TEMPORARY_SUPPRESSION
   var isVisible: Boolean = true
   var isEditable: Boolean = true
+  var isPropagatable: Boolean = true
 
   // Should be used only in student mode
   var isLearnerCreated: Boolean = false

@@ -114,6 +114,7 @@ object YamlMixinNames {
   const val ENCRYPTED_TEXT = "encrypted_text"
   const val IS_BINARY = "is_binary"
   const val EDITABLE = "editable"
+  const val PROPAGATABLE = "propagatable"
   const val HIGHLIGHT_LEVEL = JsonMixinNames.HIGHLIGHT_LEVEL
 
   // placeholder

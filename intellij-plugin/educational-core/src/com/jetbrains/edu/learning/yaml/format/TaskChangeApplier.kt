@@ -96,6 +96,7 @@ open class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task
     existingTaskFile.applyPlaceholderChanges(deserializedTaskFile)
     existingTaskFile.isVisible = deserializedTaskFile.isVisible
     existingTaskFile.isEditable = deserializedTaskFile.isEditable
+    existingTaskFile.isPropagatable = deserializedTaskFile.isPropagatable
     existingTaskFile.errorHighlightLevel = deserializedTaskFile.errorHighlightLevel
   }
 

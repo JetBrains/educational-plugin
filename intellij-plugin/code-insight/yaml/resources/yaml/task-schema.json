@@ -136,6 +136,10 @@
           "type": "boolean",
           "description": "False if learner can't change file, absent if can"
         },
+        "propagatable": {
+          "type": "boolean",
+          "description": "False if file is ignored in propagation via \"Sync Changed...\" action, absent if ignored"
+        },
         "highlight_level": {
           "type" : "string",
           "enum": [
