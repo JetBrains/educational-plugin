@@ -7,6 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotificationProvider
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.actions.taskFile.CCIgnoreFileInSyncChanges
 import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
 import com.jetbrains.edu.coursecreator.framework.SyncChangesStateManager
 import com.jetbrains.edu.learning.EduExperimentalFeatures
@@ -36,6 +37,9 @@ class SyncChangesEditorNotificationsProvider : EditorNotificationProvider {
           { CCFrameworkLessonManager.getInstance(project).propagateChanges(taskFile.task, listOf(taskFile)) },
           true
         )
+        createActionLabel(EduCoreBundle.message("action.Educational.Educator.IgnoreFilePropagation.ActionLink.text")) {
+          CCIgnoreFileInSyncChanges.runWithTaskFile(project, taskFile)
+        }
       }
     }
   }
