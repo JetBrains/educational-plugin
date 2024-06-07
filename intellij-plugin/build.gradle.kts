@@ -105,13 +105,8 @@ val cppPlugins = listOfNotNull(
 
 val changesFile = "changes.html"
 
-plugins {
-  alias(libs.plugins.gradleIntelliJPlugin)
-}
-
 allprojects {
   apply {
-    plugin("org.jetbrains.intellij")
     plugin("org.jetbrains.kotlin.plugin.serialization")
   }
   intellij {
@@ -198,6 +193,10 @@ allprojects {
 }
 
 subprojects {
+  apply {
+    plugin("org.jetbrains.intellij.platform.module")
+  }
+
   tasks {
     runIde { enabled = false }
     prepareSandbox { enabled = false }
@@ -209,6 +208,10 @@ subprojects {
   dependencies {
     testOutput(sourceSets.test.get().output.classesDirs)
   }
+}
+
+plugins {
+  alias(libs.plugins.intelliJPlatformPlugin)
 }
 
 val buildNumber = System.getenv("BUILD_NUMBER") ?: "SNAPSHOT"
