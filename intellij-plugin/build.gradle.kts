@@ -130,14 +130,6 @@ allprojects {
   }
 
   tasks {
-    withProp("customJbr") {
-      if (it.isNotBlank()) {
-        runIde {
-          jbrVersion = it
-        }
-      }
-    }
-
     withType<Test> {
       withProp("../secret.properties", "stepikTestClientSecret") { environment("STEPIK_TEST_CLIENT_SECRET", it) }
       withProp("../secret.properties", "stepikTestClientId") { environment("STEPIK_TEST_CLIENT_ID", it) }
@@ -223,6 +215,7 @@ repositories {
   intellijPlatform {
     defaultRepositories()
     binaryReleasesAndroidStudio()
+    jetbrainsRuntime()
   }
 }
 
@@ -261,6 +254,12 @@ intellijPlatform {
 dependencies {
   intellijPlatform {
     intellijIde(baseVersion)
+    if (hasProp("jbrVersion")) {
+      jetbrainsRuntime(prop("jbrVersion"))
+    }
+    else {
+      jetbrainsRuntime()
+    }
   }
 
   implementation(project("educational-core"))
