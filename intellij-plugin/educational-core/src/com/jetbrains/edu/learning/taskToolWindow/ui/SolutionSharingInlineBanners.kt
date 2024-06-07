@@ -5,6 +5,7 @@ import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.InlineBanner
 import com.intellij.util.ui.HTMLEditorKitBuilder
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils
 import com.jetbrains.edu.learning.marketplace.SolutionSharingPromptCounter
@@ -18,7 +19,9 @@ import javax.swing.JEditorPane
 
 object SolutionSharingInlineBanners {
 
-  fun promptToEnableSolutionSharing(project: Project) {
+  fun promptToEnableSolutionSharing(project: Project, task: Task) {
+    if (!SolutionSharingPromptCounter.shouldPrompt() || !task.supportSubmissions) return
+
     val inlineBanner = InlineBanner(EditorNotificationPanel.Status.Info).apply {
       setMessage(EduCoreBundle.message("marketplace.solutions.sharing.inline.banner.prompt.action.text"))
       addAction(EduCoreBundle.message("marketplace.solutions.sharing.inline.banner.prompt.description")) {

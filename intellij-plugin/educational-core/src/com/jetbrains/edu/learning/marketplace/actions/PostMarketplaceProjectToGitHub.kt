@@ -164,7 +164,7 @@ class PostMarketplaceProjectToGitHub : DumbAwareAction() {
     private val COMPLETION_CONDITION: Int
       get() = Registry.intValue(COMPLETION_CONDITION_REGISTRY_KEY).coerceIn(0, 100)
 
-    fun promptIfNeeded(project: Project) {
+    fun promptToPostProject(project: Project) {
       val course = project.course as? EduCourse ?: return
       if (!isPrompted(course.id) && canBePrompted(course)) {
         val inlineBanner = createInlineBanner()
