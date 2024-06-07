@@ -44,6 +44,7 @@ import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 class EduStartupActivity : StartupActivity.DumbAware {
 
@@ -113,6 +114,11 @@ class EduStartupActivity : StartupActivity.DumbAware {
 
   private fun migrateYaml(project: Project, course: Course) {
     migratePropagatableYamlFields(project, course)
+    migrateCanCheckLocallyYaml(project, course)
+    YamlFormatSynchronizer.saveAll(project)
+  }
+
+  private fun migrateCanCheckLocallyYaml(project: Project, course: Course) {
     val propertyComponent = PropertiesComponent.getInstance(project)
     if (propertyComponent.getBoolean(YAML_MIGRATED)) return
     propertyComponent.setValue(YAML_MIGRATED, true)
