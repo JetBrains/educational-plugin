@@ -693,6 +693,20 @@ project("Edu-Rust") {
 }
 
 project("Edu-Cpp") {
+  tasks {
+    test {
+      // Since 2024.1 CLion has two sets of incompatible plugins: based on classic language engine and new one (AKA Radler).
+      // Platform uses `idea.suppressed.plugins.set.selector` system property to choose which plugins should be disabled.
+      // But there aren't `idea.suppressed.plugins.set.selector`, `idea.suppressed.plugins.set.classic`
+      // and `idea.suppressed.plugins.set.radler` properties in tests,
+      // as a result, the platform tries to load all plugins and fails because of duplicate definitions.
+      // Here is a workaround to make test work with CLion by defining proper values for necessary properties
+      systemProperty("idea.suppressed.plugins.set.selector", "classic") // possible values: `classic` and `radler`
+      systemProperty("idea.suppressed.plugins.set.classic", "org.jetbrains.plugins.clion.radler,intellij.rider.cpp.debugger")
+      systemProperty("idea.suppressed.plugins.set.radler", "com.intellij.cidr.lang,com.intellij.cidr.lang.clangdBridge,com.intellij.c.performanceTesting,org.jetbrains.plugins.cidr-intelliLang,com.intellij.cidr.completion.ml.ranking,com.intellij.cidr.grazie,com.intellij.cidr.markdown,com.jetbrains.codeWithMe,com.jetbrains.gateway,org.jetbrains.plugins.docker.gateway")
+    }
+  }
+
   dependencies {
     intellijPlatform {
       intellijIde(clionVersion)
