@@ -27,10 +27,13 @@ import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.EduUtilsKt.isNewlyCreated
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.isPreview
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -109,6 +112,7 @@ class EduStartupActivity : StartupActivity.DumbAware {
   }
 
   private fun migrateYaml(project: Project, course: Course) {
+    migratePropagatableYamlFields(project, course)
     val propertyComponent = PropertiesComponent.getInstance(project)
     if (propertyComponent.getBoolean(YAML_MIGRATED)) return
     propertyComponent.setValue(YAML_MIGRATED, true)
@@ -118,6 +122,34 @@ class EduStartupActivity : StartupActivity.DumbAware {
       if (it is ChoiceTask) {
         it.canCheckLocally = false
       }
+    }
+  }
+
+  private fun migratePropagatableYamlFields(project: Project, course: Course) {
+    if (!CCUtils.isCourseCreator(project) || !isFeatureEnabled(EduExperimentalFeatures.CC_FL_SYNC_CHANGES)) return
+    val propertiesComponent = PropertiesComponent.getInstance(project)
+    if (propertiesComponent.getBoolean(YAML_MIGRATED_PROPAGATABLE)) return
+    propertiesComponent.setValue(YAML_MIGRATED_PROPAGATABLE, true)
+
+    var hasPropagatableFlag = false
+    val nonPropagatableFiles = mutableListOf<TaskFile>()
+    course.visitTasks { task: Task ->
+      if (task.lesson is FrameworkLesson) {
+        for (taskFile in task.taskFiles.values) {
+          if (!taskFile.isPropagatable) {
+            hasPropagatableFlag = true
+            return@visitTasks
+          }
+          if (!taskFile.isVisible || !taskFile.isEditable) {
+            nonPropagatableFiles += taskFile
+          }
+        }
+      }
+    }
+    if (hasPropagatableFlag) return
+
+    for (taskFile in nonPropagatableFiles) {
+      taskFile.isPropagatable = false
     }
   }
 
@@ -174,6 +206,8 @@ class EduStartupActivity : StartupActivity.DumbAware {
   }
 
   companion object {
+    private const val YAML_MIGRATED_PROPAGATABLE = "Edu.Yaml.Migrate.Propagatable"
+
     private val LOG = Logger.getInstance(EduStartupActivity::class.java)
   }
 }
