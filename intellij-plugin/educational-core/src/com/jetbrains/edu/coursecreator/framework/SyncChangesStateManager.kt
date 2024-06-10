@@ -5,7 +5,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
@@ -54,18 +54,18 @@ class SyncChangesStateManager(private val project: Project) : Disposable.Default
     return lessonStateStorage[lesson]
   }
 
-  fun taskFileChanged(taskFile: TaskFile) = doUpdate(taskFile)
+  fun taskFileChanged(taskFile: TaskFile) = queueUpdate(taskFile)
 
   fun taskFileCreated(taskFile: TaskFile) = processTaskFilesCreated(taskFile.task, listOf(taskFile))
 
   fun filesDeleted(task: Task, taskFilesNames: List<String>) {
     // state of a current task might change from warning to info after deletion, so recalculate it
-    doUpdate(task, emptyList())
+    queueUpdate(task, emptyList())
 
-    recalcSyncChangesStateForFilesInPrevTask(task, taskFilesNames)
+    queueSyncChangesStateForFilesInPrevTask(task, taskFilesNames)
   }
 
-  fun taskDeleted(task: Task) = recalcSyncChangesStateForFilesInPrevTask(task, null)
+  fun taskDeleted(task: Task) = queueSyncChangesStateForFilesInPrevTask(task, null)
 
   fun fileMoved(file: VirtualFile, fileInfo: FileInfo.FileInTask, oldDirectoryInfo: FileInfo.FileInTask) {
     val task = fileInfo.task
@@ -88,12 +88,12 @@ class SyncChangesStateManager(private val project: Project) : Disposable.Default
   }
 
   fun updateSyncChangesState(lessonContainer: LessonContainer) {
-    lessonContainer.visitFrameworkLessons { updateSyncChangesState(it) }
+    lessonContainer.visitFrameworkLessons { queueUpdate(it) }
   }
 
-  fun updateSyncChangesState(task: Task, taskFiles: List<TaskFile>) = doUpdate(task, taskFiles)
+  fun updateSyncChangesState(task: Task, taskFiles: List<TaskFile>) = queueUpdate(task, taskFiles)
 
-  fun updateSyncChangesState(task: Task) = doUpdate(task)
+  fun updateSyncChangesState(task: Task) = queueUpdate(task)
 
   @TestOnly
   fun waitForAllRequestsProcessed() {
@@ -130,46 +130,61 @@ class SyncChangesStateManager(private val project: Project) : Disposable.Default
   // so we need to recalculate the state for corresponding task files from a previous task
   // in case when a warning state is added/removed
   private fun processTaskFilesCreated(task: Task, taskFiles: List<TaskFile>) {
-    doUpdate(task, taskFiles)
-    recalcSyncChangesStateForFilesInPrevTask(task, taskFiles.map { it.name })
+    queueUpdate(task, taskFiles)
+    queueSyncChangesStateForFilesInPrevTask(task, taskFiles.map { it.name })
   }
 
-  private fun updateSyncChangesState(lesson: FrameworkLesson) = doUpdate(lesson)
+  private fun queueUpdate(taskFile: TaskFile) = queueUpdate(taskFile.task, listOf(taskFile))
 
-  private fun doUpdate(taskFile: TaskFile) = doUpdate(taskFile.task, listOf(taskFile))
-
-  private fun doUpdate(task: Task, taskFiles: List<TaskFile>) {
+  private fun queueUpdate(task: Task, taskFiles: List<TaskFile>) {
     if (!isCCFrameworkLesson(task.lesson)) return
-    val update = SyncChangesTaskFilesUpdate(task, taskFiles.toSet()) {
-      executeWithProjectViewUpdate(dispatcher, task.lesson) {
-        recalcSyncChangesState(task, taskFiles)
-        collectSyncChangesState(task)
-      }
-    }
-    dispatcher.queue(update)
+    dispatcher.queue(TaskFilesSyncChangesUpdate(task, taskFiles.toSet()) {
+      recalcSyncChangesState(task, taskFiles)
+    })
+    queueTaskStateUpdate(task)
+    queueLessonStateUpdate(task.lesson)
+    queueProjectUpdate(project)
   }
 
-  private fun doUpdate(task: Task) {
+  private fun queueUpdate(task: Task) {
     if (!isCCFrameworkLesson(task.lesson)) return
-    val update = SyncChangesTaskUpdate(task) {
-      executeWithProjectViewUpdate(dispatcher, task.lesson) {
-        recalcSyncChangesState(task, task.taskFiles.values.toList())
-        collectSyncChangesState(task)
-      }
-    }
-    dispatcher.queue(update)
+    dispatcher.queue(TaskFilesSyncChangesUpdate(task) {
+      recalcSyncChangesState(task, task.taskFiles.values.toList())
+    })
+    queueTaskStateUpdate(task)
+    queueLessonStateUpdate(task.lesson)
+    queueProjectUpdate(project)
   }
 
-  private fun doUpdate(lesson: Lesson) {
+  private fun queueUpdate(lesson: Lesson) {
     if (!isCCFrameworkLesson(lesson)) return
-    val update = SyncChangesLessonUpdate(lesson) {
-      executeWithProjectViewUpdate(dispatcher, lesson) {
-        for (task in lesson.taskList) {
-          recalcSyncChangesState(task, task.taskFiles.values.toList())
-        }
-      }
+    for (task in lesson.taskList) {
+      dispatcher.queue(TaskFilesSyncChangesUpdate(task) {
+        recalcSyncChangesState(task, task.taskFiles.values.toList())
+      })
+      queueTaskStateUpdate(task)
     }
-    dispatcher.queue(update)
+    queueLessonStateUpdate(lesson)
+    queueProjectUpdate(project)
+  }
+
+  private fun queueTaskStateUpdate(task: Task) {
+    dispatcher.queue(TaskSyncChangesUpdate(task) {
+      collectSyncChangesState(task)
+    })
+  }
+
+  private fun queueLessonStateUpdate(lesson: Lesson) {
+    dispatcher.queue(LessonSyncChangesUpdate(lesson) {
+      collectSyncChangesState(lesson)
+    })
+  }
+
+  private fun queueProjectUpdate(project: Project) {
+    dispatcher.queue(ProjectSyncChangesUpdate {
+      ProjectView.getInstance(project).refresh()
+      EditorNotifications.updateAll()
+    })
   }
 
   /**
@@ -254,31 +269,20 @@ class SyncChangesStateManager(private val project: Project) : Disposable.Default
 
   // after deletion of files, the framework lesson structure might break,
   // so we need to recalculate state for a corresponding file from a previous task in case when a warning state is added/removed
-  private fun recalcSyncChangesStateForFilesInPrevTask(task: Task, filterTaskFileNames: List<String>?) {
+  private fun queueSyncChangesStateForFilesInPrevTask(task: Task, filterTaskFileNames: List<String>?) {
     val prevTask = task.lesson.taskList.getOrNull(task.index - 2) ?: return
     if (filterTaskFileNames == null) {
-      doUpdate(prevTask)
+      queueUpdate(prevTask)
       return
     }
     val correspondingTaskFiles = prevTask.taskFiles.filter { it.key in filterTaskFileNames }.values.toList()
-    doUpdate(prevTask, correspondingTaskFiles)
+    queueUpdate(prevTask, correspondingTaskFiles)
   }
 
   private fun checkForAbsenceInNextTask(taskFile: TaskFile): Boolean {
     val task = taskFile.task
     val nextTask = task.lesson.taskList.getOrNull(task.index) ?: return false
     return taskFile.name !in nextTask.taskFiles
-  }
-
-  private fun executeWithProjectViewUpdate(dispatcher: MergingUpdateQueue, lesson: Lesson, action: () -> Unit) {
-    action()
-
-    collectSyncChangesState(lesson)
-    if (dispatcher.isEmpty) {
-      // TODO(refresh only necessary nodes instead of refreshing whole project view tree)
-      ProjectView.getInstance(project).refresh()
-      EditorNotifications.updateAll()
-    }
   }
 
   /**
