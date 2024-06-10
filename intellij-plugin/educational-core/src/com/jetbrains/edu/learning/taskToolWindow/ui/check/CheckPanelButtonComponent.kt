@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.taskToolWindow.ui.check
 
-import com.intellij.collaboration.ui.CollaborationToolsUIUtil.isDefault
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
@@ -14,6 +13,7 @@ import com.intellij.ui.components.JBOptionButton
 import com.intellij.util.containers.headTail
 import com.jetbrains.edu.learning.actions.ActionWithProgressIcon
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.ui.isDefault
 import org.apache.commons.lang3.StringUtils
 import java.awt.*
 import java.awt.event.ActionEvent
