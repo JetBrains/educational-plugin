@@ -24,7 +24,7 @@ class CCNewCourseDialog @Suppress("UnstableApiUsage") constructor(
   private val onOKAction: () -> Unit = {}
 ) : DialogWrapper(true) {
   private val newCoursePanel: CCNewCoursePanel = CCNewCoursePanel(disposable, course, courseProducer)
-  private val lessonTypeSelectionPanel: LessonTypeSelectionPanel = LessonTypeSelectionPanel(disposable)
+  private val lessonTypeSelectionPanel: LessonTypeSelectionPanel = LessonTypeSelectionPanel(disposable, newCoursePanel)
 
   private val panel = CCNewCourseCardPanel()
 
@@ -92,8 +92,6 @@ class CCNewCourseDialog @Suppress("UnstableApiUsage") constructor(
     if (getButton(nextAction)?.isEnabled != true) {
       return
     }
-
-    lessonTypeSelectionPanel.course = newCoursePanel.course
 
     getButton(backAction)?.isVisible = true
     getButton(okAction)?.isVisible = true

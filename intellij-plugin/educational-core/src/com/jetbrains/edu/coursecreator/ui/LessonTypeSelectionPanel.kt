@@ -29,7 +29,7 @@ import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-class LessonTypeSelectionPanel(parentDisposable: Disposable) : Wrapper(), Disposable {
+class LessonTypeSelectionPanel(parentDisposable: Disposable, coursePanel: CCNewCoursePanel) : Wrapper() {
   private val lessonTypePanel = LessonChoicePanel()
 
   lateinit var course: Course
@@ -80,25 +80,6 @@ class LessonTypeSelectionPanel(parentDisposable: Disposable) : Wrapper(), Dispos
   }
 
   fun validateAll(): List<ValidationInfo> = (targetComponent as DialogPanel).validateAll()
-
-  override fun dispose() {}
-
-  private fun createFeedbackPanel(): JPanel {
-    val panel = JPanel(HorizontalLayout(3))
-    val message = JLabel(EduCoreBundle.message("ui.feedback.cc.label")).apply {
-      foreground = JBUI.CurrentTheme.ContextHelp.FOREGROUND
-    }
-
-    val hyperlinkLabel = HyperlinkLabel(EduCoreBundle.message("ui.feedback.cc.hyperlink.label"))
-
-    hyperlinkLabel.addHyperlinkListener {
-      val dialog = CCInIdeFeedbackDialog(CourseFeedbackInfoData.from(course, null))
-      dialog.showAndGet()
-    }
-    panel.add(message)
-    panel.add(hyperlinkLabel)
-    return panel
-  }
 }
 
 class LessonChoicePanel : Wrapper(), Disposable {
@@ -242,9 +223,6 @@ class LessonChoicePanel : Wrapper(), Disposable {
         }
         addBorder(defaultBorder)
       }
-        .
-      revalidate()
-      repaint()
     }
   }
 

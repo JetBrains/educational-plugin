@@ -99,12 +99,27 @@ class CCNewCoursePanel(
     titleField.complementaryTextField = pathField
     pathField.complementaryTextField = titleField
 
-    val bottomPanel = JPanel(BorderLayout())
-    errorComponent.minimumSize = JBUI.size(600, 34)
-    errorComponent.preferredSize = errorComponent.minimumSize
-    errorComponent.border = JBUI.Borders.empty(5, 6, 2, 2)
-    bottomPanel.add(errorComponent, BorderLayout.SOUTH)
-    bottomPanel.add(settings, BorderLayout.NORTH)
+    val bottomPanel = panel {
+      row {
+        cell(settings)
+          .applyToComponent {
+            border = JBUI.Borders.empty()
+          }
+          .align(AlignX.FILL)
+      }
+      row {
+        cell(errorComponent)
+          .align(AlignX.FILL)
+          .applyToComponent {
+            minimumSize = JBUI.size(600, 34)
+            preferredSize = errorComponent.minimumSize
+            border = JBUI.Borders.empty(5, 4, 2, 2)
+          }
+      }.topGap(TopGap.SMALL)
+      separator()
+    }.apply {
+      border = JBUI.Borders.empty(4, 4, 0, 4)
+    }
 
     val courseData = collectCoursesData(course)
     val defaultCourseType = getDefaultCourseType(courseData)
@@ -155,7 +170,7 @@ class CCNewCoursePanel(
             emptyText.text = EduCoreBundle.message("cc.new.course.description.empty")
           }.component
       }
-      val feedbackPanel = createFeedbackPanel(titleField, _course)
+      val feedbackPanel = createFeedbackPanel()
       row {
         cell(feedbackPanel).align(AlignX.RIGHT)
       }
@@ -334,7 +349,7 @@ class CCNewCoursePanel(
     }
   }
 
-  private fun createFeedbackPanel(courseTitleField: CourseTitleField, course: Course): JPanel {
+  fun createFeedbackPanel(courseTitleField: CourseTitleField = titleField, course: Course = _course): JPanel {
     val panel = JPanel(HorizontalLayout())
     val message = JLabel(EduCoreBundle.message("ui.feedback.cc.label"))
     message.apply {
