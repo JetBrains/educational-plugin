@@ -91,7 +91,7 @@ class CCNewCoursePanel(
 
   init {
     layout = BorderLayout()
-    // Check both Darcula and Light theme before changing size
+
 
     _course = (course ?: courseProducer()).apply { courseMode = CourseMode.EDUCATOR }
 
@@ -118,7 +118,7 @@ class CCNewCoursePanel(
       }.topGap(TopGap.SMALL)
       separator()
     }.apply {
-      border = JBUI.Borders.empty(4, 4, 0, 4)
+      border = JBUI.Borders.empty(4, 8, 0, 4)
     }
 
     val courseData = collectCoursesData(course)
@@ -127,7 +127,7 @@ class CCNewCoursePanel(
     topPanel = panel {
       row {
         text(EduCoreBundle.message("cc.new.course.text")).applyToComponent {
-          font = JBFont.h2()
+          font = JBFont.h3()
         }
       }.bottomGap(BottomGap.SMALL)
       row(EduCoreBundle.message("cc.new.course.name")) {
@@ -175,7 +175,7 @@ class CCNewCoursePanel(
         cell(feedbackPanel).align(AlignX.RIGHT)
       }
     }.apply {
-      border = JBUI.Borders.empty(4, 4, 0, 4)
+      border = JBUI.Borders.empty(4, 8, 0, 4)
     }
     topPanel.registerValidators(parentDisposable)
 

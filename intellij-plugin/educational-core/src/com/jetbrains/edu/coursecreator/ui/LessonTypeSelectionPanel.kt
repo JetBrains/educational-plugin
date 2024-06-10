@@ -10,6 +10,7 @@ import com.intellij.ui.JBColor
 import com.intellij.ui.RoundedLineBorder
 import com.intellij.ui.components.panels.Wrapper
 import com.intellij.ui.dsl.builder.*
+import com.intellij.ui.dsl.gridLayout.UnscaledGaps
 import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.EducationalCoreIcons
@@ -39,8 +40,8 @@ class LessonTypeSelectionPanel(parentDisposable: Disposable, coursePanel: CCNewC
     val panel = panel {
       row {
         text(EduCoreBundle.message("cc.new.course.lesson.selection.title")).applyToComponent {
-          font = JBFont.h2()
-        }
+          font = JBFont.h3()
+        }.customize(UnscaledGaps(bottom = 0))
       }
       row {
         text(EduCoreBundle.message("cc.new.course.lesson.selection.hint")).applyToComponent {
@@ -78,7 +79,7 @@ class LessonTypeSelectionPanel(parentDisposable: Disposable, coursePanel: CCNewC
       separator()
       align(Align.FILL)
     }.apply {
-      border = JBUI.Borders.empty(4, 4, 0, 4)
+      border = JBUI.Borders.empty(8, 8, 0, 4)
     }
     panel.registerValidators(parentDisposable)
     setContent(panel)
@@ -186,11 +187,13 @@ class LessonChoicePanel(private val onSelection: () -> Unit) : Wrapper(), Dispos
         }.bottomGap(BottomGap.SMALL)
 
         row {
-          titleComponent = text(title).component.apply {
-            foreground = EduColors.lessonCardForeground
-            // add a mouselistener because otherwise it does not track clicks on the text field
-            addMouseListener(createLessonCardMouseListener(this@LessonCard))
-          }
+          titleComponent = text(title)
+            .customize(UnscaledGaps(bottom = 0))
+            .component.apply {
+              foreground = EduColors.lessonCardForeground
+              // add a mouselistener because otherwise it does not track clicks on the text field
+              addMouseListener(createLessonCardMouseListener(this@LessonCard))
+            }
         }
         row {
           text(description).applyToComponent {
