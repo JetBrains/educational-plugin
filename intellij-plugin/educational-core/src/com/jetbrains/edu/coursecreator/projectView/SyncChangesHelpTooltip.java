@@ -22,6 +22,8 @@ import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.ActionLink;
 import com.intellij.ui.components.BrowserLink;
 import com.intellij.ui.components.JBFontScaler;
+import com.intellij.ui.components.panels.HorizontalLayout;
+import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.ui.components.panels.VerticalLayout;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.Alarm;
@@ -71,11 +73,14 @@ public class SyncChangesHelpTooltip {
   private static final String TOOLTIP_PROPERTY = "JComponent.syncChangesHelpTooltip";
   private static final String TOOLTIP_DISABLED_PROPERTY = "JComponent.helpTooltipDisabled";
 
+  private static final int LINKS_GAP = JBUI.scale(10);
+
   private @Nullable Supplier<@NotNull @TooltipTitle String> title;
   private @NlsSafe String shortcut;
   private @Tooltip String description;
-  private ActionLink link;
-  private @Nullable JBFontScaler linkOriginalFontScaler;
+  private final ArrayList<ActionLink> links = new ArrayList<>();
+  private final ArrayList<@Nullable JBFontScaler> linkOriginalFontScalers = new ArrayList<>();
+  private NonOpaquePanel linksPanel;
   private boolean neverHide;
   private @NotNull Alignment alignment = Alignment.CURSOR;
 
@@ -250,8 +255,8 @@ public class SyncChangesHelpTooltip {
    * @param linkAction action to execute when link is clicked.
    * @return {@code this}
    */
-  public SyncChangesHelpTooltip setLink(@NlsContexts.LinkLabel String linkText, Runnable linkAction) {
-    return setLink(linkText, linkAction, false);
+  public SyncChangesHelpTooltip addLink(@NlsContexts.LinkLabel String linkText, Runnable linkAction) {
+    return addLink(linkText, linkAction, false);
   }
 
   /**
@@ -262,15 +267,16 @@ public class SyncChangesHelpTooltip {
    * @param external whether the link is "external" or not
    * @return {@code this}
    */
-  public SyncChangesHelpTooltip setLink(@NlsContexts.LinkLabel String linkText, Runnable linkAction, boolean external) {
-    link = new ActionLink(linkText, e -> {
+  public SyncChangesHelpTooltip addLink(@NlsContexts.LinkLabel String linkText, Runnable linkAction, boolean external) {
+    ActionLink link = new ActionLink(linkText, e -> {
       hidePopup(true);
       linkAction.run();
     });
     if (external) {
       link.setExternalLinkIcon();
     }
-    linkOriginalFontScaler = new JBFontScaler(link.getFont());
+    links.add(link);
+    linkOriginalFontScalers.add(new JBFontScaler(link.getFont()));
     return this;
   }
 
@@ -283,8 +289,15 @@ public class SyncChangesHelpTooltip {
    * @return {@code this}
    */
   public SyncChangesHelpTooltip setBrowserLink(@NlsContexts.LinkLabel String linkLabel, URL url) {
-    link = new BrowserLink(linkLabel, url.toExternalForm());
+    ActionLink link = new BrowserLink(linkLabel, url.toExternalForm());
     link.setHorizontalTextPosition(SwingConstants.LEFT);
+    links.add(link);
+    return this;
+  }
+
+  public SyncChangesHelpTooltip clearLinks() {
+    links.clear();
+    linkOriginalFontScalers.clear();
     return this;
   }
 
@@ -298,7 +311,7 @@ public class SyncChangesHelpTooltip {
                           : tooltip.title != null && Objects.equals(title.get(), tooltip.title.get())) &&
            Objects.equals(shortcut, tooltip.shortcut) &&
            Objects.equals(description, tooltip.description) &&
-           Objects.equals(link, tooltip.link) &&
+           Objects.equals(links, tooltip.links) &&
            alignment == tooltip.alignment &&
            Objects.equals(masterPopupOpenCondition, tooltip.masterPopupOpenCondition);
   }
@@ -368,7 +381,7 @@ public class SyncChangesHelpTooltip {
         if (delay == -1) {
           delay = Registry.intValue("ide.tooltip.initialDelay.highlighter", 150);
         }
-        scheduleHide(link == null, delay);
+        scheduleHide(links.isEmpty(), delay);
       }
 
       @Override public void mouseMoved(MouseEvent e) {
@@ -397,7 +410,7 @@ public class SyncChangesHelpTooltip {
 
       @Override
       public void mouseExited(MouseEvent e) {
-        if (link == null || !link.getBounds().contains(e.getPoint())) {
+        if (links.isEmpty() || !linksPanel.getBounds().contains(e.getPoint())) {
           isOverPopup = false;
           hidePopup(false);
         }
@@ -437,13 +450,19 @@ public class SyncChangesHelpTooltip {
       tipPanel.add(shortcutLabel, VerticalLayout.TOP);
     }
 
-    if (link != null && linkOriginalFontScaler != null) {
-      link.setForeground(LINK_COLOR);
-      link.setFont(deriveDescriptionFont(linkOriginalFontScaler.scaledFont(), hasTitle));
-      tipPanel.add(link, VerticalLayout.TOP);
+    if (!links.isEmpty()) {
+      linksPanel = new NonOpaquePanel(new HorizontalLayout(LINKS_GAP));
+      for (int i = 0; i < links.size(); i++) {
+        JBFontScaler fontScaler = linkOriginalFontScalers.get(i);
+        if (fontScaler == null) continue;
+        links.get(i).setForeground(LINK_COLOR);
+        links.get(i).setFont(deriveDescriptionFont(fontScaler.scaledFont(), hasTitle));
+        linksPanel.add(links.get(i));
+      }
+      tipPanel.add(linksPanel, VerticalLayout.TOP);
     }
 
-    isMultiline = isMultiline || Strings.isNotEmpty(description) && (Strings.isNotEmpty(currentTitle) || link != null);
+    isMultiline = isMultiline || Strings.isNotEmpty(description) && (Strings.isNotEmpty(currentTitle) || !links.isEmpty());
     tipPanel.setBorder(textBorder(isMultiline));
 
     return tipPanel;

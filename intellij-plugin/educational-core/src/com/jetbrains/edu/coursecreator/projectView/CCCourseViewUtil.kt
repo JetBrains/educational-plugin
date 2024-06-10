@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.util.ui.tree.TreeUtil
+import com.jetbrains.edu.coursecreator.actions.taskFile.CCIgnoreFileInSyncChanges
 import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
 import com.jetbrains.edu.coursecreator.framework.SyncChangesStateManager
 import com.jetbrains.edu.coursecreator.framework.SyncChangesTaskFileState
@@ -53,6 +54,7 @@ fun SyncChangesHelpTooltip.tryInstallNewTooltip(project: Project, treeNode: Tree
   var title: String? = null
   var description: String? = null
   var actionText: String? = null
+  var secondaryActionText: String? = null
 
   val state = SyncChangesStateManager.getInstance(project).getSyncChangesState(taskFile)
 
@@ -62,19 +64,26 @@ fun SyncChangesHelpTooltip.tryInstallNewTooltip(project: Project, treeNode: Tree
       title = EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.ProjectView.Tooltip.Changes.text")
       description = EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.ProjectView.Tooltip.Changes.description")
       actionText = EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.ActionLink.Changes.text")
+      secondaryActionText = EduCoreBundle.message("action.Educational.Educator.IgnoreFilePropagation.ActionLink.text")
     }
 
     SyncChangesTaskFileState.WARNING -> {
       title = EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.ProjectView.Tooltip.File.text")
       description = EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.ProjectView.Tooltip.File.description")
       actionText = EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.ActionLink.File.text")
+      secondaryActionText = EduCoreBundle.message("action.Educational.Educator.IgnoreFilePropagation.ActionLink.File.text")
     }
   }
 
+  clearLinks()
+
   setTitle(title)
   setDescription(description)
-  setLink(actionText) {
+  addLink(actionText) {
     CCFrameworkLessonManager.getInstance(project).propagateChanges(taskFile.task, listOf(taskFile))
+  }
+  addLink(secondaryActionText) {
+    CCIgnoreFileInSyncChanges.runWithTaskFile(project, taskFile)
   }
   setLocation(SyncChangesHelpTooltip.Alignment.EXACT_CURSOR)
   return true
