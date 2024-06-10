@@ -5,40 +5,37 @@ import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.ValidationInfo
-import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.NlsContexts
-import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.JBColor
 import com.intellij.ui.RoundedLineBorder
-import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.ui.components.panels.Wrapper
 import com.intellij.ui.dsl.builder.*
-import com.intellij.ui.dsl.validation.Level
 import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.EducationalCoreIcons
-import com.jetbrains.edu.coursecreator.feedback.CCInIdeFeedbackDialog
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.feedback.CourseFeedbackInfoData
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.ui.errors.ErrorComponent
+import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import com.jetbrains.edu.learning.taskToolWindow.ui.addBorder
 import com.jetbrains.edu.learning.ui.EduColors
 import com.jetbrains.edu.learning.ui.RoundedWrapper
 import java.awt.event.*
 import javax.swing.JComponent
 import javax.swing.JLabel
-import javax.swing.JPanel
 
 class LessonTypeSelectionPanel(parentDisposable: Disposable, coursePanel: CCNewCoursePanel) : Wrapper() {
-  private val lessonTypePanel = LessonChoicePanel()
+  private val errorComponent = ErrorComponent {}.apply {
+    setErrorMessage(ValidationMessage(EduCoreBundle.message("cc.new.course.lesson.selection.empty.error")))
+  }
 
-  lateinit var course: Course
+  private val lessonTypePanel = LessonChoicePanel {
+    errorComponent.isVisible = false
+  }
 
   val isFrameworkLessonSelected: Boolean?
     get() = lessonTypePanel.isFrameworkLessonCardSelected
 
   init {
-    Disposer.register(parentDisposable, this)
     val panel = panel {
       row {
         text(EduCoreBundle.message("cc.new.course.lesson.selection.title")).applyToComponent {
@@ -55,14 +52,24 @@ class LessonTypeSelectionPanel(parentDisposable: Disposable, coursePanel: CCNewC
         cell(lessonTypePanel)
           .align(AlignY.FILL)
           .cellValidation {
-            addApplyRule(EduCoreBundle.message("cc.new.course.lesson.selection.empty.error"), Level.ERROR) {
-              lessonTypePanel.isFrameworkLessonCardSelected == null
+            addApplyRule {
+              if (lessonTypePanel.isFrameworkLessonCardSelected == null) {
+                errorComponent.apply {
+                  isVisible = true
+                }
+                ValidationInfo(EduCoreBundle.message("cc.new.course.lesson.selection.empty.error"))
+              }
+              else null
             }
           }
         resizableRow()
       }.bottomGap(BottomGap.SMALL)
 
-      val feedbackPanel = createFeedbackPanel()
+      row {
+        cell(errorComponent).align(AlignX.FILL)
+      }.bottomGap(BottomGap.SMALL)
+
+      val feedbackPanel = coursePanel.createFeedbackPanel()
       row {
         cell(feedbackPanel)
           .align(AlignX.RIGHT)
@@ -82,7 +89,7 @@ class LessonTypeSelectionPanel(parentDisposable: Disposable, coursePanel: CCNewC
   fun validateAll(): List<ValidationInfo> = (targetComponent as DialogPanel).validateAll()
 }
 
-class LessonChoicePanel : Wrapper(), Disposable {
+class LessonChoicePanel(private val onSelection: () -> Unit) : Wrapper(), Disposable {
   private val lessonCardSimpleLesson = LessonCard(
     EduCoreBundle.message("cc.new.course.lesson.selection.card.simple.title"),
     EduCoreBundle.message("cc.new.course.lesson.selection.card.simple.description"),
@@ -104,6 +111,7 @@ class LessonChoicePanel : Wrapper(), Disposable {
       if (field != value) {
         lessonCardSimpleLesson.update(value == false)
         lessonCardFrameworkLesson.update(value == true)
+        onSelection()
         revalidate()
         repaint()
       }
