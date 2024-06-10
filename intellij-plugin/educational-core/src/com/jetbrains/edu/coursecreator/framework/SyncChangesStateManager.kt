@@ -29,11 +29,9 @@ class SyncChangesStateManager(private val project: Project) : Disposable.Default
   private val taskStateStorage = ConcurrentHashMap<Task, SyncChangesTaskFileState>()
   private val lessonStateStorage = ConcurrentHashMap<Lesson, SyncChangesTaskFileState>()
 
-  private val serviceDisposable = Disposer.newDisposable()
-
   private val dispatcher = MergingUpdateQueue(
     "EduSyncChangesTracker",
-    1000,
+    syncChangesQueueDelay,
     true,
     null,
     this,
@@ -292,6 +290,8 @@ class SyncChangesStateManager(private val project: Project) : Disposable.Default
   }
 
   companion object {
+    private val syncChangesQueueDelay = Registry.intValue("edu.course.creator.fl.sync.changes.merging.timespan")
+
     fun getInstance(project: Project): SyncChangesStateManager = project.service()
   }
 }

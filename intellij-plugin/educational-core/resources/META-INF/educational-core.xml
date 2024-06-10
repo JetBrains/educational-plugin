@@ -401,6 +401,10 @@
       <description>Enables "Sync Changes with Next Tasks" action for educators in framework lessons</description>
     </experimentalFeature>
 
+    <registryKey key="edu.course.creator.fl.sync.changes.merging.timespan"
+                 description="The delay in ms before task file synchronization in the framework lesson for Course Creator.\nChanging the field requires reopening the project"
+                 defaultValue="1000"/>
+
     <iconMapper mappingFile="EduToolsIconMappings.json"/>
     <themeMetadataProvider path="JetBrainsAcademyPlugin.themeMetadata.json"/>
 
