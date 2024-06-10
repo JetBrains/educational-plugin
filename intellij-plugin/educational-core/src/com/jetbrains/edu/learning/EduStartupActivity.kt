@@ -45,6 +45,7 @@ import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import org.jetbrains.annotations.VisibleForTesting
 
 class EduStartupActivity : StartupActivity.DumbAware {
 
@@ -112,7 +113,8 @@ class EduStartupActivity : StartupActivity.DumbAware {
     }
   }
 
-  private fun migrateYaml(project: Project, course: Course) {
+  @VisibleForTesting
+  fun migrateYaml(project: Project, course: Course) {
     migratePropagatableYamlFields(project, course)
     migrateCanCheckLocallyYaml(project, course)
     YamlFormatSynchronizer.saveAll(project)
@@ -212,7 +214,8 @@ class EduStartupActivity : StartupActivity.DumbAware {
   }
 
   companion object {
-    private const val YAML_MIGRATED_PROPAGATABLE = "Edu.Yaml.Migrate.Propagatable"
+    @VisibleForTesting
+    const val YAML_MIGRATED_PROPAGATABLE = "Edu.Yaml.Migrate.Propagatable"
 
     private val LOG = Logger.getInstance(EduStartupActivity::class.java)
   }
