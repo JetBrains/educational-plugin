@@ -145,13 +145,13 @@
       "source" : "com.jetbrains.edu.learning.ui.EduColors"
     },
     {
-      "key": "LessonCard.background",
+      "key": "LessonCard.Background",
       "description" : "Background for lesson card",
       "deprecated" : false,
       "source" : "com.jetbrains.edu.learning.ui.EduColors"
     },
     {
-      "key": "LessonCard.borderColor",
+      "key": "LessonCard.BorderColor",
       "description" : "Border color for lesson card",
       "deprecated" : false,
       "source" : "com.jetbrains.edu.learning.ui.EduColors"
