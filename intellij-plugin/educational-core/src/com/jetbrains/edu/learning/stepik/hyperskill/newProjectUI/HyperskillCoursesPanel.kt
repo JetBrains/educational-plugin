@@ -17,12 +17,13 @@ import com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.notLoggedInPane
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.swing.JPanel
 
 class HyperskillCoursesPanel(
   private val platformProvider: HyperskillPlatformProvider,
-  scope: CoroutineScope,
+  val scope: CoroutineScope,
   disposable: Disposable
 ) : CoursesPanel(platformProvider, scope, disposable) {
 
@@ -64,6 +65,9 @@ class HyperskillCoursesPanel(
           runInEdt(modalityState = ModalityState.stateForComponent(this@HyperskillCoursesPanel)) {
             panel.removeAll()
             panel.add(createCoursesPanel())
+            scope.launch {
+              updateCoursesAfterLogin(false)
+            }
             connection.disconnect()
           }
         }
