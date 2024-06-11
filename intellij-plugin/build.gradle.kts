@@ -884,6 +884,7 @@ project("Edu-Jarvis") {
     implementation(rootProject.libs.jarvis) {
       excludeKotlinDeps()
     }
+    implementation(rootProject.libs.antlr)
   }
 }
 
