@@ -22,6 +22,7 @@ kotlin-css-jvm = { group = "org.jetbrains", name = "kotlin-css-jvm", version = "
 kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version = "1.6.2" }
 edu-ai-format = { group = "com.jetbrains.edu", name = "edu-ai-format", version = "0.0.4" }
 jarvis = { group = "org.jetbrains.academy.jarvis.dsl", name = "Jarvis-no-code-in-edu", version.ref = "jarvis" }
+antlr = { group = "org.antlr", name = "antlr4", version = "4.13.1" }
 # test dependencies
 junit = { group = "junit", name = "junit", version = "4.13.2" }
 kotlin-test-junit = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit", version.ref = "kotlin" }
