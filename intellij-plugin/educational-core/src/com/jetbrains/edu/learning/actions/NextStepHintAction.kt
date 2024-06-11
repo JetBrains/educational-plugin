@@ -33,6 +33,7 @@ import com.intellij.ui.JBColor
 import com.intellij.util.messages.MessageBusConnection
 import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.EduUtilsKt.showPopup
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.eduAssistant.AiAssistantState
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
@@ -51,6 +52,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import javax.swing.JComponent
 import javax.swing.JPanel
 import com.jetbrains.edu.learning.eduAssistant.core.AssistantResponse
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 
 class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
   var actionTargetParent: JPanel? = null
@@ -165,16 +167,18 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
 
   override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
-  private fun showHintWindow(textToShow: String, state: EduState, action: AnAction? = null) {
-    val nextStepHintNotification = NextStepHintNotificationFrame(textToShow, action, actionTargetParent) { rejectHint(state) }
-    nextStepHintNotificationPanel = nextStepHintNotification.rootPane
-    nextStepHintNotificationPanel?.let {  actionTargetParent?.add(it, BorderLayout.NORTH) }
-  }
-
   private inner class GetHintTask(private val project: Project, private val state: EduState, private val task: Task)
     : com.intellij.openapi.progress.Task.Backgroundable(project, EduCoreBundle.message("progress.title.getting.hint"), true) {
 
     var progressIndicator: ProgressIndicator? = null
+
+    private fun showHintWindow(textToShow: String, state: EduState, action: AnAction? = null) {
+      task.status = CheckStatus.Unchecked
+      TaskToolWindowView.getInstance(project).updateCheckPanel(task)
+      val nextStepHintNotification = NextStepHintNotificationFrame(textToShow, action, actionTargetParent) { rejectHint(state) }
+      nextStepHintNotificationPanel = nextStepHintNotification.rootPane
+      nextStepHintNotificationPanel?.let {  actionTargetParent?.add(it, BorderLayout.NORTH) }
+    }
 
     override fun run(indicator: ProgressIndicator) {
       if (!GetHintTaskState.getInstance(project).isLocked) {
