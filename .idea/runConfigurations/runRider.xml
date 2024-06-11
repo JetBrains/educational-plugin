@@ -2,6 +2,7 @@
   <configuration default="false" name="runRider" type="GradleRunConfiguration" factoryName="Gradle">
     <log_file alias="idea.log" path="$PROJECT_DIR$/intellij-plugin/build/idea-sandbox/rider-sandbox-233/log_runRider/idea.log" />
     <log_file alias="idea.log" path="$PROJECT_DIR$/intellij-plugin/build/idea-sandbox/rider-sandbox-241/log_runRider/idea.log" />
+    <log_file alias="idea.log" path="$PROJECT_DIR$/intellij-plugin/build/idea-sandbox/rider-sandbox-242/log_runRider/idea.log" />
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />

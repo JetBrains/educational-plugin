@@ -2,6 +2,7 @@
   <configuration default="false" name="runPhpStorm" type="GradleRunConfiguration" factoryName="Gradle" show_console_on_std_err="true" show_console_on_std_out="true">
     <log_file alias="idea.log" path="$PROJECT_DIR$/intellij-plugin/build/idea-sandbox/phpstorm-sandbox-233/log_runPhpStorm/idea.log" />
     <log_file alias="idea.log" path="$PROJECT_DIR$/intellij-plugin/build/idea-sandbox/phpstorm-sandbox-241/log_runPhpStorm/idea.log" />
+    <log_file alias="idea.log" path="$PROJECT_DIR$/intellij-plugin/build/idea-sandbox/phpstorm-sandbox-242/log_runPhpStorm/idea.log" />
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
