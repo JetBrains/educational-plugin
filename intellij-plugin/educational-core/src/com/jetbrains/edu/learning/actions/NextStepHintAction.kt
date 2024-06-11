@@ -33,6 +33,7 @@ import com.intellij.ui.JBColor
 import com.intellij.util.messages.MessageBusConnection
 import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.EduUtilsKt.showPopup
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.eduAssistant.AiAssistantState
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
@@ -44,6 +45,7 @@ import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessorImpl
 import com.jetbrains.edu.learning.eduAssistant.ui.NextStepHintNotificationFrame
 import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
 import java.awt.Font
@@ -214,6 +216,8 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
         | Text: $textToShow
       """.trimMargin()
       )
+      task.status = CheckStatus.Unchecked
+      TaskToolWindowView.getInstance(project).updateCheckPanel(task)
       val nextStepHintNotification = NextStepHintNotificationFrame(textToShow, action, actionTargetParent) { rejectHint(state) }
       nextStepHintNotificationPanel = nextStepHintNotification.rootPane
       nextStepHintNotificationPanel?.let { actionTargetParent?.add(it, BorderLayout.NORTH) }
