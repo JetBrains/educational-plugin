@@ -54,7 +54,7 @@ class AutoCompilationErrorHintValidationAction : ValidationAction<ValidationOfCo
     val project = task.project ?: error("Cannot get project")
     val eduState = project.eduState ?: error("Cannot get eduState for project ${project.name}")
     runCheckAction(project)
-    taskProcessor.getErrorDetails()?.let { errorDetails ->
+    return taskProcessor.getErrorDetails()?.let { errorDetails ->
       val response = project.service<TaskBasedAssistant>().getHint(taskProcessor, eduState)
       try {
         val userCode = response.taskFile?.getVirtualFile(project)?.getTextFromTaskTextFile() ?: error("Cannot get a user code")
@@ -64,7 +64,7 @@ class AutoCompilationErrorHintValidationAction : ValidationAction<ValidationOfCo
         val regex = "^(```\\w*)?(.*?)(```)?$".toRegex(RegexOption.DOT_MATCHES_ALL)
         val matchResult = regex.matchEntire(hintsValidation)?.groups?.get(2)?.value ?: hintsValidation
         val dataframeRecord = Gson().fromJson(matchResult, ValidationOfCompilationErrorHintsDataframeRecord::class.java)
-        return listOf(dataframeRecord.apply {
+        listOf(dataframeRecord.apply {
           taskId = task.id
           taskName = task.name
           this.errorDetails = errorDetails
@@ -74,7 +74,7 @@ class AutoCompilationErrorHintValidationAction : ValidationAction<ValidationOfCo
         })
       }
       catch (e: Throwable) {
-        return listOf(
+        listOf(
           ValidationOfCompilationErrorHintsDataframeRecord(
             taskId = task.id,
             taskName = task.name,
@@ -87,7 +87,7 @@ class AutoCompilationErrorHintValidationAction : ValidationAction<ValidationOfCo
         )
       }
     } ?: run {
-      return listOf(
+      listOf(
         ValidationOfCompilationErrorHintsDataframeRecord(
           taskId = task.id,
           taskName = task.name,
