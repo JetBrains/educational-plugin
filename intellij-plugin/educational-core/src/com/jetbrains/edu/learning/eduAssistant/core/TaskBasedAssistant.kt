@@ -151,6 +151,7 @@ class TaskBasedAssistant : Assistant {
       return if (promptBuilder is NextStepHintPromptBuilder) {
         getEnhancedCodeHint(taskProcessor, functionName, codeStr, codeHint, state)
       } else {
+        // Reducing the size and other improvements may lead to an incorrect fix of the compilation error.
         codeHint
       }
     } catch (e: IllegalStateException) {

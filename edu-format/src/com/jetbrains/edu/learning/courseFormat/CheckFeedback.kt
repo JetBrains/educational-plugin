@@ -8,7 +8,7 @@ data class CheckFeedback(
   val expected: String? = null,
   val actual: String? = null,
   val failedTestInfo: EduTestInfo? = null,
-  val details: String? = null
+  val errorDetails: String? = null
 ) {
   constructor(time: Date, checkResult: CheckResult) :
     this(checkResult.message, time, checkResult.diff?.expected, checkResult.diff?.actual, checkResult.executedTestsInfo.firstOrNull {

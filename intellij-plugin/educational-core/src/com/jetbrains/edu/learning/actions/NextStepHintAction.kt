@@ -34,7 +34,6 @@ import com.intellij.util.messages.MessageBusConnection
 import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.EduUtilsKt.showPopup
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.eduAssistant.AiAssistantState
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -75,11 +74,6 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
     FileDocumentManager.getInstance().saveAllDocuments()
     val state = project.eduState ?: return
     val task = state.task
-
-    if (task.status == CheckStatus.Unchecked) {
-      showHintWindow(AssistantError.UncheckedCodeError.errorMessage, state)
-      return
-    }
 
     closeNextStepHintNotificationPanel()
 
