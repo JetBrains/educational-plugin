@@ -138,7 +138,7 @@
         },
         "propagatable": {
           "type": "boolean",
-          "description": "False if file is ignored in propagation via \"Sync Changed...\" action, absent if ignored"
+          "description": "False if file is ignored in propagation via \"Sync Changed...\" action, absent if participated"
         },
         "highlight_level": {
           "type" : "string",
