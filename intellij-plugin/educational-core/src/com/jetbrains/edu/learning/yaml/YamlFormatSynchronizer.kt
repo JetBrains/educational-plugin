@@ -219,7 +219,7 @@ object YamlFormatSynchronizer {
 fun StudyItem.getConfigDir(project: Project): VirtualFile {
   return if (this is Task && lesson is FrameworkLesson) {
     @NonNls
-    val errorMessageToLog = "Config for '$name' task dir in framework lesson not found"
+    val errorMessageToLog = "Config for '$name' task dir in guided project not found"
     lesson.getDir(project.courseDir)?.findChild(name) ?: error(errorMessageToLog)
   }
   else {

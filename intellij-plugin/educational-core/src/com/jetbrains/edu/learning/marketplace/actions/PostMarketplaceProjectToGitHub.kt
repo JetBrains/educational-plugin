@@ -49,7 +49,7 @@ class PostMarketplaceProjectToGitHub : DumbAwareAction() {
     val frameworkLessonsFromSections = course.sections.flatMap { it.frameworkLessons() }.toSet()
     val frameworkLessons = courseFrameworkLessons.union(frameworkLessonsFromSections)
     if (frameworkLessons.isEmpty()) {
-      LOG.info("No framework lessons found for course ${course.id}")
+      LOG.info("No guided projects found for course ${course.id}")
       EduNotificationManager.showErrorNotification(
         project,
         EduCoreBundle.message("action.Educational.Student.PostMarketplaceProjectToGitHub.notification.title.failed.to.post.project.to.marketplace"),

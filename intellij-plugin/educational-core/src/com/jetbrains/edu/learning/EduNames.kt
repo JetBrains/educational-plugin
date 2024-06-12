@@ -7,7 +7,7 @@ object EduNames {
   const val JBA = "Hyperskill"
   const val HINTS = "hints"
 
-  const val FRAMEWORK_LESSON = "framework lesson"
+  const val FRAMEWORK_LESSON = "guided project"
   const val COURSE = "course"
   const val ITEM = "item"
   const val PROJECT = "project"

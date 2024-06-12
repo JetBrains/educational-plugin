@@ -396,7 +396,7 @@
     <editorActionHandler action="EditorDeleteToLineStart" implementationClass="com.jetbrains.edu.learning.editor.EduTypedLineHandler"/>
     <editorActionHandler action="EditorDeleteLine" implementationClass="com.jetbrains.edu.learning.editor.EduTypedLineHandler"/>
     <experimentalFeature id="edu.course.creator.split.editor" percentOfUsers="100" internalFeature="true">
-      <description>Enables previous task view for framework lessons</description>
+      <description>Enables previous task view for guided projects</description>
     </experimentalFeature>
     <liveTemplateContext implementation="com.jetbrains.edu.coursecreator.taskDescription.HintTemplateContextType"/>
     <defaultLiveTemplates file="liveTemplates/hint.xml"/>
@@ -413,7 +413,7 @@
     </experimentalFeature>
 
     <registryKey key="edu.course.creator.fl.sync.changes.merging.timespan"
-                 description="The delay in ms before task file synchronization in the framework lesson for Course Creator.\nChanging the field requires reopening the project"
+                 description="The delay in ms before task file synchronization in the guided project for Course Creator.\nChanging the field requires reopening the project"
                  defaultValue="1000"/>
 
     <iconMapper mappingFile="EduToolsIconMappings.json"/>

@@ -39,7 +39,7 @@ object JsonMixinNames {
   const val TASK_LIST = "task_list"
   const val FRAMEWORK_TYPE = "framework"
 
-  // framework lesson
+  // guided project
   const val IS_TEMPLATE_BASED = "is_template_based"
 
   // task
