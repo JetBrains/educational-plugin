@@ -49,6 +49,10 @@ class CCShowUnsyncedChanges : DumbAwareAction() {
     val presentation = e.presentation
     presentation.isEnabledAndVisible = false
 
+    if (!CCUtils.isCourseCreator(project) || !isFeatureEnabled(EduExperimentalFeatures.CC_FL_SYNC_CHANGES)) {
+      return
+    }
+
     val taskFile = getSelectedFile(e)?.getTaskFile(project) ?: return
 
     if (taskFile.task.lesson !is FrameworkLesson) return
@@ -57,11 +61,6 @@ class CCShowUnsyncedChanges : DumbAwareAction() {
   }
 
   private fun getSelectedFile(e: AnActionEvent): VirtualFile? {
-    val project = e.project ?: return null
-
-    if (!CCUtils.isCourseCreator(project) || !isFeatureEnabled(EduExperimentalFeatures.CC_FL_SYNC_CHANGES)) {
-      return null
-    }
 
     return CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(e.dataContext)?.singleOrNull()
   }
