@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
+import com.jetbrains.edu.learning.courseFormat.ext.isFrameworkTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.NonNls
@@ -44,6 +45,10 @@ class CCIgnoreFileInSyncChanges : CCChangeFilePropagationFlag(EduCoreBundle.lazy
       e.presentation.text = EduCoreBundle.message("action.Educational.Educator.IgnoreFilePropagation.All.text")
       e.presentation.description = EduCoreBundle.message("action.Educational.Educator.IgnoreFilePropagation.All.description")
     }
+  }
+
+  override fun isAvailableForDirectory(project: Project, task: Task, directory: VirtualFile): Boolean {
+    return task.isFrameworkTask
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread {
