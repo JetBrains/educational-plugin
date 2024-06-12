@@ -134,11 +134,11 @@
         },
         "editable": {
           "type": "boolean",
-          "description": "False if learner can't change file, absent if can"
+          "description": "Returns false if the learner can't modify the file, absent if they can"
         },
         "propagatable": {
           "type": "boolean",
-          "description": "False if file is ignored in propagation via \"Sync Changed...\" action, absent if participated"
+          "description": "Returns false if the file is ignored during propagation via the \"Sync changes...\" action, absent if it's participating"
         },
         "highlight_level": {
           "type" : "string",
