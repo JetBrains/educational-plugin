@@ -38,13 +38,11 @@ import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.projectView.*
 import com.jetbrains.edu.learning.CourseSetListener
-import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
-import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.projectView.ProgressUtil.createProgressBar
 import org.jetbrains.annotations.NonNls
@@ -73,7 +71,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport
 
       override fun createCellRenderer(): TreeCellRenderer {
         val projectViewRenderer = super.createCellRenderer()
-        if (CCUtils.isCourseCreator(myProject) && isFeatureEnabled(EduExperimentalFeatures.CC_FL_SYNC_CHANGES)) {
+        if (CCUtils.isCourseCreator(myProject)) {
           return CCCellRenderer(projectViewRenderer as ColoredTreeCellRenderer)
         }
         return projectViewRenderer
@@ -88,10 +86,8 @@ class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport
   private fun createCourseViewComponent(): JComponent {
     val component = super.createComponent()
     if (!myProject.isStudentProject()) {
-      if (isFeatureEnabled(EduExperimentalFeatures.CC_FL_SYNC_CHANGES)) {
-        HelpTooltipForTree().installOnTree(this, tree) { treeNode ->
-          tryInstallNewTooltip(myProject, treeNode)
-        }
+      HelpTooltipForTree().installOnTree(this, tree) { treeNode ->
+        tryInstallNewTooltip(myProject, treeNode)
       }
       return component
     }

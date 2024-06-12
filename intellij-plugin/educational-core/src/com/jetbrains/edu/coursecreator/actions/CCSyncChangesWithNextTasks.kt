@@ -43,10 +43,6 @@ class CCSyncChangesWithNextTasks : DumbAwareAction() {
       return
     }
 
-    if (!isFeatureEnabled(EduExperimentalFeatures.CC_FL_SYNC_CHANGES)) {
-      return
-    }
-
     val context = parseSelectedItems(project, e) ?: return
     val (actionText, actionDescription) = when {
       context is LessonContext -> {

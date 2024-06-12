@@ -10,17 +10,15 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.taskFile.CCIgnoreFileInSyncChanges
 import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
 import com.jetbrains.edu.coursecreator.framework.SyncChangesStateManager
-import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.getTaskFile
-import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.util.function.Function
 import javax.swing.JComponent
 
 class SyncChangesEditorNotificationsProvider : EditorNotificationProvider {
   override fun collectNotificationData(project: Project, file: VirtualFile): Function<in FileEditor, out JComponent?>? {
-    if (!CCUtils.isCourseCreator(project) || !isFeatureEnabled(EduExperimentalFeatures.CC_FL_SYNC_CHANGES)) return null
+    if (!CCUtils.isCourseCreator(project)) return null
 
     val taskFile = file.getTaskFile(project) ?: return null
     if (taskFile.task.lesson !is FrameworkLesson) return null

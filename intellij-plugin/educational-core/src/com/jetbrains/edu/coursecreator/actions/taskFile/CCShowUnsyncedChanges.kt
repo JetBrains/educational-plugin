@@ -12,10 +12,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
 import com.jetbrains.edu.coursecreator.framework.SyncChangesStateManager
-import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.getTaskFile
-import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 class CCShowUnsyncedChanges : DumbAwareAction() {
@@ -49,7 +47,7 @@ class CCShowUnsyncedChanges : DumbAwareAction() {
     val presentation = e.presentation
     presentation.isEnabledAndVisible = false
 
-    if (!CCUtils.isCourseCreator(project) || !isFeatureEnabled(EduExperimentalFeatures.CC_FL_SYNC_CHANGES)) {
+    if (!CCUtils.isCourseCreator(project)) {
       return
     }
 

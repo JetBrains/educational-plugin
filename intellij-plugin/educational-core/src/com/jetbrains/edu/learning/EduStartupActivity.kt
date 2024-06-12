@@ -134,7 +134,7 @@ class EduStartupActivity : StartupActivity.DumbAware {
   }
 
   private fun migratePropagatableYamlFields(project: Project, course: Course) {
-    if (!CCUtils.isCourseCreator(project) || !isFeatureEnabled(EduExperimentalFeatures.CC_FL_SYNC_CHANGES)) return
+    if (!CCUtils.isCourseCreator(project)) return
     val propertiesComponent = PropertiesComponent.getInstance(project)
     if (propertiesComponent.getBoolean(YAML_MIGRATED_PROPAGATABLE)) return
     propertiesComponent.setValue(YAML_MIGRATED_PROPAGATABLE, true)

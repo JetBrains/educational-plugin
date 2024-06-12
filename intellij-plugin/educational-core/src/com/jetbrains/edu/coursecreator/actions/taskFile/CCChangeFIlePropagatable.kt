@@ -9,14 +9,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsActions
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.framework.SyncChangesStateManager
-import com.jetbrains.edu.learning.EduExperimentalFeatures
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.pathRelativeToTask
 import org.jetbrains.annotations.NonNls
 import java.util.function.Supplier
 
@@ -72,14 +70,6 @@ abstract class CCChangeFilePropagationFlag(
   val name: Supplier<@NlsActions.ActionText String>,
   private val requiredPropagationFlag: Boolean
 ) : CCChangeFilePropertyActionBase(name) {
-  override fun update(e: AnActionEvent) {
-    super.update(e)
-
-    if (!isFeatureEnabled(EduExperimentalFeatures.CC_FL_SYNC_CHANGES)) {
-      e.presentation.isEnabledAndVisible = false
-    }
-  }
-
   override fun createStateForFile(project: Project, task: Task, file: VirtualFile): State? {
     val taskRelativePath = file.pathRelativeToTask(project)
     val taskFile = task.getTaskFile(taskRelativePath)
