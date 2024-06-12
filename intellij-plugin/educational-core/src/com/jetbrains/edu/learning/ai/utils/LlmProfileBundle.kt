@@ -28,5 +28,5 @@ object GrazieLlmProfileProvider : EduPropertiesBundle(BUNDLE_NAME) {
   fun getNextStepCodeHintProfile(): String = value("LLMProfileIDForGeneratingNextStepCodeHint")
 
   @Suppress("SameReturnValue")
-  fun getAutoValidationProfile(): String = "openai-gpt-4"
+  fun getAutoValidationProfile(): String = "openai-gpt-4o"
 }

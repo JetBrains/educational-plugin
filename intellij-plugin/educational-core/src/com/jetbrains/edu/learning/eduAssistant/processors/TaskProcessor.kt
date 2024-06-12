@@ -32,7 +32,7 @@ class TaskProcessor(val task: Task) {
   // and for Edu tasks
   fun isNextStepHintApplicable() = task is EduTask
 
-  fun isGetHintButtonShown() = isNextStepHintApplicable() && task.course.courseMode == CourseMode.STUDENT && task.status != CheckStatus.Solved // TODO: when should we show this button?
+  fun isGetHintButtonShown() = isNextStepHintApplicable() && task.course.courseMode == CourseMode.STUDENT && task.status == CheckStatus.Failed // TODO: when should we show this button?
 
   fun taskHasErrors() = getFailureMessage() !== null && getFailedTestName() != null
 
@@ -43,6 +43,8 @@ class TaskProcessor(val task: Task) {
   fun getExpectedValue() = if (task.status == CheckStatus.Failed) task.feedback?.expected else null
 
   fun getActualValue() = if (task.status == CheckStatus.Failed) task.feedback?.actual else null
+
+  fun getErrorDetails() = if (task.status == CheckStatus.Failed) task.feedback?.errorDetails else null
 
   private fun getTaskText(localTask: Task): String {
     return runReadAction { localTask.project?.let { localTask.getTaskTextFromTask(it) } ?: localTask.descriptionText }
@@ -68,6 +70,10 @@ class TaskProcessor(val task: Task) {
 
   fun getSubmissionTextRepresentation(state: EduState) = runReadAction {
     getChangedContent(task, state.project)
+  }
+
+  fun getFullTaskFileText(state: EduState) = runReadAction {
+    state.taskFile.getText(state.project) ?: error("Failed to retrieve the text of the task file")
   }
 
   fun getFunctionsFromTask(): List<FunctionSignature>? {

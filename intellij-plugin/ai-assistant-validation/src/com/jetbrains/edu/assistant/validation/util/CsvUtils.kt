@@ -78,6 +78,32 @@ data class ValidationOfHintsDataframeRecord(
   }
 }
 
+data class ValidationOfCompilationErrorHintsDataframeRecord(
+  var taskId: Int = 0,
+  var taskName: String = "",
+  var errorDetails: String = "",
+  var userCode: String = "",
+  var nextStepTextHint: String = "",
+  var nextStepCodeHint: String = "",
+  var errors: String = "",
+  var comprehensible: String = "",
+  var unnecessaryContent: String = "",
+  var hasExplanation: String = "",
+  var explanationCorrect: String = "",
+  var hasFix: String = "",
+  var fixCorrect: String = "",
+  var correctImplementation: String = "",
+  var improvementOverTheOriginal: String = "",
+) {
+  companion object {
+    fun buildFrom(record: CSVRecord) = ValidationOfCompilationErrorHintsDataframeRecord(
+      record.get(0).toInt(), record.get(1), record.get(2), record.get(3), record.get(4),
+      record.get(5), record.get(6), record.get(7), record.get(8), record.get(9), record.get(10),
+      record.get(11), record.get(12), record.get(13), record.get(14)
+    )
+  }
+}
+
 
 data class MultipleCodeHintDataframeRecord(
   val hintIndex: Int,
@@ -113,6 +139,41 @@ data class MultipleCodeHintDataframeRecord(
       record.get(0).toInt(), record.get(1).toInt(), record.get(2), record.get(3),
       record.get(4), record.get(5), record.get(6),
       record.get(7).toInt(), record.get(8), record.get(9)
+    )
+  }
+}
+
+data class MultipleCodeHintWithErrorDataframeRecord(
+  val hintIndex: Int,
+  val taskId: Int,
+  val taskName: String,
+  val taskDescription: String,
+  val codeHintPrompt: String? = null,
+  val userCode: String?,
+  val generatedCode: String?,
+  val testStatus: String? = null,
+  val errorMessage: String? = null
+) {
+  constructor(
+    hintIndex: Int,
+    taskId: Int,
+    taskName: String,
+    taskDescription: String,
+    userCode: String,
+    error: Throwable
+  ) : this(
+    hintIndex,
+    taskId,
+    taskName,
+    taskDescription,
+    userCode = userCode,
+    generatedCode = "Error while generating hint: ${error.message}",
+  )
+
+  companion object {
+    fun buildFrom(record: CSVRecord) = MultipleCodeHintWithErrorDataframeRecord(
+      record.get(0).toInt(), record.get(1).toInt(), record.get(2), record.get(3),
+      record.get(4), record.get(5), record.get(8), record.get(9)
     )
   }
 }

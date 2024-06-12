@@ -118,8 +118,16 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
       } else {
         for (lesson in course.lessons) {
           val lessonRecords = mutableListOf<T>()
+          val firstTask = lesson.taskList[0]
+          ApplicationManager.getApplication().invokeAndWait {
+            ApplicationManager.getApplication().runWriteAction {
+              NavigationUtils.navigateToTask(project, firstTask)
+            }
+          }
           for (task in lesson.taskList) {
             if (task is EduTask) {
+              val project = task.project ?: error("Cannot get project")
+              val eduState = project.eduState ?: error("Cannot get eduState for project ${project.name}")
               if (isNavigationRequired) {
                 ApplicationManager.getApplication().invokeAndWait {
                   ApplicationManager.getApplication().runWriteAction {
@@ -130,9 +138,6 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
 
               indicator.text = "${EduAndroidAiAssistantValidationBundle.message("action.validation.indicator.task")} ${task.name}"
               indicator.fraction = doneTasks.toDouble() / totalTasks
-
-              val project = task.project ?: error("Cannot get project")
-              val eduState = project.eduState ?: error("Cannot get eduState for project ${project.name}")
 
               studentSolutions?.let {
                 it.getSolutionListForTask(lesson.name, task.name).forEach { studentCode ->
