@@ -19,7 +19,22 @@ interface SubmissionsProvider {
 
   fun loadSharedSolutionsForCourse(course: Course): Map<Int, List<Submission>> = mapOf()
 
-  fun loadSharedSolutionsForTask(course: Course, task: Task): List<MarketplaceSubmission>? = null
+  /**
+   * Loads shared submissions for a specific [task].
+   *
+   * @return A list of shared submissions and a boolean value indicating if there are more submissions to load.
+   */
+  fun loadSharedSubmissions(course: Course, task: Task): Pair<List<Submission>, Boolean>? = null
+
+  /**
+   * Loads shared submissions that are not yet in the [SubmissionsManager] for a specific [task].
+   *
+   * @param latest id of the most recently loaded shared solution
+   * @param oldest id of the least recently loaded shared solution
+   *
+   * @return A list of shared submissions and a boolean value indicating if there are more submissions to load.
+   */
+  fun loadMoreSharedSubmissions(course: Course, task: Task, latest: Int, oldest: Int): Pair<List<Submission>, Boolean>? = null
 
   fun loadSolutionFiles(submission: MarketplaceSubmission) {}
 

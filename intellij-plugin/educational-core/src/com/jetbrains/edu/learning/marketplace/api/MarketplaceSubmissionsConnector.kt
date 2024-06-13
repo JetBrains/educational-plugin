@@ -138,26 +138,34 @@ class MarketplaceSubmissionsConnector {
     return courseSharedSolutions
   }
 
-  fun getSharedSolutionsForTask(course: Course, taskId: Int): List<MarketplaceSubmission>? {
+  fun getSharedSubmissionsForTask(course: Course, taskId: Int): Pair<List<MarketplaceSubmission>, Boolean>? {
     val (courseId, updateVersion) = course.id to course.marketplaceCourseVersion
     LOG.info("Loading shared solutions for task $taskId on course with courseId = $courseId, updateVersion = $updateVersion")
 
-    val courseSharedSolutions = mutableListOf<MarketplaceSubmission>()
-    var currentPage = 1
-    do {
-      val submissionsList = submissionsService.getPublicSubmissionsForTask(
-        courseId, updateVersion, taskId, currentPage
-      ).executeParsingErrors().onError {
-        LOG.warn("Failed to get shared submissions for task $taskId. Error message: $it")
-        return null
-      }.body() ?: return null
-      val sharedSolutions = submissionsList.submissions
-      courseSharedSolutions.addAll(sharedSolutions)
-      currentPage += 1
-    }
-    while (sharedSolutions.isNotEmpty() && submissionsList.hasNext)
+    val responseBody = submissionsService.getSharedSubmissionsForTask(
+      courseId, updateVersion, taskId
+    ).executeParsingErrors().onError {
+      LOG.warn("Failed to get shared submissions for task $taskId. Error message: $it")
+      return null
+    }.body() ?: return null
 
-    return courseSharedSolutions.takeIf { it.isNotEmpty() }
+    val sharedSubmissions = responseBody.submissions.takeIf { it.isNotEmpty() }
+    return sharedSubmissions?.let { it to responseBody.hasNext }
+  }
+
+  fun getMoreSharedSubmissions(course: Course, taskId: Int, latest: Int, oldest: Int): Pair<List<MarketplaceSubmission>, Boolean>? {
+    val (courseId, updateVersion) = course.id to course.marketplaceCourseVersion
+    LOG.info("Loading more shared solutions for task $taskId in course with courseId = $courseId, updateVersion = $updateVersion")
+
+    val responseBody = submissionsService.getMoreSharedSubmissionsForTask(
+      courseId, updateVersion, taskId, latest, oldest
+    ).executeParsingErrors().onError {
+      LOG.warn("Failed to get more shared submissions for task $taskId. Error message: $it")
+      return null
+    }.body() ?: return null
+
+    val sharedSubmissions = responseBody.submissions.takeIf { it.isNotEmpty() }
+    return sharedSubmissions?.let { it to responseBody.hasNext }
   }
 
   fun markTheoryTaskAsCompleted(task: TheoryTask) {

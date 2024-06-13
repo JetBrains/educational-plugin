@@ -23,15 +23,23 @@ class MarketplaceSubmissionsProvider : SubmissionsProvider {
   }
 
   override fun loadSharedSolutionsForCourse(course: Course): Map<Int, List<MarketplaceSubmission>> {
-    if (course !is EduCourse || !course.isMarketplace) return emptyMap()
+    if (course !is EduCourse || !course.isMarketplaceRemote) return emptyMap()
     val submissionsConnector = MarketplaceSubmissionsConnector.getInstance()
     return submissionsConnector.getSharedSolutionsForCourse(course.id, course.marketplaceCourseVersion).groupBy { it.taskId }
   }
 
-  override fun loadSharedSolutionsForTask(course: Course, task: Task): List<MarketplaceSubmission>? {
-    if (course !is EduCourse || !course.isMarketplace) return null
+  override fun loadSharedSubmissions(course: Course, task: Task): Pair<List<MarketplaceSubmission>, Boolean>? {
+    if (course !is EduCourse || !course.isMarketplaceRemote) return null
 
-    return MarketplaceSubmissionsConnector.getInstance().getSharedSolutionsForTask(course, task.id)
+    return MarketplaceSubmissionsConnector.getInstance().getSharedSubmissionsForTask(course, task.id)
+  }
+
+  override fun loadMoreSharedSubmissions(
+    course: Course, task: Task, latest: Int, oldest: Int
+  ): Pair<List<MarketplaceSubmission>, Boolean>? {
+    if (course !is EduCourse || !course.isMarketplaceRemote) return null
+
+    return MarketplaceSubmissionsConnector.getInstance().getMoreSharedSubmissions(course, task.id, latest, oldest)
   }
 
   override fun loadSubmissions(tasks: List<Task>, courseId: Int): Map<Int, List<MarketplaceSubmission>> {
