@@ -358,7 +358,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
         .build()
     }
 
-    private fun communitySolutions(taskId: Int) = listOf(
+    private fun communitySolutions(taskId: Int): MutableList<Submission> = mutableListOf(
       MarketplaceSubmission(taskId, CheckStatus.Solved, "some solution", null, 1).apply {
         id = Random.nextInt()
       },

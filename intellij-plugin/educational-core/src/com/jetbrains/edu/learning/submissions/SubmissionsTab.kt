@@ -157,8 +157,9 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
       if (submissionsList.isNullOrEmpty()) {
         return emptyCommunitySolutionsMessage() to null
       }
-
-      return getSubmissionsText(submissionsList) to SubmissionsDifferenceLinkHandler(project, task, submissionsManager, true)
+      val isToDisplayShowMore = submissionsManager.hasMoreCommunitySubmissions(task.id)
+      return getCommunitySolutionsText(submissionsList, isToDisplayShowMore).toString() to
+        SubmissionsDifferenceLinkHandler(project, task, submissionsManager, isCommunity = true)
     }
     else if (!isSolutionSharingAllowed) {
       return getSolutionSharingAgreementPromptText() to LoginLinkHandler(project, submissionsManager)
@@ -174,7 +175,7 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
 
     if (!isLoggedIn) {
       if (task.course.isMarketplace && submissionsList.isNotEmpty()) {
-        return getSubmissionsText(submissionsList) to SubmissionsDifferenceLinkHandler(project, task, submissionsManager)
+        return getSubmissionsText(submissionsList).toString() to SubmissionsDifferenceLinkHandler(project, task, submissionsManager)
       }
       else {
         return getLoginText() to LoginLinkHandler(project, submissionsManager)
@@ -189,7 +190,8 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
       return emptySubmissionsMessage() to null
     }
 
-    return getSubmissionsText(submissionsList, isToShowSubmissionsIds(task)) to SubmissionsDifferenceLinkHandler(project, task, submissionsManager)
+    return getSubmissionsText(submissionsList, isToShowSubmissionsIds(task)).toString() to
+      SubmissionsDifferenceLinkHandler(project, task, submissionsManager)
   }
 
   fun showLoadingPanel(platformName: String) = panel.showLoadingSubmissionsPanel(platformName)
@@ -267,6 +269,7 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
     private const val SUBMISSION_DIFF_URL = "${SUBMISSION_PROTOCOL}diff/"
     private const val SUBMISSION_LOGIN_URL = "${SUBMISSION_PROTOCOL}login/"
     private const val SUBMISSION_USER_AGREEMENT = "${SUBMISSION_PROTOCOL}agreement/"
+    private const val SHOW_MORE_SOLUTIONS = "${SUBMISSION_PROTOCOL}more/"
     private const val OPEN_UL_TAG = "<ul style=list-style-type:none;margin:0;padding:0;>"
     private const val CLOSE_UL_TAG = "</ul>"
     const val OPEN_PLACEHOLDER_TAG = "<placeholder>"
@@ -304,17 +307,39 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
     private class SubmissionsDifferenceLinkHandler(
       project: Project, private val task: Task, private val submissionsManager: SubmissionsManager, private val isCommunity: Boolean = false
     ) : SwingToolWindowLinkHandler(project) {
-      override fun process(url: String, referUrl: String?): Boolean {
-        if (!url.startsWith(SUBMISSION_DIFF_URL)) return false
+      override fun process(url: String, referUrl: String?): Boolean = with(url) {
 
-        val submissionId = url.substringAfter(SUBMISSION_DIFF_URL).toInt()
-        ApplicationManager.getApplication().executeOnPooledThread {
-          val submission = submissionsManager.getSubmissionWithSolutionText(task, submissionId) ?: return@executeOnPooledThread
-          runInEdt {
-            showDiff(project, task, submission, isCommunity)
+        when {
+          startsWith(SUBMISSION_DIFF_URL) -> {
+            val submissionId = url.substringAfter(SUBMISSION_DIFF_URL).toInt()
+            ApplicationManager.getApplication().executeOnPooledThread {
+              val submission = submissionsManager.getSubmissionWithSolutionText(task, submissionId) ?: return@executeOnPooledThread
+              runInEdt {
+                showDiff(project, task, submission, isCommunity)
+              }
+            }
+            return true
+          }
+
+          startsWith(SHOW_MORE_SOLUTIONS) -> {
+            val taskId = task.id
+            val communitySolutionsIds = submissionsManager.getCommunitySubmissionsFromMemory(taskId)?.mapNotNull { it.id }
+            if (communitySolutionsIds.isNullOrEmpty()) {
+              ApplicationManager.getApplication().executeOnPooledThread {
+                submissionsManager.loadCommunitySubmissions(task)
+              }
+              return true
+            }
+            val latest = communitySolutionsIds.first()
+            val oldest = communitySolutionsIds.last()
+            ApplicationManager.getApplication().executeOnPooledThread {
+              submissionsManager.loadMoreCommunitySubmissions(task, latest, oldest)
+            }
+            return true
           }
         }
-        return true
+
+        return false
       }
     }
 
@@ -323,11 +348,22 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
      */
     private fun isToShowSubmissionsIds(task: Task) = task.course is HyperskillCourse && isFeatureEnabled(EduExperimentalFeatures.CC_HYPERSKILL)
 
-    private fun getSubmissionsText(submissionsNext: List<Submission>, isToShowSubmissionsIds: Boolean = false): String = submissionsNext.map {
+    private fun getSubmissionsText(
+      submissionsNext: List<Submission>,
+      isToShowSubmissionsIds: Boolean = false,
+    ): StringBuilder = submissionsNext.map {
       submissionLink(it, isToShowSubmissionsIds)
     }.joinTo(
       StringBuilder(OPEN_UL_TAG), separator = ""
-    ).append(CLOSE_UL_TAG).toString()
+    ).append(CLOSE_UL_TAG)
+
+    private fun getCommunitySolutionsText(communitySolutions: List<Submission>, showMore: Boolean): StringBuilder {
+      val submissionsStringBuilder = getSubmissionsText(communitySolutions)
+      if (showMore) {
+        submissionsStringBuilder.append(showMoreLink())
+      }
+      return submissionsStringBuilder
+    }
 
     private fun getLoginText(): String = if (!RemoteEnvHelper.isRemoteDevServer()) {
       "<a $textStyleHeader;color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} href=$SUBMISSION_LOGIN_URL>" +
@@ -344,6 +380,9 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
     private fun getSolutionSharingAgreementPromptText(): String =
       "<a $textStyleHeader;color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} href=$SUBMISSION_USER_AGREEMENT>" +
       EduCoreBundle.message("submissions.tab.solution.sharing.agreement") + "</a>"
+
+    private fun showMoreLink(): String = "<div style=\"padding-top:8px; padding-bottom:8px; padding-right:33px; text-align: center\">" +
+      "<a $textStyleHeader;color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} href=$SHOW_MORE_SOLUTIONS>" + EduCoreBundle.message("submissions.tab.show.more.link") + "</a>" + "</div>"
 
     private fun showDiff(project: Project, task: Task, submission: Submission, isCommunity: Boolean) {
       val taskFiles = task.taskFiles.values.toMutableList()
