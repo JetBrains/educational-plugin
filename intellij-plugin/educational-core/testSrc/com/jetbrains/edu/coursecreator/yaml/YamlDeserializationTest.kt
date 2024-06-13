@@ -764,6 +764,19 @@ class YamlDeserializationTest : YamlTestCase() {
     ), expectedPlaceholderVisibility = false)
 
   @Test
+  fun `test placeholder without visibility field in CC mode`() = doTestPlaceholderAndDependencyVisibility(
+    MAPPER.deserializeTask("""
+        |type: edu
+        |files:
+        |- name: Test.java
+        |  placeholders:
+        |  - offset: 0
+        |    length: 3
+        |    placeholder_text: 'type here   '
+    """.trimMargin()
+    ), expectedPlaceholderVisibility = true)
+
+  @Test
   fun `test edu task without dependency`() {
     val yamlContent = """
     |type: edu
