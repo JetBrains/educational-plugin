@@ -211,7 +211,7 @@ class CCFrameworkLessonManager(
     updateRecord(task, updatedUserChanges.record)
 
     if (updatedUserChanges.state.isNotEmpty()) {
-      SyncChangesStateManager.getInstance(project).updateSyncChangesState(task, initialCurrentFiles.mapNotNull { task.taskFiles[it] })
+      SyncChangesStateManager.getInstance(project).removeSyncChangesState(task, initialCurrentFiles.mapNotNull { task.taskFiles[it] })
     }
 
     return updatedUserChanges

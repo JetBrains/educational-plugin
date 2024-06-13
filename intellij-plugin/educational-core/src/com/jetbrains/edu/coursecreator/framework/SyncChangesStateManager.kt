@@ -89,7 +89,20 @@ class SyncChangesStateManager(private val project: Project) : Disposable.Default
     lessonContainer.visitFrameworkLessons { queueUpdate(it) }
   }
 
-  fun updateSyncChangesState(task: Task, taskFiles: List<TaskFile>) = queueUpdate(task, taskFiles)
+  /**
+   * Removes state for given task files (that indicates there are no changes in them)
+   * Does not schedule anything but update ProjectView and notifications immediately
+   */
+  fun removeSyncChangesState(task: Task, taskFiles: List<TaskFile>) {
+    if (!isCCFrameworkLesson(task.lesson)) return
+    for (taskFile in taskFiles) {
+      taskFileStateStorage.remove(taskFile)
+    }
+    collectSyncChangesState(task)
+    collectSyncChangesState(task.lesson)
+    ProjectView.getInstance(project).refresh()
+    EditorNotifications.updateAll()
+  }
 
   fun updateSyncChangesState(task: Task) = queueUpdate(task)
 

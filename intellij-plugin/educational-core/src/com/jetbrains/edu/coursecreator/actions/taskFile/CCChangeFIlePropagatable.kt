@@ -100,16 +100,21 @@ abstract class CCChangeFilePropagationFlag(
 
     override fun changeState(project: Project) {
       taskFile.isPropagatable = isPropagatable
-      update(project)
+      update(project, taskFile.isPropagatable)
     }
 
     override fun restoreState(project: Project) {
       taskFile.isPropagatable = initialPropagatableFlag
-      update(project)
+      update(project, taskFile.isPropagatable)
     }
 
-    private fun update(project: Project) {
-      SyncChangesStateManager.getInstance(project).taskFileChanged(taskFile)
+    private fun update(project: Project, isPropagatable: Boolean) {
+      if (isPropagatable) {
+        SyncChangesStateManager.getInstance(project).taskFileChanged(taskFile)
+      }
+      else {
+        SyncChangesStateManager.getInstance(project).removeSyncChangesState(taskFile.task, listOf(taskFile))
+      }
     }
   }
 }
