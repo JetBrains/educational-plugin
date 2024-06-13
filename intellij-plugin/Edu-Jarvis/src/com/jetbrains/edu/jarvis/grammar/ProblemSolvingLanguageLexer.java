@@ -1,8 +1,6 @@
 // Generated from ProblemSolvingLanguage.g4 by ANTLR 4.13.1
 package com.jetbrains.edu.jarvis.grammar;
 
-import org.antlr.v4.runtime.Lexer;
-import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
