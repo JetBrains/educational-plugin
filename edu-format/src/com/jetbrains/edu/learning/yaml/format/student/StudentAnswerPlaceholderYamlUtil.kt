@@ -69,7 +69,7 @@ class EduAnswerPlaceholderBuilder(
   length: Int,
   placeholderText: String,
   dependency: AnswerPlaceholderDependency?,
-  isVisible: Boolean
+  isVisible: Boolean = true
 ) : AnswerPlaceholderBuilder(offset, length, placeholderText, dependency, isVisible) {
   override fun createPlaceholder(): AnswerPlaceholder {
     val placeholder = super.createPlaceholder()

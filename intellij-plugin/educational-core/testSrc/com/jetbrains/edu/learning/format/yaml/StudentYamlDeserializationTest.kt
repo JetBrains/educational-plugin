@@ -774,6 +774,25 @@ class StudentYamlDeserializationTest : EduTestCase() {
     ), expectedPlaceholderVisibility = false)
 
   @Test
+  fun `test placeholder without visibility field in student mode`() = doTestPlaceholderAndDependencyVisibility(
+    STUDENT_MAPPER.deserializeTask("""
+        |type: edu
+        |files:
+        |- name: Test.java
+        |  placeholders:
+        |  - offset: 0
+        |    length: 3
+        |    placeholder_text: 'type here   '
+        |    possible_answer: answer
+        |    status: Solved
+        |    student_answer: student answer
+        |    initial_state:
+        |      offset: 0
+        |      length: 1
+    """.trimMargin()
+    ), expectedPlaceholderVisibility = true)
+
+  @Test
   fun `test visible placeholder and invisible dependency`() = doTestPlaceholderAndDependencyVisibility(
     STUDENT_MAPPER.deserializeTask("""
         |type: edu
