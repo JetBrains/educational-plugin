@@ -63,6 +63,7 @@ class CCFrameworkLessonManager(
     require(task.parent is FrameworkLesson) {
       "`propagateChanges` should be called only when the task is in the framework lesson"
     }
+    FileDocumentManager.getInstance().saveAllDocuments()
     val lesson = task.lesson
     val startIndex = task.index
     val tasks = lesson.taskList
