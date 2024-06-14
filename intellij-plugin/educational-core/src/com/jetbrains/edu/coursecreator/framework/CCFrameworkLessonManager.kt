@@ -12,6 +12,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.xmlb.annotations.XCollection
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.framework.diff.applyChangesWithMergeDialog
+import com.jetbrains.edu.coursecreator.framework.diff.equalsTrimTrailingWhitespacesAndTrailingBlankLines
 import com.jetbrains.edu.coursecreator.framework.diff.resolveConflicts
 import com.jetbrains.edu.learning.LightTestAware
 import com.jetbrains.edu.learning.courseDir
@@ -112,8 +113,12 @@ class CCFrameworkLessonManager(
 
   private fun isTaskFileChanged(taskFile: TaskFile, storedState: FLTaskState): Boolean {
     if (!taskFile.isPropagatable) return false
-    val document = taskFile.getDocument(project)
-    return document?.text != storedState[taskFile.name]
+    val documentText = taskFile.getDocument(project)?.text
+    val storedText = storedState[taskFile.name]
+    if (documentText == null || storedText == null) {
+      return documentText != storedText
+    }
+    return !equalsTrimTrailingWhitespacesAndTrailingBlankLines(documentText, storedText)
   }
 
   private fun propagateChanges(

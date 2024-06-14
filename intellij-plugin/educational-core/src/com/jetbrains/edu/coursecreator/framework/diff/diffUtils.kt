@@ -5,9 +5,12 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.text.StringUtilRt
+import com.intellij.openapi.util.text.Strings
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.PathUtil
+import com.intellij.util.text.CharSequenceSubSequence
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.impl.FLTaskState
@@ -130,4 +133,61 @@ private fun findConflictFileType(project: Project, fileName: String, currentTask
 private fun findFileType(project: Project, fileName: String, task: Task): FileType? {
   val taskFile = task.taskFiles[fileName] ?: return null
   return taskFile.getVirtualFile(project)?.fileType
+}
+
+fun equalsTrimTrailingWhitespacesAndTrailingBlankLines(s1: CharSequence, s2: CharSequence): Boolean {
+  // removing blank trailing lines
+  val ts1 = trimTrailingWhitespaces(s1)
+  val ts2 = trimTrailingWhitespaces(s2)
+
+  // compare lines ignoring trailing whitespaces
+  return equalsTrimTrailingWhitespaces(ts1, ts2)
+}
+
+fun equalsTrimTrailingWhitespaces(s1: CharSequence, s2: CharSequence): Boolean {
+  var index1 = 0
+  var index2 = 0
+
+  while (true) {
+    var lastLine1 = false
+    var lastLine2 = false
+
+    var end1 = Strings.indexOf(s1, '\n', index1) + 1
+    var end2 = Strings.indexOf(s2, '\n', index2) + 1
+    if (end1 == 0) {
+      end1 = s1.length
+      lastLine1 = true
+    }
+    if (end2 == 0) {
+      end2 = s2.length
+      lastLine2 = true
+    }
+    if (lastLine1 xor lastLine2) return false
+
+    val line1 = s1.subSequence(index1, end1)
+    val line2 = s2.subSequence(index2, end2)
+
+    if (!lineEqualsTrimTrailingWhitespaces(line1, line2)) return false
+
+    index1 = end1
+    index2 = end2
+    if (lastLine1) return true
+  }
+}
+
+fun lineEqualsTrimTrailingWhitespaces(line1: CharSequence, line2: CharSequence): Boolean {
+  val ts1 = trimTrailingWhitespaces(line1)
+  val ts2 = trimTrailingWhitespaces(line2)
+
+  return StringUtilRt.equal(ts1, ts2, true)
+}
+
+fun trimTrailingWhitespaces(s: CharSequence): CharSequence {
+  var end = s.length
+  while (end > 0) {
+    val c = s[end - 1]
+    if (!Strings.isWhiteSpace(c)) break
+    end--
+  }
+  return CharSequenceSubSequence(s, 0, end)
 }
