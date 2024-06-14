@@ -61,9 +61,10 @@ class RsConfigurator : EduConfigurator<RsProjectSettings> {
       val rustPluginVersion = pluginVersion(PluginInfos.RUST.stringId) ?: return false
       val currentBuild = ApplicationInfo.getInstance().build
       // Rust plugin dropped `CargoCommandConfigurationType.Companion.getInstance()` and replaced it with
-      // top-level `cargoCommandConfigurationType` function since `233.25026` and `233.23135` builds.
+      // top-level `cargoCommandConfigurationType` function since `233.25026`.
+      // Also, there are changes in `RsToolchainPathChoosingComboBox` API since `241.27011`.
       // Let's avoid runtime error because of this binary incompatibility
-      val minSupportedVersion = if (currentBuild < BUILD_241) "233.25026" else "241.25026"
+      val minSupportedVersion = if (currentBuild < BUILD_241) "233.25026" else "241.27011"
       return VersionComparatorUtil.compare(rustPluginVersion, minSupportedVersion) >= 0
     }
 

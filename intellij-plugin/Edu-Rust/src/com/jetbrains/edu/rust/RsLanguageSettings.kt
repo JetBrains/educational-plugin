@@ -18,12 +18,11 @@ import org.rust.cargo.toolchain.flavors.RsToolchainFlavor
 import java.awt.BorderLayout
 import java.nio.file.Path
 import javax.swing.JComponent
+import kotlin.io.path.pathString
 
 class RsLanguageSettings : LanguageSettings<RsProjectSettings>() {
 
-  private val toolchainComboBox: RsToolchainPathChoosingComboBox by lazy {
-    RsToolchainPathChoosingComboBox { updateToolchain() }
-  }
+  private var toolchainComboBox: RsToolchainPathChoosingComboBox? = null
 
   private var loadingFinished: Boolean = false
 
@@ -36,21 +35,24 @@ class RsLanguageSettings : LanguageSettings<RsProjectSettings>() {
     disposable: CheckedDisposable,
     context: UserDataHolder?
   ): List<LabeledComponent<JComponent>> {
-    Disposer.register(disposable, toolchainComboBox)
-    toolchainComboBox.addToolchainsAsync(::findAllToolchainsPath) {
+    val comboBox = RsToolchainPathChoosingComboBox(disposable, ::updateToolchain)
+    Disposer.register(disposable, comboBox)
+    comboBox.addToolchainsAsync(::findAllToolchainsPath) {
       loadingFinished = true
       if (disposable.isDisposed) return@addToolchainsAsync
       // `RsToolchainPathChoosingComboBox` sets initial empty text after addition of all items
       // But we want to show text of selected item
-      val combobox = toolchainComboBox.childComponent
+      val combobox = comboBox.childComponent
       val selectedItem = combobox.selectedItem
       if (selectedItem is Path) {
-        toolchainComboBox.selectedPath = selectedItem
+        comboBox.selectedPath = selectedItem
       }
       updateToolchain()
     }
 
-    return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(toolchainComboBox, EduRustBundle.message("toolchain.label.text"), BorderLayout.WEST))
+    toolchainComboBox = comboBox
+
+    return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(comboBox, EduRustBundle.message("toolchain.label.text"), BorderLayout.WEST))
   }
 
   private fun findAllToolchainsPath(): List<Path> {
@@ -62,8 +64,11 @@ class RsLanguageSettings : LanguageSettings<RsProjectSettings>() {
     // Unfortunately, `RsToolchainPathChoosingComboBox` changes its text before final callback is called
     // To avoid unexpected updates of toolchain, just skip all changes before call of final callback
     if (!loadingFinished) return
-    val toolchainPath = toolchainComboBox.selectedPath
-    if (toolchainPath != null) {
+    val toolchainPath = toolchainComboBox?.selectedPath
+    // Since 241.27011.169 we still can have event with an empty path
+    // because `RsToolchainPathChoosingComboBox` doesn't notify us when it finishes toolchain loading anymore.
+    // As a temporary solution, let's ignore such events completely
+    if (toolchainPath != null && toolchainPath.pathString.isNotEmpty()) {
       // We already have toolchain for this path
       if (rustToolchain?.location == toolchainPath) return
 
