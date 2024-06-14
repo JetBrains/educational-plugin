@@ -224,6 +224,7 @@ subprojects {
 
 plugins {
   alias(libs.plugins.intelliJPlatformPlugin)
+  antlr
 }
 
 repositories {
@@ -858,6 +859,9 @@ project("localization") {
 }
 
 project("Edu-Jarvis") {
+  apply {
+    plugin("antlr")
+  }
   dependencies {
     intellijPlatform {
       // Kotlin plugin cannot be found in 242 builds because of https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1652,
@@ -884,7 +888,24 @@ project("Edu-Jarvis") {
     implementation(rootProject.libs.jarvis) {
       excludeKotlinDeps()
     }
-    implementation(rootProject.libs.antlr)
+    antlr(rootProject.libs.antlr)
+  }
+
+  tasks {
+    generateGrammarSource {
+      maxHeapSize = "128m"
+      arguments = listOf("-visitor", "-package", "com.jetbrains.edu.jarvis.grammar.generated")
+      outputDirectory = file("src/com/jetbrains/edu/jarvis/grammar/generated")
+      source = fileTree("src/main/antlr")
+    }
+
+    compileKotlin {
+      dependsOn("generateGrammarSource")
+    }
+
+    compileTestKotlin {
+      dependsOn("generateTestGrammarSource")
+    }
   }
 }
 
