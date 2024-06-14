@@ -2,7 +2,7 @@ grammar ProblemSolvingLanguage;
 
 sentence: arbitraryText? expr arbitraryText? EOF;
 
-arbitraryText : (IDENTIFIER | AND | VALUE | ELSE | THEN | LOOP | EACH | WHILE | DO | EMPTY | RANDOM | STRING_WORD | VARIABLE | SET | CALLED | FUNCTION | PRINT | STORE | CALL | IN | CREATE | BOOL | REPEAT | UNTIL | ADD | EQUAL | RETURN | READ | WITH | GET)+?;
+arbitraryText : (IDENTIFIER | AND | VALUE | ELSE | THEN | LOOP | EACH | WHILE | DO | EMPTY | RANDOM | STRING_WORD | VARIABLE | SET | CALLED | FUNCTION | PRINT | STORE | CALL | IN | CREATE | BOOL | REPEAT | UNTIL | ADD | EQUAL | RETURN | READ | WITH | GET | CONST)+?;
 
 word: STRING_WORD | (RANDOM STRING_WORD) | (EMPTY STRING_WORD) | NUMBER | CODE;
 
@@ -11,7 +11,7 @@ value: NUMBER | STRING | CODE | IDENTIFIER | BOOL;
 contains: value arbitraryText? IN arbitraryText? CODE;
 
 expr: PRINT arbitraryText? (STRING | CODE)?
-    | CALL arbitraryText? CODE FUNCTION? (WITH arbitraryText? CODE+?)? arbitraryText? (GET arbitraryText? CODE)?
+    | CALL arbitraryText? CODE FUNCTION? (WITH arbitraryText? value+?)? arbitraryText? (GET arbitraryText? CODE)?
     | STORE arbitraryText? IN arbitraryText? VARIABLE? CODE
     | CREATE arbitraryText? word? VARIABLE? CALLED? CODE (EQUAL arbitraryText? word)?
     | SET arbitraryText? VALUE? arbitraryText? value
@@ -44,8 +44,9 @@ RANDOM: 'random';
 STRING_WORD: 'string';
 VARIABLE: VAL | VAR;
 MUTABLE: 'mutable';
+CONST: 'constant' | 'const';
 VAR: 'var' | 'variable' | MUTABLE VAR;
-VAL: 'val';
+VAL: 'val' | CONST VAL;
 SET: 'set' | 'assign' | 'give' | 'initialize';
 CALLED: 'called' | 'named';
 FUNCTION: 'fun' | 'function';
