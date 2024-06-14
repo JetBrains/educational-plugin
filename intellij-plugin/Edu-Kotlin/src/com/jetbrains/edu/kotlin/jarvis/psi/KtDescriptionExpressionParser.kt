@@ -3,8 +3,6 @@ package com.jetbrains.edu.kotlin.jarvis.psi
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.edu.jarvis.DescriptionExpressionParser
-import com.jetbrains.edu.jarvis.JarvisDslPackageCallChecker
-import com.jetbrains.edu.kotlin.jarvis.utils.DESCRIPTION
 import com.jetbrains.edu.kotlin.jarvis.utils.isDescriptionBlock
 import com.jetbrains.edu.learning.courseFormat.jarvis.DescriptionExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
