@@ -41,8 +41,14 @@ interface DescriptionErrorAnnotator : Annotator {
       }
       .filter { it.error != AnnotatorError.NONE }
 
+  /**
+   * Returns an [AnnotatorError], which represents the type of error found in the string.
+   */
   fun String.getError(): AnnotatorError
 
+  /**
+   * Returns whether the [PsiElement] is relevant, that is, whether it may contain an error.
+   */
   fun PsiElement.isRelevant(): Boolean
 
   companion object {
