@@ -75,8 +75,6 @@ abstract class SequentialCodeValidationAction<T> : CodeValidationAction<T>() {
         runBlockingCancellable {
           withBackgroundProgress(baseAssistantInfoStorage.project, GETTING_HINT_MESSAGE, false) {
             response = baseAssistantInfoStorage.assistant.getHint(
-              baseAssistantInfoStorage.taskProcessor,
-              baseAssistantInfoStorage.eduState,
               currentUserCode
             )
           }
