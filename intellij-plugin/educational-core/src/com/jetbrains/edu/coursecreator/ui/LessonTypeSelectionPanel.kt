@@ -3,8 +3,6 @@ package com.jetbrains.edu.coursecreator.ui
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.project.DumbAwareAction
-import com.intellij.openapi.ui.DialogPanel
-import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.ui.JBColor
 import com.intellij.ui.RoundedLineBorder
@@ -15,8 +13,6 @@ import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.errors.ErrorComponent
-import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import com.jetbrains.edu.learning.taskToolWindow.ui.addBorder
 import com.jetbrains.edu.learning.ui.EduColors
 import com.jetbrains.edu.learning.ui.RoundedWrapper
@@ -24,16 +20,10 @@ import java.awt.event.*
 import javax.swing.JComponent
 import javax.swing.JLabel
 
-class LessonTypeSelectionPanel(parentDisposable: Disposable, coursePanel: CCNewCoursePanel) : Wrapper() {
-  private val errorComponent = ErrorComponent {}.apply {
-    setErrorMessage(ValidationMessage(EduCoreBundle.message("cc.new.course.lesson.selection.empty.error")))
-  }
+class LessonTypeSelectionPanel(coursePanel: CCNewCoursePanel) : Wrapper() {
+  private val lessonTypePanel = LessonChoicePanel()
 
-  private val lessonTypePanel = LessonChoicePanel {
-    errorComponent.isVisible = false
-  }
-
-  val isFrameworkLessonSelected: Boolean?
+  val isFrameworkLessonSelected: Boolean
     get() = lessonTypePanel.isFrameworkLessonCardSelected
 
   init {
@@ -52,22 +42,7 @@ class LessonTypeSelectionPanel(parentDisposable: Disposable, coursePanel: CCNewC
       row {
         cell(lessonTypePanel)
           .align(AlignY.FILL)
-          .cellValidation {
-            addApplyRule {
-              if (lessonTypePanel.isFrameworkLessonCardSelected == null) {
-                errorComponent.apply {
-                  isVisible = true
-                }
-                ValidationInfo(EduCoreBundle.message("cc.new.course.lesson.selection.empty.error"))
-              }
-              else null
-            }
-          }
         resizableRow()
-      }.bottomGap(BottomGap.SMALL)
-
-      row {
-        cell(errorComponent).align(AlignX.FILL)
       }.bottomGap(BottomGap.SMALL)
 
       val feedbackPanel = coursePanel.createFeedbackPanel()
@@ -81,16 +56,13 @@ class LessonTypeSelectionPanel(parentDisposable: Disposable, coursePanel: CCNewC
     }.apply {
       border = JBUI.Borders.empty(8, 8, 0, 4)
     }
-    panel.registerValidators(parentDisposable)
     setContent(panel)
     preferredSize = JBUI.size(600, preferredSize.height)
     minimumSize = JBUI.size(600, minimumSize.height)
   }
-
-  fun validateAll(): List<ValidationInfo> = (targetComponent as DialogPanel).validateAll()
 }
 
-class LessonChoicePanel(private val onSelection: () -> Unit) : Wrapper(), Disposable {
+class LessonChoicePanel : Wrapper(), Disposable {
   private val lessonCardSimpleLesson = LessonCard(
     EduCoreBundle.message("cc.new.course.lesson.selection.card.simple.title"),
     EduCoreBundle.message("cc.new.course.lesson.selection.card.simple.description"),
@@ -107,23 +79,21 @@ class LessonChoicePanel(private val onSelection: () -> Unit) : Wrapper(), Dispos
    * true -> Framework lesson card selected
    * null -> nothing is selected
    */
-  var isFrameworkLessonCardSelected: Boolean? = null
+  var isFrameworkLessonCardSelected: Boolean = false
     private set(value) {
       if (field != value) {
-        lessonCardSimpleLesson.update(value == false)
-        lessonCardFrameworkLesson.update(value == true)
-        onSelection()
+        lessonCardSimpleLesson.update(!value)
+        lessonCardFrameworkLesson.update(value)
         revalidate()
         repaint()
       }
       field = value
     }
 
-  private val selectedCard: LessonCard?
+  private val selectedCard: LessonCard
     get() = when (isFrameworkLessonCardSelected) {
       false -> lessonCardSimpleLesson
       true -> lessonCardFrameworkLesson
-      null -> null
     }
 
   init {
@@ -144,12 +114,12 @@ class LessonChoicePanel(private val onSelection: () -> Unit) : Wrapper(), Dispos
       addFocusListener(object : FocusAdapter() {
         override fun focusGained(e: FocusEvent?) {
           super.focusGained(e)
-          selectedCard?.update(true)
+          selectedCard.update(true)
         }
 
         override fun focusLost(e: FocusEvent?) {
           super.focusLost(e)
-          selectedCard?.update(isSelected = true, isFocused = false)
+          selectedCard.update(isSelected = true, isFocused = false)
         }
       })
     }

@@ -24,7 +24,7 @@ class CCNewCourseDialog @Suppress("UnstableApiUsage") constructor(
   private val onOKAction: () -> Unit = {}
 ) : DialogWrapper(true) {
   private val newCoursePanel: CCNewCoursePanel = CCNewCoursePanel(disposable, course, courseProducer)
-  private val lessonTypeSelectionPanel: LessonTypeSelectionPanel = LessonTypeSelectionPanel(disposable, newCoursePanel)
+  private val lessonTypeSelectionPanel: LessonTypeSelectionPanel = LessonTypeSelectionPanel(newCoursePanel)
 
   private val panel = CCNewCourseCardPanel()
 
@@ -55,10 +55,7 @@ class CCNewCourseDialog @Suppress("UnstableApiUsage") constructor(
   override fun createCenterPanel(): JComponent = panel
 
   override fun doOKAction() {
-    val validationResult = lessonTypeSelectionPanel.validateAll()
-    if (validationResult.isNotEmpty()) return
-
-    val isFrameworkLessonSelected = lessonTypeSelectionPanel.isFrameworkLessonSelected ?: return
+    val isFrameworkLessonSelected = lessonTypeSelectionPanel.isFrameworkLessonSelected
     close(OK_EXIT_CODE)
     onOKAction()
     val course = newCoursePanel.course
