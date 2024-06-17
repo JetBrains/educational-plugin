@@ -42,9 +42,9 @@ class CodeHintValidationAction : CodeValidationAction<CodeHintDataframeRecord>()
     }
   }
 
-  private fun buildCodeHintRecord(task: EduTask, userCode: String): CodeHintDataframeRecord {
+  private suspend fun buildCodeHintRecord(task: EduTask, userCode: String): CodeHintDataframeRecord {
     val baseAssistantInfoStorage = BaseAssistantInfoStorage(task)
-    val response = baseAssistantInfoStorage.assistant.getHint(baseAssistantInfoStorage.taskProcessor, baseAssistantInfoStorage.eduState, userCode)
+    val response = baseAssistantInfoStorage.assistant.getHint(userCode)
 
     try {
       val issues = runInspections(baseAssistantInfoStorage.project, baseAssistantInfoStorage.language, userCode)

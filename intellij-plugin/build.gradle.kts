@@ -194,6 +194,10 @@ allprojects {
 
     implementationWithoutKotlin(rootProject.libs.educational.ml.library.core)
     implementationWithoutKotlin(rootProject.libs.educational.ml.library.hints)
+    implementation(rootProject.libs.freemarker)
+    implementationWithoutKotlin(rootProject.libs.grazie.gateway.api)
+    implementationWithoutKotlin(rootProject.libs.grazie.gateway.client)
+    implementationWithoutKotlin(rootProject.libs.grazie.client.ktor)
     implementationWithoutKotlin(rootProject.libs.kotlin.logging)
     implementationWithoutKotlin(rootProject.libs.logback)
 
