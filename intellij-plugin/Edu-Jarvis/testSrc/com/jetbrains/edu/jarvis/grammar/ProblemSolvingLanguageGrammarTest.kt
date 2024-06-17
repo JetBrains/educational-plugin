@@ -31,6 +31,9 @@ class ProblemSolvingLanguageGrammarTest(private val sentence: String) : EduTestC
       arrayOf("repeat until `isFinished` return true"),
       arrayOf("in a loop over all indices `i` in `secret` do"),
       arrayOf("add to `newUserWord` `secret[i]`"),
+      arrayOf("get the user input and save the result to a variable named `humanYears`"),
+      arrayOf("call the function `verifyHumanYearsInput` with `humanYears`"),
+      arrayOf("if the function returns true, print the message \"Your dog's age in dog years is: \$dogYears\", where `dogYears` equals a multiplied by 7"),
     )
   }
 

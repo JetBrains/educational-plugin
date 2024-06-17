@@ -22,9 +22,13 @@ expr: PRINT arbitraryText? (STRING | CODE)?
     | LOOP arbitraryText? EACH arbitraryText? CODE arbitraryText? IN arbitraryText? CODE (DO arbitraryText?)?
     | ADD arbitraryText? value arbitraryText? CODE
     | LOOP EACH CODE IN CODE
+    | LOOP EACH CODE IN CODE
     | RETURN arbitraryText? value
     | READ arbitraryText?
+    | GET arbitraryText?
+    | SAVE arbitraryText? VARIABLE? CALLED? CODE
     | CODE FUNCTION? arbitraryText? RETURN arbitraryText? value
+    | CODE EQUAL arbitraryText? word
     | expr AND (expr | arbitraryText)
     | expr arbitraryText? expr;
 
@@ -62,6 +66,7 @@ RETURN: 'return' | 'returns';
 READ: 'read' | 'reads';
 WITH: 'with';
 GET: 'get' | 'gets' | 'receive' | 'receives' | 'obtain' | 'obtains';
+SAVE: 'save';
 NUMBER: [0-9]+;
 STRING: '"'(~["\r\n])*'"';
 CODE: '`'(~[`\r\n])*'`';

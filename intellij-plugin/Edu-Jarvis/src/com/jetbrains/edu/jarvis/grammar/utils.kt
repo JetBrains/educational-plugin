@@ -21,8 +21,7 @@ fun parseSentence(sentence: String): ProblemSolvingLanguageParser.SentenceContex
   val parser = ProblemSolvingLanguageParser(tokens)
   parser.addErrorListener(ThrowingErrorListener.INSTANCE)
   return try {
-    val a = parser.sentence()
-    a
+    parser.sentence()
   } catch (e: AssertionError) {
     // TODO: log
     null
