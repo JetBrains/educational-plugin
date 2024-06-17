@@ -5,7 +5,7 @@ import com.jetbrains.edu.assistant.validation.messages.EduAndroidAiAssistantVali
 import com.jetbrains.edu.assistant.validation.util.MultipleCodeHintDataframeRecord
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.eduAssistant.core.AssistantResponse
+import com.jetbrains.educational.ml.hints.core.AIHintsAssistantResponse
 import org.apache.commons.csv.CSVRecord
 import org.jetbrains.kotlinx.dataframe.api.toDataFrame
 
@@ -45,7 +45,7 @@ class SequentialCodeHintValidationAction : SequentialCodeValidationAction<Multip
     task: EduTask,
     hintIndex: Int,
     baseAssistantInfoStorage: BaseAssistantInfoStorage,
-    response: AssistantResponse?,
+    response: AIHintsAssistantResponse?,
     userCode: String,
     currentUserCode: String
   ): MultipleCodeHintDataframeRecord {
@@ -69,7 +69,7 @@ class SequentialCodeHintValidationAction : SequentialCodeValidationAction<Multip
     task: EduTask,
     hintIndex: Int,
     baseAssistantInfoStorage: BaseAssistantInfoStorage,
-    response: AssistantResponse?,
+    response: AIHintsAssistantResponse?,
     userCode: String,
     e: Throwable
   ) = MultipleCodeHintDataframeRecord(

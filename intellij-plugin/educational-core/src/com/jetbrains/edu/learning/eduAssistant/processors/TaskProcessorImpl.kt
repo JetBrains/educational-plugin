@@ -24,6 +24,7 @@ import com.jetbrains.edu.learning.eduAssistant.inspection.applyInspections
 import com.jetbrains.edu.learning.eduState
 import com.jetbrains.rd.util.firstOrNull
 import org.jsoup.Jsoup
+import com.jetbrains.educational.ml.hints.processors.TaskProcessor
 
 class TaskProcessorImpl(val task: Task) : TaskProcessor {
   var currentTaskFile: TaskFile? = null
@@ -48,9 +49,9 @@ class TaskProcessorImpl(val task: Task) : TaskProcessor {
 
   override fun getLessonId() = task.lesson.id
 
-  fun getErrorDetails() = if (task.status == CheckStatus.Failed) task.feedback?.errorDetails else null
+  override fun getErrorDetails() = if (task.status == CheckStatus.Failed) task.feedback?.errorDetails ?: "" else ""
 
-  fun getFullTaskFileText() = runReadAction {
+  override fun getFullTaskFileText() = runReadAction {
     state.taskFile.getText(state.project) ?: error("Failed to retrieve the text of the task file")
   }
 

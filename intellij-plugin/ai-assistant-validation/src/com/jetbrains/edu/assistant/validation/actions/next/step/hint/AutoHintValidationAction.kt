@@ -1,7 +1,6 @@
 package com.jetbrains.edu.assistant.validation.actions.next.step.hint
 
 import com.google.gson.Gson
-import com.intellij.openapi.components.service
 import com.jetbrains.edu.assistant.validation.accuracy.AccuracyCalculator
 import com.jetbrains.edu.assistant.validation.actions.ValidationAction
 import com.jetbrains.edu.assistant.validation.messages.EduAndroidAiAssistantValidationBundle
@@ -12,8 +11,8 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.eduAssistant.core.TaskBasedAssistant
-import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
+import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessorImpl
+import com.jetbrains.educational.ml.hints.core.TaskBasedAssistant
 import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.getTextFromTaskTextFile
 import org.apache.commons.csv.CSVRecord
@@ -51,16 +50,16 @@ class AutoHintValidationAction : ValidationAction<ValidationOfHintsDataframeReco
   override fun CSVRecord.toDataframeRecord() = ValidationOfHintsDataframeRecord.buildFrom(this)
 
   override suspend fun buildRecords(task: EduTask, lesson: Lesson): List<ValidationOfHintsDataframeRecord> {
-    val taskProcessor = TaskProcessor(task)
+    val taskProcessor = TaskProcessorImpl(task)
     val project = task.project ?: error("Cannot get project")
     val eduState = project.eduState ?: error("Cannot get eduState for project ${project.name}")
-    val response = project.service<TaskBasedAssistant>().getHint(taskProcessor, eduState)
+    val response = TaskBasedAssistant(taskProcessor).getHint()
 
     try {
       val userCode = eduState.taskFile.getVirtualFile(project)?.getTextFromTaskTextFile() ?: error("Cannot get a user code")
       val taskDescription = taskProcessor.getTaskTextRepresentation()
-      val codeHint = response.codeHint ?: error("Cannot get a code hint (${response.assistantError?.name ?: "no assistant error found"})")
-      val textHint = response.textHint ?: error("Cannot get a text hint (${response.assistantError?.name ?: "no assistant error found"})")
+      val codeHint = response.codeHint ?: error("Cannot get a code hint (${response.assistantException?.message ?: "no assistant error found"})")
+      val textHint = response.textHint ?: error("Cannot get a text hint (${response.assistantException?.message ?: "no assistant error found"})")
       val hintType = processValidationHintForItsType(textHint, codeHint)
       val hintsValidation = processValidationHints(taskDescription, textHint, codeHint, userCode)
       val dataframeRecord = Gson().fromJson(hintsValidation, ValidationOfHintsDataframeRecord::class.java)

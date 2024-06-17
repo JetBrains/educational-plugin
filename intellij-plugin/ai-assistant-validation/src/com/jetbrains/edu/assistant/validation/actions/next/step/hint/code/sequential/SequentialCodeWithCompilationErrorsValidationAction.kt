@@ -5,7 +5,7 @@ import com.jetbrains.edu.assistant.validation.messages.EduAndroidAiAssistantVali
 import com.jetbrains.edu.assistant.validation.util.MultipleCodeHintWithErrorDataframeRecord
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.eduAssistant.core.AssistantResponse
+import com.jetbrains.educational.ml.hints.core.AIHintsAssistantResponse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.apache.commons.csv.CSVRecord
 import org.jetbrains.kotlinx.dataframe.api.toDataFrame
@@ -29,7 +29,7 @@ class SequentialCodeWithCompilationErrorsValidationAction : SequentialCodeValida
     task: EduTask,
     hintIndex: Int,
     baseAssistantInfoStorage: BaseAssistantInfoStorage,
-    response: AssistantResponse?,
+    response: AIHintsAssistantResponse?,
     userCode: String,
     currentUserCode: String
   ) = MultipleCodeHintWithErrorDataframeRecord(
@@ -48,7 +48,7 @@ class SequentialCodeWithCompilationErrorsValidationAction : SequentialCodeValida
     task: EduTask,
     hintIndex: Int,
     baseAssistantInfoStorage: BaseAssistantInfoStorage,
-    response: AssistantResponse?,
+    response: AIHintsAssistantResponse?,
     userCode: String,
     e: Throwable
   ) = MultipleCodeHintWithErrorDataframeRecord(
