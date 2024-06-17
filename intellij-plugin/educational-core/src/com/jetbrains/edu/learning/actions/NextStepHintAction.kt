@@ -38,7 +38,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.eduAssistant.AiAssistantState
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.eduAssistant.core.TaskBasedAssistant
+import com.jetbrains.educational.ml.hints.core.TaskBasedAssistant
 import com.jetbrains.edu.learning.eduAssistant.errors.NextStepHintError
 import com.jetbrains.edu.learning.eduAssistant.log.Logger
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessorImpl
@@ -184,9 +184,9 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
       val taskProcessor = TaskProcessorImpl(task)
       runBlockingCancellable {
         task.aiAssistantState = AiAssistantState.HelpAsked
-        val response = TaskBasedAssistant().getHint(taskProcessor)
-        response.assistantError?.let {
-          showHintWindow(it.errorMessage)
+        val response = TaskBasedAssistant(taskProcessor).getHint()
+        response.assistantException?.let {
+          showHintWindow(it.message)
           return@runBlockingCancellable
         }
         response.textHint ?: run {

@@ -1,8 +1,5 @@
 package com.jetbrains.edu.assistant.validation.actions.next.step.hint.code.sequential
 
-import com.intellij.openapi.actionSystem.ex.ActionUtil
-import com.intellij.openapi.actionSystem.impl.SimpleDataContext
-import com.intellij.openapi.application.EDT
 import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
@@ -10,19 +7,12 @@ import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.jetbrains.edu.assistant.validation.actions.next.step.hint.BaseAssistantInfoStorage
 import com.jetbrains.edu.assistant.validation.actions.next.step.hint.code.CodeValidationAction
 import com.jetbrains.edu.assistant.validation.util.runCheckAction
-import com.jetbrains.edu.learning.actions.CheckAction
-import com.jetbrains.edu.learning.checker.CheckListener
-import com.jetbrains.edu.assistant.validation.util.runCheckAction
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.eduAssistant.core.AssistantResponse
 import kotlinx.coroutines.delay
-import com.jetbrains.edu.learning.eduAssistant.check.EduAssistantValidationCheckListener
-import com.jetbrains.edu.learning.eduAssistant.core.AssistantResponse
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
+import com.jetbrains.educational.ml.hints.core.AIHintsAssistantResponse
 
 abstract class SequentialCodeValidationAction<T> : CodeValidationAction<T>() {
 
@@ -48,7 +38,7 @@ abstract class SequentialCodeValidationAction<T> : CodeValidationAction<T>() {
     task: EduTask,
     hintIndex: Int,
     baseAssistantInfoStorage: BaseAssistantInfoStorage,
-    response: AssistantResponse?,
+    response: AIHintsAssistantResponse?,
     userCode: String,
     currentUserCode: String
   ) : T
@@ -57,7 +47,7 @@ abstract class SequentialCodeValidationAction<T> : CodeValidationAction<T>() {
     task: EduTask,
     hintIndex: Int,
     baseAssistantInfoStorage: BaseAssistantInfoStorage,
-    response: AssistantResponse?,
+    response: AIHintsAssistantResponse?,
     userCode: String,
     e: Throwable
   ) : T
@@ -80,7 +70,7 @@ abstract class SequentialCodeValidationAction<T> : CodeValidationAction<T>() {
     var currentUserCode = userCode
 
     for (hintIndex in 1..MAX_HINTS) {
-      var response: AssistantResponse? = null
+      var response: AIHintsAssistantResponse? = null
       try {
         runBlockingCancellable {
           withBackgroundProgress(baseAssistantInfoStorage.project, GETTING_HINT_MESSAGE, false) {

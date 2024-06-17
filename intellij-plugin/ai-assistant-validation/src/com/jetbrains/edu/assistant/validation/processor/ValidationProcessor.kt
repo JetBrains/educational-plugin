@@ -1,20 +1,24 @@
 package com.jetbrains.edu.assistant.validation.processor
 
 import com.jetbrains.edu.assistant.validation.util.*
-import com.jetbrains.edu.learning.eduAssistant.grazie.AiPlatformAdapter
-import com.jetbrains.edu.learning.eduAssistant.grazie.GenerationContextProfile.AUTO_VALIDATION
+import com.jetbrains.educational.ml.core.grazie.GrazieConnectionManager
+
+private val grazie: GrazieConnectionManager by lazy {
+  GrazieConnectionManager.create("user", "learning-assistant-prompt")
+}
+
+private const val AUTO_VALIDATION_LLM_PROFILE_ID = "gpt-4o"
 
 suspend fun processValidationHints(
   taskDescription: String,
   textHint: String,
   codeHint: String,
   userCode: String,
-) =
-  AiPlatformAdapter.chat(
+) = grazie.chat(
+    llmProfileId = AUTO_VALIDATION_LLM_PROFILE_ID,
     systemPrompt = buildHintsValidationSystemPrompt(),
     userPrompt = buildHintsValidationUserPrompt(taskDescription, textHint, codeHint, userCode),
-    temp = 0.0,
-    generationContextProfile = AUTO_VALIDATION
+    temp = 0.0
   )
 
 private val validationHintsCriteria = """
@@ -88,10 +92,10 @@ private fun buildHintsValidationSystemPrompt() = """
   """.trimIndent()
 
 suspend fun processValidationHintForItsType(textHint: String, codeHint: String) =
-  AiPlatformAdapter.chat(
+  grazie.chat(
+    llmProfileId = AUTO_VALIDATION_LLM_PROFILE_ID,
     userPrompt = buildFeedbackTypePrompt(textHint, codeHint),
-    temp = 0.0,
-    generationContextProfile = AUTO_VALIDATION
+    temp = 0.0
   )
 
 private val feedbackTypeCriterion = """
@@ -143,11 +147,11 @@ suspend fun processValidationCompilationErrorHints(
   userCode: String,
   errorDetails: String
 ) =
-  AiPlatformAdapter.chat(
+  grazie.chat(
+    llmProfileId = AUTO_VALIDATION_LLM_PROFILE_ID,
     systemPrompt = buildCompilationErrorHintsValidationSystemPrompt(),
     userPrompt = buildCompilationErrorHintsValidationUserPrompt(textHint, codeHint, userCode, errorDetails),
-    temp = 0.0,
-    generationContextProfile = AUTO_VALIDATION
+    temp = 0.0
   )
 
 private val validationCompilationErrorHintsCriteria = """

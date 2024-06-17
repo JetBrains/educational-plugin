@@ -1,7 +1,6 @@
 package com.jetbrains.edu.assistant.validation.actions.next.step.hint
 
 import com.google.gson.Gson
-import com.intellij.openapi.components.service
 import com.jetbrains.edu.assistant.validation.accuracy.AccuracyCalculator
 import com.jetbrains.edu.assistant.validation.actions.ValidationAction
 import com.jetbrains.edu.assistant.validation.messages.EduAndroidAiAssistantValidationBundle
@@ -11,8 +10,8 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.eduAssistant.core.TaskBasedAssistant
-import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessor
+import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessorImpl
+import com.jetbrains.educational.ml.hints.core.TaskBasedAssistant
 import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.getTextFromTaskTextFile
 import org.apache.commons.csv.CSVRecord
@@ -50,50 +49,40 @@ class AutoCompilationErrorHintValidationAction : ValidationAction<ValidationOfCo
   override fun CSVRecord.toDataframeRecord() = ValidationOfCompilationErrorHintsDataframeRecord.buildFrom(this)
 
   override suspend fun buildRecords(task: EduTask, lesson: Lesson): List<ValidationOfCompilationErrorHintsDataframeRecord> {
-    val taskProcessor = TaskProcessor(task)
+    val taskProcessor = TaskProcessorImpl(task)
     val project = task.project ?: error("Cannot get project")
     val eduState = project.eduState ?: error("Cannot get eduState for project ${project.name}")
     runCheckAction(project)
-    return taskProcessor.getErrorDetails()?.let { errorDetails ->
-      val response = project.service<TaskBasedAssistant>().getHint(taskProcessor, eduState)
-      try {
-        val userCode = response.taskFile?.getVirtualFile(project)?.getTextFromTaskTextFile() ?: error("Cannot get a user code")
-        val codeHint = response.codeHint ?: error("Cannot get a code hint (${response.assistantError?.name ?: "no assistant error found"})")
-        val textHint = response.textHint ?: error("Cannot get a text hint (${response.assistantError?.name ?: "no assistant error found"})")
-        val hintsValidation = processValidationCompilationErrorHints(textHint, codeHint, userCode, errorDetails)
-        val regex = "^(```\\w*)?(.*?)(```)?$".toRegex(RegexOption.DOT_MATCHES_ALL)
-        val matchResult = regex.matchEntire(hintsValidation)?.groups?.get(2)?.value ?: hintsValidation
-        val dataframeRecord = Gson().fromJson(matchResult, ValidationOfCompilationErrorHintsDataframeRecord::class.java)
-        listOf(dataframeRecord.apply {
-          taskId = task.id
-          taskName = task.name
-          this.errorDetails = errorDetails
-          this.userCode = userCode
-          nextStepTextHint = textHint
-          nextStepCodeHint = codeHint
-        })
-      }
-      catch (e: Throwable) {
-        listOf(
-          ValidationOfCompilationErrorHintsDataframeRecord(
-            taskId = task.id,
-            taskName = task.name,
-            errorDetails = taskProcessor.getTaskTextRepresentation(),
-            userCode = eduState.taskFile.getVirtualFile(project)?.getTextFromTaskTextFile() ?: "",
-            nextStepCodeHint = response.codeHint ?: "",
-            nextStepTextHint = response.textHint ?: "",
-            errors = "${EduAndroidAiAssistantValidationBundle.message("action.validation.error")} ${e.message}"
-          )
-        )
-      }
-    } ?: run {
+    val errorDetails = taskProcessor.getErrorDetails()
+    val response = TaskBasedAssistant(taskProcessor).getHint()
+    return try {
+      val userCode = taskProcessor.currentTaskFile?.getVirtualFile(project)?.getTextFromTaskTextFile() ?: error("Cannot get a user code")
+      val codeHint =
+        response.codeHint ?: error("Cannot get a code hint (${response.assistantException?.message ?: "no assistant error found"})")
+      val textHint =
+        response.textHint ?: error("Cannot get a text hint (${response.assistantException?.message ?: "no assistant error found"})")
+      val hintsValidation = processValidationCompilationErrorHints(textHint, codeHint, userCode, errorDetails)
+      val regex = "^(```\\w*)?(.*?)(```)?$".toRegex(RegexOption.DOT_MATCHES_ALL)
+      val matchResult = regex.matchEntire(hintsValidation)?.groups?.get(2)?.value ?: hintsValidation
+      val dataframeRecord = Gson().fromJson(matchResult, ValidationOfCompilationErrorHintsDataframeRecord::class.java)
+      listOf(dataframeRecord.apply {
+        taskId = task.id
+        taskName = task.name
+        this.errorDetails = errorDetails
+        this.userCode = userCode
+        nextStepTextHint = textHint
+        nextStepCodeHint = codeHint
+      })
+    } catch (e: Throwable) {
       listOf(
         ValidationOfCompilationErrorHintsDataframeRecord(
           taskId = task.id,
           taskName = task.name,
           errorDetails = taskProcessor.getTaskTextRepresentation(),
           userCode = eduState.taskFile.getVirtualFile(project)?.getTextFromTaskTextFile() ?: "",
-          errors = EduAndroidAiAssistantValidationBundle.message("action.validation.not.found.compilation.error")
+          nextStepCodeHint = response.codeHint ?: "",
+          nextStepTextHint = response.textHint ?: "",
+          errors = "${EduAndroidAiAssistantValidationBundle.message("action.validation.error")} ${e.message}"
         )
       )
     }
