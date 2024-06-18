@@ -6,7 +6,6 @@ import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.startOffset
-import com.jetbrains.edu.jarvis.errors.AnnotatorError
 import com.jetbrains.edu.jarvis.messages.EduJarvisBundle
 
 /**
@@ -29,22 +28,11 @@ interface DescriptionErrorAnnotator : Annotator {
         .create()
     }
 
-  fun getIncorrectParts(descriptionText: String) =
-    codeBlockRegex
-      .findAll(descriptionText)
-      .mapNotNull { it.groups[1] }
-      .map {
-        DescriptionAnnotatorResult(
-          it.range,
-          it.value.getError()
-        )
-      }
-      .filter { it.error != AnnotatorError.NONE }
-
   /**
-   * Returns an [AnnotatorError], which represents the type of error found in the string.
+   * Returns a sequence of [DescriptionAnnotatorResult] which contains parts of
+   * `context` to be highlighted and the type of error that the corresponding part contains.
    */
-  fun String.getError(): AnnotatorError
+  fun getIncorrectParts(context: String): Sequence<DescriptionAnnotatorResult>
 
   /**
    * Returns whether the [PsiElement] is relevant, that is, whether it may contain an error.
