@@ -167,7 +167,7 @@ private class TopLevelLessonsSectionDeserializer : StdConverter<Int, List<Int>>(
 open class CourseBuilder(
   @JsonProperty(TYPE) val courseType: String?,
   @JsonProperty(TITLE) val title: String,
-  @JsonProperty(SUMMARY) val summary: String,
+  @JsonProperty(SUMMARY) val summary: String?,
   @JsonProperty(VENDOR) val yamlVendor: Vendor?,
   @JsonProperty(IS_PRIVATE) val yamlIsPrivate: Boolean?,
   @JsonProperty(FEEDBACK_LINK) val yamlFeedbackLink: String?,
@@ -189,7 +189,7 @@ open class CourseBuilder(
     val course = makeCourse() ?: formatError(unsupportedItemTypeMessage(courseType ?: "", EduFormatNames.COURSE))
     course.apply {
       name = title
-      description = summary
+      description = summary ?: ""
       environment = yamlEnvironment ?: DEFAULT_ENVIRONMENT
       vendor = yamlVendor
       isMarketplacePrivate = yamlIsPrivate ?: false
