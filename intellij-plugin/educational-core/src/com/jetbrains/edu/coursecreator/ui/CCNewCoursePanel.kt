@@ -355,23 +355,16 @@ class CCNewCoursePanel(
     }
   }
 
-  fun createFeedbackPanel(courseTitleField: CourseTitleField = titleField, course: Course = _course): JPanel {
-    val panel = JPanel(HorizontalLayout())
-    val message = JLabel(EduCoreBundle.message("ui.feedback.cc.label"))
-    message.apply {
-      border = JBUI.Borders.emptyRight(3)
-      foreground = JBUI.CurrentTheme.ContextHelp.FOREGROUND
+  fun createFeedbackPanel(courseTitleField: CourseTitleField = titleField, course: Course = _course): JPanel = panel {
+    row {
+      text(EduCoreBundle.message("ui.feedback.cc.label")).applyToComponent {
+        foreground = JBUI.CurrentTheme.ContextHelp.FOREGROUND
+      }.gap(RightGap.SMALL)
+      link(EduCoreBundle.message("ui.feedback.cc.hyperlink.label")) {
+        val dialog = CCInIdeFeedbackDialog(CourseFeedbackInfoData.from(course, courseTitleField.text))
+        dialog.showAndGet()
+      }
     }
-
-    val hyperlinkLabel = HyperlinkLabel(EduCoreBundle.message("ui.feedback.cc.hyperlink.label"))
-
-    hyperlinkLabel.addHyperlinkListener {
-      val dialog = CCInIdeFeedbackDialog(CourseFeedbackInfoData.from(course, courseTitleField.text))
-      dialog.showAndGet()
-    }
-    panel.add(message)
-    panel.add(hyperlinkLabel)
-    return panel
   }
 
   companion object {
