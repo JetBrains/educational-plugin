@@ -47,6 +47,7 @@ import com.jetbrains.edu.learning.newproject.ui.errors.*
 import org.jdesktop.swingx.HorizontalLayout
 import java.awt.BorderLayout
 import java.awt.Component
+import java.awt.KeyboardFocusManager
 import java.io.File
 import javax.swing.*
 import javax.swing.event.DocumentEvent
@@ -91,7 +92,6 @@ class CCNewCoursePanel(
 
   init {
     layout = BorderLayout()
-
 
     _course = (course ?: courseProducer()).apply { courseMode = CourseMode.EDUCATOR }
 
@@ -168,6 +168,12 @@ class CCNewCoursePanel(
             lineWrap = true
             wrapStyleWord = true
             emptyText.text = EduCoreBundle.message("cc.new.course.description.empty")
+
+            val forwardTraversalKey = KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS
+            val backwardTraversalKey = KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS
+            val keyboardFocusManager = KeyboardFocusManager.getCurrentKeyboardFocusManager()
+            setFocusTraversalKeys(forwardTraversalKey, keyboardFocusManager.getDefaultFocusTraversalKeys(forwardTraversalKey))
+            setFocusTraversalKeys(backwardTraversalKey, keyboardFocusManager.getDefaultFocusTraversalKeys(backwardTraversalKey))
           }.component
       }
       val feedbackPanel = createFeedbackPanel()
