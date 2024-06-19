@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.authUtils.requestFocus
 import com.jetbrains.edu.learning.map
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.onError
+import com.jetbrains.edu.learning.statistics.DownloadCourseContext.TOOLBOX
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -104,7 +105,7 @@ class EduOpenCourseAppStarter : IdeStarter() {
         // If it's called from external command, the application frame can be not in focus,
         // but we want to show the corresponding dialog to a user
         requestFocus()
-        JoinCourseDialog(course).showAndGet()
+        JoinCourseDialog(course, downloadCourseContext = TOOLBOX).showAndGet()
       }
       if (result) OpenCourseDialogResult.Ok else OpenCourseDialogResult.Canceled
     }.onError { error ->

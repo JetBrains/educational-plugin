@@ -22,6 +22,8 @@ import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
 import com.jetbrains.edu.learning.marketplace.update.getUpdateInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.runInBackground
+import com.jetbrains.edu.learning.statistics.DownloadCourseContext
+import com.jetbrains.edu.learning.statistics.DownloadCourseContext.IDE_UI
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
 import com.jetbrains.edu.learning.submissions.SolutionSharingPreference
 import com.jetbrains.edu.learning.update.showUpdateNotification
@@ -77,10 +79,10 @@ fun Course.addVendor(): Boolean {
   return true
 }
 
-fun Course.loadMarketplaceCourseStructure() {
+fun Course.loadMarketplaceCourseStructure(downloadCourseContext: DownloadCourseContext = IDE_UI) {
   if (this is EduCourse && isMarketplace && items.isEmpty()) {
     computeUnderProgress(title = EduCoreBundle.message("progress.loading.course")) {
-      MarketplaceConnector.getInstance().loadCourseStructure(this)
+      MarketplaceConnector.getInstance().loadCourseStructure(this, downloadCourseContext)
     }
   }
 }

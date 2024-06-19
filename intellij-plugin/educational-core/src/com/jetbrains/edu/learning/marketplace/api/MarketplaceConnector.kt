@@ -38,6 +38,7 @@ import com.jetbrains.edu.learning.network.executeCall
 import com.jetbrains.edu.learning.network.executeHandlingExceptions
 import com.jetbrains.edu.learning.network.toMultipartBody
 import com.jetbrains.edu.learning.network.toPlainTextRequestBody
+import com.jetbrains.edu.learning.statistics.DownloadCourseContext
 import com.jetbrains.edu.learning.stepik.course.CourseConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import kotlinx.serialization.SerializationException
@@ -151,21 +152,23 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
     return response?.body()?.data?.updates?.updateInfoList
   }
 
-  fun loadCourseStructure(course: EduCourse) {
-    val unpackedCourse = loadCourse(course.id)
+  fun loadCourseStructure(course: EduCourse, downloadContext: DownloadCourseContext) {
+    val unpackedCourse = loadCourse(course.id, downloadContext)
     course.items = unpackedCourse.items
     course.additionalFiles = unpackedCourse.additionalFiles
     course.marketplaceCourseVersion = unpackedCourse.marketplaceCourseVersion
   }
 
-  fun loadCourse(courseId: Int): EduCourse {
+  fun loadCourse(courseId: Int, downloadContext: DownloadCourseContext): EduCourse {
     val buildNumber = ApplicationInfoImpl.getShadowInstanceImpl().pluginCompatibleBuild
     val uuid = PluginDownloader.getMarketplaceDownloadsUUID()
     val updateInfo = getLatestCourseUpdateInfo(courseId) ?: error("Update info for course $courseId is null")
 
-    val link = "$repositoryUrl/plugin/download?updateId=${updateInfo.updateId}&uuid=$uuid&build=$buildNumber"
+    val link = "$repositoryUrl/plugin/download?updateId=${updateInfo.updateId}&uuid=$uuid&build=$buildNumber&source=$downloadContext"
     val filePrefix = FileUtil.sanitizeFileName("marketplace-${courseId}")
     val tempFile = FileUtil.createTempFile(filePrefix, ".zip", true)
+
+    LOG.debug("Downloading $courseId course via $link")
     DownloadUtil.downloadAtomically(null, link, tempFile)
 
     return EduUtilsKt.getLocalCourse(tempFile.path) as? EduCourse
