@@ -66,7 +66,7 @@ class CourseraPlatformProvider : CoursesPlatformProvider() {
       }
     }
     catch (e: IOException) {
-      LOG.warn("Failed to get courses from ${LINK}")
+      LOG.warn("Failed to get courses from $LINK")
       emptyList()
     }
   }
