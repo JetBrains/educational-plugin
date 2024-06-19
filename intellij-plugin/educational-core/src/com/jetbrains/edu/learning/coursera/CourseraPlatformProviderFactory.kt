@@ -57,20 +57,18 @@ class CourseraPlatformProvider : CoursesPlatformProvider() {
     return CoursesGroup(courses).asList()
   }
 
-  private fun getCourseLinks(): List<String> {
-    return try {
-      val url = URL(LINK)
-      val conn = url.openConnection()
-      conn.getInputStream().bufferedReader().useLines { lines ->
-        lines.map { s -> s.split("#")[0].trim() }.filter { it.isNotEmpty() }.toList()
-      }
+  private fun getCourseLinks(): List<String> =
+    try {
+      URL(LINK).readText()
+        .lineSequence()
+        .map { it.substringBefore("#").trim() }
+        .filter { it.isNotBlank() }
+        .toList()
     }
-    catch (e: IOException) {
-      LOG.warn("Failed to get courses from $LINK")
+    catch (exception: IOException) {
+      LOG.warn("Failed to get courses from $LINK", exception)
       emptyList()
     }
-  }
-
 
   companion object {
     private const val LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/coursera-assignments.txt"
