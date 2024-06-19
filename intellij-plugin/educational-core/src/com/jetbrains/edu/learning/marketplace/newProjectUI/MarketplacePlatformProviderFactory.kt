@@ -14,13 +14,15 @@ import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.loadMarketplaceCourseStructure
 import com.jetbrains.edu.learning.marketplace.updateFeaturedStatus
+import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory
-import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.asList
+import com.jetbrains.edu.learning.statistics.DownloadCourseContext
+import com.jetbrains.edu.learning.statistics.DownloadCourseContext.IDE_UI
 import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.annotations.NonNls
 import java.io.File
@@ -31,7 +33,9 @@ class MarketplacePlatformProviderFactory : CoursesPlatformProviderFactory {
   override fun getProviders(): List<CoursesPlatformProvider> = listOf(MarketplacePlatformProvider())
 }
 
-class MarketplacePlatformProvider : CoursesPlatformProvider() {
+class MarketplacePlatformProvider(
+  private val downloadCourseContext: DownloadCourseContext = IDE_UI
+) : CoursesPlatformProvider() {
   private val bundledCoursesNames = listOf("Kotlin Koans.zip", "Introduction to Python.zip")
 
   override val name: String
@@ -59,7 +63,7 @@ class MarketplacePlatformProvider : CoursesPlatformProvider() {
   }
 
   override fun joinAction(courseInfo: CourseCreationInfo, courseMode: CourseMode, coursePanel: CoursePanel) {
-    courseInfo.course.loadMarketplaceCourseStructure()
+    courseInfo.course.loadMarketplaceCourseStructure(downloadCourseContext)
     super.joinAction(courseInfo, courseMode, coursePanel)
   }
 

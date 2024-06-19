@@ -11,11 +11,14 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseBindData
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState
+import com.jetbrains.edu.learning.statistics.DownloadCourseContext
+import com.jetbrains.edu.learning.statistics.DownloadCourseContext.IDE_UI
 import javax.swing.JComponent
 
 open class JoinCourseDialog(
   protected val course: Course,
-  protected val settings: CourseDisplaySettings = CourseDisplaySettings()
+  protected val settings: CourseDisplaySettings = CourseDisplaySettings(),
+  private val downloadCourseContext: DownloadCourseContext = IDE_UI
 ) : OpenCourseDialogBase() {
 
   init {
@@ -32,7 +35,7 @@ open class JoinCourseDialog(
 
   protected open fun createCoursePanel(): CoursePanel {
     return when {
-      course.isMarketplace && course.visibility != LocalVisibility -> MarketplaceCoursePanel(disposable)
+      course.isMarketplace && course.visibility != LocalVisibility -> MarketplaceCoursePanel(disposable, downloadCourseContext)
       else -> JoinCoursePanel(disposable)
     }
   }

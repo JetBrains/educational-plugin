@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.getTextFromTaskTextFile
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.statistics.DownloadCourseContext.UPDATE
 
 class MarketplaceCourseUpdater(project: Project, course: EduCourse, private val remoteCourseVersion: Int) : EduCourseUpdater(project, course) {
   private val tasksStatuses = mutableMapOf<Int, CheckStatus>()
@@ -66,7 +67,7 @@ class MarketplaceCourseUpdater(project: Project, course: EduCourse, private val 
   override fun courseFromServer(currentCourse: EduCourse, courseInfo: EduCourse?): EduCourse? {
     val courseFromServer = MarketplaceConnector.getInstance().searchCourse(course.id, currentCourse.isMarketplacePrivate)
     if (courseFromServer != null) {
-      MarketplaceConnector.getInstance().loadCourseStructure(courseFromServer)
+      MarketplaceConnector.getInstance().loadCourseStructure(courseFromServer, UPDATE)
     }
     return courseFromServer
   }

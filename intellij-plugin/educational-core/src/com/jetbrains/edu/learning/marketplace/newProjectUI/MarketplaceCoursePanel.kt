@@ -12,8 +12,13 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseBindData
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseSelectionListener
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.HORIZONTAL_MARGIN
+import com.jetbrains.edu.learning.statistics.DownloadCourseContext
+import com.jetbrains.edu.learning.statistics.DownloadCourseContext.IDE_UI
 
-class MarketplaceCoursePanel(disposable: Disposable): CoursePanel(disposable, true) {
+class MarketplaceCoursePanel(
+  disposable: Disposable,
+  private val downloadCourseContext: DownloadCourseContext = IDE_UI
+): CoursePanel(disposable, true) {
 
   init {
     courseDetailsPanel.border = JBUI.Borders.empty(10, HORIZONTAL_MARGIN, 0, 0)
@@ -33,7 +38,7 @@ class MarketplaceCoursePanel(disposable: Disposable): CoursePanel(disposable, tr
   }
 
   override fun joinCourseAction(info: CourseCreationInfo, mode: CourseMode) {
-    MarketplacePlatformProvider().joinAction(info, mode, this)
+    MarketplacePlatformProvider(downloadCourseContext).joinAction(info, mode, this)
   }
 
   private class LegalTermsPanel: NonOpaquePanel(), CourseSelectionListener {

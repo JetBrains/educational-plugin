@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnecto
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceUpdateChecker
 import com.jetbrains.edu.learning.marketplace.userAgreement.UserAgreementDialog
 import com.jetbrains.edu.learning.marketplace.userAgreement.UserAgreementSettings
+import com.jetbrains.edu.learning.statistics.DownloadCourseContext.OTHER
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.UserAgreementState
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -28,7 +29,7 @@ class MarketplaceStartupActivity : StartupActivity {
 
     if (course.courseMode == CourseMode.EDUCATOR && course.generatedEduId == null) {
       ApplicationManager.getApplication().executeOnPooledThread {
-        val generatedId = MarketplaceConnector.getInstance().loadCourse(course.id).generatedEduId ?: course.generateEduId()
+        val generatedId = MarketplaceConnector.getInstance().loadCourse(course.id, OTHER).generatedEduId ?: course.generateEduId()
         course.generatedEduId = generatedId
         YamlFormatSynchronizer.saveRemoteInfo(course)
       }
