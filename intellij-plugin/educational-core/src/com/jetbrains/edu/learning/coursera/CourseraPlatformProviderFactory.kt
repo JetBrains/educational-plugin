@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.coursera
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.platform.templates.github.DownloadUtil
@@ -15,12 +14,9 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.asList
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.*
 import java.io.IOException
 import java.net.URL
-import java.util.concurrent.Callable
-import java.util.concurrent.Future
-import java.util.concurrent.TimeUnit
 import javax.swing.Icon
 
 class CourseraPlatformProviderFactory : CoursesPlatformProviderFactory {
@@ -33,29 +29,34 @@ class CourseraPlatformProvider : CoursesPlatformProvider() {
 
   override val icon: Icon get() = EducationalCoreIcons.Coursera
 
-  override fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel = CourseraCoursesPanel(this, scope, disposable)
+  override fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel =
+    CourseraCoursesPanel(this, scope, disposable)
 
-  override suspend fun doLoadCourses(): List<CoursesGroup> {
-    val tasks = mutableListOf<Future<Course?>>()
-
-    for (link in getCourseLinks()) {
-      tasks.add(ApplicationManager.getApplication().executeOnPooledThread(Callable {
-        val tempFile = FileUtil.createTempFile("coursera-zip", null)
-        DownloadUtil.downloadAtomically(null, link, tempFile)
-        val courseraCourse = EduUtilsKt.getCourseraCourse(tempFile.absolutePath)
-        if (courseraCourse == null) {
-          LOG.error("Failed to get local course from $link")
-          return@Callable null
-        }
-        courseraCourse
-      }))
+  override suspend fun doLoadCourses(): List<CoursesGroup> =
+    withContext(Dispatchers.IO) {
+      try {
+        getCourseLinks()
+          .map { link -> async { downloadCourse(link) } }
+          .awaitAll()
+          .filterNotNull()
+          .sortedBy { it.name }
+          .let { courses -> CoursesGroup(courses).asList() }
+      }
+      catch (exception: Exception) {
+        LOG.error("An error occurred while loading the courses", exception)
+        emptyList()
+      }
     }
 
-    val courses = tasks.mapNotNull { it.get(60, TimeUnit.SECONDS) }
-      .sortedBy { it.name }
-
-    return CoursesGroup(courses).asList()
-  }
+  private suspend fun downloadCourse(link: String): Course? =
+    withTimeoutOrNull(60_000) {
+      FileUtil.createTempFile("coursera-zip", null).let { file ->
+        DownloadUtil.downloadAtomically(null, link, file)
+        EduUtilsKt.getCourseraCourse(file.absolutePath)
+      }
+    }.also {
+      if (it == null) { LOG.error("Timed out while loading the course") }
+    }
 
   private fun getCourseLinks(): List<String> =
     try {
