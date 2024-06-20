@@ -12,6 +12,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.ui.EditorNotifications
 import com.intellij.util.ui.update.MergingUpdateQueue
+import com.intellij.util.ui.update.Update
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.FileInfo
 import com.jetbrains.edu.learning.courseFormat.*
@@ -100,8 +101,7 @@ class SyncChangesStateManager(private val project: Project) : Disposable.Default
     }
     collectSyncChangesState(task)
     collectSyncChangesState(task.lesson)
-    ProjectView.getInstance(project).refresh()
-    EditorNotifications.updateAll()
+    refreshUI()
   }
 
   fun updateSyncChangesState(task: Task) = queueUpdate(task)
@@ -144,6 +144,11 @@ class SyncChangesStateManager(private val project: Project) : Disposable.Default
     return resultState
   }
 
+  private fun refreshUI() {
+    ProjectView.getInstance(project).refresh()
+    EditorNotifications.updateAll()
+  }
+
   // In addition/deletion of files, framework lesson structure might break/restore,
   // so we need to recalculate the state for corresponding task files from a previous task
   // in case when a warning state is added/removed
@@ -153,56 +158,28 @@ class SyncChangesStateManager(private val project: Project) : Disposable.Default
   }
 
   private fun queueUpdate(taskFile: TaskFile) = queueUpdate(taskFile.task, listOf(taskFile))
+  private fun queueUpdate(task: Task) = queueUpdate(task, task.taskFiles.values.toList())
 
   private fun queueUpdate(task: Task, taskFiles: List<TaskFile>) {
     if (!isCCFrameworkLesson(task.lesson)) return
-    dispatcher.queue(TaskFilesSyncChangesUpdate(task, taskFiles.toSet()) {
-      recalcSyncChangesState(task, taskFiles)
-    })
-    queueTaskStateUpdate(task)
-    queueLessonStateUpdate(task.lesson)
-    queueProjectUpdate(project)
-  }
-
-  private fun queueUpdate(task: Task) {
-    if (!isCCFrameworkLesson(task.lesson)) return
-    dispatcher.queue(TaskFilesSyncChangesUpdate(task) {
-      recalcSyncChangesState(task, task.taskFiles.values.toList())
-    })
-    queueTaskStateUpdate(task)
-    queueLessonStateUpdate(task.lesson)
-    queueProjectUpdate(project)
+    with(dispatcher) {
+      queue(TaskFilesSyncChangesUpdate(task, taskFiles.toSet()))
+      queue(TaskSyncChangesUpdate(task))
+      queue(LessonSyncChangesUpdate(task.lesson))
+      queue(ProjectSyncChangesUpdate())
+    }
   }
 
   private fun queueUpdate(lesson: Lesson) {
     if (!isCCFrameworkLesson(lesson)) return
-    for (task in lesson.taskList) {
-      dispatcher.queue(TaskFilesSyncChangesUpdate(task) {
-        recalcSyncChangesState(task, task.taskFiles.values.toList())
-      })
-      queueTaskStateUpdate(task)
+    with(dispatcher) {
+      for (task in lesson.taskList) {
+        queue(TaskFilesSyncChangesUpdate(task, task.taskFiles.values.toSet()))
+        queue(TaskSyncChangesUpdate(task))
+      }
+      queue(LessonSyncChangesUpdate(lesson))
+      queue(ProjectSyncChangesUpdate())
     }
-    queueLessonStateUpdate(lesson)
-    queueProjectUpdate(project)
-  }
-
-  private fun queueTaskStateUpdate(task: Task) {
-    dispatcher.queue(TaskSyncChangesUpdate(task) {
-      collectSyncChangesState(task)
-    })
-  }
-
-  private fun queueLessonStateUpdate(lesson: Lesson) {
-    dispatcher.queue(LessonSyncChangesUpdate(lesson) {
-      collectSyncChangesState(lesson)
-    })
-  }
-
-  private fun queueProjectUpdate(project: Project) {
-    dispatcher.queue(ProjectSyncChangesUpdate {
-      ProjectView.getInstance(project).refresh()
-      EditorNotifications.updateAll()
-    })
   }
 
   /**
@@ -309,6 +286,80 @@ class SyncChangesStateManager(private val project: Project) : Disposable.Default
    */
   private data class MovedDataInfo(val taskFiles: List<TaskFile> = emptyList(), val oldPaths: List<String> = emptyList()) {
     constructor(taskFile: TaskFile, oldPath: String) : this(listOf(taskFile), listOf(oldPath))
+  }
+
+
+  /**
+   * Base class for sync changes updates.
+   */
+  private sealed class SyncChangesUpdate(priority: Int) : Update(Any(), false, priority)
+
+  /**
+   * Class for updating state for a list of task files in a given task
+   * High priority, since all task files updates must be executed earlier than study item state updates
+   */
+  private inner class TaskFilesSyncChangesUpdate(val task: Task, val taskFiles: Set<TaskFile>) : SyncChangesUpdate(HIGH_PRIORITY) {
+    override fun canEat(update: Update): Boolean {
+      if (super.canEat(update)) return true
+      if (update !is TaskFilesSyncChangesUpdate) return false
+      return task == update.task && taskFiles.containsAll(update.taskFiles)
+    }
+
+    override fun run() {
+      recalcSyncChangesState(task, taskFiles.toList())
+    }
+  }
+
+  /**
+   * Base class for updating sync changes state for a given study item
+   * Lower priority, since all task files updates must be executed earlier than study item state updates
+   */
+  private sealed class StudyItemSyncChangesUpdate<T : StudyItem>(priority: Int, val item: T) : SyncChangesUpdate(priority)
+
+  /**
+   * Class for updating state for a given task
+   */
+  private inner class TaskSyncChangesUpdate(task: Task) : StudyItemSyncChangesUpdate<Task>(LOW_PRIORITY, task) {
+    override fun canEat(update: Update): Boolean {
+      if (super.canEat(update)) return true
+      if (update !is TaskSyncChangesUpdate) return false
+      return item == update.item
+    }
+
+    override fun run() {
+      collectSyncChangesState(item)
+    }
+  }
+
+  /**
+   * Class for updating state for a given lesson
+   * The priority is lower than [TaskSyncChangesUpdate], since all events must be executed later than [TaskSyncChangesUpdate]
+   */
+  private inner class LessonSyncChangesUpdate(lesson: Lesson) : StudyItemSyncChangesUpdate<Lesson>(LOW_PRIORITY + 1, lesson) {
+    override fun canEat(update: Update): Boolean {
+      if (super.canEat(update)) return true
+      if (update !is LessonSyncChangesUpdate) return false
+      return item == update.item
+    }
+
+    override fun run() {
+      collectSyncChangesState(item)
+    }
+  }
+
+  /**
+   * Base class for updating project UI for sync changes state
+   * Lowest priority, since all other updates must be executed
+   */
+  private inner class ProjectSyncChangesUpdate : SyncChangesUpdate(LOW_PRIORITY + 2) {
+    override fun canEat(update: Update): Boolean {
+      if (super.canEat(update)) return true
+      return update is ProjectSyncChangesUpdate
+    }
+
+    override fun run() {
+      refreshUI()
+    }
   }
 
   companion object {
