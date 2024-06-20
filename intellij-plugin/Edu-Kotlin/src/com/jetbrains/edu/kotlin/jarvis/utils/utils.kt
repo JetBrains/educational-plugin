@@ -2,7 +2,6 @@ package com.jetbrains.edu.kotlin.jarvis.utils
 
 import com.intellij.psi.PsiElement
 import com.jetbrains.edu.jarvis.JarvisDslPackageCallChecker
-import com.jetbrains.edu.jarvis.models.FunctionCall
 
 fun findBlock(
   element: PsiElement,
