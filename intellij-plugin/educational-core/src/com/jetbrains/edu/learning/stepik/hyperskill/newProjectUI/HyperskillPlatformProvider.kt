@@ -88,7 +88,7 @@ class HyperskillPlatformProvider : CoursesPlatformProvider() {
       courses.add(HyperskillCourseAdvertiser())
     }
 
-    return listOf(CoursesGroup(courses))
+    return CoursesGroup.fromCourses(courses)
   }
 
   private val HyperskillProject.course: HyperskillCourse?

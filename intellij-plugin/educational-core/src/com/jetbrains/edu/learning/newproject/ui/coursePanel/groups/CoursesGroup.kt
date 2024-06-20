@@ -2,9 +2,10 @@ package com.jetbrains.edu.learning.newproject.ui.coursePanel.groups
 
 import com.jetbrains.edu.learning.courseFormat.Course
 
-data class CoursesGroup(val name: String, val courses: List<Course>) {
-  constructor(courses: List<Course>) : this("", courses)
-
+data class CoursesGroup(
+  val name: String = "",
+  val courses: List<Course>
+) {
   companion object {
     fun fromCourses(courses: List<Course>): List<CoursesGroup> =
       listOf(CoursesGroup(courses = courses))
