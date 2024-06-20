@@ -3,7 +3,6 @@ package com.jetbrains.edu.coursecreator.framework
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.*
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
@@ -64,7 +63,6 @@ class CCFrameworkLessonManager(
     require(task.parent is FrameworkLesson) {
       "`propagateChanges` should be called only when the task is in the framework lesson"
     }
-    FileDocumentManager.getInstance().saveAllDocuments()
     val lesson = task.lesson
     val startIndex = task.index
     val tasks = lesson.taskList
@@ -76,7 +74,6 @@ class CCFrameworkLessonManager(
       // we return if user canceled propagation
       if (!propagateChanges(tasks[i - 1], tasks[i], baseFilesNames)) {
         showApplyChangesCanceledNotification(project, task.name, tasks[i - 1].name)
-        FileDocumentManager.getInstance().saveAllDocuments()
         SyncChangesStateManager.getInstance(project).updateSyncChangesState(tasks[i - 1])
         return
       }
@@ -86,7 +83,6 @@ class CCFrameworkLessonManager(
     // save last task manually
     saveFileStateIntoStorage(tasks.last(), baseFilesNames)
     showApplyChangesSuccessNotification(project, task.name)
-    FileDocumentManager.getInstance().saveAllDocuments()
   }
 
   /**
