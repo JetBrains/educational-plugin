@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.module.kotlin.treeToValue
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSE_CONTENTS_FOLDER
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.MARKETPLACE
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
@@ -174,3 +175,6 @@ fun JsonMapper.Builder.setDateFormat(): JsonMapper.Builder {
   mapperDateFormat.timeZone = TimeZone.getTimeZone("UTC")
   return defaultDateFormat(mapperDateFormat)
 }
+
+val EduFile.pathInArchive: String
+  get() = "$COURSE_CONTENTS_FOLDER/$pathInCourse"

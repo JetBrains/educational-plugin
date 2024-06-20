@@ -41,6 +41,7 @@ import com.jetbrains.edu.learning.json.encrypt.getAesKey
 import com.jetbrains.edu.learning.json.mixins.*
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.EXCLUDE_TEXT_FIELD_FILTER
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TEXT
+import com.jetbrains.edu.learning.json.pathInArchive
 import com.jetbrains.edu.learning.json.setDateFormat
 import com.jetbrains.edu.learning.marketplace.updateCourseItems
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -164,7 +165,7 @@ class CourseArchiveCreator(
     courseArchiveIndicator: CourseArchiveIndicator
   ) {
     courseCopy.visitEduFiles { eduFile ->
-      outputStream.withNewEntry(eduFile.pathInCourse) {
+      outputStream.withNewEntry(eduFile.pathInArchive) {
         val bytes = when (val contents = eduFile.contents) {
           is BinaryContents -> contents.bytes
           is TextualContents -> contents.text.toByteArray(UTF_8)

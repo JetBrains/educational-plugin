@@ -10,6 +10,7 @@ object EduFormatNames {
   const val MARKETPLACE = "Marketplace"
   const val COURSE_META_FILE = "course.json"
   const val COURSE_ICON_FILE = "courseIcon.svg"
+  const val COURSE_CONTENTS_FOLDER = "course.obfuscated_contents"
 
   const val COURSE = "course"
   const val SECTION = "section"
