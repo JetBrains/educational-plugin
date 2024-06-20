@@ -33,16 +33,12 @@ class HyperskillCoursesPanel(
   }
 
   override fun updateModelAfterCourseDeletedFromStorage(deletedCourse: JBACourseFromStorage) {
-    if (coursesGroups.isNotEmpty()) {
-      val coursesGroup = coursesGroups.first()
-
-      coursesGroup.courses = coursesGroup.courses.filter { it.id != deletedCourse.id }
-
-      if (coursesGroup.courses.isEmpty()) {
-        coursesGroup.courses = listOf(HyperskillCourseAdvertiser())
+    val firstGroup = coursesGroups.firstOrNull()
+    if (firstGroup != null) {
+      if (firstGroup.courses.none { it.id != deletedCourse.id }) {
+        coursesGroups[0] = firstGroup.copy(courses = listOf(HyperskillCourseAdvertiser()))
       }
     }
-
     super.updateModelAfterCourseDeletedFromStorage(deletedCourse)
   }
 

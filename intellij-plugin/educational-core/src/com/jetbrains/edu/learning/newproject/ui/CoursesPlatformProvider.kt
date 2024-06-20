@@ -47,14 +47,18 @@ abstract class CoursesPlatformProvider {
       return emptyList()
     }
     return courseGroups.mapNotNull { courseGroup ->
-      val filteredCourses = courseGroup.courses.filter {
-        val compatibility = it.compatibility
-        compatibility == CourseCompatibility.Compatible || compatibility is CourseCompatibility.PluginsRequired || compatibility is CourseCompatibility.IncompatibleVersion
-      }
+      courseGroup.courses
+        .filter {
+          when (it.compatibility) {
+            is CourseCompatibility.Compatible,
+            is CourseCompatibility.IncompatibleVersion,
+            is CourseCompatibility.PluginsRequired -> true
 
-      if (filteredCourses.isEmpty()) return@mapNotNull null
-      courseGroup.courses = filteredCourses
-      courseGroup
+            else -> false
+          }
+        }
+        .takeIf { it.isNotEmpty() }
+        ?.let { courseGroup.copy(courses = it) }
     }
   }
 
