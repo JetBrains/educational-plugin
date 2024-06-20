@@ -9,7 +9,6 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.computeUnderProgress
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
@@ -72,21 +71,16 @@ class HyperskillPlatformProvider : CoursesPlatformProvider() {
   }
 
   override suspend fun doLoadCourses(): List<CoursesGroup> {
-    val courses = mutableListOf<Course>()
-
     val selectedProject = getSelectedProject()
-
-    selectedProject?.course?.let { courses.add(it) }
-
-    val coursesFromStorage = CoursesStorage.getInstance().state.courses
+    val storedCourses = CoursesStorage.getInstance().state.courses
       .filter { it.type == HYPERSKILL && it.id != selectedProject?.id }
       .map { it.toCourse() }
-    courses.addAll(coursesFromStorage)
 
-    if (courses.isEmpty()) {
-      // if no JB Academy content to offer, advertise it
-      courses.add(HyperskillCourseAdvertiser())
-    }
+    val courses = run { listOfNotNull(selectedProject?.course) + storedCourses }
+      .ifEmpty {
+        // if no JB Academy content to offer, advertise it
+        listOf(HyperskillCourseAdvertiser())
+      }
 
     return CoursesGroup.fromCourses(courses)
   }
