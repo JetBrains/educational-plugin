@@ -116,7 +116,6 @@ class CCNewCoursePanel(
             border = JBUI.Borders.empty(5, 4, 2, 2)
           }
       }.topGap(TopGap.SMALL)
-      separator()
     }.apply {
       border = JBUI.Borders.empty(4, 8, 0, 4)
     }

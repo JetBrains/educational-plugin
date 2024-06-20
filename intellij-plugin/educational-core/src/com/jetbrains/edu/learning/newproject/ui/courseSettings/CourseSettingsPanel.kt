@@ -11,7 +11,10 @@ import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.ui.IdeBorderFactory
-import com.intellij.ui.components.panels.NonOpaquePanel
+import com.intellij.ui.components.panels.Wrapper
+import com.intellij.ui.dsl.builder.Align
+import com.intellij.ui.dsl.builder.CollapsibleRow
+import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.PathUtil
 import com.intellij.util.io.IOUtil
 import com.intellij.util.ui.JBUI
@@ -43,7 +46,7 @@ class CourseSettingsPanel(
   private val parentDisposable: Disposable,
   isLocationFieldNeeded: Boolean = false,
   panelTitle: String = EduCoreBundle.message("course.dialog.settings")
-) : NonOpaquePanel(), CourseSelectionListener {
+) : Wrapper(), CourseSelectionListener {
   var languageSettings: LanguageSettings<*>? = null
   val locationString: String?
     get() = locationField?.component?.text
@@ -51,17 +54,31 @@ class CourseSettingsPanel(
   var locationField: LabeledComponent<TextFieldWithBrowseButton>? = null
   private val context: UserDataHolder = UserDataHolderBase()
   val settingsPanel = JPanel()
-  private var decorator: HideableNoLineDecorator
 
   private var languageSettingsDisposable: CheckedDisposable? = null
+
+  private lateinit var collapsibleGroup: CollapsibleRow
 
   init {
     border = JBUI.Borders.empty(DESCRIPTION_AND_SETTINGS_TOP_OFFSET, HORIZONTAL_MARGIN, 0, 0)
     settingsPanel.layout = BoxLayout(settingsPanel, BoxLayout.Y_AXIS)
     settingsPanel.border = JBUI.Borders.empty(0, IdeBorderFactory.TITLED_BORDER_INDENT, 5, 0)
-    add(settingsPanel, BorderLayout.CENTER)
-    decorator = HideableNoLineDecorator(this, panelTitle)
-    decorator.setContentComponent(settingsPanel)
+    isOpaque = true
+
+    val panel = panel {
+      collapsibleGroup = collapsibleGroup(panelTitle) {
+        row {
+          cell(settingsPanel)
+            .align(Align.FILL)
+        }
+      }.apply {
+        packWindowHeight = true
+      }
+    }.apply {
+      isOpaque = false
+    }
+
+    setContent(panel)
 
     if (isLocationFieldNeeded) {
       locationField = createLocationComponent()
@@ -80,7 +97,7 @@ class CourseSettingsPanel(
   }
 
   fun setOn(on: Boolean) {
-    decorator.setOn(on)
+    collapsibleGroup.expanded = on
   }
 
   private fun createLocationComponent(): LabeledComponent<TextFieldWithBrowseButton> {
