@@ -28,34 +28,30 @@ class KtDescriptionErrorAnnotator : DescriptionErrorAnnotator {
 
   override fun getIncorrectParts(context: PsiElement): Collection<DescriptionAnnotatorResult> {
     val visibleFunctions =
-      PsiTreeUtil.collectElementsOfType(context.containingFile, KtNamedFunction::class.java)
-        .mapNotNull { it.toNamedFunctionOrNull() }
-    val visibleVariables =
-      (PsiTreeUtil.collectElementsOfType(context.containingFile, KtProperty::class.java) +
-       PsiTreeUtil.collectElementsOfType(context.containingFile, KtParameter::class.java))
-        .mapNotNull { it.toNamedVariableOrNull() }.toMutableSet()
-
-    return AnnotatorRule.values()
-      .flatMap { rule ->
+      PsiTreeUtil.collectElementsOfType(context.containingFile, KtNamedFunction::class.java).mapNotNull { it.toNamedFunctionOrNull() }
+    val visibleVariables = (PsiTreeUtil.collectElementsOfType(
+      context.containingFile,
+      KtProperty::class.java
+    ) + PsiTreeUtil.collectElementsOfType(context.containingFile, KtParameter::class.java)).mapNotNull { it.toNamedVariableOrNull() }
+      .toMutableSet()
+    return AnnotatorRule.values().asSequence().flatMap { rule ->
         getIncorrectPartsByRegex(context, rule.regex).map {
           it to rule
         }
       }.sortedBy { (match, _) ->
         match.range.first
+      }.distinctBy { (match, _) ->
+        match.range.first
       }.map { (match, rule) ->
         DescriptionAnnotatorResult(
-          match.range,
-          match.value.getError(rule, visibleFunctions, visibleVariables)
+          match.range, match.value.getError(rule, visibleFunctions, visibleVariables)
         )
-      }
-      .filter { it.parametrizedError.errorType != AnnotatorError.NONE }
+      }.filter { it.parametrizedError.errorType != AnnotatorError.NONE }.toList()
 
   }
 
   private fun getIncorrectPartsByRegex(context: PsiElement, regex: Regex): Sequence<MatchGroup> {
-    return regex
-      .findAll(context.text)
-      .mapNotNull { it.groups[1] }
+    return regex.findAll(context.text).mapNotNull { it.groups[1] }
   }
 
   private fun PsiElement.toNamedFunctionOrNull(): NamedFunction? {
@@ -65,40 +61,38 @@ class KtDescriptionErrorAnnotator : DescriptionErrorAnnotator {
   }
 
   private fun PsiElement.toNamedVariableOrNull(): NamedVariable? {
-    if (this !is KtParameter || this.parent !is KtProperty) return null
-    return NamedVariable(name ?: return null)
+    return when (this) {
+      is KtProperty -> NamedVariable(name ?: return null)
+      is KtParameter -> NamedVariable(name ?: return null)
+      else -> null
+    }
   }
 
 
-  private fun String.isANamedFunction() =
-    DescriptionErrorAnnotator.namedFunctionRegex.matches(this)
+  private fun String.isANamedFunction() = DescriptionErrorAnnotator.namedFunctionRegex.matches(this)
 
-  private fun String.isANamedVariable() =
-    DescriptionErrorAnnotator.namedVariableRegex.matches(this)
+  private fun String.isANamedVariable() = DescriptionErrorAnnotator.namedVariableRegex.matches(this)
 
   private fun String.getError(
-    rule: AnnotatorRule,
-    visibleFunctions: Collection<NamedFunction>,
-    visibleVariables: MutableSet<NamedVariable>
-  ):
-    AnnotatorParametrizedError {
+    rule: AnnotatorRule, visibleFunctions: Collection<NamedFunction>, visibleVariables: MutableSet<NamedVariable>
+  ): AnnotatorParametrizedError {
     val processor = KtErrorProcessor(this, visibleFunctions, visibleVariables)
     return when (rule) {
-      AnnotatorRule.ISOLATED_CODE -> {
-        when {
-          isANamedFunction() -> processor.processNamedFunction()
-          isANamedVariable() -> processor.processNamedVariable()
-          else -> AnnotatorParametrizedError.NO_ERROR
-        }
+      AnnotatorRule.VARIABLE_DECLARATION -> {
+        visibleVariables.add(NamedVariable(this))
+        AnnotatorParametrizedError.NO_ERROR
       }
 
       AnnotatorRule.NO_PARENTHESES_FUNCTION -> {
         processor.processNamedFunction()
       }
 
-      AnnotatorRule.VARIABLE_DECLARATION -> {
-        visibleVariables.add(NamedVariable(this))
-        AnnotatorParametrizedError.NO_ERROR
+      AnnotatorRule.ISOLATED_CODE -> {
+        when {
+          isANamedFunction() -> processor.processNamedFunction()
+          isANamedVariable() -> processor.processNamedVariable()
+          else -> AnnotatorParametrizedError.NO_ERROR
+        }
       }
 
       else -> AnnotatorParametrizedError.NO_ERROR
