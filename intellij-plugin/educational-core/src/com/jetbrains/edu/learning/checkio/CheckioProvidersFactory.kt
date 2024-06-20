@@ -15,7 +15,6 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.asList
 import kotlinx.coroutines.CoroutineScope
 import javax.swing.Icon
 import kotlin.math.max
@@ -29,21 +28,18 @@ class CheckiOPlatformProvider : CoursesPlatformProvider() {
 
   override val icon: Icon get() = EducationalCoreIcons.CheckiO.to24()
 
-  override fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel = CheckiOCoursesPanel(this, scope, disposable)
+  override fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel =
+    CheckiOCoursesPanel(this, scope, disposable)
 
-  override suspend fun doLoadCourses(): List<CoursesGroup> {
-    return if (EduUtilsKt.isAndroidStudio()) {
+  override suspend fun doLoadCourses(): List<CoursesGroup> =
+    if (EduUtilsKt.isAndroidStudio()) {
       emptyList()
     }
     else {
-      val courses = listOf(
-        CheckiOCourse(CheckiONames.PY_CHECKIO, PYTHON).apply { languageVersion = PYTHON_3_VERSION },
-//        CheckiOCourse(CheckiONames.JS_CHECKIO, EduNames.JAVASCRIPT)
-      )
-
-      CoursesGroup(courses).asList()
+      CheckiOCourse(CheckiONames.PY_CHECKIO, PYTHON)
+        .apply { languageVersion = PYTHON_3_VERSION }
+        .let { CoursesGroup.fromCourses(it) }
     }
-  }
 
   private fun Icon.to24() = IconUtil.scale(this, null, JBUIScale.scale(24f / max(iconHeight, iconWidth)))
 }

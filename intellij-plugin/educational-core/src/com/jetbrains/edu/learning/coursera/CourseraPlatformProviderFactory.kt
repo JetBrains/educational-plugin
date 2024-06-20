@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.asList
 import kotlinx.coroutines.*
 import java.io.IOException
 import java.net.URL
@@ -40,7 +39,7 @@ class CourseraPlatformProvider : CoursesPlatformProvider() {
           .awaitAll()
           .filterNotNull()
           .sortedBy { it.name }
-          .let { courses -> CoursesGroup(courses).asList() }
+          .let { courses -> CoursesGroup.fromCourses(courses) }
       }
       catch (exception: Exception) {
         LOG.error("An error occurred while loading the courses", exception)
@@ -55,7 +54,9 @@ class CourseraPlatformProvider : CoursesPlatformProvider() {
         EduUtilsKt.getCourseraCourse(file.absolutePath)
       }
     }.also {
-      if (it == null) { LOG.error("Timed out while loading the course") }
+      if (it == null) {
+        LOG.error("Timed out while loading the course")
+      }
     }
 
   private fun getCourseLinks(): List<String> =

@@ -20,7 +20,6 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.asList
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext.IDE_UI
 import kotlinx.coroutines.CoroutineScope
@@ -59,7 +58,7 @@ class MarketplacePlatformProvider(
     }
 
     val courses = (bundledCourses + marketplaceCourses).sortedBy { it.visibility }
-    return CoursesGroup(courses).asList()
+    return CoursesGroup.fromCourses(courses)
   }
 
   override fun joinAction(courseInfo: CourseCreationInfo, courseMode: CourseMode, coursePanel: CoursePanel) {
