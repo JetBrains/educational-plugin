@@ -20,10 +20,10 @@ class CourseArchiveIndicator(private val countingMode: FileCountingMode) {
   private var readFiles = 0
   private var folderToLocalizePaths: VirtualFile? = null
 
-  fun init(folderToLocalizePaths: VirtualFile, course: Course, indicator: ProgressIndicator) {
+  fun init(folderToLocalizePaths: VirtualFile, course: Course, indicator: ProgressIndicator?) {
     this.folderToLocalizePaths = folderToLocalizePaths
     this.indicator = indicator
-    indicator.isIndeterminate = false
+    indicator?.isIndeterminate = false
 
     var taskFilesCount = 0
     course.visitTasks { taskFilesCount += it.taskFiles.size }

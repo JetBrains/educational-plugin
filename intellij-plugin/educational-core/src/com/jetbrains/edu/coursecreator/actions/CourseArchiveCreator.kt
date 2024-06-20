@@ -130,11 +130,19 @@ class CourseArchiveCreator(
     }, EduCoreBundle.message("action.create.course.archive.progress.bar"), true, project)
   }
 
-  private fun doCreateCourseArchive(courseArchiveIndicator: CourseArchiveIndicator, courseCopy: Course) {
+  private fun doCreateCourseArchive(courseArchiveIndicator: CourseArchiveIndicator, courseCopy: Course) =
+    doCreateCourseArchive(courseArchiveIndicator, courseCopy, FileOutputStream(location))
+
+  /**
+   * Creates course archive and writes it into OutputStream.
+   * Then closes the output stream.
+   */
+  @VisibleForTesting
+  fun doCreateCourseArchive(courseArchiveIndicator: CourseArchiveIndicator, courseCopy: Course, out: OutputStream) {
     val courseDir = project.courseDir
     courseArchiveIndicator.init(courseDir, courseCopy, ProgressManager.getInstance().progressIndicator)
 
-    ZipOutputStream(FileOutputStream(location)).use { outputStream ->
+    ZipOutputStream(out).use { outputStream ->
       outputStream.withNewEntry(COURSE_META_FILE) {
         val writer = OutputStreamWriter(outputStream, UTF_8)
         generateJson(writer, courseCopy)
