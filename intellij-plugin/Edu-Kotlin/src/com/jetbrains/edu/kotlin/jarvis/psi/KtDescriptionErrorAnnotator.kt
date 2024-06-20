@@ -62,8 +62,8 @@ class KtDescriptionErrorAnnotator : DescriptionErrorAnnotator {
       AnnotatorRule.ISOLATED_CODE -> {
         processor.processIsolatedCode()
       }
-      AnnotatorRule.NO_BRACES_FUNCTION_CALL -> {
-        processor.processNoBracesFunctionCall()
+      AnnotatorRule.NO_PARENTHESES_FUNCTION_CALL -> {
+        processor.processNoParenthesesFunctionCall()
       }
       else -> AnnotatorParametrizedError.NO_ERROR
     }

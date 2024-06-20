@@ -1,6 +1,6 @@
 package com.jetbrains.edu.kotlin
 
-import ErrorProcessor
+import com.jetbrains.edu.jarvis.ErrorProcessor
 import com.jetbrains.edu.jarvis.DescriptionErrorAnnotator
 import com.jetbrains.edu.jarvis.enums.AnnotatorError
 import com.jetbrains.edu.jarvis.errors.AnnotatorParametrizedError
@@ -32,7 +32,7 @@ class KtErrorProcessor(private val context: String, private val visibleFunctions
     }
   }
 
-  override fun processNoBracesFunctionCall(): AnnotatorParametrizedError {
+  override fun processNoParenthesesFunctionCall(): AnnotatorParametrizedError {
     val functionCall = context.toFunctionCall()
     return when {
       visibleFunctions.none { it.name == functionCall.name } ->

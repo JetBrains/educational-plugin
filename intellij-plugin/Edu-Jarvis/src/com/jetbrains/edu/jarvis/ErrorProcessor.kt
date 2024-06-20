@@ -1,3 +1,5 @@
+package com.jetbrains.edu.jarvis
+
 import com.jetbrains.edu.jarvis.errors.AnnotatorParametrizedError
 
 /**
@@ -9,7 +11,7 @@ interface ErrorProcessor {
    */
   fun processIsolatedCode(): AnnotatorParametrizedError
   /**
-   * Processes the case with function calls without braces.
+   * Processes the case with function calls without parentheses.
    */
-  fun processNoBracesFunctionCall(): AnnotatorParametrizedError
+  fun processNoParenthesesFunctionCall(): AnnotatorParametrizedError
 }
