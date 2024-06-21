@@ -10,7 +10,9 @@ import com.intellij.openapi.util.NlsActions
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.framework.SyncChangesStateManager
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.isFrameworkTask
@@ -89,6 +91,26 @@ abstract class CCChangeFilePropagationFlag(
     val path = file.pathRelativeToTask(project)
     val propagatableFile = task.getTaskFile(path)
     return propagatableFile?.isPropagatable == !requiredPropagationFlag
+  }
+
+  override fun collectAffectedFiles(project: Project, course: Course, files: List<VirtualFile>): List<VirtualFile> {
+    val affectedFiles = super.collectAffectedFiles(project, course, files)
+    val affectedTaskFiles = affectedFiles.mapNotNull { it.getTaskFile(project) }
+    val tasksFilesInLesson = mutableMapOf<Lesson, List<TaskFile>>()
+    for (taskFile in affectedTaskFiles) {
+      val lesson = taskFile.task.lesson
+      if (lesson !is FrameworkLesson) continue
+      tasksFilesInLesson.merge(lesson, listOf(taskFile), List<TaskFile>::plus)
+    }
+
+    return tasksFilesInLesson.flatMap { (lesson, taskFiles) ->
+      val taskFilesNames = taskFiles.map { it.name }.toSet()
+      lesson.taskList.flatMap { task ->
+        task.taskFiles.values.filter {
+          it.name in taskFilesNames && it.isPropagatable != requiredPropagationFlag
+        }
+      }.mapNotNull { it.getVirtualFile(project) }
+    }
   }
 
   private class FileState(
