@@ -184,6 +184,9 @@ allprojects {
     implementationWithoutKotlin(rootProject.libs.retrofit)
     implementationWithoutKotlin(rootProject.libs.converter.jackson)
     implementationWithoutKotlin(rootProject.libs.kotlin.css.jvm)
+    implementationWithoutKotlin(rootProject.libs.educational.ml.library.core)
+    implementationWithoutKotlin(rootProject.libs.educational.ml.library.jarvis)
+    implementation(rootProject.libs.freemarker)
 
     testImplementation(rootProject.libs.junit)
     testImplementationWithoutKotlin(rootProject.libs.kotlin.test.junit)
@@ -1002,6 +1005,7 @@ fun <T : ModuleDependency> T.excludeKotlinDeps() {
   exclude(module = "kotlin-stdlib")
   exclude(module = "kotlin-stdlib-common")
   exclude(module = "kotlin-stdlib-jdk8")
+  exclude(module = "kotlinx-coroutines-core-jvm")
 }
 
 fun loadProperties(path: String): Properties {
