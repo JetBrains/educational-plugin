@@ -44,13 +44,14 @@ interface DescriptionErrorAnnotator : Annotator {
   fun PsiElement.isRelevant(): Boolean
 
   companion object {
-    val callSynonyms = listOf("call", "calls", "invoke", "invokes")
-    val functionSynonyms = listOf("function", "fun")
-    val declareSynonyms =
+    fun callSynonyms() = listOf("call", "calls", "invoke", "invokes", "execute", "executes", "run", "runs")
+    fun functionSynonyms() = listOf("function", "fun")
+    fun declareSynonyms() =
       listOf(
         "create", "creates", "declare", "declares", "set up", "sets up", "store", "stores",
         "stored", "set", "sets", "assign", "assigns", "give", "gives", "initialize", "initializes"
       )
+    fun variableSynonyms() = listOf("var", "variable")
 
     val namedFunctionRegex = "[a-zA-Z_][a-zA-Z0-9_]*\\((?:\\s*[^(),\\s]+\\s*(?:,\\s*[^(),\\s]+\\s*)*)?\\s*\\)".toRegex()
     val namedVariableRegex = "[a-zA-Z_][a-zA-Z0-9_]*".toRegex()

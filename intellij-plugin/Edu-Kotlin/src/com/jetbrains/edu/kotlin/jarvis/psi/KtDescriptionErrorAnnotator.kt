@@ -15,7 +15,6 @@ import com.jetbrains.edu.kotlin.jarvis.utils.isDescriptionBlock
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 
-
 class KtDescriptionErrorAnnotator : DescriptionErrorAnnotator {
 
   override fun annotate(element: PsiElement, holder: AnnotationHolder) {
@@ -27,14 +26,10 @@ class KtDescriptionErrorAnnotator : DescriptionErrorAnnotator {
   override fun PsiElement.isRelevant() = isDescriptionBlock()
 
   override fun getIncorrectParts(context: PsiElement): Collection<DescriptionAnnotatorResult> {
-    val visibleFunctions =
-      PsiTreeUtil.collectElementsOfType(context.containingFile, KtNamedFunction::class.java).mapNotNull { it.toNamedFunctionOrNull() }
-    val visibleVariables = (PsiTreeUtil.collectElementsOfType(
-      context.containingFile,
-      KtProperty::class.java
-    ) + PsiTreeUtil.collectElementsOfType(context.containingFile, KtParameter::class.java)).mapNotNull { it.toNamedVariableOrNull() }
-      .toMutableSet()
-    return AnnotatorRule.values().asSequence().flatMap { rule ->
+    val visibleFunctions = getVisibleFunctions(context)
+    val visibleVariables = getVisibleVariables(context)
+    return AnnotatorRule.values().asSequence()
+      .flatMap { rule ->
         getIncorrectPartsByRegex(context, rule.regex).map {
           it to rule
         }
@@ -46,9 +41,19 @@ class KtDescriptionErrorAnnotator : DescriptionErrorAnnotator {
         DescriptionAnnotatorResult(
           match.range, match.value.getError(rule, visibleFunctions, visibleVariables)
         )
-      }.filter { it.parametrizedError.errorType != AnnotatorError.NONE }.toList()
+      }.filter { it.parametrizedError.errorType != AnnotatorError.NONE }
+      .toList()
 
   }
+
+  private fun getVisibleVariables(context: PsiElement) =
+    (PsiTreeUtil.collectElementsOfType(context.containingFile, KtProperty::class.java)
+     + PsiTreeUtil.collectElementsOfType(context.containingFile, KtParameter::class.java))
+      .mapNotNull { it.toNamedVariableOrNull() }.toMutableSet()
+
+  private fun getVisibleFunctions(context: PsiElement) =
+    PsiTreeUtil.collectElementsOfType(context.containingFile, KtNamedFunction::class.java)
+      .mapNotNull { it.toNamedFunctionOrNull() }.toMutableSet()
 
   private fun getIncorrectPartsByRegex(context: PsiElement, regex: Regex): Sequence<MatchGroup> {
     return regex.findAll(context.text).mapNotNull { it.groups[1] }
@@ -56,22 +61,29 @@ class KtDescriptionErrorAnnotator : DescriptionErrorAnnotator {
 
   private fun PsiElement.toNamedFunctionOrNull(): NamedFunction? {
     if (this !is KtNamedFunction) return null
+    val functionName = name ?: return null
     val numberOfParameters = getChildOfType<KtParameterList>()?.parameters?.size ?: 0
-    return NamedFunction(name ?: return null, numberOfParameters)
+    return NamedFunction(functionName, numberOfParameters)
   }
 
   private fun PsiElement.toNamedVariableOrNull(): NamedVariable? {
     return when (this) {
-      is KtProperty -> NamedVariable(name ?: return null)
-      is KtParameter -> NamedVariable(name ?: return null)
+      is KtProperty -> {
+        val variableName = name ?: return null
+        NamedVariable(variableName)
+      }
+      is KtParameter -> {
+        val variableName = name ?: return null
+        NamedVariable(variableName)
+      }
       else -> null
     }
   }
 
 
-  private fun String.isANamedFunction() = DescriptionErrorAnnotator.namedFunctionRegex.matches(this)
+  private fun String.isNamedFunction() = DescriptionErrorAnnotator.namedFunctionRegex.matches(this)
 
-  private fun String.isANamedVariable() = DescriptionErrorAnnotator.namedVariableRegex.matches(this)
+  private fun String.isNamedVariable() = DescriptionErrorAnnotator.namedVariableRegex.matches(this)
 
   private fun String.getError(
     rule: AnnotatorRule, visibleFunctions: Collection<NamedFunction>, visibleVariables: MutableSet<NamedVariable>
@@ -89,8 +101,8 @@ class KtDescriptionErrorAnnotator : DescriptionErrorAnnotator {
 
       AnnotatorRule.ISOLATED_CODE -> {
         when {
-          isANamedFunction() -> processor.processNamedFunction()
-          isANamedVariable() -> processor.processNamedVariable()
+          isNamedFunction() -> processor.processNamedFunction()
+          isNamedVariable() -> processor.processNamedVariable()
           else -> AnnotatorParametrizedError.NO_ERROR
         }
       }
