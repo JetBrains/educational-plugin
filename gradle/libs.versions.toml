@@ -4,6 +4,8 @@ kotlin = "2.0.0"
 okhttp = "4.12.0"
 retrofit = "2.9.0"
 jarvis = "1.0.0"
+educational-ml-library = "1.0.6"
+grazie = "0.3.89"
 
 [libraries]
 annotations = { group = "org.jetbrains", name = "annotations", version = "23.0.0" }
@@ -24,6 +26,12 @@ twitter4j-core = { group = "org.twitter4j", name = "twitter4j-core", version = "
 twitter4j-v2 = { group = "io.github.takke", name = "jp.takke.twitter4j-v2", version = "1.4.2" }
 jarvis = { group = "org.jetbrains.academy.jarvis.dsl", name = "Jarvis-no-code-in-edu", version.ref = "jarvis" }
 antlr = { group = "org.antlr", name = "antlr4", version = "4.13.1" }
+educational-ml-library-core = { group = "com.jetbrains.educational.ml", name = "educational-ml-library-core", version.ref = "educational-ml-library" }
+educational-ml-library-jarvis = { group = "com.jetbrains.educational.ml", name = "educational-ml-library-jarvis", version.ref = "educational-ml-library" }
+freemarker = { group = "org.freemarker", name = "freemarker", version = "2.3.33"}
+grazie-client-ktor = { group = "ai.grazie.client", name = "client-ktor-jvm", version.ref = "grazie" }
+grazie-gateway-api = { group = "ai.grazie.api", name = "api-gateway-api-jvm", version.ref = "grazie" }
+grazie-gateway-client = { group = "ai.grazie.api", name = "api-gateway-client-jvm", version.ref = "grazie" }
 # test dependencies
 junit = { group = "junit", name = "junit", version = "4.13.2" }
 kotlin-test-junit = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit", version.ref = "kotlin" }
