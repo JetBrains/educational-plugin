@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.actions.EduActionUtils.runUndoableAction
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.getContainingTask
@@ -44,29 +45,15 @@ abstract class CCChangeFilePropertyActionBase(
     val project = e.project ?: return
     val virtualFiles = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(e.dataContext)?.toList() ?: return
     val course = StudyTaskManager.getInstance(project).course ?: return
-    val configurator = course.configurator ?: return
 
-    val affectedFiles = mutableListOf<VirtualFile>()
+    val affectedFiles = collectAffectedFiles(project, course, virtualFiles)
     val states = mutableListOf<State>()
     val tasks = mutableSetOf<Task>()
-
-    fun collect(files: List<VirtualFile>) {
-      for (file in files) {
-        if (configurator.excludeFromArchive(project, course, file)) continue
-        val task = file.getContainingTask(project) ?: return
-        if (file.isDirectory) {
-          collect(VfsUtil.collectChildrenRecursively(file).filter { !it.isDirectory })
-        }
-        else {
-          affectedFiles += file
-        }
-
-        states += createStateForFile(project, task, file) ?: continue
-        tasks += task
-      }
+    for (file in affectedFiles) {
+      val task = file.getContainingTask(project) ?: continue
+      states += createStateForFile(project, task, file) ?: continue
+      tasks += task
     }
-
-    collect(virtualFiles)
 
     val action = ChangeFilesPropertyUndoableAction(project, states, tasks, affectedFiles)
     runUndoableAction(project, name.get(), action)
@@ -88,6 +75,21 @@ abstract class CCChangeFilePropertyActionBase(
 
   protected abstract fun isAvailableForSingleFile(project: Project, task: Task, file: VirtualFile): Boolean
   protected abstract fun createStateForFile(project: Project, task: Task, file: VirtualFile): State?
+
+  protected open fun collectAffectedFiles(project: Project, course: Course, files: List<VirtualFile>): List<VirtualFile> {
+    val affectedFiles = mutableListOf<VirtualFile>()
+    val configurator = course.configurator ?: return emptyList()
+    for (file in files) {
+      if (configurator.excludeFromArchive(project, course, file) || file.getContainingTask(project) == null) continue
+      if (file.isDirectory) {
+        affectedFiles += collectAffectedFiles(project, course, VfsUtil.collectChildrenRecursively(file).filter { !it.isDirectory })
+      }
+      else {
+        affectedFiles += file
+      }
+    }
+    return affectedFiles
+  }
 }
 
 private class ChangeFilesPropertyUndoableAction(
