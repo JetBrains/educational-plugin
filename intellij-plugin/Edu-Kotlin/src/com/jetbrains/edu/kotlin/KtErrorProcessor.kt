@@ -24,8 +24,7 @@ class KtErrorProcessor(
           AnnotatorError.UNKNOWN_FUNCTION,
           arrayOf(namedFunction.name)
         )
-
-      visibleFunctions.none { it.numberOfArguments == namedFunction.numberOfArguments } ->
+      namedFunction !in visibleFunctions ->
         AnnotatorParametrizedError(
           AnnotatorError.WRONG_NUMBER_OF_ARGUMENTS,
           arrayOf(namedFunction.name, namedFunction.numberOfArguments)

@@ -26,6 +26,8 @@ class KtDescriptionErrorAnnotator : DescriptionErrorAnnotator {
   override fun PsiElement.isRelevant() = isDescriptionBlock()
 
   override fun getIncorrectParts(context: PsiElement): Collection<DescriptionAnnotatorResult> {
+    val visibleFunctions = getVisibleFunctions(context)
+    val visibleVariables = getVisibleVariables(context)
     return AnnotatorRule.values().asSequence()
       .flatMap { rule ->
         getIncorrectPartsByRegex(context, rule.regex).map {
@@ -37,7 +39,7 @@ class KtDescriptionErrorAnnotator : DescriptionErrorAnnotator {
         match.range.first
       }.map { (match, rule) ->
         DescriptionAnnotatorResult(
-          match.range, match.value.getError(rule, getVisibleFunctions(context), getVisibleVariables(context))
+          match.range, match.value.getError(rule, visibleFunctions, visibleVariables)
         )
       }.filter { it.parametrizedError.errorType != AnnotatorError.NONE }
       .toList()
