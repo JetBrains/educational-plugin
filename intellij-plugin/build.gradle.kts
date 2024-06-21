@@ -213,6 +213,7 @@ subprojects {
     intellijPlatform {
       testFramework(TestFrameworkType.Bundled)
     }
+    testImplementation(rootProject.libs.openTest4J)
   }
 }
 

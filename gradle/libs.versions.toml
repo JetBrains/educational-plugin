@@ -23,6 +23,7 @@ kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-seria
 kotlin-test-junit = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit", version.ref = "kotlin" }
 mockwebserver = { group = "com.squareup.okhttp3", name = "mockwebserver", version.ref = "okhttp" }
 mockk = { group = "io.mockk", name = "mockk", version = "1.12.0" }
+openTest4J = { group = "org.opentest4j", name = "opentest4j", version = "1.3.0" }
 
 [plugins]
 kotlinPlugin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
