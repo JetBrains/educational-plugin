@@ -13,12 +13,15 @@ import com.intellij.database.util.DasUtil
 import com.intellij.database.util.TreePattern
 import com.intellij.database.util.TreePatternUtils
 import com.intellij.database.view.DatabaseView
+import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.BuildNumber
 import com.intellij.openapi.vfs.newvfs.RefreshQueueImpl
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.ui.tree.TreeVisitor
 import com.intellij.ui.treeStructure.Tree
+import com.intellij.util.ThrowableRunnable
 import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.jvm.courseGeneration.JvmCourseGenerationTestBase
@@ -34,6 +37,13 @@ import javax.swing.JTree
 import javax.swing.tree.TreePath
 
 abstract class SqlCourseGenerationTestBase : JvmCourseGenerationTestBase() {
+
+  // https://youtrack.jetbrains.com/issue/EDU-6933
+  override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
+    if (ApplicationInfo.getInstance().build < BUILD_242) {
+      super.runTestRunnable(testRunnable)
+    }
+  }
 
   override fun createCourseStructure(course: Course) {
     super.createCourseStructure(course)
@@ -138,6 +148,8 @@ abstract class SqlCourseGenerationTestBase : JvmCourseGenerationTestBase() {
   companion object {
     @JvmStatic
     protected val EMPTY_DATA_SOURCE_PLACEHOLDER = "%EMPTY_DATA_SOURCE_PLACEHOLDER%"
+
+    private val BUILD_242 = BuildNumber.fromString("242")!!
 
     private val promiseMakeVisible: Method by lazy {
       val clazz = TreeUtil::class.java
