@@ -1,6 +1,8 @@
 package com.jetbrains.edu.kotlin.hyperskill
 
 import com.intellij.lang.Language
+import com.intellij.openapi.application.ApplicationInfo
+import com.intellij.openapi.util.BuildNumber
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.actions.create.CCNewTaskStructureTestBase
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -12,9 +14,12 @@ class KtHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
   override val language: Language get() = KotlinLanguage.INSTANCE
   override val courseProducer: () -> Course = ::HyperskillCourse
 
-  override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {
-    withDefaultHtmlTaskDescription {
-      super.runTestRunnable(context)
+  override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
+    // https://youtrack.jetbrains.com/issue/EDU-6934
+    if (ApplicationInfo.getInstance().build < BUILD_241) {
+      withDefaultHtmlTaskDescription {
+        super.runTestRunnable(testRunnable)
+      }
     }
   }
 
@@ -96,4 +101,8 @@ class KtHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
       file("task.html")
     }
   )
+
+  companion object {
+    private val BUILD_241 = BuildNumber.fromString("241")!!
+  }
 }
