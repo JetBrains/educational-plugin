@@ -339,7 +339,7 @@ class TaskDescriptionTest : EduTestCase() {
       <html>
        <head></head>
        <body>
-        <p><img class="image-fullsize" src="$expectedImage" data-dark-src="https://dark.png" width="400"></p> <iframe width="560" height="315" src="$expectedURL" title="YouTube video...autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen data-dark-src="https://course.edu/dark.html"></iframe>
+        <p><img class="image-fullsize" src="$expectedImage" data-dark-src="https://dark.png" width="400"></p><iframe width="560" height="315" src="$expectedURL" title="YouTube video...autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen data-dark-src="https://course.edu/dark.html"></iframe>
        </body>
       </html>
     """.trimIndent()
