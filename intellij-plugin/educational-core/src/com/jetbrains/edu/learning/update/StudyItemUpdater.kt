@@ -12,7 +12,6 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.TestOnly
 
 // TODO EDU-5830 maybe synchronization is needed
-@Suppress("DuplicatedCode")
 abstract class StudyItemUpdater<T : StudyItem, U : StudyItemUpdate<T>>(protected val project: Project) : ItemUpdater<T> {
   protected abstract suspend fun collect(localItems: List<T>, remoteItems: List<T>): List<U>
 

@@ -44,7 +44,7 @@ abstract class LessonUpdater(project: Project, private val container: LessonCont
         localLessons.clear()
       }
 
-      // tasks to be updated
+      // lessons to be updated
       val localLesson = localLessons.firstOrNull() ?: continue
       val remoteLesson = remoteLessons.find { it.id == localLesson.id }
       if (remoteLesson == null) {
