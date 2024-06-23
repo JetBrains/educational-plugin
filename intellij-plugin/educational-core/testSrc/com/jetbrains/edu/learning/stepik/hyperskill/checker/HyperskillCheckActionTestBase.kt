@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.ui.getUICheckLabel
+import com.jetbrains.edu.learning.waitUntilIndexesAreReady
 
 abstract class HyperskillCheckActionTestBase : HyperskillActionTestBase() {
 
@@ -16,6 +17,10 @@ abstract class HyperskillCheckActionTestBase : HyperskillActionTestBase() {
   }
 
   protected fun checkCheckAction(task: Task, expectedStatus: CheckStatus, expectedMessage: String? = null) {
+    // `testAction` won't wait when indexes are ready because `CheckAction` is `DumbAware`.
+    // But here we want to check `CheckAction` only in smart mode, so wait for it manually
+    waitUntilIndexesAreReady(project)
+
     when (expectedStatus) {
       CheckStatus.Unchecked -> CheckActionListener.shouldSkip()
       CheckStatus.Solved -> CheckActionListener.reset()

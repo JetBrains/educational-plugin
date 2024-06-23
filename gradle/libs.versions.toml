@@ -9,7 +9,7 @@ kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", versio
 annotations = { group = "org.jetbrains", name = "annotations", version = "23.0.0" }
 twitter4j-core = { group = "org.twitter4j", name = "twitter4j-core", version = "4.0.7" }
 twitter4j-v2 = { group = "io.github.takke", name = "jp.takke.twitter4j-v2", version = "1.4.2" }
-jsoup = { group = "org.jsoup", name = "jsoup", version = "1.15.3" }
+jsoup = { group = "org.jsoup", name = "jsoup", version = "1.17.2" }
 jackson-dataformat-yaml = { group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version.ref = "jackson" }
 jackson-datatype-jsr310 = { group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version.ref = "jackson" }
 jackson-module-kotlin = { group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version.ref = "jackson" }

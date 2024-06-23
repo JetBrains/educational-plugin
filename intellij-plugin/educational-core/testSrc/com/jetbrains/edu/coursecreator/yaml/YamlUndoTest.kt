@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator.yaml
 
+import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -98,10 +99,12 @@ open class YamlUndoTest : YamlTestCase() {
     return Triple(task, taskFile, placeholder)
   }
 
-  private fun checkPlaceholders(taskDir: VirtualFile,
-                                placeholder: AnswerPlaceholder,
-                                expectedStartOffset: Int,
-                                expectedEndOffset: Int) {
+  private fun checkPlaceholders(
+    taskDir: VirtualFile,
+    placeholder: AnswerPlaceholder,
+    expectedStartOffset: Int,
+    expectedEndOffset: Int
+  ) {
     UIUtil.dispatchAllInvocationEvents()
     assertEquals(expectedStartOffset, placeholder.offset)
     assertEquals(expectedEndOffset, placeholder.endOffset)
@@ -115,14 +118,13 @@ open class YamlUndoTest : YamlTestCase() {
   }
 
   private fun typeInTaskFile(taskFile: TaskFile, offset: Int) {
-    typeInEditor(taskFile.getVirtualFile(project)!!, offset)
-  }
-
-  private fun typeInEditor(virtualFile: VirtualFile, offset: Int) {
-    myFixture.openFileInEditor(virtualFile)
+    myFixture.openFileInEditor(taskFile.getVirtualFile(project)!!)
     myFixture.editor.selectionModel.removeSelection()
     myFixture.editor.caretModel.moveToOffset(offset)
-    myFixture.type("t")
+    // `executeCommand` is used here to guarantee that sequential type actions won't be merged into single one by the platform
+    CommandProcessor.getInstance().executeCommand(project, {
+      myFixture.type("t")
+    }, "", null)
   }
 
   private fun getFileEditor(e: Editor?): FileEditor? {

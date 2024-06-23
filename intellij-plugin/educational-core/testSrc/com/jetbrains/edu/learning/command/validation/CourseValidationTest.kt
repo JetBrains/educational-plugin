@@ -11,10 +11,7 @@ import com.intellij.openapi.vfs.findFile
 import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.childrenOfType
-import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.MockResponseFactory
-import com.jetbrains.edu.learning.MockWebServerHelper
-import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
@@ -245,6 +242,7 @@ class CourseValidationTest : EduTestCase() {
   }
 
   private fun doTest(course: Course, validateTests: Boolean, validateLinks: Boolean, expected: String) {
+    waitUntilIndexesAreReady(project)
     val testMessageConsumer = TestServiceMessageConsumer()
     val params = ValidationParams(validateTests = validateTests, validateLinks = validateLinks)
     val validationHelper = CourseValidationHelper(params, testMessageConsumer)

@@ -34,7 +34,8 @@ abstract class HyperskillTaskDescriptionHighlightingTest : TaskDescriptionHighli
         ...
        </head>
        <body>
-        <div class="wrapper"><span class="code">$codeSampleWithBasicHighlighting</span>
+        <div class="wrapper">
+         <span class="code">$codeSampleWithBasicHighlighting</span>
         </div>
        </body>
       </html>
@@ -55,7 +56,8 @@ abstract class HyperskillTaskDescriptionHighlightingTest : TaskDescriptionHighli
         ...
        </head>
        <body>
-        <div class="wrapper"><span class="code">$codeSampleWithBasicHighlighting</span>
+        <div class="wrapper">
+         <span class="code">$codeSampleWithBasicHighlighting</span>
         </div>
        </body>
       </html>
@@ -76,7 +78,8 @@ abstract class HyperskillTaskDescriptionHighlightingTest : TaskDescriptionHighli
         ...
        </head>
        <body>
-        <div class="wrapper"><span class="code">$codeSampleWithHighlighting</span>
+        <div class="wrapper">
+         <span class="code">$codeSampleWithHighlighting</span>
         </div>
        </body>
       </html>
