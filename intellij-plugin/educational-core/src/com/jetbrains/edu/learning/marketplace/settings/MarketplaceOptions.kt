@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.marketplace.settings
 
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.ui.HyperlinkAdapter
-import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.authUtils.EduLoginConnector
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -39,11 +38,7 @@ class MarketplaceOptions : OAuthLoginOptions<MarketplaceAccount>() {
 
   private val statisticsCollectionAllowedCheckBox = StatisticsCollectionOptionsCheckBox()
 
-  override fun isAvailable(): Boolean {
-    // Settings should not be shown on remote development because there is currently no authentication logic implemented.
-    // Instead, we use a workaround by reading the JBA UID token from the local file system (see EDU-6321)
-    return !RemoteEnvHelper.isRemoteDevServer()
-  }
+  override fun isAvailable(): Boolean = true
 
   override fun getDisplayName(): String = JET_BRAINS_ACCOUNT
 
