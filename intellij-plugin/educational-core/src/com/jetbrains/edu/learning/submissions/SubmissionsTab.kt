@@ -451,8 +451,11 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
     private fun formatDate(time: Date): String {
       val calendar = GregorianCalendar()
       calendar.time = time
-      val formatter = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.getDefault())
-      return formatter.format(calendar.time)
+      val forceShowInUTC = RemoteEnvHelper.isRemoteDevServer()
+      val timeStyle = if (forceShowInUTC) DateFormat.LONG else DateFormat.MEDIUM
+      val formatter = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, timeStyle, Locale.getDefault())
+      if (forceShowInUTC) formatter.timeZone = TimeZone.getTimeZone("UTC")
+      return formatter.format(calendar.time).replace("UTC", "(UTC)")
     }
 
     private fun getImageUrl(status: String?): URL? {
