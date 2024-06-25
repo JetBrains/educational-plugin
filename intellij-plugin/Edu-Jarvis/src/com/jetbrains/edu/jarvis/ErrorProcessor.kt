@@ -1,7 +1,7 @@
 package com.jetbrains.edu.jarvis
 
-import com.jetbrains.edu.jarvis.enums.AnnotatorError
-import com.jetbrains.edu.jarvis.errors.AnnotatorParametrizedError
+import com.jetbrains.edu.jarvis.highlighting.AnnotatorError
+import com.jetbrains.edu.jarvis.highlighting.AnnotatorParametrizedError
 import com.jetbrains.edu.jarvis.models.NamedFunction
 import com.jetbrains.edu.jarvis.models.NamedVariable
 
@@ -17,8 +17,8 @@ interface ErrorProcessor {
    * Processes the provided `target` string as a named function and
    * returns the associated [AnnotatorParametrizedError].
    */
-  fun processNamedFunction(target: String): AnnotatorParametrizedError {
-    val namedFunction = target.toNamedFunction()
+  fun processNamedFunction(target: String, arguments: String? = null): AnnotatorParametrizedError {
+    val namedFunction = target.toNamedFunction(arguments)
     return when {
       visibleFunctions.none { it.name == namedFunction.name } ->
         AnnotatorParametrizedError(
@@ -51,6 +51,11 @@ interface ErrorProcessor {
     else AnnotatorParametrizedError.NO_ERROR
   }
 
-  fun String.toNamedFunction(): NamedFunction
+  fun String.toNamedFunction(arguments: String? = null): NamedFunction
   fun String.toNamedVariable(): NamedVariable
+
+  companion object {
+    const val AND = "and"
+  }
+
 }
