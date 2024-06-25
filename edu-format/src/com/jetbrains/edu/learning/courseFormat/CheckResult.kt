@@ -3,17 +3,41 @@ package com.jetbrains.edu.learning.courseFormat
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.FAILED_TO_CHECK_URL
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.LOGIN_NEEDED_MESSAGE
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.NO_TESTS_URL
+import com.jetbrains.edu.learning.courseFormat.EduTestInfo.Companion.firstFailed
 import org.jetbrains.annotations.Nls
 
 data class CheckResult(
   val status: CheckStatus,
-  @Nls(capitalization = Nls.Capitalization.Sentence) val message: String = "",
-  val details: String? = null,
-  val diff: CheckResultDiff? = null,
   val severity: CheckResultSeverity = CheckResultSeverity.Info,
   val hyperlinkAction: (() -> Unit)? = null,
   val executedTestsInfo: List<EduTestInfo> = emptyList()
 ) {
+  private val firstFailedTest = executedTestsInfo.firstFailed()
+
+  var details: String? = null
+    get() = field ?: firstFailedTest?.details
+
+  var diff: CheckResultDiff? = null
+    get() = field ?: firstFailedTest?.checkResultDiff
+
+  @Nls(capitalization = Nls.Capitalization.Sentence)
+  var message: String = ""
+    get() = field.ifBlank { firstFailedTest?.message } ?: ""
+
+  // backward compatibility
+  constructor(
+    status: CheckStatus,
+    @Nls(capitalization = Nls.Capitalization.Sentence) message: String = "",
+    details: String? = null,
+    diff: CheckResultDiff? = null,
+    severity: CheckResultSeverity = CheckResultSeverity.Info,
+    hyperlinkAction: (() -> Unit)? = null,
+    executedTestsInfo: List<EduTestInfo> = emptyList()
+  ) : this(status, severity, hyperlinkAction, executedTestsInfo) {
+    this.details = details
+    this.diff = diff
+    this.message = message
+  }
 
   val fullMessage: String get() = if (details == null) message else "$message\n\n$details"
 

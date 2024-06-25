@@ -5,7 +5,6 @@ import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.ConfigurationFromContext
 import com.intellij.execution.configurations.ConfigurationType
 import com.intellij.execution.process.*
-import com.intellij.execution.testframework.Filter
 import com.intellij.execution.testframework.sm.runner.SMTRunnerEventsAdapter
 import com.intellij.execution.testframework.sm.runner.SMTestProxy
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
@@ -24,6 +23,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckResult.Companion.noTestsRun
 import com.jetbrains.edu.learning.courseFormat.CheckResultDiff
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduTestInfo
+import com.jetbrains.edu.learning.courseFormat.EduTestInfo.Companion.firstFailed
 import com.jetbrains.edu.learning.courseFormat.ext.getAllTestDirectories
 import com.jetbrains.edu.learning.courseFormat.ext.getAllTestFiles
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -109,22 +109,19 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
     if (testResults.isEmpty()) return noTestsRun
 
     val firstFailure = testResults.firstOrNull { it.status != CheckStatus.Solved }
-    val result = firstFailure ?: testResults.first()
-    return result.copy(executedTestsInfo = testRoots.getTestsInfo())
+    return firstFailure ?: testResults.first()
   }
 
   protected fun SMTestProxy.SMRootTestProxy.toCheckResult(): CheckResult {
-    if (finishedSuccessfully()) return CheckResult(CheckStatus.Solved, CheckUtils.CONGRATULATIONS)
+    val testInfo = getEduTestInfo(children = children)
+    if (finishedSuccessfully()) {
+      return CheckResult(status = CheckStatus.Solved, message = CheckUtils.CONGRATULATIONS, executedTestsInfo = testInfo)
+    }
 
-    val failedChildren = collectChildren(object : Filter<SMTestProxy>() {
-      override fun shouldAccept(test: SMTestProxy): Boolean = test.isLeaf && !test.finishedSuccessfully()
-    })
-
-    val firstFailedTest = failedChildren.firstOrNull() ?: error("Testing failed although no failed tests found")
-    val diff = firstFailedTest.diffViewerProvider?.let { CheckResultDiff(it.left, it.right, it.diffTitle) }
-    val message = if (diff != null) getComparisonErrorMessage(firstFailedTest) else getErrorMessage(firstFailedTest)
-    val details = firstFailedTest.stacktrace
-    return CheckResult(CheckStatus.Failed, removeAttributes(fillWithIncorrect(message)), diff = diff, details = details)
+    if (testInfo.firstFailed() != null) {
+      error("Testing failed although no failed tests found")
+    }
+    return CheckResult(status = CheckStatus.Failed, executedTestsInfo = testInfo)
   }
 
   private fun SMTestProxy.finishedSuccessfully(): Boolean {
@@ -218,9 +215,6 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
 
   protected open fun validateConfiguration(configuration: RunnerAndConfigurationSettings): CheckResult? = null
 
-  private fun List<SMTestProxy.SMRootTestProxy>.getTestsInfo(): List<EduTestInfo> =
-    flatMap { root -> getEduTestInfo(children = root.children) }
-
   private fun getEduTestInfo(paths: MutableList<String> = mutableListOf(), children: List<SMTestProxy>): List<EduTestInfo> {
     val result = mutableListOf<EduTestInfo>()
     children.forEach {
@@ -233,7 +227,7 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
         if (testCount > 0) {
           testName = "$testName[$testCount]"
         }
-        result.add(EduTestInfo(testName, it.magnitudeInfo.value))
+        result.add(it.toEduTestInfo(testName))
       }
       else {
         result.addAll(getEduTestInfo(paths, it.children))
@@ -241,6 +235,19 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
       paths.removeLast()
     }
     return result
+  }
+
+  private fun SMTestProxy.toEduTestInfo(name: String): EduTestInfo {
+    val diff = diffViewerProvider
+    val message = if (diff != null) getComparisonErrorMessage(this) else getErrorMessage(this)
+    return EduTestInfo(
+      name = name,
+      status = magnitudeInfo.value,
+      message = removeAttributes(fillWithIncorrect(message)),
+      details = stacktrace,
+      isFinishedSuccessfully = finishedSuccessfully(),
+      checkResultDiff = diff?.let { CheckResultDiff(diff.left, diff.right, diff.diffTitle) }
+    )
   }
 
   companion object {
