@@ -12,9 +12,9 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessorImpl
-import com.jetbrains.educational.ml.hints.core.TaskBasedAssistant
-import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.getTextFromTaskTextFile
+import com.jetbrains.edu.learning.selectedTaskFile
+import com.jetbrains.educational.ml.hints.core.TaskBasedAssistant
 import org.apache.commons.csv.CSVRecord
 import org.jetbrains.kotlinx.dataframe.api.toDataFrame
 import kotlin.io.path.Path
@@ -52,11 +52,11 @@ class AutoHintValidationAction : ValidationAction<ValidationOfHintsDataframeReco
   override suspend fun buildRecords(task: EduTask, lesson: Lesson): List<ValidationOfHintsDataframeRecord> {
     val taskProcessor = TaskProcessorImpl(task)
     val project = task.project ?: error("Cannot get project")
-    val eduState = project.eduState ?: error("Cannot get eduState for project ${project.name}")
+    val taskFile = project.selectedTaskFile ?: error("Cannot get task file of ${task.name} task")
     val response = TaskBasedAssistant(taskProcessor).getHint()
 
     try {
-      val userCode = eduState.taskFile.getVirtualFile(project)?.getTextFromTaskTextFile() ?: error("Cannot get a user code")
+      val userCode = taskFile.getVirtualFile(project)?.getTextFromTaskTextFile() ?: error("Cannot get a user code")
       val taskDescription = taskProcessor.getTaskTextRepresentation()
       val codeHint = response.codeHint ?: error("Cannot get a code hint (${response.assistantException?.message ?: "no assistant error found"})")
       val textHint = response.textHint ?: error("Cannot get a text hint (${response.assistantException?.message ?: "no assistant error found"})")
@@ -78,7 +78,7 @@ class AutoHintValidationAction : ValidationAction<ValidationOfHintsDataframeReco
         taskId = task.id,
         taskName = task.name,
         taskDescription = taskProcessor.getTaskTextRepresentation(),
-        userCode = eduState.taskFile.getVirtualFile(project)?.getTextFromTaskTextFile() ?: "",
+        userCode = taskFile.getVirtualFile(project)?.getTextFromTaskTextFile() ?: "",
         nextStepCodeHint = response.codeHint ?: "",
         nextStepTextHint = response.textHint ?: "",
         errors = "${EduAndroidAiAssistantValidationBundle.message("action.validation.error")} ${e.message}"

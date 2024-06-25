@@ -19,7 +19,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.intellij.openapi.progress.Task.Backgroundable
 import com.jetbrains.edu.assistant.validation.accuracy.AccuracyCalculator
 import com.jetbrains.edu.assistant.validation.util.*
-import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -27,6 +26,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.selectedTaskFile
 import java.time.LocalDateTime
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVRecord
@@ -142,7 +142,7 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
               studentSolutions?.let {
                 it.getSolutionListForTask(lesson.name, task.name).forEach { studentCode ->
                   ApplicationManager.getApplication().invokeAndWait {
-                    lesson.replaceContent(task, studentCode, eduState, project)
+                    lesson.replaceContent(task, studentCode, project)
                   }
                   runBlockingCancellable {
                     lessonRecords.addAll(buildRecords(task, lesson))
@@ -232,8 +232,9 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
     frameworkLessonManager.saveExternalChanges(task, externalState)
   }
 
-  protected fun Lesson.replaceContent(task: Task, newCode: String, eduState: EduState, project: Project) {
-    replaceDocumentText(eduState.taskFile, project, newCode)
+  protected fun Lesson.replaceContent(task: Task, newCode: String, project: Project) {
+    val taskFile = project.selectedTaskFile ?: error("Can't get task file")
+    replaceDocumentText(taskFile, project, newCode)
     if (this is FrameworkLesson) {
       changeStateForMainFile(task, newCode)
     }

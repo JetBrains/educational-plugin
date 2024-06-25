@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessorImpl
 import com.jetbrains.educational.ml.hints.core.TaskBasedAssistant
 import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.getTextFromTaskTextFile
+import com.jetbrains.edu.learning.selectedTaskFile
 import org.apache.commons.csv.CSVRecord
 import org.jetbrains.kotlinx.dataframe.api.toDataFrame
 import kotlin.io.path.Path
@@ -51,7 +52,6 @@ class AutoCompilationErrorHintValidationAction : ValidationAction<ValidationOfCo
   override suspend fun buildRecords(task: EduTask, lesson: Lesson): List<ValidationOfCompilationErrorHintsDataframeRecord> {
     val taskProcessor = TaskProcessorImpl(task)
     val project = task.project ?: error("Cannot get project")
-    val eduState = project.eduState ?: error("Cannot get eduState for project ${project.name}")
     runCheckAction(project)
     val errorDetails = taskProcessor.getErrorDetails()
     val response = TaskBasedAssistant(taskProcessor).getHint()
@@ -79,7 +79,7 @@ class AutoCompilationErrorHintValidationAction : ValidationAction<ValidationOfCo
           taskId = task.id,
           taskName = task.name,
           errorDetails = taskProcessor.getTaskTextRepresentation(),
-          userCode = eduState.taskFile.getVirtualFile(project)?.getTextFromTaskTextFile() ?: "",
+          userCode = project.selectedTaskFile?.getVirtualFile(project)?.getTextFromTaskTextFile() ?: "",
           nextStepCodeHint = response.codeHint ?: "",
           nextStepTextHint = response.textHint ?: "",
           errors = "${EduAndroidAiAssistantValidationBundle.message("action.validation.error")} ${e.message}"
