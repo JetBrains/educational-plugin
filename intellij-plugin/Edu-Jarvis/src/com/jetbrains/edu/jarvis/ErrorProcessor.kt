@@ -53,4 +53,9 @@ interface ErrorProcessor {
 
   fun String.toNamedFunction(arguments: String? = null): NamedFunction
   fun String.toNamedVariable(): NamedVariable
+
+  companion object {
+    const val AND = "and"
+  }
+
 }

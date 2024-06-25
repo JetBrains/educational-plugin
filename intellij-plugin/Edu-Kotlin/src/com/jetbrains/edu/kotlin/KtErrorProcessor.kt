@@ -1,7 +1,7 @@
 package com.jetbrains.edu.kotlin
 
 import com.jetbrains.edu.jarvis.ErrorProcessor
-import com.jetbrains.edu.jarvis.highlighting.GrammarRegex.AND
+import com.jetbrains.edu.jarvis.ErrorProcessor.Companion.AND
 import com.jetbrains.edu.jarvis.models.NamedFunction
 import com.jetbrains.edu.jarvis.models.NamedVariable
 import com.jetbrains.edu.kotlin.jarvis.utils.ARGUMENT_SEPARATOR

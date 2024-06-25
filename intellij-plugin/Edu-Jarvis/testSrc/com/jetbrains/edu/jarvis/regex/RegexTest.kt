@@ -27,7 +27,7 @@ interface RegexTest {
 
     private fun callSynonyms() = listOf("call", "invoke", "execute", "run")
     private fun functionSynonyms() = listOf("function", "fun")
-    private fun createSynonyms() = GrammarRegex.CREATE.split("|")
+    private fun createSynonyms() = listOf("create", "set up", "declare")
 
     const val NUMBER_OF_RUNS = 10
     const val MIN_IDENTIFIER_NAME_LENGTH = 4

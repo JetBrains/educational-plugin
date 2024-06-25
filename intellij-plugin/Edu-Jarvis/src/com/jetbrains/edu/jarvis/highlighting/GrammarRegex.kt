@@ -8,7 +8,7 @@ object GrammarRegex {
   private const val ARTICLE = "a|an|the"
   private const val MODIFIED = "multiplied|divided|incremented|decremented"
   private const val BY = "by"
-  const val AND = "and"
+  private const val AND = "and"
   private const val VALUE = "value|number"
   private const val IF = "if"
   private const val ELSE = "else|otherwise"
@@ -34,7 +34,7 @@ object GrammarRegex {
   private const val STORE = "store|stored|stores"
   private const val CALL = "call|calls|invoke|invokes|run|execute"
   private const val IN = "in"
-  const val CREATE = "declare|declares|setUp|setsUp|create|creates"
+  private const val CREATE = "declare|set up|create"
   private const val BOOL = "true|false"
   private const val ADD = "add|adds|append|appends"
   private const val EQUAL = "equal|equals"
@@ -47,7 +47,7 @@ object GrammarRegex {
   private const val IDENTIFIER = "`([A-Za-z_][A-Za-z0-9_]*)`"
   private const val NO_CAPTURE_IDENTIFIER = "`[A-Za-z_][A-Za-z0-9_]*`"
   private const val NO_CAPTURE_CODE = "`[^`\\r\\n]+`"
-  const val CODE = "`([^`\\r\\n]+)`"
+  private const val CODE = "`([^`\\r\\n]+)`"
 
   val value = listOf(
     NUMBER,
@@ -73,6 +73,7 @@ object GrammarRegex {
     DO,
     EMPTY,
     RANDOM,
+    value,
     STRING_WORD,
     VARIABLE,
     CALLED,
@@ -91,7 +92,7 @@ object GrammarRegex {
     CONST,
   ).joinToString("|")
 
-  val word = listOf(
+  private val word = listOf(
     STRING_WORD,
     "(?:$RANDOM\\s+$STRING_WORD)",
     "(?:$EMPTY\\s+$STRING_WORD)",
@@ -121,4 +122,5 @@ object GrammarRegex {
   val callFunction = ("(?i)(?:$CALL)(?:\\s+(?:$ARTICLE))?(?:\\s+(?:$FUNCTION))?" +
                       "\\s+$IDENTIFIER(\\s+$WITH\\s+(?:$value)(?:(?:\\s*$SEPARATOR\\s*(?:$value))*\\s+$AND\\s+(?:$value))?)?").toRegex()
 
+  val isolatedCode = CODE.toRegex()
 }
