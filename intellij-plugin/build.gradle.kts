@@ -182,10 +182,6 @@ allprojects {
 
     implementationWithoutKotlin(rootProject.libs.educational.ml.library.core)
     implementationWithoutKotlin(rootProject.libs.educational.ml.library.hints)
-    implementation(rootProject.libs.freemarker)
-    implementationWithoutKotlin(rootProject.libs.grazie.gateway.api)
-    implementationWithoutKotlin(rootProject.libs.grazie.gateway.client)
-    implementationWithoutKotlin(rootProject.libs.grazie.client.ktor)
     implementationWithoutKotlin(rootProject.libs.kotlin.logging)
     implementationWithoutKotlin(rootProject.libs.logback)
 
@@ -866,7 +862,7 @@ project("ai-assistant-validation") {
       intellijPlugins(kotlinPlugin)
     }
 
-    implementationWithoutKotlin(rootProject.libs.dataframe)
+    implementationWithoutKotlin(rootProject.libs.kotlinx.dataframe)
 
     implementation(project(":intellij-plugin:educational-core"))
     implementation(project(":intellij-plugin:jvm-core"))
@@ -950,9 +946,6 @@ fun <T : ModuleDependency> T.excludeKotlinDeps() {
   exclude(module = "kotlin-stdlib")
   exclude(module = "kotlin-stdlib-common")
   exclude(module = "kotlin-stdlib-jdk8")
-  exclude(module = "kotlin-stdlib-jdk7")
-  exclude(module = "kotlinx-coroutines-core")
-  exclude(module = "kotlinx-coroutines-core-jvm")
 }
 
 fun loadProperties(path: String): Properties {
