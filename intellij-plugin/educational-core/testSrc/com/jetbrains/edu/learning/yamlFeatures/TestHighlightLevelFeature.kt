@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.EduFileErrorHighlightLevel
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
+import com.jetbrains.edu.learning.waitUntilIndexesAreReady
 import org.junit.Test
 
 class TestHighlightLevelFeature : CourseGenerationTestBase<EmptyProjectSettings>() {
@@ -46,6 +47,7 @@ class TestHighlightLevelFeature : CourseGenerationTestBase<EmptyProjectSettings>
     createCourseStructure(course)
     // wait for the project to be initialized
     UIUtil.dispatchAllInvocationEvents()
+    waitUntilIndexesAreReady(project)
 
     assertHighlightLevel("lesson1/task1-no-highlight/Main1.java", FileHighlightingSetting.SKIP_HIGHLIGHTING)
     assertHighlightLevel("lesson1/task2/Main2.java", FileHighlightingSetting.FORCE_HIGHLIGHTING)
