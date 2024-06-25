@@ -12,7 +12,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.ex.temp.TempFileSystem
-import com.intellij.testFramework.utils.editor.saveToDisk
 import com.jetbrains.edu.learning.isUnitTestMode
 
 fun tryApplyTexts(
@@ -43,7 +42,7 @@ fun DiffRequestChain.getTexts(size: Int): List<String> {
 fun List<Document>.writeTexts(texts: List<String>): Unit = runWriteAction {
   zip(texts).forEach { (document, text) ->
     document.setText(text)
-    document.saveToDisk()
+    FileDocumentManager.getInstance().saveDocument(document)
   }
 }
 

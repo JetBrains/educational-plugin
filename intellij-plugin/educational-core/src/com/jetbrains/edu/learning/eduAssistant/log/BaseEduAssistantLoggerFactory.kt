@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.eduAssistant.log
 
 import com.intellij.openapi.application.PathManager
-import com.intellij.openapi.application.runWriteActionAndWait
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.JulLogger
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.RollingFileHandler
@@ -23,7 +23,7 @@ sealed class BaseEduAssistantLoggerFactory(logFileName: String, private val cate
 
   init {
     try {
-      runWriteActionAndWait {
+      runWriteAction {
         basePath.findOrCreateFile()
       }
     }
