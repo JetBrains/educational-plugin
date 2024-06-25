@@ -31,7 +31,8 @@ include(
   "intellij-plugin:Edu-Shell",
   "intellij-plugin:sql",
   "intellij-plugin:sql:sql-jvm",
-  "intellij-plugin:github"
+  "intellij-plugin:github",
+  "intellij-plugin:localization",
 )
 
 if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {

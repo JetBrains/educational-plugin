@@ -294,6 +294,12 @@ dependencies {
     pluginModule(implementation(project("sql:sql-jvm")))
     pluginModule(implementation(project("github")))
     pluginModule(implementation(project("remote-env")))
+    // BACKCOMPAT: 2024.1
+    if (environmentName.toInt() >= 242) {
+      // bundled localization resources can be used only since 2024.2,
+      // so it doesn't make sense to have this module for other platforms
+      pluginModule(implementation(project("localization")))
+    }
   }
 }
 
@@ -820,6 +826,14 @@ project("github") {
   }
 }
 
+project("localization") {
+  dependencies {
+    intellijPlatform {
+      intellijIde(baseVersion)
+    }
+  }
+}
+
 data class TypeWithVersion(val type: IntelliJPlatformType, val version: String)
 
 fun String.toTypeWithVersion(): TypeWithVersion {
@@ -894,7 +908,7 @@ fun parseManifest(file: File): Node {
   return node
 }
 
-fun manifestFile(project: Project): File {
+fun manifestFile(project: Project): File? {
   var filePath: String? = null
   // Some gradle projects are not modules from IDEA plugin point of view
   // because we use `include` for them inside manifests, i.e. they just a part of another module.
@@ -910,6 +924,9 @@ fun manifestFile(project: Project): File {
     ":intellij-plugin:Edu-Python" -> {
       filePath = if (environmentName.toInt() < 241) "Edu-Python-Community.xml" else "Edu-Python.xml"
     }
+    // Localization module is not supposed to have a plugin manifest.
+    // Since it also is not supposed to have any code, only resources, no need to verify anything for it
+    ":intellij-plugin:localization" -> return null
   }
 
   val mainOutput = project.sourceSets.main.get().output
@@ -918,7 +935,8 @@ fun manifestFile(project: Project): File {
   if (filePath != null) {
     return resourcesDir.resolve(filePath).takeIf { it.exists() } ?: error("Failed to find manifest file for ${project.name} module")
   }
-  val rootManifest = parseManifest(manifestFile(project(":intellij-plugin")))
+  val rootManifestFile = manifestFile(project(":intellij-plugin")) ?: error("Failed to find manifest file for :intellij-plugin module")
+  val rootManifest = parseManifest(rootManifestFile)
   val children = ((rootManifest["content"] as? List<*>)?.single() as? Node)?.children()
                  ?: error("Failed to find module declarations in root manifest")
   return children.filterIsInstance<Node>()
@@ -929,14 +947,14 @@ fun manifestFile(project: Project): File {
            }.firstOrNull() ?: error("Failed to find manifest file for ${project.name} module")
 }
 
-fun findModulePackage(project: Project): String {
-  val moduleManifest = manifestFile(project)
+fun findModulePackage(project: Project): String? {
+  val moduleManifest = manifestFile(project) ?: return null
   val node = parseManifest(moduleManifest)
   return node.attribute("package") as? String ?: error("Failed to find package for ${project.name}")
 }
 
 fun verifyClasses(project: Project) {
-  val pkg = findModulePackage(project)
+  val pkg = findModulePackage(project) ?: return
   val expectedDir = pkg.replace('.', '/')
 
   var hasErrors = false
