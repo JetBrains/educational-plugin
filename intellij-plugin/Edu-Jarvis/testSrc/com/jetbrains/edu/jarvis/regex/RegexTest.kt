@@ -1,8 +1,5 @@
 package com.jetbrains.edu.jarvis.regex
 
-import com.jetbrains.edu.jarvis.DescriptionErrorAnnotator.Companion.callSynonyms
-import com.jetbrains.edu.jarvis.DescriptionErrorAnnotator.Companion.declareSynonyms
-import com.jetbrains.edu.jarvis.DescriptionErrorAnnotator.Companion.functionSynonyms
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 
@@ -26,6 +23,10 @@ interface RegexTest {
     shouldMatchGroup().forEach { assertTrue(regex.find(it.input)!!.groups[1]!!.value == it.answer) }
 
   companion object {
+
+    private fun callSynonyms() = listOf("call", "invoke", "execute", "run")
+    private fun functionSynonyms() = listOf("function", "fun")
+    private fun createSynonyms() = listOf("create", "set up", "declare")
 
     const val NUMBER_OF_RUNS = 10
     const val MIN_IDENTIFIER_NAME_LENGTH = 4
@@ -79,7 +80,7 @@ interface RegexTest {
     fun generateVariableDeclaration(variableNameLength: Int): TestAnswer {
       val variableName = generateIdentifier(variableNameLength)
       return TestAnswer(
-        "${declareSynonyms().random()} ${listOf(EMPTY_STRING, THE).random()} `${variableName}`",
+        "${createSynonyms().random()} ${listOf(EMPTY_STRING, THE).random()} `${variableName}`",
         variableName
       )
     }

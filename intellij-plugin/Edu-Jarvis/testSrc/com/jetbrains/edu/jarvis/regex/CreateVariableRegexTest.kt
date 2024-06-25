@@ -1,15 +1,15 @@
 package com.jetbrains.edu.jarvis.regex
 
-import com.jetbrains.edu.jarvis.enums.AnnotatorRule
+import com.jetbrains.edu.jarvis.highlighting.AnnotatorRule
 import com.jetbrains.edu.jarvis.regex.RegexTest.Companion.MAX_IDENTIFIER_NAME_LENGTH
 import com.jetbrains.edu.jarvis.regex.RegexTest.Companion.MIN_IDENTIFIER_NAME_LENGTH
 import com.jetbrains.edu.jarvis.regex.RegexTest.Companion.NUMBER_OF_RUNS
 import com.jetbrains.edu.jarvis.regex.RegexTest.Companion.generateVariableDeclaration
 import com.jetbrains.edu.learning.EduTestCase
 
-class VariableDeclarationRegexTest : RegexTest, EduTestCase() {
+class CreateVariableRegexTest : RegexTest, EduTestCase() {
 
-  override val regex = AnnotatorRule.VARIABLE_DECLARATION.regex
+  override val regex = AnnotatorRule.CREATE_VARIABLE.regex
 
   override fun shouldMatch(): List<String> = emptyList()
 
@@ -21,10 +21,8 @@ class VariableDeclarationRegexTest : RegexTest, EduTestCase() {
     } + listOf(
       TestAnswer("Create `foo`", "foo"),
       TestAnswer("declare `bar`", "bar"),
-      TestAnswer("Set `buzz`", "buzz"),
       TestAnswer("CreaTe the Variable `test1`", "test1"),
-      TestAnswer("Set `test2`", "test2"),
-      TestAnswer("Set the variable `_test3`", "_test3"),
+      TestAnswer("Create an empty string `bar`", "bar")
     )
 
   override fun shouldNotMatch() =
@@ -39,7 +37,7 @@ class VariableDeclarationRegexTest : RegexTest, EduTestCase() {
     "invoke the foo",
   )
 
-  fun testValidNamedFunctions() = testShouldMatch()
+  fun testValidNamedFunctions() = testShouldMatchGroup()
   fun testInvalidNamedFunctions() = testShouldNotMatch()
 
 }

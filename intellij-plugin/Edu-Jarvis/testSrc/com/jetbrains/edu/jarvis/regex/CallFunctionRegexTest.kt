@@ -1,15 +1,15 @@
 package com.jetbrains.edu.jarvis.regex
 
-import com.jetbrains.edu.jarvis.enums.AnnotatorRule
+import com.jetbrains.edu.jarvis.highlighting.AnnotatorRule
 import com.jetbrains.edu.jarvis.regex.RegexTest.Companion.MAX_IDENTIFIER_NAME_LENGTH
 import com.jetbrains.edu.jarvis.regex.RegexTest.Companion.MIN_IDENTIFIER_NAME_LENGTH
 import com.jetbrains.edu.jarvis.regex.RegexTest.Companion.NUMBER_OF_RUNS
 import com.jetbrains.edu.jarvis.regex.RegexTest.Companion.generateNoParenthesesFunction
 import com.jetbrains.edu.learning.EduTestCase
 
-class NoParenthesesFunctionRegexTest : RegexTest, EduTestCase() {
+class CallFunctionRegexTest : RegexTest, EduTestCase() {
 
-  override val regex = AnnotatorRule.NO_PARENTHESES_FUNCTION.regex
+  override val regex = AnnotatorRule.CALL_FUNCTION.regex
   override fun shouldMatch(): List<String> = emptyList()
 
   override fun shouldMatchGroup() =
@@ -18,7 +18,7 @@ class NoParenthesesFunctionRegexTest : RegexTest, EduTestCase() {
         (MIN_IDENTIFIER_NAME_LENGTH..MAX_IDENTIFIER_NAME_LENGTH).random()
       )
     } + listOf(
-      TestAnswer("call the function `foo`","foo"),
+      TestAnswer("call the function `foo` with 2 and 1","foo"),
       TestAnswer("InVOke `bar`", "bar"),
       TestAnswer("run the `buzz`", "buzz"),
       TestAnswer("call `print`","print"),

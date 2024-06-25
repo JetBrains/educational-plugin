@@ -1,4 +1,4 @@
-package com.jetbrains.edu.jarvis.enums
+package com.jetbrains.edu.jarvis.highlighting
 
 enum class AnnotatorError(val message: String) {
   NONE(""),
