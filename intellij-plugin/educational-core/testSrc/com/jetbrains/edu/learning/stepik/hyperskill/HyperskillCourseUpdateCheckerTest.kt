@@ -5,13 +5,13 @@ import com.intellij.notification.Notifications
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.getActionById
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.stepik.hyperskill.update.HyperskillCourseUpdateChecker
 import com.jetbrains.edu.learning.stepik.hyperskill.update.SyncHyperskillCourseAction
@@ -84,7 +84,9 @@ class HyperskillCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
   fun `test course updated at sync action`() {
     configureResponse("stages_response.json", courseResponse = "course_response_lite.json")
     val course = createHyperskillCourse(false)
-    course.addLesson(FrameworkLesson())
+    val lesson = FrameworkLesson()
+    lesson.parent = course
+    course.addLesson(lesson)
     course.hyperskillProject!!.title = "Outdated title"
 
     var notificationShown = false
