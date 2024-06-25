@@ -3,7 +3,7 @@ kotlin = "1.9.21"
 jackson = "2.14.3"
 okhttp = "4.12.0"
 retrofit = "2.9.0"
-educational-ml-library = "1.0.3"
+educational-ml-library = "1.0.5"
 
 [libraries]
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
