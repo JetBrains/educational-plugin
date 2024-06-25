@@ -7,9 +7,10 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.suggested.startOffset
-import com.jetbrains.edu.jarvis.enums.AnnotatorError
-import com.jetbrains.edu.jarvis.enums.AnnotatorRule
-import com.jetbrains.edu.jarvis.errors.AnnotatorParametrizedError
+import com.jetbrains.edu.jarvis.highlighting.AnnotatorError
+import com.jetbrains.edu.jarvis.highlighting.AnnotatorRule
+import com.jetbrains.edu.jarvis.highlighting.AnnotatorParametrizedError
+import com.jetbrains.edu.jarvis.highlighting.RelevantPart
 import com.jetbrains.edu.jarvis.messages.EduJarvisBundle
 import com.jetbrains.edu.jarvis.models.NamedFunction
 import com.jetbrains.edu.jarvis.models.NamedVariable
@@ -61,13 +62,13 @@ interface DescriptionErrorAnnotator : Annotator {
         getRelevantPartsByRegex(context.text, rule.regex).map {
           it to rule
         }
-      }.sortedBy { (match, _) ->
-        match.range.first
-      }.distinctBy { (match, _) ->
-        match.range.first
-      }.map { (match, rule) ->
+      }.distinctBy { (relevantPart, _) ->
+        relevantPart.identifier.range.first
+      }.sortedBy { (relevantPart, _) ->
+        relevantPart.identifier.range.first
+      }.map { (relevantPart, rule) ->
         DescriptionAnnotatorResult(
-          match.range, getError(rule, processor, match.value)
+          relevantPart.identifier.range, getError(rule, processor, relevantPart)
         )
       }.filter { it.parametrizedError.errorType != AnnotatorError.NONE }
       .toList()
@@ -77,8 +78,14 @@ interface DescriptionErrorAnnotator : Annotator {
    * Returns a sequence of [MatchGroup] representing the parts of `target`
    * string that are relevant based on the given [Regex].
    */
-  private fun getRelevantPartsByRegex(target: String, regex: Regex): Sequence<MatchGroup> {
-    return regex.findAll(target).mapNotNull { it.groups[1] }
+  private fun getRelevantPartsByRegex(target: String, regex: Regex): Sequence<RelevantPart> {
+    return regex.findAll(target).mapNotNull { it.toRelevantPart() }
+  }
+
+  private fun MatchResult.toRelevantPart(): RelevantPart? {
+    val identifier = groups[1] ?: return null
+    val arguments = if(groups.size > 2) groups[2]?.value else null
+    return RelevantPart(identifier, arguments)
   }
 
   fun String.isNamedFunction() = namedFunctionRegex.matches(this)
@@ -100,22 +107,22 @@ interface DescriptionErrorAnnotator : Annotator {
   fun getError(
     rule: AnnotatorRule,
     processor: ErrorProcessor,
-    target: String
+    target: RelevantPart
   ): AnnotatorParametrizedError {
     return when (rule) {
-      AnnotatorRule.VARIABLE_DECLARATION -> {
-        processor.visibleVariables.add(NamedVariable(target))
+      AnnotatorRule.STORE_VARIABLE, AnnotatorRule.CREATE_VARIABLE, AnnotatorRule.SET_VARIABLE -> {
+        processor.visibleVariables.add(NamedVariable(target.identifier.value))
         AnnotatorParametrizedError.NO_ERROR
       }
 
-      AnnotatorRule.NO_PARENTHESES_FUNCTION -> {
-        processor.processNamedFunction(target)
+      AnnotatorRule.CALL_FUNCTION -> {
+        processor.processNamedFunction(target.identifier.value, target.arguments)
       }
 
       AnnotatorRule.ISOLATED_CODE -> {
         when {
-          target.isNamedFunction() -> processor.processNamedFunction(target)
-          target.isNamedVariable() -> processor.processNamedVariable(target)
+          target.identifier.value.isNamedFunction() -> processor.processNamedFunction(target.identifier.value)
+          target.identifier.value.isNamedVariable() -> processor.processNamedVariable(target.identifier.value)
           else -> AnnotatorParametrizedError.NO_ERROR
         }
       }
@@ -143,16 +150,6 @@ interface DescriptionErrorAnnotator : Annotator {
 
 
   companion object {
-    fun callSynonyms() = listOf("call", "calls", "invoke", "invokes", "execute", "executes", "run", "runs")
-    fun functionSynonyms() = listOf("function", "fun")
-    fun declareSynonyms() =
-      listOf(
-        "create", "creates", "declare", "declares", "set up", "sets up", "store", "stores",
-        "stored", "set", "sets", "assign", "assigns", "give", "gives", "initialize", "initializes"
-      )
-
-    fun variableSynonyms() = listOf("var", "variable")
-
     val namedFunctionRegex = "[a-zA-Z_][a-zA-Z0-9_]*\\((?:\\s*[^(),\\s]+\\s*(?:,\\s*[^(),\\s]+\\s*)*)?\\s*\\)".toRegex()
     val namedVariableRegex = "[a-zA-Z_][a-zA-Z0-9_]*".toRegex()
   }
