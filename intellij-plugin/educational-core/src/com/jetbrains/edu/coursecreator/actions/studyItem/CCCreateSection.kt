@@ -11,16 +11,13 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.StudyItem
-import com.jetbrains.edu.learning.courseFormat.jarvis.Tutorial
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.courseGeneration.jarvis.tutorial.TutorialGenerator
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.NonNls
 import java.io.IOException
 
 class CCCreateSection : CCCreateStudyItemActionBase<Section>(StudyItemType.SECTION_TYPE, EducationalCoreIcons.Section) {
   override fun addItem(course: Course, item: Section) {
-    if (item !is Tutorial) course.addSection(item)
+    course.addSection(item)
   }
 
   override fun getStudyOrderable(item: StudyItem, course: Course): Function<VirtualFile, out StudyItem?> {
@@ -29,7 +26,7 @@ class CCCreateSection : CCCreateStudyItemActionBase<Section>(StudyItemType.SECTI
 
   @Throws(IOException::class)
   override fun createItemDir(project: Project, course: Course, item: Section, parentDirectory: VirtualFile): VirtualFile {
-    return if (item is Tutorial) TutorialGenerator.generateTutorial(course) else GeneratorUtils.createSection(project, item, parentDirectory)
+    return GeneratorUtils.createSection(project, item, parentDirectory)
   }
 
   override fun getSiblingsSize(course: Course, parentItem: StudyItem?): Int = course.items.size
@@ -56,8 +53,7 @@ class CCCreateSection : CCCreateStudyItemActionBase<Section>(StudyItemType.SECTI
 
   override val studyItemVariants: List<StudyItemVariant>
     get() = listOf(
-      StudyItemVariant(StudyItemType.SECTION_TYPE.presentableTitleName, "", EducationalCoreIcons.Section) { Section() },
-      StudyItemVariant(EduCoreBundle.message("item.tutorial.title"), "", EducationalCoreIcons.Section) { Tutorial() }
+      StudyItemVariant(StudyItemType.SECTION_TYPE.presentableTitleName, "", EducationalCoreIcons.Section) { Section() }
     )
 
   companion object {
