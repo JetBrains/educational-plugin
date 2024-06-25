@@ -1,6 +1,5 @@
 package com.jetbrains.edu.jarvis.regex
 
-import com.jetbrains.edu.jarvis.highlighting.GrammarRegex
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 
