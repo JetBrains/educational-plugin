@@ -392,7 +392,22 @@ fun TaskContainer.customRunIdeTask(
   versionWithCode: String? = null,
   baseTaskName: String = type.name
 ) {
+  // Temporary workaround to avoid
+  // ```
+  // java.io.IOException: Cannot snapshot <sandboxSystemDir>/jcef_cache/SingletonSocket: not a regular file
+  // ```
+  // when you run IDE with non-empty sandbox dir.
+  // Already fixed by https://github.com/JetBrains/intellij-platform-gradle-plugin/commit/07cb0f96e8a5f575d521bb393c15c346d68883a4,
+  // so the fix will be in intellij-platform gradle plugin beta8
+  val deleteJCEFCacheTask = register("deleteJCEFCache_$baseTaskName", Delete::class) {
+    delete(
+      intellijPlatform.sandboxContainer.dir("${baseTaskName.lowercase()}-sandbox-$environmentName/system_run$baseTaskName/jcef_cache")
+    )
+  }
+
   register("run$baseTaskName", CustomRunIdeTask::class) {
+    dependsOn(deleteJCEFCacheTask)
+
     if (versionWithCode != null) {
       val version = versionWithCode.toTypeWithVersion().version
 
