@@ -27,11 +27,11 @@ class KtErrorProcessor(
   }
 
   private fun getNumberOfParameters(parameters: String) = if (parameters.isNotBlank()) {
-    parameters.count { it == ARGUMENT_SEPARATOR } + parameters.countAnd() +  1
+    parameters.count { it == ARGUMENT_SEPARATOR } + parameters.containsAndInt() + 1
   }
   else 0
 
-  private fun String.countAnd() = if(AND in this) 1 else 0
+  private fun String.containsAndInt() = if(AND in this) 1 else 0
 
   override fun String.toNamedVariable(): NamedVariable = NamedVariable(this)
 }
