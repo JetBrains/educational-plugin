@@ -102,12 +102,12 @@ object GrammarRegex {
 
 
   /**
-   * Regex that matches variable storing. Example: "Store 3 in the variable `foo`".
+   * Regex that matches variable storing. Example: ``Store 3 in the variable `foo` ``.
    */
   val storeVariable = ("(?i)(?:$STORE)(?:\\s+(?:$ARTICLE))?(?:\\s+(?:$VALUE))?\\s+(?:$value)(?:\\s+(?:$arbitraryText))*\\s+$IN" +
                        "(?:\\s+(?:$ARTICLE))?(?:\\s+(?:$VARIABLE))?\\s+$IDENTIFIER").toRegex()
   /**
-   * Regex that matches variable creation. Example: "Create an empty string `foo`".
+   * Regex that matches variable creation. Example: ``Create an empty string `foo` ``.
    */
   val createVariable = ("(?i)(?:$CREATE)(?:\\s+(?:$ARTICLE))?(?:\\s+(?:$word))?(?:\\s+(?:$VARIABLE))?" +
                         "(?:\\s+(?:$CALLED))?(?:\\s+(?:$IDENTIFIER))").toRegex()
@@ -119,8 +119,15 @@ object GrammarRegex {
   /**
    * Regex that matches a function call. Example: "Call the function `foo` with 1 and 3".
    */
-  val callFunction = ("(?i)(?:$CALL)(?:\\s+(?:$ARTICLE))?(?:\\s+(?:$FUNCTION))?" +
-                      "\\s+$IDENTIFIER(\\s+$WITH\\s+(?:$value)(?:(?:\\s*$SEPARATOR\\s*(?:$value))*\\s+$AND\\s+(?:$value))?)?").toRegex()
+  val callFunction = ("(?i)(?:$CALL)(?:\\s+(?:$ARTICLE))?(?:\\s+(?:$FUNCTION))?\\s+$IDENTIFIER" +
+                      "(\\s+$WITH\\s+(?:$value)(?:(?:\\s*$SEPARATOR\\s*(?:$value))*(?:\\s+$AND\\s+(?:$value))?)?)?").toRegex()
 
+  /**
+   * Regex that matches an isolated code in the text. Example: "`foo123`".
+   */
   val isolatedCode = CODE.toRegex()
+
+  fun getCallSynonyms() = CALL.split("|")
+  fun getFunctionSynonyms() = FUNCTION.split("|")
+  fun getCreateSynonyms() = CREATE.split("|")
 }
