@@ -223,20 +223,23 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
 
   private fun getEduTestInfo(paths: MutableList<String> = mutableListOf(), children: List<SMTestProxy>): List<EduTestInfo> {
     val result = mutableListOf<EduTestInfo>()
-    children.forEach {
-      paths.add(it.presentableName)
-      if (it.isLeaf) {
+    val nameCounter = mutableMapOf<String, Int>()
+
+    fun generateUniqueTestName(testName: String): String {
+      val occurrences = nameCounter.getOrPut(testName) { 0 }
+      nameCounter[testName] = occurrences + 1
+      return if (occurrences > 0) "$testName[$occurrences]" else testName
+    }
+
+    children.forEach { child ->
+      paths.add(child.presentableName)
+      if (child.isLeaf) {
         // Submission Service stores a test name with a maximum length of 255 characters.
         // The number 245 is chosen to allow space for [1], [2], etc., for possible duplicate test names.
-        var testName = paths.joinToString(":").take(245)
-        val testCount = result.count { test -> test.name == testName }
-        if (testCount > 0) {
-          testName = "$testName[$testCount]"
-        }
-        result.add(EduTestInfo(testName, it.magnitudeInfo.value))
-      }
-      else {
-        result.addAll(getEduTestInfo(paths, it.children))
+        val uniqueTestName = paths.joinToString(":").take(245).let(::generateUniqueTestName)
+        result.add(EduTestInfo(uniqueTestName, child.magnitudeInfo.value))
+      } else {
+        result.addAll(getEduTestInfo(paths, child.children))
       }
       paths.removeLast()
     }
