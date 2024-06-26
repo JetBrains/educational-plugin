@@ -40,6 +40,6 @@ class HyperskillTwitterConfigurator : TwitterPluginConfigurator {
   }
 
   companion object {
-    private const val NUMBER_OF_IMAGES = 3
+    private const val NUMBER_OF_IMAGES = 2
   }
 }
