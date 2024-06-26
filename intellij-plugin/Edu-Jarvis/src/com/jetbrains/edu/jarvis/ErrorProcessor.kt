@@ -37,7 +37,7 @@ interface ErrorProcessor {
   }
 
   /**
-   * Processes the provided `target` string as a named variable and
+   * Processes the provided `target` as a named variable and
    * returns the associated [AnnotatorParametrizedError].
    */
   fun processNamedVariable(target: String): AnnotatorParametrizedError {
@@ -51,7 +51,14 @@ interface ErrorProcessor {
     else AnnotatorParametrizedError.NO_ERROR
   }
 
+  /**
+   * Casts a [String] to a [NamedFunction]
+   */
   fun String.toNamedFunction(arguments: String? = null): NamedFunction
+
+  /**
+   * Casts a [String] to a [NamedVariable]
+   */
   fun String.toNamedVariable(): NamedVariable
 
   companion object {
