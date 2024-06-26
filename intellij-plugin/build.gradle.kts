@@ -178,6 +178,10 @@ allprojects {
     implementationWithoutKotlin(rootProject.libs.retrofit)
     implementationWithoutKotlin(rootProject.libs.converter.jackson)
     implementationWithoutKotlin(rootProject.libs.kotlin.css.jvm)
+    implementationWithoutKotlin(rootProject.libs.kotlin.logging)
+    implementationWithoutKotlin(rootProject.libs.logback)
+    implementationWithoutKotlin(rootProject.libs.test.spark)
+    implementationWithoutKotlin(rootProject.libs.konsume.xml)
 
     testImplementationWithoutKotlin(rootProject.libs.kotlin.test.junit)
     testImplementationWithoutKotlin(rootProject.libs.mockwebserver)
