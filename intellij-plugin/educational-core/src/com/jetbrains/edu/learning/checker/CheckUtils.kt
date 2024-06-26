@@ -1,10 +1,6 @@
 package com.jetbrains.edu.learning.checker
 
-import com.intellij.execution.ExecutionException
-import com.intellij.execution.ExecutionListener
-import com.intellij.execution.ExecutionManager
-import com.intellij.execution.RunManager
-import com.intellij.execution.RunnerAndConfigurationSettings
+import com.intellij.execution.*
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.impl.ExecutionManagerImpl
@@ -47,15 +43,23 @@ object CheckUtils {
 
   val COMPILATION_ERRORS = listOf("Compilation failed", "Compilation error")
 
-  val CONGRATULATIONS = EduFormatBundle.message("check.correct.solution")
-  val COMPILATION_FAILED_MESSAGE = EduCoreBundle.message("check.error.compilation.failed")
-  val NOT_RUNNABLE_MESSAGE = EduCoreBundle.message("check.error.solution.not.runnable")
-  val SYNTAX_ERROR_MESSAGE = EduCoreBundle.message("check.error.syntax.error")
-  val EXECUTION_ERROR_MESSAGE = EduCoreBundle.message("check.execution.error")
-  val ERRORS = listOf(
-    COMPILATION_FAILED_MESSAGE, EduFormatBundle.message("error.failed.to.launch.checking"), SYNTAX_ERROR_MESSAGE,
-    EXECUTION_ERROR_MESSAGE
-  )
+  val CONGRATULATIONS: String
+    get() = EduFormatBundle.message("check.correct.solution")
+  val COMPILATION_FAILED_MESSAGE: String
+    get() = EduCoreBundle.message("check.error.compilation.failed")
+  val NOT_RUNNABLE_MESSAGE: String
+    get() = EduCoreBundle.message("check.error.solution.not.runnable")
+  val SYNTAX_ERROR_MESSAGE: String
+    get() = EduCoreBundle.message("check.error.syntax.error")
+  val EXECUTION_ERROR_MESSAGE: String
+    get() = EduCoreBundle.message("check.execution.error")
+  val ERRORS: Set<String>
+    get() = setOf(
+      COMPILATION_FAILED_MESSAGE,
+      EduFormatBundle.message("error.failed.to.launch.checking"),
+      SYNTAX_ERROR_MESSAGE,
+      EXECUTION_ERROR_MESSAGE
+    )
 
   fun fillWithIncorrect(message: String): String =
     message.nullize(nullizeSpaces = true) ?: EduCoreBundle.message("check.incorrect")
