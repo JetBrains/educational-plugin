@@ -7,13 +7,12 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.suggested.startOffset
-import com.jetbrains.edu.jarvis.highlighting.AnnotatorError
-import com.jetbrains.edu.jarvis.highlighting.AnnotatorRule
-import com.jetbrains.edu.jarvis.highlighting.AnnotatorParametrizedError
-import com.jetbrains.edu.jarvis.highlighting.RelevantPart
+import com.jetbrains.edu.jarvis.highlighting.*
 import com.jetbrains.edu.jarvis.messages.EduJarvisBundle
 import com.jetbrains.edu.jarvis.models.NamedFunction
+import com.jetbrains.edu.jarvis.models.NamedFunction.Companion.isNamedFunction
 import com.jetbrains.edu.jarvis.models.NamedVariable
+import com.jetbrains.edu.jarvis.models.NamedVariable.Companion.isNamedVariable
 import kotlin.reflect.KClass
 
 /**
@@ -50,25 +49,23 @@ interface DescriptionErrorAnnotator : Annotator {
     }
 
   /**
-   * Returns a sequence of [DescriptionAnnotatorResult] which contains parts of
+   * Returns a sequence of [IncorrectPart] which contains parts of
    * `context` to be highlighted and the type of error that the corresponding part contains.
    */
-  fun getIncorrectParts(context: PsiElement): Collection<DescriptionAnnotatorResult> {
+  fun getIncorrectParts(context: PsiElement): Collection<IncorrectPart> {
     val visibleFunctions = getVisibleEntities(context, *getNamedFunctionClasses()) { it.toNamedFunctionOrNull() }
     val visibleVariables = getVisibleEntities(context, *getNamedVariableClasses()) { it.toNamedVariableOrNull() }
     val processor = getProcessor(visibleFunctions, visibleVariables)
     return AnnotatorRule.values().asSequence()
       .flatMap { rule ->
-        getRelevantPartsByRegex(context.text, rule.regex).map {
-          it to rule
-        }
-      }.distinctBy { (relevantPart, _) ->
-        relevantPart.identifier.range.first
-      }.sortedBy { (relevantPart, _) ->
-        relevantPart.identifier.range.first
-      }.map { (relevantPart, rule) ->
-        DescriptionAnnotatorResult(
-          relevantPart.identifier.range, getError(rule, processor, relevantPart)
+        getAnnotatorRuleMatches(context.text, rule)
+      }.distinctBy { match ->
+        match.identifier.range.first
+      }.sortedBy { match ->
+        match.identifier.range.first
+      }.map { match ->
+        IncorrectPart(
+          match.identifier.range, getError(match.rule, processor, match)
         )
       }.filter { it.parametrizedError.errorType != AnnotatorError.NONE }
       .toList()
@@ -78,20 +75,23 @@ interface DescriptionErrorAnnotator : Annotator {
    * Returns a sequence of [MatchGroup] representing the parts of `target`
    * string that are relevant based on the given [Regex].
    */
-  private fun getRelevantPartsByRegex(target: String, regex: Regex): Sequence<RelevantPart> {
-    return regex.findAll(target).mapNotNull { it.toRelevantPart() }
+  private fun getAnnotatorRuleMatches(target: String, rule: AnnotatorRule): Sequence<AnnotatorRuleMatch> {
+    return rule.regex.findAll(target).map { it.toAnnotatorRuleMatch(rule) }
   }
 
-  private fun MatchResult.toRelevantPart(): RelevantPart? {
-    val identifier = groups[1] ?: return null
+  /**
+   * Converts [MatchResult] to [AnnotatorRuleMatch].
+   * The [MatchResult] must contain at least one non-null capturing group.
+   */
+  private fun MatchResult.toAnnotatorRuleMatch(rule: AnnotatorRule): AnnotatorRuleMatch {
+    val identifier = groups[1] ?: error("Invalid regular expression. There should be at least one non-null capturing group.")
     val arguments = if(groups.size > 2) groups[2]?.value else null
-    return RelevantPart(identifier, arguments)
+    return AnnotatorRuleMatch(rule, identifier, arguments)
   }
 
-  fun String.isNamedFunction() = namedFunctionRegex.matches(this)
-
-  fun String.isNamedVariable() = namedVariableRegex.matches(this)
-
+  /**
+   * Returns visible entities, that is, entities that can be accessed from the `context` scope.
+   */
   fun <T> getVisibleEntities(
     context: PsiElement,
     vararg targetClasses: KClass<out PsiElement>,
@@ -107,7 +107,7 @@ interface DescriptionErrorAnnotator : Annotator {
   fun getError(
     rule: AnnotatorRule,
     processor: ErrorProcessor,
-    target: RelevantPart
+    target: AnnotatorRuleMatch
   ): AnnotatorParametrizedError {
     return when (rule) {
       AnnotatorRule.STORE_VARIABLE, AnnotatorRule.CREATE_VARIABLE, AnnotatorRule.SET_VARIABLE -> {
@@ -145,13 +145,16 @@ interface DescriptionErrorAnnotator : Annotator {
    * Returns the classes of PSI elements that represent named functions.
    */
   fun getNamedFunctionClasses(): Array<KClass<out PsiElement>>
+
+  /**
+   * Returns the [ErrorProcessor] for analyzing and finding the errors.
+   */
   fun getProcessor(visibleFunctions: MutableSet<NamedFunction>, visibleVariables: MutableSet<NamedVariable>): ErrorProcessor
+
+  /**
+   * Returns the [PsiElement] representing the description block.
+   * May return `null` if there is no description.
+   */
   fun getDescriptionContentOrNull(element: PsiElement): PsiElement?
-
-
-  companion object {
-    val namedFunctionRegex = "[a-zA-Z_][a-zA-Z0-9_]*\\((?:\\s*[^(),\\s]+\\s*(?:,\\s*[^(),\\s]+\\s*)*)?\\s*\\)".toRegex()
-    val namedVariableRegex = "[a-zA-Z_][a-zA-Z0-9_]*".toRegex()
-  }
 
 }
