@@ -7,8 +7,6 @@ class StoreVariableRegexTest : RegexTest, EduTestCase() {
 
   override val regex = AnnotatorRule.STORE_VARIABLE.regex
 
-  override fun shouldMatch(): List<String> = emptyList()
-
   override fun shouldMatchGroup() =
     listOf(
       // Test all STORE synonyms
