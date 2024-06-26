@@ -35,6 +35,7 @@ import com.jetbrains.edu.jarvis.utils.isJarvisApplicable
  * The tutorial section can be accessed by right-clicking on the project root directory (main folder) and navigating to New -> Tutorial.
  */
 // TODO: change the icon
+@Suppress("ComponentNotRegistered")
 class TutorialGenerator : DumbAwareAction(EduJarvisBundle.message("item.tutorial.title"), "", EducationalCoreIcons.Section) {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
