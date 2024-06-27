@@ -8,7 +8,8 @@ private val TaskDescriptionHtmlTransformer = HtmlTransformer.pipeline(
   MediaThemesTransformer,
   ExternalLinkIconsTransformer,
   CodeHighlighter,
-  HintsWrapper
+  HintsWrapper,
+  TermsHighlighter
 )
 
 val TaskDescriptionTransformer = StringHtmlTransformer.pipeline(

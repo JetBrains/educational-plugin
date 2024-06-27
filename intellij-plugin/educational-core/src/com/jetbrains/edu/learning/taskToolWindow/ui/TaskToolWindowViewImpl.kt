@@ -43,6 +43,8 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.navigationMap.NavigationMapT
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType.SUBMISSIONS_TAB
+import com.jetbrains.edu.learning.theoryLookup.TermsListener
+import com.jetbrains.edu.learning.theoryLookup.TermsManager
 import java.awt.Component
 import java.awt.Dimension
 import javax.swing.*
@@ -239,6 +241,13 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
     connection.subscribe(SubmissionsManager.TOPIC, SubmissionsListener {
       invokeLater {
         updateTab(SUBMISSIONS_TAB)
+      }
+    })
+    connection.subscribe(TermsManager.TOPIC, TermsListener { task ->
+      invokeLater {
+        if (task == project.getCurrentTask()) {
+          updateTaskDescription()
+        }
       }
     })
   }

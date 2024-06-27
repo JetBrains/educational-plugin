@@ -253,6 +253,12 @@ fun useDarkSrcCustomAttributeIfPresent(element: Element): Boolean {
   }
 }
 
+fun getDashedUnderlineElement(document: Document, text: String): Element =
+  document.createElement(SPAN_ATTRIBUTE).apply {
+    attr(STYLE_ATTRIBUTE, "border-bottom: 1px dashed gray;")
+    appendText(text)
+  }
+
 fun addExternalLinkIcons(document: Document): Document {
   val links = document.getElementsByTag(A_TAG)
   val externalLinks = links.filter { element -> element.attr(HREF_ATTRIBUTE).matches(EXTERNAL_LINK_REGEX) }
