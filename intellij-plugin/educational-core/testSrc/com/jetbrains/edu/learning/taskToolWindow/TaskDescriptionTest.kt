@@ -216,6 +216,37 @@ class TaskDescriptionTest : EduTestCase() {
   }
 
   @Test
+  fun `local image outside task folder is replaced in dark theme`() = runWithDarkTheme {
+    val taskText = """
+      <html>
+       <head></head>
+       <body>
+        <p style="text-align: center;"><img src="../../image.png" width="400"></p>
+       </body>
+      </html>
+    """.trimIndent()
+
+    courseWithFiles {
+      lesson {
+        eduTask(taskDescription = taskText, taskDescriptionFormat = DescriptionFormat.HTML)
+      }
+      additionalFile("image.png")
+      additionalFile("image_dark.png")
+    }
+    val expectedText = """
+      <html>
+       <head></head>
+       <body>
+        <p style="text-align: center;"><img src="../../image_dark.png" width="400"></p>
+       </body>
+      </html>
+    """.trimIndent()
+    val task = findTask(0, 0)
+    val actualText = replaceMediaForTheme(project, task, Jsoup.parse(taskText)).toString().trimIndent()
+    assertEquals(expectedText, actualText)
+  }
+
+  @Test
   fun `test remote image replaced from srcset in dark theme`() {
     runWithDarkTheme { doTestImageReplacedFromSrcset("https://dark.png") }
   }

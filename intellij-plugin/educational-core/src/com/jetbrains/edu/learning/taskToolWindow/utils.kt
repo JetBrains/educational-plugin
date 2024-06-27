@@ -8,6 +8,7 @@ import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.LinkLabel
 import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.openapi.vfs.findFile
 import com.intellij.ui.ExperimentalUI
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.AnActionLink
@@ -222,7 +223,7 @@ fun Element.getDarkImageSrc(project: Project, task: Task): String? {
   val fileExtension = FileUtilRt.getExtension(srcAttr)
   val darkImagePath = "$fileNameWithoutExtension$DARK_SUFFIX.$fileExtension"
   val taskDir = task.getDir(project.courseDir)
-  if (darkImagePath in task.taskFiles || taskDir?.findChild(darkImagePath)?.exists() == true) {
+  if (darkImagePath in task.taskFiles || taskDir?.findFile(darkImagePath)?.exists() == true) {
     return darkImagePath
   }
 
