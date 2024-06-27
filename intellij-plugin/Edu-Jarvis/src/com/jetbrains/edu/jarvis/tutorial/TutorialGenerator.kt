@@ -52,7 +52,7 @@ class TutorialGenerator : DumbAwareAction(EduJarvisBundle.message("item.tutorial
     if (!CCUtils.isCourseCreator(project)) return
     if (!isJarvisApplicable(course)) return
     val selectedFiles = event.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return
-    if (selectedFiles[0] != project.courseDir) return
+    if (selectedFiles.firstOrNull() != project.courseDir) return
     if (CommonDataKeys.PSI_FILE.getData(event.dataContext) != null) return
     presentation.isEnabledAndVisible = true
   }
@@ -76,11 +76,15 @@ class TutorialGenerator : DumbAwareAction(EduJarvisBundle.message("item.tutorial
     }
     val project = course.project ?: error("Project is not found")
     val virtualFile = GeneratorUtils.createSection(project, section, project.courseDir)
+    saveSectionStructureToYaml(section, course)
+    return virtualFile
+  }
+
+  private fun saveSectionStructureToYaml(section: Section, course: Course) {
     section.lessons.forEach { it.taskList.forEach { task -> YamlFormatSynchronizer.saveItemWithRemoteInfo(task) } }
     section.lessons.forEach { lesson -> YamlFormatSynchronizer.saveItem(lesson) }
     YamlFormatSynchronizer.saveItem(section)
     YamlFormatSynchronizer.saveItem(course)
-    return virtualFile
   }
 
   private fun Course.createSection() =
@@ -110,12 +114,15 @@ class TutorialGenerator : DumbAwareAction(EduJarvisBundle.message("item.tutorial
     }.apply {
       name = taskName
       index = taskIndex
-      customPresentableName = "${lesson.parent.presentableName} - ${lesson.presentableName} - ${taskName.getPresentableName()}"
+      customPresentableName = getTaskPresentableName(lesson, taskName)
       parent = lesson
       descriptionText = getFileContentFromResources(lesson.course, joinPaths(RESOURCE_FOLDER, lesson.name, taskName, TASK_MD))
       descriptionFormat = DescriptionFormat.MD
       taskFiles = createTaskFiles(this).associateBy { it.name }
     }
+
+  private fun getTaskPresentableName(lesson: ItemContainer, taskName: String) =
+    "${lesson.parent.presentableName} - ${lesson.presentableName} - ${taskName.getPresentableName()}"
 
   private fun createTaskFile(task: Task, contentType: ContentType): TaskFile {
     val fileName = getFileName(task.course, contentType)
