@@ -1,12 +1,12 @@
 package com.jetbrains.edu.jarvis.grammar
 
-import com.jetbrains.edu.learning.*
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.Test
 
 @RunWith(Parameterized::class)
-class ProblemSolvingLanguageGrammarTest(private val sentence: String) : EduTestCase() {
+class ProblemSolvingLanguageGrammarTest(private val sentence: String) : BasePlatformTestCase() {
 
   companion object {
     @JvmStatic
