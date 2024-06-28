@@ -105,7 +105,6 @@ object GrammarRegex {
     CODE,
   ).joinToString("|")
 
-
   /**
    * Regex that matches variable storing. Example: ``Store 3 in the variable `foo` ``.
    */
@@ -125,7 +124,7 @@ object GrammarRegex {
                      IDENTIFIER).toRegex()
 
   /**
-   * Regex that matches variable storing. Example: ``Store 3 in the variable `foo` ``.
+   * Regex that matches variable saving. Example: ``Save 3 to the variable `foo` ``.
    */
   val saveVariable = ("(?i)(?:$SAVE)(?:\\s+(?:$ARTICLE))?(?:\\s+(?:$VALUE))?\\s+(?:$value)(?:\\s+(?:$arbitraryText))*\\s+$TO" +
                        "(?:\\s+(?:$ARTICLE))?(?:\\s+(?:$VARIABLE))?\\s+$IDENTIFIER").toRegex()
