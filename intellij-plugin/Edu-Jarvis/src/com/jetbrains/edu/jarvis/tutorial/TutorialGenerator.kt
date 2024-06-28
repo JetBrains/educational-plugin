@@ -103,6 +103,7 @@ class TutorialGenerator : DumbAwareAction(EduJarvisBundle.message("item.tutorial
       customPresentableName = lessonName.getPresentableName()
       index = section.items.size + 1
       parent = section
+      isTemplateBased = false
       section.addLesson(this)
       createTasks(this).forEach { task -> addTask(task) }
     }
