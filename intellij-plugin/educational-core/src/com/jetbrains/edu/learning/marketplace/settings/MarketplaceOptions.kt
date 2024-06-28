@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.marketplace.settings
 
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.ui.HyperlinkAdapter
+import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.authUtils.EduLoginConnector
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -59,9 +60,9 @@ class MarketplaceOptions : OAuthLoginOptions<MarketplaceAccount>() {
     }
   }
 
-  override fun getAdditionalComponents(): List<JComponent> = listOf(
-    userAgreementCheckBox, shareMySolutionsCheckBox, statisticsCollectionAllowedCheckBox
-  )
+  override fun getAdditionalComponents(): List<JComponent> =
+    if (RemoteEnvHelper.isRemoteDevServer()) listOf(shareMySolutionsCheckBox, statisticsCollectionAllowedCheckBox)
+    else listOf(userAgreementCheckBox, shareMySolutionsCheckBox, statisticsCollectionAllowedCheckBox)
 
   override fun apply() {
     super.apply()
