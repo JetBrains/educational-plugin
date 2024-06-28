@@ -13,8 +13,10 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.jetbrains.edu.jvm.gradle.GradleWrapperListener
+import com.jetbrains.edu.jvm.messages.EduJVMBundle
 import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createFileFromTemplate
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_UNIX
@@ -62,7 +64,7 @@ object EduGradleUtils {
       if (existingProject.externalProjectPath == null) {
         existingProject.externalProjectPath = location
       }
-      setUpGradleJvm(existingProject, sdk)
+      setUpGradleJvm(project, existingProject, sdk)
       return
     }
 
@@ -72,20 +74,21 @@ object EduGradleUtils {
     // IDEA runner is much more faster and it doesn't write redundant messages into console.
     // Note, it doesn't affect tests - they still are run with gradle runner
     gradleProjectSettings.delegatedBuild = false
-    setUpGradleJvm(gradleProjectSettings, sdk)
+    setUpGradleJvm(project, gradleProjectSettings, sdk)
 
     val projects = systemSettings.linkedProjectsSettings.toHashSet()
     projects.add(gradleProjectSettings)
     systemSettings.linkedProjectsSettings = projects
   }
 
-  private fun setUpGradleJvm(projectSettings: GradleProjectSettings, sdk: Sdk?) {
+  private fun setUpGradleJvm(project: Project, projectSettings: GradleProjectSettings, sdk: Sdk?) {
     if (sdk == null) return
     val projectSdkVersion = sdk.javaSdkVersion
-    val internalJdk = ExternalSystemJdkUtil.resolveJdkName(null, USE_INTERNAL_JAVA)
-    val internalSdkVersion = internalJdk?.javaSdkVersion
+    val internalSdkVersion = computeUnderProgress(project, EduJVMBundle.message("progress.resolving.suitable.jdk"), false) {
+      ExternalSystemJdkUtil.resolveJdkName(null, USE_INTERNAL_JAVA)
+    }?.javaSdkVersion
 
-    // Try to avoid incompatibility between gradle and jdk versions
+    // Try to avoid incompatibility between Gradle and JDK versions
     projectSettings.gradleJvm = when {
       internalSdkVersion == null -> USE_PROJECT_JDK
       projectSdkVersion == null -> USE_INTERNAL_JAVA
