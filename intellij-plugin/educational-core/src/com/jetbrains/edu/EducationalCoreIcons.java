@@ -45,6 +45,22 @@ public final class EducationalCoreIcons {
   }
 
   /**
+   * Utility class that provides icons for various actions
+   *
+   * <p>All icons are 16x16</p>
+   */
+  public static final class Actions {
+    public static final Icon ApplyCode = load("/icons/com/jetbrains/edu/learning/applyCode.svg");
+    public static final Icon CommentTask = load("/icons/com/jetbrains/edu/learning/commentTask.svg");
+    public static final Icon EduCourse = load("/icons/com/jetbrains/edu/eduCourseAction.svg");
+    public static final Icon IgnoreSyncFile = load("/icons/com/jetbrains/edu/actions/syncFilesIgnore.svg");
+    public static final Icon LoggedInUser = load("/icons/com/jetbrains/edu/learning/loggedInUser.svg");
+    public static final Icon RateCourse = load("/icons/com/jetbrains/edu/learning/rateCourse.svg");
+    public static final Icon ResetTask = load("/icons/com/jetbrains/edu/learning/resetTask.svg");
+    public static final Icon SyncChanges = load("/icons/com/jetbrains/edu/actions/syncFiles.svg");
+  }
+
+  /**
    * Utility class that provides icons for the check panel.
    */
   public static final class CheckPanel {
@@ -152,20 +168,5 @@ public final class EducationalCoreIcons {
     public static final Icon NavigationMapTheoryTask = load("/icons/com/jetbrains/edu/eduNavigationMapTheoryTask.svg");
   }
 
-
-  public static final Icon LOGGED_IN_USER = load("/icons/com/jetbrains/edu/learning/loggedInUser.svg"); // 16x16
-  public static final Icon CourseAction = load("/icons/com/jetbrains/edu/eduCourseAction.svg"); // 16x16
-
-  public static final Icon ResetTask = load("/icons/com/jetbrains/edu/learning/resetTask.svg"); // 16x16
-  public static final Icon CommentTask = load("/icons/com/jetbrains/edu/learning/commentTask.svg"); // 16x16
-
-  public static final Icon RateCourse = load("/icons/com/jetbrains/edu/learning/rateCourse.svg"); // 16x16
-
   public static final Icon DOT = load("/icons/com/jetbrains/edu/learning/dot.svg"); // 3x3
-
-  public static final Icon ApplyCode = load("/icons/com/jetbrains/edu/learning/applyCode.svg"); // 16x16
-
-  public static final Icon SyncFiles = load("/icons/com/jetbrains/edu/syncFiles.svg"); // 14x14
-
-  public static final Icon SyncChangesIgnore = load("/icons/com/jetbrains/edu/syncFilesIgnore.svg"); // 16x16
 }

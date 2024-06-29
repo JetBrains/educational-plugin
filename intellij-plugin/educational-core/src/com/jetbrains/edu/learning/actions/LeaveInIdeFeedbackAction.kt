@@ -4,7 +4,6 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.RightAlignedToolbarAction
 import com.intellij.openapi.project.DumbAwareAction
-import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.course
@@ -12,11 +11,10 @@ import com.jetbrains.edu.learning.feedback.StudentInIdeFeedbackDialog
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.NonNls
 
-class LeaveInIdeFeedbackAction : DumbAwareAction(
-  EduCoreBundle.lazyMessage("action.leave.feedback.text"),
-  EduCoreBundle.lazyMessage("action.leave.feedback.description"),
-  EducationalCoreIcons.CommentTask
-), RightAlignedToolbarAction {
+class LeaveInIdeFeedbackAction :
+  DumbAwareAction(EduCoreBundle.lazyMessage("action.leave.feedback.text"), EduCoreBundle.lazyMessage("action.leave.feedback.description")),
+  RightAlignedToolbarAction
+{
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return

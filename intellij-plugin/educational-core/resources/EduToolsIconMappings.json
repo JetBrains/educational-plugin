@@ -4,6 +4,15 @@
       "jetbrains" : {
         "edu" : {
           "expui" : {
+            "actions" : {
+              "applyCode.svg" : "icons/com/jetbrains/edu/learning/applyCode.svg",
+              "commentTask.svg" : "icons/com/jetbrains/edu/learning/commentTask.svg",
+              "eduCourse.svg" : "icons/com/jetbrains/edu/eduCourseAction.svg",
+              "loggedInUser.svg" : "icons/com/jetbrains/edu/learning/loggedInUser.svg",
+              "rateCourse.svg" : "icons/com/jetbrains/edu/learning/rateCourse.svg",
+              "resetTask.svg" : "icons/com/jetbrains/edu/learning/resetTask.svg",
+              "syncChanges.svg" : "icons/com/jetbrains/edu/syncFiles.svg"
+            },
             "checkPanel" : {
               "checkDetails.svg" : "icons/com/jetbrains/edu/learning/checkDetailsToolWindow.svg",
               "resultCorrect.svg" : "icons/com/jetbrains/edu/learning/resultCorrect.svg",
@@ -40,13 +49,6 @@
               "logoScala.svg" : "icons/com/jetbrains/edu/learning/ScalaLogo.svg",
               "logoShell.svg" : "icons/com/jetbrains/edu/learning/ShellLogo.svg"
             },
-            "learning" : {
-              "applyCode.svg" : "icons/com/jetbrains/edu/learning/applyCode.svg",
-              "commentTask.svg" : "icons/com/jetbrains/edu/learning/commentTask.svg",
-              "loggedInUser.svg" : "icons/com/jetbrains/edu/learning/loggedInUser.svg",
-              "rateCourse.svg" : "icons/com/jetbrains/edu/learning/rateCourse.svg",
-              "resetTask.svg" : "icons/com/jetbrains/edu/learning/resetTask.svg"
-            },
             "platform" : {
               "checkio@24x24.svg" : "icons/com/jetbrains/edu/learning/checkio.svg",
               "coursera@24x24.svg" : "icons/com/jetbrains/edu/learning/coursera.svg",
@@ -62,9 +64,7 @@
               "courseToolWindow.svg" : "icons/com/jetbrains/edu/eduCourseTask.svg",
               "moveDown.svg" : "icons/com/jetbrains/edu/learning/moveDown.svg",
               "moveUp.svg" : "icons/com/jetbrains/edu/learning/moveUp.svg"
-            },
-            "eduCourseAction.svg" : "icons/com/jetbrains/edu/eduCourseAction.svg",
-            "syncFiles.svg" : "icons/com/jetbrains/edu/syncFiles.svg"
+            }
           }
         }
       }

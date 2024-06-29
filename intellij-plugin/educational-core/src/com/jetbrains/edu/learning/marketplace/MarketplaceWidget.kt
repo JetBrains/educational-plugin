@@ -17,7 +17,7 @@ class MarketplaceWidget(project: Project) : LoginWidget<MarketplaceAccount>(
   project,
   EduCoreBundle.message("marketplace.widget.title"),
   EduCoreBundle.message("marketplace.widget.tooltip"),
-  EducationalCoreIcons.CourseAction
+  EducationalCoreIcons.Actions.EduCourse
 ) {
   override val connector: EduLoginConnector<MarketplaceAccount, *>
     get() = MarketplaceConnector.getInstance()
