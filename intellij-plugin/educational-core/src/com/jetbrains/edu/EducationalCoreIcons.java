@@ -1,11 +1,15 @@
 package com.jetbrains.edu;
 
 import com.intellij.openapi.util.IconLoader;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class EducationalCoreIcons {
-  private static Icon load(String path) {
+/**
+ * Utility class that provides icons for various educational purposes
+ */
+public final class EducationalCoreIcons {
+  private static @NotNull Icon load(String path) {
     return IconLoader.getIcon(path, EducationalCoreIcons.class);
   }
 
