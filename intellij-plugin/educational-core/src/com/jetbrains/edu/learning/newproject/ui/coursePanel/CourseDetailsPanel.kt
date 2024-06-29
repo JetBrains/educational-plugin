@@ -131,7 +131,7 @@ private class CourseStatisticsPanel : NonOpaquePanel(HorizontalLayout(0)) {
     add(date)
   }
 
-  private fun createDotLabel() = JBLabel(EducationalCoreIcons.DOT).apply { border = JBUI.Borders.emptyRight(6) }
+  private fun createDotLabel() = JBLabel(EducationalCoreIcons.Dot).apply { border = JBUI.Borders.emptyRight(6) }
 
   private fun createGrayTextLabel(componentsFont: Font): JBLabel {
     return JBLabel().apply {

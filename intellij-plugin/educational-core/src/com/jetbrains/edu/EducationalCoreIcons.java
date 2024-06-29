@@ -143,5 +143,5 @@ public final class EducationalCoreIcons {
     public static final Icon RateCourse = load("/icons/com/jetbrains/edu/actions/rateCourse.svg");
   }
 
-  public static final Icon DOT = load("/icons/com/jetbrains/edu/learning/dot.svg"); // 3x3
+  public static final Icon Dot = load("/icons/com/jetbrains/edu/learning/dot.svg"); // 3x3
 }
