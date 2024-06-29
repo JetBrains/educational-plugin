@@ -4,9 +4,9 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
-import com.jetbrains.edu.EducationalCoreIcons
-import com.jetbrains.edu.EducationalCoreIcons.IdeTask
-import com.jetbrains.edu.EducationalCoreIcons.Task
+import com.jetbrains.edu.EducationalCoreIcons.CourseView.IdeTask
+import com.jetbrains.edu.EducationalCoreIcons.CourseView.Task
+import com.jetbrains.edu.EducationalCoreIcons.CourseView.TheoryTask
 import com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE
 import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
 import com.jetbrains.edu.coursecreator.settings.CCSettings
@@ -147,7 +147,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
       StudyItemVariant(
         EduCoreBundle.message("item.task.theory.title"),
         EduCoreBundle.message("action.new.study.item.task.theory.description"),
-        EducationalCoreIcons.TheoryTask,
+        TheoryTask,
         ::TheoryTask
       ),
       StudyItemVariant(

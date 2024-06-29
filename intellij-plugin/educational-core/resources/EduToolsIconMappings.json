@@ -4,6 +4,24 @@
       "jetbrains" : {
         "edu" : {
           "expui" : {
+            "courseView" : {
+              "eduCourseTree.svg" : "icons/com/jetbrains/edu/eduCourseTree.svg",
+              "eduLessonDefault.svg" : "icons/com/jetbrains/edu/eduLessonDefault.svg",
+              "eduLessonDone.svg" : "icons/com/jetbrains/edu/eduLessonDone.svg",
+              "eduSectionDefault.svg" : "icons/com/jetbrains/edu/eduSectionDefault.svg",
+              "eduSectionDone.svg" : "icons/com/jetbrains/edu/eduSectionDone.svg",
+              "eduTaskDefault.svg" : "icons/com/jetbrains/edu/eduTaskDefault.svg",
+              "eduTaskDone.svg" : "icons/com/jetbrains/edu/eduTaskDone.svg",
+              "eduTaskFailed.svg" : "icons/com/jetbrains/edu/eduTaskFailed.svg",
+              "eduTaskIdeDefault.svg" : "icons/com/jetbrains/edu/eduTaskIdeDefault.svg",
+              "eduTaskIdeDone.svg" : "icons/com/jetbrains/edu/eduTaskIdeDone.svg",
+              "eduTaskTheoryDefault.svg" : [
+                "icons/com/jetbrains/edu/eduTaskTheoryDefault.svg",
+                "icons/com/jetbrains/edu/eduNavigationMapTheoryTask.svg"
+              ],
+              "eduTaskTheoryDone.svg" : "icons/com/jetbrains/edu/eduTaskTheoryDone.svg",
+              "usersNumber.svg" : "icons/com/jetbrains/edu/usersNumber.svg"
+            },
             "language" : {
               "logoAndroid.svg" : "icons/com/jetbrains/edu/learning/AndroidLogo.svg",
               "logoCAndC++.svg" : "icons/com/jetbrains/edu/learning/CAndC++Logo.svg",
@@ -41,24 +59,8 @@
               "hyperskill.svg" : "icons/com/jetbrains/edu/learning/JB_academy.svg"
             },
             "eduCourseAction.svg" : "icons/com/jetbrains/edu/eduCourseAction.svg",
-            "eduCourseTree.svg" : "icons/com/jetbrains/edu/eduCourseTree.svg",
-            "eduLessonDefault.svg" : "icons/com/jetbrains/edu/eduLessonDefault.svg",
-            "eduLessonDone.svg" : "icons/com/jetbrains/edu/eduLessonDone.svg",
-            "eduSectionDefault.svg" : "icons/com/jetbrains/edu/eduSectionDefault.svg",
-            "eduSectionDone.svg" : "icons/com/jetbrains/edu/eduSectionDone.svg",
-            "eduTaskDefault.svg" : "icons/com/jetbrains/edu/eduTaskDefault.svg",
-            "eduTaskDone.svg" : "icons/com/jetbrains/edu/eduTaskDone.svg",
-            "eduTaskFailed.svg" : "icons/com/jetbrains/edu/eduTaskFailed.svg",
-            "eduTaskIdeDefault.svg" : "icons/com/jetbrains/edu/eduTaskIdeDefault.svg",
-            "eduTaskIdeDone.svg" : "icons/com/jetbrains/edu/eduTaskIdeDone.svg",
-            "eduTaskTheoryDefault.svg" : [
-              "icons/com/jetbrains/edu/eduTaskTheoryDefault.svg",
-              "icons/com/jetbrains/edu/eduNavigationMapTheoryTask.svg"
-            ],
-            "eduTaskTheoryDone.svg" : "icons/com/jetbrains/edu/eduTaskTheoryDone.svg",
-            "syncFiles.svg" : "icons/com/jetbrains/edu/syncFiles.svg",
             "toolWindowEduCourseTask.svg" : "icons/com/jetbrains/edu/eduCourseTask.svg",
-            "usersNumbers.svg" : "icons/com/jetbrains/edu/usersNumber.svg"
+            "syncFiles.svg" : "icons/com/jetbrains/edu/syncFiles.svg"
           }
         }
       }

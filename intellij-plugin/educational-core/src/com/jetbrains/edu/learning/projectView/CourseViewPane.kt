@@ -36,7 +36,7 @@ import com.intellij.ui.ColoredTreeCellRenderer
 import com.intellij.ui.ScrollPaneFactory
 import com.intellij.util.ArrayUtil
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.EducationalCoreIcons
+import com.jetbrains.edu.EducationalCoreIcons.CourseView.CourseTree
 import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.projectView.*
@@ -170,7 +170,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport
 
   override fun getTitle(): String = EduCoreBundle.message("project.view.course.pane.title")
 
-  override fun getIcon(): Icon = EducationalCoreIcons.CourseTree
+  override fun getIcon(): Icon = CourseTree
   override fun getId(): String = ID
   override fun getWeight(): Int = 10
 

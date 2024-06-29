@@ -5,7 +5,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
-import com.jetbrains.edu.EducationalCoreIcons.Lesson
+import com.jetbrains.edu.EducationalCoreIcons.CourseView.Lesson
 import com.jetbrains.edu.coursecreator.StudyItemType.LESSON_TYPE
 import com.jetbrains.edu.coursecreator.presentableTitleName
 import com.jetbrains.edu.learning.*
