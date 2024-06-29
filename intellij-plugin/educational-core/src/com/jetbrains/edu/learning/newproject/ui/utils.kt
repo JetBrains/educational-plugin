@@ -136,7 +136,7 @@ fun getColorFromScheme(colorId: String, default: Color): JBColor {
 
 fun createUsersNumberLabel(usersCount: Int): JBLabel {
   return JBLabel().apply {
-    icon = EducationalCoreIcons.User
+    icon = EducationalCoreIcons.CourseView.UsersNumber
     text = usersCount.toString()
     addCourseCardInfoStyle()
   }
