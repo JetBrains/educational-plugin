@@ -9,10 +9,12 @@ import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOOAuthConnec
 import com.jetbrains.edu.python.learning.checkio.utils.profileUrl
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle
 
-class PyCheckiOWidget(project: Project) : LoginWidget<CheckiOAccount>(project,
-                                                                      EduPythonBundle.message("checkio.widget.title"),
-                                                                      EduPythonBundle.message("checkio.widget.tooltip"),
-                                                                      EducationalCoreIcons.CheckiO) {
+class PyCheckiOWidget(project: Project) : LoginWidget<CheckiOAccount>(
+  project,
+  EduPythonBundle.message("checkio.widget.title"),
+  EduPythonBundle.message("checkio.widget.tooltip"),
+  EducationalCoreIcons.Platform.CheckiO
+) {
   override val connector: EduOAuthCodeFlowConnector<CheckiOAccount, *>
     get() = PyCheckiOOAuthConnector
 

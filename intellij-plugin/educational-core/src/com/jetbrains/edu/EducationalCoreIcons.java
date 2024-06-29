@@ -32,22 +32,20 @@ public final class EducationalCoreIcons {
     public static final Icon ShellLogo = load("/icons/com/jetbrains/edu/language/logoShell.svg");
   }
 
-  public static final Icon PyCheckiO = load("/icons/com/jetbrains/edu/learning/logoCheckiOPy.svg");
+  // Platforms
+  public static final class Platform {
+    public static final Icon CheckiO = load("/icons/com/jetbrains/edu/platform/checkio.svg");
+    public static final Icon Codeforces = load("/icons/com/jetbrains/edu/platform/codeforces.svg"); // 24x24
+    public static final Icon CODEFORCES_SMALL = load("/icons/com/jetbrains/edu/platform/codeforcesSmall.svg"); // 16x16
+    public static final Icon Coursera = load("/icons/com/jetbrains/edu/platform/coursera.svg"); // 24x24
+    public static final Icon JB_ACADEMY = load("/icons/com/jetbrains/edu/platform/JB_academy.svg");
+    public static final Icon JB_ACADEMY_TAB = load("/icons/com/jetbrains/edu/platform/JB_academy_course_tab.svg"); // 24x24
+    public static final Icon JSCheckiO = load("/icons/com/jetbrains/edu/platform/logoCheckiOJS.svg");
+    public static final Icon MARKETPLACE_TAB = load("/icons/com/jetbrains/edu/platform/marketplace_courses_tab.svg"); // 24x24
+    public static final Icon PyCheckiO = load("/icons/com/jetbrains/edu/platform/logoCheckiOPy.svg");
+  }
 
-  public static final Icon CheckiO = load("/icons/com/jetbrains/edu/learning/checkio.svg");
-  public static final Icon JSCheckiO = load("/icons/com/jetbrains/edu/learning/logoCheckiOJS.svg");
-
-  public static final Icon JB_ACADEMY = load("/icons/com/jetbrains/edu/learning/JB_academy.svg");
-  public static final Icon JB_ACADEMY_TAB = load("/icons/com/jetbrains/edu/learning/JB_academy_course_tab.svg"); // 24x24
-
-  public static final Icon Codeforces = load("/icons/com/jetbrains/edu/learning/codeforces.svg"); // 24x24
-  public static final Icon CODEFORCES_SMALL = load("/icons/com/jetbrains/edu/learning/codeforcesSmall.svg"); // 16x16
   public static final Icon LOGGED_IN_USER = load("/icons/com/jetbrains/edu/learning/loggedInUser.svg"); // 16x16
-
-  public static final Icon Coursera = load("/icons/com/jetbrains/edu/learning/coursera.svg"); // 24x24
-
-  public static final Icon MARKETPLACE_TAB = load("/icons/com/jetbrains/edu/learning/marketplace_courses_tab.svg"); // 24x24
-
   public static final Icon Task = load("/icons/com/jetbrains/edu/eduTaskDefault.svg"); // 16x16
   public static final Icon TaskSolved = load("/icons/com/jetbrains/edu/eduTaskDone.svg"); // 16x16
   public static final Icon TaskSolvedNoFrame = load("/icons/com/jetbrains/edu/eduTaskDoneNoFrame@2x.png"); //11x11

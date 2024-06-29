@@ -19,16 +19,8 @@
             },
             "learning" : {
               "applyCode.svg" : "icons/com/jetbrains/edu/learning/applyCode.svg",
-              "checkio@24x24.svg" : "icons/com/jetbrains/edu/learning/checkio.svg",
-              "codeforces@24x24.svg" : "icons/com/jetbrains/edu/learning/codeforces.svg",
               "commentTask.svg" : "icons/com/jetbrains/edu/learning/commentTask.svg",
-              "coursera@24x24.svg" : "icons/com/jetbrains/edu/learning/coursera.svg",
-              "hyperskill.svg" : "icons/com/jetbrains/edu/learning/JB_academy.svg",
-              "jetBrainsAcademy@24x24.svg" : "icons/com/jetbrains/edu/learning/JB_academy_course_tab.svg",
               "loggedInUser.svg" : "icons/com/jetbrains/edu/learning/loggedInUser.svg",
-              "logoCheckiOJS.svg" : "icons/com/jetbrains/edu/learning/logoCheckiOJS.svg",
-              "logoCheckiOPy.svg" : "icons/com/jetbrains/edu/learning/logoCheckiOPy.svg",
-              "marketplaceCourses@24x24.svg" : "icons/com/jetbrains/edu/learning/marketplace_courses_tab.svg",
               "moveDown.svg" : "icons/com/jetbrains/edu/learning/moveDown.svg",
               "moveUp.svg" : "icons/com/jetbrains/edu/learning/moveUp.svg",
               "rateCourse.svg" : "icons/com/jetbrains/edu/learning/rateCourse.svg",
@@ -37,6 +29,17 @@
               "resultIncorrect.svg" : "icons/com/jetbrains/edu/learning/resultIncorrect.svg",
               "toolWindowCheckDetails.svg" : "icons/com/jetbrains/edu/learning/checkDetailsToolWindow.svg",
               "toolWindowClock.svg" : "icons/com/jetbrains/edu/learning/clock.svg"
+            },
+            "platform" : {
+              "checkio@24x24.svg" : "icons/com/jetbrains/edu/platform/checkio.svg",
+              "codeforces@24x24.svg" : "icons/com/jetbrains/edu/platform/codeforces.svg",
+              "coursera@24x24.svg" : "icons/com/jetbrains/edu/platform/coursera.svg",
+              "hyperskill.svg" : "icons/com/jetbrains/edu/platform/JB_academy.svg",
+
+              "jetBrainsAcademy@24x24.svg" : "icons/com/jetbrains/edu/platform/JB_academy_course_tab.svg",
+              "logoCheckiOJS.svg" : "icons/com/jetbrains/edu/platform/logoCheckiOJS.svg",
+              "logoCheckiOPy.svg" : "icons/com/jetbrains/edu/platform/logoCheckiOPy.svg",
+              "marketplaceCourses@24x24.svg" : "icons/com/jetbrains/edu/platform/marketplace_courses_tab.svg"
             },
             "eduCourseAction.svg" : "icons/com/jetbrains/edu/eduCourseAction.svg",
             "toolWindowEduCourseTask.svg" : "icons/com/jetbrains/edu/eduCourseTask.svg",

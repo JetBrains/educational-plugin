@@ -9,10 +9,12 @@ import com.jetbrains.edu.learning.LoginWidget
 import com.jetbrains.edu.learning.api.EduOAuthCodeFlowConnector
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
 
-class JsCheckiOWidget(project: Project) : LoginWidget<CheckiOAccount>(project,
-                                                                      EduJavaScriptBundle.message("checkio.widget.title"),
-                                                                      EduJavaScriptBundle.message("checkio.widget.tooltip"),
-                                                                      EducationalCoreIcons.JSCheckiO) {
+class JsCheckiOWidget(project: Project) : LoginWidget<CheckiOAccount>(
+  project,
+  EduJavaScriptBundle.message("checkio.widget.title"),
+  EduJavaScriptBundle.message("checkio.widget.tooltip"),
+  EducationalCoreIcons.Platform.JSCheckiO
+) {
   override val connector: EduOAuthCodeFlowConnector<CheckiOAccount, *>
     get() = JsCheckiOOAuthConnector
 

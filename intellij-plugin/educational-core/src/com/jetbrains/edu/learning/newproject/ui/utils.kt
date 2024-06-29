@@ -43,7 +43,7 @@ val courseCardComponentFont = Font(TypographyManager().bodyFont, Font.PLAIN, Cou
 val Course.logo: Icon?
   get() {
     if (this is HyperskillCourseAdvertiser) {
-      return EducationalCoreIcons.JB_ACADEMY_TAB
+      return EducationalCoreIcons.Platform.JB_ACADEMY_TAB
     }
     val logo = configurator?.logo ?: compatibilityProvider?.logo
     if (logo == null) {
