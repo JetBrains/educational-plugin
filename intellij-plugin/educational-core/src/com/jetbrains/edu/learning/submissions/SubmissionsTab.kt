@@ -21,7 +21,8 @@ import com.intellij.ui.icons.CachedImageIcon
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.EducationalCoreIcons.Submission.*
+import com.jetbrains.edu.EducationalCoreIcons.CourseView.TaskFailed
+import com.jetbrains.edu.EducationalCoreIcons.CourseView.TaskSolved
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.ApplyCodeAction
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
@@ -460,8 +461,8 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
 
     private fun getImageUrl(status: String?): URL? {
       val icon = when (status) {
-        CORRECT -> if (StyleResourcesManager.isHighContrast()) TaskSolvedHighContrast else TaskSolved
-        else -> if (StyleResourcesManager.isHighContrast()) TaskFailedHighContrast else TaskFailed
+        CORRECT -> TaskSolved
+        else -> TaskFailed
       }
 
       return (icon as CachedImageIcon).url

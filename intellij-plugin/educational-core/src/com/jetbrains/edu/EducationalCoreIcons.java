@@ -80,18 +80,6 @@ public final class EducationalCoreIcons {
   }
 
   /**
-   * Utility class that provides icons for task submissions
-   *
-   * <p>All icons are 11x11</p>
-   */
-  public static final class Submission {
-    public static final Icon TaskFailed = load("/icons/com/jetbrains/edu/submission/taskFailed@2x.png");
-    public static final Icon TaskFailedHighContrast = load("/icons/com/jetbrains/edu/submission/taskFailedHighContrast@2x.png");
-    public static final Icon TaskSolved = load("/icons/com/jetbrains/edu/submission/taskSolved@2x.png");
-    public static final Icon TaskSolvedHighContrast = load("/icons/com/jetbrains/edu/submission/taskSolvedHighContrast@2x.png");
-  }
-
-  /**
    * Utility class that provides icons for the task tool window.
    */
   public static final class TaskToolWindow {
