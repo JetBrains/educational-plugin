@@ -9,5 +9,5 @@ class TextCodeforcesLanguageProvider: CodeforcesLanguageProvider() {
   override val languageId: String = com.intellij.openapi.fileTypes.PlainTextLanguage.INSTANCE.id
   override val templateFileName: String = "codeforces.Text Main.txt"
   override val displayTemplateName: String = "Main.txt"
-  override val languageIcon: Icon = EducationalCoreIcons.Platform.Codeforces
+  override val languageIcon: Icon = EducationalCoreIcons.Platform.Tab.Codeforces
 }

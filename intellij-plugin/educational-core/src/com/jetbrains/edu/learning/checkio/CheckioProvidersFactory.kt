@@ -26,7 +26,7 @@ class CheckiOPlatformProviderFactory : CoursesPlatformProviderFactory {
 class CheckiOPlatformProvider : CoursesPlatformProvider() {
   override val name: String = CHECKIO
 
-  override val icon: Icon get() = EducationalCoreIcons.Platform.CheckiO.to24()
+  override val icon: Icon get() = EducationalCoreIcons.Platform.Tab.CheckiO.to24()
 
   override fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel =
     CheckiOCoursesPanel(this, scope, disposable)

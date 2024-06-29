@@ -28,7 +28,7 @@ class CodeforcesPlatformProviderFactory : CoursesPlatformProviderFactory {
 class CodeforcesPlatformProvider : CoursesPlatformProvider() {
   override val name: String = CODEFORCES
 
-  override val icon: Icon get() = EducationalCoreIcons.Platform.Codeforces
+  override val icon: Icon get() = EducationalCoreIcons.Platform.Tab.Codeforces
 
   override fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel = CodeforcesCoursesPanel(this, scope, disposable)
 

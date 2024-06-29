@@ -10,7 +10,7 @@ import javax.swing.Icon
 class CodeforcesRunConfigurationType : ConfigurationType {
   override fun getId(): String = CONFIGURATION_ID
 
-  override fun getIcon(): Icon = EducationalCoreIcons.Platform.Codeforces
+  override fun getIcon(): Icon = EducationalCoreIcons.Platform.Tab.Codeforces
 
   override fun getConfigurationTypeDescription(): String = CONFIGURATION_ID
 
