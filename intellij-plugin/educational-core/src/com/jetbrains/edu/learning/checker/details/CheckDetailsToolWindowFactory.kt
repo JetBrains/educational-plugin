@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 class CheckDetailsToolWindowFactory : ToolWindowFactory, DumbAware {
   override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
     toolWindow.stripeTitle = EduCoreBundle.message("check.details.title")
-    toolWindow.setIcon(EducationalCoreIcons.CheckDetailsIcon)
+    toolWindow.setIcon(EducationalCoreIcons.CheckPanel.CheckDetails)
     toolWindow.setToHideOnEmptyContent(true)
     project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object: FileEditorManagerListener {
       override fun selectionChanged(event: FileEditorManagerEvent) {

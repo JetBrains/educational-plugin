@@ -13,7 +13,11 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import org.jetbrains.annotations.NonNls
 
-class LeaveFeedbackAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.leave.comment.text"), EduCoreBundle.lazyMessage("action.leave.comment.text"), EducationalCoreIcons.CommentTask), RightAlignedToolbarAction {
+class LeaveFeedbackAction : DumbAwareAction(
+  EduCoreBundle.lazyMessage("action.leave.comment.text"),
+  EduCoreBundle.lazyMessage("action.leave.comment.text"),
+  EducationalCoreIcons.CheckPanel.CommentTask
+), RightAlignedToolbarAction {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return

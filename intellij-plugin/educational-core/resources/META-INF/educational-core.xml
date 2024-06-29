@@ -105,7 +105,7 @@
             icon="AllIcons.Actions.Forward"/>
     <action id="Educational.RefreshTask"
             class="com.jetbrains.edu.learning.actions.RevertTaskAction"
-            icon="com.jetbrains.edu.EducationalCoreIcons.ResetTask"/>
+            icon="com.jetbrains.edu.EducationalCoreIcons.CheckPanel.ResetTask"/>
     <action id="Educational.LeaveFeedbackAction" class="com.jetbrains.edu.learning.actions.LeaveFeedbackAction"/>
     <action id="Educational.OpenTaskOnSiteAction" class="com.jetbrains.edu.learning.actions.OpenTaskOnSiteAction"/>
     <action id="Educational.CompareWithAnswer"
