@@ -17,7 +17,7 @@
               "eduTaskIdeDone.svg" : "icons/com/jetbrains/edu/courseView/eduTaskIdeDone.svg",
               "eduTaskTheoryDefault.svg" : [
                 "icons/com/jetbrains/edu/courseView/eduTaskTheoryDefault.svg",
-                "icons/com/jetbrains/edu/courseView/eduNavigationMapTheoryTask.svg"
+                "icons/com/jetbrains/edu/taskToolWindow/navigationMapTheoryTask.svg"
               ],
               "eduTaskTheoryDone.svg" : "icons/com/jetbrains/edu/courseView/eduTaskTheoryDone.svg",
               "usersNumber.svg" : "icons/com/jetbrains/edu/courseView/usersNumber.svg"
@@ -39,14 +39,11 @@
               "applyCode.svg" : "icons/com/jetbrains/edu/learning/applyCode.svg",
               "commentTask.svg" : "icons/com/jetbrains/edu/learning/commentTask.svg",
               "loggedInUser.svg" : "icons/com/jetbrains/edu/learning/loggedInUser.svg",
-              "moveDown.svg" : "icons/com/jetbrains/edu/learning/moveDown.svg",
-              "moveUp.svg" : "icons/com/jetbrains/edu/learning/moveUp.svg",
               "rateCourse.svg" : "icons/com/jetbrains/edu/learning/rateCourse.svg",
               "resetTask.svg" : "icons/com/jetbrains/edu/learning/resetTask.svg",
               "resultCorrect.svg" : "icons/com/jetbrains/edu/learning/resultCorrect.svg",
               "resultIncorrect.svg" : "icons/com/jetbrains/edu/learning/resultIncorrect.svg",
-              "toolWindowCheckDetails.svg" : "icons/com/jetbrains/edu/learning/checkDetailsToolWindow.svg",
-              "toolWindowClock.svg" : "icons/com/jetbrains/edu/learning/clock.svg"
+              "toolWindowCheckDetails.svg" : "icons/com/jetbrains/edu/learning/checkDetailsToolWindow.svg"
             },
             "platform" : {
               "tab" : {
@@ -61,8 +58,13 @@
               "logoJSCheckiO.svg" : "icons/com/jetbrains/edu/platform/logoJSCheckiO.svg",
               "logoPyCheckiO.svg" : "icons/com/jetbrains/edu/platform/logoPyCheckiO.svg"
             },
+            "taskToolWindow" : {
+              "clock.svg" : "icons/com/jetbrains/edu/taskToolWindow/clock.svg",
+              "courseToolWindow.svg" : "icons/com/jetbrains/edu/taskToolWindow/courseToolWindow.svg",
+              "moveDown.svg" : "icons/com/jetbrains/edu/taskToolWindow/moveDown.svg",
+              "moveUp.svg" : "icons/com/jetbrains/edu/taskToolWindow/moveUp.svg"
+            },
             "eduCourseAction.svg" : "icons/com/jetbrains/edu/eduCourseAction.svg",
-            "toolWindowEduCourseTask.svg" : "icons/com/jetbrains/edu/eduCourseTask.svg",
             "syncFiles.svg" : "icons/com/jetbrains/edu/syncFiles.svg"
           }
         }

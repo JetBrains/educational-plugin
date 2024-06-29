@@ -44,15 +44,15 @@ object StyleResourcesManager {
   private const val INTELLIJ_ICON_FONT_DARCULA_TTF: String = "/style/hint/fonts/intellij-icon-font-darcula.ttf"
   private const val INTELLIJ_ICON_FONT_DARCULA_WOFF: String = "/style/hint/fonts/intellij-icon-font-darcula.woff"
 
-  private const val SORTING_BASED_TASKS_MOVE_UP = "/icons/com/jetbrains/edu/learning/moveUp.svg"
-  private const val SORTING_BASED_TASKS_MOVE_UP_DARK = "/icons/com/jetbrains/edu/learning/moveUp_dark.svg"
-  private const val SORTING_BASED_TASKS_MOVE_DOWN = "/icons/com/jetbrains/edu/learning/moveDown.svg"
-  private const val SORTING_BASED_TASKS_MOVE_DOWN_DARK = "/icons/com/jetbrains/edu/learning/moveDown_dark.svg"
+  private const val SORTING_BASED_TASKS_MOVE_UP = "/icons/com/jetbrains/edu/taskToolWindow/moveUp.svg"
+  private const val SORTING_BASED_TASKS_MOVE_UP_DARK = "/icons/com/jetbrains/edu/taskToolWindow/moveUp_dark.svg"
+  private const val SORTING_BASED_TASKS_MOVE_DOWN = "/icons/com/jetbrains/edu/taskToolWindow/moveDown.svg"
+  private const val SORTING_BASED_TASKS_MOVE_DOWN_DARK = "/icons/com/jetbrains/edu/taskToolWindow/moveDown_dark.svg"
 
-  private const val SORTING_BASED_TASKS_MOVE_UP_EXPUI = "/icons/com/jetbrains/edu/expui/learning/moveUp.svg"
-  private const val SORTING_BASED_TASKS_MOVE_UP_DARK_EXPUI = "/icons/com/jetbrains/edu/expui/learning/moveUp_dark.svg"
-  private const val SORTING_BASED_TASKS_MOVE_DOWN_EXPUI = "/icons/com/jetbrains/edu/expui/learning/moveDown.svg"
-  private const val SORTING_BASED_TASKS_MOVE_DOWN_DARK_EXPUI = "/icons/com/jetbrains/edu/expui/learning/moveDown_dark.svg"
+  private const val SORTING_BASED_TASKS_MOVE_UP_EXPUI = "/icons/com/jetbrains/edu/expui/taskToolWindow/moveUp.svg"
+  private const val SORTING_BASED_TASKS_MOVE_UP_DARK_EXPUI = "/icons/com/jetbrains/edu/expui/taskToolWindow/moveUp_dark.svg"
+  private const val SORTING_BASED_TASKS_MOVE_DOWN_EXPUI = "/icons/com/jetbrains/edu/expui/taskToolWindow/moveDown.svg"
+  private const val SORTING_BASED_TASKS_MOVE_DOWN_DARK_EXPUI = "/icons/com/jetbrains/edu/expui/taskToolWindow/moveDown_dark.svg"
 
   val sortingBasedTaskResourcesList = listOf(
     SORTING_BASED_TASKS_MOVE_UP,
