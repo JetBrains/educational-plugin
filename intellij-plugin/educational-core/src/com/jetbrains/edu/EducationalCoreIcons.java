@@ -54,6 +54,16 @@ public final class EducationalCoreIcons {
   }
 
   /**
+   * Utility class that provides icons for the course creator.
+   */
+  public static final class CourseCreator {
+    public static final Icon GuidedProject = load("/icons/com/jetbrains/edu/courseCreator/guidedProject.svg");
+    public static final Icon GuidedProjectSelected = load("/icons/com/jetbrains/edu/courseCreator/guidedProjectSelected.svg");
+    public static final Icon SimpleLesson = load("/icons/com/jetbrains/edu/courseCreator/simpleLesson.svg");
+    public static final Icon SimpleLessonSelected = load("/icons/com/jetbrains/edu/courseCreator/simpleLessonSelected.svg");
+  }
+
+  /**
    * Utility class that provides icons for various components in the Course View
    */
   public static final class CourseView {
@@ -158,9 +168,4 @@ public final class EducationalCoreIcons {
   public static final Icon SyncFiles = load("/icons/com/jetbrains/edu/syncFiles.svg"); // 14x14
 
   public static final Icon SyncChangesIgnore = load("/icons/com/jetbrains/edu/syncFilesIgnore.svg"); // 16x16
-
-  public static final Icon LessonCardSimpleLesson = load("/icons/com/jetbrains/edu/lessonCardSimpleLesson.svg"); // 24x24
-  public static final Icon LessonCardSimpleLessonSelected = load("/icons/com/jetbrains/edu/lessonCardSimpleLessonSelected.svg"); // 24x24
-  public static final Icon LessonCardGuidedProject = load("/icons/com/jetbrains/edu/lessonCardGuidedProject.svg"); // 24x24
-  public static final Icon LessonCardGuidedProjectSelected = load("/icons/com/jetbrains/edu/lessonCardGuidedProjectSelected.svg"); // 24x24
 }
