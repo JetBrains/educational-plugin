@@ -80,6 +80,18 @@ public final class EducationalCoreIcons {
   }
 
   /**
+   * Utility class that provides icons for task submissions
+   *
+   * <p>All icons are 11x11</p>
+   */
+  public static final class Submission {
+    public static final Icon TaskFailed = load("/icons/com/jetbrains/edu/submission/taskFailed@2x.png");
+    public static final Icon TaskFailedHighContrast = load("/icons/com/jetbrains/edu/submission/taskFailedHighContrast@2x.png");
+    public static final Icon TaskSolved = load("/icons/com/jetbrains/edu/submission/taskSolved@2x.png");
+    public static final Icon TaskSolvedHighContrast = load("/icons/com/jetbrains/edu/submission/taskSolvedHighContrast@2x.png");
+  }
+
+  /**
    * Utility class that provides icons for the task tool window.
    */
   public static final class TaskToolWindow {
@@ -91,11 +103,6 @@ public final class EducationalCoreIcons {
   }
 
   public static final Icon LOGGED_IN_USER = load("/icons/com/jetbrains/edu/learning/loggedInUser.svg"); // 16x16
-  public static final Icon TaskSolvedNoFrame = load("/icons/com/jetbrains/edu/eduTaskDoneNoFrame@2x.png"); //11x11
-  public static final Icon TaskSolvedNoFrameHighContrast = load("/icons/com/jetbrains/edu/eduTaskDoneNoFrameHighContrast@2x.png"); //11x11
-  public static final Icon TaskFailedNoFrame = load("/icons/com/jetbrains/edu/eduTaskFailedNoFrame@2x.png"); // 11x11
-  public static final Icon TaskFailedNoFrameHighContrast = load("/icons/com/jetbrains/edu/eduTaskFailedNoFrameHighContrast@2x.png"); // 11x11
-
   public static final Icon CourseAction = load("/icons/com/jetbrains/edu/eduCourseAction.svg"); // 16x16
 
   public static final Icon ResultCorrect = load("/icons/com/jetbrains/edu/learning/resultCorrect.svg"); // 16x16
