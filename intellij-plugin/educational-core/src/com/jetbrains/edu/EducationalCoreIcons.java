@@ -113,6 +113,24 @@ public final class EducationalCoreIcons {
     public static final Icon ResultIncorrect = load("/icons/com/jetbrains/edu/checkPanel/resultIncorrect.svg");
   }
 
+  /**
+   * Utility class that provides icons for the course creator.
+   */
+  public static final class CourseCreator {
+    /**
+     * Utility class that provides icons for lesson cards
+     */
+    public static final class LessonCard {
+      public static final Icon GuidedProject = load("/icons/com/jetbrains/edu/courseCreator/lessonCard/guidedProject.svg");
+      public static final Icon GuidedProjectSelected = load("/icons/com/jetbrains/edu/courseCreator/lessonCard/guidedProjectSelected.svg");
+      public static final Icon SimpleLesson = load("/icons/com/jetbrains/edu/courseCreator/lessonCard/simpleLesson.svg");
+      public static final Icon SimpleLessonSelected = load("/icons/com/jetbrains/edu/courseCreator/lessonCard/simpleLessonSelected.svg");
+    }
+
+    public static final Icon IgnoreSyncFile = load("/icons/com/jetbrains/edu/courseCreator/ignoreSyncFile.svg");
+    public static final Icon SyncChanges = load("/icons/com/jetbrains/edu/courseCreator/syncChanges.svg");
+  }
+
   public static final Icon LOGGED_IN_USER = load("/icons/com/jetbrains/edu/learning/loggedInUser.svg"); // 16x16
   public static final Icon CourseAction = load("/icons/com/jetbrains/edu/eduCourseAction.svg"); // 16x16
 
@@ -121,13 +139,4 @@ public final class EducationalCoreIcons {
   public static final Icon DOT = load("/icons/com/jetbrains/edu/learning/dot.svg"); // 3x3
 
   public static final Icon ApplyCode = load("/icons/com/jetbrains/edu/learning/applyCode.svg"); // 16x16
-
-  public static final Icon SyncFiles = load("/icons/com/jetbrains/edu/syncFiles.svg"); // 14x14
-
-  public static final Icon SyncChangesIgnore = load("/icons/com/jetbrains/edu/syncFilesIgnore.svg"); // 16x16
-
-  public static final Icon LessonCardSimpleLesson = load("/icons/com/jetbrains/edu/lessonCardSimpleLesson.svg"); // 24x24
-  public static final Icon LessonCardSimpleLessonSelected = load("/icons/com/jetbrains/edu/lessonCardSimpleLessonSelected.svg"); // 24x24
-  public static final Icon LessonCardGuidedProject = load("/icons/com/jetbrains/edu/lessonCardGuidedProject.svg"); // 24x24
-  public static final Icon LessonCardGuidedProjectSelected = load("/icons/com/jetbrains/edu/lessonCardGuidedProjectSelected.svg"); // 24x24
 }

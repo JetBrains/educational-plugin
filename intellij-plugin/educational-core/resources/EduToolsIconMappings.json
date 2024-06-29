@@ -11,6 +11,9 @@
               "resultCorrect.svg" : "icons/com/jetbrains/edu/checkPanel/resultCorrect.svg",
               "resultIncorrect.svg" : "icons/com/jetbrains/edu/checkPanel/resultIncorrect.svg"
             },
+            "courseCreator" : {
+              "syncChanges.svg" : "icons/com/jetbrains/edu/courseCreator/syncChanges.svg"
+            },
             "courseView" : {
               "eduCourseTree.svg" : "icons/com/jetbrains/edu/courseView/eduCourseTree.svg",
               "eduLessonDefault.svg" : "icons/com/jetbrains/edu/courseView/eduLessonDefault.svg",
@@ -66,8 +69,7 @@
               "moveDown.svg" : "icons/com/jetbrains/edu/taskToolWindow/moveDown.svg",
               "moveUp.svg" : "icons/com/jetbrains/edu/taskToolWindow/moveUp.svg"
             },
-            "eduCourseAction.svg" : "icons/com/jetbrains/edu/eduCourseAction.svg",
-            "syncFiles.svg" : "icons/com/jetbrains/edu/syncFiles.svg"
+            "eduCourseAction.svg" : "icons/com/jetbrains/edu/eduCourseAction.svg"
           }
         }
       }

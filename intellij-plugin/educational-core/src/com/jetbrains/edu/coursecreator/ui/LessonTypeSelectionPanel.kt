@@ -11,7 +11,10 @@ import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.dsl.gridLayout.UnscaledGaps
 import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.EducationalCoreIcons
+import com.jetbrains.edu.EducationalCoreIcons.CourseCreator.LessonCard.GuidedProject
+import com.jetbrains.edu.EducationalCoreIcons.CourseCreator.LessonCard.GuidedProjectSelected
+import com.jetbrains.edu.EducationalCoreIcons.CourseCreator.LessonCard.SimpleLesson
+import com.jetbrains.edu.EducationalCoreIcons.CourseCreator.LessonCard.SimpleLessonSelected
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskToolWindow.ui.addBorder
 import com.jetbrains.edu.learning.ui.EduColors
@@ -234,9 +237,9 @@ private sealed class LessonCard : Wrapper() {
 
 private class SimpleLessonCard : LessonCard() {
   override val icon: Icon
-    get() = EducationalCoreIcons.LessonCardSimpleLesson
+    get() = SimpleLesson
   override val selectedIcon: Icon
-    get() = EducationalCoreIcons.LessonCardSimpleLessonSelected
+    get() = SimpleLessonSelected
   override val title: String
     get() = EduCoreBundle.message("cc.new.course.lesson.selection.card.simple.title")
   override val description: String
@@ -245,9 +248,9 @@ private class SimpleLessonCard : LessonCard() {
 
 private class GuidedProjectCard : LessonCard() {
   override val icon: Icon
-    get() = EducationalCoreIcons.LessonCardGuidedProject
+    get() = GuidedProject
   override val selectedIcon: Icon
-    get() = EducationalCoreIcons.LessonCardGuidedProjectSelected
+    get() = GuidedProjectSelected
   override val title: String
     get() = EduCoreBundle.message("cc.new.course.lesson.selection.card.framework.title")
   override val description: String

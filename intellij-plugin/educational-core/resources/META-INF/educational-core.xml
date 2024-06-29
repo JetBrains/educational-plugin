@@ -155,14 +155,14 @@
            class="com.jetbrains.edu.coursecreator.actions.CCFrameworkLessonActionGroup">
       <action id="Educational.Educator.SyncChangesWithNextTasks"
               class="com.jetbrains.edu.coursecreator.actions.CCSyncChangesWithNextTasks"
-              icon="com.jetbrains.edu.EducationalCoreIcons.SyncFiles">
+              icon="com.jetbrains.edu.EducationalCoreIcons.CourseCreator.SyncChanges">
       </action>
       <action id="Educational.Educator.AllowFileToSyncChanges"
               class="com.jetbrains.edu.coursecreator.actions.taskFile.CCAllowFileSyncChanges"
               icon="AllIcons.Actions.Show"/>
       <action id="Educational.Educator.IgnoreFilePropagation"
               class="com.jetbrains.edu.coursecreator.actions.taskFile.CCIgnoreFileInSyncChanges"
-              icon="com.jetbrains.edu.EducationalCoreIcons.SyncChangesIgnore"/>
+              icon="com.jetbrains.edu.EducationalCoreIcons.CourseCreator.IgnoreSyncFile"/>
       <action id="Educational.Educator.ShowUnsyncedChanges"
               class="com.jetbrains.edu.coursecreator.actions.taskFile.CCShowUnsyncedChanges"
               icon="AllIcons.Actions.Diff"
