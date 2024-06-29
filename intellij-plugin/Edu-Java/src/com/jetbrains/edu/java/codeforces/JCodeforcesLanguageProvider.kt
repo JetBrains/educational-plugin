@@ -13,5 +13,5 @@ class JCodeforcesLanguageProvider : CodeforcesLanguageProvider() {
   override val languageId: String = JAVA
   override val templateFileName: String = "codeforces.Java Main.java"
   override val displayTemplateName: String = "Main.java"
-  override val languageIcon: Icon = EducationalCoreIcons.JavaLogo
+  override val languageIcon: Icon = EducationalCoreIcons.Language.JavaLogo
 }

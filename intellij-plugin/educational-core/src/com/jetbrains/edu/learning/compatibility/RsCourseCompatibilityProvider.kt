@@ -16,5 +16,5 @@ class RsCourseCompatibilityProvider : CourseCompatibilityProvider {
   override fun requiredPlugins(): List<PluginInfo>? = if (isIdeaUltimate() || isCLion() || isRustRover()) RUST_PLUGINS else null
 
   override val technologyName: String get() = "Rust"
-  override val logo: Icon get() = EducationalCoreIcons.RustLogo
+  override val logo: Icon get() = EducationalCoreIcons.Language.RustLogo
 }

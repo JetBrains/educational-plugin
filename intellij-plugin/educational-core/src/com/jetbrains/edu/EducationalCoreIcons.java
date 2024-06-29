@@ -13,17 +13,24 @@ public final class EducationalCoreIcons {
     return IconLoader.getIcon(path, EducationalCoreIcons.class);
   }
 
-  public static final Icon JavaLogo = load("/icons/com/jetbrains/edu/learning/logoJava.svg"); // 16x16
-  public static final Icon KotlinLogo = load("/icons/com/jetbrains/edu/learning/logoKotlin.svg"); // 16x16
-  public static final Icon ScalaLogo = load("/icons/com/jetbrains/edu/learning/logoScala.svg"); // 16x16
-  public static final Icon AndroidLogo = load("/icons/com/jetbrains/edu/learning/logoAndroid.svg"); // 16x16
-  public static final Icon PythonLogo = load("/icons/com/jetbrains/edu/learning/logoPython.svg"); // 16x16
-  public static final Icon JsLogo = load("/icons/com/jetbrains/edu/learning/logoJavaScript.svg"); // 16x16
-  public static final Icon RustLogo = load("/icons/com/jetbrains/edu/learning/logoRust.svg"); // 16x16
-  public static final Icon CppLogo = load("/icons/com/jetbrains/edu/learning/logoCAndC++.svg"); // 16x16
-  public static final Icon GoLogo = load("/icons/com/jetbrains/edu/learning/logoGo.svg"); // 16x16
-  public static final Icon PhpLogo = load("/icons/com/jetbrains/edu/learning/logoPHP.svg"); // 16x16
-  public static final Icon ShellLogo = load("/icons/com/jetbrains/edu/learning/logoShell.svg"); // 16x16
+  /**
+   * Utility class that provides icons for various programming languages
+   *
+   * <p>All icons are 16x16</p>
+   */
+  public static final class Language {
+    public static final Icon AndroidLogo = load("/icons/com/jetbrains/edu/language/logoAndroid.svg");
+    public static final Icon CppLogo = load("/icons/com/jetbrains/edu/language/logoCAndC++.svg");
+    public static final Icon GoLogo = load("/icons/com/jetbrains/edu/language/logoGo.svg");
+    public static final Icon JavaLogo = load("/icons/com/jetbrains/edu/language/logoJava.svg");
+    public static final Icon JsLogo = load("/icons/com/jetbrains/edu/language/logoJavaScript.svg");
+    public static final Icon KotlinLogo = load("/icons/com/jetbrains/edu/language/logoKotlin.svg");
+    public static final Icon PhpLogo = load("/icons/com/jetbrains/edu/language/logoPHP.svg");
+    public static final Icon PythonLogo = load("/icons/com/jetbrains/edu/language/logoPython.svg");
+    public static final Icon RustLogo = load("/icons/com/jetbrains/edu/language/logoRust.svg");
+    public static final Icon ScalaLogo = load("/icons/com/jetbrains/edu/language/logoScala.svg");
+    public static final Icon ShellLogo = load("/icons/com/jetbrains/edu/language/logoShell.svg");
+  }
 
   public static final Icon PyCheckiO = load("/icons/com/jetbrains/edu/learning/logoCheckiOPy.svg");
 

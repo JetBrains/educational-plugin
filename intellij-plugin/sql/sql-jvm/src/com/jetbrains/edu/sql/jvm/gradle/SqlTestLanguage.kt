@@ -21,8 +21,8 @@ var Course.sqlTestLanguage: SqlTestLanguage
  * Default programming language used for test files
  */
 enum class SqlTestLanguage(val languageId: String, val logo: Icon) {
-  KOTLIN(EduFormatNames.KOTLIN, EducationalCoreIcons.KotlinLogo),
-  JAVA(EduFormatNames.JAVA, EducationalCoreIcons.JavaLogo);
+  KOTLIN(EduFormatNames.KOTLIN, EducationalCoreIcons.Language.KotlinLogo),
+  JAVA(EduFormatNames.JAVA, EducationalCoreIcons.Language.JavaLogo);
 
   fun getLanguage(): Language? = Language.findLanguageByID(languageId)
 }
