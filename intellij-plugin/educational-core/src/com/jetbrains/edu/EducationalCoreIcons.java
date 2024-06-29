@@ -19,17 +19,17 @@ public final class EducationalCoreIcons {
    * <p>All icons are 16x16</p>
    */
   public static final class Language {
-    public static final Icon AndroidLogo = load("/icons/com/jetbrains/edu/language/logoAndroid.svg");
-    public static final Icon CppLogo = load("/icons/com/jetbrains/edu/language/logoCAndC++.svg");
-    public static final Icon GoLogo = load("/icons/com/jetbrains/edu/language/logoGo.svg");
-    public static final Icon JavaLogo = load("/icons/com/jetbrains/edu/language/logoJava.svg");
-    public static final Icon JsLogo = load("/icons/com/jetbrains/edu/language/logoJavaScript.svg");
-    public static final Icon KotlinLogo = load("/icons/com/jetbrains/edu/language/logoKotlin.svg");
-    public static final Icon PhpLogo = load("/icons/com/jetbrains/edu/language/logoPHP.svg");
-    public static final Icon PythonLogo = load("/icons/com/jetbrains/edu/language/logoPython.svg");
-    public static final Icon RustLogo = load("/icons/com/jetbrains/edu/language/logoRust.svg");
-    public static final Icon ScalaLogo = load("/icons/com/jetbrains/edu/language/logoScala.svg");
-    public static final Icon ShellLogo = load("/icons/com/jetbrains/edu/language/logoShell.svg");
+    public static final Icon Android = load("/icons/com/jetbrains/edu/language/logoAndroid.svg");
+    public static final Icon Cpp = load("/icons/com/jetbrains/edu/language/logoCAndC++.svg");
+    public static final Icon Go = load("/icons/com/jetbrains/edu/language/logoGo.svg");
+    public static final Icon Java = load("/icons/com/jetbrains/edu/language/logoJava.svg");
+    public static final Icon Js = load("/icons/com/jetbrains/edu/language/logoJavaScript.svg");
+    public static final Icon Kotlin = load("/icons/com/jetbrains/edu/language/logoKotlin.svg");
+    public static final Icon Php = load("/icons/com/jetbrains/edu/language/logoPHP.svg");
+    public static final Icon Python = load("/icons/com/jetbrains/edu/language/logoPython.svg");
+    public static final Icon Rust = load("/icons/com/jetbrains/edu/language/logoRust.svg");
+    public static final Icon Scala = load("/icons/com/jetbrains/edu/language/logoScala.svg");
+    public static final Icon Shell = load("/icons/com/jetbrains/edu/language/logoShell.svg");
   }
 
   // Platforms

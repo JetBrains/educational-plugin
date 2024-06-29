@@ -26,7 +26,7 @@ class PhpConfigurator : EduConfigurator<PhpProjectSettings> {
 
   override val logo: Icon
     // the default icon from plugin looks ugly, so we use ours
-    get() = EducationalCoreIcons.Language.PhpLogo
+    get() = EducationalCoreIcons.Language.Php
 
   override val testDirs: List<String>
     get() = listOf(EduNames.TEST)

@@ -33,5 +33,5 @@ class PyCourseCompatibilityProvider : CourseCompatibilityProvider {
   }
 
   override val technologyName: String get() = "Python"
-  override val logo: Icon get() = EducationalCoreIcons.Language.PythonLogo
+  override val logo: Icon get() = EducationalCoreIcons.Language.Python
 }

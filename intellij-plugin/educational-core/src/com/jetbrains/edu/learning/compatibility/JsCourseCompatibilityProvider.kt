@@ -21,5 +21,5 @@ class JsCourseCompatibilityProvider : CourseCompatibilityProvider {
   }
 
   override val technologyName: String get() = "JavaScript"
-  override val logo: Icon get() = EducationalCoreIcons.Language.JsLogo
+  override val logo: Icon get() = EducationalCoreIcons.Language.Js
 }

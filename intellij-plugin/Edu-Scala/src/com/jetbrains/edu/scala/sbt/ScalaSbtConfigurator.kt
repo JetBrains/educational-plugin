@@ -43,7 +43,7 @@ class ScalaSbtConfigurator : EduConfigurator<JdkProjectSettings> {
     get() = listOf(EduNames.TEST)
 
   override val logo: Icon
-    get() = EducationalCoreIcons.Language.ScalaLogo
+    get() = EducationalCoreIcons.Language.Scala
 
   override val defaultPlaceholderText: String
     get() = "/* TODO */"
