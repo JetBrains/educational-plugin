@@ -14,6 +14,7 @@ import com.intellij.ui.ExperimentalUI
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.AnActionLink
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.EducationalCoreIcons.TaskToolWindow.ExternalLink
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isSwing
 import com.jetbrains.edu.learning.actions.OpenTaskOnSiteAction
@@ -31,8 +32,6 @@ import com.jetbrains.edu.learning.stepik.SOURCE
 import com.jetbrains.edu.learning.taskToolWindow.ui.LightColoredActionLink
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager
-import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_DARK_PNG
-import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_PNG
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -261,11 +260,10 @@ fun useDarkSrcCustomAttributeIfPresent(element: Element): Boolean {
 fun addExternalLinkIcons(document: Document): Document {
   val links = document.getElementsByTag(A_TAG)
   val externalLinks = links.filter { element -> element.attr(HREF_ATTRIBUTE).matches(EXTERNAL_LINK_REGEX) }
-  val arrowIcon = if (!JBColor.isBright()) {
-    EXTERNAL_LINK_ARROW_DARK_PNG
-  }
-  else {
-    EXTERNAL_LINK_ARROW_PNG
+  val arrowIcon = when {
+    !isNewUI() -> ExternalLink.path
+    isNewUI() -> if (JBColor.isBright()) ExternalLink.expuiPath else ExternalLink.expuiDarkPath
+    else -> error("Can't get external link icon")
   }
   for (link in externalLinks) {
     val span = document.createElement(SPAN_ATTRIBUTE)

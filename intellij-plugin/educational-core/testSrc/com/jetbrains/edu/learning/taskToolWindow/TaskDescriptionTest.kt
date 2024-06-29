@@ -18,8 +18,10 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.JCEFToolWindow
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager
-import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_DARK_PNG
-import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_PNG
+import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW
+import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_EXPUI
+import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_EXPUI_DARK
+import com.jetbrains.edu.learning.withSpecifiedUi
 import org.jsoup.Jsoup
 import org.junit.Test
 import java.awt.event.InputEvent
@@ -270,12 +272,25 @@ class TaskDescriptionTest : EduTestCase() {
 
   @Test
   fun `test arrow icon added after external link in light theme`() {
-    doTestArrowIconAdded(EXTERNAL_LINK_ARROW_PNG)
+    withSpecifiedUi(false) {
+      doTestArrowIconAdded(EXTERNAL_LINK_ARROW)
+    }
+  }
+
+  @Test
+  fun `test expui arrow icon added after external link in light theme`() {
+    withSpecifiedUi(true) {
+      doTestArrowIconAdded(EXTERNAL_LINK_ARROW_EXPUI)
+    }
   }
 
   @Test
   fun `test arrow icon added after external link in dark theme`() {
-    runWithDarkTheme { doTestArrowIconAdded(EXTERNAL_LINK_ARROW_DARK_PNG) }
+    withSpecifiedUi(true) {
+      runWithDarkTheme {
+        doTestArrowIconAdded(EXTERNAL_LINK_ARROW_EXPUI_DARK)
+      }
+    }
   }
 
   private fun runWithDarkTheme(doTest: () -> Unit) {

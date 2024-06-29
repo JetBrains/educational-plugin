@@ -68,6 +68,7 @@
             "taskToolWindow" : {
               "clock.svg" : "icons/com/jetbrains/edu/taskToolWindow/clock.svg",
               "courseToolWindow.svg" : "icons/com/jetbrains/edu/taskToolWindow/courseToolWindow.svg",
+              "externalLink.svg" : "icons/com/jetbrains/edu/taskToolWindow/externalLink.svg",
               "moveDown.svg" : "icons/com/jetbrains/edu/taskToolWindow/moveDown.svg",
               "moveUp.svg" : "icons/com/jetbrains/edu/taskToolWindow/moveUp.svg"
             }
