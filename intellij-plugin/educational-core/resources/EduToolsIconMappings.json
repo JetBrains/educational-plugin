@@ -4,6 +4,12 @@
       "jetbrains" : {
         "edu" : {
           "expui" : {
+            "actions" : {
+              "applyCode.svg" : "icons/com/jetbrains/edu/actions/applyCode.svg",
+              "eduCourse.svg" : "icons/com/jetbrains/edu/actions/eduCourse.svg",
+              "loggedInUser.svg" : "icons/com/jetbrains/edu/actions/loggedInUser.svg",
+              "rateCourse.svg" : "icons/com/jetbrains/edu/actions/rateCourse.svg"
+            },
             "checkPanel" : {
               "checkDetails.svg" : "icons/com/jetbrains/edu/checkPanel/checkDetails.svg",
               "commentTask.svg" : "icons/com/jetbrains/edu/checkPanel/commentTask.svg",
@@ -45,11 +51,7 @@
               "logoScala.svg" : "icons/com/jetbrains/edu/language/logoScala.svg",
               "logoShell.svg" : "icons/com/jetbrains/edu/language/logoShell.svg"
             },
-            "learning" : {
-              "applyCode.svg" : "icons/com/jetbrains/edu/learning/applyCode.svg",
-              "loggedInUser.svg" : "icons/com/jetbrains/edu/learning/loggedInUser.svg",
-              "rateCourse.svg" : "icons/com/jetbrains/edu/learning/rateCourse.svg",
-            },
+            "learning" : { },
             "platform" : {
               "tab" : {
                 "logoCheckio@24x24.svg" : "icons/com/jetbrains/edu/platform/tab/logoCheckio@24x24.svg",
@@ -68,8 +70,7 @@
               "courseToolWindow.svg" : "icons/com/jetbrains/edu/taskToolWindow/courseToolWindow.svg",
               "moveDown.svg" : "icons/com/jetbrains/edu/taskToolWindow/moveDown.svg",
               "moveUp.svg" : "icons/com/jetbrains/edu/taskToolWindow/moveUp.svg"
-            },
-            "eduCourseAction.svg" : "icons/com/jetbrains/edu/eduCourseAction.svg"
+            }
           }
         }
       }

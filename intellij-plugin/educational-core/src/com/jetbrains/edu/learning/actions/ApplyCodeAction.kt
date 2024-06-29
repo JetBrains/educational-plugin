@@ -27,6 +27,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.findFile
 import com.intellij.ui.GotItTooltip
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.EducationalCoreIcons.Actions.ApplyCode
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -44,7 +45,7 @@ import javax.swing.JComponent
  *
  * @see [com.jetbrains.edu.learning.actions.CompareWithAnswerAction]
  */
-class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
+class ApplyCodeAction : DumbAwareAction(ApplyCode), CustomComponentAction {
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false

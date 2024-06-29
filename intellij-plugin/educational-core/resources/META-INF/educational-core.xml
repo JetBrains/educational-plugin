@@ -221,7 +221,7 @@
     <group id="Educational.LearnAndTeachFileMenu"
            class="com.jetbrains.edu.learning.newproject.LearnAndTeachFileMenuGroup"
            popup="true"
-           icon="com.jetbrains.edu.EducationalCoreIcons.CourseAction">
+           icon="com.jetbrains.edu.EducationalCoreIcons.Actions.EduCourse">
       <reference id="Educational.BrowseCourses"/>
       <reference id="Educational.Educator.NewCourse"/>
       <add-to-group group-id="FileOpenGroup" relative-to-action="OpenFile" anchor="after"/>
@@ -232,12 +232,11 @@
     <action id="Educational.SolveAllTasksBefore" class="com.jetbrains.edu.coursecreator.actions.CCSolveAllTasksBeforeAction"/>
     <action id="Educational.CreateNewIssue"
             class="com.jetbrains.edu.learning.actions.CreateNewYouTrackIssue"
-            icon="/icons/com/jetbrains/edu/eduCourseAction.svg">
+            icon="com.jetbrains.edu.EducationalCoreIcons.Actions.EduCourse">
       <add-to-group group-id="HelpMenu" anchor="after" relative-to-action="ReportProblem"/>
     </action>
     <action id="Educational.Student.ApplyCode"
-            class="com.jetbrains.edu.learning.actions.ApplyCodeAction"
-            icon="com.jetbrains.edu.EducationalCoreIcons.ApplyCode">
+            class="com.jetbrains.edu.learning.actions.ApplyCodeAction">
       <add-to-group group-id="Diff.ViewerToolbar"/>
       <keyboard-shortcut
         keymap="$default"

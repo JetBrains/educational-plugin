@@ -92,7 +92,7 @@ class CodeforcesSettings : PersistentStateComponent<Element> {
   }
 
   fun isLoggedIn(): Boolean = account != null
-  fun getLoginIcon(): Icon = if (isLoggedIn()) EducationalCoreIcons.LOGGED_IN_USER else AllIcons.General.User
+  fun getLoginIcon(): Icon = if (isLoggedIn()) EducationalCoreIcons.Actions.LoggedInUser else AllIcons.General.User
 
   companion object {
     fun getInstance(): CodeforcesSettings = service()
