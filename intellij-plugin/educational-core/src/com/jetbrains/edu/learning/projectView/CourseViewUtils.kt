@@ -154,7 +154,7 @@ object CourseViewUtils {
 
   val Course.icon: Icon
     get() {
-      return if (this is CodeforcesCourse) EducationalCoreIcons.Platform.CODEFORCES_SMALL
+      return if (this is CodeforcesCourse) EducationalCoreIcons.Platform.Codeforces
       else EducationalCoreIcons.CourseTree
     }
 

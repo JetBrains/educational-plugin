@@ -32,16 +32,17 @@
             },
             "platform" : {
               "tab" : {
-                "checkio@24x24.svg" : "icons/com/jetbrains/edu/platform/tab/checkio.svg",
-                "codeforces@24x24.svg" : "icons/com/jetbrains/edu/platform/tab/codeforces.svg",
-                "coursera@24x24.svg" : "icons/com/jetbrains/edu/platform/tab/coursera.svg",
-                "jetBrainsAcademy@24x24.svg" : "icons/com/jetbrains/edu/platform/tab/JB_academy_course_tab.svg",
-                "marketplaceCourses@24x24.svg" : "icons/com/jetbrains/edu/platform/tab/marketplace_courses_tab.svg"
+                "logoCheckio@24x24.svg" : "icons/com/jetbrains/edu/platform/tab/logoCheckio@24x24.svg",
+                "logoCodeforces@24x24.svg" : "icons/com/jetbrains/edu/platform/tab/logoCodeforces@24x24.svg",
+                "logoCoursera@24x24.svg" : "icons/com/jetbrains/edu/platform/tab/logoCoursera@24x24.svg",
+                "logoJetBrainsAcademy@24x24.svg" : "icons/com/jetbrains/edu/platform/tab/logoJetBrainsAcademy@24x24.svg",
+                "logoMarketplace@24x24.svg" : "icons/com/jetbrains/edu/platform/tab/logoMarketplace@24x24.svg"
               },
-              "hyperskill.svg" : "icons/com/jetbrains/edu/platform/JB_academy.svg",
+              "logoCodeforces.svg" : "icons/com/jetbrains/edu/platform/logoCodeforces.svg",
+              "logoJetBrainsAcademy.svg" : "icons/com/jetbrains/edu/platform/logoJetBrainsAcademy.svg",
 
-              "logoCheckiOJS.svg" : "icons/com/jetbrains/edu/platform/logoCheckiOJS.svg",
-              "logoCheckiOPy.svg" : "icons/com/jetbrains/edu/platform/logoCheckiOPy.svg"
+              "logoJSCheckiO.svg" : "icons/com/jetbrains/edu/platform/logoJSCheckiO.svg",
+              "logoPyCheckiO.svg" : "icons/com/jetbrains/edu/platform/logoPyCheckiO.svg"
             },
             "eduCourseAction.svg" : "icons/com/jetbrains/edu/eduCourseAction.svg",
             "toolWindowEduCourseTask.svg" : "icons/com/jetbrains/edu/eduCourseTask.svg",

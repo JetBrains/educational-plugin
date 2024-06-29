@@ -40,7 +40,7 @@ class MarketplacePlatformProvider(
   override val name: String
     get() = MARKETPLACE
 
-  override val icon: Icon get() = EducationalCoreIcons.Platform.Tab.MARKETPLACE_TAB
+  override val icon: Icon get() = EducationalCoreIcons.Platform.Tab.Marketplace
 
   override fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel = MarketplaceCoursesPanel(this, scope, disposable)
 

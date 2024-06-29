@@ -45,17 +45,17 @@ public final class EducationalCoreIcons {
      * {@code com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory}</p>
      */
     public static final class Tab {
-      public static final Icon CheckiO = load("/icons/com/jetbrains/edu/platform/tab/checkio.svg");
-      public static final Icon Codeforces = load("/icons/com/jetbrains/edu/platform/tab/codeforces.svg");
-      public static final Icon Coursera = load("/icons/com/jetbrains/edu/platform/tab/coursera.svg");
-      public static final Icon JB_ACADEMY_TAB = load("/icons/com/jetbrains/edu/platform/tab/JB_academy_course_tab.svg");
-      public static final Icon MARKETPLACE_TAB = load("/icons/com/jetbrains/edu/platform/tab/marketplace_courses_tab.svg");
+      public static final Icon CheckiO = load("/icons/com/jetbrains/edu/platform/tab/logoCheckio@24x24.svg");
+      public static final Icon Codeforces = load("/icons/com/jetbrains/edu/platform/tab/logoCodeforces@24x24.svg");
+      public static final Icon Coursera = load("/icons/com/jetbrains/edu/platform/tab/logoCoursera@24x24.svg");
+      public static final Icon JetBrainsAcademy = load("/icons/com/jetbrains/edu/platform/tab/logoJetBrainsAcademy@24x24.svg");
+      public static final Icon Marketplace = load("/icons/com/jetbrains/edu/platform/tab/logoMarketplace@24x24.svg");
     }
 
-    public static final Icon CODEFORCES_SMALL = load("/icons/com/jetbrains/edu/platform/codeforcesSmall.svg"); // 16x16
-    public static final Icon JB_ACADEMY = load("/icons/com/jetbrains/edu/platform/JB_academy.svg");
-    public static final Icon JSCheckiO = load("/icons/com/jetbrains/edu/platform/logoCheckiOJS.svg");
-    public static final Icon PyCheckiO = load("/icons/com/jetbrains/edu/platform/logoCheckiOPy.svg");
+    public static final Icon Codeforces = load("/icons/com/jetbrains/edu/platform/logoCodeforces.svg");
+    public static final Icon JetBrainsAcademy = load("/icons/com/jetbrains/edu/platform/logoJetBrainsAcademy.svg");
+    public static final Icon JSCheckiO = load("/icons/com/jetbrains/edu/platform/logoJSCheckiO.svg");
+    public static final Icon PyCheckiO = load("/icons/com/jetbrains/edu/platform/logoPyCheckiO.svg");
   }
 
   public static final Icon LOGGED_IN_USER = load("/icons/com/jetbrains/edu/learning/loggedInUser.svg"); // 16x16

@@ -39,7 +39,7 @@
             class="com.jetbrains.edu.learning.codeforces.actions.SubmitCodeforcesSolutionAction"/>
     <action id="Educational.Codeforces.CreateTestSample"
             class="com.jetbrains.edu.learning.codeforces.actions.CodeforcesCreateTestAction"
-            icon="com.jetbrains.edu.EducationalCoreIcons.Platform.CODEFORCES_SMALL">
+            icon="com.jetbrains.edu.EducationalCoreIcons.Platform.Codeforces">
       <add-to-group group-id="NewGroup" anchor="first"/>
     </action>
   </actions>
