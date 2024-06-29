@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TITLE
 class CodeforcesFileTemplateFactory : FileTemplateGroupDescriptorFactory {
 
   override fun getFileTemplatesDescriptor(): FileTemplateGroupDescriptor {
-    val group = FileTemplateGroupDescriptor(CODEFORCES_TITLE, EducationalCoreIcons.Platform.Tab.Codeforces)
+    val group = FileTemplateGroupDescriptor(CODEFORCES_TITLE, EducationalCoreIcons.Platform.Codeforces)
     CodeforcesLanguageProvider.EP_NAME.extensions.forEach {
       group.addTemplate(CodeforcesFileTemplateDescriptor(it.templateFileName, it.languageIcon, it.displayTemplateName))
     }

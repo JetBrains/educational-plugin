@@ -13,7 +13,7 @@ class PyCheckiOWidget(project: Project) : LoginWidget<CheckiOAccount>(
   project,
   EduPythonBundle.message("checkio.widget.title"),
   EduPythonBundle.message("checkio.widget.tooltip"),
-  EducationalCoreIcons.Platform.Tab.CheckiO
+  EducationalCoreIcons.Platform.PyCheckiO
 ) {
   override val connector: EduOAuthCodeFlowConnector<CheckiOAccount, *>
     get() = PyCheckiOOAuthConnector

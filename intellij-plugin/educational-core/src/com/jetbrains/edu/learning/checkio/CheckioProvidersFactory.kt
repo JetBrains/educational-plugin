@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning.checkio
 
 import com.intellij.openapi.Disposable
-import com.intellij.ui.scale.JBUIScale
-import com.intellij.util.IconUtil
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.checkio.newProjectUI.CheckiOCoursesPanel
@@ -17,7 +15,6 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import kotlinx.coroutines.CoroutineScope
 import javax.swing.Icon
-import kotlin.math.max
 
 class CheckiOPlatformProviderFactory : CoursesPlatformProviderFactory {
   override fun getProviders(): List<CoursesPlatformProvider> = listOf(CheckiOPlatformProvider())
@@ -26,7 +23,7 @@ class CheckiOPlatformProviderFactory : CoursesPlatformProviderFactory {
 class CheckiOPlatformProvider : CoursesPlatformProvider() {
   override val name: String = CHECKIO
 
-  override val icon: Icon get() = EducationalCoreIcons.Platform.Tab.CheckiO.to24()
+  override val icon: Icon get() = EducationalCoreIcons.Platform.Tab.CheckiO
 
   override fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel =
     CheckiOCoursesPanel(this, scope, disposable)
@@ -40,6 +37,4 @@ class CheckiOPlatformProvider : CoursesPlatformProvider() {
         .apply { languageVersion = PYTHON_3_VERSION }
         .let { CoursesGroup.fromCourses(it) }
     }
-
-  private fun Icon.to24() = IconUtil.scale(this, null, JBUIScale.scale(24f / max(iconHeight, iconWidth)))
 }
