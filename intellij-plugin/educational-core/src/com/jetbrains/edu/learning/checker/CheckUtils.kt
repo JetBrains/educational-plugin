@@ -83,7 +83,7 @@ object CheckUtils {
   }
 
   fun postProcessOutput(output: String): String {
-    return output.replace(System.getProperty("line.separator"), "\n")
+    return output.replace(System.lineSeparator(), "\n")
   }
 
   fun createRunConfiguration(project: Project, taskFile: VirtualFile?): RunnerAndConfigurationSettings? {
@@ -186,9 +186,9 @@ object CheckUtils {
         return@Callback
       }
 
-      Disposer.register(context, Disposable {
+      Disposer.register(context) {
         ExecutionManagerImpl.stopProcess(descriptor)
-      })
+      }
       val processHandler = descriptor.processHandler
       if (processHandler != null) {
         processHandler.addProcessListener(object : ProcessAdapter() {
