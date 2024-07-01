@@ -352,7 +352,7 @@ class TaskDescriptionTest : EduTestCase() {
       <html>
        <head></head>
        <body>
-        <p><img class="image-fullsize" src="${expectedImage}" width="400"></p>
+        <p><img class="image-fullsize" src="$expectedImage" width="400"></p>
        </body>
       </html>
     """.trimIndent()
@@ -403,7 +403,7 @@ class TaskDescriptionTest : EduTestCase() {
       <html>
        <head></head>
        <body>
-        <p style="text-align: center;"><img class="image-fullsize" src="${imageLight}" width="400"></p>
+        <p style="text-align: center;"><img class="image-fullsize" src="$imageLight" width="400"></p>
         <p style="text-align: center;"><img class="image-fullsize" src="screenshot2.png" width="400"></p>
        </body>
       </html>
@@ -424,7 +424,7 @@ class TaskDescriptionTest : EduTestCase() {
       <html>
        <head></head>
        <body>
-        <p style="text-align: center;"><img class="image-fullsize" src="${expectedImage}" width="400"></p>
+        <p style="text-align: center;"><img class="image-fullsize" src="$expectedImage" width="400"></p>
         <p style="text-align: center;"><img class="image-fullsize" src="screenshot2.png" width="400"></p>
        </body>
       </html>
@@ -469,8 +469,8 @@ class TaskDescriptionTest : EduTestCase() {
   private fun String.getBody() = Jsoup.parse(this).getElementsByTag("body").text()
 
   companion object {
-    private val overrideMethodShortcut: String = getKeystrokeText(KeyEvent.VK_O, InputEvent.CTRL_MASK)
-    private val goToActionShortcut: String = getKeystrokeText(KeyEvent.VK_A, InputEvent.CTRL_MASK + InputEvent.SHIFT_MASK)
+    private val overrideMethodShortcut: String = getKeystrokeText(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK)
+    private val goToActionShortcut: String = getKeystrokeText(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK)
 
     private fun getKeystrokeText(keyChar: Int, modifiers: Int) = KeymapUtil.getKeystrokeText(KeyStroke.getKeyStroke(keyChar, modifiers))
   }
