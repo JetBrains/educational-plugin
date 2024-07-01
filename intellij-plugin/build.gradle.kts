@@ -198,7 +198,6 @@ subprojects {
   repositories {
     intellijPlatform {
       defaultRepositories()
-      binaryReleasesAndroidStudio()
     }
   }
 
@@ -229,7 +228,6 @@ plugins {
 repositories {
   intellijPlatform {
     defaultRepositories()
-    binaryReleasesAndroidStudio()
     jetbrainsRuntime()
   }
 }
@@ -850,7 +848,7 @@ fun String.toTypeWithVersion(): TypeWithVersion {
 
 fun IntelliJPlatformDependenciesExtension.intellijIde(versionWithCode: String) {
   val (type, version) = versionWithCode.toTypeWithVersion()
-  create(type, version)
+  create(type, version, useInstaller = false)
 }
 
 fun IntelliJPlatformDependenciesExtension.intellijPlugins(vararg notations: String) {
