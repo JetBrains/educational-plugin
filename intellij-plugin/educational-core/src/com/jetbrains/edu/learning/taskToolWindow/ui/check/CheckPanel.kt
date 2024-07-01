@@ -215,6 +215,7 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
 
     val nextTask = NavigationUtils.nextTask(task)
     if (nextTask != null || (task.status == CheckStatus.Solved && NavigationUtils.isLastHyperskillProblem(task))) {
+      updateCheckButtonWrapper(task) // to update the 'Check' button state
       val isDefault = task is TheoryTask || task.isSolved
       val action = ActionManager.getInstance().getAction(NextTaskAction.ACTION_ID)
       val nextButtonText = getNextButtonText(task, nextTask)
