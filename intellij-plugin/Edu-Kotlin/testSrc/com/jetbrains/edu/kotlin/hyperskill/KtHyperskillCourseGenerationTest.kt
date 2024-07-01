@@ -1,7 +1,5 @@
 package com.jetbrains.edu.kotlin.hyperskill
 
-import com.intellij.openapi.application.ApplicationInfo
-import com.intellij.openapi.util.BuildNumber
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase.Companion.HYPERSKILL_SETTINGS_GRADLE_TEMPLATE_NAME
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase.Companion.getKotlinTemplateVariables
@@ -25,11 +23,6 @@ class KtHyperskillCourseGenerationTest : EduTestCase() {
 
   @Test
   fun `test course structure creation`() {
-    // https://youtrack.jetbrains.com/issue/EDU-6934
-    if (ApplicationInfo.getInstance().build >= BUILD_241) {
-      return
-    }
-
     courseWithFiles(
       courseProducer = ::HyperskillCourse,
       language = KotlinLanguage.INSTANCE,
@@ -74,9 +67,5 @@ class KtHyperskillCourseGenerationTest : EduTestCase() {
     val expectedSettingsGradleContent = GeneratorUtils.getInternalTemplateText(HYPERSKILL_SETTINGS_GRADLE_TEMPLATE_NAME)
 
     assertEquals(expectedSettingsGradleContent, actualSettingsGradleContent)
-  }
-
-  companion object {
-    private val BUILD_241 = BuildNumber.fromString("241")!!
   }
 }

@@ -1,7 +1,5 @@
 package com.jetbrains.edu.kotlin.courseGeneration
 
-import com.intellij.openapi.application.ApplicationInfo
-import com.intellij.openapi.util.BuildNumber
 import com.jetbrains.edu.jvm.courseGeneration.JvmCourseGenerationTestBase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.fileTree
@@ -60,11 +58,6 @@ class KtCourseBuilderTest : JvmCourseGenerationTestBase() {
 
   @Test
   fun `test new course structure`() {
-    // https://youtrack.jetbrains.com/issue/EDU-6934
-    if (ApplicationInfo.getInstance().build >= BUILD_241) {
-      return
-    }
-
     val course = newCourse(KotlinLanguage.INSTANCE)
     createCourseStructure(course)
 
@@ -132,9 +125,5 @@ class KtCourseBuilderTest : JvmCourseGenerationTestBase() {
       file("settings.gradle")
     }
     expectedFileTree.assertEquals(rootDir)
-  }
-
-  companion object {
-    private val BUILD_241 = BuildNumber.fromString("241")!!
   }
 }
