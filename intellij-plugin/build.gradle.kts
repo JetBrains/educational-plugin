@@ -197,7 +197,11 @@ subprojects {
 
   repositories {
     intellijPlatform {
-      defaultRepositories()
+      localPlatformArtifacts()
+      intellijDependencies()
+      releases()
+      snapshots()
+      marketplace()
       binaryReleasesAndroidStudio()
     }
   }
@@ -228,7 +232,11 @@ plugins {
 
 repositories {
   intellijPlatform {
-    defaultRepositories()
+    localPlatformArtifacts()
+    intellijDependencies()
+    releases()
+    snapshots()
+    marketplace()
     binaryReleasesAndroidStudio()
     jetbrainsRuntime()
   }
