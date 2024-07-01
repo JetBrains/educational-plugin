@@ -188,6 +188,13 @@ class CourseValidationTest : EduTestCase() {
           taskFile("images/image-2.png")
           taskFile("images/image-srcset.png")
           taskFile("images/image-dark-src.png")
+
+          dir("images") {
+            // Needed to verify that we don't fail on unexpected files during calculation if a dark image path
+            dir("md-image_dark.png") {
+              taskFile("foo.txt")
+            }
+          }
         }
         eduTask("invalid links", taskDescription = """
           ![img file link](images/md-image.png)

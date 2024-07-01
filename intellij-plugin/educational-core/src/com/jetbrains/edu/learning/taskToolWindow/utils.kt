@@ -8,6 +8,7 @@ import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.LinkLabel
 import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.findFile
 import com.intellij.ui.ExperimentalUI
 import com.intellij.ui.JBColor
@@ -223,11 +224,21 @@ fun Element.getDarkImageSrc(project: Project, task: Task): String? {
   val fileExtension = FileUtilRt.getExtension(srcAttr)
   val darkImagePath = "$fileNameWithoutExtension$DARK_SUFFIX.$fileExtension"
   val taskDir = task.getDir(project.courseDir)
-  if (darkImagePath in task.taskFiles || taskDir?.findFile(darkImagePath)?.exists() == true) {
+  // There is no guarantee that `darkImagePath` is a valid local relative path.
+  // So `findFileSafe` is used instead of `findFile` not to fail with exception in the case of invalid path,
+  // for example, http url or path to a directory
+  if (darkImagePath in task.taskFiles || taskDir?.findFileSafe(darkImagePath)?.exists() == true) {
     return darkImagePath
   }
 
   return null
+}
+
+/**
+ * The same as [findFile] but returns `null` in case of an invalid path instead of throwing exception
+ */
+private fun VirtualFile.findFileSafe(relativePath: String): VirtualFile? {
+  return runCatching { findFile(relativePath) }.getOrNull()
 }
 
 /**
