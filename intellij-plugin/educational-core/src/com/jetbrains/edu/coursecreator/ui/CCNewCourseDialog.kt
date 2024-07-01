@@ -55,7 +55,7 @@ class CCNewCourseDialog @Suppress("UnstableApiUsage") constructor(
   override fun createCenterPanel(): JComponent = panel
 
   override fun doOKAction() {
-    val isFrameworkLessonSelected = lessonTypeSelectionPanel.isFrameworkLessonSelected
+    val isFrameworkLessonSelected = lessonTypeSelectionPanel.isGuidedProjectSelected
     close(OK_EXIT_CODE)
     onOKAction()
     val course = newCoursePanel.course

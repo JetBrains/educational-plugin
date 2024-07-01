@@ -17,14 +17,15 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.addBorder
 import com.jetbrains.edu.learning.ui.EduColors
 import com.jetbrains.edu.learning.ui.RoundedWrapper
 import java.awt.event.*
+import javax.swing.Icon
 import javax.swing.JComponent
 import javax.swing.JLabel
 
 class LessonTypeSelectionPanel(coursePanel: CCNewCoursePanel) : Wrapper() {
   private val lessonTypePanel = LessonChoicePanel()
 
-  val isFrameworkLessonSelected: Boolean
-    get() = lessonTypePanel.isFrameworkLessonCardSelected
+  val isGuidedProjectSelected: Boolean
+    get() = lessonTypePanel.isGuidedProjectCardSelected
 
   init {
     val panel = panel {
@@ -63,37 +64,28 @@ class LessonTypeSelectionPanel(coursePanel: CCNewCoursePanel) : Wrapper() {
 }
 
 class LessonChoicePanel : Wrapper(), Disposable {
-  private val lessonCardSimpleLesson = LessonCard(
-    EduCoreBundle.message("cc.new.course.lesson.selection.card.simple.title"),
-    EduCoreBundle.message("cc.new.course.lesson.selection.card.simple.description"),
-    false
-  )
-  private val lessonCardFrameworkLesson = LessonCard(
-    EduCoreBundle.message("cc.new.course.lesson.selection.card.framework.title"),
-    EduCoreBundle.message("cc.new.course.lesson.selection.card.framework.description"),
-    true
-  )
+  private val lessonCardSimpleLesson = SimpleLessonCard(::onSelected)
+  private val lessonCardGuidedProject = GuidedProjectCard(::onSelected)
 
   /**
    * false -> Simple lesson card selected
-   * true -> Framework lesson card selected
-   * null -> nothing is selected
+   * true -> Guided Project card selected
    */
-  var isFrameworkLessonCardSelected: Boolean = false
-    private set(value) {
+  val isGuidedProjectCardSelected: Boolean
+    get() = when(selectedCard) {
+      is SimpleLessonCard -> false
+      is GuidedProjectCard -> true
+    }
+
+  private var selectedCard: LessonCard = lessonCardSimpleLesson
+    set(value) {
       if (field != value) {
-        lessonCardSimpleLesson.update(!value)
-        lessonCardFrameworkLesson.update(value)
+        field.update(false)
+        value.update(true)
         revalidate()
         repaint()
       }
       field = value
-    }
-
-  private val selectedCard: LessonCard
-    get() = when (isFrameworkLessonCardSelected) {
-      false -> lessonCardSimpleLesson
-      true -> lessonCardFrameworkLesson
     }
 
   init {
@@ -103,7 +95,7 @@ class LessonChoicePanel : Wrapper(), Disposable {
           .widthGroup("LessonCard")
           .align(AlignY.FILL)
           .resizableColumn()
-        cell(RoundedWrapper(lessonCardFrameworkLesson))
+        cell(RoundedWrapper(lessonCardGuidedProject))
           .widthGroup("LessonCard")
           .align(AlignY.FILL)
           .resizableColumn()
@@ -123,86 +115,83 @@ class LessonChoicePanel : Wrapper(), Disposable {
         }
       })
     }
-    val actionLeft = DumbAwareAction.create { isFrameworkLessonCardSelected = false }
+    val actionLeft = DumbAwareAction.create { selectedCard = lessonCardSimpleLesson }
     actionLeft.registerCustomShortcutSet(ActionUtil.getShortcutSet("LessonCard-left"), this)
-    val actionRight = DumbAwareAction.create { isFrameworkLessonCardSelected = true }
+    val actionRight = DumbAwareAction.create { selectedCard = lessonCardGuidedProject }
     actionRight.registerCustomShortcutSet(ActionUtil.getShortcutSet("LessonCard-right"), this)
 
     setContent(panel)
   }
 
-  private fun createLessonCardMouseListener(lessonCard: LessonCard): MouseListener {
+  private fun onSelected(lessonCard: LessonCard) {
+    selectedCard = lessonCard
+  }
+
+  override fun dispose() {}
+}
+
+private sealed class LessonCard(onSelected: (LessonCard) -> Unit) : Wrapper() {
+  protected abstract val icon: Icon
+  protected abstract val selectedIcon: Icon
+  protected abstract val title: @NlsContexts.Label String
+  protected abstract val description: @NlsContexts.Label String
+
+  private lateinit var titleComponent: JComponent
+  private lateinit var iconComponent: JLabel
+
+  init {
+    isOpaque = true
+    val panel = panel {
+      row {
+        iconComponent = icon(icon).component
+      }.bottomGap(BottomGap.SMALL)
+
+      row {
+        titleComponent = text(title)
+          .customize(UnscaledGaps(bottom = 0))
+          .component.apply {
+            foreground = EduColors.lessonCardForeground
+            // add a mouselistener because otherwise it does not track clicks on the text field
+            addMouseListener(createLessonCardMouseListener(onSelected))
+          }
+      }
+      row {
+        text(description).applyToComponent {
+          font = JBFont.medium()
+          foreground = EduColors.lessonCardSecondaryForeground
+          addMouseListener(createLessonCardMouseListener(onSelected))
+        }
+      }
+    }.apply {
+      isOpaque = false
+      addMouseListener(createLessonCardMouseListener(onSelected))
+    }
+    setContent(panel)
+    update(false)
+  }
+
+  fun update(isSelected: Boolean, isFocused: Boolean = isSelected) {
+    border = innerBorder
+
+    if (isSelected) {
+      titleComponent.font = selectedTitleFont
+      background = EduColors.lessonCardSelectedBackground
+      iconComponent.icon = selectedIcon
+      addBorder(if(isFocused) focusedBorder else selectedBorder)
+    } else {
+      titleComponent.font = defaultTitleFont
+      background = EduColors.lessonCardBackground
+      iconComponent.icon = icon
+      addBorder(defaultBorder)
+    }
+  }
+
+  private fun createLessonCardMouseListener(onSelected: (LessonCard) -> Unit): MouseListener {
     return object : MouseAdapter() {
       override fun mousePressed(e: MouseEvent?) {
         super.mousePressed(e)
         requestFocusInWindow()
-        isFrameworkLessonCardSelected = lessonCard.isFrameworkLessonCard
-      }
-    }
-  }
-
-  private inner class LessonCard(
-    @NlsContexts.Label title: String,
-    @NlsContexts.Label description: String,
-    val isFrameworkLessonCard: Boolean
-  ) : Wrapper() {
-    private lateinit var titleComponent: JComponent
-    private lateinit var iconComponent: JLabel
-
-    init {
-      isOpaque = true
-      val panel = panel {
-        row {
-          iconComponent = icon(EducationalCoreIcons.LessonCardSimpleLesson).component
-        }.bottomGap(BottomGap.SMALL)
-
-        row {
-          titleComponent = text(title)
-            .customize(UnscaledGaps(bottom = 0))
-            .component.apply {
-              foreground = EduColors.lessonCardForeground
-              // add a mouselistener because otherwise it does not track clicks on the text field
-              addMouseListener(createLessonCardMouseListener(this@LessonCard))
-            }
-        }
-        row {
-          text(description).applyToComponent {
-            font = JBFont.medium()
-            foreground = EduColors.lessonCardSecondaryForeground
-            addMouseListener(createLessonCardMouseListener(this@LessonCard))
-          }
-        }
-      }.apply {
-        isOpaque = false
-        addMouseListener(createLessonCardMouseListener(this@LessonCard))
-      }
-      setContent(panel)
-      update(false)
-    }
-    
-    fun update(isSelected: Boolean, isFocused: Boolean = isSelected) {
-      border = innerBorder
-
-      if (isSelected) {
-        titleComponent.font = selectedTitleFont
-        background = EduColors.lessonCardSelectedBackground
-        iconComponent.icon = if (isFrameworkLessonCard) {
-          EducationalCoreIcons.LessonCardGuidedProjectSelected
-        }
-        else {
-          EducationalCoreIcons.LessonCardSimpleLessonSelected
-        }
-        addBorder(if(isFocused) focusedBorder else selectedBorder)
-      } else {
-        titleComponent.font = defaultTitleFont
-        background = EduColors.lessonCardBackground
-        iconComponent.icon = if (isFrameworkLessonCard) {
-          EducationalCoreIcons.LessonCardGuidedProject
-        }
-        else {
-          EducationalCoreIcons.LessonCardSimpleLesson
-        }
-        addBorder(defaultBorder)
+        onSelected(this@LessonCard)
       }
     }
   }
@@ -227,6 +216,26 @@ class LessonChoicePanel : Wrapper(), Disposable {
     private val selectedTitleFont = JBFont.regular().asBold()
     private val defaultTitleFont = JBFont.regular()
   }
+}
 
-  override fun dispose() {}
+private class SimpleLessonCard(onSelected: (LessonCard) -> Unit) : LessonCard(onSelected) {
+  override val icon: Icon
+    get() = EducationalCoreIcons.LessonCardSimpleLesson
+  override val selectedIcon: Icon
+    get() = EducationalCoreIcons.LessonCardSimpleLessonSelected
+  override val title: String
+    get() = EduCoreBundle.message("cc.new.course.lesson.selection.card.simple.title")
+  override val description: String
+    get() = EduCoreBundle.message("cc.new.course.lesson.selection.card.simple.description")
+}
+
+private class GuidedProjectCard(onSelected: (LessonCard) -> Unit) : LessonCard(onSelected) {
+  override val icon: Icon
+    get() = EducationalCoreIcons.LessonCardGuidedProject
+  override val selectedIcon: Icon
+    get() = EducationalCoreIcons.LessonCardGuidedProjectSelected
+  override val title: String
+    get() = EduCoreBundle.message("cc.new.course.lesson.selection.card.framework.title")
+  override val description: String
+    get() = EduCoreBundle.message("cc.new.course.lesson.selection.card.framework.description")
 }
