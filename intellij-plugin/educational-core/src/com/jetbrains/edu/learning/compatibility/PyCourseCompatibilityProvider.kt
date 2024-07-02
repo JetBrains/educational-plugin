@@ -1,5 +1,7 @@
 package com.jetbrains.edu.learning.compatibility
 
+import com.intellij.openapi.application.ApplicationInfo
+import com.intellij.openapi.util.BuildNumber
 import com.intellij.util.PlatformUtils.*
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduUtilsKt
@@ -9,15 +11,19 @@ import com.jetbrains.edu.learning.courseFormat.PluginInfos.PYTHON_PRO
 import com.jetbrains.edu.learning.courseFormat.PluginInfos.TOML
 import javax.swing.Icon
 
+// BACKCOMPAT: 2024.1
+private val BUILD_242 = BuildNumber.fromString("242")!!
+
 class PyCourseCompatibilityProvider : CourseCompatibilityProvider {
 
   override fun requiredPlugins(): List<PluginInfo>? {
     val requiredPlugins = mutableListOf<PluginInfo>()
     @Suppress("DEPRECATION", "UnstableApiUsage")
     requiredPlugins += when {
-      isPyCharmPro() -> PYTHON_PRO
-      isPyCharm() || isDataSpell() -> PYTHON_COMMUNITY
-      isIdeaUltimate() -> PYTHON_PRO
+      // BACKCOMPAT: 2024.1. `isPyCharmPro() || isIdeaUltimate()` branch can be dropped
+      // since they are covered by `isPyCharm()` and `isIntelliJ()` below
+      isPyCharmPro() || isIdeaUltimate() -> if (ApplicationInfo.getInstance().build >= BUILD_242) PYTHON_COMMUNITY else PYTHON_PRO
+      isPyCharm() || isDataSpell() ||
       isCLion() || isIntelliJ() || EduUtilsKt.isAndroidStudio() -> PYTHON_COMMUNITY
       else -> return null
     }
