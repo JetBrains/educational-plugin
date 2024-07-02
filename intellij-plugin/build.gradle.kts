@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.*
 
 val environmentName: String by project
+// BACKCOMPAT: 2024.1. Drop it, it's always true
+val isAtLeast242: Boolean = environmentName.toInt() >= 242
+
 val pluginVersion: String by project
 val platformVersion: String = "20${StringBuilder(environmentName).insert(environmentName.length - 1, '.')}"
 val baseIDE: String by project
@@ -43,7 +46,9 @@ val pythonProPlugin: String by project
 val pythonCommunityPlugin: String by project
 
 val pythonPlugin = when {
-  isIdeaIDE -> pythonProPlugin
+  // Since 2024.2 Python Community plugin is available in paid products (like IU) together with Python Pro as its base dependency.
+  // But all necessary code that we need is inside Python Community plugin, so we need only it from compilation POV
+  isIdeaIDE -> if (isAtLeast242) pythonCommunityPlugin else pythonProPlugin
   isClionIDE -> "PythonCore"
   isPycharmIDE -> "PythonCore"
   isStudioIDE -> pythonCommunityPlugin
@@ -96,7 +101,10 @@ val cppPlugins = listOf(
 )
 
 val ideToPlugins = mapOf(
-  IntellijIdeaUltimate to listOf(scalaPlugin, rustPlugin, pythonProPlugin, goPlugin, phpPlugin),
+  // Since 2024.2 Python Community plugin is available in paid products (like IU) together with Python Pro as its base dependency.
+  // Actually, Python Community contains all necessary code that we need.
+  // Python Pro plugin is added here on 2024.2 just to have the most common setup from user POV (i.e. Python Community + Python Pro)
+  IntellijIdeaUltimate to listOfNotNull(scalaPlugin, rustPlugin, pythonProPlugin, pythonCommunityPlugin.takeIf { isAtLeast242 }, goPlugin, phpPlugin),
   CLion to listOf(rustPlugin),
   AndroidStudio to listOf(pythonCommunityPlugin),
   GoLand to listOf(pythonCommunityPlugin),
@@ -292,7 +300,7 @@ dependencies {
     pluginModule(implementation(project("github")))
     pluginModule(implementation(project("remote-env")))
     // BACKCOMPAT: 2024.1
-    if (environmentName.toInt() >= 242) {
+    if (isAtLeast242) {
       // bundled localization resources can be used only since 2024.2,
       // so it doesn't make sense to have this module for other platforms
       pluginModule(implementation(project("localization")))
@@ -663,8 +671,13 @@ project("Edu-Python:Idea") {
       val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
       intellijIde(ideVersion)
 
-      val pluginList = listOfNotNull(
-        if (!isJvmCenteredIDE) pythonProPlugin else pythonPlugin,
+      val pluginList = listOf(
+        // BACKCOMPAT: 2024.1. Convert `when` to `if`
+        when {
+          !isJvmCenteredIDE && isAtLeast242 -> pythonCommunityPlugin
+          !isJvmCenteredIDE -> pythonProPlugin
+          else -> pythonPlugin
+        },
         javaPlugin
       )
       intellijPlugins(pluginList)

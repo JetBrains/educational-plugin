@@ -3,8 +3,6 @@
   <!--suppress PluginXmlValidity -->
   <dependencies>
     <plugin id="com.intellij.modules.python"/>
-    <!--suppress PluginXmlValidity -->
-    <module name="intellij.python.community.impl"/>
   </dependencies>
 
   <!-- BACKCOMPAT: 2024.1: Inline it -->
