@@ -183,6 +183,7 @@
       <action id="Educational.Educator.CCRemoveSection" class="com.jetbrains.edu.coursecreator.actions.studyItem.CCRemoveSection"/>
       <action id="Educational.Educator.IncludeIntoTask" class="com.jetbrains.edu.coursecreator.actions.taskFile.CCIncludeIntoTask"/>
       <action id="Educational.Educator.ExcludeFromTask" class="com.jetbrains.edu.coursecreator.actions.taskFile.CCExcludeFromTask"/>
+      <action id="Educational.Educator.TestPycFile" class="com.jetbrains.edu.coursecreator.actions.taskFile.TestPycAction"/>
       <separator/>
       <reference id="Educational.Educator.CreateCoursePreview"/>
       <reference id="Educational.Educator.ChangeCourseInfo"/>

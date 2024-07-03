@@ -300,13 +300,11 @@ object NavigationUtils {
     val taskDir = task.getDir(project.courseDir) ?: return
     val descriptionFile = task.getDescriptionFile(project)
 
-    ApplicationManager.getApplication().executeOnPooledThread {
       descriptionFile?.let { FileEditorManager.getInstance(project).openFile(it, false) }
 
       task.getAllTestVFiles(project).forEach { testFile ->
         FileEditorManager.getInstance(project).openFile(testFile, false)
       }
-    }
 
     val firstTaskFile = getFirstTaskFile(taskDir, task)
     ProjectView.getInstance(project).refresh()
