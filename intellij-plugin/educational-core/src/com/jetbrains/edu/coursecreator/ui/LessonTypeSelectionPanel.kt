@@ -64,8 +64,8 @@ class LessonTypeSelectionPanel(coursePanel: CCNewCoursePanel) : Wrapper() {
 }
 
 class LessonChoicePanel : Wrapper(), Disposable {
-  private val lessonCardSimpleLesson = SimpleLessonCard(::onSelected)
-  private val lessonCardGuidedProject = GuidedProjectCard(::onSelected)
+  private val lessonCardSimpleLesson = SimpleLessonCard()
+  private val lessonCardGuidedProject = GuidedProjectCard()
 
   /**
    * false -> Simple lesson card selected
@@ -120,17 +120,16 @@ class LessonChoicePanel : Wrapper(), Disposable {
     val actionRight = DumbAwareAction.create { selectedCard = lessonCardGuidedProject }
     actionRight.registerCustomShortcutSet(ActionUtil.getShortcutSet("LessonCard-right"), this)
 
-    setContent(panel)
-  }
+    lessonCardSimpleLesson.addSelectionListener { selectedCard = lessonCardSimpleLesson }
+    lessonCardGuidedProject.addSelectionListener { selectedCard = lessonCardGuidedProject }
 
-  private fun onSelected(lessonCard: LessonCard) {
-    selectedCard = lessonCard
+    setContent(panel)
   }
 
   override fun dispose() {}
 }
 
-private sealed class LessonCard(onSelected: (LessonCard) -> Unit) : Wrapper() {
+private sealed class LessonCard() : Wrapper() {
   protected abstract val icon: Icon
   protected abstract val selectedIcon: Icon
   protected abstract val title: @NlsContexts.Label String
@@ -138,6 +137,8 @@ private sealed class LessonCard(onSelected: (LessonCard) -> Unit) : Wrapper() {
 
   private lateinit var titleComponent: JComponent
   private lateinit var iconComponent: JLabel
+
+  private val selectionListeners: MutableList<CardSelectionListener> = mutableListOf()
 
   init {
     isOpaque = true
@@ -152,19 +153,19 @@ private sealed class LessonCard(onSelected: (LessonCard) -> Unit) : Wrapper() {
           .component.apply {
             foreground = EduColors.lessonCardForeground
             // add a mouselistener because otherwise it does not track clicks on the text field
-            addMouseListener(createLessonCardMouseListener(onSelected))
+            addMouseListener(createLessonCardMouseListener())
           }
       }
       row {
         text(description).applyToComponent {
           font = JBFont.medium()
           foreground = EduColors.lessonCardSecondaryForeground
-          addMouseListener(createLessonCardMouseListener(onSelected))
+          addMouseListener(createLessonCardMouseListener())
         }
       }
     }.apply {
       isOpaque = false
-      addMouseListener(createLessonCardMouseListener(onSelected))
+      addMouseListener(createLessonCardMouseListener())
     }
     setContent(panel)
     update(false)
@@ -186,14 +187,26 @@ private sealed class LessonCard(onSelected: (LessonCard) -> Unit) : Wrapper() {
     }
   }
 
-  private fun createLessonCardMouseListener(onSelected: (LessonCard) -> Unit): MouseListener {
+  fun addSelectionListener(onSelected: () -> Unit) {
+    selectionListeners.add(object : CardSelectionListener {
+      override fun onSelected() {
+        onSelected()
+      }
+    })
+  }
+
+  private fun createLessonCardMouseListener(): MouseListener {
     return object : MouseAdapter() {
       override fun mousePressed(e: MouseEvent?) {
         super.mousePressed(e)
         requestFocusInWindow()
-        onSelected(this@LessonCard)
+        selectionListeners.forEach(CardSelectionListener::onSelected)
       }
     }
+  }
+
+  private interface CardSelectionListener {
+    fun onSelected()
   }
 
   companion object {
@@ -218,7 +231,7 @@ private sealed class LessonCard(onSelected: (LessonCard) -> Unit) : Wrapper() {
   }
 }
 
-private class SimpleLessonCard(onSelected: (LessonCard) -> Unit) : LessonCard(onSelected) {
+private class SimpleLessonCard() : LessonCard() {
   override val icon: Icon
     get() = EducationalCoreIcons.LessonCardSimpleLesson
   override val selectedIcon: Icon
@@ -229,7 +242,7 @@ private class SimpleLessonCard(onSelected: (LessonCard) -> Unit) : LessonCard(on
     get() = EduCoreBundle.message("cc.new.course.lesson.selection.card.simple.description")
 }
 
-private class GuidedProjectCard(onSelected: (LessonCard) -> Unit) : LessonCard(onSelected) {
+private class GuidedProjectCard() : LessonCard() {
   override val icon: Icon
     get() = EducationalCoreIcons.LessonCardGuidedProject
   override val selectedIcon: Icon
