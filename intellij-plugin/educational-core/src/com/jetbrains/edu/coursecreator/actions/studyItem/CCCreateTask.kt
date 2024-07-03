@@ -104,6 +104,15 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
         initTask(course, item, info, withSources = false)
       }
 
+      // copy propagatable property for all files
+      // there may be test files that will not be copied because property `copyTestsInFrameworkLessons` is false,
+      // but there may be a corresponding test file in the previous task
+      // in order to avoid this situation, `isPropagatable` is copied for all files
+      for ((name, taskFile) in item.taskFiles) {
+        val correspondingFile = prevTask.taskFiles[name] ?: continue
+        taskFile.isPropagatable = correspondingFile.isPropagatable
+      }
+
       // If we insert new task between `task1` and `task2`
       // we should change target of all placeholder dependencies of `task2` from task file of `task1`
       // to the corresponding task file in new task
