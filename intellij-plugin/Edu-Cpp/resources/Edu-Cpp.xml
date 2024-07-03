@@ -1,6 +1,13 @@
 <idea-plugin package="com.jetbrains.edu.cpp" xmlns:xi="http://www.w3.org/2001/XInclude">
-  <!-- BACKCOMPAT: 2023.3. Inline Edu-Cpp-platform.xml -->
-  <xi:include href="/META-INF/Edu-Cpp-platform.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <!--suppress PluginXmlValidity -->
+  <dependencies>
+    <plugin id="com.intellij.clion"/>
+    <plugin id="com.intellij.clion.runFile"/>
+    <!--suppress PluginXmlValidity -->
+    <module name="intellij.clion.runFile"/>
+    <plugin id="org.jetbrains.plugins.clion.test.catch"/>
+    <plugin id="org.jetbrains.plugins.clion.test.google"/>
+  </dependencies>
 
   <extensions defaultExtensionNs="Educational">
     <configurator language="ObjectiveC" implementationClass="com.jetbrains.edu.cpp.CppGTestConfigurator"
