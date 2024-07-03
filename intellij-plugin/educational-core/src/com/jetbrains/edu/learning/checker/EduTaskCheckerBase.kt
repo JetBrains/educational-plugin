@@ -118,7 +118,7 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
       return CheckResult(status = CheckStatus.Solved, message = CheckUtils.CONGRATULATIONS, executedTestsInfo = testInfo)
     }
 
-    if (testInfo.firstFailed() != null) {
+    if (testInfo.firstFailed() == null) {
       error("Testing failed although no failed tests found")
     }
     return CheckResult(status = CheckStatus.Failed, executedTestsInfo = testInfo)
