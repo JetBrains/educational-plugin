@@ -129,7 +129,7 @@ class LessonChoicePanel : Wrapper(), Disposable {
   override fun dispose() {}
 }
 
-private sealed class LessonCard() : Wrapper() {
+private sealed class LessonCard : Wrapper() {
   protected abstract val icon: Icon
   protected abstract val selectedIcon: Icon
   protected abstract val title: @NlsContexts.Label String
@@ -167,6 +167,7 @@ private sealed class LessonCard() : Wrapper() {
       isOpaque = false
       addMouseListener(createLessonCardMouseListener())
     }
+    @Suppress("LeakingThis")
     setContent(panel)
     update(false)
   }
@@ -231,7 +232,7 @@ private sealed class LessonCard() : Wrapper() {
   }
 }
 
-private class SimpleLessonCard() : LessonCard() {
+private class SimpleLessonCard : LessonCard() {
   override val icon: Icon
     get() = EducationalCoreIcons.LessonCardSimpleLesson
   override val selectedIcon: Icon
@@ -242,7 +243,7 @@ private class SimpleLessonCard() : LessonCard() {
     get() = EduCoreBundle.message("cc.new.course.lesson.selection.card.simple.description")
 }
 
-private class GuidedProjectCard() : LessonCard() {
+private class GuidedProjectCard : LessonCard() {
   override val icon: Icon
     get() = EducationalCoreIcons.LessonCardGuidedProject
   override val selectedIcon: Icon
