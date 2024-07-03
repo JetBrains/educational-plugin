@@ -257,6 +257,89 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
     }.assertEquals(root, myFixture)
   }
 
+  @Test
+  fun `test copy propagatable property of files`() {
+    val lessonName = "lesson"
+
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      frameworkLesson(lessonName) {
+        eduTask("task1") {
+          taskFile("src/Task.kt", "fun foo() {}", propagatable = true)
+          taskFile("src/Baz.kt", "fun baz() {}", propagatable = false)
+          taskFile("test/Tests1.kt", "fun tests1() {}", propagatable = false)
+          taskFile("test/Tests2.kt", "fun tests2() {}", propagatable = true)
+        }
+      }
+    }
+
+    val lesson = course.lessons.first()
+
+    val newTaskName = "task2"
+    val lessonFile = findFile(lessonName)
+
+    withVirtualFileListener(course) {
+      withMockCreateStudyItemUi(MockNewStudyItemUi(newTaskName)) {
+        testAction(CCCreateTask.ACTION_ID, dataContext(lessonFile))
+      }
+    }
+
+    val task2 = lesson.getTask(newTaskName)!!
+
+    assertEquals(true, task2.taskFiles["src/Task.kt"]?.isPropagatable)
+    assertEquals(false, task2.taskFiles["src/Baz.kt"]?.isPropagatable)
+    assertEquals(false, task2.taskFiles["test/Tests1.kt"]?.isPropagatable)
+    assertEquals(true, task2.taskFiles["test/Tests2.kt"]?.isPropagatable)
+  }
+
+  @Test
+  fun `test tests files in edu task are non-propagatable by default`() {
+    val lessonName = "lesson"
+
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      frameworkLesson(lessonName)
+    }
+
+    val lesson = course.lessons.first()
+
+    val taskName = "task1"
+    val lessonFile = findFile(lessonName)
+
+    withVirtualFileListener(course) {
+      withMockCreateStudyItemUi(MockNewStudyItemUi(taskName)) {
+        testAction(CCCreateTask.ACTION_ID, dataContext(lessonFile))
+      }
+    }
+
+    val task = lesson.getTask(taskName)!!
+    assertEquals(true, task.taskFiles["Task.txt"]?.isPropagatable)
+    assertEquals(false, task.taskFiles["tests/Tests.txt"]?.isPropagatable)
+  }
+
+  @Test
+  fun `test input and output files in output task are non-propagatable by default`() {
+    val lessonName = "lesson"
+
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      frameworkLesson(lessonName)
+    }
+
+    val lesson = course.lessons.first()
+
+    val taskName = "task1"
+    val lessonFile = findFile(lessonName)
+
+    withVirtualFileListener(course) {
+      withMockCreateStudyItemUi(MockNewStudyItemUi(taskName, itemType = "Output")) {
+        testAction(CCCreateTask.ACTION_ID, dataContext(lessonFile))
+      }
+    }
+
+    val task = lesson.getTask(taskName)!!
+    assertEquals(false, task.taskFiles["tests/input.txt"]?.isPropagatable)
+    assertEquals(false, task.taskFiles["tests/output.txt"]?.isPropagatable)
+    assertEquals(true, task.taskFiles["Main.txt"]?.isPropagatable)
+  }
+
   private fun typeAtTheEndOfFile(path: String, text: String) {
     val psiFile = myFixture.configureFromTempProjectFile(path)
     myFixture.editor.caretModel.moveToOffset(psiFile.textLength)
