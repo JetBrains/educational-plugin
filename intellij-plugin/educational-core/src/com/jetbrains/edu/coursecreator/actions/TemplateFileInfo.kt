@@ -12,6 +12,8 @@ data class TemplateFileInfo(val templateName: String, val path: String, val isVi
     taskFile.name = path
     taskFile.contents = InMemoryTextualContents(template)
     taskFile.isVisible = isVisible
+    // invisible files are considered as non-propagatable by default
+    taskFile.isPropagatable = isVisible
     return taskFile
   }
 }
