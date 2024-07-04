@@ -937,7 +937,7 @@ fun manifestFile(project: Project): File? {
     // Special rules for `Edu-Python` module because it's added via `include`
     // BACKCOMPAT: 2023.3. Drop this branch
     ":intellij-plugin:Edu-Python" -> {
-      filePath = if (environmentName.toInt() < 241) "Edu-Python-Community.xml" else "Edu-Python.xml"
+      filePath = "Edu-Python.xml"
     }
     // Localization module is not supposed to have a plugin manifest.
     // Since it also is not supposed to have any code, only resources, no need to verify anything for it

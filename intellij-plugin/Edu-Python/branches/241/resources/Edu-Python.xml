@@ -1,4 +1,4 @@
-<!-- BACKCOMPAT: 2023.3 -->
+<!-- BACKCOMPAT: 2024.1 inline it -->
 <idea-plugin package="com.jetbrains.edu.python" xmlns:xi="http://www.w3.org/2001/XInclude">
   <!--suppress PluginXmlValidity -->
   <dependencies>
@@ -7,6 +7,6 @@
     <module name="intellij.python.community.impl"/>
   </dependencies>
 
-  <!-- BACKCOMPAT: 2023.3: Inline it -->
+  <!-- BACKCOMPAT: 2024.1: Inline it -->
   <xi:include href="/META-INF/Edu-Python-base.xml" xpointer="xpointer(/idea-plugin/*)"/>
 </idea-plugin>
