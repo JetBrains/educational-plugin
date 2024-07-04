@@ -57,7 +57,7 @@ abstract class CourseArchiveTestBase : EduActionTestCase() {
         var eduFilesCount = 0
         course.visitEduFiles { eduFile ->
           val actualEncryptedContents = fileName2contents[eduFile.pathInArchive] ?: error("File ${eduFile.name} not found in archive")
-          val actualContents = AES256.decryptBinary(actualEncryptedContents, TEST_AES_KEY)
+          val actualContents = AES256.decrypt(actualEncryptedContents, TEST_AES_KEY)
 
           val expectedContents = when (val contents = eduFile.contents) {
             is BinaryContents -> contents.bytes

@@ -35,7 +35,7 @@ sealed class ZipContents(private val zipPath: String, private val eduFile: EduFi
     }
 
     return if (aesKey != null) {
-      AES256.decryptBinary(encryptedBytes, aesKey)
+      AES256.decrypt(encryptedBytes, aesKey)
     }
     else {
       encryptedBytes

@@ -82,18 +82,18 @@ object AES256 {
   }
 
   fun encrypt(str: String, secretKey: String): String {
-    val encrypted = cipher(Cipher.ENCRYPT_MODE, secretKey).doFinal(str.toByteArray(Charsets.UTF_8))
+    val encrypted = encrypt(str.toByteArray(Charsets.UTF_8), secretKey)
     return String(encoder.encode(encrypted), Charsets.UTF_8)
   }
 
   fun decrypt(str: String, secretKey: String): String {
     val byteStr = decoder.decode(str.toByteArray(Charsets.UTF_8))
-    return String(cipher(Cipher.DECRYPT_MODE, secretKey).doFinal(byteStr), Charsets.UTF_8)
+    return String(decrypt(byteStr, secretKey), Charsets.UTF_8)
   }
 
-  fun encryptBinary(bytes: ByteArray, secretKey: String): ByteArray = cipher(Cipher.ENCRYPT_MODE, secretKey).doFinal(bytes)
+  fun encrypt(bytes: ByteArray, secretKey: String): ByteArray = cipher(Cipher.ENCRYPT_MODE, secretKey).doFinal(bytes)
 
-  fun decryptBinary(bytes: ByteArray, secretKey: String): ByteArray = cipher(Cipher.DECRYPT_MODE, secretKey).doFinal(bytes)
+  fun decrypt(bytes: ByteArray, secretKey: String): ByteArray = cipher(Cipher.DECRYPT_MODE, secretKey).doFinal(bytes)
 }
 
 

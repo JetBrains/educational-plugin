@@ -179,7 +179,7 @@ class CourseArchiveCreator(
           is TextualContents -> contents.text.toByteArray(UTF_8)
           is UndeterminedContents -> throw IllegalStateException("All contents must be disambiguated before writing archive")
         }
-        outputStream.write(AES256.encryptBinary(bytes, aesKey))
+        outputStream.write(AES256.encrypt(bytes, aesKey))
         courseArchiveIndicator.writeFile(eduFile)
       }
     }
