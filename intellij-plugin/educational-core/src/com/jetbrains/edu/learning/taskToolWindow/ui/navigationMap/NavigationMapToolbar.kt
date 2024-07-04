@@ -8,6 +8,7 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.ex.ActionButtonLook
 import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl
+import com.intellij.openapi.actionSystem.toolbarLayout.ToolbarLayoutStrategy
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.util.ui.JBEmptyBorder
 import com.intellij.util.ui.JBInsets
@@ -18,7 +19,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.projectView.CourseViewUtils.isSolved
-import com.jetbrains.edu.learning.taskToolWindow.ui.setupLayoutStrategy
 import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.*
 import java.awt.geom.Path2D
@@ -34,7 +34,7 @@ class NavigationMapToolbar(private val defaultActionGroup: DefaultActionGroup = 
   init {
     // '-4' to align the left border
     border = JBEmptyBorder(8, -4, 20, 8)
-    setupLayoutStrategy()
+    layoutStrategy = ToolbarLayoutStrategy.NOWRAP_STRATEGY
     setCustomButtonLook(MyActionButtonLook())
     setMinimumButtonSize(Dimension(28, 28))
     setActionButtonBorder(4, 0)
