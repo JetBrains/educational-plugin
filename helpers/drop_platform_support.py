@@ -87,7 +87,7 @@ def process_run_configurations(platform_version: int) -> Changes:
         # `MULTILINE` mode is used to match only one line.
         #
         # Note, removing xml item is intentionally done via regexp instead of xml parsing to preserve formatting
-        new_text = re.sub(f"^\s*<log_file.*path=\".*?sandbox-{platform_version}.*?\".*/>\s*$\n", "", text,
+        new_text = re.sub(fr"^\s*<log_file.*path=\".*?sandbox-{platform_version}.*?\".*/>\s*$\n", "", text,
                           flags=re.MULTILINE)
         if text != new_text:
             changes[file] = (FileModification.Change, new_text.encode())
