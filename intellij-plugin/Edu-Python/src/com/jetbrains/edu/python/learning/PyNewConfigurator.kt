@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.python.learning.PyConfigurator.Companion.TASK_PY
 import com.jetbrains.edu.python.learning.checker.PyNewTaskCheckerProvider
 import com.jetbrains.edu.python.learning.newproject.PyProjectSettings
+import com.jetbrains.python.psi.icons.PythonPsiApiIcons
 import javax.swing.Icon
 
 class PyNewConfigurator : EduConfigurator<PyProjectSettings> {
@@ -29,7 +30,7 @@ class PyNewConfigurator : EduConfigurator<PyProjectSettings> {
     get() = PyNewTaskCheckerProvider()
 
   override val logo: Icon
-    get() = pythonIcon
+    get() = PythonPsiApiIcons.Python
 
   override val defaultPlaceholderText: String
     get() = "# TODO"
