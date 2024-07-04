@@ -5,6 +5,11 @@ import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.findPsiFile
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.childLeafs
+import com.jetbrains.cidr.cpp.runfile.CppFileEntryPointDetector
 import com.jetbrains.cidr.execution.CidrTargetRunConfigurationProducer
 import com.jetbrains.edu.cpp.codeforces.CppCodeforcesRunConfiguration
 import com.jetbrains.edu.learning.checker.DefaultCodeExecutor
@@ -40,6 +45,16 @@ class CppCodeExecutor : DefaultCodeExecutor() {
 
   override fun createCodeforcesConfiguration(project: Project, factory: ConfigurationFactory): CodeforcesRunConfiguration {
     return CppCodeforcesRunConfiguration(project, factory)
+  }
+
+  private fun findEntryPointElement(project: Project, virtualFile: VirtualFile): PsiElement? {
+    val psiFile = virtualFile.findPsiFile(project) ?: return null
+    val entryPointDetector = CppFileEntryPointDetector.getInstance() ?: return null
+    // TODO: is there more efficient way to do it than iterating over all leaf children without referring to particular psi classes?
+    // It still doesn't work with new C++ language engine because
+    // `CppFileNovaEntryPointDetector#isMainOrIsInMain` is not properly implemented yet.
+    // See https://youtrack.jetbrains.com/issue/EDU-6773
+    return psiFile.childLeafs().find { entryPointDetector.isMainOrIsInMain(it) }
   }
 
   companion object {
