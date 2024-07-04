@@ -28,12 +28,10 @@
     <module name="Edu-Go"/>
     <module name="Edu-Php"/>
     <module name="Edu-Shell"/>
+    <module name="Edu-Python"/>
     <module name="sql-core"/>
     <module name="sql-jvm"/>
     <module name="github"/>
     <module name="remote-env"/>
   </content>
-
-  <!-- BACKCOMPAT: 2023.3. Inline it -->
-  <xi:include href="/META-INF/plugin-platform.xml" xpointer="xpointer(/idea-plugin/*)"/>
 </idea-plugin>

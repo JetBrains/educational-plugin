@@ -1,6 +1,0 @@
-<!--suppress PluginXmlValidity -->
-<idea-plugin>
-  <content>
-    <module name="Edu-Python"/>
-  </content>
-</idea-plugin>
