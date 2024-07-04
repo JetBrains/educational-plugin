@@ -10,6 +10,7 @@ import com.intellij.ui.jcef.JBCefApp
 import com.jetbrains.codeWithMe.model.projectViewModel
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
+import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator.Companion.EDU_PROJECT_CREATED
@@ -23,9 +24,17 @@ import com.jetbrains.rdserver.core.protocolModel
 @Suppress("UnstableApiUsage")
 class EduRemoteService(private val session: ClientProjectSession): LifetimedService() {
   init {
-    LOG.info("JBCefApp.IS_REMOTE_ENABLED: ${isJCEFEnabledOnRemote()}")
-    LOG.info("JBCefApp.isSupported(): ${JBCefApp.isSupported()}")
-    LOG.info("EduSettings.getInstance().javaUiLibraryWithCheck: ${EduSettings.getInstance().javaUiLibraryWithCheck}")
+    val jcefEnabledOnRemote = isJCEFEnabledOnRemote()
+    val isJCEFSupported = JBCefApp.isSupported()
+    LOG.info("JBCefApp.IS_REMOTE_ENABLED: $jcefEnabledOnRemote")
+    LOG.info("JBCefApp.isSupported(): $isJCEFSupported")
+    LOG.info("EduSettings.getInstance().javaUiLibraryWithCheck (before): ${EduSettings.getInstance().javaUiLibraryWithCheck}")
+
+    if (jcefEnabledOnRemote && isJCEFSupported) {
+      EduSettings.getInstance().javaUiLibrary = JavaUILibrary.JCEF
+    }
+
+    LOG.info("EduSettings.getInstance().javaUiLibraryWithCheck (after): ${EduSettings.getInstance().javaUiLibraryWithCheck}")
 
     val project = session.project
     serviceLifetime.launchOnUi {
