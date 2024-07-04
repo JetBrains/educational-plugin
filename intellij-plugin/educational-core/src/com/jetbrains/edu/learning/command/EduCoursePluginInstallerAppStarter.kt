@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.command
 
 import com.intellij.ide.CliResult
+import com.intellij.ide.plugins.HeadlessPluginsInstaller
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.extensions.PluginId
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -48,7 +49,11 @@ class EduCoursePluginInstallerAppStarter : EduAppStarterBase<Args>() {
 
     LOG.info("Installing: $pluginIds")
 
-    return installPlugins(pluginIds, course.name)
+    val installedPlugins = HeadlessPluginsInstaller.installPlugins(pluginIds)
+    if (installedPlugins.size != pluginIds.size) {
+      return CommandResult.Error("Failed to install plugins for `${course.name}` course")
+    }
+    return CommandResult.Ok
   }
 
   override fun canProcessExternalCommandLine(): Boolean = true
