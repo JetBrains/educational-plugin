@@ -4,8 +4,11 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.client.ClientProjectSession
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.rd.util.launchOnUi
+import com.intellij.ui.jcef.JBCefApp
 import com.jetbrains.codeWithMe.model.projectViewModel
+import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.navigation.NavigationUtils
@@ -20,6 +23,10 @@ import com.jetbrains.rdserver.core.protocolModel
 @Suppress("UnstableApiUsage")
 class EduRemoteService(private val session: ClientProjectSession): LifetimedService() {
   init {
+    LOG.info("JBCefApp.IS_REMOTE_ENABLED: ${isJCEFEnabledOnRemote()}")
+    LOG.info("JBCefApp.isSupported(): ${JBCefApp.isSupported()}")
+    LOG.info("EduSettings.getInstance().javaUiLibraryWithCheck: ${EduSettings.getInstance().javaUiLibraryWithCheck}")
+
     val project = session.project
     serviceLifetime.launchOnUi {
       val model = session.protocolModel.projectViewModel
@@ -54,7 +61,18 @@ class EduRemoteService(private val session: ClientProjectSession): LifetimedServ
   }
 
   companion object {
+
+    private val LOG = logger<EduRemoteService>()
+
     @Suppress("unused")
     fun getInstance(session: ClientProjectSession): EduRemoteService = session.getService(EduRemoteService::class.java)
+
+    private fun isJCEFEnabledOnRemote(): Boolean {
+      return runCatching {
+        val field = JBCefApp::class.java.getDeclaredField("IS_REMOTE_ENABLED")
+        field.isAccessible = true
+        field.getBoolean(null)
+      }.getOrElse { false }
+    }
   }
 }
