@@ -1,6 +1,5 @@
 import argparse
 import base64
-import glob
 import os
 import re
 from enum import Enum
@@ -81,9 +80,8 @@ def process_branch_directories(platform_version: int) -> Changes:
 def process_run_configurations(platform_version: int) -> Changes:
     changes = {}
     run_configurations_dir = Path(".idea/runConfigurations")
-    for file in glob.glob("*.xml", root_dir=run_configurations_dir):
-        path = run_configurations_dir / file
-        with open(path, "r") as f:
+    for file in run_configurations_dir.glob("*.xml"):
+        with open(file, "r") as f:
             text = f.read()
         # Removes `<log_file />` entity from run configurations related to given `platform_version`.
         # `MULTILINE` mode is used to match only one line.
@@ -92,7 +90,7 @@ def process_run_configurations(platform_version: int) -> Changes:
         new_text = re.sub(f"^\s*<log_file.*path=\".*?sandbox-{platform_version}.*?\".*/>\s*$\n", "", text,
                           flags=re.MULTILINE)
         if text != new_text:
-            changes[path] = (FileModification.Change, new_text.encode())
+            changes[file] = (FileModification.Change, new_text.encode())
 
     return changes
 
