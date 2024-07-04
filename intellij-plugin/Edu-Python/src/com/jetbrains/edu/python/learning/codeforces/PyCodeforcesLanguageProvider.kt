@@ -13,6 +13,6 @@ class PyCodeforcesLanguageProvider : CodeforcesLanguageProvider() {
   override val languageId: String = PYTHON
   override val templateFileName: String = "codeforces.Python main.py"
   override val displayTemplateName: String = "main.py"
-  override val languageIcon: Icon = EducationalCoreIcons.Language.Python
+  override val languageIcon: Icon = EducationalCoreIcons.PythonLogo
 
 }

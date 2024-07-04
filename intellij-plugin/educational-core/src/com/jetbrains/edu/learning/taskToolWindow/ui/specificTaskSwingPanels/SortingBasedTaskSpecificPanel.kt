@@ -175,7 +175,7 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
     return object : DumbAwareAction(
       EduCoreBundle.lazyMessage("sorting.based.task.move.up"),
       EduCoreBundle.lazyMessage("sorting.based.task.move.up.description"),
-      EducationalCoreIcons.TaskToolWindow.MoveUp
+      EducationalCoreIcons.MoveUpMatching
     ) {
       override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
@@ -191,7 +191,7 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
     return object : DumbAwareAction(
       EduCoreBundle.lazyMessage("sorting.based.task.move.down"),
       EduCoreBundle.lazyMessage("sorting.based.task.move.down.description"),
-      EducationalCoreIcons.TaskToolWindow.MoveDown
+      EducationalCoreIcons.MoveDownMatching
     ) {
       override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 

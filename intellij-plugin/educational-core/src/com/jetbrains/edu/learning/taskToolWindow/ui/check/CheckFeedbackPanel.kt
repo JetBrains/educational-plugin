@@ -5,8 +5,7 @@ import com.intellij.util.Alarm
 import com.intellij.util.text.DateFormatUtil
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.EducationalCoreIcons.CheckPanel.ResultCorrect
-import com.jetbrains.edu.EducationalCoreIcons.CheckPanel.ResultIncorrect
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask
@@ -38,8 +37,8 @@ class CheckFeedbackPanel(task: Task, checkResult: CheckResult, alarm: Alarm) : J
 
       iconTextGap = JBUI.scale(4)
       icon = when (status) {
-        CheckStatus.Failed -> ResultIncorrect
-        CheckStatus.Solved -> ResultCorrect
+        CheckStatus.Failed -> EducationalCoreIcons.ResultIncorrect
+        CheckStatus.Solved -> EducationalCoreIcons.ResultCorrect
         else -> null
       }
       foreground = when (status) {

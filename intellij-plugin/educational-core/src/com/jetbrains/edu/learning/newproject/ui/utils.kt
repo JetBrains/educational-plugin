@@ -43,7 +43,7 @@ val courseCardComponentFont = Font(TypographyManager().bodyFont, Font.PLAIN, Cou
 val Course.logo: Icon?
   get() {
     if (this is HyperskillCourseAdvertiser) {
-      return EducationalCoreIcons.Platform.JetBrainsAcademy
+      return EducationalCoreIcons.JB_ACADEMY_TAB
     }
     val logo = configurator?.logo ?: compatibilityProvider?.logo
     if (logo == null) {
@@ -136,7 +136,7 @@ fun getColorFromScheme(colorId: String, default: Color): JBColor {
 
 fun createUsersNumberLabel(usersCount: Int): JBLabel {
   return JBLabel().apply {
-    icon = EducationalCoreIcons.CourseView.UsersNumber
+    icon = EducationalCoreIcons.User
     text = usersCount.toString()
     addCourseCardInfoStyle()
   }

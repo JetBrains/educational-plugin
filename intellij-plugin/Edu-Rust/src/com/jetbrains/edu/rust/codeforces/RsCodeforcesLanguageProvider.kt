@@ -19,7 +19,7 @@ class RsCodeforcesLanguageProvider : CodeforcesLanguageProvider() {
   override val languageId: String = RUST
   override val templateFileName: String = "codeforces.Rust main.rs"
   override val displayTemplateName: String = "main.rs"
-  override val languageIcon: Icon = EducationalCoreIcons.Language.Rust
+  override val languageIcon: Icon = EducationalCoreIcons.RustLogo
 
   override fun createTaskFiles(task: Task): List<TaskFile> {
     val moduleName = GeneratorUtils.getDefaultName(task)

@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NonNls
 class LeaveInIdeFeedbackAction : DumbAwareAction(
   EduCoreBundle.lazyMessage("action.leave.feedback.text"),
   EduCoreBundle.lazyMessage("action.leave.feedback.description"),
-  EducationalCoreIcons.CheckPanel.CommentTask
+  EducationalCoreIcons.CommentTask
 ), RightAlignedToolbarAction {
 
   override fun actionPerformed(e: AnActionEvent) {

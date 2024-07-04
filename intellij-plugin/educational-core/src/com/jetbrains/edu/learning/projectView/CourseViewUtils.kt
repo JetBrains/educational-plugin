@@ -10,31 +10,17 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiManager
 import com.intellij.ui.LayeredIcon
-import com.jetbrains.edu.EducationalCoreIcons.CourseView
-import com.jetbrains.edu.EducationalCoreIcons.CourseView.CourseTree
-import com.jetbrains.edu.EducationalCoreIcons.CourseView.IdeTaskSolved
-import com.jetbrains.edu.EducationalCoreIcons.CourseView.Lesson
-import com.jetbrains.edu.EducationalCoreIcons.CourseView.LessonSolved
-import com.jetbrains.edu.EducationalCoreIcons.CourseView.Section
-import com.jetbrains.edu.EducationalCoreIcons.CourseView.SectionSolved
-import com.jetbrains.edu.EducationalCoreIcons.CourseView.SyncFilesModInfo
-import com.jetbrains.edu.EducationalCoreIcons.CourseView.SyncFilesModWarning
-import com.jetbrains.edu.EducationalCoreIcons.CourseView.TaskFailed
-import com.jetbrains.edu.EducationalCoreIcons.CourseView.TaskSolved
-import com.jetbrains.edu.EducationalCoreIcons.CourseView.TheoryTaskSolved
-import com.jetbrains.edu.EducationalCoreIcons.Platform.Codeforces
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.framework.SyncChangesStateManager
 import com.jetbrains.edu.coursecreator.framework.SyncChangesTaskFileState
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
-import com.jetbrains.edu.learning.pathRelativeToTask
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import org.jetbrains.annotations.TestOnly
 import javax.swing.Icon
@@ -121,8 +107,12 @@ object CourseViewUtils {
   fun getIcon(item: StudyItem): Icon {
     val icon = when (item) {
       is Course -> item.icon
-      is Section -> if (item.isSolved) SectionSolved else Section
-      is Lesson -> if (item.isSolved) LessonSolved else Lesson
+      is Section -> {
+        if (item.isSolved) EducationalCoreIcons.SectionSolved else EducationalCoreIcons.Section
+      }
+      is Lesson -> {
+        if (item.isSolved) EducationalCoreIcons.LessonSolved else EducationalCoreIcons.Lesson
+      }
       is Task -> item.icon
       else -> error("Unexpected item type: ${item.javaClass.simpleName}")
     }
@@ -139,8 +129,8 @@ object CourseViewUtils {
       else -> null
     }
     return when (state) {
-      SyncChangesTaskFileState.INFO -> SyncFilesModInfo
-      SyncChangesTaskFileState.WARNING -> SyncFilesModWarning
+      SyncChangesTaskFileState.INFO -> EducationalCoreIcons.SyncFilesModInfo
+      SyncChangesTaskFileState.WARNING -> EducationalCoreIcons.SyncFilesModWarning
       else -> null
     }
   }
@@ -163,16 +153,19 @@ object CourseViewUtils {
   }
 
   val Course.icon: Icon
-    get() = if (this is CodeforcesCourse) Codeforces else CourseTree
+    get() {
+      return if (this is CodeforcesCourse) EducationalCoreIcons.CODEFORCES_SMALL
+      else EducationalCoreIcons.CourseTree
+    }
 
   val Task.icon: Icon
     get() {
       return when (this) {
-        is IdeTask -> if (isSolved) IdeTaskSolved else CourseView.IdeTask
-        is TheoryTask -> if (isSolved) TheoryTaskSolved else CourseView.TheoryTask
-        else -> if (status == CheckStatus.Unchecked) CourseView.Task
-        else if  (isSolved || containsCorrectSubmissions()) TaskSolved
-        else TaskFailed
+        is IdeTask -> if (isSolved) EducationalCoreIcons.IdeTaskSolved else EducationalCoreIcons.IdeTask
+        is TheoryTask -> if (isSolved) EducationalCoreIcons.TheoryTaskSolved else EducationalCoreIcons.TheoryTask
+        else -> if (status == CheckStatus.Unchecked) EducationalCoreIcons.Task
+        else if  (isSolved || containsCorrectSubmissions()) EducationalCoreIcons.TaskSolved
+        else EducationalCoreIcons.TaskFailed
       }
     }
 

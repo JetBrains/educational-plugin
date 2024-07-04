@@ -13,5 +13,5 @@ class PhpCodeforcesLanguageProvider : CodeforcesLanguageProvider() {
   override val languageId: String = PHP
   override val templateFileName: String = "codeforces.Php main.php"
   override val displayTemplateName: String = "main.php"
-  override val languageIcon: Icon = EducationalCoreIcons.Language.Php
+  override val languageIcon: Icon = EducationalCoreIcons.PhpLogo
 }

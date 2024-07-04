@@ -18,10 +18,8 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.JCEFToolWindow
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager
-import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW
-import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_EXPUI
-import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_EXPUI_DARK
-import com.jetbrains.edu.learning.withSpecifiedUi
+import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_DARK_PNG
+import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_PNG
 import org.jsoup.Jsoup
 import org.junit.Test
 import java.awt.event.InputEvent
@@ -272,25 +270,12 @@ class TaskDescriptionTest : EduTestCase() {
 
   @Test
   fun `test arrow icon added after external link in light theme`() {
-    withSpecifiedUi(false) {
-      doTestArrowIconAdded(EXTERNAL_LINK_ARROW)
-    }
-  }
-
-  @Test
-  fun `test expui arrow icon added after external link in light theme`() {
-    withSpecifiedUi(true) {
-      doTestArrowIconAdded(EXTERNAL_LINK_ARROW_EXPUI)
-    }
+    doTestArrowIconAdded(EXTERNAL_LINK_ARROW_PNG)
   }
 
   @Test
   fun `test arrow icon added after external link in dark theme`() {
-    withSpecifiedUi(true) {
-      runWithDarkTheme {
-        doTestArrowIconAdded(EXTERNAL_LINK_ARROW_EXPUI_DARK)
-      }
-    }
+    runWithDarkTheme { doTestArrowIconAdded(EXTERNAL_LINK_ARROW_DARK_PNG) }
   }
 
   private fun runWithDarkTheme(doTest: () -> Unit) {
@@ -352,7 +337,7 @@ class TaskDescriptionTest : EduTestCase() {
       <html>
        <head></head>
        <body>
-        <p><img class="image-fullsize" src="$expectedImage" width="400"></p>
+        <p><img class="image-fullsize" src="${expectedImage}" width="400"></p>
        </body>
       </html>
     """.trimIndent()
@@ -403,7 +388,7 @@ class TaskDescriptionTest : EduTestCase() {
       <html>
        <head></head>
        <body>
-        <p style="text-align: center;"><img class="image-fullsize" src="$imageLight" width="400"></p>
+        <p style="text-align: center;"><img class="image-fullsize" src="${imageLight}" width="400"></p>
         <p style="text-align: center;"><img class="image-fullsize" src="screenshot2.png" width="400"></p>
        </body>
       </html>
@@ -424,7 +409,7 @@ class TaskDescriptionTest : EduTestCase() {
       <html>
        <head></head>
        <body>
-        <p style="text-align: center;"><img class="image-fullsize" src="$expectedImage" width="400"></p>
+        <p style="text-align: center;"><img class="image-fullsize" src="${expectedImage}" width="400"></p>
         <p style="text-align: center;"><img class="image-fullsize" src="screenshot2.png" width="400"></p>
        </body>
       </html>
@@ -469,8 +454,8 @@ class TaskDescriptionTest : EduTestCase() {
   private fun String.getBody() = Jsoup.parse(this).getElementsByTag("body").text()
 
   companion object {
-    private val overrideMethodShortcut: String = getKeystrokeText(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK)
-    private val goToActionShortcut: String = getKeystrokeText(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK)
+    private val overrideMethodShortcut: String = getKeystrokeText(KeyEvent.VK_O, InputEvent.CTRL_MASK)
+    private val goToActionShortcut: String = getKeystrokeText(KeyEvent.VK_A, InputEvent.CTRL_MASK + InputEvent.SHIFT_MASK)
 
     private fun getKeystrokeText(keyChar: Int, modifiers: Int) = KeymapUtil.getKeystrokeText(KeyStroke.getKeyStroke(keyChar, modifiers))
   }

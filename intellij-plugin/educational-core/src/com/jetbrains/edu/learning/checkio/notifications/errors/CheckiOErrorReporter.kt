@@ -25,7 +25,7 @@ class CheckiOErrorReporter(
   private fun reportLoginRequiredError() {
     EduNotificationManager
       .create(ERROR, title, EduCoreBundle.message("notification.content.log.in.and.try.again.checkio"))
-      .setIcon(EducationalCoreIcons.Platform.Tab.CheckiO)
+      .setIcon(EducationalCoreIcons.CheckiO)
       .setListener(LoginLinkListener(oAuthConnector))
       .notify(project)
   }
@@ -33,7 +33,7 @@ class CheckiOErrorReporter(
   private fun reportNetworkError() {
     EduNotificationManager
       .create(WARNING, title, EduCoreBundle.message("notification.content.check.connection.and.try.again"))
-      .setIcon(EducationalCoreIcons.Platform.Tab.CheckiO)
+      .setIcon(EducationalCoreIcons.CheckiO)
       .setSubtitle(EduCoreBundle.message("notification.subtitle.connection.failed"))
       .notify(project)
   }
@@ -41,7 +41,7 @@ class CheckiOErrorReporter(
   private fun reportUnexpectedError() {
     EduNotificationManager
       .create(ERROR, title, EduCoreBundle.message("notification.content.unexpected.error.occurred"))
-      .setIcon(EducationalCoreIcons.Platform.Tab.CheckiO)
+      .setIcon(EducationalCoreIcons.CheckiO)
       .notify(project)
   }
 

@@ -3,8 +3,8 @@ package com.jetbrains.edu.coursecreator.actions.studyItem
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
-import com.jetbrains.edu.EducationalCoreIcons.CourseView.Section
-import com.jetbrains.edu.coursecreator.StudyItemType.SECTION_TYPE
+import com.jetbrains.edu.EducationalCoreIcons
+import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.coursecreator.presentableTitleName
 import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.courseDir
@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import org.jetbrains.annotations.NonNls
 import java.io.IOException
 
-class CCCreateSection : CCCreateStudyItemActionBase<Section>(SECTION_TYPE, Section) {
+class CCCreateSection : CCCreateStudyItemActionBase<Section>(StudyItemType.SECTION_TYPE, EducationalCoreIcons.Section) {
   override fun addItem(course: Course, item: Section) {
     course.addSection(item)
   }
@@ -53,7 +53,7 @@ class CCCreateSection : CCCreateStudyItemActionBase<Section>(SECTION_TYPE, Secti
 
   override val studyItemVariants: List<StudyItemVariant>
     get() = listOf(
-      StudyItemVariant(SECTION_TYPE.presentableTitleName, "", Section) { Section() }
+      StudyItemVariant(StudyItemType.SECTION_TYPE.presentableTitleName, "", EducationalCoreIcons.Section) { Section() }
     )
 
   companion object {

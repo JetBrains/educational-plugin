@@ -8,15 +8,12 @@ import com.intellij.notification.Notifications
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.ex.ActionUtil
-import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.ui.TestDialogManager
 import com.intellij.openapi.ui.TestInputDialog
-import com.intellij.openapi.util.BuildNumber
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.TestActionEvent
 import com.intellij.util.ui.UIUtil
@@ -28,7 +25,6 @@ import com.jetbrains.edu.learning.storage.LearningObjectStorageType
 import com.jetbrains.edu.learning.storage.getDefaultLearningObjectsStorageType
 import com.jetbrains.edu.learning.storage.pathInStorage
 import com.jetbrains.edu.learning.storage.setDefaultLearningObjectsStorageType
-import com.jetbrains.edu.learning.taskToolWindow.isNewUI
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
 import org.junit.Assert.assertArrayEquals
@@ -82,22 +78,6 @@ fun withNotificationCheck(project: Project, disposable: Disposable, check: (Bool
 
   action()
   check(notificationShown, notificationText)
-}
-
-fun withSpecifiedUi(isExperimental: Boolean = true, doTest: () -> Unit) {
-  // BACKCOMPAT 2024.1
-  // Since 2024.2 only experimental UI included in builds
-  if (ApplicationInfo.getInstance().build >= BuildNumber.fromString("242")!! && !isExperimental) {
-    return
-  }
-  val initialUI = isNewUI()
-  try {
-    Registry.get("ide.experimental.ui").setValue(isExperimental)
-    doTest()
-  }
-  finally {
-    Registry.get("ide.experimental.ui").setValue(initialUI)
-  }
 }
 
 inline fun <reified T : AnAction> getActionById(actionId: String): T {

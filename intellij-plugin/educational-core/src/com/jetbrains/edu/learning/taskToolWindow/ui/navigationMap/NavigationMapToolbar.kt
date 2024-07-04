@@ -23,7 +23,7 @@ import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.*
 import java.awt.geom.Path2D
 import java.awt.geom.RoundRectangle2D
-import javax.swing.JComponent
+import javax.swing.*
 
 class NavigationMapToolbar(private val defaultActionGroup: DefaultActionGroup = DefaultActionGroup()) : ActionToolbarImpl(
   ACTION_PLACE,
@@ -147,7 +147,7 @@ class NavigationMapAction(val task: Task, private val currentTask: Task, private
     }
     presentation.text = task.presentableName
     presentation.icon = if (task is TheoryTask && task.course is HyperskillCourse) {
-      EducationalCoreIcons.TaskToolWindow.NavigationMapTheoryTask
+      EducationalCoreIcons.NavigationMapTheoryTask
     }
     else {
       EduTextIcon(index.toString())

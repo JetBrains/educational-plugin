@@ -33,6 +33,7 @@ import java.awt.MouseInfo
 import java.awt.Point
 import javax.swing.JSlider
 import javax.swing.SwingConstants
+import javax.swing.event.ChangeListener
 
 class TaskToolWindowFactory : ToolWindowFactory, DumbAware {
   override fun isApplicable(project: Project): Boolean = project.isEduProject()
@@ -80,11 +81,11 @@ class TaskToolWindowFactory : ToolWindowFactory, DumbAware {
       fontSizeSlider.paintTrack = true
       fontSizeSlider.snapToTicks = true
       UIUtil.setSliderIsFilled(fontSizeSlider, true)
-      fontSizeSlider.addChangeListener {
+      fontSizeSlider.addChangeListener(ChangeListener {
         val fontFactor = FontSize.values()[fontSizeSlider.value.toReverseIndex()]
         PropertiesComponent.getInstance().setValue(StyleManager.FONT_SIZE_PROPERTY, fontFactor.size, FontPreferences.DEFAULT_FONT_SIZE)
         TaskToolWindowView.getInstance(project).updateTaskDescription()
-      }
+      })
       val popup = JBPopupFactory.getInstance().createComponentPopupBuilder(fontSizeSlider, fontSizeSlider).createPopup()
       val location = MouseInfo.getPointerInfo().location
       popup.show(RelativePoint(
@@ -102,8 +103,8 @@ class TaskToolWindowFactory : ToolWindowFactory, DumbAware {
     }
   }
 
-  override fun init(toolWindow: ToolWindow) {
-    toolWindow.setIcon(EducationalCoreIcons.TaskToolWindow.CourseToolWindow)
+  override fun init(window: ToolWindow) {
+    window.setIcon(EducationalCoreIcons.CourseToolWindow)
   }
 
   companion object {

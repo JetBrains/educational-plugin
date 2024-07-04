@@ -31,7 +31,7 @@ open class JsConfigurator : EduConfigurator<JsNewProjectSettings> {
     get() = listOf(PluginId.getId("NodeJS"))
 
   override val logo: Icon
-    get() = EducationalCoreIcons.Language.Js
+    get() = EducationalCoreIcons.JsLogo
 
   override fun excludeFromArchive(project: Project, course: Course, file: VirtualFile): Boolean =
     super.excludeFromArchive(project, course, file) || file.path.contains("node_modules") || "package-lock.json" == file.name

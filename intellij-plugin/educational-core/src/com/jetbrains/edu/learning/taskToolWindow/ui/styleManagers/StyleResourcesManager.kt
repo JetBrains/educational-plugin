@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers
 import com.intellij.ide.ui.LafManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.ui.JBColor
-import com.jetbrains.edu.EducationalCoreIcons.TaskToolWindow.ExternalLink
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
 import com.jetbrains.edu.learning.taskToolWindow.ui.EduToolsResourcesRequestHandler
 import java.net.URL
@@ -14,9 +13,8 @@ object StyleResourcesManager {
   private const val BROWSER_CSS: String = "/style/browser.css"
   private const val CODEFORCES_TASK_CSS: String = "/style/codeforces_task.css"
   private const val HYPERSKILL_TASK_CSS: String = "/style/hyperskill_task.css"
-  val EXTERNAL_LINK_ARROW = ExternalLink.path
-  val EXTERNAL_LINK_ARROW_EXPUI = ExternalLink.expuiPath
-  val EXTERNAL_LINK_ARROW_EXPUI_DARK = ExternalLink.expuiDarkPath
+  const val EXTERNAL_LINK_ARROW_PNG = "/icons/com/jetbrains/edu/learning/external_link_arrow@2x.png"
+  const val EXTERNAL_LINK_ARROW_DARK_PNG = "/icons/com/jetbrains/edu/learning/external_link_arrow@2x_dark.png"
 
   private const val JETBRAINS_ACADEMY_CSS_LIGHT: String = "/style/jetbrains-academy/jetbrains_academy_light.css"
   private const val JETBRAINS_ACADEMY_CSS_DARK: String = "/style/jetbrains-academy/jetbrains_academy_darcula.css"
@@ -46,15 +44,15 @@ object StyleResourcesManager {
   private const val INTELLIJ_ICON_FONT_DARCULA_TTF: String = "/style/hint/fonts/intellij-icon-font-darcula.ttf"
   private const val INTELLIJ_ICON_FONT_DARCULA_WOFF: String = "/style/hint/fonts/intellij-icon-font-darcula.woff"
 
-  private const val SORTING_BASED_TASKS_MOVE_UP = "/icons/com/jetbrains/edu/taskToolWindow/moveUp.svg"
-  private const val SORTING_BASED_TASKS_MOVE_UP_DARK = "/icons/com/jetbrains/edu/taskToolWindow/moveUp_dark.svg"
-  private const val SORTING_BASED_TASKS_MOVE_DOWN = "/icons/com/jetbrains/edu/taskToolWindow/moveDown.svg"
-  private const val SORTING_BASED_TASKS_MOVE_DOWN_DARK = "/icons/com/jetbrains/edu/taskToolWindow/moveDown_dark.svg"
+  private const val SORTING_BASED_TASKS_MOVE_UP = "/icons/com/jetbrains/edu/learning/moveUp.svg"
+  private const val SORTING_BASED_TASKS_MOVE_UP_DARK = "/icons/com/jetbrains/edu/learning/moveUp_dark.svg"
+  private const val SORTING_BASED_TASKS_MOVE_DOWN = "/icons/com/jetbrains/edu/learning/moveDown.svg"
+  private const val SORTING_BASED_TASKS_MOVE_DOWN_DARK = "/icons/com/jetbrains/edu/learning/moveDown_dark.svg"
 
-  private const val SORTING_BASED_TASKS_MOVE_UP_EXPUI = "/icons/com/jetbrains/edu/expui/taskToolWindow/moveUp.svg"
-  private const val SORTING_BASED_TASKS_MOVE_UP_DARK_EXPUI = "/icons/com/jetbrains/edu/expui/taskToolWindow/moveUp_dark.svg"
-  private const val SORTING_BASED_TASKS_MOVE_DOWN_EXPUI = "/icons/com/jetbrains/edu/expui/taskToolWindow/moveDown.svg"
-  private const val SORTING_BASED_TASKS_MOVE_DOWN_DARK_EXPUI = "/icons/com/jetbrains/edu/expui/taskToolWindow/moveDown_dark.svg"
+  private const val SORTING_BASED_TASKS_MOVE_UP_EXPUI = "/icons/com/jetbrains/edu/expui/learning/moveUp.svg"
+  private const val SORTING_BASED_TASKS_MOVE_UP_DARK_EXPUI = "/icons/com/jetbrains/edu/expui/learning/moveUp_dark.svg"
+  private const val SORTING_BASED_TASKS_MOVE_DOWN_EXPUI = "/icons/com/jetbrains/edu/expui/learning/moveDown.svg"
+  private const val SORTING_BASED_TASKS_MOVE_DOWN_DARK_EXPUI = "/icons/com/jetbrains/edu/expui/learning/moveDown_dark.svg"
 
   val sortingBasedTaskResourcesList = listOf(
     SORTING_BASED_TASKS_MOVE_UP,
@@ -72,9 +70,8 @@ object StyleResourcesManager {
     BROWSER_CSS,
     CODEFORCES_TASK_CSS,
     HYPERSKILL_TASK_CSS,
-    EXTERNAL_LINK_ARROW,
-    EXTERNAL_LINK_ARROW_EXPUI,
-    EXTERNAL_LINK_ARROW_EXPUI_DARK,
+    EXTERNAL_LINK_ARROW_PNG,
+    EXTERNAL_LINK_ARROW_DARK_PNG,
     JETBRAINS_ACADEMY_CSS_DARK,
     JETBRAINS_ACADEMY_CSS_LIGHT,
     JETBRAINS_ACADEMY_CSS_BASE,

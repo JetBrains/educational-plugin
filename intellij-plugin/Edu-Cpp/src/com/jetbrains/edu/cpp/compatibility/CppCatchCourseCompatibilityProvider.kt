@@ -10,5 +10,5 @@ class CppCatchCourseCompatibilityProvider : CourseCompatibilityProvider {
   override fun requiredPlugins(): List<PluginInfo> = listOf(PluginInfos.CATCH)
 
   override val technologyName: String get() = "C/C++"
-  override val logo: Icon get() = EducationalCoreIcons.Language.Cpp
+  override val logo: Icon get() = EducationalCoreIcons.CppLogo
 }

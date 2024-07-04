@@ -4,74 +4,55 @@
       "jetbrains" : {
         "edu" : {
           "expui" : {
-            "actions" : {
-              "applyCode.svg" : "icons/com/jetbrains/edu/actions/applyCode.svg",
-              "eduCourse.svg" : "icons/com/jetbrains/edu/actions/eduCourse.svg",
-              "loggedInUser.svg" : "icons/com/jetbrains/edu/actions/loggedInUser.svg",
-              "rateCourse.svg" : "icons/com/jetbrains/edu/actions/rateCourse.svg"
+            "learning" : {
+              "android.svg" : "icons/com/jetbrains/edu/learning/AndroidLogo.svg",
+              "applyCode.svg" : "icons/com/jetbrains/edu/learning/applyCode.svg",
+              "go.svg" : "icons/com/jetbrains/edu/learning/GoLogo.svg",
+              "java.svg" : "icons/com/jetbrains/edu/learning/JavaLogo.svg",
+              "javascript.svg" : "icons/com/jetbrains/edu/learning/JavaScriptLogo.svg",
+              "kotlin.svg" : "icons/com/jetbrains/edu/learning/KotlinLogo.svg",
+              "loggedInUser.svg" : "icons/com/jetbrains/edu/learning/loggedInUser.svg",
+              "php.svg" : "icons/com/jetbrains/edu/learning/PhpLogo.svg",
+              "python.svg" : "icons/com/jetbrains/edu/learning/PythonLogo.svg",
+              "rust.svg" : "icons/com/jetbrains/edu/learning/RustLogo.svg",
+              "scalaLogo.svg" : "icons/com/jetbrains/edu/learning/ScalaLogo.svg",
+              "cAndC++.svg" : "icons/com/jetbrains/edu/learning/CAndC++Logo.svg",
+              "checkio@24x24.svg" : "icons/com/jetbrains/edu/learning/checkio.svg",
+              "checkiOPY.svg" : "icons/com/jetbrains/edu/learning/PyCheckiO.svg",
+              "codeforces@24x24.svg" : "icons/com/jetbrains/edu/learning/codeforces.svg",
+              "commentTask.svg" : "icons/com/jetbrains/edu/learning/commentTask.svg",
+              "coursera@24x24.svg" : "icons/com/jetbrains/edu/learning/coursera.svg",
+              "jetBrainsAcademy@24x24.svg" : "icons/com/jetbrains/edu/learning/JB_academy_course_tab.svg",
+              "checkiOJS.svg" : "icons/com/jetbrains/edu/learning/JSCheckiO.svg",
+              "marketplaceCourses@24x24.svg" : "icons/com/jetbrains/edu/learning/marketplace_courses_tab.svg",
+              "resetTask.svg" : "icons/com/jetbrains/edu/learning/resetTask.svg",
+              "resultCorrect.svg" : "icons/com/jetbrains/edu/learning/resultCorrect.svg",
+              "resultIncorrect.svg" : "icons/com/jetbrains/edu/learning/resultIncorrect.svg",
+              "hyperskill.svg" : "icons/com/jetbrains/edu/learning/JB_academy.svg",
+              "moveUp.svg" : "icons/com/jetbrains/edu/learning/moveUp.svg",
+              "moveDown.svg" : "icons/com/jetbrains/edu/learning/moveDown.svg",
+              "rateCourse.svg" : "icons/com/jetbrains/edu/learning/rateCourse.svg"
             },
-            "checkPanel" : {
-              "checkDetails.svg" : "icons/com/jetbrains/edu/checkPanel/checkDetails.svg",
-              "commentTask.svg" : "icons/com/jetbrains/edu/checkPanel/commentTask.svg",
-              "resetTask.svg" : "icons/com/jetbrains/edu/checkPanel/resetTask.svg",
-              "resultCorrect.svg" : "icons/com/jetbrains/edu/checkPanel/resultCorrect.svg",
-              "resultIncorrect.svg" : "icons/com/jetbrains/edu/checkPanel/resultIncorrect.svg"
-            },
-            "courseCreator" : {
-              "syncChanges.svg" : "icons/com/jetbrains/edu/courseCreator/syncChanges.svg"
-            },
-            "courseView" : {
-              "eduCourseTree.svg" : "icons/com/jetbrains/edu/courseView/eduCourseTree.svg",
-              "eduLessonDefault.svg" : "icons/com/jetbrains/edu/courseView/eduLessonDefault.svg",
-              "eduLessonDone.svg" : "icons/com/jetbrains/edu/courseView/eduLessonDone.svg",
-              "eduSectionDefault.svg" : "icons/com/jetbrains/edu/courseView/eduSectionDefault.svg",
-              "eduSectionDone.svg" : "icons/com/jetbrains/edu/courseView/eduSectionDone.svg",
-              "eduTaskDefault.svg" : "icons/com/jetbrains/edu/courseView/eduTaskDefault.svg",
-              "eduTaskDone.svg" : "icons/com/jetbrains/edu/courseView/eduTaskDone.svg",
-              "eduTaskFailed.svg" : "icons/com/jetbrains/edu/courseView/eduTaskFailed.svg",
-              "eduTaskIdeDefault.svg" : "icons/com/jetbrains/edu/courseView/eduTaskIdeDefault.svg",
-              "eduTaskIdeDone.svg" : "icons/com/jetbrains/edu/courseView/eduTaskIdeDone.svg",
-              "eduTaskTheoryDefault.svg" : [
-                "icons/com/jetbrains/edu/courseView/eduTaskTheoryDefault.svg",
-                "icons/com/jetbrains/edu/taskToolWindow/navigationMapTheoryTask.svg"
-              ],
-              "eduTaskTheoryDone.svg" : "icons/com/jetbrains/edu/courseView/eduTaskTheoryDone.svg",
-              "usersNumber.svg" : "icons/com/jetbrains/edu/courseView/usersNumber.svg"
-            },
-            "language" : {
-              "logoAndroid.svg" : "icons/com/jetbrains/edu/language/logoAndroid.svg",
-              "logoCAndC++.svg" : "icons/com/jetbrains/edu/language/logoCAndC++.svg",
-              "logoGo.svg" : "icons/com/jetbrains/edu/language/logoGo.svg",
-              "logoJava.svg" : "icons/com/jetbrains/edu/language/logoJava.svg",
-              "logoJavaScript.svg" : "icons/com/jetbrains/edu/language/logoJavaScript.svg",
-              "logoKotlin.svg" : "icons/com/jetbrains/edu/language/logoKotlin.svg",
-              "logoPHP.svg" : "icons/com/jetbrains/edu/language/logoPHP.svg",
-              "logoPython.svg" : "icons/com/jetbrains/edu/language/logoPython.svg",
-              "logoRust.svg" : "icons/com/jetbrains/edu/language/logoRust.svg",
-              "logoScala.svg" : "icons/com/jetbrains/edu/language/logoScala.svg",
-              "logoShell.svg" : "icons/com/jetbrains/edu/language/logoShell.svg"
-            },
-            "learning" : { },
-            "platform" : {
-              "tab" : {
-                "logoCheckio@24x24.svg" : "icons/com/jetbrains/edu/platform/tab/logoCheckio@24x24.svg",
-                "logoCodeforces@24x24.svg" : "icons/com/jetbrains/edu/platform/tab/logoCodeforces@24x24.svg",
-                "logoCoursera@24x24.svg" : "icons/com/jetbrains/edu/platform/tab/logoCoursera@24x24.svg",
-                "logoJetBrainsAcademy@24x24.svg" : "icons/com/jetbrains/edu/platform/tab/logoJetBrainsAcademy@24x24.svg",
-                "logoMarketplace@24x24.svg" : "icons/com/jetbrains/edu/platform/tab/logoMarketplace@24x24.svg"
-              },
-              "logoCodeforces.svg" : "icons/com/jetbrains/edu/platform/logoCodeforces.svg",
-              "logoJetBrainsAcademy.svg" : "icons/com/jetbrains/edu/platform/logoJetBrainsAcademy.svg",
-              "logoJSCheckiO.svg" : "icons/com/jetbrains/edu/platform/logoJSCheckiO.svg",
-              "logoPyCheckiO.svg" : "icons/com/jetbrains/edu/platform/logoPyCheckiO.svg"
-            },
-            "taskToolWindow" : {
-              "clock.svg" : "icons/com/jetbrains/edu/taskToolWindow/clock.svg",
-              "courseToolWindow.svg" : "icons/com/jetbrains/edu/taskToolWindow/courseToolWindow.svg",
-              "externalLink.svg" : "icons/com/jetbrains/edu/taskToolWindow/externalLink.svg",
-              "moveDown.svg" : "icons/com/jetbrains/edu/taskToolWindow/moveDown.svg",
-              "moveUp.svg" : "icons/com/jetbrains/edu/taskToolWindow/moveUp.svg"
-            }
+            "eduCourseAction.svg" : [
+              "icons/com/jetbrains/edu/eduCourseAction.svg",
+              "icons/com/jetbrains/edu/learning/marketplace_courses.svg"
+            ],
+            "eduCourseTask.svg" : "icons/com/jetbrains/edu/eduCourseTask.svg",
+            "eduCourseTree.svg" : "icons/com/jetbrains/edu/eduCourseTree.svg",
+            "eduLessonDefault.svg" : "icons/com/jetbrains/edu/eduLessonDefault.svg",
+            "eduLessonDone.svg" : "icons/com/jetbrains/edu/eduLessonDone.svg",
+            "eduSectionDefault.svg" : "icons/com/jetbrains/edu/eduSectionDefault.svg",
+            "eduSectionDone.svg" : "icons/com/jetbrains/edu/eduSectionDone.svg",
+            "eduTaskDefault.svg" : "icons/com/jetbrains/edu/eduTaskDefault.svg",
+            "eduTaskDone.svg" : "icons/com/jetbrains/edu/eduTaskDone.svg",
+            "eduTaskFailed.svg" : "icons/com/jetbrains/edu/eduTaskFailed.svg",
+            "eduTaskIdeDefault.svg" : "icons/com/jetbrains/edu/eduTaskIdeDefault.svg",
+            "eduTaskIdeDone.svg" : "icons/com/jetbrains/edu/eduTaskIdeDone.svg",
+            "eduTaskTheoryDefault.svg" : "icons/com/jetbrains/edu/eduTaskTheoryDefault.svg",
+            "eduTaskTheoryDone.svg" : "icons/com/jetbrains/edu/eduTaskTheoryDone.svg",
+            "eduNavigationMapTheoryTask.svg" : "icons/com/jetbrains/edu/eduNavigationMapTheoryTask.svg",
+            "syncFiles.svg" : "icons/com/jetbrains/edu/syncFiles.svg",
+            "usersNumbers.svg" : "icons/com/jetbrains/edu/usersNumber.svg"
           }
         }
       }

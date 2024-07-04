@@ -10,5 +10,5 @@ class ShellCourseCompatibilityProvider : CourseCompatibilityProvider {
   override fun requiredPlugins(): List<PluginInfo> = listOf(PluginInfos.SHELL)
 
   override val technologyName: String get() = SHELL
-  override val logo: Icon get() = EducationalCoreIcons.Language.Shell
+  override val logo: Icon get() = EducationalCoreIcons.ShellLogo
 }

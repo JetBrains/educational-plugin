@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NonNls
 class RateMarketplaceCourseAction : DumbAwareAction(
   EduCoreBundle.lazyMessage("marketplace.action.rate.course"),
   EduCoreBundle.lazyMessage("marketplace.action.rate.course"),
-  EducationalCoreIcons.Actions.RateCourse
+  EducationalCoreIcons.RateCourse
 ), RightAlignedToolbarAction {
 
   override fun actionPerformed(e: AnActionEvent) {

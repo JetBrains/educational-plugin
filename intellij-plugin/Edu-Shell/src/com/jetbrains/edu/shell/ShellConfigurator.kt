@@ -21,7 +21,7 @@ class ShellConfigurator : EduConfigurator<EmptyProjectSettings> {
     get() = ShellTaskCheckerProvider()
 
   override val logo: Icon
-    get() = EducationalCoreIcons.Language.Shell
+    get() = EducationalCoreIcons.ShellLogo
 
   override fun getMockFileName(course: Course, text: String): String = TASK_SH
 

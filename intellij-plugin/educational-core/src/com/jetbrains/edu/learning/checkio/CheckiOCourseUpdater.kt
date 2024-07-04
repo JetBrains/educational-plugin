@@ -56,7 +56,7 @@ class CheckiOCourseUpdater(
     if (stations.isNotEmpty()) {
       EduNotificationManager
         .create(INFORMATION, title, stations.joinToString("\n") { it.name })
-        .setIcon(EducationalCoreIcons.Platform.Tab.CheckiO)
+        .setIcon(EducationalCoreIcons.CheckiO)
         .notify(null)
     }
   }

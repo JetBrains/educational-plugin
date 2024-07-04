@@ -21,10 +21,7 @@ import com.intellij.ide.impl.ProjectViewSelectInTarget
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.ide.projectView.ProjectViewSettings
 import com.intellij.ide.projectView.ViewSettings
-import com.intellij.ide.projectView.impl.AbstractProjectViewPaneWithAsyncSupport
-import com.intellij.ide.projectView.impl.ProjectAbstractTreeStructureBase
-import com.intellij.ide.projectView.impl.ProjectTreeStructure
-import com.intellij.ide.projectView.impl.ProjectViewTree
+import com.intellij.ide.projectView.impl.*
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.ide.util.treeView.NodeDescriptor
@@ -36,7 +33,7 @@ import com.intellij.ui.ColoredTreeCellRenderer
 import com.intellij.ui.ScrollPaneFactory
 import com.intellij.util.ArrayUtil
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.EducationalCoreIcons.CourseView.CourseTree
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.projectView.*
@@ -169,7 +166,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport
 
   override fun getTitle(): String = EduCoreBundle.message("project.view.course.pane.title")
 
-  override fun getIcon(): Icon = CourseTree
+  override fun getIcon(): Icon = EducationalCoreIcons.CourseTree
   override fun getId(): String = ID
   override fun getWeight(): Int = 10
 
