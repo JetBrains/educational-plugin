@@ -1,6 +1,5 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="runWebStorm" type="GradleRunConfiguration" factoryName="Gradle" show_console_on_std_err="true" show_console_on_std_out="true">
-    <log_file alias="idea.log" path="$PROJECT_DIR$/intellij-plugin/build/idea-sandbox/webstorm-sandbox-233/log_runWebStorm/idea.log" />
     <log_file alias="idea.log" path="$PROJECT_DIR$/intellij-plugin/build/idea-sandbox/webstorm-sandbox-241/log_runWebStorm/idea.log" />
     <log_file alias="idea.log" path="$PROJECT_DIR$/intellij-plugin/build/idea-sandbox/webstorm-sandbox-242/log_runWebStorm/idea.log" />
     <ExternalSystemSettings>

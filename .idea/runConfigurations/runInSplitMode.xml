@@ -1,6 +1,5 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="runInSplitMode" type="GradleRunConfiguration" factoryName="Gradle">
-    <log_file alias="idea.log" path="$PROJECT_DIR$/intellij-plugin/build/idea-sandbox/split-mode-sandbox-233/log_runInSplitMode" />
     <log_file alias="idea.log" path="$PROJECT_DIR$/intellij-plugin/build/idea-sandbox/split-mode-sandbox-241/log_runInSplitMode" />
     <ExternalSystemSettings>
       <option name="executionName" />
