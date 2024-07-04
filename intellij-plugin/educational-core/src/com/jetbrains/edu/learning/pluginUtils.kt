@@ -91,7 +91,7 @@ fun enablePlugins(pluginsId: List<PluginId>) {
 
 val TIME_LOGGER = Logger.getInstance("JetBrainsAcademy.performance.measure")
 
-fun <T> measureAndLogTime(title: String, block: () -> T): T {
+fun <T> measureTimeAndLog(title: String, block: () -> T): T {
   val start = System.currentTimeMillis()
   val value = block()
   val time = System.currentTimeMillis() - start

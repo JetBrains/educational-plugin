@@ -253,7 +253,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     isNewCourseCreatorCourse: Boolean,
     indicator: ProgressIndicator
   ) {
-    measureAndLogTime("Course content generation") {
+    measureTimeAndLog("Course content generation") {
       val course = holder.course
       if (!course.isStudy) {
         CCUtils.initializeCCPlaceholders(holder)

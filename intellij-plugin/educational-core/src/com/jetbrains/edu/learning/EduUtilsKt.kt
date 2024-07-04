@@ -116,7 +116,7 @@ object EduUtilsKt {
     readCourseJson: (() -> Reader, fileContentsFactory: FileContentsFactory) -> Course? = ::readCourseJson
   ): Course? {
     try {
-      return measureAndLogTime("Read course archive") {
+      return measureTimeAndLog("Read course archive") {
         ZipFile(zipFilePath).use { zipFile ->
           val entry = zipFile.getEntry(COURSE_META_FILE) ?: return@use null
           val reader = { zipFile.getInputStream(entry).reader(StandardCharsets.UTF_8) }
