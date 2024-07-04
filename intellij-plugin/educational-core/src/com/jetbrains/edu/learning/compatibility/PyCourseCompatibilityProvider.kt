@@ -1,7 +1,5 @@
 package com.jetbrains.edu.learning.compatibility
 
-import com.intellij.openapi.application.ApplicationInfo
-import com.intellij.openapi.util.BuildNumber
 import com.intellij.util.PlatformUtils.*
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduUtilsKt
@@ -10,9 +8,6 @@ import com.jetbrains.edu.learning.courseFormat.PluginInfos.PYTHON_COMMUNITY
 import com.jetbrains.edu.learning.courseFormat.PluginInfos.PYTHON_PRO
 import com.jetbrains.edu.learning.courseFormat.PluginInfos.TOML
 import javax.swing.Icon
-
-// BACKCOMPAT: 2023.3
-private val BUILD_241 = BuildNumber.fromString("241")!!
 
 class PyCourseCompatibilityProvider : CourseCompatibilityProvider {
 
@@ -26,9 +21,7 @@ class PyCourseCompatibilityProvider : CourseCompatibilityProvider {
       isCLion() || isIntelliJ() || EduUtilsKt.isAndroidStudio() -> PYTHON_COMMUNITY
       else -> return null
     }
-    if (ApplicationInfo.getInstance().build >= BUILD_241) {
-      requiredPlugins += TOML
-    }
+    requiredPlugins += TOML
     return requiredPlugins
   }
 
