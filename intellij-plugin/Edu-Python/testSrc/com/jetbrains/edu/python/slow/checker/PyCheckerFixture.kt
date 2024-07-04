@@ -7,7 +7,6 @@ import com.intellij.testFramework.runInEdtAndWait
 import com.jetbrains.edu.learning.checker.EduCheckerFixture
 import com.jetbrains.edu.python.learning.newproject.PySdkToCreateVirtualEnv
 import com.jetbrains.edu.python.learning.newproject.PyProjectSettings
-import com.jetbrains.edu.python.learning.newproject.create
 import com.jetbrains.python.sdk.PythonSdkType
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 import java.nio.file.Paths

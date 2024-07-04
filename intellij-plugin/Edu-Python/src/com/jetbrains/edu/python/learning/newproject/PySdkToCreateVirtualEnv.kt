@@ -6,15 +6,23 @@ import com.jetbrains.python.sdk.PythonSdkType
 import com.jetbrains.python.sdk.flavors.PyFlavorAndData
 import com.jetbrains.python.sdk.flavors.PyFlavorData.Empty
 
-// BACKCOMPAT: 2023.3. Make constructor private
-class PySdkToCreateVirtualEnv(
+class PySdkToCreateVirtualEnv private constructor(
   name: String,
   path: String,
   version: String
 ) : ProjectJdkImpl(name, PythonSdkType.getInstance(), path, version) {
 
-  companion object Companion
+  companion object {
+    fun create(name: String, path: String, version: String): PySdkToCreateVirtualEnv {
+      val sdk = PySdkToCreateVirtualEnv(name, path, version)
+      with(sdk.sdkModificator) {
+        sdkAdditionalData = PythonSdkAdditionalData(PyFlavorAndData(Empty, FakePythonSdkFlavor))
+        // Since this sdk is not associated with anything, it's ok not to use write action here for synchronization.
+        // Otherwise, we have to switch to EDT taking into account modality state
+        // since this code is supposed to be invoked from BGT from modal dialog
+        applyChangesWithoutWriteAction()
+      }
+      return sdk
+    }
+  }
 }
-
-// BACKCOMPAT: 2023.3. Inline it
-fun fakeSdkAdditionalData(): PythonSdkAdditionalData = PythonSdkAdditionalData(PyFlavorAndData(Empty, FakePythonSdkFlavor))
