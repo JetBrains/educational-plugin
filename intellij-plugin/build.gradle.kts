@@ -87,12 +87,9 @@ val rustPlugins = listOf(
   tomlPlugin
 )
 
-// BACKCOMPAT: 2023.3.
-// - Unconditionally add `com.intellij.clion.runFile`
-// - replace `listOfNotNull` with `listOf`
-val cppPlugins = listOfNotNull(
+val cppPlugins = listOf(
   "com.intellij.clion",
-  "com.intellij.clion.runFile".takeIf { environmentName.toInt() >= 241 },
+  "com.intellij.clion.runFile",
   "com.intellij.nativeDebug",
   "org.jetbrains.plugins.clion.test.google",
   "org.jetbrains.plugins.clion.test.catch"
@@ -353,10 +350,10 @@ tasks {
     args("buildEventsScheme", "--outputFile=${buildDir()}/eventScheme.json", "--pluginId=com.jetbrains.edu")
     // Force headless mode to be able to run command on CI
     systemProperty("java.awt.headless", "true")
-    // BACKCOMPAT: 2023.3. Update value to 233 and this comment
+    // BACKCOMPAT: 2024.1. Update value to 242 and this comment
     // `IDEA_BUILD_NUMBER` variable is used by `buildEventsScheme` task to write `buildNumber` to output json.
     // It will be used by TeamCity automation to set minimal IDE version for new events
-    environment("IDEA_BUILD_NUMBER", "233")
+    environment("IDEA_BUILD_NUMBER", "241")
   }
 
   customRunIdeTask(IntellijIdeaUltimate, ideaVersion, baseTaskName = "Idea")
@@ -935,7 +932,7 @@ fun manifestFile(project: Project): File? {
     ":intellij-plugin:educational-core", ":intellij-plugin:code-insight",
     ":intellij-plugin:Edu-Python:Idea", ":intellij-plugin:Edu-Python:PyCharm" -> return manifestFile(project.parent!!)
     // Special rules for `Edu-Python` module because it's added via `include`
-    // BACKCOMPAT: 2023.3. Drop this branch
+    // BACKCOMPAT: 2024.1. Drop this branch
     ":intellij-plugin:Edu-Python" -> {
       filePath = "Edu-Python.xml"
     }
