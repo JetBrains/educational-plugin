@@ -60,6 +60,7 @@ object JsonMixinNames {
   const val PLACEHOLDERS = "placeholders"
   const val IS_EDITABLE = "is_editable"
   const val HIGHLIGHT_LEVEL = "highlight_level"
+  // a JSON filter to exclude the "text" field from serialization
   const val EXCLUDE_TEXT_FIELD_FILTER = "exclude_text_field_filter"
 
   // feedback

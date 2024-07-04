@@ -411,7 +411,7 @@
     <experimentalFeature id="edu.course.sql" percentOfUsers="100" internalFeature="true">
       <description>Enables support for SQL courses</description>
     </experimentalFeature>
-    <experimentalFeature id="edu.course.format.files.outside.json" percentOfUsers="0" internalFeature="true">
+    <experimentalFeature id="edu.course.format.files.outside.json" percentOfUsers="100" internalFeature="true">
       <description>Writes course archives in the format without the "text" attributes. The contents of files is put inside the archive instead of JSON</description>
     </experimentalFeature>
 
