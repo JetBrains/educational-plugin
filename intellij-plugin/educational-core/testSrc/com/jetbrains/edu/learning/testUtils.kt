@@ -6,7 +6,10 @@ import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.notification.Notification
 import com.intellij.notification.Notifications
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.DumbAware
@@ -18,6 +21,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.TestActionEvent
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
+import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
@@ -95,9 +99,11 @@ fun testAction(
   val e = if (context != null) TestActionEvent.createTestEvent(action, context) else TestActionEvent.createTestEvent(action)
 
   val project = e.project
-  if (action !is DumbAware && project != null) {
+  if ((action !is DumbAware || action is CheckAction) && project != null) {
     // Since 242 tests don't wait when indexes are ready.
-    // But we don't want to check non-`DumbAware` actions in dumb mode since it doesn't make sense
+    // But we don't want to check non-`DumbAware` actions in dumb mode since it doesn't make sense.
+    // Also, even `CheckAction` is `DumbAware`, we don't want to run it in dumb mode as well
+    // because the only thing that it does in dumb mode is showing balloon to inform users about dumb mode
     waitUntilIndexesAreReady(project)
   }
 
