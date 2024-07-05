@@ -4,9 +4,12 @@ import com.jetbrains.edu.learning.courseFormat.BinaryContents
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.TextualContents
+import com.jetbrains.edu.learning.courseFormat.ext.visitEduFiles
+import com.jetbrains.edu.learning.courseFormat.zip.ZipContents
 import org.junit.Test
 import kotlin.test.assertContains
 import kotlin.test.assertIs
+import kotlin.test.assertIsNot
 
 class CreateCourseFromZipTest : EduTestCase() {
 
@@ -92,6 +95,29 @@ class CreateCourseFromZipTest : EduTestCase() {
           assertTrue(contents.bytes.isNotEmpty())
         }
       }
+    }
+  }
+
+  @Test
+  fun `no ZipContents after course archive is fully opened`() {
+    val zipPath = "$testDataPath/Kotlin_Course_to_test_archive_reading.zip"
+    val course = EduUtilsKt.getLocalCourse(zipPath) ?: error("Failed to load course from $zipPath")
+
+    course.visitEduFiles { eduFile ->
+      assertIs<ZipContents>(eduFile.contents)
+    }
+
+    // This sets the course to the StudyTaskManager and thus fires LearningObjectsPersister to persist all the contests to the learning
+    // object storage
+    initializeCourse(project, course)
+
+    course.visitEduFiles { eduFile ->
+      // The contents should be first TextualContentsDiagnosticsWrapper, then after persisting that takes some time
+      // TextualContentsFromLearningObjectsStorage (or binary).
+      // The better approach would be to wait until all threads that persist data finish, and
+      // then to test that the contents is TextualContentsFromLearningObjectsStorage (or binary)
+      assertIsNot<ZipContents>(eduFile.contents)
+      println("contents type is not ZipContents, but ${eduFile.contents.javaClass}")
     }
   }
 

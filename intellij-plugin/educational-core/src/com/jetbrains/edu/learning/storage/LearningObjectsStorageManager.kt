@@ -52,7 +52,13 @@ class LearningObjectsStorageManager(private val project: Project) : DumbAware, D
         // this will allow logging all accesses to the contents while it is being persisted
         contents = contentsWithDiagnostics
         ApplicationManager.getApplication().executeOnPooledThread {
-          val persistedContents = initialContents.persist(storage, pathInStorage)
+          val persistedContents = try {
+            initialContents.persist(storage, pathInStorage)
+          }
+          catch(e: Exception) {
+            logger<LearningObjectsStorageManager>().error("Exception during persisting contents for EduFile $pathInStorage", e)
+            initialContents
+          }
           // if persisting took long, contents could have been already changed
 
           if (!setContentsIfEquals(contentsWithDiagnostics, persistedContents)) {
