@@ -23,6 +23,7 @@ class PyCourseCompatibilityProvider : CourseCompatibilityProvider {
       // BACKCOMPAT: 2024.1. `isPyCharmPro() || isIdeaUltimate()` branch can be dropped
       // since they are covered by `isPyCharm()` and `isIntelliJ()` below
       isPyCharmPro() || isIdeaUltimate() -> if (ApplicationInfo.getInstance().build >= BUILD_242) PYTHON_COMMUNITY else PYTHON_PRO
+      // Actually, `isPyCharm()` covers DataSpell case as well, so `isDataSpell()` is only for readability improvement
       isPyCharm() || isDataSpell() ||
       isCLion() || isIntelliJ() || EduUtilsKt.isAndroidStudio() -> PYTHON_COMMUNITY
       else -> return null
