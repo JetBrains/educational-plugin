@@ -33,7 +33,7 @@ private val LOG = logger<LocalEduCourseMixin>()
 
 private class CourseJsonParsingException(message: String): Exception(message)
 
-fun readCourseJson(reader: () -> Reader, fileContentsFactory: FileContentsFactory): Course? {
+fun readCourseJson(reader: () -> Reader, fileContentsFactory: FileContentsFactory = EmtpyFileContentFactory): Course? {
   return try {
     val courseMapper = getCourseMapper(fileContentsFactory)
     val isArchiveEncrypted = reader().use { currentReader ->
