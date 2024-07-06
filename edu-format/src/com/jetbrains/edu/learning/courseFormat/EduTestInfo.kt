@@ -29,6 +29,7 @@ data class EduTestInfo(
 
   override fun toString(): String = "[${PresentableStatus.getPresentableStatus(status)}] $name"
 
+  @Suppress("KDocUnresolvedReference")
   /**
    * Values and titles were taken from [com.intellij.execution.testframework.sm.runner.states.TestStateInfo.Magnitude]
    */
