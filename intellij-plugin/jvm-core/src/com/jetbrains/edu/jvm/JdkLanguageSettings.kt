@@ -17,8 +17,10 @@ import com.jetbrains.edu.jvm.messages.EduJVMBundle
 import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_JAVA
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
+import com.jetbrains.edu.learning.runInBackground
 import org.jetbrains.annotations.VisibleForTesting
 import java.awt.BorderLayout
 import java.io.File
@@ -63,7 +65,9 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
 
   private fun preselectJdk(course: Course, jdkComboBox: JdkComboBox, sdksModel: ProjectSdksModel) {
     if (jdkComboBox.selectedJdk != null) return
-    jdkComboBox.selectedJdk = findSuitableJdk(minJvmSdkVersion(course), sdksModel)
+    runInBackground(course.project, EduJVMBundle.message("progress.setting.suitable.jdk"), false) {
+      jdkComboBox.selectedJdk = findSuitableJdk(minJvmSdkVersion(course), sdksModel)
+    }
   }
 
   override fun validate(course: Course?, courseLocation: String?): SettingsValidationResult {
