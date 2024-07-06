@@ -68,6 +68,7 @@ import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.QUIZ_HEADER
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.SECTION
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.SOLUTIONS_HIDDEN
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.SOLUTION_HIDDEN
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.STATUS
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.SUMMARY
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TAGS
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TASK
@@ -385,6 +386,14 @@ abstract class AnswerPlaceholderDependencyMixin {
   @JsonProperty(IS_VISIBLE)
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = TrueValueFilter::class)
   private var isVisible = true
+}
+
+@Suppress("unused")
+abstract class EduTestInfoMixin {
+  @JsonProperty(NAME)
+  private lateinit var name: String
+  @JsonProperty(STATUS)
+  private var status: Int = -1
 }
 
 class CourseDeserializer : StdDeserializer<Course>(Course::class.java) {

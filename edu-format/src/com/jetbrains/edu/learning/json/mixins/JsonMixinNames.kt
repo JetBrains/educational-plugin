@@ -87,4 +87,7 @@ object JsonMixinNames {
   const val VENDOR = "vendor"
   const val IS_PRIVATE = "is_private"
   const val GENERATED_EDU_ID = "generated_edu_id"
+
+  // submissions
+  const val STATUS = "status"
 }

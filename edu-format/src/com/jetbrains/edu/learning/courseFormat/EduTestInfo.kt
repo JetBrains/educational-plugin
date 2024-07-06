@@ -1,21 +1,15 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.fasterxml.jackson.annotation.JsonCreator
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.jetbrains.edu.learning.courseFormat.EduTestInfo.PresentableStatus.*
-import com.jetbrains.edu.learning.marketplace.api.NAME
 import org.jetbrains.annotations.TestOnly
 
-private const val STATUS = "status"
-
 data class EduTestInfo(
-  @JsonProperty(NAME) val name: String = "",
-  @JsonProperty(STATUS) val status: Int = -1,
-  @JsonIgnore val message: String = "",
-  @JsonIgnore val details: String? = null,
-  @JsonIgnore private val isFinishedSuccessfully: Boolean? = null,
-  @JsonIgnore val checkResultDiff: CheckResultDiff? = null
+  val name: String,
+  val status: Int,
+  val message: String,
+  val details: String? = null,
+  private val isFinishedSuccessfully: Boolean? = null,
+  val checkResultDiff: CheckResultDiff? = null
 ) {
   private val isSuccess: Boolean = if (isFinishedSuccessfully == true) {
     true
@@ -27,21 +21,11 @@ data class EduTestInfo(
     }
   }
 
-  @JsonCreator
-  constructor(
-    @JsonProperty(NAME) name: String,
-    @JsonProperty(STATUS) status: Int
-  ) : this(
-    name = name,
-    status = status,
-    message = "",
-    details = null,
-    isFinishedSuccessfully = null,
-    checkResultDiff = null
-  )
+  @Suppress("unused") // used for serialization
+  private constructor() : this("", -1, "")
 
   @TestOnly
-  constructor(name: String, presentableStatus: PresentableStatus) : this(name, presentableStatus.value)
+  constructor(name: String, presentableStatus: PresentableStatus) : this(name, presentableStatus.value, message = "")
 
   override fun toString(): String = "[${PresentableStatus.getPresentableStatus(status)}] $name"
 
