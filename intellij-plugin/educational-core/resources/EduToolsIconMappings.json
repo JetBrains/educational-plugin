@@ -39,14 +39,11 @@
               "applyCode.svg" : "icons/com/jetbrains/edu/learning/applyCode.svg",
               "commentTask.svg" : "icons/com/jetbrains/edu/learning/commentTask.svg",
               "loggedInUser.svg" : "icons/com/jetbrains/edu/learning/loggedInUser.svg",
-              "moveDown.svg" : "icons/com/jetbrains/edu/learning/moveDown.svg",
-              "moveUp.svg" : "icons/com/jetbrains/edu/learning/moveUp.svg",
               "rateCourse.svg" : "icons/com/jetbrains/edu/learning/rateCourse.svg",
               "resetTask.svg" : "icons/com/jetbrains/edu/learning/resetTask.svg",
               "resultCorrect.svg" : "icons/com/jetbrains/edu/learning/resultCorrect.svg",
               "resultIncorrect.svg" : "icons/com/jetbrains/edu/learning/resultIncorrect.svg",
-              "toolWindowCheckDetails.svg" : "icons/com/jetbrains/edu/learning/checkDetailsToolWindow.svg",
-              "toolWindowClock.svg" : "icons/com/jetbrains/edu/learning/clock.svg"
+              "toolWindowCheckDetails.svg" : "icons/com/jetbrains/edu/learning/checkDetailsToolWindow.svg"
             },
             "platform" : {
               "checkio@24x24.svg" : "icons/com/jetbrains/edu/learning/checkio.svg",
@@ -58,8 +55,13 @@
               "marketplaceCourses@24x24.svg" : "icons/com/jetbrains/edu/learning/marketplace_courses_tab.svg",
               "hyperskill.svg" : "icons/com/jetbrains/edu/learning/JB_academy.svg"
             },
+            "taskToolWindow" : {
+              "clock.svg" : "icons/com/jetbrains/edu/learning/clock.svg",
+              "courseToolWindow.svg" : "icons/com/jetbrains/edu/eduCourseTask.svg",
+              "moveDown.svg" : "icons/com/jetbrains/edu/learning/moveDown.svg",
+              "moveUp.svg" : "icons/com/jetbrains/edu/learning/moveUp.svg"
+            },
             "eduCourseAction.svg" : "icons/com/jetbrains/edu/eduCourseAction.svg",
-            "toolWindowEduCourseTask.svg" : "icons/com/jetbrains/edu/eduCourseTask.svg",
             "syncFiles.svg" : "icons/com/jetbrains/edu/syncFiles.svg"
           }
         }

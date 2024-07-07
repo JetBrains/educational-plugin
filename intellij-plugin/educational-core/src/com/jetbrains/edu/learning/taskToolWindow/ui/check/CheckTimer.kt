@@ -25,7 +25,7 @@ class CheckTimer(private val endDateTime: Date, onFinish: () -> Unit = {}) : JPa
     }
 
   init {
-    val clock = JBLabel(EducationalCoreIcons.Clock).apply {
+    val clock = JBLabel(EducationalCoreIcons.TaskToolWindow.Clock).apply {
       border = JBUI.Borders.empty(8, 1, 0, 1)
       font = JBFont.regular()
     }

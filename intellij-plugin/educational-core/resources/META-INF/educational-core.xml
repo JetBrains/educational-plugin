@@ -324,7 +324,7 @@
 
     <toolWindow id="Task" anchor="right" order="first"
                 factoryClass="com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory"
-                icon="com.jetbrains.edu.EducationalCoreIcons.CourseToolWindow"/>
+                icon="com.jetbrains.edu.EducationalCoreIcons.TaskToolWindow.CourseToolWindow"/>
     <toolWindow id="Educational.CheckDetails" anchor="bottom" canCloseContents="true" doNotActivateOnStart="true"
                 factoryClass="com.jetbrains.edu.learning.checker.details.CheckDetailsToolWindowFactory"
                 icon="com.jetbrains.edu.EducationalCoreIcons.CheckDetailsIcon"/>

@@ -110,16 +110,24 @@ public final class EducationalCoreIcons {
     public static final Icon PyCheckiO = load("/icons/com/jetbrains/edu/learning/PyCheckiO.svg");
   }
 
+  /**
+   * Utility class that provides icons for the task tool window
+   */
+  public static final class TaskToolWindow {
+    public static final Icon Clock = load("/icons/com/jetbrains/edu/learning/clock.svg");
+    public static final Icon CourseToolWindow = loadRasterized("icons/com/jetbrains/edu/eduCourseTask.svg");
+    public static final Icon MoveDown = load("/icons/com/jetbrains/edu/learning/moveDown.svg");
+    public static final Icon MoveUp = load("/icons/com/jetbrains/edu/learning/moveUp.svg");
+    public static final Icon NavigationMapTheoryTask = load("/icons/com/jetbrains/edu/eduNavigationMapTheoryTask.svg");
+  }
+
   public static final Icon LOGGED_IN_USER = load("/icons/com/jetbrains/edu/learning/loggedInUser.svg"); // 16x16
   public static final Icon TaskSolvedNoFrame = load("/icons/com/jetbrains/edu/eduTaskDoneNoFrame@2x.png"); //11x11
   public static final Icon TaskSolvedNoFrameHighContrast = load("/icons/com/jetbrains/edu/eduTaskDoneNoFrameHighContrast@2x.png"); //11x11
   public static final Icon TaskFailedNoFrame = load("/icons/com/jetbrains/edu/eduTaskFailedNoFrame@2x.png"); // 11x11
   public static final Icon TaskFailedNoFrameHighContrast = load("/icons/com/jetbrains/edu/eduTaskFailedNoFrameHighContrast@2x.png"); // 11x11
 
-  public static final Icon NavigationMapTheoryTask = load("/icons/com/jetbrains/edu/eduNavigationMapTheoryTask.svg"); // 16x16
-
   public static final Icon CourseAction = load("/icons/com/jetbrains/edu/eduCourseAction.svg"); // 16x16
-  public static final Icon CourseToolWindow = loadRasterized("icons/com/jetbrains/edu/eduCourseTask.svg"); // 13x13
 
   public static final Icon ResultCorrect = load("/icons/com/jetbrains/edu/learning/resultCorrect.svg"); // 16x16
   public static final Icon ResultIncorrect = load("/icons/com/jetbrains/edu/learning/resultIncorrect.svg"); // 16x16
@@ -127,14 +135,10 @@ public final class EducationalCoreIcons {
   public static final Icon CommentTask = load("/icons/com/jetbrains/edu/learning/commentTask.svg"); // 16x16
 
   public static final Icon RateCourse = load("/icons/com/jetbrains/edu/learning/rateCourse.svg"); // 16x16
-  public static final Icon Clock = load("/icons/com/jetbrains/edu/learning/clock.svg"); // 16x16
 
   public static final Icon CheckDetailsIcon = loadRasterized("icons/com/jetbrains/edu/learning/checkDetailsToolWindow.svg"); // 13x13
 
   public static final Icon DOT = load("/icons/com/jetbrains/edu/learning/dot.svg"); // 3x3
-
-  public static final Icon MoveUpMatching = load("/icons/com/jetbrains/edu/learning/moveUp.svg"); // 16x16
-  public static final Icon MoveDownMatching = load("/icons/com/jetbrains/edu/learning/moveDown.svg"); // 16x16
 
   public static final Icon ApplyCode = load("/icons/com/jetbrains/edu/learning/applyCode.svg"); // 16x16
 
