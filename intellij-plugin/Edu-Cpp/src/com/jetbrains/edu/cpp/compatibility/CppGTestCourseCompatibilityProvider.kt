@@ -10,5 +10,5 @@ class CppGTestCourseCompatibilityProvider : CourseCompatibilityProvider {
   override fun requiredPlugins(): List<PluginInfo> = listOf(PluginInfos.GOOGLE_TEST)
 
   override val technologyName: String get() = "C/C++"
-  override val logo: Icon get() = EducationalCoreIcons.CppLogo
+  override val logo: Icon get() = EducationalCoreIcons.Language.CppLogo
 }

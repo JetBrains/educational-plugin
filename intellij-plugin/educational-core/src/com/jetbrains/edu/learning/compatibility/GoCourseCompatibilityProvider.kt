@@ -12,5 +12,5 @@ class GoCourseCompatibilityProvider : CourseCompatibilityProvider {
     if (isIdeaUltimate() || isGoIde()) listOf(PluginInfos.GO) else null
 
   override val technologyName: String get() = "Go"
-  override val logo: Icon get() = EducationalCoreIcons.GoLogo
+  override val logo: Icon get() = EducationalCoreIcons.Language.GoLogo
 }

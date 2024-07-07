@@ -17,7 +17,7 @@ class CppCodeforcesLanguageProvider : CodeforcesLanguageProvider() {
   override val languageId: String = CPP
   override val templateFileName: String = "codeforces.CPP main.cpp"
   override val displayTemplateName: String = "main.cpp"
-  override val languageIcon: Icon = EducationalCoreIcons.CppLogo
+  override val languageIcon: Icon = EducationalCoreIcons.Language.CppLogo
 
   override fun createTaskFiles(task: Task): List<TaskFile> {
     val moduleName = GeneratorUtils.getDefaultName(task)

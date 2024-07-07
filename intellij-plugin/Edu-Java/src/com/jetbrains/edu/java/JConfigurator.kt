@@ -31,7 +31,7 @@ class JConfigurator : GradleConfiguratorBase() {
     get() = getInternalTemplateText(MOCK_JAVA)
 
   override val logo: Icon
-    get() = EducationalCoreIcons.JavaLogo
+    get() = EducationalCoreIcons.Language.JavaLogo
 
   override val defaultPlaceholderText: String
     get() = "/* TODO */"

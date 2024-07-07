@@ -4,6 +4,19 @@
       "jetbrains" : {
         "edu" : {
           "expui" : {
+            "language" : {
+              "logoAndroid.svg" : "icons/com/jetbrains/edu/learning/AndroidLogo.svg",
+              "logoCAndC++.svg" : "icons/com/jetbrains/edu/learning/CAndC++Logo.svg",
+              "logoGo.svg" : "icons/com/jetbrains/edu/learning/GoLogo.svg",
+              "logoJava.svg" : "icons/com/jetbrains/edu/learning/JavaLogo.svg",
+              "logoJavaScript.svg" : "icons/com/jetbrains/edu/learning/JavaScriptLogo.svg",
+              "logoKotlin.svg" : "icons/com/jetbrains/edu/learning/KotlinLogo.svg",
+              "logoPHP.svg" : "icons/com/jetbrains/edu/learning/PhpLogo.svg",
+              "logoPython.svg" : "icons/com/jetbrains/edu/learning/PythonLogo.svg",
+              "logoRust.svg" : "icons/com/jetbrains/edu/learning/RustLogo.svg",
+              "logoScala.svg" : "icons/com/jetbrains/edu/learning/ScalaLogo.svg",
+              "logoShell.svg" : "icons/com/jetbrains/edu/learning/ShellLogo.svg"
+            },
             "learning" : {
               "applyCode.svg" : "icons/com/jetbrains/edu/learning/applyCode.svg",
               "checkio@24x24.svg" : "icons/com/jetbrains/edu/learning/checkio.svg",
@@ -13,20 +26,9 @@
               "hyperskill.svg" : "icons/com/jetbrains/edu/learning/JB_academy.svg",
               "jetBrainsAcademy@24x24.svg" : "icons/com/jetbrains/edu/learning/JB_academy_course_tab.svg",
               "loggedInUser.svg" : "icons/com/jetbrains/edu/learning/loggedInUser.svg",
-              "logoAndroid.svg" : "icons/com/jetbrains/edu/learning/AndroidLogo.svg",
-              "logoCAndC++.svg" : "icons/com/jetbrains/edu/learning/CAndC++Logo.svg",
               "logoCodeforces.svg" : "icons/com/jetbrains/edu/learning/codeforcesSmall.svg",
-              "logoGo.svg" : "icons/com/jetbrains/edu/learning/GoLogo.svg",
-              "logoJava.svg" : "icons/com/jetbrains/edu/learning/JavaLogo.svg",
-              "logoJavaScript.svg" : "icons/com/jetbrains/edu/learning/JavaScriptLogo.svg",
               "logoJSCheckiO.svg" : "icons/com/jetbrains/edu/learning/JSCheckiO.svg",
-              "logoKotlin.svg" : "icons/com/jetbrains/edu/learning/KotlinLogo.svg",
-              "logoPHP.svg" : "icons/com/jetbrains/edu/learning/PhpLogo.svg",
               "logoPyCheckiO.svg" : "icons/com/jetbrains/edu/learning/PyCheckiO.svg",
-              "logoPython.svg" : "icons/com/jetbrains/edu/learning/PythonLogo.svg",
-              "logoRust.svg" : "icons/com/jetbrains/edu/learning/RustLogo.svg",
-              "logoScala.svg" : "icons/com/jetbrains/edu/learning/ScalaLogo.svg",
-              "logoShell.svg": "icons/com/jetbrains/edu/learning/ShellLogo.svg",
               "marketplaceCourses@24x24.svg" : "icons/com/jetbrains/edu/learning/marketplace_courses_tab.svg",
               "moveDown.svg" : "icons/com/jetbrains/edu/learning/moveDown.svg",
               "moveUp.svg" : "icons/com/jetbrains/edu/learning/moveUp.svg",

@@ -36,7 +36,7 @@ class CSharpConfigurator : EduConfigurator<CSharpProjectSettings> {
 
   override fun getMockFileName(course: Course, text: String): String = TASK_CS
   override val logo: Icon
-    get() = EducationalCoreIcons.CSharpLogo
+    get() = EducationalCoreIcons.Language.CSharpLogo
 
   companion object {
     @NonNls

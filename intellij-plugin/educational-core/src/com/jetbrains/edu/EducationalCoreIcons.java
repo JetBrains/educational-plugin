@@ -44,18 +44,25 @@ public final class EducationalCoreIcons {
     return IconManager.getInstance().loadRasterizedIcon(path, EducationalCoreIcons.class.getClassLoader(), 0, 0);
   }
 
-  public static final Icon JavaLogo = load("/icons/com/jetbrains/edu/learning/JavaLogo.svg"); // 16x16
-  public static final Icon KotlinLogo = load("/icons/com/jetbrains/edu/learning/KotlinLogo.svg"); // 16x16
-  public static final Icon ScalaLogo = load("/icons/com/jetbrains/edu/learning/ScalaLogo.svg"); // 16x16
-  public static final Icon AndroidLogo = load("/icons/com/jetbrains/edu/learning/AndroidLogo.svg"); // 16x16
-  public static final Icon PythonLogo = load("/icons/com/jetbrains/edu/learning/PythonLogo.svg"); // 16x16
-  public static final Icon JsLogo = load("/icons/com/jetbrains/edu/learning/JavaScriptLogo.svg"); // 16x16
-  public static final Icon RustLogo = load("/icons/com/jetbrains/edu/learning/RustLogo.svg"); // 16x16
-  public static final Icon CppLogo = load("/icons/com/jetbrains/edu/learning/CAndC++Logo.svg"); // 16x16
-  public static final Icon GoLogo = load("/icons/com/jetbrains/edu/learning/GoLogo.svg"); // 16x16
-  public static final Icon PhpLogo = load("/icons/com/jetbrains/edu/learning/PhpLogo.svg"); // 16x16
-  public static final Icon ShellLogo = load("/icons/com/jetbrains/edu/learning/ShellLogo.svg"); // 16x16
-  public static final Icon CSharpLogo = load("/icons/com/jetbrains/edu/learning/CSharpLogo.svg"); // 16x16
+  /**
+   * Utility class that provides icons for various programming languages
+   *
+   * <p>All icons are 16x16</p>
+   */
+  public static final class Language {
+    public static final Icon AndroidLogo = load("/icons/com/jetbrains/edu/learning/AndroidLogo.svg");
+    public static final Icon CppLogo = load("/icons/com/jetbrains/edu/learning/CAndC++Logo.svg");
+    public static final Icon CSharpLogo = load("/icons/com/jetbrains/edu/learning/CSharpLogo.svg");
+    public static final Icon GoLogo = load("/icons/com/jetbrains/edu/learning/GoLogo.svg");
+    public static final Icon JavaLogo = load("/icons/com/jetbrains/edu/learning/JavaLogo.svg");
+    public static final Icon JsLogo = load("/icons/com/jetbrains/edu/learning/JavaScriptLogo.svg");
+    public static final Icon KotlinLogo = load("/icons/com/jetbrains/edu/learning/KotlinLogo.svg");
+    public static final Icon PhpLogo = load("/icons/com/jetbrains/edu/learning/PhpLogo.svg");
+    public static final Icon PythonLogo = load("/icons/com/jetbrains/edu/learning/PythonLogo.svg");
+    public static final Icon RustLogo = load("/icons/com/jetbrains/edu/learning/RustLogo.svg");
+    public static final Icon ScalaLogo = load("/icons/com/jetbrains/edu/learning/ScalaLogo.svg");
+    public static final Icon ShellLogo = load("/icons/com/jetbrains/edu/learning/ShellLogo.svg");
+  }
 
   public static final Icon PyCheckiO = load("/icons/com/jetbrains/edu/learning/PyCheckiO.svg");
 

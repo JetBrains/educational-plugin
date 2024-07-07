@@ -19,5 +19,5 @@ class AndroidCourseCompatibilityProvider : CourseCompatibilityProvider {
   }
 
   override val technologyName: String get() = "Android"
-  override val logo: Icon get() = EducationalCoreIcons.AndroidLogo
+  override val logo: Icon get() = EducationalCoreIcons.Language.AndroidLogo
 }

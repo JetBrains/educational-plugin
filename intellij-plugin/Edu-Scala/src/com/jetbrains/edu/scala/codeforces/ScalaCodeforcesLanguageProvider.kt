@@ -13,5 +13,5 @@ class ScalaCodeforcesLanguageProvider : CodeforcesLanguageProvider() {
   override val languageId: String = SCALA
   override val templateFileName: String = "codeforces.Scala Main.scala"
   override val displayTemplateName: String = "Main.scala"
-  override val languageIcon: Icon = EducationalCoreIcons.ScalaLogo
+  override val languageIcon: Icon = EducationalCoreIcons.Language.ScalaLogo
 }
