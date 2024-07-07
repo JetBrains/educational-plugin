@@ -104,7 +104,7 @@ class CheckMessagePanel private constructor() : JPanel() {
     if (!checkResult.severity.isInfo() || (checkResult.status == CheckStatus.Unchecked && checkResult.message.isNotBlank())) {
       val icon = when (checkResult.status) {
         CheckStatus.Unchecked -> if (checkResult.severity.isWaring()) AllIcons.General.BalloonWarning else AllIcons.General.BalloonInformation
-        CheckStatus.Failed -> EducationalCoreIcons.ResultIncorrect
+        CheckStatus.Failed -> EducationalCoreIcons.CheckPanel.ResultIncorrect
         else -> null
       }
       messagePane.foreground = when (checkResult.status) {

@@ -45,6 +45,15 @@ public final class EducationalCoreIcons {
   }
 
   /**
+   * Utility class that provides icons for the check panel.
+   */
+  public static final class CheckPanel {
+    public static final Icon CheckDetailsToolWindow = loadRasterized("icons/com/jetbrains/edu/learning/checkDetailsToolWindow.svg");
+    public static final Icon ResultCorrect = load("/icons/com/jetbrains/edu/learning/resultCorrect.svg");
+    public static final Icon ResultIncorrect = load("/icons/com/jetbrains/edu/learning/resultIncorrect.svg");
+  }
+
+  /**
    * Utility class that provides icons for various components in the Course View
    */
   public static final class CourseView {
@@ -133,17 +142,14 @@ public final class EducationalCoreIcons {
     public static final Icon NavigationMapTheoryTask = load("/icons/com/jetbrains/edu/eduNavigationMapTheoryTask.svg");
   }
 
+
   public static final Icon LOGGED_IN_USER = load("/icons/com/jetbrains/edu/learning/loggedInUser.svg"); // 16x16
   public static final Icon CourseAction = load("/icons/com/jetbrains/edu/eduCourseAction.svg"); // 16x16
 
-  public static final Icon ResultCorrect = load("/icons/com/jetbrains/edu/learning/resultCorrect.svg"); // 16x16
-  public static final Icon ResultIncorrect = load("/icons/com/jetbrains/edu/learning/resultIncorrect.svg"); // 16x16
   public static final Icon ResetTask = load("/icons/com/jetbrains/edu/learning/resetTask.svg"); // 16x16
   public static final Icon CommentTask = load("/icons/com/jetbrains/edu/learning/commentTask.svg"); // 16x16
 
   public static final Icon RateCourse = load("/icons/com/jetbrains/edu/learning/rateCourse.svg"); // 16x16
-
-  public static final Icon CheckDetailsIcon = loadRasterized("icons/com/jetbrains/edu/learning/checkDetailsToolWindow.svg"); // 13x13
 
   public static final Icon DOT = load("/icons/com/jetbrains/edu/learning/dot.svg"); // 3x3
 

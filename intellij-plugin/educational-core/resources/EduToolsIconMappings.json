@@ -4,6 +4,11 @@
       "jetbrains" : {
         "edu" : {
           "expui" : {
+            "checkPanel" : {
+              "checkDetails.svg" : "icons/com/jetbrains/edu/learning/checkDetailsToolWindow.svg",
+              "resultCorrect.svg" : "icons/com/jetbrains/edu/learning/resultCorrect.svg",
+              "resultIncorrect.svg" : "icons/com/jetbrains/edu/learning/resultIncorrect.svg"
+            },
             "courseView" : {
               "eduCourseTree.svg" : "icons/com/jetbrains/edu/eduCourseTree.svg",
               "eduLessonDefault.svg" : "icons/com/jetbrains/edu/eduLessonDefault.svg",
@@ -40,10 +45,7 @@
               "commentTask.svg" : "icons/com/jetbrains/edu/learning/commentTask.svg",
               "loggedInUser.svg" : "icons/com/jetbrains/edu/learning/loggedInUser.svg",
               "rateCourse.svg" : "icons/com/jetbrains/edu/learning/rateCourse.svg",
-              "resetTask.svg" : "icons/com/jetbrains/edu/learning/resetTask.svg",
-              "resultCorrect.svg" : "icons/com/jetbrains/edu/learning/resultCorrect.svg",
-              "resultIncorrect.svg" : "icons/com/jetbrains/edu/learning/resultIncorrect.svg",
-              "toolWindowCheckDetails.svg" : "icons/com/jetbrains/edu/learning/checkDetailsToolWindow.svg"
+              "resetTask.svg" : "icons/com/jetbrains/edu/learning/resetTask.svg"
             },
             "platform" : {
               "checkio@24x24.svg" : "icons/com/jetbrains/edu/learning/checkio.svg",
