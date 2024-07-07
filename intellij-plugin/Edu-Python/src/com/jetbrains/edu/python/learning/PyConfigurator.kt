@@ -27,7 +27,7 @@ open class PyConfigurator : EduConfigurator<PyProjectSettings> {
     get() = PyTaskCheckerProvider()
 
   override val logo: Icon
-    get() = EducationalCoreIcons.PythonLogo
+    get() = EducationalCoreIcons.Language.Python
 
   override val isCourseCreatorEnabled: Boolean
     get() = false

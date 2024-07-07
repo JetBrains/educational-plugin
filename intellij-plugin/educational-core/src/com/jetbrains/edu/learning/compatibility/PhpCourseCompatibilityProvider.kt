@@ -9,7 +9,7 @@ import javax.swing.Icon
 
 class PhpCourseCompatibilityProvider : CourseCompatibilityProvider {
 
-  override val logo: Icon get() = EducationalCoreIcons.Language.PhpLogo
+  override val logo: Icon get() = EducationalCoreIcons.Language.Php
 
   override val technologyName: String get() = "PHP"
 

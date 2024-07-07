@@ -31,7 +31,7 @@ class ScalaGradleConfigurator : GradleConfiguratorBase() {
   override fun getMockFileName(course: Course, text: String): String = fileName(ScalaLanguage.INSTANCE, text)
 
   override val logo: Icon
-    get() = EducationalCoreIcons.Language.ScalaLogo
+    get() = EducationalCoreIcons.Language.Scala
 
   override val defaultPlaceholderText: String
     get() = "/* TODO */"

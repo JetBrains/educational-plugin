@@ -24,7 +24,7 @@ class KtConfigurator : GradleConfiguratorBase() {
     get() = getInternalTemplateText(MOCK_KT)
 
   override val logo: Icon
-    get() = EducationalCoreIcons.KotlinLogo
+    get() = EducationalCoreIcons.Language.Kotlin
 
   override val defaultPlaceholderText: String
     get() = "TODO()"

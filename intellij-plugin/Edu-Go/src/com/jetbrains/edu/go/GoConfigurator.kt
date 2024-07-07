@@ -29,7 +29,7 @@ class GoConfigurator : EduConfigurator<GoProjectSettings> {
     get() = listOf(TEST)
 
   override val logo: Icon
-    get() = EducationalCoreIcons.GoLogo
+    get() = EducationalCoreIcons.Language.Go
 
   override val taskCheckerProvider: TaskCheckerProvider
     get() = object : TaskCheckerProvider {

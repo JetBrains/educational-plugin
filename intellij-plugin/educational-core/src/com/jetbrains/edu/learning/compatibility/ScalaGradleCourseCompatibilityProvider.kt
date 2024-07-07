@@ -18,5 +18,5 @@ class ScalaGradleCourseCompatibilityProvider : CourseCompatibilityProvider {
   }
 
   override val technologyName: String get() = "Scala"
-  override val logo: Icon get() = EducationalCoreIcons.Language.ScalaLogo
+  override val logo: Icon get() = EducationalCoreIcons.Language.Scala
 }

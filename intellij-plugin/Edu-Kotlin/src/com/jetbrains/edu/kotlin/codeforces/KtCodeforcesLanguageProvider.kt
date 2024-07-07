@@ -13,5 +13,5 @@ class KtCodeforcesLanguageProvider : CodeforcesLanguageProvider() {
   override val languageId: String = KOTLIN
   override val templateFileName: String = "codeforces.Kotlin Main.kt"
   override val displayTemplateName: String = "Main.kt"
-  override val languageIcon: Icon = EducationalCoreIcons.Language.KotlinLogo
+  override val languageIcon: Icon = EducationalCoreIcons.Language.Kotlin
 }

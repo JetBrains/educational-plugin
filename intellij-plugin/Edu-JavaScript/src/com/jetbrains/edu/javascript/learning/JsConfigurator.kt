@@ -32,7 +32,7 @@ open class JsConfigurator : EduConfigurator<JsNewProjectSettings> {
     get() = listOf(PluginId.getId("NodeJS"))
 
   override val logo: Icon
-    get() = EducationalCoreIcons.Language.JsLogo
+    get() = EducationalCoreIcons.Language.JavaScript
 
   override val isEnabled: Boolean
     get() = !PlatformUtils.isRider()

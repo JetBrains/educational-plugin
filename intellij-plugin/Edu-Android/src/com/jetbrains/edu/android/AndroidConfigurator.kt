@@ -29,5 +29,5 @@ class AndroidConfigurator : GradleConfiguratorBase() {
     get() = isFeatureEnabled(EduExperimentalFeatures.ANDROID_COURSES) || isUnitTestMode
 
   override val logo: Icon
-    get() = EducationalCoreIcons.AndroidLogo
+    get() = EducationalCoreIcons.Language.Android
 }

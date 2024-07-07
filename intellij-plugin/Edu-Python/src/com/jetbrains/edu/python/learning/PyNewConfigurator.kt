@@ -30,7 +30,7 @@ class PyNewConfigurator : EduConfigurator<PyProjectSettings> {
     get() = PyNewTaskCheckerProvider()
 
   override val logo: Icon
-    get() = EducationalCoreIcons.PythonLogo
+    get() = EducationalCoreIcons.Language.Python
 
   override val defaultPlaceholderText: String
     get() = "# TODO"

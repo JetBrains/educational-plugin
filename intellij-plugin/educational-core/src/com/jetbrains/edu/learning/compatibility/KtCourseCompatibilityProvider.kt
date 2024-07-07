@@ -20,5 +20,5 @@ class KtCourseCompatibilityProvider : CourseCompatibilityProvider {
   }
 
   override val technologyName: String get() = "Kotlin"
-  override val logo: Icon get() = EducationalCoreIcons.Language.KotlinLogo
+  override val logo: Icon get() = EducationalCoreIcons.Language.Kotlin
 }

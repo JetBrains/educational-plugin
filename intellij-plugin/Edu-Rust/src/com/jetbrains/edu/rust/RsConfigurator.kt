@@ -38,7 +38,7 @@ class RsConfigurator : EduConfigurator<RsProjectSettings> {
     get() = "src"
 
   override val logo: Icon
-    get() = EducationalCoreIcons.RustLogo
+    get() = EducationalCoreIcons.Language.Rust
 
   override fun excludeFromArchive(project: Project, course: Course, file: VirtualFile): Boolean {
     // Cargo config file should be included into course even it's located in "hidden" `.cargo` directory

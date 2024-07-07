@@ -18,5 +18,5 @@ class JCourseCompatibilityProvider : CourseCompatibilityProvider {
   }
 
   override val technologyName: String get() = "Java"
-  override val logo: Icon get() = EducationalCoreIcons.Language.JavaLogo
+  override val logo: Icon get() = EducationalCoreIcons.Language.Java
 }
