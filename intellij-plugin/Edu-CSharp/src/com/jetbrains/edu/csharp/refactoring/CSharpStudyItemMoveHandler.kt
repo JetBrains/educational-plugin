@@ -24,7 +24,7 @@ import kotlin.io.path.relativeTo
 class CSharpStudyItemMoveHandler : StudyItemRefactoringHandler {
   override fun moveLesson(project: Project, lesson: Lesson, newParent: VirtualFile) {
     val tasks = lesson.taskList
-    CSharpBackendService.getInstance(project).unloadProjectTask(tasks)
+    CSharpBackendService.getInstance(project).removeCSProjectFilesFromSolution(tasks)
     tasks.forEach { task ->
       val oldCSProjFileName = task.getCSProjFileName()
       val newCSProjFileName = constructNewCSProjFileNameOnMove(task.name, newParent.toNioPath(), project.courseDir.toNioPath())
@@ -34,7 +34,7 @@ class CSharpStudyItemMoveHandler : StudyItemRefactoringHandler {
 
   override fun moveTask(project: Project, task: Task, newParent: VirtualFile) {
     // unload the corresponding project from a solution
-    CSharpBackendService.getInstance(project).unloadProjectTask(listOf(task))
+    CSharpBackendService.getInstance(project).removeCSProjectFilesFromSolution(listOf(task))
     val oldCSProjFileName = task.getCSProjFileName()
     val newCSProjFileName = constructNewCSProjFileNameOnMove(task.name, newParent.toNioPath(), project.courseDir.toNioPath())
     renameCSProj(project, task, oldCSProjFileName, newCSProjFileName)
@@ -80,7 +80,7 @@ class CSharpStudyItemMoveHandler : StudyItemRefactoringHandler {
 
   override fun renameStudyItem(project: Project, item: StudyItem, newName: String) {
     val tasks = item.getTasks()
-    CSharpBackendService.getInstance(project).unloadProjectTask(tasks)
+    CSharpBackendService.getInstance(project).removeCSProjectFilesFromSolution(tasks)
     tasks.forEach { task ->
       val oldCSProjFileName = task.getCSProjFileName()
       val newCSProjFileName = oldCSProjFileName.split(".").reversed().mapIndexed { ind, it ->

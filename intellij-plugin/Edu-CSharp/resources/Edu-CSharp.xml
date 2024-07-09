@@ -18,7 +18,7 @@
     <postStartupActivity implementation="com.jetbrains.edu.csharp.CSharpProjectActivity"/>
   </extensions>
 
-  <extensions defaultExtensionNs="com.intellij">
-    <projectViewPane implementation="com.jetbrains.edu.csharp.CSharpCourseViewPane" order="first"/>
-  </extensions>
+<!--  <extensions defaultExtensionNs="com.intellij">-->
+<!--    <projectViewPane implementation="com.jetbrains.edu.csharp.CSharpCourseViewPane" order="first"/>-->
+<!--  </extensions>-->
 </idea-plugin>

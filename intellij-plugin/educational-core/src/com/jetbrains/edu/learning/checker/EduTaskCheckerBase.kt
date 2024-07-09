@@ -105,12 +105,14 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
       }
     }
 
-    val testResults = testRoots.map { it.toCheckResult() }
+    val testResults = testRoots.map { it.toCheckResult() }.ifEmpty { fillResults() }
     if (testResults.isEmpty()) return noTestsRun
 
     val firstFailure = testResults.firstOrNull { it.status != CheckStatus.Solved }
     return firstFailure ?: testResults.first()
   }
+
+  protected open fun fillResults(): List<CheckResult> = emptyList()
 
   protected fun SMTestProxy.SMRootTestProxy.toCheckResult(): CheckResult {
     val testInfo = getEduTestInfo(children = children)
