@@ -1022,7 +1022,7 @@
       ],
     ```
 
-19. The "text" field MAY be omitted for EduFiles and TaskFiles.
+19. The "text" field MUST be omitted for EduFiles and TaskFiles.
     In this case, the contents of the file are located inside the course archive.
 
     Before:

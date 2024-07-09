@@ -516,15 +516,17 @@ private open class EduFileBuilder {
     result.errorHighlightLevel = errorHighlightLevel
 
     val text = this.text
-    if (text != null) {
-      result.contents = when (isBinary) {
+    result.contents = if (text != null) {
+      // The "text" field is not allowed starting from the 19th version of the format.
+      // But we have this branch here because it is used when reading an older version of the course.json
+      when (isBinary) {
         true -> InMemoryBinaryContents.parseBase64Encoding(text)
         false -> InMemoryTextualContents(text)
         null -> InMemoryUndeterminedContents(text)
       }
     }
     else {
-      result.contents = when (isBinary) {
+      when (isBinary) {
         true -> fileContentsFactory.createBinaryContents(result)
         false -> fileContentsFactory.createTextualContents(result)
         null -> throw IllegalStateException("If the text field is absent, it must contain file binarity")

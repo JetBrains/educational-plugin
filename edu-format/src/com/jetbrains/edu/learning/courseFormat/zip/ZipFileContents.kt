@@ -50,6 +50,6 @@ sealed class ZipContents(private val zipPath: String, private val eduFile: EduFi
   }
 
   companion object {
-    val EMPTY_BYTES = byteArrayOf()
+    private val EMPTY_BYTES = byteArrayOf()
   }
 }
