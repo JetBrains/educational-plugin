@@ -1,15 +1,13 @@
 package com.jetbrains.edu.learning
 
-import com.jetbrains.edu.learning.courseFormat.BinaryContents
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.TextualContents
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.visitEduFiles
 import com.jetbrains.edu.learning.courseFormat.zip.ZipContents
+import com.jetbrains.edu.learning.storage.ContentsFromLearningObjectsStorage
+import com.jetbrains.edu.learning.storage.LearningObjectsStorageManager
 import org.junit.Test
 import kotlin.test.assertContains
 import kotlin.test.assertIs
-import kotlin.test.assertIsNot
 
 class CreateCourseFromZipTest : EduTestCase() {
 
@@ -107,17 +105,35 @@ class CreateCourseFromZipTest : EduTestCase() {
       assertIs<ZipContents>(eduFile.contents)
     }
 
+    LearningObjectsStorageManager.getInstance(project).testModeOn()
     // This sets the course to the StudyTaskManager and thus fires LearningObjectsPersister to persist all the contests to the learning
     // object storage
     initializeCourse(project, course)
+    LearningObjectsStorageManager.getInstance(project).waitForPersisting()
 
     course.visitEduFiles { eduFile ->
-      // The contents should be first TextualContentsDiagnosticsWrapper, then after persisting that takes some time
-      // TextualContentsFromLearningObjectsStorage (or binary).
-      // The better approach would be to wait until all threads that persist data finish, and
-      // then to test that the contents is TextualContentsFromLearningObjectsStorage (or binary)
-      assertIsNot<ZipContents>(eduFile.contents)
-      println("contents type is not ZipContents, but ${eduFile.contents.javaClass}")
+      assertIs<ContentsFromLearningObjectsStorage>(
+        eduFile.contents,
+        "Contents must come from the learning objects storage: ${eduFile.contents.javaClass}}"
+      )
+    }
+  }
+
+  @Test
+  fun `reading archive with broken paths`() {
+    val zipPath = "$testDataPath/Kotlin_Course_with_broken_paths.zip"
+    val course = EduUtilsKt.getLocalCourse(zipPath) ?: error("Failed to load course from $zipPath")
+
+    // The just loaded course references files inside the Zip archive, but their paths are wrong.
+    // After course initialization we persist empty contents in Learning Objects Storage, and log errors about that
+    initializeCourse(project, course)
+
+    course.visitEduFiles { eduFile ->
+      when (val contents = eduFile.contents) {
+        is BinaryContents -> assertTrue("bytes contents must be empty", contents.bytes.isEmpty())
+        is TextualContents -> assertEmpty(contents.text)
+        is UndeterminedContents -> fail("Impossible to have undetermined contents")
+      }
     }
   }
 

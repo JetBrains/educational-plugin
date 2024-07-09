@@ -17,7 +17,6 @@
               "name" : "Task.txt",
               "placeholders" : [ ],
               "is_visible" : true,
-              "text" : "6zkm3NpDQQaIQ+CAebF//w==",
               "is_binary" : false
             }
           },
@@ -34,16 +33,14 @@
     {
       "name" : "build.gradle",
       "is_visible" : true,
-      "text" : "6zkm3NpDQQaIQ+CAebF//w==",
       "is_binary" : false
     },
     {
       "name" : "settings.gradle",
       "is_visible" : true,
-      "text" : "6zkm3NpDQQaIQ+CAebF//w==",
       "is_binary" : false
     }
   ],
-  "version" : 18,
+  "version" : 19,
   "edu_plugin_version" : "yyyy.2-yyyy.1-TEST"
 }

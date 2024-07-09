@@ -9,6 +9,8 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.util.containers.ContainerUtil
+import com.intellij.util.progress.sleepCancellable
 import com.jetbrains.edu.learning.LightTestAware
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
@@ -18,7 +20,11 @@ import com.jetbrains.edu.learning.isLight
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.yaml.format.student.TakeFromStorageBinaryContents
 import com.jetbrains.edu.learning.yaml.format.student.TakeFromStorageTextualContents
+import com.jetbrains.rd.util.threading.coroutines.waitFor
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.annotations.VisibleForTesting
+import java.util.concurrent.Future
+import java.util.concurrent.TimeoutException
 
 @Service(Service.Level.PROJECT)
 class LearningObjectsStorageManager(private val project: Project) : DumbAware, Disposable, LightTestAware {
@@ -27,6 +33,10 @@ class LearningObjectsStorageManager(private val project: Project) : DumbAware, D
    * This is the project level storage used to store all the edu files contents and other data that should be persistent.
    */
   private val learningObjectsStorage: LearningObjectsStorage = createLearningObjectStorage()
+
+  // In test mode, we store all the Futures that persist the data, so that we could later wait for them to finish
+  private var testMode: Boolean = false
+  private val persistingTasks: MutableSet<Future<*>> = ContainerUtil.newConcurrentSet<Future<*>>()
 
   val writeTextInYaml: Boolean get() = learningObjectsStorage.writeTextInYaml
 
@@ -51,7 +61,7 @@ class LearningObjectsStorageManager(private val project: Project) : DumbAware, D
 
         // this will allow logging all accesses to the contents while it is being persisted
         contents = contentsWithDiagnostics
-        ApplicationManager.getApplication().executeOnPooledThread {
+        val future = ApplicationManager.getApplication().executeOnPooledThread {
           val persistedContents = try {
             initialContents.persist(storage, pathInStorage)
           }
@@ -67,7 +77,31 @@ class LearningObjectsStorageManager(private val project: Project) : DumbAware, D
             logger<FileContents>().error("Contents of a file changed while the file was being persisted: $pathInStorage from ${initialContents.javaClass} to ${contents.javaClass}")
           }
         }
+
+        if (testMode) {
+          persistingTasks.add(future)
+        }
       }
+    }
+  }
+
+  /**
+   * In test mode, all the tasks that persist the data will be stored, so that we could later wait for them to finish in the
+   * [waitForPersisting].
+   */
+  @VisibleForTesting
+  fun testModeOn() {
+    testMode = true
+  }
+
+  @VisibleForTesting
+  fun waitForPersisting() {
+    persistingTasks.forEach {
+      for (i in 1..10) {
+        if (it.isDone) return@forEach
+        Thread.sleep(50)
+      }
+      throw TimeoutException("Waiting for persisting task for too long")
     }
   }
 
@@ -143,6 +177,9 @@ class LearningObjectsStorageManager(private val project: Project) : DumbAware, D
   @TestOnly
   override fun cleanUpState() {
     (learningObjectsStorage as? InMemoryLearningObjectsStorage)?.clear()
+
+    testMode = false
+    persistingTasks.clear()
   }
 
   companion object {

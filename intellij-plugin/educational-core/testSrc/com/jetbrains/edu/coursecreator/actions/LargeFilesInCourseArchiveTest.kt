@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator.actions
 
-import com.fasterxml.jackson.databind.JsonMappingException
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.EDU_TEST_BIN
@@ -8,7 +7,12 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.InMemoryBinaryContents
 import com.jetbrains.edu.learning.courseFormat.getBinaryFileLimit
 import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
+import com.jetbrains.edu.learning.json.encrypt.TEST_AES_KEY
 import org.junit.Test
+import java.nio.file.Files
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.deleteIfExists
+import kotlin.test.assertContains
 
 class LargeFilesInCourseArchiveTest : CourseArchiveTestBase() {
 
@@ -38,14 +42,7 @@ class LargeFilesInCourseArchiveTest : CourseArchiveTestBase() {
       }
     }
 
-    assertThrows(HugeBinaryFileException::class.java, StringUtil.formatFileSize(FileUtilRt.LARGE_FOR_CONTENT_LOADING.toLong())) {
-      try {
-        generateJson()
-      }
-      catch (e: JsonMappingException) {
-        throw e.cause!!
-      }
-    }
+    testHugeBinaryFileInCourseArchive()
   }
 
   @Test
@@ -54,13 +51,24 @@ class LargeFilesInCourseArchiveTest : CourseArchiveTestBase() {
       additionalFile("file.$EDU_TEST_BIN", InMemoryBinaryContents(ByteArray(FileUtilRt.LARGE_FOR_CONTENT_LOADING + 1)))
     }
 
-    assertThrows(HugeBinaryFileException::class.java, StringUtil.formatFileSize(FileUtilRt.LARGE_FOR_CONTENT_LOADING.toLong())) {
-      try {
-        generateJson()
-      }
-      catch (e: JsonMappingException) {
-        throw e.cause!!
-      }
+    testHugeBinaryFileInCourseArchive()
+  }
+
+  private fun testHugeBinaryFileInCourseArchive() {
+    val fileSizeMessage = StringUtil.formatFileSize(FileUtilRt.LARGE_FOR_CONTENT_LOADING.toLong())
+    val tempFileForArchive = Files.createTempFile("test-course-archive-", ".zip")
+    try {
+      val archiveCreator = CourseArchiveCreator(project, tempFileForArchive.absolutePathString(), TEST_AES_KEY)
+      val errorMessage = archiveCreator.createArchive() ?: kotlin.test.fail("Must generate an error message")
+      assertContains(
+        errorMessage,
+        fileSizeMessage,
+        false,
+        "The error message must contain the information that there was a huge file in archive"
+      )
+    }
+    finally {
+      tempFileForArchive.deleteIfExists()
     }
   }
 }
