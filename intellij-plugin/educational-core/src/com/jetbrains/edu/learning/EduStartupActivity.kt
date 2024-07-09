@@ -2,6 +2,8 @@ package com.jetbrains.edu.learning
 
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.ide.util.PropertiesComponent
+import com.intellij.notification.BrowseNotificationAction
+import com.intellij.notification.NotificationType.WARNING
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runWriteAction
@@ -27,8 +29,11 @@ import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.EduUtilsKt.isNewlyCreated
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.isPreview
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
@@ -36,12 +41,15 @@ import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.navigation.NavigationUtils.setHighlightLevelForFilesInTask
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.VisibleForTesting
 
 class EduStartupActivity : StartupActivity.DumbAware {
@@ -71,6 +79,31 @@ class EduStartupActivity : StartupActivity.DumbAware {
       if (course == null) {
         LOG.warn("Opened project is with null course")
         return@runWhenProjectIsInitialized
+      }
+
+      @NonNls val jetBrainsAcademyActionName = "JetBrains Academy"
+      if (course is CheckiOCourse) {
+        EduNotificationManager.create(
+          WARNING,
+          EduFormatNames.CHECKIO,
+          EduCoreBundle.message("checkio.drop.notifications")
+        )
+          .addAction(BrowseNotificationAction(EduFormatNames.CHECKIO, "https://checkio.org/"))
+          .addAction(BrowseNotificationAction(jetBrainsAcademyActionName, "https://academy.jetbrains.com"))
+          .setImportant(true)
+          .notify(project)
+      }
+
+      if (course is CodeforcesCourse) {
+        EduNotificationManager.create(
+          WARNING,
+          EduFormatNames.CODEFORCES,
+          EduCoreBundle.message("codeforces.drop.notification")
+        )
+          .addAction(BrowseNotificationAction(EduFormatNames.CODEFORCES, "https://codeforces.com/"))
+          .addAction(BrowseNotificationAction(jetBrainsAcademyActionName, "https://academy.jetbrains.com"))
+          .setImportant(true)
+          .notify(project)
       }
 
       val fileEditorManager = FileEditorManager.getInstance(project)
