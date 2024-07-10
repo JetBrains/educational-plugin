@@ -239,14 +239,14 @@ object GeneratorUtils {
     fileContents: FileContents,
     isEditable: Boolean = true
   ): VirtualFile? {
-    return runInWriteActionAndWait(ThrowableComputable {
+    return runInWriteActionAndWait {
       val file = doCreateChildFile(holder, parentDir, path, fileContents)
       val course = holder.course
       if (course != null && file != null && !isEditable) {
         addNonEditableFileToCourse(course, file)
       }
       file
-    })
+    }
   }
 
   @Throws(IOException::class)
