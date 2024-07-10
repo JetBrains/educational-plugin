@@ -80,15 +80,6 @@ class CCTaskMoveHandlerDelegate : CCStudyItemMoveHandlerDelegate(StudyItemType.T
     targetLesson: Lesson
   ) {
     val sourceLessonDir = sourceDirectory.virtualFile.parent ?: return
-    updateHigherElements(sourceLessonDir.children, { file: VirtualFile -> taskToMove.lesson.getTask(file.name) }, taskToMove.index, -1)
-    val newItemIndex = if (targetTask != null) targetTask.index + indexDelta else 1
-    taskToMove.index = -1
-    taskToMove.lesson.removeTask(taskToMove)
-    updateHigherElements(targetDirectory.children, { file: VirtualFile -> targetLesson.getTask(file.name) }, newItemIndex - 1, 1)
-    taskToMove.index = newItemIndex
-    taskToMove.parent = targetLesson
-    targetLesson.addTask(taskToMove)
-    targetLesson.sortItems()
     ApplicationManager.getApplication().runWriteAction(object : Runnable {
       override fun run() {
         try {
@@ -102,6 +93,15 @@ class CCTaskMoveHandlerDelegate : CCStudyItemMoveHandlerDelegate(StudyItemType.T
         }
       }
     })
+    updateHigherElements(sourceLessonDir.children, { file: VirtualFile -> taskToMove.lesson.getTask(file.name) }, taskToMove.index, -1)
+    val newItemIndex = if (targetTask != null) targetTask.index + indexDelta else 1
+    taskToMove.index = -1
+    taskToMove.lesson.removeTask(taskToMove)
+    updateHigherElements(targetDirectory.children, { file: VirtualFile -> targetLesson.getTask(file.name) }, newItemIndex - 1, 1)
+    taskToMove.index = newItemIndex
+    taskToMove.parent = targetLesson
+    targetLesson.addTask(taskToMove)
+    targetLesson.sortItems()
   }
 
   companion object {

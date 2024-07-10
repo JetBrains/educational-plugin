@@ -54,6 +54,18 @@ class CCLessonMoveHandlerDelegate : CCStudyItemMoveHandlerDelegate(StudyItemType
         return
       }
     }
+    ApplicationManager.getApplication().runWriteAction(object : Runnable {
+      override fun run() {
+        try {
+          if (targetParentDir != sourceVFile.parent) {
+            sourceVFile.move(this, targetParentDir)
+          }
+        }
+        catch (e: IOException) {
+          LOG.error(e)
+        }
+      }
+    })
     val targetSection = course.getSection(targetParentDir.name)
     val targetContainer = targetSection ?: course
     var delta: Int? = CCItemPositionPanel.AFTER_DELTA
@@ -74,18 +86,6 @@ class CCLessonMoveHandlerDelegate : CCStudyItemMoveHandlerDelegate(StudyItemType
     sourceContainer.removeLesson(sourceLesson)
     targetContainer.addLesson(sourceLesson)
     course.sortItems()
-    ApplicationManager.getApplication().runWriteAction(object : Runnable {
-      override fun run() {
-        try {
-          if (targetParentDir != sourceVFile.parent) {
-            sourceVFile.move(this, targetParentDir)
-          }
-        }
-        catch (e: IOException) {
-          LOG.error(e)
-        }
-      }
-    })
     ProjectView.getInstance(project).refresh()
     saveItem(targetContainer)
     saveItem(sourceContainer)
