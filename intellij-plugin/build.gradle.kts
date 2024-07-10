@@ -4,7 +4,7 @@ import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType.*
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.intellij.platform.gradle.extensions.IntelliJPlatformDependenciesExtension
-import org.jetbrains.intellij.platform.gradle.extensions.IntelliJPlatformTestingExtension
+import org.jetbrains.intellij.platform.gradle.tasks.CustomRunIdeTask
 import org.jetbrains.intellij.platform.gradle.tasks.PrepareSandboxTask
 import org.jetbrains.intellij.platform.gradle.tasks.RunIdeTask
 import org.jetbrains.intellij.platform.gradle.utils.extensionProvider
@@ -197,11 +197,7 @@ subprojects {
 
   repositories {
     intellijPlatform {
-      localPlatformArtifacts()
-      intellijDependencies()
-      releases()
-      snapshots()
-      marketplace()
+      defaultRepositories()
       binaryReleasesAndroidStudio()
     }
   }
@@ -232,11 +228,7 @@ plugins {
 
 repositories {
   intellijPlatform {
-    localPlatformArtifacts()
-    intellijDependencies()
-    releases()
-    snapshots()
-    marketplace()
+    defaultRepositories()
     binaryReleasesAndroidStudio()
     jetbrainsRuntime()
   }
@@ -361,42 +353,38 @@ tasks {
     }
   }
 
-  intellijPlatformTesting {
-    // Generates event scheme for JetBrains Academy plugin FUS events to `build/eventScheme.json`
-    runIde.register("buildEventsScheme") {
-      task {
-        args("buildEventsScheme", "--outputFile=${buildDir()}/eventScheme.json", "--pluginId=com.jetbrains.edu")
-        // Force headless mode to be able to run command on CI
-        systemProperty("java.awt.headless", "true")
-        // BACKCOMPAT: 2024.1. Update value to 242 and this comment
-        // `IDEA_BUILD_NUMBER` variable is used by `buildEventsScheme` task to write `buildNumber` to output json.
-        // It will be used by TeamCity automation to set minimal IDE version for new events
-        environment("IDEA_BUILD_NUMBER", "241")
-      }
+  // Generates event scheme for JetBrains Academy plugin FUS events to `build/eventScheme.json`
+  register("buildEventsScheme", CustomRunIdeTask::class) {
+    args("buildEventsScheme", "--outputFile=${buildDir()}/eventScheme.json", "--pluginId=com.jetbrains.edu")
+    // Force headless mode to be able to run command on CI
+    systemProperty("java.awt.headless", "true")
+    // BACKCOMPAT: 2024.1. Update value to 242 and this comment
+    // `IDEA_BUILD_NUMBER` variable is used by `buildEventsScheme` task to write `buildNumber` to output json.
+    // It will be used by TeamCity automation to set minimal IDE version for new events
+    environment("IDEA_BUILD_NUMBER", "241")
+  }
+
+  customRunIdeTask(IntellijIdeaUltimate, ideaVersion, baseTaskName = "Idea")
+  customRunIdeTask(CLion, clionVersion)
+  customRunIdeTask(PyCharmCommunity, pycharmVersion, baseTaskName = "PyCharm")
+  customRunIdeTask(AndroidStudio, studioVersion)
+  customRunIdeTask(WebStorm)
+  customRunIdeTask(GoLand)
+  customRunIdeTask(PhpStorm)
+  customRunIdeTask(RustRover)
+  customRunIdeTask(DataSpell)
+  customRunIdeTask(Rider, riderVersion)
+
+  register("runInSplitMode", CustomRunIdeTask::class) {
+    splitMode = true
+
+    // Specify custom sandbox directory to have a stable path to log file
+    sandboxDirectory = intellijPlatform.sandboxContainer.dir("split-mode-sandbox-$environmentName")
+
+    plugins {
+      val type = baseVersion.toTypeWithVersion().type
+      plugins(idePlugins(type))
     }
-
-    runIde.register("runInSplitMode") {
-      splitMode = true
-
-      // Specify custom sandbox directory to have a stable path to log file
-      sandboxDirectory = intellijPlatform.sandboxContainer.dir("split-mode-sandbox-$environmentName")
-
-      plugins {
-        val type = baseVersion.toTypeWithVersion().type
-        plugins(idePlugins(type))
-      }
-    }
-
-    customRunIdeTask(IntellijIdeaUltimate, ideaVersion, baseTaskName = "Idea")
-    customRunIdeTask(CLion, clionVersion)
-    customRunIdeTask(PyCharmCommunity, pycharmVersion, baseTaskName = "PyCharm")
-    customRunIdeTask(AndroidStudio, studioVersion)
-    customRunIdeTask(WebStorm)
-    customRunIdeTask(GoLand)
-    customRunIdeTask(PhpStorm)
-    customRunIdeTask(RustRover)
-    customRunIdeTask(DataSpell)
-    customRunIdeTask(Rider, riderVersion)
   }
 }
 
@@ -404,12 +392,27 @@ tasks {
  * Creates `run$[baseTaskName]` Gradle task to run IDE of given [type]
  * via `runIde` task with plugins according to [ideToPlugins] map
  */
-fun IntelliJPlatformTestingExtension.customRunIdeTask(
+fun TaskContainer.customRunIdeTask(
   type: IntelliJPlatformType,
   versionWithCode: String? = null,
   baseTaskName: String = type.name
 ) {
-  runIde.register("run$baseTaskName") {
+  // Temporary workaround to avoid
+  // ```
+  // java.io.IOException: Cannot snapshot <sandboxSystemDir>/jcef_cache/SingletonSocket: not a regular file
+  // ```
+  // when you run IDE with non-empty sandbox dir.
+  // Already fixed by https://github.com/JetBrains/intellij-platform-gradle-plugin/commit/07cb0f96e8a5f575d521bb393c15c346d68883a4,
+  // so the fix will be in intellij-platform gradle plugin beta8
+  val deleteJCEFCacheTask = register("deleteJCEFCache_$baseTaskName", Delete::class) {
+    delete(
+      intellijPlatform.sandboxContainer.dir("${baseTaskName.lowercase()}-sandbox-$environmentName/system_run$baseTaskName/jcef_cache")
+    )
+  }
+
+  register("run$baseTaskName", CustomRunIdeTask::class) {
+    dependsOn(deleteJCEFCacheTask)
+
     if (versionWithCode != null) {
       val version = versionWithCode.toTypeWithVersion().version
 
@@ -429,10 +432,8 @@ fun IntelliJPlatformTestingExtension.customRunIdeTask(
         localPath.convention(layout.dir(provider { file(prop(pathProperty)) }))
       }
       else {
-        task {
-          doFirst {
-            throw GradleException("Property `$pathProperty` is not defined in gradle.properties")
-          }
+        doFirst {
+          throw GradleException("Property `$pathProperty` is not defined in gradle.properties")
         }
       }
     }
@@ -575,7 +576,16 @@ project("Edu-Java") {
 project("Edu-Kotlin") {
   dependencies {
     intellijPlatform {
-      val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
+      // Kotlin plugin cannot be found in 242 builds because of https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1652,
+      // and as a result, it's impossible to build the module with Kotlin plugin dependency.
+      // As a temporary workaround, let's build the module with old IDE version.
+      // Should be fixed as part of https://youtrack.jetbrains.com/issue/EDU-6934
+      val ideVersion = if (environmentName.toInt() == 242) {
+        "IU-2024.1"
+      }
+      else {
+        if (!isJvmCenteredIDE) ideaVersion else baseVersion
+      }
 
       intellijIde(ideVersion)
 
