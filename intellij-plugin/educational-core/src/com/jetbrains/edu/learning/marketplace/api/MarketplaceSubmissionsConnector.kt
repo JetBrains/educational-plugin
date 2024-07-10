@@ -47,7 +47,6 @@ class MarketplaceSubmissionsConnector {
   private val converterFactory: JacksonConverterFactory
   val objectMapper: ObjectMapper by lazy {
     val objectMapper = ConnectorUtils.createRegisteredMapper(SimpleModule())
-    objectMapper.addMixIn(SolutionFile::class.java, SolutionFileMixin::class.java)
     objectMapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderWithAnswerMixin::class.java)
     objectMapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
     objectMapper.addMixIn(EduTestInfo::class.java, EduTestInfoMixin::class.java)
