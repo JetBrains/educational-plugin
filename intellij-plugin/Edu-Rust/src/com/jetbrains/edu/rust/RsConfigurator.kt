@@ -1,6 +1,8 @@
 package com.jetbrains.edu.rust
 
+import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.BuildNumber
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.text.VersionComparatorUtil
 import com.jetbrains.edu.learning.EduCourseBuilder
@@ -14,6 +16,8 @@ import org.rust.cargo.CargoConstants
 import org.rust.ide.icons.RsIcons
 import org.rust.lang.RsConstants
 import javax.swing.Icon
+
+private val BUILD_242: BuildNumber = BuildNumber.fromString("242")!!
 
 class RsConfigurator : EduConfigurator<RsProjectSettings> {
   override val taskCheckerProvider: RsTaskCheckerProvider
@@ -54,11 +58,10 @@ class RsConfigurator : EduConfigurator<RsProjectSettings> {
   override val isEnabled: Boolean
     get() {
       val rustPluginVersion = pluginVersion(PluginInfos.RUST.stringId) ?: return false
-      // Rust plugin dropped `CargoCommandConfigurationType.Companion.getInstance()` and replaced it with
-      // top-level `cargoCommandConfigurationType` function since `233.25026`.
-      // Also, there are changes in `RsToolchainPathChoosingComboBox` API since `241.27011`.
+      val currentBuild = ApplicationInfo.getInstance().build
+      // Rust plugin changed `RsToolchainPathChoosingComboBox` API since `241.27011.175` and `242.19890.40`.
       // Let's avoid runtime error because of this binary incompatibility
-      val minSupportedVersion = "241.27011"
+      val minSupportedVersion = if (currentBuild < BUILD_242) "241.27011.175" else "242.19890.40"
       return VersionComparatorUtil.compare(rustPluginVersion, minSupportedVersion) >= 0
     }
 
