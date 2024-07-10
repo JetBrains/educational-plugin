@@ -1,5 +1,9 @@
 package com.jetbrains.edu.rust
 
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.invokeLater
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.CheckedDisposable
 import com.intellij.openapi.util.Disposer
@@ -35,7 +39,7 @@ class RsLanguageSettings : LanguageSettings<RsProjectSettings>() {
     disposable: CheckedDisposable,
     context: UserDataHolder?
   ): List<LabeledComponent<JComponent>> {
-    val comboBox = RsToolchainPathChoosingComboBox(disposable, ::updateToolchain)
+    val comboBox = RsToolchainPathChoosingComboBox { updateToolchain() }
     Disposer.register(disposable, comboBox)
     comboBox.addToolchainsAsync(::findAllToolchainsPath) {
       loadingFinished = true
@@ -90,5 +94,32 @@ class RsLanguageSettings : LanguageSettings<RsProjectSettings>() {
       else -> null
     }
     return SettingsValidationResult.Ready(validationMessage)
+  }
+
+  private fun RsToolchainPathChoosingComboBox.addToolchainsAsync(
+    toolchainObtainer: () -> List<Path>,
+    onFinish: () -> Unit
+  ) {
+    setBusy(true)
+    ApplicationManager.getApplication().executeOnPooledThread {
+      val toolchainPaths = try {
+        toolchainObtainer()
+      }
+      catch (e: Throwable) {
+        LOG.error(e)
+        emptyList()
+      }
+      // `RsToolchainPathChoosingComboBox` is shown inside dialog,
+      // so without proper modality state `invokeLater` won't be process until dialog closed
+      invokeLater(ModalityState.any()) {
+        setToolchains(toolchainPaths)
+        setBusy(false)
+        onFinish()
+      }
+    }
+  }
+
+  companion object {
+    private val LOG = logger<RsLanguageSettings>()
   }
 }
