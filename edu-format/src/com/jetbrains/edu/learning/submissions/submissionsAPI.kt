@@ -8,13 +8,9 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TIME
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.IS_VISIBLE
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.NAME
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.PLACEHOLDERS
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.STATUS
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TEXT
 import java.util.*
-
-const val IS_VISIBLE = "is_visible"
-const val PLACEHOLDERS = "placeholders"
-const val STATUS = "status"
-const val TEXT = "text"
 
 abstract class Submission {
   @JsonProperty(ID)

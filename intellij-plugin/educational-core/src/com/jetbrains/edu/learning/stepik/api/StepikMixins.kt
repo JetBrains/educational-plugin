@@ -14,14 +14,14 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.ID
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.NAME
+import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.IS_VISIBLE
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.NAME
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.PLACEHOLDERS
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.STATUS
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TEXT
 import com.jetbrains.edu.learning.json.mixins.NotImplementedInMixin
 import com.jetbrains.edu.learning.stepik.StepikNames
-import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
-import com.jetbrains.edu.learning.submissions.IS_VISIBLE
-import com.jetbrains.edu.learning.submissions.PLACEHOLDERS
-import com.jetbrains.edu.learning.submissions.STATUS
-import com.jetbrains.edu.learning.submissions.TEXT
 import java.util.*
 
 const val IS_IDEA_COMPATIBLE = "is_idea_compatible"
