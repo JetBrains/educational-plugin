@@ -105,7 +105,6 @@ class CreateCourseFromZipTest : EduTestCase() {
       assertIs<ZipContents>(eduFile.contents)
     }
 
-    LearningObjectsStorageManager.getInstance(project).testModeOn()
     // This sets the course to the StudyTaskManager and thus fires LearningObjectsPersister to persist all the contests to the learning
     // object storage
     initializeCourse(project, course)

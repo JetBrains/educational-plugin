@@ -10,7 +10,6 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.containers.ContainerUtil
-import com.intellij.util.progress.sleepCancellable
 import com.jetbrains.edu.learning.LightTestAware
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
@@ -20,9 +19,7 @@ import com.jetbrains.edu.learning.isLight
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.yaml.format.student.TakeFromStorageBinaryContents
 import com.jetbrains.edu.learning.yaml.format.student.TakeFromStorageTextualContents
-import com.jetbrains.rd.util.threading.coroutines.waitFor
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.annotations.VisibleForTesting
 import java.util.concurrent.Future
 import java.util.concurrent.TimeoutException
 
@@ -35,8 +32,7 @@ class LearningObjectsStorageManager(private val project: Project) : DumbAware, D
   private val learningObjectsStorage: LearningObjectsStorage = createLearningObjectStorage()
 
   // In test mode, we store all the Futures that persist the data, so that we could later wait for them to finish
-  private var testMode: Boolean = false
-  private val persistingTasks: MutableSet<Future<*>> = ContainerUtil.newConcurrentSet<Future<*>>()
+  private val persistingTasks: MutableSet<Future<*>> = ContainerUtil.newConcurrentSet()
 
   val writeTextInYaml: Boolean get() = learningObjectsStorage.writeTextInYaml
 
@@ -78,23 +74,14 @@ class LearningObjectsStorageManager(private val project: Project) : DumbAware, D
           }
         }
 
-        if (testMode) {
+        if (isUnitTestMode) {
           persistingTasks.add(future)
         }
       }
     }
   }
 
-  /**
-   * In test mode, all the tasks that persist the data will be stored, so that we could later wait for them to finish in the
-   * [waitForPersisting].
-   */
-  @VisibleForTesting
-  fun testModeOn() {
-    testMode = true
-  }
-
-  @VisibleForTesting
+  @TestOnly
   fun waitForPersisting() {
     persistingTasks.forEach {
       for (i in 1..10) {
@@ -178,7 +165,6 @@ class LearningObjectsStorageManager(private val project: Project) : DumbAware, D
   override fun cleanUpState() {
     (learningObjectsStorage as? InMemoryLearningObjectsStorage)?.clear()
 
-    testMode = false
     persistingTasks.clear()
   }
 
