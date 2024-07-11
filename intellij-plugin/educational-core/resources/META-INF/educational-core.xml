@@ -317,9 +317,11 @@
                  defaultValue="[SQLite*|YAML]"/>
 
     <toolWindow id="Task" anchor="right" order="first"
-                factoryClass="com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory"/>
+                factoryClass="com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory"
+                icon="com.jetbrains.edu.EducationalCoreIcons.CourseToolWindow"/>
     <toolWindow id="Educational.CheckDetails" anchor="bottom" canCloseContents="true" doNotActivateOnStart="true"
-                factoryClass="com.jetbrains.edu.learning.checker.details.CheckDetailsToolWindowFactory"/>
+                factoryClass="com.jetbrains.edu.learning.checker.details.CheckDetailsToolWindowFactory"
+                icon="com.jetbrains.edu.EducationalCoreIcons.CheckDetailsIcon"/>
 
     <!-- placeholders -->
     <editorFactoryListener implementation="com.jetbrains.edu.learning.editor.EduEditorFactoryListener"/>

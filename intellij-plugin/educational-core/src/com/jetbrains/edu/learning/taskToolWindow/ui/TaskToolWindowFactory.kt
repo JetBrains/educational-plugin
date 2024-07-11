@@ -19,7 +19,6 @@ import com.intellij.openapi.wm.impl.content.ToolWindowContentUi
 import com.intellij.ui.GotItTooltip
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.coursecreator.actions.CCEditTaskDescription
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.actions.EduActionUtils
@@ -101,10 +100,6 @@ class TaskToolWindowFactory : ToolWindowFactory, DumbAware {
       }
       return FontSize.values().size / 2
     }
-  }
-
-  override fun init(window: ToolWindow) {
-    window.setIcon(EducationalCoreIcons.CourseToolWindow)
   }
 
   companion object {

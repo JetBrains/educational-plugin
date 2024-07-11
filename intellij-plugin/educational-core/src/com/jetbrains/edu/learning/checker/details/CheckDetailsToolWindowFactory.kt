@@ -8,13 +8,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
-import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 class CheckDetailsToolWindowFactory : ToolWindowFactory, DumbAware {
   override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
     toolWindow.stripeTitle = EduCoreBundle.message("check.details.title")
-    toolWindow.setIcon(EducationalCoreIcons.CheckDetailsIcon)
     toolWindow.setToHideOnEmptyContent(true)
     project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object: FileEditorManagerListener {
       override fun selectionChanged(event: FileEditorManagerEvent) {
