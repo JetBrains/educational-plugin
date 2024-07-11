@@ -8,12 +8,16 @@ import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.util.io.URLUtil
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduBrowser
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.ext.technologyName
+import com.jetbrains.edu.learning.pluginVersion
 
+@Suppress("ComponentNotRegistered")
 class CreateNewYouTrackIssue : DumbAwareAction() {
 
   override fun update(e: AnActionEvent) {
