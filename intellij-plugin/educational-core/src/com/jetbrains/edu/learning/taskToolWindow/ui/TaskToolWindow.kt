@@ -16,11 +16,13 @@
 package com.jetbrains.edu.learning.taskToolWindow.ui
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.ui.update.MergingUpdateQueue
 import com.intellij.util.ui.update.Update
 import com.jetbrains.edu.learning.JavaUILibrary
+import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -61,7 +63,10 @@ abstract class TaskToolWindow(protected val project: Project) : Disposable {
     const val TASK_DESCRIPTION_UPDATE_DELAY_REGISTRY_KEY: String = "edu.task.description.update.delay"
 
     fun getTaskDescription(project: Project, task: Task?, uiMode: JavaUILibrary): String {
-      val taskText = task?.getTaskTextFromTask(project) ?: return EduCoreBundle.message("label.open.task")
+      val openedTask = task ?: return EduCoreBundle.message("label.open.task")
+      val taskText = computeUnderProgress(project, EduCoreBundle.message("progress.loading.task.description")) {
+        runReadAction { openedTask.getTaskTextFromTask(project) }
+      } ?: return EduCoreBundle.message("label.open.task")
       val transformerContext = HtmlTransformerContext(project, task, uiMode)
       return TaskDescriptionTransformer.transform(taskText, transformerContext)
     }
