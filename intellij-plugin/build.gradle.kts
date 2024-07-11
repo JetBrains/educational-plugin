@@ -374,6 +374,10 @@ tasks {
 
     // Uncomment to enable FUS testing mode
     // jvmArgs("-Dfus.internal.test.mode=true")
+
+    if (hasProp("isJarvis")) {
+      jvmArgs("-Dis.jarvis.mode=${prop("isJarvis")}")
+    }
   }
   buildPlugin {
     dependsOn(":edu-format:jar")
