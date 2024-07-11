@@ -82,7 +82,7 @@ class EduStartupActivity : StartupActivity.DumbAware {
       }
 
       @NonNls val jetBrainsAcademyActionName = "JetBrains Academy"
-      if (course is CheckiOCourse) {
+      if (course is CheckiOCourse && !ApplicationManager.getApplication().isUnitTestMode) {
         EduNotificationManager.create(
           WARNING,
           EduFormatNames.CHECKIO,
@@ -94,7 +94,7 @@ class EduStartupActivity : StartupActivity.DumbAware {
           .notify(project)
       }
 
-      if (course is CodeforcesCourse) {
+      if (course is CodeforcesCourse && !ApplicationManager.getApplication().isUnitTestMode) {
         EduNotificationManager.create(
           WARNING,
           EduFormatNames.CODEFORCES,
