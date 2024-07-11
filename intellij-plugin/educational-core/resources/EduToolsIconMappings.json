@@ -38,7 +38,7 @@
               "toolWindowClock.svg" : "icons/com/jetbrains/edu/learning/clock.svg"
             },
             "eduCourseAction.svg" : "icons/com/jetbrains/edu/eduCourseAction.svg",
-            "eduCourseTask.svg" : "icons/com/jetbrains/edu/eduCourseTask.svg",
+            "eduCourseTree.svg" : "icons/com/jetbrains/edu/eduCourseTree.svg",
             "eduLessonDefault.svg" : "icons/com/jetbrains/edu/eduLessonDefault.svg",
             "eduLessonDone.svg" : "icons/com/jetbrains/edu/eduLessonDone.svg",
             "eduSectionDefault.svg" : "icons/com/jetbrains/edu/eduSectionDefault.svg",
