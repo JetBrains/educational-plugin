@@ -62,17 +62,6 @@ abstract class Course : LessonContainer() {
   var feedbackLink: String? = null
   var license: String? = null
 
-  @Suppress("SetterBackingFieldAssignment")
-  @Deprecated("Use languageId and languageVersion instead")
-  private var programmingLanguage: String? = null
-    set(value) {
-      if (value.isNullOrEmpty()) return
-      value.split(" ").apply {
-        languageId = first()
-        languageVersion = getOrNull(1)
-      }
-    }
-
   /**
    * Programming language ID from [com.intellij.lang.Language.getID]
    * also see [com.jetbrains.edu.learning.courseFormat.ext.CourseExt.getLanguageById]

@@ -90,18 +90,6 @@ class CourseFormatTest : EduTestCase() {
   }
 
   @Test
-  fun testCourseOldProgrammingLanguage() {
-    assertEquals(EduFormatNames.PYTHON, courseFromJson.languageId)
-    assertNull(courseFromJson.languageVersion)
-  }
-
-  @Test
-  fun testCourseOldProgrammingLanguageWithVersion() {
-    assertEquals(EduFormatNames.PYTHON, courseFromJson.languageId)
-    assertEquals(PYTHON_3_VERSION, courseFromJson.languageVersion)
-  }
-
-  @Test
   fun testCourseProgrammingLanguageId() {
     assertEquals(EduFormatNames.PYTHON, courseFromJson.languageId)
     assertNull(courseFromJson.languageVersion)

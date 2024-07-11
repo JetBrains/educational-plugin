@@ -33,7 +33,6 @@ const val UPDATE_DATE = "update_date"
 const val IS_PUBLIC = "is_public"
 const val SUMMARY = "summary"
 const val TITLE = "title"
-const val PROGRAMMING_LANGUAGE = "programming_language"
 const val LANGUAGE = "language"
 const val ADMINS_GROUP = "admins_group"
 const val LEARNERS_COUNT = "learners_count"
@@ -186,7 +185,7 @@ class StepikAnswerPlaceholderMixin {
   lateinit var placeholderDependency: AnswerPlaceholderDependency
 
   @JsonProperty(POSSIBLE_ANSWER)
-  lateinit var possibleAnswer : String
+  lateinit var possibleAnswer: String
 
   @JsonProperty(PLACEHOLDER_TEXT)
   lateinit var placeholderText: String

@@ -25,7 +25,6 @@ private const val IS_PRIVATE = "isPrivate"
 private const val LANGUAGE = "language"
 private const val PLUGIN_ID = "pluginId"
 private const val PLUGINS = "plugins"
-private const val PROGRAMMING_LANGUAGE = "programmingLanguage"
 private const val PROGRAMMING_LANGUAGE_ID = "programmingLanguageId"
 private const val PROGRAMMING_LANGUAGE_VERSION = "programmingLanguageVersion"
 private const val QUERY = "query"
@@ -98,13 +97,8 @@ class Author {
 }
 
 class Fields {
-  @Suppress("unused")
-  @Deprecated("Use languageId and languageVersion instead")
-  @JsonProperty(PROGRAMMING_LANGUAGE)
-  var programmingLanguage: String = ""
-
   @JsonProperty(PROGRAMMING_LANGUAGE_ID)
-  var languageId: String? = null
+  var languageId: String = ""
 
   @JsonProperty(PROGRAMMING_LANGUAGE_VERSION)
   var languageVersion: String? = null

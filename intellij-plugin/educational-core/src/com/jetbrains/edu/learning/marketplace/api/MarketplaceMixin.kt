@@ -54,16 +54,8 @@ private class MarketplaceCourseBuilder(
       description = courseDescription
       learnersCount = downloads
       reviewScore = rating ?: 0.0
-      val fieldsLanguageId = fields.languageId
-      if (!fieldsLanguageId.isNullOrEmpty()) {
-        languageId = fieldsLanguageId
-        languageVersion = fields.languageVersion
-      } else {
-        fields.programmingLanguage.split(" ").apply {
-          languageId = first()
-          languageVersion = getOrNull(1)
-        }
-      }
+      languageId = fields.languageId
+      languageVersion = fields.languageVersion
       languageCode = fields.language
       environment = fields.environment ?: DEFAULT_ENVIRONMENT
       marketplaceCourseVersion = version ?: 1
