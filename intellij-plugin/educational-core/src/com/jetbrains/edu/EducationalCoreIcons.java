@@ -1,12 +1,47 @@
 package com.jetbrains.edu;
 
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.ui.IconManager;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class EducationalCoreIcons {
-  private static Icon load(String path) {
+public final class EducationalCoreIcons {
+  /**
+   * Loads an icon using the default method.
+   * This is currently the default way to load icons based on their path in the `resources` directory.
+   * Note that there is also a method available for loading icons as rasterized images
+   * using the {@link #loadRasterized(String)} method.
+   * <p/>
+   * However, the {@link #loadRasterized(String)} method has some limitations because it uses platform API that is not fully adjusted
+   * for our needs and may not perfectly fit our use case, but it remains a necessary option for now.
+   *
+   * @param path the path to the icon in the `resources` directory.
+   * @return the loaded {@link Icon} object.
+   */
+  private static @NotNull Icon load(@NotNull String path) {
     return IconLoader.getIcon(path, EducationalCoreIcons.class);
+  }
+
+  /**
+   * Loads an icon in a modern and efficient manner as a rasterized image.
+   * Currently, this method is used exclusively for loading tool window icons.
+   * <p>
+   * Note: The last two arguments passed to {@link IconManager#loadRasterizedIcon} are `cacheKey` and `flags`.
+   * Both are set to 0, which is acceptable; however, we should consider using a different API in the future
+   * that does not apply caching, which is currently unavailable
+   *
+   * @param path the path to the icon in the resources directory, without a leading slash.
+   *             The path must be relative to the classpath root.
+   * @return the loaded {@link Icon} object.
+   * @throws IllegalArgumentException if the provided path starts with a leading slash.
+   */
+  private static @NotNull Icon loadRasterized(@NotNull String path) {
+    if (path.startsWith("/")) {
+      throw new IllegalArgumentException("Path must be specified without a leading slash");
+    }
+
+    return IconManager.getInstance().loadRasterizedIcon(path, EducationalCoreIcons.class.getClassLoader(), 0, 0);
   }
 
   public static final Icon JavaLogo = load("/icons/com/jetbrains/edu/learning/JavaLogo.svg"); // 16x16
@@ -61,7 +96,7 @@ public class EducationalCoreIcons {
 
   public static final Icon CourseAction = load("/icons/com/jetbrains/edu/eduCourseAction.svg"); // 16x16
   public static final Icon CourseTree = load("/icons/com/jetbrains/edu/eduCourseTree.svg"); // 16x16
-  public static final Icon CourseToolWindow = load("/icons/com/jetbrains/edu/eduCourseTask.svg"); // 13x13
+  public static final Icon CourseToolWindow = loadRasterized("icons/com/jetbrains/edu/eduCourseTask.svg"); // 13x13
 
   public static final Icon ResultCorrect = load("/icons/com/jetbrains/edu/learning/resultCorrect.svg"); // 16x16
   public static final Icon ResultIncorrect = load("/icons/com/jetbrains/edu/learning/resultIncorrect.svg"); // 16x16
@@ -73,7 +108,7 @@ public class EducationalCoreIcons {
 
   public static final Icon User = load("/icons/com/jetbrains/edu/usersNumber.svg"); // 12x12
 
-  public static final Icon CheckDetailsIcon = load("/icons/com/jetbrains/edu/learning/checkDetailsToolWindow.svg"); // 13x13
+  public static final Icon CheckDetailsIcon = loadRasterized("icons/com/jetbrains/edu/learning/checkDetailsToolWindow.svg"); // 13x13
 
   public static final Icon DOT = load("/icons/com/jetbrains/edu/learning/dot.svg"); // 3x3
 
