@@ -54,7 +54,7 @@
             ],
             "eduTaskTheoryDone.svg" : "icons/com/jetbrains/edu/eduTaskTheoryDone.svg",
             "syncFiles.svg" : "icons/com/jetbrains/edu/syncFiles.svg",
-            "toolWindowEduCourseTask.svg" : "icons/com/jetbrains/edu/eduCourseTree.svg",
+            "toolWindowEduCourseTask.svg" : "icons/com/jetbrains/edu/eduCourseTask.svg",
             "usersNumbers.svg" : "icons/com/jetbrains/edu/usersNumber.svg"
           }
         }
