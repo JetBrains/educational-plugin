@@ -5,7 +5,7 @@ import java.util.*
 
 /**
  * Used in the following Mixins:
- * - [com.jetbrains.edu.coursecreator.actions.mixins.RemoteEduCourseMixin]
+ * - [com.jetbrains.edu.learning.json.mixins.RemoteEduCourseMixin]
  * - [com.jetbrains.edu.learning.marketplace.api.MarketplaceEduCourseMixin]
  * - [com.jetbrains.edu.learning.stepik.api.StepikEduCourseMixin]
  * - [com.jetbrains.edu.learning.yaml.format.EduCourseRemoteInfoYamlMixin]

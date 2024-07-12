@@ -70,7 +70,8 @@ abstract class Course : LessonContainer() {
 
   /**
    * Programming language versions in string format
-   * also see [com.jetbrains.edu.learning.EduNames.PYTHON_2_VERSION], [com.jetbrains.edu.learning.EduNames.PYTHON_3_VERSION]
+   * also see [com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON_2_VERSION],
+   * [com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON_3_VERSION]
    */
   var languageVersion: String? = null
 
