@@ -17,7 +17,6 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiUtilCore
-import com.intellij.util.ObjectUtils
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.learning.*
@@ -263,14 +262,11 @@ private fun VirtualFile.toDescriptionFormat(): DescriptionFormat {
 
 @RequiresReadLock
 fun Task.getTaskTextFromTask(project: Project): String? {
-  val lessonDir = lesson.getDir(project.courseDir) ?: return null
-  val taskDirectory = if (lesson is FrameworkLesson) lessonDir.findChild(name) else getDir(project.courseDir)
-  if (taskDirectory == null) return null
-  var text = getTaskTextByTaskName(this, taskDirectory)
-  if (text == null) {
-    LOG.warn("Cannot find task description file for a task: $name")
+  val taskDirectory = getDir(project.courseDir) ?: run {
+    LOG.warn("Cannot find task directory for a task: $name")
     return null
   }
+  var text = getTaskTextByTaskName(this, taskDirectory)
   text = StringUtil.replace(text, "%IDE_NAME%", ApplicationNamesInfo.getInstance().fullProductName)
   val textBuffer = StringBuffer(text)
   replaceActionIDsWithShortcuts(textBuffer)
@@ -280,9 +276,9 @@ fun Task.getTaskTextFromTask(project: Project): String? {
   return textBuffer.toString()
 }
 
-private fun getTaskTextByTaskName(task: Task, taskDirectory: VirtualFile): String? {
+private fun getTaskTextByTaskName(task: Task, taskDirectory: VirtualFile): String {
   val taskTextFile = taskDirectory.getTaskTextFile()
-  val taskDescription = ObjectUtils.chooseNotNull(taskTextFile?.getTextFromTaskTextFile(), task.descriptionText)
+  val taskDescription = taskTextFile?.getTextFromTaskTextFile() ?: task.descriptionText
 
   return if (taskTextFile != null && TASK_MD == taskTextFile.name) {
     convertToHtml(taskDescription)
