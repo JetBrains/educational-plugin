@@ -50,7 +50,7 @@ abstract class Course : LessonContainer() {
   @Transient
   var needWriteYamlText: Boolean = false
 
-  open var languageCode: String = "en"
+  var languageCode: String = "en"
 
   // Marketplace:
   var isMarketplace: Boolean = false
@@ -66,13 +66,13 @@ abstract class Course : LessonContainer() {
    * Programming language ID from [com.intellij.lang.Language.getID]
    * also see [com.jetbrains.edu.learning.courseFormat.ext.CourseExt.getLanguageById]
    */
-  open var languageId: String = ""
+  var languageId: String = ""
 
   /**
    * Programming language versions in string format
    * also see [com.jetbrains.edu.learning.EduNames.PYTHON_2_VERSION], [com.jetbrains.edu.learning.EduNames.PYTHON_3_VERSION]
    */
-  open var languageVersion: String? = null
+  var languageVersion: String? = null
 
   fun init(isRestarted: Boolean) {
     init(this, isRestarted)
