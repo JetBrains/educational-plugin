@@ -400,6 +400,8 @@ fun IntelliJPlatformTestingExtension.customRunIdeTask(
   baseTaskName: String = type.name
 ) {
   runIde.register("run$baseTaskName") {
+    useInstaller = false
+
     if (versionWithCode != null) {
       val version = versionWithCode.toTypeWithVersion().version
 
