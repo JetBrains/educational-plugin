@@ -1,12 +1,12 @@
 package com.jetbrains.edu.android
 
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.jvm.gradle.GradleConfiguratorBase
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.isUnitTestMode
-import icons.StudioIcons
 import javax.swing.Icon
 
 class AndroidConfigurator : GradleConfiguratorBase() {
@@ -29,5 +29,5 @@ class AndroidConfigurator : GradleConfiguratorBase() {
     get() = isFeatureEnabled(EduExperimentalFeatures.ANDROID_COURSES) || isUnitTestMode
 
   override val logo: Icon
-    get() = StudioIcons.Common.ANDROID_HEAD
+    get() = EducationalCoreIcons.AndroidLogo
 }
