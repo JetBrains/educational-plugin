@@ -22,7 +22,6 @@ import org.rust.cargo.toolchain.flavors.RsToolchainFlavor
 import java.awt.BorderLayout
 import java.nio.file.Path
 import javax.swing.JComponent
-import kotlin.io.path.pathString
 
 class RsLanguageSettings : LanguageSettings<RsProjectSettings>() {
 
@@ -69,15 +68,11 @@ class RsLanguageSettings : LanguageSettings<RsProjectSettings>() {
     // To avoid unexpected updates of toolchain, just skip all changes before call of final callback
     if (!loadingFinished) return
     val toolchainPath = toolchainComboBox?.selectedPath
-    // Since 241.27011.169 we still can have event with an empty path
-    // because `RsToolchainPathChoosingComboBox` doesn't notify us when it finishes toolchain loading anymore.
-    // As a temporary solution, let's ignore such events completely
-    if (toolchainPath != null && toolchainPath.pathString.isNotEmpty()) {
-      // We already have toolchain for this path
-      if (rustToolchain?.location == toolchainPath) return
+    // We already have toolchain for this path
+    if (rustToolchain?.location == toolchainPath) return
 
-      rustToolchain = RsToolchainProvider.getToolchain(toolchainPath)
-    }
+    rustToolchain = toolchainPath?.let { RsToolchainProvider.getToolchain(it) }
+
     notifyListeners()
   }
 
