@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.BuildNumber
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.text.VersionComparatorUtil
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseDir
@@ -13,7 +14,6 @@ import com.jetbrains.edu.learning.courseFormat.PluginInfos
 import com.jetbrains.edu.learning.pluginVersion
 import com.jetbrains.edu.rust.checker.RsTaskCheckerProvider
 import org.rust.cargo.CargoConstants
-import org.rust.ide.icons.RsIcons
 import org.rust.lang.RsConstants
 import javax.swing.Icon
 
@@ -38,7 +38,7 @@ class RsConfigurator : EduConfigurator<RsProjectSettings> {
     get() = "src"
 
   override val logo: Icon
-    get() = RsIcons.RUST
+    get() = EducationalCoreIcons.RustLogo
 
   override fun excludeFromArchive(project: Project, course: Course, file: VirtualFile): Boolean {
     // Cargo config file should be included into course even it's located in "hidden" `.cargo` directory
