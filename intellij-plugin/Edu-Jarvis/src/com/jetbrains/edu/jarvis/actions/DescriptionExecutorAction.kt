@@ -10,8 +10,6 @@ import com.jetbrains.edu.jarvis.DraftExpressionWriter
 import com.jetbrains.edu.jarvis.grammar.parse
 import com.jetbrains.edu.jarvis.messages.EduJarvisBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
-import groovyjarjarantlr.RecognitionException
-import java.util.InputMismatchException
 
 
 /**
