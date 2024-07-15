@@ -8,13 +8,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ActionCallback
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.Alarm
-import com.intellij.util.text.DateFormatUtil
 import com.jetbrains.edu.learning.EduUtilsKt.isNewlyCreated
 import com.jetbrains.edu.learning.LightTestAware
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.isUnitTestMode
 import org.jetbrains.annotations.TestOnly
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 
 abstract class CourseUpdateChecker(protected val project: Project) : Disposable, LightTestAware {
@@ -32,7 +32,7 @@ abstract class CourseUpdateChecker(protected val project: Project) : Disposable,
   open val checkInterval: Long
     get() {
       //default value is 18 000 seconds (5 hours), set in educational-core.xml
-      return DateFormatUtil.SECOND * Registry.intValue(REGISTRY_KEY)
+      return TimeUnit.SECONDS.toMillis(Registry.intValue(REGISTRY_KEY).toLong())
     }
 
   fun check() {

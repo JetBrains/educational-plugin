@@ -3,9 +3,9 @@ package com.jetbrains.edu.learning.codeforces.update
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import com.intellij.util.text.DateFormatUtil
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.update.CourseUpdateChecker
+import java.util.concurrent.TimeUnit
 
 @Service(Service.Level.PROJECT)
 class CodeforcesCourseUpdateChecker(project: Project) : CourseUpdateChecker(project) {
@@ -23,7 +23,7 @@ class CodeforcesCourseUpdateChecker(project: Project) : CourseUpdateChecker(proj
   }
 
   companion object {
-    const val ONGOING_COURSE_CHECK_INTERVAL: Long = 60 * DateFormatUtil.SECOND
+    val ONGOING_COURSE_CHECK_INTERVAL: Long = TimeUnit.MINUTES.toMillis(1)
 
     fun getInstance(project: Project): CodeforcesCourseUpdateChecker {
       return project.service()

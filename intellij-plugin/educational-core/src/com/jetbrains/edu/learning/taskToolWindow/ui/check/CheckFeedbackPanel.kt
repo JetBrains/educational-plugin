@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckMessagePanel.Comp
 import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.BorderLayout
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.swing.JPanel
 
 class CheckFeedbackPanel(task: Task, checkResult: CheckResult, alarm: Alarm) : JPanel(BorderLayout()) {
@@ -67,7 +68,7 @@ class CheckFeedbackPanel(task: Task, checkResult: CheckResult, alarm: Alarm) : J
       val timeUpdater = object : Runnable {
         override fun run() {
           text = DateFormatUtil.formatPrettyDateTime(time)
-          alarm.addRequest(this, DateFormatUtil.MINUTE)
+          alarm.addRequest(this, TimeUnit.MINUTES.toMillis(1))
         }
       }
       timeUpdater.run()

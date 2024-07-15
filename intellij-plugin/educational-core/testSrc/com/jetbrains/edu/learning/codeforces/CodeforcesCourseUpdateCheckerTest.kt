@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.codeforces
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.registry.Registry
-import com.intellij.util.text.DateFormatUtil
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.actions.EduActionUtils
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_PROBLEMS
@@ -25,6 +24,7 @@ import org.jsoup.Jsoup
 import org.junit.Test
 import java.time.ZonedDateTime
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class CodeforcesCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
   private val expectedTaskADescription: String by lazy {
@@ -92,7 +92,7 @@ class CodeforcesCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
 
     checker.check()
     assertFalse(course.isOngoing)
-    assertEquals(DateFormatUtil.SECOND * Registry.intValue(CourseUpdateChecker.REGISTRY_KEY), checker.checkInterval)
+    assertEquals(TimeUnit.SECONDS.toMillis(Registry.intValue(CourseUpdateChecker.REGISTRY_KEY).toLong()), checker.checkInterval)
   }
 
   private fun createCodeforcesCourse(isNewlyCreated: Boolean = false, isCourseUpToDate: Boolean = false): CodeforcesCourse {
