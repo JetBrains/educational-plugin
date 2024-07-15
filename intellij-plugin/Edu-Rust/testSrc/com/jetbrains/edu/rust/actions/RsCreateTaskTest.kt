@@ -3,6 +3,7 @@ package com.jetbrains.edu.rust.actions
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ContentEntry
 import com.intellij.openapi.roots.ModifiableRootModel
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.util.Urls
 import com.jetbrains.edu.coursecreator.actions.create.MockNewStudyItemUi
@@ -13,8 +14,8 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.testAction
 import org.junit.Test
 import org.rust.cargo.CfgOptions
+import org.rust.cargo.project.model.CargoProjectsService
 import org.rust.cargo.project.model.cargoProjects
-import org.rust.cargo.project.model.impl.TestCargoProjectsServiceImpl
 import org.rust.cargo.project.workspace.CargoWorkspace
 import org.rust.cargo.project.workspace.CargoWorkspaceData
 import org.rust.cargo.project.workspace.PackageOrigin
@@ -73,7 +74,7 @@ private object RsProjectDescriptor : LightProjectDescriptor() {
     super.configureModule(module, model, contentEntry)
     val projectDir = contentEntry.file!!
     val ws = testCargoProject(projectDir.url)
-    (module.project.cargoProjects as TestCargoProjectsServiceImpl).createTestProject(projectDir, ws, null)
+    module.project.cargoProjects.createTestProject(projectDir, ws)
   }
 
   private fun testCargoProject(contentRoot: String): CargoWorkspace {
@@ -95,9 +96,20 @@ private object RsProjectDescriptor : LightProjectDescriptor() {
     origin = PackageOrigin.WORKSPACE,
     edition = CargoWorkspace.Edition.EDITION_2018,
     features = emptyMap(),
+    enabledFeatures = emptySet(),
     cfgOptions = CfgOptions.EMPTY,
     env = emptyMap(),
     outDirUrl = null,
-    enabledFeatures = emptySet()
+    categories = emptySet()
   )
+
+  // Rust team moved `TestCargoProjectsServiceImpl` into test sources.
+  // As a result, the plugin doesn't contain test implementation class, and it's impossible to use it now.
+  //
+  // Uncomment implementation when the issue is fixed
+  @Suppress("UnusedReceiverParameter", "UNUSED_PARAMETER")
+  private fun CargoProjectsService.createTestProject(projectDir: VirtualFile, ws: CargoWorkspace) {
+//    (this as TestCargoProjectsServiceImpl).createTestProject(projectDir, ws, null)
+    TODO()
+  }
 }
