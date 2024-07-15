@@ -2,13 +2,13 @@ package com.jetbrains.edu.python.learning
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.python.learning.checker.PyTaskCheckerProvider
 import com.jetbrains.edu.python.learning.newproject.PyProjectSettings
-import com.jetbrains.python.psi.icons.PythonPsiApiIcons
 import javax.swing.Icon
 
 open class PyConfigurator : EduConfigurator<PyProjectSettings> {
@@ -27,7 +27,7 @@ open class PyConfigurator : EduConfigurator<PyProjectSettings> {
     get() = PyTaskCheckerProvider()
 
   override val logo: Icon
-    get() = PythonPsiApiIcons.Python
+    get() = EducationalCoreIcons.PythonLogo
 
   override val isCourseCreatorEnabled: Boolean
     get() = false
