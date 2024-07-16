@@ -1,11 +1,11 @@
 package com.jetbrains.edu.kotlin
 
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.jvm.gradle.GradleConfiguratorBase
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.kotlin.checker.KtTaskCheckerProvider
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
-import org.jetbrains.kotlin.idea.KotlinIcons
 import javax.swing.Icon
 
 class KtConfigurator : GradleConfiguratorBase() {
@@ -24,7 +24,7 @@ class KtConfigurator : GradleConfiguratorBase() {
     get() = getInternalTemplateText(MOCK_KT)
 
   override val logo: Icon
-    get() = KotlinIcons.SMALL_LOGO
+    get() = EducationalCoreIcons.KotlinLogo
 
   override val defaultPlaceholderText: String
     get() = "TODO()"

@@ -1,7 +1,7 @@
 package com.jetbrains.edu.go
 
-import com.goide.GoIcons
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.go.checker.GoCodeExecutor
 import com.jetbrains.edu.go.checker.GoEduTaskChecker
 import com.jetbrains.edu.go.checker.GoEnvironmentChecker
@@ -29,7 +29,7 @@ class GoConfigurator : EduConfigurator<GoProjectSettings> {
     get() = listOf(TEST)
 
   override val logo: Icon
-    get() = GoIcons.ICON
+    get() = EducationalCoreIcons.GoLogo
 
   override val taskCheckerProvider: TaskCheckerProvider
     get() = object : TaskCheckerProvider {
