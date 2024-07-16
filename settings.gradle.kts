@@ -115,7 +115,6 @@ fun configureJarvisProperties() {
 
   jarvisProperties.extractAndStore(
     "intellij-plugin/educational-core/resources/jarvisTemplateVariables/jarvis.properties",
-    "isJarvis",
     "jarvisDslVersion"
   )
 }
