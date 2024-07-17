@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.newproject.ui.myCourses
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.ui.SimpleTextAttributes
+import com.intellij.ui.components.JBPanelWithEmptyText
 import com.jetbrains.edu.learning.actions.EduActionUtils
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -30,8 +31,8 @@ class MyCoursesPanel(
     return ToolbarActionWrapper(EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk.lowercase"), importCourseAction)
   }
 
-  override fun setNoCoursesPanelDefaultText() {
-    val emptyText = noCoursesPanel.emptyText
+  override fun setNoCoursesPanelDefaultText(panel: JBPanelWithEmptyText) {
+    val emptyText = panel.emptyText
     emptyText.text = EduCoreBundle.message("course.dialog.my.courses.no.courses.started")
     emptyText.appendSecondaryText(
       EduCoreBundle.message("course.dialog.open.course.from.disk"),

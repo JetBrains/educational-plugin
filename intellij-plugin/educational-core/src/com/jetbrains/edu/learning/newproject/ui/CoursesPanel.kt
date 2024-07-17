@@ -48,15 +48,15 @@ abstract class CoursesPanel(
   var coursePanel: CoursePanel = createCoursePanel(disposable)
 
   @Suppress("LeakingThis")
-  protected val coursesSearchComponent: CoursesSearchComponent = CoursesSearchComponent(getEmptySearchText(),
-                                                                                        { coursesGroups },
-                                                                                        { groups -> updateModel(groups, selectedCourse) })
-
+  protected val coursesSearchComponent: CoursesSearchComponent = CoursesSearchComponent(
+    getEmptySearchText(),
+    { coursesGroups },
+    { groups -> updateModel(groups, selectedCourse) }
+  )
   private val coursesListDecorator = CoursesListDecorator(this.createCoursesListPanel(), this.tabDescription(), this.toolbarAction())
 
   private val cardLayout = JBCardLayout()
   protected val coursesGroups = mutableListOf<CoursesGroup>()
-  protected val noCoursesPanel: JBPanelWithEmptyText = JBPanelWithEmptyText()
 
   @Volatile
   private var loadingFinished = false
@@ -68,11 +68,10 @@ abstract class CoursesPanel(
     layout = cardLayout
     background = SelectCourseBackgroundColor
     coursesListDecorator.setSelectionListener { this.processSelectionChanged() }
-    this.setNoCoursesPanelDefaultText()
 
     this.add(createContentPanel(), CONTENT_CARD_NAME)
     this.add(createLoadingPanel(), LOADING_CARD_NAME)
-    this.add(noCoursesPanel, NO_COURSES)
+    this.add(createNoCoursesPanel(), NO_COURSES)
     showProgressState()
   }
 
@@ -80,7 +79,14 @@ abstract class CoursesPanel(
     updateModel(coursesGroups, null, true)
   }
 
-  open fun getEmptySearchText(): String = EduCoreBundle.message("course.dialog.search.placeholder")
+  private fun getEmptySearchText(): String = EduCoreBundle.message("course.dialog.search.placeholder")
+
+  open fun createNoCoursesPanel(): JPanel {
+    val emptyTextPanel = JBPanelWithEmptyText()
+    setNoCoursesPanelDefaultText(emptyTextPanel)
+
+    return emptyTextPanel
+  }
 
   open fun showErrorMessage(e: CoursesDownloadingException) {}
 
@@ -139,8 +145,8 @@ abstract class CoursesPanel(
     add(CenteredIcon(), BorderLayout.CENTER)
   }
 
-  protected open fun setNoCoursesPanelDefaultText() {
-    val text = noCoursesPanel.emptyText
+  protected open fun setNoCoursesPanelDefaultText(panel: JBPanelWithEmptyText) {
+    val text = panel.emptyText
     text.text = EduCoreBundle.message("course.dialog.no.courses", ApplicationNamesInfo.getInstance().fullProductName)
     text.appendSecondaryText(EduCoreBundle.message("help.use.guide1") + " ", SimpleTextAttributes.GRAYED_ATTRIBUTES, null)
     @Suppress("DialogTitleCapitalization") // it's ok to start from lowercase as it's the second part of a sentence

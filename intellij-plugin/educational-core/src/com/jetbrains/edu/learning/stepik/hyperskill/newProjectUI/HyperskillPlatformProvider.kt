@@ -15,7 +15,6 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseCreationInfo
-import com.jetbrains.edu.learning.newproject.HyperskillCourseAdvertiser
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
@@ -77,12 +76,8 @@ class HyperskillPlatformProvider : CoursesPlatformProvider() {
       .map { it.toCourse() }
 
     val courses = run { listOfNotNull(selectedProject?.course) + storedCourses }
-      .ifEmpty {
-        // if no JB Academy content to offer, advertise it
-        listOf(HyperskillCourseAdvertiser())
-      }
 
-    return CoursesGroup.fromCourses(courses)
+    return if (courses.isNotEmpty()) CoursesGroup.fromCourses(courses) else emptyList()
   }
 
   private val HyperskillProject.course: HyperskillCourse?
