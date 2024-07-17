@@ -30,10 +30,10 @@ class DescriptionExecutorAction(private val element: PsiElement) : AnAction() {
     val descriptionExpression = DescriptionExpressionParser.parseDescriptionExpression(element, element.language)
     if (descriptionExpression == null) {
       EduNotificationManager.create(
-          ERROR,
-          EduJarvisBundle.message("action.not.run.due.to.nested.block.title"),
-          EduJarvisBundle.message("action.not.run.due.to.nested.block.text")
-        )
+        ERROR,
+        EduJarvisBundle.message("action.not.run.due.to.nested.block.title"),
+        EduJarvisBundle.message("action.not.run.due.to.nested.block.text")
+      )
         .notify(project)
       return
     }
@@ -41,18 +41,14 @@ class DescriptionExecutorAction(private val element: PsiElement) : AnAction() {
     val markupModel = e.getData(PlatformDataKeys.EDITOR)?.markupModel ?: error("Editor was not found")
     markupModel.removeAllHighlighters()
 
-    val attributes = TextAttributes()
-    attributes.effectColor = JBColor.RED
-    attributes.effectType = EffectType.LINE_UNDERSCORE
+    parseDescription(descriptionExpression, markupModel)
 
-    parseDescription(descriptionExpression, markupModel, attributes)
-
-    if(markupModel.allHighlighters.isNotEmpty()) {
+    if (markupModel.allHighlighters.isNotEmpty()) {
       EduNotificationManager.create(
-          ERROR,
-          EduJarvisBundle.message("action.not.run.due.to.incorrect.grammar.title"),
-          EduJarvisBundle.message("action.not.run.due.to.incorrect.grammar.text")
-        )
+        ERROR,
+        EduJarvisBundle.message("action.not.run.due.to.incorrect.grammar.title"),
+        EduJarvisBundle.message("action.not.run.due.to.incorrect.grammar.text")
+      )
         .notify(project)
       return
     }
@@ -68,7 +64,11 @@ class DescriptionExecutorAction(private val element: PsiElement) : AnAction() {
   /**
    * Parses the description block by splitting it into sentences and highlights those that do not match the grammar.
    */
-  private fun parseDescription(descriptionExpression: DescriptionExpression, markupModel: MarkupModel, attributes: TextAttributes) {
+  private fun parseDescription(descriptionExpression: DescriptionExpression, markupModel: MarkupModel) {
+    val attributes = TextAttributes()
+    attributes.effectColor = JBColor.RED
+    attributes.effectType = EffectType.LINE_UNDERSCORE
+
     descriptionExpression.prompt.split(DOT)
       .fold(descriptionExpression.promptOffset) { currentOffset, sentence ->
         processSentence(sentence, currentOffset, markupModel, attributes)
@@ -77,11 +77,16 @@ class DescriptionExecutorAction(private val element: PsiElement) : AnAction() {
   }
 
   /**
-   * Parses the sentences in t
+   * Processes the sentence and determines whether to highlight the sentence or not.
    */
-  private fun processSentence(sentence:String, sentenceOffset: Int, markupModel: MarkupModel, attributes: TextAttributes) {
-    if(sentence.isBlank()) return
-    if(sentence.matchesGrammar()) return
+  private fun processSentence(
+    sentence: String,
+    sentenceOffset: Int,
+    markupModel: MarkupModel,
+    attributes: TextAttributes
+  ) {
+    if (sentence.isBlank()) return
+    if (sentence.matchesGrammar()) return
     val trimmedLength = sentence.trimStart().length
     val trimmedOffset = sentence.length - trimmedLength
 
@@ -95,7 +100,8 @@ class DescriptionExecutorAction(private val element: PsiElement) : AnAction() {
   private fun String.matchesGrammar() = try {
     this.parse()
     true
-  } catch (e: Throwable) {
+  }
+  catch (e: Throwable) {
     // TODO: also check grammar with LLM
     false
   }
