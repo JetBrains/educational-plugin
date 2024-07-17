@@ -38,13 +38,17 @@ class HyperskillTopLoginPanelWithBanner : Wrapper() {
 
   private val oldUIBackgroundColor = JBColor(0xF2F2F2, 0x3C3F41)
   private val radius = JBUI.scale(12)
+  private val icon = loadIcon("selectCourseDialog/hyperskill/hyperskill-freemium-cover.png", this::class.java.classLoader)
 
   init {
     border = JBUI.Borders.empty(PANEL_GAP)
 
     setContent(JPanel(BorderLayout()).apply {
+      val scaledIcon = IconUtil.scale(icon, this@HyperskillTopLoginPanelWithBanner, 0.5f)
+      val bannerPanel = Wrapper(JLabel(scaledIcon))
+
       add(createLeftPanel(), BorderLayout.CENTER)
-      add(createBannerPanel(), BorderLayout.EAST)
+      add(bannerPanel, BorderLayout.EAST)
     }.apply {
       isOpaque = true
       background = getBackgroundColor()
@@ -78,8 +82,8 @@ class HyperskillTopLoginPanelWithBanner : Wrapper() {
     row {
       // I haven't found anything more suitable than text()
       @Suppress("DialogTitleCapitalization") text(EduCoreBundle.message("course.dialog.hyperskill.jba.on.hyperskill.label.text")).applyToComponent {
-          font = JBFont.regular().biggerOn(TITLE_FONT_FACTOR).deriveFont(Font.PLAIN)
-        }
+        font = JBFont.regular().biggerOn(TITLE_FONT_FACTOR).deriveFont(Font.PLAIN)
+      }
     }
     row {
       text(
@@ -98,16 +102,6 @@ class HyperskillTopLoginPanelWithBanner : Wrapper() {
     isOpaque = true
     background = getBackgroundColor()
     border = JBUI.Borders.emptyLeft(30)
-  }
-
-  private fun createBannerPanel(): Wrapper {
-    val academyOnHyperskillBanner = IconUtil.scale(
-      loadIcon("selectCourseDialog/hyperskill/hyperskill-freemium-cover.png", HyperskillTopLoginPanelWithBanner::class.java.classLoader),
-      this,
-      0.5f
-    )
-
-    return Wrapper(JLabel(academyOnHyperskillBanner))
   }
 
   private fun createIconPanel(): JPanel {

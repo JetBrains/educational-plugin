@@ -46,6 +46,11 @@ abstract class CoursesPlatformProvider {
       logger<CoursesPlatformProvider>().warn(e)
       return emptyList()
     }
+
+    if (courseGroups.isEmpty()) {
+      return emptyList()
+    }
+
     return courseGroups.mapNotNull { courseGroup ->
       courseGroup.courses
         .filter {
@@ -53,7 +58,6 @@ abstract class CoursesPlatformProvider {
             is CourseCompatibility.Compatible,
             is CourseCompatibility.IncompatibleVersion,
             is CourseCompatibility.PluginsRequired -> true
-
             else -> false
           }
         }

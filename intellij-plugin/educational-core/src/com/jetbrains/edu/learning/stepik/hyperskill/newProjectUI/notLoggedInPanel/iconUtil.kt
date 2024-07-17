@@ -1,14 +1,13 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.notLoggedInPanel
 
 import com.intellij.openapi.util.IconLoader
-import com.intellij.ui.ColorUtil
-import com.intellij.util.ui.JBUI
+import com.intellij.ui.JBColor
+
 
 fun getIconPath(path: String): String {
   val darkSuffix = "_dark"
 
-  // copy-pasted from `com.intellij.platform.ide.newUiOnboarding.NewUiOnboardingUtil`
-  val isDark = ColorUtil.isDark(JBUI.CurrentTheme.GotItTooltip.background(false))
+  val isDark = !JBColor.isBright()
 
   val extension = path.substringAfterLast(".", missingDelimiterValue = "")
   val pathWithNoExt = path.removeSuffix(".$extension")

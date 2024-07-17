@@ -2,11 +2,10 @@ package com.jetbrains.edu.learning.stepik.hyperskill.courseSelection
 
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.MockResponseFactory
-import com.jetbrains.edu.learning.newproject.HyperskillCourseAdvertiser
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.pathWithoutPrams
 import com.jetbrains.edu.learning.stepik.hyperskill.api.*
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.defaultHyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.logInFakeHyperskillUser
 import com.jetbrains.edu.learning.stepik.hyperskill.logOutFakeHyperskillUser
@@ -23,16 +22,6 @@ class HyperskillPlatformProviderTest : EduTestCase() {
     CoursesStorage.getInstance().state.courses.clear()
   }
 
-  @Test
-  fun `test advertising course added when no JBA login`() {
-    val courseGroups = loadCourses()
-
-    assertTrue(courseGroups.size == 1)
-    assertTrue(courseGroups[0].courses.size == 1)
-
-    val course = courseGroups[0].courses.first()
-    assertTrue(course is HyperskillCourseAdvertiser)
-  }
 
   @Test
   fun `test selected project added`() {
