@@ -59,9 +59,9 @@ class RsConfigurator : EduConfigurator<RsProjectSettings> {
     get() {
       val rustPluginVersion = pluginVersion(PluginInfos.RUST.stringId) ?: return false
       val currentBuild = ApplicationInfo.getInstance().build
-      // Rust plugin changed `RsToolchainPathChoosingComboBox` API since `241.27011.175` and `242.19890.40`.
+      // Rust plugin changed `RsToolchainPathChoosingComboBox` API since `241.27011.175` and `242.19890.39`.
       // Let's avoid runtime error because of this binary incompatibility
-      val minSupportedVersion = if (currentBuild < BUILD_242) "241.27011.175" else "242.19890.40"
+      val minSupportedVersion = if (currentBuild < BUILD_242) "241.27011.175" else "242.19890.39"
       return VersionComparatorUtil.compare(rustPluginVersion, minSupportedVersion) >= 0
     }
 
