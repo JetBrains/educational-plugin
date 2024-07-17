@@ -211,8 +211,6 @@ abstract class CoursesPanel(
     }
   }
 
-  protected open fun isLoginNeeded() = false
-
   open inner class CoursesListWithResetFilters : CoursesListPanel() {
 
     override fun resetFilters() {
