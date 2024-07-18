@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NonNls
 class ApplyHyperskillSubmission : DumbAwareAction(
   EduCoreBundle.lazyMessage("action.apply.submission.text", HYPERSKILL),
   EduCoreBundle.lazyMessage("action.apply.submission.description", HYPERSKILL),
-  EducationalCoreIcons.JB_ACADEMY
+  EducationalCoreIcons.Platform.JetBrainsAcademy
 ) {
 
   override fun actionPerformed(e: AnActionEvent) {

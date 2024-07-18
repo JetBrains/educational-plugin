@@ -32,14 +32,13 @@
             },
             "platform" : {
               "checkio@24x24.svg" : "icons/com/jetbrains/edu/learning/checkio.svg",
-              "codeforces@24x24.svg" : "icons/com/jetbrains/edu/learning/codeforces.svg",
               "coursera@24x24.svg" : "icons/com/jetbrains/edu/learning/coursera.svg",
-              "hyperskill.svg" : "icons/com/jetbrains/edu/learning/JB_academy.svg",
               "jetBrainsAcademy@24x24.svg" : "icons/com/jetbrains/edu/learning/JB_academy_course_tab.svg",
               "logoCodeforces.svg" : "icons/com/jetbrains/edu/learning/codeforcesSmall.svg",
               "logoJSCheckiO.svg" : "icons/com/jetbrains/edu/learning/JSCheckiO.svg",
               "logoPyCheckiO.svg" : "icons/com/jetbrains/edu/learning/PyCheckiO.svg",
-              "marketplaceCourses@24x24.svg" : "icons/com/jetbrains/edu/learning/marketplace_courses_tab.svg"
+              "marketplaceCourses@24x24.svg" : "icons/com/jetbrains/edu/learning/marketplace_courses_tab.svg",
+              "hyperskill.svg" : "icons/com/jetbrains/edu/learning/JB_academy.svg"
             },
             "eduCourseAction.svg" : "icons/com/jetbrains/edu/eduCourseAction.svg",
             "eduCourseTree.svg" : "icons/com/jetbrains/edu/eduCourseTree.svg",

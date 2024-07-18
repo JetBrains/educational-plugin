@@ -10,10 +10,12 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.profileUrl
 import com.jetbrains.edu.learning.stepik.hyperskill.update.SyncHyperskillCourseAction
 
-class HyperskillWidget(project: Project) : LoginWidget<HyperskillAccount>(project,
-                                                                          EduCoreBundle.message("hyperskill.widget.title"),
-                                                                          EduCoreBundle.message("hyperskill.widget.tooltip"),
-                                                                          EducationalCoreIcons.JB_ACADEMY) {
+class HyperskillWidget(project: Project) : LoginWidget<HyperskillAccount>(
+  project,
+  EduCoreBundle.message("hyperskill.widget.title"),
+  EduCoreBundle.message("hyperskill.widget.tooltip"),
+  EducationalCoreIcons.Platform.JetBrainsAcademy
+) {
   override val connector: EduOAuthCodeFlowConnector<HyperskillAccount, *>
     get() = HyperskillConnector.getInstance()
 

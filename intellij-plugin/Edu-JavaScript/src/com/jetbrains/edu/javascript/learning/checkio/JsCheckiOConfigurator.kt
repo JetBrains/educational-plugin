@@ -21,7 +21,7 @@ class JsCheckiOConfigurator : JsConfigurator(), CheckiOConnectorProvider {
     get() = JsCheckiOTaskCheckerProvider()
 
   override val logo: Icon
-    get() = EducationalCoreIcons.JSCheckiO
+    get() = EducationalCoreIcons.Platform.JSCheckiO
 
   override val isCourseCreatorEnabled: Boolean = false
 

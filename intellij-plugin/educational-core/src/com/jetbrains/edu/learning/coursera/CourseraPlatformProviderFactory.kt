@@ -26,7 +26,7 @@ class CourseraPlatformProvider : CoursesPlatformProvider() {
 
   override val name: String = COURSERA
 
-  override val icon: Icon get() = EducationalCoreIcons.Coursera
+  override val icon: Icon get() = EducationalCoreIcons.Platform.Tab.CourseraTab
 
   override fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel =
     CourseraCoursesPanel(this, scope, disposable)
