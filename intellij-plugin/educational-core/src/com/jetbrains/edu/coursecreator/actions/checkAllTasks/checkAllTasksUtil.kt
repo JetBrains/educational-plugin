@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
@@ -121,8 +122,7 @@ fun checkTask(
   task: Task,
   indicator: ProgressIndicator
 ): Boolean {
-  // We decided to check the ChoiceTask when CC chose any answer. Otherwise, we don't check this task.
-  if (task is ChoiceTask && task.selectedVariants.isEmpty()) {
+  if (task is TheoryTask || (task is ChoiceTask && task.selectedVariants.isEmpty())) {
     return true
   }
 
