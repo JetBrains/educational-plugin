@@ -26,14 +26,14 @@ abstract class JsonLocalCourseConverterBase : JsonLocalCourseConverter {
     return localCourse
   }
 
-  protected fun convertSection(sectionObject: ObjectNode, language: String) {
+  private fun convertSection(sectionObject: ObjectNode, language: String) {
     convertSectionObject(sectionObject, language)
     for (lesson in sectionObject.getJsonObjectList(ITEMS)) {
       convertLesson(lesson, language)
     }
   }
 
-  protected fun convertLesson(lessonObject: ObjectNode, language: String) {
+  private fun convertLesson(lessonObject: ObjectNode, language: String) {
     convertLessonObject(lessonObject, language)
     for (task in lessonObject.getJsonObjectList(TASK_LIST)) {
       convertTaskObject(task, language)
