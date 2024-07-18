@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.navigation
 
 import com.intellij.ide.projectView.ProjectView
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Editor
@@ -18,14 +19,14 @@ import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.ext.*
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import org.jetbrains.annotations.VisibleForTesting
 import javax.swing.tree.TreePath
 
@@ -298,11 +299,16 @@ object NavigationUtils {
   private fun openCCTaskFiles(project: Project, task: Task) {
     val taskDir = task.getDir(project.courseDir) ?: return
     val descriptionFile = task.getDescriptionFile(project)
-    descriptionFile?.let { FileEditorManager.getInstance(project).openFile(it, false) }
 
-    task.getAllTestVFiles(project).forEach { testFile ->
-      FileEditorManager.getInstance(project).openFile(testFile, false)
+    invokeAndWaitIfNeeded {
+      if (descriptionFile != null) {
+        FileEditorManager.getInstance(project).openFile(descriptionFile, false)
+      }
+      task.getAllTestVFiles(project).forEach { testFile ->
+        FileEditorManager.getInstance(project).openFile(testFile, false)
+      }
     }
+
     val firstTaskFile = getFirstTaskFile(taskDir, task)
     ProjectView.getInstance(project).refresh()
     firstTaskFile?.let { updateProjectView(project, it) }
