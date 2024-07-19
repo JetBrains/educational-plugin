@@ -6,6 +6,7 @@ import com.intellij.codeInsight.daemon.impl.analysis.FileHighlightingSetting
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightLevelUtil
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
@@ -141,7 +142,9 @@ fun VirtualFile.isTaskDirectory(project: Project): Boolean {
 }
 
 fun VirtualFile.getTextFromTaskTextFile(): String? {
-  val document = FileDocumentManager.getInstance().getDocument(this)
+  val document = runReadAction {
+    FileDocumentManager.getInstance().getDocument(this)
+  }
   return document?.text
 }
 
