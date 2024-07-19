@@ -232,7 +232,9 @@ class EduStartupActivity : StartupActivity.DumbAware {
     }
 
     // Android Studio creates `gradlew` not via VFS, so we have to refresh project dir
-    VfsUtil.markDirtyAndRefresh(false, true, true, project.courseDir)
+    runInBackground(project, EduCoreBundle.message("refresh.course.project.directory"), false) {
+      VfsUtil.markDirtyAndRefresh(false, true, true, project.courseDir)
+    }
   }
 
   companion object {
