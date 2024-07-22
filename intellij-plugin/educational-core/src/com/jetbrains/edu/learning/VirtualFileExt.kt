@@ -142,8 +142,10 @@ fun VirtualFile.isTaskDirectory(project: Project): Boolean {
 }
 
 fun VirtualFile.getTextFromTaskTextFile(): String? {
-  val document = runReadAction {
-    FileDocumentManager.getInstance().getDocument(this)
+  val document = computeUnderProgress(title = EduCoreBundle.message("getting.text.from.the.file")) {
+    runReadAction {
+      FileDocumentManager.getInstance().getDocument(this)
+    }
   }
   return document?.text
 }
