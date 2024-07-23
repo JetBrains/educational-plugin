@@ -102,14 +102,6 @@ fun configureSecretProperties() {
     "eduHubClientSecret",
     "marketplaceHubClientId"
   )
-
-  if (inJetBrainsNetwork() && !isTeamCity) {
-    // This token should be available only with the plugin being built locally
-    secretProperties.extractAndStore(
-      "intellij-plugin/educational-core/resources/ai/ai.properties",
-      "grazieTemporaryToken"
-    )
-  }
 }
 
 fun downloadHyperskillCss() {
