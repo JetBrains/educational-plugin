@@ -3,11 +3,13 @@
 package com.jetbrains.edu.learning.courseFormat.ext
 
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.problems.WolfTheProblemSolver
+import com.intellij.psi.PsiDocumentManager
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.EduFile.Companion.LOG
 import com.jetbrains.edu.learning.courseFormat.EduFileErrorHighlightLevel
@@ -95,3 +97,16 @@ private fun TaskFile.resetDocument(project: Project): Boolean {
 }
 
 fun TaskFile.shouldBePropagated(): Boolean = isEditable && isVisible
+
+/**
+ * Updates the content of the [TaskFile] with the specified [newContent].
+ * Only for testing or validation.
+ */
+fun TaskFile.updateContent(project: Project, newContent: String) {
+  val document = getDocument(project) ?: error("Document was not found")
+  runWriteAction {
+    document.setText(newContent)
+    FileDocumentManager.getInstance().saveDocument(document)
+    PsiDocumentManager.getInstance(project).commitDocument(document)
+  }
+}

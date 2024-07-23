@@ -24,6 +24,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.project
+import com.jetbrains.edu.learning.courseFormat.ext.updateContent
 import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.navigation.NavigationUtils
@@ -233,7 +234,7 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
   }
 
   protected fun Lesson.replaceContent(task: Task, newCode: String, eduState: EduState, project: Project) {
-    replaceDocumentText(eduState.taskFile, project, newCode)
+    eduState.taskFile.updateContent(project, newCode)
     if (this is FrameworkLesson) {
       changeStateForMainFile(task, newCode)
     }

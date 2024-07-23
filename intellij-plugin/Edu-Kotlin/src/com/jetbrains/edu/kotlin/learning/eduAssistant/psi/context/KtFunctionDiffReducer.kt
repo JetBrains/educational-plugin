@@ -25,11 +25,12 @@ class KtFunctionDiffReducer : FunctionDiffReducer {
     first: Array<PsiElement>,
     second: Array<PsiElement>,
     project: Project,
-    insertionAfterElement: PsiElement?
+    insertionAfterElement: PsiElement?,
+    needLineBreak: Boolean = true
   ): Boolean {
     first.zip(second).forEach {
       if (!Regex(TODO).containsMatchIn(it.first.text) && it.first.node.elementType != it.second.node.elementType) {
-        addElement(it.first, it.second, project, addAfter = false)
+        addElement(it.first, it.second, project, addAfter = false, needLineBreak = needLineBreak)
         return true
       }
       if (!equalText(it.first, it.second, Char::isWhitespace)) {
@@ -41,11 +42,11 @@ class KtFunctionDiffReducer : FunctionDiffReducer {
     if (first.size < second.size) {
       if (first.isEmpty()) {
         insertionAfterElement?.let {
-          addElement(it, second[first.size], project)
+          addElement(it, second[first.size], project, needLineBreak = needLineBreak)
           return true
         }
       } else {
-        addElement(first.last(), second[first.size], project)
+        addElement(first.last(), second[first.size], project, needLineBreak = needLineBreak)
         return true
       }
     }
@@ -147,7 +148,7 @@ class KtFunctionDiffReducer : FunctionDiffReducer {
         // Change subjectExpression or entries
         first is KtWhenExpression && second is KtWhenExpression ->
           swapSmallElements(first.subjectExpression, second.subjectExpression, project) ||
-          compareAndAmendChildren(first.entries.toTypedArray(), second.entries.toTypedArray(), project, first.openBrace)
+          compareAndAmendChildren(first.entries.toTypedArray(), second.entries.toTypedArray(), project, first.openBrace, needLineBreak = false)
         // Move on to comparing the returned expressions
         first is KtReturnExpression && second is KtReturnExpression ->
           swapSmallElements(first.returnedExpression, second.returnedExpression, project)

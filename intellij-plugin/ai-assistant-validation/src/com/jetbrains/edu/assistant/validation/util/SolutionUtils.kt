@@ -1,12 +1,9 @@
 package com.jetbrains.edu.assistant.validation.util
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiDocumentManager
-import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.courseFormat.ext.getSolution
 import com.jetbrains.edu.learning.courseFormat.ext.isTestFile
+import com.jetbrains.edu.learning.courseFormat.ext.updateContent
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
@@ -27,17 +24,7 @@ fun propagateAuthorSolution(previousTask: Task, currentTask: Task, project: Proj
 fun replaceTaskFilesWithSolutions(task: Task, project: Project, solutionProducer: (String) -> (String?)) {
   task.taskFiles.filter { !it.value.isTestFile && it.value.isVisible }.forEach { (k, f) ->
     solutionProducer(k)?.let { solution ->
-      replaceDocumentText(f, project, solution)
-    }
-  }
-}
-
-fun replaceDocumentText(taskFile: TaskFile, project: Project, solution: String) {
-  val currentDocument = taskFile.getDocument(project)
-  ApplicationManager.getApplication().invokeAndWait {
-    ApplicationManager.getApplication().runWriteAction {
-      currentDocument?.setText(solution)
-      currentDocument?.let { PsiDocumentManager.getInstance(project).commitDocument(it) }
+      f.updateContent(project, solution)
     }
   }
 }
