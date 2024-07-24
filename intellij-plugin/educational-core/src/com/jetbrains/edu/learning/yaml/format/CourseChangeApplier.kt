@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.yaml.format
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseraCourse
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 
 class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>(project) {
   override fun applyChanges(existingItem: Course, deserializedItem: Course) {
@@ -21,10 +20,6 @@ class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>
     existingItem.languageVersion = deserializedItem.languageVersion
     if (deserializedItem is CourseraCourse && existingItem is CourseraCourse) {
       existingItem.submitManually = deserializedItem.submitManually
-    }
-    if (deserializedItem is CodeforcesCourse && existingItem is CodeforcesCourse) {
-      existingItem.endDateTime = deserializedItem.endDateTime
-      existingItem.programTypeId = deserializedItem.programTypeId
     }
   }
 }

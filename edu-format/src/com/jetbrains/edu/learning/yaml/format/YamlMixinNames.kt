@@ -30,16 +30,13 @@ object YamlMixinNames {
   const val SUBMIT_MANUALLY = "submit_manually"
   const val COURSE_TYPE_YAML = "coursera"
 
-  // codeforces contest
-  const val END_DATE_TIME = "end_date_time"
-  const val PROGRAM_TYPE_ID = "program_type_id"
-
   //hyperskill course
   const val HYPERSKILL_PROJECT = "hyperskill_project"
   const val STAGES = "stages"
   const val THEORY_ID = "theory_id"
   const val HYPERSKILL_TYPE_YAML = "hyperskill"
   const val STEPIK_TYPE_YAML = "stepik"
+  const val END_DATE_TIME = "end_date_time"
 
   // marketplace course
   const val MARKETPLACE_YAML_TYPE = "marketplace"
@@ -89,16 +86,6 @@ object YamlMixinNames {
   const val CHECKIO_TYPE_YAML = "checkiO"
   const val CODE = "code"
   const val SECONDS_FROM_CHANGE = "seconds_from_change"
-
-  // codeforces
-  const val CODEFORCES_TYPE_YAML = "codeforces"
-
-  // codeforces task
-  const val PROBLEM_INDEX = "problem_index"
-
-  // codeforces task with file IO
-  const val INPUT_FILE = "input_file"
-  const val OUTPUT_FILE = "output_file"
 
   // feedback
   const val MESSAGE = "message"

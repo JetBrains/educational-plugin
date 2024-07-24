@@ -17,15 +17,13 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.*
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import org.jetbrains.annotations.VisibleForTesting
 import javax.swing.tree.TreePath
 
@@ -181,13 +179,7 @@ object NavigationUtils {
 
   private fun getFirstTaskFile(taskDir: VirtualFile, task: Task): VirtualFile? {
     val taskFiles = task.taskFiles.values
-    val firstVisibleTaskFile =
-      if (task is CodeforcesTask) {
-        taskFiles.firstOrNull { it.isVisible && !it.name.startsWith(CodeforcesNames.TEST_DATA_FOLDER) }
-      }
-      else {
-        taskFiles.firstOrNull { it.isVisible }
-      } ?: return null
+    val firstVisibleTaskFile = taskFiles.firstOrNull { it.isVisible } ?: return null
     return firstVisibleTaskFile.findTaskFileInDir(taskDir)
   }
 

@@ -2,8 +2,6 @@ package com.jetbrains.edu.learning
 
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.components.service
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_SUBMIT
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_URL
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_DEFAULT_URL
@@ -21,14 +19,6 @@ open class EduBrowser : LightTestAware {
     when {
       link.startsWith(StepikNames.getStepikUrl()) -> {
         EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.STEPIK)
-      }
-      link.startsWith(CODEFORCES_URL) -> {
-        if (link.contains(CODEFORCES_SUBMIT)) {
-          EduCounterUsageCollector.codeforcesSubmitSolution()
-        }
-        else {
-          EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.CODEFORCES)
-        }
       }
       link.startsWith(HYPERSKILL_DEFAULT_URL) -> {
         EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.JBA)

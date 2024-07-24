@@ -10,7 +10,6 @@ import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.MockEduBrowser
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CourseMode
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_SOLUTIONS_ANCHOR
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillTaskLink
@@ -18,18 +17,6 @@ import com.jetbrains.edu.learning.testAction
 import org.junit.Test
 
 class CompareWithAnswerActionTest : EduActionTestCase() {
-  @Test
-  fun `test disabled for codeforces`() {
-    courseWithFiles(courseProducer = ::CodeforcesCourse) {
-      lesson {
-        codeTask {
-          taskFile("task.txt")
-        }
-      }
-    }
-
-    doTestDisabled()
-  }
 
   @Test
   fun `test for Hyperskill course`() {

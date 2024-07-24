@@ -3,13 +3,8 @@ package com.jetbrains.edu.learning.format.yaml
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.assertContentsEqual
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_TASK_TYPE_WITH_FILE_IO
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOStation
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTaskWithFileIO
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
@@ -24,7 +19,6 @@ import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
 import com.jetbrains.edu.learning.yaml.YamlMapper.STUDENT_MAPPER
 import org.intellij.lang.annotations.Language
 import org.junit.Test
-import java.time.ZonedDateTime
 import java.util.*
 
 class StudentYamlDeserializationTest : EduTestCase() {
@@ -43,24 +37,6 @@ class StudentYamlDeserializationTest : EduTestCase() {
     val course = STUDENT_MAPPER.deserializeCourse(yamlContent)
     assertNotNull(course)
     assertEquals(CourseMode.STUDENT, course.courseMode)
-  }
-
-  @Test
-  fun `test codeforces course`() {
-    val endDateTime = ZonedDateTime.parse("2019-08-11T15:35+03:00[Europe/Moscow]")
-    val yamlContent = """
-      |type: codeforces
-      |title: Test Course
-      |language: English
-      |summary: Test Course Description
-      |programming_language: Plain text
-      |end_date_time: ${endDateTime.toEpochSecond()}.000000000
-      |mode: Study
-      |""".trimMargin()
-    val course = STUDENT_MAPPER.deserializeCourse(yamlContent)
-    assertNotNull(course)
-    assertTrue(course is CodeforcesCourse)
-    assertEquals(endDateTime.toEpochSecond(), (course as CodeforcesCourse).endDateTime?.toEpochSecond())
   }
 
   @Test
@@ -125,62 +101,6 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertInstanceOf(lesson, FrameworkLesson::class.java)
     assertEquals(1, (lesson as FrameworkLesson).currentTaskIndex)
 
-  }
-
-  @Test
-  fun `test codeforces task`() {
-    val feedbackUrl = "https://codeforces.com/contest/1218/problem/A?locale=en"
-    val status = CheckStatus.Unchecked
-
-    val yamlContent = """
-    |type: $CODEFORCES_TASK_TYPE
-    |feedback_link: $feedbackUrl
-    |status: $status
-    |""".trimMargin()
-
-    val task = deserializeTask(yamlContent)
-    assertNotNull(task)
-    assertInstanceOf(task, CodeforcesTask::class.java)
-    assertEquals(feedbackUrl, task.feedbackLink)
-    assertEquals(status, task.status)
-  }
-
-  @Test
-  fun `test codeforces task with file io`() {
-    val taskFileName = "src/Task.kt"
-    val taskSolution = "Task solution"
-    val feedbackUrl = "https://codeforces.com/contest/1228/problem/F?locale=ru"
-    val status = CheckStatus.Unchecked
-
-    val inputFileName = "in.txt"
-    val outputFileName = "out.txt"
-
-    val yamlContent = """
-    |type: $CODEFORCES_TASK_TYPE_WITH_FILE_IO
-    |files:
-    |- name: $taskFileName
-    |  visible: true
-    |  text: $taskSolution
-    |  learner_created: false
-    |feedback_link: $feedbackUrl
-    |status: $status
-    |input_file: $inputFileName
-    |output_file: $outputFileName
-    |""".trimMargin()
-
-    val task = deserializeTask(yamlContent)
-    assertNotNull(task)
-    assertInstanceOf(task, CodeforcesTaskWithFileIO::class.java)
-
-    val taskFile = task.taskFiles[taskFileName]!!
-    assertEquals(true, taskFile.isVisible)
-    assertEquals(taskSolution, taskFile.text)
-
-    assertEquals(feedbackUrl, task.feedbackLink)
-    assertEquals(status, task.status)
-
-    assertEquals(inputFileName, (task as CodeforcesTaskWithFileIO).inputFileName)
-    assertEquals(outputFileName, task.outputFileName)
   }
 
   @Test

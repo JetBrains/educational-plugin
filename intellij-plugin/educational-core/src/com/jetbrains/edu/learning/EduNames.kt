@@ -28,7 +28,6 @@ object EduNames {
 
   // Troubleshooting guide links
   const val NO_COURSES_URL = "$TROUBLESHOOTING_GUIDE_URL#no_courses_found"
-  const val CODEFORCES_ANTI_CRAWLER_URL = "$TROUBLESHOOTING_GUIDE_URL#codeforces_anti_crawler"
   const val FAILED_TO_POST_TO_JBA_URL = "$TROUBLESHOOTING_GUIDE_URL#failed_submission_jba"
   const val OUTSIDE_OF_KNOWN_PORT_RANGE_URL = "$TROUBLESHOOTING_GUIDE_URL#outside_of_known_port_range"
 

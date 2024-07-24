@@ -1,7 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CODEFORCES_TYPE_YAML
-
 object EduFormatNames {
   const val EDU_PREFIX = "edu"
   const val REST_PREFIX = "api"
@@ -79,13 +77,6 @@ object EduFormatNames {
 
   // checkio
   const val CHECKIO = "CheckiO"
-
-  // codeforces
-  const val CODEFORCES: String = "Codeforces"
-  const val CODEFORCES_SUBMIT: String = "submit"
-  const val CODEFORCES_TASK_TYPE: String = CODEFORCES_TYPE_YAML
-  const val CODEFORCES_TASK_TYPE_WITH_FILE_IO: String = "${CODEFORCES_TYPE_YAML}_file_io"
-  const val CODEFORCES_URL: String = "https://codeforces.com"
 
   // stepik
   const val STEPIK = "Stepik"

@@ -18,7 +18,6 @@ import com.jetbrains.edu.learning.yaml.errorHandling.unnamedItemAtMessage
 import com.jetbrains.edu.learning.yaml.errorHandling.unsupportedItemTypeMessage
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.EDU_YAML_TYPE
-import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.END_DATE_TIME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT_SETTINGS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_LINK
@@ -30,7 +29,6 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.MARKETPLACE_COURSE_
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.MARKETPLACE_YAML_TYPE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE_VERSION
-import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PROGRAM_TYPE_ID
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SOLUTIONS_HIDDEN
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SUBMIT_MANUALLY
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SUMMARY
@@ -41,7 +39,6 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.UPDATE_DATE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VENDOR
 import com.jetbrains.edu.learning.yaml.format.remote.RemoteStudyItemYamlMixin
-import java.time.ZonedDateTime
 import java.util.*
 
 /**
@@ -207,8 +204,6 @@ open class CourseBuilder(
   @JsonProperty(CONTENT) val content: List<String?> = emptyList(),
   @JsonProperty(SUBMIT_MANUALLY) val courseraSubmitManually: Boolean?,
   @JsonProperty(SOLUTIONS_HIDDEN) val areSolutionsHidden: Boolean?,
-  @JsonProperty(END_DATE_TIME) val codeforcesEndDateTime: ZonedDateTime?,
-  @JsonProperty(PROGRAM_TYPE_ID) val codeforcesProgramTypeId: String?,
   @JsonProperty(TAGS) val yamlContentTags: List<String> = emptyList(),
   @JsonProperty(ENVIRONMENT_SETTINGS) val yamlEnvironmentSettings: Map<String, String> = emptyMap(),
   @JsonProperty(TRANSLATED_TO_LANGUAGE) val translatedToLanguage: String? = null,

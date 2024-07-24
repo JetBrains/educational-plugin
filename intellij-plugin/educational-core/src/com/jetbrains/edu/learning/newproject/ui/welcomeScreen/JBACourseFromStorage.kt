@@ -10,12 +10,10 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.CourseraCourse
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CHECKIO
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSERA
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.STEPIK
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
@@ -104,7 +102,6 @@ class JBACourseFromStorage() : CourseInfo() {
       CHECKIO -> CheckiOCourse()
       HYPERSKILL -> HyperskillCourse()
       STEPIK -> StepikCourse()
-      CODEFORCES -> CodeforcesCourse()
       EduNames.EDU, MARKETPLACE -> EduCourse()
       else -> EduCourse()
     }

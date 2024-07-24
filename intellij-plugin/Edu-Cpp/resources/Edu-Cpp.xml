@@ -16,7 +16,6 @@
                   displayName="C++ (Catch 2.0)" environment="Catch"/>
     <configurator language="ObjectiveC" implementationClass="com.jetbrains.edu.cpp.CppConfigurator"
                   courseType="Stepik"/>
-    <codeforcesLanguageProvider implementation="com.jetbrains.edu.cpp.codeforces.CppCodeforcesLanguageProvider"/>
 
     <compatibilityProvider language="ObjectiveC"
                            environment="GoogleTest"

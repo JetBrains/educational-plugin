@@ -72,38 +72,9 @@ class StyleManager {
       a {
         color = linkColor
       }
-
-      codeforcesCssAdjustment()
     }.toString()
   }
 
-  private fun codeforcesCssAdjustment(): CSSBuilder =
-    CSSBuilder().apply {
-      ".compact-problemset .problem-statement" {
-        fontSize = bodyFontSize.rem.times(1.4)
-      }
-
-      // Commented because otherwise all other font-sizes don't work ¯\_(ツ)_/¯
-//      ".problem-statement" {
-//        fontSize = styleManager.bodyFontSize.rem.times(1.4)
-//      }
-
-      ".problem-statement .header .title" {
-        fontSize = bodyFontSize.pct.times(150)
-      }
-
-      ".problem-statement .section-title" {
-        fontSize = bodyFontSize.pct.times(115)
-      }
-
-      ".problem-statement .sample-tests" {
-        fontSize = bodyFontSize.em.times(0.9)
-      }
-
-      ".problem-statement .sample-tests .title" {
-        fontSize = bodyFontSize.em.times(1.3)
-      }
-    }
 
   fun tablesStylesheet(): String {
     val themeDependentBorderColor = when {

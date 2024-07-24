@@ -40,7 +40,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
   }
 
   enum class LinkType {
-    IN_COURSE, STEPIK, EXTERNAL, PSI, CODEFORCES, JBA, FILE
+    IN_COURSE, STEPIK, EXTERNAL, PSI, JBA, FILE
   }
 
   /**

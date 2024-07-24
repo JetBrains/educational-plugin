@@ -11,7 +11,6 @@ object StyleResourcesManager {
   private val LOG: Logger = Logger.getInstance(this::class.java)
 
   private const val BROWSER_CSS: String = "/style/browser.css"
-  private const val CODEFORCES_TASK_CSS: String = "/style/codeforces_task.css"
   private const val HYPERSKILL_TASK_CSS: String = "/style/hyperskill_task.css"
   const val EXTERNAL_LINK_ARROW_PNG = "/icons/com/jetbrains/edu/learning/external_link_arrow@2x.png"
   const val EXTERNAL_LINK_ARROW_DARK_PNG = "/icons/com/jetbrains/edu/learning/external_link_arrow@2x_dark.png"
@@ -66,7 +65,6 @@ object StyleResourcesManager {
 
   val resourcesList = listOf(
     BROWSER_CSS,
-    CODEFORCES_TASK_CSS,
     HYPERSKILL_TASK_CSS,
     EXTERNAL_LINK_ARROW_PNG,
     EXTERNAL_LINK_ARROW_DARK_PNG,
@@ -136,7 +134,6 @@ object StyleResourcesManager {
     "tables_style" to StyleManager().tablesStylesheet(),
     "content" to content,
     "mathJax" to "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
-    resourcePair("codeforces_task", CODEFORCES_TASK_CSS),
     resourcePair("hyperskill_task", HYPERSKILL_TASK_CSS),
     resourcePair("scrollbar_style_laf", scrollbarLafSpecific),
     resourcePair("scrollbar_style_base", SCROLL_BARS_BASE),

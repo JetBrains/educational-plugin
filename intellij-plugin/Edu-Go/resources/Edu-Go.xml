@@ -6,7 +6,6 @@
 
   <extensions defaultExtensionNs="Educational">
     <configurator language="go" implementationClass="com.jetbrains.edu.go.GoConfigurator"/>
-    <codeforcesLanguageProvider implementation="com.jetbrains.edu.go.codeforces.GoCodeforcesLanguageProvider"/>
 
     <!-- Hyperskill -->
     <configurator implementationClass="com.jetbrains.edu.go.stepik.hyperskill.GoHyperskillConfigurator" language="go" courseType="Hyperskill"/>

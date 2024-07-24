@@ -13,7 +13,4 @@
               extensions="db"
               implementationClass="com.jetbrains.edu.learning.stepik.hyperskill.FakeBinaryDBFileType"/>
   </extensions>
-  <extensions defaultExtensionNs="Educational">
-    <codeforcesLanguageProvider implementation="com.jetbrains.edu.learning.codeforces.TextCodeforcesLanguageProvider"/>
-  </extensions>
 </idea-plugin>

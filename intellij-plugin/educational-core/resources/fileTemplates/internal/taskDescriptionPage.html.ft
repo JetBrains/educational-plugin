@@ -24,8 +24,7 @@
   <link rel="stylesheet" type="text/css" href="${hint_base}"></link>
   <link rel="stylesheet" type="text/css" href="${hint_laf_specific}"></link>
 
-  <link rel="stylesheet" type="text/css" href="${codeforces_task}"></link>
-  <link rel="stylesheet" type="text/css" href="${hyperskill_task}"></link>
+ <link rel="stylesheet" type="text/css" href="${hyperskill_task}"></link>
   <link rel="stylesheet" type="text/css" href="${scrollbar_style_base}"></link>
   <link rel="stylesheet" type="text/css" href="${scrollbar_style_laf}"></link>
   <link rel="stylesheet" type="text/css" href="${jetbrains_academy_style}"></link>

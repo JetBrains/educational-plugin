@@ -5,7 +5,6 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
@@ -84,25 +83,6 @@ class YamlSerializationTest : YamlTestCase() {
     |status: Unchecked
     |record: -1
     |""".trimMargin())
-  }
-
-  @Test
-  fun `test codeforces task`() {
-    val course = course(courseProducer = ::CodeforcesCourse) {
-      lesson {
-        codeforcesTask("first task", taskDescription = "") { }
-      }
-    }
-
-    val task = course.lessons.first().taskList.first().apply {
-      record = 23
-      contentTags = listOf("kotlin", "cycles")
-    }
-    doTest(task, """
-          |type: codeforces
-          |status: Unchecked
-          |
-        """.trimMargin())
   }
 
   @Test
@@ -707,65 +687,6 @@ class YamlSerializationTest : YamlTestCase() {
       |content:
       |- lesson1
       |feedback_link: $courseLink
-      |
-    """.trimMargin())
-  }
-
-  @Test
-  fun `test codeforces course feedback link not serialized`() {
-    val courseLink = "https://course_link.com"
-    val course = course(courseProducer = ::CodeforcesCourse) {
-      lesson {
-        codeforcesTask { }
-      }
-    }.apply { feedbackLink = courseLink }
-    doTest(course, """
-      |type: codeforces
-      |title: Test Course
-      |language: English
-      |summary: Test Course Description
-      |programming_language: Plain text
-      |content:
-      |- lesson1
-      |mode: Study
-      |
-    """.trimMargin())
-  }
-
-  @Test
-  fun `test codeforces course with programTypeId`() {
-    val course = course(courseProducer = ::CodeforcesCourse) {} as CodeforcesCourse
-    course.apply {
-      languageCode = "en"
-      programTypeId = "0"
-    }
-
-    doTest(course, """
-      |type: codeforces
-      |title: Test Course
-      |language: English
-      |summary: Test Course Description
-      |programming_language: Plain text
-      |program_type_id: 0
-      |mode: Study
-      |
-    """.trimMargin())
-  }
-
-  @Test
-  fun `test codeforces course without programTypeId`() {
-    val course = course(courseProducer = ::CodeforcesCourse) {} as CodeforcesCourse
-    course.apply {
-      languageCode = "en"
-    }
-
-    doTest(course, """
-      |type: codeforces
-      |title: Test Course
-      |language: English
-      |summary: Test Course Description
-      |programming_language: Plain text
-      |mode: Study
       |
     """.trimMargin())
   }

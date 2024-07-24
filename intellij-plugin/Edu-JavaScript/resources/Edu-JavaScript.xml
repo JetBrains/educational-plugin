@@ -10,6 +10,5 @@
 
   <extensions defaultExtensionNs="Educational">
     <configurator implementationClass="com.jetbrains.edu.javascript.learning.JsConfigurator" language="JavaScript"/>
-    <codeforcesLanguageProvider implementation="com.jetbrains.edu.javascript.learning.codeforces.JsCodeforcesLanguageProvider"/>
   </extensions>
 </idea-plugin>

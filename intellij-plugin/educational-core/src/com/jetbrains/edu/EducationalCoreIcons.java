@@ -139,7 +139,6 @@ public final class EducationalCoreIcons {
       public static final Icon MarketplaceTab = load("/icons/com/jetbrains/edu/learning/marketplace_courses_tab.svg");
     }
 
-    public static final Icon Codeforces = load("/icons/com/jetbrains/edu/learning/codeforcesSmall.svg");
     public static final Icon JetBrainsAcademy = load("/icons/com/jetbrains/edu/learning/JB_academy.svg");
     public static final Icon JSCheckiO = load("/icons/com/jetbrains/edu/learning/JSCheckiO.svg");
     public static final Icon PyCheckiO = load("/icons/com/jetbrains/edu/learning/PyCheckiO.svg");

@@ -4,11 +4,7 @@ import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
-import com.intellij.psi.PsiDirectory
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiFileSystemItem
-import com.intellij.psi.PsiManager
+import com.intellij.psi.*
 import com.intellij.ui.LayeredIcon
 import com.jetbrains.edu.EducationalCoreIcons.CourseView
 import com.jetbrains.edu.EducationalCoreIcons.CourseView.CourseTree
@@ -29,7 +25,6 @@ import com.jetbrains.edu.coursecreator.framework.SyncChangesTaskFileState
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -120,7 +115,7 @@ object CourseViewUtils {
 
   fun getIcon(item: StudyItem): Icon {
     val icon = when (item) {
-      is Course -> item.icon
+      is Course -> icon
       is Section -> if (item.isSolved) SectionSolved else Section
       is Lesson -> if (item.isSolved) LessonSolved else Lesson
       is Task -> item.icon
@@ -162,8 +157,8 @@ object CourseViewUtils {
     it.status == CheckStatus.Solved || SubmissionsManager.getInstance(project).containsCorrectSubmission(it.id)
   }
 
-  val Course.icon: Icon
-    get() = if (this is CodeforcesCourse) Codeforces else CourseTree
+  val icon: Icon
+    get() = EducationalCoreIcons.CourseTree
 
   val Task.icon: Icon
     get() {

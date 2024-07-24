@@ -2,18 +2,12 @@
 
 package com.jetbrains.edu.learning.format.yaml
 
-import com.jetbrains.edu.learning.storage.pathInStorage
-import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.assertContentsEqual
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_TASK_TYPE_WITH_FILE_IO
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOStation
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTaskWithFileIO
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
@@ -24,10 +18,11 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
+import com.jetbrains.edu.learning.findTask
+import com.jetbrains.edu.learning.storage.pathInStorage
 import com.jetbrains.edu.learning.yaml.YamlMapper
 import org.intellij.lang.annotations.Language
 import org.junit.Test
-import java.time.ZonedDateTime
 import java.util.*
 
 class StudentYamlSerializationTest : EduTestCase() {
@@ -59,45 +54,6 @@ class StudentYamlSerializationTest : EduTestCase() {
 
     doTest(course, """
       |type: hyperskill
-      |title: Test Course
-      |language: English
-      |summary: Test Course Description
-      |programming_language: Plain text
-      |mode: Study
-      |
-    """.trimMargin())
-  }
-
-  @Test
-  fun `test codeforces course`() {
-    val course = course(courseProducer = ::CodeforcesCourse) {} as CodeforcesCourse
-    val endDateTime = ZonedDateTime.parse("2019-08-11T15:35+03:00[Europe/Moscow]")
-    course.apply {
-      languageCode = "en"
-      this.endDateTime = endDateTime
-    }
-
-    doTest(course, """
-      |type: codeforces
-      |title: Test Course
-      |language: English
-      |summary: Test Course Description
-      |programming_language: Plain text
-      |end_date_time: ${endDateTime.toEpochSecond()}.000000000
-      |mode: Study
-      |
-    """.trimMargin())
-  }
-
-  @Test
-  fun `test codeforces course without endDateTime`() {
-    val course = course(courseProducer = ::CodeforcesCourse) {} as CodeforcesCourse
-    course.apply {
-      languageCode = "en"
-    }
-
-    doTest(course, """
-      |type: codeforces
       |title: Test Course
       |language: English
       |summary: Test Course Description
@@ -399,77 +355,6 @@ class StudentYamlSerializationTest : EduTestCase() {
     |seconds_from_change: 0
     |
     """.trimMargin())
-  }
-
-  @Test
-  fun `test codeforces task`() {
-    val taskFileName = "src/Task.kt"
-    val taskSolution = "Task solution"
-    val feedbackUrl = "https://codeforces.com/contest/1218/problem/A?locale=en"
-    val status = CheckStatus.Unchecked
-
-    val course = course(courseProducer = ::CodeforcesCourse) {
-      lesson {
-        codeforcesTask {}
-      }
-    }
-
-    val codeforcesTask = course.lessons[0].taskList[0].apply {
-      feedbackLink = feedbackUrl
-      this.status = status
-    }
-    codeforcesTask.addTaskFile(TaskFile(taskFileName, InMemoryTextualContents(taskSolution)).apply { isVisible = true })
-
-    doTest(codeforcesTask, """
-    |type: $CODEFORCES_TASK_TYPE
-    |files:
-    |- name: $taskFileName
-    |  visible: true
-    |  learner_created: false
-    |feedback_link: $feedbackUrl
-    |status: $status
-    |""".trimMargin())
-
-    assertContentsEqual(codeforcesTask, taskFileName, taskSolution)
-  }
-
-  @Test
-  fun `test codeforces task with file io`() {
-    val taskFileName = "src/Task.kt"
-    val taskSolution = "Task solution"
-    val feedbackUrl = "https://codeforces.com/contest/1228/problem/F?locale=ru"
-    val status = CheckStatus.Unchecked
-
-    val inputFileName = "in.txt"
-    val outputFileName = "out.txt"
-
-    val course = course(courseProducer = ::CodeforcesCourse) {
-      lesson {
-      }
-    }
-    val lesson = course.lessons[0]
-    val codeforcesTask = CodeforcesTaskWithFileIO(inputFileName, outputFileName).apply {
-      feedbackLink = feedbackUrl
-      this.status = status
-    }
-    lesson.addTask(codeforcesTask)
-    course.init(course, false)
-
-    codeforcesTask.addTaskFile(TaskFile(taskFileName, InMemoryTextualContents(taskSolution)).apply { isVisible = true })
-
-    doTest(codeforcesTask, """
-    |type: $CODEFORCES_TASK_TYPE_WITH_FILE_IO
-    |files:
-    |- name: $taskFileName
-    |  visible: true
-    |  learner_created: false
-    |feedback_link: $feedbackUrl
-    |status: $status
-    |input_file: $inputFileName
-    |output_file: $outputFileName
-    |""".trimMargin())
-
-    assertContentsEqual(codeforcesTask, taskFileName, taskSolution)
   }
 
   @Test
