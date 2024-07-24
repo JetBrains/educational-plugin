@@ -116,7 +116,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private val GROUP = EventLogGroup(
       "educational.counters",
       "The metric is reported in case a user has called the corresponding JetBrains Academy features.",
-      18,
+      19,
     )
 
     private val TASK_NAVIGATION_EVENT = GROUP.registerEvent(
@@ -166,8 +166,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
           "Stepik",
           "Js_CheckiO",
           "Py_CheckiO",
-          "Marketplace",
-          "Codeforces"
+          "Marketplace"
         )
       ),
       enumField<AuthorizationPlace>(SOURCE)
@@ -238,10 +237,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
       "import.course",
       "The event is recorded in case a user opens a course from a disk in Learner mode."
     )
-    private val CODEFORCES_SUBMIT_SOLUTION_EVENT = GROUP.registerEvent(
-      "codeforces.submit.solution",
-      "The event is recorded in case a user clicks Submit Solution in the Task Description for a Codeforces task."
-    )
+
     private val TWITTER_DIALOG_SHOWN_EVENT = GROUP.registerEvent(
       "twitter.dialog.shown",
       "The event is recorded in case a user receives a suggestion to tweet about completing a course or task (e.g., JB Academy project completion).",
@@ -369,8 +365,6 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     fun synchronizeCourse(course: Course, place: SynchronizeCoursePlace) = SYNCHRONIZE_COURSE_EVENT.log(course.itemType, place)
 
     fun importCourseArchive() = IMPORT_COURSE_EVENT.log()
-
-    fun codeforcesSubmitSolution() = CODEFORCES_SUBMIT_SOLUTION_EVENT.log()
 
     fun twitterDialogShown(course: Course) = TWITTER_DIALOG_SHOWN_EVENT.log(course.itemType, course.languageId)
 
