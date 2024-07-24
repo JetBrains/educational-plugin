@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning.configuration
 
 import com.intellij.lang.Language
-import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSERA
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYCHARM
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.STEPIK
@@ -13,12 +11,12 @@ object EduConfiguratorManager {
   /**
    * Returns any enabled [EduConfigurator] for given language, courseType and environment
    */
-  fun findConfigurator(courseType: String, environment: String, language: Language): EduConfigurator<*>? =
-    when (courseType) {
-      CODEFORCES -> CodeforcesLanguageProvider.getConfigurator(language.id)
-      MARKETPLACE -> findExtension(PYCHARM, environment, language)?.instance
-      else -> findExtension(courseType, environment, language)?.instance
-    }
+  fun findConfigurator(courseType: String, environment: String, language: Language): EduConfigurator<*>? = if (courseType == MARKETPLACE) {
+    findExtension(PYCHARM, environment, language)?.instance
+  }
+  else {
+    findExtension(courseType, environment, language)?.instance
+  }
 
   fun findExtension(courseType: String, environment: String, language: Language): EducationalExtensionPoint<EduConfigurator<*>>? {
     var configurator =

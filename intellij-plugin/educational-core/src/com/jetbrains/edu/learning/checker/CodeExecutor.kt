@@ -1,13 +1,10 @@
 package com.jetbrains.edu.learning.checker
 
 import com.intellij.execution.RunnerAndConfigurationSettings
-import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Result
-import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfiguration
-import com.jetbrains.edu.learning.codeforces.run.EmptyCodeforcesRunConfiguration
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -35,9 +32,6 @@ interface CodeExecutor {
     project: Project,
     task: Task
   ): RunnerAndConfigurationSettings? = CheckUtils.createDefaultRunConfiguration(project, task)
-
-  fun createCodeforcesConfiguration(project: Project, factory: ConfigurationFactory): CodeforcesRunConfiguration =
-    EmptyCodeforcesRunConfiguration(project, factory)
 
   fun tryToExtractCheckResultError(errorOutput: String): CheckResult? = null
 

@@ -20,7 +20,7 @@ abstract class StudyItem() {
   var index: Int = -1
   var name: String = ""
   var updateDate: Date = Date(0)
-  var id: Int = 0 // id on remote resource (Stepik, CheckIO, Codeforces, Marketplace)
+  var id: Int = 0 // id on remote resource (Stepik, CheckIO, Marketplace)
   var contentTags: List<String> = listOf()
 
   @Transient

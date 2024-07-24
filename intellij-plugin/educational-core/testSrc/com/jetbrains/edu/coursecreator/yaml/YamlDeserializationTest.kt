@@ -6,7 +6,6 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
@@ -266,48 +265,6 @@ class YamlDeserializationTest : YamlTestCase() {
       |""".trimMargin()
     val course = deserializeNotNull(yamlContent)
     assertEquals(contentTags, course.contentTags)
-  }
-
-  @Test
-  fun `test codeforces course with programTypeId`() {
-    val name = "Test Course"
-    val programmingLanguage = "Plain text"
-    val programTypeId = "1000"
-    val yamlContent = """
-      |type: ${YamlMixinNames.CODEFORCES_TYPE_YAML}
-      |title: $name
-      |language: English
-      |summary: |-
-      |  This is a course about string theory.
-      |  Why not?"
-      |program_type_id: $programTypeId
-      |programming_language: $programmingLanguage
-      |""".trimMargin()
-    val course = deserializeNotNull(yamlContent) as CodeforcesCourse
-    assertEquals(name, course.name)
-    assertEquals(programmingLanguage, course.languageById!!.displayName)
-    assertEquals(programTypeId, course.programTypeId)
-    assertNotNull(course.description)
-  }
-
-  @Test
-  fun `test codeforces course without programTypeId`() {
-    val name = "Test Course"
-    val programmingLanguage = "Plain text"
-    val yamlContent = """
-      |type: ${YamlMixinNames.CODEFORCES_TYPE_YAML}
-      |title: $name
-      |language: English
-      |summary: |-
-      |  This is a course about string theory.
-      |  Why not?"
-      |programming_language: $programmingLanguage
-      |""".trimMargin()
-    val course = deserializeNotNull(yamlContent) as CodeforcesCourse
-    assertEquals(name, course.name)
-    assertEquals(programmingLanguage, course.languageById!!.displayName)
-    assertEquals("0", course.programTypeId)
-    assertNotNull(course.description)
   }
 
   @Test

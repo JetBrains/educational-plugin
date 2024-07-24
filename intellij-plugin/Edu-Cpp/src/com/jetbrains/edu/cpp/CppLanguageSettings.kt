@@ -6,11 +6,11 @@ import com.intellij.openapi.util.CheckedDisposable
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.util.io.IOUtil
-import com.jetbrains.cmake.completion.CMakeRecognizedCPPLanguageStandard.*
+import com.jetbrains.cmake.completion.CMakeRecognizedCPPLanguageStandard.CPP11
+import com.jetbrains.cmake.completion.CMakeRecognizedCPPLanguageStandard.CPP14
 import com.jetbrains.edu.cpp.messages.EduCppBundle
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
@@ -29,10 +29,11 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
     disposable: CheckedDisposable,
     context: UserDataHolder?
   ): List<LabeledComponent<JComponent>> {
-    val standards = when (course) {
-      is StepikCourse -> arrayOf(CPP11.standard, CPP14.standard)
-      is CodeforcesCourse -> arrayOf(CPP11.standard, CPP14.standard, CPP17.standard, CPP20.standard)
-      else -> getLanguageVersions().toTypedArray()
+    val standards = if (course is StepikCourse) {
+      arrayOf(CPP11.standard, CPP14.standard)
+    }
+    else {
+      getLanguageVersions().toTypedArray()
     }
 
     val langStandardComboBox = ComboBox(standards)

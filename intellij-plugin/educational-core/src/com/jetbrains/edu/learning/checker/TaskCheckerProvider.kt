@@ -1,10 +1,6 @@
 package com.jetbrains.edu.learning.checker
 
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.codeforces.checker.CodeforcesTaskChecker
-import com.jetbrains.edu.learning.codeforces.checker.CodeforcesTaskWithFileIOTaskChecker
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTaskWithFileIO
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
@@ -37,8 +33,6 @@ interface TaskCheckerProvider {
       is TheoryTask -> getTheoryTaskChecker(task, project)
       is ChoiceTask -> if (task.canCheckLocally) ChoiceTaskChecker(task, project) else null
       is IdeTask -> IdeTaskChecker(task, project)
-      is CodeforcesTaskWithFileIO -> CodeforcesTaskWithFileIOTaskChecker(task, project)
-      is CodeforcesTask -> CodeforcesTaskChecker(task, envChecker, project, codeExecutor)
       else -> throw IllegalStateException("Unknown task type: " + task.itemType)
     }
   }

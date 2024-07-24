@@ -1,6 +1,5 @@
 package com.jetbrains.edu.rust.checker
 
-import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
@@ -8,12 +7,10 @@ import com.intellij.psi.PsiManager
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checker.CodeExecutor
 import com.jetbrains.edu.learning.checker.CodeExecutor.Companion.resultUnchecked
-import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfiguration
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.rust.codeforces.RsCodeforcesRunConfiguration
 import com.jetbrains.edu.rust.messages.EduRustBundle
 import org.rust.cargo.project.settings.rustSettings
 import org.rust.cargo.toolchain.CargoCommandLine
@@ -44,10 +41,6 @@ class RsCodeExecutor : CodeExecutor {
     else {
       Err(RsStderrAnalyzer.tryToGetCheckResult(processOutput.stdout) ?: CheckResult.failedToCheck)
     }
-  }
-
-  override fun createCodeforcesConfiguration(project: Project, factory: ConfigurationFactory): CodeforcesRunConfiguration {
-    return RsCodeforcesRunConfiguration(project, factory)
   }
 
   private fun String.prepareToCheck(): String {
