@@ -17,7 +17,6 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
 import com.jetbrains.edu.learning.courseFormat.attempts.DataTaskAttempt
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOStation
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
@@ -392,16 +391,6 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     updateDate: Date = Date(0),
     buildTask: TaskBuilder.() -> Unit = {}
   ) = task(CodeTask(), name, customPresentableName, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
-
-  fun codeforcesTask(
-    name: String? = null,
-    customPresentableName: String? = null,
-    taskDescription: String? = null,
-    buildTask: TaskBuilder.() -> Unit = {}
-  ) {
-    val codeforcesTask = CodeforcesTask()
-    task(codeforcesTask, name, customPresentableName, taskDescription, DescriptionFormat.HTML, buildTask = buildTask)
-  }
 
   fun dataTask(
     name: String? = null,

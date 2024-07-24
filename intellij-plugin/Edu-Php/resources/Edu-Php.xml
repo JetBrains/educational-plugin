@@ -6,6 +6,5 @@
 
   <extensions defaultExtensionNs="Educational">
     <configurator implementationClass="com.jetbrains.edu.php.PhpConfigurator" language="PHP" displayName="PHP"/>
-    <codeforcesLanguageProvider implementation="com.jetbrains.edu.php.codeforces.PhpCodeforcesLanguageProvider"/>
   </extensions>
 </idea-plugin>

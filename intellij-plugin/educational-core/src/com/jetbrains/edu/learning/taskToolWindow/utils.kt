@@ -17,12 +17,8 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isSwing
 import com.jetbrains.edu.learning.actions.OpenTaskOnSiteAction
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames
-import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
-import com.jetbrains.edu.learning.codeforces.actions.CodeforcesCopyAndSubmitAction
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -36,7 +32,6 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResources
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import java.awt.BorderLayout
 import javax.swing.JPanel
 
 private const val SHORTCUT = "shortcut"
@@ -296,17 +291,10 @@ fun getPictureSize(fontSize: Int): String {
 }
 
 fun addActionLinks(course: Course?, linkPanel: JPanel, topMargin: Int, leftMargin: Int) {
-  when (course) {
-    is HyperskillCourse -> linkPanel.add(
-      createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), OpenTaskOnSiteAction.ACTION_ID, topMargin, leftMargin))
-    is CodeforcesCourse -> {
-      linkPanel.add(createActionLink(EduCoreBundle.message("action.open.on.text", CodeforcesNames.CODEFORCES_TITLE),
-                                     OpenTaskOnSiteAction.ACTION_ID, topMargin, leftMargin), BorderLayout.NORTH)
-      if (!CodeforcesSettings.getInstance().isLoggedIn()) {
-        linkPanel.add(createActionLink(EduCoreBundle.message("codeforces.copy.and.submit"),
-                                       CodeforcesCopyAndSubmitAction.ACTION_ID, topMargin, leftMargin), BorderLayout.CENTER)
-      }
-    }
+  if (course is HyperskillCourse) {
+    linkPanel.add(
+      createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), OpenTaskOnSiteAction.ACTION_ID, topMargin, leftMargin)
+    )
   }
 }
 

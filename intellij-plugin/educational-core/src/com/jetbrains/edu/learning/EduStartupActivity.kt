@@ -33,7 +33,6 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.isPreview
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
@@ -89,18 +88,6 @@ class EduStartupActivity : StartupActivity.DumbAware {
           EduCoreBundle.message("checkio.drop.notifications")
         )
           .addAction(BrowseNotificationAction(EduFormatNames.CHECKIO, "https://checkio.org/"))
-          .addAction(BrowseNotificationAction(jetBrainsAcademyActionName, "https://academy.jetbrains.com"))
-          .setImportant(true)
-          .notify(project)
-      }
-
-      if (course is CodeforcesCourse && !ApplicationManager.getApplication().isUnitTestMode) {
-        EduNotificationManager.create(
-          WARNING,
-          EduFormatNames.CODEFORCES,
-          EduCoreBundle.message("codeforces.drop.notification")
-        )
-          .addAction(BrowseNotificationAction(EduFormatNames.CODEFORCES, "https://codeforces.com/"))
           .addAction(BrowseNotificationAction(jetBrainsAcademyActionName, "https://academy.jetbrains.com"))
           .setImportant(true)
           .notify(project)

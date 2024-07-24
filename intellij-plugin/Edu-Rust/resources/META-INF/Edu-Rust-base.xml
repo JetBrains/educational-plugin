@@ -1,6 +1,5 @@
 <idea-plugin>
   <extensions defaultExtensionNs="Educational">
     <configurator language="Rust" implementationClass="com.jetbrains.edu.rust.RsConfigurator"/>
-    <codeforcesLanguageProvider implementation="com.jetbrains.edu.rust.codeforces.RsCodeforcesLanguageProvider"/>
   </extensions>
 </idea-plugin>

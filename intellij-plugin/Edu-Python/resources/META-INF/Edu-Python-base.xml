@@ -29,6 +29,5 @@
                   language="Python"
                   environment="unittest"
                   displayName="Python"/>
-    <codeforcesLanguageProvider implementation="com.jetbrains.edu.python.learning.codeforces.PyCodeforcesLanguageProvider"/>
   </extensions>
 </idea-plugin>

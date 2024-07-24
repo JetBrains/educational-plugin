@@ -14,7 +14,6 @@
     <configurator language="Scala" implementationClass="com.jetbrains.edu.scala.gradle.ScalaGradleConfigurator" environment="Gradle"/>
     <configurator language="Scala" implementationClass="com.jetbrains.edu.scala.sbt.ScalaSbtConfigurator" environment="sbt"/>
     <configurator language="Scala" implementationClass="com.jetbrains.edu.scala.gradle.ScalaGradleConfigurator" courseType="Stepik"/>
-    <codeforcesLanguageProvider implementation="com.jetbrains.edu.scala.codeforces.ScalaCodeforcesLanguageProvider"/>
     <mainFileProvider language="Scala" implementationClass="com.jetbrains.edu.scala.gradle.ScalaMainFileProvider"/>
   </extensions>
 </idea-plugin>

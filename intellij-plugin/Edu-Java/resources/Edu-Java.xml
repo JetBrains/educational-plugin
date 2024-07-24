@@ -13,7 +13,6 @@
 
   <extensions defaultExtensionNs="Educational">
     <configurator language="JAVA" implementationClass="com.jetbrains.edu.java.JConfigurator"/>
-    <codeforcesLanguageProvider implementation="com.jetbrains.edu.java.codeforces.JCodeforcesLanguageProvider"/>
     <mainFileProvider language="JAVA" implementationClass="com.jetbrains.edu.java.JMainFileProvider"/>
   </extensions>
 </idea-plugin>

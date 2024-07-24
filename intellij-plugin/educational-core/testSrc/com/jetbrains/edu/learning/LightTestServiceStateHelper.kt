@@ -5,7 +5,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.runInEdtAndWait
 import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
-import com.jetbrains.edu.learning.codeforces.update.CodeforcesCourseUpdateChecker
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceUpdateChecker
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
@@ -35,7 +34,6 @@ object LightTestServiceStateHelper {
     SubmissionsManager::class,
     YamlLoadingErrorManager::class,
     MarketplaceUpdateChecker::class,
-    CodeforcesCourseUpdateChecker::class,
     HyperskillCourseUpdateChecker::class,
     LearningObjectsStorageManager::class,
     // Intentionally the last item in the list since it's holds the essential knowledge about project course

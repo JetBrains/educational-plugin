@@ -11,7 +11,7 @@ object EduFields {
   private const val PLATFORM = "platform"
   private const val COURSE_ID = "course_id"
 
-  private val PLATFORM_NAMES = listOf("CheckiO", "PyCharm", "Coursera", "Hyperskill", "Marketplace", "Codeforces")
+  private val PLATFORM_NAMES = listOf("CheckiO", "PyCharm", "Coursera", "Hyperskill", "Marketplace")
 
   val COURSE_ID_FIELD = EventFields.Int(COURSE_ID)
   val COURSE_MODE_FIELD = EventFields.Enum<CourseMode>(MODE)

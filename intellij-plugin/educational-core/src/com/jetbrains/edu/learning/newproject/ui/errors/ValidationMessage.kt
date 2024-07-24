@@ -12,8 +12,6 @@ import org.jetbrains.annotations.Nls
  * This class is intended to show messages inside [com.jetbrains.edu.learning.newproject.ui.errors.ErrorComponent], located
  * inside [com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel].
  *
- * There are other usages of this class, but they are problematic and should probably be fixed or rewritten without this class.
- * (see [com.jetbrains.edu.learning.codeforces.ChooseCodeforcesContestLanguagesDialog])
  */
 data class ValidationMessage(
   @Nls val message: String,

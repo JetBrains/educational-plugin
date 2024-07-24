@@ -20,12 +20,10 @@ import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.CompareWithAnswerAction
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.details.CheckDetailsView
-import com.jetbrains.edu.learning.codeforces.actions.CodeforcesMarkAsCompletedAction
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckResultDiff
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CourseraCourse
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -43,11 +41,9 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckMessagePanel.Companion.FOCUS_BORDER_WIDTH
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
 import com.jetbrains.edu.learning.xmlUnescaped
-import org.jdesktop.swingx.HorizontalLayout
 import java.awt.BorderLayout
 import java.util.concurrent.CompletableFuture
 import javax.swing.BoxLayout
-import javax.swing.JLabel
 import javax.swing.JPanel
 
 class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, alarm: Alarm) : JPanel(BorderLayout()) {
@@ -176,29 +172,9 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
       @Suppress("DialogTitleCapitalization")
       val compareOutputs = LightColoredActionLink(EduCoreBundle.message("label.compare.outputs"), CompareOutputsAction(project, diff))
       answerHintsPanel.value.add(compareOutputs)
-      if (task is CodeforcesTask) {
-        answerHintsPanel.value.add(createCodeforcesMarkAsCompletedLink())
-      }
     }
 
-    if (task is CodeforcesTask && checkResult == CheckResult.UNCHECKED) {
-      answerHintsPanel.value.add(createCodeforcesSuccessMessagePanel())
-    }
     return if (answerHintsPanel.isInitialized()) answerHintsPanel.value else null
-  }
-
-  private fun createCodeforcesSuccessMessagePanel(): JPanel {
-    val panel = JPanel(HorizontalLayout())
-    val message = JLabel(EduCoreBundle.message("codeforces.local.tests.passed"))
-    message.border = JBUI.Borders.empty(16, 0, 0, 16)
-    panel.add(message)
-    panel.add(createCodeforcesMarkAsCompletedLink())
-    return panel
-  }
-
-  private fun createCodeforcesMarkAsCompletedLink(): AnActionLink {
-    return LightColoredActionLink(EduCoreBundle.message("codeforces.label.mark.as.completed"),
-                                  ActionManager.getInstance().getAction(CodeforcesMarkAsCompletedAction.ACTION_ID))
   }
 
   private class ShowFullOutputAction(private val project: Project, private val text: String) : DumbAwareAction(null as String?) {

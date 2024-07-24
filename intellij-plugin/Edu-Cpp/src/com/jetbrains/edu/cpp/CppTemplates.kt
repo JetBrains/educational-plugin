@@ -2,7 +2,6 @@ package com.jetbrains.edu.cpp
 
 import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -50,8 +49,6 @@ data class TemplateInfo(private val templateName: String, val generatedFileName:
 
 fun getCppTemplates(course: Course): CppTemplates =
   when {
-    course is CodeforcesCourse ->
-      CppTemplates()
     course is StepikCourse ->
       CppTemplates(
         testTaskCMakeList = CppTemplates.defaultExecutableTaskCMakeList
@@ -73,5 +70,5 @@ fun getCppTemplates(course: Course): CppTemplates =
           TemplateInfo("catch.cmake.catch.cmake", GeneratorUtils.joinPaths("cmake", "catch.cmake")))
       )
     else ->
-      throw IllegalStateException("Course must be Stepik, Codeforces or Hyperskill type or have one of these environments: GoogleTest, Catch")
+      throw IllegalStateException("Course must be Stepik or Hyperskill type or have one of these environments: GoogleTest, Catch")
   }

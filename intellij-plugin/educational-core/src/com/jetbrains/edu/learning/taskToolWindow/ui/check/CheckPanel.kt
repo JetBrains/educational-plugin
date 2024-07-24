@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.taskToolWindow.ui.check
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl
 import com.intellij.openapi.project.Project
@@ -13,15 +12,11 @@ import com.intellij.util.ui.JBEmptyBorder
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.actions.*
-import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
-import com.jetbrains.edu.learning.codeforces.actions.CodeforcesCopyAndSubmitAction
-import com.jetbrains.edu.learning.codeforces.actions.SubmitCodeforcesSolutionAction
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -154,7 +149,6 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
   private fun updateCheckButtonWrapper(task: Task) {
     checkButtonWrapper.removeAll()
     when (task) {
-      is CodeforcesTask -> updateCheckButtonWrapper(task)
       is DataTask -> updateCheckButtonWrapper(task)
       is TheoryTask -> {}
       else -> {
@@ -164,18 +158,6 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
         checkButtonWrapper.add(checkComponent, BorderLayout.WEST)
       }
     }
-  }
-
-  private fun updateCheckButtonWrapper(task: CodeforcesTask) {
-    var optionalActions: List<AnAction>? = null
-    if (CodeforcesSettings.getInstance().isLoggedIn()) {
-      optionalActions = listOf(SubmitCodeforcesSolutionAction.ACTION_ID, CodeforcesCopyAndSubmitAction.ACTION_ID).map {
-        ActionManager.getInstance().getAction(it) ?: error("Action $it is not found")
-      }
-    }
-    val checkComponent = CheckPanelButtonComponent(project, CheckAction(task.getUICheckLabel()),
-                                                   isDefault = false, optionalActions = optionalActions)
-    checkButtonWrapper.add(checkComponent, BorderLayout.WEST)
   }
 
   private fun updateCheckButtonWrapper(task: DataTask) {

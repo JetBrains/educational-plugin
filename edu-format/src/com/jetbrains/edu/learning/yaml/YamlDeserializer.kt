@@ -6,15 +6,9 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.MissingNode
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.CourseMode.Companion.toCourseMode
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CODEFORCES_TASK_TYPE_WITH_FILE_IO
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission.Companion.CHECK_IO_MISSION_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOStation
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTaskWithFileIO
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.*
@@ -131,8 +125,6 @@ object YamlDeserializer {
       // for student mode
       CODE_TASK_TYPE -> CodeTask::class.java
       CHECK_IO_MISSION_TASK_TYPE -> CheckiOMission::class.java
-      CODEFORCES_TASK_TYPE -> CodeforcesTask::class.java
-      CODEFORCES_TASK_TYPE_WITH_FILE_IO -> CodeforcesTaskWithFileIO::class.java
       STRING_TASK_TYPE -> StringTask::class.java
       NUMBER_TASK_TYPE -> NumberTask::class.java
       UNSUPPORTED_TASK_TYPE -> UnsupportedTask::class.java
@@ -158,10 +150,11 @@ object YamlDeserializer {
     val treeNode = REMOTE_MAPPER.readTree(configFileText)
     val type = asText(treeNode.get(YamlMixinNames.TYPE))
 
-    val clazz = when {
-      type == CODEFORCES -> CodeforcesCourse::class.java
-      treeNode.get(YamlMixinNames.HYPERSKILL_PROJECT) != null -> HyperskillCourse::class.java
-      else -> EduCourse::class.java
+    val clazz = if (treeNode.get(YamlMixinNames.HYPERSKILL_PROJECT) != null) {
+      HyperskillCourse::class.java
+    }
+    else {
+      EduCourse::class.java
     }
 
     return REMOTE_MAPPER.treeToValue(treeNode, clazz)

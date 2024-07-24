@@ -11,8 +11,6 @@ import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.codeforces.api.ContestInfo
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
@@ -71,10 +69,6 @@ val Course.supportedTechnologies: List<String>
 
 val Course.tags: List<Tag>
   get() {
-    if (course is CodeforcesCourse) {
-      return emptyList()
-    }
-
     val tags = mutableListOf<Tag>()
     if (course is HyperskillCourseAdvertiser) {
       tags.addAll((this as HyperskillCourseAdvertiser).supportedLanguages.map { ProgrammingLanguageTag(it) })
@@ -102,7 +96,7 @@ val Course.isPreview: Boolean
 
 val Course.compatibility: CourseCompatibility
   get() {
-    if (this is HyperskillCourseAdvertiser || this is CodeforcesCourse || this is ContestInfo) {
+    if (this is HyperskillCourseAdvertiser) {
       return CourseCompatibility.Compatible
     }
 
