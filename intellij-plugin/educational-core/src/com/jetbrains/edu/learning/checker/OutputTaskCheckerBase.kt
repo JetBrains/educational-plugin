@@ -58,7 +58,7 @@ abstract class OutputTaskCheckerBase<T: OutputTaskBase>(
       val outputDocument = getDocument(outputVirtualFile)
 
       val testNumber = index + 1
-      indicator.text2 = EduCoreBundle.message("progress.details.codeforces.running.test", testNumber, testFolders.size)
+      indicator.text2 = EduCoreBundle.message("progress.details.running.test", testNumber, testFolders.size)
 
       val result = withRegistryKeyOff(RUN_WITH_PTY) {
         codeExecutor.execute(project, task, indicator, input)
