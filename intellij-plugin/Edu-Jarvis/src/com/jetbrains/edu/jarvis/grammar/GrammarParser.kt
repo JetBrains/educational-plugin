@@ -60,12 +60,12 @@ class GrammarParser(project: Project, private val descriptionExpression: Descrip
     // TODO: Catch connection errors.
     val mask = DescriptionGrammarChecker.checkGrammar(
       map { it.sentence }
-    ).toList()
-    return filterByMask(mask, true)
+    ).map { it.not() }.toList()
+    return filterByMask(mask)
   }
 
-  private fun <E> List<E>.filterByMask(mask: List<Boolean>, inverse: Boolean = false): List<E>
-    = filterIndexed { index, _ -> mask[index] xor inverse }
+  private fun <E> List<E>.filterByMask(mask: List<Boolean>): List<E>
+    = filterIndexed { index, _ -> mask[index] }
 
   companion object {
     private const val DOT = "."
