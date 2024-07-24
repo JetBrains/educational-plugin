@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.twitter.ui
+package com.jetbrains.edu.learning.socialmedia.twitter.ui
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
@@ -12,8 +12,9 @@ interface TwitterDialogUI {
 
 fun createTwitterDialogUI(project: Project, dialogPanelCreator: (Disposable) -> TwitterDialogPanel): TwitterDialogUI {
   return if (isUnitTestMode) {
-    MOCK ?: error("You should set mock ui via `withMockTwitterDialogUI`")
-  } else {
+    MOCK ?: error("You should set mock UI via `withMockTwitterDialogUI`")
+  }
+  else {
     TwitterDialog(project, dialogPanelCreator)
   }
 }
@@ -25,7 +26,8 @@ fun withMockTwitterDialogUI(mockUI: TwitterDialogUI, action: () -> Unit) {
   try {
     MOCK = mockUI
     action()
-  } finally {
+  }
+  finally {
     MOCK = null
   }
 }

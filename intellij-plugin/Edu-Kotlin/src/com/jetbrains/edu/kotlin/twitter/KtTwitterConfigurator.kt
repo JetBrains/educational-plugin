@@ -5,13 +5,13 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CheckStatus.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator
-import com.jetbrains.edu.learning.twitter.TwitterUtils
+import com.jetbrains.edu.learning.socialmedia.twitter.TwitterPluginConfigurator
+import com.jetbrains.edu.learning.socialmedia.twitter.TwitterUtils
 import org.jetbrains.annotations.NonNls
 import java.nio.file.Path
 
 class KtTwitterConfigurator : TwitterPluginConfigurator {
-  override fun askToTweet(project: Project, solvedTask: Task, statusBeforeCheck: CheckStatus): Boolean {
+  override fun askToPost(project: Project, solvedTask: Task, statusBeforeCheck: CheckStatus): Boolean {
     val course = StudyTaskManager.getInstance(project).course ?: return false
     if (course.name == "Kotlin Koans") {
       return solvedTask.status == Solved &&

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.twitter.ui
+package com.jetbrains.edu.learning.socialmedia.twitter.ui
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
@@ -10,7 +10,7 @@ import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator
+import com.jetbrains.edu.learning.socialmedia.twitter.TwitterPluginConfigurator
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.callback.CefContextMenuParams

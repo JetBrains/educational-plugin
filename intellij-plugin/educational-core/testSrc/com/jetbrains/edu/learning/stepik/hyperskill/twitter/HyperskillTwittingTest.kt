@@ -12,11 +12,11 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.socialmedia.twitter.TwitterSettings
+import com.jetbrains.edu.learning.socialmedia.twitter.ui.TwitterDialogUI
+import com.jetbrains.edu.learning.socialmedia.twitter.ui.withMockTwitterDialogUI
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
 import com.jetbrains.edu.learning.testAction
-import com.jetbrains.edu.learning.twitter.TwitterSettings
-import com.jetbrains.edu.learning.twitter.ui.TwitterDialogUI
-import com.jetbrains.edu.learning.twitter.ui.withMockTwitterDialogUI
 import com.jetbrains.edu.learning.ui.getUICheckLabel
 import org.junit.Test
 
@@ -24,12 +24,12 @@ class HyperskillTwittingTest : EduActionTestCase() {
 
   override fun setUp() {
     super.setUp()
-    TwitterSettings.getInstance().askToTweet = true
+    TwitterSettings.getInstance().askToPost = true
   }
 
   override fun tearDown() {
     try {
-      TwitterSettings.getInstance().askToTweet = false
+      TwitterSettings.getInstance().askToPost = false
     }
     catch (e: Throwable) {
       addSuppressedException(e)

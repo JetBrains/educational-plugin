@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.twitter
+package com.jetbrains.edu.learning.socialmedia.twitter
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import okhttp3.ResponseBody

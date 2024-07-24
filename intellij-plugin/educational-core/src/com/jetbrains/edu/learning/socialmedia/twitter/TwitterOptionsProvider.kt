@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.twitter
+package com.jetbrains.edu.learning.socialmedia.twitter
 
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.ui.DialogPanel
@@ -13,7 +13,7 @@ class TwitterOptionsProvider : BoundConfigurable(EduCoreBundle.message("twitter.
     group(displayName) {
       row {
         checkBox(EduCoreBundle.message("twitter.ask.to.tweet"))
-          .bindSelected(TwitterSettings.getInstance()::askToTweet)
+          .bindSelected(TwitterSettings.getInstance()::askToPost)
       }
     }
   }

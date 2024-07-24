@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.twitter
+package com.jetbrains.edu.learning.socialmedia.twitter
 
 import com.intellij.credentialStore.CredentialAttributes
 import com.intellij.credentialStore.Credentials
@@ -22,8 +22,8 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
-import com.jetbrains.edu.learning.twitter.ui.TwitterDialogUI
-import com.jetbrains.edu.learning.twitter.ui.createTwitterDialogUI
+import com.jetbrains.edu.learning.socialmedia.twitter.ui.TwitterDialogUI
+import com.jetbrains.edu.learning.socialmedia.twitter.ui.createTwitterDialogUI
 import twitter4j.*
 import twitter4j.auth.AccessToken
 import twitter4j.auth.RequestToken
@@ -57,7 +57,7 @@ object TwitterUtils {
   fun createTwitterDialogAndShow(project: Project, configurator: TwitterPluginConfigurator, task: Task) {
     project.invokeLater {
       val imagePath = configurator.getImagePath(task)
-      val dialog = createTwitterDialogUI(project) { configurator.getTweetDialogPanel(task, imagePath, it) }
+      val dialog = createTwitterDialogUI(project) { configurator.getPostDialogPanel(task, imagePath, it) }
       if (dialog.showAndGet()) {
         ProgressManager.getInstance().run(TweetingBackgroundableTask(project, dialog, imagePath))
       }

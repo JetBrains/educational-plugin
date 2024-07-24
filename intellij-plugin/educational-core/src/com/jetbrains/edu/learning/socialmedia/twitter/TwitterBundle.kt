@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.twitter
+package com.jetbrains.edu.learning.socialmedia.twitter
 
 import com.jetbrains.edu.learning.messages.EduPropertiesBundle
 import org.jetbrains.annotations.NonNls

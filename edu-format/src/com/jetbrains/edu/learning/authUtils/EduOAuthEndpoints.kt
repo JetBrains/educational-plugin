@@ -1,10 +1,7 @@
 package com.jetbrains.edu.learning.authUtils
 
 import retrofit2.Call
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.POST
-import retrofit2.http.Url
+import retrofit2.http.*
 
 interface EduOAuthEndpoints {
   @POST
@@ -16,7 +13,7 @@ interface EduOAuthEndpoints {
     @Field("redirect_uri") redirectUri: String,
     @Field("code") code: String,
     @Field("grant_type") grantType: String,
-    @Field("code_verifier") codeVerifier: String,
+    @FieldMap codeVerifier: Map<String, String>
   ): Call<TokenInfo>
 
   @POST

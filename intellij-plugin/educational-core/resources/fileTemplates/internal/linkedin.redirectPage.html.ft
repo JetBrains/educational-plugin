@@ -1,0 +1,13 @@
+<html>
+<head>
+  <title>Redirecting to LinkedIn</title>
+  <meta http-equiv="refresh" content="0.1; URL=https://www.linkedin.com/feed/">
+  <meta name="keywords" content="automatic redirection">
+</head>
+
+<body>
+If your browser doesn't automatically redirect within a few seconds,
+you may want to go to
+<a href="https://www.linkedin.com/feed/">the destination</a> manually.
+</body>
+</html>

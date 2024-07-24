@@ -160,9 +160,10 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
     error("Failed to refresh token")
   }
 
-  protected fun retrieveLoginToken(code: String, redirectUri: String): TokenInfo? {
+  protected fun retrieveLoginToken(code: String, redirectUri: String, codeVerifierFieldName: String = "code_verifier"): TokenInfo? {
+    val codeVerifierField = mapOf(codeVerifierFieldName to codeVerifier)
     val response = getEduOAuthEndpoints()
-      .getTokens(baseOAuthTokenUrl, clientId, clientSecret, redirectUri, code, OAuthUtils.GrantType.AUTHORIZATION_CODE, codeVerifier)
+      .getTokens(baseOAuthTokenUrl, clientId, clientSecret, redirectUri, code, OAuthUtils.GrantType.AUTHORIZATION_CODE, codeVerifierField)
       .executeHandlingExceptions()
     return response?.body()
   }

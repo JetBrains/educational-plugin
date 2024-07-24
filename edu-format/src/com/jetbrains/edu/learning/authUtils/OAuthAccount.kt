@@ -29,6 +29,11 @@ abstract class OAuthAccount<UInfo : UserInfo> : Account<UInfo> {
     this.userInfo = userInfo
   }
 
+  constructor(userInfo: UInfo, tokenExpiresIn: Long) {
+    this.userInfo = userInfo
+    this.tokenExpiresIn = tokenExpiresIn
+  }
+
   override fun isUpToDate() = TokenInfo().apply { expiresIn = tokenExpiresIn }.isUpToDate()
 
   fun getAccessToken(): String? {

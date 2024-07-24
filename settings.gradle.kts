@@ -83,6 +83,11 @@ fun configureSecretProperties() {
     "twitterConsumerSecret"
   )
   secretProperties.extractAndStore(
+    "intellij-plugin/educational-core/resources/linkedin/linkedin-oauth.properties",
+    "linkedInClientId",
+    "linkedInClientSecret"
+  )
+  secretProperties.extractAndStore(
     "intellij-plugin/Edu-Python/resources/checkio/py-checkio-oauth.properties",
     "pyCheckioClientId",
     "pyCheckioClientSecret"
