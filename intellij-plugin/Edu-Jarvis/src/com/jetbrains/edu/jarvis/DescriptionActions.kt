@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 @Service(Service.Level.PROJECT)
 class DescriptionActions {
 
+  // TODO: limit the number of description blocks?
   private val actions: MutableMap<Int, MutableSet<DescriptionExecutorAction>> = mutableMapOf()
 
   fun addAction(task: Task, action: DescriptionExecutorAction) {
