@@ -184,6 +184,7 @@ allprojects {
     implementationWithoutKotlin(rootProject.libs.converter.jackson)
     implementationWithoutKotlin(rootProject.libs.kotlin.css.jvm)
 
+    testImplementation(rootProject.libs.junit)
     testImplementationWithoutKotlin(rootProject.libs.kotlin.test.junit)
     testImplementationWithoutKotlin(rootProject.libs.mockwebserver)
     testImplementationWithoutKotlin(rootProject.libs.mockk)
