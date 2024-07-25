@@ -262,7 +262,16 @@ private fun VirtualFile.toDescriptionFormat(): DescriptionFormat {
 
 @RequiresReadLock
 fun Task.getTaskTextFromTask(project: Project): String? {
-  val taskDirectory = getDir(project.courseDir) ?: run {
+  val taskDirectory = if (lesson is FrameworkLesson && course.isStudy) {
+    // In learner mode in framework lessons tasks,
+    // `getDir(project.courseDir)` returns the path to the `lesson/task` folder where the task files for the current task are stored.
+    // But the task description and YAML files for the task are in the folder with the task name (f. e. `lesson/task1`)
+    lesson.getDir(project.courseDir)?.findChild(name)
+  }
+  else {
+    getDir(project.courseDir)
+  }
+  if (taskDirectory == null) {
     LOG.warn("Cannot find task directory for a task: $name")
     return null
   }
