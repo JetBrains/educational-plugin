@@ -6,11 +6,10 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeLater
-import com.intellij.openapi.components.Service
-import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.runBackgroundableTask
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.util.messages.Topic
 import com.jetbrains.edu.jarvis.DescriptionExpressionParser
 import com.jetbrains.edu.jarvis.DraftExpressionWriter
 import com.jetbrains.edu.jarvis.grammar.GrammarParser
@@ -19,6 +18,7 @@ import com.jetbrains.edu.learning.actions.EduActionUtils
 import com.jetbrains.edu.learning.courseFormat.jarvis.DescriptionExpression
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import java.util.concurrent.atomic.AtomicBoolean
+import com.jetbrains.edu.learning.createTopic
 
 /**
  * An action class responsible for handling the running of `description` DSL (Domain-Specific Language) elements.
@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  *
  * @param element The PSI element associated with the `description` DSL that this action is supposed to execute.
  */
-class DescriptionExecutorAction(private val element: PsiElement) : AnAction() {
+class DescriptionExecutorAction(val element: PsiElement) : AnAction() {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: error("Project was not found")
@@ -49,7 +49,7 @@ class DescriptionExecutorAction(private val element: PsiElement) : AnAction() {
     EduJarvisBundle.message("action.progress.bar.message"),
     project
   ) { indicator ->
-    if (!CodeGenerationState.getInstance(project).lock()) {
+    if (!lock()) {
       project.notifyError(content = EduJarvisBundle.message("action.already.running"))
       return@runBackgroundableTask
     }
@@ -59,7 +59,7 @@ class DescriptionExecutorAction(private val element: PsiElement) : AnAction() {
     val grammarParser = GrammarParser(project, descriptionExpression)
     grammarParser.findAndHighlightErrors()
 
-    CodeGenerationState.getInstance(project).unlock()
+    unlock()
 
     if (grammarParser.hasFoundErrors) {
       project.notifyError(
@@ -75,27 +75,31 @@ class DescriptionExecutorAction(private val element: PsiElement) : AnAction() {
       // TODO: reformat and improve the generated code
       DraftExpressionWriter.addDraftExpression(project, element, generatedCode, element.language)
     }
+    project.messageBus.syncPublisher(TOPIC).onActionSuccess()
   }
 
   private fun Project.notifyError(title: String = "", content: String = "") =
     EduNotificationManager.create(
       ERROR, content, title
-    ).notify(this)
-
-  @Service(Service.Level.PROJECT)
-  private class CodeGenerationState {
-    private val isBusy = AtomicBoolean(false)
-
-    fun lock(): Boolean {
-      return isBusy.compareAndSet(false, true)
+    ).notify(this).also {
+      messageBus.syncPublisher(TOPIC).onActionFailure(title)
     }
 
-    fun unlock() {
-      isBusy.set(false)
-    }
+  private val isBusy = AtomicBoolean(false)
 
-    companion object {
-      fun getInstance(project: Project): CodeGenerationState = project.service()
-    }
+  private fun lock(): Boolean = isBusy.compareAndSet(false, true)
+
+  private fun unlock() {
+    isBusy.set(false)
   }
+
+  companion object {
+    @Topic.ProjectLevel
+    val TOPIC: Topic<DescriptionActionCompletionListener> = createTopic("Edu.descriptionAction")
+  }
+}
+
+interface DescriptionActionCompletionListener {
+  fun onActionFailure(message: String)
+  fun onActionSuccess()
 }

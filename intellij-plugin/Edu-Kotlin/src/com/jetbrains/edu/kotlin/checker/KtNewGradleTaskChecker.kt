@@ -1,9 +1,15 @@
 package com.jetbrains.edu.kotlin.checker
 
 import com.intellij.execution.RunnerAndConfigurationSettings
+import com.intellij.openapi.actionSystem.ex.ActionUtil
+import com.intellij.openapi.actionSystem.impl.SimpleDataContext
+import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
+import com.jetbrains.edu.jarvis.DescriptionActions
+import com.jetbrains.edu.jarvis.actions.DescriptionActionCompletionListener
+import com.jetbrains.edu.jarvis.actions.DescriptionExecutorAction
 import com.jetbrains.edu.jvm.gradle.checker.GradleCommandLine
 import com.jetbrains.edu.jvm.gradle.checker.NewGradleEduTaskChecker
 import com.jetbrains.edu.jvm.gradle.checker.hasSeparateModule
@@ -13,9 +19,47 @@ import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import org.jetbrains.kotlin.idea.extensions.KotlinTestFrameworkProvider
 import org.jetbrains.plugins.gradle.service.execution.GradleRunConfiguration
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 class KtNewGradleTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project: Project) :
   NewGradleEduTaskChecker(task, envChecker, project) {
+
+  override fun runDescriptionActions(promptErrors: MutableList<String>, indicator: ProgressIndicator) {
+    val connection = project.messageBus.connect()
+    try {
+      val descriptionActions = DescriptionActions.getInstance(project)
+      val actions = descriptionActions.getActions(task) ?: emptySet()
+      if (actions.isNotEmpty()) {
+        val latch = CountDownLatch(actions.size)
+
+        connection.subscribe(DescriptionExecutorAction.TOPIC, object : DescriptionActionCompletionListener {
+          override fun onActionFailure(message: String) {
+            promptErrors.add(message)
+            latch.countDown()
+          }
+
+          override fun onActionSuccess() {
+            latch.countDown()
+          }
+        })
+
+        val dataContext = SimpleDataContext.getProjectContext(project)
+        runInEdt {
+            actions.forEach { action ->
+              ActionUtil.invokeAction(action, dataContext, "", null, null)
+            }
+        }
+
+        while (!indicator.isCanceled) {
+          val result = latch.await(100, TimeUnit.MILLISECONDS)
+          if (result) break
+        }
+      }
+    } finally {
+      connection.disconnect()
+    }
+  }
 
   override fun computePossibleErrorResult(indicator: ProgressIndicator, stderr: String): CheckResult {
     return if (task.hasSeparateModule(project)) {

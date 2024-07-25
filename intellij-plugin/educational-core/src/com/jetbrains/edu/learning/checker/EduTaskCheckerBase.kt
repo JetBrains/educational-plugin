@@ -35,12 +35,24 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
 
   var activateRunToolWindow: Boolean = !task.course.isStudy
 
+  open fun runDescriptionActions(promptErrors: MutableList<String>, indicator: ProgressIndicator) { }
+
   override fun check(indicator: ProgressIndicator): CheckResult {
     if (task.course.isStudy) {
       runInEdt {
         ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.RUN)?.hide(null)
       }
     }
+
+    val promptErrors = mutableListOf<String>()
+    runDescriptionActions(promptErrors, indicator)
+    // We need to invoke all current pending EDT actions to get proper states of test roots.
+    invokeAndWaitIfNeeded {}
+
+    if (promptErrors.isNotEmpty()) {
+      return CheckResult(CheckStatus.Failed, promptErrors.first())
+    }
+    // TODO: run tests for code that is inside draft blocks
 
     val possibleError = envChecker.getEnvironmentError(project, task)
     if (possibleError != null) {

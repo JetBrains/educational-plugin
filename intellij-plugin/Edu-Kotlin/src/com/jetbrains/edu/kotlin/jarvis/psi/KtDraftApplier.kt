@@ -6,21 +6,25 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.childrenOfType
+import com.jetbrains.edu.jarvis.DescriptionActions
 import com.jetbrains.edu.jarvis.DraftApplier
 import com.jetbrains.edu.kotlin.jarvis.utils.DESCRIPTION
 import com.jetbrains.edu.kotlin.jarvis.utils.DRAFT
 import com.jetbrains.edu.kotlin.jarvis.utils.findBlock
+import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import org.jetbrains.kotlin.psi.KtCallExpression
 
 class KtDraftApplier : DraftApplier {
 
   override fun applyCodeDraftToMainCode(project: Project, element: PsiElement, psiFile: PsiFile?) {
+    val task = project.getCurrentTask() ?: return
     val draftBlock = findBlock(element, { it.parent }, DRAFT) as? KtCallExpression ?: error("The draft block is not found")
     val lambdaArgument = draftBlock.lambdaArguments.firstOrNull() ?: return
     val lambdaBody = lambdaArgument.getLambdaExpression()?.bodyExpression ?: return
     // TODO: parse these comments
     val commentsToRemove = lambdaBody.childrenOfType<PsiComment>().take(NUM_COMMENTS_TO_REMOVE)
     val descriptionBlock = findBlock(draftBlock, { it.prevSibling }, DESCRIPTION) ?: error("The description block is not found")
+    DescriptionActions.getInstance(project).removeAction(task, descriptionBlock)
     WriteCommandAction.runWriteCommandAction(project, null, null, {
       commentsToRemove.forEach { it.delete() }
       descriptionBlock.replace(lambdaBody)
