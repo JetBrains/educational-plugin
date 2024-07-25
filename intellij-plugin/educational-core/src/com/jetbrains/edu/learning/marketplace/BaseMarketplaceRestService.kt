@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.marketplace
 
-import com.intellij.openapi.diagnostic.logger
 import com.intellij.util.io.origin
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
@@ -8,7 +7,6 @@ import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import com.jetbrains.edu.learning.authUtils.hasOpenDialogs
 import com.jetbrains.edu.learning.authUtils.sendPluginInfoResponse
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.courseGeneration.MarketplaceOpenCourseRequest
 import com.jetbrains.edu.learning.marketplace.courseGeneration.MarketplaceOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -20,21 +18,30 @@ import io.netty.handler.codec.http.HttpResponseStatus
 import io.netty.handler.codec.http.QueryStringDecoder
 import java.util.regex.Pattern
 
-class LTIRestService : OAuthRestService(LTI) {
+abstract class BaseMarketplaceRestService(platformName: String) : OAuthRestService(platformName) {
 
+  // Do not override this function; it does the main work
+  // If you need to change service behavior, change preProcessRequest and postProcessResponse functions
   override fun execute(urlDecoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
-    val uri = urlDecoder.uri()
+    preProcessRequest(urlDecoder, request, context)
+    return processRequest(urlDecoder, request, context)
+  }
 
-    if (hasOpenDialogs(MARKETPLACE)) {
+  abstract fun preProcessRequest(urlDecoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext)
+
+  private fun processRequest(urlDecoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
+    val uri = urlDecoder.uri()
+    if (uri.contains(INFO)) {
+      sendPluginInfoResponse(request, context)
+      return null
+    }
+
+    if (hasOpenDialogs(platformName)) {
       sendOk(request, context)
       return null
     }
 
     val courseId = getIntParameter(COURSE_ID, urlDecoder)
-    val launchId = getStringParameter(LAUNCH_ID, urlDecoder)
-    val studyItemId = getStringParameter(STUDY_ITEM_ID, urlDecoder)
-    val lmsDescription = getStringParameter(LMS_DESCRIPTION, urlDecoder)
-    logger<LTIRestService>().info("LTI request with course=$courseId launchId=$launchId studyItemId=$studyItemId: $lmsDescription")
     if (courseId != -1) {
       openInIDE(MarketplaceOpenCourseRequest(courseId), request, context)
     }
@@ -43,18 +50,19 @@ class LTIRestService : OAuthRestService(LTI) {
     return "Unknown command: $uri"
   }
 
-  override fun getServiceName(): String = "edu/lti"
-
-  private fun openInIDE(openCourseRequest: MarketplaceOpenCourseRequest,
-                        request: FullHttpRequest,
-                        context: ChannelHandlerContext): String? {
-    LOG.info("Opening $MARKETPLACE course: $openCourseRequest")
+  private fun openInIDE(
+    openCourseRequest: MarketplaceOpenCourseRequest,
+    request: FullHttpRequest,
+    context: ChannelHandlerContext
+  ): String? {
+    LOG.info("Opening $platformName course: $openCourseRequest")
     return when (val result = ProjectOpener.getInstance().open(MarketplaceOpenInIdeRequestHandler, openCourseRequest)) {
       is Ok -> {
         sendOk(request, context)
-        LOG.info("$MARKETPLACE course opened: $openCourseRequest")
+        LOG.info("$platformName course opened: $openCourseRequest")
         null
       }
+
       is Err -> {
         val validationResult = result.error
         val message = validationResult.message
@@ -80,10 +88,8 @@ class LTIRestService : OAuthRestService(LTI) {
   }
 
   companion object {
-    private const val COURSE_ID = "marketplace_course_id"
-    private const val LAUNCH_ID = "launch_id"
-    private const val STUDY_ITEM_ID = "study_item_id"
-    private const val LMS_DESCRIPTION = "lms_description"
+    internal const val COURSE_ID = "course_id"
+    internal const val INFO = "info"
     private val JETBRAINS_ORIGIN_PATTERN = Pattern.compile("https://([a-z0-9-]+\\.)*jetbrains.com$")
     private val TRUSTED_ORIGINS = setOf(PLUGINS_REPOSITORY_URL, PLUGINS_EDU_DEMO, PLUGINS_MASTER_DEMO)
   }
