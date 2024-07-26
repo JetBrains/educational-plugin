@@ -37,6 +37,7 @@ const val EDUTOOLS = "edutools"
 const val EDUTOOLS_VERSION = "edutools_version"
 const val EMAIL = "email"
 const val ENVIRONMENT = "environment"
+const val FRAMEWORK = "framework"
 const val FRONTEND_EVENTS = "frontend-events"
 const val FULL_NAME = "fullname"
 const val HAS_NEXT = "has_next"
@@ -148,6 +149,14 @@ class HyperskillStepSource : StepSource() {
 
   @JsonProperty(TITLE)
   var title: String = ""
+
+  /**
+   * Hyperskill field to indicate a task's framework.
+   * Now it can be 'null' or 'Android'
+   * The value 'Android' means that the task must be opened only in Android Studio as an Android project
+   */
+  @JsonProperty(FRAMEWORK)
+  var framework: String? = null
 
   @JsonProperty(TOPIC)
   var topic: Int? = null

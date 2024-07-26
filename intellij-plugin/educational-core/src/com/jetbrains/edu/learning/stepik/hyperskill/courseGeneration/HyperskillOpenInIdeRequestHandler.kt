@@ -33,18 +33,24 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpenRequest>() {
   private val LOG = Logger.getInstance(HyperskillOpenInIdeRequestHandler::class.java)
+
   override val courseLoadingProcessTitle: String get() = EduCoreBundle.message("hyperskill.loading.project")
+
+  private fun hasAndroidEnvironment(course: Course): Boolean = course.environment == EduNames.ANDROID
 
   override fun openInExistingProject(
     request: HyperskillOpenRequest,
     findProject: ((Course) -> Boolean) -> Pair<Project, Course>?
   ): Boolean {
-    val (project, course) = findExistingProject(findProject, request) ?: return false
-    val hyperskillCourse = course as HyperskillCourse
     when (request) {
       is HyperskillOpenStepRequestBase -> {
         val stepId = request.stepId
-        hyperskillCourse.addProblemsWithTopicWithFiles(project, getStepSource(stepId, request.isLanguageSelectedByUser))
+        val stepSource = getStepSource(stepId, request.isLanguageSelectedByUser)
+        val isAndroidEnvRequired = stepSource.framework == EduNames.ANDROID
+        val courseFilter: (Course) -> Boolean = if (isAndroidEnvRequired) ::hasAndroidEnvironment else { _ -> true }
+        val (project, course) = findExistingProject(findProject, request, courseFilter) ?: return false
+        val hyperskillCourse = course as HyperskillCourse
+        hyperskillCourse.addProblemsWithTopicWithFiles(project, stepSource)
         hyperskillCourse.selectedProblem = stepId
         runInEdt {
           requestFocus()
@@ -54,6 +60,8 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
       }
 
       is HyperskillOpenProjectStageRequest -> {
+        val (project, course) = findExistingProject(findProject, request) ?: return false
+        val hyperskillCourse = course as HyperskillCourse
         if (hyperskillCourse.getProjectLesson() == null) {
           computeUnderProgress(project, EduCoreBundle.message("hyperskill.loading.stages")) {
             HyperskillConnector.getInstance().loadStages(hyperskillCourse)
@@ -94,7 +102,8 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
 
   private fun findExistingProject(
     findProject: ((Course) -> Boolean) -> Pair<Project, Course>?,
-    request: HyperskillOpenRequest
+    request: HyperskillOpenRequest,
+    courseFilter: (Course) -> Boolean = { true }
   ): Pair<Project, Course>? {
     return when (request) {
       is HyperskillOpenProjectStageRequest -> findProject { it.matchesById(request.projectId) }
@@ -102,15 +111,17 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
         val hyperskillLanguage = request.language
         val (languageId, languageVersion) = HyperskillLanguages.getLanguageIdAndVersion(hyperskillLanguage) ?: return null
 
-        findProject { it.matchesById(request.projectId) && it.languageId == languageId && it.languageVersion == languageVersion }
+        findProject {
+          it.matchesById(request.projectId) && it.languageId == languageId && it.languageVersion == languageVersion && courseFilter(it)
+        }
         ?: findProject { course -> course.isHyperskillProblemsCourse(hyperskillLanguage) }
       }
 
       is HyperskillOpenStepRequest -> {
         val hyperskillLanguage = request.language
         val (languageId, languageVersion) = HyperskillLanguages.getLanguageIdAndVersion(hyperskillLanguage) ?: return null
-        findProject { it is HyperskillCourse && it.languageId == languageId && it.languageVersion == languageVersion }
-        ?: findProject { course -> course.isHyperskillProblemsCourse(hyperskillLanguage) }
+        findProject { it is HyperskillCourse && it.languageId == languageId && it.languageVersion == languageVersion && courseFilter(it) }
+        ?: findProject { course -> course.isHyperskillProblemsCourse(hyperskillLanguage) && courseFilter(course) }
       }
     }
   }
@@ -146,7 +157,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
                          ?: return Err(ValidationErrorMessage("Unsupported environment ${hyperskillProject.environment}"))
 
     if (request is HyperskillOpenStepWithProjectRequest) {
-      // These condition is about opening e.g. Python problem with chosen Kotlin's project,
+      // This condition is about opening e.g. Python problem with chosen Kotlin's project,
       // otherwise - open Kotlin problem in current Kotlin project itself later below
       if (hyperskillLanguage != hyperskillProject.language) {
         return Ok(HyperskillCourse(hyperskillLanguage, languageId, languageVersion))
@@ -158,6 +169,16 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
       if (eduEnvironment == EduNames.ANDROID && hyperskillLanguage == KOTLIN) {
         return Ok(HyperskillCourse(hyperskillLanguage, languageId, languageVersion))
       }
+
+      // EDU-5994: if Step has a field 'framework' == 'Android', it should be opened only in Android Studio
+      // as an Android project.
+      val stepSource = getStepSource(request.stepId, request.isLanguageSelectedByUser)
+      // When the user has selected project on Hyperskill, the Plugin has to check if it is an Android project,
+      // if not: a new one should be created.
+      if (stepSource.framework == EduNames.ANDROID && eduEnvironment != EduNames.ANDROID) {
+        return Ok(HyperskillCourse(hyperskillLanguage, languageId, languageVersion, EduNames.ANDROID))
+      }
+
     }
     if (request is HyperskillOpenStepRequest) return Ok(HyperskillCourse(hyperskillLanguage, languageId, languageVersion))
 

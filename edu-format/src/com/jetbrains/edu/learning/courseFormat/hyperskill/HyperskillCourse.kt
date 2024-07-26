@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.courseFormat.hyperskill
 
 import com.jetbrains.edu.learning.capitalize
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_PROBLEMS
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_PROJECTS_URL
@@ -35,11 +36,12 @@ class HyperskillCourse : Course {
     id = hyperskillProject.id
   }
 
-  constructor(languageName: String, languageId: String, languageVersion: String?) {
+  constructor(languageName: String, languageId: String, languageVersion: String?, environment: String = DEFAULT_ENVIRONMENT) {
     name = "${languageName.capitalize()} Problems"
     description = message("hyperskill.problems.project.description", languageName.capitalize())
     this.languageId = languageId
     this.languageVersion = languageVersion
+    this.environment = environment
   }
 
   val isTemplateBased: Boolean
