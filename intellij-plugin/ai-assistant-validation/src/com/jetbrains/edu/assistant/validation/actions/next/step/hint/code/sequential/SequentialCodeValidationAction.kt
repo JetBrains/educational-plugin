@@ -11,8 +11,8 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.educational.ml.hints.assistant.AiAssistantHintInternal
 import kotlinx.coroutines.delay
-import com.jetbrains.educational.ml.hints.core.AIHintsAssistantResponse
 
 abstract class SequentialCodeValidationAction<T> : CodeValidationAction<T>() {
 
@@ -38,7 +38,7 @@ abstract class SequentialCodeValidationAction<T> : CodeValidationAction<T>() {
     task: EduTask,
     hintIndex: Int,
     baseAssistantInfoStorage: BaseAssistantInfoStorage,
-    response: AIHintsAssistantResponse?,
+    response: AiAssistantHintInternal?,
     userCode: String,
     currentUserCode: String
   ) : T
@@ -47,7 +47,7 @@ abstract class SequentialCodeValidationAction<T> : CodeValidationAction<T>() {
     task: EduTask,
     hintIndex: Int,
     baseAssistantInfoStorage: BaseAssistantInfoStorage,
-    response: AIHintsAssistantResponse?,
+    response: AiAssistantHintInternal?,
     userCode: String,
     e: Throwable
   ) : T
@@ -70,17 +70,15 @@ abstract class SequentialCodeValidationAction<T> : CodeValidationAction<T>() {
     var currentUserCode = userCode
 
     for (hintIndex in 1..MAX_HINTS) {
-      var response: AIHintsAssistantResponse? = null
+      var response: AiAssistantHintInternal? = null
       try {
         runBlockingCancellable {
           withBackgroundProgress(baseAssistantInfoStorage.project, GETTING_HINT_MESSAGE, false) {
-            response = baseAssistantInfoStorage.assistant.getHint(
-              currentUserCode
-            )
+            response = baseAssistantInfoStorage.assistant.getHintInternal(currentUserCode).getOrNull()
           }
         }
 
-        currentUserCode = response?.codeHint ?: error("Code hint is empty")
+        currentUserCode = response?.codeHint?.value ?: error("Code hint is empty")
 
         lesson.replaceContent(task, currentUserCode, baseAssistantInfoStorage.eduState, baseAssistantInfoStorage.project)
 

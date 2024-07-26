@@ -5,7 +5,7 @@ import com.jetbrains.edu.assistant.validation.messages.EduAndroidAiAssistantVali
 import com.jetbrains.edu.assistant.validation.util.MultipleCodeHintDataframeRecord
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.educational.ml.hints.core.AIHintsAssistantResponse
+import com.jetbrains.educational.ml.hints.assistant.AiAssistantHintInternal
 import org.apache.commons.csv.CSVRecord
 import org.jetbrains.kotlinx.dataframe.api.toDataFrame
 
@@ -45,7 +45,7 @@ class SequentialCodeHintValidationAction : SequentialCodeValidationAction<Multip
     task: EduTask,
     hintIndex: Int,
     baseAssistantInfoStorage: BaseAssistantInfoStorage,
-    response: AIHintsAssistantResponse?,
+    response: AiAssistantHintInternal?,
     userCode: String,
     currentUserCode: String
   ): MultipleCodeHintDataframeRecord {
@@ -55,9 +55,9 @@ class SequentialCodeHintValidationAction : SequentialCodeValidationAction<Multip
       taskId = task.id,
       taskName = task.name,
       taskDescription = baseAssistantInfoStorage.taskProcessor.getTaskTextRepresentation(),
-      codeHintPrompt = response?.prompts?.getOrDefault("nextStepCodeHintPrompt", ""),
+      codeHintPrompt = response?.codeHintPrompt?.value,
       userCode = userCode,
-      generatedCode = response?.codeHint,
+      generatedCode = response?.codeHint?.value,
       numberOfIssues = issues.size,
       issues = issues.joinToString(","),
       testStatus = task.status.name,
@@ -69,7 +69,7 @@ class SequentialCodeHintValidationAction : SequentialCodeValidationAction<Multip
     task: EduTask,
     hintIndex: Int,
     baseAssistantInfoStorage: BaseAssistantInfoStorage,
-    response: AIHintsAssistantResponse?,
+    response: AiAssistantHintInternal?,
     userCode: String,
     e: Throwable
   ) = MultipleCodeHintDataframeRecord(

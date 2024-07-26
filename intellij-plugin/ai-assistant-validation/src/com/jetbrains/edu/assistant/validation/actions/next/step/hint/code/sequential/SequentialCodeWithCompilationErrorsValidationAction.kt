@@ -5,8 +5,8 @@ import com.jetbrains.edu.assistant.validation.messages.EduAndroidAiAssistantVali
 import com.jetbrains.edu.assistant.validation.util.MultipleCodeHintWithErrorDataframeRecord
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.educational.ml.hints.core.AIHintsAssistantResponse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.educational.ml.hints.assistant.AiAssistantHintInternal
 import org.apache.commons.csv.CSVRecord
 import org.jetbrains.kotlinx.dataframe.api.toDataFrame
 
@@ -29,7 +29,7 @@ class SequentialCodeWithCompilationErrorsValidationAction : SequentialCodeValida
     task: EduTask,
     hintIndex: Int,
     baseAssistantInfoStorage: BaseAssistantInfoStorage,
-    response: AIHintsAssistantResponse?,
+    response: AiAssistantHintInternal?,
     userCode: String,
     currentUserCode: String
   ) = MultipleCodeHintWithErrorDataframeRecord(
@@ -37,9 +37,9 @@ class SequentialCodeWithCompilationErrorsValidationAction : SequentialCodeValida
     taskId = task.id,
     taskName = task.name,
     taskDescription = baseAssistantInfoStorage.taskProcessor.getTaskTextRepresentation(),
-    codeHintPrompt = response?.prompts?.getOrDefault("nextStepCodeHintPrompt", ""),
+    codeHintPrompt = response?.codeHintPrompt?.value,
     userCode = userCode,
-    generatedCode = response?.codeHint,
+    generatedCode = response?.codeHint?.value,
     testStatus = task.status.name,
     errorMessage = task.feedback?.message
   )
@@ -48,7 +48,7 @@ class SequentialCodeWithCompilationErrorsValidationAction : SequentialCodeValida
     task: EduTask,
     hintIndex: Int,
     baseAssistantInfoStorage: BaseAssistantInfoStorage,
-    response: AIHintsAssistantResponse?,
+    response: AiAssistantHintInternal?,
     userCode: String,
     e: Throwable
   ) = MultipleCodeHintWithErrorDataframeRecord(

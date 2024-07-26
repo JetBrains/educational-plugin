@@ -1,20 +1,20 @@
 package com.jetbrains.edu.assistant.validation.actions.next.step.hint
 
-import com.google.gson.Gson
 import com.jetbrains.edu.assistant.validation.accuracy.AccuracyCalculator
 import com.jetbrains.edu.assistant.validation.actions.ValidationAction
 import com.jetbrains.edu.assistant.validation.messages.EduAndroidAiAssistantValidationBundle
-import com.jetbrains.edu.assistant.validation.processor.processValidationHintForItsType
-import com.jetbrains.edu.assistant.validation.processor.processValidationHints
+import com.jetbrains.edu.assistant.validation.processor.ValidationHintProcessorImpl
 import com.jetbrains.edu.assistant.validation.util.*
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessorImpl
-import com.jetbrains.educational.ml.hints.core.TaskBasedAssistant
-import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.getTextFromTaskTextFile
+import com.jetbrains.edu.learning.selectedTaskFile
+import com.jetbrains.educational.ml.hints.assistant.AiHintsAssistant
+import com.jetbrains.educational.ml.hints.processors.ValidationHintProcessor
+import com.jetbrains.educational.ml.hints.validation.ValidationHintAssistant
 import org.apache.commons.csv.CSVRecord
 import org.jetbrains.kotlinx.dataframe.api.toDataFrame
 import kotlin.io.path.Path
@@ -49,70 +49,80 @@ class AutoHintValidationAction : ValidationAction<ValidationOfHintsDataframeReco
 
   override fun CSVRecord.toDataframeRecord() = ValidationOfHintsDataframeRecord.buildFrom(this)
 
+  private suspend fun buildRecord(
+    validationProcessor: ValidationHintProcessor,
+    taskId: Int,
+    taskName: String
+  ): ValidationOfHintsDataframeRecord {
+    val validationHintAssistant = ValidationHintAssistant(validationProcessor)
+    val hintType = validationHintAssistant.processValidationHintForItsType().getOrThrow()
+    val hintsValidation = validationHintAssistant.processValidationHints().getOrThrow()
+    return ValidationOfHintsDataframeRecord(
+      taskId = taskId,
+      taskName = taskName,
+      taskDescription = validationProcessor.getTaskDescription(),
+      userCode = validationProcessor.getUserCode(),
+      nextStepTextHint = validationProcessor.getTextHint(),
+      nextStepCodeHint = validationProcessor.getCodeHint(),
+      feedbackType = hintType.feedbackType,
+      information = hintsValidation.information,
+      levelOfDetail = hintsValidation.levelOfDetail,
+      personalized = hintsValidation.personalized,
+      intersection = hintsValidation.intersection,
+      appropriate = hintsValidation.appropriate,
+      specific = hintsValidation.specific,
+      misleadingInformation = hintsValidation.misleadingInformation,
+      codeQuality = hintsValidation.codeQuality,
+      kotlinStyle = hintsValidation.kotlinStyle,
+      length = hintsValidation.length
+    )
+  }
+
   override suspend fun buildRecords(task: EduTask, lesson: Lesson): List<ValidationOfHintsDataframeRecord> {
     val taskProcessor = TaskProcessorImpl(task)
     val project = task.project ?: error("Cannot get project")
-    val eduState = project.eduState ?: error("Cannot get eduState for project ${project.name}")
-    val response = TaskBasedAssistant(taskProcessor).getHint()
+    val response = AiHintsAssistant.getAssistant(taskProcessor).getHint()
+    val assistantHint = response.getOrNull()
 
-    try {
-      val userCode = eduState.taskFile.getVirtualFile(project)?.getTextFromTaskTextFile() ?: error("Cannot get a user code")
-      val taskDescription = taskProcessor.getTaskTextRepresentation()
-      val codeHint = response.codeHint ?: error("Cannot get a code hint (${response.assistantException?.message ?: "no assistant error found"})")
-      val textHint = response.textHint ?: error("Cannot get a text hint (${response.assistantException?.message ?: "no assistant error found"})")
-      val hintType = processValidationHintForItsType(textHint, codeHint)
-      val hintsValidation = processValidationHints(taskDescription, textHint, codeHint, userCode)
-      val dataframeRecord = Gson().fromJson(hintsValidation, ValidationOfHintsDataframeRecord::class.java)
-      return listOf(dataframeRecord.apply {
-        taskId = task.id
-        taskName = task.name
-        this.taskDescription = taskDescription
-        this.userCode = userCode
-        nextStepTextHint = textHint
-        nextStepCodeHint = codeHint
-        feedbackType = hintType
-      })
-    }
-    catch (e: Throwable) {
-      return listOf(ValidationOfHintsDataframeRecord (
+    return try {
+      assistantHint ?: error("Cannot get assistant hint (${response.exceptionOrNull()?.message ?: "no assistant error found"})")
+      listOf(buildRecord(
+        ValidationHintProcessorImpl(project, taskProcessor, assistantHint),
+        task.id,
+        task.name
+      ))
+    } catch (e: Throwable) {
+      listOf(ValidationOfHintsDataframeRecord (
         taskId = task.id,
         taskName = task.name,
         taskDescription = taskProcessor.getTaskTextRepresentation(),
-        userCode = eduState.taskFile.getVirtualFile(project)?.getTextFromTaskTextFile() ?: "",
-        nextStepCodeHint = response.codeHint ?: "",
-        nextStepTextHint = response.textHint ?: "",
+        userCode = project.selectedTaskFile?.getVirtualFile(project)?.getTextFromTaskTextFile() ?: "",
+        nextStepCodeHint = assistantHint?.codeHint?.value ?: "",
+        nextStepTextHint = assistantHint?.textHint?.value ?: "",
         errors = "${EduAndroidAiAssistantValidationBundle.message("action.validation.error")} ${e.message}"
       ))
     }
   }
 
-  override suspend fun buildRecords(manualValidationRecord: ValidationOfHintsDataframeRecord): ValidationOfHintsDataframeRecord {
+  override suspend fun buildRecords(manualValidationRecord: ValidationOfHintsDataframeRecord): ValidationOfHintsDataframeRecord =
     try {
-      val hintType = processValidationHintForItsType(manualValidationRecord.nextStepTextHint, manualValidationRecord.nextStepCodeHint)
-      val hintsValidation = processValidationHints(
-        manualValidationRecord.taskDescription,
-        manualValidationRecord.nextStepTextHint,
-        manualValidationRecord.nextStepCodeHint,
-        manualValidationRecord.userCode
+      buildRecord(
+        ValidationHintProcessorImpl(
+          hintText = manualValidationRecord.nextStepTextHint,
+          hintCode = manualValidationRecord.nextStepCodeHint,
+          userCodeText = manualValidationRecord.userCode,
+          description = manualValidationRecord.taskDescription
+        ),
+        manualValidationRecord.taskId,
+        manualValidationRecord.taskName
       )
-      val dataframeRecord = Gson().fromJson(hintsValidation, ValidationOfHintsDataframeRecord::class.java)
-      return dataframeRecord.apply {
-        taskId = manualValidationRecord.taskId
-        taskName = manualValidationRecord.taskName
-        this.taskDescription = manualValidationRecord.taskDescription
-        this.userCode = manualValidationRecord.userCode
-        nextStepTextHint = manualValidationRecord.nextStepTextHint
-        nextStepCodeHint = manualValidationRecord.nextStepCodeHint
-        feedbackType = hintType
-      }
     } catch (e: Throwable) {
-      return ValidationOfHintsDataframeRecord (
+      ValidationOfHintsDataframeRecord (
         taskId = manualValidationRecord.taskId,
         taskName = manualValidationRecord.taskName,
         taskDescription = manualValidationRecord.taskDescription,
       )
     }
-  }
 
   inner class AutoHintValidationAccuracyCalculator : AccuracyCalculator<ValidationOfHintsDataframeRecord> {
 

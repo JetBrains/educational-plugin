@@ -20,12 +20,12 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.educational.ml.hints.core.AIHintsAssistantResponse
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessorImpl
-import com.jetbrains.educational.ml.hints.core.TaskBasedAssistant
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
+import com.jetbrains.educational.ml.hints.assistant.AiAssistantHint
+import com.jetbrains.educational.ml.hints.assistant.AiHintsAssistant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.junit.runner.RunWith
@@ -64,18 +64,18 @@ abstract class ExternalResourcesTest(private val lessonName: String, private val
       TaskToolWindowView.getInstance(project).currentTask
     }.firstOrNull { it.name == taskName && it.lesson.name == lessonName } ?: error("Cannot get the target task")
 
-  protected fun getHint(taskProcessor: TaskProcessorImpl, userCode: String? = null): AIHintsAssistantResponse =
-    ProgressManager.getInstance().run(object : com.intellij.openapi.progress.Task.WithResult<AIHintsAssistantResponse, Exception>(
+  protected fun getHint(taskProcessor: TaskProcessorImpl, userCode: String? = null): AiAssistantHint =
+    ProgressManager.getInstance().run(object : com.intellij.openapi.progress.Task.WithResult<AiAssistantHint, Exception>(
       project,
       EduCoreBundle.message("progress.title.getting.hint"),
       true
     ) {
-      override fun compute(indicator: ProgressIndicator): AIHintsAssistantResponse {
+      override fun compute(indicator: ProgressIndicator): AiAssistantHint? {
         indicator.isIndeterminate = true
         return runBlockingCancellable {
           withContext(Dispatchers.EDT) {
-            val response = TaskBasedAssistant(taskProcessor).getHint(userCode)
-            response.codeHint?.let {
+            val response = AiHintsAssistant.getAssistant(taskProcessor).getHint(userCode).getOrNull()
+            response?.codeHint?.value?.let {
               downloadSolution(taskProcessor.task, project, it)
             }
             response

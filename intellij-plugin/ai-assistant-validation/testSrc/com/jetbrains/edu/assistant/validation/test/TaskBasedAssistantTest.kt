@@ -54,7 +54,7 @@ class TaskBasedAssistantTest(lesson: String, task: String) : ExternalResourcesTe
     val inspections = getInspections(language)
 
     val issuesUser = getCodeIssues(userCode, "file", project, language, inspections)
-    val issuesAi = getCodeIssues(response.codeHint, "file2", project, language, inspections)
+    val issuesAi = getCodeIssues(response.codeHint?.value, "file2", project, language, inspections)
 
     assertNotNull(issuesAi, "Failed to obtain AI issues. The issue list should not be null.")
     assertNotNull(issuesUser, "Failed to obtain user issues. The issue list should not be null.")

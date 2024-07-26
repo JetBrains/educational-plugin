@@ -21,12 +21,12 @@ class TaskProcessorTest : JdkCheckerTestBase() {
     val task = course.findTask("lesson3", "task1")
     myCourse.configurator!!.courseBuilder.refreshProject(project, RefreshCause.PROJECT_CREATED)
     checkTask(task)
-    val taskProcessor = TaskProcessorImpl(task)
-    taskProcessor.getFailedTestName()?.let {
+    val testFailureContext = TaskProcessorImpl(task).getTestFailureContext()
+    testFailureContext?.name?.let {
       // We have different behaviour on different IDEA versions
       assertTrue("Actual failed test name is $it", it in listOf("Test class Tests:testSolution", "Tests:testSolution"))
     }
-    taskProcessor.getFailureMessage()?.let {
+    testFailureContext?.message?.let {
       // We have different behaviour on different IDEA versions
       assertTrue("Actual failed test message is $it", it in listOf("foo() should return 42", "Execution failed"))
     }

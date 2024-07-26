@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.getTextFromTaskTextFile
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.eduAssistant.inspection.applyInspections
 import com.jetbrains.edu.learning.eduState
+import com.jetbrains.educational.ml.hints.context.TestFailureContext
 import com.jetbrains.rd.util.firstOrNull
 import org.jsoup.Jsoup
 import com.jetbrains.educational.ml.hints.processors.TaskProcessor
@@ -35,27 +36,9 @@ class TaskProcessorImpl(val task: Task) : TaskProcessor {
 
   private val state = project.eduState ?: error("State was not found")
 
-  override fun taskHasCompilationError() = getFailureMessage() == EduCoreBundle.message("check.error.compilation.failed")
-
-  override fun taskHasLogicalErrors() = getFailureMessage() !== null && getFailedTestName() != null
-
-  override fun getFailureMessage() = if (task.status == CheckStatus.Failed) task.feedback?.message else null
-
-  override fun getFailedTestName() = if (task.status == CheckStatus.Failed) task.feedback?.failedTestInfo?.name else null
-
-  override fun getExpectedValue() = if (task.status == CheckStatus.Failed) task.feedback?.expected else null
-
-  override fun getActualValue() = if (task.status == CheckStatus.Failed) task.feedback?.actual else null
-
-  override fun getLessonId() = task.lesson.id
-
-  override fun getErrorDetails() = if (task.status == CheckStatus.Failed) task.feedback?.errorDetails ?: "" else ""
-
   override fun getFullTaskFileText() = runReadAction {
     state.taskFile.getText(state.project) ?: error("Failed to retrieve the text of the task file")
   }
-
-  override fun getTaskId() = task.id
 
   override fun getLowercaseLanguageDisplayName() = language.displayName.lowercase()
 
@@ -71,6 +54,20 @@ class TaskProcessorImpl(val task: Task) : TaskProcessor {
     val document = getTaskContentHtmlDocument()
     document.getElementsByClass(HTML_HINT_CLASS_NAME).remove()
     return document.text()
+  }
+
+  override fun getTestFailureContext(): TestFailureContext? {
+    val feedback = task.feedback ?: return null
+    val name = feedback.failedTestInfo?.name ?: return null
+    if (task.status != CheckStatus.Failed) return null
+    return TestFailureContext(
+      name = name,
+      message = feedback.message,
+      expected = feedback.expected,
+      actual = feedback.actual,
+      details = feedback.errorDetails,
+      isCompilationError = feedback.message == EduCoreBundle.message("check.error.compilation.failed")
+    )
   }
 
   override fun getHintsTextRepresentation(): List<String> {

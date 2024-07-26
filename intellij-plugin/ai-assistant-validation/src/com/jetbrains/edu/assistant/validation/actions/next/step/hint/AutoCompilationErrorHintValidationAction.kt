@@ -1,19 +1,20 @@
 package com.jetbrains.edu.assistant.validation.actions.next.step.hint
 
-import com.google.gson.Gson
 import com.jetbrains.edu.assistant.validation.accuracy.AccuracyCalculator
 import com.jetbrains.edu.assistant.validation.actions.ValidationAction
 import com.jetbrains.edu.assistant.validation.messages.EduAndroidAiAssistantValidationBundle
-import com.jetbrains.edu.assistant.validation.processor.processValidationCompilationErrorHints
+import com.jetbrains.edu.assistant.validation.processor.ValidationHintProcessorImpl
 import com.jetbrains.edu.assistant.validation.util.*
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessorImpl
-import com.jetbrains.educational.ml.hints.core.TaskBasedAssistant
-import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.getTextFromTaskTextFile
+import com.jetbrains.edu.learning.selectedTaskFile
+import com.jetbrains.educational.ml.hints.assistant.AiHintsAssistant
+import com.jetbrains.educational.ml.hints.processors.ValidationHintProcessor
+import com.jetbrains.educational.ml.hints.validation.ValidationHintAssistant
 import org.apache.commons.csv.CSVRecord
 import org.jetbrains.kotlinx.dataframe.api.toDataFrame
 import kotlin.io.path.Path
@@ -48,71 +49,78 @@ class AutoCompilationErrorHintValidationAction : ValidationAction<ValidationOfCo
 
   override fun CSVRecord.toDataframeRecord() = ValidationOfCompilationErrorHintsDataframeRecord.buildFrom(this)
 
+  private suspend fun buildRecord(
+    validationProcessor: ValidationHintProcessor,
+    taskId: Int,
+    taskName: String
+  ): ValidationOfCompilationErrorHintsDataframeRecord {
+    val hintsValidation = ValidationHintAssistant(validationProcessor).processValidationCompilationErrorHints().getOrThrow()
+    return ValidationOfCompilationErrorHintsDataframeRecord(
+      taskId = taskId,
+      taskName = taskName,
+      errorDetails = validationProcessor.getErrorDetails(),
+      userCode = validationProcessor.getUserCode(),
+      nextStepTextHint = validationProcessor.getTextHint(),
+      nextStepCodeHint = validationProcessor.getCodeHint(),
+      comprehensible = hintsValidation.comprehensible,
+      unnecessaryContent = hintsValidation.unnecessaryContent,
+      hasExplanation = hintsValidation.hasExplanation,
+      explanationCorrect = hintsValidation.explanationCorrect,
+      hasFix = hintsValidation.hasFix,
+      fixCorrect = hintsValidation.fixCorrect,
+      correctImplementation = hintsValidation.correctImplementation,
+      improvementOverTheOriginal = hintsValidation.improvementOverTheOriginal,
+    )
+  }
+
   override suspend fun buildRecords(task: EduTask, lesson: Lesson): List<ValidationOfCompilationErrorHintsDataframeRecord> {
     val taskProcessor = TaskProcessorImpl(task)
     val project = task.project ?: error("Cannot get project")
-    val eduState = project.eduState ?: error("Cannot get eduState for project ${project.name}")
     runCheckAction(project)
-    val errorDetails = taskProcessor.getErrorDetails()
-    val response = TaskBasedAssistant(taskProcessor).getHint()
+    val response = AiHintsAssistant.getAssistant(taskProcessor).getHint()
+    val assistantHint = response.getOrNull()
+
     return try {
-      val userCode = taskProcessor.currentTaskFile?.getVirtualFile(project)?.getTextFromTaskTextFile() ?: error("Cannot get a user code")
-      val codeHint =
-        response.codeHint ?: error("Cannot get a code hint (${response.assistantException?.message ?: "no assistant error found"})")
-      val textHint =
-        response.textHint ?: error("Cannot get a text hint (${response.assistantException?.message ?: "no assistant error found"})")
-      val hintsValidation = processValidationCompilationErrorHints(textHint, codeHint, userCode, errorDetails)
-      val regex = "^(```\\w*)?(.*?)(```)?$".toRegex(RegexOption.DOT_MATCHES_ALL)
-      val matchResult = regex.matchEntire(hintsValidation)?.groups?.get(2)?.value ?: hintsValidation
-      val dataframeRecord = Gson().fromJson(matchResult, ValidationOfCompilationErrorHintsDataframeRecord::class.java)
-      listOf(dataframeRecord.apply {
-        taskId = task.id
-        taskName = task.name
-        this.errorDetails = errorDetails
-        this.userCode = userCode
-        nextStepTextHint = textHint
-        nextStepCodeHint = codeHint
-      })
+      assistantHint ?: error("Cannot get assistant hint (${response.exceptionOrNull()?.message ?: "no assistant error found"})")
+      listOf(buildRecord(
+        ValidationHintProcessorImpl(project, taskProcessor, assistantHint),
+        task.id,
+        task.name
+      ))
     } catch (e: Throwable) {
       listOf(
         ValidationOfCompilationErrorHintsDataframeRecord(
           taskId = task.id,
           taskName = task.name,
           errorDetails = taskProcessor.getTaskTextRepresentation(),
-          userCode = eduState.taskFile.getVirtualFile(project)?.getTextFromTaskTextFile() ?: "",
-          nextStepCodeHint = response.codeHint ?: "",
-          nextStepTextHint = response.textHint ?: "",
+          userCode = project.selectedTaskFile?.getVirtualFile(project)?.getTextFromTaskTextFile() ?: "",
+          nextStepCodeHint = assistantHint?.codeHint?.value ?: "",
+          nextStepTextHint = assistantHint?.textHint?.value ?: "",
           errors = "${EduAndroidAiAssistantValidationBundle.message("action.validation.error")} ${e.message}"
         )
       )
     }
   }
 
-  override suspend fun buildRecords(manualValidationRecord: ValidationOfCompilationErrorHintsDataframeRecord): ValidationOfCompilationErrorHintsDataframeRecord {
+  override suspend fun buildRecords(manualValidationRecord: ValidationOfCompilationErrorHintsDataframeRecord): ValidationOfCompilationErrorHintsDataframeRecord =
     try {
-      val hintsValidation = processValidationCompilationErrorHints(
-        manualValidationRecord.nextStepTextHint,
-        manualValidationRecord.nextStepCodeHint,
-        manualValidationRecord.userCode,
-        manualValidationRecord.errorDetails
+      buildRecord(
+        ValidationHintProcessorImpl(
+          hintText = manualValidationRecord.nextStepTextHint,
+          hintCode = manualValidationRecord.nextStepCodeHint,
+          userCodeText = manualValidationRecord.userCode,
+          detailsOfFailure = manualValidationRecord.errorDetails
+        ),
+        manualValidationRecord.taskId,
+        manualValidationRecord.taskName
       )
-      val dataframeRecord = Gson().fromJson(hintsValidation, ValidationOfCompilationErrorHintsDataframeRecord::class.java)
-      return dataframeRecord.apply {
-        taskId = manualValidationRecord.taskId
-        taskName = manualValidationRecord.taskName
-        this.errorDetails = manualValidationRecord.errorDetails
-        this.userCode = manualValidationRecord.userCode
-        nextStepTextHint = manualValidationRecord.nextStepTextHint
-        nextStepCodeHint = manualValidationRecord.nextStepCodeHint
-      }
     } catch (e: Throwable) {
-      return ValidationOfCompilationErrorHintsDataframeRecord(
+      ValidationOfCompilationErrorHintsDataframeRecord(
         taskId = manualValidationRecord.taskId,
         taskName = manualValidationRecord.taskName,
         errorDetails = manualValidationRecord.errorDetails,
       )
     }
-  }
 
   inner class AutoCompilationErrorHintValidationAccuracyCalculator : AccuracyCalculator<ValidationOfCompilationErrorHintsDataframeRecord> {
 

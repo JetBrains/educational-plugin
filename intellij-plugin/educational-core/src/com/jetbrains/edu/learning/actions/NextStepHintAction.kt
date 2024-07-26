@@ -38,7 +38,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.eduAssistant.AiAssistantState
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.educational.ml.hints.core.TaskBasedAssistant
+import com.jetbrains.educational.ml.hints.assistant.AiHintsAssistant
 import com.jetbrains.edu.learning.eduAssistant.errors.NextStepHintError
 import com.jetbrains.edu.learning.eduAssistant.log.Logger
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessorImpl
@@ -184,22 +184,25 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
       val taskProcessor = TaskProcessorImpl(task)
       runBlockingCancellable {
         task.aiAssistantState = AiAssistantState.HelpAsked
-        val response = TaskBasedAssistant(taskProcessor).getHint()
-        response.assistantException?.let {
-          showHintWindow(it.message)
+        val response = AiHintsAssistant.getAssistant(taskProcessor).getHint()
+        response.exceptionOrNull()?.let {
+          showHintWindow(it.message ?: it.localizedMessage)
           return@runBlockingCancellable
         }
-        response.textHint ?: run {
+        val assistantHint = response.getOrNull()
+        assistantHint?.textHint ?: run {
           showHintWindow(NextStepHintError.UnknownError.errorMessage)
           return@runBlockingCancellable
         }
 
-        highlighter = response.codeHint?.let {
+        highlighter = assistantHint.codeHint?.value?.let {
           highlightFirstCodeDiffPositionOrNull(taskProcessor.currentTaskFile ?: state.taskFile, it, indicator)
         }
 
-        val action = response.codeHint?.let { showNextStepHint(state, taskProcessor.currentTaskFile ?: state.taskFile, it) }
-        response.textHint?.let { showHintWindow(it, action) }
+        val action = assistantHint.codeHint?.value?.let {
+          showNextStepHint(state, taskProcessor.currentTaskFile ?: state.taskFile, it)
+        }
+        showHintWindow(assistantHint.textHint.value, action)
       }
     }
 

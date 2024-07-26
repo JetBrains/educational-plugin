@@ -44,7 +44,7 @@ class CodeHintValidationAction : CodeValidationAction<CodeHintDataframeRecord>()
 
   private suspend fun buildCodeHintRecord(task: EduTask, userCode: String): CodeHintDataframeRecord {
     val baseAssistantInfoStorage = BaseAssistantInfoStorage(task)
-    val response = baseAssistantInfoStorage.assistant.getHint(userCode)
+    val response = baseAssistantInfoStorage.assistant.getHintInternal(userCode).getOrNull()
 
     try {
       val issues = runInspections(baseAssistantInfoStorage.project, baseAssistantInfoStorage.language, userCode)
@@ -53,9 +53,9 @@ class CodeHintValidationAction : CodeValidationAction<CodeHintDataframeRecord>()
         taskId = task.id,
         taskName = task.name,
         taskDescription = baseAssistantInfoStorage.taskProcessor.getTaskTextRepresentation(),
-        codeHintPrompt = response.prompts.getOrDefault("nextStepCodeHintPrompt", ""),
+        codeHintPrompt = response?.codeHintPrompt?.value,
         userCode = userCode,
-        generatedCode = response.codeHint ?: "",
+        generatedCode = response?.codeHint?.value ?: "",
         numberOfIssues = issues.size,
         issues = issues.joinToString(",")
       )
@@ -65,7 +65,7 @@ class CodeHintValidationAction : CodeValidationAction<CodeHintDataframeRecord>()
         taskId = task.id,
         taskName = task.name,
         taskDescription = baseAssistantInfoStorage.taskProcessor.getTaskTextRepresentation(),
-        codeHintPrompt = response.prompts.getOrDefault("nextStepCodeHintPrompt", ""),
+        codeHintPrompt = response?.codeHintPrompt?.value,
         userCode = userCode,
         error = e
       )
