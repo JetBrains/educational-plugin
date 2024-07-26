@@ -274,12 +274,6 @@ private fun getTopic(taskId: Int): Int? {
   return stepSource?.topic
 }
 
-fun getNextButtonText(taskId: Int): String? = when (val nextStep = getNextStep(taskId)) {
-    is NextActivityInfo.Next -> EduCoreBundle.message("button.next.task.text", nextStep.stepSource.title)
-    is NextActivityInfo.TopicCompleted -> EduCoreBundle.message("button.next.finish.topic")
-    else -> null
-  }
-
 private fun getNextStep(taskId: Int): NextActivityInfo {
   val topicId = getTopic(taskId)
   if (topicId == null) {
