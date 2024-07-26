@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>${VERSION}</TargetFramework>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+</Project>

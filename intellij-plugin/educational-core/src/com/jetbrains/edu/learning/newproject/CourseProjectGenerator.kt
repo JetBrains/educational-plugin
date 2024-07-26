@@ -204,13 +204,19 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     NOTIFICATIONS_SILENT_MODE.set(project, true)
   }
 
+  protected open fun beforeInitHandler(location: Path): BeforeInitHandler = BeforeInitHandler()
+
+  protected open fun setUpProjectLocation(location: Path): Path = location
+
   private suspend fun openNewCourseProject(
     location: Path,
-    prepareToOpenCallback: suspend (Project, Module) -> Unit
+    prepareToOpenCallback: suspend (Project, Module) -> Unit,
   ): Project? {
-    val task = OpenProjectTask(course, prepareToOpenCallback)
+    val beforeInitHandler = beforeInitHandler(location)
+    val locationToOpen = setUpProjectLocation(location)
+    val task = OpenProjectTask(course, prepareToOpenCallback, beforeInitHandler)
 
-    return ProjectManagerEx.getInstanceEx().openProjectAsync(location, task)
+    return ProjectManagerEx.getInstanceEx().openProjectAsync(locationToOpen, task)
   }
 
   /**
@@ -287,6 +293,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
   @Throws(IOException::class)
   open fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
   }
+  protected class BeforeInitHandler(val callback: (project: Project) -> Unit = { })
 
   private val isNewCourseCreatorCourse: Boolean
     get() = course.courseMode == CourseMode.EDUCATOR && course.items.isEmpty()
@@ -317,15 +324,20 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
       return course.isPreview
     }
 
-    private fun OpenProjectTask(course: Course, prepareToOpenCallback: suspend (Project, Module) -> Unit): OpenProjectTask {
-      @Suppress("UnstableApiUsage")
+    private fun OpenProjectTask(
+      course: Course,
+      prepareToOpenCallback: suspend (Project, Module) -> Unit,
+      beforeInitHandler: BeforeInitHandler
+    ): OpenProjectTask {
       return OpenProjectTask {
         forceOpenInNewFrame = true
         isNewProject = true
         isProjectCreatedWithWizard = true
         runConfigurators = true
+        projectName = course.name
         beforeInit = {
           it.putUserData(EDU_PROJECT_CREATED, true)
+          beforeInitHandler.callback(it)
         }
         preparedToOpen = {
           StudyTaskManager.getInstance(it.project).course = course

@@ -33,11 +33,10 @@ abstract class CourseGenerationTestBase<Settings : EduProjectSettings> : HeavyPl
   protected open fun createCourseStructure(course: Course) {
     val configurator = course.configurator ?: error("Failed to find `EduConfigurator` for `${course.name}` course")
     val generator = configurator.courseBuilder.getCourseProjectGenerator(course)
-                    ?: error("given builder returns null as course project generator")
+                    ?: error("The provided builder returned null as the course project generator")
     val project = invokeAndWaitIfNeeded {
       generator.doCreateCourseProject(rootDir.path, defaultSettings) ?: error("Cannot create project")
     }
-
     TaskToolWindowView.getInstance(project).currentTask = project.getCurrentTask()
     runInEdtAndWait {
       myProject = project

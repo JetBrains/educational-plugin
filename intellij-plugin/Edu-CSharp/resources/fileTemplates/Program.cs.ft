@@ -1,0 +1,12 @@
+using System;
+
+namespace ${NAMESPACE_NAME};
+
+class HelloWorld
+{
+    static void Main(string[] args)
+    {
+        // your code here
+        Console.WriteLine("Hello world");
+    }
+}

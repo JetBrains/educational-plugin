@@ -25,7 +25,7 @@ val ideaVersion: String by project
 val clionVersion: String by project
 val pycharmVersion: String by project
 val studioVersion: String by project
-val riderVersion: String by project
+val riderVersion: String? by project
 
 val isIdeaIDE = baseIDE == "idea"
 val isClionIDE = baseIDE == "clion"
@@ -38,7 +38,8 @@ val baseVersion = when {
   isClionIDE -> clionVersion
   isPycharmIDE -> pycharmVersion
   isStudioIDE -> studioVersion
-  isRiderIDE -> riderVersion
+  // BACKCOMPAT: 2024.1
+  isRiderIDE -> riderVersion ?: error("Rider is only supported from version 242 onwards")
   else -> error("Unexpected IDE name = `$baseIDE`")
 }
 
@@ -303,6 +304,12 @@ dependencies {
       // bundled localization resources can be used only since 2024.2,
       // so it doesn't make sense to have this module for other platforms
       pluginModule(implementation(project("localization")))
+    }
+
+    // BACKCOMPAT: 2024.1
+    if (isAtLeast242) {
+      // features necessary for course creation are available only since 2024.2
+      pluginModule(implementation(project("Edu-CSharp")))
     }
   }
 }
@@ -796,6 +803,20 @@ project("Edu-Shell") {
   }
 }
 
+// BACKCOMPAT: 2024.1
+if (isAtLeast242) {
+  project("Edu-CSharp") {
+    dependencies {
+      intellijPlatform {
+        intellijIde(riderVersion!!)
+      }
+
+      implementation(project(":intellij-plugin:educational-core"))
+      testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+    }
+  }
+}
+
 project("sql") {
   dependencies {
     intellijPlatform {
@@ -940,6 +961,9 @@ fun manifestFile(project: Project): File? {
     // BACKCOMPAT: 2024.1. Drop this branch
     ":intellij-plugin:Edu-Python" -> {
       filePath = "Edu-Python.xml"
+    }
+    ":intellij-plugin:Edu-CSharp" -> {
+      filePath = "Edu-CSharp.xml"
     }
     // Localization module is not supposed to have a plugin manifest.
     // Since it also is not supposed to have any code, only resources, no need to verify anything for it

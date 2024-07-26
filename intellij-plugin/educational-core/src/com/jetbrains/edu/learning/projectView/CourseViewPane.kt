@@ -21,7 +21,10 @@ import com.intellij.ide.impl.ProjectViewSelectInTarget
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.ide.projectView.ProjectViewSettings
 import com.intellij.ide.projectView.ViewSettings
-import com.intellij.ide.projectView.impl.*
+import com.intellij.ide.projectView.impl.AbstractProjectViewPaneWithAsyncSupport
+import com.intellij.ide.projectView.impl.ProjectAbstractTreeStructureBase
+import com.intellij.ide.projectView.impl.ProjectTreeStructure
+import com.intellij.ide.projectView.impl.ProjectViewTree
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.ide.util.treeView.NodeDescriptor
@@ -85,6 +88,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport
 
   private fun createCourseViewComponent(): JComponent {
     val component = super.createComponent()
+    CourseViewPaneCustomization.customize(myTree)
     if (!myProject.isStudentProject()) {
       HelpTooltipForTree().installOnTree(this, tree) { treeNode ->
         tryInstallNewTooltip(myProject, treeNode)

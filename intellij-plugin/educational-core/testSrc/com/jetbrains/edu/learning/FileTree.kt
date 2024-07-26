@@ -21,40 +21,54 @@ interface FileTreeBuilder {
 class FileTree(private val rootDirectory: Entry.Directory) {
 
   fun assertEquals(baseDir: VirtualFile, fixture: CodeInsightTestFixture? = null) {
+    fullyRefreshDirectory(baseDir)
+    assert(rootDirectory, baseDir, fixture) { expected, actual ->
+      expected == actual
+    }
+  }
 
-    fun go(expected: Entry.Directory, actual: VirtualFile) {
-      val actualChildren = actual.children
-        .filter { it.name !in IGNORED_FILES }
-        .associateBy { it.name }
-      check(expected.children.keys == actualChildren.keys) {
-        "Mismatch in directory ${actual.path}\n" +
-                "Expected: ${expected.children.keys}\n" +
-                "Actual  : ${actualChildren.keys}"
-      }
+  fun assertExists(baseDir: VirtualFile, fixture: CodeInsightTestFixture? = null) {
+    fullyRefreshDirectory(baseDir)
+    assert(rootDirectory, baseDir, fixture) { expected, actual ->
+      actual.containsAll(expected)
+    }
+  }
 
-      for ((name, entry) in expected.children) {
-        val child = actualChildren[name]!!
-        when (entry) {
-          is Entry.File -> {
-            check(!child.isDirectory)
-            if (entry.text != null) {
-              if (fixture != null && !child.isToEncodeContent) {
-                fixture.openFileInEditor(child)
-                fixture.checkResult(entry.text)
-              }
-              else {
-                val actualText = child.loadEncodedContent()
-                Assert.assertEquals(entry.text, actualText)
-              }
-            }
-          }
-          is Entry.Directory -> go(entry, child)
-        }
-      }
+  private fun assert(
+    expected: Entry.Directory,
+    actual: VirtualFile,
+    fixture: CodeInsightTestFixture?,
+    condition: (Set<String>, Set<String>) -> Boolean
+  ) {
+    val actualChildren = actual.children
+      .filter { it.name !in IGNORED_FILES }
+      .associateBy { it.name }
+    check(condition(expected.children.keys, actualChildren.keys)) {
+      "Mismatch in directory ${actual.path}\n" +
+      "Expected: ${expected.children.keys}\n" +
+      "Actual  : ${actualChildren.keys}"
     }
 
-    fullyRefreshDirectory(baseDir)
-    go(rootDirectory, baseDir)
+    for ((name, entry) in expected.children) {
+      val child = actualChildren[name]!!
+      when (entry) {
+        is Entry.File -> {
+          check(!child.isDirectory)
+          if (entry.text != null) {
+            if (fixture != null && !child.isToEncodeContent) {
+              fixture.openFileInEditor(child)
+              fixture.checkResult(entry.text)
+            }
+            else {
+              val actualText = child.loadEncodedContent()
+              Assert.assertEquals(entry.text, actualText)
+            }
+          }
+        }
+
+        is Entry.Directory -> assert(entry, child, fixture, condition)
+      }
+    }
   }
 
   fun create(root: VirtualFile) {
@@ -65,6 +79,7 @@ class FileTree(private val rootDirectory: Entry.Directory) {
             val vFile = root.findOrCreateChildData(root, name)
             VfsUtil.saveText(vFile, entry.text ?: "")
           }
+
           is Entry.Directory -> {
             go(entry, root.createChildDirectory(root, name))
           }
@@ -103,7 +118,8 @@ private class FileTreeBuilderImpl(val directory: MutableMap<String, Entry> = mut
   private fun forPathSegments(pathSegments: List<String>, lastBlock: FileTreeBuilder.() -> Unit) {
     directory[pathSegments[0]] = if (pathSegments.size == 1) {
       FileTreeBuilderImpl().apply(lastBlock).intoDirectory()
-    } else {
+    }
+    else {
       FileTreeBuilderImpl().apply { forPathSegments(pathSegments.drop(1), lastBlock) }.intoDirectory()
     }
   }

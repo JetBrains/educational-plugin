@@ -35,6 +35,11 @@ include(
   "intellij-plugin:localization",
 )
 
+// BACKCOMPAT: 2024.1
+if (compareValues(settings.providers.gradleProperty("environmentName").orNull?.toInt(), 242) >= 0) {
+  include("intellij-plugin:Edu-CSharp")
+}
+
 if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {
   include("fleet-plugin")
 }

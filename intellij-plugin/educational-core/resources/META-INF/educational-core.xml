@@ -85,6 +85,9 @@
     <extensionPoint qualifiedName="Educational.yamlActionsHelper"
                     interface="com.jetbrains.edu.coursecreator.actions.YamlActionsHelper"
                     dynamic="true"/>
+    <extensionPoint qualifiedName="Educational.courseViewPaneCustomization"
+                    interface="com.jetbrains.edu.learning.projectView.CourseViewPaneCustomization"
+                    dynamic="true"/>
   </extensionPoints>
 
   <actions>
