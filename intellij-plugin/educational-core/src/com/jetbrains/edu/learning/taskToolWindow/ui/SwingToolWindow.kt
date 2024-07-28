@@ -60,6 +60,10 @@ class SwingToolWindow(project: Project) : TaskToolWindow(project) {
     taskInfoTextPane.addHyperlinkListener(toolWindowLinkHandler)
   }
 
+  override fun updateTaskInfoPanel(task: Task?) {
+    taskInfoTextPane.text = getTaskDescription(project, task, uiMode)
+  }
+
   override fun updateTaskSpecificPanel(task: Task?) {
     taskSpecificPanel.removeAll()
     val panel = createSpecificPanel(task)
@@ -68,10 +72,6 @@ class SwingToolWindow(project: Project) : TaskToolWindow(project) {
       taskSpecificPanel.revalidate()
       taskSpecificPanel.repaint()
     }
-  }
-
-  override fun setText(text: String) {
-    taskInfoTextPane.text = text
   }
 
   private inner class HintElementLinkHandler : SwingToolWindowLinkHandler(project) {

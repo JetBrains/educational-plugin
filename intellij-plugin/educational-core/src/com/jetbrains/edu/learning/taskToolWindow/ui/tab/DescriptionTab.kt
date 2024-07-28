@@ -72,8 +72,7 @@ class DescriptionTab(project: Project) : TaskToolWindowTab(project, TabType.DESC
   }
 
   override fun update(task: Task) {
-    taskTextToolWindow.setTaskText(project, task)
-    taskTextToolWindow.updateTaskSpecificPanel(task)
+    taskTextToolWindow.setTaskText(task)
   }
 
   fun updateCheckDetails(task: Task, checkResult: CheckResult) = checkPanel.updateCheckDetails(task, checkResult)
