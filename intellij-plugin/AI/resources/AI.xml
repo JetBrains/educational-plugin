@@ -1,3 +1,9 @@
 <idea-plugin package="com.jetbrains.edu.ai">
   <resource-bundle>messages.EduAIBundle</resource-bundle>
+
+  <actions>
+    <action id="Educational.EduAIServiceChangeHost"
+            class="com.jetbrains.edu.ai.action.EduAIServiceChangeHost"
+            internal="true"/>
+  </actions>
 </idea-plugin>
