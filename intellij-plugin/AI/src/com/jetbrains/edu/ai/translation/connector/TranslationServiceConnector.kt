@@ -23,6 +23,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import okhttp3.ConnectionPool
+import retrofit2.Response
 import retrofit2.converter.jackson.JacksonConverterFactory
 
 @Suppress("unused")
@@ -50,48 +51,28 @@ class TranslationServiceConnector(private val scope: CoroutineScope) {
     marketplaceId: MarketplaceId,
     updateVersion: UpdateVersion,
     language: Language
-  ): Result<CourseTranslation, String> {
-    val response = scope
+  ): Result<CourseTranslation, String> =
+    scope
       .async(Dispatchers.IO) {
         service
           .getTranslatedCourse(marketplaceId.value, updateVersion.value, language.name)
-          .executeParsingErrors()
+          .executeGetCall("Failed to get translation for course ($marketplaceId, $updateVersion, $language)")
       }
       .await()
-      .onError {
-        LOG.error("Failed to get translation for course ($marketplaceId, $updateVersion, $language). Error message: $it")
-        return Err(it)
-      }
-
-    return when (val courseTranslation = response.body()) {
-      null -> Err("Response body is null")
-      else -> Ok(courseTranslation)
-    }
-  }
 
   suspend fun getTranslatedTask(
     marketplaceId: MarketplaceId,
     updateVersion: UpdateVersion,
     language: Language,
     taskId: TaskEduId
-  ): Result<CourseTranslation, String> {
-    val response = scope
+  ): Result<CourseTranslation, String> =
+    scope
       .async(Dispatchers.IO) {
         service
           .getTranslatedTask(marketplaceId.value, updateVersion.value, language.name, taskId.value)
-          .executeParsingErrors()
+          .executeGetCall("Failed to get translation for course ($marketplaceId, $updateVersion, $language, $taskId)")
       }
       .await()
-      .onError {
-        LOG.error("Failed to get translation for course ($marketplaceId, $updateVersion, $language, $taskId). Error message: $it")
-        return Err(it)
-      }
-
-    return when (val courseTranslation = response.body()) {
-      null -> Err("Response body is null")
-      else -> Ok(courseTranslation)
-    }
-  }
 
   suspend fun doTranslateCourse(
     marketplaceId: MarketplaceId,
@@ -114,6 +95,18 @@ class TranslationServiceConnector(private val scope: CoroutineScope) {
     return when (response.isSuccessful) {
       true -> Ok(true)
       false -> Err("Response body is null")
+    }
+  }
+
+  private fun <T> Response<T>.executeGetCall(errorMessage: String): Result<T, String> {
+    val response = executeParsingErrors()
+      .onError {
+        LOG.error("$errorMessage. Error message: $it")
+        return Err(it)
+      }
+    return when (val body = response.body()) {
+      null -> Err("Response body is null")
+      else -> Ok(body)
     }
   }
 
