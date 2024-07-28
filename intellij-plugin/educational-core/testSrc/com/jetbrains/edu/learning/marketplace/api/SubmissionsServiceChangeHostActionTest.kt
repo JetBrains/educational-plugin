@@ -4,9 +4,9 @@ import com.intellij.ide.util.PropertiesComponent
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.marketplace.SUBMISSIONS_SERVICE_HOST_PROPERTY
 import com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceChangeHost
-import com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceChangeHostUI
 import com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceHost
-import com.jetbrains.edu.learning.marketplace.changeHost.withMockSubmissionsServiceChangeHostUI
+import com.jetbrains.edu.learning.services.dialog.ServiceHostChanger
+import com.jetbrains.edu.learning.services.dialog.withMockServiceHostChanger
 import com.jetbrains.edu.learning.testAction
 import org.jetbrains.annotations.NonNls
 import org.junit.Test
@@ -57,7 +57,7 @@ class SubmissionsServiceChangeHostActionTest : EduTestCase() {
   }
 
   private fun doSubmissionsServiceChangeHostAction(url: String) {
-    withMockSubmissionsServiceChangeHostUI(object : SubmissionsServiceChangeHostUI {
+    withMockServiceHostChanger(object : ServiceHostChanger {
       override fun getResultUrl(): String = url
     }) {
       testAction(SubmissionsServiceChangeHost.ACTION_ID)

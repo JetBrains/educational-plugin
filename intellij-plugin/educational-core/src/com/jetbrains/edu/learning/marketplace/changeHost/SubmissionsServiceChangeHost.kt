@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.marketplace.MarketplaceSolutionLoader
 import com.jetbrains.edu.learning.marketplace.SUBMISSIONS_SERVICE_HOST_PROPERTY
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.services.dialog.showDialogAndGetHost
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import org.jetbrains.annotations.NonNls
 
@@ -18,7 +19,7 @@ class SubmissionsServiceChangeHost : DumbAwareAction(EduCoreBundle.message("subm
     val project = e.project ?: return
     val course = project.course ?: return
 
-    val selectedUrl = showDialogAndGetSubmissionsServiceHost()
+    val selectedUrl = SubmissionsServiceChangeHostDialog().showDialogAndGetHost()
     if (selectedUrl == null) {
       LOG.warn("Selected Submissions service URL item is null")
       return

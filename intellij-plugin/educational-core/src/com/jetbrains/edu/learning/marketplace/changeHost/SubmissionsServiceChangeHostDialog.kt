@@ -12,10 +12,11 @@ import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.marketplace.SUBMISSIONS_SERVICE_HOST_PROPERTY
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.services.dialog.ServiceHostChanger
 import javax.swing.JComboBox
 import javax.swing.JComponent
 
-internal class SubmissionsServiceChangeHostDialog : SubmissionsServiceChangeHostUI, DialogWrapper(true) {
+internal class SubmissionsServiceChangeHostDialog : ServiceHostChanger, DialogWrapper(true) {
   private var selectedHost: SubmissionsServiceHost? = SubmissionsServiceHost.getSelectedHost()
 
   private var otherServer: String = if (selectedHost in listOf(SubmissionsServiceHost.PRODUCTION, SubmissionsServiceHost.STAGING)) {

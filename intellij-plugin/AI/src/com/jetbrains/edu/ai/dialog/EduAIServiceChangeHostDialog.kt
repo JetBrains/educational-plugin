@@ -14,10 +14,11 @@ import com.jetbrains.edu.ai.host.EduAIServiceHost
 import com.jetbrains.edu.ai.host.EduAIServiceHost.*
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.services.dialog.ServiceHostChanger
 import javax.swing.JComboBox
 import javax.swing.JComponent
 
-class EduAIServiceChangeHostDialog : EduAIServiceChangeHostUI, DialogWrapper(true) {
+class EduAIServiceChangeHostDialog : ServiceHostChanger, DialogWrapper(true) {
   private var selectedHost: EduAIServiceHost? = EduAIServiceHost.getSelectedHost()
 
   private var otherServer: String = if (selectedHost in listOf(PRODUCTION, STAGING)) {
