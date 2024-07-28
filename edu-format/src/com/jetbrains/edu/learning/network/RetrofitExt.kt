@@ -112,7 +112,7 @@ fun <T> Response<T>.executeParsingErrors(omitErrors: Boolean = false): Result<Re
   if (omitErrors) LOG.warning(fullErrorText) else LOG.severe(fullErrorText)
 
   return when (code) {
-    HTTP_OK, HTTP_CREATED, HTTP_NO_CONTENT -> Ok(this) // 200, 201, 202, 204
+    HTTP_OK, HTTP_CREATED, HTTP_ACCEPTED, HTTP_NO_CONTENT -> Ok(this) // 200, 201, 202, 204
     HTTP_UNAVAILABLE, HTTP_BAD_GATEWAY ->
       Err("${message("error.service.maintenance")}\n\n$error") // 502, 503
     in HTTP_INTERNAL_ERROR..HTTP_VERSION ->

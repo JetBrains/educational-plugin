@@ -1,6 +1,15 @@
 package com.jetbrains.edu.ai.translation
 
+import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.educational.core.format.domain.MarketplaceId
+import com.jetbrains.educational.core.format.domain.UpdateVersion
 import com.jetbrains.educational.translation.enum.Language
 
 val defaultLanguage: Language
   get() = Language.ENGLISH
+
+val EduCourse.marketplaceId: MarketplaceId
+  get() = MarketplaceId(id)
+
+val EduCourse.updateVersion: UpdateVersion
+  get() = UpdateVersion(course.marketplaceCourseVersion)
