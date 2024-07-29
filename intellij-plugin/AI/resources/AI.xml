@@ -5,6 +5,10 @@
     <action id="Educational.EduAIServiceChangeHost"
             class="com.jetbrains.edu.ai.action.EduAIServiceChangeHost"
             internal="true"/>
+
+    <action id="Educational.GetCourseTranslation"
+            class="com.jetbrains.edu.ai.translation.action.GetCourseTranslation"
+            internal="true"/>
   </actions>
 
   <extensionPoints>
