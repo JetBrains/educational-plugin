@@ -30,6 +30,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.Function
 import com.intellij.util.PathUtil
+import com.jetbrains.edu.coursecreator.handlers.StudyItemRefactoringHandler
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -217,6 +218,7 @@ object CCUtils {
       val lesson = lessonsToWrap[i]
       val lessonDir = lesson.getDir(project.courseDir)
       if (lessonDir != null) {
+        StudyItemRefactoringHandler.processBeforeLessonMovement(project, lesson, sectionDir)
         moveLesson(lessonDir, sectionDir)
         lesson.index = i + 1
         lesson.parent = section

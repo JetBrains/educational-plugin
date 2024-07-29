@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.move.MoveCallback
 import com.jetbrains.edu.coursecreator.CCUtils.updateHigherElements
 import com.jetbrains.edu.coursecreator.StudyItemType
+import com.jetbrains.edu.coursecreator.handlers.StudyItemRefactoringHandler
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
@@ -63,6 +64,7 @@ class CCLessonMoveHandlerDelegate : CCStudyItemMoveHandlerDelegate(StudyItemType
     if (delta == null) {
       return
     }
+    StudyItemRefactoringHandler.processBeforeLessonMovement(project, sourceLesson, targetParentDir)
     val sourceContainer = sourceLesson.container
     val sourceLessonIndex = sourceLesson.index
     sourceLesson.index = -1

@@ -37,7 +37,7 @@ import java.io.File
 
 @Service(Service.Level.PROJECT)
 class CSharpBackendService(private val project: Project) : Disposable {
-  private val csprojMergingQueue = MergingUpdateQueue(PROJECT_MODEL_READY, 300, false, null, this, null, true)
+  private val csprojMergingQueue = TaskMergingQueue()
   private val indexingMergingQueue = MergingUpdateQueue(INDEXING_REQUEST, 300, false, null, this)
 
   init {
@@ -54,28 +54,7 @@ class CSharpBackendService(private val project: Project) : Disposable {
   }
 
   fun addCSProjectFilesToSolution(tasks: List<Task>) {
-    csprojMergingQueue.queue(Update.create(tasks) {
-      val csprojTaskPaths = tasks.map { it.csProjPathByTask(project).toIOFile().toString() }
-      val projectModelTasks = project.solution.projectModelTasks
-      val parentId = WorkspaceModel.getInstance(project).getSolutionEntity()?.getId(project) ?: return@create
-      val parameters = RdPostProcessParameters(false, listOf())
-      val command = AddProjectCommand(parentId, csprojTaskPaths, listOf(), true, parameters)
-      try {
-        projectModelTasks.addProject.runCommandUnderProgress(
-          command,
-          project,
-          EduCSharpBundle.message("adding.projects.to.solution"),
-          isCancelable = false,
-          throwFault = true
-        )
-      }
-      catch (e: RdFault) {
-        LOG.warn("Could not add csproj files to solution", e)
-        if (isUserWantsToRetry()) {
-          addCSProjectFilesToSolution(tasks)
-        }
-      }
-    })
+    csprojMergingQueue.queue(Update.create(tasks) {})
   }
 
   fun removeCSProjectFilesFromSolution(tasks: List<Task>) {
@@ -101,15 +80,6 @@ class CSharpBackendService(private val project: Project) : Disposable {
     }
   }
 
-  @Suppress("HardcodedStringLiteral")
-  private fun isUserWantsToRetry(): Boolean = Messages.showOkCancelDialog(
-    EduCSharpBundle.getMessage("unexpected.error.occurred.when.adding.task.retry"),
-    CommonBundle.getErrorTitle(),
-    EduCoreBundle.getMessage("retry"),
-    CommonBundle.getCancelButtonText(),
-    Messages.getErrorIcon()
-  ) == MessageConstants.OK
-
   fun startIndexingTopLevelFiles(files: List<File>) {
     indexingMergingQueue.queue(Update.create(files) {
       WorkspaceUserModelUpdater.getInstance(project).tryInclude(files)
@@ -126,11 +96,48 @@ class CSharpBackendService(private val project: Project) : Disposable {
 
   override fun dispose() {}
 
+  private inner class TaskMergingQueue : MergingUpdateQueue(PROJECT_MODEL_READY, 500, false, null, null, null, true) {
+    override fun execute(updates: Array<out Update>) {
+      val tasks = updates.flatMapTo(HashSet()) { upd ->
+        upd.equalityObjects.mapNotNull { it as List<*> }.flatten().mapNotNull { it as? Task }
+      }.toList()
+      val csprojTaskPaths = tasks.map { it.csProjPathByTask(project).toIOFile().toString() }
+      val projectModelTasks = project.solution.projectModelTasks
+      val parentId = WorkspaceModel.getInstance(project).getSolutionEntity()?.getId(project) ?: return
+      val parameters = RdPostProcessParameters(false, listOf())
+      val command = AddProjectCommand(parentId, csprojTaskPaths, listOf(), true, parameters)
+      try {
+        projectModelTasks.addProject.runCommandUnderProgress(
+          command,
+          project,
+          EduCSharpBundle.message("adding.projects.to.solution"),
+          isCancelable = false,
+          throwFault = true
+        )
+      }
+      catch (e: RdFault) {
+        LOG.warn("Could not add csproj files to solution: $tasks", e)
+        if (isUserWantsToRetry()) {
+          addCSProjectFilesToSolution(tasks)
+        }
+      }
+    }
+
+    @Suppress("HardcodedStringLiteral")
+    private fun isUserWantsToRetry(): Boolean = Messages.showOkCancelDialog(
+      EduCSharpBundle.getMessage("unexpected.error.occurred.when.adding.task.retry"),
+      CommonBundle.getErrorTitle(),
+      EduCoreBundle.getMessage("retry"),
+      CommonBundle.getCancelButtonText(),
+      Messages.getErrorIcon()
+    ) == MessageConstants.OK
+
+  }
+
   companion object {
     fun getInstance(project: Project): CSharpBackendService = project.service()
     private val LOG = logger<CSharpBackendService>()
     private const val PROJECT_MODEL_READY: String = "Project Model Ready"
     private const val INDEXING_REQUEST: String = "Indexing Request"
   }
-
 }
