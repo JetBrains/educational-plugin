@@ -88,8 +88,7 @@ private const val SURVEY_PROMPTED = "surveyPrompted"
 
 private const val QUESTIONNAIRE_ADVERTISING_NOTIFICATION_SHOWN = "questionnaireAdvertisingNotification"
 
-private const val FEEDBACK_URL_TEMPLATE = "https://www.jetbrains.com/feedback/feedback.jsp?" +
-                                          "product=EduTools&ide=\$PRODUCT&course=\$COURSE&mode=\$MODE"
+private const val FEEDBACK_URL_TEMPLATE = "https://www.jetbrains.com/feedback/academy/"
 
 private const val QUESTIONNAIRE_URL_TEMPLATE = "https://surveys.jetbrains.com/s3/marketplace-courses-survey?ide=\$PRODUCT&courseId=\$COURSE_ID"
 
