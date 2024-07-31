@@ -99,13 +99,4 @@ class TabManager(private val project: Project) : Disposable {
     val indexOfTab = tabbedPane.indexOfTab(tabType.tabName)
     tabbedPane.selectedIndex = if (indexOfTab != -1) indexOfTab else 0
   }
-
-  fun updateTaskSpecificPanel(task: Task?) {
-    descriptionTab.updateTaskSpecificPanel(task)
-  }
-
-  fun updateTaskDescription(task: Task?) {
-    task ?: return
-    descriptionTab.update(task)
-  }
 }

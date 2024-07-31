@@ -57,7 +57,7 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
     // TODO: move it in some separate method
     set(value) {
       if (currentTask !== null && currentTask === value) return
-      tabManager.updateTaskDescription(value)
+      value?.let { tabManager.descriptionTab.update(it) }
       tabManager.descriptionTab.isSeparatorVisible = value != null
       tabManager.descriptionTab.isCheckPanelVisible = value != null
       updateCheckPanel(value)
@@ -129,7 +129,7 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
   }
 
   override fun updateTaskSpecificPanel() {
-    tabManager.updateTaskSpecificPanel(currentTask)
+    tabManager.descriptionTab.updateTaskSpecificPanel(currentTask)
   }
 
   override fun updateNavigationPanel(task: Task?) {
@@ -153,7 +153,7 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
   override fun updateNavigationPanel() = updateNavigationPanel(currentTask)
 
   override fun updateTaskDescriptionTab(task: Task?) {
-    tabManager.updateTaskDescription(task)
+    task?.let { tabManager.descriptionTab.update(it) }
   }
 
   override fun updateTaskDescription() {
@@ -256,7 +256,7 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
       updateCheckPanel(task)
     }
     if (checkResult.status == CheckStatus.Failed) {
-      tabManager.updateTaskSpecificPanel(task)
+      tabManager.descriptionTab.updateTaskSpecificPanel(task)
     }
   }
 
