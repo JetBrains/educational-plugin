@@ -5,25 +5,22 @@ import com.intellij.credentialStore.Credentials
 import com.intellij.credentialStore.generateServiceName
 import com.intellij.ide.BrowserUtil
 import com.intellij.ide.passwordSafe.PasswordSafe
-import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationType.INFORMATION
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task.Backgroundable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.NlsSafe
-import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
-import com.jetbrains.edu.learning.socialmedia.twitter.ui.TwitterDialogUI
-import com.jetbrains.edu.learning.socialmedia.twitter.ui.createTwitterDialogUI
+import com.jetbrains.edu.learning.socialmedia.suggestToPostDialog.SuggestToPostDialogUI
+import com.jetbrains.edu.learning.socialmedia.twitter.dialog.createTwitterDialogUI
 import twitter4j.*
 import twitter4j.auth.AccessToken
 import twitter4j.auth.RequestToken
@@ -31,7 +28,6 @@ import twitter4j.conf.ConfigurationBuilder
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.nio.file.Path
-import kotlin.io.path.exists
 
 object TwitterUtils {
   private val LOG = Logger.getInstance(TwitterUtils::class.java)
@@ -132,18 +128,9 @@ object TwitterUtils {
     val mediaPath: Path?
   )
 
-  fun pluginRelativePath(path: String): Path? {
-    require(!FileUtil.isAbsolute(path)) { "`$path` shouldn't be absolute" }
-
-    return PluginManagerCore.getPlugin(PluginId.getId(EduNames.PLUGIN_ID))
-      ?.pluginPath
-      ?.resolve(path)
-      ?.takeIf { it.exists() }
-  }
-
   private class TweetingBackgroundableTask(
     project: Project,
-    private val dialog: TwitterDialogUI,
+    private val dialog: SuggestToPostDialogUI,
     private val imagePath: Path?
   ) : Backgroundable(project, EduCoreBundle.message("twitter.loading.posting"), true) {
 

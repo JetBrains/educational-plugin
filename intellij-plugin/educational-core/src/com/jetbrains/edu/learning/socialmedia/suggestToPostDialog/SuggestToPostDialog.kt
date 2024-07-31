@@ -1,27 +1,31 @@
-package com.jetbrains.edu.learning.socialmedia.twitter.ui
+package com.jetbrains.edu.learning.socialmedia.suggestToPostDialog
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.ValidationInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.socialmedia.twitter.TwitterSettings
+import com.jetbrains.edu.learning.socialmedia.SocialMediaSettings
 import javax.swing.JComponent
 
 /**
  * Dialog wrapper class with DoNotAsk option for asking user to tweet.
  */
-class TwitterDialog(
+abstract class SuggestToPostDialog(
   project: Project,
-  dialogPanelCreator: (Disposable) -> TwitterDialogPanel
-) : DialogWrapper(project), TwitterDialogUI {
+  dialogPanelCreator: (Disposable) -> SuggestToPostDialogPanel,
+  dialogTitle: String,
+  okButtonText: String,
+  val settings: SocialMediaSettings<SocialMediaSettings.SocialMediaSettingsState>
+) : DialogWrapper(project), SuggestToPostDialogUI {
 
-  private val panel: TwitterDialogPanel
+
+  private val panel: SuggestToPostDialogPanel
 
   init {
-    title = EduCoreBundle.message("twitter.dialog.title")
-    setDoNotAskOption(TwitterDoNotAskOption())
-    setOKButtonText(EduCoreBundle.message("twitter.dialog.ok.action"))
+    title = dialogTitle
+    setDoNotAskOption(SuggestDoNotAskToPostOption(settings))
+    setOKButtonText(okButtonText)
     setResizable(false)
     panel = dialogPanelCreator(disposable)
 
@@ -34,10 +38,11 @@ class TwitterDialog(
   override fun createCenterPanel(): JComponent = panel
   override fun doValidate(): ValidationInfo? = panel.doValidate()
 
-  private class TwitterDoNotAskOption : com.intellij.openapi.ui.DoNotAskOption {
+  private class SuggestDoNotAskToPostOption(val settings: SocialMediaSettings<SocialMediaSettings.SocialMediaSettingsState>) :
+    com.intellij.openapi.ui.DoNotAskOption {
     override fun setToBeShown(toBeShown: Boolean, exitCode: Int) {
       if (exitCode == CANCEL_EXIT_CODE || exitCode == OK_EXIT_CODE) {
-        TwitterSettings.getInstance().askToPost = toBeShown
+        settings.askToPost = toBeShown
       }
     }
 

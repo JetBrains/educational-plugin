@@ -1,16 +1,14 @@
-package com.jetbrains.edu.learning.socialmedia.twitter.ui
+package com.jetbrains.edu.learning.socialmedia.suggestToPostDialog
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.socialmedia.twitter.TwitterPluginConfigurator
+import com.jetbrains.edu.learning.socialmedia.SocialmediaPluginConfigurator
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.callback.CefContextMenuParams
@@ -22,21 +20,21 @@ import javax.swing.ImageIcon
 import javax.swing.JComponent
 import javax.swing.JTextArea
 
-class DefaultTwitterDialogPanel(
-  configurator: TwitterPluginConfigurator,
+open class DefaultSuggestToPostDialogPanel(
+  configurator: SocialmediaPluginConfigurator,
   solvedTask: Task,
   imagePath: Path?,
   disposable: Disposable
-) : TwitterDialogPanel(VerticalFlowLayout(0, 0)) {
+) : SuggestToPostDialogPanel(VerticalFlowLayout(0, 0)) {
 
-  private val twitterTextField: JTextArea = JTextArea(4, 0)
+  private val textField: JTextArea = JTextArea(4, 0)
 
   init {
     border = JBUI.Borders.empty()
-    twitterTextField.lineWrap = true
-    twitterTextField.text = configurator.getDefaultMessage(solvedTask)
+    textField.lineWrap = true
+    textField.text = configurator.getDefaultMessage(solvedTask)
     // JTextArea doesn't support scrolling itself
-    val scrollPane = JBScrollPane(twitterTextField)
+    val scrollPane = JBScrollPane(textField)
     add(scrollPane)
 
     if (imagePath != null) {
@@ -47,20 +45,10 @@ class DefaultTwitterDialogPanel(
     }
   }
 
-  override val message: String get() = twitterTextField.text
-
-  override fun doValidate(): ValidationInfo? {
-    val extraCharacters = twitterTextField.text.length - 280
-    return if (extraCharacters > 0) {
-      ValidationInfo(EduCoreBundle.message("twitter.validation.maximum.length", extraCharacters), twitterTextField)
-    }
-    else {
-      super.doValidate()
-    }
-  }
+  override val message: String get() = textField.text
 
   private fun createImageComponent(path: Path, disposable: Disposable): JComponent {
-    val browser = TwitterJBCefBrowser(path)
+    val browser = SuggestToPostJBCefBrowser(path)
     Disposer.register(disposable, browser)
     val component = browser.component
     component.preferredSize = calculateImageDimension(path)
@@ -73,7 +61,7 @@ class DefaultTwitterDialogPanel(
     return Dimension(icon.iconWidth, icon.iconHeight)
   }
 
-  private class TwitterJBCefBrowser(path: Path) : JBCefBrowser(path.toUri().toString()) {
+  private class SuggestToPostJBCefBrowser(path: Path) : JBCefBrowser(path.toUri().toString()) {
     override fun createDefaultContextMenuHandler(): DefaultCefContextMenuHandler {
       val isInternal = ApplicationManager.getApplication().isInternal
       return object : DefaultCefContextMenuHandler(isInternal) {

@@ -12,9 +12,9 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.socialmedia.suggestToPostDialog.SuggestToPostDialogUI
 import com.jetbrains.edu.learning.socialmedia.twitter.TwitterSettings
-import com.jetbrains.edu.learning.socialmedia.twitter.ui.TwitterDialogUI
-import com.jetbrains.edu.learning.socialmedia.twitter.ui.withMockTwitterDialogUI
+import com.jetbrains.edu.learning.socialmedia.twitter.dialog.withMockTwitterDialogUI
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.ui.getUICheckLabel
@@ -145,7 +145,7 @@ class HyperskillTwittingTest : EduActionTestCase() {
 
   private fun launchCheckAction(task: Task): Boolean {
     var isDialogShown = false
-    withMockTwitterDialogUI(object : TwitterDialogUI {
+    withMockTwitterDialogUI(object : SuggestToPostDialogUI {
       override val message: String get() = "Twitter message"
 
       override fun showAndGet(): Boolean {

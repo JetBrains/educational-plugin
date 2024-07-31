@@ -1,18 +1,15 @@
-package com.jetbrains.edu.learning.socialmedia.twitter.ui
+package com.jetbrains.edu.learning.socialmedia.suggestToPostDialog
 
 import com.intellij.openapi.ui.ValidationInfo
 import java.awt.LayoutManager
 import javax.swing.JPanel
 
-/**
- * Class provides structure for twitter dialog panel
- */
-abstract class TwitterDialogPanel : JPanel {
+abstract class SuggestToPostDialogPanel : JPanel {
   constructor(layout: LayoutManager) : super(layout)
   constructor() : super()
 
   /**
-   * Provides tweet text
+   * Provides post text
    */
   abstract val message: String
 

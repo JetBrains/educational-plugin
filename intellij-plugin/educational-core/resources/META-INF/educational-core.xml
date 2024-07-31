@@ -45,6 +45,9 @@
     <extensionPoint qualifiedName="Educational.twitterPluginConfigurator"
                     interface="com.jetbrains.edu.learning.socialmedia.twitter.TwitterPluginConfigurator"
                     dynamic="true"/>
+    <extensionPoint qualifiedName="Educational.linkedInPluginConfigurator"
+                    interface="com.jetbrains.edu.learning.socialmedia.linkedIn.LinkedInPluginConfigurator"
+                    dynamic="true"/>
     <extensionPoint qualifiedName="Educational.remoteTaskChecker"
                     interface="com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker"
                     dynamic="true"/>
@@ -444,6 +447,7 @@
     <optionsProvider instance="com.jetbrains.edu.learning.stepik.StepikOptions"/>
     <optionsProvider instance="com.jetbrains.edu.learning.coursera.CourseraOptions"/>
     <checkListener implementation="com.jetbrains.edu.learning.socialmedia.twitter.TwitterAction"/>
+    <checkListener implementation="com.jetbrains.edu.learning.socialmedia.linkedIn.LinkedInAction"/>
     <checkListener implementation="com.jetbrains.edu.learning.statistics.PostFeedbackCheckListener"/>
     <checkListener implementation="com.jetbrains.edu.learning.command.validation.ValidationCheckListener"/>
     <coursesPlatformProviderFactory id="Marketplace" order="first"

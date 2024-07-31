@@ -5,8 +5,8 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CheckStatus.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.socialmedia.SocialmediaUtils
 import com.jetbrains.edu.learning.socialmedia.twitter.TwitterPluginConfigurator
-import com.jetbrains.edu.learning.socialmedia.twitter.TwitterUtils
 import org.jetbrains.annotations.NonNls
 import java.nio.file.Path
 
@@ -29,7 +29,7 @@ class KtTwitterConfigurator : TwitterPluginConfigurator {
   override fun getImagePath(solvedTask: Task): Path? {
     val solvedTaskNumber = calculateTaskNumber(solvedTask)
     val level = solvedTaskNumber / 8
-    return TwitterUtils.pluginRelativePath("twitter/kotlin_koans/images/${level}level.gif")
+    return SocialmediaUtils.pluginRelativePath("socialmedia/twitter/kotlin_koans/images/${level}level.gif")
   }
 
   companion object {

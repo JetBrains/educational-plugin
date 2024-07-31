@@ -1,31 +1,19 @@
-package com.jetbrains.edu.learning.stepik.hyperskill.twitter
+package com.jetbrains.edu.learning.stepik.hyperskill.socialmedia.twitter
 
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.socialmedia.SocialmediaUtils
 import com.jetbrains.edu.learning.socialmedia.twitter.TwitterPluginConfigurator
-import com.jetbrains.edu.learning.socialmedia.twitter.TwitterUtils
+import com.jetbrains.edu.learning.stepik.hyperskill.socialmedia.HyperskillSocialmediaUtils
 import java.nio.file.Path
 import kotlin.random.Random
 
 class HyperskillTwitterConfigurator : TwitterPluginConfigurator {
-
   override fun askToPost(project: Project, solvedTask: Task, statusBeforeCheck: CheckStatus): Boolean {
-    val course = project.course as? HyperskillCourse ?: return false
-    if (!course.isStudy) return false
-    if (statusBeforeCheck == CheckStatus.Solved) return false
-
-    val projectLesson = course.getProjectLesson() ?: return false
-    if (solvedTask.lesson != projectLesson) return false
-
-    var allProjectTaskSolved = true
-    projectLesson.visitTasks {
-      allProjectTaskSolved = allProjectTaskSolved && it.status == CheckStatus.Solved
-    }
-    return allProjectTaskSolved
+    return HyperskillSocialmediaUtils.askToPost(project, solvedTask, statusBeforeCheck)
   }
 
   override fun getDefaultMessage(solvedTask: Task): String {
@@ -36,7 +24,7 @@ class HyperskillTwitterConfigurator : TwitterPluginConfigurator {
 
   override fun getImagePath(solvedTask: Task): Path? {
     val gifIndex = Random.Default.nextInt(NUMBER_OF_IMAGES)
-    return TwitterUtils.pluginRelativePath("twitter/hyperskill/achievement$gifIndex.gif")
+    return SocialmediaUtils.pluginRelativePath("socialmedia/twitter/hyperskill/achievement$gifIndex.gif")
   }
 
   companion object {

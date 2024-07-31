@@ -248,6 +248,12 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
       ITEM_TYPE_FIELD,
       LANGUAGE_FIELD
     )
+    private val LINKEDIN_DIALOG_SHOWN_EVENT = GROUP.registerEvent(
+      "linkedin.dialog.shown",
+      "The event is recorded in case a user receives a suggestion to post to LinkedIn about completing a course or task (e.g., JB Academy project completion).",
+      ITEM_TYPE_FIELD,
+      LANGUAGE_FIELD
+    )
     private val COURSE_SELECTION_VIEW_OPENED_EVENT = GROUP.registerEvent(
       "open.course.selection.view",
       "The event is recorded in case a user opens the Course Selection view.",
@@ -373,6 +379,8 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     fun codeforcesSubmitSolution() = CODEFORCES_SUBMIT_SOLUTION_EVENT.log()
 
     fun twitterDialogShown(course: Course) = TWITTER_DIALOG_SHOWN_EVENT.log(course.itemType, course.languageId)
+
+    fun linkedInDialogShown(course: Course) = LINKEDIN_DIALOG_SHOWN_EVENT.log(course.itemType, course.languageId)
 
     fun courseSelectionViewOpened(actionPlace: String) {
       COURSE_SELECTION_VIEW_OPENED_EVENT.log(CourseActionSource.fromActionPlace(actionPlace))
