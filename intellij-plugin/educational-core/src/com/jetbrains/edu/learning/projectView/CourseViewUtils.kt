@@ -103,14 +103,23 @@ object CourseViewUtils {
 
   fun getIcon(item: StudyItem): Icon {
     val icon = when (item) {
-      is Course -> icon
+      is Course -> EducationalCoreIcons.CourseTree
       is Section -> {
         if (item.isSolved) EducationalCoreIcons.SectionSolved else EducationalCoreIcons.Section
       }
+
       is Lesson -> {
         if (item.isSolved) EducationalCoreIcons.LessonSolved else EducationalCoreIcons.Lesson
       }
-      is Task -> item.icon
+
+      is Task -> when (item) {
+        is IdeTask -> if (item.isSolved) EducationalCoreIcons.IdeTaskSolved else EducationalCoreIcons.IdeTask
+        is TheoryTask -> if (item.isSolved) EducationalCoreIcons.TheoryTaskSolved else EducationalCoreIcons.TheoryTask
+        else -> if (item.status == CheckStatus.Unchecked) EducationalCoreIcons.Task
+        else if (item.isSolved || item.containsCorrectSubmissions()) EducationalCoreIcons.TaskSolved
+        else EducationalCoreIcons.TaskFailed
+      }
+
       else -> error("Unexpected item type: ${item.javaClass.simpleName}")
     }
     val modifier = getSyncChangesModifier(item) ?: return icon
@@ -148,20 +157,6 @@ object CourseViewUtils {
     val project = it.project ?: return false
     it.status == CheckStatus.Solved || SubmissionsManager.getInstance(project).containsCorrectSubmission(it.id)
   }
-
-  val icon: Icon
-    get() = EducationalCoreIcons.CourseTree
-
-  val Task.icon: Icon
-    get() {
-      return when (this) {
-        is IdeTask -> if (isSolved) EducationalCoreIcons.IdeTaskSolved else EducationalCoreIcons.IdeTask
-        is TheoryTask -> if (isSolved) EducationalCoreIcons.TheoryTaskSolved else EducationalCoreIcons.TheoryTask
-        else -> if (status == CheckStatus.Unchecked) EducationalCoreIcons.Task
-        else if  (isSolved || containsCorrectSubmissions()) EducationalCoreIcons.TaskSolved
-        else EducationalCoreIcons.TaskFailed
-      }
-    }
 
   private fun Task.containsCorrectSubmissions(): Boolean {
     val project = course.project ?: return false
