@@ -99,7 +99,6 @@ class HyperskillCheckNumberTaskTest : HyperskillCheckAnswerTaskTest() {
   @Test
   fun `test creating placeholder`() {
     val course = getCourse()
-    val task = course.allTasks[0] as NumberTask
     val stepSource = StepSource().apply {
       block = Step().apply {
         name = "number"
@@ -137,7 +136,7 @@ class HyperskillCheckNumberTaskTest : HyperskillCheckAnswerTaskTest() {
 
   /**
    * test method
-   * [TrailingSpacesOptionsAnswerTaskProvider.AnswerOptions.getEnsureNewLineAtEOF]
+   * [com.jetbrains.edu.learning.editor.TrailingSpacesOptionsAnswerTaskProvider.AnswerOptions.getEnsureNewLineAtEOF]
    *
    * method getEnsureNewLineAtEOF allow adding blank line to the end of file.
    * This option is enabled from the settings by checking the box "ensure every saved file ends with a line break".
