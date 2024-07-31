@@ -47,7 +47,6 @@ abstract class CoursesPanel(
   @Suppress("LeakingThis")
   var coursePanel: CoursePanel = createCoursePanel(disposable)
 
-  @Suppress("LeakingThis")
   protected val coursesSearchComponent: CoursesSearchComponent = CoursesSearchComponent(
     getEmptySearchText(),
     { coursesGroups },
@@ -62,15 +61,17 @@ abstract class CoursesPanel(
   private var loadingFinished = false
 
   val languageSettings get() = coursePanel.languageSettings
-  val selectedCourse get() = coursesListDecorator.getSelectedCourse()
+  private val selectedCourse get() = coursesListDecorator.getSelectedCourse()
 
   init {
     layout = cardLayout
     background = SelectCourseBackgroundColor
     coursesListDecorator.setSelectionListener { this.processSelectionChanged() }
 
+    @Suppress("LeakingThis")
     this.add(createContentPanel(), CONTENT_CARD_NAME)
     this.add(createLoadingPanel(), LOADING_CARD_NAME)
+    @Suppress("LeakingThis")
     this.add(createNoCoursesPanel(), NO_COURSES)
     showProgressState()
   }
