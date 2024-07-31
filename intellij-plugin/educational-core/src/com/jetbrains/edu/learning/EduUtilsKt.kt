@@ -89,6 +89,8 @@ object EduUtilsKt {
   @Suppress("UnstableApiUsage")
   fun isAndroidStudio(): Boolean = "AndroidStudio" == PlatformUtils.getPlatformPrefix()
 
+  fun isRider(): Boolean = PlatformUtils.RIDER_PREFIX == PlatformUtils.getPlatformPrefix()
+
   fun isTaskDescriptionFile(fileName: String): Boolean = TASK_HTML == fileName || TASK_MD == fileName
 
   fun updateToolWindows(project: Project) {
