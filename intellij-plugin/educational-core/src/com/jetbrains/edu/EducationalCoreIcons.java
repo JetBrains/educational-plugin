@@ -54,7 +54,6 @@ public final class EducationalCoreIcons {
     public static final Icon CommentTask = load("/icons/com/jetbrains/edu/learning/commentTask.svg");
     public static final Icon EduCourse = load("/icons/com/jetbrains/edu/eduCourseAction.svg");
     public static final Icon IgnoreSyncFile = load("/icons/com/jetbrains/edu/actions/syncFilesIgnore.svg");
-    public static final Icon LoggedInUser = load("/icons/com/jetbrains/edu/learning/loggedInUser.svg");
     public static final Icon RateCourse = load("/icons/com/jetbrains/edu/learning/rateCourse.svg");
     public static final Icon ResetTask = load("/icons/com/jetbrains/edu/learning/resetTask.svg");
     public static final Icon SyncChanges = load("/icons/com/jetbrains/edu/actions/syncFiles.svg");

@@ -7,18 +7,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.*
 import com.intellij.ui.LayeredIcon
 import com.jetbrains.edu.EducationalCoreIcons.CourseView
-import com.jetbrains.edu.EducationalCoreIcons.CourseView.CourseTree
-import com.jetbrains.edu.EducationalCoreIcons.CourseView.IdeTaskSolved
-import com.jetbrains.edu.EducationalCoreIcons.CourseView.Lesson
-import com.jetbrains.edu.EducationalCoreIcons.CourseView.LessonSolved
-import com.jetbrains.edu.EducationalCoreIcons.CourseView.Section
-import com.jetbrains.edu.EducationalCoreIcons.CourseView.SectionSolved
-import com.jetbrains.edu.EducationalCoreIcons.CourseView.SyncFilesModInfo
-import com.jetbrains.edu.EducationalCoreIcons.CourseView.SyncFilesModWarning
-import com.jetbrains.edu.EducationalCoreIcons.CourseView.TaskFailed
-import com.jetbrains.edu.EducationalCoreIcons.CourseView.TaskSolved
-import com.jetbrains.edu.EducationalCoreIcons.CourseView.TheoryTaskSolved
-import com.jetbrains.edu.EducationalCoreIcons.Platform.Codeforces
+import com.jetbrains.edu.EducationalCoreIcons.CourseView.*
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.framework.SyncChangesStateManager
 import com.jetbrains.edu.coursecreator.framework.SyncChangesTaskFileState
@@ -114,11 +103,19 @@ object CourseViewUtils {
   }
 
   fun getIcon(item: StudyItem): Icon {
-    val icon = when (item) {
-      is Course -> icon
+    val icon: Icon = when (item) {
+      is Course -> CourseTree
       is Section -> if (item.isSolved) SectionSolved else Section
+
       is Lesson -> if (item.isSolved) LessonSolved else Lesson
-      is Task -> item.icon
+
+      is Task -> when (item) {
+        is IdeTask -> if (item.isSolved) IdeTaskSolved else CourseView.IdeTask
+        is TheoryTask -> if (item.isSolved) TheoryTaskSolved else CourseView.TheoryTask
+        else -> if (item.status == CheckStatus.Unchecked) CourseView.Task
+        else if (item.isSolved || item.containsCorrectSubmissions()) TaskSolved
+        else TaskFailed
+      }
       else -> error("Unexpected item type: ${item.javaClass.simpleName}")
     }
     val modifier = getSyncChangesModifier(item) ?: return icon
@@ -156,9 +153,6 @@ object CourseViewUtils {
     val project = it.project ?: return false
     it.status == CheckStatus.Solved || SubmissionsManager.getInstance(project).containsCorrectSubmission(it.id)
   }
-
-  val icon: Icon
-    get() = EducationalCoreIcons.CourseTree
 
   val Task.icon: Icon
     get() {
