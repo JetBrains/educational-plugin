@@ -2,11 +2,16 @@ package com.jetbrains.edu.learning.socialmedia.linkedIn
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
+import com.intellij.notification.NotificationAction
+import com.intellij.notification.NotificationType.INFORMATION
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
+import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.api.EduOAuthCodeFlowConnector
 import com.jetbrains.edu.learning.authUtils.ConnectorUtils
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.network.executeHandlingExceptions
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.apache.http.client.utils.URIBuilder
@@ -81,17 +86,40 @@ class LinkedInConnector : EduOAuthCodeFlowConnector<LinkedInAccount, LinkedInUse
     return getWWWEndpoint().uploadMedia(requestBody, urlPath, params).executeHandlingExceptions()?.isSuccessful == true
   }
 
-  private fun createPost(uploadLinkData: GetUploadLinkResponse, message: String): Boolean {
+  private fun createPost(uploadLinkData: GetUploadLinkResponse, message: String): String? {
     val shareMediaContentBody = ShareMediaContentBody()
     shareMediaContentBody.author = "urn:li:person:${account!!.userInfo.id}"
     shareMediaContentBody.specificContent.shareContent.media[0].media = uploadLinkData.asset
     shareMediaContentBody.specificContent.shareContent.shareCommentary.text = message
-    return getAPIEndpoint().postTextWithMedia(shareMediaContentBody).executeHandlingExceptions()?.isSuccessful == true
+    val response = getAPIEndpoint().postTextWithMedia(shareMediaContentBody).executeHandlingExceptions()
+    if (response?.isSuccessful == true) {
+      return response.headers()["x-restli-id"]
+    }
+    else {
+      return null
+    }
   }
 
   fun createPostWithMedia(message: String, imagePath: Path) {
     val uploadLinkData = getMediaUploadLink() ?: return
-    if (createPost(uploadLinkData, message)) uploadMediaFile(uploadLinkData, imagePath)
+    if (uploadMediaFile(uploadLinkData, imagePath)) {
+      val postId = createPost(uploadLinkData, message)
+      if (postId != null) {
+        EduNotificationManager
+          .create(INFORMATION, EduCoreBundle.message("twitter.success.title"), EduCoreBundle.message("linkedin.post.posted"))
+          .addAction(NotificationAction.createSimpleExpiring(EduCoreBundle.message("twitter.open.in.browser")) {
+            EduBrowser.getInstance().browse("https://www.linkedin.com/feed/update/${postId}")
+          })
+          .notify(null)
+      }
+      else {
+        EduNotificationManager.showErrorNotification(
+          null,
+          EduCoreBundle.message("linkedin.error.failed.to.post"),
+          EduCoreBundle.message("linkedin.error.failed.to.post")
+        )
+      }
+    }
   }
 
 

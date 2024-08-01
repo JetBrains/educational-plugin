@@ -19,6 +19,7 @@ import javax.swing.Box
 import javax.swing.ImageIcon
 import javax.swing.JComponent
 import javax.swing.JTextArea
+import kotlin.math.max
 
 open class DefaultSuggestToPostDialogPanel(
   configurator: SocialmediaPluginConfigurator,
@@ -49,16 +50,17 @@ open class DefaultSuggestToPostDialogPanel(
 
   private fun createImageComponent(path: Path, disposable: Disposable): JComponent {
     val browser = SuggestToPostJBCefBrowser(path)
+    browser.cefBrowser.uiComponent.preferredSize = Dimension(600, 315)
     Disposer.register(disposable, browser)
     val component = browser.component
-    component.preferredSize = calculateImageDimension(path)
+    component.maximumSize = calculateImageDimension(path)
     return component
   }
 
   private fun calculateImageDimension(path: Path): Dimension {
     // TODO: it can be done more efficiently
     val icon = ImageIcon(path.toString())
-    return Dimension(icon.iconWidth, icon.iconHeight)
+    return Dimension(max(icon.iconWidth, 600), max(icon.iconHeight, 315))
   }
 
   private class SuggestToPostJBCefBrowser(path: Path) : JBCefBrowser(path.toUri().toString()) {
