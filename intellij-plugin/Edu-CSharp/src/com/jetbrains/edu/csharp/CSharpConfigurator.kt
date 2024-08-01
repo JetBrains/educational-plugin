@@ -3,10 +3,13 @@ package com.jetbrains.edu.csharp
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.EducationalCoreIcons
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduCourseBuilder
+import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.isFeatureEnabled
+import com.jetbrains.edu.learning.pathRelativeToTask
 import org.jetbrains.annotations.NonNls
 import javax.swing.Icon
 
@@ -24,6 +27,9 @@ class CSharpConfigurator : EduConfigurator<CSharpProjectSettings> {
     if (super.excludeFromArchive(project, course, file)) return true
     return file.pathRelativeToTask(project).contains(BIN_DIRECTORY) || file.pathRelativeToTask(project).contains(OBJ_DIRECTORY)
   }
+
+  override val defaultPlaceholderText: String
+    get() = "/* TODO */"
 
   override val isEnabled: Boolean
     get() = isFeatureEnabled(EduExperimentalFeatures.CSHARP_COURSES)
