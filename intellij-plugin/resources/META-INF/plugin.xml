@@ -20,6 +20,7 @@
     <module name="edu-markdown"/>
     <module name="edu-yaml"/>
     <module name="jvm-core"/>
+    <module name="AI"/>
     <module name="Edu-Java"/>
     <module name="Edu-Kotlin"/>
     <module name="Edu-Scala"/>

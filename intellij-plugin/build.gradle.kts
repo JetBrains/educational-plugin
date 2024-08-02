@@ -282,6 +282,7 @@ dependencies {
     pluginModule(implementation(project("code-insight:markdown")))
     pluginModule(implementation(project("code-insight:yaml")))
     pluginModule(implementation(project("jvm-core")))
+    pluginModule(implementation(project("AI")))
     pluginModule(implementation(project("Edu-Java")))
     pluginModule(implementation(project("Edu-Kotlin")))
     pluginModule(implementation(project("Edu-Python")))
@@ -548,6 +549,18 @@ project("remote-env") {
       intellijIde(ideVersion)
 
       intellijPlugins(codeWithMePlugin)
+    }
+
+    implementation(project(":intellij-plugin:educational-core"))
+
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+  }
+}
+
+project("AI") {
+  dependencies {
+    intellijPlatform {
+      intellijIde(baseVersion)
     }
 
     implementation(project(":intellij-plugin:educational-core"))

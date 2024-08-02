@@ -16,6 +16,7 @@ include(
   "intellij-plugin:code-insight:yaml",
   "intellij-plugin:jvm-core",
   "intellij-plugin:remote-env",
+  "intellij-plugin:AI",
   "intellij-plugin:Edu-Java",
   "intellij-plugin:Edu-Kotlin",
   "intellij-plugin:Edu-Scala",

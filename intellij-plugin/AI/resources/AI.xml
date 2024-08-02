@@ -1,0 +1,3 @@
+<idea-plugin package="com.jetbrains.edu.ai">
+  <resource-bundle>messages.EduAIBundle</resource-bundle>
+</idea-plugin>
