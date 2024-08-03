@@ -36,17 +36,10 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
   var activateRunToolWindow: Boolean = !task.course.isStudy
 
   override fun check(indicator: ProgressIndicator): CheckResult {
-    if (task.course.isStudy) {
-      runInEdt {
-        ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.RUN)?.hide(null)
-      }
-    }
-
-    val possibleError = envChecker.getEnvironmentError(project, task)
+    val possibleError = prepareEnvironment()
     if (possibleError != null) {
       return possibleError
     }
-
     val configurations = runReadActionInSmartMode(project) { createTestConfigurations() }
     configurations.forEach {
       it.isActivateToolWindowBeforeRun = activateRunToolWindow
@@ -88,7 +81,8 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
         indicator,
         processListener = processListener,
         testEventsListener = testEventsListener
-      )) {
+      )
+    ) {
       LOG.warn("Execution failed because the configuration is broken")
       return noTestsRun
     }
@@ -112,6 +106,17 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
     return firstFailure ?: testResults.first()
   }
 
+  protected fun prepareEnvironment(): CheckResult? {
+    if (task.course.isStudy) {
+      runInEdt {
+        ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.RUN)?.hide(null)
+      }
+    }
+
+    val possibleError = envChecker.getEnvironmentError(project, task)
+    return possibleError
+  }
+
   protected fun SMTestProxy.SMRootTestProxy.toCheckResult(): CheckResult {
     val testInfo = getEduTestInfo(children = children)
     if (finishedSuccessfully()) {
@@ -132,7 +137,7 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
    * Some testing frameworks add attributes to be shown in console (ex. Jest - ANSI color codes)
    * which are not supported in Task Description, so they need to be removed
    */
-  private fun removeAttributes(text: String): String {
+  protected fun removeAttributes(text: String): String {
     val buffer = StringBuilder()
     AnsiEscapeDecoder().escapeText(text, ProcessOutputTypes.STDOUT) { chunk, _ ->
       buffer.append(chunk)
@@ -174,7 +179,7 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
    *
    * @return Run configurations to run task tests
    */
-  protected abstract fun createDefaultTestConfigurations(): List<RunnerAndConfigurationSettings>
+  protected open fun createDefaultTestConfigurations(): List<RunnerAndConfigurationSettings> = emptyList()
 
   protected fun createTestConfigurationsForTestFiles(): List<RunnerAndConfigurationSettings> {
     return task.getAllTestFiles(project).mapNotNull { createTestConfigurationFromPsiElement(it) }

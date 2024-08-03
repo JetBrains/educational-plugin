@@ -65,7 +65,7 @@ class CSharpCourseBuilder : EduCourseBuilder<CSharpProjectSettings> {
     val params = mutableMapOf(VERSION_VARIABLE to getDotNetVersion(info.getUserData(VERSION_KEY)))
     info.getUserData(NAMESPACE_KEY)?.let { namespaceVar ->
       params[NAMESPACE_VARIABLE] = namespaceVar
-      params[TEST_NAME_VARIABLE] = namespaceVar.filter { it != '.' } + "Test"
+      params[TEST_NAME_VARIABLE] = namespaceVar.toTestName()
     }
     return params
   }
