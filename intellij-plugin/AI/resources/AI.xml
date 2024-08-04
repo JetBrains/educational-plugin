@@ -7,9 +7,29 @@
             internal="true"/>
   </actions>
 
+  <extensionPoints>
+    <extensionPoint qualifiedName="Educational.AIOptionsProvider"
+                    beanClass="com.intellij.openapi.options.ConfigurableEP"
+                    dynamic="true">
+      <with attribute="instance" implements="com.jetbrains.edu.ai.settings.AIOptionsProvider"/>
+    </extensionPoint>
+  </extensionPoints>
+
   <extensions defaultExtensionNs="com.intellij">
+    <applicationConfigurable groupId="Educational"
+                             provider="com.jetbrains.edu.ai.settings.EduAIConfigurableProvider"
+                             id="AI"
+                             key="settings.ai"
+                             bundle="messages.EduAIBundle"/>
+
+    <applicationService serviceImplementation="com.jetbrains.edu.ai.translation.settings.TranslationSettings"/>
+
     <experimentalFeature id="edu.ai" percentOfUsers="100" internalFeature="true">
       <description>Enables educational AI features</description>
     </experimentalFeature>
+  </extensions>
+
+  <extensions defaultExtensionNs="Educational">
+    <AIOptionsProvider instance="com.jetbrains.edu.ai.translation.settings.TranslationOptions"/>
   </extensions>
 </idea-plugin>
