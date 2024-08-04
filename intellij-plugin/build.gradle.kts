@@ -564,6 +564,7 @@ project("AI") {
     }
 
     implementation(project(":intellij-plugin:educational-core"))
+    implementationWithoutKotlin(rootProject.libs.edu.ai.format)
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
   }
