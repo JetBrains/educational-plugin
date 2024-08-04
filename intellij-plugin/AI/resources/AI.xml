@@ -6,4 +6,10 @@
             class="com.jetbrains.edu.ai.action.EduAIServiceChangeHost"
             internal="true"/>
   </actions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <experimentalFeature id="edu.ai" percentOfUsers="100" internalFeature="true">
+      <description>Enables educational AI features</description>
+    </experimentalFeature>
+  </extensions>
 </idea-plugin>

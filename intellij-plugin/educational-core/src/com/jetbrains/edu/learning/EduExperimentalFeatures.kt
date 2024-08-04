@@ -8,4 +8,5 @@ object EduExperimentalFeatures {
   const val SQL_COURSES = "edu.course.sql"
   const val COURSE_FORMAT_WITH_FILES_OUTSIDE_JSON = "edu.course.format.files.outside.json"
   const val CSHARP_COURSES = "edu.course.csharp"
+  const val AI = "edu.ai"
 }
