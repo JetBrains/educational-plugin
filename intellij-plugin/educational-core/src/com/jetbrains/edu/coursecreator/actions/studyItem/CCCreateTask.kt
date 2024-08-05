@@ -94,7 +94,8 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
       val defaultTestFileName = course.configurator?.testFileName ?: ""
       val needCopyTests = CCSettings.getInstance().copyTestsInFrameworkLessons
       for ((path, file) in prevTask.taskFiles) {
-        if (needCopyTests || !(testDirs.any { path.startsWith(it) } || path == defaultTestFileName)) {
+        val shouldCopyTaskFile = course.configurator?.courseBuilder?.shouldCopyTaskFile(path) ?: true
+        if (shouldCopyTaskFile && (needCopyTests || !(testDirs.any { path.startsWith(it) } || path == defaultTestFileName))) {
           newTaskFiles[path] = file.copyForNewTask(prevTaskDir, item)
         }
       }

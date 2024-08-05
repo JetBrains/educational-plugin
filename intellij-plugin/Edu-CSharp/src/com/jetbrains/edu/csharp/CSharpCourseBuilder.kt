@@ -1,13 +1,13 @@
 package com.jetbrains.edu.csharp
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
+import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.intellij.openapi.util.Key
-import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.rdclient.util.idea.toIOFile
 import com.jetbrains.rider.ideaInterop.fileTypes.msbuild.CsprojFileType
@@ -29,6 +29,10 @@ class CSharpCourseBuilder : EduCourseBuilder<CSharpProjectSettings> {
   override fun initNewTask(course: Course, task: Task, info: NewStudyItemInfo, withSources: Boolean) {
     info.putUserData(CSPROJ_NAME_PER_TASK_KEY, task.getCSProjFileNameWithoutExtension())
     super.initNewTask(course, task, info, withSources)
+  }
+
+  override fun shouldCopyTaskFile(path: String): Boolean {
+    return !path.endsWith(CsprojFileType.defaultExtension)
   }
 
   override fun beforeStudyItemDeletion(project: Project, item: StudyItem) {
@@ -68,18 +72,12 @@ class CSharpCourseBuilder : EduCourseBuilder<CSharpProjectSettings> {
 
   override fun getTestTaskTemplates(course: Course, info: NewStudyItemInfo, withSources: Boolean): List<TemplateFileInfo> {
     val templates = super.getTestTaskTemplates(course, info, withSources).toMutableList()
-    if (!withSources) {
-      return templates
-    }
     templates.add(getTemplatesByTaskType(course, info, PROJECT_FILE_WITH_TESTS_TEMPLATE))
     return templates
   }
 
   override fun getExecutableTaskTemplates(course: Course, info: NewStudyItemInfo, withSources: Boolean): List<TemplateFileInfo> {
     val templates = super.getExecutableTaskTemplates(course, info, withSources).toMutableList()
-    if (!withSources) {
-      return templates
-    }
     templates.add(getTemplatesByTaskType(course, info, PROJECT_FILE_NO_TESTS_TEMPLATE))
     return templates
   }

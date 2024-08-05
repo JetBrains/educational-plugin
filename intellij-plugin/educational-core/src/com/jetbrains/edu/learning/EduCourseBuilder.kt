@@ -58,7 +58,7 @@ interface EduCourseBuilder<Settings : EduProjectSettings> {
   /**
    * Allows to update project modules and the whole project structure
    */
-  fun refreshProject(project: Project, cause: RefreshCause) { }
+  fun refreshProject(project: Project, cause: RefreshCause) {}
 
   fun createInitialLesson(holder: CourseInfoHolder<Course>, lessonProducer: () -> Lesson): Lesson? {
     val lessonInfo = NewStudyItemInfo(LESSON + 1, 1, lessonProducer)
@@ -68,6 +68,8 @@ interface EduCourseBuilder<Settings : EduProjectSettings> {
     lesson.addTask(task)
     return lesson
   }
+
+  fun shouldCopyTaskFile(path: String): Boolean = true
 
   /**
    * Returns list of templates to create files in new task that supposed to be checked by tests launch.
