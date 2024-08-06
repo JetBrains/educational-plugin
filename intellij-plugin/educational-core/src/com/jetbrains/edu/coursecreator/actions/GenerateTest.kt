@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator.actions
 
+import com.intellij.lang.Language
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -7,11 +8,13 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.Computable
+import com.intellij.psi.PsiFile
 import com.jetbrains.edu.coursecreator.testGeneration.*
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
+import okio.Path.Companion.toPath
 import org.jetbrains.research.testspark.core.data.Report
 import org.jetbrains.research.testspark.core.data.TestGenerationData
 import org.jetbrains.research.testspark.core.generation.llm.LLMWithFeedbackCycle
@@ -24,6 +27,9 @@ import org.jetbrains.research.testspark.core.progress.CustomProgressIndicator
 import org.jetbrains.research.testspark.core.test.TestsPersistentStorage
 import org.jetbrains.research.testspark.core.test.TestsPresenter
 import org.jetbrains.research.testspark.core.test.data.TestSuiteGeneratedByLLM
+import java.io.File
+import kotlin.io.path.Path
+import kotlin.io.path.createDirectories
 
 
 open class GenerateTest : AnAction() {
@@ -73,11 +79,11 @@ open class GenerateTest : AnAction() {
   private val testsPresenter = object : TestsPresenter {
 
     override fun representTestSuite(testSuite: TestSuiteGeneratedByLLM): String {
-      return "TODO" // TODO
+      return "TODO1" // TODO
     }
 
     override fun representTestCase(testSuite: TestSuiteGeneratedByLLM, testCaseIndex: Int): String {
-      return "TODO" // TODO
+      return "TODO2" // TODO
     }
   }
 
@@ -109,11 +115,11 @@ open class GenerateTest : AnAction() {
   }
 
 
-  // TODO Split into the smallest functions
-  private fun generateTest(e: AnActionEvent) {
-    val psiFile = e.getData(CommonDataKeys.PSI_FILE) ?: return
+  private fun generatePrompt(e: AnActionEvent, polyDepth: Int): String{
+    val psiFile = e.getData(CommonDataKeys.PSI_FILE) ?: error("TODO")
     val project = e.project ?: error("There are no project for this action") // TODO replace with the relevant behaviour
-    val language = StudyTaskManager.getInstance(project).course?.languageById ?: error("There are no course or language instance") // TODO replace with the relevant behaviour
+    val language = StudyTaskManager.getInstance(project).course?.languageById
+                   ?: error("There are no course or language instance") // TODO replace with the relevant behaviour
     val psiHelper = PsiHelper.getInstance(language)
     psiHelper.psiFile = psiFile // TODO refactor to the more convenient structure
     val caret = e.dataContext.getData(CommonDataKeys.CARET)?.caretModel?.primaryCaret!!.offset // TODO additional checking for caret
@@ -121,7 +127,7 @@ open class GenerateTest : AnAction() {
 
 
     val interestingPsiClasses =
-      psiHelper.getInterestingPsiClassesWithQualifiedNames(project, classesToTest, 0) // TODO change polyDepth
+      psiHelper.getInterestingPsiClassesWithQualifiedNames(project, classesToTest, polyDepth) // TODO change polyDepth
 
     val interestingClasses = interestingPsiClasses.map { it.toClassRepresentation() }.toList()
     val polymorphismRelations =
@@ -132,13 +138,13 @@ open class GenerateTest : AnAction() {
     // cut - class under the test
     //classesToTest - cut + parents of the cut
     val context = PromptGenerationContext(
-      cut = classesToTest[0].toClassRepresentation(),
+      cut = classesToTest.first().toClassRepresentation(),
       classesToTest = classesToTest.map { it.toClassRepresentation() }.toList(),
       polymorphismRelations = polymorphismRelations,
       promptConfiguration = PromptConfiguration(
         desiredLanguage = psiHelper.language.languageName,
         desiredTestingPlatform = "JUnit 5",
-        desiredMockingFramework = "Mockito 5",
+        desiredMockingFramework = "Without Mockito",
       )
     )
 
@@ -150,22 +156,64 @@ open class GenerateTest : AnAction() {
     )
 
     val promptGenerator = PromptGenerator(context, promptTemplates)
-
     val initialPromptMessage = promptGenerator.generatePromptForClass(interestingClasses, "") // TODO connect with real templates
+    return initialPromptMessage
+  }
+
+  // TODO Split into the smallest functions
+  private fun generateTest(e: AnActionEvent) {
+    val psiFile = e.getData(CommonDataKeys.PSI_FILE) ?: return
+    val project = e.project ?: error("There are no project for this action") // TODO replace with the relevant behaviour
+    val language = StudyTaskManager.getInstance(project).course?.languageById
+                   ?: error("There are no course or language instance") // TODO replace with the relevant behaviour
+    val psiHelper = PsiHelper.getInstance(language)
+   val testGenerationData = TestGenerationData()
+    val initialPromptMessage = generatePrompt(e, 0)
+    println("--------------")
+    println(initialPromptMessage)
+    println("--------------")
 
     val promptSizeReductionStrategy = object : PromptSizeReductionStrategy {
-      override fun isReductionPossible(): Boolean = false // TODO add real logic
+      override fun isReductionPossible(): Boolean = (SettingsArguments(project).maxPolyDepth(testGenerationData.polyDepthReducing) > 1) ||
+                                                    (SettingsArguments(project).maxInputParamsDepth(testGenerationData.inputParamsDepthReducing) > 1)
+
+      private fun reducePromptSize(): Boolean{
+        if (SettingsArguments(project).maxPolyDepth(testGenerationData.polyDepthReducing) > 1) {
+          testGenerationData.polyDepthReducing++
+//          log.info("polymorphism depth is: ${SettingsArguments(project).maxPolyDepth(testGenerationData.polyDepthReducing)}")
+//          showPromptReductionWarning(testGenerationData)
+          return true
+        }
+
+        // reducing depth of input params
+        if (SettingsArguments(project).maxInputParamsDepth(testGenerationData.inputParamsDepthReducing) > 1) {
+          testGenerationData.inputParamsDepthReducing++
+//          log.info("input params depth is: ${SettingsArguments(project).maxInputParamsDepth(testGenerationData.inputParamsDepthReducing)}")
+//          showPromptReductionWarning(testGenerationData)
+          return true
+        }
+        return false
+      }
 
       override fun reduceSizeAndGeneratePrompt(): String {
+
+        if (!isReductionPossible()) {
+          throw IllegalStateException("Prompt size reduction is not possible yet requested")
+        }
+
+        val reductionSuccess = reducePromptSize()
+        assert(reductionSuccess)
+
+        return generatePrompt(e, testGenerationData.polyDepthReducing)
         // TODO add real body
-        return initialPromptMessage
+//        return initialPromptMessage
       }
     }
 
     val report = Report()
     val testFilename = "GeneratedTest.java" // TODO hardcode solution
-    val resultPath = "TODO" // TODO
-    val buildPath = ProjectRootManager.getInstance(project).contentRoots.first().path
+    val resultPath = project.basePath!!.toPath().resolve("testsCases").also { it.toNioPath().toFile().mkdirs() }
+    val buildPath = project.basePath!!.toPath().resolve("tests").also { it.toNioPath().toFile().mkdirs() }
 
     val packageName = psiHelper.getPackageName()
 
@@ -175,17 +223,30 @@ open class GenerateTest : AnAction() {
       promptSizeReductionStrategy = promptSizeReductionStrategy,
       testSuiteFilename = testFilename,
       packageName = packageName,
-      resultPath = resultPath,
-      buildPath = buildPath,
+      resultPath = resultPath.toString().also { println("1234: $it") },
+      buildPath = buildPath.toString(),
       requestManager = OpenAIRequestManager(project),
-      testsAssembler = JUnitTestsAssembler(project, progressIndicator, TestGenerationData()),
+      testsAssembler = JUnitTestsAssembler(project, progressIndicator, testGenerationData),
       testCompiler = TestCompilerFactory.createJavacTestCompiler(project, LLMSettingsState.DefaultLLMSettingsState.junitVersion),
       indicator = progressIndicator,
       requestsCountThreshold = 4, // TODO
       testsPresenter = testsPresenter,
       testStorage = object : TestsPersistentStorage {
         override fun saveGeneratedTest(packageString: String, code: String, resultPath: String, testFileName: String): String {
-          return "TODO" // TODO
+          // Generate the final path for the generated tests
+          var generatedTestPath = "$resultPath${File.separatorChar}"
+          packageString.split(".").forEach { directory ->
+            if (directory.isNotBlank()) generatedTestPath += "$directory${File.separatorChar}"
+          }
+          Path(generatedTestPath).createDirectories()
+
+          // Save the generated test suite to the file
+          val testFile = File("$generatedTestPath$testFileName")
+          testFile.createNewFile()
+//          log.info("Save test in file " + testFile.absolutePath)
+          testFile.writeText(code)
+
+          return "$generatedTestPath$testFileName"
         }
 
       }

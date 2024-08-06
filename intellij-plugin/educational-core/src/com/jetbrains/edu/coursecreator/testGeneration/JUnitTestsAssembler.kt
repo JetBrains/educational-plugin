@@ -91,7 +91,7 @@ class JUnitTestsAssembler(
       generationData.importsCode.add(junitVersion.runWithAnnotationMeta.import)
     }
     else {
-      generationData.runWith = ""
+      generationData.runWith = "" // TODO
       generationData.importsCode.remove(junitVersion.runWithAnnotationMeta.import)
     }
 

@@ -84,14 +84,14 @@ class OpenAIRequestManager(val project: Project) : RequestManager(System.getenv(
 
   override fun processResponse(testsAssembler: TestsAssembler, packageName: String): LLMResponse {
     // TODO This is hard code solution for demo
-    val response = testsAssembler.getContent()
-    val text = response.removePrefix("```java\n").replace("`", "").trimIndent()
-    val q = Path( project.basePath + "/lesson1/task1/test/com/hello")
-    q.createDirectories()
-    val s = q.resolve("TaskTest.java")
-    s.createFile()
-    s.write(text)
-    // TODO
+//    val response = testsAssembler.getContent()
+//    val text = response.removePrefix("```java\n").replace("`", "").trimIndent()
+//    val q = Path( project.basePath + "/lesson1/task1/test/com/hello")
+//    q.createDirectories()
+//    val s = q.resolve("TaskTest.java")
+//    s.createFile()
+//    s.write(text)
+//    // TODO
 
     return super.processResponse(testsAssembler, packageName)
   }
