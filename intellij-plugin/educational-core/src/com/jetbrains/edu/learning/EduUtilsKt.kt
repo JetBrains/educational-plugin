@@ -39,9 +39,16 @@ import com.jetbrains.edu.learning.projectView.ProgressUtil.updateCourseProgress
 import com.jetbrains.edu.learning.taskToolWindow.ui.EduBrowserHyperlinkListener
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
+import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
+import org.intellij.markdown.flavours.gfm.GFMTokenTypes
+import org.intellij.markdown.flavours.gfm.StrikeThroughDelimiterParser
 import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.MarkdownParser
+import org.intellij.markdown.parser.sequentialparsers.EmphasisLikeParser
+import org.intellij.markdown.parser.sequentialparsers.SequentialParser
+import org.intellij.markdown.parser.sequentialparsers.SequentialParserManager
+import org.intellij.markdown.parser.sequentialparsers.impl.*
 import org.jsoup.Jsoup
 import java.io.IOException
 import java.io.Reader
@@ -72,10 +79,7 @@ object EduUtilsKt {
     // Markdown parser is supposed to work with normalized text from document
     val normalizedText = StringUtil.convertLineSeparators(markdownText)
 
-    // org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor considers links starting
-    // with "^(vbscript|javascript|file|data):" unsafe and converts them into "#"
-    // if `useSafeLinks` is `true`
-    val flavour = GFMFlavourDescriptor(useSafeLinks = false)
+    val flavour = EDUGFMFlavourDescriptor()
     val parsedTree = MarkdownParser(flavour).buildMarkdownTreeFromString(markdownText)
 
     return HtmlGenerator(normalizedText, parsedTree, flavour, false).generateHtml()
@@ -263,4 +267,25 @@ object Executor {
       },
       message, true, null
     )
+}
+
+// org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor considers links starting
+// with "^(vbscript|javascript|file|data):" unsafe and converts them into "#"
+// if `useSafeLinks` is `true`
+private class EDUGFMFlavourDescriptor : GFMFlavourDescriptor(false, false, false) {
+  override val sequentialParserManager = object : SequentialParserManager() {
+    // we to exclude MathParser() from the standard list to avoid converting MathJax expressions like '$' to <span class="math"></span>
+    // and usage of the MarkdownPlugins formulas processing approach
+    override fun getParserSequence(): List<SequentialParser> {
+      return listOf(
+        AutolinkParser(listOf(MarkdownTokenTypes.AUTOLINK, GFMTokenTypes.GFM_AUTOLINK)),
+        BacktickParser(),
+//        MathParser(),
+        ImageParser(),
+        InlineLinkParser(),
+        ReferenceLinkParser(),
+        EmphasisLikeParser(EmphStrongDelimiterParser(), StrikeThroughDelimiterParser())
+      )
+    }
+  }
 }
