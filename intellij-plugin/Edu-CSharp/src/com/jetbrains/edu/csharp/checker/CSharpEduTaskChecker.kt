@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckResult.Companion.noTestsRun
+import com.jetbrains.edu.learning.courseFormat.CheckResultDiff
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduTestInfo
 import com.jetbrains.edu.learning.courseFormat.EduTestInfo.Companion.firstFailed
@@ -37,26 +38,24 @@ class CSharpEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker, projec
       return error
     }
     val rdUnitTestSession = getOrCreateSession() ?: return noTestsRun
-    val result = CompletableDeferred<CheckResult>()
-    subscribeToTestSessionResult(rdUnitTestSession, result)
+    val checkResult = CompletableDeferred<CheckResult>()
     runInEdt {
       rdUnitTestSession.run.fire()
     }
-    return runBlockingCancellable {
-      while (!result.isCompleted) {
-        if (indicator.isCanceled) {
-          result.cancel()
-          break
-        }
+    subscribeToTestSessionResult(rdUnitTestSession, checkResult)
+    while (!checkResult.isCompleted) {
+      if (indicator.isCanceled) {
+        checkResult.cancel()
+        break
       }
-      if (result.isCancelled) {
-        runInEdt {
-          project.solution.rdUnitTestHost.sessionManager.closeSession.fire(rdUnitTestSession.sessionId)
-        }
-        return@runBlockingCancellable noTestsRun
-      }
-      return@runBlockingCancellable result.await()
     }
+    if (checkResult.isCancelled) {
+      runInEdt {
+        project.solution.rdUnitTestHost.sessionManager.closeSession.fire(rdUnitTestSession.sessionId)
+      }
+      return noTestsRun
+    }
+    return runBlockingCancellable { checkResult.await() }
   }
 
   private fun getOrCreateSession(): RdUnitTestSession? {
@@ -98,34 +97,68 @@ class CSharpEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker, projec
     }
   }
 
-  private fun subscribeToTestSessionResult(session: RdUnitTestSession, result: CompletableDeferred<CheckResult>) = runInEdt {
-    session.state.adviseWithPrev(project.lifetime) { prev, cur ->
-      if (isRunningState(prev.asNullable?.status) && isNotRunningState(cur.status)) {
-        result.complete(collectTestResults(session))
+  private fun subscribeToTestSessionResult(session: RdUnitTestSession, checkResult: CompletableDeferred<CheckResult>) {
+    val isReady = CompletableDeferred<Unit>()
+    runInEdt {
+      session.state.adviseWithPrev(project.lifetime) { prev, cur ->
+        if (isRunningState(prev.asNullable?.status) && isNotRunningState(cur.status)) {
+          isReady.complete(Unit)
+        }
       }
     }
+    runBlockingCancellable { isReady.await() }
+    checkResult.complete(collectTestResults(session))
   }
 
   private fun collectTestResults(rdSession: RdUnitTestSession): CheckResult {
     val descriptor = RiderUnitTestSessionConductor.getInstance(project).getSessionDescriptorById(rdSession.sessionId) ?: return noTestsRun
-    val children = descriptor.getNodes().filter { !it.descriptor.hasChildren }
-    val testInfo = children.map { (it.descriptor as RdUnitTestSessionNodeDescriptor).getEduTestInfo() }
+    val testTreeNodes = descriptor.getNodes().filter { !it.descriptor.hasChildren }
+    val testInfoWithNodes = testTreeNodes.map { it to (it.descriptor as RdUnitTestSessionNodeDescriptor).getEduTestInfo() }.toMutableList()
+    val firstFailedIndex =
+      testInfoWithNodes.indexOfFirst { (it.first.descriptor as RdUnitTestSessionNodeDescriptor).status != RdUnitTestStatus.Success }
+    if (firstFailedIndex != -1) {
+      val firstFailedNode = testInfoWithNodes[firstFailedIndex].first
+      val result = CompletableDeferred<RdUnitTestResultData>()
+      runInEdt {
+        rdSession.resultData.advise(project.lifetime) { resultData ->
+          if (resultData != null && resultData.nodeId == firstFailedNode.id) {
+            result.complete(resultData)
+          }
+        }
+        rdSession.treeDescriptor.selectNode.fire(RdUnitTestNavigateArgs(firstFailedNode.id, true))
+      }
+      val resultData = runBlockingCancellable { result.await() }
+      val newInfo = testInfoWithNodes[firstFailedIndex].second.copy(
+        details = resultData.exceptionLines,
+        checkResultDiff = tryGetDiff(resultData.exceptionLines)
+      )
+      testInfoWithNodes[firstFailedIndex] = testInfoWithNodes[firstFailedIndex].copy(second = newInfo)
+    }
+    val testInfo = testInfoWithNodes.map { it.second }
     if (testInfo.isNotEmpty() && testInfo.firstFailed() == null) {
       return CheckResult(status = CheckStatus.Solved, message = CheckUtils.CONGRATULATIONS, executedTestsInfo = testInfo)
     }
-    if (testInfo.isEmpty()) {
+    if (testInfoWithNodes.isEmpty()) {
       return noTestsRun
     }
     return CheckResult(status = CheckStatus.Failed, executedTestsInfo = testInfo)
   }
 
-  private fun RdUnitTestSessionNodeDescriptor.getEduTestInfo() = EduTestInfo(
+  private fun RdUnitTestSessionNodeDescriptor.getEduTestInfo(data: RdUnitTestResultData? = null) = EduTestInfo(
     name = text,
     status = status.toPresentableStatus().value,
     message = removeAttributes(fillWithIncorrect(status.name)),
-    details = statusMessage.trim(),
+    details = if (data != null && data.exceptionLines.isNotEmpty()) data.exceptionLines else statusMessage.trim(),
     isFinishedSuccessfully = status == RdUnitTestStatus.Success,
+    checkResultDiff = tryGetDiff(data?.exceptionLines ?: "")
   )
+
+  private fun tryGetDiff(lines: String): CheckResultDiff? {
+    val split = lines.split("\n\n")[0].split("But was:") // hardcoded for now
+    if (split.size < 2) return null
+    val (expected, actual) = split
+    return CheckResultDiff(expected.replace("Expected:", "").trim(), actual.trim())
+  }
 
   private fun RdUnitTestStatus.toPresentableStatus() =
     when (this) {
