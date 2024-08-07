@@ -262,19 +262,7 @@ private fun VirtualFile.toDescriptionFormat(): DescriptionFormat {
 
 @RequiresReadLock
 fun Task.getTaskTextFromTask(project: Project): String? {
-  val taskDirectory = if (lesson is FrameworkLesson && course.isStudy) {
-    // In learner mode in framework lessons tasks,
-    // `getDir(project.courseDir)` returns the path to the `lesson/task` folder where the task files for the current task are stored.
-    // But the task description and YAML files for the task are in the folder with the task name (f. e. `lesson/task1`)
-    lesson.getDir(project.courseDir)?.findChild(name)
-  }
-  else {
-    getDir(project.courseDir)
-  }
-  if (taskDirectory == null) {
-    LOG.warn("Cannot find task directory for a task: $name")
-    return null
-  }
+  val taskDirectory = getTaskDirectory(project) ?: return null
   var text = getTaskTextByTaskName(this, taskDirectory)
   text = StringUtil.replace(text, "%IDE_NAME%", ApplicationNamesInfo.getInstance().fullProductName)
   val textBuffer = StringBuffer(text)
@@ -283,6 +271,25 @@ fun Task.getTaskTextFromTask(project: Project): String? {
     removeHyperskillTags(textBuffer)
   }
   return textBuffer.toString()
+}
+
+/**
+ * In learner mode in framework lessons tasks, `getDir(project.courseDir)`
+ * returns the path to the `lesson/task` folder where the task files for the current task are stored.
+ *
+ * But the task description and YAML files for the task are in the folder with the task name (f. e. `lesson/task1`)
+ */
+private fun Task.getTaskDirectory(project: Project): VirtualFile? {
+  val taskDirectory = if (lesson is FrameworkLesson && course.isStudy) {
+    lesson.getDir(project.courseDir)?.findChild(name)
+  }
+  else {
+    getDir(project.courseDir)
+  }
+  if (taskDirectory == null) {
+    LOG.warn("Cannot find task directory for a task: $name")
+  }
+  return taskDirectory
 }
 
 private fun getTaskTextByTaskName(task: Task, taskDirectory: VirtualFile): String {
