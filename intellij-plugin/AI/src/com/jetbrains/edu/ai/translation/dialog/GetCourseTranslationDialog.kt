@@ -3,8 +3,10 @@ package com.jetbrains.edu.ai.translation.dialog
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.bindItem
+import com.intellij.ui.dsl.builder.toNullableProperty
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.ai.messages.EduAIBundle
+import com.jetbrains.edu.ai.translation.settings.TranslationSettings
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.educational.translation.enum.Language
@@ -13,8 +15,8 @@ import javax.swing.JComboBox
 import javax.swing.JComponent
 
 class GetCourseTranslationDialog(private val course: EduCourse) : DialogWrapper(true) {
-  private val courseSourceLanguage: Language? = Language.findByCode(course.languageCode)
-  private var selectedLanguage: Language? = null
+  private val courseSourceLanguage = Language.findByCode(course.languageCode)
+  private var selectedLanguage = TranslationSettings.getInstance().preferableLanguage
 
   private lateinit var comboBox: JComboBox<Language>
 
@@ -34,7 +36,7 @@ class GetCourseTranslationDialog(private val course: EduCourse) : DialogWrapper(
     }
     row(EduAIBundle.message("ai.service.translation.select.target.language.label")) {
       comboBox = comboBox(LanguageComboBoxModel())
-        .bindItem(::selectedLanguage)
+        .bindItem(::selectedLanguage.toNullableProperty())
         .onChanged {
           isOKActionEnabled = it.selectedItem != courseSourceLanguage
         }
@@ -60,7 +62,6 @@ class GetCourseTranslationDialog(private val course: EduCourse) : DialogWrapper(
         .sortedBy { it.label }
 
       addAll(languages)
-      selectedLanguage = languages.first()
     }
   }
 
