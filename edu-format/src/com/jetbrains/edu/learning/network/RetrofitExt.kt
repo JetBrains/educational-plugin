@@ -102,13 +102,17 @@ fun <T> Call<T>.executeCall(omitErrors: Boolean = false): Result<Response<T>, St
 
 fun <T> Call<T>.executeParsingErrors(omitErrors: Boolean = false): Result<Response<T>, String> {
   val response = executeCall(omitErrors).onError { return Err(it) }
+  return response.executeParsingErrors(omitErrors)
+}
 
-  val error = response.errorBody()?.string() ?: return Ok(response)
-  val fullErrorText = "$error. Code ${response.code()}"
+fun <T> Response<T>.executeParsingErrors(omitErrors: Boolean = false): Result<Response<T>, String> {
+  val error = errorBody()?.string() ?: return Ok(this)
+  val code = code()
+  val fullErrorText = "$error. Code $code"
   if (omitErrors) LOG.warning(fullErrorText) else LOG.severe(fullErrorText)
 
-  return when (response.code()) {
-    HTTP_OK, HTTP_CREATED, HTTP_NO_CONTENT -> Ok(response) // 200, 201, 204
+  return when (code) {
+    HTTP_OK, HTTP_CREATED, HTTP_NO_CONTENT -> Ok(this) // 200, 201, 202, 204
     HTTP_UNAVAILABLE, HTTP_BAD_GATEWAY ->
       Err("${message("error.service.maintenance")}\n\n$error") // 502, 503
     in HTTP_INTERNAL_ERROR..HTTP_VERSION ->
@@ -124,7 +128,7 @@ fun <T> Call<T>.executeParsingErrors(omitErrors: Boolean = false): Result<Respon
     in HTTP_BAD_REQUEST..HTTP_UNSUPPORTED_TYPE ->
       Err(message("error.unexpected.error", error)) // 400x
     else -> {
-      LOG.warning("Code ${response.code()} is not handled")
+      LOG.warning("Code $code is not handled")
       Err(message("error.unexpected.error", error))
     }
   }
