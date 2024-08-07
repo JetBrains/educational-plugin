@@ -19,7 +19,7 @@ abstract class SubmissionsTestBase : EduTestCase() {
     CompletableFuture.runAsync { submissionsManager.prepareSubmissionsContentWhenLoggedIn() }
       .thenApply {
         for (taskId in taskIds) {
-          val submissionsNumber = taskIdsToSubmissionsNumber[taskId] ?: error("Number of submissions for taskId ${taskId} is null")
+          val submissionsNumber = taskIdsToSubmissionsNumber[taskId] ?: error("Number of submissions for taskId $taskId is null")
           checkSubmissionsPresent(submissionsManager, taskId, submissionsNumber)
         }
       }
@@ -50,7 +50,7 @@ abstract class SubmissionsTestBase : EduTestCase() {
     CompletableFuture.runAsync { checkTask() }.thenApply { checkSubmissionPresentWithStatus(submissionsManager, taskId, checkStatus) }
   }
 
-  protected fun checkTask(lessonIndex: Int = 0, taskIndex: Int = 0) {
+  private fun checkTask(lessonIndex: Int = 0, taskIndex: Int = 0) {
     val task = findTask(lessonIndex, taskIndex)
     NavigationUtils.navigateToTask(project, task)
     testAction(CheckAction(task.getUICheckLabel()))

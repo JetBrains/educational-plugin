@@ -22,6 +22,7 @@ object EduFormatNames {
 
   // marketplace
   const val SOLUTION = "solution"
+  const val STATES_ON_CLOSE = "states_on_close"
   const val SUBMISSIONS = "submissions"
 
   // vendor

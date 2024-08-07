@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.submissions
 
 import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.openapi.project.Project
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -16,6 +17,8 @@ interface SubmissionsProvider {
   fun loadAllSubmissions(course: Course): Map<Int, List<Submission>>
 
   fun loadSubmissions(tasks: List<Task>, courseId: Int): Map<Int, List<Submission>>
+
+  fun loadCourseStateOnClose(project: Project, course: Course): Map<Int, Submission> = mapOf()
 
   fun loadSharedSolutionsForCourse(course: Course): Map<Int, List<Submission>> = mapOf()
 

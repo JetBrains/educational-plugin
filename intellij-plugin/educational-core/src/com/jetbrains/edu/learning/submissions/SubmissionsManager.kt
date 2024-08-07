@@ -38,6 +38,9 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
 
   data class CommunitySubmissions(val submissions: MutableList<Submission>, var hasMore: Boolean = false)
 
+  // Guarded by synchronized `getCourseStateOnClose` method
+  private var courseStateOnClose: Map<Int, Submission> = emptyMap()
+
   var course: Course? = project.course
     @TestOnly set
 
@@ -53,12 +56,13 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
     return communitySubmissions[taskId]?.submissions?.find { it.id == submissionId }
   }
 
-  fun getOrLoadSubmissions(tasks: List<Task>): List<Submission>? {
+  fun getOrLoadSubmissions(tasks: List<Task>): List<Submission> {
     val taskIds = tasks.map { it.id }.toSet()
     val submissionsFromMemory = getSubmissionsFromMemory(taskIds)
     return submissionsFromMemory.ifEmpty {
-      val course = this.course ?: return null
-      val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course) ?: return null
+      val course = course ?: error("Nullable Course")
+      val submissionsProvider =
+        SubmissionsProvider.getSubmissionsProviderForCourse(course) ?: error("SubmissionProvider for course ${course.id} not available")
       val submissionsById = submissionsProvider.loadSubmissions(tasks, course.id)
       submissions.putAll(submissionsById)
       notifySubmissionsChanged()
@@ -66,8 +70,29 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
     }
   }
 
+  @Synchronized
+  fun getCourseStateOnClose(): Map<Int, Submission> {
+    val cachedStates = courseStateOnClose
+    @Suppress("ReplaceIsEmptyWithIfEmpty")
+    return if (cachedStates.isEmpty()) {
+      val loadedStates = loadStateOnClose()
+      courseStateOnClose = loadedStates
+      loadedStates
+    }
+    else {
+      cachedStates
+    }
+  }
+
   fun getSubmissions(task: Task): List<Submission> {
     return getOrLoadSubmissions(task)
+  }
+
+  private fun loadStateOnClose(): Map<Int, Submission> {
+    val course = course ?: error("Nullable Course")
+    val submissionsProvider =
+      SubmissionsProvider.getSubmissionsProviderForCourse(course) ?: error("SubmissionProvider for course ${course.id} not available")
+    return submissionsProvider.loadCourseStateOnClose(project, course)
   }
 
   fun getSubmissionWithSolutionText(task: Task, submissionId: Int): Submission? {
@@ -76,7 +101,7 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
                      ?: return null
 
     if (submission is MarketplaceSubmission && submission.solutionFiles == null) {
-      val course = this.course ?: return null
+      val course = course ?: return null
       val submissionsProvider = course.getSubmissionsProvider() ?: return null
       submissionsProvider.loadSolutionFiles(submission)
     }
@@ -84,7 +109,7 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
   }
 
   private fun getOrLoadSubmissions(task: Task): List<Submission> {
-    val course = this.course ?: return emptyList()
+    val course = course ?: return emptyList()
     val submissionsProvider = course.getSubmissionsProvider() ?: return emptyList()
     val submissionsList = submissions[task.id]
     return if (submissionsList != null) {
@@ -124,14 +149,14 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
   }
 
   fun submissionsSupported(): Boolean {
-    val course = this.course
+    val course = course
     if (course == null) return false
     val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course) ?: return false
     return submissionsProvider.areSubmissionsAvailable(course)
   }
 
   fun prepareSubmissionsContentWhenLoggedIn(loadSolutions: () -> Unit = {}) {
-    val course = this.course
+    val course = course
     val submissionsProvider = course?.getSubmissionsProvider() ?: return
 
     CompletableFuture.runAsync({
@@ -154,7 +179,7 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
   }
 
   fun loadCommunitySubmissions(task: Task) {
-    val course = this.course
+    val course = course
     val submissionsProvider = course?.getSubmissionsProvider() ?: return
 
     submissionsProvider.isLoggedInAsync().thenApply { isLoggedIn ->
@@ -175,7 +200,7 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
   }
 
   fun loadMoreCommunitySubmissions(task: Task, latest: Int, oldest: Int) {
-    val course = this.course
+    val course = course
     val submissionsProvider = course?.getSubmissionsProvider() ?: return
 
     submissionsProvider.isLoggedInAsync().thenApply { isLoggedIn ->

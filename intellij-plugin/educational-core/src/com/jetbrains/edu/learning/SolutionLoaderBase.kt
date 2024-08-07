@@ -30,6 +30,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.submissions.Submission
+import com.jetbrains.edu.learning.submissions.SubmissionSettings
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.isSignificantlyAfter
 import com.jetbrains.edu.learning.update.showUpdateNotification
@@ -71,19 +72,20 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     progressIndicator: ProgressIndicator?,
     force: Boolean = false
   ) {
-    val submissions = if (progressIndicator != null) {
-      ApplicationUtil.runWithCheckCanceled({ loadSubmissions(tasksToUpdate) }, progressIndicator)
-    }
-    else {
-      loadSubmissions(tasksToUpdate)
-    }
+    val submissions = runWithProgress(progressIndicator) { loadSubmissions(tasksToUpdate) }
 
-    if (submissions != null) {
-      progressIndicator?.text = EduCoreBundle.message("update.updating.tasks")
-      updateTasks(course, tasksToUpdate, submissions, progressIndicator, force)
+    progressIndicator?.text = EduCoreBundle.message("update.updating.tasks")
+    if (submissions.isNotEmpty() || SubmissionSettings.getInstance(project).stateOnClose) {
+      return updateTasks(course, tasksToUpdate, submissions, progressIndicator, force)
     }
-    else {
-      LOG.warn("Can't get submissions")
+    LOG.warn("Can't get submissions")
+  }
+
+  private fun <T> runWithProgress(progressIndicator: ProgressIndicator?, doLoad: () -> T): T {
+    return if (progressIndicator != null) {
+      ApplicationUtil.runWithCheckCanceled(doLoad, progressIndicator)
+    } else {
+      doLoad()
     }
   }
 
@@ -241,7 +243,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     cancelUnfinishedTasks()
   }
 
-  private fun loadSubmissions(tasks: List<Task>): List<Submission>? = SubmissionsManager.getInstance(project).getOrLoadSubmissions(tasks)
+  protected open fun loadSubmissions(tasks: List<Task>): List<Submission> = SubmissionsManager.getInstance(project).getOrLoadSubmissions(tasks)
 
   protected abstract fun loadSolution(task: Task, submissions: List<Submission>): TaskSolutions
 

@@ -16,10 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionAction
 import com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionActionTest.Companion.putCommunityData
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsList
-import com.jetbrains.edu.learning.marketplace.api.SubmissionsService
+import com.jetbrains.edu.learning.marketplace.api.*
 import com.jetbrains.edu.learning.marketplace.deleteSubmissions.AdvancedSubmissionsDeleteDialog
 import com.jetbrains.edu.learning.marketplace.deleteSubmissions.DeleteAllSubmissionsAction
 import com.jetbrains.edu.learning.marketplace.deleteSubmissions.SubmissionsDeleteDialog
@@ -276,6 +273,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
 
     fun configureSubmissionsResponses(
       submissionsLists: List<String> = listOf(loadSubmissionsData),
+      statesOnCloseList: List<String> = emptyList(),
       solutionsKeyTextMap: Map<String, String> = emptyMap(),
       submissionsDeleteRequestSuccess: Boolean = false,
       reportSolutionRequestSuccess: Boolean = false,
@@ -296,6 +294,13 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
         every { service.getAllSubmissionsForCourse(any(), i + 1) } returns getAllSubmissionsPageableCall
         val getAllSubmissionsPageableResponse = mapper.treeToValue(mapper.readTree(submissionsLists[i]), MarketplaceSubmissionsList::class.java)
         every { getAllSubmissionsPageableCall.execute() } returns Response.success(getAllSubmissionsPageableResponse)
+      }
+
+      for (i in statesOnCloseList.indices) {
+        val getAllStatesPageableCall = mockk<Call<MarketplaceStateOnCloseList>>()
+        every { service.getStateOnClose(any(), i + 1) } returns getAllStatesPageableCall
+        val getAllStatesPageableResponse = mapper.treeToValue(mapper.readTree(statesOnCloseList[i]), MarketplaceStateOnCloseList::class.java)
+        every { getAllStatesPageableCall.execute() } returns Response.success(getAllStatesPageableResponse)
       }
 
       val deleteSubmissionsCall = mockk<Call<ResponseBody>>()

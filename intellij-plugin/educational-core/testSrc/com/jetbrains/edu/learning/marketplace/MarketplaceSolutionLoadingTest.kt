@@ -18,8 +18,10 @@ class MarketplaceSolutionLoadingTest : SolutionLoadingTestBase() {
 
   @Test
   fun `test solution not applied at submission and course versions incompatibility`() {
-    configureSubmissionsResponses(getConfiguredSubmissionsList(),
-                                  mapOf(FIRST_TASK_SUBMISSION_AWS_KEY to solutionCorrect, SECOND_TASK_SUBMISSION_AWS_KEY to solutionCorrect))
+    configureSubmissionsResponses(
+      getConfiguredSubmissionsList(),
+      solutionsKeyTextMap = mapOf(FIRST_TASK_SUBMISSION_AWS_KEY to solutionCorrect, SECOND_TASK_SUBMISSION_AWS_KEY to solutionCorrect)
+    )
     val course = createMarketplaceCourse(2)
     MarketplaceSolutionLoader.getInstance(project).loadAndApplySolutions(course)
 
@@ -52,8 +54,10 @@ class MarketplaceSolutionLoadingTest : SolutionLoadingTestBase() {
 
   @Test
   fun `test local changes are not lost`() {
-    configureSubmissionsResponses(getConfiguredSubmissionsList(),
-                                  mapOf(FIRST_TASK_SUBMISSION_AWS_KEY to solutionCorrect, SECOND_TASK_SUBMISSION_AWS_KEY to solutionWrong))
+    configureSubmissionsResponses(
+      getConfiguredSubmissionsList(),
+      solutionsKeyTextMap = mapOf(FIRST_TASK_SUBMISSION_AWS_KEY to solutionCorrect, SECOND_TASK_SUBMISSION_AWS_KEY to solutionWrong)
+    )
     val course = createMarketplaceCourse()
     MarketplaceSolutionLoader.getInstance(project).loadAndApplySolutions(course)
 
@@ -127,8 +131,10 @@ class MarketplaceSolutionLoadingTest : SolutionLoadingTestBase() {
 
   @Test
   fun `test solution loading first task solved second task failed`() {
-    configureSubmissionsResponses(getConfiguredSubmissionsList(),
-                                  mapOf(FIRST_TASK_SUBMISSION_AWS_KEY to solutionCorrect, SECOND_TASK_SUBMISSION_AWS_KEY to solutionWrong))
+    configureSubmissionsResponses(
+      getConfiguredSubmissionsList(),
+      solutionsKeyTextMap = mapOf(FIRST_TASK_SUBMISSION_AWS_KEY to solutionCorrect, SECOND_TASK_SUBMISSION_AWS_KEY to solutionWrong)
+    )
     val course = createMarketplaceCourse()
     withVirtualFileListener(course) {
       MarketplaceSolutionLoader.getInstance(project).loadAndApplySolutions(course)
@@ -165,8 +171,10 @@ class MarketplaceSolutionLoadingTest : SolutionLoadingTestBase() {
 
   @Test
   fun `test solution loading first task failed second task solved`() {
-    configureSubmissionsResponses(getConfiguredSubmissionsList(firstStatus = WRONG, secondStatus = CORRECT),
-                                  mapOf(FIRST_TASK_SUBMISSION_AWS_KEY to solutionWrong, SECOND_TASK_SUBMISSION_AWS_KEY to solutionCorrect))
+    configureSubmissionsResponses(
+      getConfiguredSubmissionsList(firstStatus = WRONG, secondStatus = CORRECT),
+      solutionsKeyTextMap = mapOf(FIRST_TASK_SUBMISSION_AWS_KEY to solutionWrong, SECOND_TASK_SUBMISSION_AWS_KEY to solutionCorrect)
+    )
     val course = createMarketplaceCourse()
     withVirtualFileListener(course) {
       MarketplaceSolutionLoader.getInstance(project).loadAndApplySolutions(course)
@@ -205,7 +213,8 @@ class MarketplaceSolutionLoadingTest : SolutionLoadingTestBase() {
   fun `test first submission from the list applied`() {
     configureSubmissionsResponses(
       getConfiguredSubmissionsList(firstTaskId = 1, secondTaskId = 1, firstStatus = CORRECT, secondStatus = WRONG),
-      mapOf(FIRST_TASK_SUBMISSION_AWS_KEY to solutionCorrect, SECOND_TASK_SUBMISSION_AWS_KEY to solutionWrong))
+      solutionsKeyTextMap = mapOf(FIRST_TASK_SUBMISSION_AWS_KEY to solutionCorrect, SECOND_TASK_SUBMISSION_AWS_KEY to solutionWrong)
+    )
     val course = createMarketplaceCourse()
     withVirtualFileListener(course) {
       MarketplaceSolutionLoader.getInstance(project).loadAndApplySolutions(course)
@@ -242,12 +251,13 @@ class MarketplaceSolutionLoadingTest : SolutionLoadingTestBase() {
 
   @Test
   fun `test solution for output task applied`() {
-    configureSubmissionsResponses(getConfiguredSubmissionsList(),
-      mapOf(FIRST_TASK_SUBMISSION_AWS_KEY to solutionCorrect, SECOND_TASK_SUBMISSION_AWS_KEY to solutionWrong))
+    configureSubmissionsResponses(
+      getConfiguredSubmissionsList(),
+      solutionsKeyTextMap = mapOf(FIRST_TASK_SUBMISSION_AWS_KEY to solutionCorrect, SECOND_TASK_SUBMISSION_AWS_KEY to solutionWrong)
+    )
 
     val course = courseWithFiles(
-      language = FakeGradleBasedLanguage,
-      courseProducer = ::EduCourse, id = 1
+      language = FakeGradleBasedLanguage, courseProducer = ::EduCourse, id = 1
     ) {
       lesson("lesson1") {
         outputTask("task1", stepId = 1) {
@@ -309,11 +319,15 @@ class MarketplaceSolutionLoadingTest : SolutionLoadingTestBase() {
 
     checkTaskStatuses(course.allTasks, listOf(CheckStatus.Solved, CheckStatus.Failed))
   }
+
   @Test
   fun `test solution loading with additional file in the first task`() {
-    configureSubmissionsResponses(getConfiguredSubmissionsList(firstStatus = CORRECT, secondStatus = CORRECT),
-                                  mapOf(FIRST_TASK_SUBMISSION_AWS_KEY to solutionWithAdditionalFile,
-                                        SECOND_TASK_SUBMISSION_AWS_KEY to solutionCorrect))
+    configureSubmissionsResponses(
+      getConfiguredSubmissionsList(firstStatus = CORRECT, secondStatus = CORRECT),
+      solutionsKeyTextMap = mapOf(
+        FIRST_TASK_SUBMISSION_AWS_KEY to solutionWithAdditionalFile, SECOND_TASK_SUBMISSION_AWS_KEY to solutionCorrect
+      )
+    )
     val course = createMarketplaceCourse()
     withVirtualFileListener(course) {
       MarketplaceSolutionLoader.getInstance(project).loadAndApplySolutions(course)
@@ -349,29 +363,29 @@ class MarketplaceSolutionLoadingTest : SolutionLoadingTestBase() {
     checkTaskStatuses(course.allTasks, listOf(CheckStatus.Solved, CheckStatus.Solved))
   }
 
-  private fun createMarketplaceCourse(courseVersion: Int = 1) = courseWithFiles(language = FakeGradleBasedLanguage,
-                                                                                courseProducer = ::EduCourse, id = 1) {
-    lesson("lesson1") {
-      eduTask("task1", stepId = 1) {
-        taskFile("src/Task.kt", "fun foo() {}")
-        taskFile("test/Tests.kt", "fun tests() {}")
+   private fun createMarketplaceCourse(courseVersion: Int = 1) = courseWithFiles(
+      language = FakeGradleBasedLanguage, courseProducer = ::EduCourse, id = 1
+    ) {
+      lesson("lesson1") {
+        eduTask("task1", stepId = 1) {
+          taskFile("src/Task.kt", "fun foo() {}")
+          taskFile("test/Tests.kt", "fun tests() {}")
+        }
+        eduTask("task2", stepId = 2) {
+          taskFile("src/Task.kt", "fun foo()2 {}")
+          taskFile("test/Tests.kt", "fun tests()2 {}")
+        }
       }
-      eduTask("task2", stepId = 2) {
-        taskFile("src/Task.kt", "fun foo()2 {}")
-        taskFile("test/Tests.kt", "fun tests()2 {}")
-      }
-    }
-  }.apply {
-    isMarketplace = true
-    marketplaceCourseVersion = courseVersion
-  } as EduCourse
+    }.apply {
+      isMarketplace = true
+      marketplaceCourseVersion = courseVersion
+    } as EduCourse
 
-  private fun getConfiguredSubmissionsList(firstTaskId: Int = 1,
-                                           secondTaskId: Int = 2,
-                                           firstStatus: String = CORRECT,
-                                           secondStatus: String = WRONG): List<String> {
-    @Language("JSON")
-    val submissionsList = """
+  companion object {
+    fun getConfiguredSubmissionsList(
+      firstTaskId: Int = 1, secondTaskId: Int = 2, firstStatus: String = CORRECT, secondStatus: String = WRONG
+    ): List<String> {
+      val submissionsList = """
       {
         "has_next" : false,
         "submissions" : [
@@ -396,7 +410,58 @@ class MarketplaceSolutionLoadingTest : SolutionLoadingTestBase() {
           ]
       }
   """
-    return listOf(submissionsList)
+      return listOf(submissionsList)
+    }
+
+    @Language("JSON")
+    val solutionCorrect = """
+  [
+    {
+      "name" : "src/Task.kt",
+      "placeholders" : [
+        {
+          "offset" : 181,
+          "length" : 41,
+          "possible_answer" : "possible answer",
+          "placeholder_text" : "placeholder text"
+        }
+      ],
+      "is_visible" : true,
+      "text" : "text from submission solved"
+    },
+    {
+      "name" : "test/Tests.kt",
+      "placeholders" : [ ],
+      "is_visible" : false,
+      "text" : ""
+    }
+  ]
+    """
+
+    @Language("JSON")
+    val solutionWrong = """
+  [
+    {
+      "name" : "src/Task.kt",
+      "placeholders" : [
+        {
+          "offset" : 181,
+          "length" : 41,
+          "possible_answer" : "possible answer",
+          "placeholder_text" : "placeholder text"
+        }
+      ],
+      "is_visible" : true,
+      "text" : "text from submission failed"
+    },
+    {
+      "name" : "test/Tests.kt",
+      "placeholders" : [],
+      "is_visible" : false,
+      "text" : ""
+    }
+  ]
+"""
   }
 
   @Language("JSON")
@@ -438,56 +503,6 @@ class MarketplaceSolutionLoadingTest : SolutionLoadingTestBase() {
       "placeholders" : [ ],
       "is_visible" : true,
       "text" : "additional file text"
-    }
-  ]
-"""
-
-  @Language("JSON")
-  private val solutionCorrect = """
-  [
-    {
-      "name" : "src/Task.kt",
-      "placeholders" : [
-        {
-          "offset" : 181,
-          "length" : 41,
-          "possible_answer" : "possible answer",
-          "placeholder_text" : "placeholder text"
-        }
-      ],
-      "is_visible" : true,
-      "text" : "text from submission solved"
-    },
-    {
-      "name" : "test/Tests.kt",
-      "placeholders" : [ ],
-      "is_visible" : false,
-      "text" : ""
-    }
-  ]
-    """
-
-  @Language("JSON")
-  private val solutionWrong = """
-  [
-    {
-      "name" : "src/Task.kt",
-      "placeholders" : [
-        {
-          "offset" : 181,
-          "length" : 41,
-          "possible_answer" : "possible answer",
-          "placeholder_text" : "placeholder text"
-        }
-      ],
-      "is_visible" : true,
-      "text" : "text from submission failed"
-    },
-    {
-      "name" : "test/Tests.kt",
-      "placeholders" : [],
-      "is_visible" : false,
-      "text" : ""
     }
   ]
 """

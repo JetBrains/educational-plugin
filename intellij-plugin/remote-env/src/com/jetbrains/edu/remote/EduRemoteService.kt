@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator.Companion.EDU_PROJECT_CREATED
 import com.jetbrains.edu.learning.projectView.CourseViewPane
+import com.jetbrains.edu.learning.submissions.SubmissionSettings
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.remote.termination.EduRemoteDisconnectWatcherService
 import com.jetbrains.edu.remote.termination.EduRemoteInactivityWatcherService
@@ -31,6 +32,7 @@ class EduRemoteService(private val session: ClientProjectSession): LifetimedServ
         // but rather the first course project opening for a user. Therefore, the corresponding existing code in the plugin is not invoked,
         // and we need to explicitly do it here.
         project.putUserData(EDU_PROJECT_CREATED, true)
+        SubmissionSettings.getInstance(project).stateOnClose = true
 
         // Temporary workaround to force JCEF on remote if it's available.
         // Ideally, it should be selected automatically during `EduSettings` service initialization

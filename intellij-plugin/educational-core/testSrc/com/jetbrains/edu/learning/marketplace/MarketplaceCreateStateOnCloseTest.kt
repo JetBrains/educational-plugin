@@ -3,20 +3,18 @@ package com.jetbrains.edu.learning.marketplace
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.WRONG
 import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceStateOnClose
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceStateOnClosePost
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
 import com.jetbrains.edu.learning.yaml.YamlMapper.STUDENT_MAPPER
 import org.junit.Test
 import java.util.*
 
-class MarketplaceCreateSubmissionTest : EduTestCase() {
+class MarketplaceCreateStateOnCloseTest : EduTestCase() {
   private val course: EduCourse by lazy {
     courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::EduCourse) {
       section("Section") {
@@ -34,17 +32,13 @@ class MarketplaceCreateSubmissionTest : EduTestCase() {
   }
 
   @Test
-  fun `test creating submission for solved edu task`() = createSubmission(CORRECT, CheckStatus.Solved)
-  @Test
-  fun `test creating submission for failed edu task`() = createSubmission(WRONG, CheckStatus.Failed)
-  @Test
-  fun `test correct submission deserialization`() = deserializeSubmission(CORRECT, CheckStatus.Solved)
-  @Test
-  fun `test wrong submission deserialization`() = deserializeSubmission(WRONG, CheckStatus.Failed)
+  fun `test creating state on close`() = createStateOnClose()
 
-  private fun createSubmission(submissionStatus: String, checkStatus: CheckStatus) {
+  @Test
+  fun `test state on close deserialization`() = deserializeStateOnClose()
+
+  private fun createStateOnClose() {
     val eduTask = course.allTasks[0]
-    eduTask.status = checkStatus
     val solutionFiles = getSolutionFiles(project, eduTask)
     val firstSolutionFile = solutionFiles.first()
     val placeholder = AnswerPlaceholder(2, "placeholder text")
@@ -52,22 +46,20 @@ class MarketplaceCreateSubmissionTest : EduTestCase() {
     firstSolutionFile.placeholders = listOf(placeholder)
     val objectMapper = MarketplaceSubmissionsConnector.getInstance().objectMapper
     val solutionText = objectMapper.writeValueAsString(solutionFiles).trimIndent()
-    val submission = MarketplaceSubmission(eduTask.id, eduTask.status, solutionText, solutionFiles, course.marketplaceCourseVersion)
+    val stateOnClose = MarketplaceStateOnClosePost(eduTask.id, solutionText)
 
-    doTest(submission, """
-      |status: $submissionStatus
-      |update_version: 3
+    doTest(stateOnClose, """
       |task_id: 1
-      |format_version: $JSON_FORMAT_VERSION
       |solution: "[{\"name\":\"src/Task.kt\",\"placeholders\":[{\"offset\":2,\"length\":16,\"\
   possible_answer\":\"\",\"placeholder_text\":\"placeholder text\"}],\"is_visible\"\
   :true,\"text\":\"solution file text\"},{\"name\":\"src/Test.kt\",\"placeholders\"\
   :null,\"is_visible\":false,\"text\":\"test file text\"}]"
+      |format_version: $JSON_FORMAT_VERSION
       |
     """.trimMargin())
   }
 
-  private fun deserializeSubmission(submissionStatus: String, checkStatus: CheckStatus) {
+  private fun deserializeStateOnClose() {
     val submissionId = 21556587
     val submissionTime = Date()
     val courseVersion = 3
@@ -77,27 +69,24 @@ class MarketplaceCreateSubmissionTest : EduTestCase() {
       |id: $submissionId
       |time: ${submissionTime.time}
       |task_id: $taskId
-      |status: $submissionStatus
       |solution_aws_key: $solutionKey
       |format_version: $JSON_FORMAT_VERSION
       |update_version: $courseVersion
       |
     """.trimMargin()
     val treeNode = STUDENT_MAPPER.readTree(yamlContent)
-    val submission = STUDENT_MAPPER.treeToValue(treeNode, MarketplaceSubmission::class.java)
-    checkNotNull(submission)
-    assertEquals(submissionId, submission.id)
-    assertEquals(taskId, submission.taskId)
-    assertEquals(submissionTime, submission.time)
-    assertEquals(submissionStatus, submission.status)
-    assertEquals(JSON_FORMAT_VERSION, submission.formatVersion)
-    assertEquals(courseVersion, submission.courseVersion)
-    assertEquals(solutionKey, submission.solutionKey)
-    assertEquals(checkStatus.rawStatus, submission.status)
+    val stateOnClose = STUDENT_MAPPER.treeToValue(treeNode, MarketplaceStateOnClose::class.java)
+    checkNotNull(stateOnClose)
+    assertEquals(submissionId, stateOnClose.id)
+    assertEquals(taskId, stateOnClose.taskId)
+    assertEquals(submissionTime, stateOnClose.time)
+    assertEquals(JSON_FORMAT_VERSION, stateOnClose.formatVersion)
+    assertEquals(courseVersion, stateOnClose.courseVersion)
+    assertEquals(solutionKey, stateOnClose.solutionKey)
   }
 
-  private fun doTest(submission: MarketplaceSubmission, expected: String) {
-    val actual = STUDENT_MAPPER.writeValueAsString(submission)
+  private fun doTest(state: MarketplaceStateOnClosePost, expected: String) {
+    val actual = STUDENT_MAPPER.writeValueAsString(state)
     assertEquals(expected, actual)
   }
 }

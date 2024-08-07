@@ -14,7 +14,9 @@ import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.authUtils.ConnectorUtils
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
+import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderDependencyMixin
@@ -101,6 +103,7 @@ class MarketplaceSubmissionsConnector {
 
   private fun logCourseId(courseId: Int?): String = if (courseId != null) "for course $courseId" else ""
 
+  // TODO: generalize fetching all pages for paginated requests in common method EDU-7110
   fun getAllSubmissions(courseId: Int): List<MarketplaceSubmission> {
     var currentPage = 1
     val allSubmissions = mutableListOf<MarketplaceSubmission>()
@@ -117,6 +120,23 @@ class MarketplaceSubmissionsConnector {
     return allSubmissions
   }
 
+  // TODO: generalize fetching all pages for paginated requests EDU-7110
+  fun getCourseStateOnClose(courseId: Int): List<MarketplaceStateOnClose> {
+    var currentPage = 1
+    val allStates = mutableListOf<MarketplaceStateOnClose>()
+    do {
+      val page = submissionsService.getStateOnClose(courseId, currentPage).executeParsingErrors().onError {
+        LOG.warn("Failed to get all states on close for course $courseId. Error message: $it")
+        return emptyList()
+      }.body() ?: break
+      allStates.addAll(page.states)
+      currentPage += 1
+    }
+    while (page.states.isNotEmpty() && page.hasNext)
+    return allStates
+  }
+
+  // TODO: generalize fetching all pages for paginated requests EDU-7110
   /**
    * Fetches only N shared solutions for each task on the course that user has solved
    */
@@ -143,7 +163,7 @@ class MarketplaceSubmissionsConnector {
 
   fun getSharedSubmissionsForTask(course: Course, taskId: Int): Pair<List<MarketplaceSubmission>, Boolean>? {
     val (courseId, updateVersion) = course.id to course.marketplaceCourseVersion
-    LOG.info("Loading shared solutions for task $taskId on course with courseId = $courseId, updateVersion = $updateVersion")
+    LOG.info("Loading shared solutions for task $taskId in course with courseId = $courseId, updateVersion = $updateVersion")
 
     val responseBody = submissionsService.getSharedSubmissionsForTask(
       courseId, updateVersion, taskId
@@ -198,24 +218,46 @@ class MarketplaceSubmissionsConnector {
   }
 
   fun postSubmission(project: Project, task: Task, result: CheckResult): MarketplaceSubmission {
-    val solutionFiles = solutionFilesList(project, task).filter { it.isVisible }
-    val solutionText = objectMapper.writeValueAsString(solutionFiles).trimIndent()
-
     val course = task.course
 
-    val submission = MarketplaceSubmission(
-      task.id,
-      task.status,
-      solutionText,
-      solutionFiles,
-      course.marketplaceCourseVersion,
-      result.executedTestsInfo
-    )
+    val submission = createSubmission(project, task, course, result.executedTestsInfo)
 
     val postedSubmission = doPostSubmission(course.id, task.id, submission).onError { error("failed to post submission") }
     submission.id = postedSubmission.id
     submission.time = postedSubmission.time
     return submission
+  }
+
+  private fun createSubmission(
+    project: Project,
+    task: Task,
+    course: Course,
+    testInfo: List<EduTestInfo> = emptyList()
+  ): MarketplaceSubmission {
+    val solutionFiles = solutionFilesList(project, task).filter { it.isVisible }
+    val solutionText = objectMapper.writeValueAsString(solutionFiles).trimIndent()
+
+    return MarketplaceSubmission(
+      task.id,
+      task.status,
+      solutionText,
+      solutionFiles,
+      course.marketplaceCourseVersion,
+      testInfo
+    )
+  }
+
+  private fun createStateOnClose(
+    project: Project,
+    task: Task,
+  ): MarketplaceStateOnClosePost {
+    val solutionFiles = solutionFilesList(project, task).filter { it.isVisible }
+    val solutionText = objectMapper.writeValueAsString(solutionFiles).trimIndent()
+
+    return MarketplaceStateOnClosePost(
+      task.id,
+      solutionText
+    )
   }
 
   suspend fun changeSharingPreference(state: Boolean): Result<Response<Unit>, String> {
@@ -280,7 +322,60 @@ class MarketplaceSubmissionsConnector {
     return files.checkNotEmpty()
   }
 
-  private fun logAndNotifyAfterDeletionAttempt(response: Response<ResponseBody>, project: Project?, courseId: Int?, loginName: String?) {
+  @RequiresBackgroundThread
+  fun saveCurrentState(project: Project, course: Course) {
+    if (!course.isStudy || course !is EduCourse || !course.isMarketplaceRemote) return
+
+    val currentStates = measureTimeAndLog("Collecting the current course state") {
+      collectCurrentState(project, course)
+    }
+    measureTimeAndLog("Posting the current course state") {
+      postCurrentState(course, currentStates)
+    }
+  }
+
+  private fun collectCurrentState(project: Project, course: Course): List<MarketplaceStateOnClosePost> {
+    return course.allTasks
+      .filter { task -> task.supportSubmissions && task.hasChangedFiles(project) }
+      .map { createStateOnClose(project, it) }
+  }
+
+  private fun Task.hasChangedFiles(project: Project): Boolean {
+    for (taskFile in taskFiles.values) {
+      if (!taskFile.isVisible) continue
+      val document = taskFile.getDocument(project) ?: continue
+      if (document.text != taskFile.contents.textualRepresentation) return true
+    }
+    return false
+  }
+
+  private fun postCurrentState(course: EduCourse, currentStates: List<MarketplaceStateOnClosePost>) {
+    if (currentStates.isEmpty()) return
+
+    var attempts = 0
+    do {
+      val remainingStates = doPostChunked(currentStates, course)
+      attempts++
+    } while (remainingStates.isNotEmpty() && attempts < 4)
+  }
+
+  private fun doPostChunked(currentStates: List<MarketplaceStateOnClosePost>, course: EduCourse): List<MarketplaceStateOnClosePost> {
+    val remainingStates = mutableListOf<MarketplaceStateOnClosePost>()
+    currentStates.chunked(STATES_PER_REQUEST).forEach { stateChunk ->
+      when (val res = submissionsService.postStateOnClose(course.id, course.marketplaceCourseVersion, stateChunk).executeParsingErrors()) {
+        is Ok -> {
+          LOG.info("Successfully sent ${stateChunk.size} states")
+        }
+        is Err -> {
+          LOG.info("Failed to send states with error `${res.error}`")
+          remainingStates.addAll(stateChunk)
+        }
+      }
+    }
+    return remainingStates
+  }
+
+  private fun logAndNotifyAfterDeletionAttempt(response: Response<ResponseBody>, project: Project?, courseId: Int?,loginName: String?) {
     when (response.code()) {
       HTTP_NO_CONTENT -> {
         LOG.info("Successfully deleted all submissions ${logLoginName(loginName)} ${logCourseId(courseId)}")
@@ -369,6 +464,8 @@ class MarketplaceSubmissionsConnector {
 
   companion object {
     private val LOG = logger<MarketplaceConnector>()
+    @VisibleForTesting
+    const val STATES_PER_REQUEST: Int = 100
 
     @VisibleForTesting
     fun loadSolutionByLink(solutionsDownloadLink: String): String {

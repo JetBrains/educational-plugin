@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.api
 
 import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
@@ -11,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus.Companion.toCheckStat
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
@@ -19,11 +21,11 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.CodeTaskReply
 import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.markStageAsCompleted
 import com.jetbrains.edu.learning.stepik.hyperskill.openSelectedStage
 import com.jetbrains.edu.learning.submissions.Submission
 
+@Service(Service.Level.PROJECT)
 class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
 
   override fun loadSolution(task: Task, submissions: List<Submission>): TaskSolutions {

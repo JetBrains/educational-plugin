@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.MARKETPLACE
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.SOLUTION
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.STATES_ON_CLOSE
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.SUBMISSIONS
 import com.jetbrains.edu.learning.submissions.SolutionFile
 import com.jetbrains.edu.learning.submissions.Submission
@@ -176,7 +177,7 @@ class CourseBean {
   var name: String = ""
 }
 
-class MarketplaceSubmission : Submission {
+abstract class MarketplaceSubmissionBase : Submission() {
   @JsonProperty(UPDATE_VERSION)
   var courseVersion: Int = 0
 
@@ -187,20 +188,20 @@ class MarketplaceSubmission : Submission {
   @JsonIgnore
   override var solutionFiles: List<SolutionFile>? = null
 
-  // used in POST requests: we send solution files written as a string to submissions service and never download back
-  @JsonProperty(SOLUTION)
-  var solution: String = ""
-
   @JsonProperty(FORMAT_VERSION)
   override var formatVersion: Int = JSON_FORMAT_VERSION
 
   @JsonProperty(SOLUTION_AWS_KEY)
   var solutionKey: String = ""
+}
+
+class MarketplaceSubmission() : MarketplaceSubmissionBase() {
+  // used in POST requests: we send solution files written as a string to submissions service and never download back
+  @JsonProperty(SOLUTION)
+  var solution: String = ""
 
   @JsonProperty(TEST_RESULTS)
   var testsInfo: List<EduTestInfo> = emptyList()
-
-  constructor()
 
   constructor(
     taskId: Int,
@@ -209,7 +210,7 @@ class MarketplaceSubmission : Submission {
     solutionFiles: List<SolutionFile>?,
     courseVersion: Int,
     testsInfo: List<EduTestInfo> = emptyList()
-  ) {
+  ) : this() {
     this.taskId = taskId
     this.status = checkStatus.rawStatus
     this.solutionFiles = solutionFiles
@@ -219,10 +220,31 @@ class MarketplaceSubmission : Submission {
   }
 }
 
+class MarketplaceStateOnClose : MarketplaceSubmissionBase()
+
 class MarketplaceSubmissionsList {
   @JsonProperty(HAS_NEXT)
   var hasNext: Boolean = false
 
   @JsonProperty(SUBMISSIONS)
   lateinit var submissions: List<MarketplaceSubmission>
+}
+
+class MarketplaceStateOnCloseList {
+  @JsonProperty(HAS_NEXT)
+  var hasNext: Boolean = false
+
+  @JsonProperty(STATES_ON_CLOSE)
+  lateinit var states: List<MarketplaceStateOnClose>
+}
+
+class MarketplaceStateOnClosePost(id: Int, solutionText: String, format: Int = JSON_FORMAT_VERSION) {
+  @JsonProperty(TASK_ID)
+  val taskId: Int = id
+
+  @JsonProperty(SOLUTION)
+  val solution: String = solutionText
+
+  @JsonProperty(FORMAT_VERSION)
+  val formatVersion: Int = format
 }

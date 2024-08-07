@@ -76,8 +76,6 @@ class ApplyHyperskillSubmission : DumbAwareAction(
     }
   }
 
-
-
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
 
   override fun update(e: AnActionEvent) {

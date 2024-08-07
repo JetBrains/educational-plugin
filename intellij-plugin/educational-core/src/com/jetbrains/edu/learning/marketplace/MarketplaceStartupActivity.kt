@@ -2,8 +2,11 @@ package com.jetbrains.edu.learning.marketplace
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.progress.blockingContext
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectCloseListener
 import com.intellij.openapi.startup.StartupActivity
+import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.CourseMode
@@ -15,7 +18,9 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnecto
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceUpdateChecker
 import com.jetbrains.edu.learning.marketplace.userAgreement.UserAgreementDialog
 import com.jetbrains.edu.learning.marketplace.userAgreement.UserAgreementSettings
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext.OTHER
+import com.jetbrains.edu.learning.submissions.SubmissionSettings
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.UserAgreementState
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -38,9 +43,11 @@ class MarketplaceStartupActivity : StartupActivity {
 
     if (!project.isStudentProject()) return
 
+    val marketplaceConnector = MarketplaceConnector.getInstance()
+
     if (!isHeadlessEnvironment) {
       ApplicationManager.getApplication().executeOnPooledThread {
-        val isToShowUserAgreementDialog = MarketplaceConnector.getInstance().isLoggedIn() &&
+        val isToShowUserAgreementDialog = marketplaceConnector.isLoggedIn() &&
                                           !UserAgreementSettings.getInstance().isDialogShown &&
                                           MarketplaceSubmissionsConnector.getInstance().getUserAgreementState() == UserAgreementState.NOT_SHOWN
 
@@ -55,6 +62,23 @@ class MarketplaceStartupActivity : StartupActivity {
     val submissionsManager = SubmissionsManager.getInstance(project)
     if (!submissionsManager.submissionsSupported()) return
 
-    submissionsManager.prepareSubmissionsContentWhenLoggedIn { MarketplaceSolutionLoader.getInstance(project).loadSolutionsInBackground() }
+    val solutionsLoader = MarketplaceSolutionLoader.getInstance(project)
+    submissionsManager.prepareSubmissionsContentWhenLoggedIn { solutionsLoader.loadSolutionsInBackground() }
+
+    project.messageBus.connect().subscribe(ProjectCloseListener.TOPIC, object : ProjectCloseListener {
+      override fun projectClosing(project: Project) {
+        if (!SubmissionSettings.getInstance(project).stateOnClose) return
+
+        // We can't make it asynchronous since we need project to get course data
+        runWithModalProgressBlocking(project, EduCoreBundle.message("save.course.state.progress.title")) {
+          val loggedIn = marketplaceConnector.isLoggedIn()
+          if (loggedIn) {
+            blockingContext {
+              MarketplaceSubmissionsConnector.getInstance().saveCurrentState(project, course)
+            }
+          }
+        }
+      }
+    })
   }
 }

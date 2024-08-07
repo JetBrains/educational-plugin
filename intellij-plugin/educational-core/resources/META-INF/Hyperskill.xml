@@ -22,7 +22,6 @@
     <statusBarWidgetFactory id="widget.hyperskill"
                             implementation="com.jetbrains.edu.learning.stepik.hyperskill.widget.HyperskillWidgetFactory"
                             order="before positionWidget"/>
-    <projectService serviceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader"/>
 
     <experimentalFeature id="edu.course.hyperskill" percentOfUsers="100" internalFeature="true">
       <description>Enables action to push Hyperskill lesson to Stepik</description>
