@@ -5,7 +5,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlTokenType
 import com.jetbrains.edu.codeInsight.inCourse
 import com.jetbrains.edu.codeInsight.inFileWithName
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.taskToolWindow.A_TAG
 import com.jetbrains.edu.learning.taskToolWindow.HREF_ATTRIBUTE
 import com.jetbrains.edu.learning.taskToolWindow.links.TaskDescriptionLinkProtocol
@@ -14,7 +14,7 @@ object EduHtmlPsiPatterns {
 
   val hrefAttributeValue: XmlAttributeValuePattern = XmlPatterns.xmlAttributeValue(HREF_ATTRIBUTE)
     .inCourse()
-    .inFileWithName(TASK_HTML)
+    .inFileWithName(DescriptionFormat.HTML.fileName)
     .withSuperParent(2, XmlPatterns.xmlTag().withName(A_TAG))
 
   val inHrefAttributeValue: PsiElementPattern.Capture<PsiElement> = PlatformPatterns.psiElement(XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN)

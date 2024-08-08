@@ -36,7 +36,7 @@ class ShortcutsHighlightingTest : EduTestCase() {
     }
 
     val task = findTask(0, 0)
-    val taskDescriptionFile = task.getDir(project.courseDir)?.findChild(descriptionFormat.descriptionFileName) ?: error("No task description file")
+    val taskDescriptionFile = task.getDir(project.courseDir)?.findChild(descriptionFormat.fileName) ?: error("No task description file")
 
     myFixture.openFileInEditor(taskDescriptionFile)
     myFixture.checkHighlighting()

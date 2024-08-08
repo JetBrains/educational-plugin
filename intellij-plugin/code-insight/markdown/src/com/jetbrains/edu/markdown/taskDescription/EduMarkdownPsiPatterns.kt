@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElement
 import com.jetbrains.edu.codeInsight.inCourse
 import com.jetbrains.edu.codeInsight.inFileWithName
 import com.jetbrains.edu.codeInsight.psiElement
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.taskToolWindow.links.TaskDescriptionLinkProtocol
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownLinkDestination
 
@@ -14,7 +14,7 @@ object EduMarkdownPsiPatterns {
 
   val markdownLinkDestination: PsiElementPattern.Capture<out PsiElement> = psiElement<MarkdownLinkDestination>()
       .inCourse()
-      .inFileWithName(TASK_MD)
+      .inFileWithName(DescriptionFormat.MD.fileName)
 
   val inMarkdownLinkDestination: PsiElementPattern.Capture<PsiElement> = psiElement<PsiElement>()
       .withParent(markdownLinkDestination)

@@ -11,8 +11,6 @@ import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.getContainingTask
@@ -54,7 +52,7 @@ class CCDescriptionFileRenameProcessor : RenamePsiFileProcessor() {
         }
 
         override fun performRename(newName: String) {
-          val format = DescriptionFormat.values().find { it.descriptionFileName == newName } ?: error("Unexpected new name: `$newName`")
+          val format = DescriptionFormat.values().find { it.fileName == newName } ?: error("Unexpected new name: `$newName`")
           task.descriptionFormat = format
           super.performRename(newName)
         }
@@ -63,7 +61,11 @@ class CCDescriptionFileRenameProcessor : RenamePsiFileProcessor() {
         override fun canRun() {
           if (!EduUtilsKt.isTaskDescriptionFile(newName)) {
             throw ConfigurationException(
-              EduCoreBundle.message("dialog.message.incorrect.description.file.name", TASK_HTML, TASK_MD)
+              EduCoreBundle.message(
+                "dialog.message.incorrect.description.file.name",
+                DescriptionFormat.HTML.fileName,
+                DescriptionFormat.MD.fileName
+              )
             )
           }
         }

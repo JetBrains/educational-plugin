@@ -1,12 +1,13 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD
+enum class DescriptionFormat(val extension: String) {
+  HTML("html"),
+  MD("md");
 
-enum class DescriptionFormat(val descriptionFileName: String) {
-  HTML(TASK_HTML),
-  MD(TASK_MD);
+  val fileName: String
+    get() = "$TASK_DESCRIPTION_PREFIX.${extension}"
 
-  val fileExtension: String = getExtension(descriptionFileName)
-
+  companion object {
+    const val TASK_DESCRIPTION_PREFIX: String = "task"
+  }
 }

@@ -23,8 +23,6 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduUtilsKt.convertToHtml
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -138,7 +136,7 @@ fun Task.saveStudentAnswersIfNeeded(project: Project) {
 
 fun Task.addDefaultTaskDescription() {
   val format = if (CCSettings.getInstance().useHtmlAsDefaultTaskFormat) DescriptionFormat.HTML else DescriptionFormat.MD
-  val fileName = format.descriptionFileName
+  val fileName = format.fileName
   descriptionText = GeneratorUtils.getInternalTemplateText(fileName)
   descriptionFormat = format
 }
@@ -153,10 +151,10 @@ fun Task.getDescriptionFile(project: Project, guessFormat: Boolean = false): Vir
   val taskDir = getDir(project.courseDir) ?: return null
 
   val file = if (guessFormat) {
-    taskDir.findChild(TASK_HTML) ?: taskDir.findChild(TASK_MD)
+    taskDir.findChild(DescriptionFormat.HTML.fileName) ?: taskDir.findChild(DescriptionFormat.MD.fileName)
   }
   else {
-    taskDir.findChild(descriptionFormat.descriptionFileName)
+    taskDir.findChild(descriptionFormat.fileName)
   }
 
   file ?: LOG.warn("No task description file for $name")
@@ -255,10 +253,9 @@ fun Task.updateDescriptionTextAndFormat(project: Project) = runReadAction {
   }
 }
 
-private fun VirtualFile.toDescriptionFormat(): DescriptionFormat {
-  return DescriptionFormat.values().firstOrNull { it.fileExtension == extension } ?: loadingError(
-    EduCoreBundle.message("yaml.editor.invalid.description"))
-}
+private fun VirtualFile.toDescriptionFormat(): DescriptionFormat =
+  DescriptionFormat.values().firstOrNull { it.extension == extension }
+  ?: loadingError(EduCoreBundle.message("yaml.editor.invalid.description"))
 
 @RequiresReadLock
 fun Task.getTaskTextFromTask(project: Project): String? {
@@ -296,16 +293,16 @@ private fun getTaskTextByTaskName(task: Task, taskDirectory: VirtualFile): Strin
   val taskTextFile = taskDirectory.getTaskTextFile()
   val taskDescription = taskTextFile?.getTextFromTaskTextFile() ?: task.descriptionText
 
-  return if (taskTextFile != null && TASK_MD == taskTextFile.name) {
+  return if (taskTextFile != null && DescriptionFormat.MD.fileName == taskTextFile.name) {
     convertToHtml(taskDescription)
   }
   else taskDescription
 }
 
 private fun VirtualFile.getTaskTextFile(): VirtualFile? {
-  var taskTextFile = findChild(TASK_HTML)
+  var taskTextFile = findChild(DescriptionFormat.HTML.fileName)
   if (taskTextFile == null) {
-    taskTextFile = findChild(TASK_MD)
+    taskTextFile = findChild(DescriptionFormat.MD.fileName)
   }
   return taskTextFile
 }

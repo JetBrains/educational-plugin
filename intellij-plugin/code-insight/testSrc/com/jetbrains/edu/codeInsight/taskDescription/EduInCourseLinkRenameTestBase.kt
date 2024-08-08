@@ -33,11 +33,11 @@ abstract class EduInCourseLinkRenameTestBase(format: DescriptionFormat) : EduTas
       dir("foo/bar") {
         file("TaskFile2.txt")
       }
-      file(taskDescriptionFormat.descriptionFileName)
+      file(taskDescriptionFormat.fileName)
     }
     dir("section 1/lesson2/task2") {
       file("TaskFile3.txt")
-      file(taskDescriptionFormat.descriptionFileName)
+      file(taskDescriptionFormat.fileName)
     }
   }
 
@@ -48,11 +48,11 @@ abstract class EduInCourseLinkRenameTestBase(format: DescriptionFormat) : EduTas
       dir("foo/bar") {
         file("TaskFile2.txt")
       }
-      file(taskDescriptionFormat.descriptionFileName)
+      file(taskDescriptionFormat.fileName)
     }
     dir("section1/lesson2/task2") {
       file("TaskFile3.txt")
-      file(taskDescriptionFormat.descriptionFileName)
+      file(taskDescriptionFormat.fileName)
     }
   }
 
@@ -63,11 +63,11 @@ abstract class EduInCourseLinkRenameTestBase(format: DescriptionFormat) : EduTas
       dir("foo/bar") {
         file("TaskFile2.txt")
       }
-      file(taskDescriptionFormat.descriptionFileName)
+      file(taskDescriptionFormat.fileName)
     }
     dir("section1/lesson 2/task2") {
       file("TaskFile3.txt")
-      file(taskDescriptionFormat.descriptionFileName)
+      file(taskDescriptionFormat.fileName)
     }
   }
 
@@ -78,11 +78,11 @@ abstract class EduInCourseLinkRenameTestBase(format: DescriptionFormat) : EduTas
       dir("foo/bar") {
         file("TaskFile2.txt")
       }
-      file(taskDescriptionFormat.descriptionFileName)
+      file(taskDescriptionFormat.fileName)
     }
     dir("section1/lesson2/task2") {
       file("TaskFile3.txt")
-      file(taskDescriptionFormat.descriptionFileName)
+      file(taskDescriptionFormat.fileName)
     }
   }
 
@@ -97,11 +97,11 @@ abstract class EduInCourseLinkRenameTestBase(format: DescriptionFormat) : EduTas
       dir("foo/bar") {
         file("TaskFile2.txt")
       }
-      file(taskDescriptionFormat.descriptionFileName)
+      file(taskDescriptionFormat.fileName)
     }
     dir("section1/lesson2/task2") {
       file("TaskFile3.txt")
-      file(taskDescriptionFormat.descriptionFileName)
+      file(taskDescriptionFormat.fileName)
     }
   }
 
@@ -116,11 +116,11 @@ abstract class EduInCourseLinkRenameTestBase(format: DescriptionFormat) : EduTas
       dir("foo/bar") {
         file("TaskFile 2.txt")
       }
-      file(taskDescriptionFormat.descriptionFileName)
+      file(taskDescriptionFormat.fileName)
     }
     dir("section1/lesson2/task2") {
       file("TaskFile3.txt")
-      file(taskDescriptionFormat.descriptionFileName)
+      file(taskDescriptionFormat.fileName)
     }
   }
 
@@ -135,16 +135,16 @@ abstract class EduInCourseLinkRenameTestBase(format: DescriptionFormat) : EduTas
       dir("foo/bar") {
         file("TaskFile2.txt")
       }
-      file(taskDescriptionFormat.descriptionFileName)
+      file(taskDescriptionFormat.fileName)
     }
     dir("section1/lesson2/task2") {
       file("TaskFile3.txt")
-      file(taskDescriptionFormat.descriptionFileName)
+      file(taskDescriptionFormat.fileName)
     }
   }
 
   protected open fun doTest(newName: String, linkBefore: String, linkAfter: String, expectedFileTree: FileTreeBuilder.() -> Unit) {
-    val taskDescriptionFile = findFile("lesson1/task1/${taskDescriptionFormat.descriptionFileName}")
+    val taskDescriptionFile = findFile("lesson1/task1/${taskDescriptionFormat.fileName}")
 
     myFixture.saveText(taskDescriptionFile, linkBefore.withDescriptionFormat())
     myFixture.configureFromExistingVirtualFile(taskDescriptionFile)
