@@ -200,7 +200,6 @@ private sealed class LessonCard : Wrapper() {
     return object : MouseAdapter() {
       override fun mousePressed(e: MouseEvent?) {
         super.mousePressed(e)
-        requestFocusInWindow()
         selectionListeners.forEach(CardSelectionListener::onSelected)
       }
     }
