@@ -48,17 +48,17 @@ abstract class EduTaskDescriptionCompletionTestBase(format: DescriptionFormat) :
   }
 
   protected open fun doTest(linkBefore: String, linkAfter: String) {
-    val taskDescriptionFile = findFile("lesson1/task1/${taskDescriptionFormat.descriptionFileName}")
+    val taskDescriptionFile = findFile("lesson1/task1/${taskDescriptionFormat.fileName}")
     completionFixture.doSingleCompletion(taskDescriptionFile, linkBefore.withDescriptionFormat(), linkAfter.withDescriptionFormat())
   }
 
   protected open fun checkNoCompletion(link: String) {
-    val taskDescriptionFile = findFile("lesson1/task1/${taskDescriptionFormat.descriptionFileName}")
+    val taskDescriptionFile = findFile("lesson1/task1/${taskDescriptionFormat.fileName}")
     completionFixture.checkNoCompletion(taskDescriptionFile, link.withDescriptionFormat())
   }
 
   protected fun checkDoNotContainCompletion(link: String, variant: String) {
-    val taskDescriptionFile = findFile("lesson1/task1/${taskDescriptionFormat.descriptionFileName}")
+    val taskDescriptionFile = findFile("lesson1/task1/${taskDescriptionFormat.fileName}")
     completionFixture.checkDoNotContainCompletion(taskDescriptionFile, link.withDescriptionFormat(), variant)
   }
 }

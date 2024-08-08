@@ -4,13 +4,11 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.findTask
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.testAction
 import org.junit.Test
 
@@ -97,10 +95,18 @@ class RenameTest : RenameTestBase() {
       }
     }
 
-    doRenameAction(course, "lesson1/task1/${TASK_MD}", TASK_HTML, shouldBeInvoked = false)
+    val taskHtml = DescriptionFormat.HTML.fileName
+    val taskMd = DescriptionFormat.MD.fileName
+
+    doRenameAction(
+      course,
+      "lesson1/task1/$taskMd",
+      taskHtml,
+      shouldBeInvoked = false
+    )
     assertEquals(DescriptionFormat.MD, course.lessons[0].taskList[0].descriptionFormat)
-    assertNull(findDescriptionFile(TASK_HTML))
-    assertNotNull(findDescriptionFile(TASK_MD))
+    assertNull(findDescriptionFile(taskHtml))
+    assertNotNull(findDescriptionFile(taskMd))
   }
 
   @Test
@@ -266,10 +272,13 @@ class RenameTest : RenameTestBase() {
       }
     }
 
-    doRenameAction(course, "lesson1/task1/${TASK_MD}", TASK_HTML)
+    val taskHtml = DescriptionFormat.HTML.fileName
+    val taskMd = DescriptionFormat.MD.fileName
+
+    doRenameAction(course, "lesson1/task1/$taskMd", taskHtml)
     assertEquals(DescriptionFormat.HTML, course.lessons[0].taskList[0].descriptionFormat)
-    assertNull(findDescriptionFile(TASK_MD))
-    assertNotNull(findDescriptionFile(TASK_HTML))
+    assertNull(findDescriptionFile(taskMd))
+    assertNotNull(findDescriptionFile(taskHtml))
   }
 
   @Test
@@ -282,11 +291,12 @@ class RenameTest : RenameTestBase() {
       }
     }
 
+    val taskMd = DescriptionFormat.MD.fileName
     val newFileName = "incorrectFileName.txt"
-    doRenameAction(course, "lesson1/task1/${TASK_MD}", newFileName, shouldBeInvoked = false)
+    doRenameAction(course, "lesson1/task1/$taskMd", newFileName, shouldBeInvoked = false)
     assertEquals(DescriptionFormat.MD, course.lessons[0].taskList[0].descriptionFormat)
     assertNull(findDescriptionFile(newFileName))
-    assertNotNull(findDescriptionFile(TASK_MD))
+    assertNotNull(findDescriptionFile(taskMd))
   }
 
   @Test

@@ -54,10 +54,6 @@ object EduFormatNames {
 
   const val DEFAULT_ENVIRONMENT = ""
 
-  // description format
-  const val TASK_HTML = "task.html"
-  const val TASK_MD = "task.md"
-
   // Used as course type only
   const val PYCHARM = "PyCharm"
 

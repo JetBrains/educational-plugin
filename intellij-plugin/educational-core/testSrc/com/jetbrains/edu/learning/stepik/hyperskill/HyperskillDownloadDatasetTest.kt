@@ -3,8 +3,8 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_TOPICS
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
 import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
 import com.jetbrains.edu.learning.courseFormat.attempts.DataTaskAttempt.Companion.toDataTaskAttempt
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
@@ -46,11 +46,13 @@ class HyperskillDownloadDatasetTest : EduActionTestCase() {
 
   @Test
   fun `test download new dataset`() {
+    val taskHtml = DescriptionFormat.HTML.fileName
+
     val course = hyperskillCourseWithFiles(language = PlainTextLanguage.INSTANCE) {
       section(HYPERSKILL_TOPICS) {
         lesson(TOPIC_NAME) {
           dataTask(DATA_TASK_1, stepId = 1) {
-            taskFile(TASK_HTML)
+            taskFile(taskHtml)
             taskFile(SOME_FILE_TXT)
           }
         }
@@ -62,7 +64,7 @@ class HyperskillDownloadDatasetTest : EduActionTestCase() {
       dir(HYPERSKILL_TOPICS) {
         dir(TOPIC_NAME) {
           dir(DATA_TASK_1) {
-            file(TASK_HTML)
+            file(taskHtml)
             file(SOME_FILE_TXT)
             dir(DATA_FOLDER_NAME) {
               dir(DATASET_FOLDER_NAME) {
@@ -77,6 +79,8 @@ class HyperskillDownloadDatasetTest : EduActionTestCase() {
 
   @Test
   fun `test update dataset`() {
+    val taskHtml = DescriptionFormat.HTML.fileName
+
     val course = hyperskillCourseWithFiles(language = PlainTextLanguage.INSTANCE) {
       section(HYPERSKILL_TOPICS) {
         lesson(TOPIC_NAME) {
@@ -85,7 +89,7 @@ class HyperskillDownloadDatasetTest : EduActionTestCase() {
             stepId = 2,
             attempt = Attempt(102, Date(), 300).toDataTaskAttempt()
           ) {
-            taskFile(TASK_HTML)
+            taskFile(taskHtml)
             taskFile(SOME_FILE_TXT)
             dir(DATA_FOLDER_NAME) {
               dir(DATASET_FOLDER_NAME) {
@@ -102,7 +106,7 @@ class HyperskillDownloadDatasetTest : EduActionTestCase() {
       dir(HYPERSKILL_TOPICS) {
         dir(TOPIC_NAME) {
           dir(DATA_TASK_2) {
-            file(TASK_HTML)
+            file(taskHtml)
             file(SOME_FILE_TXT)
             dir(DATA_FOLDER_NAME) {
               dir(DATASET_FOLDER_NAME) {
@@ -117,6 +121,8 @@ class HyperskillDownloadDatasetTest : EduActionTestCase() {
 
   @Test
   fun `test outdated attempt`() {
+    val taskHtml = DescriptionFormat.HTML.fileName
+
     val course = hyperskillCourseWithFiles(language = PlainTextLanguage.INSTANCE) {
       section(HYPERSKILL_TOPICS) {
         lesson(TOPIC_NAME) {
@@ -125,7 +131,7 @@ class HyperskillDownloadDatasetTest : EduActionTestCase() {
             stepId = 3,
             attempt = Attempt(103, Date(), 0).toDataTaskAttempt()
           ) {
-            taskFile(TASK_HTML)
+            taskFile(taskHtml)
             taskFile(SOME_FILE_TXT)
             dir(DATA_FOLDER_NAME) {
               dir(DATASET_FOLDER_NAME) {
@@ -142,7 +148,7 @@ class HyperskillDownloadDatasetTest : EduActionTestCase() {
       dir(HYPERSKILL_TOPICS) {
         dir(TOPIC_NAME) {
           dir(DATA_TASK_3) {
-            file(TASK_HTML)
+            file(taskHtml)
             file(SOME_FILE_TXT)
             dir(DATA_FOLDER_NAME) {
               dir(DATASET_FOLDER_NAME) {

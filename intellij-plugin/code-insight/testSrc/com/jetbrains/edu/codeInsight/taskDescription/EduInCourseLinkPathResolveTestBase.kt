@@ -43,7 +43,7 @@ abstract class EduInCourseLinkPathResolveTestBase(format: DescriptionFormat) : E
   fun `test task file reference 2`() = doTest("course://lesson2/task2/foo/bar/TaskFile<caret>2.txt", "lesson2/task2/foo/bar/TaskFile2.txt")
 
   protected open fun doTest(link: String, expectedPath: String) {
-    val taskDescriptionFile = findFile("lesson1/task1/${taskDescriptionFormat.descriptionFileName}")
+    val taskDescriptionFile = findFile("lesson1/task1/${taskDescriptionFormat.fileName}")
     myFixture.saveText(taskDescriptionFile, link.withDescriptionFormat())
     myFixture.configureFromExistingVirtualFile(taskDescriptionFile)
 

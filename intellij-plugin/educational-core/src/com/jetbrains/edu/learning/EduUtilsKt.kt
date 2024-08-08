@@ -25,8 +25,6 @@ import com.intellij.util.TimeoutUtil
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSE_META_FILE
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.zip.FileContentsFromZipFactory
@@ -88,7 +86,8 @@ object EduUtilsKt {
   @Suppress("UnstableApiUsage")
   fun isAndroidStudio(): Boolean = "AndroidStudio" == PlatformUtils.getPlatformPrefix()
 
-  fun isTaskDescriptionFile(fileName: String): Boolean = TASK_HTML == fileName || TASK_MD == fileName
+  fun isTaskDescriptionFile(fileName: String): Boolean =
+    fileName in listOf(DescriptionFormat.HTML.fileName, DescriptionFormat.MD.fileName)
 
   fun updateToolWindows(project: Project) {
     TaskToolWindowView.getInstance(project).updateTaskDescription()

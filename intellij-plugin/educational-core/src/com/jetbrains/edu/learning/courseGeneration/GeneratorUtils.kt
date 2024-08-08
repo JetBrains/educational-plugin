@@ -21,13 +21,9 @@ import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import com.intellij.util.io.ReadOnlyAttributeUtil
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.HTML
-import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.MD
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.LESSON
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.SECTION
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
@@ -169,11 +165,7 @@ object GeneratorUtils {
   @RequiresBlockingContext
   @Throws(IOException::class)
   private fun createDescriptionFile(holder: CourseInfoHolder<out Course?>, taskDir: VirtualFile, task: Task): VirtualFile? {
-    val descriptionFileName = when (task.descriptionFormat) {
-      HTML -> TASK_HTML
-      MD -> TASK_MD
-    }
-
+    val descriptionFileName = task.descriptionFormat.fileName
     return createChildFile(holder, taskDir, descriptionFileName, InMemoryTextualContents(task.descriptionText))
   }
 
