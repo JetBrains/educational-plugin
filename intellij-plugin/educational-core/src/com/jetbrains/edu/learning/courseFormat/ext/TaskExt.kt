@@ -276,7 +276,8 @@ fun Task.getTaskTextFromTask(project: Project): String? {
  *
  * But the task description and YAML files for the task are in the folder with the task name (f. e. `lesson/task1`)
  */
-private fun Task.getTaskDirectory(project: Project): VirtualFile? {
+@RequiresReadLock
+fun Task.getTaskDirectory(project: Project): VirtualFile? {
   val taskDirectory = if (lesson is FrameworkLesson && course.isStudy) {
     lesson.getDir(project.courseDir)?.findChild(name)
   }
