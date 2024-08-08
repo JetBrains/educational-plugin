@@ -130,10 +130,10 @@ class LessonChoicePanel : Wrapper(), Disposable {
 }
 
 private sealed class LessonCard : Wrapper() {
-  protected abstract val icon: Icon
-  protected abstract val selectedIcon: Icon
-  protected abstract val title: @NlsContexts.Label String
-  protected abstract val description: @NlsContexts.Label String
+  abstract val icon: Icon
+  abstract val selectedIcon: Icon
+  abstract val title: @NlsContexts.Label String
+  abstract val description: @NlsContexts.Label String
 
   private lateinit var titleComponent: JComponent
   private lateinit var iconComponent: JLabel
