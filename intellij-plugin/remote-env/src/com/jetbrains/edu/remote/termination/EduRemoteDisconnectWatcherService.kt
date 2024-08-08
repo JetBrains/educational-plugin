@@ -48,7 +48,7 @@ class EduRemoteDisconnectWatcherService(private val scope: CoroutineScope) {
             LOG.debug("Disconnection continues for $timeDisconnected seconds, max idle time: $maxIdleTime")
             if (timeDisconnected >= maxIdleTime) {
               LOG.info("Exiting application due to long user absence")
-              ApplicationManager.getApplication().exit(true, true, false)
+              ApplicationManager.getApplication().exit(false, true, false)
               break
             }
           }
