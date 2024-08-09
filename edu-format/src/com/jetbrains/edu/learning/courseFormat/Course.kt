@@ -17,6 +17,9 @@ abstract class Course : LessonContainer() {
   var courseMode: CourseMode = CourseMode.STUDENT //this field is used to distinguish study and course creator modes
   var solutionsHidden: Boolean = false
 
+  var selectedTaskId: Int? = null
+  var ltiLaunchId: String? = null
+
   @Transient
   var visibility: CourseVisibility = CourseVisibility.LocalVisibility
 

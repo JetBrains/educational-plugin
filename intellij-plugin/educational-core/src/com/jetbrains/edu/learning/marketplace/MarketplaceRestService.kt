@@ -6,10 +6,14 @@ import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import com.jetbrains.edu.learning.authUtils.hasOpenDialogs
 import com.jetbrains.edu.learning.authUtils.sendPluginInfoResponse
+import com.jetbrains.edu.learning.courseGeneration.OpenInIdeRequest
+import com.jetbrains.edu.learning.courseGeneration.OpenInIdeRequestHandler
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.courseGeneration.MarketplaceOpenCourseRequest
 import com.jetbrains.edu.learning.marketplace.courseGeneration.MarketplaceOpenInIdeRequestHandler
+import com.jetbrains.edu.learning.marketplace.courseGeneration.MarketplaceOpenLtiLinkCourseRequest
+import com.jetbrains.edu.learning.marketplace.courseGeneration.MarketplaceOpenLtiLinkCourseRequestHandler
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.showNotificationFromCourseValidation
 import io.netty.channel.ChannelHandlerContext
@@ -34,8 +38,20 @@ class MarketplaceRestService : OAuthRestService(MARKETPLACE) {
     }
 
     val courseId = getIntParameter(COURSE_ID, urlDecoder)
-    if (courseId != -1) {
-      openInIDE(MarketplaceOpenCourseRequest(courseId), request, context)
+    val updateVersion = getIntParameter(UPDATE_VERSION, urlDecoder)
+    val taskEduId = getIntParameter(TASK_EDU_ID, urlDecoder)
+    val launchId = getStringParameter(LAUNCH_ID, urlDecoder)
+    when {
+      launchId != null && taskEduId > 0 && updateVersion > 0 -> {
+        val openLtiLinkCourseRequest = MarketplaceOpenLtiLinkCourseRequest(courseId, updateVersion, taskEduId, launchId)
+        openInIDE(openLtiLinkCourseRequest, MarketplaceOpenLtiLinkCourseRequestHandler, request, context)
+      }
+      courseId > 0 ->  {
+        if (launchId != null) {
+          LOG.warn("launchId=${launchId}, but not all parameters present. taskEduId=$taskEduId, updateVersion=$updateVersion")
+        }
+        openInIDE(MarketplaceOpenCourseRequest(courseId), MarketplaceOpenInIdeRequestHandler, request, context)
+      }
     }
 
     sendStatus(HttpResponseStatus.BAD_REQUEST, false, context.channel())
@@ -44,11 +60,12 @@ class MarketplaceRestService : OAuthRestService(MARKETPLACE) {
 
   override fun getServiceName(): String = MarketplaceConnector.getInstance().serviceName
 
-  private fun openInIDE(openCourseRequest: MarketplaceOpenCourseRequest,
-                        request: FullHttpRequest,
-                        context: ChannelHandlerContext): String? {
+  private fun <R: OpenInIdeRequest> openInIDE(openCourseRequest: R,
+                                              handler: OpenInIdeRequestHandler<R>,
+                                              request: FullHttpRequest,
+                                              context: ChannelHandlerContext): String? {
     LOG.info("Opening $MARKETPLACE course: $openCourseRequest")
-    return when (val result = ProjectOpener.getInstance().open(MarketplaceOpenInIdeRequestHandler, openCourseRequest)) {
+    return when (val result = ProjectOpener.getInstance().open(handler, openCourseRequest)) {
       is Ok -> {
         sendOk(request, context)
         LOG.info("$MARKETPLACE course opened: $openCourseRequest")
@@ -79,8 +96,12 @@ class MarketplaceRestService : OAuthRestService(MARKETPLACE) {
   }
 
   companion object {
-    private const val COURSE_ID = "course_id"
     private const val INFO = "info"
+    private const val COURSE_ID = "course_id"
+    private const val UPDATE_VERSION = "u"
+    private const val TASK_EDU_ID = "t"
+    // used to recognize lti launch
+    private const val LAUNCH_ID = "l"
     private val JETBRAINS_ORIGIN_PATTERN = Pattern.compile("https://([a-z0-9-]+\\.)*jetbrains.com$")
     private val TRUSTED_ORIGINS = setOf(PLUGINS_REPOSITORY_URL, PLUGINS_EDU_DEMO, PLUGINS_MASTER_DEMO)
   }
