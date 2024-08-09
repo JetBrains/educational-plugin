@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.services.dialog.ServiceHostChanger
 import javax.swing.JComboBox
 import javax.swing.JComponent
 
-internal class SubmissionsServiceChangeHostDialog : ServiceHostChanger, DialogWrapper(true) {
+internal class SubmissionsServiceChangeHostDialog(val ltiLinkId: String?) : ServiceHostChanger, DialogWrapper(true) {
   private var selectedHost: SubmissionsServiceHost? = SubmissionsServiceHost.getSelectedHost()
 
   private var otherServer: String = if (selectedHost in listOf(SubmissionsServiceHost.PRODUCTION, SubmissionsServiceHost.STAGING)) {
@@ -36,7 +36,7 @@ internal class SubmissionsServiceChangeHostDialog : ServiceHostChanger, DialogWr
   }
 
   override fun createCenterPanel(): JComponent = panel {
-    row(EduCoreBundle.message("submissions.service.change.host.choose.server.label")) {
+    row(EduCoreBundle.message("submissions.service.change.host.choose.server.label") + " " + ltiLinkId) {
       comboBox = comboBox(EnumComboBoxModel(SubmissionsServiceHost::class.java))
         .bindItem(::selectedHost)
         .focused()

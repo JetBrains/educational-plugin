@@ -19,7 +19,8 @@ class SubmissionsServiceChangeHost : DumbAwareAction(EduCoreBundle.message("subm
     val project = e.project ?: return
     val course = project.course ?: return
 
-    val selectedUrl = SubmissionsServiceChangeHostDialog().showDialogAndGetHost()
+    val ltiLaunchId = course.ltiLaunchId
+    val selectedUrl = SubmissionsServiceChangeHostDialog(ltiLaunchId).showDialogAndGetHost()
     if (selectedUrl == null) {
       LOG.warn("Selected Submissions service URL item is null")
       return

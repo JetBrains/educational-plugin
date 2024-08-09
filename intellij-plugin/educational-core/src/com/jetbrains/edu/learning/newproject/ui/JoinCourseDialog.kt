@@ -23,7 +23,7 @@ open class JoinCourseDialog(
 
   init {
     super.init()
-    title = course.name
+    title = course.name + course.ltiLaunchId?.let { " For LTI launch" }.orEmpty()
   }
 
   override fun createCenterPanel(): JComponent {
