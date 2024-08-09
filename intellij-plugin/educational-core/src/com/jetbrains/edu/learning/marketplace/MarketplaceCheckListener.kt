@@ -4,6 +4,7 @@ import com.intellij.execution.process.ProcessIOExecutorService
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.courseFormat.CheckResult
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showSubmissionNotPostedNotification
@@ -51,6 +52,13 @@ class MarketplaceCheckListener : CheckListener {
         else -> {
           showSubmissionNotPostedNotification(project, this, task.name)
         }
+      }
+    }
+    ltiLaunchId?.let {
+      if (task.id == this.selectedTaskId) {
+          if (task.status == CheckStatus.Solved) {
+              MarketplaceSubmissionsConnector.getInstance().submitLTISolution(it)
+          }
       }
     }
   }

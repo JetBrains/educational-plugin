@@ -297,6 +297,14 @@ class MarketplaceSubmissionsConnector {
     return true
   }
 
+  fun submitLTISolution(launchId: String): String {
+    LOG.info("Reporting LTI solution with launchId $launchId")
+    return submissionsService.postLTISolution(launchId).executeParsingErrors().onError {
+      LOG.info("Failed to report LTI solution with launchId $launchId")
+      return it
+    }.body() ?: "No body for LTI submission"
+  }
+
   private fun doPostSubmission(courseId: Int, taskId: Int, submission: MarketplaceSubmission): Result<MarketplaceSubmission, String> {
     LOG.info("Posting submission for task $taskId")
     val response = submissionsService.postSubmission(courseId, submission.courseVersion, taskId, submission).executeParsingErrors().onError {

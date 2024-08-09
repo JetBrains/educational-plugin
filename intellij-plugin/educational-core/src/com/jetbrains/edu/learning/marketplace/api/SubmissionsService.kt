@@ -78,4 +78,7 @@ interface SubmissionsService {
 
   @PATCH("/api/user/statisticsAllowed")
   suspend fun changeUserStatisticsAllowedState(@Query("state") statisticsAllowed: Boolean): Response<Unit>
+
+  @POST("/submitTestScoreForLTI")
+  fun postLTISolution(@Query("launchId") launchId: String): Call<String>
 }
