@@ -9,5 +9,8 @@ enum class DescriptionFormat(val extension: String) {
 
   companion object {
     const val TASK_DESCRIPTION_PREFIX: String = "task"
+
+    val taskDescriptionRegex: Regex =
+      """^$TASK_DESCRIPTION_PREFIX(?:_[a-z]{2}(?:-[A-Z]{2})?)?\.(${HTML.extension}|${MD.extension})$""".toRegex()
   }
 }

@@ -2,9 +2,13 @@ package com.jetbrains.edu.learning.handlers
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.*
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.*
+import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.FileInfo
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.fileInfo
@@ -42,6 +46,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
   private fun fileCreated(file: VirtualFile) {
     if (file.isDirectory) return
     val fileInfo = file.fileInfo(project) as? FileInfo.FileInTask ?: return
+    if (EduUtilsKt.isTaskDescriptionFile(fileInfo.pathInTask)) return
     fileInTaskCreated(fileInfo, file)
   }
 

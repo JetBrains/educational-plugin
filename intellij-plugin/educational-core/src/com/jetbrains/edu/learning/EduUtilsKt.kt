@@ -86,8 +86,7 @@ object EduUtilsKt {
   @Suppress("UnstableApiUsage")
   fun isAndroidStudio(): Boolean = "AndroidStudio" == PlatformUtils.getPlatformPrefix()
 
-  fun isTaskDescriptionFile(fileName: String): Boolean =
-    fileName in listOf(DescriptionFormat.HTML.fileName, DescriptionFormat.MD.fileName)
+  fun isTaskDescriptionFile(fileName: String): Boolean = fileName matches DescriptionFormat.taskDescriptionRegex
 
   fun updateToolWindows(project: Project) {
     TaskToolWindowView.getInstance(project).updateTaskDescription()
