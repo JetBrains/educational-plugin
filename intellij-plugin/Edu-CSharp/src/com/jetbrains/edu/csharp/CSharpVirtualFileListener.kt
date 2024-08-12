@@ -4,18 +4,38 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileCreateEvent
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
+import com.intellij.openapi.vfs.newvfs.events.VFilePropertyChangeEvent
+import com.jetbrains.edu.learning.getTask
 import com.jetbrains.rdclient.util.idea.toIOFile
+import com.jetbrains.rider.ideaInterop.fileTypes.msbuild.CsprojFileType
 
 class CSharpVirtualFileListener(private val project: Project) : BulkFileListener {
   override fun after(events: List<VFileEvent>) {
-    val newFilesToIndex = events.filterIsInstance<VFileCreateEvent>()
-      .filter { event -> event.file != null && event.parent.path == project.basePath }
-      .mapNotNull { it.file?.toIOFile() }
-
-    // is needed to trigger indexing for top-level files and directories in the project for them to appear in the courseView
-    if (newFilesToIndex.isNotEmpty()) {
-      CSharpBackendService.getInstance(project).startIndexingTopLevelFiles(newFilesToIndex)
+    for (event in events) {
+      when (event) {
+        is VFileCreateEvent -> fileCreated(event)
+        is VFilePropertyChangeEvent -> propertyChanged(event)
+      }
     }
-    super.after(events)
+  }
+
+  private fun fileCreated(event: VFileCreateEvent) {
+    val file = event.file?.toIOFile() ?: return
+    if (event.parent.path == project.basePath) {
+      // is needed to trigger indexing for top-level files and directories in the project for them to appear in the courseView
+      CSharpBackendService.getInstance(project).startIndexingTopLevelFiles(listOf(file))
+    }
+  }
+
+  private fun propertyChanged(propertyChangeEvent: VFilePropertyChangeEvent) {
+    val file = propertyChangeEvent.file
+    if (file.parent.path == project.basePath) {
+      CSharpBackendService.getInstance(project).stopIndexingTopLevelFiles(listOf(propertyChangeEvent.oldPath.toIOFile()))
+      CSharpBackendService.getInstance(project).startIndexingTopLevelFiles(listOf(file.toIOFile()))
+    }
+    else if (file.extension == CsprojFileType.defaultExtension) {
+      val task = file.parent.getTask(project) ?: error("CSProj file found in an unexpected place: ${file.parent}")
+      CSharpBackendService.getInstance(project).addCSProjectFilesToSolution(listOf(task))
+    }
   }
 }

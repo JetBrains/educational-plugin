@@ -19,7 +19,6 @@ import com.jetbrains.rd.ide.model.RdPostProcessParameters
 import com.jetbrains.rd.util.reactive.RdFault
 import com.jetbrains.rd.util.reactive.whenFalse
 import com.jetbrains.rd.util.reactive.whenTrue
-import com.jetbrains.rdclient.util.idea.toIOFile
 import com.jetbrains.rider.model.AddProjectCommand
 import com.jetbrains.rider.model.RdRemoveItemsCommand
 import com.jetbrains.rider.model.projectModelTasks
@@ -37,7 +36,7 @@ import java.io.File
 
 @Service(Service.Level.PROJECT)
 class CSharpBackendService(private val project: Project) : Disposable {
-  private val csprojMergingQueue = MergingUpdateQueue(PROJECT_MODEL_READY, 300, false, null, this, null, true)
+  private val csprojMergingQueue = TaskMergingQueue()
   private val indexingMergingQueue = MergingUpdateQueue(INDEXING_REQUEST, 300, false, null, this)
 
   init {
@@ -54,42 +53,20 @@ class CSharpBackendService(private val project: Project) : Disposable {
   }
 
   fun addCSProjectFilesToSolution(tasks: List<Task>) {
-    csprojMergingQueue.queue(Update.create(tasks) {
-      val csprojTaskPaths = tasks.map { it.csProjPathByTask(project).toIOFile().toString() }
-      val projectModelTasks = project.solution.projectModelTasks
-      val parentId = WorkspaceModel.getInstance(project).getSolutionEntity()?.getId(project) ?: return@create
-      val parameters = RdPostProcessParameters(false, listOf())
-      val command = AddProjectCommand(parentId, csprojTaskPaths, listOf(), true, parameters)
-      try {
-        projectModelTasks.addProject.runCommandUnderProgress(
-          command,
-          project,
-          EduCSharpBundle.message("adding.projects.to.solution"),
-          isCancelable = false,
-          throwFault = true
-        )
-      }
-      catch (e: RdFault) {
-        LOG.warn("Could not add csproj files to solution", e)
-        if (isUserWantsToRetry()) {
-          addCSProjectFilesToSolution(tasks)
-        }
-      }
-    })
+    csprojMergingQueue.queue(Update.create(tasks) {})
   }
 
   fun removeCSProjectFilesFromSolution(tasks: List<Task>) {
     // Should be done synchronously, since the csproj name depends on the course structure.
     // If we do this asynchronously, the course structure will be modified earlier than
     // we retrieve the csproj name to unload
-    val projectModelTasks = project.solution.projectModelTasks
     val entities = tasks.mapNotNull { task ->
       WorkspaceModel.getInstance(project).findProjectsByName(task.getCSProjFileNameWithoutExtension()).firstOrNull()
     }
     val ids = entities.mapNotNull { it.getId(project) }.ifEmpty { return }
     val command = RdRemoveItemsCommand(ids)
     try {
-      projectModelTasks.remove.runCommandUnderProgress(
+      project.solution.projectModelTasks.remove.runCommandUnderProgress(
         command,
         project,
         EduCSharpBundle.message("removing.project.files"),
@@ -100,15 +77,6 @@ class CSharpBackendService(private val project: Project) : Disposable {
       LOG.error("Failed to unload task", e)
     }
   }
-
-  @Suppress("HardcodedStringLiteral")
-  private fun isUserWantsToRetry(): Boolean = Messages.showOkCancelDialog(
-    EduCSharpBundle.getMessage("unexpected.error.occurred.when.adding.task.retry"),
-    CommonBundle.getErrorTitle(),
-    EduCoreBundle.getMessage("retry"),
-    CommonBundle.getCancelButtonText(),
-    Messages.getErrorIcon()
-  ) == MessageConstants.OK
 
   fun startIndexingTopLevelFiles(files: List<File>) {
     indexingMergingQueue.queue(Update.create(files) {
@@ -126,11 +94,49 @@ class CSharpBackendService(private val project: Project) : Disposable {
 
   override fun dispose() {}
 
+  private inner class TaskMergingQueue : MergingUpdateQueue(PROJECT_MODEL_READY, 500, false, null, null, null, true) {
+    override fun execute(updates: Array<out Update>) {
+      val tasks = updates
+        .flatMap { update -> update.equalityObjects.filterIsInstance<List<*>>() }
+        .flatten()
+        .filterIsInstance<Task>()
+        .toList()
+      val csprojTaskPaths = tasks.map { it.csProjPathByTask(project) }
+      val parentId = WorkspaceModel.getInstance(project).getSolutionEntity()?.getId(project) ?: return
+      val parameters = RdPostProcessParameters(false, listOf())
+      val command = AddProjectCommand(parentId, csprojTaskPaths, listOf(), true, parameters)
+      try {
+        project.solution.projectModelTasks.addProject.runCommandUnderProgress(
+          command,
+          project,
+          EduCSharpBundle.message("adding.projects.to.solution"),
+          isCancelable = false,
+          throwFault = true
+        )
+      }
+      catch (e: RdFault) {
+        LOG.warn("Could not add csproj files to solution: $tasks", e)
+        if (isUserWantsToRetry()) {
+          addCSProjectFilesToSolution(tasks)
+        }
+      }
+    }
+
+    @Suppress("HardcodedStringLiteral")
+    private fun isUserWantsToRetry(): Boolean = Messages.showOkCancelDialog(
+      EduCSharpBundle.getMessage("unexpected.error.occurred.when.adding.task.retry"),
+      CommonBundle.getErrorTitle(),
+      EduCoreBundle.getMessage("retry"),
+      CommonBundle.getCancelButtonText(),
+      Messages.getErrorIcon()
+    ) == MessageConstants.OK
+
+  }
+
   companion object {
     fun getInstance(project: Project): CSharpBackendService = project.service()
     private val LOG = logger<CSharpBackendService>()
     private const val PROJECT_MODEL_READY: String = "Project Model Ready"
     private const val INDEXING_REQUEST: String = "Indexing Request"
   }
-
 }

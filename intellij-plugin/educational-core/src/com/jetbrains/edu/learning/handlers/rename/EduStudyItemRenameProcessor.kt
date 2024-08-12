@@ -7,10 +7,13 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiDirectoryContainer
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReference
+import com.intellij.psi.search.SearchScope
 import com.intellij.refactoring.rename.RenameDialog
 import com.intellij.refactoring.rename.RenamePsiFileProcessor
 import com.jetbrains.edu.coursecreator.CCStudyItemPathInputValidator
 import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
+import com.jetbrains.edu.coursecreator.handlers.StudyItemRefactoringHandler
 import com.jetbrains.edu.coursecreator.presentableTitleName
 import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.course
@@ -45,6 +48,15 @@ abstract class EduStudyItemRenameProcessor : RenamePsiFileProcessor() {
     return createRenameDialog(project, element, nameSuggestionContext, editor, Factory(item))
   }
 
+  override fun findReferences(
+    element: PsiElement,
+    searchScope: SearchScope,
+    searchInCommentsAndStrings: Boolean
+  ): MutableCollection<PsiReference> {
+    val references = super.findReferences(element, searchScope, searchInCommentsAndStrings)
+    return StudyItemRefactoringHandler.processUsageReferences(references)
+  }
+
   protected open fun getDirectory(element: PsiElement, course: Course): PsiDirectory = element.toPsiDirectory()
 
   protected abstract fun getStudyItem(project: Project, course: Course, file: VirtualFile): StudyItem?
@@ -68,6 +80,7 @@ abstract class EduStudyItemRenameProcessor : RenamePsiFileProcessor() {
         }
 
         override fun performRename(newName: String) {
+          StudyItemRefactoringHandler.processBeforeRename(project, item, newName)
           super.performRename(newName)
           CCFrameworkLessonManager.getInstance(project).migrateRecords(item, newName)
           item.name = newName

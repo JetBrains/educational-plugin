@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.move.MoveCallback
 import com.jetbrains.edu.coursecreator.CCUtils.updateHigherElements
 import com.jetbrains.edu.coursecreator.StudyItemType
+import com.jetbrains.edu.coursecreator.handlers.StudyItemRefactoringHandler
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -56,6 +57,7 @@ class CCTaskMoveHandlerDelegate : CCStudyItemMoveHandlerDelegate(StudyItemType.T
       }
       val taskList = targetLesson.taskList
       val targetTask = if (taskList.isEmpty()) null else taskList[taskList.size - 1]
+      StudyItemRefactoringHandler.processBeforeTaskMovement(project, taskToMove, targetVFile)
       moveTask(sourceDirectory, taskToMove, targetTask, 1, targetVFile, targetLesson)
       saveItem(sourceLesson)
       saveItem(targetLesson)
@@ -64,6 +66,7 @@ class CCTaskMoveHandlerDelegate : CCStudyItemMoveHandlerDelegate(StudyItemType.T
       val lessonDir = targetVFile.parent ?: return
       val targetTask = targetVFile.getTask(project) ?: return
       val delta = getDelta(project, targetTask) ?: return
+      StudyItemRefactoringHandler.processBeforeTaskMovement(project, taskToMove, targetVFile)
       moveTask(sourceDirectory, taskToMove, targetTask, delta, lessonDir, targetTask.lesson)
       saveItem(sourceLesson)
       saveItem(targetTask.lesson)
