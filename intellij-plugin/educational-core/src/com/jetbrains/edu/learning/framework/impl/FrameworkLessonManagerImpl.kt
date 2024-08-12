@@ -55,9 +55,8 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     // there may be visible editable files (f. e. binary files) that are not stored into submissions,
     // but we don't want to lose them after applying submission into a task
     val externalPropagatableFiles = externalState.split(task).first.toMutableMap()
-    for ((path, text) in propagatableFiles) {
-      if (path in externalPropagatableFiles) continue
-      externalPropagatableFiles[path] = text
+    propagatableFiles.forEach { (path, text) ->
+        externalPropagatableFiles.putIfAbsent(path, text)
     }
     val changes = calculateChanges(propagatableFiles, externalPropagatableFiles)
     val currentRecord = task.record

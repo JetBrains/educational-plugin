@@ -348,6 +348,9 @@ class HyperskillNavigationTest : NavigationTestBase() {
             file("Task.kt", """
               fun foo() {}
             """)
+            file("Baz.kt", """
+              fun baz() {}
+            """)
           }
           dir("test") {
             file("Tests2.kt", """
