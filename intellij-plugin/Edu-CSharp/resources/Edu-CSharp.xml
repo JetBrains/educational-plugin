@@ -5,6 +5,64 @@
     <module name="intellij.rider"/>
   </dependencies>
 
+  <resource-bundle>messages.EduCoreBundle</resource-bundle>
+
+  <actions>
+    <unregister id="Educational.Educator.NewFile"/>
+    <group id="Educational.Educator.NewFile">
+      <reference id="Educational.Educator.CreateTask"/>
+      <reference id="Educational.Educator.CreateLesson"/>
+      <reference id="Educational.Educator.CreateSection"/>
+      <separator/>
+      <add-to-group group-id="SolutionViewAddGroup.SolutionSection" anchor="first"/>
+    </group>
+
+    <unregister id="Educational.Educator.CourseCreator.FrameworkLesson"/>
+    <group id="Educational.Educator.CourseCreator.FrameworkLesson" popup="false"
+           class="com.jetbrains.edu.coursecreator.actions.CCFrameworkLessonActionGroup">
+      <reference id="Educational.Educator.SyncChangesWithNextTasks"/>
+      <reference id="Educational.Educator.AllowFileToSyncChanges"/>
+      <reference id="Educational.Educator.IgnoreFilePropagation"/>
+      <reference id="Educational.Educator.ShowUnsyncedChanges">
+      </reference>
+      <separator/>
+      <add-to-group group-id="SolutionExplorerPopupMenu"
+                    anchor="before"
+                    relative-to-action="RunContextGroupInner"/>
+    </group>
+
+    <unregister id="Educational.LearnAndTeachFileMenu"/>
+    <group id="Educational.LearnAndTeachFileMenu"
+           class="com.jetbrains.edu.learning.newproject.LearnAndTeachFileMenuGroup"
+           popup="true"
+           icon="com.jetbrains.edu.EducationalCoreIcons.Actions.EduCourse">
+      <reference id="Educational.BrowseCourses"/>
+      <reference id="Educational.Educator.NewCourse"/>
+      <add-to-group group-id="FileMenu" anchor="before" relative-to-action="RiderFileOpenGroup"/>
+    </group>
+
+    <unregister id="Educational.Educator.CourseCreator.Menu"/>
+    <group id="Educational.Educator.CourseCreator.Menu" popup="true"
+           class="com.jetbrains.edu.coursecreator.actions.CCProjectViewActionGroup">
+      <reference id="Educational.Educator.ShowToStudent"/>
+      <reference id="Educational.Educator.HideFromStudent"/>
+      <reference id="Educational.Educator.ShowPreview"/>
+      <add-to-group group-id="SolutionExplorerPopupMenu.Edit"/>
+      <reference id="Educational.Educator.CCWrapWithSection"/>
+      <reference id="Educational.Educator.CCRemoveSection"/>
+      <reference id="Educational.Educator.IncludeIntoTask"/>
+      <reference id="Educational.Educator.ExcludeFromTask"/>
+      <separator/>
+      <reference id="Educational.Educator.CreateCoursePreview"/>
+      <reference id="Educational.Educator.ChangeCourseInfo"/>
+      <reference id="Educational.Educator.CheckAllTasks"/>
+      <reference id="Educational.Educator.PackCourse"/>
+      <add-to-group group-id="SolutionExplorerPopupMenu" anchor="after"
+                    relative-to-action="Educational.Educator.CourseCreator.FrameworkLesson"/>
+      <add-to-group group-id="FileMenu" anchor="after" relative-to-action="Educational.LearnAndTeachFileMenu"/>
+    </group>
+  </actions>
+
   <extensions defaultExtensionNs="Educational">
     <configurator implementationClass="com.jetbrains.edu.csharp.CSharpConfigurator" language="C#"
                   displayName="C#"/>
