@@ -150,14 +150,14 @@ fun Task.addDefaultTaskDescription() {
 fun Task.getDescriptionFile(project: Project, guessFormat: Boolean = false): VirtualFile? {
   val taskDir = getDir(project.courseDir) ?: return null
 
-  val file = if (guessFormat) {
-    taskDir.findChild(DescriptionFormat.HTML.fileName) ?: taskDir.findChild(DescriptionFormat.MD.fileName)
-  }
-  else {
-    taskDir.findChild(descriptionFormat.fileName)
+  val file = when {
+    guessFormat -> taskDir.getTaskTextFile()
+    else -> taskDir.findChild(descriptionFormat.fileName)
   }
 
-  file ?: LOG.warn("No task description file for $name")
+  if (file == null) {
+    LOG.warn("No task description file for $name")
+  }
 
   return file
 }
@@ -300,12 +300,7 @@ private fun getTaskTextByTaskName(task: Task, taskDirectory: VirtualFile): Strin
   else taskDescription
 }
 
-private fun VirtualFile.getTaskTextFile(): VirtualFile? {
-  var taskTextFile = findChild(DescriptionFormat.HTML.fileName)
-  if (taskTextFile == null) {
-    taskTextFile = findChild(DescriptionFormat.MD.fileName)
-  }
-  return taskTextFile
-}
+private fun VirtualFile.getTaskTextFile(): VirtualFile? =
+  findChild(DescriptionFormat.HTML.fileName) ?: findChild(DescriptionFormat.MD.fileName)
 
 private val LOG = logger<Task>()
