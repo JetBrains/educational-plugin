@@ -12,29 +12,30 @@ import java.util.*
  * - [com.jetbrains.edu.learning.yaml.format.CourseYamlMixin]
  */
 open class EduCourse : Course() {
-  @Transient
-  var isUpToDate: Boolean = true
-  var learnersCount: Int = 0
-  var reviewScore: Double = 0.0
-
-  var generatedEduId: String? = null
-
-  // in CC mode is used to store top-level lessons' section id
-  var sectionIds: List<Int> = emptyList()
-  var instructors: List<Int> = emptyList()
-  var isStepikPublic: Boolean = false
-  var reviewSummary: Int = 0
-
   override val itemType: String
     get() = if (isMarketplace) MARKETPLACE else super.itemType
-
-  var formatVersion: Int = JSON_FORMAT_VERSION
 
   override val isStepikRemote: Boolean
     get() = id != 0 && !isMarketplace
 
   val isMarketplaceRemote: Boolean
     get() = id != 0 && isMarketplace
+
+  var formatVersion: Int = JSON_FORMAT_VERSION
+
+  @Transient
+  var isUpToDate: Boolean = true
+  var learnersCount: Int = 0
+  var reviewScore: Double = 0.0
+  var generatedEduId: String? = null
+
+  var isPreview: Boolean = false
+
+  // in CC mode is used to store top-level lessons' section id
+  var sectionIds: List<Int> = emptyList()
+  var instructors: List<Int> = emptyList()
+  var isStepikPublic: Boolean = false
+  var reviewSummary: Int = 0
 
   fun convertToLocal() {
     if (isMarketplace) {
@@ -48,7 +49,4 @@ open class EduCourse : Course() {
     id = 0
     updateDate = Date(0)
   }
-
-  var isPreview: Boolean = false
-
 }
