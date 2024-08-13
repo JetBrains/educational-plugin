@@ -490,10 +490,6 @@ project("educational-core") {
         bundledModules("intellij.platform.vcs.impl")
       }
     }
-
-    implementation("org.jetbrains.academy.jarvis.dsl:Jarvis-no-code-in-edu:1.0.0") {
-      excludeKotlinDeps()
-    }
     api(project(":edu-format"))
     api(rootProject.libs.edu.ai.format) {
       excludeKotlinDeps()
@@ -1008,9 +1004,6 @@ project("Edu-Jarvis") {
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
 
-    implementation(rootProject.libs.jarvis) {
-      excludeKotlinDeps()
-    }
     antlr(rootProject.libs.antlr)
   }
 
