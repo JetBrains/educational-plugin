@@ -144,21 +144,38 @@ fun Task.addDefaultTaskDescription() {
 /**
  * If [guessFormat] is `false`, the format of the task description file is taken from the [Task.descriptionFormat]
  * field.
+ *
  * If [guessFormat] is `true`, [Task.descriptionFormat] field is ignored, and the description file is searched
  * to be either `task.html` or `task.md` with the former having more priority.
  */
-fun Task.getDescriptionFile(project: Project, guessFormat: Boolean = false): VirtualFile? {
-  val taskDir = getDir(project.courseDir) ?: return null
+@RequiresReadLock
+fun Task.getDescriptionFile(
+  project: Project,
+  guessFormat: Boolean = false,
+  translatedToLanguageCode: String? = null
+): VirtualFile? {
+  val taskDirectory = getTaskDirectory(project) ?: return null
 
-  val file = when {
-    guessFormat -> taskDir.getTaskTextFile()
-    else -> taskDir.findChild(descriptionFormat.fileName)
+  if (guessFormat) {
+    val file = taskDirectory.run { findChild(DescriptionFormat.HTML.fileName) ?: findChild(DescriptionFormat.MD.fileName) }
+    if (file == null) {
+      LOG.warn("No task description file for $name")
+    }
+    return file
   }
 
+  if (translatedToLanguageCode != null) {
+    val translatedFileName = descriptionFormat.fileNameWithTranslation(translatedToLanguageCode)
+    val translatedFile = taskDirectory.findChild(translatedFileName)
+    if (translatedFile != null) {
+      return translatedFile
+    }
+  }
+
+  val file = taskDirectory.findChild(descriptionFormat.fileName)
   if (file == null) {
     LOG.warn("No task description file for $name")
   }
-
   return file
 }
 
@@ -258,9 +275,8 @@ private fun VirtualFile.toDescriptionFormat(): DescriptionFormat =
   ?: loadingError(EduCoreBundle.message("yaml.editor.invalid.description"))
 
 @RequiresReadLock
-fun Task.getTaskTextFromTask(project: Project): String? {
-  val taskDirectory = getTaskDirectory(project) ?: return null
-  var text = getTaskTextByTaskName(this, taskDirectory)
+fun Task.getTaskTextFromTask(project: Project, translatedToLanguageCode: String? = null): String? {
+  var text = getTaskText(project, translatedToLanguageCode) ?: return null
   text = StringUtil.replace(text, "%IDE_NAME%", ApplicationNamesInfo.getInstance().fullProductName)
   val textBuffer = StringBuffer(text)
   replaceActionIDsWithShortcuts(textBuffer)
@@ -290,17 +306,15 @@ fun Task.getTaskDirectory(project: Project): VirtualFile? {
   return taskDirectory
 }
 
-private fun getTaskTextByTaskName(task: Task, taskDirectory: VirtualFile): String {
-  val taskTextFile = taskDirectory.getTaskTextFile()
-  val taskDescription = taskTextFile?.getTextFromTaskTextFile() ?: task.descriptionText
+private fun Task.getTaskText(project: Project, translatedToLanguageCode: String?): String? {
+  val taskTextFile = getDescriptionFile(project, guessFormat = false, translatedToLanguageCode) ?: return null
+  val taskDescription = taskTextFile.getTextFromTaskTextFile() ?: return descriptionText
 
-  return if (taskTextFile != null && DescriptionFormat.MD.fileName == taskTextFile.name) {
-    convertToHtml(taskDescription)
+  if (taskTextFile.extension == DescriptionFormat.MD.extension) {
+  	return convertToHtml(taskDescription)
   }
-  else taskDescription
+  
+  return taskDescription
 }
-
-private fun VirtualFile.getTaskTextFile(): VirtualFile? =
-  findChild(DescriptionFormat.HTML.fileName) ?: findChild(DescriptionFormat.MD.fileName)
 
 private val LOG = logger<Task>()

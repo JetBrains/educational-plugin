@@ -11,7 +11,6 @@ import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.translation.connector.TranslationServiceConnector
 import com.jetbrains.edu.learning.Result
-import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.Companion.TASK_DESCRIPTION_PREFIX
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.ext.getTaskDirectory
@@ -78,7 +77,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
   @RequiresBlockingContext
   private fun Task.saveTranslation(text: DescriptionText) {
     val taskDirectory = getTaskDirectory(project) ?: return
-    val name = "${TASK_DESCRIPTION_PREFIX}_${text.language.code}.${descriptionFormat.extension}"
+    val name = descriptionFormat.fileNameWithTranslation(text.language.code)
 
     try {
       GeneratorUtils.createTextChildFile(project, taskDirectory, name, text.text)
