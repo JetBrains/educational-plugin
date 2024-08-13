@@ -459,10 +459,6 @@ project("educational-core") {
     intellijPlatform {
       intellijIde(baseVersion)
     }
-
-    implementation("org.jetbrains.academy.jarvis.dsl:Jarvis-no-code-in-edu:1.0.0") {
-      excludeKotlinDeps()
-    }
     api(project(":edu-format"))
     // For some reason, kotlin serialization plugin doesn't see the corresponding library from IDE dependency
     // and fails Kotlin compilation.
@@ -925,9 +921,6 @@ project("Edu-Jarvis") {
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
 
-    implementation(rootProject.libs.jarvis) {
-      excludeKotlinDeps()
-    }
     antlr(rootProject.libs.antlr)
   }
 
