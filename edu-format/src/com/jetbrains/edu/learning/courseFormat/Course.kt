@@ -52,6 +52,8 @@ abstract class Course : LessonContainer() {
 
   open var languageCode: String = "en"
 
+  var translatedToLanguageCode: String? = null
+
   // Marketplace:
   var isMarketplace: Boolean = false
   var vendor: Vendor? = null

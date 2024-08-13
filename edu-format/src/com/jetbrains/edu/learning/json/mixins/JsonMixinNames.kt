@@ -12,6 +12,7 @@ object JsonMixinNames {
   // course
   const val AUTHORS = "authors"
   const val LANGUAGE = "language"
+  const val TRANSLATED_TO_LANGUAGE = "translated_to_language"
   const val SUMMARY = "summary"
   @Deprecated("Use PROGRAMMING_LANGUAGE_ID and PROGRAMMING_LANGUAGE_VERSION instead")
   const val PROGRAMMING_LANGUAGE = "programming_language"

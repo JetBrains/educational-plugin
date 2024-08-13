@@ -2,15 +2,14 @@ package com.jetbrains.edu.coursecreator.yaml
 
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
-import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
-import com.jetbrains.edu.learning.courseFormat.CourseraCourse
-import com.jetbrains.edu.learning.findTask
-import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
+import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
+import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
+import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.YamlMapper
 import com.jetbrains.edu.learning.yaml.YamlTestCase
@@ -1120,6 +1119,26 @@ class YamlSerializationTest : YamlTestCase() {
       |mode: Study
       |environment_settings:
       |  foo: bar
+      |""".trimMargin())
+  }
+
+  @Test
+  fun `test translation language`() {
+    val course = course {
+      lesson("lesson1") {
+        eduTask()
+      }
+    }
+    course.translatedToLanguageCode = "fr"
+    doTest(course, """
+      |title: Test Course
+      |language: English
+      |translated_to_language: French
+      |summary: Test Course Description
+      |programming_language: Plain text
+      |content:
+      |- lesson1
+      |mode: Study
       |""".trimMargin())
   }
 

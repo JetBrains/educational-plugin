@@ -15,6 +15,7 @@ object YamlMixinNames {
   // course
   const val TITLE = JsonMixinNames.TITLE
   const val LANGUAGE = JsonMixinNames.LANGUAGE
+  const val TRANSLATED_TO_LANGUAGE = JsonMixinNames.TRANSLATED_TO_LANGUAGE
   const val SUMMARY = JsonMixinNames.SUMMARY
   const val PROGRAMMING_LANGUAGE = "programming_language"
   const val PROGRAMMING_LANGUAGE_VERSION = JsonMixinNames.PROGRAMMING_LANGUAGE_VERSION

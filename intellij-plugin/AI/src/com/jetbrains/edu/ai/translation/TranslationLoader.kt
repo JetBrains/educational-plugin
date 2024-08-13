@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getTaskDirectory
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.onError
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.educational.translation.enum.Language
 import com.jetbrains.educational.translation.format.CourseTranslation
 import com.jetbrains.educational.translation.format.DescriptionText
@@ -68,6 +69,9 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
         val translation = taskDescriptions[task.taskEduId] ?: continue
         task.saveTranslation(translation)
       }
+
+      translatedToLanguageCode = courseTranslation.language.code
+      YamlFormatSynchronizer.saveItem(this)
     }
   }
 

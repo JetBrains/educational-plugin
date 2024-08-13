@@ -12,6 +12,7 @@ open module com.jetbrains.edu.format {
   requires java.logging;
   requires kotlin.stdlib;
   requires org.jetbrains.annotations;
+  requires com.jetbrains.edu.ai.format;
 
   exports com.jetbrains.edu.learning.courseFormat;
   exports com.jetbrains.edu.learning.courseFormat.tasks;
