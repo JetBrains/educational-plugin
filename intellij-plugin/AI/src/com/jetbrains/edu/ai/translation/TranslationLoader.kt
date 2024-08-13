@@ -50,12 +50,12 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
       val translation = downloadTranslation(course, language).onError { error ->
         LOG.error("Failed to download translation for ${course.name} to $language: $error")
         return@withContext
-      }
+      } ?: return@withContext
       course.saveTranslation(translation)
     }
   }
 
-  private suspend fun downloadTranslation(course: EduCourse, language: Language): Result<CourseTranslation, String> {
+  private suspend fun downloadTranslation(course: EduCourse, language: Language): Result<CourseTranslation?, String> {
     val marketplaceId = course.marketplaceId
     val updateVersion = course.updateVersion
     return TranslationServiceConnector.getInstance().getTranslatedCourse(marketplaceId, updateVersion, language)

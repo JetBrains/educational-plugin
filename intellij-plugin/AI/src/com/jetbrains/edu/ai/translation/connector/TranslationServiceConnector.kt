@@ -1,6 +1,5 @@
 package com.jetbrains.edu.ai.translation.connector
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
@@ -24,7 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import okhttp3.ConnectionPool
 import retrofit2.Response
-import retrofit2.converter.jackson.JacksonConverterFactory
+import java.net.HttpURLConnection.HTTP_ACCEPTED
 
 @Suppress("unused")
 @Service(Service.Level.APP)
@@ -38,10 +37,10 @@ class TranslationServiceConnector(private val scope: CoroutineScope) {
     get() = serviceHolder.value
 
   private val serviceHolder = SynchronizedClearableLazy {
-    val objectMapper = jacksonObjectMapper()
-    val converterFactory = JacksonConverterFactory.create(objectMapper)
+    val customInterceptor = TranslationInterceptor()
+    val converterFactory = TranslationConverterFactory()
 
-    createRetrofitBuilder(aiServiceUrl, connectionPool)
+    createRetrofitBuilder(aiServiceUrl, connectionPool, customInterceptor = customInterceptor)
       .addConverterFactory(converterFactory)
       .build()
       .create(TranslationService::class.java)
@@ -51,7 +50,7 @@ class TranslationServiceConnector(private val scope: CoroutineScope) {
     marketplaceId: MarketplaceId,
     updateVersion: UpdateVersion,
     language: Language
-  ): Result<CourseTranslation, String> =
+  ): Result<CourseTranslation?, String> =
     scope
       .async(Dispatchers.IO) {
         service
@@ -65,7 +64,7 @@ class TranslationServiceConnector(private val scope: CoroutineScope) {
     updateVersion: UpdateVersion,
     language: Language,
     taskId: TaskEduId
-  ): Result<CourseTranslation, String> =
+  ): Result<CourseTranslation?, String> =
     scope
       .async(Dispatchers.IO) {
         service
@@ -91,6 +90,9 @@ class TranslationServiceConnector(private val scope: CoroutineScope) {
         LOG.error("Failed to translate course ($marketplaceId, $updateVersion, $language, force: $force)")
         return Err(it)
       }
+      .onAccepted {
+        return Ok(false)
+      }
 
     return when (response.isSuccessful) {
       true -> Ok(true)
@@ -98,16 +100,27 @@ class TranslationServiceConnector(private val scope: CoroutineScope) {
     }
   }
 
-  private fun <T> Response<T>.executeGetCall(errorMessage: String): Result<T, String> {
+  private fun <T> Response<T>.executeGetCall(errorMessage: String): Result<T?, String> {
     val response = executeParsingErrors()
       .onError {
         LOG.error("$errorMessage. Error message: $it")
         return Err(it)
       }
+      .onAccepted {
+        return Ok(null)
+      }
     return when (val body = response.body()) {
       null -> Err("Response body is null")
       else -> Ok(body)
     }
+  }
+
+  private inline fun <T> Response<T>.onAccepted(action: () -> Unit): Response<T> {
+    if (code() == HTTP_ACCEPTED) {
+      LOG.info("Translation service is currently preparing your course translation. Please check back later.")
+      action()
+    }
+    return this
   }
 
   companion object {
