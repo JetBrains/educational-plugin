@@ -48,8 +48,22 @@ import java.util.*
  * Update [com.jetbrains.edu.learning.yaml.format.CourseChangeApplier] and [CourseBuilder] if new fields added to mixin
  */
 @Suppress("unused") // used for yaml serialization
-@JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, VENDOR, IS_PRIVATE, PROGRAMMING_LANGUAGE,
-                   PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, SOLUTIONS_HIDDEN, CONTENT, FEEDBACK_LINK, TAGS, ENVIRONMENT_SETTINGS)
+@JsonPropertyOrder(
+  TYPE,
+  TITLE,
+  LANGUAGE,
+  SUMMARY,
+  VENDOR,
+  IS_PRIVATE,
+  PROGRAMMING_LANGUAGE,
+  PROGRAMMING_LANGUAGE_VERSION,
+  ENVIRONMENT,
+  SOLUTIONS_HIDDEN,
+  CONTENT,
+  FEEDBACK_LINK,
+  TAGS,
+  ENVIRONMENT_SETTINGS
+)
 @JsonDeserialize(builder = CourseBuilder::class)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY,
   property = TYPE, defaultImpl = EduCourse::class, visible = true)
