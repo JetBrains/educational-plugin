@@ -164,6 +164,8 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
         "platform", listOf(
           "Hyperskill",
           "Stepik",
+          "Js_CheckiO",
+          "Py_CheckiO",
           "Marketplace"
         )
       ),
