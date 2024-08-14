@@ -9,9 +9,11 @@ import com.intellij.psi.PsiFile
 import com.intellij.refactoring.rename.PsiElementRenameHandler
 import com.intellij.refactoring.rename.RenameHandler
 import com.intellij.refactoring.rename.RenamePsiFileProcessor
+import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.getLesson
 import com.jetbrains.edu.learning.getSection
 import com.jetbrains.edu.learning.getTask
+import com.jetbrains.edu.learning.handlers.rename.EduTaskFileRenameProcessor
 import com.jetbrains.edu.learning.handlers.rename.LessonRenameProcessor
 import com.jetbrains.edu.learning.handlers.rename.SectionRenameProcessor
 import com.jetbrains.edu.learning.handlers.rename.TaskRenameProcessor
@@ -32,6 +34,7 @@ class CSharpRenameHandler : RenameHandler {
       file.getTask(project) != null -> TaskRenameProcessor()
       file.getLesson(project) != null -> LessonRenameProcessor()
       file.getSection(project) != null -> SectionRenameProcessor()
+      file.getContainingTask(project) != null -> EduTaskFileRenameProcessor()
       else -> RenamePsiFileProcessor()
     }
     PsiElementRenameHandler.rename(
