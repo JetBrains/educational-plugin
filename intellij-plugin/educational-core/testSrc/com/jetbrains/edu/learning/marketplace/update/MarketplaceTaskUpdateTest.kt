@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
+import com.jetbrains.edu.learning.courseFormat.ext.getTaskText
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.update.TaskUpdateTestBase
@@ -49,7 +49,7 @@ class MarketplaceTaskUpdateTest : TaskUpdateTestBase<EduCourse>() {
     updateTasks(remoteCourse)
 
     val taskDescription = runReadAction {
-      findTask(0, 0).getTaskTextFromTask(project)!!
+      findTask(0, 0).getTaskText(project)!!
     }
     assertTrue("Task Description not updated", taskDescription.contains(newText))
   }

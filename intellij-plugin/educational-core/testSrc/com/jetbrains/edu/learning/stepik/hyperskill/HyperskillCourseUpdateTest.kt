@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_TOPICS
-import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
+import com.jetbrains.edu.learning.courseFormat.ext.getTaskText
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
@@ -132,7 +132,7 @@ class HyperskillCourseUpdateTest : FrameworkLessonsUpdateTest<HyperskillCourse>(
   }
 
   private fun checkDescriptionUpdated(task: Task, @Suppress("SameParameterValue") newDescription: String) {
-    val taskDescription = task.getTaskTextFromTask(project)!!
+    val taskDescription = task.getTaskText(project)!!
     assertTrue("Task Description not updated", taskDescription.contains(newDescription))
   }
 

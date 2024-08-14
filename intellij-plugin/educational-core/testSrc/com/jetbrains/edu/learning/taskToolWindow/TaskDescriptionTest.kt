@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
+import com.jetbrains.edu.learning.courseFormat.ext.getFormattedTaskText
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.taskToolWindow.ui.JCEFToolWindow
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
@@ -36,7 +36,7 @@ class TaskDescriptionTest : EduTestCase() {
     createCourseWithHyperskillTags(courseProducer = ::HyperskillCourse)
 
     val task = findTask(0, 0)
-    val taskDescription = task.getTaskTextFromTask(project)
+    val taskDescription = task.getFormattedTaskText(project)
 
     val expectedTextWithoutTags = """
       text danger hint pre meta
@@ -49,7 +49,7 @@ class TaskDescriptionTest : EduTestCase() {
     val expectedTextWithTags = createCourseWithHyperskillTags(courseProducer = ::EduCourse)
 
     val task = findTask(0, 0)
-    val taskDescription = task.getTaskTextFromTask(project)
+    val taskDescription = task.getFormattedTaskText(project)
 
     assertEquals(expectedTextWithTags, taskDescription)
   }
@@ -72,7 +72,7 @@ class TaskDescriptionTest : EduTestCase() {
   fun `test ide name`() {
     createCourseWithDescription("This is %IDE_NAME%")
     val task = findTask(0, 0)
-    val taskDescription = task.getTaskTextFromTask(project)
+    val taskDescription = task.getFormattedTaskText(project)
     assertEquals("This is ${ApplicationNamesInfo.getInstance().fullProductName}", taskDescription!!.getBody())
   }
 
@@ -429,7 +429,7 @@ class TaskDescriptionTest : EduTestCase() {
     try {
       keymapManager.activeKeymap = keymapManager.getKeymap(keymapName)!!
       val task = findTask(0, 0)
-      val taskDescription = task.getTaskTextFromTask(project)
+      val taskDescription = task.getFormattedTaskText(project)
       assertEquals(taskTextWithShortcuts, taskDescription!!.getBody())
     }
     finally {

@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.update
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.thisLogger
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
+import com.jetbrains.edu.learning.courseFormat.ext.getTaskText
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -130,7 +130,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
     updateTasks(remoteCourse)
 
     val taskDescription = runReadAction {
-      findTask(0, 0).getTaskTextFromTask(project)!!
+      findTask(0, 0).getTaskText(project)!!
     }
     assertTrue("Task Description not updated", taskDescription.contains(newDescription))
 

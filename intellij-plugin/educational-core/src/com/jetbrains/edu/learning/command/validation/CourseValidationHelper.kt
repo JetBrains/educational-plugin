@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
-import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
+import com.jetbrains.edu.learning.courseFormat.ext.getFormattedTaskText
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.taskToolWindow.links.TaskDescriptionLink
@@ -89,7 +89,7 @@ class CourseValidationHelper(
   }
 
   private suspend fun TestSuiteBuilder.validateTaskDescriptionLinks(project: Project, task: Task) {
-    val text = readAction { task.getTaskTextFromTask(project) } ?: return
+    val text = readAction { task.getFormattedTaskText(project) } ?: return
     val links = extractLinks(project, task, text)
     // Don't create empty node if no links in the task description
     if (links.isEmpty()) return

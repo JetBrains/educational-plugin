@@ -275,7 +275,7 @@ private fun VirtualFile.toDescriptionFormat(): DescriptionFormat =
   ?: loadingError(EduCoreBundle.message("yaml.editor.invalid.description"))
 
 @RequiresReadLock
-fun Task.getTaskTextFromTask(project: Project, translatedToLanguageCode: String? = null): String? {
+fun Task.getFormattedTaskText(project: Project, translatedToLanguageCode: String? = null): String? {
   var text = getTaskText(project, translatedToLanguageCode) ?: return null
   text = StringUtil.replace(text, "%IDE_NAME%", ApplicationNamesInfo.getInstance().fullProductName)
   val textBuffer = StringBuffer(text)
@@ -306,7 +306,8 @@ fun Task.getTaskDirectory(project: Project): VirtualFile? {
   return taskDirectory
 }
 
-private fun Task.getTaskText(project: Project, translatedToLanguageCode: String?): String? {
+@RequiresReadLock
+fun Task.getTaskText(project: Project, translatedToLanguageCode: String? = null): String? {
   val taskTextFile = getDescriptionFile(project, guessFormat = false, translatedToLanguageCode) ?: return null
   val taskDescription = taskTextFile.getTextFromTaskTextFile() ?: return descriptionText
 

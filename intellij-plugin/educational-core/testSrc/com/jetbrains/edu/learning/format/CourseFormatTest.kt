@@ -5,7 +5,7 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON_3_VERSION
-import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
+import com.jetbrains.edu.learning.courseFormat.ext.getTaskText
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -58,7 +58,7 @@ class CourseFormatTest : EduTestCase() {
 
   @Test
   fun testDescription() {
-    assertEquals("First task description", firstEduTask.getTaskTextFromTask(project))
+    assertEquals("First task description", firstEduTask.getTaskText(project))
   }
 
   @Test

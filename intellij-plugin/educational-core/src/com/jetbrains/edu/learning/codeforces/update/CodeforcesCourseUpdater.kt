@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.codeforces.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.codeforces.ContestParameters
-import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
+import com.jetbrains.edu.learning.courseFormat.ext.getFormattedTaskText
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
@@ -81,7 +81,7 @@ class CodeforcesCourseUpdater(private val project: Project, val course: Codeforc
   }
 
   private fun CodeforcesTask.needToBeUpdated(project: Project, remoteTask: CodeforcesTask): Boolean {
-    val descriptionText = runReadAction { this.getTaskTextFromTask(project) }
+    val descriptionText = runReadAction { getFormattedTaskText(project) }
     // TODO think about tests
     return descriptionText != remoteTask.descriptionText
   }

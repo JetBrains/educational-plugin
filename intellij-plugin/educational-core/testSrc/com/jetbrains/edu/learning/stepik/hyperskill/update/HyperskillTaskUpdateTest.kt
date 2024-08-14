@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_TOPICS
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
+import com.jetbrains.edu.learning.courseFormat.ext.getTaskText
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
@@ -159,7 +159,7 @@ class HyperskillTaskUpdateTest : TaskUpdateTestBase<HyperskillCourse>() {
     updateTasks(remoteCourse)
 
     val taskDescription = runReadAction {
-      findTask(0, 0).getTaskTextFromTask(project)!!
+      findTask(0, 0).getTaskText(project)!!
     }
     assertTrue("Task Description not updated", taskDescription.contains(newText))
   }
