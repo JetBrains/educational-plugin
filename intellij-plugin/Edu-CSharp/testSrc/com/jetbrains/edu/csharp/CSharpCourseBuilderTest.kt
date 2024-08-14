@@ -94,7 +94,7 @@ class CSharpCourseBuilderTest : CourseGenerationTestBase<CSharpProjectSettings>(
         }
         dir("Task 3") {
           file("Lesson1.Task3.csproj")
-          file("Program.cs", mainFileContents("Lesson1.Task3"))
+          file("Task.cs", taskFileContents("Lesson1.Task3"))
           file("task.md")
         }
       }

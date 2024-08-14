@@ -43,9 +43,6 @@ class CSharpConfigurator : EduConfigurator<CSharpProjectSettings> {
     const val TASK_CS = "Task.cs"
 
     @NonNls
-    const val MAIN_CS = "Program.cs"
-
-    @NonNls
     const val TEST_CS = "Test.cs"
 
     const val BIN_DIRECTORY = "bin/"
