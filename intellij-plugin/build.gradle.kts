@@ -451,6 +451,7 @@ project("educational-core") {
   dependencies {
     intellijPlatform {
       intellijIde(baseVersion)
+      intellijPlugins("training")
     }
 
     api(project(":edu-format"))

@@ -8,7 +8,8 @@ enum class TaskDescriptionLinkProtocol(val protocol: String) {
   FILE(StandardFileSystems.FILE_PROTOCOL_PREFIX),
   PSI_ELEMENT(DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL),
   TOOL_WINDOW("tool_window://"),
-  SETTINGS("settings://");
+  SETTINGS("settings://"),
+  FEATURE_TRAINER("ift://");
 
   override fun toString(): String = protocol
 }

@@ -77,6 +77,7 @@ abstract class TaskDescriptionLink<T, R : T?>(
       TaskDescriptionLinkProtocol.PSI_ELEMENT.protocol to ::PsiElementLink,
       TaskDescriptionLinkProtocol.SETTINGS.protocol to ::SettingsLink,
       TaskDescriptionLinkProtocol.TOOL_WINDOW.protocol to ::ToolWindowLink,
+      TaskDescriptionLinkProtocol.FEATURE_TRAINER.protocol to ::ToolWindowLink,
     )
   }
 }
