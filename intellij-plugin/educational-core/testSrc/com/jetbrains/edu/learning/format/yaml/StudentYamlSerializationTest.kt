@@ -6,8 +6,6 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.assertContentsEqual
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOStation
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
@@ -59,24 +57,6 @@ class StudentYamlSerializationTest : EduTestCase() {
       |summary: Test Course Description
       |programming_language: Plain text
       |mode: Study
-      |
-    """.trimMargin())
-  }
-
-  @Test
-  fun `test checkio station`() {
-    val station = CheckiOStation()
-    station.name = "station"
-
-    val mission = CheckiOMission()
-    mission.name = "mission"
-
-    station.addMission(mission)
-
-    doTest(station, """
-      |type: checkiO
-      |content:
-      |- mission
       |
     """.trimMargin())
   }
@@ -341,20 +321,6 @@ class StudentYamlSerializationTest : EduTestCase() {
     |  time: "Thu, 01 Jan 1970 00:00:00 UTC"
     |record: 1
     |""".trimMargin())
-  }
-
-  @Test
-  fun `test checkio mission`() {
-    val checkiOMission = CheckiOMission()
-    checkiOMission.code = "code"
-
-    doTest(checkiOMission, """
-    |type: checkiO
-    |status: Unchecked
-    |code: code
-    |seconds_from_change: 0
-    |
-    """.trimMargin())
   }
 
   @Test

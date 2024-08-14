@@ -4,7 +4,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.RemoteEduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
@@ -26,10 +25,6 @@ class StudentTaskChangeApplier(project: Project) : TaskChangeApplier(project) {
       throw YamlLoadingException(EduCoreBundle.message("yaml.editor.invalid.status.cannot.be.changed"))
     }
     when (existingItem) {
-      is CheckiOMission -> {
-        existingItem.code = (deserializedItem as CheckiOMission).code
-        existingItem.secondsFromLastChangeOnServer = deserializedItem.secondsFromLastChangeOnServer
-      }
       is ChoiceTask -> {
         existingItem.record = deserializedItem.record
         existingItem.selectedVariants = (deserializedItem as ChoiceTask).selectedVariants

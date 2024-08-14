@@ -1,7 +1,5 @@
 package com.jetbrains.edu.learning.format.yaml
 
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
-import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
@@ -148,23 +146,4 @@ class StudentChangeApplierTest : YamlTestCase() {
 
     assertEquals(deserializedItem.taskFiles.values.first().text, existingItem.taskFiles.values.first().text)
   }
-
-  @Test
-  fun `test checkio mission`() {
-    val existingMission = courseWithFiles(courseMode = CourseMode.STUDENT) {
-      station("station") {
-        mission("mission1")
-      }
-    }.lessons.first().taskList.first() as CheckiOMission
-
-    val deserializedMission = CheckiOMission()
-    deserializedMission.code = "code"
-    deserializedMission.secondsFromLastChangeOnServer = 124
-
-    getChangeApplierForItem(project, existingMission).applyChanges(existingMission, deserializedMission)
-
-    assertEquals(deserializedMission.code, existingMission.code)
-    assertEquals(deserializedMission.secondsFromLastChangeOnServer, existingMission.secondsFromLastChangeOnServer)
-  }
-
 }

@@ -4,14 +4,12 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.errorHandling.unsupportedItemTypeMessage
 import com.jetbrains.edu.learning.yaml.format.CourseBuilder
 import com.jetbrains.edu.learning.yaml.format.CourseYamlMixin
-import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CHECKIO_TYPE_YAML
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.COURSE_TYPE_YAML
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT
@@ -78,7 +76,6 @@ class RemoteCourseBuilder(
         }
       }
 
-      CHECKIO_TYPE_YAML -> CheckiOCourse()
       HYPERSKILL_TYPE_YAML -> HyperskillCourse()
       STEPIK_TYPE_YAML -> StepikCourse()
       null -> EduCourse()

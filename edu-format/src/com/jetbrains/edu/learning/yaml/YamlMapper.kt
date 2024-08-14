@@ -13,9 +13,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.attempts.DataTaskAttempt
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOStation
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
@@ -30,12 +27,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.json.encrypt.EncryptionModule
 import com.jetbrains.edu.learning.json.encrypt.getAesKey
 import com.jetbrains.edu.learning.yaml.format.*
-import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CHECKIO_TYPE_YAML
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.COURSE_TYPE_YAML
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.HYPERSKILL_TYPE_YAML
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.STEPIK_TYPE_YAML
-import com.jetbrains.edu.learning.yaml.format.checkio.CheckiOMissionYamlMixin
-import com.jetbrains.edu.learning.yaml.format.checkio.CheckiOStationYamlMixin
 import com.jetbrains.edu.learning.yaml.format.coursera.CourseraCourseYamlMixin
 import com.jetbrains.edu.learning.yaml.format.hyperskill.*
 import com.jetbrains.edu.learning.yaml.format.remote.*
@@ -112,7 +106,6 @@ object YamlMapper {
 
   private fun ObjectMapper.addMixIns() {
     addMixIn(CourseraCourse::class.java, CourseraCourseYamlMixin::class.java)
-    addMixIn(CheckiOCourse::class.java, RemoteCourseYamlMixin::class.java)
     addMixIn(HyperskillCourse::class.java, RemoteCourseYamlMixin::class.java)
     addMixIn(StepikCourse::class.java, RemoteCourseYamlMixin::class.java)
     addMixIn(Course::class.java, CourseYamlMixin::class.java)
@@ -129,7 +122,6 @@ object YamlMapper {
     addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyYamlMixin::class.java)
 
     registerSubtypes(NamedType(CourseraCourse::class.java, COURSE_TYPE_YAML))
-    registerSubtypes(NamedType(CheckiOCourse::class.java, CHECKIO_TYPE_YAML))
     registerSubtypes(NamedType(HyperskillCourse::class.java, HYPERSKILL_TYPE_YAML))
     registerSubtypes(NamedType(StepikCourse::class.java, STEPIK_TYPE_YAML))
   }
@@ -155,14 +147,12 @@ object YamlMapper {
   private fun ObjectMapper.addStudentMixIns() {
     addMixIn(Course::class.java, StudentCourseYamlMixin::class.java)
 
-    addMixIn(CheckiOStation::class.java, CheckiOStationYamlMixin::class.java)
     addMixIn(FrameworkLesson::class.java, StudentFrameworkLessonYamlMixin::class.java)
 
     addMixIn(Task::class.java, StudentTaskYamlMixin::class.java)
     addMixIn(RemoteEduTask::class.java, RemoteEduTaskYamlMixin::class.java)
     addMixIn(TheoryTask::class.java, TheoryTaskYamlUtil::class.java)
     addMixIn(ChoiceTask::class.java, StudentChoiceTaskYamlMixin::class.java)
-    addMixIn(CheckiOMission::class.java, CheckiOMissionYamlMixin::class.java)
     addMixIn(SortingTask::class.java, SortingTaskYamlMixin::class.java)
     addMixIn(MatchingTask::class.java, MatchingTaskYamlMixin::class.java)
     addMixIn(TableTask::class.java, TableTaskYamlMixin::class.java)

@@ -32,7 +32,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.isPreview
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
@@ -78,19 +77,6 @@ class EduStartupActivity : StartupActivity.DumbAware {
       if (course == null) {
         LOG.warn("Opened project is with null course")
         return@runWhenProjectIsInitialized
-      }
-
-      @NonNls val jetBrainsAcademyActionName = "JetBrains Academy"
-      if (course is CheckiOCourse && !ApplicationManager.getApplication().isUnitTestMode) {
-        EduNotificationManager.create(
-          WARNING,
-          EduFormatNames.CHECKIO,
-          EduCoreBundle.message("checkio.drop.notifications")
-        )
-          .addAction(BrowseNotificationAction(EduFormatNames.CHECKIO, "https://checkio.org/"))
-          .addAction(BrowseNotificationAction(jetBrainsAcademyActionName, "https://academy.jetbrains.com"))
-          .setImportant(true)
-          .notify(project)
       }
 
       val fileEditorManager = FileEditorManager.getInstance(project)

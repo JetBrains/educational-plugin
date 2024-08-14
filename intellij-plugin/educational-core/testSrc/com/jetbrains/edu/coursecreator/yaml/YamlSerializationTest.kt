@@ -4,7 +4,6 @@ import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
@@ -83,26 +82,6 @@ class YamlSerializationTest : YamlTestCase() {
     |status: Unchecked
     |record: -1
     |""".trimMargin())
-  }
-
-  @Test
-  fun `test checkiO mission`() {
-    val course = course(courseProducer = ::CheckiOCourse) {
-      lesson {
-        mission("mission") { }
-      }
-    }
-
-    val task = course.lessons.first().taskList.first().apply {
-      record = 23
-      contentTags = listOf("kotlin", "cycles")
-    }
-    doTest(task, """
-          |type: checkiO
-          |status: Unchecked
-          |seconds_from_change: 0
-          |
-        """.trimMargin())
   }
 
   @Test
@@ -619,21 +598,6 @@ class YamlSerializationTest : YamlTestCase() {
     doTest(task, """
     |type: edu
     |feedback_link: example.com
-    |""".trimMargin())
-  }
-
-  @Test
-  fun `test checkiO mission feedback link not serialized`() {
-    val task = course(courseProducer = ::CheckiOCourse) {
-      lesson {
-        mission { }
-      }
-    }.findTask("lesson1", "task1")
-    task.feedbackLink = "example.com"
-    doTest(task, """
-    |type: checkiO
-    |status: Unchecked
-    |seconds_from_change: 0
     |""".trimMargin())
   }
 

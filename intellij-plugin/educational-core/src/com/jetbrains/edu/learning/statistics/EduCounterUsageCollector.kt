@@ -116,7 +116,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private val GROUP = EventLogGroup(
       "educational.counters",
       "The metric is reported in case a user has called the corresponding JetBrains Academy features.",
-      19,
+      20,
     )
 
     private val TASK_NAVIGATION_EVENT = GROUP.registerEvent(
@@ -164,8 +164,6 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
         "platform", listOf(
           "Hyperskill",
           "Stepik",
-          "Js_CheckiO",
-          "Py_CheckiO",
           "Marketplace"
         )
       ),

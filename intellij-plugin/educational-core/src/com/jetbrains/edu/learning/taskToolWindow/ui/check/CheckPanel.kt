@@ -16,7 +16,6 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CourseMode
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -114,11 +113,6 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
   }
 
   private fun restoreSavedResult(task: Task): CheckResult? {
-    /**
-     * We are not showing old result for CheckiO because we store last successful attempt
-     * @see com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission.status
-     */
-    if (task is CheckiOMission) return null
     val feedback = task.feedback
     if (feedback == null) {
       if (task.status == CheckStatus.Unchecked) {

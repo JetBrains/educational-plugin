@@ -3,8 +3,6 @@ package com.jetbrains.edu.learning.format.yaml
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.assertContentsEqual
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOStation
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
@@ -52,38 +50,6 @@ class StudentYamlDeserializationTest : EduTestCase() {
     val course = STUDENT_MAPPER.deserializeCourse(yamlContent)
     assertNotNull(course)
     assertTrue(course is EduCourse)
-  }
-
-  @Test
-  fun `test checkio station`() {
-    val firstTask = "Introduction Task"
-    val secondTask = "Advanced Task"
-    val yamlContent = """
-      |type: checkiO
-      |content:
-      |- $firstTask
-      |- $secondTask
-    """.trimMargin()
-    val lesson = STUDENT_MAPPER.deserializeLesson(yamlContent)
-    assertTrue(lesson is CheckiOStation)
-    assertEquals(listOf(firstTask, secondTask), lesson.taskList.map { it.name })
-  }
-
-  @Test
-  fun `test checkio mission`() {
-    val yamlContent = """
-    |type: checkiO
-    |status: Unchecked
-    |record: -1
-    |code: code
-    |seconds_from_change: 1
-    |
-    """.trimMargin()
-    val task = STUDENT_MAPPER.deserializeTask(yamlContent)
-    assertNotNull(task)
-    assertInstanceOf(task, CheckiOMission::class.java)
-    assertEquals("code", (task as CheckiOMission).code)
-    assertEquals(1, task.secondsFromLastChangeOnServer)
   }
 
   @Test

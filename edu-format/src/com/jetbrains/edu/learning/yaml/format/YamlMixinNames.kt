@@ -82,11 +82,6 @@ object YamlMixinNames {
   const val ROWS = "rows"
   const val COLUMNS = "columns"
 
-  // checkio
-  const val CHECKIO_TYPE_YAML = "checkiO"
-  const val CODE = "code"
-  const val SECONDS_FROM_CHANGE = "seconds_from_change"
-
   // feedback
   const val MESSAGE = "message"
   const val TIME = "time"

@@ -15,8 +15,6 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.LESSON
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.SECTION
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
 import com.jetbrains.edu.learning.courseFormat.attempts.DataTaskAttempt
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOStation
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
@@ -112,14 +110,6 @@ abstract class LessonOwnerBuilder(val course: Course) {
     buildLesson: LessonBuilder<Lesson>.() -> Unit = {}
   ) {
     lesson(Lesson(), name, customPresentableName, id, updateDate, buildLesson)
-  }
-
-  fun station(
-    name: String? = null,
-    customPresentableName: String? = null,
-    buildLesson: LessonBuilder<CheckiOStation>.() -> Unit = {}
-  ) {
-    lesson(CheckiOStation(), name, customPresentableName, buildLesson = buildLesson)
   }
 
   protected fun <T : Lesson> lesson(
@@ -365,21 +355,6 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
   ) {
     val numberTask = NumberTask()
     task(numberTask, name, customPresentableName, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
-  }
-
-  fun mission(
-    name: String? = null,
-    customPresentableName: String? = null,
-    taskDescription: String? = null,
-    taskDescriptionFormat: DescriptionFormat? = null,
-    code: String = "",
-    secondsFromChange: Long = 0,
-    buildTask: TaskBuilder.() -> Unit = {}
-  ) {
-    val mission = CheckiOMission()
-    task(mission, name, customPresentableName, taskDescription, taskDescriptionFormat, buildTask = buildTask)
-    mission.code = code
-    mission.secondsFromLastChangeOnServer = secondsFromChange
   }
 
   fun codeTask(

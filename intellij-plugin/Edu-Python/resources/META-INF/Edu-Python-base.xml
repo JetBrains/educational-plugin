@@ -6,7 +6,6 @@
                     dynamic="true"/>
   </extensionPoints>
 
-  <xi:include href="/META-INF/CheckIO-Python.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/Hyperskill-Python.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <!-- Extensions available only in IDEA and Android Studio -->
   <xi:include href="/META-INF/Edu-Python-Idea.xml" xpointer="xpointer(/idea-plugin/*)"/>

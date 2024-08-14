@@ -6,9 +6,6 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.MissingNode
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.CourseMode.Companion.toCourseMode
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOMission.Companion.CHECK_IO_MISSION_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOStation
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.*
@@ -100,7 +97,6 @@ object YamlDeserializer {
     val type = asText(treeNode.get(YamlMixinNames.TYPE))
     val clazz = when (type) {
       FrameworkLesson().itemType -> FrameworkLesson::class.java
-      CheckiOStation().itemType -> CheckiOStation::class.java // for student projects only
       StepikLesson().itemType -> StepikLesson::class.java
       null, Lesson().itemType -> Lesson::class.java
       else -> formatError(unsupportedItemTypeMessage(type, LESSON))
@@ -124,7 +120,6 @@ object YamlDeserializer {
       IDE_TASK_TYPE -> IdeTask::class.java
       // for student mode
       CODE_TASK_TYPE -> CodeTask::class.java
-      CHECK_IO_MISSION_TASK_TYPE -> CheckiOMission::class.java
       STRING_TASK_TYPE -> StringTask::class.java
       NUMBER_TASK_TYPE -> NumberTask::class.java
       UNSUPPORTED_TASK_TYPE -> UnsupportedTask::class.java

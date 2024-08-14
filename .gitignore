@@ -46,8 +46,6 @@ dependencies/
 
 # oauth properties files
 secret.properties
-intellij-plugin/Edu-Python/resources/checkio/py-checkio-oauth.properties
-intellij-plugin/Edu-JavaScript/resources/checkio/js-checkio-oauth.properties
 # old location of twitter properties
 intellij-plugin/Edu-Kotlin/resources/twitter/kotlin_koans/oauth_twitter.properties
 intellij-plugin/educational-core/resources/twitter/oauth_twitter.properties

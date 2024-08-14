@@ -75,9 +75,6 @@ object EduFormatNames {
   // coursera
   const val COURSERA = "Coursera"
 
-  // checkio
-  const val CHECKIO = "CheckiO"
-
   // stepik
   const val STEPIK = "Stepik"
   const val ATTEMPT = "attempt"

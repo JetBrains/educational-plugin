@@ -132,15 +132,12 @@ public final class EducationalCoreIcons {
      * {@code com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory}</p>
      */
     public static final class Tab {
-      public static final Icon CheckiOTab = load("/icons/com/jetbrains/edu/learning/checkio.svg");
       public static final Icon CourseraTab = load("/icons/com/jetbrains/edu/learning/coursera.svg");
       public static final Icon JetBrainsAcademyTab = load("/icons/com/jetbrains/edu/learning/JB_academy_course_tab.svg");
       public static final Icon MarketplaceTab = load("/icons/com/jetbrains/edu/learning/marketplace_courses_tab.svg");
     }
 
     public static final Icon JetBrainsAcademy = load("/icons/com/jetbrains/edu/learning/JB_academy.svg");
-    public static final Icon JSCheckiO = load("/icons/com/jetbrains/edu/learning/JSCheckiO.svg");
-    public static final Icon PyCheckiO = load("/icons/com/jetbrains/edu/learning/PyCheckiO.svg");
   }
 
   /**

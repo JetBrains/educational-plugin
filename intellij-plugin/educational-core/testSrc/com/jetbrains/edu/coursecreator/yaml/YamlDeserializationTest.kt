@@ -5,7 +5,6 @@ import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
-import com.jetbrains.edu.learning.courseFormat.checkio.CheckiOCourse
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
@@ -122,34 +121,6 @@ class YamlDeserializationTest : YamlTestCase() {
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById!!.displayName)
     assertFalse(course.submitManually)
-    assertNotNull(course.description)
-    assertEquals(listOf(firstLesson, secondLesson), course.items.map { it.name })
-    assertFalse(course.isMarketplace)
-  }
-
-  @Test
-  fun `test checkio course`() {
-    val name = "Py CheckiO"
-    val language = "English"
-    val programmingLanguage = "Plain text"
-    val firstLesson = "Home"
-    val secondLesson = "Initiation"
-    val yamlContent = """
-      |type: checkiO
-      |title: Py CheckiO
-      |language: English
-      |summary: |-
-         CheckiO is a game where you code in Python or JavaScript.
-      |programming_language: Plain text
-      |content:
-      |- Home
-      |- Initiation
-      |mode: Study
-    """.trimMargin()
-    val course = deserializeNotNull(yamlContent) as CheckiOCourse
-    assertEquals(name, course.name)
-    assertEquals(language, course.humanLanguage)
-    assertEquals(programmingLanguage, course.languageById!!.displayName)
     assertNotNull(course.description)
     assertEquals(listOf(firstLesson, secondLesson), course.items.map { it.name })
     assertFalse(course.isMarketplace)

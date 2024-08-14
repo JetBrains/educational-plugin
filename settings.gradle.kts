@@ -94,16 +94,6 @@ fun configureSecretProperties() {
     "linkedInClientSecret"
   )
   secretProperties.extractAndStore(
-    "intellij-plugin/Edu-Python/resources/checkio/py-checkio-oauth.properties",
-    "pyCheckioClientId",
-    "pyCheckioClientSecret"
-  )
-  secretProperties.extractAndStore(
-    "intellij-plugin/Edu-JavaScript/resources/checkio/js-checkio-oauth.properties",
-    "jsCheckioClientId",
-    "jsCheckioClientSecret"
-  )
-  secretProperties.extractAndStore(
     "edu-format/resources/aes/aes.properties",
     "aesKey"
   )

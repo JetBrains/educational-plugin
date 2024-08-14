@@ -50,11 +50,8 @@
               "logoShell.svg" : "icons/com/jetbrains/edu/learning/ShellLogo.svg"
             },
             "platform" : {
-              "checkio@24x24.svg" : "icons/com/jetbrains/edu/learning/checkio.svg",
               "coursera@24x24.svg" : "icons/com/jetbrains/edu/learning/coursera.svg",
               "jetBrainsAcademy@24x24.svg" : "icons/com/jetbrains/edu/learning/JB_academy_course_tab.svg",
-              "logoJSCheckiO.svg" : "icons/com/jetbrains/edu/learning/JSCheckiO.svg",
-              "logoPyCheckiO.svg" : "icons/com/jetbrains/edu/learning/PyCheckiO.svg",
               "marketplaceCourses@24x24.svg" : "icons/com/jetbrains/edu/learning/marketplace_courses_tab.svg",
               "hyperskill.svg" : "icons/com/jetbrains/edu/learning/JB_academy.svg"
             },

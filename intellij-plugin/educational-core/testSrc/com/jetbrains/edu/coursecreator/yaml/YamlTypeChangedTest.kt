@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator.yaml
 
-import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
@@ -89,27 +88,6 @@ class YamlTypeChangedTest : YamlTestCase() {
   fun `test edu to hyperskill course`() {
     project.putUserData(YAML_TEST_THROW_EXCEPTION, false)
     testCourseTypeChanged(HYPERSKILL_TYPE_YAML, HyperskillCourse::class.java)
-  }
-
-  @Test
-  fun `test edu to checkio failed`() {
-    project.putUserData(YAML_TEST_THROW_EXCEPTION, false)
-    testCourseTypeDidntChange(YamlMixinNames.CHECKIO_TYPE_YAML)
-  }
-
-  private fun testCourseTypeDidntChange(type: String) {
-    val course = getCourse()
-    loadItemFromConfig(course, """
-      |type: $type
-      |title: Kotlin Course41
-      |language: English
-      |summary: test
-      |programming_language: Plain text
-      |content:
-      |- lesson1
-      |""".trimMargin())
-
-    assertEquals(course.itemType, StudyTaskManager.getInstance(project).course!!.itemType)
   }
 
   private fun <T : Course> testCourseTypeChanged(courseType: String, expectedCourse: Class<T>) {
