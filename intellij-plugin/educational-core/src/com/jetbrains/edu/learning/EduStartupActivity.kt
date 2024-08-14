@@ -12,11 +12,15 @@ import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileTypes.ExactFileNameMatcher
 import com.intellij.openapi.fileTypes.FileTypeManager
+import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.startup.StartupManager
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.wm.ToolWindowAnchor
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import com.jetbrains.edu.coursecreator.CCUtils
@@ -47,8 +51,20 @@ import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.VisibleForTesting
+import training.dsl.LessonContext
+import training.dsl.highlightButtonById
+import training.lang.AbstractLangSupport
+import training.lang.LangManager
+import training.learn.CourseManager
+import training.learn.course.IftModule
+import training.learn.course.KLesson
+import training.learn.course.LearningCourseBase
+import training.learn.course.LessonType
+import training.statistic.LessonStartingWay
+import training.ui.LEARN_TOOL_WINDOW_ID
 
 class EduStartupActivity : StartupActivity.DumbAware {
 
@@ -73,6 +89,11 @@ class EduStartupActivity : StartupActivity.DumbAware {
     ensureCourseIgnoreHasNoCustomAssociation()
 
     StartupManager.getInstance(project).runWhenProjectIsInitialized {
+      val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(LEARN_TOOL_WINDOW_ID)
+      toolWindow!!.show()
+      LangManager.getInstance().updateLangSupport("TEXT")
+      CourseManager.instance.modules
+      CourseManager.instance.openLesson(project, testLesson, LessonStartingWay.RESTORE_LINK, forceStartLesson = true)
       val course = manager.course
       if (course == null) {
         LOG.warn("Opened project is with null course")
@@ -217,3 +238,51 @@ class EduStartupActivity : StartupActivity.DumbAware {
     private val LOG = Logger.getInstance(EduStartupActivity::class.java)
   }
 }
+
+class TestLesson : KLesson("dasd", "dasd") {
+  override val lessonContent: LessonContext.() -> Unit = {
+   highlightButtonById("RedesignedRunConfigurationSelector", clearHighlights = false)
+  }
+}
+
+class TestModule(@NonNls id: String, @Nls name: String, @Nls description: String,
+                                      @NlsSafe val lessonsDir: String,
+                                      initLessons: () -> List<KLesson>)
+  : IftModule(id, name, description, TestLangSupport(), LessonType.SCRATCH, initLessons) {
+  override val sampleFilePath: String = "Task.txt"
+  override fun preferredLearnWindowAnchor(project: Project): ToolWindowAnchor {
+    return ToolWindowAnchor.LEFT
+  }
+}
+
+class TestLangSupport : AbstractLangSupport() {
+  override val primaryLanguage: String
+    get() = "TEXT"
+
+  override fun applyToProjectAfterConfigure(): (Project) -> Unit = { }
+  override fun checkSdk(sdk: Sdk?, project: Project) {
+
+  }
+
+  override fun isSdkConfigured(project: Project): Boolean {
+    return true
+  }
+
+}
+
+class TestCourse : LearningCourseBase(PlainTextLanguage.INSTANCE.id) {
+  override fun modules(): Collection<IftModule> {
+    return listOf(TestModule(
+      id = "edu.Onboarding",
+      name = "ASDASD",
+      description = "ASDASD",
+      lessonsDir = "Onboarding",
+    ) {
+      listOf(
+        testLesson
+      )
+    })
+  }
+}
+
+private val testLesson = TestLesson()

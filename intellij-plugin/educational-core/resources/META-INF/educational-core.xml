@@ -4,6 +4,7 @@
     <plugin id="com.intellij.modules.lang"/>
     <!-- The vcs module is needed to be sure that IgnoreFileType, PatternCache exist which are used for .courseignore support -->
     <plugin id="com.intellij.modules.vcs"/>
+    <plugin id="training"/>
   </dependencies>
 
   <resource-bundle>messages.EduCoreBundle</resource-bundle>
@@ -443,6 +444,13 @@
     <registryKey key="edu.network.request.assertion.policy"
                  description="Assertion policy for network requests from EDT in JetBrains Academy plugin"
                  defaultValue="[OFF|LOG_ERROR*|EXCEPTION]"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="training">
+<!--    <ift.language.extension language="TEXT" defaultProductName="IDEA"-->
+<!--                            implementationClass="com.intellij.clion.featuresTrainer.lang.CppLangSupport"/>-->
+    <ift.learning.course language="TEXT" implementationClass="com.jetbrains.edu.learning.TestCourse"/>
+    <ift.language.extension language="TEXT" defaultProductName="IDEA" implementationClass="com.jetbrains.edu.learning.TestLangSupport"/>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">
