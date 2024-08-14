@@ -9,6 +9,7 @@ import com.jetbrains.edu.ai.translation.dialog.GetCourseTranslationDialog
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import org.jetbrains.annotations.NonNls
 
 @Suppress("ComponentNotRegistered")
@@ -22,6 +23,8 @@ class GetCourseTranslation : DumbAwareAction() {
 
     val selectedLanguage = GetCourseTranslationDialog(course).getLanguage() ?: return
     TranslationLoader.getInstance(project).loadAndSaveWithModalProgress(course, selectedLanguage)
+
+    TaskToolWindowView.getInstance(project).updateTaskDescription()
   }
 
   override fun update(e: AnActionEvent) {
