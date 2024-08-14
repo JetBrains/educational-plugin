@@ -1,5 +1,6 @@
 package com.jetbrains.edu.ai.translation
 
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
@@ -13,6 +14,7 @@ import com.jetbrains.edu.ai.translation.connector.TranslationServiceConnector
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
+import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.ext.getTaskDirectory
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -47,13 +49,25 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
   @Suppress("MemberVisibilityCanBePrivate")
   suspend fun loadAndSaveAsync(course: EduCourse, language: Language) {
     withContext(Dispatchers.IO) {
-      val translation = downloadTranslation(course, language).onError { error ->
-        LOG.error("Failed to download translation for ${course.name} to $language: $error")
-        return@withContext
-      } ?: return@withContext
-      course.saveTranslation(translation)
+      if (!course.isTranslationExists(language)) {
+        val translation = downloadTranslation(course, language).onError { error ->
+          LOG.error("Failed to download translation for ${course.name} to $language: $error")
+          return@withContext
+        } ?: return@withContext
+        course.saveTranslation(translation)
+      }
+
+      course.translatedToLanguageCode = language.code
+      YamlFormatSynchronizer.saveItem(course)
     }
   }
+
+  private suspend fun EduCourse.isTranslationExists(language: Language): Boolean =
+    readAction {
+      allTasks.all {
+        it.getDescriptionFile(project, translatedToLanguageCode = language.code)?.exists() == true
+      }
+    }
 
   private suspend fun downloadTranslation(course: EduCourse, language: Language): Result<CourseTranslation?, String> {
     val marketplaceId = course.marketplaceId
@@ -68,9 +82,6 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
         val translation = taskDescriptions[task.taskEduId] ?: continue
         task.saveTranslation(translation)
       }
-
-      translatedToLanguageCode = courseTranslation.language.code
-      YamlFormatSynchronizer.saveItem(this)
     }
   }
 
