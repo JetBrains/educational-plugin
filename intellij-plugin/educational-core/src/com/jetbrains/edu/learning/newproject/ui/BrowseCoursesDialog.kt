@@ -21,9 +21,8 @@ import javax.swing.JComponent
 import kotlin.coroutines.CoroutineContext
 
 class BrowseCoursesDialog : OpenCourseDialogBase(), CoroutineScope {
-  private val panel = CoursesPanelWithTabs(this, disposable)
-
   private val job = SupervisorJob()
+  private val panel = CoursesPanelWithTabs(this, disposable)
 
   override val coroutineContext: CoroutineContext
     get() = job + Dispatchers.Main + ModalityState.any().asContextElement()
@@ -39,9 +38,9 @@ class BrowseCoursesDialog : OpenCourseDialogBase(), CoroutineScope {
     panel.loadCourses()
   }
 
-  override fun getPreferredFocusedComponent(): JComponent {
-    return panel
-  }
+  override fun createCenterPanel(): JComponent = panel
+
+  override fun getPreferredFocusedComponent(): JComponent = panel
 
   private fun setupPluginListeners(disposable: Disposable) {
     val connection = ApplicationManager.getApplication().messageBus.connect(disposable)
@@ -72,8 +71,6 @@ class BrowseCoursesDialog : OpenCourseDialogBase(), CoroutineScope {
     @Suppress("UnstableApiUsage")
     DisabledPluginsState.addDisablePluginListener(disablePluginListener)
   }
-
-  override fun createCenterPanel(): JComponent = panel
 
   companion object {
     @NonNls
