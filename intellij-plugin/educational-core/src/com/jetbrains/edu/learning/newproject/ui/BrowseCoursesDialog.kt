@@ -6,15 +6,15 @@ import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.notification.Notification
 import com.intellij.notification.Notifications
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.AppUIExecutor
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
-import com.intellij.openapi.application.impl.coroutineDispatchingContext
+import com.intellij.openapi.application.asContextElement
 import com.intellij.openapi.updateSettings.impl.UpdateChecker
 import com.intellij.openapi.util.Disposer
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgroundColor
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import org.jetbrains.annotations.NonNls
 import javax.swing.JComponent
@@ -26,7 +26,7 @@ class BrowseCoursesDialog : OpenCourseDialogBase(), CoroutineScope {
   private val job = Job()
 
   override val coroutineContext: CoroutineContext
-    get() = AppUIExecutor.onUiThread(ModalityState.any()).coroutineDispatchingContext() + job
+    get() = job + Dispatchers.Main + ModalityState.any().asContextElement()
 
   init {
     title = EduCoreBundle.message("course.dialog.title")
