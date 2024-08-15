@@ -75,11 +75,8 @@ class MarketplaceCourseUpdater(project: Project, course: EduCourse, private val 
   override fun taskChanged(newTask: Task, task: Task): Boolean {
     val newTaskFiles = newTask.taskFiles
     val taskFiles = task.taskFiles
-    val taskDescriptionText = task.descriptionText.ifEmpty {
-      runReadAction {
-        task.getDescriptionFile(project, guessFormat = true)?.getTextFromTaskTextFile() ?: ""
-      }
-    }
+    val taskDescriptionText = runReadAction { task.getDescriptionFile(project)?.getTextFromTaskTextFile() ?: "" }
+
     val isChanged = when {
       newTask.name != task.name -> true
       newTask.itemType != task.itemType -> true

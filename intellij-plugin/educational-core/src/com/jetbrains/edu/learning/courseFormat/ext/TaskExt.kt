@@ -141,28 +141,9 @@ fun Task.addDefaultTaskDescription() {
   descriptionFormat = format
 }
 
-/**
- * If [guessFormat] is `false`, the format of the task description file is taken from the [Task.descriptionFormat]
- * field.
- *
- * If [guessFormat] is `true`, [Task.descriptionFormat] field is ignored, and the description file is searched
- * to be either `task.html` or `task.md` with the former having more priority.
- */
 @RequiresReadLock
-fun Task.getDescriptionFile(
-  project: Project,
-  guessFormat: Boolean = false,
-  translatedToLanguageCode: String? = null
-): VirtualFile? {
+fun Task.getDescriptionFile(project: Project, translatedToLanguageCode: String? = null): VirtualFile? {
   val taskDirectory = getTaskDirectory(project) ?: return null
-
-  if (guessFormat) {
-    val file = taskDirectory.run { findChild(DescriptionFormat.HTML.fileName) ?: findChild(DescriptionFormat.MD.fileName) }
-    if (file == null) {
-      LOG.warn("No task description file for $name")
-    }
-    return file
-  }
 
   if (translatedToLanguageCode != null) {
     val translatedFileName = descriptionFormat.fileNameWithTranslation(translatedToLanguageCode)
@@ -250,8 +231,10 @@ fun Task.shouldGenerateTestsOnTheFly(): Boolean {
   return course.isStudy && course is EduCourse && course.isMarketplace && (this is EduTask || this is OutputTask)
 }
 
+@RequiresReadLock
 fun Task.updateDescriptionTextAndFormat(project: Project) = runReadAction {
-  val taskDescriptionFile = getDescriptionFile(project, guessFormat = true)
+  val taskDirectory = getTaskDirectory(project)
+  val taskDescriptionFile = taskDirectory?.run { findChild(DescriptionFormat.HTML.fileName) ?: findChild(DescriptionFormat.MD.fileName) }
 
   if (taskDescriptionFile == null) {
     descriptionFormat = DescriptionFormat.HTML
@@ -308,7 +291,7 @@ fun Task.getTaskDirectory(project: Project): VirtualFile? {
 
 @RequiresReadLock
 fun Task.getTaskText(project: Project, translatedToLanguageCode: String? = null): String? {
-  val taskTextFile = getDescriptionFile(project, guessFormat = false, translatedToLanguageCode) ?: return null
+  val taskTextFile = getDescriptionFile(project, translatedToLanguageCode) ?: return null
   val taskDescription = taskTextFile.getTextFromTaskTextFile() ?: return descriptionText
 
   if (taskTextFile.extension == DescriptionFormat.MD.extension) {
