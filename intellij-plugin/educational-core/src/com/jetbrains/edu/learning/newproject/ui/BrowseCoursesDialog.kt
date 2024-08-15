@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgroundColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import org.jetbrains.annotations.NonNls
 import javax.swing.JComponent
 import kotlin.coroutines.CoroutineContext
@@ -23,7 +23,7 @@ import kotlin.coroutines.CoroutineContext
 class BrowseCoursesDialog : OpenCourseDialogBase(), CoroutineScope {
   private val panel = CoursesPanelWithTabs(this, disposable)
 
-  private val job = Job()
+  private val job = SupervisorJob()
 
   override val coroutineContext: CoroutineContext
     get() = job + Dispatchers.Main + ModalityState.any().asContextElement()
