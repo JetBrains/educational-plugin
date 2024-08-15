@@ -5,27 +5,20 @@
 
 ## The JetBrains Academy plugin
 
-Learn and teach programming languages such as
-[Kotlin](https://kotlinlang.org/),
-[Java](https://www.java.com),
-[Python](https://www.python.org/),
-[JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript),
-[Rust](https://www.rust-lang.org/),
-[Scala](https://www.scala-lang.org/),
-[C++](https://isocpp.org/),
-[Go](https://golang.org/), and 
-[PHP](https://www.php.net/), through interactive courses right in your JetBrains IDE.
+Turn on the free educational features in your IDE to learn programming from scratch, expand your current skill set,
+or create your own interactive courses to share with others.
 
-**As a learner**, you can study programming while gaining experience with professional development tools. 
-Join a step-by-step course, work on real-world projects, complete missions, participate in contests, or try them all.
-Read the [learner start guide](https://plugins.jetbrains.com/plugin/10081-jetbrains-academy/docs/learner-start-guide.html) for more information.
+**Interested in learning?** 
+Access over 100 courses in the most in-demand programming languages and technologies, 
+and build real-world projects for your developer portfolio.
 
-**As an educator**, you can create your own courses and share them with others either privately or publicly. 
-Combine theoretical learning and hands-on practice, test user knowledge with different sets of tasks, and provide extra assistance with feedback and hints.
+Read the [Learner Start Guide](https://plugins.jetbrains.com/plugin/10081-jetbrains-academy/docs/learner-start-guide.html) for more information.
+
+**Want to share your knowledge?**
+Create your own courses by combining theoretical learning and hands-on practice. 
+Test user knowledge with various sets of tasks, and provide extra assistance with feedback and hints.
+
 Read the [course creator start guide](https://plugins.jetbrains.com/plugin/10081-jetbrains-academy/docs/educator-start-guide.html) for more information.
-
-The best way to learn what this plugin is about is to check out the JetBrains Academy
-[documentation](https://plugins.jetbrains.com/plugin/10081-jetbrains-academy/docs).
 
 ### Issue tracker
 Please submit your issues to the JetBrains Academy tracker on [YouTrack](https://youtrack.jetbrains.com/issues/EDU).
