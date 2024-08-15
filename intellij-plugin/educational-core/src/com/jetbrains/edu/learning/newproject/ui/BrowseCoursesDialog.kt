@@ -21,7 +21,7 @@ import javax.swing.JComponent
 import kotlin.coroutines.CoroutineContext
 
 class BrowseCoursesDialog : OpenCourseDialogBase(), CoroutineScope {
-  val panel = CoursesPanelWithTabs(this, disposable)
+  private val panel = CoursesPanelWithTabs(this, disposable)
 
   private val job = Job()
 
@@ -34,7 +34,7 @@ class BrowseCoursesDialog : OpenCourseDialogBase(), CoroutineScope {
     rootPane.background = SelectCourseBackgroundColor
     panel.setSidePaneBackground()
 
-    Disposer.register(disposable, Disposable { job.cancel() })
+    Disposer.register(disposable) { job.cancel() }
     setupPluginListeners(disposable)
     panel.loadCourses()
   }
@@ -65,10 +65,10 @@ class BrowseCoursesDialog : OpenCourseDialogBase(), CoroutineScope {
       })
 
     val disablePluginListener = Runnable { ApplicationManager.getApplication().invokeLater { panel.doValidation() } }
-    Disposer.register(disposable, Disposable {
+    Disposer.register(disposable) {
       @Suppress("UnstableApiUsage")
       DisabledPluginsState.removeDisablePluginListener(disablePluginListener)
-    })
+    }
     @Suppress("UnstableApiUsage")
     DisabledPluginsState.addDisablePluginListener(disablePluginListener)
   }
