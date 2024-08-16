@@ -33,6 +33,7 @@ import com.jetbrains.edu.learning.taskToolWindow.removeHyperskillTags
 import com.jetbrains.edu.learning.taskToolWindow.replaceActionIDsWithShortcuts
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
+import org.jetbrains.annotations.VisibleForTesting
 import java.io.IOException
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -145,17 +146,20 @@ fun Task.addDefaultTaskDescription() {
 fun Task.getDescriptionFile(project: Project, translatedToLanguageCode: String? = null): VirtualFile? {
   val taskDirectory = getTaskDirectory(project) ?: return null
 
-  if (translatedToLanguageCode != null) {
-    val translatedFileName = descriptionFormat.fileNameWithTranslation(translatedToLanguageCode)
-    val translatedFile = taskDirectory.findChild(translatedFileName)
-    if (translatedFile != null) {
-      return translatedFile
-    }
+  val fileName = if (translatedToLanguageCode != null) {
+    descriptionFormat.fileNameWithTranslation(translatedToLanguageCode)
+  } else {
+    descriptionFormat.fileName
   }
 
-  val file = taskDirectory.findChild(descriptionFormat.fileName)
+  val file = taskDirectory.findChild(fileName)
   if (file == null) {
-    LOG.warn("No task description file for $name")
+    buildString {
+      append("No $fileName description file for $name task")
+      if (translatedToLanguageCode != null) {
+        append(", translated to $translatedToLanguageCode language code")
+      }
+    }.let { LOG.warn(it) }
   }
   return file
 }
@@ -259,7 +263,9 @@ private fun VirtualFile.toDescriptionFormat(): DescriptionFormat =
 
 @RequiresReadLock
 fun Task.getFormattedTaskText(project: Project, translatedToLanguageCode: String? = null): String? {
-  var text = getTaskText(project, translatedToLanguageCode) ?: return null
+  var text = getTaskText(project, translatedToLanguageCode)
+             ?: getTaskText(project)
+             ?: return null
   text = StringUtil.replace(text, "%IDE_NAME%", ApplicationNamesInfo.getInstance().fullProductName)
   val textBuffer = StringBuffer(text)
   replaceActionIDsWithShortcuts(textBuffer)
@@ -290,6 +296,7 @@ fun Task.getTaskDirectory(project: Project): VirtualFile? {
 }
 
 @RequiresReadLock
+@VisibleForTesting
 fun Task.getTaskText(project: Project, translatedToLanguageCode: String? = null): String? {
   val taskTextFile = getDescriptionFile(project, translatedToLanguageCode) ?: return null
   val taskDescription = taskTextFile.getTextFromTaskTextFile() ?: return descriptionText
