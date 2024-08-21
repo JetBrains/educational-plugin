@@ -181,6 +181,7 @@ allprojects {
     implementationWithoutKotlin(rootProject.libs.kotlin.logging)
     implementationWithoutKotlin(rootProject.libs.logback)
     implementationWithoutKotlin(rootProject.libs.test.spark)
+    implementationWithoutKotlin(rootProject.libs.javaparser)
     implementationWithoutKotlin(rootProject.libs.konsume.xml)
 
     testImplementationWithoutKotlin(rootProject.libs.kotlin.test.junit)

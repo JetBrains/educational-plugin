@@ -57,8 +57,8 @@ data class LLMSettingsState(
     // TODO replace with bundle
     val defaultLLMRequests: String =
       "[\"Add more comments to the test\",\"Reformat the test\",\"Improve variable names\",\"Improve assertions\",\"Increase the call sequences for a more complex scenario\"]"
-    val junitVersion: JUnitVersion = JUnitVersion.JUnit5
-    val junitVersionPriorityCheckBoxSelected: Boolean = true
+    val junitVersion: JUnitVersion = JUnitVersion.JUnit4
+    val junitVersionPriorityCheckBoxSelected: Boolean = false
     val provideTestSamplesCheckBoxSelected: Boolean = true
     val llmSetupCheckBoxSelected: Boolean = true
   }

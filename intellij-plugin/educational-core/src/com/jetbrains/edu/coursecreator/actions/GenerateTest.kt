@@ -5,16 +5,33 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.externalSystem.model.project.LibraryData
+import com.intellij.openapi.externalSystem.model.project.LibraryPathType
+import com.intellij.openapi.externalSystem.model.project.dependencies.ProjectDependencies
+import com.intellij.openapi.externalSystem.model.project.dependencies.ProjectDependenciesImpl
+import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectManager
+import com.intellij.openapi.project.modules
+import com.intellij.openapi.roots.CompilerModuleExtension
+import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.roots.libraries.LibraryTable
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar
 import com.intellij.openapi.util.Computable
+import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.PsiFile
 import com.jetbrains.edu.coursecreator.testGeneration.*
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
+import io.ktor.http.Url
 import okio.Path.Companion.toPath
+import org.apache.commons.io.FileUtils
+import org.apache.velocity.runtime.resource.loader.JarResourceLoader
+import org.jetbrains.research.testspark.core.data.JUnitVersion
 import org.jetbrains.research.testspark.core.data.Report
 import org.jetbrains.research.testspark.core.data.TestGenerationData
 import org.jetbrains.research.testspark.core.generation.llm.LLMWithFeedbackCycle
@@ -27,7 +44,10 @@ import org.jetbrains.research.testspark.core.progress.CustomProgressIndicator
 import org.jetbrains.research.testspark.core.test.TestsPersistentStorage
 import org.jetbrains.research.testspark.core.test.TestsPresenter
 import org.jetbrains.research.testspark.core.test.data.TestSuiteGeneratedByLLM
+import org.jetbrains.research.testspark.core.utils.DataFilesUtil
 import java.io.File
+import java.net.URL
+import java.util.*
 import kotlin.io.path.Path
 import kotlin.io.path.createDirectories
 
@@ -76,17 +96,6 @@ open class GenerateTest : AnAction() {
     }
   }
 
-  private val testsPresenter = object : TestsPresenter {
-
-    override fun representTestSuite(testSuite: TestSuiteGeneratedByLLM): String {
-      return "TODO1" // TODO
-    }
-
-    override fun representTestCase(testSuite: TestSuiteGeneratedByLLM, testCaseIndex: Int): String {
-      return "TODO2" // TODO
-    }
-  }
-
 
   override fun actionPerformed(e: AnActionEvent) {
     generateTest(e)
@@ -115,7 +124,40 @@ open class GenerateTest : AnAction() {
   }
 
 
-  private fun generatePrompt(e: AnActionEvent, polyDepth: Int): String{
+  fun getBuildPath(project: Project): String {
+    var buildPath = ""
+
+    for (module in ModuleManager.getInstance(project).modules) {
+      val compilerOutputPath = CompilerModuleExtension.getInstance(module)?.compilerOutputPath
+
+      compilerOutputPath?.let { buildPath += compilerOutputPath.path.plus(DataFilesUtil.classpathSeparator.toString()) }
+      // Include extra libraries in classpath
+      val librariesPaths = ModuleRootManager.getInstance(module).orderEntries().librariesOnly().pathsList.pathList
+      for (lib in librariesPaths) {
+        // exclude the invalid classpaths
+        if (buildPath.contains(lib)) {
+          continue
+        }
+        if (lib.endsWith(".zip")) {
+          continue
+        }
+
+        // remove junit and hamcrest libraries, since we use our own libraries
+        val pathArray = lib.split(File.separatorChar)
+        val libFileName = pathArray[pathArray.size - 1]
+        if (libFileName.startsWith("junit") ||
+            libFileName.startsWith("hamcrest")
+        ) {
+          continue
+        }
+
+        buildPath += lib.plus(DataFilesUtil.classpathSeparator.toString())
+      }
+    }
+    return buildPath
+  }
+
+  private fun generatePrompt(e: AnActionEvent, polyDepth: Int): String {
     val psiFile = e.getData(CommonDataKeys.PSI_FILE) ?: error("TODO")
     val project = e.project ?: error("There are no project for this action") // TODO replace with the relevant behaviour
     val language = StudyTaskManager.getInstance(project).course?.languageById
@@ -143,7 +185,7 @@ open class GenerateTest : AnAction() {
       polymorphismRelations = polymorphismRelations,
       promptConfiguration = PromptConfiguration(
         desiredLanguage = psiHelper.language.languageName,
-        desiredTestingPlatform = "JUnit 5",
+        desiredTestingPlatform = "JUnit 4",
         desiredMockingFramework = "Without Mockito",
       )
     )
@@ -160,14 +202,35 @@ open class GenerateTest : AnAction() {
     return initialPromptMessage
   }
 
+  fun getResultPath(id: String, testResultDirectory: String): String {
+    val testResultName = "test_gen_result_$id"
+
+    return "$testResultDirectory$testResultName"
+  }
+
+
   // TODO Split into the smallest functions
   private fun generateTest(e: AnActionEvent) {
     val psiFile = e.getData(CommonDataKeys.PSI_FILE) ?: return
     val project = e.project ?: error("There are no project for this action") // TODO replace with the relevant behaviour
+    val libraries = LibraryTablesRegistrar.getInstance().getLibraryTable(project).libraries
+    println("libraries size: ${libraries.size}")
+
+    libraries.forEach {
+      println("hello")
+      val toFile = it.rootProvider.getFiles(OrderRootType.CLASSES)
+        .find { it.extension == "jar" && it.nameWithoutExtension.contains("junit-4") }?.presentableUrl
+        ?.toPath()?.toFile()
+      toFile?.copyTo(LibraryPathsProvider.libPrefix.toPath().resolve(toFile.name).toFile(), true)
+    }
+    println("--------------")
     val language = StudyTaskManager.getInstance(project).course?.languageById
                    ?: error("There are no course or language instance") // TODO replace with the relevant behaviour
+    println("--------------")
     val psiHelper = PsiHelper.getInstance(language)
-   val testGenerationData = TestGenerationData()
+    println("--------------")
+    val testGenerationData = TestGenerationData()
+    println("--------------")
     val initialPromptMessage = generatePrompt(e, 0)
     println("--------------")
     println(initialPromptMessage)
@@ -177,7 +240,7 @@ open class GenerateTest : AnAction() {
       override fun isReductionPossible(): Boolean = (SettingsArguments(project).maxPolyDepth(testGenerationData.polyDepthReducing) > 1) ||
                                                     (SettingsArguments(project).maxInputParamsDepth(testGenerationData.inputParamsDepthReducing) > 1)
 
-      private fun reducePromptSize(): Boolean{
+      private fun reducePromptSize(): Boolean {
         if (SettingsArguments(project).maxPolyDepth(testGenerationData.polyDepthReducing) > 1) {
           testGenerationData.polyDepthReducing++
 //          log.info("polymorphism depth is: ${SettingsArguments(project).maxPolyDepth(testGenerationData.polyDepthReducing)}")
@@ -212,10 +275,30 @@ open class GenerateTest : AnAction() {
 
     val report = Report()
     val testFilename = "GeneratedTest.java" // TODO hardcode solution
-    val resultPath = project.basePath!!.toPath().resolve("testsCases").also { it.toNioPath().toFile().mkdirs() }
-    val buildPath = project.basePath!!.toPath().resolve("tests").also { it.toNioPath().toFile().mkdirs() }
+
+    val testResultDirectory = "${FileUtilRt.getTempDirectory()}${File.separatorChar}testSparkResults${File.separatorChar}"
+    val id = UUID.randomUUID().toString()
+
+    LLMSettingsState.DefaultLLMSettingsState.junitVersion.libJar.forEach { // download by sdk tools
+      println(it.name)
+      FileUtils.copyURLToFile(URL( it.downloadUrl), LibraryPathsProvider.libPrefix.toPath().resolve(it.name).toFile(),6000,6000)
+    }
+
+    val resultPath = getResultPath(id, testResultDirectory)
+//    val buildPath = project.basePath!!.toPath().resolve("tests").also { it.toNioPath().toFile().mkdirs() }
 
     val packageName = psiHelper.getPackageName()
+    val testSuitePresenter = JUnitTestSuitePresenter(project, testGenerationData)
+    val testsPresenter = object : TestsPresenter {
+      override fun representTestSuite(testSuite: TestSuiteGeneratedByLLM): String {
+        return testSuitePresenter.toStringWithoutExpectedException(testSuite)
+      }
+
+      override fun representTestCase(testSuite: TestSuiteGeneratedByLLM, testCaseIndex: Int): String {
+        return testSuitePresenter.toStringSingleTestCaseWithoutExpectedException(testSuite, testCaseIndex)
+      }
+    }
+
 
     val llmFeedbackCycle = LLMWithFeedbackCycle(
       report = report,
@@ -224,7 +307,7 @@ open class GenerateTest : AnAction() {
       testSuiteFilename = testFilename,
       packageName = packageName,
       resultPath = resultPath.toString().also { println("1234: $it") },
-      buildPath = buildPath.toString(),
+      buildPath = getBuildPath(project).also { println(it) },
       requestManager = OpenAIRequestManager(project),
       testsAssembler = JUnitTestsAssembler(project, progressIndicator, testGenerationData),
       testCompiler = TestCompilerFactory.createJavacTestCompiler(project, LLMSettingsState.DefaultLLMSettingsState.junitVersion),
@@ -251,7 +334,17 @@ open class GenerateTest : AnAction() {
 
       }
     )
-    llmFeedbackCycle.run()
+    llmFeedbackCycle.run().also {
+      println("================1=====================")
+      println(it.generatedTestSuite)
+      println("================2=====================")
+      println(it.compilableTestCases)
+      println("================3=====================")
+      println(it.executionResult)
+      println("================4=====================")
+      println(testSuitePresenter.toString(it.generatedTestSuite!!))
+    }
+
   }
 
 }

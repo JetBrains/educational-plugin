@@ -8,7 +8,7 @@ import java.io.File
 class LibraryPathsProvider {
   companion object {
     private val sep = File.separatorChar
-    private val libPrefix = "${PathManager.getPluginsPath()}${sep}TestSpark${sep}lib$sep"
+    val libPrefix = "${PathManager.getPluginsPath()}${sep}JetBrainsAcademy${sep}lib"
 
     fun getTestCompilationLibraryPaths() = JavaTestCompilationDependencies.getJarDescriptors().map { descriptor ->
       "$libPrefix${sep}${descriptor.name}"
