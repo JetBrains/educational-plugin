@@ -14,7 +14,7 @@ import com.jetbrains.edu.coursecreator.testGeneration.PsiClassWrapper
 import com.jetbrains.edu.coursecreator.testGeneration.PsiHelper
 import com.jetbrains.edu.coursecreator.testGeneration.PsiMethodWrapper
 
-class JavaPsiHelper : PsiHelper {
+class JavaPsiHelper : PsiHelper() {
     override var psiFile: PsiFile? = null
 
     override val language: TestLanguage get() = TestLanguage.Java

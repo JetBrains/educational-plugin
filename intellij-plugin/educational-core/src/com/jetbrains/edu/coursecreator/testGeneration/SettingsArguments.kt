@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project
 /**
  * A class that provides access to various settings arguments.
  */
+// TODO add files of project settings
 class SettingsArguments(private val project: Project) {
   private val llmSettingsState: LLMSettingsState
     get() = LLMSettingsState()

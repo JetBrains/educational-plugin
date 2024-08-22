@@ -11,12 +11,6 @@ class TestCompilerFactory {
       val javaHomePath = ProjectRootManager.getInstance(project).projectSdk!!.homeDirectory!!.path // TODO replace with the real code`
       val libraryPaths = LibraryPathsProvider.getTestCompilationLibraryPaths()
       val junitLibraryPaths = LibraryPathsProvider.getJUnitLibraryPaths(junitVersion)
-      println("$$$$1")
-      println(javaHomePath)
-      println("$$$$2")
-      println(libraryPaths)
-      println("$$$$3")
-      println(junitLibraryPaths)
       return TestCompiler(javaHomePath, libraryPaths, junitLibraryPaths)
     }
   }

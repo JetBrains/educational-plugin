@@ -74,7 +74,7 @@ class JUnitTestsAssembler(
     val generatedTestsCount = super.getContent().split("@Test").size - 1
 
     if (lastTestCount != generatedTestsCount) {
-      indicator.setText("Generating Test #" + generatedTestsCount)
+      indicator.setText("Generating Test #$generatedTestsCount")
       lastTestCount = generatedTestsCount
     }
   }

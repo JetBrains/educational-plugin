@@ -4,15 +4,17 @@ import com.intellij.lang.LanguageExtension
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
 import com.intellij.lang.Language
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.util.Computable
 import com.intellij.psi.PsiFile
 
 /**
- * Interface that declares all the methods needed for parsing and
+ * Abstract class that declares all the methods needed for parsing and
  * handling the PSI (Program Structure Interface) for different languages.
  */
-interface PsiHelper {
-  var psiFile: PsiFile?
-  val language: TestLanguage
+abstract class PsiHelper {
+  abstract var psiFile: PsiFile?
+  abstract val language: TestLanguage
 
   /**
    * Returns the surrounding PsiClass object based on the caret position within the specified PsiFile.
@@ -22,7 +24,7 @@ interface PsiHelper {
    * @param caretOffset The offset of the caret position within the PsiFile.
    * @return The surrounding PsiClass object if found, null otherwise.
    */
-  fun getSurroundingClass(caretOffset: Int): PsiClassWrapper?
+  abstract fun getSurroundingClass(caretOffset: Int): PsiClassWrapper?
 
   /**
    * Returns the surrounding method of the given PSI file based on the caret offset.
@@ -30,7 +32,7 @@ interface PsiHelper {
    * @param caretOffset The caret offset within the PSI file.
    * @return The surrounding method if found, otherwise null.
    */
-  fun getSurroundingMethod(caretOffset: Int): PsiMethodWrapper?
+  abstract fun getSurroundingMethod(caretOffset: Int): PsiMethodWrapper?
 
   /**
    * Returns the line number of the selected line where the caret is positioned.
@@ -38,7 +40,7 @@ interface PsiHelper {
    * @param caretOffset The caret offset within the PSI file.
    * @return The line number of the selected line, otherwise null.
    */
-  fun getSurroundingLine(caretOffset: Int): Int?
+  abstract fun getSurroundingLine(caretOffset: Int): Int?
 
   /**
    * Retrieves a set of interesting PsiClasses based on a given project,
@@ -49,7 +51,7 @@ interface PsiHelper {
    * @param polyDepthReducing The factor to reduce the polymorphism depth.
    * @return The set of interesting PsiClasses found during the search.
    */
-  fun getInterestingPsiClassesWithQualifiedNames(
+  abstract fun getInterestingPsiClassesWithQualifiedNames(
     project: Project,
     classesToTest: List<PsiClassWrapper>,
     polyDepthReducing: Int,
@@ -62,7 +64,7 @@ interface PsiHelper {
    * @param psiMethod The PsiMethod for which to find interesting PsiClasses.
    * @return A mutable set of interesting PsiClasses.
    */
-  fun getInterestingPsiClassesWithQualifiedNames(
+  abstract fun getInterestingPsiClassesWithQualifiedNames(
     cut: PsiClassWrapper,
     psiMethod: PsiMethodWrapper,
   ): MutableSet<PsiClassWrapper>
@@ -75,7 +77,7 @@ interface PsiHelper {
    *         The array contains the class display name, method display name (if present), and the line number (if present).
    *         The line number is prefixed with "Line".
    */
-  fun getCurrentListOfCodeTypes(e: AnActionEvent): Array<*>?
+  abstract fun getCurrentListOfCodeTypes(e: AnActionEvent): Array<*>?
 
   /**
    * Helper for generating method descriptors for methods.
@@ -83,17 +85,16 @@ interface PsiHelper {
    * @param psiMethod The method to extract the descriptor from.
    * @return The method descriptor.
    */
-  fun generateMethodDescriptor(psiMethod: PsiMethodWrapper): String
+  abstract fun generateMethodDescriptor(psiMethod: PsiMethodWrapper): String
 
   /**
    * Fills the classesToTest variable with the data about the classes to test.
    *
    * @param project The project in which to collect classes to test.
    * @param classesToTest The list of classes to test.
-   * @param psiHelper The PSI helper instance to use for collecting classes.
    * @param caretOffset The caret offset in the file.
    */
-  fun collectClassesToTest(
+  abstract fun collectClassesToTest(
     project: Project,
     classesToTest: MutableList<PsiClassWrapper>,
     caretOffset: Int,
@@ -106,7 +107,7 @@ interface PsiHelper {
    * @param line The line number.
    * @return The display name of the line.
    */
-  fun getLineDisplayName(line: Int): String
+  abstract fun getLineDisplayName(line: Int): String
 
   /**
    * Gets the display name of a class.
@@ -115,7 +116,7 @@ interface PsiHelper {
    * @param psiClass The PSI class of interest.
    * @return The display name of the PSI class.
    */
-  fun getClassDisplayName(psiClass: PsiClassWrapper): String
+  abstract fun getClassDisplayName(psiClass: PsiClassWrapper): String
 
   /**
    * Gets the display name of a method, depending on if it is a (default) constructor or a normal method.
@@ -124,12 +125,26 @@ interface PsiHelper {
    * @param psiMethod The PSI method of interest.
    * @return The display name of the PSI method.
    */
-  fun getMethodDisplayName(psiMethod: PsiMethodWrapper): String
+  abstract fun getMethodDisplayName(psiMethod: PsiMethodWrapper): String
 
 
-  fun getPackageName(): String
+  abstract fun getPackageName(): String
 
-  companion object{
+
+  /**
+   * TODO
+   */
+  fun getAllClassesToTest(project: Project, caret: Int): List<PsiClassWrapper> {
+    val classesToTest = mutableListOf<PsiClassWrapper>()
+    ApplicationManager.getApplication().runReadAction(
+      Computable {
+        collectClassesToTest(project, classesToTest, caret) // TODO
+      },
+    )
+    return classesToTest
+  }
+
+  companion object {
     private val EP_NAME = LanguageExtension<PsiHelper>("Educational.psiHelper")
 
     fun getInstance(language: Language): PsiHelper = EP_NAME.forLanguage(language)
