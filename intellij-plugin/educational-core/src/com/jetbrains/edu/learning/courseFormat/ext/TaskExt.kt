@@ -142,18 +142,30 @@ fun Task.addDefaultTaskDescription() {
 }
 
 @RequiresReadLock
-fun Task.getDescriptionFile(project: Project, translatedToLanguageCode: String? = null): VirtualFile? {
+fun Task.getDescriptionFile(project: Project, translatedToLanguageCode: String? = null, guessFormat: Boolean = false): VirtualFile? {
   val taskDirectory = getTaskDirectory(project) ?: return null
 
   if (translatedToLanguageCode != null) {
-    val translatedFileName = descriptionFormat.fileNameWithTranslation(translatedToLanguageCode)
-    val translatedFile = taskDirectory.findChild(translatedFileName)
+    val translatedFile = if (guessFormat) {
+      val translatedFileNameHTML = DescriptionFormat.HTML.fileNameWithTranslation(translatedToLanguageCode)
+      val translatedFileNameMD = DescriptionFormat.MD.fileNameWithTranslation(translatedToLanguageCode)
+      taskDirectory.run { findChild(translatedFileNameHTML) ?: findChild(translatedFileNameMD) }
+    }
+    else {
+      val translatedFileName = descriptionFormat.fileNameWithTranslation(translatedToLanguageCode)
+      taskDirectory.findChild(translatedFileName)
+    }
     if (translatedFile != null) {
       return translatedFile
     }
   }
 
-  val file = taskDirectory.findChild(descriptionFormat.fileName)
+  val file = if (guessFormat) {
+    taskDirectory.run { findChild(DescriptionFormat.HTML.fileName) ?: findChild(DescriptionFormat.MD.fileName) }
+  }
+  else {
+    taskDirectory.findChild(descriptionFormat.fileName)
+  }
   if (file == null) {
     LOG.warn("No task description file for $name")
   }
@@ -233,8 +245,7 @@ fun Task.shouldGenerateTestsOnTheFly(): Boolean {
 
 @RequiresReadLock
 fun Task.updateDescriptionTextAndFormat(project: Project) = runReadAction {
-  val taskDirectory = getTaskDirectory(project)
-  val taskDescriptionFile = taskDirectory?.run { findChild(DescriptionFormat.HTML.fileName) ?: findChild(DescriptionFormat.MD.fileName) }
+  val taskDescriptionFile = getDescriptionFile(project, guessFormat = true)
 
   if (taskDescriptionFile == null) {
     descriptionFormat = DescriptionFormat.HTML
@@ -291,7 +302,7 @@ fun Task.getTaskDirectory(project: Project): VirtualFile? {
 
 @RequiresReadLock
 fun Task.getTaskText(project: Project, translatedToLanguageCode: String? = null): String? {
-  val taskTextFile = getDescriptionFile(project, translatedToLanguageCode) ?: return null
+  val taskTextFile = getDescriptionFile(project, translatedToLanguageCode, guessFormat = true) ?: return null
   val taskDescription = taskTextFile.getTextFromTaskTextFile() ?: return descriptionText
 
   if (taskTextFile.extension == DescriptionFormat.MD.extension) {
