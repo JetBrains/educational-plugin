@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.taskToolWindow.ui
 
 import com.intellij.ide.ui.LafManagerListener
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.actionSystem.impl.ActionButton
@@ -45,11 +46,15 @@ import java.awt.Component
 import java.awt.Dimension
 import javax.swing.*
 
-class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), DataProvider {
+class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), DataProvider, Disposable {
   private val lessonHeader: LessonHeader = LessonHeader()
   private val navigationMapToolbar: NavigationMapToolbar = NavigationMapToolbar()
   private val taskName: JLabel = JLabel(EduCoreBundle.message("item.task.title"))
   private val tabManager: TabManager = TabManager(project)
+
+  init {
+    Disposer.register(this, tabManager)
+  }
 
   override var currentTask: Task? = null
     // TODO: move it in some separate method
@@ -261,6 +266,8 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
   override fun addInlineBanner(inlineBanner: InlineBanner) {
     tabManager.descriptionTab.addInlineBanner(inlineBanner)
   }
+
+  override fun dispose() {}
 
   companion object {
     private const val HELP_ID = "task.description"
