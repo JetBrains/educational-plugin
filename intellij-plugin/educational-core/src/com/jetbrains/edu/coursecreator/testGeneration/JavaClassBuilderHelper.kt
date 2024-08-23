@@ -170,7 +170,7 @@ object JavaClassBuilderHelper {
   fun getClassFromTestCaseCode(code: String): String {
     val pattern = Regex("public\\s+class\\s+(\\S+)\\s*\\{")
     val matchResult = pattern.find(code)
-    matchResult ?: return "GeneratedTest"
+    matchResult ?: return "GeneratedTest2321312"
     val (className) = matchResult.destructured
     return className
   }

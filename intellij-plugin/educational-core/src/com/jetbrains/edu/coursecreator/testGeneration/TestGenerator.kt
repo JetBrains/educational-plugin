@@ -1,15 +1,14 @@
 package com.jetbrains.edu.coursecreator.testGeneration
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtilRt
 import com.jetbrains.edu.coursecreator.testGeneration.PromptUtil.generatePrompt
 import okio.Path.Companion.toPath
 import org.apache.commons.io.FileUtils
 import org.jetbrains.research.testspark.core.data.Report
 import org.jetbrains.research.testspark.core.data.TestGenerationData
-import org.jetbrains.research.testspark.core.generation.llm.FeedbackResponse
 import org.jetbrains.research.testspark.core.generation.llm.LLMWithFeedbackCycle
-import org.jetbrains.research.testspark.core.progress.CustomProgressIndicator
 import org.jetbrains.research.testspark.core.test.TestsPersistentStorage
 import org.jetbrains.research.testspark.core.test.TestsPresenter
 import org.jetbrains.research.testspark.core.test.data.TestSuiteGeneratedByLLM
@@ -26,8 +25,9 @@ class TestGenerator(private val project: Project) {
 
   fun generateFileTests(
     psiHelper: PsiHelper,
+    testFilename: String,
     caret: Int
-  ): FeedbackResponse { // TODO add possibility to generate uncompilable tests
+  ): String { // TODO add possibility to generate uncompilable tests
     val classesToTest = psiHelper.getAllClassesToTest(project, caret)
     val testGenerationData = TestGenerationData()
     val initialPromptMessage = generatePrompt(project, psiHelper, 0, classesToTest)
@@ -35,14 +35,14 @@ class TestGenerator(private val project: Project) {
       psiHelper.getInterestingPsiClassesWithQualifiedNames(project, classesToTest, 0) // TODO change polyDepth
 // ---------------------------------------------------
     val report = Report()
-    val testFilename = "GeneratedTest.java" // TODO hardcode solution
+//    val testFilename = "GeneratedTest.java" // TODO hardcode solution
 
     val testResultDirectory = "${FileUtilRt.getTempDirectory()}${File.separatorChar}testSparkResults${File.separatorChar}"
     val id = UUID.randomUUID().toString()
 
     LLMSettingsState.DefaultLLMSettingsState.junitVersion.libJar.forEach { // download by sdk tools
       println(it.name)
-      FileUtils.copyURLToFile(URL( it.downloadUrl), LibraryPathsProvider.libPrefix.toPath().resolve(it.name).toFile(),6000,6000)
+      FileUtils.copyURLToFile(URL(it.downloadUrl), LibraryPathsProvider.libPrefix.toPath().resolve(it.name).toFile(), 6000, 6000)
     }
 
     val resultPath = TestBuildUtil.getResultPath(id, testResultDirectory)
@@ -52,15 +52,17 @@ class TestGenerator(private val project: Project) {
     val testSuitePresenter = JUnitTestSuitePresenter(project, testGenerationData)
     val testsPresenter = object : TestsPresenter {
       override fun representTestSuite(testSuite: TestSuiteGeneratedByLLM): String {
-        return testSuitePresenter.toStringWithoutExpectedException(testSuite)
+        return testSuitePresenter.toStringWithoutExpectedException(testSuite, testFilename.replace(".java", ""))
       }
 
       override fun representTestCase(testSuite: TestSuiteGeneratedByLLM, testCaseIndex: Int): String {
         return testSuitePresenter.toStringSingleTestCaseWithoutExpectedException(testSuite, testCaseIndex)
       }
     }
-
-
+    var buildPath = TestBuildUtil.getBuildPath(project)
+    if (buildPath.isBlank()) {
+      buildPath = ProjectRootManager.getInstance(project).contentRoots.first().path
+    }
     val llmFeedbackCycle = LLMWithFeedbackCycle(
       report = report,
       initialPromptMessage = initialPromptMessage,
@@ -68,7 +70,7 @@ class TestGenerator(private val project: Project) {
       testSuiteFilename = testFilename,
       packageName = packageName,
       resultPath = resultPath.toString().also { println("1234: $it") },
-      buildPath = TestBuildUtil.getBuildPath(project).also { println(it) },
+      buildPath = buildPath.also { println(it) },
       requestManager = OpenAIRequestManager(project),
       testsAssembler = JUnitTestsAssembler(project, progressIndicator, testGenerationData),
       testCompiler = TestCompilerFactory.createJavacTestCompiler(project, LLMSettingsState.DefaultLLMSettingsState.junitVersion),
@@ -95,7 +97,7 @@ class TestGenerator(private val project: Project) {
 
       }
     )
-    return llmFeedbackCycle.run().also { println(it.generatedTestSuite) }
+    return testSuitePresenter.toString(llmFeedbackCycle.run().generatedTestSuite!!, testFilename.replace(".java", ""))
   }
 
 }

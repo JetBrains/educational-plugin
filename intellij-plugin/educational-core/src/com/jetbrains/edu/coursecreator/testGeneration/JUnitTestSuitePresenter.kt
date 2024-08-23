@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.research.testspark.core.data.TestGenerationData
 import org.jetbrains.research.testspark.core.generation.llm.getClassWithTestCaseName
 import org.jetbrains.research.testspark.core.test.data.TestSuiteGeneratedByLLM
+
 //import org.jetbrains.research.testspark.helpers.JavaClassBuilderHelper
 
 class JUnitTestSuitePresenter(
@@ -27,7 +28,7 @@ class JUnitTestSuitePresenter(
    *
    * @return A string representing the test file.
    */
-  fun toString(testSuite: TestSuiteGeneratedByLLM): String {
+  fun toString(testSuite: TestSuiteGeneratedByLLM, testFileName: String): String {
     var testBody = ""
 
     return testSuite.run {
@@ -74,7 +75,7 @@ class JUnitTestSuitePresenter(
    *
    * @return the full text of the test suite (excluding the expected exception) as a string.
    */
-  fun toStringWithoutExpectedException(testSuite: TestSuiteGeneratedByLLM): String {
+  fun toStringWithoutExpectedException(testSuite: TestSuiteGeneratedByLLM,testFileName: String): String {
     var testBody = ""
 
     return testSuite.run {
