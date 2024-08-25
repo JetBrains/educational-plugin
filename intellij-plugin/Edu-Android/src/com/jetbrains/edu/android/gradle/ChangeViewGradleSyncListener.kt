@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.projectView.CourseViewPane
 
 class ChangeViewGradleSyncListener : GradleSyncListener {
   override fun syncSucceeded(project: Project) {
-    ExternalSystemUtil.invokeLater(project, ModalityState.NON_MODAL) {
+    ExternalSystemUtil.invokeLater(project, ModalityState.nonModal()) {
       if (!project.isDisposed && project.course != null) {
         ProjectView.getInstance(project).changeViewCB(CourseViewPane.ID, null)
       }

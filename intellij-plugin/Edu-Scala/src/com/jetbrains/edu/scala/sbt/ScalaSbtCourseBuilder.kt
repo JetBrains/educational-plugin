@@ -58,7 +58,7 @@ class ScalaSbtCourseBuilder : EduCourseBuilder<JdkProjectSettings> {
     project.putUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT, null)
     ExternalSystemUtil.refreshProject(projectBasePath, builder.build())
     if (!isUnitTestMode) {
-      ExternalSystemUtil.invokeLater(project, ModalityState.NON_MODAL) {
+      ExternalSystemUtil.invokeLater(project, ModalityState.nonModal()) {
         ProjectView.getInstance(project).changeViewCB(CourseViewPane.ID, null)
       }
     }

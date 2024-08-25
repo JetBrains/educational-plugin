@@ -22,7 +22,7 @@ import java.io.IOException
 import java.nio.charset.StandardCharsets
 
 fun hasOpenDialogs(platformName: String): Boolean = getInEdt(modalityState = ModalityState.any()) {
-  if (ModalityState.current() != ModalityState.NON_MODAL) {
+  if (ModalityState.current() != ModalityState.nonModal()) {
     requestFocus()
     Messages.showInfoMessage(EduCoreBundle.message("rest.service.modal.dialogs.message", platformName),
                              EduCoreBundle.message("rest.service.modal.dialogs.title", platformName))
