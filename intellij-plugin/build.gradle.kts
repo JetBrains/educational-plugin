@@ -186,6 +186,7 @@ allprojects {
     implementationWithoutKotlin(rootProject.libs.kotlin.css.jvm)
 
     testImplementation(rootProject.libs.junit)
+    testImplementation(rootProject.libs.openTest4J)
     testImplementationWithoutKotlin(rootProject.libs.kotlin.test.junit)
     testImplementationWithoutKotlin(rootProject.libs.mockwebserver)
     testImplementationWithoutKotlin(rootProject.libs.mockk)
@@ -219,7 +220,6 @@ subprojects {
     intellijPlatform {
       testFramework(TestFrameworkType.Bundled)
     }
-    testImplementation(rootProject.libs.openTest4J)
   }
 }
 
@@ -312,6 +312,8 @@ dependencies {
       // features necessary for course creation are available only since 2024.2
       pluginModule(implementation(project("Edu-CSharp")))
     }
+
+    testFramework(TestFrameworkType.Bundled)
   }
 }
 
