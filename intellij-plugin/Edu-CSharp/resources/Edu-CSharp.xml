@@ -61,6 +61,10 @@
                     relative-to-action="Educational.Educator.CourseCreator.FrameworkLesson"/>
       <add-to-group group-id="FileMenu" anchor="after" relative-to-action="Educational.LearnAndTeachFileMenu"/>
     </group>
+
+    <reference id="Educational.Educator.MarketplacePushCourse">
+      <add-to-group group-id="Educational.Educator.CourseCreator.Menu" relative-to-action="Educational.Educator.PackCourse" anchor="after"/>
+    </reference>
   </actions>
 
   <extensions defaultExtensionNs="Educational">
