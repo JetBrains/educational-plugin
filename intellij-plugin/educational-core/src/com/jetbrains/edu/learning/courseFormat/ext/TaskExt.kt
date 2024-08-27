@@ -155,9 +155,7 @@ fun Task.getDescriptionFile(project: Project, translatedToLanguageCode: String? 
       val translatedFileName = descriptionFormat.fileNameWithTranslation(translatedToLanguageCode)
       taskDirectory.findChild(translatedFileName)
     }
-    if (translatedFile != null) {
-      return translatedFile
-    }
+    return translatedFile
   }
 
   val file = if (guessFormat) {
