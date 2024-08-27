@@ -53,6 +53,7 @@ sealed class ParsedJavaVersion {
 
 data class JavaVersionParseSuccess(val javaSdkVersion: JavaSdkVersion) : ParsedJavaVersion() {
   infix fun isAtLeast(that: JavaVersionParseSuccess): Boolean = javaSdkVersion.isAtLeast(that.javaSdkVersion)
+  infix fun isGreater(that: JavaVersionParseSuccess): Boolean = javaSdkVersion > that.javaSdkVersion
 }
 
 object JavaVersionNotProvided : ParsedJavaVersion()

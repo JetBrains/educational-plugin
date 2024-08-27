@@ -98,11 +98,19 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
         ready("error.no.jdk.need.at.least", (courseJavaVersion as JavaVersionParseSuccess).javaSdkVersion.description)
       }
     }
+
+    selectedJavaVersion as JavaVersionParseSuccess
+
+    val maxJavaVersion = maxJvmSdkVersion(course) as JavaVersionParseSuccess?
+
+    if (maxJavaVersion != null && selectedJavaVersion isGreater maxJavaVersion) {
+      return ready("error.new.java", maxJavaVersion.javaSdkVersion.description, selectedJavaVersion.javaSdkVersion.description)
+    }
+
     if (courseJavaVersion == JavaVersionNotProvided) {
       return SettingsValidationResult.OK
     }
 
-    selectedJavaVersion as JavaVersionParseSuccess
     courseJavaVersion as JavaVersionParseSuccess
 
     return if (selectedJavaVersion isAtLeast courseJavaVersion) {
@@ -118,6 +126,12 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
    * Basically, it is taken from environment settings, but for Java courses it is specified explicitly in [Course.languageVersion]
    */
   protected open fun minJvmSdkVersion(course: Course): ParsedJavaVersion = course.minJvmSdkVersion
+
+  /**
+   * This is the maximum JDK version that we allow to use for the course.
+   * For Hyperskill courses we don't allow using JDK greater than 19
+   */
+  protected open fun maxJvmSdkVersion(course: Course): ParsedJavaVersion? = course.maxJvmSdkVersion
 
   override fun getSettings(): JdkProjectSettings = JdkProjectSettings(sdkModel, jdk)
 
