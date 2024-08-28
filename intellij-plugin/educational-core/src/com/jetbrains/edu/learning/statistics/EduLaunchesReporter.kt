@@ -67,6 +67,7 @@ object EduLaunchesReporter {
     val projectType = course.itemType
     val role = if (course.isStudy) "student" else "teacher"
     val id = if (course.id != 0) "&courseId=${course.id}" else ""
-    return "$baseUrl?pluginId=$pluginId&build=$buildNumber&pluginVersion=${plugin.version}&os=$os&uuid=$uid&projectType=$projectType&role=$role$id"
+    val name = URLEncoder.encode("pluginName=${course.name}", Charsets.UTF_8.name())
+    return "$baseUrl?$name&pluginId=$pluginId&build=$buildNumber&pluginVersion=${plugin.version}&os=$os&uuid=$uid&projectType=$projectType&role=$role$id"
   }
 }
