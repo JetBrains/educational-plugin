@@ -453,6 +453,10 @@ project("educational-core") {
   dependencies {
     intellijPlatform {
       intellijIde(baseVersion)
+
+      if (isAtLeast242) {
+        bundledModules("intellij.platform.vcs.impl")
+      }
     }
 
     api(project(":edu-format"))
@@ -825,6 +829,8 @@ if (isAtLeast242) {
     dependencies {
       intellijPlatform {
         intellijIde(riderVersion!!)
+
+        bundledModule("intellij.rider")
       }
 
       implementation(project(":intellij-plugin:educational-core"))
