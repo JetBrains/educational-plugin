@@ -28,8 +28,7 @@ Changes = Dict[Path, Tuple[FileModification, Optional[bytes]]]
 def collect_changes(platform_version: int) -> Changes:
     changes: Changes = {
         **process_gradle_properties(platform_version),
-        **process_branch_directories(platform_version),
-        **process_run_configurations(platform_version)
+        **process_branch_directories(platform_version)
     }
     current_dir = Path(".").absolute()
     return {path.absolute().relative_to(current_dir): value for (path, value) in changes.items()}
@@ -73,24 +72,6 @@ def process_branch_directories(platform_version: int) -> Changes:
                 # Delete all files from remaining platform-specific directories
                 for sub_dir in sub_dirs:
                     changes[sub_dir / relative_path] = (FileModification.Delete, None)
-
-    return changes
-
-
-def process_run_configurations(platform_version: int) -> Changes:
-    changes = {}
-    run_configurations_dir = Path(".idea/runConfigurations")
-    for file in run_configurations_dir.glob("*.xml"):
-        with open(file, "r") as f:
-            text = f.read()
-        # Removes `<log_file />` entity from run configurations related to given `platform_version`.
-        # `MULTILINE` mode is used to match only one line.
-        #
-        # Note, removing xml item is intentionally done via regexp instead of xml parsing to preserve formatting
-        new_text = re.sub(fr"^\s*<log_file.*path=\".*?sandbox-{platform_version}.*?\".*/>\s*$\n", "", text,
-                          flags=re.MULTILINE)
-        if text != new_text:
-            changes[file] = (FileModification.Change, new_text.encode())
 
     return changes
 
