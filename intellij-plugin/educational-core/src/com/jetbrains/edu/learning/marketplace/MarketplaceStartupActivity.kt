@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.marketplace
 
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.blockingContext
@@ -19,9 +20,12 @@ import com.jetbrains.edu.learning.marketplace.update.MarketplaceUpdateChecker
 import com.jetbrains.edu.learning.marketplace.userAgreement.UserAgreementDialog
 import com.jetbrains.edu.learning.marketplace.userAgreement.UserAgreementSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext.OTHER
+import com.jetbrains.edu.learning.submissions.SharedSolutionsListener
 import com.jetbrains.edu.learning.submissions.SubmissionSettings
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
+import com.jetbrains.edu.learning.submissions.SubmissionsManager.Companion.SHARED_SOLUTIONS_TOPIC
 import com.jetbrains.edu.learning.submissions.UserAgreementState
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
@@ -65,7 +69,8 @@ class MarketplaceStartupActivity : StartupActivity {
     val solutionsLoader = MarketplaceSolutionLoader.getInstance(project)
     submissionsManager.prepareSubmissionsContentWhenLoggedIn { solutionsLoader.loadSolutionsInBackground() }
 
-    project.messageBus.connect().subscribe(ProjectCloseListener.TOPIC, object : ProjectCloseListener {
+    val connection = project.messageBus.connect()
+    connection.subscribe(ProjectCloseListener.TOPIC, object : ProjectCloseListener {
       override fun projectClosing(project: Project) {
         if (!SubmissionSettings.getInstance(project).stateOnClose) return
 
@@ -79,6 +84,13 @@ class MarketplaceStartupActivity : StartupActivity {
           }
         }
       }
+    })
+    connection.subscribe(SHARED_SOLUTIONS_TOPIC, SharedSolutionsListener {
+      EduNotificationManager.showInfoNotification(
+        project,
+        EduCoreBundle.message("marketplace.solutions.sharing.notification.title.no.more.shared.solutions.available"),
+        EduCoreBundle.message("marketplace.solutions.sharing.notification.content.no.more.shared.solutions.available")
+      )
     })
   }
 }

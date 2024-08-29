@@ -138,6 +138,10 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
     project.messageBus.syncPublisher(TOPIC).submissionsChanged()
   }
 
+  private fun notifySharedSolutionsUnchanged() {
+    project.messageBus.syncPublisher(SHARED_SOLUTIONS_TOPIC).sharedSolutionsUnchanged()
+  }
+
   fun containsCorrectSubmission(stepId: Int): Boolean {
     return getSubmissionsFromMemory(setOf(stepId)).any { it.status == CORRECT }
   }
@@ -211,6 +215,7 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
       val taskId = task.id
       val result = submissionsProvider.loadMoreSharedSubmissions(course, task, latest, oldest)
       if (result == null) {
+        notifySharedSolutionsUnchanged()
         communitySubmissions[taskId]?.hasMore = false
         return@thenApply taskToolWindowView.updateSubmissionsTab()
       }
@@ -300,6 +305,9 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
     @Topic.ProjectLevel
     val TOPIC: Topic<SubmissionsListener> = createTopic("Edu.submissions")
 
+    @Topic.ProjectLevel
+    val SHARED_SOLUTIONS_TOPIC: Topic<SharedSolutionsListener> = createTopic("Edu.sharedSolutions")
+
     fun getInstance(project: Project): SubmissionsManager {
       return project.service()
     }
@@ -310,4 +318,8 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
 
 fun interface SubmissionsListener {
   fun submissionsChanged()
+}
+
+fun interface SharedSolutionsListener {
+  fun sharedSolutionsUnchanged()
 }
