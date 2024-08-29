@@ -64,14 +64,8 @@ class CSharpCourseBuilder : EduCourseBuilder<CSharpProjectSettings> {
     }
   }
 
-  override fun extractInitializationParams(info: NewStudyItemInfo): Map<String, String> {
-    val params = mutableMapOf(VERSION_VARIABLE to getDotNetVersion(info.getUserData(VERSION_KEY)))
-    info.getUserData(NAMESPACE_KEY)?.let { namespaceVar ->
-      params[NAMESPACE_VARIABLE] = namespaceVar
-      params[TEST_NAME_VARIABLE] = namespaceVar.filter { it != '.' } + "Test"
-    }
-    return params
-  }
+  override fun extractInitializationParams(info: NewStudyItemInfo): Map<String, String> =
+    mutableMapOf(VERSION_VARIABLE to getDotNetVersion(info.getUserData(VERSION_KEY)))
 
   override fun getDefaultTaskTemplates(
     course: Course,
@@ -87,7 +81,6 @@ class CSharpCourseBuilder : EduCourseBuilder<CSharpProjectSettings> {
   private fun getCSProjTemplate(course: Course, info: NewStudyItemInfo): TemplateFileInfo {
     val csprojNameNoExtension = info.getUserData(CSPROJ_NAME_PER_TASK_KEY) ?: error("CSProj filename not found")
     info.putUserData(VERSION_KEY, course.languageVersion)
-    info.putUserData(NAMESPACE_KEY, csprojNameNoExtension)
     return TemplateFileInfo(PROJECT_FILE_TEMPLATE, "$csprojNameNoExtension.${CsprojFileType.defaultExtension}", false)
   }
 
@@ -97,11 +90,8 @@ class CSharpCourseBuilder : EduCourseBuilder<CSharpProjectSettings> {
     const val PROJECT_FILE_TEMPLATE = "ProjectWithTests.csproj"
     const val SOLUTION_FILE_TEMPLATE = "Solution.sln"
     const val VERSION_VARIABLE = "VERSION"
-    const val NAMESPACE_VARIABLE = "NAMESPACE_NAME"
-    const val TEST_NAME_VARIABLE = "TEST_NAME"
 
     val VERSION_KEY = Key.create<String>("edu.csharp.dotnetVersion")
-    val NAMESPACE_KEY = Key.create<String>("edu.csharp.namespace")
     val CSPROJ_NAME_PER_TASK_KEY = Key.create<String>("edu.csharp.csproj.path")
   }
 }

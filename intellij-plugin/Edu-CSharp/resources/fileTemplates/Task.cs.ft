@@ -1,8 +1,8 @@
-namespace ${NAMESPACE_NAME};
+// ReSharper disable all CheckNamespace
 
-class HelloWorld
+class Task
 {
-    static void Main(string[] args)
+    public static void Main(string[] args)
     {
         // your code here
         Console.WriteLine("Hello world");

@@ -1,11 +1,11 @@
-namespace ${NAMESPACE_NAME} {
-    [TestFixture]
-    internal class ${TEST_NAME}
+// ReSharper disable all CheckNamespace
+
+[TestFixture]
+internal class Test
+{
+    [Test]
+    public void Test1()
     {
-        [Test]
-        public void Test1()
-        {
-            // your code here
-        }
+        Assert.Fail("Tests are not implemented");
     }
 }

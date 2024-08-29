@@ -46,9 +46,36 @@ class CSharpCourseBuilderTest : CourseGenerationTestBase<CSharpProjectSettings>(
       dir("lesson1") {
         dir("task1") {
           file("Lesson1.Task1.csproj")
-          file("Task.cs", taskFileContents("Lesson1.Task1"))
           file("task.md")
-          file("Test.cs", testFileContents("Lesson1.Task1"))
+          dir("src") {
+            file("Task.cs", """
+              // ReSharper disable all CheckNamespace
+              
+              class Task
+              {
+                  public static void Main(string[] args)
+                  {
+                      // your code here
+                      Console.WriteLine("Hello world");
+                  }
+              }
+            """)
+          }
+          dir("test") {
+            file("Test.cs", """
+              // ReSharper disable all CheckNamespace
+              
+              [TestFixture]
+              internal class Test
+              {
+                  [Test]
+                  public void Test1()
+                  {
+                      Assert.Fail("Tests are not implemented");
+                  }
+              }
+              """)
+          }
         }
       }
     }
@@ -76,34 +103,129 @@ class CSharpCourseBuilderTest : CourseGenerationTestBase<CSharpProjectSettings>(
         }
       }
     }
+
     createCourseStructure(course)
     val expectedFileTree = fileTree {
       file("${course.name}.sln")
       dir("Lesson 1") {
         dir("Task 1") {
           file("Lesson1.Task1.csproj")
-          file("Task.cs", taskFileContents("Lesson1.Task1"))
           file("task.md")
-          file("Test.cs", testFileContents("Lesson1.Task1"))
+          dir("src") {
+            file("Task.cs", """
+              // ReSharper disable all CheckNamespace
+              
+              class Task
+              {
+                  public static void Main(string[] args)
+                  {
+                      // your code here
+                      Console.WriteLine("Hello world");
+                  }
+              }
+            """)
+          }
+          dir("test") {
+            file("Test.cs", """
+              // ReSharper disable all CheckNamespace
+              
+              [TestFixture]
+              internal class Test
+              {
+                  [Test]
+                  public void Test1()
+                  {
+                      Assert.Fail("Tests are not implemented");
+                  }
+              }
+              """)
+          }
         }
         dir("Task 2") {
           file("Lesson1.Task2.csproj")
-          file("Task.cs", taskFileContents("Lesson1.Task2"))
           file("task.md")
-          file("Test.cs", testFileContents("Lesson1.Task2"))
+          dir("src") {
+            file("Task.cs", """
+              // ReSharper disable all CheckNamespace
+              
+              class Task
+              {
+                  public static void Main(string[] args)
+                  {
+                      // your code here
+                      Console.WriteLine("Hello world");
+                  }
+              }
+            """)
+          }
+          dir("test") {
+            file("Test.cs", """
+              // ReSharper disable all CheckNamespace
+              
+              [TestFixture]
+              internal class Test
+              {
+                  [Test]
+                  public void Test1()
+                  {
+                      Assert.Fail("Tests are not implemented");
+                  }
+              }
+              """)
+          }
         }
         dir("Task 3") {
           file("Lesson1.Task3.csproj")
-          file("Task.cs", taskFileContents("Lesson1.Task3"))
           file("task.md")
+          dir("src") {
+            file("Task.cs", """
+              // ReSharper disable all CheckNamespace
+              
+              class Task
+              {
+                  public static void Main(string[] args)
+                  {
+                      // your code here
+                      Console.WriteLine("Hello world");
+                  }
+              }
+            """)
+          }
         }
       }
       dir("Another Lesson") {
         dir("First task") {
           file("AnotherLesson.FirstTask.csproj")
-          file("Task.cs", taskFileContents("AnotherLesson.FirstTask"))
           file("task.md")
-          file("Test.cs", testFileContents("AnotherLesson.FirstTask"))
+          dir("src") {
+            file("Task.cs", """
+              // ReSharper disable all CheckNamespace
+              
+              class Task
+              {
+                  public static void Main(string[] args)
+                  {
+                      // your code here
+                      Console.WriteLine("Hello world");
+                  }
+              }
+            """)
+          }
+          dir("test") {
+            file("Test.cs", """
+              // ReSharper disable all CheckNamespace
+              
+              [TestFixture]
+              internal class Test
+              {
+                  [Test]
+                  public void Test1()
+                  {
+                      Assert.Fail("Tests are not implemented");
+                  }
+              }
+              """)
+          }
         }
       }
     }

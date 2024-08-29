@@ -20,6 +20,12 @@ class CSharpConfigurator : EduConfigurator<CSharpProjectSettings> {
   override val testFileName: String
     get() = TEST_CS
 
+  override val sourceDir: String
+    get() = SRC_DIRECTORY
+
+  override val testDirs: List<String>
+    get() = listOf(TEST_DIRECTORY)
+
   override val taskCheckerProvider: TaskCheckerProvider
     get() = TODO("Not yet implemented")
 
@@ -44,6 +50,9 @@ class CSharpConfigurator : EduConfigurator<CSharpProjectSettings> {
 
     @NonNls
     const val TEST_CS = "Test.cs"
+
+    const val SRC_DIRECTORY = "src"
+    const val TEST_DIRECTORY = "test"
 
     const val BIN_DIRECTORY = "bin/"
     const val OBJ_DIRECTORY = "obj/"

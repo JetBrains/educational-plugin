@@ -11,22 +11,17 @@ val csprojWithTests = GeneratorUtils.getInternalTemplateText(
 
 fun TaskBuilder.csTaskTestFiles(csprojName: String) {
   taskFile("$csprojName.csproj", csprojWithTests)
-  taskFile("Task.cs", taskFileContents(csprojName))
-  taskFile("Test.cs", testFileContents(csprojName))
+  dir("src") {
+    taskFile("Task.cs", GeneratorUtils.getInternalTemplateText(CSharpConfigurator.TASK_CS))
+  }
+  dir("test") {
+    taskFile("Test.cs", GeneratorUtils.getInternalTemplateText(CSharpConfigurator.TEST_CS))
+  }
 }
 
 fun TaskBuilder.csTaskFiles(csprojName: String) {
   taskFile("$csprojName.csproj", csprojWithTests)
-  taskFile("Task.cs", taskFileContents(csprojName))
+  dir("src") {
+    taskFile("Task.cs", GeneratorUtils.getInternalTemplateText(CSharpConfigurator.TASK_CS))
+  }
 }
-
-fun taskFileContents(namespace: String): String = GeneratorUtils.getInternalTemplateText(
-  CSharpConfigurator.TASK_CS, mapOf(CSharpCourseBuilder.NAMESPACE_VARIABLE to namespace)
-)
-
-fun testFileContents(namespace: String): String = GeneratorUtils.getInternalTemplateText(
-  CSharpConfigurator.TEST_CS,
-  mapOf(
-    CSharpCourseBuilder.NAMESPACE_VARIABLE to namespace,
-    CSharpCourseBuilder.TEST_NAME_VARIABLE to namespace.filter { it != '.' } + "Test")
-)
