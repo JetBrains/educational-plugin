@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.databind.jsontype.NamedType
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
+import com.fasterxml.jackson.dataformat.yaml.YAMLParser
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.jetbrains.edu.learning.courseFormat.*
@@ -91,6 +92,7 @@ object YamlMapper {
       .disable(YAMLGenerator.Feature.USE_NATIVE_TYPE_ID)
       .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
       .enable(YAMLGenerator.Feature.LITERAL_BLOCK_STYLE)
+      .enable(YAMLParser.Feature.EMPTY_STRING_AS_NULL)
       .build()
 
     return JsonMapper.builder(yamlFactory)

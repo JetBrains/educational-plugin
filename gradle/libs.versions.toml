@@ -1,6 +1,6 @@
 [versions]
 kotlin = "2.0.0"
-jackson = "2.14.3"
+jackson = "2.17.2"
 okhttp = "4.12.0"
 retrofit = "2.9.0"
 
