@@ -70,7 +70,7 @@ class MarketplaceSolutionLoader(project: Project) : SolutionLoaderBase(project) 
 
     val files =
       when (task) {
-        is TheoryTask,
+        is TheoryTask -> if (!SubmissionSettings.getInstance(project).stateOnClose) emptyMap() else lastSubmission.eduTaskFiles()
         is ChoiceTask -> emptyMap()
 
         is OutputTask,

@@ -336,7 +336,7 @@ class MarketplaceSubmissionsConnector {
 
   private fun collectCurrentState(project: Project, course: Course): List<MarketplaceStateOnClosePost> {
     return course.allTasks
-      .filter { task -> task.supportSubmissions && task.hasChangedFiles(project) }
+      .filter { task -> (task.supportSubmissions || task is TheoryTask) && task.hasChangedFiles(project) }
       .map { createStateOnClose(project, it) }
   }
 
