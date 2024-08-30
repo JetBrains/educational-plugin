@@ -31,7 +31,7 @@ class CSharpConfigurator : EduConfigurator<CSharpProjectSettings> {
 
   override fun excludeFromArchive(project: Project, course: Course, file: VirtualFile): Boolean {
     if (super.excludeFromArchive(project, course, file)) return true
-    return file.pathRelativeToTask(project).contains(BIN_DIRECTORY) || file.pathRelativeToTask(project).contains(OBJ_DIRECTORY)
+    return file.pathRelativeToTask(project).contains("$BIN_DIRECTORY/") || file.pathRelativeToTask(project).contains("$OBJ_DIRECTORY/")
   }
 
   override val defaultPlaceholderText: String
@@ -54,7 +54,7 @@ class CSharpConfigurator : EduConfigurator<CSharpProjectSettings> {
     const val SRC_DIRECTORY = "src"
     const val TEST_DIRECTORY = "test"
 
-    const val BIN_DIRECTORY = "bin/"
-    const val OBJ_DIRECTORY = "obj/"
+    const val BIN_DIRECTORY = "bin"
+    const val OBJ_DIRECTORY = "obj"
   }
 }

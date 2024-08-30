@@ -78,14 +78,14 @@ class CSharpBackendService(private val project: Project) : Disposable {
     }
   }
 
-  fun startIndexingTopLevelFiles(files: List<File>) {
+  fun includeFilesToCourseView(files: List<File>) {
     indexingMergingQueue.queue(Update.create(files) {
       WorkspaceUserModelUpdater.getInstance(project).tryInclude(files)
       updateIndexRules(project)
     })
   }
 
-  fun stopIndexingTopLevelFiles(files: List<File>) {
+  fun excludeFilesFromCourseView(files: List<File>) {
     indexingMergingQueue.queue(Update.create(files) {
       WorkspaceUserModelUpdater.getInstance(project).tryExclude(files)
       updateIndexRules(project)

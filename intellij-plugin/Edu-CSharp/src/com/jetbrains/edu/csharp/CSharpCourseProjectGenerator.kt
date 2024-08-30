@@ -44,7 +44,7 @@ class CSharpCourseProjectGenerator(
 
     val topLevelDirectories = course.sections + course.lessons.filter { it.getDir(project.courseDir)?.parent == project.courseDir }
     val filesToIndex = topLevelDirectories.map { pathByStudyItem(project, it).toIOFile() }
-    CSharpBackendService.getInstance(project).startIndexingTopLevelFiles(filesToIndex)
+    CSharpBackendService.getInstance(project).includeFilesToCourseView(filesToIndex)
   }
 
   /**

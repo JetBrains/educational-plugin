@@ -46,13 +46,13 @@ class CSharpCourseBuilder : EduCourseBuilder<CSharpProjectSettings> {
         CSharpBackendService.getInstance(project).removeCSProjectFilesFromSolution(item.taskList)
         val parentDir = item.getDir(project.courseDir)?.parent ?: return
         if (parentDir == project.courseDir) {
-          CSharpBackendService.getInstance(project).stopIndexingTopLevelFiles(listOfNotNull(parentDir.toIOFile()))
+          CSharpBackendService.getInstance(project).excludeFilesFromCourseView(listOfNotNull(parentDir.toIOFile()))
         }
       }
 
       is Section -> {
         CSharpBackendService.getInstance(project).removeCSProjectFilesFromSolution(item.lessons.flatMap { it.taskList })
-        CSharpBackendService.getInstance(project).stopIndexingTopLevelFiles(listOfNotNull(item.getDir(project.courseDir)?.toIOFile()))
+        CSharpBackendService.getInstance(project).excludeFilesFromCourseView(listOfNotNull(item.getDir(project.courseDir)?.toIOFile()))
       }
     }
   }
