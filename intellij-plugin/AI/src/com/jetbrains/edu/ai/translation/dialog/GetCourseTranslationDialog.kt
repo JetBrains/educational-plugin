@@ -23,6 +23,12 @@ class GetCourseTranslationDialog(private val course: EduCourse) : DialogWrapper(
   init {
     title = EduAIBundle.message("action.Educational.GetCourseTranslation.text")
 
+    if (selectedLanguage == courseSourceLanguage) {
+      course.translatedToLanguageCode?.let {
+        selectedLanguage = Language.getByCode(it)
+      }
+    }
+
     isOKActionEnabled = selectedLanguage != courseSourceLanguage
     isResizable = true
 
