@@ -1,9 +1,22 @@
 package com.jetbrains.edu.remote
 
+import com.intellij.codeWithMe.ClientId
+import com.intellij.openapi.application.invokeLater
+import com.intellij.openapi.client.session
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.ext.allTasks
+import com.jetbrains.edu.learning.courseFormat.ext.findTaskFileInDir
+import com.jetbrains.edu.learning.courseFormat.ext.getDir
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.marketplace.MarketplaceSolutionLoader
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import kotlinx.coroutines.CoroutineScope
@@ -48,9 +61,32 @@ class EduRemoteUidRetrieverService(private val project: Project, private val sco
       if (project.isOpen) {
         submissionsManager.prepareSubmissionsContentWhenLoggedIn {
           MarketplaceSolutionLoader.getInstance(project).loadSolutionsInBackground()
+          openLastSubmittedTaskIfNeeded()
         }
       }
     }
+  }
+
+  private fun openLastSubmittedTaskIfNeeded() {
+    val lastSubmission = SubmissionsManager.getInstance(project).getLastSubmission()
+    val course = project.course ?: return
+
+    val taskToOpen = course.allTasks.find { task -> task.id == lastSubmission?.taskId } ?: getFirstTask(course)
+    val taskFile = taskToOpen.taskFiles.values.first()
+    val taskDir = taskToOpen.getDir(project.courseDir) ?: return
+    val findTaskFileInDir = taskFile.findTaskFileInDir(taskDir) ?: return
+
+    invokeLater {
+      ClientId.withClientId(project.session(ClientId.current).clientId) {
+        FileEditorManagerEx.getInstanceEx(project).openFile(findTaskFileInDir)
+      }
+    }
+  }
+
+  fun getFirstTask(course: Course): Task {
+    val firstItem = course.items.firstOrNull() ?: return course.allTasks.first()
+    val firstLesson = if (firstItem is Section) firstItem.lessons.firstOrNull() else firstItem as Lesson
+    return firstLesson?.taskList?.firstOrNull() ?: course.allTasks.first()
   }
 
   private fun File.extractUUID(): String? {

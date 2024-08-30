@@ -290,6 +290,10 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
     return communitySubmissions[taskId]?.hasMore ?: false
   }
 
+  fun getLastSubmission(): Submission? {
+    return submissions.values.flatten().sortedByDescending { it.time }.firstOrNull()
+  }
+
   @TestOnly
   override fun cleanUpState() {
     submissions.clear()

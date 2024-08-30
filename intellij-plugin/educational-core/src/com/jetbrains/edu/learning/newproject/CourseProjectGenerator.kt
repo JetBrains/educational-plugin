@@ -49,6 +49,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillCourseProjectGenerator
+import com.jetbrains.edu.learning.submissions.SubmissionSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -77,7 +78,9 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
 
     setUpPluginDependencies(project, course)
 
-    NavigationUtils.openFirstTask(course, project)
+    if (!SubmissionSettings.getInstance(project).stateOnClose) {
+      NavigationUtils.openFirstTask(course, project)
+    }
 
     YamlFormatSynchronizer.saveAll(project)
     YamlFormatSynchronizer.startSynchronization(project)

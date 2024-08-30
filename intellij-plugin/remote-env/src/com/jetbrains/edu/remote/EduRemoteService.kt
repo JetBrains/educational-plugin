@@ -11,7 +11,6 @@ import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator.Companion.EDU_PROJECT_CREATED
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.submissions.SubmissionSettings
@@ -48,7 +47,6 @@ class EduRemoteService(private val session: ClientProjectSession): LifetimedServ
             }
             if (model.currentPane.value == CourseViewPane.ID) {
               invokeAndWaitIfNeeded {
-                NavigationUtils.openFirstTask(course, project)
                 TaskToolWindowView.getInstance(project).updateTaskDescription()
                 service<EduRemoteDisconnectWatcherService>().start()
                 service<EduRemoteInactivityWatcherService>().start()

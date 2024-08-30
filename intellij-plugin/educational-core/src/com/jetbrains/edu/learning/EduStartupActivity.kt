@@ -43,6 +43,7 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils.setHighlightLevelFo
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.submissions.SubmissionSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.jetbrains.annotations.VisibleForTesting
 
@@ -77,7 +78,7 @@ class EduStartupActivity : StartupActivity.DumbAware {
       }
 
       val fileEditorManager = FileEditorManager.getInstance(project)
-      if (!fileEditorManager.hasOpenFiles()) {
+      if (!fileEditorManager.hasOpenFiles() && !SubmissionSettings.getInstance(project).stateOnClose) {
         NavigationUtils.openFirstTask(course, project)
       }
       selectProjectView(project, true)
