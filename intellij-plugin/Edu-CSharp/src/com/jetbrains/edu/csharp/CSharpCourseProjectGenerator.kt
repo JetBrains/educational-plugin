@@ -31,8 +31,8 @@ class CSharpCourseProjectGenerator(
     course.languageVersion = projectSettings.version
   }
 
-  override fun afterProjectGenerated(project: Project, projectSettings: CSharpProjectSettings, onConfigurationFinished: () -> Unit) {
-    super.afterProjectGenerated(project, projectSettings, onConfigurationFinished)
+  override fun afterProjectGenerated(project: Project, projectSettings: CSharpProjectSettings) {
+    super.afterProjectGenerated(project, projectSettings)
 
     val course = project.course ?: error("No course corresponding to the project")
 

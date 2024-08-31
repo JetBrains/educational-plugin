@@ -25,12 +25,12 @@ class PhpCourseProjectGenerator(
     createComposerFile(holder)
   }
 
-  override fun afterProjectGenerated(project: Project, projectSettings: PhpProjectSettings, onConfigurationFinished: () -> Unit) {
+  override fun afterProjectGenerated(project: Project, projectSettings: PhpProjectSettings) {
     if (!isUnitTestMode) {
       downloadPhar(project, projectSettings)
       installComposer(project)
     }
-    super.afterProjectGenerated(project, projectSettings, onConfigurationFinished)
+    super.afterProjectGenerated(project, projectSettings)
   }
 
   private fun createComposerFile(holder: CourseInfoHolder<Course>) {

@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import java.io.IOException
 
 class JsCourseProjectGenerator(builder: JsCourseBuilder, course: Course) : CourseProjectGenerator<JsNewProjectSettings>(builder, course) {
-  override fun afterProjectGenerated(project: Project, projectSettings: JsNewProjectSettings, onConfigurationFinished: () -> Unit) {
+  override fun afterProjectGenerated(project: Project, projectSettings: JsNewProjectSettings) {
     val interpreter = projectSettings.selectedInterpreter
     if (interpreter == null) {
       // It's ok not to have NodeJS interpreter in tests
@@ -40,22 +40,19 @@ class JsCourseProjectGenerator(builder: JsCourseBuilder, course: Course) : Cours
       project.invokeLater(modalityState) {
         if (version != null) {
           val configurator = NodeCoreLibraryConfigurator.getInstance(project)
-          configurator.configureAndAssociateWithProject(interpreter, version) {
-            onConfigurationFinished()
-          }
+          configurator.configureAndAssociateWithProject(interpreter, version, null)
         }
         else {
           LOG.warn("Couldn't retrieve Node interpreter version")
           @Suppress("UnstableApiUsage")
           val requester = ModuleManager.getInstance(project).modules[0].moduleFile
           NodeSettingsConfigurable.showSettingsDialog(project, requester)
-          onConfigurationFinished()
         }
       }
     }
     // Pass empty callback here because Core library configuration will be made asynchronously
     // Before this, we can't consider JS course project is fully configured
-    super.afterProjectGenerated(project, projectSettings, onConfigurationFinished = {})
+    super.afterProjectGenerated(project, projectSettings)
   }
 
   @Throws(IOException::class)

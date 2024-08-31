@@ -47,10 +47,10 @@ class ScalaSbtCourseProjectGenerator(builder: ScalaSbtCourseBuilder, course: Cou
     project.putUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT, true)
   }
 
-  override fun afterProjectGenerated(project: Project, projectSettings: JdkProjectSettings, onConfigurationFinished: () -> Unit) {
+  override fun afterProjectGenerated(project: Project, projectSettings: JdkProjectSettings) {
     projectSettings.setUpProjectJdk(project, course)
     setupSbtSettings(project)
-    super.afterProjectGenerated(project, projectSettings, onConfigurationFinished)
+    super.afterProjectGenerated(project, projectSettings)
   }
 
   private fun setupSbtSettings(project: Project) {

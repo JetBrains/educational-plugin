@@ -13,7 +13,7 @@ class ShellCourseProjectGenerator(
   builder: EduCourseBuilder<EmptyProjectSettings>,
   course: Course
 ) : CourseProjectGenerator<EmptyProjectSettings>(builder, course) {
-  override fun afterProjectGenerated(project: Project, projectSettings: EmptyProjectSettings, onConfigurationFinished: () -> Unit) {
+  override fun afterProjectGenerated(project: Project, projectSettings: EmptyProjectSettings) {
     val onSuccess = Runnable {
       runReadAction {
         if (project.isDisposed) return@runReadAction
@@ -22,6 +22,6 @@ class ShellCourseProjectGenerator(
     }
     val onFailure = Runnable { }
     ShShellcheckUtil.download(project, onSuccess, onFailure)
-    super.afterProjectGenerated(project, projectSettings, onConfigurationFinished)
+    super.afterProjectGenerated(project, projectSettings)
   }
 }

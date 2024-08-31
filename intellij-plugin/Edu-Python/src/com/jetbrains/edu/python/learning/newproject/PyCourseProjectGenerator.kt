@@ -26,7 +26,7 @@ open class PyCourseProjectGenerator(
   course: Course
 ) : CourseProjectGenerator<PyProjectSettings>(builder, course) {
 
-  override fun afterProjectGenerated(project: Project, projectSettings: PyProjectSettings, onConfigurationFinished: () -> Unit) {
+  override fun afterProjectGenerated(project: Project, projectSettings: PyProjectSettings) {
     var sdk = projectSettings.sdk
     if (sdk is PySdkToInstall) {
       val selectedSdk = sdk
@@ -50,7 +50,7 @@ open class PyCourseProjectGenerator(
       return
     }
     installRequiredPackages(project, sdk)
-    super.afterProjectGenerated(project, projectSettings, onConfigurationFinished)
+    super.afterProjectGenerated(project, projectSettings)
   }
 
   private fun createAndAddVirtualEnv(project: Project, settings: PyProjectSettings, baseSdk: PyDetectedSdk) {
