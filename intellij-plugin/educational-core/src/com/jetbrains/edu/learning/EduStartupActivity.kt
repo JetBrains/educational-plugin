@@ -2,8 +2,6 @@ package com.jetbrains.edu.learning
 
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.ide.util.PropertiesComponent
-import com.intellij.notification.BrowseNotificationAction
-import com.intellij.notification.NotificationType.WARNING
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runWriteAction
@@ -19,6 +17,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
+import com.intellij.platform.backend.observation.trackActivityBlocking
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.SynchronizeTaskDescription
 import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreFileType
@@ -29,7 +28,6 @@ import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.EduUtilsKt.isNewlyCreated
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -43,19 +41,18 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.navigation.NavigationUtils.setHighlightLevelForFilesInTask
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
-import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
-import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.VisibleForTesting
 
 class EduStartupActivity : StartupActivity.DumbAware {
 
   private val YAML_MIGRATED = "Edu.Yaml.Migrate"
 
-  override fun runActivity(project: Project) {
-    if (!project.isEduProject()) return
+  // Replace `trackActivityBlocking` with `trackActivity` during migration to `ProjectActivity`
+  override fun runActivity(project: Project) = project.trackActivityBlocking(EduCourseConfigurationActivityKey) {
+    if (!project.isEduProject()) return@trackActivityBlocking
 
     val manager = StudyTaskManager.getInstance(project)
     val connection = ApplicationManager.getApplication().messageBus.connect(manager)
