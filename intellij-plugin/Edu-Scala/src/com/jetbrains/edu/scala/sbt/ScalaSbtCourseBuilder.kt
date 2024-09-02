@@ -57,7 +57,7 @@ class ScalaSbtCourseBuilder : EduCourseBuilder<JdkProjectSettings> {
     // Build toolwindow will be opened if `ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT` is true while sync
     project.putUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT, null)
     ExternalSystemUtil.refreshProject(projectBasePath, builder.build())
-    if (!isUnitTestMode) {
+    if (!isHeadlessEnvironment) {
       ExternalSystemUtil.invokeLater(project, ModalityState.nonModal()) {
         ProjectView.getInstance(project).changeViewCB(CourseViewPane.ID, null)
       }

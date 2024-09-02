@@ -6,12 +6,13 @@ import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.isHeadlessEnvironment
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 
 class ChangeViewGradleSyncListener : GradleSyncListener {
   override fun syncSucceeded(project: Project) {
     ExternalSystemUtil.invokeLater(project, ModalityState.nonModal()) {
-      if (!project.isDisposed && project.course != null) {
+      if (!project.isDisposed && project.course != null && !isHeadlessEnvironment) {
         ProjectView.getInstance(project).changeViewCB(CourseViewPane.ID, null)
       }
     }
