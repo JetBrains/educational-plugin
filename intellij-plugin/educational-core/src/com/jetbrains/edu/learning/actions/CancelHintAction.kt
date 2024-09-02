@@ -2,26 +2,20 @@ package com.jetbrains.edu.learning.actions
 
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.PlatformDataKeys
-import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.project.Project
-import com.intellij.util.ui.JButtonAction
+import com.intellij.openapi.actionSystem.Presentation
+import com.intellij.openapi.actionSystem.ex.CustomComponentAction
+import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
-import com.jetbrains.edu.learning.actions.AcceptHintAction.Companion.getDiffRequestChain
-import com.jetbrains.edu.learning.actions.AcceptHintAction.Companion.isNextStepHintDiff
-import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.actions.ApplyCodeActionBase.Companion.isNextStepHintDiff
+import com.jetbrains.edu.learning.actions.EduActionUtils.closeLastActiveFileEditor
+import com.jetbrains.edu.learning.actions.EduActionUtils.performAction
+import com.jetbrains.edu.learning.invokeLater
+import com.jetbrains.edu.learning.ui.isDefault
 import org.jetbrains.annotations.NonNls
 import javax.swing.JButton
+import javax.swing.JComponent
 
-class CancelHintAction : JButtonAction(EduCoreBundle.message("action.Educational.Assistant.CancelHint.button")) {
-
-  override fun getActionUpdateThread() = ActionUpdateThread.EDT
-  override fun createButton(): JButton =
-    object : JButton(templatePresentation.text) {
-      override fun isDefaultButton(): Boolean = false
-      override fun isEnabled(): Boolean = true
-      override fun isFocusable(): Boolean = true
-    }
+class CancelHintAction : DumbAwareAction(), CustomComponentAction {
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false
@@ -30,21 +24,26 @@ class CancelHintAction : JButtonAction(EduCoreBundle.message("action.Educational
   }
 
   override fun actionPerformed(e: AnActionEvent) {
-    val diffRequestChain = e.getDiffRequestChain() ?: return
-    diffRequestChain.putUserData(NextStepHintAction.IS_ACCEPTED_HINT, false)
-
     val project = e.project ?: return
-    project.closeDiffWindow(e)
+    with(project) {
+      invokeLater {
+        closeLastActiveFileEditor(e)
+      }
+    }
+  }
+
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
+
+  override fun createCustomComponent(presentation: Presentation, place: String): JComponent = JButton(presentation.text).apply {
+    isFocusable = true
+    isDefault = false
+    addActionListener {
+      performAction(this@CancelHintAction, this, place, presentation)
+    }
   }
 
   companion object {
     @NonNls
     const val ACTION_ID: String = "Educational.Assistant.CancelHint"
-
-    fun Project.closeDiffWindow(e: AnActionEvent) {
-      val fileEditorManager = FileEditorManager.getInstance(this)
-      val fileEditor = e.getData(PlatformDataKeys.LAST_ACTIVE_FILE_EDITOR) ?: return
-      fileEditorManager.closeFile(fileEditor.file)
-    }
   }
 }
