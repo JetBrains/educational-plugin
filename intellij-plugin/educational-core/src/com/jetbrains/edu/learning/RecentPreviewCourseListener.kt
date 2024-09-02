@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning
 
 import com.intellij.ide.AppLifecycleListener
 import com.intellij.ide.RecentProjectsManager
+import com.intellij.ide.RecentProjectsManagerBase
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.project.ProjectManagerListener
@@ -35,7 +36,7 @@ class RecentPreviewCourseListener : ProjectManagerListener, AppLifecycleListener
   }
 
   private fun removeProjectFromRecentProjects(project: Project) {
-    val basePath = project.basePath
+    val basePath = (RecentProjectsManager.getInstance() as? RecentProjectsManagerBase)?.getProjectPath(project) ?: project.basePath
     if (basePath != null) {
       RecentProjectsManager.getInstance().removePath(basePath)
       RecentProjectsManager.getInstance().updateLastProjectPath()
