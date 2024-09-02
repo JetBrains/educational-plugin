@@ -9,7 +9,6 @@ import com.jetbrains.edu.ai.translation.dialog.GetCourseTranslationDialog
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import org.jetbrains.annotations.NonNls
 
 class GetCourseTranslation : DumbAwareAction() {
@@ -21,14 +20,14 @@ class GetCourseTranslation : DumbAwareAction() {
     if (!course.isMarketplaceRemote) return
 
     val selectedLanguage = GetCourseTranslationDialog(course).getLanguage() ?: return
-    TranslationLoader.getInstance(project).loadAndSaveWithModalProgress(course, selectedLanguage)
-
-    TaskToolWindowView.getInstance(project).updateTaskDescription()
+    TranslationLoader.getInstance(project).fetchAndApplyTranslation(course, selectedLanguage)
   }
 
   override fun update(e: AnActionEvent) {
-    val course = e.project?.course as? EduCourse
-    e.presentation.isEnabledAndVisible = course?.isMarketplaceRemote == true
+    e.presentation.isEnabledAndVisible = false
+    val project = e.project ?: return
+    val course = project.course as? EduCourse
+    e.presentation.isEnabledAndVisible = course?.isMarketplaceRemote == true && !TranslationLoader.isRunning(project)
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
