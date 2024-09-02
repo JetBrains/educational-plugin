@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.platform.backend.observation.Observation
+import com.intellij.util.io.delete
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -18,7 +19,9 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import java.nio.file.Paths
 import java.util.concurrent.TimeUnit
+import kotlin.io.path.exists
 
 /**
  * Loads given course, opens a project with loaded course and performs [performProjectAction]
@@ -48,6 +51,8 @@ abstract class EduCourseProjectAppStarterBase : EduAppStarterBase<ArgsWithProjec
     projectSettings: EduProjectSettings,
     args: ArgsWithProjectPath
   ): CommandResult {
+    cleanupCourseDir(args)
+
     var errorMessage: String? = null
 
     val listener = ProjectConfigurationListener()
@@ -91,6 +96,13 @@ abstract class EduCourseProjectAppStarterBase : EduAppStarterBase<ArgsWithProjec
     }
 
     return result
+  }
+
+  private fun cleanupCourseDir(args: ArgsWithProjectPath) {
+    val courseDir = Paths.get(args.projectPath)
+    if (courseDir.exists()) {
+      courseDir.delete()
+    }
   }
 
   protected abstract suspend fun performProjectAction(project: Project, course: Course, args: Args): CommandResult
