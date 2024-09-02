@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileCreateEvent
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
+import com.intellij.openapi.vfs.newvfs.events.VFileMoveEvent
 import com.intellij.openapi.vfs.newvfs.events.VFilePropertyChangeEvent
 import com.jetbrains.edu.learning.getTask
 import com.jetbrains.rdclient.util.idea.toIOFile
@@ -14,6 +15,7 @@ class CSharpVirtualFileListener(private val project: Project) : BulkFileListener
     for (event in events) {
       when (event) {
         is VFileCreateEvent -> fileCreated(event)
+        is VFileMoveEvent -> fileMoved(event)
         is VFilePropertyChangeEvent -> propertyChanged(event)
       }
     }
@@ -27,6 +29,14 @@ class CSharpVirtualFileListener(private val project: Project) : BulkFileListener
     }
     else if (file.isDirectory && (file.name == CSharpConfigurator.OBJ_DIRECTORY || file.name == CSharpConfigurator.BIN_DIRECTORY)) {
       CSharpBackendService.getInstance(project).excludeFilesFromCourseView(listOf(file))
+    }
+  }
+
+  private fun fileMoved(event: VFileMoveEvent) {
+    val file = event.file.toIOFile()
+    if (event.newParent.path == project.basePath) {
+      // is needed to trigger indexing for top-level files and directories in the project for them to appear in the courseView
+      CSharpBackendService.getInstance(project).includeFilesToCourseView(listOf(file))
     }
   }
 

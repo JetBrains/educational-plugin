@@ -51,7 +51,11 @@ class CSharpCourseBuilder : EduCourseBuilder<CSharpProjectSettings> {
       }
 
       is Section -> {
-        CSharpBackendService.getInstance(project).removeCSProjectFilesFromSolution(item.lessons.flatMap { it.taskList })
+        val lessons = item.lessons
+        // check if section is being unwrapped
+        if (lessons.all { it.getDir(project.courseDir) != null }) {
+          CSharpBackendService.getInstance(project).removeCSProjectFilesFromSolution(lessons.flatMap { it.taskList })
+        }
         CSharpBackendService.getInstance(project).excludeFilesFromCourseView(listOfNotNull(item.getDir(project.courseDir)?.toIOFile()))
       }
     }

@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
 import com.jetbrains.edu.coursecreator.CCUtils.updateHigherElements
+import com.jetbrains.edu.coursecreator.handlers.StudyItemRefactoringHandler
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
@@ -42,11 +43,14 @@ class CCRemoveSection : DumbAwareAction() {
         return
       }
     }
+    val lessonsFromSection = section.lessons
+    lessonsFromSection.forEach { lesson ->
+      StudyItemRefactoringHandler.processBeforeLessonMovement(project, lesson, courseDir)
+    }
     if (removeSectionDir(file, courseDir)) {
-      val lessonsFromSection = section.lessons
       val sectionIndex = section.index
-      for (lesson in lessonsFromSection) {
-        lesson.index = lesson.index + sectionIndex - 1
+      lessonsFromSection.forEach { lesson ->
+        lesson.index += sectionIndex - 1
         lesson.parent = lesson.course
       }
       updateHigherElements(
