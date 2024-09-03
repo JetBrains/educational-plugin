@@ -1,6 +1,8 @@
 package com.jetbrains.edu.csharp
 
+import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.BuildNumber
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduCourseBuilder
@@ -12,6 +14,9 @@ import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.pathRelativeToTask
 import org.jetbrains.annotations.NonNls
 import javax.swing.Icon
+
+// BACKCOMPAT: 2024.2
+private val BUILD_242_21829 = BuildNumber.fromString("242.21829")!!
 
 class CSharpConfigurator : EduConfigurator<CSharpProjectSettings> {
   override val courseBuilder: EduCourseBuilder<CSharpProjectSettings>
@@ -38,7 +43,8 @@ class CSharpConfigurator : EduConfigurator<CSharpProjectSettings> {
     get() = "/* TODO */"
 
   override val isEnabled: Boolean
-    get() = isFeatureEnabled(EduExperimentalFeatures.CSHARP_COURSES)
+    get() = isFeatureEnabled(EduExperimentalFeatures.CSHARP_COURSES) &&
+            ApplicationInfo.getInstance().build >= BUILD_242_21829
 
   override fun getMockFileName(course: Course, text: String): String = TASK_CS
   override val logo: Icon
