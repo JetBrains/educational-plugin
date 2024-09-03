@@ -449,8 +449,7 @@
   <extensions defaultExtensionNs="training">
 <!--    <ift.language.extension language="TEXT" defaultProductName="IDEA"-->
 <!--                            implementationClass="com.intellij.clion.featuresTrainer.lang.CppLangSupport"/>-->
-    <ift.learning.course language="TEXT" implementationClass="com.jetbrains.edu.learning.TestCourse"/>
-    <ift.language.extension language="TEXT" defaultProductName="IDEA" implementationClass="com.jetbrains.edu.learning.TestLangSupport"/>
+    <ift.learning.course language="Python" implementationClass="com.jetbrains.edu.learning.TestCourse"/>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">

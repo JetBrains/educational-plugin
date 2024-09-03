@@ -10,7 +10,6 @@ import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileTypes.ExactFileNameMatcher
 import com.intellij.openapi.fileTypes.FileTypeManager
-import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.startup.StartupActivity
@@ -87,9 +86,9 @@ class EduStartupActivity : StartupActivity.DumbAware {
     StartupManager.getInstance(project).runWhenProjectIsInitialized {
       val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(LEARN_TOOL_WINDOW_ID)
       toolWindow!!.show()
-      LangManager.getInstance().updateLangSupport("TEXT")
+      LangManager.getInstance().updateLangSupport("Python")
       CourseManager.instance.modules
-      CourseManager.instance.openLesson(project, testLesson, LessonStartingWay.RESTORE_LINK, forceStartLesson = true)
+      CourseManager.instance.openLesson(project, TestLesson(), LessonStartingWay.RESTORE_LINK, forceStartLesson = true)
       val course = manager.course
       if (course == null) {
         LOG.warn("Opened project is with null course")
@@ -235,25 +234,17 @@ class EduStartupActivity : StartupActivity.DumbAware {
   }
 }
 
+
+
 class TestLesson : KLesson("dasd", "dasd") {
   override val lessonContent: LessonContext.() -> Unit = {
-   highlightButtonById("RedesignedRunConfigurationSelector", clearHighlights = false)
-  }
-}
-
-class TestModule(@NonNls id: String, @Nls name: String, @Nls description: String,
-                                      @NlsSafe val lessonsDir: String,
-                                      initLessons: () -> List<KLesson>)
-  : IftModule(id, name, description, TestLangSupport(), LessonType.SCRATCH, initLessons) {
-  override val sampleFilePath: String = "Task.txt"
-  override fun preferredLearnWindowAnchor(project: Project): ToolWindowAnchor {
-    return ToolWindowAnchor.LEFT
+    highlightButtonById("Run", clearHighlights = false)
   }
 }
 
 class TestLangSupport : AbstractLangSupport() {
   override val primaryLanguage: String
-    get() = "TEXT"
+    get() = "Python"
 
   override fun applyToProjectAfterConfigure(): (Project) -> Unit = { }
   override fun checkSdk(sdk: Sdk?, project: Project) {
@@ -263,11 +254,22 @@ class TestLangSupport : AbstractLangSupport() {
   override fun isSdkConfigured(project: Project): Boolean {
     return true
   }
-
 }
 
-class TestCourse : LearningCourseBase(PlainTextLanguage.INSTANCE.id) {
+class TestModule(@NonNls id: String, @Nls name: String, @Nls description: String,
+                 @NlsSafe val lessonsDir: String,
+                 initLessons: () -> List<KLesson>)
+  : IftModule(id, name, description, TestLangSupport(), LessonType.SCRATCH, initLessons) {
+  override val sampleFilePath: String = "Task.txt"
+  override fun preferredLearnWindowAnchor(project: Project): ToolWindowAnchor {
+    return ToolWindowAnchor.LEFT
+  }
+}
+
+
+class TestCourse : LearningCourseBase("Python") {
   override fun modules(): Collection<IftModule> {
+
     return listOf(TestModule(
       id = "edu.Onboarding",
       name = "ASDASD",
@@ -275,10 +277,9 @@ class TestCourse : LearningCourseBase(PlainTextLanguage.INSTANCE.id) {
       lessonsDir = "Onboarding",
     ) {
       listOf(
-        testLesson
+        TestLesson()
       )
     })
   }
 }
 
-private val testLesson = TestLesson()
