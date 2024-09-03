@@ -70,7 +70,7 @@ class LearningObjectsStorageManager(private val project: Project) : DumbAware, D
           if (!setContentsIfEquals(contentsWithDiagnostics, persistedContents)) {
             // The level is `error`, because we want to have feedback if that happens.
             // But we will probably change this later to `warn`, or 'info', or remove the check completely.
-            logger<FileContents>().error("Contents of a file changed while the file was being persisted: $pathInStorage from ${initialContents.javaClass} to ${contents.javaClass}")
+            logger<FileContents>().error("Contents of a file changed while the file was being persisted: $pathInStorage from ${initialContents.debugString()} to ${contents.debugString()}")
           }
         }
 
@@ -186,3 +186,26 @@ val EduFile.pathInStorage: String
   else {
     ""
   } + name
+
+fun FileContents.debugString(): String {
+  var depth = 0
+  var actualContents = this
+  while (true) {
+    val unwrappedContents = actualContents.unwrapDiagnostics
+    if (unwrappedContents == null) break
+    depth += 1
+    actualContents = unwrappedContents
+  }
+
+  val (size, hash) = when (actualContents) {
+    is BinaryContents -> actualContents.bytes.size to actualContents.bytes.hashCode()
+    is TextualContents -> actualContents.text.length to actualContents.text.hashCode()
+    is UndeterminedContents -> actualContents.textualRepresentation.length to actualContents.textualRepresentation.hashCode()
+  }
+  val hashHex = String.format("%08x", hash)
+
+  val classSimpleName = actualContents::class.java.simpleName
+  val className = if (classSimpleName == "") actualContents::class.java.name else classSimpleName
+
+  return "${"[".repeat(depth)}$className(size=$size hash=$hashHex)${"]".repeat(depth)}"
+}

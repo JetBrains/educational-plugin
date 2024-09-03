@@ -14,7 +14,7 @@ private fun warnContents(contents: FileContents, pathInStorage: String) {
 }
 
 private class TextualContentsDiagnosticsWrapper(
-  private val contents: TextualContents,
+  val contents: TextualContents,
   private val pathInStorage: String
 ) : TextualContents {
   override val text: String
@@ -25,7 +25,7 @@ private class TextualContentsDiagnosticsWrapper(
 }
 
 private class BinaryContentsDiagnosticsWrapper(
-  private val contents: BinaryContents,
+  val contents: BinaryContents,
   private val pathInStorage: String
 ) : BinaryContents {
   override val bytes: ByteArray
@@ -36,7 +36,7 @@ private class BinaryContentsDiagnosticsWrapper(
 }
 
 private class UndeterminedContentsDiagnosticsWrapper(
-  private val contents: UndeterminedContents,
+  val contents: UndeterminedContents,
   private val pathInStorage: String
 ) : UndeterminedContents {
   override val textualRepresentation: String
@@ -51,3 +51,11 @@ fun wrapWithDiagnostics(contents: FileContents, pathInStorage: String): FileCont
   is BinaryContents -> BinaryContentsDiagnosticsWrapper(contents, pathInStorage)
   is UndeterminedContents -> UndeterminedContentsDiagnosticsWrapper(contents, pathInStorage)
 }
+
+val FileContents.unwrapDiagnostics: FileContents?
+  get() = when (this) {
+    is BinaryContentsDiagnosticsWrapper -> contents
+    is TextualContentsDiagnosticsWrapper -> contents
+    is UndeterminedContentsDiagnosticsWrapper -> contents
+    else -> null
+  }
