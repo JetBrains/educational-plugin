@@ -209,7 +209,7 @@ allprojects {
     implementationWithoutKotlin(rootProject.libs.converter.jackson)
     implementationWithoutKotlin(rootProject.libs.kotlin.css.jvm)
     implementationWithoutKotlin(rootProject.libs.educational.ml.library.core)
-    implementationWithoutKotlin(rootProject.libs.educational.ml.library.jarvis)
+    implementationWithoutKotlin(rootProject.libs.educational.ml.library.cognifire)
     implementation(rootProject.libs.freemarker)
 
     testImplementation(rootProject.libs.junit)
@@ -430,6 +430,14 @@ tasks {
     customRunIdeTask(RustRover)
     customRunIdeTask(DataSpell)
     customRunIdeTask(Rider, riderVersion)
+  }
+
+  clean {
+    delete("generated-src")
+  }
+
+  compileTestKotlin {
+    dependsOn("generateTestGrammarSource")
   }
 }
 
@@ -984,6 +992,12 @@ project("Edu-Jarvis") {
       arguments = listOf("-visitor", "-package", "com.jetbrains.edu.jarvis.grammar.generated")
       outputDirectory = file("src/com/jetbrains/edu/jarvis/grammar/generated")
       source = fileTree("src/main/antlr")
+    }
+
+    generateTestGrammarSource {
+      maxHeapSize = "128m"
+      arguments = listOf("-visitor", "-package", "com.jetbrains.edu.jarvis.grammar.generated")
+      outputDirectory = file("generated-src/antlr/test")
     }
 
     compileKotlin {
