@@ -103,6 +103,10 @@ fun configureSecretProperties() {
     "eduHubClientSecret",
     "marketplaceHubClientId"
   )
+  secretProperties.extractAndStore(
+    "intellij-plugin/educational-core/resources/lti/lti-auth.properties",
+    "ltiServiceToken"
+  )
 }
 
 fun downloadHyperskillCss() {
