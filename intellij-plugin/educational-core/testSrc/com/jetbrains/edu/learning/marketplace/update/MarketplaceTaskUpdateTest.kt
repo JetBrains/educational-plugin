@@ -115,6 +115,80 @@ class MarketplaceTaskUpdateTest : TaskUpdateTestBase<EduCourse>() {
   }
 
   @Test
+  fun `test file structure when new task created in the middle of the lesson`() {
+    localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::EduCourse) {
+      lesson("lesson1", id = 1) {
+        eduTask("task1", stepId = 1)
+        eduTask("task2", stepId = 2)
+      }
+      additionalFile("build.gradle", "apply plugin: \"java\"")
+    } as EduCourse
+
+    val newEduTask = EduTask("task3").apply { id = 3 }
+    val remoteCourse = toRemoteCourse {
+      val tasks = lessons.first().taskList.toMutableList()
+      tasks.add(1, newEduTask)
+
+      lessons.first().apply {
+        this.taskList.forEach { removeTask(it) }
+        tasks.forEach { addTask(it) }
+        init(false)
+      }
+    }
+    updateTasks(remoteCourse)
+
+    assertEquals("Task hasn't been added", 3, findLesson(0).taskList.size)
+
+    val expectedStructure = fileTree {
+      dir("lesson1") {
+        dir("task1") {
+          file("task.md")
+        }
+        dir("task3") {
+          file("task.md")
+        }
+        dir("task2") {
+          file("task.md")
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    expectedStructure.assertEquals(rootDir)
+  }
+
+  // EDU-6756 Support update in case a new StudyItem appears in the middle of the existing ones
+  @Test(expected = AssertionError::class)
+  fun `test task indexes when new task created in the middle of the lesson`() {
+    localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::EduCourse) {
+      lesson("lesson1", id = 1) {
+        eduTask("task1", stepId = 1)
+        eduTask("task2", stepId = 2)
+      }
+      additionalFile("build.gradle", "apply plugin: \"java\"")
+    } as EduCourse
+
+    val newEduTask = EduTask("task3").apply { id = 3 }
+    val remoteCourse = toRemoteCourse {
+      val tasks = lessons.first().taskList.toMutableList()
+      tasks.add(1, newEduTask)
+
+      lessons.first().apply {
+        this.taskList.forEach { removeTask(it) }
+        tasks.forEach { addTask(it) }
+        init(false)
+      }
+    }
+    updateTasks(remoteCourse)
+
+    val tasks = localCourse.lessons.first().taskList
+    assertEquals("Task hasn't been added", 3, tasks.size)
+    assertTrue("Wrong index for the first task", tasks[0].name == "task1")
+    assertTrue("Wrong index for the second task", tasks[1].name == "task3")
+    assertTrue("Wrong index for the third task", tasks[2].name == "task2")
+  }
+
+  @Test
   fun `test last task deleted`() {
     initiateLocalCourse()
     val remoteCourse = toRemoteCourse {

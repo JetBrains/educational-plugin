@@ -78,6 +78,95 @@ class MarketplaceLessonUpdateTest : LessonUpdateTestBase<EduCourse>() {
   }
 
   @Test
+  fun `test file structure when new lesson created in the middle of the course`() {
+    localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::EduCourse) {
+      lesson("lesson1", id = 1) {
+        eduTask("task1", stepId = 1)
+      }
+      lesson("lesson2", id = 2) {
+        eduTask("task2", stepId = 2)
+      }
+      additionalFile("build.gradle", "apply plugin: \"java\"")
+    } as EduCourse
+
+    val newEduTask = EduTask("task3").apply { id = 3 }
+    val newLesson = Lesson().apply {
+      id = 3
+      name = "lesson3"
+      addTask(newEduTask)
+      newEduTask.parent = this
+    }
+
+    val remoteCourse = toRemoteCourse {
+      val lessons = lessons.toMutableList()
+      lessons.add(1, newLesson)
+      this.lessons.forEach { removeLesson(it) }
+      lessons.forEach { addLesson(it) }
+      init(false)
+    }
+    updateLessons(remoteCourse, localCourse, remoteCourse)
+    assertEquals("Lesson hasn't been added", 3, localCourse.lessons.size)
+
+    val expectedStructure = fileTree {
+      dir("lesson1") {
+        dir("task1") {
+          file("task.md")
+        }
+      }
+      dir("lesson3") {
+        dir("task3") {
+          file("task.md")
+        }
+      }
+      dir("lesson2") {
+        dir("task2") {
+          file("task.md")
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    expectedStructure.assertEquals(rootDir)
+  }
+
+  // EDU-6756 Support update in case a new StudyItem appears in the middle of the existing ones
+  @Test(expected = AssertionError::class)
+  fun `test lesson indexes when new lesson created in the middle of the course`() {
+    localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::EduCourse) {
+      lesson("lesson1", id = 1) {
+        eduTask("task1", stepId = 1)
+      }
+      lesson("lesson2", id = 2) {
+        eduTask("task2", stepId = 2)
+      }
+      additionalFile("build.gradle", "apply plugin: \"java\"")
+    } as EduCourse
+
+    val newEduTask = EduTask("task3").apply { id = 3 }
+    val newLesson = Lesson().apply {
+      id = 3
+      name = "lesson3"
+      addTask(newEduTask)
+      newEduTask.parent = this
+    }
+
+    val remoteCourse = toRemoteCourse {
+      val lessons = lessons.toMutableList()
+      lessons.add(1, newLesson)
+      this.lessons.forEach { removeLesson(it) }
+      lessons.forEach { addLesson(it) }
+      init(false)
+    }
+    updateLessons(remoteCourse, localCourse, remoteCourse)
+
+    val lessons = localCourse.lessons
+    assertEquals("Lesson hasn't been added", 3, lessons.size)
+    assertTrue("Wrong index for the first lesson", lessons[0].name == "lesson1")
+    assertTrue("Wrong index for the second lesson", lessons[1].name == "lesson3")
+    assertTrue("Wrong index for the third lesson", lessons[2].name == "lesson2")
+  }
+
+  @Test
   fun `test new lesson in section created`() {
     localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::EduCourse) {
       section("section1", id = 1) {
@@ -163,6 +252,107 @@ class MarketplaceLessonUpdateTest : LessonUpdateTestBase<EduCourse>() {
       file("settings.gradle")
     }
     expectedStructure.assertEquals(rootDir)
+  }
+
+  @Test
+  fun `test file structure when new lesson created in the middle of the section`() {
+    localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::EduCourse) {
+      section("section1", id = 1) {
+        lesson("lesson1", id = 1) {
+          eduTask("task1", stepId = 1)
+        }
+        lesson("lesson2", id = 2) {
+          eduTask("task2", stepId = 2)
+        }
+      }
+      additionalFile("build.gradle", "apply plugin: \"java\"")
+    } as EduCourse
+
+    val newEduTask = EduTask("task3").apply { id = 3 }
+    val newLesson = Lesson().apply {
+      id = 3
+      name = "lesson3"
+      addTask(newEduTask)
+      newEduTask.parent = this
+    }
+
+    val remoteCourse = toRemoteCourse {
+      val section = sections.first()
+      val lessons = section.lessons.toMutableList()
+      lessons.add(1, newLesson)
+      sections.first().apply {
+        this.lessons.forEach { removeLesson(it) }
+        lessons.forEach { addLesson(it) }
+        init(false)
+      }
+    }
+    updateLessons(remoteCourse, localCourse.sections.first(), remoteCourse.sections.first())
+    assertEquals("Lesson hasn't been added", 3, localCourse.sections.first().lessons.size)
+
+    val expectedStructure = fileTree {
+      dir("section1") {
+        dir("lesson1") {
+          dir("task1") {
+            file("task.md")
+          }
+        }
+        dir("lesson3") {
+          dir("task3") {
+            file("task.md")
+          }
+        }
+        dir("lesson2") {
+          dir("task2") {
+            file("task.md")
+          }
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    expectedStructure.assertEquals(rootDir)
+  }
+
+  // EDU-6756 Support update in case a new StudyItem appears in the middle of the existing ones
+  @Test(expected = AssertionError::class)
+  fun `test lesson indexes when new lesson created in the middle of the section`() {
+    localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::EduCourse) {
+      section("section1", id = 1) {
+        lesson("lesson1", id = 1) {
+          eduTask("task1", stepId = 1)
+        }
+        lesson("lesson2", id = 2) {
+          eduTask("task2", stepId = 2)
+        }
+      }
+      additionalFile("build.gradle", "apply plugin: \"java\"")
+    } as EduCourse
+
+    val newEduTask = EduTask("task3").apply { id = 3 }
+    val newLesson = Lesson().apply {
+      id = 3
+      name = "lesson3"
+      addTask(newEduTask)
+      newEduTask.parent = this
+    }
+
+    val remoteCourse = toRemoteCourse {
+      val section = sections.first()
+      val lessons = section.lessons.toMutableList()
+      lessons.add(1, newLesson)
+      sections.first().apply {
+        this.lessons.forEach { removeLesson(it) }
+        lessons.forEach { addLesson(it) }
+        init(false)
+      }
+    }
+    updateLessons(remoteCourse, localCourse.sections.first(), remoteCourse.sections.first())
+
+    val lessons = localCourse.sections.first().lessons
+    assertEquals("Lesson hasn't been added", 3, lessons.size)
+    assertTrue("Wrong index for the first lesson", lessons[0].name == "lesson1")
+    assertTrue("Wrong index for the second lesson", lessons[1].name == "lesson3")
+    assertTrue("Wrong index for the third lesson", lessons[2].name == "lesson2")
   }
 
   @Test
@@ -382,7 +572,6 @@ class MarketplaceLessonUpdateTest : LessonUpdateTestBase<EduCourse>() {
 
     val firstLocalSection = localCourse.sections.first()
     updateLessons(remoteCourse, firstLocalSection, remoteCourse.sections.first())
-
 
     val actualTaskName = firstLocalSection.getLesson(1)?.getTask(1)?.name
     assertEquals("Task name not updated", updatedNameForTask1, actualTaskName)

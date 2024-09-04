@@ -90,6 +90,125 @@ class HyperskillSectionUpdateTest : SectionUpdateTestBase<HyperskillCourse>() {
   }
 
   @Test
+  fun `test file structure when new section created in the middle of the course`() {
+    localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
+      section("section1", id = 1) {
+        lesson("lesson1", id = 1) {
+          eduTask("task1", stepId = 1)
+        }
+      }
+      section("section2", id = 2) {
+        lesson("lesson2", id = 2) {
+          eduTask("task2", stepId = 2)
+        }
+      }
+    } as HyperskillCourse
+
+    val newEduTask = EduTask("task3").apply {
+      id = 3
+      descriptionFormat = DescriptionFormat.HTML
+    }
+    val newLesson = Lesson().apply {
+      id = 3
+      name = "lesson3"
+      addTask(newEduTask)
+      newEduTask.parent = this
+    }
+    val newSection = Section().apply {
+      id = 3
+      name = "section3"
+      addLesson(newLesson)
+      newLesson.parent = this
+    }
+
+    val remoteCourse = toRemoteCourse {
+      val sections = sections.toMutableList()
+      sections.add(1, newSection)
+      this.sections.forEach { removeSection(it) }
+      sections.forEach { addSection(it) }
+      init(false)
+    }
+    updateSections(remoteCourse)
+    assertEquals("Section hasn't been added", 3, localCourse.sections.size)
+
+    val expectedStructure = fileTree {
+      dir("section1") {
+        dir("lesson1") {
+          dir("task1") {
+            file("task.html")
+          }
+        }
+      }
+      dir("section3") {
+        dir("lesson3") {
+          dir("task3") {
+            file("task.html")
+          }
+        }
+      }
+      dir("section2") {
+        dir("lesson2") {
+          dir("task2") {
+            file("task.html")
+          }
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    expectedStructure.assertEquals(rootDir)
+  }
+
+  // EDU-6756 Support update in case a new StudyItem appears in the middle of the existing ones
+  @Test(expected = AssertionError::class)
+  fun `test section indexes when new section created in the middle of the course`() {
+    localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
+      section("section1", id = 1) {
+        lesson("lesson1", id = 1) {
+          eduTask("task1", stepId = 1)
+        }
+      }
+      section("section2", id = 2) {
+        lesson("lesson2", id = 2) {
+          eduTask("task2", stepId = 2)
+        }
+      }
+    } as HyperskillCourse
+
+    val newEduTask = EduTask("task3").apply {
+      id = 3
+      descriptionFormat = DescriptionFormat.HTML
+    }
+    val newLesson = Lesson().apply {
+      id = 3
+      name = "lesson3"
+      addTask(newEduTask)
+      newEduTask.parent = this
+    }
+    val newSection = Section().apply {
+      id = 3
+      name = "section3"
+      addLesson(newLesson)
+      newLesson.parent = this
+    }
+
+    val remoteCourse = toRemoteCourse {
+      val sections = sections.toMutableList()
+      sections.add(1, newSection)
+      this.sections.forEach { removeSection(it) }
+      sections.forEach { addSection(it) }
+      init(false)
+    }
+    updateSections(remoteCourse)
+
+    val sections = localCourse.sections
+    assertEquals("Section hasn't been added", 3, sections.size)
+    assertTrue("Wrong index for the first section", sections[0].name == "section1")
+    assertTrue("Wrong index for the second section", sections[1].name == "section3")
+    assertTrue("Wrong index for the third section", sections[2].name == "section2")
+  }
+
+  @Test
   fun `test section deleted`() {
     initiateLocalCourse()
     val remoteCourse = toRemoteCourse {

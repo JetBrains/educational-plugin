@@ -20,6 +20,7 @@ data class SectionCreationInfo(
   override val remoteItem: Section
 ) : SectionUpdate(null, remoteItem) {
   override suspend fun update(project: Project) {
+    // TODO EDU-6756 what if section was created in the middle of the course?
     localCourse.addItem(remoteItem)
     remoteItem.init(localCourse, false)
 
