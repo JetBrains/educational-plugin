@@ -21,6 +21,4 @@ fun Task.getCSProjFileName(): String = "${getCSProjFileNameWithoutExtension()}.$
 
 fun Task.getCSProjFileNameWithoutExtension(): String = pathInCourse.formatForCSProj()
 
-fun String.formatForCSProj(): String = split(" ").joinToString("") { it.capitalize() }
-  .split("/").joinToString(".") { it.capitalize() }
-
+fun String.formatForCSProj(): String = split("/").joinToString(".") { it.capitalize() }

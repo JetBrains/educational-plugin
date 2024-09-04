@@ -2,8 +2,10 @@ package com.jetbrains.edu.csharp
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
+import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
+import com.jetbrains.edu.csharp.messages.EduCSharpBundle
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -90,6 +92,9 @@ class CSharpCourseBuilder : EduCourseBuilder<CSharpProjectSettings> {
 
   override fun getSupportedLanguageVersions(): List<String> = ProjectTemplateTargetFramework.allPredefinedNet.map { it.presentation }
 
+  override fun validateItemName(project: Project, name: String, itemType: StudyItemType): String? =
+    if (name.matches(STUDY_ITEM_NAME_PATTERN)) null else EduCSharpBundle.message("error.invalid.name")
+
   companion object {
     const val PROJECT_FILE_TEMPLATE = "ProjectWithTests.csproj"
     const val SOLUTION_FILE_TEMPLATE = "Solution.sln"
@@ -97,5 +102,7 @@ class CSharpCourseBuilder : EduCourseBuilder<CSharpProjectSettings> {
 
     val VERSION_KEY = Key.create<String>("edu.csharp.dotnetVersion")
     val CSPROJ_NAME_PER_TASK_KEY = Key.create<String>("edu.csharp.csproj.path")
+
+    private val STUDY_ITEM_NAME_PATTERN = "[a-zA-Z0-9_ ]+".toRegex()
   }
 }
