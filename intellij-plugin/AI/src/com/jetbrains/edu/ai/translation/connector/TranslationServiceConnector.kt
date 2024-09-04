@@ -55,7 +55,7 @@ class TranslationServiceConnector(private val scope: CoroutineScope) {
       .async(Dispatchers.IO) {
         service
           .getTranslatedCourse(marketplaceId.value, updateVersion.value, language.name)
-          .executeGetCall("Failed to get translation for course ($marketplaceId, $updateVersion, $language)")
+          .executeGetCall()
       }
       .await()
 
@@ -69,7 +69,7 @@ class TranslationServiceConnector(private val scope: CoroutineScope) {
       .async(Dispatchers.IO) {
         service
           .getTranslatedTask(marketplaceId.value, updateVersion.value, language.name, taskId.value)
-          .executeGetCall("Failed to get translation for course ($marketplaceId, $updateVersion, $language, $taskId)")
+          .executeGetCall()
       }
       .await()
 
@@ -87,7 +87,6 @@ class TranslationServiceConnector(private val scope: CoroutineScope) {
       }
       .await()
       .onError {
-        LOG.error("Failed to translate course ($marketplaceId, $updateVersion, $language, force: $force)")
         return Err(it)
       }
       .onAccepted {
@@ -100,10 +99,9 @@ class TranslationServiceConnector(private val scope: CoroutineScope) {
     }
   }
 
-  private fun <T> Response<T>.executeGetCall(errorMessage: String): Result<T?, String> {
+  private fun <T> Response<T>.executeGetCall(): Result<T?, String> {
     val response = executeParsingErrors()
       .onError {
-        LOG.error("$errorMessage. Error message: $it")
         return Err(it)
       }
       .onAccepted {
