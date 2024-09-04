@@ -66,7 +66,7 @@ class CCTaskMoveHandlerDelegate : CCStudyItemMoveHandlerDelegate(StudyItemType.T
       val lessonDir = targetVFile.parent ?: return
       val targetTask = targetVFile.getTask(project) ?: return
       val delta = getDelta(project, targetTask) ?: return
-      StudyItemRefactoringHandler.processBeforeTaskMovement(project, taskToMove, targetVFile)
+      StudyItemRefactoringHandler.processBeforeTaskMovement(project, taskToMove, lessonDir)
       moveTask(sourceDirectory, taskToMove, targetTask, delta, lessonDir, targetTask.lesson)
       saveItem(sourceLesson)
       saveItem(targetTask.lesson)
