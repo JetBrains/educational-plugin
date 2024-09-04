@@ -18,6 +18,7 @@
   <extensions defaultExtensionNs="Educational">
     <optionsProvider instance="com.jetbrains.edu.learning.marketplace.settings.MarketplaceOptions"/>
     <checkListener implementation="com.jetbrains.edu.learning.marketplace.MarketplaceCheckListener"/>
+    <checkListener implementation="com.jetbrains.edu.learning.marketplace.lti.LTICheckListener"/>
     <submissionsProvider implementation="com.jetbrains.edu.learning.marketplace.MarketplaceSubmissionsProvider"/>
     <taskNavigationExtension implementation="com.jetbrains.edu.learning.marketplace.MarketplaceTaskNavigationExtension"/>
   </extensions>
