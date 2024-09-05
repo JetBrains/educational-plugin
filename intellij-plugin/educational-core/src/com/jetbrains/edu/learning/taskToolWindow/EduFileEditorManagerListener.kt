@@ -15,9 +15,9 @@ import com.jetbrains.edu.learning.getTaskFile
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 
-class EduFileEditorManagerListener(private val project: Project) : FileEditorManagerListener {
+class EduFileEditorManagerListener(private val project: Project) : FileEditorManagerListener, FileEditorManagerListener.Before {
 
-  override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
+  override fun beforeFileOpened(source: FileEditorManager, file: VirtualFile) {
     val taskFile = file.getTaskFile(project) ?: return
     showTaskDescriptionToolWindow(project, taskFile, true)
   }
