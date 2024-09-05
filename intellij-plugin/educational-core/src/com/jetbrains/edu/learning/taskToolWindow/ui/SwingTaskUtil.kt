@@ -10,15 +10,17 @@ import com.intellij.ui.dsl.builder.Cell
 import com.intellij.ui.dsl.builder.Row
 import com.intellij.util.ui.HTMLEditorKitBuilder
 import com.intellij.util.ui.JBUI
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
+import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.notLoggedInPanel.getIconPath
 import com.jetbrains.edu.learning.taskToolWindow.ui.specificTaskSwingPanels.ChoiceTaskSpecificPanel
 import com.jetbrains.edu.learning.taskToolWindow.ui.specificTaskSwingPanels.SortingBasedTaskSpecificPanel
 import com.jetbrains.edu.learning.taskToolWindow.ui.specificTaskSwingPanels.TableTaskSpecificPanel
+import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager.INTELLIJ_ICON_QUICKFIX_OFF_BULB
 import com.jetbrains.edu.learning.xmlEscaped
 import org.jetbrains.annotations.VisibleForTesting
 import org.jsoup.nodes.Element
@@ -65,6 +67,8 @@ private fun prepareCss(editorKit: HTMLEditorKit) {
 }
 
 const val HINT_PROTOCOL = "hint://"
+const val CHEVRON_RIGHT = "&#8250"
+const val CHEVRON_DOWN = "&#8964"
 
 private val LOG = Logger.getInstance(SwingToolWindow::class.java)  //TODO we probably need another logger here
 private const val DEFAULT_ICON_SIZE = 16
@@ -77,30 +81,18 @@ fun getHintIconSize(): Int {
 }
 
 fun wrapHintSwing(project: Project, hintElement: Element, displayedHintNumber: String, hintTitle: String): String {
-
-  fun getIconFullPath(retinaPath: String, path: String): String {
-    val bulbPath = if (UIUtil.isRetina()) retinaPath else path
-    val bulbIconUrl = SwingToolWindow::class.java.classLoader.getResource(bulbPath)
-    if (bulbIconUrl == null) {
-      LOG.warn("Cannot find bulb icon")
-    }
-    return if (bulbIconUrl == null) "" else bulbIconUrl.toExternalForm()
-  }
-
-  fun getBulbIcon() = getIconFullPath("style/hint/swing/swing_icons/retina_bulb.png", "style/hint/swing/swing_icons/bulb.png")
-
-  fun getLeftIcon() = getIconFullPath("style/hint/swing/swing_icons/retina_right.png", "style/hint/swing/swing_icons/right.png")
-
-  fun getDownIcon() = getIconFullPath("style/hint/swing/swing_icons/retina_down.png", "style/hint/swing/swing_icons/down.png")
+  val bulbWithTheme = getIconPath(INTELLIJ_ICON_QUICKFIX_OFF_BULB.trimStart('/'))
+  val bulbIcon = if (!isUnitTestMode) SwingToolWindow::class.java.classLoader.getResource(bulbWithTheme)?.toExternalForm() else ""
+  if (bulbIcon == null) LOG.warn("Cannot find bulb icon")
 
   // all tagged elements should have different href otherwise they are all underlined on hover. That's why
   // we have to add hint number to href
   fun createHintBlockTemplate(hintElement: Element, displayedHintNumber: String, escapedHintTitle: String): String {
     val iconSize = getHintIconSize()
     return """
-      <img src='${getBulbIcon()}' width='$iconSize' height='$iconSize' >
+      <img src='$bulbIcon' width='$iconSize' height='$iconSize' >
       <span><a href='$HINT_PROTOCOL$displayedHintNumber' value='${hintElement.text()}'>$escapedHintTitle $displayedHintNumber</a>
-      <img src='${getLeftIcon()}' width='$iconSize' height='$iconSize' >
+      <span id='chevron'>$CHEVRON_RIGHT</span></span>
     """.trimIndent()
   }
 
@@ -110,9 +102,9 @@ fun wrapHintSwing(project: Project, hintElement: Element, displayedHintNumber: S
     val hintText = hintElement.text()
     val iconSize = getHintIconSize()
     return """ 
-        <img src='${getBulbIcon()}' width='$iconSize' height='$iconSize' >
+        <img src='$bulbIcon' width='$iconSize' height='$iconSize' >
         <span><a href='$HINT_PROTOCOL$displayedHintNumber' value='$hintText'>$escapedHintTitle $displayedHintNumber</a>
-        <img src='${getDownIcon()}' width='$iconSize' height='$iconSize' >
+        <span id='chevron'>$CHEVRON_DOWN</span></span>
         <div class='hint_text'>$hintText</div>
      """.trimIndent()
   }

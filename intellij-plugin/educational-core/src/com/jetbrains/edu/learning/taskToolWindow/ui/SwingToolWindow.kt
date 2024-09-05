@@ -19,7 +19,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -97,15 +96,13 @@ class SwingToolWindow(project: Project) : TaskToolWindow(project) {
         }
         val hintTextElement = getHintTextElement(parent)
         if (hintTextElement == null) {
-          val downPath = if (UIUtil.isRetina()) "style/hint/swing/swing_icons/retina_down.png" else "style/hint/swing/swing_icons/down.png"
-          changeArrowIcon(sourceElement, document, downPath)
+          toggleArrowIcon(document, CHEVRON_DOWN)
           val hintText = (sourceElement.attributes.getAttribute(HTML.Tag.A) as SimpleAttributeSet).getAttribute(HTML.Attribute.VALUE)
           document.insertBeforeEnd(parent.parentElement, String.format(HINT_TEXT_PATTERN, hintText))
           EduCounterUsageCollector.hintExpanded()
         }
         else {
-          val leftPath = if (UIUtil.isRetina()) "style/hint/swing/swing_icons/retina_right.png" else "style/hint/swing/swing_icons/right.png"
-          changeArrowIcon(sourceElement, document, leftPath)
+          toggleArrowIcon(document, CHEVRON_RIGHT)
           document.removeElement(hintTextElement)
           EduCounterUsageCollector.hintCollapsed()
         }
@@ -119,28 +116,9 @@ class SwingToolWindow(project: Project) : TaskToolWindow(project) {
     }
 
     @Throws(BadLocationException::class, IOException::class)
-    private fun changeArrowIcon(sourceElement: SwingTextElement, document: HTMLDocument, iconUrl: String) {
-      val resource = javaClass.classLoader.getResource(iconUrl)
-      if (resource != null) {
-        val arrowImageElement = getArrowImageElement(sourceElement.parentElement)
-        document.setOuterHTML(arrowImageElement, String.format("<img src='%s' width='16' height='16'>", resource.toExternalForm()))
-      }
-      else {
-        LOG.warn("Cannot find arrow icon $iconUrl")
-      }
-    }
-
-    private fun getArrowImageElement(element: SwingTextElement): SwingTextElement? {
-      var result: SwingTextElement? = null
-      for (i in 0 until element.elementCount) {
-        val child = element.getElement(i) ?: continue
-        val attributes = child.attributes ?: continue
-        val img = attributes.getAttribute(HTML.Attribute.SRC) as? String ?: continue
-        if (img.endsWith("down.png") || img.endsWith("right.png")) {
-          result = child
-        }
-      }
-      return result
+    private fun toggleArrowIcon(document: HTMLDocument, newValue: String) {
+      val chevron = document.getElement("chevron")
+      document.setOuterHTML(chevron, "<span id='chevron'>$newValue</span>")
     }
 
     private fun getHintTextElement(parent: SwingTextElement): SwingTextElement? {

@@ -43,7 +43,7 @@ abstract class HintsInTaskDescriptionTestBase(
         <div class="wrapper">
          <div class="hint">
           <div class="hint_header">
-           Hint
+           <img src="" style="display: inline-block;"> Hint
           </div>
           <div class="hint_content">
            Hint text
@@ -63,7 +63,7 @@ abstract class HintsInTaskDescriptionTestBase(
         <div class="wrapper">
          <div class="top">
           <div class="hint">
-           <img src="bulb.png" width="0" height="0"> <span><a href="hint://" value="Hint text">Hint </a> <img src="right.png" width="0" height="0"></span>
+           <img src="" width="0" height="0"> <span><a href="hint://" value="Hint text">Hint </a> <span id="chevron">›</span></span>
           </div>
          </div>
         </div>
@@ -137,7 +137,7 @@ class HintTestForMarketplaceCourseEduTask : HintsInTaskDescriptionTestBase(false
          <p>Hello</p>
          <div class="hint">
           <div class="hint_header">
-           Explanation 1
+           <img src="" style="display: inline-block;"> Explanation 1
           </div>
           <div class="hint_content">
            Text 1
@@ -145,7 +145,7 @@ class HintTestForMarketplaceCourseEduTask : HintsInTaskDescriptionTestBase(false
          </div>
          <div class="hint">
           <div class="hint_header">
-           Clarification 1
+           <img src="" style="display: inline-block;"> Clarification 1
           </div>
           <div class="hint_content">
            Text 2
@@ -153,7 +153,7 @@ class HintTestForMarketplaceCourseEduTask : HintsInTaskDescriptionTestBase(false
          </div>
          <div class="hint">
           <div class="hint_header">
-           Hint 1
+           <img src="" style="display: inline-block;"> Hint 1
           </div>
           <div class="hint_content">
            Text 3
@@ -161,7 +161,7 @@ class HintTestForMarketplaceCourseEduTask : HintsInTaskDescriptionTestBase(false
          </div>
          <div class="hint">
           <div class="hint_header">
-           Clarification 2
+           <img src="" style="display: inline-block;"> Clarification 2
           </div>
           <div class="hint_content">
            Text 4
@@ -169,7 +169,7 @@ class HintTestForMarketplaceCourseEduTask : HintsInTaskDescriptionTestBase(false
          </div>
          <div class="hint">
           <div class="hint_header">
-           Random title
+           <img src="" style="display: inline-block;"> Random title
           </div>
           <div class="hint_content">
            Text 5
@@ -177,7 +177,7 @@ class HintTestForMarketplaceCourseEduTask : HintsInTaskDescriptionTestBase(false
          </div>
          <div class="hint">
           <div class="hint_header">
-           Hint 2
+           <img src="" style="display: inline-block;"> Hint 2
           </div>
           <div class="hint_content">
            Text 6
@@ -185,7 +185,7 @@ class HintTestForMarketplaceCourseEduTask : HintsInTaskDescriptionTestBase(false
          </div>
          <div class="hint">
           <div class="hint_header">
-           Explanation 2
+           <img src="" style="display: inline-block;"> Explanation 2
           </div>
           <div class="hint_content">
            Text 7
@@ -204,32 +204,32 @@ class HintTestForMarketplaceCourseEduTask : HintsInTaskDescriptionTestBase(false
          <p>Hello</p>
          <div class="top">
           <div class="hint">
-           <img src="bulb.png" width="0" height="0"> <span><a href="hint://1" value="Text 1">Explanation 1</a> <img src="right.png" width="0" height="0"></span>
+           <img src="" width="0" height="0"> <span><a href="hint://1" value="Text 1">Explanation 1</a> <span id="chevron">›</span></span>
           </div>
          </div>
          <div class="top">
           <div class="hint">
-           <img src="bulb.png" width="0" height="0"> <span><a href="hint://1" value="Text 2">Clarification 1</a> <img src="right.png" width="0" height="0"></span>
+           <img src="" width="0" height="0"> <span><a href="hint://1" value="Text 2">Clarification 1</a> <span id="chevron">›</span></span>
           </div>
          </div>
          <div class="top">
           <div class="hint">
-           <img src="bulb.png" width="0" height="0"> <span><a href="hint://1" value="Text 3">Hint 1</a> <img src="right.png" width="0" height="0"></span>
+           <img src="" width="0" height="0"> <span><a href="hint://1" value="Text 3">Hint 1</a> <span id="chevron">›</span></span>
           </div>
          </div>
          <div class="hint">
-          <img src="bulb.png" width="0" height="0"> <span><a href="hint://2" value="Text 4">Clarification 2</a> <img src="right.png" width="0" height="0"></span>
+          <img src="" width="0" height="0"> <span><a href="hint://2" value="Text 4">Clarification 2</a> <span id="chevron">›</span></span>
          </div>
          <div class="top">
           <div class="hint">
-           <img src="bulb.png" width="0" height="0"> <span><a href="hint://" value="Text 5">Random title </a> <img src="right.png" width="0" height="0"></span>
+           <img src="" width="0" height="0"> <span><a href="hint://" value="Text 5">Random title </a> <span id="chevron">›</span></span>
           </div>
          </div>
          <div class="hint">
-          <img src="bulb.png" width="0" height="0"> <span><a href="hint://2" value="Text 6">Hint 2</a> <img src="right.png" width="0" height="0"></span>
+          <img src="" width="0" height="0"> <span><a href="hint://2" value="Text 6">Hint 2</a> <span id="chevron">›</span></span>
          </div>
          <div class="hint">
-          <img src="bulb.png" width="0" height="0"> <span><a href="hint://2" value="Text 7">Explanation 2</a> <img src="right.png" width="0" height="0"></span>
+          <img src="" width="0" height="0"> <span><a href="hint://2" value="Text 7">Explanation 2</a> <span id="chevron">›</span></span>
          </div>
         </div>
        </body>

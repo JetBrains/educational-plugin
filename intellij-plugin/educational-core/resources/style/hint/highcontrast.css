@@ -1,22 +1,8 @@
-@font-face {
-    font-family: "intellij-icon-font-darcula";
-    src:url("fonts/intellij-icon-font-darcula.eot");
-    src:url("fonts/intellij-icon-font-darcula.eot?#iefix") format("embedded-opentype"),
-    url("fonts/intellij-icon-font-darcula.woff") format("woff"),
-    url("fonts/intellij-icon-font-darcula.ttf") format("truetype"),
-    url("fonts/intellij-icon-font-darcula.svg#hint-icon-font") format("svg");
-}
-
 .hint_header {
     color: #D2F53C;
 }
-.hint .hint_header:before {
-    font-family: "intellij-icon-font-darcula";
-    content: "\e000";
-}
 
 .hint_header:after {
-    font-family: "intellij-icon-font-darcula";
-    content: "\e001";
+    content: "\2303";
     color: #ffffff;
 }

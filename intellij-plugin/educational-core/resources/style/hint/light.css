@@ -1,23 +1,9 @@
-@font-face {
-    font-family: "intellij-icon-font";
-    src:url("fonts/intellij-icon-font.eot");
-    src:url("fonts/intellij-icon-font.eot?#iefix") format("embedded-opentype"),
-    url("fonts/intellij-icon-font.woff") format("woff"),
-    url("fonts/intellij-icon-font.ttf") format("truetype"),
-    url("fonts/intellij-icon-font.svg#hint-icon-font") format("svg");
-}
-
 .hint_header {
-    color: #2470B3;
-}
-.hint .hint_header:before {
-    font-family: "intellij-icon-font";
-    content: "\e000";
+    color: #4682FA;
 }
 
 .hint_header:after {
-    font-family: "intellij-icon-font";
-    content: "\e001";
+    content: "\2303";
     color: #7F8B91;
     opacity: 0.9;
 }

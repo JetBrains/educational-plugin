@@ -17,20 +17,14 @@
     cursor: pointer;
 }
 
-.hint .hint_header:before {
-    margin-right: -0.2em;
-    vertical-align: -0.1em;
-}
-
 .hint_header:after {
     margin-left: -0.1em;
     display: inline-block;
-    vertical-align: -0.15em;
-    transform: rotate(270deg);
+    transform: rotate(90deg);
 }
 
 .hint_header.checked:after {
-    transform: rotate(0deg);
+    transform: rotate(180deg);
 }
 
 .hint_content {

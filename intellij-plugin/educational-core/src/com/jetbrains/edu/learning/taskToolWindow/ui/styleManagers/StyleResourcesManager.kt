@@ -32,14 +32,8 @@ object StyleResourcesManager {
   private const val SCROLL_BARS_HIGH_CONTRAST_CSS: String = "/style/scrollbars/highcontrast.css"
   private const val SCROLL_BARS_LIGHT_CSS: String = "/style/scrollbars/light.css"
 
-  private const val INTELLIJ_ICON_FONT_EOT: String = "/style/hint/fonts/intellij-icon-font.eot"
-  private const val INTELLIJ_ICON_FONT_SVG: String = "/style/hint/fonts/intellij-icon-font.svg"
-  private const val INTELLIJ_ICON_FONT_TTF: String = "/style/hint/fonts/intellij-icon-font.ttf"
-  private const val INTELLIJ_ICON_FONT_WOFF: String = "/style/hint/fonts/intellij-icon-font.woff"
-  private const val INTELLIJ_ICON_FONT_DARCULA_EOT: String = "/style/hint/fonts/intellij-icon-font-darcula.eot"
-  private const val INTELLIJ_ICON_FONT_DARCULA_SVG: String = "/style/hint/fonts/intellij-icon-font-darcula.svg"
-  private const val INTELLIJ_ICON_FONT_DARCULA_TTF: String = "/style/hint/fonts/intellij-icon-font-darcula.ttf"
-  private const val INTELLIJ_ICON_FONT_DARCULA_WOFF: String = "/style/hint/fonts/intellij-icon-font-darcula.woff"
+  const val INTELLIJ_ICON_QUICKFIX_OFF_BULB: String = "/style/hint/icons/quickfixOffBulb.png"
+  const val INTELLIJ_ICON_QUICKFIX_OFF_BULB_DARK: String = "/style/hint/icons/quickfixOffBulb_dark.png"
 
   private const val SORTING_BASED_TASKS_MOVE_UP = "/icons/com/jetbrains/edu/learning/moveUp.svg"
   private const val SORTING_BASED_TASKS_MOVE_UP_DARK = "/icons/com/jetbrains/edu/learning/moveUp_dark.svg"
@@ -82,14 +76,16 @@ object StyleResourcesManager {
     SCROLL_BARS_DARCULA_CSS,
     SCROLL_BARS_HIGH_CONTRAST_CSS,
     SCROLL_BARS_LIGHT_CSS,
-    INTELLIJ_ICON_FONT_EOT,
-    INTELLIJ_ICON_FONT_SVG,
-    INTELLIJ_ICON_FONT_TTF,
-    INTELLIJ_ICON_FONT_WOFF,
-    INTELLIJ_ICON_FONT_DARCULA_EOT,
-    INTELLIJ_ICON_FONT_DARCULA_SVG,
-    INTELLIJ_ICON_FONT_DARCULA_TTF,
-    INTELLIJ_ICON_FONT_DARCULA_WOFF,
+    INTELLIJ_ICON_QUICKFIX_OFF_BULB,
+    INTELLIJ_ICON_QUICKFIX_OFF_BULB_DARK
+//    INTELLIJ_ICON_FONT_EOT,
+//    INTELLIJ_ICON_FONT_SVG,
+//    INTELLIJ_ICON_FONT_TTF,
+//    INTELLIJ_ICON_FONT_WOFF,
+//    INTELLIJ_ICON_FONT_DARCULA_EOT,
+//    INTELLIJ_ICON_FONT_DARCULA_SVG,
+//    INTELLIJ_ICON_FONT_DARCULA_TTF,
+//    INTELLIJ_ICON_FONT_DARCULA_WOFF,
   ) + sortingBasedTaskResourcesList
 
   private val panelSpecificHintResources: Map<String, String>
