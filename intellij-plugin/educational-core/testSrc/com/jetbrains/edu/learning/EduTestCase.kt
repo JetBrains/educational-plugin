@@ -19,6 +19,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.replaceService
 import com.intellij.toolWindow.ToolWindowHeadlessManagerImpl
 import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
@@ -75,6 +76,11 @@ abstract class EduTestCase : BasePlatformTestCase() {
     registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE, COURSERA)
     registerConfigurator(myFixture.testRootDisposable, FakeGradleConfigurator::class.java, FakeGradleBasedLanguage)
     registerConfigurator(myFixture.testRootDisposable, FakeGradleHyperskillConfigurator::class.java, FakeGradleBasedLanguage, HYPERSKILL)
+
+    // Mock tool window provided by default headless implementation of `ToolWindowManager` doesn't keep any state.
+    // As a result, it's impossible to write tests which check tool window state.
+    // `EduToolWindowHeadlessManager` allows us to track necessary properties in our tests
+    project.replaceService(ToolWindowManager::class.java, EduToolWindowHeadlessManager(project), testRootDisposable)
 
     LightTestServiceStateHelper.restoreState(project)
 
