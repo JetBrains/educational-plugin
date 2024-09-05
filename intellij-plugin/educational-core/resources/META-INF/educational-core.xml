@@ -24,7 +24,7 @@
               topic="com.intellij.execution.RunManagerListener"/>
     <listener class="com.jetbrains.edu.learning.yaml.YamlLoadingErrorManager$Listener"
               topic="com.jetbrains.edu.learning.yaml.YamlListener"/>
-    <listener class="com.jetbrains.edu.learning.taskToolWindow.ui.EduFileEditorManagerListener"
+    <listener class="com.jetbrains.edu.learning.taskToolWindow.EduFileEditorManagerListener"
               topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
     <listener class="com.jetbrains.edu.learning.storage.LearningObjectsPersister"
               topic="com.jetbrains.edu.learning.CourseSetListener"/>

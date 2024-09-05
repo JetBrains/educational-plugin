@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.taskToolWindow.ui
+package com.jetbrains.edu.learning.taskToolWindow
 
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -12,6 +12,8 @@ import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.getTaskFile
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 
 class EduFileEditorManagerListener(private val project: Project) : FileEditorManagerListener {
 
