@@ -5,5 +5,7 @@
 
     <content>
         <module name="AI"/>
+        <module name="Edu-Kotlin"/>
+        <module name="jvm-core"/>
     </content>
 </idea-plugin>
