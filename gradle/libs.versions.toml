@@ -23,7 +23,7 @@ kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-seria
 edu-ai-format = { group = "com.jetbrains.edu", name = "edu-ai-format", version = "0.0.4" }
 educational-ml-library-core = { group = "com.jetbrains.educational.ml", name = "educational-ml-library-core", version.ref = "educational-ml-library" }
 educational-ml-library-theory-lookup = { group = "com.jetbrains.educational.ml", name = "educational-ml-library-theory-lookup", version.ref = "educational-ml-library" }
-stanford-corenlp = { group = "edu.stanford.nlp", name = "stanford-corenlp", version = "4.5.7" }
+languagetool = { group = "org.languagetool", name = "language-en", version = "6.4" }
 # test dependencies
 junit = { group = "junit", name = "junit", version = "4.13.2" }
 kotlin-test-junit = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit", version.ref = "kotlin" }
