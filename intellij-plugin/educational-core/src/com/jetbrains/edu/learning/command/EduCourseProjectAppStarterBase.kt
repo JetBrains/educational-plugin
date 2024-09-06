@@ -16,7 +16,8 @@ import com.jetbrains.edu.learning.newproject.EduProjectSettings
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.nio.file.Paths
+import java.nio.file.*
+import java.nio.file.attribute.BasicFileAttributes
 import kotlin.io.path.exists
 
 /**
@@ -87,7 +88,27 @@ abstract class EduCourseProjectAppStarterBase : EduAppStarterBase<ArgsWithProjec
   private fun cleanupCourseDir(args: ArgsWithProjectPath) {
     val courseDir = Paths.get(args.projectPath)
     if (courseDir.exists()) {
-      courseDir.delete()
+      // Do not try to delete the directory itself since it may have different permissions
+      val children = mutableListOf<Path>()
+      // Replace with Path#walkFileTree when it becomes stable
+      Files.walkFileTree(courseDir, object : SimpleFileVisitor<Path>() {
+        override fun preVisitDirectory(dir: Path, attrs: BasicFileAttributes): FileVisitResult {
+          return if (dir == courseDir) {
+            FileVisitResult.CONTINUE
+          }
+          else {
+            children.add(dir)
+            FileVisitResult.SKIP_SUBTREE
+          }
+        }
+
+        override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
+          children.add(file)
+          return FileVisitResult.CONTINUE
+        }
+      })
+
+      children.forEach { it.delete() }
     }
   }
 
