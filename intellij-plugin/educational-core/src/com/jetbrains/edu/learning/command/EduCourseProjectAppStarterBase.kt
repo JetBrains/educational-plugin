@@ -50,6 +50,7 @@ abstract class EduCourseProjectAppStarterBase : EduAppStarterBase<ArgsWithProjec
   ): CommandResult {
     cleanupCourseDir(args)
 
+    EduThreadDumpService.getInstance().startThreadDumping()
     var errorMessage: String? = null
 
     val result = withAutoImportDisabled {
