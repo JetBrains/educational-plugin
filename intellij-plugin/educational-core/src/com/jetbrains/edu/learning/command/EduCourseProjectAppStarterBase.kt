@@ -61,7 +61,9 @@ abstract class EduCourseProjectAppStarterBase : EduAppStarterBase<ArgsWithProjec
         }
       }
       if (project != null) {
-        Observation.awaitConfiguration(project)
+        Observation.awaitConfiguration(project) {
+          LOG.warn(it)
+        }
 
         val result = performProjectAction(project, course, args)
 
