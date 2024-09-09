@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.intellij.openapi.diagnostic.logger
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 
 class LTICheckListener : CheckListener {
@@ -20,7 +21,7 @@ class LTICheckListener : CheckListener {
     result: CheckResult
   ) {
     val course = task.lesson.course as? EduCourse ?: return
-    if (!course.isStudy) return
+    if (!course.isStudy || !course.isMarketplaceRemote) return
 
     val ltiSettings = LTISettingsManager.instance(project).state
     val launchId = ltiSettings.launchId ?: return
@@ -39,26 +40,28 @@ class LTICheckListener : CheckListener {
   }
 
   private fun notifyPostingStatus(error: String?, lmsDescription: String?, project: Project) {
-    //TODO bundle the following texts
-    val lmsName = if (lmsDescription.isNullOrEmpty()) {
-      "LMS"
-    }
-    else {
-      "LMS: $lmsDescription"
-    }
-
     if (error != null) {
       EduNotificationManager.create(
         ERROR,
-        "Failed to post to LMS",
-        "Failed to post your achievement to $lmsName. Error message: $error"
+        EduCoreBundle.message("lti.grades.post.error.title"),
+        if (lmsDescription.isNullOrEmpty()) {
+          EduCoreBundle.message("lti.grades.post.error.text", error)
+        }
+        else {
+          EduCoreBundle.message("lti.grades.post.error.text.with.lms", lmsDescription, error)
+        }
       ).notify(project)
     }
     else {
       EduNotificationManager.create(
         NotificationType.INFORMATION,
-        "Achievement successfully posted",
-        "Your achievement was successfully posted to $lmsName",
+        EduCoreBundle.message("lti.grades.post.success.title"),
+        if (lmsDescription.isNullOrEmpty()) {
+          EduCoreBundle.message("lti.grades.post.success.text")
+        }
+        else {
+          EduCoreBundle.message("lti.grades.post.success.text.with.lms", lmsDescription)
+        }
       ).notify(project)
     }
   }

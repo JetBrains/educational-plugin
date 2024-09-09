@@ -6,7 +6,7 @@ import retrofit2.http.Path
 
 interface LTIEndpoints {
 
-  @POST("/lti/grading//launchId/{launchId}/course/{courseEduId}/task/{taskEduId}")
+  @POST("/lti/grading/launchId/{launchId}/course/{courseEduId}/task/{taskEduId}")
   fun reportTaskSolved(
     @Path("launchId") launchId: String,
     @Path("courseEduId") courseEduId: Int,
