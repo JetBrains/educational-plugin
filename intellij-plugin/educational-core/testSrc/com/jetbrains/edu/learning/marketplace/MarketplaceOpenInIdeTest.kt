@@ -60,7 +60,7 @@ class MarketplaceOpenInIdeTest : EduTestCase() {
   fun `test open course in new project`() {
     configureCoursesResponse("test_course_info.json")
 
-    mockProjectOpener.open(MarketplaceOpenInIdeRequestHandler, MarketplaceOpenCourseRequest(1))
+    mockProjectOpener.open(MarketplaceOpenInIdeRequestHandler, MarketplaceOpenCourseRequest(1, -1))
 
     checkTestCourseFileStructure()
   }
@@ -70,7 +70,7 @@ class MarketplaceOpenInIdeTest : EduTestCase() {
   fun `test open course with special symbols in new project`() {
     configureCoursesResponse("test_course_info_special_symbols.json")
 
-    mockProjectOpener.open(MarketplaceOpenInIdeRequestHandler, MarketplaceOpenCourseRequest(1))
+    mockProjectOpener.open(MarketplaceOpenInIdeRequestHandler, MarketplaceOpenCourseRequest(1, -1))
 
     checkTestCourseFileStructure()
   }
@@ -133,7 +133,7 @@ class MarketplaceOpenInIdeTest : EduTestCase() {
   }
 
   private fun doLanguageValidationTest(checkError: (CourseValidationResult) -> Unit) {
-    mockProjectOpener.open(MarketplaceOpenInIdeRequestHandler, MarketplaceOpenCourseRequest(1)).onError {
+    mockProjectOpener.open(MarketplaceOpenInIdeRequestHandler, MarketplaceOpenCourseRequest(1, -1)).onError {
       checkError(it)
       return
     }

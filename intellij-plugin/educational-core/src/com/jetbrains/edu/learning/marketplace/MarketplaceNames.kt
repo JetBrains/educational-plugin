@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.marketplace
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 
 const val MARKETPLACE = EduFormatNames.MARKETPLACE
+const val LTI = "LTI"
 const val JET_BRAINS_ACCOUNT = "JetBrains Account"
 const val HUB_AUTH_URL = "https://hub.jetbrains.com"
 const val HUB_API_PATH = "/api/rest"

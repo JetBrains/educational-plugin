@@ -5,6 +5,7 @@
                         serviceImplementation="com.jetbrains.edu.learning.marketplace.api.MarketplaceConnectorImpl"
                         testServiceImplementation="com.jetbrains.edu.learning.marketplace.api.MockMarketplaceConnector"/>
     <httpRequestHandler implementation="com.jetbrains.edu.learning.marketplace.MarketplaceRestService"/>
+    <httpRequestHandler implementation="com.jetbrains.edu.learning.marketplace.lti.LTIRestService"/>
     <statusBarWidgetFactory id="widget.marketplace"
                             implementation="com.jetbrains.edu.learning.marketplace.MarketplaceWidgetFactory"
                             order="before positionWidget"/>
