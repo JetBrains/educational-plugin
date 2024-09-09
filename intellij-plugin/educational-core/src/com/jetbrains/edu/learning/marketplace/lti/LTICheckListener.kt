@@ -22,34 +22,29 @@ class LTICheckListener : CheckListener {
     val course = task.lesson.course as? EduCourse ?: return
     if (!course.isStudy) return
 
-    val ltiSettingsManager = LTISettingsManager.instance(project)
-    // This call reloads data from file.
-    // Later, we will remove this line because we don't expect users to modify the LTI yaml file manually.
-    // Reloading will be done on project opening and when the project is launched from the browser.
-    // As a downside, now this file is reloaded each time a learner checks a task.
-    ltiSettingsManager.reloadSettingsFromFile()
-    val ltiLaunch = ltiSettingsManager.ltiSettings?.launches?.firstOrNull() ?: return
+    val ltiSettings = LTISettingsManager.instance(project).state
+    val launchId = ltiSettings.launchId ?: return
 
-    logger<LTICheckListener>().info("Posting check result for task ${task.name}. solved=${result.isSolved} launchId=$ltiLaunch")
+    logger<LTICheckListener>().info("Posting check result for task ${task.name}. solved=${result.isSolved} launchId=$launchId")
 
     if (result.isSolved) {
       ApplicationManager.getApplication().executeOnPooledThread {
-        val error = LTIConnector.getInstance().postTaskSolved(ltiLaunch.id, task.course.id, task.id)
+        val error = LTIConnector.getInstance().postTaskSolved(launchId, task.course.id, task.id)
 
         runInEdt {
-          notifyPostingStatus(error, ltiLaunch, project)
+          notifyPostingStatus(error, ltiSettings.lmsDescription, project)
         }
       }
     }
   }
 
-  private fun notifyPostingStatus(error: String?, ltiLaunch: LTILaunch, project: Project) {
+  private fun notifyPostingStatus(error: String?, lmsDescription: String?, project: Project) {
     //TODO bundle the following texts
-    val lmsName = if (ltiLaunch.lmsDescription != "") {
-      "LMS: ${ltiLaunch.lmsDescription}"
+    val lmsName = if (lmsDescription.isNullOrEmpty()) {
+      "LMS"
     }
     else {
-      "LMS"
+      "LMS: $lmsDescription"
     }
 
     if (error != null) {

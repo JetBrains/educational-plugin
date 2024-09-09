@@ -1,8 +1,8 @@
 package com.jetbrains.edu.learning.marketplace.lti
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.intellij.openapi.components.BaseState
 
-class LTISettings(
-  @JsonProperty("launches")
-  val launches: List<LTILaunch>
-)
+class LTISettings : BaseState() {
+  var launchId by string()
+  var lmsDescription by string()
+}
