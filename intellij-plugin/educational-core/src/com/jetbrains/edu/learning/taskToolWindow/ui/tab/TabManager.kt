@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.components.JBTabbedPane
 import com.intellij.util.ui.JBFont
+import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
@@ -20,6 +21,7 @@ class TabManager(private val project: Project) : Disposable {
 
   val tabbedPane: JBTabbedPane = JBTabbedPane().apply {
     font = JBFont.medium().biggerOn(1.0f)
+    border = JBUI.Borders.customLineBottom(JBUI.CurrentTheme.CustomFrameDecorations.separatorForeground())
   }
   val descriptionTab = createTab(DESCRIPTION_TAB) as DescriptionTab
 

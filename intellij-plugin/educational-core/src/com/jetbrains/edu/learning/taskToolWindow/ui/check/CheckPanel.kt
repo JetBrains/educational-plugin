@@ -60,6 +60,8 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     add(checkDetailsPlaceholder, BorderLayout.NORTH)
     updateRightActionsToolbar()
     asyncProcessIcon.border = JBUI.Borders.empty(8, 6, 0, 10)
+    maximumSize = Dimension(Int.MAX_VALUE, 30)
+    border = JBUI.Borders.empty(2, 0, 0, 10)
   }
 
   private fun updateRightActionsToolbar(task: Task? = null) {

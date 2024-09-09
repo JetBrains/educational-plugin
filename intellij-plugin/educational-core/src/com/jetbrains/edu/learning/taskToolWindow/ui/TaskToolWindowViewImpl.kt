@@ -37,6 +37,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsSer
 import com.jetbrains.edu.learning.submissions.SubmissionsListener
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.SubmissionsTab
+import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckPanel
 import com.jetbrains.edu.learning.taskToolWindow.ui.navigationMap.NavigationMapAction
 import com.jetbrains.edu.learning.taskToolWindow.ui.navigationMap.NavigationMapToolbar
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabManager
@@ -51,6 +52,7 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
   private val navigationMapToolbar: NavigationMapToolbar = NavigationMapToolbar()
   private val taskName: JLabel = JLabel(EduCoreBundle.message("item.task.title"))
   private val tabManager: TabManager = TabManager(project)
+  private val checkPanel: CheckPanel = CheckPanel(project, this)
 
   init {
     Disposer.register(this, tabManager)
@@ -61,8 +63,7 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
     set(value) {
       if (currentTask !== null && currentTask === value) return
       tabManager.updateTaskDescription(value)
-      tabManager.descriptionTab.isSeparatorVisible = value != null
-      tabManager.descriptionTab.isCheckPanelVisible = value != null
+      checkPanel.isVisible = value != null
       updateCheckPanel(value)
       updateNavigationPanel(value)
       taskName.text = value?.presentableName ?: EduCoreBundle.message("item.task.title")
@@ -128,7 +129,7 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
   override fun updateCheckPanel(task: Task?) {
     if (task == null) return
     readyToCheck()
-    tabManager.descriptionTab.updateCheckPanel(task)
+    checkPanel.updateCheckPanel(task)
   }
 
   override fun updateTaskSpecificPanel() {
@@ -174,7 +175,7 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
    }
 
   override fun readyToCheck() {
-    tabManager.descriptionTab.readyToCheck()
+    checkPanel.readyToCheck()
   }
 
   override fun init(toolWindow: ToolWindow) {
@@ -216,6 +217,8 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
 
     mainPanel.add(tabManager.tabbedPane)
 
+    mainPanel.add(checkPanel)
+
     UIUtil.setBackgroundRecursively(mainPanel, getTaskDescriptionBackgroundColor())
 
     val content = ContentFactory.getInstance()
@@ -242,12 +245,12 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
 
   override fun checkStarted(task: Task, startSpinner: Boolean) {
     if (task != currentTask) return
-    tabManager.descriptionTab.checkStarted(startSpinner)
+    checkPanel.checkStarted(startSpinner)
   }
 
   override fun checkFinished(task: Task, checkResult: CheckResult) {
     if (task != currentTask) return
-    tabManager.descriptionTab.updateCheckDetails(task, checkResult)
+    checkPanel.updateCheckDetails(task, checkResult)
     if (task is DataTask || task.isChangedOnFailed) {
       updateCheckPanel(task)
     }
