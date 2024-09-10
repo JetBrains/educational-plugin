@@ -21,6 +21,8 @@ class LTICheckListener : CheckListener {
     result: CheckResult
   ) {
     val course = task.lesson.course as? EduCourse ?: return
+    if (!result.isSolved) return // currently, we report only successful solutions
+
     if (!course.isStudy || !course.isMarketplaceRemote) return
 
     val ltiSettings = LTISettingsManager.instance(project).state
@@ -28,13 +30,11 @@ class LTICheckListener : CheckListener {
 
     logger<LTICheckListener>().info("Posting check result for task ${task.name}: solved=${result.isSolved}, launchId=$launchId")
 
-    if (result.isSolved) {
-      ApplicationManager.getApplication().executeOnPooledThread {
-        val error = LTIConnector.getInstance().postTaskSolved(launchId, task.course.id, task.id)
+    ApplicationManager.getApplication().executeOnPooledThread {
+      val error = LTIConnector.getInstance().postTaskSolved(launchId, task.course.id, task.id)
 
-        runInEdt {
-          notifyPostingStatus(error, ltiSettings.lmsDescription, project)
-        }
+      runInEdt {
+        notifyPostingStatus(error, ltiSettings.lmsDescription, project)
       }
     }
   }
