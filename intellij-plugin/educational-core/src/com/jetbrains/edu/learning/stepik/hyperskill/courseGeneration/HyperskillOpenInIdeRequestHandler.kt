@@ -41,14 +41,14 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
   override fun openInExistingProject(
     request: HyperskillOpenRequest,
     findProject: ((Course) -> Boolean) -> Pair<Project, Course>?
-  ): Boolean {
+  ): Project? {
     when (request) {
       is HyperskillOpenStepRequestBase -> {
         val stepId = request.stepId
         val stepSource = getStepSource(stepId, request.isLanguageSelectedByUser)
         val isAndroidEnvRequired = stepSource.framework == EduNames.ANDROID
         val courseFilter: (Course) -> Boolean = if (isAndroidEnvRequired) ::hasAndroidEnvironment else { _ -> true }
-        val (project, course) = findExistingProject(findProject, request, courseFilter) ?: return false
+        val (project, course) = findExistingProject(findProject, request, courseFilter) ?: return null
         val hyperskillCourse = course as HyperskillCourse
         hyperskillCourse.addProblemsWithTopicWithFiles(project, stepSource)
         hyperskillCourse.selectedProblem = stepId
@@ -57,17 +57,18 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
           navigateToStep(project, hyperskillCourse, stepId)
         }
         synchronizeProjectOnStepOpening(project, hyperskillCourse, stepId)
+        return project
       }
 
       is HyperskillOpenProjectStageRequest -> {
-        val (project, course) = findExistingProject(findProject, request) ?: return false
+        val (project, course) = findExistingProject(findProject, request) ?: return null
         val hyperskillCourse = course as HyperskillCourse
         if (hyperskillCourse.getProjectLesson() == null) {
           computeUnderProgress(project, EduCoreBundle.message("hyperskill.loading.stages")) {
             HyperskillConnector.getInstance().loadStages(hyperskillCourse)
           }
           hyperskillCourse.init(false)
-          val projectLesson = hyperskillCourse.getProjectLesson() ?: return false
+          val projectLesson = hyperskillCourse.getProjectLesson() ?: return null
           val courseDir = project.courseDir
           GeneratorUtils.createLesson(project, projectLesson, courseDir)
           GeneratorUtils.unpackAdditionalFiles(CourseInfoHolder.fromCourse(course, courseDir), ALL_FILES)
@@ -77,10 +78,10 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
         }
         course.selectedStage = request.stageId
         runInEdt { openSelectedStage(hyperskillCourse, project) }
+        return project
       }
 
     }
-    return true
   }
 
   private fun navigateToStep(project: Project, course: Course, stepId: Int) {

@@ -12,7 +12,10 @@ abstract class OpenInIdeRequestHandler<in T : OpenInIdeRequest> {
   @get:DialogTitle
   abstract val courseLoadingProcessTitle: String
 
-  abstract fun openInExistingProject(request: T, findProject: ((Course) -> Boolean) -> Pair<Project, Course>?): Boolean
+  /**
+   * Returns the project in which the course was open, or null if the project was not found
+   */
+  abstract fun openInExistingProject(request: T, findProject: ((Course) -> Boolean) -> Pair<Project, Course>?): Project?
 
   abstract fun getCourse(request: T, indicator: ProgressIndicator): Result<Course, CourseValidationResult>
 }

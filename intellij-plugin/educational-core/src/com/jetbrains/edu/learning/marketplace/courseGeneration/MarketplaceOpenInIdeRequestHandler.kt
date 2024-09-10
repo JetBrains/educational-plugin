@@ -21,12 +21,12 @@ object MarketplaceOpenInIdeRequestHandler : OpenInIdeRequestHandler<MarketplaceO
   override fun openInExistingProject(
     request: MarketplaceOpenCourseRequest,
     findProject: ((Course) -> Boolean) -> Pair<Project, Course>?
-  ): Boolean {
-    val (project, course) = findProject { it.isMarketplace && it.id == request.courseId } ?: return false
-    val marketplaceCourse = course as? EduCourse ?: return false
+  ): Project? {
+    val (project, course) = findProject { it.isMarketplace && it.id == request.courseId } ?: return null
+    val marketplaceCourse = course as? EduCourse ?: return null
     synchronizeCourse(project, marketplaceCourse)
     openTask(request.taskId, course, project)
-    return true
+    return project
   }
 
   override fun getCourse(request: MarketplaceOpenCourseRequest, indicator: ProgressIndicator): Result<Course, CourseValidationResult> {

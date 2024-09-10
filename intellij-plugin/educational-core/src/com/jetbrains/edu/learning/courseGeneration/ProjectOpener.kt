@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.authUtils.requestFocus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.CourseValidationResult
+import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
 
 abstract class ProjectOpener {
@@ -18,16 +19,24 @@ abstract class ProjectOpener {
       requestFocus()
     }
     with(requestHandler) {
-      if (openInOpenedProject(request)) return Ok(true)
-      if (openInRecentProject(request)) return Ok(true)
+      val openedProject = openInOpenedProject(request)
+      if (openedProject != null) {
+        return Ok(true)
+      }
+
+      val recentProject = openInRecentProject(request)
+      if (recentProject != null) {
+        return Ok(true)
+      }
+
       return openInNewProject(request)
     }
   }
 
-  private fun <T: OpenInIdeRequest> OpenInIdeRequestHandler<T>.openInOpenedProject(request: T): Boolean =
+  private fun <T: OpenInIdeRequest> OpenInIdeRequestHandler<T>.openInOpenedProject(request: T): Project? =
     openInExistingProject(request, ::focusOpenProject)
 
-  private fun <T: OpenInIdeRequest> OpenInIdeRequestHandler<T>.openInRecentProject(request: T): Boolean =
+  private fun <T: OpenInIdeRequest> OpenInIdeRequestHandler<T>.openInRecentProject(request: T): Project? =
     openInExistingProject(request, EduBuiltInServerUtils::openRecentProject)
 
   fun <T: OpenInIdeRequest> OpenInIdeRequestHandler<T>.openInNewProject(request: T): Result<Boolean, CourseValidationResult> {
