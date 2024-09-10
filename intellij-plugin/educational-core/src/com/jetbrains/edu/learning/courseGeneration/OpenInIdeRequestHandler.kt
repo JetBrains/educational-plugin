@@ -18,4 +18,12 @@ abstract class OpenInIdeRequestHandler<in T : OpenInIdeRequest> {
   abstract fun openInExistingProject(request: T, findProject: ((Course) -> Boolean) -> Pair<Project, Course>?): Project?
 
   abstract fun getCourse(request: T, indicator: ProgressIndicator): Result<Course, CourseValidationResult>
+
+  /**
+   * Called after the request is handled, and the project is known.
+   * Always runs in EDT.
+   */
+  open fun afterProjectOpened(request: T, project: Project) {
+    // do nothing by default
+  }
 }

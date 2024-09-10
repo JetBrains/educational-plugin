@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.courseGeneration
 
+import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
@@ -19,13 +20,11 @@ abstract class ProjectOpener {
       requestFocus()
     }
     with(requestHandler) {
-      val openedProject = openInOpenedProject(request)
-      if (openedProject != null) {
-        return Ok(true)
-      }
-
-      val recentProject = openInRecentProject(request)
-      if (recentProject != null) {
+      val project = openInOpenedProject(request) ?: openInRecentProject(request)
+      if (project != null) {
+        invokeLater {
+          afterProjectOpened(request, project)
+        }
         return Ok(true)
       }
 
@@ -45,7 +44,12 @@ abstract class ProjectOpener {
     }.map { course ->
       getInEdt {
         requestFocus()
-        newProject(course)
+        val opened = newProject(course)
+        val project = course.project
+        if (opened && project != null) {
+          afterProjectOpened(request, project)
+        }
+        opened
       }
     }
   }
