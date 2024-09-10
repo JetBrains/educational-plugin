@@ -36,19 +36,6 @@ fun showCCPostFeedbackNotification(course: Course, project: Project) {
   )
 }
 
-fun showStudentPostFeedbackNotification(project: Project) {
-  PropertiesComponent.getInstance().setValue(SURVEY_PROMPTED, true)
-  PropertiesComponent.getInstance().setValue(QUESTIONNAIRE_ADVERTISING_NOTIFICATION_SHOWN, true)
-  showFeedbackNotification(
-    project,
-    EduCoreBundle.message("survey.title"),
-    EduCoreBundle.message("survey.template", SURVEY_LINK),
-    SURVEY_LINK
-  )
-}
-
-// we have plans to use the showQuestionnaireAdvertisingNotification once again later
-@Suppress("unused")
 fun showQuestionnaireAdvertisingNotification(project: Project, course: Course) {
   @Suppress("UnstableApiUsage")
   val questionnaireUrl = QUESTIONNAIRE_URL_TEMPLATE

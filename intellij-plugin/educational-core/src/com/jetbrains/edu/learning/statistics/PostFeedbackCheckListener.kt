@@ -8,11 +8,13 @@ import com.jetbrains.edu.learning.projectView.ProgressUtil
 
 class PostFeedbackCheckListener : CheckListener {
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
+    if (isQuestionnaireAdvertisingNotificationShown()) return
     val lesson = task.lesson
     val course = lesson.course
 
-    if (progressPassed(ProgressUtil.countProgress(course)) && !isSurveyPrompted()) {
-      showStudentPostFeedbackNotification(project)
+    val progress = ProgressUtil.countProgress(course)
+    if (course.isMarketplace && progressPassed(progress)) {
+      showQuestionnaireAdvertisingNotification(project, course)
     }
   }
 
