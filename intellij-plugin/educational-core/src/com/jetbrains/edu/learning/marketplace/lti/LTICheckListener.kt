@@ -26,7 +26,7 @@ class LTICheckListener : CheckListener {
     val ltiSettings = LTISettingsManager.instance(project).state
     val launchId = ltiSettings.launchId ?: return
 
-    logger<LTICheckListener>().info("Posting check result for task ${task.name}. solved=${result.isSolved} launchId=$launchId")
+    logger<LTICheckListener>().info("Posting check result for task ${task.name}: solved=${result.isSolved}, launchId=$launchId")
 
     if (result.isSolved) {
       ApplicationManager.getApplication().executeOnPooledThread {

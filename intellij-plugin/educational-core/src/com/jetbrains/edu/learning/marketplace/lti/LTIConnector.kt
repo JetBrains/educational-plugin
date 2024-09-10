@@ -22,7 +22,7 @@ class LTIConnector {
     val ltiEndpoints = retrofit.create(LTIEndpoints::class.java)
 
     ltiEndpoints.reportTaskSolved(launchId, courseEduId, taskEduId).executeParsingErrors().onError {
-      logger<LTIConnector>().warn("[LTI] Failed to report task solved for task $taskEduId: $it")
+      logger<LTIConnector>().warn("[LTI] Failed to report task as solved for task $taskEduId: $it")
       return it
     }
 
