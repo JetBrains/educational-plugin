@@ -1,8 +1,9 @@
 package com.jetbrains.edu.learning.marketplace
 
+import com.intellij.notification.NotificationType
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.util.io.origin
-import com.jetbrains.edu.learning.Err
-import com.jetbrains.edu.learning.Ok
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import com.jetbrains.edu.learning.authUtils.hasOpenDialogs
 import com.jetbrains.edu.learning.authUtils.sendPluginInfoResponse
@@ -11,6 +12,7 @@ import com.jetbrains.edu.learning.marketplace.courseGeneration.MarketplaceOpenCo
 import com.jetbrains.edu.learning.marketplace.courseGeneration.MarketplaceOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.showNotificationFromCourseValidation
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.http.FullHttpRequest
 import io.netty.handler.codec.http.HttpRequest
@@ -31,16 +33,23 @@ abstract class BaseMarketplaceRestService(platformName: String) : OAuthRestServi
       return null
     }
 
-    val openCourseRequest = createMarketplaceOpenCourseRequest(urlDecoder)
-    if (openCourseRequest != null) {
-      openInIDE(openCourseRequest, request, context)
+    createMarketplaceOpenCourseRequest(urlDecoder).map { marketplaceRequest ->
+      openInIDE(marketplaceRequest, request, context)
+      logger<BaseMarketplaceRestService>().info("Received marketplace request: courseId=${marketplaceRequest.courseId}, taskId=${marketplaceRequest.taskId}, ltiSettings=${marketplaceRequest.ltiSettingsDTO}")
+    }.onError { error ->
+      logger<BaseMarketplaceRestService>().warn(error)
+      EduNotificationManager.create(
+        NotificationType.ERROR,
+        EduCoreBundle.message("lti.request.error"),
+        error
+      ).notify(null)
     }
 
     sendStatus(HttpResponseStatus.BAD_REQUEST, false, context.channel())
     return "Unknown command: ${urlDecoder.uri()}"
   }
 
-  protected abstract fun createMarketplaceOpenCourseRequest(urlDecoder: QueryStringDecoder): MarketplaceOpenCourseRequest?
+  protected abstract fun createMarketplaceOpenCourseRequest(urlDecoder: QueryStringDecoder): Result<MarketplaceOpenCourseRequest, String>
 
   private fun openInIDE(
     openCourseRequest: MarketplaceOpenCourseRequest,
