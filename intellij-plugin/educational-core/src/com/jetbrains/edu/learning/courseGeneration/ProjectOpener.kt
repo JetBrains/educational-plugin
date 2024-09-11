@@ -45,9 +45,11 @@ abstract class ProjectOpener {
       getInEdt {
         requestFocus()
         val opened = newProject(course)
-        val project = course.project
-        if (opened && project != null) {
-          afterProjectOpened(request, project)
+        if (opened) {
+          val project = course.project ?: openInExistingProject(request, ::focusOpenProject, searchProjectOnly = true)
+          if (project != null) {
+            afterProjectOpened(request, project)
+          }
         }
         opened
       }

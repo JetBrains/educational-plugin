@@ -20,9 +20,11 @@ object MarketplaceOpenInIdeRequestHandler : OpenInIdeRequestHandler<MarketplaceO
 
   override fun openInExistingProject(
     request: MarketplaceOpenCourseRequest,
-    findProject: ((Course) -> Boolean) -> Pair<Project, Course>?
+    findProject: ((Course) -> Boolean) -> Pair<Project, Course>?,
+    searchProjectOnly: Boolean
   ): Project? {
     val (project, course) = findProject { it.isMarketplace && it.id == request.courseId } ?: return null
+    if (searchProjectOnly) return project
     val marketplaceCourse = course as? EduCourse ?: return null
     synchronizeCourse(project, marketplaceCourse)
     return project

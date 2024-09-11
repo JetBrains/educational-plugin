@@ -40,7 +40,8 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
 
   override fun openInExistingProject(
     request: HyperskillOpenRequest,
-    findProject: ((Course) -> Boolean) -> Pair<Project, Course>?
+    findProject: ((Course) -> Boolean) -> Pair<Project, Course>?,
+    searchProjectOnly: Boolean
   ): Project? {
     when (request) {
       is HyperskillOpenStepRequestBase -> {
@@ -49,6 +50,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
         val isAndroidEnvRequired = stepSource.framework == EduNames.ANDROID
         val courseFilter: (Course) -> Boolean = if (isAndroidEnvRequired) ::hasAndroidEnvironment else { _ -> true }
         val (project, course) = findExistingProject(findProject, request, courseFilter) ?: return null
+        if (searchProjectOnly) return project
         val hyperskillCourse = course as HyperskillCourse
         hyperskillCourse.addProblemsWithTopicWithFiles(project, stepSource)
         hyperskillCourse.selectedProblem = stepId
@@ -62,6 +64,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
 
       is HyperskillOpenProjectStageRequest -> {
         val (project, course) = findExistingProject(findProject, request) ?: return null
+        if (searchProjectOnly) return project
         val hyperskillCourse = course as HyperskillCourse
         if (hyperskillCourse.getProjectLesson() == null) {
           computeUnderProgress(project, EduCoreBundle.message("hyperskill.loading.stages")) {

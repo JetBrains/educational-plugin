@@ -13,9 +13,10 @@ abstract class OpenInIdeRequestHandler<in T : OpenInIdeRequest> {
   abstract val courseLoadingProcessTitle: String
 
   /**
-   * Returns the project in which the course was open, or null if the project was not found
+   * Returns the project in which the course was open, or null if the project was not found.
+   * If [searchProjectOnly] is true, no opening is performed, only the project is searched.
    */
-  abstract fun openInExistingProject(request: T, findProject: ((Course) -> Boolean) -> Pair<Project, Course>?): Project?
+  abstract fun openInExistingProject(request: T, findProject: ((Course) -> Boolean) -> Pair<Project, Course>?, searchProjectOnly: Boolean = false): Project?
 
   abstract fun getCourse(request: T, indicator: ProgressIndicator): Result<Course, CourseValidationResult>
 
