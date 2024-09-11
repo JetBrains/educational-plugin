@@ -20,8 +20,6 @@ import java.util.regex.Pattern
 
 abstract class BaseMarketplaceRestService(platformName: String) : OAuthRestService(platformName) {
 
-  abstract val courseIdParamName: String
-
   override fun execute(urlDecoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
     if (urlDecoder.path().contains(INFO)) {
       sendPluginInfoResponse(request, context)
@@ -33,15 +31,16 @@ abstract class BaseMarketplaceRestService(platformName: String) : OAuthRestServi
       return null
     }
 
-    val courseId = getIntParameter(courseIdParamName, urlDecoder)
-    if (courseId != -1) {
-      val eduTaskId = getIntParameter(EDU_TASK_ID, urlDecoder)
-      openInIDE(MarketplaceOpenCourseRequest(courseId, eduTaskId), request, context)
+    val openCourseRequest = createMarketplaceOpenCourseRequest(urlDecoder)
+    if (openCourseRequest != null) {
+      openInIDE(openCourseRequest, request, context)
     }
 
     sendStatus(HttpResponseStatus.BAD_REQUEST, false, context.channel())
     return "Unknown command: ${urlDecoder.uri()}"
   }
+
+  protected abstract fun createMarketplaceOpenCourseRequest(urlDecoder: QueryStringDecoder): MarketplaceOpenCourseRequest?
 
   private fun openInIDE(
     openCourseRequest: MarketplaceOpenCourseRequest,

@@ -3,21 +3,19 @@ package com.jetbrains.edu.learning.marketplace.lti
 import com.intellij.openapi.diagnostic.logger
 import com.jetbrains.edu.learning.marketplace.BaseMarketplaceRestService
 import com.jetbrains.edu.learning.marketplace.LTI
-import io.netty.channel.ChannelHandlerContext
-import io.netty.handler.codec.http.FullHttpRequest
+import com.jetbrains.edu.learning.marketplace.courseGeneration.MarketplaceOpenCourseRequest
 import io.netty.handler.codec.http.QueryStringDecoder
 
 class LTIRestService : BaseMarketplaceRestService(LTI) {
-  override val courseIdParamName: String = "marketplace_course_id"
-
-  override fun execute(urlDecoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
-    val courseId = getIntParameter(courseIdParamName, urlDecoder)
+  override fun createMarketplaceOpenCourseRequest(urlDecoder: QueryStringDecoder): MarketplaceOpenCourseRequest? {
+    val courseId = getIntParameter(COURSE_ID, urlDecoder)
+    if (courseId == -1) return null
+    val eduTaskId = getIntParameter(EDU_TASK_ID, urlDecoder)
     val launchId = getStringParameter(LAUNCH_ID, urlDecoder)
-    val eduTaskId = getStringParameter(EDU_TASK_ID, urlDecoder)
     val lmsDescription = getStringParameter(LMS_DESCRIPTION, urlDecoder)
     logger<LTIRestService>().info("LTI request with course=$courseId launchId=$launchId eduTaskId=$eduTaskId: $lmsDescription")
 
-    return super.execute(urlDecoder, request, context)
+    return MarketplaceOpenCourseRequest(courseId, eduTaskId, LTISettingsDTO(launchId, lmsDescription))
   }
 
   override fun getServiceName(): String = "edu/lti"
@@ -25,5 +23,6 @@ class LTIRestService : BaseMarketplaceRestService(LTI) {
   companion object {
     private const val LAUNCH_ID = "launch_id"
     private const val LMS_DESCRIPTION = "lms_description"
+    private const val COURSE_ID = "marketplace_course_id"
   }
 }
