@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.marketplace.courseGeneration
 
-import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.*
@@ -11,6 +10,7 @@ import com.jetbrains.edu.learning.courseGeneration.OpenInIdeRequestHandler
 import com.jetbrains.edu.learning.marketplace.MarketplaceSolutionLoader
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.checkForUpdates
+import com.jetbrains.edu.learning.marketplace.lti.LTISettingsManager
 import com.jetbrains.edu.learning.marketplace.updateFeaturedStatus
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
@@ -25,7 +25,6 @@ object MarketplaceOpenInIdeRequestHandler : OpenInIdeRequestHandler<MarketplaceO
     val (project, course) = findProject { it.isMarketplace && it.id == request.courseId } ?: return null
     val marketplaceCourse = course as? EduCourse ?: return null
     synchronizeCourse(project, marketplaceCourse)
-    openTask(request.taskId, course, project)
     return project
   }
 
@@ -42,17 +41,24 @@ object MarketplaceOpenInIdeRequestHandler : OpenInIdeRequestHandler<MarketplaceO
     course.validateLanguage().onError { return Err(it) }
     course.updateFeaturedStatus()
 
-    openTask(request.taskId, course, course.project)
-
     return Ok(course)
   }
 
-  private fun openTask(taskId: Int, course: EduCourse, project: Project?) {
-    if (taskId != -1 && project != null) {
+  override fun afterProjectOpened(request: MarketplaceOpenCourseRequest, project: Project) {
+    openTask(request.taskId, project.course, project)
+
+    val ltiSettings = request.ltiSettingsDTO
+    if (ltiSettings != null) {
+      val settingsState = LTISettingsManager.instance(project).state
+      settingsState.launchId = ltiSettings.launchId
+      settingsState.lmsDescription = ltiSettings.lmsDescription
+    }
+  }
+
+  private fun openTask(taskId: Int, course: Course?, project: Project) {
+    if (taskId != -1 && course != null) {
       course.allTasks.firstOrNull { it.id == taskId }?.let {
-        runInEdt {
-          NavigationUtils.navigateToTask(project, it)
-        }
+        NavigationUtils.navigateToTask(project, it)
       }
     }
   }
