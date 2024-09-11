@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.rd.util.lifetime
 import com.intellij.openapi.ui.MessageConstants
 import com.intellij.openapi.ui.Messages
-import com.intellij.platform.backend.workspace.WorkspaceModel
 import com.intellij.util.ui.update.MergingUpdateQueue
 import com.intellij.util.ui.update.Update
 import com.jetbrains.edu.csharp.messages.EduCSharpBundle
@@ -26,9 +25,7 @@ import com.jetbrains.rider.model.riderSolutionLifecycle
 import com.jetbrains.rider.projectView.indexing.updateIndexRules
 import com.jetbrains.rider.projectView.solution
 import com.jetbrains.rider.projectView.workspace.WorkspaceModelEvents
-import com.jetbrains.rider.projectView.workspace.findProjectsByName
 import com.jetbrains.rider.projectView.workspace.getId
-import com.jetbrains.rider.projectView.workspace.getSolutionEntity
 import com.jetbrains.rider.util.idea.runCommandUnderProgress
 import com.jetbrains.rider.workspaceModel.WorkspaceUserModelUpdater
 import java.io.File
@@ -60,9 +57,7 @@ class CSharpBackendService(private val project: Project) : Disposable {
     // Should be done synchronously, since the csproj name depends on the course structure.
     // If we do this asynchronously, the course structure will be modified earlier than
     // we retrieve the csproj name to unload
-    val entities = tasks.mapNotNull { task ->
-      WorkspaceModel.getInstance(project).findProjectsByName(task.getCSProjFileNameWithoutExtension()).firstOrNull()
-    }
+    val entities = tasks.mapNotNull { task -> task.toProjectModelEntity(project) }
     val ids = entities.mapNotNull { it.getId(project) }.ifEmpty { return }
     val command = RdRemoveItemsCommand(ids)
     try {
@@ -102,7 +97,7 @@ class CSharpBackendService(private val project: Project) : Disposable {
         .filterIsInstance<Task>()
         .toList()
       val csprojTaskPaths = tasks.map { it.csProjPathByTask(project) }
-      val parentId = WorkspaceModel.getInstance(project).getSolutionEntity()?.getId(project) ?: return
+      val parentId = project.getSolutionEntity()?.getId(project) ?: return
       val parameters = RdPostProcessParameters(false, listOf())
       val command = AddProjectCommand(parentId, csprojTaskPaths, listOf(), true, parameters)
       try {

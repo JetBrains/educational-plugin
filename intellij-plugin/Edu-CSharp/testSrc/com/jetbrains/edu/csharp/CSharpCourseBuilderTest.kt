@@ -64,6 +64,7 @@ class CSharpCourseBuilderTest : CourseGenerationTestBase<CSharpProjectSettings>(
           dir("test") {
             file("Test.cs", """
               // ReSharper disable all CheckNamespace
+              // Please ensure all the tests are contained within the same namespace
               
               [TestFixture]
               internal class Test
@@ -128,6 +129,7 @@ class CSharpCourseBuilderTest : CourseGenerationTestBase<CSharpProjectSettings>(
           dir("test") {
             file("Test.cs", """
               // ReSharper disable all CheckNamespace
+              // Please ensure all the tests are contained within the same namespace
               
               [TestFixture]
               internal class Test
@@ -161,6 +163,7 @@ class CSharpCourseBuilderTest : CourseGenerationTestBase<CSharpProjectSettings>(
           dir("test") {
             file("Test.cs", """
               // ReSharper disable all CheckNamespace
+              // Please ensure all the tests are contained within the same namespace
               
               [TestFixture]
               internal class Test
@@ -214,6 +217,7 @@ class CSharpCourseBuilderTest : CourseGenerationTestBase<CSharpProjectSettings>(
           dir("test") {
             file("Test.cs", """
               // ReSharper disable all CheckNamespace
+              // Please ensure all the tests are contained within the same namespace
               
               [TestFixture]
               internal class Test

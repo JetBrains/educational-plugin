@@ -88,7 +88,8 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
         indicator,
         processListener = processListener,
         testEventsListener = testEventsListener
-      )) {
+      )
+    ) {
       LOG.warn("Execution failed because the configuration is broken")
       return noTestsRun
     }
@@ -126,18 +127,6 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
 
   private fun SMTestProxy.finishedSuccessfully(): Boolean {
     return !hasErrors() && (isPassed || isIgnored)
-  }
-
-  /**
-   * Some testing frameworks add attributes to be shown in console (ex. Jest - ANSI color codes)
-   * which are not supported in Task Description, so they need to be removed
-   */
-  private fun removeAttributes(text: String): String {
-    val buffer = StringBuilder()
-    AnsiEscapeDecoder().escapeText(text, ProcessOutputTypes.STDOUT) { chunk, _ ->
-      buffer.append(chunk)
-    }
-    return buffer.toString()
   }
 
   /**
@@ -255,6 +244,18 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
       val errorMessage = node.errorMessage.orEmpty()
       val index = StringUtil.indexOfIgnoreCase(errorMessage, "expected:", 0)
       return if (index != -1) errorMessage.substring(0, index).trim() else errorMessage
+    }
+
+    /**
+     * Some testing frameworks add attributes to be shown in console (ex. Jest - ANSI color codes)
+     * which are not supported in Task Description, so they need to be removed
+     */
+    fun removeAttributes(text: String): String {
+      val buffer = StringBuilder()
+      AnsiEscapeDecoder().escapeText(text, ProcessOutputTypes.STDOUT) { chunk, _ ->
+        buffer.append(chunk)
+      }
+      return buffer.toString()
     }
 
     private fun createConfigurationTypeComparator(configurationType: ConfigurationType?): Comparator<ConfigurationFromContext> {

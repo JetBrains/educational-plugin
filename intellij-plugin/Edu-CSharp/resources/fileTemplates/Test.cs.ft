@@ -1,4 +1,5 @@
 // ReSharper disable all CheckNamespace
+// Please ensure all the tests are contained within the same namespace
 
 [TestFixture]
 internal class Test

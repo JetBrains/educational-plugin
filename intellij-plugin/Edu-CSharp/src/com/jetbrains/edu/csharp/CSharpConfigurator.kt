@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.BuildNumber
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.EducationalCoreIcons
+import com.jetbrains.edu.csharp.checker.CSharpTaskCheckerProvider
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
@@ -32,7 +33,7 @@ class CSharpConfigurator : EduConfigurator<CSharpProjectSettings> {
     get() = listOf(TEST_DIRECTORY)
 
   override val taskCheckerProvider: TaskCheckerProvider
-    get() = TODO("Not yet implemented")
+    get() = CSharpTaskCheckerProvider()
 
   override fun excludeFromArchive(project: Project, course: Course, file: VirtualFile): Boolean {
     if (super.excludeFromArchive(project, course, file)) return true
