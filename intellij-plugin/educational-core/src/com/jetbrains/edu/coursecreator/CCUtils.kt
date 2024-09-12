@@ -30,6 +30,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.Function
 import com.intellij.util.PathUtil
+import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
 import com.jetbrains.edu.coursecreator.handlers.StudyItemRefactoringHandler
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
@@ -219,6 +220,7 @@ object CCUtils {
       val lessonDir = lesson.getDir(project.courseDir)
       if (lessonDir != null) {
         StudyItemRefactoringHandler.processBeforeLessonMovement(project, lesson, sectionDir)
+        CCFrameworkLessonManager.getInstance(project).migrateRecords(lesson, sectionDir)
         moveLesson(lessonDir, sectionDir)
         lesson.index = i + 1
         lesson.parent = section

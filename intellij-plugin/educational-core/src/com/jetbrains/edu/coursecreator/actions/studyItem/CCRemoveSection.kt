@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
 import com.jetbrains.edu.coursecreator.CCUtils.updateHigherElements
+import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
 import com.jetbrains.edu.coursecreator.handlers.StudyItemRefactoringHandler
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
@@ -46,6 +47,7 @@ class CCRemoveSection : DumbAwareAction() {
     val lessonsFromSection = section.lessons
     lessonsFromSection.forEach { lesson ->
       StudyItemRefactoringHandler.processBeforeLessonMovement(project, lesson, courseDir)
+      CCFrameworkLessonManager.getInstance(project).migrateRecords(lesson, courseDir)
     }
     if (removeSectionDir(file, courseDir)) {
       val sectionIndex = section.index
