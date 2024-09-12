@@ -1,16 +1,12 @@
 package com.jetbrains.edu.cpp
 
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.progress.runBlockingMaybeCancellable
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiUtilBase
-import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace
 import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
@@ -94,14 +90,9 @@ open class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
     return psiFile.text
   }
 
+  // BACKCOMPAT: 2024.1. Inline it.
   override fun refreshProject(project: Project, cause: RefreshCause) {
-    ApplicationManager.getApplication().executeOnPooledThread {
-      //TODO(launch coroutine properly)
-      runBlockingMaybeCancellable {
-        // if it is a new project it will be initialized, else it will be reloaded only.
-        CMakeWorkspace.getInstance(project).linkCMakeProject(VfsUtil.virtualToIoFile(project.courseDir))
-      }
-    }
+    refreshCMakeProject(project)
   }
 
   override fun validateItemName(project: Project, name: String, itemType: StudyItemType): String? =
