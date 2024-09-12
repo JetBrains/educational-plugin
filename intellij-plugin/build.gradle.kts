@@ -829,6 +829,13 @@ if (isAtLeast242) {
 
       implementation(project(":intellij-plugin:educational-core"))
       testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+      testImplementation("org.testng:testng:7.7.0")
+    }
+    tasks.register<Test>("slowCSharpTests") {
+      useTestNG()
+      testClassesDirs = sourceSets["test"].output.classesDirs
+      classpath = sourceSets["test"].runtimeClasspath
+      include("**/csharp/slow/checker/**/*.class")
     }
   }
 }

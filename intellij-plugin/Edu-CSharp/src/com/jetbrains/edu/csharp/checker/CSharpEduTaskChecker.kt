@@ -137,7 +137,8 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
       .associateWithNotNullTo(HashMap()) { (it.descriptor as? RdUnitTestSessionNodeDescriptor)?.getEduTestInfo() }
 
     val firstFailedNode = testInfoWithNodes.keys.firstOrNull {
-      (it.descriptor as RdUnitTestSessionNodeDescriptor).status != RdUnitTestStatus.Success
+      val status = (it.descriptor as RdUnitTestSessionNodeDescriptor).status
+      status != RdUnitTestStatus.Success
     }
     if (firstFailedNode != null) {
       if (!getFirstFailedTestInfo(rdSession, testInfoWithNodes, firstFailedNode)) {
@@ -181,10 +182,11 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
 
   private fun RdUnitTestSessionNodeDescriptor.getEduTestInfo(data: RdUnitTestResultData? = null): EduTestInfo {
     val (diff, infoLines) = tryGetDiff(data?.exceptionLines, text)
-    val message = infoLines.ifBlank { status.name }
+    val testStatus = data?.status ?: status
+    val message = infoLines.ifBlank { testStatus.name }
     return EduTestInfo(
-      name = text,
-      status = status.toPresentableStatus().value,
+      name = data?.text ?: text,
+      status = testStatus.toPresentableStatus().value,
       message = EduTaskCheckerBase.removeAttributes(fillWithIncorrect(message)),
       details = if (data != null && data.exceptionLines.isNotEmpty()) data.exceptionLines else statusMessage.trim(),
       isFinishedSuccessfully = status == RdUnitTestStatus.Success || status == RdUnitTestStatus.Ignored,
