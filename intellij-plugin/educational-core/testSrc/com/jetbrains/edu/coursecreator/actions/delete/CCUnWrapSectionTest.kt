@@ -4,11 +4,10 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCRemoveSection
+import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
-import com.jetbrains.edu.learning.EduActionTestCase
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.CourseMode
-import com.jetbrains.edu.learning.fileTree
-import com.jetbrains.edu.learning.testAction
 import org.junit.Test
 
 class CCUnWrapSectionTest : EduActionTestCase() {
@@ -126,5 +125,31 @@ class CCUnWrapSectionTest : EduActionTestCase() {
     assertEquals(1, course.getLesson("lesson1")!!.index)
     assertEquals(2, course.getSection("section2")!!.index)
     assertEquals(3, course.getLesson("lesson2")!!.index)
+  }
+
+  @Test
+  fun `test task records in framework lesson remain correct after section unwrap`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      section("section1") {
+        frameworkLesson("lesson1") {
+          eduTask("task1") {
+            taskFile("src/Task.kt")
+          }
+        }
+      }
+    }
+
+    val lesson = course.getSection("section1")!!.lessons.first()
+    val task = lesson.taskList.first()
+
+    val manager = CCFrameworkLessonManager.getInstance(project)
+
+    manager.updateRecord(task, 1)
+
+    val sectionDir = findFile("section1")
+
+    testAction(CCRemoveSection.ACTION_ID, dataContext(arrayOf(sectionDir)))
+
+    assertEquals(1, manager.getRecord(task))
   }
 }

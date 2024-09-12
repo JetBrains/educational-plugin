@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.actions.create
 
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCWrapWithSection
+import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduTestInputDialog
 import com.jetbrains.edu.learning.courseFormat.CourseMode
@@ -111,5 +112,30 @@ class CCWrapInSectionTest : EduActionTestCase() {
     withEduTestDialog(EduTestInputDialog("section3")) {
       testAction(CCWrapWithSection.ACTION_ID, dataContext(arrayOf(taskDir)), shouldBeEnabled = false)
     }
+  }
+
+  @Test
+  fun `test task records in framework lesson remain correct after lesson wrap into section`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      frameworkLesson("lesson1") {
+        eduTask("task1") {
+          taskFile("src/Task.kt")
+        }
+      }
+    }
+
+    val lesson = course.lessons.first()
+    val task = lesson.taskList.first()
+
+    val manager = CCFrameworkLessonManager.getInstance(project)
+
+    manager.updateRecord(task, 1)
+
+    val lessonDir = findFile("lesson1")
+    withEduTestDialog(EduTestInputDialog("section1")) {
+      testAction(CCWrapWithSection.ACTION_ID, dataContext(arrayOf(lessonDir)), shouldBeEnabled = true)
+    }
+
+    assertEquals(1, manager.getRecord(task))
   }
 }
