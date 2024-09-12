@@ -3,7 +3,8 @@ package com.jetbrains.edu.csharp
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.workspace.WorkspaceModel
 import com.jetbrains.edu.learning.capitalize
-import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.rider.ideaInterop.fileTypes.msbuild.CsprojFileType
@@ -14,12 +15,9 @@ import com.jetbrains.rider.projectView.workspace.getSolutionEntity
 
 val DEFAULT_DOT_NET = ProjectTemplateTargetFramework.latest.presentation
 
-fun Task.csProjPathByTask(project: Project): String = GeneratorUtils.joinPaths(pathByStudyItem(project, this), getCSProjFileName())
+fun Task.csProjPathByTask(project: Project): String = GeneratorUtils.joinPaths(getDir(project.courseDir)?.path, getCSProjFileName())
 
 fun getDotNetVersion(version: String?): String = version ?: DEFAULT_DOT_NET
-
-fun pathByStudyItem(project: Project, item: StudyItem): String =
-  GeneratorUtils.joinPaths(project.basePath, item.pathInCourse)
 
 fun Task.getCSProjFileName(): String = "${getCSProjFileNameWithoutExtension()}.${CsprojFileType.defaultExtension}"
 

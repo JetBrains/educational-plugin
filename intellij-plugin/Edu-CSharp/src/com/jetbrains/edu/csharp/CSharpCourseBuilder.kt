@@ -2,21 +2,20 @@ package com.jetbrains.edu.csharp
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
+import com.intellij.platform.backend.workspace.WorkspaceModel
 import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
 import com.jetbrains.edu.csharp.messages.EduCSharpBundle
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.Section
-import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.rdclient.util.idea.toIOFile
 import com.jetbrains.rider.ideaInterop.fileTypes.msbuild.CsprojFileType
 import com.jetbrains.rider.projectView.projectTemplates.components.ProjectTemplateTargetFramework
+import com.jetbrains.rider.projectView.workspace.findProjects
 
 
 class CSharpCourseBuilder : EduCourseBuilder<CSharpProjectSettings> {
@@ -63,12 +62,6 @@ class CSharpCourseBuilder : EduCourseBuilder<CSharpProjectSettings> {
     }
   }
 
-  override fun onStudyItemCreation(project: Project, item: StudyItem) {
-    super.onStudyItemCreation(project, item)
-    when (item) {
-      is Task -> CSharpBackendService.getInstance(project).addCSProjectFilesToSolution(listOf(item))
-    }
-  }
 
   override fun extractInitializationParams(info: NewStudyItemInfo): Map<String, String> =
     mutableMapOf(VERSION_VARIABLE to getDotNetVersion(info.getUserData(VERSION_KEY)))
@@ -88,6 +81,31 @@ class CSharpCourseBuilder : EduCourseBuilder<CSharpProjectSettings> {
     val csprojNameNoExtension = info.getUserData(CSPROJ_NAME_PER_TASK_KEY) ?: error("CSProj filename not found")
     info.putUserData(VERSION_KEY, course.languageVersion)
     return TemplateFileInfo(PROJECT_FILE_TEMPLATE, "$csprojNameNoExtension.${CsprojFileType.defaultExtension}", false)
+  }
+
+  override fun refreshProject(project: Project, cause: RefreshCause) {
+    super.refreshProject(project, cause)
+    val course = project.course ?: error("No course associated with project")
+
+    if (cause == RefreshCause.PROJECT_CREATED) {
+      val topLevelDirectories = course.sections + course.lessons.filter { it.getDir(project.courseDir)?.parent == project.courseDir }
+      val filesToIndex = topLevelDirectories.mapNotNull { it.getDir(project.courseDir)?.toIOFile() }
+      CSharpBackendService.getInstance(project).includeFilesToCourseView(filesToIndex)
+    }
+    val projectModelEntities = WorkspaceModel.getInstance(project).findProjects().associateByTo(HashMap()) { it.name }
+    val tasksToAdd = mutableListOf<Task>()
+    course.visitTasks { task ->
+      val taskParent = task.parent
+      if (course.isStudy && taskParent is FrameworkLesson && taskParent.currentTask() != task) return@visitTasks
+      val csproj = task.getCSProjFileNameWithoutExtension()
+      val entity = projectModelEntities.remove(csproj)
+      if (entity == null) {
+        tasksToAdd.add(task)
+      }
+    }
+
+    CSharpBackendService.getInstance(project).removeProjectModelEntitiesFromSolution(projectModelEntities.values.toList())
+    CSharpBackendService.getInstance(project).addTasksCSProjectToSolution(tasksToAdd)
   }
 
   override fun getSupportedLanguageVersions(): List<String> = ProjectTemplateTargetFramework.allPredefinedNet.map { it.presentation }

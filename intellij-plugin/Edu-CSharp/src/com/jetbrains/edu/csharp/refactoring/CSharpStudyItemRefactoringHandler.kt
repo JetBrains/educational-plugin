@@ -6,7 +6,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiReference
 import com.jetbrains.edu.coursecreator.handlers.StudyItemRefactoringHandler
-import com.jetbrains.edu.csharp.CSharpBackendService
 import com.jetbrains.edu.csharp.CSharpConfigurator
 import com.jetbrains.edu.csharp.formatForCSProj
 import com.jetbrains.edu.csharp.getCSProjFileName
@@ -25,7 +24,6 @@ import kotlin.io.path.relativeTo
 class CSharpStudyItemRefactoringHandler : StudyItemRefactoringHandler {
   override fun beforeMoveLesson(project: Project, lesson: Lesson, newParent: VirtualFile) {
     val tasks = lesson.taskList
-    CSharpBackendService.getInstance(project).removeCSProjectFilesFromSolution(tasks)
     tasks.forEach { task ->
       val oldCSProjFileName = task.getCSProjFileName()
       val newCSProjFileName = constructNewCSProjFileNameOnMove(
@@ -36,8 +34,6 @@ class CSharpStudyItemRefactoringHandler : StudyItemRefactoringHandler {
   }
 
   override fun beforeMoveTask(project: Project, task: Task, newParent: VirtualFile) {
-    // unload the corresponding project from a solution
-    CSharpBackendService.getInstance(project).removeCSProjectFilesFromSolution(listOf(task))
     val oldCSProjFileName = task.getCSProjFileName()
     val newCSProjFileName = constructNewCSProjFileNameOnMove(task.name, newParent.toNioPath(), project.courseDir.toNioPath())
     renameCSProj(project, task, oldCSProjFileName, newCSProjFileName)
@@ -77,7 +73,6 @@ class CSharpStudyItemRefactoringHandler : StudyItemRefactoringHandler {
 
   override fun beforeRenameStudyItem(project: Project, item: StudyItem, newName: String) {
     val tasks = item.getTasks()
-    CSharpBackendService.getInstance(project).removeCSProjectFilesFromSolution(tasks)
     tasks.forEach { task ->
       val oldCSProjFileName = task.getCSProjFileName()
       val newCSProjFileName = oldCSProjFileName

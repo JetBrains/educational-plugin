@@ -6,9 +6,11 @@ import com.intellij.openapi.vfs.newvfs.events.VFileCreateEvent
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.openapi.vfs.newvfs.events.VFileMoveEvent
 import com.intellij.openapi.vfs.newvfs.events.VFilePropertyChangeEvent
-import com.jetbrains.edu.learning.getTask
+import com.jetbrains.edu.learning.RefreshCause
+import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.getStudyItem
 import com.jetbrains.rdclient.util.idea.toIOFile
-import com.jetbrains.rider.ideaInterop.fileTypes.msbuild.CsprojFileType
 
 class CSharpVirtualFileListener(private val project: Project) : BulkFileListener {
   override fun after(events: List<VFileEvent>) {
@@ -38,6 +40,9 @@ class CSharpVirtualFileListener(private val project: Project) : BulkFileListener
       // is needed to trigger indexing for top-level files and directories in the project for them to appear in the courseView
       CSharpBackendService.getInstance(project).includeFilesToCourseView(listOf(file))
     }
+    if (event.file.getStudyItem(project) != null) {
+      project.course?.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
+    }
   }
 
   private fun propertyChanged(propertyChangeEvent: VFilePropertyChangeEvent) {
@@ -45,10 +50,6 @@ class CSharpVirtualFileListener(private val project: Project) : BulkFileListener
     if (file.parent.path == project.basePath) {
       CSharpBackendService.getInstance(project).excludeFilesFromCourseView(listOf(propertyChangeEvent.oldPath.toIOFile()))
       CSharpBackendService.getInstance(project).includeFilesToCourseView(listOf(file.toIOFile()))
-    }
-    else if (file.extension == CsprojFileType.defaultExtension) {
-      val task = file.parent.getTask(project) ?: error("CSProj file found in an unexpected place: ${file.parent}")
-      CSharpBackendService.getInstance(project).addCSProjectFilesToSolution(listOf(task))
     }
   }
 }

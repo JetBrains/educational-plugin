@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.pathRelativeToTask
+import com.jetbrains.rider.ideaInterop.fileTypes.sln.SolutionFileType
 import org.jetbrains.annotations.NonNls
 import javax.swing.Icon
 
@@ -37,7 +38,9 @@ class CSharpConfigurator : EduConfigurator<CSharpProjectSettings> {
 
   override fun excludeFromArchive(project: Project, course: Course, file: VirtualFile): Boolean {
     if (super.excludeFromArchive(project, course, file)) return true
-    return file.pathRelativeToTask(project).contains("$BIN_DIRECTORY/") || file.pathRelativeToTask(project).contains("$OBJ_DIRECTORY/")
+    return file.extension == SolutionFileType.defaultExtension
+           || file.pathRelativeToTask(project).contains("$BIN_DIRECTORY/")
+           || file.pathRelativeToTask(project).contains("$OBJ_DIRECTORY/")
   }
 
   override val defaultPlaceholderText: String
