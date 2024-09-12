@@ -82,7 +82,7 @@ abstract class EduStudyItemRenameProcessor : RenamePsiFileProcessor() {
         override fun performRename(newName: String) {
           StudyItemRefactoringHandler.processBeforeRename(project, item, newName)
           super.performRename(newName)
-          CCFrameworkLessonManager.getInstance(project).migrateRecords(item, newName)
+          CCFrameworkLessonManager.getInstance(project).migrateRecordsRename(item, newName)
           item.name = newName
           YamlFormatSynchronizer.saveItem(item.parent)
           item.course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)

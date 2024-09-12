@@ -292,22 +292,40 @@ class CCFrameworkLessonManager(
     state.removeTaskRecord(key)
   }
 
-  fun migrateRecords(studyItem: StudyItem, newName: String) {
+  private fun migrateRecords(studyItem: StudyItem, oldPath: String, newPath: String) {
     if (studyItem is Course) return
-    val oldName = studyItem.name
-
-    val prefixPath = studyItem.parent.pathInCourse
 
     studyItem.visitTasks { task ->
       if (task.parent !is FrameworkLesson) return@visitTasks
 
       val suffixPath = task.getRelativePath(studyItem)
 
-      val oldPath = listOf(prefixPath, oldName, suffixPath).filter { it.isNotEmpty() }.joinToString(VfsUtilCore.VFS_SEPARATOR)
-      val newPath = listOf(prefixPath, newName, suffixPath).filter { it.isNotEmpty() }.joinToString(VfsUtilCore.VFS_SEPARATOR)
+      val oldTaskPath = concatNonEmptyPaths(oldPath, suffixPath)
+      val newTaskPath = concatNonEmptyPaths(newPath, suffixPath)
 
-      state.migrateTaskRecord(oldPath, newPath)
+      state.migrateTaskRecord(oldTaskPath, newTaskPath)
     }
+  }
+
+  fun migrateRecords(studyItem: StudyItem, newParent: VirtualFile) {
+    val oldPath = studyItem.pathInCourse
+
+    val newParentPath = VfsUtilCore.getRelativePath(newParent, project.courseDir) ?: ""
+    val newPath = concatNonEmptyPaths(newParentPath, studyItem.name)
+    migrateRecords(studyItem, oldPath, newPath)
+  }
+
+  fun migrateRecordsRename(studyItem: StudyItem, newName: String) {
+    if (studyItem is Course) return
+
+    val oldPath = studyItem.pathInCourse
+    val newPath = concatNonEmptyPaths(studyItem.parent.pathInCourse, newName)
+
+    migrateRecords(studyItem, oldPath, newPath)
+  }
+
+  private fun concatNonEmptyPaths(vararg paths: String): String {
+    return paths.filter { it.isNotEmpty() }.joinToString(VfsUtilCore.VFS_SEPARATOR)
   }
 
   @VisibleForTesting
