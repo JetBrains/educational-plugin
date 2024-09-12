@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator.actions.move
 
+import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
 import com.jetbrains.edu.learning.actions.move.MoveTestBase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import org.junit.Test
@@ -191,5 +192,81 @@ class CCMoveLessonTest : MoveTestBase() {
     assertEquals(1, section2.getLesson("lesson4")!!.index)
     assertEquals(2, section2.getLesson("lesson2")!!.index)
     assertEquals(3, section2.getLesson("lesson5")!!.index)
+  }
+
+  @Test
+  fun `test task records in framework lesson remain correct after lesson move to another section`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      section("section1") {
+        frameworkLesson("lesson1") {
+          eduTask("task1") {
+            taskFile("src/Task.kt")
+          }
+        }
+      }
+      section("section2") {
+        lesson("lesson2")
+      }
+    }
+
+    val lesson = course.getSection("section1")?.lessons?.first()!!
+    val task = lesson.taskList.first()
+
+    val manager = CCFrameworkLessonManager.getInstance(project)
+
+    manager.updateRecord(task, 1)
+
+    val sourceDir = findPsiDirectory("section1/lesson1")
+    val targetDir = findPsiDirectory("section2/lesson2")
+
+    doMoveAction(course, sourceDir, targetDir, delta = 0)
+
+    val section1 = course.getSection("section1")!!
+    val section2 = course.getSection("section2")!!
+
+    assertEquals(0, section1.items.size)
+
+    assertEquals(2, section2.items.size)
+    assertEquals(1, section2.getLesson("lesson1")!!.index)
+    assertEquals(2, section2.getLesson("lesson2")!!.index)
+
+    assertEquals("section2", task.lesson.section?.name)
+
+    assertEquals(1, manager.getRecord(task))
+  }
+
+  @Test
+  fun `test task records in framework lesson remain correct after lesson inside a section move outside`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      section("section1") {
+        frameworkLesson("lesson1") {
+          eduTask("task1") {
+            taskFile("src/Task.kt")
+          }
+        }
+      }
+    }
+
+    val lesson = course.getSection("section1")?.lessons?.first()!!
+    val task = lesson.taskList.first()
+
+    val manager = CCFrameworkLessonManager.getInstance(project)
+
+    manager.updateRecord(task, 1)
+
+    val sourceDir = findPsiDirectory("section1/lesson1")
+    val targetDir = findPsiDirectory(".")
+
+    doMoveAction(course, sourceDir, targetDir, delta = 0)
+
+    val section1 = course.getSection("section1")!!
+
+    assertEquals(0, section1.items.size)
+
+    assertEquals(2, course.items.size)
+    assertEquals("section1", course.items[0].name)
+    assertEquals("lesson1", course.items[1].name)
+
+    assertEquals(1, manager.getRecord(task))
   }
 }
