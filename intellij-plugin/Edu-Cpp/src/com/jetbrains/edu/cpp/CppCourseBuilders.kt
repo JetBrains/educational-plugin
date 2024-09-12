@@ -1,8 +1,10 @@
 package com.jetbrains.edu.cpp
 
 import com.google.common.annotations.VisibleForTesting
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.runBlockingMaybeCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -93,8 +95,13 @@ open class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
   }
 
   override fun refreshProject(project: Project, cause: RefreshCause) {
-    // if it is a new project it will be initialized, else it will be reloaded only.
-    CMakeWorkspace.getInstance(project).selectProjectDir(VfsUtil.virtualToIoFile(project.courseDir))
+    ApplicationManager.getApplication().executeOnPooledThread {
+      //TODO(launch coroutine properly)
+      runBlockingMaybeCancellable {
+        // if it is a new project it will be initialized, else it will be reloaded only.
+        CMakeWorkspace.getInstance(project).linkCMakeProject(VfsUtil.virtualToIoFile(project.courseDir))
+      }
+    }
   }
 
   override fun validateItemName(project: Project, name: String, itemType: StudyItemType): String? =
