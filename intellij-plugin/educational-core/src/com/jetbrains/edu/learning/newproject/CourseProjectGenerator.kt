@@ -31,7 +31,6 @@ import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
 import com.intellij.util.PathUtil
 import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import com.intellij.util.concurrency.annotations.RequiresEdt
-import com.intellij.util.messages.Topic
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.CCUtils.isLocalCourse
 import com.jetbrains.edu.learning.*
@@ -203,9 +202,9 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     NOTIFICATIONS_SILENT_MODE.set(project, true)
   }
 
-  protected open fun beforeInitHandler(location: Path): BeforeInitHandler = BeforeInitHandler()
+  open fun beforeInitHandler(location: Path): BeforeInitHandler = BeforeInitHandler()
 
-  protected open fun setUpProjectLocation(location: Path): Path = location
+  open fun setUpProjectLocation(location: Path): Path = location
 
   private suspend fun openNewCourseProject(
     location: Path,
@@ -292,7 +291,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
   @Throws(IOException::class)
   open fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
   }
-  protected class BeforeInitHandler(val callback: (project: Project) -> Unit = { })
+  class BeforeInitHandler(val callback: (project: Project) -> Unit = { })
 
   private val isNewCourseCreatorCourse: Boolean
     get() = course.courseMode == CourseMode.EDUCATOR && course.items.isEmpty()
@@ -320,7 +319,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
       return course.isPreview
     }
 
-    private fun OpenProjectTask(
+    fun OpenProjectTask(
       course: Course,
       prepareToOpenCallback: suspend (Project, Module) -> Unit,
       beforeInitHandler: BeforeInitHandler
