@@ -5,6 +5,7 @@ import com.intellij.ide.RecentProjectsManager
 import com.intellij.ide.impl.OpenProjectTask
 import com.intellij.ide.impl.TrustedPaths
 import com.intellij.idea.ActionsBundle
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
@@ -19,7 +20,6 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.wm.impl.status.widget.StatusBarWidgetsManager
-import com.intellij.platform.backend.observation.trackActivity
 import com.intellij.platform.ide.progress.ModalTaskOwner
 import com.intellij.platform.ide.progress.TaskCancellation
 import com.intellij.platform.ide.progress.runWithModalProgressBlocking
@@ -31,6 +31,7 @@ import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
 import com.intellij.util.PathUtil
 import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import com.intellij.util.concurrency.annotations.RequiresEdt
+import com.intellij.util.messages.Topic
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.CCUtils.isLocalCourse
 import com.jetbrains.edu.learning.*
@@ -67,7 +68,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
 ) {
 
   @RequiresBlockingContext
-  open fun afterProjectGenerated(project: Project, projectSettings: S) {
+  open fun afterProjectGenerated(project: Project, projectSettings: S, onConfigurationFinished: () -> Unit) {
     // project.isLocalCourse info is stored in PropertiesComponent to keep it after course restart on purpose
     // not to show login widget for local course
     project.isLocalCourse = course.isLocal
@@ -83,6 +84,8 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
 
     YamlFormatSynchronizer.saveAll(project)
     YamlFormatSynchronizer.startSynchronization(project)
+
+    onConfigurationFinished()
   }
 
   // 'projectSettings' must have S type but due to some reasons:
@@ -107,10 +110,12 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     applySettings(castedProjectSettings)
     val createdProject = createProject(location, initialLessonProducer) ?: return null
 
-    createdProject.trackActivity(EduCourseConfigurationActivityKey) {
-      withContext(Dispatchers.EDT) {
-        blockingContext {
-          afterProjectGenerated(createdProject, castedProjectSettings)
+    withContext(Dispatchers.EDT) {
+      blockingContext {
+        afterProjectGenerated(createdProject, castedProjectSettings) {
+          ApplicationManager.getApplication().messageBus
+            .syncPublisher(COURSE_PROJECT_CONFIGURATION)
+            .onCourseProjectConfigured(createdProject)
         }
       }
     }
@@ -303,6 +308,9 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
 
     val COURSE_MODE_TO_CREATE = Key.create<CourseMode>("edu.courseModeToCreate")
 
+    @Topic.AppLevel
+    val COURSE_PROJECT_CONFIGURATION: Topic<CourseProjectConfigurationListener> = createTopic("COURSE_PROJECT_CONFIGURATION")
+
     // TODO: provide more precise heuristic for Gradle, sbt and other "dangerous" build systems
     // See https://youtrack.jetbrains.com/issue/EDU-4182
     private fun isCourseTrusted(course: Course, isNewCourseCreatorCourse: Boolean): Boolean {
@@ -340,5 +348,9 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
         }
       }
     }
+  }
+
+  fun interface CourseProjectConfigurationListener {
+    fun onCourseProjectConfigured(project: Project)
   }
 }

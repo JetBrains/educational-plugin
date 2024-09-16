@@ -46,7 +46,7 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     }
   }
 
-  override fun afterProjectGenerated(project: Project, projectSettings: CppProjectSettings) {
+  override fun afterProjectGenerated(project: Project, projectSettings: CppProjectSettings, onConfigurationFinished: () -> Unit) {
     if (course is StepikCourse) {
       course.items.forEach { addCMakeListToStepikTasks(it, project, projectSettings) }
     }
@@ -54,6 +54,6 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     val googleTestSrc = FileUtil.join(project.courseDir.path, TEST_FRAMEWORKS_BASE_DIR_VALUE, GTEST_SOURCE_DIR_VALUE)
     VcsConfiguration.getInstance(project).addIgnoredUnregisteredRoots(listOf(googleTestSrc))
 
-    super.afterProjectGenerated(project, projectSettings)
+    super.afterProjectGenerated(project, projectSettings, onConfigurationFinished)
   }
 }
