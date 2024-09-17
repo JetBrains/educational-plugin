@@ -16,10 +16,7 @@ import com.jetbrains.edu.python.learning.messages.EduPythonBundle.message
 import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings.Companion.installSdk
 import com.jetbrains.edu.python.learning.newproject.PySdkSettingsHelper.Companion.firstAvailable
 import com.jetbrains.python.packaging.PyPackageManager
-import com.jetbrains.python.sdk.PyDetectedSdk
-import com.jetbrains.python.sdk.PySdkToInstall
-import com.jetbrains.python.sdk.associateWithModule
-import com.jetbrains.python.sdk.createSdkByGenerateTask
+import com.jetbrains.python.sdk.*
 
 open class PyCourseProjectGenerator(
   builder: EduCourseBuilder<PyProjectSettings>,
@@ -73,7 +70,7 @@ open class PyCourseProjectGenerator(
     }
     settings.sdk = sdk
     SdkConfigurationUtil.addSdk(sdk)
-    sdk.associateWithModule(null, project.basePath)
+    sdk.setAssociationToModule(project)
   }
 
   companion object {
