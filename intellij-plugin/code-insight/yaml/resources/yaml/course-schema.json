@@ -4,6 +4,10 @@
   "title": "Course Configuration",
   "description": "Configuration file containing information about course",
   "properties": {
+    "yaml_version": {
+      "description" : "version of the yaml configuration for the entire course",
+      "type": "integer"
+    },
     "type": {
       "description": "Course type",
       "type": "string",
@@ -100,6 +104,7 @@
     }
   },
   "required": [
+    "yaml_version",
     "title",
     "language",
     "programming_language",
