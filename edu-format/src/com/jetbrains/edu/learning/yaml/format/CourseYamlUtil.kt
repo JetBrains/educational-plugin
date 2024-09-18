@@ -3,15 +3,25 @@
 package com.jetbrains.edu.learning.yaml.format
 
 import com.fasterxml.jackson.annotation.*
+import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.databind.JavaType
+import com.fasterxml.jackson.databind.SerializerProvider
+import com.fasterxml.jackson.databind.annotation.JsonAppend
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.fasterxml.jackson.databind.cfg.MapperConfig
+import com.fasterxml.jackson.databind.introspect.AnnotatedClass
+import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition
+import com.fasterxml.jackson.databind.ser.VirtualBeanPropertyWriter
+import com.fasterxml.jackson.databind.util.Annotations
 import com.fasterxml.jackson.databind.util.StdConverter
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYCHARM
 import com.jetbrains.edu.learning.json.mixins.IntValueFilter
 import com.jetbrains.edu.learning.json.mixins.NotImplementedInMixin
+import com.jetbrains.edu.learning.yaml.YamlMapper.CURRENT_YAML_VERSION
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.errorHandling.unnamedItemAtMessage
 import com.jetbrains.edu.learning.yaml.errorHandling.unsupportedItemTypeMessage
@@ -37,6 +47,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TOP_LEVEL_LESSONS_S
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.UPDATE_DATE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VENDOR
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.YAML_VERSION
 import com.jetbrains.edu.learning.yaml.format.remote.RemoteStudyItemYamlMixin
 import java.util.*
 
@@ -45,6 +56,11 @@ import java.util.*
  * Update [com.jetbrains.edu.learning.yaml.format.CourseChangeApplier] and [CourseBuilder] if new fields added to mixin
  */
 @Suppress("unused") // used for yaml serialization
+@JsonAppend(
+  props = [
+    JsonAppend.Prop(YamlVersionWriter::class, name=YAML_VERSION)
+  ]
+)
 @JsonPropertyOrder(
   TYPE,
   TITLE,
@@ -60,6 +76,7 @@ import java.util.*
   FEEDBACK_LINK,
   TAGS,
   ENVIRONMENT_SETTINGS
+  // YAML_VERSION is appended to the end with the @JsonAppend annotation
 )
 @JsonDeserialize(builder = CourseBuilder::class)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY,
@@ -125,6 +142,28 @@ abstract class CourseYamlMixin {
 
   @JsonIgnore
   private var programmingLanguage: String? = null
+}
+
+private class YamlVersionWriter : VirtualBeanPropertyWriter {
+  override fun value(bean: Any?, gen: JsonGenerator?, prov: SerializerProvider?): Any = CURRENT_YAML_VERSION
+
+  @Suppress("unused")
+  constructor()
+
+  constructor(
+    propDef: BeanPropertyDefinition?,
+    contextAnnotations: Annotations?,
+    declaredType: JavaType?
+  ) : super(propDef, contextAnnotations, declaredType)
+
+  override fun withConfig(
+    config: MapperConfig<*>?,
+    declaringClass: AnnotatedClass?,
+    propDef: BeanPropertyDefinition?,
+    type: JavaType?
+  ): VirtualBeanPropertyWriter {
+    return YamlVersionWriter(propDef, declaringClass?.annotations, type)
+  }
 }
 
 private class ProgrammingLanguageConverter : StdConverter<String, String>() {
