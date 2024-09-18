@@ -24,6 +24,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
       |environment: Android
       |content:
       |- lesson1
+      |yaml_version: 1
       |
     """.trimMargin("|"))
   }
@@ -40,6 +41,27 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
       |language: Russian
       |summary: sum
       |<warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property</warning>: prop
+      |programming_language: Plain text
+      |programming_language_version: 1.42
+      |environment: Android
+      |content:
+      |- lesson1
+      |yaml_version: 1
+      |
+    """.trimMargin("|"))
+  }
+
+  @Test
+  fun `test course without yaml_version`() {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      lesson {}
+    }
+
+    testHighlighting(getCourse(), """
+      |<warning descr="Schema validation: Missing required property 'yaml_version'">title: Test Course</warning>
+      |type: coursera
+      |language: Russian
+      |summary: sum
       |programming_language: Plain text
       |programming_language_version: 1.42
       |environment: Android
