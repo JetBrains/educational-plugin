@@ -48,6 +48,7 @@ import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.submissions.SubmissionSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import com.jetbrains.edu.learning.yaml.YamlMigrator
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.VisibleForTesting
 
@@ -73,6 +74,9 @@ class EduStartupActivity : StartupActivity.DumbAware {
 
     ensureCourseIgnoreHasNoCustomAssociation()
 
+    val yamlMigrator = YamlMigrator.getInstance(project)
+    yamlMigrator?.migrateStructure()
+
     StartupManager.getInstance(project).runWhenProjectIsInitialized {
       val course = manager.course
       if (course == null) {
@@ -86,6 +90,12 @@ class EduStartupActivity : StartupActivity.DumbAware {
       }
       selectProjectView(project, true)
 
+      yamlMigrator?.migrateModel(course)
+      if (yamlMigrator?.needToMigrate() == true) {
+        YamlFormatSynchronizer.saveAll(project)
+      }
+
+      //this is an old migration logic that is going to be moved to the YamlMigrator
       migrateYaml(project, course)
 
       setupProject(project, course)
