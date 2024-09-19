@@ -201,6 +201,10 @@ class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project, SUBM
     communityPanel.showLoadingSubmissionsPanel(platformName)
   }
 
+  fun isCommunityTabShowing(): Boolean {
+    return segmentedButton.selectedItem is CommunitySegmentedButton
+  }
+
   fun showCommunityTab() {
     segmentedButton.selectedItem = segmentedButton.items.find { it is CommunitySegmentedButton }
   }

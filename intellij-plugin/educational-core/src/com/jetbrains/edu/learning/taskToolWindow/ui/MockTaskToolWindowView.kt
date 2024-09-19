@@ -12,6 +12,7 @@ class MockTaskToolWindowView(project: Project) : TaskToolWindowView(project) {
 
   override fun init(toolWindow: ToolWindow) {}
   override fun selectTab(tabType: TabType) {}
+  override fun isSelectedTab(tabType: TabType): Boolean = false
   override fun updateCheckPanel(task: Task?) {}
   override fun updateTaskSpecificPanel() {}
   override fun updateNavigationPanel(task: Task?) {}
@@ -24,6 +25,7 @@ class MockTaskToolWindowView(project: Project) : TaskToolWindowView(project) {
   override fun showLoadingCommunityPanel(platformName: String) {}
   override fun showMyTab() {}
   override fun showCommunityTab() {}
+  override fun isCommunityTabShowing(): Boolean = false
   override fun readyToCheck() {}
   override fun scrollNavMap(task: Task?) {}
   override fun checkStarted(task: Task, startSpinner: Boolean) {}

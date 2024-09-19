@@ -310,6 +310,14 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
       "The event is recorded in case a user opens the Community panel on the Submissions tab to explore other learners' solutions."
     )
 
+    private val COMMUNITY_TAB_OPENED_BY_LINK = GROUP.registerEvent(
+      "community.tab.opened.by.link",
+      "The event is logged when a user clicks the 'See community solutions' link to view solutions from other students. " +
+      "The event is marked as successful if clicking the link opens the Community tab. " +
+      "If the Community tab was already open, the event logs a failure.",
+      EventFields.Boolean(SUCCESS)
+    )
+
     fun taskNavigation(place: TaskNavigationPlace) = TASK_NAVIGATION_EVENT.log(place)
 
     fun eduProjectCreated(course: Course) = EDU_PROJECT_CREATED_EVENT.log(course.courseMode, course.itemType, course.languageId)
@@ -406,5 +414,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     fun solutionSharingState(state: Boolean) = AGREE_TO_ENABLE_SOLUTION_SHARE_STATE.log(state)
 
     fun openCommunityTab() = OPEN_COMMUNITY_TAB.log()
+
+    fun communityTabOpenedByLink(success: Boolean) = COMMUNITY_TAB_OPENED_BY_LINK.log(success)
   }
 }

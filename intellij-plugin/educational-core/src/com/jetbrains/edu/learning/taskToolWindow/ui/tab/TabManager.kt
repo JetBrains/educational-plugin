@@ -97,6 +97,10 @@ class TabManager(private val project: Project) : Disposable {
     return result
   }
 
+  fun isSelectedTab(tabType: TabType): Boolean {
+    return tabbedPane.selectedIndex == tabbedPane.indexOfTab(tabType.tabName)
+  }
+
   fun selectTab(tabType: TabType) {
     val indexOfTab = tabbedPane.indexOfTab(tabType.tabName)
     tabbedPane.selectedIndex = if (indexOfTab != -1) indexOfTab else 0

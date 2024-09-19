@@ -21,6 +21,7 @@ abstract class TaskToolWindowView(val project: Project) : LightTestAware {
   abstract fun init(toolWindow: ToolWindow)
 
   abstract fun selectTab(tabType: TabType)
+  abstract fun isSelectedTab(tabType: TabType): Boolean
   abstract fun updateCheckPanel(task: Task?)
   abstract fun updateTaskSpecificPanel()
   abstract fun updateNavigationPanel(task: Task?)
@@ -33,6 +34,7 @@ abstract class TaskToolWindowView(val project: Project) : LightTestAware {
   abstract fun showLoadingCommunityPanel(platformName: String)
   abstract fun showMyTab()
   abstract fun showCommunityTab()
+  abstract fun isCommunityTabShowing(): Boolean
   abstract fun readyToCheck()
   abstract fun scrollNavMap(task: Task?)
   abstract fun checkStarted(task: Task, startSpinner: Boolean = false)

@@ -89,6 +89,8 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
     tabManager.selectTab(tabType)
   }
 
+  override fun isSelectedTab(tabType: TabType): Boolean = tabManager.isSelectedTab(tabType)
+
   override fun showLoadingSubmissionsPanel(platformName: String) {
     if (currentTask == null) return
     val submissionsTab = getSubmissionTab() ?: return
@@ -122,6 +124,12 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
     project.invokeLater {
       submissionsTab.showCommunityTab()
     }
+  }
+
+  override fun isCommunityTabShowing(): Boolean {
+    if (!project.isMarketplaceCourse()) return false
+    val submissionsTab = getSubmissionTab() ?: return false
+    return submissionsTab.isCommunityTabShowing()
   }
 
   private fun getSubmissionTab(): SubmissionsTab? = tabManager.getTab(SUBMISSIONS_TAB) as? SubmissionsTab
