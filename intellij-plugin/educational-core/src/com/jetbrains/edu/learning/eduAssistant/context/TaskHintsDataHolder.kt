@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.eduAssistant.context
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 @Service(Service.Level.PROJECT)
