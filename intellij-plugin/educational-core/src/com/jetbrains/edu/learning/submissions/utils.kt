@@ -8,17 +8,27 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.ui.ColorUtil
+import com.intellij.ui.icons.CachedImageIcon
 import com.intellij.util.Time
+import com.jetbrains.edu.EducationalCoreIcons.Submission.*
+import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.findTaskFileInDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.submissions.SubmissionsTab.Companion.CLOSE_PLACEHOLDER_TAG
-import com.jetbrains.edu.learning.submissions.SubmissionsTab.Companion.OPEN_PLACEHOLDER_TAG
+import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager
+import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.TaskToolWindowBundle
+import com.jetbrains.edu.learning.ui.EduColors
+import java.net.URL
+import java.text.DateFormat
 import java.util.*
 
+const val OPEN_PLACEHOLDER_TAG = "<placeholder>"
+const val CLOSE_PLACEHOLDER_TAG = "</placeholder>"
 private const val MAX_FILE_SIZE: Int = 5 * 1024 * 1024 // 5 Mb
 private val LOG: Logger = logger<Submission>()
 
@@ -74,4 +84,48 @@ fun isVersionCompatible(submissionFormatVersion: Int): Boolean {
 internal fun Date.isSignificantlyAfter(otherDate: Date): Boolean {
   val diff = time - otherDate.time
   return diff > Time.MINUTE
+}
+
+fun formatDate(time: Date): String {
+  val calendar = GregorianCalendar()
+  calendar.time = time
+  val forceShowInUTC = RemoteEnvHelper.isRemoteDevServer()
+  val timeStyle = if (forceShowInUTC) DateFormat.LONG else DateFormat.MEDIUM
+  val formatter = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, timeStyle, Locale.getDefault())
+  if (forceShowInUTC) formatter.timeZone = TimeZone.getTimeZone("UTC")
+  return formatter.format(calendar.time).replace("UTC", "(UTC)")
+}
+
+fun getImageUrl(status: String?): URL? {
+  val icon = when (status) {
+    CORRECT -> if (StyleResourcesManager.isHighContrast()) TaskSolvedHighContrast else TaskSolved
+    else -> if (StyleResourcesManager.isHighContrast()) TaskFailedHighContrast else TaskFailed
+  }
+
+  return (icon as CachedImageIcon).url
+}
+
+fun getLinkColor(submission: Submission): String {
+  return when (submission.status) {
+    CORRECT -> getCorrectLinkColor()
+    else -> getWrongLinkColor()
+  }
+}
+
+private fun getCorrectLinkColor(): String {
+  return if (StyleResourcesManager.isHighContrast()) {
+    TaskToolWindowBundle.value("correct.label.foreground.high.contrast")
+  }
+  else {
+    "#${ColorUtil.toHex(EduColors.correctLabelForeground)}"
+  }
+}
+
+private fun getWrongLinkColor(): String {
+  return if (StyleResourcesManager.isHighContrast()) {
+    TaskToolWindowBundle.value("wrong.label.foreground.high.contrast")
+  }
+  else {
+    "#${ColorUtil.toHex(EduColors.wrongLabelForeground)}"
+  }
 }

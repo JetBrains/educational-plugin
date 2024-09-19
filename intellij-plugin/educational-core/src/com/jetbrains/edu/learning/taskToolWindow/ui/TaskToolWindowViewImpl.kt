@@ -16,6 +16,7 @@ import com.intellij.ui.InlineBanner
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.content.ContentFactory
 import com.intellij.ui.util.maximumHeight
+import com.intellij.util.asSafely
 import com.intellij.util.ui.JBEmptyBorder
 import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.JBUI
@@ -36,7 +37,8 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsService
 import com.jetbrains.edu.learning.submissions.SubmissionsListener
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
-import com.jetbrains.edu.learning.submissions.SubmissionsTab
+import com.jetbrains.edu.learning.submissions.ui.MarketplaceSubmissionsTab
+import com.jetbrains.edu.learning.submissions.ui.SubmissionsTab
 import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckPanel
 import com.jetbrains.edu.learning.taskToolWindow.ui.navigationMap.NavigationMapAction
 import com.jetbrains.edu.learning.taskToolWindow.ui.navigationMap.NavigationMapToolbar
@@ -104,7 +106,7 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
 
     val submissionsTab = getSubmissionTab() ?: return
     ApplicationManager.getApplication().invokeLater {
-      submissionsTab.showLoadingCommunityPanel(platformName)
+      submissionsTab.asSafely<MarketplaceSubmissionsTab>()?.showLoadingCommunityPanel(platformName)
     }
   }
 
@@ -113,7 +115,7 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
 
     val submissionsTab = getSubmissionTab() ?: return
     project.invokeLater {
-      submissionsTab.showMyTab()
+      submissionsTab.asSafely<MarketplaceSubmissionsTab>()?.showMyTab()
     }
   }
 
@@ -122,14 +124,14 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
 
     val submissionsTab = getSubmissionTab() ?: return
     project.invokeLater {
-      submissionsTab.showCommunityTab()
+      submissionsTab.asSafely<MarketplaceSubmissionsTab>()?.showCommunityTab()
     }
   }
 
   override fun isCommunityTabShowing(): Boolean {
     if (!project.isMarketplaceCourse()) return false
     val submissionsTab = getSubmissionTab() ?: return false
-    return submissionsTab.isCommunityTabShowing()
+    return submissionsTab.asSafely<MarketplaceSubmissionsTab>()?.isCommunityTabShowing() ?: false
   }
 
   private fun getSubmissionTab(): SubmissionsTab? = tabManager.getTab(SUBMISSIONS_TAB) as? SubmissionsTab
