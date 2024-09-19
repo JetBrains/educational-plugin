@@ -42,7 +42,7 @@ class YamlRenameTest : YamlCodeInsightTest() {
       |programming_language: Plain text
       |content:
       |- lesson2
-      |yaml_version: 1
+      |yaml_version: 3
       |
     """.trimMargin("|"))
   }

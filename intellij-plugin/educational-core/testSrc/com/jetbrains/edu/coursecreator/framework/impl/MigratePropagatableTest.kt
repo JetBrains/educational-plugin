@@ -1,16 +1,17 @@
 package com.jetbrains.edu.coursecreator.framework.impl
 
 import com.intellij.ide.util.PropertiesComponent
-import com.jetbrains.edu.learning.EduStartupActivity
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.yaml.YamlMigrator
+import com.jetbrains.edu.learning.yaml.YamlMigrator.Companion.YAML_MIGRATED_PROPAGATABLE
 import org.junit.Test
 
 class MigratePropagatableTest : EduTestCase() {
   override fun tearDown() {
     try {
-      PropertiesComponent.getInstance(project).unsetValue(EduStartupActivity.YAML_MIGRATED_PROPAGATABLE)
+      PropertiesComponent.getInstance(project).unsetValue(YAML_MIGRATED_PROPAGATABLE)
     }
     catch (e: Throwable) {
       addSuppressedException(e)
@@ -39,7 +40,7 @@ class MigratePropagatableTest : EduTestCase() {
 
     assertFalse(yamlMigrationFlag)
 
-    EduStartupActivity().migrateYaml(project, course)
+    YamlMigrator.getInstance(project, 1).migrateModel(course)
 
     assertTrue(yamlMigrationFlag)
 
@@ -66,7 +67,7 @@ class MigratePropagatableTest : EduTestCase() {
 
     assertFalse(yamlMigrationFlag)
 
-    EduStartupActivity().migrateYaml(project, course)
+    YamlMigrator.getInstance(project, 1).migrateModel(course)
 
     assertTrue(yamlMigrationFlag)
 
@@ -93,7 +94,7 @@ class MigratePropagatableTest : EduTestCase() {
 
     yamlMigrationFlag = true
 
-    EduStartupActivity().migrateYaml(project, course)
+    YamlMigrator.getInstance(project, 1).migrateModel(course)
 
     assertTrue(yamlMigrationFlag)
 
@@ -121,7 +122,7 @@ class MigratePropagatableTest : EduTestCase() {
 
     assertFalse(yamlMigrationFlag)
 
-    EduStartupActivity().migrateYaml(project, course)
+    YamlMigrator.getInstance(project, 1).migrateModel(course)
 
     assertTrue(yamlMigrationFlag)
 
@@ -131,8 +132,8 @@ class MigratePropagatableTest : EduTestCase() {
   }
 
   private var yamlMigrationFlag: Boolean
-    get() = PropertiesComponent.getInstance(project).getBoolean(EduStartupActivity.YAML_MIGRATED_PROPAGATABLE)
+    get() = PropertiesComponent.getInstance(project).getBoolean(YAML_MIGRATED_PROPAGATABLE)
     set(value) {
-      PropertiesComponent.getInstance(project).setValue(EduStartupActivity.YAML_MIGRATED_PROPAGATABLE, value)
+      PropertiesComponent.getInstance(project).setValue(YAML_MIGRATED_PROPAGATABLE, value)
     }
 }

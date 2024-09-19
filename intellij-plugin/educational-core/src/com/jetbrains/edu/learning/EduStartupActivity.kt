@@ -34,10 +34,6 @@ import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.isPreview
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
-import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
@@ -53,8 +49,6 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.VisibleForTesting
 
 class EduStartupActivity : StartupActivity.DumbAware {
-
-  private val YAML_MIGRATED = "Edu.Yaml.Migrate"
 
   override fun runActivity(project: Project) {
     if (!project.isEduProject()) return
@@ -95,9 +89,6 @@ class EduStartupActivity : StartupActivity.DumbAware {
         YamlFormatSynchronizer.saveAll(project)
       }
 
-      //this is an old migration logic that is going to be moved to the YamlMigrator
-      migrateYaml(project, course)
-
       setupProject(project, course)
       val coursesStorage = CoursesStorage.getInstance()
       val location = project.basePath
@@ -116,54 +107,6 @@ class EduStartupActivity : StartupActivity.DumbAware {
 
         EduCounterUsageCollector.eduProjectOpened(course)
       }
-    }
-  }
-
-  @VisibleForTesting
-  fun migrateYaml(project: Project, course: Course) {
-    migratePropagatableYamlFields(project, course)
-    migrateCanCheckLocallyYaml(project, course)
-    YamlFormatSynchronizer.saveAll(project)
-  }
-
-  private fun migrateCanCheckLocallyYaml(project: Project, course: Course) {
-    val propertyComponent = PropertiesComponent.getInstance(project)
-    if (propertyComponent.getBoolean(YAML_MIGRATED)) return
-    propertyComponent.setValue(YAML_MIGRATED, true)
-    if (course !is HyperskillCourse && course !is StepikCourse) return
-
-    course.visitTasks {
-      if (it is ChoiceTask) {
-        it.canCheckLocally = false
-      }
-    }
-  }
-
-  private fun migratePropagatableYamlFields(project: Project, course: Course) {
-    if (!CCUtils.isCourseCreator(project)) return
-    val propertiesComponent = PropertiesComponent.getInstance(project)
-    if (propertiesComponent.getBoolean(YAML_MIGRATED_PROPAGATABLE)) return
-    propertiesComponent.setValue(YAML_MIGRATED_PROPAGATABLE, true)
-
-    var hasPropagatableFlag = false
-    val nonPropagatableFiles = mutableListOf<TaskFile>()
-    course.visitTasks { task: Task ->
-      if (task.lesson is FrameworkLesson) {
-        for (taskFile in task.taskFiles.values) {
-          if (!taskFile.isPropagatable) {
-            hasPropagatableFlag = true
-            return@visitTasks
-          }
-          if (!taskFile.isVisible || !taskFile.isEditable) {
-            nonPropagatableFiles += taskFile
-          }
-        }
-      }
-    }
-    if (hasPropagatableFlag) return
-
-    for (taskFile in nonPropagatableFiles) {
-      taskFile.isPropagatable = false
     }
   }
 
@@ -222,9 +165,6 @@ class EduStartupActivity : StartupActivity.DumbAware {
   }
 
   companion object {
-    @VisibleForTesting
-    const val YAML_MIGRATED_PROPAGATABLE = "Edu.Yaml.Migrate.Propagatable"
-
     private val LOG = Logger.getInstance(EduStartupActivity::class.java)
   }
 }

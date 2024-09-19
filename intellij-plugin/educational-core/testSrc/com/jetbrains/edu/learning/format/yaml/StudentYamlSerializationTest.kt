@@ -35,7 +35,7 @@ class StudentYamlSerializationTest : EduTestCase() {
       |summary: Test Course Description
       |programming_language: Plain text
       |mode: Study
-      |yaml_version: 1
+      |yaml_version: 3
       |
     """.trimMargin())
   }
@@ -58,7 +58,7 @@ class StudentYamlSerializationTest : EduTestCase() {
       |summary: Test Course Description
       |programming_language: Plain text
       |mode: Study
-      |yaml_version: 1
+      |yaml_version: 3
       |
     """.trimMargin())
   }

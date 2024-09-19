@@ -9,10 +9,15 @@ import org.junit.Test
 class YamlMigratorTest : EduTestCase() {
 
   private fun doTest(beforeMigration: String, afterMigration: String, toVersion: Int) {
-    val migrator = YamlMigrator.getInstance(beforeMigration)
+    val migrator = YamlMigrator.getInstance(project, beforeMigration)
     val course = MAPPER.deserializeCourse(beforeMigration)
     migrator?.updateModelToVersion(toVersion, course)
-    assertEquals(afterMigration, MAPPER.writeValueAsString(course).trim())
+    val actualMigrationResult = MAPPER.writeValueAsString(course)
+    //MAPPER always writes the last YAML version
+    val actualMigrationResultWithoutVersion = actualMigrationResult
+      .replace("yaml_version: \\d+".toRegex(), "yaml_version: *")
+      .trim()
+    assertEquals(afterMigration, actualMigrationResultWithoutVersion)
   }
 
   @Test
@@ -39,7 +44,7 @@ class YamlMigratorTest : EduTestCase() {
         content:
         - Lesson 1
         - Lesson 2
-        yaml_version: 1
+        yaml_version: *
       """.trimIndent(),
       1
     )

@@ -24,7 +24,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
       |environment: Android
       |content:
       |- lesson1
-      |yaml_version: 1
+      |yaml_version: 3
       |
     """.trimMargin("|"))
   }
@@ -46,7 +46,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
       |environment: Android
       |content:
       |- lesson1
-      |yaml_version: 1
+      |yaml_version: 3
       |
     """.trimMargin("|"))
   }
