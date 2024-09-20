@@ -6,6 +6,9 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtCallExpression
+import com.jetbrains.edu.cognifire.models.FunctionArgument
+import com.jetbrains.edu.cognifire.models.FunctionSignature
+import org.jetbrains.kotlin.psi.KtNamedFunction
 
 const val UNIT_RETURN_VALUE = "Unit"
 const val TODO_MARKER = "TODO"
@@ -36,4 +39,21 @@ fun PsiElement.getTodoMessageOrNull() = if (this is KtCallExpression && calleeEx
   valueArguments.firstOrNull()?.getArgumentExpression()?.text ?: EMPTY_TODO
 } else {
   null
+}
+
+fun getFunctionSignature(containingFunction: KtNamedFunction): FunctionSignature {
+  val containingFunctionParameters =
+    containingFunction.valueParameterList?.parameters
+      ?.map {
+        FunctionArgument(
+          it?.name ?: "",
+          it?.typeReference?.text ?: ""
+        )
+      } ?: emptyList()
+
+  return FunctionSignature(
+    containingFunction.name ?: "",
+    containingFunctionParameters,
+    containingFunction.typeReference?.text ?: UNIT_RETURN_VALUE
+  )
 }

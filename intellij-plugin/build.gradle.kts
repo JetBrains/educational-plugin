@@ -376,6 +376,12 @@ tasks {
     autoReload = false
     jvmArgs("-Xmx2g")
     jvmArgs("-Dide.experimental.ui=true")
+    if (hasProp("validationOutputPath")) {
+      val outputPath = prop("validationOutputPath").let {
+        rootProject.projectDir.toPath().resolve(it)
+      }
+      jvmArgs("-Dvalidation.output.path=$outputPath")
+    }
 
     // Uncomment to show localized messages
     // jvmArgs("-Didea.l10n=true")
@@ -971,6 +977,8 @@ project("Edu-Cognifire") {
     }
 
     implementation(project(":intellij-plugin:educational-core"))
+    implementationWithoutKotlin(rootProject.libs.apache)
+    implementationWithoutKotlin(rootProject.libs.kotlinx.dataframe)
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
 
