@@ -23,6 +23,7 @@
     <cognifireDslPackageCallChecker language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.psi.KtCognifireDslPackageCallChecker"/>
     <codeApplier language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.psi.KtCodeApplier"/>
     <generatedCodeParser language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.psi.KtGeneratedCodeParser"/>
+    <fileIntoFunctionsParser language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.validation.KtFileIntoFunctionsParser"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
