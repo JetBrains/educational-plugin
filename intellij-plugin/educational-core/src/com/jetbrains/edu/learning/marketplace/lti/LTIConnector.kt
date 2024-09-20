@@ -2,10 +2,9 @@ package com.jetbrains.edu.learning.marketplace.lti
 
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
-import com.intellij.openapi.diagnostic.logger
 import com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceHost
 import com.jetbrains.edu.learning.network.createRetrofitBuilder
-import com.jetbrains.edu.learning.network.executeParsingErrors
+import com.jetbrains.edu.learning.network.executeCall
 import com.jetbrains.edu.learning.onError
 import okhttp3.ConnectionPool
 
@@ -17,19 +16,30 @@ class LTIConnector {
   /**
    * returns error message or null, if request was successful
    */
-  fun postTaskSolved(launchId: String, courseEduId: Int, taskEduId: Int): String? {
+  fun postTaskSolved(launchId: String, courseEduId: Int, taskEduId: Int): PostTaskSolvedStatus {
     val retrofit = createRetrofitBuilder(SubmissionsServiceHost.getSelectedUrl(), connectionPool, LTIAuthBundle.value("ltiServiceToken")).build()
     val ltiEndpoints = retrofit.create(LTIEndpoints::class.java)
 
-    ltiEndpoints.reportTaskSolved(launchId, courseEduId, taskEduId).executeParsingErrors().onError {
-      logger<LTIConnector>().warn("[LTI] Failed to report task as solved for task $taskEduId: $it")
-      return it
+    val response = ltiEndpoints.reportTaskSolved(launchId, courseEduId, taskEduId).executeCall(omitErrors = true).onError {
+      return ConnectionError(it)
     }
 
-    return null
+    return when (response.code()) {
+      200 -> NoLineItem
+      204 -> Success
+      404 -> UnknownLaunchId
+      else -> return ServerError // 500 or other statuses
+    }
   }
 
   companion object {
     fun getInstance(): LTIConnector = service()
   }
 }
+
+sealed class PostTaskSolvedStatus
+data object Success : PostTaskSolvedStatus()
+data object NoLineItem: PostTaskSolvedStatus()
+data object ServerError : PostTaskSolvedStatus()
+data object UnknownLaunchId : PostTaskSolvedStatus()
+data class ConnectionError(val error: String) : PostTaskSolvedStatus()
