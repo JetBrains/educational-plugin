@@ -60,7 +60,11 @@ class MarketplaceSolutionLoader(project: Project) : SolutionLoaderBase(project) 
         "of the ${MarketplaceSubmissionBase::class.simpleName} class"
       )
 
-    if (lastSubmission.courseVersion != task.course.marketplaceCourseVersion) {
+    val submissionsSettings = SubmissionSettings.getInstance(project)
+
+    // Is added specially for courses launched via Remote Development solution to keep user code in editor on course updates
+    // To be fixed by EDU-7466
+    if (!submissionsSettings.applySubmissionsForce && lastSubmission.courseVersion != task.course.marketplaceCourseVersion) {
       LOG.info(
         "Marketplace submission ${lastSubmission.id} for task ${task.name} is not up to date. " +
         "Submission course version: ${lastSubmission.courseVersion}, course version: ${task.course.marketplaceCourseVersion}"
@@ -70,7 +74,7 @@ class MarketplaceSolutionLoader(project: Project) : SolutionLoaderBase(project) 
 
     val files =
       when (task) {
-        is TheoryTask -> if (!SubmissionSettings.getInstance(project).stateOnClose) emptyMap() else lastSubmission.eduTaskFiles()
+        is TheoryTask -> if (!submissionsSettings.stateOnClose) emptyMap() else lastSubmission.eduTaskFiles()
         is ChoiceTask -> emptyMap()
 
         is OutputTask,

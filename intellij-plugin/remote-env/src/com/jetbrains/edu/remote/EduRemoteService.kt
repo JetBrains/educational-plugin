@@ -32,6 +32,7 @@ class EduRemoteService(private val session: ClientProjectSession): LifetimedServ
         // and we need to explicitly do it here.
         project.putUserData(EDU_PROJECT_CREATED, true)
         SubmissionSettings.getInstance(project).stateOnClose = true
+        SubmissionSettings.getInstance(project).applySubmissionsForce = true
 
         // Temporary workaround to force JCEF on remote if it's available.
         // Ideally, it should be selected automatically during `EduSettings` service initialization
