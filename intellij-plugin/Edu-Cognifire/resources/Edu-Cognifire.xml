@@ -33,6 +33,11 @@
                     dynamic="true">
       <with attribute="implementationClass" implements="com.jetbrains.edu.cognifire.CodeApplier"/>
     </extensionPoint>
+    <extensionPoint qualifiedName="Educational.fileIntoFunctionsParser"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.cognifire.validation.FileIntoFunctionsParser"/>
+    </extensionPoint>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -48,6 +53,11 @@
     <action id="Educational.Educator.CreateTutorial"
             class="com.jetbrains.edu.cognifire.tutorial.TutorialGenerator">
       <add-to-group group-id="Educational.Educator.NewFile" anchor="first"/>
+    </action>
+    <action id="Validation.GeneratedCodeValidation"
+            class="com.jetbrains.edu.cognifire.validation.GeneratedCodeValidationAction"
+            internal="true">
+      <add-to-group group-id="ToolsMenu"/>
     </action>
   </actions>
 </idea-plugin>
