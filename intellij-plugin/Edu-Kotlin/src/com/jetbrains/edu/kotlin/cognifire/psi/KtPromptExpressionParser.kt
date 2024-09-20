@@ -5,11 +5,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.findParentOfType
 import com.jetbrains.edu.cognifire.PromptExpressionParser
-import com.jetbrains.edu.cognifire.models.FunctionSignature
 import com.jetbrains.edu.cognifire.models.PromptExpression
-import com.jetbrains.edu.cognifire.models.FunctionArgument
 import com.jetbrains.edu.cognifire.utils.isPromptBlock
-import com.jetbrains.edu.kotlin.cognifire.utils.UNIT_RETURN_VALUE
+import com.jetbrains.edu.kotlin.cognifire.utils.getFunctionSignature
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -40,23 +38,6 @@ class KtPromptExpressionParser : PromptExpressionParser {
       promptExpression.endOffset,
       trimmedPromptPromptText.dropPostfix(TRIM_INDENT_POSTFIX).dropPostfix(QUOTE_POSTFIX),
       promptCodeBlockPsi?.bodyExpression?.text ?: ""
-    )
-  }
-
-  private fun getFunctionSignature(containingFunction: KtNamedFunction): FunctionSignature {
-    val containingFunctionParameters =
-      containingFunction.valueParameterList?.parameters
-        ?.map {
-          FunctionArgument(
-            it?.name ?: "",
-            it?.typeReference?.text ?: ""
-          )
-        } ?: emptyList()
-
-    return FunctionSignature(
-      containingFunction.name ?: "",
-      containingFunctionParameters,
-      containingFunction.typeReference?.text ?: UNIT_RETURN_VALUE
     )
   }
 
