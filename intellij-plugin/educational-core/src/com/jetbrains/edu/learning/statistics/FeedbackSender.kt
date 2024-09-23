@@ -11,46 +11,41 @@ import com.intellij.util.PlatformUtils
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.capitalize
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import javax.swing.event.HyperlinkEvent
 
-@Suppress("UnstableApiUsage")
 fun showCCPostFeedbackNotification(course: Course, project: Project) {
-  val feedbackUrl = FEEDBACK_URL_TEMPLATE
-      .replace(
-        "\$PRODUCT", productMap[PlatformUtils.getPlatformPrefix()] ?: PlatformUtils.getPlatformPrefix()
-      )
-      .replace("\$COURSE", course.name)
-      .replace("\$MODE", if (course.courseMode == CourseMode.STUDENT) "Learner" else "Educator")
-
   val language = course.languageId.lowercase().capitalize()
+  val feedbackUrl = getFeedbackUrl(course.name, "Educator")
+  showPostFeedbackNotification(project, EduCoreBundle.message("check.correct.solution.title"), EduCoreBundle.message("feedback.template.creator", feedbackUrl, language), feedbackUrl)
+}
 
-  PropertiesComponent.getInstance().setValue(QUESTIONNAIRE_ADVERTISING_NOTIFICATION_SHOWN, true)
+fun showStudentPostFeedbackNotification(courseName: String, project: Project) {
+  val feedbackUrl = getFeedbackUrl(courseName, "Learner")
+  showPostFeedbackNotification(project, EduCoreBundle.message("feedback.template.student.title"), EduCoreBundle.message("feedback.template.student", feedbackUrl), feedbackUrl)
+}
+
+private fun getFeedbackUrl(courseName: String, courseMode: String): String {
+  return FEEDBACK_URL_TEMPLATE
+    .replace(
+      "\$PRODUCT", productMap[PlatformUtils.getPlatformPrefix()] ?: PlatformUtils.getPlatformPrefix()
+    )
+    .replace("\$COURSE", courseName)
+    .replace("\$MODE", courseMode)
+}
+
+private fun showPostFeedbackNotification(project: Project, notificationTitle: String, notificationText: String, feedbackUrl: String) {
+  PropertiesComponent.getInstance().setValue(LEAVE_FEEDBACK_NOTIFICATION_SHOWN, true)
   showFeedbackNotification(
     project,
-    EduCoreBundle.message("check.correct.solution.title"),
-    EduCoreBundle.message("feedback.template.creator", feedbackUrl, language),
+    notificationTitle,
+    notificationText,
     feedbackUrl
   )
 }
 
-fun showQuestionnaireAdvertisingNotification(project: Project, course: Course) {
-  @Suppress("UnstableApiUsage")
-  val questionnaireUrl = QUESTIONNAIRE_URL_TEMPLATE
-    .replace("\$PRODUCT", productMap[PlatformUtils.getPlatformPrefix()] ?: PlatformUtils.getPlatformPrefix())
-    .replace("\$COURSE_ID", course.id.toString())
-
-  PropertiesComponent.getInstance().setValue(QUESTIONNAIRE_ADVERTISING_NOTIFICATION_SHOWN, true)
-  showFeedbackNotification(
-    project,
-    EduCoreBundle.message("check.correct.solution.title"),
-    EduCoreBundle.message("notification.student.survey", course.name, questionnaireUrl),
-    questionnaireUrl
-  )
-}
-
+@Suppress("DEPRECATION")
 private fun showFeedbackNotification(
   project: Project,
   @NotificationTitle title: String,
@@ -67,19 +62,11 @@ private fun showFeedbackNotification(
     .notify(project)
 }
 
-fun isSurveyPrompted() : Boolean = PropertiesComponent.getInstance().getBoolean(SURVEY_PROMPTED)
+fun isLeaveFeedbackPrompted() : Boolean = PropertiesComponent.getInstance().getBoolean(LEAVE_FEEDBACK_NOTIFICATION_SHOWN)
 
-fun isQuestionnaireAdvertisingNotificationShown() : Boolean = PropertiesComponent.getInstance().getBoolean(QUESTIONNAIRE_ADVERTISING_NOTIFICATION_SHOWN)
+private const val LEAVE_FEEDBACK_NOTIFICATION_SHOWN = "questionnaireAdvertisingNotification"
 
-private const val SURVEY_PROMPTED = "surveyPrompted"
-
-private const val QUESTIONNAIRE_ADVERTISING_NOTIFICATION_SHOWN = "questionnaireAdvertisingNotification"
-
-private const val FEEDBACK_URL_TEMPLATE = "https://www.jetbrains.com/feedback/academy/"
-
-private const val QUESTIONNAIRE_URL_TEMPLATE = "https://surveys.jetbrains.com/s3/marketplace-courses-survey?ide=\$PRODUCT&courseId=\$COURSE_ID"
-
-private const val SURVEY_LINK = "https://surveys.jetbrains.com/s3/plnf-computer-science-learning-curve-survey"
+private const val FEEDBACK_URL_TEMPLATE = "https://www.jetbrains.com/feedback/feedback.jsp?product=EduTools&ide=\$PRODUCT&course=\$COURSE&mode=\$MODE"
 
 @Suppress("UnstableApiUsage")
 private val productMap = hashMapOf(
