@@ -4,9 +4,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
-import com.jetbrains.edu.EducationalCoreIcons.CourseView.IdeTask
-import com.jetbrains.edu.EducationalCoreIcons.CourseView.Task
-import com.jetbrains.edu.EducationalCoreIcons.CourseView.TheoryTask
+import com.jetbrains.edu.EducationalCoreIcons.CourseView.*
 import com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE
 import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
 import com.jetbrains.edu.coursecreator.settings.CCSettings
@@ -22,8 +20,9 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import org.jetbrains.annotations.NonNls
 import java.io.IOException
+import javax.swing.Icon
 
-class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
+open class CCCreateTask(icon : Icon = Task) : CCCreateStudyItemActionBase<Task>(TASK_TYPE, icon) {
 
   override fun addItem(course: Course, item: Task) {
     item.lesson.addTask(item)

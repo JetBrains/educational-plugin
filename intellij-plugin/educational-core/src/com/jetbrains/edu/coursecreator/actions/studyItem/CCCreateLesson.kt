@@ -15,8 +15,9 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.NonNls
 import java.io.IOException
+import javax.swing.Icon
 
-class CCCreateLesson : CCCreateStudyItemActionBase<Lesson>(LESSON_TYPE, Lesson) {
+open class CCCreateLesson(icon: Icon = Lesson) : CCCreateStudyItemActionBase<Lesson>(LESSON_TYPE, icon) {
 
   override val studyItemVariants: List<StudyItemVariant>
     get() = listOf(

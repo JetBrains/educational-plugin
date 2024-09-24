@@ -34,11 +34,15 @@ import com.intellij.openapi.project.DumbAwareToggleAction
 import com.intellij.openapi.project.Project
 import com.intellij.ui.ColoredTreeCellRenderer
 import com.intellij.ui.ScrollPaneFactory
+import com.intellij.ui.dsl.builder.AlignX
+import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ArrayUtil
+import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.EducationalCoreIcons.CourseView.CourseTree
 import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.actions.CCCreateCoursePreview
 import com.jetbrains.edu.coursecreator.projectView.*
 import com.jetbrains.edu.learning.CourseSetListener
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
@@ -55,7 +59,6 @@ import javax.swing.Icon
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.JProgressBar
-import javax.swing.border.EmptyBorder
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
 import javax.swing.tree.TreeCellRenderer
@@ -87,14 +90,35 @@ class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport
   override fun createComparator(): Comparator<NodeDescriptor<*>> = EduNodeComparator
 
   private fun createCourseViewComponent(): JComponent {
-    val component = super.createComponent()
-    CourseViewPaneCustomization.customize(myTree)
+    super.createComponent()
+    CourseViewPaneCustomization.customize(tree)
     if (!myProject.isStudentProject()) {
       HelpTooltipForTree().installOnTree(this, tree) { treeNode ->
         tryInstallNewTooltip(myProject, treeNode)
       }
-      return component
+
+      val panel = panel {
+        row {
+          cell(EducatorActionsPanel())
+
+          button(
+            EduCoreBundle.message("action.create.course.preview.on.view.pane"),
+            CCCreateCoursePreview(),
+            ActionPlaces.PROJECT_VIEW_TOOLBAR
+          ).align(AlignX.RIGHT)
+        }
+      }.apply {
+        border = JBUI.Borders.emptyRight(12)
+      }
+      val mainPanel = JPanel(BorderLayout())
+      mainPanel.background = UIUtil.getTreeBackground()
+
+      mainPanel.add(panel, BorderLayout.NORTH)
+      mainPanel.add(tree, BorderLayout.CENTER)
+
+      return ScrollPaneFactory.createScrollPane(mainPanel)
     }
+
     val panel = JPanel(BorderLayout())
     panel.background = UIUtil.getTreeBackground()
 
@@ -122,7 +146,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport
     progressBar = createProgressBar()
     panel.background = UIUtil.getTreeBackground()
     panel.add(progressBar, BorderLayout.NORTH)
-    panel.border = EmptyBorder(0, 0, 5, 0)
+    panel.border = JBUI.Borders.emptyBottom(5)
     return panel
   }
 
