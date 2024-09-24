@@ -2,17 +2,19 @@ package com.jetbrains.edu.learning
 
 import com.intellij.ide.lightEdit.LightEdit
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Computable
 import com.intellij.util.messages.Topic
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.yaml.YamlDeepLoader.loadCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.isEduYamlProject
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.startSynchronization
+import kotlinx.atomicfu.locks.reentrantLock
+import kotlinx.atomicfu.locks.withLock
 import org.jetbrains.annotations.TestOnly
 
 /**
@@ -23,6 +25,7 @@ class StudyTaskManager(private val project: Project) : DumbAware, Disposable, Li
   @Volatile
   private var courseLoadedWithError = false
 
+  private val courseLoadingLock = reentrantLock()
   private var _course: Course? = null
 
   var course: Course?
@@ -34,6 +37,32 @@ class StudyTaskManager(private val project: Project) : DumbAware, Disposable, Li
       }
     }
 
+  private fun needToLoadCourse(project: Project): Boolean = !project.isDefault
+                                                                   && !LightEdit.owns(project)
+                                                                   && course == null
+                                                                   && project.isEduYamlProject()
+                                                                   && !courseLoadedWithError
+
+  private fun initializeCourse() {
+    if (!needToLoadCourse(project)) return
+
+    courseLoadingLock.withLock {
+      if (!needToLoadCourse(project)) return
+
+      val loadedCourse = runReadAction { loadCourse(project) }
+      courseLoadedWithError = loadedCourse == null
+      if (loadedCourse != null) {
+        logger<StudyTaskManager>().info("Loaded course corresponding to the project: ${loadedCourse.name}")
+        course = loadedCourse
+      }
+      else {
+        logger<StudyTaskManager>().info("Course corresponding to the project loaded with errors")
+      }
+
+      startSynchronization(project)
+    }
+  }
+
   override fun dispose() {}
 
   @TestOnly
@@ -44,18 +73,8 @@ class StudyTaskManager(private val project: Project) : DumbAware, Disposable, Li
   companion object {
     val COURSE_SET = Topic.create("Edu.courseSet", CourseSetListener::class.java)
 
-    fun getInstance(project: Project): StudyTaskManager {
-      val manager = project.service<StudyTaskManager>()
-      if (!project.isDefault && !LightEdit.owns(project) && manager.course == null
-          && project.isEduYamlProject() && !manager.courseLoadedWithError) {
-        val course = ApplicationManager.getApplication().runReadAction(Computable { loadCourse(project) })
-        manager.courseLoadedWithError = course == null
-        if (course != null) {
-          manager.course = course
-        }
-        startSynchronization(project)
-      }
-      return manager
+    fun getInstance(project: Project): StudyTaskManager = project.service<StudyTaskManager>().apply {
+      initializeCourse()
     }
   }
 }
