@@ -198,10 +198,6 @@ class CourseArchiveCreator(
 
   @VisibleForTesting
   fun prepareCourse(course: Course, indicator: CourseArchiveIndicator? = null) {
-    if (course is EduCourse && isFeatureEnabled(COURSE_FORMAT_WITH_FILES_OUTSIDE_JSON)) {
-      course.formatVersion = JSON_FORMAT_VERSION_WITH_FILES_OUTSIDE
-    }
-
     loadActualTexts(project, course, indicator)
     course.sortItems()
     course.additionalFiles = AdditionalFilesUtils.collectAdditionalFiles(course.configurator, project, indicator)
