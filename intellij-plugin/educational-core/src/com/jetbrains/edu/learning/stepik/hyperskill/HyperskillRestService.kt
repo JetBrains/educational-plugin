@@ -43,18 +43,19 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
                        request: FullHttpRequest,
                        context: ChannelHandlerContext): String? {
     val uri = urlDecoder.uri()
-    if (PLUGIN_INFO.matcher(uri).matches()) {
+    val hyperskillConnector = HyperskillConnector.getInstance()
+    if (hyperskillConnector.getServicePattern("/info").matcher(uri).matches()) {
       sendPluginInfoResponse(request, context)
       return null
     }
 
-    if (OAUTH_ERROR_CODE_PATTERN.matcher(uri).matches()) {
+    if (hyperskillConnector.getOAuthPattern("\\?error=(\\w+)").matcher(uri).matches()) {
       return sendErrorResponse(request, context, "Failed to login")
     }
 
-    if (OAUTH_CODE_PATTERN.matcher(uri).matches()) {
+    if (hyperskillConnector.getOAuthPattern().matcher(uri).matches()) {
       val code = getStringParameter(CODE_ARGUMENT, urlDecoder)!! // cannot be null because of pattern
-      val success = HyperskillConnector.getInstance().login(code)
+      val success = hyperskillConnector.login(code)
       if (success) {
         LOG.info("$platformName: OAuth code is handled")
         val pageContent = getInternalTemplateText("hyperskill.redirectPage.html")
@@ -69,12 +70,12 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
       return null
     }
 
-    if (OPEN_COURSE_PATTERN.matcher(uri).matches()) {
+    if (hyperskillConnector.getServicePattern("""\?$STAGE_ID=.+&$PROJECT_ID=.+""").matcher(uri).matches()) {
       val userId = getIntParameter(USER_ID, urlDecoder)
       return withHyperskillAuthorization(userId) { openStage(urlDecoder, request, context) }
     }
 
-    if (OPEN_STEP_PATTERN.matcher(uri).matches()) {
+    if (hyperskillConnector.getServicePattern("""\?$STEP_ID=.+""").matcher(uri).matches()) {
       val userId = getIntParameter(USER_ID, urlDecoder)
       return withHyperskillAuthorization(userId) { openProblem(urlDecoder, request, context) }
     }
@@ -247,12 +248,6 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
 
     @NonNls
     private const val USER_ID: String = "user_id"
-
-    private val OAUTH_CODE_PATTERN = HyperskillConnector.getInstance().getOAuthPattern()
-    private val OAUTH_ERROR_CODE_PATTERN = HyperskillConnector.getInstance().getOAuthPattern("\\?error=(\\w+)")
-    private val OPEN_COURSE_PATTERN = HyperskillConnector.getInstance().getServicePattern("""\?$STAGE_ID=.+&$PROJECT_ID=.+""")
-    private val OPEN_STEP_PATTERN = HyperskillConnector.getInstance().getServicePattern("""\?$STEP_ID=.+""")
-    private val PLUGIN_INFO = HyperskillConnector.getInstance().getServicePattern("/info")
 
     private enum class ReLoginDialogResult(private val result: Int) {
       YES(0), NO(1), CANCEL(-1);
