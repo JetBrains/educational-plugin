@@ -76,6 +76,8 @@ public final class EducationalCoreIcons {
     public static final Icon GuidedProjectSelected = load("/icons/com/jetbrains/edu/courseCreator/guidedProjectSelected.svg");
     public static final Icon SimpleLesson = load("/icons/com/jetbrains/edu/courseCreator/simpleLesson.svg");
     public static final Icon SimpleLessonSelected = load("/icons/com/jetbrains/edu/courseCreator/simpleLessonSelected.svg");
+    public static final Icon NewLesson = load("/icons/com/jetbrains/edu/courseCreator/addLesson.svg");
+    public static final Icon NewTask = load("/icons/com/jetbrains/edu/courseCreator/addTask.svg");
   }
 
   /**
