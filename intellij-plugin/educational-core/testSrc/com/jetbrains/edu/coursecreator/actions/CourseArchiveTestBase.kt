@@ -7,15 +7,14 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtilRt
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduActionTestCase
-import com.jetbrains.edu.learning.EduExperimentalFeatures.COURSE_FORMAT_WITH_FILES_OUTSIDE_JSON
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSE_CONTENTS_FOLDER
 import com.jetbrains.edu.learning.courseFormat.ext.visitEduFiles
+import com.jetbrains.edu.learning.injectLastJsonVersion
 import com.jetbrains.edu.learning.json.encrypt.AES256
 import com.jetbrains.edu.learning.json.encrypt.TEST_AES_KEY
 import com.jetbrains.edu.learning.json.pathInArchive
-import com.jetbrains.edu.learning.withFeature
 import org.junit.Assert
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -24,53 +23,45 @@ import java.util.zip.ZipInputStream
 
 abstract class CourseArchiveTestBase : EduActionTestCase() {
   protected fun doTest() {
-    val expectedCourseJson = loadExpectedJson()
+    val expectedCourseJson = loadExpectedJson().injectLastJsonVersion()
 
-    withFeature(COURSE_FORMAT_WITH_FILES_OUTSIDE_JSON, false) {
-      val generatedJsonFile = generateJson()
-      assertEquals(expectedCourseJson, generatedJsonFile)
-    }
+    // TODO: remove "text" fields directly from test jsons
+    val expectedCourseJsonVersionWithoutTexts = expectedCourseJson
+      .replace("""^\s*"text" : ".{2,}",\n""".toRegex(RegexOption.MULTILINE), "")
 
-    withFeature(COURSE_FORMAT_WITH_FILES_OUTSIDE_JSON, true) {
-      // TODO: when COURSE_FORMAT_WITH_FILES_OUTSIDE_JSON feature is removed remove "text" fields from test jsons
-      val expectedCourseJsonVersion19 = expectedCourseJson
-        .replace(""""version" : \d{1,2}""".toRegex(), """"version" : 19""")
-        .replace("""^\s*"text" : ".{2,}",\n""".toRegex(RegexOption.MULTILINE), "")
+    val generatedJsonFile = generateJson()
+    assertEquals(expectedCourseJsonVersionWithoutTexts, generatedJsonFile)
 
-      val generatedJsonFile = generateJson()
-      assertEquals(expectedCourseJsonVersion19, generatedJsonFile)
+    doWithArchiveCreator { creator, course ->
+      val out = ByteArrayOutputStream()
+      creator.doCreateCourseArchive(CourseArchiveIndicator(FileCountingMode.DURING_WRITE), course, out)
+      val zip = out.toByteArray()
 
-      doWithArchiveCreator { creator, course ->
-        val out = ByteArrayOutputStream()
-        creator.doCreateCourseArchive(CourseArchiveIndicator(FileCountingMode.DURING_WRITE), course, out)
-        val zip = out.toByteArray()
-
-        val fileName2contents = mutableMapOf<String, ByteArray>()
-        ZipInputStream(ByteArrayInputStream(zip)).use { zipIn ->
-          while (true) {
-            val entry = zipIn.nextEntry ?: break
-            if (!entry.name.startsWith("$COURSE_CONTENTS_FOLDER/")) continue
-            fileName2contents[entry.name] = zipIn.readAllBytes()
-          }
+      val fileName2contents = mutableMapOf<String, ByteArray>()
+      ZipInputStream(ByteArrayInputStream(zip)).use { zipIn ->
+        while (true) {
+          val entry = zipIn.nextEntry ?: break
+          if (!entry.name.startsWith("$COURSE_CONTENTS_FOLDER/")) continue
+          fileName2contents[entry.name] = zipIn.readAllBytes()
         }
-
-        var eduFilesCount = 0
-        course.visitEduFiles { eduFile ->
-          val actualEncryptedContents = fileName2contents[eduFile.pathInArchive] ?: error("File ${eduFile.name} not found in archive")
-          val actualContents = AES256.decrypt(actualEncryptedContents, TEST_AES_KEY)
-
-          val expectedContents = when (val contents = eduFile.contents) {
-            is BinaryContents -> contents.bytes
-            is TextualContents -> contents.text.toByteArray()
-            is UndeterminedContents -> error("unexpected undetermined contents")
-          }
-
-          Assert.assertArrayEquals(expectedContents, actualContents)
-
-          eduFilesCount++
-        }
-        assertEquals("Number of files in archive must be the same as in the course", eduFilesCount, fileName2contents.size)
       }
+
+      var eduFilesCount = 0
+      course.visitEduFiles { eduFile ->
+        val actualEncryptedContents = fileName2contents[eduFile.pathInArchive] ?: error("File ${eduFile.name} not found in archive")
+        val actualContents = AES256.decrypt(actualEncryptedContents, TEST_AES_KEY)
+
+        val expectedContents = when (val contents = eduFile.contents) {
+          is BinaryContents -> contents.bytes
+          is TextualContents -> contents.text.toByteArray()
+          is UndeterminedContents -> error("unexpected undetermined contents")
+        }
+
+        Assert.assertArrayEquals(expectedContents, actualContents)
+
+        eduFilesCount++
+      }
+      assertEquals("Number of files in archive must be the same as in the course", eduFilesCount, fileName2contents.size)
     }
   }
 
