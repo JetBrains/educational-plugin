@@ -178,8 +178,7 @@ fun Task.canShowSolution(): Boolean {
     return hasSolutions() && status == CheckStatus.Solved
   }
   val hiddenByEducator = solutionHidden ?: course.solutionsHidden
-  val shouldShow = !hiddenByEducator || status == CheckStatus.Solved
-  return shouldShow && taskFiles.values.any { it.canShowSolution() }
+  return !hiddenByEducator && taskFiles.values.any { it.canShowSolution() }
 }
 
 fun Task.hasSolutions(): Boolean = course.isMarketplace || this !is TheoryTask && this !is DataTask

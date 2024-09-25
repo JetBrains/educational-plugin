@@ -73,13 +73,13 @@ class SolutionHiddenTest : EduTestCase() {
   }
 
   @Test
-  fun `test show hidden solution if task is solved`() {
+  fun `test solution is hidden if task is solved`() {
     getCurrentCourse()
     val task = findTask(0, 0)
     task.solutionHidden = true
     task.status = CheckStatus.Solved
 
-    assertTrue(task.canShowSolution())
+    assertFalse(task.canShowSolution())
   }
 
   private fun getCurrentCourse(): Course {
