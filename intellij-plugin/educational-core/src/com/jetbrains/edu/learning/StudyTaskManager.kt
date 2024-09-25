@@ -26,6 +26,8 @@ class StudyTaskManager(private val project: Project) : DumbAware, Disposable, Li
   private var courseLoadedWithError = false
 
   private val courseLoadingLock = ReentrantLock()
+
+  @Volatile
   private var _course: Course? = null
 
   var course: Course?
