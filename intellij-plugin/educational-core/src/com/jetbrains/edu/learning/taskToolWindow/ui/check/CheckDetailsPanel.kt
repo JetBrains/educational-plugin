@@ -137,7 +137,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
     row(EduCoreBundle.message("submissions.got.stuck")) {
       link(EduCoreBundle.message("submissions.see.community.solutions.link")) {
         val taskToolWindow = TaskToolWindowView.getInstance(project)
-        val isCommunityPanelShowing = taskToolWindow.run { isSelectedTab(TabType.SUBMISSIONS_TAB) && isCommunityTabShowing() }
+        val isCommunityPanelShowing = taskToolWindow.isSelectedTab(TabType.SUBMISSIONS_TAB) && taskToolWindow.isCommunityTabShowing()
         if (!isCommunityPanelShowing) {
           taskToolWindow.showCommunityTab()
           taskToolWindow.selectTab(TabType.SUBMISSIONS_TAB)
