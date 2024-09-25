@@ -103,7 +103,7 @@
   "summary": "Introduction course to Python",
   "title": "Introduction to Python",
   "programming_language_id": "Python",
-  "version": 18,
+  "version": -1,
   "additional_files": [
     {
       "name": "test_helper.py",
