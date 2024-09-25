@@ -87,7 +87,7 @@ class SwingToolWindow(project: Project) : TaskToolWindow(project) {
     private fun toggleHintElement(sourceElement: SwingTextElement) {
       try {
         val document = taskInfoTextPane.document as HTMLDocument
-        val parent = sourceElement.parentElement
+        val parent = sourceElement.parentElement as AbstractDocument.AbstractElement
         val className = parent.parentElement.attributes.getAttribute(HTML.Attribute.CLASS) as String
         if ("hint" != className) {
           LOG.warn(
@@ -96,13 +96,13 @@ class SwingToolWindow(project: Project) : TaskToolWindow(project) {
         }
         val hintTextElement = getHintTextElement(parent)
         if (hintTextElement == null) {
-          toggleArrowIcon(document, CHEVRON_DOWN)
+          toggleArrowIcon(parent, document, CHEVRON_DOWN_HTML_BLOCK)
           val hintText = (sourceElement.attributes.getAttribute(HTML.Tag.A) as SimpleAttributeSet).getAttribute(HTML.Attribute.VALUE)
           document.insertBeforeEnd(parent.parentElement, String.format(HINT_TEXT_PATTERN, hintText))
           EduCounterUsageCollector.hintExpanded()
         }
         else {
-          toggleArrowIcon(document, CHEVRON_RIGHT)
+          toggleArrowIcon(parent, document, CHEVRON_RIGHT_HTML_BLOCK)
           document.removeElement(hintTextElement)
           EduCounterUsageCollector.hintCollapsed()
         }
@@ -116,9 +116,16 @@ class SwingToolWindow(project: Project) : TaskToolWindow(project) {
     }
 
     @Throws(BadLocationException::class, IOException::class)
-    private fun toggleArrowIcon(document: HTMLDocument, newValue: String) {
-      val chevron = document.getElement("chevron")
-      document.setOuterHTML(chevron, "<span id='chevron'>$newValue</span>")
+    private fun toggleArrowIcon(parent: SwingTextElement, document: HTMLDocument, newValue: String) {
+      val chevron = (parent as AbstractDocument.AbstractElement).children()
+                      .asSequence()
+                      .filterIsInstance<AbstractDocument.AbstractElement>()
+                      .firstOrNull {
+                        val attrSet = it.getAttribute(HTML.Tag.SPAN) as? SimpleAttributeSet ?: return@firstOrNull false
+                        val clazz = attrSet.getAttribute(HTML.Attribute.CLASS) ?: return@firstOrNull false
+                        clazz == CHEVRON_HTML_CLASS_NAME
+                      } ?: return
+      document.setOuterHTML(chevron as SwingTextElement, newValue)
     }
 
     private fun getHintTextElement(parent: SwingTextElement): SwingTextElement? {

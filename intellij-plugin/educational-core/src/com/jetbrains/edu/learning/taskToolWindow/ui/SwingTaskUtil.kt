@@ -69,6 +69,9 @@ private fun prepareCss(editorKit: HTMLEditorKit) {
 const val HINT_PROTOCOL = "hint://"
 const val CHEVRON_RIGHT = "&#8250"
 const val CHEVRON_DOWN = "&#8964"
+const val CHEVRON_HTML_CLASS_NAME = "chevron"
+const val CHEVRON_RIGHT_HTML_BLOCK = "<span class='$CHEVRON_HTML_CLASS_NAME'>$CHEVRON_RIGHT</span>"
+const val CHEVRON_DOWN_HTML_BLOCK = "<span class='$CHEVRON_HTML_CLASS_NAME'>$CHEVRON_DOWN</span>"
 
 private val LOG = Logger.getInstance(SwingToolWindow::class.java)  //TODO we probably need another logger here
 private const val DEFAULT_ICON_SIZE = 16
@@ -92,7 +95,7 @@ fun wrapHintSwing(project: Project, hintElement: Element, displayedHintNumber: S
     return """
       <img src='$bulbIcon' width='$iconSize' height='$iconSize' >
       <span><a href='$HINT_PROTOCOL$displayedHintNumber' value='${hintElement.text()}'>$escapedHintTitle $displayedHintNumber</a>
-      <span id='chevron'>$CHEVRON_RIGHT</span></span>
+      $CHEVRON_RIGHT_HTML_BLOCK</span>
     """.trimIndent()
   }
 
@@ -104,7 +107,7 @@ fun wrapHintSwing(project: Project, hintElement: Element, displayedHintNumber: S
     return """ 
         <img src='$bulbIcon' width='$iconSize' height='$iconSize' >
         <span><a href='$HINT_PROTOCOL$displayedHintNumber' value='$hintText'>$escapedHintTitle $displayedHintNumber</a>
-        <span id='chevron'>$CHEVRON_DOWN</span></span>
+        $CHEVRON_DOWN_HTML_BLOCK</span>
         <div class='hint_text'>$hintText</div>
      """.trimIndent()
   }

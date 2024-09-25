@@ -63,7 +63,7 @@ abstract class HintsInTaskDescriptionTestBase(
         <div class="wrapper">
          <div class="top">
           <div class="hint">
-           <img src="" width="0" height="0"> <span><a href="hint://" value="Hint text">Hint </a> <span id="chevron">›</span></span>
+           <img src="" width="0" height="0"> <span><a href="hint://" value="Hint text">Hint </a> <span class="chevron">›</span></span>
           </div>
          </div>
         </div>
@@ -204,32 +204,32 @@ class HintTestForMarketplaceCourseEduTask : HintsInTaskDescriptionTestBase(false
          <p>Hello</p>
          <div class="top">
           <div class="hint">
-           <img src="" width="0" height="0"> <span><a href="hint://1" value="Text 1">Explanation 1</a> <span id="chevron">›</span></span>
+           <img src="" width="0" height="0"> <span><a href="hint://1" value="Text 1">Explanation 1</a> <span class="chevron">›</span></span>
           </div>
          </div>
          <div class="top">
           <div class="hint">
-           <img src="" width="0" height="0"> <span><a href="hint://1" value="Text 2">Clarification 1</a> <span id="chevron">›</span></span>
+           <img src="" width="0" height="0"> <span><a href="hint://1" value="Text 2">Clarification 1</a> <span class="chevron">›</span></span>
           </div>
          </div>
          <div class="top">
           <div class="hint">
-           <img src="" width="0" height="0"> <span><a href="hint://1" value="Text 3">Hint 1</a> <span id="chevron">›</span></span>
+           <img src="" width="0" height="0"> <span><a href="hint://1" value="Text 3">Hint 1</a> <span class="chevron">›</span></span>
           </div>
          </div>
          <div class="hint">
-          <img src="" width="0" height="0"> <span><a href="hint://2" value="Text 4">Clarification 2</a> <span id="chevron">›</span></span>
+          <img src="" width="0" height="0"> <span><a href="hint://2" value="Text 4">Clarification 2</a> <span class="chevron">›</span></span>
          </div>
          <div class="top">
           <div class="hint">
-           <img src="" width="0" height="0"> <span><a href="hint://" value="Text 5">Random title </a> <span id="chevron">›</span></span>
+           <img src="" width="0" height="0"> <span><a href="hint://" value="Text 5">Random title </a> <span class="chevron">›</span></span>
           </div>
          </div>
          <div class="hint">
-          <img src="" width="0" height="0"> <span><a href="hint://2" value="Text 6">Hint 2</a> <span id="chevron">›</span></span>
+          <img src="" width="0" height="0"> <span><a href="hint://2" value="Text 6">Hint 2</a> <span class="chevron">›</span></span>
          </div>
          <div class="hint">
-          <img src="" width="0" height="0"> <span><a href="hint://2" value="Text 7">Explanation 2</a> <span id="chevron">›</span></span>
+          <img src="" width="0" height="0"> <span><a href="hint://2" value="Text 7">Explanation 2</a> <span class="chevron">›</span></span>
          </div>
         </div>
        </body>
