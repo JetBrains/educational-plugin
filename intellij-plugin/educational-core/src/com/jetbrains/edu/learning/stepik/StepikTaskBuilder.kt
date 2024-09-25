@@ -300,7 +300,12 @@ open class StepikTaskBuilder(private val course: Course, stepSource: StepSource)
   }
 
   // We can get an unsupported task for hyperskill courses only. There only task type is important, no other info is used
-  private fun unsupportedTask(@NonNls name: String): Task = UnsupportedTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked)
+  private fun unsupportedTask(@NonNls name: String): Task {
+    return UnsupportedTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked).apply {
+      descriptionFormat = DescriptionFormat.HTML
+      initTaskFiles(this)
+    }
+  }
 
   private fun pycharmTask(type: String? = null): Task {
     val stepOptions = step.pycharmOptions()
