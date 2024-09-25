@@ -41,6 +41,7 @@ private const val VIDEO_TAG = "video"
 private const val IFRAME_TAG = "iframe"
 private const val YOUTUBE_VIDEO_ID_LENGTH = 11
 const val A_TAG = "a"
+const val CODE_TAG = "code"
 const val IMG_TAG = "img"
 const val SCRIPT_TAG = "script"
 const val SRC_ATTRIBUTE = "src"
@@ -48,6 +49,8 @@ private const val SPAN_ATTRIBUTE = "span"
 private const val HEIGHT_ATTRIBUTE = "height"
 const val HREF_ATTRIBUTE = "href"
 private const val STYLE_ATTRIBUTE = "style"
+private const val CLASS_ATTRIBUTE = "class"
+const val TERM_CLASS = "term"
 private const val SRCSET_ATTRIBUTE = "srcset"
 private const val DARK_SRC_CUSTOM_ATTRIBUTE = "dark-src"
 private const val WIDTH_ATTRIBUTE = "width"
@@ -252,6 +255,13 @@ fun useDarkSrcCustomAttributeIfPresent(element: Element): Boolean {
     false
   }
 }
+
+fun getDashedUnderlineElement(document: Document, text: String): Element =
+  document.createElement(SPAN_ATTRIBUTE).apply {
+    attr(STYLE_ATTRIBUTE, "border-bottom: 1px dashed gray;")
+    attr(CLASS_ATTRIBUTE, TERM_CLASS)
+    appendText(text)
+  }
 
 fun addExternalLinkIcons(document: Document): Document {
   val links = document.getElementsByTag(A_TAG)
