@@ -13,9 +13,9 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.yaml.YamlDeepLoader.loadCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.isEduYamlProject
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.startSynchronization
-import kotlinx.atomicfu.locks.reentrantLock
-import kotlinx.atomicfu.locks.withLock
 import org.jetbrains.annotations.TestOnly
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 /**
  * Implementation of class which contains all the information about study in context of current project
@@ -25,42 +25,47 @@ class StudyTaskManager(private val project: Project) : DumbAware, Disposable, Li
   @Volatile
   private var courseLoadedWithError = false
 
-  private val courseLoadingLock = reentrantLock()
+  private val courseLoadingLock = ReentrantLock()
   private var _course: Course? = null
 
   var course: Course?
     get() = _course
     set(course) {
       _course = course
-      course?.apply {
-        project.messageBus.syncPublisher(COURSE_SET).courseSet(this)
-      }
+      course?.fireCourseSetEvent()
     }
 
-  private fun needToLoadCourse(project: Project): Boolean = !project.isDefault
-                                                                   && !LightEdit.owns(project)
-                                                                   && course == null
-                                                                   && project.isEduYamlProject()
-                                                                   && !courseLoadedWithError
+  private fun Course.fireCourseSetEvent() =
+    project.messageBus.syncPublisher(COURSE_SET).courseSet(this)
+
+  private fun needToLoadCourse(project: Project): Boolean =
+    !project.isDefault
+    && !LightEdit.owns(project)
+    && course == null
+    && !courseLoadedWithError
+    && project.isEduYamlProject()
 
   private fun initializeCourse() {
     if (!needToLoadCourse(project)) return
 
+    var loadedCourse: Course? = null
+
     courseLoadingLock.withLock {
       if (!needToLoadCourse(project)) return
 
-      val loadedCourse = runReadAction { loadCourse(project) }
+      loadedCourse = runReadAction { loadCourse(project) }
       courseLoadedWithError = loadedCourse == null
       if (loadedCourse != null) {
         logger<StudyTaskManager>().info("Loaded course corresponding to the project: ${loadedCourse.name}")
-        course = loadedCourse
+        _course = loadedCourse
       }
       else {
         logger<StudyTaskManager>().info("Course corresponding to the project loaded with errors")
       }
-
-      startSynchronization(project)
     }
+
+    loadedCourse?.fireCourseSetEvent()
+    startSynchronization(project)
   }
 
   override fun dispose() {}
