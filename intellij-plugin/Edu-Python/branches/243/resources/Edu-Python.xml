@@ -1,0 +1,10 @@
+<!-- BACKCOMPAT: 2024.1 inline it -->
+<idea-plugin package="com.jetbrains.edu.python" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <!--suppress PluginXmlValidity -->
+  <dependencies>
+    <plugin id="com.intellij.modules.python"/>
+  </dependencies>
+
+  <!-- BACKCOMPAT: 2024.1: Inline it -->
+  <xi:include href="/META-INF/Edu-Python-base.xml" xpointer="xpointer(/idea-plugin/*)"/>
+</idea-plugin>
