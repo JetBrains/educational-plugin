@@ -61,8 +61,8 @@ class SwitchTaskPanelAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.
           .align(AlignX.FILL)
           .focused()
           .bindItem(
-            getter = { EduSettings.getInstance().javaUiLibraryWithCheck },
-            setter = { EduSettings.getInstance().javaUiLibrary = it ?: SWING }
+            getter = { EduSettings.getInstance().javaUiLibrary },
+            setter = { EduSettings.getInstance().setJavaUiLibrary(it ?: SWING, changedByUser = true) }
           )
       }
     }

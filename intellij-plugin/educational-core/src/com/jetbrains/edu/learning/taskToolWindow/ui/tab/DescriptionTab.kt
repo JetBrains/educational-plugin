@@ -1,10 +1,10 @@
 package com.jetbrains.edu.learning.taskToolWindow.ui.tab
 
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.InlineBanner
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.taskToolWindow.ui.JCEFToolWindow
@@ -18,7 +18,7 @@ import javax.swing.JPanel
  */
 class DescriptionTab(project: Project) : TaskToolWindowTab(project, TabType.DESCRIPTION_TAB) {
 
-  private val taskTextToolWindow = if (EduSettings.getInstance().javaUiLibraryWithCheck == JavaUILibrary.JCEF) {
+  private val taskTextToolWindow = if (JavaUILibrary.isJCEF()) {
     JCEFToolWindow(project)
   }
   else {
@@ -26,6 +26,8 @@ class DescriptionTab(project: Project) : TaskToolWindowTab(project, TabType.DESC
   }
 
   init {
+    LOG.info("Description tab uses `${taskTextToolWindow.javaClass.name}` impl")
+
     Disposer.register(this, taskTextToolWindow)
 
     val taskDescription = taskTextToolWindow.taskInfoPanel
@@ -56,4 +58,7 @@ class DescriptionTab(project: Project) : TaskToolWindowTab(project, TabType.DESC
     taskInfoPanel.validate()
   }
 
+  companion object {
+    private val LOG = logger<DescriptionTab>()
+  }
 }

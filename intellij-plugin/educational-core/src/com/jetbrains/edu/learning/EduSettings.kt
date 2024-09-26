@@ -37,6 +37,15 @@ class EduSettings : PersistentStateComponent<Element> {
 
   @Property
   var javaUiLibrary: JavaUILibrary = initialJavaUiLibrary()
+    private set
+
+  @Property
+  private var uiLibraryChangedByUser: Boolean = false
+
+  fun setJavaUiLibrary(javaUiLibrary: JavaUILibrary, changedByUser: Boolean) {
+    this.javaUiLibrary = javaUiLibrary
+    uiLibraryChangedByUser = changedByUser
+  }
 
   override fun getState(): Element {
     return serialize()
@@ -55,6 +64,19 @@ class EduSettings : PersistentStateComponent<Element> {
 
   override fun loadState(state: Element) {
     deserialize(state)
+
+    // It's supposed to handle two cases:
+    // - JCEF became unavailable after the previous IDE session.
+    //   For example, the previous session was in another IDE version where JCEF was available and settings were migrated from there.
+    //   In this case, we want to switch to Swing to avoid runtime errors.
+    // - JCEF became available after the previous IDE session, although it wasn't available before.
+    //   For example, it may happen during the creation of a course image for RemDev
+    //   where IDE can be launched several times without JCEF during the preparation phase.
+    //   In this case, we want to use JCEF if it's available in the current run.
+    //   At the same time, we want to preserve user's choice
+    if (javaUiLibrary == JavaUILibrary.JCEF || !uiLibraryChangedByUser) {
+      javaUiLibrary = initialJavaUiLibrary()
+    }
   }
 
   private fun deserialize(state: Element) {
@@ -72,14 +94,6 @@ class EduSettings : PersistentStateComponent<Element> {
       JavaUILibrary.SWING
     }
   }
-
-  val javaUiLibraryWithCheck: JavaUILibrary
-    get() = if (javaUiLibrary === JavaUILibrary.JCEF && JBCefApp.isSupported()) {
-      JavaUILibrary.JCEF
-    }
-    else {
-      JavaUILibrary.SWING
-    }
 
   private fun getUser(parent: Element): Element? {
     for (child in parent.children) {

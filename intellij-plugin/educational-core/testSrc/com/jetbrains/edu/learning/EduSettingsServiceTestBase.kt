@@ -8,13 +8,20 @@ import org.jdom.Element
 
 abstract class EduSettingsServiceTestBase : EduTestCase() {
 
-  protected inline fun <reified T : Any> PersistentStateComponent<T>.loadStateAndCheck(@Language("XML") xml: String) {
+  protected inline fun <reified T : Any> PersistentStateComponent<T>.loadStateAndCheck(
+    @Language("XML") xml: String,
+    @Language("XML") expected: String = xml
+  ) {
     val element = JDOMUtil.load(xml.trimIndent().toByteArray())
     val storedState = element.deserialize<T>()
     loadState(storedState)
+    checkState<T>(expected)
+  }
+
+  protected inline fun <reified T : Any> PersistentStateComponent<T>.checkState(@Language("XML")  expected: String) {
     val currentState = state ?: error("Can't take state of `${javaClass.simpleName}`")
     val actual = JDOMUtil.writeElement(currentState.serialize())
-    assertEquals(xml.trimIndent(), actual)
+    assertEquals(expected.trimIndent(), actual)
   }
 
   protected inline fun <reified T : Any> Element.deserialize(): T {

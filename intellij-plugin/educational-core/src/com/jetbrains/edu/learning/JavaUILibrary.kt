@@ -14,7 +14,7 @@ enum class JavaUILibrary {
 
   @Suppress("unused", "MemberVisibilityCanBePrivate")
   companion object {
-    fun isSwing(): Boolean = EduSettings.getInstance().javaUiLibraryWithCheck == SWING
-    fun isJCEF(): Boolean = EduSettings.getInstance().javaUiLibraryWithCheck == JCEF
+    fun isSwing(): Boolean = EduSettings.getInstance().javaUiLibrary == SWING
+    fun isJCEF(): Boolean = EduSettings.getInstance().javaUiLibrary == JCEF
   }
 }

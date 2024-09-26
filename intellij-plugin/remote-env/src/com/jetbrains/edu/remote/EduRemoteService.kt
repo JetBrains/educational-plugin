@@ -5,11 +5,8 @@ import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.client.ClientProjectSession
 import com.intellij.openapi.components.service
 import com.intellij.openapi.rd.util.launchOnUi
-import com.intellij.ui.jcef.JBCefApp
 import com.jetbrains.codeWithMe.model.projectViewModel
-import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
-import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator.Companion.EDU_PROJECT_CREATED
 import com.jetbrains.edu.learning.projectView.CourseViewPane
@@ -33,10 +30,6 @@ class EduRemoteService(private val session: ClientProjectSession): LifetimedServ
         project.putUserData(EDU_PROJECT_CREATED, true)
         SubmissionSettings.getInstance(project).stateOnClose = true
         SubmissionSettings.getInstance(project).applySubmissionsForce = true
-
-        // Temporary workaround to force JCEF on remote if it's available.
-        // Ideally, it should be selected automatically during `EduSettings` service initialization
-        enableJCEFIfSupported()
 
         val course = project.course ?: return@launchOnUi
         // This hack is needed because at the time this service is loaded our Course view is not present in the model
@@ -64,11 +57,5 @@ class EduRemoteService(private val session: ClientProjectSession): LifetimedServ
   companion object {
     @Suppress("unused")
     fun getInstance(session: ClientProjectSession): EduRemoteService = session.getService(EduRemoteService::class.java)
-
-    private fun enableJCEFIfSupported() {
-      if (JBCefApp.isSupported()) {
-        EduSettings.getInstance().javaUiLibrary = JavaUILibrary.JCEF
-      }
-    }
   }
 }
