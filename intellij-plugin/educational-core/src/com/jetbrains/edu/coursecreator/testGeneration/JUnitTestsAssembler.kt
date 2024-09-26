@@ -16,7 +16,7 @@ import org.jetbrains.research.testspark.core.test.parsers.java.JUnitTestSuitePar
 class JUnitTestsAssembler(
   val project: Project,
   val indicator: CustomProgressIndicator,
-  val generationData: TestGenerationData,
+  private val generationData: TestGenerationData,
 ) : TestsAssembler() {
 
   private val log: Logger = Logger.getInstance(this.javaClass)
@@ -31,7 +31,6 @@ class JUnitTestsAssembler(
   override fun consume(text: String) {
     if (text.isEmpty()) return
 
-    // Collect the response and update the progress bar
     super.consume(text)
     updateProgressBar()
   }
@@ -91,7 +90,7 @@ class JUnitTestsAssembler(
       generationData.importsCode.add(junitVersion.runWithAnnotationMeta.import)
     }
     else {
-      generationData.runWith = "" // TODO
+      generationData.runWith = ""
       generationData.importsCode.remove(junitVersion.runWithAnnotationMeta.import)
     }
 

@@ -2,20 +2,14 @@ package com.jetbrains.edu.coursecreator.testGeneration
 
 import com.google.gson.GsonBuilder
 import com.google.gson.annotations.SerializedName
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.util.io.HttpRequests
 import com.intellij.util.io.HttpRequests.HttpStatusException
-import com.intellij.util.io.createDirectories
-import com.intellij.util.io.write
 import org.jetbrains.research.testspark.core.data.ChatMessage
-import org.jetbrains.research.testspark.core.generation.llm.network.LLMResponse
 import org.jetbrains.research.testspark.core.generation.llm.network.RequestManager
 import org.jetbrains.research.testspark.core.progress.CustomProgressIndicator
 import org.jetbrains.research.testspark.core.test.TestsAssembler
 import java.net.HttpURLConnection
-import kotlin.io.path.Path
-import kotlin.io.path.createFile
 
 // TODO will be replaced with the Grazie requestManager
 class OpenAIRequestManager(val project: Project) : RequestManager(System.getenv("OPENAI_TOKEN")) {
@@ -31,10 +25,8 @@ class OpenAIRequestManager(val project: Project) : RequestManager(System.getenv(
     indicator: CustomProgressIndicator,
     testsAssembler: TestsAssembler
   ): SendResult {
-    // Prepare the chat
     val llmRequestBody = OpenAIRequestBody("gpt-3.5-turbo", chatHistory)
     var sendResult = SendResult.OK
-//    ApplicationManager.getApplication().invokeAndWait {
 
       try {
         httpRequest.connect {

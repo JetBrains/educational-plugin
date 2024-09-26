@@ -4,7 +4,6 @@ import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.roots.ModuleRootManager
-import com.intellij.task.ProjectTaskManager
 import org.jetbrains.research.testspark.core.utils.DataFilesUtil
 import java.io.File
 
@@ -19,22 +18,18 @@ object TestBuildUtil {
       val compilerOutputPath = CompilerModuleExtension.getInstance(module)?.compilerOutputPath
 
       compilerOutputPath?.let { buildPath += compilerOutputPath.path.plus(DataFilesUtil.classpathSeparator.toString()) }
-      // Include extra libraries in classpath
       val librariesPaths = ModuleRootManager.getInstance(module).orderEntries().librariesOnly().pathsList.pathList
       for (lib in librariesPaths) {
-        // exclude the invalid classpaths
         if (buildPath.contains(lib)) {
           continue
         }
         if (lib.endsWith(".zip")) {
           continue
         }
-
-        // remove junit and hamcrest libraries, since we use our own libraries
         val pathArray = lib.split(File.separatorChar)
         val libFileName = pathArray[pathArray.size - 1]
         if (libFileName.startsWith("junit") ||
-            libFileName.startsWith("hamcrest") //TODO to settings
+            libFileName.startsWith("hamcrest")
         ) {
           continue
         }
@@ -46,7 +41,7 @@ object TestBuildUtil {
   }
 
   fun getResultPath(id: String, testResultDirectory: String): String {
-    val testResultName = "test_gen_result_$id" // TODO
+    val testResultName = "test_gen_result_$id"
 
     return "$testResultDirectory$testResultName"
   }

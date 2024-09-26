@@ -1,23 +1,21 @@
 package com.jetbrains.edu.coursecreator.testGeneration
 
+//import com.intellij.lang.java.JavaLanguage
 import com.github.javaparser.ParseProblemException
 import com.github.javaparser.StaticJavaParser
 import com.github.javaparser.ast.CompilationUnit
 import com.github.javaparser.ast.body.MethodDeclaration
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter
-import com.intellij.execution.target.java.JavaLanguageRuntimeUI
-//import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.codeStyle.CodeStyleManager
-import org.intellij.lang.annotations.Language
 import org.jetbrains.research.testspark.core.data.TestGenerationData
 import java.io.File
 
-object JavaClassBuilderHelper {
+object JavaClassBuilderHelper { // TODO replace to java module
   /**
    * Generates the code for a test class.
    *

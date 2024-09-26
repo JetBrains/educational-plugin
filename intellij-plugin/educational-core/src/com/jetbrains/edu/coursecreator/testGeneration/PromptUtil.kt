@@ -44,7 +44,7 @@ object PromptUtil {
     )
 
     val promptGenerator = PromptGenerator(context, promptTemplates)
-    val initialPromptMessage = promptGenerator.generatePromptForClass(interestingClasses, "") // TODO connect with real templates
+    val initialPromptMessage = promptGenerator.generatePromptForClass(interestingClasses, "")
     return initialPromptMessage
   }
 }

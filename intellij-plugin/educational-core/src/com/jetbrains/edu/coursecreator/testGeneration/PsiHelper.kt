@@ -1,10 +1,9 @@
 package com.jetbrains.edu.coursecreator.testGeneration
 
-import com.intellij.lang.LanguageExtension
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.project.Project
 import com.intellij.lang.Language
+import com.intellij.lang.LanguageExtension
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
 import com.intellij.psi.PsiFile
 
@@ -70,16 +69,6 @@ abstract class PsiHelper {
   ): MutableSet<PsiClassWrapper>
 
   /**
-   * Gets the current list of code types based on the given AnActionEvent.
-   *
-   * @param e The AnActionEvent representing the current action event.
-   * @return An array containing the current code types. If no caret or PSI file is found, an empty array is returned.
-   *         The array contains the class display name, method display name (if present), and the line number (if present).
-   *         The line number is prefixed with "Line".
-   */
-  abstract fun getCurrentListOfCodeTypes(e: AnActionEvent): Array<*>?
-
-  /**
    * Helper for generating method descriptors for methods.
    *
    * @param psiMethod The method to extract the descriptor from.
@@ -99,34 +88,6 @@ abstract class PsiHelper {
     classesToTest: MutableList<PsiClassWrapper>,
     caretOffset: Int,
   )
-
-  /**
-   * Gets the display line number.
-   * This is used when displaying the name of a method in the GenerateTestsActionMethod menu entry.
-   *
-   * @param line The line number.
-   * @return The display name of the line.
-   */
-  abstract fun getLineDisplayName(line: Int): String
-
-  /**
-   * Gets the display name of a class.
-   * This is used when displaying the name of a class in the GenerateTestsActionClass menu entry.
-   *
-   * @param psiClass The PSI class of interest.
-   * @return The display name of the PSI class.
-   */
-  abstract fun getClassDisplayName(psiClass: PsiClassWrapper): String
-
-  /**
-   * Gets the display name of a method, depending on if it is a (default) constructor or a normal method.
-   * This is used when displaying the name of a method in the GenerateTestsActionMethod menu entry.
-   *
-   * @param psiMethod The PSI method of interest.
-   * @return The display name of the PSI method.
-   */
-  abstract fun getMethodDisplayName(psiMethod: PsiMethodWrapper): String
-
 
   abstract fun getPackageName(): String
 

@@ -1,18 +1,12 @@
 package com.jetbrains.edu.java.testGeneration
 
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiTypesUtil
-import com.jetbrains.edu.coursecreator.testGeneration.TestLanguage
-import com.jetbrains.edu.coursecreator.testGeneration.PsiClassWrapper
-import com.jetbrains.edu.coursecreator.testGeneration.PsiHelper
-import com.jetbrains.edu.coursecreator.testGeneration.PsiMethodWrapper
+import com.jetbrains.edu.coursecreator.testGeneration.*
 
 class JavaPsiHelper : PsiHelper() {
     override var psiFile: PsiFile? = null
@@ -120,8 +114,7 @@ class JavaPsiHelper : PsiHelper() {
         var currentLevelClasses =
             mutableListOf<PsiClassWrapper>().apply { addAll(classesToTest) }
 
-        // TODO
-        repeat(5) {
+        repeat(SettingsArguments(project).maxInputParamsDepth(polyDepthReducing)) {
             val tempListOfClasses = mutableSetOf<JavaPsiClassWrapper>()
 
             currentLevelClasses.forEach { classIt ->
@@ -151,48 +144,6 @@ class JavaPsiHelper : PsiHelper() {
         val interestingPsiClasses = cut.getInterestingPsiClassesWithQualifiedNames(psiMethod)
         log.info("There are ${interestingPsiClasses.size} interesting psi classes from method ${psiMethod.methodDescriptor}")
         return interestingPsiClasses
-    }
-
-    override fun getCurrentListOfCodeTypes(e: AnActionEvent): Array<*>? {
-        val result: ArrayList<String> = arrayListOf()
-        val caret: Caret =
-            e.dataContext.getData(CommonDataKeys.CARET)?.caretModel?.primaryCaret ?: return result.toArray()
-
-        val javaPsiClassWrapped = getSurroundingClass(caret.offset) as JavaPsiClassWrapper?
-        val javaPsiMethodWrapped = getSurroundingMethod(caret.offset) as JavaPsiMethodWrapper?
-        val line: Int? = getSurroundingLine(caret.offset)
-
-        javaPsiClassWrapped?.let { result.add(getClassDisplayName(it)) }
-        javaPsiMethodWrapped?.let { result.add(getMethodDisplayName(it)) }
-        line?.let { result.add(getLineDisplayName(it)) }
-
-        if (javaPsiClassWrapped != null && javaPsiMethodWrapped != null) {
-            log.info(
-                "The test can be generated for: \n " +
-                    " 1) Class ${javaPsiClassWrapped.qualifiedName} \n" +
-                    " 2) Method ${javaPsiMethodWrapped.methodDescriptor}" +
-                    " 3) Line $line",
-            )
-        }
-
-        return result.toArray()
-    }
-
-    override fun getLineDisplayName(line: Int): String = "<html><b><font color='orange'>line</font> $line</b></html>"
-
-    override fun getClassDisplayName(psiClass: PsiClassWrapper): String =
-        "" // TODO
-
-    override fun getMethodDisplayName(psiMethod: PsiMethodWrapper): String {
-        return if ((psiMethod as JavaPsiMethodWrapper).isDefaultConstructor) {
-            "<html><b><font color='orange'>default constructor</font></b></html>"
-        } else if (psiMethod.isConstructor) {
-            "<html><b><font color='orange'>constructor</font></b></html>"
-        } else if (psiMethod.isMethodDefault) {
-            "<html><b><font color='orange'>default method</font> ${psiMethod.name}</b></html>"
-        } else {
-            "<html><b><font color='orange'>method</font> ${psiMethod.name}</b></html>"
-        }
     }
 
     override fun getPackageName(): String {

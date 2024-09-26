@@ -5,12 +5,11 @@ import org.jetbrains.research.testspark.core.generation.llm.prompt.configuration
 import org.jetbrains.research.testspark.core.generation.llm.prompt.configuration.MethodRepresentation
 
 fun PsiMethodWrapper.toMethodRepresentation(): MethodRepresentation? {
-  text ?: return null
   return MethodRepresentation(
     signature = signature,
     name = name,
-    text = text!!,
-    containingClassQualifiedName = containingClass!!.qualifiedName,
+    text = text ?: return null,
+    containingClassQualifiedName = containingClass?.qualifiedName ?: return null,
   )
 }
 

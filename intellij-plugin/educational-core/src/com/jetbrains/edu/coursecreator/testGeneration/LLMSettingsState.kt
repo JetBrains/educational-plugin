@@ -38,7 +38,7 @@ data class LLMSettingsState(
     val grazieName: String = "AI Assistant JetBrains"
     val grazieToken: String = ""
     val grazieModel: String = ""
-    var currentLLMPlatformName: String = "OenAI"
+    var currentLLMPlatformName: String = "OpenAI"
     val maxLLMRequest: Int = 3
     val maxInputParamsDepth: Int = 2
     val maxPolyDepth: Int = 2

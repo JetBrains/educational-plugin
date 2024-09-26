@@ -18,9 +18,11 @@ import java.util.*
 import kotlin.io.path.Path
 import kotlin.io.path.createDirectories
 
+private const val TEMP_DIRECTORY = "generatedTests"
+
 class TestGenerator(private val project: Project) {
 
-  fun generateFileTests(
+  fun generateTestSuite(
     psiHelper: PsiHelper,
     testFilename: String,
     caret: Int,
@@ -31,7 +33,7 @@ class TestGenerator(private val project: Project) {
     val initialPromptMessage = generatePrompt(project, psiHelper, 0, classesToTest)
     val report = Report()
 
-    val testResultDirectory = "${FileUtilRt.getTempDirectory()}${File.separatorChar}testSparkResults${File.separatorChar}"
+    val testResultDirectory = "${FileUtilRt.getTempDirectory()}${File.separatorChar}$TEMP_DIRECTORY${File.separatorChar}"
     val id = UUID.randomUUID().toString()
 
     LLMSettingsState.DefaultLLMSettingsState.junitVersion.libJar.forEach {
