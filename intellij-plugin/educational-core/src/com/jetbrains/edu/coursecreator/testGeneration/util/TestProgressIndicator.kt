@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.testGeneration
+package com.jetbrains.edu.coursecreator.testGeneration.util
 
 import com.intellij.openapi.progress.ProgressIndicator
 import org.jetbrains.research.testspark.core.progress.CustomProgressIndicator

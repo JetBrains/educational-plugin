@@ -1,10 +1,11 @@
-package com.jetbrains.edu.coursecreator.testGeneration
+package com.jetbrains.edu.coursecreator.testGeneration.request
 
 import com.google.gson.GsonBuilder
 import com.google.gson.annotations.SerializedName
 import com.intellij.openapi.project.Project
 import com.intellij.util.io.HttpRequests
 import com.intellij.util.io.HttpRequests.HttpStatusException
+import com.jetbrains.edu.coursecreator.testGeneration.processing.TestRequestedAssembler
 import org.jetbrains.research.testspark.core.data.ChatMessage
 import org.jetbrains.research.testspark.core.generation.llm.network.RequestManager
 import org.jetbrains.research.testspark.core.progress.CustomProgressIndicator
@@ -34,7 +35,7 @@ class OpenAIRequestManager(val project: Project) : RequestManager(System.getenv(
 
           // check response
           when ((it.connection as HttpURLConnection).responseCode) {
-            HttpURLConnection.HTTP_OK -> (testsAssembler as JUnitTestsAssembler).consume(it)
+            HttpURLConnection.HTTP_OK -> (testsAssembler as TestRequestedAssembler).consume(it)
             HttpURLConnection.HTTP_INTERNAL_ERROR -> {
               sendResult = SendResult.OTHER
             }

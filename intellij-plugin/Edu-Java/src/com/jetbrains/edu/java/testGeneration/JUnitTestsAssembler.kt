@@ -1,14 +1,16 @@
-package com.jetbrains.edu.coursecreator.testGeneration
+package com.jetbrains.edu.java.testGeneration
 
 import com.google.gson.Gson
 import com.google.gson.JsonParser
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.util.io.HttpRequests
+import com.jetbrains.edu.coursecreator.testGeneration.util.LLMSettingsState
+import com.jetbrains.edu.coursecreator.testGeneration.request.OpenAIRequestManager
+import com.jetbrains.edu.coursecreator.testGeneration.processing.TestRequestedAssembler
 import org.jetbrains.research.testspark.core.data.JUnitVersion
 import org.jetbrains.research.testspark.core.data.TestGenerationData
 import org.jetbrains.research.testspark.core.progress.CustomProgressIndicator
-import org.jetbrains.research.testspark.core.test.TestsAssembler
 import org.jetbrains.research.testspark.core.test.data.TestSuiteGeneratedByLLM
 import org.jetbrains.research.testspark.core.test.parsers.TestSuiteParser
 import org.jetbrains.research.testspark.core.test.parsers.java.JUnitTestSuiteParser
@@ -16,8 +18,8 @@ import org.jetbrains.research.testspark.core.test.parsers.java.JUnitTestSuitePar
 class JUnitTestsAssembler(
   val project: Project,
   val indicator: CustomProgressIndicator,
-  private val generationData: TestGenerationData,
-) : TestsAssembler() {
+  private val generationData: TestGenerationData
+) : TestRequestedAssembler() {
 
   private val log: Logger = Logger.getInstance(this.javaClass)
 
@@ -38,9 +40,9 @@ class JUnitTestsAssembler(
   /**
    * Receives a response text and updates the progress bar accordingly.
    *
-   * @param httpRequest the httpRequest sent to OpenAI
+   * @param httpRequest the httpRequest sent to service
    */
-  fun consume(httpRequest: HttpRequests.Request) {
+  override fun consume(httpRequest: HttpRequests.Request) {
     while (true) {
       if (indicator.isProcessCanceled()) return
 

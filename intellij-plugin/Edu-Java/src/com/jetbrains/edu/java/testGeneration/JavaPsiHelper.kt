@@ -6,7 +6,11 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiTypesUtil
-import com.jetbrains.edu.coursecreator.testGeneration.*
+import com.jetbrains.edu.coursecreator.testGeneration.psi.PsiClassWrapper
+import com.jetbrains.edu.coursecreator.testGeneration.psi.PsiHelper
+import com.jetbrains.edu.coursecreator.testGeneration.psi.PsiMethodWrapper
+import com.jetbrains.edu.coursecreator.testGeneration.psi.TestLanguage
+import com.jetbrains.edu.coursecreator.testGeneration.util.SettingsArguments
 
 class JavaPsiHelper : PsiHelper() {
     override var psiFile: PsiFile? = null
@@ -147,7 +151,7 @@ class JavaPsiHelper : PsiHelper() {
     }
 
     override fun getPackageName(): String {
-        val psiPackage = JavaDirectoryService.getInstance().getPackage(psiFile!!.containingDirectory)
+        val psiPackage = JavaDirectoryService.getInstance().getPackage(psiFile!!.containingDirectory) // TODO
         return psiPackage?.qualifiedName ?: ""
     }
 

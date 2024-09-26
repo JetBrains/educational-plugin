@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.testGeneration
+package com.jetbrains.edu.coursecreator.testGeneration.util
 
 import com.intellij.openapi.project.Project
 
@@ -33,6 +33,13 @@ class SettingsArguments(private val project: Project) {
    */
   fun maxPolyDepth(polyDepthReducing: Int): Int =
     llmSettingsState.maxPolyDepth - polyDepthReducing
+
+  /**
+   * Returns threshold for maximum amount of requests.
+   *
+   * @return Threshold for maximum amount of requests.
+   */
+  fun requestsCountThreshold() = llmSettingsState.requestsCountThreshold
 
   /**
    * Checks if the token is set for the user in the settings.
@@ -70,4 +77,3 @@ class SettingsArguments(private val project: Project) {
     else -> ""
   }
 }
-

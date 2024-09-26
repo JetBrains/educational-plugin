@@ -1,6 +1,8 @@
-package com.jetbrains.edu.coursecreator.testGeneration
+package com.jetbrains.edu.coursecreator.testGeneration.util
 
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.coursecreator.testGeneration.psi.PsiClassWrapper
+import com.jetbrains.edu.coursecreator.testGeneration.psi.PsiMethodWrapper
 import org.jetbrains.research.testspark.core.generation.llm.prompt.configuration.ClassRepresentation
 import org.jetbrains.research.testspark.core.generation.llm.prompt.configuration.MethodRepresentation
 

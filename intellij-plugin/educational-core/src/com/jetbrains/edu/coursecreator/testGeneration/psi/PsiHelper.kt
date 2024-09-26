@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.testGeneration
+package com.jetbrains.edu.coursecreator.testGeneration.psi
 
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageExtension
@@ -93,13 +93,17 @@ abstract class PsiHelper {
 
 
   /**
-   * TODO
+   * Retrieves all classes to test based on the project and caret position.
+   *
+   * @param project The project in which to retrieve classes to test.
+   * @param caret The caret position in the file.
+   * @return The list of PsiClassWrapper objects representing the classes to test.
    */
   fun getAllClassesToTest(project: Project, caret: Int): List<PsiClassWrapper> {
     val classesToTest = mutableListOf<PsiClassWrapper>()
     ApplicationManager.getApplication().runReadAction(
       Computable {
-        collectClassesToTest(project, classesToTest, caret) // TODO
+        collectClassesToTest(project, classesToTest, caret)
       },
     )
     return classesToTest

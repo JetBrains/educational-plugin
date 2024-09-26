@@ -1,11 +1,13 @@
-package com.jetbrains.edu.coursecreator.testGeneration
+package com.jetbrains.edu.java.testGeneration
 
-//import com.intellij.lang.java.JavaLanguage
 import com.github.javaparser.ParseProblemException
 import com.github.javaparser.StaticJavaParser
 import com.github.javaparser.ast.CompilationUnit
 import com.github.javaparser.ast.body.MethodDeclaration
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter
+import com.intellij.lang.Language
+import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
@@ -111,7 +113,8 @@ object JavaClassBuilderHelper { // TODO replace to java module
       }.visit(componentUnit, null)
 
       return result
-    } catch (e: ParseProblemException) {
+    }
+    catch (e: ParseProblemException) {
       val upperCutCode = "\t@Test" + code.split("@Test").last()
       var methodStarted = false
       var balanceOfBrackets = 0
@@ -154,7 +157,8 @@ object JavaClassBuilderHelper { // TODO replace to java module
       }.visit(componentUnit, null)
 
       return result
-    } catch (e: ParseProblemException) {
+    }
+    catch (e: ParseProblemException) {
       return oldTestCaseName
     }
   }
@@ -187,7 +191,7 @@ object JavaClassBuilderHelper { // TODO replace to java module
       val psiFile: PsiFile = PsiFileFactory.getInstance(project)
         .createFileFromText(
           fileName,
-          com.intellij.lang.Language.findLanguageByID("JAVA")!!,
+          Language.findLanguageByID("JAVA") ?: error("Java language must exist"),
           code,
         )
 
@@ -198,7 +202,6 @@ object JavaClassBuilderHelper { // TODO replace to java module
 
       File(fileName).delete()
     }
-
     return result
   }
 }

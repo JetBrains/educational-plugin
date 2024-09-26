@@ -1,0 +1,27 @@
+<idea-plugin>
+  <extensionPoints>
+    <extensionPoint qualifiedName="Educational.psiHelper"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.coursecreator.testGeneration.psi.PsiHelper"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="Educational.TestPresenterManager"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass"
+            implements="com.jetbrains.edu.coursecreator.testGeneration.processing.manager.TestPresenterManager"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="Educational.TestAssemblerManager"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass"
+            implements="com.jetbrains.edu.coursecreator.testGeneration.processing.manager.TestAssemblerManager"/>
+    </extensionPoint>
+  </extensionPoints>
+  <actions>
+    <action id="Educational.Educator.GenerateTest" text="Generate Test" description="Actions related to TestSpark"
+            class="com.jetbrains.edu.coursecreator.testGeneration.actions.GenerateTest">
+      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+    </action>
+  </actions>
+</idea-plugin>

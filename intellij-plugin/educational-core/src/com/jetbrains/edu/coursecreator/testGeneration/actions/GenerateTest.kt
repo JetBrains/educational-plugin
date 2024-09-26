@@ -1,11 +1,12 @@
-package com.jetbrains.edu.coursecreator.actions
+package com.jetbrains.edu.coursecreator.testGeneration.actions
 
 import com.intellij.ide.projectView.ProjectView
-import com.intellij.lang.Language
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
@@ -13,16 +14,15 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiFile
 import com.intellij.task.ProjectTaskManager
 import com.intellij.util.io.createDirectories
-import com.jetbrains.edu.coursecreator.testGeneration.PsiHelper
 import com.jetbrains.edu.coursecreator.testGeneration.TestGenerator
-import com.jetbrains.edu.coursecreator.testGeneration.TestProgressIndicator
+import com.jetbrains.edu.coursecreator.testGeneration.psi.PsiHelper
+import com.jetbrains.edu.coursecreator.testGeneration.util.TestProgressIndicator
+import com.jetbrains.edu.coursecreator.testGeneration.util.TestedFileInfo
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.CourseMode
-import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
@@ -35,15 +35,9 @@ import javax.swing.JComponent
 import javax.swing.JTextField
 import kotlin.math.roundToInt
 
+private const val DIALOG_WIDTH_RATIO = 0.2f
 
 open class GenerateTest : AnAction() {
-  private data class TestedFileInfo(
-    val project: Project,
-    val psiFile: PsiFile,
-    val caret: Int,
-    val language: Language,
-    val selectedTaskFile: TaskFile
-  )
 
   override fun actionPerformed(e: AnActionEvent) {
 
@@ -102,9 +96,9 @@ open class GenerateTest : AnAction() {
     val task = selectedTaskFile.task
     val testDir = task.findTestDirs(project).first()
     val psiHelper = PsiHelper.getInstance(testedFileInfo.language)
-    psiHelper.psiFile = testedFileInfo.psiFile // TODO
+    psiHelper.psiFile = testedFileInfo.psiFile // TODO add PSI Manager
 
-    val text = TestGenerator(project).generateTestSuite(psiHelper, testFilename, testedFileInfo.caret, progressIndicator)
+    val text = TestGenerator(project).generateTestSuite(psiHelper, testFilename, testedFileInfo, progressIndicator)
     val file = testDir.createAndWriteTestToFile(packagePath, testFilename, text)
     project.updateNavigator(file)
   }
@@ -113,16 +107,32 @@ open class GenerateTest : AnAction() {
     pathRelativeToTask(project).replace("src/", "").replace(this.name, "") // TODO
 
 
-  private fun VirtualFile.createAndWriteTestToFile(packagePath: String, testFilename: String, text: String) =
-    toNioPath().resolve(packagePath).apply { createDirectories() }.resolve("$testFilename.java").toFile().apply { // TODO
-      createNewFile()
-      writeText(text)
+  private fun VirtualFile.createAndWriteTestToFile(packagePath: String, testFilename: String, text: String): File {
+    val directory = toNioPath().resolve(packagePath)
+    writeOnEdt {
+      directory.createDirectories()
     }
+    val file = directory.resolve("$testFilename.java").toFile()
+    writeOnEdt {
+      file.createNewFile()
+      file.writeText(text)
+    }
+    return file
+  }
+
+  private fun writeOnEdt(action: () -> Unit) {
+    runInEdt {
+      runWriteAction {
+        action.invoke()
+      }
+    }
+  }
 
   private fun Project.updateNavigator(file: File) {
     LocalFileSystem.getInstance().refreshAndFindFileByIoFile(file)
     ProjectView.getInstance(this).refresh()
   }
+
   inner class FileNameForTestingDialog : DialogWrapper(true) {
 
     val textField = JTextField().apply {
@@ -143,5 +153,3 @@ open class GenerateTest : AnAction() {
   }
 
 }
-
-private const val DIALOG_WIDTH_RATIO = 0.2f

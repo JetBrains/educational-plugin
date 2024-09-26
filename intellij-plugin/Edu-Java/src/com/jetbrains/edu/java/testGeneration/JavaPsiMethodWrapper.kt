@@ -7,8 +7,8 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiSubstitutor
 import com.intellij.psi.PsiType
 import com.intellij.util.containers.stream
-import com.jetbrains.edu.coursecreator.testGeneration.PsiClassWrapper
-import com.jetbrains.edu.coursecreator.testGeneration.PsiMethodWrapper
+import com.jetbrains.edu.coursecreator.testGeneration.psi.PsiClassWrapper
+import com.jetbrains.edu.coursecreator.testGeneration.psi.PsiMethodWrapper
 import java.util.stream.Collectors
 
 class JavaPsiMethodWrapper(private val psiMethod: PsiMethod) : PsiMethodWrapper {

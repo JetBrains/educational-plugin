@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.testGeneration
+package com.jetbrains.edu.coursecreator.testGeneration.processing
 
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project

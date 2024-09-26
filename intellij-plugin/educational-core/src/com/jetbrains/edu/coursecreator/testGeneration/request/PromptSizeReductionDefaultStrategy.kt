@@ -1,7 +1,10 @@
-package com.jetbrains.edu.coursecreator.testGeneration
+package com.jetbrains.edu.coursecreator.testGeneration.request
 
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.coursecreator.testGeneration.PromptUtil.generatePrompt
+import com.jetbrains.edu.coursecreator.testGeneration.request.PromptUtil.generatePrompt
+import com.jetbrains.edu.coursecreator.testGeneration.psi.PsiClassWrapper
+import com.jetbrains.edu.coursecreator.testGeneration.psi.PsiHelper
+import com.jetbrains.edu.coursecreator.testGeneration.util.SettingsArguments
 import org.jetbrains.research.testspark.core.data.TestGenerationData
 import org.jetbrains.research.testspark.core.generation.llm.prompt.PromptSizeReductionStrategy
 

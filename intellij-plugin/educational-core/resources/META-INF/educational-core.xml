@@ -31,11 +31,6 @@
   </projectListeners>
 
   <extensionPoints>
-        <extensionPoint qualifiedName="Educational.psiHelper"
-                    beanClass="com.intellij.lang.LanguageExtensionPoint"
-                    dynamic="true">
-      <with attribute="implementationClass" implements="com.jetbrains.edu.coursecreator.testGeneration.PsiHelper"/>
-    </extensionPoint>
     <extensionPoint qualifiedName="Educational.configurator"
                     beanClass="com.jetbrains.edu.learning.configuration.EducationalExtensionPoint"
                     dynamic="true">
@@ -95,7 +90,6 @@
   <actions>
     <action id="Educational.ImportLocalCourse" class="com.jetbrains.edu.learning.actions.ImportLocalCourseAction"/>
     <action id="Educational.Check" class="com.jetbrains.edu.learning.actions.CheckAction"/>
-    <action id="Educational.NextStepHint" class="com.jetbrains.edu.learning.actions.NextStepHintAction"/>
     <action id="Educational.Retry" class="com.jetbrains.edu.learning.actions.RetryAction"/>
     <action id="Educational.PrevPlaceholder"
             class="com.jetbrains.edu.learning.actions.PrevPlaceholderAction"
@@ -139,6 +133,9 @@
     <action id="Educational.Educator.NewCourse" class="com.jetbrains.edu.coursecreator.actions.CCNewCourseAction"/>
     <action id="Educational.CCEditTaskDescription" class="com.jetbrains.edu.coursecreator.actions.CCEditTaskDescription"/>
 
+    <action id="LessonCard-left" class="com.intellij.openapi.actionSystem.EmptyAction" use-shortcut-of="EditorLeft"/>
+    <action id="LessonCard-right" class="com.intellij.openapi.actionSystem.EmptyAction" use-shortcut-of="EditorRight"/>
+
     <group id="Educational.Educator.NewFile">
       <action id="Educational.Educator.CreateTask" class="com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask"/>
       <action id="Educational.Educator.CreateLesson"
@@ -160,8 +157,19 @@
               class="com.jetbrains.edu.coursecreator.actions.CCSyncChangesWithNextTasks"
               icon="com.jetbrains.edu.EducationalCoreIcons.SyncFiles">
       </action>
+      <action id="Educational.Educator.AllowFileToSyncChanges"
+              class="com.jetbrains.edu.coursecreator.actions.taskFile.CCAllowFileSyncChanges"
+              icon="AllIcons.Actions.Show"/>
+      <action id="Educational.Educator.IgnoreFilePropagation"
+              class="com.jetbrains.edu.coursecreator.actions.taskFile.CCIgnoreFileInSyncChanges"
+              icon="com.jetbrains.edu.EducationalCoreIcons.SyncChangesIgnore"/>
+      <action id="Educational.Educator.ShowUnsyncedChanges"
+              class="com.jetbrains.edu.coursecreator.actions.taskFile.CCShowUnsyncedChanges"
+              icon="AllIcons.Actions.Diff"
+              internal="true">
+      </action>
       <separator/>
-      <add-to-group group-id="ProjectViewPopupMenu" anchor="first"/>
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="Educational.Educator.CourseCreator.Menu"/>
     </group>
 
     <group id="Educational.Educator.CourseCreator.Menu" popup="true"
@@ -206,12 +214,7 @@
 
     <action id="Educational.Educator.UnpackCourse" class="com.jetbrains.edu.coursecreator.actions.CCUnpackCourseArchive"/>
     <action id="Educational.Educator.EditCourseFromArchive" class="com.jetbrains.edu.coursecreator.actions.CCEditCourseArchive"/>
-
-    <action id="Educational.Educator.GenerateTest" text="Generate Test" description="Actions related to TestSpark"
-            class="com.jetbrains.edu.coursecreator.actions.GenerateTest">
-      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-    </action>
-    <action id="Educational.Educator.StepikChangeHost"
+   <action id="Educational.Educator.StepikChangeHost"
             class="com.jetbrains.edu.learning.stepik.changeHost.StepikChangeHost"
             internal="true"/>
 
@@ -493,4 +496,5 @@
   <xi:include href="/META-INF/Codeforces.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/Hyperskill.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/Marketplace.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/TestGeneration.xml" xpointer="xpointer(/idea-plugin/*)"/>
 </idea-plugin>

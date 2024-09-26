@@ -1,6 +1,10 @@
-package com.jetbrains.edu.coursecreator.testGeneration
+package com.jetbrains.edu.coursecreator.testGeneration.request
 
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.coursecreator.testGeneration.psi.PsiClassWrapper
+import com.jetbrains.edu.coursecreator.testGeneration.psi.PsiHelper
+import com.jetbrains.edu.coursecreator.testGeneration.util.getPolymorphismRelationsWithQualifiedNames
+import com.jetbrains.edu.coursecreator.testGeneration.util.toClassRepresentation
 import org.jetbrains.research.testspark.core.generation.llm.prompt.PromptGenerator
 import org.jetbrains.research.testspark.core.generation.llm.prompt.configuration.PromptConfiguration
 import org.jetbrains.research.testspark.core.generation.llm.prompt.configuration.PromptGenerationContext

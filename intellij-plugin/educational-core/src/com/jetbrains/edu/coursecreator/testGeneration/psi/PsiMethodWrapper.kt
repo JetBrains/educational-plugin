@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.testGeneration
+package com.jetbrains.edu.coursecreator.testGeneration.psi
 
 import com.intellij.psi.PsiFile
 

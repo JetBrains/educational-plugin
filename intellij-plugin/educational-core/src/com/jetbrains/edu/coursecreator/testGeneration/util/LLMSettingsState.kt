@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.testGeneration
+package com.jetbrains.edu.coursecreator.testGeneration.util
 
 import org.jetbrains.research.testspark.core.data.JUnitVersion
 
@@ -11,6 +11,7 @@ data class LLMSettingsState(
   var grazieModel: String = DefaultLLMSettingsState.grazieModel,
   var currentLLMPlatformName: String = DefaultLLMSettingsState.currentLLMPlatformName,
   var maxLLMRequest: Int = DefaultLLMSettingsState.maxLLMRequest,
+  var requestsCountThreshold: Int = DefaultLLMSettingsState.requestsCountThreshold,
   var maxInputParamsDepth: Int = DefaultLLMSettingsState.maxInputParamsDepth,
   var maxPolyDepth: Int = DefaultLLMSettingsState.maxPolyDepth,
   var classPrompts: String = DefaultLLMSettingsState.classPrompts,
@@ -40,6 +41,7 @@ data class LLMSettingsState(
     val grazieModel: String = ""
     var currentLLMPlatformName: String = "OpenAI"
     val maxLLMRequest: Int = 3
+    val requestsCountThreshold: Int = 3
     val maxInputParamsDepth: Int = 2
     val maxPolyDepth: Int = 2
     // TODO replace with bundle

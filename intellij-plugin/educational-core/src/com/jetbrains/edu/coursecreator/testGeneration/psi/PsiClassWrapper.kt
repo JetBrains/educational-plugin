@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.testGeneration
+package com.jetbrains.edu.coursecreator.testGeneration.psi
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile

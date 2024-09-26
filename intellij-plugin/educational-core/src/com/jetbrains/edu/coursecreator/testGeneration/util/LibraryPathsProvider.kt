@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.testGeneration
+package com.jetbrains.edu.coursecreator.testGeneration.util
 
 import com.intellij.openapi.application.PathManager
 import org.jetbrains.research.testspark.core.data.JUnitVersion
@@ -9,14 +9,14 @@ class LibraryPathsProvider {
   companion object {
     private val sep = File.separatorChar
     private const val PLUGIN_NAME = "JetBrainsAcademy"
-    val libPrefix = "${PathManager.getPluginsPath()}${sep}$PLUGIN_NAME${sep}lib"
+    val libPrefix = "${PathManager.getPluginsPath()}$sep$PLUGIN_NAME${sep}lib"
 
     fun getTestCompilationLibraryPaths() = JavaTestCompilationDependencies.getJarDescriptors().map { descriptor ->
-      "$libPrefix${sep}${descriptor.name}"
+      "$libPrefix$sep${descriptor.name}"
     }
 
     fun getJUnitLibraryPaths(junitVersion: JUnitVersion): List<String> = junitVersion.libJar.map { descriptor ->
-      "$libPrefix${sep}${descriptor.name}"
+      "$libPrefix$sep${descriptor.name}"
     }
   }
 }

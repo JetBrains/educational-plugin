@@ -8,8 +8,8 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ClassInheritorsSearch
 import com.intellij.psi.util.PsiTypesUtil
-import com.jetbrains.edu.coursecreator.testGeneration.PsiClassWrapper
-import com.jetbrains.edu.coursecreator.testGeneration.PsiMethodWrapper
+import com.jetbrains.edu.coursecreator.testGeneration.psi.PsiClassWrapper
+import com.jetbrains.edu.coursecreator.testGeneration.psi.PsiMethodWrapper
 import org.jetbrains.research.testspark.core.utils.importPattern
 import org.jetbrains.research.testspark.core.utils.packagePattern
 
@@ -62,7 +62,7 @@ class JavaPsiClassWrapper(private val psiClass: PsiClass) : PsiClassWrapper {
     }
 
     override fun getInterestingPsiClassesWithQualifiedNames(
-        psiMethod: PsiMethodWrapper,
+      psiMethod: PsiMethodWrapper,
     ): MutableSet<PsiClassWrapper> {
         val interestingMethods = mutableSetOf(psiMethod as JavaPsiMethodWrapper)
         for (currentPsiMethod in allMethods) {

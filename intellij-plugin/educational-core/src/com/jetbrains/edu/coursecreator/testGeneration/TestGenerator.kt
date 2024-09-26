@@ -1,22 +1,26 @@
 package com.jetbrains.edu.coursecreator.testGeneration
 
+import com.intellij.lang.Language
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtilRt
-import com.jetbrains.edu.coursecreator.testGeneration.PromptUtil.generatePrompt
+import com.jetbrains.edu.coursecreator.testGeneration.processing.TestBuildUtil
+import com.jetbrains.edu.coursecreator.testGeneration.processing.TestCompilerFactory
+import com.jetbrains.edu.coursecreator.testGeneration.processing.manager.TestAssemblerManager
+import com.jetbrains.edu.coursecreator.testGeneration.processing.manager.TestPresenterManager
+import com.jetbrains.edu.coursecreator.testGeneration.psi.PsiHelper
+import com.jetbrains.edu.coursecreator.testGeneration.request.OpenAIRequestManager
+import com.jetbrains.edu.coursecreator.testGeneration.request.PromptSizeReductionDefaultStrategy
+import com.jetbrains.edu.coursecreator.testGeneration.request.PromptUtil.generatePrompt
+import com.jetbrains.edu.coursecreator.testGeneration.util.*
 import okio.Path.Companion.toPath
 import org.apache.commons.io.FileUtils
 import org.jetbrains.research.testspark.core.data.Report
 import org.jetbrains.research.testspark.core.data.TestGenerationData
 import org.jetbrains.research.testspark.core.generation.llm.LLMWithFeedbackCycle
-import org.jetbrains.research.testspark.core.test.TestsPersistentStorage
-import org.jetbrains.research.testspark.core.test.TestsPresenter
-import org.jetbrains.research.testspark.core.test.data.TestSuiteGeneratedByLLM
 import java.io.File
 import java.net.URL
 import java.util.*
-import kotlin.io.path.Path
-import kotlin.io.path.createDirectories
 
 private const val TEMP_DIRECTORY = "generatedTests"
 
@@ -25,71 +29,60 @@ class TestGenerator(private val project: Project) {
   fun generateTestSuite(
     psiHelper: PsiHelper,
     testFilename: String,
-    caret: Int,
+    testedFileInfo: TestedFileInfo,
     progressIndicator: TestProgressIndicator
   ): String {
-    val classesToTest = psiHelper.getAllClassesToTest(project, caret)
+    downloadTestLibs()
+
+    val classesToTest = psiHelper.getAllClassesToTest(project, testedFileInfo.caret)
     val testGenerationData = TestGenerationData()
     val initialPromptMessage = generatePrompt(project, psiHelper, 0, classesToTest)
     val report = Report()
-
-    val testResultDirectory = "${FileUtilRt.getTempDirectory()}${File.separatorChar}$TEMP_DIRECTORY${File.separatorChar}"
-    val id = UUID.randomUUID().toString()
-
-    LLMSettingsState.DefaultLLMSettingsState.junitVersion.libJar.forEach {
-      FileUtils.copyURLToFile(URL(it.downloadUrl), LibraryPathsProvider.libPrefix.toPath().resolve(it.name).toFile(), 6000, 6000)
-    }
-
-    val resultPath = TestBuildUtil.getResultPath(id, testResultDirectory)
-
     val packageName = psiHelper.getPackageName()
-    val testSuitePresenter = JUnitTestSuitePresenter(project, testGenerationData)
-    val testFileName1 = testFilename.replace(".java", "")
-    val testsPresenter = object : TestsPresenter {
-      override fun representTestSuite(testSuite: TestSuiteGeneratedByLLM): String {
-        return testSuitePresenter.toStringWithoutExpectedException(testSuite, testFileName1)
-      }
-
-      override fun representTestCase(testSuite: TestSuiteGeneratedByLLM, testCaseIndex: Int): String {
-        return testSuitePresenter.toStringSingleTestCaseWithoutExpectedException(testSuite, testCaseIndex)
-      }
-    }
-    var buildPath = TestBuildUtil.getBuildPath (project)
-    if (buildPath.isBlank()) {
-      buildPath = ProjectRootManager.getInstance(project).contentRoots.first().path
-    }
+    val testPresenterManager = TestPresenterManager.getInstance(testedFileInfo.language)
+    val testSuitePresenter = testPresenterManager.getTestSuitePresenter(project, testGenerationData)
+    val testsPresenter = testPresenterManager.getTestsPresenter(testSuitePresenter, testFilename)
+    val testAssembler =
+      TestAssemblerManager.getInstance(testedFileInfo.language).getTestAssembler(project, progressIndicator, testGenerationData)
     val llmFeedbackCycle = LLMWithFeedbackCycle(
       report = report,
       initialPromptMessage = initialPromptMessage,
       promptSizeReductionStrategy = PromptSizeReductionDefaultStrategy(project, testGenerationData, psiHelper, classesToTest),
-      testSuiteFilename = testFilename,
+      testSuiteFilename = testFilename.withExtension(testedFileInfo.language),
       packageName = packageName,
-      resultPath = resultPath,
-      buildPath = buildPath,
+      resultPath = getResultPath(),
+      buildPath = getBuildPath(project),
       requestManager = OpenAIRequestManager(project),
-      testsAssembler = JUnitTestsAssembler(project, progressIndicator, testGenerationData),
+      testsAssembler = testAssembler,
       testCompiler = TestCompilerFactory.createJavacTestCompiler(project, LLMSettingsState.DefaultLLMSettingsState.junitVersion),
       indicator = progressIndicator,
-      requestsCountThreshold = 4, // TODO
+      requestsCountThreshold = SettingsArguments(project).requestsCountThreshold(),
       testsPresenter = testsPresenter,
-      testStorage = object : TestsPersistentStorage {
-        override fun saveGeneratedTest(packageString: String, code: String, resultPath: String, testFileName: String): String {
-          var generatedTestPath = "$resultPath${File.separatorChar}"
-          packageString.split(".").forEach { directory ->
-            if (directory.isNotBlank()) generatedTestPath += "$directory${File.separatorChar}"
-          }
-          Path(generatedTestPath).createDirectories()
-          val testFile = File("$generatedTestPath$testFileName")
-          testFile.createNewFile()
-          testFile.writeText(code)
-
-          return "$generatedTestPath$testFileName"
-        }
-
-      }
+      testStorage = TestsPersistentStorage
     )
-    val testSuite = llmFeedbackCycle.run().generatedTestSuite!!
-    return testSuitePresenter.toString(testSuite, testFileName1)
+    val testSuite = llmFeedbackCycle.run().generatedTestSuite ?: error("Failed to generate a test suite")
+    return testSuitePresenter.toString(testSuite, testFilename)
   }
 
+  private fun getResultPath(): String {
+    val testResultDirectory = "${FileUtilRt.getTempDirectory()}${File.separatorChar}$TEMP_DIRECTORY${File.separatorChar}"
+    val id = UUID.randomUUID().toString()
+    return TestBuildUtil.getResultPath(id, testResultDirectory)
+  }
+
+  private fun downloadTestLibs() {
+    LLMSettingsState.DefaultLLMSettingsState.junitVersion.libJar.forEach {
+      FileUtils.copyURLToFile(URL(it.downloadUrl), LibraryPathsProvider.libPrefix.toPath().resolve(it.name).toFile(), 6000, 6000)
+    }
+  }
+
+  private fun getBuildPath(project: Project): String {
+    var buildPath = TestBuildUtil.getBuildPath(project)
+    if (buildPath.isBlank()) {
+      buildPath = ProjectRootManager.getInstance(project).contentRoots.first().path
+    }
+    return buildPath
+  }
+
+  private fun String.withExtension(language: Language) = plus(".java") // TODO
 }

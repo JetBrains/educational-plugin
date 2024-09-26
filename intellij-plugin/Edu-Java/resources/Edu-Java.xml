@@ -10,11 +10,11 @@
   </dependencies>
 
   <xi:include href="/META-INF/Hyperskill-Java.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/TestGeneration-Java.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <extensions defaultExtensionNs="Educational">
     <configurator language="JAVA" implementationClass="com.jetbrains.edu.java.JConfigurator"/>
     <codeforcesLanguageProvider implementation="com.jetbrains.edu.java.codeforces.JCodeforcesLanguageProvider"/>
     <mainFileProvider language="JAVA" implementationClass="com.jetbrains.edu.java.JMainFileProvider"/>
-    <psiHelper language="JAVA" implementationClass="com.jetbrains.edu.java.testGeneration.JavaPsiHelper"/>
   </extensions>
 </idea-plugin>
