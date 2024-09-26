@@ -15,8 +15,6 @@ object TestBuildUtil {
     var buildPath = ""
 
     for (module in ModuleManager.getInstance(project).modules) {
-      println("module")
-      println(module)
 
       val compilerOutputPath = CompilerModuleExtension.getInstance(module)?.compilerOutputPath
 

@@ -1,22 +1,26 @@
 package com.jetbrains.edu.coursecreator.actions
 
+import com.intellij.icons.ExpUiIcons.Breakpoints
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.service
+import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.task.ProjectTaskManager
 import com.intellij.util.io.createDirectories
+import com.intellij.xdebugger.XSourcePosition
+import com.intellij.xdebugger.impl.XSourcePositionImpl
+import com.intellij.xdebugger.impl.breakpoints.XBreakpointUtil
 import com.jetbrains.edu.coursecreator.testGeneration.PsiHelper
 import com.jetbrains.edu.coursecreator.testGeneration.TestGenerator
+import com.jetbrains.edu.coursecreator.testGeneration.TestProgressIndicator
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.CourseMode
@@ -26,7 +30,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.courseFormat.ext.testDirs
 import com.jetbrains.edu.learning.pathRelativeToTask
 import com.jetbrains.edu.learning.selectedTaskFile
-import com.jetbrains.edu.learning.storage.pathInStorage
 import java.awt.Dimension
 import java.awt.Toolkit
 import javax.swing.JComponent
@@ -38,40 +41,19 @@ open class GenerateTest : AnAction() {
 
   override fun actionPerformed(e: AnActionEvent) {
 
-
+    val dialog = SampleDialogWrapper()
+    if (!dialog.showAndGet()) {
+      return
+    }
+    val fileName = "${dialog.textField.text}.java"
     ApplicationManager.getApplication().executeOnPooledThread {
       ProjectTaskManager.getInstance(e.project).buildAllModules().onSuccess {
         ProgressManager.getInstance()
-          .run(object : Task.Backgroundable(e.project, "Generating test") {
+          .run(
+            object : Task.Backgroundable(e.project, "Generating test") {
             override fun run(indicator: ProgressIndicator) {
-//              ProjectTaskManager.getInstance(e.project).buildAllModules().onSuccess {
-                generateTest(e)
-//              }
-//          val ijIndicator = IJProgressIndicator(indicator)
-
-//          if (ToolUtils.isProcessStopped(testGenerationController.errorMonitor, ijIndicator)) return
-//
-//          if (projectBuilder.runBuild(ijIndicator)) {
-//            if (ToolUtils.isProcessStopped(testGenerationController.errorMonitor, ijIndicator)) return
-//
-//            uiContext = processManager.runTestGenerator(
-//              ijIndicator,
-//              codeType,
-//              packageName,
-//              projectContext,
-//              generatedTestsData,
-//              testGenerationController.errorMonitor,
-//            )
-//          }
-//
-//          if (ToolUtils.isProcessStopped(testGenerationController.errorMonitor, ijIndicator)) return
-
-//          ijIndicator.stop()
-            }
-
-            override fun onFinished() {
-              super.onFinished()
-
+              val testIndicator = TestProgressIndicator(indicator)
+              generateTest(e, fileName, testIndicator)
             }
           })
       }
@@ -91,22 +73,13 @@ open class GenerateTest : AnAction() {
   }
 
 
-  private fun generateTest(e: AnActionEvent) {
+  private fun generateTest(e: AnActionEvent, fileName: String, progressIndicator: TestProgressIndicator) {
     val project = e.project!!
-//    val dialog = SampleDialogWrapper()
-//    if (!dialog.showAndGet()) {
-//      return
-//    }
-//    val fileName = "${dialog.textField.text}.java"
-    val fileName = "SAMA.java"
     val selectedTaskFile = e.project!!.selectedTaskFile!!
     val packagePath = selectedTaskFile.getVirtualFile(project)?.pathRelativeToTask(project)?.replace("src/", "")!!
       .replace(selectedTaskFile.getVirtualFile(project)?.name!!, "")
-    println(packagePath)
     val task = selectedTaskFile.task
-    println(task.testDirs)
     val testDir = task.findTestDirs(project).first()
-    println(testDir)
 
     val psiFile = e.getData(CommonDataKeys.PSI_FILE) ?: return
     val language = StudyTaskManager.getInstance(project).course?.languageById
@@ -115,11 +88,10 @@ open class GenerateTest : AnAction() {
     psiHelper.psiFile = psiFile
 
     val caret = e.dataContext.getData(CommonDataKeys.CARET)?.caretModel?.primaryCaret!!.offset // TODO additional checking for caret
-    val text = TestGenerator(project).generateFileTests(psiHelper, fileName, caret)
+    val text = TestGenerator(project).generateFileTests(psiHelper, fileName, caret, progressIndicator)
 
 
     val file = testDir.toNioPath().resolve(packagePath).apply { createDirectories() }.resolve(fileName).toFile().apply {
-      println(this.absolutePath)
       createNewFile()
       writeText(text)
     }
@@ -134,7 +106,6 @@ open class GenerateTest : AnAction() {
       val screenWidth = Toolkit.getDefaultToolkit().screenSize.width
       val textFieldWidth = screenWidth / 5
 
-      // Step 2: Set preferred size of the textField
       preferredSize = Dimension(textFieldWidth, preferredSize.height)
     }
 
@@ -144,7 +115,7 @@ open class GenerateTest : AnAction() {
       init()
     }
 
-    override fun createCenterPanel(): JComponent? = textField
+    override fun createCenterPanel(): JComponent = textField
 
   }
 

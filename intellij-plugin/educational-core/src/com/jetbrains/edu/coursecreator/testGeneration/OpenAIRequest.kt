@@ -44,30 +44,18 @@ class OpenAIRequestManager(val project: Project) : RequestManager(System.getenv(
           when ((it.connection as HttpURLConnection).responseCode) {
             HttpURLConnection.HTTP_OK -> (testsAssembler as JUnitTestsAssembler).consume(it)
             HttpURLConnection.HTTP_INTERNAL_ERROR -> {
-              println(
-                "Server problems"
-              )
               sendResult = SendResult.OTHER
             }
 
             HttpURLConnection.HTTP_BAD_REQUEST -> {
-              println(
-                "Too long prompt"
-              )
               sendResult = SendResult.PROMPT_TOO_LONG
             }
 
             HttpURLConnection.HTTP_UNAUTHORIZED -> {
-              println(
-                "Token is wrong"
-              )
               sendResult = SendResult.OTHER
             }
 
             else -> {
-              println(
-                "Bla bla bla"
-              )
               sendResult = SendResult.OTHER
             }
           }
@@ -76,24 +64,8 @@ class OpenAIRequestManager(val project: Project) : RequestManager(System.getenv(
       catch (e: HttpStatusException) {
         log.info { "Error in sending request: ${e.message}" }
       }
-
-//    }
     return sendResult
 
-  }
-
-  override fun processResponse(testsAssembler: TestsAssembler, packageName: String): LLMResponse {
-    // TODO This is hard code solution for demo
-//    val response = testsAssembler.getContent()
-//    val text = response.removePrefix("```java\n").replace("`", "").trimIndent()
-//    val q = Path( project.basePath + "/lesson1/task1/test/com/hello")
-//    q.createDirectories()
-//    val s = q.resolve("TaskTest.java")
-//    s.createFile()
-//    s.write(text)
-//    // TODO
-
-    return super.processResponse(testsAssembler, packageName)
   }
 
   data class OpenAIRequestBody(
