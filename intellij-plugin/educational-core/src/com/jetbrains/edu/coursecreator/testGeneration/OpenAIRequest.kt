@@ -34,7 +34,7 @@ class OpenAIRequestManager(val project: Project) : RequestManager(System.getenv(
     // Prepare the chat
     val llmRequestBody = OpenAIRequestBody("gpt-3.5-turbo", chatHistory)
     var sendResult = SendResult.OK
-    ApplicationManager.getApplication().invokeAndWait {
+//    ApplicationManager.getApplication().invokeAndWait {
 
       try {
         httpRequest.connect {
@@ -77,7 +77,7 @@ class OpenAIRequestManager(val project: Project) : RequestManager(System.getenv(
         log.info { "Error in sending request: ${e.message}" }
       }
 
-    }
+//    }
     return sendResult
 
   }

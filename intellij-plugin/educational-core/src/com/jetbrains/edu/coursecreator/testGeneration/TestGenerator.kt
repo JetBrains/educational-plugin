@@ -1,9 +1,20 @@
 package com.jetbrains.edu.coursecreator.testGeneration
 
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.concurrency.awaitPromise
+import com.intellij.openapi.concurrency.waitForPromise
+import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.platform.diagnostic.telemetry.EDT
+import com.intellij.platform.ide.progress.runWithModalProgressBlocking
+import com.intellij.task.ProjectTaskManager
+import com.intellij.util.concurrency.Semaphore
 import com.jetbrains.edu.coursecreator.testGeneration.PromptUtil.generatePrompt
+import kotlinx.coroutines.runBlocking
+import okhttp3.internal.wait
 import okio.Path.Companion.toPath
 import org.apache.commons.io.FileUtils
 import org.jetbrains.research.testspark.core.data.Report
@@ -17,6 +28,7 @@ import java.net.URL
 import java.util.*
 import kotlin.io.path.Path
 import kotlin.io.path.createDirectories
+import kotlin.time.Duration
 
 class TestGenerator(private val project: Project) {
 
@@ -50,16 +62,41 @@ class TestGenerator(private val project: Project) {
 
     val packageName = psiHelper.getPackageName()
     val testSuitePresenter = JUnitTestSuitePresenter(project, testGenerationData)
+    val testFileName1 = testFilename.replace(".java", "")
     val testsPresenter = object : TestsPresenter {
       override fun representTestSuite(testSuite: TestSuiteGeneratedByLLM): String {
-        return testSuitePresenter.toStringWithoutExpectedException(testSuite, testFilename.replace(".java", ""))
+        return testSuitePresenter.toStringWithoutExpectedException(testSuite, testFileName1)
       }
 
       override fun representTestCase(testSuite: TestSuiteGeneratedByLLM, testCaseIndex: Int): String {
         return testSuitePresenter.toStringSingleTestCaseWithoutExpectedException(testSuite, testCaseIndex)
       }
     }
-    var buildPath = TestBuildUtil.getBuildPath(project)
+
+    ProjectRootManager.getInstance(project).contentRoots.first().path.also {
+      println("321 $it")
+    }
+
+//    val promise = ProjectTaskManager.getInstance(project).buildAllModules()
+//    promise.then {
+//      println("Hello21")
+//    }
+//    println("Hello12")
+//    val finished = Semaphore()
+//    finished.down()
+//    promise.onSuccess {
+//      if (it.isAborted || it.hasErrors()) {
+//        println("oh oh")
+//      }
+//      finished.up()
+//    }
+//    promise.onError {
+//      println("oh oh1")
+//      finished.up()
+//    }
+//    finished.waitFor()
+    var buildPath = TestBuildUtil.getBuildPath (project)
+    println("432 $buildPath")
     if (buildPath.isBlank()) {
       buildPath = ProjectRootManager.getInstance(project).contentRoots.first().path
     }
@@ -97,7 +134,10 @@ class TestGenerator(private val project: Project) {
 
       }
     )
-    return testSuitePresenter.toString(llmFeedbackCycle.run().generatedTestSuite!!, testFilename.replace(".java", ""))
+    val testSuite = llmFeedbackCycle.run().generatedTestSuite!!
+    println(testSuite)
+    println(testFileName1)
+    return testSuitePresenter.toString(testSuite, testFileName1)
   }
 
 }

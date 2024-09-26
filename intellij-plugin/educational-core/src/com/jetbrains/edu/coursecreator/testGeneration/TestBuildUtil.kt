@@ -4,15 +4,20 @@ import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.task.ProjectTaskManager
 import org.jetbrains.research.testspark.core.utils.DataFilesUtil
 import java.io.File
 
 object TestBuildUtil {
 
   fun getBuildPath(project: Project): String {
+
     var buildPath = ""
 
     for (module in ModuleManager.getInstance(project).modules) {
+      println("module")
+      println(module)
+
       val compilerOutputPath = CompilerModuleExtension.getInstance(module)?.compilerOutputPath
 
       compilerOutputPath?.let { buildPath += compilerOutputPath.path.plus(DataFilesUtil.classpathSeparator.toString()) }

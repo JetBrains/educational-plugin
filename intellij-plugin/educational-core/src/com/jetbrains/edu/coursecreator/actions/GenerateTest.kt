@@ -4,10 +4,16 @@ import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.service
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.task.ProjectTaskManager
 import com.intellij.util.io.createDirectories
 import com.jetbrains.edu.coursecreator.testGeneration.PsiHelper
 import com.jetbrains.edu.coursecreator.testGeneration.TestGenerator
@@ -31,7 +37,45 @@ open class GenerateTest : AnAction() {
 
 
   override fun actionPerformed(e: AnActionEvent) {
-    generateTest(e)
+
+
+    ApplicationManager.getApplication().executeOnPooledThread {
+      ProjectTaskManager.getInstance(e.project).buildAllModules().onSuccess {
+        ProgressManager.getInstance()
+          .run(object : Task.Backgroundable(e.project, "Generating test") {
+            override fun run(indicator: ProgressIndicator) {
+//              ProjectTaskManager.getInstance(e.project).buildAllModules().onSuccess {
+                generateTest(e)
+//              }
+//          val ijIndicator = IJProgressIndicator(indicator)
+
+//          if (ToolUtils.isProcessStopped(testGenerationController.errorMonitor, ijIndicator)) return
+//
+//          if (projectBuilder.runBuild(ijIndicator)) {
+//            if (ToolUtils.isProcessStopped(testGenerationController.errorMonitor, ijIndicator)) return
+//
+//            uiContext = processManager.runTestGenerator(
+//              ijIndicator,
+//              codeType,
+//              packageName,
+//              projectContext,
+//              generatedTestsData,
+//              testGenerationController.errorMonitor,
+//            )
+//          }
+//
+//          if (ToolUtils.isProcessStopped(testGenerationController.errorMonitor, ijIndicator)) return
+
+//          ijIndicator.stop()
+            }
+
+            override fun onFinished() {
+              super.onFinished()
+
+            }
+          })
+      }
+    }
   }
 
   override fun update(e: AnActionEvent) {
@@ -49,11 +93,12 @@ open class GenerateTest : AnAction() {
 
   private fun generateTest(e: AnActionEvent) {
     val project = e.project!!
-    val dialog = SampleDialogWrapper()
-    if (!dialog.showAndGet()) {
-      return
-    }
-    val fileName = "${dialog.textField.text}.java"
+//    val dialog = SampleDialogWrapper()
+//    if (!dialog.showAndGet()) {
+//      return
+//    }
+//    val fileName = "${dialog.textField.text}.java"
+    val fileName = "SAMA.java"
     val selectedTaskFile = e.project!!.selectedTaskFile!!
     val packagePath = selectedTaskFile.getVirtualFile(project)?.pathRelativeToTask(project)?.replace("src/", "")!!
       .replace(selectedTaskFile.getVirtualFile(project)?.name!!, "")
@@ -79,10 +124,6 @@ open class GenerateTest : AnAction() {
       writeText(text)
     }
     LocalFileSystem.getInstance().refreshAndFindFileByIoFile(file)
-    VirtualFileManager.getInstance().findFileByNioPath(file.toPath())?.refresh(true, true)
-    VirtualFileManager.getInstance().findFileByNioPath(file.toPath())?.refresh(false, true)
-    VirtualFileManager.getInstance().syncRefresh()
-//    TaskToolWindowView.getInstance(project).updateNavigationPanel()
     ProjectView.getInstance(project).refresh()
 
   }
