@@ -21,6 +21,7 @@ data class GeneratedCodeDataframeRecord(
   val unparsableSentences: String? = null,
   val generatedCode: String? = null,
   val hasErrors: Boolean = false,
+  val exceptionMessage: String? = null,
 ) {
   constructor(
     taskId: Int,
@@ -35,7 +36,7 @@ data class GeneratedCodeDataframeRecord(
     modelSolution,
     prompt,
     code,
-    "Error while generating code: ${error.message}",
+    exceptionMessage = "Error while generating code: ${error.message}",
   )
 
   constructor(
@@ -46,6 +47,6 @@ data class GeneratedCodeDataframeRecord(
     taskId,
     function,
     modelSolution,
-    "Error while generating prompt",
+    exceptionMessage = "Error while generating prompt",
   )
 }
