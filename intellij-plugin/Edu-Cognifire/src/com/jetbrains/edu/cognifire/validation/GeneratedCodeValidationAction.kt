@@ -98,6 +98,8 @@ class GeneratedCodeValidationAction : ActionWithProgressIcon(), DumbAware {
         val promptExpression = PromptExpression(
           functionSignature = signature,
           baseContentOffset = 0,
+          baseStartOffset = 0,
+          baseEndOffset = 0,
           prompt = prompt,
           code = ""
         )
