@@ -1,10 +1,5 @@
 <idea-plugin>
   <extensionPoints>
-    <extensionPoint qualifiedName="Educational.psiHelper"
-                    beanClass="com.intellij.lang.LanguageExtensionPoint"
-                    dynamic="true">
-      <with attribute="implementationClass" implements="com.jetbrains.edu.coursecreator.testGeneration.psi.PsiHelper"/>
-    </extensionPoint>
     <extensionPoint qualifiedName="Educational.TestPresenterManager"
                     beanClass="com.intellij.lang.LanguageExtensionPoint"
                     dynamic="true">
@@ -16,6 +11,12 @@
                     dynamic="true">
       <with attribute="implementationClass"
             implements="com.jetbrains.edu.coursecreator.testGeneration.processing.manager.TestAssemblerManager"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="Educational.PsiHelperManager"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass"
+            implements="com.jetbrains.edu.coursecreator.testGeneration.processing.manager.PsiHelperManager"/>
     </extensionPoint>
   </extensionPoints>
   <actions>

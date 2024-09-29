@@ -5,8 +5,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.runInEdt
-import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
@@ -17,7 +16,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.task.ProjectTaskManager
 import com.intellij.util.io.createDirectories
 import com.jetbrains.edu.coursecreator.testGeneration.TestGenerator
-import com.jetbrains.edu.coursecreator.testGeneration.psi.PsiHelper
+import com.jetbrains.edu.coursecreator.testGeneration.psi.manager.PsiHelperManager
 import com.jetbrains.edu.coursecreator.testGeneration.util.TestProgressIndicator
 import com.jetbrains.edu.coursecreator.testGeneration.util.TestedFileInfo
 import com.jetbrains.edu.learning.EduUtilsKt
@@ -95,11 +94,10 @@ open class GenerateTest : AnAction() {
 
     val task = selectedTaskFile.task
     val testDir = task.findTestDirs(project).first()
-    val psiHelper = PsiHelper.getInstance(testedFileInfo.language)
-    psiHelper.psiFile = testedFileInfo.psiFile // TODO add PSI Manager
+    val psiHelper = PsiHelperManager.getInstance(testedFileInfo.language).getPsiHelper(testedFileInfo.psiFile)
 
     val text = TestGenerator(project).generateTestSuite(psiHelper, testFilename, testedFileInfo, progressIndicator)
-    val file = testDir.createAndWriteTestToFile(packagePath, testFilename, text)
+    val file = testDir.createAndWriteTestToFile(packagePath, testFilename, text, project)
     project.updateNavigator(file)
   }
 
@@ -107,24 +105,22 @@ open class GenerateTest : AnAction() {
     pathRelativeToTask(project).replace("src/", "").replace(this.name, "") // TODO
 
 
-  private fun VirtualFile.createAndWriteTestToFile(packagePath: String, testFilename: String, text: String): File {
+  private fun VirtualFile.createAndWriteTestToFile(packagePath: String, testFilename: String, text: String, project: Project): File {
     val directory = toNioPath().resolve(packagePath)
-    writeOnEdt {
+    writeOnEdt(project) {
       directory.createDirectories()
     }
     val file = directory.resolve("$testFilename.java").toFile()
-    writeOnEdt {
+    writeOnEdt(project) {
       file.createNewFile()
       file.writeText(text)
     }
     return file
   }
 
-  private fun writeOnEdt(action: () -> Unit) {
-    runInEdt {
-      runWriteAction {
-        action.invoke()
-      }
+  private fun writeOnEdt(project: Project, action: () -> Unit) { // TODO replace
+    WriteCommandAction.runWriteCommandAction(project) {
+      action.invoke()
     }
   }
 

@@ -1,7 +1,7 @@
 <idea-plugin>
   <extensions defaultExtensionNs="Educational">
-    <psiHelper language="JAVA" implementationClass="com.jetbrains.edu.java.testGeneration.JavaPsiHelper"/>
     <TestPresenterManager language="JAVA" implementationClass="com.jetbrains.edu.java.testGeneration.JavaTestPresenterManager"/>
     <TestAssemblerManager language="JAVA" implementationClass="com.jetbrains.edu.java.testGeneration.JavaTestAssemblerManager"/>
+    <PsiHelperManager language="JAVA" implementationClass="com.jetbrains.edu.java.testGeneration.psi.JavaPsiHelperManager"/>
   </extensions>
 </idea-plugin>

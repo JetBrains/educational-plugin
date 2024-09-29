@@ -1,4 +1,4 @@
-package com.jetbrains.edu.java.testGeneration
+package com.jetbrains.edu.java.testGeneration.psi
 
 import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiDocumentManager

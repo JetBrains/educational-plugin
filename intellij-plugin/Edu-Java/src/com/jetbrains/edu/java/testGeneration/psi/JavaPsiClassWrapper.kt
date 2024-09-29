@@ -1,4 +1,4 @@
-package com.jetbrains.edu.java.testGeneration
+package com.jetbrains.edu.java.testGeneration.psi
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile

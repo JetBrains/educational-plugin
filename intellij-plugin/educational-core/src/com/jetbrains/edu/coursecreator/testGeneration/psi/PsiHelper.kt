@@ -12,7 +12,6 @@ import com.intellij.psi.PsiFile
  * handling the PSI (Program Structure Interface) for different languages.
  */
 abstract class PsiHelper {
-  abstract var psiFile: PsiFile?
   abstract val language: TestLanguage
 
   /**
@@ -107,12 +106,6 @@ abstract class PsiHelper {
       },
     )
     return classesToTest
-  }
-
-  companion object {
-    private val EP_NAME = LanguageExtension<PsiHelper>("Educational.psiHelper")
-
-    fun getInstance(language: Language): PsiHelper = EP_NAME.forLanguage(language)
   }
 
 }
