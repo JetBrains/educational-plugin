@@ -1,5 +1,7 @@
 package com.jetbrains.edu.commandLine
 
+import com.github.ajalt.clikt.parameters.arguments.argument
+import com.github.ajalt.clikt.parameters.arguments.convert
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.project.Project
@@ -21,20 +23,16 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
-import java.nio.file.Paths
 import java.util.concurrent.TimeUnit
 import kotlin.io.path.exists
+import kotlin.io.path.pathString
 
-/**
- * Loads given course, opens a project with loaded course and performs [performProjectAction]
- */
-abstract class EduCourseProjectAppStarterBase : EduAppStarterBase<ArgsWithProjectPath>() {
+abstract class EduCourseProjectCommand(name: String) : EduCommand(name) {
+  val courseDir: Path by argument("Path to course project directory").convert { Paths.get(it) }
 
   protected abstract val courseMode: CourseMode
 
-  override fun createArgParser(): ArgParser<ArgsWithProjectPath> = ArgParser.createWithProjectPath(commandName)
-
-  final override suspend fun doMain(course: Course, args: ArgsWithProjectPath): CommandResult {
+  override suspend fun doRun(course: Course): CommandResult {
     val configurator = course.configurator
     if (configurator == null) {
       return CommandResult.Error(course.incompatibleCourseMessage())
@@ -44,27 +42,23 @@ abstract class EduCourseProjectAppStarterBase : EduAppStarterBase<ArgsWithProjec
 
     return when (val projectSettings = courseBuilder.getDefaultSettings()) {
       is Err -> CommandResult.Error(projectSettings.error)
-      is Ok -> createCourseProject(course, projectSettings.value, args)
+      is Ok -> createCourseProject(course, projectSettings.value)
     }
   }
 
-  private suspend fun createCourseProject(
-    course: Course,
-    projectSettings: EduProjectSettings,
-    args: ArgsWithProjectPath
-  ): CommandResult {
-    cleanupCourseDir(args)
+  private suspend fun createCourseProject(course: Course, projectSettings: EduProjectSettings): CommandResult {
+    cleanupCourseDir()
 
     var errorMessage: String? = null
 
-    val listener = ProjectConfigurationListener()
+    val listener = ProjectConfigurationListener(this)
     ApplicationManager.getApplication()
       .messageBus
       .connect()
       .subscribe(CourseProjectGenerator.COURSE_PROJECT_CONFIGURATION, listener)
 
     val result = withAutoImportDisabled {
-      val info = CourseCreationInfo(course, args.projectPath, projectSettings)
+      val info = CourseCreationInfo(course, courseDir.pathString, projectSettings)
       val project = withContext(Dispatchers.EDT) {
         CoursesPlatformProvider.joinCourse(info, courseMode, null) {
           errorMessage = it.message?.message
@@ -77,7 +71,7 @@ abstract class EduCourseProjectAppStarterBase : EduAppStarterBase<ArgsWithProjec
         // So, let's try to wait for them
         Observation.awaitConfiguration(project)
 
-        val result = performProjectAction(project, course, args)
+        val result = performProjectAction(project, course)
 
         withContext(Dispatchers.EDT) {
           @Suppress("UnstableApiUsage")
@@ -100,8 +94,7 @@ abstract class EduCourseProjectAppStarterBase : EduAppStarterBase<ArgsWithProjec
     return result
   }
 
-  private fun cleanupCourseDir(args: ArgsWithProjectPath) {
-    val courseDir = Paths.get(args.projectPath)
+  private fun cleanupCourseDir() {
     if (courseDir.exists()) {
       // Do not try to delete the directory itself since it may have different permissions
       val children = mutableListOf<Path>()
@@ -127,10 +120,12 @@ abstract class EduCourseProjectAppStarterBase : EduAppStarterBase<ArgsWithProjec
     }
   }
 
-  protected abstract suspend fun performProjectAction(project: Project, course: Course, args: Args): CommandResult
+  protected abstract suspend fun performProjectAction(project: Project, course: Course): CommandResult
 }
 
-private class ProjectConfigurationListener : CourseProjectGenerator.CourseProjectConfigurationListener {
+private class ProjectConfigurationListener(
+  private val command: EduCommand
+) : CourseProjectGenerator.CourseProjectConfigurationListener {
 
   @Volatile
   private var isProjectConfigured: Boolean = false
@@ -147,7 +142,7 @@ private class ProjectConfigurationListener : CourseProjectGenerator.CourseProjec
     // Wait until the course project is fully configured
     waitUntil { isProjectConfigured || (startTime - System.currentTimeMillis()) > timeout }
     if (!isProjectConfigured) {
-      EduAppStarterBase.logErrorAndExit("Project creation took more than $timeout ms")
+      command.logErrorAndExit("Project creation took more than $timeout ms")
     }
   }
 

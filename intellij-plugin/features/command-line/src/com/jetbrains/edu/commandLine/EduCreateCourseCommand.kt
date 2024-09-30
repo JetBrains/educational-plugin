@@ -11,14 +11,11 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
  * - `createCourse %/path/to/project/dir% --marketplace %marketplace-course-link%`
  * - `createCourse %/path/to/project/dir% --archive %/path/to/course/archive%`
  */
-class EduCourseCreatorAppStarter : EduCourseProjectAppStarterBase() {
+class EduCourseCreatorAppStarter : EduAppStarterWrapper(EduCreateCourseCommand())
 
-  @Suppress("OVERRIDE_DEPRECATION")
-  override val commandName: String
-    get() = "createCourse"
-
+class EduCreateCourseCommand : EduCourseProjectCommand("createCourse") {
   override val courseMode: CourseMode
     get() = CourseMode.STUDENT
 
-  override suspend fun performProjectAction(project: Project, course: Course, args: Args): CommandResult = CommandResult.Ok
+  override suspend fun performProjectAction(project: Project, course: Course): CommandResult = CommandResult.Ok
 }
