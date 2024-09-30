@@ -20,8 +20,7 @@ import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.childrenConfigFileNames
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
-import com.jetbrains.edu.learning.yaml.YamlLoader.loadItem
-import com.jetbrains.edu.learning.yaml.YamlMapper.MAPPER
+import com.jetbrains.edu.learning.yaml.YamlMapper.basicMapper
 import com.jetbrains.edu.learning.yaml.errorHandling.YamlLoadingException
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
 import com.jetbrains.edu.learning.yaml.errorHandling.noDirForItemMessage
@@ -54,7 +53,7 @@ object YamlLoader {
 
   private fun doLoad(project: Project, configFile: VirtualFile, loadFromVFile: Boolean) {
     // for null course we load course again so no need to pass mode specific mapper here
-    val mapper = StudyTaskManager.getInstance(project).course?.mapper ?: MAPPER
+    val mapper = StudyTaskManager.getInstance(project).course?.mapper ?: basicMapper()
 
     val existingItem = getStudyItemForConfig(project, configFile)
     val deserializedItem = deserializeItemProcessingErrors(configFile, project, loadFromVFile, mapper) ?: return
@@ -94,7 +93,7 @@ object YamlLoader {
   inline fun <reified T : StudyItem> StudyItem.deserializeContent(
     project: Project,
     contentList: List<T>,
-    mapper: ObjectMapper = MAPPER,
+    mapper: ObjectMapper = basicMapper(),
   ): List<T> {
     val content = mutableListOf<T>()
     for (titledItem in contentList) {

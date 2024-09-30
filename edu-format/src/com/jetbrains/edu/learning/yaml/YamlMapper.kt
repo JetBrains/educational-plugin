@@ -40,10 +40,10 @@ import org.jetbrains.annotations.TestOnly
 import java.util.*
 
 object YamlMapper {
-  val MAPPER: ObjectMapper by lazy {
+  fun basicMapper(): ObjectMapper {
     val mapper = createMapper()
     mapper.addMixIns()
-    mapper
+    return mapper
   }
 
   val REMOTE_MAPPER: ObjectMapper by lazy {

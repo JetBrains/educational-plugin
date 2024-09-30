@@ -23,7 +23,7 @@ fun deserializeItemProcessingErrors(
   configFile: VirtualFile,
   project: Project,
   loadFromVFile: Boolean = true,
-  mapper: ObjectMapper = YamlMapper.MAPPER
+  mapper: ObjectMapper = YamlMapper.basicMapper()
 ): StudyItem? {
   val configFileText = if (loadFromVFile) VfsUtil.loadText(configFile) else configFile.document.text
   val configName = configFile.name

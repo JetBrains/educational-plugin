@@ -13,7 +13,7 @@ import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
 import com.jetbrains.edu.learning.yaml.YamlLoader
-import com.jetbrains.edu.learning.yaml.YamlMapper.MAPPER
+import com.jetbrains.edu.learning.yaml.YamlMapper.basicMapper
 import com.jetbrains.edu.learning.yaml.YamlTestCase
 import com.jetbrains.edu.learning.yaml.deserializeItemProcessingErrors
 import com.jetbrains.edu.learning.yaml.errorHandling.InvalidYamlFormatException
@@ -189,7 +189,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
       |""".trimMargin()
-        MAPPER.deserializeCourse(yamlContent)
+        basicMapper().deserializeCourse(yamlContent)
     })
   }
 
