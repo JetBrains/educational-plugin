@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
-import com.jetbrains.edu.learning.yaml.YamlMapper.MAPPER
+import com.jetbrains.edu.learning.yaml.YamlMapper.basicMapper
 import com.jetbrains.edu.learning.yaml.YamlTestCase
 import org.junit.Test
 
@@ -111,7 +111,7 @@ open class YamlUndoTest : YamlTestCase() {
 
     val taskConfig = taskDir.findChild(YamlConfigSettings.TASK_CONFIG)!!
     val document = FileDocumentManager.getInstance().getDocument(taskConfig)!!
-    val deserializedTask = MAPPER.deserializeTask(document.text)
+    val deserializedTask = basicMapper().deserializeTask(document.text)
     val deserializedPlaceholder = deserializedTask.getTaskFile(TASK_FILE_NAME)!!.answerPlaceholders.first()
     assertEquals(expectedStartOffset, deserializedPlaceholder.offset)
     assertEquals(expectedEndOffset, deserializedPlaceholder.endOffset)

@@ -43,7 +43,7 @@ import com.jetbrains.edu.learning.yaml.YamlConfigSettings.SECTION_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.TASK_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.remoteConfigFileName
-import com.jetbrains.edu.learning.yaml.YamlMapper.MAPPER
+import com.jetbrains.edu.learning.yaml.YamlMapper.basicMapper
 import com.jetbrains.edu.learning.yaml.YamlMapper.REMOTE_MAPPER
 import com.jetbrains.edu.learning.yaml.YamlMapper.STUDENT_MAPPER
 import com.jetbrains.edu.learning.yaml.YamlMapper.STUDENT_MAPPER_WITH_ENCRYPTION
@@ -212,7 +212,7 @@ object YamlFormatSynchronizer {
       if (isMarketplace) STUDENT_MAPPER_WITH_ENCRYPTION else STUDENT_MAPPER
     }
     else {
-      MAPPER
+      basicMapper()
     }
 }
 

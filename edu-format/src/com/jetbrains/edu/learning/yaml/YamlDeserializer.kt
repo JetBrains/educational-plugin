@@ -36,7 +36,7 @@ import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_SECTION_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_TASK_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.SECTION_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.TASK_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlMapper.MAPPER
+import com.jetbrains.edu.learning.yaml.YamlMapper.basicMapper
 import com.jetbrains.edu.learning.yaml.YamlMapper.REMOTE_MAPPER
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
@@ -184,7 +184,7 @@ object YamlDeserializer {
     }
 
   fun getCourseMode(courseConfigText: String): CourseMode? {
-    val treeNode = MAPPER.readTree(courseConfigText)
+    val treeNode = basicMapper().readTree(courseConfigText)
     val courseModeText = asText(treeNode.get(YamlMixinNames.MODE))
     return courseModeText?.toCourseMode()
   }
