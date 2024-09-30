@@ -14,6 +14,7 @@ abstract class UpdateTestBase<T : Course> : NavigationTestBase() {
 
   protected fun toRemoteCourse(changeCourse: T.() -> Unit): T =
     localCourse.copy().apply {
+      additionalFiles = localCourse.additionalFiles
       copyFileContents(localCourse, this)
       init(false)
       changeCourse()

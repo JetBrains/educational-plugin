@@ -90,7 +90,7 @@ class HyperskillCourseUpdateTest : FrameworkLessonsUpdateTest<HyperskillCourse>(
       sourceCompatibility = '1.8'
     """.trimIndent()
     updateCourse {
-      additionalFiles = additionalFiles + TaskFile("build.gradle", buildGradleText)
+      additionalFiles = listOf(TaskFile("build.gradle", buildGradleText))
     }
 
     fileTree {
