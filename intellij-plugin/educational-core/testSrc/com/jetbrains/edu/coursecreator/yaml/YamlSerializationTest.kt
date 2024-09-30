@@ -909,7 +909,7 @@ class YamlSerializationTest : YamlTestCase() {
     course.generatedEduId = generatedEduId
     course.description = "This is a course about string theory.\nWhy not?"
 
-    val actual = YamlMapper.REMOTE_MAPPER.writeValueAsString(course)
+    val actual = YamlMapper.remoteMapper().writeValueAsString(course)
     val expected = """
       |id: 0
       |generated_edu_id: generated_edu_id

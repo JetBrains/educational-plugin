@@ -44,7 +44,7 @@ import com.jetbrains.edu.learning.yaml.YamlConfigSettings.TASK_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.remoteConfigFileName
 import com.jetbrains.edu.learning.yaml.YamlMapper.basicMapper
-import com.jetbrains.edu.learning.yaml.YamlMapper.REMOTE_MAPPER
+import com.jetbrains.edu.learning.yaml.YamlMapper.remoteMapper
 import com.jetbrains.edu.learning.yaml.YamlMapper.STUDENT_MAPPER
 import com.jetbrains.edu.learning.yaml.YamlMapper.STUDENT_MAPPER_WITH_ENCRYPTION
 import org.jetbrains.annotations.NonNls
@@ -105,7 +105,7 @@ object YamlFormatSynchronizer {
   private fun saveItemRemoteInfo(item: StudyItem) {
     // we don't want to create remote info files in local courses
     if (item.id > 0 || item is HyperskillCourse) {
-      saveItem(item, REMOTE_MAPPER, item.remoteConfigFileName)
+      saveItem(item, remoteMapper(), item.remoteConfigFileName)
     }
   }
 
