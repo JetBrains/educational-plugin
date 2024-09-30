@@ -46,7 +46,7 @@ import com.jetbrains.edu.learning.yaml.YamlConfigSettings.remoteConfigFileName
 import com.jetbrains.edu.learning.yaml.YamlMapper.basicMapper
 import com.jetbrains.edu.learning.yaml.YamlMapper.remoteMapper
 import com.jetbrains.edu.learning.yaml.YamlMapper.studentMapper
-import com.jetbrains.edu.learning.yaml.YamlMapper.STUDENT_MAPPER_WITH_ENCRYPTION
+import com.jetbrains.edu.learning.yaml.YamlMapper.studentMapperWithEncryption
 import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
 import javax.swing.JLabel
@@ -209,7 +209,7 @@ object YamlFormatSynchronizer {
 
   val Course.mapper: ObjectMapper
     get() = if (isStudy) {
-      if (isMarketplace) STUDENT_MAPPER_WITH_ENCRYPTION else studentMapper()
+      if (isMarketplace) studentMapperWithEncryption() else studentMapper()
     }
     else {
       basicMapper()
