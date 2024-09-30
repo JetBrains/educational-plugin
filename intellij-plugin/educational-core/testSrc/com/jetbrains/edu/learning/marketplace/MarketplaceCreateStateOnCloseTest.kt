@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceStateOnClose
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceStateOnClosePost
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
-import com.jetbrains.edu.learning.yaml.YamlMapper.STUDENT_MAPPER
+import com.jetbrains.edu.learning.yaml.YamlMapper.studentMapper
 import org.junit.Test
 import java.util.*
 
@@ -74,8 +74,8 @@ class MarketplaceCreateStateOnCloseTest : EduTestCase() {
       |update_version: $courseVersion
       |
     """.trimMargin()
-    val treeNode = STUDENT_MAPPER.readTree(yamlContent)
-    val stateOnClose = STUDENT_MAPPER.treeToValue(treeNode, MarketplaceStateOnClose::class.java)
+    val treeNode = studentMapper().readTree(yamlContent)
+    val stateOnClose = studentMapper().treeToValue(treeNode, MarketplaceStateOnClose::class.java)
     checkNotNull(stateOnClose)
     assertEquals(submissionId, stateOnClose.id)
     assertEquals(taskId, stateOnClose.taskId)
@@ -86,7 +86,7 @@ class MarketplaceCreateStateOnCloseTest : EduTestCase() {
   }
 
   private fun doTest(state: MarketplaceStateOnClosePost, expected: String) {
-    val actual = STUDENT_MAPPER.writeValueAsString(state)
+    val actual = studentMapper().writeValueAsString(state)
     assertEquals(expected, actual)
   }
 }

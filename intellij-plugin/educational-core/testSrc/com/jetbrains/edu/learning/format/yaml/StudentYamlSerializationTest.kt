@@ -622,7 +622,7 @@ class StudentYamlSerializationTest : EduTestCase() {
   }
 
   private fun doTest(item: StudyItem, expected: String) {
-    val actual = YamlMapper.STUDENT_MAPPER.writeValueAsString(item)
+    val actual = YamlMapper.studentMapper().writeValueAsString(item)
     assertEquals(expected, actual)
   }
 }

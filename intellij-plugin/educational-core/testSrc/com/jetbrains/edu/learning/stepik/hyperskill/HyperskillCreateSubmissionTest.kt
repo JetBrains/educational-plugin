@@ -272,7 +272,7 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
   }
 
   private fun doTest(submission: StepikBasedSubmission, expected: String) {
-    val actual = YamlMapper.STUDENT_MAPPER.writeValueAsString(submission)
+    val actual = YamlMapper.studentMapper().writeValueAsString(submission)
     assertEquals(expected, actual)
   }
 }

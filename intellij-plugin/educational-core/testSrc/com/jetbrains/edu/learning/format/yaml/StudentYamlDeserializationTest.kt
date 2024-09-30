@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
-import com.jetbrains.edu.learning.yaml.YamlMapper.STUDENT_MAPPER
+import com.jetbrains.edu.learning.yaml.YamlMapper.studentMapper
 import org.intellij.lang.annotations.Language
 import org.junit.Test
 import java.util.*
@@ -32,7 +32,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
       |  Why not?"
       |programming_language: Plain text
       |""".trimMargin()
-    val course = STUDENT_MAPPER.deserializeCourse(yamlContent)
+    val course = studentMapper().deserializeCourse(yamlContent)
     assertNotNull(course)
     assertEquals(CourseMode.STUDENT, course.courseMode)
   }
@@ -47,7 +47,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
       |programming_language: Plain text
       |mode: Study
       |""".trimMargin()
-    val course = STUDENT_MAPPER.deserializeCourse(yamlContent)
+    val course = studentMapper().deserializeCourse(yamlContent)
     assertNotNull(course)
     assertTrue(course is EduCourse)
   }
@@ -62,7 +62,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     |current_task: 1
     |
     """.trimMargin("|")
-    val lesson = STUDENT_MAPPER.deserializeLesson(yamlContent)
+    val lesson = studentMapper().deserializeLesson(yamlContent)
     assertNotNull(lesson)
     assertInstanceOf(lesson, FrameworkLesson::class.java)
     assertEquals(1, (lesson as FrameworkLesson).currentTaskIndex)
@@ -616,7 +616,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
 
   @Test
   fun `test placeholder with invisible dependency`() = doTestPlaceholderAndDependencyVisibility(
-    STUDENT_MAPPER.deserializeTask("""
+    studentMapper().deserializeTask("""
         |type: edu
         |files:
         |- name: Test.java
@@ -641,7 +641,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
 
   @Test
   fun `test invisible placeholder`() = doTestPlaceholderAndDependencyVisibility(
-    STUDENT_MAPPER.deserializeTask("""
+    studentMapper().deserializeTask("""
         |type: edu
         |files:
         |- name: Test.java
@@ -661,7 +661,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
 
   @Test
   fun `test placeholder without visibility field in student mode`() = doTestPlaceholderAndDependencyVisibility(
-    STUDENT_MAPPER.deserializeTask("""
+    studentMapper().deserializeTask("""
         |type: edu
         |files:
         |- name: Test.java
@@ -680,7 +680,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
 
   @Test
   fun `test visible placeholder and invisible dependency`() = doTestPlaceholderAndDependencyVisibility(
-    STUDENT_MAPPER.deserializeTask("""
+    studentMapper().deserializeTask("""
         |type: edu
         |files:
         |- name: Test.java
@@ -704,5 +704,5 @@ class StudentYamlDeserializationTest : EduTestCase() {
     """.trimMargin()
     ), expectedPlaceholderVisibility = false)
 
-  private fun deserializeTask(yamlContent: String) = STUDENT_MAPPER.deserializeTask(yamlContent)
+  private fun deserializeTask(yamlContent: String) = studentMapper().deserializeTask(yamlContent)
 }
