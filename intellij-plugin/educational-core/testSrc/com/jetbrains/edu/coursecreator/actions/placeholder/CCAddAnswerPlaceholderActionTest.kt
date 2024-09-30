@@ -119,7 +119,7 @@ class CCAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() 
     myFixture.editor.selectionModel.setSelection(0, 2)
     testAction(CCTestAddAnswerPlaceholder())
 
-    val actual = course.mapper.writeValueAsString(taskFile)
+    val actual = course.mapper().writeValueAsString(taskFile)
     assertEquals("""
       |name: Task.kt
       |visible: true

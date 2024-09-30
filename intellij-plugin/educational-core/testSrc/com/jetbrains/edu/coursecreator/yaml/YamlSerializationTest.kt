@@ -1028,7 +1028,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   private fun doTest(item: StudyItem, expected: String) {
-    val actual = item.course.mapper.writeValueAsString(item)
+    val actual = item.course.mapper().writeValueAsString(item)
     assertEquals(expected, actual)
   }
 }

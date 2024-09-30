@@ -60,7 +60,7 @@ object YamlFormatSynchronizer {
     @NonNls
     val errorMessageToLog = "Attempt to create config files for project without course"
     val course = StudyTaskManager.getInstance(project).course ?: error(errorMessageToLog)
-    val mapper = course.mapper
+    val mapper = course.mapper()
     saveItem(course, mapper)
     course.visitSections { section -> saveItem(section, mapper) }
     course.visitLessons { lesson ->
@@ -73,7 +73,7 @@ object YamlFormatSynchronizer {
     saveRemoteInfo(course)
   }
 
-  fun saveItem(item: StudyItem, mapper: ObjectMapper = item.course.mapper, configName: String = item.configFileName) {
+  fun saveItem(item: StudyItem, mapper: ObjectMapper = item.course.mapper(), configName: String = item.configFileName) {
     val course = item.course
 
     @NonNls
@@ -207,13 +207,12 @@ object YamlFormatSynchronizer {
     return COURSE_CONFIG == name || SECTION_CONFIG == name || LESSON_CONFIG == name || TASK_CONFIG == name
   }
 
-  val Course.mapper: ObjectMapper
-    get() = if (isStudy) {
-      if (isMarketplace) studentMapperWithEncryption() else studentMapper()
-    }
-    else {
-      basicMapper()
-    }
+  fun Course.mapper(): ObjectMapper = if (isStudy) {
+    if (isMarketplace) studentMapperWithEncryption() else studentMapper()
+  }
+  else {
+    basicMapper()
+  }
 }
 
 fun StudyItem.getConfigDir(project: Project): VirtualFile {
