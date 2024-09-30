@@ -53,7 +53,7 @@ object YamlLoader {
 
   private fun doLoad(project: Project, configFile: VirtualFile, loadFromVFile: Boolean) {
     // for null course we load course again so no need to pass mode specific mapper here
-    val mapper = StudyTaskManager.getInstance(project).course?.mapper ?: basicMapper()
+    val mapper = StudyTaskManager.getInstance(project).course?.mapper() ?: basicMapper()
 
     val existingItem = getStudyItemForConfig(project, configFile)
     val deserializedItem = deserializeItemProcessingErrors(configFile, project, loadFromVFile, mapper) ?: return
@@ -163,7 +163,7 @@ object YamlLoader {
       return
     }
 
-    val mapper = course.mapper
+    val mapper = course.mapper()
     items = deserializeContent(project, items, mapper)
     // set parent to deserialize content correctly
     items.forEach { it.init(this, false) }

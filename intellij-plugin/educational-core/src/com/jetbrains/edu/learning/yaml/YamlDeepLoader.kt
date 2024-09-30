@@ -39,7 +39,7 @@ object YamlDeepLoader {
     val courseConfig = projectDir.findChild(YamlConfigSettings.COURSE_CONFIG) ?: error(errorMessageToLog)
 
     val deserializedCourse = deserializeItemProcessingErrors(courseConfig, project) as? Course ?: return null
-    val mapper = deserializedCourse.mapper
+    val mapper = deserializedCourse.mapper()
 
     deserializedCourse.items = deserializedCourse.deserializeContent(project, deserializedCourse.items, mapper)
     deserializedCourse.items.forEach { deserializedItem ->
