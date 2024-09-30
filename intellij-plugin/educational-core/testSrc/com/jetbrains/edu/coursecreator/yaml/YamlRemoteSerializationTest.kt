@@ -205,7 +205,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
   }
 
   private fun doTest(item: StudyItem, expected: String) {
-    val actual = YamlMapper.REMOTE_MAPPER.writeValueAsString(item)
+    val actual = YamlMapper.remoteMapper().writeValueAsString(item)
     assertEquals(expected, actual)
   }
 }

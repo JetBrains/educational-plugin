@@ -46,10 +46,10 @@ object YamlMapper {
     return mapper
   }
 
-  val REMOTE_MAPPER: ObjectMapper by lazy {
+  fun remoteMapper(): ObjectMapper {
     val mapper = createMapper()
     addRemoteMixIns(mapper)
-    mapper
+    return mapper
   }
 
   val STUDENT_MAPPER: ObjectMapper by lazy {
