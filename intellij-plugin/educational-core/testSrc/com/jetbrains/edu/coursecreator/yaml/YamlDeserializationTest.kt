@@ -21,7 +21,7 @@ import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeSection
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.getCourseMode
 import com.jetbrains.edu.learning.yaml.YamlMapper.basicMapper
-import com.jetbrains.edu.learning.yaml.YamlMapper.STUDENT_MAPPER
+import com.jetbrains.edu.learning.yaml.YamlMapper.studentMapper
 import com.jetbrains.edu.learning.yaml.YamlTestCase
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.HYPERSKILL_TYPE_YAML
@@ -408,7 +408,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |content:
       |- "Introduction Task"
     """.trimMargin()
-    val lesson = STUDENT_MAPPER.deserializeLesson(yamlContent)
+    val lesson = studentMapper().deserializeLesson(yamlContent)
     check(lesson is FrameworkLesson)
     @Suppress("DEPRECATION")
     assertEquals(customName, lesson.customPresentableName)

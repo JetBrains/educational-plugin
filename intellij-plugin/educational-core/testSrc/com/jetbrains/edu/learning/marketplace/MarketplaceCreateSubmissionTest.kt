@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
-import com.jetbrains.edu.learning.yaml.YamlMapper.STUDENT_MAPPER
+import com.jetbrains.edu.learning.yaml.YamlMapper.studentMapper
 import org.junit.Test
 import java.util.*
 
@@ -83,8 +83,8 @@ class MarketplaceCreateSubmissionTest : EduTestCase() {
       |update_version: $courseVersion
       |
     """.trimMargin()
-    val treeNode = STUDENT_MAPPER.readTree(yamlContent)
-    val submission = STUDENT_MAPPER.treeToValue(treeNode, MarketplaceSubmission::class.java)
+    val treeNode = studentMapper().readTree(yamlContent)
+    val submission = studentMapper().treeToValue(treeNode, MarketplaceSubmission::class.java)
     checkNotNull(submission)
     assertEquals(submissionId, submission.id)
     assertEquals(taskId, submission.taskId)
@@ -97,7 +97,7 @@ class MarketplaceCreateSubmissionTest : EduTestCase() {
   }
 
   private fun doTest(submission: MarketplaceSubmission, expected: String) {
-    val actual = STUDENT_MAPPER.writeValueAsString(submission)
+    val actual = studentMapper().writeValueAsString(submission)
     assertEquals(expected, actual)
   }
 }
