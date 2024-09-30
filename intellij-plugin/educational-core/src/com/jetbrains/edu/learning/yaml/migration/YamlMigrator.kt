@@ -14,13 +14,14 @@ import com.intellij.openapi.vfs.isFile
 import com.intellij.openapi.vfs.readText
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.reformatYaml
 import com.jetbrains.edu.learning.yaml.YamlMapper
 import com.jetbrains.edu.learning.yaml.YamlMapper.CURRENT_YAML_VERSION
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.YAML_VERSION
 import org.jetbrains.annotations.VisibleForTesting
 import java.nio.file.Files
 
-class YamlMigrator private constructor(private val loadedYamlVersion: Int, private val courseDir: VirtualFile) {
+class YamlMigrator private constructor(private val project: Project, private val loadedYamlVersion: Int, private val courseDir: VirtualFile) {
 
   fun needToMigrate(): Boolean = loadedYamlVersion < CURRENT_YAML_VERSION
 
@@ -49,7 +50,8 @@ class YamlMigrator private constructor(private val loadedYamlVersion: Int, priva
       }
 
       for ((file, fileContents) in migratedConfigs) {
-        Files.writeString(file.toNioPath(), fileContents)
+        val formattedContents = reformatYaml(project, file.name, fileContents)
+        Files.writeString(file.toNioPath(), formattedContents)
       }
     }
     catch (th: Throwable) {
@@ -126,7 +128,7 @@ class YamlMigrator private constructor(private val loadedYamlVersion: Int, priva
         logger<YamlMigrator>().warn("YAML version of the project is $version which is greater than the latest supported version $CURRENT_YAML_VERSION")
       }
 
-      return YamlMigrator(version, courseDir)
+      return YamlMigrator(project, version, courseDir)
     }
   }
 }
