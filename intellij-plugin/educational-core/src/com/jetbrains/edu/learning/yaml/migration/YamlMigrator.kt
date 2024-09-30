@@ -21,7 +21,12 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.YAML_VERSION
 import org.jetbrains.annotations.VisibleForTesting
 import java.nio.file.Files
 
-class YamlMigrator private constructor(private val project: Project, private val loadedYamlVersion: Int, private val courseDir: VirtualFile) {
+class YamlMigrator private constructor(
+  private val project: Project,
+  private val loadedYamlVersion: Int,
+  private val courseDir: VirtualFile,
+  private val courseTree: ObjectNode
+) {
 
   fun needToMigrate(): Boolean = loadedYamlVersion < CURRENT_YAML_VERSION
 
@@ -62,7 +67,7 @@ class YamlMigrator private constructor(private val project: Project, private val
   @VisibleForTesting
   fun updateStructureToVersion(version: Int) {
     for ((stepVersion, migrationStep) in steps) {
-      if (stepVersion == version) {
+      if (stepVersion == version && migrationStep.migrationNeeded(project, courseTree)) {
         performStep(migrationStep)
       }
     }
@@ -128,7 +133,7 @@ class YamlMigrator private constructor(private val project: Project, private val
         logger<YamlMigrator>().warn("YAML version of the project is $version which is greater than the latest supported version $CURRENT_YAML_VERSION")
       }
 
-      return YamlMigrator(project, version, courseDir)
+      return YamlMigrator(project, version, courseDir, configTree)
     }
   }
 }
