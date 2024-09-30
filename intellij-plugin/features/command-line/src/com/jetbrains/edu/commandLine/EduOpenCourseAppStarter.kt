@@ -1,5 +1,8 @@
 package com.jetbrains.edu.commandLine
 
+import com.github.ajalt.clikt.command.parse
+import com.github.ajalt.clikt.core.CliktError
+import com.github.ajalt.clikt.core.context
 import com.intellij.featureStatistics.fusCollectors.LifecycleUsageTriggerCollector
 import com.intellij.ide.AppLifecycleListener
 import com.intellij.ide.CliResult
@@ -12,8 +15,6 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.progress.blockingContext
 import com.intellij.platform.diagnostic.telemetry.impl.span
-import com.jetbrains.edu.learning.Err
-import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.authUtils.requestFocus
 import com.jetbrains.edu.learning.map
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
@@ -42,14 +43,19 @@ class EduOpenCourseAppStarter : IdeStarter() {
     asyncCoroutineScope: CoroutineScope,
     lifecyclePublisher: AppLifecycleListener
   ) {
-    val parsedArgs = parseArgs(args).onError {
+    val command = openCourseCommand()
+    try {
+      command.parse(args.drop(1))
+    }
+    catch (e: CliktError) {
+      command.echoFormattedHelp(e)
       app.saveAndExit(1)
       return
     }
 
     invokeAppListeners(args, lifecyclePublisher, asyncCoroutineScope)
 
-    val result = showOpenCourseDialog(parsedArgs)
+    val result = showOpenCourseDialog(command.source, command.courseId)
     when (result) {
       OpenCourseDialogResult.Ok -> Unit
       OpenCourseDialogResult.Canceled -> app.saveAndExit(0)
@@ -79,28 +85,32 @@ class EduOpenCourseAppStarter : IdeStarter() {
 
   @Suppress("MoveVariableDeclarationIntoWhen")
   override suspend fun processExternalCommandLine(args: List<String>, currentDirectory: String?): CliResult {
-    val parsedArgs = parseArgs(args).onError {
-      return CliResult(1, it)
+    val command = openCourseCommand()
+    return try {
+      command.parse(args.drop(1))
+      val dialogResult = showOpenCourseDialog(command.source, command.courseId)
+      when (dialogResult) {
+        OpenCourseDialogResult.Ok,
+        OpenCourseDialogResult.Canceled -> CliResult.OK
+        is OpenCourseDialogResult.Error -> CliResult(1, dialogResult.message)
+      }
     }
-    val dialogResult = showOpenCourseDialog(parsedArgs)
-    return when (dialogResult) {
-      OpenCourseDialogResult.Ok,
-      OpenCourseDialogResult.Canceled -> CliResult.OK
-      is OpenCourseDialogResult.Error -> CliResult(1, dialogResult.message)
+    catch (e: CliktError) {
+      CliResult(1, command.getFormattedHelp(e))
     }
   }
 
-  private fun parseArgs(args: List<String>): Result<Args, String> {
-    val parser = ArgParser.createDefault(COMMAND_NAME)
-    val result = parser.parseArgs(args)
-    if (result is Err) {
-      LOG.error(result.error)
+  private fun openCourseCommand(): EduOpenCourseCommand {
+    return EduOpenCourseCommand().apply {
+      context {
+        echoMessage = LOG.toMessageEchoer()
+      }
     }
-    return result
   }
 
-  private suspend fun showOpenCourseDialog(args: Args): OpenCourseDialogResult {
-    return args.loadCourse().map { course ->
+  private suspend fun showOpenCourseDialog(source: CourseSource, courseId: String): OpenCourseDialogResult {
+    source.loadCourse(courseId)
+    return source.loadCourse(courseId).map { course ->
       val result = withContext(Dispatchers.EDT) {
         // If it's called from external command, the application frame can be not in focus,
         // but we want to show the corresponding dialog to a user
@@ -122,8 +132,6 @@ class EduOpenCourseAppStarter : IdeStarter() {
 
   companion object {
     private val LOG: Logger = logger<EduOpenCourseAppStarter>()
-
-    private const val COMMAND_NAME = "openCourse"
   }
 
   private sealed interface OpenCourseDialogResult {
@@ -131,4 +139,8 @@ class EduOpenCourseAppStarter : IdeStarter() {
     data object Canceled : OpenCourseDialogResult
     data class Error(val message: String) : OpenCourseDialogResult
   }
+}
+
+class EduOpenCourseCommand : EduCommand("openCourse") {
+  override suspend fun run() {}
 }
