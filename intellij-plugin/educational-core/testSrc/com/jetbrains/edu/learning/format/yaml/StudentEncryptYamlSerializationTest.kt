@@ -155,7 +155,7 @@ class StudentEncryptYamlSerializationTest : EduTestCase() {
   private fun doTest(task: Task, expected: String) {
     try {
       task.course.needWriteYamlText = true
-      val studentMapper = YamlMapper.TEST_STUDENT_MAPPER_WITH_ENCRYPTION
+      val studentMapper = YamlMapper.testStudentMapperWithEncryption()
       studentMapper.registerModule(EncryptionModule(TEST_AES_KEY))
       val actual = studentMapper.writeValueAsString(task)
       assertEquals(expected, actual)

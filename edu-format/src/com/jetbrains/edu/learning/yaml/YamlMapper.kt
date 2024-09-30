@@ -71,14 +71,14 @@ object YamlMapper {
     return mapper
   }
 
-  @get:TestOnly
-  val TEST_STUDENT_MAPPER_WITH_ENCRYPTION: ObjectMapper by lazy {
+  @TestOnly
+  fun testStudentMapperWithEncryption(): ObjectMapper {
     val mapper = createMapper()
     mapper.addMixIns()
     mapper.addMixIn(TaskFile::class.java, StudentEncryptedTaskFileYamlMixin::class.java)
     mapper.addMixIn(AnswerPlaceholder::class.java, StudentAnswerPlaceholderYamlMixin::class.java)
     mapper.addStudentMixIns()
-    mapper
+    return mapper
   }
 
   private fun ObjectMapper.addEncryptionModule() {
