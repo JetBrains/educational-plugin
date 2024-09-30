@@ -71,6 +71,10 @@ fun <T : StudyItem> copyFileContents(sourceItem: T, destinationItem: T) {
     val subItem2 = destinationItem.getItem(subItem1.name) ?: continue
     copyFileContents(subItem1, subItem2)
   }
+
+  if (sourceItem is Course && destinationItem is Course) {
+    destinationItem.additionalFiles = sourceItem.additionalFiles
+  }
 }
 
 fun copyFileContentsForTasks(sourceTask: Task, destinationTask: Task) {
