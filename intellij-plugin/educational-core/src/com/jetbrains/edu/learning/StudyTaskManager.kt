@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.yaml.YamlDeepLoader.loadCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.isEduYamlProject
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.startSynchronization
+import com.jetbrains.edu.learning.yaml.migration.YamlMigrator
 import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
@@ -54,6 +55,9 @@ class StudyTaskManager(private val project: Project) : DumbAware, Disposable, Li
 
     courseLoadingLock.withLock {
       if (!needToLoadCourse(project)) return
+
+      var yamlMigrator = YamlMigrator.getInstance(project)
+      yamlMigrator?.migrateStructure()
 
       loadedCourse = runReadAction { loadCourse(project) }
       courseLoadedWithError = loadedCourse == null

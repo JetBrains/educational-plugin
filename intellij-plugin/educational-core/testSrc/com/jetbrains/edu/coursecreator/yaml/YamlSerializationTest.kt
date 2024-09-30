@@ -387,6 +387,7 @@ class YamlSerializationTest : YamlTestCase() {
       |content:
       |- the first lesson
       |- the second lesson
+      |yaml_version: 1
       |
     """.trimMargin())
   }
@@ -631,6 +632,7 @@ class YamlSerializationTest : YamlTestCase() {
       |environment: Android
       |content:
       |- lesson1
+      |yaml_version: 1
       |
     """.trimMargin())
   }
@@ -651,6 +653,7 @@ class YamlSerializationTest : YamlTestCase() {
       |content:
       |- lesson1
       |feedback_link: $courseLink
+      |yaml_version: 1
       |
     """.trimMargin())
   }
@@ -669,6 +672,7 @@ class YamlSerializationTest : YamlTestCase() {
       |summary: Test Course Description
       |programming_language: Plain text
       |mode: Study
+      |yaml_version: 1
       |
     """.trimMargin())
   }
@@ -687,6 +691,7 @@ class YamlSerializationTest : YamlTestCase() {
       |summary: Test Course Description
       |programming_language: Plain text
       |mode: Study
+      |yaml_version: 1
       |
     """.trimMargin())
   }
@@ -708,6 +713,7 @@ class YamlSerializationTest : YamlTestCase() {
       |content:
       |- lesson1
       |mode: Study
+      |yaml_version: 1
       |
     """.trimMargin())
   }
@@ -722,6 +728,7 @@ class YamlSerializationTest : YamlTestCase() {
       |summary: Test Course Description
       |programming_language: Plain text
       |solutions_hidden: true
+      |yaml_version: 1
       |
     """.trimMargin())
   }
@@ -795,6 +802,7 @@ class YamlSerializationTest : YamlTestCase() {
       |language: English
       |summary: Test Course Description
       |programming_language: Plain text
+      |yaml_version: 1
       |
     """.trimMargin())
   }
@@ -812,6 +820,7 @@ class YamlSerializationTest : YamlTestCase() {
       |summary: sum
       |programming_language: Plain text
       |programming_language_version: 1.42
+      |yaml_version: 1
       |
     """.trimMargin())
   }
@@ -828,6 +837,7 @@ class YamlSerializationTest : YamlTestCase() {
       |tags:
       |- kotlin
       |- cycles
+      |yaml_version: 1
       |
     """.trimMargin())
   }
@@ -846,6 +856,7 @@ class YamlSerializationTest : YamlTestCase() {
       |summary: sum
       |programming_language: Plain text
       |programming_language_version: 1.42
+      |yaml_version: 1
       |
     """.trimMargin())
   }
@@ -866,6 +877,7 @@ class YamlSerializationTest : YamlTestCase() {
       |programming_language: Plain text
       |programming_language_version: 1.42
       |submit_manually: true
+      |yaml_version: 1
       |
     """.trimMargin())
   }
@@ -891,6 +903,7 @@ class YamlSerializationTest : YamlTestCase() {
       |content:
       |- the first lesson
       |- the second lesson
+      |yaml_version: 1
       |
     """.trimMargin())
 
@@ -947,6 +960,7 @@ class YamlSerializationTest : YamlTestCase() {
       |content:
       |- the first lesson
       |- the second lesson
+      |yaml_version: 1
       |
     """.trimMargin())
   }
@@ -1004,6 +1018,7 @@ class YamlSerializationTest : YamlTestCase() {
       |mode: Study
       |environment_settings:
       |  foo: bar
+      |yaml_version: 1
       |""".trimMargin())
   }
 
@@ -1024,6 +1039,7 @@ class YamlSerializationTest : YamlTestCase() {
       |content:
       |- lesson1
       |mode: Study
+      |yaml_version: 1
       |""".trimMargin())
   }
 
