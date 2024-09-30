@@ -6,8 +6,6 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenProjectStageRequest
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
 enum class CourseSource(val option: String, val description: String) {
@@ -54,15 +52,4 @@ enum class CourseSource(val option: String, val description: String) {
   };
 
   abstract suspend fun loadCourse(value: String): Result<Course, String>
-}
-
-suspend fun Args.loadCourse(): Result<Course, String> {
-  for (courseSource in CourseSource.values()) {
-    val value = getOptionValue(courseSource.option) ?: continue
-    return withContext(Dispatchers.IO) {
-       courseSource.loadCourse(value)
-    }
-  }
-
-  return Err("Failed to find course source where it should be loaded from")
 }

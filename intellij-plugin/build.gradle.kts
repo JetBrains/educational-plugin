@@ -456,6 +456,8 @@ project("educational-core") {
     }
 
     api(project(":edu-format"))
+    implementationWithoutKotlin(rootProject.libs.clikt.core)
+
     // For some reason, kotlin serialization plugin doesn't see the corresponding library from IDE dependency
     // and fails Kotlin compilation.
     // Let's provide necessary dependency during compilation to make it work
