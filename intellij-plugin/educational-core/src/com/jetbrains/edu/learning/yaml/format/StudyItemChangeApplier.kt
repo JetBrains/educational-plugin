@@ -65,6 +65,7 @@ open class ItemContainerChangeApplier<T : ItemContainer>(val project: Project) :
   private fun updateChildren(deserializedItem: T, existingItem: T) {
     val existingChildren = existingItem.items
     val preservedChildren = mutableListOf<StudyItem>()
+    val mapper = existingItem.course.mapper()
     for (titledItem in deserializedItem.items) {
       val child = existingChildren.find { it.name == titledItem.name }
       if (child != null) {
@@ -76,7 +77,7 @@ open class ItemContainerChangeApplier<T : ItemContainer>(val project: Project) :
         // it is called from `YamlLoader.loadItem`
         val configFile = existingItem.getConfigFileForChild(project, titledItem.name) ?: continue
 
-        val deserializedChild = deserializeItemProcessingErrors(configFile, project, mapper = existingItem.course.mapper()) ?: continue
+        val deserializedChild = deserializeItemProcessingErrors(configFile, project, mapper=mapper) ?: continue
         deserializedChild.name = titledItem.name
         deserializedChild.index = titledItem.index
         deserializedChild.parent = existingItem

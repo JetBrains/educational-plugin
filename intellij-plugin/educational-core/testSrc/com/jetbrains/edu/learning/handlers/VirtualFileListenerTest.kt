@@ -21,6 +21,7 @@ class VirtualFileListenerTest : VirtualFileListenerTestBase() {
   @Test
   fun `test add task file`() {
     val filePath = "src/taskFile.txt"
+    val studentMapper = YamlMapper.studentMapper()
     doAddFileTest(filePath) { task ->
       listOf((filePath `in` task).withAdditionalCheck { taskFile ->
         assertEquals(true, taskFile.isLearnerCreated)
@@ -28,7 +29,7 @@ class VirtualFileListenerTest : VirtualFileListenerTestBase() {
         // after task files is created, changes are saved to config in `invokeLater`
         // we want to check config after it happened, means this event is dispatched
         PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
-        val item = deserializeItemProcessingErrors(taskConfigFile, project, mapper = YamlMapper.studentMapper()) as EduTask
+        val item = deserializeItemProcessingErrors(taskConfigFile, project, mapper = studentMapper) as EduTask
         val deserializedTaskFile = item.getTaskFile(taskFile.name)
                                    ?: error("Learner config file doesn't contain `${taskFile.name}` task file")
         assertEquals(true, deserializedTaskFile.isLearnerCreated)

@@ -142,8 +142,8 @@ object YamlDeserializer {
   }
 
   private fun deserializeCourseRemoteInfo(configFileText: String): Course {
-    val treeNode = remoteMapper().readTree(configFileText)
-    val type = asText(treeNode.get(YamlMixinNames.TYPE))
+    val remoteMapper = remoteMapper()
+    val treeNode = remoteMapper.readTree(configFileText)
 
     val clazz = if (treeNode.get(YamlMixinNames.HYPERSKILL_PROJECT) != null) {
       HyperskillCourse::class.java
@@ -152,7 +152,7 @@ object YamlDeserializer {
       EduCourse::class.java
     }
 
-    return remoteMapper().treeToValue(treeNode, clazz)
+    return remoteMapper.treeToValue(treeNode, clazz)
   }
 
   private fun deserializeLessonRemoteInfo(configFileText: String): StudyItem {

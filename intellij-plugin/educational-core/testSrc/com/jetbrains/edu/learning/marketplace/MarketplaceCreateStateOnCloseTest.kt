@@ -74,8 +74,9 @@ class MarketplaceCreateStateOnCloseTest : EduTestCase() {
       |update_version: $courseVersion
       |
     """.trimMargin()
-    val treeNode = studentMapper().readTree(yamlContent)
-    val stateOnClose = studentMapper().treeToValue(treeNode, MarketplaceStateOnClose::class.java)
+    val studentMapper = studentMapper()
+    val treeNode = studentMapper.readTree(yamlContent)
+    val stateOnClose = studentMapper.treeToValue(treeNode, MarketplaceStateOnClose::class.java)
     checkNotNull(stateOnClose)
     assertEquals(submissionId, stateOnClose.id)
     assertEquals(taskId, stateOnClose.taskId)

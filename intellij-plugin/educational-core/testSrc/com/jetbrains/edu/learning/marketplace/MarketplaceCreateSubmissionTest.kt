@@ -83,8 +83,9 @@ class MarketplaceCreateSubmissionTest : EduTestCase() {
       |update_version: $courseVersion
       |
     """.trimMargin()
-    val treeNode = studentMapper().readTree(yamlContent)
-    val submission = studentMapper().treeToValue(treeNode, MarketplaceSubmission::class.java)
+    val studentMapper = studentMapper()
+    val treeNode = studentMapper.readTree(yamlContent)
+    val submission = studentMapper.treeToValue(treeNode, MarketplaceSubmission::class.java)
     checkNotNull(submission)
     assertEquals(submissionId, submission.id)
     assertEquals(taskId, submission.taskId)
