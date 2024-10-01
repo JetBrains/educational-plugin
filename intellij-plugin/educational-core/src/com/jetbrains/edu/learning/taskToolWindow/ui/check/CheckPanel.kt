@@ -12,6 +12,7 @@ import com.intellij.util.Alarm
 import com.intellij.util.ui.*
 import com.jetbrains.edu.learning.actions.*
 import com.jetbrains.edu.learning.checker.CheckUtils.getCustomRunConfigurationForRunner
+import com.jetbrains.edu.learning.aiDebugging.AiDebuggingNotification
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -89,8 +90,8 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     if (checkResult != null) {
       linkPanel.removeAll()
       checkDetailsPlaceholder.add(CheckDetailsPanel(project, task, checkResult, checkTimeAlarm), BorderLayout.SOUTH)
+      AiDebuggingNotification.addAiDebuggingNotification(task, checkDetailsPlaceholder)
     }
-    updateBackground()
   }
 
   private fun restoreSavedResult(task: Task): CheckResult? {
