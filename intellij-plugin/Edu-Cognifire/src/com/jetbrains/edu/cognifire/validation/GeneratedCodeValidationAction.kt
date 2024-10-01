@@ -95,9 +95,10 @@ open class GeneratedCodeValidationAction(private val shouldGenerateBadPrompts: B
     if (tasks.isEmpty()) return 0
     val records = mutableListOf<GeneratedCodeDataframeRecord>()
     val task = tasks.lastOrNull() ?: return 0
-    val completedTasksNumber = processTask(task, language, project, records, indicator, totalTasks, doneTasks)
+    return processTask(task, language, project, records, indicator, totalTasks, doneTasks).also {
+      records.toDataFrame().writeCSV()
+    }
     records.toDataFrame().writeCSV()
-    return completedTasksNumber
   }
 
   private fun processTask(
