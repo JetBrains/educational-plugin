@@ -59,5 +59,10 @@
             internal="true">
       <add-to-group group-id="ToolsMenu"/>
     </action>
+    <action id="Validation.GeneratedCodeFromBadPromptsValidation"
+            class="com.jetbrains.edu.cognifire.validation.GeneratedCodeFromBadPromptsValidationAction"
+            internal="true">
+      <add-to-group group-id="ToolsMenu"/>
+    </action>
   </actions>
 </idea-plugin>
