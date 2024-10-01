@@ -109,6 +109,7 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
   }
 
   fun updateCheckDetails(task: Task, result: CheckResult? = null) {
+    updateGetHintButtonWrapper(task)
     checkFinishedPanel.removeAll()
     checkFinishedPanel.addNextTaskButton(task)
     checkFinishedPanel.addRetryButton(task)
@@ -150,6 +151,17 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     updateCheckButtonWrapper(task)
     updateRightActionsToolbar(task)
     updateCheckDetails(task)
+  }
+
+  private fun updateGetHintButtonWrapper(task: Task) {
+    getHintButtonWrapper.removeAll()
+
+    if (AiDebuggingAction.isAvailable(task)) {
+      val action = ActionManager.getInstance().getAction(AiDebuggingAction.ACTION_ID) as AiDebuggingAction
+      val nextStepHintButton = CheckPanelButtonComponent(action = action)
+      action.actionTargetParent = checkDetailsPlaceholder
+      getHintButtonWrapper.add(nextStepHintButton, BorderLayout.WEST)
+    }
   }
 
   private fun updateCheckButtonWrapper(task: Task) {
