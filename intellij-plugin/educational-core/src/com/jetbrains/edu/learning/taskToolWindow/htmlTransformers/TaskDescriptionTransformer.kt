@@ -6,7 +6,6 @@ private val TaskDescriptionHtmlTransformer = HtmlTransformer.pipeline(
   CutOutHeaderTransformer,
   CssHtmlTransformer,
   MediaThemesTransformer,
-  ExternalLinkIconsTransformer,
   CodeHighlighter,
   HintsWrapper
 )

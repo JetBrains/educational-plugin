@@ -25,10 +25,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.SOURCE
 import com.jetbrains.edu.learning.taskToolWindow.ui.LightColoredActionLink
-import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleManager
-import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager
-import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_DARK_PNG
-import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_PNG
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -251,33 +247,6 @@ fun useDarkSrcCustomAttributeIfPresent(element: Element): Boolean {
   else {
     false
   }
-}
-
-fun addExternalLinkIcons(document: Document): Document {
-  val links = document.getElementsByTag(A_TAG)
-  val externalLinks = links.filter { element -> element.attr(HREF_ATTRIBUTE).matches(EXTERNAL_LINK_REGEX) }
-  val arrowIcon = if (!JBColor.isBright()) {
-    EXTERNAL_LINK_ARROW_DARK_PNG
-  }
-  else {
-    EXTERNAL_LINK_ARROW_PNG
-  }
-  for (link in externalLinks) {
-    val span = document.createElement(SPAN_ATTRIBUTE)
-    link.replaceWith(span)
-    span.appendChild(link)
-    link.appendElement(IMG_TAG)
-    val img = link.getElementsByTag(IMG_TAG)
-    val fontSize = StyleManager().bodyFontSize
-    val pictureSize = getPictureSize(fontSize)
-
-    img.attr(SRC_ATTRIBUTE, StyleResourcesManager.resourceUrl(arrowIcon))
-    img.attr(STYLE_ATTRIBUTE, "display:inline; position:relative; top:${fontSize * 0.18}; left:-${fontSize * 0.1}")
-    img.attr(BORDER_ATTRIBUTE, "0")
-    img.attr(WIDTH_ATTRIBUTE, pictureSize)
-    img.attr(HEIGHT_ATTRIBUTE, pictureSize)
-  }
-  return document
 }
 
 fun getPictureSize(fontSize: Int): String {

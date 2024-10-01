@@ -16,10 +16,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.getFormattedTaskText
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.taskToolWindow.ui.JCEFToolWindow
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
-import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleManager
-import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager
-import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_DARK_PNG
-import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_PNG
 import org.jsoup.Jsoup
 import org.junit.Test
 import java.awt.event.InputEvent
@@ -268,16 +264,6 @@ class TaskDescriptionTest : EduTestCase() {
     doTestImageAndIFrameSrcReplacedFromDarkSrc("https://light.png", "https://course.edu/light.html")
   }
 
-  @Test
-  fun `test arrow icon added after external link in light theme`() {
-    doTestArrowIconAdded(EXTERNAL_LINK_ARROW_PNG)
-  }
-
-  @Test
-  fun `test arrow icon added after external link in dark theme`() {
-    runWithDarkTheme { doTestArrowIconAdded(EXTERNAL_LINK_ARROW_DARK_PNG) }
-  }
-
   private fun runWithDarkTheme(doTest: () -> Unit) {
     val initialTheme = UIManager.getLookAndFeel()
     setLookAndFeel(DarculaLaf())
@@ -290,36 +276,6 @@ class TaskDescriptionTest : EduTestCase() {
       setLookAndFeel(initialTheme)
       AppUIUtil.updateForDarcula(isDarcula)
     }
-  }
-
-  private fun doTestArrowIconAdded(expectedLinkArrowUrl: String) {
-    doTestArrowIconAddedWithProtocol("http", expectedLinkArrowUrl)
-    doTestArrowIconAddedWithProtocol("https", expectedLinkArrowUrl)
-  }
-
-  private fun doTestArrowIconAddedWithProtocol(protocol: String, expectedLinkArrowUrl: String) {
-    val taskText = """<a href="$protocol://www.google.com/">Google</a>""".trimIndent()
-    courseWithFiles {
-      lesson {
-        eduTask(taskDescription = taskText, taskDescriptionFormat = DescriptionFormat.HTML) {
-        }
-      }
-    }
-    val fontSize = StyleManager().bodyFontSize
-    val pictureSize = getPictureSize(fontSize)
-    val expectedText = """
-      <html>
-       <head></head>
-       <body>
-        <span><a href="$protocol://www.google.com/">Google<img src="${
-      StyleResourcesManager.resourceUrl(expectedLinkArrowUrl)
-    }" style="display:inline; position:relative; top:${fontSize * 0.18}; left:-${fontSize * 0.1}" border="0" width="$pictureSize" height="$pictureSize"></a></span>
-       </body>
-      </html>
-    """.trimIndent()
-
-    val actualText = addExternalLinkIcons(Jsoup.parse(taskText)).toString()
-    assertEquals(expectedText, actualText)
   }
 
   private fun doTestImageReplacedFromSrcset(expectedImage: String) {
