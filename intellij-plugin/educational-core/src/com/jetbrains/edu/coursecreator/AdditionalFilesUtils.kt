@@ -15,7 +15,7 @@ import com.jetbrains.edu.coursecreator.actions.CourseArchiveIndicator
 import com.jetbrains.edu.coursecreator.actions.TextualContentsFromDisk
 import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreRules
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -29,19 +29,27 @@ import java.io.IOException
 object AdditionalFilesUtils {
   private val LOG = Logger.getInstance(AdditionalFilesUtils::class.java)
 
-  fun collectAdditionalFiles(course: Course, project: Project, indicator: CourseArchiveIndicator? = null): List<EduFile> {
+  fun collectAdditionalFiles(
+    courseConfigurator: EduConfigurator<*>?,
+    project: Project,
+    indicator: CourseArchiveIndicator? = null
+  ): List<EduFile> {
+    if (courseConfigurator == null) return listOf()
+
     ApplicationManager.getApplication().invokeAndWait { FileDocumentManager.getInstance().saveAllDocuments() }
 
-    val fileVisitor = additionalFilesVisitor(project, course, indicator)
+    val fileVisitor = additionalFilesVisitor(project, courseConfigurator, indicator)
     VfsUtilCore.visitChildrenRecursively(project.courseDir, fileVisitor)
     return fileVisitor.additionalTaskFiles
   }
 
-  private fun isExcluded(file: VirtualFile, courseIgnoreRules: CourseIgnoreRules, course: Course, project: Project): Boolean =
-    courseIgnoreRules.isIgnored(file) || excludedByConfigurator(file, course, project)
-
-  private fun excludedByConfigurator(file: VirtualFile, course: Course, project: Project): Boolean =
-    course.configurator?.excludeFromArchive(project, file) ?: false
+  private fun isExcluded(
+    file: VirtualFile,
+    courseIgnoreRules: CourseIgnoreRules,
+    courseConfigurator: EduConfigurator<*>,
+    project: Project
+  ): Boolean =
+    courseIgnoreRules.isIgnored(file) || courseConfigurator.excludeFromArchive(project, file)
 
   @Suppress("DEPRECATION") // https://youtrack.jetbrains.com/issue/EDU-4930
   fun collectAdditionalLessonInfo(lesson: Lesson, project: Project): LessonAdditionalInfo {
@@ -49,7 +57,12 @@ object AdditionalFilesUtils {
     val taskInfo = nonPluginTasks.associateBy(Task::id) {
       TaskAdditionalInfo(it.name, it.customPresentableName, collectTaskFiles(project, it))
     }
-    val courseFiles: List<EduFile> = if (lesson.course is HyperskillCourse) collectAdditionalFiles(lesson.course, project) else listOf()
+    val courseFiles: List<EduFile> = if (lesson.course is HyperskillCourse) {
+      collectAdditionalFiles(lesson.course.configurator, project)
+    }
+    else {
+      listOf()
+    }
     return LessonAdditionalInfo(lesson.customPresentableName, taskInfo, courseFiles)
   }
 
@@ -57,7 +70,7 @@ object AdditionalFilesUtils {
     return project.courseDir.findChild(EduNames.CHANGE_NOTES)
   }
 
-  private fun additionalFilesVisitor(project: Project, course: Course, indicator: CourseArchiveIndicator?) =
+  private fun additionalFilesVisitor(project: Project, courseConfigurator: EduConfigurator<*>, indicator: CourseArchiveIndicator?) =
     object : VirtualFileVisitor<Any>(NO_FOLLOW_SYMLINKS) {
       // we take the course ignore rules once, and we are sure they are not changed while course archive is being created
       private val courseIgnoreRules = CourseIgnoreRules.loadFromCourseIgnoreFile(project)
@@ -66,7 +79,13 @@ object AdditionalFilesUtils {
       var archiveLocation = PropertiesComponent.getInstance(project).getValue(CCCreateCourseArchiveAction.LAST_ARCHIVE_LOCATION)
 
       override fun visitFile(file: VirtualFile): Boolean {
-        if (FileUtil.toSystemDependentName(file.path) == archiveLocation || isExcluded(file, courseIgnoreRules, course, project)) {
+        if (FileUtil.toSystemDependentName(file.path) == archiveLocation || isExcluded(
+            file,
+            courseIgnoreRules,
+            courseConfigurator,
+            project
+          )
+        ) {
           return false
         }
 

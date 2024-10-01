@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.courseignore
 
 import com.jetbrains.edu.coursecreator.AdditionalFilesUtils
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.findTask
 import org.junit.Test
 
@@ -25,7 +26,7 @@ class CourseIgnoreTest : EduTestCase() {
         eduFile("not-ignored.txt")
       }
     }
-    val additionalFiles = AdditionalFilesUtils.collectAdditionalFiles(course, project)
+    val additionalFiles = AdditionalFilesUtils.collectAdditionalFiles(course.configurator, project)
     assertSameElements(additionalFiles.map { it.name }, listOf("not-ignored.txt"))
   }
 
@@ -52,7 +53,7 @@ class CourseIgnoreTest : EduTestCase() {
         eduFile("tmp/not-ignored.txt")
       }
     }
-    val additionalFiles = AdditionalFilesUtils.collectAdditionalFiles(course, project)
+    val additionalFiles = AdditionalFilesUtils.collectAdditionalFiles(course.configurator, project)
     assertSameElements(additionalFiles.map { it.name }, listOf("not-ignored.txt", "tmp/not-ignored.txt"))
 
     val task = course.findTask("lesson1", "task1")
@@ -141,7 +142,7 @@ class CourseIgnoreTest : EduTestCase() {
       }
     }
 
-    val additionalFiles = AdditionalFilesUtils.collectAdditionalFiles(course, project)
+    val additionalFiles = AdditionalFilesUtils.collectAdditionalFiles(course.configurator, project)
     assertSameElements(additionalFiles.map { it.name }, listOf("folder/p.txt", "dir.txt", "i-j.txt", "xyz.txt", "subfolder/x.txt"))
 
     val task = course.findTask("lesson1", "task1")
