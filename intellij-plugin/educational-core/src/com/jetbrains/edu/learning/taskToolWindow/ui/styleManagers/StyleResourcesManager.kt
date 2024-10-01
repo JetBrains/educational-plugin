@@ -25,7 +25,7 @@ object StyleResourcesManager {
   private const val HINT_HIGH_CONTRAST_CSS: String = "/style/hint/highcontrast.css"
   private const val HINT_LIGHT_CSS: String = "/style/hint/light.css"
   private const val TOGGLE_HINT_JS: String = "/style/hint/toggleHint.js"
-  private const val JQUERY_JS: String = "/style/hint/jquery-3.7.0.js"
+  private const val JQUERY_JS: String = "/style/hint/jquery-3.7.1.min.js"
 
   private const val SCROLL_BARS_BASE: String = "/style/scrollbars/base.css"
   private const val SCROLL_BARS_DARCULA_CSS: String = "/style/scrollbars/darcula.css"
