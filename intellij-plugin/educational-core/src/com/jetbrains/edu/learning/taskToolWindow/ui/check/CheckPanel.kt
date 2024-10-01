@@ -38,9 +38,11 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
   private val checkActionsPanel: JPanel = JPanel(BorderLayout())
   private val linkPanel = JPanel(BorderLayout())
   private val checkDetailsPlaceholder: JPanel = JPanel(BorderLayout())
+  private val leftActionsToolbar: JPanel = JPanel(BorderLayout())
   private val checkButtonWrapper = JPanel(BorderLayout())
   private val rightActionsGroup = DefaultActionGroup()
   private val rightActionsToolbar = ActionToolbarImpl(ACTION_PLACE, rightActionsGroup, true)
+  private val getHintButtonWrapper = JPanel(BorderLayout())
   private val course = project.course
   private val checkTimeAlarm: Alarm = Alarm(parentDisposable)
   private val asyncProcessIcon = AsyncProcessIcon("Submitting...")
@@ -53,6 +55,9 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     rightActionsToolbar.border = JBEmptyBorder(5,0,0,0)
 
     checkActionsPanel.add(checkButtonWrapper, BorderLayout.WEST)
+    leftActionsToolbar.add(checkButtonWrapper, BorderLayout.WEST)
+    leftActionsToolbar.add(getHintButtonWrapper, BorderLayout.EAST)
+    checkActionsPanel.add(leftActionsToolbar, BorderLayout.WEST)
     checkActionsPanel.add(checkFinishedPanel, BorderLayout.CENTER)
     checkActionsPanel.add(rightActionsToolbar, BorderLayout.EAST)
     checkActionsPanel.add(linkPanel, BorderLayout.NORTH)
@@ -95,6 +100,7 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
 
   fun checkStarted(startSpinner: Boolean) {
     readyToCheck()
+    getHintButtonWrapper.removeAll()
     updateBackground()
     if (startSpinner) {
       checkFinishedPanel.add(asyncProcessIcon, BorderLayout.WEST)
@@ -102,6 +108,7 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
   }
 
   fun updateCheckDetails(task: Task, result: CheckResult? = null) {
+    updateGetHintButtonWrapper(task)
     checkFinishedPanel.removeAll()
     checkFinishedPanel.addNextTaskButton(task)
     checkFinishedPanel.addRetryButton(task)
@@ -142,6 +149,17 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     updateCheckDetails(task)
   }
 
+  private fun updateGetHintButtonWrapper(task: Task) {
+    getHintButtonWrapper.removeAll()
+
+    if (AiDebuggingAction.isAvailable(task)) {
+      val action = ActionManager.getInstance().getAction(AiDebuggingAction.ACTION_ID) as AiDebuggingAction
+      val nextStepHintButton = CheckPanelButtonComponent(action = action)
+      action.actionTargetParent = checkDetailsPlaceholder
+      getHintButtonWrapper.add(nextStepHintButton, BorderLayout.WEST)
+    }
+  }
+
   private fun updateCheckButtonWrapper(task: Task) {
     checkButtonWrapper.removeAll()
     when (task) {
@@ -176,7 +194,7 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
       }
       CheckStatus.Failed, CheckStatus.Solved  -> {
         val retryComponent = CheckPanelButtonComponent(EduActionUtils.getAction(RetryDataTaskAction.ACTION_ID) as RetryDataTaskAction,
-                                                       isDefault = true)
+          isDefault = true)
         checkButtonWrapper.add(retryComponent, BorderLayout.WEST)
       }
     }
