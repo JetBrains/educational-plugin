@@ -61,8 +61,8 @@ open class CppConfigurator : EduConfigurator<CppProjectSettings> {
   override val logo: Icon
     get() = EducationalCoreIcons.Language.Cpp
 
-  override fun excludeFromArchive(project: Project, course: Course, file: VirtualFile): Boolean {
-    if (super.excludeFromArchive(project, course, file)) {
+  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
+    if (super.excludeFromArchive(project, file)) {
       return true
     }
 

@@ -7,7 +7,6 @@ import com.jetbrains.edu.jvm.gradle.GradleConfiguratorBase
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.jvm.gradle.checker.GradleTaskCheckerProvider
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.sql.core.SqlConfiguratorBase
 
 class SqlGradleConfigurator : GradleConfiguratorBase(), SqlConfiguratorBase<JdkProjectSettings> {
@@ -18,8 +17,8 @@ class SqlGradleConfigurator : GradleConfiguratorBase(), SqlConfiguratorBase<JdkP
   override val courseBuilder: GradleCourseBuilderBase
     get() = SqlGradleCourseBuilder()
 
-  override fun excludeFromArchive(project: Project, course: Course, file: VirtualFile): Boolean {
-    if (super<GradleConfiguratorBase>.excludeFromArchive(project, course, file)) return true
+  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
+    if (super<GradleConfiguratorBase>.excludeFromArchive(project, file)) return true
     return file.extension == DB_EXTENSION
   }
 

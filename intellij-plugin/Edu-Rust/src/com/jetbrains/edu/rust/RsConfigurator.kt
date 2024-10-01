@@ -40,10 +40,10 @@ class RsConfigurator : EduConfigurator<RsProjectSettings> {
   override val logo: Icon
     get() = EducationalCoreIcons.Language.Rust
 
-  override fun excludeFromArchive(project: Project, course: Course, file: VirtualFile): Boolean {
+  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
     // Cargo config file should be included into course even it's located in "hidden" `.cargo` directory
     if (file.isCargoConfigDirOrFile(project)) return false
-    return super.excludeFromArchive(project, course, file) || file.name == CargoConstants.LOCK_FILE ||
+    return super.excludeFromArchive(project, file) || file.name == CargoConstants.LOCK_FILE ||
            generateSequence(file, VirtualFile::getParent).any { it.name == CargoConstants.ProjectLayout.target }
   }
 

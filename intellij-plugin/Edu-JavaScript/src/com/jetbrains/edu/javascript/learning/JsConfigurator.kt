@@ -37,8 +37,8 @@ open class JsConfigurator : EduConfigurator<JsNewProjectSettings> {
   override val isEnabled: Boolean
     get() = !PlatformUtils.isRider()
 
-  override fun excludeFromArchive(project: Project, course: Course, file: VirtualFile): Boolean =
-    super.excludeFromArchive(project, course, file) || file.path.contains("node_modules") || "package-lock.json" == file.name
+  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean =
+    super.excludeFromArchive(project, file) || file.path.contains("node_modules") || "package-lock.json" == file.name
 
   override val defaultPlaceholderText: String
     get() = "/* TODO */"

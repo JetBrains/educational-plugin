@@ -48,8 +48,8 @@ class ScalaSbtConfigurator : EduConfigurator<JdkProjectSettings> {
   override val defaultPlaceholderText: String
     get() = "/* TODO */"
 
-  override fun excludeFromArchive(project: Project, course: Course, file: VirtualFile): Boolean {
-    return super.excludeFromArchive(project, course, file) ||
+  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
+    return super.excludeFromArchive(project, file) ||
            generateSequence(file, VirtualFile::getParent).any { it.name == "target"}
   }
 

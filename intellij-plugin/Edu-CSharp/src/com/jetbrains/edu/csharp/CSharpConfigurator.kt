@@ -36,8 +36,8 @@ class CSharpConfigurator : EduConfigurator<CSharpProjectSettings> {
   override val taskCheckerProvider: TaskCheckerProvider
     get() = CSharpTaskCheckerProvider()
 
-  override fun excludeFromArchive(project: Project, course: Course, file: VirtualFile): Boolean {
-    if (super.excludeFromArchive(project, course, file)) return true
+  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
+    if (super.excludeFromArchive(project, file)) return true
     return file.extension == SolutionFileType.defaultExtension
            || file.pathRelativeToTask(project).contains("$BIN_DIRECTORY/")
            || file.pathRelativeToTask(project).contains("$OBJ_DIRECTORY/")

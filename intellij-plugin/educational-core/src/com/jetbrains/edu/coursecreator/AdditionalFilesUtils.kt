@@ -41,7 +41,7 @@ object AdditionalFilesUtils {
     courseIgnoreRules.isIgnored(file) || excludedByConfigurator(file, course, project)
 
   private fun excludedByConfigurator(file: VirtualFile, course: Course, project: Project): Boolean =
-    course.configurator?.excludeFromArchive(project, course, file) ?: false
+    course.configurator?.excludeFromArchive(project, file) ?: false
 
   @Suppress("DEPRECATION") // https://youtrack.jetbrains.com/issue/EDU-4930
   fun collectAdditionalLessonInfo(lesson: Lesson, project: Project): LessonAdditionalInfo {

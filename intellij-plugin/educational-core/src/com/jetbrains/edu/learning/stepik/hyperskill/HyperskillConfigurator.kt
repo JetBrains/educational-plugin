@@ -54,8 +54,8 @@ abstract class HyperskillConfigurator<T : EduProjectSettings>(private val baseCo
   override val logo: Icon
     get() = baseConfigurator.logo
 
-  override fun excludeFromArchive(project: Project, course: Course, file: VirtualFile): Boolean =
-    baseConfigurator.excludeFromArchive(project, course, file)
+  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean =
+    baseConfigurator.excludeFromArchive(project, file)
 
   override fun isTestFile(task: Task, path: String): Boolean {
     val isTestFile = baseConfigurator.isTestFile(task, path)

@@ -30,7 +30,7 @@ private fun shouldIgnore(file: VirtualFile, project: Project, task: Task): Boole
   val courseDir = project.courseDir
   if (!FileUtil.isAncestor(courseDir.path, file.path, true)) return true
   val course = StudyTaskManager.getInstance(project).course ?: return true
-  if (course.configurator?.excludeFromArchive(project, course, file) == true) return true
+  if (course.configurator?.excludeFromArchive(project, file) == true) return true
   return task.shouldBeEmpty(file.path)
 }
 

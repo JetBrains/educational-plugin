@@ -80,7 +80,7 @@ abstract class CCChangeFilePropertyActionBase(
     val affectedFiles = mutableListOf<VirtualFile>()
     val configurator = course.configurator ?: return emptyList()
     for (file in files) {
-      if (configurator.excludeFromArchive(project, course, file) || file.getContainingTask(project) == null) continue
+      if (configurator.excludeFromArchive(project, file) || file.getContainingTask(project) == null) continue
       if (file.isDirectory) {
         affectedFiles += collectAffectedFiles(project, course, VfsUtil.collectChildrenRecursively(file).filter { !it.isDirectory })
       }
