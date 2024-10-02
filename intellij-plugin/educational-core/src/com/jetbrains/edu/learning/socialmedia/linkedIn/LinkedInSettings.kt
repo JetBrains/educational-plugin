@@ -9,6 +9,8 @@ private const val serviceName = "LinkedInSettings"
 @State(name = serviceName, storages = [Storage("academy.socialmedia.settings.xml", roamingType = RoamingType.DISABLED)])
 class LinkedInSettings : SocialMediaSettings<LinkedInSettings.LinkedSate>(LinkedSate()) {
 
+  override val name = "LinkedIn"
+
   var account: LinkedInAccount?
     get() {
       if (userId.isEmpty()) {
@@ -36,7 +38,6 @@ class LinkedInSettings : SocialMediaSettings<LinkedInSettings.LinkedSate>(Linked
         expiresIn = value.tokenExpiresIn
       }
     }
-
   private var expiresIn: Long
     get() {
       return state.expiresIn

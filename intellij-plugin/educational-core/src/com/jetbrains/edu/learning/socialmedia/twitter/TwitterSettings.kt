@@ -13,6 +13,8 @@ import java.util.*
 )
 class TwitterSettings : SocialMediaSettings<SocialMediaSettings.SocialMediaSettingsState>(SocialMediaSettingsState()) {
 
+  override val name = "Twitter"
+
   override fun getDefaultUserId(): String {
     return generateNewUserId()
   }

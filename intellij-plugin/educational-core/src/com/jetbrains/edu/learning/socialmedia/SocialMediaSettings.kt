@@ -7,6 +7,8 @@ import com.jetbrains.edu.learning.isUnitTestMode
 abstract class SocialMediaSettings<out T : SocialMediaSettings.SocialMediaSettingsState>(state: T) :
   SimplePersistentStateComponent<@UnsafeVariance T>(state) {
 
+  abstract val name: String
+
   // Don't use property delegation like `var askToTweet by state::askToPost`.
   // It doesn't work because `state` may change but delegation keeps the initial state object
   var askToPost: Boolean

@@ -12,9 +12,10 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.socialmedia.linkedIn.LinkedInSettings
 import com.jetbrains.edu.learning.socialmedia.suggestToPostDialog.SuggestToPostDialogUI
+import com.jetbrains.edu.learning.socialmedia.suggestToPostDialog.withMockTwitterDialogUI
 import com.jetbrains.edu.learning.socialmedia.twitter.TwitterSettings
-import com.jetbrains.edu.learning.socialmedia.twitter.dialog.withMockTwitterDialogUI
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.ui.getUICheckLabel
@@ -25,11 +26,13 @@ class HyperskillTwittingTest : EduActionTestCase() {
   override fun setUp() {
     super.setUp()
     TwitterSettings.getInstance().askToPost = true
+    LinkedInSettings.getInstance().askToPost = true
   }
 
   override fun tearDown() {
     try {
       TwitterSettings.getInstance().askToPost = false
+      LinkedInSettings.getInstance().askToPost = false
     }
     catch (e: Throwable) {
       addSuppressedException(e)
@@ -146,8 +149,6 @@ class HyperskillTwittingTest : EduActionTestCase() {
   private fun launchCheckAction(task: Task): Boolean {
     var isDialogShown = false
     withMockTwitterDialogUI(object : SuggestToPostDialogUI {
-      override val message: String get() = "Twitter message"
-
       override fun showAndGet(): Boolean {
         isDialogShown = true
         return false
