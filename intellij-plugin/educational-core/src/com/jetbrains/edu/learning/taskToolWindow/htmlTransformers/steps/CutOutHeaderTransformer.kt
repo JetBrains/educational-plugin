@@ -12,7 +12,7 @@ object CutOutHeaderTransformer : HtmlTransformer {
     // Find the first header element that appears once and remove it
     HEADER_TAG_NAMES.asSequence()
       .map { html.getElementsByTag(it) }
-      .firstOrNull { it.size == 1 }
+      .firstOrNull { it.size == 1 && it.prev().isEmpty() }
       ?.first() // Get the single element
       ?.remove()
 
