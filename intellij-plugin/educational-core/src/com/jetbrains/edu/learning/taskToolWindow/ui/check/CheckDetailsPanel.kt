@@ -151,8 +151,6 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
 
   private class ShowFullOutputAction(private val project: Project, private val text: String) : DumbAwareAction(null as String?) {
     private var outputShown = false
-    //suppressing capitalization because LightColoredActionLink's base class requires Sentence capitalization for the parameter
-    @Suppress("DialogTitleCapitalization")
     val actionLink: AnActionLink = LightColoredActionLink(EduCoreBundle.message("label.full.output.show"), this)
 
     override fun actionPerformed(e: AnActionEvent) {
