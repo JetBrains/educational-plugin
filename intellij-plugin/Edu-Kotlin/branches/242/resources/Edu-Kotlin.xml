@@ -1,0 +1,8 @@
+<idea-plugin package="com.jetbrains.edu.kotlin" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <extensions defaultExtensionNs="org.jetbrains.kotlin">
+    <supportsKotlinPluginMode supportsK2="true" />
+  </extensions>
+
+  <!-- BACKCOMPAT: 2024.1: Inline it -->
+  <xi:include href="/META-INF/Edu-Kotlin-base.xml" xpointer="xpointer(/idea-plugin/*)"/>
+</idea-plugin>

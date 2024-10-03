@@ -597,6 +597,17 @@ project("Edu-Kotlin") {
 
       intellijPlugins(jvmPlugins)
       intellijPlugins(kotlinPlugin)
+
+      intellijPlatformTesting {
+        testIde.register("testWithK2Support") {
+          task {
+            enabled = environmentName.toInt() >= 242
+            jvmArgs("-Didea.kotlin.plugin.use.k2=true")
+          }
+        }
+      }
+
+      tasks.getByName("test").dependsOn("testWithK2Support")
     }
 
     implementation(project(":intellij-plugin:educational-core"))
