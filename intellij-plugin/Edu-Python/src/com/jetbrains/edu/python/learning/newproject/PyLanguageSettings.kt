@@ -173,6 +173,6 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
 
     const val ALL_VERSIONS = "All versions"
 
-    fun installSdk(sdkToInstall: PySdkToInstall): PyDetectedSdk? = null //sdkToInstall.install(null) { detectSystemWideSdks(null, emptyList()) }
+    fun installSdk(sdkToInstall: PySdkToInstall): PyDetectedSdk? = sdkToInstall.install(null) { detectSystemWideSdks(null, emptyList()) }
   }
 }
