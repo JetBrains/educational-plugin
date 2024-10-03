@@ -25,7 +25,8 @@ class EduRemoteInactivityWatcherService(private val scope: CoroutineScope) {
   @Suppress("UnstableApiUsage", "DuplicatedCode")
   fun start() {
     if (!isStarted.compareAndSet(false, true)) {
-      error("There was an attempt to start the service again, while it is already running")
+      LOG.info("There was an attempt to start the service again, while it is already running")
+      return
     }
     scope.launch {
       while (true) {
