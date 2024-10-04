@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.python.learning.installRequiredPackages
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle.message
-import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings.Companion.installSdk
 import com.jetbrains.edu.python.learning.newproject.PySdkSettingsHelper.Companion.firstAvailable
 import com.jetbrains.python.packaging.PyPackageManager
 import com.jetbrains.python.sdk.*
@@ -29,7 +28,7 @@ open class PyCourseProjectGenerator(
       val selectedSdk = sdk
       @Suppress("UnstableApiUsage")
       val installedSdk = invokeAndWaitIfNeeded {
-        installSdk(selectedSdk)
+        selectedSdk.install()
       }
       if (installedSdk != null) {
         createAndAddVirtualEnv(project, projectSettings, installedSdk)

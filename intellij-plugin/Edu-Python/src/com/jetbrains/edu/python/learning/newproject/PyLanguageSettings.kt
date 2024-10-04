@@ -20,10 +20,13 @@ import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.errors.ready
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle
 import com.jetbrains.python.psi.LanguageLevel
-import com.jetbrains.python.sdk.*
+import com.jetbrains.python.sdk.PySdkUtil
 import com.jetbrains.python.sdk.add.PySdkPathChoosingComboBox
 import com.jetbrains.python.sdk.add.addInterpretersAsync
+import com.jetbrains.python.sdk.findBaseSdks
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
+import com.jetbrains.python.sdk.getSdksToInstall
+import com.jetbrains.python.sdk.sdkSeemsValid
 import org.jetbrains.annotations.Nls
 import java.awt.BorderLayout
 import java.awt.event.ItemEvent
@@ -172,7 +175,5 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
     }
 
     const val ALL_VERSIONS = "All versions"
-
-    fun installSdk(sdkToInstall: PySdkToInstall): PyDetectedSdk? = sdkToInstall.install(null) { detectSystemWideSdks(null, emptyList()) }
   }
 }
