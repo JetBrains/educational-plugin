@@ -14,17 +14,20 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_PROJECTS_URL
-import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_TOPICS
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillTaskType
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillTopic
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
@@ -348,4 +351,130 @@ private sealed class NextActivityInfo {
 fun getUnsupportedTaskDescriptionText(name: String, stepId: Int): String {
   val fixedTaskName = name.lowercase().replaceFirstChar { it.titlecaseChar() }
   return EduCoreBundle.message("hyperskill.unsupported.task.description.text", fixedTaskName, stepLink(stepId), HYPERSKILL)
+}
+
+fun HyperskillCourse.addProblemsWithTopicWithFiles(project: Project?, stepSource: HyperskillStepSource): Result<Unit, String> {
+  return computeUnderProgress(title = EduCoreBundle.message("hyperskill.loading.problems")) {
+    var localTopicsSection = getTopicsSection()
+    val createSectionDir = localTopicsSection == null
+    if (localTopicsSection == null) {
+      localTopicsSection = createTopicsSection()
+    }
+
+    val (topicNameSource, stepSources) = stepSource.getTopicWithRecommendedSteps().onError { return@computeUnderProgress Err(it) }
+    var localTopicLesson = localTopicsSection.getLesson { it.presentableName == topicNameSource }
+    val createLessonDir = localTopicLesson == null
+    if (localTopicLesson == null) {
+      localTopicLesson = localTopicsSection.createTopicLesson(topicNameSource)
+    }
+
+    val tasks = localTopicLesson.addProblems(stepSources).onError { return@computeUnderProgress Err(it) }
+    localTopicsSection.init(this, false)
+
+    if (project != null) {
+      when {
+        createSectionDir -> saveSectionDir(project, course, localTopicsSection, localTopicLesson, tasks)
+        createLessonDir -> saveLessonDir(project, localTopicsSection, localTopicLesson, tasks)
+        else -> saveTasks(project, localTopicLesson, tasks)
+      }
+
+      if (tasks.isNotEmpty()) {
+        course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
+      }
+    }
+    Ok(Unit)
+  }
+}
+
+private fun saveSectionDir(
+  project: Project,
+  course: Course,
+  topicsSection: Section,
+  topicLesson: Lesson,
+  tasks: List<Task>
+) {
+  GeneratorUtils.createSection(project, topicsSection, project.courseDir)
+  tasks.forEach { task -> YamlFormatSynchronizer.saveItemWithRemoteInfo(task) }
+  YamlFormatSynchronizer.saveItem(topicLesson)
+  YamlFormatSynchronizer.saveItem(topicsSection)
+  YamlFormatSynchronizer.saveItem(course)
+}
+
+private fun saveLessonDir(
+  project: Project,
+  topicSection: Section,
+  topicLesson: Lesson,
+  tasks: List<Task>
+) {
+  val parentDir = topicSection.getDir(project.courseDir) ?: error("Can't get directory of Topics section")
+  GeneratorUtils.createLesson(project, topicLesson, parentDir)
+  tasks.forEach { task -> YamlFormatSynchronizer.saveItemWithRemoteInfo(task) }
+  YamlFormatSynchronizer.saveItem(topicLesson)
+  YamlFormatSynchronizer.saveItem(topicSection)
+}
+
+private fun saveTasks(
+  project: Project,
+  topicLesson: Lesson,
+  tasks: List<Task>,
+) {
+  tasks.forEach { task ->
+    topicLesson.getDir(project.courseDir)?.let { lessonDir ->
+      GeneratorUtils.createTask(project, task, lessonDir)
+      YamlFormatSynchronizer.saveItemWithRemoteInfo(task)
+    }
+  }
+  YamlFormatSynchronizer.saveItem(topicLesson)
+}
+
+
+private fun Lesson.addProblems(stepSources: List<HyperskillStepSource>): Result<List<Task>, String> {
+  val existingTasksIds = items.map { it.id }
+  val stepsSourceForAdding = stepSources.filter { it.id !in existingTasksIds }
+
+  val tasks = HyperskillConnector.getTasks(course, stepsSourceForAdding)
+  tasks.forEach(this::addTask)
+  return Ok(tasks)
+}
+
+private fun HyperskillCourse.createTopicsSection(): Section {
+  val section = Section()
+  section.name = HYPERSKILL_TOPICS
+  section.index = items.size + 1
+  section.parent = this
+  addSection(section)
+  return section
+}
+
+private fun Section.createTopicLesson(name: String): Lesson {
+  val lesson = Lesson()
+  lesson.name = name
+  lesson.index = this.items.size + 1
+  lesson.parent = this
+  addLesson(lesson)
+  return lesson
+}
+
+private fun HyperskillStepSource.getTopicWithRecommendedSteps(): Result<Pair<String, List<HyperskillStepSource>>, String> {
+  val connector = HyperskillConnector.getInstance()
+  val topicId = topic ?: return Err("Topic must not be null")
+
+  val stepSources = connector.getStepsForTopic(topicId)
+    .onError { return Err(it) }
+    .filter { it.isRecommended || it.id == id }.toMutableList()
+
+  val theoryTask = stepSources.find { it.block?.name == HyperskillTaskType.TEXT.type }
+  if (theoryTask != null) {
+    stepSources.remove(theoryTask)
+    stepSources.add(0, theoryTask)
+  }
+
+  val theoryTitle = stepSources.find { it.block?.name == HyperskillTaskType.TEXT.type }?.title
+  if (theoryTitle != null) {
+    return Ok(Pair(theoryTitle, stepSources))
+  }
+
+  LOG.warn("Can't get theory step title for ${id} step")
+  val problemTitle = title
+  return Ok(Pair(problemTitle, stepSources))
 }
