@@ -429,6 +429,9 @@
     <experimentalFeature id="edu.course.format.files.outside.json" percentOfUsers="100" internalFeature="true">
       <description>Writes course archives in the format without the "text" attributes. The contents of files is put inside the archive instead of JSON</description>
     </experimentalFeature>
+    <experimentalFeature id="edu.course.update.new" percentOfUsers="0" internalFeature="true">
+      <description>Enable the new course update functionality to provide more efficient course updates</description>
+    </experimentalFeature>
 
     <registryKey key="edu.course.creator.fl.sync.changes.merging.timespan"
                  description="The delay in ms before task file synchronization in the guided project for Course Creator.\nChanging the field requires reopening the project"
