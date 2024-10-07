@@ -32,10 +32,7 @@ import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.notification.EduNotificationManager
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
-import com.jetbrains.edu.learning.stepik.hyperskill.api.WithPaginationMetaData
+import com.jetbrains.edu.learning.stepik.hyperskill.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepWithProjectRequest
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
@@ -355,35 +352,45 @@ fun getUnsupportedTaskDescriptionText(name: String, stepId: Int): String {
 
 fun HyperskillCourse.addProblemsWithTopicWithFiles(project: Project?, stepSource: HyperskillStepSource): Result<Unit, String> {
   return computeUnderProgress(title = EduCoreBundle.message("hyperskill.loading.problems")) {
-    var localTopicsSection = getTopicsSection()
-    val createSectionDir = localTopicsSection == null
-    if (localTopicsSection == null) {
-      localTopicsSection = createTopicsSection()
-    }
-
-    val (topicNameSource, stepSources) = stepSource.getTopicWithRecommendedSteps().onError { return@computeUnderProgress Err(it) }
-    var localTopicLesson = localTopicsSection.getLesson { it.presentableName == topicNameSource }
-    val createLessonDir = localTopicLesson == null
-    if (localTopicLesson == null) {
-      localTopicLesson = localTopicsSection.createTopicLesson(topicNameSource)
-    }
-
-    val tasks = localTopicLesson.addProblems(stepSources).onError { return@computeUnderProgress Err(it) }
-    localTopicsSection.init(this, false)
-
-    if (project != null) {
-      when {
-        createSectionDir -> saveSectionDir(project, course, localTopicsSection, localTopicLesson, tasks)
-        createLessonDir -> saveLessonDir(project, localTopicsSection, localTopicLesson, tasks)
-        else -> saveTasks(project, localTopicLesson, tasks)
-      }
-
-      if (tasks.isNotEmpty()) {
-        course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
-      }
-    }
-    Ok(Unit)
+    val recommendedSteps = stepSource.getTopicWithRecommendedSteps().onError { return@computeUnderProgress Err(it) }
+    val topicTitle = recommendedSteps.findTheoryStep()?.title ?: stepSource.title
+    addProblemsWithTopicWithFiles(project, topicTitle, recommendedSteps)
   }
+}
+
+private fun HyperskillCourse.addProblemsWithTopicWithFiles(
+  project: Project?,
+  topicNameSource: String,
+  unarrangedSteps: List<HyperskillStepSource>,
+): Result<Unit, String> {
+  var localTopicsSection = getTopicsSection()
+  val createSectionDir = localTopicsSection == null
+  if (localTopicsSection == null) {
+    localTopicsSection = createTopicsSection()
+  }
+  val stepSources = rearrangeTopicSteps(unarrangedSteps)
+
+  var localTopicLesson = localTopicsSection.getLesson { it.presentableName == topicNameSource }
+  val createLessonDir = localTopicLesson == null
+  if (localTopicLesson == null) {
+    localTopicLesson = localTopicsSection.createTopicLesson(topicNameSource)
+  }
+
+  val tasks = localTopicLesson.addProblems(stepSources).onError { return Err(it) }
+  localTopicsSection.init(this, false)
+
+  if (project != null) {
+    when {
+      createSectionDir -> saveSectionDir(project, course, localTopicsSection, localTopicLesson, tasks)
+      createLessonDir -> saveLessonDir(project, localTopicsSection, localTopicLesson, tasks)
+      else -> saveTasks(project, localTopicLesson, tasks)
+    }
+
+    if (tasks.isNotEmpty()) {
+      course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
+    }
+  }
+  return Ok(Unit)
 }
 
 private fun saveSectionDir(
@@ -455,26 +462,35 @@ private fun Section.createTopicLesson(name: String): Lesson {
   return lesson
 }
 
-private fun HyperskillStepSource.getTopicWithRecommendedSteps(): Result<Pair<String, List<HyperskillStepSource>>, String> {
+private fun HyperskillStepSource.getTopicWithRecommendedSteps(): Result<List<HyperskillStepSource>, String> {
   val connector = HyperskillConnector.getInstance()
   val topicId = topic ?: return Err("Topic must not be null")
 
   val stepSources = connector.getStepsForTopic(topicId)
     .onError { return Err(it) }
     .filter { it.isRecommended || it.id == id }.toMutableList()
+  return Ok(stepSources)
+}
 
-  val theoryTask = stepSources.find { it.block?.name == HyperskillTaskType.TEXT.type }
+private fun rearrangeTopicSteps(unarrangedSteps: List<HyperskillStepSource>): List<HyperskillStepSource> {
+  val stepSources = unarrangedSteps.toMutableList()
+  // put completed steps at the top
+  val completedSteps = stepSources.filter { it.isCompleted }
+  stepSources.removeAll(completedSteps)
+  stepSources.addAll(0, completedSteps)
+
+  // put a theory step at the top
+  val theoryTask = stepSources.findTheoryStep()
   if (theoryTask != null) {
     stepSources.remove(theoryTask)
     stepSources.add(0, theoryTask)
   }
-
-  val theoryTitle = stepSources.find { it.block?.name == HyperskillTaskType.TEXT.type }?.title
-  if (theoryTitle != null) {
-    return Ok(Pair(theoryTitle, stepSources))
+  else {
+    LOG.warn("Can't get theory step for ${stepSources.first().topic} topic")
   }
+  return stepSources
+}
 
-  LOG.warn("Can't get theory step title for ${id} step")
-  val problemTitle = title
-  return Ok(Pair(problemTitle, stepSources))
+private fun Iterable<HyperskillStepSource>.findTheoryStep(): HyperskillStepSource? {
+  return firstOrNull { it.block?.name == HyperskillTaskType.TEXT.type }
 }
