@@ -77,7 +77,7 @@ class NextStepHintNotificationFrame(@Nls message: String, action: AnAction?, act
 
   private fun createIconPanel(): JPanel = JPanel(BorderLayout()).apply {
     isOpaque = false
-    //TODO add(JBLabel(EducationalCoreIcons.aiAssistant), BorderLayout.NORTH)
+    add(JBLabel(EducationalCoreIcons.aiAssistant), BorderLayout.NORTH)
   }
 
   private fun createCancelPanel(): JPanel = JPanel(BorderLayout()).apply {
