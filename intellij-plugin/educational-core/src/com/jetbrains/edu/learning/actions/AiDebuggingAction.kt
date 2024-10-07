@@ -15,42 +15,36 @@ import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Key
 import com.intellij.ui.JBColor
 import com.jetbrains.edu.learning.EduUtilsKt.showPopup
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CourseMode
-import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.eduAssistant.ui.NextStepHintNotificationFrame
 import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.selectedTaskFile
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
-import java.awt.Font
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.swing.JComponent
 import javax.swing.JPanel
 
 class AiDebuggingAction : ActionWithProgressIcon(), DumbAware {
   var actionTargetParent: JPanel? = null
-  private var nextStepHintNotificationPanel: JComponent? = null
-
-  //рrivate var getDebuggingSession: GetDebuggingSession? = null
+  private var aiDebuggingNotificationPanel: JComponent? = null
   private var highlighter: RangeHighlighter? = null
 
   init {
-    templatePresentation.text = "debug ai"//EduCoreBundle.message("action.Educational.Hint.text")
+    templatePresentation.text = "debug ai" //for button
     setUpSpinnerPanel("progress text")
   }
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     if (DumbService.isDumb(project)) {
-      e.dataContext.showPopup(ActionUtil.getUnavailableMessage("Next ai hint", false))
+      e.dataContext.showPopup(ActionUtil.getUnavailableMessage(EduCoreBundle.message("action.Educational.AiDebuggingNotification.description"), false))
       return
     }
     FileDocumentManager.getInstance().saveAllDocuments()
@@ -58,7 +52,7 @@ class AiDebuggingAction : ActionWithProgressIcon(), DumbAware {
     closeNextStepHintNotificationPanel()
 
     if (!GetDebuggingSessionState.getInstance(project).lock()) {
-      e.dataContext.showPopup("ai already running")
+      e.dataContext.showPopup(EduCoreBundle.message("action.Educational.AiDebuggingNotification.already.running"))
       return
     }
 
@@ -69,7 +63,7 @@ class AiDebuggingAction : ActionWithProgressIcon(), DumbAware {
 
   private fun closeNextStepHintNotificationPanel() {
     actionTargetParent?.apply {
-      //remove(nextStepHintNotificationPanel)
+      //remove(aiDebuggingNotificationPanel)
       revalidate()
       repaint()
     }
@@ -80,7 +74,7 @@ class AiDebuggingAction : ActionWithProgressIcon(), DumbAware {
 
   @Suppress("DialogTitleCapitalization")
   private fun showDebugNotification(project: Project) =
-    object : AnAction("action.Educational.AiDebuggingNotification.start.debugging.session") {
+    object : AnAction(EduCoreBundle.message("action.Educational.AiDebuggingNotification.start.debugging.session")) {
       override fun actionPerformed(p0: AnActionEvent) {
         highlighter?.dispose()
       }
@@ -93,7 +87,8 @@ class AiDebuggingAction : ActionWithProgressIcon(), DumbAware {
   override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
   private inner class GetDebuggingSession(private val project: Project, private val task: Task) :
-    com.intellij.openapi.progress.Task.Backgroundable(project, "progress title session", true) {
+    com.intellij.openapi.progress.Task.Backgroundable(project,
+      EduCoreBundle.message("action.Educational.AiDebuggingNotification.progress.text"), true) {
 
     override fun run(indicator: ProgressIndicator) {
       if (!GetDebuggingSessionState.getInstance(project).isLocked) {
@@ -104,29 +99,27 @@ class AiDebuggingAction : ActionWithProgressIcon(), DumbAware {
       processStarted()
       ApplicationManager.getApplication().executeOnPooledThread { EduActionUtils.showFakeProgress(indicator) }
 
-      //showHintWindow("TEXT LETS START DEBUG SESSION")
-
 
       //val taskProcessor = TaskProcessorImpl(task)
       runBlockingCancellable {
         /*val assistantHint = AiHintsAssistant.getAssistant(taskProcessor).getHint().getOrElse {
           showHintWindow(it.message ?: EduCoreBundle.message("action.Educational.NextStepHint.error.unknown"))
           return@runBlockingCancellable
-        }*/
-        //val codeHint = assistantHint.codeHint?.value
-
+        }
+        val codeHint = assistantHint.codeHint?.value
+*/
         val action = showDebugNotification(project)
-        showHintWindow("assistantHint.textHint.value", action)
+        showHintWindow(EduCoreBundle.message("action.Educational.AiDebuggingNotification.text"), action)
         return@runBlockingCancellable
 
-        /*if (codeHint != null) {
-          //val taskFile = taskProcessor.currentTaskFile ?: project.selectedTaskFile ?: error("Can't get task file")
-          //highlighter = highlightFirstCodeDiffPositionOrNull(taskFile, codeHint, indicator)
-          val action = showDebugNotification(project)
-          showHintWindow("assistantHint.textHint.value", action)
-          return@runBlockingCancellable
-        }
-        showHintWindow("assistantHint.textHint.value")*/
+//        if (codeHint != null) {
+//          //val taskFile = taskProcessor.currentTaskFile ?: project.selectedTaskFile ?: error("Can't get task file")
+//          //highlighter = highlightFirstCodeDiffPositionOrNull(taskFile, codeHint, indicator)
+//          val action = showDebugNotification(project)
+//          showHintWindow("assistantHint.textHint.value", action)
+//          return@runBlockingCancellable
+//        }
+//        showHintWindow("assistantHint.textHint.value")
       }
 
     }
@@ -146,8 +139,8 @@ class AiDebuggingAction : ActionWithProgressIcon(), DumbAware {
           rejectHint(task)
         }
       }
-      nextStepHintNotificationPanel = nextStepHintNotification.rootPane
-      nextStepHintNotificationPanel?.let { actionTargetParent?.add(it, BorderLayout.NORTH) }
+      aiDebuggingNotificationPanel = nextStepHintNotification.rootPane
+      aiDebuggingNotificationPanel?.let { actionTargetParent?.add(it, BorderLayout.NORTH) }
     }
 
     /**
