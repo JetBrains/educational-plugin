@@ -36,6 +36,7 @@ import com.jetbrains.edu.learning.update.UpdateUtils.updateFrameworkLessonFiles
 import com.jetbrains.edu.learning.update.UpdateUtils.updateTaskDescription
 import com.jetbrains.edu.learning.update.elements.TaskUpdateInfo
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import kotlinx.coroutines.runBlocking
 import java.io.IOException
 import java.util.*
 
@@ -156,6 +157,13 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
   @VisibleForTesting
   fun doUpdate(remoteCourse: HyperskillCourse?, problemsUpdates: List<TaskUpdateInfo>) {
     if (remoteCourse != null) {
+      if (isFeatureEnabled(EduExperimentalFeatures.NEW_COURSE_UPDATE) && remoteCourse != null) {
+        runBlocking {
+          HyperskillCourseUpdaterNew(project, course).update(remoteCourse)
+        }
+        return
+      }
+
       updateCourse(remoteCourse)
       updateProjectLesson(remoteCourse)
     }
@@ -255,6 +263,28 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
 
   companion object {
     private val LOG: Logger = Logger.getInstance(HyperskillCourseUpdater::class.java)
+
+    fun updateHyperskillCourse(
+      project: Project,
+      localCourse: HyperskillCourse,
+      remoteCourse: HyperskillCourse? = null,
+      onFinish: (() -> Unit)? = null,
+      onFinishUpdated: ((isUpdated: Boolean) -> Unit)? = null
+    ) {
+      if (isFeatureEnabled(EduExperimentalFeatures.NEW_COURSE_UPDATE) && remoteCourse != null) {
+        runBlocking {
+          HyperskillCourseUpdaterNew(project, localCourse).update(remoteCourse)
+        }
+      } else {
+        HyperskillCourseUpdater(project, localCourse).updateCourse { isUpdated ->
+          if (onFinishUpdated != null) {
+            onFinishUpdated(isUpdated)
+          } else if (onFinish != null) {
+            onFinish()
+          }
+        }
+      }
+    }
 
     @VisibleForTesting
     fun FrameworkLesson.shouldBeUpdated(project: Project, remoteCourse: HyperskillCourse): Boolean {
