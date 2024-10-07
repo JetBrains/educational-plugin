@@ -10,6 +10,7 @@ import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.coursecreator.AdditionalFilesUtils.getChangeNotesVirtualFile
 import com.jetbrains.edu.coursecreator.CCNotificationUtils
 import com.jetbrains.edu.learning.EduCourseUpdater
+import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -17,14 +18,23 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.getTextFromTaskTextFile
+import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext.UPDATE
+import kotlinx.coroutines.runBlocking
 
 class MarketplaceCourseUpdater(project: Project, course: EduCourse, private val remoteCourseVersion: Int) : EduCourseUpdater(project, course) {
   private val tasksStatuses = mutableMapOf<Int, CheckStatus>()
 
   override fun doUpdate(courseFromServer: EduCourse) {
+    if (isFeatureEnabled(EduExperimentalFeatures.NEW_COURSE_UPDATE)) {
+      runBlocking {
+        MarketplaceCourseUpdaterNew(project, course).update(courseFromServer)
+      }
+      return
+    }
+
     tasksStatuses.clear()
 
     courseFromServer.items.withIndex().forEach { (index, item) -> item.index = index + 1 }
