@@ -8,6 +8,9 @@ import com.jetbrains.edu.learning.update.CourseUpdater
 import com.jetbrains.edu.learning.update.HyperskillItemUpdater
 import com.jetbrains.edu.learning.update.LessonUpdater
 import com.jetbrains.edu.learning.update.SectionUpdater
+import com.jetbrains.edu.learning.update.comparators.HyperskillProjectComparator.Companion.isNotEqual
+import com.jetbrains.edu.learning.update.comparators.HyperskillStageComparator.Companion.areNotEqual
+import com.jetbrains.edu.learning.update.comparators.HyperskillTopicComparator.Companion.areNotEqual
 
 class HyperskillCourseUpdaterNew(project: Project, course: Course) : CourseUpdater(project, course), HyperskillItemUpdater<Course> {
   override fun createLessonUpdater(container: LessonContainer): LessonUpdater = HyperskillLessonUpdater(project, container)
@@ -31,13 +34,6 @@ class HyperskillCourseUpdaterNew(project: Project, course: Course) : CourseUpdat
     val localStages = stages
     val remoteStages = remoteCourse.stages
 
-    return when {
-      localProject != remoteProject -> true
-      localTopics.size != remoteTopics.size -> true
-      localTopics.keys != remoteTopics.keys -> true
-      localTopics.any { (key, value) -> remoteTopics[key] != value } -> true
-      localStages != remoteStages -> true
-      else -> false
-    }
+    return localProject isNotEqual remoteProject || localTopics areNotEqual remoteTopics || localStages areNotEqual remoteStages
   }
 }
