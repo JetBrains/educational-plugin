@@ -32,16 +32,16 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
   private val oldLessonDirectories = HashMap<Int, VirtualFile>()
   private val oldSectionDirectories = HashMap<Int, VirtualFile>()
 
-  abstract fun courseFromServer(currentCourse: EduCourse, courseInfo: EduCourse?): EduCourse?
+  abstract fun courseFromServer(currentCourse: EduCourse): EduCourse?
 
   abstract fun taskChanged(newTask: Task, task: Task): Boolean
 
-  fun updateCourse(courseInfo: EduCourse? = null) {
+  fun updateCourse() {
     checkIsBackgroundThread()
     oldLessonDirectories.clear()
     oldSectionDirectories.clear()
 
-    val courseFromServer = courseFromServer(course, courseInfo)
+    val courseFromServer = courseFromServer(course)
 
     if (courseFromServer == null) {
       val platformName = if (course.isMarketplace) MARKETPLACE else STEPIK

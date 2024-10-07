@@ -64,7 +64,7 @@ class MarketplaceCourseUpdater(project: Project, course: EduCourse, private val 
     course.marketplaceCourseVersion = remoteCourseVersion
   }
 
-  override fun courseFromServer(currentCourse: EduCourse, courseInfo: EduCourse?): EduCourse? {
+  override fun courseFromServer(currentCourse: EduCourse): EduCourse? {
     val courseFromServer = MarketplaceConnector.getInstance().searchCourse(course.id, currentCourse.isMarketplacePrivate)
     if (courseFromServer != null) {
       MarketplaceConnector.getInstance().loadCourseStructure(courseFromServer, UPDATE)
