@@ -304,7 +304,7 @@ private fun getNextStepInTopic(topicId: Int, taskId: Int?): NextActivityInfo {
   val nextStep = steps.find { it.isNext }
 
   return if (nextStep == null) {
-    NextActivityInfo.TopicCompleted(topicId)
+    NextActivityInfo.TopicCompleted(topicId, steps)
   }
   else {
     NextActivityInfo.Next(nextStep, topicId)
@@ -334,7 +334,7 @@ fun <T : WithPaginationMetaData> withPageIteration(fetchData: (Int) -> Result<T,
 }
 
 private sealed class NextActivityInfo {
-  class TopicCompleted(val topicId: Int) : NextActivityInfo()
+  class TopicCompleted(val topicId: Int, val steps: List<HyperskillStepSource>) : NextActivityInfo()
 
   data object NoActivity : NextActivityInfo()
 
