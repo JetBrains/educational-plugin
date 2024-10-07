@@ -40,7 +40,7 @@ class CodeGenerator(promptExpression: PromptExpression) {
     val codeLines = promptExpression.code.lines()
 
     return promptLines.enumerate(0) + System.lineSeparator() +
-           codeLines.enumerate(promptLines.size + 2)
+           codeLines.enumerate(promptLines.size + 1)
   }
 
   private fun List<String>.enumerate(startIndex: Int): String {
