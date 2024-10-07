@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.j2k.InspectionLikeProcessingForElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.idea.inspections.LiftReturnOrAssignmentInspection.Util.LiftType.LIFT_ASSIGNMENT_OUT
 
-internal class LiftAssignmentInspectionBasedProcessing : InspectionLikeProcessingForElement<KtExpression>(KtExpression::class.java) {
+internal class LiftAssignmentInspectionProcessing : InspectionLikeProcessingForElement<KtExpression>(KtExpression::class.java) {
 
   override fun isApplicableTo(element: KtExpression, settings: ConverterSettings): Boolean {
     val state = LiftReturnOrAssignmentInspection.Util.getState(element, skipLongExpressions = false) ?: return false
