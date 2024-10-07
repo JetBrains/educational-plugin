@@ -10,7 +10,6 @@ import com.jetbrains.edu.learning.hasParams
 import com.jetbrains.edu.learning.pathWithoutPrams
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler.addProblemsWithTopicWithFiles
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler.getStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepWithProjectRequest
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.StepInfo
