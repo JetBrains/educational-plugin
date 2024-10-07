@@ -9,7 +9,9 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.HyperlinkAdapter
+import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.*
@@ -40,6 +42,7 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.LightColoredActionLink
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.awt.BorderLayout
+import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.JSeparator
 import javax.swing.event.HyperlinkEvent
@@ -218,7 +221,7 @@ fun openNextActivity(project: Project, task: Task) {
 
 fun openTopic(project: Project, topic: HyperskillTopic) {
   if (HyperskillSettings.INSTANCE.account == null) {
-    notifyJBAUnauthorized(project, EduCoreBundle.message("notification.hyperskill.no.next.activity.title"))
+    notifyJBAUnauthorized(project, EduCoreBundle.message("hyperskill.topics.not.available"))
     return
   }
 
@@ -226,7 +229,32 @@ fun openTopic(project: Project, topic: HyperskillTopic) {
     getNextStepInTopic(topic.id, null)
   }
 
-  openStep(project, null, nextActivityInfo)
+  openTopic(project, topic, nextActivityInfo)
+}
+
+private fun openTopic(project: Project, topic: HyperskillTopic, nextActivityInfo: NextActivityInfo) {
+  when (nextActivityInfo) {
+    is NextActivityInfo.TopicCompleted -> {
+      if (nextActivityInfo.steps.any { !it.isCompleted }) {
+        downloadOptionalSteps(project, topic, nextActivityInfo)
+      }
+      else {
+        EduBrowser.getInstance().browse(topicCompletedLink(nextActivityInfo.topicId))
+      }
+    }
+    is NextActivityInfo.Next -> {
+      val nextStep = nextActivityInfo.stepSource
+      val course = project.course ?: return
+      val language = HyperskillLanguages.getRequestLanguage(course.languageId) ?: return
+      ProjectOpener.getInstance().open(
+        HyperskillOpenInIdeRequestHandler,
+        HyperskillOpenStepWithProjectRequest(course.id, nextStep.id, language)
+      ).onError {
+        logger<ProjectOpener>().warn("Downloading the topic resulted in an error: ${it.message}. The error was ignored and not displayed for the user.")
+      }
+    }
+    else -> showNoNextTopicNotification(project)
+  }
 }
 
 private fun openStep(project: Project, task: Task?, nextActivityInfo: NextActivityInfo) {
@@ -311,13 +339,63 @@ private fun getNextStepInTopic(topicId: Int, taskId: Int?): NextActivityInfo {
   }
 }
 
-private fun showNoNextActivityNotification(task: Task?, project: Project) {
-  EduNotificationManager.create(
-    ERROR,
+private fun showNoNextActivityNotification(task: Task?, project: Project) =
+  showErrorNotification(
+    project,
     EduCoreBundle.message("notification.hyperskill.no.next.activity.title"),
-    task?.let { EduCoreBundle.message("notification.hyperskill.no.next.activity.content", stepLink(task.id)) } ?: "",
-  ).setListener(NotificationListener.URL_OPENING_LISTENER)
+    task?.let { EduCoreBundle.message("notification.hyperskill.no.next.activity.content", stepLink(task.id)) } ?: ""
+  )
+
+private fun showNoNextTopicNotification(project: Project) {
+  showErrorNotification(project, EduCoreBundle.message("hyperskill.topics.not.available"))
+}
+
+private fun showErrorNotification(project: Project, title: String, content: String? = null) {
+  EduNotificationManager.create(ERROR, title, content ?: "")
+    .setListener(NotificationListener.URL_OPENING_LISTENER)
     .notify(project)
+}
+
+private fun downloadOptionalSteps(project: Project, topic: HyperskillTopic, nextActivityInfo: NextActivityInfo.TopicCompleted) {
+  if (!showDownloadOptionalStepsDialog(project)) return
+
+  val course = project.course as? HyperskillCourse ?: return
+  computeUnderProgress(project, EduCoreBundle.message("hyperskill.topics.fetch")) {
+    val title = nextActivityInfo.steps.findTheoryStep()?.title ?: topic.title
+    course.addProblemsWithTopicWithFiles(project, title, nextActivityInfo.steps)
+  }
+
+  val nextTask = findFirstUnsolvedTaskInTopic(project.course as HyperskillCourse, topic)
+  if (nextTask != null) {
+    course.selectedProblem = nextTask.id
+    NavigationUtils.navigateToTask(project, nextTask)
+    HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground(course, nextTask.lesson.taskList, true)
+  }
+}
+
+private fun findFirstUnsolvedTaskInTopic(course: HyperskillCourse, topic: HyperskillTopic): Task? = course
+  .getTopicsSection()
+  ?.getLesson { topic.title == it.presentableName }
+  ?.taskList
+  ?.find { it.status != CheckStatus.Solved }
+
+private fun showDownloadOptionalStepsDialog(project: Project): Boolean {
+  val dialog = object : DialogWrapper(project) {
+    init {
+      title = EduCoreBundle.message("hyperskill.topics.download.optional.steps.dialog.title")
+      setOKButtonText(EduCoreBundle.message("hyperskill.topics.download.optional.steps.dialog.ok.button"))
+      init()
+    }
+
+    override fun createCenterPanel(): JComponent {
+      return panel {
+        row {
+          text(EduCoreBundle.message("hyperskill.topics.download.optional.steps.dialog.description"))
+        }
+      }
+    }
+  }
+  return dialog.showAndGet()
 }
 
 fun <T : WithPaginationMetaData> withPageIteration(fetchData: (Int) -> Result<T, String>): Result<List<T>, String> {
