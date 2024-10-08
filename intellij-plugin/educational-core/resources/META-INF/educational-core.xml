@@ -266,6 +266,10 @@
     <action id="Educational.LeaveInIdeFeedbackAction"
             class="com.jetbrains.edu.learning.actions.LeaveInIdeFeedbackAction"
             icon="com.jetbrains.edu.EducationalCoreIcons.Actions.CommentTask"/>
+    <action
+        id="Educational.CCOpenEducatorDocTab"
+        class="com.jetbrains.edu.coursecreator.ui.CCOpenEducatorDocTab"
+    />
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
