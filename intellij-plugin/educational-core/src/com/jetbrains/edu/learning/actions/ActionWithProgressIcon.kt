@@ -1,8 +1,8 @@
 package com.jetbrains.edu.learning.actions
 
 import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.util.NlsActions.ActionDescription
 import com.intellij.openapi.util.NlsActions.ActionText
+import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import org.jetbrains.annotations.NonNls
@@ -18,7 +18,7 @@ abstract class ActionWithProgressIcon : AnAction {
 
   protected constructor(actionText: Supplier<@ActionText String>) : super(actionText)
 
-
+  @RequiresEdt
   protected fun setUpSpinnerPanel(@NonNls message: String) {
     val asyncProcessIcon = AsyncProcessIcon(message)
     val iconPanel = JPanel(BorderLayout()).apply {
@@ -29,10 +29,12 @@ abstract class ActionWithProgressIcon : AnAction {
     spinnerPanel = iconPanel
   }
 
+  @RequiresEdt
   protected fun processStarted() {
     spinnerPanel?.isVisible = true
   }
 
+  @RequiresEdt
   protected fun processFinished() {
     spinnerPanel?.isVisible = false
   }

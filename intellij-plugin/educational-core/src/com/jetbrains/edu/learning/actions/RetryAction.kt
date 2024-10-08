@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.ProgressIndicator
@@ -78,7 +79,9 @@ class RetryAction(actionText: Supplier<@ActionText String>,
     private lateinit var result: Result<Boolean, String>
 
     override fun run(indicator: ProgressIndicator) {
-      processStarted()
+      invokeAndWaitIfNeeded {
+        processStarted()
+      }
       ApplicationManager.getApplication().executeOnPooledThread { EduActionUtils.showFakeProgress(indicator) }
       val remoteChecker = remoteCheckerForTask(project, task) ?: return
       result = remoteChecker.retry(task) ?: return
