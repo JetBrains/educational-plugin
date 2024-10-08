@@ -8,8 +8,6 @@ import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.ser.BeanSerializerFactory
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.externalDependencies.DependencyOnPlugin
 import com.intellij.externalDependencies.ExternalDependenciesManager
@@ -27,7 +25,6 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.jetbrains.edu.coursecreator.AdditionalFilesUtils
 import com.jetbrains.edu.coursecreator.CCUtils.saveOpenedDocuments
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.EduExperimentalFeatures.COURSE_FORMAT_WITH_FILES_OUTSIDE_JSON
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSE_META_FILE
 import com.jetbrains.edu.learning.courseFormat.ext.*
@@ -39,8 +36,6 @@ import com.jetbrains.edu.learning.json.encrypt.AES256
 import com.jetbrains.edu.learning.json.encrypt.EncryptionModule
 import com.jetbrains.edu.learning.json.encrypt.getAesKey
 import com.jetbrains.edu.learning.json.mixins.*
-import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.EXCLUDE_TEXT_FIELD_FILTER
-import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TEXT
 import com.jetbrains.edu.learning.json.pathInArchive
 import com.jetbrains.edu.learning.json.setDateFormat
 import com.jetbrains.edu.learning.marketplace.updateCourseItems
@@ -75,12 +70,7 @@ class CourseArchiveCreator(
     course.updateEnvironmentSettings(project)
     val courseCopy = course.copy()
 
-    val courseArchiveIndicator = CourseArchiveIndicator(if (isFeatureEnabled(COURSE_FORMAT_WITH_FILES_OUTSIDE_JSON)) {
-      FileCountingMode.DURING_WRITE
-    }
-    else {
-      FileCountingMode.DURING_READ
-    })
+    val courseArchiveIndicator = CourseArchiveIndicator(FileCountingMode.DURING_WRITE)
 
     try {
       // We run prepareCourse() in EDT because it calls the VirtualFile.toStudentFile method that replaces placeholders inside the document.
@@ -148,9 +138,7 @@ class CourseArchiveCreator(
         generateJson(writer, courseCopy)
       }
 
-      if (isFeatureEnabled(COURSE_FORMAT_WITH_FILES_OUTSIDE_JSON)) {
-        writeAllFilesToArchive(courseCopy, outputStream, courseArchiveIndicator)
-      }
+      writeAllFilesToArchive(courseCopy, outputStream, courseArchiveIndicator)
 
       writeIconToArchive(outputStream)
     }
@@ -229,23 +217,7 @@ class CourseArchiveCreator(
       .build()
     mapper.addStudyItemMixins()
 
-    setupTextFieldFilter(mapper)
-
     return mapper
-  }
-
-  private fun setupTextFieldFilter(mapper: JsonMapper) {
-    // We don't need to serialize the text field in EduFiles and TaskFiles if the course format stores files outside JSON
-    val textFieldFilter = if (isFeatureEnabled(COURSE_FORMAT_WITH_FILES_OUTSIDE_JSON)) {
-      SimpleBeanPropertyFilter.serializeAllExcept(TEXT)
-    }
-    else {
-      SimpleBeanPropertyFilter.serializeAll()
-    }
-
-    mapper.setFilterProvider(
-      SimpleFilterProvider(mapOf(EXCLUDE_TEXT_FIELD_FILTER to textFieldFilter))
-    )
   }
 
   /**
