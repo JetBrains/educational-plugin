@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.marketplace.update.elements.MarketplaceCourseUpdate
 import com.jetbrains.edu.learning.stepik.hyperskill.update.elements.HyperskillCourseUpdate
+import com.jetbrains.edu.learning.update.comparators.EduFileComparator.Companion.areNotEqual
 
 abstract class CourseUpdate(
   override val localItem: Course,
@@ -20,7 +21,7 @@ abstract class CourseUpdate(
     localItem.name = remoteItem.name
     localItem.description = remoteItem.description
 
-    if (localItem.additionalFiles != remoteItem.additionalFiles) {
+    if (localItem.additionalFiles areNotEqual remoteItem.additionalFiles) {
       val baseDir = project.courseDir
 
       writeAction {

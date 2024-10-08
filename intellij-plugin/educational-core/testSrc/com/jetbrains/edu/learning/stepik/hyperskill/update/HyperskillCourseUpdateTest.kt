@@ -4,6 +4,7 @@ import com.jetbrains.edu.learning.CourseBuilder
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
+import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
@@ -323,7 +324,8 @@ class HyperskillCourseUpdateTest : CourseUpdateTestBase<HyperskillCourse>() {
     initiateLocalCourse()
 
     val remoteCourse = toRemoteCourse {
-      additionalFiles = additionalFiles + TaskFile("newFile.txt", "New file content")
+      additionalFiles += TaskFile("newFile.txt", "New file content")
+      additionalFiles = additionalFiles.map { EduFile(it.name, it.contents) }
     }
     updateCourse(remoteCourse)
     assertEquals("Additional file hasn't been added", 3, localCourse.additionalFiles.size)
@@ -388,10 +390,14 @@ class HyperskillCourseUpdateTest : CourseUpdateTestBase<HyperskillCourse>() {
       additionalFiles = listOf(
         TaskFile("build.gradle", updatedBuildGradleText),
         TaskFile("settings.gradle", "")
-      )
+      ).map { EduFile(it.name, it.contents) }
     }
     updateCourse(remoteCourse)
-    assertEquals("Additional file hasn't been updated", updatedBuildGradleText, localCourse.additionalFiles[0].text)
+    assertEquals(
+      "Additional file hasn't been updated",
+      updatedBuildGradleText,
+      localCourse.additionalFiles[0].contents.textualRepresentation
+    )
 
     val expectedStructure = fileTree {
       dir("section1") {
@@ -412,6 +418,41 @@ class HyperskillCourseUpdateTest : CourseUpdateTestBase<HyperskillCourse>() {
       file("settings.gradle")
     }
 
+    expectedStructure.assertEquals(rootDir)
+  }
+
+  @Test
+  fun `test additional file not updated`() {
+    initiateLocalCourse()
+
+    val buildGradleText = localCourse.additionalFiles[0].contents.textualRepresentation
+    val remoteCourse = toRemoteCourse {
+      additionalFiles = listOf(
+        TaskFile("settings.gradle", ""),
+        TaskFile("build.gradle", buildGradleText),
+      ).map { EduFile(it.name, it.contents) }
+    }
+    updateCourse(remoteCourse, false)
+    assertEquals("Additional file has been updated", buildGradleText, localCourse.additionalFiles[0].contents.textualRepresentation)
+
+    val expectedStructure = fileTree {
+      dir("section1") {
+        dir("lesson1") {
+          dir("task1") {
+            dir("src") {
+              file("Task.kt")
+              file("Baz.kt")
+            }
+            dir("test") {
+              file("Tests.kt")
+            }
+            file("task.html")
+          }
+        }
+      }
+      file("build.gradle", buildGradleText)
+      file("settings.gradle")
+    }
     expectedStructure.assertEquals(rootDir)
   }
 

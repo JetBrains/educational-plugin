@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.LessonContainer
 import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.update.comparators.EduFileComparator.Companion.areNotEqual
 import com.jetbrains.edu.learning.update.elements.CourseUpdate
 import com.jetbrains.edu.learning.update.elements.StudyItemUpdate
 
@@ -41,7 +42,7 @@ abstract class CourseUpdater(val project: Project, private val localCourse: Cour
   protected fun Course.isChanged(remoteCourse: Course): Boolean =
     when {
       name != remoteCourse.name -> true
-      additionalFiles != remoteCourse.additionalFiles -> true
+      additionalFiles areNotEqual remoteCourse.additionalFiles -> true
       else -> false
     }
 }
