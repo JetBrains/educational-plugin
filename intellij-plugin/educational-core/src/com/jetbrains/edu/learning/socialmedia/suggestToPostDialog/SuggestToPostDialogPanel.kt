@@ -9,8 +9,6 @@ import com.intellij.ui.components.JBTextArea
 import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.ui.jcef.JBCefBrowser.DefaultCefContextMenuHandler
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.socialmedia.SocialmediaPluginConfigurator
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.callback.CefContextMenuParams
@@ -24,8 +22,7 @@ import javax.swing.JPanel
 import kotlin.math.max
 
 class SuggestToPostDialogPanel(
-  configurator: SocialmediaPluginConfigurator,
-  solvedTask: Task,
+  message: String,
   imagePath: Path?,
   disposable: Disposable
 ) : JPanel(VerticalFlowLayout(0, 0)) {
@@ -34,7 +31,7 @@ class SuggestToPostDialogPanel(
 
   init {
     border = JBUI.Borders.empty()
-    postText.text = configurator.getMessage(solvedTask)
+    postText.text = message
     postText.border = JBUI.Borders.empty()
     postText.lineWrap = true
     postText.wrapStyleWord = true
@@ -53,7 +50,7 @@ class SuggestToPostDialogPanel(
 
   private fun createImageComponent(path: Path, disposable: Disposable): JComponent {
     val browser = SuggestToPostJBCefBrowser(path)
-    browser.cefBrowser.uiComponent.preferredSize = Dimension(600, 315)
+    browser.cefBrowser.uiComponent.preferredSize = Dimension(JBUI.scale(600), JBUI.scale(315))
     Disposer.register(disposable, browser)
     val component = browser.component
     component.maximumSize = calculateImageDimension(path)
@@ -62,7 +59,9 @@ class SuggestToPostDialogPanel(
 
   private fun calculateImageDimension(path: Path): Dimension {
     val icon = ImageIcon(path.toString())
-    return Dimension(max(icon.iconWidth, 600), max(icon.iconHeight, 315))
+    val imageWidth = JBUI.scale(max(icon.iconWidth, 600))
+    val imageHeight = JBUI.scale((max(icon.iconHeight, 315)))
+    return Dimension(imageWidth, imageHeight)
   }
 
   fun doValidate(): ValidationInfo? {

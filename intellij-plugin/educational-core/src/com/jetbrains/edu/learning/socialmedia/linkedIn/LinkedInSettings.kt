@@ -38,6 +38,7 @@ class LinkedInSettings : SocialMediaSettings<LinkedInSettings.LinkedSate>(Linked
         expiresIn = value.tokenExpiresIn
       }
     }
+
   private var expiresIn: Long
     get() {
       return state.expiresIn

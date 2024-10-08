@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.learning.socialmedia.linkedIn.LinkedInPluginConfigurator
-import com.jetbrains.edu.learning.socialmedia.suggestToPostDialog.createTwitterDialogUI
+import com.jetbrains.edu.learning.socialmedia.suggestToPostDialog.createSuggestToPostDialogUI
 import com.jetbrains.edu.learning.socialmedia.twitter.TwitterPluginConfigurator
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 
@@ -20,7 +20,7 @@ class SocialmediaMultiplePostAction : CheckListener {
 
   private val configurators = listOf(TwitterPluginConfigurator.EP_NAME, LinkedInPluginConfigurator.EP_NAME).flatMap { it.extensionList }
 
-  fun sendStatistics(course: Course) {
+  private fun sendStatistics(course: Course) {
     EduCounterUsageCollector.linkedInDialogShown(course)
     EduCounterUsageCollector.twitterDialogShown(course)
   }
@@ -30,9 +30,9 @@ class SocialmediaMultiplePostAction : CheckListener {
   }
 
   private fun createDialogAndShow(project: Project, configurators: List<SocialmediaPluginConfigurator>, task: Task) {
-    val configurator = configurators.firstOrNull() ?: return
-    val (gifIndex, imagePath) = configurator.getIndexWithImagePath(task)
-    val dialog = createTwitterDialogUI(project, configurators, configurator, task, imagePath)
+    val defaultConfigurator = configurators.firstOrNull() ?: return
+    val (gifIndex, imagePath) = defaultConfigurator.getIndexWithImagePath(task)
+    val dialog = createSuggestToPostDialogUI(project, configurators, defaultConfigurator.getMessage(task), imagePath)
 
     if (dialog.showAndGet()) {
       runInBackground(null, EduCoreBundle.message("linkedin.loading.posting"), true) {

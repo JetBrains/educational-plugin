@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.socialmedia.linkedIn.LinkedInSettings
 import com.jetbrains.edu.learning.socialmedia.suggestToPostDialog.SuggestToPostDialogUI
-import com.jetbrains.edu.learning.socialmedia.suggestToPostDialog.withMockTwitterDialogUI
+import com.jetbrains.edu.learning.socialmedia.suggestToPostDialog.withMockSuggestToPostDialogUI
 import com.jetbrains.edu.learning.socialmedia.twitter.TwitterSettings
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
 import com.jetbrains.edu.learning.testAction
@@ -148,7 +148,7 @@ class HyperskillTwittingTest : EduActionTestCase() {
 
   private fun launchCheckAction(task: Task): Boolean {
     var isDialogShown = false
-    withMockTwitterDialogUI(object : SuggestToPostDialogUI {
+    withMockSuggestToPostDialogUI(object : SuggestToPostDialogUI {
       override fun showAndGet(): Boolean {
         isDialogShown = true
         return false
