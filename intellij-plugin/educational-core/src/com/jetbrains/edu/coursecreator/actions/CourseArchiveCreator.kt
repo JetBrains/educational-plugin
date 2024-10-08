@@ -70,12 +70,12 @@ class CourseArchiveCreator(
     course.updateEnvironmentSettings(project)
     val courseCopy = course.copy()
 
-    val courseArchiveIndicator = CourseArchiveIndicator(FileCountingMode.DURING_WRITE)
+    val courseArchiveIndicator = CourseArchiveIndicator()
 
     try {
       // We run prepareCourse() in EDT because it calls the VirtualFile.toStudentFile method that replaces placeholders inside the document.
       // Modifying the document requires a write action.
-      prepareCourse(courseCopy, courseArchiveIndicator)
+      prepareCourse(courseCopy)
     }
     catch (e: BrokenPlaceholderException) {
       if (!isUnitTestMode) {
@@ -114,7 +114,7 @@ class CourseArchiveCreator(
           message
         }
       }
-      catch (e: ProcessCanceledException) {
+      catch (_: ProcessCanceledException) {
         EduCoreBundle.message("error.course.archiving.cancelled.by.user")
       }
     }, EduCoreBundle.message("action.create.course.archive.progress.bar"), true, project)
@@ -185,10 +185,10 @@ class CourseArchiveCreator(
   }
 
   @VisibleForTesting
-  fun prepareCourse(course: Course, indicator: CourseArchiveIndicator? = null) {
-    loadActualTexts(project, course, indicator)
+  fun prepareCourse(course: Course) {
+    loadActualTexts(project, course)
     course.sortItems()
-    course.additionalFiles = AdditionalFilesUtils.collectAdditionalFiles(course.configurator, project, indicator)
+    course.additionalFiles = AdditionalFilesUtils.collectAdditionalFiles(course.configurator, project)
     course.pluginDependencies = collectCourseDependencies(project, course)
     course.courseMode = CourseMode.STUDENT
   }
@@ -286,28 +286,28 @@ class CourseArchiveCreator(
       return this
     }
 
-    fun loadActualTexts(project: Project, course: Course, indicator: CourseArchiveIndicator? = null) {
+    fun loadActualTexts(project: Project, course: Course) {
       course.visitLessons { lesson ->
         val lessonDir = lesson.getDir(project.courseDir)
         if (lessonDir == null) return@visitLessons
         for (task in lesson.taskList) {
-          loadActualTexts(project, task, indicator)
+          loadActualTexts(project, task)
         }
       }
     }
 
-    private fun loadActualTexts(project: Project, task: Task, indicator: CourseArchiveIndicator?) {
+    private fun loadActualTexts(project: Project, task: Task) {
       val taskDir = task.getDir(project.courseDir) ?: return
-      convertToStudentTaskFiles(project, task, taskDir, indicator)
+      convertToStudentTaskFiles(project, task, taskDir)
       task.updateDescriptionTextAndFormat(project)
     }
 
-    private fun convertToStudentTaskFiles(project: Project, task: Task, taskDir: VirtualFile, indicator: CourseArchiveIndicator?) {
+    private fun convertToStudentTaskFiles(project: Project, task: Task, taskDir: VirtualFile) {
       val studentTaskFiles = LinkedHashMap<String, TaskFile>()
       for ((key, value) in task.taskFiles) {
         val answerFile = value.findTaskFileInDir(taskDir) ?: continue
 
-        val studentFile = answerFile.toStudentFile(project, task, indicator)
+        val studentFile = answerFile.toStudentFile(project, task)
         if (studentFile != null) {
           studentTaskFiles[key] = studentFile
         }

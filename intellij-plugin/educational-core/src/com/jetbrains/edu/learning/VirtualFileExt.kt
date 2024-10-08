@@ -270,7 +270,7 @@ fun VirtualFile.loadEncodedContent(isToEncodeContent: Boolean = this.isToEncodeC
 }
 
 @Throws(HugeBinaryFileException::class)
-fun VirtualFile.toStudentFile(project: Project, task: Task, indicator: CourseArchiveIndicator? = null): TaskFile? {
+fun VirtualFile.toStudentFile(project: Project, task: Task): TaskFile? {
   try {
     val taskCopy = task.copy()
     val taskFile = taskCopy.getTaskFile(pathRelativeToTask(project)) ?: return null
@@ -278,7 +278,7 @@ fun VirtualFile.toStudentFile(project: Project, task: Task, indicator: CourseArc
       if (task.lesson is FrameworkLesson && length >= getBinaryFileLimit()) {
         throw HugeBinaryFileException("${task.pathInCourse}/${taskFile.name}", length, getBinaryFileLimit().toLong(), true)
       }
-      taskFile.contents = BinaryContentsFromDisk(this, indicator)
+      taskFile.contents = BinaryContentsFromDisk(this)
       return taskFile
     }
     FileDocumentManager.getInstance().saveDocument(document)
@@ -304,18 +304,12 @@ fun VirtualFile.toStudentFile(project: Project, task: Task, indicator: CourseArc
       // their positions and store them inside the TaskFile.
       val inMemoryText = EduMacroUtils.collapseMacrosForFile(project.toCourseInfoHolder(), this, text)
 
-      taskFile.contents = object: TextualContents {
-        override val text: String
-          get() {
-            indicator?.readFile(this@toStudentFile)
-            return inMemoryText
-          }
-      }
+      taskFile.contents = InMemoryTextualContents(inMemoryText)
     }
     return taskFile
   }
   catch (e: IOException) {
-    LOG.error("Failed to convert `${path}` to student file")
+    LOG.error("Failed to convert `${path}` to student file", e)
   }
   return null
 }
