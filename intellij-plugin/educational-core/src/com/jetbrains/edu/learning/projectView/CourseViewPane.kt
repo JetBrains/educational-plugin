@@ -44,6 +44,7 @@ import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CCCreateCoursePreview
 import com.jetbrains.edu.coursecreator.projectView.*
+import com.jetbrains.edu.coursecreator.ui.CCOpenEducatorHelp
 import com.jetbrains.edu.learning.CourseSetListener
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
@@ -101,11 +102,21 @@ class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport
         row {
           cell(EducatorActionsPanel())
 
-          button(
-            EduCoreBundle.message("action.create.course.preview.on.view.pane"),
-            CCCreateCoursePreview(),
-            ActionPlaces.PROJECT_VIEW_TOOLBAR
-          ).align(AlignX.RIGHT)
+          panel {
+            row {
+              button(
+                EduCoreBundle.message("action.Educational.Educator.CreateCoursePreview.text"),
+                CCCreateCoursePreview(),
+                ActionPlaces.PROJECT_VIEW_TOOLBAR
+              )
+
+              button(
+                EduCoreBundle.message("action.Educational.CCOpenEducatorHelp.text"),
+                CCOpenEducatorHelp(),
+                ActionPlaces.PROJECT_VIEW_TOOLBAR
+              )
+            }
+          }.align(AlignX.RIGHT)
         }
       }.apply {
         border = JBUI.Borders.emptyRight(12)
