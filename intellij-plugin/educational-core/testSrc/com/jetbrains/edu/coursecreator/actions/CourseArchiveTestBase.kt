@@ -34,7 +34,7 @@ abstract class CourseArchiveTestBase : EduActionTestCase() {
 
     doWithArchiveCreator { creator, course ->
       val out = ByteArrayOutputStream()
-      creator.doCreateCourseArchive(CourseArchiveIndicator(FileCountingMode.DURING_WRITE), course, out)
+      creator.doCreateCourseArchive(CourseArchiveIndicator(), course, out)
       val zip = out.toByteArray()
 
       val fileName2contents = mutableMapOf<String, ByteArray>()
