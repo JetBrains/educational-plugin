@@ -37,11 +37,11 @@ class MarketplaceUpdateInfoTest : EduTestCase() {
   }
 
   @Test
-  fun `test remote course version not set for new course`() {
+  fun `test remote course version is set when updateInfo is empty`() {
     configureResponse("emptyUpdateInfo.json")
     val course = EduCourse()
     course.setRemoteMarketplaceCourseVersion()
-    assertEquals(0, course.marketplaceCourseVersion)
+    assertEquals(1, course.marketplaceCourseVersion)
   }
 
   override fun getTestDataPath(): String = super.getTestDataPath() + "/marketplace/updateInfo/"

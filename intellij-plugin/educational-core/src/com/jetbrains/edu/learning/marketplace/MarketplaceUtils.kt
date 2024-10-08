@@ -69,6 +69,9 @@ fun Course.setRemoteMarketplaceCourseVersion() {
   if (updateInfo != null) {
     incrementMarketplaceCourseVersion(updateInfo.version)
   }
+  else {
+    incrementMarketplaceCourseVersion(marketplaceCourseVersion)
+  }
 }
 
 fun EduCourse.generateEduId() = "${name}_${vendor?.name}_$languageId"
