@@ -10,10 +10,9 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.updateEnvironmentSettings
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 @Suppress("ComponentNotRegistered")  // educational-core.xml
-class CCCreateCoursePreview : DumbAwareAction(EduCoreBundle.lazyMessage("action.create.course.preview.text")) {
+class CCCreateCoursePreview : DumbAwareAction() {
 
  override fun getActionUpdateThread() = ActionUpdateThread.BGT
 

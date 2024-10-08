@@ -275,6 +275,10 @@
       <reference id="Educational.LeaveInIdeFeedbackAction"/>
       <reference id="Educational.LeaveFeedbackAction"/>
     </group>
+    <action
+        id="Educational.CCOpenEducatorDocTab"
+        class="com.jetbrains.edu.coursecreator.ui.CCOpenEducatorHelp"
+    />
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
