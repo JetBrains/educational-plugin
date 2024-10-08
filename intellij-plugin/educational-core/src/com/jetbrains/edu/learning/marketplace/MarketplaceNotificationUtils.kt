@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.marketplace
 
-import com.intellij.icons.ExpUiIcons
 import com.intellij.ide.plugins.PluginManagerConfigurable
 import com.intellij.notification.BrowseNotificationAction
 import com.intellij.notification.NotificationAction
@@ -205,7 +204,7 @@ object MarketplaceNotificationUtils {
     EduNotificationManager
       .create(INFORMATION, title, message)
       // workaround: there is no NotificationType.Success in the platform yet
-      .setIcon(ExpUiIcons.Status.Success)
+      .setIcon(getSuccessIcon())
       .notify(project)
   }
 
