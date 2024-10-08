@@ -1,11 +1,7 @@
 package com.jetbrains.edu.learning.marketplace.update
 
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.Section
-import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.update.CourseUpdateTestBase
@@ -422,6 +418,41 @@ class MarketplaceCourseUpdateTest : CourseUpdateTestBase<EduCourse>() {
         }
       }
       file("build.gradle", "updated content")
+      file("settings.gradle")
+    }
+    expectedStructure.assertEquals(rootDir)
+  }
+
+  @Test
+  fun `test additional file not updated`() {
+    initiateLocalCourse()
+
+    val buildGradleText = localCourse.additionalFiles[0].text
+    val remoteCourse = toRemoteCourse {
+      additionalFiles = listOf(
+        TaskFile("build.gradle", buildGradleText),
+        TaskFile("settings.gradle", "")
+      )
+    }
+    updateCourse(remoteCourse, false)
+    assertEquals("Additional file has been updated", buildGradleText, localCourse.additionalFiles[0].text)
+
+    val expectedStructure = fileTree {
+      dir("section1") {
+        dir("lesson1") {
+          dir("task1") {
+            dir("src") {
+              file("Task.kt")
+              file("Baz.kt")
+            }
+            dir("test") {
+              file("Tests.kt")
+            }
+            file("task.md")
+          }
+        }
+      }
+      file("build.gradle", buildGradleText)
       file("settings.gradle")
     }
     expectedStructure.assertEquals(rootDir)

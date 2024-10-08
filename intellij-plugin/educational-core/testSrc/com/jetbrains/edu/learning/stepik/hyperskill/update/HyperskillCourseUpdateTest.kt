@@ -395,6 +395,41 @@ class HyperskillCourseUpdateTest : CourseUpdateTestBase<HyperskillCourse>() {
   }
 
   @Test
+  fun `test additional file not updated`() {
+    initiateLocalCourse()
+
+    val buildGradleText = localCourse.additionalFiles[0].text
+    val remoteCourse = toRemoteCourse {
+      additionalFiles = listOf(
+        TaskFile("build.gradle", buildGradleText),
+        TaskFile("settings.gradle", "")
+      )
+    }
+    updateCourse(remoteCourse, false)
+    assertEquals("Additional file has been updated", buildGradleText, localCourse.additionalFiles[0].text)
+
+    val expectedStructure = fileTree {
+      dir("section1") {
+        dir("lesson1") {
+          dir("task1") {
+            dir("src") {
+              file("Task.kt")
+              file("Baz.kt")
+            }
+            dir("test") {
+              file("Tests.kt")
+            }
+            file("task.html")
+          }
+        }
+      }
+      file("build.gradle", buildGradleText)
+      file("settings.gradle")
+    }
+    expectedStructure.assertEquals(rootDir)
+  }
+
+  @Test
   fun `test hyperskill stages updated`() {
     initiateLocalCourse()
 

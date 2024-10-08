@@ -7,14 +7,16 @@ import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.gradle.GradleConstants.BUILD_GRADLE
+import com.jetbrains.edu.learning.gradle.GradleConstants.SETTINGS_GRADLE
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
@@ -84,7 +86,11 @@ class FakeGradleCourseProjectGenerator(
 
   override fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
     super.createAdditionalFiles(holder, isNewCourse)
-    GeneratorUtils.createTextChildFile(holder, holder.courseDir, "build.gradle", "")
-    GeneratorUtils.createTextChildFile(holder, holder.courseDir, "settings.gradle", "")
+    val existingAdditionalFiles = holder.course.additionalFiles.map { it.name }
+    listOf(BUILD_GRADLE, SETTINGS_GRADLE)
+      .filter { it !in existingAdditionalFiles }
+      .forEach { fileName ->
+        GeneratorUtils.createTextChildFile(holder, holder.courseDir, fileName, "")
+      }
   }
 }
