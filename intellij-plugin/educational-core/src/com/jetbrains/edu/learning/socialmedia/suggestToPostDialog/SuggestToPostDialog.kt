@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.ui.components.JBCheckBox
+import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.socialmedia.SocialMediaSettings
@@ -36,15 +37,23 @@ class SuggestToPostDialog(
     setOKButtonText(EduCoreBundle.message("linkedin.post.button.text"))
     setResizable(false)
     panel = SuggestToPostDialogPanel(message, imagePath, disposable)
+
+    configurators.map { it.settings }.forEach { settings ->
+      val checkBox = JBCheckBox(settings.name, settings.askToPost)
+      checkBoxes.put(settings, checkBox)
+      checkBox.addItemListener {
+        isOKActionEnabled = checkBoxes.values.any { it.isSelected }
+      }
+    }
     if (configurators.size > 1) {
-      panel.add(Box.createVerticalStrut(JBUI.scale(10)))
       val checkBoxesPanel = JPanel(FlowLayout(FlowLayout.RIGHT, 0, 0))
-      configurators.map { it.settings }.forEach { settings ->
-        val checkBox = JBCheckBox(EduCoreBundle.message("linkedin.post.on", settings.name), settings.askToPost)
-        checkBoxes.put(settings, checkBox)
-        checkBoxesPanel.add(checkBox)
+      checkBoxesPanel.add(JBLabel(EduCoreBundle.message("label.share.on")))
+      checkBoxesPanel.add(Box.createHorizontalStrut(10))
+      checkBoxes.forEach {
+        checkBoxesPanel.add(it.value)
         checkBoxesPanel.add(Box.createHorizontalStrut(10))
       }
+      panel.add(Box.createVerticalStrut(JBUI.scale(10)))
       panel.add(checkBoxesPanel)
     }
 
@@ -52,8 +61,14 @@ class SuggestToPostDialog(
     init()
 
     myCheckBoxDoNotShowDialog.addItemListener {
-      if (it.getStateChange() == ItemEvent.DESELECTED) checkBoxes.forEach { it.value.isEnabled = true }
-      if (it.getStateChange() == ItemEvent.SELECTED) checkBoxes.forEach { it.value.isEnabled = false }
+      if (it.getStateChange() == ItemEvent.DESELECTED) {
+        checkBoxes.forEach { it.value.isEnabled = true }
+        isOKActionEnabled = checkBoxes.values.any { it.isSelected }
+      }
+      if (it.getStateChange() == ItemEvent.SELECTED) {
+        checkBoxes.forEach { it.value.isEnabled = false }
+        isOKActionEnabled = false
+      }
     }
   }
 
