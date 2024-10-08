@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.marketplace.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.intellij.execution.process.ProcessIOExecutorService
 import com.intellij.notification.NotificationAction
 import com.intellij.openapi.actionSystem.ActionManager
@@ -17,6 +18,7 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.updateSettings.impl.PluginDownloader
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.platform.templates.github.DownloadUtil
+import com.intellij.util.asSafely
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showErrorNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showInfoNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLogAction
@@ -25,11 +27,11 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.authUtils.ConnectorUtils
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
-import com.jetbrains.edu.learning.marketplace.*
+import com.jetbrains.edu.learning.marketplace.LICENSE_URL
+import com.jetbrains.edu.learning.marketplace.MARKETPLACE
+import com.jetbrains.edu.learning.marketplace.MARKETPLACE_PLUGIN_URL
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showFailedToFindMarketplaceCourseOnRemoteNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showLoginNeededNotification
-import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showMarketplaceAccountNotification
-import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showNoRightsToUpdateNotification
 import com.jetbrains.edu.learning.marketplace.api.GraphqlQuery.LOADING_STEP
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
@@ -68,6 +70,7 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
   override val objectMapper: ObjectMapper by lazy {
     val objectMapper = ConnectorUtils.createRegisteredMapper(SimpleModule())
     objectMapper.addMixIn(EduCourse::class.java, MarketplaceEduCourseMixin::class.java)
+    objectMapper.registerModule(kotlinModule())
     objectMapper
   }
 
@@ -194,25 +197,18 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
     LOG.info("Uploading new course from ${file.absolutePath}")
 
     val response = getRepositoryEndpoints(hubToken).uploadNewCourse(file.toMultipartBody(), LICENSE_URL.toPlainTextRequestBody())
-      .executeUploadParsingErrors(project,
-                                  message("notification.course.creator.failed.to.upload.course.title"),
-                                  showLogAction,
-                                  getOrganizationVendorPath(course.vendor?.name),
-                                  {},
-                                  {},
-                                  {
-                                    onAuthFailedActions(project, message("notification.course.creator.failed.to.upload.course.oauth.reason.title"))
-                                  })
+      .executeUploadParsingErrors(project, message("notification.course.creator.failed.to.upload.course.title"), showLogAction)
       .onError {
         LOG.error("Failed to upload course ${course.name}: $it")
         return
       }
 
-    val courseBean = response.body()
-    if (courseBean == null) {
+    val uploadCourseResponse = response.body().asSafely<SuccessCourseUploadResponse>()
+    if (uploadCourseResponse == null) {
       showErrorNotification(project, message("notification.course.creator.failed.to.upload.course.title"), action = showLogAction)
       return
     }
+    val courseBean = uploadCourseResponse.plugin
     course.id = courseBean.id
     YamlFormatSynchronizer.saveRemoteInfo(course)
     YamlFormatSynchronizer.saveItem(course)
@@ -232,15 +228,14 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
     showLoginNeededNotification(project, message("item.upload.to.0.course.title", MARKETPLACE), failedActionTitle) { doAuthorize() }
   }
 
-  private fun <T> Call<T>.executeUploadParsingErrors(project: Project,
-                                                     failedActionMessage: String,
-                                                     onErrorAction: AnAction,
-                                                     vendorPath: String,
-                                                     showPermissionDeniedNotification: () -> Unit,
-                                                     showOnNotFoundCodeNotification: () -> Unit,
-                                                     onAuthFailedActions: () -> Unit): Result<Response<T>, String> {
+  private fun <T> Call<T>.executeUploadParsingErrors(
+    project: Project,
+    failedActionTitle: String,
+    onErrorAction: AnAction,
+    showOnNotFoundCodeNotification: () -> Unit = {}
+  ): Result<Response<T>, String> {
     val response = executeCall().onError {
-      showErrorNotification(project, failedActionMessage, it)
+      showErrorNotification(project, failedActionTitle, it)
       return Err(it)
     }
     val responseCode = response.code()
@@ -256,40 +251,14 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
     return when (responseCode) {
       HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_CREATED -> Ok(response)
       HttpURLConnection.HTTP_BAD_REQUEST -> {
-        showErrorNotification(project, failedActionMessage, extractedErrorMessage ?: errorMessage)
+        FailedCourseUploadResponse.parse(objectMapper, errorBody).errors.forEach {
+          showErrorNotification(project, failedActionTitle, it)
+        }
         Err(errorMessage) // 400
       }
       HttpURLConnection.HTTP_FORBIDDEN -> {
-        when {
-          errorBody.contains(ERROR_MARKETPLACE_AGREEMENT_NOT_ACCEPTED) ||
-          errorBody.contains(ERROR_PLUGIN_DEV_AGREEMENT_NOT_ACCEPTED) -> showMarketplaceAccountNotification(
-            project,
-            message("marketplace.plugin.development.agreement.not.accepted")
-          ) { openOnMarketplaceAction(MARKETPLACE_CREATE_VENDOR_PATH) }
-
-          errorBody.contains(ERROR_TRADER_STATUS_NOT_SPECIFIED) -> showMarketplaceAccountNotification(
-            project,
-            message("marketplace.trader.status.not.specified")
-          ) { openOnMarketplaceAction(MARKETPLACE_PROFILE_PATH) }
-
-          errorBody.contains(ERROR_CREATE_VENDOR_ACCOUNT) -> showMarketplaceAccountNotification(
-            project,
-            message("marketplace.create.vendor.account")
-          ) { openOnMarketplaceAction(MARKETPLACE_CREATE_VENDOR_PATH) }
-
-          errorBody.contains(ERROR_ORGANIZATION_TRADER_STATUS_NOT_SPECIFIED) -> {
-              showMarketplaceAccountNotification(
-              project,
-              message("marketplace.organization.trader.status.not.specified")
-            ) { openOnMarketplaceAction(vendorPath) }
-          }
-
-          errorBody.contains(ERROR_PERMISSION_DENIED) -> showPermissionDeniedNotification()
-          errorBody.contains(ERROR_AUTH_FAILED) -> onAuthFailedActions()
-
-          else -> showErrorNotification(project, failedActionMessage, extractedErrorMessage ?: errorMessage)
-        }
-
+        showErrorNotification(project, failedActionTitle, extractedErrorMessage ?: errorMessage)
+        onAuthFailedActions(project, failedActionTitle)
         Err(errorMessage) // 403
       }
       HttpURLConnection.HTTP_NOT_FOUND -> {
@@ -297,16 +266,16 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
           Err(errorMessage) //404
         }
       HttpURLConnection.HTTP_UNAVAILABLE, HttpURLConnection.HTTP_BAD_GATEWAY -> {
-        showErrorNotification(project, failedActionMessage, action = onErrorAction)
+        showErrorNotification(project, failedActionTitle, action = onErrorAction)
         Err("${EduFormatBundle.message("error.service.maintenance")}\n\n$errorMessage") // 502, 503
       }
       in HttpURLConnection.HTTP_INTERNAL_ERROR..HttpURLConnection.HTTP_VERSION -> {
-        showErrorNotification(project, failedActionMessage, action = onErrorAction)
+        showErrorNotification(project, failedActionTitle, action = onErrorAction)
         Err("${EduFormatBundle.message("error.service.down")}\n\n$errorMessage") // 500x
       }
       else -> {
         LOG.warn("Code $responseCode is not handled")
-        showErrorNotification(project, failedActionMessage, action = onErrorAction)
+        showErrorNotification(project, failedActionTitle, action = onErrorAction)
         Err(EduFormatBundle.message("error.unexpected.error", errorMessage))
       }
     }
@@ -349,23 +318,12 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
       uploadNewCourseUnderProgress(project, course, file, hubToken)
     }
 
-    getRepositoryEndpoints(hubToken).uploadCourseUpdate(file.toMultipartBody(), course.id)
-      .executeUploadParsingErrors(project,
-                                  message("notification.course.creator.failed.to.update.course.title"),
-                                  uploadAsNewCourseAction,
-                                  getOrganizationVendorPath(course.vendor?.name),
-                                  {
-                                    showNoRightsToUpdateNotification(project, course) {
-                                      uploadNewCourseUnderProgress(project, course, file, hubToken)
-                                    }
-                                  },
-                                  {
-                                    showFailedToFindMarketplaceCourseOnRemoteNotification(project, uploadAsNewCourseAction)
-                                  },
-                                  {
-                                    onAuthFailedActions(project, message("notification.course.creator.failed.to.update.course.oauth.reason.title"))
-                                  })
-      .onError {
+    getRepositoryEndpoints(hubToken).uploadCourseUpdate(file.toMultipartBody(), course.id).executeUploadParsingErrors(project,
+        message("notification.course.creator.failed.to.update.course.title"),
+        uploadAsNewCourseAction,
+        showOnNotFoundCodeNotification = {
+          showFailedToFindMarketplaceCourseOnRemoteNotification(project, uploadAsNewCourseAction)
+        }).onError {
         val message = "Failed to upload course update for course ${course.id}: $it"
         if (it.contains(PLUGIN_CONTAINS_VERSION_ERROR_TEXT)) {
           LOG.info(message)
@@ -460,13 +418,6 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
     private val XML_ID = "\\d{5,}-.*".toRegex()
     private const val PLUGIN_CONTAINS_VERSION_ERROR_TEXT = "plugin already contains version"
 
-    private const val ERROR_MARKETPLACE_AGREEMENT_NOT_ACCEPTED = "You have not accepted the JetBrains Plugin Marketplace agreement"
-    private const val ERROR_PLUGIN_DEV_AGREEMENT_NOT_ACCEPTED = "You have not accepted the Plugin Developer agreement"
-    private const val ERROR_TRADER_STATUS_NOT_SPECIFIED = "Please specify the trader status for your vendor"
-    private const val ERROR_CREATE_VENDOR_ACCOUNT = "Please create a vendor account before uploading a new plugin"
-    private const val ERROR_ORGANIZATION_TRADER_STATUS_NOT_SPECIFIED = "Please create a vendor account before uploading a new plugin"
-    private const val ERROR_PERMISSION_DENIED = "Unfortunately, you don't have sufficient permissions"
-    private const val ERROR_AUTH_FAILED = "Authentication Failed"
     fun getInstance(): MarketplaceConnector = service()
   }
 }

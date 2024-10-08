@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.marketplace.api
 
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.Multipart
@@ -18,16 +17,16 @@ interface MarketplaceRepositoryEndpoints {
   fun getUpdateId(@Body query: QueryData): Call<UpdateData>
 
   @Multipart
-  @POST("/edu/plugin/upload")
+  @POST("/api/plugins/edu/upload/details")
   fun uploadNewCourse(
     @Part file: MultipartBody.Part,
-    @Part("licenseUrl") licenseUrl: RequestBody,
-  ): Call<CourseBean>
+    @Part("licenseUrl") licenseUrl: RequestBody
+  ): Call<UploadResponse>
 
   @Multipart
-  @POST("/plugin/uploadPlugin")
+  @POST("/api/updates/upload/details")
   fun uploadCourseUpdate(
     @Part file: MultipartBody.Part,
     @Part("pluginId") courseId: Int,
-  ): Call<ResponseBody>
+  ): Call<UploadResponse>
 }

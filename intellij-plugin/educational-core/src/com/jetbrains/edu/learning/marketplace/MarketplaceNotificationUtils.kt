@@ -89,27 +89,6 @@ object MarketplaceNotificationUtils {
     )
   }
 
-  fun showMarketplaceAccountNotification(project: Project, message: String, action: () -> AnAction) {
-    CCNotificationUtils.showErrorNotification(
-      project,
-      EduCoreBundle.message("notification.course.creator.failed.to.upload.course.title"),
-      message,
-      action()
-    )
-  }
-
-  fun showNoRightsToUpdateNotification(project: Project, course: EduCourse, action: () -> Unit) {
-    CCNotificationUtils.showErrorNotification(project,
-      EduCoreBundle.message("notification.course.creator.access.denied.title"),
-      EduCoreBundle.message("notification.course.creator.access.denied.content"),
-      NotificationAction.createSimpleExpiring(
-        EduCoreBundle.message("notification.course.creator.access.denied.action")
-      ) {
-        course.convertToLocal()
-        action()
-      })
-  }
-
   fun showFailedToPushCourseNotification(project: Project, courseName: String) {
     EduNotificationManager.showErrorNotification(
       project,
