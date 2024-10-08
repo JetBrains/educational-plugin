@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.socialmedia.suggestToPostDialog
 
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.ValidationInfo
@@ -11,6 +10,7 @@ import com.jetbrains.edu.learning.socialmedia.SocialMediaSettings
 import com.jetbrains.edu.learning.socialmedia.SocialmediaPluginConfigurator
 import java.awt.FlowLayout
 import java.awt.event.ItemEvent
+import java.nio.file.Path
 import javax.swing.Box
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -21,7 +21,8 @@ import javax.swing.JPanel
 class SuggestToPostDialog(
   project: Project,
   configurators: List<SocialmediaPluginConfigurator>,
-  dialogPanelCreator: (Disposable) -> SuggestToPostDialogPanel
+  message: String,
+  imagePath: Path?,
 ) : SuggestToPostDialogUI, DialogWrapper(project) {
 
 
@@ -34,7 +35,7 @@ class SuggestToPostDialog(
     setDoNotAskOption(SuggestDoNotAskToPostOption(checkBoxes))
     setOKButtonText(EduCoreBundle.message("linkedin.post.button.text"))
     setResizable(false)
-    panel = dialogPanelCreator(disposable)
+    panel = SuggestToPostDialogPanel(message, imagePath, disposable)
     if (configurators.size > 1) {
       panel.add(Box.createVerticalStrut(JBUI.scale(10)))
       val checkBoxesPanel = JPanel(FlowLayout(FlowLayout.RIGHT, 0, 0))

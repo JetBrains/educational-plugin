@@ -22,20 +22,20 @@ class KtTwitterConfigurator : TwitterPluginConfigurator {
     if (course.name == "Kotlin Koans") {
       return solvedTask.status == Solved &&
              (statusBeforeCheck == Unchecked || statusBeforeCheck == Failed) &&
-             calculateTaskNumber(solvedTask) % NUMBER_OF_IMAGES == 0
+             calculateTaskNumber(solvedTask) % 8 == 0
     }
     return false
   }
 
   override fun getMessage(solvedTask: Task): String {
     val solvedTaskNumber = calculateTaskNumber(solvedTask)
-    return String.format(COMPLETE_KOTLIN_KOANS_LEVEL, solvedTaskNumber / NUMBER_OF_IMAGES)
+    return String.format(COMPLETE_KOTLIN_KOANS_LEVEL, solvedTaskNumber / 8)
   }
 
   override fun getIndexWithImagePath(solvedTask: Task?, imageIndex: Int?): Pair<Int, Path?> {
     solvedTask ?: error("Task is not provided")
     val solvedTaskNumber = imageIndex ?: calculateTaskNumber(solvedTask)
-    val level = solvedTaskNumber / NUMBER_OF_IMAGES
+    val level = solvedTaskNumber / 8
     val imagePath = SocialmediaUtils.pluginRelativePath("socialmedia/twitter/kotlin_koans/images/${level}level.gif")
     return level to imagePath
   }
@@ -48,10 +48,8 @@ class KtTwitterConfigurator : TwitterPluginConfigurator {
 
   companion object {
 
-    const val NUMBER_OF_IMAGES = 8
-
     @NonNls
-    private val COMPLETE_KOTLIN_KOANS_LEVEL =
+    private const val COMPLETE_KOTLIN_KOANS_LEVEL =
       "Hey, I just completed level %d of Kotlin Koans. https://kotlinlang.org/docs/tutorials/koans.html #kotlinkoans"
 
     private fun calculateTaskNumber(solvedTask: Task): Int {
