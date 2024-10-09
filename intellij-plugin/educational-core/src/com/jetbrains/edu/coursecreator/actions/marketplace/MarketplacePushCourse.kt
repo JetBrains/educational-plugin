@@ -20,11 +20,11 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.*
-import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showFailedToPushCourseNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showLoginNeededNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showReloginToJBANeededNotification
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.jetbrains.annotations.Nls
@@ -58,7 +58,7 @@ class MarketplacePushCourse(
 
  override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
- override fun actionPerformed(e: AnActionEvent) {
+  override fun actionPerformed(e: AnActionEvent) {
     val project = e.project
     if (project == null || !isCourseCreator(project)) {
       return
@@ -73,22 +73,27 @@ class MarketplacePushCourse(
       return
     }
 
-    CompletableFuture.supplyAsync({ connector.loadHubToken() }, ProcessIOExecutorService.INSTANCE)
-      .handle { hubToken, exception ->
-        if (exception != null) {
-          showFailedToPushCourseNotification(project, course.name)
-        }
-        else if (hubToken == null) {
-          LOG.warn("Login failed: JetBrains account token is null")
-          val jbAccountInfoService = JBAccountInfoService.getInstance() ?: return@handle
-          showReloginToJBANeededNotification(connector.invokeJBALoginAction(jbAccountInfoService))
-        }
-        else {
-          project.invokeLater {
-            prepareAndPush(project, course, connector, e.presentation.text, hubToken)
-          }
-        }
+    CompletableFuture.supplyAsync({ connector.loadHubToken() }, ProcessIOExecutorService.INSTANCE).handle { hubToken, exception ->
+      if (exception != null) {
+        EduNotificationManager.showErrorNotification(
+          project,
+          message("marketplace.push.course.failed.title"),
+          message("marketplace.push.course.failed.text", course.name)
+        )
       }
+      /**
+       * Workaround: while awaiting https://youtrack.jetbrains.com/issue/HUB-11929,
+       * let's always prompt action to re-login whenever `hubToken` is null as it might help
+       */
+      if (hubToken == null) {
+        LOG.error("Login failed: JetBrains account token is null")
+        val jbAccountInfoService = JBAccountInfoService.getInstance() ?: return@handle
+        return@handle showReloginToJBANeededNotification(connector.invokeJBALoginAction(jbAccountInfoService))
+      }
+      project.invokeLater {
+        prepareAndPush(project, course, connector, e.presentation.text, hubToken)
+      }
+    }
   }
 
   private fun prepareAndPush(project: Project, course: EduCourse, connector: MarketplaceConnector, actionName: String, hubToken: String) {

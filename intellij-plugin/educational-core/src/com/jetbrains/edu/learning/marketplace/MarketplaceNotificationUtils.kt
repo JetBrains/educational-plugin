@@ -89,14 +89,6 @@ object MarketplaceNotificationUtils {
     )
   }
 
-  fun showFailedToPushCourseNotification(project: Project, courseName: String) {
-    EduNotificationManager.showErrorNotification(
-      project,
-      EduCoreBundle.message("marketplace.push.course.failed.title"),
-      EduCoreBundle.message("marketplace.push.course.failed.text", courseName)
-    )
-  }
-
   fun showFailedToChangeSharingPreferenceNotification() {
     EduNotificationManager.showErrorNotification(
       title = @Suppress("DialogTitleCapitalization") EduCoreBundle.message("marketplace.solutions.sharing.notification.title"),
