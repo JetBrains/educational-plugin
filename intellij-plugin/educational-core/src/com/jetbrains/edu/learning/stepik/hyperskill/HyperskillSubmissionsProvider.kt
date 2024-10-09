@@ -9,16 +9,17 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
-import com.jetbrains.edu.learning.submissions.SubmissionsProvider
+import com.jetbrains.edu.learning.submissions.provider.SubmissionsData
+import com.jetbrains.edu.learning.submissions.provider.SubmissionsProvider
 
 class HyperskillSubmissionsProvider : SubmissionsProvider {
 
-  override fun loadAllSubmissions(course: Course): Map<Int, List<StepikBasedSubmission>> {
+  override fun loadAllSubmissions(course: Course): SubmissionsData {
     if (!areSubmissionsAvailable(course) || !isLoggedIn()) return emptyMap()
     return loadSubmissions(course.allTasks, course.id)
   }
 
-  override fun loadSubmissions(tasks: List<Task>, courseId: Int): Map<Int, List<StepikBasedSubmission>> {
+  override fun loadSubmissions(tasks: List<Task>, courseId: Int): SubmissionsData {
     val stepIds = tasks.map { it.id }.toSet()
     val submissionsById = mutableMapOf<Int, MutableList<StepikBasedSubmission>>()
     val submissionsList = HyperskillConnector.getInstance().getSubmissions(stepIds)

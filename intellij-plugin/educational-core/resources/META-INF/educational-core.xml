@@ -57,7 +57,10 @@
                     interface="com.jetbrains.edu.learning.checker.CheckListener"
                     dynamic="true"/>
     <extensionPoint qualifiedName="Educational.submissionsProvider"
-                    interface="com.jetbrains.edu.learning.submissions.SubmissionsProvider"
+                    interface="com.jetbrains.edu.learning.submissions.provider.SubmissionsProvider"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="Educational.communitySubmissionsProvider"
+                    interface="com.jetbrains.edu.learning.submissions.provider.CommunitySubmissionsProvider"
                     dynamic="true"/>
     <extensionPoint qualifiedName="Educational.optionsProvider"
                     beanClass="com.intellij.openapi.options.ConfigurableEP"

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.marketplace
+package com.jetbrains.edu.learning.marketplace.submissions
 
 import com.intellij.openapi.project.Project
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
@@ -7,18 +7,20 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.marketplace.JET_BRAINS_ACCOUNT
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceStateOnClose
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.submissions.SubmissionSettings
-import com.jetbrains.edu.learning.submissions.SubmissionsProvider
 import com.jetbrains.edu.learning.submissions.isSolutionSharingAllowed
 import com.jetbrains.edu.learning.submissions.isSubmissionDownloadAllowed
+import com.jetbrains.edu.learning.submissions.provider.SubmissionsData
+import com.jetbrains.edu.learning.submissions.provider.SubmissionsProvider
 
 class MarketplaceSubmissionsProvider : SubmissionsProvider {
 
-  override fun loadAllSubmissions(course: Course): Map<Int, List<MarketplaceSubmission>> {
+  override fun loadAllSubmissions(course: Course): SubmissionsData {
     if (course is EduCourse && course.isMarketplaceRemote) {
       return loadSubmissions(course.allTasks, course.id)
     }
@@ -33,27 +35,7 @@ class MarketplaceSubmissionsProvider : SubmissionsProvider {
     return emptyMap()
   }
 
-  override fun loadSharedSolutionsForCourse(course: Course): Map<Int, List<MarketplaceSubmission>> {
-    if (course !is EduCourse || !course.isMarketplaceRemote) return emptyMap()
-    val submissionsConnector = MarketplaceSubmissionsConnector.getInstance()
-    return submissionsConnector.getSharedSolutionsForCourse(course.id, course.marketplaceCourseVersion).groupBy { it.taskId }
-  }
-
-  override fun loadSharedSubmissions(course: Course, task: Task): Pair<List<MarketplaceSubmission>, Boolean>? {
-    if (course !is EduCourse || !course.isMarketplaceRemote) return null
-
-    return MarketplaceSubmissionsConnector.getInstance().getSharedSubmissionsForTask(course, task.id)
-  }
-
-  override fun loadMoreSharedSubmissions(
-    course: Course, task: Task, latest: Int, oldest: Int
-  ): Pair<List<MarketplaceSubmission>, Boolean>? {
-    if (course !is EduCourse || !course.isMarketplaceRemote) return null
-
-    return MarketplaceSubmissionsConnector.getInstance().getMoreSharedSubmissions(course, task.id, latest, oldest)
-  }
-
-  override fun loadSubmissions(tasks: List<Task>, courseId: Int): Map<Int, List<MarketplaceSubmission>> {
+  override fun loadSubmissions(tasks: List<Task>, courseId: Int): SubmissionsData {
     val submissions = MarketplaceSubmissionsConnector.getInstance().getAllSubmissions(courseId)
     val submissionsById = mutableMapOf<Int, MutableList<MarketplaceSubmission>>()
     return submissions.groupByTo(submissionsById) { it.taskId }

@@ -19,7 +19,8 @@
     <optionsProvider instance="com.jetbrains.edu.learning.marketplace.settings.MarketplaceOptions"/>
     <checkListener implementation="com.jetbrains.edu.learning.marketplace.MarketplaceCheckListener"/>
     <checkListener implementation="com.jetbrains.edu.learning.marketplace.lti.LTICheckListener"/>
-    <submissionsProvider implementation="com.jetbrains.edu.learning.marketplace.MarketplaceSubmissionsProvider"/>
+    <submissionsProvider implementation="com.jetbrains.edu.learning.marketplace.submissions.MarketplaceSubmissionsProvider"/>
+    <communitySubmissionsProvider implementation="com.jetbrains.edu.learning.marketplace.submissions.MarketplaceCommunitySubmissionsProvider"/>
     <taskNavigationExtension implementation="com.jetbrains.edu.learning.marketplace.MarketplaceTaskNavigationExtension"/>
   </extensions>
 

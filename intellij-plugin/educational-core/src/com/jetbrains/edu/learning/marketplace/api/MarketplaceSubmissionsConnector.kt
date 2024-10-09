@@ -32,6 +32,7 @@ import com.jetbrains.edu.learning.network.createRetrofitBuilder
 import com.jetbrains.edu.learning.network.executeCall
 import com.jetbrains.edu.learning.network.executeParsingErrors
 import com.jetbrains.edu.learning.submissions.*
+import com.jetbrains.edu.learning.submissions.TaskCommunitySubmissions
 import okhttp3.ConnectionPool
 import okhttp3.ResponseBody
 import org.jetbrains.annotations.VisibleForTesting
@@ -161,7 +162,7 @@ class MarketplaceSubmissionsConnector {
     return courseSharedSolutions
   }
 
-  fun getSharedSubmissionsForTask(course: Course, taskId: Int): Pair<List<MarketplaceSubmission>, Boolean>? {
+  fun getSharedSubmissionsForTask(course: Course, taskId: Int): TaskCommunitySubmissions? {
     val (courseId, updateVersion) = course.id to course.marketplaceCourseVersion
     LOG.info("Loading shared solutions for task $taskId in course with courseId = $courseId, updateVersion = $updateVersion")
 
@@ -173,10 +174,10 @@ class MarketplaceSubmissionsConnector {
     }.body() ?: return null
 
     val sharedSubmissions = responseBody.submissions.takeIf { it.isNotEmpty() }
-    return sharedSubmissions?.let { it to responseBody.hasNext }
+    return sharedSubmissions?.let { TaskCommunitySubmissions(it.toMutableList(), responseBody.hasNext) }
   }
 
-  fun getMoreSharedSubmissions(course: Course, taskId: Int, latest: Int, oldest: Int): Pair<List<MarketplaceSubmission>, Boolean>? {
+  fun getMoreSharedSubmissions(course: Course, taskId: Int, latest: Int, oldest: Int): TaskCommunitySubmissions? {
     val (courseId, updateVersion) = course.id to course.marketplaceCourseVersion
     LOG.info("Loading more shared solutions for task $taskId in course with courseId = $courseId, updateVersion = $updateVersion")
 
@@ -188,7 +189,7 @@ class MarketplaceSubmissionsConnector {
     }.body() ?: return null
 
     val sharedSubmissions = responseBody.submissions.takeIf { it.isNotEmpty() }
-    return sharedSubmissions?.let { it to responseBody.hasNext }
+    return sharedSubmissions?.let { TaskCommunitySubmissions(it.toMutableList(), responseBody.hasNext) }
   }
 
   fun markTheoryTaskAsCompleted(task: TheoryTask) {

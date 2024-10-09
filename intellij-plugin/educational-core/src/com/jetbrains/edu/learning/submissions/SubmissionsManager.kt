@@ -17,6 +17,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.createTopic
 import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
+import com.jetbrains.edu.learning.submissions.provider.CommunitySubmissionsProvider
+import com.jetbrains.edu.learning.submissions.provider.CommunitySubmissionsProvider.Companion.getCommunitySubmissionsProvider
+import com.jetbrains.edu.learning.submissions.provider.SubmissionsProvider
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
 import org.jetbrains.annotations.TestOnly
@@ -27,16 +30,14 @@ import java.util.concurrent.ConcurrentHashMap
  * Stores and returns submissions for courses with submissions support if they are already loaded or delegates loading
  * to SubmissionsProvider.
  *
- * @see com.jetbrains.edu.learning.submissions.SubmissionsProvider
+ * @see com.jetbrains.edu.learning.submissions.provider.SubmissionsProvider
  */
 @Service(Service.Level.PROJECT)
 class SubmissionsManager(private val project: Project) : LightTestAware {
 
   private val submissions = ConcurrentHashMap<Int, List<Submission>>()
 
-  private val communitySubmissions = ConcurrentHashMap<Int, CommunitySubmissions>()
-
-  data class CommunitySubmissions(val submissions: MutableList<Submission>, var hasMore: Boolean = false)
+  private val communitySubmissions = ConcurrentHashMap<Int, TaskCommunitySubmissions>()
 
   // Guarded by synchronized `getCourseStateOnClose` method
   private var courseStateOnClose: Map<Int, Submission> = emptyMap()
@@ -162,6 +163,7 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
   fun prepareSubmissionsContentWhenLoggedIn(loadSolutions: () -> Unit = {}) {
     val course = course
     val submissionsProvider = course?.getSubmissionsProvider() ?: return
+    val communitySubmissionsProvider = course.getCommunitySubmissionsProvider() ?: return
 
     CompletableFuture.runAsync({
       if (!isLoggedIn()) return@runAsync
@@ -171,7 +173,7 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
       taskToolWindowView.showLoadingSubmissionsPanel(platformName)
       taskToolWindowView.showLoadingCommunityPanel(platformName)
       loadSubmissionsContent(course, submissionsProvider, loadSolutions)
-      loadCommunityContent(course, submissionsProvider)
+      loadCommunityContent(course, communitySubmissionsProvider)
 
       notifySubmissionsChanged()
     }, ProcessIOExecutorService.INSTANCE)
@@ -185,6 +187,7 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
   fun loadCommunitySubmissions(task: Task) {
     val course = course
     val submissionsProvider = course?.getSubmissionsProvider() ?: return
+    val communitySubmissionsProvider = course.getCommunitySubmissionsProvider() ?: return
 
     submissionsProvider.isLoggedInAsync().thenApply { isLoggedIn ->
       if (!isLoggedIn) return@thenApply
@@ -192,13 +195,13 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
       val taskToolWindowView = TaskToolWindowView.getInstance(project)
       taskToolWindowView.showLoadingCommunityPanel(getPlatformName())
       val taskId = task.id
-      val result = submissionsProvider.loadSharedSubmissions(course, task)
+      val result = communitySubmissionsProvider.loadCommunitySubmissions(course, task)
       if (result == null) {
         communitySubmissions[taskId]?.hasMore = false
         return@thenApply taskToolWindowView.updateSubmissionsTab()
       }
       val (sharedSubmissions, hasMore) = result
-      communitySubmissions[taskId] = CommunitySubmissions(sharedSubmissions.toMutableList(), hasMore)
+      communitySubmissions[taskId] = TaskCommunitySubmissions(sharedSubmissions.toMutableList(), hasMore)
       notifySubmissionsChanged()
     }
   }
@@ -206,6 +209,7 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
   fun loadMoreCommunitySubmissions(task: Task, latest: Int, oldest: Int) {
     val course = course
     val submissionsProvider = course?.getSubmissionsProvider() ?: return
+    val communitySubmissionsProvider = course.getCommunitySubmissionsProvider() ?: return
 
     submissionsProvider.isLoggedInAsync().thenApply { isLoggedIn ->
       if (!isLoggedIn) return@thenApply
@@ -213,18 +217,17 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
       val taskToolWindowView = TaskToolWindowView.getInstance(project)
       taskToolWindowView.showLoadingCommunityPanel(getPlatformName())
       val taskId = task.id
-      val result = submissionsProvider.loadMoreSharedSubmissions(course, task, latest, oldest)
+      val result = communitySubmissionsProvider.loadMoreCommunitySubmissions(course, task, latest, oldest)
       if (result == null) {
         notifySharedSolutionsUnchanged()
         communitySubmissions[taskId]?.hasMore = false
         return@thenApply taskToolWindowView.updateSubmissionsTab()
       }
-      val (sharedSubmissions, hasMore) = result
       communitySubmissions[taskId]?.let {
-        it.submissions.addAll(sharedSubmissions)
-        it.hasMore = hasMore
+        it.submissions.addAll(result.submissions)
+        it.hasMore = result.hasMore
       } ?: run {
-        communitySubmissions[taskId] = CommunitySubmissions(sharedSubmissions.toMutableList(), hasMore)
+        communitySubmissions[taskId] = result
       }
       notifySubmissionsChanged()
     }
@@ -275,10 +278,10 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
     loadSolutions()
   }
 
-  private fun loadCommunityContent(course: Course, submissionsProvider: SubmissionsProvider) {
-    val courseSharedSolutions = submissionsProvider.loadSharedSolutionsForCourse(course)
+  private fun loadCommunityContent(course: Course, communitySubmissionsProvider: CommunitySubmissionsProvider) {
+    val courseSharedSolutions = communitySubmissionsProvider.loadCommunitySubmissions(course)
     courseSharedSolutions.forEach { (taskId, sharedSolutions) ->
-      communitySubmissions[taskId] = CommunitySubmissions(sharedSolutions.toMutableList(), hasMore = true)
+      communitySubmissions[taskId] = TaskCommunitySubmissions(sharedSolutions.toMutableList(), hasMore = true)
     }
   }
 
@@ -301,7 +304,7 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
 
   @TestOnly
   fun addCommunitySolutions(taskId: Int, solutions: MutableList<Submission>) {
-    communitySubmissions.putAll(mapOf(taskId to CommunitySubmissions(solutions)))
+    communitySubmissions.putAll(mapOf(taskId to TaskCommunitySubmissions(solutions)))
   }
 
   companion object {
