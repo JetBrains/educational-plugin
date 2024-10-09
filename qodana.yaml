@@ -2,6 +2,7 @@ version: 1.0
 profile:
   path: qodana.profile.yaml
 
+projectJDK: "17"
 # Trigger Gradle here to evaluate `setting.gradle.kts` and load `secret.properties` CI.
 # Otherwise, Qodana shows `Invalid property key` warnings
 bootstrap: ./gradlew
