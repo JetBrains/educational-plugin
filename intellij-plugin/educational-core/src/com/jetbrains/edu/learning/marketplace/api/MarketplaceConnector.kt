@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.marketplace.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
-import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.intellij.execution.process.ProcessIOExecutorService
 import com.intellij.notification.NotificationAction
 import com.intellij.openapi.actionSystem.ActionManager
@@ -70,7 +70,7 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
   override val objectMapper: ObjectMapper by lazy {
     val objectMapper = ConnectorUtils.createRegisteredMapper(SimpleModule())
     objectMapper.addMixIn(EduCourse::class.java, MarketplaceEduCourseMixin::class.java)
-    objectMapper.registerModule(KotlinModule.Builder().build())
+    objectMapper.registerModule(kotlinModule())
     objectMapper
   }
 
@@ -229,10 +229,10 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
   }
 
   private fun <T> Call<T>.executeUploadParsingErrors(
-    project: Project, failedActionMessage: String, onErrorAction: AnAction, showOnNotFoundCodeNotification: () -> Unit = {}
+    project: Project, failedActionTitle: String, onErrorAction: AnAction, showOnNotFoundCodeNotification: () -> Unit = {}
   ): Result<Response<T>, String> {
     val response = executeCall().onError {
-      showErrorNotification(project, failedActionMessage, it)
+      showErrorNotification(project, failedActionTitle, it)
       return Err(it)
     }
     val responseCode = response.code()
@@ -249,13 +249,13 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
       HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_CREATED -> Ok(response)
       HttpURLConnection.HTTP_BAD_REQUEST -> {
         FailedCourseUploadResponse.parse(objectMapper, errorBody).errors.forEach {
-          showErrorNotification(project, failedActionMessage, it)
+          showErrorNotification(project, failedActionTitle, it)
         }
         Err(errorMessage) // 400
       }
       HttpURLConnection.HTTP_FORBIDDEN -> {
-        showErrorNotification(project, failedActionMessage, extractedErrorMessage ?: errorMessage)
-        onAuthFailedActions(project, failedActionMessage)
+        showErrorNotification(project, failedActionTitle, extractedErrorMessage ?: errorMessage)
+        onAuthFailedActions(project, failedActionTitle)
         Err(errorMessage) // 403
       }
       HttpURLConnection.HTTP_NOT_FOUND -> {
@@ -263,16 +263,16 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
           Err(errorMessage) //404
         }
       HttpURLConnection.HTTP_UNAVAILABLE, HttpURLConnection.HTTP_BAD_GATEWAY -> {
-        showErrorNotification(project, failedActionMessage, action = onErrorAction)
+        showErrorNotification(project, failedActionTitle, action = onErrorAction)
         Err("${EduFormatBundle.message("error.service.maintenance")}\n\n$errorMessage") // 502, 503
       }
       in HttpURLConnection.HTTP_INTERNAL_ERROR..HttpURLConnection.HTTP_VERSION -> {
-        showErrorNotification(project, failedActionMessage, action = onErrorAction)
+        showErrorNotification(project, failedActionTitle, action = onErrorAction)
         Err("${EduFormatBundle.message("error.service.down")}\n\n$errorMessage") // 500x
       }
       else -> {
         LOG.warn("Code $responseCode is not handled")
-        showErrorNotification(project, failedActionMessage, action = onErrorAction)
+        showErrorNotification(project, failedActionTitle, action = onErrorAction)
         Err(EduFormatBundle.message("error.unexpected.error", errorMessage))
       }
     }
