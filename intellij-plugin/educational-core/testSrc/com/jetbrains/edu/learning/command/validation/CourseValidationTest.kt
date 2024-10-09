@@ -1,16 +1,12 @@
 package com.jetbrains.edu.learning.command.validation
 
 import com.intellij.ide.actions.QualifiedNameProvider
-import com.intellij.json.psi.JsonElement
-import com.intellij.json.psi.JsonFile
-import com.intellij.json.psi.JsonObject
-import com.intellij.json.psi.JsonProperty
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.findFile
 import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.childrenOfType
+import com.intellij.psi.xml.XmlFile
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -132,11 +128,11 @@ class CourseValidationTest : EduTestCase() {
       }
       additionalFile("foo/bar.txt")
       // Used for psi links
-      additionalFile("config.json", """{ "foo": { "bar": "" } }""")
+      additionalFile("config.xml", """<foo><bar></bar></foo>""")
     }
 
     // Make psi link resolution works for JSON.
-    QualifiedNameProvider.EP_NAME.point.registerExtension(TestJsonQualifiedNameProvider(), testRootDisposable)
+    QualifiedNameProvider.EP_NAME.point.registerExtension(TestXmlQualifiedNameProvider(), testRootDisposable)
     registerTaskDescriptionToolWindow()
     helper.addResponseHandler(testRootDisposable) { _, path ->
       when (path) {
@@ -263,23 +259,18 @@ class CourseValidationTest : EduTestCase() {
 }
 
 
-private class TestJsonQualifiedNameProvider : QualifiedNameProvider {
+private class TestXmlQualifiedNameProvider : QualifiedNameProvider {
   override fun adjustElementToCopy(element: PsiElement): PsiElement? = null
   override fun getQualifiedName(element: PsiElement): String? = null
 
   // It shouldn't be too precise, but it should be enough to check how we work with psi links
   override fun qualifiedNameToElement(fqn: String, project: Project): PsiElement? {
-    val file = project.courseDir.findFile("config.json")?.findPsiFile(project) as? JsonFile ?: return null
+    val file = project.courseDir.findFile("config.xml")?.findPsiFile(project) as? XmlFile ?: return null
     val segments = fqn.split(".")
-    var currentElement: JsonElement = file
-    for (segment in segments) {
-      currentElement = currentElement
-        .childrenOfType<JsonObject>()
-        .singleOrNull()
-        ?.childrenOfType<JsonProperty>()
-        ?.find { it.name == segment }
-        ?: return null
+    var currentTag = file.rootTag?.takeIf { it.name == segments[0] } ?: return null
+    for (segment in segments.drop(1)) {
+      currentTag = currentTag.findFirstSubTag(segment) ?: return null
     }
-    return currentElement
+    return currentTag
   }
 }
