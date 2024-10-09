@@ -206,7 +206,7 @@ data class FailedCourseUploadResponse(
     fun parse(objectMapper: ObjectMapper, content: String): FailedCourseUploadResponse {
       return try {
         objectMapper.readValue(content, FailedCourseUploadResponse::class.java)
-      } catch (e: Exception) {
+      } catch (_: Exception) {
         FailedCourseUploadResponse(emptyList(), listOf("Unknown error occurred: $content"))
       }
     }
