@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.update.CourseUpdater
 import org.junit.Test
 
 class MarketplaceCourseUpdateTest : CourseUpdateTestBase<EduCourse>() {
-  override fun getUpdater(course: Course): CourseUpdater = MarketplaceCourseUpdaterNew(project, course)
+  override fun getUpdater(course: EduCourse): CourseUpdater<EduCourse> = MarketplaceCourseUpdaterNew(project, course)
 
   @Test
   fun `test nothing to update`() {

@@ -10,7 +10,7 @@ import java.util.*
 class HyperskillCourseUpdate(
   override val localItem: HyperskillCourse,
   override val remoteItem: HyperskillCourse
-) : CourseUpdate(localItem, remoteItem) {
+) : CourseUpdate<HyperskillCourse>(localItem, remoteItem) {
   override suspend fun update(project: Project) {
     baseUpdate(project)
 

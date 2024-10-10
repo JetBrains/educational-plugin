@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.stepik.hyperskill.update
 
 import com.jetbrains.edu.learning.CourseBuilder
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -17,7 +16,7 @@ import com.jetbrains.edu.learning.update.CourseUpdater
 import org.junit.Test
 
 class HyperskillCourseUpdateTest : CourseUpdateTestBase<HyperskillCourse>() {
-  override fun getUpdater(course: Course): CourseUpdater = HyperskillCourseUpdaterNew(project, course)
+  override fun getUpdater(course: HyperskillCourse): CourseUpdater<HyperskillCourse> = HyperskillCourseUpdaterNew(project, course)
 
   @Test
   fun `test nothing to update`() {

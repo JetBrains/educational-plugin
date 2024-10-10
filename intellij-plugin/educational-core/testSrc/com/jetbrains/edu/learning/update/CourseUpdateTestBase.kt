@@ -4,7 +4,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import kotlinx.coroutines.runBlocking
 
 abstract class CourseUpdateTestBase<T : Course> : UpdateTestBase<T>() {
-  abstract fun getUpdater(course: Course): CourseUpdater
+  abstract fun getUpdater(course: T): CourseUpdater<T>
 
   protected fun updateCourse(remoteCourse: T, isShouldBeUpdated: Boolean = true) {
     val updater = getUpdater(localCourse)

@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.update
 
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.LessonContainer
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.update.CourseUpdater
@@ -12,15 +11,18 @@ import com.jetbrains.edu.learning.update.comparators.HyperskillProjectComparator
 import com.jetbrains.edu.learning.update.comparators.HyperskillStageComparator.Companion.areNotEqual
 import com.jetbrains.edu.learning.update.comparators.HyperskillTopicComparator.Companion.areNotEqual
 
-class HyperskillCourseUpdaterNew(project: Project, course: Course) : CourseUpdater(project, course), HyperskillItemUpdater<Course> {
+class HyperskillCourseUpdaterNew(
+  project: Project,
+  course: HyperskillCourse
+) : CourseUpdater<HyperskillCourse>(project, course), HyperskillItemUpdater<HyperskillCourse> {
   override fun createLessonUpdater(container: LessonContainer): LessonUpdater = HyperskillLessonUpdater(project, container)
 
-  override fun createSectionUpdater(course: Course): SectionUpdater = HyperskillSectionUpdater(project, course)
+  override fun createSectionUpdater(course: HyperskillCourse): SectionUpdater = HyperskillSectionUpdater(project, course)
 
-  override fun isCourseChanged(localCourse: Course, remoteCourse: Course): Boolean =
+  override fun isCourseChanged(localCourse: HyperskillCourse, remoteCourse: HyperskillCourse): Boolean =
     when {
       localCourse.isChanged(remoteCourse) -> true
-      (localCourse as HyperskillCourse).isProjectChanged(remoteCourse as HyperskillCourse) -> true
+      localCourse.isProjectChanged(remoteCourse) -> true
       else -> false
     }
 

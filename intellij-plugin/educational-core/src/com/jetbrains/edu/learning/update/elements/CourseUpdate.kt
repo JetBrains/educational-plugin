@@ -13,10 +13,10 @@ import com.jetbrains.edu.learning.marketplace.update.elements.MarketplaceCourseU
 import com.jetbrains.edu.learning.stepik.hyperskill.update.elements.HyperskillCourseUpdate
 import com.jetbrains.edu.learning.update.comparators.EduFileComparator.Companion.areNotEqual
 
-abstract class CourseUpdate(
-  override val localItem: Course,
-  override val remoteItem: Course
-) : StudyItemUpdate<Course>(localItem, remoteItem) {
+abstract class CourseUpdate<T : Course>(
+  override val localItem: T,
+  override val remoteItem: T
+) : StudyItemUpdate<T>(localItem, remoteItem) {
   protected suspend fun baseUpdate(project: Project) {
     localItem.name = remoteItem.name
     localItem.description = remoteItem.description
@@ -43,7 +43,7 @@ abstract class CourseUpdate(
   companion object {
     private val LOG: Logger = Logger.getInstance(CourseUpdate::class.java)
 
-    fun get(localCourse: Course, remoteCourse: Course): CourseUpdate = when {
+    fun <T : Course> get(localCourse: T, remoteCourse: T): CourseUpdate<out Course> = when {
       localCourse is EduCourse && remoteCourse is EduCourse -> MarketplaceCourseUpdate(localCourse, remoteCourse)
       localCourse is HyperskillCourse && remoteCourse is HyperskillCourse -> HyperskillCourseUpdate(localCourse, remoteCourse)
       else -> error("Unsupported course types: local=${localCourse::class.simpleName}, remote=${remoteCourse::class.simpleName}")
