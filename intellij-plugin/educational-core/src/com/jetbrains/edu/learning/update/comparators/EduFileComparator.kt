@@ -8,7 +8,9 @@ class EduFileComparator private constructor(): Comparator<EduFile> {
     o1 == null -> -1
     o2 == null -> 1
     o1.name != o2.name -> o1.name.compareTo(o2.name)
-    o1.text != o2.text -> o1.text.compareTo(o2.name)
+    o1.contents.textualRepresentation != o2.contents.textualRepresentation -> {
+      o1.contents.textualRepresentation.compareTo(o2.contents.textualRepresentation)
+    }
     else -> 0
   }
 

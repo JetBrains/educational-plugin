@@ -400,7 +400,7 @@ class MarketplaceCourseUpdateTest : CourseUpdateTestBase<EduCourse>() {
       )
     }
     updateCourse(remoteCourse)
-    assertEquals("Additional file hasn't been updated", "updated content", localCourse.additionalFiles[0].text)
+    assertEquals("Additional file hasn't been updated", "updated content", localCourse.additionalFiles[0].contents.textualRepresentation)
 
     val expectedStructure = fileTree {
       dir("section1") {
@@ -427,7 +427,7 @@ class MarketplaceCourseUpdateTest : CourseUpdateTestBase<EduCourse>() {
   fun `test additional file not updated`() {
     initiateLocalCourse()
 
-    val buildGradleText = localCourse.additionalFiles[0].text
+    val buildGradleText = localCourse.additionalFiles[0].contents.textualRepresentation
     val remoteCourse = toRemoteCourse {
       additionalFiles = listOf(
         TaskFile("build.gradle", buildGradleText),
@@ -435,7 +435,7 @@ class MarketplaceCourseUpdateTest : CourseUpdateTestBase<EduCourse>() {
       )
     }
     updateCourse(remoteCourse, false)
-    assertEquals("Additional file has been updated", buildGradleText, localCourse.additionalFiles[0].text)
+    assertEquals("Additional file has been updated", buildGradleText, localCourse.additionalFiles[0].contents.textualRepresentation)
 
     val expectedStructure = fileTree {
       dir("section1") {
