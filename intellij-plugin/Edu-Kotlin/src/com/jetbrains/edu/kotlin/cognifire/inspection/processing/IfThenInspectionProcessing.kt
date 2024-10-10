@@ -1,0 +1,60 @@
+package com.jetbrains.edu.kotlin.cognifire.inspection.processing
+
+import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.jetbrains.educational.ml.cognifire.responses.GeneratedCodeLine
+import com.jetbrains.educational.ml.cognifire.responses.PromptToCodeResponse
+import org.jetbrains.kotlin.idea.codeinsight.api.classic.inspections.AbstractApplicabilityBasedInspection
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtIfExpression
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.scripting.definitions.runReadAction
+
+abstract class IfThenInspectionProcessing(private val project: Project, private val element: PsiElement) : InspectionProcessing {
+  abstract val inspection: AbstractApplicabilityBasedInspection<KtIfExpression>
+
+  override fun isApplicable(): Boolean = runReadAction {
+    if (!element.isValid) return@runReadAction false
+    if (element !is KtIfExpression) return@runReadAction false
+    inspection.isApplicable(element)
+  }
+
+  override fun apply() {
+    if (element !is KtIfExpression) return
+    WriteCommandAction.runWriteCommandAction(project, null, null, {
+      inspection.applyTo(element, project)
+    })
+  }
+
+  abstract fun getReplacedExpressionText(psiFile: PsiFile, condition: KtNameReferenceExpression): String?
+
+  override fun applyInspection(promptToCode: PromptToCodeResponse, psiFile: PsiFile): PromptToCodeResponse {
+    if (!isApplicable()) return promptToCode
+    if (element !is KtIfExpression) return promptToCode
+    val ifPromptLines = element.getPromptToCodeLinesContainingIfStatement(promptToCode)
+    val firstIfPromptLine = element.getFirstLineNumberOfIfStatementInPromptToCode(promptToCode) ?: return promptToCode
+    val firstIfCodeLine = element.getFirstCodeLineNumberOfIfStatementInPromptToCode(promptToCode) ?: return promptToCode
+    val lastIfPromptLine = element.getLastLineNumberOfIfStatementInPromptToCode(promptToCode) ?: return promptToCode
+    val condition = (element.condition as? KtBinaryExpression)?.left as? KtNameReferenceExpression ?: return promptToCode
+
+    apply()
+
+    val replacedExpressionText = getReplacedExpressionText(psiFile, condition) ?: return promptToCode
+    val expression = findExpressionInPsiFile(psiFile, replacedExpressionText)
+    val newPromptToCode = mutableListOf<GeneratedCodeLine>()
+    promptToCode.filter { it.promptLineNumber < firstIfPromptLine }.forEach {
+      newPromptToCode.add(it.copy())
+    }
+    ifPromptLines.forEach {
+      newPromptToCode.add(it.copy(codeLineNumber = firstIfCodeLine, generatedCodeLine = expression))
+    }
+    var codeLineNumber = firstIfCodeLine + 1
+    promptToCode.filter { it.promptLineNumber > lastIfPromptLine }.forEach {
+      newPromptToCode.add(it.copy(codeLineNumber = codeLineNumber))
+      codeLineNumber++
+    }
+    return newPromptToCode
+  }
+}
