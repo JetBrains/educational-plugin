@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 class MarketplaceCourseUpdate(
   override val localItem: EduCourse,
   override val remoteItem: EduCourse
-) : CourseUpdate(localItem, remoteItem) {
+) : CourseUpdate<EduCourse>(localItem, remoteItem) {
   override suspend fun update(project: Project) {
     baseUpdate(project)
     localItem.marketplaceCourseVersion = remoteItem.marketplaceCourseVersion

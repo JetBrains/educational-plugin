@@ -1,7 +1,10 @@
 package com.jetbrains.edu.learning.marketplace.update
 
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.update.CourseUpdateTestBase
@@ -9,7 +12,7 @@ import com.jetbrains.edu.learning.update.CourseUpdater
 import org.junit.Test
 
 class MarketplaceCourseUpdateTest : CourseUpdateTestBase<EduCourse>() {
-  override fun getUpdater(course: Course): CourseUpdater = MarketplaceCourseUpdaterNew(project, course)
+  override fun getUpdater(course: EduCourse): CourseUpdater<EduCourse> = MarketplaceCourseUpdaterNew(project, course)
 
   @Test
   fun `test lesson added`() {

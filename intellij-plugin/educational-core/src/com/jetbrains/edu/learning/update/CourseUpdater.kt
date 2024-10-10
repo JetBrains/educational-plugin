@@ -8,11 +8,11 @@ import com.jetbrains.edu.learning.update.comparators.EduFileComparator.Companion
 import com.jetbrains.edu.learning.update.elements.CourseUpdate
 import com.jetbrains.edu.learning.update.elements.StudyItemUpdate
 
-abstract class CourseUpdater(val project: Project, private val localCourse: Course) : ItemUpdater<Course> {
+abstract class CourseUpdater<T : Course>(val project: Project, private val localCourse: T) : ItemUpdater<T> {
   protected abstract fun createLessonUpdater(container: LessonContainer): LessonUpdater
-  protected abstract fun createSectionUpdater(course: Course): SectionUpdater
+  protected abstract fun createSectionUpdater(course: T): SectionUpdater
 
-  suspend fun collect(remoteCourse: Course): List<StudyItemUpdate<StudyItem>> {
+  suspend fun collect(remoteCourse: T): Collection<StudyItemUpdate<StudyItem>> {
     val updates = mutableListOf<StudyItemUpdate<StudyItem>>()
 
     val sectionUpdater = createSectionUpdater(localCourse)
@@ -30,16 +30,16 @@ abstract class CourseUpdater(val project: Project, private val localCourse: Cour
     return updates
   }
 
-  suspend fun update(remoteCourse: Course) {
+  suspend fun update(remoteCourse: T) {
     val updates = collect(remoteCourse)
     updates.forEach {
       it.update(project)
     }
   }
 
-  abstract fun isCourseChanged(localCourse: Course, remoteCourse: Course): Boolean
+  abstract fun isCourseChanged(localCourse: T, remoteCourse: T): Boolean
 
-  protected fun Course.isChanged(remoteCourse: Course): Boolean =
+  protected fun T.isChanged(remoteCourse: T): Boolean =
     when {
       name != remoteCourse.name -> true
       additionalFiles areNotEqual remoteCourse.additionalFiles -> true
