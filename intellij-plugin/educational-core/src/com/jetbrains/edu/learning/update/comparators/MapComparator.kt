@@ -12,14 +12,11 @@ class MapComparator<K : Comparable<K>, V>(
   }
 
   private fun compareMapsNonNull(map1: Map<K, V>, map2: Map<K, V>): Int {
-    val keys1 = map1.keys
-    val keys2 = map2.keys
-
-    val keyComparison = keys1.toString().compareTo(keys2.toString())
-    if (keyComparison != 0) return keyComparison
-
-    for (key in keys1) {
-      val valueComparison = valueComparator.compare(map1[key], map2[key])
+    val allKeys = map1.keys union map2.keys
+    allKeys.forEach { key ->
+      val value1 = map1[key]
+      val value2 = map2[key]
+      val valueComparison = valueComparator.compare(value1, value2)
       if (valueComparison != 0) return valueComparison
     }
     return 0
