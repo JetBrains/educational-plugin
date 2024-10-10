@@ -12,6 +12,34 @@ class MarketplaceCourseUpdateTest : CourseUpdateTestBase<EduCourse>() {
   override fun getUpdater(course: EduCourse): CourseUpdater<EduCourse> = MarketplaceCourseUpdaterNew(project, course)
 
   @Test
+  fun `test nothing to update`() {
+    initiateLocalCourse()
+
+    val remoteCourse = toRemoteCourse { }
+    updateCourse(remoteCourse, isShouldBeUpdated = false)
+
+    val expectedStructure = fileTree {
+      dir("section1") {
+        dir("lesson1") {
+          dir("task1") {
+            dir("src") {
+              file("Task.kt")
+              file("Baz.kt")
+            }
+            dir("test") {
+              file("Tests.kt")
+            }
+            file("task.md")
+          }
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    expectedStructure.assertEquals(rootDir)
+  }
+
+  @Test
   fun `test lesson added`() {
     initiateLocalCourse()
 
@@ -209,34 +237,6 @@ class MarketplaceCourseUpdateTest : CourseUpdateTestBase<EduCourse>() {
 
     val expectedStructure = fileTree {
       dir("Updated Section Name") {
-        dir("lesson1") {
-          dir("task1") {
-            dir("src") {
-              file("Task.kt")
-              file("Baz.kt")
-            }
-            dir("test") {
-              file("Tests.kt")
-            }
-            file("task.md")
-          }
-        }
-      }
-      file("build.gradle")
-      file("settings.gradle")
-    }
-    expectedStructure.assertEquals(rootDir)
-  }
-
-  @Test
-  override fun `test nothing to update`() {
-    initiateLocalCourse()
-
-    val remoteCourse = toRemoteCourse { }
-    updateCourse(remoteCourse, isShouldBeUpdated = false)
-
-    val expectedStructure = fileTree {
-      dir("section1") {
         dir("lesson1") {
           dir("task1") {
             dir("src") {

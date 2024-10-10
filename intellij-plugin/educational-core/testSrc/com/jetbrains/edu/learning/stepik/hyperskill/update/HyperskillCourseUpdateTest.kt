@@ -19,6 +19,34 @@ class HyperskillCourseUpdateTest : CourseUpdateTestBase<HyperskillCourse>() {
   override fun getUpdater(course: HyperskillCourse): CourseUpdater<HyperskillCourse> = HyperskillCourseUpdaterNew(project, course)
 
   @Test
+  fun `test nothing to update`() {
+    initiateLocalCourse()
+
+    val remoteCourse = toRemoteCourse { }
+    updateCourse(remoteCourse, isShouldBeUpdated = false)
+
+    val expectedStructure = fileTree {
+      dir("section1") {
+        dir("lesson1") {
+          dir("task1") {
+            dir("src") {
+              file("Task.kt")
+              file("Baz.kt")
+            }
+            dir("test") {
+              file("Tests.kt")
+            }
+            file("task.html")
+          }
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    expectedStructure.assertEquals(rootDir)
+  }
+
+  @Test
   fun `test lesson added`() {
     initiateLocalCourse()
 
