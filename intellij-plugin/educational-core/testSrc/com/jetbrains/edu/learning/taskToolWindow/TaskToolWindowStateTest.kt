@@ -2,9 +2,7 @@ package com.jetbrains.edu.learning.taskToolWindow
 
 import com.intellij.openapi.components.ComponentManagerEx
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl
 import com.intellij.openapi.fileEditor.impl.PsiAwareFileEditorManagerImpl
-import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowManager
@@ -216,8 +214,8 @@ class TaskToolWindowStateTest : EduTestCase() {
    * which is async and used in production
    */
   private fun setProductionFileEditorManager() {
-    project.putUserData(FileEditorManagerImpl.ALLOW_IN_LIGHT_PROJECT, true)
-    Disposer.register(testRootDisposable) { project.putUserData(FileEditorManagerImpl.ALLOW_IN_LIGHT_PROJECT, null) }
+    allowFileEditorInLightProject(project)
+
     project.replaceService(
       FileEditorManager::class.java,
       PsiAwareFileEditorManagerImpl(project, (project as ComponentManagerEx).getCoroutineScope().namedChildScope(name)),
