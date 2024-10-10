@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill.update
 import com.jetbrains.edu.learning.CourseBuilder
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
+import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
@@ -294,7 +295,8 @@ class HyperskillCourseUpdateTest : CourseUpdateTestBase<HyperskillCourse>() {
     initiateLocalCourse()
 
     val remoteCourse = toRemoteCourse {
-      additionalFiles = additionalFiles + TaskFile("newFile.txt", "New file content")
+      additionalFiles += TaskFile("newFile.txt", "New file content")
+      additionalFiles = additionalFiles.map { EduFile(it.name, it.contents) }
     }
     updateCourse(remoteCourse)
     assertEquals("Additional file hasn't been added", 3, localCourse.additionalFiles.size)
@@ -359,7 +361,7 @@ class HyperskillCourseUpdateTest : CourseUpdateTestBase<HyperskillCourse>() {
       additionalFiles = listOf(
         TaskFile("build.gradle", updatedBuildGradleText),
         TaskFile("settings.gradle", "")
-      )
+      ).map { EduFile(it.name, it.contents) }
     }
     updateCourse(remoteCourse)
     assertEquals(
@@ -397,9 +399,9 @@ class HyperskillCourseUpdateTest : CourseUpdateTestBase<HyperskillCourse>() {
     val buildGradleText = localCourse.additionalFiles[0].contents.textualRepresentation
     val remoteCourse = toRemoteCourse {
       additionalFiles = listOf(
+        TaskFile("settings.gradle", ""),
         TaskFile("build.gradle", buildGradleText),
-        TaskFile("settings.gradle", "")
-      )
+      ).map { EduFile(it.name, it.contents) }
     }
     updateCourse(remoteCourse, false)
     assertEquals("Additional file has been updated", buildGradleText, localCourse.additionalFiles[0].contents.textualRepresentation)

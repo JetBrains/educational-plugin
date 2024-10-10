@@ -13,6 +13,6 @@ class HyperskillStageComparator private constructor() : Comparator<HyperskillSta
 
   companion object {
     infix fun List<HyperskillStage>.areNotEqual(other: List<HyperskillStage>): Boolean =
-      ListComparator(HyperskillStageComparator()).compare(this, other) != 0
+      SetComparator(HyperskillStageComparator()).compare(this, other) != 0
   }
 }

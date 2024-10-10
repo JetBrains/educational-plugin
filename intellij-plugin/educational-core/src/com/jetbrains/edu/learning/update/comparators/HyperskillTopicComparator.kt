@@ -22,8 +22,8 @@ class HyperskillTopicComparator private constructor() : Comparator<HyperskillTop
 
   companion object {
     private fun compareMaps(o1: Map<Int, List<HyperskillTopic>>, o2: Map<Int, List<HyperskillTopic>>): Int {
-      val listComparator = ListComparator(HyperskillTopicComparator())
-      return MapComparator<Int, List<HyperskillTopic>>(listComparator).compare(o1, o2)
+      val valueComparator = SetComparator(HyperskillTopicComparator())
+      return MapComparator<Int, Collection<HyperskillTopic>>(valueComparator).compare(o1, o2)
     }
 
     infix fun Map<Int, List<HyperskillTopic>>.areNotEqual(other: Map<Int, List<HyperskillTopic>>): Boolean = compareMaps(this, other) != 0

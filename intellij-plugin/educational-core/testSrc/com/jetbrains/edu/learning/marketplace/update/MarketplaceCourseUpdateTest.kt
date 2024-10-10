@@ -1,10 +1,7 @@
 package com.jetbrains.edu.learning.marketplace.update
 
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
-import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.Section
-import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.update.CourseUpdateTestBase
@@ -336,7 +333,8 @@ class MarketplaceCourseUpdateTest : CourseUpdateTestBase<EduCourse>() {
     initiateLocalCourse()
 
     val remoteCourse = toRemoteCourse {
-      additionalFiles = additionalFiles + TaskFile("newFile.txt", "New file content")
+      additionalFiles += TaskFile("newFile.txt", "New file content")
+      additionalFiles = additionalFiles.map { EduFile(it.name, it.contents) }
     }
     updateCourse(remoteCourse)
     assertEquals("Additional file hasn't been added", 3, localCourse.additionalFiles.size)
@@ -400,7 +398,7 @@ class MarketplaceCourseUpdateTest : CourseUpdateTestBase<EduCourse>() {
       additionalFiles = listOf(
         TaskFile("build.gradle", "updated content"),
         TaskFile("settings.gradle", "")
-      )
+      ).map { EduFile(it.name, it.contents) }
     }
     updateCourse(remoteCourse)
     assertEquals("Additional file hasn't been updated", "updated content", localCourse.additionalFiles[0].contents.textualRepresentation)
@@ -433,9 +431,9 @@ class MarketplaceCourseUpdateTest : CourseUpdateTestBase<EduCourse>() {
     val buildGradleText = localCourse.additionalFiles[0].contents.textualRepresentation
     val remoteCourse = toRemoteCourse {
       additionalFiles = listOf(
+        TaskFile("settings.gradle", ""),
         TaskFile("build.gradle", buildGradleText),
-        TaskFile("settings.gradle", "")
-      )
+      ).map { EduFile(it.name, it.contents) }
     }
     updateCourse(remoteCourse, false)
     assertEquals("Additional file has been updated", buildGradleText, localCourse.additionalFiles[0].contents.textualRepresentation)

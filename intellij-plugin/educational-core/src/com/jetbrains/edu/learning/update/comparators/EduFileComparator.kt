@@ -15,6 +15,6 @@ class EduFileComparator private constructor(): Comparator<EduFile> {
   }
 
   companion object {
-    infix fun List<EduFile>.areNotEqual(other: List<EduFile>): Boolean = ListComparator(EduFileComparator()).compare(this, other) != 0
+    infix fun List<EduFile>.areNotEqual(other: List<EduFile>): Boolean = SetComparator(EduFileComparator()).compare(this, other) != 0
   }
 }
