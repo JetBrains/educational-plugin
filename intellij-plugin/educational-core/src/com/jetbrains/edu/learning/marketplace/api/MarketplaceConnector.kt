@@ -229,7 +229,10 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
   }
 
   private fun <T> Call<T>.executeUploadParsingErrors(
-    project: Project, failedActionTitle: String, onErrorAction: AnAction, showOnNotFoundCodeNotification: () -> Unit = {}
+    project: Project,
+    failedActionTitle: String,
+    onErrorAction: AnAction,
+    showOnNotFoundCodeNotification: () -> Unit = {}
   ): Result<Response<T>, String> {
     val response = executeCall().onError {
       showErrorNotification(project, failedActionTitle, it)
