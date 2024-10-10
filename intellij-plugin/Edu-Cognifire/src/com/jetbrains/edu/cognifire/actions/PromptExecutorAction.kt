@@ -21,7 +21,6 @@ import com.jetbrains.edu.cognifire.highlighting.HighlighterManager
 import com.jetbrains.edu.cognifire.highlighting.ListenerManager
 import com.jetbrains.edu.cognifire.highlighting.prompttocode.PromptToCodeHighlighter
 import com.jetbrains.edu.cognifire.highlighting.grammar.GrammarHighlighter
-import com.jetbrains.edu.cognifire.inspection.InspectionProcessor
 import com.jetbrains.edu.cognifire.messages.EduCognifireBundle
 import com.jetbrains.edu.cognifire.models.PromptExpression
 import com.jetbrains.edu.learning.actions.EduActionUtils
@@ -114,11 +113,10 @@ class PromptExecutorAction(private val element: PsiElement, private val id: Stri
     project: Project,
     promptExpression: PromptExpression
   ) {
-    val codeGenerator = CodeGenerator(promptExpression)
+    val codeGenerator = CodeGenerator(promptExpression, project, element.language)
 
     invokeLater {
-      var generatedCode = codeGenerator.generatedCode
-      generatedCode = InspectionProcessor.applyInspections(generatedCode, project, element.language)
+      val generatedCode = codeGenerator.generatedCode
       val codeExpression = CodeExpressionWriter.addCodeExpression(
         project,
         element,
