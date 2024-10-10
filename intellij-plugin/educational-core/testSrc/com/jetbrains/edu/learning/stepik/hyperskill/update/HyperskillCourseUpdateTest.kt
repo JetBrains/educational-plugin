@@ -1,7 +1,11 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.update
 
+import com.jetbrains.edu.learning.CourseBuilder
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
@@ -126,28 +130,17 @@ class HyperskillCourseUpdateTest : CourseUpdateTestBase<HyperskillCourse>() {
   fun `test section added`() {
     initiateLocalCourse()
 
-    val newTask = EduTask("task2").apply {
-      id = 2
-      descriptionFormat = DescriptionFormat.HTML
-      taskFiles = linkedMapOf(
-        "Task.kt" to TaskFile("src/Task.kt", "fun foo() {}"),
-        "Baz.kt" to TaskFile("src/Baz.kt", "fun baz() {}"),
-        "Tests.kt" to TaskFile("test/Tests.kt", "fun test2() {}")
-      )
+    val remoteCourse = toRemoteCourse { }
+    CourseBuilder(remoteCourse).section("section2", id = 2) {
+      lesson("lesson2", id = 2) {
+        eduTask("task2", stepId = 2, taskDescriptionFormat = DescriptionFormat.HTML) {
+          taskFile("src/Task.kt")
+          taskFile("src/Baz.kt")
+          taskFile("test/Tests.kt")
+        }
+      }
     }
-    val newLesson = Lesson().apply {
-      id = 2
-      name = "lesson2"
-      addTask(newTask)
-    }
-    val newSection = Section().apply {
-      id = 2
-      name = "section2"
-      addLesson(newLesson)
-    }
-    val remoteCourse = toRemoteCourse {
-      addSection(newSection)
-    }
+
     updateCourse(remoteCourse)
     assertEquals("Section hasn't been added", 2, localCourse.sections.size)
 
