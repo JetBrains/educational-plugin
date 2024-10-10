@@ -6,7 +6,6 @@ import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
-import com.intellij.util.concurrency.ThreadingAssertions
 import com.jetbrains.educational.ml.cognifire.responses.PromptToCodeResponse
 
 interface InspectionProcessor {
