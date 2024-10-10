@@ -1,6 +1,9 @@
 package com.jetbrains.edu.learning.marketplace.api
 
-import com.fasterxml.jackson.annotation.*
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.courseFormat.*
@@ -177,11 +180,6 @@ class CourseBean {
 }
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
-@JsonSubTypes(
-  JsonSubTypes.Type(value = SuccessCourseUploadResponse::class),
-  JsonSubTypes.Type(value = SuccessCourseUpdateUploadResponse::class),
-  JsonSubTypes.Type(value = FailedCourseUploadResponse::class)
-)
 sealed class UploadResponse
 
 @JsonIgnoreProperties(ignoreUnknown = true)
