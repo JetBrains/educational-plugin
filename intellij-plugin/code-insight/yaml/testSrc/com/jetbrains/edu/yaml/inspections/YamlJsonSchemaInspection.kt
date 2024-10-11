@@ -18,7 +18,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
       |type: coursera
       |language: Russian
       |summary: sum
-      |<warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property: prop</warning>
+      |<warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property</warning>: prop
       |programming_language: Plain text
       |programming_language_version: 1.42
       |environment: Android
@@ -39,7 +39,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
       |type: marketplace
       |language: Russian
       |summary: sum
-      |<warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property: prop</warning>
+      |<warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property</warning>: prop
       |programming_language: Plain text
       |programming_language_version: 1.42
       |environment: Android
@@ -58,7 +58,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
     }
 
     testHighlighting(getCourse().items[0], """
-      |<warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property: prop</warning>
+      |<warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property</warning>: prop
       |content:
       |- lesson1
     """.trimMargin("|"))
@@ -74,7 +74,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
 
     testHighlighting(getCourse().items[0], """
       |type: framework
-      |<warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property: prop</warning>
+      |<warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property</warning>: prop
       |content:
       |- task1
     """.trimMargin("|"))
@@ -101,20 +101,20 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
 
     testHighlighting(findTask(1, 0), """
     |type: edu
-    |<warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property: prop</warning>
+    |<warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property</warning>: prop
     |files:
     |- name: Test.java
     |  visible: true
     |  placeholders:
     |  - offset: 0
     |    length: 3
-    |    <warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property: prop</warning>
+    |    <warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property</warning>: prop
     |    placeholder_text: type here
     |    dependency:
     |      lesson: lesson1
     |      task: task1
     |      file: Test.java
-    |      <warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property: prop</warning>
+    |      <warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property</warning>: prop
     |      placeholder: 1
     |      is_visible: true
     |""".trimMargin("|"))
@@ -132,17 +132,17 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
 
     testHighlighting(findTask(0, 0), """
       |type: choice
-      |<warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property: prop</warning>
+      |<warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property</warning>: prop
       |is_multiple_choice: false
       |options:
       |- text: 1
       |  is_correct: true
       |- text: 2
       |  is_correct: false
-      |  <warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property: prop</warning>
+      |  <warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property</warning>: prop
       |files:
       |- name: Test.java
-      |  <warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property: prop</warning>
+      |  <warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property</warning>: prop
       |  visible: true
       |""".trimMargin("|"))
   }

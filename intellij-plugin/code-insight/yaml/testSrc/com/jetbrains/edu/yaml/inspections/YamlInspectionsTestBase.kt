@@ -1,6 +1,8 @@
 package com.jetbrains.edu.yaml.inspections
 
 import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.openapi.application.ApplicationInfo
+import com.intellij.openapi.util.BuildNumber
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
@@ -9,6 +11,9 @@ import com.jetbrains.edu.yaml.YamlCodeInsightTest
 import kotlin.reflect.KClass
 
 abstract class YamlInspectionsTestBase(private val inspectionClass: KClass<out LocalInspectionTool>) : YamlCodeInsightTest() {
+
+  // BACKCOMPAT: 2024.2
+  private val BUILD243 = BuildNumber.fromString("243")!!
 
   override fun setUp() {
     super.setUp()
@@ -35,7 +40,14 @@ abstract class YamlInspectionsTestBase(private val inspectionClass: KClass<out L
   }
 
   protected fun testHighlighting(item: StudyItem, configText: String) {
-    openConfigFileWithText(item, configText)
+    val fixedConfig = if (ApplicationInfo.getInstance().build < BUILD243) {
+      configText.replace("wrong_property</warning>: prop", "wrong_property: prop</warning>")
+    }
+    else {
+      configText
+    }
+
+    openConfigFileWithText(item, fixedConfig)
     myFixture.checkHighlighting()
   }
 }
