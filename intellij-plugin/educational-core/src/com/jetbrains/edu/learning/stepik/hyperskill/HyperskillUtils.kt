@@ -251,6 +251,7 @@ private fun openTopic(project: Project, topic: HyperskillTopic, nextActivityInfo
         HyperskillOpenStepWithProjectRequest(course.id, nextStep.id, language)
       ).onError {
         logger<ProjectOpener>().warn("Downloading the topic resulted in an error: ${it.message}. The error was ignored and not displayed for the user.")
+        showNoNextTopicNotification(project)
       }
     }
     else -> showNoNextTopicNotification(project)
