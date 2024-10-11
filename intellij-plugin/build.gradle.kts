@@ -101,6 +101,12 @@ val cppPlugins = listOf(
   "org.jetbrains.plugins.clion.test.catch"
 )
 
+val sqlPlugins = listOf(
+  sqlPlugin,
+  // https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1791
+  "intellij.charts"
+)
+
 val csharpPlugins = listOf(
   "com.intellij.resharper.unity"
 )
@@ -850,7 +856,7 @@ project("sql") {
       val ideVersion = if (isStudioIDE || isPycharmIDE) ideaVersion else baseVersion
       intellijIde(ideVersion)
 
-      intellijPlugins(sqlPlugin)
+      intellijPlugins(sqlPlugins)
     }
 
     api(project(":intellij-plugin:educational-core"))
@@ -865,7 +871,7 @@ project("sql:sql-jvm") {
       intellijIde(ideaVersion)
 
       intellijPlugins(jvmPlugins)
-      intellijPlugins(sqlPlugin)
+      intellijPlugins(sqlPlugins)
     }
 
     api(project(":intellij-plugin:sql"))
