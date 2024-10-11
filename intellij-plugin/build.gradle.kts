@@ -126,7 +126,18 @@ fun idePlugins(type: IntelliJPlatformType): List<String> {
   return ideToPlugins[type].orEmpty() + psiViewerPlugin
 }
 
+/**
+ * Modules created automatically because of the project file structure.
+ * These modules are not intended to be part of plugin,
+ * so they shouldn't be set up in the same way as others.
+ *
+ * Mostly workaround to overcome cons of using `allprojects` and `subprojects`
+ */
+val implicitModules = setOf(":intellij-plugin:features")
+
 allprojects {
+  if (path in implicitModules) return@allprojects
+
   apply {
     plugin("org.jetbrains.kotlin.plugin.serialization")
   }
@@ -204,6 +215,8 @@ allprojects {
 }
 
 subprojects {
+  if (path in implicitModules) return@subprojects
+
   apply {
     plugin("org.jetbrains.intellij.platform.module")
   }
@@ -310,6 +323,7 @@ dependencies {
     pluginModule(implementation(project("sql:sql-jvm")))
     pluginModule(implementation(project("github")))
     pluginModule(implementation(project("remote-env")))
+    pluginModule(implementation(project("features:command-line")))
     // BACKCOMPAT: 2024.1
     if (isAtLeast242) {
       // bundled localization resources can be used only since 2024.2,
@@ -902,6 +916,18 @@ project("localization") {
     intellijPlatform {
       intellijIde(baseVersion)
     }
+  }
+}
+
+project("features:command-line") {
+  dependencies {
+    intellijPlatform {
+      intellijIde(baseVersion)
+    }
+
+    implementation(project(":intellij-plugin:educational-core"))
+
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
   }
 }
 
