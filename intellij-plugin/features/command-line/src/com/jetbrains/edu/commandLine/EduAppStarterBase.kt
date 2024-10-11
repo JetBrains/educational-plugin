@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.command
+package com.jetbrains.edu.commandLine
 
 import com.intellij.openapi.application.ModernApplicationStarter
 import com.intellij.openapi.application.ex.ApplicationManagerEx
@@ -49,7 +49,7 @@ abstract class EduAppStarterBase<T : Args> : ModernApplicationStarter() {
       logErrorAndExit(error)
     }
   }
-  
+
   companion object {
     @JvmStatic
     protected val LOG = logger<EduCourseCreatorAppStarter>()

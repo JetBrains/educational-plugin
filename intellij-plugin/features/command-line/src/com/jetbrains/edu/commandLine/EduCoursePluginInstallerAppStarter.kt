@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.command
+package com.jetbrains.edu.commandLine
 
 import com.intellij.ide.CliResult
 import com.intellij.ide.plugins.HeadlessPluginsInstaller

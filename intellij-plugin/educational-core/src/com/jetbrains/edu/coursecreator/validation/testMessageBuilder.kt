@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.command.validation
+package com.jetbrains.edu.coursecreator.validation
 
 import com.intellij.execution.testframework.sm.ServiceMessageBuilder
 

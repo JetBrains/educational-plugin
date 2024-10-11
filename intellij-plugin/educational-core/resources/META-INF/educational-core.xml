@@ -272,12 +272,6 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
-
-    <appStarter id="createCourse" implementation="com.jetbrains.edu.learning.command.EduCourseCreatorAppStarter"/>
-    <appStarter id="installCoursePlugins" implementation="com.jetbrains.edu.learning.command.EduCoursePluginInstallerAppStarter"/>
-    <appStarter id="validateCourse" implementation="com.jetbrains.edu.learning.command.validation.EduCourseValidatorAppStarter"/>
-    <appStarter id="openCourse" implementation="com.jetbrains.edu.learning.command.EduOpenCourseAppStarter"/>
-
     <applicationService serviceInterface="com.jetbrains.edu.learning.EduBrowser"
                         serviceImplementation="com.jetbrains.edu.learning.EduBrowser"
                         testServiceImplementation="com.jetbrains.edu.learning.MockEduBrowser"/>
@@ -461,7 +455,7 @@
     <checkListener implementation="com.jetbrains.edu.learning.socialmedia.twitter.TwitterAction"/>
     <checkListener implementation="com.jetbrains.edu.learning.socialmedia.linkedIn.LinkedInAction"/>
     <checkListener implementation="com.jetbrains.edu.learning.statistics.PostFeedbackCheckListener"/>
-    <checkListener implementation="com.jetbrains.edu.learning.command.validation.ValidationCheckListener"/>
+    <checkListener implementation="com.jetbrains.edu.coursecreator.validation.ValidationCheckListener"/>
     <coursesPlatformProviderFactory id="Marketplace" order="first"
                                     implementation="com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProviderFactory"/>
     <coursesPlatformProviderFactory id="JetBrainsAcademy" order="after Marketplace"

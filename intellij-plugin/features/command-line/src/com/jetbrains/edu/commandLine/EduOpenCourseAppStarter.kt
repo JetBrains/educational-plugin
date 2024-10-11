@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.command
+package com.jetbrains.edu.commandLine
 
 import com.intellij.featureStatistics.fusCollectors.LifecycleUsageTriggerCollector
 import com.intellij.ide.AppLifecycleListener

@@ -1,7 +1,9 @@
-package com.jetbrains.edu.learning.command.validation
+package com.jetbrains.edu.commandLine.validation
 
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.command.*
+import com.jetbrains.edu.commandLine.*
+import com.jetbrains.edu.coursecreator.validation.CourseValidationHelper
+import com.jetbrains.edu.coursecreator.validation.ValidationParams
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import org.apache.commons.cli.Option

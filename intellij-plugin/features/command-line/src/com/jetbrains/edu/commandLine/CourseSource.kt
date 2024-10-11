@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.command
+package com.jetbrains.edu.commandLine
 
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course

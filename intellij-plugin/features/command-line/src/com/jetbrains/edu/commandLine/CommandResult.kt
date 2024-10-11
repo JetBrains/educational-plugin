@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.command
+package com.jetbrains.edu.commandLine
 
 sealed class CommandResult {
   abstract val exitCode: Int
