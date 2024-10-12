@@ -10,6 +10,7 @@ import com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.PushHyperskillL
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.InMemoryBinaryContents
+import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.StepikNames
@@ -28,13 +29,17 @@ class HyperskillLessonTest : EduTestCase() {
       frameworkLesson {
         eduTask {}
       }
-      additionalFile("package.json", "My cool dependencies")
+      additionalFile("package.json", InMemoryTextualContents("My cool dependencies"))
     }
     val info = AdditionalFilesUtils.collectAdditionalLessonInfo(course.lessons.first(), project)
 
     assertEquals(1, info.additionalFiles.size)
     assertEquals("package.json", info.additionalFiles[0].name)
-    assertEquals("My cool dependencies", info.additionalFiles[0].text)
+    assertContentsEqual(
+      "package.json",
+      InMemoryTextualContents("My cool dependencies"),
+      info.additionalFiles[0].contents
+    )
   }
 
   @Test
