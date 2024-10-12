@@ -2,6 +2,7 @@
   <!--suppress PluginXmlValidity -->
   <dependencies>
     <plugin id="com.intellij.modules.rider"/>
+    <plugin id="com.intellij.resharper.unity"/>
     <module name="intellij.rider"/>
   </dependencies>
 
@@ -70,6 +71,8 @@
   <extensions defaultExtensionNs="Educational">
     <configurator implementationClass="com.jetbrains.edu.csharp.CSharpConfigurator" language="C#"
                   displayName="C#"/>
+    <configurator implementationClass="com.jetbrains.edu.csharp.hyperskill.CSharpHyperskillConfigurator" language="C#"
+                  courseType="Hyperskill"/>
     <courseViewPaneCustomization implementation="com.jetbrains.edu.csharp.CSharpCourseViewPaneCustomization"/>
     <studyItemRefactoringHandler implementation="com.jetbrains.edu.csharp.refactoring.CSharpStudyItemRefactoringHandler"/>
   </extensions>

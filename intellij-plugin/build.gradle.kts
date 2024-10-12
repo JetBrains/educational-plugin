@@ -101,6 +101,10 @@ val cppPlugins = listOf(
   "org.jetbrains.plugins.clion.test.catch"
 )
 
+val csharpPlugins = listOf(
+  "com.intellij.resharper.unity"
+)
+
 val ideToPlugins = mapOf(
   // Since 2024.2 Python Community plugin is available in paid products (like IU) together with Python Pro as its base dependency.
   // Actually, Python Community contains all necessary code that we need.
@@ -825,6 +829,7 @@ if (isAtLeast242) {
     dependencies {
       intellijPlatform {
         intellijIde(riderVersion!!)
+        intellijPlugins(csharpPlugins)
       }
 
       implementation(project(":intellij-plugin:educational-core"))
