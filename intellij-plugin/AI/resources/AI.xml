@@ -8,6 +8,7 @@
 
     <action id="Educational.GetCourseTranslation"
             class="com.jetbrains.edu.ai.translation.action.GetCourseTranslation"
+            icon="com.jetbrains.edu.ai.ui.EducationalAIIcons.Translation"
             internal="true"/>
 
     <action id="Educational.ResetCourseTranslation"
