@@ -7,8 +7,10 @@ import com.jetbrains.edu.ai.translation.TranslationLoader
 import com.jetbrains.edu.ai.translation.dialog.GetCourseTranslationDialog
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import org.jetbrains.annotations.NonNls
 
+/**
+ * @see [com.jetbrains.edu.learning.actions.EduActionUtils.COURSE_TRANSLATION_ACTION_ID]
+ */
 @Suppress("ComponentNotRegistered")
 class GetCourseTranslation : DumbAwareAction() {
   override fun actionPerformed(e: AnActionEvent) {
@@ -25,15 +27,13 @@ class GetCourseTranslation : DumbAwareAction() {
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false
     val project = e.project ?: return
-    val course = project.course as? EduCourse
-    e.presentation.isEnabledAndVisible = course?.isMarketplaceRemote == true && !TranslationLoader.isRunning(project)
+    val course = project.course as? EduCourse ?: return
+    if (!course.isStudy || !course.isMarketplaceRemote) {
+      return
+    }
+    e.presentation.isVisible = true
+    e.presentation.isEnabled = !TranslationLoader.isRunning(project)
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
-
-  companion object {
-    @Suppress("unused")
-    @NonNls
-    const val ACTION_ID = "Educational.GetCourseTranslation"
-  }
 }
