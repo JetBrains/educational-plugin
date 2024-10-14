@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.actions
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
@@ -15,8 +14,6 @@ import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
-import com.intellij.ui.JBColor
-import com.jetbrains.edu.learning.EduUtilsKt.showPopup
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -36,15 +33,10 @@ class AiDebuggingAction : ActionWithProgressIcon(), DumbAware {
   private var aiDebuggingNotificationPanel: JComponent? = null
   private var highlighter: RangeHighlighter? = null
 
-  init {
-    templatePresentation.text = "debug ai" //for button
-    setUpSpinnerPanel("progress text")
-  }
-
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     if (DumbService.isDumb(project)) {
-      e.dataContext.showPopup(ActionUtil.getUnavailableMessage(EduCoreBundle.message("action.Educational.AiDebuggingNotification.description"), false))
+      //e.dataContext.showPopup(ActionUtil.getUnavailableMessage(EduCoreBundle.message("action.Educational.AiDebuggingNotification.description"), false))
       return
     }
     FileDocumentManager.getInstance().saveAllDocuments()
@@ -52,7 +44,7 @@ class AiDebuggingAction : ActionWithProgressIcon(), DumbAware {
     closeNextStepHintNotificationPanel()
 
     if (!GetDebuggingSessionState.getInstance(project).lock()) {
-      e.dataContext.showPopup(EduCoreBundle.message("action.Educational.AiDebuggingNotification.already.running"))
+      //e.dataContext.showPopup(EduCoreBundle.message("action.Educational.AiDebuggingNotification.already.running"))
       return
     }
 
@@ -99,27 +91,11 @@ class AiDebuggingAction : ActionWithProgressIcon(), DumbAware {
       processStarted()
       ApplicationManager.getApplication().executeOnPooledThread { EduActionUtils.showFakeProgress(indicator) }
 
-
-      //val taskProcessor = TaskProcessorImpl(task)
       runBlockingCancellable {
-        /*val assistantHint = AiHintsAssistant.getAssistant(taskProcessor).getHint().getOrElse {
-          showHintWindow(it.message ?: EduCoreBundle.message("action.Educational.NextStepHint.error.unknown"))
-          return@runBlockingCancellable
-        }
-        val codeHint = assistantHint.codeHint?.value
-*/
+
         val action = showDebugNotification(project)
         showHintWindow(EduCoreBundle.message("action.Educational.AiDebuggingNotification.text"), action)
         return@runBlockingCancellable
-
-//        if (codeHint != null) {
-//          //val taskFile = taskProcessor.currentTaskFile ?: project.selectedTaskFile ?: error("Can't get task file")
-//          //highlighter = highlightFirstCodeDiffPositionOrNull(taskFile, codeHint, indicator)
-//          val action = showDebugNotification(project)
-//          showHintWindow("assistantHint.textHint.value", action)
-//          return@runBlockingCancellable
-//        }
-//        showHintWindow("assistantHint.textHint.value")
       }
 
     }
@@ -131,57 +107,14 @@ class AiDebuggingAction : ActionWithProgressIcon(), DumbAware {
 
     private fun showHintWindow(textToShow: String, action: AnAction? = null) {
       task.status = CheckStatus.Unchecked
+      val nextStepHintNotification = NextStepHintNotificationFrame(textToShow, action, actionTargetParent)
+
       project.invokeLater {
         TaskToolWindowView.getInstance(project).updateCheckPanel(task)
+        aiDebuggingNotificationPanel = nextStepHintNotification.rootPane
+        aiDebuggingNotificationPanel?.let { actionTargetParent?.add(it, BorderLayout.NORTH) }
       }
-      val nextStepHintNotification = NextStepHintNotificationFrame(textToShow, action, actionTargetParent).apply {
-        onClosed {
-          rejectHint(task)
-        }
-      }
-      aiDebuggingNotificationPanel = nextStepHintNotification.rootPane
-      aiDebuggingNotificationPanel?.let { actionTargetParent?.add(it, BorderLayout.NORTH) }
     }
-
-    /**
-     * Highlights the first code difference position between the student's code in the task file and a given code hint.
-     *
-     * @return The range highlighter indicating the first code difference position, or null
-     * if virtualFile or editor is null or
-     * if the focus is on another file or
-     * if no differences are found.
-     *
-     */
-    /*private fun highlightFirstCodeDiffPositionOrNull(
-      taskFile: TaskFile,
-      codeHint: String,
-      indicator: ProgressIndicator
-    ): RangeHighlighter? {
-      val editor = FileEditorManager.getInstance(project).selectedTextEditor ?: return null
-      val virtualFile = taskFile.getVirtualFile(project) ?: return null
-      val currentFile = FileDocumentManager.getInstance().getFile(editor.document)
-      if (currentFile != virtualFile) {
-        return null
-      }
-      val studentText = VfsUtil.loadText(virtualFile)
-      val fragments = ComparisonManager.getInstance().compareLines(
-        studentText, codeHint,
-        ComparisonPolicy.DEFAULT, indicator
-      )
-      return fragments.firstOrNull()?.startLine1?.let { line ->
-        val attributes = TextAttributes(
-          null, HIGHLIGHTER_COLOR, null,
-          EffectType.BOXED, Font.PLAIN
-        )
-        if (line < studentText.lines().size) {
-          editor.markupModel.addLineHighlighter(line, 0, attributes)
-        }
-        else {
-          null
-        }
-      }
-    }*/
-
   }
 
   @Service(Service.Level.PROJECT)
@@ -214,9 +147,6 @@ class AiDebuggingAction : ActionWithProgressIcon(), DumbAware {
 
     @NonNls
     const val ACTION_ID = "Educational.AiDebugging"
-    private val HIGHLIGHTER_COLOR = JBColor(0xEFE5FF, 0x433358)
-
- /*   val NEXT_STEP_HINT_DIFF_FLAG: Key<Boolean> = Key.create("nextStepHintDiffFlag")
-    val IS_ACCEPTED_HINT: Key<Boolean> = Key.create("isAcceptedHint")*/
+    //private val HIGHLIGHTER_COLOR = JBColor(0xEFE5FF, 0x433358)
   }
 }
