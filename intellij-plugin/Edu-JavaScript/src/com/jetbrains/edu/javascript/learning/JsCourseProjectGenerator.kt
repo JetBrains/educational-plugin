@@ -1,5 +1,6 @@
 package com.jetbrains.edu.javascript.learning
 
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
 import com.intellij.javascript.nodejs.library.core.NodeCoreLibraryConfigurator
 import com.intellij.javascript.nodejs.settings.NodeSettingsConfigurable
@@ -35,6 +36,19 @@ class JsCourseProjectGenerator(builder: JsCourseBuilder, course: Course) : Cours
       installNodeDependencies(project, packageJsonFile)
     }
 
+    configureNodeJS(interpreter, project, onConfigurationFinished)
+    // Pass empty callback here because Core library configuration will be made asynchronously
+    // Before this, we can't consider JS course project is fully configured
+    super.afterProjectGenerated(project, projectSettings, onConfigurationFinished = {})
+  }
+
+  private fun configureNodeJS(
+    interpreter: NodeJsInterpreter,
+    project: Project,
+    onConfigurationFinished: () -> Unit
+  ) {
+    if (isUnitTestMode) return
+
     val modalityState = ModalityState.current()
     interpreter.provideCachedVersionOrFetch { version ->
       project.invokeLater(modalityState) {
@@ -53,9 +67,6 @@ class JsCourseProjectGenerator(builder: JsCourseBuilder, course: Course) : Cours
         }
       }
     }
-    // Pass empty callback here because Core library configuration will be made asynchronously
-    // Before this, we can't consider JS course project is fully configured
-    super.afterProjectGenerated(project, projectSettings, onConfigurationFinished = {})
   }
 
   @Throws(IOException::class)
