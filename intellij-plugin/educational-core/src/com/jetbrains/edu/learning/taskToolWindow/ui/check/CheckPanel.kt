@@ -3,7 +3,9 @@ package com.jetbrains.edu.learning.taskToolWindow.ui.check
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl
+import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.Alarm
@@ -108,7 +110,6 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
   }
 
   fun updateCheckDetails(task: Task, result: CheckResult? = null) {
-    updateGetHintButtonWrapper(task)
     checkFinishedPanel.removeAll()
     checkFinishedPanel.addNextTaskButton(task)
     checkFinishedPanel.addRetryButton(task)
@@ -117,6 +118,7 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     if (checkResult != null) {
       linkPanel.removeAll()
       checkDetailsPlaceholder.add(CheckDetailsPanel(project, task, checkResult, checkTimeAlarm), BorderLayout.SOUTH)
+      updateAiDebuggingNotification(task)
     }
     updateBackground()
   }
@@ -149,14 +151,12 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     updateCheckDetails(task)
   }
 
-  private fun updateGetHintButtonWrapper(task: Task) {
-    getHintButtonWrapper.removeAll()
-
+  private fun updateAiDebuggingNotification(task: Task) {
     if (AiDebuggingAction.isAvailable(task)) {
       val action = ActionManager.getInstance().getAction(AiDebuggingAction.ACTION_ID) as AiDebuggingAction
-      val nextStepHintButton = CheckPanelButtonComponent(action = action)
       action.actionTargetParent = checkDetailsPlaceholder
-      getHintButtonWrapper.add(nextStepHintButton, BorderLayout.WEST)
+      val dataContext = SimpleDataContext.getProjectContext(project)
+      ActionUtil.invokeAction(action, dataContext, "", null, null)
     }
   }
 
