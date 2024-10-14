@@ -29,3 +29,6 @@ fun TranslationProjectSettings.Companion.getCurrentTranslationLanguage(project: 
 fun TranslationProjectSettings.Companion.changeCurrentTranslationLanguage(project: Project, language: Language) {
   getInstance(project).currentTranslationLanguageCode = language.code
 }
+
+fun TranslationProjectSettings.Companion.isCourseTranslated(project: Project): Boolean =
+  getInstance(project).currentTranslationLanguageCode != null

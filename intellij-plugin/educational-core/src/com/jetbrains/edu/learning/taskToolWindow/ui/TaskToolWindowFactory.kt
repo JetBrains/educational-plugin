@@ -18,6 +18,7 @@ import com.intellij.ui.awt.RelativePoint
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.actions.CCEditTaskDescription
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
+import com.jetbrains.edu.learning.actions.EduActionUtils.COURSE_TRANSLATION_ACTION_ID
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -42,7 +43,12 @@ class TaskToolWindowFactory : ToolWindowFactory, DumbAware {
   }
 
   private fun ToolWindow.initTitleActions() {
-    val actions = arrayOf(CCEditTaskDescription.ACTION_ID, PreviousTaskAction.ACTION_ID, NextTaskAction.ACTION_ID).map {
+    val actions = arrayOf(
+      CCEditTaskDescription.ACTION_ID,
+      COURSE_TRANSLATION_ACTION_ID,
+      PreviousTaskAction.ACTION_ID,
+      NextTaskAction.ACTION_ID
+    ).map {
       ActionManager.getInstance().getAction(it) ?: error("Action $it not found")
     }
     setTitleActions(actions)

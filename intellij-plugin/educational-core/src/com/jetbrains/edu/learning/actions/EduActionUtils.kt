@@ -29,6 +29,11 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
 object EduActionUtils {
+  /**
+   * @see [com.jetbrains.edu.ai.translation.action.GetCourseTranslation]
+   */
+  @NonNls
+  const val COURSE_TRANSLATION_ACTION_ID: String = "Educational.GetCourseTranslation"
 
   fun getAction(@NonNls id: String): AnAction {
     return ActionManager.getInstance().getAction(id) ?: error("Can not find action by id $id")
