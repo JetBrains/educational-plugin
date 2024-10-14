@@ -1,6 +1,9 @@
 <component name="InspectionProjectProfileManager">
   <profile version="1.0">
     <option name="myName" value="idea.default" />
+    <inspection_tool class="60175927-3d94-3de3-bbe6-54353bd28bc6" enabled="true" level="WARNING" enabled_by_default="false">
+      <scope name="Production" level="WARNING" enabled="true" />
+    </inspection_tool>
     <inspection_tool class="AbstractMethodCallInConstructor" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="AccessStaticViaInstance" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="ActionIsNotPreviewFriendly" enabled="true" level="Strong Warning" enabled_by_default="true" editorAttributes="Strong Warning" />
