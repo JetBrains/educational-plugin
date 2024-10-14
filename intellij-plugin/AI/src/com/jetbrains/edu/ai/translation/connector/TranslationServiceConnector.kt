@@ -4,7 +4,6 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.thisLogger
-import com.intellij.util.concurrency.SynchronizedClearableLazy
 import com.jetbrains.edu.ai.host.EduAIServiceHost
 import com.jetbrains.edu.ai.translation.service.TranslationService
 import com.jetbrains.edu.learning.Err
@@ -34,13 +33,13 @@ class TranslationServiceConnector(private val scope: CoroutineScope) {
   private val connectionPool = ConnectionPool()
 
   private val service: TranslationService
-    get() = serviceHolder.value
+    get() = translationService()
 
-  private val serviceHolder = SynchronizedClearableLazy {
+  private fun translationService(): TranslationService {
     val customInterceptor = TranslationInterceptor()
     val converterFactory = TranslationConverterFactory()
 
-    createRetrofitBuilder(aiServiceUrl, connectionPool, customInterceptor = customInterceptor)
+    return createRetrofitBuilder(aiServiceUrl, connectionPool, customInterceptor = customInterceptor)
       .addConverterFactory(converterFactory)
       .build()
       .create(TranslationService::class.java)
