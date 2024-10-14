@@ -2,8 +2,10 @@ package com.jetbrains.edu.cognifire.utils
 
 import com.intellij.psi.PsiElement
 import com.jetbrains.edu.cognifire.CognifireDslPackageCallChecker
+import com.jetbrains.edu.cognifire.models.PromptExpression
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.KOTLIN
+import com.jetbrains.educational.ml.cognifire.responses.PromptToCodeResponse
 
 fun isCognifireApplicable(course: Course) = course.languageId == KOTLIN
 
@@ -12,3 +14,5 @@ fun PsiElement.isPromptBlock() = text.startsWith(PROMPT) &&
 
 const val PROMPT = "prompt"
 const val CODE = "code"
+
+fun PromptToCodeResponse.toGeneratedCode() = distinctBy { it.codeLineNumber }.joinToString(System.lineSeparator()) { it.generatedCodeLine }

@@ -1,8 +1,11 @@
 package com.jetbrains.edu.kotlin.cognifire.psi
 
 import com.jetbrains.edu.cognifire.GeneratedCodeParser
+import com.jetbrains.edu.cognifire.PurificationWrongTodo
 import com.jetbrains.edu.cognifire.models.FunctionSignature
+import com.jetbrains.edu.cognifire.utils.toGeneratedCode
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.educational.ml.cognifire.responses.GeneratedCodeLine
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.junit.Test
 
@@ -45,15 +48,34 @@ class KtGeneratedCodeParserTest : EduTestCase() {
 
   @Test
   fun `test hasErrors with todo messages related to return value`() {
-    val generatedCode = """
-      val wordLength = 4
-      val maxAttemptsCount = 3
-      val secretExample = "ACEB"
-      println(getGameRules(wordLength, maxAttemptsCount, secretExample))
-      playGame(generateSecret(), wordLength, maxAttemptsCount)
-      TODO("Specify the return value or further operations")
-    """.trimIndent()
-    assertFalse(GeneratedCodeParser.hasErrors(project, generatedCode, mainFunctionSignature, language))
+    val promptToCodeTranslation = listOf(
+      GeneratedCodeLine(
+        promptLineNumber = 0,
+        codeLineNumber = 0,
+        promptLine = "Calculate the minimum of two values: the length of the string obtained by filtering characters in `secret` that are also in `guess`, and the length of the string obtained by filtering characters in `guess` that are also in `secret`.",
+        generatedCodeLine = "val filteredSecret = secret.filter { it in guess }"
+      ),
+      GeneratedCodeLine(
+        promptLineNumber = 0,
+        codeLineNumber = 1,
+        promptLine = "Calculate the minimum of two values: the length of the string obtained by filtering characters in `secret` that are also in `guess`, and the length of the string obtained by filtering characters in `guess` that are also in `secret`.",
+        generatedCodeLine = "val filteredGuess = guess.filter { it in secret }\n"
+      ),
+      GeneratedCodeLine(
+        promptLineNumber = 0,
+        codeLineNumber = 2,
+        promptLine = "Calculate the minimum of two values: the length of the string obtained by filtering characters in `secret` that are also in `guess`, and the length of the string obtained by filtering characters in `guess` that are also in `secret`.",
+        generatedCodeLine = "val minLength = minOf(filteredSecret.length, filteredGuess.length)"
+      ),
+      GeneratedCodeLine(
+        promptLineNumber = 0,
+        codeLineNumber = 3,
+        promptLine = "Calculate the minimum of two values: the length of the string obtained by filtering characters in `secret` that are also in `guess`, and the length of the string obtained by filtering characters in `guess` that are also in `secret`.",
+        generatedCodeLine = "TODO(\"Specify the return value or further actions\")"
+      ),
+    )
+    val promptToCode = PurificationWrongTodo.deleteWrongTodo(project, promptToCodeTranslation, mainFunctionSignature, language)
+    assertFalse(GeneratedCodeParser.hasErrors(project, promptToCode.toGeneratedCode(), mainFunctionSignature, language))
   }
 
   companion object {
