@@ -73,7 +73,7 @@ open class GeneratedCodeValidationAction(private val shouldGenerateBadPrompts: B
     indicator.isIndeterminate = false
     indicator.fraction = 0.0
     val language = course.languageById ?: return@runBackgroundableTask
-    val totalTasks = course.allTasks.filter { it is EduTask }.size
+    val totalTasks = course.allTasks.filterIsInstance<EduTask>().size
     var doneTasks = 0
     course.lessons.forEach { lesson ->
       doneTasks += processLesson(lesson, project, language, indicator, totalTasks, doneTasks)
@@ -91,14 +91,13 @@ open class GeneratedCodeValidationAction(private val shouldGenerateBadPrompts: B
     totalTasks: Int,
     doneTasks: Int
   ): Int {
-    val tasks = lesson.taskList.filter { it is EduTask }
+    val tasks = lesson.taskList.filterIsInstance<EduTask>()
     if (tasks.isEmpty()) return 0
     val records = mutableListOf<GeneratedCodeDataframeRecord>()
     val task = tasks.lastOrNull() ?: return 0
     return processTask(task, language, project, records, indicator, totalTasks, doneTasks).also {
       records.toDataFrame().writeCSV()
     }
-    records.toDataFrame().writeCSV()
   }
 
   private fun processTask(
