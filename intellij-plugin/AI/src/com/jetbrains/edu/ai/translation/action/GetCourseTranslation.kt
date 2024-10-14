@@ -5,12 +5,21 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.ai.translation.TranslationLoader
 import com.jetbrains.edu.ai.translation.dialog.GetCourseTranslationDialog
+import com.jetbrains.edu.ai.ui.EducationalAIIcons
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import org.jetbrains.annotations.NonNls
 
+/**
+ * @see [com.jetbrains.edu.learning.actions.EduActionUtils.COURSE_TRANSLATION_ACTION_ID]
+ */
 @Suppress("ComponentNotRegistered")
 class GetCourseTranslation : DumbAwareAction() {
+  init {
+    templatePresentation.icon = EducationalAIIcons.Translation
+    templatePresentation.hoveredIcon = EducationalAIIcons.TranslationHovered
+    templatePresentation.selectedIcon = EducationalAIIcons.TranslationPressed
+  }
+
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     if (project.isDisposed) return
@@ -25,15 +34,18 @@ class GetCourseTranslation : DumbAwareAction() {
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false
     val project = e.project ?: return
-    val course = project.course as? EduCourse
-    e.presentation.isEnabledAndVisible = course?.isMarketplaceRemote == true && !TranslationLoader.isRunning(project)
+    val course = project.course as? EduCourse ?: return
+    if (!course.isStudy || !course.isMarketplaceRemote) {
+      return
+    }
+    e.presentation.icon = if (course.translatedToLanguageCode == null) {
+      EducationalAIIcons.Translation
+    }
+    else {
+      EducationalAIIcons.TranslationEnabled
+    }
+    e.presentation.isEnabledAndVisible = !TranslationLoader.isRunning(project)
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
-
-  companion object {
-    @Suppress("unused")
-    @NonNls
-    const val ACTION_ID = "Educational.GetCourseTranslation"
-  }
 }

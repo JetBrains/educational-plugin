@@ -21,7 +21,7 @@ class GetCourseTranslationDialog(private val course: EduCourse) : DialogWrapper(
   private lateinit var comboBox: JComboBox<Language>
 
   init {
-    title = EduAIBundle.message("action.Educational.GetCourseTranslation.text")
+    title = EduAIBundle.message("ai.service.choose.translation.dialog.title")
 
     if (selectedLanguage == courseSourceLanguage) {
       course.translatedToLanguageCode?.let {
