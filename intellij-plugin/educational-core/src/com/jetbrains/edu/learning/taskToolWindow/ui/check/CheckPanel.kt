@@ -103,7 +103,6 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
   }
 
   fun updateCheckDetails(task: Task, result: CheckResult? = null) {
-    updateGetHintButtonWrapper(task)
     checkFinishedPanel.removeAll()
     checkFinishedPanel.addNextTaskButton(task)
     checkFinishedPanel.addRetryButton(task)
@@ -112,10 +111,7 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     if (checkResult != null) {
       linkPanel.removeAll()
       checkDetailsPlaceholder.add(CheckDetailsPanel(project, task, checkResult, checkTimeAlarm), BorderLayout.SOUTH)
-    }
-    updateBackground()
-    if (checkResult != null) {
-      AiDebuggingNotification.addAiDebuggingNotification(task, checkDetailsPlaceholder)
+      updateAiDebuggingNotification(task)
     }
   }
 
@@ -148,14 +144,12 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     updateCheckDetails(task)
   }
 
-  private fun updateGetHintButtonWrapper(task: Task) {
-    getHintButtonWrapper.removeAll()
-
+  private fun updateAiDebuggingNotification(task: Task) {
     if (AiDebuggingAction.isAvailable(task)) {
       val action = ActionManager.getInstance().getAction(AiDebuggingAction.ACTION_ID) as AiDebuggingAction
-      val nextStepHintButton = CheckPanelButtonComponent(action = action)
       action.actionTargetParent = checkDetailsPlaceholder
-      getHintButtonWrapper.add(nextStepHintButton, BorderLayout.WEST)
+      val dataContext = SimpleDataContext.getProjectContext(project)
+      ActionUtil.invokeAction(action, dataContext, "", null, null)
     }
   }
 
