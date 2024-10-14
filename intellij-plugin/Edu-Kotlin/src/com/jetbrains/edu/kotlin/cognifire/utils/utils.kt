@@ -2,6 +2,8 @@ package com.jetbrains.edu.kotlin.cognifire.utils
 
 import com.intellij.psi.PsiElement
 
+const val UNIT_RETURN_VALUE = "Unit"
+
 fun findBlock(
   element: PsiElement,
   step: (PsiElement) -> PsiElement?,
