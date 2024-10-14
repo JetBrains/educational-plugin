@@ -9,7 +9,6 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.actionSystem.PlatformDataKeys.LAST_ACTIVE_FILE_EDITOR
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction
 import com.intellij.openapi.actionSystem.impl.ActionButton
@@ -18,7 +17,6 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
@@ -28,6 +26,7 @@ import com.intellij.openapi.vfs.findFile
 import com.intellij.ui.GotItTooltip
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
+import com.jetbrains.edu.learning.actions.EduActionUtils.closeLastActiveFileEditor
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
@@ -73,7 +72,7 @@ class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
       return
     }
 
-    project.closeDiffWindow(e)
+    project.closeLastActiveFileEditor(e)
 
     EduNotificationManager.showInfoNotification(
       project,
@@ -147,12 +146,6 @@ class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
       document.setText(text)
       fileDocumentManager.saveDocument(document)
     }
-  }
-
-  private fun Project.closeDiffWindow(e: AnActionEvent) {
-    val fileEditorManager = FileEditorManager.getInstance(this)
-    val fileEditor = e.getData(LAST_ACTIVE_FILE_EDITOR) ?: return
-    fileEditorManager.closeFile(fileEditor.file)
   }
 
   private fun showApplyCodeFailedNotification(project: Project) {
