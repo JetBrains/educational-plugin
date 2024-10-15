@@ -22,7 +22,7 @@ import java.util.*
 
 @Throws(IOException::class)
 fun createCourseFromJson(pathToJson: String, courseMode: CourseMode, isEncrypted: Boolean = false): EduCourse {
-  val courseJson = File(pathToJson).readText().injectLastJsonVersion()
+  val courseJson = File(pathToJson).readText()
   val courseMapper = getCourseMapper(object : FileContentsFactory {
     override fun createBinaryContents(file: EduFile) = throw IllegalStateException("description of edu file ${file.pathInCourse} must contain the 'text' field")
     override fun createTextualContents(file: EduFile) = throw IllegalStateException("description of edu file ${file.pathInCourse} must contain the 'text' field")
@@ -34,8 +34,6 @@ fun createCourseFromJson(pathToJson: String, courseMode: CourseMode, isEncrypted
     this.courseMode = courseMode
   }
 }
-
-fun String.injectLastJsonVersion(): String = replace(""""version"\s*:\s*-1""".toRegex(), """"version" : $JSON_FORMAT_VERSION""")
 
 private fun configureCourseMapper(courseMapper: ObjectMapper, isEncrypted: Boolean) {
   courseMapper.configureCourseMapper(isEncrypted)
