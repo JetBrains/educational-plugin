@@ -68,7 +68,7 @@ private fun prepareCss(editorKit: HTMLEditorKit) {
 
 const val HINT_PROTOCOL = "hint://"
 const val CHEVRON_RIGHT = "&#8250"
-const val CHEVRON_DOWN = "&#8964"
+const val CHEVRON_DOWN = "&#9013"
 const val CHEVRON_HTML_CLASS_NAME = "chevron"
 const val CHEVRON_RIGHT_HTML_BLOCK = "<span class='$CHEVRON_HTML_CLASS_NAME'>$CHEVRON_RIGHT</span>"
 const val CHEVRON_DOWN_HTML_BLOCK = "<span class='$CHEVRON_HTML_CLASS_NAME'>$CHEVRON_DOWN</span>"
