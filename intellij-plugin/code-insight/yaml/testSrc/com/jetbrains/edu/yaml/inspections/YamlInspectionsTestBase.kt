@@ -12,9 +12,6 @@ import kotlin.reflect.KClass
 
 abstract class YamlInspectionsTestBase(private val inspectionClass: KClass<out LocalInspectionTool>) : YamlCodeInsightTest() {
 
-  // BACKCOMPAT: 2024.2
-  private val BUILD243 = BuildNumber.fromString("243")!!
-
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(listOf(inspectionClass.java))
@@ -40,7 +37,8 @@ abstract class YamlInspectionsTestBase(private val inspectionClass: KClass<out L
   }
 
   protected fun testHighlighting(item: StudyItem, configText: String) {
-    val fixedConfig = if (ApplicationInfo.getInstance().build < BUILD243) {
+    // BACKCOMPAT: 2024.2 remove the fixedConfig variable completely and use configText instead.
+    val fixedConfig = if (ApplicationInfo.getInstance().build < BuildNumber.fromString("243")!!) {
       configText.replace("wrong_property</warning>: prop", "wrong_property: prop</warning>")
     }
     else {
