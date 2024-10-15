@@ -4,10 +4,15 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.socialmedia.SocialmediaPluginConfigurator
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.annotations.VisibleForTesting
 import java.nio.file.Path
 
 interface SuggestToPostDialogUI {
   fun showAndGet(): Boolean
+
+  @VisibleForTesting
+  fun setConfigurators(configurators: List<SocialmediaPluginConfigurator>) {
+  }
 }
 
 fun createSuggestToPostDialogUI(
@@ -17,7 +22,10 @@ fun createSuggestToPostDialogUI(
   imagePath: Path?
 ): SuggestToPostDialogUI {
   return if (isUnitTestMode) {
-    MOCK ?: error("You should set mock UI via `withMockSuggestToDialogUI`")
+    val mockUI = MOCK
+    if (mockUI == null) error("You should set mock UI via `withMockSuggestToDialogUI`")
+    mockUI.setConfigurators(configurators)
+    mockUI
   }
   else {
     SuggestToPostDialog(project, configurators, message, imagePath)

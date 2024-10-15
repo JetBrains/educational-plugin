@@ -12,27 +12,39 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.socialmedia.SocialmediaPluginConfigurator
+import com.jetbrains.edu.learning.socialmedia.linkedIn.LinkedInPluginConfigurator
 import com.jetbrains.edu.learning.socialmedia.linkedIn.LinkedInSettings
 import com.jetbrains.edu.learning.socialmedia.suggestToPostDialog.SuggestToPostDialogUI
 import com.jetbrains.edu.learning.socialmedia.suggestToPostDialog.withMockSuggestToPostDialogUI
+import com.jetbrains.edu.learning.socialmedia.twitter.TwitterPluginConfigurator
 import com.jetbrains.edu.learning.socialmedia.twitter.TwitterSettings
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
+import com.jetbrains.edu.learning.stepik.hyperskill.socialmedia.linkedIn.HyperskillLinkedInConfigurator
+import com.jetbrains.edu.learning.stepik.hyperskill.socialmedia.twitter.HyperskillTwitterConfigurator
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.ui.getUICheckLabel
 import org.junit.Test
 
 class HyperskillTwittingTest : EduActionTestCase() {
 
+  private var hyperskillConfigurators: List<SocialmediaPluginConfigurator>? = null
+
   override fun setUp() {
     super.setUp()
     TwitterSettings.getInstance().askToPost = true
     LinkedInSettings.getInstance().askToPost = true
+    hyperskillConfigurators = listOf(
+      TwitterPluginConfigurator.EP_NAME.findExtensionOrFail(HyperskillTwitterConfigurator::class.java),
+      LinkedInPluginConfigurator.EP_NAME.findExtensionOrFail(HyperskillLinkedInConfigurator::class.java)
+    )
   }
 
   override fun tearDown() {
     try {
       TwitterSettings.getInstance().askToPost = false
       LinkedInSettings.getInstance().askToPost = false
+      hyperskillConfigurators = null
     }
     catch (e: Throwable) {
       addSuppressedException(e)
@@ -148,17 +160,31 @@ class HyperskillTwittingTest : EduActionTestCase() {
 
   private fun launchCheckAction(task: Task): Boolean {
     var isDialogShown = false
+    var testConfigurators: List<SocialmediaPluginConfigurator>? = null
     withMockSuggestToPostDialogUI(object : SuggestToPostDialogUI {
+
       override fun showAndGet(): Boolean {
         isDialogShown = true
         return false
       }
+
+      override fun setConfigurators(configurators: List<SocialmediaPluginConfigurator>) {
+        testConfigurators = configurators
+      }
+
     }) {
       val taskFile = task.taskFiles.values.first()
       val virtualFile = taskFile.getVirtualFile(project)
                         ?: error("Can't find virtual file for `${taskFile.name}` task file in `${task.name}` task")
       FileEditorManager.getInstance(project).openFile(virtualFile, true)
       testAction(CheckAction(task.getUICheckLabel()))
+    }
+
+    if (isDialogShown) {
+      assertEquals(testConfigurators, hyperskillConfigurators)
+    }
+    else {
+      assertNull(testConfigurators)
     }
     return isDialogShown
   }

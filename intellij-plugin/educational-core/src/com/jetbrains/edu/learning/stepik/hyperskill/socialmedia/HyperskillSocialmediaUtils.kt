@@ -30,5 +30,6 @@ object HyperskillSocialmediaUtils {
     return EduCoreBundle.message(messageKey, courseName)
   }
 
+  // NB! This number should be synchronized for X and LinkedIn to post the same images to both social networks
   const val NUMBER_OF_GIFS = 2
 }

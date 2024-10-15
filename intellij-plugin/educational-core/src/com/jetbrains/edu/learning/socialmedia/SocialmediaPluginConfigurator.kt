@@ -5,6 +5,13 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import java.nio.file.Path
 
+
+/**
+ * To support new social network:
+ *
+ * 1. Extend this interface and add EP_NAME.
+ * 2. Implement interface from Step 1 for the corresponding case (for example, Hyperskill or Kotlin Koans course).
+ */
 interface SocialmediaPluginConfigurator {
 
   val settings: SocialMediaSettings<SocialMediaSettings.SocialMediaSettingsState>

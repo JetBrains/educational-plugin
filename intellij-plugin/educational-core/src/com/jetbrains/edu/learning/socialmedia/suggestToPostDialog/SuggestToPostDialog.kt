@@ -31,7 +31,13 @@ class SuggestToPostDialog(
   private val checkBoxes = mutableMapOf<SocialMediaSettings<SocialMediaSettings.SocialMediaSettingsState>, JBCheckBox>()
 
   init {
-    title = EduCoreBundle.message("linkedin.dialog.title")
+    val onlyOneConfigurator = configurators.size == 1
+    title = if (onlyOneConfigurator) {
+      EduCoreBundle.message("twitter.dialog.title", configurators[0].settings.name)
+    }
+    else {
+      EduCoreBundle.message("linkedin.dialog.title")
+    }
 
     setDoNotAskOption(SuggestDoNotAskToPostOption(checkBoxes))
     setOKButtonText(EduCoreBundle.message("linkedin.post.button.text"))
@@ -45,7 +51,7 @@ class SuggestToPostDialog(
         isOKActionEnabled = checkBoxes.values.any { it.isSelected }
       }
     }
-    if (configurators.size > 1) {
+    if (!onlyOneConfigurator) {
       val checkBoxesPanel = JPanel(FlowLayout(FlowLayout.RIGHT, 0, 0))
       checkBoxesPanel.add(JBLabel(EduCoreBundle.message("label.share.on")))
       checkBoxesPanel.add(Box.createHorizontalStrut(10))
