@@ -14,6 +14,8 @@ import java.util.*
 val environmentName: String by project
 // BACKCOMPAT: 2024.1. Drop it, it's always true
 val isAtLeast242: Boolean = environmentName.toInt() >= 242
+// BACKCOMPAT: 2024.2. Drop it, it's always true
+val isAtLeast243: Boolean = environmentName.toInt() >= 243
 
 val pluginVersion: String by project
 val platformVersion: String = "20${StringBuilder(environmentName).insert(environmentName.length - 1, '.')}"
@@ -71,6 +73,7 @@ val phpPlugin: String by project
 val intelliLangPlugin = "org.intellij.intelliLang"
 val javaScriptPlugin = "JavaScript"
 val nodeJsPlugin = "NodeJS"
+val jsonPlugin = "com.intellij.modules.json"
 val yamlPlugin = "org.jetbrains.plugins.yaml"
 val androidPlugin = "org.jetbrains.android"
 val platformImagesPlugin = "com.intellij.platform.images"
@@ -811,6 +814,9 @@ project("Edu-Go") {
       intellijIde(ideaVersion)
 
       intellijPlugins(goPlugin, intelliLangPlugin)
+      if (isAtLeast243) {
+        intellijPlugins(jsonPlugin)
+      }
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -825,6 +831,9 @@ project("Edu-Php") {
       intellijIde(ideaVersion)
 
       intellijPlugins(phpPlugin)
+      if (isAtLeast243) {
+        intellijPlugins(jsonPlugin)
+      }
     }
 
     implementation(project(":intellij-plugin:educational-core"))
