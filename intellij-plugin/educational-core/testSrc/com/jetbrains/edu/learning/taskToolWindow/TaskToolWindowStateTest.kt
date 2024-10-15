@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.taskToolWindow
 import com.intellij.openapi.components.ComponentManagerEx
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.impl.PsiAwareFileEditorManagerImpl
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowManager
@@ -214,8 +215,11 @@ class TaskToolWindowStateTest : EduTestCase() {
    * which is async and used in production
    */
   private fun setProductionFileEditorManager() {
-    allowFileEditorInLightProject(project)
+    project.putUserData(ALLOW_IN_LIGHT_PROJECT_KEY, true)
+    Disposer.register(testRootDisposable) { project.putUserData(ALLOW_IN_LIGHT_PROJECT_KEY, null) }
 
+    // BACKCOMPAT: 2024.1 change `namedChildScope` to `childScope` and remove suppression of deprecation
+    @Suppress("DEPRECATION")
     project.replaceService(
       FileEditorManager::class.java,
       PsiAwareFileEditorManagerImpl(project, (project as ComponentManagerEx).getCoroutineScope().namedChildScope(name)),

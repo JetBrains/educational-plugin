@@ -1,10 +1,7 @@
 package com.jetbrains.edu.learning.taskToolWindow
 
 import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.Key
 
-fun TaskToolWindowStateTest.allowFileEditorInLightProject(project: Project) {
-  project.putUserData(FileEditorManagerImpl.ALLOW_IN_LIGHT_PROJECT, true)
-  Disposer.register(testRootDisposable) { project.putUserData(FileEditorManagerImpl.ALLOW_IN_LIGHT_PROJECT, null) }
-}
+val ALLOW_IN_LIGHT_PROJECT_KEY: Key<Boolean>
+  get() = FileEditorManagerImpl.ALLOW_IN_LIGHT_PROJECT
