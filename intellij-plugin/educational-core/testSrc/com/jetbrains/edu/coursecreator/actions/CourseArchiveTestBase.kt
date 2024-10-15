@@ -11,7 +11,6 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSE_CONTENTS_FOLDER
 import com.jetbrains.edu.learning.courseFormat.ext.visitEduFiles
-import com.jetbrains.edu.learning.injectLastJsonVersion
 import com.jetbrains.edu.learning.json.encrypt.AES256
 import com.jetbrains.edu.learning.json.encrypt.TEST_AES_KEY
 import com.jetbrains.edu.learning.json.pathInArchive
@@ -64,6 +63,8 @@ abstract class CourseArchiveTestBase : EduActionTestCase() {
       assertEquals("Number of files in archive must be the same as in the course", eduFilesCount, fileName2contents.size)
     }
   }
+
+  private fun String.injectLastJsonVersion(): String = replace(""""version"\s*:\s*-1""".toRegex(), """"version" : $JSON_FORMAT_VERSION""")
 
   private fun loadExpectedJson(): String {
     val fileName = getTestFile()
