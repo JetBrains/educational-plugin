@@ -3,9 +3,7 @@ package com.jetbrains.edu.learning.taskToolWindow.ui.check
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DefaultActionGroup
-import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl
-import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.Alarm
@@ -14,6 +12,7 @@ import com.intellij.util.ui.JBEmptyBorder
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.actions.*
+import com.jetbrains.edu.learning.aiDebugging.AiDebuggingNotification
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -114,14 +113,16 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     checkFinishedPanel.addNextTaskButton(task)
     checkFinishedPanel.addRetryButton(task)
 
+    updateBackground()
+
     val checkResult = result ?: restoreSavedResult(task)
     if (checkResult != null) {
       linkPanel.removeAll()
       checkDetailsPlaceholder.add(CheckDetailsPanel(project, task, checkResult, checkTimeAlarm), BorderLayout.SOUTH)
-      updateAiDebuggingNotification(task)
+      AiDebuggingNotification(checkDetailsPlaceholder).addAiDebuggingNotification(task)
     }
-    updateBackground()
   }
+
 
   private fun restoreSavedResult(task: Task): CheckResult? {
     val feedback = task.feedback
@@ -149,15 +150,6 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     updateCheckButtonWrapper(task)
     updateRightActionsToolbar(task)
     updateCheckDetails(task)
-  }
-
-  private fun updateAiDebuggingNotification(task: Task) {
-    if (AiDebuggingAction.isAvailable(task)) {
-      val action = ActionManager.getInstance().getAction(AiDebuggingAction.ACTION_ID) as AiDebuggingAction
-      action.actionTargetParent = checkDetailsPlaceholder
-      val dataContext = SimpleDataContext.getProjectContext(project)
-      ActionUtil.invokeAction(action, dataContext, "", null, null)
-    }
   }
 
   private fun updateCheckButtonWrapper(task: Task) {
