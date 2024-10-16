@@ -18,6 +18,16 @@ interface SocialmediaPluginConfigurator {
 
   /**
    * The implementation should define policy when user will be asked to post.
+   *
+   * Make sure that if you return 'true' for some task, then all other existing
+   * implementations of SocialmediaPluginConfigurator that also return true for
+   * that task, have the same number of images, and those images correspond to
+   * each other.
+   *
+   * For example, if you implement a Configurator for hyperskill courses, it
+   * should have the same images as other hyperskill configurators.
+   * If you implement a configurator for the "Kotlin Koans" course, it should
+   * have the same images as existing "Kotlin Koans" configurators.
    */
   fun askToPost(project: Project, solvedTask: Task, statusBeforeCheck: CheckStatus): Boolean
 

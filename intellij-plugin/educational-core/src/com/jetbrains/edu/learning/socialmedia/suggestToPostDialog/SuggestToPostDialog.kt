@@ -33,10 +33,10 @@ class SuggestToPostDialog(
   init {
     val onlyOneConfigurator = configurators.size == 1
     title = if (onlyOneConfigurator) {
-      EduCoreBundle.message("twitter.dialog.title", configurators[0].settings.name)
+      EduCoreBundle.message("dialog.title.post.your.achievements.to", configurators[0].settings.name)
     }
     else {
-      EduCoreBundle.message("linkedin.dialog.title")
+      EduCoreBundle.message("dialog.title.post.your.achievements.to.social.networks")
     }
 
     setDoNotAskOption(SuggestDoNotAskToPostOption(checkBoxes))

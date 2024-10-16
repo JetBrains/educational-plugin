@@ -26,7 +26,7 @@ import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.ui.getUICheckLabel
 import org.junit.Test
 
-class HyperskillTwittingTest : EduActionTestCase() {
+class HyperskillPostToSocialNetworksTest : EduActionTestCase() {
 
   private var hyperskillConfigurators: List<SocialmediaPluginConfigurator>? = null
 
