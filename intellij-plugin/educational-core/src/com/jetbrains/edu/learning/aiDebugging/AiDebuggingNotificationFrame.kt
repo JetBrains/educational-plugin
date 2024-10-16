@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.eduAssistant.ui
+package com.jetbrains.edu.learning.aiDebugging
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
@@ -14,12 +14,14 @@ import com.intellij.util.ui.UIUtil.HTML_MIME
 import com.jetbrains.edu.EducationalCoreIcons
 import org.jetbrains.annotations.Nls
 import java.awt.BorderLayout
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import javax.swing.*
 import javax.swing.text.DefaultCaret
 
-class NextStepHintNotificationFrame(@Nls message: String, action: AnAction?, actionTargetParent: JPanel?) : JFrame() {
+class AiDebuggingNotificationFrame(@Nls message: String, action: AnAction?, actionTargetParent: JPanel?, close: () -> Unit) : JFrame() {
 
   init {
     contentPane.background = BACKGROUND_COLOR
@@ -31,7 +33,7 @@ class NextStepHintNotificationFrame(@Nls message: String, action: AnAction?, act
 
     val contentPanel = createContentPanel().apply {
       add(createIconPanel(), BorderLayout.WEST)
-      add(createCancelPanel(), BorderLayout.EAST)
+      add(createCancelPanel(close), BorderLayout.EAST)
       add(centerPanel, BorderLayout.CENTER)
     }
 
@@ -80,8 +82,13 @@ class NextStepHintNotificationFrame(@Nls message: String, action: AnAction?, act
     add(JBLabel(EducationalCoreIcons.aiAssistant), BorderLayout.NORTH)
   }
 
-  private fun createCancelPanel(): JPanel = JPanel(BorderLayout()).apply {
+  private fun createCancelPanel(close: () -> Unit): JPanel = JPanel(BorderLayout()).apply {
     val cancelButton = JBLabel(AllIcons.Windows.CloseActive)
+    cancelButton.addMouseListener(object : MouseAdapter() {
+      override fun mouseClicked(e: MouseEvent) {
+        close.invoke()
+      }
+    })
     isOpaque = false
     add(cancelButton, BorderLayout.NORTH)
   }
