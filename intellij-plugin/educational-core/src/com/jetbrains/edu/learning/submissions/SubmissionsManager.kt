@@ -266,7 +266,8 @@ class SubmissionsManager(private val project: Project) : EduTestAware {
   }
 
   private fun gotStuckCondition(task: Task, numberOfWrongSubmissions: Int): Boolean {
-    return !task.canShowSolution() && numberOfWrongSubmissions >= GOT_STUCK_WRONG_SUBMISSIONS_AMOUNT
+    if (task.canShowSolution()) return true
+    return numberOfWrongSubmissions >= GOT_STUCK_WRONG_SUBMISSIONS_AMOUNT
   }
 
   private fun getPlatformName(): String = course?.getSubmissionsProvider()?.getPlatformName() ?: error("Failed to get platform Name")
