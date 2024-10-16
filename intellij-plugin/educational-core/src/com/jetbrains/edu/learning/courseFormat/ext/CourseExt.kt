@@ -22,10 +22,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.HyperskillCourseAdvertiser
 import kotlin.math.max
 
-val Course.configurator: EduConfigurator<*>? get() {
-  val language = languageById ?: return null
-  return EduConfiguratorManager.findConfigurator(itemType, environment, language)
-}
+val Course.configurator: EduConfigurator<*>? get() = EduConfiguratorManager.findConfigurator(itemType, environment, languageId)
 
 val Course.compatibilityProvider: CourseCompatibilityProvider?
   get() {

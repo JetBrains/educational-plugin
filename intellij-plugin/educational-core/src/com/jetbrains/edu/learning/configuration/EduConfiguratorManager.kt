@@ -11,23 +11,23 @@ object EduConfiguratorManager {
   /**
    * Returns any enabled [EduConfigurator] for given language, courseType and environment
    */
-  fun findConfigurator(courseType: String, environment: String, language: Language): EduConfigurator<*>? = if (courseType == MARKETPLACE) {
-    findExtension(PYCHARM, environment, language)?.instance
+  fun findConfigurator(courseType: String, environment: String, languageId: String): EduConfigurator<*>? = if (courseType == MARKETPLACE) {
+    findExtension(PYCHARM, environment, languageId)?.instance
   }
   else {
-    findExtension(courseType, environment, language)?.instance
+    findExtension(courseType, environment, languageId)?.instance
   }
 
-  fun findExtension(courseType: String, environment: String, language: Language): EducationalExtensionPoint<EduConfigurator<*>>? {
+  fun findExtension(courseType: String, environment: String, languageId: String): EducationalExtensionPoint<EduConfigurator<*>>? {
     var configurator =
       allExtensions().find { extension ->
-        extension.language == language.id &&
+        extension.language == languageId &&
         extension.courseType == courseType &&
         extension.environment == environment
       }
     if (configurator == null) {
       configurator = allExtensions().find { extension ->
-        extension.language == language.id &&
+        extension.language == languageId &&
         compatibleCourseType(extension, courseType) &&
         extension.environment == environment
       }
