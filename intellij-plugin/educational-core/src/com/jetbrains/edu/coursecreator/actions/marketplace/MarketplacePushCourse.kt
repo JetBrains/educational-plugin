@@ -75,6 +75,7 @@ class MarketplacePushCourse(
 
     CompletableFuture.supplyAsync({ connector.loadHubToken() }, ProcessIOExecutorService.INSTANCE).handle { hubToken, exception ->
       if (exception != null) {
+        LOG.warn("Hub authorization failed: ${exception.message}", exception)
         EduNotificationManager.showErrorNotification(
           project,
           message("marketplace.push.course.failed.title"),
