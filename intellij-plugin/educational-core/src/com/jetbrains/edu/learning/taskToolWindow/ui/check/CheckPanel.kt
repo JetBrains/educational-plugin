@@ -111,7 +111,7 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     if (checkResult != null) {
       linkPanel.removeAll()
       checkDetailsPlaceholder.add(CheckDetailsPanel(project, task, checkResult, checkTimeAlarm), BorderLayout.SOUTH)
-      updateAiDebuggingNotification(task)
+      AiDebuggingNotification(checkDetailsPlaceholder).addAiDebuggingNotification(task)
     }
   }
 
@@ -142,15 +142,6 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     updateCheckButtonWrapper(task)
     updateRightActionsToolbar(task)
     updateCheckDetails(task)
-  }
-
-  private fun updateAiDebuggingNotification(task: Task) {
-    if (AiDebuggingAction.isAvailable(task)) {
-      val action = ActionManager.getInstance().getAction(AiDebuggingAction.ACTION_ID) as AiDebuggingAction
-      action.actionTargetParent = checkDetailsPlaceholder
-      val dataContext = SimpleDataContext.getProjectContext(project)
-      ActionUtil.invokeAction(action, dataContext, "", null, null)
-    }
   }
 
   private fun updateCheckButtonWrapper(task: Task) {
