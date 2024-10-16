@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.MissingNode
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.CourseMode.Companion.toCourseMode
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
@@ -46,6 +47,7 @@ import com.jetbrains.edu.learning.yaml.format.RemoteStudyItem
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LESSON
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TASK
+import com.jetbrains.edu.learning.yaml.migrate.YamlMigrator
 import org.jetbrains.annotations.VisibleForTesting
 
 /**
@@ -70,9 +72,10 @@ object YamlDeserializer {
    */
   @VisibleForTesting
   fun ObjectMapper.deserializeCourse(configFileText: String): Course {
-    val treeNode = readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
-    val courseMode = asText(treeNode.get("mode"))
-    val course = treeToValue(treeNode, Course::class.java)
+    val treeNode = readTree(configFileText) as? ObjectNode ?: JsonNodeFactory.instance.objectNode()
+    val migratedTreeNode = YamlMigrator(this).migrateCourse(treeNode)
+    val courseMode = asText(migratedTreeNode.get("mode"))
+    val course = treeToValue(migratedTreeNode, Course::class.java)
     course.courseMode = if (courseMode != null) CourseMode.STUDENT else CourseMode.EDUCATOR
     return course
   }
