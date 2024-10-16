@@ -3,9 +3,7 @@ package com.jetbrains.edu.learning.taskToolWindow.ui.check
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DefaultActionGroup
-import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl
-import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.Alarm
@@ -54,8 +52,8 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     rightActionsToolbar.targetComponent = this
     rightActionsGroup.isSearchable = false
     rightActionsToolbar.setActionButtonBorder(2, 0)
-    rightActionsToolbar.setMinimumButtonSize(Dimension(28,28))
-    rightActionsToolbar.border = JBEmptyBorder(5,0,0,0)
+    rightActionsToolbar.setMinimumButtonSize(Dimension(28, 28))
+    rightActionsToolbar.border = JBEmptyBorder(5, 0, 0, 0)
 
     checkActionsPanel.add(checkButtonWrapper, BorderLayout.WEST)
     leftActionsToolbar.add(checkButtonWrapper, BorderLayout.WEST)
@@ -122,7 +120,7 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
       linkPanel.removeAll()
       checkDetailsPlaceholder.add(CheckDetailsPanel(project, task, checkResult, checkTimeAlarm), BorderLayout.SOUTH)
       AiDebuggingNotification(checkDetailsPlaceholder).addAiDebuggingNotification(task)
-      updateAiDebuggingNotification(task)
+
     }
   }
 
@@ -153,15 +151,6 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     updateCheckButtonWrapper(task)
     updateRightActionsToolbar(task)
     updateCheckDetails(task)
-  }
-
-  private fun updateAiDebuggingNotification(task: Task) {
-    if (AiDebuggingAction.isAvailable(task)) {
-      val action = ActionManager.getInstance().getAction(AiDebuggingAction.ACTION_ID) as AiDebuggingAction
-      action.actionTargetParent = checkDetailsPlaceholder
-      val dataContext = SimpleDataContext.getProjectContext(project)
-      ActionUtil.invokeAction(action, dataContext, "", null, null)
-    }
   }
 
   private fun updateCheckButtonWrapper(task: Task) {
@@ -196,9 +185,12 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
         val checkComponent = CheckPanelButtonComponent(CheckAction(task.getUICheckLabel()), isEnabled = isRunning, isDefault = isRunning)
         checkButtonWrapper.add(checkComponent, BorderLayout.CENTER)
       }
-      CheckStatus.Failed, CheckStatus.Solved  -> {
-        val retryComponent = CheckPanelButtonComponent(EduActionUtils.getAction(RetryDataTaskAction.ACTION_ID) as RetryDataTaskAction,
-          isDefault = true)
+
+      CheckStatus.Failed, CheckStatus.Solved -> {
+        val retryComponent = CheckPanelButtonComponent(
+          EduActionUtils.getAction(RetryDataTaskAction.ACTION_ID) as RetryDataTaskAction,
+          isDefault = true
+        )
         checkButtonWrapper.add(retryComponent, BorderLayout.WEST)
       }
     }
@@ -208,7 +200,8 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     if (!(task.status == CheckStatus.Solved
           || task is TheoryTask
           || task.course is HyperskillCourse
-          || task.course.courseMode == CourseMode.EDUCATOR)) {
+          || task.course.courseMode == CourseMode.EDUCATOR)
+    ) {
       return
     }
 
@@ -227,8 +220,10 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     if (!task.isChangedOnFailed) return
 
     if (task.status == CheckStatus.Failed) {
-      val retryComponent = CheckPanelButtonComponent(EduActionUtils.getAction(RetryAction.ACTION_ID) as ActionWithProgressIcon,
-        isDefault = true, isEnabled = true)
+      val retryComponent = CheckPanelButtonComponent(
+        EduActionUtils.getAction(RetryAction.ACTION_ID) as ActionWithProgressIcon,
+        isDefault = true, isEnabled = true
+      )
       add(retryComponent, BorderLayout.WEST)
     }
   }
