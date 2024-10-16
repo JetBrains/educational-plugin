@@ -269,6 +269,12 @@
     <action id="Educational.LeaveInIdeFeedbackAction"
             class="com.jetbrains.edu.learning.actions.LeaveInIdeFeedbackAction"
             icon="com.jetbrains.edu.EducationalCoreIcons.Actions.CommentTask"/>
+
+    <group id="Educational.CheckPanel.Right">
+      <reference id="Educational.RefreshTask"/>
+      <reference id="Educational.LeaveInIdeFeedbackAction"/>
+      <reference id="Educational.LeaveFeedbackAction"/>
+    </group>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
