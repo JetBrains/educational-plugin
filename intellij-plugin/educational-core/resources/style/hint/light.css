@@ -1,9 +1,9 @@
 .hint_header {
-    color: #4682FA;
+    color: #2470B3;
 }
 
 .hint_header:after {
-    content: "\2303";
-    color: #7F8B91;
+    content: "\2335";
+    color: #000000;
     opacity: 0.9;
 }

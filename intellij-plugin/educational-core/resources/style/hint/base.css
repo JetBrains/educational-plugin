@@ -20,11 +20,13 @@
 .hint_header:after {
     margin-left: -0.1em;
     display: inline-block;
-    transform: rotate(90deg);
+    transform: rotate(270deg);
+    font-family: "SF NS Text", sans-serif;
 }
 
 .hint_header.checked:after {
-    transform: rotate(180deg);
+    transform: rotate(0deg);
+    font-family: "SF NS Text", sans-serif;
 }
 
 .hint_content {
