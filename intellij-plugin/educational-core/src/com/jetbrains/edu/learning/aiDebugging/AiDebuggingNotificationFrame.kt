@@ -16,8 +16,6 @@ import org.jetbrains.annotations.Nls
 import java.awt.BorderLayout
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import java.awt.event.WindowAdapter
-import java.awt.event.WindowEvent
 import javax.swing.*
 import javax.swing.text.DefaultCaret
 
@@ -40,12 +38,6 @@ class AiDebuggingNotificationFrame(@Nls message: String, action: AnAction?, acti
     add(contentPanel)
     pack()
   }
-
-  fun onClosed(action: () -> Unit) = addWindowListener(object : WindowAdapter() {
-    override fun windowClosed(e: WindowEvent) {
-      action()
-    }
-  })
 
   private fun createCenterPanel(): JPanel = JPanel(VerticalLayout(JBUI.scale(PADDING_BORDER))).apply {
     isOpaque = false
@@ -86,7 +78,7 @@ class AiDebuggingNotificationFrame(@Nls message: String, action: AnAction?, acti
     val cancelButton = JBLabel(AllIcons.Windows.CloseActive)
     cancelButton.addMouseListener(object : MouseAdapter() {
       override fun mouseClicked(e: MouseEvent) {
-        close.invoke()
+        close()
       }
     })
     isOpaque = false
