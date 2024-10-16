@@ -68,7 +68,6 @@ object YamlDeserializer {
    * Creates [ItemContainer] object from yaml config file.
    * For [Course] object the instance of a proper type is created inside [com.jetbrains.edu.learning.yaml.format.CourseBuilder]
    */
-  @VisibleForTesting
   fun ObjectMapper.deserializeCourse(configFileText: String): Course {
     val treeNode = readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
     val courseMode = asText(treeNode.get("mode"))
