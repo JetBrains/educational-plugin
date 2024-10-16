@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings
-import com.jetbrains.edu.learning.yaml.YamlDeserializer
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
 import com.jetbrains.edu.learning.yaml.YamlMapper
 import org.jetbrains.ide.BuiltInServerManager
 import java.io.File
@@ -126,7 +126,7 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
     val courseConfig = projectDir.findChild(YamlConfigSettings.COURSE_CONFIG) ?: return null
     return runReadAction {
       ProgressManager.getInstance().computeInNonCancelableSection<Course, Exception> {
-        YamlDeserializer.deserializeItem(courseConfig.name, YamlMapper.basicMapper(), VfsUtil.loadText(courseConfig)) as? Course
+        YamlMapper.basicMapper().deserializeCourse(VfsUtil.loadText(courseConfig))
       }
     }
   }
