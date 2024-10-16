@@ -32,7 +32,7 @@ fun createPsiFile(project: Project, functionSignature: String, code: String): Ps
     """.trimIndent()
   )
 
-fun PsiElement.getTODOMessage() = if (this is KtCallExpression && calleeExpression?.text == TODO_MARKER) {
+fun PsiElement.getTodoMessageOrNull() = if (this is KtCallExpression && calleeExpression?.text == TODO_MARKER) {
   valueArguments.firstOrNull()?.getArgumentExpression()?.text ?: EMPTY_TODO
 } else {
   null

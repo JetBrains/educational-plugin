@@ -16,21 +16,21 @@ class CodeGenerator(promptExpression: PromptExpression, project: Project, langua
   private val promptToCodeTranslation: PromptToCodeResponse =
     getCodeFromPrompt(promptExpression.functionSignature.toString(), enumeratedPromptLines)
 
-  private val promptToCodeClearedFromWrongTODOs = runReadAction {
+  private val promptToCodeClearedFromWrongTodos = runReadAction {
     PurificationWrongTodo.deleteWrongTodo(project, promptToCodeTranslation, promptExpression.functionSignature, language)
   }
 
-  val promptToCodeLines = promptToCodeClearedFromWrongTODOs
+  val promptToCodeLines = promptToCodeClearedFromWrongTodos
     .groupBy { it.promptLineNumber }
     .mapValues { promptGroup ->
       promptGroup.value.map { it.codeLineNumber }
     }
-  val codeToPromptLines = promptToCodeClearedFromWrongTODOs
+  val codeToPromptLines = promptToCodeClearedFromWrongTodos
     .groupBy { it.codeLineNumber }
     .mapValues { promptGroup ->
       promptGroup.value.map { it.promptLineNumber }
     }
-  val generatedCode = promptToCodeClearedFromWrongTODOs.toGeneratedCode()
+  val generatedCode = promptToCodeClearedFromWrongTodos.toGeneratedCode()
 
   private fun getCodeFromPrompt(functionSignature: String, enumeratedPromptLines: String) = runBlockingCancellable {
     PromptToCodeAssistant.generateCode(
