@@ -6,7 +6,7 @@ import com.intellij.psi.PsiRecursiveElementVisitor
 import com.jetbrains.edu.cognifire.GeneratedCodeParser
 import com.jetbrains.edu.cognifire.models.FunctionSignature
 import com.jetbrains.edu.kotlin.cognifire.utils.createPsiFile
-import com.jetbrains.edu.kotlin.cognifire.utils.getTODOMessage
+import com.jetbrains.edu.kotlin.cognifire.utils.getTodoMessageOrNull
 
 class KtGeneratedCodeParser : GeneratedCodeParser {
   override fun hasErrors(project: Project, generatedCode: String, functionSignature: FunctionSignature): Boolean {
@@ -14,7 +14,7 @@ class KtGeneratedCodeParser : GeneratedCodeParser {
     val todoStrings = mutableListOf<String>()
     file.accept(object : PsiRecursiveElementVisitor() {
       override fun visitElement(element: PsiElement) {
-        element.getTODOMessage()?.let { todoStrings.add(it) }
+        element.getTodoMessageOrNull()?.let { todoStrings.add(it) }
         super.visitElement(element)
       }
     })
