@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlDeepLoader.loadRemoteInfo
-import com.jetbrains.edu.learning.yaml.YamlDeserializer
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
 import com.jetbrains.edu.learning.yaml.YamlMapper
 import java.io.File
 
@@ -65,7 +65,7 @@ object EduBuiltInServerUtils {
     val localCourseConfig = projectDir.findChild(COURSE_CONFIG) ?: return null
     return runReadAction {
       val localCourse = ProgressManager.getInstance().computeInNonCancelableSection<Course, Exception> {
-        YamlDeserializer.deserializeItem(localCourseConfig.name, YamlMapper.basicMapper(), VfsUtil.loadText(localCourseConfig) ) as? Course
+        YamlMapper.basicMapper().deserializeCourse(VfsUtil.loadText(localCourseConfig))
       } ?: return@runReadAction null
       localCourse.loadRemoteInfo(remoteInfoConfig)
       localCourse
