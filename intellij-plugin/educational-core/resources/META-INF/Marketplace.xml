@@ -33,7 +33,9 @@
     <action id="Educational.StartMarketplaceCourse" class="com.jetbrains.edu.learning.marketplace.course.StartMarketplaceCourseAction"/>
     <action id="Educational.RateMarketplaceCourseAction"
             class="com.jetbrains.edu.learning.marketplace.actions.RateMarketplaceCourseAction"
-            icon="com.jetbrains.edu.EducationalCoreIcons.Actions.RateCourse"/>
+            icon="com.jetbrains.edu.EducationalCoreIcons.Actions.RateCourse">
+      <add-to-group group-id="Educational.CheckPanel.Right" anchor="last"/>
+    </action>
     <action id="Educational.Student.DeleteAllSubmissions" class="com.jetbrains.edu.learning.marketplace.deleteSubmissions.DeleteAllSubmissionsAction"/>
     <action id="Educational.Student.ShareMySolutions" class="com.jetbrains.edu.learning.marketplace.actions.ShareMySolutionsAction">
       <add-to-group group-id="Educational.CourseView.SecondaryActions" relative-to-action="Educational.HideSolvedLessons" anchor="after"/>

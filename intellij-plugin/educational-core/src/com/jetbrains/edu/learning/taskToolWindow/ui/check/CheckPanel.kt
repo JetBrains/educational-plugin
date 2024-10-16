@@ -1,8 +1,9 @@
 package com.jetbrains.edu.learning.taskToolWindow.ui.check
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.actionSystem.ActionGroup
 import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.actionSystem.ActionToolbar
 import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
@@ -20,7 +21,6 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
-import com.jetbrains.edu.learning.marketplace.actions.RateMarketplaceCourseAction
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.projectView.CourseViewUtils.isSolved
@@ -39,51 +39,21 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
   private val linkPanel = JPanel(BorderLayout())
   private val checkDetailsPlaceholder: JPanel = JPanel(BorderLayout())
   private val checkButtonWrapper = JPanel(BorderLayout())
-  private val rightActionsGroup = DefaultActionGroup()
-  private val rightActionsToolbar = ActionToolbarImpl(ACTION_PLACE, rightActionsGroup, true)
+  private val rightActionsToolbar: ActionToolbar = createRightActionToolbar()
   private val course = project.course
   private val checkTimeAlarm: Alarm = Alarm(parentDisposable)
   private val asyncProcessIcon = AsyncProcessIcon("Submitting...")
 
   init {
-    rightActionsToolbar.targetComponent = this
-    rightActionsGroup.isSearchable = false
-    rightActionsToolbar.setActionButtonBorder(2, 0)
-    rightActionsToolbar.setMinimumButtonSize(Dimension(28,28))
-    rightActionsToolbar.border = JBEmptyBorder(5,0,0,0)
-
     checkActionsPanel.add(checkButtonWrapper, BorderLayout.WEST)
     checkActionsPanel.add(checkFinishedPanel, BorderLayout.CENTER)
-    checkActionsPanel.add(rightActionsToolbar, BorderLayout.EAST)
+    checkActionsPanel.add(rightActionsToolbar.component, BorderLayout.EAST)
     checkActionsPanel.add(linkPanel, BorderLayout.NORTH)
     add(checkActionsPanel, BorderLayout.CENTER)
     add(checkDetailsPlaceholder, BorderLayout.NORTH)
-    updateRightActionsToolbar()
     asyncProcessIcon.border = JBUI.Borders.empty(8, 6, 0, 10)
     maximumSize = Dimension(Int.MAX_VALUE, 30)
     border = JBUI.Borders.empty(2, 0, 0, 10)
-  }
-
-  private fun updateRightActionsToolbar(task: Task? = null) {
-    rightActionsGroup.removeAll()
-    if (task?.isChangedOnFailed != true) {
-      rightActionsGroup.add(ActionManager.getInstance().getAction(RevertTaskAction.ACTION_ID))
-    }
-
-    if (task != null) {
-      val leaveFeedbackActionId = if (task.course.isMarketplace) {
-        LeaveInIdeFeedbackAction.ACTION_ID
-      }
-      else {
-        LeaveFeedbackAction.ACTION_ID
-      }
-
-      rightActionsGroup.add(ActionManager.getInstance().getAction(leaveFeedbackActionId))
-
-      if (task.course.feedbackLink != null) {
-        rightActionsGroup.add(ActionManager.getInstance().getAction(RateMarketplaceCourseAction.ACTION_ID))
-      }
-    }
   }
 
   fun readyToCheck() {
@@ -138,8 +108,17 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
 
   fun updateCheckPanel(task: Task) {
     updateCheckButtonWrapper(task)
-    updateRightActionsToolbar(task)
     updateCheckDetails(task)
+  }
+
+  private fun createRightActionToolbar(): ActionToolbar {
+    val actionGroup = ActionManager.getInstance().getAction("Educational.CheckPanel.Right") as ActionGroup
+    return ActionToolbarImpl(ACTION_PLACE, actionGroup, true).apply {
+      targetComponent = this@CheckPanel
+      setActionButtonBorder(2, 0)
+      minimumButtonSize = Dimension(28, 28)
+      border = JBEmptyBorder(5, 0, 0, 0)
+    }
   }
 
   private fun updateCheckButtonWrapper(task: Task) {
