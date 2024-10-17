@@ -27,11 +27,7 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.educational.translation.enum.Language
 import com.jetbrains.educational.translation.format.CourseTranslation
 import com.jetbrains.educational.translation.format.DescriptionText
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.io.IOException
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.time.Duration.Companion.seconds
@@ -63,7 +59,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
         }
         withBackgroundProgress(project, EduAIBundle.message("ai.service.getting.course.translation")) {
           if (!course.isTranslationExists(language)) {
-            val translation = loadAndSaveAsync(course, language)
+            val translation = fetchTranslation(course, language)
             course.saveTranslation(translation)
           }
           course.translatedToLanguageCode = language.code
@@ -79,7 +75,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
     }
   }
 
-  private suspend fun loadAndSaveAsync(course: EduCourse, language: Language): CourseTranslation =
+  private suspend fun fetchTranslation(course: EduCourse, language: Language): CourseTranslation =
     withContext(Dispatchers.IO) {
       downloadTranslation(course, language).onError { error ->
         error("Failed to download translation for ${course.name} to $language: $error")
