@@ -10,41 +10,38 @@ import java.awt.BorderLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
 
-class AiDebuggingNotification {
+object AiDebuggingNotification {
 
-  companion object {
+  private var aiDebuggingNotificationPanel: JComponent? = null
 
-    private var aiDebuggingNotificationPanel: JComponent? = null
-
-    fun addAiDebuggingNotification(task: Task, actionTargetParent: JPanel?) {
-      if (isAvailable(task)) {
-        val textToShow = EduCoreBundle.message("action.Educational.AiDebuggingNotification.text")
-        val action = showDebugNotification()
-        val close: () -> Unit = {
-          aiDebuggingNotificationPanel?.let {
-            actionTargetParent?.remove(aiDebuggingNotificationPanel)
-            actionTargetParent?.revalidate()
-            actionTargetParent?.repaint()
-          }
+  fun addAiDebuggingNotification(task: Task, actionTargetParent: JPanel?) {
+    if (isAvailable(task)) {
+      val textToShow = EduCoreBundle.message("action.Educational.AiDebuggingNotification.text")
+      val action = showDebugNotification()
+      val close: () -> Unit = {
+        aiDebuggingNotificationPanel?.let {
+          actionTargetParent?.remove(aiDebuggingNotificationPanel)
+          actionTargetParent?.revalidate()
+          actionTargetParent?.repaint()
         }
+      }
 
-        val nextStepHintNotification =
-          AiDebuggingNotificationFrame(textToShow, action, actionTargetParent, close)
+      val nextStepHintNotification =
+        AiDebuggingNotificationFrame(textToShow, action, actionTargetParent, close)
 
-        aiDebuggingNotificationPanel = nextStepHintNotification.rootPane
-        aiDebuggingNotificationPanel?.let { actionTargetParent?.add(it, BorderLayout.NORTH) }
+      aiDebuggingNotificationPanel = nextStepHintNotification.rootPane
+      aiDebuggingNotificationPanel?.let { actionTargetParent?.add(it, BorderLayout.NORTH) }
+    }
+  }
+
+  @Suppress("DialogTitleCapitalization")
+  private fun showDebugNotification() =
+    object : AnAction(EduCoreBundle.message("action.Educational.AiDebuggingNotification.start.debugging.session")) {
+      override fun actionPerformed(p0: AnActionEvent) {
+        //TODO: debugging session
       }
     }
 
-    @Suppress("DialogTitleCapitalization")
-    private fun showDebugNotification() =
-      object : AnAction(EduCoreBundle.message("action.Educational.AiDebuggingNotification.start.debugging.session")) {
-        override fun actionPerformed(p0: AnActionEvent) {
-          //TODO: debugging session
-        }
-      }
-
-    private fun isAvailable(task: Task) =
-      task.course.courseMode == CourseMode.STUDENT && task.status == CheckStatus.Failed // TODO: when should we show this button?
-  }
+  private fun isAvailable(task: Task) =
+    task.course.courseMode == CourseMode.STUDENT && task.status == CheckStatus.Failed // TODO: when should we show this button?
 }
