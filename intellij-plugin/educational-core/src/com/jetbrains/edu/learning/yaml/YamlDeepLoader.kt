@@ -6,8 +6,10 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.coursecreator.AdditionalFilesUtils.collectAdditionalFiles
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
+import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_PROJECTS_URL
@@ -25,6 +27,7 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.YamlLoader.deserializeContent
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
 import com.jetbrains.edu.learning.yaml.format.getRemoteChangeApplierForItem
+import com.jetbrains.edu.learning.yaml.migrate.AdditionalFilesProviderKey
 import org.jetbrains.annotations.NonNls
 
 object YamlDeepLoader {
@@ -40,6 +43,10 @@ object YamlDeepLoader {
 
     // the initial mapper has no idea whether the course is in the CC or in the Student mode
     val initialMapper = YamlMapper.basicMapper()
+    initialMapper.setEduValue(AdditionalFilesProviderKey) { itemType, environment, languageId ->
+      val configurator = EduConfiguratorManager.findConfigurator(itemType, environment, languageId)
+      collectAdditionalFiles(configurator, project)
+    }
     val deserializedCourse = deserializeItemProcessingErrors(courseConfig, project, mapper=initialMapper) as? Course ?: return null
     // this mapper already respects course mode, it will be used to deserialize all other course items
     val mapper = deserializedCourse.mapper()

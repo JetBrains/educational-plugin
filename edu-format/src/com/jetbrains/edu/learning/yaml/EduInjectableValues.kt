@@ -8,7 +8,7 @@ typealias AdditionalFilesProvider = (courseType: String, environment: String, la
 
 abstract class InjectableValueKey<T>(val name: String)
 
-private class EduInjectableValues(internal val values: MutableMap<String, Any?>): InjectableValues.Std(values)
+private class EduInjectableValues(val values: MutableMap<String, Any?>): InjectableValues.Std(values)
 
 @Suppress("UNCHECKED_CAST")
 fun <T> ObjectMapper.getEduValue(key: InjectableValueKey<T>): T? {

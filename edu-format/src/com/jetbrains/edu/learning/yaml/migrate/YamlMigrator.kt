@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.jetbrains.edu.learning.yaml.YamlMapper.CURRENT_YAML_VERSION
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.YAML_VERSION
 
-class YamlMigrator(private val mapper: ObjectMapper) {
+class YamlMigrator(mapper: ObjectMapper) {
 
   val migrationSteps = mapOf(
     1 to ToVersion1Step,
