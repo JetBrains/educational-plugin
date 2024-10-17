@@ -9,6 +9,10 @@
     <action id="Educational.GetCourseTranslation"
             class="com.jetbrains.edu.ai.translation.action.GetCourseTranslation"
             internal="true"/>
+
+    <action id="Educational.ResetCourseTranslation"
+            class="com.jetbrains.edu.ai.translation.action.ResetCourseTranslation"
+            internal="true"/>
   </actions>
 
   <extensionPoints>
