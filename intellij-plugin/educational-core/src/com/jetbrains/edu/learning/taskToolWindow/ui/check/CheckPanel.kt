@@ -180,8 +180,7 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
         checkButtonWrapper.add(checkComponent, BorderLayout.CENTER)
       }
       CheckStatus.Failed, CheckStatus.Solved  -> {
-        val retryComponent = CheckPanelButtonComponent(EduActionUtils.getAction(RetryDataTaskAction.ACTION_ID) as RetryDataTaskAction,
-          isDefault = true)
+        val retryComponent = CheckPanelButtonComponent(EduActionUtils.getAction(RetryDataTaskAction.ACTION_ID) as RetryDataTaskAction, isDefault = true)
         checkButtonWrapper.add(retryComponent, BorderLayout.WEST)
       }
     }
