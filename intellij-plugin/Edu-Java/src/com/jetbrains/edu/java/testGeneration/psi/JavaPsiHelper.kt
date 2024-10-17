@@ -27,81 +27,74 @@ class JavaPsiHelper(private val psiFile: PsiFile) : PsiHelper() {
 
   override fun getSurroundingClass(
     caretOffset: Int,
-  ): PsiClassWrapper? {
-    val classElements = PsiTreeUtil.findChildrenOfAnyType(psiFile, PsiClass::class.java)
-    for (cls in classElements) {
-      if (cls.containsOffset(caretOffset)) {
-        val javaClassWrapper = JavaPsiClassWrapper(cls)
-        if (javaClassWrapper.isTestableClass()) {
-          log.info("Surrounding class for caret in $caretOffset is ${javaClassWrapper.qualifiedName}")
-          return javaClassWrapper
-        }
-      }
+  ): PsiClassWrapper? =
+    PsiTreeUtil.findChildrenOfAnyType(psiFile, PsiClass::class.java)
+      .firstOrNull { cls -> cls.containsOffset(caretOffset) && JavaPsiClassWrapper(cls).isTestableClass() }
+      ?.let { cls ->
+        log.info("Surrounding class for caret in $caretOffset is ${cls.qualifiedName}")
+        JavaPsiClassWrapper(cls)
+      } ?: run {
+      log.info("No surrounding class for caret in $caretOffset")
+      null
     }
-    log.info("No surrounding class for caret in $caretOffset")
-    return null
-  }
+
 
   override fun getSurroundingMethod(
     caretOffset: Int,
-  ): PsiMethodWrapper? {
-    val methodElements = PsiTreeUtil.findChildrenOfAnyType(psiFile, PsiMethod::class.java)
-    for (method in methodElements) {
-      if (method.body != null && method.containsOffset(caretOffset)) {
-        val surroundingClass =
-          PsiTreeUtil.getParentOfType(method, PsiClass::class.java) ?: continue
-        val surroundingClassWrapper = JavaPsiClassWrapper(surroundingClass)
-        if (surroundingClassWrapper.isTestableClass()) {
-          val javaMethod = JavaPsiMethodWrapper(method)
-          log.info("Surrounding method for caret in $caretOffset is ${javaMethod.methodDescriptor}")
-          return javaMethod
+  ): PsiMethodWrapper? =
+    PsiTreeUtil.findChildrenOfAnyType(psiFile, PsiMethod::class.java)
+      .filter { method -> method.body != null && method.containsOffset(caretOffset) }.firstNotNullOfOrNull { method ->
+        val surroundingClass = PsiTreeUtil.getParentOfType(method, PsiClass::class.java)
+        val surroundingClassWrapper = surroundingClass?.let { JavaPsiClassWrapper(it) }
+        if (surroundingClassWrapper?.isTestableClass() == true) {
+          JavaPsiMethodWrapper(method).also {
+            log.info("Surrounding method for caret in $caretOffset is ${it.methodDescriptor}")
+          }
+        }
+        else {
+          null
         }
       }
+    ?: run {
+      log.info("No surrounding method for caret in $caretOffset")
+      null
     }
-    log.info("No surrounding method for caret in $caretOffset")
-    return null
-  }
 
   override fun getSurroundingLine(
     caretOffset: Int,
   ): Int? {
-    val doc = PsiDocumentManager.getInstance(psiFile!!.project).getDocument(psiFile!!) ?: return null
+    val doc = PsiDocumentManager.getInstance(psiFile.project).getDocument(psiFile) ?: return null
 
     val selectedLine = doc.getLineNumber(caretOffset)
     val selectedLineText =
       doc.getText(TextRange(doc.getLineStartOffset(selectedLine), doc.getLineEndOffset(selectedLine)))
 
-    if (selectedLineText.isBlank()) {
-      log.info("Line $selectedLine at caret $caretOffset is blank")
-      return null
+    return if (selectedLineText.isBlank()) {
+      null.also { log.info("Line $selectedLine at caret $caretOffset is blank") }
     }
-    log.info("Surrounding line at caret $caretOffset is $selectedLine")
-
-    // increase by one is necessary due to different start of numbering
-    return selectedLine + 1
+    else {
+      // increase by one is necessary due to different start of numbering
+      (selectedLine + 1).also { log.info("Surrounding line at caret $caretOffset is $selectedLine") }
+    }
   }
 
   override fun collectClassesToTest(
     project: Project,
-    classesToTest: MutableList<PsiClassWrapper>,
+    classesToTest: MutableSet<PsiClassWrapper>,
     caretOffset: Int,
   ) {
     // check if cut has any none java super class
     val maxPolymorphismDepth = 5 //TODO
 
-    val cutPsiClass = getSurroundingClass(caretOffset)!!
+    val cutPsiClass = getSurroundingClass(caretOffset) ?: return
     var currentPsiClass = cutPsiClass
-    for (index in 0 until maxPolymorphismDepth) {
-      if (!classesToTest.contains(currentPsiClass)) {
-        classesToTest.add(currentPsiClass)
-      }
+    repeat(maxPolymorphismDepth) {
+      classesToTest.add(currentPsiClass)
 
-      if (currentPsiClass.superClass == null ||
-          currentPsiClass.superClass!!.qualifiedName.startsWith("java.")
-      ) {
-        break
+      if (currentPsiClass.superClass?.qualifiedName?.startsWith("java.") != false) {
+        return@repeat
       }
-      currentPsiClass = currentPsiClass.superClass!!
+      currentPsiClass = currentPsiClass.superClass ?: return
     }
     log.info("There are ${classesToTest.size} classes to test")
   }
@@ -113,8 +106,7 @@ class JavaPsiHelper(private val psiFile: PsiFile) : PsiHelper() {
   ): MutableSet<PsiClassWrapper> {
     val interestingPsiClasses: MutableSet<JavaPsiClassWrapper> = mutableSetOf()
 
-    var currentLevelClasses =
-      mutableListOf<PsiClassWrapper>().apply { addAll(classesToTest) }
+    var currentLevelClasses = classesToTest.toMutableList()
 
     repeat(SettingsArguments(project).maxInputParamsDepth(polyDepthReducing)) {
       val tempListOfClasses = mutableSetOf<JavaPsiClassWrapper>()
@@ -132,7 +124,7 @@ class JavaPsiHelper(private val psiFile: PsiFile) : PsiHelper() {
           }
         }
       }
-      currentLevelClasses = mutableListOf<PsiClassWrapper>().apply { addAll(tempListOfClasses) }
+      currentLevelClasses = tempListOfClasses.toMutableList()
       interestingPsiClasses.addAll(tempListOfClasses)
     }
     log.info("There are ${interestingPsiClasses.size} interesting psi classes")
@@ -142,19 +134,16 @@ class JavaPsiHelper(private val psiFile: PsiFile) : PsiHelper() {
   override fun getInterestingPsiClassesWithQualifiedNames(
     cut: PsiClassWrapper,
     psiMethod: PsiMethodWrapper,
-  ): MutableSet<PsiClassWrapper> {
-    val interestingPsiClasses = cut.getInterestingPsiClassesWithQualifiedNames(psiMethod)
-    log.info("There are ${interestingPsiClasses.size} interesting psi classes from method ${psiMethod.methodDescriptor}")
-    return interestingPsiClasses
-  }
+  ): MutableSet<PsiClassWrapper> =
+    cut.getInterestingPsiClassesWithQualifiedNames(psiMethod).also {
+      log.info("There are ${it.size} interesting psi classes from method ${psiMethod.methodDescriptor}")
+    }
 
   override fun getPackageName(): String {
-    val psiPackage = JavaDirectoryService.getInstance().getPackage(psiFile!!.containingDirectory) // TODO
+    val psiPackage = JavaDirectoryService.getInstance().getPackage(psiFile.containingDirectory) // TODO
     return psiPackage?.qualifiedName ?: ""
   }
 
-  private fun PsiElement.containsOffset(caretOffset: Int): Boolean {
-    return (textRange.startOffset <= caretOffset) && (textRange.endOffset >= caretOffset)
-  }
+  private fun PsiElement.containsOffset(caretOffset: Int) = caretOffset in textRange
 
 }

@@ -34,7 +34,7 @@ class TestGenerator(private val project: Project) {
   ): String {
     downloadTestLibs()
 
-    val classesToTest = psiHelper.getAllClassesToTest(project, testedFileInfo.caret)
+    val classesToTest = psiHelper.getAllClassesToTest(project, testedFileInfo.caret).toList()
     val testGenerationData = TestGenerationData()
     val initialPromptMessage = generatePrompt(project, psiHelper, 0, classesToTest)
     val report = Report()

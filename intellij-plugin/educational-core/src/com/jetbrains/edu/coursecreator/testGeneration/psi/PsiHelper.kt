@@ -84,7 +84,7 @@ abstract class PsiHelper {
    */
   abstract fun collectClassesToTest(
     project: Project,
-    classesToTest: MutableList<PsiClassWrapper>,
+    classesToTest: MutableSet<PsiClassWrapper>,
     caretOffset: Int,
   )
 
@@ -98,8 +98,8 @@ abstract class PsiHelper {
    * @param caret The caret position in the file.
    * @return The list of PsiClassWrapper objects representing the classes to test.
    */
-  fun getAllClassesToTest(project: Project, caret: Int): List<PsiClassWrapper> {
-    val classesToTest = mutableListOf<PsiClassWrapper>()
+  fun getAllClassesToTest(project: Project, caret: Int): Set<PsiClassWrapper> {
+    val classesToTest = mutableSetOf<PsiClassWrapper>()
     ApplicationManager.getApplication().runReadAction(
       Computable {
         collectClassesToTest(project, classesToTest, caret)

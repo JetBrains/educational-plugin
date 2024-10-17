@@ -12,11 +12,8 @@ class JUnitTestSuitePresenter(
 ) : TestSuitePresenter {
 
   override fun toString(testSuite: TestSuiteGeneratedByLLM, testFileName: String): String {
-    var testBody = ""
-
     return testSuite.run {
-      // Add each test
-      testCases.forEach { testCase -> testBody += "$testCase\n" }
+      val testBody = testCases.joinToString(separator = System.lineSeparator(), postfix = System.lineSeparator())
 
       JavaClassBuilderHelper.generateCode(
         project,
@@ -39,7 +36,7 @@ class JUnitTestSuitePresenter(
       JavaClassBuilderHelper.generateCode(
         project,
         getClassWithTestCaseName(testCases[testCaseIndex].name),
-        testCases[testCaseIndex].toStringWithoutExpectedException() + "\n",
+        "${testCases[testCaseIndex].toStringWithoutExpectedException()}${System.lineSeparator()}",
         imports,
         packageString,
         runWith,
@@ -53,7 +50,7 @@ class JUnitTestSuitePresenter(
 
     return testSuite.run {
       // Add each test (exclude expected exception)
-      testCases.forEach { testCase -> testBody += "${testCase.toStringWithoutExpectedException()}\n" }
+      testCases.forEach { testCase -> testBody += "${testCase.toStringWithoutExpectedException()}${System.lineSeparator()}" }
 
       JavaClassBuilderHelper.generateCode(
         project,

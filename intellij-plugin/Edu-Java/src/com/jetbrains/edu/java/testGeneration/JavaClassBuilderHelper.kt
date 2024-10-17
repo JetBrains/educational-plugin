@@ -35,15 +35,12 @@ object JavaClassBuilderHelper { // TODO replace to java module
     otherInfo: String,
     testGenerationData: TestGenerationData,
   ): String {
-    var testFullText = printUpperPart(className, imports, packageString, runWith, otherInfo)
 
-    // Add each test (exclude expected exception)
-    testFullText += body
-
-    // close the test class
-    testFullText += "}"
-
-    testFullText.replace("\r\n", "\n")
+    val testFullText = buildString {
+      append(printUpperPart(className, imports, packageString, runWith, otherInfo))
+      append(body)
+      append("}")
+    }.replace("\r\n", "\n")
 
     /**
      * for better readability and make the tests shorter, we reduce the number of line breaks:
@@ -63,35 +60,29 @@ object JavaClassBuilderHelper { // TODO replace to java module
     packageString: String,
     runWith: String,
     otherInfo: String,
-  ): String {
-    var testText = ""
+  ): String =
+    buildString {
+      // Add package
+      if (packageString.isNotBlank()) {
+        appendLine("package $packageString;")
+      }
+      // add imports
+      append(imports.joinToString(separator = System.lineSeparator(), postfix = System.lineSeparator()))
+      appendLine()
 
-    // Add package
-    if (packageString.isNotBlank()) {
-      testText += "package $packageString;\n"
+      // add runWith if exists
+      if (runWith.isNotBlank()) {
+        appendLine("@RunWith($runWith)")
+      }
+      // open the test class
+      appendLine("public class $className {")
+      appendLine()
+
+      // Add other presets (annotations, non-test functions)
+      if (otherInfo.isNotBlank()) {
+        append(otherInfo)
+      }
     }
-
-    // add imports
-    imports.forEach { importedElement ->
-      testText += "$importedElement\n"
-    }
-
-    testText += "\n"
-
-    // add runWith if exists
-    if (runWith.isNotBlank()) {
-      testText += "@RunWith($runWith)\n"
-    }
-    // open the test class
-    testText += "public class $className {\n\n"
-
-    // Add other presets (annotations, non-test functions)
-    if (otherInfo.isNotBlank()) {
-      testText += otherInfo
-    }
-
-    return testText
-  }
 
   /**
    * Finds the test method from a given class with the specified test case name.
@@ -131,7 +122,7 @@ object JavaClassBuilderHelper { // TODO replace to java module
           break
         }
       }
-      return result + "\n"
+      return "$result${System.lineSeparator()}"
     }
   }
 
@@ -172,7 +163,7 @@ object JavaClassBuilderHelper { // TODO replace to java module
   fun getClassFromTestCaseCode(code: String): String {
     val pattern = Regex("public\\s+class\\s+(\\S+)\\s*\\{")
     val matchResult = pattern.find(code)
-    matchResult ?: return "GeneratedTest2321312"
+    matchResult ?: error("There are no matches for java class in code: $code")
     val (className) = matchResult.destructured
     return className
   }

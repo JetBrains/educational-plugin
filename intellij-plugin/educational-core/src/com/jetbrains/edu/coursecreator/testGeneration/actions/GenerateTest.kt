@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.testGeneration.actions
 
 import com.intellij.ide.projectView.ProjectView
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -19,14 +20,11 @@ import com.jetbrains.edu.coursecreator.testGeneration.TestGenerator
 import com.jetbrains.edu.coursecreator.testGeneration.psi.manager.PsiHelperManager
 import com.jetbrains.edu.coursecreator.testGeneration.util.TestProgressIndicator
 import com.jetbrains.edu.coursecreator.testGeneration.util.TestedFileInfo
-import com.jetbrains.edu.learning.EduUtilsKt
-import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
-import com.jetbrains.edu.learning.pathRelativeToTask
-import com.jetbrains.edu.learning.selectedTaskFile
 import java.awt.Dimension
 import java.awt.Toolkit
 import java.io.File
@@ -36,7 +34,10 @@ import kotlin.math.roundToInt
 
 private const val DIALOG_WIDTH_RATIO = 0.2f
 
-open class GenerateTest : AnAction() {
+class GenerateTest : AnAction() {
+
+  override fun getActionUpdateThread(): ActionUpdateThread =
+    ActionUpdateThread.EDT
 
   override fun actionPerformed(e: AnActionEvent) {
 
@@ -64,7 +65,9 @@ open class GenerateTest : AnAction() {
 
   override fun update(e: AnActionEvent) {
     val project = e.project
+    val virtualFile = e.getData(CommonDataKeys.VIRTUAL_FILE)
     e.presentation.isEnabledAndVisible = project != null && isCourseJavaCreator(project)
+                                         && virtualFile?.isTestsFile(project) == false
   }
 
   private fun isCourseJavaCreator(project: Project): Boolean {
