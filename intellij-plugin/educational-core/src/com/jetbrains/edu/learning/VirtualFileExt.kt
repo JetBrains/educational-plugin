@@ -29,7 +29,6 @@ import com.intellij.ui.components.JBLoadingPanel
 import com.intellij.util.concurrency.annotations.RequiresWriteLock
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.actions.BinaryContentsFromDisk
-import com.jetbrains.edu.coursecreator.actions.CourseArchiveIndicator
 import com.jetbrains.edu.learning.EduDocumentListener.Companion.runWithListener
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
