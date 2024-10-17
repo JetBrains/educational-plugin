@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.marketplace.api
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
@@ -48,7 +48,7 @@ class MarketplaceSubmissionsConnector {
   private val connectionPool: ConnectionPool = ConnectionPool()
   private val converterFactory: JacksonConverterFactory
   val objectMapper: ObjectMapper by lazy {
-    val objectMapper = ConnectorUtils.createRegisteredMapper(SimpleModule())
+    val objectMapper = ConnectorUtils.createRegisteredMapper(kotlinModule())
     objectMapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderWithAnswerMixin::class.java)
     objectMapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
     objectMapper.addMixIn(EduTestInfo::class.java, EduTestInfoMixin::class.java)

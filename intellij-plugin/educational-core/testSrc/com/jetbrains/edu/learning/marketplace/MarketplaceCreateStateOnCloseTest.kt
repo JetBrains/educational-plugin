@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.marketplace
 
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
@@ -10,7 +11,6 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceStateOnClose
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceStateOnClosePost
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
-import com.jetbrains.edu.learning.yaml.YamlMapper.studentMapper
 import org.junit.Test
 import java.util.*
 
@@ -31,13 +31,12 @@ class MarketplaceCreateStateOnCloseTest : EduTestCase() {
     } as EduCourse
   }
 
-  @Test
-  fun `test creating state on close`() = createStateOnClose()
+  private val objectMapper by lazy {
+    MarketplaceSubmissionsConnector.getInstance().objectMapper
+  }
 
   @Test
-  fun `test state on close deserialization`() = deserializeStateOnClose()
-
-  private fun createStateOnClose() {
+  fun `test creating state on close`() {
     val eduTask = course.allTasks[0]
     val solutionFiles = getSolutionFiles(project, eduTask)
     val firstSolutionFile = solutionFiles.first()
@@ -47,47 +46,37 @@ class MarketplaceCreateStateOnCloseTest : EduTestCase() {
     val objectMapper = MarketplaceSubmissionsConnector.getInstance().objectMapper
     val solutionText = objectMapper.writeValueAsString(solutionFiles).trimIndent()
     val stateOnClose = MarketplaceStateOnClosePost(eduTask.id, solutionText)
+    // Directly serialize the MarketplaceStateOnClosePost object using the objectMapper
+    val actual = objectMapper.writeValueAsString(stateOnClose)
+    val expected =
+      """{"task_id":1,"solution":"[{\"name\":\"src/Task.kt\",\"placeholders\":[{\"offset\":2,\"length\":16,\"possible_answer\":\"\",\"placeholder_text\":\"placeholder text\"}],\"is_visible\":true,\"text\":\"solution file text\"},{\"name\":\"src/Test.kt\",\"placeholders\":null,\"is_visible\":false,\"text\":\"test file text\"}]","format_version":$JSON_FORMAT_VERSION}"""
 
-    doTest(stateOnClose, """
-      |task_id: 1
-      |solution: "[{\"name\":\"src/Task.kt\",\"placeholders\":[{\"offset\":2,\"length\":16,\"\
-  possible_answer\":\"\",\"placeholder_text\":\"placeholder text\"}],\"is_visible\"\
-  :true,\"text\":\"solution file text\"},{\"name\":\"src/Test.kt\",\"placeholders\"\
-  :null,\"is_visible\":false,\"text\":\"test file text\"}]"
-      |format_version: $JSON_FORMAT_VERSION
-      |
-    """.trimMargin())
+    assertEquals(expected, actual)
   }
 
-  private fun deserializeStateOnClose() {
+  @Test
+  fun `test state on close deserialization`() {
     val submissionId = 21556587
     val submissionTime = Date()
     val courseVersion = 3
     val taskId = 5
     val solutionKey = "https://example"
-    val yamlContent = """
-      |id: $submissionId
-      |time: ${submissionTime.time}
-      |task_id: $taskId
-      |solution_aws_key: $solutionKey
-      |format_version: $JSON_FORMAT_VERSION
-      |update_version: $courseVersion
-      |
-    """.trimMargin()
-    val studentMapper = studentMapper()
-    val treeNode = studentMapper.readTree(yamlContent)
-    val stateOnClose = studentMapper.treeToValue(treeNode, MarketplaceStateOnClose::class.java)
-    checkNotNull(stateOnClose)
+    val jsonContent = """
+        {
+          "id": $submissionId,
+          "time": ${submissionTime.time},
+          "task_id": $taskId,
+          "solution_aws_key": "$solutionKey",
+          "format_version": $JSON_FORMAT_VERSION,
+          "update_version": $courseVersion
+        }
+      """
+    val stateOnClose = objectMapper.readValue<MarketplaceStateOnClose>(jsonContent)
     assertEquals(submissionId, stateOnClose.id)
     assertEquals(taskId, stateOnClose.taskId)
     assertEquals(submissionTime, stateOnClose.time)
     assertEquals(JSON_FORMAT_VERSION, stateOnClose.formatVersion)
     assertEquals(courseVersion, stateOnClose.courseVersion)
     assertEquals(solutionKey, stateOnClose.solutionKey)
-  }
-
-  private fun doTest(state: MarketplaceStateOnClosePost, expected: String) {
-    val actual = studentMapper().writeValueAsString(state)
-    assertEquals(expected, actual)
   }
 }
