@@ -11,13 +11,13 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYCHARM
 import com.jetbrains.edu.learning.json.mixins.IntValueFilter
-import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TRANSLATED_TO_LANGUAGE
 import com.jetbrains.edu.learning.json.mixins.NotImplementedInMixin
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.errorHandling.unnamedItemAtMessage
 import com.jetbrains.edu.learning.yaml.errorHandling.unsupportedItemTypeMessage
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.EDU_YAML_TYPE
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENHANCEMENTS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT_SETTINGS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_LINK
@@ -35,11 +35,13 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SUMMARY
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TAGS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TITLE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TOP_LEVEL_LESSONS_SECTION
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TRANSLATED_TO_LANGUAGE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.UPDATE_DATE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VENDOR
 import com.jetbrains.edu.learning.yaml.format.remote.RemoteStudyItemYamlMixin
 import java.util.*
+import com.jetbrains.educational.translation.enum.Language as TranslationLanguage
 
 /**
  * Mixin class is used to deserialize [Course] item.
@@ -51,6 +53,7 @@ import java.util.*
   TITLE,
   LANGUAGE,
   TRANSLATED_TO_LANGUAGE,
+  ENHANCEMENTS,
   SUMMARY,
   VENDOR,
   IS_PRIVATE,
@@ -101,6 +104,15 @@ abstract class CourseYamlMixin {
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private var translatedToLanguageCode: String? = null
 
+  /**
+   * Serializers from `edu-ai-format` are used:
+   * @see [com.jetbrains.educational.translation.format.json.LanguageJsonDeserializer]
+   * @see [com.jetbrains.educational.translation.format.json.LanguageJsonSerializer]
+   */
+  @JsonProperty(ENHANCEMENTS)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private var enhancements: Map<Language, EnhancementsInfo> = mapOf()
+
   @JsonProperty(ENVIRONMENT)
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
   private lateinit var environment: String
@@ -149,7 +161,7 @@ private class LanguageConverter : StdConverter<String, String>() {
 }
 
 private class TranslationLanguageConverter : StdConverter<String, String>() {
-  override fun convert(code: String): String = com.jetbrains.educational.translation.enum.Language.getByCode(code).label
+  override fun convert(code: String): String = TranslationLanguage.getByCode(code).label
 }
 
 private class CourseTypeSerializationConverter : StdConverter<String, String?>() {
@@ -207,6 +219,7 @@ open class CourseBuilder(
   @JsonProperty(TAGS) val yamlContentTags: List<String> = emptyList(),
   @JsonProperty(ENVIRONMENT_SETTINGS) val yamlEnvironmentSettings: Map<String, String> = emptyMap(),
   @JsonProperty(TRANSLATED_TO_LANGUAGE) val translatedToLanguage: String? = null,
+  @JsonProperty(ENHANCEMENTS) val courseEnhancements: Map<TranslationLanguage, EnhancementsInfo> = emptyMap(),
 ) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {
@@ -245,9 +258,10 @@ open class CourseBuilder(
 
     val translatedToLanguageLabel = translatedToLanguage
     if (translatedToLanguageLabel != null) {
-      course.translatedToLanguageCode = com.jetbrains.educational.translation.enum.Language.findByLabel(translatedToLanguageLabel)?.code
+      course.translatedToLanguageCode = TranslationLanguage.findByLabel(translatedToLanguageLabel)?.code
                                         ?: formatError(message("yaml.editor.invalid.format.translation.language.field", translatedToLanguageLabel))
     }
+    course.enhancements = courseEnhancements
 
     return course
   }

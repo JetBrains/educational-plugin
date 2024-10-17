@@ -3,11 +3,7 @@
 
 package com.jetbrains.edu.learning.json.mixins
 
-import com.fasterxml.jackson.annotation.JacksonInject
-import com.fasterxml.jackson.annotation.JsonFilter
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.fasterxml.jackson.annotation.*
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.ObjectCodec
 import com.fasterxml.jackson.databind.DeserializationContext
@@ -20,9 +16,6 @@ import com.fasterxml.jackson.databind.util.StdConverter
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.MARKETPLACE
 import com.jetbrains.edu.learning.courseFormat.tasks.*
-import com.jetbrains.edu.learning.courseFormat.EmtpyFileContentFactory
-import com.jetbrains.edu.learning.courseFormat.FILE_CONTENTS_FACTORY_INJECTABLE_VALUE
-import com.jetbrains.edu.learning.courseFormat.FileContentsFactory
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -82,6 +75,7 @@ import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TASK_LIST
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TASK_TYPE
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TEXT
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TITLE
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TRANSLATION_VERSION
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TYPE
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.VERSION
 
@@ -402,6 +396,11 @@ abstract class EduTestInfoMixin {
   private lateinit var name: String
   @JsonProperty(STATUS)
   private var status: Int = -1
+}
+
+abstract class EnhancementsInfoMixin {
+  @JsonProperty(TRANSLATION_VERSION)
+  private var translationVersion: Int = -1
 }
 
 class CourseDeserializer : StdDeserializer<Course>(Course::class.java) {

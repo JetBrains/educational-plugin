@@ -27,6 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.json.encrypt.EncryptionModule
 import com.jetbrains.edu.learning.json.encrypt.getAesKey
+import com.jetbrains.edu.learning.json.mixins.EnhancementsInfoMixin
 import com.jetbrains.edu.learning.yaml.format.*
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.COURSE_TYPE_YAML
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.HYPERSKILL_TYPE_YAML
@@ -122,6 +123,7 @@ object YamlMapper {
     addMixIn(TaskFile::class.java, TaskFileYamlMixin::class.java)
     addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderYamlMixin::class.java)
     addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyYamlMixin::class.java)
+    addMixIn(EnhancementsInfo::class.java, EnhancementsInfoMixin::class.java)
 
     registerSubtypes(NamedType(CourseraCourse::class.java, COURSE_TYPE_YAML))
     registerSubtypes(NamedType(HyperskillCourse::class.java, HYPERSKILL_TYPE_YAML))

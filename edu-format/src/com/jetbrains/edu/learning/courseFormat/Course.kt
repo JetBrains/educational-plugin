@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.courseFormat
 
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYCHARM
+import com.jetbrains.educational.translation.enum.Language
 import java.util.*
 
 /**
@@ -53,6 +54,7 @@ abstract class Course : LessonContainer() {
   open var languageCode: String = "en"
 
   var translatedToLanguageCode: String? = null
+  var enhancements: Map<Language, EnhancementsInfo> = emptyMap()
 
   // Marketplace:
   var isMarketplace: Boolean = false
