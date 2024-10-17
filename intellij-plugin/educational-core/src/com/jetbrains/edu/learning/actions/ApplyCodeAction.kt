@@ -28,6 +28,7 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.EduActionUtils.closeLastActiveFileEditor
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import org.jetbrains.annotations.NonNls
@@ -72,7 +73,9 @@ class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
       return
     }
 
-    project.closeLastActiveFileEditor(e)
+    project.invokeLater {
+      project.closeLastActiveFileEditor(e)
+    }
 
     EduNotificationManager.showInfoNotification(
       project,

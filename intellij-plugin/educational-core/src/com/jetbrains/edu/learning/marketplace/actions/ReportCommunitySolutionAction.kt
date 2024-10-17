@@ -17,6 +17,7 @@ import com.intellij.ui.GotItTooltip
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.EduActionUtils.closeLastActiveFileEditor
+import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.isMarketplaceCourse
@@ -73,7 +74,9 @@ class ReportCommunitySolutionAction : DumbAwareAction(), CustomComponentAction {
       val taskId = chainDiffVirtualFile.getUserDataFromChain(TASK_ID_KEY) ?: return@runInBackground
       SubmissionsManager.getInstance(project).removeCommunitySubmission(taskId, submissionId)
       chainDiffVirtualFile.putUserData(IS_REPORTED, true)
-      project.closeLastActiveFileEditor(e)
+      project.invokeLater {
+        project.closeLastActiveFileEditor(e)
+      }
       MarketplaceNotificationUtils.showSuccessRequestNotification(
         project,
         EduCoreBundle.message("marketplace.report.solutions.success.title"),
