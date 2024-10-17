@@ -51,10 +51,12 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
     scope.launch {
       try {
         if (!lock()) {
-          EduNotificationManager.showErrorNotification(
-            project,
-            content = EduAIBundle.message("ai.translation.already.running")
-          )
+          withContext(Dispatchers.EDT) {
+            EduNotificationManager.showErrorNotification(
+              project,
+              content = EduAIBundle.message("ai.translation.already.running")
+            )
+          }
           return@launch
         }
         withBackgroundProgress(project, EduAIBundle.message("ai.service.getting.course.translation")) {
@@ -75,12 +77,52 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
     }
   }
 
+  fun resetCourseTranslation(course: EduCourse) {
+    scope.launch {
+      try {
+        if (!lock()) {
+          withContext(Dispatchers.EDT) {
+            EduNotificationManager.showErrorNotification(
+              project,
+              content = EduAIBundle.message("ai.translation.translations.reset.is.not.possible")
+            )
+          }
+          return@launch
+        }
+        if (course.translatedToLanguageCode != null) {
+          withBackgroundProgress(project, EduAIBundle.message("ai.service.reset.course.translation")) {
+            course.translatedToLanguageCode = null
+            withContext(Dispatchers.EDT) {
+              YamlFormatSynchronizer.saveItem(course)
+              TaskToolWindowView.getInstance(project).updateTaskDescription()
+            }
+          }
+        }
+        withBackgroundProgress(project, EduAIBundle.message("ai.service.deleting.course.translation.files")) {
+          course.deleteAllTranslations()
+        }
+      }
+      finally {
+        unlock()
+      }
+    }
+  }
+
   private suspend fun fetchTranslation(course: EduCourse, language: Language): CourseTranslation =
     withContext(Dispatchers.IO) {
       downloadTranslation(course, language).onError { error ->
         error("Failed to download translation for ${course.name} to $language: $error")
       }
     }
+
+  @OptIn(ExperimentalStdlibApi::class)
+  private suspend fun EduCourse.deleteAllTranslations() = allTasks.map {
+    scope.async(Dispatchers.IO) {
+      Language.entries.forEach { language ->
+        it.deleteTranslation(language)
+      }
+    }
+  }.awaitAll()
 
   private suspend fun EduCourse.isTranslationExists(language: Language): Boolean =
     readAction {
@@ -125,6 +167,21 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
     }
     catch (exception: IOException) {
       LOG.error("Failed to write text to $taskDirectory", exception)
+      throw exception
+    }
+  }
+
+  private suspend fun Task.deleteTranslation(language: Language) {
+    try {
+      val translationFile = readAction {
+        getDescriptionFile(project, translatedToLanguageCode = language.code)
+      } ?: return
+      writeAction {
+        translationFile.delete(this::class.java)
+      }
+    }
+    catch (exception: IOException) {
+      LOG.error("Failed to delete ${language.label} translation file", exception)
       throw exception
     }
   }
