@@ -332,9 +332,13 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
         return false
       }
 
-    val message = message("marketplace.push.course.successfully.updated", course.name, course.marketplaceCourseVersion)
-    showInfoNotification(project, message, action = openOnMarketplaceAction(course.getMarketplaceUrl()))
-    LOG.info(message)
+    showInfoNotification(
+      project,
+      message("marketplace.push.course.successfully.updated.title"),
+      message("marketplace.push.course.successfully.updated.message", course.name, course.marketplaceCourseVersion),
+      action = openOnMarketplaceAction(course.getMarketplaceUrl())
+    )
+    LOG.info("Course ${course.name} update has been successfully uploaded with version ${course.marketplaceCourseVersion}")
     YamlFormatSynchronizer.saveItem(course)
     return false
   }
