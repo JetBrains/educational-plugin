@@ -14,6 +14,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts
+import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -113,6 +114,7 @@ object EduActionUtils {
     }
   }
 
+  @RequiresEdt
   fun Project.closeLastActiveFileEditor(e: AnActionEvent) {
     val fileEditorManager = FileEditorManager.getInstance(this)
     val fileEditor = e.getData(LAST_ACTIVE_FILE_EDITOR) ?: return
