@@ -86,6 +86,7 @@ class EducationalCoreIconsTest(
       EducationalCoreIcons.Submission.TaskSolved,
       EducationalCoreIcons.Submission.TaskSolvedHighContrast,
       EducationalCoreIcons.DOT,
+      EducationalCoreIcons.AIDebugger.BUG
     )
 
     private fun getIconPathsFromClass(aClass: Class<*>): Collection<EduIconTestData> {
