@@ -69,7 +69,7 @@ class MarketplaceSolutionLoader(project: Project) : SolutionLoaderBase(project) 
         "Marketplace submission ${lastSubmission.id} for task ${task.name} is not up to date. " +
         "Submission course version: ${lastSubmission.courseVersion}, course version: ${task.course.marketplaceCourseVersion}"
       )
-      return TaskSolutions.INCOMPATIBLE
+      return TaskSolutions.EMPTY
     }
 
     val files =
