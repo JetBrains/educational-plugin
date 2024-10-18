@@ -25,6 +25,8 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.YamlLoader.deserializeContent
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
 import com.jetbrains.edu.learning.yaml.format.getRemoteChangeApplierForItem
+import com.jetbrains.edu.learning.yaml.migrate.YAML_VERSION_MAPPER_KEY
+import com.jetbrains.edu.learning.yaml.migrate.YamlMigrator
 import org.jetbrains.annotations.NonNls
 
 object YamlDeepLoader {
@@ -38,8 +40,14 @@ object YamlDeepLoader {
     val errorMessageToLog = "Course yaml config cannot be null"
     val courseConfig = projectDir.findChild(YamlConfigSettings.COURSE_CONFIG) ?: error(errorMessageToLog)
 
-    val deserializedCourse = deserializeItemProcessingErrors(courseConfig, project) as? Course ?: return null
+    // the initial mapper has no idea whether the course is in the CC or in the Student mode
+    val initialMapper = YamlMapper.basicMapper()
+    val deserializedCourse = deserializeItemProcessingErrors(courseConfig, project, mapper=initialMapper) as? Course ?: return null
+    val needMigration = YamlMigrator(initialMapper).needMigration()
+
+    // this mapper already respects course mode, it will be used to deserialize all other course items
     val mapper = deserializedCourse.mapper()
+    mapper.setEduValue(YAML_VERSION_MAPPER_KEY, initialMapper.getEduValue(YAML_VERSION_MAPPER_KEY))
 
     deserializedCourse.items = deserializedCourse.deserializeContent(project, deserializedCourse.items, mapper)
     deserializedCourse.items.forEach { deserializedItem ->
@@ -60,6 +68,17 @@ object YamlDeepLoader {
           addNonEditableFilesToCourse(deserializedItem, deserializedCourse, project)
           deserializedItem.removeNonExistingTaskFiles(project)
         }
+      }
+    }
+
+    if (needMigration) {
+      project.invokeLater {
+        // After migration, we save all YAMLs back to disk.
+        // In theory, com.jetbrains.edu.learning.yaml.YamlLoader.loadItem() could be fired before the migrated YAMLs are saved,
+        // and that could lead to incorrectly read YAML.
+        // One of the dangerous places: the FileEditorManagerListener calls loadItem() to refresh editor notifications for
+        // YAML files, and this happens right after the project is loaded.
+        YamlFormatSynchronizer.saveAll(project)
       }
     }
 

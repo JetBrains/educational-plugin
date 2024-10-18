@@ -19,17 +19,21 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.errorHandling.InvalidYamlFormatException
 import com.jetbrains.edu.learning.yaml.errorHandling.showInvalidConfigNotification
 
+/**
+ * [parentItem] is an already deserialized study item, if known
+ */
 fun deserializeItemProcessingErrors(
   configFile: VirtualFile,
   project: Project,
   loadFromVFile: Boolean = true,
-  mapper: ObjectMapper = YamlMapper.basicMapper()
+  mapper: ObjectMapper = YamlMapper.basicMapper(),
+  parentItem: StudyItem? = null
 ): StudyItem? {
   val configFileText = if (loadFromVFile) VfsUtil.loadText(configFile) else configFile.document.text
   val configName = configFile.name
   return ProgressManager.getInstance().computeInNonCancelableSection<StudyItem, Exception> {
     try {
-      YamlDeserializer.deserializeItem(configName, mapper, configFileText)
+      YamlDeserializer.deserializeItem(configName, mapper, configFileText, parentItem)
     }
     catch (e: Exception) {
       processErrors(project, configFile, e)
