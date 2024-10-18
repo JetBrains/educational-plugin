@@ -14,5 +14,6 @@ fun PsiElement.isPromptBlock() = text.startsWith(PROMPT) &&
 
 const val PROMPT = "prompt"
 const val CODE = "code"
+const val UNIT_RETURN_VALUE = "Unit"
 
 fun PromptToCodeResponse.toGeneratedCode() = distinctBy { it.codeLineNumber }.joinToString(System.lineSeparator()) { it.generatedCodeLine }

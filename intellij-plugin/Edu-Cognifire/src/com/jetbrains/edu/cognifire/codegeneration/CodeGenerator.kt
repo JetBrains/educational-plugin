@@ -3,12 +3,11 @@ package com.jetbrains.edu.cognifire.codegeneration
 import com.intellij.lang.Language
 import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.cognifire.PurificationWrongTodo
+import com.jetbrains.edu.cognifire.utils.RedundantTodoCleaner
 import com.jetbrains.edu.cognifire.models.PromptExpression
 import com.jetbrains.edu.cognifire.utils.toGeneratedCode
 import com.jetbrains.educational.ml.cognifire.core.PromptToCodeAssistant
 import com.jetbrains.educational.ml.cognifire.responses.PromptToCodeResponse
-import org.jetbrains.kotlin.scripting.definitions.runReadAction
 
 class CodeGenerator(promptExpression: PromptExpression, project: Project, language: Language) {
   private val enumeratedPromptLines = getEnumeratedPromptLines(promptExpression)
@@ -16,9 +15,8 @@ class CodeGenerator(promptExpression: PromptExpression, project: Project, langua
   private val promptToCodeTranslation: PromptToCodeResponse =
     getCodeFromPrompt(promptExpression.functionSignature.toString(), enumeratedPromptLines)
 
-  private val promptToCodeClearedFromWrongTodos = runReadAction {
-    PurificationWrongTodo.deleteWrongTodo(project, promptToCodeTranslation, promptExpression.functionSignature, language)
-  }
+  private val promptToCodeClearedFromWrongTodos =
+    RedundantTodoCleaner.deleteWrongTodo(promptToCodeTranslation, promptExpression.functionSignature)
 
   val promptToCodeLines = promptToCodeClearedFromWrongTodos
     .groupBy { it.promptLineNumber }

@@ -1,7 +1,7 @@
 package com.jetbrains.edu.kotlin.cognifire.psi
 
 import com.jetbrains.edu.cognifire.GeneratedCodeParser
-import com.jetbrains.edu.cognifire.PurificationWrongTodo
+import com.jetbrains.edu.cognifire.utils.RedundantTodoCleaner
 import com.jetbrains.edu.cognifire.models.FunctionSignature
 import com.jetbrains.edu.cognifire.utils.toGeneratedCode
 import com.jetbrains.edu.learning.EduTestCase
@@ -74,7 +74,7 @@ class KtGeneratedCodeParserTest : EduTestCase() {
         generatedCodeLine = "TODO(\"Specify the return value or further actions\")"
       ),
     )
-    val promptToCode = PurificationWrongTodo.deleteWrongTodo(project, promptToCodeTranslation, mainFunctionSignature, language)
+    val promptToCode = RedundantTodoCleaner.deleteWrongTodo(promptToCodeTranslation, mainFunctionSignature)
     assertFalse(GeneratedCodeParser.hasErrors(project, promptToCode.toGeneratedCode(), mainFunctionSignature, language))
   }
 
