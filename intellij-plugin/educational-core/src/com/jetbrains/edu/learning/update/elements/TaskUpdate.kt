@@ -19,7 +19,6 @@ sealed class TaskUpdate(localItem: Task?, remoteItem: Task?) : StudyItemUpdate<T
 
 data class TaskCreationInfo(val localLesson: Lesson, override val remoteItem: Task) : TaskUpdate(null, remoteItem) {
   override suspend fun update(project: Project) {
-    // TODO EDU-6756 what if task was created in the middle of the lesson?
     localLesson.addItem(remoteItem)
     remoteItem.init(localLesson, false)
 
@@ -48,8 +47,6 @@ data class TaskUpdateInfo(override val localItem: Task, override val remoteItem:
     localItem.deleteFilesOnDisc(project)
 
     remoteItem.apply {
-      // TODO EDU-6756 maybe drop it, as index will be calculated in LessonUpdate .init()
-      index = localItem.index
       // we keep CheckStatus.Solved for task even if it was updated
       // we keep CheckStatus.Failed for task only if it was not updated
       if (localItem.status != CheckStatus.Failed) {
@@ -63,7 +60,7 @@ data class TaskUpdateInfo(override val localItem: Task, override val remoteItem:
         EduCourseUpdater.createTaskDirectories(project, lessonDir, remoteItem)
       }
     }
-    lesson.addItem(localItem.index - 1, remoteItem)
+    lesson.addItem(remoteItem)
 
     blockingContext {
       YamlFormatSynchronizer.saveItemWithRemoteInfo(remoteItem)

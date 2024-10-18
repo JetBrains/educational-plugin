@@ -38,6 +38,8 @@ abstract class CourseUpdate<T : Course>(
 
       localItem.additionalFiles = remoteItem.additionalFiles
     }
+
+    localItem.sortItems()
   }
 
   companion object {

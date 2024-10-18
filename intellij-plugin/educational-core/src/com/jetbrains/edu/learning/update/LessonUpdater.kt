@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.update.elements.LessonCreationInfo
 import com.jetbrains.edu.learning.update.elements.LessonDeletionInfo
 import com.jetbrains.edu.learning.update.elements.LessonUpdate
 import com.jetbrains.edu.learning.update.elements.LessonUpdateInfo
-import org.jetbrains.annotations.TestOnly
 
 abstract class LessonUpdater(project: Project, private val container: LessonContainer) : StudyItemUpdater<Lesson, LessonUpdate>(project) {
   protected abstract fun createTaskUpdater(lesson: Lesson): TaskUpdater
@@ -65,9 +64,6 @@ abstract class LessonUpdater(project: Project, private val container: LessonCont
 
     return updates
   }
-
-  @TestOnly
-  suspend fun update(remoteContainer: LessonContainer) = update(container.lessons, remoteContainer.lessons)
 
   private fun Lesson.isChanged(remoteLesson: Lesson): Boolean = when {
     name != remoteLesson.name -> true

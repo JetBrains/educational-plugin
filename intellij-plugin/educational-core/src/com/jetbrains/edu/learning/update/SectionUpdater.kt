@@ -7,7 +7,6 @@ import com.jetbrains.edu.learning.update.elements.SectionCreationInfo
 import com.jetbrains.edu.learning.update.elements.SectionDeletionInfo
 import com.jetbrains.edu.learning.update.elements.SectionUpdate
 import com.jetbrains.edu.learning.update.elements.SectionUpdateInfo
-import org.jetbrains.annotations.TestOnly
 
 abstract class SectionUpdater(project: Project, private val course: Course) : StudyItemUpdater<Section, SectionUpdate>(project) {
   protected abstract fun createLessonUpdater(section: Section): LessonUpdater
@@ -57,9 +56,6 @@ abstract class SectionUpdater(project: Project, private val course: Course) : St
 
     return updates
   }
-
-  @TestOnly
-  suspend fun update(remoteCourse: Course) = update(course.sections, remoteCourse.sections)
 
   private fun Section.isChanged(remoteSection: Section): Boolean =
     when {

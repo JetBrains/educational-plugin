@@ -106,10 +106,11 @@ abstract class LessonOwnerBuilder(val course: Course) {
     name: String? = null,
     customPresentableName: String? = null,
     id: Int = 0,
+    index: Int? = null,
     updateDate: Date = Date(0),
     buildLesson: LessonBuilder<Lesson>.() -> Unit = {}
   ) {
-    lesson(Lesson(), name, customPresentableName, id, updateDate, buildLesson)
+    lesson(Lesson(), name, customPresentableName, id, index, updateDate, buildLesson)
   }
 
   protected fun <T : Lesson> lesson(
@@ -117,11 +118,12 @@ abstract class LessonOwnerBuilder(val course: Course) {
     name: String? = null,
     customPresentableName: String? = null,
     id: Int = 0,
+    index: Int? = null,
     updateDate: Date = Date(0),
     buildLesson: LessonBuilder<T>.() -> Unit
   ) {
     val lessonBuilder = LessonBuilder(course, null, lesson)
-    lesson.index = nextLessonIndex
+    lesson.index = index ?: nextLessonIndex
     lesson.updateDate = updateDate
     lessonBuilder.withName(name ?: (LESSON + nextLessonIndex))
     lessonBuilder.withCustomPresentableName(customPresentableName)
@@ -156,12 +158,13 @@ class CourseBuilder(course: Course) : LessonOwnerBuilder(course) {
     name: String? = null,
     customPresentableName: String? = null,
     id: Int = 0,
+    index: Int? = null,
     buildSection: SectionBuilder.() -> Unit = {}
   ) {
     val sectionBuilder = SectionBuilder(course, Section())
     val section = sectionBuilder.section
-    section.index = course.items.size + 1
     val nextSectionIndex = course.items.size + 1
+    section.index = index ?: nextSectionIndex
     sectionBuilder.withName(name ?: (SECTION + nextSectionIndex))
     sectionBuilder.withCustomPresentableName(customPresentableName)
     sectionBuilder.withId(id)

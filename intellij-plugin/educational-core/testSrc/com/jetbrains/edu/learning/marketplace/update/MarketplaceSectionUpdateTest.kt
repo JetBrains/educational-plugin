@@ -1,45 +1,33 @@
 package com.jetbrains.edu.learning.marketplace.update
 
-import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
-import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.CourseBuilder
+import com.jetbrains.edu.learning.SectionBuilder
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.fileTree
-import com.jetbrains.edu.learning.update.SectionUpdateTestBase
-import com.jetbrains.edu.learning.update.SectionUpdater
+import com.jetbrains.edu.learning.update.CourseUpdater
+import com.jetbrains.edu.learning.update.UpdateTestBase
 import org.junit.Test
 
-class MarketplaceSectionUpdateTest : SectionUpdateTestBase<EduCourse>() {
-  override fun getUpdater(course: Course): SectionUpdater = MarketplaceSectionUpdater(project, course)
+class MarketplaceSectionUpdateTest : UpdateTestBase<EduCourse>() {
+  override fun getUpdater(localCourse: EduCourse): CourseUpdater<EduCourse> = MarketplaceCourseUpdaterNew(project, localCourse)
 
   @Test
   fun `test new section created`() {
     initiateLocalCourse()
-    val newEduTask = EduTask("task3").apply {
-      id = 3
-      taskFiles = linkedMapOf(
-        "Task.kt" to TaskFile("src/Task.kt", "fun foo() {}"),
-        "Baz.kt" to TaskFile("src/Baz.kt", "fun baz() {}"),
-        "Tests3.kt" to TaskFile("test/Tests3.kt", "fun test3() {}")
-      )
-      descriptionFormat = DescriptionFormat.HTML
-    }
-    val newLesson = Lesson().apply {
-      id = 2
-      name = "lesson2"
-      addTask(newEduTask)
-      newEduTask.parent = this
-    }
-    val newSection = Section().apply {
-      id = 2
-      name = "section2"
-      addLesson(newLesson)
-      newLesson.parent = this
+
+    val remoteCourse = toRemoteCourse { }
+    CourseBuilder(remoteCourse).section("section2", id = 2) {
+      lesson("lesson2", id = 2) {
+        eduTask("task3", stepId = 2) {
+          taskFile("src/Task.kt")
+          taskFile("src/Baz.kt")
+          taskFile("test/Tests.kt")
+        }
+      }
     }
 
-    val remoteCourse = toRemoteCourse {
-      addSection(newSection)
-    }
-    updateSections(remoteCourse)
+    updateCourse(remoteCourse)
+
     assertEquals("Section hasn't been added", 2, localCourse.sections.size)
 
     val expectedStructure = fileTree {
@@ -51,9 +39,9 @@ class MarketplaceSectionUpdateTest : SectionUpdateTestBase<EduCourse>() {
               file("Baz.kt")
             }
             dir("test") {
-              file("Tests1.kt")
+              file("Tests.kt")
             }
-            file("task.html")
+            file("task.md")
           }
           dir("task2") {
             dir("src") {
@@ -61,9 +49,9 @@ class MarketplaceSectionUpdateTest : SectionUpdateTestBase<EduCourse>() {
               file("Baz.kt")
             }
             dir("test") {
-              file("Tests2.kt")
+              file("Tests.kt")
             }
-            file("task.html")
+            file("task.md")
           }
         }
       }
@@ -75,9 +63,9 @@ class MarketplaceSectionUpdateTest : SectionUpdateTestBase<EduCourse>() {
               file("Baz.kt")
             }
             dir("test") {
-              file("Tests3.kt")
+              file("Tests.kt")
             }
-            file("task.html")
+            file("task.md")
           }
         }
       }
@@ -88,8 +76,8 @@ class MarketplaceSectionUpdateTest : SectionUpdateTestBase<EduCourse>() {
   }
 
   @Test
-  fun `test file structure when new section created in the middle of the course`() {
-    localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::EduCourse) {
+  fun `test new section created in the middle of the course`() {
+    localCourse = createBasicMarketplaceCourse {
       section("section1", id = 1) {
         lesson("lesson1", id = 1) {
           eduTask("task1", stepId = 1)
@@ -101,31 +89,45 @@ class MarketplaceSectionUpdateTest : SectionUpdateTestBase<EduCourse>() {
         }
       }
       additionalFile("build.gradle", "apply plugin: \"java\"")
-    } as EduCourse
-
-    val newEduTask = EduTask("task3").apply { id = 3 }
-    val newLesson = Lesson().apply {
-      id = 3
-      name = "lesson3"
-      addTask(newEduTask)
-      newEduTask.parent = this
-    }
-    val newSection = Section().apply {
-      id = 3
-      name = "section3"
-      addLesson(newLesson)
-      newLesson.parent = this
     }
 
-    val remoteCourse = toRemoteCourse {
-      val sections = sections.toMutableList()
-      sections.add(1, newSection)
-      this.sections.forEach { removeSection(it) }
-      sections.forEach { addSection(it) }
-      init(false)
+    val remoteCourse = toRemoteCourse { }
+    CourseBuilder(remoteCourse).section("section3", id = 3, index = 2) {
+      lesson("lesson3", id = 3) {
+        eduTask("task3", stepId = 3)
+      }
     }
-    updateSections(remoteCourse)
-    assertEquals("Section hasn't been added", 3, localCourse.sections.size)
+    remoteCourse.apply {
+      sections[1].index = 3
+      sortItems()
+    }
+
+    updateCourse(remoteCourse)
+
+    val sections = localCourse.sections
+    assertEquals(3, sections.size)
+    checkIndices(sections)
+    localCourse.sections[0].let { section ->
+      assertEquals(1, section.id)
+      assertEquals(1, section.index)
+      assertEquals("section1", section.name)
+      assertEquals("section1", section.presentableName)
+      assertEquals("lesson1", section.lessons[0].name)
+    }
+    localCourse.sections[1].let { section ->
+      assertEquals(3, section.id)
+      assertEquals(2, section.index)
+      assertEquals("section3", section.name)
+      assertEquals("section3", section.presentableName)
+      assertEquals("lesson3", section.lessons[0].name)
+    }
+    localCourse.sections[2].let { section ->
+      assertEquals(2, section.id)
+      assertEquals(3, section.index)
+      assertEquals("section2", section.name)
+      assertEquals("section2", section.presentableName)
+      assertEquals("lesson2", section.lessons[0].name)
+    }
 
     val expectedStructure = fileTree {
       dir("section1") {
@@ -155,60 +157,16 @@ class MarketplaceSectionUpdateTest : SectionUpdateTestBase<EduCourse>() {
     expectedStructure.assertEquals(rootDir)
   }
 
-  // EDU-6756 Support update in case a new StudyItem appears in the middle of the existing ones
-  @Test(expected = AssertionError::class)
-  fun `test section indexes when new section created in the middle of the course`() {
-    localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::EduCourse) {
-      section("section1", id = 1) {
-        lesson("lesson1", id = 1) {
-          eduTask("task1", stepId = 1)
-        }
-      }
-      section("section2", id = 2) {
-        lesson("lesson2", id = 2) {
-          eduTask("task2", stepId = 2)
-        }
-      }
-      additionalFile("build.gradle", "apply plugin: \"java\"")
-    } as EduCourse
-
-    val newEduTask = EduTask("task3").apply { id = 3 }
-    val newLesson = Lesson().apply {
-      id = 3
-      name = "lesson3"
-      addTask(newEduTask)
-      newEduTask.parent = this
-    }
-    val newSection = Section().apply {
-      id = 3
-      name = "section3"
-      addLesson(newLesson)
-      newLesson.parent = this
-    }
-
-    val remoteCourse = toRemoteCourse {
-      val sections = sections.toMutableList()
-      sections.add(1, newSection)
-      this.sections.forEach { removeSection(it) }
-      sections.forEach { addSection(it) }
-      init(false)
-    }
-    updateSections(remoteCourse)
-
-    val sections = localCourse.sections
-    assertEquals("Section hasn't been added", 3, sections.size)
-    assertTrue("Wrong index for the first section", sections[0].name == "section1")
-    assertTrue("Wrong index for the second section", sections[1].name == "section3")
-    assertTrue("Wrong index for the third section", sections[2].name == "section2")
-  }
-
   @Test
   fun `test section deleted`() {
     initiateLocalCourse()
+
     val remoteCourse = toRemoteCourse {
       sections.forEach { removeSection(it) }
     }
-    updateSections(remoteCourse)
+
+    updateCourse(remoteCourse)
+
     assertEquals("Section hasn't been deleted", 0, localCourse.sections.size)
 
     val expectedStructure = fileTree {
@@ -221,15 +179,18 @@ class MarketplaceSectionUpdateTest : SectionUpdateTestBase<EduCourse>() {
   @Test
   fun `test section name updated`() {
     initiateLocalCourse()
+
+    val updatedSectionName = "updated_section"
     val remoteCourse = toRemoteCourse {
-      sections[0].name = "updated_section"
+      sections[0].name = updatedSectionName
     }
-    updateSections(remoteCourse)
-    val updatedSectionName = localCourse.sections.first().name
-    assertEquals("Section name hasn't been updated", "updated_section", updatedSectionName)
+
+    updateCourse(remoteCourse)
+
+    assertEquals("Section name hasn't been updated", updatedSectionName, localCourse.sections[0].name)
 
     val expectedStructure = fileTree {
-      dir("updated_section") {
+      dir(updatedSectionName) {
         dir("lesson1") {
           dir("task1") {
             dir("src") {
@@ -237,9 +198,9 @@ class MarketplaceSectionUpdateTest : SectionUpdateTestBase<EduCourse>() {
               file("Baz.kt")
             }
             dir("test") {
-              file("Tests1.kt")
+              file("Tests.kt")
             }
-            file("task.html")
+            file("task.md")
           }
           dir("task2") {
             dir("src") {
@@ -247,9 +208,9 @@ class MarketplaceSectionUpdateTest : SectionUpdateTestBase<EduCourse>() {
               file("Baz.kt")
             }
             dir("test") {
-              file("Tests2.kt")
+              file("Tests.kt")
             }
-            file("task.html")
+            file("task.md")
           }
         }
       }
@@ -262,26 +223,26 @@ class MarketplaceSectionUpdateTest : SectionUpdateTestBase<EduCourse>() {
   @Test
   fun `test section with lessons and tasks updated`() {
     initiateLocalCourse()
+
     val updatedSectionName = "updated_section"
     val updatedLessonName = "updated_lesson"
     val updatedTaskName = "updated_task"
-
     val remoteCourse = toRemoteCourse {
-      val section = sections.first()
-      section.name = updatedSectionName
-      val lesson = section.lessons.first()
-      lesson.name = updatedLessonName
-      val task = lesson.taskList.first()
-      task.name = updatedTaskName
+      sections[0].apply {
+        name = updatedSectionName
+        lessons[0].apply {
+          name = updatedLessonName
+          taskList[0].name = updatedTaskName
+        }
+      }
     }
 
-    updateSections(remoteCourse)
-    val updatedSection = localCourse.sections.first()
-    assertEquals(updatedSectionName, updatedSection.name)
-    val updatedLesson = updatedSection.lessons.first()
-    assertEquals(updatedLessonName, updatedLesson.name)
-    val updatedTask = updatedLesson.taskList.first()
-    assertEquals(updatedTaskName, updatedTask.name)
+    updateCourse(remoteCourse)
+
+    val sections = localCourse.sections[0]
+    assertEquals(updatedSectionName,sections.name)
+    assertEquals(updatedLessonName, sections.lessons[0].name)
+    assertEquals(updatedTaskName, sections.lessons[0].taskList[0].name)
 
     val expectedStructure = fileTree {
       dir(updatedSectionName) {
@@ -292,9 +253,9 @@ class MarketplaceSectionUpdateTest : SectionUpdateTestBase<EduCourse>() {
               file("Baz.kt")
             }
             dir("test") {
-              file("Tests1.kt")
+              file("Tests.kt")
             }
-            file("task.html")
+            file("task.md")
           }
           dir("task2") {
             dir("src") {
@@ -302,9 +263,9 @@ class MarketplaceSectionUpdateTest : SectionUpdateTestBase<EduCourse>() {
               file("Baz.kt")
             }
             dir("test") {
-              file("Tests2.kt")
+              file("Tests.kt")
             }
-            file("task.html")
+            file("task.md")
           }
         }
       }
@@ -317,35 +278,23 @@ class MarketplaceSectionUpdateTest : SectionUpdateTestBase<EduCourse>() {
   @Test
   fun `test section lessons and tasks added`() {
     initiateLocalCourse()
-    val newLesson = Lesson().apply {
-      id = 2
-      name = "new_lesson"
-      val newTask = EduTask("new_task").apply {
-        id = 3
-        taskFiles = linkedMapOf(
-          "Task.kt" to TaskFile("src/Task.kt", "fun foo() {}"),
-          "Baz.kt" to TaskFile("src/Baz.kt", "fun baz() {}"),
-          "Tests1.kt" to TaskFile("test/Tests3.kt", "fun test3() {}")
-        )
-        descriptionFormat = DescriptionFormat.HTML
+
+    val newLessonName = "new_lesson"
+    val newTaskName = "new_task"
+    val remoteCourse = toRemoteCourse { }
+    SectionBuilder(remoteCourse, remoteCourse.sections[0]).lesson(newLessonName, id = 2) {
+      eduTask(newTaskName, stepId = 3) {
+        taskFile("src/Task.kt")
+        taskFile("src/Baz.kt")
+        taskFile("test/Tests.kt")
       }
-      addTask(newTask)
-      newTask.parent = this
     }
 
-    val remoteCourse = toRemoteCourse {
-      sections[0].addLesson(newLesson)
-      newLesson.parent = sections[0]
-    }
+    updateCourse(remoteCourse)
 
-    updateSections(remoteCourse)
-    val updatedSection = localCourse.sections.first()
-    assertEquals(2, updatedSection.lessons.size)
-
-    val newAddedLesson = updatedSection.getLesson(2)!!
-    assertEquals("new_lesson", newAddedLesson.name)
-    assertEquals(1, newAddedLesson.taskList.size)
-    assertEquals("new_task", newAddedLesson.getTask(3)!!.name)
+    assertEquals(2, localCourse.sections[0].lessons.size)
+    assertEquals(newLessonName, localCourse.sections[0].lessons[1].name)
+    assertEquals(newTaskName, localCourse.sections[0].lessons[1].taskList[0].name)
 
     val expectedStructure = fileTree {
       dir("section1") {
@@ -356,9 +305,9 @@ class MarketplaceSectionUpdateTest : SectionUpdateTestBase<EduCourse>() {
               file("Baz.kt")
             }
             dir("test") {
-              file("Tests1.kt")
+              file("Tests.kt")
             }
-            file("task.html")
+            file("task.md")
           }
           dir("task2") {
             dir("src") {
@@ -366,21 +315,21 @@ class MarketplaceSectionUpdateTest : SectionUpdateTestBase<EduCourse>() {
               file("Baz.kt")
             }
             dir("test") {
-              file("Tests2.kt")
+              file("Tests.kt")
             }
-            file("task.html")
+            file("task.md")
           }
         }
-        dir("new_lesson") {
-          dir("new_task") {
+        dir(newLessonName) {
+          dir(newTaskName) {
             dir("src") {
               file("Task.kt")
               file("Baz.kt")
             }
             dir("test") {
-              file("Tests3.kt")
+              file("Tests.kt")
             }
-            file("task.html")
+            file("task.md")
           }
         }
       }
@@ -393,53 +342,56 @@ class MarketplaceSectionUpdateTest : SectionUpdateTestBase<EduCourse>() {
   @Test
   fun `test sections and lessons swapped and renamed`() {
     initiateLocalCourse()
-    val remoteCourse = toRemoteCourse {
-      val firstSection = sections[0]
-      firstSection.name = "section2"
-      val secondSection = Section().apply {
-        id = 2
-        name = "section1"
-        val newLesson = Lesson().apply {
-          id = 2
-          name = "lesson2"
-          val newTask = EduTask("task3").apply {
-            id = 3
-            taskFiles = linkedMapOf(
-              "Task.kt" to TaskFile("src/Task.kt", "fun foo() {}"),
-              "Baz.kt" to TaskFile("src/Baz.kt", "fun baz() {}"),
-              "Tests3.kt" to TaskFile("test/Tests3.kt", "fun test3() {}")
-            )
-            descriptionFormat = DescriptionFormat.HTML
-          }
-          addTask(newTask)
+
+    val remoteCourse = toRemoteCourse { }
+    CourseBuilder(remoteCourse).section("section1", id = 2, index = 1) {
+      lesson("lesson1", id = 2) {
+        eduTask("task3", stepId = 3) {
+          taskFile("src/Task.kt")
+          taskFile("src/Baz.kt")
+          taskFile("test/Tests.kt")
         }
-        addLesson(newLesson)
       }
-      sections.forEach { removeSection(it) }
-      addSection(secondSection)
-      addSection(firstSection)
-      init(false)
+    }
+    remoteCourse.apply {
+      sections[0].apply {
+        index = 2
+        name = "section2"
+        lessons[0].name = "lesson2"
+      }
+      sortItems()
     }
 
-    updateSections(remoteCourse)
+    updateCourse(remoteCourse)
+
     assertEquals(2, localCourse.sections.size)
-    assertEquals("section2", localCourse.sections[0].name)
-    assertEquals("section1", localCourse.sections[1].name)
-    assertEquals("lesson1", localCourse.sections[0].lessons[0].name)
-    assertEquals("lesson2", localCourse.sections[1].lessons[0].name)
+    localCourse.sections[0].let { section ->
+      assertEquals(2, section.id)
+      assertEquals(1, section.index)
+      assertEquals("section1", section.name)
+      assertEquals("section1", section.presentableName)
+      assertEquals("lesson1", section.lessons[0].name)
+    }
+    localCourse.sections[1].let { section ->
+      assertEquals(1, section.id)
+      assertEquals(2, section.index)
+      assertEquals("section2", section.name)
+      assertEquals("section2", section.presentableName)
+      assertEquals("lesson2", section.lessons[0].name)
+    }
 
     val expectedStructure = fileTree {
       dir("section2") {
-        dir("lesson1") {
+        dir("lesson2") {
           dir("task1") {
             dir("src") {
               file("Task.kt")
               file("Baz.kt")
             }
             dir("test") {
-              file("Tests1.kt")
+              file("Tests.kt")
             }
-            file("task.html")
+            file("task.md")
           }
           dir("task2") {
             dir("src") {
@@ -447,23 +399,23 @@ class MarketplaceSectionUpdateTest : SectionUpdateTestBase<EduCourse>() {
               file("Baz.kt")
             }
             dir("test") {
-              file("Tests2.kt")
+              file("Tests.kt")
             }
-            file("task.html")
+            file("task.md")
           }
         }
       }
       dir("section1") {
-        dir("lesson2") {
+        dir("lesson1") {
           dir("task3") {
             dir("src") {
               file("Task.kt")
               file("Baz.kt")
             }
             dir("test") {
-              file("Tests3.kt")
+              file("Tests.kt")
             }
-            file("task.html")
+            file("task.md")
           }
         }
       }
@@ -474,23 +426,22 @@ class MarketplaceSectionUpdateTest : SectionUpdateTestBase<EduCourse>() {
   }
 
   override fun initiateLocalCourse() {
-    localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::EduCourse) {
-      section("section1") {
+    localCourse = createBasicMarketplaceCourse {
+      section("section1", id = 1) {
         lesson("lesson1", id = 1) {
-          eduTask("task1", stepId = 1, taskDescription = "Task 1 description", taskDescriptionFormat = DescriptionFormat.HTML) {
+          eduTask("task1", stepId = 1) {
             taskFile("src/Task.kt", "fun foo() {}")
             taskFile("src/Baz.kt", "fun baz() {}")
-            taskFile("test/Tests1.kt", "fun test1() {}")
+            taskFile("test/Tests.kt", "fun test1() {}")
           }
-          eduTask("task2", stepId = 2, taskDescription = "Task 2 description", taskDescriptionFormat = DescriptionFormat.HTML) {
+          eduTask("task2", stepId = 2) {
             taskFile("src/Task.kt", "fun foo() {}")
             taskFile("src/Baz.kt", "fun baz() {}")
-            taskFile("test/Tests2.kt", "fun test2() {}")
+            taskFile("test/Tests.kt", "fun test2() {}")
           }
         }
       }
       additionalFile("build.gradle", "apply plugin: \"java\"")
-    } as EduCourse
-    localCourse.marketplaceCourseVersion = 1
+    }
   }
 }

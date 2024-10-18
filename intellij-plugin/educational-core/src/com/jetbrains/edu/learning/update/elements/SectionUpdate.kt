@@ -20,7 +20,6 @@ data class SectionCreationInfo(
   override val remoteItem: Section
 ) : SectionUpdate(null, remoteItem) {
   override suspend fun update(project: Project) {
-    // TODO EDU-6756 what if section was created in the middle of the course?
     localCourse.addItem(remoteItem)
     remoteItem.init(localCourse, false)
 
@@ -43,11 +42,12 @@ data class SectionUpdateInfo(
   val lessonUpdates: List<LessonUpdate>
 ) : SectionUpdate(localItem, remoteItem) {
   override suspend fun update(project: Project) {
-    val parentContainer = localItem.parent
-    lessonUpdates.forEach {
-      it.update(project)
+    if (lessonUpdates.isNotEmpty()) {
+      lessonUpdates.forEach { it.update(project) }
+      localItem.sortItems()
     }
-    localItem.init(parentContainer, false)
+
+    localItem.index = remoteItem.index
 
     if (localItem.name != remoteItem.name) {
       val courseDir = project.courseDir

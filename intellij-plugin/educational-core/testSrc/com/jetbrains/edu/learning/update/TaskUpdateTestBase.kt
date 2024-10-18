@@ -1,78 +1,18 @@
 package com.jetbrains.edu.learning.update
 
 import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.diagnostic.thisLogger
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getTaskText
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileTree
-import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import java.util.*
 
 abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
-  abstract fun getUpdater(lesson: Lesson): TaskUpdater
-
-  protected fun updateTasks(remoteCourse: T, lesson: Lesson? = null, remoteLesson: Lesson? = null, isShouldBeUpdated: Boolean = true) {
-    val lessonToBeUpdated = lesson ?: localCourse.lessons.first()
-    val updater = getUpdater(lessonToBeUpdated)
-    val lessonFromServer = remoteLesson ?: remoteCourse.lessons.first()
-    val updates = runBlocking {
-      updater.collect(lessonFromServer)
-    }
-    assertEquals("Updates are " + if (isShouldBeUpdated) "" else "not" + " available", isShouldBeUpdated, updates.isNotEmpty())
-    val isUpdateSucceed = runBlocking {
-      try {
-        updater.update(lessonFromServer)
-        true
-      }
-      catch (e: Exception) {
-        thisLogger().error(e)
-        false
-      }
-    }
-    if (isShouldBeUpdated) {
-      assertTrue("Update failed", isUpdateSucceed)
-    }
-  }
-
-  @Test
-  fun `test nothing to update`() {
-    initiateLocalCourse()
-
-    val remoteCourse = toRemoteCourse { }
-    updateTasks(remoteCourse, isShouldBeUpdated = false)
-
-    val expectedStructure = fileTree {
-      dir("lesson1") {
-        dir("task1") {
-          dir("src") {
-            file("Task.kt")
-            file("Baz.kt")
-          }
-          dir("test") {
-            file("Tests1.kt")
-          }
-          file("task.html")
-        }
-        dir("task2") {
-          dir("src") {
-            file("Task.kt")
-            file("Baz.kt")
-          }
-          dir("test") {
-            file("Tests2.kt")
-          }
-          file("task.html")
-        }
-      }
-      file("build.gradle")
-      file("settings.gradle")
-    }
-    expectedStructure.assertEquals(rootDir)
-  }
 
   @Test
   fun `test task name has been updated`() {
@@ -82,7 +22,8 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
     val remoteCourse = toRemoteCourse {
       taskList[0].name = newTaskName
     }
-    updateTasks(remoteCourse)
+
+    updateCourse(remoteCourse)
 
     val taskName = findTask(0, 0).name
     assertEquals("Task name not updated", newTaskName, taskName)
@@ -95,7 +36,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
             file("Baz.kt")
           }
           dir("test") {
-            file("Tests1.kt")
+            file("Tests.kt")
           }
           file("task.html")
         }
@@ -105,7 +46,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
             file("Baz.kt")
           }
           dir("test") {
-            file("Tests2.kt")
+            file("Tests.kt")
           }
           file("task.html")
         }
@@ -127,7 +68,8 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
         updateDate = Date(100)
       }
     }
-    updateTasks(remoteCourse)
+
+    updateCourse(remoteCourse)
 
     val taskDescription = runReadAction {
       findTask(0, 0).getTaskText(project)!!
@@ -142,7 +84,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
             file("Baz.kt")
           }
           dir("test") {
-            file("Tests1.kt")
+            file("Tests.kt")
           }
           file("task.html", newDescription)
         }
@@ -152,7 +94,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
             file("Baz.kt")
           }
           dir("test") {
-            file("Tests2.kt")
+            file("Tests.kt")
           }
           file("task.html")
         }
@@ -166,13 +108,14 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
   @Test
   fun `test task type has been updated`() {
     initiateLocalCourse()
+
     val newTaskName = "taskNewName"
     val newCodeTask = CodeTask(newTaskName).apply {
       id = 1
       descriptionFormat = DescriptionFormat.HTML
       taskFiles = linkedMapOf(
         "src/Task.kt" to TaskFile("src/Task.kt", "fun foo() {}"),
-        "test/Tests1.kt" to TaskFile("test/Tests1.kt", "fun test1() {}")
+        "test/Tests.kt" to TaskFile("test/Tests.kt", "fun test1() {}")
       )
     }
     val remoteCourse = toRemoteCourse {
@@ -181,7 +124,8 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
         addTask(0, newCodeTask)
       }
     }
-    updateTasks(remoteCourse)
+
+    updateCourse(remoteCourse)
 
     assertTrue("Task type isn't changed", findTask(0, 0) is CodeTask)
 
@@ -192,7 +136,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
             file("Task.kt")
           }
           dir("test") {
-            file("Tests1.kt")
+            file("Tests.kt")
           }
           file("task.html")
         }
@@ -202,7 +146,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
             file("Baz.kt")
           }
           dir("test") {
-            file("Tests2.kt")
+            file("Tests.kt")
           }
           file("task.html")
         }
@@ -216,23 +160,17 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
   @Test
   fun `test taskFile name has been updated`() {
     initiateLocalCourse()
+
     val newTaskFile = TaskFile("src/TaskFile2Renamed.kt", "task file 2 text")
-    val newTask = EduTask("task2").apply {
-      id = 2
-      descriptionFormat = DescriptionFormat.HTML
-      taskFiles = localCourse.taskList[1].taskFiles
-      removeTaskFile("src/Task.kt")
-      addTaskFile(newTaskFile)
-    }
     val remoteCourse = toRemoteCourse {
-      lessons.first().apply {
-        removeTask(taskList[1])
-        addTask(1, newTask)
+      lessons.first().taskList[1].apply {
+        removeTaskFile("src/Task.kt")
+        addTaskFile(newTaskFile)
       }
     }
-    updateTasks(remoteCourse)
+    updateCourse(remoteCourse)
 
-    assertTrue("taskFile name isn't changed", findTask(0, 1).taskFiles[newTaskFile.name] != null)
+    assertEquals("taskFile name isn't changed", newTaskFile.name, localCourse.lessons[0].taskList[1].taskFiles[newTaskFile.name]!!.name)
 
     val expectedStructure = fileTree {
       dir("lesson1") {
@@ -242,7 +180,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
             file("Baz.kt")
           }
           dir("test") {
-            file("Tests1.kt")
+            file("Tests.kt")
           }
           file("task.html")
         }
@@ -252,7 +190,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
             file("Baz.kt")
           }
           dir("test") {
-            file("Tests2.kt")
+            file("Tests.kt")
           }
           file("task.html")
         }
@@ -264,24 +202,17 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
   }
 
   @Test
-  fun `test taskFiles have been updated`() {
+  fun `test taskFiles have been added`() {
     initiateLocalCourse()
-    val newTaskFile = TaskFile("src/newTaskFile.kt", "New task file text")
-    val newTask = EduTask("task2").apply {
-      id = 2
-      descriptionFormat = DescriptionFormat.HTML
-      taskFiles = localCourse.taskList[1].taskFiles
-      addTaskFile(newTaskFile)
-    }
-    val remoteCourse = toRemoteCourse {
-      lessons.first().apply {
-        removeTask(taskList[1])
-        addTask(1, newTask)
-      }
-    }
-    updateTasks(remoteCourse)
 
-    assertTrue("New TaskFile isn't added", findTask(0, 1).taskFiles[newTaskFile.name] != null)
+    val newTaskFile = TaskFile("src/newTaskFile.kt", "New task file text")
+    val remoteCourse = toRemoteCourse {
+      lessons[0].taskList[1].addTaskFile(newTaskFile)
+    }
+
+    updateCourse(remoteCourse)
+
+    assertEquals("New TaskFile isn't added", newTaskFile, localCourse.lessons[0].taskList[1].taskFiles[newTaskFile.name])
 
     val expectedStructure = fileTree {
       dir("lesson1") {
@@ -291,7 +222,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
             file("Baz.kt")
           }
           dir("test") {
-            file("Tests1.kt")
+            file("Tests.kt")
           }
           file("task.html")
         }
@@ -302,7 +233,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
             file("newTaskFile.kt")
           }
           dir("test") {
-            file("Tests2.kt")
+            file("Tests.kt")
           }
           file("task.html")
         }
@@ -317,12 +248,14 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
   fun `test save task status Solved if task not updated`() {
     initiateLocalCourse()
     localCourse.taskList[0].status = CheckStatus.Solved
+
     val remoteCourse = toRemoteCourse {
       taskList[0].status = CheckStatus.Unchecked
     }
-    updateTasks(remoteCourse, isShouldBeUpdated = false)
 
-    assertEquals("Solved task status has been updated", CheckStatus.Solved, findTask(0, 0).status)
+    updateCourse(remoteCourse, isShouldBeUpdated = false)
+
+    assertEquals("Solved task status has been updated", CheckStatus.Solved, localCourse.taskList[0].status)
 
     val expectedStructure = fileTree {
       dir("lesson1") {
@@ -332,7 +265,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
             file("Baz.kt")
           }
           dir("test") {
-            file("Tests1.kt")
+            file("Tests.kt")
           }
           file("task.html")
         }
@@ -342,7 +275,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
             file("Baz.kt")
           }
           dir("test") {
-            file("Tests2.kt")
+            file("Tests.kt")
           }
           file("task.html")
         }
@@ -356,17 +289,18 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
   @Test
   fun `test save task status Solved if task was updated`() {
     initiateLocalCourse()
-    val newTaskName = "taskNewName"
     localCourse.taskList[0].status = CheckStatus.Solved
+
+    val newTaskName = "taskNewName"
     val remoteCourse = toRemoteCourse {
       taskList[0].apply {
         name = newTaskName
         status = CheckStatus.Unchecked
       }
     }
-    updateTasks(remoteCourse)
+    updateCourse(remoteCourse)
 
-    assertEquals("Solved task status has been updated", CheckStatus.Solved, findTask(0, 0).status)
+    assertEquals("Solved task status has been updated", CheckStatus.Solved, localCourse.taskList[0].status)
 
     val expectedStructure = fileTree {
       dir("lesson1") {
@@ -376,7 +310,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
             file("Baz.kt")
           }
           dir("test") {
-            file("Tests1.kt")
+            file("Tests.kt")
           }
           file("task.html")
         }
@@ -386,7 +320,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
             file("Baz.kt")
           }
           dir("test") {
-            file("Tests2.kt")
+            file("Tests.kt")
           }
           file("task.html")
         }
@@ -401,12 +335,14 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
   fun `test save task status Failed if task not updated`() {
     initiateLocalCourse()
     localCourse.taskList[0].status = CheckStatus.Failed
+
     val remoteCourse = toRemoteCourse {
       taskList[0].status = CheckStatus.Unchecked
     }
-    updateTasks(remoteCourse, isShouldBeUpdated = false)
 
-    assertEquals("Failed task status has been updated", CheckStatus.Failed, findTask(0, 0).status)
+    updateCourse(remoteCourse, isShouldBeUpdated = false)
+
+    assertEquals("Failed task status has been updated", CheckStatus.Failed, localCourse.taskList[0].status)
 
     val expectedStructure = fileTree {
       dir("lesson1") {
@@ -416,7 +352,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
             file("Baz.kt")
           }
           dir("test") {
-            file("Tests1.kt")
+            file("Tests.kt")
           }
           file("task.html")
         }
@@ -426,7 +362,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
             file("Baz.kt")
           }
           dir("test") {
-            file("Tests2.kt")
+            file("Tests.kt")
           }
           file("task.html")
         }
@@ -440,17 +376,19 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
   @Test
   fun `test do not save task status Failed if task was updated`() {
     initiateLocalCourse()
-    val newTaskName = "taskNewName"
     localCourse.taskList[0].status = CheckStatus.Failed
+
+    val newTaskName = "taskNewName"
     val remoteCourse = toRemoteCourse {
       taskList[0].apply {
         name = newTaskName
         status = CheckStatus.Unchecked
       }
     }
-    updateTasks(remoteCourse)
 
-    assertEquals("Failed task status hasn't been updated", CheckStatus.Unchecked, findTask(0, 0).status)
+    updateCourse(remoteCourse)
+
+    assertEquals("Failed task status hasn't been updated", CheckStatus.Unchecked, localCourse.taskList[0].status)
 
     val expectedStructure = fileTree {
       dir("lesson1") {
@@ -460,7 +398,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
             file("Baz.kt")
           }
           dir("test") {
-            file("Tests1.kt")
+            file("Tests.kt")
           }
           file("task.html")
         }
@@ -470,7 +408,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
             file("Baz.kt")
           }
           dir("test") {
-            file("Tests2.kt")
+            file("Tests.kt")
           }
           file("task.html")
         }

@@ -23,7 +23,7 @@ abstract class CourseUpdater<T : Course>(val project: Project, private val local
     val lessonUpdates = lessonUpdater.collect(remoteCourse)
     updates.addAll(lessonUpdates)
 
-    if (localCourse.isOutdated(remoteCourse) || isCourseChanged(localCourse, remoteCourse)) {
+    if (updates.isNotEmpty() || localCourse.isOutdated(remoteCourse) || isCourseChanged(localCourse, remoteCourse)) {
       updates.add(CourseUpdate.get(localCourse, remoteCourse))
     }
 
