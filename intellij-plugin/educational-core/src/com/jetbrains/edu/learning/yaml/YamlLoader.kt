@@ -98,7 +98,7 @@ object YamlLoader {
     val content = mutableListOf<T>()
     for (titledItem in contentList) {
       val configFile: VirtualFile = getConfigFileForChild(project, titledItem.name) ?: continue
-      val deserializeItem = deserializeItemProcessingErrors(configFile, project, mapper = mapper) as? T ?: continue
+      val deserializeItem = deserializeItemProcessingErrors(configFile, project, mapper = mapper, parentItem = this) as? T ?: continue
       deserializeItem.name = titledItem.name
       deserializeItem.index = titledItem.index
       content.add(deserializeItem)

@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
+import com.jetbrains.edu.learning.yaml.YamlMapper.CURRENT_YAML_VERSION
 import org.junit.Test
 
 class YamlRenameTest : YamlCodeInsightTest() {
@@ -42,6 +43,7 @@ class YamlRenameTest : YamlCodeInsightTest() {
       |programming_language: Plain text
       |content:
       |- lesson2
+      |yaml_version: $CURRENT_YAML_VERSION
       |
     """.trimMargin("|"))
   }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.MissingNode
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.CourseMode.Companion.toCourseMode
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
@@ -46,6 +47,7 @@ import com.jetbrains.edu.learning.yaml.format.RemoteStudyItem
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LESSON
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TASK
+import com.jetbrains.edu.learning.yaml.migrate.YamlMigrator
 import org.jetbrains.annotations.VisibleForTesting
 
 /**
@@ -54,12 +56,12 @@ import org.jetbrains.annotations.VisibleForTesting
  * should be applied to existing one that is done in [com.jetbrains.edu.learning.yaml.YamlLoader.loadItem].
  */
 object YamlDeserializer {
-  fun deserializeItem(configName: String, mapper: ObjectMapper, configFileText: String): StudyItem {
+  fun deserializeItem(configName: String, mapper: ObjectMapper, configFileText: String, parentItem: StudyItem?): StudyItem {
     return when (configName) {
       COURSE_CONFIG -> mapper.deserializeCourse(configFileText)
-      SECTION_CONFIG -> mapper.deserializeSection(configFileText)
-      LESSON_CONFIG -> mapper.deserializeLesson(configFileText)
-      TASK_CONFIG -> mapper.deserializeTask(configFileText)
+      SECTION_CONFIG -> mapper.deserializeSection(configFileText, parentItem as? Course)
+      LESSON_CONFIG -> mapper.deserializeLesson(configFileText, parentItem)
+      TASK_CONFIG -> mapper.deserializeTask(configFileText, parentItem as? Lesson)
       else -> loadingError(unknownConfigMessage(configName))
     }
   }
@@ -69,7 +71,12 @@ object YamlDeserializer {
    * For [Course] object the instance of a proper type is created inside [com.jetbrains.edu.learning.yaml.format.CourseBuilder]
    */
   fun ObjectMapper.deserializeCourse(configFileText: String): Course {
-    val treeNode = readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
+    var treeNode = readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
+
+    if (treeNode is ObjectNode) {
+      treeNode = YamlMigrator(this).migrateCourse(treeNode)
+    }
+
     val courseMode = asText(treeNode.get("mode"))
     val course = treeToValue(treeNode, Course::class.java)
     course.courseMode = if (courseMode != null) CourseMode.STUDENT else CourseMode.EDUCATOR
@@ -84,14 +91,23 @@ object YamlDeserializer {
     }
 
   @VisibleForTesting
-  fun ObjectMapper.deserializeSection(configFileText: String): Section {
-    val jsonNode = readNode(configFileText)
+  fun ObjectMapper.deserializeSection(configFileText: String, parentCourse: Course? = null): Section {
+    var jsonNode = readNode(configFileText)
+
+    jsonNode = migrateStudyItemYamlTree(jsonNode, parentCourse, "No course is specified during section migration") { node, course ->
+      migrateSection(node, course)
+    }
+
     return treeToValue(jsonNode, Section::class.java)
   }
 
   @VisibleForTesting
-  fun ObjectMapper.deserializeLesson(configFileText: String): Lesson {
-    val treeNode = readNode(configFileText)
+  fun ObjectMapper.deserializeLesson(configFileText: String, parentItem: StudyItem? = null): Lesson {
+    var treeNode = readNode(configFileText)
+
+    treeNode = migrateStudyItemYamlTree(treeNode, parentItem, "No parent item is specified during lesson migration") { node, item ->
+      migrateLesson(node, item)
+    }
 
     val type = asText(treeNode.get(YamlMixinNames.TYPE))
     val clazz = when (type) {
@@ -104,8 +120,13 @@ object YamlDeserializer {
   }
 
   @VisibleForTesting
-  fun ObjectMapper.deserializeTask(configFileText: String): Task {
-    val treeNode = readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
+  fun ObjectMapper.deserializeTask(configFileText: String, parentLesson: Lesson? = null): Task {
+    var treeNode = readNode(configFileText)
+
+    treeNode = migrateStudyItemYamlTree(treeNode, parentLesson, "No lesson is specified during task migration") { node, lesson ->
+      migrateTask(node, lesson)
+    }
+
     val type = asText(treeNode.get(YamlMixinNames.TYPE))
                ?: formatError(message("yaml.editor.invalid.task.type.not.specified"))
 
@@ -128,6 +149,27 @@ object YamlDeserializer {
       else -> formatError(unsupportedItemTypeMessage(type, TASK))
     }
     return treeToValue(treeNode, clazz)
+  }
+
+  private fun <T : StudyItem> ObjectMapper.migrateStudyItemYamlTree(
+    treeNode: JsonNode,
+    parentItem: T?,
+    errorMessage: String,
+    migrateAction: YamlMigrator.(ObjectNode, T) -> ObjectNode
+  ): JsonNode {
+    val migrator = YamlMigrator(this)
+
+    // treeNode must be ObjectNode, but we don't throw an error right now to get more specific error messages later
+    if (treeNode is ObjectNode && migrator.needMigration()) {
+      if (parentItem != null) {
+        return migrator.migrateAction(treeNode, parentItem)
+      }
+      else {
+        LOG.severe(errorMessage)
+      }
+    }
+
+    return treeNode
   }
 
   fun deserializeRemoteItem(configName: String, configFileText: String): StudyItem {
@@ -188,4 +230,5 @@ object YamlDeserializer {
     return courseModeText?.toCourseMode()
   }
 
+  private val LOG = logger<YamlDeserializer>()
 }
