@@ -28,6 +28,7 @@ class JCEFToolWindow(project: Project) : TaskToolWindow(project) {
     taskInfoJBCefBrowser.jbCefClient.addLifeSpanHandler(taskInfoLifeSpanHandler, taskInfoJBCefBrowser.cefBrowser)
     taskSpecificJBCefBrowser.jbCefClient.setProperty(JBCefClient.Properties.JS_QUERY_POOL_SIZE, TASK_SPECIFIC_PANEL_JS_QUERY_POOL_SIZE)
 
+    taskInfoJBCefBrowser.disableNavigation()
     Disposer.register(this, taskInfoJBCefBrowser)
     Disposer.register(this, taskSpecificJBCefBrowser)
 
