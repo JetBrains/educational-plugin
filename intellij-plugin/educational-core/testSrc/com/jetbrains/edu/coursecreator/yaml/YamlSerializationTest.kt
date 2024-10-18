@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.YamlMapper
+import com.jetbrains.edu.learning.yaml.YamlMapper.CURRENT_YAML_VERSION
 import com.jetbrains.edu.learning.yaml.YamlTestCase
 import org.junit.Test
 import java.util.*
@@ -1028,7 +1029,9 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   private fun doTest(item: StudyItem, expected: String) {
+    val expectedWithVersion = expected + "yaml_version: $CURRENT_YAML_VERSION\n"
+
     val actual = item.course.mapper().writeValueAsString(item)
-    assertEquals(expected, actual)
+    assertEquals(expectedWithVersion, actual)
   }
 }
