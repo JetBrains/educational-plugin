@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.storage.pathInStorage
 import com.jetbrains.edu.learning.yaml.YamlMapper
+import com.jetbrains.edu.learning.yaml.YamlMapper.CURRENT_YAML_VERSION
 import org.intellij.lang.annotations.Language
 import org.junit.Test
 import java.util.*
@@ -35,6 +36,7 @@ class StudentYamlSerializationTest : EduTestCase() {
       |summary: Test Course Description
       |programming_language: Plain text
       |mode: Study
+      |yaml_version: $CURRENT_YAML_VERSION
       |
     """.trimMargin())
   }
@@ -57,6 +59,7 @@ class StudentYamlSerializationTest : EduTestCase() {
       |summary: Test Course Description
       |programming_language: Plain text
       |mode: Study
+      |yaml_version: $CURRENT_YAML_VERSION
       |
     """.trimMargin())
   }
