@@ -18,7 +18,6 @@ import kotlinx.coroutines.withContext
 sealed class TaskUpdate(localItem: Task?, remoteItem: Task?) : StudyItemUpdate<Task>(localItem, remoteItem)
 
 data class TaskCreationInfo(val localLesson: Lesson, override val remoteItem: Task) : TaskUpdate(null, remoteItem) {
-  @Suppress("UnstableApiUsage")
   override suspend fun update(project: Project) {
     // TODO EDU-6756 what if task was created in the middle of the lesson?
     localLesson.addItem(remoteItem)
@@ -38,7 +37,6 @@ data class TaskCreationInfo(val localLesson: Lesson, override val remoteItem: Ta
 }
 
 data class TaskUpdateInfo(override val localItem: Task, override val remoteItem: Task) : TaskUpdate(localItem, remoteItem) {
-  @Suppress("UnstableApiUsage")
   override suspend fun update(project: Project) {
     val lesson = localItem.parent
     if (lesson is FrameworkLesson) {

@@ -19,7 +19,6 @@ data class LessonCreationInfo(
   val localContainer: ItemContainer,
   override val remoteItem: Lesson
 ) : LessonUpdate(null, remoteItem) {
-  @Suppress("UnstableApiUsage")
   override suspend fun update(project: Project) {
     // TODO EDU-6756 what if lesson was created in the middle of the section?
     localContainer.addItem(remoteItem)
@@ -43,7 +42,6 @@ data class LessonUpdateInfo(
   override val remoteItem: Lesson,
   val taskUpdates: List<TaskUpdate>
 ) : LessonUpdate(localItem, remoteItem) {
-  @Suppress("UnstableApiUsage")
   override suspend fun update(project: Project) {
     val parentContainer = localItem.parent
     taskUpdates.forEach {
