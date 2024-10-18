@@ -1,15 +1,13 @@
 package com.jetbrains.edu.cognifire.codegeneration
 
-import com.intellij.lang.Language
 import com.intellij.openapi.progress.runBlockingCancellable
-import com.intellij.openapi.project.Project
 import com.jetbrains.edu.cognifire.utils.RedundantTodoCleaner
 import com.jetbrains.edu.cognifire.models.PromptExpression
 import com.jetbrains.edu.cognifire.utils.toGeneratedCode
 import com.jetbrains.educational.ml.cognifire.core.PromptToCodeAssistant
 import com.jetbrains.educational.ml.cognifire.responses.PromptToCodeResponse
 
-class CodeGenerator(promptExpression: PromptExpression, project: Project, language: Language) {
+class CodeGenerator(promptExpression: PromptExpression) {
   private val enumeratedPromptLines = getEnumeratedPromptLines(promptExpression)
 
   private val promptToCodeTranslation: PromptToCodeResponse =

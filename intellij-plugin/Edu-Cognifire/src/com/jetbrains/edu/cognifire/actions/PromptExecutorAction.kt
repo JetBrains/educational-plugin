@@ -113,7 +113,7 @@ class PromptExecutorAction(private val element: PsiElement, private val id: Stri
     project: Project,
     promptExpression: PromptExpression
   ) {
-    val codeGenerator = CodeGenerator(promptExpression, project, element.language)
+    val codeGenerator = CodeGenerator(promptExpression)
 
     invokeLater {
       val generatedCode = codeGenerator.generatedCode
