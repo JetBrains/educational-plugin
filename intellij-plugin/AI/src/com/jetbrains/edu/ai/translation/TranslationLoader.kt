@@ -27,11 +27,7 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.educational.translation.enum.Language
 import com.jetbrains.educational.translation.format.CourseTranslation
 import com.jetbrains.educational.translation.format.DescriptionText
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.io.IOException
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.time.Duration.Companion.seconds
@@ -135,8 +131,8 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
 
   companion object {
     private val LOG = thisLogger()
-    private const val DOWNLOAD_ATTEMPTS: Int = 20
-    private const val DOWNLOAD_TIMEOUT_SECONDS: Int = 3
+    private const val DOWNLOAD_ATTEMPTS: Int = 10
+    private const val DOWNLOAD_TIMEOUT_SECONDS: Int = 10
 
     fun getInstance(project: Project): TranslationLoader = project.service()
 
