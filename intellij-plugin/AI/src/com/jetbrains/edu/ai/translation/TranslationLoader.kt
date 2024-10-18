@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.EnhancementsInfo
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.ext.getTaskDirectory
@@ -61,6 +62,11 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
           if (!course.isTranslationExists(language)) {
             val translation = fetchTranslation(course, language)
             course.saveTranslation(translation)
+            val enhancements = course.enhancements.toMutableMap()
+            val enhancement = enhancements[language]?.copy(translationVersion = translation.id)
+                              ?: EnhancementsInfo(translationVersion = translation.id)
+            enhancements[language] = enhancement
+            course.enhancements = enhancements
           }
           course.translatedToLanguageCode = language.code
           withContext(Dispatchers.EDT) {
