@@ -6,6 +6,7 @@ import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.kotlin.checker.KtTaskCheckerProvider
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
+import org.jetbrains.kotlin.idea.base.plugin.KotlinPluginModeProvider
 import javax.swing.Icon
 
 class KtConfigurator : GradleConfiguratorBase() {
@@ -28,6 +29,9 @@ class KtConfigurator : GradleConfiguratorBase() {
 
   override val defaultPlaceholderText: String
     get() = "TODO()"
+
+  override val isEnabled: Boolean
+    get() = KotlinPluginModeProvider.isK1Mode()
 
   companion object {
     const val TESTS_KT = "Tests.kt"
