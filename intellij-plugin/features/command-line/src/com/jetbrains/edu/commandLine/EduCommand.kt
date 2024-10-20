@@ -9,11 +9,14 @@ import com.github.ajalt.clikt.parameters.groups.single
 import com.github.ajalt.clikt.parameters.options.OptionDelegate
 import com.github.ajalt.clikt.parameters.options.convert
 import com.github.ajalt.clikt.parameters.options.option
+import com.github.ajalt.clikt.parameters.types.enum
 import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.onError
+import java.util.logging.ConsoleHandler
+import java.util.logging.Level
 import kotlin.system.exitProcess
 
 abstract class EduCommand(name: String) : CoreSuspendingCliktCommand(name) {
@@ -24,6 +27,9 @@ abstract class EduCommand(name: String) : CoreSuspendingCliktCommand(name) {
     CourseSource.values()[1].toOption(),
     *CourseSource.values().drop(2).map { it.toOption() }.toTypedArray()
   ).single().required()
+
+  private val logLevel: LogLevel? by option("--log-level", help = "Minimal IDE log level printing to stderr")
+    .enum<LogLevel>(ignoreCase = true) { it.name }
 
   val source: CourseSource get() = sourceWithCourseId.source
   val courseId: String get() = sourceWithCourseId.courseId
@@ -39,6 +45,8 @@ abstract class EduCommand(name: String) : CoreSuspendingCliktCommand(name) {
   protected open suspend fun doRun(course: Course): CommandResult = CommandResult.Ok
 
   override suspend fun run() {
+    setLogLevel()
+
     val course = source.loadCourse(courseId).onError { logErrorAndExit(it) }
 
     val result = doRun(course)
@@ -55,6 +63,15 @@ abstract class EduCommand(name: String) : CoreSuspendingCliktCommand(name) {
 
   private fun CourseSource.toOption(): OptionDelegate<CourseSourceWithId?> = option("--${option}", help = description)
     .convert { CourseSourceWithId(this@toOption, it) }
+
+  private fun setLogLevel() {
+    val level = logLevel?.level ?: return
+    // There isn't a public API to change which logs are written to console, it's always WARN and above.
+    // But since the current platform logging is a wrapper around `java.util.logging.Logger`,
+    // it's enough to adjust root logger
+    val rootLogger = java.util.logging.Logger.getLogger("")
+    rootLogger.handlers.filterIsInstance<ConsoleHandler>().firstOrNull()?.level = level
+  }
 
   companion object {
     @JvmStatic
@@ -73,6 +90,16 @@ abstract class EduCommand(name: String) : CoreSuspendingCliktCommand(name) {
   }
 
   private data class CourseSourceWithId(val source: CourseSource, val courseId: String)
+
+  @Suppress("unused")
+  private enum class LogLevel(val level: Level) {
+    OFF(Level.OFF),
+    SEVERE(Level.SEVERE),
+    WARNING(Level.WARNING),
+    INFO(Level.INFO),
+    FINE(Level.FINE),
+    FINER(Level.FINER),
+  }
 }
 
 internal fun Logger.toMessageEchoer(): MessageEchoer = { _, message, _, err ->
