@@ -30,6 +30,7 @@ fun loadAndFillLessonAdditionalInfo(lesson: Lesson, course: Course? = null) {
 fun loadAndFillAdditionalCourseInfo(course: Course, attachmentLink: String? = null) {
   val link = attachmentLink ?: "${getStepikUrl()}/media/attachments/course/${course.id}/${StepikNames.ADDITIONAL_INFO}"
   val infoText = StepikConnector.getInstance().loadAttachment(link) ?: return
+  if (infoText == "null") return
   val courseInfo = HyperskillConnector.getInstance().objectMapper.readValue(infoText, CourseAdditionalInfo::class.java)
 
   course.additionalFiles = courseInfo.additionalFiles

@@ -20,7 +20,6 @@ import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectEx
-import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.registry.Registry
@@ -33,6 +32,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.util.PathUtil
 import com.intellij.util.messages.Topic
 import com.intellij.util.messages.Topic.BroadcastDirection
+import com.jetbrains.edu.learning.CourseRootProvider.Companion.getCourseRootDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.isBinary
@@ -117,7 +117,7 @@ val Project.courseDir: VirtualFile
   }
 
 fun Project.guessCourseDir(): VirtualFile? {
-  val projectDir = guessProjectDir() ?: return null
+  val projectDir = getCourseRootDir() ?: return null
   return if (projectDir.name == Project.DIRECTORY_STORE_FOLDER) {
     projectDir.parent
   }
