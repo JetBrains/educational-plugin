@@ -14,6 +14,7 @@ import com.jetbrains.edu.ai.translation.connector.TranslationServiceConnector
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
+import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
@@ -23,7 +24,6 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.educational.translation.enum.Language
 import com.jetbrains.educational.translation.format.CourseTranslation
 import com.jetbrains.educational.translation.format.DescriptionText
@@ -62,9 +62,8 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
             val translation = fetchTranslation(course, language)
             course.saveTranslation(translation)
           }
-          course.translatedToLanguageCode = language.code
+          TranslationProjectSettings.changeCurrentTranslationLanguage(project, language)
           withContext(Dispatchers.EDT) {
-            YamlFormatSynchronizer.saveItem(course)
             TaskToolWindowView.getInstance(project).updateTaskDescription()
           }
         }
@@ -85,11 +84,10 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
           )
           return@launch
         }
-        if (course.translatedToLanguageCode != null) {
+        if (TranslationProjectSettings.getCurrentTranslationLanguage(project) != null) {
           withBackgroundProgress(project, EduAIBundle.message("ai.service.reset.course.translation")) {
-            course.translatedToLanguageCode = null
+            TranslationProjectSettings.resetTranslation(project)
             withContext(Dispatchers.EDT) {
-              YamlFormatSynchronizer.saveItem(course)
               TaskToolWindowView.getInstance(project).updateTaskDescription()
             }
           }
@@ -123,7 +121,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
   private suspend fun EduCourse.isTranslationExists(language: Language): Boolean =
     readAction {
       allTasks.all {
-        it.getDescriptionFile(project, translatedToLanguageCode = language.code)?.exists() == true
+        it.getDescriptionFile(project, translationLanguageCode = language.code)?.exists() == true
       }
     }
 
@@ -170,7 +168,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
   private suspend fun Task.deleteTranslation(language: Language) {
     try {
       val translationFile = readAction {
-        getDescriptionFile(project, translatedToLanguageCode = language.code)
+        getDescriptionFile(project, translationLanguageCode = language.code)
       } ?: return
       writeAction {
         translationFile.delete(this::class.java)

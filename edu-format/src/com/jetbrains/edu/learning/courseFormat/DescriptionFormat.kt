@@ -9,8 +9,8 @@ enum class DescriptionFormat(val extension: String) {
   val fileName: String
     get() = "$TASK_DESCRIPTION_PREFIX.$extension"
 
-  fun fileNameWithTranslation(translatedToLanguageCode: String): String =
-    "${TASK_DESCRIPTION_PREFIX}_$translatedToLanguageCode.$extension"
+  fun fileNameWithTranslation(translationLanguageCode: String): String =
+    "${TASK_DESCRIPTION_PREFIX}_$translationLanguageCode.$extension"
 
   companion object {
     @VisibleForTesting

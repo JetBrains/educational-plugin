@@ -1007,26 +1007,6 @@ class YamlSerializationTest : YamlTestCase() {
       |""".trimMargin())
   }
 
-  @Test
-  fun `test translation language`() {
-    val course = course {
-      lesson("lesson1") {
-        eduTask()
-      }
-    }
-    course.translatedToLanguageCode = "fr"
-    doTest(course, """
-      |title: Test Course
-      |language: English
-      |translated_to_language: French
-      |summary: Test Course Description
-      |programming_language: Plain text
-      |content:
-      |- lesson1
-      |mode: Study
-      |""".trimMargin())
-  }
-
   private fun doTest(item: StudyItem, expected: String) {
     val actual = item.course.mapper().writeValueAsString(item)
     assertEquals(expected, actual)

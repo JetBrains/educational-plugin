@@ -1,12 +1,15 @@
 package com.jetbrains.edu.ai.translation.dialog
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.bindItem
 import com.intellij.ui.dsl.builder.toNullableProperty
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.ai.messages.EduAIBundle
+import com.jetbrains.edu.ai.translation.getCurrentTranslationLanguage
 import com.jetbrains.edu.ai.translation.settings.TranslationSettings
+import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.educational.translation.enum.Language
@@ -14,7 +17,7 @@ import javax.swing.DefaultComboBoxModel
 import javax.swing.JComboBox
 import javax.swing.JComponent
 
-class GetCourseTranslationDialog(private val course: EduCourse) : DialogWrapper(true) {
+class GetCourseTranslationDialog(project: Project, private val course: EduCourse) : DialogWrapper(true) {
   private val courseSourceLanguage = Language.findByCode(course.languageCode)
   private var selectedLanguage = TranslationSettings.getInstance().preferableLanguage
 
@@ -23,10 +26,9 @@ class GetCourseTranslationDialog(private val course: EduCourse) : DialogWrapper(
   init {
     title = EduAIBundle.message("action.Educational.GetCourseTranslation.text")
 
-    if (selectedLanguage == courseSourceLanguage) {
-      course.translatedToLanguageCode?.let {
-        selectedLanguage = Language.getByCode(it)
-      }
+    val currentTranslationLanguage = TranslationProjectSettings.getCurrentTranslationLanguage(project)
+    if (currentTranslationLanguage != null && currentTranslationLanguage != courseSourceLanguage) {
+      selectedLanguage = currentTranslationLanguage
     }
 
     isOKActionEnabled = selectedLanguage != courseSourceLanguage

@@ -11,7 +11,6 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYCHARM
 import com.jetbrains.edu.learning.json.mixins.IntValueFilter
-import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TRANSLATED_TO_LANGUAGE
 import com.jetbrains.edu.learning.json.mixins.NotImplementedInMixin
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.errorHandling.unnamedItemAtMessage
@@ -50,7 +49,6 @@ import java.util.*
   TYPE,
   TITLE,
   LANGUAGE,
-  TRANSLATED_TO_LANGUAGE,
   SUMMARY,
   VENDOR,
   IS_PRIVATE,
@@ -92,14 +90,6 @@ abstract class CourseYamlMixin {
   @JsonSerialize(converter = LanguageConverter::class)
   @JsonProperty(LANGUAGE)
   private lateinit var languageCode: String
-
-  /**
-   * This property is used to determine which of the loaded translations is preferred to open at course startup
-   */
-  @JsonSerialize(converter = TranslationLanguageConverter::class)
-  @JsonProperty(TRANSLATED_TO_LANGUAGE)
-  @JsonInclude(JsonInclude.Include.NON_NULL)
-  private var translatedToLanguageCode: String? = null
 
   @JsonProperty(ENVIRONMENT)
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -146,10 +136,6 @@ private class ProgrammingLanguageConverter : StdConverter<String, String>() {
 
 private class LanguageConverter : StdConverter<String, String>() {
   override fun convert(languageCode: String): String = displayLanguageByCode(languageCode)
-}
-
-private class TranslationLanguageConverter : StdConverter<String, String>() {
-  override fun convert(code: String): String = com.jetbrains.educational.translation.enum.Language.getByCode(code).label
 }
 
 private class CourseTypeSerializationConverter : StdConverter<String, String?>() {
@@ -206,7 +192,6 @@ open class CourseBuilder(
   @JsonProperty(SOLUTIONS_HIDDEN) val areSolutionsHidden: Boolean?,
   @JsonProperty(TAGS) val yamlContentTags: List<String> = emptyList(),
   @JsonProperty(ENVIRONMENT_SETTINGS) val yamlEnvironmentSettings: Map<String, String> = emptyMap(),
-  @JsonProperty(TRANSLATED_TO_LANGUAGE) val translatedToLanguage: String? = null,
 ) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {
@@ -242,13 +227,6 @@ open class CourseBuilder(
       message("yaml.editor.invalid.format.unknown.field", language)
     )
     course.languageCode = Locale(locale).language
-
-    val translatedToLanguageLabel = translatedToLanguage
-    if (translatedToLanguageLabel != null) {
-      course.translatedToLanguageCode = com.jetbrains.educational.translation.enum.Language.findByLabel(translatedToLanguageLabel)?.code
-                                        ?: formatError(message("yaml.editor.invalid.format.translation.language.field", translatedToLanguageLabel))
-    }
-
     return course
   }
 

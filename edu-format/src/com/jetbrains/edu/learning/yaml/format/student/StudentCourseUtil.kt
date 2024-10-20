@@ -15,7 +15,6 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAG
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SUMMARY
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TAGS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TITLE
-import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TRANSLATED_TO_LANGUAGE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 
 @Suppress("unused") // used for yaml serialization
@@ -23,7 +22,6 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
   TYPE,
   TITLE,
   LANGUAGE,
-  TRANSLATED_TO_LANGUAGE,
   SUMMARY,
   PROGRAMMING_LANGUAGE,
   PROGRAMMING_LANGUAGE_VERSION,
