@@ -38,6 +38,7 @@
   </extensions>
 
   <extensions defaultExtensionNs="Educational">
+    <AIFeaturesProvider implementation="com.jetbrains.edu.ai.provider.AIProvider"/>
     <AIOptionsProvider instance="com.jetbrains.edu.ai.translation.settings.TranslationOptions"/>
   </extensions>
 </idea-plugin>

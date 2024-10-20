@@ -99,6 +99,9 @@
     <extensionPoint qualifiedName="Educational.studyItemRefactoringHandler"
                     interface="com.jetbrains.edu.coursecreator.handlers.StudyItemRefactoringHandler"
                     dynamic="true"/>
+    <extensionPoint qualifiedName="Educational.AIFeaturesProvider"
+                    interface="com.jetbrains.edu.learning.ai.AIFeaturesProvider"
+                    dynamic="true"/>
   </extensionPoints>
 
   <actions>

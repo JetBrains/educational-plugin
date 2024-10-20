@@ -11,6 +11,7 @@ import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.translation.connector.TranslationServiceConnector
+import com.jetbrains.edu.ai.translation.settings.TranslationProjectSettings
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
@@ -23,6 +24,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.educational.translation.enum.Language
 import com.jetbrains.educational.translation.format.CourseTranslation
 import com.jetbrains.educational.translation.format.DescriptionText
@@ -63,7 +65,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
             val translation = fetchTranslation(course, language)
             course.saveTranslation(translation)
           }
-          // TODO
+          TranslationProjectSettings.getInstance(project).translatedToLanguage = language
           withContext(Dispatchers.EDT) {
             TaskToolWindowView.getInstance(project).updateTaskDescription()
           }
@@ -87,9 +89,9 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
           }
           return@launch
         }
-        if (course.translatedToLanguageCode != null) {
+        if (TranslationProjectSettings.getInstance(project).translatedToLanguage != null) {
           withBackgroundProgress(project, EduAIBundle.message("ai.service.reset.course.translation")) {
-            course.translatedToLanguageCode = null
+            TranslationProjectSettings.getInstance(project).translatedToLanguage = null
             withContext(Dispatchers.EDT) {
               YamlFormatSynchronizer.saveItem(course)
               TaskToolWindowView.getInstance(project).updateTaskDescription()

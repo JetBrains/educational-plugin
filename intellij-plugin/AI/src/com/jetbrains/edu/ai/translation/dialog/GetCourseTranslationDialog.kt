@@ -7,6 +7,7 @@ import com.intellij.ui.dsl.builder.bindItem
 import com.intellij.ui.dsl.builder.toNullableProperty
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.ai.messages.EduAIBundle
+import com.jetbrains.edu.ai.translation.settings.TranslationProjectSettings
 import com.jetbrains.edu.ai.translation.settings.TranslationSettings
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -24,8 +25,9 @@ class GetCourseTranslationDialog(project: Project, private val course: EduCourse
   init {
     title = EduAIBundle.message("action.Educational.GetCourseTranslation.text")
 
-    if (selectedLanguage == courseSourceLanguage) {
-      // TODO
+    val currentTranslationLanguage = TranslationProjectSettings.getInstance(project).translatedToLanguage
+    if (currentTranslationLanguage != null && currentTranslationLanguage != courseSourceLanguage) {
+      selectedLanguage = currentTranslationLanguage
     }
 
     isOKActionEnabled = selectedLanguage != courseSourceLanguage
