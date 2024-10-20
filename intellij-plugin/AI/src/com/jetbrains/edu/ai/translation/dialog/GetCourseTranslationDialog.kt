@@ -1,5 +1,6 @@
 package com.jetbrains.edu.ai.translation.dialog
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.bindItem
@@ -14,7 +15,7 @@ import javax.swing.DefaultComboBoxModel
 import javax.swing.JComboBox
 import javax.swing.JComponent
 
-class GetCourseTranslationDialog(private val course: EduCourse) : DialogWrapper(true) {
+class GetCourseTranslationDialog(project: Project, private val course: EduCourse) : DialogWrapper(true) {
   private val courseSourceLanguage = Language.findByCode(course.languageCode)
   private var selectedLanguage = TranslationSettings.getInstance().preferableLanguage
 
@@ -24,9 +25,7 @@ class GetCourseTranslationDialog(private val course: EduCourse) : DialogWrapper(
     title = EduAIBundle.message("action.Educational.GetCourseTranslation.text")
 
     if (selectedLanguage == courseSourceLanguage) {
-      course.translatedToLanguageCode?.let {
-        selectedLanguage = Language.getByCode(it)
-      }
+      // TODO
     }
 
     isOKActionEnabled = selectedLanguage != courseSourceLanguage

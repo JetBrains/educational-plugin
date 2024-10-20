@@ -65,7 +65,7 @@ abstract class TaskToolWindow(protected val project: Project) : Disposable {
     fun getTaskDescription(project: Project, task: Task?, uiMode: JavaUILibrary): String {
       val openedTask = task ?: return EduCoreBundle.message("label.open.task")
       val taskText = computeUnderProgress(project, EduCoreBundle.message("progress.loading.task.description")) {
-        runReadAction { openedTask.getFormattedTaskText(project, translatedToLanguageCode = task.course.translatedToLanguageCode) }
+        runReadAction { openedTask.getFormattedTaskText(project) } // TODO
       } ?: return EduCoreBundle.message("label.open.task")
       val transformerContext = HtmlTransformerContext(project, task, uiMode)
       return TaskDescriptionTransformer.transform(taskText, transformerContext)

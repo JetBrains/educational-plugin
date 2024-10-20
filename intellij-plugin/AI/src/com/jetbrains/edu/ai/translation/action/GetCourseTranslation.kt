@@ -18,7 +18,7 @@ class GetCourseTranslation : DumbAwareAction() {
     val course = project.course as? EduCourse ?: return
     if (!course.isMarketplaceRemote) return
 
-    val selectedLanguage = GetCourseTranslationDialog(course).getLanguage() ?: return
+    val selectedLanguage = GetCourseTranslationDialog(project, course).getLanguage() ?: return
     TranslationLoader.getInstance(project).fetchAndApplyTranslation(course, selectedLanguage)
   }
 

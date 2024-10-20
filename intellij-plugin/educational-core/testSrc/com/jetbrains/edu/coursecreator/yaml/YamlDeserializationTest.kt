@@ -1068,21 +1068,5 @@ class YamlDeserializationTest : YamlTestCase() {
     assertEquals(mapOf("foo" to "bar"), course.environmentSettings)
   }
 
-  @Test
-  fun `test translation language`() {
-    val yamlContent = """
-      |title: Test Course
-      |language: English
-      |translated_to_language: Russian
-      |summary: Test Course Description
-      |programming_language: Plain text
-      |content:
-      |- lesson1
-      |mode: Study
-      |""".trimMargin()
-    val course = deserializeNotNull(yamlContent)
-    assertEquals("ru", course.translatedToLanguageCode)
-  }
-
   private fun deserializeNotNull(yamlContent: String): Course = basicMapper().deserializeCourse(yamlContent)
 }
