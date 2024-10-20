@@ -32,14 +32,12 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.JBColor
 import com.intellij.util.messages.MessageBusConnection
 import com.jetbrains.edu.learning.EduUtilsKt.showPopup
-import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.eduAssistant.log.Logger
 import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessorImpl
 import com.jetbrains.edu.learning.eduAssistant.ui.NextStepHintNotificationFrame
 import com.jetbrains.edu.learning.invokeLater
@@ -122,21 +120,9 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
 
   private fun createDiffCloseListener(project: Project, diffRequestChain: SimpleDiffRequestChain) {
     val connection: MessageBusConnection = project.messageBus.connect()
-    val task = project.getCurrentTask() ?: error("Can't get current task")
     val myEditorChangeListener = object : FileEditorManagerListener {
       override fun fileClosed(source: FileEditorManager, file: VirtualFile) {
           if (diffRequestChain.getUserData(NEXT_STEP_HINT_DIFF_FLAG) == true) {
-            if (diffRequestChain.getUserData(IS_ACCEPTED_HINT) == true) {
-              Logger.eduAssistantLogger.info(
-                """Lesson id: ${task.lesson.id}    Task id: ${task.id}
-                  |User response: accepted code hint
-                  |
-                """.trimMargin()
-              )
-            }
-            else if (actionTargetParent?.components?.contains(nextStepHintNotificationPanel) == true) {
-              rejectHint(task)
-            }
             closeNextStepHintNotificationPanel()
             diffRequestChain.putUserData(IS_ACCEPTED_HINT, false)
             connection.disconnect()
@@ -145,16 +131,6 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
       }
     }
     connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, myEditorChangeListener)
-  }
-
-  private fun rejectHint(task: Task) {
-    Logger.eduAssistantLogger.info(
-      """Lesson id: ${task.lesson.id}    Task id: ${task.id}
-        |User response: canceled code hint
-        |
-      """.trimMargin()
-    )
-    closeNextStepHintNotificationPanel()
   }
 
   override fun getActionUpdateThread() = ActionUpdateThread.BGT
@@ -195,19 +171,13 @@ class NextStepHintAction : ActionWithProgressIcon(), DumbAware {
     }
 
     private fun showHintWindow(textToShow: String, action: AnAction? = null) {
-      Logger.eduAssistantLogger.info(
-        """Lesson id: ${task.lesson.id}    Task id: ${task.id}
-        | User response: text shown
-        | Text: $textToShow
-      """.trimMargin()
-      )
       task.status = CheckStatus.Unchecked
       project.invokeLater {
         TaskToolWindowView.getInstance(project).updateCheckPanel(task)
 
         val nextStepHintNotification = NextStepHintNotificationFrame(textToShow, action, actionTargetParent).apply {
           onClosed {
-            rejectHint(task)
+            closeNextStepHintNotificationPanel()
           }
         }
         nextStepHintNotificationPanel = nextStepHintNotification.rootPane

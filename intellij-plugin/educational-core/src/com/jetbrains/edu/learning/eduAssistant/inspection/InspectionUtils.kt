@@ -11,20 +11,16 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
-import com.jetbrains.edu.learning.eduAssistant.log.Logger
 
 private fun PsiFile.applyLocalInspection(inspection: LocalInspectionTool): List<ProblemDescriptor> {
   val problems = mutableListOf<ProblemDescriptor>()
   val inspectionManager = InspectionManager.getInstance(project)
   ProgressManager.getInstance().executeProcessUnderProgress(
     {
-      val hasProblems = problems.addAll(
+      problems.addAll(
         runReadAction<List<ProblemDescriptor>> {
           inspection.processFile(this, inspectionManager)
         })
-      if (hasProblems) {
-        Logger.eduAssistantLogger.info("Inspection ${inspection.id} has ${problems.size} problems")
-      }
     },
     DaemonProgressIndicator()
   )
@@ -43,7 +39,6 @@ fun applyInspections(code: String, project: Project, language: Language): String
       descriptor.fixes?.firstOrNull()?.let { quickFix ->
         WriteCommandAction.runWriteCommandAction(project, null, null, {
           quickFix.applyFix(project, descriptor) }, psiFile)
-        runReadAction { Logger.eduAssistantLogger.info("Applied ${quickFix.name} quick fix for ${inspection.id} inspection") }
       }
     }
   }
