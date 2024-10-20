@@ -19,8 +19,8 @@ class EduCreateCourseCommandTest(
           Usage: createCourse [<options>] <path to course project directory>
           
           Options:
-            --archive=<value>      Path to course archive file
-            --marketplace=<value>  Marketplace course link. Supported formats:
+            --archive=<value>                                 Path to course archive file
+            --marketplace=<value>                             Marketplace course link. Supported formats:
               - %course-id%
               - %course-id%-%plugin-name%
               - https://plugins.jetbrains.com/plugin/%course-id%
@@ -31,8 +31,9 @@ class EduCreateCourseCommandTest(
               - 16630-introduction-to-python
               - https://plugins.jetbrains.com/plugin/16630
               - https://plugins.jetbrains.com/plugin/16630-introduction-to-python
-            --hyperskill=<value>   Hyperskill project id
-            -h, --help             Show this message and exit
+            --hyperskill=<value>                              Hyperskill project id
+            --log-level=(OFF|SEVERE|WARNING|INFO|FINE|FINER)  Minimal IDE log level printing to stderr
+            -h, --help                                        Show this message and exit
         """
       )
     )
