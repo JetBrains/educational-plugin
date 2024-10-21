@@ -27,6 +27,8 @@ include(
   "intellij-plugin:Edu-JavaScript",
   "intellij-plugin:Edu-Rust",
   "intellij-plugin:Edu-Cpp",
+  "intellij-plugin:Edu-Cpp:CLion-Classic", // specific support for CLion classic
+  "intellij-plugin:Edu-Cpp:CLion-Nova",    // specific support for CLion Nova
   "intellij-plugin:Edu-Go",
   "intellij-plugin:Edu-Php",
   "intellij-plugin:Edu-Shell",

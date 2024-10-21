@@ -9,6 +9,12 @@
     <plugin id="org.jetbrains.plugins.clion.test.google"/>
   </dependencies>
 
+  <extensionPoints>
+    <extensionPoint qualifiedName="Educational.cppRunConfigurationHelper"
+                    interface="com.jetbrains.edu.cpp.checker.CppRunConfigurationHelper"
+                    dynamic="true"/>
+  </extensionPoints>
+
   <extensions defaultExtensionNs="Educational">
     <configurator language="ObjectiveC" implementationClass="com.jetbrains.edu.cpp.CppGTestConfigurator"
                   displayName="C++ (Google Test)" environment="GoogleTest"/>

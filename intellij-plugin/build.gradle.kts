@@ -319,6 +319,8 @@ dependencies {
     pluginModule(implementation(project("Edu-JavaScript")))
     pluginModule(implementation(project("Edu-Rust")))
     pluginModule(implementation(project("Edu-Cpp")))
+    pluginModule(implementation(project("Edu-Cpp:CLion-Classic")))
+    pluginModule(implementation(project("Edu-Cpp:CLion-Nova")))
     pluginModule(implementation(project("Edu-Go")))
     pluginModule(implementation(project("Edu-Php")))
     pluginModule(implementation(project("Edu-Shell")))
@@ -807,6 +809,34 @@ project("Edu-Cpp") {
 
     implementation(project(":intellij-plugin:educational-core"))
 
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+  }
+}
+
+project("Edu-Cpp:CLion-Classic") {
+  dependencies {
+    intellijPlatform {
+      intellijIde(clionVersion)
+
+      intellijPlugins(cppPlugins)
+    }
+
+    implementation(project(":intellij-plugin:educational-core"))
+    implementation(project(":intellij-plugin:Edu-Cpp"))
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+  }
+}
+
+project("Edu-Cpp:CLion-Nova") {
+  dependencies {
+    intellijPlatform {
+      intellijIde(clionVersion)
+
+      intellijPlugins(cppPlugins)
+    }
+
+    implementation(project(":intellij-plugin:educational-core"))
+    implementation(project(":intellij-plugin:Edu-Cpp"))
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
   }
 }

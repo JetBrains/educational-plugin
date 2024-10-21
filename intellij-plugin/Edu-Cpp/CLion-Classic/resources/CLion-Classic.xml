@@ -1,0 +1,10 @@
+<idea-plugin package="com.jetbrains.edu.cpp.classic">
+  <dependencies>
+    <plugin id="com.intellij.cidr.lang"/>
+    <!--suppress PluginXmlValidity -->
+    <module name="Edu-Cpp"/>
+  </dependencies>
+  <extensions defaultExtensionNs="Educational">
+    <cppRunConfigurationHelper implementation="com.jetbrains.edu.cpp.classic.checker.ClassicCppRunConfigurationHelper"/>
+  </extensions>
+</idea-plugin>
