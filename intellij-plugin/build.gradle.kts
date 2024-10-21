@@ -416,7 +416,9 @@ tasks {
     }
 
     customRunIdeTask(IntellijIdeaUltimate, ideaVersion, baseTaskName = "Idea")
-    customRunIdeTask(CLion, clionVersion)
+    customRunIdeTask(CLion, clionVersion) {
+      setClionSystemProperties(withRadler = false)
+    }
     customRunIdeTask(PyCharmCommunity, pycharmVersion, baseTaskName = "PyCharm")
     customRunIdeTask(AndroidStudio, studioVersion)
     customRunIdeTask(WebStorm)
@@ -425,6 +427,12 @@ tasks {
     customRunIdeTask(RustRover)
     customRunIdeTask(DataSpell)
     customRunIdeTask(Rider, riderVersion)
+
+    if (isAtLeast242) {
+      customRunIdeTask(CLion, clionVersion, baseTaskName = "CLion-Nova") {
+        setClionSystemProperties(withRadler = true)
+      }
+    }
   }
 }
 
@@ -435,7 +443,8 @@ tasks {
 fun IntelliJPlatformTestingExtension.customRunIdeTask(
   type: IntelliJPlatformType,
   versionWithCode: String? = null,
-  baseTaskName: String = type.name
+  baseTaskName: String = type.name,
+  configureRunIdeTask: RunIdeTask.() -> Unit = {},
 ) {
   runIde.register("run$baseTaskName") {
     useInstaller = false
@@ -469,6 +478,8 @@ fun IntelliJPlatformTestingExtension.customRunIdeTask(
 
     // Specify custom sandbox directory to have a stable path to log file
     sandboxDirectory = intellijPlatform.sandboxContainer.dir("${baseTaskName.lowercase()}-sandbox-$environmentName")
+
+    task(configureRunIdeTask)
 
     plugins {
       plugins(idePlugins(type))
@@ -783,15 +794,7 @@ project("Edu-Rust") {
 project("Edu-Cpp") {
   tasks {
     test {
-      // Since 2024.1 CLion has two sets of incompatible plugins: based on classic language engine and new one (AKA Radler).
-      // Platform uses `idea.suppressed.plugins.set.selector` system property to choose which plugins should be disabled.
-      // But there aren't `idea.suppressed.plugins.set.selector`, `idea.suppressed.plugins.set.classic`
-      // and `idea.suppressed.plugins.set.radler` properties in tests,
-      // as a result, the platform tries to load all plugins and fails because of duplicate definitions.
-      // Here is a workaround to make test work with CLion by defining proper values for necessary properties
-      systemProperty("idea.suppressed.plugins.set.selector", "classic") // possible values: `classic` and `radler`
-      systemProperty("idea.suppressed.plugins.set.classic", "org.jetbrains.plugins.clion.radler,intellij.rider.cpp.debugger")
-      systemProperty("idea.suppressed.plugins.set.radler", "com.intellij.cidr.lang,com.intellij.cidr.lang.clangdBridge,com.intellij.c.performanceTesting,org.jetbrains.plugins.cidr-intelliLang,com.intellij.cidr.completion.ml.ranking,com.intellij.cidr.grazie,com.intellij.cidr.markdown,com.jetbrains.codeWithMe,com.jetbrains.gateway,org.jetbrains.plugins.docker.gateway")
+      setClionSystemProperties(withRadler = false)
     }
   }
 
@@ -1105,4 +1108,36 @@ fun copyFormatJars() {
     into("build/distributions")
     include("*.jar")
   }
+}
+
+// Since 2024.1 CLion has two sets of incompatible plugins: based on classic language engine and new one (AKA Radler).
+// Platform uses `idea.suppressed.plugins.set.selector` system property to choose which plugins should be disabled.
+// But there aren't `idea.suppressed.plugins.set.selector`, `idea.suppressed.plugins.set.classic`
+// and `idea.suppressed.plugins.set.radler` properties in tests,
+// as a result, the platform tries to load all plugins and fails because of duplicate definitions.
+// Here is a workaround to make test work with CLion by defining proper values for necessary properties
+fun JavaForkOptions.setClionSystemProperties(withRadler: Boolean = false) {
+  val (mode, suppressedPlugins) = if (withRadler) {
+    val radlerSuppressedPlugins = listOfNotNull(
+      "com.intellij.cidr.lang",
+      "com.intellij.cidr.lang.clangdBridge",
+      "com.intellij.c.performanceTesting",
+      "org.jetbrains.plugins.cidr-intelliLang",
+      "com.intellij.cidr.grazie",
+      "com.intellij.cidr.markdown",
+      //BACKCOMPAT 2024.1: Remove additional plugin
+      "com.intellij.cidr.completion.ml.ranking".takeIf { !isAtLeast242 }
+    )
+    "radler" to radlerSuppressedPlugins
+  }
+  else {
+    val classicSuppressedPlugins = listOf(
+      "org.jetbrains.plugins.clion.radler",
+      "intellij.rider.cpp.debugger",
+      "intellij.rider.plugins.clion.radler.cwm"
+    )
+    "classic" to classicSuppressedPlugins
+  }
+  systemProperty("idea.suppressed.plugins.set.selector", mode) // possible values: `classic` and `radler`
+  systemProperty("idea.suppressed.plugins.set.$mode", suppressedPlugins.joinToString(","))
 }
