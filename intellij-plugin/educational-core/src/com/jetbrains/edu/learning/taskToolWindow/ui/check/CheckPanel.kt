@@ -111,7 +111,7 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     if (checkResult != null) {
       linkPanel.removeAll()
       checkDetailsPlaceholder.add(CheckDetailsPanel(project, task, checkResult, checkTimeAlarm), BorderLayout.SOUTH)
-      AiDebuggingNotification(checkDetailsPlaceholder).addAiDebuggingNotification(task)
+      AiDebuggingNotification.addAiDebuggingNotification(task, checkDetailsPlaceholder)
     }
   }
 
