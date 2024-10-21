@@ -45,8 +45,8 @@ class CascadeIfInspectionProcessing(private val project: Project, private val el
     val conditionElement = runReadAction {
       ((element.condition as? KtBinaryExpression)?.right ?: element.condition)?.text
     } ?: return promptToCode
-    val firstIfPromptLine = element.getFirstLineNumberOfIfStatementInPromptToCode(promptToCode) ?: return promptToCode
-    val lastIfPromptLine = element.getLastLineNumberOfIfStatementInPromptToCode(promptToCode) ?: return promptToCode
+    val firstIfPromptLine = element.getFirstPromptLineNumber(promptToCode) ?: return promptToCode
+    val lastIfPromptLine = element.getLastPromptLineNumber(promptToCode) ?: return promptToCode
 
     apply()
 
@@ -89,7 +89,7 @@ class CascadeIfInspectionProcessing(private val project: Project, private val el
         newPromptToCode.add(conditionLine.copy(codeLineNumber = lineNumber, generatedCodeLine = WHEN_AND_OPEN_BRACE))
         lineNumber++
       }
-      val newCondition = findExpressionInPsiFile(psiFile, conditionInWhen)
+      val newCondition = findExpression(psiFile, conditionInWhen)
       newPromptToCode.add(conditionLine.copy(codeLineNumber = lineNumber, generatedCodeLine = newCondition))
       lineNumber++
       expressionLines.forEachIndexed { index, expressionLine ->

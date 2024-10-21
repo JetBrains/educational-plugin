@@ -36,6 +36,6 @@ class LiftReturnOrAssignmentInspectionProcessing(private val project: Project, p
   override fun applyInspection(promptToCode: PromptToCodeResponse, psiFile: PsiFile): PromptToCodeResponse {
     if (!isApplicable()) return promptToCode
     apply()
-    return getNewPromptToCodeWithoutChangingLines(promptToCode, psiFile)
+    return updatePromptToCodeWithoutChangingLines(promptToCode, psiFile)
   }
 }

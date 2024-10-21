@@ -2,11 +2,14 @@ package com.jetbrains.edu.kotlin.cognifire.inspection
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
+import com.intellij.openapi.application.runReadAction
+import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiRecursiveElementVisitor
 import com.jetbrains.edu.cognifire.inspection.InspectionProcessor
+import com.jetbrains.edu.cognifire.utils.toGeneratedCode
 import com.jetbrains.edu.kotlin.cognifire.inspection.processing.*
 import com.jetbrains.educational.ml.cognifire.responses.PromptToCodeResponse
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.*
 
 /**
@@ -16,32 +19,42 @@ import org.jetbrains.kotlin.psi.*
  */
 class KtInspectionProcessor : InspectionProcessor {
 
-  override fun applyInspections(promptToCodeTranslation: PromptToCodeResponse, project: Project, psiFile: PsiFile): PromptToCodeResponse {
+  override fun applyInspections(promptToCodeTranslation: PromptToCodeResponse, project: Project, functionSignature: String): PromptToCodeResponse {
     var promptToCode = promptToCodeTranslation.map { it.copy() }
+    val psiFile = getPsiFile(promptToCodeTranslation, functionSignature, project)
     psiFile.accept(object : PsiRecursiveElementVisitor() {
       override fun visitElement(element: PsiElement) {
-        when (element) {
-          is KtTryExpression -> {
-            promptToCode = LiftReturnOrAssignmentInspectionProcessing(project, element).applyInspection(promptToCode, psiFile)
-          }
+        promptToCode = when (element) {
+          is KtTryExpression -> LiftReturnOrAssignmentInspectionProcessing(project, element).applyInspection(promptToCode, psiFile)
           is KtWhenExpression -> {
             promptToCode = LiftReturnOrAssignmentInspectionProcessing(project, element).applyInspection(promptToCode, psiFile)
-            promptToCode = IntroduceWhenSubjectInspectionProcessing(project, element).applyInspection(promptToCode, psiFile)
+            IntroduceWhenSubjectInspectionProcessing(project, element).applyInspection(promptToCode, psiFile)
           }
           is KtIfExpression -> {
             promptToCode = CascadeIfInspectionProcessing(project, element).applyInspection(promptToCode, psiFile)
             promptToCode = LiftReturnOrAssignmentInspectionProcessing(project, element).applyInspection(promptToCode, psiFile)
             promptToCode = FoldInitializerAndIfToElvisInspectionProcessing(project, element).applyInspection(promptToCode, psiFile)
             promptToCode = IfThenToElvisInspectionProcessing(project, element).applyInspection(promptToCode, psiFile)
-            promptToCode = IfThenToSafeAccessInspectionProcessing(project, element).applyInspection(promptToCode, psiFile)
+            IfThenToSafeAccessInspectionProcessing(project, element).applyInspection(promptToCode, psiFile)
           }
-          is KtProperty -> {
-            promptToCode = JoinDeclarationAndAssignmentInspectionProcessing(project, element).applyInspection(promptToCode, psiFile)
-          }
+          is KtProperty -> JoinDeclarationAndAssignmentInspectionProcessing(project, element).applyInspection(promptToCode, psiFile)
+          else -> promptToCode
         }
         super.visitElement(element)
       }
     })
     return promptToCode
+  }
+
+  private fun getPsiFile(promptToCode: PromptToCodeResponse, functionSignature: String, project: Project) = runReadAction {
+    PsiFileFactory.getInstance(project).createFileFromText(
+      "Main.kt",
+      KotlinLanguage.INSTANCE,
+      """
+        $functionSignature {
+            ${promptToCode.toGeneratedCode()}
+        }
+      """.trimIndent()
+    )
   }
 }

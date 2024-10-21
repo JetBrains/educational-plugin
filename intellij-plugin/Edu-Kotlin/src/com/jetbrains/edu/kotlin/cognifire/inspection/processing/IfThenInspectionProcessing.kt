@@ -33,16 +33,16 @@ abstract class IfThenInspectionProcessing(private val project: Project, private 
   override fun applyInspection(promptToCode: PromptToCodeResponse, psiFile: PsiFile): PromptToCodeResponse {
     if (!isApplicable()) return promptToCode
     if (element !is KtIfExpression) return promptToCode
-    val ifPromptLines = element.getPromptToCodeLinesContainingIfStatement(promptToCode)
-    val firstIfPromptLine = element.getFirstLineNumberOfIfStatementInPromptToCode(promptToCode) ?: return promptToCode
-    val firstIfCodeLine = element.getFirstCodeLineNumberOfIfStatementInPromptToCode(promptToCode) ?: return promptToCode
-    val lastIfPromptLine = element.getLastLineNumberOfIfStatementInPromptToCode(promptToCode) ?: return promptToCode
+    val ifPromptLines = element.findIfStatementInResponse(promptToCode)
+    val firstIfPromptLine = element.getFirstPromptLineNumber(promptToCode) ?: return promptToCode
+    val firstIfCodeLine = element.getFirstCodeLineNumber(promptToCode) ?: return promptToCode
+    val lastIfPromptLine = element.getLastPromptLineNumber(promptToCode) ?: return promptToCode
     val condition = (element.condition as? KtBinaryExpression)?.left as? KtNameReferenceExpression ?: return promptToCode
 
     apply()
 
     val replacedExpressionText = getReplacedExpressionText(psiFile, condition) ?: return promptToCode
-    val expression = findExpressionInPsiFile(psiFile, replacedExpressionText)
+    val expression = findExpression(psiFile, replacedExpressionText)
     val newPromptToCode = mutableListOf<GeneratedCodeLine>()
     promptToCode.filter { it.promptLineNumber < firstIfPromptLine }.forEach {
       newPromptToCode.add(it.copy())

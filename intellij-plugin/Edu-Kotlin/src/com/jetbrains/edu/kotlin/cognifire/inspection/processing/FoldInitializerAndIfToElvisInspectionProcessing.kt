@@ -39,8 +39,8 @@ class FoldInitializerAndIfToElvisInspectionProcessing(private val project: Proje
     val variable = variableDeclaration?.let { variable ->
       promptToCode.find { it.generatedCodeLine.contains(runReadAction { variable.text }) }
     } ?: return promptToCode
-    val ifPromptLines = element.getPromptToCodeLinesContainingIfStatement(promptToCode)
-    val lastIfLine = element.getLastLineNumberOfIfStatementInPromptToCode(promptToCode) ?: return promptToCode
+    val ifPromptLines = element.findIfStatementInResponse(promptToCode)
+    val lastIfLine = element.getLastPromptLineNumber(promptToCode) ?: return promptToCode
 
     apply()
 

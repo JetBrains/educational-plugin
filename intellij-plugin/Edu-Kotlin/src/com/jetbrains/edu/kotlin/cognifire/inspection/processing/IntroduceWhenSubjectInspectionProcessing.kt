@@ -29,6 +29,6 @@ class IntroduceWhenSubjectInspectionProcessing(private val project: Project, pri
   override fun applyInspection(promptToCode: PromptToCodeResponse, psiFile: PsiFile): PromptToCodeResponse {
     if (!isApplicable()) return promptToCode
     apply()
-    return getNewPromptToCodeWithoutChangingLines(promptToCode, psiFile)
+    return updatePromptToCodeWithoutChangingLines(promptToCode, psiFile)
   }
 }
