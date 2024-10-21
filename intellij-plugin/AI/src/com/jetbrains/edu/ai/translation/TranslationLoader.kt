@@ -51,12 +51,10 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
     scope.launch {
       try {
         if (!lock()) {
-          withContext(Dispatchers.EDT) {
-            EduNotificationManager.showErrorNotification(
-              project,
-              content = EduAIBundle.message("ai.translation.already.running")
-            )
-          }
+          EduNotificationManager.showErrorNotification(
+            project,
+            content = EduAIBundle.message("ai.translation.already.running")
+          )
           return@launch
         }
         withBackgroundProgress(project, EduAIBundle.message("ai.service.getting.course.translation")) {
@@ -81,12 +79,10 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
     scope.launch {
       try {
         if (!lock()) {
-          withContext(Dispatchers.EDT) {
-            EduNotificationManager.showErrorNotification(
-              project,
-              content = EduAIBundle.message("ai.translation.translations.reset.is.not.possible")
-            )
-          }
+          EduNotificationManager.showErrorNotification(
+            project,
+            content = EduAIBundle.message("ai.translation.translations.reset.is.not.possible")
+          )
           return@launch
         }
         if (course.translatedToLanguageCode != null) {
