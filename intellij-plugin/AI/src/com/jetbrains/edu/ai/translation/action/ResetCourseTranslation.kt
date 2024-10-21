@@ -24,7 +24,7 @@ class ResetCourseTranslation : DumbAwareAction() {
     e.presentation.isEnabledAndVisible = false
     val project = e.project ?: return
     val course = project.course as? EduCourse ?: return
-    e.presentation.isEnabledAndVisible = course.isMarketplaceRemote == true && !TranslationLoader.isRunning(project)
+    e.presentation.isEnabledAndVisible = course.isMarketplaceRemote && !TranslationLoader.isRunning(project)
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
