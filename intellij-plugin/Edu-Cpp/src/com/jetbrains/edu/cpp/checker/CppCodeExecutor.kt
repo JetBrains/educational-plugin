@@ -27,11 +27,17 @@ class CppCodeExecutor : DefaultCodeExecutor() {
       }.firstNotNullOfOrNull { file -> findEntryPointElement(project, file) }
 
     if (entryPoint == null) {
+      LOG.warn("Failed to find main entry point for task '${task.name}'")
       return null
     }
 
-    val context = ConfigurationContext(entryPoint)
+    val mainElement = CppRunConfigurationHelper.getInstance()?.prepareEntryPointForRunConfiguration(entryPoint)
+    if (mainElement == null) {
+      LOG.warn("Failed to get wrapper for main psi element for file '${entryPoint.containingFile.name}'")
+      return null
+    }
 
+    val context = ConfigurationContext(mainElement)
     val configuration = CidrTargetRunConfigurationProducer.getInstances(project).firstOrNull()?.findOrCreateConfigurationFromContext(context)
     if (configuration == null) {
       LOG.warn("Failed to create a configuration from main function in the file '${entryPoint.containingFile.name}'")
@@ -44,9 +50,6 @@ class CppCodeExecutor : DefaultCodeExecutor() {
     val psiFile = virtualFile.findPsiFile(project) ?: return null
     val entryPointDetector = CppFileEntryPointDetector.getInstance() ?: return null
     // TODO: is there more efficient way to do it than iterating over all leaf children without referring to particular psi classes?
-    // It still doesn't work with new C++ language engine because
-    // `CppFileNovaEntryPointDetector#isMainOrIsInMain` is not properly implemented yet.
-    // See https://youtrack.jetbrains.com/issue/EDU-6773
     return psiFile.childLeafs().find { entryPointDetector.isMainOrIsInMain(it) }
   }
 

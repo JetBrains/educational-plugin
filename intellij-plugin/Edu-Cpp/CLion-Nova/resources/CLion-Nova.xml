@@ -1,0 +1,10 @@
+<idea-plugin package="com.jetbrains.edu.cpp.radler">
+  <dependencies>
+    <plugin id="org.jetbrains.plugins.clion.radler"/>
+    <!--suppress PluginXmlValidity -->
+    <module name="Edu-Cpp"/>
+  </dependencies>
+  <extensions defaultExtensionNs="Educational">
+    <cppRunConfigurationHelper implementation="com.jetbrains.edu.cpp.radler.checker.RadlerCppRunConfigurationHelper"/>
+  </extensions>
+</idea-plugin>
