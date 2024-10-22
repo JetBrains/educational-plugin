@@ -7,7 +7,6 @@ import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.ai.EDU_AI_SERVICE_HOST_PROPERTY
 import com.jetbrains.edu.ai.dialog.EduAIServiceChangeHostDialog
-import com.jetbrains.edu.ai.host.EduAIServiceHost.STAGING
 import com.jetbrains.edu.learning.services.dialog.showDialogAndGetHost
 import org.jetbrains.annotations.NonNls
 
@@ -18,7 +17,7 @@ class EduAIServiceChangeHost : DumbAwareAction() {
       LOG.warn("Selected AI service URL item is null")
       return
     }
-    val existingValue = PropertiesComponent.getInstance().getValue(EDU_AI_SERVICE_HOST_PROPERTY, STAGING.url)
+    val existingValue = PropertiesComponent.getInstance().getValue(EDU_AI_SERVICE_HOST_PROPERTY)
     if (selectedUrl == existingValue) return
 
     PropertiesComponent.getInstance().setValue(EDU_AI_SERVICE_HOST_PROPERTY, selectedUrl, existingValue)
