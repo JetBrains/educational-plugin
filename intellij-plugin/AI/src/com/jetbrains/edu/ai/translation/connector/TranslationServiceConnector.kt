@@ -5,6 +5,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.thisLogger
 import com.jetbrains.edu.ai.host.EduAIServiceHost
+import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.translation.service.TranslationService
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
@@ -17,12 +18,14 @@ import com.jetbrains.educational.core.format.domain.TaskEduId
 import com.jetbrains.educational.core.format.domain.UpdateVersion
 import com.jetbrains.educational.translation.enum.Language
 import com.jetbrains.educational.translation.format.CourseTranslation
+import io.netty.handler.codec.http.HttpResponseStatus.UNPROCESSABLE_ENTITY
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import okhttp3.ConnectionPool
 import retrofit2.Response
-import java.net.HttpURLConnection.HTTP_ACCEPTED
+import java.net.HttpURLConnection.*
+import java.net.SocketException
 
 @Suppress("unused")
 @Service(Service.Level.APP)
@@ -52,9 +55,11 @@ class TranslationServiceConnector(private val scope: CoroutineScope) {
   ): Result<CourseTranslation?, String> =
     scope
       .async(Dispatchers.IO) {
-        service
-          .getTranslatedCourse(marketplaceId.value, updateVersion.value, language.name)
-          .executeGetCall()
+        networkCall {
+          service
+            .getTranslatedCourse(marketplaceId.value, updateVersion.value, language.name)
+            .handleResponse()
+        }
       }
       .await()
 
@@ -66,9 +71,11 @@ class TranslationServiceConnector(private val scope: CoroutineScope) {
   ): Result<CourseTranslation?, String> =
     scope
       .async(Dispatchers.IO) {
-        service
-          .getTranslatedTask(marketplaceId.value, updateVersion.value, language.name, taskId.value)
-          .executeGetCall()
+        networkCall {
+          service
+            .getTranslatedTask(marketplaceId.value, updateVersion.value, language.name, taskId.value)
+            .handleResponse()
+        }
       }
       .await()
 
@@ -98,19 +105,27 @@ class TranslationServiceConnector(private val scope: CoroutineScope) {
     }
   }
 
-  private fun <T> Response<T>.executeGetCall(): Result<T?, String> {
-    val response = executeParsingErrors()
-      .onError {
-        return Err(it)
-      }
-      .onAccepted {
-        return Ok(null)
-      }
-    return when (val body = response.body()) {
-      null -> Err("Response body is null")
-      else -> Ok(body)
+  private fun <T> Response<T>.handleResponse(): Result<T?, String> {
+    val code = code()
+    val errorMessage = errorBody()?.string()
+    if (!errorMessage.isNullOrEmpty()) {
+      LOG.error("Request failed. Status code: $code. Error message: $errorMessage")
+    }
+    return when (code) {
+      HTTP_OK -> Ok(body())
+      HTTP_ACCEPTED -> Ok(null)
+      HTTP_UNAVAILABLE -> Err(EduAIBundle.message("ai.translation.service.is.currently.unavailable"))
+      UNPROCESSABLE_ENTITY.code() -> Err(EduAIBundle.message("ai.translation.service.only.popular.courses.are.allowed.for.translation"))
+      else -> Err(EduAIBundle.message("ai.translation.service.could.not.connect"))
     }
   }
+
+  private suspend fun <T> networkCall(call: suspend () -> Result<T?, String>): Result<T?, String> =
+    try {
+      call()
+    } catch (exception: SocketException) {
+      Err(EduAIBundle.message("ai.translation.service.could.not.connect"))
+    }
 
   private inline fun <T> Response<T>.onAccepted(action: () -> Unit): Response<T> {
     if (code() == HTTP_ACCEPTED) {
