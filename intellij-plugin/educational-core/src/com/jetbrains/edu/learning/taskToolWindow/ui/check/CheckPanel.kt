@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.ui.InlineBanner
 import com.intellij.util.Alarm
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBEmptyBorder
@@ -149,13 +150,22 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     updateCheckDetails(task)
   }
 
+  fun addHint(inlineBanner: InlineBanner) {
+    checkDetailsPlaceholder.add(inlineBanner, BorderLayout.SOUTH)
+  }
+
+  fun removeHint(inlineBanner: InlineBanner) {
+    checkDetailsPlaceholder.remove(inlineBanner)
+    checkDetailsPlaceholder.revalidate()
+    checkDetailsPlaceholder.repaint()
+  }
+
   private fun updateGetHintButtonWrapper(task: Task) {
     getHintButtonWrapper.removeAll()
 
     if (NextStepHintAction.isAvailable(task)) {
       val action = ActionManager.getInstance().getAction(NextStepHintAction.ACTION_ID) as NextStepHintAction
       val nextStepHintButton = CheckPanelButtonComponent(action = action)
-      action.actionTargetParent = checkDetailsPlaceholder
       getHintButtonWrapper.add(nextStepHintButton, BorderLayout.WEST)
     }
   }
