@@ -11,8 +11,6 @@ import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.network.createRetrofitBuilder
-import com.jetbrains.edu.learning.network.executeParsingErrors
-import com.jetbrains.edu.learning.onError
 import com.jetbrains.educational.core.format.domain.MarketplaceId
 import com.jetbrains.educational.core.format.domain.TaskEduId
 import com.jetbrains.educational.core.format.domain.UpdateVersion
@@ -27,7 +25,6 @@ import retrofit2.Response
 import java.net.HttpURLConnection.*
 import java.net.SocketException
 
-@Suppress("unused")
 @Service(Service.Level.APP)
 class TranslationServiceConnector(private val scope: CoroutineScope) {
   private val aiServiceUrl: String
@@ -63,6 +60,7 @@ class TranslationServiceConnector(private val scope: CoroutineScope) {
       }
       .await()
 
+  @Suppress("unused")
   suspend fun getTranslatedTask(
     marketplaceId: MarketplaceId,
     updateVersion: UpdateVersion,
@@ -78,32 +76,6 @@ class TranslationServiceConnector(private val scope: CoroutineScope) {
         }
       }
       .await()
-
-  suspend fun doTranslateCourse(
-    marketplaceId: MarketplaceId,
-    updateVersion: UpdateVersion,
-    language: Language,
-    force: Boolean = false
-  ): Result<Boolean, String> {
-    val response = scope
-      .async(Dispatchers.IO) {
-        service
-          .translateCourse(marketplaceId.value, updateVersion.value, language.name, force)
-          .executeParsingErrors()
-      }
-      .await()
-      .onError {
-        return Err(it)
-      }
-      .onAccepted {
-        return Ok(false)
-      }
-
-    return when (response.isSuccessful) {
-      true -> Ok(true)
-      false -> Err("Response body is null")
-    }
-  }
 
   private fun <T> Response<T>.handleResponse(): Result<T?, String> {
     val code = code()
@@ -126,14 +98,6 @@ class TranslationServiceConnector(private val scope: CoroutineScope) {
     } catch (exception: SocketException) {
       Err(EduAIBundle.message("ai.translation.service.could.not.connect"))
     }
-
-  private inline fun <T> Response<T>.onAccepted(action: () -> Unit): Response<T> {
-    if (code() == HTTP_ACCEPTED) {
-      LOG.info("Translation service is currently preparing your course translation. Please check back later.")
-      action()
-    }
-    return this
-  }
 
   companion object {
     private val LOG: Logger = thisLogger()
