@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.actions
+package com.jetbrains.edu.ai.hints.action
 
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NonNls
 import javax.swing.JButton
 import javax.swing.JComponent
 
-class CancelHintAction : DumbAwareAction(), CustomComponentAction {
+class CancelHint : DumbAwareAction(), CustomComponentAction {
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false
@@ -38,12 +38,12 @@ class CancelHintAction : DumbAwareAction(), CustomComponentAction {
     isFocusable = true
     isDefault = false
     addActionListener {
-      performAction(this@CancelHintAction, this, place, presentation)
+      performAction(this@CancelHint, this, place, presentation)
     }
   }
 
   companion object {
     @NonNls
-    const val ACTION_ID: String = "Educational.Assistant.CancelHint"
+    const val ACTION_ID: String = "Educational.Hints.CancelHint"
   }
 }
