@@ -307,8 +307,6 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
-    <notificationGroup id="AiEduAssistant" displayType="BALLOON"  key="notification.group.edu.tools"/>
-    <notificationGroup displayType="BALLOON" id="AiEduAssistantValidation" bundle="messages.EduCoreBundle" key="notification.group.edu.tools"/>
     <applicationService serviceInterface="com.jetbrains.edu.learning.EduBrowser"
                         serviceImplementation="com.jetbrains.edu.learning.EduBrowser"
                         testServiceImplementation="com.jetbrains.edu.learning.MockEduBrowser"/>

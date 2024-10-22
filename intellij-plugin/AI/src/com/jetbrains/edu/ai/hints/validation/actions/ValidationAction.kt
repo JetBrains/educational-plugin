@@ -1,7 +1,5 @@
 package com.jetbrains.edu.ai.hints.validation.actions
 
-import com.intellij.notification.NotificationGroupManager
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
@@ -28,6 +26,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.selectedTaskFile
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import org.apache.commons.csv.CSVFormat
@@ -204,20 +203,16 @@ abstract class ValidationAction<T> : ActionWithProgressIcon(), DumbAware {
     }
 
     override fun onThrowable(error: Throwable) {
-      NotificationGroupManager.getInstance().getNotificationGroup("AiEduAssistantValidation")
-        .createNotification(error.message ?: "Error during validation", NotificationType.ERROR)
-        .notify(project)
+      EduNotificationManager.showErrorNotification(project, content = error.message ?: "Error during validation")
       super.onThrowable(error)
     }
 
     override fun onFinished() {
-      NotificationGroupManager.getInstance().getNotificationGroup("AiEduAssistantValidation")
-        .createNotification(EduAIBundle.message(
-          "validation.finished",
-          progressText,
-          validationOutputFile
-        ), NotificationType.INFORMATION)
-        .notify(project)
+      EduNotificationManager.showInfoNotification(project, content = EduAIBundle.message(
+        "validation.finished",
+        progressText,
+        validationOutputFile
+      ))
       super.onFinished()
     }
   }
