@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.navigation
 
 import com.intellij.ide.projectView.ProjectView
+import com.intellij.openapi.application.WriteIntentReadAction
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Editor
@@ -14,6 +15,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
+import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.*
@@ -165,7 +167,9 @@ object NavigationUtils {
 
   @VisibleForTesting
   fun getFirstTask(course: Course): Task? {
-    LocalFileSystem.getInstance().refresh(false)
+    runWriteAction {
+      LocalFileSystem.getInstance().refresh(false)
+    }
     val firstItem = course.items.firstOrNull() ?: return null
     val firstLesson = if (firstItem is Section) firstItem.lessons.firstOrNull() else firstItem as Lesson
     if (firstLesson != null) return firstLesson.taskList.firstOrNull()
@@ -198,12 +202,15 @@ object NavigationUtils {
     closeOpenedFiles: Boolean = true,
     fileToActivate: VirtualFile? = null
   ) {
-    navigateToTaskInternal(project, task, fromTask, showDialogIfConflict, closeOpenedFiles, fileToActivate)
-    TaskNavigationExtension.EP.forEachExtensionSafe {
-      it.onTaskNavigation(project, task, fromTask)
+    runInEdt {
+      navigateToTaskInternal(project, task, fromTask, showDialogIfConflict, closeOpenedFiles, fileToActivate)
+      TaskNavigationExtension.EP.forEachExtensionSafe {
+        it.onTaskNavigation(project, task, fromTask)
+      }
     }
   }
 
+  @RequiresEdt
   private fun navigateToTaskInternal(
     project: Project,
     task: Task,
@@ -211,7 +218,7 @@ object NavigationUtils {
     showDialogIfConflict: Boolean,
     closeOpenedFiles: Boolean,
     fileToActivate: VirtualFile?
-  ) {
+  ) = WriteIntentReadAction.run {
     if (closeOpenedFiles) {
       for (file in FileEditorManager.getInstance(project).openFiles) {
         FileEditorManager.getInstance(project).closeFile(file)
@@ -219,7 +226,7 @@ object NavigationUtils {
     }
     if (CCUtils.isCourseCreator(project)) {
       openCCTaskFiles(project, task)
-      return
+      return@run
     }
     val taskFiles = task.taskFiles
 
@@ -232,12 +239,12 @@ object NavigationUtils {
       project.course?.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
     }
 
-    val taskDir = task.getDir(project.courseDir) ?: return
+    val taskDir = task.getDir(project.courseDir) ?: return@run
 
     if (taskFiles.isEmpty()) {
       val selectingDir = task.findSourceDir(taskDir) ?: taskDir
       ProjectView.getInstance(project).select(selectingDir, selectingDir, false)
-      return
+      return@run
     }
 
     // We need update dependencies before file opening to find out which placeholders are visible
@@ -287,6 +294,7 @@ object NavigationUtils {
     }
   }
 
+  @RequiresEdt
   private fun openCCTaskFiles(project: Project, task: Task) {
     val taskDir = task.getDir(project.courseDir) ?: return
     val descriptionFile = task.getDescriptionFile(project)
@@ -351,6 +359,7 @@ object NavigationUtils {
     setReadOnlyFlagToNonEditableFiles(project, currentTask, true)
   }
 
+  @RequiresEdt
   private fun updateProjectView(project: Project, fileToActivate: VirtualFile) {
     FileEditorManager.getInstance(project).openFile(fileToActivate, true)
     val viewPane = ProjectView.getInstance(project).currentProjectViewPane ?: return
