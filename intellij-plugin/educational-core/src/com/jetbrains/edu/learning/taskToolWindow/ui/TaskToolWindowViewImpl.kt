@@ -314,10 +314,7 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
 
   override fun addInlineBannerToCheckPanel(inlineBanner: InlineBanner) {
     checkPanel.addHint(inlineBanner)
-  }
-
-  override fun removeInlineBannerFromCheckPanel(inlineBanner: InlineBanner) {
-    checkPanel.removeHint(inlineBanner)
+    checkPanel.revalidate()
   }
 
   override fun dispose() {}
