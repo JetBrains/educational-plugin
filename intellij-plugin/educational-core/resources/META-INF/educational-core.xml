@@ -440,6 +440,10 @@
       <description>Enable the new course update functionality to provide more efficient course updates</description>
     </experimentalFeature>
 
+    <experimentalFeature id="edu.educator.help" percentOfUsers="0" internalFeature="true">
+      <description>Open educator help for newly created CC courses; add Help button to the toolbar above course view</description>
+    </experimentalFeature>
+
     <registryKey key="edu.course.creator.fl.sync.changes.merging.timespan"
                  description="The delay in ms before task file synchronization in the guided project for Course Creator.\nChanging the field requires reopening the project"
                  defaultValue="1000"/>

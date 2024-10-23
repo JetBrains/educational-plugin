@@ -9,4 +9,5 @@ object EduExperimentalFeatures {
   const val CSHARP_COURSES = "edu.course.csharp"
   const val AI = "edu.ai"
   const val NEW_COURSE_UPDATE = "edu.course.update.new"
+  const val EDUCATOR_HELP = "edu.educator.help"
 }

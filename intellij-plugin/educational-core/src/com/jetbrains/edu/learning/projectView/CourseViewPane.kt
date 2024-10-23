@@ -47,11 +47,13 @@ import com.jetbrains.edu.coursecreator.actions.CCCreateCoursePreview
 import com.jetbrains.edu.coursecreator.projectView.*
 import com.jetbrains.edu.coursecreator.ui.CCOpenEducatorHelp
 import com.jetbrains.edu.learning.CourseSetListener
+import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.projectView.ProgressUtil.createProgressBar
 import org.jetbrains.annotations.NonNls
@@ -111,11 +113,13 @@ class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport
                 ActionPlaces.PROJECT_VIEW_TOOLBAR
               ).gap(RightGap.SMALL)
 
-              button(
-                EduCoreBundle.message("action.Educational.CCOpenEducatorHelp.text"),
-                CCOpenEducatorHelp(),
-                ActionPlaces.PROJECT_VIEW_TOOLBAR
-              )
+              if (isFeatureEnabled(EduExperimentalFeatures.EDUCATOR_HELP)) {
+                button(
+                  EduCoreBundle.message("action.Educational.CCOpenEducatorHelp.text"),
+                  CCOpenEducatorHelp(),
+                  ActionPlaces.PROJECT_VIEW_TOOLBAR
+                )
+              }
             }
           }.align(AlignX.RIGHT)
         }
