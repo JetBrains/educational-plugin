@@ -105,6 +105,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
   private suspend fun fetchTranslation(course: EduCourse, language: Language): CourseTranslation =
     withContext(Dispatchers.IO) {
       downloadTranslation(course, language).onError { error ->
+        EduNotificationManager.showErrorNotification(project, content = error)
         error("Failed to download translation for ${course.name} to $language: $error")
       }
     }
