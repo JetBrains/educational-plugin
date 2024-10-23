@@ -25,12 +25,8 @@ abstract class CourseArchiveTestBase : EduActionTestCase() {
   protected fun doTest() {
     val expectedCourseJson = loadExpectedJson()
 
-    // TODO: remove "text" fields directly from test jsons
-    val expectedCourseJsonVersionWithoutTexts = expectedCourseJson
-      .replace("""^\s*"text" : ".{2,}",\n""".toRegex(RegexOption.MULTILINE), "")
-
     val generatedJsonFile = generateJson()
-    assertEquals(expectedCourseJsonVersionWithoutTexts, generatedJsonFile)
+    assertEquals(expectedCourseJson, generatedJsonFile)
 
     doWithArchiveCreator { creator, course ->
       val out = ByteArrayOutputStream()
