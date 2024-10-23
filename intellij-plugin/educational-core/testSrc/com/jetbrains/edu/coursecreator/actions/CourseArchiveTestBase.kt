@@ -68,7 +68,7 @@ abstract class CourseArchiveTestBase : EduActionTestCase() {
   private fun loadExpectedJson(): String {
     val fileName = getTestFile()
     val jsonFromFile = FileUtil.loadFile(File(testDataPath, fileName))
-    val withLastJsonVersion = jsonFromFile.replace(""""version"\s*:\s*-1""".toRegex(), """"version" : $JSON_FORMAT_VERSION""")
+    val withLastJsonVersion = jsonFromFile.replace(""""version"\s*:\s*<last version>""".toRegex(), """"version" : $JSON_FORMAT_VERSION""")
     return withLastJsonVersion
   }
 
