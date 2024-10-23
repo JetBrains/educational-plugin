@@ -372,6 +372,9 @@ tasks {
     jvmArgs("-Xmx2g")
     jvmArgs("-Dide.experimental.ui=true")
 
+    jvmArgs("-Didea.kotlin.plugin.use.k2=true")
+//    jvmArgs("-Dide.coroutine.write.intent.lock=true")
+
     // Uncomment to show localized messages
     // jvmArgs("-Didea.l10n=true")
 
