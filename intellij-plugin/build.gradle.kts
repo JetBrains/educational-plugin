@@ -638,6 +638,13 @@ project("Edu-Kotlin") {
       intellijPlugins(kotlinPlugin)
     }
 
+    tasks.test {
+      jvmArgumentProviders += CommandLineArgumentProvider {
+        // Force turning Kotlin V2 off in IDE, otherwise our Kotlin module does not load. Remove after EDU-7532
+        listOf("-Didea.kotlin.plugin.use.k2=false")
+      }
+    }
+
     implementation(project(":intellij-plugin:educational-core"))
     implementation(project(":intellij-plugin:jvm-core"))
 
