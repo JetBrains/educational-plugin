@@ -20,6 +20,7 @@ import io.netty.handler.codec.http.HttpResponseStatus.UNPROCESSABLE_ENTITY
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import okhttp3.ConnectionPool
 import retrofit2.Response
 import java.net.HttpURLConnection.*
@@ -51,7 +52,7 @@ class TranslationServiceConnector(private val scope: CoroutineScope) {
     language: Language
   ): Result<CourseTranslation?, String> =
     scope
-      .async(Dispatchers.IO) {
+      .async {
         networkCall {
           service
             .getTranslatedCourse(marketplaceId.value, updateVersion.value, language.name)
@@ -68,7 +69,7 @@ class TranslationServiceConnector(private val scope: CoroutineScope) {
     taskId: TaskEduId
   ): Result<CourseTranslation?, String> =
     scope
-      .async(Dispatchers.IO) {
+      .async {
         networkCall {
           service
             .getTranslatedTask(marketplaceId.value, updateVersion.value, language.name, taskId.value)
@@ -94,7 +95,9 @@ class TranslationServiceConnector(private val scope: CoroutineScope) {
 
   private suspend fun <T> networkCall(call: suspend () -> Result<T?, String>): Result<T?, String> =
     try {
-      call()
+      withContext(Dispatchers.IO) {
+        call()
+      }
     } catch (exception: SocketException) {
       Err(EduAIBundle.message("ai.translation.service.could.not.connect"))
     }
