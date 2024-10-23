@@ -26,7 +26,7 @@ class TranslationProjectSettingsTest : EduSettingsServiceTestBase() {
   @Test
   fun `test settings with selected language serialization`() {
     val settings = TranslationProjectSettings()
-    settings.currentTranslationLanguageCode = "fr"
+    settings.setCurrentTranslationLanguageCode("fr")
     settings.checkState("""
         <TranslationProjectState>
           <option name="currentTranslationLanguageCode" value="fr" />

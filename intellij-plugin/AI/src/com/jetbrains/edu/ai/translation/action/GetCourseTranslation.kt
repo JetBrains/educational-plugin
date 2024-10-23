@@ -5,7 +5,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.ai.translation.TranslationLoader
 import com.jetbrains.edu.ai.translation.dialog.GetCourseTranslationDialog
-import com.jetbrains.edu.ai.translation.isCourseTranslated
 import com.jetbrains.edu.ai.ui.EducationalAIIcons
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.course

@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.editor.colors.EditorColorsListener
 import com.intellij.openapi.editor.colors.EditorColorsManager
@@ -23,6 +24,7 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
+import com.jetbrains.edu.learning.ai.translationSettings
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
@@ -45,11 +47,16 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.navigationMap.NavigationMapT
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType.SUBMISSIONS_TAB
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.awt.Component
 import java.awt.Dimension
 import javax.swing.*
 
-class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), DataProvider, Disposable {
+class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskToolWindowView(project), DataProvider, Disposable {
   private val lessonHeader: LessonHeader = LessonHeader()
   private val navigationMapToolbar: NavigationMapToolbar = NavigationMapToolbar()
   private val taskName: JLabel = JLabel(EduCoreBundle.message("item.task.title"))
@@ -58,6 +65,14 @@ class TaskToolWindowViewImpl(project: Project) : TaskToolWindowView(project), Da
 
   init {
     Disposer.register(this, tabManager)
+
+    scope.launch {
+      project.translationSettings().translationLanguageCodeChange.collectLatest {
+        withContext(Dispatchers.EDT) {
+          updateTaskDescription()
+        }
+      }
+    }
   }
 
   override var currentTask: Task? = null

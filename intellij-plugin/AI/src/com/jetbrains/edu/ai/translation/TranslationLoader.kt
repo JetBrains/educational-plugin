@@ -1,6 +1,5 @@
 package com.jetbrains.edu.ai.translation
 
-import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.components.Service
@@ -23,7 +22,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.onError
-import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.educational.translation.enum.Language
 import com.jetbrains.educational.translation.format.CourseTranslation
 import com.jetbrains.educational.translation.format.DescriptionText
@@ -62,9 +60,6 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
             course.saveTranslation(translation)
           }
           TranslationProjectSettings.changeCurrentTranslationLanguage(project, language)
-          withContext(Dispatchers.EDT) {
-            TaskToolWindowView.getInstance(project).updateTaskDescription()
-          }
         }
       }
       finally {
@@ -86,9 +81,6 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
         if (TranslationProjectSettings.getCurrentTranslationLanguage(project) != null) {
           withBackgroundProgress(project, EduAIBundle.message("ai.service.reset.course.translation")) {
             TranslationProjectSettings.resetTranslation(project)
-            withContext(Dispatchers.EDT) {
-              TaskToolWindowView.getInstance(project).updateTaskDescription()
-            }
           }
         }
         withBackgroundProgress(project, EduAIBundle.message("ai.service.deleting.course.translation.files")) {

@@ -2,6 +2,7 @@ package com.jetbrains.edu.ai.translation
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
+import com.jetbrains.edu.learning.ai.translationSettings
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.educational.core.format.domain.MarketplaceId
@@ -27,8 +28,5 @@ fun TranslationProjectSettings.Companion.getCurrentTranslationLanguage(project: 
 }
 
 fun TranslationProjectSettings.Companion.changeCurrentTranslationLanguage(project: Project, language: Language) {
-  getInstance(project).currentTranslationLanguageCode = language.code
+  project.translationSettings().setCurrentTranslationLanguageCode(language.code)
 }
-
-fun TranslationProjectSettings.Companion.isCourseTranslated(project: Project): Boolean =
-  getInstance(project).currentTranslationLanguageCode != null
