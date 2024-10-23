@@ -14,7 +14,8 @@ class BinaryContentsFromDisk(val file: VirtualFile) : BinaryContents {
     get() = runReadAction {
       try {
         file.contentsToByteArray()
-      } catch (e: FileTooBigException) {
+      }
+      catch (_: FileTooBigException) {
         throw HugeBinaryFileException(file.path, file.length, FileUtilRt.LARGE_FOR_CONTENT_LOADING.toLong())
       }
     }
