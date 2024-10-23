@@ -96,13 +96,14 @@ class MarketplaceSettings(private val scope: CoroutineScope) {
 
   fun updateSharingPreference(state: Boolean, project: Project? = null) {
     if (!isJBALoggedIn()) return
+    if (state == solutionsSharing) return
+    solutionsSharing = state
     scope.launch(Dispatchers.IO) {
       MarketplaceSubmissionsConnector.getInstance().changeSharingPreference(state).onError {
         SolutionSharingInlineBanners.showFailedToEnableSolutionSharing(project)
+        solutionsSharing = !state
         return@launch
       }
-
-      solutionsSharing = state
       if (state && project?.isMarketplaceStudentCourse() == true) {
         SolutionSharingInlineBanners.showSuccessSolutionSharingEnabling(project)
       }
