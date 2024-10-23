@@ -27,7 +27,7 @@ class HintsLoader(private val project: Project, private val scope: CoroutineScop
 
       val taskProcessor = TaskProcessorImpl(task)
       val hint = withBackgroundProgress(project, EduCoreBundle.message("action.Educational.NextStepHint.progress.short.text"), cancellable = true) {
-        AiHintsAssistant.getAssistant(taskProcessor).getHint()
+        AiHintsAssistant.getAssistant(taskProcessor).getHint(taskProcessor.getSubmissionTextRepresentation() ?: "")
       }.getOrElse {
         HintsBannerManager.showTextHintBanner(project, task, it.message ?: EduCoreBundle.message("action.Educational.NextStepHint.error.unknown"))
         return@launch

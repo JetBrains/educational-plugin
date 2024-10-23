@@ -13,6 +13,9 @@ import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessorImpl
 import com.jetbrains.edu.learning.getTextFromTaskTextFile
 import com.jetbrains.edu.learning.selectedTaskFile
 import com.jetbrains.educational.ml.hints.assistant.AiHintsAssistant
+import com.jetbrains.educational.ml.hints.context.CompilationErrorHintsValidationUserContext
+import com.jetbrains.educational.ml.hints.context.ValidationContext
+import com.jetbrains.educational.ml.hints.generator.ValidationHintGenerator
 import com.jetbrains.educational.ml.hints.processors.ValidationHintProcessor
 import com.jetbrains.educational.ml.hints.validation.ValidationHintAssistant
 import org.apache.commons.csv.CSVRecord
@@ -55,7 +58,11 @@ class AutoCompilationErrorHintValidationAction : ValidationAction<ValidationOfCo
     taskId: Int,
     taskName: String
   ): ValidationOfCompilationErrorHintsDataframeRecord {
-    val hintsValidation = ValidationHintAssistant(validationProcessor).processValidationCompilationErrorHints().getOrThrow()
+    val hintsValidation = ValidationHintAssistant(validationProcessor, object : ValidationHintGenerator() {
+      override suspend fun validateHint(context: ValidationContext): String {
+        TODO("Not yet implemented")
+      }
+    }).processValidationCompilationErrorHints(CompilationErrorHintsValidationUserContext("", "", "", "", "")).getOrThrow()
     return ValidationOfCompilationErrorHintsDataframeRecord(
       taskId = taskId,
       taskName = taskName,
@@ -78,7 +85,7 @@ class AutoCompilationErrorHintValidationAction : ValidationAction<ValidationOfCo
     val taskProcessor = TaskProcessorImpl(task)
     val project = task.project ?: error("Cannot get project")
     runCheckAction(project)
-    val response = AiHintsAssistant.getAssistant(taskProcessor).getHint()
+    val response = AiHintsAssistant.getAssistant(taskProcessor).getHint("")
     val assistantHint = response.getOrNull()
 
     return try {

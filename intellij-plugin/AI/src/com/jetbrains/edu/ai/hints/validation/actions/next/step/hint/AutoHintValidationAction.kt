@@ -13,6 +13,9 @@ import com.jetbrains.edu.learning.eduAssistant.processors.TaskProcessorImpl
 import com.jetbrains.edu.learning.getTextFromTaskTextFile
 import com.jetbrains.edu.learning.selectedTaskFile
 import com.jetbrains.educational.ml.hints.assistant.AiHintsAssistant
+import com.jetbrains.educational.ml.hints.context.HintsValidationUserContext
+import com.jetbrains.educational.ml.hints.context.ValidationContext
+import com.jetbrains.educational.ml.hints.generator.ValidationHintGenerator
 import com.jetbrains.educational.ml.hints.processors.ValidationHintProcessor
 import com.jetbrains.educational.ml.hints.validation.ValidationHintAssistant
 import org.apache.commons.csv.CSVRecord
@@ -55,9 +58,13 @@ class AutoHintValidationAction : ValidationAction<ValidationOfHintsDataframeReco
     taskId: Int,
     taskName: String
   ): ValidationOfHintsDataframeRecord {
-    val validationHintAssistant = ValidationHintAssistant(validationProcessor)
+    val validationHintAssistant = ValidationHintAssistant(validationProcessor, object : ValidationHintGenerator() {
+      override suspend fun validateHint(context: ValidationContext): String {
+        TODO("Not yet implemented")
+      }
+    })
     val hintType = validationHintAssistant.processValidationHintForItsType().getOrThrow()
-    val hintsValidation = validationHintAssistant.processValidationHints().getOrThrow()
+    val hintsValidation = validationHintAssistant.processValidationHints(HintsValidationUserContext("", "", "", "", "")).getOrThrow()
     return ValidationOfHintsDataframeRecord(
       taskId = taskId,
       taskName = taskName,
@@ -83,7 +90,7 @@ class AutoHintValidationAction : ValidationAction<ValidationOfHintsDataframeReco
     val taskProcessor = TaskProcessorImpl(task)
     val project = task.project ?: error("Cannot get project")
     val taskFile = project.selectedTaskFile ?: error("Cannot get task file of ${task.name} task")
-    val response = AiHintsAssistant.getAssistant(taskProcessor).getHint()
+    val response = AiHintsAssistant.getAssistant(taskProcessor).getHint("")
     val assistantHint = response.getOrNull()
 
     return try {
