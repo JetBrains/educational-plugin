@@ -7,16 +7,24 @@ import com.intellij.openapi.fileEditor.impl.HTMLEditorProvider
 import com.intellij.openapi.fileEditor.impl.HTMLEditorProvider.Request.Companion.url
 import com.intellij.openapi.project.Project
 import com.intellij.util.Urls.newFromEncoded
+import com.jetbrains.edu.learning.EduExperimentalFeatures
+import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 class CCOpenEducatorHelp : AnAction() {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    doOpen(project)
+    if (isFeatureEnabled(EduExperimentalFeatures.EDUCATOR_HELP)) {
+      doOpen(project)
+    }
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
+
+  override fun update(e: AnActionEvent) {
+    e.presentation.isEnabledAndVisible = isFeatureEnabled(EduExperimentalFeatures.EDUCATOR_HELP)
+  }
 
   companion object {
     private const val DOCUMENTATION_URL = "https://jetbrains-academy.github.io/educators-guide-test/"
