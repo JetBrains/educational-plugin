@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSE_CONTENTS_FOLDER
+import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.ext.visitEduFiles
 import com.jetbrains.edu.learning.json.encrypt.AES256
 import com.jetbrains.edu.learning.json.encrypt.TEST_AES_KEY
@@ -22,7 +23,7 @@ import java.util.zip.ZipInputStream
 
 abstract class CourseArchiveTestBase : EduActionTestCase() {
   protected fun doTest() {
-    val expectedCourseJson = loadExpectedJson().injectLastJsonVersion()
+    val expectedCourseJson = loadExpectedJson()
 
     // TODO: remove "text" fields directly from test jsons
     val expectedCourseJsonVersionWithoutTexts = expectedCourseJson
@@ -64,11 +65,11 @@ abstract class CourseArchiveTestBase : EduActionTestCase() {
     }
   }
 
-  private fun String.injectLastJsonVersion(): String = replace(""""version"\s*:\s*-1""".toRegex(), """"version" : $JSON_FORMAT_VERSION""")
-
   private fun loadExpectedJson(): String {
     val fileName = getTestFile()
-    return FileUtil.loadFile(File(testDataPath, fileName))
+    val jsonFromFile = FileUtil.loadFile(File(testDataPath, fileName))
+    val withLastJsonVersion = jsonFromFile.replace(""""version"\s*:\s*-1""".toRegex(), """"version" : $JSON_FORMAT_VERSION""")
+    return withLastJsonVersion
   }
 
   private fun <R> doWithArchiveCreator(action: (archiveCreator: CourseArchiveCreator, preparedCourse: Course) -> R): R {
