@@ -17,6 +17,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.psi.PsiElement
+import com.jetbrains.edu.learning.EduUtilsKt.escapeAnsiText
 import com.jetbrains.edu.learning.checker.CheckUtils.fillWithIncorrect
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckResult.Companion.noTestsRun
@@ -250,13 +251,7 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
      * Some testing frameworks add attributes to be shown in console (ex. Jest - ANSI color codes)
      * which are not supported in Task Description, so they need to be removed
      */
-    fun removeAttributes(text: String): String {
-      val buffer = StringBuilder()
-      AnsiEscapeDecoder().escapeText(text, ProcessOutputTypes.STDOUT) { chunk, _ ->
-        buffer.append(chunk)
-      }
-      return buffer.toString()
-    }
+    fun removeAttributes(text: String): String = escapeAnsiText(text)
 
     private fun createConfigurationTypeComparator(configurationType: ConfigurationType?): Comparator<ConfigurationFromContext> {
       return Comparator { c1, c2 ->

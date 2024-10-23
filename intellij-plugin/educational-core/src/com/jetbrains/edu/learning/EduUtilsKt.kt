@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.module.kotlin.treeToValue
+import com.intellij.execution.process.AnsiEscapeDecoder
+import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.ide.SaveAndSyncHandler
 import com.intellij.ide.lightEdit.LightEdit
 import com.intellij.openapi.actionSystem.DataContext
@@ -179,6 +181,14 @@ object EduUtilsKt {
       LOG.warn(e.message)
     }
     return result
+  }
+
+  fun escapeAnsiText(text: String): String {
+    val buffer = StringBuilder()
+    AnsiEscapeDecoder().escapeText(text, ProcessOutputTypes.STDOUT) { chunk, _ ->
+      buffer.append(chunk)
+    }
+    return buffer.toString()
   }
 
   private val LOG = logger<EduUtilsKt>()
