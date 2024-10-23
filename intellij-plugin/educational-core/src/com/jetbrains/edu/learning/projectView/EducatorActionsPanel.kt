@@ -68,7 +68,7 @@ private class NewTaskToolbarAction : CCCreateTask(EducationalCoreIcons.CourseCre
     event.presentation.isEnabled = false
     val project = event.getData(CommonDataKeys.PROJECT) ?: return
     val course = StudyTaskManager.getInstance(project).course ?: return
-    if (course.lessons.isEmpty()) {
+    if (course.items.isEmpty()) {
       return
     }
 
