@@ -1,13 +1,13 @@
 <html>
 <head>
   <title>Redirecting to Hyperskill projects</title>
-  <meta http-equiv="refresh" content="0.1; URL=https://hyperskill.org/projects/">
+  <meta http-equiv="refresh" content="0.1; URL=https://hyperskill.org/courses/">
   <meta name="keywords" content="automatic redirection">
 </head>
 
 <body>
 If your browser doesn't automatically go there within a few seconds,
 you may want to go to
-<a href="https://hyperskill.org/projects/">the destination</a> manually.
+<a href="https://hyperskill.org/courses/">the destination</a> manually.
 </body>
 </html>
