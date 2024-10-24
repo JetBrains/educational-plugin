@@ -8,9 +8,7 @@ object StepikNames {
   const val STEPIK = "Stepik"
   const val STEPIK_DEFAULT_URL = "https://stepik.org"
   const val STEPIK_HOST_ORDINAL_PROPERTY = "stepik.host.ordinal"
-  const val STEPIK_RELEASE_URL = "https://release.stepik.org"
   const val COGNITERRA_URL = "https://cogniterra.org"
-  const val COGNITERRA_RELEASE_URL = "https://release.cogniterra.org"
 
   const val PYCHARM_PREFIX = "pycharm"
 
@@ -19,7 +17,7 @@ object StepikNames {
   const val PLUGIN_NAME = "EduTools"
 
   fun getStepikUrl(): String = if (isUnitTestMode) {
-    STEPIK_RELEASE_URL
+    COGNITERRA_URL
   }
   else {
     StepikHost.getSelectedHost().url
@@ -28,8 +26,6 @@ object StepikNames {
   fun getClientId(): String = StepikHost.getSelectedHost().clientId
 
   fun getClientSecret(): String = StepikHost.getSelectedHost().clientSecret
-
-  fun getStepikApiUrl(): String = "${getStepikUrl()}/api/"
 
   fun getTokenUrl(): String = "${getStepikUrl()}/oauth2/token/"
 
