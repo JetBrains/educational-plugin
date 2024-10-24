@@ -25,6 +25,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.network.executeHandlingExceptions
 import com.jetbrains.edu.learning.network.executeParsingErrors
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
+import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.*
 import com.jetbrains.edu.learning.stepik.api.StepikBasedConnector.Companion.createObjectMapper
 import com.jetbrains.edu.learning.stepik.hyperskill.*
@@ -169,7 +170,7 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
       .filter { it.theoryId != null }
   }
 
-  fun getLesson(course: HyperskillCourse, attachmentLink: String): Lesson {
+  fun getLesson(course: HyperskillCourse): Lesson {
     val progressIndicator = ProgressManager.getInstance().progressIndicator
 
     val lesson = FrameworkLesson()
@@ -188,6 +189,8 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
       lesson.addTask(task)
     }
     lesson.sortItems()
+    val hyperskillProject = course.hyperskillProject ?: error("No Hyperskill project")
+    val attachmentLink = "$baseUrl/api/projects/${hyperskillProject.id}/additional-files/${StepikNames.ADDITIONAL_INFO}"
     loadAndFillAdditionalCourseInfo(course, attachmentLink)
     loadAndFillLessonAdditionalInfo(lesson)
     return lesson
@@ -207,7 +210,7 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
       hyperskillCourse.stages = stages
     }
     val stages = hyperskillCourse.stages
-    val lesson = getLesson(hyperskillCourse, hyperskillProject.ideFiles)
+    val lesson = getLesson(hyperskillCourse)
     if (lesson.taskList.size != stages.size) {
       LOG.warn("Course has ${stages.size} stages, but ${lesson.taskList.size} tasks")
       return
