@@ -20,7 +20,6 @@ data class LessonCreationInfo(
   override val remoteItem: Lesson
 ) : LessonUpdate(null, remoteItem) {
   override suspend fun update(project: Project) {
-    // TODO EDU-6756 what if lesson was created in the middle of the section?
     localContainer.addItem(remoteItem)
     remoteItem.init(localContainer, false)
 
@@ -43,16 +42,19 @@ data class LessonUpdateInfo(
   val taskUpdates: List<TaskUpdate>
 ) : LessonUpdate(localItem, remoteItem) {
   override suspend fun update(project: Project) {
-    val parentContainer = localItem.parent
-    taskUpdates.forEach {
-      it.update(project)
+    if (taskUpdates.isNotEmpty()) {
+      taskUpdates.forEach {
+        it.update(project)
+      }
+      localItem.sortItems()
     }
-    localItem.init(parentContainer, false)
+
+    localItem.index = remoteItem.index
 
     if (localItem.name != remoteItem.name) {
       val courseDir = project.courseDir
       val fromDir = localItem.getDir(courseDir) ?: error("Lesson dir wasn't found")
-      val parentDir = parentContainer.getDir(courseDir) ?: error("Parent dir wasn't found")
+      val parentDir = localItem.parent.getDir(courseDir) ?: error("Parent dir wasn't found")
 
       localItem.name = remoteItem.name
       withContext(Dispatchers.IO) {

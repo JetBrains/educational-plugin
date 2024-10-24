@@ -1,38 +1,36 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.update
 
-import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
+import com.jetbrains.edu.learning.CourseBuilder
+import com.jetbrains.edu.learning.SectionBuilder
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.LessonContainer
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.update.LessonUpdateTestBase
-import com.jetbrains.edu.learning.update.LessonUpdater
 import org.junit.Test
 
 class HyperskillLessonUpdateTest : LessonUpdateTestBase<HyperskillCourse>() {
-  override fun getUpdater(container: LessonContainer): LessonUpdater = HyperskillLessonUpdater(project, container)
+  override fun getUpdater(localCourse: HyperskillCourse) = HyperskillCourseUpdaterNew(project, localCourse)
 
   @Test
   fun `test new lesson in course created`() {
     initiateLocalCourse()
-    val newEduTask = EduTask("task3").apply {
-      id = 3
-      taskFiles = linkedMapOf(
-        "Task.kt" to TaskFile("src/Task.kt", "fun foo() {}"),
-        "Baz.kt" to TaskFile("src/Baz.kt", "fun baz() {}"),
-        "Tests1.kt" to TaskFile("test/Tests3.kt", "fun test3() {}")
-      )
-      descriptionFormat = DescriptionFormat.HTML
-    }
+
     val newLesson = Lesson().apply {
       name = "lesson2"
+      val newEduTask = EduTask("task3").apply {
+        id = 3
+        taskFiles = linkedMapOf(
+          "Task.kt" to TaskFile("src/Task.kt", "fun foo() {}"),
+          "Baz.kt" to TaskFile("src/Baz.kt", "fun baz() {}"),
+          "Tests.kt" to TaskFile("test/Tests.kt", "fun test3() {}")
+        )
+        descriptionFormat = DescriptionFormat.HTML
+      }
       addTask(newEduTask)
-      newEduTask.parent = this
     }
     val newStages = listOf(
       HyperskillStage(1, "", 1, true),
@@ -41,10 +39,10 @@ class HyperskillLessonUpdateTest : LessonUpdateTestBase<HyperskillCourse>() {
     )
     val remoteCourse = toRemoteCourse {
       addLesson(newLesson)
-      newLesson.parent = this
       stages = newStages
     }
-    updateLessons(remoteCourse)
+
+    updateCourse(remoteCourse)
 
     assertEquals("Lesson hasn't been added", 2, getLessons().size)
 
@@ -56,7 +54,7 @@ class HyperskillLessonUpdateTest : LessonUpdateTestBase<HyperskillCourse>() {
             file("Baz.kt")
           }
           dir("test") {
-            file("Tests1.kt")
+            file("Tests.kt")
           }
           file("task.html")
         }
@@ -66,7 +64,7 @@ class HyperskillLessonUpdateTest : LessonUpdateTestBase<HyperskillCourse>() {
             file("Baz.kt")
           }
           dir("test") {
-            file("Tests2.kt")
+            file("Tests.kt")
           }
           file("task.html")
         }
@@ -78,7 +76,7 @@ class HyperskillLessonUpdateTest : LessonUpdateTestBase<HyperskillCourse>() {
             file("Baz.kt")
           }
           dir("test") {
-            file("Tests3.kt")
+            file("Tests.kt")
           }
           file("task.html")
         }
@@ -90,36 +88,45 @@ class HyperskillLessonUpdateTest : LessonUpdateTestBase<HyperskillCourse>() {
   }
 
   @Test
-  fun `test file structure when new lesson created in the middle of the course`() {
-    localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
+  fun `test new lesson created in the middle of the course`() {
+    localCourse = createBasicHyperskillCourse {
       lesson("lesson1", id = 1) {
         eduTask("task1", stepId = 1)
       }
       lesson("lesson2", id = 2) {
         eduTask("task2", stepId = 2)
       }
-    } as HyperskillCourse
-
-    val newEduTask = EduTask("task3").apply {
-      id = 3
-      descriptionFormat = DescriptionFormat.HTML
-    }
-    val newLesson = Lesson().apply {
-      id = 3
-      name = "lesson3"
-      addTask(newEduTask)
-      newEduTask.parent = this
     }
 
-    val remoteCourse = toRemoteCourse {
-      val lessons = lessons.toMutableList()
-      lessons.add(1, newLesson)
-      this.lessons.forEach { removeLesson(it) }
-      lessons.forEach { addLesson(it) }
-      init(false)
+    val remoteCourse = toRemoteCourse { }
+    CourseBuilder(remoteCourse).lesson("lesson3", id = 3, index = 2) {
+      eduTask("task3", stepId = 3, taskDescriptionFormat = DescriptionFormat.HTML)
     }
-    updateLessons(remoteCourse, localCourse)
-    assertEquals("Lesson hasn't been added", 3, localCourse.lessons.size)
+    remoteCourse.apply {
+      lessons[1].index = 3
+      sortItems()
+    }
+
+    updateCourse(remoteCourse)
+
+    val lessons = localCourse.lessons
+    assertEquals("Lesson hasn't been added", 3, lessons.size)
+    checkIndices(lessons)
+    lessons[0].let { lesson ->
+      assertEquals(1, lesson.id)
+      assertEquals(1, lesson.index)
+      assertEquals("lesson1", lesson.name)
+    }
+    lessons[1].let { lesson ->
+      assertEquals(3, lesson.id)
+      assertEquals(2, lesson.index)
+      assertEquals("lesson3", lesson.name)
+    }
+    lessons[2].let { lesson ->
+      assertEquals(2, lesson.id)
+      assertEquals(3, lesson.index)
+      assertEquals("lesson2", lesson.name)
+    }
 
     val expectedStructure = fileTree {
       dir("lesson1") {
@@ -143,99 +150,39 @@ class HyperskillLessonUpdateTest : LessonUpdateTestBase<HyperskillCourse>() {
     expectedStructure.assertEquals(rootDir)
   }
 
-  // EDU-6756 Support update in case a new StudyItem appears in the middle of the existing ones
-  @Test(expected = AssertionError::class)
-  fun `test lesson indexes when new lesson created in the middle of the course`() {
-    localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
-      lesson("lesson1", id = 1) {
-        eduTask("task1", stepId = 1)
-      }
-      lesson("lesson2", id = 2) {
-        eduTask("task2", stepId = 2)
-      }
-    } as HyperskillCourse
-
-    val newEduTask = EduTask("task3").apply {
-      id = 3
-      descriptionFormat = DescriptionFormat.HTML
-    }
-    val newLesson = Lesson().apply {
-      id = 3
-      name = "lesson3"
-      addTask(newEduTask)
-      newEduTask.parent = this
-    }
-
-    val remoteCourse = toRemoteCourse {
-      val lessons = lessons.toMutableList()
-      lessons.add(1, newLesson)
-      this.lessons.forEach { removeLesson(it) }
-      lessons.forEach { addLesson(it) }
-      init(false)
-    }
-    updateLessons(remoteCourse, localCourse)
-
-    val lessons = localCourse.lessons
-    assertEquals("Lesson hasn't been added", 3, lessons.size)
-    assertTrue("Wrong index for the first lesson", lessons[0].name == "lesson1")
-    assertTrue("Wrong index for the second lesson", lessons[1].name == "lesson3")
-    assertTrue("Wrong index for the third lesson", lessons[2].name == "lesson2")
-  }
-
   @Test
   fun `test new lesson in section created`() {
-    localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
+    localCourse = createBasicHyperskillCourse {
       section("section1", id = 1) {
         lesson("lesson1", id = 1) {
-          eduTask("task1", stepId = 1, taskDescription = "Old Description", taskDescriptionFormat = DescriptionFormat.HTML) {
+          eduTask("task1", stepId = 1, taskDescriptionFormat = DescriptionFormat.HTML) {
             taskFile("src/Task.kt", "fun foo() {}")
             taskFile("src/Baz.kt", "fun baz() {}")
-            taskFile("test/Tests1.kt", "fun test1() {}")
+            taskFile("test/Tests.kt", "fun test1() {}")
           }
-          eduTask("task2", stepId = 2, taskDescription = "Old Description", taskDescriptionFormat = DescriptionFormat.HTML) {
+          eduTask("task2", stepId = 2, taskDescriptionFormat = DescriptionFormat.HTML) {
             taskFile("src/Task.kt", "fun foo() {}")
             taskFile("src/Baz.kt", "fun baz() {}")
-            taskFile("test/Tests2.kt", "fun test2() {}")
+            taskFile("test/Tests.kt", "fun test2() {}")
           }
         }
       }
-      additionalFile("build.gradle", "apply plugin: \"java\"")
-    } as HyperskillCourse
-    localCourse.hyperskillProject = HyperskillProject()
-    localCourse.stages = listOf(
-      HyperskillStage(1, "", 1, true),
-      HyperskillStage(2, "", 2),
-    )
+    }
 
-    val newEduTask = EduTask("task3").apply {
-      id = 3
-      taskFiles = linkedMapOf(
-        "Task.kt" to TaskFile("src/Task.kt", "fun foo() {}"),
-        "Baz.kt" to TaskFile("src/Baz.kt", "fun baz() {}"),
-        "Tests1.kt" to TaskFile("test/Tests3.kt", "fun test3() {}")
-      )
-      descriptionFormat = DescriptionFormat.HTML
-    }
-    val newLesson = Lesson().apply {
-      id = 2
-      name = "lesson2"
-      addTask(newEduTask)
-      newEduTask.parent = this
-    }
-    val newStages = listOf(
-      HyperskillStage(1, "", 1, true),
-      HyperskillStage(2, "", 2),
-      HyperskillStage(3, "", 3)
-    )
     val remoteCourse = toRemoteCourse {
-      val section = sections.first()
-      section.addLesson(newLesson)
-      newLesson.parent = section
-      stages = newStages
+      stages = stages + HyperskillStage(3, "", 3)
     }
-    updateLessons(remoteCourse, localCourse.sections.first(), remoteCourse.sections.first())
+    SectionBuilder(remoteCourse, remoteCourse.sections[0]).lesson("lesson2", id = 2, index = 2) {
+      eduTask("task3", stepId = 3, taskDescriptionFormat = DescriptionFormat.HTML) {
+        taskFile("src/Task.kt", "fun foo() {}")
+        taskFile("src/Baz.kt", "fun baz() {}")
+        taskFile("test/Tests.kt", "fun test3() {}")
+      }
+    }
 
-    assertEquals("Lesson hasn't been added", 2, getLessons(localCourse.sections.first()).size)
+    updateCourse(remoteCourse)
+
+    assertEquals("Lesson hasn't been added", 2, localCourse.sections[0].lessons.size)
 
     val expectedStructure = fileTree {
       dir("section1") {
@@ -246,7 +193,7 @@ class HyperskillLessonUpdateTest : LessonUpdateTestBase<HyperskillCourse>() {
               file("Baz.kt")
             }
             dir("test") {
-              file("Tests1.kt")
+              file("Tests.kt")
             }
             file("task.html")
           }
@@ -256,7 +203,7 @@ class HyperskillLessonUpdateTest : LessonUpdateTestBase<HyperskillCourse>() {
               file("Baz.kt")
             }
             dir("test") {
-              file("Tests2.kt")
+              file("Tests.kt")
             }
             file("task.html")
           }
@@ -268,7 +215,7 @@ class HyperskillLessonUpdateTest : LessonUpdateTestBase<HyperskillCourse>() {
               file("Baz.kt")
             }
             dir("test") {
-              file("Tests3.kt")
+              file("Tests.kt")
             }
             file("task.html")
           }
@@ -281,8 +228,8 @@ class HyperskillLessonUpdateTest : LessonUpdateTestBase<HyperskillCourse>() {
   }
 
   @Test
-  fun `test file structure when new lesson created in the middle of the section`() {
-    localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
+  fun `test new lesson created in the middle of the section`() {
+    localCourse = createBasicHyperskillCourse {
       section("section1", id = 1) {
         lesson("lesson1", id = 1) {
           eduTask("task1", stepId = 1)
@@ -291,31 +238,37 @@ class HyperskillLessonUpdateTest : LessonUpdateTestBase<HyperskillCourse>() {
           eduTask("task2", stepId = 2)
         }
       }
-    } as HyperskillCourse
-
-    val newEduTask = EduTask("task3").apply {
-      id = 3
-      descriptionFormat = DescriptionFormat.HTML
-    }
-    val newLesson = Lesson().apply {
-      id = 3
-      name = "lesson3"
-      addTask(newEduTask)
-      newEduTask.parent = this
     }
 
-    val remoteCourse = toRemoteCourse {
-      val section = sections.first()
-      val lessons = section.lessons.toMutableList()
-      lessons.add(1, newLesson)
-      sections.first().apply {
-        this.lessons.forEach { removeLesson(it) }
-        lessons.forEach { addLesson(it) }
-        init(false)
-      }
+    val remoteCourse = toRemoteCourse { }
+    SectionBuilder(remoteCourse, remoteCourse.sections[0]).lesson("lesson3", id = 3, index = 2) {
+      eduTask("task3", stepId = 3, taskDescriptionFormat = DescriptionFormat.HTML)
     }
-    updateLessons(remoteCourse, localCourse.sections.first(), remoteCourse.sections.first())
-    assertEquals("Lesson hasn't been added", 3, localCourse.sections.first().lessons.size)
+    remoteCourse.sections[0].apply {
+      lessons[1].index = 3
+      sortItems()
+    }
+
+    updateCourse(remoteCourse)
+
+    val lessons = localCourse.sections[0].lessons
+    assertEquals("Lesson hasn't been added", 3, lessons.size)
+    checkIndices(lessons)
+    lessons[0].let { lesson ->
+      assertEquals(1, lesson.id)
+      assertEquals(1, lesson.index)
+      assertEquals("lesson1", lesson.name)
+    }
+    lessons[1].let { lesson ->
+      assertEquals(3, lesson.id)
+      assertEquals(2, lesson.index)
+      assertEquals("lesson3", lesson.name)
+    }
+    lessons[2].let { lesson ->
+      assertEquals(2, lesson.id)
+      assertEquals(3, lesson.index)
+      assertEquals("lesson2", lesson.name)
+    }
 
     val expectedStructure = fileTree {
       dir("section1") {
@@ -341,116 +294,18 @@ class HyperskillLessonUpdateTest : LessonUpdateTestBase<HyperskillCourse>() {
     expectedStructure.assertEquals(rootDir)
   }
 
-  // EDU-6756 Support update in case a new StudyItem appears in the middle of the existing ones
-  @Test(expected = AssertionError::class)
-  fun `test lesson indexes when new lesson created in the middle of the section`() {
-    localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
-      section("section1", id = 1) {
-        lesson("lesson1", id = 1) {
-          eduTask("task1", stepId = 1)
-        }
-        lesson("lesson2", id = 2) {
-          eduTask("task2", stepId = 2)
-        }
-      }
-    } as HyperskillCourse
-
-    val newEduTask = EduTask("task3").apply {
-      id = 3
-      descriptionFormat = DescriptionFormat.HTML
-    }
-    val newLesson = Lesson().apply {
-      id = 3
-      name = "lesson3"
-      addTask(newEduTask)
-      newEduTask.parent = this
-    }
-
-    val remoteCourse = toRemoteCourse {
-      val section = sections.first()
-      val lessons = section.lessons.toMutableList()
-      lessons.add(1, newLesson)
-      sections.first().apply {
-        this.lessons.forEach { removeLesson(it) }
-        lessons.forEach { addLesson(it) }
-        init(false)
-      }
-    }
-    updateLessons(remoteCourse, localCourse.sections.first(), remoteCourse.sections.first())
-
-    val lessons = localCourse.sections.first().lessons
-    assertEquals("Lesson hasn't been added", 3, lessons.size)
-    assertTrue("Wrong index for the first lesson", lessons[0].name == "lesson1")
-    assertTrue("Wrong index for the second lesson", lessons[1].name == "lesson3")
-    assertTrue("Wrong index for the third lesson", lessons[2].name == "lesson2")
-  }
-
-  @Test
-  fun `test first task deleted`() {
-    initiateLocalCourse()
-    val newStages = listOf(
-      HyperskillStage(2, "", 2),
-    )
-    val remoteCourse = toRemoteCourse {
-      lessons.first().apply {
-        removeTask(taskList[0])
-      }
-      stages = newStages
-    }
-    updateLessons(remoteCourse)
-
-    assertEquals("Task hasn't been deleted", 1, findLesson(0).taskList.size)
-    assertEquals("Task index hasn't been changed", 1, findLesson(0).taskList.first().index)
-
-    val expectedStructure = fileTree {
-      dir("lesson1") {
-        dir("task2") {
-          dir("src") {
-            file("Task.kt")
-            file("Baz.kt")
-          }
-          dir("test") {
-            file("Tests2.kt")
-          }
-          file("task.html")
-        }
-      }
-      file("build.gradle")
-      file("settings.gradle")
-    }
-    expectedStructure.assertEquals(rootDir)
-  }
-
   @Test
   fun `test lesson in course has been deleted`() {
-    localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
+    localCourse = createBasicHyperskillCourse {
       lesson("lesson1", id = 1) {
-        eduTask("task1", stepId = 1, taskDescription = "Old Description", taskDescriptionFormat = DescriptionFormat.HTML) {
-          taskFile("src/Task.kt", "fun foo() {}")
-          taskFile("src/Baz.kt", "fun baz() {}")
-          taskFile("test/Tests1.kt", "fun test1() {}")
-        }
-        eduTask("task2", stepId = 2, taskDescription = "Old Description", taskDescriptionFormat = DescriptionFormat.HTML) {
-          taskFile("src/Task.kt", "fun foo() {}")
-          taskFile("src/Baz.kt", "fun baz() {}")
-          taskFile("test/Tests2.kt", "fun test2() {}")
-        }
+        eduTask("task1", stepId = 1, taskDescriptionFormat = DescriptionFormat.HTML)
+        eduTask("task2", stepId = 2, taskDescriptionFormat = DescriptionFormat.HTML)
       }
       lesson("lesson2", id = 2) {
-        eduTask("task3", stepId = 3, taskDescription = "Old Description", taskDescriptionFormat = DescriptionFormat.HTML) {
-          taskFile("src/Task.kt", "fun foo() {}")
-          taskFile("src/Baz.kt", "fun baz() {}")
-          taskFile("test/Tests3.kt", "fun test3() {}")
-        }
-        eduTask("task4", stepId = 4, taskDescription = "Old Description", taskDescriptionFormat = DescriptionFormat.HTML) {
-          taskFile("src/Task.kt", "fun foo() {}")
-          taskFile("src/Baz.kt", "fun baz() {}")
-          taskFile("test/Tests4.kt", "fun test4() {}")
-        }
+        eduTask("task3", stepId = 3, taskDescriptionFormat = DescriptionFormat.HTML)
+        eduTask("task4", stepId = 4, taskDescriptionFormat = DescriptionFormat.HTML)
       }
-      additionalFile("build.gradle", "apply plugin: \"java\"")
-    } as HyperskillCourse
-    localCourse.hyperskillProject = HyperskillProject()
+    }
     localCourse.stages = listOf(
       HyperskillStage(1, "", 1, true),
       HyperskillStage(2, "", 2),
@@ -459,36 +314,23 @@ class HyperskillLessonUpdateTest : LessonUpdateTestBase<HyperskillCourse>() {
     )
 
     val remoteCourse = toRemoteCourse {
-      removeLesson(lessons.first())
+      removeLesson(lessons[0])
       stages = listOf(
         HyperskillStage(3, "", 3),
         HyperskillStage(4, "", 4)
       )
     }
-    updateLessons(remoteCourse)
+
+    updateCourse(remoteCourse)
 
     assertEquals("Lesson hasn't been deleted", 1, getLessons().size)
 
     val expectedStructure = fileTree {
       dir("lesson2") {
         dir("task3") {
-          dir("src") {
-            file("Task.kt")
-            file("Baz.kt")
-          }
-          dir("test") {
-            file("Tests3.kt")
-          }
           file("task.html")
         }
         dir("task4") {
-          dir("src") {
-            file("Task.kt")
-            file("Baz.kt")
-          }
-          dir("test") {
-            file("Tests4.kt")
-          }
           file("task.html")
         }
       }
@@ -500,36 +342,18 @@ class HyperskillLessonUpdateTest : LessonUpdateTestBase<HyperskillCourse>() {
 
   @Test
   fun `test lesson in section has been deleted`() {
-    localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
+    localCourse = createBasicHyperskillCourse {
       section("section1", id = 1) {
         lesson("lesson1", id = 1) {
-          eduTask("task1", stepId = 1, taskDescription = "Old Description", taskDescriptionFormat = DescriptionFormat.HTML) {
-            taskFile("src/Task.kt", "fun foo() {}")
-            taskFile("src/Baz.kt", "fun baz() {}")
-            taskFile("test/Tests1.kt", "fun test1() {}")
-          }
-          eduTask("task2", stepId = 2, taskDescription = "Old Description", taskDescriptionFormat = DescriptionFormat.HTML) {
-            taskFile("src/Task.kt", "fun foo() {}")
-            taskFile("src/Baz.kt", "fun baz() {}")
-            taskFile("test/Tests2.kt", "fun test2() {}")
-          }
+          eduTask("task1", stepId = 1, taskDescriptionFormat = DescriptionFormat.HTML)
+          eduTask("task2", stepId = 2, taskDescriptionFormat = DescriptionFormat.HTML)
         }
         lesson("lesson2", id = 2) {
-          eduTask("task3", stepId = 3, taskDescription = "Old Description", taskDescriptionFormat = DescriptionFormat.HTML) {
-            taskFile("src/Task.kt", "fun foo() {}")
-            taskFile("src/Baz.kt", "fun baz() {}")
-            taskFile("test/Tests3.kt", "fun test3() {}")
-          }
-          eduTask("task4", stepId = 4, taskDescription = "Old Description", taskDescriptionFormat = DescriptionFormat.HTML) {
-            taskFile("src/Task.kt", "fun foo() {}")
-            taskFile("src/Baz.kt", "fun baz() {}")
-            taskFile("test/Tests4.kt", "fun test4() {}")
-          }
+          eduTask("task3", stepId = 3, taskDescriptionFormat = DescriptionFormat.HTML)
+          eduTask("task4", stepId = 4, taskDescriptionFormat = DescriptionFormat.HTML)
         }
       }
-      additionalFile("build.gradle", "apply plugin: \"java\"")
-    } as HyperskillCourse
-    localCourse.hyperskillProject = HyperskillProject()
+    }
     localCourse.stages = listOf(
       HyperskillStage(1, "", 1, true),
       HyperskillStage(2, "", 2),
@@ -538,38 +362,25 @@ class HyperskillLessonUpdateTest : LessonUpdateTestBase<HyperskillCourse>() {
     )
 
     val remoteCourse = toRemoteCourse {
-      val section = sections.first()
-      section.removeLesson(section.lessons.first())
+      val section = sections[0]
+      section.removeLesson(section.lessons[0])
       stages = listOf(
         HyperskillStage(3, "", 3),
         HyperskillStage(4, "", 4)
       )
     }
-    updateLessons(remoteCourse, localCourse.sections.first(), remoteCourse.sections.first())
 
-    assertEquals("Lesson hasn't been deleted", 1, getLessons(localCourse.sections.first()).size)
+    updateCourse(remoteCourse)
+
+    assertEquals("Lesson hasn't been deleted", 1, getLessons(localCourse.sections[0]).size)
 
     val expectedStructure = fileTree {
       dir("section1") {
         dir("lesson2") {
           dir("task3") {
-            dir("src") {
-              file("Task.kt")
-              file("Baz.kt")
-            }
-            dir("test") {
-              file("Tests3.kt")
-            }
             file("task.html")
           }
           dir("task4") {
-            dir("src") {
-              file("Task.kt")
-              file("Baz.kt")
-            }
-            dir("test") {
-              file("Tests4.kt")
-            }
             file("task.html")
           }
         }
@@ -582,93 +393,42 @@ class HyperskillLessonUpdateTest : LessonUpdateTestBase<HyperskillCourse>() {
 
   @Test
   fun `test new lesson in section created and existing task has been changed`() {
-    localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
+    localCourse = createBasicHyperskillCourse {
       section("section1", id = 1) {
         lesson("lesson1", id = 1) {
-          eduTask("task1", stepId = 1, taskDescription = "Old Description", taskDescriptionFormat = DescriptionFormat.HTML) {
-            taskFile("src/Task.kt", "fun foo() {}")
-            taskFile("src/Baz.kt", "fun baz() {}")
-            taskFile("test/Tests1.kt", "fun test1() {}")
-          }
-          eduTask("task2", stepId = 2, taskDescription = "Old Description", taskDescriptionFormat = DescriptionFormat.HTML) {
-            taskFile("src/Task.kt", "fun foo() {}")
-            taskFile("src/Baz.kt", "fun baz() {}")
-            taskFile("test/Tests2.kt", "fun test2() {}")
-          }
+          eduTask("task1", stepId = 1, taskDescriptionFormat = DescriptionFormat.HTML)
+          eduTask("task2", stepId = 2, taskDescriptionFormat = DescriptionFormat.HTML)
         }
       }
-      additionalFile("build.gradle", "apply plugin: \"java\"")
-    } as HyperskillCourse
-    localCourse.hyperskillProject = HyperskillProject()
-    localCourse.stages = listOf(
-      HyperskillStage(1, "", 1, true),
-      HyperskillStage(2, "", 2),
-    )
+    }
 
-    val updatedNameForTask1 = "task1 updated"
-    val newEduTask = EduTask("task3").apply {
-      id = 3
-      taskFiles = linkedMapOf(
-        "Task.kt" to TaskFile("src/Task.kt", "fun foo() {}"),
-        "Baz.kt" to TaskFile("src/Baz.kt", "fun baz() {}"),
-        "Tests1.kt" to TaskFile("test/Tests3.kt", "fun test3() {}")
-      )
-      descriptionFormat = DescriptionFormat.HTML
-    }
-    val newLesson = Lesson().apply {
-      id = 2
-      name = "lesson2"
-      addTask(newEduTask)
-      newEduTask.parent = this
-    }
+    val updatedTaskName = "task1 updated"
     val remoteCourse = toRemoteCourse {
-      val section = sections.first()
-      section.getLesson(1)?.getTask(1)?.name = updatedNameForTask1
-      section.addLesson(newLesson)
-      newLesson.parent = section
+      sections[0].lessons[0].taskList[0].name = updatedTaskName
+    }
+    SectionBuilder(remoteCourse, remoteCourse.sections[0]).lesson("lesson2", id = 2, index = 2) {
+      eduTask("task3", stepId = 3, taskDescriptionFormat = DescriptionFormat.HTML)
     }
 
-    val firstLocalSection = localCourse.sections.first()
-    updateLessons(remoteCourse, firstLocalSection, remoteCourse.sections.first())
+    updateCourse(remoteCourse)
 
-
-    val actualTaskName = firstLocalSection.getLesson(1)?.getTask(1)?.name
-    assertEquals("Task name not updated", updatedNameForTask1, actualTaskName)
+    val firstLocalSection = localCourse.sections[0]
+    val actualTaskName = firstLocalSection.lessons[0].taskList[0].name
+    assertEquals("Task name not updated", updatedTaskName, actualTaskName)
     assertEquals("Lesson hasn't been added", 2, firstLocalSection.lessons.size)
 
     val expectedStructure = fileTree {
       dir("section1") {
         dir("lesson1") {
-          dir(updatedNameForTask1) {
-            dir("src") {
-              file("Task.kt")
-              file("Baz.kt")
-            }
-            dir("test") {
-              file("Tests1.kt")
-            }
+          dir(updatedTaskName) {
             file("task.html")
           }
           dir("task2") {
-            dir("src") {
-              file("Task.kt")
-              file("Baz.kt")
-            }
-            dir("test") {
-              file("Tests2.kt")
-            }
             file("task.html")
           }
         }
         dir("lesson2") {
           dir("task3") {
-            dir("src") {
-              file("Task.kt")
-              file("Baz.kt")
-            }
-            dir("test") {
-              file("Tests3.kt")
-            }
             file("task.html")
           }
         }
@@ -680,22 +440,6 @@ class HyperskillLessonUpdateTest : LessonUpdateTestBase<HyperskillCourse>() {
   }
 
   override fun initiateLocalCourse() {
-    localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
-      lesson("lesson1", id = 1) {
-        eduTask("task1", stepId = 1, taskDescription = "Old Description", taskDescriptionFormat = DescriptionFormat.HTML) {
-          taskFile("src/Task.kt", "fun foo() {}")
-          taskFile("src/Baz.kt", "fun baz() {}")
-          taskFile("test/Tests1.kt", "fun test1() {}")
-        }
-        eduTask("task2", stepId = 2, taskDescription = "Old Description", taskDescriptionFormat = DescriptionFormat.HTML) {
-          taskFile("src/Task.kt", "fun foo() {}")
-          taskFile("src/Baz.kt", "fun baz() {}")
-          taskFile("test/Tests2.kt", "fun test2() {}")
-        }
-      }
-      additionalFile("build.gradle", "apply plugin: \"java\"")
-    } as HyperskillCourse
-    localCourse.hyperskillProject = HyperskillProject()
-    localCourse.stages = listOf(HyperskillStage(1, "", 1, true), HyperskillStage(2, "", 2))
+    localCourse = createBasicHyperskillCourse()
   }
 }

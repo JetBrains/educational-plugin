@@ -1,21 +1,22 @@
 package com.jetbrains.edu.learning.marketplace.update
 
-import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
-import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.EduFile
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.fileTree
-import com.jetbrains.edu.learning.update.CourseUpdateTestBase
 import com.jetbrains.edu.learning.update.CourseUpdater
+import com.jetbrains.edu.learning.update.UpdateTestBase
 import org.junit.Test
 
-class MarketplaceCourseUpdateTest : CourseUpdateTestBase<EduCourse>() {
-  override fun getUpdater(course: EduCourse): CourseUpdater<EduCourse> = MarketplaceCourseUpdaterNew(project, course)
+class MarketplaceCourseUpdateTest : UpdateTestBase<EduCourse>() {
+  override fun getUpdater(localCourse: EduCourse): CourseUpdater<EduCourse> = MarketplaceCourseUpdaterNew(project, localCourse)
 
   @Test
   fun `test nothing to update`() {
     initiateLocalCourse()
 
     val remoteCourse = toRemoteCourse { }
+
     updateCourse(remoteCourse, isShouldBeUpdated = false)
 
     val expectedStructure = fileTree {
@@ -40,280 +41,15 @@ class MarketplaceCourseUpdateTest : CourseUpdateTestBase<EduCourse>() {
   }
 
   @Test
-  fun `test lesson added`() {
-    initiateLocalCourse()
-
-    val newTask = EduTask("task2").apply {
-      id = 2
-      taskFiles = linkedMapOf(
-        "Task.kt" to TaskFile("src/Task.kt", "fun foo() {}"),
-        "Baz.kt" to TaskFile("src/Baz.kt", "fun baz() {}"),
-        "Tests.kt" to TaskFile("test/Tests.kt", "fun test3() {}")
-      )
-    }
-    val newLesson = Lesson().apply {
-      id = 2
-      name = "lesson2"
-      addTask(newTask)
-    }
-    val remoteCourse = toRemoteCourse {
-      sections.first().addLesson(newLesson)
-    }
-    updateCourse(remoteCourse)
-    assertEquals("Lesson hasn't been added", 2, localCourse.sections.first().lessons.size)
-
-    val expectedStructure = fileTree {
-      dir("section1") {
-        dir("lesson1") {
-          dir("task1") {
-            dir("src") {
-              file("Task.kt")
-              file("Baz.kt")
-            }
-            dir("test") {
-              file("Tests.kt")
-            }
-            file("task.md")
-          }
-        }
-        dir("lesson2") {
-          dir("task2") {
-            dir("src") {
-              file("Task.kt")
-              file("Baz.kt")
-            }
-            dir("test") {
-              file("Tests.kt")
-            }
-            file("task.md")
-          }
-        }
-      }
-      file("build.gradle")
-      file("settings.gradle")
-    }
-    expectedStructure.assertEquals(rootDir)
-  }
-
-  @Test
-  fun `test lesson deleted`() {
-    initiateLocalCourse()
-
-    val remoteCourse = toRemoteCourse {
-      val section = sections.first()
-      section.removeLesson(section.lessons.first())
-    }
-    updateCourse(remoteCourse)
-    assertEquals("Lesson hasn't been deleted", 0, localCourse.sections.first().lessons.size)
-
-    val expectedStructure = fileTree {
-      dir("section1")
-      file("build.gradle")
-      file("settings.gradle")
-    }
-    expectedStructure.assertEquals(rootDir)
-  }
-
-  @Test
-  fun `test lesson updated`() {
-    initiateLocalCourse()
-
-    val remoteCourse = toRemoteCourse {
-      sections.first().lessons.first().name = "Updated Lesson Name"
-    }
-    updateCourse(remoteCourse)
-    assertEquals("Lesson name hasn't been updated", "Updated Lesson Name", localCourse.sections.first().lessons.first().name)
-
-    val expectedStructure = fileTree {
-      dir("section1") {
-        dir("Updated Lesson Name") {
-          dir("task1") {
-            dir("src") {
-              file("Task.kt")
-              file("Baz.kt")
-            }
-            dir("test") {
-              file("Tests.kt")
-            }
-            file("task.md")
-          }
-        }
-      }
-      file("build.gradle")
-      file("settings.gradle")
-    }
-    expectedStructure.assertEquals(rootDir)
-  }
-
-  @Test
-  fun `test section added`() {
-    initiateLocalCourse()
-
-    val newTask = EduTask("task2").apply {
-      id = 2
-      taskFiles = linkedMapOf(
-        "Task.kt" to TaskFile("src/Task.kt", "fun foo() {}"),
-        "Baz.kt" to TaskFile("src/Baz.kt", "fun baz() {}"),
-        "Tests.kt" to TaskFile("test/Tests.kt", "fun test3() {}")
-      )
-    }
-    val newLesson = Lesson().apply {
-      id = 2
-      name = "lesson2"
-      addTask(newTask)
-    }
-    val newSection = Section().apply {
-      id = 2
-      name = "section2"
-      addLesson(newLesson)
-    }
-    val remoteCourse = toRemoteCourse {
-      addSection(newSection)
-    }
-    updateCourse(remoteCourse)
-    assertEquals("Section hasn't been added", 2, localCourse.sections.size)
-
-    val expectedStructure = fileTree {
-      dir("section1") {
-        dir("lesson1") {
-          dir("task1") {
-            dir("src") {
-              file("Task.kt")
-              file("Baz.kt")
-            }
-            dir("test") {
-              file("Tests.kt")
-            }
-            file("task.md")
-          }
-        }
-      }
-      dir("section2") {
-        dir("lesson2") {
-          dir("task2") {
-            dir("src") {
-              file("Task.kt")
-              file("Baz.kt")
-            }
-            dir("test") {
-              file("Tests.kt")
-            }
-            file("task.md")
-          }
-        }
-      }
-      file("build.gradle")
-      file("settings.gradle")
-    }
-    expectedStructure.assertEquals(rootDir)
-  }
-
-  @Test
-  fun `test section deleted`() {
-    initiateLocalCourse()
-
-    val remoteCourse = toRemoteCourse {
-      removeSection(sections.first())
-    }
-    updateCourse(remoteCourse)
-    assertEquals("Section hasn't been deleted", 0, localCourse.sections.size)
-
-    val expectedStructure = fileTree {
-      file("build.gradle")
-      file("settings.gradle")
-    }
-    expectedStructure.assertEquals(rootDir)
-  }
-
-  @Test
-  fun `test section updated`() {
-    initiateLocalCourse()
-
-    val remoteCourse = toRemoteCourse {
-      sections.first().name = "Updated Section Name"
-    }
-    updateCourse(remoteCourse)
-    assertEquals("Section name hasn't been updated", "Updated Section Name", localCourse.sections.first().name)
-
-    val expectedStructure = fileTree {
-      dir("Updated Section Name") {
-        dir("lesson1") {
-          dir("task1") {
-            dir("src") {
-              file("Task.kt")
-              file("Baz.kt")
-            }
-            dir("test") {
-              file("Tests.kt")
-            }
-            file("task.md")
-          }
-        }
-      }
-      file("build.gradle")
-      file("settings.gradle")
-    }
-    expectedStructure.assertEquals(rootDir)
-  }
-
-  @Test
-  fun `test task added`() {
-    initiateLocalCourse()
-
-    val newTask = EduTask("task2").apply {
-      id = 2
-      taskFiles = linkedMapOf(
-        "Task.kt" to TaskFile("src/Task.kt", "fun bar() {}"),
-        "Baz.kt" to TaskFile("src/Baz.kt", "fun baz() {}"),
-        "Tests.kt" to TaskFile("test/Tests.kt", "fun test3() {}")
-      )
-    }
-    val remoteCourse = toRemoteCourse {
-      sections.first().lessons.first().addTask(newTask)
-    }
-    updateCourse(remoteCourse)
-    assertEquals("Task hasn't been added", 2, localCourse.sections.first().lessons.first().taskList.size)
-
-    val expectedStructure = fileTree {
-      dir("section1") {
-        dir("lesson1") {
-          dir("task1") {
-            dir("src") {
-              file("Task.kt")
-              file("Baz.kt")
-            }
-            dir("test") {
-              file("Tests.kt")
-            }
-            file("task.md")
-          }
-          dir("task2") {
-            dir("src") {
-              file("Task.kt")
-              file("Baz.kt")
-            }
-            dir("test") {
-              file("Tests.kt")
-            }
-            file("task.md")
-          }
-        }
-      }
-      file("build.gradle")
-      file("settings.gradle")
-    }
-    expectedStructure.assertEquals(rootDir)
-  }
-
-  @Test
   fun `test course name updated`() {
     initiateLocalCourse()
 
+    val updateCourseName = "Updated Course Name"
     val remoteCourse = toRemoteCourse {
-      name = "Updated Course Name"
+      name = updateCourseName
     }
     updateCourse(remoteCourse)
-    assertEquals("Course name hasn't been updated", "Updated Course Name", localCourse.name)
+    assertEquals("Course name hasn't been updated", updateCourseName, localCourse.name)
   }
 
   @Test
@@ -460,7 +196,7 @@ class MarketplaceCourseUpdateTest : CourseUpdateTestBase<EduCourse>() {
   }
 
   override fun initiateLocalCourse() {
-    localCourse = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::EduCourse) {
+    localCourse = createBasicMarketplaceCourse {
       section("section1") {
         lesson("lesson1") {
           eduTask("task1") {
@@ -472,6 +208,6 @@ class MarketplaceCourseUpdateTest : CourseUpdateTestBase<EduCourse>() {
       }
       additionalFile("build.gradle", "apply plugin: \"java\"")
       additionalFile("settings.gradle")
-    } as EduCourse
+    }
   }
 }
