@@ -14,7 +14,7 @@ val Course.minJvmSdkVersion: ParsedJavaVersion
 
 val Course.maxJvmSdkVersion: ParsedJavaVersion?
   get() = when(this) {
-    is HyperskillCourse -> JavaVersionParseSuccess(JavaSdkVersion.JDK_19)
+    is HyperskillCourse -> JavaVersionParseSuccess(JavaSdkVersion.JDK_21)
     else -> null
   }
 
