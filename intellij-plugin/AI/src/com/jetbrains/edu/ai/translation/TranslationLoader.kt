@@ -30,7 +30,6 @@ import com.jetbrains.educational.translation.format.DescriptionText
 import kotlinx.coroutines.*
 import java.io.IOException
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.time.Duration.Companion.seconds
 
 @Service(Service.Level.PROJECT)
 class TranslationLoader(private val project: Project, private val scope: CoroutineScope) {
@@ -130,16 +129,12 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
     val marketplaceId = course.marketplaceId
     val updateVersion = course.updateVersion
 
-    repeat(DOWNLOAD_ATTEMPTS) {
-      val translation = TranslationServiceConnector.getInstance().getTranslatedCourse(marketplaceId, updateVersion, language)
-        .onError { error -> return Err(error) }
-      if (translation != null) {
-        return Ok(translation)
-      }
-      LOG.debug("Translation hasn't been downloaded yet, trying again in $DOWNLOAD_TIMEOUT_SECONDS seconds")
-      delay(DOWNLOAD_TIMEOUT_SECONDS.seconds)
+    val translation = TranslationServiceConnector.getInstance().getTranslatedCourse(marketplaceId, updateVersion, language)
+      .onError { error -> return Err(error) }
+    if (translation != null) {
+      return Ok(translation)
     }
-    return Err("Translation wasn't downloaded after $DOWNLOAD_ATTEMPTS attempts")
+    return Err("Translation does not exist")
   }
 
   private suspend fun EduCourse.saveTranslation(courseTranslation: CourseTranslation) {
@@ -183,8 +178,6 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
 
   companion object {
     private val LOG = thisLogger()
-    private const val DOWNLOAD_ATTEMPTS: Int = 10
-    private const val DOWNLOAD_TIMEOUT_SECONDS: Int = 10
 
     fun getInstance(project: Project): TranslationLoader = project.service()
 

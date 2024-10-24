@@ -88,6 +88,7 @@ class TranslationServiceConnector(private val scope: CoroutineScope) {
       HTTP_OK -> Ok(body())
       HTTP_ACCEPTED -> Ok(null)
       HTTP_UNAVAILABLE -> Err(EduAIBundle.message("ai.translation.service.is.currently.unavailable"))
+      HTTP_NOT_FOUND -> Err(EduAIBundle.message("ai.translation.course.translation.does.not.exist"))
       UNPROCESSABLE_ENTITY.code() -> Err(EduAIBundle.message("ai.translation.service.only.popular.courses.are.allowed.for.translation"))
       else -> Err(EduAIBundle.message("ai.translation.service.could.not.connect"))
     }
@@ -98,7 +99,8 @@ class TranslationServiceConnector(private val scope: CoroutineScope) {
       withContext(Dispatchers.IO) {
         call()
       }
-    } catch (exception: SocketException) {
+    }
+    catch (exception: SocketException) {
       Err(EduAIBundle.message("ai.translation.service.could.not.connect"))
     }
 
