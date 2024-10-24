@@ -76,8 +76,6 @@ fun configureSecretProperties() {
     "intellij-plugin/educational-core/resources/stepik/stepik.properties",
     "stepikClientId",
     "stepikClientSecret",
-    "stepikNonProductionClientId",
-    "stepikNonProductionClientSecret",
     "cogniterraClientId",
     "cogniterraClientSecret"
   )

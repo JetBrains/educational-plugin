@@ -76,7 +76,6 @@ val nodeJsPlugin = "NodeJS"
 val jsonPlugin = "com.intellij.modules.json"
 val yamlPlugin = "org.jetbrains.plugins.yaml"
 val androidPlugin = "org.jetbrains.android"
-val platformImagesPlugin = "com.intellij.platform.images"
 val codeWithMePlugin = "com.jetbrains.codeWithMe"
 
 
@@ -169,12 +168,6 @@ allprojects {
   }
 
   tasks {
-    withType<Test> {
-      withProp("../secret.properties", "stepikTestClientSecret") { environment("STEPIK_TEST_CLIENT_SECRET", it) }
-      withProp("../secret.properties", "stepikTestClientId") { environment("STEPIK_TEST_CLIENT_ID", it) }
-      systemProperty("java.awt.headless", "true")
-    }
-
     withType<JavaCompile> {
       // Prevents unexpected incremental compilation errors after changing value of `environmentName` property
       inputs.property("environmentName", providers.gradleProperty("environmentName"))
@@ -1007,22 +1000,6 @@ fun hasProp(name: String): Boolean = extra.has(name)
 fun prop(name: String): String =
   extra.properties[name] as? String ?: error("Property `$name` is not defined in gradle.properties")
 
-fun withProp(name: String, action: (String) -> Unit) {
-  if (hasProp(name)) {
-    action(prop(name))
-  }
-}
-
-fun withProp(filePath: String, name: String, action: (String) -> Unit) {
-  if (!file(filePath).exists()) {
-    println("$filePath doesn't exist")
-    return
-  }
-  val properties = loadProperties(filePath)
-  val value = properties.getProperty(name) ?: return
-  action(value)
-}
-
 fun buildDir(): String {
   return project.layout.buildDirectory.get().asFile.absolutePath
 }
@@ -1033,12 +1010,6 @@ fun <T : ModuleDependency> T.excludeKotlinDeps() {
   exclude(module = "kotlin-stdlib")
   exclude(module = "kotlin-stdlib-common")
   exclude(module = "kotlin-stdlib-jdk8")
-}
-
-fun loadProperties(path: String): Properties {
-  val properties = Properties()
-  file(path).bufferedReader().use { properties.load(it) }
-  return properties
 }
 
 fun parseManifest(file: File): Node {
