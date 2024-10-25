@@ -4,14 +4,10 @@ import com.intellij.execution.*
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.impl.ExecutionManagerImpl
-import com.intellij.execution.process.ProcessAdapter
-import com.intellij.execution.process.ProcessEvent
-import com.intellij.execution.process.ProcessHandler
-import com.intellij.execution.process.ProcessListener
+import com.intellij.execution.process.*
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder
 import com.intellij.execution.runners.ProgramRunner
-import com.intellij.execution.testframework.sm.runner.SMTRunnerEventsListener
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runReadAction
@@ -25,6 +21,7 @@ import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.messages.MessageBusConnection
 import com.intellij.util.text.nullize
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.checker.tests.TestResultCollector
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
@@ -60,6 +57,18 @@ object CheckUtils {
       SYNTAX_ERROR_MESSAGE,
       EXECUTION_ERROR_MESSAGE
     )
+
+  /**
+   * Some testing frameworks add attributes to be shown in console (ex. Jest - ANSI color codes)
+   * which are not supported in Task Description, so they need to be removed
+   */
+  fun removeAttributes(text: String): String {
+    val buffer = StringBuilder()
+    AnsiEscapeDecoder().escapeText(text, ProcessOutputTypes.STDOUT) { chunk, _ ->
+      buffer.append(chunk)
+    }
+    return buffer.toString()
+  }
 
   fun fillWithIncorrect(message: String): String =
     message.nullize(nullizeSpaces = true) ?: EduCoreBundle.message("check.incorrect")
@@ -102,11 +111,12 @@ object CheckUtils {
     indicator: ProgressIndicator,
     executionListener: ExecutionListener? = null,
     processListener: ProcessListener? = null,
-    testEventsListener: SMTRunnerEventsListener? = null
+    testResultCollector: TestResultCollector? = null
   ): Boolean {
     val connection = project.messageBus.connect()
     try {
-      return executeRunConfigurations(connection, configurations, indicator, executionListener, processListener, testEventsListener)
+      testResultCollector?.startCollecting(connection)
+      return executeRunConfigurations(connection, configurations, indicator, executionListener, processListener)
     }
     finally {
       connection.disconnect()
@@ -119,11 +129,8 @@ object CheckUtils {
     indicator: ProgressIndicator,
     executionListener: ExecutionListener?,
     processListener: ProcessListener?,
-    testEventsListener: SMTRunnerEventsListener?
   ): Boolean {
     if (configurations.isEmpty()) return true
-
-    testEventsListener?.let { connection.subscribe(SMTRunnerEventsListener.TEST_STATUS, it) }
 
     val latch = CountDownLatch(configurations.size)
     val context = Context(processListener, executionListener, latch)

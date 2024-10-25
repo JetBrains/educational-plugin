@@ -5,7 +5,6 @@ import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.ConfigurationFromContext
 import com.intellij.execution.configurations.ConfigurationType
 import com.intellij.execution.process.*
-import com.intellij.execution.testframework.sm.runner.SMTRunnerEventsAdapter
 import com.intellij.execution.testframework.sm.runner.SMTestProxy
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runInEdt
@@ -17,12 +16,12 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.psi.PsiElement
-import com.jetbrains.edu.learning.checker.CheckUtils.fillWithIncorrect
+import com.jetbrains.edu.learning.checker.tests.SMTestResultCollector
+import com.jetbrains.edu.learning.checker.tests.TestResultCollector
+import com.jetbrains.edu.learning.checker.tests.TestResultGroup
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckResult.Companion.noTestsRun
-import com.jetbrains.edu.learning.courseFormat.CheckResultDiff
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.EduTestInfo
 import com.jetbrains.edu.learning.courseFormat.EduTestInfo.Companion.firstFailed
 import com.jetbrains.edu.learning.courseFormat.ext.getAllTestDirectories
 import com.jetbrains.edu.learning.courseFormat.ext.getAllTestFiles
@@ -61,17 +60,6 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
       }
     }
 
-    val testRoots = mutableListOf<SMTestProxy.SMRootTestProxy>()
-    val testEventsListener = object : SMTRunnerEventsAdapter() {
-      // We have to collect test roots in `onTestingStarted`
-      // because some test framework integrations (Gradle)
-      // have custom components in implementation that don't provide test events
-      // except `onTestingStarted`
-      override fun onTestingStarted(testsRoot: SMTestProxy.SMRootTestProxy) {
-        testRoots += testsRoot
-      }
-    }
-
     val stderr = StringBuilder()
     val processListener = object : ProcessAdapter() {
       override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
@@ -82,12 +70,13 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
       }
     }
 
+    val testResultCollector = createTestResultCollector()
     if (!CheckUtils.executeRunConfigurations(
         project,
         configurations,
         indicator,
         processListener = processListener,
-        testEventsListener = testEventsListener
+        testResultCollector = testResultCollector
       )
     ) {
       LOG.warn("Execution failed because the configuration is broken")
@@ -99,35 +88,36 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
 
     if (indicator.isCanceled) return CheckResult.CANCELED
 
-    if (areTestsFailedToRun(testRoots)) {
+    val testResults = testResultCollector.collectTestResults()
+
+    if (areTestsFailedToRun(testResults)) {
       val result = computePossibleErrorResult(indicator, stderr.toString())
       if (!result.isSolved) {
         return result
       }
     }
 
-    val testResults = testRoots.map { it.toCheckResult() }
     if (testResults.isEmpty()) return noTestsRun
+    val checkResults = testResults.map { CheckResult.from(it) }
 
-    val firstFailure = testResults.firstOrNull { it.status != CheckStatus.Solved }
-    return firstFailure ?: testResults.first()
+    val firstFailure = checkResults.firstOrNull { it.status != CheckStatus.Solved }
+    return firstFailure ?: checkResults.first()
   }
 
-  protected fun SMTestProxy.SMRootTestProxy.toCheckResult(): CheckResult {
-    val testInfo = getEduTestInfo(children = children)
-    if (finishedSuccessfully()) {
-      return CheckResult(status = CheckStatus.Solved, message = CheckUtils.CONGRATULATIONS, executedTestsInfo = testInfo)
+  private fun CheckResult.Companion.from(group: TestResultGroup): CheckResult {
+    return if (group.results.firstFailed() != null) {
+      CheckResult(status = CheckStatus.Failed, executedTestsInfo = group.results)
     }
-
-    if (testInfo.firstFailed() == null) {
-      error("Testing failed although no failed tests found")
+    else {
+      CheckResult(status = CheckStatus.Solved, message = CheckUtils.CONGRATULATIONS, executedTestsInfo = group.results)
     }
-    return CheckResult(status = CheckStatus.Failed, executedTestsInfo = testInfo)
   }
 
-  private fun SMTestProxy.finishedSuccessfully(): Boolean {
-    return !hasErrors() && (isPassed || isIgnored)
-  }
+  /**
+   * Creates new instance of [TestResultCollector] to collect test results for the corresponding technology
+   * during running test run configurations
+   */
+  protected open fun createTestResultCollector(): TestResultCollector = SMTestResultCollector()
 
   /**
    * Launches additional task if tests cannot be run (e.g. because of compilation error or syntax error).
@@ -139,7 +129,7 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
   /**
    * Check if the launch of tests was not successful. It allows us to create meaningful output in such cases.
    */
-  protected open fun areTestsFailedToRun(testRoots: List<SMTestProxy.SMRootTestProxy>): Boolean = testRoots.all { it.children.isEmpty() }
+  protected open fun areTestsFailedToRun(testResults: List<TestResultGroup>): Boolean = testResults.isEmpty()
 
   protected fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
     val customConfiguration = CheckUtils.getCustomRunConfiguration(project, task)
@@ -204,40 +194,6 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
 
   protected open fun validateConfiguration(configuration: RunnerAndConfigurationSettings): CheckResult? = null
 
-  private fun getEduTestInfo(paths: MutableList<String> = mutableListOf(), children: List<SMTestProxy>): List<EduTestInfo> {
-    val result = mutableListOf<EduTestInfo>()
-    children.forEach {
-      paths.add(it.presentableName)
-      if (it.isLeaf) {
-        // Submission Service stores a test name with a maximum length of 255 characters.
-        // The number 245 is chosen to allow space for [1], [2], etc., for possible duplicate test names.
-        var testName = paths.joinToString(":").take(245)
-        val testCount = result.count { test -> test.name == testName }
-        if (testCount > 0) {
-          testName = "$testName[$testCount]"
-        }
-        result.add(it.toEduTestInfo(testName))
-      }
-      else {
-        result.addAll(getEduTestInfo(paths, it.children))
-      }
-      paths.removeLast()
-    }
-    return result
-  }
-
-  private fun SMTestProxy.toEduTestInfo(name: String): EduTestInfo {
-    val diff = diffViewerProvider
-    val message = if (diff != null) getComparisonErrorMessage(this) else getErrorMessage(this)
-    return EduTestInfo(
-      name = name,
-      status = magnitudeInfo.value,
-      message = removeAttributes(fillWithIncorrect(message)),
-      details = stacktrace,
-      isFinishedSuccessfully = finishedSuccessfully(),
-      checkResultDiff = diff?.let { CheckResultDiff(diff.left, diff.right, diff.diffTitle) }
-    )
-  }
 
   companion object {
     fun extractComparisonErrorMessage(node: SMTestProxy): String {

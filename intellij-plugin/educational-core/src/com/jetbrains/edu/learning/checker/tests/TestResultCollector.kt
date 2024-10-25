@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.checker.tests
 
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.messages.MessageBusConnection
+import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.tests.TestResultCollector.CollectorState.*
 import java.util.concurrent.atomic.AtomicReference
 
@@ -9,6 +10,9 @@ import java.util.concurrent.atomic.AtomicReference
  * Collects test events (probably from different sources) and transforms them into unified data
  *
  * An instance of the class can be used only once because it holds the state of launched tests.
+ *
+ * @see SMTestResultCollector
+ * @see CheckUtils.executeRunConfigurations
  */
 abstract class TestResultCollector {
 

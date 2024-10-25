@@ -13,7 +13,7 @@ import com.jetbrains.edu.csharp.getTestName
 import com.jetbrains.edu.csharp.toProjectModelEntity
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.CheckUtils.fillWithIncorrect
-import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
+import com.jetbrains.edu.learning.checker.CheckUtils.removeAttributes
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.courseFormat.CheckResult
@@ -185,7 +185,7 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
     return EduTestInfo(
       name = text,
       status = status.toPresentableStatus().value,
-      message = EduTaskCheckerBase.removeAttributes(fillWithIncorrect(message)),
+      message = removeAttributes(fillWithIncorrect(message)),
       details = if (data != null && data.exceptionLines.isNotEmpty()) data.exceptionLines else statusMessage.trim(),
       isFinishedSuccessfully = status == RdUnitTestStatus.Success || status == RdUnitTestStatus.Ignored,
       checkResultDiff = diff

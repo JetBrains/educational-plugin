@@ -6,7 +6,6 @@ import com.intellij.execution.actions.RunConfigurationProducer
 import com.intellij.execution.process.ProcessAdapter
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessOutputTypes
-import com.intellij.execution.testframework.sm.runner.SMTestProxy
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
@@ -16,6 +15,7 @@ import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.CheckUtils.createRunConfiguration
 import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
+import com.jetbrains.edu.learning.checker.tests.TestResultGroup
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -51,10 +51,13 @@ open class PyTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project:
     return CheckResult(CheckStatus.Failed, CheckUtils.SYNTAX_ERROR_MESSAGE, error)
   }
 
-  override fun areTestsFailedToRun(testRoots: List<SMTestProxy.SMRootTestProxy>): Boolean {
-    if (super.areTestsFailedToRun(testRoots)) return true
-    val result = testRoots.firstOrNull()?.toCheckResult() ?: return false
-    return SYNTAX_ERRORS.any { it in result.message }
+  override fun areTestsFailedToRun(testResults: List<TestResultGroup>): Boolean {
+    if (super.areTestsFailedToRun(testResults)) return true
+    return testResults.any { group ->
+      group.results.any { testResult ->
+        SYNTAX_ERRORS.any { it in testResult.message }
+      }
+    }
   }
 
   private fun getSyntaxError(indicator: ProgressIndicator): String? {
