@@ -3,13 +3,13 @@ package com.jetbrains.edu.rust.checker
 import com.intellij.execution.RunManager
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.configurations.ConfigurationType
-import com.intellij.execution.testframework.sm.runner.SMTestProxy
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
+import com.jetbrains.edu.learning.checker.tests.TestResultCollector
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -63,19 +63,5 @@ class RsEduTaskChecker(project: Project, envChecker: EnvironmentChecker, task: E
     return runReadAction { project.cargoProjects.findPackageForFile(taskDir) }
   }
 
-  override fun getErrorMessage(node: SMTestProxy): String {
-    val message = super.getErrorMessage(node)
-    // We assume that Rust plugin should put correct error message into test node
-    // or put all test error output into stacktrace
-    if (message.isNotEmpty()) return message
-    val stacktrace = node.stacktrace.orEmpty()
-    val matchResult = ASSERT_MESSAGE_RE.find(stacktrace) ?: return stacktrace
-    return matchResult.groups["message"]?.value ?: error("Failed to find `message` capturing group")
-  }
-
-  companion object {
-    private val ASSERT_MESSAGE_RE =
-      """thread '.*' panicked at '(assertion failed: `\(left (.*) right\)`\s*left: `(.*?)`,\s*right: `(.*?)`(: )?)?(?<message>.*)',"""
-        .toRegex(setOf(RegexOption.MULTILINE, RegexOption.DOT_MATCHES_ALL))
-  }
+  override fun createTestResultCollector(): TestResultCollector = RsTestResultCollector()
 }
