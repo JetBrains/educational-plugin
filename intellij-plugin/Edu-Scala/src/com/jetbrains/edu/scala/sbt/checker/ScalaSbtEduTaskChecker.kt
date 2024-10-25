@@ -2,15 +2,14 @@ package com.jetbrains.edu.scala.sbt.checker
 
 import com.intellij.execution.RunManager
 import com.intellij.execution.RunnerAndConfigurationSettings
-import com.intellij.execution.testframework.sm.runner.SMTestProxy
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
 import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
+import com.jetbrains.edu.learning.checker.tests.TestResultCollector
 import com.jetbrains.edu.learning.courseFormat.ext.getAllTestDirectories
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.xmlEscaped
 import org.jetbrains.plugins.scala.testingSupport.test.scalatest.ScalaTestConfigurationType
 import org.jetbrains.plugins.scala.testingSupport.test.scalatest.ScalaTestRunConfiguration
 import org.jetbrains.plugins.scala.testingSupport.test.testdata.AllInPackageTestData
@@ -42,5 +41,5 @@ class ScalaSbtEduTaskChecker(
     return settings
   }
 
-  override fun getErrorMessage(node: SMTestProxy): String = super.getErrorMessage(node).xmlEscaped
+  override fun createTestResultCollector(): TestResultCollector = ScalaTestResultCollector()
 }
