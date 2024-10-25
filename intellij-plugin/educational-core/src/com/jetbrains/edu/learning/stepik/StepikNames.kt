@@ -17,7 +17,7 @@ object StepikNames {
   const val PLUGIN_NAME = "EduTools"
 
   fun getStepikUrl(): String = if (isUnitTestMode) {
-    COGNITERRA_URL
+    "https://testURL.org"
   }
   else {
     StepikHost.getSelectedHost().url
