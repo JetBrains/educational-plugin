@@ -5,7 +5,6 @@ import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.scala.sbt.ScalaSbtEduTaskChecker
 
 class ScalaSbtTaskCheckerProvider : TaskCheckerProvider {
   override val envChecker: EnvironmentChecker

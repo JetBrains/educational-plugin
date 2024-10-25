@@ -1,4 +1,4 @@
-package com.jetbrains.edu.scala.sbt
+package com.jetbrains.edu.scala.sbt.checker
 
 import com.intellij.execution.RunManager
 import com.intellij.execution.RunnerAndConfigurationSettings
