@@ -4,15 +4,14 @@ import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.ConfigurationFromContext
 import com.intellij.execution.configurations.ConfigurationType
-import com.intellij.execution.process.*
-import com.intellij.execution.testframework.sm.runner.SMTestProxy
+import com.intellij.execution.process.ProcessAdapter
+import com.intellij.execution.process.ProcessEvent
+import com.intellij.execution.process.ProcessOutputType
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.util.NlsSafe
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.psi.PsiElement
@@ -26,7 +25,6 @@ import com.jetbrains.edu.learning.courseFormat.EduTestInfo.Companion.firstFailed
 import com.jetbrains.edu.learning.courseFormat.ext.getAllTestDirectories
 import com.jetbrains.edu.learning.courseFormat.ext.getAllTestFiles
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.runReadActionInSmartMode
 
 abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: EnvironmentChecker, project: Project) :
@@ -180,39 +178,9 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
     return configurationsFromContext?.sortedWith(comparator)?.firstOrNull()?.configurationSettings
   }
 
-  /**
-   * Returns message for test error that will be shown to a user in Check Result panel
-   */
-  @Suppress("UnstableApiUsage")
-  @NlsSafe
-  protected open fun getErrorMessage(node: SMTestProxy): String = node.errorMessage ?: EduCoreBundle.message("error.execution.failed")
-
-  /**
-   * Returns message for comparison error that will be shown to a user in Check Result panel
-   */
-  protected open fun getComparisonErrorMessage(node: SMTestProxy): String = getErrorMessage(node)
-
   protected open fun validateConfiguration(configuration: RunnerAndConfigurationSettings): CheckResult? = null
 
-
   companion object {
-    fun extractComparisonErrorMessage(node: SMTestProxy): String {
-      val errorMessage = node.errorMessage.orEmpty()
-      val index = StringUtil.indexOfIgnoreCase(errorMessage, "expected:", 0)
-      return if (index != -1) errorMessage.substring(0, index).trim() else errorMessage
-    }
-
-    /**
-     * Some testing frameworks add attributes to be shown in console (ex. Jest - ANSI color codes)
-     * which are not supported in Task Description, so they need to be removed
-     */
-    fun removeAttributes(text: String): String {
-      val buffer = StringBuilder()
-      AnsiEscapeDecoder().escapeText(text, ProcessOutputTypes.STDOUT) { chunk, _ ->
-        buffer.append(chunk)
-      }
-      return buffer.toString()
-    }
 
     private fun createConfigurationTypeComparator(configurationType: ConfigurationType?): Comparator<ConfigurationFromContext> {
       return Comparator { c1, c2 ->
