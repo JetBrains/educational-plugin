@@ -1,4 +1,4 @@
-package com.jetbrains.edu.javascript.learning
+package com.jetbrains.edu.javascript.learning.checker
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.checker.EnvironmentChecker

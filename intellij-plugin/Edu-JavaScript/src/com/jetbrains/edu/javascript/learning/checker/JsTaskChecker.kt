@@ -1,10 +1,11 @@
-package com.jetbrains.edu.javascript.learning
+package com.jetbrains.edu.javascript.learning.checker
 
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.configurations.RuntimeConfigurationError
 import com.intellij.execution.testframework.sm.runner.SMTestProxy
 import com.intellij.lang.javascript.ui.NodeModuleNamesUtil
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.javascript.learning.installNodeDependencies
 import com.jetbrains.edu.javascript.learning.messages.EduJavaScriptBundle
 import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.checker.EnvironmentChecker

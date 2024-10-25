@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PlatformUtils
 import com.jetbrains.edu.EducationalCoreIcons
+import com.jetbrains.edu.javascript.learning.checker.JsTaskCheckerProvider
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
