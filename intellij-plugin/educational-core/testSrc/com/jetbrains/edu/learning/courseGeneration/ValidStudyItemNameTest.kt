@@ -39,6 +39,7 @@ class ValidStudyItemNameTest(
   companion object {
     private const val DEFAULT_RESULT: String = "Study item"
 
+    @Suppress("NonAsciiCharacters")
     @Parameterized.Parameters(name = "{2}")
     @JvmStatic
     fun data(): Collection<Array<Any>> = listOf(

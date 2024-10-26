@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import org.junit.Test
 
+@Suppress("NonFinalUtilityClass", "NewClassNamingConvention")
 class JCheckersTest : JdkCheckerTestBase() {
 
   override fun createCourse(): Course = course(language = JavaLanguage.INSTANCE) {

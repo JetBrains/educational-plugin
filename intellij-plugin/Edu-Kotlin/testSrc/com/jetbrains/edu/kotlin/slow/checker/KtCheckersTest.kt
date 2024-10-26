@@ -70,6 +70,7 @@ class KtCheckersTest : JdkCheckerTestBase() {
         """)
       }
       eduTask("EduTaskWithGradleCustomRunConfiguration") {
+        @Suppress("RedundantNullableReturnType")
         kotlinTaskFile("src/Task.kt", """
           fun foo(): String? = System.getenv("EXAMPLE_ENV")
         """)

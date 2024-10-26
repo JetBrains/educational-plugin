@@ -5,6 +5,7 @@ import com.jetbrains.edu.coursecreator.actions.CourseArchiveTestBase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import org.junit.Test
 
+@Suppress("NonFinalUtilityClass")
 class JCreateCourseArchiveTest : CourseArchiveTestBase() {
 
   override fun getTestDataPath(): String = super.getTestDataPath() + "/actions/createCourseArchive"

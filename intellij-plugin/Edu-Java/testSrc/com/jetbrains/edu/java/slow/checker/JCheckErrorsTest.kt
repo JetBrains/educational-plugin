@@ -26,6 +26,7 @@ import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.assertThat
 import org.junit.Test
 
+@Suppress("NonFinalUtilityClass", "NewClassNamingConvention", "SimplifiableAssertion", "DataFlowIssue")
 class JCheckErrorsTest : JdkCheckerTestBase() {
 
   override fun createCourse(): Course = course(language = JavaLanguage.INSTANCE) {

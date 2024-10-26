@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.EduTestInfo
 import com.jetbrains.edu.learning.courseFormat.EduTestInfo.PresentableStatus.*
 import org.junit.Test
 
+@Suppress("NonFinalUtilityClass", "NewClassNamingConvention", "SimplifiableAssertion", "DataFlowIssue")
 class JExecutedTestsInfoTest : JdkCheckerTestBase() {
   override fun createCourse(): Course = course(language = JavaLanguage.INSTANCE) {
     lesson {

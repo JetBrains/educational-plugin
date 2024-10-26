@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.junit.Assert.assertThat
 import org.junit.Test
 
+@Suppress("NonFinalUtilityClass")
 class KtCheckErrorsTest : JdkCheckerTestBase() {
 
   override fun createCourse(): Course = course(language = KotlinLanguage.INSTANCE) {
@@ -172,6 +173,7 @@ class KtCheckErrorsTest : JdkCheckerTestBase() {
         """)
       }
       eduTask("gradleCustomRunConfiguration") {
+        @Suppress("RedundantNullableReturnType")
         kotlinTaskFile("src/Task.kt", """
           fun foo(): String? = System.getenv("EXAMPLE_ENV")
         """)

@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.testAction
 import org.junit.Test
 
 class GoCreateTaskTest : EduActionTestCase() {
+  @Suppress("NonAsciiCharacters")
   @Test
   fun `test module name generated correctly`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = GoLanguage.INSTANCE) {
