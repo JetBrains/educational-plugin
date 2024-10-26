@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.CoreMatchers.not
-import org.junit.Assert.assertThat
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 
 class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {

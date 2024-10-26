@@ -23,7 +23,7 @@ import com.jetbrains.edu.learning.nullValue
 import com.jetbrains.edu.learning.xmlEscaped
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.equalTo
-import org.junit.Assert.assertThat
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 
 @Suppress("NonFinalUtilityClass", "NewClassNamingConvention", "SimplifiableAssertion", "DataFlowIssue")

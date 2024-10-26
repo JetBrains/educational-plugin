@@ -15,7 +15,7 @@ import com.jetbrains.python.PythonLanguage
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.Matcher
-import org.junit.Assert.assertThat
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 
 @Suppress("PyInterpreter", "PyUnresolvedReferences")

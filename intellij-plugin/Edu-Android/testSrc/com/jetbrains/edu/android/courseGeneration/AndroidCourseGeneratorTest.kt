@@ -12,8 +12,8 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.jvm.courseGeneration.JvmCourseGenerationTestBase
 import com.jetbrains.edu.learning.*
 import org.hamcrest.CoreMatchers
+import org.hamcrest.MatcherAssert.assertThat
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.junit.Assert.assertThat
 import org.junit.Test
 
 class AndroidCourseGeneratorTest : JvmCourseGenerationTestBase() {

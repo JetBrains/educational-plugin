@@ -14,8 +14,8 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.nullValue
 import com.jetbrains.edu.learning.xmlEscaped
 import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.MatcherAssert.assertThat
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.junit.Assert.assertThat
 import org.junit.Test
 
 @Suppress("NonFinalUtilityClass")

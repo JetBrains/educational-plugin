@@ -3,7 +3,7 @@ package com.jetbrains.edu.cpp
 import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.edu.learning.EduTestCase
 import org.hamcrest.text.IsEqualIgnoringCase
-import org.junit.Assert.assertThat
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 
 class CppUtilTest : EduTestCase() {
