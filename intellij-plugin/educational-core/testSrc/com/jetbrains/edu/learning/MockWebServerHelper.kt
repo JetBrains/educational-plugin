@@ -35,8 +35,8 @@ class MockWebServerHelper(parentDisposable: Disposable) {
   }
 
   init {
-    Disposer.register(parentDisposable, Disposable { mockWebServer.shutdown() })
-    Disposer.register(parentDisposable, Disposable { webSocketMockSever.shutdown() })
+    Disposer.register(parentDisposable) { mockWebServer.shutdown() }
+    Disposer.register(parentDisposable) { webSocketMockSever.shutdown() }
     ThreadLeakTracker.longRunningThreadCreated(parentDisposable, "MockWebServer", "OkHttp TaskRunner", "Okio Watchdog")
   }
 
@@ -44,7 +44,7 @@ class MockWebServerHelper(parentDisposable: Disposable) {
 
   fun addResponseHandler(disposable: Disposable, handler: ResponseHandler) {
     handlers += handler
-    Disposer.register(disposable, Disposable { handlers -= handler })
+    Disposer.register(disposable) { handlers -= handler }
   }
 
   // DownloadUtil.downloadAtomically(), used in com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector.loadCourseStructure(),

@@ -22,7 +22,6 @@ import com.jetbrains.php.config.interpreters.PhpInterpretersManagerImpl
 import com.jetbrains.php.config.interpreters.PhpSdkType
 import java.awt.BorderLayout
 import javax.swing.JComponent
-import javax.swing.event.ChangeListener
 
 class PhpLanguageSettings : LanguageSettings<PhpProjectSettings>() {
   private var phpProjectSettings = PhpProjectSettings()
@@ -34,14 +33,11 @@ class PhpLanguageSettings : LanguageSettings<PhpProjectSettings>() {
     composerPhpInterpretersCombo.isNoItemAllowed = false
     addDefaultInterpreterIntoComboBox(defaultProject)
 
-    composerPhpInterpretersCombo.addChangeListener(
-      ChangeListener {
-        run {
-          val interpreterId = (it.source as? ComposerPhpInterpretersCombo)?.interpreterId
-          val interpreter = PhpInterpretersManagerImpl.getInstance(defaultProject).findInterpreterById(interpreterId)
-          selectInterpreter(defaultProject, interpreter)
-        }
-      })
+    composerPhpInterpretersCombo.addChangeListener {
+      val interpreterId = (it.source as? ComposerPhpInterpretersCombo)?.interpreterId
+      val interpreter = PhpInterpretersManagerImpl.getInstance(defaultProject).findInterpreterById(interpreterId)
+      selectInterpreter(defaultProject, interpreter)
+    }
   }
 
   private fun addDefaultInterpreterIntoComboBox(project: Project) {

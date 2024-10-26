@@ -7,7 +7,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgroundColor
-import java.awt.event.ActionListener
 
 class GroupsComponent(
   private val createCourseCard: (Course) -> CourseCardComponent,
@@ -23,9 +22,8 @@ class GroupsComponent(
     emptyText.text = EduCoreBundle.message("course.dialog.no.courses.found")
     emptyText.appendSecondaryText(
       EduCoreBundle.message("course.dialog.no.courses.found.secondary.text"),
-      SimpleTextAttributes.LINK_PLAIN_ATTRIBUTES,
-      ActionListener { resetFilters() }
-    )
+      SimpleTextAttributes.LINK_PLAIN_ATTRIBUTES
+    ) { resetFilters() }
   }
 
   fun addGroup(coursesGroup: CoursesGroup) {

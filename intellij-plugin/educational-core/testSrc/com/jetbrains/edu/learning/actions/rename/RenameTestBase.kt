@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.handlers.rename.MockRenameDialogFactory
 import com.jetbrains.edu.learning.handlers.rename.withMockRenameDialogFactory
 import com.jetbrains.edu.learning.testAction
-import java.util.function.Function
 
 abstract class RenameTestBase : EduActionTestCase() {
 
@@ -35,7 +34,7 @@ abstract class RenameTestBase : EduActionTestCase() {
 
     withMockRenameDialogFactory(factory) {
       withVirtualFileListener(course) {
-        RenameHandlerRegistry.getInstance().setRenameHandlerSelectorInTests(Function { handlers ->
+        RenameHandlerRegistry.getInstance().setRenameHandlerSelectorInTests({ handlers ->
           error("Multiple rename handlers: ${handlers.map { it.javaClass.name }}")
         }, testRootDisposable)
         testAction(IdeActions.ACTION_RENAME, dataContext.withRenameDefaultName(newName))

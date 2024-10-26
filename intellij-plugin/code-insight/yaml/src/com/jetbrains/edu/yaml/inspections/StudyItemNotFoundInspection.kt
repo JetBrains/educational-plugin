@@ -94,9 +94,9 @@ class StudyItemNotFoundInspection : UnresolvedFileReferenceInspection() {
           else -> null
         }
       }
-      ActionUtil.invokeAction(action, context, ActionPlaces.UNKNOWN, null, Runnable {
+      ActionUtil.invokeAction(action, context, ActionPlaces.UNKNOWN, null) {
         YamlLoader.loadItem(project, configFile, false)
-      })
+      }
     }
   }
 }

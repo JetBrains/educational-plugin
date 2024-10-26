@@ -17,7 +17,6 @@ import com.jetbrains.edu.coursecreator.ui.CCCreateStudyItemDialogBase
 import com.jetbrains.edu.learning.courseFormat.Course
 import org.jetbrains.android.util.AndroidUtils
 import java.awt.Component
-import java.util.function.Consumer
 import javax.swing.JLabel
 import javax.swing.JList
 import javax.swing.ListCellRenderer
@@ -63,13 +62,13 @@ class AndroidNewTaskAfterPopupDialog(
   override fun createAdditionalFields(panel: Panel) {
     val androidVersionsInfo = AndroidVersionsInfo()
     androidVersionsInfo.loadLocalVersions()
-    androidVersionsInfo.loadRemoteTargetVersions(FormFactor.MOBILE, FormFactor.MOBILE.minOfflineApiLevel, Consumer { items ->
+    androidVersionsInfo.loadRemoteTargetVersions(FormFactor.MOBILE, FormFactor.MOBILE.minOfflineApiLevel) { items ->
       val nonPreviewItems = items.filter { it.androidTarget?.version?.isPreview != true }
       val maxSdkVersion = nonPreviewItems.maxOfOrNull { it.minApiLevel } ?: SdkVersionInfo.HIGHEST_KNOWN_STABLE_API
       compileSdkVersion = maxOf(maxSdkVersion, compileSdkVersion)
       comboBoxWrapper.init(FormFactor.MOBILE, nonPreviewItems)
       comboBoxWrapper.combobox.isEnabled = true
-    })
+    }
     addTextValidator(packageNameField)
 
     with(panel) {

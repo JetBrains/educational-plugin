@@ -21,9 +21,9 @@ class MockStepikConnector : StepikConnector(), MockStepikBasedConnector {
 
   fun setBaseUrl(baseUrl: String, disposable: Disposable) {
     _baseUrl = baseUrl
-    Disposer.register(disposable, Disposable {
+    Disposer.register(disposable) {
       _baseUrl = null
-    })
+    }
   }
 
   fun setHelperBaseUrl() {

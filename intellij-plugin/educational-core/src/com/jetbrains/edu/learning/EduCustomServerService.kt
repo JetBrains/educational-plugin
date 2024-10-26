@@ -74,7 +74,7 @@ class EduCustomServerService : Disposable {
     val channelRegistrar = ChannelRegistrar()
     channelRegistrar.setServerChannel(serverChannel, false)
 
-    Disposer.register(this, Disposable { channelRegistrar.close() })
+    Disposer.register(this) { channelRegistrar.close() }
   }
 
   override fun dispose() {}

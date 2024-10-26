@@ -47,9 +47,9 @@ object StepikTestUtils {
     }
     EduSettings.getInstance().user = user
     user.saveTokens(tokenInfo)
-    Disposer.register(disposable, Disposable {
+    Disposer.register(disposable) {
       EduSettings.getInstance().user = null
-    })
+    }
     println("Logged in as ${user.firstName} ${user.lastName}")
     return user
   }

@@ -7,7 +7,6 @@ import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils
@@ -60,13 +59,13 @@ class AndroidCourseProjectGenerator(builder: AndroidCourseBuilder, course: Cours
       // It's important in case of Windows file path because they contains `\` and `:` which should be escaped.
       val properties = toSortedProperties()
       try {
-        GeneratorUtils.runInWriteActionAndWait(ThrowableComputable {
+        GeneratorUtils.runInWriteActionAndWait {
           val child = baseDir.findChild(name)
           if (child == null) {
             val propertiesFile = baseDir.createChildData(AndroidCourseBuilder::class.java, name)
             propertiesFile.getOutputStream(AndroidCourseBuilder::class.java).use { properties.store(it, "") }
           }
-        })
+        }
       } catch (e: IOException) {
         // We want to fail tests if exception happened
         val log: (String, Throwable) -> Unit = if (isUnitTestMode) LOG::error else LOG::warn
