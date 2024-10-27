@@ -6,6 +6,7 @@ import com.intellij.ui.dsl.builder.bindItem
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.builder.toNullableProperty
+import com.intellij.util.application
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.settings.AIOptionsProvider
 import com.jetbrains.edu.ai.translation.defaultLanguage
@@ -14,7 +15,7 @@ import javax.swing.DefaultComboBoxModel
 
 class TranslationOptions : BoundConfigurable(EduAIBundle.message("settings.ai.translation.display.name")), AIOptionsProvider {
   override fun createPanel(): DialogPanel = panel {
-    val settings = TranslationSettings.getInstance()
+    val settings = application.translationSettings()
 
     group(displayName) {
       row(EduAIBundle.message("settings.ai.translation.preferred.language")) {

@@ -17,8 +17,8 @@ import javax.swing.JPanel.LEFT_ALIGNMENT
 
 class CourseTranslationDialog(private val project: Project, course: EduCourse) : DialogWrapper(true) {
   private val courseSourceLanguage = Language.findByCode(course.languageCode)
-  private var selectedLanguage = application.translationSettings().preferableLanguage
 
+  private var selectedLanguage: Language
   private lateinit var translateToCheckBox: Cell<JBCheckBox>
   private lateinit var translationLanguageComboBox: JComboBox<Language>
 
@@ -26,8 +26,10 @@ class CourseTranslationDialog(private val project: Project, course: EduCourse) :
     title = EduAIBundle.message("ai.translation.course.translation.dialog.title")
 
     val currentTranslationLanguage = TranslationProjectSettings.getCurrentTranslationLanguage(project)
-    if (currentTranslationLanguage != null && currentTranslationLanguage != courseSourceLanguage) {
-      selectedLanguage = currentTranslationLanguage
+    selectedLanguage = if (currentTranslationLanguage?.isNotSource() == true) {
+      currentTranslationLanguage
+    } else {
+      application.translationSettings().preferableLanguage
     }
 
     isResizable = true
@@ -94,7 +96,7 @@ class CourseTranslationDialog(private val project: Project, course: EduCourse) :
         foreground = EduColors.aiTranslationBottomLabelTextColor
       }
 
-  private fun Language.isNotSource(): Boolean = this != courseSourceLanguage
+  private fun Language?.isNotSource(): Boolean = this != courseSourceLanguage
 
   private fun Language.isNew(): Boolean = isNotSource() && this != TranslationProjectSettings.getCurrentTranslationLanguage(project)
 

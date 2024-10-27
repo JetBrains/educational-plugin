@@ -26,8 +26,4 @@ class TranslationSettings : SimplePersistentStateComponent<TranslationSettings.S
     var preferableLanguage by enum<Language>()
     var autoTranslate by property(false)
   }
-
-  companion object {
-    fun getInstance(): TranslationSettings = service()
-  }
 }
