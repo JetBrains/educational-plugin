@@ -27,6 +27,7 @@ object EduColors {
   val lessonCardSelectedBackground: JBColor = JBColor.namedColor("LessonCard.selectedBackground", 0xF5F8FE, 0x25324D)
   val lessonCardSelectedBorderColor: JBColor = JBColor.namedColor("LessonCard.selectedBorderColor", 0xC2D6FC, 0x35538F)
 
+  val aiTranslationBottomLabelTextColor: JBColor = JBColor.namedColor("AITranslation.bottomLabelTextColor", 0x818594)
   val taskToolWindowLessonLabel: JBColor = JBColor.namedColor("TaskToolWindow.lessonNameForeground", 0x6C707E, 0x6F737A)
 
   val wrongLabelForeground: Color = UIUtil.getErrorForeground()

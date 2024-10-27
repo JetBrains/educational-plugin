@@ -2,13 +2,13 @@
   <resource-bundle>messages.EduAIBundle</resource-bundle>
 
   <actions>
-    <action id="Educational.EduAIServiceChangeHost"
-            class="com.jetbrains.edu.ai.action.EduAIServiceChangeHost"
+    <action id="Educational.AITranslation"
+            class="com.jetbrains.edu.ai.translation.action.AITranslation"
+            icon="com.jetbrains.edu.ai.ui.EducationalAIIcons.Translation"
             internal="true"/>
 
-    <action id="Educational.GetCourseTranslation"
-            class="com.jetbrains.edu.ai.translation.action.GetCourseTranslation"
-            icon="com.jetbrains.edu.ai.ui.EducationalAIIcons.Translation"
+    <action id="Educational.EduAIServiceChangeHost"
+            class="com.jetbrains.edu.ai.action.EduAIServiceChangeHost"
             internal="true"/>
 
     <action id="Educational.ResetCourseTranslation"

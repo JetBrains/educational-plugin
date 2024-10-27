@@ -4,17 +4,17 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.ai.translation.TranslationLoader
-import com.jetbrains.edu.ai.translation.dialog.GetCourseTranslationDialog
+import com.jetbrains.edu.ai.translation.dialog.CourseTranslationDialog
 import com.jetbrains.edu.ai.ui.EducationalAIIcons
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 
 /**
- * @see [com.jetbrains.edu.learning.actions.EduActionUtils.COURSE_TRANSLATION_ACTION_ID]
+ * @see [com.jetbrains.edu.learning.actions.EduActionUtils.AI_TRANSLATION_ACTION_ID]
  */
 @Suppress("ComponentNotRegistered")
-class GetCourseTranslation : DumbAwareAction() {
+class AITranslation : DumbAwareAction() {
   init {
     templatePresentation.icon = EducationalAIIcons.Translation
     templatePresentation.hoveredIcon = EducationalAIIcons.TranslationHovered
@@ -28,7 +28,7 @@ class GetCourseTranslation : DumbAwareAction() {
     val course = project.course as? EduCourse ?: return
     if (!course.isMarketplaceRemote) return
 
-    val selectedLanguage = GetCourseTranslationDialog(project, course).getLanguage() ?: return
+    val selectedLanguage = CourseTranslationDialog(project, course).getLanguage() ?: return
     TranslationLoader.getInstance(project).fetchAndApplyTranslation(course, selectedLanguage)
   }
 
