@@ -23,7 +23,7 @@ class GetCourseTranslationDialog(project: Project, private val course: EduCourse
   private lateinit var comboBox: JComboBox<Language>
 
   init {
-    title = EduAIBundle.message("ai.service.choose.translation.dialog.title")
+    title = EduAIBundle.message("ai.translation.choose.translation.dialog.title")
 
     val currentTranslationLanguage = TranslationProjectSettings.getCurrentTranslationLanguage(project)
     if (currentTranslationLanguage != null && currentTranslationLanguage != courseSourceLanguage) {
@@ -38,10 +38,10 @@ class GetCourseTranslationDialog(project: Project, private val course: EduCourse
   }
 
   override fun createCenterPanel(): JComponent = com.intellij.ui.dsl.builder.panel {
-    row(EduAIBundle.message("ai.service.translation.course.language.label")) {
+    row(EduAIBundle.message("ai.translation.course.language.label")) {
       label(course.humanLanguage)
     }
-    row(EduAIBundle.message("ai.service.translation.select.target.language.label")) {
+    row(EduAIBundle.message("ai.translation.select.target.language.label")) {
       comboBox = comboBox(LanguageComboBoxModel())
         .bindItem(::selectedLanguage.toNullableProperty())
         .onChanged {

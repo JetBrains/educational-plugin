@@ -56,7 +56,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
           )
           return@launch
         }
-        withBackgroundProgress(project, EduAIBundle.message("ai.service.getting.course.translation")) {
+        withBackgroundProgress(project, EduAIBundle.message("ai.translation.getting.course.translation")) {
           if (!course.isTranslationExists(language)) {
             val translation = fetchTranslation(course, language)
             course.saveTranslation(translation)
@@ -76,16 +76,16 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
         if (!lock()) {
           EduNotificationManager.showErrorNotification(
             project,
-            content = EduAIBundle.message("ai.translation.translations.reset.is.not.possible")
+            content = EduAIBundle.message("ai.translation.reset.is.not.possible")
           )
           return@launch
         }
         if (TranslationProjectSettings.getCurrentTranslationLanguage(project) != null) {
-          withBackgroundProgress(project, EduAIBundle.message("ai.service.reset.course.translation")) {
+          withBackgroundProgress(project, EduAIBundle.message("ai.translation.reset.course.translation")) {
             TranslationProjectSettings.resetTranslation(project)
           }
         }
-        withBackgroundProgress(project, EduAIBundle.message("ai.service.deleting.course.translation.files")) {
+        withBackgroundProgress(project, EduAIBundle.message("ai.translation.deleting.course.translation.files")) {
           course.deleteAllTranslations()
         }
       }
