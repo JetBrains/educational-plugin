@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.ui.ai
 
 import com.jetbrains.edu.learning.EduSettingsServiceTestBase
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
+import com.jetbrains.educational.core.enum.Language
 import org.junit.Test
 
 class TranslationProjectSettingsTest : EduSettingsServiceTestBase() {
@@ -10,7 +11,7 @@ class TranslationProjectSettingsTest : EduSettingsServiceTestBase() {
     val settings = TranslationProjectSettings()
     settings.loadStateAndCheck("""
       <TranslationProjectState>
-        <option name="currentTranslationLanguageCode" value="ru" />
+        <option name="currentTranslationLanguage" value="Russian" />
       </TranslationProjectState>
     """)
   }
@@ -26,10 +27,10 @@ class TranslationProjectSettingsTest : EduSettingsServiceTestBase() {
   @Test
   fun `test settings with selected language serialization`() {
     val settings = TranslationProjectSettings()
-    settings.setCurrentTranslationLanguageCode("fr")
+    settings.setCurrentTranslationLanguage(Language.FRENCH)
     settings.checkState("""
         <TranslationProjectState>
-          <option name="currentTranslationLanguageCode" value="fr" />
+          <option name="currentTranslationLanguage" value="French" />
         </TranslationProjectState>
     """)
   }

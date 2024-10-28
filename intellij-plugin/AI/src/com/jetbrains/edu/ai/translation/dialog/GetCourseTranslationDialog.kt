@@ -7,12 +7,11 @@ import com.intellij.ui.dsl.builder.bindItem
 import com.intellij.ui.dsl.builder.toNullableProperty
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.ai.messages.EduAIBundle
-import com.jetbrains.edu.ai.translation.getCurrentTranslationLanguage
 import com.jetbrains.edu.ai.translation.settings.TranslationSettings
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.educational.translation.enum.Language
+import com.jetbrains.educational.core.enum.Language
 import javax.swing.DefaultComboBoxModel
 import javax.swing.JComboBox
 import javax.swing.JComponent

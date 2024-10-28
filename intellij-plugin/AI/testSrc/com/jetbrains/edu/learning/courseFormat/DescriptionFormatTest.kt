@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.courseFormat
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.Companion.TASK_DESCRIPTION_PREFIX
-import com.jetbrains.educational.translation.enum.Language
+import com.jetbrains.educational.core.enum.Language
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized

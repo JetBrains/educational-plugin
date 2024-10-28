@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
+import com.jetbrains.edu.learning.ai.translationSettings
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
@@ -22,7 +23,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.onError
-import com.jetbrains.educational.translation.enum.Language
+import com.jetbrains.educational.core.enum.Language
 import com.jetbrains.educational.translation.format.CourseTranslation
 import com.jetbrains.educational.translation.format.DescriptionText
 import kotlinx.coroutines.*
@@ -59,7 +60,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
             val translation = fetchTranslation(course, language)
             course.saveTranslation(translation)
           }
-          TranslationProjectSettings.changeCurrentTranslationLanguage(project, language)
+          project.translationSettings().setCurrentTranslationLanguage(language)
         }
       }
       finally {
@@ -113,7 +114,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
   private suspend fun EduCourse.isTranslationExists(language: Language): Boolean =
     readAction {
       allTasks.all {
-        it.getDescriptionFile(project, translationLanguageCode = language.code)?.exists() == true
+        it.getDescriptionFile(project, translationLanguage = language)?.exists() == true
       }
     }
 
@@ -142,7 +143,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
   @RequiresBlockingContext
   private fun Task.saveTranslation(text: DescriptionText) {
     val taskDirectory = getTaskDirectory(project) ?: return
-    val name = descriptionFormat.fileNameWithTranslation(text.language.code)
+    val name = descriptionFormat.fileNameWithTranslation(text.language)
 
     try {
       GeneratorUtils.createTextChildFile(project, taskDirectory, name, text.text)
@@ -156,7 +157,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
   private suspend fun Task.deleteTranslation(language: Language) {
     try {
       val translationFile = readAction {
-        getDescriptionFile(project, translationLanguageCode = language.code)
+        getDescriptionFile(project, translationLanguage = language)
       } ?: return
       writeAction {
         translationFile.delete(this::class.java)

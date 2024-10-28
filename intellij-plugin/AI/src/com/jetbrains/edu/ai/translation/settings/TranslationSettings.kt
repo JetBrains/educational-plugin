@@ -2,7 +2,7 @@ package com.jetbrains.edu.ai.translation.settings
 
 import com.intellij.openapi.components.*
 import com.jetbrains.edu.ai.translation.defaultLanguage
-import com.jetbrains.educational.translation.enum.Language
+import com.jetbrains.educational.core.enum.Language
 
 @Service
 @State(name = "TranslationSettings", storages = [Storage(StoragePathMacros.NON_ROAMABLE_FILE, roamingType = RoamingType.LOCAL)])

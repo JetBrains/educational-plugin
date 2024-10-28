@@ -33,6 +33,7 @@ import com.jetbrains.edu.learning.taskToolWindow.removeHyperskillTags
 import com.jetbrains.edu.learning.taskToolWindow.replaceActionIDsWithShortcuts
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
+import com.jetbrains.educational.core.enum.Language
 import java.io.IOException
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -142,17 +143,17 @@ fun Task.addDefaultTaskDescription() {
 }
 
 @RequiresReadLock
-fun Task.getDescriptionFile(project: Project, translationLanguageCode: String? = null, guessFormat: Boolean = false): VirtualFile? {
+fun Task.getDescriptionFile(project: Project, translationLanguage: Language? = null, guessFormat: Boolean = false): VirtualFile? {
   val taskDirectory = getTaskDirectory(project) ?: return null
 
-  if (translationLanguageCode != null) {
+  if (translationLanguage != null) {
     val translatedFile = if (guessFormat) {
-      val translatedFileNameHTML = DescriptionFormat.HTML.fileNameWithTranslation(translationLanguageCode)
-      val translatedFileNameMD = DescriptionFormat.MD.fileNameWithTranslation(translationLanguageCode)
+      val translatedFileNameHTML = DescriptionFormat.HTML.fileNameWithTranslation(translationLanguage)
+      val translatedFileNameMD = DescriptionFormat.MD.fileNameWithTranslation(translationLanguage)
       taskDirectory.run { findChild(translatedFileNameHTML) ?: findChild(translatedFileNameMD) }
     }
     else {
-      val translatedFileName = descriptionFormat.fileNameWithTranslation(translationLanguageCode)
+      val translatedFileName = descriptionFormat.fileNameWithTranslation(translationLanguage)
       taskDirectory.findChild(translatedFileName)
     }
     return translatedFile
@@ -267,8 +268,8 @@ private fun VirtualFile.toDescriptionFormat(): DescriptionFormat =
   ?: loadingError(EduCoreBundle.message("yaml.editor.invalid.description"))
 
 @RequiresReadLock
-fun Task.getFormattedTaskText(project: Project, translationLanguageCode: String? = null): String? {
-  var text = getTaskText(project, translationLanguageCode) ?: return null
+fun Task.getFormattedTaskText(project: Project, translationLanguage: Language? = null): String? {
+  var text = getTaskText(project, translationLanguage) ?: return null
   text = StringUtil.replace(text, "%IDE_NAME%", ApplicationNamesInfo.getInstance().fullProductName)
   val textBuffer = StringBuffer(text)
   replaceActionIDsWithShortcuts(textBuffer)
@@ -299,8 +300,8 @@ fun Task.getTaskDirectory(project: Project): VirtualFile? {
 }
 
 @RequiresReadLock
-fun Task.getTaskText(project: Project, translationLanguageCode: String? = null): String? {
-  val taskTextFile = getDescriptionFile(project, translationLanguageCode, guessFormat = true) ?: return null
+fun Task.getTaskText(project: Project, translationLanguage: Language? = null): String? {
+  val taskTextFile = getDescriptionFile(project, translationLanguage, guessFormat = true) ?: return null
   val taskDescription = taskTextFile.getTextFromTaskTextFile() ?: return descriptionText
 
   if (taskTextFile.extension == DescriptionFormat.MD.extension) {

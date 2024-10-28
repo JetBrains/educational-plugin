@@ -11,10 +11,10 @@ import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.network.createRetrofitBuilder
+import com.jetbrains.educational.core.enum.Language
 import com.jetbrains.educational.core.format.domain.MarketplaceId
 import com.jetbrains.educational.core.format.domain.TaskEduId
 import com.jetbrains.educational.core.format.domain.UpdateVersion
-import com.jetbrains.educational.translation.enum.Language
 import com.jetbrains.educational.translation.format.CourseTranslation
 import io.netty.handler.codec.http.HttpResponseStatus.UNPROCESSABLE_ENTITY
 import kotlinx.coroutines.CoroutineScope
