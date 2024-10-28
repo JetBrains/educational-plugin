@@ -67,7 +67,7 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
     Disposer.register(this, tabManager)
 
     scope.launch {
-      project.translationSettings().translationLanguageChange.collectLatest {
+      project.translationSettings().translationLanguage.collectLatest {
         withContext(Dispatchers.EDT) {
           updateTaskDescription()
         }

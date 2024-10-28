@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
+import com.jetbrains.edu.learning.ai.TranslationProperties
 import com.jetbrains.edu.learning.ai.translationSettings
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
@@ -57,11 +58,15 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
           return@launch
         }
         withBackgroundProgress(project, EduAIBundle.message("ai.translation.getting.course.translation")) {
-          if (!course.isTranslationExists(language)) {
-            val translation = fetchTranslation(course, language)
-            course.saveTranslation(translation)
+          val translationSettings = project.translationSettings()
+          val version = translationSettings.getTranslationVersion(language)
+          if (version != null && course.isTranslationExists(language)) {
+            translationSettings.setTranslation(TranslationProperties(language, version))
+            return@withBackgroundProgress
           }
-          project.translationSettings().setCurrentTranslationLanguage(language)
+          val translation = fetchTranslation(course, language)
+          course.saveTranslation(translation)
+          translationSettings.setTranslation(TranslationProperties(language, translation.id))
         }
       }
       finally {

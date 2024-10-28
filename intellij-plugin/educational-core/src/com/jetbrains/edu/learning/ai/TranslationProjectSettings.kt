@@ -4,34 +4,54 @@ import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings.TranslationProjectState
 import com.jetbrains.educational.core.enum.Language
+import com.jetbrains.educational.translation.format.domain.TranslationVersion
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.util.concurrent.ConcurrentHashMap
 
 fun Project.translationSettings(): TranslationProjectSettings = service()
 
 @Service(Service.Level.PROJECT)
-@State(name="TranslationProjectSettings", reloadable = true, storages = [Storage("edu_translation.xml")])
+@State(name = "TranslationProjectSettings", reloadable = true, storages = [Storage("edu_translation.xml")])
 class TranslationProjectSettings : PersistentStateComponent<TranslationProjectState> {
-  private val _translationLanguageChange = MutableStateFlow<Language?>(null)
-  val translationLanguageChange: StateFlow<Language?> = _translationLanguageChange.asStateFlow()
+  private val _translationLanguage = MutableStateFlow<Language?>(null)
+  val translationLanguage: StateFlow<Language?> = _translationLanguage.asStateFlow()
+  private val translationLanguageVersions = ConcurrentHashMap<Language, TranslationVersion>()
 
-  fun setCurrentTranslationLanguage(language: Language?) {
-    _translationLanguageChange.value = language
+  fun setTranslation(properties: TranslationProperties?) {
+    if (properties == null) {
+      _translationLanguage.value = null
+      return
+    }
+    val (language, version) = properties
+    _translationLanguage.value = language
+    translationLanguageVersions[language] = version
   }
+
+  fun getTranslationVersion(language: Language): TranslationVersion? = translationLanguageVersions[language]
 
   override fun getState(): TranslationProjectState {
     val state = TranslationProjectState()
-    state.currentTranslationLanguage = translationLanguageChange.value
+    state.currentTranslationLanguage = translationLanguage.value
+    state.translationVersions = translationLanguageVersions.mapValuesTo(mutableMapOf()) { (_, value) -> value.value }
     return state
   }
 
   override fun loadState(state: TranslationProjectState) {
-    _translationLanguageChange.value = state.currentTranslationLanguage
+    translationLanguageVersions.clear()
+    for ((language, version) in state.translationVersions) {
+      translationLanguageVersions[language] = TranslationVersion(version)
+    }
+    val language = state.currentTranslationLanguage ?: return
+    if (getTranslationVersion(language) != null) {
+      _translationLanguage.value = language
+    }
   }
 
   class TranslationProjectState : BaseState() {
     var currentTranslationLanguage by enum<Language>()
+    var translationVersions by map<Language, Int>()
   }
 
   companion object {
@@ -40,7 +60,7 @@ class TranslationProjectSettings : PersistentStateComponent<TranslationProjectSt
     fun isCourseTranslated(project: Project): Boolean = getCurrentTranslationLanguage(project) != null
 
     fun resetTranslation(project: Project) {
-      project.translationSettings().setCurrentTranslationLanguage(null)
+      project.translationSettings().setTranslation(null)
     }
   }
 }
