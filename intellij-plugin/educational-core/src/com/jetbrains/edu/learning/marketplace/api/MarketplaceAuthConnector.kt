@@ -32,7 +32,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, JBAccountUserInfo>() {
-  override val clientSecret: String = MarketplaceOAuthBundle.value("eduHubClientSecret")
+  private val clientSecret: String = MarketplaceOAuthBundle.value("eduHubClientSecret")
 
   override val clientId: String = MarketplaceOAuthBundle.value("eduHubClientId")
 

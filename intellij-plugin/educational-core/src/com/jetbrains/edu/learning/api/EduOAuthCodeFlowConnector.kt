@@ -34,7 +34,9 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
   protected open val baseOAuthTokenUrl: String = "oauth2/token/"
 
   private var state: String = generateSafeRandomString()
-  private var codeVerifier: String = generateSafeRandomString()
+
+  // change to private after LinkedIn secret removed
+  protected var codeVerifier: String = generateSafeRandomString()
   private var codeChallenge: String? = null
 
   protected abstract val authorizationUrlBuilder: URIBuilder
@@ -145,7 +147,7 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
     val currentAccount = account ?: error("No logged-in user")
     val refreshToken = currentAccount.getRefreshToken() ?: error("Refresh token is null")
     val response = getEduOAuthEndpoints()
-      .refreshTokens(baseOAuthTokenUrl, OAuthUtils.GrantType.REFRESH_TOKEN, clientId, clientSecret, refreshToken)
+      .refreshTokens(baseOAuthTokenUrl, OAuthUtils.GrantType.REFRESH_TOKEN, clientId, refreshToken)
       .executeCall().onError { error(EduCoreBundle.message("error.failed.to.refresh.tokens")) }
     if (response.isSuccessful) return response.body() ?: error("Failed to refresh token")
 
@@ -160,10 +162,11 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
     error("Failed to refresh token")
   }
 
-  protected fun retrieveLoginToken(code: String, redirectUri: String, codeVerifierFieldName: String = "code_verifier"): TokenInfo? {
+  // remove open when LinkedIn secret removed
+  protected open fun retrieveLoginToken(code: String, redirectUri: String, codeVerifierFieldName: String = "code_verifier"): TokenInfo? {
     val codeVerifierField = mapOf(codeVerifierFieldName to codeVerifier)
     val response = getEduOAuthEndpoints()
-      .getTokens(baseOAuthTokenUrl, clientId, clientSecret, redirectUri, code, OAuthUtils.GrantType.AUTHORIZATION_CODE, codeVerifierField)
+      .getTokens(baseOAuthTokenUrl, clientId, redirectUri, code, OAuthUtils.GrantType.AUTHORIZATION_CODE, codeVerifierField)
       .executeHandlingExceptions()
     return response?.body()
   }

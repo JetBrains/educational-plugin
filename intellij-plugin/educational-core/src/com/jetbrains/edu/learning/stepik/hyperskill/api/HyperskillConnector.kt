@@ -69,8 +69,6 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
 
   override val clientId: String = CLIENT_ID
 
-  override val clientSecret: String = CLIENT_SECRET
-
   override val objectMapper: ObjectMapper by lazy {
     val module = SimpleModule()
     module.addDeserializer(PyCharmStepOptions::class.java, JacksonStepOptionsDeserializer())
@@ -385,7 +383,6 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
     private val LOG: Logger = logger<HyperskillConnector>()
 
     private val CLIENT_ID: String = HyperskillOAuthBundle.value("hyperskillClientId")
-    private val CLIENT_SECRET: String = HyperskillOAuthBundle.value("hyperskillClientSecret")
 
     fun getInstance(): HyperskillConnector = service()
 

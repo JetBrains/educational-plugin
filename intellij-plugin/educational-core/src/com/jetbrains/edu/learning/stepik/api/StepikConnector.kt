@@ -19,7 +19,6 @@ import com.jetbrains.edu.learning.network.executeHandlingExceptions
 import com.jetbrains.edu.learning.network.toPlainTextRequestBody
 import com.jetbrains.edu.learning.stepik.*
 import com.jetbrains.edu.learning.stepik.StepikNames.getClientId
-import com.jetbrains.edu.learning.stepik.StepikNames.getClientSecret
 import com.jetbrains.edu.learning.stepik.StepikNames.getStepikUrl
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -49,9 +48,6 @@ abstract class StepikConnector : EduOAuthCodeFlowConnector<StepikUser, StepikUse
 
   override val clientId: String
     get() = getClientId()
-
-  override val clientSecret: String
-    get() = getClientSecret()
 
   override val oAuthServicePath: String
     // In case of Stepik and Android Studio our redirect_uri is `http://localhost:port`

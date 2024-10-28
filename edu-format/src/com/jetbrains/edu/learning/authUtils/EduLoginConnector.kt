@@ -24,8 +24,6 @@ abstract class EduLoginConnector<UserAccount : Account<*>, SpecificUserInfo : Us
 
   protected abstract val clientId: String
 
-  protected abstract val clientSecret: String
-
   abstract val objectMapper: ObjectMapper
 
   /**

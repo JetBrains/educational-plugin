@@ -9,6 +9,8 @@ import com.intellij.openapi.components.service
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.api.EduOAuthCodeFlowConnector
 import com.jetbrains.edu.learning.authUtils.ConnectorUtils
+import com.jetbrains.edu.learning.authUtils.OAuthUtils
+import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.network.executeHandlingExceptions
 import com.jetbrains.edu.learning.notification.EduNotificationManager
@@ -33,7 +35,6 @@ class LinkedInConnector : EduOAuthCodeFlowConnector<LinkedInAccount, LinkedInUse
 
   override val baseUrl: String = LINKEDIN_BASE_WWW_URL
   override val clientId: String = CLIENT_ID
-  override val clientSecret: String = CLIENT_SECRET
   override val objectMapper: ObjectMapper by lazy {
     ConnectorUtils.createRegisteredMapper(SimpleModule())
   }
@@ -69,6 +70,23 @@ class LinkedInConnector : EduOAuthCodeFlowConnector<LinkedInAccount, LinkedInUse
     this.account = account
     notifyUserLoggedIn()
     return true
+  }
+
+  // remove it and use method from the base class when LinkedIn secret removed
+  override fun retrieveLoginToken(code: String, redirectUri: String, codeVerifierFieldName: String): TokenInfo? {
+    val codeVerifierField = mapOf(codeVerifierFieldName to codeVerifier)
+    val response = getEduOAuthEndpoints()
+      .getTokensWithSecret(
+        baseOAuthTokenUrl,
+        clientId,
+        CLIENT_SECRET,
+        redirectUri,
+        code,
+        OAuthUtils.GrantType.AUTHORIZATION_CODE,
+        codeVerifierField
+      )
+      .executeHandlingExceptions()
+    return response?.body()
   }
 
   private fun getMediaUploadLink(): GetUploadLinkResponse? {
