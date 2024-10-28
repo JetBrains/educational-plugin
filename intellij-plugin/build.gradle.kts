@@ -183,6 +183,8 @@ allprojects {
     implementationWithoutKotlin(rootProject.libs.test.spark)
     implementationWithoutKotlin(rootProject.libs.javaparser)
     implementationWithoutKotlin(rootProject.libs.konsume.xml)
+    implementationWithoutKotlin(rootProject.libs.educational.ml.library.core)
+    implementationWithoutKotlin(rootProject.libs.educational.ml.library.test.generation)
 
     testImplementationWithoutKotlin(rootProject.libs.kotlin.test.junit)
     testImplementationWithoutKotlin(rootProject.libs.mockwebserver)

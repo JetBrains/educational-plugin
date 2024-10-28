@@ -10,6 +10,7 @@ logback = "1.3.14"
 test-spark = "2.0.4"
 konsume = "1.0"
 javaparser = "3.24.2"
+educational-ml-library="1.0.generation"
 
 [libraries]
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
@@ -40,6 +41,8 @@ logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 test-spark = { module = "org.jetbrains.research:testspark-core", version.ref = "test-spark"}
 konsume-xml = { module = "com.gitlab.mvysny.konsume-xml:konsume-xml", version.ref = "konsume"}
 javaparser = { module = "com.github.javaparser:javaparser-symbol-solver-core", version.ref = "javaparser"}
+educational-ml-library-core = { group = "com.jetbrains.educational.ml", name = "educational-ml-library-core", version.ref = "educational-ml-library" }
+educational-ml-library-test-generation = { group = "com.jetbrains.educational.ml", name="educational-ml-library-test-generation", version.ref = "educational-ml-library"}
 
 
 [plugins]

@@ -9,7 +9,7 @@ import com.jetbrains.edu.coursecreator.testGeneration.processing.TestCompilerFac
 import com.jetbrains.edu.coursecreator.testGeneration.processing.manager.TestAssemblerManager
 import com.jetbrains.edu.coursecreator.testGeneration.processing.manager.TestPresenterManager
 import com.jetbrains.edu.coursecreator.testGeneration.psi.PsiHelper
-import com.jetbrains.edu.coursecreator.testGeneration.request.OpenAIRequestManager
+import com.jetbrains.edu.coursecreator.testGeneration.request.AIRequestManager
 import com.jetbrains.edu.coursecreator.testGeneration.request.PromptSizeReductionDefaultStrategy
 import com.jetbrains.edu.coursecreator.testGeneration.request.PromptUtil.generatePrompt
 import com.jetbrains.edu.coursecreator.testGeneration.util.*
@@ -52,7 +52,7 @@ class TestGenerator(private val project: Project) {
       packageName = packageName,
       resultPath = getResultPath(),
       buildPath = getBuildPath(project),
-      requestManager = OpenAIRequestManager(project),
+      requestManager = AIRequestManager(),
       testsAssembler = testAssembler,
       testCompiler = TestCompilerFactory.createJavacTestCompiler(project, LLMSettingsState.DefaultLLMSettingsState.junitVersion),
       indicator = progressIndicator,
