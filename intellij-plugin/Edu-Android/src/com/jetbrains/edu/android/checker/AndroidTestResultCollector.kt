@@ -3,6 +3,7 @@ package com.jetbrains.edu.android.checker
 import com.android.ddmlib.IDevice
 import com.android.tools.idea.execution.common.AndroidExecutionTarget
 import com.android.tools.idea.execution.common.processhandler.AndroidProcessHandler
+import com.android.tools.idea.testartifacts.instrumented.testsuite.api.AndroidTestResults
 import com.android.tools.idea.testartifacts.instrumented.testsuite.api.AndroidTestResultsTreeNode
 import com.android.tools.idea.testartifacts.instrumented.testsuite.model.AndroidDevice
 import com.android.tools.idea.testartifacts.instrumented.testsuite.model.AndroidDeviceType
@@ -21,6 +22,7 @@ import com.jetbrains.edu.learning.checker.tests.TestResultCollector
 import com.jetbrains.edu.learning.checker.tests.TestResultGroup
 import com.jetbrains.edu.learning.courseFormat.EduTestInfo
 import com.jetbrains.edu.learning.courseFormat.EduTestInfo.PresentableStatus
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 /**
  * Collects events about both unit and instrumentation Android tests.
@@ -69,7 +71,16 @@ class AndroidTestResultCollector : TestResultCollector() {
     if (leafNodes.isEmpty()) return null
 
     val testResults = leafNodes.map {
-      EduTestInfo(it.results.methodName, it.results.getTestResultSummary().toTestStatus(), it.results.getErrorStackTrace(device))
+      val results = it.results
+      val testStatus = results.getTestResultSummary().toTestStatus()
+      val (message, stacktrace) = if (testStatus.isSuccess()) {
+        "" to null
+      }
+      else {
+        results.getMessage(device) to results.getErrorStackTrace(device)
+      }
+
+      EduTestInfo(results.getTestName(), testStatus, message, stacktrace)
     }
     return TestResultGroup(testResults)
   }
@@ -94,6 +105,25 @@ class AndroidTestResultCollector : TestResultCollector() {
       AndroidTestCaseResult.CANCELLED -> PresentableStatus.TERMINATED
       AndroidTestCaseResult.SCHEDULED -> PresentableStatus.NOT_RUN
     }
+  }
+
+  private fun AndroidTestResults.getTestName(): String {
+    // Submission Service stores a test name with a maximum length of 255 characters
+    return "$className:$methodName".take(255)
+  }
+
+  private fun AndroidTestResults.getMessage(device: AndroidDevice): String {
+    val stacktrace = getErrorStackTrace(device)
+    // Here we rely on the following:
+    // - `getErrorStackTrace` returns an actual Java stacktrace
+    // - the first line is "<FQL of exception class>: <error message>"
+    return stacktrace
+     .trimStart()
+     .lineSequence()
+     .first()
+     .substringAfter(":")
+     .takeIf { it.isNotEmpty() }
+     ?: EduCoreBundle.message("error.execution.failed")
   }
 
   private inner class AndroidProcessExecutionListener : ExecutionListener {

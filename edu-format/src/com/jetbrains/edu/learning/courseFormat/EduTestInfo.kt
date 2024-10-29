@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.jetbrains.edu.learning.courseFormat.EduTestInfo.PresentableStatus.*
 import org.jetbrains.annotations.TestOnly
 
 data class EduTestInfo(
@@ -15,10 +14,7 @@ data class EduTestInfo(
     true
   }
   else {
-    when (PresentableStatus.get(status)) {
-      COMPLETED, SKIPPED, IGNORED -> true
-      else -> false
-    }
+    PresentableStatus.get(status)?.isSuccess() == true
   }
 
   @Suppress("unused") // used for serialization
@@ -53,6 +49,8 @@ data class EduTestInfo(
     ERROR(8, "Error");
 
     override fun toString(): String = title
+
+    fun isSuccess(): Boolean = this == COMPLETED || this == SKIPPED || this == IGNORED
 
     companion object {
       private const val UNKNOWN: String = "Unknown"
