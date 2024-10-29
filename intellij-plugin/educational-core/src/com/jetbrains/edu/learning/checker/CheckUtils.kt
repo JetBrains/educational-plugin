@@ -178,12 +178,12 @@ object CheckUtils {
   @Throws(ExecutionException::class)
   private fun RunnerAndConfigurationSettings.startRunConfigurationExecution(context: Context): Boolean {
     val runner = ProgramRunner.getRunner(DefaultRunExecutor.EXECUTOR_ID, configuration)
-    val env = ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), this).activeTarget().build()
-
-    if (runner == null || env.state == null) {
+    if (runner == null) {
       context.latch.countDown()
       return false
     }
+
+    val env = ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), this).activeTarget().build()
     @Suppress("UnstableApiUsage")
     env.callback = ProgramRunner.Callback { descriptor ->
       // Descriptor can be null in some cases.
