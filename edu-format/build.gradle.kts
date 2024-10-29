@@ -38,7 +38,6 @@ dependencies {
   implementationWithoutKotlin(libs.retrofit)
   implementationWithoutKotlin(libs.converter.jackson)
   implementationWithoutKotlin(libs.logging.interceptor)
-  implementationWithoutKotlin(libs.edu.ai.format)
 }
 
 // Workaround to help java to find `module-info.java` file.

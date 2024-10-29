@@ -1,8 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.jetbrains.educational.core.enum.Language
-import org.jetbrains.annotations.VisibleForTesting
-
 enum class DescriptionFormat(val extension: String) {
   HTML("html"),
   MD("md");
@@ -10,11 +7,7 @@ enum class DescriptionFormat(val extension: String) {
   val fileName: String
     get() = "$TASK_DESCRIPTION_PREFIX.$extension"
 
-  fun fileNameWithTranslation(translationLanguage: Language): String =
-    "${TASK_DESCRIPTION_PREFIX}_${translationLanguage.code}.$extension"
-
   companion object {
-    @VisibleForTesting
     const val TASK_DESCRIPTION_PREFIX: String = "task"
 
     val taskDescriptionRegex: Regex =

@@ -22,6 +22,7 @@ import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduUtilsKt.convertToHtml
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.Companion.TASK_DESCRIPTION_PREFIX
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.*
@@ -170,6 +171,9 @@ fun Task.getDescriptionFile(project: Project, translationLanguage: Language? = n
   }
   return file
 }
+
+fun DescriptionFormat.fileNameWithTranslation(translationLanguage: Language): String =
+  "${TASK_DESCRIPTION_PREFIX}_${translationLanguage.code}.$extension"
 
 private fun TaskFile.canShowSolution() =
   answerPlaceholders.isNotEmpty() && answerPlaceholders.all { it.possibleAnswer.isNotEmpty() }
