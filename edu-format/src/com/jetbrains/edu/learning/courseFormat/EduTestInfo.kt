@@ -24,8 +24,17 @@ data class EduTestInfo(
   @Suppress("unused") // used for serialization
   private constructor() : this("", -1, "")
 
+  constructor(
+    name: String,
+    status: PresentableStatus,
+    message: String,
+    details: String? = null,
+    isFinishedSuccessfully: Boolean? = null,
+    checkResultDiff: CheckResultDiff? = null
+  ) : this(name, status.value, message, details, isFinishedSuccessfully, checkResultDiff)
+
   @TestOnly
-  constructor(name: String, presentableStatus: PresentableStatus) : this(name, presentableStatus.value, message = "")
+  constructor(name: String, presentableStatus: PresentableStatus) : this(name, presentableStatus, message = "")
 
   override fun toString(): String = "[${PresentableStatus.getPresentableStatus(status)}] $name"
 
