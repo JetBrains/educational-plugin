@@ -62,7 +62,6 @@ class AndroidCourseGeneratorTest : JvmCourseGenerationTestBase() {
             file("ExampleUnitTest.kt")
           }
           dir("androidTest/java/com/example/android/course") {
-            file("AndroidEduTestRunner.kt")
             file("ExampleInstrumentedTest.kt")
           }
         }

@@ -113,7 +113,6 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
     }
     if (withTests) {
       templates += TemplateFileInfo("android-ExampleUnitTest.kt", "src/test/java/$packagePath/ExampleUnitTest.kt", false)
-      templates += TemplateFileInfo("android-AndroidEduTestRunner.kt", "src/androidTest/java/$packagePath/AndroidEduTestRunner.kt", false)
       templates += TemplateFileInfo("android-ExampleInstrumentedTest.kt", "src/androidTest/java/$packagePath/ExampleInstrumentedTest.kt",
                                     false)
     }

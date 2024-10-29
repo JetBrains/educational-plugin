@@ -53,7 +53,6 @@ class AndroidCreateTaskTest : EduActionTestCase() {
             file("ExampleUnitTest.kt")
           }
           dir("androidTest/java/com/edu/task1") {
-            file("AndroidEduTestRunner.kt")
             file("ExampleInstrumentedTest.kt")
           }
         }
