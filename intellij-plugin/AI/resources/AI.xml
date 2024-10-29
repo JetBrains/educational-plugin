@@ -60,6 +60,8 @@
     <registryKey key="edu.ai.translation.update.check.interval"
                  description="Sets the course translation update check interval in seconds"
                  defaultValue="3600"/>
+
+    <registryKey defaultValue="true" description="Makes Get Hint action available (Kotlin courses only)" key="ai.get.hint.action"/>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">
