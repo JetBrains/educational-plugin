@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.ui
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.impl.HTMLEditorProvider
 import com.intellij.openapi.fileEditor.impl.HTMLEditorProvider.Request.Companion.url
 import com.intellij.openapi.project.Project
@@ -30,7 +31,14 @@ class CCOpenEducatorHelp : AnAction() {
     fun doOpen(project: Project) {
       if (isFeatureEnabled(EduExperimentalFeatures.EDUCATOR_HELP)) {
         val request = url(newFromEncoded(DOCUMENTATION_URL).toExternalForm())
-        openEditor(project, EduCoreBundle.message("course.creator.docs.file"), request)
+        val openFiles = FileEditorManager.getInstance(project).openFiles
+        val educatorHelpFile = openFiles.find { it.url.endsWith(EduCoreBundle.message("course.creator.docs.file")) }
+        if (educatorHelpFile != null) {
+          FileEditorManager.getInstance(project).openFile(educatorHelpFile)
+        }
+        else {
+          openEditor(project, EduCoreBundle.message("course.creator.docs.file"), request)
+        }
       }
     }
 
