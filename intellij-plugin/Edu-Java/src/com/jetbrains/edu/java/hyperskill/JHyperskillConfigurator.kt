@@ -28,6 +28,7 @@ class JHyperskillConfigurator : GradleHyperskillConfigurator<JdkProjectSettings>
   private class JHyperskillGradleCourseBuilder : JCourseBuilder() {
     override fun buildGradleTemplateName(course: Course): String = JAVA_HYPERSKILL_BUILD_GRADLE_TEMPLATE_NAME
     override fun settingGradleTemplateName(course: Course): String = HYPERSKILL_SETTINGS_GRADLE_TEMPLATE_NAME
+    override fun getLanguageSettings(): JHyperskillLanguageSettings = JHyperskillLanguageSettings()
   }
 
   private class JHyperskillCourseBuilder(private val gradleCourseBuilder: GradleCourseBuilderBase) :
