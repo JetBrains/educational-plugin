@@ -10,6 +10,9 @@ open class JsTaskCheckerProvider : TaskCheckerProvider {
   override val envChecker: EnvironmentChecker
     get() = JsEnvironmentChecker()
 
+  override val codeExecutor: JsCodeExecutor
+    get() = JsCodeExecutor()
+
   override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> {
     return JsTaskChecker(task, envChecker, project)
   }

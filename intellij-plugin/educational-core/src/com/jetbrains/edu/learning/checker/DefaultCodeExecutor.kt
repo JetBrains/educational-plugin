@@ -80,7 +80,10 @@ open class DefaultCodeExecutor : CodeExecutor {
     val errorOutput = output.stderr
 
     if (output.exitCode != 0) {
-      val err = tryToExtractCheckResultError(errorOutput) ?: CheckResult(CheckStatus.Failed, EXECUTION_ERROR_MESSAGE, errorOutput)
+      // Sometimes error messages and stack traces are in the stdout instead of stderr. For example, JS
+      val outputErrorMessage = if (errorOutput.isNotEmpty()) errorOutput else output.stdout
+      val err =
+        tryToExtractCheckResultError(outputErrorMessage) ?: CheckResult(CheckStatus.Failed, EXECUTION_ERROR_MESSAGE, outputErrorMessage)
       return Err(err)
     }
 
