@@ -9,7 +9,6 @@ import org.jetbrains.intellij.platform.gradle.tasks.PrepareSandboxTask
 import org.jetbrains.intellij.platform.gradle.tasks.RunIdeTask
 import org.jetbrains.intellij.platform.gradle.utils.extensionProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.util.*
 
 val environmentName: String by project
 // BACKCOMPAT: 2024.1. Drop it, it's always true
@@ -220,6 +219,7 @@ subprojects {
   repositories {
     intellijPlatform {
       defaultRepositories()
+      jetbrainsRuntime()
     }
   }
 
@@ -288,12 +288,6 @@ intellijPlatform {
 dependencies {
   intellijPlatform {
     intellijIde(baseVersion)
-    if (hasProp("jbrVersion")) {
-      jetbrainsRuntime(prop("jbrVersion"))
-    }
-    else {
-      jetbrainsRuntime()
-    }
 
     pluginModule(implementation(project("educational-core")))
     pluginModule(implementation(project("code-insight")))
@@ -987,6 +981,14 @@ fun String.toTypeWithVersion(): TypeWithVersion {
 fun IntelliJPlatformDependenciesExtension.intellijIde(versionWithCode: String) {
   val (type, version) = versionWithCode.toTypeWithVersion()
   create(type, version, useInstaller = false)
+
+  // JetBrains runtime is necessary not only for running IDE but for tests as well
+  if (hasProp("jbrVersion")) {
+    jetbrainsRuntime(prop("jbrVersion"))
+  }
+  else {
+    jetbrainsRuntime()
+  }
 }
 
 fun IntelliJPlatformDependenciesExtension.intellijPlugins(vararg notations: String) {
