@@ -5,7 +5,9 @@
     <action id="Educational.AITranslation"
             class="com.jetbrains.edu.ai.translation.action.AITranslation"
             icon="com.jetbrains.edu.ai.ui.EducationalAIIcons.Translation"
-            internal="true"/>
+            internal="true">
+      <add-to-group group-id="Educational.TaskToolWindowView.TitleActions" anchor="first"/>
+    </action>
 
     <action id="Educational.EduAIServiceChangeHost"
             class="com.jetbrains.edu.ai.action.EduAIServiceChangeHost"

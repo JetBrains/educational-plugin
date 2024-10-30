@@ -10,9 +10,6 @@ import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 
-/**
- * @see [com.jetbrains.edu.learning.actions.EduActionUtils.AI_TRANSLATION_ACTION_ID]
- */
 @Suppress("ComponentNotRegistered")
 class AITranslation : DumbAwareAction() {
   init {
@@ -49,4 +46,9 @@ class AITranslation : DumbAwareAction() {
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
+
+  companion object {
+    @Suppress("unused")
+    const val ACTION_ID: String = "Educational.AITranslation"
+  }
 }

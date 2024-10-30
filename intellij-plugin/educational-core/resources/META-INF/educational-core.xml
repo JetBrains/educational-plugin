@@ -275,10 +275,18 @@
       <reference id="Educational.LeaveInIdeFeedbackAction"/>
       <reference id="Educational.LeaveFeedbackAction"/>
     </group>
+
     <action
         id="Educational.CCOpenEducatorDocTab"
         class="com.jetbrains.edu.coursecreator.ui.CCOpenEducatorHelp"
     />
+
+    <!-- Actions located in the right corner of Task tool window -->
+    <group id="Educational.TaskToolWindowView.TitleActions">
+      <reference id="Educational.CCEditTaskDescription"/>
+      <reference id="Educational.PreviousTask"/>
+      <reference id="Educational.NextTask"/>
+    </group>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -438,10 +446,6 @@
     </experimentalFeature>
     <experimentalFeature id="edu.course.update.new" percentOfUsers="0" internalFeature="true">
       <description>Enable the new course update functionality to provide more efficient course updates</description>
-    </experimentalFeature>
-
-    <experimentalFeature id="edu.educator.help" percentOfUsers="0" internalFeature="true">
-      <description>Open educator help for newly created CC courses; add Help button to the toolbar above course view</description>
     </experimentalFeature>
 
     <registryKey key="edu.course.creator.fl.sync.changes.merging.timespan"

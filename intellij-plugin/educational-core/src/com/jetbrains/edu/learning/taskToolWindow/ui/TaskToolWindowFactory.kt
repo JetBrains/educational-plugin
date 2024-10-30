@@ -16,11 +16,7 @@ import com.intellij.openapi.wm.ex.ToolWindowEx
 import com.intellij.openapi.wm.impl.content.ToolWindowContentUi
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.coursecreator.actions.CCEditTaskDescription
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
-import com.jetbrains.edu.learning.actions.EduActionUtils.AI_TRANSLATION_ACTION_ID
-import com.jetbrains.edu.learning.actions.NextTaskAction
-import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleManager
 import java.awt.MouseInfo
@@ -43,15 +39,8 @@ class TaskToolWindowFactory : ToolWindowFactory, DumbAware {
   }
 
   private fun ToolWindow.initTitleActions() {
-    val actions = arrayOf(
-      CCEditTaskDescription.ACTION_ID,
-      AI_TRANSLATION_ACTION_ID,
-      PreviousTaskAction.ACTION_ID,
-      NextTaskAction.ACTION_ID
-    ).map {
-      ActionManager.getInstance().getAction(it) ?: error("Action $it not found")
-    }
-    setTitleActions(actions)
+    val group = ActionManager.getInstance().getAction("Educational.TaskToolWindowView.TitleActions") as DefaultActionGroup
+    setTitleActions(group.childActionsOrStubs.toList())
   }
 
   /**
