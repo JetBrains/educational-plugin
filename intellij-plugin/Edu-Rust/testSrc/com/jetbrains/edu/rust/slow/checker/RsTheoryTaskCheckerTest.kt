@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.equalTo
-import org.junit.Assert
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import org.rust.lang.RsLanguage
 
@@ -86,8 +86,8 @@ class RsTheoryTaskCheckerTest : RsCheckersTestBase() {
         "TheoryWithCustomRunConfiguration" -> equalTo(CheckStatus.Solved) to containsString("Hello!")
         else -> error("Unexpected task name: ${task.name}")
       }
-      Assert.assertThat(checkResult.status, statusMatcher)
-      Assert.assertThat(checkResult.message, messageMatcher)
+      assertThat(checkResult.status, statusMatcher)
+      assertThat(checkResult.message, messageMatcher)
     }
     doTest()
   }

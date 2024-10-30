@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.nullValue
 import org.hamcrest.CoreMatchers.equalTo
-import org.junit.Assert
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 
 class GoCheckErrorsTest : GoCheckersTestBase() {
@@ -217,8 +217,8 @@ class GoCheckErrorsTest : GoCheckersTestBase() {
           CheckResultDiffMatcher.diff(CheckResultDiff(expected = "1\n\n2\n\n", actual = "1\n2\n"))
         else -> error("Unexpected task name: ${task.name}")
       }
-      Assert.assertThat("Checker output for ${task.name} doesn't match", checkResult.message, messageMatcher)
-      Assert.assertThat("Checker diff for ${task.name} doesn't match", checkResult.diff, diffMatcher)
+      assertThat("Checker output for ${task.name} doesn't match", checkResult.message, messageMatcher)
+      assertThat("Checker diff for ${task.name} doesn't match", checkResult.diff, diffMatcher)
     }
     doTest()
   }

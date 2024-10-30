@@ -12,8 +12,8 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.nullValue
 import com.jetbrains.edu.learning.xmlEscaped
 import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.MatcherAssert.assertThat
 import org.jetbrains.plugins.scala.ScalaLanguage
-import org.junit.Assert
 import org.junit.Test
 
 class ScalaGradleCheckErrorTest : JdkCheckerTestBase() {
@@ -168,8 +168,8 @@ class ScalaGradleCheckErrorTest : JdkCheckerTestBase() {
             diff(CheckResultDiff(expected = "OK!\n", actual = "OK\n"))
         else -> error("Unexpected task `${task.name}`")
       }
-      Assert.assertThat("Checker message for ${task.name} doesn't match", checkResult.message, messageMatcher)
-      Assert.assertThat("Checker diff for ${task.name} doesn't match", checkResult.diff, diffMatcher)
+      assertThat("Checker message for ${task.name} doesn't match", checkResult.message, messageMatcher)
+      assertThat("Checker diff for ${task.name} doesn't match", checkResult.diff, diffMatcher)
     }
     doTest()
   }

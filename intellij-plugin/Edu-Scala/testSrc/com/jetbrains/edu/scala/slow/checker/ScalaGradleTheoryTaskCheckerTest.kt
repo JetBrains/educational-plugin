@@ -8,8 +8,8 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import org.hamcrest.CoreMatchers.*
+import org.hamcrest.MatcherAssert.assertThat
 import org.jetbrains.plugins.scala.ScalaLanguage
-import org.junit.Assert
 import org.junit.Test
 
 // Add Theory task with custom Application configuration
@@ -182,8 +182,8 @@ class ScalaGradleTheoryTaskCheckerTest : JdkCheckerTestBase() {
         )
         else -> error("Unexpected task name: ${task.name}")
       }
-      Assert.assertThat(checkResult.status, statusMatcher)
-      Assert.assertThat(message, messageMatcher)
+      assertThat(checkResult.status, statusMatcher)
+      assertThat(message, messageMatcher)
     }
     doTest()
   }

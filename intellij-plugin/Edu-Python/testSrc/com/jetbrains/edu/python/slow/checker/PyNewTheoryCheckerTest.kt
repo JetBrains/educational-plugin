@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.python.PythonLanguage
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.equalTo
-import org.junit.Assert
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 
 @Suppress("PyInterpreter", "PyUnresolvedReferences")
@@ -153,8 +153,8 @@ class PyNewTheoryCheckerTest : PyCheckersTestBase() {
         "FrameworkTheoryWithCustomRunConfiguration2" -> equalTo(CheckStatus.Solved) to containsString("Hello from FrameworkTheory2!")
         else -> error("Unexpected task name: ${task.name}")
       }
-      Assert.assertThat(checkResult.status, statusMatcher)
-      Assert.assertThat(checkResult.message, messageMatcher)
+      assertThat(checkResult.status, statusMatcher)
+      assertThat(checkResult.message, messageMatcher)
     }
     doTest()
   }

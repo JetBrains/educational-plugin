@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.hamcrest.CoreMatchers.equalTo
-import org.junit.Assert
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import org.rust.lang.RsLanguage
 
@@ -218,8 +218,8 @@ class RsSingleWorkspaceCheckerTest : RsCheckersTestBase() {
         "Output" -> equalTo(CheckStatus.Solved) to equalTo(CheckUtils.CONGRATULATIONS)
         else -> error("Unexpected task name: ${task.name}")
       }
-      Assert.assertThat("Checker status for ${task.name} doesn't match", checkResult.status, statusMatcher)
-      Assert.assertThat("Checker output for ${task.name} doesn't match", checkResult.message, messageMatcher)
+      assertThat("Checker status for ${task.name} doesn't match", checkResult.status, statusMatcher)
+      assertThat("Checker output for ${task.name} doesn't match", checkResult.message, messageMatcher)
     }
     doTest()
   }
