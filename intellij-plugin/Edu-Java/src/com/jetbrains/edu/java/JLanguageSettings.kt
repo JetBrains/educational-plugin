@@ -8,7 +8,7 @@ import com.jetbrains.edu.jvm.JdkLanguageSettings
 import com.jetbrains.edu.jvm.ParsedJavaVersion
 import com.jetbrains.edu.learning.courseFormat.Course
 
-class JLanguageSettings : JdkLanguageSettings() {
+open class JLanguageSettings : JdkLanguageSettings() {
 
   override fun setupProjectSdksModel(model: ProjectSdksModel) {
     val (jdkPath, sdk) = findBundledJdk(model) ?: return

@@ -9,12 +9,19 @@ import org.jetbrains.annotations.VisibleForTesting
 
 private const val JVM_LANGUAGE_LEVEL = "jvm_language_level"
 
+// TODO(refactor this), this is a temporary solution
+// All JVM-based Hyperskill courses now require JDK version 21
+val hyperskillJdkVersion: JavaSdkVersion = JavaSdkVersion.JDK_21
+
 val Course.minJvmSdkVersion: ParsedJavaVersion
-  get() = ParsedJavaVersion.fromStringLanguageLevel(environmentSettings[JVM_LANGUAGE_LEVEL])
+  get() = when (this) {
+    is HyperskillCourse -> JavaVersionParseSuccess(hyperskillJdkVersion)
+    else -> ParsedJavaVersion.fromStringLanguageLevel(environmentSettings[JVM_LANGUAGE_LEVEL])
+  }
 
 val Course.maxJvmSdkVersion: ParsedJavaVersion?
   get() = when(this) {
-    is HyperskillCourse -> JavaVersionParseSuccess(JavaSdkVersion.JDK_21)
+    is HyperskillCourse -> JavaVersionParseSuccess(hyperskillJdkVersion)
     else -> null
   }
 
