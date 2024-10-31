@@ -1,6 +1,7 @@
 package com.jetbrains.edu.android
 
 import com.jetbrains.edu.EducationalCoreIcons
+import com.jetbrains.edu.android.checker.AndroidTaskCheckerProvider
 import com.jetbrains.edu.jvm.gradle.GradleConfiguratorBase
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.EduExperimentalFeatures

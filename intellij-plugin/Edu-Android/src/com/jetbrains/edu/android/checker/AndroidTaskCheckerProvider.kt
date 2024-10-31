@@ -1,4 +1,4 @@
-package com.jetbrains.edu.android
+package com.jetbrains.edu.android.checker
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.jvm.gradle.checker.GradleEduTaskChecker

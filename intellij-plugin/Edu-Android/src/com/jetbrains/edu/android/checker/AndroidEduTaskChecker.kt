@@ -1,4 +1,4 @@
-package com.jetbrains.edu.android
+package com.jetbrains.edu.android.checker
 
 import com.android.ddmlib.IDevice
 import com.android.sdklib.internal.avd.AvdInfo
