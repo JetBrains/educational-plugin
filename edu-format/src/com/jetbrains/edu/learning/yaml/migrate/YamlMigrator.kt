@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.yaml.YamlMapper.CURRENT_YAML_VERSION
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.YAML_VERSION
 import com.jetbrains.edu.learning.yaml.getEduValue
 import com.jetbrains.edu.learning.yaml.setEduValue
+import org.jetbrains.annotations.TestOnly
 
 /**
  * YAML version is added to an [ObjectMapper] after it has migrated a course.
@@ -20,15 +21,15 @@ val YAML_VERSION_MAPPER_KEY = InjectableValueKey<Int>("yaml_version")
 
 class YamlMigrator(private val mapper: ObjectMapper) {
 
-  private val migrationSteps = mapOf(
-    1 to ToVersion1Step,
-  )
+  init {
+    mapper.mapperSetupForTests()
+  }
 
   private fun getInitialYamlVersion(): Int? = mapper.getEduValue(YAML_VERSION_MAPPER_KEY)
 
   fun needMigration(): Boolean {
     val yamlVersion = getInitialYamlVersion()
-    return yamlVersion != null && yamlVersion < CURRENT_YAML_VERSION
+    return yamlVersion != null && yamlVersion < currentYamlVersion
   }
 
   /**
@@ -63,7 +64,7 @@ class YamlMigrator(private val mapper: ObjectMapper) {
     }
 
     var migratedConfig = configTree
-    for (version in yamlVersion..CURRENT_YAML_VERSION) {
+    for (version in yamlVersion..currentYamlVersion) {
       val nextStep = migrationSteps[version] ?: continue
       migratedConfig = nextStep.migrateItem(migratedConfig)
     }
@@ -73,5 +74,37 @@ class YamlMigrator(private val mapper: ObjectMapper) {
 
   companion object {
     private val LOG = logger<YamlMigrator>()
+
+    private var migrationSteps: Map<Int, YamlMigrationStep> = mapOf(
+      1 to ToVersion1Step,
+    )
+
+    // The following values and methods allow overriding migrator behavior in tests
+    private var currentYamlVersion = CURRENT_YAML_VERSION
+    private var mapperSetupForTests: ObjectMapper.() -> Unit = {}
+
+    @TestOnly
+    fun withMigrationSteps(
+      steps: Map<Int, YamlMigrationStep>,
+      mapperSetup: ObjectMapper.() -> Unit = {},
+      action: () -> Unit
+    ) {
+      val storedMigrationSteps = migrationSteps
+      val storedCurrentYamlVersion = currentYamlVersion
+      val storedMapperSetup = mapperSetupForTests
+
+      migrationSteps = steps
+      currentYamlVersion = steps.keys.maxOrNull() ?: 0
+      mapperSetupForTests = mapperSetup
+
+      try {
+        action()
+      }
+      finally {
+        migrationSteps = storedMigrationSteps
+        currentYamlVersion = storedCurrentYamlVersion
+        mapperSetupForTests = storedMapperSetup
+      }
+    }
   }
 }
