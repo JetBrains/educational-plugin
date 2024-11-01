@@ -13,14 +13,6 @@ interface TranslationService {
     @Path("language") language: String
   ): Response<CourseTranslation>
 
-  @GET("$API_TRANSLATE/{marketplaceId}/{updateVersion}/{language}/task/{taskId}")
-  suspend fun getTranslatedTask(
-    @Path("marketplaceId") marketplaceId: Int,
-    @Path("updateVersion") updateVersion: Int,
-    @Path("language") language: String,
-    @Path("taskId") taskId: Int
-  ): Response<CourseTranslation>
-
   companion object {
     private const val API_TRANSLATE = "/api/translate"
   }

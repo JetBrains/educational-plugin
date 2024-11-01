@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.network.createRetrofitBuilder
 import com.jetbrains.educational.core.enum.Language
 import com.jetbrains.educational.core.format.domain.MarketplaceId
-import com.jetbrains.educational.core.format.domain.TaskEduId
 import com.jetbrains.educational.core.format.domain.UpdateVersion
 import com.jetbrains.educational.translation.format.CourseTranslation
 import io.netty.handler.codec.http.HttpResponseStatus.UNPROCESSABLE_ENTITY
@@ -56,23 +55,6 @@ class TranslationServiceConnector(private val scope: CoroutineScope) {
         networkCall {
           service
             .getTranslatedCourse(marketplaceId.value, updateVersion.value, language.name)
-            .handleResponse()
-        }
-      }
-      .await()
-
-  @Suppress("unused")
-  suspend fun getTranslatedTask(
-    marketplaceId: MarketplaceId,
-    updateVersion: UpdateVersion,
-    language: Language,
-    taskId: TaskEduId
-  ): Result<CourseTranslation?, String> =
-    scope
-      .async {
-        networkCall {
-          service
-            .getTranslatedTask(marketplaceId.value, updateVersion.value, language.name, taskId.value)
             .handleResponse()
         }
       }
