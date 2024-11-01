@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.ai
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings.TranslationProjectState
-import com.jetbrains.educational.core.enum.Language
+import com.jetbrains.educational.core.enum.TranslationLanguage
 import com.jetbrains.educational.translation.format.domain.TranslationVersion
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,9 +15,9 @@ fun Project.translationSettings(): TranslationProjectSettings = service()
 @Service(Service.Level.PROJECT)
 @State(name = "TranslationProjectSettings", reloadable = true, storages = [Storage("edu_translation.xml")])
 class TranslationProjectSettings : PersistentStateComponent<TranslationProjectState> {
-  private val _translationLanguage = MutableStateFlow<Language?>(null)
-  val translationLanguage: StateFlow<Language?> = _translationLanguage.asStateFlow()
-  private val translationLanguageVersions = ConcurrentHashMap<Language, TranslationVersion>()
+  private val _translationLanguage = MutableStateFlow<TranslationLanguage?>(null)
+  val translationLanguage: StateFlow<TranslationLanguage?> = _translationLanguage.asStateFlow()
+  private val translationLanguageVersions = ConcurrentHashMap<TranslationLanguage, TranslationVersion>()
 
   fun setTranslation(properties: TranslationProperties?) {
     if (properties == null) {
@@ -29,7 +29,7 @@ class TranslationProjectSettings : PersistentStateComponent<TranslationProjectSt
     translationLanguageVersions[language] = version
   }
 
-  fun getTranslationVersion(language: Language): TranslationVersion? = translationLanguageVersions[language]
+  fun getTranslationVersion(language: TranslationLanguage): TranslationVersion? = translationLanguageVersions[language]
 
   override fun getState(): TranslationProjectState {
     val state = TranslationProjectState()
@@ -50,12 +50,13 @@ class TranslationProjectSettings : PersistentStateComponent<TranslationProjectSt
   }
 
   class TranslationProjectState : BaseState() {
-    var currentTranslationLanguage by enum<Language>()
-    var translationVersions by map<Language, Int>()
+    var currentTranslationLanguage by enum<TranslationLanguage>()
+    var translationVersions by map<TranslationLanguage, Int>()
   }
 
   companion object {
-    fun getCurrentTranslationLanguage(project: Project): Language? = project.translationSettings().state.currentTranslationLanguage
+    fun getCurrentTranslationLanguage(project: Project): TranslationLanguage? =
+      project.translationSettings().state.currentTranslationLanguage
 
     fun isCourseTranslated(project: Project): Boolean = getCurrentTranslationLanguage(project) != null
 

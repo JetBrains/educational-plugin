@@ -12,21 +12,22 @@ import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.ui.EduColors
 import com.jetbrains.educational.core.enum.Language
+import com.jetbrains.educational.core.enum.TranslationLanguage
 import javax.swing.*
 import javax.swing.JPanel.LEFT_ALIGNMENT
 
 class CourseTranslationDialog(private val project: Project, course: EduCourse) : DialogWrapper(true) {
-  private val courseSourceLanguage = Language.findByCode(course.languageCode)
+  private val courseSourceLanguage = Language(course.languageCode)
 
-  private var selectedLanguage: Language
+  private var selectedLanguage: TranslationLanguage?
   private lateinit var translateToCheckBox: Cell<JBCheckBox>
-  private lateinit var translationLanguageComboBox: JComboBox<Language>
+  private lateinit var translationLanguageComboBox: JComboBox<TranslationLanguage>
 
   init {
     title = EduAIBundle.message("ai.translation.course.translation.dialog.title")
 
     val currentTranslationLanguage = TranslationProjectSettings.getCurrentTranslationLanguage(project)
-    selectedLanguage = if (currentTranslationLanguage?.isNotSource() == true) {
+    selectedLanguage = if (currentTranslationLanguage.isNotSource()) {
       currentTranslationLanguage
     } else {
       application.translationSettings().preferableLanguage
@@ -51,7 +52,7 @@ class CourseTranslationDialog(private val project: Project, course: EduCourse) :
     minimumSize = JBUI.size(WIDTH, HEIGHT)
   }
 
-  fun getLanguage(): Language? {
+  fun getLanguage(): TranslationLanguage? {
     if (!showAndGet()) return null
     return selectedLanguage
   }
@@ -75,11 +76,11 @@ class CourseTranslationDialog(private val project: Project, course: EduCourse) :
         }
       }
 
-  private fun Row.translationLanguageComboBox(): JComboBox<Language> =
+  private fun Row.translationLanguageComboBox(): JComboBox<TranslationLanguage> =
     comboBox(LanguageComboBoxModel())
       .bindItem(::selectedLanguage.toNullableProperty())
       .onChanged {
-        selectedLanguage = it.selectedItem as? Language ?: return@onChanged
+        selectedLanguage = it.selectedItem as? TranslationLanguage ?: return@onChanged
         if (selectedLanguage.isNew()) {
           close(OK_EXIT_CODE)
         }
@@ -96,15 +97,16 @@ class CourseTranslationDialog(private val project: Project, course: EduCourse) :
         foreground = EduColors.aiTranslationBottomLabelTextColor
       }
 
-  private fun Language?.isNotSource(): Boolean = this != courseSourceLanguage
+  private fun TranslationLanguage?.isNotSource(): Boolean = this != null && code != courseSourceLanguage.code
 
-  private fun Language.isNew(): Boolean = isNotSource() && this != TranslationProjectSettings.getCurrentTranslationLanguage(project)
+  private fun TranslationLanguage?.isNew(): Boolean =
+    isNotSource() && this != TranslationProjectSettings.getCurrentTranslationLanguage(project)
 
-  private inner class LanguageComboBoxModel : DefaultComboBoxModel<Language>() {
+  private inner class LanguageComboBoxModel : DefaultComboBoxModel<TranslationLanguage>() {
     init {
       @OptIn(ExperimentalStdlibApi::class)
-      val languages = Language.entries
-        .filter { it != courseSourceLanguage }
+      val languages = TranslationLanguage.entries
+        .filter { it.isNotSource() }
         .sortedBy { it.label }
 
       addAll(languages)

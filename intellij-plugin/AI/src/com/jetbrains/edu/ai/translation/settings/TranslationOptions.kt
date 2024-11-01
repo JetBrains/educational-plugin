@@ -9,8 +9,7 @@ import com.intellij.ui.dsl.builder.toNullableProperty
 import com.intellij.util.application
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.settings.AIOptionsProvider
-import com.jetbrains.edu.ai.translation.defaultLanguage
-import com.jetbrains.educational.core.enum.Language
+import com.jetbrains.educational.core.enum.TranslationLanguage
 import javax.swing.DefaultComboBoxModel
 
 class TranslationOptions : BoundConfigurable(EduAIBundle.message("settings.ai.translation.display.name")), AIOptionsProvider {
@@ -29,17 +28,13 @@ class TranslationOptions : BoundConfigurable(EduAIBundle.message("settings.ai.tr
     }
   }
 
-  private inner class LanguageComboBoxModel : DefaultComboBoxModel<Language>() {
+  private inner class LanguageComboBoxModel : DefaultComboBoxModel<TranslationLanguage>() {
     init {
-      addElement(defaultLanguage)
-
       @OptIn(ExperimentalStdlibApi::class)
-      val languages = Language.entries
-        .filter { it != defaultLanguage }
+      val languages = TranslationLanguage.entries
         .sortedBy { it.label }
       addAll(languages)
-
-      selectedItem = defaultLanguage
+      selectedItem = EduAIBundle.message("ai.translation.choose.language")
     }
   }
 }

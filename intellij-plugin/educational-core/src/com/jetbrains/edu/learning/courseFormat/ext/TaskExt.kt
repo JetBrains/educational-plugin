@@ -34,7 +34,7 @@ import com.jetbrains.edu.learning.taskToolWindow.removeHyperskillTags
 import com.jetbrains.edu.learning.taskToolWindow.replaceActionIDsWithShortcuts
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
-import com.jetbrains.educational.core.enum.Language
+import com.jetbrains.educational.core.enum.TranslationLanguage
 import java.io.IOException
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -144,7 +144,7 @@ fun Task.addDefaultTaskDescription() {
 }
 
 @RequiresReadLock
-fun Task.getDescriptionFile(project: Project, translationLanguage: Language? = null, guessFormat: Boolean = false): VirtualFile? {
+fun Task.getDescriptionFile(project: Project, translationLanguage: TranslationLanguage? = null, guessFormat: Boolean = false): VirtualFile? {
   val taskDirectory = getTaskDirectory(project) ?: return null
 
   if (translationLanguage != null) {
@@ -172,7 +172,7 @@ fun Task.getDescriptionFile(project: Project, translationLanguage: Language? = n
   return file
 }
 
-fun DescriptionFormat.fileNameWithTranslation(translationLanguage: Language): String =
+fun DescriptionFormat.fileNameWithTranslation(translationLanguage: TranslationLanguage): String =
   "${TASK_DESCRIPTION_PREFIX}_${translationLanguage.code}.$extension"
 
 private fun TaskFile.canShowSolution() =
@@ -272,7 +272,7 @@ private fun VirtualFile.toDescriptionFormat(): DescriptionFormat =
   ?: loadingError(EduCoreBundle.message("yaml.editor.invalid.description"))
 
 @RequiresReadLock
-fun Task.getFormattedTaskText(project: Project, translationLanguage: Language? = null): String? {
+fun Task.getFormattedTaskText(project: Project, translationLanguage: TranslationLanguage? = null): String? {
   var text = getTaskText(project, translationLanguage) ?: return null
   text = StringUtil.replace(text, "%IDE_NAME%", ApplicationNamesInfo.getInstance().fullProductName)
   val textBuffer = StringBuffer(text)
@@ -304,7 +304,7 @@ fun Task.getTaskDirectory(project: Project): VirtualFile? {
 }
 
 @RequiresReadLock
-fun Task.getTaskText(project: Project, translationLanguage: Language? = null): String? {
+fun Task.getTaskText(project: Project, translationLanguage: TranslationLanguage? = null): String? {
   val taskTextFile = getDescriptionFile(project, translationLanguage, guessFormat = true) ?: return null
   val taskDescription = taskTextFile.getTextFromTaskTextFile() ?: return descriptionText
 

@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.courseFormat
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.Companion.TASK_DESCRIPTION_PREFIX
-import com.jetbrains.educational.core.enum.Language
+import com.jetbrains.educational.core.enum.TranslationLanguage
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -39,6 +39,6 @@ class DescriptionFormatTest(private val languageCode: String) : EduTestCase() {
     @JvmStatic
     @Parameterized.Parameters(name = "{0}")
     @OptIn(ExperimentalStdlibApi::class)
-    fun data(): Collection<Array<Any>> = Language.entries.map { arrayOf(it.code) }
+    fun data(): Collection<Array<Any>> = TranslationLanguage.entries.map { arrayOf(it.code) }
   }
 }

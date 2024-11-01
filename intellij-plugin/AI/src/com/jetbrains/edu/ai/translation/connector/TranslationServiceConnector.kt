@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.network.createRetrofitBuilder
-import com.jetbrains.educational.core.enum.Language
+import com.jetbrains.educational.core.enum.TranslationLanguage
 import com.jetbrains.educational.core.format.domain.MarketplaceId
 import com.jetbrains.educational.core.format.domain.UpdateVersion
 import com.jetbrains.educational.translation.format.CourseTranslation
@@ -48,7 +48,7 @@ class TranslationServiceConnector(private val scope: CoroutineScope) {
   suspend fun getTranslatedCourse(
     marketplaceId: MarketplaceId,
     updateVersion: UpdateVersion,
-    language: Language
+    language: TranslationLanguage
   ): Result<CourseTranslation?, String> =
     scope
       .async {

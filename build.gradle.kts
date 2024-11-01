@@ -41,7 +41,7 @@ allprojects {
     mavenCentral()
     maven("https://cache-redirector.jetbrains.com/intellij-dependencies")
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-js-wrappers")
-    maven("https://packages.jetbrains.team/maven/p/edu/edu-ai-format")
+    maven("https://packages.jetbrains.team/maven/p/edu/maven")
   }
 
   configure<JavaPluginExtension> {

@@ -25,7 +25,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.onError
-import com.jetbrains.educational.core.enum.Language
+import com.jetbrains.educational.core.enum.TranslationLanguage
 import com.jetbrains.educational.translation.format.CourseTranslation
 import com.jetbrains.educational.translation.format.DescriptionText
 import kotlinx.coroutines.*
@@ -47,7 +47,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
     lock.set(false)
   }
 
-  fun fetchAndApplyTranslation(course: EduCourse, language: Language) {
+  fun fetchAndApplyTranslation(course: EduCourse, translationLanguage: TranslationLanguage) {
     scope.launch {
       try {
         if (!lock()) {
@@ -59,14 +59,14 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
         }
         withBackgroundProgress(project, EduAIBundle.message("ai.translation.getting.course.translation")) {
           val translationSettings = project.translationSettings()
-          val version = translationSettings.getTranslationVersion(language)
-          if (version != null && course.isTranslationExists(language)) {
-            translationSettings.setTranslation(TranslationProperties(language, version))
+          val version = translationSettings.getTranslationVersion(translationLanguage)
+          if (version != null && course.isTranslationExists(translationLanguage)) {
+            translationSettings.setTranslation(TranslationProperties(translationLanguage, version))
             return@withBackgroundProgress
           }
-          val translation = fetchTranslation(course, language)
+          val translation = fetchTranslation(course, translationLanguage)
           course.saveTranslation(translation)
-          translationSettings.setTranslation(TranslationProperties(language, translation.id))
+          translationSettings.setTranslation(TranslationProperties(translationLanguage, translation.id))
         }
       }
       finally {
@@ -100,7 +100,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
     }
   }
 
-  private suspend fun fetchTranslation(course: EduCourse, language: Language): CourseTranslation =
+  private suspend fun fetchTranslation(course: EduCourse, language: TranslationLanguage): CourseTranslation =
     withContext(Dispatchers.IO) {
       downloadTranslation(course, language).onError { error ->
         EduNotificationManager.showErrorNotification(project, content = error)
@@ -111,20 +111,20 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
   @OptIn(ExperimentalStdlibApi::class)
   private suspend fun EduCourse.deleteAllTranslations() = allTasks.map {
     scope.async(Dispatchers.IO) {
-      Language.entries.forEach { language ->
+      TranslationLanguage.entries.forEach { language ->
         it.deleteTranslation(language)
       }
     }
   }.awaitAll()
 
-  private suspend fun EduCourse.isTranslationExists(language: Language): Boolean =
+  private suspend fun EduCourse.isTranslationExists(translationLanguage: TranslationLanguage): Boolean =
     readAction {
       allTasks.all {
-        it.getDescriptionFile(project, translationLanguage = language)?.exists() == true
+        it.getDescriptionFile(project, translationLanguage = translationLanguage)?.exists() == true
       }
     }
 
-  private suspend fun downloadTranslation(course: EduCourse, language: Language): Result<CourseTranslation, String> {
+  private suspend fun downloadTranslation(course: EduCourse, language: TranslationLanguage): Result<CourseTranslation, String> {
     val marketplaceId = course.marketplaceId
     val updateVersion = course.updateVersion
 
@@ -149,7 +149,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
   @RequiresBlockingContext
   private fun Task.saveTranslation(text: DescriptionText) {
     val taskDirectory = getTaskDirectory(project) ?: return
-    val name = descriptionFormat.fileNameWithTranslation(text.language)
+    val name = descriptionFormat.fileNameWithTranslation(text.language.toTranslationLanguage())
 
     try {
       GeneratorUtils.createTextChildFile(project, taskDirectory, name, text.text)
@@ -160,17 +160,17 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
     }
   }
 
-  private suspend fun Task.deleteTranslation(language: Language) {
+  private suspend fun Task.deleteTranslation(translationLanguage: TranslationLanguage) {
     try {
       val translationFile = readAction {
-        getDescriptionFile(project, translationLanguage = language)
+        getDescriptionFile(project, translationLanguage = translationLanguage)
       } ?: return
       writeAction {
         translationFile.delete(this::class.java)
       }
     }
     catch (exception: IOException) {
-      LOG.error("Failed to delete ${language.label} translation file", exception)
+      LOG.error("Failed to delete ${translationLanguage.label} translation file", exception)
       throw exception
     }
   }
