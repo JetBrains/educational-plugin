@@ -11,10 +11,12 @@ import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.network.createRetrofitBuilder
+import com.jetbrains.edu.learning.onError
 import com.jetbrains.educational.core.enum.TranslationLanguage
 import com.jetbrains.educational.core.format.domain.MarketplaceId
 import com.jetbrains.educational.core.format.domain.UpdateVersion
 import com.jetbrains.educational.translation.format.CourseTranslation
+import com.jetbrains.educational.translation.format.domain.TranslationVersion
 import io.netty.handler.codec.http.HttpResponseStatus.UNPROCESSABLE_ENTITY
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -43,6 +45,27 @@ class TranslationServiceConnector(private val scope: CoroutineScope) {
       .addConverterFactory(converterFactory)
       .build()
       .create(TranslationService::class.java)
+  }
+
+  suspend fun getLatestTranslationVersion(
+    marketplaceId: MarketplaceId,
+    updateVersion: UpdateVersion,
+    language: TranslationLanguage
+  ): Result<TranslationVersion, String> {
+    val version = scope
+      .async {
+        networkCall {
+          service
+            .getLatestCourseTranslationVersion(marketplaceId.value, updateVersion.value, language.name)
+            .handleResponse()
+        }
+      }
+      .await()
+      .onError { return Err(it) }
+    if (version == null) {
+      error("Translation version is null")
+    }
+    return Ok(version)
   }
 
   suspend fun getTranslatedCourse(
