@@ -25,8 +25,6 @@ object StepikNames {
 
   fun getClientId(): String = StepikHost.getSelectedHost().clientId
 
-  fun getClientSecret(): String = StepikHost.getSelectedHost().clientSecret
-
   fun getTokenUrl(): String = "${getStepikUrl()}/oauth2/token/"
 
   fun getStepikProfilePath(): String = "${getStepikUrl()}/users/"

@@ -75,14 +75,11 @@ fun configureSecretProperties() {
   secretProperties.extractAndStore(
     "intellij-plugin/educational-core/resources/stepik/stepik.properties",
     "stepikClientId",
-    "stepikClientSecret",
     "cogniterraClientId",
-    "cogniterraClientSecret"
   )
   secretProperties.extractAndStore(
     "intellij-plugin/educational-core/resources/hyperskill/hyperskill-oauth.properties",
     "hyperskillClientId",
-    "hyperskillClientSecret"
   )
   secretProperties.extractAndStore(
     "intellij-plugin/educational-core/resources/twitter/oauth_twitter.properties",

@@ -6,10 +6,10 @@ import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_DEFAULT_URL
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_HOST_ORDINAL_PROPERTY
 import com.jetbrains.edu.learning.stepik.StepikOAuthBundle.value
 
-enum class StepikHost(val url: String, val clientId: String, val clientSecret: String) {
+enum class StepikHost(val url: String, val clientId: String) {
 
-  PRODUCTION(STEPIK_DEFAULT_URL, value("stepikClientId"), value("stepikClientSecret")),
-  COGNITERRA(COGNITERRA_URL, value("cogniterraClientId"), value("cogniterraClientSecret"));
+  PRODUCTION(STEPIK_DEFAULT_URL, value("stepikClientId")),
+  COGNITERRA(COGNITERRA_URL, value("cogniterraClientId"));
 
   override fun toString(): String {
     return url
