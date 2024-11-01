@@ -56,12 +56,12 @@ import org.jetbrains.annotations.VisibleForTesting
  * should be applied to existing one that is done in [com.jetbrains.edu.learning.yaml.YamlLoader.loadItem].
  */
 object YamlDeserializer {
-  fun deserializeItem(configName: String, mapper: ObjectMapper, configFileText: String, parentItem: StudyItem?): StudyItem {
+  fun deserializeItem(configName: String, mapper: ObjectMapper, configFileText: String, parentItem: StudyItem?, itemFolder: String?): StudyItem {
     return when (configName) {
       COURSE_CONFIG -> mapper.deserializeCourse(configFileText)
-      SECTION_CONFIG -> mapper.deserializeSection(configFileText, parentItem as? Course)
-      LESSON_CONFIG -> mapper.deserializeLesson(configFileText, parentItem)
-      TASK_CONFIG -> mapper.deserializeTask(configFileText, parentItem as? Lesson)
+      SECTION_CONFIG -> mapper.deserializeSection(configFileText, parentItem as? Course, itemFolder)
+      LESSON_CONFIG -> mapper.deserializeLesson(configFileText, parentItem, itemFolder)
+      TASK_CONFIG -> mapper.deserializeTask(configFileText, parentItem as? Lesson, itemFolder)
       else -> loadingError(unknownConfigMessage(configName))
     }
   }
@@ -91,22 +91,22 @@ object YamlDeserializer {
     }
 
   @VisibleForTesting
-  fun ObjectMapper.deserializeSection(configFileText: String, parentCourse: Course? = null): Section {
+  fun ObjectMapper.deserializeSection(configFileText: String, parentCourse: Course? = null, sectionFolder: String? = null): Section {
     var jsonNode = readNode(configFileText)
 
-    jsonNode = migrateStudyItemYamlTree(jsonNode, parentCourse, "No course is specified during section migration") { node, course ->
-      migrateSection(node, course)
+    jsonNode = migrateStudyItemYamlTree(jsonNode, parentCourse, sectionFolder) { node, course, folder ->
+      migrateSection(node, course, folder)
     }
 
     return treeToValue(jsonNode, Section::class.java)
   }
 
   @VisibleForTesting
-  fun ObjectMapper.deserializeLesson(configFileText: String, parentItem: StudyItem? = null): Lesson {
+  fun ObjectMapper.deserializeLesson(configFileText: String, parentItem: StudyItem? = null, lessonFolder: String? = null): Lesson {
     var treeNode = readNode(configFileText)
 
-    treeNode = migrateStudyItemYamlTree(treeNode, parentItem, "No parent item is specified during lesson migration") { node, item ->
-      migrateLesson(node, item)
+    treeNode = migrateStudyItemYamlTree(treeNode, parentItem, lessonFolder) { node, item, folder ->
+      migrateLesson(node, item, folder)
     }
 
     val type = asText(treeNode.get(YamlMixinNames.TYPE))
@@ -120,11 +120,11 @@ object YamlDeserializer {
   }
 
   @VisibleForTesting
-  fun ObjectMapper.deserializeTask(configFileText: String, parentLesson: Lesson? = null): Task {
+  fun ObjectMapper.deserializeTask(configFileText: String, parentLesson: Lesson? = null, taskFolder: String? = null): Task {
     var treeNode = readNode(configFileText)
 
-    treeNode = migrateStudyItemYamlTree(treeNode, parentLesson, "No lesson is specified during task migration") { node, lesson ->
-      migrateTask(node, lesson)
+    treeNode = migrateStudyItemYamlTree(treeNode, parentLesson, taskFolder) { node, lesson, folder ->
+      migrateTask(node, lesson, folder)
     }
 
     val type = asText(treeNode.get(YamlMixinNames.TYPE))
@@ -154,18 +154,18 @@ object YamlDeserializer {
   private fun <T : StudyItem> ObjectMapper.migrateStudyItemYamlTree(
     treeNode: JsonNode,
     parentItem: T?,
-    errorMessage: String,
-    migrateAction: YamlMigrator.(ObjectNode, T) -> ObjectNode
+    itemFolder: String?,
+    migrateAction: YamlMigrator.(ObjectNode, T, String) -> ObjectNode
   ): JsonNode {
     val migrator = YamlMigrator(this)
 
     // treeNode must be ObjectNode, but we don't throw an error right now to get more specific error messages later
     if (treeNode is ObjectNode && migrator.needMigration()) {
-      if (parentItem != null) {
-        return migrator.migrateAction(treeNode, parentItem)
+      if (parentItem != null && itemFolder != null) {
+        return migrator.migrateAction(treeNode, parentItem, itemFolder)
       }
       else {
-        LOG.severe(errorMessage)
+        LOG.severe("No parent item or item folder is specified during migration")
       }
     }
 
