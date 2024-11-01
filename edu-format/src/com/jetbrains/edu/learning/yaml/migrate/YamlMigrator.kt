@@ -39,20 +39,20 @@ class YamlMigrator(private val mapper: ObjectMapper) {
     mapper.setEduValue(YAML_VERSION_MAPPER_KEY, yamlVersion)
 
     return runMigrationSteps(configTree) {
-      migrateCourse(it)
+      migrateCourse(mapper, it)
     }
   }
 
-  fun migrateSection(configTree: ObjectNode, parentCourse: Course): ObjectNode = runMigrationSteps(configTree) {
-    migrateSection(it, parentCourse)
+  fun migrateSection(configTree: ObjectNode, parentCourse: Course, sectionFolder: String): ObjectNode = runMigrationSteps(configTree) {
+    migrateSection(mapper, it, parentCourse, sectionFolder)
   }
 
-  fun migrateLesson(configTree: ObjectNode, parentItem: StudyItem): ObjectNode = runMigrationSteps(configTree) {
-    migrateLesson(it, parentItem)
+  fun migrateLesson(configTree: ObjectNode, parentItem: StudyItem, lessonFolder: String): ObjectNode = runMigrationSteps(configTree) {
+    migrateLesson(mapper, it, parentItem, lessonFolder)
   }
 
-  fun migrateTask(configTree: ObjectNode, parentLesson: Lesson): ObjectNode = runMigrationSteps(configTree) {
-    migrateTask(it, parentLesson)
+  fun migrateTask(configTree: ObjectNode, parentLesson: Lesson, taskFolder: String): ObjectNode = runMigrationSteps(configTree) {
+    migrateTask(mapper, it, parentLesson, taskFolder)
   }
 
   private fun runMigrationSteps(configTree: ObjectNode, migrateItem: YamlMigrationStep.(ObjectNode) -> ObjectNode): ObjectNode {

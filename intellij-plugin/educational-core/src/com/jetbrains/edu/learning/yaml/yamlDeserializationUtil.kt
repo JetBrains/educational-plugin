@@ -33,7 +33,7 @@ fun deserializeItemProcessingErrors(
   val configName = configFile.name
   return ProgressManager.getInstance().computeInNonCancelableSection<StudyItem, Exception> {
     try {
-      YamlDeserializer.deserializeItem(configName, mapper, configFileText, parentItem)
+      YamlDeserializer.deserializeItem(configName, mapper, configFileText, parentItem, configFile.parent?.name)
     }
     catch (e: Exception) {
       processErrors(project, configFile, e)
