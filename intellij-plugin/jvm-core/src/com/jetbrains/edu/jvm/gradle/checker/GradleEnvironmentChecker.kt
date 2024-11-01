@@ -23,7 +23,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 
-class GradleEnvironmentChecker : EnvironmentChecker() {
+open class GradleEnvironmentChecker : EnvironmentChecker() {
   override fun getEnvironmentError(project: Project, task: Task): CheckResult? {
     val sdk = ProjectRootManager.getInstance(project).projectSdk ?: return noSdkConfiguredResult
 
