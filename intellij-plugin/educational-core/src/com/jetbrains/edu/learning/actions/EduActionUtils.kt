@@ -1,8 +1,9 @@
 package com.jetbrains.edu.learning.actions
 
-import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformDataKeys.LAST_ACTIVE_FILE_EDITOR
-import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.command.UndoConfirmationPolicy
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.command.undo.UndoManager
@@ -13,28 +14,23 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.checkIsBackgroundThread
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.getContainingTask
-import com.jetbrains.edu.learning.isUnitTestMode
-import com.jetbrains.edu.learning.selectedTaskFile
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
-import javax.swing.JComponent
 
 object EduActionUtils {
   /**
-   * @see [com.jetbrains.edu.ai.hints.action.GetHint]
+   * @see [com.jetbrains.edu.aiHints.core.action.GetHint]
    */
   @NonNls
   const val GET_HINT_ACTION_ID: String = "Educational.Hints.GetHint"
@@ -47,7 +43,7 @@ object EduActionUtils {
    * @see [com.jetbrains.edu.aiHints.core.action.GetHint]
    */
   fun isGetHintAvailable(task: Task): Boolean {
-    if (!Registry.`is`("ai.get.hint.action", true)) return false
+    if (!isFeatureEnabled(EduExperimentalFeatures.AI_HINTS)) return false
     val course = task.course
     return course.languageId == EduFormatNames.KOTLIN && course.isStudy && task is EduTask && task.status == CheckStatus.Failed
   }
@@ -133,15 +129,6 @@ object EduActionUtils {
       }
       catch (ignored: TimeoutException) {
       }
-    }
-  }
-
-  fun performAction(action: AnAction, component: JComponent, place: String, presentation: Presentation) {
-    val dataContext = ActionToolbar.getDataContextFor(component)
-    val event = AnActionEvent.createFromInputEvent(null, place, presentation, dataContext)
-
-    if (ActionUtil.lastUpdateAndCheckDumb(action, event, true)) {
-      ActionUtil.performActionDumbAwareWithCallbacks(action, event)
     }
   }
 

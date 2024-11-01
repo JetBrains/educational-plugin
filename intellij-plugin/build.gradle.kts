@@ -201,8 +201,6 @@ allprojects {
     implementationWithoutKotlin(rootProject.libs.retrofit)
     implementationWithoutKotlin(rootProject.libs.converter.jackson)
     implementationWithoutKotlin(rootProject.libs.kotlin.css.jvm)
-    implementationWithoutKotlin(rootProject.libs.educational.ml.library.core)
-    implementationWithoutKotlin(rootProject.libs.educational.ml.library.hints)
 
     testImplementation(rootProject.libs.junit)
     testImplementation(rootProject.libs.openTest4J)
@@ -319,6 +317,8 @@ dependencies {
     pluginModule(implementation(project("github")))
     pluginModule(implementation(project("remote-env")))
     pluginModule(implementation(project("features:command-line")))
+    pluginModule(implementation(project("features:ai-hints-core")))
+    pluginModule(implementation(project("features:ai-hints-kotlin")))
     // BACKCOMPAT: 2024.1
     if (isAtLeast242) {
       // bundled localization resources can be used only since 2024.2,
@@ -974,6 +974,47 @@ project("features:command-line") {
   }
 }
 
+project("features:ai-hints-core") {
+  dependencies {
+    intellijPlatform {
+      intellijIde(baseVersion)
+    }
+
+    implementation(project(":intellij-plugin:educational-core"))
+    implementation(project(":intellij-plugin:AI"))
+    api(rootProject.libs.educational.ml.library.core) {
+      excludeKotlinDeps()
+      exclude(group = "net.java.dev.jna", module = "jna")
+      exclude(group = "net.java.dev.jna", module = "jna-platform")
+      exclude(group = "it.unimi.dsi", module = "fastutil-core")
+    }
+    api(rootProject.libs.educational.ml.library.hints) {
+      excludeKotlinDeps()
+      exclude(group = "net.java.dev.jna", module = "jna")
+      exclude(group = "net.java.dev.jna", module = "jna-platform")
+      exclude(group = "it.unimi.dsi", module = "fastutil-core")
+    }
+
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+  }
+}
+
+project("features:ai-hints-kotlin") {
+  dependencies {
+    intellijPlatform {
+      intellijIde(baseVersion)
+
+      intellijPlugins(kotlinPlugin)
+    }
+
+    implementation(project(":intellij-plugin:educational-core"))
+    implementation(project(":intellij-plugin:features:ai-hints-core"))
+
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+    testImplementation(project(":intellij-plugin:features:ai-hints-core", "testOutput"))
+  }
+}
+
 data class TypeWithVersion(val type: IntelliJPlatformType, val version: String)
 
 fun String.toTypeWithVersion(): TypeWithVersion {
@@ -1037,9 +1078,6 @@ fun <T : ModuleDependency> T.excludeKotlinDeps() {
   exclude(module = "kotlin-stdlib-jdk7")
   exclude(module = "kotlinx-coroutines-core")
   exclude(module = "kotlinx-coroutines-core-jvm")
-  exclude(group = "net.java.dev.jna", module = "jna")
-  exclude(group = "net.java.dev.jna", module = "jna-platform")
-  exclude(group = "it.unimi.dsi", module = "fastutil-core")
 }
 
 fun parseManifest(file: File): Node {

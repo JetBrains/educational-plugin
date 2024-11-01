@@ -20,22 +20,6 @@
     <action id="Educational.UpdateCourseTranslation"
             class="com.jetbrains.edu.ai.translation.action.UpdateCourseTranslation"
             internal="true"/>
-
-    <action id="Educational.Hints.GetHint"
-            class="com.jetbrains.edu.ai.hints.action.GetHint"
-            internal="true"/>
-
-    <action id="Educational.Hints.AcceptHint"
-            class="com.jetbrains.edu.ai.hints.action.AcceptHint"
-            internal="true">
-      <add-to-group group-id="Diff.ViewerToolbar" anchor="before" relative-to-action="Educational.Hints.CancelHint"/>
-    </action>
-
-    <action id="Educational.Hints.CancelHint"
-            class="com.jetbrains.edu.ai.hints.action.CancelHint"
-            internal="true">
-      <add-to-group group-id="Diff.ViewerToolbar" anchor="after" relative-to-action="Educational.Hints.AcceptHint"/>
-    </action>
   </actions>
 
   <extensionPoints>
@@ -60,8 +44,6 @@
     <registryKey key="edu.ai.translation.update.check.interval"
                  description="Sets the course translation update check interval in seconds"
                  defaultValue="3600"/>
-
-    <registryKey defaultValue="true" description="Makes Get Hint action available (Kotlin courses only)" key="ai.get.hint.action"/>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">

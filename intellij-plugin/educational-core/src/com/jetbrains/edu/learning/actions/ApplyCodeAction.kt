@@ -28,7 +28,6 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.EduActionUtils.closeLastActiveFileEditor
 import com.jetbrains.edu.learning.courseDir
-import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import org.jetbrains.annotations.NonNls
@@ -73,10 +72,8 @@ open class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
       return
     }
 
-    project.invokeLater {
-      project.closeLastActiveFileEditor(e)
-    }
-    showSuccessfulNotification(project)
+    project.closeLastActiveFileEditor(e)
+    afterActionPerformed(project)
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
@@ -144,7 +141,7 @@ open class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
     EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.failed.text")
   )
 
-  open fun showSuccessfulNotification(project: Project) = EduNotificationManager.showInfoNotification(
+  open fun afterActionPerformed(project: Project) = EduNotificationManager.showInfoNotification(
     project,
     @Suppress("DialogTitleCapitalization") EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.success.title"),
     EduCoreBundle.message("action.Educational.Student.ApplyCode.notification.success.text")
