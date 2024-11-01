@@ -34,6 +34,10 @@
                              bundle="messages.EduAIBundle"/>
 
     <applicationService serviceImplementation="com.jetbrains.edu.ai.translation.settings.TranslationSettings"/>
+
+    <registryKey key="edu.ai.translation.update.check.interval"
+                 description="Sets the course translation update check interval in seconds"
+                 defaultValue="3600"/>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">

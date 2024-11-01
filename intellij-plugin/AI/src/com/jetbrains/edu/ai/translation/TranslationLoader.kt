@@ -70,9 +70,43 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
           }
 
           val translation = fetchTranslation(course, translationLanguage)
-          val properties = translation.toTranslationProperties()
           course.saveTranslation(translation)
-          translationSettings.setTranslation(properties)
+          translationSettings.setTranslation(translation.toTranslationProperties())
+        }
+      }
+      finally {
+        unlock()
+      }
+    }
+  }
+
+  fun updateTranslation(course: EduCourse, translationProperties: TranslationProperties) {
+    scope.launch {
+      try {
+        if (!lock()) {
+          EduNotificationManager.showErrorNotification(
+            project,
+            content = EduAIBundle.message("ai.translation.already.running")
+          )
+          return@launch
+        }
+        withBackgroundProgress(project, EduAIBundle.message("ai.translation.update.course.translation")) {
+          val (language, _, version) = translationProperties
+          val translation = fetchTranslation(course, language)
+          val translationSettings = project.translationSettings()
+          if (version == translation.id) {
+            EduNotificationManager.showInfoNotification(
+              project,
+              content = EduAIBundle.message("ai.translation.translation.is.up.to.date")
+            )
+            return@withBackgroundProgress
+          }
+          course.saveTranslation(translation)
+          translationSettings.setTranslation(translation.toTranslationProperties())
+          EduNotificationManager.showInfoNotification(
+            project,
+            content = EduAIBundle.message("ai.translation.translation.has.been.updated")
+          )
         }
       }
       finally {
