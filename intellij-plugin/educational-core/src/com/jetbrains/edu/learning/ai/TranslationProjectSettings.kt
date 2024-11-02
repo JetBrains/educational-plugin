@@ -6,7 +6,6 @@ import com.jetbrains.edu.learning.ai.TranslationProjectSettings.TranslationProje
 import com.jetbrains.educational.core.enum.TranslationLanguage
 import com.jetbrains.educational.translation.format.domain.TranslationVersion
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.concurrent.ConcurrentHashMap
 
@@ -15,25 +14,27 @@ fun Project.translationSettings(): TranslationProjectSettings = service()
 @Service(Service.Level.PROJECT)
 @State(name = "TranslationProjectSettings", reloadable = true, storages = [Storage("edu_translation.xml")])
 class TranslationProjectSettings : PersistentStateComponent<TranslationProjectState> {
-  private val _translationLanguage = MutableStateFlow<TranslationLanguage?>(null)
-  val translationLanguage: StateFlow<TranslationLanguage?> = _translationLanguage.asStateFlow()
+  private val _translationProperties = MutableStateFlow<TranslationProperties?>(null)
+  val translationProperties = _translationProperties.asStateFlow()
   private val translationLanguageVersions = ConcurrentHashMap<TranslationLanguage, TranslationVersion>()
 
   fun setTranslation(properties: TranslationProperties?) {
     if (properties == null) {
-      _translationLanguage.value = null
+      _translationProperties.value = null
       return
     }
     val (language, version) = properties
-    _translationLanguage.value = language
     translationLanguageVersions[language] = version
+    _translationProperties.value = properties
   }
 
-  fun getTranslationVersion(language: TranslationLanguage): TranslationVersion? = translationLanguageVersions[language]
+  fun getTranslationProperties(): TranslationProperties? = translationProperties.value
+
+  fun getTranslationVersion(): TranslationVersion? = translationProperties.value?.version
 
   override fun getState(): TranslationProjectState {
     val state = TranslationProjectState()
-    state.currentTranslationLanguage = translationLanguage.value
+    state.currentTranslationLanguage = translationProperties.value?.language
     state.translationVersions = translationLanguageVersions.mapValuesTo(mutableMapOf()) { (_, value) -> value.value }
     return state
   }
@@ -44,9 +45,8 @@ class TranslationProjectSettings : PersistentStateComponent<TranslationProjectSt
       translationLanguageVersions[language] = TranslationVersion(version)
     }
     val language = state.currentTranslationLanguage ?: return
-    if (getTranslationVersion(language) != null) {
-      _translationLanguage.value = language
-    }
+    val version = translationLanguageVersions[language] ?: return
+    _translationProperties.value = TranslationProperties(language, version)
   }
 
   class TranslationProjectState : BaseState() {

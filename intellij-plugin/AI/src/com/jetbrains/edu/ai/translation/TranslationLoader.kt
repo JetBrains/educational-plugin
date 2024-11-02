@@ -59,7 +59,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
         }
         withBackgroundProgress(project, EduAIBundle.message("ai.translation.getting.course.translation")) {
           val translationSettings = project.translationSettings()
-          val version = translationSettings.getTranslationVersion(translationLanguage)
+          val version = translationSettings.getTranslationVersion()
           if (version != null && course.isTranslationExists(translationLanguage)) {
             translationSettings.setTranslation(TranslationProperties(translationLanguage, version))
             return@withBackgroundProgress
