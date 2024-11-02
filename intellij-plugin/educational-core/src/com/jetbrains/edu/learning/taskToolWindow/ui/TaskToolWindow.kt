@@ -69,7 +69,7 @@ abstract class TaskToolWindow(protected val project: Project) : Disposable {
         runReadAction {
           openedTask.getFormattedTaskText(
             project,
-            translationLanguage = project.translationSettings().getTranslationLanguage()
+            translationLanguage = project.translationSettings().translationLanguage
           )
         }
       } ?: return EduCoreBundle.message("label.open.task")

@@ -27,7 +27,7 @@ class CourseTranslationDialog(private val project: Project, course: EduCourse) :
   init {
     title = EduAIBundle.message("ai.translation.course.translation.dialog.title")
 
-    val currentTranslationLanguage = project.translationSettings().getTranslationLanguage()
+    val currentTranslationLanguage = project.translationSettings().translationLanguage
     selectedLanguage = if (currentTranslationLanguage.isNotSource()) {
       currentTranslationLanguage
     } else {
@@ -101,7 +101,7 @@ class CourseTranslationDialog(private val project: Project, course: EduCourse) :
   private fun TranslationLanguage?.isNotSource(): Boolean = this != null && code != courseSourceLanguage.code
 
   private fun TranslationLanguage?.isNew(): Boolean =
-    isNotSource() && this != project.translationSettings().getTranslationLanguage()
+    isNotSource() && this != project.translationSettings().translationLanguage
 
   private inner class LanguageComboBoxModel : DefaultComboBoxModel<TranslationLanguage>() {
     init {
