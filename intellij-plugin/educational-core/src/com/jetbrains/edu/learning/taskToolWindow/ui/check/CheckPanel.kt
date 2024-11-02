@@ -10,6 +10,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.ui.InlineBanner
 import com.intellij.util.Alarm
 import com.intellij.util.ui.AsyncProcessIcon
+import com.intellij.util.ui.JBDimension
 import com.intellij.util.ui.JBEmptyBorder
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
@@ -34,6 +35,7 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.ui.getUICheckLabel
 import java.awt.BorderLayout
 import java.awt.Dimension
+import javax.swing.BoxLayout
 import javax.swing.JPanel
 
 class CheckPanel(private val project: Project, private val parentDisposable: Disposable) : JPanel(BorderLayout()) {
@@ -41,17 +43,20 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
   private val checkActionsPanel: JPanel = JPanel(BorderLayout())
   private val linkPanel = JPanel(BorderLayout())
   private val checkDetailsPlaceholder: JPanel = JPanel(BorderLayout())
-  private val leftActionsToolbar: JPanel = JPanel(BorderLayout())
+  private val leftActionsToolbar: JPanel = JPanel()
   private val checkButtonWrapper = JPanel(BorderLayout())
   private val getHintButtonWrapper = JPanel(BorderLayout())
   private val rightActionsToolbar: ActionToolbar = createRightActionToolbar()
+  private val runActionsToolbar: ActionToolbar = createRunActionToolbar()
   private val course = project.course
   private val checkTimeAlarm: Alarm = Alarm(parentDisposable)
   private val asyncProcessIcon = AsyncProcessIcon("Submitting...")
 
   init {
-    leftActionsToolbar.add(checkButtonWrapper, BorderLayout.WEST)
-    leftActionsToolbar.add(getHintButtonWrapper, BorderLayout.EAST)
+    leftActionsToolbar.layout = BoxLayout(leftActionsToolbar, BoxLayout.X_AXIS)
+    leftActionsToolbar.add(checkButtonWrapper)
+    leftActionsToolbar.add(getHintButtonWrapper)
+    leftActionsToolbar.add(runActionsToolbar.component)
     checkActionsPanel.add(leftActionsToolbar, BorderLayout.WEST)
     checkActionsPanel.add(checkFinishedPanel, BorderLayout.CENTER)
     checkActionsPanel.add(rightActionsToolbar.component, BorderLayout.EAST)
@@ -131,6 +136,15 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
       setActionButtonBorder(2, 0)
       minimumButtonSize = Dimension(28, 28)
       border = JBEmptyBorder(5, 0, 0, 0)
+    }
+  }
+
+  private fun createRunActionToolbar(): ActionToolbar {
+    val actionGroup = ActionManager.getInstance().getAction("Educational.CheckPanel.Running") as ActionGroup
+    return ActionToolbarImpl(ACTION_PLACE, actionGroup, true).apply {
+      targetComponent = this@CheckPanel
+      minimumButtonSize = JBDimension(28, 28)
+      border = JBEmptyBorder(8, 0, 0, 0)
     }
   }
 

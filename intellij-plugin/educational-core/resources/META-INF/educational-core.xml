@@ -107,6 +107,10 @@
   <actions>
     <action id="Educational.ImportLocalCourse" class="com.jetbrains.edu.learning.actions.ImportLocalCourseAction"/>
     <action id="Educational.Check" class="com.jetbrains.edu.learning.actions.CheckAction"/>
+    <action id="Educational.Run"
+            class="com.jetbrains.edu.learning.actions.RunTaskAction"
+            icon="AllIcons.Actions.Execute"
+    />
     <action id="Educational.Retry" class="com.jetbrains.edu.learning.actions.RetryAction"/>
     <action id="Educational.PrevPlaceholder"
             class="com.jetbrains.edu.learning.actions.PrevPlaceholderAction"
@@ -279,6 +283,10 @@
     <action id="Educational.LeaveInIdeFeedbackAction"
             class="com.jetbrains.edu.learning.actions.LeaveInIdeFeedbackAction"
             icon="com.jetbrains.edu.EducationalCoreIcons.Actions.CommentTask"/>
+
+    <group id="Educational.CheckPanel.Running">
+      <reference id="Educational.Run"/>
+    </group>
 
     <group id="Educational.CheckPanel.Right">
       <reference id="Educational.RefreshTask"/>
