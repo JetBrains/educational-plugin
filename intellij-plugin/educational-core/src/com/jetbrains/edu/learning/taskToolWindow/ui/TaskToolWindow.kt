@@ -22,7 +22,7 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.ui.update.MergingUpdateQueue
 import com.intellij.util.ui.update.Update
 import com.jetbrains.edu.learning.JavaUILibrary
-import com.jetbrains.edu.learning.ai.TranslationProjectSettings
+import com.jetbrains.edu.learning.ai.translationSettings
 import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.courseFormat.ext.getFormattedTaskText
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -69,7 +69,7 @@ abstract class TaskToolWindow(protected val project: Project) : Disposable {
         runReadAction {
           openedTask.getFormattedTaskText(
             project,
-            translationLanguage = TranslationProjectSettings.getCurrentTranslationLanguage(project)
+            translationLanguage = project.translationSettings().getTranslationLanguage()
           )
         }
       } ?: return EduCoreBundle.message("label.open.task")

@@ -85,7 +85,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
           )
           return@launch
         }
-        if (TranslationProjectSettings.getCurrentTranslationLanguage(project) != null) {
+        if (TranslationProjectSettings.isCourseTranslated(project)) {
           withBackgroundProgress(project, EduAIBundle.message("ai.translation.reset.course.translation")) {
             TranslationProjectSettings.resetTranslation(project)
           }

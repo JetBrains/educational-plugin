@@ -9,6 +9,7 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.translation.settings.translationSettings
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
+import com.jetbrains.edu.learning.ai.translationSettings
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.ui.EduColors
 import com.jetbrains.educational.core.enum.Language
@@ -26,7 +27,7 @@ class CourseTranslationDialog(private val project: Project, course: EduCourse) :
   init {
     title = EduAIBundle.message("ai.translation.course.translation.dialog.title")
 
-    val currentTranslationLanguage = TranslationProjectSettings.getCurrentTranslationLanguage(project)
+    val currentTranslationLanguage = project.translationSettings().getTranslationLanguage()
     selectedLanguage = if (currentTranslationLanguage.isNotSource()) {
       currentTranslationLanguage
     } else {
@@ -100,7 +101,7 @@ class CourseTranslationDialog(private val project: Project, course: EduCourse) :
   private fun TranslationLanguage?.isNotSource(): Boolean = this != null && code != courseSourceLanguage.code
 
   private fun TranslationLanguage?.isNew(): Boolean =
-    isNotSource() && this != TranslationProjectSettings.getCurrentTranslationLanguage(project)
+    isNotSource() && this != project.translationSettings().getTranslationLanguage()
 
   private inner class LanguageComboBoxModel : DefaultComboBoxModel<TranslationLanguage>() {
     init {

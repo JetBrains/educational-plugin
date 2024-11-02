@@ -28,6 +28,8 @@ class TranslationProjectSettings : PersistentStateComponent<TranslationProjectSt
     _translationProperties.value = properties
   }
 
+  fun getTranslationLanguage(): TranslationLanguage? = translationProperties.value?.language
+
   fun getTranslationProperties(): TranslationProperties? = translationProperties.value
 
   fun getTranslationVersion(): TranslationVersion? = translationProperties.value?.version
@@ -55,10 +57,7 @@ class TranslationProjectSettings : PersistentStateComponent<TranslationProjectSt
   }
 
   companion object {
-    fun getCurrentTranslationLanguage(project: Project): TranslationLanguage? =
-      project.translationSettings().state.currentTranslationLanguage
-
-    fun isCourseTranslated(project: Project): Boolean = getCurrentTranslationLanguage(project) != null
+    fun isCourseTranslated(project: Project): Boolean = project.translationSettings().getTranslationLanguage() != null
 
     fun resetTranslation(project: Project) {
       project.translationSettings().setTranslation(null)
