@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.ai
 
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.ai.CourseStructureNames.Companion.serializeToCourseStructureTranslation
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings.TranslationProjectState
 import com.jetbrains.educational.core.enum.TranslationLanguage
 import com.jetbrains.educational.translation.format.domain.TranslationVersion
@@ -16,6 +17,7 @@ fun Project.translationSettings(): TranslationProjectSettings = service()
 class TranslationProjectSettings : PersistentStateComponent<TranslationProjectState> {
   private val _translationProperties = MutableStateFlow<TranslationProperties?>(null)
   val translationProperties = _translationProperties.asStateFlow()
+  private val structureTranslations = ConcurrentHashMap<TranslationLanguage, CourseStructureNames>()
   private val translationLanguageVersions = ConcurrentHashMap<TranslationLanguage, TranslationVersion>()
 
   fun setTranslation(properties: TranslationProperties?) {
@@ -23,36 +25,49 @@ class TranslationProjectSettings : PersistentStateComponent<TranslationProjectSt
       _translationProperties.value = null
       return
     }
-    val (language, version) = properties
-    translationLanguageVersions[language] = version
+    val language = properties.language
+    structureTranslations[language] = properties.structureTranslation
+    translationLanguageVersions[language] = properties.version
     _translationProperties.value = properties
   }
+
+  val structureTranslation : CourseStructureNames?
+    get() = translationProperties.value?.structureTranslation
 
   val translationLanguage: TranslationLanguage?
     get() = translationProperties.value?.language
 
-  val translationVersion: TranslationVersion?
-    get() = translationProperties.value?.version
+  fun getTranslationPropertiesByLanguage(language: TranslationLanguage): TranslationProperties? {
+    val structure = structureTranslations[language] ?: return null
+    val version = translationLanguageVersions[language] ?: return null
+    return TranslationProperties(language, structure, version)
+  }
 
   override fun getState(): TranslationProjectState {
     val state = TranslationProjectState()
     state.currentTranslationLanguage = translationProperties.value?.language
+    state.structureTranslation = structureTranslations.mapValuesTo(mutableMapOf()) { (_, value) -> value.deserialize() }
     state.translationVersions = translationLanguageVersions.mapValuesTo(mutableMapOf()) { (_, value) -> value.value }
     return state
   }
 
   override fun loadState(state: TranslationProjectState) {
+    structureTranslations.clear()
+    for ((language, serializedStructure) in state.structureTranslation) {
+      structureTranslations[language] = serializedStructure.serializeToCourseStructureTranslation()
+    }
     translationLanguageVersions.clear()
     for ((language, version) in state.translationVersions) {
       translationLanguageVersions[language] = TranslationVersion(version)
     }
+
     val language = state.currentTranslationLanguage ?: return
-    val version = translationLanguageVersions[language] ?: return
-    _translationProperties.value = TranslationProperties(language, version)
+    _translationProperties.value = getTranslationPropertiesByLanguage(language)
   }
 
   class TranslationProjectState : BaseState() {
     var currentTranslationLanguage by enum<TranslationLanguage>()
+    var structureTranslation by map<TranslationLanguage, String>()
     var translationVersions by map<TranslationLanguage, Int>()
   }
 

@@ -13,6 +13,7 @@ import com.jetbrains.edu.ai.translation.connector.TranslationServiceConnector
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
+import com.jetbrains.edu.learning.ai.CourseStructureNames
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.ai.TranslationProperties
 import com.jetbrains.edu.learning.ai.translationSettings
@@ -59,14 +60,19 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
         }
         withBackgroundProgress(project, EduAIBundle.message("ai.translation.getting.course.translation")) {
           val translationSettings = project.translationSettings()
-          val version = translationSettings.translationVersion
-          if (version != null && course.isTranslationExists(translationLanguage)) {
-            translationSettings.setTranslation(TranslationProperties(translationLanguage, version))
-            return@withBackgroundProgress
+
+          if (course.isTranslationExists(translationLanguage)) {
+            val properties = translationSettings.getTranslationPropertiesByLanguage(translationLanguage)
+            if (properties != null) {
+              translationSettings.setTranslation(properties)
+              return@withBackgroundProgress
+            }
           }
+
           val translation = fetchTranslation(course, translationLanguage)
+          val properties = translation.toTranslationProperties()
           course.saveTranslation(translation)
-          translationSettings.setTranslation(TranslationProperties(translationLanguage, translation.id))
+          translationSettings.setTranslation(properties)
         }
       }
       finally {
@@ -173,6 +179,11 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
       LOG.error("Failed to delete ${translationLanguage.label} translation file", exception)
       throw exception
     }
+  }
+
+  private fun CourseTranslation.toTranslationProperties(): TranslationProperties {
+    val structureTranslation = CourseStructureNames(taskNames, lessonNames, sectionNames)
+    return TranslationProperties(language.toTranslationLanguage(), structureTranslation, id)
   }
 
   companion object {
