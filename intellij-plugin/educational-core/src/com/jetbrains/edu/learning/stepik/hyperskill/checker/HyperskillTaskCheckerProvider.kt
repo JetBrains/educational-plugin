@@ -8,7 +8,6 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_PROJECTS_URL
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 class HyperskillTaskCheckerProvider(private val baseProvider: TaskCheckerProvider) : TaskCheckerProvider {
@@ -47,6 +46,4 @@ class HyperskillTaskCheckerProvider(private val baseProvider: TaskCheckerProvide
       override fun clearState() = checker.clearState()
     }
   }
-  override fun getTheoryTaskChecker(task: TheoryTask, project: Project): TheoryTaskChecker =
-    baseProvider.getTheoryTaskChecker(task, project)
 }
