@@ -2,9 +2,12 @@ package com.jetbrains.edu.learning.ai
 
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.ai.CourseStructureNames.Companion.getTranslatedName
 import com.jetbrains.edu.learning.ai.CourseStructureNames.Companion.serializeToCourseStructureTranslation
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings.TranslationProjectState
+import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.educational.core.enum.TranslationLanguage
+import com.jetbrains.educational.core.format.domain.StudyItemName
 import com.jetbrains.educational.translation.format.domain.TranslationVersion
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -76,6 +79,11 @@ class TranslationProjectSettings : PersistentStateComponent<TranslationProjectSt
 
     fun resetTranslation(project: Project) {
       project.translationSettings().setTranslation(null)
+    }
+
+    fun getStudyItemTranslatedName(project: Project, item: StudyItem): StudyItemName? {
+      val courseStructureNames = project.translationSettings().structureTranslation ?: return null
+      return courseStructureNames.getTranslatedName(item)
     }
   }
 }

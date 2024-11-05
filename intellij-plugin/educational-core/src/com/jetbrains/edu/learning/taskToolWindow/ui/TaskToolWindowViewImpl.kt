@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.taskToolWindow.ui
 
+import com.intellij.ide.projectView.ProjectView
 import com.intellij.ide.ui.LafManagerListener
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.DataProvider
@@ -73,6 +74,7 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
         withContext(Dispatchers.EDT) {
           updateHeaders()
           updateTaskDescription()
+          ProjectView.getInstance(project).refresh()
         }
       }
     }
