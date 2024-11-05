@@ -47,6 +47,8 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.navigationMap.NavigationMapT
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType.SUBMISSIONS_TAB
+import com.jetbrains.educational.core.format.domain.LessonEduId
+import com.jetbrains.educational.core.format.domain.TaskEduId
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -69,6 +71,7 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
     scope.launch {
       project.translationSettings().translationProperties.collectLatest {
         withContext(Dispatchers.EDT) {
+          updateHeaders()
           updateTaskDescription()
         }
       }
@@ -83,8 +86,7 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
       checkPanel.isVisible = value != null
       updateCheckPanel(value)
       updateNavigationPanel(value)
-      taskName.text = value?.presentableName ?: EduCoreBundle.message("item.task.title")
-      lessonHeader.setHeaderText(value?.lesson?.presentableName)
+      updateHeaders(value)
       updateTabs(value)
       HyperskillMetricsService.getInstance().viewEvent(value)
       EduCounterUsageCollector.viewEvent(value)
@@ -183,6 +185,24 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
 
   override fun updateTaskDescriptionTab(task: Task?) {
     tabManager.updateTaskDescription(task)
+  }
+
+  private fun updateHeaders(task: Task? = currentTask) {
+    if (task == null) {
+      taskName.text = EduCoreBundle.message("item.task.title")
+      return
+    }
+
+    val structureTranslation = project.translationSettings().structureTranslation
+
+    val taskEduId = TaskEduId(task.id)
+    val translatedTaskName = structureTranslation?.taskNames?.get(taskEduId)
+    taskName.text = translatedTaskName?.value ?: task.presentableName
+
+    val lesson = task.lesson
+    val lessonEduId = LessonEduId(lesson.id)
+    val translatedLessonName = structureTranslation?.lessonNames?.get(lessonEduId)
+    lessonHeader.setHeaderText(translatedLessonName?.value ?: lesson.presentableName)
   }
 
   override fun updateTaskDescription() {
