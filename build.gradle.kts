@@ -38,7 +38,6 @@ allprojects {
   }
 
   repositories {
-    mavenLocal()
     mavenCentral()
     maven("https://cache-redirector.jetbrains.com/intellij-dependencies")
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-js-wrappers")
