@@ -53,10 +53,7 @@ class CourseTranslationDialog(private val project: Project, course: EduCourse) :
     minimumSize = JBUI.size(WIDTH, HEIGHT)
   }
 
-  fun getLanguage(): TranslationLanguage? {
-    if (!showAndGet()) return null
-    return selectedLanguage
-  }
+  fun getLanguage(): TranslationLanguage? = selectedLanguage
 
   private fun Row.translateToCheckBox(): Cell<JBCheckBox> =
     checkBox(EduAIBundle.message("ai.translation.translate.to.label"))
@@ -72,8 +69,8 @@ class CourseTranslationDialog(private val project: Project, course: EduCourse) :
           close(OK_EXIT_CODE)
         }
         else if (!it.isSelected) {
-          TranslationProjectSettings.resetTranslation(project)
-          close(CANCEL_EXIT_CODE)
+          selectedLanguage = null
+          close(OK_EXIT_CODE)
         }
       }
 

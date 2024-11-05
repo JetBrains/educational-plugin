@@ -7,6 +7,7 @@ import com.jetbrains.edu.ai.translation.TranslationLoader
 import com.jetbrains.edu.ai.translation.dialog.CourseTranslationDialog
 import com.jetbrains.edu.ai.ui.EducationalAIIcons
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
+import com.jetbrains.edu.learning.ai.translationSettings
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 
@@ -25,8 +26,15 @@ class AITranslation : DumbAwareAction() {
     val course = project.course as? EduCourse ?: return
     if (!course.isMarketplaceRemote) return
 
-    val selectedLanguage = CourseTranslationDialog(project, course).getLanguage() ?: return
-    TranslationLoader.getInstance(project).fetchAndApplyTranslation(course, selectedLanguage)
+    val dialog = CourseTranslationDialog(project, course)
+    if (!dialog.showAndGet()) return
+    val selectedLanguage = dialog.getLanguage()
+    if (selectedLanguage == null) {
+      project.translationSettings().setTranslation(null)
+    }
+    else {
+      TranslationLoader.getInstance(project).fetchAndApplyTranslation(course, selectedLanguage)
+    }
   }
 
   override fun update(e: AnActionEvent) {

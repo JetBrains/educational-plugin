@@ -78,7 +78,9 @@ class TranslationProjectSettings : PersistentStateComponent<TranslationProjectSt
     fun isCourseTranslated(project: Project): Boolean = project.translationSettings().translationProperties.value != null
 
     fun resetTranslation(project: Project) {
-      project.translationSettings().setTranslation(null)
+      val settings = project.translationSettings()
+      settings._translationProperties.value = null
+      settings.structureTranslations.clear()
     }
 
     fun getStudyItemTranslatedName(project: Project, item: StudyItem): StudyItemName? {
