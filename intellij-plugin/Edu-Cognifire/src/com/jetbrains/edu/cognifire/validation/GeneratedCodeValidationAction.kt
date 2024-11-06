@@ -157,7 +157,7 @@ open class GeneratedCodeValidationAction(private val shouldGenerateBadPrompts: B
     val unparsableSentences = GrammarParser.getUnparsableSentences(promptExpression)
     val codeGenerator = CodeGenerator(promptExpression)
     val generatedCode = codeGenerator.generatedCode
-    val hasTODO = runReadAction { GeneratedCodeParser.hasErrors(project, generatedCode, language) }
+    val hasTODO = runReadAction { GeneratedCodeParser.hasErrors(project, generatedCode, signature, language) }
     records.add(
       GeneratedCodeDataframeRecord(
         taskId = task.id,
