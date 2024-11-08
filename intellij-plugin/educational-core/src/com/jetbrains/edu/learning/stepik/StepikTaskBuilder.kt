@@ -347,7 +347,7 @@ open class StepikTaskBuilder(private val course: Course, stepSource: StepSource)
   }
 
   private fun createMockTaskFile(task: Task, comment: String, codeTemplate: String?) {
-    val configurator = EduConfiguratorManager.findConfigurator(courseType, courseEnvironment, language)
+    val configurator = EduConfiguratorManager.findConfigurator(courseType, courseEnvironment, language.id)
     if (configurator == null) {
       LOG.error("Could not find configurator for courseType $courseType, language $language")
       return

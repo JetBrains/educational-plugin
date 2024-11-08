@@ -23,7 +23,7 @@ import com.jetbrains.edu.learning.newproject.HyperskillCourseAdvertiser
 
 val Course.configurator: EduConfigurator<*>? get() {
   val language = languageById ?: return null
-  return EduConfiguratorManager.findConfigurator(itemType, environment, language)
+  return EduConfiguratorManager.findConfigurator(itemType, environment, language.id)
 }
 
 val Course.compatibilityProvider: CourseCompatibilityProvider?

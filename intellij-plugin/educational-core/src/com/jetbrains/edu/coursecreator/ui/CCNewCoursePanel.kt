@@ -21,7 +21,6 @@ import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.wm.IdeFrame
 import com.intellij.ui.DocumentAdapter
-import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.components.JBTextArea
 import com.intellij.ui.dsl.builder.*
 import com.intellij.util.ui.JBFont
@@ -44,7 +43,6 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
 import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettingsPanel
 import com.jetbrains.edu.learning.newproject.ui.errors.*
-import org.jdesktop.swingx.HorizontalLayout
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.KeyboardFocusManager
@@ -298,7 +296,7 @@ class CCNewCoursePanel(
     }
 
     val configurator = EduConfiguratorManager.findConfigurator(courseData.courseType, courseData.environment,
-                                                               courseData.language) ?: return
+                                                               courseData.language.id) ?: return
     _course.languageId = courseData.language.id
     _course.environment = courseData.environment
     languageSettings = configurator.courseBuilder.getLanguageSettings()
@@ -326,7 +324,7 @@ class CCNewCoursePanel(
 
   private fun obtainCourseData(languageId: String, environment: String, courseType: String): CourseData? {
     val language = getLanguageById(languageId) ?: return null
-    val extension = EduConfiguratorManager.findExtension(courseType, environment, language) ?: return null
+    val extension = EduConfiguratorManager.findExtension(courseType, environment, language.id) ?: return null
     return obtainCourseData(extension, language)
   }
 
