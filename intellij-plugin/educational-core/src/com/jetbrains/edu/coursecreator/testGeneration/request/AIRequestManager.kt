@@ -1,12 +1,8 @@
 package com.jetbrains.edu.coursecreator.testGeneration.request
 
 import com.fasterxml.jackson.databind.MapperFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.json.JsonMapper
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.jsonMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.intellij.openapi.progress.runBlockingCancellable
 import com.jetbrains.educational.ml.core.grazie.message.ChatHistory
 import com.jetbrains.educational.ml.core.grazie.message.ChatMessage
