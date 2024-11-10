@@ -77,6 +77,7 @@ class YamlMigrator(private val mapper: ObjectMapper) {
 
     private var migrationSteps: Map<Int, YamlMigrationStep> = mapOf(
       1 to ToVersion1Step,
+      2 to ToVersion2StepAddAdditionalFiles
     )
 
     // The following values and methods allow overriding migrator behavior in tests
