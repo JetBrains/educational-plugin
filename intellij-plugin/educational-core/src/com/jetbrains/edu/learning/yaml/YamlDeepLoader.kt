@@ -1,13 +1,17 @@
 package com.jetbrains.edu.learning.yaml
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.coursecreator.AdditionalFilesUtils.collectAdditionalFiles
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
+import com.jetbrains.edu.learning.configuration.EduConfiguratorManager.findConfigurator
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_PROJECTS_URL
@@ -25,6 +29,7 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.YamlLoader.deserializeContent
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
 import com.jetbrains.edu.learning.yaml.format.getRemoteChangeApplierForItem
+import com.jetbrains.edu.learning.yaml.migrate.ADDITIONAL_FILES_COLLECTOR_MAPPER_KEY
 import com.jetbrains.edu.learning.yaml.migrate.YAML_VERSION_MAPPER_KEY
 import com.jetbrains.edu.learning.yaml.migrate.YamlMigrator
 import org.jetbrains.annotations.NonNls
@@ -42,11 +47,13 @@ object YamlDeepLoader {
 
     // the initial mapper has no idea whether the course is in the CC or in the Student mode
     val initialMapper = YamlMapper.basicMapper()
+    initialMapper.setupForMigration(project)
     val deserializedCourse = deserializeItemProcessingErrors(courseConfig, project, mapper=initialMapper) as? Course ?: return null
     val needMigration = YamlMigrator(initialMapper).needMigration()
 
     // this mapper already respects course mode, it will be used to deserialize all other course items
     val mapper = deserializedCourse.mapper()
+    mapper.setupForMigration(project)
     mapper.setEduValue(YAML_VERSION_MAPPER_KEY, initialMapper.getEduValue(YAML_VERSION_MAPPER_KEY))
 
     deserializedCourse.items = deserializedCourse.deserializeContent(project, deserializedCourse.items, mapper)
@@ -205,6 +212,28 @@ object YamlDeepLoader {
       lesson.visitTasks {
         it.updateDescriptionTextAndFormat(project)
       }
+    }
+  }
+
+  /**
+   * Adds all edu values to ObjectMapper needed for YAML migration.
+   * If a new migration step is implemented, add here all the edu values necessary for that migration step to work.
+   */
+  private fun ObjectMapper.setupForMigration(project: Project) {
+    setEduValue(ADDITIONAL_FILES_COLLECTOR_MAPPER_KEY) { courseType, environment, languageId ->
+      val language = Language.findLanguageByID(languageId)
+      if (language == null) {
+        LOG.warn("Failed to find language with ID $languageId during course YAML migration: collect additional files")
+        return@setEduValue emptyList()
+      }
+      val configurator = findConfigurator(courseType, environment, language)
+
+      if (configurator == null) {
+        LOG.warn("Failed to find EduConfigurator during course YAML migration: courseType=$courseType environment=$environment languageId=$languageId")
+        return@setEduValue emptyList()
+      }
+
+      return@setEduValue collectAdditionalFiles(configurator, project, saveDocuments = false, detectTaskFoldersByContents = true)
     }
   }
 }
