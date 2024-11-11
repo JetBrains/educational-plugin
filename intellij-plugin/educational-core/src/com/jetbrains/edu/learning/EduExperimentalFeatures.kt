@@ -7,7 +7,6 @@ object EduExperimentalFeatures {
   const val MARKETPLACE_PRIVATE_COURSES = "edu.course.marketplace.show.private"
   const val SQL_COURSES = "edu.course.sql"
   const val CSHARP_COURSES = "edu.course.csharp"
-  const val AI = "edu.ai"
   const val NEW_COURSE_UPDATE = "edu.course.update.new"
   const val EDUCATOR_HELP = "edu.educator.help"
 }

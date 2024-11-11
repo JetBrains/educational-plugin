@@ -34,10 +34,6 @@
                              bundle="messages.EduAIBundle"/>
 
     <applicationService serviceImplementation="com.jetbrains.edu.ai.translation.settings.TranslationSettings"/>
-
-    <experimentalFeature id="edu.ai" percentOfUsers="100" internalFeature="true">
-      <description>Enables educational AI features</description>
-    </experimentalFeature>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">
