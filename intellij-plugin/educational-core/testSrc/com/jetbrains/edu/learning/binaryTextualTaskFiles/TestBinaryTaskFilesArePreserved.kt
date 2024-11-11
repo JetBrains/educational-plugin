@@ -9,6 +9,8 @@ import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.FileContents
 import com.jetbrains.edu.learning.courseFormat.InMemoryBinaryContents
 import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
+import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.TextualContents
 import com.jetbrains.edu.learning.courseFormat.ext.visitEduFiles
 import com.jetbrains.edu.learning.doWithLearningObjectsStorageType
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
@@ -22,20 +24,20 @@ class TestBinaryFilesAreNotStoredInsideTasks : CourseReopeningTestBase<EmptyProj
   @Test
   fun `test binary files are not preserved after a student closes and opens the project`() =
     doWithLearningObjectsStorageType(LearningObjectStorageType.YAML) {
-      doTest(binaryFilesCleared = true)
+      doTest(binaryAndAdditionalFilesCleared = true)
     }
 
   @Test
   fun `test binary files are preserved after a student closes and opens the project`() =
     doWithLearningObjectsStorageType(LearningObjectStorageType.SQLite) {
-      doTest(binaryFilesCleared = false)
+      doTest(binaryAndAdditionalFilesCleared = false)
     }
 
   /**
    * This test describes the current behaviour of the Plugin. Actually, we want all the contents to be preserved after reopening the course
    * So this test will be rewritten in the future.
    */
-  private fun doTest(binaryFilesCleared: Boolean) {
+  private fun doTest(binaryAndAdditionalFilesCleared: Boolean) {
     /**
      * We create files here in such a way that their contents depend on their path.
      * So, file contents are different, but we can later check file contents knowing only their path.
@@ -70,18 +72,25 @@ class TestBinaryFilesAreNotStoredInsideTasks : CourseReopeningTestBase<EmptyProj
     openStudentProjectThenReopenStudentProject(course, {
       testContentsArePreserved(it)
     }, {
-      testContentsArePreserved(it, binaryFilesCleared)
+      testContentsArePreserved(it, binaryAndAdditionalFilesCleared)
     })
   }
 
-  private fun testContentsArePreserved(studentProject: Project, binaryFilesCleared: Boolean = false) {
+  private fun testContentsArePreserved(studentProject: Project, binaryAndAdditionalFilesCleared: Boolean = false) {
     val course = studentProject.course!!
     course.visitEduFiles { eduFile ->
       val path = eduFile.pathInCourse
       var expectedContents = expectedContents(eduFile)
-      if (binaryFilesCleared && expectedContents is BinaryContents) {
-        expectedContents = BinaryContents.EMPTY
+
+      if (binaryAndAdditionalFilesCleared) {
+        if (expectedContents is BinaryContents) {
+          expectedContents = BinaryContents.EMPTY
+        }
+        else if (eduFile !is TaskFile) { // is additional file
+          expectedContents = TextualContents.EMPTY
+        }
       }
+
       assertContentsEqual(path, expectedContents, eduFile.contents)
     }
   }
