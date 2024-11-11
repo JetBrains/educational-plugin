@@ -4,7 +4,7 @@ import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
-import com.intellij.openapi.diagnostic.thisLogger
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.intellij.util.concurrency.annotations.RequiresBlockingContext
@@ -221,7 +221,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
   }
 
   companion object {
-    private val LOG = thisLogger()
+    private val LOG = Logger.getInstance(TranslationLoader::class.java)
 
     fun getInstance(project: Project): TranslationLoader = project.service()
 

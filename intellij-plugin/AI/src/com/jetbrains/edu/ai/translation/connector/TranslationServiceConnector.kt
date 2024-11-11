@@ -3,7 +3,6 @@ package com.jetbrains.edu.ai.translation.connector
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.diagnostic.thisLogger
 import com.jetbrains.edu.ai.host.EduAIServiceHost
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.translation.service.TranslationService
@@ -99,7 +98,7 @@ class TranslationServiceConnector {
     }
 
   companion object {
-    private val LOG: Logger = thisLogger()
+    private val LOG: Logger = Logger.getInstance(TranslationServiceConnector::class.java)
 
     fun getInstance(): TranslationServiceConnector = service()
   }
