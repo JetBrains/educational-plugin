@@ -18,9 +18,7 @@ import com.jetbrains.educational.core.format.domain.UpdateVersion
 import com.jetbrains.educational.translation.format.CourseTranslation
 import com.jetbrains.educational.translation.format.domain.TranslationVersion
 import io.netty.handler.codec.http.HttpResponseStatus.UNPROCESSABLE_ENTITY
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import okhttp3.ConnectionPool
 import retrofit2.Response
@@ -28,7 +26,7 @@ import java.net.HttpURLConnection.*
 import java.net.SocketException
 
 @Service(Service.Level.APP)
-class TranslationServiceConnector(private val scope: CoroutineScope) {
+class TranslationServiceConnector {
   private val aiServiceUrl: String
     get() = EduAIServiceHost.getSelectedUrl()
 
@@ -52,16 +50,11 @@ class TranslationServiceConnector(private val scope: CoroutineScope) {
     updateVersion: UpdateVersion,
     language: TranslationLanguage
   ): Result<TranslationVersion, String> {
-    val version = scope
-      .async {
-        networkCall {
-          service
-            .getLatestCourseTranslationVersion(marketplaceId.value, updateVersion.value, language.name)
-            .handleResponse()
-        }
-      }
-      .await()
-      .onError { return Err(it) }
+    val version = networkCall {
+      service
+        .getLatestCourseTranslationVersion(marketplaceId.value, updateVersion.value, language.name)
+        .handleResponse()
+    }.onError { return Err(it) }
     if (version == null) {
       error("Translation version is null")
     }
@@ -73,15 +66,11 @@ class TranslationServiceConnector(private val scope: CoroutineScope) {
     updateVersion: UpdateVersion,
     language: TranslationLanguage
   ): Result<CourseTranslation?, String> =
-    scope
-      .async {
-        networkCall {
-          service
-            .getTranslatedCourse(marketplaceId.value, updateVersion.value, language.name)
-            .handleResponse()
-        }
-      }
-      .await()
+    networkCall {
+      service
+        .getTranslatedCourse(marketplaceId.value, updateVersion.value, language.name)
+        .handleResponse()
+    }
 
   private fun <T> Response<T>.handleResponse(): Result<T?, String> {
     val code = code()
