@@ -6,6 +6,7 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsContexts.NotificationContent
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import com.jetbrains.edu.ai.messages.EduAIBundle
@@ -49,90 +50,72 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
   }
 
   fun fetchAndApplyTranslation(course: EduCourse, translationLanguage: TranslationLanguage) {
-    scope.launch {
-      try {
-        if (!lock()) {
-          EduNotificationManager.showErrorNotification(
-            project,
-            content = EduAIBundle.message("ai.translation.already.running")
-          )
-          return@launch
-        }
-        withBackgroundProgress(project, EduAIBundle.message("ai.translation.getting.course.translation")) {
-          val translationSettings = project.translationSettings()
+    runInBackgroundExclusively(EduAIBundle.message("ai.translation.already.running")) {
+      withBackgroundProgress(project, EduAIBundle.message("ai.translation.getting.course.translation")) {
+        val translationSettings = project.translationSettings()
 
-          if (course.isTranslationExists(translationLanguage)) {
-            val properties = translationSettings.getTranslationPropertiesByLanguage(translationLanguage)
-            if (properties != null) {
-              translationSettings.setTranslation(properties)
-              return@withBackgroundProgress
-            }
+        if (course.isTranslationExists(translationLanguage)) {
+          val properties = translationSettings.getTranslationPropertiesByLanguage(translationLanguage)
+          if (properties != null) {
+            translationSettings.setTranslation(properties)
+            return@withBackgroundProgress
           }
-
-          val translation = fetchTranslation(course, translationLanguage)
-          course.saveTranslation(translation)
-          translationSettings.setTranslation(translation.toTranslationProperties())
         }
-      }
-      finally {
-        unlock()
+
+        val translation = fetchTranslation(course, translationLanguage)
+        course.saveTranslation(translation)
+        translationSettings.setTranslation(translation.toTranslationProperties())
       }
     }
   }
 
   fun updateTranslation(course: EduCourse, translationProperties: TranslationProperties) {
-    scope.launch {
-      try {
-        if (!lock()) {
-          EduNotificationManager.showErrorNotification(
-            project,
-            content = EduAIBundle.message("ai.translation.already.running")
-          )
-          return@launch
-        }
-        withBackgroundProgress(project, EduAIBundle.message("ai.translation.update.course.translation")) {
-          val (language, _, version) = translationProperties
-          val translation = fetchTranslation(course, language)
-          val translationSettings = project.translationSettings()
-          if (version == translation.id) {
-            EduNotificationManager.showInfoNotification(
-              project,
-              content = EduAIBundle.message("ai.translation.translation.is.up.to.date")
-            )
-            return@withBackgroundProgress
-          }
-          course.saveTranslation(translation)
-          translationSettings.setTranslation(translation.toTranslationProperties())
+    runInBackgroundExclusively(EduAIBundle.message("ai.translation.already.running")) {
+      withBackgroundProgress(project, EduAIBundle.message("ai.translation.update.course.translation")) {
+        val (language, _, version) = translationProperties
+        val translation = fetchTranslation(course, language)
+        val translationSettings = project.translationSettings()
+        if (version == translation.id) {
           EduNotificationManager.showInfoNotification(
             project,
-            content = EduAIBundle.message("ai.translation.translation.has.been.updated")
+            content = EduAIBundle.message("ai.translation.translation.is.up.to.date")
           )
+          return@withBackgroundProgress
         }
-      }
-      finally {
-        unlock()
+        course.saveTranslation(translation)
+        translationSettings.setTranslation(translation.toTranslationProperties())
+        EduNotificationManager.showInfoNotification(
+          project,
+          content = EduAIBundle.message("ai.translation.translation.has.been.updated")
+        )
       }
     }
   }
 
   fun resetCourseTranslation(course: EduCourse) {
+    runInBackgroundExclusively(EduAIBundle.message("ai.translation.reset.is.not.possible")) {
+      if (TranslationProjectSettings.isCourseTranslated(project)) {
+        withBackgroundProgress(project, EduAIBundle.message("ai.translation.reset.course.translation")) {
+          TranslationProjectSettings.resetTranslation(project)
+        }
+      }
+      withBackgroundProgress(project, EduAIBundle.message("ai.translation.deleting.course.translation.files")) {
+        course.deleteAllTranslations()
+      }
+    }
+  }
+
+  private inline fun runInBackgroundExclusively(
+    @NotificationContent lockNotAcquiredNotificationText: String,
+    crossinline action: suspend () -> Unit
+  ) {
     scope.launch {
+      if (!lock()) {
+        EduNotificationManager.showErrorNotification(project, content = lockNotAcquiredNotificationText)
+        return@launch
+      }
       try {
-        if (!lock()) {
-          EduNotificationManager.showErrorNotification(
-            project,
-            content = EduAIBundle.message("ai.translation.reset.is.not.possible")
-          )
-          return@launch
-        }
-        if (TranslationProjectSettings.isCourseTranslated(project)) {
-          withBackgroundProgress(project, EduAIBundle.message("ai.translation.reset.course.translation")) {
-            TranslationProjectSettings.resetTranslation(project)
-          }
-        }
-        withBackgroundProgress(project, EduAIBundle.message("ai.translation.deleting.course.translation.files")) {
-          course.deleteAllTranslations()
-        }
+        action()
       }
       finally {
         unlock()
