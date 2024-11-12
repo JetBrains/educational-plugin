@@ -31,23 +31,12 @@ import com.jetbrains.educational.core.enum.TranslationLanguage
 import com.jetbrains.educational.translation.format.CourseTranslation
 import com.jetbrains.educational.translation.format.DescriptionText
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
 import java.io.IOException
-import java.util.concurrent.atomic.AtomicBoolean
 
 @Service(Service.Level.PROJECT)
 class TranslationLoader(private val project: Project, private val scope: CoroutineScope) {
-  private val lock = AtomicBoolean(false)
-
-  private val isLocked: Boolean
-    get() = lock.get()
-
-  private fun lock(): Boolean {
-    return lock.compareAndSet(false, true)
-  }
-
-  private fun unlock() {
-    lock.set(false)
-  }
+  private val mutex = Mutex()
 
   fun fetchAndApplyTranslation(course: EduCourse, translationLanguage: TranslationLanguage) {
     runInBackgroundExclusively(EduAIBundle.message("ai.translation.already.running")) {
@@ -110,15 +99,16 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
     crossinline action: suspend () -> Unit
   ) {
     scope.launch {
-      if (!lock()) {
+      if (mutex.tryLock()) {
+        try {
+          action()
+        }
+        finally {
+          mutex.unlock()
+        }
+      }
+      else {
         EduNotificationManager.showErrorNotification(project, content = lockNotAcquiredNotificationText)
-        return@launch
-      }
-      try {
-        action()
-      }
-      finally {
-        unlock()
       }
     }
   }
@@ -208,6 +198,6 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
 
     fun getInstance(project: Project): TranslationLoader = project.service()
 
-    fun isRunning(project: Project): Boolean = getInstance(project).isLocked
+    fun isRunning(project: Project): Boolean = getInstance(project).mutex.isLocked
   }
 }
