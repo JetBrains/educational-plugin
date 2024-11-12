@@ -24,6 +24,8 @@
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
+    <postStartupActivity implementation="com.jetbrains.edu.android.AndroidMigrationProjectActivity"/>
+
     <experimentalFeature id="com.jetbrains.edu.android" percentOfUsers="100" internalFeature="false">
       <description>Enables support of Android courses</description>
     </experimentalFeature>

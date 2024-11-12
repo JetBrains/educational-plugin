@@ -6,11 +6,17 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.ExtensionPoint
 import com.intellij.openapi.extensions.impl.ExtensionPointImpl
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.jvm.courseGeneration.JvmCourseGenerationTestBase
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.framework.FrameworkLessonManager
+import com.jetbrains.edu.learning.framework.impl.visitFrameworkLessons
+import com.jetbrains.edu.learning.gradle.GradleConstants.BUILD_GRADLE
 import org.hamcrest.CoreMatchers
 import org.hamcrest.MatcherAssert.assertThat
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -104,6 +110,106 @@ class AndroidCourseGeneratorTest : JvmCourseGenerationTestBase() {
     }.assertEquals(rootDir)
   }
 
+  @Test
+  fun `test migrate to new test runner in educator mode`() {
+    val course = oldAndroidCourse(CourseMode.EDUCATOR)
+    createCourseStructure(course)
+
+    fileTree {
+      dir("lesson1") {
+        dir("task1") {
+          file("task.md")
+          file(BUILD_GRADLE, appBuildGradleWithDefaultTestRunner())
+          dir("src/androidTest/java/foo/bar") {
+            file("ExampleInstrumentedTest.kt")
+          }
+        }
+        dir("task2") {
+          file("task.md")
+          file(BUILD_GRADLE, appBuildGradleWithDefaultTestRunner())
+          dir("src/androidTest/java/foo/bar") {
+            file("ExampleInstrumentedTest.kt")
+          }
+        }
+      }
+      dir("lesson2/task3") {
+        file("task.md")
+        file(BUILD_GRADLE, appBuildGradleWithDefaultTestRunner())
+        dir("src/androidTest/java/foo/bar") {
+          file("ExampleInstrumentedTest.kt")
+        }
+      }
+      dir("lesson3/task4") {
+        file("task.md")
+        file(BUILD_GRADLE, appBuildGradleWithDefaultTestRunner())
+        dir("src/androidTest/java/foo/bar") {
+          file("ExampleInstrumentedTest.kt")
+        }
+      }
+      gradleWrapperFiles()
+      file("local.properties")
+      file("gradle.properties")
+      file("build.gradle")
+      file("settings.gradle")
+    }.assertEquals(rootDir)
+  }
+
+  @Test
+  fun `test migrate to new test runner in student mode`() {
+    val course = oldAndroidCourse(CourseMode.STUDENT)
+    createCourseStructure(course)
+
+    FileDocumentManager.getInstance().saveAllDocuments()
+
+    fileTree {
+      dir("lesson1") {
+        dir("task") {
+          file(BUILD_GRADLE, appBuildGradleWithDefaultTestRunner())
+          dir("src/androidTest/java/foo/bar") {
+            file("ExampleInstrumentedTest.kt")
+          }
+        }
+        dir("task1") {
+          file("task.md")
+        }
+        dir("task2") {
+          file("task.md")
+        }
+      }
+      dir("lesson2/task3") {
+        file("task.md")
+        file(BUILD_GRADLE, appBuildGradleWithDefaultTestRunner())
+        dir("src/androidTest/java/foo/bar") {
+          file("ExampleInstrumentedTest.kt")
+        }
+      }
+      dir("lesson3/task4") {
+        file("task.md")
+        file(BUILD_GRADLE, appBuildGradleWithDefaultTestRunner())
+        dir("src/androidTest/java/foo/bar") {
+          file("ExampleInstrumentedTest.kt")
+        }
+      }
+      gradleWrapperFiles()
+      file("local.properties")
+      file("gradle.properties")
+      file("build.gradle")
+      file("settings.gradle")
+    }.assertEquals(rootDir)
+
+
+    val flm = FrameworkLessonManager.getInstance(project)
+    course.visitFrameworkLessons { lesson ->
+      for (task in lesson.taskList) {
+        if (task != lesson.currentTask()) {
+          val state = flm.getTaskState(lesson, task)
+          assertEquals("$BUILD_GRADLE in ${task.name} is not updated", appBuildGradleWithDefaultTestRunner(), state[BUILD_GRADLE])
+          assertNull("${task.name} shouldn't contains old `AndroidEduTestRunner.kt`", state["src/androidTest/java/foo/bar/AndroidEduTestRunner.kt"])
+        }
+      }
+    }
+  }
+
   private fun FileTreeBuilder.gradleWrapperFiles() {
     dir("gradle/wrapper") {
       file("gradle-wrapper.jar")
@@ -127,6 +233,78 @@ class AndroidCourseGeneratorTest : JvmCourseGenerationTestBase() {
   companion object {
     // See com.android.tools.idea.gradle.notification.ProjectSyncStatusNotificationProvider.ProjectStructureNotificationPanel.userAllowsShow
     private const val PROJECT_STRUCTURE_NOTIFICATION_LAST_HIDDEN_TIMESTAMP = "PROJECT_STRUCTURE_NOTIFICATION_LAST_HIDDEN_TIMESTAMP"
+
+    private fun oldAndroidCourse(courseMode: CourseMode): Course {
+      return course(language = KotlinLanguage.INSTANCE, environment = EduNames.ANDROID, courseMode = courseMode) {
+        frameworkLesson("lesson1") {
+          eduTask("task1") {
+            taskFile(BUILD_GRADLE, appBuildGradleWithOldTestRunner())
+            taskFile("src/androidTest/java/foo/bar/AndroidEduTestRunner.kt")
+            taskFile("src/androidTest/java/foo/bar/ExampleInstrumentedTest.kt")
+          }
+          eduTask("task2") {
+            taskFile(BUILD_GRADLE, appBuildGradleWithOldTestRunner())
+            taskFile("src/androidTest/java/foo/bar/AndroidEduTestRunner.kt")
+            taskFile("src/androidTest/java/foo/bar/ExampleInstrumentedTest.kt")
+          }
+        }
+        lesson("lesson2") {
+          eduTask("task3") {
+            taskFile(BUILD_GRADLE, appBuildGradleWithOldTestRunner())
+            taskFile("src/androidTest/java/foo/bar/AndroidEduTestRunner.kt")
+            taskFile("src/androidTest/java/foo/bar/ExampleInstrumentedTest.kt")
+          }
+        }
+        lesson("lesson3") {
+          eduTask("task4") {
+            taskFile(BUILD_GRADLE, appBuildGradleWithDefaultTestRunner())
+            taskFile("src/androidTest/java/foo/bar/ExampleInstrumentedTest.kt")
+          }
+        }
+      }
+    }
+
+    private fun appBuildGradleWithOldTestRunner(): String = appBuildGradle("foo.bar.AndroidEduTestRunner")
+
+    private fun appBuildGradleWithDefaultTestRunner(): String = appBuildGradle("androidx.test.runner.AndroidJUnitRunner")
+
+    private fun appBuildGradle(runnerClass: String): String {
+      return """
+        plugins {
+            id 'com.android.application'
+            id 'org.jetbrains.kotlin.android'
+        }
+        
+        android {
+            namespace 'foo.bar'
+            compileSdk 30
+        
+            defaultConfig {
+                applicationId "foo.bar"
+                minSdk 30
+                targetSdk 30
+                versionCode 1
+                versionName "1.0"
+        
+                testInstrumentationRunner "$runnerClass"
+            }
+        
+            buildTypes {
+                release {
+                    minifyEnabled false
+                    proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+                }
+            }
+            compileOptions {
+                sourceCompatibility JavaVersion.VERSION_1_8
+                targetCompatibility JavaVersion.VERSION_1_8
+            }
+            kotlinOptions {
+                jvmTarget = '1.8'
+            }
+        }            
+      """.trimIndent()
+    }
 
     @Suppress("UnstableApiUsage")
     fun <T : Any, K : T> ExtensionPoint<T>.unregisterExtensionInTest(extensionClass: Class<K>, disposable: Disposable) {
