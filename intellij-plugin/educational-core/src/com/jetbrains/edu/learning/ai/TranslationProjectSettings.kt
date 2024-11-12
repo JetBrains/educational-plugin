@@ -81,6 +81,7 @@ class TranslationProjectSettings : PersistentStateComponent<TranslationProjectSt
       val settings = project.translationSettings()
       settings._translationProperties.value = null
       settings.structureTranslations.clear()
+      settings.translationLanguageVersions.clear()
     }
 
     fun getStudyItemTranslatedName(project: Project, item: StudyItem): StudyItemName? {
