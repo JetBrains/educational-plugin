@@ -197,14 +197,24 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
 
     val structureTranslation = project.translationSettings().structureTranslation
 
-    val taskEduId = TaskEduId(task.id)
-    val translatedTaskName = structureTranslation?.taskNames?.get(taskEduId)
-    taskName.text = translatedTaskName?.value ?: task.presentableName
+    val translatedTaskName = if (structureTranslation != null && task.id > 0) {
+      val taskEduId = TaskEduId(task.id)
+      structureTranslation.taskNames[taskEduId]?.value
+    }
+    else {
+      null
+    }
+    taskName.text = translatedTaskName ?: task.presentableName
 
     val lesson = task.lesson
-    val lessonEduId = LessonEduId(lesson.id)
-    val translatedLessonName = structureTranslation?.lessonNames?.get(lessonEduId)
-    lessonHeader.setHeaderText(translatedLessonName?.value ?: lesson.presentableName)
+    val translatedLessonName = if (structureTranslation != null && lesson.id > 0) {
+      val lessonEduId = LessonEduId(lesson.id)
+      structureTranslation.lessonNames[lessonEduId]?.value
+    }
+    else {
+      null
+    }
+    lessonHeader.setHeaderText(translatedLessonName ?: lesson.presentableName)
   }
 
   override fun updateTaskDescription() {
