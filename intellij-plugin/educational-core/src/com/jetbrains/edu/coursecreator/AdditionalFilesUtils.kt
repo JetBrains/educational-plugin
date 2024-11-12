@@ -23,20 +23,37 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.api.LessonAdditionalInfo
 import com.jetbrains.edu.learning.stepik.api.TaskAdditionalInfo
 import com.jetbrains.edu.learning.stepik.collectTaskFiles
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.TASK_CONFIG
 import java.io.IOException
 
 object AdditionalFilesUtils {
   private val LOG = Logger.getInstance(AdditionalFilesUtils::class.java)
 
+  /**
+   * @param saveDocuments specifies whether to save all documents in open editors before collecting additional files.
+   * Default is `true`.
+   * If [saveDocuments] is `false`, no write action will be performed during the call.
+   *
+   * @param detectTaskFoldersByContents controls the way to determine whether a folder is a task folder.
+   * Additional files are not searched inside task folders. Default is `false`.
+   * When [detectTaskFoldersByContents] is `true`, the folder is considered to be a task folder, if it contains
+   * the `task-info.yaml` file.
+   * When [detectTaskFoldersByContents] is `false`, the `project.course` object is inspected to find the task with that folder.
+   * Use `detectTaskFoldersByContents=true` in case the `project.course` object is unavailable.
+   */
   fun collectAdditionalFiles(
     courseConfigurator: EduConfigurator<*>?,
-    project: Project
+    project: Project,
+    saveDocuments: Boolean = true,
+    detectTaskFoldersByContents: Boolean = false
   ): List<EduFile> {
     if (courseConfigurator == null) return listOf()
 
-    ApplicationManager.getApplication().invokeAndWait { FileDocumentManager.getInstance().saveAllDocuments() }
+    if (saveDocuments) {
+      ApplicationManager.getApplication().invokeAndWait { FileDocumentManager.getInstance().saveAllDocuments() }
+    }
 
-    val fileVisitor = additionalFilesVisitor(project, courseConfigurator)
+    val fileVisitor = additionalFilesVisitor(project, courseConfigurator, detectTaskFoldersByContents)
     VfsUtilCore.visitChildrenRecursively(project.courseDir, fileVisitor)
     return fileVisitor.additionalTaskFiles
   }
@@ -68,7 +85,7 @@ object AdditionalFilesUtils {
     return project.courseDir.findChild(EduNames.CHANGE_NOTES)
   }
 
-  private fun additionalFilesVisitor(project: Project, courseConfigurator: EduConfigurator<*>) =
+  private fun additionalFilesVisitor(project: Project, courseConfigurator: EduConfigurator<*>, detectTaskFoldersByContents: Boolean) =
     object : VirtualFileVisitor<Any>(NO_FOLLOW_SYMLINKS) {
       // we take the course ignore rules once, and we are sure they are not changed while course archive is being created
       private val courseIgnoreRules = CourseIgnoreRules.loadFromCourseIgnoreFile(project)
@@ -90,7 +107,14 @@ object AdditionalFilesUtils {
         if (file.isDirectory) {
           // All files inside task directory are already handled by `CCVirtualFileListener`
           // so here we don't need to process them again
-          return file.getTask(project) == null
+          val isTaskFolder = if (detectTaskFoldersByContents) {
+            file.findChild(TASK_CONFIG) != null
+          }
+          else {
+            file.getTask(project) != null
+          }
+
+          return !isTaskFolder
         }
 
         addToAdditionalFiles(file, project)
@@ -107,9 +131,6 @@ object AdditionalFilesUtils {
       }
 
       private fun createAdditionalTaskFile(file: VirtualFile, project: Project): EduFile? {
-        val taskFile = file.getTaskFile(project)
-        if (taskFile != null) return null
-
         val path = VfsUtilCore.getRelativePath(file, project.courseDir) ?: return null
         val contents = if (file.isToEncodeContent) {
           BinaryContentsFromDisk(file)
