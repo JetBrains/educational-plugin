@@ -48,8 +48,6 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.navigationMap.NavigationMapT
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType.SUBMISSIONS_TAB
-import com.jetbrains.educational.core.format.domain.LessonEduId
-import com.jetbrains.educational.core.format.domain.TaskEduId
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -195,25 +193,13 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
       return
     }
 
-    val structureTranslation = project.translationSettings().structureTranslation
+    val translationSettings = project.translationSettings()
 
-    val translatedTaskName = if (structureTranslation != null && task.id > 0) {
-      val taskEduId = TaskEduId(task.id)
-      structureTranslation.taskNames[taskEduId]?.value
-    }
-    else {
-      null
-    }
+    val translatedTaskName = translationSettings.getStudyItemTranslatedName(task)
     taskName.text = translatedTaskName ?: task.presentableName
 
     val lesson = task.lesson
-    val translatedLessonName = if (structureTranslation != null && lesson.id > 0) {
-      val lessonEduId = LessonEduId(lesson.id)
-      structureTranslation.lessonNames[lessonEduId]?.value
-    }
-    else {
-      null
-    }
+    val translatedLessonName = translationSettings.getStudyItemTranslatedName(lesson)
     lessonHeader.setHeaderText(translatedLessonName ?: lesson.presentableName)
   }
 

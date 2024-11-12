@@ -12,9 +12,7 @@ import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.network.createRetrofitBuilder
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.educational.core.enum.TranslationLanguage
-import com.jetbrains.educational.core.format.domain.MarketplaceId
-import com.jetbrains.educational.core.format.domain.UpdateVersion
-import com.jetbrains.educational.translation.format.CourseTranslation
+import com.jetbrains.educational.translation.format.CourseTranslationResponse
 import com.jetbrains.educational.translation.format.domain.TranslationVersion
 import io.netty.handler.codec.http.HttpResponseStatus.UNPROCESSABLE_ENTITY
 import kotlinx.coroutines.Dispatchers
@@ -45,13 +43,13 @@ class TranslationServiceConnector {
   }
 
   suspend fun getLatestTranslationVersion(
-    marketplaceId: MarketplaceId,
-    updateVersion: UpdateVersion,
+    marketplaceId: Int,
+    updateVersion: Int,
     language: TranslationLanguage
   ): Result<TranslationVersion, String> {
     val version = networkCall {
       service
-        .getLatestCourseTranslationVersion(marketplaceId.value, updateVersion.value, language.name)
+        .getLatestCourseTranslationVersion(marketplaceId, updateVersion, language.name)
         .handleResponse()
     }.onError { return Err(it) }
     if (version == null) {
@@ -61,13 +59,13 @@ class TranslationServiceConnector {
   }
 
   suspend fun getTranslatedCourse(
-    marketplaceId: MarketplaceId,
-    updateVersion: UpdateVersion,
+    marketplaceId: Int,
+    updateVersion: Int,
     language: TranslationLanguage
-  ): Result<CourseTranslation?, String> =
+  ): Result<CourseTranslationResponse?, String> =
     networkCall {
       service
-        .getTranslatedCourse(marketplaceId.value, updateVersion.value, language.name)
+        .getTranslatedCourse(marketplaceId, updateVersion, language.name)
         .handleResponse()
     }
 

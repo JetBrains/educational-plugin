@@ -10,8 +10,6 @@ import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.translation.TranslationLoader
 import com.jetbrains.edu.ai.translation.connector.TranslationServiceConnector
-import com.jetbrains.edu.ai.translation.marketplaceId
-import com.jetbrains.edu.ai.translation.updateVersion
 import com.jetbrains.edu.learning.ai.TranslationProperties
 import com.jetbrains.edu.learning.ai.translationSettings
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -60,12 +58,12 @@ class TranslationUpdateChecker(private val project: Project, private val scope: 
   private suspend fun isTranslationOutdated(course: EduCourse, translationProperties: TranslationProperties): Boolean {
     val (language, _, version) = translationProperties
     val latestVersion = TranslationServiceConnector.getInstance()
-      .getLatestTranslationVersion(course.marketplaceId, course.updateVersion, language)
+      .getLatestTranslationVersion(course.id, course.marketplaceCourseVersion, language)
       .onError {
         LOG.error(it)
         return false
       }
-    return version != latestVersion
+    return version != latestVersion.value
   }
 
   private fun showUpdateAvailableNotification(updateAction: () -> Unit) {

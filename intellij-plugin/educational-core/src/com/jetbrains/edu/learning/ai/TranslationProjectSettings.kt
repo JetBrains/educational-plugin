@@ -2,13 +2,9 @@ package com.jetbrains.edu.learning.ai
 
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.ai.CourseStructureNames.Companion.getTranslatedName
-import com.jetbrains.edu.learning.ai.CourseStructureNames.Companion.serializeToCourseStructureTranslation
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings.TranslationProjectState
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.educational.core.enum.TranslationLanguage
-import com.jetbrains.educational.core.format.domain.StudyItemName
-import com.jetbrains.educational.translation.format.domain.TranslationVersion
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.concurrent.ConcurrentHashMap
@@ -20,8 +16,8 @@ fun Project.translationSettings(): TranslationProjectSettings = service()
 class TranslationProjectSettings : PersistentStateComponent<TranslationProjectState> {
   private val _translationProperties = MutableStateFlow<TranslationProperties?>(null)
   val translationProperties = _translationProperties.asStateFlow()
-  private val structureTranslations = ConcurrentHashMap<TranslationLanguage, CourseStructureNames>()
-  private val translationLanguageVersions = ConcurrentHashMap<TranslationLanguage, TranslationVersion>()
+  private val structureTranslations = ConcurrentHashMap<TranslationLanguage, Map<String, String>>()
+  private val translationLanguageVersions = ConcurrentHashMap<TranslationLanguage, Int>()
 
   fun setTranslation(properties: TranslationProperties?) {
     if (properties == null) {
@@ -34,9 +30,6 @@ class TranslationProjectSettings : PersistentStateComponent<TranslationProjectSt
     _translationProperties.value = properties
   }
 
-  val structureTranslation : CourseStructureNames?
-    get() = translationProperties.value?.structureTranslation
-
   val translationLanguage: TranslationLanguage?
     get() = translationProperties.value?.language
 
@@ -46,22 +39,27 @@ class TranslationProjectSettings : PersistentStateComponent<TranslationProjectSt
     return TranslationProperties(language, structure, version)
   }
 
+  fun getStudyItemTranslatedName(item: StudyItem): String? {
+    val language = translationProperties.value?.language ?: return null
+    return structureTranslations[language]?.get(item.id.toString())
+  }
+
   override fun getState(): TranslationProjectState {
     val state = TranslationProjectState()
     state.currentTranslationLanguage = translationProperties.value?.language
-    state.structureTranslation = structureTranslations.mapValuesTo(mutableMapOf()) { (_, value) -> value.deserialize() }
-    state.translationVersions = translationLanguageVersions.mapValuesTo(mutableMapOf()) { (_, value) -> value.value }
+    state.structureTranslation = structureTranslations
+    state.translationVersions = translationLanguageVersions
     return state
   }
 
   override fun loadState(state: TranslationProjectState) {
     structureTranslations.clear()
-    for ((language, serializedStructure) in state.structureTranslation) {
-      structureTranslations[language] = serializedStructure.serializeToCourseStructureTranslation()
+    for ((language, structure) in state.structureTranslation) {
+      structureTranslations[language] = structure
     }
     translationLanguageVersions.clear()
     for ((language, version) in state.translationVersions) {
-      translationLanguageVersions[language] = TranslationVersion(version)
+      translationLanguageVersions[language] = version
     }
 
     val language = state.currentTranslationLanguage ?: return
@@ -70,7 +68,7 @@ class TranslationProjectSettings : PersistentStateComponent<TranslationProjectSt
 
   class TranslationProjectState : BaseState() {
     var currentTranslationLanguage by enum<TranslationLanguage>()
-    var structureTranslation by map<TranslationLanguage, String>()
+    var structureTranslation by map<TranslationLanguage, Map<String, String>>()
     var translationVersions by map<TranslationLanguage, Int>()
   }
 
@@ -82,11 +80,6 @@ class TranslationProjectSettings : PersistentStateComponent<TranslationProjectSt
       settings._translationProperties.value = null
       settings.structureTranslations.clear()
       settings.translationLanguageVersions.clear()
-    }
-
-    fun getStudyItemTranslatedName(project: Project, item: StudyItem): StudyItemName? {
-      val courseStructureNames = project.translationSettings().structureTranslation ?: return null
-      return courseStructureNames.getTranslatedName(item)
     }
   }
 }

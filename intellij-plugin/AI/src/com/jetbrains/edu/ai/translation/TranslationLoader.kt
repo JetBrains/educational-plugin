@@ -14,7 +14,6 @@ import com.jetbrains.edu.ai.translation.connector.TranslationServiceConnector
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
-import com.jetbrains.edu.learning.ai.CourseStructureNames
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.ai.TranslationProperties
 import com.jetbrains.edu.learning.ai.translationSettings
@@ -28,7 +27,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.educational.core.enum.TranslationLanguage
-import com.jetbrains.educational.translation.format.CourseTranslation
+import com.jetbrains.educational.translation.format.CourseTranslationResponse
 import com.jetbrains.educational.translation.format.DescriptionText
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
@@ -113,7 +112,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
     }
   }
 
-  private suspend fun fetchTranslation(course: EduCourse, language: TranslationLanguage): CourseTranslation =
+  private suspend fun fetchTranslation(course: EduCourse, language: TranslationLanguage): CourseTranslationResponse =
     withContext(Dispatchers.IO) {
       downloadTranslation(course, language).onError { error ->
         EduNotificationManager.showErrorNotification(project, content = error)
@@ -137,11 +136,8 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
       }
     }
 
-  private suspend fun downloadTranslation(course: EduCourse, language: TranslationLanguage): Result<CourseTranslation, String> {
-    val marketplaceId = course.marketplaceId
-    val updateVersion = course.updateVersion
-
-    val translation = TranslationServiceConnector.getInstance().getTranslatedCourse(marketplaceId, updateVersion, language)
+  private suspend fun downloadTranslation(course: EduCourse, language: TranslationLanguage): Result<CourseTranslationResponse, String> {
+    val translation = TranslationServiceConnector.getInstance().getTranslatedCourse(course.id, course.marketplaceCourseVersion, language)
       .onError { error -> return Err(error) }
     if (translation != null) {
       return Ok(translation)
@@ -149,11 +145,11 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
     return Err("Translation does not exist")
   }
 
-  private suspend fun EduCourse.saveTranslation(courseTranslation: CourseTranslation) {
+  private suspend fun EduCourse.saveTranslation(courseTranslation: CourseTranslationResponse) {
     val taskDescriptions = courseTranslation.taskDescriptions
     writeAction {
       for (task in allTasks) {
-        val translation = taskDescriptions[task.taskEduId] ?: continue
+        val translation = taskDescriptions[task.id.toString()] ?: continue
         task.saveTranslation(translation)
       }
     }
@@ -188,10 +184,8 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
     }
   }
 
-  private fun CourseTranslation.toTranslationProperties(): TranslationProperties {
-    val structureTranslation = CourseStructureNames(taskNames, lessonNames, sectionNames)
-    return TranslationProperties(language.toTranslationLanguage(), structureTranslation, id)
-  }
+  private fun CourseTranslationResponse.toTranslationProperties(): TranslationProperties =
+    TranslationProperties(language.toTranslationLanguage(), itemNames, id)
 
   companion object {
     private val LOG = Logger.getInstance(TranslationLoader::class.java)
