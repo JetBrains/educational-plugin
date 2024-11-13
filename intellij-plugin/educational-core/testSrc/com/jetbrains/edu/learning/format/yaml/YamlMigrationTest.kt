@@ -158,6 +158,44 @@ class YamlMigrationTest : EduTestCase() {
     }
   }
 
+  @Test
+  fun `migrate steps from yaml version plus 1 to current version`() {
+    courseWithFiles(createYamlConfigs = true) {
+      lesson {
+        eduTask()
+      }
+    }
+
+    class CallMeStep : YamlMigrationStep {
+      var called = false
+      override fun migrateCourse(mapper: ObjectMapper, config: ObjectNode): ObjectNode {
+        called = true
+        return config
+      }
+    }
+    val dontCallMe = object : YamlMigrationStep {
+      override fun migrateCourse(mapper: ObjectMapper, config: ObjectNode): ObjectNode {
+        error("This migration step should not be called")
+      }
+    }
+
+    val callMe1 = CallMeStep()
+    val callMe2 = CallMeStep()
+
+    YamlMigrator.withMigrationSteps(
+      steps = mapOf(
+        CURRENT_YAML_VERSION to dontCallMe,
+        CURRENT_YAML_VERSION + 1 to callMe1,
+        CURRENT_YAML_VERSION + 2 to callMe2
+      )
+    ) {
+      loadCourse(project) ?: kotlin.test.fail("failed to load course")
+
+      assertTrue("This migration step should be called", callMe1.called)
+      assertTrue("This migration step should be called", callMe2.called)
+    }
+  }
+
   private fun findTaskFiles(lesson: Lesson, taskFolder: String): List<String> {
     val lessonDir = lesson.getDir(project.courseDir) ?: kotlin.test.fail("Failed to get lesson dir")
     val taskDir = lessonDir.findChild(taskFolder) ?: kotlin.test.fail("Failed to get task dir")

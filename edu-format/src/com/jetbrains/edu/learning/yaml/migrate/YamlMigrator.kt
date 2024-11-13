@@ -64,7 +64,7 @@ class YamlMigrator(private val mapper: ObjectMapper) {
     }
 
     var migratedConfig = configTree
-    for (version in yamlVersion..currentYamlVersion) {
+    for (version in yamlVersion + 1..currentYamlVersion) {
       val nextStep = migrationSteps[version] ?: continue
       migratedConfig = nextStep.migrateItem(migratedConfig)
     }
