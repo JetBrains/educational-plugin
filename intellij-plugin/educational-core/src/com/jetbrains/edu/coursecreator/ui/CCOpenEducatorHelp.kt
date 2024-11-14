@@ -1,7 +1,6 @@
 package com.jetbrains.edu.coursecreator.ui
 
 import com.intellij.openapi.actionSystem.ActionUpdateThread
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.impl.HTMLEditorProvider
@@ -9,10 +8,11 @@ import com.intellij.openapi.fileEditor.impl.HTMLEditorProvider.Request.Companion
 import com.intellij.openapi.project.Project
 import com.intellij.util.Urls.newFromEncoded
 import com.jetbrains.edu.learning.EduExperimentalFeatures
+import com.jetbrains.edu.learning.actions.ActionWithButtonCustomComponent
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
-class CCOpenEducatorHelp : AnAction() {
+class CCOpenEducatorHelp : ActionWithButtonCustomComponent() {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
