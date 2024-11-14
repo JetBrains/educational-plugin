@@ -22,11 +22,10 @@ class AIBreakPointService(private val project: Project) {
 
   private val breakpointManager = XDebuggerManager.getInstance(project).breakpointManager
 
-  fun initialize(){
+  fun initialize() {
     val language = Language.findLanguageByID(project.course?.languageId)
     language?.let {
-      val breakpointType = BreakpointTypeManager.getInstance(it).getBreakPointType()
-      val type = XDebuggerUtil.getInstance().findBreakpointType(breakpointType::class.java)
+      val type = language.getAIBreakpointType()
       breakpointManager.getBreakpoints(type).forEach(::highlightBreakpoint)
       addListener(type)
     }
@@ -79,6 +78,16 @@ class AIBreakPointService(private val project: Project) {
       type, listener
     )
   }
+
+  private fun Language.getAIBreakpointType() =
+    XDebuggerUtil
+      .getInstance()
+      .findBreakpointType(
+        BreakpointTypeManager
+          .getInstance(this)
+          .getBreakPointType()
+        ::class.java
+      )
 
   companion object {
     val HIGHLIGHTING_COLOR: Color = Color.getHSBColor(0.74f, 1.0f, 0.97f)
