@@ -33,8 +33,7 @@ class AIBreakPointService(private val project: Project) {
 
 
   fun toggleLineBreakpoint(language: Language, file: VirtualFile, line: Int) {
-    val breakpointType = BreakpointTypeManager.getInstance(language).getBreakPointType()
-    val type = XDebuggerUtil.getInstance().findBreakpointType(breakpointType::class.java)
+    val type = language.getAIBreakpointType()
     breakpointManager.addLineBreakpoint(type, file.url, line, type.createProperties())
 
   }
