@@ -35,7 +35,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.ColoredTreeCellRenderer
 import com.intellij.ui.ScrollPaneFactory
 import com.intellij.ui.dsl.builder.AlignX
-import com.intellij.ui.dsl.builder.RightGap
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ArrayUtil
 import com.intellij.util.ui.JBUI
@@ -43,17 +42,13 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.EducationalCoreIcons.CourseView.CourseTree
 import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.actions.CCCreateCoursePreview
 import com.jetbrains.edu.coursecreator.projectView.*
-import com.jetbrains.edu.coursecreator.ui.CCOpenEducatorHelp
 import com.jetbrains.edu.learning.CourseSetListener
-import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
-import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.projectView.ProgressUtil.createProgressBar
 import org.jetbrains.annotations.NonNls
@@ -101,31 +96,17 @@ class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport
         tryInstallNewTooltip(myProject, treeNode)
       }
 
+      val toolbar = createHeaderRightToolbar()
       val panel = panel {
         row {
           cell(EducatorActionsPanel())
-
-          panel {
-            row {
-              button(
-                EduCoreBundle.message("action.Educational.Educator.CreateCoursePreview.text"),
-                CCCreateCoursePreview(),
-                ActionPlaces.PROJECT_VIEW_TOOLBAR
-              ).gap(RightGap.SMALL)
-
-              if (isFeatureEnabled(EduExperimentalFeatures.EDUCATOR_HELP)) {
-                button(
-                  EduCoreBundle.message("action.Educational.CCOpenEducatorHelp.text"),
-                  CCOpenEducatorHelp(),
-                  ActionPlaces.PROJECT_VIEW_TOOLBAR
-                )
-              }
-            }
-          }.align(AlignX.RIGHT)
+          cell(toolbar.component).align(AlignX.RIGHT)
         }
       }.apply {
         border = JBUI.Borders.emptyRight(12)
       }
+      toolbar.targetComponent = panel
+
       val mainPanel = JPanel(BorderLayout())
       mainPanel.background = UIUtil.getTreeBackground()
 
@@ -172,6 +153,11 @@ class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport
     for (action in group.childActionsOrStubs) {
       actionGroup.addAction(action).setAsSecondary(true)
     }
+  }
+
+  private fun createHeaderRightToolbar(): ActionToolbar {
+    val group = ActionManager.getInstance().getAction("Educational.CourseView.Header.Right") as ActionGroup
+    return ActionManager.getInstance().createActionToolbar(ActionPlaces.PROJECT_VIEW_TOOLBAR, group, true)
   }
 
   private fun updateCourseProgress() {

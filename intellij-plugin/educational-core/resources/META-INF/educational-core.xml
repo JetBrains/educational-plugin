@@ -261,9 +261,20 @@
       />
     </action>
 
+    <action
+        id="Educational.CCOpenEducatorDocTab"
+        class="com.jetbrains.edu.coursecreator.ui.CCOpenEducatorHelp"
+    />
+
     <group id="Educational.CourseView.SecondaryActions">
       <action id="Educational.HideSolvedLessons"
               class="com.jetbrains.edu.learning.projectView.CourseViewPane$HideSolvedLessonsAction"/>
+    </group>
+
+   <!-- Actions located in the right corner of the Course View header -->
+    <group id="Educational.CourseView.Header.Right">
+      <reference id="Educational.Educator.CreateCoursePreview"/>
+      <reference id="Educational.CCOpenEducatorDocTab"/>
     </group>
 
     <action id="Educational.LeaveInIdeFeedbackAction"
@@ -275,11 +286,6 @@
       <reference id="Educational.LeaveInIdeFeedbackAction"/>
       <reference id="Educational.LeaveFeedbackAction"/>
     </group>
-
-    <action
-        id="Educational.CCOpenEducatorDocTab"
-        class="com.jetbrains.edu.coursecreator.ui.CCOpenEducatorHelp"
-    />
 
     <!-- Actions located in the right corner of Task tool window -->
     <group id="Educational.TaskToolWindowView.TitleActions">
