@@ -186,7 +186,8 @@ class TutorialGenerator : DumbAwareAction(EduCognifireBundle.message("item.tutor
           TutorialTask("IfExpression", EDU_TASK),
           TutorialTask("Run", EDU_TASK),
           TutorialTask("Correction", EDU_TASK),
-          TutorialTask("AcceptanceOfCode", EDU_TASK)
+          TutorialTask("AcceptanceOfCode", EDU_TASK),
+          TutorialTask("Verification", THEORY_TASK),
         )
       )
     )

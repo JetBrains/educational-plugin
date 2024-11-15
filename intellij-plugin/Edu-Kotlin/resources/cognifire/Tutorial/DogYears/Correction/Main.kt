@@ -23,3 +23,7 @@ fun calculateDogAgeInDogYears() {
 fun verifyHumanYearsInput(humanYears: Int): Boolean {
   TODO("Not implemented yet")
 }
+
+fun main() {
+  calculateDogAgeInDogYears()
+}

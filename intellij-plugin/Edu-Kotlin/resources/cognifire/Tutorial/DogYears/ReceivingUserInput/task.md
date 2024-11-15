@@ -10,7 +10,7 @@ Save the age into a variable named `humanYears` for future use.
 fun calculateDogAgeInDogYears() {
   prompt("""
         Get the user input and save the result to a variable named humanYears.
-    """.trimIndent())
+    """)
 }
 ```
 </div>
