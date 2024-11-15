@@ -32,6 +32,7 @@ class TaskToolWindowFactory : ToolWindowFactory, DumbAware {
       return
     }
     val taskToolWindowView = TaskToolWindowView.getInstance(project)
+    toolWindow.component.putClientProperty(ToolWindowContentUi.DONT_HIDE_TOOLBAR_IN_HEADER, true)
     toolWindow.component.putClientProperty(ToolWindowContentUi.HIDE_ID_LABEL, "true")
     toolWindow.initTitleActions()
     taskToolWindowView.init(toolWindow)

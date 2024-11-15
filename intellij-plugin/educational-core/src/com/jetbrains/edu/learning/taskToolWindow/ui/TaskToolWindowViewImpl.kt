@@ -245,7 +245,6 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
           maximumHeight = 51
         }
 
-
     mainPanel.add(navMapPanel)
 
     // setup task name
