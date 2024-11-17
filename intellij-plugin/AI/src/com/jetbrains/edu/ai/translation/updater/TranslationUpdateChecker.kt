@@ -63,7 +63,7 @@ class TranslationUpdateChecker(private val project: Project, private val scope: 
         LOG.error(it)
         return false
       }
-    return version != latestVersion.value
+    return version != latestVersion
   }
 
   private fun showUpdateAvailableNotification(updateAction: () -> Unit) {

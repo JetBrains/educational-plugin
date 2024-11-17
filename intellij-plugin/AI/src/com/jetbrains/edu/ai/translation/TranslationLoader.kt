@@ -26,9 +26,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.onError
-import com.jetbrains.educational.core.enum.TranslationLanguage
+import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import com.jetbrains.educational.translation.format.CourseTranslationResponse
-import com.jetbrains.educational.translation.format.DescriptionText
+import com.jetbrains.educational.translation.format.TranslatedText
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import java.io.IOException
@@ -63,7 +63,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
         val (language, _, version) = translationProperties
         val translation = fetchTranslation(course, language)
         val translationSettings = project.translationSettings()
-        if (version == translation.id) {
+        if (version == translation.version) {
           EduNotificationManager.showInfoNotification(
             project,
             content = EduAIBundle.message("ai.translation.translation.is.up.to.date")
@@ -156,9 +156,9 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
   }
 
   @RequiresBlockingContext
-  private fun Task.saveTranslation(text: DescriptionText) {
+  private fun Task.saveTranslation(text: TranslatedText) {
     val taskDirectory = getTaskDirectory(project) ?: return
-    val name = descriptionFormat.fileNameWithTranslation(text.language.toTranslationLanguage())
+    val name = descriptionFormat.fileNameWithTranslation(text.language)
 
     try {
       GeneratorUtils.createTextChildFile(project, taskDirectory, name, text.text)
@@ -185,7 +185,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
   }
 
   private fun CourseTranslationResponse.toTranslationProperties(): TranslationProperties =
-    TranslationProperties(language.toTranslationLanguage(), itemNames, id)
+    TranslationProperties(language, itemNames, version)
 
   companion object {
     private val LOG = Logger.getInstance(TranslationLoader::class.java)

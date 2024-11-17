@@ -34,7 +34,7 @@ import com.jetbrains.edu.learning.taskToolWindow.removeHyperskillTags
 import com.jetbrains.edu.learning.taskToolWindow.replaceActionIDsWithShortcuts
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
-import com.jetbrains.educational.core.enum.TranslationLanguage
+import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import java.io.IOException
 import kotlin.collections.component1
 import kotlin.collections.component2

@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.ai
 
-import com.jetbrains.educational.core.enum.TranslationLanguage
+import com.jetbrains.educational.core.format.enum.TranslationLanguage
+import com.jetbrains.educational.translation.format.domain.TranslationVersion
 
 /**
  * Represents the properties of a translation for a course.
@@ -16,5 +17,5 @@ import com.jetbrains.educational.core.enum.TranslationLanguage
 data class TranslationProperties(
   val language: TranslationLanguage,
   val structureTranslation: Map<String, String>,
-  val version: Int
+  val version: TranslationVersion,
 )

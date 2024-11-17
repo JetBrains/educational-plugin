@@ -4,7 +4,8 @@ import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings.TranslationProjectState
 import com.jetbrains.edu.learning.courseFormat.StudyItem
-import com.jetbrains.educational.core.enum.TranslationLanguage
+import com.jetbrains.educational.core.format.enum.TranslationLanguage
+import com.jetbrains.educational.translation.format.domain.TranslationVersion
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.concurrent.ConcurrentHashMap
@@ -17,7 +18,7 @@ class TranslationProjectSettings : PersistentStateComponent<TranslationProjectSt
   private val _translationProperties = MutableStateFlow<TranslationProperties?>(null)
   val translationProperties = _translationProperties.asStateFlow()
   private val structureTranslations = ConcurrentHashMap<TranslationLanguage, Map<String, String>>()
-  private val translationLanguageVersions = ConcurrentHashMap<TranslationLanguage, Int>()
+  private val translationLanguageVersions = ConcurrentHashMap<TranslationLanguage, TranslationVersion>()
 
   fun setTranslation(properties: TranslationProperties?) {
     if (properties == null) {
@@ -48,7 +49,7 @@ class TranslationProjectSettings : PersistentStateComponent<TranslationProjectSt
     val state = TranslationProjectState()
     state.currentTranslationLanguage = translationProperties.value?.language
     state.structureTranslation = structureTranslations
-    state.translationVersions = translationLanguageVersions
+    state.translationVersions = translationLanguageVersions.mapValuesTo(mutableMapOf()) { it.value.value }
     return state
   }
 
@@ -59,7 +60,7 @@ class TranslationProjectSettings : PersistentStateComponent<TranslationProjectSt
     }
     translationLanguageVersions.clear()
     for ((language, version) in state.translationVersions) {
-      translationLanguageVersions[language] = version
+      translationLanguageVersions[language] = TranslationVersion(version)
     }
 
     val language = state.currentTranslationLanguage ?: return

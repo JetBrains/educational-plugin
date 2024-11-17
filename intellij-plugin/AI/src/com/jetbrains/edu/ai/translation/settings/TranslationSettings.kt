@@ -2,7 +2,7 @@ package com.jetbrains.edu.ai.translation.settings
 
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.components.*
-import com.jetbrains.educational.core.enum.TranslationLanguage
+import com.jetbrains.educational.core.format.enum.TranslationLanguage
 
 fun Application.translationSettings(): TranslationSettings = service()
 

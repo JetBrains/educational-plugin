@@ -12,13 +12,12 @@ import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.ai.translationSettings
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.ui.EduColors
-import com.jetbrains.educational.core.enum.Language
-import com.jetbrains.educational.core.enum.TranslationLanguage
+import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import javax.swing.*
 import javax.swing.JPanel.LEFT_ALIGNMENT
 
 class CourseTranslationDialog(private val project: Project, course: EduCourse) : DialogWrapper(true) {
-  private val courseSourceLanguage = Language(course.languageCode)
+  private val courseSourceLanguage = course.languageCode
 
   private var selectedLanguage: TranslationLanguage?
   private lateinit var translateToCheckBox: Cell<JBCheckBox>
@@ -95,7 +94,7 @@ class CourseTranslationDialog(private val project: Project, course: EduCourse) :
         foreground = EduColors.aiTranslationBottomLabelTextColor
       }
 
-  private fun TranslationLanguage?.isNotSource(): Boolean = this != null && code != courseSourceLanguage.code
+  private fun TranslationLanguage?.isNotSource(): Boolean = this != null && code != courseSourceLanguage
 
   private fun TranslationLanguage?.isNew(): Boolean =
     isNotSource() && this != project.translationSettings().translationLanguage

@@ -3,7 +3,8 @@ package com.jetbrains.edu.learning.ui.ai
 import com.jetbrains.edu.learning.EduSettingsServiceTestBase
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.ai.TranslationProperties
-import com.jetbrains.educational.core.enum.TranslationLanguage
+import com.jetbrains.educational.core.format.enum.TranslationLanguage
+import com.jetbrains.educational.translation.format.domain.TranslationVersion
 import junit.framework.ComparisonFailure
 import org.junit.Test
 
@@ -59,7 +60,7 @@ class TranslationProjectSettingsTest : EduSettingsServiceTestBase() {
     val translationProperties = TranslationProperties(
       language = TranslationLanguage.FRENCH,
       structureTranslation = mapOf("1" to "bonjour", "2" to "croissant", "3" to "deux"),
-      version = 1
+      version = TranslationVersion(1)
     )
     val settings = TranslationProjectSettings()
     settings.setTranslation(translationProperties)

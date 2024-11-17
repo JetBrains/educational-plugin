@@ -9,7 +9,7 @@ import com.intellij.ui.dsl.builder.toNullableProperty
 import com.intellij.util.application
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.settings.AIOptionsProvider
-import com.jetbrains.educational.core.enum.TranslationLanguage
+import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import javax.swing.DefaultComboBoxModel
 
 class TranslationOptions : BoundConfigurable(EduAIBundle.message("settings.ai.translation.display.name")), AIOptionsProvider {
