@@ -87,6 +87,9 @@ class CourseArchiveCreator(
     catch (e: HugeBinaryFileException) {
       return e.message
     }
+    catch (e: FileNotFoundException) {
+      return e.message
+    }
 
     return ProgressManager.getInstance().runProcessWithProgressSynchronously<String?, RuntimeException>({
       try {
@@ -296,7 +299,10 @@ class CourseArchiveCreator(
       }
 
       for (additionalFile in course.additionalFiles) {
-        val fsFile = courseDir.findFileByRelativePath(additionalFile.name) ?: continue
+        val fsFile = courseDir.findFileByRelativePath(additionalFile.name)
+        if (fsFile == null) {
+          throw FileNotFoundException(EduCoreBundle.message("error.additional.file.does.not.exist", additionalFile.name))
+        }
         additionalFile.contents = when(additionalFile.isBinary) {
           false -> TextualContentsFromDisk(fsFile)
           true -> BinaryContentsFromDisk(fsFile)
