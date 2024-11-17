@@ -2,6 +2,9 @@ package com.jetbrains.edu.aiHints.core.connector
 
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.thisLogger
+import com.intellij.ui.JBAccountInfoService
 import com.jetbrains.edu.ai.host.EduAIServiceHost
 import com.jetbrains.edu.aiHints.core.service.HintsService
 import com.jetbrains.edu.learning.network.createRetrofitBuilder
@@ -19,10 +22,19 @@ class HintsServiceConnector {
   private val connectionPool = ConnectionPool()
 
   private val service: HintsService
-    get() = createRetrofitBuilder(url, connectionPool)
-        .addConverterFactory(HintsConverterFactory())
-        .build()
-        .create(HintsService::class.java)
+    get() = createHintsService()
+
+  @Throws(IllegalStateException::class)
+  private fun createHintsService(): HintsService {
+    val userId = JBAccountInfoService.getInstance()?.userData?.id ?: run {
+      LOG.error("JetBrains Account User ID is null")
+      throw IllegalStateException("JetBrains Account User ID is null")
+    }
+    return createRetrofitBuilder(url, connectionPool, "u.$userId")
+      .addConverterFactory(HintsConverterFactory())
+      .build()
+      .create(HintsService::class.java)
+  }
 
   suspend fun getCodeHint(context: CodeHintContext): CodeHint {
     val response = service.getCodeHint(context).body() ?: error("Response body is null")
@@ -40,5 +52,7 @@ class HintsServiceConnector {
     fun List<CodeHint>.asCodeHint() = CodeHint(joinToString(separator = "") { it.code })
 
     fun List<TextHint>.asTextHint() = TextHint(joinToString(separator = "") { it.text })
+
+    private val LOG: Logger = thisLogger()
   }
 }
