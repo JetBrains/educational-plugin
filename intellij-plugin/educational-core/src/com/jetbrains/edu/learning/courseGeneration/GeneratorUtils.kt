@@ -388,10 +388,11 @@ object GeneratorUtils {
 
   @RequiresBlockingContext
   @Throws(IOException::class)
-  fun evaluateExistingTemplate(child: VirtualFile, templateVariables: Map<String, Any>) {
+  fun evaluateExistingTemplate(child: VirtualFile, templateVariables: Map<String, Any>): String {
     val rawContent = VfsUtil.loadText(child)
     val content = FileTemplateUtil.mergeTemplate(templateVariables, rawContent, false)
     invokeAndWaitIfNeeded { runWriteAction { VfsUtil.saveText(child, content) } }
+    return content
   }
 
   /**
@@ -407,14 +408,16 @@ object GeneratorUtils {
     path: String,
     templateName: String,
     templateVariables: Map<String, Any>
-  ) {
+  ): EduFile {
     val file = baseDir.findFileByRelativePath(path)
     if (file == null) {
       val configText = getInternalTemplateText(templateName, templateVariables)
       createChildFile(holder, baseDir, path, InMemoryTextualContents(configText))
+      return EduFile(path, InMemoryTextualContents(configText))
     }
     else {
-      evaluateExistingTemplate(file, templateVariables)
+      val configText = evaluateExistingTemplate(file, templateVariables)
+      return EduFile(path, InMemoryTextualContents(configText))
     }
   }
 

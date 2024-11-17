@@ -23,16 +23,19 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
 
     val mainCMakeTemplateInfo = getCppTemplates(course).mainCMakeList
     val sanitizedProjectName = FileUtil.sanitizeFileName(holder.courseDir.name)
+    val cmakeText = mainCMakeTemplateInfo.getText(sanitizedProjectName, course.languageVersion ?: "")
     GeneratorUtils.createTextChildFile(
       holder,
       holder.courseDir,
       mainCMakeTemplateInfo.generatedFileName,
-      mainCMakeTemplateInfo.getText(sanitizedProjectName, course.languageVersion ?: "")
+      cmakeText
     )
+    addAdditionalFile(mainCMakeTemplateInfo.generatedFileName, cmakeText)
 
     getCppTemplates(course).extraTopLevelFiles.forEach { templateInfo ->
-      GeneratorUtils.createTextChildFile(holder, holder.courseDir, templateInfo.generatedFileName,
-                                     templateInfo.getText(sanitizedProjectName))
+      val text = templateInfo.getText(sanitizedProjectName)
+      GeneratorUtils.createTextChildFile(holder, holder.courseDir, templateInfo.generatedFileName, text)
+      addAdditionalFile(templateInfo.generatedFileName, text)
     }
   }
 

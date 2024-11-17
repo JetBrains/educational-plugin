@@ -32,11 +32,12 @@ open class GradleCourseProjectGenerator(
     if (EduGradleUtils.hasCourseHaveGradleKtsFiles(holder.course)) {
       return
     }
-    EduGradleUtils.createProjectGradleFiles(
+    val additionalFiles = EduGradleUtils.createProjectGradleFiles(
       holder,
       gradleCourseBuilder.templates(holder.course),
       gradleCourseBuilder.templateVariables(holder.courseDir.name)
     )
+    addAdditionalFiles(*additionalFiles.toTypedArray())
   }
 
   protected open fun getJdk(settings: JdkProjectSettings): Sdk? {

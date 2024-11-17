@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createFileFromTemplate
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_UNIX
 import org.jetbrains.plugins.gradle.settings.DistributionType
@@ -48,10 +49,15 @@ object EduGradleUtils {
     holder: CourseInfoHolder<Course>,
     templates: Map<String, String>,
     templateVariables: Map<String, Any>
-  ) {
+  ): List<EduFile> {
+    val createdAdditionalFiles = mutableListOf<EduFile>()
+
     for ((name, templateName) in templates) {
-      createFileFromTemplate(holder, holder.courseDir, name, templateName, templateVariables)
+      val additionalFile = createFileFromTemplate(holder, holder.courseDir, name, templateName, templateVariables)
+      createdAdditionalFiles.add(additionalFile)
     }
+
+    return createdAdditionalFiles
   }
 
   fun setGradleSettings(project: Project, sdk: Sdk?, location: String, distributionType: DistributionType = DistributionType.WRAPPED) {

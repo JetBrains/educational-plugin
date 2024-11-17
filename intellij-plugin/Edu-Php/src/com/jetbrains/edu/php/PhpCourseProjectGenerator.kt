@@ -21,7 +21,6 @@ class PhpCourseProjectGenerator(
 ) : CourseProjectGenerator<PhpProjectSettings>(builder, course) {
 
   override fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
-    super.createAdditionalFiles(holder, isNewCourse)
     createComposerFile(holder)
   }
 
@@ -36,12 +35,14 @@ class PhpCourseProjectGenerator(
   private fun createComposerFile(holder: CourseInfoHolder<Course>) {
     val composerFile = holder.courseDir.findChild(ComposerUtils.CONFIG_DEFAULT_FILENAME)
     if (composerFile == null) {
+      val configText = getInternalTemplateText(ComposerUtils.CONFIG_DEFAULT_FILENAME)
       createTextChildFile(
         holder,
         holder.courseDir,
         ComposerUtils.CONFIG_DEFAULT_FILENAME,
-        getInternalTemplateText(ComposerUtils.CONFIG_DEFAULT_FILENAME)
+        configText
       )
+      addAdditionalFile(ComposerUtils.CONFIG_DEFAULT_FILENAME, configText)
     }
   }
 

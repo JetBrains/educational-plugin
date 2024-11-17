@@ -50,6 +50,7 @@ class CSharpCourseProjectGenerator(
       solutionFileName,
       content
     )
+    addAdditionalFile(solutionFileName, content)
   }
 
   override fun beforeInitHandler(location: Path): BeforeInitHandler = BeforeInitHandler {

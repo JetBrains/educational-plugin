@@ -91,6 +91,7 @@ class FakeGradleCourseProjectGenerator(
       .filter { it !in existingAdditionalFiles }
       .forEach { fileName ->
         GeneratorUtils.createTextChildFile(holder, holder.courseDir, fileName, "")
+        addAdditionalFile(fileName, "")
       }
   }
 }

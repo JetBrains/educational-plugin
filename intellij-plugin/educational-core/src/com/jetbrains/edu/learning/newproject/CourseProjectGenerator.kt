@@ -40,6 +40,8 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.CourseVisibility.*
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.EduFile
+import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.IdeaDirectoryUnpackMode.ONLY_IDEA_DIRECTORY
@@ -286,6 +288,27 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
       LOG.info("Converting course to local. Course id: ${course.id}")
       course.convertToLocal()
     }
+  }
+
+  protected fun addAdditionalFile(eduFile: EduFile) {
+    val contains = course.additionalFiles.find { it.name == eduFile.name } != null
+
+    if (contains) {
+      course.additionalFiles = course.additionalFiles.map { if (it.name == eduFile.name) eduFile else it }
+    }
+    else {
+      course.additionalFiles = course.additionalFiles + eduFile
+    }
+  }
+
+  protected fun addAdditionalFiles(vararg additionalFile: EduFile) {
+    for (file in additionalFile) {
+      addAdditionalFile(file)
+    }
+  }
+
+  protected fun addAdditionalFile(name: String, textualContents: String) {
+    addAdditionalFile(EduFile(name, InMemoryTextualContents(textualContents)))
   }
 
   /**

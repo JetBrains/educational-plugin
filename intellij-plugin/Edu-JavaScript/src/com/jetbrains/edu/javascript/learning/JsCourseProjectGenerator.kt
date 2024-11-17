@@ -75,6 +75,7 @@ class JsCourseProjectGenerator(builder: JsCourseBuilder, course: Course) : Cours
     if (packageJsonFile == null && !holder.course.isStudy) {
       val templateText = getInternalTemplateText(NodeModuleNamesUtil.PACKAGE_JSON)
       createTextChildFile(holder, holder.courseDir, NodeModuleNamesUtil.PACKAGE_JSON, templateText)
+      addAdditionalFile(NodeModuleNamesUtil.PACKAGE_JSON, templateText)
     }
   }
 
