@@ -3,8 +3,11 @@ package com.jetbrains.edu.ai.translation.action
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.util.application
 import com.jetbrains.edu.ai.translation.TranslationLoader
 import com.jetbrains.edu.ai.translation.dialog.CourseTranslationDialog
+import com.jetbrains.edu.ai.translation.settings.AutoTranslationProperties
+import com.jetbrains.edu.ai.translation.settings.translationSettings
 import com.jetbrains.edu.ai.ui.EducationalAIIcons
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.ai.translationSettings
@@ -33,6 +36,10 @@ class AITranslation : DumbAwareAction() {
       project.translationSettings().setTranslation(null)
     }
     else {
+      val translationSettings = application.translationSettings()
+      if (!translationSettings.autoTranslate) {
+        translationSettings.setAutoTranslationProperties(AutoTranslationProperties(selectedLanguage, false))
+      }
       TranslationLoader.getInstance(project).fetchAndApplyTranslation(course, selectedLanguage)
     }
   }

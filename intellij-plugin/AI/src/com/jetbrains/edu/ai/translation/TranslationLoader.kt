@@ -8,12 +8,12 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.NotificationContent
 import com.intellij.platform.ide.progress.withBackgroundProgress
+import com.intellij.util.application
 import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.translation.connector.TranslationServiceConnector
-import com.jetbrains.edu.learning.Err
-import com.jetbrains.edu.learning.Ok
-import com.jetbrains.edu.learning.Result
+import com.jetbrains.edu.ai.translation.settings.translationSettings
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.ai.TranslationProperties
 import com.jetbrains.edu.learning.ai.translationSettings
@@ -25,17 +25,31 @@ import com.jetbrains.edu.learning.courseFormat.ext.getTaskDirectory
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.notification.EduNotificationManager
-import com.jetbrains.edu.learning.onError
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import com.jetbrains.educational.translation.format.CourseTranslationResponse
 import com.jetbrains.educational.translation.format.TranslatedText
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.sync.Mutex
 import java.io.IOException
 
 @Service(Service.Level.PROJECT)
 class TranslationLoader(private val project: Project, private val scope: CoroutineScope) {
   private val mutex = Mutex()
+
+  init {
+    scope.launch {
+      application.translationSettings().autoTranslationSettings.collectLatest { properties ->
+        if (properties == null) return@collectLatest
+        val course = project.course as? EduCourse ?: return@collectLatest
+        if (TranslationProjectSettings.isCourseTranslated(project)) return@collectLatest
+        if (isRunning(project)) return@collectLatest
+        if (properties.autoTranslate) {
+          fetchAndApplyTranslation(course, properties.language)
+        }
+      }
+    }
+  }
 
   fun fetchAndApplyTranslation(course: EduCourse, translationLanguage: TranslationLanguage) {
     runInBackgroundExclusively(EduAIBundle.message("ai.translation.already.running")) {
