@@ -5,14 +5,21 @@ import com.intellij.externalDependencies.ExternalDependenciesManager
 import com.intellij.externalDependencies.ProjectExternalDependency
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.fileTypes.PlainTextLanguage
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiDocumentManager
 import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchiveTest.PlainTextCompatibilityProvider.Companion.PLAIN_TEXT_PLUGIN_ID
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
+import com.jetbrains.edu.learning.CourseBuilder
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
+import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createTextChildFile
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.runInWriteActionAndWait
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.setUpPluginDependencies
@@ -50,10 +57,10 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
           taskFile("taskFile1.txt")
         }
       }
-      additionalFile(lessonIgnoredFile)
-      additionalFile(courseIgnoredFile)
-      additionalFile(EduNames.COURSE_IGNORE, "$courseIgnoredFile\n${lessonIgnoredFile}\n\n")
     }
+    createUserFile(EduNames.COURSE_IGNORE, "$courseIgnoredFile\n$lessonIgnoredFile\n\n")
+    createUserFile(lessonIgnoredFile)
+    createUserFile(courseIgnoredFile)
     course.description = "my summary"
     doTest()
   }
@@ -726,112 +733,113 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
           taskFile("taskFile1.txt")
         }
       }
-      additionalFile(".idea/important_settings.xml", """
-        some additional file that should not go into archive
-      """.trimIndent())
-      additionalFile(".idea/subfolder/important_settings_in_subfolder.xml", """
-        some additional file that should not go into archive
-      """.trimIndent())
-      additionalFile(".idea/scopes/.dont include me.xml", """
-        some hidden additional file that should not go into archive
-      """.trimIndent())
-      additionalFile(".idea/scopes/.dont include folder/x.xml", """
-        some additional file inside a hidden folder that should not go into archive
-      """.trimIndent())
-      additionalFile(".idea/scopes/level_up.xml", """
-        <component name="DependencyValidationManager">
-          <scope name="level_up" pattern="file:lesson1/task3/*" />
-        </component>
-      """.trimIndent())
-      additionalFile(".idea/inspectionProfiles/profiles_settings.xml", """
-        <component name="InspectionProjectProfileManager">
-          <settings>
-            <option name="PROJECT_PROFILE" value="One more inspection profile" />
-            <version value="1.0" />
-          </settings>
-        </component>
-      """.trimIndent())
-      additionalFile(".idea/inspectionProfiles/Project_Default.xml", """
-        <component name="InspectionProjectProfileManager">
-          <profile version="1.0">
-            <option name="myName" value="Project Default" />
-            <inspection_tool class="ReplaceAssignmentWithOperatorAssignment" enabled="true" level="INFORMATION" enabled_by_default="false">
-              <scope name="level_up" level="WARNING" enabled="true" editorAttributes="WARNING_ATTRIBUTES">
-                <option name="ignoreLazyOperators" value="true" />
-                <option name="ignoreObscureOperators" value="false" />
-              </scope>
-              <option name="ignoreLazyOperators" value="true" />
-              <option name="ignoreObscureOperators" value="false" />
-            </inspection_tool>
-            <inspection_tool class="unused" enabled="true" level="WARNING" enabled_by_default="false" checkParameterExcludingHierarchy="false">
-              <scope name="level_up" level="WARNING" enabled="true" checkParameterExcludingHierarchy="false">
-                <option name="LOCAL_VARIABLE" value="true" />
-                <option name="FIELD" value="true" />
-                <option name="METHOD" value="true" />
-                <option name="CLASS" value="true" />
-                <option name="PARAMETER" value="true" />
-                <option name="REPORT_PARAMETER_FOR_PUBLIC_METHODS" value="true" />
-                <option name="ADD_MAINS_TO_ENTRIES" value="true" />
-                <option name="ADD_APPLET_TO_ENTRIES" value="true" />
-                <option name="ADD_SERVLET_TO_ENTRIES" value="true" />
-                <option name="ADD_NONJAVA_TO_ENTRIES" value="true" />
-              </scope>
-              <option name="LOCAL_VARIABLE" value="true" />
-              <option name="FIELD" value="true" />
-              <option name="METHOD" value="true" />
-              <option name="CLASS" value="true" />
-              <option name="PARAMETER" value="true" />
-              <option name="REPORT_PARAMETER_FOR_PUBLIC_METHODS" value="true" />
-              <option name="ADD_MAINS_TO_ENTRIES" value="true" />
-              <option name="ADD_APPLET_TO_ENTRIES" value="true" />
-              <option name="ADD_SERVLET_TO_ENTRIES" value="true" />
-              <option name="ADD_NONJAVA_TO_ENTRIES" value="true" />
-            </inspection_tool>
-          </profile>
-        </component>
-      """.trimIndent())
-      additionalFile(".idea/inspectionProfiles/One_more_inspections_profile.xml", """
-        <component name="InspectionProjectProfileManager">
-          <profile version="1.0">
-            <option name="myName" value="One more inspection profile" />
-            <inspection_tool class="AssignmentToNull" enabled="true" level="WARNING" enabled_by_default="true" />
-            <inspection_tool class="IncrementDecrementUsedAsExpression" enabled="true" level="WARNING" enabled_by_default="true" />
-            <inspection_tool class="ReplaceAssignmentWithOperatorAssignment" enabled="true" level="INFORMATION" enabled_by_default="false">
-              <scope name="level_up" level="WARNING" enabled="true" editorAttributes="WARNING_ATTRIBUTES">
-                <option name="ignoreLazyOperators" value="true" />
-                <option name="ignoreObscureOperators" value="false" />
-              </scope>
-              <option name="ignoreLazyOperators" value="true" />
-              <option name="ignoreObscureOperators" value="false" />
-            </inspection_tool>
-            <inspection_tool class="unused" enabled="true" level="WARNING" enabled_by_default="false" checkParameterExcludingHierarchy="false">
-              <scope name="level_up" level="WARNING" enabled="true" editorAttributes="NOT_USED_ELEMENT_ATTRIBUTES" checkParameterExcludingHierarchy="false">
-                <option name="LOCAL_VARIABLE" value="true" />
-                <option name="FIELD" value="true" />
-                <option name="METHOD" value="true" />
-                <option name="CLASS" value="true" />
-                <option name="PARAMETER" value="true" />
-                <option name="REPORT_PARAMETER_FOR_PUBLIC_METHODS" value="true" />
-                <option name="ADD_MAINS_TO_ENTRIES" value="true" />
-                <option name="ADD_APPLET_TO_ENTRIES" value="true" />
-                <option name="ADD_SERVLET_TO_ENTRIES" value="true" />
-                <option name="ADD_NONJAVA_TO_ENTRIES" value="true" />
-              </scope>
-              <option name="LOCAL_VARIABLE" value="true" />
-              <option name="FIELD" value="true" />
-              <option name="METHOD" value="true" />
-              <option name="CLASS" value="true" />
-              <option name="PARAMETER" value="true" />
-              <option name="REPORT_PARAMETER_FOR_PUBLIC_METHODS" value="true" />
-              <option name="ADD_MAINS_TO_ENTRIES" value="true" />
-              <option name="ADD_APPLET_TO_ENTRIES" value="true" />
-              <option name="ADD_SERVLET_TO_ENTRIES" value="true" />
-              <option name="ADD_NONJAVA_TO_ENTRIES" value="true" />
-            </inspection_tool>
-          </profile>
-        </component>
-      """.trimIndent())
     }
+
+    createUserFile(".idea/important_settings.xml", """
+      some additional file that should not go into archive
+    """.trimIndent())
+    createUserFile(".idea/subfolder/important_settings_in_subfolder.xml", """
+      some additional file that should not go into archive
+    """.trimIndent())
+    createUserFile(".idea/scopes/.dont include me.xml", """
+      some hidden additional file that should not go into archive
+    """.trimIndent())
+    createUserFile(".idea/scopes/.dont include folder/x.xml", """
+      some additional file inside a hidden folder that should not go into archive
+    """.trimIndent())
+    createUserFile(".idea/scopes/level_up.xml", """
+      <component name="DependencyValidationManager">
+        <scope name="level_up" pattern="file:lesson1/task3/*" />
+      </component>
+    """.trimIndent())
+    createUserFile(".idea/inspectionProfiles/profiles_settings.xml", """
+      <component name="InspectionProjectProfileManager">
+        <settings>
+          <option name="PROJECT_PROFILE" value="One more inspection profile" />
+          <version value="1.0" />
+        </settings>
+      </component>
+    """.trimIndent())
+    createUserFile(".idea/inspectionProfiles/Project_Default.xml", """
+      <component name="InspectionProjectProfileManager">
+        <profile version="1.0">
+          <option name="myName" value="Project Default" />
+          <inspection_tool class="ReplaceAssignmentWithOperatorAssignment" enabled="true" level="INFORMATION" enabled_by_default="false">
+            <scope name="level_up" level="WARNING" enabled="true" editorAttributes="WARNING_ATTRIBUTES">
+              <option name="ignoreLazyOperators" value="true" />
+              <option name="ignoreObscureOperators" value="false" />
+            </scope>
+            <option name="ignoreLazyOperators" value="true" />
+            <option name="ignoreObscureOperators" value="false" />
+          </inspection_tool>
+          <inspection_tool class="unused" enabled="true" level="WARNING" enabled_by_default="false" checkParameterExcludingHierarchy="false">
+            <scope name="level_up" level="WARNING" enabled="true" checkParameterExcludingHierarchy="false">
+              <option name="LOCAL_VARIABLE" value="true" />
+              <option name="FIELD" value="true" />
+              <option name="METHOD" value="true" />
+              <option name="CLASS" value="true" />
+              <option name="PARAMETER" value="true" />
+              <option name="REPORT_PARAMETER_FOR_PUBLIC_METHODS" value="true" />
+              <option name="ADD_MAINS_TO_ENTRIES" value="true" />
+              <option name="ADD_APPLET_TO_ENTRIES" value="true" />
+              <option name="ADD_SERVLET_TO_ENTRIES" value="true" />
+              <option name="ADD_NONJAVA_TO_ENTRIES" value="true" />
+            </scope>
+            <option name="LOCAL_VARIABLE" value="true" />
+            <option name="FIELD" value="true" />
+            <option name="METHOD" value="true" />
+            <option name="CLASS" value="true" />
+            <option name="PARAMETER" value="true" />
+            <option name="REPORT_PARAMETER_FOR_PUBLIC_METHODS" value="true" />
+            <option name="ADD_MAINS_TO_ENTRIES" value="true" />
+            <option name="ADD_APPLET_TO_ENTRIES" value="true" />
+            <option name="ADD_SERVLET_TO_ENTRIES" value="true" />
+            <option name="ADD_NONJAVA_TO_ENTRIES" value="true" />
+          </inspection_tool>
+        </profile>
+      </component>
+    """.trimIndent())
+    createUserFile(".idea/inspectionProfiles/One_more_inspections_profile.xml", """
+      <component name="InspectionProjectProfileManager">
+        <profile version="1.0">
+          <option name="myName" value="One more inspection profile" />
+          <inspection_tool class="AssignmentToNull" enabled="true" level="WARNING" enabled_by_default="true" />
+          <inspection_tool class="IncrementDecrementUsedAsExpression" enabled="true" level="WARNING" enabled_by_default="true" />
+          <inspection_tool class="ReplaceAssignmentWithOperatorAssignment" enabled="true" level="INFORMATION" enabled_by_default="false">
+            <scope name="level_up" level="WARNING" enabled="true" editorAttributes="WARNING_ATTRIBUTES">
+              <option name="ignoreLazyOperators" value="true" />
+              <option name="ignoreObscureOperators" value="false" />
+            </scope>
+            <option name="ignoreLazyOperators" value="true" />
+            <option name="ignoreObscureOperators" value="false" />
+          </inspection_tool>
+          <inspection_tool class="unused" enabled="true" level="WARNING" enabled_by_default="false" checkParameterExcludingHierarchy="false">
+            <scope name="level_up" level="WARNING" enabled="true" editorAttributes="NOT_USED_ELEMENT_ATTRIBUTES" checkParameterExcludingHierarchy="false">
+              <option name="LOCAL_VARIABLE" value="true" />
+              <option name="FIELD" value="true" />
+              <option name="METHOD" value="true" />
+              <option name="CLASS" value="true" />
+              <option name="PARAMETER" value="true" />
+              <option name="REPORT_PARAMETER_FOR_PUBLIC_METHODS" value="true" />
+              <option name="ADD_MAINS_TO_ENTRIES" value="true" />
+              <option name="ADD_APPLET_TO_ENTRIES" value="true" />
+              <option name="ADD_SERVLET_TO_ENTRIES" value="true" />
+              <option name="ADD_NONJAVA_TO_ENTRIES" value="true" />
+            </scope>
+            <option name="LOCAL_VARIABLE" value="true" />
+            <option name="FIELD" value="true" />
+            <option name="METHOD" value="true" />
+            <option name="CLASS" value="true" />
+            <option name="PARAMETER" value="true" />
+            <option name="REPORT_PARAMETER_FOR_PUBLIC_METHODS" value="true" />
+            <option name="ADD_MAINS_TO_ENTRIES" value="true" />
+            <option name="ADD_APPLET_TO_ENTRIES" value="true" />
+            <option name="ADD_SERVLET_TO_ENTRIES" value="true" />
+            <option name="ADD_NONJAVA_TO_ENTRIES" value="true" />
+          </inspection_tool>
+        </profile>
+      </component>
+    """.trimIndent())
     doTest()
   }
 
@@ -867,10 +875,10 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
 
   @Test
   fun `test course archive has both course_json and courseIcon_svg inside`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
-      additionalFile(EduFormatNames.COURSE_ICON_FILE)
-      additionalFile("not a course icon.svg")
-    }
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {}
+
+    createUserFile(EduFormatNames.COURSE_ICON_FILE)
+    createUserFile("not a course icon.svg")
 
     val courseArchiveFile = kotlin.io.path.createTempFile("course.zip")
     try {
@@ -893,9 +901,8 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
 
   @Test
   fun `test courseIcon_svg file is not added inside the course archive`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
-      additionalFile("not a course icon.svg")
-    }
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {}
+    createUserFile("not a course icon.svg")
 
     val courseArchiveFile = kotlin.io.path.createTempFile("course.zip")
     try {
@@ -908,6 +915,29 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     } finally {
       Files.delete(courseArchiveFile)
     }
+  }
+
+  /**
+   * Emulates that a user created a file.
+   * Use it instead of [CourseBuilder.additionalFile] if you are not sure
+   * or want to test whether this file is going to become additional.
+   * This method should be called after the call to the [courseWithFiles].
+   */
+  private fun createUserFile(path: String, contents: String = ""): VirtualFile {
+    lateinit var createdFile: VirtualFile
+
+    val course = project.course ?: error("failed to find course")
+    val courseDir = project.courseDir
+
+    withVirtualFileListener(course) {
+      createdFile = createTextChildFile(project, courseDir, path, contents) ?: error("failed to create file $path")
+      runInWriteActionAndWait {
+        // if the .courseignore file is added, we commit it for it to be parsed
+        PsiDocumentManager.getInstance(project).commitAllDocuments()
+      }
+    }
+
+    return createdFile
   }
 
   override fun getTestDataPath(): String {
