@@ -21,17 +21,17 @@
   ],
   "additional_files" : [
     {
+      "name" : "gradle.properties",
+      "is_visible" : true,
+      "is_binary" : false
+    },
+    {
       "name" : "build.gradle",
       "is_visible" : true,
       "is_binary" : false
     },
     {
       "name" : "settings.gradle",
-      "is_visible" : true,
-      "is_binary" : false
-    },
-    {
-      "name" : "gradle.properties",
       "is_visible" : true,
       "is_binary" : false
     }

@@ -21,6 +21,11 @@
   ],
   "additional_files" : [
     {
+      "name" : "8abe7b618ddf9c55adbea359ce891775794a61",
+      "is_visible" : true,
+      "is_binary" : true
+    },
+    {
       "name" : "build.gradle",
       "is_visible" : true,
       "is_binary" : false
@@ -29,11 +34,6 @@
       "name" : "settings.gradle",
       "is_visible" : true,
       "is_binary" : false
-    },
-    {
-      "name" : "8abe7b618ddf9c55adbea359ce891775794a61",
-      "is_visible" : true,
-      "is_binary" : true
     }
   ],
   "version" : <last version>,
