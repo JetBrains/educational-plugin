@@ -11,6 +11,7 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileTypes.PlainTextLanguage
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
@@ -21,6 +22,7 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.replaceService
 import com.intellij.toolWindow.ToolWindowHeadlessManagerImpl
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
@@ -41,6 +43,8 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createChildFile
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.runInWriteActionAndWait
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory
@@ -53,6 +57,9 @@ import org.junit.runners.JUnit4
 import java.io.File
 import java.io.IOException
 import java.util.regex.Pattern
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.iterator
 import kotlin.reflect.KMutableProperty0
 
 @RunWith(JUnit4::class)
@@ -191,7 +198,8 @@ abstract class EduTestCase : BasePlatformTestCase() {
     createYamlConfigs: Boolean = false,
     buildCourse: CourseBuilder.() -> Unit
   ): Course {
-    val course = course(name, language, description, environment, courseMode, courseProducer, buildCourse).apply {
+    val userCreatedFiles = LinkedHashMap<String, FileContents>()
+    val course = course(name, language, description, environment, courseMode, courseProducer, userCreatedFiles, buildCourse).apply {
       vendor = courseVendor
 
       initializeCourse(project, course)
@@ -200,11 +208,15 @@ abstract class EduTestCase : BasePlatformTestCase() {
         createConfigFiles(project)
       }
     }
+
     if (id != null) {
       course.id = id
     }
 
     SubmissionsManager.getInstance(project).course = course
+
+    createUserCreatedFiles(course, userCreatedFiles)
+
     return course
   }
 
@@ -303,6 +315,23 @@ abstract class EduTestCase : BasePlatformTestCase() {
     remoteCourse.init(true)
     StudyTaskManager.getInstance(project).course = remoteCourse
     return remoteCourse
+  }
+
+  private fun createUserCreatedFiles(course: Course, files: Map<String, FileContents>) {
+    if (files.isEmpty()) return
+
+    ProgressManager.getInstance().runProcessWithProgressSynchronously(
+    {
+      withVirtualFileListener(course) {
+        for ((name, contents) in files) {
+          runInWriteActionAndWait {
+            createChildFile(project, project.courseDir, name, contents)
+          }
+
+          UIUtil.dispatchAllInvocationEvents()
+        }
+      }
+    }, "Creating files by user", false, project)
   }
 
   private fun registerConfigurator(

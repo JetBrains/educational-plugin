@@ -44,9 +44,11 @@ fun course(
   environment: String = "",
   courseMode: CourseMode = CourseMode.STUDENT,
   courseProducer: () -> Course = ::EduCourse,
-  buildCourse: CourseBuilder.() -> Unit
+  userCreatedFiles: MutableMap<String, FileContents>? = null,
+  buildCourse: CourseBuilder.() -> Unit,
 ): Course {
   val builder = CourseBuilder(courseProducer())
+  builder.userCreatedFiles = userCreatedFiles
   builder.withName(name)
   builder.withMode(courseMode)
   val course = builder.course
@@ -141,6 +143,7 @@ abstract class LessonOwnerBuilder(val course: Course) {
 class CourseBuilder(course: Course) : LessonOwnerBuilder(course) {
 
   override val nextLessonIndex: Int get() = course.lessons.size + 1
+  var userCreatedFiles: MutableMap<String, FileContents>? = null
 
   fun withName(name: String) {
     course.name = name
@@ -182,6 +185,17 @@ class CourseBuilder(course: Course) : LessonOwnerBuilder(course) {
     builder.buildTaskFile()
 
     course.additionalFiles = course.additionalFiles + builder.eduFile
+  }
+
+  /**
+   * This file is pretended to be created by a user after all other course files already exist on FS.
+   */
+  fun userCreatedFile(name: String, contents: FileContents = TextualContents.EMPTY) {
+    userCreatedFiles?.set(name, contents)
+  }
+
+  fun userCreatedFile(name: String, text: String) {
+    userCreatedFiles?.set(name, InMemoryTextualContents(text))
   }
 
   fun environmentSetting(key: String, value: String) {
