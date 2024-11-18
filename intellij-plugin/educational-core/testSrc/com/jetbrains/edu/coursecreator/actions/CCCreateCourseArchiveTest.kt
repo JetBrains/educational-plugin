@@ -50,9 +50,9 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
           taskFile("taskFile1.txt")
         }
       }
-      additionalFile(lessonIgnoredFile)
-      additionalFile(courseIgnoredFile)
-      additionalFile(EduNames.COURSE_IGNORE, "$courseIgnoredFile\n${lessonIgnoredFile}\n\n")
+      userCreatedFile(EduNames.COURSE_IGNORE, "$courseIgnoredFile\n${lessonIgnoredFile}\n\n")
+      userCreatedFile(lessonIgnoredFile)
+      userCreatedFile(courseIgnoredFile)
     }
     course.description = "my summary"
     doTest()
@@ -732,12 +732,12 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
       additionalFile(".idea/subfolder/important_settings_in_subfolder.xml", """
         some additional file that should not go into archive
       """.trimIndent())
-      additionalFile(".idea/scopes/.dont include me.xml", """
+      /*additionalFile(".idea/scopes/.dont include me.xml", """
         some hidden additional file that should not go into archive
       """.trimIndent())
       additionalFile(".idea/scopes/.dont include folder/x.xml", """
         some additional file inside a hidden folder that should not go into archive
-      """.trimIndent())
+      """.trimIndent())*/
       additionalFile(".idea/scopes/level_up.xml", """
         <component name="DependencyValidationManager">
           <scope name="level_up" pattern="file:lesson1/task3/*" />

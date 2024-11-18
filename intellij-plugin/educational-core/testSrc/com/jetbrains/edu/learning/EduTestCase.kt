@@ -287,6 +287,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
     remoteCourse.languageId = languageId
     remoteCourse.languageVersion = languageVersion
     remoteCourse.description = description
+    remoteCourse.additionalFiles = additionalFiles.toList()
 
     var hasSections = false
     for (item in remoteCourse.items) {
