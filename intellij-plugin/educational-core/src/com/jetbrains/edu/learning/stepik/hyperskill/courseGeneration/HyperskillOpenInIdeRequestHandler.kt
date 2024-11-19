@@ -177,6 +177,9 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
       // When the user has selected project on Hyperskill, the Plugin has to check if it is an Android project,
       // if not: a new one should be created.
       if (stepSource.framework == EduNames.ANDROID && eduEnvironment != EduNames.ANDROID) {
+        if (!EduUtilsKt.isAndroidStudio()) {
+          return Err(ValidationErrorMessageWithHyperlinks(EduCoreBundle.message("rest.service.android.not.supported")))
+        }
         return Ok(HyperskillCourse(hyperskillLanguage, languageId, languageVersion, EduNames.ANDROID))
       }
 
