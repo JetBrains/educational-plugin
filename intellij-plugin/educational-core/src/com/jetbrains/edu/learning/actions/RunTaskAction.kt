@@ -9,10 +9,12 @@ import com.intellij.execution.runners.ExecutionEnvironmentBuilder
 import com.intellij.execution.runners.ProgramRunner
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.PlatformCoreDataKeys.CONTEXT_COMPONENT
+import com.intellij.openapi.actionSystem.ex.ActionUtil.SHOW_TEXT_IN_TOOLBAR
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
@@ -27,7 +29,7 @@ import com.jetbrains.edu.learning.selectedTaskFile
 import javax.swing.JComponent
 import javax.swing.event.HyperlinkEvent
 
-class RunTaskAction : DumbAwareAction() {
+class RunTaskAction : ActionWithButtonCustomComponent(), DumbAware {
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
@@ -41,14 +43,13 @@ class RunTaskAction : DumbAwareAction() {
     val runConfiguration = getCustomRunConfigurationForRunner(project, task) ?: return
     // store the configuration found during the update to use it later when the action is performed
     e.presentation.putClientProperty(runConfigurationKey, runConfiguration)
+    e.presentation.putClientProperty(SHOW_TEXT_IN_TOOLBAR, true)
 
     e.presentation.text = EduCoreBundle.message("action.run.button.text")
     e.presentation.description = EduCoreBundle.message("action.run.button.description", task.name)
 
     e.presentation.isEnabledAndVisible = true
   }
-
-  override fun displayTextInToolbar(): Boolean = true
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
@@ -149,7 +150,7 @@ class RunTaskAction : DumbAwareAction() {
 
     stopAndRunHandler.balloon = balloon
 
-    val pressedButton = e.inputEvent?.component as? JComponent ?: return
+    val pressedButton = e.getData(CONTEXT_COMPONENT) ?: return
     val tooltipRelativePoint = AnchoredPoint(AnchoredPoint.Anchor.TOP, pressedButton)
     balloon.show(tooltipRelativePoint, Balloon.Position.above)
   }
