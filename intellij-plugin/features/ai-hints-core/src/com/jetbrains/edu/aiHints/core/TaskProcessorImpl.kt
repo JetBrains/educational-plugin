@@ -116,9 +116,9 @@ class TaskProcessorImpl(val task: Task) : TaskProcessor {
   }
 
 
-  override fun getFunctionsSetStrFromAuthorSolution() = task.authorSolutionContext?.functionSignatures?.map { it.toString() }
+  override fun getFunctionsSetStrFromAuthorSolution() = task.authorSolutionContext.functionSignatures.map { it.toString() }
 
-  override fun getStringsFromAuthorSolution() = task.authorSolutionContext?.functionsToStringMap?.values?.flatten()
+  override fun getStringsFromAuthorSolution() = task.authorSolutionContext.functionsToStringMap.values.flatten()
 
   private fun getStringsIfFileUnchanged(file: TaskFile, project: Project): List<String>? = if (isFileUnchanged(
       file,
@@ -147,9 +147,9 @@ class TaskProcessorImpl(val task: Task) : TaskProcessor {
   override fun getShortFunctionFromSolutionIfRecommended(code: String, functionName: String): String? {
     val functionSignatures = getFunctionSignaturesFromGeneratedCode(code, project, language)
     val signature = functionSignatures.find { it.name == functionName }
-    val functionsSignaturesFromSolution = task.authorSolutionContext?.functionSignatures?.filter {
+    val functionsSignaturesFromSolution = task.authorSolutionContext.functionSignatures.filter {
       it.bodyLineCount != null && it.bodyLineCount <= MAX_BODY_LINES_IN_SHORT_FUNCTION
-    } ?: return null
+    }
     if (signature != null && functionsSignaturesFromSolution.contains(signature)) {
       val taskFile = currentTaskFile ?: project.selectedTaskFile ?: error("Can't get task file")
       return runReadAction {
@@ -282,7 +282,7 @@ class TaskProcessorImpl(val task: Task) : TaskProcessor {
     return runReadAction {
       FunctionSignaturesProvider.getFunctionSignatures(this, signatureSource, language).filter { functionSignature ->
         task.taskFilesWithChangedFunctions?.values?.flatten()?.contains(functionSignature.name) == true ||
-        task.authorSolutionContext?.functionSignatures?.contains(functionSignature) == false
+        !task.authorSolutionContext.functionSignatures.contains(functionSignature)
       }.joinToString(separator = System.lineSeparator()) {
         FunctionSignatureResolver.getFunctionBySignature(this, it.name, language)?.text ?: ""
       }

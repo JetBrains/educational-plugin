@@ -8,10 +8,10 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 /**
  * Stores a context created by the author's solution, if any.
  */
-var Task.authorSolutionContext: AuthorSolutionContext?
-  get() = hintData?.authorSolutionContext
+var Task.authorSolutionContext: AuthorSolutionContext
+  get() = hintData.authorSolutionContext
   set(value) {
-    hintData?.authorSolutionContext = value
+    hintData.authorSolutionContext = value
   }
 
 /**
@@ -19,9 +19,9 @@ var Task.authorSolutionContext: AuthorSolutionContext?
  * This map stores only task files in which changes have been made in the author's solution.
  */
 var Task.taskFilesWithChangedFunctions: Map<String, List<String>>?
-  get() = hintData?.taskFilesWithChangedFunctions
+  get() = hintData.taskFilesWithChangedFunctions
   set(value) {
-    hintData?.taskFilesWithChangedFunctions = value
+    hintData.taskFilesWithChangedFunctions = value
   }
 
 /**

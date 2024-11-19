@@ -1,13 +1,9 @@
 package com.jetbrains.edu.aiHints.core.context
 
-import com.intellij.openapi.application.readAction
-import com.intellij.util.concurrency.annotations.RequiresReadLock
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.ext.allTasks
+import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.ext.isTestFile
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
-import com.jetbrains.edu.learning.courseFormat.ext.project
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 data class AuthorSolutionContext(
@@ -16,24 +12,16 @@ data class AuthorSolutionContext(
 ) {
   companion object {
     @JvmStatic
-    @RequiresReadLock
-    fun create(task: Task): AuthorSolutionContext? {
-      val project = task.project ?: return null
-      val language = task.course.languageById ?: return null
+    fun create(project: Project, task: Task): AuthorSolutionContext {
+      val language = task.course.languageById ?: error("Language is null for task ${task.name}")
       val files = task.taskFiles.values.filterNot { it.isTestFile }
-      val functionsToStringMap = FunctionsToStrings.create(project, language, files)
+      val functionsToStringMap = runReadAction {
+        FunctionsToStrings.create(project, language, files)
+      }
       return AuthorSolutionContext(
         functionsToStringMap.mapOfStringSignatures(),
         functionsToStringMap.signatures()
       )
-    }
-
-    @JvmStatic
-    suspend fun create(course: Course) = readAction {
-      val tasksToInitialize = course.allTasks.filter { it is EduTask && it.authorSolutionContext == null }
-      for (task in tasksToInitialize) {
-        task.authorSolutionContext = create(task)
-      }
     }
   }
 }

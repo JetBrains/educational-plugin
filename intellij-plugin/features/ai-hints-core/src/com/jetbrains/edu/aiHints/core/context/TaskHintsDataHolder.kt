@@ -11,20 +11,22 @@ import com.jetbrains.rd.util.ConcurrentHashMap
 class TaskHintsDataHolder {
   private val data = ConcurrentHashMap<Task, TaskHintData>()
 
-  private fun getOrCreate(task: Task): TaskHintData = data.getOrPut(task) { TaskHintData() }
+  private fun getOrCreate(project: Project, task: Task): TaskHintData = data.getOrPut(task) {
+    TaskHintData(authorSolutionContext = AuthorSolutionContext.create(project, task))
+  }
 
   data class TaskHintData(
-    var authorSolutionContext: AuthorSolutionContext? = null,
+    var authorSolutionContext: AuthorSolutionContext,
     var taskFilesWithChangedFunctions: Map<String, List<String>>? = null
   )
 
   companion object {
     fun getInstance(project: Project): TaskHintsDataHolder = project.service()
 
-    val Task.hintData: TaskHintData?
+    val Task.hintData: TaskHintData
       get() {
-        val project = project ?: return null
-        return getInstance(project).getOrCreate(this)
+        val project = project ?: error("No project for task $name")
+        return getInstance(project).getOrCreate(project, this)
       }
   }
 }

@@ -22,7 +22,6 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
-    <postStartupActivity implementation="com.jetbrains.edu.aiHints.core.HintsProjectActivity"/>
     <!--suppress PluginXmlValidity -->
     <experimentalFeature id="edu.learning.ai.get.hint" percentOfUsers="100" internalFeature="true">
       <description>Enables Get AI Hint action</description>
