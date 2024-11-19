@@ -10,6 +10,7 @@ import com.intellij.execution.runners.ProgramRunner
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformCoreDataKeys.CONTEXT_COMPONENT
+import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.actionSystem.ex.ActionUtil.SHOW_TEXT_IN_TOOLBAR
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
@@ -24,8 +25,11 @@ import com.intellij.ui.awt.AnchoredPoint
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.checker.CheckUtils.getCustomRunConfigurationForRunner
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.selectedTaskFile
+import com.jetbrains.edu.learning.ui.isDefault
+import javax.swing.JButton
 import javax.swing.JComponent
 import javax.swing.event.HyperlinkEvent
 
@@ -42,8 +46,9 @@ class RunTaskAction : ActionWithButtonCustomComponent(), DumbAware {
 
     val runConfiguration = getCustomRunConfigurationForRunner(project, task) ?: return
     // store the configuration found during the update to use it later when the action is performed
-    e.presentation.putClientProperty(runConfigurationKey, runConfiguration)
+    e.presentation.putClientProperty(RUN_CONFIGURATION, runConfiguration)
     e.presentation.putClientProperty(SHOW_TEXT_IN_TOOLBAR, true)
+    e.presentation.putClientProperty(SHOW_AS_DEFAULT_BUTTON, task is TheoryTask)
 
     e.presentation.text = EduCoreBundle.message("action.run.button.text")
     e.presentation.description = EduCoreBundle.message("action.run.button.description", task.name)
@@ -59,6 +64,24 @@ class RunTaskAction : ActionWithButtonCustomComponent(), DumbAware {
     runTask(project, task, e)
   }
 
+  override fun createCustomComponent(presentation: Presentation, place: String): JButton {
+    val component = super.createCustomComponent(presentation, place)
+    setupButton(component, presentation)
+    return component
+  }
+
+  override fun updateCustomComponent(component: JComponent, presentation: Presentation) {
+    super.updateCustomComponent(component, presentation)
+    val button = component as? JButton ?: return
+    setupButton(button, presentation)
+    button.invalidate()
+    button.repaint()
+  }
+
+  private fun setupButton(button: JButton, presentation: Presentation) {
+    button.isDefault = presentation.getClientProperty(SHOW_AS_DEFAULT_BUTTON) ?: false
+  }
+
   private fun runTask(project: Project, task: Task, e: AnActionEvent?) {
     val runningTask = RunTaskActionState.getInstance(project).setRunningTask(task)
     if (runningTask != null) {
@@ -69,7 +92,7 @@ class RunTaskAction : ActionWithButtonCustomComponent(), DumbAware {
     }
 
     val runnerAndConfigurationSettings =
-      e?.presentation?.getClientProperty(runConfigurationKey) ?:
+      e?.presentation?.getClientProperty(RUN_CONFIGURATION) ?:
       getCustomRunConfigurationForRunner(project, task)
 
     if (runnerAndConfigurationSettings == null) {
@@ -176,6 +199,7 @@ class RunTaskAction : ActionWithButtonCustomComponent(), DumbAware {
     const val ACTION_ID = "Educational.Run"
     const val RUN_CONFIGURATION_FILE_NAME = "runner.run.xml"
 
-    private val runConfigurationKey = Key<RunnerAndConfigurationSettings>("run configuration")
+    private val RUN_CONFIGURATION = Key<RunnerAndConfigurationSettings>("run configuration")
+    private val SHOW_AS_DEFAULT_BUTTON = Key<Boolean>("show as default button")
   }
 }

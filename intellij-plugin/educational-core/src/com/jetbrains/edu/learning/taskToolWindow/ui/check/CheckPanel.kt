@@ -15,6 +15,7 @@ import com.intellij.util.ui.JBEmptyBorder
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.actions.*
+import com.jetbrains.edu.learning.checker.CheckUtils.getCustomRunConfigurationForRunner
 import com.jetbrains.edu.learning.actions.EduActionUtils.GET_HINT_ACTION_ID
 import com.jetbrains.edu.learning.actions.EduActionUtils.isGetHintAvailable
 import com.jetbrains.edu.learning.course
@@ -208,7 +209,8 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     val nextTask = NavigationUtils.nextTask(task)
     if (nextTask != null || (task.status == CheckStatus.Solved && NavigationUtils.isLastHyperskillProblem(task))) {
       updateCheckButtonWrapper(task) // to update the 'Check' button state
-      val isDefault = task is TheoryTask || task.isSolved
+      val hasRunButton = getCustomRunConfigurationForRunner(project, task) != null
+      val isDefault = (task is TheoryTask || task.isSolved) && !hasRunButton
       val action = ActionManager.getInstance().getAction(NextTaskAction.ACTION_ID)
       val nextButtonText = nextTask?.let { EduCoreBundle.message("button.next.task.text", nextTask.presentableName) }
       val nextButton = CheckPanelButtonComponent(action = action, isDefault = isDefault, customButtonText = nextButtonText)
