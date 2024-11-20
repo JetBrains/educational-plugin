@@ -26,7 +26,7 @@ import com.intellij.openapi.vfs.findFile
 import com.intellij.ui.GotItTooltip
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
-import com.jetbrains.edu.learning.actions.EduActionUtils.closeLastActiveFileEditor
+import com.jetbrains.edu.learning.actions.EduActionUtils.closeFileEditor
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
@@ -72,7 +72,7 @@ open class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
       return
     }
 
-    project.closeLastActiveFileEditor(e)
+    project.closeFileEditor(e)
     afterActionPerformed(project)
   }
 

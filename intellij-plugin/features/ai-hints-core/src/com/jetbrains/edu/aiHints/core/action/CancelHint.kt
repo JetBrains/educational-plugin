@@ -6,7 +6,7 @@ import com.intellij.openapi.project.DumbAware
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.ActionWithButtonCustomComponent
 import com.jetbrains.edu.learning.actions.ApplyCodeAction.Companion.isGetHintDiff
-import com.jetbrains.edu.learning.actions.EduActionUtils.closeLastActiveFileEditor
+import com.jetbrains.edu.learning.actions.EduActionUtils.closeFileEditor
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 
@@ -20,7 +20,7 @@ class CancelHint : ActionWithButtonCustomComponent(), DumbAware {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    project.closeLastActiveFileEditor(e)
+    project.closeFileEditor(e)
     TaskToolWindowView.getInstance(project).updateCheckPanel(project.getCurrentTask())
   }
 

@@ -16,7 +16,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.ui.GotItTooltip
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
-import com.jetbrains.edu.learning.actions.EduActionUtils.closeLastActiveFileEditor
+import com.jetbrains.edu.learning.actions.EduActionUtils.closeFileEditor
 import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
@@ -75,7 +75,7 @@ class ReportCommunitySolutionAction : DumbAwareAction(), CustomComponentAction {
       SubmissionsManager.getInstance(project).removeCommunitySubmission(taskId, submissionId)
       chainDiffVirtualFile.putUserData(IS_REPORTED, true)
       project.invokeLater {
-        project.closeLastActiveFileEditor(e)
+        project.closeFileEditor(e)
       }
       MarketplaceNotificationUtils.showSuccessRequestNotification(
         project,

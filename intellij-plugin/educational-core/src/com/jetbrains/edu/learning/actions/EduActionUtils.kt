@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.actions
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.PlatformDataKeys.LAST_ACTIVE_FILE_EDITOR
+import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.command.UndoConfirmationPolicy
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.command.undo.UndoManager
@@ -133,9 +133,9 @@ object EduActionUtils {
   }
 
   @RequiresEdt
-  fun Project.closeLastActiveFileEditor(e: AnActionEvent) {
+  fun Project.closeFileEditor(e: AnActionEvent) {
     val fileEditorManager = FileEditorManager.getInstance(this)
-    val fileEditor = e.getData(LAST_ACTIVE_FILE_EDITOR) ?: return
+    val fileEditor = e.getData(PlatformDataKeys.FILE_EDITOR) ?: return
     fileEditorManager.closeFile(fileEditor.file)
   }
 
