@@ -248,7 +248,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
           }
 
           try {
-            generateCourseContent(holder, isNewCourseCreatorCourse, ProgressManager.getInstance().progressIndicator)
+            generateCourseContent(holder, ProgressManager.getInstance().progressIndicator)
           }
           catch (e: IOException) {
             LOG.error("Failed to generate course", e)
@@ -262,7 +262,6 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
   @Throws(IOException::class)
   private fun generateCourseContent(
     holder: CourseInfoHolder<Course>,
-    isNewCourseCreatorCourse: Boolean,
     indicator: ProgressIndicator
   ) {
     measureTimeAndLog("Course content generation") {
@@ -274,7 +273,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
       if (course is EduCourse && course.isMarketplaceRemote && !course.isStudy) {
         checkIfAvailableOnRemote(course)
       }
-      createAdditionalFiles(holder, isNewCourseCreatorCourse)
+      createAdditionalFiles(holder)
       EduCounterUsageCollector.eduProjectCreated(course)
     }
   }
@@ -292,12 +291,11 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
    * Creates additional files that are not in course object
    *
    * @param holder contains info about course project like root directory
-   * @param isNewCourse `true` if course is new one, `false` otherwise
    *
    * @throws IOException
    */
   @Throws(IOException::class)
-  open fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
+  open fun createAdditionalFiles(holder: CourseInfoHolder<Course>) {
   }
   class BeforeInitHandler(val callback: (project: Project) -> Unit = { })
 

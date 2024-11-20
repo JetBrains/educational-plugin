@@ -20,8 +20,8 @@ class PhpCourseProjectGenerator(
   course: Course
 ) : CourseProjectGenerator<PhpProjectSettings>(builder, course) {
 
-  override fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
-    super.createAdditionalFiles(holder, isNewCourse)
+  override fun createAdditionalFiles(holder: CourseInfoHolder<Course>) {
+    super.createAdditionalFiles(holder)
     createComposerFile(holder)
   }
 

@@ -32,9 +32,7 @@ class RsCourseProjectGenerator(builder: RsCourseBuilder, course: Course) :
     super.afterProjectGenerated(project, projectSettings, onConfigurationFinished)
   }
 
-  override fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
-    if (!isNewCourse) return
-
+  override fun createAdditionalFiles(holder: CourseInfoHolder<Course>) {
     val members = mutableListOf<String>()
     holder.course.visitLessons { lesson ->
       val lessonDir = lesson.getDir(holder.courseDir) ?: return@visitLessons

@@ -26,7 +26,7 @@ class PyHyperskillBaseConfigurator : PyConfigurator() {
   }
 
   private class GeneratorWithoutAdditionalFiles(builder: PyCourseBuilder, course: Course) : PyCourseProjectGenerator(builder, course) {
-    override fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
+    override fun createAdditionalFiles(holder: CourseInfoHolder<Course>) {
       // do nothing
     }
   }

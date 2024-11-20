@@ -23,8 +23,8 @@ import java.util.*
 
 class AndroidCourseProjectGenerator(builder: AndroidCourseBuilder, course: Course) : GradleCourseProjectGenerator(builder, course) {
 
-  override fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
-    super.createAdditionalFiles(holder, isNewCourse)
+  override fun createAdditionalFiles(holder: CourseInfoHolder<Course>) {
+    super.createAdditionalFiles(holder)
 
     // fileSystem can be different here in tests.
     // But `GradleWrapper.create` works properly only for local file system

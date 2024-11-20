@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
   CourseProjectGenerator<CppProjectSettings>(builder, course) {
 
-  override fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
+  override fun createAdditionalFiles(holder: CourseInfoHolder<Course>) {
     if (holder.courseDir.findChild(CMakeListsFileType.FILE_NAME) != null) return
 
     val mainCMakeTemplateInfo = getCppTemplates(course).mainCMakeList

@@ -84,8 +84,8 @@ class FakeGradleCourseProjectGenerator(
     onConfigurationFinished()
   }
 
-  override fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
-    super.createAdditionalFiles(holder, isNewCourse)
+  override fun createAdditionalFiles(holder: CourseInfoHolder<Course>) {
+    super.createAdditionalFiles(holder)
     val existingAdditionalFiles = holder.course.additionalFiles.map { it.name }
     listOf(BUILD_GRADLE, SETTINGS_GRADLE)
       .filter { it !in existingAdditionalFiles }
