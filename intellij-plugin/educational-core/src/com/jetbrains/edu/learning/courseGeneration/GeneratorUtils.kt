@@ -3,9 +3,7 @@ package com.jetbrains.edu.learning.courseGeneration
 import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.ide.fileTemplates.FileTemplateUtil
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runInEdt
-import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.progress.ProgressIndicator
@@ -388,10 +386,9 @@ object GeneratorUtils {
 
   @RequiresBlockingContext
   @Throws(IOException::class)
-  fun evaluateExistingTemplate(child: VirtualFile, templateVariables: Map<String, Any>) {
+  private fun evaluateExistingTemplate(child: VirtualFile, templateVariables: Map<String, Any>): String {
     val rawContent = VfsUtil.loadText(child)
-    val content = FileTemplateUtil.mergeTemplate(templateVariables, rawContent, false)
-    invokeAndWaitIfNeeded { runWriteAction { VfsUtil.saveText(child, content) } }
+    return FileTemplateUtil.mergeTemplate(templateVariables, rawContent, false)
   }
 
   /**
@@ -408,14 +405,26 @@ object GeneratorUtils {
     templateName: String,
     templateVariables: Map<String, Any>
   ) {
-    val file = baseDir.findFileByRelativePath(path)
-    if (file == null) {
-      val configText = getInternalTemplateText(templateName, templateVariables)
-      createChildFile(holder, baseDir, path, InMemoryTextualContents(configText))
+    val eduFile = substituteTemplateInternalOrFromDisk(baseDir, path, templateName, templateVariables)
+    createChildFile(holder, baseDir, path, eduFile.contents)
+  }
+
+  @RequiresBlockingContext
+  @Throws(IOException::class)
+  fun substituteTemplateInternalOrFromDisk(
+    courseDir: VirtualFile,
+    templatePath: String,
+    internalTemplateName: String,
+    templateVariables: Map<String, Any>
+  ): EduFile {
+    val file = courseDir.findFileByRelativePath(templatePath)
+    val configText = if (file == null) {
+      getInternalTemplateText(internalTemplateName, templateVariables)
     }
     else {
       evaluateExistingTemplate(file, templateVariables)
     }
+    return EduFile(templatePath, InMemoryTextualContents(configText))
   }
 
   /**
