@@ -33,6 +33,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.util.PathUtil
 import com.intellij.util.messages.Topic
 import com.intellij.util.messages.Topic.BroadcastDirection
+import com.jetbrains.edu.learning.CourseRootProvider.Companion.getCourseRootDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.isBinary
@@ -117,7 +118,7 @@ val Project.courseDir: VirtualFile
   }
 
 fun Project.guessCourseDir(): VirtualFile? {
-  val projectDir = guessProjectDir() ?: return null
+  val projectDir = getCourseRootDir() ?: guessProjectDir() ?: return null
   return if (projectDir.name == Project.DIRECTORY_STORE_FOLDER) {
     projectDir.parent
   }

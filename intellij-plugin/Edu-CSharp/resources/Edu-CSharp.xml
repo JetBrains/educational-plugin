@@ -75,6 +75,7 @@
                   courseType="Hyperskill"/>
     <courseViewPaneCustomization implementation="com.jetbrains.edu.csharp.CSharpCourseViewPaneCustomization"/>
     <studyItemRefactoringHandler implementation="com.jetbrains.edu.csharp.refactoring.CSharpStudyItemRefactoringHandler"/>
+    <courseRootProvider implementation="com.jetbrains.edu.csharp.hyperskill.HyperskillUnityCourseRootProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
