@@ -984,15 +984,11 @@ project("features:ai-hints-core") {
     implementation(project(":intellij-plugin:AI"))
     api(rootProject.libs.educational.ml.library.core) {
       excludeKotlinDeps()
-      exclude(group = "net.java.dev.jna", module = "jna")
-      exclude(group = "net.java.dev.jna", module = "jna-platform")
-      exclude(group = "it.unimi.dsi", module = "fastutil-core")
+      exclude(group = "net.java.dev.jna")
     }
     api(rootProject.libs.educational.ml.library.hints) {
       excludeKotlinDeps()
-      exclude(group = "net.java.dev.jna", module = "jna")
-      exclude(group = "net.java.dev.jna", module = "jna-platform")
-      exclude(group = "it.unimi.dsi", module = "fastutil-core")
+      exclude(group = "net.java.dev.jna")
     }
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
