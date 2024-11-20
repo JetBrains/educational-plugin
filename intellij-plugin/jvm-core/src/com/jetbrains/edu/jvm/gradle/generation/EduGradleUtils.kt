@@ -50,7 +50,7 @@ object EduGradleUtils {
     templateVariables: Map<String, Any>
   ) {
     for ((name, templateName) in templates) {
-      createFileFromTemplate(holder, holder.courseDir, name, templateName, templateVariables)
+      createFileFromTemplate(holder, name, templateName, templateVariables)
     }
   }
 

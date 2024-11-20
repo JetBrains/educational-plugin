@@ -106,7 +106,6 @@ class PostMarketplaceProjectToGitHub : DumbAwareAction() {
 
     GeneratorUtils.createFileFromTemplate(
       CourseInfoHolder.fromCourse(course, courseDir),
-      courseDir,
       GITIGNORE_FILE_PATH,
       GITIGNORE_TEMPLATE_NAME,
       templateVariables
@@ -125,7 +124,6 @@ class PostMarketplaceProjectToGitHub : DumbAwareAction() {
 
     GeneratorUtils.createFileFromTemplate(
       CourseInfoHolder.fromCourse(course, courseDir),
-      courseDir,
       README_FILE_PATH,
       README_TEMPLATE_NAME,
       templateVariables

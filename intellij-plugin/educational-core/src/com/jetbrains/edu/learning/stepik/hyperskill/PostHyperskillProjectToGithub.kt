@@ -55,7 +55,7 @@ class PostHyperskillProjectToGithub : AnAction() {
       "solutionDirs" to gitIgnoreString
     )
 
-    GeneratorUtils.createFileFromTemplate(CourseInfoHolder.fromCourse(currentTask.course, courseDir), courseDir, GITIGNORE_FILE_PATH,
+    GeneratorUtils.createFileFromTemplate(CourseInfoHolder.fromCourse(currentTask.course, courseDir), GITIGNORE_FILE_PATH,
                                           GITIGNORE_TEMPLATE_NAME, templateVariables)
   }
 
@@ -75,7 +75,7 @@ class PostHyperskillProjectToGithub : AnAction() {
       "profileLink" to account.profileUrl
     )
 
-    GeneratorUtils.createFileFromTemplate(CourseInfoHolder.fromCourse(course, courseDir), courseDir, README_FILE_PATH, README_TEMPLATE_NAME,
+    GeneratorUtils.createFileFromTemplate(CourseInfoHolder.fromCourse(course, courseDir), README_FILE_PATH, README_TEMPLATE_NAME,
                                           templateVariables)
   }
 

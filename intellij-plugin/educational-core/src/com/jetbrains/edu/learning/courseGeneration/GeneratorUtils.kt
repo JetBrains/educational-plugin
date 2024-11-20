@@ -392,7 +392,7 @@ object GeneratorUtils {
   }
 
   /**
-   * Checks if file exists in [baseDir] by given [path].
+   * Checks if file exists in [holder.courseDir] by given [path].
    * If it doesn't exist, creates a new file from internal [templateName] template.
    * Otherwise, substitutes all template variables in file text
    */
@@ -400,13 +400,12 @@ object GeneratorUtils {
   @Throws(IOException::class)
   fun createFileFromTemplate(
     holder: CourseInfoHolder<out Course?>,
-    baseDir: VirtualFile,
     path: String,
     templateName: String,
     templateVariables: Map<String, Any>
   ) {
-    val eduFile = substituteTemplateInternalOrFromDisk(baseDir, path, templateName, templateVariables)
-    createChildFile(holder, baseDir, path, eduFile.contents)
+    val eduFile = substituteTemplateInternalOrFromDisk(holder.courseDir, path, templateName, templateVariables)
+    createChildFile(holder, holder.courseDir, path, eduFile.contents)
   }
 
   @RequiresBlockingContext
