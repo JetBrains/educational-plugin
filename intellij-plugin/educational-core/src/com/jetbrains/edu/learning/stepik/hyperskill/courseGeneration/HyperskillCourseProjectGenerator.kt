@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
@@ -19,6 +20,9 @@ open class HyperskillCourseProjectGenerator<T : EduProjectSettings>(
 
   override fun createAdditionalFiles(holder: CourseInfoHolder<Course>) =
     base.createAdditionalFiles(holder)
+
+  override fun autoCreatedAdditionalFiles(holder: CourseInfoHolder<Course>): List<EduFile> =
+    base.autoCreatedAdditionalFiles(holder)
 
   override suspend fun createCourseStructure(holder: CourseInfoHolder<Course>, initialLessonProducer: () -> Lesson) =
     base.createCourseStructure(holder, initialLessonProducer)

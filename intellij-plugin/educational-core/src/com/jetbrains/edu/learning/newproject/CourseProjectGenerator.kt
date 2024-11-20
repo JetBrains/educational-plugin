@@ -36,13 +36,17 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.CCUtils.isLocalCourse
 import com.jetbrains.edu.coursecreator.ui.CCOpenEducatorHelp
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.CourseVisibility.*
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.IdeaDirectoryUnpackMode.ONLY_IDEA_DIRECTORY
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createChildFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.unpackAdditionalFiles
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
@@ -287,8 +291,27 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     }
   }
 
+  private fun addAdditionalFile(eduFile: EduFile) {
+    val contains = course.additionalFiles.any { it.name == eduFile.name }
+
+    if (contains) {
+      course.additionalFiles = course.additionalFiles.map { if (it.name == eduFile.name) eduFile else it }
+    }
+    else {
+      course.additionalFiles += eduFile
+    }
+  }
+
   /**
    * Creates additional files that are not in course object
+   * The files are created on FS.
+   * Some files that are intended to go into the course archive are also added to the [Course.additionalFiles].
+   *
+   * The default implementation takes the list of files from [autoCreatedAdditionalFiles], writes them to the FS and augments the list
+   * [Course.additionalFiles] with those files that are not excluded by the [EduConfigurator].
+   *
+   * Consider overriding [autoCreatedAdditionalFiles] instead of this method, and generate the necessary additional files there.
+   * Override this method only if it is impossible to generate additional files in-memory, and one needs to write them directly to FS.
    *
    * @param holder contains info about course project like root directory
    *
@@ -296,7 +319,21 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
    */
   @Throws(IOException::class)
   open fun createAdditionalFiles(holder: CourseInfoHolder<Course>) {
+    for (file in autoCreatedAdditionalFiles(holder)) {
+      val childFile = createChildFile(holder, holder.courseDir, file.name, file.contents) ?: continue
+
+      if (course.configurator?.excludeFromArchive(holder, childFile) == false) {
+        addAdditionalFile(file)
+      }
+    }
   }
+
+  /**
+   * Returns the list of additional files that must be added to the project.
+   * Examines the FS and [Course.additionalFiles] to check, whether they lack some necessary files.
+   */
+  open fun autoCreatedAdditionalFiles(holder: CourseInfoHolder<Course>): List<EduFile> = emptyList()
+
   class BeforeInitHandler(val callback: (project: Project) -> Unit = { })
 
   private val isNewCourseCreatorCourse: Boolean
