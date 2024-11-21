@@ -55,7 +55,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import com.jetbrains.edu.learning.theoryLookup.TermsListener
 import java.awt.Component
 import java.awt.Dimension
 import javax.swing.*
@@ -76,6 +75,11 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
           updateHeaders()
           updateTaskDescription()
           ProjectView.getInstance(project).refresh()
+        }
+      }
+      TheoryLookupTermsManager.getInstance(project).theoryLookupProperties.collectLatest {
+        withContext(Dispatchers.EDT) {
+          updateTaskDescription()
         }
       }
     }
@@ -284,13 +288,6 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
     connection.subscribe(SubmissionsManager.TOPIC, SubmissionsListener {
       invokeLater {
         updateTab(SUBMISSIONS_TAB)
-      }
-    })
-    connection.subscribe(TheoryLookupTermsManager.TOPIC, TheoryLookupTermsManager.TermsListener { task ->
-      invokeLater {
-        if (task == project.getCurrentTask()) {
-          updateTaskDescription()
-        }
       }
     })
   }
