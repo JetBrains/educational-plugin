@@ -977,7 +977,7 @@ project("features:command-line") {
 project("features:ai-hints-core") {
   dependencies {
     intellijPlatform {
-      intellijIde(baseVersion)
+      intellijIde(project, baseVersion)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -998,7 +998,7 @@ project("features:ai-hints-core") {
 project("features:ai-hints-kotlin") {
   dependencies {
     intellijPlatform {
-      intellijIde(baseVersion)
+      intellijIde(project, baseVersion)
 
       intellijPlugins(kotlinPlugin)
     }
