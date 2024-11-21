@@ -1,7 +1,5 @@
 package com.jetbrains.edu.ai.translation.updater
 
-import com.intellij.notification.NotificationAction
-import com.intellij.notification.NotificationType.INFORMATION
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
@@ -10,11 +8,12 @@ import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.translation.TranslationLoader
 import com.jetbrains.edu.ai.translation.connector.TranslationServiceConnector
+import com.jetbrains.edu.ai.translation.ui.AITranslationNotification.ActionLabel
+import com.jetbrains.edu.ai.translation.ui.AITranslationNotificationManager
 import com.jetbrains.edu.learning.ai.TranslationProperties
 import com.jetbrains.edu.learning.ai.translationSettings
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.onError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -67,12 +66,15 @@ class TranslationUpdateChecker(private val project: Project, private val scope: 
   }
 
   private fun showUpdateAvailableNotification(updateAction: () -> Unit) {
-    EduNotificationManager
-      .create(INFORMATION, content = EduAIBundle.message("ai.translation.an.updated.version.of.the.translation.is.available"))
-      .addAction(NotificationAction.createSimpleExpiring(EduCoreBundle.message("update.action")) {
-        updateAction()
-      })
-      .notify(project)
+    val actionLabel = ActionLabel(
+      name = EduCoreBundle.message("update.action"),
+      action = updateAction
+    )
+    AITranslationNotificationManager.showInfoNotification(
+      project,
+      message = EduAIBundle.message("ai.translation.an.updated.version.of.the.translation.is.available"),
+      actionLabel = actionLabel
+    )
   }
 
   companion object {

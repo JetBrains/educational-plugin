@@ -13,6 +13,8 @@ import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.translation.connector.TranslationServiceConnector
 import com.jetbrains.edu.ai.translation.settings.translationSettings
+import com.jetbrains.edu.ai.translation.ui.AITranslationNotification.ActionLabel
+import com.jetbrains.edu.ai.translation.ui.AITranslationNotificationManager
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.ai.TranslationProperties
@@ -24,7 +26,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.ext.getTaskDirectory
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.notification.EduNotificationManager
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import com.jetbrains.educational.translation.format.CourseTranslationResponse
 import com.jetbrains.educational.translation.format.TranslatedText
@@ -78,17 +80,17 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
         val translation = fetchTranslation(course, language)
         val translationSettings = project.translationSettings()
         if (version == translation.version) {
-          EduNotificationManager.showInfoNotification(
+          AITranslationNotificationManager.showInfoNotification(
             project,
-            content = EduAIBundle.message("ai.translation.translation.is.up.to.date")
+            message = EduAIBundle.message("ai.translation.translation.is.up.to.date")
           )
           return@withBackgroundProgress
         }
         course.saveTranslation(translation)
         translationSettings.setTranslation(translation.toTranslationProperties())
-        EduNotificationManager.showInfoNotification(
+        AITranslationNotificationManager.showInfoNotification(
           project,
-          content = EduAIBundle.message("ai.translation.translation.has.been.updated")
+          message = EduAIBundle.message("ai.translation.translation.has.been.updated")
         )
       }
     }
@@ -121,7 +123,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
         }
       }
       else {
-        EduNotificationManager.showErrorNotification(project, content = lockNotAcquiredNotificationText)
+        AITranslationNotificationManager.showErrorNotification(project, message = lockNotAcquiredNotificationText)
       }
     }
   }
@@ -129,7 +131,11 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
   private suspend fun fetchTranslation(course: EduCourse, language: TranslationLanguage): CourseTranslationResponse =
     withContext(Dispatchers.IO) {
       downloadTranslation(course, language).onError { error ->
-        EduNotificationManager.showErrorNotification(project, content = error)
+        val actionLabel = ActionLabel(
+          name = EduCoreBundle.message("retry"),
+          action = { fetchAndApplyTranslation(course, language) }
+        )
+        AITranslationNotificationManager.showErrorNotification(project, message = error, actionLabel = actionLabel)
         error("Failed to download translation for ${course.name} to $language: $error")
       }
     }
@@ -156,7 +162,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
     if (translation != null) {
       return Ok(translation)
     }
-    return Err("Translation does not exist")
+    return Err(EduAIBundle.message("ai.translation.course.translation.does.not.exist"))
   }
 
   private suspend fun EduCourse.saveTranslation(courseTranslation: CourseTranslationResponse) {
