@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.createCourseFromJson
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
+import com.jetbrains.edu.learning.waitUntilIndexesAreReady
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
@@ -37,6 +38,7 @@ abstract class CourseGenerationTestBase<Settings : EduProjectSettings> : HeavyPl
     val project = invokeAndWaitIfNeeded {
       generator.doCreateCourseProject(rootDir.path, defaultSettings) ?: error("Cannot create project")
     }
+    waitUntilIndexesAreReady(project)
     TaskToolWindowView.getInstance(project).currentTask = project.getCurrentTask()
     runInEdtAndWait {
       myProject = project
