@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning
 import com.intellij.ui.jcef.JBCefApp
 import io.mockk.every
 import io.mockk.mockkStatic
-import io.mockk.unmockkStatic
 import org.junit.Test
 
 class EduSettingsTest : EduSettingsServiceTestBase() {
@@ -91,13 +90,9 @@ class EduSettingsTest : EduSettingsServiceTestBase() {
   }
 
   private fun withJCEFSupported(value: Boolean, action: () -> Unit) {
-    mockkStatic(JBCefApp::class)
-    every { JBCefApp.isSupported() } returns value
-    try {
+    mockkStatic(JBCefApp::class) {
+      every { JBCefApp.isSupported() } returns value
       action()
-    }
-    finally {
-      unmockkStatic(JBCefApp::class)
     }
   }
 }
