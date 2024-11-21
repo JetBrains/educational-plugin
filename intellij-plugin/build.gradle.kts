@@ -998,7 +998,8 @@ project("features:ai-hints-core") {
 project("features:ai-hints-kotlin") {
   dependencies {
     intellijPlatform {
-      intellijIde(project, baseVersion)
+      val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
+      intellijIde(project, ideVersion)
 
       intellijPlugins(kotlinPlugin)
     }
