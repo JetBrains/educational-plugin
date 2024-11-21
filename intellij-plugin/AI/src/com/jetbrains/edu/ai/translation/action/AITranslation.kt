@@ -3,14 +3,11 @@ package com.jetbrains.edu.ai.translation.action
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
-import com.intellij.util.application
+import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.jetbrains.edu.ai.translation.TranslationLoader
-import com.jetbrains.edu.ai.translation.dialog.CourseTranslationDialog
-import com.jetbrains.edu.ai.translation.settings.AutoTranslationProperties
-import com.jetbrains.edu.ai.translation.settings.translationSettings
+import com.jetbrains.edu.ai.translation.ui.CourseTranslationPopup
 import com.jetbrains.edu.ai.ui.EducationalAIIcons
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
-import com.jetbrains.edu.learning.ai.translationSettings
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 
@@ -29,19 +26,9 @@ class AITranslation : DumbAwareAction() {
     val course = project.course as? EduCourse ?: return
     if (!course.isMarketplaceRemote) return
 
-    val dialog = CourseTranslationDialog(project, course)
-    if (!dialog.showAndGet()) return
-    val selectedLanguage = dialog.getLanguage()
-    if (selectedLanguage == null) {
-      project.translationSettings().setTranslation(null)
-    }
-    else {
-      val translationSettings = application.translationSettings()
-      if (!translationSettings.autoTranslate) {
-        translationSettings.setAutoTranslationProperties(AutoTranslationProperties(selectedLanguage, false))
-      }
-      TranslationLoader.getInstance(project).fetchAndApplyTranslation(course, selectedLanguage)
-    }
+    val popup = CourseTranslationPopup(project, course)
+    val relativePoint = JBPopupFactory.getInstance().guessBestPopupLocation(this, e)
+    popup.show(relativePoint)
   }
 
   override fun update(e: AnActionEvent) {
