@@ -4,7 +4,8 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createTextChildFile
+import com.jetbrains.edu.learning.courseFormat.EduFile
+import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.isUnitTestMode
@@ -20,10 +21,8 @@ class PhpCourseProjectGenerator(
   course: Course
 ) : CourseProjectGenerator<PhpProjectSettings>(builder, course) {
 
-  override fun createAdditionalFiles(holder: CourseInfoHolder<Course>) {
-    super.createAdditionalFiles(holder)
-    createComposerFile(holder)
-  }
+  override fun autoCreatedAdditionalFiles(holder: CourseInfoHolder<Course>): List<EduFile> =
+    listOfNotNull(createComposerFile(holder))
 
   override fun afterProjectGenerated(project: Project, projectSettings: PhpProjectSettings, onConfigurationFinished: () -> Unit) {
     if (!isUnitTestMode) {
@@ -33,16 +32,13 @@ class PhpCourseProjectGenerator(
     super.afterProjectGenerated(project, projectSettings, onConfigurationFinished)
   }
 
-  private fun createComposerFile(holder: CourseInfoHolder<Course>) {
+  private fun createComposerFile(holder: CourseInfoHolder<Course>): EduFile? {
     val composerFile = holder.courseDir.findChild(ComposerUtils.CONFIG_DEFAULT_FILENAME)
-    if (composerFile == null) {
-      createTextChildFile(
-        holder,
-        holder.courseDir,
-        ComposerUtils.CONFIG_DEFAULT_FILENAME,
-        getInternalTemplateText(ComposerUtils.CONFIG_DEFAULT_FILENAME)
-      )
-    }
+    if (composerFile != null) return null
+
+    return EduFile(ComposerUtils.CONFIG_DEFAULT_FILENAME, InMemoryTextualContents(
+      getInternalTemplateText(ComposerUtils.CONFIG_DEFAULT_FILENAME)
+    ))
   }
 
   private fun downloadPhar(project: Project, projectSettings: PhpProjectSettings) {

@@ -43,6 +43,8 @@ class CSharpCourseProjectGenerator(
   }
 
   override fun createAdditionalFiles(holder: CourseInfoHolder<Course>) {
+    super.createAdditionalFiles(holder)
+
     val content = GeneratorUtils.getInternalTemplateText(CSharpCourseBuilder.SOLUTION_FILE_TEMPLATE, mapOf())
 
     GeneratorUtils.createTextChildFile(

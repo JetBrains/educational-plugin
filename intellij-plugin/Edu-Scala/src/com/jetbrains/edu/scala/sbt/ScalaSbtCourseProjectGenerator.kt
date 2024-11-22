@@ -9,6 +9,7 @@ import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.EduNames.PROJECT_NAME
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.gradleSanitizeName
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
@@ -23,19 +24,21 @@ class ScalaSbtCourseProjectGenerator(builder: ScalaSbtCourseBuilder, course: Cou
   course
 ) {
 
-  override fun createAdditionalFiles(holder: CourseInfoHolder<Course>) {
+  override fun autoCreatedAdditionalFiles(holder: CourseInfoHolder<Course>): List<EduFile> {
     val sbtVersion = maxOf(Sbt.LatestVersion(), MIN_RECOMMENDED_SBT_VERSION)
     val templateVariables = mapOf(
       PROJECT_NAME to gradleSanitizeName(holder.courseDir.name),
       "SBT_VERSION" to sbtVersion.toString()
     )
 
-    GeneratorUtils.createFileFromTemplate(holder, BUILD_SBT, BUILD_SBT, templateVariables)
-    GeneratorUtils.createFileFromTemplate(
-      holder,
-      "${Sbt.ProjectDirectory()}/${Sbt.PropertiesFile()}",
-      Sbt.PropertiesFile(),
-      templateVariables
+    return listOf(
+      GeneratorUtils.createFromInternalTemplateOrFromDisk(holder.courseDir, BUILD_SBT, BUILD_SBT, templateVariables),
+      GeneratorUtils.createFromInternalTemplateOrFromDisk(
+        holder.courseDir,
+        "${Sbt.ProjectDirectory()}/${Sbt.PropertiesFile()}",
+        Sbt.PropertiesFile(),
+        templateVariables
+      )
     )
   }
 

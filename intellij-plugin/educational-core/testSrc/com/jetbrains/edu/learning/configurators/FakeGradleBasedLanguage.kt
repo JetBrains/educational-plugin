@@ -13,8 +13,9 @@ import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFile
+import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.gradle.GradleConstants.BUILD_GRADLE
 import com.jetbrains.edu.learning.gradle.GradleConstants.SETTINGS_GRADLE
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
@@ -84,13 +85,12 @@ class FakeGradleCourseProjectGenerator(
     onConfigurationFinished()
   }
 
-  override fun createAdditionalFiles(holder: CourseInfoHolder<Course>) {
-    super.createAdditionalFiles(holder)
+  override fun autoCreatedAdditionalFiles(holder: CourseInfoHolder<Course>): List<EduFile> {
     val existingAdditionalFiles = holder.course.additionalFiles.map { it.name }
-    listOf(BUILD_GRADLE, SETTINGS_GRADLE)
+    return listOf(BUILD_GRADLE, SETTINGS_GRADLE)
       .filter { it !in existingAdditionalFiles }
-      .forEach { fileName ->
-        GeneratorUtils.createTextChildFile(holder, holder.courseDir, fileName, "")
+      .map { fileName ->
+        EduFile(fileName, InMemoryTextualContents(""))
       }
   }
 }

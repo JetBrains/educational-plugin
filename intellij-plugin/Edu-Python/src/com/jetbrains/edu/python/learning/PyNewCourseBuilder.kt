@@ -34,7 +34,9 @@ class PyNewCourseBuilder : EduCourseBuilder<PyProjectSettings> {
 
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<PyProjectSettings> {
     return object : PyCourseProjectGenerator(this@PyNewCourseBuilder, course) {
-      override fun createAdditionalFiles(holder: CourseInfoHolder<Course>) {}
+      override fun createAdditionalFiles(holder: CourseInfoHolder<Course>) {
+        // do nothing, independently of what could a base PyCourseProjectGenerator create
+      }
     }
   }
 

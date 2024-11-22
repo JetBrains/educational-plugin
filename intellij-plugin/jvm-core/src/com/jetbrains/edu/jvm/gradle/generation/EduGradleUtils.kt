@@ -18,7 +18,8 @@ import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createFileFromTemplate
+import com.jetbrains.edu.learning.courseFormat.EduFile
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createFromInternalTemplateOrFromDisk
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_UNIX
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
@@ -48,11 +49,10 @@ object EduGradleUtils {
     holder: CourseInfoHolder<Course>,
     templates: Map<String, String>,
     templateVariables: Map<String, Any>
-  ) {
-    for ((name, templateName) in templates) {
-      createFileFromTemplate(holder, name, templateName, templateVariables)
+  ): List<EduFile> =
+    templates.map { (name, templateName) ->
+      createFromInternalTemplateOrFromDisk(holder.courseDir, name, templateName, templateVariables)
     }
-  }
 
   fun setGradleSettings(project: Project, sdk: Sdk?, location: String, distributionType: DistributionType = DistributionType.WRAPPED) {
     val systemSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)

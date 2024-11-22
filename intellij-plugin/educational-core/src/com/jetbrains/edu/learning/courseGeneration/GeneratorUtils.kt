@@ -404,13 +404,19 @@ object GeneratorUtils {
     templateName: String,
     templateVariables: Map<String, Any>
   ) {
-    val eduFile = substituteTemplateInternalOrFromDisk(holder.courseDir, path, templateName, templateVariables)
+    val eduFile = createFromInternalTemplateOrFromDisk(holder.courseDir, path, templateName, templateVariables)
     createChildFile(holder, holder.courseDir, path, eduFile.contents)
   }
 
+  /**
+   * Searches for a template in the [courseDir] at the path [templatePath].
+   * If the template does not exist, the internal template with the name [internalTemplateName] is used.
+   *
+   * The template is substituted with [templateVariables], and the result is returned as an [EduFile].
+   */
   @RequiresBlockingContext
   @Throws(IOException::class)
-  fun substituteTemplateInternalOrFromDisk(
+  fun createFromInternalTemplateOrFromDisk(
     courseDir: VirtualFile,
     templatePath: String,
     internalTemplateName: String,

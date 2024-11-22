@@ -7,6 +7,8 @@ import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFile
+import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
@@ -18,21 +20,22 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
   CourseProjectGenerator<CppProjectSettings>(builder, course) {
 
-  override fun createAdditionalFiles(holder: CourseInfoHolder<Course>) {
-    if (holder.courseDir.findChild(CMakeListsFileType.FILE_NAME) != null) return
+  override fun autoCreatedAdditionalFiles(holder: CourseInfoHolder<Course>): List<EduFile> {
+    if (holder.courseDir.findChild(CMakeListsFileType.FILE_NAME) != null) return emptyList()
 
     val mainCMakeTemplateInfo = getCppTemplates(course).mainCMakeList
     val sanitizedProjectName = FileUtil.sanitizeFileName(holder.courseDir.name)
-    GeneratorUtils.createTextChildFile(
-      holder,
-      holder.courseDir,
-      mainCMakeTemplateInfo.generatedFileName,
-      mainCMakeTemplateInfo.getText(sanitizedProjectName, course.languageVersion ?: "")
-    )
 
-    getCppTemplates(course).extraTopLevelFiles.forEach { templateInfo ->
-      GeneratorUtils.createTextChildFile(holder, holder.courseDir, templateInfo.generatedFileName,
-                                     templateInfo.getText(sanitizedProjectName))
+    return listOf(
+      EduFile(
+        mainCMakeTemplateInfo.generatedFileName,
+        InMemoryTextualContents(
+          mainCMakeTemplateInfo.getText(sanitizedProjectName, course.languageVersion ?: "")
+        )
+      )
+    ) +
+    getCppTemplates(course).extraTopLevelFiles.map { templateInfo ->
+      EduFile(templateInfo.generatedFileName, InMemoryTextualContents(templateInfo.getText(sanitizedProjectName)))
     }
   }
 

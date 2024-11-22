@@ -9,6 +9,7 @@ import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
@@ -27,12 +28,12 @@ open class GradleCourseProjectGenerator(
     EduGradleUtils.setGradleSettings(project, sdk, project.basePath!!)
   }
 
-  override fun createAdditionalFiles(holder: CourseInfoHolder<Course>) {
+  override fun autoCreatedAdditionalFiles(holder: CourseInfoHolder<Course>): List<EduFile> {
     val gradleCourseBuilder = courseBuilder as GradleCourseBuilderBase
     if (EduGradleUtils.hasCourseHaveGradleKtsFiles(holder.course)) {
-      return
+      return emptyList()
     }
-    EduGradleUtils.createProjectGradleFiles(
+    return EduGradleUtils.createProjectGradleFiles(
       holder,
       gradleCourseBuilder.templates(holder.course),
       gradleCourseBuilder.templateVariables(holder.courseDir.name)
