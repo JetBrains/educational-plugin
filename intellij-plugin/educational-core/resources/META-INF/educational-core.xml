@@ -44,11 +44,11 @@
       <with attribute="implementationClass" implements="com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider"/>
     </extensionPoint>
 
-    <extensionPoint qualifiedName="Educational.twitterPluginConfigurator"
-                    interface="com.jetbrains.edu.learning.socialmedia.twitter.TwitterPluginConfigurator"
+    <extensionPoint qualifiedName="Educational.xPluginConfigurator"
+                    interface="com.jetbrains.edu.learning.socialMedia.x.XPluginConfigurator"
                     dynamic="true"/>
     <extensionPoint qualifiedName="Educational.linkedInPluginConfigurator"
-                    interface="com.jetbrains.edu.learning.socialmedia.linkedIn.LinkedInPluginConfigurator"
+                    interface="com.jetbrains.edu.learning.socialMedia.linkedIn.LinkedInPluginConfigurator"
                     dynamic="true"/>
     <extensionPoint qualifiedName="Educational.remoteTaskChecker"
                     interface="com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker"
@@ -405,7 +405,7 @@
     <applicationService serviceImplementation="com.jetbrains.edu.learning.coursera.CourseraSettings"/>
     <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.builtInServer.StepikRestService"/>
     <httpRequestHandler implementation="com.jetbrains.edu.learning.taskToolWindow.ui.EduToolsResourcesRequestHandler"/>
-    <httpRequestHandler implementation="com.jetbrains.edu.learning.socialmedia.linkedIn.LinkedInRestService"/>
+    <httpRequestHandler implementation="com.jetbrains.edu.learning.socialMedia.linkedIn.LinkedInRestService"/>
     <registryKey key="edu.course.update.check.interval"
                  description="Sets is course up to date check interval in seconds"
                  defaultValue="18000"/>
@@ -486,7 +486,7 @@
 
     <optionsProvider instance="com.jetbrains.edu.learning.stepik.StepikOptions"/>
     <optionsProvider instance="com.jetbrains.edu.learning.coursera.CourseraOptions"/>
-    <checkListener implementation="com.jetbrains.edu.learning.socialmedia.SocialmediaMultiplePostAction"/>
+    <checkListener implementation="com.jetbrains.edu.learning.socialMedia.SocialMediaMultiplePostAction"/>
     <checkListener implementation="com.jetbrains.edu.learning.statistics.PostFeedbackCheckListener"/>
     <checkListener implementation="com.jetbrains.edu.coursecreator.validation.ValidationCheckListener"/>
     <coursesPlatformProviderFactory id="Marketplace" order="first"
@@ -536,8 +536,8 @@
 
     <!--educator-->
     <optionsProvider instance="com.jetbrains.edu.coursecreator.settings.CCOptions"/>
-    <optionsProvider instance="com.jetbrains.edu.learning.socialmedia.twitter.TwitterOptionsProvider"/>
-    <optionsProvider instance="com.jetbrains.edu.learning.socialmedia.linkedIn.LinkedInOptionsProvider"/>
+    <optionsProvider instance="com.jetbrains.edu.learning.socialMedia.x.XOptionsProvider"/>
+    <optionsProvider instance="com.jetbrains.edu.learning.socialMedia.linkedIn.LinkedInOptionsProvider"/>
 
     <pathMacroProvider implementation="com.jetbrains.edu.learning.checker.TaskRunConfigurationPathMacroProvider"/>
   </extensions>

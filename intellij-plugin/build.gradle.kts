@@ -344,8 +344,8 @@ tasks {
   }
 
   withType<PrepareSandboxTask> {
-    from("socialmedia") {
-      into("${projectName.get()}/socialmedia")
+    from("socialMedia") {
+      into("${projectName.get()}/socialMedia")
       include("**/*.gif")
     }
     doLast {

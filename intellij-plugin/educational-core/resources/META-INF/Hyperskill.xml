@@ -36,10 +36,10 @@
     <checkListener implementation="com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillCheckListener"/>
     <remoteTaskChecker implementation="com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillRemoteTaskChecker"/>
     <submissionsProvider implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSubmissionsProvider"/>-->
-    <twitterPluginConfigurator
-        implementation="com.jetbrains.edu.learning.stepik.hyperskill.socialmedia.twitter.HyperskillTwitterConfigurator"/>
+    <xPluginConfigurator
+        implementation="com.jetbrains.edu.learning.stepik.hyperskill.socialMedia.x.HyperskillXConfigurator"/>
     <linkedInPluginConfigurator
-        implementation="com.jetbrains.edu.learning.stepik.hyperskill.socialmedia.linkedIn.HyperskillLinkedInConfigurator"/>
+        implementation="com.jetbrains.edu.learning.stepik.hyperskill.socialMedia.linkedIn.HyperskillLinkedInConfigurator"/>
   </extensions>
 
   <actions>

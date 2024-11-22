@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.newproject.ui.BrowseCoursesDialog
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationEvent.*
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.CourseActionSource.values
 import com.jetbrains.edu.learning.statistics.EduFields.COURSE_ID_FIELD
 import com.jetbrains.edu.learning.statistics.EduFields.COURSE_MODE_FIELD
 import com.jetbrains.edu.learning.statistics.EduFields.ITEM_TYPE_FIELD
@@ -116,7 +117,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private val GROUP = EventLogGroup(
       "educational.counters",
       "The metric is reported in case a user has called the corresponding JetBrains Academy features.",
-      21,
+      22,
     )
 
     private val TASK_NAVIGATION_EVENT = GROUP.registerEvent(
@@ -238,8 +239,8 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
       "The event is recorded in case a user opens a course from a disk in Learner mode."
     )
 
-    private val TWITTER_DIALOG_SHOWN_EVENT = GROUP.registerEvent(
-      "twitter.dialog.shown",
+    private val X_DIALOG_SHOWN_EVENT = GROUP.registerEvent(
+      "x.dialog.shown",
       "The event is recorded in case a user receives a suggestion to tweet about completing a course or task (e.g., JB Academy project completion).",
       ITEM_TYPE_FIELD,
       LANGUAGE_FIELD
@@ -380,7 +381,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
 
     fun importCourseArchive() = IMPORT_COURSE_EVENT.log()
 
-    fun twitterDialogShown(course: Course) = TWITTER_DIALOG_SHOWN_EVENT.log(course.itemType, course.languageId)
+    fun xDialogShown(course: Course) = X_DIALOG_SHOWN_EVENT.log(course.itemType, course.languageId)
 
     fun linkedInDialogShown(course: Course) = LINKEDIN_DIALOG_SHOWN_EVENT.log(course.itemType, course.languageId)
 

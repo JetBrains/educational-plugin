@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.hyperskill.socialmedia
+package com.jetbrains.edu.learning.stepik.hyperskill.socialMedia
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.course
@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
-object HyperskillSocialmediaUtils {
+object HyperskillSocialMediaUtils {
 
   fun askToPost(project: Project, solvedTask: Task, statusBeforeCheck: CheckStatus): Boolean {
     val course = project.course as? HyperskillCourse ?: return false
