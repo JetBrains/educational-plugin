@@ -8,8 +8,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.rd.util.lifetime
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
+import com.intellij.platform.backend.workspace.WorkspaceModel
 import com.jetbrains.edu.csharp.CSharpConfigurator
 import com.jetbrains.edu.csharp.getTestName
+import com.jetbrains.edu.csharp.hyperskill.HyperskillUnityCourseRootProvider
 import com.jetbrains.edu.csharp.toProjectModelEntity
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.CheckUtils.fillWithIncorrect
@@ -30,12 +32,13 @@ import com.jetbrains.rd.util.reactive.fire
 import com.jetbrains.rdclient.util.idea.callSynchronously
 import com.jetbrains.rider.model.*
 import com.jetbrains.rider.projectView.solution
+import com.jetbrains.rider.projectView.workspace.findProjectsByName
 import com.jetbrains.rider.projectView.workspace.getId
 import com.jetbrains.rider.protocol.protocol
 import com.jetbrains.rider.unitTesting.RiderUnitTestSessionConductor
 import kotlinx.coroutines.*
 
-class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChecker, project: Project) :
+abstract class CSharpEduTaskCheckerBase(task: EduTask, private val envChecker: EnvironmentChecker, project: Project) :
   TaskChecker<EduTask>(task, project) {
 
   override fun check(indicator: ProgressIndicator): CheckResult {
@@ -96,18 +99,15 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
     return createUnitTestSession(name)
   }
 
+  abstract fun getTaskId(): Int?
+
   private suspend fun createUnitTestSession(name: String): RdUnitTestSession? = coroutineScope {
-    val projectModelEntityId = task
-                                 .toProjectModelEntity(project)
-                                 ?.childrenEntities
-                                 ?.firstOrNull { it.name == CSharpConfigurator.TEST_DIRECTORY }
-                                 ?.getId(project)
-                               ?: error("No project model entity associated with task ${task.name} found")
+    val projectModelEntityId = getTaskId() ?: error("No project model entity associated with task ${task.name} found")
     try {
       val rdSession = CompletableDeferred<RdUnitTestSession>()
       withContext(Dispatchers.EDT) {
         val createdSessionId = project.solution.rdUnitTestHost.createSession.callSynchronously(
-          RdProjectFolderCriterion(projectModelEntityId), project.protocol
+          RdProjectFileCriterion(projectModelEntityId), project.protocol
         ) ?: return@withContext null
         project.solution.rdUnitTestHost.sessions.advise(project.lifetime) { entry ->
           val session = entry.newValueOpt ?: return@advise
@@ -234,4 +234,25 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
     const val EXPECTED = "Expected: "
     const val ACTUAL = "But was: "
   }
+}
+
+class CSharpEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project: Project) :
+  CSharpEduTaskCheckerBase(task, envChecker, project) {
+  override fun getTaskId(): Int? = task
+    .toProjectModelEntity(project)
+    ?.childrenEntities
+    ?.firstOrNull { it.name == CSharpConfigurator.TEST_DIRECTORY }
+    ?.getId(project)
+}
+
+class UnityEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project: Project) :
+  CSharpEduTaskCheckerBase(task, envChecker, project) {
+  override fun getTaskId(): Int? = WorkspaceModel.getInstance(project).findProjectsByName("PlayMode").firstOrNull()
+    ?.childrenEntities?.firstOrNull { it.name == "Packages" }
+    ?.childrenEntities?.firstOrNull { it.name == HyperskillUnityCourseRootProvider.HYPERSKILL_UNITY_NAME }
+    ?.childrenEntities?.firstOrNull { it.name == "Tests" }
+    ?.childrenEntities?.firstOrNull { it.name == "PlayMode" }
+    ?.childrenEntities?.firstOrNull { it.name == "task" }
+    ?.childrenEntities?.firstOrNull { it.name == "Tests.cs" }
+    ?.getId(project)
 }
