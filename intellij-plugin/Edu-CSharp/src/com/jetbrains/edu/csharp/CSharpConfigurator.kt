@@ -1,11 +1,11 @@
 package com.jetbrains.edu.csharp
 
 import com.intellij.openapi.application.ApplicationInfo
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.BuildNumber
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.csharp.checker.CSharpTaskCheckerProvider
+import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
@@ -36,11 +36,11 @@ class CSharpConfigurator : EduConfigurator<CSharpProjectSettings> {
   override val taskCheckerProvider: TaskCheckerProvider
     get() = CSharpTaskCheckerProvider()
 
-  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
-    if (super.excludeFromArchive(project, file)) return true
+  override fun excludeFromArchive(holder: CourseInfoHolder<out Course?>, file: VirtualFile): Boolean {
+    if (super.excludeFromArchive(holder, file)) return true
     return file.extension == SolutionFileType.defaultExtension
-           || file.pathRelativeToTask(project).contains("$BIN_DIRECTORY/")
-           || file.pathRelativeToTask(project).contains("$OBJ_DIRECTORY/")
+           || file.pathRelativeToTask(holder).contains("$BIN_DIRECTORY/")
+           || file.pathRelativeToTask(holder).contains("$OBJ_DIRECTORY/")
   }
 
   override val defaultPlaceholderText: String

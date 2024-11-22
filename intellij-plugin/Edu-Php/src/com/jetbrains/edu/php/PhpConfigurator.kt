@@ -1,9 +1,9 @@
 package com.jetbrains.edu.php
 
 import com.intellij.openapi.extensions.PluginId
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.EducationalCoreIcons
+import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
@@ -41,8 +41,8 @@ class PhpConfigurator : EduConfigurator<PhpProjectSettings> {
 
   override fun isTestFile(task: Task, path: String): Boolean = super.isTestFile(task, path) || path == testFileName
 
-  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean =
-    super.excludeFromArchive(project, file) ||
+  override fun excludeFromArchive(holder: CourseInfoHolder<out Course?>, file: VirtualFile): Boolean =
+    super.excludeFromArchive(holder, file) ||
     file.path.contains(ComposerUtils.VENDOR_DIR_DEFAULT_NAME) ||
     file.path.contains(ComposerUtils.COMPOSER_PHAR_NAME)
 

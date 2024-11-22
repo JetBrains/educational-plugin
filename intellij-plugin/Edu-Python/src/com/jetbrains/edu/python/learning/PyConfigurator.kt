@@ -1,8 +1,8 @@
 package com.jetbrains.edu.python.learning
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.EducationalCoreIcons
+import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
@@ -20,8 +20,8 @@ open class PyConfigurator : EduConfigurator<PyProjectSettings> {
   override val testFileName: String
     get() = TESTS_PY
 
-  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean =
-    super.excludeFromArchive(project, file) || excludeFromArchive(file)
+  override fun excludeFromArchive(holder: CourseInfoHolder<out Course?>, file: VirtualFile): Boolean =
+    super.excludeFromArchive(holder, file) || excludeFromArchive(file)
 
   override val taskCheckerProvider: TaskCheckerProvider
     get() = PyTaskCheckerProvider()

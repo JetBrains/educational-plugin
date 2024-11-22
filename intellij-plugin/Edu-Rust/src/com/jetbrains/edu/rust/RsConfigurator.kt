@@ -1,14 +1,13 @@
 package com.jetbrains.edu.rust
 
 import com.intellij.openapi.application.ApplicationInfo
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.BuildNumber
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.text.VersionComparatorUtil
 import com.jetbrains.edu.EducationalCoreIcons
+import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.configuration.EduConfigurator
-import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.PluginInfos
 import com.jetbrains.edu.learning.pluginVersion
@@ -40,15 +39,14 @@ class RsConfigurator : EduConfigurator<RsProjectSettings> {
   override val logo: Icon
     get() = EducationalCoreIcons.Language.Rust
 
-  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
+  override fun excludeFromArchive(holder: CourseInfoHolder<out Course?>, file: VirtualFile): Boolean {
     // Cargo config file should be included into course even it's located in "hidden" `.cargo` directory
-    if (file.isCargoConfigDirOrFile(project)) return false
-    return super.excludeFromArchive(project, file) || file.name == CargoConstants.LOCK_FILE ||
+    if (file.isCargoConfigDirOrFile(holder.courseDir)) return false
+    return super.excludeFromArchive(holder, file) || file.name == CargoConstants.LOCK_FILE ||
            generateSequence(file, VirtualFile::getParent).any { it.name == CargoConstants.ProjectLayout.target }
   }
 
-  private fun VirtualFile.isCargoConfigDirOrFile(project: Project): Boolean {
-    val courseDir = project.courseDir
+  private fun VirtualFile.isCargoConfigDirOrFile(courseDir: VirtualFile): Boolean {
     val cargoDir = courseDir.findChild(".cargo") ?: return false
     if (cargoDir == this) return true
     // Cargo config file should be included into course even it's located in "hidden" directory

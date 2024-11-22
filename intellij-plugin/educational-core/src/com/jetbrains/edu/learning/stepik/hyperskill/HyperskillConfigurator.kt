@@ -1,8 +1,8 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.openapi.extensions.PluginId
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
@@ -54,8 +54,8 @@ abstract class HyperskillConfigurator<T : EduProjectSettings>(private val baseCo
   override val logo: Icon
     get() = baseConfigurator.logo
 
-  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean =
-    baseConfigurator.excludeFromArchive(project, file)
+  override fun excludeFromArchive(holder: CourseInfoHolder<out Course?>, file: VirtualFile): Boolean =
+    baseConfigurator.excludeFromArchive(holder, file)
 
   override fun isTestFile(task: Task, path: String): Boolean {
     val isTestFile = baseConfigurator.isTestFile(task, path)

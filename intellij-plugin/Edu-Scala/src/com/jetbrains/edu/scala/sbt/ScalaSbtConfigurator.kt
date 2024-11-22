@@ -6,6 +6,7 @@ import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.jvmEnvironmentSettings
 import com.jetbrains.edu.jvm.stepik.fileName
+import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtilsKt
@@ -48,8 +49,8 @@ class ScalaSbtConfigurator : EduConfigurator<JdkProjectSettings> {
   override val defaultPlaceholderText: String
     get() = "/* TODO */"
 
-  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
-    return super.excludeFromArchive(project, file) ||
+  override fun excludeFromArchive(holder: CourseInfoHolder<out Course?>, file: VirtualFile): Boolean {
+    return super.excludeFromArchive(holder, file) ||
            generateSequence(file, VirtualFile::getParent).any { it.name == "target"}
   }
 

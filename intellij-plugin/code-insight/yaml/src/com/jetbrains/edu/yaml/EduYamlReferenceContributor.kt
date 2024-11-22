@@ -20,6 +20,7 @@ import com.jetbrains.edu.codeInsight.EduReferenceContributorBase
 import com.jetbrains.edu.codeInsight.inFileWithName
 import com.jetbrains.edu.codeInsight.psiElement
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.configuration.excludeFromArchive
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.LESSON_CONFIG

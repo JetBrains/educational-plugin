@@ -7,8 +7,10 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.jvmEnvironmentSettings
+import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_JAR
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_PROPERTIES
@@ -20,8 +22,8 @@ import com.jetbrains.edu.learning.gradle.GradleConstants.SETTINGS_GRADLE
 abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
   abstract override val courseBuilder: GradleCourseBuilderBase
 
-  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
-    if (super.excludeFromArchive(project, file)) return true
+  override fun excludeFromArchive(holder: CourseInfoHolder<out Course?>, file: VirtualFile): Boolean {
+    if (super.excludeFromArchive(holder, file)) return true
     val name = file.name
     val path = file.path
     val pathSegments = path.split(VfsUtilCore.VFS_SEPARATOR_CHAR)

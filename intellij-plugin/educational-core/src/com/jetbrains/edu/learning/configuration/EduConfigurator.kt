@@ -54,7 +54,7 @@ interface EduConfigurator<Settings : EduProjectSettings> {
   /**
    * Used in educator plugin to filter files to be packed into course archive
    */
-  fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
+  fun excludeFromArchive(holder: CourseInfoHolder<out Course?>, file: VirtualFile): Boolean {
     val ancestorNames = mutableListOf<String>()
     var parent: VirtualFile? = file
     while (parent != null) {
@@ -196,3 +196,6 @@ interface EduConfigurator<Settings : EduProjectSettings> {
     val INCLUDED_SETTINGS_SUBDIRECTORIES = setOf(PROFILE_DIR, "scopes")
   }
 }
+
+fun EduConfigurator<*>.excludeFromArchive(project: Project, file: VirtualFile): Boolean =
+  excludeFromArchive(project.toCourseInfoHolder(), file)
