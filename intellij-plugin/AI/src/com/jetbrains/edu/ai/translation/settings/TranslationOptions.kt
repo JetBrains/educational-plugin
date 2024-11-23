@@ -7,8 +7,8 @@ import com.intellij.ui.dsl.builder.*
 import com.intellij.util.application
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.settings.AIOptionsProvider
+import com.jetbrains.edu.ai.translation.ui.TranslationLanguageComboBoxModel
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
-import javax.swing.DefaultComboBoxModel
 
 class TranslationOptions : BoundConfigurable(EduAIBundle.message("settings.ai.translation.display.name")), AIOptionsProvider {
   private val settings = application.translationSettings()
@@ -19,7 +19,7 @@ class TranslationOptions : BoundConfigurable(EduAIBundle.message("settings.ai.tr
   override fun createPanel(): DialogPanel = panel {
     group(displayName) {
       row(EduAIBundle.message("settings.ai.translation.preferred.language")) {
-        comboBox(LanguageComboBoxModel())
+        comboBox(TranslationLanguageComboBoxModel())
           .bindItem(::preferableLanguage.toNullableProperty())
           .onChanged {
             checkBox.enabled(it.selectedItem != null)
@@ -38,15 +38,5 @@ class TranslationOptions : BoundConfigurable(EduAIBundle.message("settings.ai.tr
     val language = preferableLanguage ?: return
     val autoTranslationProperties = AutoTranslationProperties(language, autoTranslate)
     application.translationSettings().setAutoTranslationProperties(autoTranslationProperties)
-  }
-
-  private inner class LanguageComboBoxModel : DefaultComboBoxModel<TranslationLanguage>() {
-    init {
-      @OptIn(ExperimentalStdlibApi::class)
-      val languages = TranslationLanguage.entries
-        .sortedBy { it.label }
-      addAll(languages)
-      selectedItem = EduAIBundle.message("ai.translation.choose.language")
-    }
   }
 }

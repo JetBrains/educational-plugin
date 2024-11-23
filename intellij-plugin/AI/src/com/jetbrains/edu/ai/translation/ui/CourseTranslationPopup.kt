@@ -24,7 +24,6 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.ui.EduColors
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import java.awt.BorderLayout
-import javax.swing.DefaultComboBoxModel
 import javax.swing.JComboBox
 import javax.swing.JPanel
 import javax.swing.JPanel.LEFT_ALIGNMENT
@@ -35,6 +34,7 @@ class CourseTranslationPopup(private val project: Project, private val course: E
     project.translationSettings().translationLanguage ?: application.translationSettings().preferableLanguage
 
   private lateinit var translateToCheckBox: Cell<JBCheckBox>
+  private val comboBoxModel = TranslationLanguageComboBoxModel(courseSourceLanguage).apply { selectedItem = selectedLanguage }
   private lateinit var translationLanguageComboBox: JComboBox<TranslationLanguage>
   private val popup: JBPopup = createPopup()
 
@@ -96,7 +96,7 @@ class CourseTranslationPopup(private val project: Project, private val course: E
   }
 
   private fun Row.translationLanguageComboBox(): JComboBox<TranslationLanguage> =
-    comboBox(LanguageComboBoxModel())
+    comboBox(comboBoxModel)
       .bindItem(::selectedLanguage.toNullableProperty())
       .onChanged(::translationLanguageChangeListener)
       .focused()
@@ -124,19 +124,4 @@ class CourseTranslationPopup(private val project: Project, private val course: E
 
   private fun TranslationLanguage.isSource(): Boolean = code == courseSourceLanguage
   private fun TranslationLanguage.isNotSource(): Boolean = !isSource()
-
-  private inner class LanguageComboBoxModel : DefaultComboBoxModel<TranslationLanguage>() {
-    init {
-      @OptIn(ExperimentalStdlibApi::class)
-      val languages = TranslationLanguage.entries
-        .filter { it.isNotSource() }
-        .sortedBy { it.label }
-      addAll(languages)
-    }
-
-    override fun setSelectedItem(anObject: Any?) {
-      val objectToSelect = anObject ?: EduAIBundle.message("ai.translation.choose.language")
-      super.setSelectedItem(objectToSelect)
-    }
-  }
 }
