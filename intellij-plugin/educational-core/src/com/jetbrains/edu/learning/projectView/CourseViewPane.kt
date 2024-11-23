@@ -40,6 +40,7 @@ import com.intellij.util.ArrayUtil
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.EducationalCoreIcons.CourseView.CourseTree
+import com.jetbrains.edu.learning.agreement.userAgreementSettings
 import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.projectView.*
@@ -89,6 +90,9 @@ class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport
   override fun createComparator(): Comparator<NodeDescriptor<*>> = EduNodeComparator
 
   private fun createCourseViewComponent(): JComponent {
+    if (!userAgreementSettings().isPluginAllowed) {
+      return super.createComponent()
+    }
     super.createComponent()
     CourseViewPaneCustomization.customize(tree)
     if (!myProject.isStudentProject()) {

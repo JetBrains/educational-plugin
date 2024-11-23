@@ -26,13 +26,11 @@ import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showF
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showNoSubmissionsToDeleteNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showSubmissionsDeletedSuccessfullyNotification
 import com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceHost
-import com.jetbrains.edu.learning.marketplace.userAgreement.UserAgreementDialogResultState
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.network.createRetrofitBuilder
 import com.jetbrains.edu.learning.network.executeCall
 import com.jetbrains.edu.learning.network.executeParsingErrors
 import com.jetbrains.edu.learning.submissions.*
-import com.jetbrains.edu.learning.submissions.TaskCommunitySubmissions
 import okhttp3.ConnectionPool
 import okhttp3.ResponseBody
 import org.jetbrains.annotations.VisibleForTesting
@@ -409,11 +407,6 @@ class MarketplaceSubmissionsConnector {
     }
 
     return response.body()?.string()?.let { UserAgreementState.valueOf(it) }
-  }
-
-  suspend fun changeUserAgreementAndStatisticsState(result: UserAgreementDialogResultState) {
-    changeUserAgreementState(result.agreementState)
-    changeUserStatisticsAllowedState(result.isStatisticsSharingAllowed)
   }
 
   suspend fun changeUserAgreementState(newState: UserAgreementState): Result<Unit, String> {
