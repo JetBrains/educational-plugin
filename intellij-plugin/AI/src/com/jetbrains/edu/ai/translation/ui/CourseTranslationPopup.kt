@@ -17,6 +17,7 @@ import com.intellij.util.ui.JBEmptyBorder
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.translation.TranslationLoader
+import com.jetbrains.edu.ai.translation.settings.AutoTranslationProperties
 import com.jetbrains.edu.ai.translation.settings.translationSettings
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.ai.translationSettings
@@ -110,6 +111,11 @@ class CourseTranslationPopup(private val project: Project, private val course: E
     }
     else {
       project.translationSettings().setTranslation(null)
+    }
+    val settings = application.translationSettings()
+    if (!settings.autoTranslate) {
+      val autoTranslationProperties = AutoTranslationProperties(language, settings.autoTranslate)
+      settings.setAutoTranslationProperties(autoTranslationProperties)
     }
     popup.closeOk(null)
   }
