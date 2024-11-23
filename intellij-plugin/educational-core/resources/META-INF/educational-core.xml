@@ -105,6 +105,12 @@
   </extensionPoints>
 
   <actions>
+    <action id="Educational.Agreement.ShowUserAgreementDialog"
+            class="com.jetbrains.edu.learning.agreement.action.ShowUserAgreementDialog"
+            internal="true"/>
+    <action id="Educational.Agreement.ResetUserAgreementSettings"
+            class="com.jetbrains.edu.learning.agreement.action.ResetUserAgreementSettings"
+            internal="true"/>
     <action id="Educational.ImportLocalCourse" class="com.jetbrains.edu.learning.actions.ImportLocalCourseAction"/>
     <action id="Educational.Check" class="com.jetbrains.edu.learning.actions.CheckAction"/>
     <action id="Educational.Run"
@@ -302,6 +308,7 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
+    <applicationService serviceImplementation="com.jetbrains.edu.learning.agreement.UserAgreementSettings"/>
     <applicationService serviceInterface="com.jetbrains.edu.learning.EduBrowser"
                         serviceImplementation="com.jetbrains.edu.learning.EduBrowser"
                         testServiceImplementation="com.jetbrains.edu.learning.MockEduBrowser"/>
@@ -337,6 +344,7 @@
     <!--END of Courseignore lang-->
 
     <postStartupActivity implementation="com.jetbrains.edu.learning.EduStartupActivity"/>
+    <postStartupActivity implementation="com.jetbrains.edu.learning.agreement.UserAgreementProjectActivity"/>
 
     <registryKey key="edu.task.description.update.delay"
                  description="The delay in ms before loading page by Task Description view. \nRequires project reopening"
@@ -543,4 +551,7 @@
 
   <xi:include href="/META-INF/Hyperskill.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/Marketplace.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <extensions defaultExtensionNs="Educational">
+    <optionsProvider instance="com.jetbrains.edu.learning.agreement.UserAgreementOptions"/>
+  </extensions>
 </idea-plugin>

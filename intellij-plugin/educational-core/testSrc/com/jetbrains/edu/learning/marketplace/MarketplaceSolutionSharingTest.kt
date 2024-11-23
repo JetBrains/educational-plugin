@@ -1,22 +1,32 @@
 package com.jetbrains.edu.learning.marketplace
 
 import com.intellij.openapi.util.Disposer
+import com.intellij.ui.JBAccountInfoService
+import com.jetbrains.edu.learning.agreement.UserAgreementSettings
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.marketplace.actions.ShareMySolutionsAction
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.stepik.SubmissionsTestBase
+import com.jetbrains.edu.learning.submissions.SolutionSharingPreference
 import com.jetbrains.edu.learning.testAction
+import io.mockk.unmockkStatic
 import org.junit.Test
 
 class MarketplaceSolutionSharingTest : SubmissionsTestBase() {
 
   override fun setUp() {
     super.setUp()
-    val oldSharingPreference = MarketplaceSettings.INSTANCE.solutionsSharing
-    MarketplaceSettings.INSTANCE.setSharingPreference(false)
-
+    if (MarketplaceSettings.INSTANCE.getMarketplaceAccount() == null) {
+      loginFakeMarketplaceUser()
+    }
+    mockJBAccount()
+    val settings = UserAgreementSettings.getInstance()
+    val oldSharingPreference = if (settings.solutionSharing) SolutionSharingPreference.ALWAYS else SolutionSharingPreference.NEVER
+    UserAgreementSettings.getInstance().setSolutionSharing(SolutionSharingPreference.ALWAYS)
     Disposer.register(testRootDisposable) {
-      MarketplaceSettings.INSTANCE.setSharingPreference(oldSharingPreference)
+      UserAgreementSettings.getInstance().setSolutionSharing(oldSharingPreference)
+      unmockkStatic(JBAccountInfoService::class)
+      MarketplaceSettings.INSTANCE.setAccount(null)
     }
   }
 

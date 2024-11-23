@@ -23,6 +23,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.PlatformUtils
 import com.intellij.util.TimeoutUtil
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.agreement.UserAgreementSettings
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSE_META_FILE
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -138,8 +139,11 @@ object EduUtilsKt {
     return project.guessCourseDir()?.getUserData(CourseProjectGenerator.COURSE_MODE_TO_CREATE)
   }
 
-  fun Project.isEduProject(): Boolean =
-    StudyTaskManager.getInstance(this).course != null || getCourseModeForNewlyCreatedProject(this) != null
+  fun Project.isEduProject(): Boolean {
+    if (!UserAgreementSettings.getInstance().isPluginAllowed)
+        return false
+    return StudyTaskManager.getInstance(this).course != null || getCourseModeForNewlyCreatedProject(this) != null
+  }
 
   fun Project.isStudentProject(): Boolean {
     val course = StudyTaskManager.getInstance(this).course

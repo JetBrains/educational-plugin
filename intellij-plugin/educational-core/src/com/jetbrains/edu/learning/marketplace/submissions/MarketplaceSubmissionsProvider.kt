@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.marketplace.submissions
 
 import com.intellij.openapi.project.Project
-import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.jetbrains.edu.learning.authUtils.AuthorizationPlace
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -13,8 +12,6 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceStateOnClose
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.submissions.SubmissionSettings
-import com.jetbrains.edu.learning.submissions.isSolutionSharingAllowed
-import com.jetbrains.edu.learning.submissions.isSubmissionDownloadAllowed
 import com.jetbrains.edu.learning.submissions.provider.SubmissionsData
 import com.jetbrains.edu.learning.submissions.provider.SubmissionsProvider
 
@@ -53,16 +50,6 @@ class MarketplaceSubmissionsProvider : SubmissionsProvider {
 
   override fun isLoggedIn(): Boolean {
     return MarketplaceConnector.getInstance().isLoggedIn()
-  }
-
-  @RequiresBackgroundThread
-  override fun isSubmissionDownloadAllowed(): Boolean {
-    return MarketplaceSubmissionsConnector.getInstance().getUserAgreementState().isSubmissionDownloadAllowed()
-  }
-
-  @RequiresBackgroundThread
-  override fun isSolutionSharingAllowed(): Boolean {
-    return MarketplaceSubmissionsConnector.getInstance().getUserAgreementState().isSolutionSharingAllowed()
   }
 
   override fun getPlatformName(): String = JET_BRAINS_ACCOUNT

@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.marketplace
 
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.util.registry.Registry
-import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
+import com.jetbrains.edu.learning.agreement.UserAgreementSettings
 import org.jetbrains.annotations.NonNls
 
 object SolutionSharingPromptCounter {
@@ -26,7 +26,7 @@ object SolutionSharingPromptCounter {
     get() = Registry.intValue(REGISTRY_KEY).toLong()
 
   fun shouldPrompt(): Boolean {
-    if (MarketplaceSettings.INSTANCE.solutionsSharing == true) {
+    if (UserAgreementSettings.getInstance().solutionSharing) {
       return false
     }
 

@@ -16,6 +16,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.util.PathUtil
 import com.intellij.util.PlatformUtils
+import com.jetbrains.edu.learning.agreement.UserAgreementManager
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.isBuiltinPortValid
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -49,6 +50,7 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
       // That's why we start custom server on another port to handle Hyperskill related queries.
       EduCustomServerService.getInstance().startCustomServer()
     }
+    UserAgreementManager.getInstance()
     if (isUnitTestMode) return
 
     val port = BuiltInServerManager.getInstance().port

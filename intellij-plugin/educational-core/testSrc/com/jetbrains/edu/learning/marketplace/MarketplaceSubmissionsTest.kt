@@ -6,7 +6,6 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.TestDialog
-import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
@@ -21,7 +20,6 @@ import com.jetbrains.edu.learning.marketplace.deleteSubmissions.AdvancedSubmissi
 import com.jetbrains.edu.learning.marketplace.deleteSubmissions.DeleteAllSubmissionsAction
 import com.jetbrains.edu.learning.marketplace.deleteSubmissions.SubmissionsDeleteDialog
 import com.jetbrains.edu.learning.marketplace.deleteSubmissions.deleteSubmissionsWithTestDialog
-import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.simpleDiffRequestChain
 import com.jetbrains.edu.learning.stepik.SubmissionsTestBase
 import com.jetbrains.edu.learning.submissions.*
@@ -44,12 +42,6 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
   override fun setUp() {
     super.setUp()
     loginFakeMarketplaceUser()
-    val settings = MarketplaceSettings.INSTANCE
-    val initialAgreementState = settings.userAgreementState
-    settings.setTestAgreementState(UserAgreementState.ACCEPTED)
-    Disposer.register(testRootDisposable) {
-      settings.setTestAgreementState(initialAgreementState)
-    }
   }
 
   /**
@@ -277,7 +269,6 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
       solutionsKeyTextMap: Map<String, String> = emptyMap(),
       submissionsDeleteRequestSuccess: Boolean = false,
       reportSolutionRequestSuccess: Boolean = false,
-      userAgreementState: UserAgreementState = UserAgreementState.ACCEPTED
     ) {
       mockkConstructor(Retrofit::class)
       val service = mockk<SubmissionsService>()
@@ -327,12 +318,6 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
         Response.error(HttpURLConnection.HTTP_NOT_FOUND, "mock report response body".toResponseBody())
       }
       every { reportSolutionCall.execute() } returns reportCommunityResponse
-
-      val userAgreementStateCall = mockk<Call<ResponseBody>>()
-      coEvery {  service.getUserAgreementState() } returns userAgreementStateCall
-      every { userAgreementStateCall.execute() } answers {
-        Response.success(userAgreementState.toString().toResponseBody("application/json; charset=UTF-8".toMediaType()))
-      }
 
       if (solutionsKeyTextMap.isNotEmpty()) {
         mockkObject(MarketplaceSubmissionsConnector)

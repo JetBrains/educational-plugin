@@ -26,13 +26,11 @@ import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showF
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showNoSubmissionsToDeleteNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showSubmissionsDeletedSuccessfullyNotification
 import com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceHost
-import com.jetbrains.edu.learning.marketplace.userAgreement.UserAgreementDialogResultState
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.network.createRetrofitBuilder
 import com.jetbrains.edu.learning.network.executeCall
 import com.jetbrains.edu.learning.network.executeParsingErrors
 import com.jetbrains.edu.learning.submissions.*
-import com.jetbrains.edu.learning.submissions.TaskCommunitySubmissions
 import okhttp3.ConnectionPool
 import okhttp3.ResponseBody
 import org.jetbrains.annotations.VisibleForTesting
@@ -274,20 +272,6 @@ class MarketplaceSubmissionsConnector {
     }
   }
 
-  suspend fun getSharingPreference(): SolutionSharingPreference? {
-    val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
-    LOG.info("Getting solution sharing preference for use $loginName")
-    val responseString = try {
-      submissionsService.getSharingPreference().string()
-    }
-    catch (e: Exception) {
-      LOG.info("Error occurred while getting solution sharing preference for user $loginName", e)
-      null
-    }
-
-    return responseString?.let { SolutionSharingPreference.valueOf(it) }
-  }
-
   fun reportSolution(submissionId: Int): Boolean {
     LOG.info("Reporting solution with id $submissionId")
     submissionsService.reportSolution(submissionId).executeParsingErrors().onError {
@@ -396,26 +380,6 @@ class MarketplaceSubmissionsConnector {
     }
   }
 
-  @RequiresBackgroundThread
-  fun getUserAgreementState(): UserAgreementState? {
-    val loginName = JBAccountInfoService.getInstance()?.userData?.loginName ?: run {
-      LOG.info("Unable to get user agreement state for not logged in user")
-      return null
-    }
-    LOG.info("Getting user agreement state for user $loginName")
-    val response = submissionsService.getUserAgreementState().executeParsingErrors().onError {
-      LOG.info("Error occurred while getting user agreement state for user $loginName")
-      return null
-    }
-
-    return response.body()?.string()?.let { UserAgreementState.valueOf(it) }
-  }
-
-  suspend fun changeUserAgreementAndStatisticsState(result: UserAgreementDialogResultState) {
-    changeUserAgreementState(result.agreementState)
-    changeUserStatisticsAllowedState(result.isStatisticsSharingAllowed)
-  }
-
   suspend fun changeUserAgreementState(newState: UserAgreementState): Result<Unit, String> {
     val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
     val newStateName = newState.name
@@ -435,32 +399,23 @@ class MarketplaceSubmissionsConnector {
     }
   }
 
-  suspend fun changeUserStatisticsAllowedState(newState: Boolean): Result<Unit, String> {
+  suspend fun changeAiFeaturesAgreementState(newState: UserAgreementState): Result<Unit, String> {
     val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
-    LOG.info("Changing User Statistics Allowed state to $newState for user $loginName")
+    val newStateName = newState == UserAgreementState.ACCEPTED
+    LOG.info("Changing User Ai Features Agreement state to $newStateName for user $loginName")
     return try {
-      val response = submissionsService.changeUserStatisticsAllowedState(newState)
+      val response = submissionsService.changeAiFeaturesAgreementState(newStateName)
       if (response.isSuccessful) {
         Ok(Unit)
       }
       else {
-        Err("Failed to change User Statistics Allowance state: ${response.errorBody()}. Response code: ${response.code()}")
+        Err("Failed to change User Ai Features Agreement state: ${response.errorBody()}. Response code: ${response.code()}")
       }
     }
     catch (e: Exception) {
-      LOG.error("Error occurred while changing User Statistics Allowed state to $newState for user $loginName", e)
-      Err(e.message ?: "Failed to change User Statistics Allowed state")
+      LOG.error("Error occurred while changing User Ai Features Agreement state to $newState for user $loginName", e)
+      Err(e.message ?: "Failed to change User Ai Features Agreement state")
     }
-  }
-
-  suspend fun getUserStatisticsAllowedState(): Boolean? {
-    val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
-    val response = submissionsService.getUserStatisticsAllowedState()
-    val responseBody = response.body()
-    if (responseBody == null) {
-      LOG.info("Error occurred while getting User Agreement state for user $loginName: ${response.errorBody()}. Response code: ${response.code()}")
-    }
-    return responseBody
   }
 
   companion object {
