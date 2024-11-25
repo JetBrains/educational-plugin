@@ -78,5 +78,3 @@ object AiDebuggingNotification {
       DescriptionFormat.HTML -> TaskDescriptionType.HTML
     }
 }
-
-

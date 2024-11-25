@@ -17,5 +17,4 @@
       <add-to-group group-id="EditorPopupMenu" anchor="last"/>
     </action>
   </actions>
-  <resource-bundle>messages.EduCoreBundle</resource-bundle>
 </idea-plugin>

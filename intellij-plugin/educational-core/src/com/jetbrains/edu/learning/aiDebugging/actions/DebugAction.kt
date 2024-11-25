@@ -4,7 +4,6 @@ import com.intellij.lang.Language
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.editor.CaretModel
 import com.jetbrains.edu.learning.aiDebugging.breakpoint.AIBreakPointService
 
 // TODO temporary class for testing ai breakpoints
@@ -21,9 +20,6 @@ class DebugAction : AnAction() {
 }
 
 private fun getLineBreakpointPosition(e: AnActionEvent): Int? {
-  val editor = e.getData(CommonDataKeys.EDITOR)
-  if (editor == null) return null
-  val caretModel: CaretModel = editor.caretModel
-  val logicalPosition = caretModel.logicalPosition
-  return logicalPosition.line
+  val editor = e.getData(CommonDataKeys.EDITOR) ?: return null
+  return editor.caretModel.logicalPosition.line
 }

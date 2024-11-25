@@ -12,23 +12,24 @@ import com.intellij.xdebugger.XDebuggerUtil
 import com.intellij.xdebugger.breakpoints.*
 import com.intellij.xdebugger.ui.DebuggerColors
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.getEditor
+import kotlinx.coroutines.CoroutineScope
 import java.awt.Color
 
 @Service(Service.Level.PROJECT)
-class AIBreakPointService(private val project: Project) {
+class AIBreakPointService(private val project: Project, private val coroutineScope: CoroutineScope) {
 
   private val highlighterRangers = mutableMapOf<XBreakpoint<out XBreakpointProperties<*>>, RangeHighlighter>()
 
-  private val breakpointManager = XDebuggerManager.getInstance(project).breakpointManager
+  private val breakpointManager: XBreakpointManager
+    get() = XDebuggerManager.getInstance(project).breakpointManager
 
   fun initialize() {
-    val language = Language.findLanguageByID(project.course?.languageId)
-    language?.let {
-      val type = language.getAIBreakpointType()
-      breakpointManager.getBreakpoints(type).forEach(::highlightBreakpoint)
-      addListener(type)
-    }
+    val language = project.course?.languageById ?: return
+    val type = language.getAIBreakpointType()
+    breakpointManager.getBreakpoints(type).forEach(::highlightBreakpoint)
+    addListener(type)
   }
 
 
@@ -39,7 +40,7 @@ class AIBreakPointService(private val project: Project) {
   }
 
   private val listener by lazy {
-    return@lazy object : XBreakpointListener<XLineBreakpoint<XBreakpointProperties<*>>> {
+    object : XBreakpointListener<XLineBreakpoint<XBreakpointProperties<*>>> {
       override fun breakpointAdded(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>) {
         super.breakpointAdded(breakpoint)
         highlightBreakpoint(breakpoint)
@@ -57,7 +58,7 @@ class AIBreakPointService(private val project: Project) {
   }
 
   private fun highlightBreakpoint(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>) {
-    val position = breakpoint.sourcePosition ?: error("There are no position for the breakpoint")
+    val position = breakpoint.sourcePosition ?: error("There is no position for the breakpoint")
     ApplicationManager.getApplication().invokeLater {
       val editor = position.file.getEditor(project) ?: return@invokeLater
       val attribute = TextAttributes().apply {
@@ -73,22 +74,15 @@ class AIBreakPointService(private val project: Project) {
   }
 
   private fun addListener(type: XLineBreakpointType<XBreakpointProperties<*>>) {
-    breakpointManager.addBreakpointListener(
-      type, listener
-    )
+    breakpointManager.addBreakpointListener(type, listener)
   }
 
   private fun Language.getAIBreakpointType() =
     XDebuggerUtil
       .getInstance()
-      .findBreakpointType(
-        BreakpointTypeManager
-          .getInstance(this)
-          .getBreakPointType()
-        ::class.java
-      )
+      .findBreakpointType(BreakpointTypeManager.getInstance(this).getBreakPointType()::class.java)
 
   companion object {
-    val HIGHLIGHTING_COLOR: Color = Color.getHSBColor(0.74f, 1.0f, 0.97f)
+    private val HIGHLIGHTING_COLOR: Color = Color.getHSBColor(0.74f, 1.0f, 0.97f)
   }
 }

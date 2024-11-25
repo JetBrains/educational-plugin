@@ -6,5 +6,5 @@ import com.intellij.debugger.engine.JavaBreakpointHandlerFactory
 
 class JAIDebuggerBreakpointHandlerFactory : JavaBreakpointHandlerFactory {
   override fun createHandler(process: DebugProcessImpl): JavaBreakpointHandler =
-  	JavaBreakpointHandler(JAIDebuggerBreakpointType::class.java, process)
+    JavaBreakpointHandler(JAIDebuggerBreakpointType::class.java, process)
 }
