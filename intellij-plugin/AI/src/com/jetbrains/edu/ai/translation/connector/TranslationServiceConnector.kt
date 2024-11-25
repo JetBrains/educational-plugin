@@ -1,5 +1,6 @@
 package com.jetbrains.edu.ai.translation.connector
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
@@ -24,7 +25,7 @@ import java.net.HttpURLConnection.*
 import java.net.SocketException
 
 @Service(Service.Level.APP)
-class TranslationServiceConnector {
+class TranslationServiceConnector : Disposable {
   private val aiServiceUrl: String
     get() = EduAIServiceHost.getSelectedUrl()
 
@@ -32,6 +33,10 @@ class TranslationServiceConnector {
 
   private val service: TranslationService
     get() = translationService()
+
+  override fun dispose() {
+    connectionPool.evictAll()
+  }
 
   private fun translationService(): TranslationService {
     val customInterceptor = TranslationInterceptor()

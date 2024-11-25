@@ -2,13 +2,13 @@ package com.jetbrains.edu.ai.translation.action
 
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.GotItTooltip
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.translation.TranslationLoader
+import com.jetbrains.edu.ai.translation.connector.TranslationServiceConnector
 import com.jetbrains.edu.ai.translation.ui.CourseTranslationPopup
 import com.jetbrains.edu.ai.ui.EducationalAIIcons
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
@@ -17,12 +17,14 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 
 @Suppress("ComponentNotRegistered")
 class AITranslation : DumbAwareAction() {
+  private val tooltip: GotItTooltip = createTooltip()
+
   init {
     templatePresentation.icon = EducationalAIIcons.Translation
     templatePresentation.hoveredIcon = EducationalAIIcons.TranslationHovered
     templatePresentation.selectedIcon = EducationalAIIcons.TranslationPressed
 
-    showTooltip(templatePresentation)
+    tooltip.assignTo(templatePresentation, GotItTooltip.BOTTOM_MIDDLE)
   }
 
   override fun actionPerformed(e: AnActionEvent) {
@@ -55,11 +57,11 @@ class AITranslation : DumbAwareAction() {
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
-  private fun showTooltip(presentation: Presentation) {
-    val tooltip = GotItTooltip(TOOLTIP_ID, EduAIBundle.message("ai.translation.tooltip.text"))
+  private fun createTooltip(): GotItTooltip {
+    val translationServiceConnector = TranslationServiceConnector.getInstance()
+    return GotItTooltip(TOOLTIP_ID, EduAIBundle.message("ai.translation.tooltip.text"), translationServiceConnector)
       .withHeader(EduAIBundle.message("ai.translation.tooltip.header"))
       .withPosition(Balloon.Position.below)
-    tooltip.assignTo(presentation, GotItTooltip.BOTTOM_MIDDLE)
   }
 
   companion object {
