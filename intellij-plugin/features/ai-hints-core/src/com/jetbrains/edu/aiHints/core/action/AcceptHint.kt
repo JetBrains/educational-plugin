@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.ApplyCodeAction
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.notification.EduNotificationManager
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.ui.isDefault
 import org.jetbrains.annotations.NonNls
@@ -36,6 +37,7 @@ class AcceptHint : ApplyCodeAction() {
   override fun afterActionPerformed(project: Project) {
     val task = project.getCurrentTask()
     TaskToolWindowView.getInstance(project).updateCheckPanel(task)
+    EduCounterUsageCollector.aiHintsCodeHintAccepted(isAccepted = true)
   }
 
   override fun showFailedNotification(project: Project) = EduNotificationManager.showErrorNotification(

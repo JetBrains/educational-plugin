@@ -8,6 +8,7 @@ import com.intellij.ui.RoundedLineBorder
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.aiHints.core.messages.EduAIHintsCoreBundle
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.ui.EduColors
 import org.jetbrains.annotations.Nls
@@ -33,6 +34,11 @@ open class HintInlineBanner(
 
   @RequiresEdt
   fun display() {
+    when (this) {
+      is CodeHintInlineBanner -> EduCounterUsageCollector.aiHintsBannerShown(EduCounterUsageCollector.AiHintsBannerType.Code)
+      is TextHintInlineBanner -> EduCounterUsageCollector.aiHintsBannerShown(EduCounterUsageCollector.AiHintsBannerType.Text)
+      is ErrorHintInlineBanner -> EduCounterUsageCollector.aiHintsBannerShown(EduCounterUsageCollector.AiHintsBannerType.Error)
+    }
     TaskToolWindowView.getInstance(project).addInlineBannerToCheckPanel(this@HintInlineBanner)
   }
 

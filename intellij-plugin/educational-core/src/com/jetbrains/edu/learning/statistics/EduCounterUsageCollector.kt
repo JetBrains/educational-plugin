@@ -107,6 +107,12 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     }
   }
 
+  enum class AiHintsBannerType {
+    Code,
+    Text,
+    Error
+  }
+
   companion object {
     private const val SOURCE = "source"
     private const val SUCCESS = "success"
@@ -120,6 +126,25 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
       22,
     )
 
+    private val AI_HINTS_GET_HINT = GROUP.registerEvent(
+      "ai.hints.get.hint",
+      "The event is recorded when Get Hint button is clicked"
+    )
+    private val AI_HINTS_BANNER_SHOWN = GROUP.registerEvent(
+      "ai.hints.banner.shown",
+      "Represents the type of banner that is shown to the user",
+      enumField<AiHintsBannerType>(TYPE)
+    )
+    private val AI_HINTS_SHOW_IN_CODE_LINK_CLICKED = GROUP.registerEvent(
+      "ai.hints.show.in.code",
+      "The event is recorded with True when Show in code link is clicked from the CodeHint banner, and with False when banner is just closed",
+      EventFields.Boolean(SUCCESS)
+    )
+    private val AI_HINTS_CODE_HINT_ACCEPTED = GROUP.registerEvent(
+      "ai.hints.code.hint.accepted",
+      "Represents whether the shown CodeHint was accepted or declined",
+      EventFields.Boolean(SUCCESS)
+    )
     private val TASK_NAVIGATION_EVENT = GROUP.registerEvent(
       "navigate.to.task",
       "The event is recorded in case a user navigates to the next or previous task/stage/problem.",
@@ -417,5 +442,13 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     fun openCommunityTab() = OPEN_COMMUNITY_TAB.log()
 
     fun communityTabOpenedByLink(success: Boolean) = COMMUNITY_TAB_OPENED_BY_LINK.log(success)
+
+    fun aiHintsGetHint() = AI_HINTS_GET_HINT.log()
+
+    fun aiHintsShowInCode(isClicked: Boolean) = AI_HINTS_SHOW_IN_CODE_LINK_CLICKED.log(isClicked)
+
+    fun aiHintsBannerShown(type: AiHintsBannerType) = AI_HINTS_BANNER_SHOWN.log(type)
+
+    fun aiHintsCodeHintAccepted(isAccepted: Boolean) = AI_HINTS_CODE_HINT_ACCEPTED.log(isAccepted)
   }
 }

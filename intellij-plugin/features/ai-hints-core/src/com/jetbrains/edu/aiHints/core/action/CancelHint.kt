@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.ActionWithButtonCustomComponent
 import com.jetbrains.edu.learning.actions.ApplyCodeAction.Companion.isGetHintDiff
 import com.jetbrains.edu.learning.actions.EduActionUtils.closeFileEditor
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 
 class CancelHint : ActionWithButtonCustomComponent(), DumbAware {
 
@@ -18,6 +19,7 @@ class CancelHint : ActionWithButtonCustomComponent(), DumbAware {
 
   override fun actionPerformed(e: AnActionEvent) {
     e.project?.closeFileEditor(e)
+    EduCounterUsageCollector.aiHintsCodeHintAccepted(isAccepted = false)
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT

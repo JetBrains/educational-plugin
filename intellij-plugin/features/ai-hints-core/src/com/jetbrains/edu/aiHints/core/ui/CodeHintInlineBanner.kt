@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.educational.ml.hints.hint.CodeHint
 import com.jetbrains.educational.ml.hints.hint.TextHint
 import org.jetbrains.annotations.Nls
@@ -19,6 +20,12 @@ class CodeHintInlineBanner(
   private val highlighter: RangeHighlighter? = null
 ) : HintInlineBanner(project, message) {
 
+  init {
+    setCloseAction {
+      EduCounterUsageCollector.aiHintsShowInCode(isClicked = false)
+    }
+  }
+
   override fun removeNotify() {
     super.removeNotify()
     highlighter?.dispose()
@@ -28,6 +35,8 @@ class CodeHintInlineBanner(
     addAction(EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.show.code.text")) {
       showInCodeAction()
     }
+    EduCounterUsageCollector.aiHintsShowInCode(isClicked = true)
+    setCloseAction {} // Resetting close action to avoid counting `isClicked = false` event
     return this
   }
 
