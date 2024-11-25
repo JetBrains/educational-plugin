@@ -2,8 +2,12 @@ package com.jetbrains.edu.ai.translation.action
 
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.ui.GotItTooltip
+import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.translation.TranslationLoader
 import com.jetbrains.edu.ai.translation.ui.CourseTranslationPopup
 import com.jetbrains.edu.ai.ui.EducationalAIIcons
@@ -17,6 +21,8 @@ class AITranslation : DumbAwareAction() {
     templatePresentation.icon = EducationalAIIcons.Translation
     templatePresentation.hoveredIcon = EducationalAIIcons.TranslationHovered
     templatePresentation.selectedIcon = EducationalAIIcons.TranslationPressed
+
+    showTooltip(templatePresentation)
   }
 
   override fun actionPerformed(e: AnActionEvent) {
@@ -49,8 +55,17 @@ class AITranslation : DumbAwareAction() {
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
+  private fun showTooltip(presentation: Presentation) {
+    val tooltip = GotItTooltip(TOOLTIP_ID, EduAIBundle.message("ai.translation.tooltip.text"))
+      .withHeader(EduAIBundle.message("ai.translation.tooltip.header"))
+      .withPosition(Balloon.Position.below)
+    tooltip.assignTo(presentation, GotItTooltip.BOTTOM_MIDDLE)
+  }
+
   companion object {
     @Suppress("unused")
     const val ACTION_ID: String = "Educational.AITranslation"
+
+    private const val TOOLTIP_ID: String = "ai.translation.tooltip"
   }
 }
