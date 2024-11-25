@@ -42,6 +42,12 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
       file("CMakeLists.txt")
     }.assertEquals(rootDir)
 
+    assertListOfAdditionalFiles(course,
+      "CMakeLists.txt" to null,
+      "cmake/utils.cmake" to null,
+      "cmake/googletest.cmake" to null,
+      "cmake/googletest-download.cmake" to null
+    )
   }
 
   @Test
@@ -72,6 +78,11 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
       file("CMakeLists.txt")
     }.assertEquals(rootDir)
 
+    assertListOfAdditionalFiles(course,
+      "CMakeLists.txt" to null,
+      "cmake/utils.cmake" to null,
+      "cmake/catch.cmake" to null
+    )
   }
 
   @Test
@@ -255,5 +266,21 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
       file("CMakeLists.txt.in")
       file("CMakeLists.txt")
     }.assertEquals(rootDir)
+  }
+
+  @Test
+  fun `test study edu course creates nothing if CMakeLists already exists`() {
+    val course = course(language = OCLanguage.getInstance(), environment = "Catch") {
+      additionalFiles {
+        eduFile("CMakeLists.txt", "file 1")
+        eduFile("cmake/utils.cmake", "file 2")
+        // cmake/catch.cmake is skipped to test it will not be created
+      }
+    }
+    createCourseStructure(course)
+    assertListOfAdditionalFiles(course,
+      "CMakeLists.txt" to "file 1",
+      "cmake/utils.cmake" to "file 2"
+    )
   }
 }

@@ -92,6 +92,13 @@ class AndroidCourseGeneratorTest : JvmCourseGenerationTestBase() {
     ).forEach { line ->
       assertThat(text, CoreMatchers.containsString(line))
     }
+
+    assertListOfAdditionalFiles(course,
+      "build.gradle" to null,
+      "settings.gradle" to null,
+      "gradle.properties" to null
+      //local.properties is generated but does not go to additional files
+    )
   }
 
   @Test

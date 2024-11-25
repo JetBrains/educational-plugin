@@ -30,6 +30,8 @@ class PyNewCourseBuilderTest : CourseGenerationTestBase<PyProjectSettings>() {
         }
       }
     }.assertEquals(rootDir)
+
+    assertListOfAdditionalFiles(course)
   }
 
   @Test

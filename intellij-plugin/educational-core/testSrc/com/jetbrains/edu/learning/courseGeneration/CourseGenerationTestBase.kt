@@ -6,10 +6,15 @@ import com.intellij.testFramework.HeavyPlatformTestCase
 import com.intellij.testFramework.runInEdtAndWait
 import com.jetbrains.edu.learning.FileTree
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
+import com.jetbrains.edu.learning.assertContentsEqual
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.FileContents
+import com.jetbrains.edu.learning.courseFormat.InMemoryBinaryContents
+import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.ext.disambiguateContents
 import com.jetbrains.edu.learning.createCourseFromJson
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
@@ -93,6 +98,29 @@ abstract class CourseGenerationTestBase<Settings : EduProjectSettings> : HeavyPl
         )
 
         assertEquals("Lesson index mismatch", newLesson.index, lesson.index)
+      }
+    }
+  }
+
+  protected fun assertListOfAdditionalFiles(course: Course, vararg files: Pair<String, Any?>) {
+    val filesMap = mapOf(*files)
+    assertEquals("Unexpected list of additional files", filesMap.keys, course.additionalFiles.map { it.name }.toSet())
+
+    for (actualFile in course.additionalFiles) {
+      val path = actualFile.name
+
+      if (!filesMap.containsKey(path)) fail("Unexpected additional file $path")
+
+      val expectedContents = when (val value = filesMap[path]) {
+        is String -> InMemoryTextualContents(value)
+        is ByteArray -> InMemoryBinaryContents(value)
+        is FileContents -> value
+        null -> null
+        else -> error("value should be either a String or a ByteArray or a FileContents, got ${value::class.java} instead")
+      }
+      val actualContents = actualFile.contents.disambiguateContents(path)
+      if (expectedContents != null) {
+        assertContentsEqual(path, expectedContents, actualContents)
       }
     }
   }

@@ -1,7 +1,9 @@
 package com.jetbrains.edu.php
 
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
 import com.jetbrains.edu.php.PhpConfigurator.Companion.TASK_PHP
@@ -40,10 +42,19 @@ class PhpCourseBuilderTest : CourseGenerationTestBase<PhpProjectSettings>() {
       }
       file(ComposerUtils.CONFIG_DEFAULT_FILENAME)
     }.assertEquals(rootDir)
+
+    assertListOfAdditionalFiles(newCourse,
+      ComposerUtils.CONFIG_DEFAULT_FILENAME to getInternalTemplateText(ComposerUtils.CONFIG_DEFAULT_FILENAME)
+    )
   }
 
   @Test
   fun `test study course structure`() {
+    val changedConfig = "{" +
+                        "  \"require\": {" +
+                        "    \"phpunit/phpunit\": \"^9\"" +
+                        "  }" +
+                        "}"
     val course = course(language = PhpLanguage.INSTANCE) {
       lesson("lesson1") {
         eduTask("task1") {
@@ -56,11 +67,7 @@ class PhpCourseBuilderTest : CourseGenerationTestBase<PhpProjectSettings>() {
         }
       }
       additionalFiles {
-        eduFile(ComposerUtils.CONFIG_DEFAULT_FILENAME, "{" +
-                                                       "  \"require\": {" +
-                                                       "    \"phpunit/phpunit\": \"^9\"" +
-                                                       "  }" +
-                                                       "}")
+        eduFile(ComposerUtils.CONFIG_DEFAULT_FILENAME, changedConfig)
       }
     }
     createCourseStructure(course)
@@ -77,5 +84,21 @@ class PhpCourseBuilderTest : CourseGenerationTestBase<PhpProjectSettings>() {
       }
       file(ComposerUtils.CONFIG_DEFAULT_FILENAME)
     }.assertEquals(rootDir)
+
+    // student gets config changed by a teacher
+    assertListOfAdditionalFiles(course,
+      ComposerUtils.CONFIG_DEFAULT_FILENAME to changedConfig
+    )
+  }
+
+  @Test
+  fun `composer_json is recreated for student`() {
+    val course = newCourse(PhpLanguage.INSTANCE, courseMode = CourseMode.STUDENT)
+    createCourseStructure(course)
+
+    // student gets a recreated composer.json if it was not in additional files
+    assertListOfAdditionalFiles(course,
+      ComposerUtils.CONFIG_DEFAULT_FILENAME to getInternalTemplateText(ComposerUtils.CONFIG_DEFAULT_FILENAME)
+    )
   }
 }

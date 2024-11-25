@@ -1,6 +1,8 @@
 package com.jetbrains.edu.scala.courseGeneration
 
 import com.jetbrains.edu.jvm.courseGeneration.JvmCourseGenerationTestBase
+import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
 import org.jetbrains.plugins.scala.ScalaLanguage
@@ -57,5 +59,26 @@ class ScalaSbtCourseBuilderTest : JvmCourseGenerationTestBase() {
     }
 
     expectedFileTree.assertEquals(rootDir)
+
+    assertListOfAdditionalFiles(course,
+      "build.sbt" to null,
+      "project/build.properties" to null
+    )
+  }
+
+  @Test
+  fun `test study course additional files`() {
+    val course = course(language = ScalaLanguage.INSTANCE, environment = "sbt") {
+      additionalFile("build.sbt", "template example: \$PROJECT_NAME")
+      additionalFile("project/build.properties", "template example: \$PROJECT_NAME")
+      additionalFile("extra.file", "not changed")
+    }
+    createCourseStructure(course)
+
+    assertListOfAdditionalFiles(course,
+      "build.sbt" to "template example: ${project.courseDir.name}",
+      "project/build.properties" to "template example: ${project.courseDir.name}",
+      "extra.file" to "not changed"
+    )
   }
 }

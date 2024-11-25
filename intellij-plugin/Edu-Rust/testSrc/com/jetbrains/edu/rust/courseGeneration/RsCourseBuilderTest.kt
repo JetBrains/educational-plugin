@@ -43,6 +43,10 @@ class RsCourseBuilderTest : CourseGenerationTestBase<RsProjectSettings>() {
 
       """)
     }.assertEquals(rootDir)
+
+    assertListOfAdditionalFiles(newCourse,
+      "Cargo.toml" to null
+    )
   }
 
   @Test

@@ -81,6 +81,8 @@ class CSharpCourseBuilderTest : CourseGenerationTestBase<CSharpProjectSettings>(
       }
     }
     expectedFileTree.assertExists(rootDir)
+
+    assertListOfAdditionalFiles(course)
   }
 
   @Test

@@ -2,6 +2,7 @@ package com.jetbrains.edu.sql.jvm.gradle.courseGeneration
 
 import com.intellij.sql.psi.SqlLanguage
 import com.jetbrains.edu.jvm.courseGeneration.JvmCourseGenerationTestBase
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
@@ -38,6 +39,11 @@ class SqlGradleCourseBuilderTest : JvmCourseGenerationTestBase() {
       file("build.gradle")
       file("settings.gradle")
     }.assertEquals(rootDir)
+
+    assertListOfAdditionalFiles(newCourse,
+      "build.gradle" to null,
+      "settings.gradle" to null
+    )
   }
 
   @Test
@@ -126,5 +132,20 @@ class SqlGradleCourseBuilderTest : JvmCourseGenerationTestBase() {
       file("build.gradle")
       file("settings.gradle")
     }.assertEquals(rootDir)
+  }
+
+  @Test
+  fun `test student course additional files with kts files`() {
+    val newCourse = course(language = SqlLanguage.INSTANCE) {
+      additionalFile("build.gradle.kts", "")
+      additionalFile("settings.gradle.kts", "")
+    }
+    createCourseStructure(newCourse)
+
+    assertListOfAdditionalFiles(newCourse,
+      "build.gradle.kts" to null,
+      "settings.gradle.kts" to null
+      //build.gradle and settings.gradle are not created
+    )
   }
 }
