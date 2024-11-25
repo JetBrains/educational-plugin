@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.getTextFromTaskTextFile
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.ui.EduColors
 import kotlinx.coroutines.Dispatchers
@@ -39,19 +40,21 @@ object HintsBannerManager {
     val hintBanner = HintInlineBanner(message, highlighter).apply {
       addAction(EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.show.code.text")) {
         showInCodeAction(project, taskVirtualFile, taskFileText, codeHint)
+        EduCounterUsageCollector.aiHintsShowInCode(isClicked = true)
       }
       setCloseAction {
         highlighter?.dispose()
+        EduCounterUsageCollector.aiHintsShowInCode(isClicked = false)
       }
     }
     show(project, task, hintBanner)
+    EduCounterUsageCollector.aiHintsBannerShown(EduCounterUsageCollector.AiHintsBannerType.Code)
   }
 
-  suspend fun showTextHintBanner(project: Project, task: Task, @Nls message: String) = show(
-    project,
-    task,
-    HintInlineBanner(message)
-  )
+  suspend fun showTextHintBanner(project: Project, task: Task, @Nls message: String) {
+    show(project, task, HintInlineBanner(message))
+    EduCounterUsageCollector.aiHintsBannerShown(EduCounterUsageCollector.AiHintsBannerType.Text)
+  }
 
   private suspend fun show(project: Project, task: Task, hintsBanner: HintInlineBanner) = withContext(Dispatchers.EDT) {
     val taskToolWindow = TaskToolWindowView.getInstance(project)

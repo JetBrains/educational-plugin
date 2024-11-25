@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.actions.ActionWithProgressIcon
 import com.jetbrains.edu.learning.actions.EduActionUtils.GET_HINT_ACTION_ID
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.actions.EduActionUtils.isGetHintAvailable
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 
 class GetHint : ActionWithProgressIcon() {
@@ -37,6 +38,7 @@ class GetHint : ActionWithProgressIcon() {
     }
 
     val task = TaskToolWindowView.getInstance(project).currentTask ?: return
+    EduCounterUsageCollector.aiHintsGetHint()
     HintsLoader.getInstance(project).getHint(task)
   }
 
