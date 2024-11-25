@@ -9,6 +9,7 @@ import com.jetbrains.edu.ai.translation.service.TranslationService
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
+import com.jetbrains.edu.learning.network.HTTP_UNAVAILABLE_FOR_LEGAL_REASONS
 import com.jetbrains.edu.learning.network.createRetrofitBuilder
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
@@ -81,6 +82,7 @@ class TranslationServiceConnector {
       HTTP_UNAVAILABLE -> Err(EduAIBundle.message("ai.translation.service.is.currently.unavailable"))
       HTTP_NOT_FOUND -> Err(EduAIBundle.message("ai.translation.course.translation.does.not.exist"))
       UNPROCESSABLE_ENTITY.code() -> Err(EduAIBundle.message("ai.translation.only.popular.courses.are.allowed.for.translation"))
+      HTTP_UNAVAILABLE_FOR_LEGAL_REASONS -> Err(EduAIBundle.message("ai.translation.translation.unavailable.due.to.license.restrictions"))
       else -> Err(EduAIBundle.message("ai.translation.service.could.not.connect"))
     }
   }
