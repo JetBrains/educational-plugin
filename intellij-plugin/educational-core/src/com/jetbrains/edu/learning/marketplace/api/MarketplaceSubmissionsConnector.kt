@@ -428,32 +428,42 @@ class MarketplaceSubmissionsConnector {
     }
   }
 
-  suspend fun changeUserStatisticsAllowedState(newState: Boolean): Result<Unit, String> {
+  suspend fun changeAiFeaturesAgreementState(newState: UserAgreementState): Result<Unit, String> {
     val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
-    LOG.info("Changing User Statistics Allowed state to $newState for user $loginName")
+    val newStateName = newState.name
+    LOG.info("Changing User Ai Features Agreement state to $newStateName for user $loginName")
     return try {
-      val response = submissionsService.changeUserStatisticsAllowedState(newState)
+      val response = submissionsService.changeAiFeaturesAgreementState(newStateName)
       if (response.isSuccessful) {
         Ok(Unit)
       }
       else {
-        Err("Failed to change User Statistics Allowance state: ${response.errorBody()}. Response code: ${response.code()}")
+        Err("Failed to change User Ai Features Agreement state: ${response.errorBody()}. Response code: ${response.code()}")
       }
     }
     catch (e: Exception) {
-      LOG.error("Error occurred while changing User Statistics Allowed state to $newState for user $loginName", e)
-      Err(e.message ?: "Failed to change User Statistics Allowed state")
+      LOG.error("Error occurred while changing User Ai Features Agreement state to $newState for user $loginName", e)
+      Err(e.message ?: "Failed to change User Ai Features Agreement state")
     }
   }
 
-  suspend fun getUserStatisticsAllowedState(): Boolean? {
-    val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
-    val response = submissionsService.getUserStatisticsAllowedState()
+  suspend fun getAiFeaturesAgreementState(): UserAgreementState? {
+    val loginName = JBAccountInfoService.getInstance()?.userData?.loginName ?: run {
+      LOG.info("Unable to get user ai features agreement state for not logged in user")
+      return null
+    }
+    val response = submissionsService.getAiFeaturesAgreementState()
     val responseBody = response.body()
     if (responseBody == null) {
-      LOG.info("Error occurred while getting User Agreement state for user $loginName: ${response.errorBody()}. Response code: ${response.code()}")
+      LOG.info("Error occurred while getting User Ai Features Agreement state for user $loginName: ${response.errorBody()}. Response code: ${response.code()}")
+      return null
     }
-    return responseBody
+    return if (responseBody.toBoolean()) {
+      UserAgreementState.ACCEPTED
+    }
+    else {
+      UserAgreementState.DECLINED
+    }
   }
 
   companion object {

@@ -10,9 +10,9 @@ import com.jetbrains.edu.learning.marketplace.JET_BRAINS_ACCOUNT
 import com.jetbrains.edu.learning.marketplace.JET_BRAINS_ACCOUNT_PROFILE_PATH
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
+import com.jetbrains.edu.learning.marketplace.settings.checkboxes.AiFeaturesAgreementOptionsCheckBox
 import com.jetbrains.edu.learning.marketplace.settings.checkboxes.MarketplaceOptionsCheckBox
 import com.jetbrains.edu.learning.marketplace.settings.checkboxes.SolutionSharingOptionsCheckBox
-import com.jetbrains.edu.learning.marketplace.settings.checkboxes.StatisticsCollectionOptionsCheckBox
 import com.jetbrains.edu.learning.marketplace.settings.checkboxes.UserAgreementOptionsCheckBox
 import com.jetbrains.edu.learning.settings.OAuthLoginOptions
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
@@ -37,7 +37,7 @@ class MarketplaceOptions : OAuthLoginOptions<MarketplaceAccount>() {
 
   private val shareMySolutionsCheckBox = SolutionSharingOptionsCheckBox()
 
-  private val statisticsCollectionAllowedCheckBox = StatisticsCollectionOptionsCheckBox()
+  private val aiFeaturesAgreementOptionsCheckBox = AiFeaturesAgreementOptionsCheckBox()
 
   override fun isAvailable(): Boolean = true
 
@@ -61,8 +61,8 @@ class MarketplaceOptions : OAuthLoginOptions<MarketplaceAccount>() {
   }
 
   override fun getAdditionalComponents(): List<JComponent> =
-    if (RemoteEnvHelper.isRemoteDevServer()) listOf(shareMySolutionsCheckBox, statisticsCollectionAllowedCheckBox)
-    else listOf(userAgreementCheckBox, shareMySolutionsCheckBox, statisticsCollectionAllowedCheckBox)
+    if (RemoteEnvHelper.isRemoteDevServer()) listOf(shareMySolutionsCheckBox, aiFeaturesAgreementOptionsCheckBox)
+    else listOf(userAgreementCheckBox, shareMySolutionsCheckBox, aiFeaturesAgreementOptionsCheckBox)
 
   override fun apply() {
     super.apply()
@@ -81,8 +81,14 @@ class MarketplaceOptions : OAuthLoginOptions<MarketplaceAccount>() {
       settings.updateAgreementState(agreementState)
     }
 
-    if (settings.isStatisticsCollectionStateModified()) {
-      settings.updateStatisticsCollectionState(statisticsCollectionAllowedCheckBox.isSelected)
+    if (settings.isAiFeaturesAgreementModified()) {
+      val agreementState = if (aiFeaturesAgreementOptionsCheckBox.isSelected) {
+        UserAgreementState.ACCEPTED
+      }
+      else {
+        UserAgreementState.TERMINATED
+      }
+      settings.updateAiFeaturesAgreementState(agreementState)
     }
   }
 
@@ -91,7 +97,7 @@ class MarketplaceOptions : OAuthLoginOptions<MarketplaceAccount>() {
     val settings = MarketplaceSettings.INSTANCE
     shareMySolutionsCheckBox.isSelected = settings.solutionsSharing == true
     userAgreementCheckBox.isSelected = settings.userAgreementState == UserAgreementState.ACCEPTED
-    statisticsCollectionAllowedCheckBox.isSelected = settings.statisticsCollectionState == true
+    aiFeaturesAgreementOptionsCheckBox.isSelected = settings.aiFeaturesAgreement == UserAgreementState.ACCEPTED
   }
 
   override fun isModified(): Boolean {
@@ -99,12 +105,12 @@ class MarketplaceOptions : OAuthLoginOptions<MarketplaceAccount>() {
     return super.isModified() ||
            settings.isSolutionSharingStateModified() ||
            settings.isUserAgreementStateModified() ||
-           settings.isStatisticsCollectionStateModified()
+           settings.isAiFeaturesAgreementModified()
   }
 
   private fun MarketplaceSettings.isSolutionSharingStateModified(): Boolean = solutionsSharing != shareMySolutionsCheckBox.isSelected
 
   private fun MarketplaceSettings.isUserAgreementStateModified(): Boolean = userAgreementState == UserAgreementState.ACCEPTED != userAgreementCheckBox.isSelected
 
-  private fun MarketplaceSettings.isStatisticsCollectionStateModified(): Boolean = statisticsCollectionState != statisticsCollectionAllowedCheckBox.isSelected
+  private fun MarketplaceSettings.isAiFeaturesAgreementModified(): Boolean = aiFeaturesAgreement == UserAgreementState.ACCEPTED != aiFeaturesAgreementOptionsCheckBox.isSelected
 }

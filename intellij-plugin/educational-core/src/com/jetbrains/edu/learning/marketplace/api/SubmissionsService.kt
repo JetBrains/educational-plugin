@@ -74,8 +74,8 @@ interface SubmissionsService {
   suspend fun changeUserAgreementState(@Query("state") agreementState: String): Response<Unit>
 
   @GET("/api/user/statisticsAllowed")
-  suspend fun getUserStatisticsAllowedState(): Response<Boolean>
+  suspend fun getAiFeaturesAgreementState(): Response<String>
 
   @PATCH("/api/user/statisticsAllowed")
-  suspend fun changeUserStatisticsAllowedState(@Query("state") statisticsAllowed: Boolean): Response<Unit>
+  suspend fun changeAiFeaturesAgreementState(@Query("state") agreementState: String): Response<Unit>
 }

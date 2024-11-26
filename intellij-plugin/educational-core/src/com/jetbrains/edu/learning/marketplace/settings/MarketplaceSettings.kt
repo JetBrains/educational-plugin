@@ -44,7 +44,7 @@ class MarketplaceSettings(private val scope: CoroutineScope) {
    * Do not rely on this property deciding if statistics can be uploaded, get actual state from the remote
    */
   @Volatile
-  var statisticsCollectionState: Boolean? = null
+  var aiFeaturesAgreement: UserAgreementState? = null
     private set
 
   init {
@@ -54,8 +54,8 @@ class MarketplaceSettings(private val scope: CoroutineScope) {
 
         val remoteAgreementState = submissionsConnector.getUserAgreementState()
         userAgreementState = remoteAgreementState
-        val remoteStatisticsState = submissionsConnector.getUserStatisticsAllowedState()
-        statisticsCollectionState = remoteStatisticsState
+        val remoteStatisticsState = submissionsConnector.getAiFeaturesAgreementState()
+        aiFeaturesAgreement = remoteStatisticsState
 
         solutionsSharing = submissionsConnector.getSharingPreference().toBoolean()
       }
@@ -145,10 +145,10 @@ class MarketplaceSettings(private val scope: CoroutineScope) {
     userAgreementState = state
   }
 
-  fun updateStatisticsCollectionState(state: Boolean, project: Project? = null) {
+  fun updateAiFeaturesAgreementState(state: UserAgreementState, project: Project? = null) {
     if (!isJBALoggedIn()) return
     scope.launch(Dispatchers.IO) {
-      MarketplaceSubmissionsConnector.getInstance().changeUserStatisticsAllowedState(state).onError {
+      MarketplaceSubmissionsConnector.getInstance().changeAiFeaturesAgreementState(state).onError {
         EduNotificationManager.showErrorNotification(
           project,
           EduCoreBundle.message("user.statistics.changed.failed.notification.title"),
@@ -157,8 +157,8 @@ class MarketplaceSettings(private val scope: CoroutineScope) {
         return@launch
       }
 
-      statisticsCollectionState = state
-      val notificationText = if (state) {
+      aiFeaturesAgreement = state
+      val notificationText = if (state == UserAgreementState.ACCEPTED) {
         EduCoreBundle.message("user.statistics.changed.allowed.notification.text")
       }
       else {
@@ -182,11 +182,11 @@ class MarketplaceSettings(private val scope: CoroutineScope) {
     }
   }
 
-  fun updateToActualStatisticsSharingState(processUpdate: suspend (Boolean?) -> Unit) {
+  fun updateToActualAiFeaturesAgreementState(processUpdate: suspend (UserAgreementState?) -> Unit) {
     if (!isJBALoggedIn()) return
     scope.launch(Dispatchers.IO) {
-      val actualStatisticsState = MarketplaceSubmissionsConnector.getInstance().getUserStatisticsAllowedState()
-      statisticsCollectionState = actualStatisticsState
+      val actualStatisticsState = MarketplaceSubmissionsConnector.getInstance().getAiFeaturesAgreementState()
+      aiFeaturesAgreement = actualStatisticsState
       processUpdate(actualStatisticsState)
     }
   }
