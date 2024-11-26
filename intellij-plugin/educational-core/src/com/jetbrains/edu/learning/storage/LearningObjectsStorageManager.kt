@@ -68,9 +68,16 @@ class LearningObjectsStorageManager(private val project: Project) : DumbAware, D
           // if persisting took long, contents could have been already changed
 
           if (!setContentsIfEquals(contentsWithDiagnostics, persistedContents)) {
-            // The level is `error`, because we want to have feedback if that happens.
-            // But we will probably change this later to `warn`, or 'info', or remove the check completely.
-            logger<FileContents>().error("Contents of a file changed while the file was being persisted: $pathInStorage from ${initialContents.debugString()} to ${contents.debugString()}")
+            val logMessage = "Contents of a file changed while the file was being persisted: $pathInStorage from ${initialContents.debugString()} to ${contents.debugString()}"
+
+            // The level is ERROR if the contents are different, otherwise it is a WARNING,
+            // because the same contents do not lead to unexpected behavior
+            if (isSameContents(initialContents, persistedContents)) {
+              logger<FileContents>().warn(logMessage)
+            }
+            else {
+              logger<FileContents>().error(logMessage)
+            }
           }
         }
 
@@ -157,6 +164,14 @@ class LearningObjectsStorageManager(private val project: Project) : DumbAware, D
     LearningObjectStorageType.InMemory -> InMemoryLearningObjectsStorage()
     LearningObjectStorageType.SQLite -> SQLiteLearningObjectsStorage.openOrCreateDB(project)
     else -> null
+  }
+
+  private fun isSameContents(c1: FileContents, c2: FileContents): Boolean {
+    return when {
+      c1 is TextualContents && c2 is TextualContents -> c1.text == c2.text
+      c1 is BinaryContents && c2 is BinaryContents -> c1.bytes.contentEquals(c2.bytes)
+      else -> false
+    }
   }
 
   override fun dispose() {}
