@@ -11,7 +11,6 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformCoreDataKeys.CONTEXT_COMPONENT
 import com.intellij.openapi.actionSystem.Presentation
-import com.intellij.openapi.actionSystem.ex.ActionUtil.SHOW_TEXT_IN_TOOLBAR
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.diagnostic.logger
@@ -47,7 +46,6 @@ class RunTaskAction : ActionWithButtonCustomComponent(), DumbAware {
     val runConfiguration = getCustomRunConfigurationForRunner(project, task) ?: return
     // store the configuration found during the update to use it later when the action is performed
     e.presentation.putClientProperty(RUN_CONFIGURATION, runConfiguration)
-    e.presentation.putClientProperty(SHOW_TEXT_IN_TOOLBAR, true)
     e.presentation.putClientProperty(SHOW_AS_DEFAULT_BUTTON, task is TheoryTask)
 
     e.presentation.text = EduCoreBundle.message("action.run.button.text")
@@ -63,6 +61,9 @@ class RunTaskAction : ActionWithButtonCustomComponent(), DumbAware {
 
     runTask(project, task, e)
   }
+
+  // BACKCOMPAT: 2024.2 replace this method with e.presentation.putClientProperty(SHOW_TEXT_IN_TOOLBAR, true) in update()
+  override fun displayTextInToolbar(): Boolean = true
 
   override fun createCustomComponent(presentation: Presentation, place: String): JButton {
     val component = super.createCustomComponent(presentation, place)
