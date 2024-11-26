@@ -49,6 +49,9 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
       return
     }
 
+    // We are going to use the contents of course files, so we must init() the course.
+    // Otherwise, we have only the course structure.
+    courseFromServer.init(true)
     updateCourseWithRemote(courseFromServer)
   }
 
