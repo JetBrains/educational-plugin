@@ -127,7 +127,7 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
   /**
    * Check if the launch of tests was not successful. It allows us to create meaningful output in such cases.
    */
-  protected open fun areTestsFailedToRun(testResults: List<TestResultGroup>): Boolean = testResults.isEmpty()
+  protected open fun areTestsFailedToRun(testResults: List<TestResultGroup>): Boolean = testResults.all { it.results.isEmpty() }
 
   protected fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
     val customConfiguration = CheckUtils.getCustomRunConfiguration(project, task)
