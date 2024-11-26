@@ -984,10 +984,12 @@ project("features:ai-hints-core") {
     implementation(project(":intellij-plugin:AI"))
     api(rootProject.libs.educational.ml.library.core) {
       excludeKotlinDeps()
+      excludeKotlinSerializationDeps()
       exclude(group = "net.java.dev.jna")
     }
     api(rootProject.libs.educational.ml.library.hints) {
       excludeKotlinDeps()
+      excludeKotlinSerializationDeps()
       exclude(group = "net.java.dev.jna")
     }
 
@@ -1067,14 +1069,24 @@ fun buildDir(): String {
 }
 
 fun <T : ModuleDependency> T.excludeKotlinDeps() {
+  // Kotlin stdlib
   exclude(module = "kotlin-runtime")
   exclude(module = "kotlin-reflect")
   exclude(module = "kotlin-stdlib")
   exclude(module = "kotlin-stdlib-common")
   exclude(module = "kotlin-stdlib-jdk8")
   exclude(module = "kotlin-stdlib-jdk7")
+  // Kotlin coroutines
   exclude(module = "kotlinx-coroutines-core")
   exclude(module = "kotlinx-coroutines-core-jvm")
+  exclude(module = "kotlinx-coroutines-jdk8")
+  exclude(module = "kotlinx-coroutines-slf4j")
+}
+
+fun <T : ModuleDependency> T.excludeKotlinSerializationDeps() {
+  // Kotlin serialization
+  exclude(module = "kotlinx-serialization-core-jvm")
+  exclude(module = "kotlinx-serialization-json")
 }
 
 fun parseManifest(file: File): Node {
