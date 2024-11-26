@@ -64,6 +64,14 @@ open class EduFile {
     this.contents = contents
   }
 
+  /**
+   * The [contents] is interpreted as [InMemoryTextualContents]
+   */
+  constructor(name: String, contents: String) {
+    this.name = name
+    this.contents = InMemoryTextualContents(contents)
+  }
+
   @Suppress("unused") // used for serialization
   fun getTextToSerialize(): String? {
     if (this !is TaskFile || !task.course.needWriteYamlText) {

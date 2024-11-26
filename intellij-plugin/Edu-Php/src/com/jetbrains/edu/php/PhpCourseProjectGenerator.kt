@@ -5,7 +5,6 @@ import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFile
-import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.isUnitTestMode
@@ -36,9 +35,7 @@ class PhpCourseProjectGenerator(
     val composerFile = holder.courseDir.findChild(ComposerUtils.CONFIG_DEFAULT_FILENAME)
     if (composerFile != null) return null
 
-    return EduFile(ComposerUtils.CONFIG_DEFAULT_FILENAME, InMemoryTextualContents(
-      getInternalTemplateText(ComposerUtils.CONFIG_DEFAULT_FILENAME)
-    ))
+    return EduFile(ComposerUtils.CONFIG_DEFAULT_FILENAME, getInternalTemplateText(ComposerUtils.CONFIG_DEFAULT_FILENAME))
   }
 
   private fun downloadPhar(project: Project, projectSettings: PhpProjectSettings) {

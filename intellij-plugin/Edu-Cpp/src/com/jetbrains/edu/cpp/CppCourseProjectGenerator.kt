@@ -8,7 +8,6 @@ import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFile
-import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
@@ -29,13 +28,11 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     return listOf(
       EduFile(
         mainCMakeTemplateInfo.generatedFileName,
-        InMemoryTextualContents(
-          mainCMakeTemplateInfo.getText(sanitizedProjectName, course.languageVersion ?: "")
-        )
+        mainCMakeTemplateInfo.getText(sanitizedProjectName, course.languageVersion ?: "")
       )
     ) +
     getCppTemplates(course).extraTopLevelFiles.map { templateInfo ->
-      EduFile(templateInfo.generatedFileName, InMemoryTextualContents(templateInfo.getText(sanitizedProjectName)))
+      EduFile(templateInfo.generatedFileName, templateInfo.getText(sanitizedProjectName))
     }
   }
 

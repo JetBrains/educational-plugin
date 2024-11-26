@@ -14,7 +14,6 @@ import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFile
-import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.gradle.GradleConstants.BUILD_GRADLE
 import com.jetbrains.edu.learning.gradle.GradleConstants.SETTINGS_GRADLE
@@ -90,7 +89,7 @@ class FakeGradleCourseProjectGenerator(
     return listOf(BUILD_GRADLE, SETTINGS_GRADLE)
       .filter { it !in existingAdditionalFiles }
       .map { fileName ->
-        EduFile(fileName, InMemoryTextualContents(""))
+        EduFile(fileName, "")
       }
   }
 }

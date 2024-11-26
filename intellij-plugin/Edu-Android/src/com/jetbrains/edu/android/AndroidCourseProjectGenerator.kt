@@ -13,7 +13,6 @@ import com.jetbrains.edu.jvm.gradle.generation.GradleCourseProjectGenerator
 import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFile
-import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_PROPERTIES
 import com.jetbrains.edu.learning.gradle.GradleConstants.LOCAL_PROPERTIES
 import org.jetbrains.plugins.gradle.settings.DistributionType
@@ -67,7 +66,7 @@ class AndroidCourseProjectGenerator(builder: AndroidCourseBuilder, course: Cours
         properties.store(writer, "")
       }
       val propertiesContents = propertiesWriter.toString()
-      return EduFile(name, InMemoryTextualContents(propertiesContents))
+      return EduFile(name, propertiesContents)
     }
 
     private fun Map<String, String>.toSortedProperties(): Properties =

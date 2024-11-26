@@ -392,7 +392,7 @@ object GeneratorUtils {
   }
 
   /**
-   * Checks if file exists in [holder.courseDir] by given [path].
+   * Checks if file exists in `courseDir` from [holder] by given [path].
    * If it doesn't exist, creates a new file from internal [templateName] template.
    * Otherwise, substitutes all template variables in file text
    */
@@ -429,7 +429,7 @@ object GeneratorUtils {
     else {
       evaluateExistingTemplate(file, templateVariables)
     }
-    return EduFile(templatePath, InMemoryTextualContents(configText))
+    return EduFile(templatePath, configText)
   }
 
   /**

@@ -12,7 +12,6 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFile
-import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
@@ -73,7 +72,7 @@ class JsCourseProjectGenerator(builder: JsCourseBuilder, course: Course) : Cours
     val packageJsonFile = holder.courseDir.findChild(NodeModuleNamesUtil.PACKAGE_JSON)
     if (packageJsonFile == null && !holder.course.isStudy) {
       val templateText = getInternalTemplateText(NodeModuleNamesUtil.PACKAGE_JSON)
-      return listOf(EduFile(NodeModuleNamesUtil.PACKAGE_JSON, InMemoryTextualContents(templateText)))
+      return listOf(EduFile(NodeModuleNamesUtil.PACKAGE_JSON, templateText))
     }
     return emptyList()
   }
