@@ -30,7 +30,6 @@ object EduColors {
   val aiGetHintHighlighterColor: JBColor = JBColor.namedColor("AIGetHint.highlighterColor", 0xEFE5FF, 0x433358)
   val aiGetHintInlineBannersBackgroundColor: JBColor = JBColor.namedColor("AIGetHint.inlineBannersBackgroundColor", 0xFAF5FF, 0x2F2936)
   val aiGetHintInlineBannersBorderColor: JBColor = JBColor.namedColor("AIGetHint.inlineBannersBorderColor", 0xDCCBFB, 0x8150BE)
-  val aiTranslationBottomLabelTextColor: JBColor = JBColor.namedColor("AITranslation.bottomLabelTextColor", 0x818594)
   val taskToolWindowLessonLabel: JBColor = JBColor.namedColor("TaskToolWindow.lessonNameForeground", 0x6C707E, 0x6F737A)
 
   val wrongLabelForeground: Color = UIUtil.getErrorForeground()

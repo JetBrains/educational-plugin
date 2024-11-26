@@ -604,6 +604,10 @@ project("AI") {
 
     implementation(project(":intellij-plugin:educational-core"))
 
+    compileOnly(rootProject.libs.kotlinx.serialization) {
+      excludeKotlinDeps()
+    }
+
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
   }
 }

@@ -9,7 +9,6 @@ import com.intellij.ui.JBColor
 import com.intellij.ui.TitlePanel
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBCheckBox
-import com.intellij.ui.components.JBLabel
 import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.popup.AbstractPopup
 import com.intellij.util.application
@@ -19,10 +18,11 @@ import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.translation.TranslationLoader
 import com.jetbrains.edu.ai.translation.settings.AutoTranslationProperties
 import com.jetbrains.edu.ai.translation.settings.translationSettings
+import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
+import com.jetbrains.edu.learning.ai.TranslationProperties
 import com.jetbrains.edu.learning.ai.translationSettings
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.ui.EduColors
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import java.awt.BorderLayout
 import javax.swing.JComboBox
@@ -62,13 +62,22 @@ class CourseTranslationPopup(private val project: Project, private val course: E
     isOpaque = true
 
     add(createCenterPanel())
-    add(createBottomLabel(), BorderLayout.SOUTH)
   }
 
   private fun createCenterPanel(): DialogPanel = panel {
     row {
       translateToCheckBox = translateToCheckBox()
       translationLanguageComboBox = translationLanguageComboBox()
+    }
+    row {
+      label(EduAIBundle.message("ai.translation.ai.powered.translation.to.multiple.languages")).applyToComponent {
+        foreground = EduTranslationColors.aiTranslationBottomLabelTextColor
+        border = JBEmptyBorder(2, 20, 8, 20)
+      }
+    }
+    val translationProperties = project.translationSettings().translationProperties.value
+    if (translationProperties != null) {
+      feedbackFooter(translationProperties)
     }
   }.apply {
     border = JBEmptyBorder(0, 20, 0, 20)
@@ -120,13 +129,17 @@ class CourseTranslationPopup(private val project: Project, private val course: E
     popup.closeOk(null)
   }
 
-  private fun createBottomLabel(): JBLabel =
-    JBLabel(EduAIBundle.message("ai.translation.ai.powered.translation.to.multiple.languages"))
-      .apply {
-        alignmentX = LEFT_ALIGNMENT
-        foreground = EduColors.aiTranslationBottomLabelTextColor
-        border = JBEmptyBorder(2, 20, 8, 20)
+  private fun Panel.feedbackFooter(translationProperties: TranslationProperties): Row =
+    row {
+      link(EduAIBundle.message("ai.translation.share.your.feedback")) {
+        val task = project.getCurrentTask() ?: return@link
+        val dialog = AITranslationFeedbackDialog(project, course, task, translationProperties)
+        this@CourseTranslationPopup.popup.closeOk(null)
+        dialog.showAndGet()
+      }.applyToComponent {
+        background = EduTranslationColors.aiTranslationFooterLabelColor
       }
+    }
 
   private fun TranslationLanguage.isSource(): Boolean = code == courseSourceLanguage
   private fun TranslationLanguage.isNotSource(): Boolean = !isSource()
