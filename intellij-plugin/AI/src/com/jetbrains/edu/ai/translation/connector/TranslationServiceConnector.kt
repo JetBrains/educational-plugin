@@ -1,5 +1,6 @@
 package com.jetbrains.edu.ai.translation.connector
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
@@ -12,7 +13,6 @@ import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.network.HTTP_UNAVAILABLE_FOR_LEGAL_REASONS
 import com.jetbrains.edu.learning.network.createRetrofitBuilder
-import com.jetbrains.edu.learning.onError
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import com.jetbrains.educational.translation.format.CourseTranslationResponse
 import com.jetbrains.educational.translation.format.domain.TranslationVersion
@@ -21,6 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.ConnectionPool
 import retrofit2.Response
+import retrofit2.converter.jackson.JacksonConverterFactory
 import java.net.HttpURLConnection.*
 import java.net.SocketException
 
@@ -39,11 +40,10 @@ class TranslationServiceConnector : Disposable {
   }
 
   private fun translationService(): TranslationService {
-    val customInterceptor = TranslationInterceptor()
-    val converterFactory = TranslationConverterFactory()
-
-    return createRetrofitBuilder(aiServiceUrl, connectionPool, customInterceptor = customInterceptor)
-      .addConverterFactory(converterFactory)
+    val objectMapper = jacksonObjectMapper()
+    val factory = JacksonConverterFactory.create(objectMapper)
+    return createRetrofitBuilder(aiServiceUrl, connectionPool)
+      .addConverterFactory(factory)
       .build()
       .create(TranslationService::class.java)
   }
@@ -52,47 +52,42 @@ class TranslationServiceConnector : Disposable {
     marketplaceId: Int,
     updateVersion: Int,
     language: TranslationLanguage
-  ): Result<TranslationVersion, String> {
-    val version = networkCall {
+  ): Result<TranslationVersion, String> =
+    networkCall {
       service
         .getLatestCourseTranslationVersion(marketplaceId, updateVersion, language.name)
         .handleResponse()
-    }.onError { return Err(it) }
-    if (version == null) {
-      error("Translation version is null")
     }
-    return Ok(version)
-  }
 
   suspend fun getTranslatedCourse(
     marketplaceId: Int,
     updateVersion: Int,
     language: TranslationLanguage
-  ): Result<CourseTranslationResponse?, String> =
+  ): Result<CourseTranslationResponse, String> =
     networkCall {
       service
         .getTranslatedCourse(marketplaceId, updateVersion, language.name)
         .handleResponse()
     }
 
-  private fun <T> Response<T>.handleResponse(): Result<T?, String> {
+  private fun <T> Response<T>.handleResponse(): Result<T, String> {
     val code = code()
     val errorMessage = errorBody()?.string()
     if (!errorMessage.isNullOrEmpty()) {
       LOG.error("Request failed. Status code: $code. Error message: $errorMessage")
     }
-    return when (code) {
-      HTTP_OK -> Ok(body())
-      HTTP_ACCEPTED -> Ok(null)
-      HTTP_UNAVAILABLE -> Err(EduAIBundle.message("ai.translation.service.is.currently.unavailable"))
-      HTTP_NOT_FOUND -> Err(EduAIBundle.message("ai.translation.course.translation.does.not.exist"))
-      UNPROCESSABLE_ENTITY.code() -> Err(EduAIBundle.message("ai.translation.only.popular.courses.are.allowed.for.translation"))
-      HTTP_UNAVAILABLE_FOR_LEGAL_REASONS -> Err(EduAIBundle.message("ai.translation.translation.unavailable.due.to.license.restrictions"))
+    val result = body()
+    return when {
+      code == HTTP_OK && result != null -> Ok(result)
+      code == HTTP_NOT_FOUND -> Err(EduAIBundle.message("ai.translation.course.translation.does.not.exist"))
+      code == UNPROCESSABLE_ENTITY.code() -> Err(EduAIBundle.message("ai.translation.only.popular.courses.are.allowed.for.translation"))
+      code == HTTP_UNAVAILABLE_FOR_LEGAL_REASONS -> Err(EduAIBundle.message("ai.translation.translation.unavailable.due.to.license.restrictions"))
+      code == HTTP_UNAVAILABLE || result == null -> Err(EduAIBundle.message("ai.translation.service.is.currently.unavailable"))
       else -> Err(EduAIBundle.message("ai.translation.service.could.not.connect"))
     }
   }
 
-  private suspend fun <T> networkCall(call: suspend () -> Result<T?, String>): Result<T?, String> =
+  private suspend fun <T> networkCall(call: suspend () -> Result<T, String>): Result<T, String> =
     try {
       withContext(Dispatchers.IO) {
         call()
