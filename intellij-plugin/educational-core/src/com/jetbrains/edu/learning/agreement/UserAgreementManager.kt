@@ -5,17 +5,31 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
+import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.isEduYamlProject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
 
 @Service
 class UserAgreementManager(scope: CoroutineScope) {
   init {
     scope.launch {
-      userAgreementSettings().userAgreementProperties.collectLatest {
-        reloadProjectOnAgreementChange()
+      launch {
+        userAgreementSettings().userAgreementProperties.distinctUntilChangedBy { it.pluginAgreement }.collectLatest {
+          reloadProjectOnAgreementChange()
+        }
+      }
+      launch {
+        userAgreementSettings().userAgreementProperties.distinctUntilChangedBy { it.submissionsServiceAgreement }.collectLatest {
+          MarketplaceSettings.INSTANCE.updateAgreementState(it.submissionsServiceAgreement)
+        }
+      }
+      launch {
+        userAgreementSettings().userAgreementProperties.distinctUntilChangedBy { it.aiServiceAgreement }.collectLatest {
+          MarketplaceSettings.INSTANCE.updateAiFeaturesAgreementState(it.aiServiceAgreement)
+        }
       }
     }
   }
