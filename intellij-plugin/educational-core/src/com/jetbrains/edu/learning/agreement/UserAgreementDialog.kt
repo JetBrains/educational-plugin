@@ -13,18 +13,17 @@ import com.intellij.ui.dsl.gridLayout.UnscaledGaps
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.EduBrowser
+import com.jetbrains.edu.learning.agreement.UserAgreementUtil.EMPTY_TEXT
+import com.jetbrains.edu.learning.agreement.UserAgreementUtil.createAiAgreementCheckBoxTextPanel
+import com.jetbrains.edu.learning.agreement.UserAgreementUtil.createPluginAgreementCheckBoxTextPanel
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.submissions.UserAgreementState
 import com.jetbrains.edu.learning.submissions.isSubmissionDownloadAllowed
 import javax.swing.JComponent
-import javax.swing.JPanel
 
 class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
-  private val leftGap = UnscaledGaps(0, 3, 0, 0)
-
   init {
     setOKButtonText(EduCoreBundle.message("user.agreement.dialog.agree.button"))
     isResizable = false
@@ -68,62 +67,23 @@ class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
     }
   }
 
-  @Suppress("DialogTitleCapitalization")
-  private fun createPluginAgreementCheckBoxTextPanel(): JPanel = panel {
-    row {
-      link(EduCoreBundle.message("user.agreement.dialog.checkbox.agreement")) { EduBrowser.getInstance().browse(USER_AGREEMENT_URL) }
-        .resizableColumn()
-        .customize(leftGap)
-      label(EduCoreBundle.message("user.agreement.dialog.checkbox.and"))
-        .customize(leftGap)
-      link(EduCoreBundle.message("user.agreement.dialog.checkbox.privacy.policy")) { EduBrowser.getInstance().browse(PRIVACY_POLICY_URL) }
-        .resizableColumn()
-        .customize(leftGap)
-    }
-  }
-
-  @Suppress("DialogTitleCapitalization")
-  private fun createAiAgreementCheckBoxTextPanel(): JPanel = panel {
-    row {
-      text(
-        EduCoreBundle.message("user.agreement.dialog.ai.agreement.checkbox.text.first.row"),
-        action = {
-          EduBrowser.getInstance().browse(AI_TERMS_OF_USE_URL)
-        })
-        .customize(leftGap)
-    }
-    row {
-      label(EduCoreBundle.message("user.agreement.dialog.ai.agreement.checkbox.text.second.row"))
-        .customize(leftGap)
-    }
-    row {
-      label(EduCoreBundle.message("user.agreement.dialog.ai.agreement.checkbox.text.third.row"))
-        .customize(leftGap)
-    }
-  }
-
-  fun showWithResult(): UserAgreementSettings.UserAgreementProperties {
+  fun showWithResult(): UserAgreementSettings.AgreementStateResponse {
     val result = showAndGet()
     if (!result) {
-      return UserAgreementSettings.UserAgreementProperties(pluginAgreement = UserAgreementState.DECLINED)
+      return UserAgreementSettings.AgreementStateResponse()
     }
-
     val pluginAgreementState =
       if (pluginAgreementCheckBox.component.isSelected) UserAgreementState.ACCEPTED else UserAgreementState.DECLINED
-    return UserAgreementSettings.UserAgreementProperties(pluginAgreement = pluginAgreementState)
+    val aiAgreementState =
+      if (aiAgreementCheckBox.component.isSelected) UserAgreementState.ACCEPTED else UserAgreementState.DECLINED
+    return UserAgreementSettings.AgreementStateResponse(pluginAgreement = pluginAgreementState, aiAgreement = aiAgreementState)
   }
 
   companion object {
-    private const val AI_TERMS_OF_USE_URL: String = "https://www.jetbrains.com/ai/terms-of-use/"
-    private const val USER_AGREEMENT_URL: String = "https://www.jetbrains.com/legal/docs/terms/jetbrains-academy/plugin/"
-    private const val PRIVACY_POLICY_URL: String = "https://www.jetbrains.com/legal/docs/privacy/privacy/"
-
-    private const val EMPTY_TEXT: String = ""
-
     @RequiresEdt
     fun showUserAgreementDialog(project: Project?): Boolean {
       val result = UserAgreementDialog(project).showWithResult()
-      userAgreementSettings().setUserAgreementSettings(result)
+      userAgreementSettings().setAgreementState(result)
       val isAccepted = result.pluginAgreement == UserAgreementState.ACCEPTED
       return isAccepted
     }

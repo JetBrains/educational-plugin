@@ -5,6 +5,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.ui.JBAccountInfoService
+import com.jetbrains.edu.learning.agreement.userAgreementSettings
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showSuccessRequestNotification
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
@@ -20,6 +21,7 @@ import com.jetbrains.edu.learning.submissions.UserAgreementState
 import com.jetbrains.edu.learning.taskToolWindow.ui.SolutionSharingInlineBanners
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.annotations.VisibleForTesting
@@ -49,25 +51,13 @@ class MarketplaceSettings(private val scope: CoroutineScope) {
 
   init {
     if (!isUnitTestMode && isJBALoggedIn()) {
-      scope.launch(Dispatchers.IO) {
-        val submissionsConnector = MarketplaceSubmissionsConnector.getInstance()
-
-        val remoteAgreementState = submissionsConnector.getUserAgreementState()
-        userAgreementState = remoteAgreementState
-        val remoteStatisticsState = submissionsConnector.getAiFeaturesAgreementState()
-        aiFeaturesAgreement = remoteStatisticsState
-
-        solutionsSharing = submissionsConnector.getSharingPreference().toBoolean()
+      scope.launch {
+        userAgreementSettings().userAgreementProperties.collectLatest {
+          userAgreementState = it.submissionsServiceAgreement
+          aiFeaturesAgreement = it.aiServiceAgreement
+          solutionsSharing = it.solutionSharing.toBoolean()
+        }
       }
-    }
-  }
-
-  fun updateSolutionSharingFromRemote(afterUpdate: suspend (sharingPreference: Boolean?) -> Unit = {}) {
-    scope.launch(Dispatchers.IO) {
-      if (isJBALoggedIn() && solutionsSharing == null) {
-        solutionsSharing = MarketplaceSubmissionsConnector.getInstance().getSharingPreference().toBoolean()
-      }
-      afterUpdate(solutionsSharing)
     }
   }
 
@@ -170,24 +160,6 @@ class MarketplaceSettings(private val scope: CoroutineScope) {
         EduCoreBundle.message("user.statistics.changed.success.notification.title"),
         notificationText
       )
-    }
-  }
-
-  fun updateToActualUserAgreementState(processUpdate: suspend (UserAgreementState?) -> Unit) {
-    if (!isJBALoggedIn()) return
-    scope.launch(Dispatchers.IO) {
-      val actualAgreementState = MarketplaceSubmissionsConnector.getInstance().getUserAgreementState()
-      userAgreementState = actualAgreementState
-      processUpdate(actualAgreementState)
-    }
-  }
-
-  fun updateToActualAiFeaturesAgreementState(processUpdate: suspend (UserAgreementState?) -> Unit) {
-    if (!isJBALoggedIn()) return
-    scope.launch(Dispatchers.IO) {
-      val actualStatisticsState = MarketplaceSubmissionsConnector.getInstance().getAiFeaturesAgreementState()
-      aiFeaturesAgreement = actualStatisticsState
-      processUpdate(actualStatisticsState)
     }
   }
 

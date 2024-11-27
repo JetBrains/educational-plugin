@@ -6,6 +6,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
+import com.jetbrains.edu.learning.submissions.SolutionSharingPreference
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.isEduYamlProject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
@@ -22,13 +23,20 @@ class UserAgreementManager(scope: CoroutineScope) {
         }
       }
       launch {
+        userAgreementSettings().userAgreementProperties.distinctUntilChangedBy { it.aiServiceAgreement }.collectLatest {
+          MarketplaceSettings.INSTANCE.updateAiFeaturesAgreementState(it.aiServiceAgreement)
+        }
+      }
+      launch {
         userAgreementSettings().userAgreementProperties.distinctUntilChangedBy { it.submissionsServiceAgreement }.collectLatest {
           MarketplaceSettings.INSTANCE.updateAgreementState(it.submissionsServiceAgreement)
         }
       }
       launch {
-        userAgreementSettings().userAgreementProperties.distinctUntilChangedBy { it.aiServiceAgreement }.collectLatest {
-          MarketplaceSettings.INSTANCE.updateAiFeaturesAgreementState(it.aiServiceAgreement)
+        userAgreementSettings().userAgreementProperties.distinctUntilChangedBy { it.solutionSharing }.collectLatest {
+          MarketplaceSettings.INSTANCE.updateSharingPreference(
+            it.solutionSharing == SolutionSharingPreference.ALWAYS
+          )
         }
       }
     }

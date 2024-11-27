@@ -430,7 +430,7 @@ class MarketplaceSubmissionsConnector {
 
   suspend fun changeAiFeaturesAgreementState(newState: UserAgreementState): Result<Unit, String> {
     val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
-    val newStateName = newState.name
+    val newStateName = if (newState == UserAgreementState.ACCEPTED) true else false
     LOG.info("Changing User Ai Features Agreement state to $newStateName for user $loginName")
     return try {
       val response = submissionsService.changeAiFeaturesAgreementState(newStateName)

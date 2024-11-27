@@ -484,7 +484,6 @@
     <configurator language="TEXT" courseType="Hyperskill"
                   implementationClass="com.jetbrains.edu.learning.stepik.hyperskill.PlainTextHyperskillConfigurator"/>
 
-    <optionsProvider instance="com.jetbrains.edu.learning.agreement.UserAgreementOptions"/>
     <optionsProvider instance="com.jetbrains.edu.learning.stepik.StepikOptions"/>
     <optionsProvider instance="com.jetbrains.edu.learning.coursera.CourseraOptions"/>
     <checkListener implementation="com.jetbrains.edu.learning.socialmedia.SocialmediaMultiplePostAction"/>
@@ -545,4 +544,7 @@
 
   <xi:include href="/META-INF/Hyperskill.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/Marketplace.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <extensions defaultExtensionNs="Educational">
+    <optionsProvider instance="com.jetbrains.edu.learning.agreement.UserAgreementOptions"/>
+  </extensions>
 </idea-plugin>

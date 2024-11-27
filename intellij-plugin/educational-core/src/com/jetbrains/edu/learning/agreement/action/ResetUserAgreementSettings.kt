@@ -3,20 +3,14 @@ package com.jetbrains.edu.learning.agreement.action
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
-import com.jetbrains.edu.learning.agreement.UserAgreementSettings
 import com.jetbrains.edu.learning.agreement.userAgreementSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
-import com.jetbrains.edu.learning.submissions.UserAgreementState
 
 @Suppress("ComponentNotRegistered")
 class ResetUserAgreementSettings : DumbAwareAction() {
   override fun actionPerformed(e: AnActionEvent) {
-    userAgreementSettings().setUserAgreementSettings(
-      UserAgreementSettings.UserAgreementProperties(
-        UserAgreementState.NOT_SHOWN
-      )
-    )
+    userAgreementSettings().resetUserAgreementSettings()
     EduNotificationManager.showInfoNotification(
       e.project,
       EduCoreBundle.message("action.Educational.Agreement.ResetUserAgreementSettings.notification.title"),
