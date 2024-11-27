@@ -17,6 +17,7 @@ class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>
     existingItem.isMarketplacePrivate = deserializedItem.isMarketplacePrivate
     existingItem.languageId = deserializedItem.languageId
     existingItem.languageVersion = deserializedItem.languageVersion
+    existingItem.additionalFiles = deserializedItem.additionalFiles
     if (deserializedItem is CourseraCourse && existingItem is CourseraCourse) {
       existingItem.submitManually = deserializedItem.submitManually
     }
