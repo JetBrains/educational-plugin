@@ -67,8 +67,12 @@ object AdditionalFilesUtils {
     courseIgnoreRules: CourseIgnoreRules,
     courseConfigurator: EduConfigurator<*>,
     project: Project
-  ): Boolean =
-    courseIgnoreRules.isIgnored(file) || courseConfigurator.excludeFromArchive(project, file)
+  ): Boolean {
+    return courseIgnoreRules.isIgnored(file) ||
+           courseConfigurator.excludeFromArchive(project, file) ||
+           FileUtil.toSystemDependentName(file.path) == PropertiesComponent.getInstance(project)
+             .getValue(CCCreateCourseArchiveAction.LAST_ARCHIVE_LOCATION)
+  }
 
   @Suppress("DEPRECATION") // https://youtrack.jetbrains.com/issue/EDU-4930
   fun collectAdditionalLessonInfo(lesson: Lesson, project: Project): LessonAdditionalInfo {
@@ -95,10 +99,9 @@ object AdditionalFilesUtils {
       private val courseIgnoreRules = CourseIgnoreRules.loadFromCourseIgnoreFile(project)
 
       val additionalTaskFiles = mutableListOf<EduFile>()
-      var archiveLocation = PropertiesComponent.getInstance(project).getValue(CCCreateCourseArchiveAction.LAST_ARCHIVE_LOCATION)
 
       override fun visitFile(file: VirtualFile): Boolean {
-        if (FileUtil.toSystemDependentName(file.path) == archiveLocation || isExcluded(
+        if (isExcluded(
             file,
             courseIgnoreRules,
             courseConfigurator,
