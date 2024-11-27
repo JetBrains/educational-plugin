@@ -16,7 +16,6 @@ import com.jetbrains.edu.learning.network.createRetrofitBuilder
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import com.jetbrains.educational.translation.format.CourseTranslationResponse
 import com.jetbrains.educational.translation.format.domain.TranslationVersion
-import io.netty.handler.codec.http.HttpResponseStatus.UNPROCESSABLE_ENTITY
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.ConnectionPool
@@ -80,7 +79,6 @@ class TranslationServiceConnector : Disposable {
     return when {
       code == HTTP_OK && result != null -> Ok(result)
       code == HTTP_NOT_FOUND -> Err(EduAIBundle.message("ai.translation.course.translation.does.not.exist"))
-      code == UNPROCESSABLE_ENTITY.code() -> Err(EduAIBundle.message("ai.translation.only.popular.courses.are.allowed.for.translation"))
       code == HTTP_UNAVAILABLE_FOR_LEGAL_REASONS -> Err(EduAIBundle.message("ai.translation.translation.unavailable.due.to.license.restrictions"))
       code == HTTP_UNAVAILABLE || result == null -> Err(EduAIBundle.message("ai.translation.service.is.currently.unavailable"))
       else -> Err(EduAIBundle.message("ai.translation.service.could.not.connect"))
