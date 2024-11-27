@@ -43,9 +43,7 @@ class RunTaskAction : ActionWithButtonCustomComponent(), DumbAware {
     val taskFile = project.selectedTaskFile ?: return
     val task = taskFile.task
 
-    val runConfiguration = getCustomRunConfigurationForRunner(project, task) ?: return
-    // store the configuration found during the update to use it later when the action is performed
-    e.presentation.putClientProperty(RUN_CONFIGURATION, runConfiguration)
+    getCustomRunConfigurationForRunner(project, task) ?: return
     e.presentation.putClientProperty(SHOW_AS_DEFAULT_BUTTON, task is TheoryTask)
 
     e.presentation.text = EduCoreBundle.message("action.run.button.text")
@@ -92,9 +90,7 @@ class RunTaskAction : ActionWithButtonCustomComponent(), DumbAware {
       return
     }
 
-    val runnerAndConfigurationSettings =
-      e?.presentation?.getClientProperty(RUN_CONFIGURATION) ?:
-      getCustomRunConfigurationForRunner(project, task)
+    val runnerAndConfigurationSettings = getCustomRunConfigurationForRunner(project, task)
 
     if (runnerAndConfigurationSettings == null) {
       logger<RunTaskAction>().warn("Failed to find custom run configuration for runner of ${task.name}")
@@ -200,7 +196,6 @@ class RunTaskAction : ActionWithButtonCustomComponent(), DumbAware {
     const val ACTION_ID = "Educational.Run"
     const val RUN_CONFIGURATION_FILE_NAME = "runner.run.xml"
 
-    private val RUN_CONFIGURATION = Key<RunnerAndConfigurationSettings>("run configuration")
     private val SHOW_AS_DEFAULT_BUTTON = Key<Boolean>("show as default button")
   }
 }
