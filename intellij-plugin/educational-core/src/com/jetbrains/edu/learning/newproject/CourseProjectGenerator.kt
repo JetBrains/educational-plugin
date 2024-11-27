@@ -37,13 +37,10 @@ import com.jetbrains.edu.coursecreator.CCUtils.isLocalCourse
 import com.jetbrains.edu.coursecreator.ui.CCOpenEducatorHelp
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.configuration.EduConfigurator
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.CourseVisibility.*
-import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.EduFile
-import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.ext.isPreview
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.IdeaDirectoryUnpackMode.ONLY_IDEA_DIRECTORY
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createChildFile
@@ -90,7 +87,9 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     YamlFormatSynchronizer.saveAll(project)
     YamlFormatSynchronizer.startSynchronization(project)
 
-    CCOpenEducatorHelp.doOpen(project)
+    if (!course.isStudy && !course.isPreview ) {
+      CCOpenEducatorHelp.doOpen(project)
+    }
 
     onConfigurationFinished()
   }
