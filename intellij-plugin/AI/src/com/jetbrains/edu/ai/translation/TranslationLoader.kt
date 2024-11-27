@@ -14,6 +14,7 @@ import com.jetbrains.edu.ai.translation.connector.TranslationServiceConnector
 import com.jetbrains.edu.ai.translation.settings.TranslationSettings
 import com.jetbrains.edu.ai.translation.ui.AITranslationNotification.ActionLabel
 import com.jetbrains.edu.ai.translation.ui.AITranslationNotificationManager
+import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.ai.TranslationProperties
@@ -73,7 +74,10 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
           }
         }
 
-        val translation = fetchTranslation(course, translationLanguage)
+        val translation = fetchTranslation(course, translationLanguage).onError { error ->
+          LOG.warn("Failed to get translation for ${course.name} to $translationLanguage: $error")
+          return@withBackgroundProgress
+        }
         course.saveTranslation(translation)
         translationSettings.setTranslation(translation.toTranslationProperties())
       }
@@ -84,7 +88,10 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
     runInBackgroundExclusively(EduAIBundle.message("ai.translation.already.running")) {
       withBackgroundProgress(project, EduAIBundle.message("ai.translation.update.course.translation")) {
         val (language, _, version) = translationProperties
-        val translation = fetchTranslation(course, language)
+        val translation = fetchTranslation(course, language).onError { error ->
+          LOG.warn("Failed to update translation for ${course.name} to $language: $error")
+          return@withBackgroundProgress
+        }
         val translationSettings = TranslationProjectSettings.getInstance(project)
         if (version == translation.version) {
           AITranslationNotificationManager.showInfoNotification(
@@ -135,16 +142,20 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
     }
   }
 
-  private suspend fun fetchTranslation(course: EduCourse, language: TranslationLanguage): CourseTranslationResponse =
+  private suspend fun fetchTranslation(
+    course: EduCourse,
+    language: TranslationLanguage
+  ): Result<CourseTranslationResponse, TranslationError> =
     withContext(Dispatchers.IO) {
-      downloadTranslation(course, language).onError { error ->
+      val translation = downloadTranslation(course, language)
+      if (translation is Err) {
         val actionLabel = ActionLabel(
           name = EduCoreBundle.message("retry"),
           action = { fetchAndApplyTranslation(course, language) }
         )
-        AITranslationNotificationManager.showErrorNotification(project, message = error, actionLabel = actionLabel)
-        error("Failed to download translation for ${course.name} to $language: $error")
+        AITranslationNotificationManager.showErrorNotification(project, message = translation.error.message(), actionLabel = actionLabel)
       }
+      return@withContext translation
     }
 
   @OptIn(ExperimentalStdlibApi::class)
@@ -163,7 +174,10 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
       }
     }
 
-  private suspend fun downloadTranslation(course: EduCourse, language: TranslationLanguage): Result<CourseTranslationResponse, String> =
+  private suspend fun downloadTranslation(
+    course: EduCourse,
+    language: TranslationLanguage
+  ): Result<CourseTranslationResponse, TranslationError> =
     TranslationServiceConnector.getInstance().getTranslatedCourse(course.id, course.marketplaceCourseVersion, language)
 
   private suspend fun EduCourse.saveTranslation(courseTranslation: CourseTranslationResponse) {

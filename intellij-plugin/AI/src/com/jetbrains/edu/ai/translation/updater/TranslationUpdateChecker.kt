@@ -59,7 +59,7 @@ class TranslationUpdateChecker(private val project: Project, private val scope: 
     val latestVersion = TranslationServiceConnector.getInstance()
       .getLatestTranslationVersion(course.id, course.marketplaceCourseVersion, language)
       .onError {
-        LOG.error(it)
+        LOG.error(it.message())
         return false
       }
     return version != latestVersion
