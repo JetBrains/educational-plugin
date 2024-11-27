@@ -87,7 +87,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     YamlFormatSynchronizer.saveAll(project)
     YamlFormatSynchronizer.startSynchronization(project)
 
-    if (!course.isStudy && !course.isPreview ) {
+    if (!course.isStudy && !course.isPreview && !isUnitTestMode) {
       CCOpenEducatorHelp.doOpen(project)
     }
 
