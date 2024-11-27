@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.handlers
 
 import com.intellij.ide.projectView.ProjectView
+import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.diagnostic.Logger
@@ -11,6 +12,7 @@ import com.intellij.openapi.vfs.newvfs.events.*
 import com.intellij.util.ui.update.MergingUpdateQueue
 import com.intellij.util.ui.update.Update
 import com.jetbrains.edu.coursecreator.AdditionalFilesUtils.isExcluded
+import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchiveAction.Companion.LAST_ARCHIVE_LOCATION
 import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreRules
 import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
 import com.jetbrains.edu.coursecreator.framework.SyncChangesStateManager
@@ -73,7 +75,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
       CourseIgnoreRules.loadFromCourseIgnoreFile(project),
       configurator,
       project
-    )
+    ) || file.path == PropertiesComponent.getInstance(project).getValue(LAST_ARCHIVE_LOCATION)
     if (!isExcluded) {
       additionalFileCreated(course, file)
     }
