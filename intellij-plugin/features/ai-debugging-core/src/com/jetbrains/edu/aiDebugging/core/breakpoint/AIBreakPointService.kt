@@ -1,7 +1,6 @@
-package com.jetbrains.edu.learning.aiDebugging.breakpoint
+package com.jetbrains.edu.aiDebugging.core.breakpoint
 
 import com.intellij.lang.Language
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.openapi.editor.markup.TextAttributes
@@ -15,10 +14,12 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.getEditor
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.awt.Color
 
 @Service(Service.Level.PROJECT)
-class AIBreakPointService(private val project: Project, private val coroutineScope: CoroutineScope) {
+class AIBreakPointService(private val project: Project, private val scope: CoroutineScope) {
 
   private val highlighterRangers = mutableMapOf<XBreakpoint<out XBreakpointProperties<*>>, RangeHighlighter>()
 
@@ -57,20 +58,18 @@ class AIBreakPointService(private val project: Project, private val coroutineSco
     }
   }
 
-  private fun highlightBreakpoint(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>) {
+  private fun highlightBreakpoint(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>) = scope.launch(Dispatchers.IO) {
     val position = breakpoint.sourcePosition ?: error("There is no position for the breakpoint")
-    ApplicationManager.getApplication().invokeLater {
-      val editor = position.file.getEditor(project) ?: return@invokeLater
-      val attribute = TextAttributes().apply {
-        backgroundColor = HIGHLIGHTING_COLOR
-      }
-      val range = editor.markupModel.addLineHighlighter(
-        position.line,
-        DebuggerColors.BREAKPOINT_HIGHLIGHTER_LAYER + 1,
-        attribute
-      )
-      highlighterRangers[breakpoint] = range
+    val editor = position.file.getEditor(project) ?: return@launch
+    val attribute = TextAttributes().apply {
+      backgroundColor = HIGHLIGHTING_COLOR
     }
+    val range = editor.markupModel.addLineHighlighter(
+      position.line,
+      DebuggerColors.BREAKPOINT_HIGHLIGHTER_LAYER + 1,
+      attribute
+    )
+    highlighterRangers[breakpoint] = range
   }
 
   private fun addListener(type: XLineBreakpointType<XBreakpointProperties<*>>) {

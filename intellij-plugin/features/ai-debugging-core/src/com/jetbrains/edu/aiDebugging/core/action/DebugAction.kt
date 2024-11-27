@@ -1,10 +1,10 @@
-package com.jetbrains.edu.learning.aiDebugging.actions
+package com.jetbrains.edu.aiDebugging.core.action
 
 import com.intellij.lang.Language
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.jetbrains.edu.learning.aiDebugging.breakpoint.AIBreakPointService
+import com.jetbrains.edu.aiDebugging.core.breakpoint.AIBreakPointService
 
 // TODO temporary class for testing ai breakpoints
 @Suppress("ComponentNotRegistered")

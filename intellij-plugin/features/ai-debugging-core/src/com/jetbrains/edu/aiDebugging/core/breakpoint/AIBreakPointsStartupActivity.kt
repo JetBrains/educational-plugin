@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.aiDebugging.breakpoint
+package com.jetbrains.edu.aiDebugging.core.breakpoint
 
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.java.aiDebugger
+package com.jetbrains.edu.aiDebugging.java
 
 import com.intellij.debugger.ui.breakpoints.JavaLineBreakpointType
 import com.jetbrains.edu.EducationalCoreIcons

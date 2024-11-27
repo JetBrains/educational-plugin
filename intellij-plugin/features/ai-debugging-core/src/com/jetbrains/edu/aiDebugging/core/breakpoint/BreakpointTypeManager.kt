@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.aiDebugging.breakpoint
+package com.jetbrains.edu.aiDebugging.core.breakpoint
 
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageExtension
@@ -9,7 +9,7 @@ interface BreakpointTypeManager {
   fun getBreakPointType(): XLineBreakpointType<XBreakpointProperties<*>>
 
   companion object {
-    private val EP_NAME = LanguageExtension<BreakpointTypeManager>("Educational.BreakpointTypeManager")
+    private val EP_NAME = LanguageExtension<BreakpointTypeManager>("aiDebugging.breakpointTypeManager")
 
     fun getInstance(language: Language): BreakpointTypeManager = EP_NAME.forLanguage(language)
   }

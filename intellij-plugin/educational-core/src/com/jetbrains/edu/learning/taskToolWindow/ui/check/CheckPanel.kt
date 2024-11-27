@@ -16,7 +16,6 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.actions.*
 import com.jetbrains.edu.learning.actions.EduActionUtils.GET_HINT_ACTION_ID
 import com.jetbrains.edu.learning.actions.EduActionUtils.isGetHintAvailable
-import com.jetbrains.edu.learning.aiDebugging.AiDebuggingNotification
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -90,7 +89,6 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     if (checkResult != null) {
       linkPanel.removeAll()
       checkDetailsPlaceholder.add(CheckDetailsPanel(project, task, checkResult, checkTimeAlarm), BorderLayout.SOUTH)
-      AiDebuggingNotification.addAiDebuggingNotification(task, checkDetailsPlaceholder, checkResult)
     }
   }
 
@@ -122,7 +120,7 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
   }
 
   fun addHint(inlineBanner: InlineBanner) {
-    checkDetailsPlaceholder.add(inlineBanner, BorderLayout.SOUTH)
+    checkDetailsPlaceholder.add(inlineBanner, BorderLayout.NORTH)
   }
 
   private fun createRightActionToolbar(): ActionToolbar {
