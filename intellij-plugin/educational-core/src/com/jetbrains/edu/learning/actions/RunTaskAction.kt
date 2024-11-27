@@ -46,9 +46,6 @@ class RunTaskAction : ActionWithButtonCustomComponent(), DumbAware {
     getCustomRunConfigurationForRunner(project, task) ?: return
     e.presentation.putClientProperty(SHOW_AS_DEFAULT_BUTTON, task is TheoryTask)
 
-    e.presentation.text = EduCoreBundle.message("action.run.button.text")
-    e.presentation.description = EduCoreBundle.message("action.run.button.description", task.name)
-
     e.presentation.isEnabledAndVisible = true
   }
 
@@ -59,9 +56,6 @@ class RunTaskAction : ActionWithButtonCustomComponent(), DumbAware {
 
     runTask(project, task, e)
   }
-
-  // BACKCOMPAT: 2024.2 replace this method with e.presentation.putClientProperty(SHOW_TEXT_IN_TOOLBAR, true) in update()
-  override fun displayTextInToolbar(): Boolean = true
 
   override fun createCustomComponent(presentation: Presentation, place: String): JButton {
     val component = super.createCustomComponent(presentation, place)
@@ -79,6 +73,8 @@ class RunTaskAction : ActionWithButtonCustomComponent(), DumbAware {
 
   private fun setupButton(button: JButton, presentation: Presentation) {
     button.isDefault = presentation.getClientProperty(SHOW_AS_DEFAULT_BUTTON) ?: false
+    button.text = EduCoreBundle.message("action.run.button.text")
+    button.toolTipText = null
   }
 
   private fun runTask(project: Project, task: Task, e: AnActionEvent?) {
