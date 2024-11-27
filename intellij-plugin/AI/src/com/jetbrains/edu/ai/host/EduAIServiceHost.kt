@@ -23,6 +23,6 @@ enum class EduAIServiceHost(private val visibleName: Supplier<@Nls String>, val 
     }
 
     @JvmStatic
-    fun getSelectedUrl(): String = PropertiesComponent.getInstance().getValue(EDU_AI_SERVICE_HOST_PROPERTY, STAGING.url)
+    fun getSelectedUrl(): String = PropertiesComponent.getInstance().getValue(EDU_AI_SERVICE_HOST_PROPERTY, PRODUCTION.url)
   }
 }

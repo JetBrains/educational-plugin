@@ -4,8 +4,7 @@
   <actions>
     <action id="Educational.AITranslation"
             class="com.jetbrains.edu.ai.translation.action.AITranslation"
-            icon="com.jetbrains.edu.ai.ui.EducationalAIIcons.Translation"
-            internal="true">
+            icon="com.jetbrains.edu.ai.ui.EducationalAIIcons.Translation">
       <add-to-group group-id="Educational.TaskToolWindowView.TitleActions" anchor="first"/>
     </action>
 
@@ -18,8 +17,7 @@
             internal="true"/>
 
     <action id="Educational.UpdateCourseTranslation"
-            class="com.jetbrains.edu.ai.translation.action.UpdateCourseTranslation"
-            internal="true"/>
+            class="com.jetbrains.edu.ai.translation.action.UpdateCourseTranslation"/>
   </actions>
 
   <extensionPoints>
