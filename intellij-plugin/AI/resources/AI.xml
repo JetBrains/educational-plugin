@@ -29,6 +29,9 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
+    <statistics.counterUsagesCollector
+        implementationClass="com.jetbrains.edu.ai.translation.statistics.EduAITranslationCounterUsageCollector"/>
+
     <applicationConfigurable groupId="Educational"
                              provider="com.jetbrains.edu.ai.settings.EduAIConfigurableProvider"
                              id="AI"
