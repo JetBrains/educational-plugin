@@ -17,6 +17,7 @@ import com.intellij.openapi.util.NlsContexts
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.agreement.UserAgreementSettings
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -43,7 +44,7 @@ object EduActionUtils {
    * @see [com.jetbrains.edu.aiHints.core.action.GetHint]
    */
   fun isGetHintAvailable(task: Task): Boolean {
-    if (!isFeatureEnabled(EduExperimentalFeatures.AI_HINTS)) return false
+    if (!isFeatureEnabled(EduExperimentalFeatures.AI_HINTS) || !UserAgreementSettings().aiServiceAgreement) return false
     val course = task.course
     return course.languageId == EduFormatNames.KOTLIN && course.isStudy && task is EduTask && task.status == CheckStatus.Failed
   }
