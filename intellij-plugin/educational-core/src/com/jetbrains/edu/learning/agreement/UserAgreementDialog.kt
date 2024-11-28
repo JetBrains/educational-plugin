@@ -1,26 +1,23 @@
 package com.jetbrains.edu.learning.agreement
 
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.openapi.ui.showYesNoDialog
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.dsl.builder.AlignY
 import com.intellij.ui.dsl.builder.Cell
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.builder.selected
 import com.intellij.ui.dsl.gridLayout.UnscaledGaps
-import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.agreement.UserAgreementUtil.EMPTY_TEXT
 import com.jetbrains.edu.learning.agreement.UserAgreementUtil.createAiAgreementCheckBoxTextPanel
 import com.jetbrains.edu.learning.agreement.UserAgreementUtil.createPluginAgreementCheckBoxTextPanel
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.UserAgreementState
-import com.jetbrains.edu.learning.submissions.isSubmissionDownloadAllowed
 import javax.swing.JComponent
 
 class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
@@ -88,15 +85,16 @@ class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
       return isAccepted
     }
 
-    @RequiresBackgroundThread
-    fun showAtLogin() {
-      if (!MarketplaceConnector.getInstance().isLoggedIn()) return
-      val agreementState = MarketplaceSubmissionsConnector.getInstance().getUserAgreementState()
-      if (!agreementState.isSubmissionDownloadAllowed()) {
-        runInEdt {
-          showUserAgreementDialog(null)
-        }
+    fun showEnableSubmissionsDialog(project: Project): Boolean {
+      val result = showYesNoDialog(
+        EduCoreBundle.message("user.agreement.settings.title"),
+        EduCoreBundle.message("marketplace.options.user.agreement.checkbox"),
+        project
+      )
+      if (result) {
+        SubmissionsManager.getInstance(project).prepareSubmissionsContentWhenLoggedIn()
       }
+      return result
     }
   }
 }

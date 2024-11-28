@@ -36,6 +36,10 @@ class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.Sta
   val isNotShown: Boolean
     get() = _userAgreementProperties.value.pluginAgreement == UserAgreementState.NOT_SHOWN
 
+  fun enableSubmissions() {
+    _userAgreementProperties.value = _userAgreementProperties.value.copy(submissionsServiceAgreement = UserAgreementState.ACCEPTED)
+  }
+
   fun setAgreementState(agreementState: AgreementStateResponse) {
     _userAgreementProperties.value = UserAgreementProperties(
       pluginAgreement = agreementState.pluginAgreement,

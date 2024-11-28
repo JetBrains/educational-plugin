@@ -9,8 +9,8 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.ui.JBAccountInfoService
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
-import com.jetbrains.edu.learning.agreement.UserAgreementDialog
 import com.jetbrains.edu.learning.RemoteEnvHelper
+import com.jetbrains.edu.learning.agreement.userAgreementSettings
 import com.jetbrains.edu.learning.authUtils.AuthorizationPlace
 import com.jetbrains.edu.learning.authUtils.EduLoginConnector
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.JBA_TOKEN_EXCHANGE
@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.marketplace.JET_BRAINS_ACCOUNT
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showInstallMarketplacePluginNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showReloginToJBANeededNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceOAuthBundle
+import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.network.createRetrofitBuilder
 import com.jetbrains.edu.learning.network.executeHandlingExceptions
@@ -43,7 +44,15 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
       login(
         *postLoginActions,
         Runnable {
-          runInBackground(null, EduCoreBundle.message("user.agreement.getting.state"), false) { UserAgreementDialog.showAtLogin() }
+          runInBackground(null, EduCoreBundle.message("user.agreement.getting.state"), false) {
+            // Send data to service as we didn't send it when we were not authorized
+            val marketplaceSettings = MarketplaceSettings.INSTANCE
+            val userAgreementSettings = userAgreementSettings()
+            val userAgreementProperties = userAgreementSettings.userAgreementProperties.value
+            marketplaceSettings.updateAgreementState(userAgreementProperties.submissionsServiceAgreement)
+            marketplaceSettings.updateSharingPreference(userAgreementSettings.solutionSharing)
+            marketplaceSettings.updateAiFeaturesAgreementState(userAgreementProperties.aiServiceAgreement)
+          }
         })
     }
   }

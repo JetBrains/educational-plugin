@@ -14,12 +14,3 @@ enum class UserAgreementState {
   TERMINATED,
   NOT_SHOWN;
 }
-
-fun UserAgreementState?.isSubmissionUploadAllowed(): Boolean = this == UserAgreementState.ACCEPTED
-
-fun UserAgreementState?.isSubmissionDownloadAllowed(): Boolean = when (this) {
-  UserAgreementState.ACCEPTED, UserAgreementState.TERMINATED -> true
-  else -> false
-}
-
-fun UserAgreementState?.isSolutionSharingAllowed(): Boolean = this == UserAgreementState.ACCEPTED

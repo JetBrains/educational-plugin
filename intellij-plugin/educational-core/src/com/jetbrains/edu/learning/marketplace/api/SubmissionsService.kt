@@ -58,9 +58,6 @@ interface SubmissionsService {
   @DELETE("/api/course/{courseId}/submission")
   fun deleteAllSubmissions(@Path("courseId") courseId: Int): Call<ResponseBody>
 
-  @GET("/api/user/sharing")
-  suspend fun getSharingPreference(): ResponseBody
-
   @PATCH("/api/user/sharing")
   suspend fun changeSharingPreference(@Query("preference") sharingPreference: String): Response<Unit>
 
@@ -72,9 +69,6 @@ interface SubmissionsService {
 
   @PATCH("/api/user/agreement")
   suspend fun changeUserAgreementState(@Query("state") agreementState: String): Response<Unit>
-
-  @GET("/api/user/statisticsAllowed")
-  suspend fun getAiFeaturesAgreementState(): Response<String>
 
   @PATCH("/api/user/statisticsAllowed")
   suspend fun changeAiFeaturesAgreementState(@Query("state") agreementState: Boolean): Response<Unit>

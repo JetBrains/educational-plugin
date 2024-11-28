@@ -272,20 +272,6 @@ class MarketplaceSubmissionsConnector {
     }
   }
 
-  suspend fun getSharingPreference(): SolutionSharingPreference? {
-    val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
-    LOG.info("Getting solution sharing preference for use $loginName")
-    val responseString = try {
-      submissionsService.getSharingPreference().string()
-    }
-    catch (e: Exception) {
-      LOG.info("Error occurred while getting solution sharing preference for user $loginName", e)
-      null
-    }
-
-    return responseString?.let { SolutionSharingPreference.valueOf(it) }
-  }
-
   fun reportSolution(submissionId: Int): Boolean {
     LOG.info("Reporting solution with id $submissionId")
     submissionsService.reportSolution(submissionId).executeParsingErrors().onError {
@@ -394,21 +380,6 @@ class MarketplaceSubmissionsConnector {
     }
   }
 
-  @RequiresBackgroundThread
-  fun getUserAgreementState(): UserAgreementState? {
-    val loginName = JBAccountInfoService.getInstance()?.userData?.loginName ?: run {
-      LOG.info("Unable to get user agreement state for not logged in user")
-      return null
-    }
-    LOG.info("Getting user agreement state for user $loginName")
-    val response = submissionsService.getUserAgreementState().executeParsingErrors().onError {
-      LOG.info("Error occurred while getting user agreement state for user $loginName")
-      return null
-    }
-
-    return response.body()?.string()?.let { UserAgreementState.valueOf(it) }
-  }
-
   suspend fun changeUserAgreementState(newState: UserAgreementState): Result<Unit, String> {
     val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
     val newStateName = newState.name
@@ -430,7 +401,7 @@ class MarketplaceSubmissionsConnector {
 
   suspend fun changeAiFeaturesAgreementState(newState: UserAgreementState): Result<Unit, String> {
     val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
-    val newStateName = if (newState == UserAgreementState.ACCEPTED) true else false
+    val newStateName = newState == UserAgreementState.ACCEPTED
     LOG.info("Changing User Ai Features Agreement state to $newStateName for user $loginName")
     return try {
       val response = submissionsService.changeAiFeaturesAgreementState(newStateName)
@@ -444,25 +415,6 @@ class MarketplaceSubmissionsConnector {
     catch (e: Exception) {
       LOG.error("Error occurred while changing User Ai Features Agreement state to $newState for user $loginName", e)
       Err(e.message ?: "Failed to change User Ai Features Agreement state")
-    }
-  }
-
-  suspend fun getAiFeaturesAgreementState(): UserAgreementState? {
-    val loginName = JBAccountInfoService.getInstance()?.userData?.loginName ?: run {
-      LOG.info("Unable to get user ai features agreement state for not logged in user")
-      return null
-    }
-    val response = submissionsService.getAiFeaturesAgreementState()
-    val responseBody = response.body()
-    if (responseBody == null) {
-      LOG.info("Error occurred while getting User Ai Features Agreement state for user $loginName: ${response.errorBody()}. Response code: ${response.code()}")
-      return null
-    }
-    return if (responseBody.toBoolean()) {
-      UserAgreementState.ACCEPTED
-    }
-    else {
-      UserAgreementState.DECLINED
     }
   }
 
