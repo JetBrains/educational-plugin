@@ -5,6 +5,7 @@ import com.intellij.openapi.util.NlsContexts
 import com.intellij.platform.feedback.dialog.uiBlocks.FeedbackBlock
 import com.intellij.platform.feedback.dialog.uiBlocks.JsonDataProvider
 import com.intellij.platform.feedback.dialog.uiBlocks.TextDescriptionProvider
+import com.intellij.ui.JBColor
 import com.intellij.ui.dsl.builder.BottomGap
 import com.intellij.ui.dsl.builder.Panel
 import kotlinx.serialization.json.JsonObjectBuilder
@@ -25,12 +26,12 @@ class LikeBlock(
 
   override fun addToPanel(panel: Panel) {
     panel.apply {
-      row(label) {
+      row {
+        label(label)
         cell(likeOption)
           .errorOnApply("") { answer == FeedbackLikenessAnswer.NO_ANSWER }
         cell(dislikeOption)
           .errorOnApply("") { answer == FeedbackLikenessAnswer.NO_ANSWER }
-      }.apply {
         bottomGap(BottomGap.SMALL)
       }
     }
@@ -93,7 +94,7 @@ class LikeBlock(
       val backgroundColor = when {
         isSelected -> EduTranslationColors.aiTranslationFeedbackOptionSelectedBackgroundColor
         mousePosition != null -> EduTranslationColors.aiTranslationFeedbackOptionHoverBackgroundColor
-        else -> EduTranslationColors.aiTranslationFeedbackOptionPanelBackground
+        else -> JBColor.PanelBackground
       }
       putClientProperty("JButton.backgroundColor", backgroundColor)
       foreground = if (isSelected) {

@@ -11,5 +11,4 @@ object EduTranslationColors {
   val aiTranslationFeedbackOptionSelectedBackgroundColor: JBColor = JBColor(Color(0xFFFFFF), Color(0x313335))
   val aiTranslationFeedbackOptionUnselectedForeground: JBColor = JBColor(Color(0x000000), Color(0xBBBBBB))
   val aiTranslationFeedbackOptionSelectedForeground: JBColor = JBColor(Color(0x000000), Color(0xFEFEFE))
-  val aiTranslationFeedbackOptionPanelBackground: JBColor = JBColor.namedColor("Panel.background", JBColor.WHITE)
 }
