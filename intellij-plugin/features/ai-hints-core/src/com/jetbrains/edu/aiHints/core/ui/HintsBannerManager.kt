@@ -20,7 +20,6 @@ import com.jetbrains.edu.aiHints.core.messages.EduAIHintsCoreBundle
 import com.jetbrains.edu.learning.actions.ApplyCodeAction
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.getTextFromTaskTextFile
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.ui.EduColors
@@ -31,7 +30,7 @@ import java.awt.Font
 
 object HintsBannerManager {
 
-  suspend fun showCodeHintBanner(project: Project, task: Task, taskFile: TaskFile, @Nls message: String, codeHint: String) {
+  suspend fun showCodeHintBanner(project: Project, taskFile: TaskFile, @Nls message: String, codeHint: String) {
     val taskVirtualFile = taskFile.getVirtualFile(project) ?: error("VirtualFile for ${taskFile.name} not found")
     val taskFileText = taskVirtualFile.getTextFromTaskTextFile() ?: error("TaskFile text for ${taskFile.name} not found")
 
@@ -44,19 +43,13 @@ object HintsBannerManager {
         highlighter?.dispose()
       }
     }
-    show(project, task, hintBanner)
+    show(project, hintBanner)
   }
 
-  suspend fun showTextHintBanner(project: Project, task: Task, @Nls message: String) = show(
-    project,
-    task,
-    HintInlineBanner(message)
-  )
+  suspend fun showTextHintBanner(project: Project, @Nls message: String) = show(project, HintInlineBanner(message))
 
-  private suspend fun show(project: Project, task: Task, hintsBanner: HintInlineBanner) = withContext(Dispatchers.EDT) {
-    val taskToolWindow = TaskToolWindowView.getInstance(project)
-    taskToolWindow.updateCheckPanel(task)
-    taskToolWindow.addInlineBannerToCheckPanel(hintsBanner)
+  private suspend fun show(project: Project, hintsBanner: HintInlineBanner) = withContext(Dispatchers.EDT) {
+    TaskToolWindowView.getInstance(project).addInlineBannerToCheckPanel(hintsBanner)
   }
 
   private fun showInCodeAction(project: Project, taskVirtualFile: VirtualFile, taskFileText: String, codeHint: String) {

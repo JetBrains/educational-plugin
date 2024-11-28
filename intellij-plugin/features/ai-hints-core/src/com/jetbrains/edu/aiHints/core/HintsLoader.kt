@@ -22,7 +22,7 @@ class HintsLoader(private val project: Project, private val scope: CoroutineScop
   fun getHint(task: Task) {
     scope.launch(Dispatchers.IO) {
       if (!mutex.tryLock()) {
-        HintsBannerManager.showTextHintBanner(project, task, EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.already.in.progress"))
+        HintsBannerManager.showTextHintBanner(project, EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.already.in.progress"))
         return@launch
       }
       try {
@@ -31,17 +31,17 @@ class HintsLoader(private val project: Project, private val scope: CoroutineScop
         val hint = withBackgroundProgress(project, EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.progress.text"), cancellable = true) {
           hintsAssistant.getHint(taskProcessor.getSubmissionTextRepresentation() ?: "")
         }.getOrElse {
-          HintsBannerManager.showTextHintBanner(project, task, it.message ?: EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.error.unknown"))
+          HintsBannerManager.showTextHintBanner(project, it.message ?: EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.error.unknown"))
           return@launch
         }
 
         val codeHint = hint.codeHint?.code
         if (codeHint != null) {
           val taskFile = taskProcessor.currentTaskFile ?: project.selectedTaskFile ?: error("Failed to obtain TaskFile")
-          return@launch HintsBannerManager.showCodeHintBanner(project, task, taskFile, hint.textHint.text, codeHint)
+          return@launch HintsBannerManager.showCodeHintBanner(project, taskFile, hint.textHint.text, codeHint)
         }
 
-        HintsBannerManager.showTextHintBanner(project, task, hint.textHint.text)
+        HintsBannerManager.showTextHintBanner(project, hint.textHint.text)
       }
       finally {
         mutex.unlock()

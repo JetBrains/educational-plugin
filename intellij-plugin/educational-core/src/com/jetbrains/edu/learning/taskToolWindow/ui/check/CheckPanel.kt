@@ -127,7 +127,7 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
   }
 
   fun addHint(inlineBanner: InlineBanner) {
-    checkDetailsPlaceholder.add(inlineBanner, BorderLayout.SOUTH)
+    checkDetailsPlaceholder.add(inlineBanner, BorderLayout.NORTH)
   }
 
   private fun createRightActionToolbar(): ActionToolbar {
