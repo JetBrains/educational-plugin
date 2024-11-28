@@ -20,7 +20,7 @@ interface SocialMediaPluginConfigurator {
    * The implementation should define policy when user will be asked to post.
    *
    * Make sure that if you return 'true' for some task, then all other existing
-   * implementations of SocialmediaPluginConfigurator that also return true for
+   * implementations of SocialMediaPluginConfigurator that also return true for
    * that task, have the same number of images, and those images correspond to
    * each other.
    *
