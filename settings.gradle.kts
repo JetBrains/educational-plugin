@@ -178,7 +178,3 @@ pluginManagement {
     }
   }
 }
-include("intellij-plugin:features:ai-debugging-core")
-findProject(":intellij-plugin:features:ai-debugging-core")?.name = "ai-debugging-core"
-include("intellij-plugin:features:ai-debugging-java")
-findProject(":intellij-plugin:features:ai-debugging-java")?.name = "ai-debugging-java"
