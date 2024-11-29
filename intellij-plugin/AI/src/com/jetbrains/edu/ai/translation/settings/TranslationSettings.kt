@@ -1,12 +1,9 @@
 package com.jetbrains.edu.ai.translation.settings
 
-import com.intellij.openapi.application.Application
 import com.intellij.openapi.components.*
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-
-fun Application.translationSettings(): TranslationSettings = service()
 
 @Service
 @State(name = "TranslationSettings", storages = [Storage(StoragePathMacros.NON_ROAMABLE_FILE, roamingType = RoamingType.LOCAL)])
@@ -39,5 +36,9 @@ class TranslationSettings : PersistentStateComponent<TranslationSettings.State> 
   class State : BaseState() {
     var preferableLanguage by enum<TranslationLanguage>()
     var autoTranslate by property(false)
+  }
+
+  companion object {
+    fun getInstance(): TranslationSettings = service()
   }
 }

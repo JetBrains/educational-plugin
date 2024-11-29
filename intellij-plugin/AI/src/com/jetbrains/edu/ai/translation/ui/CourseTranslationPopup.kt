@@ -11,18 +11,16 @@ import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.popup.AbstractPopup
-import com.intellij.util.application
 import com.intellij.util.ui.JBEmptyBorder
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.translation.TranslationLoader
 import com.jetbrains.edu.ai.translation.isSameLanguage
 import com.jetbrains.edu.ai.translation.settings.AutoTranslationProperties
-import com.jetbrains.edu.ai.translation.settings.translationSettings
+import com.jetbrains.edu.ai.translation.settings.TranslationSettings
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.ai.TranslationProperties
-import com.jetbrains.edu.learning.ai.translationSettings
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import java.awt.BorderLayout
@@ -32,7 +30,7 @@ import javax.swing.JPanel.LEFT_ALIGNMENT
 
 class CourseTranslationPopup(private val project: Project, private val course: EduCourse) {
   private var selectedLanguage: TranslationLanguage? =
-    project.translationSettings().translationLanguage ?: application.translationSettings().preferableLanguage
+    TranslationProjectSettings.getInstance(project).translationLanguage ?: TranslationSettings.getInstance().preferableLanguage
 
   private lateinit var translateToCheckBox: Cell<JBCheckBox>
   private val comboBoxModel = TranslationLanguageComboBoxModel(course).apply { selectedItem = selectedLanguage }
@@ -75,7 +73,7 @@ class CourseTranslationPopup(private val project: Project, private val course: E
         border = JBEmptyBorder(2, 20, 8, 20)
       }
     }
-    val translationProperties = project.translationSettings().translationProperties.value
+    val translationProperties = TranslationProjectSettings.getInstance(project).translationProperties.value
     if (translationProperties != null) {
       feedbackFooter(translationProperties)
     }
@@ -100,7 +98,7 @@ class CourseTranslationPopup(private val project: Project, private val course: E
       TranslationLoader.getInstance(project).fetchAndApplyTranslation(course, language)
     }
     else {
-      project.translationSettings().setTranslation(null)
+      TranslationProjectSettings.getInstance(project).setTranslation(null)
     }
     popup.closeOk(null)
   }
@@ -118,7 +116,7 @@ class CourseTranslationPopup(private val project: Project, private val course: E
     if (!language.isSameLanguage(course)) {
       TranslationLoader.getInstance(project).fetchAndApplyTranslation(course, language)
     }
-    val settings = application.translationSettings()
+    val settings = TranslationSettings.getInstance()
     if (!settings.autoTranslate) {
       val autoTranslationProperties = AutoTranslationProperties(language, settings.autoTranslate)
       settings.setAutoTranslationProperties(autoTranslationProperties)

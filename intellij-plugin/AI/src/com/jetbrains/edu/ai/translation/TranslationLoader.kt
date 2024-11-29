@@ -8,17 +8,15 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.NotificationContent
 import com.intellij.platform.ide.progress.withBackgroundProgress
-import com.intellij.util.application
 import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.translation.connector.TranslationServiceConnector
-import com.jetbrains.edu.ai.translation.settings.translationSettings
+import com.jetbrains.edu.ai.translation.settings.TranslationSettings
 import com.jetbrains.edu.ai.translation.ui.AITranslationNotification.ActionLabel
 import com.jetbrains.edu.ai.translation.ui.AITranslationNotificationManager
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.ai.TranslationProperties
-import com.jetbrains.edu.learning.ai.translationSettings
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
@@ -43,7 +41,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
 
   init {
     scope.launch {
-      application.translationSettings().autoTranslationSettings.collectLatest { properties ->
+      TranslationSettings.getInstance().autoTranslationSettings.collectLatest { properties ->
         if (properties == null) return@collectLatest
         val course = project.course as? EduCourse ?: return@collectLatest
         if (TranslationProjectSettings.isCourseTranslated(project)) return@collectLatest
@@ -65,7 +63,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
     }
     runInBackgroundExclusively(EduAIBundle.message("ai.translation.already.running")) {
       withBackgroundProgress(project, EduAIBundle.message("ai.translation.getting.course.translation")) {
-        val translationSettings = project.translationSettings()
+        val translationSettings = TranslationProjectSettings.getInstance(project)
 
         if (course.isTranslationExists(translationLanguage)) {
           val properties = translationSettings.getTranslationPropertiesByLanguage(translationLanguage)
@@ -87,7 +85,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
       withBackgroundProgress(project, EduAIBundle.message("ai.translation.update.course.translation")) {
         val (language, _, version) = translationProperties
         val translation = fetchTranslation(course, language)
-        val translationSettings = project.translationSettings()
+        val translationSettings = TranslationProjectSettings.getInstance(project)
         if (version == translation.version) {
           AITranslationNotificationManager.showInfoNotification(
             project,

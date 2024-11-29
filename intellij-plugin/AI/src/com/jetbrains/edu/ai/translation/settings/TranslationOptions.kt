@@ -4,14 +4,13 @@ import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.dsl.builder.*
-import com.intellij.util.application
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.settings.AIOptionsProvider
 import com.jetbrains.edu.ai.translation.ui.TranslationLanguageComboBoxModel
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
 
 class TranslationOptions : BoundConfigurable(EduAIBundle.message("settings.ai.translation.display.name")), AIOptionsProvider {
-  private val settings = application.translationSettings()
+  private val settings = TranslationSettings.getInstance()
   private var autoTranslate: Boolean = settings.autoTranslate
   private var preferableLanguage: TranslationLanguage? = settings.preferableLanguage
   private lateinit var checkBox: Cell<JBCheckBox>
@@ -37,6 +36,6 @@ class TranslationOptions : BoundConfigurable(EduAIBundle.message("settings.ai.tr
     super.apply()
     val language = preferableLanguage ?: return
     val autoTranslationProperties = AutoTranslationProperties(language, autoTranslate)
-    application.translationSettings().setAutoTranslationProperties(autoTranslationProperties)
+    TranslationSettings.getInstance().setAutoTranslationProperties(autoTranslationProperties)
   }
 }

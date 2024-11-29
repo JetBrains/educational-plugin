@@ -10,8 +10,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.concurrent.ConcurrentHashMap
 
-fun Project.translationSettings(): TranslationProjectSettings = service()
-
 @Service(Service.Level.PROJECT)
 @State(name = "TranslationProjectSettings", reloadable = true, storages = [Storage("edu_translation.xml")])
 class TranslationProjectSettings : PersistentStateComponent<TranslationProjectState> {
@@ -74,10 +72,12 @@ class TranslationProjectSettings : PersistentStateComponent<TranslationProjectSt
   }
 
   companion object {
-    fun isCourseTranslated(project: Project): Boolean = project.translationSettings().translationProperties.value != null
+    fun getInstance(project: Project) = project.service<TranslationProjectSettings>()
+
+    fun isCourseTranslated(project: Project): Boolean = getInstance(project).translationProperties.value != null
 
     fun resetTranslation(project: Project) {
-      val settings = project.translationSettings()
+      val settings = getInstance(project)
       settings._translationProperties.value = null
       settings.structureTranslations.clear()
       settings.translationLanguageVersions.clear()

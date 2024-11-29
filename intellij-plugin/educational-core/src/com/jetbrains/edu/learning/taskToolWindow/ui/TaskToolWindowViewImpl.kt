@@ -25,7 +25,7 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
-import com.jetbrains.edu.learning.ai.translationSettings
+import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
@@ -68,7 +68,7 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
     Disposer.register(this, tabManager)
 
     scope.launch {
-      project.translationSettings().translationProperties.collectLatest {
+      TranslationProjectSettings.getInstance(project).translationProperties.collectLatest {
         withContext(Dispatchers.EDT) {
           updateHeaders()
           updateTaskDescription()
@@ -193,7 +193,7 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
       return
     }
 
-    val translationSettings = project.translationSettings()
+    val translationSettings = TranslationProjectSettings.getInstance(project)
 
     val translatedTaskName = translationSettings.getStudyItemTranslatedName(task)
     taskName.text = translatedTaskName ?: task.presentableName

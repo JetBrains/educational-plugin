@@ -10,8 +10,8 @@ import com.jetbrains.edu.ai.translation.TranslationLoader
 import com.jetbrains.edu.ai.translation.connector.TranslationServiceConnector
 import com.jetbrains.edu.ai.translation.ui.AITranslationNotification.ActionLabel
 import com.jetbrains.edu.ai.translation.ui.AITranslationNotificationManager
+import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.ai.TranslationProperties
-import com.jetbrains.edu.learning.ai.translationSettings
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.onError
@@ -39,7 +39,7 @@ class TranslationUpdateChecker(private val project: Project, private val scope: 
     if (lock.compareAndSet(false, true)) {
       scope.launch {
         while (true) {
-          val translationProperties = project.translationSettings().translationProperties.value
+          val translationProperties = TranslationProjectSettings.getInstance(project).translationProperties.value
           if (translationProperties != null && isTranslationOutdated(course, translationProperties)) {
             showUpdateAvailableNotification {
               TranslationLoader.getInstance(project).updateTranslation(course, translationProperties)
