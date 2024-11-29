@@ -30,6 +30,11 @@ object AITranslationNotificationManager {
     showNotification(toolWindow, notification)
   }
 
+  fun closeExistingNotifications(project: Project) {
+    val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskToolWindowFactory.STUDY_TOOL_WINDOW) ?: return
+    closeExistingNotifications(toolWindow)
+  }
+
   private fun showNotification(toolWindow: ToolWindow, notification: AITranslationNotification) {
     toolWindow.component.add(notification, BorderLayout.NORTH)
   }

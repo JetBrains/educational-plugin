@@ -2,6 +2,7 @@ package com.jetbrains.edu.ai.translation.action
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.jetbrains.edu.ai.translation.TranslationLoader
+import com.jetbrains.edu.ai.translation.ui.AITranslationNotificationManager
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.ai.translationSettings
 import com.jetbrains.edu.learning.course
@@ -16,6 +17,7 @@ class UpdateCourseTranslation : AITranslationActionBase() {
     if (isActionUnavailable(project, course)) return
 
     val translationProperties = project.translationSettings().translationProperties.value ?: return
+    AITranslationNotificationManager.closeExistingNotifications(project)
     TranslationLoader.getInstance(project).updateTranslation(course, translationProperties)
   }
 
