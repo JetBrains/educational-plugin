@@ -1,8 +1,6 @@
 package com.jetbrains.edu.ai.translation.action
 
-import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.GotItTooltip
@@ -16,7 +14,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 
 @Suppress("ComponentNotRegistered")
-class AITranslation : DumbAwareAction() {
+class AITranslation : AITranslationActionBase() {
   private val tooltip: GotItTooltip = createTooltip()
 
   init {
@@ -29,10 +27,8 @@ class AITranslation : DumbAwareAction() {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    if (project.isDisposed) return
-
     val course = project.course as? EduCourse ?: return
-    if (!course.isMarketplaceRemote) return
+    if (isActionUnavailable(project, course)) return
 
     val popup = CourseTranslationPopup(project, course)
     val relativePoint = JBPopupFactory.getInstance().guessBestPopupLocation(this, e)
@@ -41,21 +37,20 @@ class AITranslation : DumbAwareAction() {
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false
+
     val project = e.project ?: return
     val course = project.course as? EduCourse ?: return
-    if (!course.isStudy || !course.isMarketplaceRemote) {
-      return
-    }
+    if (isActionUnavailable(project, course)) return
+
     e.presentation.icon = if (TranslationProjectSettings.isCourseTranslated(project)) {
       EducationalAIIcons.TranslationEnabled
     }
     else {
       EducationalAIIcons.Translation
     }
+
     e.presentation.isEnabledAndVisible = !TranslationLoader.isRunning(project)
   }
-
-  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
   private fun createTooltip(): GotItTooltip {
     val translationServiceConnector = TranslationServiceConnector.getInstance()
