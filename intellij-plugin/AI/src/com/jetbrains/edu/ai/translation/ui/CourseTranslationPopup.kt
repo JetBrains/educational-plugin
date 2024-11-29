@@ -89,7 +89,7 @@ class CourseTranslationPopup(private val project: Project, private val course: E
         alignmentX = LEFT_ALIGNMENT
       }
       .apply {
-        enabled(!selectedLanguage.isSameLanguage(course))
+        enabled(selectedLanguage != null && !selectedLanguage.isSameLanguage(course))
         selected(TranslationProjectSettings.isCourseTranslated(project))
       }
       .onChanged(::translationCheckBoxChangeListener)
