@@ -21,7 +21,6 @@ import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.wm.IdeFrame
 import com.intellij.ui.DocumentAdapter
-import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.components.JBTextArea
 import com.intellij.ui.dsl.builder.*
 import com.intellij.util.ui.JBFont
@@ -44,7 +43,6 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
 import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettingsPanel
 import com.jetbrains.edu.learning.newproject.ui.errors.*
-import org.jdesktop.swingx.HorizontalLayout
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.KeyboardFocusManager
@@ -83,7 +81,7 @@ class CCNewCoursePanel(
       _course.name = titleField.text
       _course.description = descriptionTextArea.text
       _course.isMarketplace = true
-      _course.marketplaceCourseVersion = 1
+      if (_course.marketplaceCourseVersion == 0) _course.marketplaceCourseVersion = 1
       return _course
     }
 
