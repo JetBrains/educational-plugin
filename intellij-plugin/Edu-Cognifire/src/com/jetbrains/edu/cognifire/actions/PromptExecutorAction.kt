@@ -17,7 +17,7 @@ import com.jetbrains.edu.cognifire.grammar.OffsetSentence
 import com.jetbrains.edu.cognifire.highlighting.HighlighterManager
 import com.jetbrains.edu.cognifire.highlighting.ListenerManager
 import com.jetbrains.edu.cognifire.highlighting.prompttocode.PromptToCodeHighlighter
-import com.jetbrains.edu.cognifire.highlighting.grammar.GrammarHighlighter
+import com.jetbrains.edu.cognifire.highlighting.grammar.GrammarHighlighterProcessor
 import com.jetbrains.edu.cognifire.messages.EduCognifireBundle
 import com.jetbrains.edu.cognifire.models.PromptExpression
 import com.jetbrains.edu.learning.actions.EduActionUtils
@@ -141,7 +141,7 @@ class PromptExecutorAction(private val element: PsiElement, private val id: Stri
       var unparsableSentences = emptyList<OffsetSentence>()
       if (state == PromptCodeState.CodeFailed) {
         unparsableSentences = checkGrammar(newPromptExpression, project)
-        GrammarHighlighter.highlightAll(project, unparsableSentences)
+        GrammarHighlighterProcessor.highlightAll(project, unparsableSentences)
       }
       Logger.cognifireLogger.info(
         """Lesson id: ${task.lesson.id}    Task id: ${task.id}    Action id: $id

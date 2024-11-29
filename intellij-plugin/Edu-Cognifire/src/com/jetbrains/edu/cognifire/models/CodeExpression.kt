@@ -5,19 +5,24 @@ open class CodeExpression (
   private val baseContentOffset: Int,
   private val baseStartOffset: Int,
   private val baseEndOffset: Int
-): CognifireExpression {
-  override var dynamicOffset: Int = 0
+): BaseProdeExpression {
+  override var dynamicStartOffset: Int = 0
+  override var dynamicEndOffset: Int = 0
 
   override val contentOffset: Int
-    get() = baseContentOffset + dynamicOffset
+    get() = baseContentOffset + dynamicStartOffset
 
   override val startOffset: Int
-    get() = baseStartOffset + dynamicOffset
+    get() = baseStartOffset + dynamicStartOffset
 
   override val endOffset: Int
-    get() = baseEndOffset + dynamicOffset
+    get() = baseEndOffset + dynamicEndOffset
 
-  override fun shiftOffset(delta: Int) {
-    dynamicOffset += delta
+  override fun shiftStartOffset(delta: Int) {
+    dynamicStartOffset += delta
+  }
+
+  override fun shiftEndOffset(delta: Int) {
+    dynamicEndOffset += delta
   }
 }
