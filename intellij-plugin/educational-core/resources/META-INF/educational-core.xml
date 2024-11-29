@@ -235,9 +235,8 @@
       <add-to-group group-id="EditorPopupMenu" anchor="first"/>
     </group>
 
-    <action id="Educational.Educator.UnpackCourse" class="com.jetbrains.edu.coursecreator.actions.CCUnpackCourseArchive"/>
     <action id="Educational.Educator.EditCourseFromArchive" class="com.jetbrains.edu.coursecreator.actions.CCEditCourseArchive"/>
-   <action id="Educational.Educator.StepikChangeHost"
+    <action id="Educational.Educator.StepikChangeHost"
             class="com.jetbrains.edu.learning.stepik.changeHost.StepikChangeHost"
             internal="true"/>
 

@@ -10,8 +10,6 @@ import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.coursecreator.ui.CCNewCourseDialog
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.RemoteEnvHelper
-import com.jetbrains.edu.learning.courseFormat.CourseMode
-import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 class CCEditCourseArchive : DumbAwareAction() {
@@ -38,7 +36,6 @@ class CCEditCourseArchive : DumbAwareAction() {
       return
     }
 
-    val producer = { EduCourse().apply { courseMode = CourseMode.EDUCATOR } }
-    CCNewCourseDialog(EduCoreBundle.message("dialog.title.unpack.course"), EduCoreBundle.message("button.unpack"), course, producer).show()
+    CCNewCourseDialog(EduCoreBundle.message("dialog.title.unpack.course"), EduCoreBundle.message("button.unpack"), course).show()
   }
 }
