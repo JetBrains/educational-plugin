@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.actions
 
+import com.intellij.openapi.actionSystem.ActionToolbar
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.actionSystem.ex.ActionUtil
@@ -22,7 +23,8 @@ abstract class ActionWithButtonCustomComponent : AnAction(), CustomComponentActi
     val button = JButton(presentation.text)
     button.toolTipText = presentation.description
     button.addActionListener { e ->
-      ActionUtil.invokeAction(this, button, place, null, null)
+      @Suppress("DEPRECATION") // BACKCOMPAT: 2024.2 Use [ActionUtil.invokeAction(AnAction, AnActionEvent, Runnable?)]
+      ActionUtil.invokeAction(this, ActionToolbar.getDataContextFor(button), place, null, null)
     }
     return button
   }

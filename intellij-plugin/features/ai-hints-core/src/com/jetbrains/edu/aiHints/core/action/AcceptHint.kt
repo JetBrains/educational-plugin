@@ -1,5 +1,6 @@
 package com.jetbrains.edu.aiHints.core.action
 
+import com.intellij.openapi.actionSystem.ActionToolbar
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.actionSystem.ex.ActionUtil
@@ -28,7 +29,7 @@ class AcceptHint : ApplyCodeAction() {
     isFocusable = true
     addActionListener {
       @Suppress("DEPRECATION") // BACKCOMPAT: 2024.2 Use [ActionUtil.invokeAction(AnAction, AnActionEvent, Runnable?)]
-      ActionUtil.invokeAction(this@AcceptHint, this, place, null, null)
+      ActionUtil.invokeAction(this@AcceptHint, ActionToolbar.getDataContextFor(this), place, null, null)
     }
   }
 
