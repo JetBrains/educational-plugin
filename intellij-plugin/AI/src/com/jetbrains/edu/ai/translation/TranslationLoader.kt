@@ -5,10 +5,10 @@ import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.blockingContext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.NotificationContent
 import com.intellij.platform.ide.progress.withBackgroundProgress
-import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.translation.connector.TranslationServiceConnector
 import com.jetbrains.edu.ai.translation.settings.TranslationSettings
@@ -191,21 +191,20 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
 
   private suspend fun EduCourse.saveTranslation(courseTranslation: CourseTranslationResponse) {
     val taskDescriptions = courseTranslation.taskDescriptions
-    writeAction {
-      for (task in allTasks) {
-        val translation = taskDescriptions[task.id.toString()] ?: continue
-        task.saveTranslation(translation)
-      }
+    for (task in allTasks) {
+      val translation = taskDescriptions[task.id.toString()] ?: continue
+      task.saveTranslation(translation)
     }
   }
 
-  @RequiresBlockingContext
-  private fun Task.saveTranslation(text: TranslatedText) {
-    val taskDirectory = getTaskDirectory(project) ?: return
+  private suspend fun Task.saveTranslation(text: TranslatedText) {
+    val taskDirectory = readAction { getTaskDirectory(project) } ?: return
     val name = descriptionFormat.fileNameWithTranslation(text.language)
 
     try {
-      GeneratorUtils.createTextChildFile(project, taskDirectory, name, text.text)
+      blockingContext {
+        GeneratorUtils.createTextChildFile(project, taskDirectory, name, text.text)
+      }
     }
     catch (exception: IOException) {
       LOG.error("Failed to write text to $taskDirectory", exception)
