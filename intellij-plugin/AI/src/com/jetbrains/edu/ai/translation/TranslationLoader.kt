@@ -49,13 +49,20 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
         if (TranslationProjectSettings.isCourseTranslated(project)) return@collectLatest
         if (isRunning(project)) return@collectLatest
         if (properties.autoTranslate) {
-          fetchAndApplyTranslation(course, properties.language)
+          val language = properties.language
+          if (!language.isSameLanguage(course)) {
+            fetchAndApplyTranslation(course, language)
+          }
         }
       }
     }
   }
 
   fun fetchAndApplyTranslation(course: EduCourse, translationLanguage: TranslationLanguage) {
+    if (translationLanguage.isSameLanguage(course)) {
+      LOG.warn("Translation language ${translationLanguage.code} matches the course language ${course.languageCode}")
+      return
+    }
     runInBackgroundExclusively(EduAIBundle.message("ai.translation.already.running")) {
       withBackgroundProgress(project, EduAIBundle.message("ai.translation.getting.course.translation")) {
         val translationSettings = project.translationSettings()

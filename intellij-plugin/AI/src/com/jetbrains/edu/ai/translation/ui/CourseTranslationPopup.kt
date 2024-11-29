@@ -16,6 +16,7 @@ import com.intellij.util.ui.JBEmptyBorder
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.translation.TranslationLoader
+import com.jetbrains.edu.ai.translation.isSameLanguage
 import com.jetbrains.edu.ai.translation.settings.AutoTranslationProperties
 import com.jetbrains.edu.ai.translation.settings.translationSettings
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
@@ -30,14 +31,13 @@ import javax.swing.JPanel
 import javax.swing.JPanel.LEFT_ALIGNMENT
 
 class CourseTranslationPopup(private val project: Project, private val course: EduCourse) {
-  private val courseSourceLanguage = course.languageCode
   private var selectedLanguage: TranslationLanguage? =
     project.translationSettings().translationLanguage ?: application.translationSettings().preferableLanguage
 
   private lateinit var translateToCheckBox: Cell<JBCheckBox>
-  private val comboBoxModel = TranslationLanguageComboBoxModel(courseSourceLanguage).apply { selectedItem = selectedLanguage }
+  private val comboBoxModel = TranslationLanguageComboBoxModel(course).apply { selectedItem = selectedLanguage }
   private lateinit var translationLanguageComboBox: JComboBox<TranslationLanguage>
-  private val popup: JBPopup = createPopup()
+  private val popup = createPopup()
 
   fun show(point: RelativePoint) {
     popup.show(point)
@@ -89,17 +89,17 @@ class CourseTranslationPopup(private val project: Project, private val course: E
         alignmentX = LEFT_ALIGNMENT
       }
       .apply {
-        enabled(selectedLanguage?.isNotSource() == true)
+        enabled(!selectedLanguage.isSameLanguage(course))
         selected(TranslationProjectSettings.isCourseTranslated(project))
       }
       .onChanged(::translationCheckBoxChangeListener)
 
   private fun translationCheckBoxChangeListener(checkBox: JBCheckBox) {
     val language = selectedLanguage ?: return
-    if (checkBox.isSelected && language.isNotSource()) {
+    if (checkBox.isSelected && !language.isSameLanguage(course)) {
       TranslationLoader.getInstance(project).fetchAndApplyTranslation(course, language)
     }
-    else if (!checkBox.isSelected || language.isSource()) {
+    else {
       project.translationSettings().setTranslation(null)
     }
     popup.closeOk(null)
@@ -115,11 +115,8 @@ class CourseTranslationPopup(private val project: Project, private val course: E
 
   private fun translationLanguageChangeListener(component: ComboBox<TranslationLanguage>) {
     val language = component.selectedItem as? TranslationLanguage ?: return
-    if (language.isNotSource()) {
+    if (!language.isSameLanguage(course)) {
       TranslationLoader.getInstance(project).fetchAndApplyTranslation(course, language)
-    }
-    else {
-      project.translationSettings().setTranslation(null)
     }
     val settings = application.translationSettings()
     if (!settings.autoTranslate) {
@@ -140,7 +137,4 @@ class CourseTranslationPopup(private val project: Project, private val course: E
         background = EduTranslationColors.aiTranslationFooterLabelColor
       }
     }
-
-  private fun TranslationLanguage.isSource(): Boolean = code == courseSourceLanguage
-  private fun TranslationLanguage.isNotSource(): Boolean = !isSource()
 }
