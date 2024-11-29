@@ -21,6 +21,7 @@ import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduUtilsKt.convertToHtml
+import com.jetbrains.edu.learning.actions.EduActionUtils.isGetHintAvailable
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.Companion.TASK_DESCRIPTION_PREFIX
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
@@ -184,7 +185,8 @@ fun Task.canShowSolution(): Boolean {
   }
   val hiddenByEducator = solutionHidden ?: course.solutionsHidden
   val shouldShow = !hiddenByEducator || status == CheckStatus.Solved
-  return shouldShow && taskFiles.values.any { it.canShowSolution() }
+  val canShowSolution = shouldShow && taskFiles.values.any { it.canShowSolution() }
+  return canShowSolution && !isGetHintAvailable(this) // Disable where there are AI Hints
 }
 
 fun Task.hasSolutions(): Boolean = course.isMarketplace || this !is TheoryTask && this !is DataTask
