@@ -74,6 +74,16 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
     }
   }
 
+  fun updateTranslationWhenCourseUpdate(course: EduCourse) {
+    runInBackgroundExclusively(EduAIBundle.message("ai.translation.update.is.not.possible")) {
+      val properties = TranslationProjectSettings.getInstance(project).translationProperties.value
+      doResetCourseTranslation(course)
+      if (properties != null) {
+        doUpdateTranslation(course, properties)
+      }
+    }
+  }
+
   fun resetCourseTranslation(course: EduCourse) {
     runInBackgroundExclusively(EduAIBundle.message("ai.translation.reset.is.not.possible")) {
       doResetCourseTranslation(course)
