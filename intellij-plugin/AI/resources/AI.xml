@@ -50,4 +50,9 @@
   <extensions defaultExtensionNs="Educational">
     <AIOptionsProvider instance="com.jetbrains.edu.ai.translation.settings.TranslationOptions"/>
   </extensions>
+
+  <projectListeners>
+    <listener class="com.jetbrains.edu.ai.update.EduCourseUpdateListener"
+              topic="com.jetbrains.edu.learning.CourseUpdateListener"/>
+  </projectListeners>
 </idea-plugin>
