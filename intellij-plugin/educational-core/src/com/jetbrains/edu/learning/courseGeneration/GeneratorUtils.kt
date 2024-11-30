@@ -359,13 +359,12 @@ object GeneratorUtils {
     baseDirName: String = item.name,
     needUpdateItem: Boolean = true
   ): VirtualFile {
-    val uniqueDirName = getUniqueValidName(parentDir, baseDirName)
-    if (uniqueDirName != baseDirName && needUpdateItem) {
-      item.customPresentableName = item.name
-      item.name = uniqueDirName
-    }
-
     return runInWriteActionAndWait {
+      val uniqueDirName = getUniqueValidName(parentDir, baseDirName)
+      if (uniqueDirName != baseDirName && needUpdateItem) {
+        item.customPresentableName = item.name
+        item.name = uniqueDirName
+      }
       VfsUtil.createDirectoryIfMissing(parentDir, uniqueDirName)
     }
   }
