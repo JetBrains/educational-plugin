@@ -310,7 +310,7 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
   private fun deleteRemovedItems(remoteItemsIds: List<Int>, items: List<StudyItem>) {
     val itemsToDelete = items.filter { it.id !in remoteItemsIds }
     if (itemsToDelete.isNotEmpty()) {
-      runInEdt {
+      invokeAndWaitIfNeeded {
         runWriteAction {
           for (item in itemsToDelete) {
             val virtualFile = item.getDir(project.courseDir)
