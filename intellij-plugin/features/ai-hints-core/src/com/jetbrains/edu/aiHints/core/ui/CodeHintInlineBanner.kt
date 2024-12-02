@@ -7,7 +7,6 @@ import com.intellij.diff.chains.SimpleDiffRequestChain
 import com.intellij.diff.comparison.ComparisonManager
 import com.intellij.diff.comparison.ComparisonPolicy
 import com.intellij.diff.requests.SimpleDiffRequest
-import com.intellij.openapi.application.EDT
 import com.intellij.openapi.editor.markup.EffectType
 import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.openapi.editor.markup.TextAttributes
@@ -21,36 +20,35 @@ import com.jetbrains.edu.learning.actions.ApplyCodeAction
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.getTextFromTaskTextFile
-import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.ui.EduColors
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.jetbrains.educational.ml.hints.hint.CodeHint
 import org.jetbrains.annotations.Nls
 import java.awt.Font
 
-object HintsBannerManager {
+class CodeHintInlineBanner(
+  private val project: Project,
+  taskFile: TaskFile,
+  message: @Nls String,
+  private val codeHint: CodeHint
+) : HintInlineBanner(project, message) {
 
-  suspend fun showCodeHintBanner(project: Project, taskFile: TaskFile, @Nls message: String, codeHint: String) {
+  private var highlighter: RangeHighlighter? = null
+
+  init {
     val taskVirtualFile = taskFile.getVirtualFile(project) ?: error("VirtualFile for ${taskFile.name} not found")
     val taskFileText = taskVirtualFile.getTextFromTaskTextFile() ?: error("TaskFile text for ${taskFile.name} not found")
+    highlighter = highlightFirstCodeDiffPositionOrNull(project, taskVirtualFile, taskFileText, codeHint.code)
 
-    val highlighter = highlightFirstCodeDiffPositionOrNull(project, taskVirtualFile, taskFileText, codeHint)
-    val hintBanner = HintInlineBanner(message, highlighter).apply {
-      addAction(EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.show.code.text")) {
-        showInCodeAction(project, taskVirtualFile, taskFileText, codeHint)
-      }
-      setCloseAction {
-        highlighter?.dispose()
-      }
+    addAction(EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.show.code.text")) {
+      showInCodeAction(project, taskVirtualFile, taskFileText, codeHint.code)
     }
-    show(project, hintBanner)
   }
 
-  suspend fun showTextHintBanner(project: Project, @Nls message: String) = show(project, HintInlineBanner(message))
-
-  private suspend fun show(project: Project, hintsBanner: HintInlineBanner) = withContext(Dispatchers.EDT) {
-    TaskToolWindowView.getInstance(project).addInlineBannerToCheckPanel(hintsBanner)
+  override fun removeNotify() {
+    super.removeNotify()
+    highlighter?.dispose()
   }
+
 
   private fun showInCodeAction(project: Project, taskVirtualFile: VirtualFile, taskFileText: String, codeHint: String) {
     val diffRequestChain = SimpleDiffRequestChain(
