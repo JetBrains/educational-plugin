@@ -197,12 +197,17 @@ class TaskProcessorImpl(val task: Task) : TaskProcessor {
    * This functions tries to reduce the code hint so to not give the full solution.
    * You either receive errors about reading without read lock, or you don't have "Show in code" at all.
    */
-  override fun reduceChangesInCodeHint(code: String, modifiedCode: String, functionName: String): String = runReadAction {
-    val functionFromCode = getFunctionPsiWithName(code, functionName, project, language)?.copy()
-    val functionFromCodeHint = getFunctionPsiWithName(modifiedCode, functionName, project, language)?.copy()
-                               ?: error("Function with the name $functionName in the code hint is not found")
-    val reducedCodeHint = FunctionDiffReducer.reduceDiffFunctions(functionFromCode, functionFromCodeHint, project, language)
-    reducedCodeHint?.text ?: modifiedCode
+  override fun reduceChangesInCodeHint(code: String, modifiedCode: String, functionName: String): String {
+    val (functionFromCode, functionFromCodeHint) = runReadAction {
+      getFunctionPsiWithName(code, functionName, project, language)?.copy() to getFunctionPsiWithName(modifiedCode, functionName, project, language)?.copy()
+    }
+    return if (functionFromCodeHint != null) {
+      val reducedCodeHint = FunctionDiffReducer.reduceDiffFunctions(functionFromCode, functionFromCodeHint, project, language)
+      reducedCodeHint?.text ?: modifiedCode
+    }
+    else {
+      modifiedCode
+    }
   }
 
   override fun applyCodeHint(codeHint: String): String? {
