@@ -168,6 +168,29 @@ class FunctionDiffReducerTest : EduTestCase() {
   }
 
   /**
+   * Transformation type: Internal Body Change Detection
+   * Applies to the Function
+   * Changes: only adding one line in the one line Function remains
+   */
+  @Test
+  fun `test addition a line of a different type`() {
+    val codeStr = """
+      $greetFunction
+      fun main() {
+        println("Hello!")
+        TODO("Not implemented")
+      }
+    """.trimIndent()
+    val expectedFunction = """
+      fun main() {
+          println("Hello!")
+          val firstUserAnswer: String = ""
+      }
+    """.trimIndent()
+    reduceChangesInCodeHint(codeStr, codeHintVar, expectedFunction)
+  }
+
+  /**
    * Transformation type: Additive Statement Isolation
    * Applies to the While statement
    * Changes: only the While statement without body remains, since it's a new While statement
@@ -481,6 +504,122 @@ class FunctionDiffReducerTest : EduTestCase() {
     reduceChangesInCodeHint(codeStr, codeHintWhen, mainFunctionWithWhenStatementWithElseEntry)
   }
 
+  /**
+   * Transformation type: Additive Statement Isolation
+   * Applies to the KtDotQualifiedExpression
+   * Changes: the body of the expression has been deleted
+   */
+  @Test
+  fun `test addition of a KtDotQualifiedExpression`() {
+    val codeStr = """
+      fun renderProductTable(): String {
+          return html {
+              table {
+                  val products = getProducts()
+                  TODO()
+              }
+          }.toString()
+      }
+    """.trimIndent()
+    val codeHint = """
+      fun renderProductTable(): String {
+          return html {
+              table {
+                  val products = getProducts()
+                  $dotQualifiedExpression
+              }
+          }.toString()
+      }
+    """.trimIndent()
+    val expectedFunction = """
+      fun renderProductTable(): String {
+          return html {
+              table {
+                  val products = getProducts()
+                  $dotQualifiedExpressionWithEmptyBody
+              }
+          }.toString()
+      }
+    """.trimIndent()
+    reduceChangesInCodeHint(codeStr, codeHint, expectedFunction, "renderProductTable")
+  }
+
+  /**
+   * Transformation type: Additive Statement Isolation
+   * Applies to the KtLambdaArgument
+   * Changes: the body of the expression has been deleted
+   */
+  @Test
+  fun `test addition KtLambdaArgument inside a KtLambdaArgument`() {
+    val codeStr = """
+      fun renderProductTable(): String {
+          return html {
+              table {
+                  val products = getProducts()
+                  $dotQualifiedExpressionWithEmptyBody
+              }
+          }.toString()
+      }
+    """.trimIndent()
+    val codeHint = """
+      fun renderProductTable(): String {
+          return html {
+              table {
+                  val products = getProducts()
+                  $dotQualifiedExpression
+              }
+          }.toString()
+      }
+    """.trimIndent()
+    val expectedFunction = """
+      fun renderProductTable(): String {
+          return html {
+              table {
+                  val products = getProducts()
+                  products.forEachIndexed { index, product -> 
+                    tr { 
+                    }
+                  }
+              }
+          }.toString()
+      }
+    """.trimIndent()
+    reduceChangesInCodeHint(codeStr, codeHint, expectedFunction, "renderProductTable")
+  }
+
+  /**
+   * Transformation type: Additive Statement Isolation
+   * Applies to the Function
+   * Changes: the expression with which the property was initialised has been reduced
+   */
+  @Test
+  fun `test addition of a complex KtProperty`() {
+    val codeStr = """
+      suspend fun loadContributorsConcurrent(service: GitHubService, req: RequestData): List<User> = coroutineScope {
+          val repos = service.getOrgRepos(req.org).bodyList()
+      }
+    """.trimIndent()
+    val codeHint = """
+      suspend fun loadContributorsConcurrent(service: GitHubService, req: RequestData): List<User> = coroutineScope {
+          val repos = service.getOrgRepos(req.org).bodyList()
+          val deferreds: List<Deferred<List<User>>> = repos.map { repo ->
+              async {
+                  log("starting loading for ${'$'}{repo.name}")
+                  service.getRepoContributors(repo.owner, repo.name).bodyList()
+              }
+          }
+      }
+    """.trimIndent()
+    val expectedFunction = """
+      suspend fun loadContributorsConcurrent(service: GitHubService, req: RequestData): List<User> = coroutineScope {
+          val repos = service.getOrgRepos(req.org).bodyList()
+          val deferreds: List<Deferred<List<User>>> = repos.map { repo ->
+          }
+      }
+    """.trimIndent()
+    reduceChangesInCodeHint(codeStr, codeHint, expectedFunction, "loadContributorsConcurrent")
+  }
+
   private fun reduceChangesInCodeHint(codeStr: String, codeHint: String, updatedCodeHint: String, functionName: String = MAIN_FUNCTION_NAME) {
     val course = project.course ?: error("Course was not found")
     val task = course.findTask("lesson1", "task1")
@@ -675,6 +814,27 @@ class FunctionDiffReducerTest : EduTestCase() {
             "squared" -> applySquaredFilter(trimmedPicture)
             else -> error("Unexpected filter")
         }
+      }
+    """.trimIndent()
+
+    private val dotQualifiedExpression = """
+      products.forEachIndexed { index, product -> 
+          tr {
+              td(getCellColor(index, 0)) { 
+                  text(product.name)
+              }
+              td(getCellColor(index, 1)) { 
+                  text(product.price)
+              }
+              td(getCellColor(index, 2)) { 
+                  text(product.popularity)
+              }
+          }
+      }
+    """.trimIndent()
+
+    private val dotQualifiedExpressionWithEmptyBody = """
+      products.forEachIndexed { index, product -> 
       }
     """.trimIndent()
   }

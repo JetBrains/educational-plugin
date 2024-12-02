@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.jetbrains.edu.aiHints.core.FunctionDiffReducer
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
 class KtFunctionDiffReducer : FunctionDiffReducer {
@@ -26,8 +27,11 @@ class KtFunctionDiffReducer : FunctionDiffReducer {
     needLineBreak: Boolean = true
   ): Boolean {
     first.zip(second).forEach {
-      if (!Regex(TODO).containsMatchIn(it.first.text) && it.first.node.elementType != it.second.node.elementType) {
+      if (it.first.node.elementType != it.second.node.elementType) {
         addElement(it.first, it.second, project, addAfter = false, needLineBreak = needLineBreak)
+        if (Regex(TODO).containsMatchIn(it.first.text)) {
+          removeElement(it.first, project)
+        }
         return true
       }
       if (!equalText(it.first, it.second, Char::isWhitespace)) {
@@ -126,6 +130,22 @@ class KtFunctionDiffReducer : FunctionDiffReducer {
 
       // If a new `return` expression has been added - move on to the reduction of the return expression
       is KtReturnExpression -> element.returnedExpression?.let { reducingNewElement(it, project) }
+
+      // If a new lambda argument has been added - move on to the reduction of the body of the lambda expression
+      is KtLambdaArgument -> element.getLambdaExpression()?.bodyExpression?.let { reducingNewElement(it, project) }
+
+      // If a new dot qualified expression has been added - move on to the reduction of the selector expression
+      is KtDotQualifiedExpression -> element.selectorExpression?.let { reducingNewElement(it, project) }
+
+      // If a new call expression has been added - delete its value and lambda arguments
+      is KtCallExpression -> {
+        element.valueArgumentList?.let { removeElement(element, project) }
+        element.lambdaArguments.forEach {  lambda ->
+          lambda.getLambdaExpression()?.bodyExpression?.let { removeElement(it, project) }
+        }
+      }
+      // If a new property has been added - move on to the reduction of the initializer
+      is KtProperty -> element.initializer?.let { reducingNewElement(it, project) }
     }
   }
 
@@ -167,7 +187,30 @@ class KtFunctionDiffReducer : FunctionDiffReducer {
         // Move on to comparing the returned expressions
         first is KtReturnExpression && second is KtReturnExpression ->
           swapSmallElements(first.returnedExpression, second.returnedExpression, project)
-
+        // Move on to comparing the body of lambda expression
+        first is KtLambdaArgument && second is KtLambdaArgument ->
+          compareAndAmendChildren(
+            first.getLambdaExpression()?.bodyExpression?.children ?: emptyArray(),
+            second.getLambdaExpression()?.bodyExpression?.children ?: emptyArray(),
+            project,
+            first.getLambdaExpression()?.let {
+              it.functionLiteral.node.findChildByType(KtTokens.ARROW)?.psi ?: it.leftCurlyBrace.psi
+                                             },
+            needLineBreak = false
+          )
+        // Move on to compare the children of the dot qualified expression
+        first is KtDotQualifiedExpression && second is KtDotQualifiedExpression ->
+          resolveMultilineMismatch(first, second, project)
+        // Move on to compare the children of the call expression
+        first is KtCallExpression && second is KtCallExpression ->
+          resolveMultilineMismatch(first, second, project)
+        // Change the name of the expression
+        first is KtNameReferenceExpression && second is KtNameReferenceExpression ->
+          swapSmallElements(first, second, project)
+        // Change typeReference or initializer
+        first is KtProperty && second is KtProperty ->
+          swapSmallElements(first.typeReference, second.typeReference, project) ||
+          swapSmallElements(first.initializer, second.initializer, project)
         else -> false
       }
     }
