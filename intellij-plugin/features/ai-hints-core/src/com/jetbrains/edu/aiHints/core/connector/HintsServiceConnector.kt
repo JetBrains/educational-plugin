@@ -6,13 +6,21 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.ui.JBAccountInfoService
 import com.jetbrains.edu.ai.host.EduAIServiceHost
+import com.jetbrains.edu.aiHints.core.messages.EduAIHintsCoreBundle
 import com.jetbrains.edu.aiHints.core.service.HintsService
+import com.jetbrains.edu.learning.Err
+import com.jetbrains.edu.learning.Ok
+import com.jetbrains.edu.learning.Result
+import com.jetbrains.edu.learning.network.HTTP_UNAVAILABLE_FOR_LEGAL_REASONS
 import com.jetbrains.edu.learning.network.createRetrofitBuilder
+import com.jetbrains.edu.learning.onError
 import com.jetbrains.educational.ml.hints.context.CodeHintContext
 import com.jetbrains.educational.ml.hints.context.TextHintContext
 import com.jetbrains.educational.ml.hints.hint.CodeHint
 import com.jetbrains.educational.ml.hints.hint.TextHint
 import okhttp3.ConnectionPool
+import retrofit2.Response
+import java.net.HttpURLConnection.*
 
 @Service(Service.Level.APP)
 class HintsServiceConnector {
@@ -37,13 +45,33 @@ class HintsServiceConnector {
   }
 
   suspend fun getCodeHint(context: CodeHintContext): CodeHint {
-    val response = service.getCodeHint(context).body() ?: error("Response body is null")
+    val response = service.getCodeHint(context).handleResponse().onError {
+      error(it)
+    }
     return response.asCodeHint()
   }
 
   suspend fun getTextHint(context: TextHintContext): TextHint {
-    val response = service.getTextHint(context).body() ?: error("Response body is null")
+    val response = service.getTextHint(context).handleResponse().onError {
+      error(it)
+    }
     return response.asTextHint()
+  }
+
+  private fun <T> Response<List<T>>.handleResponse(): Result<List<T>, String> {
+    val code = code()
+    val errorMessage = errorBody()?.string()
+    if (!errorMessage.isNullOrEmpty()) {
+      LOG.error("Request failed. Status code: $code. Error message: $errorMessage")
+    }
+    val body = body()
+    return when {
+      code == HTTP_OK && body != null -> Ok(body)
+      body == null -> Err(EduAIHintsCoreBundle.message("hints.error.failed.to.generate"))
+      code == HTTP_UNAVAILABLE_FOR_LEGAL_REASONS -> Err(EduAIHintsCoreBundle.message("hints.error.unavailable.for.legal.reasons"))
+      code == HTTP_UNAVAILABLE || code == HTTP_BAD_GATEWAY -> Err(EduAIHintsCoreBundle.message("hints.error.service.unavailable"))
+      else -> Err(EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.error.unknown"))
+    }
   }
 
   companion object {
