@@ -67,12 +67,13 @@ class LearningObjectsStorageManager(private val project: Project) : DumbAware, D
           }
           // if persisting took long, contents could have been already changed
 
-          if (!setContentsIfEquals(contentsWithDiagnostics, persistedContents)) {
-            val logMessage = "Contents of a file changed while the file was being persisted: $pathInStorage from ${initialContents.debugString()} to ${contents.debugString()}"
+          val currentContents = setContentsIfEquals(contentsWithDiagnostics, persistedContents)
+          if (currentContents != contentsWithDiagnostics) {
+            val logMessage = "Contents of a file changed while the file was being persisted: $pathInStorage from ${initialContents.debugString()} to ${currentContents.debugString()}"
 
             // The level is ERROR if the contents are different, otherwise it is a WARNING,
             // because the same contents do not lead to unexpected behavior
-            if (isSameContents(initialContents, persistedContents)) {
+            if (isSameContents(initialContents, currentContents)) {
               logger<FileContents>().warn(logMessage)
             }
             else {

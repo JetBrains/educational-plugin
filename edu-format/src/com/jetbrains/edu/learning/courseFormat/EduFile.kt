@@ -36,8 +36,8 @@ open class EduFile {
     get() = _contents.get()
     set(value) = _contents.set(value)
 
-  fun setContentsIfEquals(expectedValue: FileContents, newValue: FileContents): Boolean =
-    _contents.compareAndSet(expectedValue, newValue)
+  fun setContentsIfEquals(expectedValue: FileContents, newValue: FileContents): FileContents =
+    _contents.compareAndExchange(expectedValue, newValue)
 
   @Suppress("unused") // used for serialization
   val isBinary: Boolean?
