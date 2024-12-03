@@ -47,7 +47,6 @@ import com.jetbrains.edu.learning.CourseSetListener
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.agreement.UserAgreementSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -90,9 +89,6 @@ class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport
   override fun createComparator(): Comparator<NodeDescriptor<*>> = EduNodeComparator
 
   private fun createCourseViewComponent(): JComponent {
-    if (!UserAgreementSettings.getInstance().isPluginAllowed) {
-      return super.createComponent()
-    }
     super.createComponent()
     CourseViewPaneCustomization.customize(tree)
     if (!myProject.isStudentProject()) {
