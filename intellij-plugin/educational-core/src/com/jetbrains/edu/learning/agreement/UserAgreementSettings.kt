@@ -5,6 +5,7 @@ import com.intellij.util.application
 import com.jetbrains.edu.learning.submissions.SolutionSharingPreference
 import com.jetbrains.edu.learning.submissions.UserAgreementState
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 fun userAgreementSettings(): UserAgreementSettings = application.service()
@@ -13,7 +14,7 @@ fun userAgreementSettings(): UserAgreementSettings = application.service()
 @State(name = "UserAgreementSettings", storages = [Storage("edu.agreement.xml", roamingType = RoamingType.DEFAULT)])
 class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.State> {
   private val _userAgreementProperties = MutableStateFlow(UserAgreementProperties())
-  val userAgreementProperties = _userAgreementProperties.asStateFlow()
+  val userAgreementProperties: StateFlow<UserAgreementProperties> = _userAgreementProperties.asStateFlow()
 
   val isPluginAllowed: Boolean
     get() {
