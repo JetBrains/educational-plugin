@@ -49,4 +49,3 @@ object UserAgreementUtil {
 
   const val EMPTY_TEXT: String = ""
 }
-
