@@ -24,7 +24,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.annotations.VisibleForTesting
 
 @Service(Service.Level.APP)
 class MarketplaceSettings(private val scope: CoroutineScope) {
@@ -33,13 +32,6 @@ class MarketplaceSettings(private val scope: CoroutineScope) {
 
   @Volatile
   var solutionsSharing: Boolean? = null
-    private set
-
-  /**
-   * Do not rely on this property deciding if the submissions can be uploaded or downloaded, get actual state from the remote
-   */
-  @Volatile
-  var userAgreementState: UserAgreementState? = null
     private set
 
   /**
@@ -53,7 +45,6 @@ class MarketplaceSettings(private val scope: CoroutineScope) {
     if (!isUnitTestMode && isJBALoggedIn()) {
       scope.launch {
         UserAgreementSettings.getInstance().userAgreementProperties.collectLatest {
-          userAgreementState = it.submissionsServiceAgreement
           aiFeaturesAgreement = it.aiServiceAgreement
           solutionsSharing = it.solutionSharing.toBoolean()
         }
@@ -99,40 +90,6 @@ class MarketplaceSettings(private val scope: CoroutineScope) {
       }
       EduCounterUsageCollector.solutionSharingState(state)
     }
-  }
-
-  fun updateAgreementState(state: UserAgreementState, project: Project? = null) {
-    if (!isJBALoggedIn()) return
-    scope.launch(Dispatchers.IO) {
-      MarketplaceSubmissionsConnector.getInstance().changeUserAgreementState(state).onError {
-        EduNotificationManager.showErrorNotification(
-          project,
-          EduCoreBundle.message("user.agreement.changed.failed.notification.title"),
-          EduCoreBundle.message("notification.something.went.wrong.text")
-        )
-        return@launch
-      }
-
-      userAgreementState = state
-
-      val notificationText = if (state == UserAgreementState.ACCEPTED) {
-        EduCoreBundle.message("user.agreement.changed.accepted.notification.text")
-      }
-      else {
-        EduCoreBundle.message("user.agreement.changed.terminated.notification.text")
-      }
-
-      showSuccessRequestNotification(
-        project,
-        EduCoreBundle.message("user.agreement.changed.success.notification.title"),
-        notificationText
-      )
-    }
-  }
-
-  @VisibleForTesting
-  fun setTestAgreementState(state: UserAgreementState?) {
-    userAgreementState = state
   }
 
   fun updateAiFeaturesAgreementState(state: UserAgreementState, project: Project? = null) {

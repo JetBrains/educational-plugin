@@ -6,7 +6,6 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.TestDialog
-import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
@@ -21,7 +20,6 @@ import com.jetbrains.edu.learning.marketplace.deleteSubmissions.AdvancedSubmissi
 import com.jetbrains.edu.learning.marketplace.deleteSubmissions.DeleteAllSubmissionsAction
 import com.jetbrains.edu.learning.marketplace.deleteSubmissions.SubmissionsDeleteDialog
 import com.jetbrains.edu.learning.marketplace.deleteSubmissions.deleteSubmissionsWithTestDialog
-import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.simpleDiffRequestChain
 import com.jetbrains.edu.learning.stepik.SubmissionsTestBase
 import com.jetbrains.edu.learning.submissions.*
@@ -44,12 +42,6 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
   override fun setUp() {
     super.setUp()
     loginFakeMarketplaceUser()
-    val settings = MarketplaceSettings.INSTANCE
-    val initialAgreementState = settings.userAgreementState
-    settings.setTestAgreementState(UserAgreementState.ACCEPTED)
-    Disposer.register(testRootDisposable) {
-      settings.setTestAgreementState(initialAgreementState)
-    }
   }
 
   /**
