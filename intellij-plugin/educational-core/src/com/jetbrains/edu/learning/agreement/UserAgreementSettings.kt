@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.agreement
 
 import com.intellij.openapi.components.*
+import com.jetbrains.edu.learning.submissions.SolutionSharingPreference
 import com.jetbrains.edu.learning.submissions.UserAgreementState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,8 +31,15 @@ class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.Sta
   val isNotShown: Boolean
     get() = _userAgreementProperties.value.pluginAgreement == UserAgreementState.NOT_SHOWN
 
+  val solutionSharing: Boolean
+    get() = _userAgreementProperties.value.solutionSharingPreference == SolutionSharingPreference.ALWAYS
+
   fun enableSubmissions() {
     _userAgreementProperties.value = _userAgreementProperties.value.copy(submissionsServiceAgreement = UserAgreementState.ACCEPTED)
+  }
+
+  fun enableSolutionSharing() {
+    _userAgreementProperties.value = _userAgreementProperties.value.copy(solutionSharingPreference = SolutionSharingPreference.ALWAYS)
   }
 
   fun setAgreementState(agreementState: AgreementStateResponse) {
@@ -52,11 +60,13 @@ class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.Sta
     pluginAgreement: UserAgreementState,
     aiServiceAgreement: UserAgreementState,
     submissionsServiceAgreement: UserAgreementState,
+    solutionSharingPreference: SolutionSharingPreference
   ) {
     _userAgreementProperties.value = UserAgreementProperties(
       pluginAgreement = pluginAgreement,
       aiServiceAgreement = aiServiceAgreement,
       submissionsServiceAgreement = submissionsServiceAgreement,
+      solutionSharingPreference = solutionSharingPreference,
       isChangedByUser = true
     )
   }
@@ -69,6 +79,7 @@ class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.Sta
     val pluginAgreement: UserAgreementState = UserAgreementState.NOT_SHOWN,
     val submissionsServiceAgreement: UserAgreementState = UserAgreementState.NOT_SHOWN,
     val aiServiceAgreement: UserAgreementState = UserAgreementState.NOT_SHOWN,
+    val solutionSharingPreference: SolutionSharingPreference = SolutionSharingPreference.NEVER,
     val isChangedByUser: Boolean = false
   )
 
@@ -76,6 +87,7 @@ class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.Sta
     var pluginAgreement by enum<UserAgreementState>(UserAgreementState.NOT_SHOWN)
     var submissionsServiceAgreement by enum<UserAgreementState>(UserAgreementState.NOT_SHOWN)
     var aiServiceAgreement by enum<UserAgreementState>(UserAgreementState.NOT_SHOWN)
+    var solutionSharingPreference by enum<SolutionSharingPreference>(SolutionSharingPreference.NEVER)
   }
 
   override fun getState(): State {
@@ -83,6 +95,7 @@ class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.Sta
     state.pluginAgreement = _userAgreementProperties.value.pluginAgreement
     state.submissionsServiceAgreement = _userAgreementProperties.value.submissionsServiceAgreement
     state.aiServiceAgreement = _userAgreementProperties.value.aiServiceAgreement
+    state.solutionSharingPreference = _userAgreementProperties.value.solutionSharingPreference
     return state
   }
 
@@ -91,6 +104,7 @@ class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.Sta
       state.pluginAgreement,
       state.submissionsServiceAgreement,
       state.aiServiceAgreement,
+      state.solutionSharingPreference
     )
   }
 

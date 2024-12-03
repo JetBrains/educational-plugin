@@ -7,9 +7,10 @@ import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
-import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings.Companion.isJBALoggedIn
 import com.jetbrains.edu.learning.onError
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.submissions.SolutionSharingPreference
 import com.jetbrains.edu.learning.submissions.UserAgreementState
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.isEduYamlProject
 import kotlinx.coroutines.CoroutineScope
@@ -44,8 +45,17 @@ class UserAgreementManager(private val scope: CoroutineScope) {
             submitSubmissionsServiceAgreement(it.submissionsServiceAgreement)
             if (it.submissionsServiceAgreement != UserAgreementState.ACCEPTED) {
               // Disable Solution Sharing on remote, when user disables Submissions functionality
-              MarketplaceSettings.INSTANCE.updateSharingPreference(false)
+              submitSharingPreference(false)
             }
+          }
+        }
+      }
+      launch {
+        userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.solutionSharingPreference }.collectLatest {
+          if (it.isChangedByUser) {
+            val isSolutionSharingEnabled = it.solutionSharingPreference == SolutionSharingPreference.ALWAYS
+            EduCounterUsageCollector.solutionSharingState(isSolutionSharingEnabled)
+            submitSharingPreference(isSolutionSharingEnabled)
           }
         }
       }
@@ -84,6 +94,16 @@ class UserAgreementManager(private val scope: CoroutineScope) {
           LOG.error("Failed to submit Submissions Service Agreement state $state to remote: $it")
           return@launch
         }
+      }
+    }
+  }
+
+  private fun submitSharingPreference(state: Boolean) {
+    if (!isJBALoggedIn()) return
+    scope.launch(Dispatchers.IO) {
+      MarketplaceSubmissionsConnector.getInstance().changeSharingPreference(state).onError {
+        LOG.error("Failed to submit Sharing Preference state $state to remote: $it")
+        return@launch
       }
     }
   }

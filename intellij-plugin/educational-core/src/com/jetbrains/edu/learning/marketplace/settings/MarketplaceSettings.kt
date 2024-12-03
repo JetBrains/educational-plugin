@@ -3,38 +3,14 @@ package com.jetbrains.edu.learning.marketplace.settings
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.project.Project
 import com.intellij.ui.JBAccountInfoService
-import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.getJBAUserInfo
-import com.jetbrains.edu.learning.marketplace.isMarketplaceStudentCourse
-import com.jetbrains.edu.learning.marketplace.toBoolean
-import com.jetbrains.edu.learning.onError
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.taskToolWindow.ui.SolutionSharingInlineBanners
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import org.jetbrains.annotations.TestOnly
 
 @Service(Service.Level.APP)
-class MarketplaceSettings(private val scope: CoroutineScope) {
+class MarketplaceSettings {
 
   private var account: MarketplaceAccount? = null
-
-  @Volatile
-  var solutionsSharing: Boolean? = null
-    private set
-
-  init {
-    if (!isUnitTestMode && isJBALoggedIn()) {
-      scope.launch(Dispatchers.IO) {
-        solutionsSharing = MarketplaceSubmissionsConnector.getInstance().getSharingPreference().toBoolean()
-      }
-    }
-  }
 
   fun getMarketplaceAccount(): MarketplaceAccount? {
     if (!isJBALoggedIn()) {
@@ -57,28 +33,6 @@ class MarketplaceSettings(private val scope: CoroutineScope) {
 
   fun setAccount(value: MarketplaceAccount?) {
     account = value
-  }
-
-  fun updateSharingPreference(state: Boolean, project: Project? = null) {
-    if (!isJBALoggedIn()) return
-    if (state == solutionsSharing) return
-    solutionsSharing = state
-    scope.launch(Dispatchers.IO) {
-      MarketplaceSubmissionsConnector.getInstance().changeSharingPreference(state).onError {
-        SolutionSharingInlineBanners.showFailedToEnableSolutionSharing(project)
-        solutionsSharing = !state
-        return@launch
-      }
-      if (state && project?.isMarketplaceStudentCourse() == true) {
-        SolutionSharingInlineBanners.showSuccessSolutionSharingEnabling(project)
-      }
-      EduCounterUsageCollector.solutionSharingState(state)
-    }
-  }
-
-  @TestOnly
-  fun setSharingPreference(state: Boolean?) {
-    solutionsSharing = state
   }
 
   companion object {

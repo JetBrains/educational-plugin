@@ -10,9 +10,9 @@ import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.agreement.UserAgreementUtil.EMPTY_TEXT
 import com.jetbrains.edu.learning.agreement.UserAgreementUtil.createAiAgreementCheckBoxTextPanel
 import com.jetbrains.edu.learning.agreement.UserAgreementUtil.createPluginAgreementCheckBoxTextPanel
-import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.settings.OptionsProvider
+import com.jetbrains.edu.learning.submissions.SolutionSharingPreference
 import com.jetbrains.edu.learning.submissions.UserAgreementState
 
 class UserAgreementOptions : BoundConfigurable(EduCoreBundle.message("user.agreement.settings.title")), OptionsProvider {
@@ -20,7 +20,7 @@ class UserAgreementOptions : BoundConfigurable(EduCoreBundle.message("user.agree
   private var pluginAgreement = userAgreementSettings.pluginAgreement
   private var aiFeaturesAgreement = userAgreementSettings.aiServiceAgreement
   private var submissionsServiceAgreement = userAgreementSettings.submissionsServiceAgreement
-  private var solutionSharingPreference = MarketplaceSettings.INSTANCE.solutionsSharing ?: false
+  private var solutionSharingPreference = userAgreementSettings.solutionSharing
 
   private lateinit var pluginAgreementCheckBox: Cell<JBCheckBox>
   private lateinit var aiFeaturesAgreementCheckBox: Cell<JBCheckBox>
@@ -81,7 +81,7 @@ class UserAgreementOptions : BoundConfigurable(EduCoreBundle.message("user.agree
            || pluginAgreement != userAgreementSettings.pluginAgreement
            || aiFeaturesAgreement != userAgreementSettings.aiServiceAgreement
            || submissionsServiceAgreement != userAgreementSettings.submissionsServiceAgreement
-           || solutionSharingPreference != MarketplaceSettings.INSTANCE.solutionsSharing
+           || solutionSharingPreference != userAgreementSettings.solutionSharing
   }
 
   override fun apply() {
@@ -94,13 +94,14 @@ class UserAgreementOptions : BoundConfigurable(EduCoreBundle.message("user.agree
       if (aiFeaturesAgreement && pluginAgreement) UserAgreementState.ACCEPTED else UserAgreementState.TERMINATED
     val submissionsServiceAgreementState =
       if (submissionsServiceAgreement && pluginAgreement) UserAgreementState.ACCEPTED else UserAgreementState.TERMINATED
+    val solutionSharingPreference = if (solutionSharingPreference && submissionsServiceAgreement && pluginAgreement)
+      SolutionSharingPreference.ALWAYS else SolutionSharingPreference.NEVER
+
     userAgreementSettings.updatePluginAgreementState(
       pluginAgreementState,
       aiServiceAgreementState,
-      submissionsServiceAgreementState
+      submissionsServiceAgreementState,
+      solutionSharingPreference
     )
-
-    val isSolutionSharingEnabled = solutionSharingPreference && submissionsServiceAgreement && pluginAgreement
-    MarketplaceSettings.INSTANCE.updateSharingPreference(isSolutionSharingEnabled)
   }
 }

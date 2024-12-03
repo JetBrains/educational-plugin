@@ -102,20 +102,6 @@ class MarketplaceSubmissionsConnector {
 
   private fun logCourseId(courseId: Int?): String = if (courseId != null) "for course $courseId" else ""
 
-  suspend fun getSharingPreference(): SolutionSharingPreference? {
-    val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
-    LOG.info("Getting solution sharing preference for use $loginName")
-    val responseString = try {
-      submissionsService.getSharingPreference().string()
-    }
-    catch (e: Exception) {
-      LOG.info("Error occurred while getting solution sharing preference for user $loginName", e)
-      null
-    }
-
-    return responseString?.let { SolutionSharingPreference.valueOf(it) }
-  }
-
   // TODO: generalize fetching all pages for paginated requests in common method EDU-7110
   fun getAllSubmissions(courseId: Int): List<MarketplaceSubmission> {
     var currentPage = 1
