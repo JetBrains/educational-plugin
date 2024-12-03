@@ -40,13 +40,6 @@ class UserAgreementManager(private val scope: CoroutineScope) {
         }
       }
       launch {
-        userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.submissionsServiceAgreement }.collectLatest {
-          if (it.isChangedByUser) {
-
-          }
-        }
-      }
-      launch {
         userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.solutionSharing }.collectLatest {
           if (it.isChangedByUser) {
             MarketplaceSettings.INSTANCE.updateSharingPreference(
