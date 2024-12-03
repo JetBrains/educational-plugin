@@ -9,7 +9,7 @@ import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotificationProvider
 import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.agreement.UserAgreementDialog
-import com.jetbrains.edu.learning.agreement.userAgreementSettings
+import com.jetbrains.edu.learning.agreement.UserAgreementSettings
 import com.jetbrains.edu.learning.marketplace.isMarketplaceStudentCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.util.function.Function
@@ -19,7 +19,7 @@ class UserAgreementNotificationProvider : EditorNotificationProvider, DumbAware 
 
   override fun collectNotificationData(project: Project, file: VirtualFile): Function<in FileEditor, out JComponent?>? {
     if (!RemoteEnvHelper.isRemoteDevServer() || !project.isMarketplaceStudentCourse()) return null
-    val agreementState = userAgreementSettings().submissionsServiceAgreement
+    val agreementState = UserAgreementSettings.getInstance().submissionsServiceAgreement
     if (agreementState) return null
 
     return Function {

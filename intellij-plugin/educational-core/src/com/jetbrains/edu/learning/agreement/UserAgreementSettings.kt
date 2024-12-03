@@ -1,14 +1,11 @@
 package com.jetbrains.edu.learning.agreement
 
 import com.intellij.openapi.components.*
-import com.intellij.util.application
 import com.jetbrains.edu.learning.submissions.SolutionSharingPreference
 import com.jetbrains.edu.learning.submissions.UserAgreementState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-
-fun userAgreementSettings(): UserAgreementSettings = application.service()
 
 @Service
 @State(name = "UserAgreementSettings", storages = [Storage("edu.agreement.xml", roamingType = RoamingType.DEFAULT)])
@@ -102,5 +99,9 @@ class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.Sta
       state.aiServiceAgreement,
       state.solutionSharing
     )
+  }
+
+  companion object {
+    fun getInstance(): UserAgreementSettings = service()
   }
 }

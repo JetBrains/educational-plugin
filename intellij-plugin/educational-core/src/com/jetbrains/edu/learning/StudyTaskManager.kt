@@ -9,7 +9,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.util.messages.Topic
-import com.jetbrains.edu.learning.agreement.userAgreementSettings
+import com.jetbrains.edu.learning.agreement.UserAgreementSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.yaml.YamlDeepLoader.loadCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.isEduYamlProject
@@ -47,7 +47,7 @@ class StudyTaskManager(private val project: Project) : DumbAware, Disposable, Li
     && course == null
     && !courseLoadedWithError
     && project.isEduYamlProject()
-    && userAgreementSettings().isPluginAllowed
+    && UserAgreementSettings.getInstance().isPluginAllowed
 
   private fun initializeCourse() {
     if (!needToLoadCourse(project)) return

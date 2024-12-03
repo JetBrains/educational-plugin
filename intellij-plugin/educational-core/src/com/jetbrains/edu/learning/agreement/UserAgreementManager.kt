@@ -16,24 +16,25 @@ import kotlinx.coroutines.launch
 @Service
 class UserAgreementManager(scope: CoroutineScope) {
   init {
+    val userAgreementSettings = UserAgreementSettings.getInstance()
     scope.launch {
       launch {
-        userAgreementSettings().userAgreementProperties.distinctUntilChangedBy { it.pluginAgreement }.collectLatest {
+        userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.pluginAgreement }.collectLatest {
           reloadProjectOnAgreementChange()
         }
       }
       launch {
-        userAgreementSettings().userAgreementProperties.distinctUntilChangedBy { it.aiServiceAgreement }.collectLatest {
+        userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.aiServiceAgreement }.collectLatest {
           MarketplaceSettings.INSTANCE.updateAiFeaturesAgreementState(it.aiServiceAgreement)
         }
       }
       launch {
-        userAgreementSettings().userAgreementProperties.distinctUntilChangedBy { it.submissionsServiceAgreement }.collectLatest {
+        userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.submissionsServiceAgreement }.collectLatest {
           MarketplaceSettings.INSTANCE.updateAgreementState(it.submissionsServiceAgreement)
         }
       }
       launch {
-        userAgreementSettings().userAgreementProperties.distinctUntilChangedBy { it.solutionSharing }.collectLatest {
+        userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.solutionSharing }.collectLatest {
           MarketplaceSettings.INSTANCE.updateSharingPreference(
             it.solutionSharing == SolutionSharingPreference.ALWAYS
           )

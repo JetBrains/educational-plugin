@@ -5,7 +5,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.ui.JBAccountInfoService
-import com.jetbrains.edu.learning.agreement.userAgreementSettings
+import com.jetbrains.edu.learning.agreement.UserAgreementSettings
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showSuccessRequestNotification
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
@@ -52,7 +52,7 @@ class MarketplaceSettings(private val scope: CoroutineScope) {
   init {
     if (!isUnitTestMode && isJBALoggedIn()) {
       scope.launch {
-        userAgreementSettings().userAgreementProperties.collectLatest {
+        UserAgreementSettings.getInstance().userAgreementProperties.collectLatest {
           userAgreementState = it.submissionsServiceAgreement
           aiFeaturesAgreement = it.aiServiceAgreement
           solutionsSharing = it.solutionSharing.toBoolean()

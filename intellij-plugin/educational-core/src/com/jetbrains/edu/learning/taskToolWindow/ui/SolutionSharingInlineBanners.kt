@@ -6,7 +6,7 @@ import com.intellij.ui.InlineBanner
 import com.intellij.util.ui.HTMLEditorKitBuilder
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.agreement.UserAgreementDialog
-import com.jetbrains.edu.learning.agreement.userAgreementSettings
+import com.jetbrains.edu.learning.agreement.UserAgreementSettings
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils
@@ -26,7 +26,7 @@ object SolutionSharingInlineBanners {
       setMessage(EduCoreBundle.message("marketplace.solutions.sharing.inline.banner.prompt.action.text"))
       addAction(EduCoreBundle.message("marketplace.solutions.sharing.inline.banner.prompt.description")) {
         project.invokeLater {
-          if (userAgreementSettings().solutionSharing || UserAgreementDialog.showEnableSubmissionsDialog(project)) {
+          if (UserAgreementSettings.getInstance().solutionSharing || UserAgreementDialog.showEnableSubmissionsDialog(project)) {
             CompletableFuture.runAsync {
               MarketplaceSettings.INSTANCE.updateSharingPreference(true, project)
               EduCounterUsageCollector.solutionSharingInviteAction(true)

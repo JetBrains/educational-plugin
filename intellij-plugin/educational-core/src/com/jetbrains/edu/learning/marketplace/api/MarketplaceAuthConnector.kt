@@ -10,7 +10,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.ui.JBAccountInfoService
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.jetbrains.edu.learning.RemoteEnvHelper
-import com.jetbrains.edu.learning.agreement.userAgreementSettings
+import com.jetbrains.edu.learning.agreement.UserAgreementSettings
 import com.jetbrains.edu.learning.authUtils.AuthorizationPlace
 import com.jetbrains.edu.learning.authUtils.EduLoginConnector
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.JBA_TOKEN_EXCHANGE
@@ -47,7 +47,7 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
           runInBackground(null, EduCoreBundle.message("user.agreement.getting.state"), false) {
             // Send data to service as we didn't send it when we were not authorized
             val marketplaceSettings = MarketplaceSettings.INSTANCE
-            val userAgreementSettings = userAgreementSettings()
+            val userAgreementSettings = UserAgreementSettings.getInstance()
             val userAgreementProperties = userAgreementSettings.userAgreementProperties.value
             marketplaceSettings.updateAgreementState(userAgreementProperties.submissionsServiceAgreement)
             marketplaceSettings.updateSharingPreference(userAgreementSettings.solutionSharing)

@@ -80,7 +80,7 @@ class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
     @RequiresEdt
     fun showUserAgreementDialog(project: Project?): Boolean {
       val result = UserAgreementDialog(project).showWithResult()
-      userAgreementSettings().setAgreementState(result)
+      UserAgreementSettings.getInstance().setAgreementState(result)
       val isAccepted = result.pluginAgreement == UserAgreementState.ACCEPTED
       return isAccepted
     }

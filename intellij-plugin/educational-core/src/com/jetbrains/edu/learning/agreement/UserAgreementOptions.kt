@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.submissions.SolutionSharingPreference
 import com.jetbrains.edu.learning.submissions.UserAgreementState
 
 class UserAgreementOptions : BoundConfigurable(EduCoreBundle.message("user.agreement.settings.title")), OptionsProvider {
-  private val userAgreementSettings = userAgreementSettings()
+  private val userAgreementSettings = UserAgreementSettings.getInstance()
   private var pluginAgreement = userAgreementSettings.pluginAgreement
   private var aiFeaturesAgreement = userAgreementSettings.aiServiceAgreement
   private var submissionsServiceAgreement = userAgreementSettings.submissionsServiceAgreement

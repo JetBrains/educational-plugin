@@ -18,7 +18,7 @@ class UserAgreementProjectActivity : ProjectActivity {
     if (!project.isEduProject()) {
       return changeProjectView(project)
     }
-    if (userAgreementSettings().isNotShown && !isHeadlessEnvironment) {
+    if (UserAgreementSettings.getInstance().isNotShown && !isHeadlessEnvironment) {
       UserAgreementManager.getInstance().showUserAgreement(project)
     }
   }

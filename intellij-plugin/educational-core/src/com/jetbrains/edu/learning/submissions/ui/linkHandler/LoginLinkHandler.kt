@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.ColorUtil
 import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.agreement.UserAgreementDialog
-import com.jetbrains.edu.learning.agreement.userAgreementSettings
+import com.jetbrains.edu.learning.agreement.UserAgreementSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.ui.SubmissionsTab.Companion.SUBMISSION_PROTOCOL
@@ -25,7 +25,7 @@ class LoginLinkHandler(
 
     url.startsWith(SUBMISSION_USER_AGREEMENT) -> {
       if (UserAgreementDialog.showEnableSubmissionsDialog(project)) {
-        userAgreementSettings().enableSubmissions()
+        UserAgreementSettings.getInstance().enableSubmissions()
       }
       true
     }
