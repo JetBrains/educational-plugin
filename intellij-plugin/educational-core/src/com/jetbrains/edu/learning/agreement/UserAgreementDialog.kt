@@ -36,9 +36,6 @@ class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
     }
   }.apply { border = JBUI.Borders.empty(5) }
 
-  private lateinit var pluginAgreementCheckBox: Cell<JBCheckBox>
-  private lateinit var aiAgreementCheckBox: Cell<JBCheckBox>
-
   private fun createInnerPanel(): JComponent = panel {
     row {
       text(EduCoreBundle.message("user.agreement.dialog.text"))
@@ -64,6 +61,10 @@ class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
       cell(createAiAgreementCheckBoxTextPanel())
     }
   }
+
+  private lateinit var pluginAgreementCheckBox: Cell<JBCheckBox>
+
+  private lateinit var aiAgreementCheckBox: Cell<JBCheckBox>
 
   fun showWithResult(): UserAgreementSettings.AgreementStateResponse {
     val result = showAndGet()
