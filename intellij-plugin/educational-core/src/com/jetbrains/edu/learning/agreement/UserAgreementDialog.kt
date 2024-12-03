@@ -60,6 +60,7 @@ class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
         .enabledIf(pluginAgreementCheckBox.selected)
         .comment(EduCoreBundle.message("user.agreement.dialog.ai.agreement.checkbox.comment"))
         .customize(UnscaledGaps.EMPTY)
+        .align(AlignY.TOP)
       cell(createAiAgreementCheckBoxTextPanel())
     }
   }

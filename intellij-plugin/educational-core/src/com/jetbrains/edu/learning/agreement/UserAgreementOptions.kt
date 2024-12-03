@@ -3,10 +3,7 @@ package com.jetbrains.edu.learning.agreement
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.ui.components.JBCheckBox
-import com.intellij.ui.dsl.builder.Cell
-import com.intellij.ui.dsl.builder.bindSelected
-import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.builder.selected
+import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.dsl.gridLayout.UnscaledGaps
 import com.intellij.ui.dsl.gridLayout.UnscaledGapsY
 import com.jetbrains.edu.learning.RemoteEnvHelper
@@ -55,6 +52,7 @@ class UserAgreementOptions : BoundConfigurable(EduCoreBundle.message("user.agree
             .bindSelected(::aiFeaturesAgreement)
             .enabledIf(pluginAgreementCheckBox.selected)
             .customize(UnscaledGaps.EMPTY)
+            .align(AlignY.TOP)
           cell(createAiAgreementCheckBoxTextPanel())
         }
         if (!RemoteEnvHelper.isRemoteDevServer()) {
