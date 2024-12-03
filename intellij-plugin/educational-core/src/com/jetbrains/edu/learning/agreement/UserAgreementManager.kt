@@ -10,7 +10,6 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnecto
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings.Companion.isJBALoggedIn
 import com.jetbrains.edu.learning.onError
-import com.jetbrains.edu.learning.submissions.SolutionSharingPreference
 import com.jetbrains.edu.learning.submissions.UserAgreementState
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.isEduYamlProject
 import kotlinx.coroutines.CoroutineScope
@@ -40,11 +39,13 @@ class UserAgreementManager(private val scope: CoroutineScope) {
         }
       }
       launch {
-        userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.solutionSharing }.collectLatest {
+        userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.submissionsServiceAgreement }.collectLatest {
           if (it.isChangedByUser) {
-            MarketplaceSettings.INSTANCE.updateSharingPreference(
-              it.solutionSharing == SolutionSharingPreference.ALWAYS
-            )
+            submitSubmissionsServiceAgreement(it.submissionsServiceAgreement)
+            if (it.submissionsServiceAgreement != UserAgreementState.ACCEPTED) {
+              // Disable Solution Sharing on remote, when user disables Submissions functionality
+              MarketplaceSettings.INSTANCE.updateSharingPreference(false)
+            }
           }
         }
       }
@@ -58,13 +59,11 @@ class UserAgreementManager(private val scope: CoroutineScope) {
     submitAiAgreement(userAgreementProperties.aiServiceAgreement)
   }
 
+  @Suppress("UNUSED_PARAMETER")
   private fun submitPluginAgreement(state: UserAgreementState) {
     if (!isJBALoggedIn()) return
     scope.launch(Dispatchers.IO) {
-      MarketplaceSubmissionsConnector.getInstance().changeUserAgreementState(state).onError {
-        LOG.error("Failed to submit Plugin User Agreement state $state to remote: $it")
-        return@launch
-      }
+      // TODO: Submit Plugin Agreement to Remote once corresponding endpoint is added
     }
   }
 
@@ -74,6 +73,17 @@ class UserAgreementManager(private val scope: CoroutineScope) {
       MarketplaceSubmissionsConnector.getInstance().changeAiFeaturesAgreementState(state).onError {
         LOG.error("Failed to submit AI User Agreement state $state to remote: $it")
         return@launch
+      }
+    }
+  }
+
+  private fun submitSubmissionsServiceAgreement(state: UserAgreementState) {
+    if (!isJBALoggedIn()) {
+      scope.launch(Dispatchers.IO) {
+        MarketplaceSubmissionsConnector.getInstance().changeUserAgreementState(state).onError {
+          LOG.error("Failed to submit Submissions Service Agreement state $state to remote: $it")
+          return@launch
+        }
       }
     }
   }
