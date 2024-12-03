@@ -1,21 +1,19 @@
 package com.jetbrains.edu.learning.marketplace
 
-import com.jetbrains.edu.learning.FileTree
-import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
-import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.intellij.openapi.project.Project
+import com.intellij.testFramework.PlatformTestUtil
+import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
-import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
 import com.jetbrains.edu.learning.navigation.NavigationUtils.getFirstTask
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import com.jetbrains.rd.util.firstOrNull
 import org.junit.Test
 import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
 
 class MarketplaceCourseUpdateTest : CourseGenerationTestBase<EmptyProjectSettings>() {
   override val defaultSettings: EmptyProjectSettings get() = EmptyProjectSettings
@@ -590,6 +588,40 @@ class MarketplaceCourseUpdateTest : CourseGenerationTestBase<EmptyProjectSetting
     checkTaskFiles(secondTask, oldTaskFileText, oldTestFileText, oldTaskDescriptionText, taskFileName, testFileName)
   }
 
+  @Test
+  fun `test task is replaced with new id`() {
+    val course = createCourse(CheckStatus.Solved)
+
+    val serverCourse = course {
+      lesson {
+        eduTask(stepId = 1) {
+          taskFile("TaskFile1.kt")
+        }
+        // the task changed its id from 2 to 3,
+        // so effectively it should mean that the old task id deleted and a new one is added
+        eduTask(stepId = 3) {
+          taskFile("TaskFile2.kt")
+        }
+      }
+    } as EduCourse
+
+    val expectedStructure = fileTree {
+      dir("lesson1") {
+        dir("task1") {
+          file("TaskFile1.kt")
+          file("task.md")
+        }
+        dir("task2") {
+          file("TaskFile2.kt")
+          file("task.md")
+        }
+      }
+    }
+
+    doTest(course, serverCourse, expectedStructure, 2)
+    assertEquals(course.updateDate, serverCourse.updateDate)
+  }
+
   private fun createCourseWithFrameworkLesson(
     taskFileName: String,
     testFileName: String,
@@ -646,9 +678,35 @@ class MarketplaceCourseUpdateTest : CourseGenerationTestBase<EmptyProjectSetting
 
   fun doTest(course: EduCourse, courseFromServer: EduCourse, expectedFileTree: FileTree, remoteCourseVersion: Int) {
     loadCourseStructure(course, courseFromServer)
-    MarketplaceCourseUpdater(project, course, remoteCourseVersion).updateCourseWithRemote(courseFromServer)
+
+    updateCourse(course, courseFromServer, remoteCourseVersion)
+
     checkCourseStructure(course, courseFromServer, expectedFileTree)
     assertEquals(remoteCourseVersion, course.marketplaceCourseVersion)
+  }
+
+  private fun updateCourse(
+    course: EduCourse,
+    courseFromServer: EduCourse,
+    remoteCourseVersion: Int
+  ) {
+    val courseUpdated = AtomicBoolean(false)
+    project.messageBus.connect(testRootDisposable).subscribe(CourseUpdateListener.COURSE_UPDATE, object : CourseUpdateListener {
+      override fun courseUpdated(project: Project, course: Course) {
+        courseUpdated.set(true)
+      }
+    })
+    runInBackground(project, "test title") {
+      MarketplaceCourseUpdater(project, course, remoteCourseVersion).updateCourseWithRemote(courseFromServer)
+    }
+
+    for (i in 1..100) {
+      if (courseUpdated.get()) return
+      Thread.sleep(50)
+      PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+    }
+
+    error("The course update is taking too long")
   }
 
   private fun loadCourseStructure(course: EduCourse, courseFromServer: EduCourse) {
