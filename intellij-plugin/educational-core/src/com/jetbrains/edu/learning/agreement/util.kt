@@ -34,7 +34,7 @@ object UserAgreementUtil {
 
   private fun leftGap() = UnscaledGaps(0, 3, 0, 0)
 
-  private const val AI_TERMS_OF_USE_URL: String = "https://www.jetbrains.com/ai/terms-of-use/"
+  private const val AI_TERMS_OF_USE_URL: String = "https://www.jetbrains.com/legal/docs/terms/jetbrains-ai-service/"
   private const val USER_AGREEMENT_URL: String = "https://www.jetbrains.com/legal/docs/terms/jetbrains-academy/plugin/"
   private const val PRIVACY_POLICY_URL: String = "https://www.jetbrains.com/legal/docs/privacy/privacy/"
 
