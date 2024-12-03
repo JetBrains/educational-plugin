@@ -35,7 +35,7 @@ class UserAgreementManager(private val scope: CoroutineScope) {
       launch {
         userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.aiServiceAgreement }.collectLatest {
           if (it.isChangedByUser) {
-            MarketplaceSettings.INSTANCE.updateAiFeaturesAgreementState(it.aiServiceAgreement)
+            updateAiAgreementState(it.aiServiceAgreement)
           }
         }
       }
@@ -63,6 +63,16 @@ class UserAgreementManager(private val scope: CoroutineScope) {
     scope.launch(Dispatchers.IO) {
       MarketplaceSubmissionsConnector.getInstance().changeUserAgreementState(state).onError {
         LOG.error("Failed to submit Plugin User Agreement state $state to remote: $it")
+        return@launch
+      }
+    }
+  }
+
+  private fun updateAiAgreementState(state: UserAgreementState) {
+    if (!isJBALoggedIn()) return
+    scope.launch(Dispatchers.IO) {
+      MarketplaceSubmissionsConnector.getInstance().changeAiFeaturesAgreementState(state).onError {
+        LOG.error("Failed to submit AI User Agreement state $state to remote: $it")
         return@launch
       }
     }

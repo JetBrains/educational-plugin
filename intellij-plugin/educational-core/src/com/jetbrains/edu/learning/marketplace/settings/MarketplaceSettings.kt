@@ -7,17 +7,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.JBAccountInfoService
 import com.jetbrains.edu.learning.agreement.UserAgreementSettings
 import com.jetbrains.edu.learning.isUnitTestMode
-import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showSuccessRequestNotification
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.getJBAUserInfo
 import com.jetbrains.edu.learning.marketplace.isMarketplaceStudentCourse
 import com.jetbrains.edu.learning.marketplace.toBoolean
-import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.submissions.UserAgreementState
 import com.jetbrains.edu.learning.taskToolWindow.ui.SolutionSharingInlineBanners
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -34,18 +30,10 @@ class MarketplaceSettings(private val scope: CoroutineScope) {
   var solutionsSharing: Boolean? = null
     private set
 
-  /**
-   * Do not rely on this property deciding if statistics can be uploaded, get actual state from the remote
-   */
-  @Volatile
-  var aiFeaturesAgreement: UserAgreementState? = null
-    private set
-
   init {
     if (!isUnitTestMode && isJBALoggedIn()) {
       scope.launch {
         UserAgreementSettings.getInstance().userAgreementProperties.collectLatest {
-          aiFeaturesAgreement = it.aiServiceAgreement
           solutionsSharing = it.solutionSharing.toBoolean()
         }
       }
@@ -89,34 +77,6 @@ class MarketplaceSettings(private val scope: CoroutineScope) {
         SolutionSharingInlineBanners.showSuccessSolutionSharingEnabling(project)
       }
       EduCounterUsageCollector.solutionSharingState(state)
-    }
-  }
-
-  fun updateAiFeaturesAgreementState(state: UserAgreementState, project: Project? = null) {
-    if (!isJBALoggedIn()) return
-    scope.launch(Dispatchers.IO) {
-      MarketplaceSubmissionsConnector.getInstance().changeAiFeaturesAgreementState(state).onError {
-        EduNotificationManager.showErrorNotification(
-          project,
-          EduCoreBundle.message("user.statistics.changed.failed.notification.title"),
-          EduCoreBundle.message("notification.something.went.wrong.text")
-        )
-        return@launch
-      }
-
-      aiFeaturesAgreement = state
-      val notificationText = if (state == UserAgreementState.ACCEPTED) {
-        EduCoreBundle.message("user.statistics.changed.allowed.notification.text")
-      }
-      else {
-        EduCoreBundle.message("user.statistics.changed.prohibited.notification.text")
-      }
-
-      showSuccessRequestNotification(
-        project,
-        EduCoreBundle.message("user.statistics.changed.success.notification.title"),
-        notificationText
-      )
     }
   }
 
