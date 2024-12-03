@@ -79,11 +79,9 @@ class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
 
   companion object {
     @RequiresEdt
-    fun showUserAgreementDialog(project: Project?): Boolean {
+    fun showUserAgreementDialog(project: Project?) {
       val result = UserAgreementDialog(project).showWithResult()
       UserAgreementSettings.getInstance().setAgreementState(result)
-      val isAccepted = result.pluginAgreement == UserAgreementState.ACCEPTED
-      return isAccepted
     }
 
     fun showEnableSubmissionsDialog(project: Project): Boolean {
