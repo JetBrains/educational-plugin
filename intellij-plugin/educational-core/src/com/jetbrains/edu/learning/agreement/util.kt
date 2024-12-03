@@ -21,22 +21,13 @@ object UserAgreementUtil {
     }
   }
 
-  @Suppress("DialogTitleCapitalization")
   fun createAiAgreementCheckBoxTextPanel(): JPanel = panel {
     row {
       text(
-        EduCoreBundle.message("user.agreement.dialog.ai.agreement.checkbox.text.first.row"),
+        EduCoreBundle.message("user.agreement.dialog.ai.agreement.checkbox.text"),
         action = {
           EduBrowser.getInstance().browse(AI_TERMS_OF_USE_URL)
         })
-        .customize(leftGap())
-    }
-    row {
-      label(EduCoreBundle.message("user.agreement.dialog.ai.agreement.checkbox.text.second.row"))
-        .customize(leftGap())
-    }
-    row {
-      label(EduCoreBundle.message("user.agreement.dialog.ai.agreement.checkbox.text.third.row"))
         .customize(leftGap())
     }
   }
