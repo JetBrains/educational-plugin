@@ -4,7 +4,6 @@ import com.intellij.execution.process.ProcessIOExecutorService
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.intellij.util.messages.Topic
 import com.jetbrains.edu.learning.LightTestAware
 import com.jetbrains.edu.learning.agreement.UserAgreementSettings
@@ -251,10 +250,8 @@ class SubmissionsManager(private val project: Project) : LightTestAware {
 
   fun isLoggedIn(): Boolean = course?.getSubmissionsProvider()?.isLoggedIn() ?: false
 
-  @RequiresBackgroundThread
   fun isSubmissionDownloadAllowed(): Boolean = UserAgreementSettings.getInstance().submissionsServiceAgreement
 
-  @RequiresBackgroundThread
   fun isSolutionSharingAllowed(): Boolean = UserAgreementSettings.getInstance().submissionsServiceAgreement
 
   fun isCommunitySolutionsLoaded(task: Task): Boolean = !communitySubmissions[task.id]?.submissions.isNullOrEmpty()
