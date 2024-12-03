@@ -5,7 +5,6 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.ui.JBAccountInfoService
-import com.jetbrains.edu.learning.agreement.UserAgreementSettings
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
@@ -17,7 +16,6 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.taskToolWindow.ui.SolutionSharingInlineBanners
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.TestOnly
 
@@ -32,10 +30,8 @@ class MarketplaceSettings(private val scope: CoroutineScope) {
 
   init {
     if (!isUnitTestMode && isJBALoggedIn()) {
-      scope.launch {
-        UserAgreementSettings.getInstance().userAgreementProperties.collectLatest {
-          solutionsSharing = it.solutionSharing.toBoolean()
-        }
+      scope.launch(Dispatchers.IO) {
+        solutionsSharing = MarketplaceSubmissionsConnector.getInstance().getSharingPreference().toBoolean()
       }
     }
   }
