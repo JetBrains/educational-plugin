@@ -28,14 +28,14 @@ class UserAgreementManager(private val scope: CoroutineScope) {
         userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.pluginAgreement }.collectLatest {
           if (it.isChangedByUser) {
             reloadProjectOnAgreementChange()
-            updateAgreementState(it.pluginAgreement)
+            submitPluginAgreement(it.pluginAgreement)
           }
         }
       }
       launch {
         userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.aiServiceAgreement }.collectLatest {
           if (it.isChangedByUser) {
-            updateAiAgreementState(it.aiServiceAgreement)
+            submitAiAgreement(it.aiServiceAgreement)
           }
         }
       }
@@ -58,7 +58,14 @@ class UserAgreementManager(private val scope: CoroutineScope) {
     }
   }
 
-  private fun updateAgreementState(state: UserAgreementState) {
+  fun submitAgreementsToRemote() {
+    if (!isJBALoggedIn()) return
+    val userAgreementProperties = UserAgreementSettings.getInstance().userAgreementProperties.value
+    submitPluginAgreement(userAgreementProperties.pluginAgreement)
+    submitAiAgreement(userAgreementProperties.aiServiceAgreement)
+  }
+
+  private fun submitPluginAgreement(state: UserAgreementState) {
     if (!isJBALoggedIn()) return
     scope.launch(Dispatchers.IO) {
       MarketplaceSubmissionsConnector.getInstance().changeUserAgreementState(state).onError {
@@ -68,7 +75,7 @@ class UserAgreementManager(private val scope: CoroutineScope) {
     }
   }
 
-  private fun updateAiAgreementState(state: UserAgreementState) {
+  private fun submitAiAgreement(state: UserAgreementState) {
     if (!isJBALoggedIn()) return
     scope.launch(Dispatchers.IO) {
       MarketplaceSubmissionsConnector.getInstance().changeAiFeaturesAgreementState(state).onError {

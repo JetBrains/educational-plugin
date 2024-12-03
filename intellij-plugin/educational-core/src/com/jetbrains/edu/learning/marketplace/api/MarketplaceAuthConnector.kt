@@ -10,7 +10,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.ui.JBAccountInfoService
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.jetbrains.edu.learning.RemoteEnvHelper
-import com.jetbrains.edu.learning.agreement.UserAgreementSettings
+import com.jetbrains.edu.learning.agreement.UserAgreementManager
 import com.jetbrains.edu.learning.authUtils.AuthorizationPlace
 import com.jetbrains.edu.learning.authUtils.EduLoginConnector
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.JBA_TOKEN_EXCHANGE
@@ -22,7 +22,6 @@ import com.jetbrains.edu.learning.marketplace.JET_BRAINS_ACCOUNT
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showInstallMarketplacePluginNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showReloginToJBANeededNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceOAuthBundle
-import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.network.createRetrofitBuilder
 import com.jetbrains.edu.learning.network.executeHandlingExceptions
@@ -46,12 +45,7 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
         Runnable {
           runInBackground(null, EduCoreBundle.message("user.agreement.getting.state"), false) {
             // Send data to service as we didn't send it when we were not authorized
-            val marketplaceSettings = MarketplaceSettings.INSTANCE
-            val userAgreementSettings = UserAgreementSettings.getInstance()
-            val userAgreementProperties = userAgreementSettings.userAgreementProperties.value
-            marketplaceSettings.updateAgreementState(userAgreementProperties.submissionsServiceAgreement)
-            marketplaceSettings.updateSharingPreference(userAgreementSettings.solutionSharing)
-            marketplaceSettings.updateAiFeaturesAgreementState(userAgreementProperties.aiServiceAgreement)
+            UserAgreementManager.getInstance().submitAgreementsToRemote()
           }
         })
     }
