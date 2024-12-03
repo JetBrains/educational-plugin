@@ -20,24 +20,32 @@ class UserAgreementManager(scope: CoroutineScope) {
     scope.launch {
       launch {
         userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.pluginAgreement }.collectLatest {
-          reloadProjectOnAgreementChange()
+          if (it.isChangedByUser) {
+            reloadProjectOnAgreementChange()
+          }
         }
       }
       launch {
         userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.aiServiceAgreement }.collectLatest {
-          MarketplaceSettings.INSTANCE.updateAiFeaturesAgreementState(it.aiServiceAgreement)
+          if (it.isChangedByUser) {
+            MarketplaceSettings.INSTANCE.updateAiFeaturesAgreementState(it.aiServiceAgreement)
+          }
         }
       }
       launch {
         userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.submissionsServiceAgreement }.collectLatest {
-          MarketplaceSettings.INSTANCE.updateAgreementState(it.submissionsServiceAgreement)
+          if (it.isChangedByUser) {
+            MarketplaceSettings.INSTANCE.updateAgreementState(it.submissionsServiceAgreement)
+          }
         }
       }
       launch {
         userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.solutionSharing }.collectLatest {
-          MarketplaceSettings.INSTANCE.updateSharingPreference(
-            it.solutionSharing == SolutionSharingPreference.ALWAYS
-          )
+          if (it.isChangedByUser) {
+            MarketplaceSettings.INSTANCE.updateSharingPreference(
+              it.solutionSharing == SolutionSharingPreference.ALWAYS
+            )
+          }
         }
       }
     }

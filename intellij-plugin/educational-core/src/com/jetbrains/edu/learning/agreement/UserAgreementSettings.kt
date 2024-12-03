@@ -42,7 +42,8 @@ class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.Sta
     _userAgreementProperties.value = UserAgreementProperties(
       pluginAgreement = agreementState.pluginAgreement,
       aiServiceAgreement = agreementState.aiAgreement,
-      submissionsServiceAgreement = agreementState.pluginAgreement
+      submissionsServiceAgreement = agreementState.pluginAgreement,
+      isChangedByUser = true
     )
   }
 
@@ -61,19 +62,21 @@ class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.Sta
       pluginAgreement = pluginAgreement,
       aiServiceAgreement = aiServiceAgreement,
       submissionsServiceAgreement = submissionsServiceAgreement,
-      solutionSharing = solutionSharingPreference
+      solutionSharing = solutionSharingPreference,
+      isChangedByUser = true
     )
   }
 
   fun resetUserAgreementSettings() {
-    _userAgreementProperties.value = UserAgreementProperties()
+    _userAgreementProperties.value = UserAgreementProperties(isChangedByUser = true)
   }
 
   data class UserAgreementProperties(
     val pluginAgreement: UserAgreementState = UserAgreementState.NOT_SHOWN,
     val submissionsServiceAgreement: UserAgreementState = UserAgreementState.NOT_SHOWN,
     val aiServiceAgreement: UserAgreementState = UserAgreementState.NOT_SHOWN,
-    val solutionSharing: SolutionSharingPreference = SolutionSharingPreference.NEVER
+    val solutionSharing: SolutionSharingPreference = SolutionSharingPreference.NEVER,
+    val isChangedByUser: Boolean = false
   )
 
   class State : BaseState() {
