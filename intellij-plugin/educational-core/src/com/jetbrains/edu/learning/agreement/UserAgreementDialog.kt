@@ -1,14 +1,14 @@
 package com.jetbrains.edu.learning.agreement
 
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.observable.properties.AtomicBooleanProperty
+import com.intellij.openapi.observable.properties.MutableBooleanProperty
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.showYesNoDialog
-import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.dsl.builder.AlignY
-import com.intellij.ui.dsl.builder.Cell
+import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.builder.selected
 import com.intellij.ui.dsl.gridLayout.UnscaledGaps
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.JBUI
@@ -21,6 +21,10 @@ import com.jetbrains.edu.learning.submissions.UserAgreementState
 import javax.swing.JComponent
 
 class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
+  private val pluginAgreementAccepted: MutableBooleanProperty = AtomicBooleanProperty(false)
+
+  private val aiAgreementCheckBox: MutableBooleanProperty = AtomicBooleanProperty(false)
+
   init {
     setOKButtonText(EduCoreBundle.message("user.agreement.dialog.agree.button"))
     isResizable = false
@@ -41,30 +45,28 @@ class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
       text(EduCoreBundle.message("user.agreement.dialog.text"))
     }
     row {
-      pluginAgreementCheckBox = checkBox(EMPTY_TEXT)
+      checkBox(EMPTY_TEXT)
         .comment(EduCoreBundle.message("user.agreement.dialog.plugin.agreement.checkbox.comment"))
         .onChanged {
           if (!it.isSelected) {
-            aiAgreementCheckBox.selected(false)
+            aiAgreementCheckBox.set(false)
           }
           isOKActionEnabled = it.isSelected
         }
+        .bindSelected(pluginAgreementAccepted)
         .customize(UnscaledGaps.EMPTY)
       cell(createPluginAgreementCheckBoxTextPanel())
     }
     row {
-      aiAgreementCheckBox = checkBox(EMPTY_TEXT)
-        .enabledIf(pluginAgreementCheckBox.selected)
+      checkBox(EMPTY_TEXT)
+        .enabledIf(pluginAgreementAccepted)
         .comment(EduCoreBundle.message("user.agreement.dialog.ai.agreement.checkbox.comment"))
         .customize(UnscaledGaps.EMPTY)
         .align(AlignY.TOP)
+        .bindSelected(aiAgreementCheckBox)
       cell(createAiAgreementCheckBoxTextPanel())
     }
   }
-
-  private lateinit var pluginAgreementCheckBox: Cell<JBCheckBox>
-
-  private lateinit var aiAgreementCheckBox: Cell<JBCheckBox>
 
   fun showWithResult(): UserAgreementSettings.AgreementStateResponse {
     val result = showAndGet()
@@ -72,9 +74,9 @@ class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
       return UserAgreementSettings.AgreementStateResponse()
     }
     val pluginAgreementState =
-      if (pluginAgreementCheckBox.component.isSelected) UserAgreementState.ACCEPTED else UserAgreementState.DECLINED
+      if (pluginAgreementAccepted.get()) UserAgreementState.ACCEPTED else UserAgreementState.DECLINED
     val aiAgreementState =
-      if (aiAgreementCheckBox.component.isSelected) UserAgreementState.ACCEPTED else UserAgreementState.DECLINED
+      if (aiAgreementCheckBox.get()) UserAgreementState.ACCEPTED else UserAgreementState.DECLINED
     return UserAgreementSettings.AgreementStateResponse(pluginAgreement = pluginAgreementState, aiAgreement = aiAgreementState)
   }
 
