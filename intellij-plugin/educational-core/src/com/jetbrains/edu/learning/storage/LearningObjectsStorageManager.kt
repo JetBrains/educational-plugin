@@ -65,10 +65,10 @@ class LearningObjectsStorageManager(private val project: Project) : DumbAware, D
             logger<LearningObjectsStorageManager>().error("Exception during persisting contents for EduFile $pathInStorage", e)
             initialContents
           }
-          // if persisting took long, contents could have been already changed
 
-          val currentContents = setContentsIfEquals(contentsWithDiagnostics, persistedContents)
-          if (currentContents != contentsWithDiagnostics) {
+          // if persisting took long, contents could have been already changed
+          if (!setContentsIfEquals(contentsWithDiagnostics, persistedContents)) {
+            val currentContents = contents
             val logMessage = "Contents of a file changed while the file was being persisted: $pathInStorage from ${initialContents.debugString()} to ${currentContents.debugString()}"
 
             // The level is ERROR if the contents are different, otherwise it is a WARNING,
