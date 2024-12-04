@@ -38,8 +38,8 @@ class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.Sta
     _userAgreementProperties.value = _userAgreementProperties.value.copy(submissionsServiceAgreement = UserAgreementState.ACCEPTED)
   }
 
-  fun enableSolutionSharing() {
-    _userAgreementProperties.value = _userAgreementProperties.value.copy(solutionSharingPreference = SolutionSharingPreference.ALWAYS)
+  fun setSolutionSharing(solutionSharingPreference: SolutionSharingPreference = SolutionSharingPreference.ALWAYS) {
+    _userAgreementProperties.value = _userAgreementProperties.value.copy(solutionSharingPreference = solutionSharingPreference)
   }
 
   fun setAgreementState(agreementState: AgreementStateResponse) {

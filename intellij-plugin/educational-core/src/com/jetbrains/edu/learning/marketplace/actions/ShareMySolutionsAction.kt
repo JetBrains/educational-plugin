@@ -25,7 +25,7 @@ class ShareMySolutionsAction : DumbAwareToggleAction() {
 
   override fun isSelected(e: AnActionEvent): Boolean = UserAgreementSettings.getInstance().solutionSharing
 
-  override fun setSelected(e: AnActionEvent, state: Boolean) = UserAgreementSettings.getInstance().enableSolutionSharing()
+  override fun setSelected(e: AnActionEvent, state: Boolean) = UserAgreementSettings.getInstance().setSolutionSharing()
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 

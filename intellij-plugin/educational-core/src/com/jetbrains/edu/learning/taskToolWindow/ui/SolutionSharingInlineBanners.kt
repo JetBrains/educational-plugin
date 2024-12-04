@@ -26,7 +26,7 @@ object SolutionSharingInlineBanners {
         project.invokeLater {
           if (UserAgreementSettings.getInstance().solutionSharing || UserAgreementDialog.showEnableSubmissionsDialog(project)) {
             CompletableFuture.runAsync {
-              UserAgreementSettings.getInstance().enableSolutionSharing()
+              UserAgreementSettings.getInstance().setSolutionSharing()
               showSuccessSolutionSharingEnabling(project)
               EduCounterUsageCollector.solutionSharingInviteAction(true)
             }
