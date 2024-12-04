@@ -64,68 +64,78 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
       return
     }
     runInBackgroundExclusively(EduAIBundle.message("ai.translation.already.running")) {
-      withBackgroundProgress(project, EduAIBundle.message("ai.translation.getting.course.translation")) {
-        val translationSettings = TranslationProjectSettings.getInstance(project)
-
-        if (course.isTranslationExists(translationLanguage)) {
-          val properties = translationSettings.getTranslationPropertiesByLanguage(translationLanguage)
-          if (properties != null) {
-            translationSettings.setTranslation(properties)
-            return@withBackgroundProgress
-          }
-        }
-
-        EduAITranslationCounterUsageCollector.translationStarted(course, translationLanguage)
-        val translation = fetchTranslation(course, translationLanguage).onError { error ->
-          EduAITranslationCounterUsageCollector.translationFinishedWithError(course, translationLanguage, error)
-          LOG.warn("Failed to get translation for ${course.name} to $translationLanguage: $error")
-          return@withBackgroundProgress
-        }
-        course.saveTranslation(translation)
-        translationSettings.setTranslation(translation.toTranslationProperties())
-        EduAITranslationCounterUsageCollector.translationFinishedSuccessfully(course, translationLanguage)
-      }
+      doFetchAndApplyTranslation(course, translationLanguage)
     }
   }
 
   fun updateTranslation(course: EduCourse, translationProperties: TranslationProperties) {
     runInBackgroundExclusively(EduAIBundle.message("ai.translation.already.running")) {
-      withBackgroundProgress(project, EduAIBundle.message("ai.translation.update.course.translation")) {
-        val (language, _, version) = translationProperties
-        val translation = fetchTranslation(course, language).onError {  error ->
-          EduAITranslationCounterUsageCollector.translationFinishedWithError(course, language, error)
-          LOG.warn("Failed to update translation for ${course.name} to $language: $error")
-          return@withBackgroundProgress
-        }
-        val translationSettings = TranslationProjectSettings.getInstance(project)
-        if (version == translation.version) {
-          AITranslationNotificationManager.showInfoNotification(
-            project,
-            message = EduAIBundle.message("ai.translation.translation.is.up.to.date")
-          )
-          return@withBackgroundProgress
-        }
-        course.saveTranslation(translation)
-        translationSettings.setTranslation(translation.toTranslationProperties())
-        AITranslationNotificationManager.showInfoNotification(
-          project,
-          message = EduAIBundle.message("ai.translation.translation.has.been.updated")
-        )
-        EduAITranslationCounterUsageCollector.translationUpdated(course, translation.language)
-      }
+      doUpdateTranslation(course, translationProperties)
     }
   }
 
   fun resetCourseTranslation(course: EduCourse) {
     runInBackgroundExclusively(EduAIBundle.message("ai.translation.reset.is.not.possible")) {
-      if (TranslationProjectSettings.isCourseTranslated(project)) {
-        withBackgroundProgress(project, EduAIBundle.message("ai.translation.reset.course.translation")) {
-          TranslationProjectSettings.getInstance(project).resetTranslation()
+      doResetCourseTranslation(course)
+    }
+  }
+
+  private suspend fun doFetchAndApplyTranslation(course: EduCourse, translationLanguage: TranslationLanguage): Unit =
+    withBackgroundProgress(project, EduAIBundle.message("ai.translation.getting.course.translation")) {
+      val translationSettings = TranslationProjectSettings.getInstance(project)
+
+      if (course.isTranslationExists(translationLanguage)) {
+        val properties = translationSettings.getTranslationPropertiesByLanguage(translationLanguage)
+        if (properties != null) {
+          translationSettings.setTranslation(properties)
+          return@withBackgroundProgress
         }
       }
-      withBackgroundProgress(project, EduAIBundle.message("ai.translation.deleting.course.translation.files")) {
-        course.deleteAllTranslations()
+
+      EduAITranslationCounterUsageCollector.translationStarted(course, translationLanguage)
+      val translation = fetchTranslation(course, translationLanguage).onError { error ->
+        EduAITranslationCounterUsageCollector.translationFinishedWithError(course, translationLanguage, error)
+        LOG.warn("Failed to get translation for ${course.name} to $translationLanguage: $error")
+        return@withBackgroundProgress
       }
+      course.saveTranslation(translation)
+      translationSettings.setTranslation(translation.toTranslationProperties())
+      EduAITranslationCounterUsageCollector.translationFinishedSuccessfully(course, translationLanguage)
+    }
+
+  private suspend fun doUpdateTranslation(course: EduCourse, translationProperties: TranslationProperties): Unit =
+    withBackgroundProgress(project, EduAIBundle.message("ai.translation.update.course.translation")) {
+      val (language, _, version) = translationProperties
+      val translation = fetchTranslation(course, language).onError { error ->
+        EduAITranslationCounterUsageCollector.translationFinishedWithError(course, language, error)
+        LOG.warn("Failed to update translation for ${course.name} to $language: $error")
+        return@withBackgroundProgress
+      }
+      val translationSettings = TranslationProjectSettings.getInstance(project)
+      if (version == translation.version) {
+        AITranslationNotificationManager.showInfoNotification(
+          project,
+          message = EduAIBundle.message("ai.translation.translation.is.up.to.date")
+        )
+        return@withBackgroundProgress
+      }
+      course.saveTranslation(translation)
+      translationSettings.setTranslation(translation.toTranslationProperties())
+      AITranslationNotificationManager.showInfoNotification(
+        project,
+        message = EduAIBundle.message("ai.translation.translation.has.been.updated")
+      )
+      EduAITranslationCounterUsageCollector.translationUpdated(course, translation.language)
+    }
+
+  private suspend fun doResetCourseTranslation(course: EduCourse) {
+    if (TranslationProjectSettings.isCourseTranslated(project)) {
+      withBackgroundProgress(project, EduAIBundle.message("ai.translation.reset.course.translation")) {
+        TranslationProjectSettings.getInstance(project).resetTranslation()
+      }
+    }
+    withBackgroundProgress(project, EduAIBundle.message("ai.translation.deleting.course.translation.files")) {
+      course.deleteAllTranslations()
     }
   }
 
