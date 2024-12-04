@@ -63,7 +63,6 @@ class UserAgreementManager(private val scope: CoroutineScope) {
   }
 
   fun submitAgreementsToRemote() {
-    if (!isJBALoggedIn()) return
     val userAgreementProperties = UserAgreementSettings.getInstance().userAgreementProperties.value
     submitPluginAgreement(userAgreementProperties.pluginAgreement)
     submitAiAgreement(userAgreementProperties.aiServiceAgreement)
