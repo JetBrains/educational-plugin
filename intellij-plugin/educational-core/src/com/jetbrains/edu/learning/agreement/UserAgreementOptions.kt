@@ -1,9 +1,12 @@
 package com.jetbrains.edu.learning.agreement
 
+import com.intellij.openapi.observable.properties.AtomicBooleanProperty
+import com.intellij.openapi.observable.properties.MutableBooleanProperty
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.ui.DialogPanel
-import com.intellij.ui.components.JBCheckBox
-import com.intellij.ui.dsl.builder.*
+import com.intellij.ui.dsl.builder.AlignY
+import com.intellij.ui.dsl.builder.bindSelected
+import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.gridLayout.UnscaledGaps
 import com.intellij.ui.dsl.gridLayout.UnscaledGapsY
 import com.jetbrains.edu.learning.RemoteEnvHelper
@@ -17,15 +20,11 @@ import com.jetbrains.edu.learning.submissions.UserAgreementState
 
 class UserAgreementOptions : BoundConfigurable(EduCoreBundle.message("user.agreement.settings.title")), OptionsProvider {
   private val userAgreementSettings = UserAgreementSettings.getInstance()
-  private var pluginAgreement = userAgreementSettings.pluginAgreement
-  private var aiFeaturesAgreement = userAgreementSettings.aiServiceAgreement
-  private var submissionsServiceAgreement = userAgreementSettings.submissionsServiceAgreement
-  private var solutionSharingPreference = userAgreementSettings.solutionSharing
 
-  private lateinit var pluginAgreementCheckBox: Cell<JBCheckBox>
-  private lateinit var aiFeaturesAgreementCheckBox: Cell<JBCheckBox>
-  private lateinit var submissionsServiceCheckBox: Cell<JBCheckBox>
-  private lateinit var solutionSharingPreferenceCheckBox: Cell<JBCheckBox>
+  private val pluginAgreementAccepted: MutableBooleanProperty = AtomicBooleanProperty(userAgreementSettings.pluginAgreement)
+  private val aiAgreementAccepted: MutableBooleanProperty = AtomicBooleanProperty(userAgreementSettings.aiServiceAgreement)
+  private val submissionsServiceAccepted: MutableBooleanProperty = AtomicBooleanProperty(userAgreementSettings.submissionsServiceAgreement)
+  private val solutionSharingAccepted: MutableBooleanProperty = AtomicBooleanProperty(userAgreementSettings.solutionSharing)
 
   override fun createPanel(): DialogPanel = panel {
     group(displayName) {
@@ -33,14 +32,14 @@ class UserAgreementOptions : BoundConfigurable(EduCoreBundle.message("user.agree
         text(EduCoreBundle.message("user.agreement.dialog.text"))
       }
       row {
-        pluginAgreementCheckBox = checkBox(EMPTY_TEXT)
-          .bindSelected(::pluginAgreement)
+        checkBox(EMPTY_TEXT)
+          .bindSelected(pluginAgreementAccepted)
           .enabled(!userAgreementSettings.isNotShown)
           .onChanged {
             if (!it.isSelected) {
-              aiFeaturesAgreementCheckBox.component.isSelected = false
-              submissionsServiceCheckBox.component.isSelected = false
-              solutionSharingPreferenceCheckBox.component.isSelected = false
+              aiAgreementAccepted.set(false)
+              submissionsServiceAccepted.set(false)
+              solutionSharingAccepted.set(false)
             }
           }
           .customize(UnscaledGaps.EMPTY)
@@ -48,29 +47,29 @@ class UserAgreementOptions : BoundConfigurable(EduCoreBundle.message("user.agree
       }.customize(UnscaledGapsY(bottom = 5))
       indent {
         row {
-          aiFeaturesAgreementCheckBox = checkBox(EMPTY_TEXT)
-            .bindSelected(::aiFeaturesAgreement)
-            .enabledIf(pluginAgreementCheckBox.selected)
+          checkBox(EMPTY_TEXT)
+            .bindSelected(aiAgreementAccepted)
+            .enabledIf(pluginAgreementAccepted)
             .customize(UnscaledGaps.EMPTY)
             .align(AlignY.TOP)
           cell(createAiAgreementCheckBoxTextPanel())
         }
         if (!RemoteEnvHelper.isRemoteDevServer()) {
           row {
-            submissionsServiceCheckBox = checkBox(EduCoreBundle.message("marketplace.options.user.agreement.checkbox"))
-              .bindSelected(::submissionsServiceAgreement)
-              .enabledIf(pluginAgreementCheckBox.selected)
+            checkBox(EduCoreBundle.message("marketplace.options.user.agreement.checkbox"))
+              .bindSelected(submissionsServiceAccepted)
+              .enabledIf(pluginAgreementAccepted)
               .onChanged {
                 if (!it.isSelected) {
-                  solutionSharingPreferenceCheckBox.component.isSelected = false
+                  solutionSharingAccepted.set(false)
                 }
               }
           }
         }
         row {
-          solutionSharingPreferenceCheckBox = checkBox(EduCoreBundle.message("marketplace.options.solutions.sharing.checkbox"))
-            .bindSelected(::solutionSharingPreference)
-            .enabledIf(submissionsServiceCheckBox.selected)
+          checkBox(EduCoreBundle.message("marketplace.options.solutions.sharing.checkbox"))
+            .bindSelected(solutionSharingAccepted)
+            .enabledIf(submissionsServiceAccepted)
         }
       }
     }
@@ -78,23 +77,26 @@ class UserAgreementOptions : BoundConfigurable(EduCoreBundle.message("user.agree
 
   override fun isModified(): Boolean {
     return super<BoundConfigurable>.isModified()
-           || pluginAgreement != userAgreementSettings.pluginAgreement
-           || aiFeaturesAgreement != userAgreementSettings.aiServiceAgreement
-           || submissionsServiceAgreement != userAgreementSettings.submissionsServiceAgreement
-           || solutionSharingPreference != userAgreementSettings.solutionSharing
+           || pluginAgreementAccepted.get() != userAgreementSettings.pluginAgreement
+           || aiAgreementAccepted.get() != userAgreementSettings.aiServiceAgreement
+           || submissionsServiceAccepted.get() != userAgreementSettings.submissionsServiceAgreement
+           || solutionSharingAccepted.get() != userAgreementSettings.solutionSharing
   }
 
   override fun apply() {
     super.apply()
     if (!isModified) return
 
+    val pluginAgreementAccepted = pluginAgreementAccepted.get()
+    val submissionsServiceAccepted = submissionsServiceAccepted.get()
+    val solutionSharingAccepted = solutionSharingAccepted.get()
     val pluginAgreementState =
-      if (pluginAgreement) UserAgreementState.ACCEPTED else UserAgreementState.TERMINATED
+      if (pluginAgreementAccepted) UserAgreementState.ACCEPTED else UserAgreementState.TERMINATED
     val aiServiceAgreementState =
-      if (aiFeaturesAgreement && pluginAgreement) UserAgreementState.ACCEPTED else UserAgreementState.TERMINATED
+      if (aiAgreementAccepted.get() && pluginAgreementAccepted) UserAgreementState.ACCEPTED else UserAgreementState.TERMINATED
     val submissionsServiceAgreementState =
-      if (submissionsServiceAgreement && pluginAgreement) UserAgreementState.ACCEPTED else UserAgreementState.TERMINATED
-    val solutionSharingPreference = if (solutionSharingPreference && submissionsServiceAgreement && pluginAgreement)
+      if (solutionSharingAccepted && pluginAgreementAccepted) UserAgreementState.ACCEPTED else UserAgreementState.TERMINATED
+    val solutionSharingPreference = if (solutionSharingAccepted && submissionsServiceAccepted && pluginAgreementAccepted)
       SolutionSharingPreference.ALWAYS else SolutionSharingPreference.NEVER
 
     userAgreementSettings.updatePluginAgreementState(
