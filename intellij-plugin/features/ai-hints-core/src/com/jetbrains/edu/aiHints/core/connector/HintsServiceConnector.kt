@@ -3,7 +3,7 @@ package com.jetbrains.edu.aiHints.core.connector
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.diagnostic.thisLogger
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.ui.JBAccountInfoService
 import com.jetbrains.edu.ai.host.EduAIServiceHost
 import com.jetbrains.edu.aiHints.core.service.HintsService
@@ -53,6 +53,6 @@ class HintsServiceConnector {
 
     fun List<TextHint>.asTextHint() = TextHint(joinToString(separator = "") { it.text })
 
-    private val LOG: Logger = thisLogger()
+    private val LOG: Logger = logger<HintsServiceConnector>()
   }
 }

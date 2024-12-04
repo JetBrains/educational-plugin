@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.marketplace.changeHost
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.diagnostic.thisLogger
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.marketplace.MarketplaceSolutionLoader
@@ -41,7 +41,7 @@ class SubmissionsServiceChangeHost : DumbAwareAction(EduCoreBundle.message("subm
   }
 
   companion object {
-    private val LOG: Logger = thisLogger()
+    private val LOG: Logger = logger<SubmissionsServiceChangeHost>()
 
     @NonNls
     const val ACTION_ID = "Educational.Student.SubmissionsServiceChangeHost"
