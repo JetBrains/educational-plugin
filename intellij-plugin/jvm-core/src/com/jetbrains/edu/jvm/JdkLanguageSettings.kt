@@ -1,6 +1,8 @@
 package com.jetbrains.edu.jvm
 
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.PathManager
+import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.JavaSdkType
@@ -66,7 +68,10 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
   private fun preselectJdk(course: Course, jdkComboBox: JdkComboBox, sdksModel: ProjectSdksModel) {
     if (jdkComboBox.selectedJdk != null) return
     runInBackground(course.project, EduJVMBundle.message("progress.setting.suitable.jdk"), false) {
-      jdkComboBox.selectedJdk = findSuitableJdk(minJvmSdkVersion(course), sdksModel)
+      val suitableJdk = findSuitableJdk(minJvmSdkVersion(course), sdksModel)
+      invokeLater(ModalityState.any()) {
+        jdkComboBox.selectedJdk = suitableJdk
+      }
     }
   }
 
