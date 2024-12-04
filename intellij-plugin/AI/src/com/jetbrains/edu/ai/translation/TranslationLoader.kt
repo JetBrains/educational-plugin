@@ -69,7 +69,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
   }
 
   fun updateTranslation(course: EduCourse, translationProperties: TranslationProperties) {
-    runInBackgroundExclusively(EduAIBundle.message("ai.translation.already.running")) {
+    runInBackgroundExclusively(EduAIBundle.message("ai.translation.update.is.not.possible")) {
       doUpdateTranslation(course, translationProperties)
     }
   }
