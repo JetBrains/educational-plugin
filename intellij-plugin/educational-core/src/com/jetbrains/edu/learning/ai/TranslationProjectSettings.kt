@@ -2,17 +2,19 @@ package com.jetbrains.edu.learning.ai
 
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.LightTestAware
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings.TranslationProjectState
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import com.jetbrains.educational.translation.format.domain.TranslationVersion
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.ConcurrentHashMap
 
 @Service(Service.Level.PROJECT)
 @State(name = "TranslationProjectSettings", reloadable = true, storages = [Storage("edu_translation.xml")])
-class TranslationProjectSettings : PersistentStateComponent<TranslationProjectState> {
+class TranslationProjectSettings : PersistentStateComponent<TranslationProjectState>, LightTestAware {
   private val _translationProperties = MutableStateFlow<TranslationProperties?>(null)
   val translationProperties = _translationProperties.asStateFlow()
   private val structureTranslations = ConcurrentHashMap<TranslationLanguage, Map<String, String>>()
@@ -65,6 +67,17 @@ class TranslationProjectSettings : PersistentStateComponent<TranslationProjectSt
     _translationProperties.value = getTranslationPropertiesByLanguage(language)
   }
 
+  fun resetTranslation() {
+    _translationProperties.value = null
+    structureTranslations.clear()
+    translationLanguageVersions.clear()
+  }
+
+  @TestOnly
+  override fun cleanUpState() {
+    resetTranslation()
+  }
+
   class TranslationProjectState : BaseState() {
     var currentTranslationLanguage by enum<TranslationLanguage>()
     var structureTranslation by map<TranslationLanguage, Map<String, String>>()
@@ -75,12 +88,5 @@ class TranslationProjectSettings : PersistentStateComponent<TranslationProjectSt
     fun getInstance(project: Project) = project.service<TranslationProjectSettings>()
 
     fun isCourseTranslated(project: Project): Boolean = getInstance(project).translationProperties.value != null
-
-    fun resetTranslation(project: Project) {
-      val settings = getInstance(project)
-      settings._translationProperties.value = null
-      settings.structureTranslations.clear()
-      settings.translationLanguageVersions.clear()
-    }
   }
 }
