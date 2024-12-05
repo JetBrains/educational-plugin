@@ -1,6 +1,5 @@
 package com.jetbrains.edu.ai.translation
 
-import com.intellij.testFramework.replaceService
 import com.intellij.util.application
 import com.jetbrains.edu.ai.translation.connector.TranslationServiceConnector
 import com.jetbrains.edu.learning.EduTestCase
@@ -8,6 +7,7 @@ import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.ai.TranslationProperties
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.mockService
 import com.jetbrains.edu.learning.waitFor
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import com.jetbrains.educational.translation.format.CourseTranslationResponse
@@ -15,7 +15,6 @@ import com.jetbrains.educational.translation.format.TranslatedText
 import com.jetbrains.educational.translation.format.domain.TranslationVersion
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.spyk
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collectLatest
@@ -65,7 +64,7 @@ class TranslationTest : EduTestCase() {
       )
     )
 
-    val mockedService = mockTranslationServiceConnector()
+    val mockedService = mockService<TranslationServiceConnector>(application)
     coEvery { mockedService.getTranslatedCourse(course.id, course.marketplaceCourseVersion, translationLanguage) } returns Ok(response)
 
     // when
@@ -100,13 +99,6 @@ class TranslationTest : EduTestCase() {
         }
       }
     }
-  }
-
-  private fun mockTranslationServiceConnector(): TranslationServiceConnector {
-    val service = TranslationServiceConnector.getInstance()
-    val mockedService = spyk(service)
-    application.replaceService(TranslationServiceConnector::class.java, mockedService, testRootDisposable)
-    return mockedService
   }
 
   private fun performAndWait(expectedVersion: Int, action: () -> Unit) {
