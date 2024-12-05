@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.marketplace
 
 import com.intellij.openapi.project.Project
-import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
@@ -700,13 +699,7 @@ class MarketplaceCourseUpdateTest : CourseGenerationTestBase<EmptyProjectSetting
       MarketplaceCourseUpdater(project, course, remoteCourseVersion).updateCourseWithRemote(courseFromServer)
     }
 
-    for (i in 1..100) {
-      if (courseUpdated.get()) return
-      Thread.sleep(50)
-      PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
-    }
-
-    error("The course update is taking too long")
+    waitFor { courseUpdated.get() }
   }
 
   private fun loadCourseStructure(course: EduCourse, courseFromServer: EduCourse) {

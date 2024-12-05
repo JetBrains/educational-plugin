@@ -1,6 +1,5 @@
 package com.jetbrains.edu.ai.translation
 
-import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.replaceService
 import com.intellij.util.application
 import com.jetbrains.edu.ai.translation.connector.TranslationServiceConnector
@@ -9,6 +8,7 @@ import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.ai.TranslationProperties
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.waitFor
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import com.jetbrains.educational.translation.format.CourseTranslationResponse
 import com.jetbrains.educational.translation.format.TranslatedText
@@ -127,15 +127,5 @@ class TranslationTest : EduTestCase() {
     finally {
       job.cancel()
     }
-  }
-
-  private fun waitFor(condition: () -> Boolean) {
-    repeat(100) {
-      if (condition()) return
-      Thread.sleep(50)
-      PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
-    }
-
-    error("Too long waiting")
   }
 }
