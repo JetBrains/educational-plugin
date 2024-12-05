@@ -120,7 +120,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
     runInBackgroundExclusively(EduAIBundle.message("ai.translation.reset.is.not.possible")) {
       if (TranslationProjectSettings.isCourseTranslated(project)) {
         withBackgroundProgress(project, EduAIBundle.message("ai.translation.reset.course.translation")) {
-          TranslationProjectSettings.resetTranslation(project)
+          TranslationProjectSettings.getInstance(project).resetTranslation()
         }
       }
       withBackgroundProgress(project, EduAIBundle.message("ai.translation.deleting.course.translation.files")) {

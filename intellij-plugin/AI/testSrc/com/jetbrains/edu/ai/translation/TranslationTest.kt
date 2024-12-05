@@ -25,6 +25,19 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 class TranslationTest : EduTestCase() {
 
+  override fun tearDown() {
+    try {
+      // TODO: improve `LightTestServiceStateHelper` to support services from any module
+      TranslationProjectSettings.getInstance(project).cleanUpState()
+    }
+    catch (e: Throwable) {
+      addSuppressedException(e)
+    }
+    finally {
+      super.tearDown()
+    }
+  }
+
   @Test
   fun `test translation loading`() {
     // given
