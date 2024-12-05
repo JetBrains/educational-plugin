@@ -18,7 +18,9 @@ import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.ui.TestDialogManager
 import com.intellij.openapi.ui.TestInputDialog
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.TestActionEvent
+import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.learning.actions.CheckAction
@@ -228,4 +230,22 @@ fun simpleDiffRequestChain(
       )
     )
   )
+}
+
+/**
+ * Waits [iterations] number of iterations for [condition] becomes true,
+ * processing EDT events on each iteration.
+ * If the condition is not satisfied after all iterations, it throws [IllegalStateException]
+ *
+ * It's supposed to be used to wait for a background process to finish
+ */
+@RequiresEdt
+fun waitFor(iterations: Int = 100, condition: () -> Boolean) {
+  repeat(iterations) {
+    PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+    if (condition()) return
+    Thread.sleep(50)
+  }
+
+  error("Too long waiting")
 }
