@@ -204,6 +204,7 @@ allprojects {
 
     testImplementation(rootProject.libs.junit)
     testImplementation(rootProject.libs.openTest4J)
+    testImplementation(rootProject.libs.classgraph)
     testImplementationWithoutKotlin(rootProject.libs.kotlin.test.junit)
     testImplementationWithoutKotlin(rootProject.libs.mockwebserver)
     testImplementationWithoutKotlin(rootProject.libs.mockk)
