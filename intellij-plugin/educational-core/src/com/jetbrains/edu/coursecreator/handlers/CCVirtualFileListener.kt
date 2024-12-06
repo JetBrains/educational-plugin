@@ -111,7 +111,19 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
       }
 
       is FileInfo.FileInTask -> deleteFileInTask(fileInfo, file)
+
+      is FileInfo.FileOutsideTasks -> deleteAdditionalFile(fileInfo.coursePath)
     }
+  }
+
+  private fun deleteAdditionalFile(coursePath: String) {
+    val course = project.course ?: return
+    course.additionalFiles = course.additionalFiles.filter { additionalFile ->
+      val name = additionalFile.name
+      val deleted = name == coursePath || coursePath.isParentOf(name)
+      !deleted
+    }
+    YamlFormatSynchronizer.saveItem(course)
   }
 
   override fun beforePropertyChange(event: VFilePropertyChangeEvent) {

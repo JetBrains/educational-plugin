@@ -199,6 +199,14 @@ fun VirtualFile.pathRelativeToTask(holder: CourseInfoHolder<out Course?>): Strin
   return FileUtil.getRelativePath(taskDir.path, path, VfsUtilCore.VFS_SEPARATOR_CHAR) ?: return name
 }
 
+fun VirtualFile.pathRelativeToCourse(project: Project): String? {
+  return pathRelativeToCourse(project.toCourseInfoHolder())
+}
+
+fun VirtualFile.pathRelativeToCourse(holder: CourseInfoHolder<out Course?>): String? {
+  return FileUtil.getRelativePath(holder.courseDir.path, path, VfsUtilCore.VFS_SEPARATOR_CHAR)
+}
+
 fun VirtualFile.getTaskDir(project: Project): VirtualFile? {
   return getTaskDir(project.toCourseInfoHolder())
 }

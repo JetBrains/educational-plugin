@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.learning.FileInfo.FileOutsideTasks
 import com.jetbrains.edu.learning.configuration.excludeFromArchive
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
@@ -19,7 +20,13 @@ fun VirtualFile.fileInfo(project: Project): FileInfo? {
     getTask(project)?.let { return FileInfo.TaskDirectory(it) }
   }
 
-  val task = getContainingTask(project) ?: return null
+  val task = getContainingTask(project)
+
+  if (task == null) {
+    val relativePath = pathRelativeToCourse(project) ?: return null
+    return FileOutsideTasks(relativePath, isDirectory)
+  }
+
   if (shouldIgnore(this, project, task)) return null
 
   val taskRelativePath = pathRelativeToTask(project)
@@ -40,4 +47,5 @@ sealed class FileInfo {
   data class LessonDirectory(val lesson: Lesson) : FileInfo()
   data class TaskDirectory(val task: Task) : FileInfo()
   data class FileInTask(val task: Task, val pathInTask: String) : FileInfo()
+  data class FileOutsideTasks(val coursePath: String, val isDirectory: Boolean) : FileInfo()
 }
