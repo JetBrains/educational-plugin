@@ -41,15 +41,7 @@ object LightTestServiceStateHelper {
   )
 
   fun restoreState(project: Project) {
-    val application = ApplicationManager.getApplication()
-    for (serviceClass in lightTestAwareApplicationServices) {
-      // Do not create service if it wasn't created earlier
-      application.getServiceIfCreated(serviceClass.java)?.restoreState()
-    }
-    for (serviceClass in lightTestAwareProjectServices) {
-      // Do not create service if it wasn't created earlier
-      project.getServiceIfCreated(serviceClass.java)?.restoreState()
-    }
+    performForAllServices(project, LightTestAware::restoreState)
   }
 
   fun cleanUpState(project: Project) {
@@ -59,14 +51,18 @@ object LightTestServiceStateHelper {
       PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
     }
 
+    performForAllServices(project, LightTestAware::cleanUpState)
+  }
+
+  private fun performForAllServices(project: Project, action: LightTestAware.() -> Unit) {
     val application = ApplicationManager.getApplication()
     for (serviceClass in lightTestAwareApplicationServices) {
       // Do not create service if it wasn't created earlier
-      application.getServiceIfCreated(serviceClass.java)?.cleanUpState()
+      application.getServiceIfCreated(serviceClass.java)?.action()
     }
     for (serviceClass in lightTestAwareProjectServices) {
       // Do not create service if it wasn't created earlier
-      project.getServiceIfCreated(serviceClass.java)?.cleanUpState()
+      project.getServiceIfCreated(serviceClass.java)?.action()
     }
   }
 }
