@@ -6,7 +6,9 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VfsUtilCore.VFS_SEPARATOR_CHAR
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.events.*
 import com.intellij.util.ui.update.MergingUpdateQueue
@@ -111,6 +113,30 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
 
       is FileInfo.FileInTask -> deleteFileInTask(fileInfo, file)
     }
+  }
+
+  override fun beforePropertyChange(event: VFilePropertyChangeEvent) {
+    super.beforePropertyChange(event)
+
+    if (event.propertyName != VirtualFile.PROP_NAME) return
+    if (event.file.getContainingTask(project) != null) return
+
+    val course = project.course ?: return
+    val courseDir = project.courseDir
+    val oldPath = FileUtil.getRelativePath(courseDir.path, event.oldPath, VFS_SEPARATOR_CHAR) ?: return
+    val newPath = FileUtil.getRelativePath(courseDir.path, event.newPath, VFS_SEPARATOR_CHAR) ?: return
+
+    for (additionalFile in course.additionalFiles) {
+      val name = additionalFile.name
+
+      additionalFile.name = when {
+        name == oldPath -> newPath
+        oldPath.isParentOf(name) -> newPath + name.substringAfter(oldPath, "")
+        else -> name
+      }
+    }
+
+    YamlFormatSynchronizer.saveItem(course)
   }
 
   private fun deleteLesson(info: FileInfo.LessonDirectory) {
