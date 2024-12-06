@@ -10,6 +10,7 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.runInEdtAndWait
 import io.github.classgraph.AnnotationEnumValue
 import io.github.classgraph.ClassGraph
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.system.measureTimeMillis
 
 /**
@@ -59,6 +60,8 @@ private class ServiceClasses private constructor(
 
     private const val BASE_PACKAGE = "com.jetbrains.edu"
 
+    private val cache: MutableMap<IdeaPluginDescriptorImpl, ServiceClasses> = ConcurrentHashMap()
+
     fun collect(): ServiceClasses {
       // Here we take into account that all tests in single Gradle module have the same plugin descriptor.
       // As a result, we can reuse calculated values from the previous test with the same descriptor
@@ -66,12 +69,14 @@ private class ServiceClasses private constructor(
         it.isEnabled && it.pluginId.idString.startsWith(BASE_PACKAGE)
       } as? IdeaPluginDescriptorImpl ?: error("Failed to find any plugin descriptor related to the plugin")
 
-      val collectedClasses: ServiceClasses
-      val duration = measureTimeMillis {
-        collectedClasses = collect(pluginDescriptor)
+      return cache.getOrPut(pluginDescriptor) {
+        val collectedClasses: ServiceClasses
+        val duration = measureTimeMillis {
+          collectedClasses = collect(pluginDescriptor)
+        }
+        println("Service classes collecting took $duration ms")
+        collectedClasses
       }
-      println("Service classes collecting took $duration ms")
-      return collectedClasses
     }
 
     private fun collect(pluginDescriptor: IdeaPluginDescriptorImpl): ServiceClasses {
