@@ -5,7 +5,6 @@ import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-@Service
 @State(name = "TranslationSettings", storages = [Storage(StoragePathMacros.NON_ROAMABLE_FILE, roamingType = RoamingType.LOCAL)])
 class TranslationSettings : PersistentStateComponent<TranslationSettings.State> {
   private val _translationSettings = MutableStateFlow<AutoTranslationProperties?>(null)
