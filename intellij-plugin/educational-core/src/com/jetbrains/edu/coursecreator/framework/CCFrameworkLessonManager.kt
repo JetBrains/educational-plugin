@@ -13,7 +13,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.framework.diff.applyChangesWithMergeDialog
 import com.jetbrains.edu.coursecreator.framework.diff.equalsTrimTrailingWhitespacesAndTrailingBlankLines
 import com.jetbrains.edu.coursecreator.framework.diff.resolveConflicts
-import com.jetbrains.edu.learning.LightTestAware
+import com.jetbrains.edu.learning.EduTestAware
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.*
@@ -45,7 +45,7 @@ import java.nio.file.Paths
 @State(name = "CCFrameworkLessonManager", storages = [Storage(StoragePathMacros.WORKSPACE_FILE, roamingType = RoamingType.DISABLED)])
 class CCFrameworkLessonManager(
   private val project: Project
-) : SimplePersistentStateComponent<CCFrameworkLessonManager.RecordState>(RecordState()), Disposable, LightTestAware {
+) : SimplePersistentStateComponent<CCFrameworkLessonManager.RecordState>(RecordState()), Disposable, EduTestAware {
   private var storage: CCFrameworkStorage = createStorage(project)
 
   /**

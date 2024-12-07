@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.ai
 
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.LightTestAware
+import com.jetbrains.edu.learning.EduTestAware
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings.TranslationProjectState
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 @Service(Service.Level.PROJECT)
 @State(name = "TranslationProjectSettings", reloadable = true, storages = [Storage("edu_translation.xml")])
-class TranslationProjectSettings : PersistentStateComponent<TranslationProjectState>, LightTestAware {
+class TranslationProjectSettings : PersistentStateComponent<TranslationProjectState>, EduTestAware {
   private val _translationProperties = MutableStateFlow<TranslationProperties?>(null)
   val translationProperties = _translationProperties.asStateFlow()
   private val structureTranslations = ConcurrentHashMap<TranslationLanguage, Map<String, String>>()

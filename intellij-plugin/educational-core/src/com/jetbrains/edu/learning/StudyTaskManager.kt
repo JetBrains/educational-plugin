@@ -21,7 +21,7 @@ import kotlin.concurrent.withLock
  * Implementation of class which contains all the information about study in context of current project
  */
 @Service(Service.Level.PROJECT)
-class StudyTaskManager(private val project: Project) : DumbAware, Disposable, LightTestAware {
+class StudyTaskManager(private val project: Project) : DumbAware, Disposable, EduTestAware {
   @Volatile
   private var courseLoadedWithError = false
 

@@ -6,7 +6,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.intellij.util.messages.Topic
-import com.jetbrains.edu.learning.LightTestAware
+import com.jetbrains.edu.learning.EduTestAware
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -33,7 +33,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @see com.jetbrains.edu.learning.submissions.provider.SubmissionsProvider
  */
 @Service(Service.Level.PROJECT)
-class SubmissionsManager(private val project: Project) : LightTestAware {
+class SubmissionsManager(private val project: Project) : EduTestAware {
 
   private val submissions = ConcurrentHashMap<Int, List<Submission>>()
 

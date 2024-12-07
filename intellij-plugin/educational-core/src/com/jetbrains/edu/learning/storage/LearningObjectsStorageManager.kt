@@ -10,7 +10,7 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.containers.ContainerUtil
-import com.jetbrains.edu.learning.LightTestAware
+import com.jetbrains.edu.learning.EduTestAware
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.visitEduFiles
@@ -24,7 +24,7 @@ import java.util.concurrent.Future
 import java.util.concurrent.TimeoutException
 
 @Service(Service.Level.PROJECT)
-class LearningObjectsStorageManager(private val project: Project) : DumbAware, Disposable, LightTestAware {
+class LearningObjectsStorageManager(private val project: Project) : DumbAware, Disposable, EduTestAware {
 
   /**
    * This is the project level storage used to store all the edu files contents and other data that should be persistent.

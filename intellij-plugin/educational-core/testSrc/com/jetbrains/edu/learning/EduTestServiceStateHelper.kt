@@ -17,17 +17,17 @@ import com.jetbrains.edu.learning.yaml.YamlLoadingErrorManager
 import kotlin.reflect.KClass
 
 /**
- * Helps manage state of services marked with [LightTestAware] between light tests cases
+ * Helps manage state of services marked with [EduTestAware] between light tests cases
  */
-object LightTestServiceStateHelper {
+object EduTestServiceStateHelper {
 
-  private val lightTestAwareApplicationServices: List<KClass<out LightTestAware>> = listOf(
+  private val testAwareApplicationServices: List<KClass<out EduTestAware>> = listOf(
     CoursesStorage::class,
     EduBrowser::class,
     HyperskillMetricsService::class,
   )
 
-  private val lightTestAwareProjectServices: List<KClass<out LightTestAware>> = listOf(
+  private val testAwareProjectServices: List<KClass<out EduTestAware>> = listOf(
     TaskToolWindowView::class,
     CCFrameworkLessonManager::class,
     FrameworkLessonManager::class,
@@ -41,7 +41,7 @@ object LightTestServiceStateHelper {
   )
 
   fun restoreState(project: Project) {
-    performForAllServices(project, LightTestAware::restoreState)
+    performForAllServices(project, EduTestAware::restoreState)
   }
 
   fun cleanUpState(project: Project) {
@@ -51,16 +51,16 @@ object LightTestServiceStateHelper {
       PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
     }
 
-    performForAllServices(project, LightTestAware::cleanUpState)
+    performForAllServices(project, EduTestAware::cleanUpState)
   }
 
-  private fun performForAllServices(project: Project, action: LightTestAware.() -> Unit) {
+  private fun performForAllServices(project: Project, action: EduTestAware.() -> Unit) {
     val application = ApplicationManager.getApplication()
-    for (serviceClass in lightTestAwareApplicationServices) {
+    for (serviceClass in testAwareApplicationServices) {
       // Do not create service if it wasn't created earlier
       application.getServiceIfCreated(serviceClass.java)?.action()
     }
-    for (serviceClass in lightTestAwareProjectServices) {
+    for (serviceClass in testAwareProjectServices) {
       // Do not create service if it wasn't created earlier
       project.getServiceIfCreated(serviceClass.java)?.action()
     }

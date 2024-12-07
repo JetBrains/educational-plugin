@@ -5,8 +5,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.InlineBanner
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.EduTestAware
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
-import com.jetbrains.edu.learning.LightTestAware
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isHeadlessEnvironment
@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
 import org.jetbrains.annotations.TestOnly
 import java.awt.Color
 
-abstract class TaskToolWindowView(val project: Project) : LightTestAware {
+abstract class TaskToolWindowView(val project: Project) : EduTestAware {
 
   abstract var currentTask: Task?
 

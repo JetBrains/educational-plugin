@@ -4,7 +4,7 @@ import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.*
 import com.intellij.util.xmlb.annotations.XCollection
-import com.jetbrains.edu.learning.LightTestAware
+import com.jetbrains.edu.learning.EduTestAware
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.projectView.CourseViewUtils.isSolved
@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.DoubleAdder
 import kotlin.math.min
 
 @State(name = "HyperskillMetrics", storages = [Storage("hyperskill.xml", roamingType = RoamingType.DISABLED)])
-open class HyperskillMetricsService : PersistentStateComponent<HyperskillMetricsService.State>, Disposable, LightTestAware {
+open class HyperskillMetricsService : PersistentStateComponent<HyperskillMetricsService.State>, Disposable, EduTestAware {
   private val frontendEvents: Deque<HyperskillFrontendEvent> = ConcurrentLinkedDeque()
   private val timeSpentEvents: MutableMap<Int, DoubleAdder> = mutableMapOf()
   private var taskInProgress: Pair<Int, Long>? = null

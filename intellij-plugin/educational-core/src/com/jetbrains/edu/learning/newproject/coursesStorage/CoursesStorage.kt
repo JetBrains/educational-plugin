@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.newproject.coursesStorage
 import com.intellij.openapi.components.*
 import com.intellij.openapi.wm.impl.welcomeScreen.learnIde.coursesInProgress.CourseDataStorage
 import com.intellij.openapi.wm.impl.welcomeScreen.learnIde.coursesInProgress.CourseInfo
-import com.jetbrains.edu.learning.LightTestAware
+import com.jetbrains.edu.learning.EduTestAware
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.JBACourseFromStorage
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.TestOnly
 
 @State(name = "CoursesStorage", storages = [Storage("coursesStorage.xml", roamingType = RoamingType.DISABLED)])
 @Service
-class CoursesStorage : CourseDataStorage, CoursesStorageBase(), LightTestAware {
+class CoursesStorage : CourseDataStorage, CoursesStorageBase(), EduTestAware {
 
   override fun getCoursePath(course: Course): String? = getCoursePath(JBACourseFromStorage().apply {
     this.name = course.name

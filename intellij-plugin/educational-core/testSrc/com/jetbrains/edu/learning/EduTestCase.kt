@@ -82,7 +82,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
     // `EduToolWindowHeadlessManager` allows us to track necessary properties in our tests
     project.replaceService(ToolWindowManager::class.java, EduToolWindowHeadlessManager(project), testRootDisposable)
 
-    LightTestServiceStateHelper.restoreState(project)
+    EduTestServiceStateHelper.restoreState(project)
 
     CheckActionListener.reset()
     val connection = project.messageBus.connect(testRootDisposable)
@@ -101,7 +101,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
 
   override fun tearDown() {
     try {
-      LightTestServiceStateHelper.cleanUpState(project)
+      EduTestServiceStateHelper.cleanUpState(project)
     }
     catch (e: Throwable) {
       addSuppressedException(e)

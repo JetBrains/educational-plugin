@@ -8,8 +8,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ActionCallback
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.Alarm
+import com.jetbrains.edu.learning.EduTestAware
 import com.jetbrains.edu.learning.EduUtilsKt.isNewlyCreated
-import com.jetbrains.edu.learning.LightTestAware
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.isUnitTestMode
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 
-abstract class CourseUpdateChecker(protected val project: Project) : Disposable, LightTestAware {
+abstract class CourseUpdateChecker(protected val project: Project) : Disposable, EduTestAware {
   private val checkRunnable = Runnable { (checkIsUpToDate()).doWhenDone { queueNextCheck() } }
   private val checkForAlarm by lazy { Alarm(Alarm.ThreadToUse.POOLED_THREAD, this) }
   var course: Course? = project.course

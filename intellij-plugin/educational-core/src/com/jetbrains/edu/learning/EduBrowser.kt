@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_DEFAULT_URL
 import java.net.URL
 
-open class EduBrowser : LightTestAware {
+open class EduBrowser : EduTestAware {
   fun browse(url: URL) = browse(url.toExternalForm())
 
   open fun browse(link: String) {

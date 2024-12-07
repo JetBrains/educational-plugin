@@ -5,12 +5,12 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotifications
-import com.jetbrains.edu.learning.LightTestAware
+import com.jetbrains.edu.learning.EduTestAware
 import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.ConcurrentHashMap
 
 @Service(Service.Level.PROJECT)
-class YamlLoadingErrorManager : LightTestAware {
+class YamlLoadingErrorManager : EduTestAware {
 
   private val errors: ConcurrentHashMap<String, String> = ConcurrentHashMap()
 
