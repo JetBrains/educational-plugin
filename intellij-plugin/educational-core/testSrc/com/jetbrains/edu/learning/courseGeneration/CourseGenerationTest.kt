@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.courseGeneration
 
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
-import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.learning.EduStartupActivity
 import com.jetbrains.edu.learning.course
@@ -114,7 +113,7 @@ class CourseGenerationTest : CourseGenerationTestBase<EmptyProjectSettings>() {
   }
 
   @Test
-  fun testCoursePreviewNotAdded() {
+  fun `test course preview not added to course storage`() {
     val coursePreview = (course {
       lesson("lesson1") {
         eduTask("task1") {
@@ -129,9 +128,6 @@ class CourseGenerationTest : CourseGenerationTestBase<EmptyProjectSettings>() {
     // wa have to call it here as it is called itself at time when course isn't set to StudyTaskManager
     EduStartupActivity().runActivity(myProject)
 
-    assertFalse(CoursesStorage.getInstance().hasCourse(coursePreview))
-
-    ProjectManager.getInstance().closeAndDispose(myProject)
+    assertFalse("Course `${coursePreview.name}` shouldn't be added to course storage", CoursesStorage.getInstance().hasCourse(coursePreview))
   }
-
 }
