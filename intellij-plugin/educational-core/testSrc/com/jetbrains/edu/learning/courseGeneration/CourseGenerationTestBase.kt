@@ -2,29 +2,17 @@ package com.jetbrains.edu.learning.courseGeneration
 
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.testFramework.HeavyPlatformTestCase
 import com.intellij.testFramework.runInEdtAndWait
-import com.jetbrains.edu.learning.FileTree
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
-import com.jetbrains.edu.learning.assertContentsEqual
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.CourseMode
-import com.jetbrains.edu.learning.courseFormat.FileContents
-import com.jetbrains.edu.learning.courseFormat.InMemoryBinaryContents
-import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
-import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.disambiguateContents
-import com.jetbrains.edu.learning.createCourseFromJson
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
-import com.jetbrains.edu.learning.waitUntilIndexesAreReady
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
 @Suppress("UnstableApiUsage")
-@RunWith(JUnit4::class)
-abstract class CourseGenerationTestBase<Settings : EduProjectSettings> : HeavyPlatformTestCase() {
+abstract class CourseGenerationTestBase<Settings : EduProjectSettings> : EduHeavyTestCase() {
 
   abstract val defaultSettings: Settings
 

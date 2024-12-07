@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.yaml.YamlLoadingErrorManager
 import kotlin.reflect.KClass
 
 /**
- * Helps manage state of services marked with [EduTestAware] between light tests cases
+ * Helps manage state of services marked with [EduTestAware] between tests cases
  */
 object EduTestServiceStateHelper {
 
@@ -40,11 +40,11 @@ object EduTestServiceStateHelper {
     StudyTaskManager::class,
   )
 
-  fun restoreState(project: Project) {
+  fun restoreState(project: Project?) {
     performForAllServices(project, EduTestAware::restoreState)
   }
 
-  fun cleanUpState(project: Project) {
+  fun cleanUpState(project: Project?) {
     // Some services may be used in scheduled tasks (via `invokeLater`, for example).
     // And since we can't rely on service/project disposing in light tests, let's wait for all these tasks manually
     runInEdtAndWait {
@@ -54,15 +54,19 @@ object EduTestServiceStateHelper {
     performForAllServices(project, EduTestAware::cleanUpState)
   }
 
-  private fun performForAllServices(project: Project, action: EduTestAware.() -> Unit) {
+  private fun performForAllServices(project: Project?, action: EduTestAware.() -> Unit) {
     val application = ApplicationManager.getApplication()
     for (serviceClass in testAwareApplicationServices) {
       // Do not create service if it wasn't created earlier
       application.getServiceIfCreated(serviceClass.java)?.action()
     }
-    for (serviceClass in testAwareProjectServices) {
-      // Do not create service if it wasn't created earlier
-      project.getServiceIfCreated(serviceClass.java)?.action()
+    // There is no necessity to do anything for non-light projects
+    // since in heavy tests a new project is created for each test case
+    if (project != null && project.isLight) {
+      for (serviceClass in testAwareProjectServices) {
+        // Do not create service if it wasn't created earlier
+        project.getServiceIfCreated(serviceClass.java)?.action()
+      }
     }
   }
 }

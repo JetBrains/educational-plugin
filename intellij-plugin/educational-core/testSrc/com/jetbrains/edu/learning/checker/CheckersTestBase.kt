@@ -7,7 +7,6 @@ import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.testFramework.HeavyPlatformTestCase
 import com.intellij.util.ThrowableRunnable
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.*
@@ -21,11 +20,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
 import com.jetbrains.edu.learning.ui.getUICheckLabel
 import org.junit.ComparisonFailure
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
-@RunWith(JUnit4::class)
-abstract class CheckersTestBase<Settings : EduProjectSettings> : HeavyPlatformTestCase() {
+abstract class CheckersTestBase<Settings : EduProjectSettings> : EduHeavyTestCase() {
     protected lateinit var myCourse: Course
 
     private val checkerFixture: EduCheckerFixture<Settings> by lazy {
