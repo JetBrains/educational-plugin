@@ -3,7 +3,8 @@ package com.jetbrains.edu.learning.agreement
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
-import com.intellij.openapi.diagnostic.thisLogger
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
@@ -125,6 +126,6 @@ class UserAgreementManager(private val scope: CoroutineScope) {
   companion object {
     fun getInstance(): UserAgreementManager = service()
 
-    private val LOG = thisLogger()
+    private val LOG: Logger = logger<UserAgreementManager>()
   }
 }
