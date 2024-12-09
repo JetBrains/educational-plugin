@@ -10,7 +10,6 @@ import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.gridLayout.UnscaledGaps
 import com.intellij.ui.dsl.gridLayout.UnscaledGapsY
 import com.jetbrains.edu.learning.RemoteEnvHelper
-import com.jetbrains.edu.learning.agreement.UserAgreementUtil.EMPTY_TEXT
 import com.jetbrains.edu.learning.agreement.UserAgreementUtil.aiAgreementCheckBoxText
 import com.jetbrains.edu.learning.agreement.UserAgreementUtil.pluginAgreementCheckBoxText
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -32,7 +31,7 @@ class UserAgreementOptions : BoundConfigurable(EduCoreBundle.message("user.agree
         text(EduCoreBundle.message("user.agreement.dialog.text"))
       }
       row {
-        checkBox(EMPTY_TEXT)
+        checkBox("")
           .bindSelected(pluginAgreementAccepted)
           .enabled(!userAgreementSettings.isNotShown)
           .onChanged {
@@ -47,7 +46,7 @@ class UserAgreementOptions : BoundConfigurable(EduCoreBundle.message("user.agree
       }.customize(UnscaledGapsY(bottom = 5))
       indent {
         row {
-          checkBox(EMPTY_TEXT)
+          checkBox("")
             .bindSelected(aiAgreementAccepted)
             .enabledIf(pluginAgreementAccepted)
             .customize(UnscaledGaps.EMPTY)

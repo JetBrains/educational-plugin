@@ -12,7 +12,6 @@ import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.gridLayout.UnscaledGaps
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.agreement.UserAgreementUtil.EMPTY_TEXT
 import com.jetbrains.edu.learning.agreement.UserAgreementUtil.aiAgreementCheckBoxText
 import com.jetbrains.edu.learning.agreement.UserAgreementUtil.pluginAgreementCheckBoxText
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -45,7 +44,7 @@ class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
       text(EduCoreBundle.message("user.agreement.dialog.text"))
     }
     row {
-      checkBox(EMPTY_TEXT)
+      checkBox("")
         .comment(EduCoreBundle.message("user.agreement.dialog.plugin.agreement.checkbox.comment"))
         .onChanged {
           if (!it.isSelected) {
@@ -58,7 +57,7 @@ class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
       pluginAgreementCheckBoxText()
     }
     row {
-      checkBox(EMPTY_TEXT)
+      checkBox("")
         .enabledIf(pluginAgreementAccepted)
         .comment(EduCoreBundle.message("user.agreement.dialog.ai.agreement.checkbox.comment"))
         .customize(UnscaledGaps.EMPTY)
