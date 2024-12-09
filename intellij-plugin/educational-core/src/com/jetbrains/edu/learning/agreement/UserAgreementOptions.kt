@@ -11,8 +11,8 @@ import com.intellij.ui.dsl.gridLayout.UnscaledGaps
 import com.intellij.ui.dsl.gridLayout.UnscaledGapsY
 import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.agreement.UserAgreementUtil.EMPTY_TEXT
-import com.jetbrains.edu.learning.agreement.UserAgreementUtil.createAiAgreementCheckBoxTextPanel
-import com.jetbrains.edu.learning.agreement.UserAgreementUtil.createPluginAgreementCheckBoxTextPanel
+import com.jetbrains.edu.learning.agreement.UserAgreementUtil.aiAgreementCheckBoxText
+import com.jetbrains.edu.learning.agreement.UserAgreementUtil.pluginAgreementCheckBoxText
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.settings.OptionsProvider
 import com.jetbrains.edu.learning.submissions.SolutionSharingPreference
@@ -43,7 +43,7 @@ class UserAgreementOptions : BoundConfigurable(EduCoreBundle.message("user.agree
             }
           }
           .customize(UnscaledGaps.EMPTY)
-        cell(createPluginAgreementCheckBoxTextPanel())
+        pluginAgreementCheckBoxText()
       }.customize(UnscaledGapsY(bottom = 5))
       indent {
         row {
@@ -52,7 +52,7 @@ class UserAgreementOptions : BoundConfigurable(EduCoreBundle.message("user.agree
             .enabledIf(pluginAgreementAccepted)
             .customize(UnscaledGaps.EMPTY)
             .align(AlignY.TOP)
-          cell(createAiAgreementCheckBoxTextPanel())
+          aiAgreementCheckBoxText()
         }
         if (!RemoteEnvHelper.isRemoteDevServer()) {
           row {
