@@ -9,7 +9,6 @@ import com.intellij.ui.dsl.builder.AlignY
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.gridLayout.UnscaledGaps
-import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.agreement.UserAgreementUtil.aiAgreementCheckBoxText
 import com.jetbrains.edu.learning.agreement.UserAgreementUtil.pluginAgreementCheckBoxText
@@ -75,13 +74,5 @@ class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
     val aiAgreementState =
       if (aiAgreementCheckBox.get()) UserAgreementState.ACCEPTED else UserAgreementState.DECLINED
     return UserAgreementSettings.AgreementStateResponse(pluginAgreement = pluginAgreementState, aiAgreement = aiAgreementState)
-  }
-
-  companion object {
-    @RequiresEdt
-    fun showUserAgreementDialog(project: Project?) {
-      val result = UserAgreementDialog(project).showWithResult()
-      UserAgreementSettings.getInstance().setAgreementState(result)
-    }
   }
 }
