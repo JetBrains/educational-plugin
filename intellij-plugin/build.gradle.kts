@@ -198,8 +198,6 @@ allprojects {
     implementationWithoutKotlin(rootProject.libs.retrofit)
     implementationWithoutKotlin(rootProject.libs.converter.jackson)
     implementationWithoutKotlin(rootProject.libs.kotlin.css.jvm)
-    implementationWithoutKotlin(rootProject.libs.educational.ml.library.core)
-    implementationWithoutKotlin(rootProject.libs.educational.ml.library.ai.debugger)
 
 
     testImplementation(rootProject.libs.junit)
@@ -331,6 +329,7 @@ dependencies {
     pluginModule(implementation(project("features:ai-hints-python")))
     pluginModule(implementation(project("features:ai-test-generation")))
     pluginModule(implementation(project("localization")))
+    pluginModule(implementation(project("features:ai-debugging-core")))
 
     testFramework(TestFrameworkType.Bundled)
   }
@@ -1074,7 +1073,6 @@ project("features:ai-test-generation") {
       val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
       intellijIde(project, ideVersion)
     }
-
     api(rootProject.libs.educational.ml.library.core) {
       excludeKotlinDeps()
       excludeKotlinSerializationDeps()
@@ -1088,7 +1086,26 @@ project("features:ai-test-generation") {
 
     implementation(project(":intellij-plugin:educational-core"))
     implementation(project(":intellij-plugin:AI"))
+  }
+}
 
+project("features:ai-debugging-core") {
+  dependencies {
+    intellijPlatform {
+      intellijIde(project, baseVersion)
+    }
+
+    implementation(project(":intellij-plugin:educational-core"))
+    api(rootProject.libs.educational.ml.library.core) {
+      excludeKotlinDeps()
+      excludeKotlinSerializationDeps()
+      exclude(group = "net.java.dev.jna")
+    }
+    api(rootProject.libs.educational.ml.library.ai.debugger) {
+      excludeKotlinDeps()
+      excludeKotlinSerializationDeps()
+      exclude(group = "net.java.dev.jna")
+    }
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
   }
 }
