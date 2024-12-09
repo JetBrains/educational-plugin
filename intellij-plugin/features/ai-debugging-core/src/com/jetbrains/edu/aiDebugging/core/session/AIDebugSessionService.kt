@@ -56,8 +56,9 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
             project.getService(AIBreakPointService::class.java).toggleLineBreakpoint(language, virtualFile, line)
           }
         }
-        createTests(task.getInvisibleTestFiles(), project)
-        startDebugSession(task, testResult, closeAIDebuggingHint)
+        runWithTests(task, closeAIDebuggingHint) {
+          startDebugSession(task, testResult, closeAIDebuggingHint)
+        }
       }.onFailure {
         EduNotificationManager.showErrorNotification(
           project,
@@ -67,13 +68,25 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
     }
   }
 
+  private fun runWithTests(task: Task, closeAIDebuggingHint: () -> Unit, execution: () -> Unit) {
+    createTests(task.getInvisibleTestFiles(), project)
+    try {
+      execution()
+    } catch (_: Throwable) {
+      debugStopped(task, closeAIDebuggingHint)
+    }
+  }
+
+  private fun debugStopped(task: Task, closeAIDebuggingHint: () -> Unit) {
+    deleteTests(task.getInvisibleTestFiles(), project)
+    closeAIDebuggingHint()
+    // TODO: make breakpoints regular
+  }
+
   private fun subscribeToDebuggerEvents(task: Task, closeAIDebuggingHint: () -> Unit) {
     project.messageBus.connect().subscribe(XDebuggerManager.TOPIC, object : XDebuggerManagerListener {
       override fun processStopped(debugProcess: XDebugProcess) {
-        super.processStopped(debugProcess)
-        deleteTests(task.getInvisibleTestFiles(), project)
-        closeAIDebuggingHint()
-        // TODO: make breakpoints regular
+        debugStopped(task, closeAIDebuggingHint)
       }
     })
   }
