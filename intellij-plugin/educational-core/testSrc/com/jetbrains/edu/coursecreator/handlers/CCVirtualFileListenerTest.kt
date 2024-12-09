@@ -1,8 +1,11 @@
 package com.jetbrains.edu.coursecreator.handlers
 
+import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchiveAction
 import com.jetbrains.edu.learning.configurators.FakeGradleConfigurator
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.getStudyItem
@@ -498,4 +501,155 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
   @Test
   fun `test number of items do not change when copy section inside section`() =
     doTestNumberOfItemsDidNotChange("section1", "section2")
+
+  @Test
+  fun `user created file is added to additional files`() =
+    doTestAdditionalFilesAfterFSActions(emptyList(), listOf("file.txt")) {
+      createFile("file.txt")
+    }
+
+  @Test
+  fun `user created directory is not added to additional files`() =
+    doTestAdditionalFilesAfterFSActions(listOf("file.txt"), listOf("file.txt")) {
+      createDirectory("dir")
+      createDirectory("dir/dir")
+    }
+
+  @Test
+  fun `user created file in a subfolder is added to additional files`() =
+    doTestAdditionalFilesAfterFSActions(emptyList(), listOf("folder/subfolder/file.txt")) {
+      createFile("folder/subfolder/file.txt")
+    }
+
+  @Test
+  fun `creating a file in an old archive location does not add it to additional files`() =
+    doTestAdditionalFilesAfterFSActions(emptyList(), listOf("cats.zip")) {
+      val courseZipPath = project.courseDir.path + "/course.zip"
+      PropertiesComponent.getInstance(project).setValue(CCCreateCourseArchiveAction.LAST_ARCHIVE_LOCATION, courseZipPath)
+
+      createFile("course.zip")
+      createFile("cats.zip")
+    }
+
+  @Test
+  fun `rename additional file`() =
+    doTestAdditionalFilesAfterFSActions(listOf("1.txt"), listOf("2.txt")) {
+      renameFile("1.txt", "2.txt")
+    }
+
+  @Test
+  fun `rename additional folder`() =
+    doTestAdditionalFilesAfterFSActions(
+      listOf("a.txt", "a/1.txt", "a/2.txt", "a/-i-.txt", "a/.excluded-by-configurator"),
+      // 1. file a/-i-.txt does not appear in the list of additional files
+      // 2. even if the file is excluded by configurator, it is still in the list of additional files
+      listOf("a.txt", "b/1.txt", "b/2.txt", "b/.excluded-by-configurator")
+    ) {
+      renameFile("a", "b")
+    }
+
+  @Test
+  fun `delete additional file in a course folder`() =
+    doTestAdditionalFilesAfterFSActions(listOf("1.txt"), emptyList()) {
+      deleteFile("1.txt")
+    }
+
+  @Test
+  fun `delete additional file with other files of the same name`() =
+    doTestAdditionalFilesAfterFSActions(listOf("1.txt", "a/1.txt", "lesson1/1.txt"), listOf("1.txt", "lesson1/1.txt")) {
+      deleteFile("a/1.txt")
+    }
+
+  @Test
+  fun `delete additional folder`() =
+    doTestAdditionalFilesAfterFSActions(listOf("a.txt", "a/1.txt", "a/2.txt", "aa/1.txt"), listOf("a.txt", "aa/1.txt")) {
+      deleteFile("a")
+    }
+
+  @Test
+  fun `copy additional file to the same folder`() =
+    doTestAdditionalFilesAfterFSActions(listOf("1.txt"), listOf("1.txt", "2.txt")) {
+      copyFile("1.txt", ".", copyName = "2.txt")
+    }
+
+  @Test
+  fun `copy additional file in another folder`() =
+    doTestAdditionalFilesAfterFSActions(listOf("1.txt"), listOf("1.txt", "a/1.txt")) {
+      createDirectory("a")
+      copyFile("1.txt", "a")
+    }
+
+  @Test
+  fun `move additional file`() = doTestAdditionalFilesAfterFSActions(listOf("1.txt"), listOf("a/1.txt")) {
+    createDirectory("a")
+    moveFile("1.txt", "a")
+  }
+
+  @Test
+  fun `move additional folder`() =
+    doTestAdditionalFilesAfterFSActions(
+      listOf("a.txt", "a/1.txt", "a/2.txt", "a/-i-.txt", "a/.excluded-by-configurator"),
+      // 1. file a/-i-.txt does not appear in the list of additional files
+      // 2. even if the file is excluded by configurator, it is still in the list of additional files
+      listOf("a.txt", "dir/a/1.txt", "dir/a/2.txt", "dir/a/.excluded-by-configurator")
+    ) {
+      createDirectory("dir")
+      moveFile("a", "dir")
+    }
+
+  @Test
+  fun `move between lesson and section folders`() =
+    doTestAdditionalFilesAfterFSActions(
+      listOf(
+        "a.txt", "b.txt",
+        "lesson1/l1a.txt", "lesson1/l1b.txt", "lesson1/l1c.txt",
+        "section1/s1a.txt", "section1/s1b.txt",
+        "section1/lesson1/s1l1a.txt", "section1/lesson1/s1l1b.txt", "section1/lesson1/s1l1c.txt"
+      ),
+      listOf(
+        "l1a.txt", "s1a.txt", "s1l1a.txt",
+        "lesson1/a.txt", "lesson1/s1b.txt", "lesson1/s1l1c.txt",
+        "section1/b.txt", "section1/l1b.txt", "section1/s1l1b.txt",
+        "section1/lesson1/l1c.txt",
+      ),
+    ) {
+      moveFile("a.txt", "lesson1")
+      moveFile("b.txt", "section1")
+
+      moveFile("lesson1/l1a.txt", ".")
+      moveFile("lesson1/l1b.txt", "section1")
+      moveFile("lesson1/l1c.txt", "section1/lesson1")
+
+      moveFile("section1/s1a.txt", ".")
+      moveFile("section1/s1b.txt", "lesson1")
+
+      moveFile("section1/lesson1/s1l1a.txt", ".")
+      moveFile("section1/lesson1/s1l1b.txt", "section1")
+      moveFile("section1/lesson1/s1l1c.txt", "lesson1")
+    }
+
+  @Test
+  fun `moving into task folder deletes additional files`() =
+    doTestAdditionalFilesAfterFSActions(
+      listOf("a.txt", "dir/b.txt", "dir/c.txt"),
+      emptyList()
+    ) {
+      moveFile("a.txt", "lesson2/task1")
+      moveFile("dir", "lesson2/task1")
+    }
+
+  @Test
+  fun `moving out of a task folder creates additional files`() =
+    doTestAdditionalFilesAfterFSActions(
+      listOf(
+        "lesson2/task1/-i-a.txt",
+        "lesson2/task1/dir/-i-b.txt",
+        "lesson2/task1/dir/-i-c.txt",
+        "lesson2/task1/dir/.-i-excluded-because-of-dot.txt"
+      ),
+      listOf("-i-a.txt", "dir/-i-b.txt", "dir/-i-c.txt")
+    ) {
+      moveFile("lesson2/task1/-i-a.txt", ".")
+      moveFile("lesson2/task1/dir", ".")
+    }
 }
