@@ -42,6 +42,7 @@ include(
   "intellij-plugin:features:ai-hints-kotlin",
   "intellij-plugin:features:ai-hints-python",
   "intellij-plugin:features:ai-test-generation",
+  "intellij-plugin:features:ai-debugging-core",
   "intellij-plugin:features:ide-onboarding",
   "intellij-plugin:features:remote-env",
   "intellij-plugin:features:social-media",

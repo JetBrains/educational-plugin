@@ -90,6 +90,7 @@ dependencies {
     pluginModule(implementation(project("features:remote-env")))
     pluginModule(implementation(project("features:social-media")))
     pluginModule(implementation(project("localization")))
+    pluginModule(implementation(project("features:ai-debugging-core")))
 
     testFramework(TestFrameworkType.Bundled)
   }
