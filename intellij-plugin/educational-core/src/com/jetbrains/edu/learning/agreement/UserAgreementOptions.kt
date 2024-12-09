@@ -33,7 +33,6 @@ class UserAgreementOptions : BoundConfigurable(EduCoreBundle.message("user.agree
       row {
         checkBox("")
           .bindSelected(pluginAgreementAccepted)
-          .enabled(!userAgreementSettings.isNotShown)
           .onChanged {
             if (!it.isSelected) {
               aiAgreementAccepted.set(false)
