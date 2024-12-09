@@ -10,12 +10,13 @@ object UserAgreementUtil {
   @Suppress("DialogTitleCapitalization")
   fun createPluginAgreementCheckBoxTextPanel(): JPanel = panel {
     row {
-      link(EduCoreBundle.message("user.agreement.dialog.checkbox.agreement")) { EduBrowser.getInstance().browse(USER_AGREEMENT_URL) }
-        .resizableColumn()
-        .customize(leftGap())
-      label(EduCoreBundle.message("user.agreement.dialog.checkbox.and"))
-        .customize(leftGap())
-      link(EduCoreBundle.message("user.agreement.dialog.checkbox.privacy.policy")) { EduBrowser.getInstance().browse(PRIVACY_POLICY_URL) }
+      text(
+        EduCoreBundle.message(
+          "user.agreement.dialog.checkbox.agreement.text",
+          USER_AGREEMENT_URL,
+          PRIVACY_POLICY_URL
+        )
+      ) { EduBrowser.getInstance().browse(it.url) }
         .resizableColumn()
         .customize(leftGap())
     }
@@ -23,12 +24,9 @@ object UserAgreementUtil {
 
   fun createAiAgreementCheckBoxTextPanel(): JPanel = panel {
     row {
-      text(
-        EduCoreBundle.message("user.agreement.dialog.ai.agreement.checkbox.text"),
-        action = {
-          EduBrowser.getInstance().browse(AI_TERMS_OF_USE_URL)
-        })
-        .customize(leftGap())
+      text(EduCoreBundle.message("user.agreement.dialog.ai.agreement.checkbox.text", AI_TERMS_OF_USE_URL)) {
+        EduBrowser.getInstance().browse(it.url)
+      }.customize(leftGap())
     }
   }
 
