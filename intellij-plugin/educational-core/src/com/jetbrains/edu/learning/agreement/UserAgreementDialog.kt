@@ -5,7 +5,6 @@ import com.intellij.openapi.observable.properties.AtomicBooleanProperty
 import com.intellij.openapi.observable.properties.MutableBooleanProperty
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.openapi.ui.showYesNoDialog
 import com.intellij.ui.dsl.builder.AlignY
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.panel
@@ -15,7 +14,6 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.agreement.UserAgreementUtil.aiAgreementCheckBoxText
 import com.jetbrains.edu.learning.agreement.UserAgreementUtil.pluginAgreementCheckBoxText
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.UserAgreementState
 import javax.swing.JComponent
 
@@ -84,18 +82,6 @@ class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
     fun showUserAgreementDialog(project: Project?) {
       val result = UserAgreementDialog(project).showWithResult()
       UserAgreementSettings.getInstance().setAgreementState(result)
-    }
-
-    fun showEnableSubmissionsDialog(project: Project): Boolean {
-      val result = showYesNoDialog(
-        EduCoreBundle.message("user.agreement.settings.title"),
-        EduCoreBundle.message("marketplace.options.user.agreement.checkbox"),
-        project
-      )
-      if (result) {
-        SubmissionsManager.getInstance(project).prepareSubmissionsContentWhenLoggedIn()
-      }
-      return result
     }
   }
 }
