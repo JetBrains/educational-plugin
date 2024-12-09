@@ -110,7 +110,8 @@ class UserAgreementManager(private val scope: CoroutineScope) {
 
   fun showUserAgreement(project: Project) {
     runInEdt {
-      UserAgreementDialog.showUserAgreementDialog(project)
+      val result = UserAgreementDialog(project).showWithResult()
+      UserAgreementSettings.getInstance().setAgreementState(result)
     }
   }
 

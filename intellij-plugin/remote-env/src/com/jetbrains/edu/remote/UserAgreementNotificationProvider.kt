@@ -1,6 +1,5 @@
 package com.jetbrains.edu.remote
 
-import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
@@ -8,7 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotificationProvider
 import com.jetbrains.edu.learning.RemoteEnvHelper
-import com.jetbrains.edu.learning.agreement.UserAgreementDialog
+import com.jetbrains.edu.learning.agreement.UserAgreementManager
 import com.jetbrains.edu.learning.agreement.UserAgreementSettings
 import com.jetbrains.edu.learning.marketplace.isMarketplaceStudentCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -26,9 +25,7 @@ class UserAgreementNotificationProvider : EditorNotificationProvider, DumbAware 
       val panel = EditorNotificationPanel()
       panel.text = EduCoreBundle.message("user.agreement.editor.notification")
       panel.createActionLabel(EduCoreBundle.message("user.agreement.editor.notification.details")) {
-        runInEdt {
-          UserAgreementDialog.showUserAgreementDialog(project)
-        }
+        UserAgreementManager.getInstance().showUserAgreement(project)
       }
       panel
     }

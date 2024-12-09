@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.agreement.UserAgreementDialog
 @Suppress("ComponentNotRegistered")
 class ShowUserAgreementDialog : DumbAwareAction() {
   override fun actionPerformed(e: AnActionEvent) {
-    UserAgreementDialog.showUserAgreementDialog(e.project)
+    UserAgreementDialog(e.project).show()
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
