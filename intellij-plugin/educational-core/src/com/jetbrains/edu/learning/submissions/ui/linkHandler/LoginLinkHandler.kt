@@ -3,8 +3,8 @@ package com.jetbrains.edu.learning.submissions.ui.linkHandler
 import com.intellij.openapi.project.Project
 import com.intellij.ui.ColorUtil
 import com.jetbrains.edu.learning.RemoteEnvHelper
-import com.jetbrains.edu.learning.agreement.UserAgreementDialog
 import com.jetbrains.edu.learning.agreement.UserAgreementSettings
+import com.jetbrains.edu.learning.agreement.UserAgreementUtil.showEnableSubmissionsDialog
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.ui.SubmissionsTab.Companion.SUBMISSION_PROTOCOL
@@ -24,7 +24,7 @@ class LoginLinkHandler(
     }
 
     url.startsWith(SUBMISSION_USER_AGREEMENT) -> {
-      if (UserAgreementDialog.showEnableSubmissionsDialog(project)) {
+      if (showEnableSubmissionsDialog(project)) {
         UserAgreementSettings.getInstance().enableSubmissions()
       }
       true
