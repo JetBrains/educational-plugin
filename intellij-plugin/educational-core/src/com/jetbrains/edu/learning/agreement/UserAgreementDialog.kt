@@ -17,9 +17,11 @@ import com.jetbrains.edu.learning.submissions.UserAgreementState
 import javax.swing.JComponent
 
 class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
-  private val pluginAgreementAccepted: MutableBooleanProperty = AtomicBooleanProperty(false)
+  private val userAgreementSettings = UserAgreementSettings.getInstance()
 
-  private val aiAgreementCheckBox: MutableBooleanProperty = AtomicBooleanProperty(false)
+  private val pluginAgreementAccepted: MutableBooleanProperty = AtomicBooleanProperty(userAgreementSettings.pluginAgreement)
+
+  private val aiAgreementCheckBox: MutableBooleanProperty = AtomicBooleanProperty(userAgreementSettings.aiServiceAgreement)
 
   init {
     setOKButtonText(EduCoreBundle.message("user.agreement.dialog.agree.button"))
