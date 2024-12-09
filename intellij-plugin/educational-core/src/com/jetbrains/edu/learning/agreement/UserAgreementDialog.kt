@@ -13,8 +13,8 @@ import com.intellij.ui.dsl.gridLayout.UnscaledGaps
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.agreement.UserAgreementUtil.EMPTY_TEXT
-import com.jetbrains.edu.learning.agreement.UserAgreementUtil.createAiAgreementCheckBoxTextPanel
-import com.jetbrains.edu.learning.agreement.UserAgreementUtil.createPluginAgreementCheckBoxTextPanel
+import com.jetbrains.edu.learning.agreement.UserAgreementUtil.aiAgreementCheckBoxText
+import com.jetbrains.edu.learning.agreement.UserAgreementUtil.pluginAgreementCheckBoxText
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.UserAgreementState
@@ -55,7 +55,7 @@ class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
         }
         .bindSelected(pluginAgreementAccepted)
         .customize(UnscaledGaps.EMPTY)
-      cell(createPluginAgreementCheckBoxTextPanel())
+      pluginAgreementCheckBoxText()
     }
     row {
       checkBox(EMPTY_TEXT)
@@ -64,7 +64,7 @@ class UserAgreementDialog(project: Project?) : DialogWrapper(project) {
         .customize(UnscaledGaps.EMPTY)
         .align(AlignY.TOP)
         .bindSelected(aiAgreementCheckBox)
-      cell(createAiAgreementCheckBoxTextPanel())
+      aiAgreementCheckBoxText()
     }
   }
 

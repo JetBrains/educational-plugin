@@ -1,33 +1,30 @@
 package com.jetbrains.edu.learning.agreement
 
-import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.builder.Cell
+import com.intellij.ui.dsl.builder.Row
 import com.intellij.ui.dsl.gridLayout.UnscaledGaps
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import javax.swing.JPanel
+import javax.swing.JEditorPane
 
 object UserAgreementUtil {
   @Suppress("DialogTitleCapitalization")
-  fun createPluginAgreementCheckBoxTextPanel(): JPanel = panel {
-    row {
-      text(
-        EduCoreBundle.message(
-          "user.agreement.dialog.checkbox.agreement.text",
-          USER_AGREEMENT_URL,
-          PRIVACY_POLICY_URL
-        )
-      ) { EduBrowser.getInstance().browse(it.url) }
-        .resizableColumn()
-        .customize(leftGap())
-    }
+  fun Row.pluginAgreementCheckBoxText(): Cell<JEditorPane> {
+    return text(
+      EduCoreBundle.message(
+        "user.agreement.dialog.checkbox.agreement.text",
+        USER_AGREEMENT_URL,
+        PRIVACY_POLICY_URL
+      )
+    ) { EduBrowser.getInstance().browse(it.url) }
+      .resizableColumn()
+      .customize(leftGap())
   }
 
-  fun createAiAgreementCheckBoxTextPanel(): JPanel = panel {
-    row {
-      text(EduCoreBundle.message("user.agreement.dialog.ai.agreement.checkbox.text", AI_TERMS_OF_USE_URL)) {
-        EduBrowser.getInstance().browse(it.url)
-      }.customize(leftGap())
-    }
+  fun Row.aiAgreementCheckBoxText(): Cell<JEditorPane> {
+    return text(EduCoreBundle.message("user.agreement.dialog.ai.agreement.checkbox.text", AI_TERMS_OF_USE_URL)) {
+      EduBrowser.getInstance().browse(it.url)
+    }.resizableColumn().customize(leftGap())
   }
 
   private fun leftGap() = UnscaledGaps(0, 3, 0, 0)
