@@ -38,7 +38,9 @@ include(
   "intellij-plugin:localization",
   "intellij-plugin:features:command-line",
   "intellij-plugin:features:ai-hints-core",
-  "intellij-plugin:features:ai-hints-kotlin"
+  "intellij-plugin:features:ai-hints-kotlin",
+  "intellij-plugin:features:ai-debugging-core",
+  "intellij-plugin:features:ai-debugging-java"
 )
 
 // BACKCOMPAT: 2024.1
