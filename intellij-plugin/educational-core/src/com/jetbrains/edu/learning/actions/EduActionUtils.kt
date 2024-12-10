@@ -44,7 +44,7 @@ object EduActionUtils {
    * @see [com.jetbrains.edu.aiHints.core.action.GetHint]
    */
   fun isGetHintAvailable(task: Task): Boolean {
-    if (!isFeatureEnabled(EduExperimentalFeatures.AI_HINTS) || !UserAgreementSettings().aiServiceAgreement) return false
+    if (!isFeatureEnabled(EduExperimentalFeatures.AI_HINTS) || !UserAgreementSettings.getInstance().aiServiceAgreement) return false
     val course = task.course
     return course.languageId == EduFormatNames.KOTLIN && course.isStudy && task is EduTask && task.status == CheckStatus.Failed
   }
