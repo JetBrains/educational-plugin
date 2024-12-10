@@ -110,7 +110,17 @@ private class FileTreeBuilderImpl(val directory: MutableMap<String, Entry> = mut
 
   override fun file(name: String, code: String?) {
     check('/' !in name) { "Bad file name `$name`" }
-    directory[name] = Entry.File(code?.trimIndent())
+    val text = if (code != null) {
+      // Preserve end of line at the end of the given code.
+      // Otherwise, it's impossible to check any text with a newline at the end using this API
+      val endsWithNewLine = code.endsWith('\n')
+      val result = code.trimIndent()
+      if (endsWithNewLine) result + "\n" else result
+    }
+    else {
+      null
+    }
+    directory[name] = Entry.File(text)
   }
 
   fun intoDirectory() = Entry.Directory(directory)

@@ -202,3 +202,15 @@ fun Course.visitEduFiles(visitor: (EduFile) -> Unit) {
     visitor(additionalFile)
   }
 }
+
+fun Course.visitItems(action: (StudyItem) -> Unit) {
+
+  fun walk(item: StudyItem) {
+    action(item)
+    if (item is ItemContainer) {
+      item.items.forEach(::walk)
+    }
+  }
+
+  items.forEach(::walk)
+}

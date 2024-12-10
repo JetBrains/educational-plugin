@@ -27,8 +27,6 @@ import com.jetbrains.edu.learning.statistics.DownloadCourseContext.IDE_UI
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
 import com.jetbrains.edu.learning.submissions.SolutionSharingPreference
 import com.jetbrains.edu.learning.update.showUpdateNotification
-import com.jetbrains.edu.learning.yaml.YamlDeepLoader.reloadRemoteInfo
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.util.*
 
 private const val DELIMITER = "."
@@ -45,24 +43,6 @@ fun getJBAUserInfo(): JBAccountUserInfo? {
 }
 
 private fun getJBAIdToken(): String? = JBAccountInfoService.getInstance()?.idToken
-
-fun Course.updateCourseItems(project: Project) {
-  visitSections { section ->
-    section.ensureIdGenerated(project)
-  }
-  visitLessons { lesson ->
-    lesson.ensureIdGenerated(project)
-    lesson.visitTasks { task ->
-      task.ensureIdGenerated(project)
-    }
-  }
-  YamlFormatSynchronizer.saveRemoteInfo(this)
-}
-
-fun StudyItem.ensureIdGenerated(project: Project) {
-  reloadRemoteInfo(project)
-  generateId()
-}
 
 fun Course.setRemoteMarketplaceCourseVersion() {
   val updateInfo = MarketplaceConnector.getInstance().getLatestCourseUpdateInfo(id)
