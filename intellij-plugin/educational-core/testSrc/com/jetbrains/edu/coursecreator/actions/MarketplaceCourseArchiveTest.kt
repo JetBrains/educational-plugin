@@ -12,13 +12,13 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
 import com.jetbrains.edu.learning.courseFormat.Vendor
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
+import com.jetbrains.edu.learning.marketplace.StudyItemIdGenerator
 import com.jetbrains.edu.learning.marketplace.addVendor
 import com.jetbrains.edu.learning.marketplace.api.Author
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.setMarketplaceAuthorsAsString
 import com.jetbrains.edu.learning.marketplace.mockJBAccount
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
-import com.jetbrains.edu.learning.marketplace.updateCourseItems
 import com.jetbrains.edu.learning.navigation.NavigationUtils.getFirstTask
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_LESSON_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_TASK_CONFIG
@@ -249,7 +249,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
       findFile("lesson1/${REMOTE_LESSON_CONFIG}").writeText("id: 11")
       FileDocumentManager.getInstance().saveAllDocuments()
     }
-    course.updateCourseItems(project)
+    StudyItemIdGenerator.getInstance(project).generateIdsIfNeeded(course.course)
 
     val newJson = generateJson()
     val courseWithRemoteInfoFilesChanges = FileUtil.loadFile(File(testDataPath, CHANGE_REMOTE_INFO_FILES_COURSE_WITH_CHANGES))

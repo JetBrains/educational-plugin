@@ -49,12 +49,6 @@ abstract class StudyItem() {
 
   abstract fun init(parentItem: ItemContainer, isRestarted: Boolean)
 
-  fun generateId() {
-    if (id == 0) {
-      id = System.identityHashCode(this)
-    }
-  }
-
   fun getRelativePath(root: StudyItem): String {
     if (this == root) return ""
     val parents = mutableListOf<String>()

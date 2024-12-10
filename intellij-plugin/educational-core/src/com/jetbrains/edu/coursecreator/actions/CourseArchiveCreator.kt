@@ -38,7 +38,7 @@ import com.jetbrains.edu.learning.json.encrypt.getAesKey
 import com.jetbrains.edu.learning.json.mixins.*
 import com.jetbrains.edu.learning.json.pathInArchive
 import com.jetbrains.edu.learning.json.setDateFormat
-import com.jetbrains.edu.learning.marketplace.updateCourseItems
+import com.jetbrains.edu.learning.marketplace.StudyItemIdGenerator
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.TASK_CONFIG
 import org.jetbrains.annotations.NonNls
@@ -63,7 +63,7 @@ class CourseArchiveCreator(
     val course = StudyTaskManager.getInstance(project).course ?: return EduCoreBundle.message("error.unable.to.obtain.course.for.project")
     if (course.isMarketplace && !isUnitTestMode) {
       ProgressManager.getInstance().runProcessWithProgressSynchronously({
-        course.updateCourseItems(project)
+        StudyItemIdGenerator.getInstance(project).generateIdsIfNeeded(course.course)
       }, EduCoreBundle.message("action.create.course.archive.progress.bar"), false, project)
     }
 

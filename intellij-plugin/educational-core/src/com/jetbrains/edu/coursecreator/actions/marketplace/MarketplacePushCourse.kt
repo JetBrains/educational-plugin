@@ -153,7 +153,7 @@ class MarketplacePushCourse(
     if (marketplaceCourseVersion == 0) marketplaceCourseVersion = 1
 
     if (!isUnitTestMode) {
-      updateCourseItems(project)
+      StudyItemIdGenerator.getInstance(project).generateIdsIfNeeded(course)
     }
     if (vendor == null) {
       if (!addVendor()) {
