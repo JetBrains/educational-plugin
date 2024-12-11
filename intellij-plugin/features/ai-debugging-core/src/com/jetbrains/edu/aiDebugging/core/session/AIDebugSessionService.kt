@@ -22,8 +22,6 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduTestInfo.Companion.firstFailed
 import com.jetbrains.edu.learning.courseFormat.ext.*
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.document
 import com.jetbrains.edu.learning.notification.EduNotificationManager
@@ -92,7 +90,7 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
   }
 
   private fun Task.getInvisibleTestFiles() = taskFiles.values.filter {
-    EduUtilsKt.isTestsFile(this, it.name) && !it.isVisible && (this is EduTask || this is OutputTask)
+    EduUtilsKt.isTestsFile(this, it.name) && !it.isVisible
   }
 
   private fun startDebugSession(task: Task, testResult: CheckResult, closeAIDebuggingHint: () -> Unit) = runInEdt {

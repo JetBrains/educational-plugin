@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.project
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.selectedTaskFile
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
@@ -47,7 +48,7 @@ class AIDebuggingCheckListener : CheckListener {
   }
 
   private fun isAvailable(task: Task) =
-    task.course.courseMode == CourseMode.STUDENT && task.status == CheckStatus.Failed // TODO: when should we show this button?
+    task.course.courseMode == CourseMode.STUDENT && task.status == CheckStatus.Failed && task is EduTask // TODO: when should we show this button?
 
   private fun Task.getTaskDescription(project: Project): TaskDescription {
     val description = runReadAction { getDescriptionFile(project)?.readText() } ?: error("There are no description for the task")
