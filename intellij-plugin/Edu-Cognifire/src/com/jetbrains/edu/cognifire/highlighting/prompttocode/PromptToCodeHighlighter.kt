@@ -1,16 +1,15 @@
 package com.jetbrains.edu.cognifire.highlighting.prompttocode
 
-import com.intellij.openapi.editor.event.DocumentEvent
-import com.intellij.openapi.editor.event.DocumentListener
-import com.intellij.openapi.editor.event.EditorMouseEvent
-import com.intellij.openapi.editor.event.EditorMouseMotionListener
+import com.intellij.openapi.editor.event.*
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.cognifire.highlighting.GuardedBlockManager
 import com.jetbrains.edu.cognifire.highlighting.HighlighterManager
 import com.jetbrains.edu.cognifire.highlighting.ListenerManager
 import com.jetbrains.edu.cognifire.highlighting.highlighers.LinkingHighlighter
 import com.jetbrains.edu.cognifire.highlighting.highlighers.UncommitedChangesHighlighter
 import com.jetbrains.edu.cognifire.models.PromptExpression
 import com.jetbrains.edu.cognifire.models.CodeExpression
+import com.jetbrains.edu.learning.selectedEditor
 
 /**
  * Class [PromptToCodeHighlighter] is responsible for highlighting the prompt and code lines
@@ -21,9 +20,9 @@ import com.jetbrains.edu.cognifire.models.CodeExpression
  * @property listenerManager The instance of [ListenerManager].
  *
  */
-class PromptToCodeHighlighter(private val project: Project) {
+class PromptToCodeHighlighter(private val project: Project, private val actionId: String) {
 
-  private val highlighterManager = HighlighterManager.getInstance(project)
+  private val highlighterManager = HighlighterManager.getInstance()
   private val listenerManager = ListenerManager.getInstance(project)
 
   /**
@@ -44,16 +43,28 @@ class PromptToCodeHighlighter(private val project: Project) {
     promptToCodeLines: Map<Int, List<Int>>,
     codeToPromptLines: Map<Int, List<Int>>
   ) {
-    ListenerManager.getInstance(project).addListener(
+    listenerManager.addListener(
       getMouseMotionListener(
         promptExpression,
         codeExpression,
         promptToCodeLines,
         codeToPromptLines
-      )
+      ),
+      actionId
     )
-    ListenerManager.getInstance(project).addListener(
-      getDocumentListener(codeExpression, promptExpression)
+    listenerManager.addListener(
+      getDocumentListener(codeExpression, promptExpression),
+      actionId
+    )
+  }
+
+  fun setUpDocumentListener(
+    promptExpression: PromptExpression,
+    codeExpression: CodeExpression
+  ) {
+    listenerManager.addListener(
+      getDocumentListener(codeExpression, promptExpression),
+      actionId
     )
   }
 
@@ -70,7 +81,7 @@ class PromptToCodeHighlighter(private val project: Project) {
       val promptLineOffset = editor.document.getLineNumber(promptExpression.contentOffset)
       val codeLineOffset = editor.document.getLineNumber(codeExpression.contentOffset)
 
-      highlighterManager.clearProdeHighlighters<LinkingHighlighter>()
+      highlighterManager.clearProdeHighlighters<LinkingHighlighter>(actionId)
 
       if(selectedLineWithOffset - promptLineOffset in promptToCodeLines.keys) showHighlighters(
         selectedLineWithOffset - promptLineOffset,
@@ -91,33 +102,48 @@ class PromptToCodeHighlighter(private val project: Project) {
 
   private fun getDocumentListener(codeExpression: CodeExpression, promptExpression: PromptExpression) = object: DocumentListener {
     override fun documentChanged(event: DocumentEvent) {
+      if (project.isDisposed) return
       val delta = event.newLength - event.oldLength
 
       if (event.offset < promptExpression.startOffset) {
         promptExpression.shiftStartOffset(delta)
-        promptExpression.shiftEndOffset(delta)
-      } else if(event.offset in promptExpression.startOffset until promptExpression.endOffset){
+      }
+      if (event.offset < promptExpression.endOffset){
         promptExpression.shiftEndOffset(delta)
       }
-
-      if (event.offset in promptExpression.endOffset until codeExpression.startOffset) {
+      if (event.offset < codeExpression.startOffset) {
         codeExpression.shiftStartOffset(delta)
-        codeExpression.shiftEndOffset(delta)
-      } else if(event.offset in codeExpression.startOffset until codeExpression.endOffset){
+      }
+      if (event.offset < codeExpression.endOffset) {
         codeExpression.shiftEndOffset(delta)
       }
 
       if (event.offset in promptExpression.startOffset until promptExpression.endOffset ||
           event.offset in codeExpression.startOffset until codeExpression.endOffset) {
-        highlighterManager.clearProdeHighlighters<LinkingHighlighter>()
-        listenerManager.clearAllMouseMotionListeners()
+        highlighterManager.clearProdeHighlighters<LinkingHighlighter>(actionId)
+        listenerManager.clearAllMouseMotionListeners(actionId)
 
-        if(delta > 0) {
+        if (delta > 0) {
+          val editor = project.selectedEditor ?: error("No editor selected")
           highlighterManager.addProdeHighlighter(
-            UncommitedChangesHighlighter(event.offset, event.offset + delta)
+            UncommitedChangesHighlighter(editor, event.offset, event.offset + delta),
+            actionId
           )
         }
+        if (delta != 0) {
+          addReadOnlyBlock(codeExpression, promptExpression, event)
+        }
       }
+    }
+  }
+
+  private fun addReadOnlyBlock(codeExpression: CodeExpression, promptExpression: PromptExpression, event: DocumentEvent) {
+    val document = event.document
+    val guardManager = GuardedBlockManager.getInstance()
+    if (event.offset in promptExpression.startOffset until promptExpression.endOffset) {
+      guardManager.addGuardedBlock(document, codeExpression.startOffset, codeExpression.endOffset, actionId, true)
+    } else if (event.offset in codeExpression.startOffset until codeExpression.endOffset) {
+      guardManager.addGuardedBlock(document, promptExpression.startOffset, promptExpression.endOffset, actionId, false)
     }
   }
 
@@ -139,7 +165,8 @@ class PromptToCodeHighlighter(private val project: Project) {
   private fun addHighlighters(lines: List<Int>) = try {
     lines.forEach { line ->
       highlighterManager.addProdeHighlighter(
-        LinkingHighlighter(line)
+        LinkingHighlighter(project, line),
+        actionId
       )
     }
   }

@@ -14,6 +14,7 @@ import com.jetbrains.edu.cognifire.codegeneration.CodeGenerationState
 import com.jetbrains.edu.cognifire.codegeneration.CodeGenerator
 import com.jetbrains.edu.cognifire.grammar.GrammarParser
 import com.jetbrains.edu.cognifire.grammar.OffsetSentence
+import com.jetbrains.edu.cognifire.highlighting.GuardedBlockManager
 import com.jetbrains.edu.cognifire.highlighting.HighlighterManager
 import com.jetbrains.edu.cognifire.highlighting.ListenerManager
 import com.jetbrains.edu.cognifire.highlighting.prompttocode.PromptToCodeHighlighter
@@ -49,8 +50,9 @@ class PromptExecutorAction(private val element: PsiElement, private val id: Stri
 
 
     // TODO: Update highlighters on PsiElement update
-    HighlighterManager.getInstance(project).clearAll()
-    ListenerManager.getInstance(project).clearAll()
+    HighlighterManager.getInstance().clearAll(id)
+    ListenerManager.getInstance(project).clearAll(id)
+    GuardedBlockManager.getInstance().removeGuardedBlock(id, element.containingFile.virtualFile)
 
     val promptExpression = PromptExpressionParser.parsePromptExpression(element, element.language)
     if (promptExpression == null) {
@@ -126,7 +128,7 @@ class PromptExecutorAction(private val element: PsiElement, private val id: Stri
     invokeLater {
       val generatedCode = codeGenerator.generatedCode
       val (newPromptExpression, newCodeExpression) = syncProde(project, codeGenerator, promptExpression)
-      PromptToCodeHighlighter(project).setUp(
+      PromptToCodeHighlighter(project, id).setUp(
         newPromptExpression,
         newCodeExpression,
         codeGenerator.promptToCodeLines,
@@ -141,7 +143,7 @@ class PromptExecutorAction(private val element: PsiElement, private val id: Stri
       var unparsableSentences = emptyList<OffsetSentence>()
       if (state == PromptCodeState.CodeFailed) {
         unparsableSentences = checkGrammar(newPromptExpression, project)
-        GrammarHighlighterProcessor.highlightAll(project, unparsableSentences)
+        GrammarHighlighterProcessor.highlightAll(project, unparsableSentences, id)
       }
       Logger.cognifireLogger.info(
         """Lesson id: ${task.lesson.id}    Task id: ${task.id}    Action id: $id

@@ -48,6 +48,11 @@
                     dynamic="true">
       <with attribute="implementationClass" implements="com.jetbrains.edu.cognifire.inspection.InspectionProcessor"/>
     </extensionPoint>
+    <extensionPoint qualifiedName="Educational.prodeExpressionParser"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.cognifire.parsers.ProdeExpressionParser"/>
+    </extensionPoint>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -57,6 +62,9 @@
       <categoryKey>cognifire.intention.category.name</categoryKey>
       <descriptionDirectoryName>CodeIntentionAction</descriptionDirectoryName>
     </intentionAction>
+    <applicationService serviceImplementation="com.jetbrains.edu.cognifire.highlighting.HighlighterManager"/>
+    <applicationService serviceImplementation="com.jetbrains.edu.cognifire.highlighting.GuardedBlockManager"/>
+    <postStartupActivity implementation="com.jetbrains.edu.cognifire.CognifireStartupActivity"/>
   </extensions>
 
   <actions>
