@@ -39,7 +39,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.runReadActionInSmartMode
 import com.jetbrains.edu.learning.toPsiFile
@@ -324,7 +323,7 @@ object CheckUtils {
         CommandProcessor.getInstance().executeCommand(
           project,
           { document.setText(newDocumentText) },
-          message("action.change.test.text"),
+          EduCoreBundle.message("action.change.test.text"),
           "Edu Actions"
         )
         PsiDocumentManager.getInstance(project).commitAllDocuments()
