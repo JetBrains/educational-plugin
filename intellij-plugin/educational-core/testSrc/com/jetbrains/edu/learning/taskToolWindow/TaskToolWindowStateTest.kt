@@ -7,7 +7,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowManager
-import com.intellij.platform.util.coroutines.namedChildScope
+import com.intellij.platform.util.coroutines.childScope
 import com.intellij.testFramework.executeSomeCoroutineTasksAndDispatchAllInvocationEvents
 import com.intellij.testFramework.replaceService
 import com.jetbrains.edu.learning.EduTestCase
@@ -15,16 +15,9 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory.Companion.STUDY_TOOL_WINDOW
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
-import com.jetbrains.edu.rules.ConditionalExecutionRule
-import com.jetbrains.edu.rules.MinPlatformVersion
-import org.junit.Rule
 import org.junit.Test
 
 class TaskToolWindowStateTest : EduTestCase() {
-
-  @JvmField
-  @Rule
-  val executionRule = ConditionalExecutionRule()
 
   override fun setUp() {
     super.setUp()
@@ -126,11 +119,6 @@ class TaskToolWindowStateTest : EduTestCase() {
     assertTrue("Task tool window should be shown", toolWindow.isVisible)
   }
 
-  // For some reason, file editor manager doesn't change selection after a file closing in tests before 242.
-  // As a result, all closing tests can't work properly with current setup.
-  // Let's skip them for now.
-  // BACKCOMPAT: 2024.1. Drop `MinPlatformVersion` annotation
-  @MinPlatformVersion("242")
   @Test
   fun `closing task file doesn't close tool window and changes current task`() {
     // given
@@ -147,11 +135,6 @@ class TaskToolWindowStateTest : EduTestCase() {
     assertTrue("Task tool window should be shown", toolWindow.isVisible)
   }
 
-  // For some reason, file editor manager doesn't change selection after a file closing in tests before 242.
-  // As a result, all closing tests can't work properly with current setup.
-  // Let's skip them for now.
-  // BACKCOMPAT: 2024.1. Drop `MinPlatformVersion` annotation
-  @MinPlatformVersion("242")
   @Test
   fun `closing task file doesn't open tool window and changes current task`() {
     // given
@@ -169,11 +152,6 @@ class TaskToolWindowStateTest : EduTestCase() {
     assertFalse("Task tool window should not be shown", toolWindow.isVisible)
   }
 
-  // For some reason, file editor manager doesn't change selection after a file closing in tests before 242.
-  // As a result, all closing tests can't work properly with current setup.
-  // Let's skip them for now.
-  // BACKCOMPAT: 2024.1. Drop `MinPlatformVersion` annotation
-  @MinPlatformVersion("242")
   @Test
   fun `closing last task file doesn't close tool window and reset current task`() {
     // given
@@ -189,11 +167,6 @@ class TaskToolWindowStateTest : EduTestCase() {
     assertTrue("Task tool window should be shown", toolWindow.isVisible)
   }
 
-  // For some reason, file editor manager doesn't change selection after a file closing in tests before 242.
-  // As a result, all closing tests can't work properly with current setup.
-  // Let's skip them for now.
-  // BACKCOMPAT: 2024.1. Drop `MinPlatformVersion` annotation
-  @MinPlatformVersion("242")
   @Test
   fun `closing non-task file doesn't change state`() {
     // given
@@ -218,11 +191,9 @@ class TaskToolWindowStateTest : EduTestCase() {
     project.putUserData(ALLOW_IN_LIGHT_PROJECT_KEY, true)
     Disposer.register(testRootDisposable) { project.putUserData(ALLOW_IN_LIGHT_PROJECT_KEY, null) }
 
-    // BACKCOMPAT: 2024.1 change `namedChildScope` to `childScope` and remove suppression of deprecation
-    @Suppress("DEPRECATION")
     project.replaceService(
       FileEditorManager::class.java,
-      PsiAwareFileEditorManagerImpl(project, (project as ComponentManagerEx).getCoroutineScope().namedChildScope(name)),
+      PsiAwareFileEditorManagerImpl(project, (project as ComponentManagerEx).getCoroutineScope().childScope(name)),
       testRootDisposable
     )
   }

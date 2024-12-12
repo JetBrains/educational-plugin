@@ -4,9 +4,12 @@ import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.Err
+import com.jetbrains.edu.learning.Ok
+import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.checker.CodeExecutor
 import com.jetbrains.edu.learning.checker.CodeExecutor.Companion.resultUnchecked
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
@@ -31,8 +34,7 @@ class RsCodeExecutor : CodeExecutor {
     // `--color never` is needed to avoid unexpected color escape codes in output
     val cmd = CargoCommandLine.forTarget(target, "run", listOf("--color", "never")).copy(emulateTerminal = false)
 
-    val disposable = StudyTaskManager.getInstance(project)
-    val processOutput = cargo.toGeneralCommandLine(project, cmd).executeCargoCommandLine(disposable, input)
+    val processOutput = cargo.toGeneralCommandLine(project, cmd).executeCargoCommandLine(input)
     val output = processOutput.stdout
 
     return if (processOutput.isSuccess) {

@@ -7,6 +7,7 @@ import com.intellij.openapi.vfs.findFile
 import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlFile
+import com.intellij.testFramework.IndexingTestUtil
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -245,7 +246,7 @@ class CourseValidationTest : EduTestCase() {
   }
 
   private fun doTest(course: Course, validateTests: Boolean, validateLinks: Boolean, expected: String) {
-    waitUntilIndexesAreReady(project)
+    IndexingTestUtil.waitUntilIndexesAreReady(project)
     val testMessageConsumer = TestServiceMessageConsumer()
     val params = ValidationParams(validateTests = validateTests, validateLinks = validateLinks)
     val validationHelper = CourseValidationHelper(params, testMessageConsumer)

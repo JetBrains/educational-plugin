@@ -19,10 +19,7 @@ import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.ui.TestDialogManager
 import com.intellij.openapi.ui.TestInputDialog
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.testFramework.PlatformTestUtil
-import com.intellij.testFramework.TestActionEvent
-import com.intellij.testFramework.UsefulTestCase
-import com.intellij.testFramework.replaceService
+import com.intellij.testFramework.*
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
@@ -110,7 +107,7 @@ fun testAction(
     // But we don't want to check non-`DumbAware` actions in dumb mode since it doesn't make sense.
     // Also, even `CheckAction` is `DumbAware`, we don't want to run it in dumb mode as well
     // because the only thing that it does in dumb mode is showing balloon to inform users about dumb mode
-    waitUntilIndexesAreReady(project)
+    IndexingTestUtil.waitUntilIndexesAreReady(project)
   }
 
   action.beforeActionPerformedUpdate(e)

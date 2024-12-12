@@ -6,8 +6,6 @@
 
   <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/edu-code-insight.xml" xpointer="xpointer(/idea-plugin/*)"/>
-  <!-- BACKCOMPAT: 2024.1 -->
-  <xi:include href="/META-INF/edu-csharp-base.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <!--update description in description.html file instead-->
   <description/>
@@ -34,6 +32,7 @@
     <module name="Edu-Php"/>
     <module name="Edu-Shell"/>
     <module name="Edu-Python"/>
+    <module name="Edu-CSharp"/>
     <module name="sql-core"/>
     <module name="sql-jvm"/>
     <module name="github"/>

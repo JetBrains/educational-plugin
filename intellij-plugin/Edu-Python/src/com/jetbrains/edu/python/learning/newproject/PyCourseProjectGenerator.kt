@@ -3,6 +3,7 @@ package com.jetbrains.edu.python.learning.newproject
 import com.intellij.execution.ExecutionException
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
@@ -28,7 +29,12 @@ open class PyCourseProjectGenerator(
       val selectedSdk = sdk
       @Suppress("UnstableApiUsage")
       val installedSdk = invokeAndWaitIfNeeded {
-        selectedSdk.install()
+        selectedSdk.install(null) {
+          detectSystemWideSdks(null, emptyList())
+        }.getOrElse {
+          LOG.warn(it)
+          null
+        }
       }
       if (installedSdk != null) {
         createAndAddVirtualEnv(project, projectSettings, installedSdk)
@@ -70,6 +76,11 @@ open class PyCourseProjectGenerator(
     settings.sdk = sdk
     SdkConfigurationUtil.addSdk(sdk)
     sdk.setAssociationToModule(project)
+  }
+
+  private fun Sdk.setAssociationToModule(project: Project) {
+    val module = ModuleManager.getInstance(project).sortedModules.firstOrNull() ?: return
+    setAssociationToModule(module)
   }
 
   companion object {

@@ -6,7 +6,6 @@ import com.intellij.execution.configurations.ConfigurationType
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.checker.tests.TestResultCollector
@@ -32,9 +31,8 @@ class RsEduTaskChecker(project: Project, envChecker: EnvironmentChecker, task: E
     // `--color never` is needed to avoid unexpected color escape codes in output
     val cmd = CargoCommandLine.forPackage(pkg, "test", listOf("--no-run", "--color", "never")).copy(emulateTerminal = false)
 
-    val disposable = StudyTaskManager.getInstance(project)
     val cargo = project.rustSettings.toolchain?.cargo() ?: return CheckResult(CheckStatus.Failed, message("error.no.toolchain"))
-    val processOutput = cargo.toGeneralCommandLine(project, cmd).executeCargoCommandLine(disposable)
+    val processOutput = cargo.toGeneralCommandLine(project, cmd).executeCargoCommandLine()
     return RsStderrAnalyzer.tryToGetCheckResult(processOutput.stdout) ?: super.computePossibleErrorResult(indicator, stderr)
   }
 

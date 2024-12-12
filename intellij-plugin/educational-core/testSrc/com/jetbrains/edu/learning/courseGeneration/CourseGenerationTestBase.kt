@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.courseGeneration
 
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.testFramework.IndexingTestUtil
 import com.intellij.testFramework.runInEdtAndWait
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
@@ -31,7 +32,7 @@ abstract class CourseGenerationTestBase<Settings : EduProjectSettings> : EduHeav
     val project = invokeAndWaitIfNeeded {
       generator.doCreateCourseProject(rootDir.path, defaultSettings) ?: error("Cannot create project")
     }
-    waitUntilIndexesAreReady(project)
+    IndexingTestUtil.waitUntilIndexesAreReady(project)
     TaskToolWindowView.getInstance(project).currentTask = project.getCurrentTask()
     runInEdtAndWait {
       myProject = project

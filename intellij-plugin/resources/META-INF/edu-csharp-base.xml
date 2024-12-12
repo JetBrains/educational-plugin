@@ -1,6 +1,0 @@
-<idea-plugin>
-  <!--suppress PluginXmlValidity -->
-  <content>
-    <module name="Edu-CSharp"/>
-  </content>
-</idea-plugin>

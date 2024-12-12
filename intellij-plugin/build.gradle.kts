@@ -12,8 +12,6 @@ import org.jetbrains.intellij.platform.gradle.utils.extensionProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val environmentName: String by project
-// BACKCOMPAT: 2024.1. Drop it, it's always true
-val isAtLeast242: Boolean = environmentName.toInt() >= 242
 // BACKCOMPAT: 2024.2. Drop it, it's always true
 val isAtLeast243: Boolean = environmentName.toInt() >= 243
 
@@ -27,7 +25,7 @@ val ideaVersion: String by project
 val clionVersion: String by project
 val pycharmVersion: String by project
 val studioVersion: String by project
-val riderVersion: String? by project
+val riderVersion: String by project
 
 val isIdeaIDE = baseIDE == "idea"
 val isClionIDE = baseIDE == "clion"
@@ -40,8 +38,7 @@ val baseVersion = when {
   isClionIDE -> clionVersion
   isPycharmIDE -> pycharmVersion
   isStudioIDE -> studioVersion
-  // BACKCOMPAT: 2024.1
-  isRiderIDE -> riderVersion ?: error("Rider is only supported from version 242 onwards")
+  isRiderIDE -> riderVersion
   else -> error("Unexpected IDE name = `$baseIDE`")
 }
 
@@ -51,7 +48,7 @@ val pythonCommunityPlugin: String by project
 val pythonPlugin = when {
   // Since 2024.2 Python Community plugin is available in paid products (like IU) together with Python Pro as its base dependency.
   // But all necessary code that we need is inside Python Community plugin, so we need only it from compilation POV
-  isIdeaIDE -> if (isAtLeast242) pythonCommunityPlugin else pythonProPlugin
+  isIdeaIDE -> pythonCommunityPlugin
   isClionIDE -> "PythonCore"
   isPycharmIDE -> "PythonCore"
   isStudioIDE -> pythonCommunityPlugin
@@ -117,7 +114,7 @@ val ideToPlugins = mapOf(
   // Since 2024.2 Python Community plugin is available in paid products (like IU) together with Python Pro as its base dependency.
   // Actually, Python Community contains all necessary code that we need.
   // Python Pro plugin is added here on 2024.2 just to have the most common setup from user POV (i.e. Python Community + Python Pro)
-  IntellijIdeaUltimate to listOfNotNull(scalaPlugin, rustPlugin, pythonProPlugin, pythonCommunityPlugin.takeIf { isAtLeast242 }, goPlugin, phpPlugin),
+  IntellijIdeaUltimate to listOfNotNull(scalaPlugin, rustPlugin, pythonProPlugin, pythonCommunityPlugin.takeIf { true }, goPlugin, phpPlugin),
   CLion to listOf(rustPlugin),
   AndroidStudio to listOf(pythonCommunityPlugin),
   GoLand to listOf(pythonCommunityPlugin),
@@ -313,6 +310,7 @@ dependencies {
     pluginModule(implementation(project("Edu-Go")))
     pluginModule(implementation(project("Edu-Php")))
     pluginModule(implementation(project("Edu-Shell")))
+    pluginModule(implementation(project("Edu-CSharp")))
     pluginModule(implementation(project("sql")))
     pluginModule(implementation(project("sql:sql-jvm")))
     pluginModule(implementation(project("github")))
@@ -320,18 +318,7 @@ dependencies {
     pluginModule(implementation(project("features:command-line")))
     pluginModule(implementation(project("features:ai-hints-core")))
     pluginModule(implementation(project("features:ai-hints-kotlin")))
-    // BACKCOMPAT: 2024.1
-    if (isAtLeast242) {
-      // bundled localization resources can be used only since 2024.2,
-      // so it doesn't make sense to have this module for other platforms
-      pluginModule(implementation(project("localization")))
-    }
-
-    // BACKCOMPAT: 2024.1
-    if (isAtLeast242) {
-      // features necessary for course creation are available only since 2024.2
-      pluginModule(implementation(project("Edu-CSharp")))
-    }
+    pluginModule(implementation(project("localization")))
 
     testFramework(TestFrameworkType.Bundled)
   }
@@ -389,10 +376,10 @@ tasks {
         args("buildEventsScheme", "--outputFile=${buildDir()}/eventScheme.json", "--pluginId=com.jetbrains.edu")
         // Force headless mode to be able to run command on CI
         systemProperty("java.awt.headless", "true")
-        // BACKCOMPAT: 2024.1. Update value to 242 and this comment
+        // BACKCOMPAT: 2024.2. Update value to 243 and this comment
         // `IDEA_BUILD_NUMBER` variable is used by `buildEventsScheme` task to write `buildNumber` to output json.
         // It will be used by TeamCity automation to set minimal IDE version for new events
-        environment("IDEA_BUILD_NUMBER", "241")
+        environment("IDEA_BUILD_NUMBER", "242")
       }
     }
 
@@ -412,6 +399,9 @@ tasks {
     customRunIdeTask(CLion, clionVersion) {
       setClionSystemProperties(withRadler = false)
     }
+    customRunIdeTask(CLion, clionVersion, baseTaskName = "CLion-Nova") {
+      setClionSystemProperties(withRadler = true)
+    }
     customRunIdeTask(PyCharmCommunity, pycharmVersion, baseTaskName = "PyCharm")
     customRunIdeTask(AndroidStudio, studioVersion)
     customRunIdeTask(WebStorm)
@@ -420,12 +410,6 @@ tasks {
     customRunIdeTask(RustRover)
     customRunIdeTask(DataSpell)
     customRunIdeTask(Rider, riderVersion)
-
-    if (isAtLeast242) {
-      customRunIdeTask(CLion, clionVersion, baseTaskName = "CLion-Nova") {
-        setClionSystemProperties(withRadler = true)
-      }
-    }
   }
 }
 
@@ -485,9 +469,7 @@ project("educational-core") {
     intellijPlatform {
       intellijIde(project, baseVersion)
 
-      if (isAtLeast242) {
-        bundledModules("intellij.platform.vcs.impl")
-      }
+      bundledModules("intellij.platform.vcs.impl")
     }
 
     api(project(":edu-format"))
@@ -726,12 +708,7 @@ project("Edu-Python:Idea") {
       intellijIde(project, ideVersion)
 
       val pluginList = listOf(
-        // BACKCOMPAT: 2024.1. Convert `when` to `if`
-        when {
-          !isJvmCenteredIDE && isAtLeast242 -> pythonCommunityPlugin
-          !isJvmCenteredIDE -> pythonProPlugin
-          else -> pythonPlugin
-        },
+        if (!isJvmCenteredIDE) pythonCommunityPlugin else pythonPlugin,
         javaPlugin
       )
       intellijPlugins(pluginList)
@@ -893,20 +870,17 @@ project("Edu-Shell") {
   }
 }
 
-// BACKCOMPAT: 2024.1
-if (isAtLeast242) {
-  project("Edu-CSharp") {
-    dependencies {
-      intellijPlatform {
-        intellijIde(project, riderVersion!!)
-        intellijPlugins(csharpPlugins)
+project("Edu-CSharp") {
+  dependencies {
+    intellijPlatform {
+      intellijIde(project, riderVersion)
+      intellijPlugins(csharpPlugins)
 
-        bundledModule("intellij.rider")
-      }
-
-      implementation(project(":intellij-plugin:educational-core"))
-      testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+      bundledModule("intellij.rider")
     }
+
+    implementation(project(":intellij-plugin:educational-core"))
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
   }
 }
 
@@ -1113,14 +1087,6 @@ fun manifestFile(project: Project): File? {
     }
     ":intellij-plugin:educational-core", ":intellij-plugin:code-insight",
     ":intellij-plugin:Edu-Python:Idea", ":intellij-plugin:Edu-Python:PyCharm" -> return manifestFile(project.parent!!)
-    // Special rules for `Edu-Python` module because it's added via `include`
-    // BACKCOMPAT: 2024.1. Drop this branch
-    ":intellij-plugin:Edu-Python" -> {
-      filePath = "Edu-Python.xml"
-    }
-    ":intellij-plugin:Edu-CSharp" -> {
-      filePath = "Edu-CSharp.xml"
-    }
     // Localization module is not supposed to have a plugin manifest.
     // Since it also is not supposed to have any code, only resources, no need to verify anything for it
     ":intellij-plugin:localization" -> return null
@@ -1208,8 +1174,6 @@ fun JavaForkOptions.setClionSystemProperties(withRadler: Boolean = false) {
       "org.jetbrains.plugins.cidr-intelliLang",
       "com.intellij.cidr.grazie",
       "com.intellij.cidr.markdown",
-      //BACKCOMPAT 2024.1: Remove additional plugin
-      "com.intellij.cidr.completion.ml.ranking".takeIf { !isAtLeast242 }
     )
     "radler" to radlerSuppressedPlugins
   }

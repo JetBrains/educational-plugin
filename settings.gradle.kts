@@ -32,6 +32,7 @@ include(
   "intellij-plugin:Edu-Go",
   "intellij-plugin:Edu-Php",
   "intellij-plugin:Edu-Shell",
+  "intellij-plugin:Edu-CSharp",
   "intellij-plugin:sql",
   "intellij-plugin:sql:sql-jvm",
   "intellij-plugin:github",
@@ -40,11 +41,6 @@ include(
   "intellij-plugin:features:ai-hints-core",
   "intellij-plugin:features:ai-hints-kotlin"
 )
-
-// BACKCOMPAT: 2024.1
-if (compareValues(settings.providers.gradleProperty("environmentName").orNull?.toInt(), 242) >= 0) {
-  include("intellij-plugin:Edu-CSharp")
-}
 
 if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {
   include("fleet-plugin")

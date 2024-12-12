@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.yamlFeatures
 
 import com.intellij.codeInsight.daemon.impl.analysis.FileHighlightingSetting
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightingSettingsPerFile
+import com.intellij.testFramework.IndexingTestUtil
 import com.intellij.testFramework.utils.vfs.getPsiFile
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.course
@@ -9,7 +10,6 @@ import com.jetbrains.edu.learning.courseFormat.EduFileErrorHighlightLevel
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
-import com.jetbrains.edu.learning.waitUntilIndexesAreReady
 import org.junit.Test
 
 class TestHighlightLevelFeature : CourseGenerationTestBase<EmptyProjectSettings>() {
@@ -47,7 +47,7 @@ class TestHighlightLevelFeature : CourseGenerationTestBase<EmptyProjectSettings>
     createCourseStructure(course)
     // wait for the project to be initialized
     UIUtil.dispatchAllInvocationEvents()
-    waitUntilIndexesAreReady(project)
+    IndexingTestUtil.waitUntilIndexesAreReady(project)
 
     assertHighlightLevel("lesson1/task1-no-highlight/Main1.java", FileHighlightingSetting.SKIP_HIGHLIGHTING)
     assertHighlightLevel("lesson1/task2/Main2.java", FileHighlightingSetting.FORCE_HIGHLIGHTING)
