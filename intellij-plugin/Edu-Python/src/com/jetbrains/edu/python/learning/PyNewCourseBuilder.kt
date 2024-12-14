@@ -5,6 +5,7 @@ import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.DefaultSettingsUtils.findPath
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.python.learning.PyConfigurator.Companion.MAIN_PY
 import com.jetbrains.edu.python.learning.PyConfigurator.Companion.TASK_PY
@@ -34,9 +35,8 @@ class PyNewCourseBuilder : EduCourseBuilder<PyProjectSettings> {
 
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<PyProjectSettings> {
     return object : PyCourseProjectGenerator(this@PyNewCourseBuilder, course) {
-      override fun createAdditionalFiles(holder: CourseInfoHolder<Course>) {
-        // do nothing, independently of what could a base PyCourseProjectGenerator create
-      }
+      // do nothing, independently of what could a base PyCourseProjectGenerator create
+      override fun autoCreatedAdditionalFiles(holder: CourseInfoHolder<Course>): List<EduFile> = emptyList()
     }
   }
 
