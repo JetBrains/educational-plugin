@@ -1,6 +1,5 @@
 import groovy.util.Node
 import groovy.xml.XmlParser
-import org.jetbrains.intellij.platform.gradle.Constants.Configurations
 import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType.*
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
@@ -303,7 +302,7 @@ intellijPlatform {
 
 dependencies {
   intellijPlatform {
-    intellijIde(project, baseVersion)
+    intellijIde(baseVersion)
 
     pluginModule(implementation(project("educational-core")))
     pluginModule(implementation(project("code-insight")))
@@ -500,7 +499,7 @@ fun IntelliJPlatformTestingExtension.customRunIdeTask(
 project("educational-core") {
   dependencies {
     intellijPlatform {
-      intellijIde(project, baseVersion)
+      intellijIde(baseVersion)
 
       bundledModules("intellij.platform.vcs.impl")
     }
@@ -521,7 +520,7 @@ project("educational-core") {
 project("code-insight") {
   dependencies {
     intellijPlatform {
-      intellijIde(project, baseVersion)
+      intellijIde(baseVersion)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -532,7 +531,7 @@ project("code-insight") {
 project("code-insight:html") {
   dependencies {
     intellijPlatform {
-      intellijIde(project, baseVersion)
+      intellijIde(baseVersion)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -553,7 +552,7 @@ project("code-insight:markdown") {
 
   dependencies {
     intellijPlatform {
-      intellijIde(project, baseVersion)
+      intellijIde(baseVersion)
 
       intellijPlugins(markdownPlugin)
     }
@@ -569,7 +568,7 @@ project("code-insight:markdown") {
 project("code-insight:yaml") {
   dependencies {
     intellijPlatform {
-      intellijIde(project, baseVersion)
+      intellijIde(baseVersion)
 
       intellijPlugins(yamlPlugin)
       if (isAtLeast251) {
@@ -589,7 +588,7 @@ project("jvm-core") {
   dependencies {
     intellijPlatform {
       val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
-      intellijIde(project, ideVersion)
+      intellijIde(ideVersion)
 
       intellijPlugins(jvmPlugins)
     }
@@ -607,7 +606,7 @@ if (!isAtLeast251) {
     dependencies {
       intellijPlatform {
         val ideVersion = if (isStudioIDE || isRiderIDE) ideaVersion else baseVersion
-        intellijIde(project, ideVersion)
+        intellijIde(ideVersion)
 
         intellijPlugins(codeWithMePlugin)
       }
@@ -622,7 +621,7 @@ if (!isAtLeast251) {
 project("AI") {
   dependencies {
     intellijPlatform {
-      intellijIde(project, baseVersion)
+      intellijIde(baseVersion)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -638,7 +637,7 @@ project("AI") {
 project("Edu-Java") {
   dependencies {
     intellijPlatform {
-      intellijIde(project, ideaVersion)
+      intellijIde(ideaVersion)
 
       intellijPlugins(jvmPlugins)
     }
@@ -656,7 +655,7 @@ project("Edu-Kotlin") {
     intellijPlatform {
       val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
 
-      intellijIde(project, ideVersion)
+      intellijIde(ideVersion)
 
       intellijPlugins(jvmPlugins)
       intellijPlugins(kotlinPlugin)
@@ -672,7 +671,7 @@ project("Edu-Kotlin") {
 project("Edu-Scala") {
   dependencies {
     intellijPlatform {
-      intellijIde(project, ideaVersion)
+      intellijIde(ideaVersion)
 
       intellijPlugins(jvmPlugins)
       intellijPlugins(scalaPlugin)
@@ -689,7 +688,7 @@ project("Edu-Scala") {
 project("Edu-Android") {
   dependencies {
     intellijPlatform {
-      intellijIde(project, studioVersion)
+      intellijIde(studioVersion)
 
       intellijPlugins(jvmPlugins)
       // TODO: make `kotlinPlugin` test-only
@@ -714,7 +713,7 @@ project("Edu-Python") {
     intellijPlatform {
       // needed to load `org.toml.lang plugin` for Python plugin in tests
       val ideVersion = if (isRiderIDE) ideaVersion else baseVersion
-      intellijIde(project, ideVersion)
+      intellijIde(ideVersion)
 
       val pluginList = listOfNotNull(
         pythonPlugin,
@@ -737,7 +736,7 @@ project("Edu-Python:Idea") {
   dependencies {
     intellijPlatform {
       val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
-      intellijIde(project, ideVersion)
+      intellijIde(ideVersion)
 
       val pluginList = listOf(
         if (!isJvmCenteredIDE) pythonCommunityPlugin else pythonPlugin,
@@ -756,7 +755,7 @@ project("Edu-Python:PyCharm") {
   dependencies {
     intellijPlatform {
       val ideVersion = if (isStudioIDE) ideaVersion else baseVersion
-      intellijIde(project, ideVersion)
+      intellijIde(ideVersion)
 
       // TODO: incorrect plugin version in case of AS
       intellijPlugins(pythonPlugin)
@@ -771,7 +770,7 @@ project("Edu-Python:PyCharm") {
 project("Edu-JavaScript") {
   dependencies {
     intellijPlatform {
-      intellijIde(project, ideaVersion)
+      intellijIde(ideaVersion)
 
       intellijPlugins(javaScriptPlugins)
     }
@@ -786,7 +785,7 @@ project("Edu-Rust") {
   dependencies {
     intellijPlatform {
       val ideVersion = if (!isIdeaIDE && !isClionIDE) ideaVersion else baseVersion
-      intellijIde(project, ideVersion)
+      intellijIde(ideVersion)
 
       intellijPlugins(rustPlugins)
     }
@@ -815,7 +814,7 @@ project("Edu-Cpp") {
 
   dependencies {
     intellijPlatform {
-      intellijIde(project, clionVersion)
+      intellijIde(clionVersion)
 
       intellijPlugins(cppPlugins)
     }
@@ -829,7 +828,7 @@ project("Edu-Cpp") {
 project("Edu-Cpp:CLion-Classic") {
   dependencies {
     intellijPlatform {
-      intellijIde(project, clionVersion)
+      intellijIde(clionVersion)
 
       intellijPlugins(cppPlugins)
     }
@@ -843,7 +842,7 @@ project("Edu-Cpp:CLion-Classic") {
 project("Edu-Cpp:CLion-Nova") {
   dependencies {
     intellijPlatform {
-      intellijIde(project, clionVersion)
+      intellijIde(clionVersion)
 
       intellijPlugins(cppPlugins)
     }
@@ -857,7 +856,7 @@ project("Edu-Cpp:CLion-Nova") {
 project("Edu-Go") {
   dependencies {
     intellijPlatform {
-      intellijIde(project, ideaVersion)
+      intellijIde(ideaVersion)
 
       intellijPlugins(goPlugin, intelliLangPlugin, jsonPlugin)
       // TODO: check if it's still needed with IJPGP 2.4
@@ -873,7 +872,7 @@ project("Edu-Go") {
 project("Edu-Php") {
   dependencies {
     intellijPlatform {
-      intellijIde(project, ideaVersion)
+      intellijIde(ideaVersion)
 
       intellijPlugins(phpPlugin, jsonPlugin)
       // TODO: check if it's still needed with IJPGP 2.4
@@ -889,7 +888,7 @@ project("Edu-Php") {
 project("Edu-Shell") {
   dependencies {
     intellijPlatform {
-      intellijIde(project, baseVersion)
+      intellijIde(baseVersion)
 
       intellijPlugins(shellScriptPlugin)
     }
@@ -903,7 +902,7 @@ project("Edu-Shell") {
 project("Edu-CSharp") {
   dependencies {
     intellijPlatform {
-      intellijIde(project, riderVersion)
+      intellijIde(riderVersion)
       intellijPlugins(csharpPlugins)
 
       bundledModule("intellij.rider")
@@ -918,7 +917,7 @@ project("sql") {
   dependencies {
     intellijPlatform {
       val ideVersion = if (isStudioIDE || isPycharmIDE) ideaVersion else baseVersion
-      intellijIde(project, ideVersion)
+      intellijIde(ideVersion)
 
       intellijPlugins(sqlPlugins)
     }
@@ -932,7 +931,7 @@ project("sql") {
 project("sql:sql-jvm") {
   dependencies {
     intellijPlatform {
-      intellijIde(project, ideaVersion)
+      intellijIde(ideaVersion)
 
       intellijPlugins(jvmPlugins)
       intellijPlugins(sqlPlugins)
@@ -950,7 +949,7 @@ project("sql:sql-jvm") {
 project("github") {
   dependencies {
     intellijPlatform {
-      intellijIde(project, baseVersion)
+      intellijIde(baseVersion)
 
       intellijPlugins(githubPlugin)
     }
@@ -964,7 +963,7 @@ project("github") {
 project("localization") {
   dependencies {
     intellijPlatform {
-      intellijIde(project, baseVersion)
+      intellijIde(baseVersion)
     }
   }
 }
@@ -973,7 +972,7 @@ project("features:command-line") {
   dependencies {
     intellijPlatform {
       // TODO: use `baseVersion` when https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1790 is resolved
-      intellijIde(project, ideaVersion)
+      intellijIde(ideaVersion)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -986,7 +985,7 @@ project("features:command-line") {
 project("features:ai-error-explanation") {
   dependencies {
     intellijPlatform {
-      intellijIde(project, baseVersion)
+      intellijIde(baseVersion)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -998,7 +997,7 @@ project("features:ai-error-explanation") {
 project("features:ai-hints-core") {
   dependencies {
     intellijPlatform {
-      intellijIde(project, baseVersion)
+      intellijIde(baseVersion)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -1028,7 +1027,7 @@ project("features:ai-hints-kotlin") {
   dependencies {
     intellijPlatform {
       val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
-      intellijIde(project, ideVersion)
+      intellijIde(ideVersion)
 
       intellijPlugins(jvmPlugins)
       intellijPlugins(kotlinPlugin)
@@ -1048,7 +1047,7 @@ project("features:ai-hints-python") {
     intellijPlatform {
       // needed to load `org.toml.lang plugin` for Python plugin in tests
       val ideVersion = if (isRiderIDE) ideaVersion else baseVersion
-      intellijIde(project, ideVersion)
+      intellijIde(ideVersion)
 
       val pluginList = listOfNotNull(
         pythonPlugin,
@@ -1072,7 +1071,7 @@ project("features:ai-test-generation") {
   dependencies {
     intellijPlatform {
       val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
-      intellijIde(project, ideVersion)
+      intellijIde(ideVersion)
     }
 
     api(rootProject.libs.educational.ml.library.core) {
@@ -1097,7 +1096,7 @@ project("features:ide-onboarding") {
   dependencies {
     intellijPlatform {
       val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
-      intellijIde(project, ideVersion)
+      intellijIde(ideVersion)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -1114,19 +1113,9 @@ fun String.toTypeWithVersion(): TypeWithVersion {
   return TypeWithVersion(IntelliJPlatformType.fromCode(code), version)
 }
 
-fun IntelliJPlatformDependenciesExtension.intellijIde(project: Project, versionWithCode: String) {
+fun IntelliJPlatformDependenciesExtension.intellijIde(versionWithCode: String) {
   val (type, version) = versionWithCode.toTypeWithVersion()
   create(type, version, useInstaller = false)
-
-  // Workaround for https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1738
-  // It will become redundant since IJPGP 2.2.0
-  if (type == AndroidStudio) {
-    project.configurations {
-      intellijPlatformBundledModules {
-        exclude(Configurations.Dependencies.BUNDLED_MODULE_GROUP, "com.jetbrains.performancePlugin")
-      }
-    }
-  }
 
   // JetBrains runtime is necessary not only for running IDE but for tests as well
   if (hasProp("jbrVersion")) {
