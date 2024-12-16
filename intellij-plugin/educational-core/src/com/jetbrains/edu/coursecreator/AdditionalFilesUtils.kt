@@ -5,7 +5,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
@@ -70,7 +69,7 @@ object AdditionalFilesUtils {
   ): Boolean {
     return courseIgnoreRules.isIgnored(file) ||
            courseConfigurator.excludeFromArchive(project, file) ||
-           FileUtil.toSystemDependentName(file.path) == PropertiesComponent.getInstance(project)
+           file.path == PropertiesComponent.getInstance(project)
              .getValue(CCCreateCourseArchiveAction.LAST_ARCHIVE_LOCATION)
   }
 

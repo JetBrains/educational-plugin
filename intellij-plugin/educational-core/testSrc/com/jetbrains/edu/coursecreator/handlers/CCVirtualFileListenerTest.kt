@@ -1,8 +1,11 @@
 package com.jetbrains.edu.coursecreator.handlers
 
+import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchiveAction
 import com.jetbrains.edu.learning.configurators.FakeGradleConfigurator
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.findTask
@@ -523,6 +526,22 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     doTestAdditionalFilesAfterFSActions(emptyList(), emptyList()) {
       createFile(".dot-file")
       createFile("folder/subfolder/.file")
+    }
+
+  @Test
+  fun `creating a file in an old archive location does not add it to additional files`() =
+    doTestAdditionalFilesAfterFSActions(emptyList(), listOf("cats.zip")) {
+      val courseZipPath = project.courseDir.path + "/course.zip"
+      val propertiesComponent = PropertiesComponent.getInstance(project)
+      val oldValue = propertiesComponent.getValue(CCCreateCourseArchiveAction.LAST_ARCHIVE_LOCATION)
+      try {
+        propertiesComponent.setValue(CCCreateCourseArchiveAction.LAST_ARCHIVE_LOCATION, courseZipPath)
+        createFile("course.zip")
+        createFile("cats.zip")
+      }
+      finally {
+        propertiesComponent.setValue(CCCreateCourseArchiveAction.LAST_ARCHIVE_LOCATION, oldValue)
+      }
     }
 
   @Test
