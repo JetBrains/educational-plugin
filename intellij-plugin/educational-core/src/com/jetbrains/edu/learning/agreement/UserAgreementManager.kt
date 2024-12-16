@@ -18,6 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.runningFold
 import kotlinx.coroutines.launch
 
 @Service
@@ -26,9 +27,26 @@ class UserAgreementManager(private val scope: CoroutineScope) {
     val userAgreementSettings = UserAgreementSettings.getInstance()
     scope.launch {
       launch {
+        userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.pluginAgreement }
+          .runningFold<_, UserAgreementStateEvent>(UserAgreementStateEvent.Uninitialized) { acc, new ->
+            when (acc) {
+              is UserAgreementStateEvent.Uninitialized -> UserAgreementStateEvent.FirstState(new.pluginAgreement)
+              is UserAgreementStateEvent.FirstState -> UserAgreementStateEvent.TransitionState(acc.current, new.pluginAgreement)
+              is UserAgreementStateEvent.TransitionState -> UserAgreementStateEvent.TransitionState(acc.current, new.pluginAgreement)
+            }
+          }.collectLatest {
+            if (it !is UserAgreementStateEvent.TransitionState) return@collectLatest
+            /**
+             * Let's avoid reloading Edu projects if the previous agreement state is [UserAgreementState.NOT_SHOWN]
+             * and the new one is [UserAgreementState.ACCEPTED], which means a new user's just accepted it.
+             */
+            if (it.previous == UserAgreementState.NOT_SHOWN && it.current == UserAgreementState.ACCEPTED) return@collectLatest
+            reloadEduProjects()
+          }
+      }
+      launch {
         userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.pluginAgreement }.collectLatest {
           if (it.isChangedByUser) {
-            reloadProjectOnAgreementChange()
             submitPluginAgreement(it.pluginAgreement)
           }
         }
@@ -115,13 +133,19 @@ class UserAgreementManager(private val scope: CoroutineScope) {
     }
   }
 
-  private fun reloadProjectOnAgreementChange() {
+  private fun reloadEduProjects() {
     val projectManager = ProjectManager.getInstance()
     for (openProject in projectManager.openProjects) {
       if (openProject.isEduYamlProject() && !openProject.isDisposed) {
         projectManager.reloadProject(openProject)
       }
     }
+  }
+
+  private sealed interface UserAgreementStateEvent {
+    data object Uninitialized : UserAgreementStateEvent
+    data class FirstState(val current: UserAgreementState) : UserAgreementStateEvent
+    data class TransitionState(val previous: UserAgreementState, val current: UserAgreementState) : UserAgreementStateEvent
   }
 
   companion object {
