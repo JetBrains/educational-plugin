@@ -204,7 +204,8 @@ class TaskProcessorImpl(val task: Task) : TaskProcessor {
     return if (functionFromCodeHint != null) {
       val reducedCodeHint = FunctionDiffReducer.reduceDiffFunctions(functionFromCode, functionFromCodeHint, project, language)
       reducedCodeHint?.text ?: modifiedCode
-    } else {
+    }
+    else {
       modifiedCode
     }
   }
