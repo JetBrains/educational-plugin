@@ -5,8 +5,8 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.configurators.FakeGradleConfigurator
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
-import com.jetbrains.edu.learning.getStudyItem
 import com.jetbrains.edu.learning.findTask
+import com.jetbrains.edu.learning.getStudyItem
 import com.jetbrains.edu.learning.handlers.EduVirtualFileListener
 import com.jetbrains.edu.learning.handlers.VirtualFileListenerTestBase
 import com.jetbrains.edu.learning.`in`
@@ -523,5 +523,23 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     doTestAdditionalFilesAfterFSActions(emptyList(), emptyList()) {
       createFile(".dot-file")
       createFile("folder/subfolder/.file")
+    }
+
+  @Test
+  fun `delete additional file in a course folder`() =
+    doTestAdditionalFilesAfterFSActions(listOf("1.txt"), emptyList()) {
+      deleteFile("1.txt")
+    }
+
+  @Test
+  fun `delete additional file with other files of the same name`() =
+    doTestAdditionalFilesAfterFSActions(listOf("1.txt", "a/1.txt", "lesson1/1.txt"), listOf("1.txt", "lesson1/1.txt")) {
+      deleteFile("a/1.txt")
+    }
+
+  @Test
+  fun `delete additional folder`() =
+    doTestAdditionalFilesAfterFSActions(listOf("a.txt", "a/1.txt", "a/2.txt", "aa/1.txt"), listOf("a.txt", "aa/1.txt")) {
+      deleteFile("a")
     }
 }
