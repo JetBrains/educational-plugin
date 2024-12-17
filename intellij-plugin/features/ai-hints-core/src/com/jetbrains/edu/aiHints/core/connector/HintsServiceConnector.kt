@@ -58,6 +58,11 @@ class HintsServiceConnector {
     return response.asTextHint()
   }
 
+  /**
+   * We put strings from bundle to the Errors, because we then show them to user (see [com.jetbrains.edu.aiHints.core.HintsLoader.getHint]).
+   * We also throw the error further because we catch them in the educational-ml-library.
+   * This is a bad design, and we must reimplement this ([EDU-7696](https://youtrack.jetbrains.com/issue/EDU-7696)).
+   */
   private fun <T> Response<List<T>>.handleResponse(): Result<List<T>, String> {
     val code = code()
     val errorMessage = errorBody()?.string()
