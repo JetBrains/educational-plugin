@@ -569,4 +569,78 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     ) {
       renameFile("lesson2", "lesson42")
     }
+
+  @Test
+  fun `move additional file`() = doTestAdditionalFilesAfterFSActions(listOf("1.txt"), listOf("a/1.txt")) {
+    createDirectory("a")
+    moveFile("1.txt", "a")
+  }
+
+  @Test
+  fun `move additional folder`() =
+    doTestAdditionalFilesAfterFSActions(
+      listOf("a.txt", "a/1.txt", "a/2.txt", "a/.excluded-by-configurator"),
+      listOf("a.txt", "dir/a/1.txt", "dir/a/2.txt", "dir/a/.excluded-by-configurator"),
+      listOf("a/non-additional.txt")
+    ) {
+      createDirectory("dir")
+      moveFile("a", "dir")
+    }
+
+  @Test
+  fun `move between lesson and section folders`() =
+    doTestAdditionalFilesAfterFSActions(
+      listOf(
+        "a.txt", "b.txt",
+        "lesson1/l1a.txt", "lesson1/l1b.txt", "lesson1/l1c.txt",
+        "section1/s1a.txt", "section1/s1b.txt",
+        "section1/lesson1/s1l1a.txt", "section1/lesson1/s1l1b.txt", "section1/lesson1/s1l1c.txt"
+      ),
+      listOf(
+        "l1a.txt", "s1a.txt", "s1l1a.txt",
+        "lesson1/a.txt", "lesson1/s1b.txt", "lesson1/s1l1c.txt",
+        "section1/b.txt", "section1/l1b.txt", "section1/s1l1b.txt",
+        "section1/lesson1/l1c.txt",
+      ),
+    ) {
+      moveFile("a.txt", "lesson1")
+      moveFile("b.txt", "section1")
+
+      moveFile("lesson1/l1a.txt", ".")
+      moveFile("lesson1/l1b.txt", "section1")
+      moveFile("lesson1/l1c.txt", "section1/lesson1")
+
+      moveFile("section1/s1a.txt", ".")
+      moveFile("section1/s1b.txt", "lesson1")
+
+      moveFile("section1/lesson1/s1l1a.txt", ".")
+      moveFile("section1/lesson1/s1l1b.txt", "section1")
+      moveFile("section1/lesson1/s1l1c.txt", "lesson1")
+    }
+
+  @Test
+  fun `moving into task folder deletes additional files`() =
+    doTestAdditionalFilesAfterFSActions(
+      listOf("a.txt", "dir/b.txt", "dir/c.txt"),
+      emptyList()
+    ) {
+      moveFile("a.txt", "lesson2/task1")
+      moveFile("dir", "lesson2/task1")
+    }
+
+  @Test
+  fun `moving out of a task folder creates additional files`() =
+    doTestAdditionalFilesAfterFSActions(
+      emptyList(),
+      listOf("a.txt", "dir/b.txt", "dir/c.txt"),
+      listOf(
+        "lesson2/task1/a.txt",
+        "lesson2/task1/dir/b.txt",
+        "lesson2/task1/dir/c.txt",
+        "lesson2/task1/dir/.excluded-because-of-dot.txt"
+      )
+    ) {
+      moveFile("lesson2/task1/a.txt", ".")
+      moveFile("lesson2/task1/dir", ".")
+    }
 }

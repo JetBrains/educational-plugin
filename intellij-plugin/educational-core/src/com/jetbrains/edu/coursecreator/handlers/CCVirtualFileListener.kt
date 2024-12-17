@@ -5,9 +5,11 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore.VFS_SEPARATOR_CHAR
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.openapi.vfs.newvfs.events.*
 import com.intellij.util.ui.update.MergingUpdateQueue
 import com.intellij.util.ui.update.Update
@@ -50,10 +52,53 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     super.fileMoved(event)
 
     val movedFile = event.file
+
+    val oldParentInfo = event.oldParent.outsideOfTaskInfo(project)
+    val newParentInfo = event.newParent.outsideOfTaskInfo(project)
+
+    when {
+      oldParentInfo is FileInfo.FileOutsideTasks && newParentInfo is FileInfo.FileOutsideTasks -> {
+        moveAdditionalFiles(oldParentInfo.appendPath(movedFile.name), movedFile)
+      }
+      oldParentInfo is FileInfo.FileOutsideTasks -> {
+        val fileInfo = oldParentInfo.appendPath(movedFile.name)
+        deleteAdditionalFile(fileInfo)
+      }
+      newParentInfo is FileInfo.FileOutsideTasks -> {
+        addFileIfAdditionalRecursively(movedFile)
+      }
+    }
+
     val fileInfo = movedFile.fileInfo(project) as? FileInfo.FileInTask ?: return
     val oldDirectoryInfo = event.oldParent.directoryFileInfo(project) ?: return
 
     SyncChangesStateManager.getInstance(project).fileMoved(movedFile, fileInfo, oldDirectoryInfo)
+  }
+
+  private fun moveAdditionalFiles(oldFileInfo: FileInfo.FileOutsideTasks, movedFile: VirtualFile) {
+    val course = oldFileInfo.course
+
+    if (movedFile.isDirectory) {
+      val additionalFilesPaths = course.additionalFiles.map { it.name }.toSet()
+
+      VfsUtil.visitChildrenRecursively(movedFile, object : VirtualFileVisitor<Any>(NO_FOLLOW_SYMLINKS) {
+        override fun visitFile(file: VirtualFile): Boolean {
+          if (!file.isDirectory) {
+            val relativePath = VfsUtil.findRelativePath(movedFile, file, VFS_SEPARATOR_CHAR) ?: return true
+            val visitedFileOldInfo = oldFileInfo.appendPath(relativePath)
+            if (visitedFileOldInfo.coursePath in additionalFilesPaths) {
+              addFileIfAdditional(file, evenIfExcluded = true)
+              deleteAdditionalFile(visitedFileOldInfo)
+            }
+          }
+          return true
+        }
+      })
+    }
+    else {
+      addFileIfAdditional(movedFile, evenIfExcluded = true)
+      deleteAdditionalFile(FileInfo.FileOutsideTasks(course, oldFileInfo.coursePath))
+    }
   }
 
   override fun fileCreated(file: VirtualFile) {
@@ -61,7 +106,18 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     addFileIfAdditional(file)
   }
 
-  private fun addFileIfAdditional(file: VirtualFile) {
+  private fun addFileIfAdditionalRecursively(file: VirtualFile) {
+    VfsUtil.visitChildrenRecursively(file, object : VirtualFileVisitor<Any>(NO_FOLLOW_SYMLINKS) {
+      override fun visitFile(file: VirtualFile): Boolean {
+        if (!file.isDirectory) {
+          addFileIfAdditional(file)
+        }
+        return true
+      }
+    })
+  }
+
+  private fun addFileIfAdditional(file: VirtualFile, evenIfExcluded: Boolean = false) {
     if (file.isDirectory) return
 
     val containingTask = file.getContainingTask(project)
@@ -69,7 +125,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
 
     val course = project.course ?: return
     val configurator = course.configurator ?: return
-    val isExcluded = isExcluded(
+    val isExcluded = !evenIfExcluded && isExcluded(
       file,
       CourseIgnoreRules.loadFromCourseIgnoreFile(project),
       configurator,
@@ -356,6 +412,11 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
       is FileInfo.LessonDirectory -> FileInfo.FileOutsideTasks(info.lesson.course, info.lesson.pathInCourse)
       else -> null
     }
+  }
+
+  fun FileInfo.FileOutsideTasks.appendPath(path: String): FileInfo.FileOutsideTasks {
+    val newPath = FileUtil.toCanonicalPath("$coursePath$VFS_SEPARATOR_CHAR$path", VFS_SEPARATOR_CHAR)
+    return FileInfo.FileOutsideTasks(course, newPath)
   }
 
   companion object {
