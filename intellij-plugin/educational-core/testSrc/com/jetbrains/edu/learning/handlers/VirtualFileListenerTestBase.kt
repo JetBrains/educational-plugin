@@ -24,6 +24,8 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.newvfs.events.VFileCopyEvent
 import com.intellij.openapi.vfs.newvfs.events.VFileCreateEvent
 import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent
+import com.intellij.testFramework.utils.vfs.createDirectory
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createTextChildFile
 
 abstract class VirtualFileListenerTestBase : EduTestCase() {
   protected abstract val courseMode: CourseMode
@@ -319,5 +321,68 @@ abstract class VirtualFileListenerTestBase : EduTestCase() {
     runWriteAction { file.move(requestor, newParent) }
 
     checksProducer(course).forEach(FileCheck::check)
+  }
+
+  /**
+   * @param additionalFilesBefore a list of additional files in a course.
+   * If a file name contains '-i-' the file is considered existing on the disk but not added to the list of additional files
+   */
+  protected fun doTestAdditionalFilesAfterFSActions(
+    additionalFilesBefore: List<String>,
+    additionalFilesAfter: List<String>,
+    filesOnDisk: List<String> = emptyList(),
+    actions: () -> Unit
+  ) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      section("section1") {
+        lesson("lesson1") {
+          eduTask("task1") {
+            taskFile("Task.kt")
+          }
+        }
+      }
+      lesson("lesson2") {
+        eduTask("task1") {
+          taskFile("Task.kt")
+        }
+      }
+
+      // Although filesOnDisk are not additional files, we create them here because if we create them after the call to`courseWithFiles`,
+      // they will be created under a file listener.
+      for (file in additionalFilesBefore + filesOnDisk) {
+        additionalFile(file)
+      }
+    }
+
+    course.additionalFiles = course.additionalFiles.filter { !filesOnDisk.contains(it.name) }
+
+    actions()
+
+    assertEquals("Unexpected list of additional files after fs actions", additionalFilesAfter.toSet(), course.additionalFiles.map { it.name }.toSet())
+  }
+
+  protected fun createFile(path: String) = createTextChildFile(project, project.courseDir, path, "")
+
+  protected fun createDirectory(path: String) = runWriteAction {
+    project.courseDir.createDirectory(path)
+  }
+
+  protected fun deleteFile(path: String) = runWriteAction {
+    project.courseDir.findFileByRelativePath(path)!!.delete(CCVirtualFileListenerTest::class.java)
+  }
+
+  protected fun copyFile(path: String, newParentPath: String, copyName: String? = null) = runWriteAction {
+    val newParent = project.courseDir.findFileByRelativePath(newParentPath)!!
+    val actualCopyName = copyName ?: path.substringAfter("/", path)
+    project.courseDir.findFileByRelativePath(path)!!.copy(CCVirtualFileListenerTest::class.java, newParent, actualCopyName)
+  }
+
+  protected fun moveFile(path: String, newParentPath: String) = runWriteAction {
+    val newParent = project.courseDir.findFileByRelativePath(newParentPath)!!
+    project.courseDir.findFileByRelativePath(path)!!.move(CCVirtualFileListenerTest::class.java, newParent)
+  }
+
+  protected fun renameFile(path: String, newName: String) = runWriteAction {
+    project.courseDir.findFileByRelativePath(path)!!.rename(CCVirtualFileListenerTest::class.java, newName)
   }
 }

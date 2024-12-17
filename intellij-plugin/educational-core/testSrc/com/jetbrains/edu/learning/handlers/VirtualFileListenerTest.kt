@@ -36,4 +36,17 @@ class VirtualFileListenerTest : VirtualFileListenerTestBase() {
       })
     }
   }
+
+  @Test
+  fun `FS operations do not affect the list of additional files in the student mode`() {
+    val initialAdditionalFiles = listOf("a.txt", "dir/b.txt", "lesson2/b.txt")
+
+    doTestAdditionalFilesAfterFSActions(initialAdditionalFiles, initialAdditionalFiles) {
+      createFile("file.txt")
+      copyFile("a.txt", ".", copyName = "a_copy.txt")
+      renameFile("a.txt", "a_renamed.txt")
+      moveFile("dir", "lesson2")
+      deleteFile("lesson2/b.txt")
+    }
+  }
 }

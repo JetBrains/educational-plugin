@@ -498,4 +498,30 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
   @Test
   fun `test number of items do not change when copy section inside section`() =
     doTestNumberOfItemsDidNotChange("section1", "section2")
+
+  @Test
+  fun `user created file is added to additional files`() =
+    doTestAdditionalFilesAfterFSActions(emptyList(), listOf("file.txt")) {
+      createFile("file.txt")
+    }
+
+  @Test
+  fun `user created directory is not added to additional files`() =
+    doTestAdditionalFilesAfterFSActions(listOf("file.txt"), listOf("file.txt")) {
+      createDirectory("dir")
+      createDirectory("dir/dir")
+    }
+
+  @Test
+  fun `user created file in a subfolder is added to additional files`() =
+    doTestAdditionalFilesAfterFSActions(emptyList(), listOf("folder/subfolder/file.txt")) {
+      createFile("folder/subfolder/file.txt")
+    }
+
+  @Test
+  fun `user created file is not added to additional files if it is excluded by configurator`() =
+    doTestAdditionalFilesAfterFSActions(emptyList(), emptyList()) {
+      createFile(".dot-file")
+      createFile("folder/subfolder/.file")
+    }
 }
