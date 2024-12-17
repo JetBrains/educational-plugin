@@ -315,7 +315,7 @@ class CourseArchiveCreator(
       return this
     }
 
-    fun loadActualTexts(project: Project, course: Course) {
+    private fun loadActualTexts(project: Project, course: Course) {
       val courseDir = project.courseDir
 
       course.visitLessons { lesson ->

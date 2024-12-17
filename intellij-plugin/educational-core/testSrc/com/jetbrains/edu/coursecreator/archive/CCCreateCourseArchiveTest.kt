@@ -21,7 +21,6 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSE_CONTENTS_FO
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createTextChildFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.runInWriteActionAndWait
-import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
 import org.junit.Test
@@ -30,6 +29,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.zip.ZipFile
 import kotlin.io.path.createTempFile
+import kotlin.test.assertIs
 import kotlin.text.Charsets.UTF_8
 
 class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
@@ -327,26 +327,8 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
   }
 
   @Test
-  fun `test throw exception if placeholder is broken`() {
-    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
-      lesson {
-        eduTask {
-          taskFile("fizz.kt", """fn fizzz() = <p>TODO()</p>""")
-        }
-      }
-    }
-    val placeholder = course.lessons.first().taskList.first().taskFiles["fizz.kt"]?.answerPlaceholders?.firstOrNull()
-                      ?: error("Cannot find placeholder")
-    placeholder.offset = 1000
-
-    assertThrows(BrokenPlaceholderException::class.java, {
-      CourseArchiveCreator.loadActualTexts(project, course)
-    })
-  }
-
-  @Test
-  fun `test navigate to yaml if placeholder is broken`() {
-    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
+  fun `test course archive creation when placeholder is broken`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("fizz.kt", """fn fizzz() = <p>TODO()</p>""")
@@ -359,11 +341,10 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     val placeholder = task.taskFiles["fizz.kt"]?.answerPlaceholders?.firstOrNull() ?: error("Cannot find placeholder")
     placeholder.offset = 1000
 
-    assertNull(FileEditorManagerEx.getInstanceEx(project).currentFile)
+    assertNull("No open file is expected", FileEditorManagerEx.getInstanceEx(project).currentFile)
 
-    // It is not important, what would be passed to the constructor, except the first argument - project
-    // Inside `compute()`, exception would be thrown, so we will not reach the moment of creating the archive
-    getArchiveCreator().createArchive(course)
+    val error = getArchiveCreator().createArchive(course)
+    assertIs<CourseArchiveCreator.BrokenPlaceholderError>(error)
 
     val navigatedFile = FileEditorManagerEx.getInstanceEx(project).currentFile ?: error("Navigated file should not be null here")
     assertEquals(task.configFileName, navigatedFile.name)
