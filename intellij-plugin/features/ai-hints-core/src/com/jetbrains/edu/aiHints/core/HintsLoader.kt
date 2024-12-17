@@ -24,7 +24,7 @@ import kotlinx.coroutines.withContext
 class HintsLoader(private val project: Project, private val scope: CoroutineScope) {
 
   fun getHint(task: Task) {
-    scope.launch(Dispatchers.IO) {
+    scope.launch(Dispatchers.Default) {
       if (!mutex.tryLock()) {
         withContext(Dispatchers.EDT) {
           ErrorHintInlineBanner(project, EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.already.in.progress")).display()
@@ -35,7 +35,9 @@ class HintsLoader(private val project: Project, private val scope: CoroutineScop
         val taskProcessor = TaskProcessorImpl(task)
         val hintsAssistant = AiHintsAssistant.getAssistant(taskProcessor, AiCodeHintGenerator(taskProcessor), AiTextHintGenerator())
         val hint = withBackgroundProgress(project, EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.progress.text"), cancellable = true) {
-          hintsAssistant.getHint(taskProcessor.getSubmissionTextRepresentation() ?: "")
+          withContext(Dispatchers.IO) {
+            hintsAssistant.getHint(taskProcessor.getSubmissionTextRepresentation() ?: "")
+          }
         }.getOrElse {
           withContext(Dispatchers.EDT) {
             ErrorHintInlineBanner(project, it.message ?: EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.error.unknown")) {
