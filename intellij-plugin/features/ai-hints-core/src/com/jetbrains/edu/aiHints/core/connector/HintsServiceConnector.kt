@@ -70,7 +70,7 @@ class HintsServiceConnector {
       body == null -> Err(EduAIHintsCoreBundle.message("hints.error.failed.to.generate"))
       code == HTTP_UNAVAILABLE_FOR_LEGAL_REASONS -> Err(EduAIHintsCoreBundle.message("hints.error.unavailable.for.legal.reasons"))
       code == HTTP_UNAVAILABLE || code == HTTP_BAD_GATEWAY -> Err(EduAIHintsCoreBundle.message("hints.error.service.unavailable"))
-      else -> Err(EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.error.unknown"))
+      else -> Err(EduAIHintsCoreBundle.message("hints.error.unknown"))
     }
   }
 
