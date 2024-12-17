@@ -372,12 +372,11 @@ class YamlSerializationTest : YamlTestCase() {
 
   @Test
   fun `test course`() {
-    val course = course(courseMode = CourseMode.EDUCATOR) {
+    val course = course(courseMode = CourseMode.EDUCATOR, description = "This is a course about string theory.\nWhy not?") {
       lesson("the first lesson")
       lesson("the second lesson")
     }
     course.languageCode = "ru"
-    course.description = "This is a course about string theory.\nWhy not?"
     doTest(course, """
       |title: Test Course
       |language: Russian
@@ -888,12 +887,11 @@ class YamlSerializationTest : YamlTestCase() {
     val defaultLocale = Locale.getDefault()
     Locale.setDefault(Locale.KOREAN)
 
-    val course = course(courseMode = CourseMode.EDUCATOR) {
+    val course = course(courseMode = CourseMode.EDUCATOR, description = "This is a course about string theory.\nWhy not?") {
       lesson("the first lesson")
       lesson("the second lesson")
     }
     course.languageCode = "ru"
-    course.description = "This is a course about string theory.\nWhy not?"
     doTest(course, """
       |title: Test Course
       |language: Russian
@@ -915,13 +913,12 @@ class YamlSerializationTest : YamlTestCase() {
   fun `test course with generatedEduId`() {
     val generatedEduId = "generated_edu_id"
 
-    val course = course(courseMode = CourseMode.EDUCATOR) {
+    val course = course(courseMode = CourseMode.EDUCATOR, description = "This is a course about string theory.\nWhy not?") {
       lesson("the first lesson")
       lesson("the second lesson")
     } as EduCourse
     course.languageCode = "ru"
     course.generatedEduId = generatedEduId
-    course.description = "This is a course about string theory.\nWhy not?"
 
     val actual = YamlMapper.remoteMapper().writeValueAsString(course)
     val expected = """
@@ -940,13 +937,12 @@ class YamlSerializationTest : YamlTestCase() {
       url = "https://vendor.com/"
     }
 
-    val course = course(courseMode = CourseMode.EDUCATOR) {
+    val course = course(courseMode = CourseMode.EDUCATOR, description = "This is a course about string theory.\nWhy not?") {
       lesson("the first lesson")
       lesson("the second lesson")
     }
     course.languageCode = "ru"
     course.vendor = vendor
-    course.description = "This is a course about string theory.\nWhy not?"
     doTest(course, """
       |title: Test Course
       |language: Russian

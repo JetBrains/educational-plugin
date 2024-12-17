@@ -15,14 +15,13 @@ import org.junit.Test
 class YamlSynchronizationTest : YamlTestCase() {
 
   override fun createCourse() {
-    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "test") {
       section {
         lesson {
           eduTask()
         }
       }
     }
-    course.description = "test"
   }
 
   @Test

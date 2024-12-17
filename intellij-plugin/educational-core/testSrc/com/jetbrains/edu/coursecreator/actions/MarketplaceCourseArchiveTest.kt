@@ -115,7 +115,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
 
   @Test
   fun `test possible answer encrypted`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
       lesson {
         eduTask("task1") {
           taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
@@ -125,7 +125,6 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
       }
     }.apply {
       isMarketplace = true
-      description = "my summary"
     }
     doTest()
   }

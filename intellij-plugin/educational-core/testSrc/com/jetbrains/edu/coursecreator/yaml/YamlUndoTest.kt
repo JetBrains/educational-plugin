@@ -31,7 +31,7 @@ open class YamlUndoTest : YamlTestCase() {
   }
 
   override fun createCourse() {
-    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "test") {
       lesson {
         eduTask {
           taskFile(TASK_FILE_NAME, "42 is the <p>TODO()</p>. 43 is not") {
@@ -40,7 +40,6 @@ open class YamlUndoTest : YamlTestCase() {
         }
       }
     }
-    course.description = "test"
   }
 
   // EDU-2217
