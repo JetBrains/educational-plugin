@@ -109,6 +109,8 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
       }
 
       is FileInfo.FileInTask -> deleteFileInTask(fileInfo, file)
+
+      is FileInfo.FileOutsideTasks -> TODO()
     }
   }
 
