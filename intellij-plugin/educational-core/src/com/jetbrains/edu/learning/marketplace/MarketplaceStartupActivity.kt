@@ -4,7 +4,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.blockingContext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectCloseListener
-import com.intellij.openapi.startup.StartupActivity
+import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -23,9 +23,9 @@ import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.SubmissionsManager.Companion.SHARED_SOLUTIONS_TOPIC
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
-class MarketplaceStartupActivity : StartupActivity {
+class MarketplaceStartupActivity : ProjectActivity {
 
-  override fun runActivity(project: Project) {
+  override suspend fun execute(project: Project) {
     if (project.isDisposed || isUnitTestMode) return
     val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
     if (!course.isMarketplaceRemote) return

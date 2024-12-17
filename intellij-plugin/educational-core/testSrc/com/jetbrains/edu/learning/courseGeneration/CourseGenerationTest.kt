@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
@@ -126,7 +127,7 @@ class CourseGenerationTest : CourseGenerationTestBase<EmptyProjectSettings>() {
     createCourseStructure(coursePreview)
 
     // wa have to call it here as it is called itself at time when course isn't set to StudyTaskManager
-    EduStartupActivity().runActivity(myProject)
+    runBlocking { EduStartupActivity().execute(myProject) }
 
     assertFalse("Course `${coursePreview.name}` shouldn't be added to course storage", CoursesStorage.getInstance().hasCourse(coursePreview))
   }

@@ -3,16 +3,16 @@ package com.jetbrains.edu.jvm.gradle
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.startup.StartupActivity
+import com.intellij.openapi.startup.ProjectActivity
 import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils
 import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils.setupGradleProject
 import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils.updateGradleSettings
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.StudyTaskManager
 
-class GradleStartupActivity : StartupActivity.DumbAware {
+class GradleStartupActivity : ProjectActivity {
 
-  override fun runActivity(project: Project) {
+  override suspend fun execute(project: Project) {
     if (project.isDisposed || !project.isEduProject()) {
       return
     }

@@ -8,7 +8,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.startup.StartupActivity
+import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
@@ -21,9 +21,9 @@ import com.jetbrains.edu.sql.core.EduSqlBundle
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.annotations.TestOnly
 
-class SqlGradleStartupActivity : StartupActivity.DumbAware {
+class SqlGradleStartupActivity : ProjectActivity {
 
-  override fun runActivity(project: Project) {
+  override suspend fun execute(project: Project) {
     if (disable) return
     val course = project.course ?: return
     // Setup data sources only for learners for now
