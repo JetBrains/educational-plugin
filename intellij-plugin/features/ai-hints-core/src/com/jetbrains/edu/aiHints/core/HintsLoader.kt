@@ -11,7 +11,9 @@ import com.jetbrains.edu.aiHints.core.messages.EduAIHintsCoreBundle
 import com.jetbrains.edu.aiHints.core.ui.CodeHintInlineBanner
 import com.jetbrains.edu.aiHints.core.ui.ErrorHintInlineBanner
 import com.jetbrains.edu.aiHints.core.ui.TextHintInlineBanner
+import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.getTextFromTaskTextFile
 import com.jetbrains.edu.learning.selectedTaskFile
 import com.jetbrains.educational.ml.hints.assistant.AiHintsAssistant
 import kotlinx.coroutines.CoroutineScope
@@ -49,9 +51,14 @@ class HintsLoader(private val project: Project, private val scope: CoroutineScop
 
         val codeHint = hint.codeHint
         if (codeHint != null) {
-          val taskFile = taskProcessor.currentTaskFile ?: project.selectedTaskFile ?: error("Failed to obtain TaskFile")
+          val taskFile = taskProcessor.currentTaskFile ?: project.selectedTaskFile ?: error("TaskFile for ${task.name} not found")
+          val taskVirtualFile = taskFile.getVirtualFile(project) ?: error("VirtualFile for ${taskFile.name} not found")
+          val taskFileText = taskVirtualFile.getTextFromTaskTextFile() ?: error("TaskFile text for ${taskFile.name} not found")
+          val highlighter = highlightFirstCodeDiffPositionOrNull(project, taskVirtualFile, taskFileText, codeHint.code)
           withContext(Dispatchers.EDT) {
-            CodeHintInlineBanner(project, taskFile, hint.textHint.text, codeHint).display()
+            CodeHintInlineBanner(project, hint.textHint.text, highlighter).addCodeHint {
+              showInCodeAction(project, taskVirtualFile, taskFileText, codeHint.code)
+            }.display()
           }
           return@launch
         }
