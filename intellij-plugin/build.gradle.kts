@@ -330,6 +330,7 @@ dependencies {
     pluginModule(implementation(project("features:ai-test-generation")))
     pluginModule(implementation(project("localization")))
     pluginModule(implementation(project("features:ai-debugging-core")))
+    pluginModule(implementation(project("features:ai-debugging-jvm")))
 
     testFramework(TestFrameworkType.Bundled)
   }
@@ -1107,6 +1108,23 @@ project("features:ai-debugging-core") {
       exclude(group = "net.java.dev.jna")
     }
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+  }
+}
+
+project("features:ai-debugging-jvm") {
+  dependencies {
+    intellijPlatform {
+      val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
+      intellijIde(project, ideVersion)
+
+      intellijPlugins(jvmPlugins)
+    }
+
+    implementation(project(":intellij-plugin:educational-core"))
+    implementation(project(":intellij-plugin:features:ai-debugging-core"))
+
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+    testImplementation(project(":intellij-plugin:features:ai-debugging-core", "testOutput"))
   }
 }
 
