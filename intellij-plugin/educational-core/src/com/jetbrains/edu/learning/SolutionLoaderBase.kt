@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
@@ -35,6 +34,7 @@ import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.isSignificantlyAfter
 import com.jetbrains.edu.learning.update.showUpdateNotification
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import org.jetbrains.annotations.VisibleForTesting
 import java.util.*
 import java.util.Collections.max
 import java.util.concurrent.Future

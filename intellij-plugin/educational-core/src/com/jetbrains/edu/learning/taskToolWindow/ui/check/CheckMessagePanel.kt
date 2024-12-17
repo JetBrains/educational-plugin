@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.taskToolWindow.ui.check
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.SystemInfo
@@ -20,6 +19,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskToolWindow.ui.EduBrowserHyperlinkListener
 import com.jetbrains.edu.learning.taskToolWindow.ui.createTextPane
 import com.jetbrains.edu.learning.ui.EduColors
+import org.jetbrains.annotations.VisibleForTesting
 import org.jsoup.Jsoup
 import java.awt.BorderLayout
 import java.awt.Font

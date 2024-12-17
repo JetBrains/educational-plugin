@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.newproject
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.ide.RecentProjectsManager
 import com.intellij.ide.impl.OpenProjectTask
 import com.intellij.ide.impl.TrustedPaths
@@ -55,6 +54,7 @@ import com.jetbrains.edu.learning.submissions.SubmissionSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.jetbrains.annotations.VisibleForTesting
 import java.io.File
 import java.io.IOException
 import java.nio.file.Path

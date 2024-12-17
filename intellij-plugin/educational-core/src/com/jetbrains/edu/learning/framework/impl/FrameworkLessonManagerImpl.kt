@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.framework.impl
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
@@ -21,6 +20,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.ui.getUIName
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.annotations.VisibleForTesting
 import java.io.IOException
 import java.nio.file.Path
 import java.nio.file.Paths

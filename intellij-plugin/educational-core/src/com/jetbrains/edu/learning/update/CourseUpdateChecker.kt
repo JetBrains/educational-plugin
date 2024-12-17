@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.update
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
@@ -14,6 +13,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.isUnitTestMode
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.annotations.VisibleForTesting
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 

@@ -1,10 +1,10 @@
 package com.jetbrains.edu.learning.framework.impl
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.util.io.StorageLockContext
 import com.intellij.util.io.storage.AbstractRecordsTable
 import com.intellij.util.io.storage.AbstractStorage
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.annotations.VisibleForTesting
 import java.io.IOException
 import java.nio.file.Path
 import kotlin.system.measureTimeMillis

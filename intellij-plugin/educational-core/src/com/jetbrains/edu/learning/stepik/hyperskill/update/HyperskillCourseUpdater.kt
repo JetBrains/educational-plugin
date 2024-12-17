@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.update
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runWriteAction
@@ -37,6 +36,7 @@ import com.jetbrains.edu.learning.update.UpdateUtils.updateTaskDescription
 import com.jetbrains.edu.learning.update.elements.TaskUpdateInfo
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.annotations.VisibleForTesting
 import java.io.IOException
 import java.util.*
 

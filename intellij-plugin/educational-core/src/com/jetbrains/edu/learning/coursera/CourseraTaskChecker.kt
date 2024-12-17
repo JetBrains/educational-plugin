@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.coursera
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.credentialStore.CredentialAttributes
 import com.intellij.credentialStore.Credentials
 import com.intellij.credentialStore.generateServiceName
@@ -40,6 +39,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import org.apache.http.HttpStatus
 import org.apache.http.entity.ContentType
+import org.jetbrains.annotations.VisibleForTesting
 import java.time.Duration
 
 class CourseraTaskChecker : RemoteTaskChecker {

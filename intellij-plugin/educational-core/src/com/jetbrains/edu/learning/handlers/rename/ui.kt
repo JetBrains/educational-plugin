@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.handlers.rename
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -8,6 +7,7 @@ import com.intellij.refactoring.rename.RenameDialog
 import com.intellij.refactoring.rename.RenamePsiFileProcessor
 import com.jetbrains.edu.learning.isUnitTestMode
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.annotations.VisibleForTesting
 
 fun createRenameDialog(
   project: Project,

@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.placeholderDependencies
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
@@ -14,6 +13,7 @@ import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import org.jetbrains.annotations.VisibleForTesting
 import java.util.function.Function
 import javax.swing.JComponent
 

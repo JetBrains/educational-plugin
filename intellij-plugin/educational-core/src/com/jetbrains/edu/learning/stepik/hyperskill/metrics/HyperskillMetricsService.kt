@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.metrics
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.*
 import com.intellij.util.xmlb.annotations.XCollection
@@ -12,6 +11,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillFrontendEvent
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillFrontendEventType
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTimeSpentEvent
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.annotations.VisibleForTesting
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.atomic.DoubleAdder

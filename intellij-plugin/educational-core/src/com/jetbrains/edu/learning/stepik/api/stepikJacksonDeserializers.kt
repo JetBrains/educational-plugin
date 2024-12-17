@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.node.ObjectNode
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.diagnostic.logger
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
@@ -25,6 +24,7 @@ import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.NAME
 import com.jetbrains.edu.learning.serialization.converter.json.*
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
+import org.jetbrains.annotations.VisibleForTesting
 
 private val LOG = logger<JacksonStepOptionsDeserializer>()
 

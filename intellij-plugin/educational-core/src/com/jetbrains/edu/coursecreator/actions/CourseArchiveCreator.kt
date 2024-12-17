@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.ser.BeanSerializerFactory
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.externalDependencies.DependencyOnPlugin
 import com.intellij.externalDependencies.ExternalDependenciesManager
 import com.intellij.ide.plugins.PluginManager
@@ -41,6 +40,7 @@ import com.jetbrains.edu.learning.marketplace.StudyItemIdGenerator
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.TASK_CONFIG
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.annotations.VisibleForTesting
 import java.io.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream

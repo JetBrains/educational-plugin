@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.ide.DeleteProvider
 import com.intellij.ide.IdeBundle
 import com.intellij.openapi.actionSystem.ActionUpdateThread
@@ -24,6 +23,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.VisibleForTesting
 import java.util.*
 
 class CCStudyItemDeleteProvider : DeleteProvider {

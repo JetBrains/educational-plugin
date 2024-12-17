@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator.actions.stepik.hyperskill
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -34,6 +33,7 @@ import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.loadAndFillAdditionalCourseInfo
 import com.jetbrains.edu.learning.stepik.api.loadAndFillLessonAdditionalInfo
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.annotations.VisibleForTesting
 
 class GetHyperskillLesson : DumbAwareAction(
   EduCoreBundle.lazyMessage("action.get.lesson.text", HYPERSKILL, StepikNames.STEPIK),

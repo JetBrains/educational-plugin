@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
@@ -30,6 +29,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import org.jetbrains.annotations.VisibleForTesting
 
 object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpenRequest>() {
   private val LOG = Logger.getInstance(HyperskillOpenInIdeRequestHandler::class.java)

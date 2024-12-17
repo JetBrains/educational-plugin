@@ -1,6 +1,5 @@
 package com.jetbrains.edu.yaml
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -19,6 +18,7 @@ import com.jetbrains.jsonSchema.extension.JsonSchemaFileProvider
 import com.jetbrains.jsonSchema.extension.JsonSchemaProviderFactory
 import com.jetbrains.jsonSchema.extension.SchemaType
 import com.jetbrains.jsonSchema.impl.JsonSchemaVersion
+import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.yaml.psi.YAMLFile
 import org.jetbrains.yaml.psi.YAMLMapping
 

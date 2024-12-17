@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageCommenters
 import com.intellij.openapi.diagnostic.Logger
@@ -37,6 +36,7 @@ import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.xmlEscaped
 import com.jetbrains.rd.util.first
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.annotations.VisibleForTesting
 
 open class StepikTaskBuilder(private val course: Course, stepSource: StepSource) {
   private val courseType: String = course.itemType

@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.metrics
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.concurrency.JobScheduler
 import com.intellij.ide.AppLifecycleListener
 import com.intellij.ide.plugins.DynamicPluginListener
@@ -16,6 +15,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.metrics.handlers.HyperskillE
 import com.jetbrains.edu.learning.stepik.hyperskill.metrics.handlers.HyperskillFrontendEventsHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.metrics.handlers.HyperskillTimeSpentEventsHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
+import org.jetbrains.annotations.VisibleForTesting
 import java.util.concurrent.TimeUnit
 
 class HyperskillMetricsScheduler : AppLifecycleListener, DynamicPluginListener {
