@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
@@ -8,6 +9,7 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.dsl.builder.*
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.JavaUILibrary
+import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillTopic
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -68,7 +70,9 @@ class TopicsTab(project: Project) : TaskToolWindowTab(project, TOPICS_TAB) {
     AllIcons.Actions.Download
   ) {
     override fun actionPerformed(e: AnActionEvent) {
-      openTopic(project, topic)
+      computeUnderProgress(project, EduCoreBundle.message("hyperskill.topics.fetch"), true) {
+        openTopic(project, topic)
+      }
     }
   }
 }
