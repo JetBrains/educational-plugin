@@ -74,7 +74,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
     }
   }
 
-  private fun beforePropertyChange(event: VFilePropertyChangeEvent) {
+  protected open fun beforePropertyChange(event: VFilePropertyChangeEvent) {
     if (event.propertyName != VirtualFile.PROP_NAME) return
     val newName = event.newValue as? String ?: return
     val (task, oldPath) = event.file.fileInfo(project) as? FileInfo.FileInTask ?: return

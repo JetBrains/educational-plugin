@@ -6,6 +6,7 @@ import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VfsUtilCore.VFS_SEPARATOR_CHAR
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.events.*
 import com.intellij.util.ui.update.MergingUpdateQueue
@@ -121,6 +122,30 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
       val name = additionalFile.name
       name != coursePath && !coursePath.isParentOf(name)
     }
+    YamlFormatSynchronizer.saveItem(course)
+  }
+
+  override fun beforePropertyChange(event: VFilePropertyChangeEvent) {
+    super.beforePropertyChange(event)
+
+    if (event.propertyName != VirtualFile.PROP_NAME) return
+    val info = event.file.outsideOfTaskInfo(project) ?: return
+    val newName = event.newValue as? String ?: return
+
+    val course = info.course
+    val oldPath = info.coursePath
+    val newPath = oldPath.replaceAfterLast(VFS_SEPARATOR_CHAR, newName, newName)
+
+    for (additionalFile in course.additionalFiles) {
+      val name = additionalFile.name
+
+      additionalFile.name = when {
+        name == oldPath -> newPath // if the file itself is renamed
+        oldPath.isParentOf(name) -> newPath + name.substringAfter(oldPath, "") // if the parent folder is renamed
+        else -> name
+      }
+    }
+
     YamlFormatSynchronizer.saveItem(course)
   }
 
@@ -321,6 +346,16 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
       LOG.info("Do actual project refresh after yaml files update")
       course?.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
     })
+  }
+
+  private fun VirtualFile.outsideOfTaskInfo(project: Project): FileInfo.FileOutsideTasks? {
+    val info = fileInfo(project) ?: return null
+    return when (info) {
+      is FileInfo.FileOutsideTasks -> info
+      is FileInfo.SectionDirectory -> FileInfo.FileOutsideTasks(info.section.course, info.section.pathInCourse)
+      is FileInfo.LessonDirectory -> FileInfo.FileOutsideTasks(info.lesson.course, info.lesson.pathInCourse)
+      else -> null
+    }
   }
 
   companion object {

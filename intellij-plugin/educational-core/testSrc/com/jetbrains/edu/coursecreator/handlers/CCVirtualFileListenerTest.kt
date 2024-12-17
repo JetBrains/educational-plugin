@@ -542,4 +542,31 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     doTestAdditionalFilesAfterFSActions(listOf("a.txt", "a/1.txt", "a/2.txt", "aa/1.txt"), listOf("a.txt", "aa/1.txt")) {
       deleteFile("a")
     }
+
+  @Test
+  fun `rename additional file`() =
+    doTestAdditionalFilesAfterFSActions(listOf("1.txt"), listOf("2.txt")) {
+      renameFile("1.txt", "2.txt")
+    }
+
+  @Test
+  fun `rename additional folder`() =
+    doTestAdditionalFilesAfterFSActions(
+      listOf("a.txt", "a/1.txt", "a/2.txt", "a/.excluded-by-configurator"),
+      // Even if the file is excluded by configurator (name starts with a dot), it is still in the list of additional files
+      listOf("a.txt", "b/1.txt", "b/2.txt", "b/.excluded-by-configurator"),
+      listOf("a/non-additional.txt")
+    ) {
+      renameFile("a", "b")
+    }
+
+  @Test
+  fun `rename lesson with additional files`() =
+    doTestAdditionalFilesAfterFSActions(
+      listOf("a.txt", "lesson2/1.txt", "lesson2/2.txt", "lesson2/.excluded-by-configurator"),
+      listOf("a.txt", "lesson42/1.txt", "lesson42/2.txt", "lesson42/.excluded-by-configurator"),
+      listOf("lesson2/non-additional.txt")
+    ) {
+      renameFile("lesson2", "lesson42")
+    }
 }
