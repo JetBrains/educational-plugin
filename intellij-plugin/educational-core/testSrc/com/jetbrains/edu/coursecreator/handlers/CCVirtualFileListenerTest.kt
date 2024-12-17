@@ -526,6 +526,19 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     }
 
   @Test
+  fun `copy additional file to the same folder`() =
+    doTestAdditionalFilesAfterFSActions(listOf("1.txt"), listOf("1.txt", "2.txt")) {
+      copyFile("1.txt", ".", copyName = "2.txt")
+    }
+
+  @Test
+  fun `copy additional file in another folder`() =
+    doTestAdditionalFilesAfterFSActions(listOf("1.txt"), listOf("1.txt", "a/1.txt")) {
+      createDirectory("a")
+      copyFile("1.txt", "a")
+    }
+
+  @Test
   fun `delete additional file in a course folder`() =
     doTestAdditionalFilesAfterFSActions(listOf("1.txt"), emptyList()) {
       deleteFile("1.txt")
