@@ -32,7 +32,7 @@ class CodeHintInlineBanner(
   private val codeHint: CodeHint
 ) : HintInlineBanner(project, message) {
 
-  private var highlighter: RangeHighlighter? = null
+  private val highlighter: RangeHighlighter?
 
   init {
     val taskVirtualFile = taskFile.getVirtualFile(project) ?: error("VirtualFile for ${taskFile.name} not found")
