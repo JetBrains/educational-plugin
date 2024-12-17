@@ -82,10 +82,10 @@ class CCCreateCoursePreviewDialog(
     override fun showError(errorState: ErrorState) {}
 
     override fun joinCourseAction(info: CourseCreationInfo, mode: CourseMode) {
-      createCoursePreview()
+      createCoursePreview(info)
     }
 
-    private fun createCoursePreview() {
+    private fun createCoursePreview(info: CourseCreationInfo) {
       val folder = CCUtils.getGeneratedFilesFolder(project)
       if (folder == null) {
         LOG.info(TMP_DIR_ERROR)
@@ -93,17 +93,17 @@ class CCCreateCoursePreviewDialog(
                         EduCoreBundle.message("course.creator.create.course.preview.failed.title"))
         return
       }
-      val courseName = course?.name
-      val archiveName = if (courseName.isNullOrEmpty()) EduNames.COURSE else FileUtil.sanitizeFileName(courseName)
+      val courseName = info.course.name
+      val archiveName = if (courseName.isEmpty()) EduNames.COURSE else FileUtil.sanitizeFileName(courseName)
       val archiveLocation = "${folder.path}/$archiveName.zip"
       close(OK_EXIT_CODE)
-      val errorMessage = CourseArchiveCreator(project, archiveLocation).createArchive()
+      val error = CourseArchiveCreator(project, archiveLocation).createCourseArchive(info.course)
 
-      if (errorMessage.isNullOrEmpty()) {
+      if (error == null) {
         val archivePath = FileUtil.join(FileUtil.toSystemDependentName(folder.path), "$archiveName.zip")
         val course = Executor.execCancelable(EduCoreBundle.message("action.create.course.archive.reading.progress.bar")) {
           EduUtilsKt.getLocalCourse(archivePath)
-        }  as? EduCourse ?: return
+        } as? EduCourse ?: return
         course.isPreview = true
 
         val lastProjectCreationLocation = RecentProjectsManager.getInstance().lastProjectCreationLocation
@@ -131,8 +131,7 @@ class CCCreateCoursePreviewDialog(
         }
       }
       else {
-        LOG.info(errorMessage)
-        showErrorDialog(project, errorMessage, EduCoreBundle.message("course.creator.create.course.preview.failed.title"))
+        showErrorDialog(project, error.message, EduCoreBundle.message("course.creator.create.course.preview.failed.title"))
       }
     }
   }

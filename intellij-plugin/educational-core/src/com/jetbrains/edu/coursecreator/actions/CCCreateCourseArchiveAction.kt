@@ -57,8 +57,8 @@ class CCCreateCourseArchiveAction : AnAction(EduCoreBundle.lazyMessage("action.c
     course.vendor = Vendor(authorName)
     PropertiesComponent.getInstance(project).setValue(AUTHOR_NAME, authorName)
 
-    val errorMessage = CourseArchiveCreator(project, locationPath).createArchive()
-    if (errorMessage == null) {
+    val error = CourseArchiveCreator(project, locationPath).createCourseArchive(course)
+    if (error == null) {
       CCNotificationUtils.showInfoNotification(
         project,
         EduCoreBundle.message("action.create.course.archive.success.message"),
@@ -66,8 +66,9 @@ class CCCreateCourseArchiveAction : AnAction(EduCoreBundle.lazyMessage("action.c
       )
       PropertiesComponent.getInstance(project).setValue(LAST_ARCHIVE_LOCATION, locationPath)
       EduCounterUsageCollector.createCourseArchive()
-    } else {
-      Messages.showErrorDialog(project, errorMessage, EduCoreBundle.message("error.failed.to.create.course.archive"))
+    }
+    else {
+      Messages.showErrorDialog(project, error.message, EduCoreBundle.message("error.failed.to.create.course.archive"))
     }
   }
 
