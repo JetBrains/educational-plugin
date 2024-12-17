@@ -1,17 +1,15 @@
 package com.jetbrains.edu.aiHints.core.ui
 
-import com.intellij.openapi.application.EDT
 import com.intellij.openapi.project.Project
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.InlineBanner
 import com.intellij.ui.NotificationBalloonRoundShadowBorderProvider
 import com.intellij.ui.RoundedLineBorder
+import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.aiHints.core.messages.EduAIHintsCoreBundle
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.ui.EduColors
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.Nls
 import java.awt.Color
 import javax.swing.BorderFactory
@@ -33,7 +31,8 @@ open class HintInlineBanner(
     background = status.backgroundColor
   }
 
-  suspend fun display() = withContext(Dispatchers.EDT) {
+  @RequiresEdt
+  fun display() {
     TaskToolWindowView.getInstance(project).addInlineBannerToCheckPanel(this@HintInlineBanner)
   }
 

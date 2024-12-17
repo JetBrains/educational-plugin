@@ -1,5 +1,6 @@
 package com.jetbrains.edu.aiHints.core
 
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
@@ -17,6 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.withContext
 
 @Service(Service.Level.PROJECT)
 class HintsLoader(private val project: Project, private val scope: CoroutineScope) {
@@ -24,7 +26,9 @@ class HintsLoader(private val project: Project, private val scope: CoroutineScop
   fun getHint(task: Task) {
     scope.launch(Dispatchers.IO) {
       if (!mutex.tryLock()) {
-        ErrorHintInlineBanner(project, EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.already.in.progress"))
+        withContext(Dispatchers.EDT) {
+          ErrorHintInlineBanner(project, EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.already.in.progress")).display()
+        }
         return@launch
       }
       try {
@@ -33,18 +37,25 @@ class HintsLoader(private val project: Project, private val scope: CoroutineScop
         val hint = withBackgroundProgress(project, EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.progress.text"), cancellable = true) {
           hintsAssistant.getHint(taskProcessor.getSubmissionTextRepresentation() ?: "")
         }.getOrElse {
-          ErrorHintInlineBanner(project, it.message ?: EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.error.unknown")) {
-            getHint(task)
-          }.display()
+          withContext(Dispatchers.EDT) {
+            ErrorHintInlineBanner(project, it.message ?: EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.error.unknown")) {
+              getHint(task)
+            }.display()
+          }
           return@launch
         }
 
         val codeHint = hint.codeHint
         if (codeHint != null) {
           val taskFile = taskProcessor.currentTaskFile ?: project.selectedTaskFile ?: error("Failed to obtain TaskFile")
-          return@launch CodeHintInlineBanner(project, taskFile, hint.textHint.text, codeHint).display()
+          withContext(Dispatchers.EDT) {
+            CodeHintInlineBanner(project, taskFile, hint.textHint.text, codeHint).display()
+          }
+          return@launch
         }
-        TextHintInlineBanner(project, hint.textHint.text).display()
+        withContext(Dispatchers.EDT) {
+          TextHintInlineBanner(project, hint.textHint.text).display()
+        }
       }
       finally {
         mutex.unlock()
