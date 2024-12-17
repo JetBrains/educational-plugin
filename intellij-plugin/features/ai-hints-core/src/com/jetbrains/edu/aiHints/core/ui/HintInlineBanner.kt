@@ -41,7 +41,7 @@ open class HintInlineBanner(
     Success(EduColors.aiGetHintInlineBannersBackgroundColor, EduColors.aiGetHintInlineBannersBorderColor, EduAIHintsCoreBundle.message("hints.label.ai.generated.content.tooltip")),
     Error(JBUI.CurrentTheme.Banner.ERROR_BACKGROUND, JBUI.CurrentTheme.Banner.ERROR_BORDER_COLOR, null);
 
-    fun toNotificationBannerStatus() = when (this) {
+    fun toNotificationBannerStatus(): EditorNotificationPanel.Status = when (this) {
       Success -> EditorNotificationPanel.Status.Info
       else -> EditorNotificationPanel.Status.Error
     }
