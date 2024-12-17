@@ -45,6 +45,7 @@
     <module name="ai-hints-python"/>
     <module name="ai-test-generation"/>
     <module name="ai-debugging-core"/>
+    <module name="ai-debugging-jvm"/>
     <module name="ide-onboarding"/>
     <module name="remote-env"/>
     <module name="social-media"/>

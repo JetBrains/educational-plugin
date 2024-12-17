@@ -91,6 +91,7 @@ dependencies {
     pluginModule(implementation(project("features:social-media")))
     pluginModule(implementation(project("localization")))
     pluginModule(implementation(project("features:ai-debugging-core")))
+    pluginModule(implementation(project("features:ai-debugging-jvm")))
 
     testFramework(TestFrameworkType.Bundled)
   }
