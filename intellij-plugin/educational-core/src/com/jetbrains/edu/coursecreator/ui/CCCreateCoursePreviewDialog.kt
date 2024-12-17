@@ -105,13 +105,13 @@ class CCCreateCoursePreviewDialog(
       val archiveName = if (courseName.isEmpty()) EduNames.COURSE else FileUtil.sanitizeFileName(courseName)
       val archiveLocation = "${folder.path}/$archiveName.zip"
       close(OK_EXIT_CODE)
-      val errorMessage = CourseArchiveCreator(project, archiveLocation).createArchive(course)
+      val error = CourseArchiveCreator(project, archiveLocation).createArchive(course)
 
-      if (errorMessage.isNullOrEmpty()) {
+      if (error == null) {
         val archivePath = FileUtil.join(FileUtil.toSystemDependentName(folder.path), "$archiveName.zip")
         val previewCourse = Executor.execCancelable(EduCoreBundle.message("action.create.course.archive.reading.progress.bar")) {
           EduUtilsKt.getLocalCourse(archivePath)
-        }  as? EduCourse ?: return
+        } as? EduCourse ?: return
         previewCourse.isPreview = true
 
         val lastProjectCreationLocation = RecentProjectsManager.getInstance().lastProjectCreationLocation
@@ -139,8 +139,7 @@ class CCCreateCoursePreviewDialog(
         }
       }
       else {
-        LOG.info(errorMessage)
-        showErrorDialog(project, errorMessage, EduCoreBundle.message("course.creator.create.course.preview.failed.title"))
+        showErrorDialog(project, error.message, EduCoreBundle.message("course.creator.create.course.preview.failed.title"))
       }
     }
   }

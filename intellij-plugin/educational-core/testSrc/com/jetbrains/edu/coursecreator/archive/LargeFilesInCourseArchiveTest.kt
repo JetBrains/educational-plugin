@@ -13,7 +13,7 @@ import org.junit.Test
 import java.nio.file.Files
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.deleteIfExists
-import kotlin.test.assertContains
+import kotlin.test.assertIs
 
 class LargeFilesInCourseArchiveTest : CourseArchiveTestBase() {
 
@@ -56,17 +56,11 @@ class LargeFilesInCourseArchiveTest : CourseArchiveTestBase() {
   }
 
   private fun testHugeBinaryFileInCourseArchive(course: Course) {
-    val fileSizeMessage = StringUtil.formatFileSize(FileUtilRt.LARGE_FOR_CONTENT_LOADING.toLong())
     val tempFileForArchive = Files.createTempFile("test-course-archive-", ".zip")
     try {
       val archiveCreator = CourseArchiveCreator(project, tempFileForArchive.absolutePathString(), NoOpCipher())
-      val errorMessage = archiveCreator.createArchive(course) ?: kotlin.test.fail("Must generate an error message")
-      assertContains(
-        errorMessage,
-        fileSizeMessage,
-        false,
-        "The error message must contain the information that there was a huge file in archive"
-      )
+      val error = archiveCreator.createArchive(course) ?: kotlin.test.fail("Must generate an error message")
+      assertIs<CourseArchiveCreator.HugeBinaryFileError>(error)
     }
     finally {
       tempFileForArchive.deleteIfExists()

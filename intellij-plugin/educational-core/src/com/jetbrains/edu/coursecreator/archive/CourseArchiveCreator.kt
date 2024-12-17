@@ -12,8 +12,7 @@ import com.intellij.externalDependencies.DependencyOnPlugin
 import com.intellij.externalDependencies.ExternalDependenciesManager
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.ide.projectView.ProjectView
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProcessCanceledException
@@ -21,6 +20,8 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.util.concurrency.ThreadingAssertions
+import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.jetbrains.edu.coursecreator.CCUtils.saveOpenedDocuments
 import com.jetbrains.edu.coursecreator.actions.BinaryContentsFromDisk
 import com.jetbrains.edu.coursecreator.actions.TextualContentsFromDisk
@@ -40,6 +41,7 @@ import com.jetbrains.edu.learning.json.setDateFormat
 import com.jetbrains.edu.learning.marketplace.StudyItemIdGenerator
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.TASK_CONFIG
+import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.VisibleForTesting
 import java.io.*
@@ -54,14 +56,34 @@ class CourseArchiveCreator(
 ) {
 
   /**
-   * @return null when course archive was created successfully, non-empty error message otherwise
+   * Returns `null` when course archive was created successfully, [Error] object otherwise
    */
-  fun createArchive(course: Course): String? {
+  @RequiresEdt
+  fun createArchive(course: Course): Error? {
     require(project.course == course) {
       "Given course is supposed to be associated with the current project"
     }
 
-    ApplicationManager.getApplication().assertIsDispatchThread()
+    ThreadingAssertions.assertEventDispatchThread()
+
+    val result = prepareCourseCopy(course).
+      flatMap { courseCopy -> generateArchive(courseCopy) }
+
+    return when (result) {
+      is Err -> {
+        val error = result.error
+        // TODO: separate error handling from course creation
+        if (error is ExceptionError<*> && !isUnitTestMode) {
+          LOG.error(error.exception)
+        }
+        error.immediateAction(project)
+        error
+      }
+      is Ok -> null
+    }
+  }
+
+  private fun prepareCourseCopy(course: Course): Result<Course, Error> {
     saveOpenedDocuments(project)
 
     if (course.isMarketplace && !isUnitTestMode) {
@@ -73,55 +95,57 @@ class CourseArchiveCreator(
     course.updateEnvironmentSettings(project)
     val courseCopy = course.copy()
 
-    val courseArchiveIndicator = CourseArchiveIndicator()
-
-    try {
+    return try {
       // We run prepareCourse() in EDT because it calls the VirtualFile.toStudentFile method that replaces placeholders inside the document.
       // Modifying the document requires a write action.
       prepareCourse(courseCopy)
+      Ok(courseCopy)
     }
     catch (e: BrokenPlaceholderException) {
-      if (!isUnitTestMode) {
-        LOG.error("Failed to create course archive: ${e.message}")
-      }
-      val yamlFile = e.placeholder.taskFile.task.getDir(project.courseDir)?.findChild(TASK_CONFIG) ?: return e.message
-      FileEditorManager.getInstance(project).openFile(yamlFile, true)
-      return "${e.message}\n\n${e.placeholderInfo}"
+      Err(BrokenPlaceholderError(e))
     }
     catch (e: HugeBinaryFileException) {
-      return e.message
+      Err(HugeBinaryFileError(e))
     }
     catch (e: FileNotFoundException) {
-      return e.message
+      Err(AdditionalFileNotFoundError(e))
     }
+    catch (e: Throwable) {
+      if (e is ProcessCanceledException) throw e
+      Err(OtherError(e))
+    }
+  }
 
-    return ProgressManager.getInstance().runProcessWithProgressSynchronously<String?, RuntimeException>({
+  private fun generateArchive(course: Course): Result<Unit, Error> {
+    val courseArchiveIndicator = CourseArchiveIndicator()
+    return ProgressManager.getInstance().runProcessWithProgressSynchronously<Result<Unit, Error>, RuntimeException>({
       try {
         unwrapExceptionCause {
           measureTimeAndLog("Create course archive") {
-            doCreateCourseArchive(courseArchiveIndicator, courseCopy)
+            doCreateCourseArchive(courseArchiveIndicator, course)
           }
         }
 
-        null
+        Ok(Unit)
       }
       catch (e: HugeBinaryFileException) {
-        e.message
+        Err(HugeBinaryFileError(e))
       }
       catch (e: IOException) {
-        LOG.warn("IO Exception during creating a course archive", e)
-        val message = EduCoreBundle.message("error.failed.to.generate.course.archive.io.exception")
+        val baseMessage = EduCoreBundle.message("error.failed.to.generate.course.archive.io.exception")
         val exceptionMessage = e.message
 
-        if (exceptionMessage != null && exceptionMessage != "") {
-          message + " " + EduCoreBundle.message("error.failed.to.generate.course.archive.io.exception.additional.message", exceptionMessage)
+        val message = if (exceptionMessage.isNullOrEmpty()) {
+          baseMessage
         }
         else {
-          message
+          baseMessage + " " + EduCoreBundle.message("error.failed.to.generate.course.archive.io.exception.additional.message", exceptionMessage)
         }
+        Err(OtherError(e, message))
       }
-      catch (_: ProcessCanceledException) {
-        EduCoreBundle.message("error.course.archiving.cancelled.by.user")
+      catch (e: Throwable) {
+        if (e is ProcessCanceledException) throw e
+        Err(OtherError(e))
       }
     }, EduCoreBundle.message("action.create.course.archive.progress.bar"), true, project)
   }
@@ -264,7 +288,7 @@ class CourseArchiveCreator(
   }
 
   companion object {
-    private val LOG = Logger.getInstance(CourseArchiveCreator::class.java.name)
+    private val LOG = logger<CourseArchiveCreator>()
     private const val TEST_PLUGIN_VERSION = "yyyy.2-yyyy.1-TEST"
 
     private val printer: PrettyPrinter
@@ -359,5 +383,37 @@ class CourseArchiveCreator(
                      it.maxVersion)
         }
     }
+  }
+
+  sealed class Error {
+
+    abstract val message: @Nls String
+
+    /**
+     * Action which is supposed to be performed without additional user actions
+     */
+    @RequiresEdt
+    open fun immediateAction(project: Project) {}
+  }
+
+  abstract class ExceptionError<T : Throwable>(val exception: T) : Error() {
+    override val message: String
+      get() = exception.message.orEmpty()
+  }
+
+  class HugeBinaryFileError(e: HugeBinaryFileException) : ExceptionError<HugeBinaryFileException>(e)
+  class BrokenPlaceholderError(e: BrokenPlaceholderException) : ExceptionError<BrokenPlaceholderException>(e) {
+    override fun immediateAction(project: Project) {
+      val yamlFile = exception.placeholder.taskFile.task.getDir(project.courseDir)?.findChild(TASK_CONFIG) ?: return
+      FileEditorManager.getInstance(project).openFile(yamlFile, true)
+    }
+  }
+  // TODO: use more specific exception for error related to additional files.
+  //  `FileNotFoundException` is not related to additional files
+  //  and in theory may occur in other cases as well
+  class AdditionalFileNotFoundError(e: FileNotFoundException) : ExceptionError<FileNotFoundException>(e)
+  class OtherError(e: Throwable, private val errorMessage: @Nls String? = null) : ExceptionError<Throwable>(e) {
+    override val message: String
+      get() = errorMessage ?: EduCoreBundle.message("error.failed.to.create.course.archive")
   }
 }
