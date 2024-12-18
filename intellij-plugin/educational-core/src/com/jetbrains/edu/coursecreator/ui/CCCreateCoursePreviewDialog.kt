@@ -34,7 +34,7 @@ import javax.swing.JComponent
 
 class CCCreateCoursePreviewDialog(
   private val project: Project,
-  course: EduCourse,
+  private val course: EduCourse,
   private val configurator: EduConfigurator<*>
 ) : DialogWrapper(true) {
 
@@ -46,6 +46,10 @@ class CCCreateCoursePreviewDialog(
     setOKButtonText(EduCoreBundle.message("course.creator.create.course.preview.button"))
     panel.preferredSize = JBUI.size(WIDTH, HEIGHT)
     panel.minimumSize = JBUI.size(WIDTH, HEIGHT)
+    // TODO: come up with another way to show proper buttons without creating course copy.
+    //  It makes it much harder to interact with course
+    //  since a lot of code assumes that they use course project associated with the corresponding project, not a copy of it.
+    //  See `com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog.CourseArchivePanel.joinCourseAction`
     val courseCopy = course.copy().apply {
       // is set not to show "Edit" button for course preview
       isPreview = true
@@ -82,10 +86,14 @@ class CCCreateCoursePreviewDialog(
     override fun showError(errorState: ErrorState) {}
 
     override fun joinCourseAction(info: CourseCreationInfo, mode: CourseMode) {
-      createCoursePreview()
+      // TODO: ideally, we should pass `info` object or `info.course` here.
+      //  But it refers to temporary copy of original course object created for the sake of proper UI.
+      //  At the same time, other code expects code associated with the corresponding project instead of a course copy
+      //  See `init` block
+      createCoursePreview(this@CCCreateCoursePreviewDialog.course)
     }
 
-    private fun createCoursePreview() {
+    private fun createCoursePreview(course: EduCourse) {
       val folder = CCUtils.getGeneratedFilesFolder(project)
       if (folder == null) {
         LOG.info(TMP_DIR_ERROR)
@@ -93,24 +101,24 @@ class CCCreateCoursePreviewDialog(
                         EduCoreBundle.message("course.creator.create.course.preview.failed.title"))
         return
       }
-      val courseName = course?.name
-      val archiveName = if (courseName.isNullOrEmpty()) EduNames.COURSE else FileUtil.sanitizeFileName(courseName)
+      val courseName = course.name
+      val archiveName = if (courseName.isEmpty()) EduNames.COURSE else FileUtil.sanitizeFileName(courseName)
       val archiveLocation = "${folder.path}/$archiveName.zip"
       close(OK_EXIT_CODE)
-      val errorMessage = CourseArchiveCreator(project, archiveLocation).createArchive()
+      val errorMessage = CourseArchiveCreator(project, archiveLocation).createArchive(course)
 
       if (errorMessage.isNullOrEmpty()) {
         val archivePath = FileUtil.join(FileUtil.toSystemDependentName(folder.path), "$archiveName.zip")
-        val course = Executor.execCancelable(EduCoreBundle.message("action.create.course.archive.reading.progress.bar")) {
+        val previewCourse = Executor.execCancelable(EduCoreBundle.message("action.create.course.archive.reading.progress.bar")) {
           EduUtilsKt.getLocalCourse(archivePath)
         }  as? EduCourse ?: return
-        course.isPreview = true
+        previewCourse.isPreview = true
 
         val lastProjectCreationLocation = RecentProjectsManager.getInstance().lastProjectCreationLocation
         try {
           val location = FileUtil.createTempDirectory(PREVIEW_FOLDER_PREFIX, null)
           val settings = panel.projectSettings ?: error("Project settings shouldn't be null")
-          val previewProject = configurator.courseBuilder.getCourseProjectGenerator(course)
+          val previewProject = configurator.courseBuilder.getCourseProjectGenerator(previewCourse)
             ?.doCreateCourseProject(location.absolutePath, settings)
           if (previewProject == null) {
             LOG.info("Failed to create project for course preview")

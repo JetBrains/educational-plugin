@@ -57,7 +57,7 @@ class CCCreateCourseArchiveAction : AnAction(EduCoreBundle.lazyMessage("action.c
     course.vendor = Vendor(authorName)
     PropertiesComponent.getInstance(project).setValue(AUTHOR_NAME, authorName)
 
-    val errorMessage = CourseArchiveCreator(project, locationPath).createArchive()
+    val errorMessage = CourseArchiveCreator(project, locationPath).createArchive(course)
     if (errorMessage == null) {
       CCNotificationUtils.showInfoNotification(
         project,

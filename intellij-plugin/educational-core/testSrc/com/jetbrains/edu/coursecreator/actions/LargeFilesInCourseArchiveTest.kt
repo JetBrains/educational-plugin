@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.actions
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.EDU_TEST_BIN
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.InMemoryBinaryContents
 import com.jetbrains.edu.learning.courseFormat.getBinaryFileLimit
@@ -34,7 +35,7 @@ class LargeFilesInCourseArchiveTest : CourseArchiveTestBase() {
 
   @Test
   fun `test large binary file in a non-framework lesson`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("task.$EDU_TEST_BIN", InMemoryBinaryContents(ByteArray(FileUtilRt.LARGE_FOR_CONTENT_LOADING + 1)))
@@ -42,24 +43,24 @@ class LargeFilesInCourseArchiveTest : CourseArchiveTestBase() {
       }
     }
 
-    testHugeBinaryFileInCourseArchive()
+    testHugeBinaryFileInCourseArchive(course)
   }
 
   @Test
   fun `test large binary additional file`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       additionalFile("file.$EDU_TEST_BIN", InMemoryBinaryContents(ByteArray(FileUtilRt.LARGE_FOR_CONTENT_LOADING + 1)))
     }
 
-    testHugeBinaryFileInCourseArchive()
+    testHugeBinaryFileInCourseArchive(course)
   }
 
-  private fun testHugeBinaryFileInCourseArchive() {
+  private fun testHugeBinaryFileInCourseArchive(course: Course) {
     val fileSizeMessage = StringUtil.formatFileSize(FileUtilRt.LARGE_FOR_CONTENT_LOADING.toLong())
     val tempFileForArchive = Files.createTempFile("test-course-archive-", ".zip")
     try {
       val archiveCreator = CourseArchiveCreator(project, tempFileForArchive.absolutePathString(), TEST_AES_KEY)
-      val errorMessage = archiveCreator.createArchive() ?: kotlin.test.fail("Must generate an error message")
+      val errorMessage = archiveCreator.createArchive(course) ?: kotlin.test.fail("Must generate an error message")
       assertContains(
         errorMessage,
         fileSizeMessage,

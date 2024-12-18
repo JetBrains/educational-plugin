@@ -55,14 +55,17 @@ class CourseArchiveCreator(
   /**
    * @return null when course archive was created successfully, non-empty error message otherwise
    */
-  fun createArchive(): String? {
+  fun createArchive(course: Course): String? {
+    require(project.course == course) {
+      "Given course is supposed to be associated with the current project"
+    }
+
     ApplicationManager.getApplication().assertIsDispatchThread()
     saveOpenedDocuments(project)
 
-    val course = StudyTaskManager.getInstance(project).course ?: return EduCoreBundle.message("error.unable.to.obtain.course.for.project")
     if (course.isMarketplace && !isUnitTestMode) {
       ProgressManager.getInstance().runProcessWithProgressSynchronously({
-        StudyItemIdGenerator.getInstance(project).generateIdsIfNeeded(course.course)
+        StudyItemIdGenerator.getInstance(project).generateIdsIfNeeded(course)
       }, EduCoreBundle.message("action.create.course.archive.progress.bar"), false, project)
     }
 

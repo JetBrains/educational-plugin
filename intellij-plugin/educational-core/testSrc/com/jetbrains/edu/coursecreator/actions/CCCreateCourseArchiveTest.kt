@@ -362,7 +362,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
 
     // It is not important, what would be passed to the constructor, except the first argument - project
     // Inside `compute()`, exception would be thrown, so we will not reach the moment of creating the archive
-    getArchiveCreator().createArchive()
+    getArchiveCreator().createArchive(course)
 
     val navigatedFile = FileEditorManagerEx.getInstanceEx(project).currentFile ?: error("Navigated file should not be null here")
     assertEquals(task.configFileName, navigatedFile.name)
@@ -848,7 +848,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
 
   @Test
   fun `test course archive has both course_json and courseIcon_svg inside`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR) {}
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {}
 
     createUserFile(EduFormatNames.COURSE_ICON_FILE)
     createUserFile("not a course icon.svg")
@@ -856,7 +856,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     val courseArchiveFile = createTempFile("course.zip")
     try {
       val archiveCreator = getArchiveCreator(courseArchiveFile.toString())
-      archiveCreator.createArchive()
+      archiveCreator.createArchive(course)
 
       ZipFile(courseArchiveFile.toFile()).use { zip ->
         assertNotNull("Course zip file must contain a course icon", zip.getEntry(EduFormatNames.COURSE_ICON_FILE))
@@ -867,25 +867,27 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
           assertFalse("Course json must not contain course icon file", json.contains(EduFormatNames.COURSE_ICON_FILE))
         }
       }
-    } finally {
+    }
+    finally {
       Files.delete(courseArchiveFile)
     }
   }
 
   @Test
   fun `test courseIcon_svg file is not added inside the course archive`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR) {}
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {}
     createUserFile("not a course icon.svg")
 
     val courseArchiveFile = createTempFile("course.zip")
     try {
       val archiveCreator = getArchiveCreator(courseArchiveFile.toString())
-      archiveCreator.createArchive()
+      archiveCreator.createArchive(course)
 
       ZipFile(courseArchiveFile.toFile()).use { zip ->
         assertNull("Course zip file must not contain a course icon", zip.getEntry(EduFormatNames.COURSE_ICON_FILE))
       }
-    } finally {
+    }
+    finally {
       Files.delete(courseArchiveFile)
     }
   }
@@ -896,7 +898,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     val additionalFile2 = "additional_file2.txt"
     val additionalFile3 = "additional_file3.txt"
 
-    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       additionalFile(additionalFile1)
     }
 
@@ -907,7 +909,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
 
     val courseArchiveFile = createTempFile("course.zip")
     try {
-      getArchiveCreator(courseArchiveFile.toString()).createArchive()
+      getArchiveCreator(courseArchiveFile.toString()).createArchive(course)
 
       ZipFile(courseArchiveFile.toFile()).use { zip ->
         assertNotNull("Course zip file must contain $additionalFile1", zip.getEntry("$COURSE_CONTENTS_FOLDER/$additionalFile1"))
