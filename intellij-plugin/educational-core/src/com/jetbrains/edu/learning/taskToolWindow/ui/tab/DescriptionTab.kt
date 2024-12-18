@@ -4,6 +4,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.InlineBanner
+import com.intellij.ui.components.panels.VerticalLayout
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -25,6 +26,8 @@ class DescriptionTab(project: Project) : TaskToolWindowTab(project, TabType.DESC
     SwingToolWindow(project)
   }
 
+  private val inlineBannersPanel = JPanel(VerticalLayout(4))
+
   init {
     LOG.info("Description tab uses `${taskTextToolWindow.javaClass.name}` impl")
 
@@ -32,6 +35,7 @@ class DescriptionTab(project: Project) : TaskToolWindowTab(project, TabType.DESC
 
     val taskDescription = taskTextToolWindow.taskInfoPanel
     taskDescription.border = JBUI.Borders.emptyBottom(10)
+    taskDescription.add(inlineBannersPanel, BorderLayout.SOUTH)
 
     add(taskDescription, BorderLayout.CENTER)
 
@@ -53,9 +57,7 @@ class DescriptionTab(project: Project) : TaskToolWindowTab(project, TabType.DESC
   }
 
   fun addInlineBanner(inlineBanner: InlineBanner) {
-    val taskInfoPanel = taskTextToolWindow.taskInfoPanel
-    taskInfoPanel.add(inlineBanner, BorderLayout.SOUTH)
-    taskInfoPanel.validate()
+    inlineBannersPanel.add(inlineBanner)
   }
 
   companion object {
