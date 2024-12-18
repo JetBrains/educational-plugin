@@ -9,7 +9,7 @@ import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.ui.JBColor
 
 
-class UncommitedChangesHighlighter(
+class UncommittedChangesHighlighter(
   private val startOffset: Int,
   private val endOffset: Int
 ): ProdeHighlighter {
