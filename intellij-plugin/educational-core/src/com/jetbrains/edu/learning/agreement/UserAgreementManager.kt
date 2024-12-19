@@ -45,16 +45,13 @@ class UserAgreementManager(private val scope: CoroutineScope) {
           }
       }
       launch {
-        userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.pluginAgreement }.collectLatest {
+        /**
+         * When either [UserAgreementSettings.UserAgreementProperties.pluginAgreement]
+         * or [UserAgreementSettings.UserAgreementProperties.aiServiceAgreement] changes by user, send it to remote
+         */
+        userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.pluginAgreement to it.aiServiceAgreement }.collectLatest {
           if (it.isChangedByUser) {
-            submitPluginAgreement(it.pluginAgreement)
-          }
-        }
-      }
-      launch {
-        userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.aiServiceAgreement }.collectLatest {
-          if (it.isChangedByUser) {
-            submitAiAgreement(it.aiServiceAgreement)
+            submitAgreements(it.pluginAgreement, it.aiServiceAgreement)
           }
         }
       }
@@ -81,25 +78,16 @@ class UserAgreementManager(private val scope: CoroutineScope) {
     }
   }
 
-  fun submitAgreementsToRemote() {
+  fun submitCurrentAgreements() {
     val userAgreementProperties = UserAgreementSettings.getInstance().userAgreementProperties.value
-    submitPluginAgreement(userAgreementProperties.pluginAgreement)
-    submitAiAgreement(userAgreementProperties.aiServiceAgreement)
+    submitAgreements(userAgreementProperties.pluginAgreement, userAgreementProperties.aiServiceAgreement)
   }
 
-  @Suppress("UNUSED_PARAMETER")
-  private fun submitPluginAgreement(state: UserAgreementState) {
+  private fun submitAgreements(pluginAgreement: UserAgreementState, aiAgreement: UserAgreementState) {
     if (!isJBALoggedIn()) return
     scope.launch(Dispatchers.IO) {
-      // TODO: Submit Plugin Agreement to Remote once corresponding endpoint is added
-    }
-  }
-
-  private fun submitAiAgreement(state: UserAgreementState) {
-    if (!isJBALoggedIn()) return
-    scope.launch(Dispatchers.IO) {
-      MarketplaceSubmissionsConnector.getInstance().changeAiFeaturesAgreementState(state).onError {
-        LOG.error("Failed to submit AI User Agreement state $state to remote: $it")
+      MarketplaceSubmissionsConnector.getInstance().updateUserAgreements(pluginAgreement, aiAgreement).onError {
+        LOG.error("Failed to submit user agreements to remote: $it")
         return@launch
       }
     }
@@ -108,7 +96,7 @@ class UserAgreementManager(private val scope: CoroutineScope) {
   private fun submitSubmissionsServiceAgreement(state: UserAgreementState) {
     if (!isJBALoggedIn()) {
       scope.launch(Dispatchers.IO) {
-        MarketplaceSubmissionsConnector.getInstance().changeUserAgreementState(state).onError {
+        MarketplaceSubmissionsConnector.getInstance().updateSubmissionsServiceAgreement(state).onError {
           LOG.error("Failed to submit Submissions Service Agreement state $state to remote: $it")
           return@launch
         }

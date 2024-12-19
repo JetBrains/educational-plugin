@@ -67,6 +67,9 @@ interface SubmissionsService {
   @PATCH("/api/user/agreement")
   suspend fun changeUserAgreementState(@Query("state") agreementState: String): Response<Unit>
 
-  @PATCH("/api/user/statisticsAllowed")
-  suspend fun changeAiFeaturesAgreementState(@Query("state") agreementState: Boolean): Response<Unit>
+  @PATCH("/api/v2/agreement/update")
+  suspend fun updateUserAgreement(
+    @Query("pluginAgreement") pluginAgreement: String,
+    @Query("aiAgreement") aiAgreement: String
+  ): Response<Unit>
 }
