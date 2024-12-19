@@ -26,7 +26,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.json.encrypt.EncryptionModule
-import com.jetbrains.edu.learning.json.encrypt.getAesKey
 import com.jetbrains.edu.learning.yaml.format.*
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.COURSE_TYPE_YAML
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.HYPERSKILL_TYPE_YAML
@@ -84,8 +83,7 @@ object YamlMapper {
   }
 
   private fun ObjectMapper.addEncryptionModule() {
-    val aesKey = getAesKey()
-    registerModule(EncryptionModule(aesKey))
+    registerModule(EncryptionModule())
   }
 
   private fun createMapper(): ObjectMapper {

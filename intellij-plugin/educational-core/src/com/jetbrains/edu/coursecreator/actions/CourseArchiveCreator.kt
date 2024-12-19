@@ -30,9 +30,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
 import com.jetbrains.edu.learning.json.addStudyItemMixins
-import com.jetbrains.edu.learning.json.encrypt.AES256
+import com.jetbrains.edu.learning.json.encrypt.Cipher
 import com.jetbrains.edu.learning.json.encrypt.EncryptionModule
-import com.jetbrains.edu.learning.json.encrypt.getAesKey
 import com.jetbrains.edu.learning.json.mixins.*
 import com.jetbrains.edu.learning.json.pathInArchive
 import com.jetbrains.edu.learning.json.setDateFormat
@@ -49,7 +48,7 @@ import kotlin.text.Charsets.UTF_8
 class CourseArchiveCreator(
   private val project: Project,
   @NonNls private val location: String,
-  private val aesKey: String = getAesKey()
+  private val cipher: Cipher = Cipher()
 ) {
 
   /**
@@ -172,7 +171,7 @@ class CourseArchiveCreator(
           is TextualContents -> contents.text.toByteArray(UTF_8)
           is UndeterminedContents -> throw IllegalStateException("All contents must be disambiguated before writing archive")
         }
-        outputStream.write(AES256.encrypt(bytes, aesKey))
+        outputStream.write(cipher.encrypt(bytes))
         courseArchiveIndicator.writeFile(eduFile)
       }
     }
@@ -214,7 +213,7 @@ class CourseArchiveCreator(
 
     val mapper = JsonMapper.builder()
       .addModule(module)
-      .addModule(EncryptionModule(aesKey))
+      .addModule(EncryptionModule(cipher))
       .configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false)
       .commonMapperSetup(course)
       .setDateFormat()

@@ -18,7 +18,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.json.encrypt.EncryptionModule
-import com.jetbrains.edu.learning.json.encrypt.getAesKey
 import com.jetbrains.edu.learning.json.migration.*
 import com.jetbrains.edu.learning.json.mixins.*
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.COURSE_TYPE
@@ -145,7 +144,7 @@ fun getCourseMapper(fileContentsFactory: FileContentsFactory): ObjectMapper {
 
 fun ObjectMapper.configureCourseMapper(isEncrypted: Boolean) {
   if (isEncrypted) {
-    registerModule(EncryptionModule(getAesKey()))
+    registerModule(EncryptionModule())
   }
   val module = SimpleModule()
   module.addDeserializer(StudyItem::class.java, StudyItemDeserializer())

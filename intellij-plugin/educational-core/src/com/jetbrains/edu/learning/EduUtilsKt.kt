@@ -30,7 +30,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.zip.FileContentsFromZipFactory
 import com.jetbrains.edu.learning.json.configureCourseMapper
-import com.jetbrains.edu.learning.json.encrypt.getAesKey
+import com.jetbrains.edu.learning.json.encrypt.Cipher
 import com.jetbrains.edu.learning.json.getCourseMapper
 import com.jetbrains.edu.learning.json.migrate
 import com.jetbrains.edu.learning.json.mixins.LocalEduCourseMixin
@@ -119,7 +119,7 @@ object EduUtilsKt {
           val entry = zipFile.getEntry(COURSE_META_FILE) ?: return@use null
           val reader = { zipFile.getInputStream(entry).reader(StandardCharsets.UTF_8) }
 
-          readCourseJson(reader, FileContentsFromZipFactory(zipFilePath, getAesKey()))
+          readCourseJson(reader, FileContentsFromZipFactory(zipFilePath, Cipher()))
         }
       }
     }
