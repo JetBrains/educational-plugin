@@ -73,9 +73,8 @@ class HintsServiceConnector {
    */
   private fun <T> Response<List<T>>.handleResponse(): Result<List<T>, String> {
     val code = code()
-    val errorMessage = errorBody()?.string()
-    if (!errorMessage.isNullOrEmpty()) {
-      LOG.warn("Request failed. Status code: $code. Error message: $errorMessage")
+    if (!isSuccessful) {
+      LOG.warn("Request failed. Status code: $code. Error message: ${errorBody()?.string().toString()}")
     }
     val body = body()
     return when {
