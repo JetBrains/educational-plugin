@@ -8,11 +8,11 @@ import com.intellij.openapi.util.text.StringUtilRt
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.cipher.AES256Cipher
+import com.jetbrains.edu.learning.cipher.TEST_AES_KEY
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSE_CONTENTS_FOLDER
 import com.jetbrains.edu.learning.courseFormat.ext.visitEduFiles
-import com.jetbrains.edu.learning.json.encrypt.AES256Cipher
-import com.jetbrains.edu.learning.json.encrypt.TEST_AES_KEY
 import com.jetbrains.edu.learning.json.pathInArchive
 import org.junit.Assert
 import java.io.ByteArrayInputStream

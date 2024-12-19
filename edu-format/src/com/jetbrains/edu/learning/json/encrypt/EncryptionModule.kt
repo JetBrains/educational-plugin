@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.introspect.Annotated
 import com.fasterxml.jackson.databind.introspect.NopAnnotationIntrospector
 import com.fasterxml.jackson.databind.node.TextNode
+import com.jetbrains.edu.learning.cipher.Cipher
 import com.jetbrains.edu.learning.courseFormat.logger
 
 private val LOG = logger<EncryptionModule>()

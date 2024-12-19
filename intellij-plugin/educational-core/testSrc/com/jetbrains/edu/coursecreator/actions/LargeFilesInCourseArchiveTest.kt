@@ -3,13 +3,13 @@ package com.jetbrains.edu.coursecreator.actions
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.EDU_TEST_BIN
+import com.jetbrains.edu.learning.cipher.AES256Cipher
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.InMemoryBinaryContents
 import com.jetbrains.edu.learning.courseFormat.getBinaryFileLimit
 import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
-import com.jetbrains.edu.learning.json.encrypt.AES256Cipher
-import com.jetbrains.edu.learning.json.encrypt.TEST_AES_KEY
+import com.jetbrains.edu.learning.cipher.TEST_AES_KEY
 import org.junit.Test
 import java.nio.file.Files
 import kotlin.io.path.absolutePathString

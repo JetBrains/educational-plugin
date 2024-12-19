@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.json.encrypt
+package com.jetbrains.edu.learning.cipher
 
 import java.util.*
 import javax.crypto.Cipher
@@ -7,7 +7,7 @@ import javax.crypto.spec.SecretKeySpec
 
 const val TEST_AES_KEY = "DFC929E375655998A34E56A21C98651C"
 
-class AES256Cipher(private val secretKey: String = getAesKey()) : com.jetbrains.edu.learning.json.encrypt.Cipher {
+class AES256Cipher(private val secretKey: String = getAesKey()) : com.jetbrains.edu.learning.cipher.Cipher {
 
   private fun cipher(opmode: Int, secretKey: String): Cipher {
     require(secretKey.length == 32) { "SecretKey length is not 32 chars" }

@@ -1,10 +1,10 @@
 package com.jetbrains.edu.learning.courseFormat.zip
 
+import com.jetbrains.edu.learning.cipher.Cipher
 import com.jetbrains.edu.learning.courseFormat.BinaryContents
 import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.TextualContents
 import com.jetbrains.edu.learning.courseFormat.logger
-import com.jetbrains.edu.learning.json.encrypt.Cipher
 import com.jetbrains.edu.learning.json.pathInArchive
 import java.nio.charset.StandardCharsets.UTF_8
 import java.util.zip.ZipFile

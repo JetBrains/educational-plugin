@@ -1,13 +1,13 @@
 package com.jetbrains.edu.learning.format.yaml
 
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.cipher.AES256Cipher
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.findTask
-import com.jetbrains.edu.learning.json.encrypt.AES256Cipher
 import com.jetbrains.edu.learning.json.encrypt.EncryptionModule
-import com.jetbrains.edu.learning.json.encrypt.TEST_AES_KEY
+import com.jetbrains.edu.learning.cipher.TEST_AES_KEY
 import com.jetbrains.edu.learning.yaml.YamlMapper
 import org.junit.Test
 

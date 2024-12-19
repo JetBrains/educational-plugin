@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.json.encrypt
+package com.jetbrains.edu.learning.cipher
 
 interface Cipher {
   fun encrypt(bytes: ByteArray): ByteArray
