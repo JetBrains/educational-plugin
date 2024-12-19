@@ -44,6 +44,10 @@ class HintsServiceConnector {
       .create(HintsService::class.java)
   }
 
+  /**
+   * We throw the [Err]or with bundled string further because we catch them on the `educational-ml-library` side.
+   * This is a bad design, and we must reimplement this ([EDU-7696](https://youtrack.jetbrains.com/issue/EDU-7696)).
+   */
   suspend fun getCodeHint(context: CodeHintContext): CodeHint {
     val response = service.getCodeHint(context).handleResponse().onError {
       error(it)
@@ -51,6 +55,10 @@ class HintsServiceConnector {
     return response.asCodeHint()
   }
 
+  /**
+   * We throw the [Err]or with bundled string further because we catch them on the `educational-ml-library` side.
+   * This is a bad design, and we must reimplement this ([EDU-7696](https://youtrack.jetbrains.com/issue/EDU-7696)).
+   */
   suspend fun getTextHint(context: TextHintContext): TextHint {
     val response = service.getTextHint(context).handleResponse().onError {
       error(it)
@@ -59,9 +67,9 @@ class HintsServiceConnector {
   }
 
   /**
-   * We put strings from bundle to the Errors, because we then show them to user (see [com.jetbrains.edu.aiHints.core.HintsLoader.getHint]).
-   * We also throw the error further because we catch them in the educational-ml-library.
-   * This is a bad design, and we must reimplement this ([EDU-7696](https://youtrack.jetbrains.com/issue/EDU-7696)).
+   * We put strings from bundle to the [Err]ors, because we then show them to user.
+   *
+   * @see [com.jetbrains.edu.aiHints.core.HintsLoader.getHint]
    */
   private fun <T> Response<List<T>>.handleResponse(): Result<List<T>, String> {
     val code = code()
