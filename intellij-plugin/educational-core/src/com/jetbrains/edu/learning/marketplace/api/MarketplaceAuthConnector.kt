@@ -45,7 +45,7 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
         Runnable {
           runInBackground(null, EduCoreBundle.message("user.agreement.getting.state"), false) {
             // Send data to service as we didn't send it when we were not authorized
-            UserAgreementManager.getInstance().submitAgreementsToRemote()
+            UserAgreementManager.getInstance().submitCurrentAgreements()
           }
         })
     }

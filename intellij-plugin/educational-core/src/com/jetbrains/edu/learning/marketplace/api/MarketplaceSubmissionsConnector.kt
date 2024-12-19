@@ -388,7 +388,7 @@ class MarketplaceSubmissionsConnector {
     }
   }
 
-  suspend fun changeUserAgreementState(newState: UserAgreementState): Result<Unit, String> {
+  suspend fun updateSubmissionsServiceAgreement(newState: UserAgreementState): Result<Unit, String> {
     val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
     val newStateName = newState.name
     LOG.info("Changing User Agreement state to $newStateName for user $loginName")
@@ -407,12 +407,11 @@ class MarketplaceSubmissionsConnector {
     }
   }
 
-  suspend fun changeAiFeaturesAgreementState(newState: UserAgreementState): Result<Unit, String> {
+  suspend fun updateUserAgreements(pluginAgreement: UserAgreementState, aiAgreement: UserAgreementState): Result<Unit, String> {
     val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
-    val newStateName = newState == UserAgreementState.ACCEPTED
-    LOG.info("Changing User Ai Features Agreement state to $newStateName for user $loginName")
+    LOG.info("Changing user $loginName plugin agreement to $pluginAgreement, AI agreement to $aiAgreement")
     return try {
-      val response = submissionsService.changeAiFeaturesAgreementState(newStateName)
+      val response = submissionsService.updateUserAgreement(pluginAgreement.toString(), aiAgreement.toString())
       if (response.isSuccessful) {
         Ok(Unit)
       }
@@ -421,8 +420,8 @@ class MarketplaceSubmissionsConnector {
       }
     }
     catch (e: Exception) {
-      LOG.error("Error occurred while changing User Ai Features Agreement state to $newState for user $loginName", e)
-      Err(e.message ?: "Failed to change User Ai Features Agreement state")
+      LOG.error("Error occurred while changing plugin agreement to $pluginAgreement and ai agreement to $aiAgreement for user $loginName", e)
+      Err(e.message ?: "Unknown error")
     }
   }
 
