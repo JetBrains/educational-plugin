@@ -6,11 +6,16 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.logging.Level
 
+private val mimeBinaryTypes = listOf(
+  "image",
+  "audio",
+  "video",
+  "application",
+  "font"
+).map { "$it/" }
+
 fun isBinary(contentType: String): Boolean {
-  return contentType.startsWith("image") ||
-         contentType.startsWith("audio") ||
-         contentType.startsWith("video") ||
-         contentType.startsWith("application")
+  return mimeBinaryTypes.any { contentType.startsWith(it) }
 }
 
 /**
