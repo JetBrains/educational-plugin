@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.InMemoryBinaryContents
 import com.jetbrains.edu.learning.courseFormat.getBinaryFileLimit
 import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
-import com.jetbrains.edu.learning.cipher.TEST_AES_KEY
 import org.junit.Test
 import java.nio.file.Files
 import kotlin.io.path.absolutePathString
@@ -60,7 +59,7 @@ class LargeFilesInCourseArchiveTest : CourseArchiveTestBase() {
     val fileSizeMessage = StringUtil.formatFileSize(FileUtilRt.LARGE_FOR_CONTENT_LOADING.toLong())
     val tempFileForArchive = Files.createTempFile("test-course-archive-", ".zip")
     try {
-      val archiveCreator = CourseArchiveCreator(project, tempFileForArchive.absolutePathString(), AES256Cipher(TEST_AES_KEY))
+      val archiveCreator = CourseArchiveCreator(project, tempFileForArchive.absolutePathString(), AES256Cipher.TEST_CIPHER)
       val errorMessage = archiveCreator.createArchive(course) ?: kotlin.test.fail("Must generate an error message")
       assertContains(
         errorMessage,

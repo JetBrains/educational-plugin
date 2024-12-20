@@ -8,4 +8,4 @@ interface Cipher {
   fun decrypt(str: String): String
 }
 
-fun Cipher(): Cipher = AES256Cipher()
+fun Cipher(): Cipher = AES256Cipher.create()
