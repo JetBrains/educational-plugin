@@ -7,10 +7,14 @@ import java.nio.file.Paths
 import java.util.logging.Level
 
 fun isBinary(contentType: String): Boolean {
-  return contentType.startsWith("image") ||
-         contentType.startsWith("audio") ||
-         contentType.startsWith("video") ||
-         contentType.startsWith("application")
+  val mimeBinaryTypes = listOf(
+    "image",
+    "audio",
+    "video",
+    "application",
+    "font"
+  )
+  return mimeBinaryTypes.any { contentType.startsWith(it) }
 }
 
 /**
