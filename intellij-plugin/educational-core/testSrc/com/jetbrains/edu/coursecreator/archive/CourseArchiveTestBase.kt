@@ -10,10 +10,11 @@ import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.cipher.Cipher
 import com.jetbrains.edu.learning.cipher.NoOpCipher
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSE_CONTENTS_FOLDER
-import com.jetbrains.edu.learning.courseFormat.ext.visitEduFiles
-import com.jetbrains.edu.learning.json.pathInArchive
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSE_META_FILE
+import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
+import com.jetbrains.edu.learning.courseFormat.copy
 import org.junit.Assert
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -41,28 +42,29 @@ abstract class CourseArchiveTestBase : EduActionTestCase() {
         }
       }
 
-      var eduFilesCount = 0
-      course.visitEduFiles { eduFile ->
-        val actualEncryptedContents = fileName2contents[eduFile.pathInArchive] ?: error("File ${eduFile.name} not found in archive")
-        val actualContents = cipher.decrypt(actualEncryptedContents)
+      val expectedDataDir = getExpectedDataDirectory()
+      for (file in expectedDataDir.walkTopDown()) {
+        if (file.isDirectory) continue
 
-        val expectedContents = when (val contents = eduFile.contents) {
-          is BinaryContents -> contents.bytes
-          is TextualContents -> contents.text.toByteArray()
-          is UndeterminedContents -> error("unexpected undetermined contents")
-        }
+        val relativePath = file.relativeTo(expectedDataDir).invariantSeparatorsPath
+        // we've already checked course.json above
+        // TODO: always check course.json together with content
+        if (relativePath == COURSE_META_FILE) continue
 
-        Assert.assertArrayEquals(expectedContents, actualContents)
-
-        eduFilesCount++
+        val actualContent = fileName2contents.remove(relativePath) ?: kotlin.test.fail("File $relativePath not found in archive")
+        val expectedContent = file.readBytes()
+        Assert.assertArrayEquals(expectedContent, actualContent)
       }
-      assertEquals("Number of files in archive must be the same as in the course", eduFilesCount, fileName2contents.size)
+
+      if (fileName2contents.isNotEmpty()) {
+        fail("Unexpected files in archive: ${fileName2contents.keys}")
+      }
     }
   }
 
-  private fun loadExpectedJson(): String {
-    val fileName = getTestFile()
-    val jsonFromFile = FileUtil.loadFile(File(testDataPath, fileName))
+  protected fun loadExpectedJson(): String {
+    val jsonFile = getExpectedDataDirectory().resolve(COURSE_META_FILE)
+    val jsonFromFile = FileUtil.loadFile(jsonFile)
     val withLastJsonVersion = jsonFromFile.replace(""""version"\s*:\s*<last version>""".toRegex(), """"version" : $JSON_FORMAT_VERSION""")
     return withLastJsonVersion
   }
@@ -90,8 +92,8 @@ abstract class CourseArchiveTestBase : EduActionTestCase() {
     cipher: Cipher = NoOpCipher()
   ): CourseArchiveCreator = CourseArchiveCreator(myFixture.project, location, cipher)
 
-  private fun getTestFile(): String {
-    return getTestName(true).trim() + ".json"
+  private fun getExpectedDataDirectory(): File {
+    return File(testDataPath, getTestName(true).trim())
   }
 
   private val printer: PrettyPrinter

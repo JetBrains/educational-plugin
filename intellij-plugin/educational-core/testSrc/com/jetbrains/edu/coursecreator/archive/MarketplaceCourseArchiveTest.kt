@@ -2,7 +2,6 @@ package com.jetbrains.edu.coursecreator.archive
 
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.writeText
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
@@ -23,7 +22,6 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils.getFirstTask
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_LESSON_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_TASK_CONFIG
 import org.junit.Test
-import java.io.File
 
 class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
 
@@ -224,8 +222,6 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     }.asRemote().apply { isMarketplace = true }
     createConfigFiles(project)
 
-    doTest()
-
     // Change `*-remote-info.yaml`s to ensure it will not equal to the original one
     runWriteAction {
       findFile("lesson1/task1/${REMOTE_TASK_CONFIG}").writeText("id: 11")
@@ -235,15 +231,11 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     StudyItemIdGenerator.getInstance(project).generateIdsIfNeeded(course.course)
 
     val newJson = generateJson()
-    val courseWithRemoteInfoFilesChanges = FileUtil.loadFile(File(testDataPath, CHANGE_REMOTE_INFO_FILES_COURSE_WITH_CHANGES))
-    assertEquals(courseWithRemoteInfoFilesChanges, newJson)
+    val expectedJson = loadExpectedJson()
+    assertEquals(expectedJson, newJson)
   }
 
   override fun getTestDataPath(): String {
     return super.getTestDataPath() + "/archive/marketplaceCourseArchive"
-  }
-
-  companion object {
-    private const val CHANGE_REMOTE_INFO_FILES_COURSE_WITH_CHANGES: String = "change remote info files course with changes.json"
   }
 }

@@ -1,0 +1,61 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+def printOutput(def output) {
+    return tasks.create("printOutput") {
+        println "#educational_plugin_checker_version 1"
+        def separator = System.lineSeparator()
+        def lines = output.toString().split("(?<=${separator})|(?=${separator})")
+        for (line in lines) {
+            println "#educational_plugin" + line
+        }
+    }
+}
+
+subprojects {
+    apply plugin: 'application'
+    apply plugin: 'java'
+
+    sourceCompatibility = 1.8
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        testImplementation group: 'junit', name: 'junit', version: '4.12'
+    }
+
+    sourceSets {
+        main {
+            java.srcDir 'src'
+        }
+        test {
+            java.srcDir 'test'
+        }
+    }
+
+    mainClassName = project.hasProperty("mainClass") ? project.getProperty("mainClass") : ""
+
+    if (project.hasProperty("educationalRun") && "true".equalsIgnoreCase(project.getProperty("educationalRun"))) {
+        def runOutput = new ByteArrayOutputStream()
+        tasks.run.setStandardOutput(runOutput)
+        tasks.run.doLast { printOutput(runOutput) }
+    }
+}
+
+project(':util') {
+    dependencies {
+        implementation group: 'junit', name: 'junit', version: '4.12'
+    }
+}
+
+configure(subprojects.findAll { it.name != 'util' }) {
+    dependencies {
+        implementation project(':util').sourceSets.main.output
+        testImplementation project(':util').sourceSets.test.output
+    }
+}
