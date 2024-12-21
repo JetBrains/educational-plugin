@@ -3,7 +3,7 @@
   "title" : "Test Course",
   "programming_language_id" : "TEXT",
   "language" : "en",
-  "course_type" : "Marketplace",
+  "course_type" : "PyCharm",
   "items" : [
     {
       "title" : "lesson1",
@@ -13,16 +13,15 @@
           "files" : {
             "Task.kt" : {
               "name" : "Task.kt",
-              "placeholders" : [
-                {
-                  "offset" : 20,
-                  "length" : 6,
-                  "possible_answer" : "YHy7k6TLDgQ5klWwH+OQRA==",
-                  "placeholder_text" : "TODO()"
-                }
-              ],
+              "placeholders" : [ ],
               "is_visible" : true,
               "is_binary" : false
+            },
+            "binary_task_file.mp4" : {
+              "name" : "binary_task_file.mp4",
+              "placeholders" : [ ],
+              "is_visible" : true,
+              "is_binary" : true
             }
           },
           "description_text" : "solve task",
@@ -31,6 +30,13 @@
         }
       ],
       "type" : "lesson"
+    }
+  ],
+  "additional_files" : [
+    {
+      "name" : "binary_file.png",
+      "is_visible" : true,
+      "is_binary" : true
     }
   ],
   "version" : <last version>,

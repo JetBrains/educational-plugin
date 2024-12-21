@@ -12,6 +12,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.jetbrains.edu.coursecreator.archive.CCCreateCourseArchiveTest.PlainTextCompatibilityProvider.Companion.PLAIN_TEXT_PLUGIN_ID
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.cipher.TestCipher
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
@@ -920,6 +921,34 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     finally {
       Files.delete(courseArchiveFile)
     }
+  }
+
+  @Test
+  fun `test encrypt course files`() {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
+      lesson {
+        eduTask("task1") {
+          taskFile("Task.kt", "fun foo(): String = TODO()")
+          taskFile("binary_task_file.mp4", contents = InMemoryBinaryContents(byteArrayOf(1, 2, 3)))
+        }
+      }
+      additionalFile("binary_file.png", contents = InMemoryBinaryContents(byteArrayOf(4, 5, 6, 7)))
+    }
+    doTest(cipher = TestCipher())
+  }
+
+  @Test
+  fun `test possible answer encrypted`() {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
+      lesson {
+        eduTask("task1") {
+          taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
+            placeholder(0, "\"Foo\"")
+          }
+        }
+      }
+    }
+    doTest(cipher = TestCipher())
   }
 
   /**

@@ -8,7 +8,8 @@ import com.intellij.openapi.util.text.StringUtilRt
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.cipher.TestCipher
+import com.jetbrains.edu.learning.cipher.Cipher
+import com.jetbrains.edu.learning.cipher.NoOpCipher
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSE_CONTENTS_FOLDER
 import com.jetbrains.edu.learning.courseFormat.ext.visitEduFiles
@@ -20,13 +21,13 @@ import java.io.File
 import java.util.zip.ZipInputStream
 
 abstract class CourseArchiveTestBase : EduActionTestCase() {
-  protected fun doTest() {
+  protected fun doTest(cipher: Cipher = NoOpCipher()) {
     val expectedCourseJson = loadExpectedJson()
 
-    val generatedJsonFile = generateJson()
+    val generatedJsonFile = generateJson(cipher)
     assertEquals(expectedCourseJson, generatedJsonFile)
 
-    doWithArchiveCreator { creator, course ->
+    doWithArchiveCreator(cipher) { creator, course ->
       val out = ByteArrayOutputStream()
       creator.doCreateCourseArchive(CourseArchiveIndicator(), course, out)
       val zip = out.toByteArray()
@@ -43,7 +44,7 @@ abstract class CourseArchiveTestBase : EduActionTestCase() {
       var eduFilesCount = 0
       course.visitEduFiles { eduFile ->
         val actualEncryptedContents = fileName2contents[eduFile.pathInArchive] ?: error("File ${eduFile.name} not found in archive")
-        val actualContents = TestCipher().decrypt(actualEncryptedContents)
+        val actualContents = cipher.decrypt(actualEncryptedContents)
 
         val expectedContents = when (val contents = eduFile.contents) {
           is BinaryContents -> contents.bytes
@@ -66,27 +67,28 @@ abstract class CourseArchiveTestBase : EduActionTestCase() {
     return withLastJsonVersion
   }
 
-  private fun <R> doWithArchiveCreator(action: (archiveCreator: CourseArchiveCreator, preparedCourse: Course) -> R): R {
+  private fun <R> doWithArchiveCreator(cipher: Cipher = NoOpCipher(), action: (archiveCreator: CourseArchiveCreator, preparedCourse: Course) -> R): R {
     val course = StudyTaskManager.getInstance(project).course ?: error("No course found")
 
     val copiedCourse = course.copy()
     copiedCourse.authors = course.authors
 
-    val creator = getArchiveCreator()
+    val creator = getArchiveCreator(cipher = cipher)
     creator.prepareCourse(copiedCourse)
 
     return action(creator, copiedCourse)
   }
 
-  protected fun generateJson(): String = doWithArchiveCreator { creator, course ->
+  protected fun generateJson(cipher: Cipher = NoOpCipher()): String = doWithArchiveCreator(cipher) { creator, course ->
     val mapper = creator.getMapper(course)
     val json = mapper.writer(printer).writeValueAsString(course)
     StringUtilRt.convertLineSeparators(json).replace("\\n\\n".toRegex(), "\n")
   }
 
   protected open fun getArchiveCreator(
-    location: String = "${myFixture.project.basePath}/${CCUtils.GENERATED_FILES_FOLDER}/course.zip"
-  ): CourseArchiveCreator = CourseArchiveCreator(myFixture.project, location, TestCipher())
+    location: String = "${myFixture.project.basePath}/${CCUtils.GENERATED_FILES_FOLDER}/course.zip",
+    cipher: Cipher = NoOpCipher()
+  ): CourseArchiveCreator = CourseArchiveCreator(myFixture.project, location, cipher)
 
   private fun getTestFile(): String {
     return getTestName(true).trim() + ".json"

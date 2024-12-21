@@ -114,22 +114,6 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
   }
 
   @Test
-  fun `test possible answer encrypted`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
-      lesson {
-        eduTask("task1") {
-          taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
-            placeholder(0, "\"Foo\"")
-          }
-        }
-      }
-    }.apply {
-      isMarketplace = true
-    }
-    doTest()
-  }
-
-  @Test
   fun `test course version`() {
     val vendor = Vendor().apply { name = "Jetbrains s.r.o" }
     courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {

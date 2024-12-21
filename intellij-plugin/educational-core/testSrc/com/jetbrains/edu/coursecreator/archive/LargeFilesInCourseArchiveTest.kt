@@ -3,7 +3,7 @@ package com.jetbrains.edu.coursecreator.archive
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.EDU_TEST_BIN
-import com.jetbrains.edu.learning.cipher.TestCipher
+import com.jetbrains.edu.learning.cipher.NoOpCipher
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.InMemoryBinaryContents
@@ -59,7 +59,7 @@ class LargeFilesInCourseArchiveTest : CourseArchiveTestBase() {
     val fileSizeMessage = StringUtil.formatFileSize(FileUtilRt.LARGE_FOR_CONTENT_LOADING.toLong())
     val tempFileForArchive = Files.createTempFile("test-course-archive-", ".zip")
     try {
-      val archiveCreator = CourseArchiveCreator(project, tempFileForArchive.absolutePathString(), TestCipher())
+      val archiveCreator = CourseArchiveCreator(project, tempFileForArchive.absolutePathString(), NoOpCipher())
       val errorMessage = archiveCreator.createArchive(course) ?: kotlin.test.fail("Must generate an error message")
       assertContains(
         errorMessage,

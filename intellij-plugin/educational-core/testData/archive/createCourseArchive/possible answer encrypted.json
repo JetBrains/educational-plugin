@@ -6,8 +6,7 @@
   "course_type" : "PyCharm",
   "items" : [
     {
-      "title" : "my lesson",
-      "custom_name" : "custom name",
+      "title" : "lesson1",
       "task_list" : [
         {
           "name" : "task1",
@@ -18,7 +17,7 @@
                 {
                   "offset" : 20,
                   "length" : 6,
-                  "possible_answer" : "\"Foo\"",
+                  "possible_answer" : "YHy7k6TLDgQ5klWwH+OQRA==",
                   "placeholder_text" : "TODO()"
                 }
               ],
@@ -31,7 +30,7 @@
           "task_type" : "edu"
         }
       ],
-      "type" : "framework"
+      "type" : "lesson"
     }
   ],
   "version" : <last version>,
