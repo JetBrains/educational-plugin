@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.format.yaml
 
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.cipher.AES256Cipher
+import com.jetbrains.edu.learning.cipher.TestCipher
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -71,7 +71,7 @@ class StudentEncryptYamlSerializationTest : EduTestCase() {
   fun `test task with placeholders`() {
     val taskSolution = "42 is the answer"
     val possibleAnswer = "answer"
-    val cipher = AES256Cipher.TEST_CIPHER
+    val cipher = TestCipher()
     val encryptedPossibleAnswer = cipher.encrypt(possibleAnswer)
     val taskSolutionEncrypted = cipher.encrypt(taskSolution)
     val task = courseWithFiles {
@@ -156,7 +156,7 @@ class StudentEncryptYamlSerializationTest : EduTestCase() {
     try {
       task.course.needWriteYamlText = true
       val studentMapper = YamlMapper.testStudentMapperWithEncryption()
-      studentMapper.registerModule(EncryptionModule(AES256Cipher.TEST_CIPHER))
+      studentMapper.registerModule(EncryptionModule(TestCipher()))
       val actual = studentMapper.writeValueAsString(task)
       assertEquals(expected, actual)
     }

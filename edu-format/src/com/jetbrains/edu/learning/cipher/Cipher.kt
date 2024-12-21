@@ -9,3 +9,9 @@ interface Cipher {
 }
 
 fun Cipher(): Cipher = AES256Cipher.create()
+
+/**
+ * Returns a cipher which is supposed to be used in tests
+ */
+@Suppress("FunctionName")
+fun TestCipher(): Cipher = AES256Cipher.TEST_CIPHER

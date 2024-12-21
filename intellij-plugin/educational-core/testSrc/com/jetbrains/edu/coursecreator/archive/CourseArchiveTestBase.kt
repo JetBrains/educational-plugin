@@ -8,7 +8,7 @@ import com.intellij.openapi.util.text.StringUtilRt
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.cipher.AES256Cipher
+import com.jetbrains.edu.learning.cipher.TestCipher
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSE_CONTENTS_FOLDER
 import com.jetbrains.edu.learning.courseFormat.ext.visitEduFiles
@@ -43,7 +43,7 @@ abstract class CourseArchiveTestBase : EduActionTestCase() {
       var eduFilesCount = 0
       course.visitEduFiles { eduFile ->
         val actualEncryptedContents = fileName2contents[eduFile.pathInArchive] ?: error("File ${eduFile.name} not found in archive")
-        val actualContents = AES256Cipher.TEST_CIPHER.decrypt(actualEncryptedContents)
+        val actualContents = TestCipher().decrypt(actualEncryptedContents)
 
         val expectedContents = when (val contents = eduFile.contents) {
           is BinaryContents -> contents.bytes
@@ -86,7 +86,7 @@ abstract class CourseArchiveTestBase : EduActionTestCase() {
 
   protected open fun getArchiveCreator(
     location: String = "${myFixture.project.basePath}/${CCUtils.GENERATED_FILES_FOLDER}/course.zip"
-  ): CourseArchiveCreator = CourseArchiveCreator(myFixture.project, location, AES256Cipher.TEST_CIPHER)
+  ): CourseArchiveCreator = CourseArchiveCreator(myFixture.project, location, TestCipher())
 
   private fun getTestFile(): String {
     return getTestName(true).trim() + ".json"

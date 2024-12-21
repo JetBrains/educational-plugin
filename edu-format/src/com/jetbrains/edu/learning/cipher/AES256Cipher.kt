@@ -5,7 +5,7 @@ import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
-class AES256Cipher private constructor(
+internal class AES256Cipher private constructor(
   private val keySpec: SecretKeySpec,
   private val ivSpec: IvParameterSpec
 ) : com.jetbrains.edu.learning.cipher.Cipher {
