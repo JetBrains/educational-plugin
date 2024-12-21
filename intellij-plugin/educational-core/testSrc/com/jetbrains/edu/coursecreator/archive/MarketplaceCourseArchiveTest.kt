@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.actions
+package com.jetbrains.edu.coursecreator.archive
 
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -256,7 +256,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
   }
 
   override fun getTestDataPath(): String {
-    return super.getTestDataPath() + "/actions/marketplaceCourseArchive"
+    return super.getTestDataPath() + "/archive/marketplaceCourseArchive"
   }
 
   companion object {

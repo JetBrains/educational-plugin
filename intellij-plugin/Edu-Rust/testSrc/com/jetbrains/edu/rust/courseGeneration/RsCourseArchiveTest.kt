@@ -1,13 +1,13 @@
 package com.jetbrains.edu.rust.courseGeneration
 
-import com.jetbrains.edu.coursecreator.actions.CourseArchiveTestBase
+import com.jetbrains.edu.coursecreator.archive.CourseArchiveTestBase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import org.junit.Test
 import org.rust.lang.RsLanguage
 
 class RsCourseArchiveTest : CourseArchiveTestBase() {
 
-  override fun getTestDataPath(): String = super.getTestDataPath() + "/actions/createCourseArchive"
+  override fun getTestDataPath(): String = super.getTestDataPath() + "/archive/createCourseArchive"
 
   @Test
   fun `test cargo config 1`() {

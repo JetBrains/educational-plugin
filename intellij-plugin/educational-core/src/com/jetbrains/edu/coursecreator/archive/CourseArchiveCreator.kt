@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.actions
+package com.jetbrains.edu.coursecreator.archive
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.PrettyPrinter
@@ -22,6 +22,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.jetbrains.edu.coursecreator.CCUtils.saveOpenedDocuments
+import com.jetbrains.edu.coursecreator.actions.BinaryContentsFromDisk
+import com.jetbrains.edu.coursecreator.actions.TextualContentsFromDisk
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.cipher.Cipher
 import com.jetbrains.edu.learning.courseFormat.*

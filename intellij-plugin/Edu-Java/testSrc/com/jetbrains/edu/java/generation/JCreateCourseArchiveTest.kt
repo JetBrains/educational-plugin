@@ -1,14 +1,14 @@
 package com.jetbrains.edu.java.generation
 
 import com.intellij.lang.java.JavaLanguage
-import com.jetbrains.edu.coursecreator.actions.CourseArchiveTestBase
+import com.jetbrains.edu.coursecreator.archive.CourseArchiveTestBase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import org.junit.Test
 
 @Suppress("NonFinalUtilityClass")
 class JCreateCourseArchiveTest : CourseArchiveTestBase() {
 
-  override fun getTestDataPath(): String = super.getTestDataPath() + "/actions/createCourseArchive"
+  override fun getTestDataPath(): String = super.getTestDataPath() + "/archive/createCourseArchive"
 
   /** Checks [com.jetbrains.edu.jvm.gradle.generation.macro.GradleCommandMacroProvider] */
   @Test

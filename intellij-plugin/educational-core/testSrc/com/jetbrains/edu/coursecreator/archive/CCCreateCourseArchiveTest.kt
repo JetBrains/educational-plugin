@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.actions
+package com.jetbrains.edu.coursecreator.archive
 
 import com.intellij.externalDependencies.DependencyOnPlugin
 import com.intellij.externalDependencies.ExternalDependenciesManager
@@ -9,7 +9,7 @@ import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.findOrCreateFile
 import com.intellij.psi.PsiDocumentManager
-import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchiveTest.PlainTextCompatibilityProvider.Companion.PLAIN_TEXT_PLUGIN_ID
+import com.jetbrains.edu.coursecreator.archive.CCCreateCourseArchiveTest.PlainTextCompatibilityProvider.Companion.PLAIN_TEXT_PLUGIN_ID
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
@@ -946,7 +946,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
   }
 
   override fun getTestDataPath(): String {
-    return super.getTestDataPath() + "/actions/createCourseArchive"
+    return super.getTestDataPath() + "/archive/createCourseArchive"
   }
 
   private class PlainTextCompatibilityProvider : CourseCompatibilityProvider {
