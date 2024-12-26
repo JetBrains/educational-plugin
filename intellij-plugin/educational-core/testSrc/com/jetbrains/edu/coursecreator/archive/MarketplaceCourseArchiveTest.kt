@@ -18,12 +18,21 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.setMarketplaceAuthorsAsString
 import com.jetbrains.edu.learning.marketplace.mockJBAccount
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
+import com.jetbrains.edu.learning.mockService
 import com.jetbrains.edu.learning.navigation.NavigationUtils.getFirstTask
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_LESSON_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_TASK_CONFIG
+import io.mockk.every
 import org.junit.Test
 
 class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
+
+  override fun setUp() {
+    super.setUp()
+    val mockGenerator = mockService<StudyItemIdGenerator>(project)
+    val ids = generateSequence(1, Int::inc).iterator()
+    every { mockGenerator.generateNewId() } answers { ids.next() }
+  }
 
   @Test
   fun `test user name as vendor`() {
