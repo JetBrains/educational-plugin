@@ -42,18 +42,23 @@ import com.jetbrains.edu.learning.marketplace.StudyItemIdGenerator
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.TASK_CONFIG
 import org.jetbrains.annotations.Nls
-import org.jetbrains.annotations.NonNls
-import org.jetbrains.annotations.VisibleForTesting
 import java.io.*
+import java.nio.file.Path
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import kotlin.text.Charsets.UTF_8
 
 class CourseArchiveCreator(
   private val project: Project,
-  @NonNls private val location: String,
+  private val outputProducer: CourseArchiveOutputProducer,
   private val cipher: Cipher = Cipher()
 ) {
+
+  constructor(
+    project: Project,
+    location: Path,
+    cipher: Cipher = Cipher()
+  ) : this(project, CourseArchiveOutputProducer(location), cipher)
 
   /**
    * Returns `null` when course archive was created successfully, [Error] object otherwise
@@ -150,19 +155,15 @@ class CourseArchiveCreator(
     }, EduCoreBundle.message("action.create.course.archive.progress.bar"), true, project)
   }
 
-  private fun doCreateCourseArchive(courseArchiveIndicator: CourseArchiveIndicator, courseCopy: Course) =
-    doCreateCourseArchive(courseArchiveIndicator, courseCopy, FileOutputStream(location))
-
   /**
-   * Creates course archive and writes it into OutputStream.
+   * Creates course archive and writes it into [CourseArchiveOutputProducer.createOutput] produced by given [outputProducer].
    * Then closes the output stream.
    */
-  @VisibleForTesting
-  fun doCreateCourseArchive(courseArchiveIndicator: CourseArchiveIndicator, courseCopy: Course, out: OutputStream) {
+  private fun doCreateCourseArchive(courseArchiveIndicator: CourseArchiveIndicator, courseCopy: Course) {
     val courseDir = project.courseDir
     courseArchiveIndicator.init(courseDir, courseCopy, ProgressManager.getInstance().progressIndicator)
 
-    ZipOutputStream(out).use { outputStream ->
+    ZipOutputStream(outputProducer.createOutput()).use { outputStream ->
       outputStream.withNewEntry(COURSE_META_FILE) {
         val writer = OutputStreamWriter(outputStream, UTF_8)
         generateJson(writer, courseCopy)
@@ -214,8 +215,7 @@ class CourseArchiveCreator(
     }
   }
 
-  @VisibleForTesting
-  fun prepareCourse(course: Course) {
+  private fun prepareCourse(course: Course) {
     loadActualTexts(project, course)
     course.sortItems()
     course.pluginDependencies = collectCourseDependencies(project, course)
@@ -232,8 +232,7 @@ class CourseArchiveCreator(
     mapper.writer(printer).writeValue(out, course)
   }
 
-  @VisibleForTesting
-  fun getMapper(course: Course): ObjectMapper {
+  private fun getMapper(course: Course): ObjectMapper {
     val module = SimpleModule()
       .addSerializer(EduCourse::class.java, EduCoursePluginVersionSerializer())
 

@@ -103,7 +103,7 @@ class CCCreateCoursePreviewDialog(
       }
       val courseName = course.name
       val archiveName = if (courseName.isEmpty()) EduNames.COURSE else FileUtil.sanitizeFileName(courseName)
-      val archiveLocation = "${folder.path}/$archiveName.zip"
+      val archiveLocation = folder.toNioPath().resolve("$archiveName.zip")
       close(OK_EXIT_CODE)
       val error = CourseArchiveCreator(project, archiveLocation).createArchive(course)
 

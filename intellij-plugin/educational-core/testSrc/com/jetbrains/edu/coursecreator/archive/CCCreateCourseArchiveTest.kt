@@ -17,40 +17,35 @@ import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSE_CONTENTS_FOLDER
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createTextChildFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.runInWriteActionAndWait
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
 import org.junit.Test
-import java.nio.file.Files
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.zip.ZipFile
-import kotlin.io.path.createTempFile
 import kotlin.test.assertIs
-import kotlin.text.Charsets.UTF_8
 
 class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
 
   @Test
   fun `test local course archive`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
         }
       }
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test course ignore`() {
     val lessonIgnoredFile = "lesson1/LessonIgnoredFile.txt"
     val courseIgnoredFile = "IgnoredFile.txt"
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
       lesson("lesson1") {
         eduTask {
           taskFile("taskFile1.txt")
@@ -60,7 +55,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     createUserFile(EduNames.COURSE_IGNORE, "$courseIgnoredFile\n$lessonIgnoredFile\n\n")
     createUserFile(lessonIgnoredFile)
     createUserFile(courseIgnoredFile)
-    doTest()
+    doTest(course)
   }
 
   @Test
@@ -74,7 +69,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     }
     course.authors = listOf(StepikUserInfo("EduTools Dev"), StepikUserInfo("EduTools QA"),
                             StepikUserInfo("EduTools"))
-    doTest()
+    doTest(course)
   }
 
   @Test
@@ -88,7 +83,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
       }
     } as EduCourse
     course.formatVersion = jsonVersion
-    doTest()
+    doTest(course)
   }
 
   @Test
@@ -101,12 +96,12 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
       }
     }
     course.contentTags = listOf("kotlin", "cycles")
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test framework lesson archive`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
       frameworkLesson("my lesson") {
         eduTask("task1") {
           taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
@@ -115,7 +110,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
         }
       }
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
@@ -130,12 +125,12 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
       }
     }
     course.lessons[0].contentTags = listOf("kotlin", "cycles")
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test framework lesson with custom name`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
       frameworkLesson("my lesson", customPresentableName = "custom name") {
         eduTask("task1") {
           taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
@@ -144,24 +139,24 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
         }
       }
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test lesson with custom name`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
       lesson(customPresentableName = "custom name") {
         eduTask {
           taskFile("taskFile1.txt")
         }
       }
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test sections`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
       section {
         lesson {
           eduTask {
@@ -170,7 +165,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
         }
       }
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
@@ -186,12 +181,12 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     }
     val section = course.sections[0]
     section.contentTags = listOf("kotlin", "cycles")
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test section with custom name`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
       section(customPresentableName = "custom name") {
         lesson {
           eduTask {
@@ -200,12 +195,12 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
         }
       }
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test custom files`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
       section {
         lesson {
           eduTask {
@@ -217,67 +212,67 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
         }
       }
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test mp3 audio task file`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("test.mp3")
         }
       }
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test mp4 video task file`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("test.mp4")
         }
       }
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test png picture task file`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("123.png")
         }
       }
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test pdf task file`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("123.pdf")
         }
       }
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test git object task file`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("8abe7b618ddf9c55adbea359ce891775794a61")
         }
       }
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
@@ -299,12 +294,12 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
         task.updateDate = date
       }
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test placeholder dependencies`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
       frameworkLesson {
         eduTask {
           taskFile("fizz.kt", """
@@ -323,7 +318,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
         }
       }
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
@@ -343,8 +338,9 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
 
     assertNull("No open file is expected", FileEditorManagerEx.getInstanceEx(project).currentFile)
 
-    val error = getArchiveCreator().createArchive(course)
-    assertIs<CourseArchiveCreator.BrokenPlaceholderError>(error)
+    val result = createCourseArchive(course)
+    assertIs<Err<*>>(result)
+    assertIs<CourseArchiveCreator.BrokenPlaceholderError>(result.error)
 
     val navigatedFile = FileEditorManagerEx.getInstanceEx(project).currentFile ?: error("Navigated file should not be null here")
     assertEquals(task.configFileName, navigatedFile.name)
@@ -352,7 +348,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
 
   @Test
   fun `test course additional files`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
       lesson {
         eduTask {
           taskFile("fizz.kt", """
@@ -365,24 +361,24 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
         eduFile("additional.txt", "file text")
       }
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test course with choice tasks`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
       lesson {
         choiceTask(isMultipleChoice = true, choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)) {
           taskFile("task.txt")
         }
       }
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test course with choice with customized messages`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
       lesson {
         choiceTask(
           isMultipleChoice = true,
@@ -395,7 +391,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
         }
       }
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
@@ -411,19 +407,19 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
       }
     }
     course.languageVersion = "11"
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test task with custom name`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
       lesson {
         eduTask(customPresentableName = "custom name") {
           taskFile("taskFile1.txt")
         }
       }
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
@@ -437,7 +433,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     }
     val task = course.lessons.first().taskList.first()
     task.contentTags = listOf("kotlin", "cycles")
-    doTest()
+    doTest(course)
   }
 
   @Test
@@ -450,102 +446,103 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
       }
     }
     course.solutionsHidden = true
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test peek solution is hidden for task`() {
-    val task = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
         eduTask("task1") {}
       }
-    }.findTask("lesson1", "task1")
+    }
+    val task = course.findTask("lesson1", "task1")
     task.solutionHidden = true
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test gradle properties additional file`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
         eduTask("task1") {}
       }
       additionalFile("gradle.properties", "some.awesome.property=true")
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test mp3 audio additional file`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
         eduTask("task1") {}
       }
       additionalFile("test.mp3")
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test mp4 video additional file`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
         eduTask("task1") {}
       }
       additionalFile("test.mp4")
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test png picture additional file`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
         eduTask("task1") {}
       }
       additionalFile("test.png")
     }
-    doTest()
+    doTest(course)
   }
 
   // EDU-2765
   @Test
   fun `test pdf additional file`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
         eduTask("task1") {}
       }
       additionalFile("test.pdf")
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test git object additional file`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
         eduTask("task1")
       }
       additionalFile("8abe7b618ddf9c55adbea359ce891775794a61")
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test non templated based framework lesson`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
       frameworkLesson("lesson1", isTemplateBased = false) {
         eduTask {
           taskFile("taskFile1.txt")
         }
       }
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test remote non templated based framework lesson`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, id = 1, description = "my summary") {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, id = 1, description = "my summary") {
       frameworkLesson("lesson1", isTemplateBased = false) {
         eduTask {
           taskFile("taskFile1.txt")
@@ -554,12 +551,12 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     }.apply {
       updateDate = Date(86486865)
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test local course with plugins`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -570,7 +567,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
       DependencyOnPlugin("testPluginId", "1.0", null))
 
     try {
-      doTest()
+      doTest(course)
     }
     finally {
       ExternalDependenciesManager.getInstance(project).allDependencies = mutableListOf<ProjectExternalDependency>()
@@ -599,7 +596,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     assertNotNull("`${course.name}` course should have `$PLAIN_TEXT_PLUGIN_ID` plugin dependency", dependency)
 
     try {
-      doTest()
+      doTest(course)
     }
     finally {
       dependenciesManager.allDependencies = mutableListOf<ProjectExternalDependency>()
@@ -608,7 +605,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
 
   @Test
   fun `test custom command`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
       lesson("lesson1") {
         theoryTask("TheoryWithCustomRunConfiguration") {
           taskFile("main.py", """
@@ -677,12 +674,12 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
         }
       }
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test only inspectionProfiles and scopes folders go into archive from the dot_idea folder`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
       lesson("lesson1") {
         eduTask {
           taskFile("taskFile1.txt")
@@ -795,21 +792,21 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
         </profile>
       </component>
     """.trimIndent())
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test environment settings serialization`() {
-    courseWithFiles {
+    val course = courseWithFiles {
       environmentSetting("example key 1", "example value 1")
       environmentSetting("example key 2", "example value 2")
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test task file highlighting level serialization`() {
-    courseWithFiles {
+    val course = courseWithFiles {
       lesson {
         eduTask {
           taskFile("a.java") {
@@ -825,7 +822,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
         }
       }
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
@@ -835,24 +832,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     createUserFile(EduFormatNames.COURSE_ICON_FILE)
     createUserFile("not a course icon.svg")
 
-    val courseArchiveFile = createTempFile("course.zip")
-    try {
-      val archiveCreator = getArchiveCreator(courseArchiveFile.toString())
-      archiveCreator.createArchive(course)
-
-      ZipFile(courseArchiveFile.toFile()).use { zip ->
-        assertNotNull("Course zip file must contain a course icon", zip.getEntry(EduFormatNames.COURSE_ICON_FILE))
-
-        val jsonEntry = zip.getEntry(EduFormatNames.COURSE_META_FILE)
-        zip.getInputStream(jsonEntry).use { input ->
-          val json = input.reader(UTF_8).readText()
-          assertFalse("Course json must not contain course icon file", json.contains(EduFormatNames.COURSE_ICON_FILE))
-        }
-      }
-    }
-    finally {
-      Files.delete(courseArchiveFile)
-    }
+    doTest(course)
   }
 
   @Test
@@ -860,18 +840,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {}
     createUserFile("not a course icon.svg")
 
-    val courseArchiveFile = createTempFile("course.zip")
-    try {
-      val archiveCreator = getArchiveCreator(courseArchiveFile.toString())
-      archiveCreator.createArchive(course)
-
-      ZipFile(courseArchiveFile.toFile()).use { zip ->
-        assertNull("Course zip file must not contain a course icon", zip.getEntry(EduFormatNames.COURSE_ICON_FILE))
-      }
-    }
-    finally {
-      Files.delete(courseArchiveFile)
-    }
+    doTest(course)
   }
 
   @Test
@@ -889,24 +858,12 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     }
     createUserFile(additionalFile3) // automatically added to the list course.additionalFiles
 
-    val courseArchiveFile = createTempFile("course.zip")
-    try {
-      getArchiveCreator(courseArchiveFile.toString()).createArchive(course)
-
-      ZipFile(courseArchiveFile.toFile()).use { zip ->
-        assertNotNull("Course zip file must contain $additionalFile1", zip.getEntry("$COURSE_CONTENTS_FOLDER/$additionalFile1"))
-        assertNull("Course zip file must not contain $additionalFile2", zip.getEntry("$COURSE_CONTENTS_FOLDER/$additionalFile2"))
-        assertNotNull("Course zip file must contain $additionalFile3", zip.getEntry("$COURSE_CONTENTS_FOLDER/$additionalFile3"))
-      }
-    }
-    finally {
-      Files.delete(courseArchiveFile)
-    }
+    doTest(course)
   }
 
   @Test
   fun `test encrypt course files`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
       lesson {
         eduTask("task1") {
           taskFile("Task.kt", "fun foo(): String = TODO()")
@@ -915,12 +872,12 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
       }
       additionalFile("binary_file.png", contents = InMemoryBinaryContents(byteArrayOf(4, 5, 6, 7)))
     }
-    doTest(cipher = TestCipher())
+    doTest(course = course, cipher = TestCipher())
   }
 
   @Test
   fun `test possible answer encrypted`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
       lesson {
         eduTask("task1") {
           taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
@@ -929,7 +886,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
         }
       }
     }
-    doTest(cipher = TestCipher())
+    doTest(course = course, cipher = TestCipher())
   }
 
   /**

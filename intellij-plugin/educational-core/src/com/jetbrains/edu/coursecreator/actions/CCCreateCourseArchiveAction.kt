@@ -23,7 +23,9 @@ import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import org.jetbrains.annotations.NonNls
-import java.io.File
+import java.nio.file.Path
+import java.nio.file.Paths
+import kotlin.io.path.invariantSeparatorsPathString
 
 class CCCreateCourseArchiveAction : AnAction(EduCoreBundle.lazyMessage("action.create.course.archive.text")) {
 
@@ -54,7 +56,7 @@ class CCCreateCourseArchiveAction : AnAction(EduCoreBundle.lazyMessage("action.c
 
   override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
-  private fun createSourceArchive(project: Project, course: Course, locationPath: String, authorName: String) {
+  private fun createSourceArchive(project: Project, course: Course, locationPath: Path, authorName: String) {
     course.vendor = Vendor(authorName)
     PropertiesComponent.getInstance(project).setValue(AUTHOR_NAME, authorName)
 
@@ -65,7 +67,7 @@ class CCCreateCourseArchiveAction : AnAction(EduCoreBundle.lazyMessage("action.c
         EduCoreBundle.message("action.create.course.archive.success.message"),
         action = ShowFileAction(locationPath)
       )
-      PropertiesComponent.getInstance(project).setValue(LAST_ARCHIVE_LOCATION, locationPath)
+      PropertiesComponent.getInstance(project).setValue(LAST_ARCHIVE_LOCATION, locationPath.invariantSeparatorsPathString)
       EduCounterUsageCollector.createCourseArchive()
     }
     else {
@@ -73,19 +75,19 @@ class CCCreateCourseArchiveAction : AnAction(EduCoreBundle.lazyMessage("action.c
     }
   }
 
-  private fun showCourseArchiveDialog(project: Project, course: Course): Triple<String, String, Boolean>? {
+  private fun showCourseArchiveDialog(project: Project, course: Course): Triple<Path, String, Boolean>? {
     val dialog = CCCreateCourseArchiveDialog(project, course.name)
     if (!dialog.showAndGet()) {
       return null
     }
-    return Triple(dialog.locationPath, dialog.authorName, dialog.checkAllTasksFlag)
+    return Triple(Paths.get(dialog.locationPath), dialog.authorName, dialog.checkAllTasksFlag)
   }
 
-  class ShowFileAction(val path: String) : AnAction(
+  class ShowFileAction(val path: Path) : AnAction(
     EduCoreBundle.message("action.create.course.archive.open.file", RevealFileAction.getFileManagerName())
   ) {
     override fun actionPerformed(e: AnActionEvent) {
-      RevealFileAction.openFile(File(path))
+      RevealFileAction.openFile(path)
     }
 
     override fun getActionUpdateThread() = ActionUpdateThread.BGT

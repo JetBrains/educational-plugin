@@ -11,7 +11,7 @@ class RsCourseArchiveTest : CourseArchiveTestBase() {
 
   @Test
   fun `test cargo config 1`() {
-    courseWithFiles(
+    val course = courseWithFiles(
       courseMode = CourseMode.EDUCATOR,
       language = RsLanguage
     ) {
@@ -40,12 +40,12 @@ class RsCourseArchiveTest : CourseArchiveTestBase() {
         rustflags = ["-Adead_code", "-Aunused_variables"]
       """)
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test cargo config 2`() {
-    courseWithFiles(
+    val course = courseWithFiles(
       courseMode = CourseMode.EDUCATOR,
       language = RsLanguage
     ) {
@@ -74,6 +74,6 @@ class RsCourseArchiveTest : CourseArchiveTestBase() {
         rustflags = ["-Adead_code", "-Aunused_variables"]
       """)
     }
-    doTest()
+    doTest(course)
   }
 }

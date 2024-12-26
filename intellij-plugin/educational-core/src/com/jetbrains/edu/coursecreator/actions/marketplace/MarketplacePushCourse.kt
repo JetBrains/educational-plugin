@@ -101,7 +101,7 @@ class MarketplacePushCourse(
     course.prepareForUpload(project)
 
     val tempFile = FileUtil.createTempFile("marketplace-${course.name}-${course.marketplaceCourseVersion}", ".zip", true)
-    val error = CourseArchiveCreator(project, tempFile.absolutePath).createArchive(course)
+    val error = CourseArchiveCreator(project, tempFile.toPath()).createArchive(course)
     if (error != null) {
       Messages.showErrorDialog(project, error.message, message("error.failed.to.create.course.archive"))
       return
