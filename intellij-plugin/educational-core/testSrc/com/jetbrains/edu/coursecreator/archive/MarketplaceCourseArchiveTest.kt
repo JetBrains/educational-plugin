@@ -13,9 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.Vendor
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.marketplace.StudyItemIdGenerator
 import com.jetbrains.edu.learning.marketplace.addVendor
-import com.jetbrains.edu.learning.marketplace.api.Author
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
-import com.jetbrains.edu.learning.marketplace.api.setMarketplaceAuthorsAsString
 import com.jetbrains.edu.learning.marketplace.mockJBAccount
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.mockService
@@ -52,19 +50,6 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     doTest(course)
 
     MarketplaceSettings.INSTANCE.setAccount(null)
-  }
-
-  @Test
-  fun `test course with author`() {
-    val vendor = Vendor().apply { name = "Jetbrains s.r.o" }
-    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
-      lesson("lesson1") {
-        eduTask("task1") {}
-      }
-      additionalFile("test.txt", "some text")
-    }.apply { isMarketplace = true }
-    course.setMarketplaceAuthorsAsString(listOf(Author("EduTools Dev"), Author("EduTools QA"), Author("EduTools")))
-    doTest(course)
   }
 
   @Test

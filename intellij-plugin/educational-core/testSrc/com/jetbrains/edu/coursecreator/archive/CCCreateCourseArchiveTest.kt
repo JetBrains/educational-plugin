@@ -20,7 +20,6 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createTextChildFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.runInWriteActionAndWait
-import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
 import org.junit.Test
 import java.text.SimpleDateFormat
@@ -55,20 +54,6 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     createUserFile(EduNames.COURSE_IGNORE, "$courseIgnoredFile\n$lessonIgnoredFile\n\n")
     createUserFile(lessonIgnoredFile)
     createUserFile(courseIgnoredFile)
-    doTest(course)
-  }
-
-  @Test
-  fun `test local course with author`() {
-    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
-      lesson {
-        eduTask {
-          taskFile("taskFile1.txt")
-        }
-      }
-    }
-    course.authors = listOf(StepikUserInfo("EduTools Dev"), StepikUserInfo("EduTools QA"),
-                            StepikUserInfo("EduTools"))
     doTest(course)
   }
 
