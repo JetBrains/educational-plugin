@@ -1,6 +1,8 @@
 package com.jetbrains.edu.java.generation
 
 import com.intellij.lang.java.JavaLanguage
+import com.intellij.openapi.roots.LanguageLevelProjectExtension
+import com.intellij.pom.java.LanguageLevel
 import com.jetbrains.edu.coursecreator.archive.CourseArchiveTestBase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import org.junit.Test
@@ -93,6 +95,21 @@ class JCreateCourseArchiveTest : CourseArchiveTestBase() {
         }
       }
     }
-    doTest(course)
+
+    withLanguageLevel(LanguageLevel.JDK_17) {
+      doTest(course)
+    }
+  }
+
+  private fun withLanguageLevel(level: LanguageLevel, action: () -> Unit) {
+    val languageLevelProjectExtension = LanguageLevelProjectExtension.getInstance(project)
+    val initialLevel = languageLevelProjectExtension.languageLevel
+    languageLevelProjectExtension.languageLevel = level
+    try {
+      action()
+    }
+    finally {
+      languageLevelProjectExtension.languageLevel = initialLevel
+    }
   }
 }
