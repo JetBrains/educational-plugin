@@ -1,0 +1,44 @@
+{
+  "summary" : "Test Course Description",
+  "title" : "Test Course",
+  "programming_language_id" : "TEXT",
+  "language" : "en",
+  "course_type" : "PyCharm",
+  "items" : [
+    {
+      "title" : "lesson1",
+      "task_list" : [
+        {
+          "name" : "task1",
+          "files" : {
+            "Task.txt" : {
+              "name" : "Task.txt",
+              "placeholders" : [ ],
+              "is_visible" : true,
+              "is_binary" : false
+            },
+            "tests/Tests.txt" : {
+              "name" : "tests/Tests.txt",
+              "placeholders" : [ ],
+              "is_visible" : false,
+              "is_binary" : false
+            }
+          },
+          "description_text" : "\nThis is a task description file.\nIts content will be displayed to a learner\nin the **Task Description** window.\n\nIt supports both Markdown and HTML.\nTo toggle the format, you can rename **task.md**\nto **task.html**, or vice versa.\nThe default task description format can be changed\nin **Preferences | Tools | Education**,\nbut this will not affect any existing task description files.\n\nThe following features are available in\n**task.md/task.html** which are specific to the JetBrains Academy plugin:\n\n- Hints can be added anywhere in the task text.\n  Type \"hint\" and press Tab.\n  Hints should be added to an empty line in the task text.\n  In hints you can use both HTML and Markdown.\n<div class=\"hint\">\n\nText of your hint\n\n</div>\n\n- You may need to refer your learners to a particular lesson,\ntask, or file. To achieve this, you can use the in-course links.\nSpecify the path using the `[link_text](course://lesson1/task1/file1)` format.\n\n- You can insert shortcuts in the task description.\nWhile **task.html/task.md** is open, right-click anywhere\non the **Editor** tab and choose the **Insert shortcut** option\nfrom the context menu.\nFor example: &shortcut:FileStructurePopup;.\n\n- Insert the &percnt;`IDE_NAME`&percnt; macro,\nwhich will be replaced by the actual IDE name.\nFor example, **%IDE_NAME%**.\n\n- Insert PSI elements, by using links like\n`[element_description](psi_element://link.to.element)`.\nTo get such a link, right-click the class or method\nand select **Copy Reference**.\nThen press &shortcut:EditorPaste; to insert the link where appropriate.\nFor example, a [link to the \"contains\" method](psi_element://java.lang.String#contains).\n\n- You can add link to file using **full path** like this:\n  `[file_link](file://lesson1/task1/file.txt)`.",
+          "description_format" : "MD",
+          "task_type" : "edu"
+        }
+      ],
+      "type" : "lesson"
+    }
+  ],
+  "additional_files" : [
+    {
+      "name" : "not a course icon.svg",
+      "is_visible" : true,
+      "is_binary" : true
+    }
+  ],
+  "version" : <last version>,
+  "edu_plugin_version" : "yyyy.2-yyyy.1-TEST"
+}
