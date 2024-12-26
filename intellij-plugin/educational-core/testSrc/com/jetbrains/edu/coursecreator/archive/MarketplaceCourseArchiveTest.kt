@@ -40,7 +40,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     MarketplaceSettings.INSTANCE.setAccount(account)
     course.addVendor()
 
-    doTest()
+    doTest(course)
 
     MarketplaceSettings.INSTANCE.setAccount(null)
   }
@@ -55,38 +55,38 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
       additionalFile("test.txt", "some text")
     }.apply { isMarketplace = true }
     course.setMarketplaceAuthorsAsString(listOf(Author("EduTools Dev"), Author("EduTools QA"), Author("EduTools")))
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test vendor with email`() {
     val vendor = Vendor().apply { name = "Jetbrains s.r.o"; email = "academy@jetbrains.com" }
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
       lesson("lesson1") {
         eduTask("task1") {}
       }
       additionalFile("test.txt", "some text")
     }.apply { isMarketplace = true }
 
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test vendor with url`() {
     val vendor = Vendor().apply { name = "Jetbrains s.r.o"; url = "jetbrains.com"}
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
       lesson("lesson1") {
         eduTask("task1") {}
       }
       additionalFile("test.txt", "another text")
     }.apply { isMarketplace = true }
 
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test private course`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
         eduTask("task1") {}
       }
@@ -95,26 +95,26 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
       isMarketplace = true
       isMarketplacePrivate = true
     }
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test plugin version`() {
     val vendor = Vendor().apply { name = "Jetbrains s.r.o"; email = "academy@jetbrains.com"}
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
       lesson("lesson1") {
         eduTask("task1") {}
       }
       additionalFile("test.txt", "new text")
     }.apply { isMarketplace = true }
 
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test course version`() {
     val vendor = Vendor().apply { name = "Jetbrains s.r.o" }
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
       lesson("lesson1") {
         eduTask("task1") {}
       }
@@ -124,13 +124,13 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
       marketplaceCourseVersion = 5
     }
 
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test course link`() {
     val vendor = Vendor().apply { name = "Jetbrains s.r.o" }
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
       lesson("lesson1") {
         eduTask("task1") {}
       }
@@ -141,13 +141,13 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
       feedbackLink = "https://course_link.com"
     }
 
-    doTest()
+    doTest(course)
   }
 
   @Test
   fun `test course programming language ID and version`() {
     val vendor = Vendor().apply { name = "Jetbrains s.r.o" }
-    courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
       lesson("lesson1") {
         eduTask("task1") {}
       }
@@ -159,7 +159,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
       languageVersion = "11"
     }
 
-    doTest()
+    doTest(course)
   }
 
   @Test
@@ -176,7 +176,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     }
     val firstTask = getFirstTask(course) ?: return
     firstTask.feedbackLink = "https://task_link.com"
-    doTest()
+    doTest(course)
   }
 
   @Test
@@ -194,7 +194,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
       VfsUtil.saveText(descriptionFile, mdDescription)
     }
 
-    val mdJson = generateJson()
+    val mdJson = createCourseArchiveAndCheck(course).courseJson
 
     assertTrue("Json should contain correct description text", mdJson.contains(""""description_text" : "$mdDescription""""))
     assertTrue("Description format should be MD", mdJson.contains(""""description_format" : "MD""""))
@@ -206,7 +206,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
       VfsUtil.saveText(descriptionFile, htmlDescription)
     }
 
-    val htmlJson = generateJson()
+    val htmlJson = createCourseArchiveAndCheck(course).courseJson
     assertTrue("Json should contain correct description text", htmlJson.contains(""""description_text" : "$htmlDescription""""))
     assertTrue("Description format should be HTML", htmlJson.contains(""""description_format" : "HTML""""))
   }
@@ -228,11 +228,8 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
       findFile("lesson1/${REMOTE_LESSON_CONFIG}").writeText("id: 11")
       FileDocumentManager.getInstance().saveAllDocuments()
     }
-    StudyItemIdGenerator.getInstance(project).generateIdsIfNeeded(course.course)
 
-    val newJson = generateJson()
-    val expectedJson = loadExpectedJson()
-    assertEquals(expectedJson, newJson)
+    doTest(course)
   }
 
   override fun getTestDataPath(): String {

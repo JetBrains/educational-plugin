@@ -1,26 +1,20 @@
 package com.jetbrains.edu.coursecreator.archive
 
 import com.intellij.openapi.util.io.FileUtilRt
-import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.EDU_TEST_BIN
-import com.jetbrains.edu.learning.cipher.NoOpCipher
+import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.InMemoryBinaryContents
 import com.jetbrains.edu.learning.courseFormat.getBinaryFileLimit
-import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
 import org.junit.Test
-import java.nio.file.Files
-import kotlin.io.path.absolutePathString
-import kotlin.io.path.deleteIfExists
 import kotlin.test.assertIs
 
 class LargeFilesInCourseArchiveTest : CourseArchiveTestBase() {
 
   @Test
   fun `test large binary file in a framework lesson`() {
-
-    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       frameworkLesson {
         eduTask {
           taskFile("task.$EDU_TEST_BIN", InMemoryBinaryContents(ByteArray(getBinaryFileLimit() + 1)))
@@ -28,9 +22,7 @@ class LargeFilesInCourseArchiveTest : CourseArchiveTestBase() {
       }
     }
 
-    assertThrows(HugeBinaryFileException::class.java, StringUtil.formatFileSize(getBinaryFileLimit().toLong())) {
-      generateJson()
-    }
+    testHugeBinaryFileInCourseArchive(course)
   }
 
   @Test
@@ -56,14 +48,8 @@ class LargeFilesInCourseArchiveTest : CourseArchiveTestBase() {
   }
 
   private fun testHugeBinaryFileInCourseArchive(course: Course) {
-    val tempFileForArchive = Files.createTempFile("test-course-archive-", ".zip")
-    try {
-      val archiveCreator = CourseArchiveCreator(project, tempFileForArchive.absolutePathString(), NoOpCipher())
-      val error = archiveCreator.createArchive(course) ?: kotlin.test.fail("Must generate an error message")
-      assertIs<CourseArchiveCreator.HugeBinaryFileError>(error)
-    }
-    finally {
-      tempFileForArchive.deleteIfExists()
-    }
+    val result = createCourseArchive(course)
+    assertIs<Err<*>>(result, "Course creation must generate an error message")
+    assertIs<CourseArchiveCreator.HugeBinaryFileError>(result.error)
   }
 }

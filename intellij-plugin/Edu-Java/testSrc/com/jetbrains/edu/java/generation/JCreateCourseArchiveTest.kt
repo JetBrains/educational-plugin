@@ -13,7 +13,7 @@ class JCreateCourseArchiveTest : CourseArchiveTestBase() {
   /** Checks [com.jetbrains.edu.jvm.gradle.generation.macro.GradleCommandMacroProvider] */
   @Test
   fun `test custom command`() {
-    courseWithFiles(
+    val course = courseWithFiles(
       language = JavaLanguage.INSTANCE,
       courseMode = CourseMode.EDUCATOR,
       description = "my summary"
@@ -93,6 +93,6 @@ class JCreateCourseArchiveTest : CourseArchiveTestBase() {
         }
       }
     }
-    doTest()
+    doTest(course)
   }
 }
