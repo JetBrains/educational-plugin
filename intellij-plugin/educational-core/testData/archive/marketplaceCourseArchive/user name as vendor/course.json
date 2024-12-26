@@ -9,9 +9,11 @@
   },
   "items" : [
     {
+      "id" : 1,
       "title" : "lesson1",
       "task_list" : [
         {
+          "id" : 2,
           "name" : "task1",
           "files" : { },
           "description_text" : "solve task",

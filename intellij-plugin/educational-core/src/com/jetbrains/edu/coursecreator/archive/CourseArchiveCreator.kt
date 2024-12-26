@@ -91,7 +91,7 @@ class CourseArchiveCreator(
   private fun prepareCourseCopy(course: Course): Result<Course, Error> {
     saveOpenedDocuments(project)
 
-    if (course.isMarketplace && !isUnitTestMode) {
+    if (course.isMarketplace) {
       ProgressManager.getInstance().runProcessWithProgressSynchronously({
         StudyItemIdGenerator.getInstance(project).generateIdsIfNeeded(course)
       }, EduCoreBundle.message("action.create.course.archive.progress.bar"), false, project)
