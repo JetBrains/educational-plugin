@@ -6,8 +6,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.ui.SimpleTextAttributes
-import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreRules
 import com.jetbrains.edu.learning.canBeAddedToTask
+import com.jetbrains.edu.learning.configuration.excludeFromArchive
 import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.projectView.CourseViewContext
@@ -34,7 +34,7 @@ class CCStudentInvisibleFileNode(
       file.canBeAddedToTask(project)
     }
     else {
-      CourseIgnoreRules.loadFromCourseIgnoreFile(project).isIgnored(file)
+      !context.containsAdditionalFile(file) && !context.configurator.excludeFromArchive(project, file)
     }
   }
 
@@ -49,7 +49,8 @@ class CCStudentInvisibleFileNode(
     data.addText(presentableName, SimpleTextAttributes.GRAY_ATTRIBUTES)
   }
 
-  @Deprecated("Deprecated in Java",
+  @Deprecated(
+    "Deprecated in Java",
     ReplaceWith("testPresentation(this)", "com.jetbrains.edu.learning.projectView.CourseViewUtils.testPresentation")
   )
   @TestOnly
