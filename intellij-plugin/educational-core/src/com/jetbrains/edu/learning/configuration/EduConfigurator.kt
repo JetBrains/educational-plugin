@@ -51,44 +51,55 @@ interface EduConfigurator<Settings : EduProjectSettings> {
   val testFileName: String
   val taskCheckerProvider: TaskCheckerProvider
 
-  /**
-   * Used in educator plugin to filter files to be packed into course archive
-   */
-  fun excludeFromArchive(holder: CourseInfoHolder<out Course?>, file: VirtualFile): Boolean {
-    val ancestorNames = mutableListOf<String>()
-    var parent: VirtualFile? = file
-    while (parent != null) {
-      ancestorNames.add(parent.name)
-      parent = parent.parent
-    }
-
-    val name = file.name
-
-    val ideaFolderIndex = ancestorNames.indexOf(Project.DIRECTORY_STORE_FOLDER)
-
-    // Remove hidden files, except the .idea folder
-    for ((i, ancestorName) in ancestorNames.withIndex()) {
-      if (ancestorName.startsWith(".") && i != ideaFolderIndex) {
-        return true
-      }
-    }
-
-    // Project related files: inside .idea include only .idea/scopes and .idea/inspectionProfiles
-    if (ideaFolderIndex == 0) {
-      return false
+  fun archiveFileInfo(holder: CourseInfoHolder<out Course?>, file: VirtualFile): ArchiveFileInfo = buildArchiveFileInfo(holder, file) {
+    val inIdeaFolder = regex("^${Project.DIRECTORY_STORE_FOLDER}(/|$)")
+    val isFileStartingWithDot = if (inIdeaFolder) {
+      regex("""^${Project.DIRECTORY_STORE_FOLDER}/(.*/)*\.""")
     }
     else {
-      if (ideaFolderIndex >= 1) {
-        return ancestorNames[ideaFolderIndex - 1] !in INCLUDED_SETTINGS_SUBDIRECTORIES
-      }
+      regex("""(/|^)\.""")
     }
 
-    return "iml" == file.extension ||
-           // Course structure files
-           EduUtilsKt.isTaskDescriptionFile(name) || isConfigFile(file) ||
-           // Special files
-           ancestorNames.contains(CCUtils.GENERATED_FILES_FOLDER) || EduNames.HINTS == name || EduNames.STEPIK_IDS_JSON == name ||
-           EduNames.COURSE_IGNORE == name || EduFormatNames.COURSE_ICON_FILE == name
+    when {
+      isFileStartingWithDot -> {
+        description("File or folder with name starting with a dot")
+      }
+      inIdeaFolder -> {
+        description("Recommended IDE project settings")
+        type(IncludeType.BETTER_INCLUDE)
+        includeInArchive()
+      }
+      regex("""\.iml$""") -> {
+        description("IDE project settings")
+        type(IncludeType.MUST_NOT_INCLUDE)
+      }
+      filter { EduUtilsKt.isTaskDescriptionFile(it.name) } -> {
+        description("Task description file")
+        type(IncludeType.MUST_NOT_INCLUDE)
+      }
+      filter { isConfigFile(it) } -> {
+        description("Study item configuration file")
+        type(IncludeType.MUST_NOT_INCLUDE)
+      }
+      regex("""^${CCUtils.GENERATED_FILES_FOLDER}(/|$)""") -> {
+        description("Folder for generated files")
+        type(IncludeType.MUST_NOT_INCLUDE)
+      }
+      nameRegex("""^${EduNames.HINTS}$""") -> {
+        description("Legacy hints file")
+      }
+      nameRegex("""^${EduNames.STEPIK_IDS_JSON}$""") -> {
+        description("Legacy file with Stepik ids of tasks")
+      }
+      nameRegex("""^${EduNames.COURSE_IGNORE}$""") -> {
+        description("File that contains patterns for ignoring specific files in course archive")
+        type(IncludeType.BETTER_NOT_INCLUDE)
+      }
+      nameRegex("""^${EduFormatNames.COURSE_ICON_FILE}$""") -> {
+        description("Course icon file")
+        type(IncludeType.BETTER_NOT_INCLUDE)
+      }
+    }
   }
 
   /**
@@ -198,3 +209,7 @@ interface EduConfigurator<Settings : EduProjectSettings> {
 
 fun EduConfigurator<*>.excludeFromArchive(project: Project, file: VirtualFile): Boolean =
   excludeFromArchive(project.toCourseInfoHolder(), file)
+
+fun EduConfigurator<*>.excludeFromArchive(holder: CourseInfoHolder<out Course?>, file: VirtualFile): Boolean {
+  return archiveFileInfo(holder, file).excludedFromArchive == true
+}
