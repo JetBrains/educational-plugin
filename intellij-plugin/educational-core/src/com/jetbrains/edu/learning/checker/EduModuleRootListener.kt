@@ -1,0 +1,57 @@
+package com.jetbrains.edu.learning.checker
+
+import com.intellij.execution.RunManager
+import com.intellij.execution.RunnerAndConfigurationSettings
+import com.intellij.execution.configurations.ModuleBasedConfiguration
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.module.ModuleUtilCore
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ModuleRootEvent
+import com.intellij.openapi.roots.ModuleRootListener
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
+import com.jetbrains.edu.learning.Err
+import com.jetbrains.edu.learning.Ok
+import com.jetbrains.edu.learning.Result
+import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
+import com.jetbrains.edu.learning.getContainingTask
+import com.jetbrains.edu.learning.getTaskDir
+import com.jetbrains.edu.learning.isTaskRunConfigurationFile
+
+class EduModuleRootListener(private val project: Project) : ModuleRootListener {
+  override fun rootsChanged(event: ModuleRootEvent) {
+    RunManager.getInstance(project).allSettings.forEach { runConfigurationFound(it) }
+  }
+
+  fun runConfigurationFound(settings: RunnerAndConfigurationSettings) {
+    if (!project.isEduProject()) return
+    if (project.course?.isStudy != true) return
+    val path = settings.pathIfStoredInArbitraryFileInProject ?: return
+    val configuration = settings.configuration as? ModuleBasedConfiguration<*, *> ?: return
+//    if (configuration.configurationModule.module != null) return
+
+    val file = LocalFileSystem.getInstance().findFileByPath(path) ?: return
+    if (file.isTaskRunConfigurationFile(project)) {
+      // It's essential to search module for src dir because in some cases (Gradle-based projects)
+      // modules of task directory and source directory may differ
+      when (val result = findSrcDir(file)) {
+        is Ok -> configuration.setModule(ModuleUtilCore.findModuleForFile(result.value, project))
+        is Err -> LOG.error(result.error)
+      }
+    }
+  }
+
+  private fun findSrcDir(file: VirtualFile): Result<VirtualFile, String> {
+    val taskDir = file.getTaskDir(project) ?: return Err("Failed to find task dir for $file")
+    val task = taskDir.getContainingTask(project) ?: return Err("Failed to find task for $taskDir")
+    val srcDir = task.findSourceDir(taskDir) ?: return Err("Failed to find source dir for ${task.name} task")
+    return Ok(srcDir)
+  }
+
+  companion object {
+    private val LOG: Logger = logger<EduRunManagerListener>()
+  }
+}
