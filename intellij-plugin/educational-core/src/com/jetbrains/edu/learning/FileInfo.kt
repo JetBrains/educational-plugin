@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.VfsUtilCore.VFS_SEPARATOR_CHAR
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.FileInfo.FileOutsideTasks
 import com.jetbrains.edu.learning.configuration.excludeFromArchive
@@ -10,6 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.ext.pathInCourse
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
@@ -26,11 +26,7 @@ fun VirtualFile.fileInfo(project: Project): FileInfo? {
 
   if (task == null) {
     val course = project.course ?: return null
-    val relativePath = FileUtil.getRelativePath(
-      CourseInfoHolder.fromCourse(course, project.courseDir).courseDir.path,
-      this.path,
-      VFS_SEPARATOR_CHAR
-    ) ?: return null
+    val relativePath = pathInCourse(project)?.ifEmpty { "." } ?: return null
     return FileOutsideTasks(course, relativePath)
   }
 

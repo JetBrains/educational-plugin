@@ -1,10 +1,9 @@
 package com.jetbrains.edu.learning.checker
 
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.pathInCourse
 import com.jetbrains.edu.learning.courseGeneration.macro.EduMacro
 import com.jetbrains.edu.learning.courseGeneration.macro.EduMacroProvider
 import com.jetbrains.edu.learning.getTaskDir
@@ -21,10 +20,8 @@ class TaskRunConfigurationPathMacroProvider : EduMacroProvider {
     }
   }
 
-  private fun taskRelativePath(holder: CourseInfoHolder<out Course?>, file: VirtualFile): String {
-    val taskDir = file.getTaskDir(holder) ?: error("Can't find task directory for `$file` file")
-    return FileUtil.getRelativePath(holder.courseDir.path, taskDir.path, VfsUtilCore.VFS_SEPARATOR_CHAR)!!
-  }
+  private fun taskRelativePath(holder: CourseInfoHolder<out Course?>, file: VirtualFile): String =
+    file.getTaskDir(holder)?.pathInCourse(holder) ?: error("Can't find task directory for `$file` file")
 
   companion object {
     private const val TASK_DIR_MACRO_NAME = "TASK_DIR"
