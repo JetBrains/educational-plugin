@@ -48,6 +48,16 @@
                      groupPathKey="inspection.group.path.key"
                      enabledByDefault="true"
                      level="ERROR"
+                     implementationClass="com.jetbrains.edu.yaml.inspections.AdditionalFileWithoutNameInspection"
+                     key="inspection.additional.file.without.name"
+                     bundle="messages.EduYAMLBundle"/>
+
+    <localInspection language="yaml"
+                     groupBundle="messages.EduCoreBundle"
+                     groupKey="inspection.yaml.group.key"
+                     groupPathKey="inspection.group.path.key"
+                     enabledByDefault="true"
+                     level="ERROR"
                      implementationClass="com.jetbrains.edu.yaml.inspections.StudyItemNotFoundInspection"
                      key="inspection.study.item.not.found.display.name"
                      bundle="messages.EduYAMLBundle"/>
