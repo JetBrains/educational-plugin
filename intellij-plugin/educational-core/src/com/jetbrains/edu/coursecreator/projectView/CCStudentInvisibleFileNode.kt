@@ -3,15 +3,13 @@ package com.jetbrains.edu.coursecreator.projectView
 import com.intellij.ide.projectView.PresentationData
 import com.intellij.ide.projectView.ViewSettings
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.VfsUtilCore.VFS_SEPARATOR_CHAR
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.ui.SimpleTextAttributes
 import com.jetbrains.edu.learning.canBeAddedToTask
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.pathInCourse
 import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.gradle.GradleConstants.LOCAL_PROPERTIES
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
@@ -63,11 +61,7 @@ class CCStudentInvisibleFileNode(
   }
 
   private fun containsAdditionalFile(course: Course, file: VirtualFile): Boolean {
-    val relativePath = FileUtil.getRelativePath(
-      project.courseDir.path,
-      file.path,
-      VFS_SEPARATOR_CHAR
-    )
+    val relativePath = file.pathInCourse(project) ?: return false
     return course.additionalFiles.any { it.name == relativePath }
   }
 

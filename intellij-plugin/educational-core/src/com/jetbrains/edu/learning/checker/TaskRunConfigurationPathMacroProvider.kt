@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.checker
 
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -23,7 +22,7 @@ class TaskRunConfigurationPathMacroProvider : EduMacroProvider {
 
   private fun taskRelativePath(holder: CourseInfoHolder<out Course?>, file: VirtualFile): String {
     val taskDir = file.getTaskDir(holder) ?: error("Can't find task directory for `$file` file")
-    return FileUtil.getRelativePath(holder.courseDir.path, taskDir.path, VfsUtilCore.VFS_SEPARATOR_CHAR)!!
+    return VfsUtil.getRelativePath(taskDir, holder.courseDir)!!.ifEmpty { "." }
   }
 
   companion object {

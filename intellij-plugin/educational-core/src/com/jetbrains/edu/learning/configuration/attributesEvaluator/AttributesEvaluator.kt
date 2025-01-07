@@ -1,12 +1,12 @@
 package com.jetbrains.edu.learning.configuration.attributesEvaluator
 
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore.VFS_SEPARATOR_CHAR
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.CourseInfoHolder
-import com.jetbrains.edu.learning.configuration.CourseFileAttributes
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
+import com.jetbrains.edu.learning.configuration.CourseFileAttributes
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.pathInCourse
 
 /**
  * See [AttributesEvaluator]
@@ -166,12 +166,8 @@ class AttributesEvaluator(base: AttributesEvaluator? = null, rulesBuilder: Attri
   }
 
   fun attributesForFile(holder: CourseInfoHolder<out Course?>, file: VirtualFile): CourseFileAttributes {
-    val relativePath = FileUtil.getRelativePath(holder.courseDir.path, file.path, VFS_SEPARATOR_CHAR)
-                       ?: return CourseFileAttributesMutable().toImmutable()
-
-    val fixedRelativePath = if (relativePath == ".") "" else relativePath
-
-    return attributesForPath(fixedRelativePath, file.isDirectory)
+    val relativePath = file.pathInCourse(holder) ?: return CourseFileAttributesMutable().toImmutable()
+    return attributesForPath(relativePath, file.isDirectory)
   }
 
   fun attributesForPath(relativePath: String, isDirectory: Boolean = false): CourseFileAttributes {

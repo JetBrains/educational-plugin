@@ -20,7 +20,6 @@ import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
@@ -198,7 +197,7 @@ fun VirtualFile.pathRelativeToTask(project: Project): String {
 
 fun VirtualFile.pathRelativeToTask(holder: CourseInfoHolder<out Course?>): String {
   val taskDir = getTaskDir(holder) ?: return name
-  return FileUtil.getRelativePath(taskDir.path, path, VfsUtilCore.VFS_SEPARATOR_CHAR) ?: return name
+  return VfsUtilCore.getRelativePath(this, taskDir)?.ifEmpty { "." } ?: return name
 }
 
 fun VirtualFile.getTaskDir(project: Project): VirtualFile? {
