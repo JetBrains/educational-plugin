@@ -971,6 +971,12 @@ project("features:ai-hints-core") {
       excludeKotlinSerializationDeps()
       exclude(group = "net.java.dev.jna")
     }
+    // For some reason, kotlin serialization plugin doesn't see the corresponding library from IDE dependency
+    // and fails Kotlin compilation.
+    // Let's provide necessary dependency during compilation to make it work
+    compileOnly(rootProject.libs.kotlinx.serialization) {
+      excludeKotlinDeps()
+    }
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
   }

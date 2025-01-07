@@ -74,9 +74,10 @@ class HintsLoader(private val project: Project, private val scope: CoroutineScop
           val taskFileText = taskVirtualFile.getTextFromTaskTextFile() ?: error("TaskFile text for ${taskFile.name} not found")
           withContext(Dispatchers.EDT) {
             val highlighter = highlightFirstCodeDiffPositionOrNull(project, taskVirtualFile, taskFileText, codeHint.code)
-            CodeHintInlineBanner(project, hint.textHint.text, highlighter).addCodeHint {
-              showInCodeAction(project, taskVirtualFile, taskFileText, codeHint.code)
-            }.display()
+            CodeHintInlineBanner(project, hint.textHint.text, highlighter)
+              .addCodeHint { showInCodeAction(project, taskVirtualFile, taskFileText, codeHint.code) }
+              .addFeedbackLink(task, taskFileText, hint.textHint, codeHint)
+              .display()
           }
           return@launch
         }
