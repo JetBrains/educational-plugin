@@ -188,7 +188,10 @@ private fun Course.configuratorCompatibility(): CourseCompatibility? {
 }
 
 fun Course.updateEnvironmentSettings(project: Project, configurator: EduConfigurator<*>? = this.configurator) {
-  course.environmentSettings += configurator?.getEnvironmentSettings(project).orEmpty()
+  // The order is important here since it should preserve old values.
+  // Otherwise, it may override values provided by users manually (via `course-info.yaml` file, for example)
+  val newEnvironmentSettings = configurator?.getEnvironmentSettings(project).orEmpty() + course.environmentSettings
+  course.environmentSettings = newEnvironmentSettings
 }
 
 fun Course.visitEduFiles(visitor: (EduFile) -> Unit) {

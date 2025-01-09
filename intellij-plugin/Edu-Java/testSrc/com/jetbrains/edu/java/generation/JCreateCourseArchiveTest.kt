@@ -4,6 +4,7 @@ import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.roots.LanguageLevelProjectExtension
 import com.intellij.pom.java.LanguageLevel
 import com.jetbrains.edu.coursecreator.archive.CourseArchiveTestBase
+import com.jetbrains.edu.jvm.JVM_LANGUAGE_LEVEL
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import org.junit.Test
 
@@ -97,6 +98,32 @@ class JCreateCourseArchiveTest : CourseArchiveTestBase() {
     }
 
     withLanguageLevel(LanguageLevel.JDK_17) {
+      doTest(course)
+    }
+  }
+
+  @Test
+  fun `test do not override existing jdk level`() {
+    val course = courseWithFiles(
+      language = JavaLanguage.INSTANCE,
+      courseMode = CourseMode.EDUCATOR
+    ) {
+      lesson("lesson1") {
+        theoryTask("task1") {
+          javaTaskFile("src/Main.java", """
+            public class Main {
+              public static void main(String[] args) {
+                System.out.println("Hello, World!");
+              }
+            }
+          """)
+        }
+      }
+    }
+
+    course.environmentSettings = mapOf(JVM_LANGUAGE_LEVEL to LanguageLevel.JDK_17.toString())
+
+    withLanguageLevel(LanguageLevel.JDK_19) {
       doTest(course)
     }
   }

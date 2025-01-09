@@ -1,0 +1,46 @@
+{
+  "summary" : "Test Course Description",
+  "title" : "Test Course",
+  "programming_language_id" : "JAVA",
+  "language" : "en",
+  "course_type" : "PyCharm",
+  "items" : [
+    {
+      "title" : "lesson1",
+      "task_list" : [
+        {
+          "name" : "task1",
+          "files" : {
+            "src/Main.java" : {
+              "name" : "src/Main.java",
+              "placeholders" : [ ],
+              "is_visible" : true,
+              "is_binary" : false
+            }
+          },
+          "description_text" : "solve task",
+          "description_format" : "MD",
+          "task_type" : "theory"
+        }
+      ],
+      "type" : "lesson"
+    }
+  ],
+  "additional_files" : [
+    {
+      "name" : "build.gradle",
+      "is_visible" : true,
+      "is_binary" : false
+    },
+    {
+      "name" : "settings.gradle",
+      "is_visible" : true,
+      "is_binary" : false
+    }
+  ],
+  "version" : <last version>,
+  "environment_settings" : {
+    "jvm_language_level" : "JDK_17"
+  },
+  "edu_plugin_version" : "yyyy.2-yyyy.1-TEST"
+}
