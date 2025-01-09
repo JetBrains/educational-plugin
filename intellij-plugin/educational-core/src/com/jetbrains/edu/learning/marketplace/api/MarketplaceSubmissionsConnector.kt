@@ -30,6 +30,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.network.createRetrofitBuilder
 import com.jetbrains.edu.learning.network.executeCall
 import com.jetbrains.edu.learning.network.executeParsingErrors
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.submissions.*
 import okhttp3.ConnectionPool
 import okhttp3.ResponseBody
@@ -216,12 +217,19 @@ class MarketplaceSubmissionsConnector {
            ?: error("Failed to load solution files for solution key $solutionKey")
   }
 
-  fun postSubmission(project: Project, task: Task, result: CheckResult): MarketplaceSubmission {
+  fun postSubmission(project: Project, task: Task, result: CheckResult): MarketplaceSubmission? {
     val course = task.course
-
     val submission = createSubmission(project, task, course, result.executedTestsInfo)
+    val postedSubmission = doPostSubmission(course.id, task.id, submission).onError {
+      LOG.error("Failed to post submission for course ${course.id} and task ${task.id} due to error $it", it)
+      EduNotificationManager.showErrorNotification(
+        project,
+        EduCoreBundle.message("submissions.failed.to.post.notification.title"),
+        EduCoreBundle.message("submissions.failed.to.post.notification.text")
+      )
+      return null
+    }
 
-    val postedSubmission = doPostSubmission(course.id, task.id, submission).onError { error("failed to post submission") }
     submission.id = postedSubmission.id
     submission.time = postedSubmission.time
     return submission
