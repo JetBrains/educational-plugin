@@ -1,7 +1,6 @@
 package com.jetbrains.edu.coursecreator.archive
 
 import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.core.PrettyPrinter
 import com.fasterxml.jackson.core.util.DefaultIndenter
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.fasterxml.jackson.databind.*
@@ -228,8 +227,13 @@ class CourseArchiveCreator(
   }
 
   private fun generateJson(out: Writer, course: Course) {
+    val indenter = DefaultIndenter("  ", "\n")
+    val prettyPrinter = DefaultPrettyPrinter()
+    prettyPrinter.indentArraysWith(indenter)
+    prettyPrinter.indentObjectsWith(indenter)
+
     val mapper = getMapper(course)
-    mapper.writer(printer).writeValue(out, course)
+    mapper.writer(prettyPrinter).writeValue(out, course)
   }
 
   private fun getMapper(course: Course): ObjectMapper {
@@ -289,13 +293,6 @@ class CourseArchiveCreator(
   companion object {
     private val LOG = logger<CourseArchiveCreator>()
     private const val TEST_PLUGIN_VERSION = "yyyy.2-yyyy.1-TEST"
-
-    private val printer: PrettyPrinter
-      get() {
-        val prettyPrinter = DefaultPrettyPrinter()
-        prettyPrinter.indentArraysWith(DefaultIndenter.SYSTEM_LINEFEED_INSTANCE)
-        return prettyPrinter
-      }
 
     fun JsonMapper.Builder.commonMapperSetup(course: Course): JsonMapper.Builder {
       if (course is CourseraCourse) {
