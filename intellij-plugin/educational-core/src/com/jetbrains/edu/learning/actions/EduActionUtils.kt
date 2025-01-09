@@ -19,6 +19,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.agreement.UserAgreementSettings
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -45,8 +46,9 @@ object EduActionUtils {
    */
   fun isGetHintAvailable(task: Task): Boolean {
     if (!isFeatureEnabled(EduExperimentalFeatures.AI_HINTS) || !UserAgreementSettings.getInstance().aiServiceAgreement) return false
-    val course = task.course
-    return course.languageId == EduFormatNames.KOTLIN && course.isStudy && task is EduTask && task.status == CheckStatus.Failed
+    val course = task.course as? EduCourse ?: return false
+    val isMarketplaceKotlinCourse = course.isStudy && course.isMarketplaceRemote && course.languageId == EduFormatNames.KOTLIN
+    return isMarketplaceKotlinCourse && task is EduTask && task.status == CheckStatus.Failed
   }
 
   fun getAction(@NonNls id: String): AnAction {
