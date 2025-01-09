@@ -4,9 +4,10 @@ import com.intellij.lang.Language
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl
 import com.intellij.testFramework.LightPlatformTestCase
+import com.jetbrains.edu.jvm.JVM_LANGUAGE_LEVEL
 import com.jetbrains.edu.jvm.JdkLanguageSettings
-import com.jetbrains.edu.jvm.setLanguageLevel
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import org.junit.Test
@@ -40,5 +41,14 @@ abstract class JdkVersionValidationTestBase(
 
     val validationMessage = validationResult.validationMessage?.message
     assertEquals(expectedValidationMessage, validationMessage)
+  }
+
+  private fun Course.setLanguageLevel(languageLevel: String?) {
+    course.environmentSettings = if (languageLevel == null) {
+      course.environmentSettings.minus(JVM_LANGUAGE_LEVEL)
+    }
+    else {
+      course.environmentSettings.plus(JVM_LANGUAGE_LEVEL to languageLevel)
+    }
   }
 }
