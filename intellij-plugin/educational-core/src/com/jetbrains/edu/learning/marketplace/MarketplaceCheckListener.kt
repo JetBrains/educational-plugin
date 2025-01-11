@@ -5,6 +5,8 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.ext.canShowCommunitySolutions
+import com.jetbrains.edu.learning.courseFormat.ext.hasCommunitySolutions
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showSubmissionNotPostedNotification
 import com.jetbrains.edu.learning.marketplace.actions.PostMarketplaceProjectToGitHub
@@ -56,7 +58,7 @@ class MarketplaceCheckListener : CheckListener {
   }
 
   private fun SubmissionsManager.loadCommunitySubmissions(task: Task, result: CheckResult) {
-    if (!task.supportSubmissions || !result.isSolved) return
+    if (task.canShowCommunitySolutions() && task.hasCommunitySolutions() || !result.isSolved) return
 
     CompletableFuture.runAsync({
       loadCommunitySubmissions(task)
