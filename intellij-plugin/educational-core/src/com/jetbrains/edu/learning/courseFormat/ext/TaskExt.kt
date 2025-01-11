@@ -17,6 +17,7 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiUtilCore
+import com.intellij.util.asSafely
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.learning.*
@@ -24,13 +25,16 @@ import com.jetbrains.edu.learning.EduUtilsKt.convertToHtml
 import com.jetbrains.edu.learning.actions.EduActionUtils.isGetHintAvailable
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.Companion.TASK_DESCRIPTION_PREFIX
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.marketplace.peekSolution.GOT_STUCK_WRONG_SUBMISSIONS_AMOUNT
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.taskToolWindow.removeHyperskillTags
 import com.jetbrains.edu.learning.taskToolWindow.replaceActionIDsWithShortcuts
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -190,6 +194,23 @@ fun Task.canShowSolution(): Boolean {
 }
 
 fun Task.hasSolutions(): Boolean = course.isMarketplace || this !is TheoryTask && this !is DataTask
+
+fun Task.canShowCommunitySolutions(): Boolean {
+  val project = course.project ?: return false
+  val eduCourse = course.asSafely<EduCourse>() ?: return false
+  if (!eduCourse.isMarketplaceRemote || !eduCourse.isStudy || !supportSubmissions) return false
+  // If we can show solution for the task, let's also allow to explore community solutions
+  if (canShowSolution()) return true
+
+  val submissions = SubmissionsManager.getInstance(project).getSubmissions(this) ?: return false
+  val correctSubmissions = submissions.count { it.status == CORRECT }
+  return correctSubmissions >= 1 || (submissions.count() - correctSubmissions) >= GOT_STUCK_WRONG_SUBMISSIONS_AMOUNT
+}
+
+fun Task.hasCommunitySolutions(): Boolean {
+  val project = course.project ?: return false
+  return !SubmissionsManager.getInstance(project).getCommunitySubmissionsFromMemory(id).isNullOrEmpty()
+}
 
 fun Task.getCodeTaskFile(project: Project): TaskFile? {
 

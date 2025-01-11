@@ -9,6 +9,7 @@ import com.intellij.ui.dsl.builder.SegmentedButton
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.courseFormat.ext.canShowCommunitySolutions
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.marketplace.isMarketplaceCourse
@@ -51,7 +52,7 @@ class MarketplaceSubmissionsTab(project: Project) : SubmissionsTab(project) {
     val submissionsManager = SubmissionsManager.getInstance(project)
 
     val isSolutionSharingAllowed = submissionsManager.isSolutionSharingAllowed()
-    val isAllowedToLoadCommunitySolutions = submissionsManager.isAllowedToLoadCommunitySolutions(task)
+    val isAllowedToLoadCommunitySolutions = task.canShowCommunitySolutions()
 
     val (descriptionText, customLinkHandler) = prepareSubmissionsContent(submissionsManager, task, isLoggedIn)
     val (communityDescriptionText, communityLinkHandler) = prepareCommunityContent(
