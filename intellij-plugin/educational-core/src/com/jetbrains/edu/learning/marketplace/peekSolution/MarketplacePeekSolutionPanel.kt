@@ -47,7 +47,7 @@ class MarketplacePeekSolutionPanel(project: Project, task: Task) : JPanel(FlowLa
     add(communityLink)
     add(JLabel(EduCoreBundle.message("label.dot")))
 
-    listenCommunitySubmissions(project, task, communityLink)
+    updateVisibilityAndLoadCommunitySubmissionsIfNeeded(project, task, communityLink)
   }
 
   companion object {

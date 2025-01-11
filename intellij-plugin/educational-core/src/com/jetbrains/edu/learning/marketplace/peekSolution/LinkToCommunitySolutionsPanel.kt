@@ -31,7 +31,7 @@ class LinkToCommunitySolutionsPanel(project: Project, task: Task): JPanel(Border
       }
     }
     panel.isVisible = false
-    listenCommunitySubmissions(project, task, panel)
+    updateVisibilityAndLoadCommunitySubmissionsIfNeeded(project, task, panel)
     add(panel, BorderLayout.CENTER)
   }
 }
