@@ -35,7 +35,7 @@ class HintsFeedbackDialog(
       "hints_likeness"
     ),
     TextAreaBlock("", "hints_experience")
-      .setPlaceholder(EduAIHintsCoreBundle.message("hints.feedback.dialog.text.area.placeholder"))
+      .setPlaceholder(EduCoreBundle.message("ui.feedback.dialog.textarea.optional.label"))
   )
 
   override val myShowFeedbackSystemInfoDialog: () -> Unit = {
@@ -43,16 +43,16 @@ class HintsFeedbackDialog(
       row(EduCoreBundle.message("ui.feedback.dialog.system.info.course.id")) {
         label(mySystemInfoData.hintsFeedbackInfo.courseId.toString())
       }
-      row(EduAIHintsCoreBundle.message("hints.feedback.label.course.update.version")) {
+      row(EduCoreBundle.message("ui.feedback.dialog.system.info.course.update.version")) {
         label(mySystemInfoData.hintsFeedbackInfo.courseUpdateVersion.toString())
       }
       row(EduCoreBundle.message("ui.feedback.dialog.system.info.course.name")) {
         label(mySystemInfoData.hintsFeedbackInfo.courseName)
       }
-      row(EduAIHintsCoreBundle.message("hints.feedback.label.task.id")) {
+      row(EduCoreBundle.message("ui.feedback.dialog.system.info.task.id")) {
         label(mySystemInfoData.hintsFeedbackInfo.taskId.toString())
       }
-      row(EduAIHintsCoreBundle.message("hints.feedback.label.task.name")) {
+      row(EduCoreBundle.message("ui.feedback.dialog.system.info.task.name")) {
         label(mySystemInfoData.hintsFeedbackInfo.taskName)
       }
       row(EduAIHintsCoreBundle.message("hints.feedback.label.student.solution")) {

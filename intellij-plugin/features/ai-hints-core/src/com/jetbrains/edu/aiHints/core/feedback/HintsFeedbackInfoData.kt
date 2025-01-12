@@ -1,4 +1,4 @@
-@file:UseSerializers(TextHintSerializer::class, CodeHintSerializer::class)
+@file:UseSerializers(TextHintKSerializer::class, CodeHintKSerializer::class)
 
 package com.jetbrains.edu.aiHints.core.feedback
 
@@ -25,13 +25,13 @@ data class HintsFeedbackInfoData(
   override fun toString(): String = buildString {
     appendLine(EduCoreBundle.message("ui.feedback.dialog.system.info.course.id"))
     appendLine(courseId)
-    appendLine(EduAIHintsCoreBundle.message("hints.feedback.label.course.update.version"))
+    appendLine(EduCoreBundle.message("ui.feedback.dialog.system.info.course.update.version"))
     appendLine(courseUpdateVersion)
     appendLine(EduCoreBundle.message("ui.feedback.dialog.system.info.course.name"))
     appendLine(courseName)
-    appendLine(EduAIHintsCoreBundle.message("hints.feedback.label.task.id"))
+    appendLine(EduCoreBundle.message("ui.feedback.dialog.system.info.task.id"))
     appendLine(taskId)
-    appendLine(EduAIHintsCoreBundle.message("hints.feedback.label.task.name"))
+    appendLine(EduCoreBundle.message("ui.feedback.dialog.system.info.task.name"))
     appendLine(taskName)
     appendLine(EduAIHintsCoreBundle.message("hints.feedback.label.student.solution"))
     appendLine(studentSolution)

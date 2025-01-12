@@ -32,7 +32,7 @@ class AITranslationFeedbackDialog(
       "translation_likeness"
     ),
     TextAreaBlock("", "translation_experience")
-      .setPlaceholder(EduAIBundle.message("ai.translation.share.feedback.tell.us.about.your.experience"))
+      .setPlaceholder(EduCoreBundle.message("ui.feedback.dialog.textarea.optional.label"))
   )
 
   override val myShowFeedbackSystemInfoDialog: () -> Unit = {
@@ -46,10 +46,10 @@ class AITranslationFeedbackDialog(
       row(EduCoreBundle.message("ui.feedback.dialog.system.info.course.name")) {
         label(mySystemInfoData.aiTranslationFeedbackInfoData.courseName)
       }
-      row(EduAIBundle.message("ai.translation.share.feedback.dialog.info.data.task.id")) {
+      row(EduCoreBundle.message("ui.feedback.dialog.system.info.task.id")) {
         label(mySystemInfoData.aiTranslationFeedbackInfoData.taskId.toString())
       }
-      row(EduAIBundle.message("ai.translation.share.feedback.dialog.info.data.task.name")) {
+      row(EduCoreBundle.message("ui.feedback.dialog.system.info.task.name")) {
         label(mySystemInfoData.aiTranslationFeedbackInfoData.taskName)
       }
       row(EduAIBundle.message("ai.translation.share.feedback.dialog.info.data.translation.language")) {
