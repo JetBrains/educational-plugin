@@ -12,15 +12,13 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 
 @Serializable
-data class HintsFeedbackInfoData(
+data class HintFeedbackCommonInfoData(
   val courseId: Int,
   val courseUpdateVersion: Int,
   val courseName: String,
   val taskId: Int,
   val taskName: String,
   val studentSolution: String,
-  val textHint: TextHint,
-  val codeHint: CodeHint,
 ) {
   override fun toString(): String = buildString {
     appendLine(EduCoreBundle.message("ui.feedback.dialog.system.info.course.id"))
@@ -35,6 +33,33 @@ data class HintsFeedbackInfoData(
     appendLine(taskName)
     appendLine(EduAIHintsCoreBundle.message("hints.feedback.label.student.solution"))
     appendLine(studentSolution)
+  }
+
+  companion object {
+    @JvmStatic
+    fun create(
+      course: Course,
+      task: Task,
+      studentSolution: String,
+    ): HintFeedbackCommonInfoData = HintFeedbackCommonInfoData(
+      courseId = course.id,
+      courseUpdateVersion = course.marketplaceCourseVersion,
+      courseName = course.name,
+      taskId = task.id,
+      taskName = task.name,
+      studentSolution = studentSolution
+    )
+  }
+}
+
+@Serializable
+data class CodeHintFeedbackInfoData(
+  val hintFeedbackInfoData: HintFeedbackCommonInfoData,
+  val textHint: TextHint,
+  val codeHint: CodeHint,
+) {
+  override fun toString(): String = buildString {
+    appendLine(hintFeedbackInfoData.toString())
     appendLine(EduAIHintsCoreBundle.message("hints.feedback.label.text.hint"))
     appendLine(textHint)
     appendLine(EduAIHintsCoreBundle.message("hints.feedback.label.code.hint"))
@@ -49,15 +74,35 @@ data class HintsFeedbackInfoData(
       studentSolution: String,
       textHint: TextHint,
       codeHint: CodeHint
-    ): HintsFeedbackInfoData = HintsFeedbackInfoData(
-      courseId = course.id,
-      courseUpdateVersion = course.marketplaceCourseVersion,
-      courseName = course.name,
-      taskId = task.id,
-      taskName = task.name,
-      studentSolution = studentSolution,
+    ): CodeHintFeedbackInfoData = CodeHintFeedbackInfoData(
+      HintFeedbackCommonInfoData.create(course, task, studentSolution),
       textHint = textHint,
       codeHint = codeHint
+    )
+  }
+}
+
+@Serializable
+data class TextHintFeedbackInfoData(
+  val hintFeedbackInfoData: HintFeedbackCommonInfoData,
+  val textHint: TextHint,
+) {
+  override fun toString(): String = buildString {
+    appendLine(hintFeedbackInfoData.toString())
+    appendLine(EduAIHintsCoreBundle.message("hints.feedback.label.text.hint"))
+    appendLine(textHint)
+  }
+
+  companion object {
+    @JvmStatic
+    fun create(
+      course: Course,
+      task: Task,
+      studentSolution: String,
+      textHint: TextHint,
+    ): TextHintFeedbackInfoData = TextHintFeedbackInfoData(
+      HintFeedbackCommonInfoData.create(course, task, studentSolution),
+      textHint = textHint,
     )
   }
 }
