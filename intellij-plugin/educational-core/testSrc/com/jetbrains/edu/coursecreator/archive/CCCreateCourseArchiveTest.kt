@@ -250,6 +250,18 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
   }
 
   @Test
+  fun `test font task file`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
+      lesson("lesson1") {
+        eduTask("task1") {
+          taskFile("test.ttf", InMemoryBinaryContents(byteArrayOf(1, 2)))
+        }
+      }
+    }
+    doTest(course)
+  }
+
+  @Test
   fun `test git object task file`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
@@ -499,6 +511,17 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
         eduTask("task1") {}
       }
       additionalFile("test.pdf")
+    }
+    doTest(course)
+  }
+
+  @Test
+  fun `test font additional file`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
+      lesson("lesson1") {
+        eduTask("task1") {}
+      }
+      additionalFile("test.ttf", InMemoryBinaryContents(byteArrayOf(1, 2)))
     }
     doTest(course)
   }
