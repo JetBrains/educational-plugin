@@ -22,3 +22,11 @@ data class TextHintFeedbackSystemInfoData(
 ) : SystemDataJsonSerializable {
   override fun serializeToJson(json: Json): JsonElement = json.encodeToJsonElement(this)
 }
+
+@Serializable
+data class ErrorHintFeedbackSystemInfoData(
+  val commonSystemInfo: CommonFeedbackSystemData,
+  val errorHintFeedbackInfo: ErrorHintFeedbackInfoData
+) : SystemDataJsonSerializable {
+  override fun serializeToJson(json: Json): JsonElement = json.encodeToJsonElement(this)
+}

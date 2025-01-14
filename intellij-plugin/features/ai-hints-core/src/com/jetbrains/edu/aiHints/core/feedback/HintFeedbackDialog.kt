@@ -125,3 +125,36 @@ class TextHintFeedbackDialog(
     init()
   }
 }
+
+class ErrorHintFeedbackDialog(
+  private val project: Project,
+  private val course: Course,
+  private val task: Task,
+  private val studentSolution: String,
+  private val errorMessage: String
+) : HintFeedbackDialog<ErrorHintFeedbackSystemInfoData>(project) {
+  override val myBlocks: List<FeedbackBlock> = listOf(
+    TextAreaBlock("", "hints_experience")
+      .setPlaceholder(EduCoreBundle.message("ui.feedback.dialog.textarea.optional.label"))
+  )
+
+  override val myShowFeedbackSystemInfoDialog: () -> Unit = {
+    showFeedbackSystemInfoDialog(project, mySystemInfoData.commonSystemInfo) {
+      commonFeedbackData(mySystemInfoData.errorHintFeedbackInfo.hintFeedbackInfoData)
+      row(EduAIHintsCoreBundle.message("hints.feedback.label.error.message")) {
+        label(mySystemInfoData.errorHintFeedbackInfo.errorMessage)
+      }
+    }
+  }
+
+  override val mySystemInfoData: ErrorHintFeedbackSystemInfoData by lazy {
+    ErrorHintFeedbackSystemInfoData(
+      CommonFeedbackSystemData.getCurrentData(),
+      ErrorHintFeedbackInfoData.create(course, task, studentSolution, errorMessage)
+    )
+  }
+
+  init {
+    init()
+  }
+}

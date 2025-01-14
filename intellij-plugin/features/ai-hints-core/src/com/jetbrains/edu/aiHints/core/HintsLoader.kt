@@ -53,6 +53,10 @@ class HintsLoader(private val project: Project, private val scope: CoroutineScop
       }
       try {
         val taskProcessor = TaskProcessorImpl(task)
+        val taskFile = taskProcessor.currentTaskFile ?: project.selectedTaskFile ?: error("TaskFile for ${task.name} not found")
+        val taskVirtualFile = taskFile.getVirtualFile(project) ?: error("VirtualFile for ${taskFile.name} not found")
+        val taskFileText = taskVirtualFile.getTextFromTaskTextFile() ?: error("TaskFile text for ${taskFile.name} not found")
+
         val hintsAssistant = AiHintsAssistant.getAssistant(taskProcessor, AiCodeHintGenerator(taskProcessor), AiTextHintGenerator())
         val hint = withBackgroundProgress(project, EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.progress.text"), cancellable = true) {
           withContext(Dispatchers.IO) {
@@ -60,16 +64,14 @@ class HintsLoader(private val project: Project, private val scope: CoroutineScop
           }
         }.getOrElse {
           withContext(Dispatchers.EDT) {
-            ErrorHintInlineBanner(project, it.message ?: EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.error.unknown")) {
-              getHint(task)
-            }.display()
+            val errorMessage = it.message ?: EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.error.unknown")
+            ErrorHintInlineBanner(project, errorMessage) { getHint(task) }
+              .addFeedbackLink(task, taskFileText, errorMessage)
+              .display()
           }
           return@launch
         }
 
-        val taskFile = taskProcessor.currentTaskFile ?: project.selectedTaskFile ?: error("TaskFile for ${task.name} not found")
-        val taskVirtualFile = taskFile.getVirtualFile(project) ?: error("VirtualFile for ${taskFile.name} not found")
-        val taskFileText = taskVirtualFile.getTextFromTaskTextFile() ?: error("TaskFile text for ${taskFile.name} not found")
         val codeHint = hint.codeHint
         if (codeHint != null) {
           withContext(Dispatchers.EDT) {
