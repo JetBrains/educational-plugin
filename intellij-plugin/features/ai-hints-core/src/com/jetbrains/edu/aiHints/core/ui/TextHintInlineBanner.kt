@@ -2,7 +2,7 @@ package com.jetbrains.edu.aiHints.core.ui
 
 import com.intellij.openapi.project.Project
 import com.intellij.util.asSafely
-import com.jetbrains.edu.aiHints.core.feedback.TextHintFeedbackDialog
+import com.jetbrains.edu.aiHints.core.feedback.dialog.TextHintFeedbackDialog
 import com.jetbrains.edu.aiHints.core.messages.EduAIHintsCoreBundle
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse

@@ -3,7 +3,7 @@ package com.jetbrains.edu.aiHints.core.ui
 import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.openapi.project.Project
 import com.intellij.util.asSafely
-import com.jetbrains.edu.aiHints.core.feedback.CodeHintFeedbackDialog
+import com.jetbrains.edu.aiHints.core.feedback.dialog.CodeHintFeedbackDialog
 import com.jetbrains.edu.aiHints.core.messages.EduAIHintsCoreBundle
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse

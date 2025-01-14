@@ -1,4 +1,4 @@
-package com.jetbrains.edu.aiHints.core.feedback
+package com.jetbrains.edu.aiHints.core.feedback.data
 
 import com.jetbrains.educational.ml.hints.hint.CodeHint
 import kotlinx.serialization.KSerializer
