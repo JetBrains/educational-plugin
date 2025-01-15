@@ -36,7 +36,9 @@ class GetHint : ActionWithProgressIcon() {
       return e.dataContext.showPopup(EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.already.in.progress"))
     }
 
-    val task = TaskToolWindowView.getInstance(project).currentTask ?: return
+    val taskToolWindow = TaskToolWindowView.getInstance(project)
+    val task = taskToolWindow.currentTask ?: return
+    taskToolWindow.updateCheckPanel(task)
     HintsLoader.getInstance(project).getHint(task)
   }
 
