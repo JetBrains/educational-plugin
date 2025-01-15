@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator.archive
 
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.platform.testFramework.core.FileComparisonFailedError
 import com.intellij.testFramework.fixtures.BasePlatformTestCase.fail
@@ -21,6 +22,7 @@ data class CourseArchiveContent(
     expectedBaseDir: File,
     generateExtraFiles: Boolean
   ) {
+    LOG.debug("Course Archive Content Files: ${files.keys.joinToString()}")
     // files not found in the actual zip archive
     val missingFiles = mutableSetOf<String>()
     // files in the actual zip archive which don't exist in expected files
@@ -36,6 +38,7 @@ data class CourseArchiveContent(
         filesToCompare[path] = ContentsToCompare(expected = expectedContent, actual = actualContent)
       }
     }
+    LOG.debug("Missing files: ${missingFiles.joinToString()}")
 
     // Check it explicitly here to catch a pathological case,
     // when both expected and actual data don't contain `course.json`
@@ -46,6 +49,8 @@ data class CourseArchiveContent(
     if (missingFiles.isNotEmpty()) {
       fail("Missing files in archive: $missingFiles")
     }
+
+    LOG.debug("Extra files: ${extraFiles.keys.joinToString()}")
 
     if (extraFiles.isNotEmpty()) {
       if (generateExtraFiles) {
@@ -66,10 +71,14 @@ data class CourseArchiveContent(
         // `FileComparisonFailedError` is used here instead of `assertEquals`
         // to add the possibility to move changes from actual to expected files using IDE Diff View
         if (expectedJson != actualJson) {
+          LOG.debug("Expected JSON:\n$expectedJson")
+          LOG.debug("Actual JSON:\n$actualJson")
           throw FileComparisonFailedError("Unexpected $path content", expectedJson, actualJson, expectedBaseDir.resolve(path).absolutePath)
         }
       }
       else {
+        LOG.debug("Expected:\n${contents.expected}")
+        LOG.debug("Actual:\n${contents.actual}")
         Assert.assertArrayEquals("Unexpected $path content", contents.expected, contents.actual)
       }
     }
@@ -81,6 +90,8 @@ data class CourseArchiveContent(
   private fun String.withLatestJsonVersion(): String = replace(LAST_VERSION_REGEX, """"version" : $JSON_FORMAT_VERSION""")
 
   companion object {
+    private val LOG = logger<CourseArchiveCreator>()
+
     private val LAST_VERSION_REGEX = """"version"\s*:\s*<last version>""".toRegex()
 
     fun fromBytes(data: ByteArray): CourseArchiveContent {
