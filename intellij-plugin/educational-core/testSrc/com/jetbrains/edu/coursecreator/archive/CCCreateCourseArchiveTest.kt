@@ -253,7 +253,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
         eduTask("task1") {
-          taskFile("test.ttf")
+          taskFile("test.ttf", InMemoryBinaryContents(byteArrayOf(1, 2)))
         }
       }
     }
@@ -520,7 +520,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
       lesson("lesson1") {
         eduTask("task1") {}
       }
-      additionalFile("test.ttf")
+      additionalFile("test.ttf", InMemoryBinaryContents(byteArrayOf(1, 2)))
     }
     doTest(course)
   }
