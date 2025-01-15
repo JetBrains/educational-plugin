@@ -117,8 +117,10 @@
     <action id="Educational.Check" class="com.jetbrains.edu.learning.actions.CheckAction"/>
     <action id="Educational.Run"
             class="com.jetbrains.edu.learning.actions.RunTaskAction"
-            icon="AllIcons.Actions.Execute"
-    />
+            icon="AllIcons.Actions.Execute"/>
+    <action id="Educational.AssignRunConfigurationToTask"
+            class="com.jetbrains.edu.learning.actions.AssignRunConfigurationToTask"
+            internal="true"/>
     <action id="Educational.Retry" class="com.jetbrains.edu.learning.actions.RetryAction"/>
     <action id="Educational.PrevPlaceholder"
             class="com.jetbrains.edu.learning.actions.PrevPlaceholderAction"
