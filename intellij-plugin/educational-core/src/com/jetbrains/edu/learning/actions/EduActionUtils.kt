@@ -9,6 +9,8 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.command.undo.UndoableAction
 import com.intellij.openapi.command.undo.UnexpectedUndoException
+import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProgressIndicator
@@ -49,6 +51,30 @@ object EduActionUtils {
     val course = task.course as? EduCourse ?: return false
     val isMarketplaceKotlinCourse = course.isStudy && course.isMarketplaceRemote && course.languageId == EduFormatNames.KOTLIN
     return isMarketplaceKotlinCourse && task is EduTask && task.status == CheckStatus.Failed
+  }
+
+  @Service(Service.Level.PROJECT)
+  class HintStateManager {
+    fun reset() {
+      state = HintState.DEFAULT
+    }
+
+    fun acceptHint() {
+      state = HintState.ACCEPTED
+    }
+
+    @Volatile
+    private var state: HintState = HintState.DEFAULT
+
+    enum class HintState {
+      DEFAULT, ACCEPTED;
+    }
+
+    companion object {
+      fun isDefault(project: Project): Boolean = getInstance(project).state == HintState.DEFAULT
+
+      fun getInstance(project: Project): HintStateManager = project.service()
+    }
   }
 
   fun getAction(@NonNls id: String): AnAction {

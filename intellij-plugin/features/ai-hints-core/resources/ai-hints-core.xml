@@ -28,6 +28,10 @@
     </experimentalFeature>
   </extensions>
 
+  <extensions defaultExtensionNs="Educational">
+    <checkListener implementation="com.jetbrains.edu.aiHints.core.listener.AIHintsCheckListener"/>
+  </extensions>
+
   <extensionPoints>
     <extensionPoint qualifiedName="aiHints.functionSignaturesProvider"
                     beanClass="com.intellij.lang.LanguageExtensionPoint"
