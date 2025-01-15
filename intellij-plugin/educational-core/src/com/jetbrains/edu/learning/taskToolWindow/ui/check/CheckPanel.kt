@@ -192,7 +192,7 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
   private fun updateGetHintButtonWrapper(task: Task) {
     getHintButtonWrapper.removeAll()
 
-    if (isGetHintAvailable(task)) {
+    if (isGetHintAvailable(task) && EduActionUtils.HintStateManager.isDefault(project)) {
       val action = ActionManager.getInstance().getAction(GET_HINT_ACTION_ID) as ActionWithProgressIcon
       getHintButtonWrapper.add(CheckPanelButtonComponent(action = action), BorderLayout.WEST)
     }

@@ -9,6 +9,8 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.command.undo.UndoableAction
 import com.intellij.openapi.command.undo.UnexpectedUndoException
+import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProgressIndicator
@@ -29,6 +31,7 @@ import java.util.concurrent.ExecutionException
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
+import java.util.concurrent.atomic.AtomicReference
 
 object EduActionUtils {
   /**
@@ -49,6 +52,26 @@ object EduActionUtils {
     val course = task.course as? EduCourse ?: return false
     val isMarketplaceKotlinCourse = course.isStudy && course.isMarketplaceRemote && course.languageId == EduFormatNames.KOTLIN
     return isMarketplaceKotlinCourse && task is EduTask && task.status == CheckStatus.Failed
+  }
+
+  @Service(Service.Level.PROJECT)
+  class HintStateManager {
+    fun reset() = state.set(HintState.Default)
+
+    fun acceptHint() = state.set(HintState.Accepted)
+
+    private val state: AtomicReference<HintState> = AtomicReference(HintState.Default)
+
+    sealed class HintState {
+      data object Default : HintState()
+      data object Accepted : HintState()
+    }
+
+    companion object {
+      fun isDefault(project: Project): Boolean = getInstance(project).state.get() == HintState.Default
+
+      fun getInstance(project: Project): HintStateManager = project.service()
+    }
   }
 
   fun getAction(@NonNls id: String): AnAction {

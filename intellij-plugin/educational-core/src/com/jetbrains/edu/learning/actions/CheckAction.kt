@@ -93,6 +93,7 @@ class CheckAction() : ActionWithProgressIcon(), DumbAware {
     else {
       ProgressManager.getInstance().run(checkTask)
     }
+    EduActionUtils.HintStateManager.getInstance(project).reset()
   }
 
   override fun update(e: AnActionEvent) {
