@@ -15,6 +15,7 @@ import com.intellij.util.Alarm
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.CompareWithAnswerAction
+import com.jetbrains.edu.learning.actions.EduActionUtils.isGetHintAvailable
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.details.CheckDetailsView
 import com.jetbrains.edu.learning.courseFormat.CheckResult
@@ -101,7 +102,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
       }
     }
 
-    if (project.isMarketplaceStudentCourse() && !checkResult.isSolved) {
+    if (project.isMarketplaceStudentCourse() && !checkResult.isSolved && !isGetHintAvailable(task)) { // Disable when there are AI Hints
       val communityLinkPanel =
         if (task.canShowSolution()) MarketplacePeekSolutionPanel(project, task) else LinkToCommunitySolutionsPanel(project, task)
       linksPanel.add(communityLinkPanel, BorderLayout.NORTH)
