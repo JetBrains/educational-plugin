@@ -23,7 +23,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <!--suppress PluginXmlValidity -->
-    <experimentalFeature id="edu.learning.ai.get.hint" percentOfUsers="100" internalFeature="true">
+    <experimentalFeature id="edu.learning.ai.get.hint" percentOfUsers="100">
       <description>Enables Get AI Hint action</description>
     </experimentalFeature>
   </extensions>
