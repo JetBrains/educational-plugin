@@ -8,7 +8,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.aiHints.core.messages.EduAIHintsCoreBundle
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.ApplyCodeAction
-import com.jetbrains.edu.learning.actions.EduActionUtils
+import com.jetbrains.edu.learning.actions.EduAIHintsUtils
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
@@ -35,7 +35,7 @@ class AcceptHint : ApplyCodeAction() {
   }
 
   override fun afterActionPerformed(project: Project) {
-    EduActionUtils.HintStateManager.getInstance(project).acceptHint()
+    EduAIHintsUtils.HintStateManager.getInstance(project).acceptHint()
     val task = project.getCurrentTask()
     TaskToolWindowView.getInstance(project).updateCheckPanel(task)
   }

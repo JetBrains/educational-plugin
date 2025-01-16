@@ -15,9 +15,9 @@ import com.intellij.util.ui.JBEmptyBorder
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.actions.*
+import com.jetbrains.edu.learning.actions.EduAIHintsUtils.GET_HINT_ACTION_ID
+import com.jetbrains.edu.learning.actions.EduAIHintsUtils.isGetHintAvailable
 import com.jetbrains.edu.learning.checker.CheckUtils.getCustomRunConfigurationForRunner
-import com.jetbrains.edu.learning.actions.EduActionUtils.GET_HINT_ACTION_ID
-import com.jetbrains.edu.learning.actions.EduActionUtils.isGetHintAvailable
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -192,7 +192,7 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
   private fun updateGetHintButtonWrapper(task: Task) {
     getHintButtonWrapper.removeAll()
 
-    if (isGetHintAvailable(task) && EduActionUtils.HintStateManager.isDefault(project)) {
+    if (isGetHintAvailable(task) && EduAIHintsUtils.HintStateManager.isDefault(project)) {
       val action = ActionManager.getInstance().getAction(GET_HINT_ACTION_ID) as ActionWithProgressIcon
       getHintButtonWrapper.add(CheckPanelButtonComponent(action = action), BorderLayout.WEST)
     }

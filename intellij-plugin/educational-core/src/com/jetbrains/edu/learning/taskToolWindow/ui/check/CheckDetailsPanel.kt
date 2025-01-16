@@ -15,7 +15,7 @@ import com.intellij.util.Alarm
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.CompareWithAnswerAction
-import com.jetbrains.edu.learning.actions.EduActionUtils.isGetHintAvailable
+import com.jetbrains.edu.learning.actions.EduAIHintsUtils.isGetHintAvailable
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.details.CheckDetailsView
 import com.jetbrains.edu.learning.courseFormat.CheckResult
