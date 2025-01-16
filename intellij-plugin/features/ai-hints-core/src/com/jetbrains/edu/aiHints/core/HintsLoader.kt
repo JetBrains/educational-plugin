@@ -32,6 +32,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.getTextFromTaskTextFile
 import com.jetbrains.edu.learning.selectedTaskFile
 import com.jetbrains.edu.learning.ui.EduColors
+import com.jetbrains.educational.ml.core.exception.AiAssistantException
 import com.jetbrains.educational.ml.hints.assistant.AiHintsAssistant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -64,7 +65,7 @@ class HintsLoader(private val project: Project, private val scope: CoroutineScop
           }
         }.getOrElse {
           withContext(Dispatchers.EDT) {
-            val errorMessage = it.message ?: EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.error.unknown")
+            val errorMessage = AiAssistantException.get(it).message
             ErrorHintInlineBanner(project, errorMessage) { getHint(task) }
               .addFeedbackLink(task, taskFileText, errorMessage)
               .display()
