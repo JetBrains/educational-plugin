@@ -7,6 +7,8 @@ import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.ActionWithButtonCustomComponent
 import com.jetbrains.edu.learning.actions.ApplyCodeAction.Companion.isGetHintDiff
 import com.jetbrains.edu.learning.actions.EduActionUtils.closeFileEditor
+import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 
 class CancelHint : ActionWithButtonCustomComponent(), DumbAware {
 
@@ -17,7 +19,10 @@ class CancelHint : ActionWithButtonCustomComponent(), DumbAware {
   }
 
   override fun actionPerformed(e: AnActionEvent) {
-    e.project?.closeFileEditor(e)
+    val project = e.project ?: return
+    project.closeFileEditor(e)
+    val task = project.getCurrentTask() ?: return
+    TaskToolWindowView.getInstance(project).updateCheckPanel(task)
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
