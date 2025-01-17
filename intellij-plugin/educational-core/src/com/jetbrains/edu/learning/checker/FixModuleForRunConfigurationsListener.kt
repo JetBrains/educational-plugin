@@ -34,9 +34,15 @@ class FixModuleForRunConfigurationsListener(private val project: Project) : RunM
   }
 
   override fun rootsChanged(event: ModuleRootEvent) {
-    if (!learnerMode()) return
-    RunManager.getInstance(project).allSettings.forEach {
-      updateConfiguration(it)
+    // `learnerMode` may initialize `StudyTaskManager` because it's called early enough to be the first call of `StudyTaskManager.getInstance`.
+    // And since `rootsChanged` is called in write action,
+    // it may lead to deadlock because of using internal lock and read action in `StudyTaskManager` initialization.
+    // Let's try to invoke this code outside write action to avoid it
+    project.invokeLater {
+      if (!learnerMode()) return@invokeLater
+      RunManager.getInstance(project).allSettings.forEach {
+        updateConfiguration(it)
+      }
     }
   }
 
