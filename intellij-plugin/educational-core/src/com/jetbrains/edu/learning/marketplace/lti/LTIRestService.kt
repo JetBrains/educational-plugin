@@ -26,8 +26,9 @@ class LTIRestService : BaseMarketplaceRestService(LTI) {
     }
 
     val lmsDescription = getStringParameter(LMS_DESCRIPTION, urlDecoder)
+    val onlineService = LTIOnlineService.detect(urlDecoder)
 
-    return Ok(MarketplaceOpenCourseRequest(courseId, eduTaskId, LTISettingsDTO(launchId, lmsDescription)))
+    return Ok(MarketplaceOpenCourseRequest(courseId, eduTaskId, LTISettingsDTO(launchId, lmsDescription, onlineService)))
   }
 
   override fun getServiceName(): String = "edu/lti"

@@ -2,16 +2,17 @@ package com.jetbrains.edu.learning.marketplace.lti
 
 import com.intellij.notification.NotificationType
 import com.intellij.notification.NotificationType.ERROR
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
+import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class LTICheckListener : CheckListener {
 
@@ -21,22 +22,25 @@ class LTICheckListener : CheckListener {
     result: CheckResult
   ) {
     val course = task.lesson.course as? EduCourse ?: return
-    if (!result.isSolved) return // currently, we report only successful solutions
 
     if (!course.isStudy || !course.isMarketplaceRemote) return
 
     val ltiSettings = LTISettingsManager.instance(project).state
+
+    val solved = result.isSolved
+    if (!solved && ltiSettings.onlineService == LTIOnlineService.ALPHA_TEST_2024) return
+
     val launchId = ltiSettings.launchId ?: return
 
-    logger<LTICheckListener>().info("Posting completion status for task ${task.name}: solved=${result.isSolved}, launchId=$launchId")
+    logger<LTICheckListener>().info("Posting completion status for task ${task.name}: solved=$solved, launchId=$launchId")
 
-    ApplicationManager.getApplication().executeOnPooledThread {
-      val response = LTIConnector.getInstance().postTaskSolved(launchId, task.course.id, task.id)
-
-      runInEdt {
-        notifyPostingResponse(response, ltiSettings.lmsDescription, project, launchId)
+    val response = runWithModalProgressBlocking(project, EduCoreBundle.message("lti.posting.completion.status")) {
+      withContext(Dispatchers.IO) {
+        LTIConnector.getInstance().postTaskChecked(ltiSettings.onlineService, launchId, task.course.id, task.id, solved)
       }
     }
+
+    notifyPostingResponse(response, ltiSettings.lmsDescription, project, launchId)
   }
 
   private fun notifyPostingResponse(response: PostTaskSolvedStatus, lmsDescription: String?, project: Project, launchId: String) {

@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.marketplace.lti
 
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
-import com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceHost
 import com.jetbrains.edu.learning.network.createRetrofitBuilder
 import com.jetbrains.edu.learning.network.executeCall
 import com.jetbrains.edu.learning.onError
@@ -16,11 +15,11 @@ class LTIConnector {
   /**
    * returns error message or null, if request was successful
    */
-  fun postTaskSolved(launchId: String, courseEduId: Int, taskEduId: Int): PostTaskSolvedStatus {
-    val retrofit = createRetrofitBuilder(SubmissionsServiceHost.getSelectedUrl(), connectionPool, LTIAuthBundle.value("ltiServiceToken")).build()
+  fun postTaskChecked(onlineService: LTIOnlineService, launchId: String, courseEduId: Int, taskEduId: Int, solved: Boolean): PostTaskSolvedStatus {
+    val retrofit = createRetrofitBuilder(onlineService.serviceURL, connectionPool, LTIAuthBundle.value("ltiServiceToken")).build()
     val ltiEndpoints = retrofit.create(LTIEndpoints::class.java)
 
-    val response = ltiEndpoints.reportTaskSolved(launchId, courseEduId, taskEduId).executeCall(omitErrors = true).onError {
+    val response = ltiEndpoints.reportTaskSolved(launchId, courseEduId, taskEduId, solved).executeCall(omitErrors = true).onError {
       return ConnectionError(it)
     }
 
