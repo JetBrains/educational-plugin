@@ -52,6 +52,7 @@ object MarketplaceOpenInIdeRequestHandler : OpenInIdeRequestHandler<MarketplaceO
       val settingsState = LTISettingsManager.instance(project).state
       settingsState.launchId = ltiSettings.launchId
       settingsState.lmsDescription = ltiSettings.lmsDescription
+      settingsState.onlineService = ltiSettings.onlineService
     }
   }
 
