@@ -101,13 +101,18 @@ fun toEncodeFileContent(virtualFile: VirtualFile): Boolean {
      */
     return true
   }
-  val contentType = mimeFileType(path) ?: return isGitObject(name)
+  // Files.probeContentType does not recognize mime font types on windows, so we check for font files separately
+  val contentType = mimeFileType(path) ?: return isGitObject(name) || isFontExtension(extension)
   return isBinary(contentType)
 }
 
 private fun isGitObject(name: String): Boolean {
   return (name.length == 38 || name.length == 40) && name.matches(Regex("[a-z0-9]+"))
 }
+
+private val fontExtensions = setOf("ttf", "otf", "ttc", "woff", "woff2")
+
+private fun isFontExtension(extension: String): Boolean = fontExtensions.contains(extension)
 
 @get:TestOnly
 val Project.isLight: Boolean get() = (this as? ProjectEx)?.isLight == true
