@@ -45,7 +45,7 @@ object MarketplaceOpenInIdeRequestHandler : OpenInIdeRequestHandler<MarketplaceO
   }
 
   override fun afterProjectOpened(request: MarketplaceOpenCourseRequest, project: Project) {
-    openTask(request.taskId, project)
+    openStudyItem(request.studyItemId, project)
 
     val ltiSettings = request.ltiSettingsDTO
     if (ltiSettings != null) {
@@ -56,12 +56,16 @@ object MarketplaceOpenInIdeRequestHandler : OpenInIdeRequestHandler<MarketplaceO
     }
   }
 
-  private fun openTask(taskId: Int, project: Project) {
-    val course = project.course
-    if (taskId != -1 && course != null) {
-      course.allTasks.firstOrNull { it.id == taskId }?.let {
-        NavigationUtils.navigateToTask(project, it)
-      }
+  private fun openStudyItem(studyItemId: Int, project: Project) {
+    if (studyItemId == -1) return
+    val course = project.course ?: return
+
+    course.allTasks.firstOrNull {
+      it.id == studyItemId
+      || it.lesson.id == studyItemId
+      || it.lesson.section?.id == studyItemId
+    }?.let {
+      NavigationUtils.navigateToTask(project, it)
     }
   }
 

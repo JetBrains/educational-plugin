@@ -15,9 +15,14 @@ class LTIRestService : BaseMarketplaceRestService(LTI) {
       return Err("LTI request has no course id.")
     }
 
-    val eduTaskId = getIntParameter(EDU_TASK_ID, urlDecoder)
-    if (eduTaskId == -1) {
-      return Err("LTI request has no task id.")
+    var studyItemId = getIntParameter(STUDY_ITEM_ID, urlDecoder)
+    if (studyItemId == -1) {
+      // in previous versions of LTI we had `task_id` instead of `study_item_id`
+      studyItemId = getIntParameter(EDU_TASK_ID, urlDecoder)
+
+      if (studyItemId == -1) {
+        return Err("The LTI request contains neither a study item ID nor a task ID.")
+      }
     }
 
     val launchId = getStringParameter(LAUNCH_ID, urlDecoder)
@@ -28,7 +33,7 @@ class LTIRestService : BaseMarketplaceRestService(LTI) {
     val lmsDescription = getStringParameter(LMS_DESCRIPTION, urlDecoder)
     val onlineService = LTIOnlineService.detect(urlDecoder)
 
-    return Ok(MarketplaceOpenCourseRequest(courseId, eduTaskId, LTISettingsDTO(launchId, lmsDescription, onlineService)))
+    return Ok(MarketplaceOpenCourseRequest(courseId, studyItemId, LTISettingsDTO(launchId, lmsDescription, onlineService)))
   }
 
   override fun getServiceName(): String = "edu/lti"
