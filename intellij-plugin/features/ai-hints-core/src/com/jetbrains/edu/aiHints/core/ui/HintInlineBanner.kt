@@ -7,8 +7,10 @@ import com.intellij.ui.NotificationBalloonRoundShadowBorderProvider
 import com.intellij.ui.RoundedLineBorder
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesCounterUsageCollector
+import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesEventFields.HintBannerType
 import com.jetbrains.edu.aiHints.core.messages.EduAIHintsCoreBundle
-import com.jetbrains.edu.aiHints.core.statistics.EduAIHintsCounterUsageCollector
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.ui.EduColors
 import org.jetbrains.annotations.Nls
@@ -18,6 +20,7 @@ import javax.swing.border.CompoundBorder
 
 open class HintInlineBanner(
   private val project: Project,
+  protected val task: Task,
   @Nls message: String,
   status: Status = Status.Success
 ) : InlineBanner(message, status.toNotificationBannerStatus()) {
@@ -31,15 +34,19 @@ open class HintInlineBanner(
     border = createBorder(status.borderColor)
     background = status.backgroundColor
     setCloseAction {
-      EduAIHintsCounterUsageCollector.hintBannerClosed()
+      EduAIFeaturesCounterUsageCollector.hintBannerClosed(task)
     }
   }
 
   @RequiresEdt
   fun display() {
-    EduAIHintsCounterUsageCollector.hintBannerShown(
-      EduAIHintsCounterUsageCollector.HintBannerType.from(this@HintInlineBanner)
-    )
+    val hintBannerType = when (this) {
+      is CodeHintInlineBanner -> HintBannerType.CODE
+      is TextHintInlineBanner -> HintBannerType.TEXT
+      is ErrorHintInlineBanner -> HintBannerType.ERROR
+      else -> error("Unexpected hint banner type: ${javaClass.simpleName}")
+    }
+    EduAIFeaturesCounterUsageCollector.hintBannerShown(hintBannerType, task)
     TaskToolWindowView.getInstance(project).addInlineBannerToCheckPanel(this@HintInlineBanner)
   }
 

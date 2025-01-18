@@ -13,8 +13,9 @@ import org.jetbrains.annotations.Nls
 
 class TextHintInlineBanner(
   project: Project,
+  task: Task,
   message: @Nls String,
-) : HintInlineBanner(project, message) {
+) : HintInlineBanner(project, task, message) {
   fun addFeedbackLink(task: Task, studentSolution: String, textHint: TextHint): TextHintInlineBanner {
     val project = task.project ?: return this
     val course = project.course.asSafely<EduCourse>() ?: return this

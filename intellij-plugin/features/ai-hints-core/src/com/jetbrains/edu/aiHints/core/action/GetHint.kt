@@ -4,9 +4,9 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.project.DumbService
+import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesCounterUsageCollector
 import com.jetbrains.edu.aiHints.core.HintsLoader
 import com.jetbrains.edu.aiHints.core.messages.EduAIHintsCoreBundle
-import com.jetbrains.edu.aiHints.core.statistics.EduAIHintsCounterUsageCollector
 import com.jetbrains.edu.learning.EduUtilsKt.showPopup
 import com.jetbrains.edu.learning.actions.ActionWithProgressIcon
 import com.jetbrains.edu.learning.actions.EduAIHintsUtils
@@ -41,7 +41,7 @@ class GetHint : ActionWithProgressIcon() {
     val taskToolWindow = TaskToolWindowView.getInstance(project)
     val task = taskToolWindow.currentTask ?: return
     taskToolWindow.updateCheckPanel(task)
-    EduAIHintsCounterUsageCollector.getHint()
+    EduAIFeaturesCounterUsageCollector.hintButtonClicked(task)
     HintsLoader.getInstance(project).getHint(task)
   }
 
