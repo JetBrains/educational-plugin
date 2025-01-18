@@ -2,6 +2,7 @@ package com.jetbrains.edu.aiHints.core.ui
 
 import com.intellij.openapi.project.Project
 import com.intellij.util.asSafely
+import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesCounterUsageCollector
 import com.jetbrains.edu.aiHints.core.feedback.dialog.ErrorHintFeedbackDialog
 import com.jetbrains.edu.aiHints.core.messages.EduAIHintsCoreBundle
 import com.jetbrains.edu.learning.course
@@ -12,12 +13,14 @@ import org.jetbrains.annotations.Nls
 
 class ErrorHintInlineBanner(
   project: Project,
+  task: Task,
   message: @Nls String,
   retryAction: Runnable? = null
-) : HintInlineBanner(project, message, Status.Error) {
+) : HintInlineBanner(project, task, message, Status.Error) {
   init {
     if (retryAction != null) {
       addAction(EduAIHintsCoreBundle.message("hints.label.retry")) {
+        EduAIFeaturesCounterUsageCollector.hintRetryClicked(task)
         close()
         retryAction.run()
       }

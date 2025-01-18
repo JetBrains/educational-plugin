@@ -3,9 +3,9 @@ package com.jetbrains.edu.aiHints.core.ui
 import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.openapi.project.Project
 import com.intellij.util.asSafely
+import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesCounterUsageCollector
 import com.jetbrains.edu.aiHints.core.feedback.dialog.CodeHintFeedbackDialog
 import com.jetbrains.edu.aiHints.core.messages.EduAIHintsCoreBundle
-import com.jetbrains.edu.aiHints.core.statistics.EduAIHintsCounterUsageCollector
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.project
@@ -16,9 +16,10 @@ import org.jetbrains.annotations.Nls
 
 class CodeHintInlineBanner(
   project: Project,
+  task: Task,
   message: @Nls String,
   private val highlighter: RangeHighlighter? = null
-) : HintInlineBanner(project, message) {
+) : HintInlineBanner(project, task, message) {
 
   override fun removeNotify() {
     super.removeNotify()
@@ -27,8 +28,8 @@ class CodeHintInlineBanner(
 
   fun addCodeHint(showInCodeAction: () -> Unit): CodeHintInlineBanner {
     addAction(EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.show.code.text")) {
+      EduAIFeaturesCounterUsageCollector.hintShowInCodeClicked(task)
       showInCodeAction()
-      EduAIHintsCounterUsageCollector.showInCodeClicked()
     }
     return this
   }

@@ -48,7 +48,7 @@ class HintsLoader(private val project: Project, private val scope: CoroutineScop
     scope.launch(Dispatchers.Default) {
       if (!mutex.tryLock()) {
         withContext(Dispatchers.EDT) {
-          ErrorHintInlineBanner(project, EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.already.in.progress")).display()
+          ErrorHintInlineBanner(project, task, EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.already.in.progress")).display()
         }
         return@launch
       }
@@ -66,7 +66,7 @@ class HintsLoader(private val project: Project, private val scope: CoroutineScop
         }.getOrElse {
           withContext(Dispatchers.EDT) {
             val errorMessage = AiAssistantException.get(it).message
-            ErrorHintInlineBanner(project, errorMessage) { getHint(task) }
+            ErrorHintInlineBanner(project, task, errorMessage) { getHint(task) }
               .addFeedbackLink(task, taskFileText, errorMessage)
               .display()
           }
@@ -77,7 +77,7 @@ class HintsLoader(private val project: Project, private val scope: CoroutineScop
         if (codeHint != null) {
           withContext(Dispatchers.EDT) {
             val highlighter = highlightFirstCodeDiffPositionOrNull(project, taskVirtualFile, taskFileText, codeHint.code)
-            CodeHintInlineBanner(project, hint.textHint.text, highlighter)
+            CodeHintInlineBanner(project, task, hint.textHint.text, highlighter)
               .addCodeHint { showInCodeAction(project, taskVirtualFile, taskFileText, codeHint.code) }
               .addFeedbackLink(task, taskFileText, hint.textHint, codeHint)
               .display()
@@ -85,7 +85,7 @@ class HintsLoader(private val project: Project, private val scope: CoroutineScop
           return@launch
         }
         withContext(Dispatchers.EDT) {
-          TextHintInlineBanner(project, hint.textHint.text)
+          TextHintInlineBanner(project, task, hint.textHint.text)
             .addFeedbackLink(task, taskFileText, hint.textHint)
             .display()
         }

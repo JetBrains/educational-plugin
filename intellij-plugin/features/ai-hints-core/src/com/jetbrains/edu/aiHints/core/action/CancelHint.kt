@@ -3,7 +3,7 @@ package com.jetbrains.edu.aiHints.core.action
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAware
-import com.jetbrains.edu.aiHints.core.statistics.EduAIHintsCounterUsageCollector
+import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesCounterUsageCollector
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.ActionWithButtonCustomComponent
 import com.jetbrains.edu.learning.actions.ApplyCodeAction.Companion.isGetHintDiff
@@ -24,7 +24,7 @@ class CancelHint : ActionWithButtonCustomComponent(), DumbAware {
     project.closeFileEditor(e)
     val task = project.getCurrentTask() ?: return
     TaskToolWindowView.getInstance(project).updateCheckPanel(task)
-    EduAIHintsCounterUsageCollector.codeHintDeclined()
+    EduAIFeaturesCounterUsageCollector.codeHintCancelled(task)
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
