@@ -18,7 +18,7 @@ import com.jetbrains.edu.ai.translation.TranslationLoader
 import com.jetbrains.edu.ai.translation.isSameLanguage
 import com.jetbrains.edu.ai.translation.settings.AutoTranslationProperties
 import com.jetbrains.edu.ai.translation.settings.TranslationSettings
-import com.jetbrains.edu.ai.translation.statistics.EduAITranslationCounterUsageCollector
+import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesCounterUsageCollector
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.ai.TranslationProperties
@@ -39,7 +39,7 @@ class CourseTranslationPopup(private val project: Project, private val course: E
   private val popup = createPopup()
 
   fun show(point: RelativePoint) {
-    EduAITranslationCounterUsageCollector.translationButtonClicked(course)
+    EduAIFeaturesCounterUsageCollector.translationButtonClicked(course)
     popup.show(point)
   }
 
@@ -100,7 +100,7 @@ class CourseTranslationPopup(private val project: Project, private val course: E
       TranslationLoader.getInstance(project).fetchAndApplyTranslation(course, language)
     }
     else {
-      EduAITranslationCounterUsageCollector.translationDisabled(course, language)
+      EduAIFeaturesCounterUsageCollector.translationDisabled(course, language)
       TranslationProjectSettings.getInstance(project).setTranslation(null)
     }
     popup.closeOk(null)
@@ -116,7 +116,7 @@ class CourseTranslationPopup(private val project: Project, private val course: E
 
   private fun translationLanguageChangeListener(component: ComboBox<TranslationLanguage>) {
     val language = component.selectedItem as? TranslationLanguage ?: return
-    EduAITranslationCounterUsageCollector.translationLanguagePickerOpened(course)
+    EduAIFeaturesCounterUsageCollector.translationLanguagePickerOpened(course)
     if (!language.isSameLanguage(course)) {
       TranslationLoader.getInstance(project).fetchAndApplyTranslation(course, language)
     }

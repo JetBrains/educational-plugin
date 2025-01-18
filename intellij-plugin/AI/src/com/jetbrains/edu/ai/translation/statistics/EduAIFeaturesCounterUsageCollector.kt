@@ -5,17 +5,17 @@ import com.intellij.internal.statistic.eventLog.events.EventPair
 import com.intellij.internal.statistic.service.fus.collectors.CounterUsagesCollector
 import com.jetbrains.edu.ai.translation.TranslationError
 import com.jetbrains.edu.ai.translation.settings.TranslationSettings
-import com.jetbrains.edu.ai.translation.statistics.EduAITranslationEventFields.ALWAYS_TRANSLATE_FIELD
-import com.jetbrains.edu.ai.translation.statistics.EduAITranslationEventFields.ORIGINAL_LANG_FIELD
-import com.jetbrains.edu.ai.translation.statistics.EduAITranslationEventFields.TRANSLATION_ERROR_FIELD
-import com.jetbrains.edu.ai.translation.statistics.EduAITranslationEventFields.TRANSLATION_LANG_FIELD
+import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesEventFields.ALWAYS_TRANSLATE_FIELD
+import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesEventFields.ORIGINAL_LANG_FIELD
+import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesEventFields.TRANSLATION_ERROR_FIELD
+import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesEventFields.TRANSLATION_LANG_FIELD
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.statistics.EduFields.COURSE_ID_FIELD
 import com.jetbrains.edu.learning.statistics.EventLogGroup
 import com.jetbrains.edu.learning.statistics.registerEvent
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
 
-class EduAITranslationCounterUsageCollector : CounterUsagesCollector() {
+class EduAIFeaturesCounterUsageCollector : CounterUsagesCollector() {
   override fun getGroup(): EventLogGroup = GROUP
 
   @Suppress("CompanionObjectInExtension")
