@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.util.asSafely
 import com.jetbrains.edu.aiHints.core.feedback.dialog.CodeHintFeedbackDialog
 import com.jetbrains.edu.aiHints.core.messages.EduAIHintsCoreBundle
+import com.jetbrains.edu.aiHints.core.statistics.EduAIHintsCounterUsageCollector
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.project
@@ -27,6 +28,7 @@ class CodeHintInlineBanner(
   fun addCodeHint(showInCodeAction: () -> Unit): CodeHintInlineBanner {
     addAction(EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.show.code.text")) {
       showInCodeAction()
+      EduAIHintsCounterUsageCollector.showInCodeClicked()
     }
     return this
   }

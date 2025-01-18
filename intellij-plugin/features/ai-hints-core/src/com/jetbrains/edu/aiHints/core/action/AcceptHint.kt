@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.aiHints.core.messages.EduAIHintsCoreBundle
+import com.jetbrains.edu.aiHints.core.statistics.EduAIHintsCounterUsageCollector
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.ApplyCodeAction
 import com.jetbrains.edu.learning.actions.EduAIHintsUtils
@@ -38,6 +39,7 @@ class AcceptHint : ApplyCodeAction() {
     EduAIHintsUtils.HintStateManager.getInstance(project).acceptHint()
     val task = project.getCurrentTask()
     TaskToolWindowView.getInstance(project).updateCheckPanel(task)
+    EduAIHintsCounterUsageCollector.codeHintAccepted()
   }
 
   override fun showFailedNotification(project: Project) = EduNotificationManager.showErrorNotification(
