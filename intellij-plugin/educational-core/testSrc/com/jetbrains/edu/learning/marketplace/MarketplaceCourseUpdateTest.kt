@@ -456,7 +456,7 @@ class MarketplaceCourseUpdateTest : CourseGenerationTestBase<EmptyProjectSetting
   }
 
   @Test
-  fun `test framework lesson not updated if tasks number on remote increased`() {
+  fun `test framework lesson updates if tasks number on remote increased`() {
     val taskFileName = "src/Task.kt"
     val testFileName = "test/Tests.kt"
     val oldTaskFileText = "fun foo() {}"
@@ -481,11 +481,11 @@ class MarketplaceCourseUpdateTest : CourseGenerationTestBase<EmptyProjectSetting
           taskFile(taskFileName, updatedTaskFileText)
           taskFile(testFileName, updatedTestFileText)
         }
-        eduTask("task1", stepId = 2, taskDescription = updatedTaskDescriptionText, taskDescriptionFormat = DescriptionFormat.HTML) {
+        eduTask("task2", stepId = 2, taskDescription = updatedTaskDescriptionText, taskDescriptionFormat = DescriptionFormat.HTML) {
           taskFile(taskFileName, updatedTaskFileText)
           taskFile(testFileName, updatedTestFileText)
         }
-        eduTask("task1", stepId = 3, taskDescription = updatedTaskDescriptionText, taskDescriptionFormat = DescriptionFormat.HTML) {
+        eduTask("task3", stepId = 3, taskDescription = updatedTaskDescriptionText, taskDescriptionFormat = DescriptionFormat.HTML) {
           taskFile(taskFileName, updatedTaskFileText)
           taskFile(testFileName, updatedTestFileText)
         }
@@ -508,6 +508,9 @@ class MarketplaceCourseUpdateTest : CourseGenerationTestBase<EmptyProjectSetting
         dir("task2") {
           file("task.html")
         }
+        dir("task3") {
+          file("task.html")
+        }
       }
     }
 
@@ -515,12 +518,15 @@ class MarketplaceCourseUpdateTest : CourseGenerationTestBase<EmptyProjectSetting
 
     val firstTask = getFirstTask(course)
     checkNotNull(firstTask)
-    checkTaskFiles(firstTask, oldTaskFileText, oldTestFileText, oldTaskDescriptionText, taskFileName, testFileName)
+    checkTaskFiles(firstTask, updatedTaskFileText, updatedTestFileText, updatedTaskDescriptionText, taskFileName, testFileName)
 
     val allTasks = course.allTasks
-    assertEquals(2, allTasks.size)
+    assertEquals(3, allTasks.size)
     val secondTask = allTasks[1]
-    checkTaskFiles(secondTask, oldTaskFileText, oldTestFileText, oldTaskDescriptionText, taskFileName, testFileName)
+    checkTaskFiles(secondTask, updatedTaskFileText, updatedTestFileText, updatedTaskDescriptionText, taskFileName, testFileName)
+
+    val thirdTask = allTasks[2]
+    checkTaskFiles(thirdTask, updatedTaskFileText, updatedTestFileText, updatedTaskDescriptionText, taskFileName, testFileName)
   }
 
   @Test

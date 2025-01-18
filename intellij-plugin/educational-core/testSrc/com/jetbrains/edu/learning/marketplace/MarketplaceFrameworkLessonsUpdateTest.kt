@@ -2,8 +2,10 @@ package com.jetbrains.edu.learning.marketplace
 
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.learning.actions.NextTaskAction
+import com.jetbrains.edu.learning.assertContentsEqual
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
 import com.jetbrains.edu.learning.stepik.hyperskill.FrameworkLessonsUpdateTest
@@ -131,6 +133,100 @@ class MarketplaceFrameworkLessonsUpdateTest : FrameworkLessonsUpdateTest<EduCour
         }
         for (index in 1..taskNum) {
           dir("task$index") {
+            file("task.html")
+          }
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }.assertEquals(rootDir, myFixture)
+  }
+
+  @Test
+  fun `test new tasks in the end of framework lessons update correctly`() {
+    val taskNum = 2
+
+    val bazText = "fun baz() {}"
+
+    val eduCourse = courseWithFiles(
+      language = FakeGradleBasedLanguage,
+      courseProducer = ::EduCourse
+    ) {
+      frameworkLesson("lesson1") {
+        for (index in 1..taskNum) {
+          eduTask("task$index", stepId = index, taskDescription = "Old Description", taskDescriptionFormat = DescriptionFormat.HTML) {
+            taskFile("src/Baz.kt", bazText)
+          }
+        }
+      }
+    } as EduCourse
+    eduCourse.marketplaceCourseVersion = 1
+    localCourse = eduCourse
+
+    val newTasksNum = 2
+
+    val newBazText = "fun newBaz() {}"
+    val barText = "fun bar() {}"
+
+    updateCourse {
+      repeat(newTasksNum) { index ->
+        val newTask = EduTask("newTask${index + 1}").apply {
+          val taskFile1 = TaskFile("src/Baz.kt", InMemoryTextualContents(newBazText))
+          taskFile1.addAnswerPlaceholder(AnswerPlaceholder(1, "TODO(1)"))
+          addTaskFile(taskFile1)
+
+          val taskFile2 = TaskFile("src/Bar.kt", InMemoryTextualContents(barText))
+          taskFile2.addAnswerPlaceholder(AnswerPlaceholder(2, "TODO(2)"))
+          addTaskFile(taskFile2)
+          descriptionText = "New Description"
+          descriptionFormat = DescriptionFormat.HTML
+        }
+        lessons[0].addTask(newTask)
+      }
+    }
+
+    assertTrue(localCourse.taskList.size == taskNum + newTasksNum)
+
+    for (index in 1..taskNum) {
+      assertContentsEqual(localCourse.taskList[index - 1], "src/Baz.kt", bazText)
+    }
+
+    for (index in 1..newTasksNum) {
+      val task = localCourse.taskList[taskNum + index - 1]
+      assertContentsEqual(task, "src/Baz.kt", newBazText)
+      assertContentsEqual(task, "src/Bar.kt", barText)
+      val bazAnswerPlaceholders = task.taskFiles["src/Baz.kt"]!!.answerPlaceholders
+      val barAnswerPlaceholders = task.taskFiles["src/Bar.kt"]!!.answerPlaceholders
+      assertEquals("lesson1#${task.name}#src/Baz.kt[1, 8]", bazAnswerPlaceholders.single().toString())
+      assertEquals("lesson1#${task.name}#src/Bar.kt[2, 9]", barAnswerPlaceholders.single().toString())
+      assertEquals("New Description", task.descriptionText)
+      assertEquals(DescriptionFormat.HTML, task.descriptionFormat)
+    }
+
+    val task1 = localCourse.taskList[0]
+
+    withVirtualFileListener(localCourse) {
+      task1.openTaskFileInEditor("src/Baz.kt")
+      testAction(NextTaskAction.ACTION_ID)
+      testAction(NextTaskAction.ACTION_ID)
+      testAction(NextTaskAction.ACTION_ID)
+    }
+
+    fileTree {
+      dir("lesson1") {
+        dir("task") {
+          dir("src") {
+            file("Baz.kt", newBazText)
+            file("Bar.kt", barText)
+          }
+        }
+        for (index in 1..taskNum) {
+          dir("task$index") {
+            file("task.html")
+          }
+        }
+        for (index in 1..newTasksNum) {
+          dir("newTask$index") {
             file("task.html")
           }
         }

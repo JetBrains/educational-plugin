@@ -220,6 +220,12 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
             remoteTask.init(currentLesson, false)
           }
         }
+        val currentLessonDir = currentLesson.getDir(project.courseDir) ?: error("Failed to get dir for current lesson")
+        val newRemoteTasks = lessonFromServer.taskList.drop(currentLesson.taskList.size)
+        for (remoteTask in newRemoteTasks) {
+          remoteTask.init(currentLesson, false)
+          createTaskDirectories(project, currentLessonDir, remoteTask)
+        }
       }
     }
     else {
@@ -240,8 +246,7 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
     val localTasks = taskList
     return when {
       !shouldFrameworkLessonBeUpdated(remoteLesson) -> false
-      // currently we do not support adding new tasks to the framework lessons, to be fixed in https://youtrack.jetbrains.com/issue/EDU-5753
-      tasksFromServer.size != localTasks.size -> false
+      tasksFromServer.size > localTasks.size -> true
       localTasks.zip(tasksFromServer).any { (task, remoteTask) -> taskChanged(remoteTask, task) } -> true
       else -> false
     }
