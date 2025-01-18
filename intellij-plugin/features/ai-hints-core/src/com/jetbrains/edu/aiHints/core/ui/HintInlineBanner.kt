@@ -8,6 +8,7 @@ import com.intellij.ui.RoundedLineBorder
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.aiHints.core.messages.EduAIHintsCoreBundle
+import com.jetbrains.edu.aiHints.core.statistics.EduAIHintsCounterUsageCollector
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.ui.EduColors
 import org.jetbrains.annotations.Nls
@@ -29,10 +30,16 @@ open class HintInlineBanner(
     }
     border = createBorder(status.borderColor)
     background = status.backgroundColor
+    setCloseAction {
+      EduAIHintsCounterUsageCollector.hintBannerClosed()
+    }
   }
 
   @RequiresEdt
   fun display() {
+    EduAIHintsCounterUsageCollector.hintBannerShown(
+      EduAIHintsCounterUsageCollector.HintBannerType.from(this@HintInlineBanner)
+    )
     TaskToolWindowView.getInstance(project).addInlineBannerToCheckPanel(this@HintInlineBanner)
   }
 
