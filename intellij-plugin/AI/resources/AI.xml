@@ -30,7 +30,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <statistics.counterUsagesCollector
-        implementationClass="com.jetbrains.edu.ai.translation.statistics.EduAITranslationCounterUsageCollector"/>
+        implementationClass="com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesCounterUsageCollector"/>
 
     <applicationConfigurable groupId="Educational"
                              provider="com.jetbrains.edu.ai.settings.EduAIConfigurableProvider"

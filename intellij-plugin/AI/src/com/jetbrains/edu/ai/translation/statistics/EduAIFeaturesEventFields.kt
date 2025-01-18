@@ -5,7 +5,7 @@ import com.jetbrains.edu.ai.translation.TranslationError
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import java.util.*
 
-object EduAITranslationEventFields {
+object EduAIFeaturesEventFields {
   private const val ALWAYS_TRANSLATE: String = "always_translate"
   private const val ORIGINAL_LANG: String = "original_lang"
   private const val TRANSLATION_ERROR: String = "translation_error"
