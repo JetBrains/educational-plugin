@@ -14,8 +14,11 @@ class MarketplaceRestService : BaseMarketplaceRestService(MARKETPLACE) {
     val courseId = getIntParameter(COURSE_ID, urlDecoder)
     if (courseId == -1) return Err("No course id specified")
 
-    val eduTaskId = getIntParameter(EDU_TASK_ID, urlDecoder)
-    return Ok(MarketplaceOpenCourseRequest(courseId, eduTaskId))
+    var studyItemId = getIntParameter(STUDY_ITEM_ID, urlDecoder)
+    if (studyItemId == -1) {
+      studyItemId = getIntParameter(EDU_TASK_ID, urlDecoder)
+    }
+    return Ok(MarketplaceOpenCourseRequest(courseId, studyItemId))
   }
 
   companion object {

@@ -35,7 +35,7 @@ abstract class BaseMarketplaceRestService(platformName: String) : OAuthRestServi
 
     createMarketplaceOpenCourseRequest(urlDecoder).map { marketplaceRequest ->
       openInIDE(marketplaceRequest, request, context)
-      logger<BaseMarketplaceRestService>().info("Received marketplace request: courseId=${marketplaceRequest.courseId}, taskId=${marketplaceRequest.taskId}, ltiSettings=${marketplaceRequest.ltiSettingsDTO}")
+      logger<BaseMarketplaceRestService>().info("Received marketplace request: courseId=${marketplaceRequest.courseId}, studyItemId=${marketplaceRequest.studyItemId}, ltiSettings=${marketplaceRequest.ltiSettingsDTO}")
     }.onError { error ->
       logger<BaseMarketplaceRestService>().warn(error)
       EduNotificationManager.create(
@@ -91,6 +91,7 @@ abstract class BaseMarketplaceRestService(platformName: String) : OAuthRestServi
   companion object {
     internal const val INFO = "info"
     const val EDU_TASK_ID = "edu_task_id"
+    const val STUDY_ITEM_ID = "edu_study_item_id"
     private val JETBRAINS_ORIGIN_PATTERN = Pattern.compile("https://([a-z0-9-]+\\.)*jetbrains.com$")
     private val TRUSTED_ORIGINS = setOf(PLUGINS_REPOSITORY_URL, PLUGINS_EDU_DEMO, PLUGINS_MASTER_DEMO)
   }
