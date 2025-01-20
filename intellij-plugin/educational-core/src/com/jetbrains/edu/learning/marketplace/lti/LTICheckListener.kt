@@ -53,12 +53,12 @@ class LTICheckListener : CheckListener {
       Success -> {
         EduNotificationManager.create(
           NotificationType.INFORMATION,
-          EduCoreBundle.message("lti.grades.post.success.title"),
+          EduCoreBundle.message("lti.grades.post.status.sent.title"),
           if (lmsDescription.isNullOrEmpty()) {
-            EduCoreBundle.message("lti.grades.post.success.text")
+            EduCoreBundle.message("lti.grades.post.status.sent.text")
           }
           else {
-            EduCoreBundle.message("lti.grades.post.success.text.with.lms", lmsDescription)
+            EduCoreBundle.message("lti.grades.post.status.sent.text.with.lms", lmsDescription)
           }
         ).notify(project)
       }
