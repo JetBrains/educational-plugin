@@ -39,7 +39,8 @@ include(
   "intellij-plugin:localization",
   "intellij-plugin:features:command-line",
   "intellij-plugin:features:ai-hints-core",
-  "intellij-plugin:features:ai-hints-kotlin"
+  "intellij-plugin:features:ai-hints-kotlin",
+  "intellij-plugin:features:ai-hints-python",
 )
 
 if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {

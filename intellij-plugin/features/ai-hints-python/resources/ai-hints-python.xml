@@ -1,0 +1,7 @@
+<idea-plugin package="com.jetbrains.edu.aiHints.python">
+  <dependencies>
+    <!--suppress PluginXmlValidity -->
+    <module name="ai-hints-core"/>
+    <plugin id="com.intellij.modules.python"/>
+  </dependencies>
+</idea-plugin>

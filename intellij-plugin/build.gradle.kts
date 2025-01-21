@@ -318,6 +318,7 @@ dependencies {
     pluginModule(implementation(project("features:command-line")))
     pluginModule(implementation(project("features:ai-hints-core")))
     pluginModule(implementation(project("features:ai-hints-kotlin")))
+    pluginModule(implementation(project("features:ai-hints-python")))
     pluginModule(implementation(project("localization")))
 
     testFramework(TestFrameworkType.Bundled)
@@ -989,6 +990,30 @@ project("features:ai-hints-kotlin") {
       intellijIde(project, ideVersion)
 
       intellijPlugins(kotlinPlugin)
+    }
+
+    implementation(project(":intellij-plugin:educational-core"))
+    implementation(project(":intellij-plugin:features:ai-hints-core"))
+
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+    testImplementation(project(":intellij-plugin:features:ai-hints-core", "testOutput"))
+  }
+}
+
+project("features:ai-hints-python") {
+  dependencies {
+    intellijPlatform {
+      // needed to load `org.toml.lang plugin` for Python plugin in tests
+      val ideVersion = if (isRiderIDE) ideaVersion else baseVersion
+      intellijIde(project, ideVersion)
+
+      val pluginList = listOfNotNull(
+        pythonPlugin,
+        if (isJvmCenteredIDE) javaPlugin else null,
+        // needed to load `intellij.python.community.impl` module of Python plugin in tests
+        tomlPlugin
+      )
+      intellijPlugins(pluginList)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
