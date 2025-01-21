@@ -527,6 +527,17 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
   }
 
   @Test
+  fun `test font additional file with upper case extension`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
+      lesson("lesson1") {
+        eduTask("task1") {}
+      }
+      additionalFile("test.TTF", InMemoryBinaryContents(byteArrayOf(1, 2)))
+    }
+    doTest(course)
+  }
+
+  @Test
   fun `test git object additional file`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
