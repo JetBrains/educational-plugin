@@ -48,7 +48,7 @@ fun KtNamedFunction.generateSignature(signatureSource: SignatureSource): Functio
       },
       functionDescriptor.returnType.toString(),
       signatureSource,
-      bodyExpression?.text?.split(System.lineSeparator())?.size
+      bodyExpression?.text?.lines()?.size
     )
   }
   return null
