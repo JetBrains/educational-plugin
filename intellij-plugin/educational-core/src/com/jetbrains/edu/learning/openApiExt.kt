@@ -112,7 +112,7 @@ private fun isGitObject(name: String): Boolean {
 
 private val fontExtensions = setOf("ttf", "otf", "ttc", "woff", "woff2")
 
-private fun isFontExtension(extension: String): Boolean = fontExtensions.contains(extension)
+private fun isFontExtension(extension: String): Boolean = fontExtensions.contains(extension.lowercase())
 
 @get:TestOnly
 val Project.isLight: Boolean get() = (this as? ProjectEx)?.isLight == true
