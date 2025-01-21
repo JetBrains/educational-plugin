@@ -1,0 +1,13 @@
+<idea-plugin>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <applicationService serviceInterface="com.jetbrains.edu.learning.marketplace.lti.LTIConnector"
+                        serviceImplementation="com.jetbrains.edu.learning.marketplace.lti.LTIConnectorImpl"
+                        testServiceImplementation="com.jetbrains.edu.learning.lti.MockLTIConnector"/>
+    <httpRequestHandler implementation="com.jetbrains.edu.learning.marketplace.lti.LTIRestService"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="Educational">
+    <checkListener implementation="com.jetbrains.edu.learning.marketplace.lti.LTICheckListener"/>
+  </extensions>
+</idea-plugin>

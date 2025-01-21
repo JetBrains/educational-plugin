@@ -5,7 +5,6 @@
                         serviceImplementation="com.jetbrains.edu.learning.marketplace.api.MarketplaceConnectorImpl"
                         testServiceImplementation="com.jetbrains.edu.learning.marketplace.api.MockMarketplaceConnector"/>
     <httpRequestHandler implementation="com.jetbrains.edu.learning.marketplace.MarketplaceRestService"/>
-    <httpRequestHandler implementation="com.jetbrains.edu.learning.marketplace.lti.LTIRestService"/>
     <statusBarWidgetFactory id="widget.marketplace"
                             implementation="com.jetbrains.edu.learning.marketplace.MarketplaceWidgetFactory"
                             order="before positionWidget"/>
@@ -18,7 +17,6 @@
   <extensions defaultExtensionNs="Educational">
     <optionsProvider instance="com.jetbrains.edu.learning.marketplace.settings.MarketplaceOptions"/>
     <checkListener implementation="com.jetbrains.edu.learning.marketplace.MarketplaceCheckListener"/>
-    <checkListener implementation="com.jetbrains.edu.learning.marketplace.lti.LTICheckListener"/>
     <submissionsProvider implementation="com.jetbrains.edu.learning.marketplace.submissions.MarketplaceSubmissionsProvider"/>
     <communitySubmissionsProvider implementation="com.jetbrains.edu.learning.marketplace.submissions.MarketplaceCommunitySubmissionsProvider"/>
     <taskNavigationExtension implementation="com.jetbrains.edu.learning.marketplace.MarketplaceTaskNavigationExtension"/>

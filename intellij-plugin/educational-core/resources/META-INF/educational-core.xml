@@ -560,6 +560,7 @@
 
   <xi:include href="/META-INF/Hyperskill.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/Marketplace.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/LTI.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <extensions defaultExtensionNs="Educational">
     <optionsProvider instance="com.jetbrains.edu.learning.agreement.UserAgreementOptions"/>
   </extensions>
