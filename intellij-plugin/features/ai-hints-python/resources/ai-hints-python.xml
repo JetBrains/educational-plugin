@@ -4,4 +4,9 @@
     <module name="ai-hints-core"/>
     <plugin id="com.intellij.modules.python"/>
   </dependencies>
+
+  <extensions defaultExtensionNs="aiHints">
+    <!--suppress PluginXmlValidity -->
+    <functionSignatureResolver language="Python" implementationClass="com.jetbrains.edu.aiHints.python.PyFunctionSignatureResolver"/>
+  </extensions>
 </idea-plugin>
