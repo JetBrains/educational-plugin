@@ -8,5 +8,6 @@
   <extensions defaultExtensionNs="aiHints">
     <!--suppress PluginXmlValidity -->
     <functionSignatureResolver language="Python" implementationClass="com.jetbrains.edu.aiHints.python.PyFunctionSignatureResolver"/>
+    <filesDiffer language="Python" implementationClass="com.jetbrains.edu.aiHints.python.PyFilesDiffer"/>
   </extensions>
 </idea-plugin>
