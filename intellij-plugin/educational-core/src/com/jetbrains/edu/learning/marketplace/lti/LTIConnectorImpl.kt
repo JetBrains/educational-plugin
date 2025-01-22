@@ -5,12 +5,16 @@ import com.jetbrains.edu.learning.network.executeCall
 import com.jetbrains.edu.learning.onError
 import okhttp3.ConnectionPool
 
-class LTIConnectorImpl : LTIConnector {
+open class LTIConnectorImpl : LTIConnector {
 
   private val connectionPool: ConnectionPool = ConnectionPool()
 
+  // to be overridden in tests
+  open fun getUrlForService(onlineService: LTIOnlineService): String = onlineService.serviceURL
+
   override fun postTaskChecked(onlineService: LTIOnlineService, launchId: String, courseEduId: Int, taskEduId: Int, solved: Boolean): PostTaskSolvedStatus {
-    val retrofit = createRetrofitBuilder(onlineService.serviceURL, connectionPool, LTIAuthBundle.value("ltiServiceToken")).build()
+    val serviceUrl = getUrlForService(onlineService)
+    val retrofit = createRetrofitBuilder(serviceUrl, connectionPool, LTIAuthBundle.value("ltiServiceToken")).build()
     val ltiEndpoints = retrofit.create(LTIEndpoints::class.java)
 
     val response = ltiEndpoints.reportTaskSolved(launchId, courseEduId, taskEduId, solved).executeCall(omitErrors = true).onError {
