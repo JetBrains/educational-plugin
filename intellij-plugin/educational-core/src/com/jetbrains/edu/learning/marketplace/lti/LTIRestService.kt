@@ -21,7 +21,7 @@ class LTIRestService : BaseMarketplaceRestService(LTI) {
       studyItemId = getIntParameter(EDU_TASK_ID, urlDecoder)
 
       if (studyItemId == -1) {
-        return Err("LTI request has neither study item id nor task id.")
+        return Err("The LTI request contains neither a study item ID nor a task ID.")
       }
     }
 
