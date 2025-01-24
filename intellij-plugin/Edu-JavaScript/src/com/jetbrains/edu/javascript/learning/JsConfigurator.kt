@@ -9,7 +9,9 @@ import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
+import com.jetbrains.edu.learning.configuration.ArchiveFileInfo
 import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.configuration.buildArchiveFileInfo
 import com.jetbrains.edu.learning.courseFormat.Course
 import javax.swing.Icon
 
@@ -38,8 +40,20 @@ open class JsConfigurator : EduConfigurator<JsNewProjectSettings> {
   override val isEnabled: Boolean
     get() = !PlatformUtils.isRider()
 
-  override fun excludeFromArchive(holder: CourseInfoHolder<out Course?>, file: VirtualFile): Boolean =
-    super.excludeFromArchive(holder, file) || file.path.contains("node_modules") || "package-lock.json" == file.name
+  override fun archiveFileInfo(holder: CourseInfoHolder<out Course?>, file: VirtualFile): ArchiveFileInfo =
+    buildArchiveFileInfo(holder, file) {
+      when {
+        hasFolder("node_modules") -> {
+          excludeFromArchive()
+        }
+
+        file.name == "package-lock.json" -> {
+          excludeFromArchive()
+        }
+
+        else -> use(super.archiveFileInfo(holder, file))
+      }
+    }
 
   override val defaultPlaceholderText: String
     get() = "/* TODO */"

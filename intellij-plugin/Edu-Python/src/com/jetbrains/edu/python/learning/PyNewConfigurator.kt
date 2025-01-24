@@ -4,7 +4,9 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
+import com.jetbrains.edu.learning.configuration.ArchiveFileInfo
 import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.configuration.buildArchiveFileInfo
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.python.learning.PyConfigurator.Companion.TASK_PY
 import com.jetbrains.edu.python.learning.checker.PyNewTaskCheckerProvider
@@ -23,8 +25,16 @@ class PyNewConfigurator : EduConfigurator<PyProjectSettings> {
   override val testDirs: List<String>
     get() = listOf(TEST_FOLDER)
 
-  override fun excludeFromArchive(holder: CourseInfoHolder<out Course?>, file: VirtualFile): Boolean =
-    super.excludeFromArchive(holder, file) || excludeFromArchive(file)
+  override fun archiveFileInfo(holder: CourseInfoHolder<out Course?>, file: VirtualFile): ArchiveFileInfo =
+    buildArchiveFileInfo(holder, file) {
+      when {
+        excludeFromArchive(file) -> {
+          excludeFromArchive()
+        }
+
+        else -> use(super.archiveFileInfo(holder, file))
+      }
+    }
 
   override val taskCheckerProvider: TaskCheckerProvider
     get() = PyNewTaskCheckerProvider()
