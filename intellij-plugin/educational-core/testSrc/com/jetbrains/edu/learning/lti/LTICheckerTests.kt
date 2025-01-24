@@ -46,7 +46,7 @@ class LTICheckerTests : EduTestCase() {
     ltiSettings.onlineService = LTIOnlineService.ALPHA_TEST_2024
     doTest(solved = true) { urlPath, body ->
       if (urlPath == null) {
-        error("LTI should report something on solved check")
+        error("LTI should report something for a solved check")
       }
     }
   }
