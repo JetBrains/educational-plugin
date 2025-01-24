@@ -92,6 +92,7 @@ dependencies {
     pluginModule(implementation(project("localization")))
     pluginModule(implementation(project("features:ai-debugging-core")))
     pluginModule(implementation(project("features:ai-debugging-jvm")))
+    pluginModule(implementation(project("features:ai-debugging-kotlin")))
 
     testFramework(TestFrameworkType.Bundled)
   }
