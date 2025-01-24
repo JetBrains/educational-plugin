@@ -47,5 +47,6 @@
     <module name="ai-test-generation"/>
     <module name="ai-debugging-core"/>
     <module name="ai-debugging-jvm"/>
+    <module name="ai-debugging-kotlin"/>
   </content>
 </idea-plugin>

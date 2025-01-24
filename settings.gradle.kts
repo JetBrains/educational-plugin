@@ -43,7 +43,8 @@ include(
   "intellij-plugin:features:ai-hints-python",
   "intellij-plugin:features:ai-test-generation",
   "intellij-plugin:features:ai-debugging-core",
-  "intellij-plugin:features:ai-debugging-jvm"
+  "intellij-plugin:features:ai-debugging-jvm",
+  "intellij-plugin:features:ai-debugging-kotlin"
 )
 
 // Temporary workaround to make it work with 2025.1.
