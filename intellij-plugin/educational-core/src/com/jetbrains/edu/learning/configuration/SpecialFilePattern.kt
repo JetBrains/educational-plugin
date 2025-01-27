@@ -13,13 +13,39 @@ fun buildArchiveFileInfo(
 ): ArchiveFileInfo =
   ArchiveInfoBuilder(holder, file).apply(actions).generate()
 
+
+interface ArchiveInfoBuilderV2 {
+  fun excludeFromArchive(condition: (VirtualFile) -> Boolean)
+}
+
+class ArchiveInfoBuilderV2Impl : ArchiveInfoBuilderV2 {
+  val excludedFromArchiveConditions: MutableList<(VirtualFile) -> Boolean> = mutableListOf()
+
+  override fun excludeFromArchive(condition: (VirtualFile) -> Boolean) {
+    excludedFromArchiveConditions += condition
+  }
+}
+
+fun buildArchiveFileInfoV2(
+  holder: CourseInfoHolder<out Course?>,
+  file: VirtualFile,
+  actions: ArchiveInfoBuilderV2.() -> Unit
+): ArchiveFileInfo {
+  val builder = ArchiveInfoBuilderV2Impl()
+  builder.actions()
+
+  val excludeFromArchive = builder.excludedFromArchiveConditions.any { condition -> condition(file) }
+
+  return Info(excludeFromArchive)
+}
+
 class ArchiveInfoBuilder(
   private val holder: CourseInfoHolder<out Course?>,
   private val file: VirtualFile
 ) {
 
   private val info = Info(
-    excludedFromArchive=false
+    excludedFromArchive = false
   )
 
   fun excludeFromArchive() {
@@ -65,6 +91,6 @@ class ArchiveInfoBuilder(
   }
 }
 
-private class Info(
+class Info(
   override var excludedFromArchive: Boolean
 ) : ArchiveFileInfo

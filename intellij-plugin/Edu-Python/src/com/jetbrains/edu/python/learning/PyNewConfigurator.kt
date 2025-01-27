@@ -25,6 +25,12 @@ class PyNewConfigurator : EduConfigurator<PyProjectSettings> {
   override val testDirs: List<String>
     get() = listOf(TEST_FOLDER)
 
+  override fun metaBuilder(): EduConfigurator.MetaArchiveInfoBuilderV2 {
+    return (super.metaBuilder()) {
+      excludeFromArchive { true }
+    }
+  }
+
   override fun archiveFileInfo(holder: CourseInfoHolder<out Course?>, file: VirtualFile): ArchiveFileInfo =
     buildArchiveFileInfo(holder, file) {
       when {

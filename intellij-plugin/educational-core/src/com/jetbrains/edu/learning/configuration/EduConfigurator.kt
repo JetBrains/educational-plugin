@@ -51,6 +51,35 @@ interface EduConfigurator<Settings : EduProjectSettings> {
   val testFileName: String
   val taskCheckerProvider: TaskCheckerProvider
 
+  class MetaArchiveInfoBuilderV2(private val metaBuilders: List<ArchiveInfoBuilderV2.() -> Unit> = listOf()) {
+
+    fun generate(holder: CourseInfoHolder<out Course?>, file: VirtualFile): ArchiveFileInfo {
+      val builder = ArchiveInfoBuilderV2Impl()
+
+      metaBuilders.forEach {
+        it(builder)
+      }
+
+      val excludeFromArchive = builder.excludedFromArchiveConditions.any { condition -> condition(file) }
+
+      return Info(excludeFromArchive)
+    }
+
+    operator fun invoke(builder: ArchiveInfoBuilderV2.() -> Unit): MetaArchiveInfoBuilderV2 {
+      return MetaArchiveInfoBuilderV2(metaBuilders + builder)
+    }
+
+    companion object {
+      operator fun invoke(builder: ArchiveInfoBuilderV2.() -> Unit): MetaArchiveInfoBuilderV2 {
+        return MetaArchiveInfoBuilderV2(listOf(builder))
+      }
+    }
+  }
+
+  fun metaBuilder(): MetaArchiveInfoBuilderV2 = MetaArchiveInfoBuilderV2 {
+    excludeFromArchive { true }
+  }
+
   fun archiveFileInfo(holder: CourseInfoHolder<out Course?>, file: VirtualFile): ArchiveFileInfo =
     buildArchiveFileInfo(holder, file) {
       val inIdeaFolder = regex("^${Project.DIRECTORY_STORE_FOLDER}/")
@@ -204,3 +233,7 @@ fun EduConfigurator<*>.excludeFromArchive(project: Project, file: VirtualFile): 
 
 fun EduConfigurator<*>.excludeFromArchive(holder: CourseInfoHolder<out Course?>, file: VirtualFile): Boolean =
   archiveFileInfo(holder, file).excludedFromArchive
+
+fun EduConfigurator<*>.excludeFromArchiveV2(holder: CourseInfoHolder<out Course?>, file: VirtualFile): Boolean {
+  return metaBuilder().generate(holder, file).excludedFromArchive
+}

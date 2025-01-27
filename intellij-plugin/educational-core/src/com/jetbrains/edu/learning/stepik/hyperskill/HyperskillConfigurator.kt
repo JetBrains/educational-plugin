@@ -57,6 +57,10 @@ abstract class HyperskillConfigurator<T : EduProjectSettings>(private val baseCo
   override fun archiveFileInfo(holder: CourseInfoHolder<out Course?>, file: VirtualFile) =
     baseConfigurator.archiveFileInfo(holder, file)
 
+  override fun metaBuilder(): EduConfigurator.MetaArchiveInfoBuilderV2 {
+    return baseConfigurator.metaBuilder()
+  }
+
   override fun isTestFile(task: Task, path: String): Boolean {
     val isTestFile = baseConfigurator.isTestFile(task, path)
     val taskFile = task.getTaskFile(path)
