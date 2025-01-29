@@ -1,11 +1,11 @@
 package com.jetbrains.edu.aiHints.python
 
 import com.intellij.testFramework.utils.vfs.getPsiFile
-import com.jetbrains.edu.aiHints.core.FunctionSignaturesProvider
+import com.jetbrains.edu.aiHints.core.EduAIHintsProcessor
 import com.jetbrains.edu.aiHints.core.context.FunctionParameter
 import com.jetbrains.edu.aiHints.core.context.FunctionSignature
 import com.jetbrains.edu.aiHints.core.context.SignatureSource
-import com.jetbrains.edu.learning.EduActionTestCase
+import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.findTask
@@ -16,12 +16,12 @@ import org.junit.runners.Parameterized
 
 @Suppress("Junit4RunWithInspection")
 @RunWith(Parameterized::class)
-class PyFunctionSignaturesProviderTest(
+class PyFunctionSignaturesManagerTest(
   private val functionSignatures: List<FunctionSignature>,
   private val code: String,
-) : EduActionTestCase() {
+) : EduTestCase() {
   override fun createCourse() {
-    courseWithFiles {
+    courseWithFiles(language = PythonLanguage.INSTANCE) {
       lesson("py_lesson") {
         eduTask("py_task") {
           taskFile("py_task.py", code)
@@ -38,7 +38,9 @@ class PyFunctionSignaturesProviderTest(
       ?.getVirtualFile(project)
       ?.getPsiFile(project) ?: error("PsiFile is not found")
 
-    val actualResult = FunctionSignaturesProvider.getFunctionSignatures(psiFile, SignatureSource.MODEL_SOLUTION, PythonLanguage.INSTANCE)
+    val actualResult = EduAIHintsProcessor.forCourse(getCourse())
+      ?.getFunctionSignatureManager()
+      ?.getFunctionSignatures(psiFile, SignatureSource.MODEL_SOLUTION)
     assertEquals(functionSignatures, actualResult)
   }
 

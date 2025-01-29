@@ -1,7 +1,7 @@
 package com.jetbrains.edu.aiHints.python
 
 import com.intellij.testFramework.utils.vfs.getPsiFile
-import com.jetbrains.edu.aiHints.core.StringExtractor
+import com.jetbrains.edu.aiHints.core.EduAIHintsProcessor
 import com.jetbrains.edu.aiHints.core.context.FunctionSignature
 import com.jetbrains.edu.aiHints.core.context.FunctionsToStrings
 import com.jetbrains.edu.learning.EduTestCase
@@ -13,7 +13,7 @@ import org.junit.Test
 
 class PyStringExtractorTest : EduTestCase() {
   override fun createCourse() {
-    courseWithFiles {
+    courseWithFiles(language = PythonLanguage.INSTANCE) {
       lesson("python_lesson") {
         eduTask("python_task") {
           taskFile(
@@ -79,6 +79,6 @@ class PyStringExtractorTest : EduTestCase() {
       ) to listOf("referenced", "formatted {a}")
     ).let(::FunctionsToStrings)
 
-    assertEquals(expectedResult, StringExtractor.getFunctionsToStringsMap(psiFile, PythonLanguage.INSTANCE))
+    assertEquals(expectedResult, EduAIHintsProcessor.forCourse(getCourse())?.getStringsExtractor()?.getFunctionsToStringsMap(psiFile))
   }
 }

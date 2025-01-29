@@ -1,4 +1,4 @@
-package com.jetbrains.edu.aiHints.python
+package com.jetbrains.edu.aiHints.python.impl
 
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil

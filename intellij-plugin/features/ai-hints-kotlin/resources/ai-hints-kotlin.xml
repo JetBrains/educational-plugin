@@ -5,12 +5,7 @@
     <plugin id="org.jetbrains.kotlin"/>
   </dependencies>
 
-  <extensions defaultExtensionNs="aiHints">
-    <functionSignaturesProvider language="kotlin" implementationClass="com.jetbrains.edu.aiHints.kotlin.KtFunctionSignaturesProvider"/>
-    <functionSignatureResolver language="kotlin" implementationClass="com.jetbrains.edu.aiHints.kotlin.KtFunctionSignatureResolver"/>
-    <filesDiffer language="kotlin" implementationClass="com.jetbrains.edu.aiHints.kotlin.KtFilesDiffer"/>
-    <functionDiffReducer language="kotlin" implementationClass="com.jetbrains.edu.aiHints.kotlin.KtFunctionDiffReducer"/>
-    <stringExtractor language="kotlin" implementationClass="com.jetbrains.edu.aiHints.kotlin.KtStringExtractor"/>
-    <inspectionProvider language="kotlin" implementationClass="com.jetbrains.edu.aiHints.kotlin.KtInspectionProvider"/>
+  <extensions defaultExtensionNs="Educational">
+    <aiHintsProcessor implementationClass="com.jetbrains.edu.aiHints.kotlin.KtEduAiHintsProcessor" language="kotlin"/>
   </extensions>
 </idea-plugin>

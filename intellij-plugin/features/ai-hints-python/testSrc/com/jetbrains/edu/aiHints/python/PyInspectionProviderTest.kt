@@ -13,6 +13,10 @@ class PyInspectionProviderTest(
   private val codeToFix: String,
   private val expectedResult: String,
 ) : EduTestCase() {
+  override fun createCourse() {
+    courseWithFiles(language = PythonLanguage.INSTANCE) {}
+  }
+
   @Test
   fun `test applying inspections`() {
     assertEquals(expectedResult, applyInspections(codeToFix, project, PythonLanguage.INSTANCE))

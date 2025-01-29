@@ -7,5 +7,6 @@
     <module name="AI"/>
     <module name="ai-hints-core"/>
     <module name="ai-hints-python"/>
+    <module name="Edu-Python"/>
   </content>
 </idea-plugin>

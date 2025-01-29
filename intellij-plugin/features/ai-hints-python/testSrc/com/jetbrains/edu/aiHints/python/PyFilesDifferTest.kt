@@ -1,6 +1,6 @@
 package com.jetbrains.edu.aiHints.python
 
-import com.jetbrains.edu.aiHints.core.FilesDiffer
+import com.jetbrains.edu.aiHints.core.EduAIHintsProcessor
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.python.PythonLanguage
 import org.junit.Test
@@ -12,11 +12,17 @@ import org.junit.runners.Parameterized
 class PyFilesDifferTest(
   private val testCase: PyFilesDifferTestCase
 ) : EduTestCase() {
+  override fun createCourse() {
+    courseWithFiles(language = PythonLanguage.INSTANCE) {}
+  }
+
   @Test
   fun `test finding changed functions between two psi files`() {
     val oldPsiFile = createPsiFile(project, testCase.old)
     val newPsiFile = createPsiFile(project, testCase.new)
-    val actualResult = FilesDiffer.findDifferentMethods(oldPsiFile, newPsiFile, PythonLanguage.INSTANCE, testCase.considerParameters)
+    val actualResult = EduAIHintsProcessor.forCourse(getCourse())
+      ?.getFilesDiffer()
+      ?.findChangedMethods(oldPsiFile, newPsiFile, testCase.considerParameters)
     assertEquals(testCase.expectedChangedFunctions, actualResult)
   }
 

@@ -1,13 +1,13 @@
-package com.jetbrains.edu.aiHints.python
+package com.jetbrains.edu.aiHints.python.impl
 
 import com.intellij.psi.PsiFile
-import com.jetbrains.edu.aiHints.core.FilesDiffer
-import com.jetbrains.edu.aiHints.python.PyHintsUtils.functions
-import com.jetbrains.edu.aiHints.python.PyHintsUtils.hasSameBodyAs
-import com.jetbrains.edu.aiHints.python.PyHintsUtils.hasSameParametersAs
+import com.jetbrains.edu.aiHints.core.api.FilesDiffer
+import com.jetbrains.edu.aiHints.python.impl.PyHintsUtils.functions
+import com.jetbrains.edu.aiHints.python.impl.PyHintsUtils.hasSameBodyAs
+import com.jetbrains.edu.aiHints.python.impl.PyHintsUtils.hasSameParametersAs
 import com.jetbrains.python.psi.PyFunction
 
-class PyFilesDiffer : FilesDiffer {
+object PyFilesDiffer : FilesDiffer {
   override fun findChangedMethods(before: PsiFile, after: PsiFile, considerParameters: Boolean): List<String> {
     val beforeFunctions = before.functions().associateBy { it.fqName }
     val afterFunctions = after.functions().associateBy { it.fqName }

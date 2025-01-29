@@ -5,12 +5,7 @@
     <plugin id="com.intellij.modules.python"/>
   </dependencies>
 
-  <extensions defaultExtensionNs="aiHints">
-    <functionSignaturesProvider language="Python" implementationClass="com.jetbrains.edu.aiHints.python.PyFunctionSignaturesProvider"/>
-    <functionSignatureResolver language="Python" implementationClass="com.jetbrains.edu.aiHints.python.PyFunctionSignatureResolver"/>
-    <filesDiffer language="Python" implementationClass="com.jetbrains.edu.aiHints.python.PyFilesDiffer"/>
-    <inspectionProvider language="Python" implementationClass="com.jetbrains.edu.aiHints.python.PyInspectionProvider"/>
-    <stringExtractor language="Python" implementationClass="com.jetbrains.edu.aiHints.python.PyStringExtractor"/>
-    <functionDiffReducer language="Python" implementationClass="com.jetbrains.edu.aiHints.python.PyFunctionDiffReducer"/>
+  <extensions defaultExtensionNs="Educational">
+    <aiHintsProcessor language="Python" implementationClass="com.jetbrains.edu.aiHints.python.PyEduAiHintsProcessor"/>
   </extensions>
 </idea-plugin>

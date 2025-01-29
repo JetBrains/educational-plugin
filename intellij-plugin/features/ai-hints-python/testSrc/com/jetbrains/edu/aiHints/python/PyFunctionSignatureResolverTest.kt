@@ -1,6 +1,6 @@
 package com.jetbrains.edu.aiHints.python
 
-import com.jetbrains.edu.aiHints.core.FunctionSignatureResolver
+import com.jetbrains.edu.aiHints.core.EduAIHintsProcessor
 import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.createPsiFile
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.python.PythonLanguage
@@ -16,10 +16,17 @@ class PyFunctionSignatureResolverTest(
   private val code: String
 ) : EduTestCase() {
 
+  override fun createCourse() {
+    courseWithFiles(language = PythonLanguage.INSTANCE) {}
+  }
+
   @Test
   fun `test getting function by signature`() {
     val psiFile = createPsiFile(project, code)
-    val actualFunctionName = FunctionSignatureResolver.getFunctionBySignature(psiFile, functionName, PythonLanguage.INSTANCE)?.text
+    val actualFunctionName = EduAIHintsProcessor.forCourse(getCourse())
+      ?.getFunctionSignatureManager()
+      ?.getFunctionBySignature(psiFile, functionName)
+      ?.text
     assertEquals(code, actualFunctionName)
   }
 

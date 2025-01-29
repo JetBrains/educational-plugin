@@ -1021,6 +1021,7 @@ project("features:ai-hints-python") {
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
     testImplementation(project(":intellij-plugin:features:ai-hints-core", "testOutput"))
+    testImplementation(project(":intellij-plugin:Edu-Python"))
   }
 }
 
