@@ -5,6 +5,9 @@ import com.jetbrains.edu.aiHints.core.EduAIHintsProcessor
 import com.jetbrains.edu.aiHints.core.context.FunctionParameter
 import com.jetbrains.edu.aiHints.core.context.FunctionSignature
 import com.jetbrains.edu.aiHints.core.context.SignatureSource
+import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_LESSON
+import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_TASK
+import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_TASK_FILE
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
@@ -22,9 +25,9 @@ class PyFunctionSignaturesManagerTest(
 ) : EduTestCase() {
   override fun createCourse() {
     courseWithFiles(language = PythonLanguage.INSTANCE) {
-      lesson("py_lesson") {
-        eduTask("py_task") {
-          taskFile("py_task.py", code)
+      lesson(PY_LESSON) {
+        eduTask(PY_TASK) {
+          taskFile(PY_TASK_FILE, code)
         }
       }
     }

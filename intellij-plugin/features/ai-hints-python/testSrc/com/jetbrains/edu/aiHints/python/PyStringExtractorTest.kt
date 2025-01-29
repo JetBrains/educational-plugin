@@ -4,6 +4,9 @@ import com.intellij.testFramework.utils.vfs.getPsiFile
 import com.jetbrains.edu.aiHints.core.EduAIHintsProcessor
 import com.jetbrains.edu.aiHints.core.context.FunctionSignature
 import com.jetbrains.edu.aiHints.core.context.FunctionsToStrings
+import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_LESSON
+import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_TASK
+import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_TASK_FILE
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
@@ -14,10 +17,10 @@ import org.junit.Test
 class PyStringExtractorTest : EduTestCase() {
   override fun createCourse() {
     courseWithFiles(language = PythonLanguage.INSTANCE) {
-      lesson("python_lesson") {
-        eduTask("python_task") {
+      lesson(PY_LESSON) {
+        eduTask(PY_TASK) {
           taskFile(
-            "task.py", text = """
+            PY_TASK_FILE, text = """
               a = "referenced"
               def foo():
                 print("double")
@@ -43,8 +46,8 @@ class PyStringExtractorTest : EduTestCase() {
   @Test
   fun `test getting map of function signatures to strings`() {
     val psiFile = StudyTaskManager.getInstance(project).course
-                    ?.findTask("python_lesson", "python_task")
-                    ?.getTaskFile("task.py")
+                    ?.findTask(PY_LESSON, PY_TASK)
+                    ?.getTaskFile(PY_TASK_FILE)
                     ?.getVirtualFile(project)
                     ?.getPsiFile(project) ?: error("Failed to extract PsiFile")
 
