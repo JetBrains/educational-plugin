@@ -1,6 +1,5 @@
 package com.jetbrains.edu.aiHints.python
 
-import com.intellij.testFramework.utils.vfs.getPsiFile
 import com.jetbrains.edu.aiHints.core.EduAIHintsProcessor
 import com.jetbrains.edu.aiHints.core.context.FunctionParameter
 import com.jetbrains.edu.aiHints.core.context.FunctionSignature
@@ -8,10 +7,8 @@ import com.jetbrains.edu.aiHints.core.context.SignatureSource
 import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_LESSON
 import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_TASK
 import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_TASK_FILE
+import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.getPsiFile
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
-import com.jetbrains.edu.learning.findTask
 import com.jetbrains.python.PythonLanguage
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -35,12 +32,7 @@ class PyFunctionSignaturesManagerTest(
 
   @Test
   fun `test getting function signatures`() {
-    val psiFile = StudyTaskManager.getInstance(project).course
-      ?.findTask("py_lesson", "py_task")
-      ?.getTaskFile("py_task.py")
-      ?.getVirtualFile(project)
-      ?.getPsiFile(project) ?: error("PsiFile is not found")
-
+    val psiFile = getPsiFile(project, PY_LESSON, PY_TASK, PY_TASK_FILE)
     val actualResult = EduAIHintsProcessor.forCourse(getCourse())
       ?.getFunctionSignatureManager()
       ?.getFunctionSignatures(psiFile, SignatureSource.MODEL_SOLUTION)

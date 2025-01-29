@@ -1,16 +1,13 @@
 package com.jetbrains.edu.aiHints.python
 
-import com.intellij.testFramework.utils.vfs.getPsiFile
 import com.jetbrains.edu.aiHints.core.EduAIHintsProcessor
 import com.jetbrains.edu.aiHints.core.context.FunctionSignature
 import com.jetbrains.edu.aiHints.core.context.FunctionsToStrings
 import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_LESSON
 import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_TASK
 import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_TASK_FILE
+import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.getPsiFile
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
-import com.jetbrains.edu.learning.findTask
 import com.jetbrains.python.PythonLanguage
 import org.junit.Test
 
@@ -45,12 +42,7 @@ class PyStringExtractorTest : EduTestCase() {
 
   @Test
   fun `test getting map of function signatures to strings`() {
-    val psiFile = StudyTaskManager.getInstance(project).course
-                    ?.findTask(PY_LESSON, PY_TASK)
-                    ?.getTaskFile(PY_TASK_FILE)
-                    ?.getVirtualFile(project)
-                    ?.getPsiFile(project) ?: error("Failed to extract PsiFile")
-
+    val psiFile = getPsiFile(project, PY_LESSON, PY_TASK, PY_TASK_FILE)
     val expectedResult = mapOf(
       FunctionSignature(
         "foo",
