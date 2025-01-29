@@ -1,6 +1,10 @@
 package com.jetbrains.edu.aiHints.python
 
 import com.jetbrains.edu.aiHints.core.TaskProcessorImpl.Companion.applyInspections
+import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_LESSON
+import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_TASK
+import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_TASK_FILE
+import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.getPsiFile
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.python.PythonLanguage
 import org.junit.Test
@@ -14,12 +18,19 @@ class PyInspectionProviderTest(
   private val expectedResult: String,
 ) : EduTestCase() {
   override fun createCourse() {
-    courseWithFiles(language = PythonLanguage.INSTANCE) {}
+    courseWithFiles(language = PythonLanguage.INSTANCE) {
+      lesson(PY_LESSON) {
+        eduTask(PY_TASK) {
+          pythonTaskFile(PY_TASK_FILE, codeToFix)
+        }
+      }
+    }
   }
 
   @Test
   fun `test applying inspections`() {
-    assertEquals(expectedResult, applyInspections(codeToFix, project, PythonLanguage.INSTANCE))
+    val psiFile = getPsiFile(project, PY_LESSON, PY_TASK, PY_TASK_FILE)
+    assertEquals(expectedResult, applyInspections(psiFile.text, project, PythonLanguage.INSTANCE))
   }
 
   companion object {

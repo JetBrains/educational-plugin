@@ -1,6 +1,11 @@
 package com.jetbrains.edu.aiHints.python
 
+import com.intellij.psi.PsiFileFactory
 import com.jetbrains.edu.aiHints.core.EduAIHintsProcessor
+import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_LESSON
+import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_TASK
+import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_TASK_FILE
+import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.getPsiFile
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.python.PythonLanguage
 import org.junit.Test
@@ -13,13 +18,19 @@ class PyFilesDifferTest(
   private val testCase: PyFilesDifferTestCase
 ) : EduTestCase() {
   override fun createCourse() {
-    courseWithFiles(language = PythonLanguage.INSTANCE) {}
+    courseWithFiles(language = PythonLanguage.INSTANCE) {
+      lesson(PY_LESSON) {
+        eduTask(PY_TASK) {
+          pythonTaskFile(PY_TASK_FILE, testCase.old)
+        }
+      }
+    }
   }
 
   @Test
   fun `test finding changed functions between two psi files`() {
-    val oldPsiFile = createPsiFile(project, testCase.old)
-    val newPsiFile = createPsiFile(project, testCase.new)
+    val oldPsiFile = getPsiFile(project, PY_LESSON, PY_TASK, PY_TASK_FILE)
+    val newPsiFile = PsiFileFactory.getInstance(project).createFileFromText(PY_TASK_FILE, PythonLanguage.INSTANCE, testCase.new)
     val actualResult = EduAIHintsProcessor.forCourse(getCourse())
       ?.getFilesDiffer()
       ?.findChangedMethods(oldPsiFile, newPsiFile, testCase.considerParameters)
@@ -37,158 +48,179 @@ class PyFilesDifferTest(
     @JvmStatic
     @Parameterized.Parameters(name = "{0}")
     fun data(): Collection<Array<PyFilesDifferTestCase>> = listOf(
-      arrayOf(PyFilesDifferTestCase(
-        old = """
+      arrayOf(
+        PyFilesDifferTestCase(
+          old = """
                 def foo():
                     return 42
             """.trimIndent(),
-        new = """
+          new = """
                 def foo():
                     return 43
             """.trimIndent(),
-        expectedChangedFunctions = listOf("foo")
-      )),
+          expectedChangedFunctions = listOf("foo")
+        )
+      ),
 
-      arrayOf(PyFilesDifferTestCase(
-        old = """
+      arrayOf(
+        PyFilesDifferTestCase(
+          old = """
                 def greet(name):
                     return f"Hello {name}"
             """.trimIndent(),
-        new = """
+          new = """
                 def greet(name, greeting="Hello"):
                     return f"{greeting} {name}"
             """.trimIndent(),
-        expectedChangedFunctions = listOf("greet"),
-        considerParameters = true
-      )),
+          expectedChangedFunctions = listOf("greet"),
+          considerParameters = true
+        )
+      ),
 
-      arrayOf(PyFilesDifferTestCase(
-        old = """
+      arrayOf(
+        PyFilesDifferTestCase(
+          old = """
                 def add(a, b):
                     return a + b
-                    
+
                 def multiply(x, y):
                     return x * y
-            """.trimIndent(),
-        new = """
+            """.trimIndent(), new = """
                 def add(a, b):
                     return a + b
-                    
+
                 def multiply(x, y):
                     result = x * y
                     return result
             """.trimIndent(),
-        expectedChangedFunctions = listOf("multiply")
-      )),
+          expectedChangedFunctions = listOf("multiply")
+        )
+      ),
 
-      arrayOf(PyFilesDifferTestCase(
-        old = """
+      arrayOf(
+        PyFilesDifferTestCase(
+          old = """
                 @decorator
                 def process(data):
                     return data.upper()
             """.trimIndent(),
-        new = """
+          new = """
                 @decorator
                 def process(data):
                     return data.lower()
             """.trimIndent(),
-        expectedChangedFunctions = listOf("process")
-      )),
+          expectedChangedFunctions = listOf("process")
+        )
+      ),
 
-      arrayOf(PyFilesDifferTestCase(
-        old = """
+      arrayOf(
+        PyFilesDifferTestCase(
+          old = """
                 def unchanged(x):
                     return x * 2
             """.trimIndent(),
-        new = """
+          new = """
                 def unchanged(x):
                     return x * 2
             """.trimIndent(),
-        expectedChangedFunctions = listOf()
-      )),
+          expectedChangedFunctions = listOf()
+        )
+      ),
 
-      arrayOf(PyFilesDifferTestCase(
-        old = """
+      arrayOf(
+        PyFilesDifferTestCase(
+          old = """
                 def calc(x):
                     return x+1
             """.trimIndent(),
-        new = """
+          new = """
                 def calc(x):
                     return x + 1
             """.trimIndent(),
-        expectedChangedFunctions = listOf("calc")
-      )),
+          expectedChangedFunctions = listOf("calc")
+        )
+      ),
 
-      arrayOf(PyFilesDifferTestCase(
-        old = """
-          def foo():
-            return 42
-             
-          def foo2():
-            return 43
-        """.trimIndent(),
-        new = """
-          def foo():
-            return 42
-            
-          def foo2():
-            return 42
-        """.trimIndent(),
-        expectedChangedFunctions = listOf("foo2"),
-        considerParameters = true
-      )),
+      arrayOf(
+        PyFilesDifferTestCase(
+          old = """
+            def foo():
+              return 42
 
-      arrayOf(PyFilesDifferTestCase(
-        old = """
+            def foo2():
+              return 43
+        """.trimIndent(),
+          new = """
+            def foo():
+              return 42
+
+            def foo2():
+              return 42
+        """.trimIndent(),
+          expectedChangedFunctions = listOf("foo2"),
+          considerParameters = true
+        )
+      ),
+
+      arrayOf(
+        PyFilesDifferTestCase(
+          old = """
           class A:
             def foo(x):
               return x + 1
         """.trimIndent(),
-        new = """
+          new = """
           class A:
             def foo(x):
               return x + 42
         """.trimIndent(),
-        expectedChangedFunctions = listOf("foo")
-      )),
+          expectedChangedFunctions = listOf("foo")
+        )
+      ),
 
-      arrayOf(PyFilesDifferTestCase(
-        old = """
+      arrayOf(
+        PyFilesDifferTestCase(
+          old = """
           def change_parameters(x, y):
             return x + y
         """.trimIndent(),
-        new = """
+          new = """
           def change_parameters(x: int, y: int):
             return x + y
         """.trimIndent(),
-        expectedChangedFunctions = listOf()
-      )),
+          expectedChangedFunctions = listOf()
+        )
+      ),
 
-      arrayOf(PyFilesDifferTestCase(
-        old = """
+      arrayOf(
+        PyFilesDifferTestCase(
+          old = """
           def change_parameters(x, y):
             return x + y
         """.trimIndent(),
-        new = """
+          new = """
           def change_parameters(x: int, y: int):
             return x + y
         """.trimIndent(),
-        expectedChangedFunctions = listOf("change_parameters"),
+          expectedChangedFunctions = listOf("change_parameters"),
           considerParameters = true
-      )),
+        )
+      ),
 
-      arrayOf(PyFilesDifferTestCase(
-        old = """
+      arrayOf(
+        PyFilesDifferTestCase(
+          old = """
           def change_parameters(x, y):
             return x + y
         """.trimIndent(),
-        new = """
+          new = """
           def change_parameters(y, x):
             return x + y
         """.trimIndent(),
-        expectedChangedFunctions = listOf("change_parameters"),
-        considerParameters = true
-      ))
+          expectedChangedFunctions = listOf("change_parameters"),
+          considerParameters = true
+        )
+      )
     )
   }
 }

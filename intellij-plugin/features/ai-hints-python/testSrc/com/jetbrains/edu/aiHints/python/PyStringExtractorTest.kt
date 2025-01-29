@@ -16,14 +16,15 @@ class PyStringExtractorTest : EduTestCase() {
     courseWithFiles(language = PythonLanguage.INSTANCE) {
       lesson(PY_LESSON) {
         eduTask(PY_TASK) {
-          taskFile(
-            PY_TASK_FILE, text = """
+          @Suppress("PyInterpreter")
+          pythonTaskFile(PY_TASK_FILE, text = """
               a = "referenced"
+              # noinspection PyUnresolvedReferences
               def foo():
-                print("double")
-                print('single')
-                print(f"formatted {1 + 3}")
-                print(a)
+                  print("double")
+                  print('single')
+                  print(f"formatted {1 + 3}")
+                  print(a)
                 
               def single_fun():
                 return 'single_fun'
