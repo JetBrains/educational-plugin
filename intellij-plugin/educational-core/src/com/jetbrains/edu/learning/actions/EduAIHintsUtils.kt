@@ -6,8 +6,6 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.components.Service
-import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckPanel.Companion.ACTION_PLACE
 import org.jetbrains.annotations.NonNls
@@ -52,35 +50,5 @@ object EduAIHintsUtils {
     fun isEnabledAndVisible(): Boolean = this == ENABLED_AND_VISIBLE
 
     fun isEnabled(): Boolean = this == ENABLED || this == ENABLED_AND_VISIBLE
-  }
-
-  /**
-   * Temporary solution because currently [com.jetbrains.edu.aiHints.core.action.GetHint]'s presentation is not propagated to corresponding
-   * button in the [com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckDetailsPanel].
-   *
-   * (see [EDU-7584](https://youtrack.jetbrains.com/issue/EDU-7584))
-   */
-  @Service(Service.Level.PROJECT)
-  class HintStateManager {
-    @Volatile
-    private var state: HintState = HintState.DEFAULT
-
-    private enum class HintState {
-      DEFAULT, ACCEPTED;
-    }
-
-    fun reset() {
-      state = HintState.DEFAULT
-    }
-
-    fun acceptHint() {
-      state = HintState.ACCEPTED
-    }
-
-    companion object {
-      fun isDefault(project: Project): Boolean = getInstance(project).state == HintState.DEFAULT
-
-      fun getInstance(project: Project): HintStateManager = project.service()
-    }
   }
 }
