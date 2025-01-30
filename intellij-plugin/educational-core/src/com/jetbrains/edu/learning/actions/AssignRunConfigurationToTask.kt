@@ -22,7 +22,7 @@ class AssignRunConfigurationToTask : AnAction(), DumbAware {
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
   override fun update(e: AnActionEvent) {
-    e.presentation.isEnabled = false
+    e.presentation.isVisible = false
 
     val project = e.project ?: return
     val course = project.course ?: return
@@ -30,7 +30,7 @@ class AssignRunConfigurationToTask : AnAction(), DumbAware {
     if (project.selectedTaskFile == null) return
     if (RunManager.getInstance(project).selectedConfiguration == null) return
 
-    e.presentation.isEnabled = true
+    e.presentation.isVisible = true
   }
 
   override fun actionPerformed(e: AnActionEvent) {
