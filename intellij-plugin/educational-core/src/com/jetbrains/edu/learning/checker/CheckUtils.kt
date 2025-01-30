@@ -82,26 +82,28 @@ object CheckUtils {
     }
   }
 
-  private fun getCustomRunConfiguration(project: Project, task: Task, predicate: (VirtualFile) -> Boolean): RunnerAndConfigurationSettings? {
+  private fun getCustomRunConfiguration(project: Project, task: Task, fileNamePredicate: (String) -> Boolean): RunnerAndConfigurationSettings? {
     val taskDir = task.getDir(project.courseDir) ?: error("Failed to find directory of `${task.name}` task")
-    val runConfigurationDir = taskDir.findChild(EduNames.RUN_CONFIGURATION_DIR) ?: return null
-    val runConfigurationFile = runConfigurationDir.children.firstOrNull {
-      predicate(it) && it.name.endsWith(".run.xml")
-    } ?: return null
-    val path = runConfigurationFile.path
+    val runConfigurationDir = taskDir.findChild(EduNames.RUN_CONFIGURATION_DIR)?: return null
+    val pathPrefix = "${runConfigurationDir.path}/"
+
     return RunManager.getInstance(project).allSettings.find {
-      it.pathIfStoredInArbitraryFileInProject == path
+      val fullPath = it.pathIfStoredInArbitraryFileInProject ?: return@find false
+      if (!fullPath.startsWith(pathPrefix)) return@find false
+      val fileName = fullPath.removePrefix(pathPrefix)
+
+      fileNamePredicate(fileName)
     }
   }
 
   fun getCustomRunConfigurationForChecker(project: Project, task: Task): RunnerAndConfigurationSettings? =
     getCustomRunConfiguration(project, task) {
-      it.name != RunTaskAction.RUN_CONFIGURATION_FILE_NAME
+      it != RunTaskAction.RUN_CONFIGURATION_FILE_NAME
     }
 
   fun getCustomRunConfigurationForRunner(project: Project, task: Task): RunnerAndConfigurationSettings? =
     getCustomRunConfiguration(project, task) {
-      it.name == RunTaskAction.RUN_CONFIGURATION_FILE_NAME
+      it == RunTaskAction.RUN_CONFIGURATION_FILE_NAME
     }
 
   fun postProcessOutput(output: String): String {
