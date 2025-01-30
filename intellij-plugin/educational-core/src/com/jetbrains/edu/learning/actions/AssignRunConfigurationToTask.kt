@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.actions
 
 import com.intellij.execution.RunManager
 import com.intellij.execution.RunnerAndConfigurationSettings
+import com.intellij.execution.configurations.LocatableConfigurationBase
 import com.intellij.ide.SaveAndSyncHandler
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
@@ -41,6 +42,7 @@ class AssignRunConfigurationToTask : AnAction(), DumbAware {
     val taskDir = project.courseDir.findFileByRelativePath(task.pathInCourse) ?: return
 
     selectedConfiguration.name = "Run task: ${task.name} (${task.parent.name})"
+    (selectedConfiguration.configuration as? LocatableConfigurationBase<*>)?.setNameChangedByUser(true)
     selectedConfiguration.storeInArbitraryFileInProject("${taskDir.path}/$RUN_CONFIGURATION_DIR/$RUN_CONFIGURATION_FILE_NAME")
 
     forceSaveRunConfigurationInFile(project, selectedConfiguration)
