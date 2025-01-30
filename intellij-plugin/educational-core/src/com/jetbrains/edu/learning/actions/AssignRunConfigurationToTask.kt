@@ -1,16 +1,13 @@
 package com.jetbrains.edu.learning.actions
 
-import com.intellij.configurationStore.runInAutoSaveDisabledMode
-import com.intellij.configurationStore.saveSettings
 import com.intellij.execution.RunManager
 import com.intellij.execution.RunnerAndConfigurationSettings
+import com.intellij.ide.SaveAndSyncHandler
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
-import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.jetbrains.edu.learning.EduNames.RUN_CONFIGURATION_DIR
 import com.jetbrains.edu.learning.actions.RunTaskAction.Companion.RUN_CONFIGURATION_FILE_NAME
 import com.jetbrains.edu.learning.course
@@ -42,14 +39,11 @@ class AssignRunConfigurationToTask : AnAction(), DumbAware {
     val selectedConfiguration = RunManager.getInstance(project).selectedConfiguration ?: return
 
     val taskDir = project.courseDir.findFileByRelativePath(task.pathInCourse) ?: return
-    
+
     selectedConfiguration.name = "Run task: ${task.name} (${task.parent.name})"
+    selectedConfiguration.storeInArbitraryFileInProject("${taskDir.path}/$RUN_CONFIGURATION_DIR/$RUN_CONFIGURATION_FILE_NAME")
 
-    runWriteAction {
-      selectedConfiguration.storeInArbitraryFileInProject("${taskDir.path}/$RUN_CONFIGURATION_DIR/$RUN_CONFIGURATION_FILE_NAME")
-    }
-
-    saveRunConfigurations(project, selectedConfiguration)
+    forceSaveRunConfigurationInFile(project, selectedConfiguration)
 
     EduNotificationManager.showInfoNotification(
       project = project,
@@ -58,13 +52,15 @@ class AssignRunConfigurationToTask : AnAction(), DumbAware {
     )
   }
 
-  private fun saveRunConfigurations(project: Project, selectedConfiguration: RunnerAndConfigurationSettings) {
+  private fun forceSaveRunConfigurationInFile(project: Project, selectedConfiguration: RunnerAndConfigurationSettings
+  ) {
+    /**
+     * Although the configuration is already tracked by the RunManager,
+     * we add it to update IDE internal data structures that store the list of configurations.
+     * Otherwise, IDE decides that the configuration is not changed and there is no need to update its storage.
+     */
     RunManager.getInstance(project).addConfiguration(selectedConfiguration)
-    runInAutoSaveDisabledMode {
-      runWithModalProgressBlocking(project, "") {
-        saveSettings(project)
-      }
-    }
+    SaveAndSyncHandler.getInstance().scheduleProjectSave(project)
   }
 
   companion object {
