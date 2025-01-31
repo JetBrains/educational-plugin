@@ -5,6 +5,11 @@
     <plugin id="com.intellij.modules.python"/>
   </dependencies>
 
+  <actions>
+    <action id="Educational.Hints.AddLastChildTest"
+            class="com.jetbrains.edu.aiHints.python.AddLastChildTest"/>
+  </actions>
+
   <extensions defaultExtensionNs="Educational">
     <aiHintsProcessor language="Python" implementationClass="com.jetbrains.edu.aiHints.python.PyEduAiHintsProcessor"/>
   </extensions>

@@ -19,14 +19,15 @@ object PyFilesDiffer : FilesDiffer {
     }.mapNotNull { it.name }
   }
 
+  // Because there is a
   private val PyFunction.fqName: String
     get() = buildString {
-      append(containingFile)
-      append(":")
-      if (containingClass != null) {
-        append(containingClass)
-        append(":")
-      }
+//      append(containingFile)
+//      append(":")
+//      if (containingClass != null) {
+//        append(containingClass)
+//        append(":")
+//      }
       append(name)
     }
 }
