@@ -65,7 +65,7 @@ object KtFunctionSignaturesManager : FunctionSignaturesManager {
         },
         functionDescriptor.returnType.toString(),
         signatureSource,
-        bodyExpression?.text?.split(System.lineSeparator())?.size
+        bodyExpression?.text?.lines()?.size
       )
     }
     return null
