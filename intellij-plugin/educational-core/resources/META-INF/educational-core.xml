@@ -22,6 +22,8 @@
   <projectListeners>
     <listener class="com.jetbrains.edu.learning.checker.FixModuleForRunConfigurationsListener"
               topic="com.intellij.execution.RunManagerListener"/>
+    <listener class="com.jetbrains.edu.learning.checker.PreventRunConfigurationsRenameListener"
+              topic="com.intellij.execution.RunManagerListener"/>
     <listener class="com.jetbrains.edu.learning.checker.FixModuleForRunConfigurationsListener"
               topic="com.intellij.openapi.roots.ModuleRootListener"/>
     <listener class="com.jetbrains.edu.learning.yaml.YamlLoadingErrorManager$Listener"
