@@ -10,6 +10,7 @@ import com.intellij.openapi.progress.blockingContext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.NotificationContent
 import com.intellij.platform.ide.progress.withBackgroundProgress
+import com.jetbrains.edu.ai.error.AIServiceError
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.translation.connector.TranslationServiceConnector
 import com.jetbrains.edu.ai.translation.settings.TranslationSettings
@@ -174,7 +175,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
   private suspend fun fetchTranslation(
     course: EduCourse,
     language: TranslationLanguage
-  ): Result<CourseTranslationResponse, TranslationError> =
+  ): Result<CourseTranslationResponse, AIServiceError> =
     withContext(Dispatchers.IO) {
       val translation = downloadTranslation(course, language)
       if (translation is Err) {
@@ -209,7 +210,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
   private suspend fun downloadTranslation(
     course: EduCourse,
     language: TranslationLanguage
-  ): Result<CourseTranslationResponse, TranslationError> =
+  ): Result<CourseTranslationResponse, AIServiceError> =
     TranslationServiceConnector.getInstance().getTranslatedCourse(course.id, course.marketplaceCourseVersion, language)
 
   private suspend fun EduCourse.saveTranslation(courseTranslation: CourseTranslationResponse) {
