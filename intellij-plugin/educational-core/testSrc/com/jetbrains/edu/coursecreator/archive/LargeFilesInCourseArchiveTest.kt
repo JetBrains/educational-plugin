@@ -50,6 +50,6 @@ class LargeFilesInCourseArchiveTest : CourseArchiveTestBase() {
   private fun testHugeBinaryFileInCourseArchive(course: Course) {
     val result = createCourseArchive(course)
     assertIs<Err<*>>(result, "Course creation must generate an error message")
-    assertIs<CourseArchiveCreator.HugeBinaryFileError>(result.error)
+    assertIs<HugeBinaryFileError>(result.error)
   }
 }

@@ -13,7 +13,6 @@ import com.intellij.ide.plugins.PluginManager
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.extensions.PluginId
-import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
@@ -39,8 +38,6 @@ import com.jetbrains.edu.learning.json.pathInArchive
 import com.jetbrains.edu.learning.json.setDateFormat
 import com.jetbrains.edu.learning.marketplace.StudyItemIdGenerator
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.yaml.YamlConfigSettings.TASK_CONFIG
-import org.jetbrains.annotations.Nls
 import java.io.*
 import java.nio.file.Path
 import java.util.zip.ZipEntry
@@ -60,10 +57,10 @@ class CourseArchiveCreator(
   ) : this(project, CourseArchiveOutputProducer(location), cipher)
 
   /**
-   * Returns `null` when course archive was created successfully, [Error] object otherwise
+   * Returns `null` when course archive was created successfully, [CourseArchiveError] object otherwise
    */
   @RequiresEdt
-  fun createArchive(course: Course): Error? {
+  fun createArchive(course: Course): CourseArchiveError? {
     require(project.course == course) {
       "Given course is supposed to be associated with the current project"
     }
@@ -77,7 +74,7 @@ class CourseArchiveCreator(
       is Err -> {
         val error = result.error
         // TODO: separate error handling from course creation
-        if (error is ExceptionError<*> && !isUnitTestMode) {
+        if (error is ExceptionCourseArchiveError<*> && !isUnitTestMode) {
           LOG.error(error.exception)
         }
         error.immediateAction(project)
@@ -87,7 +84,7 @@ class CourseArchiveCreator(
     }
   }
 
-  private fun prepareCourseCopy(course: Course): Result<Course, Error> {
+  private fun prepareCourseCopy(course: Course): Result<Course, CourseArchiveError> {
     saveOpenedDocuments(project)
 
     if (course.isMarketplace) {
@@ -120,9 +117,9 @@ class CourseArchiveCreator(
     }
   }
 
-  private fun generateArchive(course: Course): Result<Unit, Error> {
+  private fun generateArchive(course: Course): Result<Unit, CourseArchiveError> {
     val courseArchiveIndicator = CourseArchiveIndicator()
-    return ProgressManager.getInstance().runProcessWithProgressSynchronously<Result<Unit, Error>, RuntimeException>({
+    return ProgressManager.getInstance().runProcessWithProgressSynchronously<Result<Unit, CourseArchiveError>, RuntimeException>({
       try {
         unwrapExceptionCause {
           measureTimeAndLog("Create course archive") {
@@ -405,37 +402,5 @@ class CourseArchiveCreator(
                      it.maxVersion)
         }
     }
-  }
-
-  sealed class Error {
-
-    abstract val message: @Nls String
-
-    /**
-     * Action which is supposed to be performed without additional user actions
-     */
-    @RequiresEdt
-    open fun immediateAction(project: Project) {}
-  }
-
-  abstract class ExceptionError<T : Throwable>(val exception: T) : Error() {
-    override val message: String
-      get() = exception.message.orEmpty()
-  }
-
-  class HugeBinaryFileError(e: HugeBinaryFileException) : ExceptionError<HugeBinaryFileException>(e)
-  class BrokenPlaceholderError(e: BrokenPlaceholderException) : ExceptionError<BrokenPlaceholderException>(e) {
-    override fun immediateAction(project: Project) {
-      val yamlFile = exception.placeholder.taskFile.task.getDir(project.courseDir)?.findChild(TASK_CONFIG) ?: return
-      FileEditorManager.getInstance(project).openFile(yamlFile, true)
-    }
-  }
-  // TODO: use more specific exception for error related to additional files.
-  //  `FileNotFoundException` is not related to additional files
-  //  and in theory may occur in other cases as well
-  class AdditionalFileNotFoundError(e: FileNotFoundException) : ExceptionError<FileNotFoundException>(e)
-  class OtherError(e: Throwable, private val errorMessage: @Nls String? = null) : ExceptionError<Throwable>(e) {
-    override val message: String
-      get() = errorMessage ?: EduCoreBundle.message("error.failed.to.create.course.archive")
   }
 }

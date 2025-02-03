@@ -338,7 +338,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
 
     val result = createCourseArchive(course)
     assertIs<Err<*>>(result)
-    assertIs<CourseArchiveCreator.BrokenPlaceholderError>(result.error)
+    assertIs<BrokenPlaceholderError>(result.error)
 
     val navigatedFile = FileEditorManagerEx.getInstanceEx(project).currentFile ?: error("Navigated file should not be null here")
     assertEquals(task.configFileName, navigatedFile.name)

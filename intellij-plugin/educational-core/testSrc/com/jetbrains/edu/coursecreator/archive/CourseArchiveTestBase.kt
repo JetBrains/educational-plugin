@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator.archive
 
-import com.jetbrains.edu.coursecreator.archive.CourseArchiveCreator.Error
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.cipher.Cipher
 import com.jetbrains.edu.learning.cipher.NoOpCipher
@@ -28,7 +27,7 @@ abstract class CourseArchiveTestBase : EduActionTestCase() {
     courseArchiveContent.assertEquals(expectedCourseArchiveContent, getExpectedDataDirectory(), generateExtraFiles)
   }
 
-  protected fun createCourseArchive(course: Course, cipher: Cipher = NoOpCipher()): Result<CourseArchiveContent, Error> {
+  protected fun createCourseArchive(course: Course, cipher: Cipher = NoOpCipher()): Result<CourseArchiveContent, CourseArchiveError> {
     val outputProducer = TestCourseArchiveOutputProducer()
 
     val creator = CourseArchiveCreator(myFixture.project, outputProducer, cipher)
