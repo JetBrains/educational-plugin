@@ -103,7 +103,7 @@ class MarketplacePushCourse(
     val tempFile = FileUtil.createTempFile("marketplace-${course.name}-${course.marketplaceCourseVersion}", ".zip", true)
     val error = CourseArchiveCreator(project, tempFile.toPath()).createArchive(course)
     if (error != null) {
-      Messages.showErrorDialog(project, error.message, message("error.failed.to.create.course.archive"))
+      error.showNotification(project, message("error.failed.to.create.course.archive.notification.title"))
       return
     }
 
@@ -157,7 +157,11 @@ class MarketplacePushCourse(
     }
     if (vendor == null) {
       if (!addVendor()) {
-        Messages.showErrorDialog(project, message("marketplace.vendor.empty"), message("error.failed.to.create.course.archive"))
+        EduNotificationManager.showErrorNotification(
+          project,
+          message("error.failed.to.create.course.archive.notification.title"),
+          message("marketplace.vendor.empty")
+        )
         return
       }
     }

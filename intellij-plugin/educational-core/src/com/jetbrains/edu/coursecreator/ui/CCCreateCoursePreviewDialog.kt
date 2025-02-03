@@ -7,7 +7,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.openapi.ui.Messages.showErrorDialog
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
@@ -24,6 +23,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import org.jetbrains.annotations.VisibleForTesting
 import java.awt.event.ActionEvent
@@ -97,8 +97,11 @@ class CCCreateCoursePreviewDialog(
       val folder = CCUtils.getGeneratedFilesFolder(project)
       if (folder == null) {
         LOG.info(TMP_DIR_ERROR)
-        showErrorDialog(project, EduCoreBundle.message("course.creator.create.course.preview.tmpdir.message"),
-                        EduCoreBundle.message("course.creator.create.course.preview.failed.title"))
+        EduNotificationManager.showErrorNotification(
+          project,
+          EduCoreBundle.message("course.creator.create.course.preview.failed.title"),
+          EduCoreBundle.message("course.creator.create.course.preview.tmpdir.message")
+        )
         return
       }
       val courseName = course.name
@@ -122,8 +125,11 @@ class CCCreateCoursePreviewDialog(
             ?.doCreateCourseProject(location.absolutePath, settings)
           if (previewProject == null) {
             LOG.info("Failed to create project for course preview")
-            showErrorDialog(project, EduCoreBundle.message("course.creator.create.course.preview.failed.message"),
-                            EduCoreBundle.message("course.creator.create.course.preview.failed.title"))
+            EduNotificationManager.showErrorNotification(
+              project,
+              EduCoreBundle.message("course.creator.create.course.preview.failed.title"),
+              EduCoreBundle.message("course.creator.create.course.preview.failed.message")
+            )
             return
           }
           RecentProjectsManager.getInstance().removePath(location.absolutePath)
@@ -131,15 +137,18 @@ class CCCreateCoursePreviewDialog(
         }
         catch (e: IOException) {
           LOG.info(TMP_DIR_ERROR, e)
-          showErrorDialog(project, EduCoreBundle.message("course.creator.create.course.preview.tmpdir.message"),
-                          EduCoreBundle.message("course.creator.create.course.preview.failed.title"))
+          EduNotificationManager.showErrorNotification(
+            project,
+            EduCoreBundle.message("course.creator.create.course.preview.failed.title"),
+            EduCoreBundle.message("course.creator.create.course.preview.tmpdir.message")
+          )
         }
         finally {
           RecentProjectsManager.getInstance().lastProjectCreationLocation = lastProjectCreationLocation
         }
       }
       else {
-        showErrorDialog(project, error.message, EduCoreBundle.message("course.creator.create.course.preview.failed.title"))
+        error.showNotification(project, EduCoreBundle.message("course.creator.create.course.preview.failed.title"))
       }
     }
   }

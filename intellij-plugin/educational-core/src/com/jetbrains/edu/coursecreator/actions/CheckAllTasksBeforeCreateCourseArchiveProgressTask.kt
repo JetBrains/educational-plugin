@@ -66,7 +66,7 @@ class CheckAllTasksBeforeCreateCourseArchiveProgressTask(
   private fun showFailedTasksDialog(failedTestsNumber: Int): Int = getInEdt {
     showYesNoCancelDialog(
       EduCoreBundle.message("course.creator.create.archive.failed.task.checking.message", failedTestsNumber),
-      EduCoreBundle.message("error.failed.to.create.course.archive"),
+      EduCoreBundle.message("error.failed.to.create.course.archive.dialog.title"),
       EduCoreBundle.message("course.creator.create.archive.failed.task.checking.show.check.result"),
       EduCoreBundle.message("course.creator.create.archive.failed.task.checking.create.anyway"),
       IdeBundle.message("button.cancel"),

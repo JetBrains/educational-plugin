@@ -2,19 +2,29 @@ package com.jetbrains.edu.coursecreator.archive
 
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsContexts.NotificationContent
+import com.intellij.openapi.util.NlsContexts.NotificationTitle
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.TASK_CONFIG
 import org.jetbrains.annotations.Nls
 import java.io.FileNotFoundException
 
 interface CourseArchiveError {
 
-  val message: @Nls String
+  val message: @NotificationContent String
+
+  /**
+   * Shows error notification with specified [title]
+   */
+  fun showNotification(project: Project, @NotificationTitle title: String) {
+    EduNotificationManager.showErrorNotification(project, title, message)
+  }
 
   /**
    * Action which is supposed to be performed without additional user actions

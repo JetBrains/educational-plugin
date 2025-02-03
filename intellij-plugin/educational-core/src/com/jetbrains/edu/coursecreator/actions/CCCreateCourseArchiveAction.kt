@@ -8,7 +8,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.coursecreator.CCNotificationUtils
 import com.jetbrains.edu.coursecreator.CCUtils.askToWrapTopLevelLessons
 import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
@@ -71,7 +70,7 @@ class CCCreateCourseArchiveAction : AnAction(EduCoreBundle.lazyMessage("action.c
       EduCounterUsageCollector.createCourseArchive()
     }
     else {
-      Messages.showErrorDialog(project, error.message, EduCoreBundle.message("error.failed.to.create.course.archive"))
+      error.showNotification(project, EduCoreBundle.message("error.failed.to.create.course.archive.notification.title"))
     }
   }
 
