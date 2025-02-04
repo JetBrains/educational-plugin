@@ -1097,6 +1097,10 @@ project("features:ai-debugging-kotlin") {
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
     testImplementation(project(":intellij-plugin:features:ai-debugging-core", "testOutput"))
+
+    implementation("org.jetbrains.kotlinx:dataframe:0.15.0") {
+      excludeKotlinDeps()
+    }
   }
 }
 
