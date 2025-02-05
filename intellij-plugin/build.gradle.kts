@@ -319,6 +319,7 @@ dependencies {
     pluginModule(implementation(project("features:ai-hints-core")))
     pluginModule(implementation(project("features:ai-hints-kotlin")))
     pluginModule(implementation(project("features:ai-hints-python")))
+    pluginModule(implementation(project("features:smart-search")))
     pluginModule(implementation(project("localization")))
 
     testFramework(TestFrameworkType.Bundled)
@@ -1022,6 +1023,18 @@ project("features:ai-hints-python") {
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
     testImplementation(project(":intellij-plugin:features:ai-hints-core", "testOutput"))
     testImplementation(project(":intellij-plugin:Edu-Python"))
+  }
+}
+
+project("features:smart-search") {
+  dependencies {
+    intellijPlatform {
+      intellijIde(project, baseVersion)
+    }
+
+    implementation(project(":intellij-plugin:educational-core"))
+
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
   }
 }
 
