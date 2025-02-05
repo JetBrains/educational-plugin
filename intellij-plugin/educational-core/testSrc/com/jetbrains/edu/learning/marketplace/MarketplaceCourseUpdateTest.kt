@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.marketplace
 
 import com.intellij.openapi.project.Project
+import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
@@ -705,7 +706,7 @@ class MarketplaceCourseUpdateTest : CourseGenerationTestBase<EmptyProjectSetting
       MarketplaceCourseUpdater(project, course, remoteCourseVersion).updateCourseWithRemote(courseFromServer)
     }
 
-    waitFor { courseUpdated.get() }
+    PlatformTestUtil.waitWhileBusy { !courseUpdated.get() }
   }
 
   private fun loadCourseStructure(course: EduCourse, courseFromServer: EduCourse) {

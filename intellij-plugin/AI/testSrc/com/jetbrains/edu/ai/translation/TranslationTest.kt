@@ -1,5 +1,6 @@
 package com.jetbrains.edu.ai.translation
 
+import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.util.application
 import com.jetbrains.edu.ai.translation.connector.TranslationServiceConnector
 import com.jetbrains.edu.learning.EduTestCase
@@ -8,7 +9,6 @@ import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.ai.TranslationProperties
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.mockService
-import com.jetbrains.edu.learning.waitFor
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import com.jetbrains.educational.translation.format.CourseTranslationResponse
 import com.jetbrains.educational.translation.format.TranslatedText
@@ -101,7 +101,7 @@ class TranslationTest : EduTestCase() {
     }
     try {
       action()
-      waitFor { updated.get() }
+      PlatformTestUtil.waitWhileBusy { !updated.get() }
     }
     finally {
       job.cancel()
