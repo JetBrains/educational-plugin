@@ -1,0 +1,7 @@
+<idea-plugin package="com.jetbrains.edu.smartSearch">
+  <resource-bundle>messages.EduSmartSearchBundle</resource-bundle>
+
+  <actions>
+    <action id="Educational.Student.SmartSearchAction" class="com.jetbrains.edu.smartSearch.action.SmartSearchAction"/>
+  </actions>
+</idea-plugin>

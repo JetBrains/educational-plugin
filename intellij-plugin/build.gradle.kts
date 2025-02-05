@@ -323,6 +323,7 @@ dependencies {
     pluginModule(implementation(project("features:ai-hints-core")))
     pluginModule(implementation(project("features:ai-hints-kotlin")))
     pluginModule(implementation(project("features:ai-hints-python")))
+    pluginModule(implementation(project("features:smart-search")))
     pluginModule(implementation(project("localization")))
 
     testFramework(TestFrameworkType.Bundled)
@@ -1100,6 +1101,18 @@ project("features:ai-refactoring-advisor") {
     implementation(project(":intellij-plugin:features:ai-clippy-assistant"))
     implementation(project(":intellij-plugin:features:ai-learner-feedback"))
     implementation("io.github.java-diff-utils:java-diff-utils:4.15")
+
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+  }
+}
+
+project("features:smart-search") {
+  dependencies {
+    intellijPlatform {
+      intellijIde(project, baseVersion)
+    }
+
+    implementation(project(":intellij-plugin:educational-core"))
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
   }

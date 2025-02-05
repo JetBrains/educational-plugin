@@ -45,6 +45,7 @@ include(
   "intellij-plugin:features:ai-hints-core",
   "intellij-plugin:features:ai-hints-kotlin",
   "intellij-plugin:features:ai-hints-python",
+  "intellij-plugin:features:smart-search"
 )
 
 if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {
