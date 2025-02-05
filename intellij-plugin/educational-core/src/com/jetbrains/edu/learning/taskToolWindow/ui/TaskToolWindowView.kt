@@ -4,6 +4,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.InlineBanner
+import com.intellij.ui.InlineBannerBase
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduTestAware
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
@@ -40,7 +41,7 @@ abstract class TaskToolWindowView(val project: Project) : EduTestAware {
   abstract fun checkStarted(task: Task, startSpinner: Boolean = false)
   abstract fun checkFinished(task: Task, checkResult: CheckResult)
   abstract fun addInlineBanner(inlineBanner: InlineBanner)
-  abstract fun addInlineBannerToCheckPanel(inlineBanner: InlineBanner)
+  abstract fun addInlineBannerToCheckPanel(inlineBanner: InlineBannerBase)
 
   @TestOnly
   override fun cleanUpState() {
