@@ -14,6 +14,7 @@ class EduAIClippyOptions : BoundConfigurable(EduAIClippyAssistantBundle.message(
   private var emotionalIntensity: Int = settings.emotionalIntensity
   private var mistakesAttention: Int = settings.mistakesAttention
   private var communicationStyle: Int = settings.communicationStyle
+  private var emojiUsage: Int = settings.emojiUsage
 
   override fun createPanel(): DialogPanel= panel {
     group(displayName) {
@@ -37,12 +38,23 @@ class EduAIClippyOptions : BoundConfigurable(EduAIClippyAssistantBundle.message(
         spinner(1..10)
           .bindIntValue(::communicationStyle)
       }
+      row(EduAIClippyAssistantBundle.message("settings.ai.clippy.emoji.usage")) {
+        spinner(1..10)
+          .bindIntValue(::emojiUsage)
+      }
     }
   }
 
   override fun apply() {
     super.apply()
-    val aiClippyProperties = AIClippyProperties(tone, encouragementFrequency, emotionalIntensity, mistakesAttention, communicationStyle)
+    val aiClippyProperties = AIClippyProperties(
+      tone = tone,
+      encouragementFrequency = encouragementFrequency,
+      emotionalIntensity = emotionalIntensity,
+      mistakesAttention = mistakesAttention,
+      communicationStyle = communicationStyle,
+      emojiUsage = emojiUsage
+    )
     AIClippySettings.getInstance().setClippySettings(aiClippyProperties)
   }
 }

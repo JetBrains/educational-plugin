@@ -11,6 +11,7 @@ class AIClippySettings : PersistentStateComponent<AIClippySettings.State> {
   val emotionalIntensity: Int get() = clippySettings.emotionalIntensity
   val mistakesAttention: Int get() = clippySettings.mistakesAttention
   val communicationStyle: Int get() = clippySettings.communicationStyle
+  val emojiUsage: Int get() = clippySettings.emojiUsage
 
   fun setClippySettings(settings: AIClippyProperties) {
     clippySettings = settings
@@ -23,6 +24,7 @@ class AIClippySettings : PersistentStateComponent<AIClippySettings.State> {
     state.emotionalIntensity = clippySettings.emotionalIntensity
     state.mistakesAttention = clippySettings.mistakesAttention
     state.communicationStyle = clippySettings.communicationStyle
+    state.emojiUsage = clippySettings.emojiUsage
     return state
   }
 
@@ -32,7 +34,8 @@ class AIClippySettings : PersistentStateComponent<AIClippySettings.State> {
       encouragementFrequency = state.encouragementFrequency,
       emotionalIntensity = state.emotionalIntensity,
       mistakesAttention = state.mistakesAttention,
-      communicationStyle = state.communicationStyle
+      communicationStyle = state.communicationStyle,
+      emojiUsage = state.emojiUsage
     )
   }
 
@@ -42,6 +45,7 @@ class AIClippySettings : PersistentStateComponent<AIClippySettings.State> {
     var emotionalIntensity by property(5)
     var mistakesAttention by property(5)
     var communicationStyle by property(5)
+    var emojiUsage by property(5)
   }
 
   companion object {
