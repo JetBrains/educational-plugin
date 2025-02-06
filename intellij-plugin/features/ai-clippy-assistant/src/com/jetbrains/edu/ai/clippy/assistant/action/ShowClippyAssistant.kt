@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.progress.currentThreadCoroutineScope
 import com.intellij.openapi.project.DumbAwareAction
+import com.jetbrains.edu.ai.clippy.assistant.ClippyDiffService
 import com.jetbrains.edu.ai.clippy.assistant.ClippyService
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.NonNls

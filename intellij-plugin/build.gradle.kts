@@ -943,6 +943,12 @@ project("github") {
     }
 
     implementation(project(":intellij-plugin:educational-core"))
+    implementation(rootProject.libs.educational.ml.library.core) {
+      excludeKotlinDeps()
+      excludeKotlinSerializationDeps()
+      exclude(group = "net.java.dev.jna")
+    }
+    implementation("io.github.java-diff-utils:java-diff-utils:4.15")
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
   }
@@ -1055,6 +1061,7 @@ project("features:ai-clippy-assistant") {
       exclude(group = "net.java.dev.jna")
     }
 
+    implementation("io.github.java-diff-utils:java-diff-utils:4.15")
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
   }
 }
