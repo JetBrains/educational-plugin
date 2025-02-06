@@ -41,9 +41,15 @@ data class AIClippyProperties(
    * A lower value results in plain text communication without any visual elements, suitable for formal or professional contexts.
    * A higher value incorporates emojis extensively to add expressiveness, enthusiasm, or fun, making the feedback more engaging and lively.
    */
-  val emojiUsage: Int
+  val emojiUsage: Int,
+  /**
+   * Configures the level of aggression in the assistant's responses.
+   * The scale ranges from 1 (gentle and kind) to 10 (highly intense, assertive, or forceful feedback).
+   * Lower values encourage a calm and supportive tone, while higher values allow for more confrontational or intense motivational feedback.
+   */
+  val aggression: Int
 ) {
-  constructor() : this(5, 5, 5, 5, 5, 5)
+  constructor() : this(5, 5, 5, 5, 5, 5, 5)
 
   init {
     require(tone in 1..10) {
@@ -63,6 +69,9 @@ data class AIClippyProperties(
     }
     require(emojiUsage in 1..10) {
       "Invalid value for emojiUsage: $emojiUsage. Usage must be between 1 (no emoji usage) and 10 (frequent emoji usage in responses)."
+    }
+    require(aggression in 1..10) {
+      "Invalid value for aggression: $aggression. Aggression must be between 11 (gentle and kind) to 10 (highly intense, assertive, or forceful feedback)."
     }
   }
 }
