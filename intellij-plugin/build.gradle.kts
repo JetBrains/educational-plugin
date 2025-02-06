@@ -1034,6 +1034,11 @@ project("features:ai-clippy-assistant") {
 
     implementation(project(":intellij-plugin:educational-core"))
     implementation(project(":intellij-plugin:AI"))
+    implementation(rootProject.libs.educational.ml.library.core) {
+      excludeKotlinDeps()
+      excludeKotlinSerializationDeps()
+      exclude(group = "net.java.dev.jna")
+    }
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
   }

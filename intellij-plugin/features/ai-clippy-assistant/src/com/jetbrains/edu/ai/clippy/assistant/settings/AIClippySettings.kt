@@ -14,6 +14,8 @@ class AIClippySettings : PersistentStateComponent<AIClippySettings.State> {
   val emojiUsage: Int get() = clippySettings.emojiUsage
   val aggression: Int get() = clippySettings.aggression
 
+  fun getClippySettings(): AIClippyProperties = clippySettings
+
   fun setClippySettings(settings: AIClippyProperties) {
     clippySettings = settings
   }

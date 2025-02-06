@@ -1,5 +1,7 @@
 package com.jetbrains.edu.ai.clippy.assistant.settings
 
+import com.jetbrains.educational.ml.core.context.Context
+
 data class AIClippyProperties(
   /**
    * Sets the tone of the assistant.
@@ -48,7 +50,7 @@ data class AIClippyProperties(
    * Lower values encourage a calm and supportive tone, while higher values allow for more confrontational or intense motivational feedback.
    */
   val aggression: Int
-) {
+) : Context {
   constructor() : this(5, 5, 5, 5, 5, 5, 5)
 
   init {
