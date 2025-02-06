@@ -1046,6 +1046,7 @@ project("features:ai-clippy-assistant") {
       exclude(group = "net.java.dev.jna")
     }
 
+    implementation("io.github.java-diff-utils:java-diff-utils:4.15")
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
   }
 }
