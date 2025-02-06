@@ -9,6 +9,7 @@ import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesCounterUsageColl
 import com.jetbrains.edu.aiHints.core.EduAIHintsProcessor
 import com.jetbrains.edu.aiHints.core.HintStateManager
 import com.jetbrains.edu.aiHints.core.HintsLoader
+import com.jetbrains.edu.aiHints.core.log.Logger
 import com.jetbrains.edu.aiHints.core.messages.EduAIHintsCoreBundle
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduUtilsKt.showPopup
@@ -55,6 +56,11 @@ class GetHint : ActionWithProgressIcon() {
     val task = taskToolWindow.currentTask ?: return
     taskToolWindow.updateCheckPanel(task)
     EduAIFeaturesCounterUsageCollector.hintButtonClicked(task)
+    Logger.aiHintsLogger.info(
+      """|| Course id: ${task.course.id} | Lesson id: ${task.lesson.id} | Task id: ${task.id}
+         || Action: hint button is clicked
+      """.trimMargin()
+    )
     HintsLoader.getInstance(project).getHint(task)
   }
 
