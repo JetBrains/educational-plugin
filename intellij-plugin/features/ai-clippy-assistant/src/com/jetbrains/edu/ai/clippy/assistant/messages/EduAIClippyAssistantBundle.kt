@@ -5,10 +5,8 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.PropertyKey
 
 @NonNls
-const val BUNDLE: String = "messages.EduAIClippyAssistantBundle"
+private const val BUNDLE = "messages.EduAIClippyAssistantBundle"
 
 object EduAIClippyAssistantBundle : EduBundle(BUNDLE) {
-  fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String {
-    return getMessage(key, *params)
-  }
+  fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String = getMessage(key, *params)
 }
