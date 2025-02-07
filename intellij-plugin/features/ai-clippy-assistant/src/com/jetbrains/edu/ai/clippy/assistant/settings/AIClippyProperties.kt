@@ -1,8 +1,10 @@
 package com.jetbrains.edu.ai.clippy.assistant.settings
 
+import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import com.jetbrains.educational.ml.core.context.Context
 
 data class AIClippyProperties(
+  val language: TranslationLanguage,
   /**
    * Configures the level of aggression in the assistant's responses.
    * The scale ranges from 1 (gentle and kind) to 10 (highly intense, assertive, or forceful feedback).
@@ -44,7 +46,7 @@ data class AIClippyProperties(
    */
   val mistakesAttention: Int,
 ) : Context {
-  constructor() : this(5, 5, 5, 5, 5, 5)
+  constructor() : this(TranslationLanguage.ENGLISH, 5, 5, 5, 5, 5, 5)
 
   init {
     require(aggression in 1..10) {
