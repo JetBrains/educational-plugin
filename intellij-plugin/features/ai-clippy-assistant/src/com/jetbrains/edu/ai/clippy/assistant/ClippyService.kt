@@ -30,7 +30,7 @@ class ClippyService(private val project: Project) {
   private suspend fun getClippy(): Clippy =
     lock.withLock {
       if (clippy == null || clippy?.isDisposed == true) {
-        clippy = Clippy()
+        clippy = Clippy(project)
       }
       clippy ?: error("Clippy is unexpectedly null")
     }
