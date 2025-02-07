@@ -12,6 +12,7 @@ class AIClippySettings : PersistentStateComponent<AIClippySettings.State> {
   val communicationStyle: Int get() = clippySettings.communicationStyle
   val emojiUsage: Int get() = clippySettings.emojiUsage
   val aggression: Int get() = clippySettings.aggression
+  val humiliation: Int get() = clippySettings.humiliation
 
   fun getClippySettings(): AIClippyProperties = clippySettings
 
@@ -27,6 +28,7 @@ class AIClippySettings : PersistentStateComponent<AIClippySettings.State> {
     state.communicationStyle = clippySettings.communicationStyle
     state.emojiUsage = clippySettings.emojiUsage
     state.aggression = clippySettings.aggression
+    state.humiliation = clippySettings.humiliation
     return state
   }
 
@@ -38,6 +40,7 @@ class AIClippySettings : PersistentStateComponent<AIClippySettings.State> {
       communicationStyle = state.communicationStyle,
       emojiUsage = state.emojiUsage,
       aggression = state.aggression,
+      humiliation = state.humiliation,
     )
   }
 
@@ -48,6 +51,7 @@ class AIClippySettings : PersistentStateComponent<AIClippySettings.State> {
     var communicationStyle by property(5)
     var emojiUsage by property(5)
     var aggression by property(5)
+    var humiliation by property(5)
   }
 
   companion object {

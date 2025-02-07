@@ -43,9 +43,15 @@ data class AIClippyProperties(
    * The scale ranges from 1 (gentle and kind) to 10 (highly intense, assertive, or forceful feedback).
    * Lower values encourage a calm and supportive tone, while higher values allow for more confrontational or intense motivational feedback.
    */
-  val aggression: Int
+  val aggression: Int,
+  /**
+   * Configures the level of humiliating tone in the assistant's response.
+   * The scale ranges from 1 (none, supportive communication) to 10 (highly humiliating and sarcastic tone).
+   * Lower values emphasize encouragement, while higher values allow strong and harsh criticism, often including sarcasm or humiliation.
+   */
+  val humiliation: Int
 ) : Context {
-  constructor() : this(5, 5, 5, 5, 5, 5)
+  constructor() : this(5, 5, 5, 5, 5, 5, 5)
 
   init {
     require(tone in 1..10) {
@@ -66,5 +72,9 @@ data class AIClippyProperties(
     require(aggression in 1..10) {
       "Invalid value for aggression: $aggression. Aggression must be between 11 (gentle and kind) to 10 (highly intense, assertive, or forceful feedback)."
     }
+    require(humiliation in 1..10) {
+      "Invalid value for humiliation: $humiliation. Humiliation must be between 1 (none) and 10 (highly humiliating)."
+    }
+
   }
 }

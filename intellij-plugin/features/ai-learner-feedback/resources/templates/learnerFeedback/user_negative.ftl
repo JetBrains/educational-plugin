@@ -6,3 +6,4 @@ Generate a feedback between 120–150 characters:
 — Communication Style: ${communicationStyle}
 — Emoji Usage: ${emojiUsage}
 — Aggression: ${aggression}
+— Humiliation: ${humiliation}

@@ -16,6 +16,7 @@ class AIClippyOptions : BoundConfigurable(EduAIClippyAssistantBundle.message("se
   private var communicationStyle: Int = settings.communicationStyle
   private var emojiUsage: Int = settings.emojiUsage
   private var aggression: Int = settings.aggression
+  private var humiliation: Int = settings.humiliation
 
   override fun createPanel(): DialogPanel= panel {
     group(displayName) {
@@ -49,6 +50,11 @@ class AIClippyOptions : BoundConfigurable(EduAIClippyAssistantBundle.message("se
           .bindIntValue(::aggression)
           .comment(EduAIClippyAssistantBundle.message("settings.ai.clippy.aggression.description"))
       }
+      row(EduAIClippyAssistantBundle.message("settings.ai.clippy.humiliation")) {
+        spinner(1..10)
+          .bindIntValue(::humiliation)
+          .comment(EduAIClippyAssistantBundle.message("settings.ai.clippy.humiliation.description"))
+      }
     }
   }
 
@@ -61,6 +67,7 @@ class AIClippyOptions : BoundConfigurable(EduAIClippyAssistantBundle.message("se
       communicationStyle = communicationStyle,
       emojiUsage = emojiUsage,
       aggression = aggression,
+      humiliation = humiliation,
     )
     AIClippySettings.getInstance().setClippySettings(aiClippyProperties)
   }
