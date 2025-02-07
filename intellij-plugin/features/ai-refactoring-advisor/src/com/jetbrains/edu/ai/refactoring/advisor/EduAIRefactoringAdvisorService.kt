@@ -117,6 +117,7 @@ class EduAIRefactoringAdvisorService(private val project: Project, private val s
     userCode.lines().zip(suggestedCode.lines()).joinToString("\n") {
       when {
         it.first == it.second -> it.first
+        it.first.contains("#") && it.second.contains("#") -> it.first
         it.second.startsWith(it.first) && it.second.substringAfter(it.first).trim().startsWith("#") -> it.first
         else -> it.second
       }
