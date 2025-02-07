@@ -1,4 +1,4 @@
-package com.jetbrains.edu.ai.clippy.assistant
+package com.jetbrains.edu.ai.clippy.assistant.ui
 
 import com.intellij.CommonBundle
 import com.intellij.icons.AllIcons
@@ -14,8 +14,6 @@ import com.intellij.ui.scale.JBUIScale
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.ai.clippy.assistant.messages.EduAIClippyAssistantBundle
-import com.jetbrains.edu.ai.clippy.assistant.ui.EduAiClippyImages
-import com.jetbrains.edu.ai.clippy.assistant.ui.ScaledImageLabel
 import java.awt.Component
 import java.awt.Font
 import java.awt.Point
@@ -23,7 +21,7 @@ import java.awt.Toolkit
 import javax.swing.JComponent
 import javax.swing.JPanel
 
-class Clippy(private val project: Project) {
+class AIClippyPopup {
   private val popup: JBPopup
   private val text = AtomicProperty("")
 

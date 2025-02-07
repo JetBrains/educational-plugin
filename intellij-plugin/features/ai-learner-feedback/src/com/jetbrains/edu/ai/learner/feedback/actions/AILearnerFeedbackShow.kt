@@ -1,32 +1,29 @@
-package com.jetbrains.edu.ai.clippy.assistant.action
+package com.jetbrains.edu.ai.learner.feedback.actions
 
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.progress.currentThreadCoroutineScope
 import com.intellij.openapi.project.DumbAwareAction
-import com.jetbrains.edu.ai.clippy.assistant.ClippyService
-import com.jetbrains.edu.ai.clippy.assistant.grazie.ClippyGrazieClient
+import com.jetbrains.edu.ai.clippy.assistant.AIClippyService
 import com.jetbrains.edu.ai.clippy.assistant.settings.AIClippySettings
+import com.jetbrains.edu.ai.learner.feedback.grazie.AILearnerFeedbackGrazieClient
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.NonNls
 
 @Suppress("ComponentNotRegistered")
-class ShowClippyAssistant : DumbAwareAction() {
+class AILearnerFeedbackShow : DumbAwareAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     currentThreadCoroutineScope().launch {
       val clippyProperties = AIClippySettings.getInstance().getClippySettings()
-      val feedback = ClippyGrazieClient.generateFeedback(clippyProperties).also { println(it) }
-      ClippyService.getInstance(project).apply {
-        showClippy()
-        setClippyFeedback(feedback)
-      }
+      val feedback = AILearnerFeedbackGrazieClient.generateFeedback(clippyProperties).also { println(it) }
+      AIClippyService.getInstance(project).showWithText(feedback)
     }
   }
 
   override fun update(e: AnActionEvent) {
     val project = e.project ?: return
-    e.presentation.isEnabledAndVisible = !ClippyService.isActive(project)
+    e.presentation.isEnabledAndVisible = !AIClippyService.isActive(project)
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
@@ -34,6 +31,6 @@ class ShowClippyAssistant : DumbAwareAction() {
   companion object {
     @Suppress("unused")
     @NonNls
-    private const val ACTION_ID: String = "Educational.Student.ShowClippyAssistant"
+    private const val ACTION_ID: String = "Educational.Student.AILearnerFeedbackShow"
   }
 }
