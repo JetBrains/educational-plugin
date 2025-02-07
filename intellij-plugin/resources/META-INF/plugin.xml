@@ -42,6 +42,7 @@
     <module name="command-line"/>
     <module name="ai-clippy-assistant"/>
     <module name="ai-error-explanation"/>
+    <module name="ai-learner-feedback"/>
     <module name="ai-refactoring-advisor"/>
     <module name="ai-hints-core"/>
     <module name="ai-hints-kotlin"/>
