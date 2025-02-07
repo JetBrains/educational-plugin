@@ -8,7 +8,8 @@
 
   <actions>
     <action id="Educational.Student.ShowClippyAssistant"
-            class="com.jetbrains.edu.ai.clippy.assistant.action.ShowClippyAssistant"/>
+            class="com.jetbrains.edu.ai.clippy.assistant.action.ShowClippyAssistant"
+            internal="true"/>
     <action id="Educational.Student.ShowDiffClippyComments"
             class="com.jetbrains.edu.ai.clippy.assistant.action.ShowDiffClippyComments"/>
   </actions>
@@ -19,5 +20,6 @@
 
   <extensions defaultExtensionNs="Educational">
     <AIOptionsProvider instance="com.jetbrains.edu.ai.clippy.assistant.settings.EduAIClippyOptions"/>
+    <checkListener implementation="com.jetbrains.edu.ai.clippy.assistant.listener.AIClippyCheckListener"/>
   </extensions>
 </idea-plugin>
