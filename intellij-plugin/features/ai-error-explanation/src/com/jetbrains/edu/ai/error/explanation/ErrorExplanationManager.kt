@@ -74,7 +74,7 @@ class ErrorExplanationManager(private val project: Project, private val scope: C
 
   fun showErrorExplanationPanelInClippy() {
     scope.launch {
-      val feedback: String = AILearnerFeedbackService.getInstance(project).getFeedback(positive = false)
+      val feedback = AILearnerFeedbackService.getInstance(project).getFeedback(positive = false)
 
       val language = project.course?.languageById ?: return@launch
       val stdErr = ErrorExplanationStderrStorage.getInstance(project).getStderr() ?: return@launch
