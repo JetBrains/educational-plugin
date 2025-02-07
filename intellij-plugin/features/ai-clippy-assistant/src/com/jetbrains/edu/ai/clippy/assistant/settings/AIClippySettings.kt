@@ -12,7 +12,6 @@ class AIClippySettings : PersistentStateComponent<AIClippySettings.State> {
   val emotionalIntensity: Int get() = clippySettings.emotionalIntensity
   val humiliation: Int get() = clippySettings.humiliation
   val mistakesAttention: Int get() = clippySettings.mistakesAttention
-  val tone: Int get() = clippySettings.tone
 
   fun getClippySettings(): AIClippyProperties = clippySettings
 
@@ -28,7 +27,6 @@ class AIClippySettings : PersistentStateComponent<AIClippySettings.State> {
     state.emotionalIntensity = clippySettings.emotionalIntensity
     state.humiliation = clippySettings.humiliation
     state.mistakesAttention = clippySettings.mistakesAttention
-    state.tone = clippySettings.tone
     return state
   }
 
@@ -40,7 +38,6 @@ class AIClippySettings : PersistentStateComponent<AIClippySettings.State> {
       emotionalIntensity = state.emotionalIntensity,
       humiliation = state.humiliation,
       mistakesAttention = state.mistakesAttention,
-      tone = state.tone,
     )
   }
 

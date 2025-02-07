@@ -43,15 +43,8 @@ data class AIClippyProperties(
    * a higher value celebrates successes while minimizing criticism.
    */
   val mistakesAttention: Int,
-  /**
-   * Sets the tone of the assistant.
-   * The scale ranges from 1 (soft, friendly, and gentle) to 10 (harsh, strict, and direct).
-   * A lower value makes the assistant provide comforting feedback, while higher values
-   * result in more straightforward and motivating communication.
-   */
-  val tone: Int
 ) : Context {
-  constructor() : this(5, 5, 5, 5, 5, 5, 5)
+  constructor() : this(5, 5, 5, 5, 5, 5)
 
   init {
     require(aggression in 1..10) {
@@ -71,9 +64,6 @@ data class AIClippyProperties(
     }
     require(mistakesAttention in 1..10) {
       "Invalid value for mistakesAttention: $mistakesAttention. Focus must be between 1 (mistakes) and 10 (achievements)."
-    }
-    require(tone in 1..10) {
-      "Invalid value for tone: $tone. Tone must be between 1 (soft) and 10 (harsh)."
     }
   }
 }

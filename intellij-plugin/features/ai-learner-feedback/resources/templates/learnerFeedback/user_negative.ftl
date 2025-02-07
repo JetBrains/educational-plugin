@@ -6,4 +6,3 @@ Generate a feedback between 120–150 characters:
 — Emotional Intensity: ${emotionalIntensity}
 — Humiliation: ${humiliation}
 — Mistakes Attention: ${mistakesAttention}
-— Tone: ${tone}

@@ -16,7 +16,6 @@ class AIClippyOptions : BoundConfigurable(EduAIClippyAssistantBundle.message("se
   private var emotionalIntensity: Int = settings.emotionalIntensity
   private var humiliation: Int = settings.humiliation
   private var mistakesAttention: Int = settings.mistakesAttention
-  private var tone: Int = settings.tone
 
   override fun createPanel(): DialogPanel= panel {
     group(displayName) {
@@ -50,11 +49,6 @@ class AIClippyOptions : BoundConfigurable(EduAIClippyAssistantBundle.message("se
           .bindIntValue(::mistakesAttention)
           .comment(EduAIClippyAssistantBundle.message("settings.ai.clippy.mistakes.attention.description"))
       }
-      row(EduAIClippyAssistantBundle.message("settings.ai.clippy.tone")) {
-        spinner(1..10)
-          .bindIntValue(::tone)
-          .comment(EduAIClippyAssistantBundle.message("settings.ai.clippy.tone.description"))
-      }
     }
   }
 
@@ -67,7 +61,6 @@ class AIClippyOptions : BoundConfigurable(EduAIClippyAssistantBundle.message("se
       emotionalIntensity = emotionalIntensity,
       humiliation = humiliation,
       mistakesAttention = mistakesAttention,
-      tone = tone,
     )
     AIClippySettings.getInstance().setClippySettings(aiClippyProperties)
   }
