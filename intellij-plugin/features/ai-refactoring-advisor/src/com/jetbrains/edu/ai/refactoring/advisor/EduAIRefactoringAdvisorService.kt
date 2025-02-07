@@ -30,7 +30,8 @@ import com.jetbrains.edu.ai.clippy.assistant.AIClippyService.ClippyLinkAction
 import com.jetbrains.edu.ai.learner.feedback.AILearnerFeedbackService
 import com.jetbrains.edu.ai.refactoring.advisor.grazie.AIRefactoringAdvisorGrazieClient
 import com.jetbrains.edu.ai.refactoring.advisor.messages.EduAIRefactoringAdvisorBundle
-import com.jetbrains.edu.ai.refactoring.advisor.prompts.AIRefactoringContext
+import com.jetbrains.edu.ai.refactoring.advisor.prompts.AIRefactoringUserContext
+import com.jetbrains.edu.ai.refactoring.advisor.prompts.AIRefactoringSystemContext
 import com.jetbrains.edu.ai.refactoring.advisor.ui.EduAIRefactoringAdvisorColors
 import com.jetbrains.edu.learning.actions.ApplyCodeAction
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
@@ -57,14 +58,15 @@ class EduAIRefactoringAdvisorService(private val project: Project, private val s
 
     val initialCode = taskFile.contents.textualRepresentation
     val userCodeDiff = getInitialToUserCodeDiff(initialCode, userCode)
-    val refactoringContext = AIRefactoringContext(userCodeDiff, course.languageId, initialCode, taskDescription)
+    val refactoringContext = AIRefactoringUserContext(userCodeDiff, initialCode, taskDescription)
+    val refactoringSystemContext = AIRefactoringSystemContext(course.languageId)
 
     val clippyDiff = withBackgroundProgress(project, "Getting clippy notes", cancellable = true) {
       withContext(Dispatchers.IO) {
-        AIRefactoringAdvisorGrazieClient.generateRefactoringPatch(refactoringContext).dropFormatting()
+        AIRefactoringAdvisorGrazieClient.generateRefactoringPatch(refactoringContext, refactoringSystemContext).dropFormatting()
       }
     }
-    val clippySuggestedCode = applyPatch(userCode, clippyDiff)
+    val clippySuggestedCode = applyPatch(initialCode, clippyDiff)
     withContext(Dispatchers.EDT) {
       highlightFirstCodeDiffPositionOrNull(project, taskVirtualFile, clippySuggestedCode, userCode)
       showFullDiff(userCode, clippySuggestedCode, taskVirtualFile)
@@ -123,7 +125,7 @@ class EduAIRefactoringAdvisorService(private val project: Project, private val s
     val userCodeSplit = userCode.split("\n")
     val diff = DiffUtils.diff(initialCodeSplit, userCodeSplit)
     val diffList = UnifiedDiffUtils.generateUnifiedDiff("", "", initialCodeSplit, diff, 0)
-    return diffList.drop(2).joinToString("\n")
+    return diffList.joinToString("\n")
   }
 
   private fun applyPatch(text: String, patch: String): String {
