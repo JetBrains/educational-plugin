@@ -1,9 +1,8 @@
 Based on the settings below, the student has successfully solved a complex programming task.
 Generate a congratulatory sentence between 120–150 characters:
-— Tone: ${tone}
-— Encouragement Frequency: ${encouragementFrequency}
-— Emotional Intensity: ${emotionalIntensity}
-— Mistakes Attention: ${mistakesAttention}
+— Aggression: ${aggression}
 — Communication Style: ${communicationStyle}
 — Emoji Usage: ${emojiUsage}
-— Aggression: ${aggression}
+— Emotional Intensity: ${emotionalIntensity}
+— Humiliation: ${humiliation}
+— Mistakes Attention: ${mistakesAttention}

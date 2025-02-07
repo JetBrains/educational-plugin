@@ -6,13 +6,12 @@ import com.intellij.openapi.components.*
 class AIClippySettings : PersistentStateComponent<AIClippySettings.State> {
   private var clippySettings = AIClippyProperties()
 
-  val tone: Int get() = clippySettings.tone
-  val encouragementFrequency: Int get() = clippySettings.encouragementFrequency
-  val emotionalIntensity: Int get() = clippySettings.emotionalIntensity
-  val mistakesAttention: Int get() = clippySettings.mistakesAttention
+  val aggression: Int get() = clippySettings.aggression
   val communicationStyle: Int get() = clippySettings.communicationStyle
   val emojiUsage: Int get() = clippySettings.emojiUsage
-  val aggression: Int get() = clippySettings.aggression
+  val emotionalIntensity: Int get() = clippySettings.emotionalIntensity
+  val humiliation: Int get() = clippySettings.humiliation
+  val mistakesAttention: Int get() = clippySettings.mistakesAttention
 
   fun getClippySettings(): AIClippyProperties = clippySettings
 
@@ -22,36 +21,34 @@ class AIClippySettings : PersistentStateComponent<AIClippySettings.State> {
 
   override fun getState(): State {
     val state = State()
-    state.tone = clippySettings.tone
-    state.encouragementFrequency = clippySettings.encouragementFrequency
-    state.emotionalIntensity = clippySettings.emotionalIntensity
-    state.mistakesAttention = clippySettings.mistakesAttention
+    state.aggression = clippySettings.aggression
     state.communicationStyle = clippySettings.communicationStyle
     state.emojiUsage = clippySettings.emojiUsage
-    state.aggression = clippySettings.aggression
+    state.emotionalIntensity = clippySettings.emotionalIntensity
+    state.humiliation = clippySettings.humiliation
+    state.mistakesAttention = clippySettings.mistakesAttention
     return state
   }
 
   override fun loadState(state: State) {
     clippySettings = AIClippyProperties(
-      tone = state.tone,
-      encouragementFrequency = state.encouragementFrequency,
-      emotionalIntensity = state.emotionalIntensity,
-      mistakesAttention = state.mistakesAttention,
+      aggression = state.aggression,
       communicationStyle = state.communicationStyle,
       emojiUsage = state.emojiUsage,
-      aggression = state.aggression,
+      emotionalIntensity = state.emotionalIntensity,
+      humiliation = state.humiliation,
+      mistakesAttention = state.mistakesAttention,
     )
   }
 
   class State : BaseState() {
-    var tone by property(5)
-    var encouragementFrequency by property(5)
-    var emotionalIntensity by property(5)
-    var mistakesAttention by property(5)
+    var aggression by property(5)
     var communicationStyle by property(5)
     var emojiUsage by property(5)
-    var aggression by property(5)
+    var emotionalIntensity by property(5)
+    var humiliation by property(5)
+    var mistakesAttention by property(5)
+    var tone by property(5)
   }
 
   companion object {
