@@ -2,20 +2,16 @@ package com.jetbrains.edu.ai.refactoring.advisor.action
 
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.progress.currentThreadCoroutineScope
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.ai.clippy.assistant.AIClippyService
 import com.jetbrains.edu.ai.refactoring.advisor.EduAIRefactoringAdvisorService
-import kotlinx.coroutines.launch
 import org.jetbrains.annotations.NonNls
 
 @Suppress("ComponentNotRegistered")
 class ShowAIRefactoringAdvise : DumbAwareAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    currentThreadCoroutineScope().launch {
-      EduAIRefactoringAdvisorService.getInstance(project).getClippyComments()
-    }
+    EduAIRefactoringAdvisorService.getInstance(project).getClippyComments()
   }
 
   override fun update(e: AnActionEvent) {

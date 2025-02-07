@@ -6,25 +6,15 @@ import com.intellij.diff.DiffContentFactory
 import com.intellij.diff.DiffDialogHints
 import com.intellij.diff.DiffManager
 import com.intellij.diff.chains.SimpleDiffRequestChain
-import com.intellij.diff.comparison.ComparisonManager
-import com.intellij.diff.comparison.ComparisonPolicy
 import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
-import com.intellij.openapi.editor.markup.EffectType
-import com.intellij.openapi.editor.markup.RangeHighlighter
-import com.intellij.openapi.editor.markup.TextAttributes
-import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileTypes.FileTypes
-import com.intellij.openapi.progress.DumbProgressIndicator
-import com.intellij.openapi.progress.currentThreadCoroutineScope
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.platform.ide.progress.withBackgroundProgress
-import com.intellij.util.concurrency.annotations.RequiresEdt
+import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.jetbrains.edu.ai.clippy.assistant.AIClippyService
 import com.jetbrains.edu.ai.clippy.assistant.AIClippyService.ClippyLinkAction
 import com.jetbrains.edu.ai.learner.feedback.AILearnerFeedbackService
@@ -32,7 +22,6 @@ import com.jetbrains.edu.ai.refactoring.advisor.grazie.AIRefactoringAdvisorGrazi
 import com.jetbrains.edu.ai.refactoring.advisor.messages.EduAIRefactoringAdvisorBundle
 import com.jetbrains.edu.ai.refactoring.advisor.prompts.AIRefactoringSystemContext
 import com.jetbrains.edu.ai.refactoring.advisor.prompts.AIRefactoringUserContext
-import com.jetbrains.edu.ai.refactoring.advisor.ui.EduAIRefactoringAdvisorColors
 import com.jetbrains.edu.learning.actions.ApplyCodeAction
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.course
@@ -45,38 +34,38 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.awt.Font
 
 @Service(Service.Level.PROJECT)
 class EduAIRefactoringAdvisorService(private val project: Project, private val scope: CoroutineScope) {
-  suspend fun getClippyComments() {
-    val course = project.course ?: return
-    val task = project.getCurrentTask() ?: return
-    val taskFile = task.getCodeTaskFile(project) ?: return
-    val taskVirtualFile = taskFile.getVirtualFile(project) ?: error("No virtual file found for task $task")
-    val userCode = taskVirtualFile.getTextFromTaskTextFile() ?: error("No text file for taskFile in task $task")
-    val taskDescription = task.getDescriptionFile(project)?.getTextFromTaskTextFile() ?: error("No description text")
+  fun getClippyComments() {
+    scope.launch(Dispatchers.EDT) {
+      val course = project.course ?: return@launch
+      val task = project.getCurrentTask() ?: return@launch
+      val taskFile = task.getCodeTaskFile(project) ?: return@launch
+      val taskVirtualFile = taskFile.getVirtualFile(project) ?: error("No virtual file found for task $task")
+      val userCode = taskVirtualFile.getTextFromTaskTextFile() ?: error("No text file for taskFile in task $task")
+      val taskDescription = task.getDescriptionFile(project)?.getTextFromTaskTextFile() ?: error("No description text")
 
-    val initialCode = taskFile.contents.textualRepresentation
-    val userCodeDiff = getInitialToUserCodeDiff(initialCode, userCode)
-    val refactoringContext = AIRefactoringUserContext(userCodeDiff, initialCode, taskDescription)
-    val refactoringSystemContext = AIRefactoringSystemContext(course.languageId)
+      val initialCode = taskFile.contents.textualRepresentation
+      val userCodeDiff = getInitialToUserCodeDiff(initialCode, userCode)
+      val refactoringContext = AIRefactoringUserContext(userCodeDiff, initialCode, taskDescription)
+      val refactoringSystemContext = AIRefactoringSystemContext(course.languageId)
 
-    val clippyDiff = withBackgroundProgress(project, "Getting clippy notes", cancellable = true) {
-      withContext(Dispatchers.IO) {
-        AIRefactoringAdvisorGrazieClient.generateRefactoringPatch(refactoringContext, refactoringSystemContext).dropFormatting()
+      val clippyDiff = runWithModalProgressBlocking(project, "Getting clippy notes") {
+        withContext(Dispatchers.IO) {
+          AIRefactoringAdvisorGrazieClient.generateRefactoringPatch(refactoringContext, refactoringSystemContext).dropFormatting()
+        }
       }
-    }
-    val clippySuggestedCode = applyPatch(initialCode, clippyDiff)
-    val filteredResult = filterSuggestedCode(userCode, clippySuggestedCode)
-    withContext(Dispatchers.EDT) {
+
+      val clippySuggestedCode = applyPatch(initialCode, clippyDiff)
+      val filteredResult = filterSuggestedCode(userCode, clippySuggestedCode)
       if (userCode == filteredResult) {
         EduNotificationManager.showInfoNotification(
           project,
           EduAIRefactoringAdvisorBundle.message("refactoring.diff.no.suggestions.title"),
           EduAIRefactoringAdvisorBundle.message("refactoring.diff.no.suggestions.content")
         )
-        return@withContext
+        return@launch
       }
       showFullDiff(userCode, filteredResult, taskVirtualFile)
     }
@@ -86,7 +75,7 @@ class EduAIRefactoringAdvisorService(private val project: Project, private val s
     scope.launch {
       val feedback = AILearnerFeedbackService.getInstance(project).getFeedback(positive = true)
       val clippyLink = ClippyLinkAction(EduAIRefactoringAdvisorBundle.message("refactoring.diff.action.show")) {
-        currentThreadCoroutineScope().launch { getClippyComments() }
+        getClippyComments()
       }
       AIClippyService.getInstance(project).showWithTextAndLinks(feedback, listOf(clippyLink))
     }
@@ -122,27 +111,6 @@ class EduAIRefactoringAdvisorService(private val project: Project, private val s
         else -> it.second
       }
     }
-
-  @Suppress("unused")
-  @RequiresEdt
-  private fun highlightFirstCodeDiffPositionOrNull(
-    project: Project,
-    taskVirtualFile: VirtualFile,
-    taskFileText: String,
-    newText: String
-  ): RangeHighlighter? {
-    val editor = FileEditorManager.getInstance(project).selectedTextEditor ?: return null
-    val currentVirtualFile = FileDocumentManager.getInstance().getFile(editor.document) ?: return null
-    if (currentVirtualFile != taskVirtualFile) return null
-
-    val startLine = ComparisonManager.getInstance().compareLines(
-      taskFileText, newText, ComparisonPolicy.DEFAULT, DumbProgressIndicator.INSTANCE
-    ).firstOrNull()?.startLine1 ?: return null
-    if (startLine >= taskFileText.lines().size) return null
-
-    val attributes = TextAttributes(null, EduAIRefactoringAdvisorColors.wellDoneHighlight, null, EffectType.BOXED, Font.PLAIN)
-    return editor.markupModel.addLineHighlighter(startLine, 0, attributes)
-  }
 
   private fun getInitialToUserCodeDiff(initialCode: String, userCode: String): String {
     val initialCodeSplit = initialCode.split("\n")
