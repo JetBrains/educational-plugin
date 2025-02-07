@@ -353,6 +353,7 @@ tasks {
     autoReload = false
     jvmArgs("-Xmx2g")
     jvmArgs("-Dide.experimental.ui=true")
+    jvmArgs("-Deducational.ml.auth.type=APPLICATION")
 
     // Uncomment to show localized messages
     // jvmArgs("-Didea.l10n=true")
