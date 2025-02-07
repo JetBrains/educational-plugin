@@ -33,7 +33,6 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.getTaskFile
-import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.ui.EduColors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -67,7 +66,6 @@ class ErrorExplanationManager(private val project: Project, private val scope: C
 
         withContext(Dispatchers.EDT) {
           openEditor(vfsFile, lineNumber, errorExplanation)
-          showNotification(project, errorExplanation)
         }
       }
     }
@@ -130,14 +128,6 @@ class ErrorExplanationManager(private val project: Project, private val scope: C
     prevInlay?.let { Disposer.dispose(it) }
     this.prevRangeHighlighter = null
     prevInlay = null
-  }
-
-  private fun showNotification(project: Project, errorExplanation: ErrorExplanation) {
-    EduNotificationManager.showInfoNotification(
-      project,
-      EduAIErrorExplanationBundle.message("error.explanation"),
-      errorExplanation.explanation
-    )
   }
 
   private fun isCourseFile(fileName: String): Boolean {
