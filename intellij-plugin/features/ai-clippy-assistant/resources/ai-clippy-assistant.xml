@@ -6,18 +6,11 @@
     <module name="AI"/>
   </dependencies>
 
-  <actions>
-    <action id="Educational.Student.ShowClippyAssistant"
-            class="com.jetbrains.edu.ai.clippy.assistant.action.ShowClippyAssistant"
-            internal="true"/>
-  </actions>
-
   <extensions defaultExtensionNs="com.intellij">
     <applicationService serviceImplementation="com.jetbrains.edu.ai.clippy.assistant.settings.AIClippySettings"/>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">
-    <AIOptionsProvider instance="com.jetbrains.edu.ai.clippy.assistant.settings.EduAIClippyOptions"/>
-    <checkListener implementation="com.jetbrains.edu.ai.clippy.assistant.listener.AIClippyCheckListener"/>
+    <AIOptionsProvider instance="com.jetbrains.edu.ai.clippy.assistant.settings.AIClippyOptions"/>
   </extensions>
 </idea-plugin>

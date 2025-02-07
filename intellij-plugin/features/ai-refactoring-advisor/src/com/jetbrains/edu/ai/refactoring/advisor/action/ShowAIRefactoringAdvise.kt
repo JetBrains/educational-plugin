@@ -4,7 +4,7 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.progress.currentThreadCoroutineScope
 import com.intellij.openapi.project.DumbAwareAction
-import com.jetbrains.edu.ai.clippy.assistant.ClippyService
+import com.jetbrains.edu.ai.clippy.assistant.AIClippyService
 import com.jetbrains.edu.ai.refactoring.advisor.EduAIRefactoringAdvisorService
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.NonNls
@@ -20,7 +20,7 @@ class ShowAIRefactoringAdvise : DumbAwareAction() {
 
   override fun update(e: AnActionEvent) {
     val project = e.project ?: return
-    e.presentation.isEnabledAndVisible = ClippyService.isActive(project)
+    e.presentation.isEnabledAndVisible = AIClippyService.isActive(project)
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT

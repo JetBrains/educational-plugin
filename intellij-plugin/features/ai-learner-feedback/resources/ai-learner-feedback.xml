@@ -1,2 +1,18 @@
 <idea-plugin package="com.jetbrains.edu.ai.learner.feedback">
+  <resource-bundle>messages.EduAILearnerFeedbackBundle</resource-bundle>
+
+  <dependencies>
+    <!--suppress PluginXmlValidity -->
+    <module name="ai-clippy-assistant"/>
+  </dependencies>
+
+  <actions>
+    <action id="Educational.Student.ShowClippyAssistant"
+            class="com.jetbrains.edu.ai.learner.feedback.actions.AILearnerFeedbackShow"
+            internal="true"/>
+  </actions>
+
+  <extensions defaultExtensionNs="Educational">
+    <checkListener implementation="com.jetbrains.edu.ai.learner.feedback.listener.AILearnerFeedbackCheckListener"/>
+  </extensions>
 </idea-plugin>

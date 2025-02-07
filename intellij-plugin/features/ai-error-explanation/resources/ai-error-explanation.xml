@@ -1,6 +1,11 @@
 <idea-plugin package="com.jetbrains.edu.ai.error.explanation">
   <resource-bundle>messages.EduAIErrorExplanationBundle</resource-bundle>
 
+  <dependencies>
+    <!--suppress PluginXmlValidity -->
+    <module name="ai-clippy-assistant"/>
+  </dependencies>
+
   <actions>
     <action id="Educational.Student.ShowErrorExplanation"
             class="com.jetbrains.edu.ai.error.explanation.action.ShowErrorExplanation"

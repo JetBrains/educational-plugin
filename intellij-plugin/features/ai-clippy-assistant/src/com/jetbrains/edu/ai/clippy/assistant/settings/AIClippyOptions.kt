@@ -7,7 +7,7 @@ import com.intellij.ui.dsl.builder.panel
 import com.jetbrains.edu.ai.clippy.assistant.messages.EduAIClippyAssistantBundle
 import com.jetbrains.edu.ai.settings.AIOptionsProvider
 
-class EduAIClippyOptions : BoundConfigurable(EduAIClippyAssistantBundle.message("settings.ai.clippy.assistant")), AIOptionsProvider {
+class AIClippyOptions : BoundConfigurable(EduAIClippyAssistantBundle.message("settings.ai.clippy.assistant")), AIOptionsProvider {
   private val settings = AIClippySettings.getInstance()
 
   private var tone: Int = settings.tone
