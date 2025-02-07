@@ -317,6 +317,7 @@ dependencies {
     pluginModule(implementation(project("remote-env")))
     pluginModule(implementation(project("features:command-line")))
     pluginModule(implementation(project("features:ai-clippy-assistant")))
+    pluginModule(implementation(project("features:ai-error-explanation")))
     pluginModule(implementation(project("features:ai-hints-core")))
     pluginModule(implementation(project("features:ai-hints-kotlin")))
     pluginModule(implementation(project("features:ai-hints-python")))
@@ -1040,13 +1041,25 @@ project("features:ai-clippy-assistant") {
 
     implementation(project(":intellij-plugin:educational-core"))
     implementation(project(":intellij-plugin:AI"))
-    implementation(rootProject.libs.educational.ml.library.core) {
+    api(rootProject.libs.educational.ml.library.core) {
       excludeKotlinDeps()
       excludeKotlinSerializationDeps()
       exclude(group = "net.java.dev.jna")
     }
 
     implementation("io.github.java-diff-utils:java-diff-utils:4.15")
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+  }
+}
+
+project("features:ai-error-explanation") {
+  dependencies {
+    intellijPlatform {
+      intellijIde(project, baseVersion)
+    }
+
+    implementation(project(":intellij-plugin:educational-core"))
+    implementation(project(":intellij-plugin:features:ai-clippy-assistant"))
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
   }
 }
