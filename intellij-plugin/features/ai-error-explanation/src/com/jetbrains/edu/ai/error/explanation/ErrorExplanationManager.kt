@@ -53,7 +53,7 @@ class ErrorExplanationManager(private val project: Project, private val scope: C
     }
     if (language.id != EduFormatNames.PYTHON) return
     scope.launch {
-      withBackgroundProgress(project, "Fetching exception explanation") {
+      withBackgroundProgress(project, EduAIErrorExplanationBundle.message("error.explanation.fetching.error.explanation")) {
         val (fileName, lineNumber) = stackTrace
         val vfsFile = VfsUtil.findFileByIoFile(File(fileName), true) ?: return@withBackgroundProgress
         val document = runReadAction { FileDocumentManager.getInstance().getDocument(vfsFile) } ?: return@withBackgroundProgress
@@ -81,9 +81,7 @@ class ErrorExplanationManager(private val project: Project, private val scope: C
 
       val clippyLinkAction = ClippyLinkAction(EduAIErrorExplanationBundle.message("action.Educational.Student.ShowErrorExplanation.text")) { getErrorExplanation(language, stdErr) }
 
-      withContext(Dispatchers.EDT) {
-        AIClippyService.getInstance(project).showWithTextAndLinks(feedback, listOf(clippyLinkAction))
-      }
+      AIClippyService.getInstance(project).showWithTextAndLinks(feedback, listOf(clippyLinkAction))
     }
   }
 
