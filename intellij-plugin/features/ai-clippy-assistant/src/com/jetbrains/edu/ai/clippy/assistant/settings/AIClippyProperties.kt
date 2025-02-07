@@ -11,12 +11,6 @@ data class AIClippyProperties(
    */
   val tone: Int,
   /**
-   * Configures how frequently the assistant encourages the user.
-   * The scale ranges from 1 (rare encouragement, only in key situations) to 10 (frequent encouragement with constant support).
-   * A lower value means the assistant speaks sparingly, while higher values result in more active and continuous encouragement.
-   */
-  val encouragementFrequency: Int,
-  /**
    * Controls the emotional intensity of the assistant's feedback.
    * The scale ranges from 1 (neutral and professional tone) to 10 (highly emotional and enthusiastic responses).
    * Lower values focus on reserved, unemotional messages, whereas higher values
@@ -51,14 +45,11 @@ data class AIClippyProperties(
    */
   val aggression: Int
 ) : Context {
-  constructor() : this(5, 5, 5, 5, 5, 5, 5)
+  constructor() : this(5, 5, 5, 5, 5, 5)
 
   init {
     require(tone in 1..10) {
       "Invalid value for tone: $tone. Tone must be between 1 (soft) and 10 (harsh)."
-    }
-    require(encouragementFrequency in 1..10) {
-      "Invalid value for encouragementFrequency: $encouragementFrequency. Frequency must be between 1 (rare) and 10 (frequent)."
     }
     require(emotionalIntensity in 1..10) {
       "Invalid value for emotionalIntensity: $emotionalIntensity. Intensity must be between 1 (neutral) and 10 (highly emotional)."

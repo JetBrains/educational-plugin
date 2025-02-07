@@ -11,7 +11,6 @@ class AIClippyOptions : BoundConfigurable(EduAIClippyAssistantBundle.message("se
   private val settings = AIClippySettings.getInstance()
 
   private var tone: Int = settings.tone
-  private var encouragementFrequency: Int = settings.encouragementFrequency
   private var emotionalIntensity: Int = settings.emotionalIntensity
   private var mistakesAttention: Int = settings.mistakesAttention
   private var communicationStyle: Int = settings.communicationStyle
@@ -24,11 +23,6 @@ class AIClippyOptions : BoundConfigurable(EduAIClippyAssistantBundle.message("se
         spinner(1..10)
           .bindIntValue(::tone)
           .comment(EduAIClippyAssistantBundle.message("settings.ai.clippy.tone.description"))
-      }
-      row(EduAIClippyAssistantBundle.message("settings.ai.clippy.encouragement.frequency")) {
-        spinner(1..10)
-          .bindIntValue(::encouragementFrequency)
-          .comment(EduAIClippyAssistantBundle.message("settings.ai.clippy.encouragement.frequency.description"))
       }
       row(EduAIClippyAssistantBundle.message("settings.ai.clippy.emotional.intensity")) {
         spinner(1..10)
@@ -62,7 +56,6 @@ class AIClippyOptions : BoundConfigurable(EduAIClippyAssistantBundle.message("se
     super.apply()
     val aiClippyProperties = AIClippyProperties(
       tone = tone,
-      encouragementFrequency = encouragementFrequency,
       emotionalIntensity = emotionalIntensity,
       mistakesAttention = mistakesAttention,
       communicationStyle = communicationStyle,
