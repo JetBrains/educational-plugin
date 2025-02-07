@@ -1,19 +1,20 @@
-package com.jetbrains.edu.ai.clippy.assistant.action
+package com.jetbrains.edu.ai.refactoring.advisor.action
 
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.progress.currentThreadCoroutineScope
 import com.intellij.openapi.project.DumbAwareAction
-import com.jetbrains.edu.ai.clippy.assistant.ClippyDiffService
 import com.jetbrains.edu.ai.clippy.assistant.ClippyService
+import com.jetbrains.edu.ai.refactoring.advisor.EduAIRefactoringAdvisorService
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.NonNls
 
-class ShowDiffClippyComments : DumbAwareAction() {
+@Suppress("ComponentNotRegistered")
+class ShowAIRefactoringAdvise : DumbAwareAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     currentThreadCoroutineScope().launch {
-      ClippyDiffService.getInstance(project).getClippyComments()
+      EduAIRefactoringAdvisorService.getInstance(project).getClippyComments()
     }
   }
 
@@ -27,6 +28,6 @@ class ShowDiffClippyComments : DumbAwareAction() {
   companion object {
     @Suppress("unused")
     @NonNls
-    const val ACTION_ID: String = "Educational.Student.ShowDiffClippyComments"
+    const val ACTION_ID: String = "Educational.Student.ShowAIRefactoringAdvise"
   }
 }

@@ -10,8 +10,6 @@
     <action id="Educational.Student.ShowClippyAssistant"
             class="com.jetbrains.edu.ai.clippy.assistant.action.ShowClippyAssistant"
             internal="true"/>
-    <action id="Educational.Student.ShowDiffClippyComments"
-            class="com.jetbrains.edu.ai.clippy.assistant.action.ShowDiffClippyComments"/>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
