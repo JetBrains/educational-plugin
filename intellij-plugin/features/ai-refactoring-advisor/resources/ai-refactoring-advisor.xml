@@ -4,6 +4,7 @@
 
   <dependencies>
     <module name="ai-clippy-assistant"/>
+    <module name="ai-learner-feedback"/>
   </dependencies>
 
   <actions>
