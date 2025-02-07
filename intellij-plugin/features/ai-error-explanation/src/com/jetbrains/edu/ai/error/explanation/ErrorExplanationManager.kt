@@ -1,14 +1,13 @@
-package com.jetbrains.edu.learning.ai.errorExplanation
+package com.jetbrains.edu.ai.error.explanation
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.intellij.lang.Language
 import com.intellij.openapi.application.EDT
-import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.ComponentInlayAlignment
-import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.InlayProperties
 import com.intellij.openapi.editor.addComponentInlay
 import com.intellij.openapi.editor.markup.EffectType
@@ -22,8 +21,9 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.intellij.ui.dsl.builder.panel
-import com.jetbrains.edu.learning.checker.StderrAnalyzer
-import com.jetbrains.edu.learning.computeUnderProgress
+import com.jetbrains.edu.ai.error.explanation.grazie.ErrorExplanationGrazieClient
+import com.jetbrains.edu.ai.error.explanation.messages.EduAIErrorExplanationBundle
+import com.jetbrains.edu.ai.error.explanation.prompts.ErrorExplanationContext
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
@@ -34,7 +34,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.css.GridAutoFlow.Companion.row
 import java.awt.Font
 import java.io.File
 
@@ -44,20 +43,25 @@ class ErrorExplanationManager(private val project: Project, private val scope: C
     scope.launch {
       withBackgroundProgress(project, "Fetching exception explanation") {
         if (language.id != EduFormatNames.PYTHON) return@withBackgroundProgress
-        println("STDERR:\n$stderr\n")
+
+        LOG.info("STDERR:\n$stderr\n")
         val stackTrace = getFileAndLineNumber(language, stderr)
         if (stackTrace == null) {
-          println("Found no line")
+          LOG.info("Found no line")
           return@withBackgroundProgress
         }
+
         val (fileName, lineNumber) = stackTrace
         val vfsFile = VfsUtil.findFileByIoFile(File(fileName), true) ?: return@withBackgroundProgress
         val document = runReadAction { FileDocumentManager.getInstance().getDocument(vfsFile) } ?: return@withBackgroundProgress
         val text = document.text
         val programmingLanguage = project.course?.languageById?.displayName ?: return@withBackgroundProgress
-        val result =  ErrorExplanationConnector.getInstance().getErrorExplanation(programmingLanguage, text, stderr)
+        val context = ErrorExplanationContext(programmingLanguage, text, stderr)
+
+        val result = ErrorExplanationGrazieClient.getErrorExplanation(context)
         val errorExplanation = objectMapper.readValue(result, ErrorExplanation::class.java)
-        println("RESULT:\n$result\n")
+        LOG.info("RESULT:\n$result\n")
+
         withContext(Dispatchers.EDT) {
           openEditor(vfsFile, lineNumber, errorExplanation)
           showNotification(project, errorExplanation)
@@ -69,7 +73,7 @@ class ErrorExplanationManager(private val project: Project, private val scope: C
   private var prevRangeHighlighter: Pair<VirtualFile, RangeHighlighter>? = null
 
   private fun getFileAndLineNumber(language: Language, stderr: String): Pair<String, Int>? {
-    val analyzer = StderrAnalyzer.getInstance(language) ?: return null
+    val analyzer = ErrorAnalyzer.getInstance(language) ?: return null
     val stackTrace = analyzer.getStackTrace(stderr)
     val errorLine = stackTrace.findLast { (fileName, lineNumber) -> isCourseFile(fileName) && lineNumber > 0}
     return errorLine?.let { (fileName, lineNumber) -> Pair(fileName, lineNumber) }
@@ -103,7 +107,11 @@ class ErrorExplanationManager(private val project: Project, private val scope: C
   }
 
   private fun showNotification(project: Project, errorExplanation: ErrorExplanation) {
-    EduNotificationManager.showInfoNotification(project, "Error Explanation", errorExplanation.explanation)
+    EduNotificationManager.showInfoNotification(
+      project,
+      EduAIErrorExplanationBundle.message("error.explanation"),
+      errorExplanation.explanation
+    )
   }
 
   private fun isCourseFile(fileName: String): Boolean {
@@ -119,8 +127,10 @@ class ErrorExplanationManager(private val project: Project, private val scope: C
   }
 
   companion object {
-    fun getInstance(project: Project): ErrorExplanationManager = project.service()
+    private val LOG = Logger.getInstance(ErrorExplanationStartupActivity::class.java)
 
     private val objectMapper = jacksonObjectMapper()
+
+    fun getInstance(project: Project): ErrorExplanationManager = project.service()
   }
 }

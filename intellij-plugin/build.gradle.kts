@@ -487,11 +487,6 @@ project("educational-core") {
     api(rootProject.libs.edu.ai.format) {
       excludeKotlinDeps()
     }
-    api(rootProject.libs.educational.ml.library.core) {
-      excludeKotlinDeps()
-      excludeKotlinSerializationDeps()
-      exclude(group = "net.java.dev.jna")
-    }
     // For some reason, kotlin serialization plugin doesn't see the corresponding library from IDE dependency
     // and fails Kotlin compilation.
     // Let's provide necessary dependency during compilation to make it work
@@ -717,6 +712,7 @@ project("Edu-Python") {
     }
 
     implementation(project(":intellij-plugin:educational-core"))
+    implementation(project(":intellij-plugin:features:ai-error-explanation"))
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
     testImplementation(project(":intellij-plugin:Edu-Python:Idea"))

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.ai.errorExplanation
+package com.jetbrains.edu.ai.error.explanation.prompts
 
 import com.jetbrains.educational.ml.core.context.Context
 
