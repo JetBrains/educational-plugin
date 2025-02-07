@@ -27,6 +27,7 @@ import com.jetbrains.edu.ai.clippy.assistant.AIClippyService.ClippyLinkAction
 import com.jetbrains.edu.ai.error.explanation.grazie.ErrorExplanationGrazieClient
 import com.jetbrains.edu.ai.error.explanation.messages.EduAIErrorExplanationBundle
 import com.jetbrains.edu.ai.error.explanation.prompts.ErrorExplanationContext
+import com.jetbrains.edu.ai.error.explanation.ui.ErrorEditorPanel
 import com.jetbrains.edu.ai.learner.feedback.AILearnerFeedbackService
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
