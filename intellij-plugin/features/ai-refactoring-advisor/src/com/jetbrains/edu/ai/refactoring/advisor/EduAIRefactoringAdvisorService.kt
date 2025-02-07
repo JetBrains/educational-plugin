@@ -19,11 +19,14 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileTypes.FileTypes
 import com.intellij.openapi.progress.DumbProgressIndicator
+import com.intellij.openapi.progress.currentThreadCoroutineScope
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.intellij.util.concurrency.annotations.RequiresEdt
+import com.jetbrains.edu.ai.clippy.assistant.AIClippyService
+import com.jetbrains.edu.ai.clippy.assistant.AIClippyService.ClippyLinkAction
 import com.jetbrains.edu.ai.refactoring.advisor.grazie.AIRefactoringAdvisorGrazieClient
 import com.jetbrains.edu.ai.refactoring.advisor.messages.EduAIRefactoringAdvisorBundle
 import com.jetbrains.edu.ai.refactoring.advisor.prompts.AIRefactoringContext
@@ -35,12 +38,14 @@ import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.getTextFromTaskTextFile
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.awt.Font
 
 @Service(Service.Level.PROJECT)
-class EduAIRefactoringAdvisorService(private val project: Project) {
+class EduAIRefactoringAdvisorService(private val project: Project, private val scope: CoroutineScope) {
   suspend fun getClippyComments() {
     val course = project.course ?: return
     val task = project.getCurrentTask() ?: return
@@ -62,6 +67,15 @@ class EduAIRefactoringAdvisorService(private val project: Project) {
     withContext(Dispatchers.EDT) {
       highlightFirstCodeDiffPositionOrNull(project, taskVirtualFile, clippySuggestedCode, userCode)
       showFullDiff(userCode, clippySuggestedCode, taskVirtualFile)
+    }
+  }
+
+  fun showRefactoringLinkInClippy() {
+    scope.launch {
+      val clippyLink = ClippyLinkAction(EduAIRefactoringAdvisorBundle.message("refactoring.diff.action.show")) {
+        currentThreadCoroutineScope().launch { getClippyComments() }
+      }
+      AIClippyService.getInstance(project).showWithLinks(listOf(clippyLink))
     }
   }
 

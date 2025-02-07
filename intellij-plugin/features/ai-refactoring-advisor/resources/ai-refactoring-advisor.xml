@@ -1,8 +1,8 @@
+<!--suppress PluginXmlValidity -->
 <idea-plugin package="com.jetbrains.edu.ai.refactoring.advisor">
   <resource-bundle>messages.EduAIRefactoringAdvisorBundle</resource-bundle>
 
   <dependencies>
-    <!--suppress PluginXmlValidity -->
     <module name="ai-clippy-assistant"/>
   </dependencies>
 
@@ -10,4 +10,8 @@
     <action id="Educational.Student.ShowAIRefactoringAdvise"
             class="com.jetbrains.edu.ai.refactoring.advisor.action.ShowAIRefactoringAdvise"/>
   </actions>
+
+  <extensions defaultExtensionNs="Educational">
+    <checkListener implementation="com.jetbrains.edu.ai.refactoring.advisor.listener.AILearnerRefactoringAdvisorListener"/>
+  </extensions>
 </idea-plugin>

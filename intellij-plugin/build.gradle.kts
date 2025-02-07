@@ -1071,6 +1071,7 @@ project("features:ai-error-explanation") {
 
     implementation(project(":intellij-plugin:educational-core"))
     implementation(project(":intellij-plugin:features:ai-clippy-assistant"))
+    implementation(project(":intellij-plugin:features:ai-learner-feedback"))
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
   }

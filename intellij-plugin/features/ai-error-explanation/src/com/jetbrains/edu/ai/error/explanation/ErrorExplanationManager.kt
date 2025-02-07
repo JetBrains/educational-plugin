@@ -22,15 +22,18 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
-import com.intellij.ui.dsl.builder.panel
+import com.intellij.util.PathUtil
+import com.jetbrains.edu.ai.clippy.assistant.AIClippyService
+import com.jetbrains.edu.ai.clippy.assistant.AIClippyService.ClippyLinkAction
 import com.jetbrains.edu.ai.error.explanation.grazie.ErrorExplanationGrazieClient
 import com.jetbrains.edu.ai.error.explanation.messages.EduAIErrorExplanationBundle
 import com.jetbrains.edu.ai.error.explanation.prompts.ErrorExplanationContext
+import com.jetbrains.edu.ai.error.explanation.ui.ErrorEditorPanel
+import com.jetbrains.edu.ai.learner.feedback.AILearnerFeedbackService
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.getTaskFile
-import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.ui.EduColors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -64,8 +67,22 @@ class ErrorExplanationManager(private val project: Project, private val scope: C
 
         withContext(Dispatchers.EDT) {
           openEditor(vfsFile, lineNumber, errorExplanation)
-          showNotification(project, errorExplanation)
         }
+      }
+    }
+  }
+
+  fun showErrorExplanationPanelInClippy() {
+    scope.launch {
+      val feedback: String = AILearnerFeedbackService.getInstance(project).getFeedback(positive = false)
+
+      val language = project.course?.languageById ?: return@launch
+      val stdErr = ErrorExplanationStderrStorage.getInstance(project).getStderr() ?: return@launch
+
+      val clippyLinkAction = ClippyLinkAction(EduAIErrorExplanationBundle.message("action.Educational.Student.ShowErrorExplanation.text")) { getErrorExplanation(language, stdErr) }
+
+      withContext(Dispatchers.EDT) {
+        AIClippyService.getInstance(project).showWithTextAndLinks(feedback, listOf(clippyLinkAction))
       }
     }
   }
@@ -114,21 +131,12 @@ class ErrorExplanationManager(private val project: Project, private val scope: C
     prevInlay = null
   }
 
-  private fun showNotification(project: Project, errorExplanation: ErrorExplanation) {
-    EduNotificationManager.showInfoNotification(
-      project,
-      EduAIErrorExplanationBundle.message("error.explanation"),
-      errorExplanation.explanation
-    )
-  }
-
   private fun isCourseFile(fileName: String): Boolean {
     return try {
       val file = File(fileName)
       val virtualFile = VfsUtil.findFileByIoFile(file, true) ?: return false
       val taskFile = virtualFile.getTaskFile(project) ?: return false
-      if (!taskFile.isVisible) return false
-      true
+      return taskFile.isVisible
     } catch (e: Exception) {
       false
     }
