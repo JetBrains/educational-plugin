@@ -4,8 +4,9 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.progress.currentThreadCoroutineScope
 import com.intellij.openapi.project.DumbAwareAction
-import com.jetbrains.edu.ai.clippy.assistant.ClippyDiffService
 import com.jetbrains.edu.ai.clippy.assistant.ClippyService
+import com.jetbrains.edu.ai.clippy.assistant.grazie.ClippyGrazieClient
+import com.jetbrains.edu.ai.clippy.assistant.settings.AIClippySettings
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.NonNls
 
@@ -14,8 +15,8 @@ class ShowClippyAssistant : DumbAwareAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     currentThreadCoroutineScope().launch {
-//      val clippyProperties = AIClippySettings.getInstance().getClippySettings()
-//      val feedback = ClippyGrazieClient().generateFeedback(clippyProperties)
+      val clippyProperties = AIClippySettings.getInstance().getClippySettings()
+      val feedback = ClippyGrazieClient.generateFeedback(clippyProperties)
       ClippyService.getInstance(project).showClippy()
     }
   }
