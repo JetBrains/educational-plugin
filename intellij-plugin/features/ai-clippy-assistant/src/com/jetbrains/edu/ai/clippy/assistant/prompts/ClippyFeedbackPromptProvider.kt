@@ -1,4 +1,4 @@
-package com.jetbrains.edu.ai.clippy.assistant.prompts.feedback
+package com.jetbrains.edu.ai.clippy.assistant.prompts
 
 import com.jetbrains.edu.ai.clippy.assistant.settings.AIClippyProperties
 import com.jetbrains.educational.ml.core.prompt.PromptProvider

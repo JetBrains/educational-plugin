@@ -1,4 +1,4 @@
-package com.jetbrains.edu.ai.clippy.assistant
+package com.jetbrains.edu.ai.refactoring.advisor
 
 import com.github.difflib.DiffUtils
 import com.github.difflib.UnifiedDiffUtils
@@ -24,9 +24,10 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.intellij.util.concurrency.annotations.RequiresEdt
-import com.jetbrains.edu.ai.clippy.assistant.grazie.ClippyGrazieClient
-import com.jetbrains.edu.ai.clippy.assistant.messages.EduAIClippyAssistantBundle
-import com.jetbrains.edu.ai.clippy.assistant.ui.EduAIClippyColors
+import com.jetbrains.edu.ai.refactoring.advisor.grazie.AIRefactoringAdvisorGrazieClient
+import com.jetbrains.edu.ai.refactoring.advisor.messages.EduAIRefactoringAdvisorBundle
+import com.jetbrains.edu.ai.refactoring.advisor.prompts.AIRefactoringContext
+import com.jetbrains.edu.ai.refactoring.advisor.ui.EduAIRefactoringAdvisorColors
 import com.jetbrains.edu.learning.actions.ApplyCodeAction
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.course
@@ -39,7 +40,7 @@ import kotlinx.coroutines.withContext
 import java.awt.Font
 
 @Service(Service.Level.PROJECT)
-class ClippyDiffService(private val project: Project) {
+class EduAIRefactoringAdvisorService(private val project: Project) {
   suspend fun getClippyComments() {
     val course = project.course ?: return
     val task = project.getCurrentTask() ?: return
@@ -50,10 +51,11 @@ class ClippyDiffService(private val project: Project) {
 
     val initialCode = taskFile.contents.textualRepresentation
     val userCodeDiff = getInitialToUserCodeDiff(initialCode, userCode)
+    val refactoringContext = AIRefactoringContext(userCodeDiff, course.languageId, initialCode, taskDescription)
 
     val clippyDiff = withBackgroundProgress(project, "Getting clippy notes", cancellable = true) {
       withContext(Dispatchers.IO) {
-        ClippyGrazieClient.generateRefactoringPatch(course.languageId, userCodeDiff, initialCode, taskDescription).dropFormatting()
+        AIRefactoringAdvisorGrazieClient.generateRefactoringPatch(refactoringContext).dropFormatting()
       }
     }
     val clippySuggestedCode = applyPatch(userCode, clippyDiff)
@@ -66,15 +68,15 @@ class ClippyDiffService(private val project: Project) {
   private suspend fun showFullDiff(userCode: String, suggestedCode: String, taskVirtualFile: VirtualFile) {
     val diffRequestChain = SimpleDiffRequestChain(
       SimpleDiffRequest(
-        EduAIClippyAssistantBundle.message("clippy.diff.title"),
+        EduAIRefactoringAdvisorBundle.message("refactoring.diff.title"),
         DiffContentFactory.getInstance().create(userCode, FileTypes.PLAIN_TEXT),
         DiffContentFactory.getInstance().create(suggestedCode, FileTypes.PLAIN_TEXT),
-        EduAIClippyAssistantBundle.message("clippy.diff.before"),
-        EduAIClippyAssistantBundle.message("clippy.diff.after")
+        EduAIRefactoringAdvisorBundle.message("refactoring.diff.before"),
+        EduAIRefactoringAdvisorBundle.message("refactoring.diff.after")
       )
     )
     diffRequestChain.putUserData(ApplyCodeAction.VIRTUAL_FILE_PATH_LIST, listOf(taskVirtualFile.path))
-    diffRequestChain.putUserData(GET_CLIPPY_DIFF, true)
+    diffRequestChain.putUserData(GET_AI_REFACTORING_DIFF, true)
     withContext(Dispatchers.EDT) {
       DiffManager.getInstance().showDiff(project, diffRequestChain, DiffDialogHints.FRAME)
     }
@@ -96,7 +98,7 @@ class ClippyDiffService(private val project: Project) {
     ).firstOrNull()?.startLine1 ?: return null
     if (startLine >= taskFileText.lines().size) return null
 
-    val attributes = TextAttributes(null, EduAIClippyColors.aiGetClippyWellDoneHighlight, null, EffectType.BOXED, Font.PLAIN)
+    val attributes = TextAttributes(null, EduAIRefactoringAdvisorColors.wellDoneHighlight, null, EffectType.BOXED, Font.PLAIN)
     return editor.markupModel.addLineHighlighter(startLine, 0, attributes)
   }
 
@@ -116,8 +118,8 @@ class ClippyDiffService(private val project: Project) {
   private fun String.dropFormatting() = split("\n").drop(1).dropLast(1).joinToString("\n")
 
   companion object {
-    private val GET_CLIPPY_DIFF = Key.create<Boolean>("getClippyDiff")
+    private val GET_AI_REFACTORING_DIFF = Key.create<Boolean>("getAIRefactoringDiff")
 
-    fun getInstance(project: Project): ClippyDiffService = project.service()
+    fun getInstance(project: Project): EduAIRefactoringAdvisorService = project.service()
   }
 }

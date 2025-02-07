@@ -1,2 +1,8 @@
 <idea-plugin package="com.jetbrains.edu.ai.refactoring.advisor">
+  <resource-bundle>messages.EduAIRefactoringAdvisorBundle</resource-bundle>
+
+  <actions>
+    <action id="Educational.Student.ShowAIRefactoringAdvise"
+            class="com.jetbrains.edu.ai.refactoring.advisor.action.ShowAIRefactoringAdvise"/>
+  </actions>
 </idea-plugin>
