@@ -22,6 +22,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
+import com.intellij.util.PathUtil
 import com.jetbrains.edu.ai.clippy.assistant.AIClippyService
 import com.jetbrains.edu.ai.clippy.assistant.AIClippyService.ClippyLinkAction
 import com.jetbrains.edu.ai.error.explanation.grazie.ErrorExplanationGrazieClient
@@ -135,8 +136,7 @@ class ErrorExplanationManager(private val project: Project, private val scope: C
       val file = File(fileName)
       val virtualFile = VfsUtil.findFileByIoFile(file, true) ?: return false
       val taskFile = virtualFile.getTaskFile(project) ?: return false
-      if (!taskFile.isVisible) return false
-      true
+      return taskFile.isVisible
     } catch (e: Exception) {
       false
     }
