@@ -13,6 +13,6 @@
   </actions>
 
   <extensions defaultExtensionNs="Educational">
-    <checkListener implementation="com.jetbrains.edu.ai.refactoring.advisor.listener.AILearnerRefactoringAdvisorListener"/>
+    <checkListener implementation="com.jetbrains.edu.ai.refactoring.advisor.listener.AIRefactoringAdvisorListener"/>
   </extensions>
 </idea-plugin>
