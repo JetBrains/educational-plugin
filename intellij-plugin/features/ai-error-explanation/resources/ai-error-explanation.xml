@@ -9,7 +9,8 @@
 
   <actions>
     <action id="Educational.Student.ShowErrorExplanation"
-            class="com.jetbrains.edu.ai.error.explanation.action.ShowErrorExplanation"/>
+            class="com.jetbrains.edu.ai.error.explanation.action.ShowErrorExplanation"
+            internal="true"/>
   </actions>
 
   <extensionPoints>
