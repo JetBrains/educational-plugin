@@ -8,8 +8,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 class AILearnerFeedbackCheckListener : CheckListener {
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
-    if (result.isSolved) {
-      AILearnerFeedbackService.getInstance(project).showFeedbackInClippy()
-    }
+    AILearnerFeedbackService.getInstance(project).showFeedbackInClippy(positive = result.isSolved)
   }
 }

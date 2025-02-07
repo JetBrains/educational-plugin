@@ -13,11 +13,11 @@ import kotlinx.coroutines.launch
 
 @Service(Service.Level.PROJECT)
 class AILearnerFeedbackService(private val project: Project, private val scope: CoroutineScope) {
-  fun showFeedbackInClippy() {
+  fun showFeedbackInClippy(positive: Boolean) {
     scope.launch {
       val clippyProperties = AIClippySettings.getInstance().getClippySettings()
       val feedback = withBackgroundProgress(project, EduAILearnerFeedbackBundle.message("learner.feedback.calculating.feedback")) {
-        AILearnerFeedbackGrazieClient.generateFeedback(clippyProperties)
+        AILearnerFeedbackGrazieClient.generateFeedback(clippyProperties, positive)
       }
       AIClippyService.getInstance(project).showWithText(feedback)
     }
