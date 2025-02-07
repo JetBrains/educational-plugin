@@ -88,6 +88,8 @@ class AIClippyPopup {
           cell(createCongratulationsPanel()).align(Align.FILL)
         }
       }
+    }.apply {
+      border = JBUI.Borders.empty(0, 5, 0, 12)
     }
     return panel
   }
