@@ -21,6 +21,12 @@ class ClippyService(private val project: Project) {
     }
   }
 
+  suspend fun setClippyFeedback(text: String) {
+    withContext(Dispatchers.EDT) {
+      getClippy().updateText(text)
+    }
+  }
+
   private suspend fun getClippy(): Clippy =
     lock.withLock {
       if (clippy == null || clippy?.isDisposed == true) {

@@ -2,16 +2,14 @@ package com.jetbrains.edu.ai.clippy.assistant
 
 import com.intellij.CommonBundle
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.observable.properties.AtomicProperty
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.IconButton
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.ui.awt.RelativePoint
-import com.intellij.ui.dsl.builder.Align
-import com.intellij.ui.dsl.builder.AlignY
-import com.intellij.ui.dsl.builder.IntelliJSpacingConfiguration
-import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.scale.JBUIScale
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.JBUI
@@ -27,6 +25,7 @@ import javax.swing.JPanel
 
 class Clippy {
   private val popup: JBPopup
+  private val text = AtomicProperty("")
 
   val isDisposed: Boolean
     get() = popup.isDisposed
@@ -52,30 +51,29 @@ class Clippy {
     popup.show(relativePoint)
   }
 
+  @RequiresEdt
+  fun updateText(newText: String) {
+    text.set(newText)
+
+    popup.content.revalidate()
+    popup.content.repaint()
+    popup.pack(true, true)
+  }
+
   private fun createContent(): JComponent {
     val image = ScaledImageLabel(EduAiClippyImages.Clippy)
     val panel = panel {
-      row {
-        label("How are you?").align(Align.CENTER)
-      }
-      buttonsGroup {
-        row { radioButton("I'm fine") }
-        row { radioButton("Meh") }
-        row { radioButton("Bad...") }
-      }
-    }
-    return panel {
       customizeSpacingConfiguration(object : IntelliJSpacingConfiguration() {
         override val horizontalColumnsGap: Int = 5
       }) {
         row {
-          cell(image).align(Align.CENTER).widthGroup("widthGroup")
-          cell(panel).align(AlignY.FILL).widthGroup("widthGroup")
+          cell(image).align(Align.CENTER)
+          text("", maxLineLength = 35).align(AlignY.FILL).bindText(text)
         }
       }
-    }.apply {
-      applyFontRecursively(panel, JBUI.Fonts.label(18f))
     }
+    applyFontRecursively(panel, JBUI.Fonts.label(16f))
+    return panel
   }
 
   private fun createPopup(content: JComponent): JBPopup {
@@ -101,7 +99,7 @@ class Clippy {
 
   private fun getPoint(): Point {
     val screenSize = Toolkit.getDefaultToolkit().screenSize
-    val xOffset = JBUIScale.scale(700)
+    val xOffset = JBUIScale.scale(1000)
     val yOffset = JBUIScale.scale(500)
     return Point(screenSize.width - xOffset, screenSize.height - yOffset)
   }
@@ -114,5 +112,4 @@ class Clippy {
       }
     }
   }
-
 }

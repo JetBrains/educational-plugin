@@ -16,8 +16,11 @@ class ShowClippyAssistant : DumbAwareAction() {
     val project = e.project ?: return
     currentThreadCoroutineScope().launch {
       val clippyProperties = AIClippySettings.getInstance().getClippySettings()
-      val feedback = ClippyGrazieClient.generateFeedback(clippyProperties)
-      ClippyService.getInstance(project).showClippy()
+      val feedback = ClippyGrazieClient.generateFeedback(clippyProperties).also { println(it) }
+      ClippyService.getInstance(project).apply {
+        showClippy()
+        setClippyFeedback(feedback)
+      }
     }
   }
 
