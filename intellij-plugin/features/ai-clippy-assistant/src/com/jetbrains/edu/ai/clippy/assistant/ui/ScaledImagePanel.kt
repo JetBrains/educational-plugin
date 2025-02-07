@@ -11,7 +11,7 @@ class ScaledImageLabel(private val icon: Icon) : JLabel() {
 
   override fun paintComponent(g: Graphics) {
     super.paintComponent(g)
-    val image = IconUtil.toImage(icon)
+    val image = IconUtil.toBufferedImage(icon)
 
     val imageWidth = image.getWidth(this)
     val imageHeight = image.getHeight(this)
