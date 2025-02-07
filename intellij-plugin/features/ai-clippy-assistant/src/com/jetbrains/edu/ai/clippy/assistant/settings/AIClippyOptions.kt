@@ -63,6 +63,18 @@ class AIClippyOptions : BoundConfigurable(EduAIClippyAssistantBundle.message("se
     }
   }
 
+  override fun isModified(): Boolean {
+    if (super<BoundConfigurable>.isModified()) return true
+    val settings = AIClippySettings.getInstance()
+    return tone != settings.tone ||
+           encouragementFrequency != settings.encouragementFrequency ||
+           emotionalIntensity != settings.emotionalIntensity ||
+           mistakesAttention != settings.mistakesAttention ||
+           communicationStyle != settings.communicationStyle ||
+           emojiUsage != settings.emojiUsage ||
+           aggression != settings.aggression
+  }
+
   override fun apply() {
     super.apply()
     val aiClippyProperties = AIClippyProperties(

@@ -32,9 +32,15 @@ class TranslationOptions : BoundConfigurable(EduAIBundle.message("settings.ai.tr
     }
   }
 
+  override fun isModified(): Boolean {
+    if (super<BoundConfigurable>.isModified()) return true
+    return TranslationSettings.getInstance().autoTranslate != autoTranslate
+           || TranslationSettings.getInstance().preferableLanguage != preferableLanguage
+  }
+
   override fun apply() {
-    val language = preferableLanguage ?: return
     super.apply()
+    val language = preferableLanguage ?: return
     val autoTranslationProperties = AutoTranslationProperties(language, autoTranslate)
     TranslationSettings.getInstance().setAutoTranslationProperties(autoTranslationProperties)
   }
