@@ -1,8 +1,8 @@
+<!--suppress PluginXmlValidity -->
 <idea-plugin package="com.jetbrains.edu.ai.refactoring.advisor">
   <resource-bundle>messages.EduAIRefactoringAdvisorBundle</resource-bundle>
 
   <dependencies>
-    <!--suppress PluginXmlValidity -->
     <module name="ai-clippy-assistant"/>
     <module name="ai-learner-feedback"/>
   </dependencies>
