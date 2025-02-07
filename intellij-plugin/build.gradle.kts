@@ -1054,6 +1054,20 @@ project("features:ai-error-explanation") {
 
     implementation(project(":intellij-plugin:educational-core"))
     implementation(project(":intellij-plugin:features:ai-clippy-assistant"))
+
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+  }
+}
+
+project("features:ai-learner-feedback") {
+  dependencies {
+    intellijPlatform {
+      intellijIde(project, baseVersion)
+    }
+
+    implementation(project(":intellij-plugin:educational-core"))
+    implementation(project(":intellij-plugin:features:ai-clippy-assistant"))
+
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
   }
 }
