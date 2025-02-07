@@ -2,7 +2,6 @@ package com.jetbrains.edu.ai.clippy.assistant.ui
 
 import com.intellij.CommonBundle
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.observable.properties.AtomicProperty
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.IconButton
 import com.intellij.openapi.ui.popup.JBPopup
@@ -10,18 +9,18 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.panels.Wrapper
-import com.intellij.ui.dsl.builder.*
+import com.intellij.ui.dsl.builder.Align
+import com.intellij.ui.dsl.builder.AlignY
+import com.intellij.ui.dsl.builder.IntelliJSpacingConfiguration
+import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.scale.JBUIScale
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.ai.clippy.assistant.AIClippyService.ClippyLinkAction
 import com.jetbrains.edu.ai.clippy.assistant.messages.EduAIClippyAssistantBundle
-import java.awt.Component
-import java.awt.Font
 import java.awt.Point
 import java.awt.Toolkit
 import javax.swing.JComponent
-import javax.swing.JPanel
 
 class AIClippyPopup {
   private val popup: JBPopup
