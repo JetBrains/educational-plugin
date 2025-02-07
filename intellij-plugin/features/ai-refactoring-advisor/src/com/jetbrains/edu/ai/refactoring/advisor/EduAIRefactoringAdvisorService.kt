@@ -30,8 +30,8 @@ import com.jetbrains.edu.ai.clippy.assistant.AIClippyService.ClippyLinkAction
 import com.jetbrains.edu.ai.learner.feedback.AILearnerFeedbackService
 import com.jetbrains.edu.ai.refactoring.advisor.grazie.AIRefactoringAdvisorGrazieClient
 import com.jetbrains.edu.ai.refactoring.advisor.messages.EduAIRefactoringAdvisorBundle
-import com.jetbrains.edu.ai.refactoring.advisor.prompts.AIRefactoringUserContext
 import com.jetbrains.edu.ai.refactoring.advisor.prompts.AIRefactoringSystemContext
+import com.jetbrains.edu.ai.refactoring.advisor.prompts.AIRefactoringUserContext
 import com.jetbrains.edu.ai.refactoring.advisor.ui.EduAIRefactoringAdvisorColors
 import com.jetbrains.edu.learning.actions.ApplyCodeAction
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
@@ -40,6 +40,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.getTextFromTaskTextFile
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -67,9 +68,17 @@ class EduAIRefactoringAdvisorService(private val project: Project, private val s
       }
     }
     val clippySuggestedCode = applyPatch(initialCode, clippyDiff)
+    val filteredResult = filterSuggestedCode(userCode, clippySuggestedCode)
     withContext(Dispatchers.EDT) {
-      highlightFirstCodeDiffPositionOrNull(project, taskVirtualFile, clippySuggestedCode, userCode)
-      showFullDiff(userCode, clippySuggestedCode, taskVirtualFile)
+      if (userCode == filteredResult) {
+        EduNotificationManager.showInfoNotification(
+          project,
+          EduAIRefactoringAdvisorBundle.message("refactoring.diff.no.suggestions.title"),
+          EduAIRefactoringAdvisorBundle.message("refactoring.diff.no.suggestions.content")
+        )
+        return@withContext
+      }
+      showFullDiff(userCode, filteredResult, taskVirtualFile)
     }
   }
 
@@ -100,6 +109,20 @@ class EduAIRefactoringAdvisorService(private val project: Project, private val s
     }
   }
 
+  /**
+   * This is a temporary workaround.
+   * It returns the modified or unchanged lines from the generated suggestion, but ignores lines where only comment has been added.
+   */
+  private fun filterSuggestedCode(userCode: String, suggestedCode: String): String =
+    userCode.lines().zip(suggestedCode.lines()).joinToString("\n") {
+      when {
+        it.first == it.second -> it.first
+        it.second.startsWith(it.first) && it.second.substringAfter(it.first).trim().startsWith("#") -> it.first
+        else -> it.second
+      }
+    }
+
+  @Suppress("unused")
   @RequiresEdt
   private fun highlightFirstCodeDiffPositionOrNull(
     project: Project,
