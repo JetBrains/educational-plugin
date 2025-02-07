@@ -89,7 +89,6 @@ class AIClippyPopup {
         }
       }
     }
-    applyFontRecursively(panel, JBUI.Fonts.label(16f))
     return panel
   }
 
@@ -133,14 +132,5 @@ class AIClippyPopup {
     val xOffset = JBUIScale.scale(1000)
     val yOffset = JBUIScale.scale(500)
     return Point(screenSize.width - xOffset, screenSize.height - yOffset)
-  }
-
-  private fun applyFontRecursively(component: Component, font: Font) {
-    component.font = font
-    if (component is JPanel) {
-      for (child in component.components) {
-        applyFontRecursively(child, font)
-      }
-    }
   }
 }

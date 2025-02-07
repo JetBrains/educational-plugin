@@ -27,6 +27,7 @@ import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.jetbrains.edu.ai.clippy.assistant.AIClippyService
 import com.jetbrains.edu.ai.clippy.assistant.AIClippyService.ClippyLinkAction
+import com.jetbrains.edu.ai.learner.feedback.AILearnerFeedbackService
 import com.jetbrains.edu.ai.refactoring.advisor.grazie.AIRefactoringAdvisorGrazieClient
 import com.jetbrains.edu.ai.refactoring.advisor.messages.EduAIRefactoringAdvisorBundle
 import com.jetbrains.edu.ai.refactoring.advisor.prompts.AIRefactoringContext
@@ -72,10 +73,11 @@ class EduAIRefactoringAdvisorService(private val project: Project, private val s
 
   fun showRefactoringLinkInClippy() {
     scope.launch {
+      val feedback = AILearnerFeedbackService.getInstance(project).getFeedback(positive = true)
       val clippyLink = ClippyLinkAction(EduAIRefactoringAdvisorBundle.message("refactoring.diff.action.show")) {
         currentThreadCoroutineScope().launch { getClippyComments() }
       }
-      AIClippyService.getInstance(project).showWithLinks(listOf(clippyLink))
+      AIClippyService.getInstance(project).showWithTextAndLinks(feedback, listOf(clippyLink))
     }
   }
 

@@ -1083,6 +1083,7 @@ project("features:ai-refactoring-advisor") {
 
     implementation(project(":intellij-plugin:educational-core"))
     implementation(project(":intellij-plugin:features:ai-clippy-assistant"))
+    implementation(project(":intellij-plugin:features:ai-learner-feedback"))
     implementation("io.github.java-diff-utils:java-diff-utils:4.15")
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))

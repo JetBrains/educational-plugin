@@ -79,7 +79,9 @@ class ErrorExplanationManager(private val project: Project, private val scope: C
       val language = project.course?.languageById ?: return@launch
       val stdErr = ErrorExplanationStderrStorage.getInstance(project).getStderr() ?: return@launch
 
-      val clippyLinkAction = ClippyLinkAction(EduAIErrorExplanationBundle.message("action.Educational.Student.ShowErrorExplanation.text")) { getErrorExplanation(language, stdErr) }
+      val clippyLinkAction = ClippyLinkAction(EduAIErrorExplanationBundle.message("action.Educational.Student.ShowErrorExplanation.text")) {
+        getErrorExplanation(language, stdErr)
+      }
 
       AIClippyService.getInstance(project).showWithTextAndLinks(feedback, listOf(clippyLinkAction))
     }
