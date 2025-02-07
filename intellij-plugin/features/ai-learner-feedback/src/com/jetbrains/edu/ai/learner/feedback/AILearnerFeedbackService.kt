@@ -23,6 +23,13 @@ class AILearnerFeedbackService(private val project: Project, private val scope: 
     }
   }
 
+  suspend fun getFeedback(positive: Boolean): String {
+    val clippyProperties = AIClippySettings.getInstance().getClippySettings()
+    return withBackgroundProgress(project, EduAILearnerFeedbackBundle.message("learner.feedback.calculating.feedback")) {
+      AILearnerFeedbackGrazieClient.generateFeedback(clippyProperties, positive)
+    }
+  }
+
   companion object {
     fun getInstance(project: Project): AILearnerFeedbackService = project.service()
   }

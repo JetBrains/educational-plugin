@@ -11,13 +11,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.ProjectActivity
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.checker.CheckUtils
-import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.ext.languageById
 
 class ErrorExplanationStartupActivity : ProjectActivity {
   override suspend fun execute(project: Project) {
-    if (!project.isStudentProject()) return
+    //if (!project.isStudentProject()) return
     project.messageBus.connect().subscribe(ExecutionManager.EXECUTION_TOPIC, object : ExecutionListener {
       override fun processStarted(executorId: String, env: ExecutionEnvironment, handler: ProcessHandler) {
         if (env.getUserData(CheckUtils.EDU_ENV_KEY) == true) {
@@ -37,6 +34,7 @@ class ErrorExplanationStartupActivity : ProjectActivity {
               // Sometimes error messages and stack traces are in the stdout instead of stderr. For example, JS
               val outputErrorMessage = output.stderr.ifEmpty { output.stdout }
               ErrorExplanationStderrStorage.getInstance(project).setStderr(outputErrorMessage)
+              ErrorExplanationManager.getInstance(project).showErrorExplanationPanelInClippy()
             }
           }
         })

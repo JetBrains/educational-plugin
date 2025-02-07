@@ -9,10 +9,12 @@ import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.ui.awt.RelativePoint
+import com.intellij.ui.components.panels.Wrapper
 import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.scale.JBUIScale
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.ai.clippy.assistant.AIClippyService.ClippyLinkAction
 import com.jetbrains.edu.ai.clippy.assistant.messages.EduAIClippyAssistantBundle
 import java.awt.Component
 import java.awt.Font
@@ -23,7 +25,10 @@ import javax.swing.JPanel
 
 class AIClippyPopup {
   private val popup: JBPopup
-  private val text = AtomicProperty("")
+  private var text = ""
+  private val linkActions = mutableListOf<ClippyLinkAction>()
+
+  private var contentPanel: Wrapper
 
   val isDisposed: Boolean
     get() = popup.isDisposed
@@ -32,8 +37,8 @@ class AIClippyPopup {
     get() = popup.isVisible
 
   init {
-    val content = createContent()
-    popup = createPopup(content)
+    contentPanel = Wrapper(createContent())
+    popup = createPopup(contentPanel)
   }
 
   @RequiresEdt
@@ -51,8 +56,22 @@ class AIClippyPopup {
 
   @RequiresEdt
   fun updateText(newText: String) {
-    text.set(newText)
+    text = newText
 
+    updatePanel()
+  }
+
+  @RequiresEdt
+  fun updateLinkActions(linkActions: List<ClippyLinkAction>) {
+    this.linkActions.clear()
+    linkActions.forEach { this.linkActions.add(it) }
+
+    updatePanel()
+  }
+
+  @RequiresEdt
+  fun updatePanel() {
+    contentPanel.setContent(createContent())
     popup.content.revalidate()
     popup.content.repaint()
     popup.pack(true, true)
@@ -77,16 +96,13 @@ class AIClippyPopup {
   private fun createCongratulationsPanel(): JComponent {
     return panel {
       row {
-        text("", maxLineLength = 35).align(AlignY.FILL).bindText(text)
+        text(text, maxLineLength = 35).align(AlignY.FILL)
       }
       row {
-//        link(EduAIClippyAssistantBundle.message("clippy.diff.action.show")) {
-//          val action = ActionManager.getInstance().getAction(ShowDiffClippyComments.ACTION_ID) ?: return@link
-//          val dataContext = SimpleDataContext.builder()
-//            .add(CommonDataKeys.PROJECT, project)
-//            .build()
-//          ActionUtil.invokeAction(action, dataContext, "", null, null)
-//        }
+        for (link in linkActions) {
+          link(link.name) { link.action.invoke() }
+        }
+        cell()
       }
     }
   }

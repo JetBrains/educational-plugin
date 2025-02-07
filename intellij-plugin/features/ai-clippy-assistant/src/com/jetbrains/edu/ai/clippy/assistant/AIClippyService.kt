@@ -29,6 +29,31 @@ class AIClippyService(private val project: Project, private val scope: Coroutine
     }
   }
 
+  fun showWithLinks(links: List<ClippyLinkAction>) {
+    scope.launch {
+      withContext(Dispatchers.EDT) {
+        getClippy().apply {
+          show(project)
+          updateLinkActions(links)
+        }
+      }
+    }
+  }
+
+  fun showWithTextAndLinks(text: String, links: List<ClippyLinkAction>) {
+    scope.launch {
+      withContext(Dispatchers.EDT) {
+        getClippy().apply {
+          show(project)
+          updateText(text)
+          updateLinkActions(links)
+        }
+      }
+    }
+  }
+
+  data class ClippyLinkAction(val name: String, val action: () -> Unit)
+
   private suspend fun getClippy(): AIClippyPopup =
     lock.withLock {
       if (clippy == null || clippy?.isDisposed == true) {

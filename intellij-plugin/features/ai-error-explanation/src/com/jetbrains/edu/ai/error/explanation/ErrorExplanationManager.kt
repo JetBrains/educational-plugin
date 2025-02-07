@@ -22,10 +22,12 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
-import com.intellij.ui.dsl.builder.panel
+import com.jetbrains.edu.ai.clippy.assistant.AIClippyService
+import com.jetbrains.edu.ai.clippy.assistant.AIClippyService.ClippyLinkAction
 import com.jetbrains.edu.ai.error.explanation.grazie.ErrorExplanationGrazieClient
 import com.jetbrains.edu.ai.error.explanation.messages.EduAIErrorExplanationBundle
 import com.jetbrains.edu.ai.error.explanation.prompts.ErrorExplanationContext
+import com.jetbrains.edu.ai.learner.feedback.AILearnerFeedbackService
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
@@ -66,6 +68,21 @@ class ErrorExplanationManager(private val project: Project, private val scope: C
           openEditor(vfsFile, lineNumber, errorExplanation)
           showNotification(project, errorExplanation)
         }
+      }
+    }
+  }
+
+  fun showErrorExplanationPanelInClippy() {
+    scope.launch {
+      val feedback: String = AILearnerFeedbackService.getInstance(project).getFeedback(positive = false)
+
+      val language = project.course?.languageById ?: return@launch
+      val stdErr = ErrorExplanationStderrStorage.getInstance(project).getStderr() ?: return@launch
+
+      val clippyLinkAction = ClippyLinkAction(EduAIErrorExplanationBundle.message("action.Educational.Student.ShowErrorExplanation.text")) { getErrorExplanation(language, stdErr) }
+
+      withContext(Dispatchers.EDT) {
+        AIClippyService.getInstance(project).showWithTextAndLinks(feedback, listOf(clippyLinkAction))
       }
     }
   }
