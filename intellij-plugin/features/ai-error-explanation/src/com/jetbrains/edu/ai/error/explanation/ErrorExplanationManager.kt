@@ -8,6 +8,7 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.ComponentInlayAlignment
+import com.intellij.openapi.editor.Inlay
 import com.intellij.openapi.editor.InlayProperties
 import com.intellij.openapi.editor.addComponentInlay
 import com.intellij.openapi.editor.markup.EffectType
@@ -17,6 +18,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
@@ -40,17 +42,15 @@ import java.io.File
 @Service(Service.Level.PROJECT)
 class ErrorExplanationManager(private val project: Project, private val scope: CoroutineScope) {
   fun getErrorExplanation(language: Language, stderr: String) {
+    LOG.info("STDERR:\n$stderr\n")
+    val stackTrace = getFileAndLineNumber(language, stderr)
+    if (stackTrace == null) {
+      LOG.info("Found no line")
+      return
+    }
+    if (language.id != EduFormatNames.PYTHON) return
     scope.launch {
       withBackgroundProgress(project, "Fetching exception explanation") {
-        if (language.id != EduFormatNames.PYTHON) return@withBackgroundProgress
-
-        LOG.info("STDERR:\n$stderr\n")
-        val stackTrace = getFileAndLineNumber(language, stderr)
-        if (stackTrace == null) {
-          LOG.info("Found no line")
-          return@withBackgroundProgress
-        }
-
         val (fileName, lineNumber) = stackTrace
         val vfsFile = VfsUtil.findFileByIoFile(File(fileName), true) ?: return@withBackgroundProgress
         val document = runReadAction { FileDocumentManager.getInstance().getDocument(vfsFile) } ?: return@withBackgroundProgress
@@ -71,6 +71,7 @@ class ErrorExplanationManager(private val project: Project, private val scope: C
   }
 
   private var prevRangeHighlighter: Pair<VirtualFile, RangeHighlighter>? = null
+  private var prevInlay: Inlay<*>? = null
 
   private fun getFileAndLineNumber(language: Language, stderr: String): Pair<String, Int>? {
     val analyzer = ErrorAnalyzer.getInstance(language) ?: return null
@@ -84,12 +85,17 @@ class ErrorExplanationManager(private val project: Project, private val scope: C
     val descriptor = OpenFileDescriptor(project, vfsFile, lineNumber, 0)
     val fileEditor = FileEditorManager.getInstance(project).openTextEditor(descriptor, true) ?: return
     val document = FileDocumentManager.getInstance().getDocument(vfsFile) ?: return
-    fileEditor.addComponentInlay(
+    val inlay = fileEditor.addComponentInlay(
       document.getLineEndOffset(lineNumber - 1),
       InlayProperties().showAbove(false).disableSoftWrapping(false),
-      panel { row { text(errorExplanation.explanation) } },
+      ErrorEditorPanel(errorExplanation.explanation) {
+        removePrevHighlighter(project)
+        fileEditor.component.repaint()
+      },
       ComponentInlayAlignment.FIT_VIEWPORT_WIDTH
     )
+
+    prevInlay = inlay
     descriptor.navigateInEditor(project, true)
     fileEditor.markupModel.removeAllHighlighters()
     val attributes = TextAttributes(null, EduColors.aiGetHintHighlighterColor, null, EffectType.BOXED, Font.PLAIN)
@@ -103,7 +109,9 @@ class ErrorExplanationManager(private val project: Project, private val scope: C
     val fileEditor = FileEditorManager.getInstance(project).openTextEditor(descriptor, true) ?: return
     fileEditor.markupModel.removeHighlighter(prevRangeHighlighter)
     prevRangeHighlighter.dispose()
+    prevInlay?.let { Disposer.dispose(it) }
     this.prevRangeHighlighter = null
+    prevInlay = null
   }
 
   private fun showNotification(project: Project, errorExplanation: ErrorExplanation) {

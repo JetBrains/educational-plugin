@@ -1,6 +1,12 @@
 <idea-plugin package="com.jetbrains.edu.ai.error.explanation">
   <resource-bundle>messages.EduAIErrorExplanationBundle</resource-bundle>
 
+  <actions>
+    <action id="Educational.Student.ShowErrorExplanation"
+            class="com.jetbrains.edu.ai.error.explanation.action.ShowErrorExplanation"
+            internal="true"/>
+  </actions>
+
   <extensionPoints>
     <extensionPoint qualifiedName="Educational.errorAnalyzer"
                     beanClass="com.intellij.lang.LanguageExtensionPoint"

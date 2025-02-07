@@ -18,13 +18,12 @@ import com.jetbrains.edu.learning.courseFormat.ext.languageById
 class ErrorExplanationStartupActivity : ProjectActivity {
   override suspend fun execute(project: Project) {
     if (!project.isStudentProject()) return
-    val course = project.course as? EduCourse ?: return
-
     project.messageBus.connect().subscribe(ExecutionManager.EXECUTION_TOPIC, object : ExecutionListener {
       override fun processStarted(executorId: String, env: ExecutionEnvironment, handler: ProcessHandler) {
-        super.processStarted(executorId, env, handler)
-
-        if (env.getUserData(CheckUtils.EDU_ENV_KEY) == true) return
+        if (env.getUserData(CheckUtils.EDU_ENV_KEY) == true) {
+          super.processStarted(executorId, env, handler)
+          return
+        }
 
         handler.addProcessListener(object : OutputListener() {
           override fun startNotified(event: ProcessEvent) {
@@ -37,11 +36,11 @@ class ErrorExplanationStartupActivity : ProjectActivity {
             if (output.exitCode != 0) {
               // Sometimes error messages and stack traces are in the stdout instead of stderr. For example, JS
               val outputErrorMessage = output.stderr.ifEmpty { output.stdout }
-              val language = course.languageById ?: return
-              ErrorExplanationManager.getInstance(project).getErrorExplanation(language, outputErrorMessage)
+              ErrorExplanationStderrStorage.getInstance(project).setStderr(outputErrorMessage)
             }
           }
         })
+        super.processStarted(executorId, env, handler)
       }
     })
   }
