@@ -8,7 +8,6 @@ import com.intellij.execution.process.*
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder
 import com.intellij.execution.runners.ProgramRunner
-import com.intellij.execution.testframework.TestConsoleProperties
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runReadAction

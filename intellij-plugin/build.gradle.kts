@@ -354,7 +354,6 @@ tasks {
     autoReload = false
     jvmArgs("-Xmx2g")
     jvmArgs("-Dide.experimental.ui=true")
-    jvmArgs("-Deducational.ml.auth.type=APPLICATION")
 
     // Uncomment to show localized messages
     // jvmArgs("-Didea.l10n=true")
@@ -479,11 +478,6 @@ project("educational-core") {
     api(project(":edu-format"))
     api(rootProject.libs.edu.ai.format) {
       excludeKotlinDeps()
-    }
-    api(rootProject.libs.educational.ml.library.core) {
-      excludeKotlinDeps()
-      excludeKotlinSerializationDeps()
-      exclude(group = "net.java.dev.jna")
     }
     // For some reason, kotlin serialization plugin doesn't see the corresponding library from IDE dependency
     // and fails Kotlin compilation.
@@ -703,6 +697,7 @@ project("Edu-Python") {
     }
 
     implementation(project(":intellij-plugin:educational-core"))
+    implementation(project(":intellij-plugin:features:ai-error-explanation"))
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
     testImplementation(project(":intellij-plugin:Edu-Python:Idea"))

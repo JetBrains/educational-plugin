@@ -1,6 +1,7 @@
 <idea-plugin package="com.jetbrains.edu.python" xmlns:xi="http://www.w3.org/2001/XInclude">
-  <!--suppress PluginXmlValidity -->
   <dependencies>
+    <!--suppress PluginXmlValidity -->
+    <module name="ai-error-explanation"/>
     <plugin id="com.intellij.modules.python"/>
   </dependencies>
 
@@ -32,6 +33,6 @@
                   language="Python"
                   environment="unittest"
                   displayName="Python"/>
-    <stderrAnalyzer implementationClass="com.jetbrains.edu.python.learning.checker.PyStderrAnalyzer" language="Python"/>
+    <errorAnalyzer implementationClass="com.jetbrains.edu.python.learning.checker.PyErrorAnalyzer" language="Python"/>
   </extensions>
 </idea-plugin>
