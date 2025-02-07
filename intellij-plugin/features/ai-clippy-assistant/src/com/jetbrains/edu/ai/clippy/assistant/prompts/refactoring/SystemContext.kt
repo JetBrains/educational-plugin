@@ -1,4 +1,4 @@
-package com.jetbrains.edu.ai.clippy.assistant.prompts
+package com.jetbrains.edu.ai.clippy.assistant.prompts.refactoring
 
 import com.jetbrains.educational.ml.core.context.Context
 

@@ -208,7 +208,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
       return Err(ValidationErrorMessage(it))
     }
 
-    val hyperskillLanguage = if (request is HyperskillOpenStepWithProjectRequest) request.language else hyperskillProject.language.ifBlank { "unity" }
+    val hyperskillLanguage = if (request is HyperskillOpenStepWithProjectRequest) request.language else hyperskillProject.language
 
     val hyperskillCourse = createHyperskillCourse(request, hyperskillLanguage, hyperskillProject).onError {
       return Err(it)

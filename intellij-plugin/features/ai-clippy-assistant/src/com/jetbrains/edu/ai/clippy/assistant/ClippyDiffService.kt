@@ -24,8 +24,9 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.intellij.util.concurrency.annotations.RequiresEdt
-import com.jetbrains.edu.ai.clippy.assistant.grazie.ClippySuggestionsExtractor
+import com.jetbrains.edu.ai.clippy.assistant.grazie.ClippyGrazieClient
 import com.jetbrains.edu.ai.clippy.assistant.messages.EduAIClippyAssistantBundle
+import com.jetbrains.edu.ai.clippy.assistant.ui.EduAIClippyColors
 import com.jetbrains.edu.learning.actions.ApplyCodeAction
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.course
@@ -33,7 +34,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.getTextFromTaskTextFile
-import com.jetbrains.edu.learning.ui.EduColors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.awt.Font
@@ -53,7 +53,7 @@ class ClippyDiffService(private val project: Project) {
 
     val clippyDiff = withBackgroundProgress(project, "Getting clippy notes", cancellable = true) {
       withContext(Dispatchers.IO) {
-        ClippySuggestionsExtractor.getClippyPatch(course.languageId, userCodeDiff, initialCode, taskDescription)
+        ClippyGrazieClient.generateRefactoringPatch(course.languageId, userCodeDiff, initialCode, taskDescription).dropFormatting()
       }
     }
     val clippySuggestedCode = applyPatch(userCode, clippyDiff)
@@ -96,7 +96,7 @@ class ClippyDiffService(private val project: Project) {
     ).firstOrNull()?.startLine1 ?: return null
     if (startLine >= taskFileText.lines().size) return null
 
-    val attributes = TextAttributes(null, EduColors.aiGetClippyWellDoneHighlight, null, EffectType.BOXED, Font.PLAIN)
+    val attributes = TextAttributes(null, EduAIClippyColors.aiGetClippyWellDoneHighlight, null, EffectType.BOXED, Font.PLAIN)
     return editor.markupModel.addLineHighlighter(startLine, 0, attributes)
   }
 
@@ -112,6 +112,8 @@ class ClippyDiffService(private val project: Project) {
     val patchObj = UnifiedDiffUtils.parseUnifiedDiff(patch.split("\n"))
     return DiffUtils.patch(text.split("\n"), patchObj).joinToString("\n")
   }
+
+  private fun String.dropFormatting() = split("\n").drop(1).dropLast(1).joinToString("\n")
 
   companion object {
     private val GET_CLIPPY_DIFF = Key.create<Boolean>("getClippyDiff")
