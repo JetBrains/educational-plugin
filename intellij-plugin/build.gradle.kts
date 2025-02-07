@@ -1074,6 +1074,18 @@ project("features:ai-error-explanation") {
   }
 }
 
+project("features:ai-refactoring-advisor") {
+  dependencies {
+    intellijPlatform {
+      intellijIde(project, baseVersion)
+    }
+
+    implementation(project(":intellij-plugin:educational-core"))
+    implementation(project(":intellij-plugin:features:ai-clippy-assistant"))
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+  }
+}
+
 data class TypeWithVersion(val type: IntelliJPlatformType, val version: String)
 
 fun String.toTypeWithVersion(): TypeWithVersion {

@@ -40,6 +40,7 @@ include(
   "intellij-plugin:features:command-line",
   "intellij-plugin:features:ai-clippy-assistant",
   "intellij-plugin:features:ai-error-explanation",
+  "intellij-plugin:features:ai-refactoring-advisor",
   "intellij-plugin:features:ai-hints-core",
   "intellij-plugin:features:ai-hints-kotlin",
   "intellij-plugin:features:ai-hints-python",
