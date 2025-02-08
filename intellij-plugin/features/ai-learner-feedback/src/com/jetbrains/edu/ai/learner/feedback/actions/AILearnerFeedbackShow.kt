@@ -16,7 +16,6 @@ class AILearnerFeedbackShow : DumbAwareAction() {
     val project = e.project ?: return
     currentThreadCoroutineScope().launch {
       val clippyProperties = AIClippySettings.getInstance().getClippySettings()
-      val language = AIClippySettings.getInstance().language
       val feedback = AILearnerFeedbackGrazieClient.generateFeedback(clippyProperties, true).also { println(it) }
       AIClippyService.getInstance(project).showWithText(feedback)
     }
