@@ -21,6 +21,10 @@
     </extensionPoint>
   </extensionPoints>
 
+  <extensions defaultExtensionNs="Educational">
+    <checkListener implementation="com.jetbrains.edu.ai.error.explanation.listener.ErrorExplanationLearnerListener"/>
+  </extensions>
+
   <extensions defaultExtensionNs="com.intellij">
     <postStartupActivity implementation="com.jetbrains.edu.ai.error.explanation.ErrorExplanationStartupActivity"/>
   </extensions>

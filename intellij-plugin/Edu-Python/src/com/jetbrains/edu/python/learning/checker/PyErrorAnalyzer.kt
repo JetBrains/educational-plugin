@@ -8,4 +8,8 @@ class PyErrorAnalyzer : ErrorAnalyzer {
     val matches = regex.findAll(stderr).map { it.destructured }.toList()
     return matches.map { (fileName, lineNumber) -> fileName to lineNumber.toInt() }
   }
+
+  override fun isException(stderr: String): Boolean {
+    return !stderr.contains("AssertionError")
+  }
 }

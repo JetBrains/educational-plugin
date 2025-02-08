@@ -22,7 +22,6 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
-import com.intellij.util.PathUtil
 import com.jetbrains.edu.ai.clippy.assistant.AIClippyService
 import com.jetbrains.edu.ai.clippy.assistant.AIClippyService.ClippyLinkAction
 import com.jetbrains.edu.ai.error.explanation.grazie.ErrorExplanationGrazieClient
@@ -44,6 +43,14 @@ import java.io.File
 
 @Service(Service.Level.PROJECT)
 class ErrorExplanationManager(private val project: Project, private val scope: CoroutineScope) {
+  private var prevStdErr: String? = null
+
+  fun getErrorExplanation(language: Language) {
+    prevStdErr?.let { getErrorExplanation(language, it)}
+  }
+
+  fun hasPrevStdErr() = prevStdErr != null
+
   fun getErrorExplanation(language: Language, stderr: String) {
     LOG.info("STDERR:\n$stderr\n")
     val stackTrace = getFileAndLineNumber(language, stderr)
@@ -72,18 +79,23 @@ class ErrorExplanationManager(private val project: Project, private val scope: C
     }
   }
 
-  fun showErrorExplanationPanelInClippy() {
+  fun showErrorExplanationPanelInClippy(stderr: String) {
     scope.launch {
+      prevStdErr = stderr
       val feedback = AILearnerFeedbackService.getInstance(project).getFeedback(positive = false)
 
       val language = project.course?.languageById ?: return@launch
-      val stdErr = ErrorExplanationStderrStorage.getInstance(project).getStderr() ?: return@launch
 
       val clippyLinkAction = ClippyLinkAction(EduAIErrorExplanationBundle.message("action.Educational.Student.ShowErrorExplanation.text")) {
-        getErrorExplanation(language, stdErr)
+        getErrorExplanation(language, stderr)
       }
 
-      AIClippyService.getInstance(project).showWithTextAndLinks(feedback, listOf(clippyLinkAction))
+      val links = if (ErrorAnalyzer.getInstance(language)?.isException(stderr) == true) {
+        listOf(clippyLinkAction)
+      }
+      else emptyList()
+
+      AIClippyService.getInstance(project).showWithTextAndLinks(feedback, links)
     }
   }
 

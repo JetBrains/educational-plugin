@@ -11,8 +11,4 @@
             class="com.jetbrains.edu.ai.learner.feedback.actions.AILearnerFeedbackShow"
             internal="true"/>
   </actions>
-
-  <extensions defaultExtensionNs="Educational">
-    <checkListener implementation="com.jetbrains.edu.ai.learner.feedback.listener.AILearnerFeedbackListener"/>
-  </extensions>
 </idea-plugin>
