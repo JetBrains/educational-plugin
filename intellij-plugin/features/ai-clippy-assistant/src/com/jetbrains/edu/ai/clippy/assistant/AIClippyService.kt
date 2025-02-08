@@ -18,27 +18,7 @@ class AIClippyService(private val project: Project, private val scope: Coroutine
   private var clippy: AIClippyPopup? = null
   private val lock = Mutex()
 
-  fun showWithText(text: String) {
-    scope.launch {
-      withContext(Dispatchers.EDT) {
-        getClippy().apply {
-          show(project)
-          updateText(text)
-        }
-      }
-    }
-  }
-
-  fun showWithLinks(links: List<ClippyLinkAction>) {
-    scope.launch {
-      withContext(Dispatchers.EDT) {
-        getClippy().apply {
-          show(project)
-          updateLinkActions(links)
-        }
-      }
-    }
-  }
+  fun showWithText(text: String) = showWithTextAndLinks(text, emptyList())
 
   fun showWithTextAndLinks(text: String, links: List<ClippyLinkAction>) {
     scope.launch {
