@@ -10,7 +10,6 @@ import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
-import com.intellij.openapi.fileTypes.FileTypes
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
@@ -85,8 +84,8 @@ class EduAIRefactoringAdvisorService(private val project: Project, private val s
     val diffRequestChain = SimpleDiffRequestChain(
       SimpleDiffRequest(
         EduAIRefactoringAdvisorBundle.message("refactoring.diff.title"),
-        DiffContentFactory.getInstance().create(userCode, FileTypes.PLAIN_TEXT),
-        DiffContentFactory.getInstance().create(suggestedCode, FileTypes.PLAIN_TEXT),
+        DiffContentFactory.getInstance().create(userCode, taskVirtualFile.fileType),
+        DiffContentFactory.getInstance().create(suggestedCode, taskVirtualFile.fileType),
         EduAIRefactoringAdvisorBundle.message("refactoring.diff.before"),
         EduAIRefactoringAdvisorBundle.message("refactoring.diff.after")
       )
