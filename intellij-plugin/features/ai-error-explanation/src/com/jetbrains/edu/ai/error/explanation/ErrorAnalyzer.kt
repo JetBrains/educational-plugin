@@ -6,6 +6,8 @@ import com.intellij.lang.LanguageExtension
 interface ErrorAnalyzer {
   fun getStackTrace(stderr: String): List<Pair<String, Int>> = emptyList()
 
+  fun isException(stderr: String): Boolean = false
+
   companion object {
     val EP_NAME = LanguageExtension<ErrorAnalyzer>("Educational.errorAnalyzer")
 

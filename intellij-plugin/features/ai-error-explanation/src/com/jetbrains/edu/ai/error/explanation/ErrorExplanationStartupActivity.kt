@@ -33,8 +33,7 @@ class ErrorExplanationStartupActivity : ProjectActivity {
             if (output.exitCode != 0) {
               // Sometimes error messages and stack traces are in the stdout instead of stderr. For example, JS
               val outputErrorMessage = output.stderr.ifEmpty { output.stdout }
-              ErrorExplanationStderrStorage.getInstance(project).setStderr(outputErrorMessage)
-              ErrorExplanationManager.getInstance(project).showErrorExplanationPanelInClippy()
+              ErrorExplanationManager.getInstance(project).showErrorExplanationPanelInClippy(outputErrorMessage)
             }
           }
         })
