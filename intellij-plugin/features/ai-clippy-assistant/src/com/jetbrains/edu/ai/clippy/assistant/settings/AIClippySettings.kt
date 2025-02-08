@@ -1,12 +1,14 @@
 package com.jetbrains.edu.ai.clippy.assistant.settings
 
 import com.intellij.openapi.components.*
+import com.jetbrains.edu.ai.clippy.assistant.ui.AIClippyIcon
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
 
 @State(name = "AIClippySettings", storages = [Storage(StoragePathMacros.NON_ROAMABLE_FILE, roamingType = RoamingType.LOCAL)])
 class AIClippySettings : PersistentStateComponent<AIClippySettings.State> {
   private var clippySettings = AIClippyProperties()
 
+  val clippyIcon: AIClippyIcon get() = clippySettings.icon
   val language: TranslationLanguage get() = clippySettings.language
 
   val aggression: Int get() = clippySettings.aggression
@@ -25,6 +27,9 @@ class AIClippySettings : PersistentStateComponent<AIClippySettings.State> {
   override fun getState(): State {
     val state = State()
 
+    state.clippyIcon = clippySettings.icon
+    state.language = clippySettings.language
+
     state.aggression = clippySettings.aggression
     state.communicationStyle = clippySettings.communicationStyle
     state.emojiUsage = clippySettings.emojiUsage
@@ -32,13 +37,13 @@ class AIClippySettings : PersistentStateComponent<AIClippySettings.State> {
     state.humiliation = clippySettings.humiliation
     state.mistakesAttention = clippySettings.mistakesAttention
 
-    state.language = clippySettings.language
     return state
   }
 
   override fun loadState(state: State) {
     clippySettings = AIClippyProperties(
-      language = state.language ?: TranslationLanguage.ENGLISH,
+      icon = state.clippyIcon,
+      language = state.language,
       aggression = state.aggression,
       communicationStyle = state.communicationStyle,
       emojiUsage = state.emojiUsage,
@@ -49,14 +54,15 @@ class AIClippySettings : PersistentStateComponent<AIClippySettings.State> {
   }
 
   class State : BaseState() {
+    var clippyIcon by enum<AIClippyIcon>(AIClippyIcon.CLIPPY)
+    var language by enum<TranslationLanguage>(TranslationLanguage.ENGLISH)
+
     var aggression by property(5)
     var communicationStyle by property(5)
     var emojiUsage by property(5)
     var emotionalIntensity by property(5)
     var humiliation by property(5)
     var mistakesAttention by property(5)
-
-    var language by enum<TranslationLanguage>()
   }
 
   companion object {
