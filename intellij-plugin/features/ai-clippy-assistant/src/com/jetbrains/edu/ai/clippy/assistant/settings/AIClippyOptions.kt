@@ -2,11 +2,13 @@ package com.jetbrains.edu.ai.clippy.assistant.settings
 
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.ui.DialogPanel
+import com.intellij.ui.EnumComboBoxModel
 import com.intellij.ui.dsl.builder.bindIntValue
 import com.intellij.ui.dsl.builder.bindItem
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.builder.toNullableProperty
 import com.jetbrains.edu.ai.clippy.assistant.messages.EduAIClippyAssistantBundle
+import com.jetbrains.edu.ai.clippy.assistant.ui.AIClippyIcon
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.settings.AIOptionsProvider
 import com.jetbrains.edu.ai.translation.ui.TranslationLanguageComboBoxModel
@@ -15,6 +17,7 @@ import com.jetbrains.educational.core.format.enum.TranslationLanguage
 class AIClippyOptions : BoundConfigurable(EduAIClippyAssistantBundle.message("settings.ai.clippy.assistant")), AIOptionsProvider {
   private val settings = AIClippySettings.getInstance()
 
+  private var clippyIcon: AIClippyIcon = settings.clippyIcon
   private var language: TranslationLanguage = settings.language
 
   private var aggression: Int = settings.aggression
@@ -26,6 +29,10 @@ class AIClippyOptions : BoundConfigurable(EduAIClippyAssistantBundle.message("se
 
   override fun createPanel(): DialogPanel= panel {
     group(displayName) {
+      row(EduAIClippyAssistantBundle.message("settings.ai.clippy.icon")) {
+        comboBox(EnumComboBoxModel(AIClippyIcon::class.java))
+          .bindItem(::clippyIcon.toNullableProperty())
+      }
       row(EduAIBundle.message("settings.ai.translation.preferred.language")) {
         comboBox(TranslationLanguageComboBoxModel())
           .bindItem(::language.toNullableProperty())
@@ -66,18 +73,21 @@ class AIClippyOptions : BoundConfigurable(EduAIClippyAssistantBundle.message("se
   override fun isModified(): Boolean {
     if (super<BoundConfigurable>.isModified()) return true
     val settings = AIClippySettings.getInstance()
-    return aggression != settings.aggression ||
+    return clippyIcon != settings.clippyIcon ||
+           language != settings.language ||
+
+           aggression != settings.aggression ||
            communicationStyle != settings.communicationStyle ||
            emojiUsage != settings.emojiUsage ||
            emotionalIntensity != settings.emotionalIntensity ||
            mistakesAttention != settings.mistakesAttention ||
-           humiliation != settings.humiliation ||
-           language != settings.language
+           humiliation != settings.humiliation
   }
 
   override fun apply() {
     super.apply()
     val aiClippyProperties = AIClippyProperties(
+      icon = clippyIcon,
       language = language,
       aggression = aggression,
       communicationStyle = communicationStyle,

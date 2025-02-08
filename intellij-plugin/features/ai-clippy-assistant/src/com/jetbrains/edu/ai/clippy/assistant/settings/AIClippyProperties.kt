@@ -1,9 +1,11 @@
 package com.jetbrains.edu.ai.clippy.assistant.settings
 
+import com.jetbrains.edu.ai.clippy.assistant.ui.AIClippyIcon
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import com.jetbrains.educational.ml.core.context.Context
 
 data class AIClippyProperties(
+  val icon: AIClippyIcon,
   val language: TranslationLanguage,
   /**
    * Configures the level of aggression in the assistant's responses.
@@ -46,7 +48,7 @@ data class AIClippyProperties(
    */
   val mistakesAttention: Int,
 ) : Context {
-  constructor() : this(TranslationLanguage.ENGLISH, 5, 5, 5, 5, 5, 5)
+  constructor() : this(AIClippyIcon.CLIPPY, TranslationLanguage.ENGLISH, 5, 5, 5, 5, 5, 5)
 
   init {
     require(aggression in 1..10) {

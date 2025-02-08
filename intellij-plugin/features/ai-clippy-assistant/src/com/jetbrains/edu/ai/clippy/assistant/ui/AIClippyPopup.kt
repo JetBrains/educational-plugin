@@ -18,6 +18,7 @@ import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.ai.clippy.assistant.AIClippyService.ClippyLinkAction
 import com.jetbrains.edu.ai.clippy.assistant.messages.EduAIClippyAssistantBundle
+import com.jetbrains.edu.ai.clippy.assistant.settings.AIClippySettings
 import java.awt.Point
 import java.awt.Toolkit
 import javax.swing.JComponent
@@ -77,7 +78,8 @@ class AIClippyPopup {
   }
 
   private fun createContent(): JComponent {
-    val image = ScaledImageLabel(EduAiClippyImages.Clippy)
+    val clippyIcon = AIClippySettings.getInstance().clippyIcon
+    val image = ScaledImageLabel(clippyIcon.icon)
     val panel = panel {
       customizeSpacingConfiguration(object : IntelliJSpacingConfiguration() {
         override val horizontalColumnsGap: Int = 5

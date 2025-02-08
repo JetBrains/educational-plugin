@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-@SuppressWarnings("SameParameterValue")
 public final class EduAiClippyImages {
   public static final Icon Casino = load("/images/casino.png");
   public static final Icon Clippy = load("/images/clippy.svg");
