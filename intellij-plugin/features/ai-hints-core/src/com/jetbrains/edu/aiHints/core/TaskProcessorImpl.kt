@@ -14,6 +14,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiManager
 import com.intellij.util.asSafely
+import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.jetbrains.edu.aiHints.core.context.*
 import com.jetbrains.edu.learning.checker.CheckUtils.COMPILATION_FAILED_MESSAGE
 import com.jetbrains.edu.learning.course
@@ -110,6 +111,7 @@ class TaskProcessorImpl(val task: Task) : TaskProcessor {
     return isUnchanged
   }
 
+  @RequiresReadLock
   private fun getFunctionSignatures(file: TaskFile, project: Project): List<FunctionSignature> {
     val virtualFile = file.getVirtualFile(project) ?: return emptyList()
     val psiFile = PsiManager.getInstance(project).findFile(virtualFile) ?: return emptyList()
@@ -171,11 +173,9 @@ class TaskProcessorImpl(val task: Task) : TaskProcessor {
     myEduAIHintsProcessor?.getFunctionSignatureManager()?.getFunctionSignatures(psiFile, SignatureSource.GENERATED_SOLUTION)
   }
 
-  override fun extractRequiredFunctionsFromCodeHint(codeHint: String): String {
-    val codeHintPsiFile = runReadAction {
-      PsiFileFactory.getInstance(project).createFileFromText(CODE_HINT_PSI_FILE_NAME, language, codeHint)
-    }
-    return codeHintPsiFile.filterAllowedModifications(task, project, SignatureSource.GENERATED_SOLUTION)
+  override fun extractRequiredFunctionsFromCodeHint(codeHint: String): String = runReadAction {
+    val codeHintPsiFile = PsiFileFactory.getInstance(project).createFileFromText(CODE_HINT_PSI_FILE_NAME, language, codeHint)
+    codeHintPsiFile.filterAllowedModifications(task, project, SignatureSource.GENERATED_SOLUTION)
   }
 
   override fun getModifiedFunctionNameInCodeHint(codeStr: String, codeHint: String) = runReadAction {
@@ -249,6 +249,7 @@ class TaskProcessorImpl(val task: Task) : TaskProcessor {
   override fun containsGeneratedCodeStructures(code: String): Boolean =
     !getFunctionSignaturesFromGeneratedCode(code, project, language).isNullOrEmpty()
 
+  @RequiresReadLock
   private fun getChangedContent(task: Task, project: Project): String? {
     findChangedFunctions(task, project)
     return task.taskFilesWithChangedFunctions?.keys?.joinToString(separator = System.lineSeparator()) { taskFileName ->
@@ -283,16 +284,16 @@ class TaskProcessorImpl(val task: Task) : TaskProcessor {
    * which are either contained in task.changedFunctions (updated functions in the authoring solution in comparison with the previous step)
    * or not contained in the author's solution.
    */
+  @RequiresReadLock
   private fun PsiFile.filterAllowedModifications(task: Task, project: Project, signatureSource: SignatureSource): String {
     findChangedFunctions(task, project)
-    val functionSignatures = myEduAIHintsProcessor?.getFunctionSignatureManager()?.getFunctionSignatures(this, signatureSource) ?: return ""
-    return runReadAction {
-      functionSignatures.filter { functionSignature ->
-        task.taskFilesWithChangedFunctions?.values?.flatten()?.contains(functionSignature.name) == true ||
-        !task.authorSolutionContext.functionSignatures.contains(functionSignature)
-      }.joinToString(separator = System.lineSeparator()) {
-        myEduAIHintsProcessor.getFunctionSignatureManager().getFunctionBySignature(this, it.name)?.text ?: ""
-      }
+    val functionSignatures =
+      myEduAIHintsProcessor?.getFunctionSignatureManager()?.getFunctionSignatures(this, signatureSource) ?: return ""
+    return functionSignatures.filter { functionSignature ->
+      task.taskFilesWithChangedFunctions?.values?.flatten()?.contains(functionSignature.name) == true ||
+      !task.authorSolutionContext.functionSignatures.contains(functionSignature)
+    }.joinToString(separator = System.lineSeparator()) {
+      myEduAIHintsProcessor.getFunctionSignatureManager().getFunctionBySignature(this, it.name)?.text ?: ""
     }
   }
 
