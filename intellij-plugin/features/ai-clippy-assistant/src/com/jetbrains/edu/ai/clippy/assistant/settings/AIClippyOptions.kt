@@ -40,35 +40,37 @@ class AIClippyOptions : BoundConfigurable(EduAIClippyAssistantBundle.message("se
         comboBox(TranslationLanguageComboBoxModel())
           .bindItem(::language.toNullableProperty())
       }
-      row(EduAIClippyAssistantBundle.message("settings.ai.clippy.aggression")) {
-        spinner(1..10)
-          .bindIntValue(::aggression)
-          .comment(EduAIClippyAssistantBundle.message("settings.ai.clippy.aggression.description"))
-      }
-      row(EduAIClippyAssistantBundle.message("settings.ai.clippy.communication.style")) {
-        spinner(1..10)
-          .bindIntValue(::communicationStyle)
-          .comment(EduAIClippyAssistantBundle.message("settings.ai.clippy.communication.style.description"))
-      }
-      row(EduAIClippyAssistantBundle.message("settings.ai.clippy.emoji.usage")) {
-        spinner(1..10)
-          .bindIntValue(::emojiUsage)
-          .comment(EduAIClippyAssistantBundle.message("settings.ai.clippy.emoji.usage.description"))
-      }
-      row(EduAIClippyAssistantBundle.message("settings.ai.clippy.emotional.intensity")) {
-        spinner(1..10)
-          .bindIntValue(::emotionalIntensity)
-          .comment(EduAIClippyAssistantBundle.message("settings.ai.clippy.emotional.intensity.description"))
-      }
-      row(EduAIClippyAssistantBundle.message("settings.ai.clippy.humiliation")) {
-        spinner(1..10)
-          .bindIntValue(::humiliation)
-          .comment(EduAIClippyAssistantBundle.message("settings.ai.clippy.humiliation.description"))
-      }
-      row(EduAIClippyAssistantBundle.message("settings.ai.clippy.mistakes.attention")) {
-        spinner(1..10)
-          .bindIntValue(::mistakesAttention)
-          .comment(EduAIClippyAssistantBundle.message("settings.ai.clippy.mistakes.attention.description"))
+      collapsibleGroup(EduAIClippyAssistantBundle.message("settings.ai.clippy.advanced.settings")) {
+        row(EduAIClippyAssistantBundle.message("settings.ai.clippy.aggression")) {
+          spinner(1..10)
+            .bindIntValue(::aggression)
+            .comment(EduAIClippyAssistantBundle.message("settings.ai.clippy.aggression.description"))
+        }
+        row(EduAIClippyAssistantBundle.message("settings.ai.clippy.communication.style")) {
+          spinner(1..10)
+            .bindIntValue(::communicationStyle)
+            .comment(EduAIClippyAssistantBundle.message("settings.ai.clippy.communication.style.description"))
+        }
+        row(EduAIClippyAssistantBundle.message("settings.ai.clippy.emoji.usage")) {
+          spinner(1..10)
+            .bindIntValue(::emojiUsage)
+            .comment(EduAIClippyAssistantBundle.message("settings.ai.clippy.emoji.usage.description"))
+        }
+        row(EduAIClippyAssistantBundle.message("settings.ai.clippy.emotional.intensity")) {
+          spinner(1..10)
+            .bindIntValue(::emotionalIntensity)
+            .comment(EduAIClippyAssistantBundle.message("settings.ai.clippy.emotional.intensity.description"))
+        }
+        row(EduAIClippyAssistantBundle.message("settings.ai.clippy.humiliation")) {
+          spinner(1..10)
+            .bindIntValue(::humiliation)
+            .comment(EduAIClippyAssistantBundle.message("settings.ai.clippy.humiliation.description"))
+        }
+        row(EduAIClippyAssistantBundle.message("settings.ai.clippy.mistakes.attention")) {
+          spinner(1..10)
+            .bindIntValue(::mistakesAttention)
+            .comment(EduAIClippyAssistantBundle.message("settings.ai.clippy.mistakes.attention.description"))
+        }
       }
     }
   }
