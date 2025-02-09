@@ -2,17 +2,20 @@ package com.jetbrains.edu.ai.clippy.assistant.settings
 
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.ui.DialogPanel
-import com.intellij.ui.EnumComboBoxModel
 import com.intellij.ui.dsl.builder.bindIntValue
 import com.intellij.ui.dsl.builder.bindItem
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.builder.toNullableProperty
+import com.intellij.util.IconUtil
 import com.jetbrains.edu.ai.clippy.assistant.messages.EduAIClippyAssistantBundle
 import com.jetbrains.edu.ai.clippy.assistant.ui.AIClippyIcon
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.settings.AIOptionsProvider
 import com.jetbrains.edu.ai.translation.ui.TranslationLanguageComboBoxModel
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
+import java.awt.Component
+import javax.swing.DefaultListCellRenderer
+import javax.swing.JList
 
 class AIClippyOptions : BoundConfigurable(EduAIClippyAssistantBundle.message("settings.ai.clippy.assistant")), AIOptionsProvider {
   private val settings = AIClippySettings.getInstance()
@@ -30,7 +33,7 @@ class AIClippyOptions : BoundConfigurable(EduAIClippyAssistantBundle.message("se
   override fun createPanel(): DialogPanel= panel {
     group(displayName) {
       row(EduAIClippyAssistantBundle.message("settings.ai.clippy.icon")) {
-        comboBox(EnumComboBoxModel(AIClippyIcon::class.java))
+        comboBox(AIClippyIcon.values().toList(), IconComboBoxCellRenderer())
           .bindItem(::clippyIcon.toNullableProperty())
       }
       row(EduAIBundle.message("settings.ai.translation.preferred.language")) {
@@ -67,6 +70,24 @@ class AIClippyOptions : BoundConfigurable(EduAIClippyAssistantBundle.message("se
           .bindIntValue(::mistakesAttention)
           .comment(EduAIClippyAssistantBundle.message("settings.ai.clippy.mistakes.attention.description"))
       }
+    }
+  }
+
+  private class IconComboBoxCellRenderer : DefaultListCellRenderer() {
+    override fun getListCellRendererComponent(
+      list: JList<*>?,
+      value: Any?,
+      index: Int,
+      isSelected: Boolean,
+      cellHasFocus: Boolean
+    ): Component {
+      val component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
+      if (value is AIClippyIcon) {
+        val defaultIcon = IconUtil.scale(AIClippyIcon.CLIPPY.icon, component, 0.1f)
+        icon = IconUtil.scaleByIconWidth(value.icon, component, defaultIcon)
+        text = value.toString()
+      }
+      return component
     }
   }
 
