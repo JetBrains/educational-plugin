@@ -10,6 +10,7 @@ public final class EduAiClippyImages {
   public static final Icon Clippy = load("/images/clippy.svg");
   public static final Icon Frog = load("/images/frog.png");
   public static final Icon JacqueFresco = load("/images/jacque_fresco.png");
+  public static final Icon Leha = load("/images/leha.jpg");
   public static final Icon Prigozhin = load("/images/prigozhin.png");
   public static final Icon VseRavno = load("/images/vse_ravno.png");
 

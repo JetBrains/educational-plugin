@@ -11,6 +11,7 @@ enum class AIClippyIcon(private val visibleName: Supplier<@Nls String>, val icon
   CLIPPY(EduAIClippyAssistantBundle.lazyMessage("ai.clippy.icon.clippy"), EduAiClippyImages.Clippy),
   FROG(EduAIClippyAssistantBundle.lazyMessage("ai.clippy.icon.frog"), EduAiClippyImages.Frog),
   JACQUE_FRESCO(EduAIClippyAssistantBundle.lazyMessage("ai.clippy.icon.jacque.fresco"), EduAiClippyImages.JacqueFresco),
+  LEHA(EduAIClippyAssistantBundle.lazyMessage("ai.clippy.icon.leha"), EduAiClippyImages.Leha),
   PRIGOZHIN(EduAIClippyAssistantBundle.lazyMessage("ai.clippy.icon.prigozhin"), EduAiClippyImages.Prigozhin),
   VSE_RAVNO(EduAIClippyAssistantBundle.lazyMessage("ai.clippy.icon.vse.ravno"), EduAiClippyImages.VseRavno);
 
