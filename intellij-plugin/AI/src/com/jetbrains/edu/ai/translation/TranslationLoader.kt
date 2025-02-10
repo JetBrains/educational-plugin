@@ -15,8 +15,8 @@ import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.translation.connector.TranslationServiceConnector
 import com.jetbrains.edu.ai.translation.settings.TranslationSettings
 import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesCounterUsageCollector
-import com.jetbrains.edu.ai.translation.ui.AITranslationNotification.ActionLabel
 import com.jetbrains.edu.ai.translation.ui.AITranslationNotificationManager
+import com.jetbrains.edu.ai.ui.AINotification.ActionLabel
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings

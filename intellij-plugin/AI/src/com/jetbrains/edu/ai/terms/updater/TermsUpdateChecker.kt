@@ -8,8 +8,8 @@ import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.terms.TermsLoader
 import com.jetbrains.edu.ai.terms.connector.TermsServiceConnector
 import com.jetbrains.edu.ai.terms.settings.TheoryLookupSettings
-import com.jetbrains.edu.ai.translation.ui.AITranslationNotification.ActionLabel
-import com.jetbrains.edu.ai.translation.ui.AITranslationNotificationManager
+import com.jetbrains.edu.ai.terms.ui.AITermsNotificationManager
+import com.jetbrains.edu.ai.ui.AINotification.ActionLabel
 import com.jetbrains.edu.learning.ai.terms.TermsProjectSettings
 import com.jetbrains.edu.learning.ai.terms.TermsProperties
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -47,7 +47,7 @@ class TermsUpdateChecker(private val project: Project) {
       name = EduCoreBundle.message("update.action"),
       action = updateAction
     )
-    AITranslationNotificationManager.showInfoNotification(
+    AITermsNotificationManager.showInfoNotification(
       project,
       message = EduAIBundle.message("ai.terms.an.updated.version.of.the.terms.is.available"),
       actionLabel = actionLabel
