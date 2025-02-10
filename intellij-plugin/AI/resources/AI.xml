@@ -18,6 +18,10 @@
 
     <action id="Educational.UpdateCourseTranslation"
             class="com.jetbrains.edu.ai.translation.action.UpdateCourseTranslation"/>
+
+    <action id="Educational.Tests.GenerateTests" class="com.jetbrains.edu.ai.tests.GenerateTaskTests">
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+    </action>
   </actions>
 
   <extensionPoints>
