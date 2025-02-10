@@ -22,7 +22,7 @@ class CoursesSearchComponent(
     programmingLanguages(emptyList())) {
     updateModel(getCoursesGroups())
   }
-  private var humanLanguagesFilterDropdown: HumanLanguageFilterDropdown = HumanLanguageFilterDropdown(humanLanguages(emptyList())) {
+  private var humanLanguagesFilterDropdown: HumanLanguageFilterDropdown = HumanLanguageFilterDropdown {
     updateModel(getCoursesGroups())
   }
 
