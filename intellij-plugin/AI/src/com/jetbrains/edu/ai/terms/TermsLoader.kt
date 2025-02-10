@@ -186,7 +186,7 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
   }
 
   private suspend fun downloadTerms(course: EduCourse, languageCode: String): Result<CourseTermsResponse, AIServiceError> {
-    if (languageCode != TranslationLanguage.ENGLISH.code) return Err(TermsError.LANGUAGE_NOT_SUPPORTED)
+    if (TranslationLanguage.findByCode(languageCode) != TranslationLanguage.ENGLISH) return Err(TermsError.LANGUAGE_NOT_SUPPORTED)
     return TermsServiceConnector.getInstance().getCourseTerms(
       course.id,
       course.marketplaceCourseVersion,
