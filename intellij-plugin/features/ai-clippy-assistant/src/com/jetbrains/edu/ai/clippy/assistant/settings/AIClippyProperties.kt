@@ -50,6 +50,9 @@ data class AIClippyProperties(
 ) : Context {
   constructor() : this(AIClippyIcon.CLIPPY, TranslationLanguage.ENGLISH, 5, 5, 5, 5, 5, 5)
 
+  @Suppress("unused")
+  val languageLabel = language.label
+
   init {
     require(aggression in 1..10) {
       "Invalid value for aggression: $aggression. Aggression must be between 11 (gentle and kind) to 10 (highly intense, assertive, or forceful feedback)."
