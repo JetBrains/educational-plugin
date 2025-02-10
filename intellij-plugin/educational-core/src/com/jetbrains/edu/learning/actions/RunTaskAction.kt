@@ -161,10 +161,9 @@ class RunTaskAction : ActionWithButtonCustomComponent(), DumbAware {
         UIUtil.getToolTipActionBackground(),
         stopAndRunHandler
       )
+      .setHideOnLinkClick(true)
       .setFadeoutTime(5000)
       .createBalloon()
-
-    stopAndRunHandler.balloon = balloon
 
     val pressedButton = e.getData(CONTEXT_COMPONENT) ?: return
     val tooltipRelativePoint = AnchoredPoint(AnchoredPoint.Anchor.TOP, pressedButton)
@@ -176,11 +175,8 @@ class RunTaskAction : ActionWithButtonCustomComponent(), DumbAware {
     private val runningTask: Task,
     private val nextTask: Task
   ) : HyperlinkAdapter() {
-    var balloon: Balloon? = null
 
     override fun hyperlinkActivated(e: HyperlinkEvent) {
-      balloon?.hideImmediately()
-
       val processHandler = RunTaskActionState.getInstance(project).clearRunningTaskAndGetProcessHandler(runningTask)
       processHandler?.destroyProcess()
 
