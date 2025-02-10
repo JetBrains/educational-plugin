@@ -34,15 +34,19 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
    * Processes the references within the provided PsiElement, managing dependencies and scope definitions.
    *
    * @param psiElement The PSI element to be analyzed and processed for references.
-   * @param definedVariables A mapping of PSI elements to their defined references.
-   * @param outerScopeDefinitions A list of dependencies from outer scopes to be considered during processing. Defaults to an empty list.
+   * @param definedVariables Mapping PSI elements to their defined references that change their value.
+   * As an example each increment or adding for a variable is counted. It should be done for comprehension of data dependency.
+   * @param parentScopesDefinitions A list of definitions of variables and references
+   * from parent scopes to be considered during processing. Defaults to an empty list.
+   * Needed to cover all nested control flow branches.
+   * As an example each `if` branch.
    */
   private fun processReferences(
     psiElement: PsiElement,
     definedVariables: PsiElementToDependencies,
-    outerScopeDefinitions: List<PsiElementToDependencies> = emptyList()
+    parentScopesDefinitions: List<PsiElementToDependencies> = emptyList()
   ) {
-    with(ScopeContext(definedVariables, outerScopeDefinitions)) {
+    with(ScopeContext(definedVariables, parentScopesDefinitions)) {
       when (psiElement) {
         is KtFunction -> psiElement.process()
 
@@ -71,24 +75,29 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
    */
   private inner class ScopeContext(
     val definedVariables: PsiElementToDependencies,
-    val outerScopeDefinitions: List<PsiElementToDependencies>
+    val parentScopesDefinitions: List<PsiElementToDependencies>
   ) {
     fun KtFunction.process() {
       valueParameters.forEach {
-        definedVariables.addIfAbsent(it, outerScopes = outerScopeDefinitions)
+        definedVariables.addIfAbsent(it, parentScopes = parentScopesDefinitions)
       }
 
       bodyExpression?.blockExpressionsOrSingle()?.forEach {
-        processReferences(it, definedVariables, outerScopeDefinitions)
+        processReferences(it, definedVariables, parentScopesDefinitions)
       }
     }
 
     /**
      * The method registers the property into the [definedVariables]
      * and adding dependencies of references in initializer
+     * Example:
+     * ```
+     * var a = 1
+     *
+     * ```
      */
     fun KtProperty.process() {
-      definedVariables.addIfAbsent(this, outerScopes = outerScopeDefinitions)
+      definedVariables.addIfAbsent(this, parentScopes = parentScopesDefinitions)
       initializer?.let {
         it.getVariableReferences().forEach { reference ->
           addReferences(reference, definedVariables)
@@ -104,6 +113,22 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
      *
      * Do not use [addReferences] because exactly BinaryExpression should be added for dependencies
      * And it should not contain cyclic dependencies.
+     *
+     * Example:
+     * ```
+     * var a = 1
+     * var b = 2
+     * b += 3
+     * var s = a + b
+     * ```
+     *- `var s = a + b` depends on:
+     *     - `var a = 1`
+     *     - `var b = 2`
+     *     - `b += 3`
+     *
+     * - `b += 3` depends on:
+     *     - `var b = 2`
+     *
      */
     fun KtBinaryExpression.process() {
       if (operationReference.operationSignTokenType.isAssigment()) {
@@ -114,7 +139,7 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
             }
           }
           addDependency(referenceTo)
-          definedVariables.addIfAbsent(referenceTo, this, outerScopeDefinitions)
+          definedVariables.addIfAbsent(referenceTo, this, parentScopesDefinitions)
         }
         right?.getVariableReferences()?.forEach {
           addReferences(it, definedVariables)
@@ -124,10 +149,19 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
 
     /**
      * This method resolves the reference from the unary expression base element and updates dependency mappings.
+     *
+     * Example:
+     * ```
+     * a++
+     * ```
+     *
+     * - `a++` depends on:
+     *     - `a: Int` (function parameter)
+     *
      */
     fun KtPostfixExpression.process() {
       baseExpression?.reference()?.resolve()?.let {
-        definedVariables.addIfAbsent(it, this, outerScopeDefinitions)
+        definedVariables.addIfAbsent(it, this, parentScopesDefinitions)
         addDependency(it)
       }
     }
@@ -137,10 +171,32 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
      * - Registers the loop parameter in the `definedVariables` map.
      * - Resolves variable references from the loop range and updates the dependency mappings.
      * - Iteratively processes child elements within the body for variable definitions and further scope references.
+     *
+     * Example:
+     * ```
+     * var n = readln().toInt()
+     * var sum = 0
+     * var prod = 1
+     * for (i in 0..n) {
+     *   sum += i
+     *   prod *= i
+     * }
+     * ```
+     *
+     * - `for (i in 0..n)` depends on:
+     *     - `var n = readln().toInt()`
+     *
+     * - `sum += i` depends on:
+     *     - `var sum = 0`
+     *     - `i`
+     *
+     * - `prod *= i` depends on:
+     *     - `var prod = 1`
+     *     - `i`
      */
     fun KtForExpression.process() {
       loopParameter?.let {
-        definedVariables.addIfAbsent(it, outerScopes = outerScopeDefinitions)
+        definedVariables.addIfAbsent(it, parentScopes = parentScopesDefinitions)
       }
       loopRange?.getVariableReferences()?.forEach {
         addReferences(it, definedVariables)
@@ -149,7 +205,7 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
         definedVariables.searchElements(it)
       }
       body?.children?.forEach {
-        processReferences(it, definedVariables, outerScopeDefinitions)
+        processReferences(it, definedVariables, parentScopesDefinitions)
       }
     }
 
@@ -160,6 +216,37 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
      * - Processes references retrieved from the `condition`, updating the dependency mappings via `addReferences`.
      * - Further processes each element of the `body` via `processReferences` to manage scoped dependencies
      *   and nested structures.
+     *
+     * Example:
+     * ```
+     *  var n = readln().toInt()
+     *  var i = 1
+     *  var sum = 0
+     *  var prod = 1
+     *  while (i <= n) {
+     *    sum += i
+     *    prod *= i
+     *    i++
+     * }
+     * ```
+     * - `while (i <= n)` depends on:
+     *     - `var n = readln().toInt()`
+     *     - `var i = 1`
+     *     - `i++`
+     *
+     * - `sum += i` depends on:
+     *     - `var sum = 0`
+     *     - `var i = 1`
+     *     - `i++`
+     *
+     * - `prod *= i` depends on:
+     *     - `var prod = 1`
+     *     - `var i = 1`
+     *     - `i++`
+     *
+     * - `i++` depends on:
+     *     - `var i = 1`
+     *
      */
     fun KtWhileExpression.process() {
       body?.children?.forEach {
@@ -170,7 +257,7 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
         addReferences(it, definedVariables)
       }
       body?.children?.forEach {
-        processReferences(it, definedVariables, outerScopeDefinitions)
+        processReferences(it, definedVariables, parentScopesDefinitions)
       }
     }
 
@@ -180,6 +267,7 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
      * - Iterates over the arguments in the `valueArgumentList` of the call expression.
      * - For each argument, extracts its expression and retrieves any variable references.
      * - Each identified reference is processed by invoking `addReferences`, adding their dependencies.
+     *
      */
     fun KtCallExpression.process() {
       valueArgumentList?.arguments?.forEach {
@@ -196,6 +284,35 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
      * - If an entry's `expression` is a `KtBlockExpression`, processes each statement within the block.
      * - For other expression types, calls `processReferences` to resolve and update references,
      *     working within an updated snapshot of `definedVariables` and `outerScopeDefinitions`.
+     *
+     * Example:
+     * ```
+     * val a = 1
+     * var s = 2
+     * when (a) {
+     *   1 -> println(1)
+     *   2 -> {
+     *     s += 5
+     *     s += a
+     *   }
+     *   else -> s += a + a
+     * }
+     * ```
+     * - `when (a)` depends on:
+     *     - `val a = 1`
+     *
+     * - `s += 5` depends on:
+     *     - `var s = 2`
+     *
+     * - `s += a` depends on:
+     *     - `val a = 1`
+     *     - `var s = 2`
+     *     - `s += 5`
+     *
+     * - `s += a + a` depends on:
+     *     - `var s = 2`
+     *     - `val a = 1`
+     *
      */
     fun KtWhenExpression.process() {
       subjectExpression
@@ -203,9 +320,10 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
         ?.let { addReferences(it as KtReferenceExpression, definedVariables) }
       val stateSnapshot = definedVariables.copy() // need to be copied due to execution branches
       entries.forEach { entry ->
-        val blockState = stateSnapshot.copy()
+        val blockState = stateSnapshot.copy() // each branch should have same state as it was on when expression
         entry.expression?.blockExpressionsOrSingle()?.forEach { statement ->
-          processReferences(statement, blockState, outerScopeDefinitions + definedVariables)
+          // use definedVariables for collecting all necessary definitions in the control branch for this scope
+          processReferences(statement, blockState, parentScopesDefinitions + definedVariables)
         }
       }
     }
@@ -216,6 +334,30 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
      * - For each branch of the `KtIfExpression` iteratively processes child
      * elements of the branch using `processReferences` to manage variable
      * definitions and update dependency mappings within the branch scope.
+     *
+     * Example:
+     * ```
+     * var a = 1
+     * var b = a * 2
+     * if (b > 10) {
+     *   a += 2
+     * } else {
+     *   b += a
+     * }
+     * ```
+     * - `var b = a * 2` depends on:
+     *     - `var a = 1`
+     *
+     * - `if (b > 10)` depends on:
+     *     - `var b = a * 2`
+     *
+     * - `a += 2` depends on:
+     *     - `var a = 1`
+     *
+     * - `b += a` depends on:
+     *     - `var a = 1`
+     *     - `var b = a * 2`
+     *
      */
     fun KtIfExpression.process() {
       condition?.getVariableReferences()?.forEach {
@@ -223,9 +365,10 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
       }
       val stateSnapshot = definedVariables.copy() // need to be copied due to execution branches
       branches.forEach { branch ->
-        val branchState = stateSnapshot.copy()
+        val branchState = stateSnapshot.copy() // each branch should have same state as it was on if expression
         branch?.children?.forEach { element ->
-          processReferences(element, branchState, outerScopeDefinitions + definedVariables)
+          // use definedVariables for collecting all necessary definitions in the control branch for this scope
+          processReferences(element, branchState, parentScopesDefinitions + definedVariables)
         }
       }
     }
@@ -239,14 +382,14 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
         is KtBinaryExpression -> {
           if (psiElement.operationReference.operationSignTokenType.isAssigment()) {
             psiElement.left?.reference()?.resolve()?.let {
-              addIfAbsent(it, psiElement, outerScopeDefinitions)
+              addIfAbsent(it, psiElement, parentScopesDefinitions)
             }
           }
         }
 
         is KtPostfixExpression -> {
           psiElement.baseExpression?.reference()?.resolve()?.let {
-            addIfAbsent(it, psiElement, outerScopeDefinitions)
+            addIfAbsent(it, psiElement, parentScopesDefinitions)
           }
         }
       }
@@ -254,7 +397,7 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
   }
 
   /**
-    Makes a dependency on the element and all of its already initialized references
+   * Makes a dependency on the element and all of its already initialized references
    */
   private fun PsiElement.addReferences(other: KtReferenceExpression, definedVariables: PsiElementToDependencies) {
     other.reference()?.resolve()?.let { referenceTo ->

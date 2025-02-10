@@ -54,6 +54,13 @@ class FunctionDataDependencyTest
             name = "Main.kt",
             text = """
             object Task {
+            
+  fun simpleFunWithoutParametersAndWithoutMutationsTest(){
+    var a = 1
+    var b = 2
+    var s = a + b
+  }
+            
   fun simpleFunWithoutParametersTest() {
     var a = 1
     var b = 2
@@ -164,6 +171,10 @@ class FunctionDataDependencyTest
     @Parameterized.Parameters(name = "{1}")
     @JvmStatic
     fun data(): Collection<Array<Any>> = listOf(
+      arrayOf(
+        "simpleFunWithoutParametersAndWithoutMutationsTest",
+        mapOf("var s = a + b" to setOf("var a = 1", "var b = 2"))
+      ),
       arrayOf(
         "simpleFunWithoutParametersTest",
         mapOf(
