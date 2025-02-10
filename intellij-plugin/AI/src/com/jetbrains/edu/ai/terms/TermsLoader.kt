@@ -56,7 +56,6 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
         if (languageCode != TranslationLanguage.ENGLISH.code) return@collectLatest // TODO(support other languages)
 
         if (TermsProjectSettings.areCourseTermsLoaded(project, languageCode)) return@collectLatest
-        if (isRunning(project)) return@collectLatest
         fetchAndApplyTerms(course, languageCode)
         TermsUpdateChecker.getInstance(project).checkUpdate(course)
       }
