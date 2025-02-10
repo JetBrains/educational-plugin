@@ -57,7 +57,6 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
 
         if (TermsProjectSettings.areCourseTermsLoaded(project, languageCode)) return@collectLatest
         fetchAndApplyTerms(course, languageCode)
-        TermsUpdateChecker.getInstance(project).checkUpdate(course)
       }
     }
   }
