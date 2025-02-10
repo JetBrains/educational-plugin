@@ -10,7 +10,7 @@ class TheoryLookupSettings : PersistentStateComponent<TheoryLookupSettings.State
   val theoryLookupProperties = _theoryLookupProperties.asStateFlow()
 
   val isTheoryLookupEnabled: Boolean
-    get() = _theoryLookupProperties.value?.isEnabled == true
+    get() = _theoryLookupProperties.value?.isEnabled != false
 
   fun setTheoryLookupProperties(properties: TheoryLookupProperties) {
     _theoryLookupProperties.value = properties
@@ -27,7 +27,7 @@ class TheoryLookupSettings : PersistentStateComponent<TheoryLookupSettings.State
   }
 
   class State : BaseState() {
-    var isEnabled by property(false)
+    var isEnabled by property(true)
   }
 
   companion object {
