@@ -10,9 +10,9 @@ import com.jetbrains.edu.ai.error.AIServiceError
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.terms.connector.TermsServiceConnector
 import com.jetbrains.edu.ai.terms.settings.TheoryLookupSettings
+import com.jetbrains.edu.ai.terms.ui.AITermsNotificationManager
 import com.jetbrains.edu.ai.terms.updater.TermsUpdateChecker
-import com.jetbrains.edu.ai.translation.ui.AITranslationNotification.ActionLabel
-import com.jetbrains.edu.ai.translation.ui.AITranslationNotificationManager
+import com.jetbrains.edu.ai.ui.AINotification.ActionLabel
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
@@ -56,9 +56,7 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
         if (languageCode != TranslationLanguage.ENGLISH.code) return@collectLatest // TODO(support other languages)
 
         if (TermsProjectSettings.areCourseTermsLoaded(project, languageCode)) return@collectLatest
-        if (isRunning(project)) return@collectLatest
         fetchAndApplyTerms(course, languageCode)
-        TermsUpdateChecker.getInstance(project).checkUpdate(course)
       }
     }
   }
@@ -133,14 +131,14 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
       }
       val termsProjectSettings = TermsProjectSettings.getInstance(project)
       if (version == termsResponse.termsVersion) {
-        AITranslationNotificationManager.showInfoNotification(
+        AITermsNotificationManager.showInfoNotification(
           project,
           message = EduAIBundle.message("ai.terms.terms.is.up.to.date")
         )
         return@withBackgroundProgress
       }
       termsProjectSettings.setTerms(termsResponse.toTermsProperties())
-      AITranslationNotificationManager.showInfoNotification(
+      AITermsNotificationManager.showInfoNotification(
         project,
         message = EduAIBundle.message("ai.terms.terms.has.been.updated")
       )
@@ -162,7 +160,7 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
             fetchAndApplyTerms(course, languageCode)
           }
         )
-        AITranslationNotificationManager.showErrorNotification(project, message = courseTerms.error.message(), actionLabel = actionLabel)
+        AITermsNotificationManager.showErrorNotification(project, message = courseTerms.error.message(), actionLabel = actionLabel)
       }
       courseTerms
     }
@@ -182,13 +180,13 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
         }
       }
       else {
-        AITranslationNotificationManager.showErrorNotification(project, message = lockNotAcquiredNotificationText)
+        AITermsNotificationManager.showErrorNotification(project, message = lockNotAcquiredNotificationText)
       }
     }
   }
 
   private suspend fun downloadTerms(course: EduCourse, languageCode: String): Result<CourseTermsResponse, AIServiceError> {
-    if (languageCode != TranslationLanguage.ENGLISH.code) return Err(TermsError.LANGUAGE_NOT_SUPPORTED)
+    if (TranslationLanguage.findByCode(languageCode) != TranslationLanguage.ENGLISH) return Err(TermsError.LANGUAGE_NOT_SUPPORTED)
     return TermsServiceConnector.getInstance().getCourseTerms(
       course.id,
       course.marketplaceCourseVersion,
