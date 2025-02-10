@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.actions
 import com.intellij.execution.RunManager
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.configurations.LocatableConfigurationBase
+import com.intellij.execution.ui.RUN_CONFIGURATION_KEY
 import com.intellij.ide.SaveAndSyncHandler
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
@@ -28,7 +29,7 @@ class AssignRunConfigurationToTask : AnAction(), DumbAware {
     val course = project.course ?: return
     if (course.isStudy) return
     if (project.selectedTaskFile == null) return
-    if (RunManager.getInstance(project).selectedConfiguration == null) return
+    if (e.getConfigurationFromActionContext(project) == null) return
 
     e.presentation.isVisible = true
   }
@@ -37,7 +38,7 @@ class AssignRunConfigurationToTask : AnAction(), DumbAware {
     val project = e.project ?: return
     val taskFile = project.selectedTaskFile ?: return
     val task = taskFile.task
-    val selectedConfiguration = RunManager.getInstance(project).selectedConfiguration ?: return
+    val selectedConfiguration = e.getConfigurationFromActionContext(project) ?: return
 
     val taskDir = project.courseDir.findFileByRelativePath(task.pathInCourse) ?: return
 
@@ -52,6 +53,19 @@ class AssignRunConfigurationToTask : AnAction(), DumbAware {
       title = EduCoreBundle.message("actions.run.task.configuration.assigned.title"),
       content = EduCoreBundle.message("actions.run.task.configuration.assigned.message", task.name, selectedConfiguration.name)
     )
+  }
+
+  /**
+   * Returns a configuration, for which the contextual menu is open,
+   * or a currently selected action, if the action is called from somewhere else.
+   */
+  private fun AnActionEvent.getConfigurationFromActionContext(project: Project): RunnerAndConfigurationSettings? {
+    val contextualConfiguration = getData(RUN_CONFIGURATION_KEY)
+    if (contextualConfiguration != null) {
+      return contextualConfiguration
+    }
+
+    return RunManager.getInstance(project).selectedConfiguration
   }
 
   private fun forceSaveRunConfigurationInFile(project: Project, selectedConfiguration: RunnerAndConfigurationSettings
