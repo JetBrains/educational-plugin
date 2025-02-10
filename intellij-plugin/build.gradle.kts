@@ -354,6 +354,13 @@ tasks {
     jvmArgs("-Dide.experimental.ui=true")
     jvmArgs("-Didea.kotlin.plugin.use.k2=true")
 
+    // These system properties are used by educational-ml-library
+    // System properties can't be passed directly since Gradle runs the IDE process separately
+    // They are not inherited by default, unlike environment variables, which should work by default
+    System.getProperties()
+      .filterKeys { (it as? String)?.startsWith("educational.ml.") == true }
+      .map { (key, value) -> jvmArgs("-D$key=$value") }
+
     // Uncomment to show localized messages
     // jvmArgs("-Didea.l10n=true")
 
