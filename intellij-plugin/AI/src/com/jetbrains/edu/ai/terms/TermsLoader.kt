@@ -10,6 +10,7 @@ import com.jetbrains.edu.ai.error.AIServiceError
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.terms.connector.TermsServiceConnector
 import com.jetbrains.edu.ai.terms.settings.TheoryLookupSettings
+import com.jetbrains.edu.ai.terms.updater.TermsUpdateChecker
 import com.jetbrains.edu.ai.translation.ui.AITranslationNotification.ActionLabel
 import com.jetbrains.edu.ai.translation.ui.AITranslationNotificationManager
 import com.jetbrains.edu.learning.Err
@@ -25,7 +26,11 @@ import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import com.jetbrains.educational.terms.format.CourseTermsResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
@@ -34,22 +39,26 @@ import kotlinx.coroutines.withContext
 class TermsLoader(private val project: Project, private val scope: CoroutineScope) {
   private val mutex = Mutex()
 
-  val isRunning: Boolean
-    get() = mutex.isLocked
-
   init {
     scope.launch {
-      TheoryLookupSettings.getInstance().theoryLookupProperties.collectLatest { properties ->
-        if (properties == null) return@collectLatest
+      val combinedStateFlow = combineState(
+        scope,
+        TheoryLookupSettings.getInstance().theoryLookupProperties,
+        TranslationProjectSettings.getInstance(project).translationProperties
+      )
+      combinedStateFlow.collectLatest { (theoryLookupProperties, translationProperties) ->
+        if (theoryLookupProperties?.isEnabled == false) return@collectLatest
+
         val course = project.course as? EduCourse ?: return@collectLatest
-        if (TermsProjectSettings.areCourseTermsLoaded(project)) return@collectLatest
-        if (isRunning) return@collectLatest
-        if (properties.isEnabled) {
-          val language = TranslationProjectSettings.getInstance(project).translationProperties.value?.language
-          if (language?.code == TranslationLanguage.ENGLISH.code) { // TODO(omit it in the future)
-            fetchAndApplyTerms(course, language)
-          }
-        }
+
+        val translationLanguage = translationProperties?.language
+        val languageCode = translationLanguage?.code ?: course.languageCode
+        if (languageCode != TranslationLanguage.ENGLISH.code) return@collectLatest // TODO(support other languages)
+
+        if (TermsProjectSettings.areCourseTermsLoaded(project, languageCode)) return@collectLatest
+        if (isRunning(project)) return@collectLatest
+        fetchAndApplyTerms(course, languageCode)
+        TermsUpdateChecker.getInstance(project).checkUpdate(course)
       }
     }
   }
@@ -70,13 +79,13 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
     }
   }
 
-  fun fetchAndApplyTerms(course: EduCourse, language: TranslationLanguage?) {
-    if (language?.code != TranslationLanguage.ENGLISH.code) {
-      LOG.warn("Language ${language?.code} requested for theory lookup is not English")
+  fun fetchAndApplyTerms(course: EduCourse, languageCode: String) {
+    if (languageCode != TranslationLanguage.ENGLISH.code) {
+      LOG.warn("Language $languageCode requested for theory lookup is not English")
       return
     }
     runInBackgroundExclusively(EduAIBundle.message("ai.terms.already.running")) {
-      doFetchAndApplyTerms(course, language)
+      doFetchAndApplyTerms(course, languageCode)
     }
   }
 
@@ -94,18 +103,18 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
     }
   }
 
-  private suspend fun doFetchAndApplyTerms(course: EduCourse, language: TranslationLanguage) {
+  private suspend fun doFetchAndApplyTerms(course: EduCourse, languageCode: String) {
     withBackgroundProgress(project, EduAIBundle.message("ai.terms.getting.course.terms")) {
       val termsProjectSettings = TermsProjectSettings.getInstance(project)
-      val properties = termsProjectSettings.getTermsByLanguage(language)
+      val properties = termsProjectSettings.getTermsByLanguage(languageCode)
       if (properties != null) {
         termsProjectSettings.setTerms(properties)
         return@withBackgroundProgress
       }
       //TODO(add statistics (fetch started))
-      val termsResponse = fetchTerms(course, language).onError { error ->
+      val termsResponse = fetchTerms(course, languageCode).onError { error ->
         //TODO(add statistics (fetch failed))
-        LOG.warn("Failed to fetch terms for ${course.name} in $language: $error")
+        LOG.warn("Failed to fetch terms for ${course.name} in $languageCode: $error")
         return@withBackgroundProgress
       }
       termsProjectSettings.setTerms(termsResponse.toTermsProperties())
@@ -141,16 +150,16 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
 
   private suspend fun fetchTerms(
     course: EduCourse,
-    language: TranslationLanguage
+    languageCode: String
   ): Result<CourseTermsResponse, AIServiceError> {
     return withContext(Dispatchers.IO) {
-      val courseTerms = downloadTerms(course, language)
+      val courseTerms = downloadTerms(course, languageCode)
       if (courseTerms is Err) {
         val actionLabel = ActionLabel(
           name = EduCoreBundle.message("retry"),
           action = {
             // TODO(add statistics (fetch failed))
-            fetchAndApplyTerms(course, language)
+            fetchAndApplyTerms(course, languageCode)
           }
         )
         AITranslationNotificationManager.showErrorNotification(project, message = courseTerms.error.message(), actionLabel = actionLabel)
@@ -178,20 +187,30 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
     }
   }
 
-  private suspend fun downloadTerms(course: EduCourse, language: TranslationLanguage): Result<CourseTermsResponse, AIServiceError> {
+  private suspend fun downloadTerms(course: EduCourse, languageCode: String): Result<CourseTermsResponse, AIServiceError> {
+    if (languageCode != TranslationLanguage.ENGLISH.code) return Err(TermsError.LANGUAGE_NOT_SUPPORTED)
     return TermsServiceConnector.getInstance().getCourseTerms(
       course.id,
       course.marketplaceCourseVersion,
-      language
+      TranslationLanguage.ENGLISH
     )
   }
 
   private fun CourseTermsResponse.toTermsProperties(): TermsProperties =
-    TermsProperties(language, terms.mapKeys { it.key.toInt() }, termsVersion) // TODO(fix terms in ai format)
+    TermsProperties(language.code, terms.mapKeys { it.key.toInt() }, termsVersion)
+
+  private fun <T1, T2> combineState(
+    scope: CoroutineScope,
+    state1: StateFlow<T1>,
+    state2: StateFlow<T2>,
+  ): StateFlow<Pair<T1, T2>> = combine(state1, state2) { t1, t2 -> t1 to t2 }
+    .stateIn(scope, SharingStarted.Eagerly, state1.value to state2.value)
 
   companion object {
     private val LOG = Logger.getInstance(TermsLoader::class.java)
 
     fun getInstance(project: Project): TermsLoader = project.service()
+
+    fun isRunning(project: Project): Boolean = getInstance(project).mutex.isLocked
   }
 }
