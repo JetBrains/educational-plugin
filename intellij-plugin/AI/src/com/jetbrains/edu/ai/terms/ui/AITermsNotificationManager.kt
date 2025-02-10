@@ -1,4 +1,4 @@
-package com.jetbrains.edu.ai.translation.ui
+package com.jetbrains.edu.ai.terms.ui
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.NotificationContent
@@ -9,10 +9,10 @@ import com.jetbrains.edu.ai.ui.AINotification.ActionLabel
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory
 import javax.swing.BoxLayout
 
-object AITranslationNotificationManager {
+object AITermsNotificationManager {
   fun showInfoNotification(project: Project, message: @NotificationContent String, actionLabel: ActionLabel? = null) {
     val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskToolWindowFactory.STUDY_TOOL_WINDOW) ?: return
-    val notification = AITranslationNotification(EditorNotificationPanel.Status.Info, message, toolWindow.component)
+    val notification = AITermsNotification(EditorNotificationPanel.Status.Info, message, toolWindow.component)
     if (actionLabel != null) {
       notification.addActionLabel(actionLabel)
     }
@@ -22,7 +22,7 @@ object AITranslationNotificationManager {
 
   fun showErrorNotification(project: Project, message: @NotificationContent String, actionLabel: ActionLabel? = null) {
     val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskToolWindowFactory.STUDY_TOOL_WINDOW) ?: return
-    val notification = AITranslationNotification(EditorNotificationPanel.Status.Error, message, toolWindow.component)
+    val notification = AITermsNotification(EditorNotificationPanel.Status.Error, message, toolWindow.component)
     if (actionLabel != null) {
       notification.addActionLabel(actionLabel)
     }
@@ -35,12 +35,12 @@ object AITranslationNotificationManager {
     closeExistingNotifications(toolWindow)
   }
 
-  private fun showNotification(toolWindow: ToolWindow, notification: AITranslationNotification) {
+  private fun showNotification(toolWindow: ToolWindow, notification: AITermsNotification) {
     toolWindow.component.add(notification, BoxLayout.Y_AXIS)
   }
 
   private fun closeExistingNotifications(toolWindow: ToolWindow) {
-    val existingNotifications = toolWindow.component.components.filterIsInstance<AITranslationNotification>()
+    val existingNotifications = toolWindow.component.components.filterIsInstance<AITermsNotification>()
     existingNotifications.forEach { it.close() }
   }
 }

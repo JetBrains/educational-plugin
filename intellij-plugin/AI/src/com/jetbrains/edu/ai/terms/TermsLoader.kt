@@ -10,9 +10,9 @@ import com.jetbrains.edu.ai.error.AIServiceError
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.terms.connector.TermsServiceConnector
 import com.jetbrains.edu.ai.terms.settings.TheoryLookupSettings
+import com.jetbrains.edu.ai.terms.ui.AITermsNotificationManager
 import com.jetbrains.edu.ai.terms.updater.TermsUpdateChecker
-import com.jetbrains.edu.ai.translation.ui.AITranslationNotification.ActionLabel
-import com.jetbrains.edu.ai.translation.ui.AITranslationNotificationManager
+import com.jetbrains.edu.ai.ui.AINotification.ActionLabel
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
@@ -133,14 +133,14 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
       }
       val termsProjectSettings = TermsProjectSettings.getInstance(project)
       if (version == termsResponse.termsVersion) {
-        AITranslationNotificationManager.showInfoNotification(
+        AITermsNotificationManager.showInfoNotification(
           project,
           message = EduAIBundle.message("ai.terms.terms.is.up.to.date")
         )
         return@withBackgroundProgress
       }
       termsProjectSettings.setTerms(termsResponse.toTermsProperties())
-      AITranslationNotificationManager.showInfoNotification(
+      AITermsNotificationManager.showInfoNotification(
         project,
         message = EduAIBundle.message("ai.terms.terms.has.been.updated")
       )
@@ -162,7 +162,7 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
             fetchAndApplyTerms(course, languageCode)
           }
         )
-        AITranslationNotificationManager.showErrorNotification(project, message = courseTerms.error.message(), actionLabel = actionLabel)
+        AITermsNotificationManager.showErrorNotification(project, message = courseTerms.error.message(), actionLabel = actionLabel)
       }
       courseTerms
     }
@@ -182,7 +182,7 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
         }
       }
       else {
-        AITranslationNotificationManager.showErrorNotification(project, message = lockNotAcquiredNotificationText)
+        AITermsNotificationManager.showErrorNotification(project, message = lockNotAcquiredNotificationText)
       }
     }
   }
