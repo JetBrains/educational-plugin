@@ -4,22 +4,12 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.platform.ide.progress.withBackgroundProgress
-import com.jetbrains.edu.ai.clippy.assistant.AIClippyService
 import com.jetbrains.edu.ai.clippy.assistant.settings.AIClippySettings
 import com.jetbrains.edu.ai.learner.feedback.grazie.AILearnerFeedbackGrazieClient
 import com.jetbrains.edu.ai.learner.feedback.messages.EduAILearnerFeedbackBundle
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Service(Service.Level.PROJECT)
-class AILearnerFeedbackService(private val project: Project, private val scope: CoroutineScope) {
-  fun showNegativeFeedback() {
-    scope.launch {
-      val feedback = getFeedback(positive = false)
-      AIClippyService.getInstance(project).showWithText(feedback)
-    }
-  }
-
+class AILearnerFeedbackService(private val project: Project) {
   suspend fun getFeedback(positive: Boolean): String {
     val clippyProperties = AIClippySettings.getInstance().getClippySettings()
     return withBackgroundProgress(project, EduAILearnerFeedbackBundle.message("learner.feedback.calculating.feedback")) {
