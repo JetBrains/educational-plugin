@@ -51,7 +51,7 @@ class TheoryLookupTest : EduTestCase() {
 
     // when
     performAndWait(expectedVersion = termsVersion) {
-      TermsLoader.getInstance(project).fetchAndApplyTerms(course, termsLanguage)
+      TermsLoader.getInstance(project).fetchAndApplyTerms(course, termsLanguage.code)
     }
 
     // then
@@ -59,7 +59,7 @@ class TheoryLookupTest : EduTestCase() {
 
     val termsProperties = TermsProjectSettings.getInstance(project).termsProperties.value
     val expectedTermsProperties = TermsProperties(
-      language = termsLanguage,
+      languageCode = termsLanguage.code,
       terms = mapOf(
         3 to listOf(Term("X", "Y"), Term("Y", "X")),
         4 to listOf(Term("A", "B"), Term("C", "D"))

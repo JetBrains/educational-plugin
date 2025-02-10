@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.ai.terms.TermsProperties
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.onError
+import com.jetbrains.educational.core.format.enum.TranslationLanguage
 
 @Service(Service.Level.PROJECT)
 class TermsUpdateChecker(private val project: Project) {
@@ -31,8 +32,9 @@ class TermsUpdateChecker(private val project: Project) {
 
   private suspend fun areTermsOutdated(course: EduCourse, termsProperties: TermsProperties): Boolean {
     val (language, _, version) = termsProperties
+    if (language != TranslationLanguage.ENGLISH.code) return false
     val latestVersion = TermsServiceConnector.getInstance()
-      .getLatestTermsVersion(course.id, course.marketplaceCourseVersion, language)
+      .getLatestTermsVersion(course.id, course.marketplaceCourseVersion, TranslationLanguage.ENGLISH)
       .onError {
         LOG.error(it.message())
         return false
