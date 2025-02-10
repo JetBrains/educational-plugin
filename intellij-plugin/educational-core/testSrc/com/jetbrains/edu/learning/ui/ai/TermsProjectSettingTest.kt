@@ -36,17 +36,17 @@ class TermsProjectSettingTest : EduSettingsServiceTestBase() {
 
     with(termsStorage) {
       val termsProperties1 = TermsProperties(
-        language = TranslationLanguage.ENGLISH,
+        languageCode = TranslationLanguage.ENGLISH.code,
         terms = mapOf(task1.id to listOf(Term("A", "B"), Term("B", "C"))),
         version = TermsVersion(1)
       )
       setTerms(termsProperties1)
       checkState("""
       <TermsProjectState>
-        <currentTermsLanguage>English</currentTermsLanguage>
+        <currentTermsLanguage>en</currentTermsLanguage>
         <terms>
           <map>
-            <entry key="English">
+            <entry key="en">
               <value>
                 <map>
                   <entry key="100">
@@ -64,24 +64,24 @@ class TermsProjectSettingTest : EduSettingsServiceTestBase() {
         </terms>
         <termsVersions>
           <map>
-            <entry key="English" value="1" />
+            <entry key="en" value="1" />
           </map>
         </termsVersions>
       </TermsProjectState>
       """.trimIndent())
 
       val termsProperties2 = TermsProperties(
-        language = TranslationLanguage.RUSSIAN,
+        languageCode = TranslationLanguage.RUSSIAN.code,
         terms = mapOf(task1.id to listOf(Term("X", "Y"), Term("Y", "Z"))),
         version = TermsVersion(2)
       )
       setTerms(termsProperties2)
       checkState("""
       <TermsProjectState>
-        <currentTermsLanguage>Russian</currentTermsLanguage>
+        <currentTermsLanguage>ru</currentTermsLanguage>
         <terms>
           <map>
-            <entry key="English">
+            <entry key="en">
               <value>
                 <map>
                   <entry key="100">
@@ -95,7 +95,7 @@ class TermsProjectSettingTest : EduSettingsServiceTestBase() {
                 </map>
               </value>
             </entry>
-            <entry key="Russian">
+            <entry key="ru">
               <value>
                 <map>
                   <entry key="100">
@@ -113,8 +113,8 @@ class TermsProjectSettingTest : EduSettingsServiceTestBase() {
         </terms>
         <termsVersions>
           <map>
-            <entry key="English" value="1" />
-            <entry key="Russian" value="2" />
+            <entry key="en" value="1" />
+            <entry key="ru" value="2" />
           </map>
         </termsVersions>
       </TermsProjectState>
@@ -133,17 +133,17 @@ class TermsProjectSettingTest : EduSettingsServiceTestBase() {
 
     with(termsStorage) {
       val termsProperties1 = TermsProperties(
-        language = TranslationLanguage.ENGLISH,
+        languageCode = TranslationLanguage.ENGLISH.code,
         terms = mapOf(task1.id to listOf(Term("A", "B"), Term("B", "C"))),
         version = TermsVersion(1)
       )
       setTerms(termsProperties1)
       checkState("""
       <TermsProjectState>
-        <currentTermsLanguage>English</currentTermsLanguage>
+        <currentTermsLanguage>en</currentTermsLanguage>
         <terms>
           <map>
-            <entry key="English">
+            <entry key="en">
               <value>
                 <map>
                   <entry key="100">
@@ -161,24 +161,24 @@ class TermsProjectSettingTest : EduSettingsServiceTestBase() {
         </terms>
         <termsVersions>
           <map>
-            <entry key="English" value="1" />
+            <entry key="en" value="1" />
           </map>
         </termsVersions>
       </TermsProjectState>
       """.trimIndent())
 
       val termsProperties2 = TermsProperties(
-        language = TranslationLanguage.ENGLISH,
+        languageCode = TranslationLanguage.ENGLISH.code,
         terms = mapOf(task1.id to listOf(Term("X", "Y"), Term("Y", "Z"))),
         version = TermsVersion(2)
       )
       setTerms(termsProperties2)
       checkState("""
       <TermsProjectState>
-        <currentTermsLanguage>English</currentTermsLanguage>
+        <currentTermsLanguage>en</currentTermsLanguage>
         <terms>
           <map>
-            <entry key="English">
+            <entry key="en">
               <value>
                 <map>
                   <entry key="100">
@@ -196,7 +196,7 @@ class TermsProjectSettingTest : EduSettingsServiceTestBase() {
         </terms>
         <termsVersions>
           <map>
-            <entry key="English" value="2" />
+            <entry key="en" value="2" />
           </map>
         </termsVersions>
       </TermsProjectState>

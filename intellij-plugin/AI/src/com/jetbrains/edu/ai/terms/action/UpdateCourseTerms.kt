@@ -25,7 +25,7 @@ class UpdateCourseTerms : AITheoryLookupActionBase() {
     val course = project.course as? EduCourse ?: return
     if (isActionUnavailable(project, course)) return
     if (!TermsProjectSettings.areCourseTermsLoaded(project)) return
-    e.presentation.isEnabledAndVisible = !TermsLoader.getInstance(project).isRunning
+    e.presentation.isEnabledAndVisible = !TermsLoader.isRunning(project)
   }
 
   companion object {
