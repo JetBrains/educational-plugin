@@ -23,20 +23,23 @@ private val assignmentOperators = listOf("=") + reflectedAssignmentOperators
  *
  * @param from The source `PsiElement` representing the key in the dependencies map.
  * @param to The target `PsiElement` to be added as a dependency for the `from` element. Can be `null`.
- * @param outerScopes A collection of other `PsiElementToDependencies` maps representing outer scopes where
+ * @param parentScopes A collection of other `PsiElementToDependencies` maps representing outer scopes where
  * the dependency should also be added. Defaults to `null`.
+ *
+ * If to is `null` it means that empty set will be defined.
+ * This is done for store already initialized variables for making references on they in the future.
  */
 fun PsiElementToDependencies.addIfAbsent(
   from: PsiElement,
   to: PsiElement? = null,
-  outerScopes: Collection<PsiElementToDependencies>? = null
+  parentScopes: Collection<PsiElementToDependencies>? = null
 ) {
   getOrPut(from) { hashSetOf() }.also { collection ->
     to?.let {
       collection.add(it)
     }
   }
-  outerScopes?.forEach {
+  parentScopes?.forEach {
     it.addIfAbsent(from, to)
   }
 }
@@ -52,15 +55,13 @@ fun KtSingleValueToken?.isAssigment() = this != null && this.value in assignment
 
 fun PsiElementToDependencies.copy() = mapValues { it.value.toHashSet() }.toMutableMap()
 
-fun Sequence<PsiElement>.forEachReachable(action: (PsiElement) -> Unit) = iterator().forEachReachable(action)
+inline fun Sequence<PsiElement>.forEachReachable(action: (PsiElement) -> Unit) = iterator().forEachReachable(action)
 
-fun Array<PsiElement>.forEachReachable(action: (PsiElement) -> Unit) = iterator().forEachReachable(action)
+inline fun Array<PsiElement>.forEachReachable(action: (PsiElement) -> Unit) = iterator().forEachReachable(action)
 
-fun Iterator<PsiElement>.forEachReachable(action: (PsiElement) -> Unit) {
-  for (element in this) {
-    if (element is KtReturnExpression || element is KtContinueExpression || element is KtBreakExpression) {
-      break
-    }
-    action(element)
+inline fun Iterator<PsiElement>.forEachReachable(action: (PsiElement) -> Unit) = forEach {
+  if (it is KtReturnExpression || it is KtContinueExpression || it is KtBreakExpression) {
+    return
   }
+  action(it)
 }
