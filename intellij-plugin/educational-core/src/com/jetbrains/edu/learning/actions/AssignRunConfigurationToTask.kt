@@ -11,12 +11,12 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduNames.RUN_CONFIGURATION_DIR
+import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.actions.RunTaskAction.Companion.RUN_CONFIGURATION_FILE_NAME
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
-import com.jetbrains.edu.learning.selectedTaskFile
 
 class AssignRunConfigurationToTask : AnAction(), DumbAware {
 
@@ -28,7 +28,7 @@ class AssignRunConfigurationToTask : AnAction(), DumbAware {
     val project = e.project ?: return
     val course = project.course ?: return
     if (course.isStudy) return
-    if (project.selectedTaskFile == null) return
+    if (project.getCurrentTask() == null) return
     if (e.getConfigurationFromActionContext(project) == null) return
 
     e.presentation.isVisible = true
@@ -36,8 +36,7 @@ class AssignRunConfigurationToTask : AnAction(), DumbAware {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    val taskFile = project.selectedTaskFile ?: return
-    val task = taskFile.task
+    val task = project.getCurrentTask() ?: return
     val selectedConfiguration = e.getConfigurationFromActionContext(project) ?: return
 
     val taskDir = project.courseDir.findFileByRelativePath(task.pathInCourse) ?: return
