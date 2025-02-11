@@ -52,6 +52,7 @@ class AssignRunConfigurationToTask : AnAction(), DumbAware {
     val existingConfiguration = CheckUtils.getCustomRunConfigurationForRunner(project, task)
     if (existingConfiguration != null) {
       existingConfiguration.storeInLocalWorkspace()
+      existingConfiguration.name = "Unassigned ${existingConfiguration.name}"
       forceSaveRunConfigurationInFile(project, existingConfiguration)
     }
 
