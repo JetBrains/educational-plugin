@@ -124,7 +124,6 @@
             class="com.jetbrains.edu.learning.actions.AssignRunConfigurationToTask"
             internal="true">
       <add-to-group group-id="RunConfiguration.Group" anchor="before" relative-to-action="DeleteRunConfiguration"/> <!-- top right -->
-      <add-to-group group-id="RunContextGroupInner" anchor="before" relative-to-action="RunContextGroupMore"/>
     </action>
     <action id="Educational.Retry" class="com.jetbrains.edu.learning.actions.RetryAction"/>
     <action id="Educational.PrevPlaceholder"
