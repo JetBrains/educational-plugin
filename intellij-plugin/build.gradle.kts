@@ -228,6 +228,21 @@ subprojects {
 
   tasks {
     prepareSandbox { enabled = false }
+    test {
+      // Needed for both `:intellij-plugin:features:ai-hints-kotlin` and `:intellij-plugin:Edu-Kotlin`
+      // Does nothing otherwise because Kotlin does not exist in the classpath
+      jvmArgumentProviders += CommandLineArgumentProvider {
+        listOf(
+          // TODO when 251 test run is fixed, enable K2 in tests starting from 251 instead of 243
+          if (true) {
+            "-Didea.kotlin.plugin.use.k2=true"
+          }
+          else {
+            "-Didea.kotlin.plugin.use.k2=false"
+          }
+        )
+      }
+    }
   }
 
   val testOutput = configurations.create("testOutput")
@@ -645,21 +660,6 @@ project("Edu-Kotlin") {
       intellijPlugins(jvmPlugins)
       intellijPlugins(kotlinPlugin)
     }
-
-    tasks.test {
-      jvmArgumentProviders += CommandLineArgumentProvider {
-        listOf(
-          // TODO when 251 test run is fixed, enable K2 in tests starting from 251 instead of 243
-          if (true) {
-            "-Didea.kotlin.plugin.use.k2=true"
-          }
-          else {
-            "-Didea.kotlin.plugin.use.k2=false"
-          }
-        )
-      }
-    }
-
     implementation(project(":intellij-plugin:educational-core"))
     implementation(project(":intellij-plugin:jvm-core"))
 
@@ -1029,6 +1029,7 @@ project("features:ai-hints-kotlin") {
       val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
       intellijIde(project, ideVersion)
 
+      intellijPlugins(jvmPlugins)
       intellijPlugins(kotlinPlugin)
     }
 
@@ -1037,6 +1038,7 @@ project("features:ai-hints-kotlin") {
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
     testImplementation(project(":intellij-plugin:features:ai-hints-core", "testOutput"))
+    testImplementation(project(":intellij-plugin:Edu-Kotlin"))
   }
 }
 
