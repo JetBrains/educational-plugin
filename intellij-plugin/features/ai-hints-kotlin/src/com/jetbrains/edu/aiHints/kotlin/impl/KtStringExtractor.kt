@@ -34,7 +34,7 @@ object KtStringExtractor : StringExtractor {
   private fun KtNamedFunction.collectReferredStringValues(): List<String> =
     PsiTreeUtil.findChildrenOfType(this, KtReferenceExpression::class.java)
       .asSequence()
-      .mapNotNull { mainReference?.resolve() as? KtProperty }
+      .mapNotNull { it.mainReference.resolve() as? KtProperty }
       .mapNotNull { it.initializer as? KtStringTemplateExpression }
       .mapTo(mutableListOf()) { it.text }
 }
