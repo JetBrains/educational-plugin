@@ -1024,7 +1024,22 @@ project("features:ai-hints-kotlin") {
       val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
       intellijIde(project, ideVersion)
 
+      intellijPlugins(jvmPlugins)
       intellijPlugins(kotlinPlugin)
+    }
+
+    tasks.test {
+      jvmArgumentProviders += CommandLineArgumentProvider {
+        listOf(
+          //TODO when 251 is supported, enable K2 in tests starting from 251 instead of 243
+          if (isAtLeast243) {
+            "-Didea.kotlin.plugin.use.k2=true"
+          }
+          else {
+            "-Didea.kotlin.plugin.use.k2=false"
+          }
+        )
+      }
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -1032,6 +1047,7 @@ project("features:ai-hints-kotlin") {
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
     testImplementation(project(":intellij-plugin:features:ai-hints-core", "testOutput"))
+    testImplementation(project(":intellij-plugin:Edu-Kotlin"))
   }
 }
 
