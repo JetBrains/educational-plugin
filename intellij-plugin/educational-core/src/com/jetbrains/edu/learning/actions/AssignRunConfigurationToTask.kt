@@ -47,6 +47,14 @@ class AssignRunConfigurationToTask : AnAction(), DumbAware {
     val task = project.getCurrentTask() ?: return
     val selectedConfiguration = e.getConfigurationFromActionContext(project) ?: return
 
+    //If the task is already assigned to some configuration, unassign it.
+    //Otherwise the runner.run.xml will have both the old and the new configuration.
+    val existingConfiguration = CheckUtils.getCustomRunConfigurationForRunner(project, task)
+    if (existingConfiguration != null) {
+      existingConfiguration.storeInLocalWorkspace()
+      forceSaveRunConfigurationInFile(project, existingConfiguration)
+    }
+
     val taskDir = project.courseDir.findFileByRelativePath(task.pathInCourse) ?: return
 
     selectedConfiguration.name = "Run task: ${task.name} (${task.parent.name})"
