@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduNames.RUN_CONFIGURATION_DIR
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.actions.RunTaskAction.Companion.RUN_CONFIGURATION_FILE_NAME
+import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -23,15 +24,22 @@ class AssignRunConfigurationToTask : AnAction(), DumbAware {
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
   override fun update(e: AnActionEvent) {
-    e.presentation.isVisible = false
+    e.presentation.isEnabledAndVisible = false
 
     val project = e.project ?: return
     val course = project.course ?: return
     if (course.isStudy) return
-    if (project.getCurrentTask() == null) return
-    if (e.getConfigurationFromActionContext(project) == null) return
+    val task = project.getCurrentTask() ?: return
+    val configurationToAssign = e.getConfigurationFromActionContext(project) ?: return
 
-    e.presentation.isVisible = true
+    //don't enable the action if this configuration is already assigned to this task
+    val existingConfiguration = CheckUtils.getCustomRunConfigurationForRunner(project, task)
+    if (existingConfiguration == configurationToAssign) {
+      e.presentation.isVisible = true
+    }
+    else {
+      e.presentation.isEnabledAndVisible = true
+    }
   }
 
   override fun actionPerformed(e: AnActionEvent) {
