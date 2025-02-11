@@ -9,6 +9,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.blockingContext
 import com.intellij.openapi.project.Project
 import com.intellij.util.concurrency.annotations.RequiresBlockingContext
+import com.jetbrains.edu.coursecreator.archive.BrokenRemoteYamlError
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
@@ -31,12 +32,14 @@ class StudyItemIdGenerator(private val project: Project) {
    * Generates ids for all study items in given [course] if they are not assigned yet (i.e. [StudyItem.id] equals 0)
    */
   @RequiresBlockingContext
-  fun generateIdsIfNeeded(course: Course) {
+  fun generateIdsIfNeeded(course: Course): BrokenRemoteYamlError? {
     // Load `*-remote-info.yaml` files for each item to have up-to-date ids
-    loadRemoteInfo(course)
+    val error = loadRemoteInfo(course)
+    if (error != null) return error
     generateMissingIds(course)
     // Dump info about new ids to `*-remote-info.yaml` files
     YamlFormatSynchronizer.saveRemoteInfo(course)
+    return null
   }
 
   fun collectItemsWithDuplicateIds(course: Course): DuplicateIdMap {
@@ -170,10 +173,16 @@ class StudyItemIdGenerator(private val project: Project) {
     }
   }
 
-  private fun loadRemoteInfo(course: Course) {
+  private fun loadRemoteInfo(course: Course): BrokenRemoteYamlError? {
+    var failedItem: StudyItem? = null
+
     course.visitItems { item ->
-      item.reloadRemoteInfo(project)
+      if (!item.reloadRemoteInfo(project)) {
+        failedItem = item
+      }
     }
+
+    return failedItem?.let { BrokenRemoteYamlError(it) }
   }
 
   @VisibleForTesting

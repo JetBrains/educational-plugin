@@ -89,9 +89,10 @@ class CourseArchiveCreator(
     saveOpenedDocuments(project)
 
     if (course.isMarketplace) {
-      ProgressManager.getInstance().runProcessWithProgressSynchronously({
+      val error = ProgressManager.getInstance().runProcessWithProgressSynchronously<BrokenRemoteYamlError?, Exception>({
         StudyItemIdGenerator.getInstance(project).generateIdsIfNeeded(course)
       }, EduCoreBundle.message("action.create.course.archive.progress.bar"), false, project)
+      if (error != null) return Err(error)
     }
 
     course.updateEnvironmentSettings(project)
