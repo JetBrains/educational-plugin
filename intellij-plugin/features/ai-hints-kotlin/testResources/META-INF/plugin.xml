@@ -7,5 +7,7 @@
     <module name="AI"/>
     <module name="ai-hints-core"/>
     <module name="ai-hints-kotlin"/>
+    <module name="Edu-Kotlin"/>
+    <module name="jvm-core"/>
   </content>
 </idea-plugin>
