@@ -397,7 +397,7 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
   }
 
   /**
-  Makes a dependency on the element and all of its already initialized references
+   * Makes a dependency on the element and all of its already initialized references
    */
   private fun PsiElement.addReferences(other: KtReferenceExpression, definedVariables: PsiElementToDependencies) {
     other.reference()?.resolve()?.let { referenceTo ->
