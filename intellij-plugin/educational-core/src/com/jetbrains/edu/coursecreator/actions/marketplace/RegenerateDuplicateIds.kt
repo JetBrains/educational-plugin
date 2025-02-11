@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.actions.marketplace
 
 import com.intellij.notification.Notification
+import com.intellij.notification.NotificationType.INFORMATION
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.progress.currentThreadCoroutineScope
@@ -13,6 +14,8 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.marketplace.StudyItemIdGenerator
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
+import com.jetbrains.edu.learning.notification.RemoteConfigNotificationListener
+import com.jetbrains.edu.learning.notification.RemoteConfigNotificationListener.Companion.hyperlinkText
 import kotlinx.coroutines.launch
 
 class RegenerateDuplicateIds : DumbAwareAction() {
@@ -44,17 +47,19 @@ class RegenerateDuplicateIds : DumbAwareAction() {
       EduCoreBundle.message("action.Educational.Educator.RegenerateDuplicateIds.notification.no.item.changed")
     }
     else {
-      // TODO: add links to the corresponding config files
       EduCoreBundle.message(
         "action.Educational.Educator.RegenerateDuplicateIds.notification.items.changed",
-        changedItems.joinToString { it.presentableName })
+        changedItems.joinToString { it.hyperlinkText() })
     }
 
-    EduNotificationManager.showInfoNotification(
-      project,
+    @Suppress("DEPRECATION")
+    EduNotificationManager.create(
+      INFORMATION,
       EduCoreBundle.message("action.Educational.Educator.RegenerateDuplicateIds.notification.title"),
       message
     )
+      .setListener(RemoteConfigNotificationListener(project))
+      .notify(project)
   }
 
   companion object {

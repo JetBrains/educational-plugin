@@ -10,27 +10,36 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
-sealed class ParsedInCourseLink(val file: VirtualFile) {
+/**
+ * Structured form of a link to item in a course.
+ */
+sealed class ParsedInCourseLink<T : StudyItem>(val file: VirtualFile, val item: T) {
 
-  class ItemContainerDirectory(dir: VirtualFile) : ParsedInCourseLink(dir)
-  class TaskDirectory(val task: Task, file: VirtualFile) : ParsedInCourseLink(file)
-  class FileInTask(val task: Task, file: VirtualFile) : ParsedInCourseLink(file)
+  class ItemContainerDirectory(dir: VirtualFile, container: ItemContainer) : ParsedInCourseLink<ItemContainer>(dir, container)
+  class TaskDirectory(file: VirtualFile, task: Task) : ParsedInCourseLink<Task>(file, task)
+  class FileInTask(file: VirtualFile, task: Task) : ParsedInCourseLink<Task>(file, task)
 
   companion object {
 
-    fun parse(project: Project, rawLink: String): ParsedInCourseLink? {
+    /**
+     * Parses [rawLink] to item in a course.
+     * [rawLink] is supposed to be in form of a relative path to the corresponding directory/file with OS-independent path separator
+     *
+     * @see [StudyItem.pathInCourse]
+     */
+    fun parse(project: Project, rawLink: String): ParsedInCourseLink<*>? {
       val course = project.course ?: return null
       return parseNextItem(project, course, rawLink)
     }
 
-    private fun parseNextItem(project: Project, container: StudyItem, remainingPath: String?): ParsedInCourseLink? {
+    private fun parseNextItem(project: Project, container: StudyItem, remainingPath: String?): ParsedInCourseLink<*>? {
       if (remainingPath == null) {
         val courseDir = project.courseDir
         val dir = container.getDir(courseDir) ?: return null
 
         return when (container) {
-          is ItemContainer -> ItemContainerDirectory(dir)
-          is Task -> TaskDirectory(container, dir)
+          is ItemContainer -> ItemContainerDirectory(dir, container)
+          is Task -> TaskDirectory(dir, container)
           else -> error("Unexpected item type: ${container.itemType}")
         }
       }
@@ -39,7 +48,7 @@ sealed class ParsedInCourseLink(val file: VirtualFile) {
         is Task -> {
           val taskFile = container.getTaskFile(remainingPath) ?: return null
           val file = taskFile.getVirtualFile(project) ?: return null
-          FileInTask(container, file)
+          FileInTask(file, container)
         }
         is ItemContainer -> {
           val segments = remainingPath.split("/", limit = 2)

@@ -5,9 +5,11 @@ import com.intellij.notification.Notification
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.writeText
 import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.util.IJSwingUtilities
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseDir
@@ -264,7 +266,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
 
     val duplicateIdsError = createCourseArchiveWithError<DuplicateIdsError>(course)
 
-    val notification = duplicateIdsError.notification("test title")
+    val notification = duplicateIdsError.notification(project, "test title")
 
     val action = notification.actions.single {
       // Simple additional check not to get the wrong action in the future
@@ -285,7 +287,39 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     assertEquals(3, course.findTask("lesson1", "task2").id)
   }
 
+  @Test
+  fun `test duplicate ids notification links`() {
+    // given
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary", createYamlConfigs = true) {
+      lesson("lesson1") {
+        eduTask("task1", stepId = 1) {
+          taskFile("Task.txt")
+        }
+        eduTask("task2", stepId = 1) {
+          taskFile("Task.txt")
+        }
+      }
+    }
+
+    // when
+    val duplicateIdsError = createCourseArchiveWithError<DuplicateIdsError>(course)
+    val notification = duplicateIdsError.notification(project, "test title")
+    val listener = notification.listener ?: error("Failed to get notification listener")
+    val link = HREF_LINK_REGEX.find(notification.content)?.groups?.get("link")?.value
+               ?: error("Failed to find a link in the notification text")
+    listener.hyperlinkUpdate(notification, IJSwingUtilities.createHyperlinkEvent(link, notification))
+
+    // then
+    val currentFile = FileEditorManagerEx.getInstanceEx(project).currentFile
+    val expectedOpenFile = findFile("lesson1/task1/$REMOTE_TASK_CONFIG")
+    assertEquals(expectedOpenFile, currentFile)
+  }
+
   override fun getTestDataPath(): String {
     return super.getTestDataPath() + "/archive/marketplaceCourseArchive"
+  }
+
+  companion object {
+    private val HREF_LINK_REGEX = """<a href='(?<link>.*?)'>""".toRegex()
   }
 }

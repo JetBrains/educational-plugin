@@ -16,6 +16,8 @@ import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
 import com.jetbrains.edu.learning.marketplace.DuplicateIdMap
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
+import com.jetbrains.edu.learning.notification.RemoteConfigNotificationListener
+import com.jetbrains.edu.learning.notification.RemoteConfigNotificationListener.Companion.hyperlinkText
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.TASK_CONFIG
 import org.jetbrains.annotations.Nls
 import java.io.FileNotFoundException
@@ -31,7 +33,7 @@ interface CourseArchiveError {
    *
    * See [showNotification]
    */
-  fun notification(@NotificationTitle title: String): Notification {
+  fun notification(project: Project, @NotificationTitle title: String): Notification {
     return EduNotificationManager.create(NotificationType.ERROR, title, message)
   }
 
@@ -46,7 +48,7 @@ interface CourseArchiveError {
  * Shows notification with specified [title] associated with particular [CourseArchiveError]
  */
 fun CourseArchiveError.showNotification(project: Project, @NotificationTitle title: String) {
-  notification(title).notify(project)
+  notification(project, title).notify(project)
 }
 
 abstract class ExceptionCourseArchiveError<T : Throwable>(val exception: T) : CourseArchiveError {
@@ -76,8 +78,7 @@ data class DuplicateIdsError(val items: DuplicateIdMap) : CourseArchiveError {
       val htmlItemList = buildString {
         appendLine("<ul>")
         for (itemsWithSameId in items.values) {
-          // TODO: add links to the corresponding config
-          appendLine(itemsWithSameId.joinToString(", ", prefix = "<li>", postfix = "</li>") { it.presentableName })
+          appendLine(itemsWithSameId.joinToString(", ", prefix = "<li>", postfix = "</li>") { it.hyperlinkText() })
         }
         appendLine("</ul>")
       }
@@ -85,8 +86,10 @@ data class DuplicateIdsError(val items: DuplicateIdMap) : CourseArchiveError {
       return EduCoreBundle.message("error.failed.to.create.course.archive.duplicate.ids.message", htmlItemList)
     }
 
-  override fun notification(title: String): Notification {
-    return super.notification(title)
+  override fun notification(project: Project, title: String): Notification {
+    @Suppress("DEPRECATION")
+    return super.notification(project, title)
       .addAction(ActionManager.getInstance().getAction(RegenerateDuplicateIds.ACTION_ID))
+      .setListener(RemoteConfigNotificationListener(project))
   }
 }
