@@ -2,10 +2,13 @@ package com.jetbrains.edu.aiHints.kotlin.impl
 
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.asSafely
+import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.jetbrains.edu.aiHints.core.api.StringExtractor
 import com.jetbrains.edu.aiHints.core.context.FunctionsToStrings
 import com.jetbrains.edu.aiHints.core.context.SignatureSource
 import com.jetbrains.edu.aiHints.kotlin.impl.KtFunctionSignaturesManager.generateSignature
+import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
@@ -13,6 +16,7 @@ import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 
 object KtStringExtractor : StringExtractor {
+  @RequiresReadLock
   override fun getFunctionsToStringsMap(psiFile: PsiFile): FunctionsToStrings {
     val signatureToStrings = psiFile.findAllFunctions().mapNotNull { function ->
       val signature = function.generateSignature(SignatureSource.MODEL_SOLUTION) ?: return@mapNotNull null
@@ -33,8 +37,11 @@ object KtStringExtractor : StringExtractor {
 
   private fun KtNamedFunction.collectReferredStringValues(): List<String> =
     PsiTreeUtil.findChildrenOfType(this, KtReferenceExpression::class.java)
-      .asSequence()
-      .mapNotNull { it.mainReference.resolve() as? KtProperty }
-      .mapNotNull { it.initializer as? KtStringTemplateExpression }
-      .mapTo(mutableListOf()) { it.text }
+      .mapNotNull {
+        analyze(it) {
+          val ktProperty = it.mainReference.resolveToSymbol()?.psi.asSafely<KtProperty>() ?: return@analyze null
+          val ktStringTemplateExpression = ktProperty.initializer.asSafely<KtStringTemplateExpression>() ?: return@analyze null
+          ktStringTemplateExpression.text
+        }
+      }
 }
