@@ -1118,9 +1118,6 @@ project("Edu-Cognifire-Decompose") {
       excludeKotlinSerializationDeps()
       exclude(group = "net.java.dev.jna")
     }
-
-    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-
   }
 }
 
