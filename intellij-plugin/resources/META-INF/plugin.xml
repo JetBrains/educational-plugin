@@ -38,6 +38,7 @@
     <module name="github"/>
     <module name="remote-env"/>
     <module name="Edu-Cognifire"/>
+    <module name="Edu-Cognifire-Decompose"/>
 
     <!-- feature modules -->
     <module name="command-line"/>

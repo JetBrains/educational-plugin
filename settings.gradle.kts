@@ -41,7 +41,8 @@ include(
   "intellij-plugin:features:ai-hints-core",
   "intellij-plugin:features:ai-hints-kotlin",
   "intellij-plugin:features:ai-hints-python",
-  "intellij-plugin:Edu-Cognifire"
+  "intellij-plugin:Edu-Cognifire",
+  "intellij-plugin:Edu-Cognifire-Decompose"
 )
 
 if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {
@@ -188,3 +189,5 @@ pluginManagement {
 }
 include("intellij-plugin:Edu-Cognifire")
 findProject(":intellij-plugin:Edu-Cognifire")?.name = "Edu-Cognifire"
+include("intellij-plugin:Edu-Cognifire-Decompose")
+findProject(":intellij-plugin:Edu-Cognifire-Decompose")?.name = "Edu-Cognifire-Decompose"

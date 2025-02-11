@@ -4,6 +4,7 @@
     <!--suppress PluginXmlValidity -->
     <module name="jvm-core"/>
     <module name="Edu-Cognifire"/>
+    <module name="Edu-Cognifire-Decompose"/>
 
     <plugin id="org.jetbrains.kotlin"/>
     <plugin id="org.jetbrains.plugins.gradle"/>
@@ -27,10 +28,12 @@
     <codeExpressionParser language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.psi.KtCodeExpressionParser"/>
     <promptExpressionWriter language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.psi.KtPromptExpressionWriter"/>
     <prodeExpressionParser language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.psi.KtProdeExpressionParser"/>
+    <functionWriter language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifiredecompose.psi.KtFunctionWriter"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
     <runLineMarkerContributor language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.PromptRunLineMarkerContributor"/>
+    <runLineMarkerContributor language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifiredecompose.FunctionRunLineMarkerContributor"/>
     <completion.confidence language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.completion.CognifireCompletionConfidence" id="kotlinStrings" order="first"/>
     <completion.contributor language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.completion.CognifireCompletionContributor"/>
     <annotator language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.psi.KtPromptErrorAnnotator"/>

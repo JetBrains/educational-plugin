@@ -1,0 +1,24 @@
+<idea-plugin package="com.jetbrains.edu.cognifiredecompose">
+  <!--suppress PluginXmlValidity -->
+  <dependencies>
+    <plugin id="org.jetbrains.plugins.gradle"/>
+    <plugin id="JUnit"/>
+  </dependencies>
+
+  <extensionPoints>
+    <extensionPoint qualifiedName="Educational.functionWriter"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.cognifiredecompose.writers.FunctionWriter"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="Educational.cognifireDecomposeDslPackageCallChecker"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.cognifiredecompose.CognifireDecomposeDslPackageCallChecker"/>
+    </extensionPoint>
+  </extensionPoints>
+
+  <resource-bundle>messages.EduCognifireBundle</resource-bundle>
+
+
+</idea-plugin>
