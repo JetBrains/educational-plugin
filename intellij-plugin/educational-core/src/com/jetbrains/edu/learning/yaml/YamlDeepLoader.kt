@@ -27,7 +27,7 @@ import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.remoteConfigFileName
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.YamlLoader.deserializeContent
-import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
+import com.jetbrains.edu.learning.yaml.errorHandling.YamlLoadingException
 import com.jetbrains.edu.learning.yaml.format.getRemoteChangeApplierForItem
 import com.jetbrains.edu.learning.yaml.migrate.ADDITIONAL_FILES_COLLECTOR_MAPPER_KEY
 import com.jetbrains.edu.learning.yaml.migrate.YAML_VERSION_MAPPER_KEY
@@ -176,36 +176,50 @@ object YamlDeepLoader {
     }
   }
 
-  private fun StudyItem.loadRemoteInfo(project: Project) {
+  fun StudyItem.loadRemoteInfo(project: Project, errorOnAbsentConfigWhenIdIsPresent: Boolean = true): Boolean {
     val itemDir = getConfigDir(project)
     val remoteConfigFile = itemDir.findChild(remoteConfigFileName)
     if (remoteConfigFile == null) {
-      if (id > 0) {
-        loadingError(
+      if (errorOnAbsentConfigWhenIdIsPresent && id > 0) {
+        showError(
+          project,
+          null,
+          itemDir,
           EduCoreBundle.message("yaml.editor.invalid.format.config.file.not.found", configFileName, name)
         )
       }
-      else return
+
+      return false
     }
 
-    loadRemoteInfo(remoteConfigFile)
+    return loadRemoteInfo(remoteConfigFile, project)
   }
 
-  fun StudyItem.loadRemoteInfo(remoteConfigFile: VirtualFile) {
-    val itemRemoteInfo = YamlDeserializer.deserializeRemoteItem(remoteConfigFile.name, VfsUtil.loadText(remoteConfigFile))
-    if (itemRemoteInfo.id > 0 || itemRemoteInfo is HyperskillCourse) {
-      getRemoteChangeApplierForItem(itemRemoteInfo).applyChanges(this, itemRemoteInfo)
+  /**
+   * Returns whether loading was successful.
+   * For unsuccessful loading, the error message is shown over the editor.
+   * The [project] is used only to display the error message, and if it is `null`, nothing is displayed.
+   */
+  fun StudyItem.loadRemoteInfo(remoteConfigFile: VirtualFile, project: Project? = null): Boolean {
+    try {
+      val itemRemoteInfo = YamlDeserializer.deserializeRemoteItem(remoteConfigFile.name, VfsUtil.loadText(remoteConfigFile))
+      if (itemRemoteInfo.id > 0 || itemRemoteInfo is HyperskillCourse) {
+        getRemoteChangeApplierForItem(itemRemoteInfo).applyChanges(this, itemRemoteInfo)
+      }
+      return true
+    }
+    catch (e: YamlLoadingException) {
+      if (project != null) {
+        showError(project, e, remoteConfigFile, e.message)
+      }
+      return false
     }
   }
 
   /**
    * Reloads the content of a remote config if it exists.
    */
-  fun StudyItem.reloadRemoteInfo(project: Project) {
-    val itemDir = getConfigDir(project)
-    val remoteConfigFile = itemDir.findChild(remoteConfigFileName) ?: return
-    loadRemoteInfo(remoteConfigFile)
-  }
+  fun StudyItem.reloadRemoteInfo(project: Project): Boolean = loadRemoteInfo(project, errorOnAbsentConfigWhenIdIsPresent = false)
 
   private fun Course.setDescriptionInfo(project: Project) {
     visitLessons { lesson ->

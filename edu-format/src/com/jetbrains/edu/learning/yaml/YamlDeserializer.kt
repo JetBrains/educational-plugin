@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.yaml
 
+import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
@@ -49,6 +50,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LESSON
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TASK
 import com.jetbrains.edu.learning.yaml.migrate.YamlMigrator
 import org.jetbrains.annotations.VisibleForTesting
+import org.yaml.snakeyaml.error.YAMLException
 
 /**
  * Deserialize [StudyItem] object from yaml config file without any additional modifications.
@@ -173,12 +175,21 @@ object YamlDeserializer {
   }
 
   fun deserializeRemoteItem(configName: String, configFileText: String): StudyItem {
-    return when (configName) {
-      REMOTE_COURSE_CONFIG -> deserializeCourseRemoteInfo(configFileText)
-      REMOTE_LESSON_CONFIG -> deserializeLessonRemoteInfo(configFileText)
-      REMOTE_SECTION_CONFIG -> remoteMapper().readValue(configFileText, RemoteStudyItem::class.java)
-      REMOTE_TASK_CONFIG -> deserializeTaskRemoteInfo(configFileText)
-      else -> loadingError(unknownConfigMessage(configName))
+    try {
+      return when (configName) {
+        REMOTE_COURSE_CONFIG -> deserializeCourseRemoteInfo(configFileText)
+        REMOTE_LESSON_CONFIG -> deserializeLessonRemoteInfo(configFileText)
+        REMOTE_SECTION_CONFIG -> remoteMapper().readValue(configFileText, RemoteStudyItem::class.java)
+        REMOTE_TASK_CONFIG -> deserializeTaskRemoteInfo(configFileText)
+        else -> loadingError(unknownConfigMessage(configName))
+      }
+    }
+    catch (e: Exception) {
+      val message = when (e) {
+        is JsonMappingException -> e.originalMessage
+        else -> e.message
+      }
+      loadingError(message ?: "YAML loading error")
     }
   }
 

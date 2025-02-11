@@ -6,22 +6,18 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.messages.Topic
-import com.jetbrains.edu.learning.storage.persistEduFiles
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.ItemContainer
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.Section
-import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.storage.persistEduFiles
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.childrenConfigFileNames
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
+import com.jetbrains.edu.learning.yaml.YamlLoader.loadItem
 import com.jetbrains.edu.learning.yaml.YamlMapper.basicMapper
-import com.jetbrains.edu.learning.yaml.errorHandling.YamlLoadingException
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
 import com.jetbrains.edu.learning.yaml.errorHandling.noDirForItemMessage
 import com.jetbrains.edu.learning.yaml.errorHandling.unknownConfigMessage
@@ -40,15 +36,8 @@ object YamlLoader {
 
   fun loadItem(project: Project, configFile: VirtualFile, loadFromVFile: Boolean) {
     project.messageBus.syncPublisher(YAML_LOAD_TOPIC).beforeYamlLoad(configFile)
-    try {
-      doLoad(project, configFile, loadFromVFile)
-    }
-    catch (e: Exception) {
-      when (e) {
-        is YamlLoadingException -> showError(project, e, configFile, e.message)
-        else -> throw e
-      }
-    }
+
+    doLoad(project, configFile, loadFromVFile)
   }
 
   private fun doLoad(project: Project, configFile: VirtualFile, loadFromVFile: Boolean) {
