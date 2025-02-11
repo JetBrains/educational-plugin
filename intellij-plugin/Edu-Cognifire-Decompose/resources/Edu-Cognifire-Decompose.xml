@@ -18,7 +18,7 @@
     </extensionPoint>
   </extensionPoints>
 
-  <resource-bundle>messages.EduCognifireBundle</resource-bundle>
+  <resource-bundle>messages.EduCognifireDecomposeBundle</resource-bundle>
 
 
 </idea-plugin>
