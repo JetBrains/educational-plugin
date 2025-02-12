@@ -1,4 +1,4 @@
-package jetbrains.course.tutorial.dog.years
+package jetbrains.course.tutorial
 
 fun calculateDogAgeInDogYears() {
   TODO("Not implemented yet")

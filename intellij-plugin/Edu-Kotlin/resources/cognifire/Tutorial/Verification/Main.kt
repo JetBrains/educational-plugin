@@ -1,4 +1,4 @@
-package jetbrains.course.tutorial.dog.years
+package jetbrains.course.tutorial
 
 import org.jetbrains.academy.cognifire.dsl.*
 
