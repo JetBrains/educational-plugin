@@ -23,6 +23,8 @@ import javax.swing.JPanel
  * Panel with button inside and progress icon if action is appropriate
  */
 class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
+  lateinit var action: AnAction
+    private set
   /**
    * @param[action] action to execute when button is clicked. Panel will also have process icon when action is being executed.
    * @param[isDefault] parameter specifies whether button is painted as default or not. `false` by default.
@@ -31,6 +33,7 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
    * @see com.jetbrains.edu.learning.actions.ActionWithProgressIcon
    */
   constructor(action: ActionWithProgressIcon, isDefault: Boolean = false, isEnabled: Boolean = true) : this() {
+    this.action = action
     val buttonPanel = createButtonPanel(action = action, isDefault = isDefault, isEnabled = isEnabled)
     add(buttonPanel, BorderLayout.WEST)
 
@@ -51,6 +54,7 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
     isEnabled: Boolean = true,
     customButtonText: String? = null
   ) : this() {
+    this.action = action
     val buttonPanel =
       createButtonPanel(action, isDefault = isDefault, isEnabled = isEnabled, customButtonText = customButtonText)
     add(buttonPanel)

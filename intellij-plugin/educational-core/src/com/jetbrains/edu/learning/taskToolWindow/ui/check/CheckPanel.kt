@@ -45,7 +45,7 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
   private val linkPanel = JPanel(BorderLayout())
   private val checkDetailsPlaceholder: JPanel = JPanel(BorderLayout())
   private val leftActionsToolbar: JPanel = JPanel()
-  private val checkButtonWrapper = JPanel(BorderLayout())
+  val checkButtonWrapper = JPanel(BorderLayout())
   private val getHintButtonWrapper = JPanel(BorderLayout())
   private val rightActionsToolbar: ActionToolbar = createRightActionToolbar()
   private val runActionsToolbar: ActionToolbar = createRunActionToolbar()

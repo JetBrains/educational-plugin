@@ -301,7 +301,7 @@ dependencies {
     pluginModule(implementation(project("Edu-Python:Idea")))
     pluginModule(implementation(project("Edu-Python:PyCharm")))
     pluginModule(implementation(project("Edu-Scala")))
-    pluginModule(implementation(project("Edu-Android")))
+//    pluginModule(implementation(project("Edu-Android")))
     pluginModule(implementation(project("Edu-JavaScript")))
     pluginModule(implementation(project("Edu-Rust")))
     pluginModule(implementation(project("Edu-Cpp")))
@@ -655,28 +655,28 @@ project("Edu-Scala") {
   }
 }
 
-project("Edu-Android") {
-  dependencies {
-    intellijPlatform {
-      intellijIde(project, studioVersion)
-
-      intellijPlugins(jvmPlugins)
-      // TODO: make `kotlinPlugin` test-only
-      intellijPlugins(androidPlugin, kotlinPlugin)
-    }
-
-    implementation(project(":intellij-plugin:educational-core"))
-    implementation(project(":intellij-plugin:jvm-core"))
-
-    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-    testImplementation(project(":intellij-plugin:jvm-core", "testOutput"))
-  }
-
-  // BACKCOMPAT: enable when 243 studio is available
-  tasks.withType<Test> {
-    enabled = environmentName.toInt() < 243
-  }
-}
+//project("Edu-Android") {
+//  dependencies {
+//    intellijPlatform {
+//      intellijIde(project, studioVersion)
+//
+//      intellijPlugins(jvmPlugins)
+//      // TODO: make `kotlinPlugin` test-only
+//      intellijPlugins(androidPlugin, kotlinPlugin)
+//    }
+//
+//    implementation(project(":intellij-plugin:educational-core"))
+//    implementation(project(":intellij-plugin:jvm-core"))
+//
+//    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+//    testImplementation(project(":intellij-plugin:jvm-core", "testOutput"))
+//  }
+//
+//  // BACKCOMPAT: enable when 243 studio is available
+//  tasks.withType<Test> {
+//    enabled = environmentName.toInt() < 243
+//  }
+//}
 
 project("Edu-Python") {
   dependencies {

@@ -107,6 +107,10 @@
   </extensionPoints>
 
   <actions>
+    <action id="Educational.ShowImageAboveButtonAction"
+            class="com.jetbrains.edu.learning.actions.ShowImageAboveButtonAction"
+            internal="true"
+    />
     <action id="Educational.Agreement.ShowUserAgreementDialog"
             class="com.jetbrains.edu.learning.agreement.action.ShowUserAgreementDialog"
             internal="true"/>

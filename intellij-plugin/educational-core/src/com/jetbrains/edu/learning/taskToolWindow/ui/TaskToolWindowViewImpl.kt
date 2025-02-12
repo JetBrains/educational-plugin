@@ -62,7 +62,8 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
   private val navigationMapToolbar: NavigationMapToolbar = NavigationMapToolbar()
   private val taskName: JLabel = JLabel(EduCoreBundle.message("item.task.title"))
   private val tabManager: TabManager = TabManager(project)
-  private val checkPanel: CheckPanel = CheckPanel(project, this)
+  private val _checkPanel: CheckPanel = CheckPanel(project, this)
+  val checkPanel: CheckPanel get() = _checkPanel
 
   init {
     Disposer.register(this, tabManager)
