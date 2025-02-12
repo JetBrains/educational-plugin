@@ -39,9 +39,7 @@ class KtFunctionWriter : FunctionWriter<FunctionExpression> {
   private fun createElementParent(newFunctionBlock: KtExpression, element: PsiElement): PsiElement {
     val functions = ElementSearch.findFunctionsBlock(element) { it.nextSibling }
     functions ?: error("Could not find functions block")
-    val createdElement = functions.lastChild.addBefore(newFunctionBlock, functions.lastChild.lastChild)
-
-    return createdElement
+    return functions.lastChild.addBefore(newFunctionBlock, functions.lastChild.lastChild)
   }
 
   companion object {
