@@ -33,7 +33,7 @@ class Test {
         )
 
         private val mainClass = TestClass(
-            classPackage = "jetbrains.course.tutorial.dog.years",
+            classPackage = "jetbrains.course.tutorial",
             customMethods = listOf(
                 calculateDogAgeInDogYears,
                 verifyHumanYearsInput,

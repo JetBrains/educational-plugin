@@ -15,7 +15,7 @@ class Test : BaseIjTestClass() {
         fun initialize() {
             val taskDirectoryPath = System.getProperty("user.dir")
             val sourceCodeFile =
-                File("$taskDirectoryPath/src/jetbrains/course/tutorial/dog/years/Main.kt")
+                File("$taskDirectoryPath/src/jetbrains/course/tutorial/Main.kt")
             sourceText = sourceCodeFile.readText()
         }
     }
