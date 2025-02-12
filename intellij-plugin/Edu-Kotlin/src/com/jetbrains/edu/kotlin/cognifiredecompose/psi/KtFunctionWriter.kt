@@ -23,7 +23,7 @@ class KtFunctionWriter : FunctionWriter<FunctionExpression> {
 
     WriteCommandAction.runWriteCommandAction(project, null, null, {
       documentManager.commitAllDocuments()
-      updateCodeBlock(newFunctionBlock, element)
+      createElementParent(newFunctionBlock, element)
     })
     return FunctionExpression(
       ""
@@ -35,11 +35,6 @@ class KtFunctionWriter : FunctionWriter<FunctionExpression> {
       FUNCTION_BLOCK
     )
   }
-
-  private fun updateCodeBlock(
-    newFunctionBlock: KtExpression,
-    element: PsiElement)
-    = createElementParent(newFunctionBlock, element)
 
   private fun createElementParent(newFunctionBlock: KtExpression, element: PsiElement): PsiElement {
     val functions = ElementSearch.findFunctionsBlock(element) { it.nextSibling }
