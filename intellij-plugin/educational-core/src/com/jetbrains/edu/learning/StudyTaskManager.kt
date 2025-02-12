@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning
 
+import com.intellij.codeInsight.navigation.LOG
 import com.intellij.ide.lightEdit.LightEdit
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.runReadAction
@@ -57,7 +58,15 @@ class StudyTaskManager(private val project: Project) : DumbAware, Disposable, Ed
     courseLoadingLock.withLock {
       if (!needToLoadCourse(project)) return
 
-      loadedCourse = runReadAction { loadCourse(project) }
+      loadedCourse = runReadAction {
+        try {
+          loadCourse(project)
+        }
+        catch (th: Throwable) {
+          LOG.error("Error while loading course", th)
+          null
+        }
+      }
       courseLoadedWithError = loadedCourse == null
       if (loadedCourse != null) {
         logger<StudyTaskManager>().info("Loaded course corresponding to the project: ${loadedCourse.name}")
