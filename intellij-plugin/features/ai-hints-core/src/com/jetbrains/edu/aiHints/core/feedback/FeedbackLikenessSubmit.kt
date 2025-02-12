@@ -16,9 +16,7 @@ object FeedbackLikenessSubmit {
   inline fun <reified T> sendFeedbackData(likeness: FeedbackLikenessAnswer, systemInfoData: HintFeedbackSystemInfoData<T>) {
     val feedbackData = FeedbackRequestData(FEEDBACK_REPORT_ID, buildJsonObject {
       put(FEEDBACK_REPORT_ID_KEY, FEEDBACK_REPORT_ID)
-
       put(HINTS_LIKENESS_JSON_KEY, likeness.result)
-
       val json = Json { prettyPrint = true }
       put(SYSTEM_INFO_JSON_KEY, json.encodeToJsonElement(systemInfoData))
     })
