@@ -19,7 +19,6 @@ import com.jetbrains.edu.coursecreator.archive.showNotification
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.invokeLater
-import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.*
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showLoginNeededNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showReloginToJBANeededNotification
@@ -153,9 +152,6 @@ class MarketplacePushCourse(
 
     if (marketplaceCourseVersion == 0) marketplaceCourseVersion = 1
 
-    if (!isUnitTestMode) {
-      StudyItemIdGenerator.getInstance(project).generateIdsIfNeeded(course)
-    }
     if (vendor == null) {
       if (!addVendor()) {
         EduNotificationManager.showErrorNotification(
