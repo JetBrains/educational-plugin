@@ -1,5 +1,6 @@
 package com.jetbrains.edu.ai.translation
 
+import com.intellij.ide.ActivityTracker
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.components.Service
@@ -160,6 +161,8 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
         }
         finally {
           mutex.unlock()
+          // Refresh the UI manually in order to make the translation icon reappear when translation is finished
+          ActivityTracker.getInstance().inc()
         }
       }
       else {
