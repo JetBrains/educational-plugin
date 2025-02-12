@@ -105,7 +105,7 @@ class TutorialGenerator : DumbAwareAction(EduCognifireBundle.message("item.tutor
       val container = this@createLesson
       name = lessonName
       customPresentableName = lessonName.getPresentableName()
-      index = container.items.size + 1
+      index = 0
       parent = container
       isTemplateBased = false
       container.addLesson(this)
