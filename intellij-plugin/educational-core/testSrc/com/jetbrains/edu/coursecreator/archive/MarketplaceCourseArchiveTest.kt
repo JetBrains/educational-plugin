@@ -4,6 +4,7 @@ import com.intellij.ide.DataManager
 import com.intellij.notification.Notification
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.application.runWriteActionAndWait
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.vfs.VfsUtil
@@ -11,24 +12,23 @@ import com.intellij.openapi.vfs.writeText
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.util.IJSwingUtilities
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
-import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
 import com.jetbrains.edu.learning.courseFormat.Vendor
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
-import com.jetbrains.edu.learning.findTask
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createTextChildFile
 import com.jetbrains.edu.learning.marketplace.StudyItemIdGenerator
 import com.jetbrains.edu.learning.marketplace.addVendor
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.mockJBAccount
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.mockService
 import com.jetbrains.edu.learning.navigation.NavigationUtils.getFirstTask
-import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_LESSON_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_TASK_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.remoteConfigFileName
 import io.mockk.every
 import org.junit.Test
 
@@ -312,6 +312,51 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     val currentFile = FileEditorManagerEx.getInstanceEx(project).currentFile
     val expectedOpenFile = findFile("lesson1/task1/$REMOTE_TASK_CONFIG")
     assertEquals(expectedOpenFile, currentFile)
+  }
+
+  @Test
+  fun `broken remote config for course does not allow creating the course archive`() =
+    testBrokenRemoteConfig(".")
+
+  @Test
+  fun `broken remote config for section does not allow creating the course archive`() =
+    testBrokenRemoteConfig("section1")
+
+  @Test
+  fun `broken remote config for lesson does not allow creating the course archive`() =
+    testBrokenRemoteConfig("lesson2")
+
+  @Test
+  fun `broken remote config for lesson in section does not allow creating the course archive`() =
+    testBrokenRemoteConfig("section1/lesson1")
+
+  @Test
+  fun `broken remote config for task does not allow creating the course archive`() =
+    testBrokenRemoteConfig("section1/lesson1/task1")
+
+  private fun testBrokenRemoteConfig(itemPath: String, configText: String = "{92*#&$*&@#%") {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary", createYamlConfigs = true) {
+      section("section1") {
+        lesson("lesson1") {
+          eduTask("task1")
+        }
+      }
+      lesson("lesson2") {
+        eduTask("task2")
+      }
+    }.apply { isMarketplace = true }
+    val itemDir = project.courseDir.findFileByRelativePath(itemPath) ?: error("Failed to find $itemPath")
+    val item = itemDir.getStudyItem(project) ?: error("Failed to get StudyItem for $itemPath")
+
+    val brokenConfigFile = createTextChildFile(project, itemDir, item.remoteConfigFileName, configText)
+      ?: error("failed to create file ${item.remoteConfigFileName}")
+
+    createCourseArchiveWithError<BrokenRemoteYamlError>(course)
+
+    runWriteActionAndWait {
+      // broken config does not allow course loading in tearDown()
+      brokenConfigFile.delete(this)
+    }
   }
 
   override fun getTestDataPath(): String {
