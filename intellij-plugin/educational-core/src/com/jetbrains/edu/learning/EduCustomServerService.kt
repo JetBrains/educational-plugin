@@ -18,7 +18,6 @@ import io.netty.handler.codec.http.QueryStringDecoder
 import org.jetbrains.ide.BuiltInServerManager
 import org.jetbrains.ide.HttpRequestHandler
 import org.jetbrains.io.ChannelRegistrar
-import org.jetbrains.io.DelegatingHttpRequestHandlerBase
 import org.jetbrains.io.NettyUtil
 import java.net.InetAddress
 
@@ -46,7 +45,8 @@ class EduCustomServerService : Disposable {
       override fun initChannel(channel: Channel) {
         val pipeline = channel.pipeline()
         NettyUtil.addHttpServerCodec(pipeline)
-        pipeline.addLast(object : DelegatingHttpRequestHandlerBase() {
+        @Suppress("DEPRECATION_ERROR")
+        pipeline.addLast(object : org.jetbrains.io.DelegatingHttpRequestHandlerBase() {
           override fun process(context: ChannelHandlerContext,
                                request: FullHttpRequest,
                                urlDecoder: QueryStringDecoder): Boolean {
