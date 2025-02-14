@@ -204,11 +204,19 @@ object YamlFormatSynchronizer {
 
   fun isRemoteConfigFile(file: VirtualFile): Boolean {
     val name = file.name
+    return isRemoteConfigFileName(name)
+  }
+
+  fun isRemoteConfigFileName(name: String): Boolean {
     return REMOTE_COURSE_CONFIG == name || REMOTE_SECTION_CONFIG == name || REMOTE_LESSON_CONFIG == name || REMOTE_TASK_CONFIG == name
   }
 
   fun isLocalConfigFile(file: VirtualFile): Boolean {
     val name = file.name
+    return isLocalConfigFileName(name)
+  }
+
+  fun isLocalConfigFileName(name: String): Boolean {
     return COURSE_CONFIG == name || SECTION_CONFIG == name || LESSON_CONFIG == name || TASK_CONFIG == name
   }
 
