@@ -20,8 +20,8 @@ import kotlinx.coroutines.withContext
 import okhttp3.ConnectionPool
 import retrofit2.Response
 import retrofit2.converter.jackson.JacksonConverterFactory
+import java.io.IOException
 import java.net.HttpURLConnection.*
-import java.net.SocketException
 
 @Service(Service.Level.APP)
 class TranslationServiceConnector : Disposable {
@@ -90,7 +90,7 @@ class TranslationServiceConnector : Disposable {
         call()
       }
     }
-    catch (exception: SocketException) {
+    catch (exception: IOException) {
       TranslationError.CONNECTION_ERROR.asErr()
     }
 
