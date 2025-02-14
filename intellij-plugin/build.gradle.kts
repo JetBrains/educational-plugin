@@ -301,7 +301,7 @@ dependencies {
     pluginModule(implementation(project("Edu-Python:Idea")))
     pluginModule(implementation(project("Edu-Python:PyCharm")))
     pluginModule(implementation(project("Edu-Scala")))
-    pluginModule(implementation(project("Edu-Android")))
+//    pluginModule(implementation(project("Edu-Android")))
     pluginModule(implementation(project("Edu-JavaScript")))
     pluginModule(implementation(project("Edu-Rust")))
     pluginModule(implementation(project("Edu-Cpp")))
@@ -310,7 +310,7 @@ dependencies {
     pluginModule(implementation(project("Edu-Go")))
     pluginModule(implementation(project("Edu-Php")))
     pluginModule(implementation(project("Edu-Shell")))
-    pluginModule(implementation(project("Edu-CSharp")))
+    //pluginModule(implementation(project("Edu-CSharp")))
     pluginModule(implementation(project("sql")))
     pluginModule(implementation(project("sql:sql-jvm")))
     pluginModule(implementation(project("github")))
@@ -669,7 +669,7 @@ project("Edu-Scala") {
     testImplementation(project(":intellij-plugin:jvm-core", "testOutput"))
   }
 }
-
+/*
 project("Edu-Android") {
   dependencies {
     intellijPlatform {
@@ -692,6 +692,7 @@ project("Edu-Android") {
     enabled = environmentName.toInt() < 243
   }
 }
+*/
 
 project("Edu-Python") {
   dependencies {
@@ -886,6 +887,7 @@ project("Edu-Shell") {
   }
 }
 
+/*
 project("Edu-CSharp") {
   dependencies {
     intellijPlatform {
@@ -899,6 +901,7 @@ project("Edu-CSharp") {
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
   }
 }
+*/
 
 project("sql") {
   dependencies {

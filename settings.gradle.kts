@@ -23,7 +23,7 @@ include(
   "intellij-plugin:Edu-Python",
   "intellij-plugin:Edu-Python:Idea", // python support for IDEA and Android Studio
   "intellij-plugin:Edu-Python:PyCharm", // python support for PyCharm and CLion
-  "intellij-plugin:Edu-Android",
+  //"intellij-plugin:Edu-Android",
   "intellij-plugin:Edu-JavaScript",
   "intellij-plugin:Edu-Rust",
   "intellij-plugin:Edu-Cpp",
@@ -32,7 +32,7 @@ include(
   "intellij-plugin:Edu-Go",
   "intellij-plugin:Edu-Php",
   "intellij-plugin:Edu-Shell",
-  "intellij-plugin:Edu-CSharp",
+  //"intellij-plugin:Edu-CSharp",
   "intellij-plugin:sql",
   "intellij-plugin:sql:sql-jvm",
   "intellij-plugin:github",
