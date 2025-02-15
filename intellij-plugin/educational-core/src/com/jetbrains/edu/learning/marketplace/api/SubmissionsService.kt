@@ -73,3 +73,10 @@ interface SubmissionsService {
     @Query("aiAgreement") aiAgreement: String
   ): Response<Unit>
 }
+
+interface SubmissionsServiceInternal {
+  @POST("/api/v2/agreement/save-anonymously")
+  suspend fun saveAgreementAcceptanceAnonymously(
+    @Query("pluginAgreementAccepted") pluginAgreementAccepted: Boolean
+  ): Response<Unit>
+}

@@ -40,7 +40,10 @@ class UserAgreementManager(private val scope: CoroutineScope) {
              * Let's avoid reloading Edu projects if the previous agreement state is [UserAgreementState.NOT_SHOWN]
              * and the new one is [UserAgreementState.ACCEPTED], which means a new user's just accepted it.
              */
-            if (it.previous == UserAgreementState.NOT_SHOWN && it.current == UserAgreementState.ACCEPTED) return@collectLatest
+            if (it.previous == UserAgreementState.NOT_SHOWN && it.current == UserAgreementState.ACCEPTED) {
+              submitAgreementAcceptanceAnonymously()
+              return@collectLatest
+            }
             reloadEduProjects()
           }
       }
@@ -75,6 +78,12 @@ class UserAgreementManager(private val scope: CoroutineScope) {
           }
         }
       }
+    }
+  }
+
+  private fun submitAgreementAcceptanceAnonymously() {
+    scope.launch(Dispatchers.IO) {
+      MarketplaceSubmissionsConnector.getInstance().submitAgreementAcceptanceAnonymously(pluginAgreementAccepted = true)
     }
   }
 
