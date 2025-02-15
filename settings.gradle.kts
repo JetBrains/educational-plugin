@@ -41,6 +41,7 @@ include(
   "intellij-plugin:features:ai-hints-core",
   "intellij-plugin:features:ai-hints-kotlin",
   "intellij-plugin:features:ai-hints-python",
+  "intellij-plugin:features:ai-test-generation"
 )
 
 if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {
