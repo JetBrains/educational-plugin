@@ -94,12 +94,11 @@ class UserAgreementManager(private val scope: CoroutineScope) {
   }
 
   private fun submitSubmissionsServiceAgreement(state: UserAgreementState) {
-    if (!isJBALoggedIn()) {
-      scope.launch(Dispatchers.IO) {
-        MarketplaceSubmissionsConnector.getInstance().updateSubmissionsServiceAgreement(state).onError {
-          LOG.error("Failed to submit Submissions Service Agreement state $state to remote: $it")
-          return@launch
-        }
+    if (!isJBALoggedIn()) return
+    scope.launch(Dispatchers.IO) {
+      MarketplaceSubmissionsConnector.getInstance().updateSubmissionsServiceAgreement(state).onError {
+        LOG.error("Failed to submit Submissions Service Agreement state $state to remote: $it")
+        return@launch
       }
     }
   }
