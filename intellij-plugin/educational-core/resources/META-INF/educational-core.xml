@@ -121,8 +121,7 @@
             class="com.jetbrains.edu.learning.actions.RunTaskAction"
             icon="AllIcons.Actions.Execute"/>
     <action id="Educational.AssignRunConfigurationToTask"
-            class="com.jetbrains.edu.learning.actions.AssignRunConfigurationToTask"
-            internal="true">
+            class="com.jetbrains.edu.learning.actions.AssignRunConfigurationToTask">
       <add-to-group group-id="RunConfiguration.Group" anchor="before" relative-to-action="DeleteRunConfiguration"/> <!-- top right -->
     </action>
     <action id="Educational.Retry" class="com.jetbrains.edu.learning.actions.RetryAction"/>
