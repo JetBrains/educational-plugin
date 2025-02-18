@@ -1,14 +1,16 @@
 package com.jetbrains.edu.learning.agreement
 
 import com.intellij.openapi.components.*
+import com.jetbrains.edu.learning.EduTestAware
 import com.jetbrains.edu.learning.submissions.SolutionSharingPreference
 import com.jetbrains.edu.learning.submissions.UserAgreementState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import org.jetbrains.annotations.TestOnly
 
 @State(name = "UserAgreementSettings", storages = [Storage("edu.agreement.xml", roamingType = RoamingType.DEFAULT)])
-class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.State> {
+class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.State>, EduTestAware {
   private val _userAgreementProperties = MutableStateFlow(UserAgreementProperties())
   val userAgreementProperties: StateFlow<UserAgreementProperties> = _userAgreementProperties.asStateFlow()
 
@@ -105,6 +107,11 @@ class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.Sta
       state.aiServiceAgreement,
       state.solutionSharingPreference
     )
+  }
+
+  @TestOnly
+  override fun restoreState() {
+    _userAgreementProperties.value = UserAgreementProperties()
   }
 
   companion object {
