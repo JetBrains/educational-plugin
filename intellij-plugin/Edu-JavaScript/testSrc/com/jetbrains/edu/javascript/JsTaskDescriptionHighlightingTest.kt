@@ -1,13 +1,12 @@
 package com.jetbrains.edu.javascript
 
 import com.intellij.lang.Language
-import com.intellij.lang.javascript.JavascriptLanguage
 import com.jetbrains.edu.learning.taskToolWindow.TaskDescriptionHighlightingTestBase
 import org.junit.Test
 
 
 class JsTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
-  override val language: Language = JavascriptLanguage.INSTANCE
+  override val language: Language = JavascriptLanguage
 
   @Test
   fun `test markdown description highlighting`() = doMarkdownTest("""
