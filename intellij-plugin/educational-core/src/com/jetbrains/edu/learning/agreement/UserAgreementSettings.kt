@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-@Service
 @State(name = "UserAgreementSettings", storages = [Storage("edu.agreement.xml", roamingType = RoamingType.DEFAULT)])
 class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.State> {
   private val _userAgreementProperties = MutableStateFlow(UserAgreementProperties())
