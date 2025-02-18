@@ -9,15 +9,12 @@ import com.jetbrains.edu.kotlin.messages.EduKotlinBundle
 
 class FunctionRunLineMarkerContributor : RunLineMarkerContributor() {
   override fun getInfo(element: PsiElement): Info? {
-    if (element.isIntroComment()) {
-      val action = FunctionGeneratorAction(element)
-      val tooltipText = EduKotlinBundle.message("action.run.generate.function.text")
-      return Info(
-        DecomposeIcons.Function,
-        arrayOf(action),
-      ) { _ -> tooltipText }
-    }
-    return null
+    if (!element.isIntroComment()) return null
+    val action = FunctionGeneratorAction(element)
+    return Info(
+      DecomposeIcons.Function,
+      arrayOf(action),
+    ) { _ -> EduKotlinBundle.message("action.run.generate.function.text") }
   }
 
 }
