@@ -1,9 +1,9 @@
 package com.jetbrains.edu.javascript.courseGeneration
 
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
-import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.ui.NodeModuleNamesUtil
 import com.intellij.openapi.project.ProjectManager
+import com.jetbrains.edu.javascript.JavascriptLanguage
 import com.jetbrains.edu.javascript.learning.JsNewProjectSettings
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
@@ -25,7 +25,7 @@ class JsCourseBuilderTest : CourseGenerationTestBase<JsNewProjectSettings>() {
 
   @Test
   fun `test new educator course`() {
-    val newCourse = newCourse(JavascriptLanguage.INSTANCE)
+    val newCourse = newCourse(JavascriptLanguage)
 
     createCourseStructure(newCourse)
 
@@ -47,7 +47,7 @@ class JsCourseBuilderTest : CourseGenerationTestBase<JsNewProjectSettings>() {
 
   @Test
   fun `test study course structure`() {
-    val course = course(language = JavascriptLanguage.INSTANCE) {
+    val course = course(language = JavascriptLanguage) {
       lesson {
         eduTask {
           taskFile("task.js")
@@ -79,7 +79,7 @@ class JsCourseBuilderTest : CourseGenerationTestBase<JsNewProjectSettings>() {
 
   @Test
   fun `recreate package_json for student`() {
-    val newCourse = newCourse(JavascriptLanguage.INSTANCE, courseMode = CourseMode.STUDENT)
+    val newCourse = newCourse(JavascriptLanguage, courseMode = CourseMode.STUDENT)
 
     createCourseStructure(newCourse)
 

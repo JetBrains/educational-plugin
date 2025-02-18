@@ -1,12 +1,12 @@
 package com.jetbrains.edu.javascript.actions.move
 
-import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.psi.PsiElement
+import com.jetbrains.edu.javascript.JavascriptLanguage
 import com.jetbrains.edu.learning.actions.move.MoveHandlerTestBase
 import com.jetbrains.edu.learning.courseFormat.Course
 import org.junit.Test
 
-class JsMoveHandlerTest : MoveHandlerTestBase(JavascriptLanguage.INSTANCE) {
+class JsMoveHandlerTest : MoveHandlerTestBase(JavascriptLanguage) {
 
   @Test
   fun `test do not forbid move refactoring for functions`() {
