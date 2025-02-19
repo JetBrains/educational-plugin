@@ -10,6 +10,7 @@ import com.intellij.openapi.util.NlsContexts.NotificationTitle
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.jetbrains.edu.coursecreator.actions.marketplace.RegenerateDuplicateIds
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
@@ -90,6 +91,17 @@ data class DuplicateIdsError(val items: DuplicateIdMap) : CourseArchiveError {
     @Suppress("DEPRECATION")
     return super.notification(project, title)
       .addAction(ActionManager.getInstance().getAction(RegenerateDuplicateIds.ACTION_ID))
+      .setListener(RemoteConfigNotificationListener(project))
+  }
+}
+
+data class BrokenRemoteYamlError(val item: StudyItem) : CourseArchiveError {
+  override val message: String
+    get() = EduCoreBundle.message("error.failed.to.create.course.archive.broken.remote.yaml", item.hyperlinkText())
+
+  override fun notification(project: Project, title: String): Notification {
+    @Suppress("DEPRECATION")
+    return super.notification(project, title)
       .setListener(RemoteConfigNotificationListener(project))
   }
 }
