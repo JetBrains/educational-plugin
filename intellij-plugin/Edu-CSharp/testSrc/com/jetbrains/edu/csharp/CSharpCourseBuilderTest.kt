@@ -1,41 +1,14 @@
 package com.jetbrains.edu.csharp
 
-import com.intellij.codeInsight.CodeInsightSettings
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.CourseBuilder
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
-import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.rider.languages.fileTypes.csharp.CSharpLanguage
 import org.junit.Test
 
-class CSharpCourseBuilderTest : CourseGenerationTestBase<CSharpProjectSettings>() {
-  override val defaultSettings: CSharpProjectSettings = CSharpProjectSettings()
-  private lateinit var codeInsightSettingsState: CodeInsightSettings
-
-  override fun setUp() {
-    super.setUp()
-    codeInsightSettingsState = CodeInsightSettings()
-  }
-
-  override fun tearDown() {
-    try {
-      // [com.intellij.testFramework.HeavyPlatformTestCase] checks code insight settings on `tearDown()`,
-      // so we need to make sure that the proper ones are loaded
-      codeInsightSettingsState.state?.let { CodeInsightSettings.getInstance().loadState(it) }
-      // needs to be called before the project is disposed, as some of these events try
-      // to access to Rider services and fail
-      UIUtil.dispatchAllInvocationEvents()
-    }
-    catch (e: Throwable) {
-      addSuppressedException(e)
-    }
-    finally {
-      super.tearDown()
-    }
-  }
+class CSharpCourseBuilderTest : CSharpTestBase() {
 
   @Test
   fun `test new educator course`() {
