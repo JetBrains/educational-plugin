@@ -30,6 +30,8 @@ import com.jetbrains.edu.learning.actions.ApplyCodeAction
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.getTextFromTaskTextFile
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
+import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings.Companion.isJBALoggedIn
 import com.jetbrains.edu.learning.selectedTaskFile
 import com.jetbrains.edu.learning.ui.EduColors
 import com.jetbrains.educational.ml.core.exception.AiAssistantException
@@ -53,6 +55,15 @@ class HintsLoader(private val project: Project, private val scope: CoroutineScop
         return@launch
       }
       try {
+        if (!isJBALoggedIn()) {
+          val errorHintBanner = ErrorHintInlineBanner(project, task, EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.error.login.required"))
+          errorHintBanner.addAction("Login to JetBrains Academy") {
+            MarketplaceConnector.getInstance().doAuthorize()
+          }
+          errorHintBanner.display()
+          return@launch
+        }
+
         val taskProcessor = TaskProcessorImpl(task)
         val taskFile = taskProcessor.currentTaskFile ?: project.selectedTaskFile ?: error("TaskFile for ${task.name} not found")
         val taskVirtualFile = taskFile.getVirtualFile(project) ?: error("VirtualFile for ${taskFile.name} not found")
