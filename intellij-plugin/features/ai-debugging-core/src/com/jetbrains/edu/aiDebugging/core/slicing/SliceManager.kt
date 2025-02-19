@@ -8,13 +8,11 @@ import com.intellij.psi.PsiFile
 
 interface SliceManager {
 
-  // TODO change return type to Tree<?>
-  fun processSlice(psiElement: PsiElement, document: Document, psiFile: PsiFile)
+  fun processSlice(element: PsiElement, document: Document, psiFile: PsiFile): Set<Int>
 
   companion object {
     private val EP_NAME = LanguageExtension<SliceManager>("aiDebugging.sliceManager")
 
-    @Suppress("unused")
     fun getInstance(language: Language): SliceManager = EP_NAME.forLanguage(language)
   }
 }
