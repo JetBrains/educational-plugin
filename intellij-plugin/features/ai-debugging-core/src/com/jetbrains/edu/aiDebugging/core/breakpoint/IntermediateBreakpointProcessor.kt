@@ -6,8 +6,10 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.concurrency.annotations.RequiresReadLock
+import com.jetbrains.edu.aiDebugging.core.slicing.SliceManager
 
 abstract class IntermediateBreakpointProcessor {
 
@@ -32,7 +34,8 @@ abstract class IntermediateBreakpointProcessor {
       virtualFile: VirtualFile,
       wrongCodeLineNumbers: List<Int>,
       project: Project,
-      language: Language
+      language: Language,
+      considerSlicing: Boolean = true
     ): List<Int> {
       val intermediateBreakpointProcessor = EP_NAME.forLanguage(language) ?: error("${EP_NAME.name} is not implemented for $language")
       val psiFile = PsiManager.getInstance(project).findFile(virtualFile)
@@ -41,7 +44,12 @@ abstract class IntermediateBreakpointProcessor {
         val psiElement = document.getPsiElementAtLine(psiFile, wrongCodeLineNumber) ?: return emptyList()
         val breakpointLines = intermediateBreakpointProcessor.findBreakpointLines(psiElement, document, psiFile)
         val functionCalls = getParentFunctionCallLines(psiElement, psiFile, document, intermediateBreakpointProcessor)
-        breakpointLines + functionCalls
+        if (considerSlicing) {
+          val slicingBp = SliceManager.getInstance(language).processSlice(psiElement, document, psiFile)
+          breakpointLines.intersect(slicingBp) + functionCalls
+        } else {
+          breakpointLines + functionCalls
+        }
       }.flatten().distinct()
     }
 
@@ -50,7 +58,7 @@ abstract class IntermediateBreakpointProcessor {
       var result: PsiElement? = null
       psiFile.accept(object : PsiRecursiveElementWalkingVisitor() {
         override fun visitElement(element: PsiElement) {
-          if (element.textRange.startOffset >= lineStartOffset && element !is PsiWhiteSpace) {
+          if (element.textRange.startOffset >= lineStartOffset && element !is PsiWhiteSpace && element !is LeafPsiElement) {
             result = element
             stopWalking()
           }

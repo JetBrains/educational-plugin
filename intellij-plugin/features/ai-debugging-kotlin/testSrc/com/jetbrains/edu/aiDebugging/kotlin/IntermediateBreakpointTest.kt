@@ -37,7 +37,13 @@ class IntermediateBreakpointTest(
       assertEquals(
         intermediateBreakpoints.toSet(),
         runReadAction {
-          IntermediateBreakpointProcessor.calculateIntermediateBreakpointPositions(file, wrongCodeLines, project, language).toSet()
+          IntermediateBreakpointProcessor.calculateIntermediateBreakpointPositions(
+            file,
+            wrongCodeLines,
+            project,
+            language,
+            considerSlicing = false
+          ).toSet()
         }
       )
     }
@@ -60,10 +66,13 @@ class IntermediateBreakpointTest(
                           println("Valid")
                       } else println("Invalid")
         
+                      var sum = 0
                       val numbers = intArrayOf(1, 2, 3, 4, 5)
                       for (i in 0..numbers.size) {
                           println("Number: " + numbers[i])
+                          sum += numbers[i]
                       }
+                      println("Sum: " + sum)
         
                       when (name) {
                           "John" -> println("Hello, John!")
@@ -97,18 +106,18 @@ class IntermediateBreakpointTest(
       arrayOf(listOf(1), functionStartLines + functionCallLines), // test function
       arrayOf(listOf(2), propertyUsesLines + functionCallLines), // test property
       arrayOf(listOf(5), parameterUsesLines + propertyUsesLines + functionCallLines), // test BinaryExpression
-      arrayOf(listOf(11), listOf(12) + functionCallLines), // test for
+      arrayOf(listOf(12), listOf(13, 14) + functionCallLines), // test for
       arrayOf(listOf(3), listOf(4, 7, 8) + functionCallLines), // test if
-      arrayOf(listOf(15), listOf(16, 17, 19) + functionCallLines), // test when
-      arrayOf(listOf(23), propertyUsesLines + functionCallLines), // test while
+      arrayOf(listOf(18), listOf(19, 20, 22) + functionCallLines), // test when
+      arrayOf(listOf(26), propertyUsesLines + functionCallLines), // test while
       arrayOf(listOf(1, 2, 5), functionStartLines + functionCallLines + parameterUsesLines + propertyUsesLines), // test multiple lines
     )
 
-    private val functionCallLines = listOf(29)
+    private val functionCallLines = listOf(32)
 
-    private val propertyUsesLines = listOf(3, 5, 6, 23, 24)
+    private val propertyUsesLines = listOf(3, 5, 6, 26, 27)
 
-    private val parameterUsesLines = listOf(6, 15)
+    private val parameterUsesLines = listOf(6, 18)
 
     private val functionStartLines = listOf(2)
 

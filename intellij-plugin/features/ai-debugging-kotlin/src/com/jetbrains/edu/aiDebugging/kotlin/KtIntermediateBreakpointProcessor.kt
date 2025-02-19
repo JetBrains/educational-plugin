@@ -41,6 +41,10 @@ class KtIntermediateBreakpointProcessor : IntermediateBreakpointProcessor() {
           ?.let { addAll(it) }
       }
 
+      is KtReturnExpression -> psiElement.returnedExpression?.let { findBreakpointLines(it, document, psiFile) } ?: emptyList()
+
+      is KtContainerNode -> psiElement.parent?.let { findBreakpointLines(it, document, psiFile) } ?: emptyList()
+
       else -> emptyList()
     }
 
