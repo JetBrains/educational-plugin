@@ -15,6 +15,11 @@ import org.intellij.lang.annotations.Language
 import org.junit.Test
 
 class MarketplaceSolutionLoadingTest : SolutionLoadingTestBase() {
+  override fun setUp() {
+    super.setUp()
+    mockJBAccount(testRootDisposable)
+  }
+
 
   @Test
   fun `test solution not applied at submission and course versions incompatibility`() {

@@ -39,12 +39,11 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     val mockGenerator = mockService<StudyItemIdGenerator>(project)
     val ids = generateSequence(1, Int::inc).iterator()
     every { mockGenerator.generateNewId() } answers { ids.next() }
+    mockJBAccount(testRootDisposable)
   }
 
   @Test
   fun `test user name as vendor`() {
-    mockJBAccount()
-
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
         eduTask("task1") {}

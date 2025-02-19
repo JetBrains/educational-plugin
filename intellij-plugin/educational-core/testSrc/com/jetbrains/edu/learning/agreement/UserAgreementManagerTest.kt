@@ -1,7 +1,5 @@
 package com.jetbrains.edu.learning.agreement
 
-import com.intellij.openapi.util.Disposer
-import com.intellij.ui.JBAccountInfoService
 import com.intellij.util.application
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.Ok
@@ -11,7 +9,6 @@ import com.jetbrains.edu.learning.mockService
 import com.jetbrains.edu.learning.submissions.UserAgreementState
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.unmockkStatic
 import org.junit.Test
 import retrofit2.Response
 
@@ -27,15 +24,12 @@ class UserAgreementManagerTest : EduTestCase() {
     coEvery { mockedService.updateUserAgreements(any(), any()) } returns Ok(Unit)
     coEvery { mockedService.updateSubmissionsServiceAgreement(any()) } returns Ok(Unit)
     coEvery { mockedService.changeSharingPreference(any()) } returns Ok(Response.success(Unit))
-    Disposer.register(testRootDisposable) {
-      unmockkStatic(JBAccountInfoService::class)
-    }
   }
 
   @Test
   fun `test plugin agreement accepted (ai declined)`() {
     // when user logged in
-    mockJBAccount()
+    mockJBAccount(testRootDisposable)
     // and
     UserAgreementSettings.getInstance().setAgreementState(
       UserAgreementSettings.AgreementStateResponse(
@@ -53,7 +47,7 @@ class UserAgreementManagerTest : EduTestCase() {
   @Test
   fun `test plugin & ai agreements are accepted`() {
     // when user logged in
-    mockJBAccount()
+    mockJBAccount(testRootDisposable)
     // and
     UserAgreementSettings.getInstance().setAgreementState(
       UserAgreementSettings.AgreementStateResponse(
@@ -71,7 +65,7 @@ class UserAgreementManagerTest : EduTestCase() {
   @Test
   fun `test plugin & ai agreements are declined`() {
     // when user logged in
-    mockJBAccount()
+    mockJBAccount(testRootDisposable)
     // and
     UserAgreementSettings.getInstance().setAgreementState(
       UserAgreementSettings.AgreementStateResponse(

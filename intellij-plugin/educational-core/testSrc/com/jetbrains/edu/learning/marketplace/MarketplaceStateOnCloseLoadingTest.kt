@@ -23,6 +23,7 @@ class MarketplaceStateOnCloseLoadingTest : SolutionLoadingTestBase() {
   override fun setUp() {
     super.setUp()
 
+    mockJBAccount(testRootDisposable)
     val oldValue = SubmissionSettings.getInstance(project).stateOnClose
     SubmissionSettings.getInstance(project).stateOnClose = true
     Disposer.register(testRootDisposable) {

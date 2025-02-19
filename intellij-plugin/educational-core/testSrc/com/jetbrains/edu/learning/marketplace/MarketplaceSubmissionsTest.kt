@@ -22,10 +22,16 @@ import com.jetbrains.edu.learning.marketplace.deleteSubmissions.SubmissionsDelet
 import com.jetbrains.edu.learning.marketplace.deleteSubmissions.deleteSubmissionsWithTestDialog
 import com.jetbrains.edu.learning.simpleDiffRequestChain
 import com.jetbrains.edu.learning.stepik.SubmissionsTestBase
-import com.jetbrains.edu.learning.submissions.*
+import com.jetbrains.edu.learning.submissions.SolutionFile
+import com.jetbrains.edu.learning.submissions.Submission
+import com.jetbrains.edu.learning.submissions.SubmissionsManager
+import com.jetbrains.edu.learning.submissions.getSolutionFiles
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.withTestDialog
-import io.mockk.*
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkConstructor
+import io.mockk.mockkObject
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -42,6 +48,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
   override fun setUp() {
     super.setUp()
     loginFakeMarketplaceUser()
+    mockJBAccount(testRootDisposable)
   }
 
   /**
@@ -277,8 +284,6 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
       } returns service
 
       val mapper = MarketplaceSubmissionsConnector.getInstance().objectMapper
-
-      mockJBAccount()
 
       for (i in submissionsLists.indices) {
         val getAllSubmissionsPageableCall = mockk<Call<MarketplaceSubmissionsList>>()
