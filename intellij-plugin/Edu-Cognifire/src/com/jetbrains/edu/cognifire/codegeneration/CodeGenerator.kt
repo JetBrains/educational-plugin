@@ -9,8 +9,8 @@ import com.jetbrains.edu.cognifire.models.CodeExpression
 import com.jetbrains.edu.cognifire.models.PromptExpression
 import com.jetbrains.edu.cognifire.utils.toGeneratedCode
 import com.jetbrains.edu.cognifire.utils.toPrompt
-import com.jetbrains.educational.ml.cognifire.core.PromptSyncAssistant
-import com.jetbrains.educational.ml.cognifire.core.PromptToCodeAssistant
+import com.jetbrains.educational.ml.cognifire.core.promptToCode.PromptToCodeAssistant
+import com.jetbrains.educational.ml.cognifire.core.prodeSync.PromptSyncAssistant
 import com.jetbrains.educational.ml.cognifire.responses.PromptToCodeContent
 
 class CodeGenerator(
@@ -47,7 +47,7 @@ class CodeGenerator(
       )
     } else if (previousPromptToCode != null && codeExpression?.code != null && previousPromptToCode.toGeneratedCode() != codeExpression.code
              && previousPromptToCode.toPrompt() != promptExpression.prompt) {
-      getCodeFromPrompt(promptExpression.functionSignature.toString(), getEnumeratedPromptLines(promptExpression)) // TODO: handle conflict
+      getCodeFromPrompt(promptExpression.functionSignature.toString(), getEnumeratedPromptLines(promptExpression))
     } else {
       getCodeFromPrompt(promptExpression.functionSignature.toString(), getEnumeratedPromptLines(promptExpression))
     }
@@ -64,7 +64,7 @@ class CodeGenerator(
   }
 
   private fun getCodeFromPrompt(functionSignature: String, enumeratedPromptLines: String) = runBlockingCancellable {
-    PromptToCodeAssistant.generateCode(
+    PromptToCodeAssistant.translate(
       enumeratedPromptLines,
       functionSignature
     )
