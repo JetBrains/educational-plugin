@@ -16,12 +16,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.jetbrains.edu.cognifire.codegeneration.CodeGenerationState
 import com.jetbrains.edu.cognifire.codegeneration.CodeGenerator
-import com.jetbrains.edu.cognifire.grammar.GrammarParser
-import com.jetbrains.edu.cognifire.grammar.OffsetSentence
 import com.jetbrains.edu.cognifire.highlighting.GuardedBlockManager
 import com.jetbrains.edu.cognifire.highlighting.HighlighterManager
 import com.jetbrains.edu.cognifire.highlighting.ListenerManager
-import com.jetbrains.edu.cognifire.highlighting.grammar.GrammarHighlighterProcessor
 import com.jetbrains.edu.cognifire.highlighting.prompttocode.PromptToCodeHighlighter
 import com.jetbrains.edu.cognifire.log.Logger
 import com.jetbrains.edu.cognifire.manager.PromptActionManager
@@ -100,8 +97,17 @@ class PromptExecutorAction(private val element: PsiElement, private val prodeId:
     }
     catch (e: AiAssistantException) {
       when (e.cause) {
-        is CancellationException -> project.notify(type = INFORMATION, title = EduCognifireBundle.message("action.not.run.due.to.cancellation"), content = "")
-        else -> project.notify( type = ERROR, title = EduCognifireBundle.message("action.not.run.due.to.ai.assistant.exception"), content = e.message)
+        is CancellationException -> project.notify(
+          type = INFORMATION,
+          title = EduCognifireBundle.message("action.not.run.due.to.cancellation"),
+          content = ""
+        )
+
+        else -> project.notify(
+          type = ERROR,
+          title = EduCognifireBundle.message("action.not.run.due.to.ai.assistant.exception"),
+          content = e.message
+        )
       }
     }
     catch (_: Throwable) {
@@ -116,20 +122,6 @@ class PromptExecutorAction(private val element: PsiElement, private val prodeId:
   private fun runWithProgressBar(indicator: ProgressIndicator, execution: () -> Unit) {
     ApplicationManager.getApplication().executeOnPooledThread { EduActionUtils.showFakeProgress(indicator) }
     execution()
-  }
-
-  private fun checkGrammar(promptExpression: PromptExpression, project: Project): List<OffsetSentence> {
-    val unparsableSentences = GrammarParser.getUnparsableSentences(promptExpression)
-
-    if (unparsableSentences.isNotEmpty()) {
-      project.notify(
-        EduCognifireBundle.message("action.not.run.due.to.incorrect.grammar.title"),
-        EduCognifireBundle.message("action.not.run.due.to.incorrect.grammar.text"),
-        promptExpression
-      )
-    }
-
-    return unparsableSentences
   }
 
   private fun handleCodeGeneration(
@@ -157,18 +149,13 @@ class PromptExecutorAction(private val element: PsiElement, private val prodeId:
       else {
         PromptCodeState.CodeSuccess
       }
-      var unparsableSentences = emptyList<OffsetSentence>()
-      if (state == PromptCodeState.CodeFailed) {
-        unparsableSentences = checkGrammar(newPromptExpression, project)
-        GrammarHighlighterProcessor.highlightAll(project, unparsableSentences, prodeId)
-      }
+
       Logger.cognifireLogger.info(
         """Lesson id: ${task.lesson.id}    Task id: ${task.id}    Action id: $prodeId
            | Text prompt: ${newPromptExpression.prompt}
            | Code prompt: ${newPromptExpression.code}
            | Generated code: $generatedCode
            | Has TODO blocks: ${state == PromptCodeState.CodeFailed}
-           | Has unparsable sentences - ${unparsableSentences.isNotEmpty()}: ${unparsableSentences.map { it.sentence }}
         """.trimMargin()
       )
       promptActionManager.updateAction(prodeId, state, codeGenerator.finalPromptToCodeTranslation)
@@ -196,7 +183,12 @@ class PromptExecutorAction(private val element: PsiElement, private val prodeId:
     return ProdeExpression(newPromptExpression, codeExpression)
   }
 
-  private fun Project.notify(title: String = "", content: String, promptExpression: PromptExpression? = null, type: NotificationType = ERROR) {
+  private fun Project.notify(
+    title: String = "",
+    content: String,
+    promptExpression: PromptExpression? = null,
+    type: NotificationType = ERROR
+  ) {
     EduNotificationManager.create(
       type = type,
       title = title,
