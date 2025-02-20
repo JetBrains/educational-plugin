@@ -38,11 +38,6 @@
                     dynamic="true">
       <with attribute="implementationClass" implements="com.jetbrains.edu.cognifire.CognifireDslPackageCallChecker"/>
     </extensionPoint>
-    <extensionPoint qualifiedName="Educational.codeApplier"
-                    beanClass="com.intellij.lang.LanguageExtensionPoint"
-                    dynamic="true">
-      <with attribute="implementationClass" implements="com.jetbrains.edu.cognifire.CodeApplier"/>
-    </extensionPoint>
     <extensionPoint qualifiedName="Educational.inspectionProcessor"
                     beanClass="com.intellij.lang.LanguageExtensionPoint"
                     dynamic="true">
