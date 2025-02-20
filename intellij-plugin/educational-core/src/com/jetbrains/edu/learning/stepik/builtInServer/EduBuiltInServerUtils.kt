@@ -4,6 +4,7 @@ import com.intellij.ide.RecentProjectsManagerBase
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
@@ -48,7 +49,13 @@ object EduBuiltInServerUtils {
     val recentPaths = RecentProjectsManagerBase.getInstanceEx().getRecentPaths()
 
     for (projectPath in recentPaths) {
-      val course = getCourseFromYaml(projectPath) ?: continue
+      val course = try {
+        getCourseFromYaml(projectPath) ?: continue
+      }
+      catch (e: Exception) {
+        thisLogger().warn("Failed to load course meta-information from $projectPath", e)
+        continue
+      }
       if (coursePredicate(course)) {
         val project = openProject(projectPath) ?: continue
         val realProjectCourse = project.course ?: continue
