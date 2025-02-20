@@ -76,7 +76,7 @@ class StudyItemIdGeneratorTest : EduTestCase() {
   @Test
   fun `do not generate existing ids`() {
     // given
-    val course = courseWithFiles {
+    val course = courseWithFiles(createYamlConfigs = true) {
       section("section1") {
         lesson("lesson1", id = 2) {
           eduTask("task1", stepId = 1) {}

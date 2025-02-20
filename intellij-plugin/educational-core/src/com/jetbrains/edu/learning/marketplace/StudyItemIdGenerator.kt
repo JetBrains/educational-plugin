@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.visitItems
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext
-import com.jetbrains.edu.learning.yaml.YamlDeepLoader.reloadRemoteInfo
+import com.jetbrains.edu.learning.yaml.YamlDeepLoader.loadRemoteInfoRecursively
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.yaml.errorHandling.RemoteYamlLoadingException
 import kotlinx.coroutines.Dispatchers
@@ -35,7 +35,7 @@ class StudyItemIdGenerator(private val project: Project) {
   @Throws(RemoteYamlLoadingException::class)
   fun generateIdsIfNeeded(course: Course) {
     // Load `*-remote-info.yaml` files for each item to have up-to-date ids
-    loadRemoteInfo(course)
+    course.loadRemoteInfoRecursively(project)
     generateMissingIds(course)
     // Dump info about new ids to `*-remote-info.yaml` files
     YamlFormatSynchronizer.saveRemoteInfo(course)
@@ -59,7 +59,7 @@ class StudyItemIdGenerator(private val project: Project) {
    */
   @Throws(RemoteYamlLoadingException::class)
   suspend fun regenerateDuplicateIds(course: Course): List<StudyItem> {
-    loadRemoteInfo(course)
+    course.loadRemoteInfoRecursively(project)
     // Collect study items with duplicate ids
     val duplicateIds = collectItemsWithDuplicateIds(course)
     if (duplicateIds.isEmpty()) return emptyList()
@@ -169,17 +169,6 @@ class StudyItemIdGenerator(private val project: Project) {
         for ((item, id) in updates) {
           item.id = id
         }
-      }
-    }
-  }
-
-  private fun loadRemoteInfo(course: Course) {
-    course.visitItems { item ->
-      try {
-        item.reloadRemoteInfo(project)
-      }
-      catch (th: Throwable) {
-        throw RemoteYamlLoadingException(item, th)
       }
     }
   }

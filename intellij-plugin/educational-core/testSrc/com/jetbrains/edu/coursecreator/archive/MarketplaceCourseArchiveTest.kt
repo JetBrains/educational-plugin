@@ -252,7 +252,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
 
   @Test
   fun `test duplicate ids notification action`() {
-    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary", createYamlConfigs = true) {
       lesson("lesson1") {
         eduTask("task1", stepId = 1) {
           taskFile("Task.txt")

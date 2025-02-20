@@ -39,7 +39,11 @@ import com.jetbrains.edu.learning.json.pathInArchive
 import com.jetbrains.edu.learning.json.setDateFormat
 import com.jetbrains.edu.learning.marketplace.StudyItemIdGenerator
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import java.io.*
+import com.jetbrains.edu.learning.yaml.errorHandling.RemoteYamlLoadingException
+import java.io.FileNotFoundException
+import java.io.IOException
+import java.io.OutputStreamWriter
+import java.io.Writer
 import java.nio.file.Path
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
@@ -90,9 +94,14 @@ class CourseArchiveCreator(
     saveOpenedDocuments(project)
 
     if (course.isMarketplace) {
-      ProgressManager.getInstance().runProcessWithProgressSynchronously({
-        StudyItemIdGenerator.getInstance(project).generateIdsIfNeeded(course)
-      }, EduCoreBundle.message("action.create.course.archive.progress.bar"), false, project)
+      try {
+        ProgressManager.getInstance().runProcessWithProgressSynchronously<Unit, Exception>({
+          StudyItemIdGenerator.getInstance(project).generateIdsIfNeeded(course)
+        }, EduCoreBundle.message("action.create.course.archive.progress.bar"), false, project)
+      }
+      catch (e: RemoteYamlLoadingException) {
+        return Err(BrokenRemoteYamlError(e.item))
+      }
     }
 
     course.updateEnvironmentSettings(project)
