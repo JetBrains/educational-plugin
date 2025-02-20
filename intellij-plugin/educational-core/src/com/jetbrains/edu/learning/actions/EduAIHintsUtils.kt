@@ -33,7 +33,7 @@ object EduAIHintsUtils {
   fun isGetHintAvailable(task: Task): Boolean {
     if (!isFeatureEnabled(EduExperimentalFeatures.AI_HINTS) || !UserAgreementSettings.getInstance().aiServiceAgreement) return false
     val course = task.course as? EduCourse ?: return false
-    val isMarketplaceKotlinCourse = course.isStudy && course.isMarketplaceRemote && course.languageId == EduFormatNames.KOTLIN
+    val isMarketplaceKotlinCourse = course.isStudy && course.isMarketplace && course.languageId == EduFormatNames.KOTLIN
     return isMarketplaceKotlinCourse && task is EduTask && task.status == CheckStatus.Failed
   }
 
