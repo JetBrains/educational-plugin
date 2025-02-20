@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.courseFormat.tasks.choice
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.message
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.submissions.SolutionFile
 import java.util.*
 
 class ChoiceTask : Task {
@@ -36,6 +37,12 @@ class ChoiceTask : Task {
   override val isChangedOnFailed: Boolean
     get() = !canCheckLocally
 
+  override val supportSubmissions: Boolean
+    get() = true
+
+  override val isToSubmitToRemote: Boolean
+    get() = status != CheckStatus.Unchecked
+
   //Is called from choiceTask.html.ft
   @Suppress("unused")
   fun addSelectedVariant(variant: Int) {
@@ -52,6 +59,13 @@ class ChoiceTask : Task {
   @Suppress("unused")
   fun clearSelectedVariants() {
     selectedVariants.clear()
+  }
+
+  override fun getTaskSpecificSolutionFiles(): List<SolutionFile> {
+    val text = choiceOptions.mapIndexed { index, choiceOption ->
+      "${choiceOption.text}: ${selectedVariants.contains(index)}"
+    }.joinToString("\n")
+    return listOf(SolutionFile(name, text, true, listOf()))
   }
 
   companion object {

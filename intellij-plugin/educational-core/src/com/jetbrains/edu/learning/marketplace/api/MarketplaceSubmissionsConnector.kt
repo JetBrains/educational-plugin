@@ -312,6 +312,7 @@ class MarketplaceSubmissionsConnector {
       }
     }
 
+    files.addAll(task.getTaskSpecificSolutionFiles())
     return files.checkNotEmpty()
   }
 

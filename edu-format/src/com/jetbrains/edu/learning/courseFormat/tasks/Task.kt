@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.courseFormat.tasks
 
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.submissions.SolutionFile
 import java.util.*
 
 /**
@@ -162,6 +163,8 @@ abstract class Task : StudyItem {
     result = 31 * result + descriptionFormat.hashCode()
     return result
   }
+
+  open fun getTaskSpecificSolutionFiles(): List<SolutionFile> = emptyList()
 
   companion object {
     @JvmStatic
