@@ -93,6 +93,11 @@ object YamlDeepLoader {
     // to obtain description/remote config file to set info from
     deserializedCourse.init(true)
     deserializedCourse.loadRemoteInfoRecursively(project)
+
+    if (deserializedCourse is HyperskillCourse && deserializedCourse.hyperskillProject == null) {
+      deserializedCourse.reconnectHyperskillProject()
+    }
+
     if (!deserializedCourse.isStudy) {
       deserializedCourse.setDescriptionInfo(project)
     }
@@ -136,7 +141,7 @@ object YamlDeepLoader {
     }
   }
 
-  private fun Course.loadRemoteInfoRecursively(project: Project) {
+  fun Course.loadRemoteInfoRecursively(project: Project) {
     loadRemoteInfo(project)
     sections.forEach { section -> section.loadRemoteInfo(project) }
 
@@ -144,10 +149,6 @@ object YamlDeepLoader {
     visitLessons { lesson ->
       lesson.loadRemoteInfo(project)
       lesson.taskList.forEach { task -> task.loadRemoteInfo(project) }
-    }
-
-    if (this is HyperskillCourse && hyperskillProject == null) {
-      reconnectHyperskillProject()
     }
   }
 
@@ -200,14 +201,6 @@ object YamlDeepLoader {
     if (itemRemoteInfo.id > 0 || itemRemoteInfo is HyperskillCourse) {
       getRemoteChangeApplierForItem(itemRemoteInfo).applyChanges(this, itemRemoteInfo)
     }
-  }
-
-  /**
-   * Reloads the content of a remote config if it exists.
-   */
-  fun StudyItem.reloadRemoteInfo(project: Project) {
-    val remoteConfigFile = remoteConfigFile(project) ?: return
-    loadRemoteInfo(remoteConfigFile)
   }
 
   private fun Course.setDescriptionInfo(project: Project) {
