@@ -4,6 +4,7 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType.INFORMATION
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.currentThreadCoroutineScope
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
@@ -16,6 +17,8 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.notification.RemoteConfigNotificationListener
 import com.jetbrains.edu.learning.notification.RemoteConfigNotificationListener.Companion.hyperlinkText
+import com.jetbrains.edu.learning.yaml.errorHandling.RemoteYamlLoadingException
+import com.jetbrains.edu.learning.yaml.processError
 import kotlinx.coroutines.launch
 
 class RegenerateDuplicateIds : DumbAwareAction() {
@@ -35,9 +38,15 @@ class RegenerateDuplicateIds : DumbAwareAction() {
 
     currentThreadCoroutineScope().launch {
       withBackgroundProgress(project, EduCoreBundle.message("action.Educational.Educator.RegenerateDuplicateIds.progress.title")) {
-        val changedItems = StudyItemIdGenerator.getInstance(project).regenerateDuplicateIds(course)
-        showFinishNotification(project, changedItems)
-        e.getData(Notification.KEY)?.expire()
+        try {
+          val changedItems = StudyItemIdGenerator.getInstance(project).regenerateDuplicateIds(course)
+          showFinishNotification(project, changedItems)
+          e.getData(Notification.KEY)?.expire()
+        }
+        catch (e: RemoteYamlLoadingException) {
+          logger<RegenerateDuplicateIds>().warn(e)
+          e.processError(project)
+        }
       }
     }
   }
