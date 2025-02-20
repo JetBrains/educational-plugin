@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext
 import com.jetbrains.edu.learning.yaml.YamlDeepLoader.reloadRemoteInfo
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import com.jetbrains.edu.learning.yaml.errorHandling.RemoteYamlLoadingException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.VisibleForTesting
@@ -31,6 +32,7 @@ class StudyItemIdGenerator(private val project: Project) {
    * Generates ids for all study items in given [course] if they are not assigned yet (i.e. [StudyItem.id] equals 0)
    */
   @RequiresBlockingContext
+  @Throws(RemoteYamlLoadingException::class)
   fun generateIdsIfNeeded(course: Course) {
     // Load `*-remote-info.yaml` files for each item to have up-to-date ids
     loadRemoteInfo(course)
@@ -55,6 +57,7 @@ class StudyItemIdGenerator(private val project: Project) {
   /**
    * Regenerate duplicate ids of [StudyItem]
    */
+  @Throws(RemoteYamlLoadingException::class)
   suspend fun regenerateDuplicateIds(course: Course): List<StudyItem> {
     loadRemoteInfo(course)
     // Collect study items with duplicate ids
@@ -172,7 +175,12 @@ class StudyItemIdGenerator(private val project: Project) {
 
   private fun loadRemoteInfo(course: Course) {
     course.visitItems { item ->
-      item.reloadRemoteInfo(project)
+      try {
+        item.reloadRemoteInfo(project)
+      }
+      catch (th: Throwable) {
+        throw RemoteYamlLoadingException(item, th)
+      }
     }
   }
 
