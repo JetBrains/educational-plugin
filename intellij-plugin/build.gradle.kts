@@ -245,7 +245,6 @@ subprojects {
 
 plugins {
   alias(libs.plugins.intelliJPlatformPlugin)
-  antlr
 }
 
 repositories {
@@ -434,10 +433,6 @@ tasks {
 
   clean {
     delete("generated-src")
-  }
-
-  compileTestKotlin {
-    dependsOn("generateTestGrammarSource")
   }
 }
 
@@ -1098,9 +1093,6 @@ project("features:ai-test-generation") {
 }
 
 project("Edu-Cognifire") {
-  apply {
-    plugin("antlr")
-  }
   dependencies {
     intellijPlatform {
       val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
@@ -1126,31 +1118,8 @@ project("Edu-Cognifire") {
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
 
-    antlr(rootProject.libs.antlr)
   }
 
-  tasks {
-    generateGrammarSource {
-      maxHeapSize = "128m"
-      arguments = listOf("-visitor", "-package", "com.jetbrains.edu.cognifire.grammar.generated")
-      outputDirectory = file("src/com/jetbrains/edu/cognifire/grammar/generated")
-      source = fileTree("src/main/antlr")
-    }
-
-    generateTestGrammarSource {
-      maxHeapSize = "128m"
-      arguments = listOf("-visitor", "-package", "com.jetbrains.edu.cognifire.grammar.generated")
-      outputDirectory = file("generated-src/antlr/test")
-    }
-
-    compileKotlin {
-      dependsOn("generateGrammarSource")
-    }
-
-    compileTestKotlin {
-      dependsOn("generateTestGrammarSource")
-    }
-  }
 }
 
 data class TypeWithVersion(val type: IntelliJPlatformType, val version: String)
