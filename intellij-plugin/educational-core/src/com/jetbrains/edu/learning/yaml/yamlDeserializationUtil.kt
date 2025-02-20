@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.getEditor
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.errorHandling.InvalidYamlFormatException
+import com.jetbrains.edu.learning.yaml.errorHandling.RemoteYamlLoadingException
 import com.jetbrains.edu.learning.yaml.errorHandling.showInvalidConfigNotification
 
 /**
@@ -63,7 +64,13 @@ fun showError(
   }
 }
 
-private fun processErrors(project: Project, configFile: VirtualFile, e: Exception) {
+fun RemoteYamlLoadingException.processError(project: Project) {
+  val configFile = item.remoteConfigFile(project) ?: return
+  val cause = this.cause ?: return
+  processErrors(project, configFile, cause)
+}
+
+private fun processErrors(project: Project, configFile: VirtualFile, e: Throwable) {
   @Suppress("DEPRECATION")
   // suppress deprecation for MarkedYAMLException as it is actually thrown from com.fasterxml.jackson.dataformat.yaml.YAMLParser.nextToken
   when (e) {

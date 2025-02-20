@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.yaml.YamlDeserializer.childrenConfigFileNames
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
 import com.jetbrains.edu.learning.yaml.YamlMapper.basicMapper
+import com.jetbrains.edu.learning.yaml.errorHandling.RemoteYamlLoadingException
 import com.jetbrains.edu.learning.yaml.errorHandling.YamlLoadingException
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
 import com.jetbrains.edu.learning.yaml.errorHandling.noDirForItemMessage
@@ -46,6 +47,7 @@ object YamlLoader {
     catch (e: Exception) {
       when (e) {
         is YamlLoadingException -> showError(project, e, configFile, e.message)
+        is RemoteYamlLoadingException -> e.processError(project)
         else -> throw e
       }
     }
