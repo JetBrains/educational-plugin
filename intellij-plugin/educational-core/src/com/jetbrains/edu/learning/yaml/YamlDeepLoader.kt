@@ -26,6 +26,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.YamlLoader.deserializeContent
+import com.jetbrains.edu.learning.yaml.errorHandling.RemoteYamlLoadingException
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
 import com.jetbrains.edu.learning.yaml.format.getRemoteChangeApplierForItem
 import com.jetbrains.edu.learning.yaml.migrate.ADDITIONAL_FILES_COLLECTOR_MAPPER_KEY
@@ -176,17 +177,22 @@ object YamlDeepLoader {
   }
 
   private fun StudyItem.loadRemoteInfo(project: Project) {
-    val remoteConfigFile = remoteConfigFile(project)
-    if (remoteConfigFile == null) {
-      if (id > 0) {
-        loadingError(
-          EduCoreBundle.message("yaml.editor.invalid.format.config.file.not.found", configFileName, name)
-        )
+    try {
+      val remoteConfigFile = remoteConfigFile(project)
+      if (remoteConfigFile == null) {
+        if (id > 0) {
+          loadingError(
+            EduCoreBundle.message("yaml.editor.invalid.format.config.file.not.found", configFileName, name)
+          )
+        }
+        else return
       }
-      else return
-    }
 
-    loadRemoteInfo(remoteConfigFile)
+      loadRemoteInfo(remoteConfigFile)
+    }
+    catch (th: Throwable) {
+      throw RemoteYamlLoadingException(this, th)
+    }
   }
 
   fun StudyItem.loadRemoteInfo(remoteConfigFile: VirtualFile) {
