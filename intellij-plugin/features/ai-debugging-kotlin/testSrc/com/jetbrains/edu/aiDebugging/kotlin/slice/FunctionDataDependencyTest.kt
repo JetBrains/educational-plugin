@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.findTask
 import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -33,7 +34,7 @@ class FunctionDataDependencyTest
       val ktFunction = PsiTreeUtil.findChildrenOfType(psiFile, KtFunction::class.java).find { it.name == ktFunctionName }
       checkNotNull(ktFunction) { "psi function with name `$ktFunctionName` hasn't been found" }
       val actual = FunctionDataDependency(ktFunction).dependenciesBackward.mapValues { (_, dependencies) ->
-        dependencies.map { it.text }.toHashSet()
+        dependencies.map { if (it is KtNamedFunction) it.name else it.text }.toHashSet()
       }.mapKeys { it.key.text.split("\n").firstOrNull()?.trimIndent() } // to simplify expected data
       assertEquals(expectedDependencies, actual)
     }
@@ -55,7 +56,7 @@ class FunctionDataDependencyTest
             text = """
             object Task {
             
-  fun simpleFunWithoutParametersAndWithoutMutationsTest(){
+  fun simpleFunWithoutParametersAndWithoutMutationsTest() {
     var a = 1
     var b = 2
     var s = a + b
@@ -69,29 +70,42 @@ class FunctionDataDependencyTest
     var q = s + 3 + b
   }
   
-    fun simpleFunctionWithParametersTest(a: Int) {
-      var b = 2
-      b += 3
-      var s = a + b
-      var q = s + 3 + b
+  fun simpleFunctionWithParametersTest(a: Int) {
+    var b = 2
+    b += 3
+    var s = a + b
+    var q = s + 3 + b
+  }
+    
+  fun simpleInlineFunction(a: Int) : Boolean = a++
+    
+  fun functionWhileLoopTest() {
+    var n = readln().toInt()
+    var i = 1
+    var sum = 0
+    var prod = 1
+    while (i <= n) {
+      sum += i
+      prod *= i
+      i++
     }
-    
-    fun simpleInlineFunction(a: Int) : Boolean = a++
-    
-      fun functionWhileLoopTest() {
-        var n = readln().toInt()
-        var i = 1
-        var sum = 0
-        var prod = 1
-        while (i <= n) {
-          sum += i
-          prod *= i
-          i++
-        }
-        println(sum)
-        println(prod)
-      }
-}
+    println(sum)
+    println(prod)
+  }
+  
+  fun functionDoWhileLoopTest() {
+    var n = readln().toInt()
+    var i = 1
+    var sum = 0
+    var prod = 1
+    do {
+      sum += i
+      prod *= i
+      ++i
+    } while (i <= n) 
+    println(sum)
+    println(prod)
+  }
 
   fun functionForLoopTest() {
     var n = readln().toInt()
@@ -132,7 +146,7 @@ class FunctionDataDependencyTest
   }
   
   fun complexTest() {
-     var a = 10
+    var a = 10
     var b = a * 2
     for (q in 0..a) {
       while (b > 10) {
@@ -158,6 +172,16 @@ class FunctionDataDependencyTest
     }
     val c = a + b
     b += a + c
+  }
+  
+  fun functionWithReturn(x: Int, y: Int) {
+    val r = x + y
+    return r
+  }
+  
+  fun functionCallTest(a: Int) {
+    val l = list(a)
+    val f = functionWithReturn(l[0], a)
   }
             """.trimIndent()
           )
@@ -202,6 +226,17 @@ class FunctionDataDependencyTest
           "i++" to setOf("var i = 1"),
           "sum += i" to setOf("var sum = 0", "var i = 1", "i++"),
           "prod *= i" to setOf("var prod = 1", "var i = 1", "i++"),
+          "println(sum)" to setOf("var sum = 0", "sum += i"),
+          "println(prod)" to setOf("var prod = 1", "prod *= i")
+        )
+      ),
+      arrayOf(
+        "functionDoWhileLoopTest",
+        mapOf(
+          "do {" to setOf("var n = readln().toInt()", "var i = 1", "++i"),
+          "++i" to setOf("var i = 1"),
+          "sum += i" to setOf("var sum = 0", "var i = 1", "++i"),
+          "prod *= i" to setOf("var prod = 1", "var i = 1", "++i"),
           "println(sum)" to setOf("var sum = 0", "sum += i"),
           "println(prod)" to setOf("var prod = 1", "prod *= i")
         )
@@ -254,7 +289,21 @@ class FunctionDataDependencyTest
           "val c = a + b" to setOf("var a = 10", "var b = a * 2", "b += q", "b += a", "b += 2", "a += 1", "a += 2"),
           "b += a + c" to setOf("var a = 10", "var b = a * 2", "b += q", "b += a", "b += 2", "a += 1", "a += 2", "val c = a + b")
         )
-      )
+      ),
+      arrayOf(
+        "functionWithReturn",
+        mapOf(
+          "val r = x + y" to setOf("x: Int", "y: Int"),
+          "return r" to setOf("val r = x + y")
+        )
+      ),
+      arrayOf(
+        "functionCallTest",
+        mapOf(
+          "val l = list(a)" to setOf("a: Int"),
+          "val f = functionWithReturn(l[0], a)" to setOf("val l = list(a)", "a: Int", "functionWithReturn")
+        )
+      ),
     )
   }
 }

@@ -29,10 +29,10 @@ private val assignmentOperators = listOf("=") + reflectedAssignmentOperators
  * If to is `null` it means that empty set will be defined.
  * This is done for store already initialized variables for making references on they in the future.
  */
-fun PsiElementToDependencies.addIfAbsent(
+fun MutablePsiElementToDependencies.addIfAbsent(
   from: PsiElement,
   to: PsiElement? = null,
-  parentScopes: Collection<PsiElementToDependencies>? = null
+  parentScopes: Collection<MutablePsiElementToDependencies>? = null
 ) {
   getOrPut(from) { hashSetOf() }.also { collection ->
     to?.let {
@@ -44,14 +44,17 @@ fun PsiElementToDependencies.addIfAbsent(
   }
 }
 
-fun PsiElement.getVariableReferences() =
-  when (this) {
-    is KtReferenceExpression -> listOf(this)
-    else -> PsiTreeUtil.findChildrenOfType(this, KtReferenceExpression::class.java)
-      .filter { it !is KtOperationReferenceExpression }
+fun PsiElement.references(): List<KtReferenceExpression> {
+  val references = PsiTreeUtil.findChildrenOfType(this, KtReferenceExpression::class.java)
+    .filter { it !is KtOperationReferenceExpression }
+  return if (this is KtReferenceExpression) {
+    references + this
+  } else {
+    references
   }
+}
 
-fun KtSingleValueToken?.isAssigment() = this != null && this.value in assignmentOperators
+fun KtSingleValueToken?.isAssigment() = this != null && value in assignmentOperators
 
 fun PsiElementToDependencies.copy() = mapValues { it.value.toHashSet() }.toMutableMap()
 

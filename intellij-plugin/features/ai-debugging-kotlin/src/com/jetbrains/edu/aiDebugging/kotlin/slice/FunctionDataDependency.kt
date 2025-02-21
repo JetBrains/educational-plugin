@@ -43,8 +43,8 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
    */
   private fun processReferences(
     psiElement: PsiElement,
-    definedVariables: PsiElementToDependencies,
-    parentScopesDefinitions: List<PsiElementToDependencies> = emptyList()
+    definedVariables: MutablePsiElementToDependencies,
+    parentScopesDefinitions: List<MutablePsiElementToDependencies> = emptyList()
   ) {
     with(ScopeContext(definedVariables, parentScopesDefinitions)) {
       when (psiElement) {
@@ -54,11 +54,11 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
 
         is KtBinaryExpression -> psiElement.process()
 
-        is KtPostfixExpression -> psiElement.process()
+        is KtUnaryExpression -> psiElement.process()
 
         is KtForExpression -> psiElement.process()
 
-        is KtWhileExpression -> psiElement.process()
+        is KtWhileExpressionBase -> psiElement.process()
 
         is KtCallExpression -> psiElement.process()
 
@@ -66,6 +66,9 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
 
         // TODO add elif expression
         is KtIfExpression -> psiElement.process()
+
+        // TODO add lambda and try expressions
+        is KtExpression -> psiElement.process()
       }
     }
   }
@@ -74,8 +77,8 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
    * A context to manage the scope and defined variables during current state of processing.
    */
   private inner class ScopeContext(
-    val definedVariables: PsiElementToDependencies,
-    val parentScopesDefinitions: List<PsiElementToDependencies>
+    val definedVariables: MutablePsiElementToDependencies,
+    val parentScopesDefinitions: List<MutablePsiElementToDependencies>
   ) {
     fun KtFunction.process() {
       valueParameters.forEach {
@@ -99,7 +102,7 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
     fun KtProperty.process() {
       definedVariables.addIfAbsent(this, parentScopes = parentScopesDefinitions)
       initializer?.let {
-        it.getVariableReferences().forEach { reference ->
+        it.references().forEach { reference ->
           addReferences(reference, definedVariables)
         }
       }
@@ -141,7 +144,7 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
           addDependency(referenceTo)
           definedVariables.addIfAbsent(referenceTo, this, parentScopesDefinitions)
         }
-        right?.getVariableReferences()?.forEach {
+        right?.references()?.forEach {
           addReferences(it, definedVariables)
         }
       }
@@ -159,10 +162,21 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
      *     - `a: Int` (function parameter)
      *
      */
-    fun KtPostfixExpression.process() {
+    fun KtUnaryExpression.process() {
       baseExpression?.reference()?.resolve()?.let {
         definedVariables.addIfAbsent(it, this, parentScopesDefinitions)
         addDependency(it)
+      }
+    }
+
+    /**
+     * Processes the current `KtExpression` by retrieving all variable references
+     * within its context and adding dependencies between the references and the
+     * defined variables in the current scope.
+     */
+    fun KtExpression.process() {
+      references().forEach {
+        addReferences(it, definedVariables)
       }
     }
 
@@ -198,7 +212,7 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
       loopParameter?.let {
         definedVariables.addIfAbsent(it, parentScopes = parentScopesDefinitions)
       }
-      loopRange?.getVariableReferences()?.forEach {
+      loopRange?.references()?.forEach {
         addReferences(it, definedVariables)
       }
       body?.children?.forEach {
@@ -248,12 +262,12 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
      *     - `var i = 1`
      *
      */
-    fun KtWhileExpression.process() {
+    fun KtWhileExpressionBase.process() {
       body?.children?.forEach {
         definedVariables.searchElements(it)
       }
 
-      condition?.getVariableReferences()?.forEach {
+      condition?.references()?.forEach {
         addReferences(it, definedVariables)
       }
       body?.children?.forEach {
@@ -271,7 +285,7 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
      */
     fun KtCallExpression.process() {
       valueArgumentList?.arguments?.forEach {
-        it.getArgumentExpression()?.getVariableReferences()?.forEach { reference ->
+        it.getArgumentExpression()?.references()?.forEach { reference ->
           addReferences(reference, definedVariables)
         }
       }
@@ -360,7 +374,7 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
      *
      */
     fun KtIfExpression.process() {
-      condition?.getVariableReferences()?.forEach {
+      condition?.references()?.forEach {
         addReferences(it, definedVariables)
       }
       val stateSnapshot = definedVariables.copy() // need to be copied due to execution branches
@@ -377,7 +391,7 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
      * Does not make dependencies, but only adds the use of variables and references.
      * This is necessary because loops may not have linear dependencies
      */
-    private fun PsiElementToDependencies.searchElements(psiElement: PsiElement) {
+    private fun MutablePsiElementToDependencies.searchElements(psiElement: PsiElement) {
       when (psiElement) {
         is KtBinaryExpression -> {
           if (psiElement.operationReference.operationSignTokenType.isAssigment()) {
@@ -387,7 +401,7 @@ class FunctionDataDependency(ktFunction: KtFunction) : FunctionDependency() {
           }
         }
 
-        is KtPostfixExpression -> {
+        is KtUnaryExpression -> {
           psiElement.baseExpression?.reference()?.resolve()?.let {
             addIfAbsent(it, psiElement, parentScopesDefinitions)
           }
