@@ -20,21 +20,19 @@ import com.intellij.openapi.vfs.findFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.storage.persistEduFiles
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.disambiguateContents
-import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.storage.persistAdditionalFiles
+import com.jetbrains.edu.learning.storage.persistEduFiles
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.LESSON_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_COURSE_CONFIG
@@ -219,17 +217,6 @@ object YamlFormatSynchronizer {
   }
   else {
     basicMapper()
-  }
-}
-
-fun StudyItem.getConfigDir(project: Project): VirtualFile {
-  return if (this is Task && lesson is FrameworkLesson) {
-    @NonNls
-    val errorMessageToLog = "Config for '$name' task dir in guided project not found"
-    lesson.getDir(project.courseDir)?.findChild(name) ?: error(errorMessageToLog)
-  }
-  else {
-    getDir(project.courseDir) ?: error("Config for '$this' not found")
   }
 }
 

@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.navigation.ParsedInCourseLink
 import com.jetbrains.edu.learning.navigation.ParsedInCourseLink.ItemContainerDirectory
 import com.jetbrains.edu.learning.navigation.ParsedInCourseLink.TaskDirectory
-import com.jetbrains.edu.learning.yaml.YamlConfigSettings.remoteConfigFileName
+import com.jetbrains.edu.learning.yaml.remoteConfigFile
 import javax.swing.event.HyperlinkEvent
 
 /**
@@ -24,7 +24,7 @@ class RemoteConfigNotificationListener(private val project: Project) : Notificat
     val parsedLink = ParsedInCourseLink.parse(project, path) ?: return
     if (!(parsedLink is ItemContainerDirectory || parsedLink is TaskDirectory)) return
 
-    val configFile = parsedLink.file.findChild(parsedLink.item.remoteConfigFileName) ?: return
+    val configFile = parsedLink.item.remoteConfigFile(project) ?: return
     runInEdt {
       FileEditorManager.getInstance(project).openFile(configFile, true)
     }

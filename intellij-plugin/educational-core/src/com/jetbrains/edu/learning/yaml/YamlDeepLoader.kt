@@ -24,7 +24,6 @@ import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
-import com.jetbrains.edu.learning.yaml.YamlConfigSettings.remoteConfigFileName
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.YamlLoader.deserializeContent
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
@@ -177,8 +176,7 @@ object YamlDeepLoader {
   }
 
   private fun StudyItem.loadRemoteInfo(project: Project) {
-    val itemDir = getConfigDir(project)
-    val remoteConfigFile = itemDir.findChild(remoteConfigFileName)
+    val remoteConfigFile = remoteConfigFile(project)
     if (remoteConfigFile == null) {
       if (id > 0) {
         loadingError(
@@ -202,8 +200,7 @@ object YamlDeepLoader {
    * Reloads the content of a remote config if it exists.
    */
   fun StudyItem.reloadRemoteInfo(project: Project) {
-    val itemDir = getConfigDir(project)
-    val remoteConfigFile = itemDir.findChild(remoteConfigFileName) ?: return
+    val remoteConfigFile = remoteConfigFile(project) ?: return
     loadRemoteInfo(remoteConfigFile)
   }
 

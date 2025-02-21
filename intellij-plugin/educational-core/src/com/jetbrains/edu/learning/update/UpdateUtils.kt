@@ -14,7 +14,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
-import com.jetbrains.edu.learning.yaml.getConfigDir
 
 object UpdateUtils {
 
@@ -41,7 +40,10 @@ object UpdateUtils {
     }
 
     // Task Description file needs to be regenerated as it already exists
-    GeneratorUtils.createDescriptionFile(project, task.getConfigDir(project), task) ?: return
+    val taskDir = task.getTaskDirectory(project)
+    if (taskDir != null) {
+      GeneratorUtils.createDescriptionFile(project, taskDir, task)
+    }
   }
 
   fun updateFrameworkLessonFiles(project: Project, lesson: FrameworkLesson, task: Task, remoteTask: Task, updatePropagatableFiles: Boolean) {
