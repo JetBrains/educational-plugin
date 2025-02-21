@@ -4,10 +4,15 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent
+import com.intellij.openapi.vfs.newvfs.events.VFileCopyEvent
+import com.intellij.openapi.vfs.newvfs.events.VFileCreateEvent
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightPlatformTestCase
+import com.intellij.testFramework.utils.vfs.createDirectory
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListenerTest
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
@@ -19,13 +24,8 @@ import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.yaml.format.tasks.TaskWithType
-import com.intellij.openapi.vfs.VfsUtil
-import com.intellij.openapi.vfs.newvfs.events.VFileCopyEvent
-import com.intellij.openapi.vfs.newvfs.events.VFileCreateEvent
-import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent
-import com.intellij.testFramework.utils.vfs.createDirectory
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createTextChildFile
+import com.jetbrains.edu.learning.yaml.format.tasks.TaskWithType
 
 abstract class VirtualFileListenerTestBase : EduTestCase() {
   protected abstract val courseMode: CourseMode
@@ -333,7 +333,7 @@ abstract class VirtualFileListenerTestBase : EduTestCase() {
     filesOnDisk: List<String> = emptyList(),
     actions: () -> Unit
   ) {
-    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, createYamlConfigs = true) {
       section("section1") {
         lesson("lesson1") {
           eduTask("task1") {
@@ -375,6 +375,13 @@ abstract class VirtualFileListenerTestBase : EduTestCase() {
     val newParent = project.courseDir.findFileByRelativePath(newParentPath)!!
     val actualCopyName = copyName ?: path.substringAfter("/", path)
     project.courseDir.findFileByRelativePath(path)!!.copy(CCVirtualFileListenerTest::class.java, newParent, actualCopyName)
+  }
+
+  protected fun copyDirectory(path: String, newParentPath: String, copyName: String? = null) = runWriteAction {
+    val dirFrom = project.courseDir.findFileByRelativePath(path)!!
+    val newParent = project.courseDir.findFileByRelativePath(newParentPath)!!
+    val dirTo = newParent.createDirectory(copyName ?: dirFrom.name)
+    VfsUtil.copyDirectory(CCVirtualFileListenerTest::class.java, dirFrom, dirTo, null)
   }
 
   protected fun moveFile(path: String, newParentPath: String) = runWriteAction {

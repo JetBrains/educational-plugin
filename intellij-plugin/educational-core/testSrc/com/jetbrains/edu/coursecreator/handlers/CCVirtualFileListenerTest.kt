@@ -675,4 +675,14 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
       moveFile("lesson2/task1/a.txt", ".")
       moveFile("lesson2/task1/dir", ".")
     }
+
+  @Test
+  fun `copying a task does not add task files as additional`() =
+    doTestAdditionalFilesAfterFSActions(
+      listOf("dir/a.txt"),
+      listOf("dir/a.txt", "dir-copy/a.txt")
+    ) {
+      copyDirectory("dir", ".", "dir-copy")
+      copyDirectory("lesson2/task1", "lesson2", "task1copy")
+    }
 }

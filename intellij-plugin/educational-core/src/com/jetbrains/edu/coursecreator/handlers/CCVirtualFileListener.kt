@@ -364,7 +364,27 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
 
     YamlFormatSynchronizer.saveItem(parentStudyItem)
 
+    // If a Task is created and added to the course, make sure that files from the task folder are not listed as additional files.
+    // It may happen on task copy, because files are created on disk and automatically added to the list of additional files before
+    // the Task object is created.
+    if (deserializedItem is Task) {
+      removeTaskFilesFromAdditionalFiles(deserializedItem)
+    }
     return true
+  }
+
+  private fun removeTaskFilesFromAdditionalFiles(task: Task) {
+    val course = task.course
+    val pathPrefix = task.pathInCourse + VFS_SEPARATOR_CHAR
+
+    val withoutFilesFromTask = course.additionalFiles.filter {
+      !it.name.startsWith(pathPrefix)
+    }
+
+    if (withoutFilesFromTask.size < course.additionalFiles.size) {
+      course.additionalFiles = withoutFilesFromTask
+      YamlFormatSynchronizer.saveItem(course)
+    }
   }
 
   private fun reloadConfig(file: VirtualFile) {
