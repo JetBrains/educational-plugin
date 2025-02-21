@@ -26,7 +26,7 @@ interface EduAIHintsProcessor {
   fun getStringsExtractor(): StringExtractor
 
   companion object {
-    private val EP_NAME = LanguageExtension<EduAIHintsProcessor>("Educational.aiHintsProcessor")
+    val EP_NAME = LanguageExtension<EduAIHintsProcessor>("Educational.aiHintsProcessor")
 
     fun forCourse(course: Course): EduAIHintsProcessor? {
       return course.languageById?.let { EP_NAME.forLanguage(it) }
