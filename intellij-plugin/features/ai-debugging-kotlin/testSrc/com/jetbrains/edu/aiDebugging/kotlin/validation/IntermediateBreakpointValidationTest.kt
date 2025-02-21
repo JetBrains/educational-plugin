@@ -36,14 +36,16 @@ class IntermediateBreakpointValidationTest: EduTestCase() {
 
     val results = df.map { row ->
       val sourceCode = row["source_code_1"] as? String ?: error("Source code is empty")
-      val wrongCodeLine = row["final_bp"] as? Int ?: error("Wrong code lines is empty")
+      var wrongCodeLine = row["final_bp"] as? Int ?: error("Wrong code lines is empty")
       val expectedBPLineNumbers = (row["breakpoint_lines"] as? DataFrame<*>)?.map { it["value"] }?.toSet() ?: error("Wrong code lines is empty")
       val complexity = row["complexity"] as? String ?: error("Complexity is empty")
 
       replaceDocumentText(taskFile, project, sourceCode)
       val virtualFile = taskFile.getDocument(project)?.getVirtualFile() ?: error("Can't find virtual file for `${task.name}` task")
 
+      wrongCodeLine--
       val interBP = IntermediateBreakpointProcessor.calculateIntermediateBreakpointPositions(virtualFile, listOf(wrongCodeLine), project, language)
+      wrongCodeLine++
       val actualBPLines = (interBP.map { it + 1 } + wrongCodeLine).toSet()
 
       val tp = expectedBPLineNumbers.intersect(actualBPLines).size
