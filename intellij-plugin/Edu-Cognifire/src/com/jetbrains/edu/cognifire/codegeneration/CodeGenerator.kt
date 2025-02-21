@@ -22,7 +22,7 @@ class CodeGenerator(
   private val codeExpression: CodeExpression?
 ) {
 
-  val finalPromptToCodeTranslation = processPromptToCode()
+  val finalPromptToCodeTranslation = updatePromptToCode()
 
   val promptToCodeLines = finalPromptToCodeTranslation
     .groupBy { it.promptLineNumber }
@@ -39,38 +39,29 @@ class CodeGenerator(
 
   private fun generatePromptToCode(): PromptToCodeResponse {
     val enumeratedPromptLines = getEnumeratedPromptLines(promptExpression)
+    val signature = promptExpression.functionSignature.toString()
     return when {
-      previousPromptToCode == null || codeExpression?.code == null -> getCodeFromPrompt(
-        promptExpression.functionSignature.toString(),
-        enumeratedPromptLines
-      )
-
-      previousPromptToCode.toGeneratedCode() != codeExpression.code.trimStartLines()
-      && previousPromptToCode.toPrompt().ignoreWhitespace() == promptExpression.prompt.ignoreWhitespace() ->
+      isCodeChanged() ->
         syncPrompt(
-          previousPromptToCode,
-          codeExpression.code.lines().enumerate(0),
+          previousPromptToCode!!,
+          codeExpression!!.code.lines().enumerate(0),
           getSetOfModifiedCodeLines(previousPromptToCode.toGeneratedCode(), codeExpression.code),
-          promptExpression.functionSignature.toString()
+          signature
         )
-
-      else -> getCodeFromPrompt(promptExpression.functionSignature.toString(), enumeratedPromptLines)
+      else -> getCodeFromPrompt(signature, enumeratedPromptLines)
     }
   }
 
-  private fun processPromptToCode(): PromptToCodeContent =
-    generatePromptToCode().let { response ->
-      RedundantTodoCleaner
-        .deleteWrongTodo(response.content, promptExpression.functionSignature)
-        .let { clearedResponse ->
-          InspectionProcessor.applyInspections(
-            clearedResponse,
-            promptExpression.functionSignature.toString(),
-            project,
-            language
-          ) ?: clearedResponse
-      }
-    }
+  private fun updatePromptToCode(): PromptToCodeContent {
+    val promptToCodeClearedFromWrongTodos =
+      RedundantTodoCleaner.deleteWrongTodo(generatePromptToCode().content, promptExpression.functionSignature)
+    return InspectionProcessor.applyInspections(
+      promptToCodeClearedFromWrongTodos,
+      promptExpression.functionSignature.toString(),
+      project,
+      language
+    ) ?: promptToCodeClearedFromWrongTodos
+  }
 
   private fun getCodeFromPrompt(functionSignature: String, enumeratedPromptLines: String) = runBlockingCancellable {
     PromptToCodeAssistant.translate(
@@ -104,6 +95,11 @@ class CodeGenerator(
     return mapIndexed { index, line -> "${index + startIndex}: $line" }
       .joinToString(System.lineSeparator())
   }
+
+  private fun isCodeChanged() =
+    previousPromptToCode != null && codeExpression?.code != null
+    && previousPromptToCode.toGeneratedCode() != codeExpression.code.trimStartLines()
+    && previousPromptToCode.toPrompt().ignoreWhitespace() == promptExpression.prompt.ignoreWhitespace()
 
   private fun String.ignoreWhitespace() = filterNot(Char::isWhitespace)
 
