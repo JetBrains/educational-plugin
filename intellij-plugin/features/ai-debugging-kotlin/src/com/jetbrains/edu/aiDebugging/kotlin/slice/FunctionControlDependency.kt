@@ -30,13 +30,9 @@ class FunctionControlDependency(ktFunction: KtFunction) : FunctionDependency() {
   private fun processControlDependency(psiElement: PsiElement) {
     when (psiElement) {
 
-      is KtFunction -> {
-        psiElement.children.forEach { processControlDependency(it) }
-      }
+      is KtFunction -> psiElement.children.forEach { processControlDependency(it) }
 
-      is KtForExpression -> {
-        psiElement.body?.addAndProcesNext(psiElement)
-      }
+      is KtForExpression -> psiElement.body?.addAndProcesNext(psiElement)
 
       is KtIfExpression -> {
         psiElement.then?.addAndProcesNext(psiElement)
@@ -52,9 +48,7 @@ class FunctionControlDependency(ktFunction: KtFunction) : FunctionDependency() {
         }
       }
 
-      is KtWhileExpressionBase -> {
-        psiElement.body?.addAndProcesNext(psiElement)
-      }
+      is KtWhileExpressionBase -> psiElement.body?.addAndProcesNext(psiElement)
 
       else -> psiElement.children.forEachReachable { processControlDependency(it) }
     }
