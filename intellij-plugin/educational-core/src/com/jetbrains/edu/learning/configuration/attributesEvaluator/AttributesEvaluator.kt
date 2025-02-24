@@ -5,6 +5,7 @@ import com.intellij.openapi.vfs.VfsUtilCore.VFS_SEPARATOR_CHAR
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.configuration.CourseFileAttributes
+import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
 import com.jetbrains.edu.learning.courseFormat.Course
 
 /**
@@ -26,6 +27,10 @@ class AttributesBuilderContext private constructor(
 
   fun includeIntoArchive() {
     setupAttributes += { it.excludedFromArchive = false }
+  }
+
+  fun archiveInclusionPolicy(policy: ArchiveInclusionPolicy) {
+    setupAttributes += { it.inclusionPolicy = policy }
   }
 
   private fun addRule(
