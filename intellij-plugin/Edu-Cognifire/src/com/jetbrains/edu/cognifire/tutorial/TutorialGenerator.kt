@@ -36,6 +36,7 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
  * The tutorial can be accessed by right-clicking on the project root directory (main folder) and navigating to New -> Tutorial.
  */
 // TODO: change the icon
+@Suppress("ComponentNotRegistered")
 class TutorialGenerator : DumbAwareAction(EduCognifireBundle.message("item.tutorial.title"), "", Section) {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
