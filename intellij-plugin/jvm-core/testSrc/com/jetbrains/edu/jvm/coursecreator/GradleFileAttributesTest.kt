@@ -2,29 +2,13 @@ package com.jetbrains.edu.jvm.coursecreator
 
 import com.jetbrains.edu.coursecreator.archive.ExpectedCourseFileAttributes
 import com.jetbrains.edu.coursecreator.archive.FileAttributesTest
-import com.jetbrains.edu.jvm.gradle.GradleConfiguratorBase
-import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
-import com.jetbrains.edu.learning.checker.TaskCheckerProvider
-import com.jetbrains.edu.learning.configuration.EduConfigurator
-import org.junit.runners.Parameterized.Parameters
 
-class GradleFileAttributesTest(
+abstract class GradleFileAttributesTest(
   filePath: String,
   expectedAttributes: ExpectedCourseFileAttributes
 ) : FileAttributesTest(filePath, expectedAttributes) {
-  override val configurator: EduConfigurator<*> = object : GradleConfiguratorBase() {
-    override val courseBuilder: GradleCourseBuilderBase
-      get() = error("Should not be called")
-    override val testFileName: String
-      get() = error("Should not be called")
-    override val taskCheckerProvider: TaskCheckerProvider
-      get() = error("Should not be called")
-  }
 
   companion object {
-
-    @JvmStatic
-    @Parameters(name = "{0}")
     fun data(): Collection<Array<Any>> = FileAttributesTest.data() + listOf(
       arrayOf("settings.gradle", expected(excludedFromArchive = false)),
       arrayOf("subfolder/settings.gradle", expected(excludedFromArchive = false)),
