@@ -3,6 +3,7 @@
   <dependencies>
     <!--suppress PluginXmlValidity -->
     <module name="jvm-core"/>
+    <!--suppress PluginXmlValidity -->
     <module name="Edu-Cognifire"/>
 
     <plugin id="org.jetbrains.kotlin"/>
@@ -25,7 +26,6 @@
     <promptExpressionParser language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.psi.KtPromptExpressionParser"/>
     <codeExpressionWriter language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.psi.KtCodeExpressionWriter"/>
     <cognifireDslPackageCallChecker language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.psi.KtCognifireDslPackageCallChecker"/>
-    <codeApplier language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.psi.KtCodeApplier"/>
     <generatedCodeParser language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.psi.KtGeneratedCodeParser"/>
     <inspectionProcessor language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.inspection.KtInspectionProcessor"/>
     <codeExpressionParser language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.psi.KtCodeExpressionParser"/>
