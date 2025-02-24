@@ -1,5 +1,13 @@
 package com.jetbrains.edu.learning.configuration
 
+enum class InclusionPolicy {
+  MUST_INCLUDE,
+  MUST_EXCLUDE,
+  OPTIONAL,
+  RECOMMENDED,
+  NOT_RECOMMENDED
+}
+
 data class CourseFileAttributes(
   /**
    * Whether a file should be excluded from a course archive automatically.
@@ -8,11 +16,7 @@ data class CourseFileAttributes(
    * The value is used when the course is migrated from a version without an implicit list of additional files (YAML before v2).
    * Other usages of this field are considered legacy and should be eliminated with time.
    */
-  val excludedFromArchive : Boolean
+  val excludedFromArchive : Boolean,
 
-  /**
-   * We are going to add here more information about the file:
-   *  - show in course view or not (to hide out/build/target directories)
-   *  - suggest including in archive: must be included/must not be included/better to be included/etc.
-   */
+  val inclusionPolicy: InclusionPolicy
 )
