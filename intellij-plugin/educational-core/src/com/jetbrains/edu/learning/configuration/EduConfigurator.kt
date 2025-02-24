@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
-import com.jetbrains.edu.learning.configuration.EduConfigurator.Companion.EXCLUDED_FILES
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.Companion.taskDescriptionRegex
@@ -62,21 +61,31 @@ private val ROOT_COURSE_ATTRIBUTES_EVALUATOR = AttributesEvaluator {
 
   extension("iml") {
     excludeFromArchive()
+    inclusionPolicy(InclusionPolicy.MUST_EXCLUDE)
   }
 
   file(taskDescriptionRegex) {
     excludeFromArchive()
+    inclusionPolicy(InclusionPolicy.MUST_EXCLUDE)
   }
 
   file(pred { isLocalConfigFileName(it) || isRemoteConfigFileName(it) }) {
     excludeFromArchive()
+    inclusionPolicy(InclusionPolicy.MUST_EXCLUDE)
   }
 
   dir(CCUtils.GENERATED_FILES_FOLDER, direct = true) {
     excludeFromArchive()
+    inclusionPolicy(InclusionPolicy.MUST_EXCLUDE)
   }
 
-  file(*EXCLUDED_FILES) {
+  file(EduNames.COURSE_IGNORE, EduFormatNames.COURSE_ICON_FILE) {
+    excludeFromArchive()
+    inclusionPolicy(InclusionPolicy.MUST_EXCLUDE)
+  }
+
+  // legacy files
+  file(EduNames.HINTS, EduNames.STEPIK_IDS_JSON) {
     excludeFromArchive()
   }
 }
@@ -212,10 +221,6 @@ interface EduConfigurator<Settings : EduProjectSettings> {
   fun getCodeTaskFile(project: Project, task: Task): TaskFile? = task.getCodeTaskFile(project)
 
   fun getEnvironmentSettings(project: Project): Map<String, String> = mapOf()
-
-  companion object {
-    val EXCLUDED_FILES = arrayOf(EduNames.HINTS, EduNames.STEPIK_IDS_JSON, EduNames.COURSE_IGNORE, EduFormatNames.COURSE_ICON_FILE)
-  }
 }
 
 fun EduConfigurator<*>.excludeFromArchive(project: Project, file: VirtualFile): Boolean =
