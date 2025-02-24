@@ -27,7 +27,7 @@ class HyperskillLinkedInConfigurator : LinkedInPluginConfigurator {
 
   override fun getIndexWithImagePath(solvedTask: Task?, imageIndex: Int?): Pair<Int, Path?> {
     val finalImageIndex = imageIndex ?: Random.Default.nextInt(NUMBER_OF_GIFS)
-    val imagePath = SocialMediaUtils.pluginRelativePath("socialMedia/linkedin/hyperskill/achievement$finalImageIndex.gif")
+    val imagePath = SocialMediaUtils.pluginRelativePath("socialMedia/linkedIn/hyperskill/achievement$finalImageIndex.gif")
     return finalImageIndex to imagePath
   }
 
