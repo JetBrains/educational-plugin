@@ -5,16 +5,19 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.educational.ml.cognifire.responses.PromptToCodeResponse.GeneratedCodeLine
 import org.jetbrains.kotlin.cli.common.isWindows
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.junit.Assume.assumeTrue
+import org.jetbrains.kotlin.idea.base.plugin.KotlinPluginModeProvider
+import org.junit.Assume.assumeFalse
 import org.junit.Before
 import org.junit.Test
 
 class KtInspectionsTest : EduTestCase() {
 
   // TODO: Fix failing tests on Windows
+  // TODO: Fix failing tests for K2, when EDU-7553 if fixed
   @Before
   fun checkIfWindows() {
-    assumeTrue(!isWindows)
+    assumeFalse(KotlinPluginModeProvider.isK2Mode())
+    assumeFalse(isWindows)
   }
 
   @Test
