@@ -78,7 +78,7 @@ class TutorialGenerator : DumbAwareAction(EduCognifireBundle.message("item.tutor
     } else {
       GeneratorUtils.createLesson(project, lesson, project.courseDir)
     }
-    saveStructureToYaml(lesson, course, if (container is Section) container else null)
+    saveStructureToYaml(lesson, course, container as? Section)
     return virtualFile
   }
 
