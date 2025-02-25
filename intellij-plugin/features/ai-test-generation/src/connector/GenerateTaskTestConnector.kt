@@ -4,14 +4,13 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.ui.JBAccountInfoService
 import com.jetbrains.edu.ai.host.EduAIServiceHost
-import com.jetbrains.edu.ai.tests.service.GenerateTestRequest
 import com.jetbrains.edu.ai.tests.service.GenerateTaskTestService
 import com.jetbrains.edu.learning.network.HTTP_UNAVAILABLE_FOR_LEGAL_REASONS
 import com.jetbrains.edu.learning.network.createRetrofitBuilder
+import com.intellij.ui.JBAccountInfoService
+import com.jetbrains.educational.ml.test.generation.context.TestGenerationContext
 import okhttp3.ConnectionPool
-import retrofit2.Response
 import java.net.HttpURLConnection.*
 
 @Service(Service.Level.APP)
@@ -39,11 +38,9 @@ class GenerateTaskTestConnector {
   suspend fun generateTests(
     taskDescription: String,
     codeSnippet: String,
-    promptCustomization: String,
-    temperature: Double,
-    llmProfile: String
+    promptCustomization: String
   ): String {
-    val request = GenerateTestRequest(taskDescription, codeSnippet, promptCustomization, temperature, llmProfile)
+    val request = TestGenerationContext(taskDescription, codeSnippet, promptCustomization)
     val response = service.generateTests(request)
 
     if (!response.isSuccessful) {

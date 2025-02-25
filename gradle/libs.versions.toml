@@ -1,5 +1,5 @@
 [versions]
-educational-ml-library = "1.0.36"
+educational-ml-library = "1.0.38"
 jackson = "2.17.2"
 kotlin = "2.0.0"
 okhttp = "4.12.0"
@@ -12,6 +12,7 @@ converter-jackson = { group = "com.squareup.retrofit2", name = "converter-jackso
 edu-ai-format = { group = "com.jetbrains.edu", name = "edu-ai-format", version = "0.0.11" }
 educational-ml-library-core = { group = "com.jetbrains.educational.ml", name = "educational-ml-library-core", version.ref = "educational-ml-library" }
 educational-ml-library-hints = { group = "com.jetbrains.educational.ml", name = "educational-ml-library-hints", version.ref = "educational-ml-library" }
+educational-ml-library-test-generation = { group = "com.jetbrains.educational.ml", name = "educational-ml-library-test-generation", version.ref = "educational-ml-library" }
 jackson-dataformat-yaml = { group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version.ref = "jackson" }
 jackson-datatype-jsr310 = { group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version.ref = "jackson" }
 jackson-module-kotlin = { group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version.ref = "jackson" }
