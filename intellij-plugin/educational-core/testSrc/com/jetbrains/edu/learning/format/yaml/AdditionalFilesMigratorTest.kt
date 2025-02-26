@@ -83,6 +83,9 @@ class AdditionalFilesMigratorTest(
 
         // file in the task folder should be ignored
         createFile("lesson1/task1/additional_file5.txt")
+
+        // files starting with dot are ignored
+        createFile(".additional_file6_starting_with_dot.txt")
       },
       { project ->
         assertEquals(courseMode, project.course?.courseMode)

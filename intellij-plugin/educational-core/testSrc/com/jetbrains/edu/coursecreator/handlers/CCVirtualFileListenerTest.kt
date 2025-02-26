@@ -522,11 +522,14 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     }
 
   @Test
-  fun `user created file is not added to additional files if it is excluded by configurator`() =
-    doTestAdditionalFilesAfterFSActions(emptyList(), emptyList()) {
-      createFile(".dot-file")
-      createFile("folder/subfolder/.file")
+  fun `user created file is not added to additional files if it is excluded by configurator`() {
+    val mustNotBeIncludedFile = "excluded.iml" // must be excluded because of the IML extension
+    doTestAdditionalFilesAfterFSActions(emptyList(), listOf(".dot-file")) {
+      createFile(".dot-file") // dot file is tested because it used to be excluded in older versions
+      createFile(mustNotBeIncludedFile)
+      createFile("folder/subfolder/$mustNotBeIncludedFile")
     }
+  }
 
   @Test
   fun `creating a file in an old archive location does not add it to additional files`() =
@@ -661,20 +664,25 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     }
 
   @Test
-  fun `moving out of a task folder creates additional files`() =
+  fun `moving out of a task folder creates additional files`() {
+    val mustBeExcludedFile = "dir/must_be_excluded.iml" // must be excluded because of the IML extension
+    val fileStartingWithDot = "dir/.hidden_file" //a file starting with a dot is tested because such files used to be excluded in older versions
+
     doTestAdditionalFilesAfterFSActions(
       emptyList(),
-      listOf("a.txt", "dir/b.txt", "dir/c.txt"),
+      listOf("a.txt", "dir/b.txt", "dir/c.txt", fileStartingWithDot),
       listOf(
         "lesson2/task1/a.txt",
         "lesson2/task1/dir/b.txt",
         "lesson2/task1/dir/c.txt",
-        "lesson2/task1/dir/.excluded-because-of-dot.txt"
+        "lesson2/task1/$fileStartingWithDot",
+        "lesson2/task1/$mustBeExcludedFile"
       )
     ) {
       moveFile("lesson2/task1/a.txt", ".")
       moveFile("lesson2/task1/dir", ".")
     }
+  }
 
   @Test
   fun `copying a task does not add task files as additional`() =
