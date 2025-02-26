@@ -196,12 +196,12 @@ abstract class EduTestCase : BasePlatformTestCase() {
 
       initializeCourse(project, course)
       createCourseFiles(project)
-      if (createYamlConfigs) {
-        createConfigFiles(project)
-      }
     }
     if (id != null) {
       course.id = id
+    }
+    if (createYamlConfigs) {
+      createConfigFiles(project)
     }
 
     SubmissionsManager.getInstance(project).course = course
