@@ -5,8 +5,9 @@ import com.jetbrains.edu.csharp.checker.CSharpTaskCheckerProvider
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
-import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
+import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.rider.ideaInterop.fileTypes.sln.SolutionFileType
@@ -32,10 +33,12 @@ class CSharpConfigurator : EduConfigurator<CSharpProjectSettings> {
   override val courseFileAttributesEvaluator: AttributesEvaluator = AttributesEvaluator(super.courseFileAttributesEvaluator) {
     extension(SolutionFileType.defaultExtension) {
       excludeFromArchive()
+      archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
     }
 
     dirAndChildren(BIN_DIRECTORY, OBJ_DIRECTORY) {
       excludeFromArchive()
+      archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
     }
   }
 
