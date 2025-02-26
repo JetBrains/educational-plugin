@@ -5,34 +5,36 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.jvmEnvironmentSettings
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
 import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.configuration.InclusionPolicy
+import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE
+import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_PROPERTIES
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_JAR
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_PROPERTIES
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_UNIX
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_WIN
 import com.jetbrains.edu.learning.gradle.GradleConstants.LOCAL_PROPERTIES
 import com.jetbrains.edu.learning.gradle.GradleConstants.SETTINGS_GRADLE
+import org.jetbrains.plugins.gradle.util.GradleConstants
 
 abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
   abstract override val courseBuilder: GradleCourseBuilderBase
 
   override val courseFileAttributesEvaluator: AttributesEvaluator = AttributesEvaluator(super.courseFileAttributesEvaluator) {
-    file(SETTINGS_GRADLE) {
+    file(SETTINGS_GRADLE, GRADLE_PROPERTIES, GradleConstants.KOTLIN_DSL_SCRIPT_NAME, GradleConstants.KOTLIN_DSL_SETTINGS_FILE_NAME) {
       includeIntoArchive()
+      inclusionPolicy(InclusionPolicy.MUST_INCLUDE)
     }
 
-    dir(*FOLDERS_TO_EXCLUDE) {
+    dirAndChildren(*FOLDERS_TO_EXCLUDE) {
       excludeFromArchive()
-
-      any {
-        excludeFromArchive()
-      }
+      inclusionPolicy(InclusionPolicy.MUST_EXCLUDE)
     }
 
     file(*NAMES_TO_EXCLUDE) {
       excludeFromArchive()
+      inclusionPolicy(InclusionPolicy.MUST_EXCLUDE)
     }
   }
 

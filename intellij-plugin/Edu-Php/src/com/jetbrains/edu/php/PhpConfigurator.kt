@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
 import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.configuration.InclusionPolicy
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.php.composer.ComposerUtils
@@ -43,10 +44,16 @@ class PhpConfigurator : EduConfigurator<PhpProjectSettings> {
   override val courseFileAttributesEvaluator: AttributesEvaluator = AttributesEvaluator(super.courseFileAttributesEvaluator) {
     dirAndChildren(ComposerUtils.VENDOR_DIR_DEFAULT_NAME) {
       excludeFromArchive()
+      inclusionPolicy(InclusionPolicy.MUST_EXCLUDE)
+    }
+
+    file(ComposerUtils.CONFIG_DEFAULT_FILENAME) {
+      inclusionPolicy(InclusionPolicy.MUST_INCLUDE)
     }
 
     file(ComposerUtils.COMPOSER_PHAR_NAME) {
       excludeFromArchive()
+      inclusionPolicy(InclusionPolicy.MUST_EXCLUDE)
     }
   }
 
