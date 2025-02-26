@@ -1,6 +1,12 @@
 package com.jetbrains.edu.cpp
 
+import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.edu.EducationalCoreIcons
+import com.jetbrains.edu.cpp.CMakeConstants.CMAKE_CATCH
+import com.jetbrains.edu.cpp.CMakeConstants.CMAKE_DIRECTORY
+import com.jetbrains.edu.cpp.CMakeConstants.CMAKE_GOOGLE_TEST
+import com.jetbrains.edu.cpp.CMakeConstants.CMAKE_GOOGLE_TEST_DOWNLOAD
+import com.jetbrains.edu.cpp.CMakeConstants.CMAKE_UTILS
 import com.jetbrains.edu.cpp.checker.CppCatchTaskCheckerProvider
 import com.jetbrains.edu.cpp.checker.CppGTaskCheckerProvider
 import com.jetbrains.edu.cpp.checker.CppTaskCheckerProvider
@@ -9,7 +15,10 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
 import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.configuration.InclusionPolicy
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import javax.swing.Icon
 
@@ -61,6 +70,23 @@ open class CppConfigurator : EduConfigurator<CppProjectSettings> {
     // @see com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace.getProfileGenerationDirNames
     dirAndChildren("^cmake-build-".toRegex(), TEST_FRAMEWORKS_BASE_DIR_VALUE, direct = true) {
       excludeFromArchive()
+      inclusionPolicy(InclusionPolicy.MUST_EXCLUDE)
+    }
+
+    file(CMakeListsFileType.FILE_NAME, direct = true) {
+      inclusionPolicy(InclusionPolicy.MUST_INCLUDE)
+    }
+
+    dir(CMAKE_DIRECTORY, direct = true) {
+      file(
+        CMAKE_UTILS,
+        CMAKE_GOOGLE_TEST,
+        CMAKE_GOOGLE_TEST_DOWNLOAD,
+        CMAKE_CATCH,
+        direct = true
+      ) {
+        inclusionPolicy(InclusionPolicy.MUST_INCLUDE)
+      }
     }
   }
 

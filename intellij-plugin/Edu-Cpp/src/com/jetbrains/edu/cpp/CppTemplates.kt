@@ -1,10 +1,23 @@
 package com.jetbrains.edu.cpp
 
 import com.jetbrains.cmake.CMakeListsFileType
+import com.jetbrains.edu.cpp.CMakeConstants.CMAKE_CATCH
+import com.jetbrains.edu.cpp.CMakeConstants.CMAKE_DIRECTORY
+import com.jetbrains.edu.cpp.CMakeConstants.CMAKE_GOOGLE_TEST
+import com.jetbrains.edu.cpp.CMakeConstants.CMAKE_GOOGLE_TEST_DOWNLOAD
+import com.jetbrains.edu.cpp.CMakeConstants.CMAKE_UTILS
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+
+object CMakeConstants {
+  const val CMAKE_DIRECTORY = "cmake"
+  const val CMAKE_UTILS = "utils.cmake"
+  const val CMAKE_GOOGLE_TEST = "googletest.cmake"
+  const val CMAKE_GOOGLE_TEST_DOWNLOAD = "googletest-download.cmake"
+  const val CMAKE_CATCH = "catch.cmake"
+}
 
 /** Provides CMake file template information, where:
  * [mainCMakeList] - configures the course project, e.g. find all tasks `CMakeLists.txt` files and adds them.
@@ -58,16 +71,16 @@ fun getCppTemplates(course: Course): CppTemplates =
       CppTemplates(
         mainCMakeList = TemplateInfo("gtest.CMakeLists.txt", CMakeListsFileType.FILE_NAME),
         extraTopLevelFiles = listOf(
-          TemplateInfo("gtest.cmake.utils.cmake", GeneratorUtils.joinPaths("cmake", "utils.cmake")),
-          TemplateInfo("gtest.cmake.googletest.cmake", GeneratorUtils.joinPaths("cmake", "googletest.cmake")),
-          TemplateInfo("gtest.cmake.googletest-download.cmake", GeneratorUtils.joinPaths("cmake", "googletest-download.cmake")))
+          TemplateInfo("gtest.cmake.utils.cmake", GeneratorUtils.joinPaths(CMAKE_DIRECTORY, CMAKE_UTILS)),
+          TemplateInfo("gtest.cmake.googletest.cmake", GeneratorUtils.joinPaths(CMAKE_DIRECTORY, CMAKE_GOOGLE_TEST)),
+          TemplateInfo("gtest.cmake.googletest-download.cmake", GeneratorUtils.joinPaths(CMAKE_DIRECTORY, CMAKE_GOOGLE_TEST_DOWNLOAD)))
       )
     course.environment == "Catch" ->
       CppTemplates(
         mainCMakeList = TemplateInfo("catch.CMakeLists.txt", CMakeListsFileType.FILE_NAME),
         extraTopLevelFiles = listOf(
-          TemplateInfo("catch.cmake.utils.cmake", GeneratorUtils.joinPaths("cmake", "utils.cmake")),
-          TemplateInfo("catch.cmake.catch.cmake", GeneratorUtils.joinPaths("cmake", "catch.cmake")))
+          TemplateInfo("catch.cmake.utils.cmake", GeneratorUtils.joinPaths(CMAKE_DIRECTORY, CMAKE_UTILS)),
+          TemplateInfo("catch.cmake.catch.cmake", GeneratorUtils.joinPaths(CMAKE_DIRECTORY, CMAKE_CATCH)))
       )
     else ->
       throw IllegalStateException("Course must be Stepik or Hyperskill type or have one of these environments: GoogleTest, Catch")
