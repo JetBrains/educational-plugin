@@ -7,6 +7,7 @@ import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
 import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.configuration.InclusionPolicy
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.PluginInfos
 import com.jetbrains.edu.learning.pluginVersion
@@ -42,16 +43,22 @@ class RsConfigurator : EduConfigurator<RsProjectSettings> {
     dir(".cargo", direct = true) {
       name(CargoConstants.CONFIG_TOML_FILE, CargoConstants.CONFIG_FILE, direct = true) {
         includeIntoArchive()
+        inclusionPolicy(InclusionPolicy.MUST_INCLUDE)
       }
       includeIntoArchive()
     }
 
     dirAndChildren(CargoConstants.ProjectLayout.target) {
       excludeFromArchive()
+      inclusionPolicy(InclusionPolicy.MUST_EXCLUDE)
     }
 
     file(CargoConstants.LOCK_FILE) {
       excludeFromArchive()
+    }
+
+    file("Cargo.toml") {
+      inclusionPolicy(InclusionPolicy.MUST_INCLUDE)
     }
   }
 

@@ -11,11 +11,14 @@ import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
 import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.configuration.InclusionPolicy
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.scala.isScalaPluginCompatible
+import com.jetbrains.edu.scala.sbt.ScalaSbtCourseBuilder.Companion.BUILD_SBT
 import com.jetbrains.edu.scala.sbt.checker.ScalaSbtTaskCheckerProvider
 import org.jetbrains.plugins.scala.ScalaLanguage
+import org.jetbrains.sbt.Sbt
 import javax.swing.Icon
 
 class ScalaSbtConfigurator : EduConfigurator<JdkProjectSettings> {
@@ -51,6 +54,17 @@ class ScalaSbtConfigurator : EduConfigurator<JdkProjectSettings> {
   override val courseFileAttributesEvaluator: AttributesEvaluator = AttributesEvaluator(super.courseFileAttributesEvaluator) {
     dirAndChildren("target") {
       excludeFromArchive()
+      inclusionPolicy(InclusionPolicy.MUST_EXCLUDE)
+    }
+
+    file(BUILD_SBT) {
+      inclusionPolicy(InclusionPolicy.MUST_INCLUDE)
+    }
+
+    dir(Sbt.ProjectDirectory()) {
+      file(Sbt.PropertiesFile(), direct = true) {
+        inclusionPolicy(InclusionPolicy.MUST_INCLUDE)
+      }
     }
   }
 

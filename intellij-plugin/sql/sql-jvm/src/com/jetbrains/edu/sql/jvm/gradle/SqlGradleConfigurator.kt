@@ -5,6 +5,7 @@ import com.jetbrains.edu.jvm.gradle.GradleConfiguratorBase
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.jvm.gradle.checker.GradleTaskCheckerProvider
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
+import com.jetbrains.edu.learning.configuration.InclusionPolicy
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
 import com.jetbrains.edu.sql.core.SqlConfiguratorBase
 
@@ -19,6 +20,7 @@ class SqlGradleConfigurator : GradleConfiguratorBase(), SqlConfiguratorBase<JdkP
   override val courseFileAttributesEvaluator: AttributesEvaluator = AttributesEvaluator(super<GradleConfiguratorBase>.courseFileAttributesEvaluator) {
     extension(DB_EXTENSION) {
       excludeFromArchive()
+      inclusionPolicy(InclusionPolicy.MUST_EXCLUDE)
     }
   }
 
