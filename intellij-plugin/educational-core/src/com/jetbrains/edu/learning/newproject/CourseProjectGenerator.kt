@@ -9,7 +9,10 @@ import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.progress.*
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.blockingContext
+import com.intellij.openapi.progress.blockingContextToIndicator
 import com.intellij.openapi.project.NOTIFICATIONS_SILENT_MODE
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
@@ -36,9 +39,11 @@ import com.jetbrains.edu.coursecreator.CCUtils.isLocalCourse
 import com.jetbrains.edu.coursecreator.ui.CCOpenEducatorHelp
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.configuration.EduConfigurator
-import com.jetbrains.edu.learning.configuration.excludeFromArchive
+import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
+import com.jetbrains.edu.learning.configuration.courseFileAttributes
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.CourseVisibility.*
+import com.jetbrains.edu.learning.courseFormat.CourseVisibility.FeaturedVisibility
+import com.jetbrains.edu.learning.courseFormat.CourseVisibility.LocalVisibility
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.isPreview
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -319,10 +324,13 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
    */
   @Throws(IOException::class)
   open fun createAdditionalFiles(holder: CourseInfoHolder<Course>) {
+    val configurator = holder.course.configurator ?: return
+
     for (file in autoCreatedAdditionalFiles(holder)) {
       val childFile = createChildFile(holder, holder.courseDir, file.name, file.contents) ?: continue
 
-      if (course.configurator?.excludeFromArchive(holder, childFile) == false) {
+      val archiveInclusionPolicy = configurator.courseFileAttributes(holder, childFile).archiveInclusionPolicy
+      if (archiveInclusionPolicy >= ArchiveInclusionPolicy.AUTHOR_DECISION) {
         addAdditionalFile(file)
       }
     }
