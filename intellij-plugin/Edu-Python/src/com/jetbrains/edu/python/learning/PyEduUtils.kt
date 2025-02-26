@@ -15,6 +15,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.intellij.platform.util.progress.reportSequentialProgress
+import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON_2_VERSION
@@ -53,10 +54,12 @@ fun Task.getCurrentTaskFilePath(project: Project): String? {
 internal fun pythonAttributesEvaluator(baseEvaluator: AttributesEvaluator): AttributesEvaluator = AttributesEvaluator(baseEvaluator) {
   dirAndChildren(*FOLDERS_TO_EXCLUDE, direct = true) {
     excludeFromArchive()
+    archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
   }
 
   extension("pyc") {
     excludeFromArchive()
+    archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
   }
 }
 

@@ -1,5 +1,6 @@
 package com.jetbrains.edu.javascript.learning
 
+import com.intellij.lang.javascript.ui.NodeModuleNamesUtil
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.util.PlatformUtils
 import com.jetbrains.edu.EducationalCoreIcons
@@ -9,6 +10,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
 import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
 import com.jetbrains.edu.learning.courseFormat.Course
 import javax.swing.Icon
 
@@ -38,8 +40,13 @@ open class JsConfigurator : EduConfigurator<JsNewProjectSettings> {
     get() = !PlatformUtils.isRider()
 
   override val courseFileAttributesEvaluator: AttributesEvaluator = AttributesEvaluator(super.courseFileAttributesEvaluator) {
-    dirAndChildren("node_modules") {
+    file(NodeModuleNamesUtil.PACKAGE_JSON) {
+      archiveInclusionPolicy(ArchiveInclusionPolicy.INCLUDED_BY_DEFAULT)
+    }
+
+    dirAndChildren(NodeModuleNamesUtil.MODULES) {
       excludeFromArchive()
+      archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
     }
 
     file("package-lock.json") {
