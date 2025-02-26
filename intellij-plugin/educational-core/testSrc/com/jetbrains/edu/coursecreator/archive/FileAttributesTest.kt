@@ -44,7 +44,7 @@ open class FileAttributesTest(
 
       val isDirectory = filePath.last() == '/'
       val relativePath = filePath.removeSuffix("/")
-      val actualAttributes = attributesEvaluator.attributesForPath(relativePath, isDirectory)
+      val actualAttributes = attributesEvaluator.attributesForPath(course=null, relativePath, isDirectory)
 
       expectedAttributes.assertAttributes(actualAttributes)
     }

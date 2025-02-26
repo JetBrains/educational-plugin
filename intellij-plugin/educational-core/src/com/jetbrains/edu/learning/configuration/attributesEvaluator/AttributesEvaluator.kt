@@ -131,6 +131,25 @@ class AttributesBuilderContext private constructor(
     }, direct, mustBeDirectory = false, mustBeFile = true, 1, subRules)
 
   /**
+   * Matches only specific courses
+   */
+  fun course(coursePredicate: CoursePredicate, subRules: AttributesBuilderContext.() -> Unit) {
+    val newSpecificity = specificity + 1
+    val subContext = AttributesBuilderContext(newSpecificity, pathSegmentSpecifications)
+    subContext.subRules()
+
+    val baseRule = Rule(
+      newSpecificity,
+      subContext.setupAttributes,
+      pathSegmentSpecifications,
+      coursePredicate
+    )
+
+    rules += baseRule
+    rules += subContext.rules
+  }
+
+  /**
    * Creates an arbitrary predicate on a name of a path segment
    */
   fun pred(accepts: (String) -> Boolean): PathSegmentNamePredicate = object : PathSegmentNamePredicate {
@@ -166,15 +185,16 @@ class AttributesEvaluator(base: AttributesEvaluator? = null, rulesBuilder: Attri
   }
 
   fun attributesForFile(holder: CourseInfoHolder<out Course?>, file: VirtualFile): CourseFileAttributes {
+    val course = holder.course ?: return CourseFileAttributesMutable().toImmutable()
     val relativePath = FileUtil.getRelativePath(holder.courseDir.path, file.path, VFS_SEPARATOR_CHAR)
                        ?: return CourseFileAttributesMutable().toImmutable()
 
     val fixedRelativePath = if (relativePath == ".") "" else relativePath
 
-    return attributesForPath(fixedRelativePath, file.isDirectory)
+    return attributesForPath(course, fixedRelativePath, file.isDirectory)
   }
 
-  fun attributesForPath(relativePath: String, isDirectory: Boolean = false): CourseFileAttributes {
+  fun attributesForPath(course: Course?, relativePath: String, isDirectory: Boolean = false): CourseFileAttributes {
     val pathSegmentsNames = relativePath.split(VFS_SEPARATOR_CHAR)
     val pathSegments = pathSegmentsNames.mapIndexed { i, segmentName ->
       val directory = i < pathSegmentsNames.lastIndex || isDirectory
@@ -184,7 +204,7 @@ class AttributesEvaluator(base: AttributesEvaluator? = null, rulesBuilder: Attri
     val attributes = CourseFileAttributesMutable()
 
     for (rule in rules) {
-      if (rule.matches(pathSegments)) {
+      if (rule.matches(pathSegments) && rule.matches(course)) {
         rule.setupAttributes.forEach { it(attributes) }
       }
     }

@@ -1,5 +1,7 @@
 package com.jetbrains.edu.learning.configuration.attributesEvaluator
 
+import com.jetbrains.edu.learning.courseFormat.Course
+
 internal typealias AttributesMutator = (CourseFileAttributesMutable) -> Unit
 
 /**
@@ -34,7 +36,8 @@ internal data class Rule(
    */
   val specificity: Int,
   val setupAttributes: MutableList<AttributesMutator> = mutableListOf(),
-  private val pathSpecifications: List<PathSegmentSpecification>
+  private val pathSpecifications: List<PathSegmentSpecification>,
+  private val coursePredicate: CoursePredicate? = null
 ) {
 
   /**
@@ -71,6 +74,12 @@ internal data class Rule(
     }
 
     return fullyMatches[specificationsCount][segmentsCount]
+  }
+
+  fun matches(course: Course?): Boolean {
+    if (coursePredicate == null) return true
+    if (course == null) return false
+    return coursePredicate(course)
   }
 
   override fun toString(): String {
