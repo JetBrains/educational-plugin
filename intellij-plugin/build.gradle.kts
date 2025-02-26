@@ -227,6 +227,14 @@ subprojects {
 
   tasks {
     prepareSandbox { enabled = false }
+    // Localization plugins may break tests
+    // https://youtrack.jetbrains.com/issue/IJPL-178084/External-plugin-tests-break-due-to-localization-issues
+    //
+    // `disabledPlugins` doesn't affect tests, so let's use workaround for now
+    // https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1887
+    withType<Test> {
+      classpath -= classpath.filter { it.name.startsWith("localization-") && it.name.endsWith(".jar") }
+    }
   }
 
   val testOutput = configurations.create("testOutput")
