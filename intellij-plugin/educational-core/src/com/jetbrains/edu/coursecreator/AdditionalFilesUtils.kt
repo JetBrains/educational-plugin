@@ -12,14 +12,18 @@ import com.jetbrains.edu.coursecreator.actions.BinaryContentsFromDisk
 import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchiveAction
 import com.jetbrains.edu.coursecreator.actions.TextualContentsFromDisk
 import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreRules
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configuration.EduConfigurator
-import com.jetbrains.edu.learning.configuration.excludeFromArchive
+import com.jetbrains.edu.learning.configuration.InclusionPolicy
+import com.jetbrains.edu.learning.configuration.courseFileAttributes
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.getTask
+import com.jetbrains.edu.learning.isToEncodeContent
 import com.jetbrains.edu.learning.stepik.api.LessonAdditionalInfo
 import com.jetbrains.edu.learning.stepik.api.TaskAdditionalInfo
 import com.jetbrains.edu.learning.stepik.collectTaskFiles
@@ -68,7 +72,7 @@ object AdditionalFilesUtils {
     project: Project
   ): Boolean {
     return courseIgnoreRules.isIgnored(file) ||
-           courseConfigurator.excludeFromArchive(project, file) ||
+           courseConfigurator.courseFileAttributes(project, file).inclusionPolicy <= InclusionPolicy.NOT_RECOMMENDED ||
            file.path == PropertiesComponent.getInstance(project)
              .getValue(CCCreateCourseArchiveAction.LAST_ARCHIVE_LOCATION)
   }
