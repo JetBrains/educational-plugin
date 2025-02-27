@@ -12,6 +12,10 @@ import com.jetbrains.edu.decomposition.parsers.FunctionParser
 import com.jetbrains.edu.learning.EduUtilsKt.showPopup
 import com.jetbrains.edu.learning.actions.ActionWithProgressIcon
 import com.jetbrains.edu.learning.checker.details.CheckDetailsView
+import com.jetbrains.edu.learning.courseFormat.CheckFeedback
+import com.jetbrains.edu.learning.courseFormat.CheckResult
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.decomposition.DecompositionStatus
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.selectedTaskFile
@@ -19,6 +23,7 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.kotlin.asJava.classes.runReadAction
+import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
 class CheckCompletenessAction : ActionWithProgressIcon() {
@@ -35,9 +40,12 @@ class CheckCompletenessAction : ActionWithProgressIcon() {
     CheckCompletenessActionState.getScope(project).launch {
       if (CheckCompletenessActionState.getInstance(project).doLock()) {
         try {
+          processStarted()
+          TaskToolWindowView.getInstance(project).checkStarted(task, false)
           performCheckCompletenessTask(project, task)
         } finally {
           CheckCompletenessActionState.getInstance(project).unlock()
+          processFinished()
         }
       } else {
         e.dataContext.showPopup(EduDecompositionBundle.message("action.check.completeness.already.running"))
@@ -51,7 +59,18 @@ class CheckCompletenessAction : ActionWithProgressIcon() {
       val language = task.course.languageById ?: return@withBackgroundProgress
       val files = task.taskFiles.values.filter { it.isVisible }
       val functionNames = runReadAction { FunctionParser.extractFunctionNames(files, project, language) }
+      if (functionNames.isEmpty()) return@withBackgroundProgress // TODO
       // TODO: request to ml lib
+      if (functionNames.size >= 2) { // TODO: move to success block
+        task.decompositionStatus = DecompositionStatus.COMPLETENESS
+        val checkResult = CheckResult(CheckStatus.Solved, EduDecompositionBundle.message("action.check.completeness.success"))
+        task.status = checkResult.status
+        task.feedback = CheckFeedback(Date(), checkResult)
+        TaskToolWindowView.getInstance(project).apply {
+          checkFinished(task, checkResult)
+          updateCheckPanel(task)
+        }
+      }
     }
   }
 
