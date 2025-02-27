@@ -62,7 +62,7 @@ class CheckCompletenessAction : ActionWithProgressIcon() {
       if (functionNames.isEmpty()) return@withBackgroundProgress // TODO
       // TODO: request to ml lib
       if (functionNames.size >= 2) { // TODO: move to success block
-        task.decompositionStatus = DecompositionStatus.COMPLETENESS
+        task.decompositionStatus = DecompositionStatus.GRANULARITY_CHECK_NEEDED
         val checkResult = CheckResult(CheckStatus.Solved, EduDecompositionBundle.message("action.check.completeness.success"))
         task.status = checkResult.status
         task.feedback = CheckFeedback(Date(), checkResult)

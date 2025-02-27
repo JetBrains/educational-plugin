@@ -59,7 +59,7 @@ abstract class Task : StudyItem {
       checkStatus = status
     }
 
-  var decompositionStatus: DecompositionStatus = DecompositionStatus.INCOMPLETE
+  var decompositionStatus: DecompositionStatus = DecompositionStatus.COMPLETENESS_CHECK_NEEDED
 
   val lesson: Lesson
     get() = parent as? Lesson ?: error("Lesson is null for task $name")
