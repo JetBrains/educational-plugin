@@ -38,6 +38,7 @@ object YamlDeepLoader {
   private val HYPERSKILL_PROJECT_REGEX = "$HYPERSKILL_PROJECTS_URL/(\\d+)/.*".toRegex()
   private val LOG = Logger.getInstance(YamlDeepLoader::class.java)
 
+  @Throws(RemoteYamlLoadingException::class)
   fun loadCourse(project: Project): Course? {
     val projectDir = project.courseDir
 
@@ -141,6 +142,7 @@ object YamlDeepLoader {
     }
   }
 
+  @Throws(RemoteYamlLoadingException::class)
   fun Course.loadRemoteInfoRecursively(project: Project) {
     loadRemoteInfo(project)
     sections.forEach { section -> section.loadRemoteInfo(project) }
@@ -177,6 +179,7 @@ object YamlDeepLoader {
     }
   }
 
+  @Throws(RemoteYamlLoadingException::class)
   private fun StudyItem.loadRemoteInfo(project: Project) {
     try {
       val remoteConfigFile = remoteConfigFile(project)
