@@ -20,7 +20,6 @@ object StyleResourcesManager {
   private const val JETBRAINS_ACADEMY_CSS_BASE: String = "/style/jetbrains-academy/jetbrains_academy_base.css"
 
   private const val HINT_BASE_CSS: String = "/style/hint/base.css"
-  private const val HINT_SWING_BASE_CSS: String = "/style/hint/swing/base.css"
   private const val HINT_DARCULA_CSS: String = "/style/hint/darcula.css"
   private const val HINT_HIGH_CONTRAST_CSS: String = "/style/hint/highcontrast.css"
   private const val HINT_LIGHT_CSS: String = "/style/hint/light.css"
@@ -66,7 +65,6 @@ object StyleResourcesManager {
     JETBRAINS_ACADEMY_CSS_LIGHT,
     JETBRAINS_ACADEMY_CSS_BASE,
     HINT_BASE_CSS,
-    HINT_SWING_BASE_CSS,
     HINT_DARCULA_CSS,
     HINT_HIGH_CONTRAST_CSS,
     HINT_LIGHT_CSS,
@@ -90,7 +88,7 @@ object StyleResourcesManager {
       )
     }
     else {
-      mapOf("hint_base" to HINT_SWING_BASE_CSS)
+      emptyMap()
     }
 
   private val hintLafSpecificFileName: String
