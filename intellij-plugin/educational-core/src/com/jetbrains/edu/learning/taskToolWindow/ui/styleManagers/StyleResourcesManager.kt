@@ -118,6 +118,7 @@ object StyleResourcesManager {
     resourcePair("base_css", BROWSER_CSS),
     "typography_color_style" to StyleManager().typographyAndColorStylesheet(),
     "tables_style" to StyleManager().tablesStylesheet(),
+    "hints_style" to StyleManager().hintsStylesheet(),
     "content" to content,
     "mathJax" to "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
     resourcePair("hyperskill_task", HYPERSKILL_TASK_CSS),

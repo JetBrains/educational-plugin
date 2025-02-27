@@ -115,6 +115,24 @@ class StyleManager {
     return tableCss.toString()
   }
 
+  fun hintsStylesheet(): String {
+    val hintsCss = CSSBuilder().apply {
+      ".hint_content > p" {
+        paddingLeft = 0.px
+        paddingRight = 0.px
+        marginLeft = 0.px
+        marginRight = 0.px
+      }
+
+      ".hint_content > p:first-child" {
+        paddingTop = 0.px
+        marginTop = 0.px
+      }
+    }
+
+    return hintsCss.toString()
+  }
+
   companion object {
     const val FONT_SIZE_PROPERTY: String = "edu.task.description.font.factor"
 
