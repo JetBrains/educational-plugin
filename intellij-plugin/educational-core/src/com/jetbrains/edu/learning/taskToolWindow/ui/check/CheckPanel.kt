@@ -9,11 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.InlineBanner
 import com.intellij.util.Alarm
-import com.intellij.util.ui.AsyncProcessIcon
-import com.intellij.util.ui.JBDimension
-import com.intellij.util.ui.JBEmptyBorder
-import com.intellij.util.ui.JBUI
-import com.intellij.util.ui.UIUtil
+import com.intellij.util.ui.*
 import com.jetbrains.edu.learning.actions.*
 import com.jetbrains.edu.learning.actions.EduAIHintsUtils.GET_HINT_ACTION_ID
 import com.jetbrains.edu.learning.actions.EduAIHintsUtils.isGetHintAvailable
@@ -159,7 +155,12 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
         val isDefault = !(task.isChangedOnFailed && task.status == CheckStatus.Failed || task.isSolved)
         val isEnabled = !(task.isChangedOnFailed && task.status == CheckStatus.Failed) && task.isPromptActionsGeneratedSuccessfully
         val action = when (task.decompositionStatus) {
-          DecompositionStatus.COMPLETENESS_CHECK_NEEDED -> ActionManager.getInstance().getAction("Educational.Check.Completeness") as ActionWithProgressIcon
+          DecompositionStatus.COMPLETENESS_CHECK_NEEDED ->
+            ActionManager.getInstance().getAction("Educational.Check.Completeness") as ActionWithProgressIcon
+
+          DecompositionStatus.GRANULARITY_CHECK_NEEDED ->
+            ActionManager.getInstance().getAction("Educational.Check.Granularity") as ActionWithProgressIcon
+
           else -> CheckAction(task.getUICheckLabel())
         }
         val checkComponent = CheckPanelButtonComponent(
@@ -191,9 +192,12 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
         val checkComponent = CheckPanelButtonComponent(CheckAction(task.getUICheckLabel()), isEnabled = isRunning, isDefault = isRunning)
         checkButtonWrapper.add(checkComponent, BorderLayout.CENTER)
       }
-      CheckStatus.Failed, CheckStatus.Solved  -> {
-        val retryComponent = CheckPanelButtonComponent(EduActionUtils.getAction(RetryDataTaskAction.ACTION_ID) as RetryDataTaskAction,
-                                                       isDefault = true)
+
+      CheckStatus.Failed, CheckStatus.Solved -> {
+        val retryComponent = CheckPanelButtonComponent(
+          EduActionUtils.getAction(RetryDataTaskAction.ACTION_ID) as RetryDataTaskAction,
+          isDefault = true
+        )
         checkButtonWrapper.add(retryComponent, BorderLayout.WEST)
       }
     }
@@ -212,7 +216,8 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     if (!(task.status == CheckStatus.Solved
           || task is TheoryTask
           || task.course is HyperskillCourse
-          || task.course.courseMode == CourseMode.EDUCATOR)) {
+          || task.course.courseMode == CourseMode.EDUCATOR)
+    ) {
       return
     }
 
@@ -232,8 +237,10 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     if (!task.isChangedOnFailed) return
 
     if (task.status == CheckStatus.Failed) {
-      val retryComponent = CheckPanelButtonComponent(EduActionUtils.getAction(RetryAction.ACTION_ID) as ActionWithProgressIcon,
-        isDefault = true, isEnabled = true)
+      val retryComponent = CheckPanelButtonComponent(
+        EduActionUtils.getAction(RetryAction.ACTION_ID) as ActionWithProgressIcon,
+        isDefault = true, isEnabled = true
+      )
       add(retryComponent, BorderLayout.WEST)
     }
   }
