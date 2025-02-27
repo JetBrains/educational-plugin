@@ -99,9 +99,7 @@ class CodeGenerator(
   private fun isCodeChanged() =
     previousPromptToCode != null && codeExpression?.code != null
     && previousPromptToCode.toGeneratedCode() != codeExpression.code.trimStartLines()
-    && previousPromptToCode.toPrompt().ignoreWhitespace() == promptExpression.prompt.ignoreWhitespace()
-
-  private fun String.ignoreWhitespace() = filterNot(Char::isWhitespace)
+    && previousPromptToCode.toPrompt().trim() == promptExpression.prompt.trim()
 
   private fun String.trimStartLines() = this.lines().joinToString(System.lineSeparator()) { it.trimStart() }
 }
