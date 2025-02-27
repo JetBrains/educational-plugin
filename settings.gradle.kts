@@ -186,5 +186,3 @@ pluginManagement {
     maven("https://packages.jetbrains.team/maven/p/edu/cognifire")
   }
 }
-include("intellij-plugin:Edu-Cognifire")
-findProject(":intellij-plugin:Edu-Cognifire")?.name = "Edu-Cognifire"
