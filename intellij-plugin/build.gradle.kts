@@ -321,6 +321,7 @@ dependencies {
     pluginModule(implementation(project("features:ai-hints-python")))
     pluginModule(implementation(project("localization")))
     pluginModule(implementation(project("Edu-Cognifire")))
+    pluginModule(implementation(project("Edu-Decomposition")))
 
     testFramework(TestFrameworkType.Bundled)
   }
@@ -653,10 +654,12 @@ project("Edu-Kotlin") {
     implementation(project(":intellij-plugin:educational-core"))
     implementation(project(":intellij-plugin:jvm-core"))
     implementation(project(":intellij-plugin:Edu-Cognifire"))
+    implementation(project(":intellij-plugin:Edu-Decomposition"))
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
     testImplementation(project(":intellij-plugin:jvm-core", "testOutput"))
     testImplementation(project(":intellij-plugin:Edu-Cognifire", "testOutput"))
+    testImplementation(project(":intellij-plugin:Edu-Decomposition", "testOutput"))
   }
 }
 
@@ -1048,6 +1051,36 @@ project("features:ai-hints-python") {
 }
 
 project("Edu-Cognifire") {
+  dependencies {
+    intellijPlatform {
+      val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
+
+      intellijIde(project, ideVersion)
+
+      intellijPlugins(jvmPlugins)
+      intellijPlugins(kotlinPlugin)
+    }
+
+    implementation(project(":intellij-plugin:educational-core"))
+    implementation(rootProject.libs.freemarker)
+    api(rootProject.libs.educational.ml.library.core) {
+      excludeKotlinDeps()
+      excludeKotlinSerializationDeps()
+      exclude(group = "net.java.dev.jna")
+    }
+    api(rootProject.libs.educational.ml.library.cognifire) {
+      excludeKotlinDeps()
+      excludeKotlinSerializationDeps()
+      exclude(group = "net.java.dev.jna")
+    }
+
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+
+  }
+
+}
+
+project("Edu-Decomposition") {
   dependencies {
     intellijPlatform {
       val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
