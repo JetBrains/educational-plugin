@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.decomposition.DecompositionStatus
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -157,8 +158,12 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
       else -> {
         val isDefault = !(task.isChangedOnFailed && task.status == CheckStatus.Failed || task.isSolved)
         val isEnabled = !(task.isChangedOnFailed && task.status == CheckStatus.Failed) && task.isPromptActionsGeneratedSuccessfully
+        val action = when (task.decompositionStatus) {
+          DecompositionStatus.INCOMPLETE -> ActionManager.getInstance().getAction("Educational.Check.Completeness") as ActionWithProgressIcon
+          else -> CheckAction(task.getUICheckLabel())
+        }
         val checkComponent = CheckPanelButtonComponent(
-          CheckAction(task.getUICheckLabel()),
+          action = action,
           isDefault = isDefault,
           isEnabled = isEnabled,
           isSuccessOfPromptActions = task.isPromptActionsGeneratedSuccessfully

@@ -33,6 +33,8 @@
     <codeExpressionParser language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.psi.KtCodeExpressionParser"/>
     <promptExpressionWriter language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.psi.KtPromptExpressionWriter"/>
     <prodeExpressionParser language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.psi.KtProdeExpressionParser"/>
+
+    <functionParser language="kotlin" implementationClass="com.jetbrains.edu.kotlin.decomposition.psi.KtFunctionParser"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
