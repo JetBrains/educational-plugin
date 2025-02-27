@@ -40,16 +40,15 @@ class CodeGenerator(
   private fun generatePromptToCode(): PromptToCodeResponse {
     val enumeratedPromptLines = getEnumeratedPromptLines(promptExpression)
     val signature = promptExpression.functionSignature.toString()
-    return when {
-      isCodeChanged() ->
-        syncPrompt(
-          previousPromptToCode!!,
-          codeExpression!!.code.lines().enumerate(0),
-          getSetOfModifiedCodeLines(previousPromptToCode.toGeneratedCode(), codeExpression.code),
-          signature
-        )
-      else -> getCodeFromPrompt(signature, enumeratedPromptLines)
+    return if (isCodeChanged()) {
+      syncPrompt(
+        previousPromptToCode ?: error("Invalid synchronization attempt"),
+        codeExpression?.code?.lines()?.enumerate(0) ?: error("Invalid synchronization attempt"),
+        getSetOfModifiedCodeLines(previousPromptToCode.toGeneratedCode(), codeExpression.code),
+        signature
+      )
     }
+    else getCodeFromPrompt(signature, enumeratedPromptLines)
   }
 
   private fun updatePromptToCode(): PromptToCodeContent {
