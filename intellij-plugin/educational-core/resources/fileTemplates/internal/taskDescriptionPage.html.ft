@@ -33,6 +33,7 @@
   <style>
     ${tables_style}
     ${typography_color_style}
+    ${hints_style}
   </style>
 </head>
 <body>
