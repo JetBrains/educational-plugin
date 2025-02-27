@@ -234,7 +234,6 @@ subprojects {
     // https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1887
     withType<Test> {
       classpath -= classpath.filter { it.name.startsWith("localization-") && it.name.endsWith(".jar") }
-      classpath -= classpath.filter { it.name == "platform-ijent-impl.jar" }
     }
   }
 
