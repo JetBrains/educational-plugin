@@ -5,6 +5,8 @@
     <module name="jvm-core"/>
     <!--suppress PluginXmlValidity -->
     <module name="Edu-Cognifire"/>
+    <!--suppress PluginXmlValidity -->
+    <module name="Edu-Decomposition"/>
 
     <plugin id="org.jetbrains.kotlin"/>
     <plugin id="org.jetbrains.plugins.gradle"/>

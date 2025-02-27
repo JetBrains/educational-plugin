@@ -1,0 +1,9 @@
+<idea-plugin package="com.jetbrains.edu.decomposition">
+  <!--suppress PluginXmlValidity -->
+  <dependencies>
+    <plugin id="org.jetbrains.plugins.gradle"/>
+    <plugin id="JUnit"/>
+  </dependencies>
+
+  <resource-bundle>messages.EduDecompositionBundle</resource-bundle>
+</idea-plugin>

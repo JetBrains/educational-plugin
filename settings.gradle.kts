@@ -41,7 +41,8 @@ include(
   "intellij-plugin:features:ai-hints-core",
   "intellij-plugin:features:ai-hints-kotlin",
   "intellij-plugin:features:ai-hints-python",
-  "intellij-plugin:Edu-Cognifire"
+  "intellij-plugin:Edu-Cognifire",
+  "intellij-plugin:Edu-Decomposition",
 )
 
 if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {
@@ -186,5 +187,12 @@ pluginManagement {
     maven("https://packages.jetbrains.team/maven/p/edu/cognifire")
   }
 }
+plugins {
+  id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+}
 include("intellij-plugin:Edu-Cognifire")
 findProject(":intellij-plugin:Edu-Cognifire")?.name = "Edu-Cognifire"
+include("intellij-plugin:Edu-Decomposition")
+findProject(":intellij-plugin:Edu-Decomposition")?.name = "Edu-Decomposition"
+include("intellij-plugin:Edu-Decomposition")
+findProject(":intellij-plugin:Edu-Decomposition")?.name = "Edu-Decomposition"
