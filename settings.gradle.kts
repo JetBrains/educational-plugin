@@ -189,5 +189,3 @@ pluginManagement {
 }
 include("intellij-plugin:Edu-Cognifire")
 findProject(":intellij-plugin:Edu-Cognifire")?.name = "Edu-Cognifire"
-include("intellij-plugin:Edu-Decomposition")
-findProject(":intellij-plugin:Edu-Decomposition")?.name = "Edu-Decomposition"
