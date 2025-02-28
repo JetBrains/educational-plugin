@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.courseFormat.tasks
 
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.decomposition.DecompositionStatus
 import java.util.*
 
 /**
@@ -57,6 +58,8 @@ abstract class Task : StudyItem {
       }
       checkStatus = status
     }
+
+  var decompositionStatus: DecompositionStatus = DecompositionStatus.COMPLETENESS_CHECK_NEEDED
 
   val lesson: Lesson
     get() = parent as? Lesson ?: error("Lesson is null for task $name")

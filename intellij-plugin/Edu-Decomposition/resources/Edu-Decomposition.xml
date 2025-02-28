@@ -5,5 +5,17 @@
     <plugin id="JUnit"/>
   </dependencies>
 
+  <actions>
+      <action id="Educational.Check.Completeness" class="com.jetbrains.edu.decomposition.actions.CheckCompletenessAction"/>
+  </actions>
+
+  <extensionPoints>
+      <extensionPoint qualifiedName="Educational.functionParser"
+                      beanClass="com.intellij.lang.LanguageExtensionPoint"
+                      dynamic="true">
+        <with attribute="implementationClass" implements="com.jetbrains.edu.decomposition.parsers.FunctionParser"/>
+      </extensionPoint>
+  </extensionPoints>
+
   <resource-bundle>messages.EduDecompositionBundle</resource-bundle>
 </idea-plugin>
