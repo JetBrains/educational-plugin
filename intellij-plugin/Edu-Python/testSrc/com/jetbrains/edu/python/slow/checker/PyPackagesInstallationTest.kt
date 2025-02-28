@@ -22,6 +22,7 @@ class PyPackagesInstallationTest : PyCheckersTestBase() {
             taskFile("tests.py", """
               import unittest
               import requests
+              import hstest
               from task import sum
               class TestCase(unittest.TestCase):
                   def test_add(self):
@@ -30,7 +31,7 @@ class PyPackagesInstallationTest : PyCheckersTestBase() {
           }
         }
       }
-      additionalFile("requirements.txt", "requests")
+      additionalFile("requirements.txt", "requests\nhttps://github.com/hyperskill/hs-test-python/archive/release.tar.gz")
     }
 
   }
