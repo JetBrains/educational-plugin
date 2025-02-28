@@ -12,6 +12,7 @@ import com.jetbrains.edu.cognifire.utils.toPrompt
 import com.jetbrains.educational.ml.cognifire.core.promptToCode.PromptToCodeAssistant
 import com.jetbrains.educational.ml.cognifire.core.prodeSync.PromptSyncAssistant
 import com.jetbrains.educational.ml.cognifire.responses.PromptToCodeContent
+import com.jetbrains.educational.ml.cognifire.responses.PromptToCodeResponse
 
 class CodeGenerator(
   private val promptExpression: PromptExpression,
@@ -21,7 +22,7 @@ class CodeGenerator(
   private val codeExpression: CodeExpression?
 ) {
 
-  val finalPromptToCodeTranslation = improvePromptToCode()
+  val finalPromptToCodeTranslation = updatePromptToCode()
 
   val promptToCodeLines = finalPromptToCodeTranslation
     .groupBy { it.promptLineNumber }
@@ -36,23 +37,21 @@ class CodeGenerator(
   val generatedCode = finalPromptToCodeTranslation.toGeneratedCode()
   val generatedPrompt = finalPromptToCodeTranslation.toPrompt()
 
-  private fun generatePromptToCode() =
-    if (previousPromptToCode != null && codeExpression?.code != null && previousPromptToCode.toGeneratedCode() != codeExpression.code
-                          && previousPromptToCode.toPrompt().filter { !it.isWhitespace() } == promptExpression.prompt.filter { !it.isWhitespace() }) {
+  private fun generatePromptToCode(): PromptToCodeResponse {
+    val enumeratedPromptLines = getEnumeratedPromptLines(promptExpression)
+    val signature = promptExpression.functionSignature.toString()
+    return if (isCodeChanged()) {
       syncPrompt(
-        previousPromptToCode,
-        codeExpression.code.lines().enumerate(0),
+        previousPromptToCode ?: error("Invalid synchronization attempt"),
+        codeExpression?.code?.lines()?.enumerate(0) ?: error("Invalid synchronization attempt"),
         getSetOfModifiedCodeLines(previousPromptToCode.toGeneratedCode(), codeExpression.code),
-        promptExpression.functionSignature.toString()
+        signature
       )
-    } else if (previousPromptToCode != null && codeExpression?.code != null && previousPromptToCode.toGeneratedCode() != codeExpression.code
-             && previousPromptToCode.toPrompt() != promptExpression.prompt) {
-      getCodeFromPrompt(promptExpression.functionSignature.toString(), getEnumeratedPromptLines(promptExpression))
-    } else {
-      getCodeFromPrompt(promptExpression.functionSignature.toString(), getEnumeratedPromptLines(promptExpression))
     }
+    else getCodeFromPrompt(signature, enumeratedPromptLines)
+  }
 
-  private fun improvePromptToCode(): PromptToCodeContent {
+  private fun updatePromptToCode(): PromptToCodeContent {
     val promptToCodeClearedFromWrongTodos =
       RedundantTodoCleaner.deleteWrongTodo(generatePromptToCode().content, promptExpression.functionSignature)
     return InspectionProcessor.applyInspections(
@@ -77,15 +76,10 @@ class CodeGenerator(
     }
 
   private fun getSetOfModifiedCodeLines(code: String, modifiedCode: String): Set<Int> {
-    val oldCodeLines = code.lines()
-    val modifiedCodeLines = modifiedCode.lines()
-    val modifiedCodeLineNumbers = mutableSetOf<Int>()
-    for (i in 0 until maxOf(oldCodeLines.size, modifiedCodeLines.size)) {
-      if (oldCodeLines.getOrNull(i)?.trim() != modifiedCodeLines.getOrNull(i)?.trim()) {
-        modifiedCodeLineNumbers.add(i)
-      }
-    }
-    return modifiedCodeLineNumbers
+    return code.lines()
+      .zip(modifiedCode.lines()) { old, new -> old.trim() != new.trim() }
+      .mapIndexedNotNull { index, changed -> index.takeIf { changed } }
+      .toSet()
   }
 
   private fun getEnumeratedPromptLines(promptExpression: PromptExpression): String {
@@ -100,4 +94,11 @@ class CodeGenerator(
     return mapIndexed { index, line -> "${index + startIndex}: $line" }
       .joinToString(System.lineSeparator())
   }
+
+  private fun isCodeChanged() =
+    previousPromptToCode != null && codeExpression?.code != null
+    && previousPromptToCode.toGeneratedCode() != codeExpression.code.trimStartLines()
+    && previousPromptToCode.toPrompt().trim() == promptExpression.prompt.trim()
+
+  private fun String.trimStartLines() = this.lines().joinToString(System.lineSeparator()) { it.trimStart() }
 }
