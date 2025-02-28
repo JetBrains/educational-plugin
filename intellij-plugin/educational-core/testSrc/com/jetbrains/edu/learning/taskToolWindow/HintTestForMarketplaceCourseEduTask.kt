@@ -236,4 +236,56 @@ class HintTestForMarketplaceCourseEduTask : HintsInTaskDescriptionTestBase(false
       </html>
     """.replaceWidthHeightWithFontSize()
   )
+
+  @Test
+  fun `HTML contents works both in JCEF and SWING`() = doMarkdownTest(
+    """
+      <div class="hint">
+        <div>Title</div>
+        
+        Paragraph with **formatting** and symbols '"&
+      </div>
+    """,
+    """
+      <html>
+       <head>
+        ...
+       </head>
+       <body>
+        <div class="wrapper">
+         <div class="hint">
+          <div class="hint_header">
+           <img src="" style="display: inline-block;"> Hint
+          </div>
+          <div class="hint_content">
+           <div>
+            Title
+           </div>
+           <p>Paragraph with <strong>formatting</strong> and symbols '"&amp;</p>
+          </div>
+         </div>
+        </div>
+       </body>
+      </html>
+    """,
+    """
+      <html>
+       <head>
+        ...
+       </head>
+       <body>
+        <div class="wrapper">
+         <div class="top">
+          <div class="hint">
+           <img src="" width="0" height="0"> <span><a href="hint://" value="<div>
+       Title
+      </div>
+      <p>Paragraph with <strong>formatting</strong> and symbols '&quot;&amp;amp;</p>">Hint </a> <span class="chevron">›</span></span>
+          </div>
+         </div>
+        </div>
+       </body>
+      </html>
+    """.replaceWidthHeightWithFontSize()
+  )
 }
