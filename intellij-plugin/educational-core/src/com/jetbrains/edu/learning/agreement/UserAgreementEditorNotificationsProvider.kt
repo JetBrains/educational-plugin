@@ -31,7 +31,7 @@ class UserAgreementEditorNotificationsProvider : EditorNotificationProvider {
         }
         createActionLabel(EduCoreBundle.message("user.agreement.editor.notification.action.do.not.show.again")) {
           setIgnoreNotification()
-          EditorNotifications.getInstance(project).updateAllNotifications()
+          EditorNotifications.getInstance(project).updateNotifications(this@UserAgreementEditorNotificationsProvider)
         }
       }
     }
