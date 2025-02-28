@@ -6,7 +6,6 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.decomposition.messages.EduDecompositionBundle
 import com.jetbrains.edu.learning.EduUtilsKt.showPopup
 import com.jetbrains.edu.learning.actions.ActionWithProgressIcon
 import com.jetbrains.edu.learning.checker.details.CheckDetailsView
@@ -23,10 +22,16 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 abstract class CheckActionBase: ActionWithProgressIcon() {
   init {
-    setUpSpinnerPanel(getActionName())
+    setUpSpinnerPanel(spinnerPanelMessage)
   }
 
+  abstract val spinnerPanelMessage: String
+
   abstract val actionAlreadyRunningMessage: String
+
+  abstract val templatePresentationMessage: String
+
+  abstract val checkResultMessage: String
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
@@ -53,11 +58,11 @@ abstract class CheckActionBase: ActionWithProgressIcon() {
     val project = e.project ?: return
     project.selectedTaskFile ?: return
     e.presentation.isEnabledAndVisible = !CheckActionState.getInstance(project).isLocked
-    templatePresentation.text = EduDecompositionBundle.message("action.Educational.Check.Completeness.text")
+    templatePresentation.text = templatePresentationMessage
   }
 
   fun checkIsPassed(project: Project, task: Task) {
-    val checkResult = CheckResult(CheckStatus.Solved, EduDecompositionBundle.message("action.check.completeness.success"))
+    val checkResult = CheckResult(CheckStatus.Solved, checkResultMessage)
     task.status = checkResult.status
     task.feedback = CheckFeedback(Date(), checkResult)
     TaskToolWindowView.getInstance(project).apply {
@@ -69,8 +74,6 @@ abstract class CheckActionBase: ActionWithProgressIcon() {
   override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
   abstract suspend fun performCheck(project: Project, task: Task): Boolean
-
-  abstract fun getActionName(): String
 
   @Service(Service.Level.PROJECT)
   private class CheckActionState(private val scope: CoroutineScope) {

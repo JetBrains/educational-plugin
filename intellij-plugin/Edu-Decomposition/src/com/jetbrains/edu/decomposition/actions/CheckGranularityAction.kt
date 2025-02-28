@@ -14,9 +14,13 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 @Suppress("ComponentNotRegistered")
 class CheckGranularityAction : CheckActionBase() {
 
+  override val checkResultMessage: String = EduDecompositionBundle.message("action.check.granularity.success")
+
+  override val templatePresentationMessage: String = EduDecompositionBundle.message("action.Educational.Check.Granularity.text")
+
   override val actionAlreadyRunningMessage: String = EduDecompositionBundle.message("action.check.granularity.already.running")
 
-  override fun getActionName(): String = EduDecompositionBundle.message("action.Educational.Check.Completeness.text")
+  override val spinnerPanelMessage: String = EduDecompositionBundle.message("progress.title.checking.granularity")
 
   override suspend fun performCheck(project: Project, task: Task): Boolean {
     return withBackgroundProgress(project, EduDecompositionBundle.message("progress.title.checking.granularity"), cancellable = true) {

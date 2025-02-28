@@ -12,9 +12,14 @@ import org.jetbrains.kotlin.asJava.classes.runReadAction
 @Suppress("ComponentNotRegistered")
 class CheckCompletenessAction : CheckActionBase() {
 
+  override val checkResultMessage: String = EduDecompositionBundle.message("action.check.completeness.success")
+
+  override val templatePresentationMessage: String = EduDecompositionBundle.message("action.Educational.Check.Completeness.text")
+
   override val actionAlreadyRunningMessage: String = EduDecompositionBundle.message("action.check.completeness.already.running")
 
-  override fun getActionName(): String = EduDecompositionBundle.message("action.Educational.Check.Completeness.text")
+  override val spinnerPanelMessage: String = EduDecompositionBundle.message("progress.title.checking.completeness")
+
 
   override suspend fun performCheck(project: Project, task: Task): Boolean {
     return withBackgroundProgress(project, EduDecompositionBundle.message("progress.title.checking.completeness"), cancellable = true) {
