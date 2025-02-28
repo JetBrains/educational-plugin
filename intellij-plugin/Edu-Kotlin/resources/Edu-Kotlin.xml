@@ -35,6 +35,7 @@
     <prodeExpressionParser language="kotlin" implementationClass="com.jetbrains.edu.kotlin.cognifire.psi.KtProdeExpressionParser"/>
 
     <functionParser language="kotlin" implementationClass="com.jetbrains.edu.kotlin.decomposition.psi.KtFunctionParser"/>
+    <functionDependenciesParser language="kotlin" implementationClass="com.jetbrains.edu.kotlin.decomposition.psi.KtFunctionDependenciesParser"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">

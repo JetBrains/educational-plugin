@@ -7,6 +7,7 @@
 
   <actions>
       <action id="Educational.Check.Completeness" class="com.jetbrains.edu.decomposition.actions.CheckCompletenessAction"/>
+      <action id="Educational.Test.Evaluation" class="com.jetbrains.edu.decomposition.actions.TestEvaluationAction"/>
   </actions>
 
   <extensionPoints>
@@ -15,6 +16,12 @@
                       dynamic="true">
         <with attribute="implementationClass" implements="com.jetbrains.edu.decomposition.parsers.FunctionParser"/>
       </extensionPoint>
+
+    <extensionPoint qualifiedName="Educational.functionDependenciesParser"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.decomposition.parsers.FunctionDependenciesParser"/>
+    </extensionPoint>
   </extensionPoints>
 
   <resource-bundle>messages.EduDecompositionBundle</resource-bundle>
