@@ -7,7 +7,6 @@
 
   <actions>
       <action id="Educational.Check.Completeness" class="com.jetbrains.edu.decomposition.actions.CheckCompletenessAction"/>
-      <action id="Educational.Check.Granularity" class="com.jetbrains.edu.decomposition.actions.CheckGranularityAction"/>
   </actions>
 
   <extensionPoints>
@@ -17,11 +16,17 @@
         <with attribute="implementationClass" implements="com.jetbrains.edu.decomposition.parsers.FunctionParser"/>
       </extensionPoint>
 
-      <extensionPoint qualifiedName="Educational.granularityFeedbackProvider"
-                      beanClass="com.intellij.lang.LanguageExtensionPoint"
-                      dynamic="true">
-        <with attribute="implementationClass" implements="com.jetbrains.edu.decomposition.feedback.GranularityFeedbackProvider"/>
-      </extensionPoint>
+    <extensionPoint qualifiedName="Educational.functionDependenciesParser"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.decomposition.parsers.FunctionDependenciesParser"/>
+    </extensionPoint>
+
+    <extensionPoint qualifiedName="Educational.granularityFeedbackProvider"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.decomposition.feedback.GranularityFeedbackProvider"/>
+    </extensionPoint>
   </extensionPoints>
 
   <resource-bundle>messages.EduDecompositionBundle</resource-bundle>
