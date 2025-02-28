@@ -4,4 +4,3 @@ data class FunctionModel(
   val name: String,
   val offset: Int
 )
-
