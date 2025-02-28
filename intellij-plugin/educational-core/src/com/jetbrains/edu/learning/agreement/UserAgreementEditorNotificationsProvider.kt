@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.agreement
 
 import com.intellij.openapi.fileEditor.FileEditor
+import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotificationPanel
@@ -14,7 +15,7 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSettings.isEduYamlProject
 import java.util.function.Function
 import javax.swing.JComponent
 
-class UserAgreementEditorNotificationsProvider : EditorNotificationProvider {
+class UserAgreementEditorNotificationsProvider : EditorNotificationProvider, DumbAware {
   /**
    * Show editor notification for Edu project when User Agreement is not accepted
    * And thus, we don't show such a notification in case a regular project is opened (non-Edu)
