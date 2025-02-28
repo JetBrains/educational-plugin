@@ -36,7 +36,7 @@ abstract class CheckActionBase: ActionWithProgressIcon() {
     CheckActionState.getScope(project).launch {
       if (CheckActionState.getInstance(project).doLock()) {
         try {
-          if(performCheck(project, task)) {
+          if (performCheck(project, task)) {
             checkIsPassed(project, task)
           }
         } finally {
