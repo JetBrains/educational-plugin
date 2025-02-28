@@ -8,8 +8,8 @@ import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotificationProvider
 import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.EducationalCoreIcons
-import com.jetbrains.edu.learning.agreement.UserAgreementUtil.isNotificationIgnored
-import com.jetbrains.edu.learning.agreement.UserAgreementUtil.setIgnoreNotification
+import com.jetbrains.edu.learning.agreement.UserAgreementUtil.isEditorNotificationIgnored
+import com.jetbrains.edu.learning.agreement.UserAgreementUtil.setEditorNotificationIgnored
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.isEduYamlProject
 import java.util.function.Function
@@ -21,7 +21,7 @@ class UserAgreementEditorNotificationsProvider : EditorNotificationProvider, Dum
    * And thus, we don't show such a notification in case a regular project is opened (non-Edu)
    */
   override fun collectNotificationData(project: Project, file: VirtualFile): Function<in FileEditor, out JComponent?>? {
-    if (!project.isEduYamlProject() || UserAgreementSettings.getInstance().isPluginAllowed || isNotificationIgnored()) return null
+    if (!project.isEduYamlProject() || UserAgreementSettings.getInstance().isPluginAllowed || isEditorNotificationIgnored()) return null
 
     return Function {
       EditorNotificationPanel(EditorNotificationPanel.Status.Warning).apply {
@@ -31,7 +31,7 @@ class UserAgreementEditorNotificationsProvider : EditorNotificationProvider, Dum
           UserAgreementManager.getInstance().showUserAgreement(project)
         }
         createActionLabel(EduCoreBundle.message("user.agreement.editor.notification.action.do.not.show.again")) {
-          setIgnoreNotification()
+          setEditorNotificationIgnored(ignored = true)
           EditorNotifications.getInstance(project).updateNotifications(this@UserAgreementEditorNotificationsProvider)
         }
       }

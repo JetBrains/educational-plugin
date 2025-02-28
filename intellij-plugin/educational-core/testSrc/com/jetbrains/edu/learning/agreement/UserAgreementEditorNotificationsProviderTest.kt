@@ -1,15 +1,16 @@
 package com.jetbrains.edu.learning.agreement
 
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.vfs.findFile
 import com.intellij.ui.EditorNotificationPanel
-import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
-import com.jetbrains.edu.learning.findTask
+import com.jetbrains.edu.learning.NotificationsTestBase
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.selectedEditor
 import com.jetbrains.edu.learning.submissions.UserAgreementState
 import org.junit.Test
 
-class UserAgreementEditorNotificationsProviderTest : EduTestCase() {
+class UserAgreementEditorNotificationsProviderTest : NotificationsTestBase() {
   override fun setUp() {
     super.setUp()
     courseWithFiles(createYamlConfigs = true) {
@@ -21,10 +22,11 @@ class UserAgreementEditorNotificationsProviderTest : EduTestCase() {
     }
 
     // Open task file in editor
-    val task = getCourse().findTask("lesson", "task")
-    val taskFile = task.getTaskFile("task.txt") ?: error("Can't find task file for ${task.name}")
-    val virtualFile = taskFile.getVirtualFile(project) ?: error("Can't find virtual file for `${taskFile.name}` task")
+    val virtualFile = project.courseDir.findFile("lesson/task/task.txt") ?: error("Failed to find virtual file for `task.txt`")
     myFixture.openFileInEditor(virtualFile)
+
+    // Reset ignoring notification preference
+    UserAgreementUtil.setEditorNotificationIgnored(ignored = false)
   }
 
   @Test
@@ -53,7 +55,8 @@ class UserAgreementEditorNotificationsProviderTest : EduTestCase() {
       )
     )
 
-    assertEquals(EduCoreBundle.message("user.agreement.editor.notification.text"), getNotificationPanel()?.text)
+    val virtualFile = project.selectedEditor?.virtualFile ?: error("Failed to retrieve virtual file in the editor")
+    checkEditorNotification<UserAgreementEditorNotificationsProvider>(virtualFile, EduCoreBundle.message("user.agreement.editor.notification.text"))
   }
 
   @Test
@@ -65,7 +68,7 @@ class UserAgreementEditorNotificationsProviderTest : EduTestCase() {
       )
     )
     // and
-    UserAgreementUtil.setIgnoreNotification()
+    UserAgreementUtil.setEditorNotificationIgnored(ignored = true)
 
     assertNull(getNotificationPanel())
   }
@@ -74,5 +77,17 @@ class UserAgreementEditorNotificationsProviderTest : EduTestCase() {
     val selectedEditor = FileEditorManager.getInstance(project).selectedEditor
     val notificationData = UserAgreementEditorNotificationsProvider().collectNotificationData(project, selectedEditor?.file!!)
     return notificationData?.apply(selectedEditor) as? EditorNotificationPanel
+  }
+
+  override fun tearDown() {
+    try {
+      UserAgreementUtil.setEditorNotificationIgnored(ignored = false)
+    }
+    catch (e: Throwable) {
+      addSuppressedException(e)
+    }
+    finally {
+      super.tearDown()
+    }
   }
 }

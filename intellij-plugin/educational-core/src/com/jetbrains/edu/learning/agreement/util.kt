@@ -51,9 +51,9 @@ object UserAgreementUtil {
 
   private const val USER_AGREEMENT_NOTIFICATION_IGNORE: String = "edu.user.agreement.editor.notification.ignore"
 
-  fun isNotificationIgnored(): Boolean = PropertiesComponent.getInstance().getBoolean(USER_AGREEMENT_NOTIFICATION_IGNORE, false)
+  fun isEditorNotificationIgnored(): Boolean =
+    PropertiesComponent.getInstance().getBoolean(USER_AGREEMENT_NOTIFICATION_IGNORE, false)
 
-  fun setIgnoreNotification() {
-    PropertiesComponent.getInstance().setValue(USER_AGREEMENT_NOTIFICATION_IGNORE, true)
-  }
+  fun setEditorNotificationIgnored(ignored: Boolean = true) =
+    PropertiesComponent.getInstance().setValue(USER_AGREEMENT_NOTIFICATION_IGNORE, ignored)
 }
