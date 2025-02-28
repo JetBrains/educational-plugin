@@ -90,25 +90,24 @@ fun wrapHintSwing(project: Project, hintElement: Element, displayedHintNumber: S
 
   // all tagged elements should have different href otherwise they are all underlined on hover. That's why
   // we have to add hint number to href
-  fun createHintBlockTemplate(hintElement: Element, displayedHintNumber: String, escapedHintTitle: String): String {
+  fun createHintBlockTemplate(hintHtml: String, displayedHintNumber: String, escapedHintTitle: String): String {
     val iconSize = getHintIconSize()
     return """
       <img src='$bulbIcon' width='$iconSize' height='$iconSize' >
-      <span><a href='$HINT_PROTOCOL$displayedHintNumber' value='${hintElement.text()}'>$escapedHintTitle $displayedHintNumber</a>
+      <span><a href='$HINT_PROTOCOL$displayedHintNumber' value='${hintHtml.xmlEscaped}'>$escapedHintTitle $displayedHintNumber</a>
       $CHEVRON_RIGHT_HTML_BLOCK</span>
     """.trimIndent()
   }
 
   // all tagged elements should have different href otherwise they are all underlined on hover. That's why
   // we have to add hint number to href
-  fun createExpandedHintBlockTemplate(hintElement: Element, displayedHintNumber: String, escapedHintTitle: String): String {
-    val hintText = hintElement.text()
+  fun createExpandedHintBlockTemplate(hintHtml: String, displayedHintNumber: String, escapedHintTitle: String): String {
     val iconSize = getHintIconSize()
     return """ 
         <img src='$bulbIcon' width='$iconSize' height='$iconSize' >
-        <span><a href='$HINT_PROTOCOL$displayedHintNumber' value='$hintText'>$escapedHintTitle $displayedHintNumber</a>
+        <span><a href='$HINT_PROTOCOL$displayedHintNumber' value='${hintHtml.xmlEscaped}'>$escapedHintTitle $displayedHintNumber</a>
         $CHEVRON_DOWN_HTML_BLOCK</span>
-        <div class='hint_text'>$hintText</div>
+        <div class='hint_text'>$hintHtml</div>
      """.trimIndent()
   }
 
@@ -117,11 +116,12 @@ fun wrapHintSwing(project: Project, hintElement: Element, displayedHintNumber: S
   }
   val course = StudyTaskManager.getInstance(project).course
   val escapedHintTitle = hintTitle.xmlEscaped
+  val hintHtml = hintElement.html()
   return if (course != null && !course.isStudy) {
-    createExpandedHintBlockTemplate(hintElement, displayedHintNumber, escapedHintTitle)
+    createExpandedHintBlockTemplate(hintHtml, displayedHintNumber, escapedHintTitle)
   }
   else {
-    createHintBlockTemplate(hintElement, displayedHintNumber, escapedHintTitle)
+    createHintBlockTemplate(hintHtml, displayedHintNumber, escapedHintTitle)
   }
 }
 

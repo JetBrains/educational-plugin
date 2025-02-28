@@ -319,16 +319,71 @@ class HintTestForMarketplaceCourseEduTask : HintsInTaskDescriptionTestBase(false
           </div>
          </div>
          <div class="hint">
-          <img src="" width="0" height="0"> <span><a href="hint://2" value="Text in **HTML** mode Text in Markdown mode">Hint 2</a> <span class="chevron">›</span></span>
+          <img src="" width="0" height="0"> <span><a href="hint://2" value="Text in **HTML** mode 
+      <p>Text in <strong>Markdown</strong> mode</p>">Hint 2</a> <span class="chevron">›</span></span>
          </div>
          <div class="hint">
-          <img src="" width="0" height="0"> <span><a href="hint://3" value="Text in Markdown mode Text in Markdown mode">Hint 3</a> <span class="chevron">›</span></span>
+          <img src="" width="0" height="0"> <span><a href="hint://3" value="<p class=&quot;first-paragraph&quot;>Text in <strong>Markdown</strong> mode</p>
+      <p>Text in <strong>Markdown</strong> mode</p>">Hint 3</a> <span class="chevron">›</span></span>
          </div>
          <div class="hint">
-          <img src="" width="0" height="0"> <span><a href="hint://4" value="Text in **HTML** mode">Hint 4</a> <span class="chevron">›</span></span>
+          <img src="" width="0" height="0"> <span><a href="hint://4" value="<p class=&quot;first-paragraph&quot;>Text in **HTML** mode</p>">Hint 4</a> <span class="chevron">›</span></span>
          </div>
          <div class="hint">
-          <img src="" width="0" height="0"> <span><a href="hint://5" value="Text in **HTML** mode">Hint 5</a> <span class="chevron">›</span></span>
+          <img src="" width="0" height="0"> <span><a href="hint://5" value="<!--no text-->
+      <p class=&quot;first-paragraph&quot;>Text in **HTML** mode</p>">Hint 5</a> <span class="chevron">›</span></span>
+         </div>
+        </div>
+       </body>
+      </html>
+    """.replaceWidthHeightWithFontSize()
+  )
+
+  @Test
+  fun `HTML contents works both in JCEF and SWING`() = doMarkdownTest(
+    """
+      <div class="hint">
+        <div>Title</div>
+        
+        Paragraph with **formatting** and symbols '"&
+      </div>
+    """,
+    """
+      <html>
+       <head>
+        ...
+       </head>
+       <body>
+        <div class="wrapper">
+         <div class="hint">
+          <div class="hint_header">
+           <img src="" style="display: inline-block;"> Hint
+          </div>
+          <div class="hint_content">
+           <div>
+            Title
+           </div>
+           <p>Paragraph with <strong>formatting</strong> and symbols '"&amp;</p>
+          </div>
+         </div>
+        </div>
+       </body>
+      </html>
+    """,
+    """
+      <html>
+       <head>
+        ...
+       </head>
+       <body>
+        <div class="wrapper">
+         <div class="top">
+          <div class="hint">
+           <img src="" width="0" height="0"> <span><a href="hint://" value="<div>
+       Title
+      </div>
+      <p>Paragraph with <strong>formatting</strong> and symbols '&quot;&amp;amp;</p>">Hint </a> <span class="chevron">›</span></span>
+          </div>
          </div>
         </div>
        </body>
