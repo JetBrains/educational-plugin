@@ -11,7 +11,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
-import com.intellij.util.messages.MessageBusConnection
 import com.intellij.xdebugger.*
 import com.jetbrains.edu.aiDebugging.core.ui.AIBreakpointHint
 import com.jetbrains.edu.learning.EduUtilsKt
@@ -27,9 +26,6 @@ import com.jetbrains.educational.ml.ai.debugger.prompt.responses.FixCodeForTestR
 
 class AIDebugSessionRunner(private val project: Project, private val task: Task, private val closeAIDebuggingHint: () -> Unit) {
 
-  private var breakpointHint: AIBreakpointHint? = null
-  private var connection: MessageBusConnection? = null
-
   fun runDebuggingSession(
     testResult: CheckResult,
     fixes: FixCodeForTestResponse,
@@ -42,7 +38,7 @@ class AIDebugSessionRunner(private val project: Project, private val task: Task,
   }
 
   private fun runWithTests(execution: () -> Unit) {
-    createTests(task.getInvisibleTestFiles(), project)
+    createTests(getInvisibleTestFiles(), project)
     try {
       execution()
     } catch (_: Throwable) {
@@ -51,9 +47,8 @@ class AIDebugSessionRunner(private val project: Project, private val task: Task,
   }
 
   private fun debugStopped() {
-    deleteTests(task.getInvisibleTestFiles(), project)
+    deleteTests(getInvisibleTestFiles(), project)
     closeAIDebuggingHint()
-    connection?.disconnect()
     // TODO: make breakpoints regular
   }
 
@@ -61,9 +56,10 @@ class AIDebugSessionRunner(private val project: Project, private val task: Task,
     fixes: FixCodeForTestResponse,
     breakpointHints: BreakpointHintsResponse
   ) {
-    connection = project.messageBus.connect()
-    connection?.subscribe(XDebuggerManager.TOPIC, object : XDebuggerManagerListener {
+    val connection = project.messageBus.connect()
+    connection.subscribe(XDebuggerManager.TOPIC, object : XDebuggerManagerListener {
       override fun processStopped(debugProcess: XDebugProcess) {
+        connection.disconnect()
         debugStopped()
       }
 
@@ -76,6 +72,8 @@ class AIDebugSessionRunner(private val project: Project, private val task: Task,
 
   private fun subscribeToSessionEvents(session: XDebugSession, fixes: FixCodeForTestResponse, breakpointHints: BreakpointHintsResponse) {
     session.addSessionListener(object : XDebugSessionListener {
+      private var breakpointHint: AIBreakpointHint? = null
+
       override fun sessionPaused() {
         super.sessionPaused()
         val position = session.currentPosition ?: return
@@ -108,13 +106,17 @@ class AIDebugSessionRunner(private val project: Project, private val task: Task,
     return lineStartOffset + contentStartOffset
   }
 
-  private fun Task.getInvisibleTestFiles() = taskFiles.values.filter {
-    EduUtilsKt.isTestsFile(this, it.name) && !it.isVisible
+  private fun getInvisibleTestFiles() = task.taskFiles.values.filter {
+    EduUtilsKt.isTestsFile(task, it.name) && !it.isVisible
   }
 
   private fun getRunSettingsForFailedTest(testResult: CheckResult): RunnerAndConfigurationSettings {
-    val methodName = testResult.executedTestsInfo.firstFailed()?.name?.replace(":", ".") ?: error("Method name is not found")
-    val settings = runReadAction { task.getAllTestDirectories(project).firstNotNullOfOrNull {
+    val firstFailedTest = testResult.executedTestsInfo.firstFailed() ?: error("No failed test is found")
+    val methodName = firstFailedTest.name.replace(":", ".")
+    val testDirectories = runReadAction { task.getAllTestDirectories(project) }
+      .ifEmpty { error("Test directories are not found") }
+
+    val settings = runReadAction { testDirectories.firstNotNullOfOrNull {
       ConfigurationContext(it).configurationsFromContext?.firstOrNull()?.configurationSettings
     } } ?: error("No configuration is found")
 

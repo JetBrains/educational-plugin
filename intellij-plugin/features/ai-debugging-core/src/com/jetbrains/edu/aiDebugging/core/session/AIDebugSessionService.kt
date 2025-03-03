@@ -12,6 +12,7 @@ import com.jetbrains.edu.aiDebugging.core.messages.EduAIDebuggingCoreBundle
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.intellij.lang.Language
+import com.intellij.openapi.application.readAction
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.document
@@ -45,12 +46,11 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
         )
       }.onSuccess { fixes ->
         val language = project.course?.languageById ?: error("Language is not found")
-        val intermediateBreakpoints = calculateIntermediateBreakpointPositions(fixes, virtualFiles, language)
-        fixes.groupBy { it.fileName }.mapNotNull { (fileName, fixesForFile) ->
-          fileName to fixesForFile.map { it.wrongCodeLineNumber }
-        }.toMap().toggleLineBreakpoint(virtualFiles, language)
-        intermediateBreakpoints.toggleLineBreakpoint(virtualFiles, language)
-        val breakpointHints = generateIntermediateBreakpointHints(virtualFiles, fixes, intermediateBreakpoints) ?: run {
+        val fileMap = virtualFiles.associateBy { it.name }
+        val intermediateBreakpoints = calculateIntermediateBreakpointPositions(fixes, fileMap, language)
+        fixes.toBreakpointPositionsByFileMap().toggleLineBreakpoint(fileMap, language)
+        intermediateBreakpoints.toggleLineBreakpoint(fileMap, language)
+        val breakpointHints = generateIntermediateBreakpointHints(fileMap, fixes, intermediateBreakpoints) ?: run {
           EduNotificationManager.showErrorNotification(project, content = EduAIDebuggingCoreBundle.message("action.Educational.AiDebuggingNotification.modal.session.fail"))
           return@onSuccess
         }
@@ -64,11 +64,17 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
     }
   }
 
-  private fun calculateIntermediateBreakpointPositions(fixes: FixCodeForTestResponse, virtualFiles: List<VirtualFile>, language: Language) =
+  private fun FixCodeForTestResponse.toBreakpointPositionsByFileMap() =
+    groupBy { it.fileName }.mapNotNull { (fileName, fixesForFile) ->
+      fileName to fixesForFile.map { it.wrongCodeLineNumber }
+    }.toMap()
+
+  private fun calculateIntermediateBreakpointPositions(fixes: FixCodeForTestResponse, fileMap: Map<String, VirtualFile>, language: Language) =
     fixes.groupBy { it.fileName }.mapNotNull { (fileName, fixesForFile) ->
+      val virtualFile = fileMap[fileName] ?: return@mapNotNull null
       fileName to runReadAction {
         IntermediateBreakpointProcessor.calculateIntermediateBreakpointPositions(
-          virtualFiles.getVirtualFile(fileName),
+          virtualFile,
           fixesForFile.map { it.wrongCodeLineNumber }.toList(),
           project,
           language
@@ -76,45 +82,60 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
       }
     }.toMap()
 
-  private fun Map<String, List<Int>>.toggleLineBreakpoint(virtualFiles: List<VirtualFile>, language: Language) {
+  private fun Map<String, List<Int>>.toggleLineBreakpoint(fileMap: Map<String, VirtualFile>, language: Language) {
     forEach { (fileName, positions) ->
+      val virtualFile = fileMap[fileName] ?: error("Virtual file is not found")
       positions.forEach { position ->
         project.getService(AIBreakPointService::class.java)
-          .toggleLineBreakpoint(language, virtualFiles.getVirtualFile(fileName), position)
+          .toggleLineBreakpoint(language, virtualFile, position)
       }
     }
   }
 
   private suspend fun generateIntermediateBreakpointHints(
-    virtualFiles: List<VirtualFile>,
+    fileMap: Map<String, VirtualFile>,
     fixes: FixCodeForTestResponse,
     intermediateBreakpointPositions: Map<String, List<Int>>
   ): BreakpointHintsResponse? {
-    val finalBreakpoints = fixes.map {
-      val line = virtualFiles.getVirtualFile(it.fileName).getLine(it.wrongCodeLineNumber)
+    val finalBreakpoints = fixes.mapNotNull {
+      val virtualFile = fileMap[it.fileName] ?: return@mapNotNull null
+      val line = virtualFile.getLine(it.wrongCodeLineNumber)
       FinalBreakpoint(it.fileName, it.wrongCodeLineNumber, line, it.breakpointHint)
     }
     val intermediateBreakpoint = intermediateBreakpointPositions.map { (fileName, positions) ->
-      positions.map { position ->
-        val line = virtualFiles.getVirtualFile(fileName).getLine(position)
+      positions.mapNotNull { position ->
+        val virtualFile = fileMap[fileName] ?: return@mapNotNull null
+        val line = virtualFile.getLine(position)
         IntermediateBreakpoint(fileName, position, line)
       }
     }.flatten()
     return withModalProgress(project, EduAIDebuggingCoreBundle.message("action.Educational.AiDebuggingNotification.modal.session")) {
-      BreakpointHintAssistant.getBreakpointHints(virtualFiles.toNumberedLineMap(), finalBreakpoints, intermediateBreakpoint)
+      BreakpointHintAssistant.getBreakpointHints(fileMap.toNumberedLineMap(), finalBreakpoints, intermediateBreakpoint)
     }.getOrNull()
   }
 
-  private fun List<VirtualFile>.getVirtualFile(fileName: String) = firstOrNull { file -> file.name == fileName }
-                                                                   ?: error("Virtual file is not found")
-
-  private fun VirtualFile.getLine(line: Int): String = runReadAction {
-    val document = FileDocumentManager.getInstance().getDocument(this) ?: error("Document is not found")
-    if (line < 0 || line >= document.lineCount) error("Line number $line is out of bounds")
-    document.text.substring(document.getLineStartOffset(line), document.getLineEndOffset(line)).trim()
+  private suspend fun VirtualFile.getLine(line: Int): String {
+    val document = readAction { FileDocumentManager.getInstance().getDocument(this) } ?: error("Document is not found")
+    if (line < 0 || line >= document.lineCount) {
+      error("Line number $line is out of bounds")
+    }
+    return document.text.substring(document.getLineStartOffset(line), document.getLineEndOffset(line)).trim()
   }
 
-  private fun List<VirtualFile>.toNumberedLineMap() = runReadAction {
-    associate { it.name to it.document.text.lines().mapIndexed { index, line -> "$index: $line" }.joinToString(System.lineSeparator()) }
+  private fun List<VirtualFile>.toNumberedLineMap() = toNumberedLineMap { list ->
+    list.asSequence().map { it.name to it }
   }
+
+  private fun Map<String, VirtualFile>.toNumberedLineMap() = toNumberedLineMap { map ->
+    map.asSequence().map { (name, virtualFile) -> name to virtualFile }
+  }
+
+  private fun <T> T.toNumberedLineMap(getVirtualFile: (T) -> Sequence<Pair<String, VirtualFile>>) = runReadAction {
+    getVirtualFile(this).associate { (name, virtualFile) ->
+      name to virtualFile.document.text.lines()
+        .mapIndexed { index, line -> "$index: $line" }
+        .joinToString(System.lineSeparator())
+    }
+  }
+
 }
