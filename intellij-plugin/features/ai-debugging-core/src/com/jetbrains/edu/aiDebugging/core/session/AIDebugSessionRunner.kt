@@ -104,7 +104,8 @@ class AIDebugSessionRunner(private val project: Project, private val task: Task,
     val document = editor.document
     val lineStartOffset = document.getLineStartOffset(line)
     val lineText = document.getText(TextRange(lineStartOffset, document.getLineEndOffset(line)))
-    return lineStartOffset + (lineText.indexOfFirst { !it.isWhitespace() }.takeIf { it != -1 } ?: 0)
+    val contentStartOffset = lineText.indexOfFirst { !it.isWhitespace() }.takeIf { it != -1 } ?: 0
+    return lineStartOffset + contentStartOffset
   }
 
   private fun Task.getInvisibleTestFiles() = taskFiles.values.filter {
