@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 import com.jetbrains.educational.ml.ai.debugger.prompt.core.BreakpointHintAssistant
 import com.jetbrains.educational.ml.ai.debugger.prompt.prompt.entities.breakpoint.FinalBreakpoint
 import com.jetbrains.educational.ml.ai.debugger.prompt.prompt.entities.breakpoint.IntermediateBreakpoint
-import com.jetbrains.educational.ml.ai.debugger.prompt.responses.BreakpointHintResponse
+import com.jetbrains.educational.ml.ai.debugger.prompt.responses.BreakpointHintsResponse
 
 @Service(Service.Level.PROJECT)
 class AIDebugSessionService(private val project: Project, private val coroutineScope: CoroutineScope) {
@@ -89,7 +89,7 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
     virtualFiles: List<VirtualFile>,
     fixes: FixCodeForTestResponse,
     intermediateBreakpointPositions: Map<String, List<Int>>
-  ): BreakpointHintResponse? {
+  ): BreakpointHintsResponse? {
     val finalBreakpoints = fixes.map {
       val line = virtualFiles.getVirtualFile(it.fileName).getLine(it.wrongCodeLineNumber)
       FinalBreakpoint(it.fileName, it.wrongCodeLineNumber, line, it.breakpointHint)

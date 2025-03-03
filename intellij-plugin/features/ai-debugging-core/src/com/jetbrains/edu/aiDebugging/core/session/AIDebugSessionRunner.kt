@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.EduTestInfo.Companion.firstFailed
 import com.jetbrains.edu.learning.courseFormat.ext.getAllTestDirectories
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.getEditor
-import com.jetbrains.educational.ml.ai.debugger.prompt.responses.BreakpointHintResponse
+import com.jetbrains.educational.ml.ai.debugger.prompt.responses.BreakpointHintsResponse
 import com.jetbrains.educational.ml.ai.debugger.prompt.responses.FixCodeForTestResponse
 
 class AIDebugSessionRunner(private val project: Project, private val task: Task, private val closeAIDebuggingHint: () -> Unit) {
@@ -33,7 +33,7 @@ class AIDebugSessionRunner(private val project: Project, private val task: Task,
   fun runDebuggingSession(
     testResult: CheckResult,
     fixes: FixCodeForTestResponse,
-    breakpointHints: BreakpointHintResponse
+    breakpointHints: BreakpointHintsResponse
   ) {
     runWithTests {
       startDebugSession(getRunSettingsForFailedTest(testResult))
@@ -59,7 +59,7 @@ class AIDebugSessionRunner(private val project: Project, private val task: Task,
 
   private fun subscribeToDebuggerEvents(
     fixes: FixCodeForTestResponse,
-    breakpointHints: BreakpointHintResponse
+    breakpointHints: BreakpointHintsResponse
   ) {
     connection = project.messageBus.connect()
     connection?.subscribe(XDebuggerManager.TOPIC, object : XDebuggerManagerListener {
@@ -74,17 +74,13 @@ class AIDebugSessionRunner(private val project: Project, private val task: Task,
     })
   }
 
-  private fun subscribeToSessionEvents(session: XDebugSession, fixes: FixCodeForTestResponse, breakpointHints: BreakpointHintResponse) {
+  private fun subscribeToSessionEvents(session: XDebugSession, fixes: FixCodeForTestResponse, breakpointHints: BreakpointHintsResponse) {
     session.addSessionListener(object : XDebugSessionListener {
       override fun sessionPaused() {
         super.sessionPaused()
         val position = session.currentPosition ?: return
         val editor = position.file.getEditor(project) ?: return
-        val message = fixes.firstOrNull {
-          it.fileName == position.file.name && it.wrongCodeLineNumber == position.line
-        }?.breakpointHint ?: breakpointHints.content.firstOrNull {
-          it.fileName == position.file.name && it.lineNumber == position.line
-        }?.hint ?: error("No breakpoint hint is found")
+        val message = fixes.getHint(position) ?: breakpointHints.getHint(position) ?: error("No breakpoint hint is found")
         breakpointHint?.close()
         breakpointHint = AIBreakpointHint(message, editor, getTextStartOffset(editor, position.line))
       }
@@ -93,6 +89,14 @@ class AIDebugSessionRunner(private val project: Project, private val task: Task,
         super.sessionResumed()
         breakpointHint?.close()
       }
+      
+      private fun FixCodeForTestResponse.getHint(position: XSourcePosition): String? = firstOrNull {
+        it.fileName == position.file.name && it.wrongCodeLineNumber == position.line
+      }?.breakpointHint
+      
+      private fun BreakpointHintsResponse.getHint(position: XSourcePosition): String? = content.firstOrNull {
+        it.fileName == position.file.name && it.lineNumber == position.line
+      }?.hint
     })
   }
 
