@@ -236,4 +236,103 @@ class HintTestForMarketplaceCourseEduTask : HintsInTaskDescriptionTestBase(false
       </html>
     """.replaceWidthHeightWithFontSize()
   )
+
+  @Test
+  fun `first-paragraph CSS class is added to the first paragraph if there is no text before it`() = doMarkdownTest(
+    """
+      <div class="hint">Text in **HTML** mode</div>
+      <div class="hint">
+        Text in **HTML** mode
+
+        Text in **Markdown** mode
+      </div>
+      <div class="hint">
+      
+        Text in **Markdown** mode
+        
+        Text in **Markdown** mode
+      </div>
+      <div class="hint"><p>Text in **HTML** mode</p></div>
+      <div class="hint">  <!--no text-->  <p>Text in **HTML** mode</p></div>
+    """, """
+      <html>
+       <head>
+        ...
+       </head>
+       <body>
+        <div class="wrapper">
+         <div class="hint">
+          <div class="hint_header">
+           <img src="" style="display: inline-block;"> Hint 1
+          </div>
+          <div class="hint_content">
+           Text in **HTML** mode
+          </div>
+         </div>
+         <div class="hint">
+          <div class="hint_header">
+           <img src="" style="display: inline-block;"> Hint 2
+          </div>
+          <div class="hint_content">
+           Text in **HTML** mode 
+           <p>Text in <strong>Markdown</strong> mode</p>
+          </div>
+         </div>
+         <div class="hint">
+          <div class="hint_header">
+           <img src="" style="display: inline-block;"> Hint 3
+          </div>
+          <div class="hint_content">
+           <p class="first-paragraph">Text in <strong>Markdown</strong> mode</p>
+           <p>Text in <strong>Markdown</strong> mode</p>
+          </div>
+         </div>
+         <div class="hint">
+          <div class="hint_header">
+           <img src="" style="display: inline-block;"> Hint 4
+          </div>
+          <div class="hint_content">
+           <p class="first-paragraph">Text in **HTML** mode</p>
+          </div>
+         </div>
+         <div class="hint">
+          <div class="hint_header">
+           <img src="" style="display: inline-block;"> Hint 5
+          </div>
+          <div class="hint_content">
+           <p class="first-paragraph">Text in **HTML** mode</p>
+          </div>
+         </div>
+        </div>
+       </body>
+      </html>
+    """, """
+      <html>
+       <head>
+        ...
+       </head>
+       <body>
+        <div class="wrapper">
+         <div class="top">
+          <div class="hint">
+           <img src="" width="0" height="0"> <span><a href="hint://1" value="Text in **HTML** mode">Hint 1</a> <span class="chevron">›</span></span>
+          </div>
+         </div>
+         <div class="hint">
+          <img src="" width="0" height="0"> <span><a href="hint://2" value="Text in **HTML** mode Text in Markdown mode">Hint 2</a> <span class="chevron">›</span></span>
+         </div>
+         <div class="hint">
+          <img src="" width="0" height="0"> <span><a href="hint://3" value="Text in Markdown mode Text in Markdown mode">Hint 3</a> <span class="chevron">›</span></span>
+         </div>
+         <div class="hint">
+          <img src="" width="0" height="0"> <span><a href="hint://4" value="Text in **HTML** mode">Hint 4</a> <span class="chevron">›</span></span>
+         </div>
+         <div class="hint">
+          <img src="" width="0" height="0"> <span><a href="hint://5" value="Text in **HTML** mode">Hint 5</a> <span class="chevron">›</span></span>
+         </div>
+        </div>
+       </body>
+      </html>
+    """.replaceWidthHeightWithFontSize()
+  )
 }
