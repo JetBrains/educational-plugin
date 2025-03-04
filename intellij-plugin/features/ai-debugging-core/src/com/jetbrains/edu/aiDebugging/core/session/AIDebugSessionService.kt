@@ -5,7 +5,6 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.platform.ide.progress.withModalProgress
 import com.jetbrains.edu.aiDebugging.core.breakpoint.AIBreakPointService
 import com.jetbrains.edu.aiDebugging.core.breakpoint.IntermediateBreakpointProcessor
 import com.jetbrains.edu.aiDebugging.core.messages.EduAIDebuggingCoreBundle
@@ -13,6 +12,9 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.intellij.lang.Language
 import com.intellij.openapi.application.readAction
+import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.document
@@ -26,41 +28,54 @@ import com.jetbrains.educational.ml.ai.debugger.prompt.core.BreakpointHintAssist
 import com.jetbrains.educational.ml.ai.debugger.prompt.prompt.entities.breakpoint.FinalBreakpoint
 import com.jetbrains.educational.ml.ai.debugger.prompt.prompt.entities.breakpoint.IntermediateBreakpoint
 import com.jetbrains.educational.ml.ai.debugger.prompt.responses.BreakpointHintsResponse
+import java.util.concurrent.atomic.AtomicBoolean
 
 @Service(Service.Level.PROJECT)
 class AIDebugSessionService(private val project: Project, private val coroutineScope: CoroutineScope) {
 
-  fun runDebuggingSession(
+  private val lock = AtomicBoolean(false)
+
+  private val isRunning: Boolean
+    get() = lock.get()
+
+  private fun runDebuggingSession(
     task: Task,
     description: TaskDescription,
     virtualFiles: List<VirtualFile>,
     testResult: CheckResult,
     closeAIDebuggingHint: () -> Unit
   ) {
-    coroutineScope.launch {
-      withModalProgress(project, EduAIDebuggingCoreBundle.message("action.Educational.AiDebuggingNotification.modal.session")) {
-        FixCodeForTestAssistant.getCodeFix(
-          description,
-          virtualFiles.toNumberedLineMap(),
-          testResult.details ?: testResult.message
-        )
-      }.onSuccess { fixes ->
-        val language = project.course?.languageById ?: error("Language is not found")
-        val fileMap = virtualFiles.associateBy { it.name }
-        val intermediateBreakpoints = calculateIntermediateBreakpointPositions(fixes, fileMap, language)
-        fixes.toBreakpointPositionsByFileMap().toggleLineBreakpoint(fileMap, language)
-        intermediateBreakpoints.toggleLineBreakpoint(fileMap, language)
-        val breakpointHints = generateIntermediateBreakpointHints(fileMap, fixes, intermediateBreakpoints) ?: run {
-          EduNotificationManager.showErrorNotification(project, content = EduAIDebuggingCoreBundle.message("action.Educational.AiDebuggingNotification.modal.session.fail"))
-          return@onSuccess
+    if (lock.compareAndSet(false, true)) {
+      coroutineScope.launch {
+        withBackgroundProgress(project, EduAIDebuggingCoreBundle.message("action.Educational.AiDebuggingNotification.modal.session")) {
+          FixCodeForTestAssistant.getCodeFix(
+            description,
+            virtualFiles.toNumberedLineMap(),
+            testResult.details ?: testResult.message
+          )
+        }.onSuccess { fixes ->
+          val language = project.course?.languageById ?: error("Language is not found")
+          val fileMap = virtualFiles.associateBy { it.name }
+          val intermediateBreakpoints = calculateIntermediateBreakpointPositions(fixes, fileMap, language)
+          fixes.toBreakpointPositionsByFileMap().toggleLineBreakpoint(fileMap, language)
+          intermediateBreakpoints.toggleLineBreakpoint(fileMap, language)
+          val breakpointHints = generateIntermediateBreakpointHints(fileMap, fixes, intermediateBreakpoints) ?: run {
+            EduNotificationManager.showErrorNotification(
+              project,
+              content = EduAIDebuggingCoreBundle.message("action.Educational.AiDebuggingNotification.modal.session.fail")
+            )
+            return@onSuccess
+          }
+          AIDebugSessionRunner(project, task, closeAIDebuggingHint).runDebuggingSession(testResult, fixes, breakpointHints)
+        }.onFailure {
+          EduNotificationManager.showErrorNotification(
+            project,
+            content = EduAIDebuggingCoreBundle.message("action.Educational.AiDebuggingNotification.modal.session.fail")
+          )
         }
-        AIDebugSessionRunner(project, task, closeAIDebuggingHint).runDebuggingSession(testResult, fixes, breakpointHints)
-      }.onFailure {
-        EduNotificationManager.showErrorNotification(
-          project,
-          content = EduAIDebuggingCoreBundle.message("action.Educational.AiDebuggingNotification.modal.session.fail")
-        )
       }
+    } else {
+      LOG.error("AI Debug session is already running")
     }
   }
 
@@ -109,7 +124,7 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
         IntermediateBreakpoint(fileName, position, line)
       }
     }.flatten()
-    return withModalProgress(project, EduAIDebuggingCoreBundle.message("action.Educational.AiDebuggingNotification.modal.session")) {
+    return withBackgroundProgress(project, EduAIDebuggingCoreBundle.message("action.Educational.AiDebuggingNotification.modal.session")) {
       BreakpointHintAssistant.getBreakpointHints(fileMap.toNumberedLineMap(), finalBreakpoints, intermediateBreakpoint)
     }.getOrNull()
   }
@@ -135,6 +150,23 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
       name to virtualFile.document.text.lines()
         .mapIndexed { index, line -> "$index: $line" }
         .joinToString(System.lineSeparator())
+    }
+  }
+
+  companion object {
+    private val LOG = Logger.getInstance(AIDebugSessionService::class.java)
+
+    fun Project.runDebuggingSession(
+      task: Task,
+      description: TaskDescription,
+      virtualFiles: List<VirtualFile>,
+      testResult: CheckResult,
+      closeAIDebuggingHint: () -> Unit
+    ) {
+      val service = service<AIDebugSessionService>()
+      if (!service.isRunning) {
+        service.runDebuggingSession(task, description, virtualFiles, testResult, closeAIDebuggingHint)
+      }
     }
   }
 
