@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val environmentName: String by project
 // BACKCOMPAT: 2024.2. Drop it, it's always true
 val isAtLeast243: Boolean = environmentName.toInt() >= 243
+val isAtLeast251: Boolean = environmentName.toInt() >= 251
 
 val pluginVersion: String by project
 val platformVersion: String = "20${StringBuilder(environmentName).insert(environmentName.length - 1, '.')}"
@@ -100,10 +101,11 @@ val cppPlugins = listOf(
   "org.jetbrains.plugins.clion.test.catch"
 )
 
-val sqlPlugins = listOf(
+val sqlPlugins = listOfNotNull(
   sqlPlugin,
   // https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1791
-  "intellij.charts"
+  "intellij.charts",
+  "intellij.grid.plugin".takeIf { isAtLeast251 }
 )
 
 val csharpPlugins = listOf(
@@ -548,6 +550,9 @@ project("code-insight:yaml") {
       intellijIde(project, baseVersion)
 
       intellijPlugins(yamlPlugin)
+      if (isAtLeast251) {
+        intellijPlugins(jsonPlugin)
+      }
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -847,6 +852,7 @@ project("Edu-Go") {
       if (isAtLeast243) {
         intellijPlugins(jsonPlugin)
       }
+      bundledModules("com.intellij.modules.ultimate")
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -864,6 +870,7 @@ project("Edu-Php") {
       if (isAtLeast243) {
         intellijPlugins(jsonPlugin)
       }
+      bundledModules("com.intellij.modules.ultimate")
     }
 
     implementation(project(":intellij-plugin:educational-core"))
