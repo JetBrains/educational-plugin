@@ -316,7 +316,11 @@ dependencies {
     pluginModule(implementation(project("sql")))
     pluginModule(implementation(project("sql:sql-jvm")))
     pluginModule(implementation(project("github")))
-    pluginModule(implementation(project("remote-env")))
+    // Temporary workaround to make it work with 2025.1.
+    // Will be fixed automatically after migration to IJPGP 2.4
+    if (!isAtLeast251) {
+      pluginModule(implementation(project("remote-env")))
+    }
     pluginModule(implementation(project("features:command-line")))
     pluginModule(implementation(project("features:ai-hints-core")))
     pluginModule(implementation(project("features:ai-hints-kotlin")))
@@ -579,18 +583,22 @@ project("jvm-core") {
   }
 }
 
-project("remote-env") {
-  dependencies {
-    intellijPlatform {
-      val ideVersion = if (isStudioIDE || isRiderIDE) ideaVersion else baseVersion
-      intellijIde(project, ideVersion)
+// Temporary workaround to make it work with 2025.1.
+// Will be fixed automatically after migration to IJPGP 2.4
+if (!isAtLeast251) {
+  project("remote-env") {
+    dependencies {
+      intellijPlatform {
+        val ideVersion = if (isStudioIDE || isRiderIDE) ideaVersion else baseVersion
+        intellijIde(project, ideVersion)
 
-      intellijPlugins(codeWithMePlugin)
+        intellijPlugins(codeWithMePlugin)
+      }
+
+      implementation(project(":intellij-plugin:educational-core"))
+
+      testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
     }
-
-    implementation(project(":intellij-plugin:educational-core"))
-
-    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
   }
 }
 
@@ -1169,6 +1177,10 @@ fun manifestFile(project: Project): File? {
     }
     ":intellij-plugin:educational-core", ":intellij-plugin:code-insight",
     ":intellij-plugin:Edu-Python:Idea", ":intellij-plugin:Edu-Python:PyCharm" -> return manifestFile(project.parent!!)
+    ":intellij-plugin:remote-env" -> {
+      // TODO: drop it after inlining `platform-plugin.xml`
+      filePath = "remote-env.xml"
+    }
     // Localization module is not supposed to have a plugin manifest.
     // Since it also is not supposed to have any code, only resources, no need to verify anything for it
     ":intellij-plugin:localization" -> return null
