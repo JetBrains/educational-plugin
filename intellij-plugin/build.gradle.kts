@@ -316,7 +316,7 @@ dependencies {
     pluginModule(implementation(project("sql")))
     pluginModule(implementation(project("sql:sql-jvm")))
     pluginModule(implementation(project("github")))
-    pluginModule(implementation(project("remote-env")))
+//    pluginModule(implementation(project("remote-env")))
     pluginModule(implementation(project("features:command-line")))
     pluginModule(implementation(project("features:ai-hints-core")))
     pluginModule(implementation(project("features:ai-hints-kotlin")))
@@ -578,20 +578,20 @@ project("jvm-core") {
   }
 }
 
-project("remote-env") {
-  dependencies {
-    intellijPlatform {
-      val ideVersion = if (isStudioIDE || isRiderIDE) ideaVersion else baseVersion
-      intellijIde(project, ideVersion)
-
-      intellijPlugins(codeWithMePlugin)
-    }
-
-    implementation(project(":intellij-plugin:educational-core"))
-
-    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-  }
-}
+//project("remote-env") {
+//  dependencies {
+//    intellijPlatform {
+//      val ideVersion = if (isStudioIDE || isRiderIDE) ideaVersion else baseVersion
+//      intellijIde(project, ideVersion)
+//
+//      intellijPlugins(codeWithMePlugin)
+//    }
+//
+//    implementation(project(":intellij-plugin:educational-core"))
+//
+//    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+//  }
+//}
 
 project("AI") {
   dependencies {

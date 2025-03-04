@@ -36,7 +36,7 @@
     <module name="sql-core"/>
     <module name="sql-jvm"/>
     <module name="github"/>
-    <module name="remote-env"/>
+<!--    <module name="remote-env"/>-->
 
     <!-- feature modules -->
     <module name="command-line"/>
