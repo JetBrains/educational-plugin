@@ -101,6 +101,7 @@ class CodeDependencyAnalyzerTest : EduTestCase() {
     dependencies.map { it.text.trimToFirstLine() }.toHashSet()
   }.mapKeys { it.key.text.trimToFirstLine() }
 
+  @Suppress("SameParameterValue")
   private fun PsiFile.function(name: String) =
     PsiTreeUtil.findChildrenOfType(this, org.jetbrains.kotlin.psi.KtFunction::class.java).find { it.name == name }
 
