@@ -7,6 +7,7 @@ import com.intellij.execution.runners.ExecutionEnvironmentBuilder
 import com.intellij.execution.runners.ProgramRunner
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration
 import com.intellij.openapi.project.Project
@@ -41,7 +42,8 @@ class AIDebugSessionRunner(private val project: Project, private val task: Task,
     createTests(getInvisibleTestFiles(), project)
     try {
       execution()
-    } catch (_: Throwable) {
+    } catch (e: Throwable) {
+      LOG.error("Failed to start debugger session", e)
       debugStopped()
     }
   }
@@ -131,5 +133,9 @@ class AIDebugSessionRunner(private val project: Project, private val task: Task,
   private fun startDebugSession(settings: RunnerAndConfigurationSettings) = runInEdt {
     val environment = ExecutionEnvironmentBuilder.create(DefaultDebugExecutor.getDebugExecutorInstance(), settings).activeTarget().build()
     ProgramRunner.getRunner(DefaultDebugExecutor.EXECUTOR_ID, settings.configuration)?.execute(environment)
+  }
+
+  companion object {
+    private val LOG: Logger = Logger.getInstance(AIDebugSessionRunner::class.java)
   }
 }
