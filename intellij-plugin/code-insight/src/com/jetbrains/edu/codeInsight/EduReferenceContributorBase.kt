@@ -8,7 +8,7 @@ import com.intellij.psi.PsiReferenceRegistrar
 
 abstract class EduReferenceContributorBase : PsiReferenceContributor() {
   protected fun PsiReferenceRegistrar.registerEduReferenceProvider(provider: EduPsiReferenceProvider) {
-    registerReferenceProvider(provider.pattern, provider)
+    registerReferenceProvider(provider.pattern, provider, PsiReferenceRegistrar.HIGHER_PRIORITY)
   }
 }
 
