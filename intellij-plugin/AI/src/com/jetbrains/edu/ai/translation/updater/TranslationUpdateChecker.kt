@@ -42,8 +42,7 @@ class TranslationUpdateChecker(private val project: Project) {
       name = EduCoreBundle.message("update.action"),
       action = updateAction
     )
-    AITranslationNotificationManager.showInfoNotification(
-      project,
+    AITranslationNotificationManager.getInstance(project).showInfoNotification(
       message = EduAIBundle.message("ai.translation.an.updated.version.of.the.translation.is.available"),
       actionLabel = actionLabel
     )

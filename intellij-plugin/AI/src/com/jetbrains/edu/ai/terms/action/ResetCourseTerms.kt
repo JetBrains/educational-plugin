@@ -13,7 +13,7 @@ class ResetCourseTerms : AITheoryLookupActionBase() {
     val course = project.course as? EduCourse ?: return
     if (isActionUnavailable(project, course)) return
 
-    AITermsNotificationManager.closeExistingNotifications(project)
+    AITermsNotificationManager.getInstance(project).closeExistingNotifications()
     TermsLoader.getInstance(project).resetTerms()
   }
 

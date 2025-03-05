@@ -14,7 +14,7 @@ class ResetCourseTranslation : AITranslationActionBase() {
     val course = project.course as? EduCourse ?: return
     if (isActionUnavailable(project, course)) return
 
-    AITranslationNotificationManager.closeExistingNotifications(project)
+    AITranslationNotificationManager.getInstance(project).closeExistingNotifications()
     TranslationLoader.getInstance(project).resetCourseTranslation(course)
   }
 

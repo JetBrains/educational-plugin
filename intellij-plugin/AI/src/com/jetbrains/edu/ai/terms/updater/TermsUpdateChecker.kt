@@ -47,8 +47,7 @@ class TermsUpdateChecker(private val project: Project) {
       name = EduCoreBundle.message("update.action"),
       action = updateAction
     )
-    AITermsNotificationManager.showInfoNotification(
-      project,
+    AITermsNotificationManager.getInstance(project).showInfoNotification(
       message = EduAIBundle.message("ai.terms.an.updated.version.of.the.terms.is.available"),
       actionLabel = actionLabel
     )

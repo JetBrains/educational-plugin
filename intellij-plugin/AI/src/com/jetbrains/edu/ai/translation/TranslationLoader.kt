@@ -43,6 +43,9 @@ import java.io.IOException
 class TranslationLoader(private val project: Project, private val scope: CoroutineScope) {
   private val mutex = Mutex()
 
+  private val translationNotificationManager: AITranslationNotificationManager
+    get() = AITranslationNotificationManager.getInstance(project)
+
   init {
     scope.launch {
       TranslationSettings.getInstance().autoTranslationSettings.collectLatest { properties ->
@@ -125,18 +128,12 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
       }
       val translationSettings = TranslationProjectSettings.getInstance(project)
       if (version == translation.version) {
-        AITranslationNotificationManager.showInfoNotification(
-          project,
-          message = EduAIBundle.message("ai.translation.translation.is.up.to.date")
-        )
+        translationNotificationManager.showInfoNotification(EduAIBundle.message("ai.translation.translation.is.up.to.date"))
         return@withBackgroundProgress
       }
       course.saveTranslation(translation)
       translationSettings.setTranslation(translation.toTranslationProperties())
-      AITranslationNotificationManager.showInfoNotification(
-        project,
-        message = EduAIBundle.message("ai.translation.translation.has.been.updated")
-      )
+      translationNotificationManager.showInfoNotification(EduAIBundle.message("ai.translation.translation.has.been.updated"))
       EduAIFeaturesCounterUsageCollector.translationUpdated(course, translation.language)
     }
 
@@ -167,7 +164,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
         }
       }
       else {
-        AITranslationNotificationManager.showErrorNotification(project, message = lockNotAcquiredNotificationText)
+        translationNotificationManager.showErrorNotification(lockNotAcquiredNotificationText)
       }
     }
   }
@@ -186,7 +183,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
             fetchAndApplyTranslation(course, language)
           }
         )
-        AITranslationNotificationManager.showErrorNotification(project, message = translation.error.message(), actionLabel = actionLabel)
+        translationNotificationManager.showErrorNotification(message = translation.error.message(), actionLabel = actionLabel)
       }
       return@withContext translation
     }
