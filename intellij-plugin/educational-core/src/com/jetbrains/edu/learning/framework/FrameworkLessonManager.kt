@@ -6,6 +6,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduTestAware
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.framework.impl.FLTaskState
 
 interface FrameworkLessonManager : EduTestAware {
   fun prepareNextTask(lesson: FrameworkLesson, taskDir: VirtualFile, showDialogIfConflict: Boolean)
@@ -15,6 +16,8 @@ interface FrameworkLessonManager : EduTestAware {
   fun updateUserChanges(task: Task, newInitialState: Map<String, String>)
 
   fun getChangesTimestamp(task: Task): Long
+
+  fun getTaskInitialState(task: Task): FLTaskState
 
   /**
    * Retrieves the state of a given task in a framework lesson.

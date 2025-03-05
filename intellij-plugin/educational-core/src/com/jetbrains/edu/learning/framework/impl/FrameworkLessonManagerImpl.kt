@@ -118,11 +118,13 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     return storage.getUserChanges(task.record).timestamp
   }
 
+  override fun getTaskInitialState(task: Task): FLTaskState = task.allFiles
+
   override fun getTaskState(lesson: FrameworkLesson, task: Task): Map<String, String> {
     require(task.lesson == lesson) {
       "The task is not a part of this lesson"
     }
-    val initialFiles = task.allFiles
+    val initialFiles = getTaskInitialState(task)
     val changes = if (lesson.currentTaskIndex + 1 == task.index) {
       val taskDir = task.getDir(project.courseDir) ?: return emptyMap()
       getUserChangesFromFiles(initialFiles, taskDir)
