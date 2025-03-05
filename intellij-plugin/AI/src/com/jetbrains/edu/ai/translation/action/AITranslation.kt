@@ -31,7 +31,7 @@ class AITranslation : AITranslationActionBase() {
     val course = project.course as? EduCourse ?: return
     if (isActionUnavailable(project, course)) return
 
-    AITranslationNotificationManager.closeExistingNotifications(project)
+    AITranslationNotificationManager.getInstance(project).closeExistingNotifications()
 
     val popup = CourseTranslationPopup(project, course)
     val relativePoint = JBPopupFactory.getInstance().guessBestPopupLocation(this, e)
