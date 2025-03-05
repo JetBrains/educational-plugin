@@ -401,7 +401,7 @@
     <renamePsiElementProcessor implementation="com.jetbrains.edu.learning.handlers.rename.EduTaskFileRenameProcessor" order="first"/>
 
     <!-- Move -->
-    <refactoring.moveHandler implementation="com.jetbrains.edu.learning.handlers.EduMoveDelegate" order="first"/>
+    <refactoring.moveHandler implementation="com.jetbrains.edu.learning.handlers.EduMoveDelegate" order="first, before kotlin.moveMethod"/>
 
     <!-- Notifications   -->
     <editorNotificationProvider
@@ -437,11 +437,11 @@
 
     <!-- Move -->
     <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.move.CCSectionMoveHandlerDelegate"
-                             order="first"/>
+                             order="first, before kotlin.moveMethod"/>
     <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.move.CCLessonMoveHandlerDelegate"
-                             order="first"/>
+                             order="first, before kotlin.moveMethod"/>
     <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.move.CCTaskMoveHandlerDelegate"
-                             order="first"/>
+                             order="first, before kotlin.moveMethod"/>
 
     <highlightErrorFilter implementation="com.jetbrains.edu.coursecreator.CCHighlightErrorFilter"/>
 
