@@ -14,18 +14,33 @@ abstract class LessonUpdater(project: Project, private val container: LessonCont
   protected abstract fun createTaskUpdater(lesson: Lesson): TaskUpdater
 
   suspend fun collect(remoteContainer: ItemContainer): List<LessonUpdate> {
-    // EDU-6560 Implement new framework lesson update logic for Hyperskill and Marketplace
-    val localLessons = container.items.filterIsInstance<Lesson>().filter { it !is FrameworkLesson }
-    val remoteLessons = remoteContainer.items.filterIsInstance<Lesson>().filter { it !is FrameworkLesson }
+    val localLessons = container.items.filterIsInstance<Lesson>()
+    val remoteLessons = remoteContainer.items.filterIsInstance<Lesson>()
     return collect(localLessons, remoteLessons)
   }
 
   override suspend fun collect(localItems: List<Lesson>, remoteItems: List<Lesson>): List<LessonUpdate> {
+    // We assume that standard and framework lessons are updated independently,
+    // so we don't support the situation when a remote lesson became framework or vice versa.
+    val (localFrameworkLessons, localLessons) = localItems.partition { it is FrameworkLesson }
+    val (remoteFrameworkLessons, remoteLessons) = remoteItems.partition { it is FrameworkLesson }
+
+    val frameworkLessonUpdates = collectLessons(localFrameworkLessons, remoteFrameworkLessons, isFramework = true)
+    val lessonUpdates = collectLessons(localLessons, remoteLessons, isFramework = false)
+
+    return frameworkLessonUpdates + lessonUpdates
+  }
+
+  /**
+   * If [isFramework] is true, both lists must contain [FrameworkLesson].
+   */
+  suspend fun collectLessons(localItems: List<Lesson>, remoteItems: List<Lesson>, isFramework: Boolean): List<LessonUpdate> {
+    if (isFramework) return emptyList()
+
     val updates = mutableListOf<LessonUpdate>()
 
-    // EDU-6560 Implement new framework lesson update logic for Hyperskill and Marketplace
-    val localLessons = localItems.filter { it !is FrameworkLesson }.toMutableSet()
-    val remoteLessons = remoteItems.filter { it !is FrameworkLesson }.toMutableSet()
+    val localLessons = localItems.toMutableSet()
+    val remoteLessons = remoteItems.toMutableSet()
 
     while (localLessons.isNotEmpty() || remoteLessons.isNotEmpty()) {
       if (localLessons.isEmpty()) {
