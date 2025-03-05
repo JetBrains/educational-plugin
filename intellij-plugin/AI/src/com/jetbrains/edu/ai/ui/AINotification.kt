@@ -6,7 +6,7 @@ import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotificationPanel.Status
 import javax.swing.JComponent
 
-open class AINotification(
+abstract class AINotification(
   status: Status,
   @NotificationContent private val messageText: String,
   private val parentComponent: JComponent
