@@ -57,9 +57,9 @@ class TranslationServiceConnector : AIServiceConnector() {
   override fun <T> parseResponseCode(code: Int, result: T?): Result<T, AIServiceError> {
     return when {
       code == HTTP_OK && result != null -> Ok(result)
-      code == HTTP_UNAVAILABLE || result == null -> CommonAIServiceError.SERVICE_UNAVAILABLE.asErr()
       code == HTTP_NOT_FOUND -> TranslationError.NO_TRANSLATION.asErr()
       code == HTTP_UNAVAILABLE_FOR_LEGAL_REASONS -> TranslationError.TRANSLATION_UNAVAILABLE_FOR_LEGAL_REASONS.asErr()
+      code == HTTP_UNAVAILABLE || result == null -> CommonAIServiceError.SERVICE_UNAVAILABLE.asErr()
       else -> CommonAIServiceError.CONNECTION_ERROR.asErr()
     }
   }
