@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.update.elements.LessonUpdateInfo
 
 abstract class LessonUpdater(project: Project, private val container: LessonContainer) : StudyItemUpdater<Lesson, LessonUpdate>(project) {
   protected abstract fun createTaskUpdater(lesson: Lesson): TaskUpdater
+  protected abstract fun createFrameworkTaskUpdater(lesson: FrameworkLesson): FrameworkTaskUpdater
 
   suspend fun collect(remoteContainer: ItemContainer): List<LessonUpdate> {
     val localLessons = container.items.filterIsInstance<Lesson>()
@@ -34,9 +35,7 @@ abstract class LessonUpdater(project: Project, private val container: LessonCont
   /**
    * If [isFramework] is true, both lists must contain [FrameworkLesson].
    */
-  suspend fun collectLessons(localItems: List<Lesson>, remoteItems: List<Lesson>, isFramework: Boolean): List<LessonUpdate> {
-    if (isFramework) return emptyList()
-
+  private suspend fun collectLessons(localItems: List<Lesson>, remoteItems: List<Lesson>, isFramework: Boolean): List<LessonUpdate> {
     val updates = mutableListOf<LessonUpdate>()
 
     val localLessons = localItems.toMutableSet()
@@ -66,7 +65,12 @@ abstract class LessonUpdater(project: Project, private val container: LessonCont
         localLessons.remove(localLesson)
       }
       else {
-        val taskUpdater = createTaskUpdater(localLesson)
+        val taskUpdater = if (isFramework) {
+          createFrameworkTaskUpdater(localLesson as FrameworkLesson)
+        }
+        else {
+          createTaskUpdater(localLesson)
+        }
         val taskUpdates = taskUpdater.collect(remoteLesson)
         if (taskUpdates.isNotEmpty() || localLesson.isOutdated(remoteLesson) || localLesson.isChanged(remoteLesson)) {
           updates.add(LessonUpdateInfo(localLesson, remoteLesson, taskUpdates))
