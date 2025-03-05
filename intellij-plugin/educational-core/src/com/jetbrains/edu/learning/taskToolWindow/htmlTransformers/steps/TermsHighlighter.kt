@@ -39,11 +39,10 @@ object TermsHighlighter : HtmlTransformer {
       .toList()
     for (node in nodes) {
       val termElement = getDashedUnderlineElement(html, termTitle)
-      var currentNode = node
-      do {
+      var currentNode: TextNode? = node
+      while (currentNode != null) {
         currentNode = formatNextOccurrence(currentNode, termTitle, termElement)
       }
-      while (currentNode != null)
     }
   }
 
