@@ -1,20 +1,26 @@
-package com.jetbrains.edu.ai.translation.connector
+package com.jetbrains.edu.ai.terms.connector
 
 import com.intellij.util.application
 import com.jetbrains.edu.ai.error.AIServiceError
 import com.jetbrains.edu.ai.error.CommonAIServiceError
-import com.jetbrains.edu.ai.translation.TranslationError
-import com.jetbrains.edu.ai.translation.connector.TranslationConnectorTest.ResponseError.*
-import com.jetbrains.edu.ai.translation.service.TranslationService
+import com.jetbrains.edu.ai.terms.TermsError
+import com.jetbrains.edu.ai.terms.connector.TermsConnectorTest.ResponseError.ResponseCodeError
+import com.jetbrains.edu.ai.terms.connector.TermsConnectorTest.ResponseError.ResponseException
+import com.jetbrains.edu.ai.terms.service.TermsService
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.mockService
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
-import com.jetbrains.educational.translation.format.CourseTranslationResponse
-import com.jetbrains.educational.translation.format.domain.TranslationVersion
-import io.mockk.*
+import com.jetbrains.educational.terms.format.CourseTermsResponse
+import com.jetbrains.educational.terms.format.domain.TermsVersion
+import io.mockk.MockKAdditionalAnswerScope
+import io.mockk.MockKStubScope
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Test
@@ -24,8 +30,8 @@ import java.net.ProtocolException
 import java.net.UnknownHostException
 import kotlin.test.assertIs
 
-class TranslationConnectorTest : EduTestCase() {
-  private val translationLanguage = TranslationLanguage.RUSSIAN
+class TermsConnectorTest : EduTestCase() {
+  private val translationLanguage = TranslationLanguage.ENGLISH
 
   @Test
   fun `test successful response`() {
@@ -35,28 +41,28 @@ class TranslationConnectorTest : EduTestCase() {
         eduTask("task2", stepId = 4)
       }
     } as EduCourse
-    val expectedTranslationResponse = CourseTranslationResponse(TranslationVersion(1), translationLanguage, mapOf(), mapOf())
+    val expectedTermsResponse = CourseTermsResponse(TermsVersion(1), translationLanguage, mapOf())
 
-    val mockedService = mockk<TranslationService>()
+    val mockedService = mockk<TermsService>()
     coEvery {
-      mockedService.getTranslatedCourse(
+      mockedService.getCourseTerms(
         course.id,
         course.marketplaceCourseVersion,
         translationLanguage.name
       )
-    } returns Response.success(expectedTranslationResponse)
+    } returns Response.success(expectedTermsResponse)
 
-    val connector = mockService<TranslationServiceConnector>(application)
-    every { connector["translationService"]() } returns mockedService
+    val connector = mockService<TermsServiceConnector>(application)
+    every { connector["termsService"]() } returns mockedService
 
     val response = runBlocking {
-      connector.getTranslatedCourse(course.id, course.marketplaceCourseVersion, translationLanguage)
+      connector.getCourseTerms(course.id, course.marketplaceCourseVersion, translationLanguage)
     }
 
     assertIs<Ok<*>>(response)
-    assertEquals(expectedTranslationResponse, response.value)
+    assertEquals(expectedTermsResponse, response.value)
 
-    coVerify(exactly = 1) { mockedService.getTranslatedCourse(course.id, course.marketplaceCourseVersion, translationLanguage.name) }
+    coVerify(exactly = 1) { mockedService.getCourseTerms(course.id, course.marketplaceCourseVersion, translationLanguage.name) }
   }
 
   @Test
@@ -66,10 +72,10 @@ class TranslationConnectorTest : EduTestCase() {
   fun `test different connection error`() = testError(CommonAIServiceError.CONNECTION_ERROR, ResponseException(ProtocolException()))
 
   @Test
-  fun `test translation not found`() = testError(TranslationError.NO_TRANSLATION, ResponseCodeError(404))
+  fun `test terms not found`() = testError(TermsError.NO_TERMS, ResponseCodeError(404))
 
   @Test
-  fun `test translation unavailable`() = testError(TranslationError.TRANSLATION_UNAVAILABLE_FOR_LEGAL_REASONS, ResponseCodeError(451))
+  fun `test terms unavailable`() = testError(TermsError.TERMS_UNAVAILABLE_FOR_LEGAL_REASON, ResponseCodeError(451))
 
   @Test
   fun `test service unavailable`() = testError(CommonAIServiceError.SERVICE_UNAVAILABLE, ResponseCodeError(503))
@@ -84,26 +90,26 @@ class TranslationConnectorTest : EduTestCase() {
         eduTask("task2", stepId = 4)
       }
     } as EduCourse
-    val mockedService = mockk<TranslationService>()
+    val mockedService = mockk<TermsService>()
     coEvery {
-      mockedService.getTranslatedCourse(
+      mockedService.getCourseTerms(
         course.id,
         course.marketplaceCourseVersion,
         translationLanguage.name
       )
     } failsWith error
 
-    val connector = mockService<TranslationServiceConnector>(application)
-    every { connector["translationService"]() } returns mockedService
+    val connector = mockService<TermsServiceConnector>(application)
+    every { connector["termsService"]() } returns mockedService
 
     val response = runBlocking {
-      connector.getTranslatedCourse(course.id, course.marketplaceCourseVersion, translationLanguage)
+      connector.getCourseTerms(course.id, course.marketplaceCourseVersion, translationLanguage)
     }
 
     assertIs<Err<*>>(response)
     assertEquals(expectedError, response.error)
 
-    coVerify(exactly = 1) { mockedService.getTranslatedCourse(course.id, course.marketplaceCourseVersion, translationLanguage.name) }
+    coVerify(exactly = 1) { mockedService.getCourseTerms(course.id, course.marketplaceCourseVersion, translationLanguage.name) }
   }
 
   private infix fun <T : Any, B> MockKStubScope<Response<T>, B>.failsWith(
