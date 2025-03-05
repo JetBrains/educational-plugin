@@ -6,18 +6,16 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory
 import javax.swing.BoxLayout
 
-abstract class AINotificationManager<T : AINotification> {
-  protected inline fun <reified T : AINotification> closeExistingNotifications(project: Project) {
+abstract class AINotificationManager<T : AINotification>(protected val project: Project) {
+  protected abstract fun getNotifications(toolWindow: ToolWindow): List<T>
+
+  fun closeExistingNotifications() {
     val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskToolWindowFactory.STUDY_TOOL_WINDOW) ?: return
-    closeExistingNotifications<T>(toolWindow)
+    val existingNotifications = getNotifications(toolWindow)
+    existingNotifications.forEach { it.close() }
   }
 
   protected fun showNotification(toolWindow: ToolWindow, notification: T) {
     toolWindow.component.add(notification, BoxLayout.Y_AXIS)
-  }
-
-  protected inline fun <reified T : AINotification> closeExistingNotifications(toolWindow: ToolWindow) {
-    val existingNotifications = toolWindow.component.components.filterIsInstance<T>()
-    existingNotifications.forEach { it.close() }
   }
 }

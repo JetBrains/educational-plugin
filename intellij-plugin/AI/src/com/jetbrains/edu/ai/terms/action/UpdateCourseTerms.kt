@@ -15,7 +15,7 @@ class UpdateCourseTerms : AITheoryLookupActionBase() {
     if (isActionUnavailable(project, course)) return
 
     val termsProperties = TermsProjectSettings.getInstance(project).termsProperties.value ?: return
-    AITermsNotificationManager.closeExistingNotifications(project)
+    AITermsNotificationManager.getInstance(project).closeExistingNotifications()
     TermsLoader.getInstance(project).updateTerms(course, termsProperties)
   }
 

@@ -16,7 +16,7 @@ class UpdateCourseTranslation : AITranslationActionBase() {
     if (isActionUnavailable(project, course)) return
 
     val translationProperties = TranslationProjectSettings.getInstance(project).translationProperties.value ?: return
-    AITranslationNotificationManager.closeExistingNotifications(project)
+    AITranslationNotificationManager.getInstance(project).closeExistingNotifications()
     TranslationLoader.getInstance(project).updateTranslation(course, translationProperties)
   }
 
