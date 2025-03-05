@@ -14,4 +14,9 @@ class HyperskillTaskUpdater(project: Project, lesson: Lesson) :
 
 class HyperskillFrameworkTaskUpdater(project: Project, lesson: FrameworkLesson) :
   FrameworkTaskUpdater(project, lesson),
-  HyperskillItemUpdater<Task>
+  HyperskillItemUpdater<Task> {
+
+  override fun Task.canBeUpdatedBy(remoteTask: Task): Boolean = true
+
+  override suspend fun Task.shouldBeUpdated(remoteTask: Task): Boolean = isOutdated(remoteTask)
+}
