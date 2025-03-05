@@ -19,9 +19,9 @@ abstract class YamlCodeInsightTest : EduTestCase() {
     val factory = JsonSchemaProviderFactory.EP_NAME.findExtension(EduYamlSchemaProviderFactory::class.java)
     factory?.getProviders(project)?.forEach { provider ->
       val schemaResourcePath = provider.getSchemaResourcePath()
-      val uri = EduYamlSchemaProviderFactory::class.java.getResource(schemaResourcePath).toURI()
-      val absolutePath = Paths.get(uri).toAbsolutePath().toString()
-      VfsRootAccess.allowRootAccess(testRootDisposable, absolutePath)
+      val uri = EduYamlSchemaProviderFactory::class.java.getResource(schemaResourcePath)?.toURI() ?: return@forEach
+      val path = runCatching { Paths.get(uri).toAbsolutePath().toString() }.getOrNull() ?: uri.toString()
+      VfsRootAccess.allowRootAccess(testRootDisposable, path)
     }
   }
 
