@@ -3,11 +3,12 @@ package com.jetbrains.edu.learning.update
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.update.elements.FrameworkTaskUpdateInfo
 import com.jetbrains.edu.learning.update.elements.TaskCreationInfo
 import com.jetbrains.edu.learning.update.elements.TaskDeletionInfo
 import com.jetbrains.edu.learning.update.elements.TaskUpdate
-import com.jetbrains.edu.learning.update.elements.TaskUpdateInfo
 import kotlin.math.min
 
 abstract class FrameworkTaskUpdater(project: Project, lesson: FrameworkLesson) : TaskUpdaterBase<FrameworkLesson>(project, lesson) {
@@ -37,10 +38,15 @@ abstract class FrameworkTaskUpdater(project: Project, lesson: FrameworkLesson) :
       }
     }
 
-    // modified tasks
+    val localLesson = localItems.firstOrNull()?.lesson as? FrameworkLesson ?: return result
+    val remoteLesson = remoteItems.getOrNull(0)?.lesson as? FrameworkLesson ?: return result
+
+    val taskHistory = FrameworkLessonTaskHistory(project, localLesson, remoteLesson)
+    val isTemplateBased = localLesson.isTemplateBased && localLesson.course !is HyperskillCourse
     for ((localTask, remoteTask) in localItems.zip(remoteItems)) {
-      if (localTask.shouldBeUpdated(remoteTask)) {
-        result.add(TaskUpdateInfo(localTask, remoteTask))
+      // current task for non-template based FL should always be updated because the "task" folder could change because of propagation
+      if (localTask.shouldBeUpdated(remoteTask) || localTask == lesson.currentTask()) {
+        result.add(FrameworkTaskUpdateInfo(localTask, remoteTask, taskHistory, isTemplateBased))
       }
     }
 

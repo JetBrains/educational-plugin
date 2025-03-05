@@ -28,6 +28,12 @@ abstract class ItemContainer : StudyItem() {
     _items.add(index, item)
   }
 
+  fun replaceItem(existingItem: StudyItem, newItem: StudyItem) {
+    val index = _items.indexOf(existingItem)
+    if (index < 0) return
+    _items[index] = newItem
+  }
+
   fun removeItem(item: StudyItem) {
     _items.remove(item)
   }

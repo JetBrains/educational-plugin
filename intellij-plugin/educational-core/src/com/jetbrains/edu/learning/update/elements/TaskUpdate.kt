@@ -5,7 +5,6 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduCourseUpdater
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -38,10 +37,6 @@ data class TaskCreationInfo(val localLesson: Lesson, override val remoteItem: Ta
 data class TaskUpdateInfo(override val localItem: Task, override val remoteItem: Task) : TaskUpdate(localItem, remoteItem) {
   override suspend fun update(project: Project) {
     val lesson = localItem.parent
-    if (lesson is FrameworkLesson) {
-      // TODO this case will be implemented in EDU-6560
-      return
-    }
 
     lesson.removeItem(localItem)
     localItem.deleteFilesOnDisc(project)
