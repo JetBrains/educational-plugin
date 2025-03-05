@@ -14,4 +14,9 @@ class MarketplaceTaskUpdater(project: Project, lesson: Lesson) :
 
 class MarketplaceFrameworkTaskUpdater(project: Project, lesson: FrameworkLesson) :
   FrameworkTaskUpdater(project, lesson),
-  MarketplaceItemUpdater<Task>
+  MarketplaceItemUpdater<Task> {
+
+  override fun Task.canBeUpdatedBy(remoteTask: Task): Boolean = id == remoteTask.id
+
+  override suspend fun Task.shouldBeUpdated(remoteTask: Task): Boolean = isChanged(remoteTask)
+}
