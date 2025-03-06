@@ -89,7 +89,7 @@ class GenerateTaskTests : AnAction() {
         If the code snippet requires the user to implement a function or a class, to you have to import this function or class in tests.
         """.trimIndent()
       "python" -> """
-        Tests must be in Python and use unittest library for tests.
+        Tests must be in Python and use the unittest library for tests.
         If the code snippet requires the user to implement a function or a class, to you have to import this function or class in tests from the task file.
         """.trimIndent()
       else -> error("Unsupported language: $language")
