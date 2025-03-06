@@ -1,8 +1,13 @@
 package com.jetbrains.edu.commandLine
 
+import com.fasterxml.jackson.module.kotlin.jsonMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.ajalt.clikt.command.parse
 import com.github.ajalt.clikt.core.CliktError
 import com.github.ajalt.clikt.core.context
+import com.github.ajalt.clikt.parameters.options.convert
+import com.github.ajalt.clikt.parameters.options.default
+import com.github.ajalt.clikt.parameters.options.option
 import com.intellij.featureStatistics.fusCollectors.LifecycleUsageTriggerCollector
 import com.intellij.ide.AppLifecycleListener
 import com.intellij.ide.CliResult
@@ -142,5 +147,23 @@ class EduOpenCourseAppStarter : IdeStarter() {
 }
 
 class EduOpenCourseCommand : EduCommand("openCourse") {
+
+  val courseParams: Map<String, String> by option("--course-params", help = "Additional parameters for a course project in JSON object format")
+    .convert { parseCourseParams(it) }
+    .default(emptyMap())
+
+  private fun parseCourseParams(value: String): Map<String, String> {
+    return try {
+      MAPPER.readValue(value)
+    }
+    catch (e: Exception) {
+      throw IllegalArgumentException("JSON object expected, got `$value` instead", e)
+    }
+  }
+
   override suspend fun run() {}
+
+  companion object {
+    private val MAPPER = jsonMapper()
+  }
 }

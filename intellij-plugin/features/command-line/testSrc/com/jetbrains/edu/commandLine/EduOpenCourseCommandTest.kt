@@ -16,6 +16,7 @@ class EduOpenCourseCommandTest(
         mapOf(
           EduOpenCourseCommand::source to CourseSource.MARKETPLACE,
           EduOpenCourseCommand::courseId to "12345",
+          EduOpenCourseCommand::courseParams to emptyMap<String, Any>(),
         ),
         null
       ),
@@ -24,6 +25,7 @@ class EduOpenCourseCommandTest(
         mapOf(
           EduOpenCourseCommand::source to CourseSource.ARCHIVE,
           EduOpenCourseCommand::courseId to "/path/to/archive.zip",
+          EduOpenCourseCommand::courseParams to emptyMap<String, Any>(),
         ),
         null
       ),
@@ -32,6 +34,7 @@ class EduOpenCourseCommandTest(
         mapOf(
           EduOpenCourseCommand::source to CourseSource.HYPERSKILL,
           EduOpenCourseCommand::courseId to "98765",
+          EduOpenCourseCommand::courseParams to emptyMap<String, Any>(),
         ),
         null
       ),
@@ -56,6 +59,7 @@ class EduOpenCourseCommandTest(
               - https://plugins.jetbrains.com/plugin/16630-introduction-to-python
             --hyperskill=<value>                              Hyperskill project id
             --log-level=(OFF|SEVERE|WARNING|INFO|FINE|FINER)  Minimal IDE log level printing to stderr
+            --course-params=<value>                           Additional parameters for a course project in JSON object format (default: {})
             -h, --help                                        Show this message and exit
         """
       ),
@@ -104,6 +108,24 @@ class EduOpenCourseCommandTest(
 
           Error: no such option --foo
           Error: must provide one of --archive, --marketplace, --hyperskill
+        """
+      ),
+      EduCommandTestData(
+        listOf("--marketplace", "12345", "--course-params", """{"qwe":"rty"}"""),
+        mapOf(
+          EduOpenCourseCommand::source to CourseSource.MARKETPLACE,
+          EduOpenCourseCommand::courseId to "12345",
+          EduOpenCourseCommand::courseParams to mapOf("qwe" to "rty"),
+        ),
+        null
+      ),
+      EduCommandTestData(
+        listOf("--marketplace", "12345", "--course-params", "qwerty"),
+        emptyMap(),
+        """
+          Usage: openCourse [<options>]
+          
+          Error: invalid value for --course-params: JSON object expected, got `qwerty` instead
         """
       ),
     )
