@@ -12,8 +12,6 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.intellij.lang.Language
 import com.intellij.openapi.application.readAction
-import com.intellij.openapi.components.service
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -28,25 +26,23 @@ import com.jetbrains.educational.ml.ai.debugger.prompt.core.BreakpointHintAssist
 import com.jetbrains.educational.ml.ai.debugger.prompt.prompt.entities.breakpoint.FinalBreakpoint
 import com.jetbrains.educational.ml.ai.debugger.prompt.prompt.entities.breakpoint.IntermediateBreakpoint
 import com.jetbrains.educational.ml.ai.debugger.prompt.responses.BreakpointHintsResponse
-import java.util.concurrent.atomic.AtomicBoolean
+import kotlinx.coroutines.sync.Mutex
 
 @Service(Service.Level.PROJECT)
 class AIDebugSessionService(private val project: Project, private val coroutineScope: CoroutineScope) {
 
-  private val lock = AtomicBoolean(false)
+  private val mutex = Mutex()
 
-  private val isRunning: Boolean
-    get() = lock.get()
-
-  private fun runDebuggingSession(
+  fun runDebuggingSession(
     task: Task,
     description: TaskDescription,
     virtualFiles: List<VirtualFile>,
     testResult: CheckResult,
     closeAIDebuggingHint: () -> Unit
   ) {
-    if (lock.compareAndSet(false, true)) {
-      coroutineScope.launch {
+    coroutineScope.launch {
+      mutex.lock()
+      try {
         withBackgroundProgress(project, EduAIDebuggingCoreBundle.message("action.Educational.AiDebuggingNotification.modal.session")) {
           FixCodeForTestAssistant.getCodeFix(
             description,
@@ -66,16 +62,20 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
             )
             return@onSuccess
           }
-          AIDebugSessionRunner(project, task, closeAIDebuggingHint).runDebuggingSession(testResult, fixes, breakpointHints)
+          AIDebugSessionRunner(project, mutex, task, closeAIDebuggingHint).apply {
+            runDebuggingSession(testResult)
+            subscribeToDebuggerEvents(fixes, breakpointHints)
+          }
         }.onFailure {
+          mutex.unlock()
           EduNotificationManager.showErrorNotification(
             project,
             content = EduAIDebuggingCoreBundle.message("action.Educational.AiDebuggingNotification.modal.session.fail")
           )
         }
+      } catch (_: Exception) {
+        mutex.unlock()
       }
-    } else {
-      LOG.error("AI Debug session is already running")
     }
   }
 
@@ -84,7 +84,11 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
       fileName to fixesForFile.map { it.wrongCodeLineNumber }
     }.toMap()
 
-  private fun calculateIntermediateBreakpointPositions(fixes: FixCodeForTestResponse, fileMap: Map<String, VirtualFile>, language: Language) =
+  private fun calculateIntermediateBreakpointPositions(
+    fixes: FixCodeForTestResponse,
+    fileMap: Map<String, VirtualFile>,
+    language: Language
+  ) =
     fixes.groupBy { it.fileName }.mapNotNull { (fileName, fixesForFile) ->
       val virtualFile = fileMap[fileName] ?: return@mapNotNull null
       fileName to runReadAction {
@@ -124,7 +128,10 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
         IntermediateBreakpoint(fileName, position, line)
       }
     }.flatten()
-    return withBackgroundProgress(project, EduAIDebuggingCoreBundle.message("action.Educational.AiDebuggingNotification.modal.session")) {
+    return withBackgroundProgress(
+      project,
+      EduAIDebuggingCoreBundle.message("action.Educational.AiDebuggingNotification.modal.session")
+    ) {
       BreakpointHintAssistant.getBreakpointHints(fileMap.toNumberedLineMap(), finalBreakpoints, intermediateBreakpoint)
     }.getOrNull()
   }
@@ -150,23 +157,6 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
       name to virtualFile.document.text.lines()
         .mapIndexed { index, line -> "$index: $line" }
         .joinToString(System.lineSeparator())
-    }
-  }
-
-  companion object {
-    private val LOG = Logger.getInstance(AIDebugSessionService::class.java)
-
-    fun Project.runDebuggingSession(
-      task: Task,
-      description: TaskDescription,
-      virtualFiles: List<VirtualFile>,
-      testResult: CheckResult,
-      closeAIDebuggingHint: () -> Unit
-    ) {
-      val service = service<AIDebugSessionService>()
-      if (!service.isRunning) {
-        service.runDebuggingSession(task, description, virtualFiles, testResult, closeAIDebuggingHint)
-      }
     }
   }
 

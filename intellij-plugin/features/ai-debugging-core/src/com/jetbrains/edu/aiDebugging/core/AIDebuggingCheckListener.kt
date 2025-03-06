@@ -1,10 +1,11 @@
 package com.jetbrains.edu.aiDebugging.core
 
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.readText
 import com.jetbrains.edu.aiDebugging.core.messages.EduAIDebuggingCoreBundle
-import com.jetbrains.edu.aiDebugging.core.session.AIDebugSessionService.Companion.runDebuggingSession
+import com.jetbrains.edu.aiDebugging.core.session.AIDebugSessionService
 import com.jetbrains.edu.aiDebugging.core.ui.AIDebuggingHintInlineBanner
 import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.courseFormat.CheckResult
@@ -39,7 +40,7 @@ class AIDebuggingCheckListener : CheckListener {
     val virtualFiles = task.taskFiles.values.filter { it.isVisible }.mapNotNull { it.getVirtualFile(project) }
     if (virtualFiles.isEmpty()) return
     val taskDescription = task.getTaskDescription(project)
-    project.runDebuggingSession(task, taskDescription, virtualFiles, testResult, closeAIDebuggingHint)
+    project.service<AIDebugSessionService>().runDebuggingSession(task, taskDescription, virtualFiles, testResult, closeAIDebuggingHint)
   }
 
   // TODO: when should we show this button?

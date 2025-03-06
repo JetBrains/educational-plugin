@@ -24,18 +24,19 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.getEditor
 import com.jetbrains.educational.ml.ai.debugger.prompt.responses.BreakpointHintsResponse
 import com.jetbrains.educational.ml.ai.debugger.prompt.responses.FixCodeForTestResponse
+import kotlinx.coroutines.sync.Mutex
 
-class AIDebugSessionRunner(private val project: Project, private val task: Task, private val closeAIDebuggingHint: () -> Unit) {
+class AIDebugSessionRunner(
+  private val project: Project,
+  private val mutex: Mutex,
+  private val task: Task,
+  private val closeAIDebuggingHint: () -> Unit
+) {
 
-  fun runDebuggingSession(
-    testResult: CheckResult,
-    fixes: FixCodeForTestResponse,
-    breakpointHints: BreakpointHintsResponse
-  ) {
+  fun runDebuggingSession(testResult: CheckResult) {
     runWithTests {
       startDebugSession(getRunSettingsForFailedTest(testResult))
     }
-    subscribeToDebuggerEvents(fixes, breakpointHints)
   }
 
   private fun runWithTests(execution: () -> Unit) {
@@ -49,19 +50,18 @@ class AIDebugSessionRunner(private val project: Project, private val task: Task,
   }
 
   private fun debugStopped() {
+    mutex.unlock()
     deleteTests(getInvisibleTestFiles(), project)
     closeAIDebuggingHint()
     // TODO: make breakpoints regular
   }
 
-  private fun subscribeToDebuggerEvents(
+  fun subscribeToDebuggerEvents(
     fixes: FixCodeForTestResponse,
     breakpointHints: BreakpointHintsResponse
   ) {
-    val connection = project.messageBus.connect()
-    connection.subscribe(XDebuggerManager.TOPIC, object : XDebuggerManagerListener {
+    project.messageBus.connect().subscribe(XDebuggerManager.TOPIC, object : XDebuggerManagerListener {
       override fun processStopped(debugProcess: XDebugProcess) {
-        connection.disconnect()
         debugStopped()
       }
 
