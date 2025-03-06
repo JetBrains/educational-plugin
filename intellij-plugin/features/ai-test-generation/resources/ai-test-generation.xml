@@ -1,0 +1,13 @@
+<idea-plugin package="com.jetbrains.edu.ai.tests">
+  <resource-bundle>messages.EduAITestGenerationCoreBundle</resource-bundle>
+  <dependencies>
+    <module name="AI"/>
+  </dependencies>
+
+  <actions>
+    <action id="Educational.AI.GenerateTaskTests"
+            class="com.jetbrains.edu.ai.tests.GenerateTaskTests">
+      <add-to-group group-id="Educational.Educator.CourseCreator.Menu" anchor="last"/>
+    </action>
+  </actions>
+</idea-plugin>
