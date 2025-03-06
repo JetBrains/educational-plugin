@@ -34,6 +34,7 @@ abstract class TaskUpdaterBase<T : Lesson>(project: Project, protected val lesso
       index != remoteTask.index -> true
       taskFiles.size != newTaskFiles.size -> true
       taskDescriptionText != remoteTask.descriptionText -> true
+      descriptionFormat != remoteTask.descriptionFormat -> true
       javaClass != remoteTask.javaClass -> true
       this is ChoiceTask && remoteTask is ChoiceTask -> {
         choiceOptions != remoteTask.choiceOptions
