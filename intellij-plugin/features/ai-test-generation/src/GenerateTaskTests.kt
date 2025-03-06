@@ -85,7 +85,7 @@ class GenerateTaskTests : AnAction() {
     // should be moved to ml-lib
     val promptCustomization = when (language) {
       "kotlin" -> """
-        Tests must be in kotlin, inside a class called 'Tests' and must use Junit library and '@Test' annotation for evey test.
+        Tests must be in Kotlin, inside a class called 'Tests', and must use the JUnit library with the '@Test' annotation for evey test.
         If the code snippet requires the user to implement a function or a class, to you have to import this function or class in tests.
         """.trimIndent()
       "python" -> """
