@@ -243,7 +243,7 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
 
   private fun JPanel.createMouseListener(): MouseAdapter {
     return object : MouseAdapter() {
-      override fun mousePressed(e: MouseEvent?) {
+      override fun mouseClicked(e: MouseEvent?) {
         requestFocus()
       }
     }

@@ -198,8 +198,8 @@ private sealed class LessonCard : Wrapper() {
 
   private fun createLessonCardMouseListener(): MouseListener {
     return object : MouseAdapter() {
-      override fun mousePressed(e: MouseEvent?) {
-        super.mousePressed(e)
+      override fun mouseClicked(e: MouseEvent?) {
+        super.mouseClicked(e)
         selectionListeners.forEach(CardSelectionListener::onSelected)
       }
     }
