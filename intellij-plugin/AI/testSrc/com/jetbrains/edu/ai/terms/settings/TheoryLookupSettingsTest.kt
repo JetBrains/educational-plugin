@@ -10,7 +10,7 @@ class TheoryLookupSettingsTest : EduSettingsServiceTestBase() {
     settings.loadStateAndCheck(
     """
       <State>
-        <option name="enabled" value="true" />
+        <option name="enabled" value="false" />
       </State>
     """)
   }
