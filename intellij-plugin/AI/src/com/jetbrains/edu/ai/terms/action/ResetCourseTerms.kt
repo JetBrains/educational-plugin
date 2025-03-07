@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import org.jetbrains.annotations.NonNls
 
+@Suppress("ComponentNotRegistered")
 class ResetCourseTerms : AITheoryLookupActionBase() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
