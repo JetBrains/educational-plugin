@@ -24,7 +24,7 @@ class TestManager : PersistentStateComponent<TestManager> {
   }
 
   fun isTestGenerated(taskId: Int, functionNames: List<String>): Boolean {
-    return tests[taskId]?.values?.toSet()?.equals(functionNames.toSet()) ?: false
+    return tests[taskId]?.keys?.toSet()?.equals(functionNames.toSet()) ?: false
   }
 
   companion object {
