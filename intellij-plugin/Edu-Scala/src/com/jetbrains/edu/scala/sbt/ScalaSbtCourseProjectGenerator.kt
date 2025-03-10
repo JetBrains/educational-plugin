@@ -25,7 +25,7 @@ class ScalaSbtCourseProjectGenerator(builder: ScalaSbtCourseBuilder, course: Cou
 ) {
 
   override fun autoCreatedAdditionalFiles(holder: CourseInfoHolder<Course>): List<EduFile> {
-    val sbtVersion = maxOf(Sbt.LatestVersion(), MIN_RECOMMENDED_SBT_VERSION)
+    val sbtVersion = maxOf(latestSbtVersion, MIN_RECOMMENDED_SBT_VERSION)
     val templateVariables = mapOf(
       PROJECT_NAME to gradleSanitizeName(holder.courseDir.name),
       "SBT_VERSION" to sbtVersion.toString()
