@@ -90,7 +90,7 @@ class TaskProcessorImpl(val task: Task) : TaskProcessor {
       getFunctionSignaturesIfFileUnchanged(file, project)?.let {
         return@flatMap it
       } ?: run {
-        runReadAction { getFunctionSignatures(file, project) }.also {
+        /* runReadAction { */ getFunctionSignatures(file, project) /*}*/.also {
           file.functionSignatures = it
         }
       }

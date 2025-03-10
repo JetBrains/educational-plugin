@@ -1,13 +1,6 @@
 package com.jetbrains.edu.aiHints.core
 
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.fileTypes.PlainTextLanguage
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.jetbrains.edu.aiHints.core.api.*
-import com.jetbrains.edu.aiHints.core.context.FunctionSignature
-import com.jetbrains.edu.aiHints.core.context.FunctionsToStrings
-import com.jetbrains.edu.aiHints.core.context.SignatureSource
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.actions.EduAIHintsUtils
 import com.jetbrains.edu.learning.actions.EduAIHintsUtils.GET_HINT_ACTION_ID
@@ -42,7 +35,7 @@ class GetHintTest : EduActionTestCase() {
   fun `GetHint action NOT available for non-marketplace student course`() {
     // when only
     acceptAgreement()
-    registerEduAiHintsProcessor()
+    registerPlainTextEduAiHintsProcessor(testRootDisposable)
 
     testGetHintAction(shouldBeEnabled = false, shouldBeVisible = false)
     assertFalse(EduAIHintsUtils.getHintActionPresentation(project).isEnabled())
@@ -53,7 +46,7 @@ class GetHintTest : EduActionTestCase() {
     // when only
     acceptAgreement()
     getCourse().apply { isMarketplace = true }
-    registerEduAiHintsProcessor()
+    registerPlainTextEduAiHintsProcessor(testRootDisposable)
 
     testGetHintAction(shouldBeEnabled = false, shouldBeVisible = false)
     assertFalse(EduAIHintsUtils.getHintActionPresentation(project).isEnabled())
@@ -64,7 +57,7 @@ class GetHintTest : EduActionTestCase() {
     // when
     acceptAgreement()
     val course = getCourse().apply { isMarketplace = true }
-    registerEduAiHintsProcessor()
+    registerPlainTextEduAiHintsProcessor(testRootDisposable)
     selectCurrentEduTask(course)
 
     // but
@@ -93,7 +86,7 @@ class GetHintTest : EduActionTestCase() {
     // when
     acceptAgreement()
     val course = getCourse().apply { isMarketplace = true }
-    registerEduAiHintsProcessor()
+    registerPlainTextEduAiHintsProcessor(testRootDisposable)
     selectCurrentEduTask(course)
 
     // then
@@ -110,10 +103,6 @@ class GetHintTest : EduActionTestCase() {
     )
   }
 
-  private fun registerEduAiHintsProcessor() {
-    EduAIHintsProcessor.EP_NAME.addExplicitExtension(PlainTextLanguage.INSTANCE, PlainTextEduAIHintsProcessor(), testRootDisposable)
-  }
-
   private fun selectCurrentEduTask(course: Course) {
     val task = course.findTask("lesson1", "task1")
     task.status = CheckStatus.Failed
@@ -123,28 +112,5 @@ class GetHintTest : EduActionTestCase() {
 
   private fun testGetHintAction(shouldBeEnabled: Boolean, shouldBeVisible: Boolean) {
     testAction(GET_HINT_ACTION_ID, shouldBeEnabled = shouldBeEnabled, shouldBeVisible = shouldBeVisible, runAction = false)
-  }
-}
-
-private class PlainTextEduAIHintsProcessor : EduAIHintsProcessor {
-  override fun getFilesDiffer(): FilesDiffer = object : FilesDiffer {
-    override fun findChangedMethods(before: PsiFile, after: PsiFile, considerParameters: Boolean): List<String> = listOf()
-  }
-
-  override fun getFunctionDiffReducer(): FunctionDiffReducer = object : FunctionDiffReducer {
-    override fun reduceDiffFunctions(function: PsiElement?, modifiedFunction: PsiElement): PsiElement? = null
-  }
-
-  override fun getInspectionsProvider(): InspectionsProvider = object : InspectionsProvider {
-    override val inspectionIds: Set<String> = emptySet()
-  }
-
-  override fun getFunctionSignatureManager(): FunctionSignaturesManager = object : FunctionSignaturesManager {
-    override fun getFunctionSignatures(psiFile: PsiFile, signatureSource: SignatureSource): List<FunctionSignature> = emptyList()
-    override fun getFunctionBySignature(psiFile: PsiFile, functionName: String): PsiElement? = null
-  }
-
-  override fun getStringsExtractor(): StringExtractor = object : StringExtractor {
-    override fun getFunctionsToStringsMap(psiFile: PsiFile): FunctionsToStrings = FunctionsToStrings(emptyMap())
   }
 }
