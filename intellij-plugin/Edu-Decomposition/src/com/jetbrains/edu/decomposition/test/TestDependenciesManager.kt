@@ -8,7 +8,7 @@ import com.intellij.openapi.project.Project
  */
 @Service(Service.Level.PROJECT)
 @State(name = "TestManager", storages = [Storage("storage.xml")])
-class TestManager : PersistentStateComponent<TestManager> {
+class TestDependenciesManager : PersistentStateComponent<TestDependenciesManager> {
   private val tests = mutableMapOf<Int, Map<String, List<String>>>()
 
   fun addTest(taskId: Int, dependencies: Map<String, List<String>>) {
@@ -19,7 +19,7 @@ class TestManager : PersistentStateComponent<TestManager> {
 
   override fun getState() = this
 
-  override fun loadState(state: TestManager) {
+  override fun loadState(state: TestDependenciesManager) {
     tests.putAll(state.tests)
   }
 
@@ -28,6 +28,6 @@ class TestManager : PersistentStateComponent<TestManager> {
   }
 
   companion object {
-    fun getInstance(project: Project): TestManager = project.service<TestManager>()
+    fun getInstance(project: Project): TestDependenciesManager = project.service<TestDependenciesManager>()
   }
 }
