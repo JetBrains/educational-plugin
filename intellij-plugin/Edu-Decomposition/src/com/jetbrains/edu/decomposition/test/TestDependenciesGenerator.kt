@@ -14,7 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.kotlin.asJava.classes.runReadAction
 
-class TestGenerator(val project: Project) {
+class TestDependenciesGenerator(val project: Project) {
   fun generateTaskTest() {
     val task = TaskToolWindowView.getInstance(project).currentTask ?: return
     when (task.decompositionStatus) {
@@ -32,9 +32,9 @@ class TestGenerator(val project: Project) {
     withBackgroundProgress(project, EduDecompositionBundle.message("progress.title.test.generation"), cancellable = true) {
       val language = task.course.languageById ?: return@withBackgroundProgress
       val files = task.taskFiles.values.filter { it.isVisible }
-      val functionNames = runReadAction { FunctionParser.extractFunctionNames(files, project, language) }
+      val functionNames = runReadAction { FunctionParser.extractFunctionModels(files, project, language) }.map { it.name }
       val description = task.descriptionText
-      val testManager = TestManager.getInstance(project)
+      val testManager = TestDependenciesManager.getInstance(project)
       val taskId = task.id
 
       // The test was already generated for the set of functionNames and a specific task, no need to generate them

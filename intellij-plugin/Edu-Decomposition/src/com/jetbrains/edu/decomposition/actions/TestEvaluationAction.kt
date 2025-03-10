@@ -6,7 +6,7 @@ import com.jetbrains.edu.decomposition.messages.EduDecompositionBundle
 import com.jetbrains.edu.decomposition.parsers.FunctionDependenciesParser
 import com.jetbrains.edu.decomposition.parsers.FunctionParser
 import com.jetbrains.edu.decomposition.test.TestDependenciesEvaluator
-import com.jetbrains.edu.decomposition.test.TestManager
+import com.jetbrains.edu.decomposition.test.TestDependenciesManager
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.jetbrains.kotlin.asJava.classes.runReadAction
@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.asJava.classes.runReadAction
 @Suppress("ComponentNotRegistered")
 class TestEvaluationAction : CheckActionBase() {
 
-  override val spinnerPanelMessage: String = EduDecompositionBundle.message("action.test.evaluation.in.progress")
+  override val spinnerPanelMessage: String = EduDecompositionBundle.message("progress.title.test.evaluation")
 
   override val actionAlreadyRunningMessage: String = EduDecompositionBundle.message("action.test.evaluation.already.running")
 
@@ -26,8 +26,8 @@ class TestEvaluationAction : CheckActionBase() {
     return withBackgroundProgress(project, EduDecompositionBundle.message("progress.title.test.evaluation"), cancellable = true) {
       val language = task.course.languageById ?: return@withBackgroundProgress false
       val files = task.taskFiles.values.filter { it.isVisible }
-      val functionNames = runReadAction { FunctionParser.extractFunctionNames(files, project, language) }
-      val testManager = TestManager.getInstance(project)
+      val functionNames = runReadAction { FunctionParser.extractFunctionModels(files, project, language) }.map { it.name }
+      val testManager = TestDependenciesManager.getInstance(project)
       if (!testManager.isTestGenerated(task.id, functionNames)) return@withBackgroundProgress false // TODO("There are no generated tests")
       val generatedDependencies = testManager.getTest(task.id) ?: return@withBackgroundProgress false
       val dependencies = runReadAction { FunctionDependenciesParser.extractFunctionDependencies(files, project, language) }
