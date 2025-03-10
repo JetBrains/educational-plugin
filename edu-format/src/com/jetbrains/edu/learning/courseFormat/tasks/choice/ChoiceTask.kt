@@ -36,6 +36,12 @@ class ChoiceTask : Task {
   override val isChangedOnFailed: Boolean
     get() = !canCheckLocally
 
+  override val supportSubmissions: Boolean
+    get() = true
+
+  override val isToSubmitToRemote: Boolean
+    get() = status != CheckStatus.Unchecked
+
   //Is called from choiceTask.html.ft
   @Suppress("unused")
   fun addSelectedVariant(variant: Int) {
