@@ -23,8 +23,8 @@ class UserAgreementNotificationProvider : EditorNotificationProvider, DumbAware 
 
     return Function {
       val panel = EditorNotificationPanel()
-      panel.text = EduCoreBundle.message("user.agreement.editor.notification")
-      panel.createActionLabel(EduCoreBundle.message("user.agreement.editor.notification.details")) {
+      panel.text = EduCoreBundle.message("user.agreement.remote.editor.notification")
+      panel.createActionLabel(EduCoreBundle.message("user.agreement.remote.editor.notification.details")) {
         UserAgreementManager.getInstance().showUserAgreement(project)
       }
       panel

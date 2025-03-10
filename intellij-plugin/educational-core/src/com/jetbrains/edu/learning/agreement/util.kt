@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.agreement
 
+import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.showYesNoDialog
 import com.intellij.ui.dsl.builder.Cell
@@ -47,4 +48,12 @@ object UserAgreementUtil {
   private const val AI_TERMS_OF_USE_URL: String = "https://www.jetbrains.com/legal/docs/terms/jetbrains-ai-service/"
   private const val USER_AGREEMENT_URL: String = "https://www.jetbrains.com/legal/docs/terms/jetbrains-academy/plugin/"
   private const val PRIVACY_POLICY_URL: String = "https://www.jetbrains.com/legal/docs/privacy/privacy/"
+
+  private const val USER_AGREEMENT_NOTIFICATION_IGNORE: String = "edu.user.agreement.editor.notification.ignore"
+
+  fun isEditorNotificationIgnored(): Boolean =
+    PropertiesComponent.getInstance().getBoolean(USER_AGREEMENT_NOTIFICATION_IGNORE, false)
+
+  fun setEditorNotificationIgnored(ignored: Boolean = true) =
+    PropertiesComponent.getInstance().setValue(USER_AGREEMENT_NOTIFICATION_IGNORE, ignored)
 }
