@@ -155,7 +155,12 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
         val isDefault = !(task.isChangedOnFailed && task.status == CheckStatus.Failed || task.isSolved)
         val isEnabled = !(task.isChangedOnFailed && task.status == CheckStatus.Failed) && task.isPromptActionsGeneratedSuccessfully
         val action = when (task.decompositionStatus) {
-          DecompositionStatus.COMPLETENESS_CHECK_NEEDED -> ActionManager.getInstance().getAction("Educational.Check.Completeness") as ActionWithProgressIcon
+          DecompositionStatus.COMPLETENESS_CHECK_NEEDED ->
+            ActionManager.getInstance().getAction("Educational.Check.Completeness") as ActionWithProgressIcon
+
+          DecompositionStatus.GRANULARITY_CHECK_NEEDED ->
+            ActionManager.getInstance().getAction("Educational.Check.Granularity") as ActionWithProgressIcon
+
           else -> CheckAction(task.getUICheckLabel())
         }
         val checkComponent = CheckPanelButtonComponent(
