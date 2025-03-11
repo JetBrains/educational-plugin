@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.terms.TermsLoader
 import com.jetbrains.edu.ai.terms.connector.TermsServiceConnector
+import com.jetbrains.edu.ai.translation.isSameLanguage
 import com.jetbrains.edu.learning.ai.terms.TheoryLookupSettings
 import com.jetbrains.edu.ai.ui.AINotification.ActionLabel
 import com.jetbrains.edu.ai.ui.AINotificationManager
@@ -23,9 +24,13 @@ class TermsUpdateChecker(private val project: Project) {
   suspend fun checkUpdate(course: EduCourse) {
     val theoryLookupSettings = TheoryLookupSettings.getInstance()
     if (!theoryLookupSettings.isTheoryLookupEnabled) return
+
+    val translationLanguage = TranslationProjectSettings.getInstance(project).translationLanguage
+    if (translationLanguage != null && !translationLanguage.isSameLanguage(course)) return
+
     val termsProperties = TermsProjectSettings.getInstance(project).termsProperties.value
     if (termsProperties == null) {
-      val languageCode = TranslationProjectSettings.getInstance(project).translationLanguage?.code ?: course.languageCode
+      val languageCode = course.languageCode
       TermsLoader.getInstance(project).fetchAndApplyTerms(course, languageCode)
       return
     }

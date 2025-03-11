@@ -9,6 +9,7 @@ import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.jetbrains.edu.ai.error.AIServiceError
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.terms.connector.TermsServiceConnector
+import com.jetbrains.edu.ai.translation.isSameLanguage
 import com.jetbrains.edu.learning.ai.terms.TheoryLookupSettings
 import com.jetbrains.edu.ai.ui.AINotification.ActionLabel
 import com.jetbrains.edu.ai.ui.AINotificationManager
@@ -51,8 +52,8 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
         val course = project.course as? EduCourse ?: return@collectLatest
 
         val translationLanguage = translationProperties?.language
-        val languageCode = translationLanguage?.code ?: course.languageCode
-        if (languageCode != TranslationLanguage.ENGLISH.code) return@collectLatest // TODO(support other languages)
+        if (translationLanguage != null && !translationLanguage.isSameLanguage(course)) return@collectLatest  // TODO(support other languages)
+        val languageCode = course.languageCode
 
         if (TermsProjectSettings.areCourseTermsLoaded(project, languageCode)) return@collectLatest
         fetchAndApplyTerms(course, languageCode)
@@ -77,7 +78,7 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
   }
 
   fun fetchAndApplyTerms(course: EduCourse, languageCode: String) {
-    if (languageCode != TranslationLanguage.ENGLISH.code) {
+    if (languageCode != TranslationLanguage.ENGLISH.code || languageCode != course.languageCode) {
       LOG.warn("Language $languageCode requested for theory lookup is not English")
       return
     }
@@ -179,7 +180,9 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
   }
 
   private suspend fun downloadTerms(course: EduCourse, languageCode: String): Result<CourseTermsResponse, AIServiceError> {
-    if (TranslationLanguage.findByCode(languageCode) != TranslationLanguage.ENGLISH) return Err(TermsError.LANGUAGE_NOT_SUPPORTED)
+    if (TranslationLanguage.findByCode(languageCode) != TranslationLanguage.ENGLISH || languageCode != course.languageCode) {
+      return Err(TermsError.LANGUAGE_NOT_SUPPORTED)
+    }
     return TermsServiceConnector.getInstance().getCourseTerms(
       course.id,
       course.marketplaceCourseVersion,
