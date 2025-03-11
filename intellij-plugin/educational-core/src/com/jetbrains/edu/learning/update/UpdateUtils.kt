@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
+import com.jetbrains.edu.learning.toCourseInfoHolder
 
 object UpdateUtils {
 
@@ -55,7 +56,7 @@ object UpdateUtils {
       for ((path, remoteTaskFile) in remoteTaskFiles) {
         val taskFile = task.taskFiles[path]
         val currentTaskFile = if (taskFile != null) {
-          taskFile.text = remoteTaskFile.text
+          taskFile.contents = remoteTaskFile.contents
           taskFile
         }
         else {
@@ -70,7 +71,7 @@ object UpdateUtils {
 
           val taskDir = task.getDir(project.courseDir)
           if (taskDir != null) {
-            GeneratorUtils.createChildFile(project, taskDir, path, currentTaskFile.text, currentTaskFile.isEditable)
+            GeneratorUtils.createChildFile(project.toCourseInfoHolder(), taskDir, path, currentTaskFile.contents, currentTaskFile.isEditable)
           }
         }
       }
