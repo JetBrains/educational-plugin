@@ -12,7 +12,7 @@ include(
   "intellij-plugin:educational-core",
   "intellij-plugin:code-insight",
   "intellij-plugin:code-insight:html",
-  "intellij-plugin:code-insight:markdown",
+  "intellij-plugin:code-insight:edu-markdown",
   "intellij-plugin:code-insight:yaml",
   "intellij-plugin:jvm-core",
   "intellij-plugin:remote-env",

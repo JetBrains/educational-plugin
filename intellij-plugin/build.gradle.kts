@@ -308,7 +308,7 @@ dependencies {
     pluginModule(implementation(project("educational-core")))
     pluginModule(implementation(project("code-insight")))
     pluginModule(implementation(project("code-insight:html")))
-    pluginModule(implementation(project("code-insight:markdown")))
+    pluginModule(implementation(project("code-insight:edu-markdown")))
     pluginModule(implementation(project("code-insight:yaml")))
     pluginModule(implementation(project("jvm-core")))
     pluginModule(implementation(project("AI")))
@@ -536,12 +536,12 @@ project("code-insight:html") {
   }
 }
 
-project("code-insight:markdown") {
+project("code-insight:edu-markdown") {
   intellijPlatform {
     // Set custom plugin directory name for tests.
     // Otherwise, `prepareTestSandbox` merges directories of `markdown` plugin and `markdown` modules
     // into single one
-    projectName = "edu-markdown"
+//    projectName = "edu-markdown"
   }
 
   dependencies {
