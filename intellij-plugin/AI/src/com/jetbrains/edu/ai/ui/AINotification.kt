@@ -5,7 +5,8 @@ import com.intellij.openapi.util.NlsContexts.NotificationContent
 import com.intellij.ui.EditorNotificationPanel
 import javax.swing.JComponent
 
-abstract class AINotification(
+class AINotification(
+  val id: String,
   status: Status,
   @NotificationContent private val messageText: String,
   private val parentComponent: JComponent
@@ -33,4 +34,9 @@ abstract class AINotification(
     @LinkLabel val name: String,
     val action: () -> Unit
   )
+
+  companion object {
+    const val TRANSLATION_NOTIFICATION_ID = "translation"
+    const val TERMS_NOTIFICATION_ID = "terms"
+  }
 }
