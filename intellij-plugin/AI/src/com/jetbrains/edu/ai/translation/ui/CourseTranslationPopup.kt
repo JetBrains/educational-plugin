@@ -107,7 +107,7 @@ class CourseTranslationPopup(private val project: Project, private val course: E
   }
 
   private fun Row.translationLanguageComboBox(): JComboBox<TranslationLanguage> =
-    comboBox(comboBoxModel)
+    comboBox(comboBoxModel, translationComboBoxRenderer(course))
       .bindItem(::selectedLanguage.toNullableProperty())
       .onChanged(::translationLanguageChangeListener)
       .focused()

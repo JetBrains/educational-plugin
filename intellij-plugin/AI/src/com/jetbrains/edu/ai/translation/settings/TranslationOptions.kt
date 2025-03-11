@@ -7,6 +7,7 @@ import com.intellij.ui.dsl.builder.*
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.settings.AIOptionsProvider
 import com.jetbrains.edu.ai.translation.ui.TranslationLanguageComboBoxModel
+import com.jetbrains.edu.ai.translation.ui.translationComboBoxRenderer
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
 
 class TranslationOptions : BoundConfigurable(EduAIBundle.message("settings.ai.translation.display.name")), AIOptionsProvider {
@@ -18,7 +19,7 @@ class TranslationOptions : BoundConfigurable(EduAIBundle.message("settings.ai.tr
   override fun createPanel(): DialogPanel = panel {
     group(displayName) {
       row(EduAIBundle.message("settings.ai.translation.preferred.language")) {
-        comboBox(TranslationLanguageComboBoxModel())
+        comboBox(TranslationLanguageComboBoxModel(), translationComboBoxRenderer())
           .bindItem(::preferableLanguage.toNullableProperty())
           .onChanged {
             checkBox.enabled(it.selectedItem != null)
