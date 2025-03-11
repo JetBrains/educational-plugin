@@ -6,6 +6,8 @@ import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.panel
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.settings.AIOptionsProvider
+import com.jetbrains.edu.learning.ai.terms.TheoryLookupProperties
+import com.jetbrains.edu.learning.ai.terms.TheoryLookupSettings
 
 class TheoryLookupOptions : BoundConfigurable(EduAIBundle.message("settings.ai.terms.display.name")), AIOptionsProvider {
   private val settings = TheoryLookupSettings.getInstance()

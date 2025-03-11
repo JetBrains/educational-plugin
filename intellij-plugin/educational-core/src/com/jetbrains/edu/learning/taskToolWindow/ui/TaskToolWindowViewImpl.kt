@@ -50,6 +50,8 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType.SUBMISSIONS_TAB
 import com.jetbrains.edu.learning.ai.terms.TermsProjectSettings
+import com.jetbrains.edu.learning.ai.terms.TheoryLookupSettings
+import com.jetbrains.edu.learning.combineStateFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -77,7 +79,14 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
           ProjectView.getInstance(project).refresh()
         }
       }
-      TermsProjectSettings.getInstance(project).termsProperties.collectLatest {
+    }
+
+    scope.launch {
+      combineStateFlow(
+        scope,
+        TermsProjectSettings.getInstance(project).termsProperties,
+        TheoryLookupSettings.getInstance().theoryLookupProperties
+      ).collectLatest {
         withContext(Dispatchers.EDT) {
           updateTaskDescription()
         }
