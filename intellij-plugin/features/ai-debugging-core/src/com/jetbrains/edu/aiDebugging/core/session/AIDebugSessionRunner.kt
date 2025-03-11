@@ -24,11 +24,11 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.getEditor
 import com.jetbrains.educational.ml.ai.debugger.prompt.responses.BreakpointHintsResponse
 import com.jetbrains.educational.ml.ai.debugger.prompt.responses.FixCodeForTestResponse
-import kotlinx.coroutines.sync.Mutex
+import java.util.concurrent.atomic.AtomicBoolean
 
 class AIDebugSessionRunner(
   private val project: Project,
-  private val mutex: Mutex,
+  private val lock: AtomicBoolean,
   private val task: Task,
   private val closeAIDebuggingHint: () -> Unit
 ) {
@@ -50,7 +50,7 @@ class AIDebugSessionRunner(
   }
 
   private fun debugStopped() {
-    mutex.unlock()
+    lock.set(false)
     deleteTests(getInvisibleTestFiles(), project)
     closeAIDebuggingHint()
     // TODO: make breakpoints regular

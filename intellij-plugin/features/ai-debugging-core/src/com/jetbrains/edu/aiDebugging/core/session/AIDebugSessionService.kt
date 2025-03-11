@@ -26,12 +26,13 @@ import com.jetbrains.educational.ml.ai.debugger.prompt.core.BreakpointHintAssist
 import com.jetbrains.educational.ml.ai.debugger.prompt.prompt.entities.breakpoint.FinalBreakpoint
 import com.jetbrains.educational.ml.ai.debugger.prompt.prompt.entities.breakpoint.IntermediateBreakpoint
 import com.jetbrains.educational.ml.ai.debugger.prompt.responses.BreakpointHintsResponse
-import kotlinx.coroutines.sync.Mutex
+import com.intellij.openapi.diagnostic.Logger
+import java.util.concurrent.atomic.AtomicBoolean
 
 @Service(Service.Level.PROJECT)
 class AIDebugSessionService(private val project: Project, private val coroutineScope: CoroutineScope) {
 
-  private val mutex = Mutex()
+  private val lock = AtomicBoolean(false)
 
   fun runDebuggingSession(
     task: Task,
@@ -41,7 +42,10 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
     closeAIDebuggingHint: () -> Unit
   ) {
     coroutineScope.launch {
-      mutex.lock()
+      if (!lock.compareAndSet(false, true)) {
+        LOG.error("AI Debug session is already running")
+        return@launch
+      }
       try {
         withBackgroundProgress(project, EduAIDebuggingCoreBundle.message("action.Educational.AiDebuggingNotification.modal.session")) {
           FixCodeForTestAssistant.getCodeFix(
@@ -62,19 +66,20 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
             )
             return@onSuccess
           }
-          AIDebugSessionRunner(project, mutex, task, closeAIDebuggingHint).apply {
+          AIDebugSessionRunner(project, lock, task, closeAIDebuggingHint).apply {
             runDebuggingSession(testResult)
             subscribeToDebuggerEvents(fixes, breakpointHints)
           }
         }.onFailure {
-          mutex.unlock()
+          lock.set(false)
           EduNotificationManager.showErrorNotification(
             project,
             content = EduAIDebuggingCoreBundle.message("action.Educational.AiDebuggingNotification.modal.session.fail")
           )
         }
-      } catch (_: Exception) {
-        mutex.unlock()
+      } catch (e: Exception) {
+        lock.set(false)
+        LOG.error("An error occurred in the ai debugging session", e)
       }
     }
   }
@@ -158,6 +163,10 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
         .mapIndexed { index, line -> "$index: $line" }
         .joinToString(System.lineSeparator())
     }
+  }
+
+  companion object {
+    private val LOG = Logger.getInstance(AIDebugSessionService::class.java)
   }
 
 }
