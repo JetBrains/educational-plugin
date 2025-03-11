@@ -47,6 +47,8 @@ if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {
   include("fleet-plugin")
 }
 
+includeBuild("/Users/Arseniy.Pendryak/Work/intellij-platform-gradle-plugin")
+
 apply(from = "common.gradle.kts")
 
 val secretProperties: String by extra
