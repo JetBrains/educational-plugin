@@ -10,6 +10,7 @@ import com.jetbrains.edu.ai.terms.connector.TermsServiceConnector
 import com.jetbrains.edu.ai.terms.settings.TheoryLookupSettings
 import com.jetbrains.edu.ai.terms.ui.AITermsNotificationManager
 import com.jetbrains.edu.ai.ui.AINotification.ActionLabel
+import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.ai.terms.TermsProjectSettings
 import com.jetbrains.edu.learning.ai.terms.TermsProperties
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -23,7 +24,12 @@ class TermsUpdateChecker(private val project: Project) {
     val theoryLookupSettings = TheoryLookupSettings.getInstance()
     if (!theoryLookupSettings.isTheoryLookupEnabled) return
     val termsProperties = TermsProjectSettings.getInstance(project).termsProperties.value
-    if (termsProperties != null && areTermsOutdated(course, termsProperties)) {
+    if (termsProperties == null) {
+      val languageCode = TranslationProjectSettings.getInstance(project).translationLanguage?.code ?: course.languageCode
+      TermsLoader.getInstance(project).fetchAndApplyTerms(course, languageCode)
+      return
+    }
+    if (areTermsOutdated(course, termsProperties)) {
       showUpdateAvailableNotification {
         TermsLoader.getInstance(project).updateTerms(course, termsProperties)
       }
