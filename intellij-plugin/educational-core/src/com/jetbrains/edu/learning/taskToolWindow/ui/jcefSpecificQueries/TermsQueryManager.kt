@@ -4,7 +4,8 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.util.Disposer
-import com.intellij.ui.GotItTooltip
+import com.intellij.ui.GotItComponentBuilder
+import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.jcef.JBCefBrowserBase
 import com.intellij.ui.jcef.JBCefJSQuery
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -16,7 +17,6 @@ import com.jetbrains.edu.learning.ai.terms.TermsProjectSettings
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.handler.CefLoadHandlerAdapter
-import org.jetbrains.annotations.NonNls
 import java.awt.Point
 
 /**
@@ -34,7 +34,7 @@ class TermsQueryManager private constructor(
   private val jsQueryMouseOverListener = JBCefJSQuery.create(taskJBCefBrowser)
   private val jsQueryMouseOutListener = JBCefJSQuery.create(taskJBCefBrowser)
   private val jsQueryScrollListener = JBCefJSQuery.create(taskJBCefBrowser)
-  private var gotItTooltip: GotItTooltip? = null
+  private var gotItTooltip: Balloon? = null
 
   private val termListenerLoadHandler = object : CefLoadHandlerAdapter() {
 
@@ -83,7 +83,7 @@ class TermsQueryManager private constructor(
       null
     }
     jsQueryScrollListener.addHandler {
-      gotItTooltip?.dispose()
+      gotItTooltip?.let { Disposer.dispose(it) }
       null
     }
     Disposer.register(this) {
@@ -96,7 +96,7 @@ class TermsQueryManager private constructor(
 
   private fun showDefinitionOfTerm(data: String) {
     if (data.isBlank()) return
-    gotItTooltip?.dispose()
+    gotItTooltip?.let { Disposer.dispose(it) }
     val parsedData = JsEventData.fromJson(data) ?: return
     val component = taskJBCefBrowser.component ?: return
     val termTitle = parsedData.term
@@ -108,33 +108,28 @@ class TermsQueryManager private constructor(
     val position = if (isBelowMiddle) Balloon.Position.below else Balloon.Position.above
     val pointY = if (isBelowMiddle) parsedData.bottomOfTermRect else parsedData.topOfTermRect
 
-    gotItTooltip = GotItTooltip(TOOLTIP_ID, definition, this)
+    val preferredPoint = Point(parsedData.x, pointY ?: parsedData.y)
+
+    gotItTooltip = GotItComponentBuilder(definition)
       .withHeader(termTitle)
-      .withPosition(position)
-      .withGotItButtonAction {
-        gotItTooltip?.dispose()
-      }.apply {
-        if (canShow()) {
-          show(component) { _, _ -> Point(parsedData.x, pointY ?: parsedData.y) }
-        }
+      .showButton(false)
+      .build(this)
+      .apply {
+        show(RelativePoint(component, preferredPoint), position)
       }
   }
 
   private fun closeDefinitionOfTerm(data: String) {
     if (data.isBlank()) return
-    // TODO: keep the gotItTooltip open when the mouse moves towards it
-    gotItTooltip?.dispose()
+    gotItTooltip?.let { Disposer.dispose(it) }
   }
 
   override fun dispose() {
-    gotItTooltip?.dispose()
+    gotItTooltip?.let { Disposer.dispose(it) }
     taskJBCefBrowser.jbCefClient.removeLoadHandler(termListenerLoadHandler, taskJBCefBrowser.cefBrowser)
   }
 
   companion object {
-    @NonNls
-    private const val TOOLTIP_ID: String = "term.definition"
-
     @JvmStatic
     fun getTermsQueryManager(project: Project, task: Task?, taskJBCefBrowser: JBCefBrowserBase): TermsQueryManager? =
       when (task) {
