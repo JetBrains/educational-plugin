@@ -2,7 +2,7 @@ package com.jetbrains.edu.ai.terms.action
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.jetbrains.edu.ai.terms.TermsLoader
-import com.jetbrains.edu.ai.terms.ui.AITermsNotificationManager
+import com.jetbrains.edu.ai.ui.AINotificationManager
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import org.jetbrains.annotations.NonNls
@@ -14,7 +14,7 @@ class ResetCourseTerms : AITheoryLookupActionBase() {
     val course = project.course as? EduCourse ?: return
     if (isActionUnavailable(project, course)) return
 
-    AITermsNotificationManager.getInstance(project).closeExistingNotifications()
+    AINotificationManager.getInstance(project).closeExistingTermsNotifications()
     TermsLoader.getInstance(project).resetTerms()
   }
 

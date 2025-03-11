@@ -7,8 +7,8 @@ import com.intellij.ui.GotItTooltip
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.translation.TranslationLoader
 import com.jetbrains.edu.ai.translation.connector.TranslationServiceConnector
-import com.jetbrains.edu.ai.translation.ui.AITranslationNotificationManager
 import com.jetbrains.edu.ai.translation.ui.CourseTranslationPopup
+import com.jetbrains.edu.ai.ui.AINotificationManager
 import com.jetbrains.edu.ai.ui.EducationalAIIcons
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.course
@@ -31,7 +31,7 @@ class AITranslation : AITranslationActionBase() {
     val course = project.course as? EduCourse ?: return
     if (isActionUnavailable(project, course)) return
 
-    AITranslationNotificationManager.getInstance(project).closeExistingNotifications()
+    AINotificationManager.getInstance(project).closeExistingTranslationNotifications()
 
     val popup = CourseTranslationPopup(project, course)
     val relativePoint = JBPopupFactory.getInstance().guessBestPopupLocation(this, e)

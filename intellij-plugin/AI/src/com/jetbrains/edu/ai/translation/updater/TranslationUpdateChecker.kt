@@ -7,8 +7,8 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.translation.TranslationLoader
 import com.jetbrains.edu.ai.translation.connector.TranslationServiceConnector
-import com.jetbrains.edu.ai.translation.ui.AITranslationNotificationManager
 import com.jetbrains.edu.ai.ui.AINotification.ActionLabel
+import com.jetbrains.edu.ai.ui.AINotificationManager
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.ai.TranslationProperties
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -42,7 +42,7 @@ class TranslationUpdateChecker(private val project: Project) {
       name = EduCoreBundle.message("update.action"),
       action = updateAction
     )
-    AITranslationNotificationManager.getInstance(project).showInfoNotification(
+    AINotificationManager.getInstance(project).showInfoTranslationNotification(
       message = EduAIBundle.message("ai.translation.an.updated.version.of.the.translation.is.available"),
       actionLabel = actionLabel
     )
