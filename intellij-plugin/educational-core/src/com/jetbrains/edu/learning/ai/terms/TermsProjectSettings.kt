@@ -91,6 +91,9 @@ class TermsProjectSettings : PersistentStateComponent<TermsProjectState>, EduTes
     @Attribute var definition: String
   ) {
     fun asTerm(): Term = Term(value, definition)
+
+    @Suppress("unused") // used for serialization
+    constructor(): this("", "")
   }
 
   private fun Term.asStoredTerm(): StoredTerm = StoredTerm(value, definition)
