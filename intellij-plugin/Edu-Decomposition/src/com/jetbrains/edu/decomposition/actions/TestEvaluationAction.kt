@@ -33,11 +33,14 @@ class TestEvaluationAction : CheckActionBase() {
       val dependencies = runReadAction { FunctionDependenciesParser.extractFunctionDependencies(files, project, language) }
 
       // TODO("Call to test evaluator and handle result")
-      val (result, checkResultMessage) =
+
+      val result =
         if (TestDependenciesEvaluator.evaluate(generatedDependencies, dependencies)) {
-          true to EduDecompositionBundle.message("action.test.evaluation.success")
+          checkResultMessage = EduDecompositionBundle.message("action.test.evaluation.success")
+          true
         } else {
-          false to EduDecompositionBundle.message("action.test.evaluation.failure")
+          checkResultMessage = EduDecompositionBundle.message("action.test.evaluation.failure")
+          false
         }
       return@withBackgroundProgress result
     }

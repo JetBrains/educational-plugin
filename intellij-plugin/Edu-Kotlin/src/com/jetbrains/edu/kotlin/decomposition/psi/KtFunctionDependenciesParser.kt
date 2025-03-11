@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 class KtFunctionDependenciesParser : FunctionDependenciesParser {
   override fun extractFunctionDependencies(files: List<PsiFile>): Map<String, List<String>> {
     val functions = getFunctionsPsi(files)
-    val regex = """::`([^`]+)`""".toRegex()
+    val regex = """::\s*`([^`]+)`|::\s*(\w+)""".toRegex()
     return functions.mapNotNull { function ->
       val name = function.name ?: return@mapNotNull null
 
@@ -16,8 +16,9 @@ class KtFunctionDependenciesParser : FunctionDependenciesParser {
           .filterIsInstance<KtCallExpression>()
           .filter { it.calleeExpression?.text == "dependsOn" }
           .flatMap { it.valueArguments.mapNotNull { arg ->
-            regex.find(arg.text)?.groupValues?.get(1)
-            }
+            regex.find(arg.text)?.let { match ->
+              match.groups[1]?.value ?: match.groups[2]?.value
+            } }
           }
       } ?: emptyList()
 
