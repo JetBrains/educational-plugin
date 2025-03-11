@@ -3,7 +3,7 @@ package com.jetbrains.edu.ai.terms.action
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.ai.terms.settings.TheoryLookupSettings
+import com.jetbrains.edu.learning.ai.terms.TheoryLookupSettings
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 

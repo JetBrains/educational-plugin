@@ -1,6 +1,7 @@
 package com.jetbrains.edu.ai.terms.settings
 
 import com.jetbrains.edu.learning.EduSettingsServiceTestBase
+import com.jetbrains.edu.learning.ai.terms.TheoryLookupSettings
 import org.junit.Test
 
 class TheoryLookupSettingsTest : EduSettingsServiceTestBase() {

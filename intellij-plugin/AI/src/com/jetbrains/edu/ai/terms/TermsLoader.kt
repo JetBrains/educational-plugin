@@ -9,7 +9,7 @@ import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.jetbrains.edu.ai.error.AIServiceError
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.terms.connector.TermsServiceConnector
-import com.jetbrains.edu.ai.terms.settings.TheoryLookupSettings
+import com.jetbrains.edu.learning.ai.terms.TheoryLookupSettings
 import com.jetbrains.edu.ai.ui.AINotification.ActionLabel
 import com.jetbrains.edu.ai.ui.AINotificationManager
 import com.jetbrains.edu.learning.Err
@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.ai.terms.TermsProjectSettings
 import com.jetbrains.edu.learning.ai.terms.TermsProperties
+import com.jetbrains.edu.learning.combineStateFlow
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -25,11 +26,7 @@ import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import com.jetbrains.educational.terms.format.CourseTermsResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
@@ -43,7 +40,7 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
 
   init {
     scope.launch {
-      val combinedStateFlow = combineState(
+      val combinedStateFlow = combineStateFlow(
         scope,
         TheoryLookupSettings.getInstance().theoryLookupProperties,
         TranslationProjectSettings.getInstance(project).translationProperties
@@ -192,13 +189,6 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
 
   private fun CourseTermsResponse.toTermsProperties(): TermsProperties =
     TermsProperties(language.code, terms.mapKeys { it.key.toInt() }, termsVersion)
-
-  private fun <T1, T2> combineState(
-    scope: CoroutineScope,
-    state1: StateFlow<T1>,
-    state2: StateFlow<T2>,
-  ): StateFlow<Pair<T1, T2>> = combine(state1, state2) { t1, t2 -> t1 to t2 }
-    .stateIn(scope, SharingStarted.Eagerly, state1.value to state2.value)
 
   companion object {
     private val LOG = Logger.getInstance(TermsLoader::class.java)
