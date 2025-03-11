@@ -78,12 +78,17 @@ val codeWithMePlugin = "com.jetbrains.codeWithMe"
 val jvmPlugins = listOf(
   javaPlugin,
   "JUnit",
-  "org.jetbrains.plugins.gradle"
+  "org.jetbrains.plugins.gradle",
+  "com.intellij.gradle"
 )
 
 val javaScriptPlugins = listOf(
   javaScriptPlugin,
-  nodeJsPlugin
+  nodeJsPlugin,
+  jsonPlugin,
+  "com.intellij.css",
+  "com.intellij.platform.images",
+  "JavaScriptDebugger"
 )
 
 val rustPlugins = listOf(
@@ -92,17 +97,22 @@ val rustPlugins = listOf(
 )
 
 val cppPlugins = listOf(
+  "com.intellij.cidr.base",
   "com.intellij.clion",
   "com.intellij.clion.runFile",
   "com.intellij.nativeDebug",
+  "com.intellij.platform.images",
   "org.jetbrains.plugins.clion.test.google",
-  "org.jetbrains.plugins.clion.test.catch"
+  "org.jetbrains.plugins.clion.test.catch",
 )
 
 val sqlPlugins = listOf(
   sqlPlugin,
   // https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1791
-  "intellij.charts"
+  "intellij.charts",
+  "intellij.grid.impl",
+  "intellij.grid.core.impl",
+  "com.intellij.platform.images"
 )
 
 val csharpPlugins = listOf(
@@ -554,7 +564,7 @@ project("code-insight:yaml") {
     intellijPlatform {
       intellijIde(baseVersion)
 
-      intellijPlugins(yamlPlugin)
+      intellijPlugins(yamlPlugin, jsonPlugin)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -711,7 +721,8 @@ project("Edu-Python") {
         pythonPlugin,
         if (isJvmCenteredIDE) javaPlugin else null,
         // needed to load `intellij.python.community.impl` module of Python plugin in tests
-        tomlPlugin
+        tomlPlugin,
+        jsonPlugin
       )
       intellijPlugins(pluginList)
     }
@@ -837,6 +848,7 @@ project("Edu-Cpp:CLion-Nova") {
       intellijIde(clionVersion)
 
       intellijPlugins(cppPlugins)
+      intellijPlugins("org.jetbrains.plugins.clion.radler")
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -1011,6 +1023,7 @@ project("features:ai-hints-kotlin") {
       val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
       intellijIde(ideVersion)
 
+      intellijPlugins(jvmPlugins)
       intellijPlugins(kotlinPlugin)
     }
 
@@ -1033,7 +1046,8 @@ project("features:ai-hints-python") {
         pythonPlugin,
         if (isJvmCenteredIDE) javaPlugin else null,
         // needed to load `intellij.python.community.impl` module of Python plugin in tests
-        tomlPlugin
+        tomlPlugin,
+        jsonPlugin
       )
       intellijPlugins(pluginList)
     }
