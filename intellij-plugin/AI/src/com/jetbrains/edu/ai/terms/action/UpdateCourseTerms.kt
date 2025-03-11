@@ -2,7 +2,7 @@ package com.jetbrains.edu.ai.terms.action
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.jetbrains.edu.ai.terms.TermsLoader
-import com.jetbrains.edu.ai.terms.ui.AITermsNotificationManager
+import com.jetbrains.edu.ai.ui.AINotificationManager
 import com.jetbrains.edu.learning.ai.terms.TermsProjectSettings
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -16,7 +16,7 @@ class UpdateCourseTerms : AITheoryLookupActionBase() {
     if (isActionUnavailable(project, course)) return
 
     val termsProperties = TermsProjectSettings.getInstance(project).termsProperties.value ?: return
-    AITermsNotificationManager.getInstance(project).closeExistingNotifications()
+    AINotificationManager.getInstance(project).closeExistingTermsNotifications()
     TermsLoader.getInstance(project).updateTerms(course, termsProperties)
   }
 

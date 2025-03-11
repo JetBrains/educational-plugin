@@ -15,8 +15,8 @@ import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.translation.connector.TranslationServiceConnector
 import com.jetbrains.edu.ai.translation.settings.TranslationSettings
 import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesCounterUsageCollector
-import com.jetbrains.edu.ai.translation.ui.AITranslationNotificationManager
 import com.jetbrains.edu.ai.ui.AINotification.ActionLabel
+import com.jetbrains.edu.ai.ui.AINotificationManager
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
@@ -43,8 +43,8 @@ import java.io.IOException
 class TranslationLoader(private val project: Project, private val scope: CoroutineScope) {
   private val mutex = Mutex()
 
-  private val translationNotificationManager: AITranslationNotificationManager
-    get() = AITranslationNotificationManager.getInstance(project)
+  private val notificationManager: AINotificationManager
+    get() = AINotificationManager.getInstance(project)
 
   init {
     scope.launch {
@@ -128,12 +128,12 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
       }
       val translationSettings = TranslationProjectSettings.getInstance(project)
       if (version == translation.version) {
-        translationNotificationManager.showInfoNotification(EduAIBundle.message("ai.translation.translation.is.up.to.date"))
+        notificationManager.showInfoTranslationNotification(EduAIBundle.message("ai.translation.translation.is.up.to.date"))
         return@withBackgroundProgress
       }
       course.saveTranslation(translation)
       translationSettings.setTranslation(translation.toTranslationProperties())
-      translationNotificationManager.showInfoNotification(EduAIBundle.message("ai.translation.translation.has.been.updated"))
+      notificationManager.showInfoTranslationNotification(EduAIBundle.message("ai.translation.translation.has.been.updated"))
       EduAIFeaturesCounterUsageCollector.translationUpdated(course, translation.language)
     }
 
@@ -164,7 +164,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
         }
       }
       else {
-        translationNotificationManager.showErrorNotification(lockNotAcquiredNotificationText)
+        notificationManager.showErrorTranslationNotification(lockNotAcquiredNotificationText)
       }
     }
   }
@@ -183,7 +183,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
             fetchAndApplyTranslation(course, language)
           }
         )
-        translationNotificationManager.showErrorNotification(message = translation.error.message(), actionLabel = actionLabel)
+        notificationManager.showErrorTranslationNotification(message = translation.error.message(), actionLabel = actionLabel)
       }
       return@withContext translation
     }
