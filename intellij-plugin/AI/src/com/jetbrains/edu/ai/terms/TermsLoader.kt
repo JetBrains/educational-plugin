@@ -10,8 +10,8 @@ import com.jetbrains.edu.ai.error.AIServiceError
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.terms.connector.TermsServiceConnector
 import com.jetbrains.edu.ai.terms.settings.TheoryLookupSettings
-import com.jetbrains.edu.ai.terms.ui.AITermsNotificationManager
 import com.jetbrains.edu.ai.ui.AINotification.ActionLabel
+import com.jetbrains.edu.ai.ui.AINotificationManager
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
@@ -38,8 +38,8 @@ import kotlinx.coroutines.withContext
 class TermsLoader(private val project: Project, private val scope: CoroutineScope) {
   private val mutex = Mutex()
 
-  private val termsNotificationManager: AITermsNotificationManager
-    get() = AITermsNotificationManager.getInstance(project)
+  private val notificationManager: AINotificationManager
+    get() = AINotificationManager.getInstance(project)
 
   init {
     scope.launch {
@@ -133,11 +133,11 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
       }
       val termsProjectSettings = TermsProjectSettings.getInstance(project)
       if (version == termsResponse.termsVersion) {
-        termsNotificationManager.showInfoNotification(EduAIBundle.message("ai.terms.terms.is.up.to.date"))
+        notificationManager.showInfoTermsNotification(EduAIBundle.message("ai.terms.terms.is.up.to.date"))
         return@withBackgroundProgress
       }
       termsProjectSettings.setTerms(termsResponse.toTermsProperties())
-      termsNotificationManager.showInfoNotification(EduAIBundle.message("ai.terms.terms.has.been.updated"))
+      notificationManager.showInfoTermsNotification(EduAIBundle.message("ai.terms.terms.has.been.updated"))
       //TODO(add statistics (update finished))
     }
   }
@@ -156,7 +156,7 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
             fetchAndApplyTerms(course, languageCode)
           }
         )
-        termsNotificationManager.showErrorNotification(message = courseTerms.error.message(), actionLabel = actionLabel)
+        notificationManager.showErrorTermsNotification(message = courseTerms.error.message(), actionLabel = actionLabel)
       }
       courseTerms
     }
@@ -176,7 +176,7 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
         }
       }
       else {
-        termsNotificationManager.showErrorNotification(lockNotAcquiredNotificationText)
+        notificationManager.showErrorTermsNotification(lockNotAcquiredNotificationText)
       }
     }
   }
