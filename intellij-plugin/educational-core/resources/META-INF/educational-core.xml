@@ -328,6 +328,8 @@
 
     <applicationService serviceImplementation="com.jetbrains.edu.coursecreator.settings.CCSettings"/>
 
+    <applicationService serviceImplementation="com.jetbrains.edu.learning.ai.terms.TheoryLookupSettings"/>
+
     <applicationService serviceInterface="com.jetbrains.edu.learning.courseGeneration.ProjectOpener"
                         serviceImplementation="com.jetbrains.edu.learning.courseGeneration.ProjectOpenerImpl"
                         testServiceImplementation="com.jetbrains.edu.learning.MockProjectOpener"/>

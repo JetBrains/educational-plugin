@@ -1,4 +1,4 @@
-package com.jetbrains.edu.ai.terms.settings
+package com.jetbrains.edu.learning.ai.terms
 
 import com.intellij.openapi.components.*
 import kotlinx.coroutines.flow.MutableStateFlow

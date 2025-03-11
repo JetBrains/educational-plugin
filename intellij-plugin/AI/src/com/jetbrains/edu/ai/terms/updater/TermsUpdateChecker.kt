@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.terms.TermsLoader
 import com.jetbrains.edu.ai.terms.connector.TermsServiceConnector
-import com.jetbrains.edu.ai.terms.settings.TheoryLookupSettings
+import com.jetbrains.edu.learning.ai.terms.TheoryLookupSettings
 import com.jetbrains.edu.ai.ui.AINotification.ActionLabel
 import com.jetbrains.edu.ai.ui.AINotificationManager
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings

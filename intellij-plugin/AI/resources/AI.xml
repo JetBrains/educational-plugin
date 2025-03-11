@@ -47,8 +47,6 @@
 
     <applicationService serviceImplementation="com.jetbrains.edu.ai.translation.settings.TranslationSettings"/>
 
-    <applicationService serviceImplementation="com.jetbrains.edu.ai.terms.settings.TheoryLookupSettings"/>
-
     <postStartupActivity implementation="com.jetbrains.edu.ai.AIStartupActivity"/>
 
     <registryKey key="edu.ai.service.update.check.interval"
