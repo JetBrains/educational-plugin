@@ -36,7 +36,7 @@
     {
       "name" : "not a course icon.svg",
       "is_visible" : true,
-      "is_binary" : true
+      "is_binary" : false
     }
   ],
   "version" : <last version>,
