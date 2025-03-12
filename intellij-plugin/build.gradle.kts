@@ -319,6 +319,7 @@ dependencies {
     pluginModule(implementation(project("features:ai-hints-core")))
     pluginModule(implementation(project("features:ai-hints-kotlin")))
     pluginModule(implementation(project("features:ai-hints-python")))
+    pluginModule(implementation(project("features:ai-test-generation")))
     pluginModule(implementation(project("localization")))
 
     testFramework(TestFrameworkType.Bundled)
@@ -1037,6 +1038,31 @@ project("features:ai-hints-python") {
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
     testImplementation(project(":intellij-plugin:features:ai-hints-core", "testOutput"))
     testImplementation(project(":intellij-plugin:Edu-Python"))
+  }
+}
+
+project("features:ai-test-generation") {
+  dependencies {
+    intellijPlatform {
+      val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
+      intellijIde(project, ideVersion)
+    }
+
+    api(rootProject.libs.educational.ml.library.core) {
+      excludeKotlinDeps()
+      excludeKotlinSerializationDeps()
+      exclude(group = "net.java.dev.jna")
+    }
+    api(rootProject.libs.educational.ml.library.test.generation) {
+      excludeKotlinDeps()
+      excludeKotlinSerializationDeps()
+      exclude(group = "net.java.dev.jna")
+    }
+
+    implementation(project(":intellij-plugin:educational-core"))
+    implementation(project(":intellij-plugin:AI"))
+
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
   }
 }
 
