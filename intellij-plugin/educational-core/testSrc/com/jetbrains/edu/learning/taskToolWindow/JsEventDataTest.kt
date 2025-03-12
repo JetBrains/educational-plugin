@@ -13,8 +13,7 @@ class JsEventDataTest(private val jsEventDataJson: String) : EduTestCase() {
   @Test
   fun `test JsEventData deserialization`() {
     val jsEventData = JsEventData.fromJson(jsEventDataJson)
-    assertNotNull(jsEventData)
-    jsEventData!!
+    kotlin.test.assertNotNull(jsEventData)
     assertEquals(jsEventData.term, "abc")
     assertEquals(jsEventData.x, 1)
     assertEquals(jsEventData.y, 2)
