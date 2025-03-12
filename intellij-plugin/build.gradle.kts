@@ -73,6 +73,7 @@ val jsonPlugin = "com.intellij.modules.json"
 val yamlPlugin = "org.jetbrains.plugins.yaml"
 val androidPlugin = "org.jetbrains.android"
 val codeWithMePlugin = "com.jetbrains.codeWithMe"
+val radlerPlugin = "org.jetbrains.plugins.clion.radler"
 
 
 val jvmPlugins = listOf(
@@ -92,6 +93,7 @@ val rustPlugins = listOf(
 )
 
 val cppPlugins = listOf(
+  "com.intellij.cidr.lang",
   "com.intellij.clion",
   "com.intellij.clion.runFile",
   "com.intellij.nativeDebug",
@@ -530,6 +532,9 @@ project("code-insight:markdown") {
     intellijPlatform {
       intellijIde(baseVersion)
 
+      if (isAtLeast243) {
+        bundledModules("intellij.markdown.compose.preview")
+      }
       intellijPlugins(markdownPlugin)
     }
 
@@ -800,6 +805,10 @@ project("Edu-Cpp") {
     intellijPlatform {
       intellijIde(clionVersion)
 
+      bundledModules(
+        "intellij.clion.coverage",
+        "intellij.cidr.coverage"
+      )
       intellijPlugins(cppPlugins)
     }
 
@@ -829,6 +838,7 @@ project("Edu-Cpp:CLion-Nova") {
       intellijIde(clionVersion)
 
       intellijPlugins(cppPlugins)
+      intellijPlugins(radlerPlugin)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
