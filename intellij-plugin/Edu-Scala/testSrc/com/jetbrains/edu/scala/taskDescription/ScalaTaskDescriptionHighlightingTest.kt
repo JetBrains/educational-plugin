@@ -60,7 +60,7 @@ class ScalaTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase
       }
     </code></pre>
     <p>Code block with specific language:</p>
-    <pre><code data-lang="text/x-kotlin">
+    <pre><code data-lang="text/x-scala">
       def main(args: Array[String]): Unit = {
         println("Hello!")
       }
