@@ -364,25 +364,32 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
 
     YamlFormatSynchronizer.saveItem(parentStudyItem)
 
-    // If a Task is created and added to the course, make sure that files from the task folder are not listed as additional files.
-    // It may happen on task copy, because files are created on disk and automatically added to the list of additional files before
-    // the Task object is created.
-    if (deserializedItem is Task) {
-      removeTaskFilesFromAdditionalFiles(deserializedItem)
-    }
     return true
   }
 
-  private fun removeTaskFilesFromAdditionalFiles(task: Task) {
-    val course = task.course
-    val pathPrefix = task.pathInCourse + VFS_SEPARATOR_CHAR
+  /**
+   * If a task or a bigger study item is created and added to a course,
+   * make sure that files from task folders are not listed as additional files.
+   * It may happen on copying folders, because files are created on disk and automatically added to the list of additional files before
+   * the study item object is created.
+   */
+  private fun Course.removeTaskFilesFromAdditionalFiles() {
+    var additionalFilesChanged = false
 
-    val withoutFilesFromTask = course.additionalFiles.filter {
-      !it.name.startsWith(pathPrefix)
+    visitTasks { task ->
+      val pathPrefix = task.pathInCourse + VFS_SEPARATOR_CHAR
+
+      val withoutFilesFromTask = additionalFiles.filter {
+        !it.name.startsWith(pathPrefix)
+      }
+
+      if (withoutFilesFromTask.size < additionalFiles.size) {
+        additionalFiles = withoutFilesFromTask
+        additionalFilesChanged = true
+      }
     }
 
-    if (withoutFilesFromTask.size < course.additionalFiles.size) {
-      course.additionalFiles = withoutFilesFromTask
+    if (additionalFilesChanged) {
       YamlFormatSynchronizer.saveItem(course)
     }
   }
@@ -394,6 +401,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
       runInEdt {
         YamlLoader.loadItem(project, file, true)
         ProjectView.getInstance(project).refresh()
+        project.course?.removeTaskFilesFromAdditionalFiles()
       }
     }
   }
