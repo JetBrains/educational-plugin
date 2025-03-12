@@ -229,6 +229,10 @@ subprojects {
 
   tasks {
     prepareSandbox { enabled = false }
+    test {
+      // Workaround to disable IJent usage on Windows
+      systemProperty("wsl.use.remote.agent.for.launch.processes", "false")
+    }
   }
 
   val testOutput = configurations.create("testOutput")
