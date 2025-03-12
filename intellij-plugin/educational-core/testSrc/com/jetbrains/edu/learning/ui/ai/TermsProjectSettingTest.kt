@@ -14,7 +14,7 @@ import org.junit.Test
 
 class TermsProjectSettingTest : EduSettingsServiceTestBase() {
   private val termsStorage
-    get() = TermsProjectSettings.Companion.getInstance(project)
+    get() = TermsProjectSettings.getInstance(project)
 
   @Test
   fun `test empty storage serialization`() {
