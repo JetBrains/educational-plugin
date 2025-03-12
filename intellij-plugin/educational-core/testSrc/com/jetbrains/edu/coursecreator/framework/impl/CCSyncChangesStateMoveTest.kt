@@ -1,6 +1,8 @@
 package com.jetbrains.edu.coursecreator.framework.impl
 
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.refactoring.move.MoveHandlerDelegate
+import com.intellij.testFramework.ExtensionTestUtil.maskExtensions
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.framework.SyncChangesStateManager
 import com.jetbrains.edu.coursecreator.framework.SyncChangesTaskFileState
@@ -14,6 +16,16 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import org.junit.Test
 
 class CCSyncChangesStateMoveTest : MoveTestBase() {
+
+  override fun setUp() {
+    super.setUp()
+    // Temporary hack - exclude all move handlers from Java and Kotlin plugin.
+    // Since intellij-platform gradle plugin 2.4, Java and Kotlin plugin may be loaded in tests as bundled plugins of IDEA.
+    // It breaks tests although
+    val necessaryHandlers = MoveHandlerDelegate.EP_NAME.extensionList.filter { it.javaClass.name !in EXCLUDED_MOVE_HANDLER_CLASSES }
+    maskExtensions(MoveHandlerDelegate.EP_NAME, necessaryHandlers, testRootDisposable)
+  }
+
   @Test
   fun `test state change after moving a file`() {
     val course = createFrameworkCourse()
@@ -132,4 +144,15 @@ class CCSyncChangesStateMoveTest : MoveTestBase() {
 
   private val rootDir: VirtualFile
     get() = LightPlatformTestCase.getSourceRoot()
+  
+  companion object {
+    private val EXCLUDED_MOVE_HANDLER_CLASSES = listOf(
+      "org.jetbrains.kotlin.idea.refactoring.move.moveMethod.MoveKotlinMethodHandler",
+      "org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsHandler",
+      "org.jetbrains.kotlin.idea.refactoring.move.moveClassesOrPackages.KotlinAwareJavaMovePackagesHandler",
+      "org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.KotlinMoveFilesOrDirectoriesHandler",
+      "com.intellij.refactoring.move.moveClassesOrPackages.JavaMoveClassesOrPackagesHandler",
+      "com.intellij.refactoring.move.moveFilesOrDirectories.JavaMoveFilesOrDirectoriesHandler"
+    )
+  }
 }

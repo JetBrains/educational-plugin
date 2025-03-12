@@ -32,12 +32,12 @@ class YamlChangedAfterEventTest : YamlTestCase() {
     val expectedConfig = """
       |type: edu
       |files:
-      |- name: file1.txt
-      |  visible: true
-      |  learner_created: true
-      |- name: userFile.txt
-      |  visible: true
-      |  learner_created: true
+      |  - name: file1.txt
+      |    visible: true
+      |    learner_created: true
+      |  - name: userFile.txt
+      |    visible: true
+      |    learner_created: true
       |status: Unchecked
       |record: -1
       |""".trimMargin()
