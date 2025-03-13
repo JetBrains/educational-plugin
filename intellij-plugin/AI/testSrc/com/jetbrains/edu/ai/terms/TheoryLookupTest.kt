@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 import org.junit.Test
 import java.util.concurrent.atomic.AtomicBoolean
 
-class TheoryLookupTest : EduTestCase() {
+class TermsLoaderTest : EduTestCase() {
 
   @Test
   fun `test terms loading`() {
