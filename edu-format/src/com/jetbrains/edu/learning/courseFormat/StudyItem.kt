@@ -27,7 +27,7 @@ abstract class StudyItem() {
   private var _parent: ItemContainer? = null
 
   open var parent: ItemContainer
-    get() = _parent ?: error("Parent is null for StudyItem $name")
+    get() = _parent ?: error("Parent is null for StudyItem $name thread: ${Thread.currentThread().name}")
     set(value) {
       _parent = value
     }

@@ -4,6 +4,7 @@ import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
@@ -377,7 +378,19 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     var additionalFilesChanged = false
 
     visitTasks { task ->
-      val pathPrefix = task.pathInCourse + VFS_SEPARATOR_CHAR
+      thisLogger().warn("getting parent for ${task.name}, thread ${Thread.currentThread().name}")
+      val pathPrefix = try {
+        task.pathInCourse + VFS_SEPARATOR_CHAR
+      }
+      catch (e: Exception) {
+        thisLogger().warn("Failed to get path in course for task ${task.name}")
+        var p: StudyItem = task
+        while (p != this) {
+          thisLogger().warn("PARENT ${p::class.simpleName} ${p.name}")
+          p = p.parent
+        }
+        throw e
+      }
 
       val withoutFilesFromTask = additionalFiles.filter {
         !it.name.startsWith(pathPrefix)

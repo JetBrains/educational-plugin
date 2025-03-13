@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.yaml
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.annotations.VisibleForTesting
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -45,6 +46,7 @@ object YamlLoader {
       doLoad(project, configFile, loadFromVFile)
     }
     catch (e: Exception) {
+      thisLogger().warn("Failed to load yaml config", e)
       when (e) {
         is YamlLoadingException -> showError(project, e, configFile, e.message)
         is RemoteYamlLoadingException -> e.processError(project)
