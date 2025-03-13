@@ -1,11 +1,13 @@
 package com.jetbrains.edu.learning.taskToolWindow.htmlTransformers.steps
 
+import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.taskToolWindow.*
 import com.jetbrains.edu.learning.taskToolWindow.htmlTransformers.HtmlTransformer
 import com.jetbrains.edu.learning.taskToolWindow.htmlTransformers.HtmlTransformerContext
 import com.jetbrains.edu.learning.ai.terms.TermsProjectSettings
 import com.jetbrains.edu.learning.ai.terms.TheoryLookupSettings
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
@@ -25,7 +27,10 @@ object TermsHighlighter : HtmlTransformer {
 
   override fun transform(html: Document, context: HtmlTransformerContext): Document {
     if (!TheoryLookupSettings.getInstance().isTheoryLookupEnabled || context.task !is TheoryTask) return html
-    val terms = TermsProjectSettings.getInstance(context.project).getTaskTerms(context.task)?.map { it.value }
+    val task = context.task
+    val language = TranslationProjectSettings.getInstance(context.project).translationLanguage
+    if (language != null && (language.code != TranslationLanguage.ENGLISH.code || language.code != task.course.languageCode)) return html
+    val terms = TermsProjectSettings.getInstance(context.project).getTaskTerms(task)?.map { it.value }
     if (terms.isNullOrEmpty()) return html
     for (termTitle in terms) {
       formatTermOccurrences(html, termTitle)
