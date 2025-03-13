@@ -9,17 +9,12 @@ import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.jetbrains.edu.ai.error.AIServiceError
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.terms.connector.TermsServiceConnector
-import com.jetbrains.edu.ai.translation.isSameLanguage
-import com.jetbrains.edu.learning.ai.terms.TheoryLookupSettings
 import com.jetbrains.edu.ai.ui.AINotification.ActionLabel
 import com.jetbrains.edu.ai.ui.AINotificationManager
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Result
-import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.ai.terms.TermsProjectSettings
 import com.jetbrains.edu.learning.ai.terms.TermsProperties
-import com.jetbrains.edu.learning.combineStateFlow
-import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.onError
@@ -27,7 +22,6 @@ import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import com.jetbrains.educational.terms.format.CourseTermsResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
@@ -38,28 +32,6 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
 
   private val notificationManager: AINotificationManager
     get() = AINotificationManager.getInstance(project)
-
-  init {
-    scope.launch {
-      val combinedStateFlow = combineStateFlow(
-        scope,
-        TheoryLookupSettings.getInstance().theoryLookupProperties,
-        TranslationProjectSettings.getInstance(project).translationProperties
-      )
-      combinedStateFlow.collectLatest { (theoryLookupProperties, translationProperties) ->
-        if (theoryLookupProperties?.isEnabled == false) return@collectLatest
-
-        val course = project.course as? EduCourse ?: return@collectLatest
-
-        val translationLanguage = translationProperties?.language
-        if (translationLanguage != null && !translationLanguage.isSameLanguage(course)) return@collectLatest  // TODO(support other languages)
-        val languageCode = course.languageCode
-
-        if (TermsProjectSettings.areCourseTermsLoaded(project, languageCode)) return@collectLatest
-        fetchAndApplyTerms(course, languageCode)
-      }
-    }
-  }
 
   fun updateTerms(course: EduCourse, termsProperties: TermsProperties) {
     runInBackgroundExclusively(EduAIBundle.message("ai.translation.update.is.not.possible")) {
