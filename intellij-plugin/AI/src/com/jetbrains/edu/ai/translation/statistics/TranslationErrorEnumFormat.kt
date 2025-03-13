@@ -16,7 +16,7 @@ fun AIServiceError.toStatisticsFormat(): TranslationErrorEnumFormat = when (this
     CommonAIServiceError.CONNECTION_ERROR -> TranslationErrorEnumFormat.CONNECTION_ERROR
     CommonAIServiceError.SERVICE_UNAVAILABLE -> TranslationErrorEnumFormat.SERVICE_UNAVAILABLE
   }
-  is TranslationError -> when(this) {
+  is TranslationError -> when (this) {
     TranslationError.NO_TRANSLATION -> TranslationErrorEnumFormat.NO_TRANSLATION
     TranslationError.TRANSLATION_UNAVAILABLE_FOR_LEGAL_REASONS -> TranslationErrorEnumFormat.TRANSLATION_UNAVAILABLE_FOR_LEGAL_REASONS
   }
