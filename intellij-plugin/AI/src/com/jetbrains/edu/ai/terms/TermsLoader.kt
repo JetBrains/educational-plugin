@@ -82,7 +82,7 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
       LOG.warn("Language $languageCode requested for theory lookup is not English")
       return
     }
-    runInBackgroundExclusively(EduAIBundle.message("ai.terms.already.running")) {
+    runInBackgroundExclusively {
       doFetchAndApplyTerms(course, languageCode)
     }
   }
@@ -161,7 +161,7 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
   }
 
   private inline fun runInBackgroundExclusively(
-    @NotificationContent lockNotAcquiredNotificationText: String,
+    @NotificationContent lockNotAcquiredNotificationText: String? = null,
     crossinline action: suspend () -> Unit
   ) {
     scope.launch {
@@ -174,7 +174,9 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
         }
       }
       else {
-        notificationManager.showErrorTermsNotification(lockNotAcquiredNotificationText)
+        if (lockNotAcquiredNotificationText != null) {
+          notificationManager.showErrorTermsNotification(lockNotAcquiredNotificationText)
+        }
       }
     }
   }
