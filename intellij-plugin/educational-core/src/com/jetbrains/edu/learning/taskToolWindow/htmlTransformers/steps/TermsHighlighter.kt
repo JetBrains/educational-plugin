@@ -50,7 +50,7 @@ object TermsHighlighter : HtmlTransformer {
   }
 
   private fun formatNextOccurrence(textNode: TextNode, termTitle: String, dashedTermElement: Element): TextNode? {
-    val text = textNode.text()
+    val text = textNode.wholeText
     if (!text.contains(termTitle)) return null
     val startIdx = text.indexOf(termTitle)
     val endIdx = startIdx + termTitle.length
