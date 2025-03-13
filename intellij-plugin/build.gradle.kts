@@ -185,6 +185,9 @@ allprojects {
     project(":intellij-plugin").tasks.buildPlugin {
       dependsOn(verifyClasses)
     }
+    withType<Test> {
+      classpath -= classpath.filter { it.name == "platform-ijent-impl.jar" }
+    }
   }
 
   dependencies {
