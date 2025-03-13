@@ -83,7 +83,6 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
 
     scope.launch {
       combineStateFlow(
-        scope,
         TermsProjectSettings.getInstance(project).termsProperties,
         TheoryLookupSettings.getInstance().theoryLookupProperties
       ).collectLatest {
