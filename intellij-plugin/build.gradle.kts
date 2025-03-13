@@ -283,7 +283,9 @@ intellijPlatform {
     }
   }
   instrumentCode = false
-  buildSearchableOptions = prop("enableBuildSearchableOptions").toBoolean()
+  // Temporarily disable building searchable options for 251.
+  // Should be fixed automatically with IJPGP 2.4
+  buildSearchableOptions = if (isAtLeast251) false else prop("enableBuildSearchableOptions").toBoolean()
 }
 
 dependencies {
