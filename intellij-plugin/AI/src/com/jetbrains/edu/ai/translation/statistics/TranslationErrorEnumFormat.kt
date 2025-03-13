@@ -12,7 +12,7 @@ enum class TranslationErrorEnumFormat {
 }
 
 fun AIServiceError.toStatisticsFormat(): TranslationErrorEnumFormat = when (this) {
-  is CommonAIServiceError -> when(this) {
+  is CommonAIServiceError -> when (this) {
     CommonAIServiceError.CONNECTION_ERROR -> TranslationErrorEnumFormat.CONNECTION_ERROR
     CommonAIServiceError.SERVICE_UNAVAILABLE -> TranslationErrorEnumFormat.SERVICE_UNAVAILABLE
   }
