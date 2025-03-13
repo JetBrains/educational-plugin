@@ -28,20 +28,25 @@ class UserAgreementManager(private val scope: CoroutineScope) {
     scope.launch {
       launch {
         userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.pluginAgreement }
-          .runningFold<_, UserAgreementStateEvent>(UserAgreementStateEvent.Uninitialized) { acc, new ->
+          .runningFold<_, StateEvent<UserAgreementSettings.UserAgreementProperties>>(StateEvent.Uninitialized) { acc, new ->
             when (acc) {
-              is UserAgreementStateEvent.Uninitialized -> UserAgreementStateEvent.FirstState(new.pluginAgreement)
-              is UserAgreementStateEvent.FirstState -> UserAgreementStateEvent.TransitionState(acc.current, new.pluginAgreement)
-              is UserAgreementStateEvent.TransitionState -> UserAgreementStateEvent.TransitionState(acc.current, new.pluginAgreement)
+              is StateEvent.Uninitialized -> StateEvent.FirstState(new)
+              is StateEvent.FirstState -> StateEvent.TransitionState(acc.current, new)
+              is StateEvent.TransitionState -> StateEvent.TransitionState(acc.current, new)
             }
           }.collectLatest {
-            if (it !is UserAgreementStateEvent.TransitionState) return@collectLatest
+            if (it !is StateEvent.TransitionState) return@collectLatest
             /**
              * Let's avoid reloading Edu projects if the previous agreement state is [UserAgreementState.NOT_SHOWN]
              * and the new one is [UserAgreementState.ACCEPTED], which means a new user's just accepted it.
              */
-            if (it.previous == UserAgreementState.NOT_SHOWN && it.current == UserAgreementState.ACCEPTED) {
-              submitAgreementAcceptanceAnonymously()
+            if (it.previous.pluginAgreement == UserAgreementState.NOT_SHOWN && it.current.pluginAgreement == UserAgreementState.ACCEPTED) {
+              /**
+               * If this is the first time user accept the agreement, send the statistics about it to remote (regardless of their login).
+               */
+              if (it.current.isChangedByUser) {
+                submitAgreementAcceptanceAnonymously()
+              }
               return@collectLatest
             }
             reloadEduProjects()
@@ -138,10 +143,10 @@ class UserAgreementManager(private val scope: CoroutineScope) {
     }
   }
 
-  private sealed interface UserAgreementStateEvent {
-    data object Uninitialized : UserAgreementStateEvent
-    data class FirstState(val current: UserAgreementState) : UserAgreementStateEvent
-    data class TransitionState(val previous: UserAgreementState, val current: UserAgreementState) : UserAgreementStateEvent
+  private sealed interface StateEvent<out T> {
+    data object Uninitialized : StateEvent<Nothing>
+    data class FirstState<T>(val current: T) : StateEvent<T>
+    data class TransitionState<T>(val previous: T, val current: T) : StateEvent<T>
   }
 
   companion object {
