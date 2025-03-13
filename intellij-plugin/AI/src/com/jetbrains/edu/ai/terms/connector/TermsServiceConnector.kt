@@ -60,7 +60,7 @@ class TermsServiceConnector : AIServiceConnector() {
       code == HTTP_NOT_FOUND -> TermsError.NO_TERMS.asErr()
       code == HTTP_UNAVAILABLE_FOR_LEGAL_REASONS -> TermsError.TERMS_UNAVAILABLE_FOR_LEGAL_REASON.asErr()
       code == HTTP_UNAVAILABLE || result == null -> CommonAIServiceError.SERVICE_UNAVAILABLE.asErr()
-      else -> CommonAIServiceError.CONNECTION_ERROR.asErr ()
+      else -> CommonAIServiceError.CONNECTION_ERROR.asErr()
     }
   }
 
