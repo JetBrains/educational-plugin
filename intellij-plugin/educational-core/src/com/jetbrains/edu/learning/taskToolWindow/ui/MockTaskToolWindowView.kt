@@ -42,5 +42,11 @@ class MockTaskToolWindowView(project: Project) : TaskToolWindowView(project) {
     message: @NotificationContent String,
     actionLabel: ActionLabel?
   ) {}
+  override fun showTaskDescriptionNotificationIfAbsent(
+    notificationId: String,
+    status: EditorNotificationPanel.Status,
+    message: @NotificationContent String,
+    actionLabel: ActionLabel?
+  ) {}
   override fun closeExistingTaskDescriptionNotifications(notificationId: String) {}
 }

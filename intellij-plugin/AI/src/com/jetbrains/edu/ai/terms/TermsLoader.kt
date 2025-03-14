@@ -8,6 +8,7 @@ import com.intellij.openapi.util.NlsContexts.NotificationContent
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.intellij.ui.EditorNotificationPanel
 import com.jetbrains.edu.ai.error.AIServiceError
+import com.jetbrains.edu.ai.error.CommonAIServiceError
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.terms.connector.TermsServiceConnector
 import com.jetbrains.edu.learning.taskToolWindow.ui.notification.TaskToolWindowNotification.ActionLabel
@@ -132,12 +133,29 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
             fetchAndApplyTerms(course, languageCode)
           }
         )
-        TaskToolWindowView.getInstance(project).showTaskDescriptionNotification(
-          TERMS_NOTIFICATION_ID,
-          EditorNotificationPanel.Status.Error,
-          courseTerms.error.message(),
-          actionLabel
-        )
+        when (courseTerms.error) {
+          is TermsError -> {
+            TaskToolWindowView.getInstance(project).showTaskDescriptionNotification(
+              TERMS_NOTIFICATION_ID,
+              EditorNotificationPanel.Status.Error,
+              courseTerms.error.message(),
+              actionLabel
+            )
+          }
+          // do not override notification if there exist any notification produced by a common error
+          // note that corresponding notification produced by common error in translation loader does override previous
+          // because after translation retry it will be applied to translation project settings
+          // and therefore terms observer will try to update the terms after that
+          // TODO(it's a hack, so it should be refactored when we merge api of translation and terms)
+          is CommonAIServiceError -> {
+            TaskToolWindowView.getInstance(project).showTaskDescriptionNotificationIfAbsent(
+              CommonAIServiceError.NOTIFICATION_ID,
+              EditorNotificationPanel.Status.Error,
+              courseTerms.error.message(),
+              actionLabel
+            )
+          }
+        }
       }
       courseTerms
     }
