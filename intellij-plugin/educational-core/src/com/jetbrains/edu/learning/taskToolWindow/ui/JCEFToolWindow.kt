@@ -64,7 +64,9 @@ class JCEFToolWindow(project: Project) : TaskToolWindow(project) {
       Disposer.dispose(it)
     }
 
-    termsQueryManager = getTermsQueryManager(project, task, taskInfoJBCefBrowser)
+    termsQueryManager = getTermsQueryManager(project, task, taskInfoJBCefBrowser)?.also {
+      Disposer.register(this, it)
+    }
 
     taskInfoJBCefBrowser.loadHTML(taskDescription)
     taskInfoJBCefBrowser.component.isVisible = true
@@ -92,10 +94,6 @@ class JCEFToolWindow(project: Project) : TaskToolWindow(project) {
     super.dispose()
     // Dispose undisposed yet taskSpecificQueryManager
     taskSpecificQueryManager?.let {
-      Disposer.dispose(it)
-    }
-    // Dispose undisposed yet termsQueryManager
-    termsQueryManager?.let {
       Disposer.dispose(it)
     }
   }
