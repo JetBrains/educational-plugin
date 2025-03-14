@@ -50,7 +50,7 @@
     <postStartupActivity implementation="com.jetbrains.edu.ai.AIStartupActivity"/>
 
     <registryKey key="edu.ai.service.update.check.interval"
-                 description="Sets the educational AI service update check interval in seconds"
+                 description="Specifies the update check interval for the translation and theory lookup services, in seconds"
                  defaultValue="3600"/>
   </extensions>
 
