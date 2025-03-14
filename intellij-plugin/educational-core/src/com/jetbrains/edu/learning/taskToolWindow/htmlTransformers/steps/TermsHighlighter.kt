@@ -32,7 +32,7 @@ object TermsHighlighter : HtmlTransformer {
     if (language != null && (language.code != TranslationLanguage.ENGLISH.code || language.code != task.course.languageCode)) return html
     val terms = TermsProjectSettings.getInstance(context.project).getTaskTerms(task)?.map { it.value }
     if (terms.isNullOrEmpty()) return html
-    for (termTitle in terms.sortedBy { it.length }.reversed()) {
+    for (termTitle in terms.sortedByDescending { it.length }) {
       formatTermOccurrences(html, termTitle)
     }
     return html
