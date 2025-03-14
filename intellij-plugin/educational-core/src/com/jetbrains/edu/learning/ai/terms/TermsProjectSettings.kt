@@ -22,8 +22,7 @@ import kotlin.collections.set
 class TermsProjectSettings : PersistentStateComponent<TermsProjectState>, EduTestAware {
   private val _termsProperties = MutableStateFlow<TermsProperties?>(null)
   val termsProperties = _termsProperties.asStateFlow()
-  private val versionsByLanguage = ConcurrentHashMap<String, TermsVersion>()
-  private val termsByLanguage = ConcurrentHashMap<String, Map<Int, List<Term>>>()
+  private val termsPropertiesByLanguage = ConcurrentHashMap<String, TermsProperties>()
 
   fun getTaskTerms(task: Task): List<Term>? = termsProperties.value?.terms?.get(task.id)
 
@@ -33,41 +32,35 @@ class TermsProjectSettings : PersistentStateComponent<TermsProjectState>, EduTes
       return
     }
     val language = termsProperties.languageCode
-    termsByLanguage[language] = termsProperties.terms
-    versionsByLanguage[language] = termsProperties.version
+    termsPropertiesByLanguage[language] = termsProperties
     _termsProperties.value = termsProperties
   }
 
-  fun getTermsByLanguage(languageCode: String): TermsProperties? {
-    val terms = termsByLanguage[languageCode] ?: return null
-    val version = versionsByLanguage[languageCode] ?: return null
-    return TermsProperties(languageCode, terms, version)
-  }
+  fun getTermsByLanguage(languageCode: String): TermsProperties? = termsPropertiesByLanguage[languageCode]
 
   override fun getState(): TermsProjectState {
     val state = TermsProjectState()
-    state.terms = termsByLanguage.mapValuesTo(mutableMapOf()) { (_, terms) ->
-      terms.mapValues { (_, taskTerms) ->
+    state.terms = termsPropertiesByLanguage.mapValuesTo(mutableMapOf()) { (_, properties) ->
+      properties.terms.mapValues { (_, taskTerms) ->
         taskTerms.map { it.asStoredTerm() }
       }
     }
-    state.termsVersions = versionsByLanguage.mapValuesTo(mutableMapOf()) { it.value.value }
+    state.termsVersions = termsPropertiesByLanguage.mapValuesTo(mutableMapOf()) { (_, properties) -> properties.version.value }
     state.currentTermsLanguage = termsProperties.value?.languageCode
     return state
   }
 
   override fun loadState(state: TermsProjectState) {
-    termsByLanguage.clear()
-    for ((language, terms) in state.terms) {
+    termsPropertiesByLanguage.clear()
+
+    for ((language, version) in state.termsVersions) {
+      val terms = state.terms[language] ?: emptyMap()
       val taskTerms = mutableMapOf<Int, List<Term>>()
       for ((taskId, storedTaskTerms) in terms) {
         taskTerms[taskId] = storedTaskTerms.map { it.asTerm() }
       }
-      termsByLanguage[language] = taskTerms
-    }
-    versionsByLanguage.clear()
-    for ((language, version) in state.termsVersions) {
-      versionsByLanguage[language] = TermsVersion(version)
+
+      termsPropertiesByLanguage[language] = TermsProperties(language, taskTerms, TermsVersion(version))
     }
 
     val language = state.currentTermsLanguage ?: return
@@ -76,8 +69,7 @@ class TermsProjectSettings : PersistentStateComponent<TermsProjectState>, EduTes
 
   fun resetTerms() {
     _termsProperties.value = null
-    termsByLanguage.clear()
-    versionsByLanguage.clear()
+    termsPropertiesByLanguage.clear()
   }
 
   @TestOnly
