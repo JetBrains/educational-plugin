@@ -1,10 +1,11 @@
 package com.jetbrains.edu.ai.translation.action
 
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.jetbrains.edu.ai.translation.TRANSLATION_NOTIFICATION_ID
 import com.jetbrains.edu.ai.translation.TranslationLoader
-import com.jetbrains.edu.ai.ui.AINotificationManager
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import org.jetbrains.annotations.NonNls
 
 @Suppress("ComponentNotRegistered")
@@ -14,7 +15,7 @@ class ResetCourseTranslation : AITranslationActionBase() {
     val course = project.course as? EduCourse ?: return
     if (isActionUnavailable(project, course)) return
 
-    AINotificationManager.getInstance(project).closeExistingTranslationNotifications()
+    TaskToolWindowView.getInstance(project).closeExistingTaskDescriptionNotifications(TRANSLATION_NOTIFICATION_ID)
     TranslationLoader.getInstance(project).resetCourseTranslation(course)
   }
 

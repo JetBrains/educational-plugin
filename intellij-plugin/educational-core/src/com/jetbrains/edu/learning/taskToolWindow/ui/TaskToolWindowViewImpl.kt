@@ -9,11 +9,15 @@ import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.invokeLater
+import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.editor.colors.EditorColorsListener
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.NlsContexts.NotificationContent
 import com.intellij.openapi.wm.ToolWindow
+import com.intellij.openapi.wm.ToolWindowManager
+import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.InlineBanner
 import com.intellij.ui.InlineBannerBase
 import com.intellij.ui.components.JBScrollPane
@@ -52,11 +56,15 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType.SUBMISSIONS_TAB
 import com.jetbrains.edu.learning.ai.terms.TermsProjectSettings
 import com.jetbrains.edu.learning.ai.terms.TheoryLookupSettings
 import com.jetbrains.edu.learning.combineStateFlow
+import com.jetbrains.edu.learning.taskToolWindow.ui.notification.TaskToolWindowNotification
+import com.jetbrains.edu.learning.taskToolWindow.ui.notification.TaskToolWindowNotification.ActionLabel
+import com.jetbrains.edu.learning.taskToolWindow.ui.notification.TaskToolWindowNotificationsPanel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dimension
 import javax.swing.*
@@ -283,6 +291,9 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
       .apply { isCloseable = false }
     toolWindow.contentManager.addContent(content)
 
+    val notificationsPanel = TaskToolWindowNotificationsPanel()
+    toolWindow.component.add(notificationsPanel, BorderLayout.NORTH)
+
     currentTask = project.getCurrentTask()
     updateTabs(currentTask)
 
@@ -330,6 +341,33 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
   override fun addInlineBannerToCheckPanel(inlineBanner: InlineBannerBase) {
     checkPanel.addHint(inlineBanner)
     checkPanel.revalidate()
+  }
+
+  override fun showTaskDescriptionNotification(
+    notificationId: String,
+    status: EditorNotificationPanel.Status,
+    message: @NotificationContent String,
+    actionLabel: ActionLabel?
+  ) = runInEdt {
+    val notificationsPanel = getTaskDescriptionNotificationsPanel() ?: return@runInEdt
+    val notification = TaskToolWindowNotification(notificationId, status, message, notificationsPanel)
+    actionLabel?.let { notification.addActionLabel(it) }
+    closeExistingTaskDescriptionNotifications(notificationId)
+    notificationsPanel.add(notification)
+  }
+
+  override fun closeExistingTaskDescriptionNotifications(notificationId: String) = runInEdt {
+    val notificationsPanel = getTaskDescriptionNotificationsPanel() ?: return@runInEdt
+    val existingNotifications = notificationsPanel
+      .components
+      .filterIsInstance<TaskToolWindowNotification>()
+      .filter { it.id == notificationId }
+    existingNotifications.forEach { it.close() }
+  }
+
+  private fun getTaskDescriptionNotificationsPanel(): TaskToolWindowNotificationsPanel? {
+    val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskToolWindowFactory.STUDY_TOOL_WINDOW)
+    return toolWindow?.component?.components?.filterIsInstance<TaskToolWindowNotificationsPanel>()?.firstOrNull()
   }
 
   override fun dispose() {}

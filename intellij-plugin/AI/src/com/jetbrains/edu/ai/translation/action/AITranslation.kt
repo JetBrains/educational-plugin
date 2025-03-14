@@ -5,14 +5,15 @@ import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.GotItTooltip
 import com.jetbrains.edu.ai.messages.EduAIBundle
+import com.jetbrains.edu.ai.translation.TRANSLATION_NOTIFICATION_ID
 import com.jetbrains.edu.ai.translation.TranslationLoader
 import com.jetbrains.edu.ai.translation.connector.TranslationServiceConnector
 import com.jetbrains.edu.ai.translation.ui.CourseTranslationPopup
-import com.jetbrains.edu.ai.ui.AINotificationManager
 import com.jetbrains.edu.ai.ui.EducationalAIIcons
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 
 @Suppress("ComponentNotRegistered")
 class AITranslation : AITranslationActionBase() {
@@ -31,7 +32,7 @@ class AITranslation : AITranslationActionBase() {
     val course = project.course as? EduCourse ?: return
     if (isActionUnavailable(project, course)) return
 
-    AINotificationManager.getInstance(project).closeExistingTranslationNotifications()
+    TaskToolWindowView.getInstance(project).closeExistingTaskDescriptionNotifications(TRANSLATION_NOTIFICATION_ID)
 
     val popup = CourseTranslationPopup(project, course)
     val relativePoint = JBPopupFactory.getInstance().guessBestPopupLocation(this, e)

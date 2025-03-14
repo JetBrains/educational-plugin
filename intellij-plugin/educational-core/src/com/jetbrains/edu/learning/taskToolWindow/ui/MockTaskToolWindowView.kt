@@ -1,11 +1,14 @@
 package com.jetbrains.edu.learning.taskToolWindow.ui
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsContexts.NotificationContent
 import com.intellij.openapi.wm.ToolWindow
+import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.InlineBanner
 import com.intellij.ui.InlineBannerBase
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.taskToolWindow.ui.notification.TaskToolWindowNotification.ActionLabel
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
 
 class MockTaskToolWindowView(project: Project) : TaskToolWindowView(project) {
@@ -33,4 +36,11 @@ class MockTaskToolWindowView(project: Project) : TaskToolWindowView(project) {
   override fun checkFinished(task: Task, checkResult: CheckResult) {}
   override fun addInlineBanner(inlineBanner: InlineBanner) {}
   override fun addInlineBannerToCheckPanel(inlineBanner: InlineBannerBase) {}
+  override fun showTaskDescriptionNotification(
+    notificationId: String,
+    status: EditorNotificationPanel.Status,
+    message: @NotificationContent String,
+    actionLabel: ActionLabel?
+  ) {}
+  override fun closeExistingTaskDescriptionNotifications(notificationId: String) {}
 }
